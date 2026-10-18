@@ -11,8 +11,11 @@
 //! drops into `SceneSurface::render_custom` or an offscreen texture.
 
 mod cdlod;
+mod waves;
 
 use cdlod::{Cdlod, GRID, MAX_NODES, R0};
+use waves::LOOP;
+pub use waves::{WaveSimulation, WaveSpectrum};
 use std::sync::{
     Arc,
     atomic::{AtomicU8, Ordering},
@@ -34,8 +37,6 @@ const BLOOM_LEVELS: u32 = 8;
 const MSAA: u32 = 4;
 const HDR: wgpu::TextureFormat = wgpu::TextureFormat::Rgba16Float;
 const DEPTH: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
-/// Spectrum time loop (s); wave frequencies are quantised to it.
-const LOOP: f32 = 600.0;
 const CASC_L: [f32; CASCADES as usize] = [1103.0, 211.3, 39.7, 7.43, 1.393, 0.2617];
 
 /// Artist-facing ocean parameters. Angles are in degrees.
@@ -95,17 +96,19 @@ impl Default for OceanSettings {
 }
 
 impl OceanSettings {
-    fn spectrum_key(&self) -> [f32; 8] {
-        [
-            self.wind_speed,
-            self.wind_direction,
-            self.fetch_km,
-            self.swell_height,
-            self.swell_direction,
-            self.swell_length,
-            self.swell_spread,
-            self.choppiness,
-        ]
+    fn spectrum(&self) -> WaveSpectrum {
+        WaveSpectrum {
+            cascades: CASC_L,
+            wind_speed: self.wind_speed,
+            wind_direction: self.wind_direction,
+            fetch_m: self.fetch_km * 1000.0,
+            swell_height: self.swell_height,
+            swell_direction: self.swell_direction,
+            swell_length: self.swell_length,
+            swell_spread: self.swell_spread,
+            choppiness: self.choppiness,
+            short_cut: 0.0012,
+        }
     }
 }
 
@@ -147,6 +150,22 @@ macro_rules! wgsl {
     };
 }
 
+/// Pipeline sources assembled from the shared WGSL fragments.
+mod shaders {
+    pub(super) const TRANSMITTANCE: &str = wgsl!("atmosphere.wgsl", "sky_transmittance.wgsl");
+    pub(super) const MULTISCATTER: &str = wgsl!("atmosphere.wgsl", "sky_multiscatter.wgsl");
+    pub(super) const SKY_VIEW: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "sky_view.wgsl");
+    pub(super) const ENV_CUBE: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "noise.wgsl", "sky_render.wgsl", "sky_clouds.wgsl", "env_cube.wgsl");
+    pub(super) const SUN_VISIBILITY: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "noise.wgsl", "sky_render.wgsl", "sky_clouds.wgsl", "sun_visibility.wgsl");
+    pub(super) const HEIGHT_PROBE: &str = wgsl!("frame.wgsl", "height_probe.wgsl");
+    pub(super) const SURFACE: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "noise.wgsl", "sky_render.wgsl", "surface.wgsl");
+    pub(super) const SKY: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "noise.wgsl", "sky_render.wgsl", "sky_clouds.wgsl", "sky_background.wgsl");
+    pub(super) const BLOOM_DOWN: &str = wgsl!("fullscreen.wgsl", "bloom_down.wgsl");
+    pub(super) const BLOOM_UP: &str = wgsl!("fullscreen.wgsl", "bloom_up.wgsl");
+    pub(super) const COMPOSITE: &str = wgsl!("fullscreen.wgsl", "composite.wgsl");
+    pub(super) const FOAM_TEXTURE: &str = wgsl!("noise.wgsl", "periodic_noise.wgsl", "foam_texture.wgsl");
+}
+
 #[derive(Debug)]
 struct ScreenTargets {
     size: [u32; 2],
@@ -161,11 +180,6 @@ struct ScreenTargets {
 
 #[derive(Debug)]
 struct Pipelines {
-    init: wgpu::ComputePipeline,
-    evolve: wgpu::ComputePipeline,
-    rows: wgpu::ComputePipeline,
-    cols: wgpu::ComputePipeline,
-    sim_mips: wgpu::ComputePipeline,
     foam_update: wgpu::ComputePipeline,
     array16_mips: wgpu::ComputePipeline,
     transmittance: wgpu::ComputePipeline,
@@ -184,11 +198,6 @@ struct Pipelines {
 
 #[derive(Debug)]
 struct BindGroups {
-    init: wgpu::BindGroup,
-    evolve: wgpu::BindGroup,
-    rows: wgpu::BindGroup,
-    cols: wgpu::BindGroup,
-    sim_mips: Vec<wgpu::BindGroup>,
     foam_update: [wgpu::BindGroup; 2],
     foam_mips: [Vec<wgpu::BindGroup>; 2],
     transmittance: wgpu::BindGroup,
@@ -209,7 +218,7 @@ pub struct OceanRenderer {
     groups: BindGroups,
     screen: ScreenTargets,
     output_srgb: bool,
-    sim_ubo: wgpu::Buffer,
+    waves: WaveSimulation,
     foam_ubo: wgpu::Buffer,
     atmo_ubo: wgpu::Buffer,
     frame_ubo: wgpu::Buffer,
@@ -226,7 +235,6 @@ pub struct OceanRenderer {
     linear_sampler: wgpu::Sampler,
     cdlod: Cdlod,
     settings: OceanSettings,
-    need_spectrum: bool,
     need_lut: bool,
     env_full: u32,
     foam_first: bool,
@@ -429,30 +437,7 @@ impl OceanRenderer {
             BindingResource as R, BufferUsages as BU, TextureUsages as TU,
             TextureViewDimension as D,
         };
-        let sim_shaders =
-            |body: &str| -> String { [include_str!("sim_common.wgsl"), body].concat() };
         let pipelines = Pipelines {
-            init: compute_pipeline(
-                device,
-                "ocean spectrum",
-                &sim_shaders(wgsl!("noise.wgsl", "sim_init.wgsl")),
-            ),
-            evolve: compute_pipeline(
-                device,
-                "ocean evolve",
-                &sim_shaders(include_str!("sim_evolve.wgsl")),
-            ),
-            rows: compute_pipeline(
-                device,
-                "ocean fft rows",
-                wgsl!("fft_core.wgsl", "fft_rows.wgsl"),
-            ),
-            cols: compute_pipeline(
-                device,
-                "ocean fft cols",
-                wgsl!("fft_core.wgsl", "fft_cols.wgsl"),
-            ),
-            sim_mips: compute_pipeline(device, "ocean sim mips", include_str!("sim_mips.wgsl")),
             foam_update: compute_pipeline(
                 device,
                 "ocean foam update",
@@ -466,59 +451,39 @@ impl OceanRenderer {
             transmittance: compute_pipeline(
                 device,
                 "sky transmittance",
-                wgsl!("atmosphere.wgsl", "sky_transmittance.wgsl"),
+                shaders::TRANSMITTANCE,
             ),
             multiscatter: compute_pipeline(
                 device,
                 "sky multiscatter",
-                wgsl!("atmosphere.wgsl", "sky_multiscatter.wgsl"),
+                shaders::MULTISCATTER,
             ),
             sky_view: compute_pipeline(
                 device,
                 "sky view",
-                wgsl!("frame.wgsl", "atmosphere.wgsl", "sky_view.wgsl"),
+                shaders::SKY_VIEW,
             ),
             env: compute_pipeline(
                 device,
                 "sky environment cube",
-                wgsl!(
-                    "frame.wgsl",
-                    "atmosphere.wgsl",
-                    "noise.wgsl",
-                    "sky_render.wgsl",
-                    "sky_clouds.wgsl",
-                    "env_cube.wgsl"
-                ),
+                shaders::ENV_CUBE,
             ),
             cube_mips: compute_pipeline(device, "sky cube mips", include_str!("cube_mips.wgsl")),
             sun_visibility: compute_pipeline(
                 device,
                 "sun visibility",
-                wgsl!(
-                    "frame.wgsl",
-                    "atmosphere.wgsl",
-                    "noise.wgsl",
-                    "sky_render.wgsl",
-                    "sky_clouds.wgsl",
-                    "sun_visibility.wgsl"
-                ),
+                shaders::SUN_VISIBILITY,
             ),
             probe: compute_pipeline(
                 device,
                 "ocean height probe",
-                wgsl!("frame.wgsl", "height_probe.wgsl"),
+                shaders::HEIGHT_PROBE,
             ),
             ocean: render_pipeline(
                 device,
                 &RenderPipelineSpec {
                     label: "ocean surface",
-                    source: wgsl!(
-                        "frame.wgsl",
-                        "atmosphere.wgsl",
-                        "noise.wgsl",
-                        "sky_render.wgsl",
-                        "surface.wgsl"
-                    ),
+                    source: shaders::SURFACE,
                     format: HDR,
                     blend: None,
                     depth: Some(wgpu::CompareFunction::Greater),
@@ -530,14 +495,7 @@ impl OceanRenderer {
                 device,
                 &RenderPipelineSpec {
                     label: "ocean sky",
-                    source: wgsl!(
-                        "frame.wgsl",
-                        "atmosphere.wgsl",
-                        "noise.wgsl",
-                        "sky_render.wgsl",
-                        "sky_clouds.wgsl",
-                        "sky_background.wgsl"
-                    ),
+                    source: shaders::SKY,
                     format: HDR,
                     blend: None,
                     depth: Some(wgpu::CompareFunction::Equal),
@@ -549,7 +507,7 @@ impl OceanRenderer {
                 device,
                 &RenderPipelineSpec {
                     label: "ocean bloom down",
-                    source: wgsl!("fullscreen.wgsl", "bloom_down.wgsl"),
+                    source: shaders::BLOOM_DOWN,
                     format: HDR,
                     blend: None,
                     depth: None,
@@ -561,7 +519,7 @@ impl OceanRenderer {
                 device,
                 &RenderPipelineSpec {
                     label: "ocean bloom up",
-                    source: wgsl!("fullscreen.wgsl", "bloom_up.wgsl"),
+                    source: shaders::BLOOM_UP,
                     format: HDR,
                     blend: Some(wgpu::BlendState {
                         color: wgpu::BlendComponent {
@@ -584,7 +542,7 @@ impl OceanRenderer {
                 device,
                 &RenderPipelineSpec {
                     label: "ocean composite",
-                    source: wgsl!("fullscreen.wgsl", "composite.wgsl"),
+                    source: shaders::COMPOSITE,
                     format: output_format,
                     blend: None,
                     depth: None,
@@ -596,86 +554,14 @@ impl OceanRenderer {
         let p = &pipelines;
 
         // simulation
-        let spec_bytes = u64::from(N * N * CASCADES * 16);
-        let sim_ubo = buffer(device, "ocean sim ubo", 224, BU::UNIFORM | BU::COPY_DST);
-        let h0 = buffer(device, "ocean h0", spec_bytes, BU::STORAGE);
-        let spec_a = buffer(device, "ocean spectrum a", spec_bytes, BU::STORAGE);
-        let spec_b = buffer(device, "ocean spectrum b", spec_bytes, BU::STORAGE);
-        let tmp_a = buffer(device, "ocean fft a", spec_bytes, BU::STORAGE);
-        let tmp_b = buffer(device, "ocean fft b", spec_bytes, BU::STORAGE);
-        let sim_texture = |label| {
-            texture(
-                device,
-                label,
-                [N, N, CASCADES],
-                HDR,
-                SIM_MIPS,
-                1,
-                TU::TEXTURE_BINDING | TU::STORAGE_BINDING,
-            )
-        };
-        let disp = sim_texture("ocean displacement");
-        let deriv = sim_texture("ocean derivatives");
-        let moments = sim_texture("ocean slope moments");
-        let disp_all = view(&disp, None, D::D2Array);
-        let deriv_all = view(&deriv, None, D::D2Array);
-        let moments_all = view(&moments, None, D::D2Array);
+        let settings = OceanSettings::default();
+        let waves = WaveSimulation::new(device, settings.spectrum());
+        let (disp_all, deriv_all, moments_all) = (&waves.displacement, &waves.derivatives, &waves.moments);
         let level = |t: &wgpu::Texture, m: u32| view(t, Some(m), D::D2Array);
         let bg = |pipe: &wgpu::BindGroupLayout, label, resources: &[R]| {
             bind_group(device, pipe, label, resources)
         };
         let layout_c = |pipe: &wgpu::ComputePipeline| pipe.get_bind_group_layout(0);
-        let init_group = bg(
-            &layout_c(&p.init),
-            "ocean spectrum",
-            &[sim_ubo.as_entire_binding(), h0.as_entire_binding()],
-        );
-        let evolve_group = bg(
-            &layout_c(&p.evolve),
-            "ocean evolve",
-            &[
-                sim_ubo.as_entire_binding(),
-                h0.as_entire_binding(),
-                spec_a.as_entire_binding(),
-                spec_b.as_entire_binding(),
-            ],
-        );
-        let rows_group = bg(
-            &layout_c(&p.rows),
-            "ocean fft rows",
-            &[
-                spec_a.as_entire_binding(),
-                spec_b.as_entire_binding(),
-                tmp_a.as_entire_binding(),
-                tmp_b.as_entire_binding(),
-            ],
-        );
-        let (d0, v0, m0) = (level(&disp, 0), level(&deriv, 0), level(&moments, 0));
-        let cols_group = bg(
-            &layout_c(&p.cols),
-            "ocean fft cols",
-            &[
-                tmp_a.as_entire_binding(),
-                tmp_b.as_entire_binding(),
-                R::TextureView(&d0),
-                R::TextureView(&v0),
-                R::TextureView(&m0),
-            ],
-        );
-        let sim_mip_groups = (1..SIM_MIPS)
-            .map(|m| {
-                let views = [
-                    level(&disp, m - 1),
-                    level(&deriv, m - 1),
-                    level(&moments, m - 1),
-                    level(&disp, m),
-                    level(&deriv, m),
-                    level(&moments, m),
-                ];
-                let resources: Vec<_> = views.iter().map(R::TextureView).collect();
-                bg(&layout_c(&p.sim_mips), "ocean sim mip", &resources)
-            })
-            .collect();
 
         // foam micro-structure (generated once)
         let foam_detail = texture(
@@ -691,7 +577,7 @@ impl OceanRenderer {
             let generate = compute_pipeline(
                 device,
                 "ocean foam texture",
-                wgsl!("noise.wgsl", "periodic_noise.wgsl", "foam_texture.wgsl"),
+                shaders::FOAM_TEXTURE,
             );
             let mips = compute_pipeline(
                 device,
@@ -762,8 +648,8 @@ impl OceanRenderer {
                     foam_ubo.as_entire_binding(),
                     R::TextureView(&prev),
                     R::TextureView(&dst),
-                    R::TextureView(&disp_all),
-                    R::TextureView(&deriv_all),
+                    R::TextureView(disp_all),
+                    R::TextureView(deriv_all),
                     R::Sampler(&sim_sampler),
                     R::Sampler(&sim_sampler),
                 ],
@@ -893,9 +779,9 @@ impl OceanRenderer {
                     R::TextureView(&trans_view),
                     R::TextureView(&sky_view),
                     R::Sampler(&clamp_sampler),
-                    R::TextureView(&disp_all),
-                    R::TextureView(&deriv_all),
-                    R::TextureView(&moments_all),
+                    R::TextureView(disp_all),
+                    R::TextureView(deriv_all),
+                    R::TextureView(moments_all),
                     R::TextureView(&foam_detail_view),
                     R::TextureView(&env_cube),
                     R::Sampler(&repeat_sampler),
@@ -923,7 +809,7 @@ impl OceanRenderer {
             "ocean height probe",
             &[
                 frame_ubo.as_entire_binding(),
-                R::TextureView(&disp_all),
+                R::TextureView(disp_all),
                 R::Sampler(&sim_sampler),
                 probe_out.as_entire_binding(),
             ],
@@ -977,11 +863,6 @@ impl OceanRenderer {
 
         Self {
             groups: BindGroups {
-                init: init_group,
-                evolve: evolve_group,
-                rows: rows_group,
-                cols: cols_group,
-                sim_mips: sim_mip_groups,
                 foam_update,
                 foam_mips,
                 transmittance,
@@ -996,8 +877,8 @@ impl OceanRenderer {
             },
             pipelines,
             screen,
+            waves,
             output_srgb: output_format.is_srgb(),
-            sim_ubo,
             foam_ubo,
             atmo_ubo,
             frame_ubo,
@@ -1012,8 +893,7 @@ impl OceanRenderer {
             water_height: 0.0,
             linear_sampler,
             cdlod: Cdlod::new(),
-            settings: OceanSettings::default(),
-            need_spectrum: true,
+            settings,
             need_lut: true,
             env_full: 2,
             foam_first: true,
@@ -1179,7 +1059,7 @@ impl OceanRenderer {
         if settings == self.settings {
             return;
         }
-        self.need_spectrum |= settings.spectrum_key() != self.settings.spectrum_key();
+        self.waves.set_spectrum(settings.spectrum());
         self.need_lut |= settings.haze != self.settings.haze;
         self.env_full = 2;
         self.settings = settings;
@@ -1266,45 +1146,6 @@ impl OceanRenderer {
         queue.write_buffer(&self.frame_ubo, 0, bytemuck::cast_slice(&f));
     }
 
-    fn write_sim(&self, queue: &wgpu::Queue, dt: f32) {
-        let s = &self.settings;
-        let c = CASCADES as usize;
-        let mut f = [0.0f32; 56];
-        for i in 0..c {
-            let l = CASC_L[i];
-            f[i] = l;
-            f[8 + i] = if i == 0 {
-                std::f32::consts::PI / l
-            } else {
-                0.0
-            };
-            f[16 + i] = if i < c - 1 {
-                std::f32::consts::TAU * 6.0 / CASC_L[i + 1]
-            } else {
-                std::f32::consts::PI * N as f32 / l * 0.98
-            };
-        }
-        for i in 1..c {
-            f[8 + i] = f[16 + i - 1];
-        }
-        f[40..44].copy_from_slice(&[
-            s.wind_speed,
-            s.wind_direction.to_radians(),
-            s.fetch_km * 1000.0,
-            3.3,
-        ]);
-        let ks = std::f32::consts::TAU / s.swell_length;
-        f[44..48].copy_from_slice(&[
-            s.swell_height,
-            s.swell_direction.to_radians(),
-            (9.81 * ks).sqrt(),
-            s.swell_spread,
-        ]);
-        f[48..52].copy_from_slice(&[s.choppiness, 0.0012, LOOP, 1.0]);
-        f[52..56].copy_from_slice(&[self.sim_time, dt, 2.2, 1.0]);
-        queue.write_buffer(&self.sim_ubo, 0, bytemuck::cast_slice(&f));
-    }
-
     fn write_foam(&mut self, queue: &wgpu::Queue, camera: &OceanCamera, dt: f32) {
         let s = &self.settings;
         let mut u = [0u32; 36];
@@ -1381,7 +1222,6 @@ impl OceanRenderer {
         self.frame_index = self.frame_index.wrapping_add(1);
         let (view_proj, basis, tan_x, tan_y) = self.view_projection(camera);
         self.write_frame(queue, camera, &view_proj, basis, tan_x, tan_y);
-        self.write_sim(queue, dt);
         self.write_foam(queue, camera, dt);
         let p = camera.position;
         self.cdlod
@@ -1401,12 +1241,6 @@ impl OceanRenderer {
                 label: Some("ocean simulation and sky"),
                 timestamp_writes: None,
             });
-            if self.need_spectrum {
-                cp.set_pipeline(&pl.init);
-                cp.set_bind_group(0, &g.init, &[]);
-                cp.dispatch_workgroups(N / 16, N / 16, CASCADES);
-                self.need_spectrum = false;
-            }
             if self.need_lut {
                 queue.write_buffer(
                     &self.atmo_ubo,
@@ -1421,21 +1255,7 @@ impl OceanRenderer {
                 cp.dispatch_workgroups(32 / 8, 32 / 8, 1);
                 self.need_lut = false;
             }
-            cp.set_pipeline(&pl.evolve);
-            cp.set_bind_group(0, &g.evolve, &[]);
-            cp.dispatch_workgroups(N / 16, N / 16, CASCADES);
-            cp.set_pipeline(&pl.rows);
-            cp.set_bind_group(0, &g.rows, &[]);
-            cp.dispatch_workgroups(N, 1, CASCADES);
-            cp.set_pipeline(&pl.cols);
-            cp.set_bind_group(0, &g.cols, &[]);
-            cp.dispatch_workgroups(N, 1, CASCADES);
-            cp.set_pipeline(&pl.sim_mips);
-            for (m, group) in (1..SIM_MIPS).zip(&g.sim_mips) {
-                let s = N >> m;
-                cp.set_bind_group(0, group, &[]);
-                cp.dispatch_workgroups(groups_for(s), groups_for(s), CASCADES);
-            }
+            self.waves.encode(queue, &mut cp, self.sim_time, dt);
             // foam clipmaps
             self.foam_current = 1 - self.foam_current;
             cp.set_pipeline(&pl.foam_update);
@@ -1584,6 +1404,51 @@ impl OceanRenderer {
                 },
             );
             self.probe_pending = true;
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use wgpu::naga::{
+        front::wgsl,
+        valid::{Capabilities, ValidationFlags, Validator},
+    };
+
+    /// Every assembled pipeline source parses and validates with the renderer's Naga.
+    #[test]
+    fn assembled_shaders_validate() {
+        let sources = [
+            ("transmittance", super::shaders::TRANSMITTANCE),
+            ("multiscatter", super::shaders::MULTISCATTER),
+            ("sky view", super::shaders::SKY_VIEW),
+            ("env cube", super::shaders::ENV_CUBE),
+            ("sun visibility", super::shaders::SUN_VISIBILITY),
+            ("height probe", super::shaders::HEIGHT_PROBE),
+            ("surface", super::shaders::SURFACE),
+            ("sky", super::shaders::SKY),
+            ("bloom down", super::shaders::BLOOM_DOWN),
+            ("bloom up", super::shaders::BLOOM_UP),
+            ("composite", super::shaders::COMPOSITE),
+            ("foam texture", super::shaders::FOAM_TEXTURE),
+            ("foam update", include_str!("foam_update.wgsl")),
+            ("foam mips", include_str!("array16_mips.wgsl")),
+            ("foam texture mips", include_str!("rgba8_mips.wgsl")),
+            ("cube mips", include_str!("cube_mips.wgsl")),
+            ("wave spectrum", super::waves::SPECTRUM),
+            ("wave evolve", super::waves::EVOLVE),
+            ("wave fft rows", super::waves::FFT_ROWS),
+            ("wave fft cols", super::waves::FFT_COLS),
+            ("wave mips", include_str!("sim_mips.wgsl")),
+            ("archive water", crate::archive_water::SOURCE),
+        ];
+        for (label, source) in sources {
+            let module = wgsl::parse_str(source)
+                .unwrap_or_else(|e| panic!("{label}: {}", e.emit_to_string(source)));
+            Validator::new(ValidationFlags::all(), Capabilities::all())
+                .validate(&module)
+                .unwrap_or_else(|e| panic!("{label}: {}", e.emit_to_string(source)));
+            assert!(!module.entry_points.is_empty(), "{label} has no entry points");
         }
     }
 }
