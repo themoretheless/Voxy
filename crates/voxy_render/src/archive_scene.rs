@@ -1073,11 +1073,12 @@ impl ArchiveSceneRenderer {
         })
     }
     /// Update atmosphere without rebuilding geometry or allocating particles.
-    /// Replaces the scene's water bodies; an empty slice removes the water pass.
-    pub fn set_water(&mut self, bodies: &[crate::ArchiveWaterBody], waves: crate::WaveSpectrum) {
-        self.water = (!bodies.is_empty()).then(|| {
+    /// Replaces the scene's water; a world without bodies removes the water pass.
+    pub fn set_water(&mut self, world: &voxy_water::WaterWorld) {
+        self.water = (!world.bodies.is_empty()).then(|| {
             crate::archive_water::ArchiveWater::new(
                 &self.device,
+                &self.queue,
                 &crate::archive_water::WaterTargets {
                     camera_layout: &self.camera_layout,
                     environment_layout: &self.environment_bindings.layout,
@@ -1085,15 +1086,35 @@ impl ArchiveSceneRenderer {
                     shadow: &self.shadow,
                     size: [self.width, self.height],
                 },
-                bodies,
-                waves,
+                world,
             )
         });
     }
-    /// Advances the water waves; without calls the surface stays frozen.
+    /// Advances waves, breakers and ripples; without calls the water stays frozen.
     pub fn advance_water(&mut self, dt: f32) {
         if let Some(water) = &mut self.water {
             water.advance(dt);
+        }
+    }
+    /// Seconds of water simulation; pass it to `WaterWorld::sample` so gameplay and
+    /// buoyancy see the surface that is drawn.
+    pub fn water_time(&self) -> f32 {
+        self.water.as_ref().map_or(0., |w| w.time())
+    }
+    /// The water the renderer draws, for CPU queries.
+    pub fn water(&self) -> Option<&voxy_water::WaterWorld> {
+        self.water.as_ref().map(|w| w.world())
+    }
+    /// Raises (positive) or depresses the surface around `at` (xz); ripples spread from it.
+    pub fn water_splash(&mut self, at: glam::Vec2, radius: f32, height: f32) {
+        if let Some(water) = &mut self.water {
+            water.ripples().splash(at, radius, height);
+        }
+    }
+    /// A body moving through the water from `from` to `to` (xz) this frame leaves a wake.
+    pub fn water_wake(&mut self, from: glam::Vec2, to: glam::Vec2, radius: f32, height: f32) {
+        if let Some(water) = &mut self.water {
+            water.ripples().wake(from, to, radius, height);
         }
     }
     pub fn set_weather(&mut self, weather: crate::weather::Weather) -> Result<(), crate::ComputeError> {

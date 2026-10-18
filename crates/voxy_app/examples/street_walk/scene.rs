@@ -15,7 +15,7 @@ pub struct StreetScene {
     pub collision: StaticTriangleWorld,
     pub eye: Vec3,
     pub direction: Vec3,
-    pub water: Vec<voxy_render::ArchiveWaterBody>,
+    pub water: Vec<voxy_render::voxy_water::WaterBody>,
     /// Eye and direction overlooking the pool, for `--spawn pool`.
     pub pool_view: Option<(Vec3, Vec3)>,
 }

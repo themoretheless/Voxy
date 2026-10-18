@@ -24,6 +24,7 @@ members = [
     "crates/voxy_runtime",
     "crates/voxy_time",
     "crates/voxy_render",
+    "crates/voxy_water",
     "crates/voxy_model",
     "crates/voxy_web",
     "crates/voxy_ray_probe",
