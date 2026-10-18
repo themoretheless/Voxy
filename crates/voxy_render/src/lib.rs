@@ -104,7 +104,9 @@ pub use lod_subdivision::{
 mod motion;
 mod obj;
 mod ocean;
-pub use ocean::{OceanCamera, OceanRenderer, OceanSettings};
+pub use ocean::{OceanCamera, OceanRenderer, OceanSettings, WaveSpectrum};
+mod archive_water;
+pub use archive_water::{ArchiveWaterBody, pool_waves};
 mod previous_position;
 mod primary_motion;
 mod primary_surface;

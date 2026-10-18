@@ -306,6 +306,8 @@ pub struct ArchiveSceneRenderer {
     width: u32,
     height: u32,
     shadow_ready: bool,
+    camera_layout: wgpu::BindGroupLayout,
+    water: Option<crate::archive_water::ArchiveWater>,
 }
 fn buffer(
     device: &wgpu::Device,
@@ -1066,9 +1068,34 @@ impl ArchiveSceneRenderer {
             width,
             height,
             shadow_ready: false,
+            camera_layout,
+            water: None,
         })
     }
     /// Update atmosphere without rebuilding geometry or allocating particles.
+    /// Replaces the scene's water bodies; an empty slice removes the water pass.
+    pub fn set_water(&mut self, bodies: &[crate::ArchiveWaterBody], waves: crate::WaveSpectrum) {
+        self.water = (!bodies.is_empty()).then(|| {
+            crate::archive_water::ArchiveWater::new(
+                &self.device,
+                &crate::archive_water::WaterTargets {
+                    camera_layout: &self.camera_layout,
+                    environment_layout: &self.environment_bindings.layout,
+                    background: &self.background,
+                    shadow: &self.shadow,
+                    size: [self.width, self.height],
+                },
+                bodies,
+                waves,
+            )
+        });
+    }
+    /// Advances the water waves; without calls the surface stays frozen.
+    pub fn advance_water(&mut self, dt: f32) {
+        if let Some(water) = &mut self.water {
+            water.advance(dt);
+        }
+    }
     pub fn set_weather(&mut self, weather: crate::weather::Weather) -> Result<(), crate::ComputeError> {
         if !weather.is_valid() {return Err(crate::ComputeError::Validation("invalid weather".into()));}
         if self.weather != weather { self.reset_temporal_history(); }
@@ -1470,6 +1497,17 @@ impl ArchiveSceneRenderer {
         }
         for transparent in [false, true] {
             if transparent {
+                if let Some(water) = &mut self.water {
+                    water.encode(&self.queue, &mut encoder, &crate::archive_water::WaterFrame {
+                        hdr: &self.hdr,
+                        background: &self.background,
+                        depth: &self.depth,
+                        camera: &self.camera_bind,
+                        environment: &self.environment_bindings.group,
+                        eye,
+                        planes: raw_planes,
+                    });
+                }
                 encoder.copy_texture_to_texture(
                     wgpu::TexelCopyTextureInfo {
                         texture: &self.hdr,
