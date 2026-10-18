@@ -83,6 +83,8 @@ struct App {
     sun_elevation: Option<f32>,
     wetness: Option<f32>,
     pitch: Option<f32>,
+    /// `--spawn pool` starts at the garden gate overlooking the villa pool.
+    spawn_pool: bool,
     aa_validation: Option<aa_validation::AaValidation>,
     view: StreetView,
     rig: voxy_render::BodycamRig,
@@ -140,6 +142,7 @@ impl App {
             sun_elevation: value("--sun-elevation").and_then(|v| v.parse().ok()),
             wetness: value("--wetness").and_then(|v| v.parse().ok()),
             pitch: value("--pitch").and_then(|v| v.parse().ok()),
+            spawn_pool: value("--spawn").as_deref() == Some("pool"),
             aa_validation: aa_validation::AaValidation::from_environment(),
             view: StreetView::FirstPerson,
             rig: voxy_render::BodycamRig::default(),
@@ -235,6 +238,11 @@ impl App {
             // restores the captured panorama.
             if std::env::var("VOXY_STREET_SKY").as_deref() == Ok("hdri") {Some(environment)} else {None}
         } else { None };
+        if self.spawn_pool {
+            let (eye, direction) = scene.pool_view.ok_or("--spawn pool needs the original street")?;
+            scene.eye = eye;
+            scene.direction = direction;
+        }
         let mut direction = scene.direction;
         if let Some(degrees) = self.pitch {
             let pitch = degrees.clamp(-80., 80.).to_radians();
@@ -382,6 +390,7 @@ impl App {
         let validation_headroom = self.aa_validation.as_ref().map(|_| 2.);
         let mode = self.configure_renderer(&mut renderer, validation_headroom.unwrap_or(hdr_headroom.unwrap_or(1.)), None)?;
         if self.original {bake_street_probes(&mut renderer, scene.bounds)?;}
+        renderer.set_water(&scene.water, voxy_render::pool_waves());
         eprintln!("STREET antialiasing={mode:?} render={}x{} output={}x{}", render_width, render_height, size.width, size.height);
 
         let offscreen = if self.offscreen_benchmark {
@@ -512,6 +521,7 @@ impl App {
         let mode = gpu.renderer.antialiasing();
         self.configure_renderer(&mut renderer, headroom, Some(mode))?;
         if self.original {bake_street_probes(&mut renderer, scene.bounds)?;}
+        renderer.set_water(&scene.water, voxy_render::pool_waves());
         let gpu = self.gpu.as_mut().ok_or("missing gpu")?;
         gpu.renderer = renderer;
         gpu.bodycam = None;
@@ -682,6 +692,7 @@ impl App {
         }
         gpu.renderer.set_weather(self.weather)?;
         gpu.renderer.set_weather_time(if self.aa_validation.is_some() {0.} else {self.weather_start.elapsed().as_secs_f32()});
+        gpu.renderer.advance_water(if self.aa_validation.is_some() {0.} else {elapsed as f32});
         let output_view = output.create_view(&Default::default());
         let scene_view = gpu.scene_target.as_ref().map(|t| t.create_view(&Default::default()));
         let target_view = scene_view.as_ref().unwrap_or(&output_view);
