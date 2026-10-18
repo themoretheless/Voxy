@@ -103,6 +103,8 @@ pub use lod_subdivision::{
 };
 mod motion;
 mod obj;
+mod ocean;
+pub use ocean::{OceanCamera, OceanRenderer, OceanSettings};
 mod previous_position;
 mod primary_motion;
 mod primary_surface;
