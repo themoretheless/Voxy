@@ -23,12 +23,13 @@ features alone. The current performance target is **at least 120 FPS at 1920×10
 The street continues through an arch in the end colonnade: a paved lane between
 garden walls leads to a walled plot with a modern two-storey villa and a 4.8 × 14 m
 swimming pool (shallow end 1.0 m, ramp, deep end 1.9 m, mosaic basin, steps, ladder and
-underwater lights). The pool water is `voxy_render::ArchiveWaterBody`, drawn by the
+underwater lights). The pool water is a `voxy_water` basin, drawn by the
 scene's water pass on the FFT wave field shared with the `ocean` example: Fresnel
 reflection of the screen and sky, refraction of the basin with Beer–Lambert absorption,
 first-order caustics on whatever the refracted ray reaches, and an underwater view with
 Snell's window when you jump in. The pass is skipped while the pool is off-screen.
-`--spawn pool` starts at the garden gate. An untextured preview of the generated geometry
+`--spawn pool` starts at the garden gate. Wading leaves a ripple wake and jumping in
+throws up a splash (`voxy_water` ripple field). An untextured preview of the generated geometry
 renders headlessly with `VOXY_VILLA_PREVIEW=/tmp/villa.png cargo test -p voxy_app
 --example street_walk render_villa_preview -- --ignored` (`VOXY_VILLA_VIEW=x,y,z,dx,dy,dz`).
 

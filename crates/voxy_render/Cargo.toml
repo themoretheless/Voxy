@@ -22,6 +22,7 @@ image = { version = "0.25.10", default-features = false, features = ["png", "jpe
 voxy_core = { path = "../voxy_core" }
 voxy_lighting = { path = "../voxy_lighting" }
 voxy_mesher = { path = "../voxy_mesher" }
+voxy_water = { path = "../voxy_water" }
 wgpu = { version = "30.0.1", features = ["noop"] }
 
 [dev-dependencies]

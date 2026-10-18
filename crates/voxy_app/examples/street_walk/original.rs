@@ -2025,9 +2025,14 @@ mod tests {
         renderer.set_antialiasing(voxy_render::ArchiveAntialiasing::Off).unwrap();
         let mut water = scene.water.clone();
         if let Ok(caustics) = std::env::var("VOXY_VILLA_CAUSTICS") {
-            water[0].caustics = caustics.parse().unwrap();
+            water[0].material.caustics = caustics.parse().unwrap();
         }
-        renderer.set_water(&water, voxy_render::pool_waves());
+        renderer.set_water(&voxy_render::voxy_water::WaterWorld::new(water, voxy_render::WaveSpectrum::pool()));
+        if let Ok(splash) = std::env::var("VOXY_VILLA_SPLASH") {
+            let v: Vec<f32> = splash.split(',').map(|x| x.parse().unwrap()).collect();
+            renderer.advance_water(1. / 30.);
+            renderer.water_splash(glam::Vec2::new(v[0], v[1]), v[2], v[3]);
+        }
         let target = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("villa preview"),
             size: wgpu::Extent3d { width, height, depth_or_array_layers: 1 },
@@ -2084,7 +2089,9 @@ mod tests {
         // Stepping off the coping into the deep end lands on its floor below the water.
         let (feet, grounded) = world.move_capsule([0., 0.6, 124.], 1.8, 0.3, [0., -4., 0.]).unwrap();
         assert!(grounded && (feet[1] + 1.9).abs() < 0.05, "{feet:?}");
-        let pool = &scene.water[0];
-        assert!(pool.max.y < 0.2 && pool.min.y < -1.8 && pool.max.z - pool.min.z > 13.);
+        let (min, max) = scene.water[0].bounds();
+        assert!(max.y < 0.2 && min.y < -1.8 && max.z - min.z > 13.);
+        let world = voxy_render::voxy_water::WaterWorld::new(scene.water.clone(), voxy_render::WaveSpectrum::pool());
+        assert!(world.is_submerged(Vec3::new(0., -1., 124.), 0.) && !world.is_submerged(Vec3::new(0., 1., 124.), 0.));
     }
 }

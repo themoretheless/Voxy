@@ -1,86 +1,39 @@
-//! Enclosed water bodies (pools, ponds) for [`crate::ArchiveSceneRenderer`], driven by
-//! the ocean's FFT wave field. The water pass runs after opaque shading and before
-//! transparents: it refracts the copied opaque frame with absorption and caustics,
-//! reflects the screen and sky, writes depth, and fogs the view when the eye is under
-//! the surface of a body.
-use crate::ocean::{WaveSimulation, WaveSpectrum};
-use glam::Vec3;
+//! Water bodies for [`crate::ArchiveSceneRenderer`], built on `voxy_water`: basins, lake
+//! and sea regions with breaking surf, rivers with rapids and waterfalls, and
+//! interactive ripples, all on one FFT wave field. The pass runs after opaque shading
+//! and before transparents: it refracts the copied opaque frame with absorption and
+//! caustics, reflects the screen and sky, draws white water, writes depth, and fogs the
+//! view when the eye is under a surface.
+use glam::{Vec2, Vec3};
+use voxy_water::{RippleField, WaterShape, WaterWorld, WaveSimulation, surface_mesh};
 
-/// An axis-aligned water volume: the basin interior from `min` (floor corner) to `max`,
-/// whose `y` is the water level. The basin itself is ordinary scene geometry.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct ArchiveWaterBody {
-    pub min: Vec3,
-    pub max: Vec3,
-    /// Beer-Lambert absorption per metre (linear RGB).
-    pub absorption: [f32; 3],
-    /// Fraction of the ambient light scattered back towards the eye (water colour).
-    pub scatter: [f32; 3],
-    /// Scale of the vertical wave displacement; small for sheltered water.
-    pub displacement: f32,
-    /// 0 disables caustics, 1 is physically scaled focusing.
-    pub caustics: f32,
+pub(crate) fn source() -> String {
+    [include_str!("archive_environment.wgsl"), voxy_water::WATER_COMMON_WGSL, include_str!("archive_water.wgsl")].concat()
 }
 
-impl ArchiveWaterBody {
-    /// Clear chlorinated pool water.
-    pub fn pool(min: Vec3, max: Vec3) -> Self {
-        Self {
-            min,
-            max,
-            absorption: [0.42, 0.075, 0.035],
-            scatter: [0.006, 0.030, 0.034],
-            displacement: 1.0,
-            caustics: 1.0,
-        }
-    }
-
-    fn contains_eye(&self, eye: Vec3) -> bool {
-        eye.x > self.min.x
-            && eye.x < self.max.x
-            && eye.z > self.min.z
-            && eye.z < self.max.z
-            && eye.y > self.min.y
-            && eye.y < self.max.y
-    }
-}
-
-/// Gentle wind ripples on a sheltered pool: a short fetch and a faint slosh.
-pub fn pool_waves() -> WaveSpectrum {
-    WaveSpectrum {
-        cascades: [9.7, 4.2, 1.8, 0.77, 0.33, 0.14],
-        wind_speed: 4.0,
-        wind_direction: 70.0,
-        fetch_m: 25.0,
-        swell_height: 0.012,
-        swell_direction: 100.0,
-        swell_length: 2.4,
-        swell_spread: 6.0,
-        choppiness: 0.6,
-        short_cut: 0.004,
-    }
-}
-
-pub(crate) const SOURCE: &str = concat!(include_str!("archive_environment.wgsl"), include_str!("archive_water.wgsl"));
-
-const GRID_SPACING: f32 = 0.08;
-/// Waves fade out this far from the basin walls.
+/// Waves fade out this far from basin walls.
 const EDGE_FALLOFF: f32 = 0.25;
-const LOOP: f32 = 600.0;
+/// Width of the ripple window that follows the eye (m) and the ripple celerity (m/s).
+const RIPPLE_EXTENT: f32 = 24.0;
+const RIPPLE_SPEED: f32 = 0.6;
+const UNIFORM_FLOATS: usize = 40;
 
 #[derive(Debug)]
 struct Body {
-    source: ArchiveWaterBody,
     uniforms: wgpu::Buffer,
     group: wgpu::BindGroup,
     vertices: wgpu::Buffer,
     indices: wgpu::Buffer,
     count: u32,
+    bounds: (Vec3, Vec3),
+    static_uniforms: [f32; UNIFORM_FLOATS],
 }
 
 #[derive(Debug)]
 pub(crate) struct ArchiveWater {
+    world: WaterWorld,
     waves: WaveSimulation,
+    ripples: RippleField,
     surface: wgpu::RenderPipeline,
     fog: wgpu::RenderPipeline,
     bodies: Vec<Body>,
@@ -91,20 +44,11 @@ pub(crate) struct ArchiveWater {
 }
 
 fn layout_entry(binding: u32, ty: wgpu::BindingType) -> wgpu::BindGroupLayoutEntry {
-    wgpu::BindGroupLayoutEntry {
-        binding,
-        visibility: wgpu::ShaderStages::VERTEX_FRAGMENT,
-        ty,
-        count: None,
-    }
+    wgpu::BindGroupLayoutEntry { binding, visibility: wgpu::ShaderStages::VERTEX_FRAGMENT, ty, count: None }
 }
 
 fn texture_type(dimension: wgpu::TextureViewDimension, sample_type: wgpu::TextureSampleType) -> wgpu::BindingType {
-    wgpu::BindingType::Texture {
-        sample_type,
-        view_dimension: dimension,
-        multisampled: false,
-    }
+    wgpu::BindingType::Texture { sample_type, view_dimension: dimension, multisampled: false }
 }
 
 pub(crate) struct WaterTargets<'a> {
@@ -126,27 +70,43 @@ pub(crate) struct WaterFrame<'a> {
     pub planes: [glam::Vec4; 6],
 }
 
+fn half_texture(device: &wgpu::Device, queue: &wgpu::Queue, label: &str, size: [u32; 2], texels: &[[f32; 4]]) -> wgpu::Texture {
+    let data: Vec<u16> = texels.iter().flatten().map(|v| half::f16::from_f32(*v).to_bits()).collect();
+    let texture = device.create_texture(&wgpu::TextureDescriptor {
+        label: Some(label),
+        size: wgpu::Extent3d { width: size[0], height: size[1], depth_or_array_layers: 1 },
+        mip_level_count: 1,
+        sample_count: 1,
+        dimension: wgpu::TextureDimension::D2,
+        format: wgpu::TextureFormat::Rgba16Float,
+        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+        view_formats: &[],
+    });
+    queue.write_texture(
+        texture.as_image_copy(),
+        bytemuck::cast_slice(&data),
+        wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(size[0] * 8), rows_per_image: None },
+        texture.size(),
+    );
+    texture
+}
+
 impl ArchiveWater {
     pub(crate) fn new(
         device: &wgpu::Device,
+        queue: &wgpu::Queue,
         targets: &WaterTargets,
-        bodies: &[ArchiveWaterBody],
-        spectrum: WaveSpectrum,
+        world: &WaterWorld,
     ) -> Self {
+        let spectrum = world.spectrum;
         use wgpu::{TextureSampleType as S, TextureViewDimension as D};
-        let waves = WaveSimulation::new(device, spectrum);
+        let waves = WaveSimulation::new(device, spectrum, 1);
+        let ripples = RippleField::new(device, RIPPLE_EXTENT, RIPPLE_SPEED);
         let float = S::Float { filterable: true };
         let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("archive water"),
             entries: &[
-                layout_entry(
-                    0,
-                    wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                ),
+                layout_entry(0, wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Uniform, has_dynamic_offset: false, min_binding_size: None }),
                 layout_entry(1, texture_type(D::D2Array, float)),
                 layout_entry(2, texture_type(D::D2Array, float)),
                 layout_entry(3, texture_type(D::D2Array, float)),
@@ -155,39 +115,31 @@ impl ArchiveWater {
                 layout_entry(6, texture_type(D::D2, S::Depth)),
                 layout_entry(7, texture_type(D::D2, S::Depth)),
                 layout_entry(8, wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison)),
+                layout_entry(9, texture_type(D::D2, float)),
+                layout_entry(10, texture_type(D::D2, float)),
+                layout_entry(11, wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering)),
             ],
         });
         let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("archive water"),
-            source: wgpu::ShaderSource::Wgsl(
-                SOURCE.into(),
-            ),
+            source: wgpu::ShaderSource::Wgsl(source().into()),
         });
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("archive water"),
             bind_group_layouts: &[Some(targets.camera_layout), Some(&layout), Some(targets.environment_layout)],
             immediate_size: 0,
         });
-        let target = [Some(wgpu::ColorTargetState {
-            format: wgpu::TextureFormat::Rgba16Float,
-            blend: None,
-            write_mask: wgpu::ColorWrites::ALL,
-        })];
-        let grid = [Some(wgpu::VertexBufferLayout {
-            array_stride: 8,
+        let target = [Some(wgpu::ColorTargetState { format: wgpu::TextureFormat::Rgba16Float, blend: None, write_mask: wgpu::ColorWrites::ALL })];
+        let vertex = [Some(wgpu::VertexBufferLayout {
+            array_stride: std::mem::size_of::<voxy_water::WaterVertex>() as u64,
             step_mode: wgpu::VertexStepMode::Vertex,
-            attributes: &wgpu::vertex_attr_array![0 => Float32x2],
+            attributes: &wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32, 2 => Float32x2, 3 => Float32, 4 => Float32],
         })];
         let pipeline = |label, vs, fs, buffers: &[Option<wgpu::VertexBufferLayout>], depth: bool| {
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some(label),
                 layout: Some(&pipeline_layout),
-                vertex: wgpu::VertexState {
-                    module: &module,
-                    entry_point: Some(vs),
-                    compilation_options: Default::default(),
-                    buffers,
-                },
+                vertex: wgpu::VertexState { module: &module, entry_point: Some(vs), compilation_options: Default::default(), buffers },
                 primitive: wgpu::PrimitiveState::default(),
                 depth_stencil: depth.then(|| wgpu::DepthStencilState {
                     format: wgpu::TextureFormat::Depth32Float,
@@ -197,27 +149,18 @@ impl ArchiveWater {
                     bias: Default::default(),
                 }),
                 multisample: Default::default(),
-                fragment: Some(wgpu::FragmentState {
-                    module: &module,
-                    entry_point: Some(fs),
-                    compilation_options: Default::default(),
-                    targets: &target,
-                }),
+                fragment: Some(wgpu::FragmentState { module: &module, entry_point: Some(fs), compilation_options: Default::default(), targets: &target }),
                 multiview_mask: None,
                 cache: None,
             })
         };
-        let surface = pipeline("archive water surface", "vs_surface", "fs_surface", &grid, true);
+        let surface = pipeline("archive water surface", "vs_surface", "fs_surface", &vertex, true);
         let fog = pipeline("archive underwater view", "vs_fullscreen", "fs_underwater", &[], false);
 
         let [width, height] = targets.size;
         let depth_copy = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("archive water opaque depth"),
-            size: wgpu::Extent3d {
-                width,
-                height,
-                depth_or_array_layers: 1,
-            },
+            size: wgpu::Extent3d { width, height, depth_or_array_layers: 1 },
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
@@ -225,16 +168,20 @@ impl ArchiveWater {
             usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
             view_formats: &[],
         });
-        let wave_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
-            label: Some("archive water waves"),
-            address_mode_u: wgpu::AddressMode::Repeat,
-            address_mode_v: wgpu::AddressMode::Repeat,
-            mag_filter: wgpu::FilterMode::Linear,
-            min_filter: wgpu::FilterMode::Linear,
-            mipmap_filter: wgpu::MipmapFilterMode::Linear,
-            anisotropy_clamp: 8,
-            ..Default::default()
-        });
+        let sampler = |label, address| {
+            device.create_sampler(&wgpu::SamplerDescriptor {
+                label: Some(label),
+                address_mode_u: address,
+                address_mode_v: address,
+                mag_filter: wgpu::FilterMode::Linear,
+                min_filter: wgpu::FilterMode::Linear,
+                mipmap_filter: wgpu::MipmapFilterMode::Linear,
+                anisotropy_clamp: 8,
+                ..Default::default()
+            })
+        };
+        let wave_sampler = sampler("archive water waves", wgpu::AddressMode::Repeat);
+        let clamp_sampler = sampler("archive water shore", wgpu::AddressMode::ClampToEdge);
         let shadow_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             label: Some("archive water sun shadow"),
             mag_filter: wgpu::FilterMode::Linear,
@@ -245,15 +192,21 @@ impl ArchiveWater {
         let background = targets.background.create_view(&Default::default());
         let depth_view = depth_copy.create_view(&Default::default());
         let shadow = targets.shadow.create_view(&Default::default());
-        let bodies = bodies
+        let no_shore = half_texture(device, queue, "archive water no shore", [1, 1], &[[100.0, 1.0e4, 0.0, 0.0]]);
+        let inv_l = spectrum.cascades.map(|l| 1.0 / l);
+        let bodies = world
+            .bodies
             .iter()
-            .map(|source| {
+            .enumerate()
+            .map(|(index, body)| {
                 let uniforms = device.create_buffer(&wgpu::BufferDescriptor {
                     label: Some("archive water body"),
-                    size: 96,
+                    size: (UNIFORM_FLOATS * 4) as u64,
                     usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
                     mapped_at_creation: false,
                 });
+                let shore_texture = body.shore.as_ref().map(|s| half_texture(device, queue, "archive water shore", s.size, &s.texels()));
+                let shore_view = shore_texture.as_ref().unwrap_or(&no_shore).create_view(&Default::default());
                 use wgpu::BindingResource as R;
                 let resources = [
                     uniforms.as_entire_binding(),
@@ -265,126 +218,113 @@ impl ArchiveWater {
                     R::TextureView(&depth_view),
                     R::TextureView(&shadow),
                     R::Sampler(&shadow_sampler),
+                    R::TextureView(&shore_view),
+                    R::TextureView(ripples.view()),
+                    R::Sampler(&clamp_sampler),
                 ];
                 let entries: Vec<_> = resources
                     .into_iter()
                     .enumerate()
-                    .map(|(binding, resource)| wgpu::BindGroupEntry {
-                        binding: binding as u32,
-                        resource,
-                    })
+                    .map(|(binding, resource)| wgpu::BindGroupEntry { binding: binding as u32, resource })
                     .collect();
-                let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-                    label: Some("archive water body"),
-                    layout: &layout,
-                    entries: &entries,
-                });
-                let size = source.max - source.min;
-                let nx = ((size.x / GRID_SPACING).ceil() as u32).max(1);
-                let nz = ((size.z / GRID_SPACING).ceil() as u32).max(1);
-                let mut points = Vec::with_capacity(((nx + 1) * (nz + 1)) as usize);
-                for j in 0..=nz {
-                    for i in 0..=nx {
-                        points.push([
-                            source.min.x + size.x * i as f32 / nx as f32,
-                            source.min.z + size.z * j as f32 / nz as f32,
-                        ]);
-                    }
-                }
-                let mut indices = Vec::with_capacity((nx * nz * 6) as usize);
-                for j in 0..nz {
-                    for i in 0..nx {
-                        let a = i + j * (nx + 1);
-                        let (b, c) = (a + 1, a + nx + 1);
-                        indices.extend_from_slice(&[a, c, c + 1, a, c + 1, b]);
-                    }
-                }
+                let group = device.create_bind_group(&wgpu::BindGroupDescriptor { label: Some("archive water body"), layout: &layout, entries: &entries });
+                let mesh = surface_mesh(body, world.river_samples(index));
                 let buffer = |label, contents: &[u8], usage| {
-                    wgpu::util::DeviceExt::create_buffer_init(
-                        device,
-                        &wgpu::util::BufferInitDescriptor { label: Some(label), contents, usage },
-                    )
+                    wgpu::util::DeviceExt::create_buffer_init(device, &wgpu::util::BufferInitDescriptor { label: Some(label), contents, usage })
                 };
+                let (lo, hi) = body.bounds();
+                let m = &body.material;
+                let mut u = [0.0f32; UNIFORM_FLOATS];
+                let edge = if matches!(body.shape, WaterShape::Basin { .. }) { EDGE_FALLOFF } else { 0.0 };
+                u[..4].copy_from_slice(&[lo.x, lo.y, lo.z, edge]);
+                u[4..8].copy_from_slice(&[hi.x, hi.y, hi.z, -1.0e9]);
+                u[8..12].copy_from_slice(&[m.absorption[0], m.absorption[1], m.absorption[2], body.waves]);
+                u[12..16].copy_from_slice(&[m.scatter[0], m.scatter[1], m.scatter[2], m.caustics]);
+                u[16..22].copy_from_slice(&inv_l);
+                if let Some(s) = &body.shore {
+                    let origin = s.origin - Vec2::splat(s.cell * 0.5);
+                    u[24..28].copy_from_slice(&[origin.x, origin.y, s.cell * s.size[0] as f32, s.cell * s.size[1] as f32]);
+                }
+                let b = &body.breakers;
+                u[28..32].copy_from_slice(&[b.height, b.period, b.reach, f32::from(u8::from(body.shore.is_some()))]);
+                u[36..40].copy_from_slice(&[0.0, m.foam, f32::from(u8::from(matches!(body.shape, WaterShape::River(_)))), 0.0]);
                 Body {
-                    source: *source,
                     uniforms,
                     group,
-                    vertices: buffer("archive water grid", bytemuck::cast_slice(&points), wgpu::BufferUsages::VERTEX),
-                    indices: buffer("archive water indices", bytemuck::cast_slice(&indices), wgpu::BufferUsages::INDEX),
-                    count: indices.len() as u32,
+                    vertices: buffer("archive water surface", bytemuck::cast_slice(&mesh.vertices), wgpu::BufferUsages::VERTEX),
+                    indices: buffer("archive water indices", bytemuck::cast_slice(&mesh.indices), wgpu::BufferUsages::INDEX),
+                    count: mesh.indices.len() as u32,
+                    // room for waves, breakers and falls spray
+                    bounds: (lo - Vec3::splat(0.5), hi + Vec3::splat(1.5)),
+                    static_uniforms: u,
                 }
             })
             .collect();
-        Self {
-            waves,
-            surface,
-            fog,
-            bodies,
-            depth_copy,
-            time: 0.0,
-            step: 0.0,
-            size: targets.size,
-        }
+        Self { world: world.clone(), waves, ripples, surface, fog, bodies, depth_copy, time: 0.0, step: 0.0, size: targets.size }
     }
 
     pub(crate) fn advance(&mut self, dt: f32) {
         self.step = dt;
-        self.time = (self.time + dt) % LOOP;
+        self.time += dt;
+    }
+
+    pub(crate) fn time(&self) -> f32 {
+        self.time
+    }
+
+    pub(crate) fn world(&self) -> &WaterWorld {
+        &self.world
+    }
+
+    pub(crate) fn ripples(&mut self) -> &mut RippleField {
+        &mut self.ripples
     }
 
     fn copy(&self, encoder: &mut wgpu::CommandEncoder, frame: &WaterFrame) {
-        let extent = wgpu::Extent3d {
-            width: self.size[0],
-            height: self.size[1],
-            depth_or_array_layers: 1,
-        };
+        let extent = wgpu::Extent3d { width: self.size[0], height: self.size[1], depth_or_array_layers: 1 };
         encoder.copy_texture_to_texture(frame.hdr.as_image_copy(), frame.background.as_image_copy(), extent);
         encoder.copy_texture_to_texture(frame.depth.as_image_copy(), self.depth_copy.as_image_copy(), extent);
     }
 
-    /// Encodes the wave update, the water surfaces and, with the eye under a surface,
-    /// the underwater view. `frame.hdr` holds the opaque radiance on entry.
+    /// Encodes the wave and ripple updates, the water surfaces and, with the eye under a
+    /// surface, the underwater view. `frame.hdr` holds the opaque radiance on entry.
     pub(crate) fn encode(&mut self, queue: &wgpu::Queue, encoder: &mut wgpu::CommandEncoder, frame: &WaterFrame) {
-        if self.bodies.is_empty() {
-            return;
-        }
-        let visible = |s: &ArchiveWaterBody| {
-            let (lo, hi) = (s.min, s.max + Vec3::Y * 0.1);
+        let visible = |(lo, hi): (Vec3, Vec3)| {
             frame.planes.iter().all(|p| {
-                let corner = Vec3::new(
-                    if p.x > 0. { hi.x } else { lo.x },
-                    if p.y > 0. { hi.y } else { lo.y },
-                    if p.z > 0. { hi.z } else { lo.z },
-                );
+                let corner = Vec3::new(if p.x > 0. { hi.x } else { lo.x }, if p.y > 0. { hi.y } else { lo.y }, if p.z > 0. { hi.z } else { lo.z });
                 p.truncate().dot(corner) + p.w >= 0.
             })
         };
-        // Off-screen water costs nothing; the waves simply resume when it returns.
-        if !self.bodies.iter().any(|b| visible(&b.source) || b.source.contains_eye(frame.eye)) {
+        let eye_water = self.world.sample(frame.eye, self.time).filter(|s| s.submersion(frame.eye) > 0.0);
+        let drawn: Vec<usize> = (0..self.bodies.len()).filter(|&i| visible(self.bodies[i].bounds) || eye_water.is_some_and(|s| s.body == i)).collect();
+        // Off-screen water costs nothing; waves and ripples simply resume when it returns.
+        if drawn.is_empty() {
             return;
         }
-        let mut submerged = None;
-        let inv_l = self.waves_inverse_lengths();
-        for (index, body) in self.bodies.iter().enumerate() {
-            let s = &body.source;
-            let inside = s.contains_eye(frame.eye);
-            if inside {
-                submerged = Some(index);
+        let eye_xz = Vec2::new(frame.eye.x, frame.eye.z);
+        // ripples reflect off the walls of the basin the eye is over
+        let mask = self.world.bodies.iter().find_map(|b| match b.shape {
+            WaterShape::Basin { min, max } if eye_xz.x > min.x - 8. && eye_xz.x < max.x + 8. && eye_xz.y > min.z - 8. && eye_xz.y < max.z + 8. => {
+                Some((Vec2::new(min.x, min.z), Vec2::new(max.x, max.z)))
             }
-            let mut u = [0.0f32; 24];
-            u[..4].copy_from_slice(&[s.min.x, s.min.y, s.min.z, EDGE_FALLOFF]);
-            u[4..8].copy_from_slice(&[s.max.x, s.max.y, s.max.z, f32::from(u8::from(inside))]);
-            u[8..12].copy_from_slice(&[s.absorption[0], s.absorption[1], s.absorption[2], s.displacement]);
-            u[12..16].copy_from_slice(&[s.scatter[0], s.scatter[1], s.scatter[2], s.caustics]);
-            u[16..22].copy_from_slice(&inv_l);
-            queue.write_buffer(&body.uniforms, 0, bytemuck::cast_slice(&u));
-        }
+            _ => None,
+        });
+        self.ripples.set_mask(mask);
         {
-            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                label: Some("archive water waves"),
-                timestamp_writes: None,
-            });
+            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor { label: Some("archive water simulation"), timestamp_writes: None });
             self.waves.encode(queue, &mut pass, self.time, self.step);
+            self.ripples.encode(queue, &mut pass, eye_xz, self.step.max(1e-4));
+        }
+        let center = self.ripples.center();
+        for &i in &drawn {
+            let body = &self.bodies[i];
+            let mut u = body.static_uniforms;
+            if let Some(s) = eye_water.filter(|s| s.body == i) {
+                u[7] = s.surface;
+            }
+            u[32..36].copy_from_slice(&[center.x, center.y, self.ripples.extent(), 1.0]);
+            u[36] = self.time;
+            queue.write_buffer(&body.uniforms, 0, bytemuck::cast_slice(&u));
         }
         self.copy(encoder, frame);
         let hdr = frame.hdr.create_view(&Default::default());
@@ -396,17 +336,11 @@ impl ArchiveWater {
                     view: &hdr,
                     depth_slice: None,
                     resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Load,
-                        store: wgpu::StoreOp::Store,
-                    },
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store },
                 })],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                     view: &depth,
-                    depth_ops: Some(wgpu::Operations {
-                        load: wgpu::LoadOp::Load,
-                        store: wgpu::StoreOp::Store,
-                    }),
+                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store }),
                     stencil_ops: None,
                 }),
                 ..Default::default()
@@ -414,14 +348,15 @@ impl ArchiveWater {
             pass.set_pipeline(&self.surface);
             pass.set_bind_group(0, frame.camera, &[]);
             pass.set_bind_group(2, frame.environment, &[]);
-            for body in &self.bodies {
+            for &i in &drawn {
+                let body = &self.bodies[i];
                 pass.set_bind_group(1, &body.group, &[]);
                 pass.set_vertex_buffer(0, body.vertices.slice(..));
                 pass.set_index_buffer(body.indices.slice(..), wgpu::IndexFormat::Uint32);
                 pass.draw_indexed(0..body.count, 0, 0..1);
             }
         }
-        if let Some(index) = submerged {
+        if let Some(water) = eye_water {
             self.copy(encoder, frame);
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("archive underwater view"),
@@ -429,22 +364,15 @@ impl ArchiveWater {
                     view: &hdr,
                     depth_slice: None,
                     resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Load,
-                        store: wgpu::StoreOp::Store,
-                    },
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store },
                 })],
                 ..Default::default()
             });
             pass.set_pipeline(&self.fog);
             pass.set_bind_group(0, frame.camera, &[]);
-            pass.set_bind_group(1, &self.bodies[index].group, &[]);
+            pass.set_bind_group(1, &self.bodies[water.body].group, &[]);
             pass.set_bind_group(2, frame.environment, &[]);
             pass.draw(0..3, 0..1);
         }
-    }
-
-    fn waves_inverse_lengths(&self) -> [f32; 6] {
-        self.waves.spectrum_lengths().map(|l| 1.0 / l)
     }
 }

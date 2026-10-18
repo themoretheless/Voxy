@@ -1,9 +1,9 @@
 //! Continuation beyond the end-of-street colonnade: a paved lane between garden walls
 //! leading to a walled plot with a modern villa and a swimming pool. The basin is
-//! ordinary geometry; the water itself is an `ArchiveWaterBody` rendered by the scene's
+//! ordinary geometry; the water itself is a `voxy_water` basin rendered by the scene's
 //! FFT water pass.
 use super::*;
-use voxy_render::ArchiveWaterBody;
+use voxy_render::voxy_water::WaterBody;
 
 /// Mesh ids shared with the street.
 pub(super) struct Parts {
@@ -25,7 +25,7 @@ pub(super) struct Parts {
 }
 
 pub(super) struct Villa {
-    pub water: Vec<ArchiveWaterBody>,
+    pub water: Vec<WaterBody>,
     /// Eye and view direction overlooking the pool from the garden gate.
     pub view: (Vec3, Vec3),
 }
@@ -524,7 +524,7 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     }
 
     Villa {
-        water: vec![ArchiveWaterBody::pool(Vec3::new(-x, DEEP, z0), Vec3::new(x, WATER, z1))],
+        water: vec![WaterBody::pool(Vec3::new(-x, DEEP, z0), Vec3::new(x, WATER, z1))],
         view: (Vec3::new(2.9, 1.82, 107.4), Vec3::new(-0.22, -0.2, 1.).normalize()),
     }
 }

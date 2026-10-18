@@ -11,19 +11,16 @@
 //! drops into `SceneSurface::render_custom` or an offscreen texture.
 
 mod cdlod;
-mod waves;
 
 use cdlod::{Cdlod, GRID, MAX_NODES, R0};
-use waves::LOOP;
-pub use waves::{WaveSimulation, WaveSpectrum};
+use voxy_water::spectrum::LOOP;
+use voxy_water::{WaveSimulation, WaveSpectrum};
 use std::sync::{
     Arc,
     atomic::{AtomicU8, Ordering},
 };
 
-const N: u32 = 256;
 const CASCADES: u32 = 6;
-const SIM_MIPS: u32 = N.ilog2() + 1;
 const SKY_W: u32 = 256;
 const SKY_H: u32 = 144;
 const ENV_SIZE: u32 = 256;
@@ -555,7 +552,7 @@ impl OceanRenderer {
 
         // simulation
         let settings = OceanSettings::default();
-        let waves = WaveSimulation::new(device, settings.spectrum());
+        let waves = WaveSimulation::new(device, settings.spectrum(), 1);
         let (disp_all, deriv_all, moments_all) = (&waves.displacement, &waves.derivatives, &waves.moments);
         let level = |t: &wgpu::Texture, m: u32| view(t, Some(m), D::D2Array);
         let bg = |pipe: &wgpu::BindGroupLayout, label, resources: &[R]| {
@@ -1418,6 +1415,7 @@ mod tests {
     /// Every assembled pipeline source parses and validates with the renderer's Naga.
     #[test]
     fn assembled_shaders_validate() {
+        let water = crate::archive_water::source();
         let sources = [
             ("transmittance", super::shaders::TRANSMITTANCE),
             ("multiscatter", super::shaders::MULTISCATTER),
@@ -1435,12 +1433,7 @@ mod tests {
             ("foam mips", include_str!("array16_mips.wgsl")),
             ("foam texture mips", include_str!("rgba8_mips.wgsl")),
             ("cube mips", include_str!("cube_mips.wgsl")),
-            ("wave spectrum", super::waves::SPECTRUM),
-            ("wave evolve", super::waves::EVOLVE),
-            ("wave fft rows", super::waves::FFT_ROWS),
-            ("wave fft cols", super::waves::FFT_COLS),
-            ("wave mips", include_str!("sim_mips.wgsl")),
-            ("archive water", crate::archive_water::SOURCE),
+            ("archive water", water.as_str()),
         ];
         for (label, source) in sources {
             let module = wgsl::parse_str(source)
