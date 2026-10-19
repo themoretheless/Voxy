@@ -38,6 +38,7 @@ fn original_noise(p:vec3<f32>)->f32 {
 }
 fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
  let grain=original_noise(p*27.);let broad=original_noise(p*1.8);
+ if kind>8.5 {let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.025;let cell=floor(uv);let f=fract(uv);let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));let footprint=max(fwidth(uv.x),fwidth(uv.y));let tile=mix(vec3<f32>(0.62),vec3<f32>(0.9+0.18*original_hash(vec3<f32>(cell,kind))),smoothstep(0.05,0.12+footprint,edge));return mix(tile,vec3<f32>(0.9),smoothstep(0.25,0.6,footprint));}
  if kind>7.5 {let grooves=original_noise(p*vec3<f32>(85.,2.5,85.));return vec3<f32>(0.62+0.58*grooves)*(0.9+0.2*broad);}
  if kind>6.5 {let uv=select(p.xy,p.zy,abs(n.x)>0.5);let row=floor(uv.y/0.075);let cell=fract(vec2<f32>(uv.x/0.225+0.5*(row-2.*floor(row*0.5)),uv.y/0.075));let edge=min(min(cell.x,1.-cell.x)*0.225,min(cell.y,1.-cell.y)*0.075);return mix(vec3<f32>(0.40,0.38,0.34),vec3<f32>(0.71,0.40,0.26)*(0.85+0.25*broad),smoothstep(0.002,0.006,edge));}
  if kind>5.5 {return mix(vec3<f32>(0.60,0.85,0.38),vec3<f32>(1.10,1.05,0.65),broad);}

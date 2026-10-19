@@ -3,6 +3,8 @@ use super::scene::StreetScene;
 use glam::{Mat4, Quat, Vec3};
 use physics::static_triangle_world::StaticTriangleWorld;
 use voxy_render::archive_scene::*;
+#[path = "villa.rs"]
+mod villa;
 struct Builder {
     materials: Vec<ArchiveMaterialSource>,
     meshes: Vec<ArchiveMeshSource>,
@@ -1744,10 +1746,37 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         Vec3::splat(0.6),
         Quat::IDENTITY,
     );
-    b.block(trim, [0., 2.5, 88.], [32., 5., 0.6]);
-    for pillar in -7..=7 {
-        b.block(trim, [pillar as f32 * 2.2, 2.7, 87.5], [0.32, 5.4, 0.8]);
+    // The colonnade opens in the middle onto the lane towards the villa.
+    for side in [-1., 1.] {
+        b.block(trim, [side * 9.02, 2.5, 88.], [13.96, 5., 0.6]);
     }
+    b.block(trim, [0., 4.6, 88.], [4.08, 0.8, 0.6]);
+    b.block(trim, [0., 4.17, 87.5], [4.2, 0.12, 0.8]);
+    for pillar in -7..=7 {
+        if pillar != 0 {
+            b.block(trim, [pillar as f32 * 2.2, 2.7, 87.5], [0.32, 5.4, 0.8]);
+        }
+    }
+    let villa = villa::build(
+        &mut b,
+        &villa::Parts {
+            curb,
+            trim,
+            metal,
+            timber,
+            glass,
+            glow,
+            trunk,
+            leaf,
+            foliage,
+            bulb,
+            floor,
+            ceiling: kit.ceiling,
+            fabrics: kit.fabrics.clone(),
+            ceramic: kit.ceramic,
+            wood: kit.woods[3],
+        },
+    );
     let count = b.triangles.len();
     let collision = StaticTriangleWorld::new(b.triangles)?;
     eprintln!(
@@ -1764,10 +1793,12 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         lights: b.lights,
         sun: Vec3::new(-0.60, 0.58, -0.55).normalize(),
         sun_colour: [1., 0.93, 0.83, 4800.],
-        bounds: (Vec3::new(-18., -0.3, -29.), Vec3::new(18., 18., 110.)),
+        bounds: (Vec3::new(-18., -2.3, -29.), Vec3::new(18., 18., 154.)),
         collision,
         eye: Vec3::new(0.6, 1.78, -18.),
         direction: Vec3::new(-0.10, 0.025, 1.).normalize(),
+        water: villa.water,
+        pool_view: Some(villa.view),
     })
 }
 
@@ -1791,6 +1822,7 @@ mod tests {
                 meshes: Vec::new(),
                 triangles: Vec::new(),
                 rng: 11 + case as u64,
+                age_rng: 0,
                 lights: Vec::new(),
             };
             let mut kit_ids = Vec::new();
@@ -1845,6 +1877,7 @@ mod tests {
             meshes: Vec::new(),
             triangles: Vec::new(),
             rng: 7,
+            age_rng: 0,
             lights: Vec::new(),
         };
         let m = b.material([0.5, 0.5, 0.5], 0.5, 0., 0., 0., 0.);
@@ -1891,9 +1924,9 @@ mod tests {
     }
     #[test]
     fn original_street_is_independent_and_walkable() {
-        let scene = geometry(0x564f5859).unwrap();
+        let scene = geometry(0x564f5859, Ageing::default()).unwrap();
         assert!(scene.archive.is_none() && scene.images.is_empty());
-        assert!(scene.materials.len() >= 34 && scene.lights.len() == 16);
+        assert!(scene.materials.len() >= 34 && scene.lights.len() == 26);
         let rendered_triangles: usize = scene
             .geometry
             .iter()
@@ -1912,9 +1945,10 @@ mod tests {
                 kind == 2. || kind == 7.
             })
             .collect();
+        // Each frontage owns a facade and a matching grime batch.
         assert_eq!(
             wall_batches.len(),
-            24,
+            48,
             "every frontage owns a distinct facade"
         );
         let mut widths = std::collections::HashSet::new();
@@ -1955,5 +1989,109 @@ mod tests {
                 .0;
         }
         assert!(feet[2] > -15.1 && feet[1] > -0.1, "{feet:?}");
+    }
+    /// Renders the untextured original street with its water to `VOXY_VILLA_PREVIEW`
+    /// (PNG) from `VOXY_VILLA_VIEW=x,y,z,dx,dy,dz` or the pool view; run with `--ignored`.
+    #[test]
+    #[ignore]
+    fn render_villa_preview() {
+        let Ok(path) = std::env::var("VOXY_VILLA_PREVIEW") else { return };
+        let scene = geometry(0x564f5859, Ageing::default()).unwrap();
+        let (mut eye, mut direction) = scene.pool_view.unwrap();
+        if let Ok(view) = std::env::var("VOXY_VILLA_VIEW") {
+            let v: Vec<f32> = view.split(',').map(|x| x.parse().unwrap()).collect();
+            eye = Vec3::new(v[0], v[1], v[2]);
+            direction = Vec3::new(v[3], v[4], v[5]).normalize();
+        }
+        let size: Vec<u32> = std::env::var("VOXY_VILLA_SIZE")
+            .unwrap_or_else(|_| "640x360".into())
+            .split('x')
+            .map(|x| x.parse().unwrap())
+            .collect();
+        let (width, height) = (size[0], size[1]);
+        let instance = voxy_render::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
+            required_limits: wgpu::Limits::default().using_resolution(adapter.limits()),
+            ..Default::default()
+        }))
+        .unwrap();
+        let format = wgpu::TextureFormat::Rgba8Unorm;
+        let mut renderer = ArchiveSceneRenderer::new_with_environment(
+            &device, &queue, format, width, height, scene.images, scene.materials, scene.geometry,
+            &scene.lights, scene.sun, scene.sun_colour, scene.bounds, None,
+        )
+        .unwrap();
+        renderer.set_antialiasing(voxy_render::ArchiveAntialiasing::Off).unwrap();
+        let mut water = scene.water.clone();
+        if let Ok(caustics) = std::env::var("VOXY_VILLA_CAUSTICS") {
+            water[0].material.caustics = caustics.parse().unwrap();
+        }
+        renderer.set_water(&voxy_render::voxy_water::WaterWorld::new(water, voxy_render::WaveSpectrum::pool()));
+        if let Ok(splash) = std::env::var("VOXY_VILLA_SPLASH") {
+            let v: Vec<f32> = splash.split(',').map(|x| x.parse().unwrap()).collect();
+            renderer.advance_water(1. / 30.);
+            renderer.water_splash(glam::Vec2::new(v[0], v[1]), v[2], v[3]);
+        }
+        let target = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("villa preview"),
+            size: wgpu::Extent3d { width, height, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+            view_formats: &[],
+        });
+        let view = target.create_view(&Default::default());
+        for _ in 0..std::env::var("VOXY_VILLA_FRAMES").map_or(3, |f| f.parse().unwrap()) {
+            renderer.advance_water(1. / 30.);
+            renderer.draw(&view, eye, direction);
+            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        }
+        let row = (width * 4).div_ceil(256) * 256;
+        let readback = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: u64::from(row * height),
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let mut encoder = device.create_command_encoder(&Default::default());
+        encoder.copy_texture_to_buffer(
+            target.as_image_copy(),
+            wgpu::TexelCopyBufferInfo {
+                buffer: &readback,
+                layout: wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(row), rows_per_image: None },
+            },
+            target.size(),
+        );
+        queue.submit([encoder.finish()]);
+        readback.map_async(wgpu::MapMode::Read, .., |r| r.unwrap());
+        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        let mapped = readback.get_mapped_range(..).unwrap();
+        let pixels: Vec<u8> = mapped.chunks_exact(row as usize).flat_map(|r| &r[..(width * 4) as usize]).copied().collect();
+        image::save_buffer(&path, &pixels, width, height, image::ColorType::Rgba8).unwrap();
+    }
+    #[test]
+    fn lane_leads_through_the_colonnade_to_the_pool() {
+        let scene = geometry(0x564f5859, Ageing::default()).unwrap();
+        let world = &scene.collision;
+        // Walk from the end of the street along the centre line through the gate.
+        let (mut feet, grounded) = world.move_capsule([0., 0.5, 80.], 1.8, 0.3, [0., -2., 0.]).unwrap();
+        assert!(grounded);
+        for _ in 0..1400 {
+            feet = world.move_capsule(feet, 1.8, 0.3, [0., -0.004, 0.025]).unwrap().0;
+            if feet[2] > 111.0 {
+                break;
+            }
+        }
+        assert!(feet[2] > 111.0 && feet[1] > 0.1 && feet[1] < 0.3, "stopped at {feet:?}");
+        // Stepping off the coping into the deep end lands on its floor below the water.
+        let (feet, grounded) = world.move_capsule([0., 0.6, 124.], 1.8, 0.3, [0., -4., 0.]).unwrap();
+        assert!(grounded && (feet[1] + 1.9).abs() < 0.05, "{feet:?}");
+        let (min, max) = scene.water[0].bounds();
+        assert!(max.y < 0.2 && min.y < -1.8 && max.z - min.z > 13.);
+        let world = voxy_render::voxy_water::WaterWorld::new(scene.water.clone(), voxy_render::WaveSpectrum::pool());
+        assert!(world.is_submerged(Vec3::new(0., -1., 124.), 0.) && !world.is_submerged(Vec3::new(0., 1., 124.), 0.));
     }
 }

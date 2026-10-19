@@ -306,6 +306,8 @@ pub struct ArchiveSceneRenderer {
     width: u32,
     height: u32,
     shadow_ready: bool,
+    camera_layout: wgpu::BindGroupLayout,
+    water: Option<crate::archive_water::ArchiveWater>,
 }
 fn buffer(
     device: &wgpu::Device,
@@ -1066,9 +1068,55 @@ impl ArchiveSceneRenderer {
             width,
             height,
             shadow_ready: false,
+            camera_layout,
+            water: None,
         })
     }
     /// Update atmosphere without rebuilding geometry or allocating particles.
+    /// Replaces the scene's water; a world without bodies removes the water pass.
+    pub fn set_water(&mut self, world: &voxy_water::WaterWorld) {
+        self.water = (!world.bodies.is_empty()).then(|| {
+            crate::archive_water::ArchiveWater::new(
+                &self.device,
+                &self.queue,
+                &crate::archive_water::WaterTargets {
+                    camera_layout: &self.camera_layout,
+                    environment_layout: &self.environment_bindings.layout,
+                    background: &self.background,
+                    shadow: &self.shadow,
+                    size: [self.width, self.height],
+                },
+                world,
+            )
+        });
+    }
+    /// Advances waves, breakers and ripples; without calls the water stays frozen.
+    pub fn advance_water(&mut self, dt: f32) {
+        if let Some(water) = &mut self.water {
+            water.advance(dt);
+        }
+    }
+    /// Seconds of water simulation; pass it to `WaterWorld::sample` so gameplay and
+    /// buoyancy see the surface that is drawn.
+    pub fn water_time(&self) -> f32 {
+        self.water.as_ref().map_or(0., |w| w.time())
+    }
+    /// The water the renderer draws, for CPU queries.
+    pub fn water(&self) -> Option<&voxy_water::WaterWorld> {
+        self.water.as_ref().map(|w| w.world())
+    }
+    /// Raises (positive) or depresses the surface around `at` (xz); ripples spread from it.
+    pub fn water_splash(&mut self, at: glam::Vec2, radius: f32, height: f32) {
+        if let Some(water) = &mut self.water {
+            water.ripples().splash(at, radius, height);
+        }
+    }
+    /// A body moving through the water from `from` to `to` (xz) this frame leaves a wake.
+    pub fn water_wake(&mut self, from: glam::Vec2, to: glam::Vec2, radius: f32, height: f32) {
+        if let Some(water) = &mut self.water {
+            water.ripples().wake(from, to, radius, height);
+        }
+    }
     pub fn set_weather(&mut self, weather: crate::weather::Weather) -> Result<(), crate::ComputeError> {
         if !weather.is_valid() {return Err(crate::ComputeError::Validation("invalid weather".into()));}
         if self.weather != weather { self.reset_temporal_history(); }
@@ -1470,6 +1518,17 @@ impl ArchiveSceneRenderer {
         }
         for transparent in [false, true] {
             if transparent {
+                if let Some(water) = &mut self.water {
+                    water.encode(&self.queue, &mut encoder, &crate::archive_water::WaterFrame {
+                        hdr: &self.hdr,
+                        background: &self.background,
+                        depth: &self.depth,
+                        camera: &self.camera_bind,
+                        environment: &self.environment_bindings.group,
+                        eye,
+                        planes: raw_planes,
+                    });
+                }
                 encoder.copy_texture_to_texture(
                     wgpu::TexelCopyTextureInfo {
                         texture: &self.hdr,
