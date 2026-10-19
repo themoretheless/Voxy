@@ -3142,6 +3142,7 @@ dependencies = [
  "voxy_text",
  "voxy_ui",
  "voxy_ui_winit",
+ "voxy_water",
  "voxy_world",
  "wgpu",
  "wgpu-hal",
@@ -3266,6 +3267,16 @@ dependencies = [
  "wgpu",
  "windows 0.62.2",
  "winit",
+]
+
+[[package]]
+name = "voxy_water"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "glam",
+ "pollster",
+ "wgpu",
 ]
 
 [[package]]

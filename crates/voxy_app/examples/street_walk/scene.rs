@@ -15,6 +15,9 @@ pub struct StreetScene {
     pub collision: StaticTriangleWorld,
     pub eye: Vec3,
     pub direction: Vec3,
+    pub water: Vec<voxy_render::voxy_water::WaterBody>,
+    /// Eye and direction overlooking the pool, for `--spawn pool`.
+    pub pool_view: Option<(Vec3, Vec3)>,
 }
 fn array<const N: usize>(v: &serde_json::Value, default: [f32; N]) -> [f32; N] {
     std::array::from_fn(|i| v[i].as_f64().map_or(default[i], |x| x as f32))
@@ -265,5 +268,7 @@ pub fn load(root: &Path) -> Result<StreetScene, Box<dyn std::error::Error>> {
         collision,
         eye,
         direction,
+        water: Vec::new(),
+        pool_view: None,
     })
 }

@@ -103,6 +103,11 @@ pub use lod_subdivision::{
 };
 mod motion;
 mod obj;
+mod ocean;
+pub use ocean::{OceanCamera, OceanRenderer, OceanSettings};
+pub use voxy_water;
+pub use voxy_water::WaveSpectrum;
+mod archive_water;
 mod previous_position;
 mod primary_motion;
 mod primary_surface;
