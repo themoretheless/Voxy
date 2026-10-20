@@ -101,6 +101,8 @@ struct App {
     sun_elevation: Option<f32>,
     wetness: Option<f32>,
     pitch: Option<f32>,
+    /// `--spawn pool` starts at the garden gate overlooking the villa pool.
+    spawn_pool: bool,
     aa_validation: Option<aa_validation::AaValidation>,
     view: StreetView,
     rig: voxy_render::BodycamRig,
@@ -159,6 +161,7 @@ impl App {
             sun_elevation: value("--sun-elevation").and_then(|v| v.parse().ok()),
             wetness: value("--wetness").and_then(|v| v.parse().ok()),
             pitch: value("--pitch").and_then(|v| v.parse().ok()),
+            spawn_pool: value("--spawn").as_deref() == Some("pool"),
             aa_validation: aa_validation::AaValidation::from_environment(),
             view: StreetView::FirstPerson,
             rig: voxy_render::BodycamRig::default(),
@@ -266,6 +269,11 @@ impl App {
             // switches to the procedural atmosphere.
             self.hdri_sky.then_some(environment)
         } else { None };
+        if self.spawn_pool {
+            let (eye, direction) = scene.pool_view.ok_or("--spawn pool needs the original street")?;
+            scene.eye = eye;
+            scene.direction = direction;
+        }
         let mut direction = scene.direction;
         if let Some(degrees) = self.pitch {
             let pitch = degrees.clamp(-80., 80.).to_radians();
@@ -418,6 +426,7 @@ impl App {
         let validation_headroom = self.aa_validation.as_ref().map(|_| 2.);
         let mode = self.configure_renderer(&mut renderer, validation_headroom.unwrap_or(hdr_headroom.unwrap_or(1.)), None)?;
         self.probe_bake=if self.original {begin_street_probe_bake(&mut renderer,scene.bounds,self.render.probe_spacing)?}else{None};
+        renderer.set_water(&voxy_render::voxy_water::WaterWorld::new(scene.water.clone(), voxy_render::WaveSpectrum::pool()));
         eprintln!("STREET antialiasing={mode:?} render={}x{} output={}x{}", render_width, render_height, size.width, size.height);
 
         let offscreen = if self.offscreen_benchmark {
@@ -533,6 +542,7 @@ impl App {
         let headroom = gpu.validation_headroom.unwrap_or(gpu.hdr_headroom.unwrap_or(1.));
         self.configure_renderer(&mut renderer, headroom, None)?;
         self.probe_bake=if self.original {begin_street_probe_bake(&mut renderer,scene.bounds,self.render.probe_spacing)?}else{None};
+        renderer.set_water(&voxy_render::voxy_water::WaterWorld::new(scene.water.clone(), voxy_render::WaveSpectrum::pool()));
         let gpu = self.gpu.as_mut().ok_or("missing gpu")?;
         gpu.renderer = renderer;
         gpu.bodycam = None;
@@ -585,6 +595,7 @@ impl App {
         let collision = self.collision.as_ref().ok_or("missing collision")?;
         let was_grounded = self.grounded;
         let start_feet = self.feet;
+        let simulation_time_before = self.simulation_time;
         while self.accumulator >= DT {
             self.simulation_time += DT;
             self.simulation_steps += 1;
@@ -754,6 +765,19 @@ impl App {
             }
             self.replay_state.update(&[u8::from(self.grounded),u8::from(lens.is_some())]);
             if let Some((fov,up))=lens {for value in [fov,up.x,up.y,up.z] {self.replay_state.update(&value.to_bits().to_le_bytes());}}
+        }
+        gpu.renderer.advance_water(if self.aa_validation.is_some() {0.} else if self.profile.is_some() || self.offscreen_benchmark { (self.simulation_time - simulation_time_before) as f32 } else {elapsed as f32});
+        // Wading pushes a wake through the pool; jumping in throws up a splash.
+        let (from, to) = (start_feet.as_vec3(), self.feet.as_vec3());
+        let wet = gpu.renderer.water().and_then(|w| w.sample(to, gpu.renderer.water_time())).is_some_and(|s| s.submersion(to) > 0.);
+        if wet {
+            let (a, b) = (Vec2::new(from.x, from.z), Vec2::new(to.x, to.z));
+            if from.y - to.y > 0.05 {
+                gpu.renderer.water_splash(b, 0.5, -0.06);
+            }
+            if a.distance(b) > 1e-3 {
+                gpu.renderer.water_wake(a, b, 0.3, 0.01);
+            }
         }
         let output_view = output.create_view(&Default::default());
         let scene_view = gpu.scene_target.as_ref().map(|t| t.create_view(&Default::default()));

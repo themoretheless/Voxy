@@ -20,6 +20,19 @@ integration and contact occlusion are approximations; this is not path-traced GI
 The photorealism target requires visual acceptance and must not be inferred from these
 features alone. The current performance target is **at least 120 FPS at 1920×1080**.
 
+The street continues through an arch in the end colonnade: a paved lane between
+garden walls leads to a walled plot with a modern two-storey villa and a 4.8 × 14 m
+swimming pool (shallow end 1.0 m, ramp, deep end 1.9 m, mosaic basin, steps, ladder and
+underwater lights). The pool water is a `voxy_water` basin, drawn by the
+scene's water pass on the FFT wave field shared with the `ocean` example: Fresnel
+reflection of the screen and sky, refraction of the basin with Beer–Lambert absorption,
+first-order caustics on whatever the refracted ray reaches, and an underwater view with
+Snell's window when you jump in. The pass is skipped while the pool is off-screen.
+`--spawn pool` starts at the garden gate. Wading leaves a ripple wake and jumping in
+throws up a splash (`voxy_water` ripple field). An untextured preview of the generated geometry
+renders headlessly with `VOXY_VILLA_PREVIEW=/tmp/villa.png cargo test -p voxy_app
+--example street_walk render_villa_preview -- --ignored` (`VOXY_VILLA_VIEW=x,y,z,dx,dy,dz`).
+
 Controls: click to capture the mouse, WASD/arrows, Shift to run, Space to jump,
 V for smooth camera distance toggle, wheel for smooth zoom, Esc to release the mouse.
 Day/night, seasons and weather: any of `--hour 18.5`, `--day 200`, `--season winter`,
