@@ -1,0 +1,51 @@
+{
+  "pairs_per_case": 10,
+  "metric": "median of per-phase CPU p50, not frame p99",
+  "summary": [
+    {
+      "case": "coat_false",
+      "before_p50_us": 11.3335,
+      "after_p50_us": 11.1875,
+      "ratio": 0.9871178365024043,
+      "retained": false
+    },
+    {
+      "case": "coat_true",
+      "before_p50_us": 11.5625,
+      "after_p50_us": 11.5415,
+      "ratio": 0.9981837837837837,
+      "retained": false
+    },
+    {
+      "case": "temporal_alternating",
+      "before_p50_us": 677.5419999999999,
+      "after_p50_us": 697.5625,
+      "ratio": 1.0295487217028614,
+      "retained": true
+    },
+    {
+      "case": "temporal_coherent",
+      "before_p50_us": 675.229,
+      "after_p50_us": 121.9585,
+      "ratio": 0.18061798293615944,
+      "retained": true
+    },
+    {
+      "case": "temporal_mixed_quarter",
+      "before_p50_us": 693.5835,
+      "after_p50_us": 529.7080000000001,
+      "ratio": 0.7637263573888365,
+      "retained": true
+    }
+  ],
+  "binaries": {
+    "app": {
+      "path": "/private/tmp/voxy-round4-app-pairs",
+      "sha256": "cd14683730509239fea12fae41052d0ae1cea11f1c630e5ecc8a12fad2deddbd"
+    },
+    "render": {
+      "path": "/private/tmp/voxy-round4-render-pairs",
+      "sha256": "58173a80e460993b5bc1fb0539eccf3b02b94923cbacf69a8206bf4248cbba45"
+    }
+  }
+}

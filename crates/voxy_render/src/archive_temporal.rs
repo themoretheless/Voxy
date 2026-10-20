@@ -254,7 +254,11 @@ impl ArchiveTemporal {
                     headroom,
                 ],
                 lens: [
-                    if self.lens.f_number > 0. { self.lens.focal_length_m / self.lens.f_number } else { 0. },
+                    if self.lens.f_number > 0. {
+                        self.lens.focal_length_m / self.lens.f_number
+                    } else {
+                        0.
+                    },
                     self.lens.focus_distance_m,
                     self.lens.focal_length_m,
                     self.lens.shutter_fraction,
@@ -379,7 +383,11 @@ impl ArchiveTemporal {
         output: &wgpu::TextureView,
         timestamp_writes: Option<wgpu::RenderPassTimestampWrites<'_>>,
     ) {
-        let pipeline = if self.linear_output { &self.display_linear } else { &self.display };
+        let pipeline = if self.linear_output {
+            &self.display_linear
+        } else {
+            &self.display
+        };
         let write = 1 - self.read;
         let view = self.color[write].create_view(&Default::default());
         let expected = self.expected.create_view(&Default::default());

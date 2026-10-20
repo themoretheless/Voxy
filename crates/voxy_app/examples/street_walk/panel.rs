@@ -1,7 +1,9 @@
 //! Left-hand settings panel (F1 toggles). It takes input only while the
 //! mouse is released (Esc), so it never fights the walk camera.
 use crate::day_cycle::DayCycle;
+use voxy_render::archive_scene::ArchiveToneMapper;
 use voxy_render::climate::Season;
+use voxy_render::ArchiveAntialiasing;
 use voxy_render::weather::Weather;
 use winit::window::Window;
 
@@ -19,8 +21,16 @@ pub struct Settings<'a> {
     pub cycle: &'a mut Option<DayCycle>,
     pub weather: &'a mut Weather,
     pub wetness: &'a mut Option<f32>,
-    pub seed: u64,
+    /// Street seed; editing it regenerates the street.
+    pub seed_mut: Option<&'a mut u64>,
+    /// Fixed sun elevation in degrees, used while the day cycle is off.
+    pub sun_elevation: &'a mut Option<f32>,
+    pub render: &'a mut RenderSettings,
+    /// Set when a render setting should be applied to the live renderer.
+    pub reconfigure: &'a mut bool,
     pub ageing: Option<&'a mut crate::original::Ageing>,
+    /// Panorama sky toggle; switching it regenerates the street.
+    pub hdri_sky: Option<&'a mut bool>,
     /// Set when an ageing change should regenerate the street.
     pub rebuild: &'a mut bool,
 }
@@ -66,7 +76,9 @@ impl Panel {
             egui::Panel::left("street settings")
                 .resizable(false)
                 .exact_size(WIDTH)
-                .show(ui, |ui| contents(ui, &mut settings));
+                .show(ui, |ui| {
+                    egui::ScrollArea::vertical().auto_shrink(false).show(ui, |ui| contents(ui, &mut settings));
+                });
         });
         self.state.handle_platform_output(window, output.platform_output);
         let jobs = self.ctx.tessellate(output.shapes, output.pixels_per_point);
@@ -115,7 +127,7 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
 
     let mut enabled = s.cycle.is_some();
     if ui.checkbox(&mut enabled, "Смена дня, сезонов и погоды").changed() {
-        *s.cycle = enabled.then(|| DayCycle::new(s.seed));
+        *s.cycle = enabled.then(|| DayCycle::new(s.seed_mut.as_deref().copied().unwrap_or(0)));
     }
     if let Some(cycle) = s.cycle.as_mut() {
         let c = &mut cycle.calendar;
@@ -202,8 +214,146 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     if let Some(wet) = s.wetness.as_mut() {
         ui.add(egui::Slider::new(wet, 0.0..=1.).text("влажность"));
     }
+    if s.cycle.is_none() {
+        let mut fixed = s.sun_elevation.is_some();
+        if ui.checkbox(&mut fixed, "Солнце вручную").changed() {
+            *s.sun_elevation = fixed.then_some(35.);
+            *s.reconfigure = true;
+        }
+        if let Some(elevation) = s.sun_elevation.as_mut() {
+            if ui.add(egui::Slider::new(elevation, -10.0..=90.).text("высота солнца °")).changed() {
+                *s.reconfigure = true;
+            }
+        }
+    }
+    render(ui, s.render, s.reconfigure, s.rebuild);
+    if let Some(seed) = s.seed_mut.as_deref_mut() {
+        ui.separator();
+        ui.horizontal(|ui| {
+            ui.label(format!("Сид улицы {seed:#x}"));
+            if ui.button("Другая улица").clicked() {
+                *seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+                *s.rebuild = true;
+            }
+        });
+    }
+    if let Some(hdri) = s.hdri_sky.as_deref_mut() {
+        ui.separator();
+        if ui.checkbox(hdri, "Небо из панорамы (HDRI)").changed() {
+            *s.rebuild = true;
+        }
+    }
     if let Some(a) = s.ageing.as_deref_mut() {
         ageing(ui, a, s.rebuild);
+    }
+}
+
+/// Renderer options that used to be environment-only; the environment still
+/// seeds the initial values.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RenderSettings {
+    pub antialiasing: ArchiveAntialiasing,
+    pub tone_mapper: ArchiveToneMapper,
+    pub lens: Option<Lens>,
+    /// Irradiance probe spacing in metres; `None` skips the bake.
+    pub probe_spacing: Option<f32>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Lens {
+    pub f_number: f32,
+    /// 0 = centre autofocus.
+    pub focus_distance_m: f32,
+    /// Fraction of the frame interval the shutter is open (0.5 = 180 degrees).
+    pub shutter_fraction: f32,
+}
+
+impl RenderSettings {
+    /// Reads VOXY_STREET_AA, VOXY_STREET_TONEMAP, VOXY_STREET_DOF
+    /// ("5.6,auto,0.5" = f/5.6, centre autofocus, 180-degree shutter) and
+    /// VOXY_STREET_PROBES ("off" or spacing in m).
+    pub fn from_environment() -> Result<Self, String> {
+        let var = |name: &str| std::env::var(name).ok();
+        let antialiasing = match var("VOXY_STREET_AA").as_deref().unwrap_or("temporal") {
+            "off" => ArchiveAntialiasing::Off,
+            "spatial" => ArchiveAntialiasing::Spatial,
+            "temporal" => ArchiveAntialiasing::Temporal,
+            "metalfx" => ArchiveAntialiasing::MetalFx,
+            value => return Err(format!("unknown VOXY_STREET_AA: {value}")),
+        };
+        let tone_mapper = match var("VOXY_STREET_TONEMAP").as_deref().unwrap_or("agx") {
+            "aces" => ArchiveToneMapper::Aces,
+            "agx" => ArchiveToneMapper::Agx,
+            value => return Err(format!("unknown VOXY_STREET_TONEMAP: {value}")),
+        };
+        let lens = match var("VOXY_STREET_DOF").as_deref().unwrap_or("off") {
+            "off" => None,
+            value => {
+                let parts: Vec<f32> = value
+                    .split(',')
+                    .filter_map(|v| match v.trim() { "auto" => Some(0.), v => v.parse().ok() })
+                    .collect();
+                if parts.len() < 2 {
+                    return Err(format!("invalid VOXY_STREET_DOF: {value}"));
+                }
+                Some(Lens {
+                    f_number: parts[0],
+                    focus_distance_m: parts[1],
+                    shutter_fraction: parts.get(2).copied().unwrap_or(0.),
+                })
+            }
+        };
+        let probe_spacing = match var("VOXY_STREET_PROBES").as_deref().unwrap_or("6") {
+            "off" => None,
+            value => Some(value.parse().map_err(|_| format!("invalid VOXY_STREET_PROBES: {value}"))?),
+        };
+        Ok(Self { antialiasing, tone_mapper, lens, probe_spacing })
+    }
+}
+
+fn render(ui: &mut egui::Ui, r: &mut RenderSettings, reconfigure: &mut bool, rebuild: &mut bool) {
+    ui.separator();
+    ui.label("Рендер");
+    let before = *r;
+    ui.horizontal_wrapped(|ui| {
+        ui.label("Сглаживание");
+        for (name, mode) in [
+            ("нет", ArchiveAntialiasing::Off),
+            ("SMAA", ArchiveAntialiasing::Spatial),
+            ("TAA", ArchiveAntialiasing::Temporal),
+            ("MetalFX", ArchiveAntialiasing::MetalFx),
+        ] {
+            ui.selectable_value(&mut r.antialiasing, mode, name);
+        }
+    });
+    ui.horizontal(|ui| {
+        ui.label("Тонмаппинг");
+        ui.selectable_value(&mut r.tone_mapper, ArchiveToneMapper::Agx, "AgX");
+        ui.selectable_value(&mut r.tone_mapper, ArchiveToneMapper::Aces, "ACES");
+    });
+    let mut dof = r.lens.is_some();
+    if ui.checkbox(&mut dof, "Глубина резкости и motion blur").changed() {
+        r.lens = dof.then_some(Lens { f_number: 5.6, focus_distance_m: 0., shutter_fraction: 0.5 });
+    }
+    if let Some(lens) = r.lens.as_mut() {
+        ui.add(egui::Slider::new(&mut lens.f_number, 1.4..=22.).logarithmic(true).text("диафрагма f/"));
+        ui.add(egui::Slider::new(&mut lens.focus_distance_m, 0.0..=50.).text("фокус м (0 = авто)"));
+        ui.add(egui::Slider::new(&mut lens.shutter_fraction, 0.0..=1.).text("затвор"));
+    }
+    if *r != before {
+        *reconfigure = true;
+    }
+    let mut probes = r.probe_spacing.is_some();
+    if ui.checkbox(&mut probes, "Пробы отражённого света").changed() {
+        r.probe_spacing = probes.then_some(6.);
+        *rebuild = true;
+    }
+    if let Some(spacing) = r.probe_spacing.as_mut() {
+        let response = ui.add(egui::Slider::new(spacing, 2.0..=12.).text("шаг проб м"));
+        // Baking takes a moment, so wait for the drag to end.
+        if response.drag_stopped() || (response.changed() && !response.dragged()) {
+            *rebuild = true;
+        }
     }
 }
 

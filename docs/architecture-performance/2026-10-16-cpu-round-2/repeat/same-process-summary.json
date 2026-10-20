@@ -1,0 +1,64 @@
+{
+  "rounds": 5,
+  "metric": "median of per-run CPU p50; run p99 is a CPU tick tail, not frame p99",
+  "method": "same compiled executable, same thread, alternating reference and candidate paths",
+  "controls_stable_within_3_percent": true,
+  "summary": [
+    {
+      "case": "pose_alternating",
+      "before_p50_us": 2169.084,
+      "after_p50_us": 2169.917,
+      "ratio": 1.000384033075713,
+      "run_p99_us": null,
+      "checksum_identical": null
+    },
+    {
+      "case": "pose_coherent",
+      "before_p50_us": 487.0,
+      "after_p50_us": 489.667,
+      "ratio": 1.0054763860369609,
+      "run_p99_us": null,
+      "checksum_identical": null
+    },
+    {
+      "case": "pose_mixed_quarter",
+      "before_p50_us": 2170.791,
+      "after_p50_us": 1717.417,
+      "ratio": 0.7911480193164611,
+      "run_p99_us": null,
+      "checksum_identical": null
+    },
+    {
+      "case": "tick_false",
+      "before_p50_us": 17.0,
+      "after_p50_us": 12.833,
+      "ratio": 0.7548823529411764,
+      "run_p99_us": {
+        "before": 20.458,
+        "after": 15.042
+      },
+      "checksum_identical": true
+    },
+    {
+      "case": "tick_true",
+      "before_p50_us": 15.667,
+      "after_p50_us": 12.625,
+      "ratio": 0.8058339184272675,
+      "run_p99_us": {
+        "before": 17.958,
+        "after": 15.041
+      },
+      "checksum_identical": true
+    }
+  ],
+  "binaries": {
+    "app": {
+      "path": "/private/tmp/voxy-round2-tick-pairs",
+      "sha256": "ef2dc569aacdc8f121e5ac8131bd6cbd8d436c368e37e1db0f20d3f1e86e681f"
+    },
+    "render": {
+      "path": "/private/tmp/voxy-round2-kernel-pairs",
+      "sha256": "87ece8c0e07c7e64b9beb3ddef5b18f02687926612cd465f5bb2d1b27c43fc43"
+    }
+  }
+}

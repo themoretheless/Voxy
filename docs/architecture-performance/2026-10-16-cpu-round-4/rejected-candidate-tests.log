@@ -1,0 +1,91 @@
+    Blocking waiting for file lock on build directory
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+   --> crates/voxy_render/src/archive_scene.rs:953:19
+    |
+953 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+    |                   ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+   --> crates/voxy_render/src/archive_scene.rs:954:25
+    |
+954 |                 * Mat4::look_at_rh(centre + sun * extent * 2., centre, Vec3::Y);
+    |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1165:36
+     |
+1165 |         self.shadow_matrix = Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                                    ^^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1166:21
+     |
+1166 |             * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+     |                     ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1390:24
+     |
+1390 |         let vp = Mat4::perspective_rh(
+     |                        ^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1395:19
+     |
+1395 |         ) * Mat4::look_at_rh(eye, eye + direction, self.camera_up);
+     |                   ^^^^^^^^^^
+
+warning: associated function `levels` is never used
+   --> crates/voxy_render/src/bloom.rs:158:12
+    |
+ 18 | impl Bloom {
+    | ---------- associated function in this implementation
+...
+158 |     pub fn levels() -> f32 {
+    |            ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+warning: `voxy_render` (lib) generated 7 warnings
+   Compiling voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+   Compiling voxy_shell v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_shell)
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_app)
+warning: method `planar_basis` is never used
+   --> crates/voxy_app/src/controls.rs:367:12
+    |
+320 | impl WalkCamera {
+    | --------------- method in this implementation
+...
+367 |     pub fn planar_basis(self) -> (Vec3, Vec3) {
+    |            ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_app` (bin "voxy_app" test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 37.39s
+     Running unittests src/main.rs (target/release/deps/voxy_app-54a939152891db09)
+
+running 15 tests
+test animals::fur::frame_cache_tests::paired_coat_cpu_bench ... ignored, manual CPU coat simulation paired benchmark
+test animals::tests::cpu_companion_tick_and_pose_bench ... ignored, manual paired CPU benchmark
+test animals::tests::paired_palette_cpu_bench ... ignored, manual CPU paired palette benchmark
+test animals::tests::paired_transaction_cpu_bench ... ignored, manual same-process paired CPU benchmark
+test animals::gait::tests::ik_reaches_supported_targets ... ok
+test animals::asset::tests::nose_and_digit_faces_point_outward ... ok
+test animals::tests::companion_sweep_stops_at_another_body ... ok
+test animals::gait::tests::stationary_soles_match_terrain_and_stance_does_not_slide ... ok
+test animals::tests::appended_palette_matches_legacy_bits_and_preserves_prefix ... ok
+test animals::tests::companions_land_follow_and_reject_invalid_ticks ... ok
+test animals::tests::guides_remain_attached_and_bounded_during_movement ... ok
+test animals::tests::reusable_transaction_matches_clone_per_tick_and_recovers_after_late_error ... ok
+test animals::fur::tests::hair_roots_follow_blended_skin_when_legs_move ... ok
+test animals::tests::authored_species_have_valid_rigs_and_dense_fur ... ok
+test animals::fur::frame_cache_tests::shared_frames_preserve_complete_strand_history ... ok
+
+test result: ok. 11 passed; 0 failed; 4 ignored; 0 measured; 31 filtered out; finished in 2.98s
+

@@ -167,7 +167,12 @@ impl WeatherSchedule {
             pick -= w;
             kind = i;
         }
-        let mut weather = [Weather::CLEAR, Weather::CLOUDY, Weather::STORM, Weather::SNOW][kind];
+        let mut weather = [
+            Weather::CLEAR,
+            Weather::CLOUDY,
+            Weather::STORM,
+            Weather::SNOW,
+        ][kind];
         // Wind direction drifts per spell so gusts do not always share an axis.
         let angle = (h & 0xffff) as f32 / 65536. * std::f32::consts::TAU;
         let speed = weather.wind[0].hypot(weather.wind[1]);
@@ -177,9 +182,14 @@ impl WeatherSchedule {
     pub fn at(self, hours: f64) -> Weather {
         let index = (hours / Self::SPELL_HOURS).floor();
         let into = hours - index * Self::SPELL_HOURS;
-        let blend = ((into - (Self::SPELL_HOURS - Self::BLEND_HOURS)) / Self::BLEND_HOURS).clamp(0., 1.);
+        let blend =
+            ((into - (Self::SPELL_HOURS - Self::BLEND_HOURS)) / Self::BLEND_HOURS).clamp(0., 1.);
         let blend = blend * blend * (3. - 2. * blend);
-        lerp_weather(self.spell(index as i64), self.spell(index as i64 + 1), blend as f32)
+        lerp_weather(
+            self.spell(index as i64),
+            self.spell(index as i64 + 1),
+            blend as f32,
+        )
     }
 }
 
@@ -213,7 +223,12 @@ mod tests {
         assert_eq!(Season::from_day(200.), Season::Summer);
         assert_eq!(Season::from_day(300.), Season::Autumn);
         assert_eq!(Season::from_day(350.), Season::Winter);
-        for s in [Season::Spring, Season::Summer, Season::Autumn, Season::Winter] {
+        for s in [
+            Season::Spring,
+            Season::Summer,
+            Season::Autumn,
+            Season::Winter,
+        ] {
             assert_eq!(Season::from_day(s.middle_day()), s);
         }
         let mut c = Calendar::new(364., 23.);
@@ -231,7 +246,10 @@ mod tests {
             let a = schedule.at(hours);
             let b = schedule.at(hours + 0.01);
             assert!(a.is_valid());
-            assert!((a.coverage - b.coverage).abs() < 0.02, "no jumps at {hours}");
+            assert!(
+                (a.coverage - b.coverage).abs() < 0.02,
+                "no jumps at {hours}"
+            );
             match Season::from_day(hours / 24.) {
                 Season::Summer => snow_summer += a.snow,
                 Season::Winter => snow_winter += a.snow,

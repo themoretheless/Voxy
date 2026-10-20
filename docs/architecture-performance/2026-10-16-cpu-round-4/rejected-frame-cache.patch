@@ -1,0 +1,119 @@
+--- a/crates/voxy_app/src/animals/fur.rs
++++ b/crates/voxy_app/src/animals/fur.rs
+@@ -263,6 +263,15 @@
+         }
+     }
+     pub fn step(&mut self, groom: &Groom, pose: &[Mat4; BONES], dt: f32) -> Result<(), String> {
++        self.step_with_frame_cache(groom, pose, dt, true)
++    }
++    fn step_with_frame_cache(
++        &mut self,
++        groom: &Groom,
++        pose: &[Mat4; BONES],
++        dt: f32,
++        reuse_frames: bool,
++    ) -> Result<(), String> {
+         if !dt.is_finite() || dt <= 0.0 || dt > 1.0 / 30.0 {
+             return Err("invalid fur timestep".into());
+         }
+@@ -297,6 +306,9 @@
+                 .map_err(str::to_string)?;
+             self.initialized = true;
+         }
++        // All guides on one bone share the same rest orientation for this tick.
++        // Fill lazily so unused bones retain the original evaluation behavior.
++        let mut frames = [None; BONES];
+         for (strand, root) in self.strands.iter_mut().zip(&groom.roots) {
+             let matrix = pose[root.bone];
+             let normal = matrix.transform_vector3(root.normal).normalize();
+@@ -306,7 +318,11 @@
+                 center: (position - normal * 0.025).as_dvec3().to_array(),
+                 radius: 0.0245,
+             };
+-            let frame = rest_frame(matrix);
++            let frame = if reuse_frames {
++                *frames[root.bone].get_or_insert_with(|| rest_frame(matrix))
++            } else {
++                rest_frame(matrix)
++            };
+             strand
+                 .step_oriented(
+                     f64::from(dt),
+@@ -402,3 +418,77 @@
+         }
+     }
+ }
++
++#[cfg(test)]
++mod frame_cache_tests {
++    use super::*;
++    fn poses() -> Vec<[Mat4; BONES]> {
++        (0..240)
++            .map(|tick| {
++                std::array::from_fn(|bone| {
++                    Mat4::from_rotation_translation(
++                        glam::Quat::from_rotation_y(tick as f32 * 0.002 + bone as f32 * 0.03),
++                        Vec3::new(bone as f32 * 0.01, 1., tick as f32 * 0.001),
++                    )
++                })
++            })
++            .collect()
++    }
++    #[test]
++    fn shared_frames_preserve_complete_strand_history() {
++        for cat in [false, true] {
++            let groom = groom(cat).unwrap();
++            let mut before = CoatDynamics::new();
++            let mut after = CoatDynamics::new();
++            for pose in poses() {
++                assert_eq!(
++                    before.step_with_frame_cache(&groom, &pose, 1. / 60., false),
++                    after.step(&groom, &pose, 1. / 60.)
++                );
++                for (a, b) in before.strands.iter().zip(&after.strands) {
++                    assert_eq!(format!("{a:?}"), format!("{b:?}"));
++                }
++            }
++            let snapshot = format!("{after:?}");
++            assert!(after.step(&groom, &poses()[0], f32::NAN).is_err());
++            assert_eq!(snapshot, format!("{after:?}"));
++        }
++    }
++    #[test]
++    #[ignore = "manual CPU coat simulation paired benchmark"]
++    fn paired_coat_cpu_bench() {
++        use std::{hint::black_box, time::Instant};
++        let poses = poses();
++        for cat in [false, true] {
++            let groom = groom(cat).unwrap();
++            for round in 1..=5 {
++                let mut snapshots = Vec::new();
++                for (variant, cache) in if round % 2 == 1 {
++                    [("before", false), ("after", true)]
++                } else {
++                    [("after", true), ("before", false)]
++                } {
++                    let mut coat = CoatDynamics::new();
++                    let mut samples = Vec::new();
++                    for (tick, pose) in poses.iter().enumerate() {
++                        let start = Instant::now();
++                        coat.step_with_frame_cache(
++                            black_box(&groom),
++                            black_box(pose),
++                            1. / 60.,
++                            black_box(cache),
++                        )
++                        .unwrap();
++                        if tick >= 20 {
++                            samples.push(start.elapsed().as_secs_f64() * 1e6);
++                        }
++                    }
++                    snapshots.push(format!("{coat:?}"));
++                    samples.sort_by(f64::total_cmp);
++                    println!("COAT_PAIR,{round},{variant},{cat},{:.6}", samples[110]);
++                }
++                assert_eq!(snapshots[0], snapshots[1]);
++            }
++        }
++    }
++}

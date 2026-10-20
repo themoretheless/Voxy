@@ -1,0 +1,55 @@
+{
+  "binary_sha256": {
+    "companion": "9923e2730ce0e5518e4107d8600a2e0627192517e51265210721c5a8877a2087",
+    "pose-before": "6f66e3985d42bcb024c9a9680f14c722b21137e564a626d757d43aeb8430246a",
+    "pose-after": "ceb041c9f2bbb391d9b34451adba5709d6d0bcb5cf84a4cffcfe17fa06aedfb3"
+  },
+  "binaries": {
+    "companion": "/private/tmp/voxy-round2-companion",
+    "pose-before": "/private/tmp/voxy-round2-pose-before",
+    "pose-after": "/private/tmp/voxy-round2-pose-after"
+  },
+  "rounds": 5,
+  "companion_geometry": "CPU_META,vertices,1277550,geometry,8a4469d46bf376279949e925e63bbd88e3e50cd706c486bfb6ff303910849fed",
+  "method": "same compiled companion fixture, clone-per-tick reference vs reusable transaction; separate pose binaries",
+  "metric": "median of run p50 CPU duration, not application frame p99",
+  "summary": [
+    {
+      "case": "pose_alternating",
+      "before_us": 24408.458,
+      "after_us": 2932.333,
+      "ratio": 0.12013593812439935,
+      "checksum_identical": null
+    },
+    {
+      "case": "pose_coherent",
+      "before_us": 1474.917,
+      "after_us": 664.541,
+      "ratio": 0.4505616248236342,
+      "checksum_identical": null
+    },
+    {
+      "case": "pose_mixed_quarter",
+      "before_us": 21212.042,
+      "after_us": 3093.875,
+      "ratio": 0.14585465180579973,
+      "checksum_identical": null
+    },
+    {
+      "case": "tick_false",
+      "before_us": 36.0,
+      "after_us": 26.125,
+      "ratio": 0.7256944444444444,
+      "checksum_identical": true
+    },
+    {
+      "case": "tick_true",
+      "before_us": 35.25,
+      "after_us": 17.5,
+      "ratio": 0.49645390070921985,
+      "checksum_identical": true
+    }
+  ],
+  "qualifying": false,
+  "rejection_reason": "Unchanged pose controls moved substantially between processes under background compilation; superseded by same-process pairs."
+}

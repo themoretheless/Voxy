@@ -1,0 +1,19 @@
+{
+  "binaries": {
+    "target/release/voxy_app": "75242f64712739a4a13638a4e30e45c4ba2100490ffcb829c17e39efc4fd5613",
+    "target/release/examples/street_walk": "dcd0658fdf42b126186cb5961149354dce6de6bb2e3b69b9775e4a2fe4928026"
+  },
+  "git_head": "cb1668200491fbfb2e47d708108db0a428833e95",
+  "dirty_checkout": true,
+  "warmup_seconds": 10,
+  "measurement_seconds": 60,
+  "paired_comparison": false,
+  "hardware": "Apple M4 Max / Metal",
+  "notes": [
+    "Existing uncommitted rendering/model work remains present",
+    "idle and water attempts interrupted before report completion",
+    "motion report is one baseline observation, not qualification",
+    "full scene asset streaming and peak memory are not instrumented",
+    "Street process exited without report; no street timing claim. Binary hashes were recorded retrospectively; no immutable pre-run snapshot."
+  ]
+}

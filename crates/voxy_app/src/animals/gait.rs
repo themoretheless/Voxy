@@ -15,7 +15,7 @@ pub fn knee(cat: bool, leg: usize) -> Vec3 {
         a.shoulder_height * if leg < 2 { 0.52 } else { 0.57 },
         hip.z
             + if leg < 2 {
-                -0.025
+                -a.shoulder_height * 0.025
             } else {
                 a.trunk_length * 0.075
             },

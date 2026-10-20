@@ -1,0 +1,8 @@
+Voxy profile enabled: Profile { scenario: Idle, output: "docs/architecture-performance/2026-10-15-frame-profile/baseline/idle.csv", warmup: 10s, duration: 60s, start: None, previous: None, samples: [], gpu_samples: [], completed: Cell { value: false } }
+Voxy GPU: Apple M4 Max (Metal), 9 chunks, 1074 greedy quads
+Native vegetation: 13 seeded plants, 4 shared mesh variants
+Voxy water activation: 8217 cells
+Voxy loaded in 3.20 seconds
+Voxy startup frame deferred: SkippedOccluded
+Voxy first voxel frame presented (Presented)
+Error: "frame profile interrupted before report completion"

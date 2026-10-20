@@ -324,7 +324,9 @@ impl ExperimentalTripleActiveContactBatch {
         bytes: &[u8],
         compact: bool,
     ) -> Result<Vec<ExperimentalTripleExpandedCandidate>, JointDotError> {
-        self.expanded_candidate_results(bytes, compact)?.into_iter().collect()
+        self.expanded_candidate_results(bytes, compact)?
+            .into_iter()
+            .collect()
     }
     /// Validate batch framing first, then each immutable operator independently.
     /// A local rejection never certifies or invalidates a sibling candidate.
@@ -332,9 +334,11 @@ impl ExperimentalTripleActiveContactBatch {
         &self,
         bytes: &[u8],
         compact: bool,
-    ) -> Result<Vec<Result<ExperimentalTripleExpandedCandidate, JointDotError>>, JointDotError> {
+    ) -> Result<Vec<Result<ExperimentalTripleExpandedCandidate, JointDotError>>, JointDotError>
+    {
         let slices = self.operator_readbacks(bytes, compact)?;
-        Ok(self.inputs
+        Ok(self
+            .inputs
             .iter()
             .zip(slices)
             .map(|(input, bytes)| {
@@ -414,16 +418,33 @@ impl ExperimentalTripleActiveContactInput {
         })
     }
     /// Retain both coefficient components while building the existing checked ABI.
-    pub fn new_expanded(columns: &[Vec<[f64;2]>], bounds: &[f64], tolerance: f64) -> Result<Self, JointDotError> {
-        let packed=ExperimentalTripleContactInput::new_expanded(columns,bounds,tolerance)?;
-        let high:Vec<Vec<f64>>=columns.iter().map(|c|c.iter().map(|v|v[0]).collect()).collect();
-        let mut input=Self::new(&high,bounds,tolerance)?;
-        input.state_scale=packed.bound_scale/packed.column_scale;
-        input.inverse_column_scale=packed.column_scale.recip();
-        if !input.state_scale.is_finite() || input.state_scale<=0. || !input.inverse_column_scale.is_finite() {return Err(JointDotError::NumericRange);}
+    pub fn new_expanded(
+        columns: &[Vec<[f64; 2]>],
+        bounds: &[f64],
+        tolerance: f64,
+    ) -> Result<Self, JointDotError> {
+        let packed = ExperimentalTripleContactInput::new_expanded(columns, bounds, tolerance)?;
+        let high: Vec<Vec<f64>> = columns
+            .iter()
+            .map(|c| c.iter().map(|v| v[0]).collect())
+            .collect();
+        let mut input = Self::new(&high, bounds, tolerance)?;
+        input.state_scale = packed.bound_scale / packed.column_scale;
+        input.inverse_column_scale = packed.column_scale.recip();
+        if !input.state_scale.is_finite()
+            || input.state_scale <= 0.
+            || !input.inverse_column_scale.is_finite()
+        {
+            return Err(JointDotError::NumericRange);
+        }
         // Coefficient precision can require additional binary scaling.
-        let end=4+packed.columns.len()*3;
-        for (dst,word) in input.words[4..end].iter_mut().zip(packed.columns.iter().flatten()) {*dst=*word;}
+        let end = 4 + packed.columns.len() * 3;
+        for (dst, word) in input.words[4..end]
+            .iter_mut()
+            .zip(packed.columns.iter().flatten())
+        {
+            *dst = *word;
+        }
         Ok(input)
     }
     /// Experimental active-row hints only; magnitudes never enter physical loads.
@@ -623,25 +644,49 @@ impl ExperimentalTripleActiveContactInput {
     /// Seed a fresh operator solely by exact cached active-vector identity.
     /// Every uploaded component and normalization scale must match. Magnitudes
     /// are never supplied as reactions; the next result still needs physical admission.
-    pub fn seed_completed_parallel_factors(&mut self, factors: &ExperimentalTripleActiveFactors) -> Result<(), JointDotError> {
-        if self.words[3]!=0 || !self.seeded_rows().is_empty()
-            || self.width!=factors.width || self.inverse_column_scale.to_bits()!=factors.column_scale_bits
-            || factors.selected==0 || factors.selected>self.rows {return Err(JointDotError::Shape);}
-        let row_words=3*self.width; let mut rows=Vec::with_capacity(factors.selected);
+    pub fn seed_completed_parallel_factors(
+        &mut self,
+        factors: &ExperimentalTripleActiveFactors,
+    ) -> Result<(), JointDotError> {
+        if self.words[3] != 0
+            || !self.seeded_rows().is_empty()
+            || self.width != factors.width
+            || self.inverse_column_scale.to_bits() != factors.column_scale_bits
+            || factors.selected == 0
+            || factors.selected > self.rows
+        {
+            return Err(JointDotError::Shape);
+        }
+        let row_words = 3 * self.width;
+        let mut rows = Vec::with_capacity(factors.selected);
         for vector in factors.columns.chunks_exact(row_words) {
             // Identical directions can have different bounds. Seed the strongest
             // duplicate so a weaker equality does not create a dependent append.
-            let bounds=4+self.rows*row_words;
-            let bound=|row:usize| (0..3).map(|part|f64::from(f32::from_bits(self.words[bounds+3*row+part]))).sum::<f64>();
-            let row=(0..self.rows).filter(|row|!rows.contains(row)
-                && &self.words[4+row*row_words..4+(row+1)*row_words]==vector)
-                .max_by(|&a,&b|bound(a).total_cmp(&bound(b)).then_with(||b.cmp(&a))).ok_or(JointDotError::Shape)?;
+            let bounds = 4 + self.rows * row_words;
+            let bound = |row: usize| {
+                (0..3)
+                    .map(|part| f64::from(f32::from_bits(self.words[bounds + 3 * row + part])))
+                    .sum::<f64>()
+            };
+            let row = (0..self.rows)
+                .filter(|row| {
+                    !rows.contains(row)
+                        && &self.words[4 + row * row_words..4 + (row + 1) * row_words] == vector
+                })
+                .max_by(|&a, &b| bound(a).total_cmp(&bound(b)).then_with(|| b.cmp(&a)))
+                .ok_or(JointDotError::Shape)?;
             rows.push(row);
         }
-        let flags=self.layout.state-3*self.rows;
-        for &row in &rows {self.words[flags+3*row]=1f32.to_bits();}
-        let result=self.reuse_completed_parallel_factors(factors);
-        if result.is_err() {for row in rows {self.words[flags+3*row..flags+3*row+3].fill(0);}}
+        let flags = self.layout.state - 3 * self.rows;
+        for &row in &rows {
+            self.words[flags + 3 * row] = 1f32.to_bits();
+        }
+        let result = self.reuse_completed_parallel_factors(factors);
+        if result.is_err() {
+            for row in rows {
+                self.words[flags + 3 * row..flags + 3 * row + 3].fill(0);
+            }
+        }
         result
     }
     pub fn reuse_completed_parallel_factors(
@@ -1235,22 +1280,37 @@ mod tests {
                 .expanded_candidates(bytemuck::cast_slice(&output), false)
                 .is_err()
         );
-        let partial = batch.expanded_candidate_results(bytemuck::cast_slice(&output), false).unwrap();
+        let partial = batch
+            .expanded_candidate_results(bytemuck::cast_slice(&output), false)
+            .unwrap();
         assert!(partial[0].is_ok());
         assert!(partial[1].is_err());
-        let compact = batch.compact_readback_ranges().iter().flat_map(|range| {
-            bytemuck::cast_slice::<u32, u8>(&output)[range.start as usize..range.end as usize].iter().copied()
-        }).collect::<Vec<_>>();
+        let compact = batch
+            .compact_readback_ranges()
+            .iter()
+            .flat_map(|range| {
+                bytemuck::cast_slice::<u32, u8>(&output)[range.start as usize..range.end as usize]
+                    .iter()
+                    .copied()
+            })
+            .collect::<Vec<_>>();
         let partial = batch.expanded_candidate_results(&compact, true).unwrap();
         assert!(partial[0].is_ok());
         assert!(partial[1].is_err());
         output[batch.offsets[1] + batch.inputs[1].layout.status] = 0;
         output[batch.offsets[0] + 4] ^= 1;
-        let partial = batch.expanded_candidate_results(bytemuck::cast_slice(&output), false).unwrap();
+        let partial = batch
+            .expanded_candidate_results(bytemuck::cast_slice(&output), false)
+            .unwrap();
         assert!(partial[0].is_err(), "mutated operator input was admitted");
         assert!(partial[1].is_ok());
         output[0] ^= 1;
-        assert!(batch.expanded_candidate_results(bytemuck::cast_slice(&output), false).is_err(), "mutated batch framing was admitted");
+        assert!(
+            batch
+                .expanded_candidate_results(bytemuck::cast_slice(&output), false)
+                .is_err(),
+            "mutated batch framing was admitted"
+        );
         assert!(ExperimentalTripleActiveContactBatch::new(vec![]).is_err());
     }
     #[test]
@@ -1663,15 +1723,45 @@ mod expanded_factor_identity_tests {
     use super::*;
     #[test]
     fn fresh_factor_seed_distinguishes_coefficients_below_an_f64_ulp() {
-        let low=2f64.powi(-60);
-        let source=ExperimentalTripleActiveContactInput::new_expanded(&[vec![[1.,low]]],&[1.],1e-14).unwrap();
-        let factors=ExperimentalTripleActiveFactors {width:1,columns:source.words[4..7].to_vec(),qr:vec![1f32.to_bits(),0,0,1f32.to_bits(),(low as f32).to_bits(),0],selected:1,column_scale_bits:source.inverse_column_scale.to_bits()};
-        let mut changed=ExperimentalTripleActiveContactInput::new_expanded(&[vec![[1.,low*0.5]]],&[1.],1e-14).unwrap();
-        let before=changed.words.clone();
-        assert!(changed.seed_completed_parallel_factors(&factors).is_err());assert_eq!(changed.words,before);
-        let mut same=ExperimentalTripleActiveContactInput::new_expanded(&[vec![[1.,low]]],&[2.],1e-14).unwrap();
-        same.seed_completed_parallel_factors(&factors).unwrap();assert_eq!(same.words[3],1);
-        let mut duplicate=ExperimentalTripleActiveContactInput::new_expanded(&[vec![[1.,low]],vec![[1.,low]]],&[0.,1.],1e-14).unwrap();
-        duplicate.seed_completed_parallel_factors(&factors).unwrap();assert_eq!(duplicate.seeded_rows(),vec![1]);
+        let low = 2f64.powi(-60);
+        let source =
+            ExperimentalTripleActiveContactInput::new_expanded(&[vec![[1., low]]], &[1.], 1e-14)
+                .unwrap();
+        let factors = ExperimentalTripleActiveFactors {
+            width: 1,
+            columns: source.words[4..7].to_vec(),
+            qr: vec![
+                1f32.to_bits(),
+                0,
+                0,
+                1f32.to_bits(),
+                (low as f32).to_bits(),
+                0,
+            ],
+            selected: 1,
+            column_scale_bits: source.inverse_column_scale.to_bits(),
+        };
+        let mut changed = ExperimentalTripleActiveContactInput::new_expanded(
+            &[vec![[1., low * 0.5]]],
+            &[1.],
+            1e-14,
+        )
+        .unwrap();
+        let before = changed.words.clone();
+        assert!(changed.seed_completed_parallel_factors(&factors).is_err());
+        assert_eq!(changed.words, before);
+        let mut same =
+            ExperimentalTripleActiveContactInput::new_expanded(&[vec![[1., low]]], &[2.], 1e-14)
+                .unwrap();
+        same.seed_completed_parallel_factors(&factors).unwrap();
+        assert_eq!(same.words[3], 1);
+        let mut duplicate = ExperimentalTripleActiveContactInput::new_expanded(
+            &[vec![[1., low]], vec![[1., low]]],
+            &[0., 1.],
+            1e-14,
+        )
+        .unwrap();
+        duplicate.seed_completed_parallel_factors(&factors).unwrap();
+        assert_eq!(duplicate.seeded_rows(), vec![1]);
     }
 }

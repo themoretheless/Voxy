@@ -1,0 +1,35 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "frame_budget_met": false,
+  "frames": 1262,
+  "gpu_ms": null,
+  "gpu_pass_statistics": [
+    {
+      "p50_ms": 1.247417,
+      "p95_ms": 5.191708,
+      "p99_ms": 6.55725
+    },
+    null,
+    null
+  ],
+  "gpu_samples": 56,
+  "gpu_scope": "primary resident voxel pass only",
+  "limitations": [
+    "CPU render includes submission/presentation; not GPU execution time",
+    "presentation completion is not display scanout",
+    "GPU scene span excludes external postprocessing; delayed samples may cross warmup boundary",
+    "upload/memory counters unavailable"
+  ],
+  "max_ms": 82.699,
+  "measurement_seconds": 60.0,
+  "over_120hz": 1262,
+  "over_60hz": 1262,
+  "p50_ms": 46.666042,
+  "p95_ms": 69.277,
+  "p99_ms": 80.55375,
+  "peak_memory_bytes": null,
+  "scenario": "motion",
+  "skipped_frames": 0,
+  "upload_bytes": null,
+  "warmup_seconds": 10.0
+}

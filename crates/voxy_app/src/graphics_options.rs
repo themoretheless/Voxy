@@ -7,6 +7,7 @@ pub fn parse(args: impl IntoIterator<Item = String>) -> Result<GraphicsOptions, 
     let mut selected = false;
     while let Some(arg) = args.next() {
         match arg.as_str() {
+            "--profile" => options.profile_timestamps = true,
             "--fallback" => options.force_fallback_adapter = true,
             "--backend" => {
                 if selected {

@@ -28,6 +28,7 @@ struct PhotorealCamera {
     flashlight_pos: vec4<f32>,    // xyz: flashlight world pos, w: enabled (1.0 or 0.0)
     flashlight_dir: vec4<f32>,    // xyz: flashlight unit dir, w: wetness (0.0 .. 1.0)
     subject_spheres: array<vec4<f32>,12>,
+    viewport: vec4<f32>,
 };
 
 struct ChunkMeta {
@@ -90,6 +91,8 @@ struct PhotorealVertexOutput {
     @location(6) @interpolate(flat) chunk_slot: u32,
     @location(7) coat: vec4<f32>,
     @location(8) bind_position: vec3<f32>,
+    @location(9) fibre_direction: vec3<f32>,
+    @location(10) fibre_cross_section: f32,
 };
 
 fn sample_light_cell(slot: u32, local_air: vec3<i32>) -> vec2<f32> {
@@ -229,6 +232,8 @@ fn vs_voxel(input: VoxelQuadInput) -> PhotorealVertexOutput {
     output.light = sample_light_cell(input.chunk_slot.x, corner_cell);
     output.world_pos = local;
     output.bind_position=local;
+    output.fibre_direction=vec3<f32>(0.0);
+    output.fibre_cross_section=0.0;
     output.chunk_slot = input.chunk_slot.x;
     output.coat = vec4<f32>(0.0,0.0,0.0,-1.0);
     return output;
@@ -245,6 +250,8 @@ fn vs_indirect(input: IndirectVoxelInput) -> PhotorealVertexOutput {
     output.light = vec2<f32>(0.85, 0.0);
     output.world_pos = input.position;
     output.bind_position=input.position;
+    output.fibre_direction=vec3<f32>(0.0);
+    output.fibre_cross_section=0.0;
     output.chunk_slot = 0xffffffffu;
     output.coat = vec4<f32>(0.0,0.0,0.0,-1.0);
     return output;
@@ -283,12 +290,36 @@ fn vs_skinned(input: SkinnedInput) -> PhotorealVertexOutput {
     output.light = vec2<f32>(0.92, 0.0);
     output.world_pos = world_pos;
     output.bind_position=input.position;
+    output.fibre_direction=vec3<f32>(0.0);
+    output.fibre_cross_section=0.0;
     output.chunk_slot = 0xffffffffu;
     output.coat = vec4<f32>(0.0,0.0,0.0,-1.0);
     if input.uv.y <= -10000.0 {
         let rgb = u32(input.uv.x);
         output.coat = vec4<f32>(vec3<f32>(f32(rgb & 255u),f32((rgb >> 8u) & 255u),f32((rgb >> 16u) & 255u))/255.0, (-input.uv.y-10000.0)*0.001);
         output.uv = vec2<f32>(0.0);
+        if output.coat.a >= 3.0 {
+            let packed=fract(-input.uv.y);
+            let positive=packed>=0.5;
+            let side=select(-1.0,1.0,positive);
+            let along=(packed-0.0625-select(0.0,0.5,positive))/0.125;
+            let physical_width=0.00012*(1.0-along*0.80);
+            let local_normal=normalize(input.normal);
+            let flow = select(vec3<f32>(0.0,-0.35,-0.6),vec3<f32>(sign(input.position.x)*0.50,-0.24,-0.35),output.coat.a>=5.0);
+            let comb = flow-local_normal*dot(local_normal,flow);
+            let tangent = normalize(local_normal*0.53+normalize(comb+vec3<f32>(1e-7))*0.85);
+            let across = cross(local_normal,tangent);
+            let fallback = cross(local_normal,select(vec3<f32>(0.0,1.0,0.0),vec3<f32>(1.0,0.0,0.0),abs(local_normal.y)>0.9));
+            let local_side=normalize(select(fallback,across,dot(across,across)>1e-12));
+            let clip_step=camera.view_proj*(world*vec4<f32>(local_side,0.0));
+            let ndc_step=(clip_step.xy-output.position.xy/output.position.w*clip_step.w)/output.position.w;
+            let pixels_per_metre=max(length(ndc_step*camera.viewport.xy*0.5),1e-5);
+            let physical_pixels=physical_width*pixels_per_metre;
+            let expanded_pixels=max(physical_pixels,0.65);
+            output.position=vec4<f32>(output.position.xy+side*ndc_step*((expanded_pixels-physical_pixels)/pixels_per_metre)*output.position.w,output.position.zw);
+            output.fibre_cross_section=side*expanded_pixels/max(physical_pixels,1e-5);
+            output.fibre_direction=normalize((world*vec4<f32>(tangent,0.0)).xyz);
+        }
     }
     return output;
 }
@@ -575,11 +606,15 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
     let grain_filter=exp(-min(fwidth(grain_phase),16.0));
     let coat_grain=sin(grain_phase)*grain_filter;
     if input.coat.a >= 0.0 {
-        let grain=coat_grain;
+        // Skin pores belong to skin materials. Applying their periodic grain
+        // to neutral anatomy/coat materials fakes ridges on a smooth surface.
+        let grain=select(0.0,coat_grain,is_skin(input.coat.a));
         let mottling=value_noise_3d(p*430.0);
-        base_albedo = input.coat.rgb*(0.91+0.12*mottling+0.035*grain);
+        base_albedo = input.coat.rgb;
+        if is_skin(input.coat.a) {base_albedo *= 0.91+0.12*mottling+0.035*grain;}
         // coat.a in [1.02, 2) marks skin: roughness is stored offset by one.
         base_roughness = clamp(select(select(input.coat.a,input.coat.a-1.0,is_skin(input.coat.a)),0.35,is_eye(input.coat.a))+grain*0.035,0.04,1.0);
+        if input.coat.a >= 3.0 { base_roughness=clamp(fract(input.coat.a),0.30,0.95); }
         wetness = 0.0;
     }
 
@@ -615,12 +650,16 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
     let roughness = geometric_specular_aa(n, raw_roughness);
     // Hair encodes a fibre tangent rather than a skin normal. The longitudinal
     // lobe follows the strand, avoiding plastic surface highlights on the coat.
-    if input.coat.a >= 2.0 {
+    if input.coat.a >= 2.0 && input.coat.a < 3.0 {
         let tangent = geom_n;
         let light = normalize(vec3<f32>(0.42,0.82,0.38));
         let view = normalize(camera.camera_eye.xyz-input.world_pos);
-        let fibre = hair_shading(tangent,light,view,input.coat.rgb,0.35)*vec3<f32>(2.95,2.76,2.48)
-            + input.coat.rgb*vec3<f32>(0.55,0.62,0.72)*0.5;
+        let fibre_roughness = clamp(input.coat.a - 2.0, 0.30, 0.95);
+        let fibre = hair_shading(tangent,light,view,input.coat.rgb,fibre_roughness)*vec3<f32>(2.95,2.76,2.48)
+            // Integrate the overcast hemisphere as well as the direct lobe.
+            // Missing sky energy made dense short hairs look like black dots
+            // against the skin, whose material already receives sky lighting.
+            + input.coat.rgb*vec3<f32>(0.55,0.62,0.72);
         return vec4<f32>(fibre,1.0);
     }
 
@@ -705,6 +744,14 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
         diffuse_response = skin_diffuse(dot(n, sun_dir), curvature);
     }
     var sun_direct = (albedo / PI * diffuse_response + sun_spec) * sun_radiance;
+    if input.coat.a >= 3.0 {
+        // Dense short coats are dominated by the coherent underlying coat;
+        // a fully independent fibre response at every subpixel strand produces
+        // isolated bright pixels on the shaded side. Approximate the bundle's
+        // multiple scattering with the skin-normal response plus a fibre lobe.
+        let single_fibre=hair_shading(normalize(input.fibre_direction),sun_dir,view_dir,albedo,base_roughness)*sun_radiance;
+        sun_direct=mix(sun_direct,single_fibre,0.15);
+    }
     if input.coat.a >= 0.0 && is_eye(input.coat.a) {
         sun_direct = cornea_coat(n, view_dir, sun_dir, albedo / PI * n_dot_l) * sun_radiance;
     }
@@ -750,10 +797,20 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
     hdr_color = mix(hdr_color, fog_radiance, clamp(fog_factor, 0.0, 0.75));
 
     let alpha = select(tex_sample.a, 0.85, input.material == 4u);
-    return vec4<f32>(max(hdr_color, vec3<f32>(0.0)), alpha);
+    var coverage=alpha;
+    if input.coat.a>=3.0 {
+        let pixel_width=max(fwidth(input.fibre_cross_section),1e-4);
+        // Exact box-filtered coverage of both ribbon edges. Treating them
+        // independently over-attenuates subpixel strands when the edges overlap.
+        let u=input.fibre_cross_section;
+        coverage=clamp((1.0-u)/pixel_width+0.5,0.0,1.0)
+            -clamp((-1.0-u)/pixel_width+0.5,0.0,1.0);
+    }
+    return vec4<f32>(max(hdr_color, vec3<f32>(0.0)), coverage);
 }
 
 // Packed coat.a ranges: [0,1] coat roughness, [1.02,1.5) skin (roughness+1),
-// [1.5,2) eye (wet cornea), >= 2 hair fibre.
+// [1.5,2) eye, [2,3) tangent-normal hair; [3,4) animal body fibres,
+// [5,6) animal facial fibres with skin normals and reconstructed comb tangent.
 fn is_skin(coat:f32)->bool {return coat>=1.02 && coat<1.5;}
 fn is_eye(coat:f32)->bool {return coat>=1.5 && coat<2.0;}

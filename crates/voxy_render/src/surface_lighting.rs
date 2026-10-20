@@ -206,7 +206,7 @@ impl SurfaceLightingJob {
         compiled: Option<(&wgpu::ComputePipeline, Option<wgpu::Texture>)>,
     ) -> Result<Self, RaySceneError> {
         primary.validate_device(device)?;
-        scene.validate_device(device)?;
+        scene.validate_triangles(device)?;
         validate_inputs(device, primary, diffuse, light)?;
         let data = [
             [

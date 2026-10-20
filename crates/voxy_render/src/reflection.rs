@@ -341,7 +341,7 @@ impl SpecularDistancePipeline {
         emission: Option<&[[f32; 4]]>,
         throughput: Option<&[[f32; 4]]>,
     ) -> Result<SpecularDistanceJob, RaySceneError> {
-        scene.validate_device(&self.device)?;
+        scene.validate_triangles(&self.device)?;
         let count = width.checked_mul(height).ok_or(RaySceneError::Capacity)?;
         let limits = self.device.limits();
         let bytes = u64::from(count) * 32;

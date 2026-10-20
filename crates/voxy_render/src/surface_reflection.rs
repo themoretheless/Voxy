@@ -237,7 +237,7 @@ impl SurfaceReflectionJob {
         mode: ReflectionMode<'_>,
     ) -> Result<Self, RaySceneError> {
         primary.validate_device(device)?;
-        scene.validate_device(device)?;
+        scene.validate_triangles(device)?;
         let ReflectionMode {
             seed: ggx_seed,
             pipeline: compiled,

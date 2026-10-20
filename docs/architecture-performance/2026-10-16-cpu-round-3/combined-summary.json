@@ -1,0 +1,36 @@
+{
+  "rounds": 10,
+  "metric": "median of ten per-run CPU p50 values, both complete series retained; not frame p99",
+  "summary": [
+    {
+      "case": "history_change_large",
+      "before_p50_us": 884.5415,
+      "after_p50_us": 883.5205000000001,
+      "ratio": 0.9988457296802921
+    },
+    {
+      "case": "history_change_small",
+      "before_p50_us": 0.0495605,
+      "after_p50_us": 0.050455,
+      "ratio": 1.018048647612514
+    },
+    {
+      "case": "history_repeat_large",
+      "before_p50_us": 883.4375,
+      "after_p50_us": 0.042,
+      "ratio": 4.754156349487089e-05
+    },
+    {
+      "case": "palette_1",
+      "before_p50_us": 1.630211,
+      "after_p50_us": 0.9798205,
+      "ratio": 0.6010390679488729
+    },
+    {
+      "case": "palette_2",
+      "before_p50_us": 3.3343125000000002,
+      "after_p50_us": 1.8652345,
+      "ratio": 0.5594060244803088
+    }
+  ]
+}

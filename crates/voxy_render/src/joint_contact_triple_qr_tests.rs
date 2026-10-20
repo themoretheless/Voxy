@@ -952,14 +952,31 @@ fn gpu_triple_batched_independent_operators() {
 #[test]
 #[ignore = "requires a real GPU; retain a coefficient component below an f64 ulp"]
 fn gpu_triple_expanded_input_retains_low_component() {
-    let low=2f64.powi(-60);
-    let input=ExperimentalTripleActiveContactInput::new_expanded(&[vec![[1.,low]]],&[1.],2f64.powi(-65)).unwrap();
-    let words:Vec<_>=input.bytes().chunks_exact(4).map(|b|u32::from_le_bytes(b.try_into().unwrap())).collect();
-    let output=dispatch_shader(&words,&ExperimentalTripleActiveContactInput::parallel_shader_source());
-    let candidate=input.expanded_candidate(bytemuck::cast_slice(&output)).unwrap();
-    let (words,scales)=candidate.coordinates().clone().into_parts();
-    let parts=words[0].map(|v|f64::from(f32::from_bits(v)));
-    assert_eq!(parts[0]*scales[0]*scales[1],1.);
-    let tail=(parts[1]+parts[2])*scales[0]*scales[1];
-    assert!(tail<0. && (tail+low).abs()<low*1e-6,"coordinate tail was lost: {tail:e}");
+    let low = 2f64.powi(-60);
+    let input = ExperimentalTripleActiveContactInput::new_expanded(
+        &[vec![[1., low]]],
+        &[1.],
+        2f64.powi(-65),
+    )
+    .unwrap();
+    let words: Vec<_> = input
+        .bytes()
+        .chunks_exact(4)
+        .map(|b| u32::from_le_bytes(b.try_into().unwrap()))
+        .collect();
+    let output = dispatch_shader(
+        &words,
+        &ExperimentalTripleActiveContactInput::parallel_shader_source(),
+    );
+    let candidate = input
+        .expanded_candidate(bytemuck::cast_slice(&output))
+        .unwrap();
+    let (words, scales) = candidate.coordinates().clone().into_parts();
+    let parts = words[0].map(|v| f64::from(f32::from_bits(v)));
+    assert_eq!(parts[0] * scales[0] * scales[1], 1.);
+    let tail = (parts[1] + parts[2]) * scales[0] * scales[1];
+    assert!(
+        tail < 0. && (tail + low).abs() < low * 1e-6,
+        "coordinate tail was lost: {tail:e}"
+    );
 }

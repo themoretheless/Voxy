@@ -6,7 +6,10 @@
 const SAMPLES: u32 = 4096;
 
 fn hammersley(i: u32, n: u32) -> (f32, f32) {
-    (i as f32 / n as f32, i.reverse_bits() as f32 * 2.328_306_4e-10)
+    (
+        i as f32 / n as f32,
+        i.reverse_bits() as f32 * 2.328_306_4e-10,
+    )
 }
 
 /// Returns (scale, bias) with single-scatter albedo Ess = scale + bias.
@@ -48,11 +51,17 @@ fn multiscatter_specular_ibl(f0: f32, (s, b): (f32, f32), radiance: f32, irradia
 
 #[test]
 fn shared_bsdf_shader_is_valid() {
-    let source = concat!(include_str!("../src/bsdf.wgsl"), "@compute @workgroup_size(1) fn main() {}");
+    let source = concat!(
+        include_str!("../src/bsdf.wgsl"),
+        "@compute @workgroup_size(1) fn main() {}"
+    );
     let module = naga::front::wgsl::parse_str(source).unwrap();
-    naga::valid::Validator::new(naga::valid::ValidationFlags::all(), naga::valid::Capabilities::all())
-        .validate(&module)
-        .unwrap();
+    naga::valid::Validator::new(
+        naga::valid::ValidationFlags::all(),
+        naga::valid::Capabilities::all(),
+    )
+    .validate(&module)
+    .unwrap();
 }
 
 #[test]

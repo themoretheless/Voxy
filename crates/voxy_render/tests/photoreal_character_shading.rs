@@ -52,7 +52,10 @@ fn evaluate(entry_body: &str, outputs: usize) -> Option<Vec<f32>> {
     let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
         label: None,
         layout: &pipeline.get_bind_group_layout(0),
-        entries: &[wgpu::BindGroupEntry { binding: 0, resource: storage.as_entire_binding() }],
+        entries: &[wgpu::BindGroupEntry {
+            binding: 0,
+            resource: storage.as_entire_binding(),
+        }],
     });
     let mut encoder = device.create_command_encoder(&Default::default());
     {

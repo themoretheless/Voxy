@@ -1,0 +1,26 @@
+
+running 1 test
+COAT_PAIR,1,before,false,11.667000
+COAT_PAIR,1,after,false,12.208000
+COAT_PAIR,2,after,false,22.042000
+COAT_PAIR,2,before,false,22.041000
+COAT_PAIR,3,before,false,11.167000
+COAT_PAIR,3,after,false,11.083000
+COAT_PAIR,4,after,false,11.000000
+COAT_PAIR,4,before,false,12.291000
+COAT_PAIR,5,before,false,11.291000
+COAT_PAIR,5,after,false,11.041000
+COAT_PAIR,1,before,true,12.792000
+COAT_PAIR,1,after,true,11.542000
+COAT_PAIR,2,after,true,11.625000
+COAT_PAIR,2,before,true,11.708000
+COAT_PAIR,3,before,true,11.709000
+COAT_PAIR,3,after,true,12.833000
+COAT_PAIR,4,after,true,12.708000
+COAT_PAIR,4,before,true,12.125000
+COAT_PAIR,5,before,true,11.667000
+COAT_PAIR,5,after,true,11.541000
+test animals::fur::frame_cache_tests::paired_coat_cpu_bench ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 45 filtered out; finished in 5.94s
+

@@ -1,0 +1,62 @@
+    Blocking waiting for file lock on build directory
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+   --> crates/voxy_render/src/archive_scene.rs:954:19
+    |
+954 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+    |                   ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+   --> crates/voxy_render/src/archive_scene.rs:955:25
+    |
+955 |                 * Mat4::look_at_rh(centre + sun * extent * 2., centre, Vec3::Y);
+    |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1166:36
+     |
+1166 |         self.shadow_matrix = Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                                    ^^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1167:21
+     |
+1167 |             * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+     |                     ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1393:24
+     |
+1393 |         let vp = Mat4::perspective_rh(
+     |                        ^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1398:19
+     |
+1398 |         ) * Mat4::look_at_rh(eye, eye + direction, self.camera_up);
+     |                   ^^^^^^^^^^
+
+warning: associated function `levels` is never used
+   --> crates/voxy_render/src/bloom.rs:158:12
+    |
+ 18 | impl Bloom {
+    | ---------- associated function in this implementation
+...
+158 |     pub fn levels() -> f32 {
+    |            ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_render` (lib test) generated 7 warnings
+    Finished `release` profile [optimized] target(s) in 48.82s
+     Running unittests src/lib.rs (target/release/deps/voxy_render-2c5ac7892e86d51e)
+
+running 3 tests
+test skinned::temporal_admission_tests::paired_temporal_cpu_bench ... ignored, manual CPU changing-pose paired benchmark
+test skinned::temporal_admission_tests::blended_weight_changes_and_cancellation_keep_temporal_contract ... ok
+test skinned::temporal_admission_tests::temporal_cache_matches_original_positions_and_errors ... ok
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 359 filtered out; finished in 0.00s
+

@@ -93,3 +93,27 @@ and the long coat reads as sparse procedural fibres rather than a finished groom
 The simulation is bounded body collision plus guide dynamics and foot IK; it
 is not full articulated animal physics or full fur collision. These limitations
 remain open despite successful runtime checks.
+
+
+## Photo-guided anatomy revision
+
+See `photo-reference-review.md` for photographs actually viewed and the open
+Labrador model inspected in its interactive viewer. The permissively licensed
+cartoon cat was rejected. No external model geometry or photo texture is used.
+The continuous loft field now uses the nearest centreline section with shared
+interpolated frames; the previous rounded-section union inflated the outline.
+Feline face sections, shared eye/nose landmarks, a triangular nasal planum,
+rib depth, ear shape and tail taper were revised.
+
+```sh
+target/release/voxy_app --animals-check --voxel-plants --animal-clay --animal-side --animals-output artifacts/animal-photo-study/latest/clay-side
+```
+
+`--animal-clay` is an inspection mode: body and digit surfaces are neutral and
+rendered coat fibres are omitted. Eye/nose/whisker features and physical guide
+updates remain active. It is not a separate gameplay asset or a fur-physics
+qualification by itself. The ordinary runs render fur on the same new surfaces.
+
+The current release animal tests pass (7), and the model tests pass (4). Native
+run evidence is kept under `artifacts/animal-photo-study/latest/`, separately
+from older images. Visual realism remains a separate, unmet acceptance target.

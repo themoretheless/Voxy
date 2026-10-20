@@ -1,0 +1,43 @@
+Voxy profile enabled: Profile { scenario: Water, output: "docs/architecture-performance/2026-10-15-frame-profile/baseline/water.csv", warmup: 10s, duration: 60s, start: None, previous: None, samples: [], gpu_samples: [], completed: Cell { value: false } }
+Voxy GPU: Apple M4 Max (Metal), 9 chunks, 1074 greedy quads
+Native vegetation: 13 seeded plants, 4 shared mesh variants
+Voxy water activation: 8217 cells
+Voxy loaded in 4.18 seconds
+Voxy startup frame deferred: SkippedOccluded
+Voxy first voxel frame presented (Presented)
+Voxy autopilot destroyed natural water bed at VoxelPos { x: -19, y: 4, z: 20 }
+Voxy background rebuild: 2.11ms (4 chunks)
+Voxy background rebuild: 2.51ms (4 chunks)
+Voxy background rebuild: 2.19ms (4 chunks)
+Voxy background rebuild: 2.14ms (4 chunks)
+Voxy background rebuild: 3.82ms (4 chunks)
+Voxy background rebuild: 3.36ms (4 chunks)
+Voxy background rebuild: 4.61ms (5 chunks)
+Voxy background rebuild: 4.19ms (5 chunks)
+Voxy background rebuild: 4.15ms (5 chunks)
+Voxy background rebuild: 4.32ms (5 chunks)
+Voxy background rebuild: 4.79ms (5 chunks)
+Voxy background rebuild: 4.32ms (5 chunks)
+Voxy background rebuild: 3.99ms (5 chunks)
+Voxy background rebuild: 2.83ms (5 chunks)
+Voxy background rebuild: 2.68ms (5 chunks)
+Voxy background rebuild: 4.42ms (5 chunks)
+Voxy background rebuild: 2.62ms (5 chunks)
+Voxy background rebuild: 2.36ms (5 chunks)
+Voxy background rebuild: 3.84ms (5 chunks)
+Voxy background rebuild: 4.03ms (5 chunks)
+Voxy background rebuild: 7.45ms (5 chunks)
+Voxy background rebuild: 5.55ms (5 chunks)
+Voxy background rebuild: 6.26ms (5 chunks)
+Voxy background rebuild: 4.95ms (5 chunks)
+Voxy background rebuild: 4.49ms (5 chunks)
+Voxy background rebuild: 4.90ms (5 chunks)
+Voxy background rebuild: 4.50ms (5 chunks)
+Voxy background rebuild: 4.65ms (5 chunks)
+Voxy background rebuild: 4.10ms (5 chunks)
+Voxy background rebuild: 4.29ms (5 chunks)
+Voxy background rebuild: 4.01ms (5 chunks)
+Voxy background rebuild: 3.61ms (5 chunks)
+Voxy background rebuild: 4.22ms (5 chunks)
+Voxy background rebuild: 3.51ms (5 chunks)
+Error: "frame profile interrupted before report completion"

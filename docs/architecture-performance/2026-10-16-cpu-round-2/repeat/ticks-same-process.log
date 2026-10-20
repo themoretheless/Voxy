@@ -1,0 +1,26 @@
+
+running 1 test
+TICK_PAIR,1,before,false,17.250,19.500,5ca05dbb7e4c8c2b
+TICK_PAIR,1,after,false,12.875,15.542,5ca05dbb7e4c8c2b
+TICK_PAIR,2,before,false,16.167,28.917,5ca05dbb7e4c8c2b
+TICK_PAIR,2,after,false,12.750,14.834,5ca05dbb7e4c8c2b
+TICK_PAIR,3,before,false,17.250,20.458,5ca05dbb7e4c8c2b
+TICK_PAIR,3,after,false,12.750,14.875,5ca05dbb7e4c8c2b
+TICK_PAIR,4,before,false,17.000,18.875,5ca05dbb7e4c8c2b
+TICK_PAIR,4,after,false,13.000,15.084,5ca05dbb7e4c8c2b
+TICK_PAIR,5,before,false,15.875,22.625,5ca05dbb7e4c8c2b
+TICK_PAIR,5,after,false,12.833,15.042,5ca05dbb7e4c8c2b
+TICK_PAIR,1,before,true,15.542,17.666,6583c50245d4272c
+TICK_PAIR,1,after,true,12.750,15.042,6583c50245d4272c
+TICK_PAIR,2,before,true,15.708,18.125,6583c50245d4272c
+TICK_PAIR,2,after,true,12.583,15.041,6583c50245d4272c
+TICK_PAIR,3,before,true,15.667,17.875,6583c50245d4272c
+TICK_PAIR,3,after,true,12.542,14.708,6583c50245d4272c
+TICK_PAIR,4,before,true,15.625,17.958,6583c50245d4272c
+TICK_PAIR,4,after,true,12.625,15.166,6583c50245d4272c
+TICK_PAIR,5,before,true,16.709,19.000,6583c50245d4272c
+TICK_PAIR,5,after,true,12.667,14.959,6583c50245d4272c
+test animals::tests::paired_transaction_cpu_bench ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 41 filtered out; finished in 1.46s
+

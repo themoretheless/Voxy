@@ -1,0 +1,36 @@
+
+running 1 test
+HISTORY_PAIR,1,before,repeat_large,821.292000
+HISTORY_PAIR,1,after,repeat_large,0.042000
+HISTORY_PAIR,2,after,repeat_large,0.042000
+HISTORY_PAIR,2,before,repeat_large,822.208000
+HISTORY_PAIR,3,before,repeat_large,826.084000
+HISTORY_PAIR,3,after,repeat_large,0.042000
+HISTORY_PAIR,4,after,repeat_large,0.042000
+HISTORY_PAIR,4,before,repeat_large,882.000000
+HISTORY_PAIR,5,before,repeat_large,881.750000
+HISTORY_PAIR,5,after,repeat_large,0.041000
+HISTORY_PAIR,1,before,change_large,882.292000
+HISTORY_PAIR,1,after,change_large,1390.959000
+HISTORY_PAIR,2,after,change_large,873.292000
+HISTORY_PAIR,2,before,change_large,884.959000
+HISTORY_PAIR,3,before,change_large,868.667000
+HISTORY_PAIR,3,after,change_large,854.083000
+HISTORY_PAIR,4,after,change_large,881.666000
+HISTORY_PAIR,4,before,change_large,837.709000
+HISTORY_PAIR,5,before,change_large,882.083000
+HISTORY_PAIR,5,after,change_large,815.708000
+HISTORY_PAIR,1,before,change_small,0.049641
+HISTORY_PAIR,1,after,change_small,0.050617
+HISTORY_PAIR,2,after,change_small,0.050621
+HISTORY_PAIR,2,before,change_small,0.049480
+HISTORY_PAIR,3,before,change_small,0.049480
+HISTORY_PAIR,3,after,change_small,0.050617
+HISTORY_PAIR,4,after,change_small,0.050617
+HISTORY_PAIR,4,before,change_small,0.048828
+HISTORY_PAIR,5,before,change_small,0.048828
+HISTORY_PAIR,5,after,change_small,0.050617
+test skinned_motion::admission_cache_tests::paired_history_cpu_bench ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 358 filtered out; finished in 0.57s
+

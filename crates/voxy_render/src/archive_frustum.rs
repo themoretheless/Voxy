@@ -43,19 +43,23 @@ impl ArchiveFrustumGroups {
         }
     }
 }
-fn visible(g:&Group,planes:&[(Vec4,f32);6])->[u32;4] {
+fn visible(g: &Group, planes: &[(Vec4, f32); 6]) -> [u32; 4] {
     // glam selects the native SIMD backend through its safe vector API. Keep
     // multiply/add separate to match the scalar expression's rounding sequence.
-    let x=Vec4::from_array(g.x);let y=Vec4::from_array(g.y);let z=Vec4::from_array(g.z);let radius=Vec4::from_array(g.radius);
-    let mut keep=Vec4::ONE.cmpge(Vec4::ZERO);
-    for &(p,length) in planes {
-        let xy=x*p.x+y*p.y;
-        let xyz=xy+z*p.z;
-        let distance=xyz+Vec4::splat(p.w);
-        let cutoff=(-radius)*length;
+    let x = Vec4::from_array(g.x);
+    let y = Vec4::from_array(g.y);
+    let z = Vec4::from_array(g.z);
+    let radius = Vec4::from_array(g.radius);
+    let mut keep = Vec4::ONE.cmpge(Vec4::ZERO);
+    for &(p, length) in planes {
+        let xy = x * p.x + y * p.y;
+        let xyz = xy + z * p.z;
+        let distance = xyz + Vec4::splat(p.w);
+        let cutoff = (-radius) * length;
         keep &= distance.cmpge(cutoff);
     }
-    let mask=keep.bitmask();std::array::from_fn(|i|if mask&(1<<i)!=0 {u32::MAX}else{0})
+    let mask = keep.bitmask();
+    std::array::from_fn(|i| if mask & (1 << i) != 0 { u32::MAX } else { 0 })
 }
 #[cfg(test)]
 mod tests {

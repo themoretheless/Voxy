@@ -1,0 +1,43 @@
+{
+  "binary_sha256": {
+    "voxy-cpu-pose-before": "db4332ccdbc7d99026cb70f3d058193b32fca35798f7470239ad456cece492ae",
+    "voxy-strand-before": "2afeadcbbd9486250f0a009278212722bb8dd730034e36d32ffc0aa4ae31b620",
+    "voxy-cpu-pose-after": "323558b8ae44d144c27d244eb96c139076c5d1ccfef327e7373017a8a984362e",
+    "voxy-strand-after": "ec0d38cf675e3cf5a8afbee14cbc13cfccd9cd43efce41e0ba52225f60cb932d"
+  },
+  "rounds": 5,
+  "summary": [
+    {
+      "kind": "pose",
+      "layout": "coherent",
+      "before": 2717.583,
+      "after": 647.0,
+      "ratio": 0.23807920494056667,
+      "checksum_identical": null
+    },
+    {
+      "kind": "pose",
+      "layout": "alternating",
+      "before": 2715.291,
+      "after": 2728.208,
+      "ratio": 1.0047571328450615,
+      "checksum_identical": null
+    },
+    {
+      "kind": "strand",
+      "layout": "3",
+      "before": 34.583,
+      "after": 20.5,
+      "ratio": 0.592776797848654,
+      "checksum_identical": true
+    },
+    {
+      "kind": "strand",
+      "layout": "32",
+      "before": 397.0,
+      "after": 338.917,
+      "ratio": 0.8536952141057934,
+      "checksum_identical": true
+    }
+  ]
+}

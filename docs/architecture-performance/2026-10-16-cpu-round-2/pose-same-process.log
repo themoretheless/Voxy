@@ -1,0 +1,36 @@
+
+running 1 test
+KERNEL_PAIR,1,before,coherent,489.084
+KERNEL_PAIR,1,after,coherent,489.792
+KERNEL_PAIR,2,before,coherent,487.250
+KERNEL_PAIR,2,after,coherent,489.542
+KERNEL_PAIR,3,before,coherent,489.167
+KERNEL_PAIR,3,after,coherent,494.000
+KERNEL_PAIR,4,before,coherent,490.458
+KERNEL_PAIR,4,after,coherent,492.709
+KERNEL_PAIR,5,before,coherent,498.083
+KERNEL_PAIR,5,after,coherent,498.000
+KERNEL_PAIR,1,before,alternating,2257.292
+KERNEL_PAIR,1,after,alternating,2245.750
+KERNEL_PAIR,2,before,alternating,2307.333
+KERNEL_PAIR,2,after,alternating,2256.459
+KERNEL_PAIR,3,before,alternating,2261.041
+KERNEL_PAIR,3,after,alternating,2252.125
+KERNEL_PAIR,4,before,alternating,2240.583
+KERNEL_PAIR,4,after,alternating,2212.208
+KERNEL_PAIR,5,before,alternating,2217.125
+KERNEL_PAIR,5,after,alternating,2216.125
+KERNEL_PAIR,1,before,mixed_quarter,2224.833
+KERNEL_PAIR,1,after,mixed_quarter,1755.708
+KERNEL_PAIR,2,before,mixed_quarter,2242.542
+KERNEL_PAIR,2,after,mixed_quarter,1791.333
+KERNEL_PAIR,3,before,mixed_quarter,2257.291
+KERNEL_PAIR,3,after,mixed_quarter,1777.959
+KERNEL_PAIR,4,before,mixed_quarter,2258.750
+KERNEL_PAIR,4,after,mixed_quarter,1783.583
+KERNEL_PAIR,5,before,mixed_quarter,2216.583
+KERNEL_PAIR,5,after,mixed_quarter,1777.375
+test skinned::coherent_pose_tests::paired_cache_policy_cpu_bench ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 340 filtered out; finished in 1.62s
+

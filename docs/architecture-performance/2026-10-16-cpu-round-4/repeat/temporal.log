@@ -1,0 +1,36 @@
+
+running 1 test
+TEMPORAL_PAIR,1,before,coherent,674.500000
+TEMPORAL_PAIR,1,after,coherent,119.625000
+TEMPORAL_PAIR,2,after,coherent,120.708000
+TEMPORAL_PAIR,2,before,coherent,677.875000
+TEMPORAL_PAIR,3,before,coherent,701.250000
+TEMPORAL_PAIR,3,after,coherent,309.292000
+TEMPORAL_PAIR,4,after,coherent,123.209000
+TEMPORAL_PAIR,4,before,coherent,675.958000
+TEMPORAL_PAIR,5,before,coherent,1082.833000
+TEMPORAL_PAIR,5,after,coherent,298.125000
+TEMPORAL_PAIR,1,before,mixed_quarter,714.791000
+TEMPORAL_PAIR,1,after,mixed_quarter,654.000000
+TEMPORAL_PAIR,2,after,mixed_quarter,529.791000
+TEMPORAL_PAIR,2,before,mixed_quarter,698.500000
+TEMPORAL_PAIR,3,before,mixed_quarter,698.209000
+TEMPORAL_PAIR,3,after,mixed_quarter,529.625000
+TEMPORAL_PAIR,4,after,mixed_quarter,529.833000
+TEMPORAL_PAIR,4,before,mixed_quarter,683.500000
+TEMPORAL_PAIR,5,before,mixed_quarter,700.917000
+TEMPORAL_PAIR,5,after,mixed_quarter,512.125000
+TEMPORAL_PAIR,1,before,alternating,693.708000
+TEMPORAL_PAIR,1,after,alternating,699.833000
+TEMPORAL_PAIR,2,after,alternating,676.375000
+TEMPORAL_PAIR,2,before,alternating,702.750000
+TEMPORAL_PAIR,3,before,alternating,675.667000
+TEMPORAL_PAIR,3,after,alternating,679.166000
+TEMPORAL_PAIR,4,after,alternating,697.833000
+TEMPORAL_PAIR,4,before,alternating,674.667000
+TEMPORAL_PAIR,5,before,alternating,674.292000
+TEMPORAL_PAIR,5,after,alternating,678.667000
+test skinned::temporal_admission_tests::paired_temporal_cpu_bench ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 360 filtered out; finished in 3.51s
+

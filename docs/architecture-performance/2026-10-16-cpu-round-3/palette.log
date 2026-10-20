@@ -1,0 +1,26 @@
+
+running 1 test
+PALETTE_PAIR,1,before,1,1.528000
+PALETTE_PAIR,1,after,1,1.007156
+PALETTE_PAIR,2,after,1,1.003250
+PALETTE_PAIR,2,before,1,1.670578
+PALETTE_PAIR,3,before,1,1.649094
+PALETTE_PAIR,3,after,1,1.008469
+PALETTE_PAIR,4,after,1,0.947922
+PALETTE_PAIR,4,before,1,1.621750
+PALETTE_PAIR,5,before,1,1.638672
+PALETTE_PAIR,5,after,1,0.958344
+PALETTE_PAIR,1,before,2,3.375000
+PALETTE_PAIR,1,after,2,1.878266
+PALETTE_PAIR,2,after,2,1.779297
+PALETTE_PAIR,2,before,2,3.438813
+PALETTE_PAIR,3,before,2,3.457031
+PALETTE_PAIR,3,after,2,1.966141
+PALETTE_PAIR,4,after,2,1.935547
+PALETTE_PAIR,4,before,2,3.351562
+PALETTE_PAIR,5,before,2,3.208984
+PALETTE_PAIR,5,after,2,1.962891
+test animals::tests::paired_palette_cpu_bench ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 43 filtered out; finished in 6.07s
+

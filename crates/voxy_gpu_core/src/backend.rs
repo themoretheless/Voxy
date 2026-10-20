@@ -34,6 +34,8 @@ pub struct GraphicsOptions {
     pub force_fallback_adapter: bool,
     /// Requested presentation pacing; the surface's default when unsupported.
     pub present: PresentPreference,
+    /// Enable optional timestamp queries for frame profiling.
+    pub profile_timestamps: bool,
 }
 
 impl Default for GraphicsOptions {
@@ -43,6 +45,7 @@ impl Default for GraphicsOptions {
             power_preference: wgpu::PowerPreference::HighPerformance,
             force_fallback_adapter: false,
             present: PresentPreference::Default,
+            profile_timestamps: false,
         }
     }
 }

@@ -1,0 +1,128 @@
+    Checking voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Checking voxy_cuda v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_cuda)
+    Checking voxy_gpu v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu)
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+   --> crates/voxy_render/src/archive_scene.rs:953:19
+    |
+953 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+    |                   ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+   --> crates/voxy_render/src/archive_scene.rs:954:25
+    |
+954 |                 * Mat4::look_at_rh(centre + sun * extent * 2., centre, Vec3::Y);
+    |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1165:36
+     |
+1165 |         self.shadow_matrix = Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                                    ^^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1166:21
+     |
+1166 |             * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+     |                     ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1390:24
+     |
+1390 |         let vp = Mat4::perspective_rh(
+     |                        ^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1395:19
+     |
+1395 |         ) * Mat4::look_at_rh(eye, eye + direction, self.camera_up);
+     |                   ^^^^^^^^^^
+
+warning: associated function `levels` is never used
+   --> crates/voxy_render/src/bloom.rs:158:12
+    |
+ 18 | impl Bloom {
+    | ---------- associated function in this implementation
+...
+158 |     pub fn levels() -> f32 {
+    |            ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_render` (lib) generated 7 warnings
+    Checking voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Checking voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+    Checking voxy_shell v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_shell)
+    Checking voxy_app v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_app)
+warning: methods `tick` and `palette` are never used
+   --> crates/voxy_app/src/animals.rs:143:12
+    |
+ 52 | impl Companion {
+    | -------------- methods in this implementation
+...
+143 |     pub fn tick(&mut self, world: &World, target: Vec3, dt: f32) -> Result<(), String> {
+    |            ^^^^
+...
+296 |     pub fn palette(&self, actor_inverse: Mat4) -> Result<Vec<Mat4>, String> {
+    |            ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `matrices` is never used
+   --> crates/voxy_app/src/animals/fur.rs:339:12
+    |
+252 | impl CoatDynamics {
+    | ----------------- method in this implementation
+...
+339 |     pub fn matrices(&self, groom: &Groom, pose: &[Mat4; BONES]) -> Vec<Mat4> {
+    |            ^^^^^^^^
+
+warning: method `clear_keyboard` is never used
+   --> crates/voxy_app/src/controls.rs:170:12
+    |
+ 41 | impl InputState {
+    | --------------- method in this implementation
+...
+170 |     pub fn clear_keyboard(&mut self) {
+    |            ^^^^^^^^^^^^^^
+
+warning: struct `WalkCamera` is never constructed
+   --> crates/voxy_app/src/controls.rs:312:12
+    |
+312 | pub struct WalkCamera {
+    |            ^^^^^^^^^^
+
+warning: multiple associated items are never used
+   --> crates/voxy_app/src/controls.rs:321:12
+    |
+320 | impl WalkCamera {
+    | --------------- associated items in this implementation
+321 |     pub fn new(direction: Vec3) -> Self {
+    |            ^^^
+...
+333 |     pub fn desired_distance(self) -> f32 {
+    |            ^^^^^^^^^^^^^^^^
+...
+336 |     pub fn set_distance(&mut self, distance: f32) {
+    |            ^^^^^^^^^^^^
+...
+341 |     pub fn zoom(&mut self, lines: f32) {
+    |            ^^^^
+...
+346 |     pub fn apply_look(&mut self, delta: Vec2) {
+    |            ^^^^^^^^^^
+...
+352 |     pub fn step(&mut self, dt: f32) {
+    |            ^^^^
+...
+360 |     pub fn direction(self) -> Vec3 {
+    |            ^^^^^^^^^
+...
+367 |     pub fn planar_basis(self) -> (Vec3, Vec3) {
+    |            ^^^^^^^^^^^^
+
+warning: `voxy_app` (bin "voxy_app") generated 5 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 16.25s

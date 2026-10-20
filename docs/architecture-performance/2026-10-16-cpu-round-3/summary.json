@@ -1,0 +1,83 @@
+{
+  "rounds": 5,
+  "metric": "median of per-run CPU p50; not application frame p99",
+  "method": "one executable per subsystem; before/after order reverses each pair",
+  "summary": [
+    {
+      "case": "history_change_large",
+      "before_p50_us": 885.833,
+      "after_p50_us": 1802.5,
+      "ratio": 2.0348079152616805,
+      "paired_ratios": [
+        3.1012064667246153,
+        0.9992009777865054,
+        0.9389136691135411,
+        2.0380657540504084,
+        2.819756093981597
+      ]
+    },
+    {
+      "case": "history_change_small",
+      "before_p50_us": 0.049805,
+      "after_p50_us": 0.049965,
+      "ratio": 1.003212528862564,
+      "paired_ratios": [
+        0.42755191976930257,
+        1.0066293429270166,
+        1.0098305835901775,
+        0.9934745507479169,
+        1.00979821303082
+      ]
+    },
+    {
+      "case": "history_repeat_large",
+      "before_p50_us": 885.833,
+      "after_p50_us": 0.042,
+      "ratio": 4.7412999967262456e-05,
+      "paired_ratios": [
+        4.7412999967262456e-05,
+        4.746433112021472e-05,
+        3.515132646041207e-05,
+        4.654384263748442e-05,
+        4.743752647183397e-05
+      ]
+    },
+    {
+      "case": "palette_1",
+      "before_p50_us": 1.638672,
+      "after_p50_us": 1.00325,
+      "ratio": 0.6122335647402287,
+      "paired_ratios": [
+        0.6591335078534031,
+        0.6005406511997644,
+        0.6115291184128983,
+        0.5845056266378912,
+        0.5848296669498227
+      ]
+    },
+    {
+      "case": "palette_2",
+      "before_p50_us": 3.375,
+      "after_p50_us": 1.935547,
+      "ratio": 0.5734954074074073,
+      "paired_ratios": [
+        0.5565232592592593,
+        0.5174160386156502,
+        0.5687368727674122,
+        0.5775059509565987,
+        0.6116861286936924
+      ]
+    }
+  ],
+  "controls_within_3_percent": false,
+  "binaries": {
+    "app": {
+      "path": "/private/tmp/voxy-round3-app-pairs",
+      "sha256": "9b3e237584916c6c4fe5410df073ac72870f28c866b42bcea4f440f6f484670b"
+    },
+    "render": {
+      "path": "/private/tmp/voxy-round3-history-pairs",
+      "sha256": "e435f359b76720ca0d14277740bf6fa60fa948f2b424b3062506ebe671901eea"
+    }
+  }
+}

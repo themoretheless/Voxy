@@ -1,6 +1,7 @@
 //! Original breed anatomy studies. Neutral, stationary surfaces before grooming.
 //! This module intentionally does not depend on the rejected companion prototype.
 mod glb;
+mod ears;
 mod sculpt;
 mod surface;
 use glam::Vec3;
@@ -77,21 +78,21 @@ impl Breed {
                 0.565,
                 0.66,
                 0.125,
-                0.235,
+                0.285,
                 0.55,
-                0.125,
-                0.235,
-                0.105,
+                0.185,
+                0.225,
+                0.095,
                 Ear::Folded { length: 0.105 },
                 0.34,
-                0.037,
+                0.043,
                 0.145,
             ),
             Self::GermanShepherd => (
                 0.625,
                 0.765,
                 0.132,
-                0.255,
+                0.31,
                 0.585,
                 0.125,
                 0.265,
@@ -105,7 +106,7 @@ impl Breed {
                 0.56,
                 0.66,
                 0.122,
-                0.225,
+                0.275,
                 0.548,
                 0.116,
                 0.224,
@@ -119,7 +120,7 @@ impl Breed {
                 0.27,
                 0.37,
                 0.052,
-                0.115,
+                0.143,
                 0.278,
                 0.085,
                 0.079,
@@ -147,11 +148,11 @@ impl Breed {
                 0.345,
                 0.495,
                 0.082,
-                0.161,
+                0.18,
                 0.35,
                 0.105,
-                0.126,
-                0.049,
+                0.112,
+                0.036,
                 Ear::Upright { height: 0.062 },
                 0.40,
                 0.026,
@@ -202,6 +203,61 @@ pub struct Landmark {
     pub position: Vec3,
 }
 impl BreedAnatomy {
+    #[must_use]
+    pub fn head_origin(&self) -> Vec3 {
+        let cat = self.breed.species() == Species::Cat;
+        Vec3::new(
+            0.0,
+            self.shoulder_height + self.neck_length * if cat { 0.15 } else { 0.55 },
+            self.trunk_length * 0.36 + self.neck_length * if cat { 0.75 } else { 0.48 },
+        )
+    }
+    #[must_use]
+    pub fn eye_center(&self, side: f32) -> Vec3 {
+        let skull = self.head_length - self.muzzle_length;
+        let cat = self.breed.species() == Species::Cat;
+        let provisional=self.head_origin()
+            + Vec3::new(
+                side * self.skull_width * if cat { 0.29 } else { 0.32 },
+                skull * 0.08,
+                skull * if cat { 0.87 } else { 0.85 },
+            );
+        sculpt::eye_anchor(*self,provisional,self.eye_normal(side))
+    }
+    #[must_use]
+    pub fn eye_normal(&self, side: f32) -> Vec3 {
+        if self.breed.species() == Species::Cat {
+            Vec3::new(side * 0.35, 0.07, 0.94).normalize()
+        } else {
+            Vec3::new(side * 0.68, 0.07, 0.73).normalize()
+        }
+    }
+    #[must_use]
+    pub fn eye_radius(&self) -> f32 {
+        self.skull_width * if self.breed.species() == Species::Cat { 0.09 } else { 0.072 }
+    }
+    #[must_use]
+    pub fn digit_tip(&self,side:f32,front:bool,digit:usize) -> Vec3 {
+        let paw=self.paw_half_width;
+        let length=if digit==1 || digit==2 {1.45}else{1.30};
+        Vec3::new(side*self.rib_half_width*0.68+(digit as f32-1.5)*paw*0.42,
+            paw*0.48,(if front {1.}else{-1.})*self.trunk_length*0.36+paw*length)
+    }
+    #[must_use]
+    pub fn nose_center(&self) -> Vec3 {
+        let skull = self.head_length - self.muzzle_length;
+        self.head_origin()
+            + Vec3::new(
+                0.0,
+                -skull
+                    * if self.breed.species() == Species::Cat {
+                        0.25
+                    } else {
+                        0.22
+                    },
+                self.head_length + 0.001,
+            )
+    }
     pub fn validate(&self) -> Result<(), String> {
         let dimensions = [
             self.shoulder_height,
@@ -257,11 +313,7 @@ impl BreedAnatomy {
             },
             Landmark {
                 name: "nose",
-                position: Vec3::new(
-                    0.0,
-                    h + self.neck_length * 0.55,
-                    front + self.neck_length * 0.48 + self.head_length,
-                ),
+                position: self.nose_center(),
             },
             Landmark {
                 name: "left-front-paw",
@@ -350,6 +402,20 @@ mod tests {
         let gallery = gallery_glb().unwrap();
         let model = crate::ModelAsset::parse(&gallery, &[], crate::ModelLimits::default()).unwrap();
         assert_eq!(model.primitives.len(), 6);
+    }
+    #[test]
+    fn face_landmarks_keep_the_feline_muzzle_short() {
+        for breed in Breed::ALL {
+            let a = breed.anatomy();
+            let eye = a.eye_center(1.0);
+            let nose = a.nose_center();
+            let forward = nose.z - eye.z;
+            assert!(forward > 0.0);
+            if breed.species() == Species::Cat {
+                assert!(forward < a.skull_width * 0.55);
+            }
+            assert!((eye.x + a.eye_center(-1.0).x).abs() < 1e-7);
+        }
     }
     #[test]
     fn invalid_profiles_fail_before_mesh_generation() {

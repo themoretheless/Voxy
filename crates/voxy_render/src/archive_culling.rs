@@ -129,9 +129,23 @@ impl ArchiveInstanceCulling {
         });
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("full precision stable frustum compaction"),
-            source: wgpu::ShaderSource::Wgsl(if device.features().contains(wgpu::Features::SUBGROUP) && std::env::var_os("VOXY_STREET_SUBGROUP_CULLING").is_some() {
-                concat!(include_str!("archive_culling.wgsl"),include_str!("archive_culling_subgroup.wgsl")).into()
-            } else {concat!(include_str!("archive_culling.wgsl"),include_str!("archive_culling_mark.wgsl")).into()}),
+            source: wgpu::ShaderSource::Wgsl(
+                if device.features().contains(wgpu::Features::SUBGROUP)
+                    && std::env::var_os("VOXY_STREET_SUBGROUP_CULLING").is_some()
+                {
+                    concat!(
+                        include_str!("archive_culling.wgsl"),
+                        include_str!("archive_culling_subgroup.wgsl")
+                    )
+                    .into()
+                } else {
+                    concat!(
+                        include_str!("archive_culling.wgsl"),
+                        include_str!("archive_culling_mark.wgsl")
+                    )
+                    .into()
+                },
+            ),
         });
         let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,

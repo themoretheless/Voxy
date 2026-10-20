@@ -1,0 +1,26 @@
+
+running 21 tests
+test renderer::skinned_lod::tests::gpu_skeletal_lod_pose_switches_indices_and_preserves_shared_streams ... ignored, requires real GPU; explicit skeletal LOD color/depth acceptance
+test skinned::coherent_pose_tests::paired_cache_policy_cpu_bench ... ignored, manual paired CPU kernel benchmark
+test skinned::temporal_admission_tests::paired_temporal_cpu_bench ... ignored, manual CPU changing-pose paired benchmark
+test skinned::tests::mesh_rejects_bad_weights_joints_and_indices ... ok
+test skinned::tests::unused_joint_indices_are_safe_for_shader_reads ... ok
+test skinned_motion::admission_cache_tests::paired_history_cpu_bench ... ignored, manual CPU paired history benchmark
+test skinned::temporal_admission_tests::blended_weight_changes_and_cancellation_keep_temporal_contract ... ok
+test skinned::correspondence_tests::weighted_poses_models_indices_and_invalid_palettes ... ok
+test skinned::coherent_pose_tests::cached_admission_matches_original_loop_and_normal_bits ... ok
+test skinned::tests::posed_scene_matches_correspondence_and_preserves_indexing ... ok
+test skinned_motion::resident_tests::commit_and_invalid_pose_reset_resident_history ... ok
+test skinned_motion::tests::prepared_frames_commit_captured_pose_and_reject_stale_or_foreign_candidates ... ok
+test skinned_motion::tests::skipped_and_invalid_frames_preserve_pose_and_reset_clears_it ... ok
+test skinned_lod::tests::deformation_recertifies_error_and_two_views_select_independently ... ok
+test skinned_lod::tests::invalid_pose_or_witness_never_changes_last_good_snapshot ... ok
+test skinned_lod::tests::subdivision_archive_binds_exact_source_and_recertifies_deformation ... ok
+test skinned::temporal_admission_tests::temporal_cache_matches_original_positions_and_errors ... ok
+test skinned_motion::admission_cache_tests::reused_pose_keeps_generation_and_rejection_semantics ... ok
+test skinned_lod::tests::skeletal_gpu_lod_budget_shared_streams_and_topology_history ... ok
+test skinned::coherent_pose_tests::parallel_admission_matches_sequential_first_error ... ok
+test skinned::coherent_pose_tests::grouped_admission_matches_per_vertex_scan ... ok
+
+test result: ok. 17 passed; 0 failed; 4 ignored; 0 measured; 341 filtered out; finished in 0.30s
+

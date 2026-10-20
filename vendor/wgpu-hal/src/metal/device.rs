@@ -271,11 +271,16 @@ impl super::Device {
 
                 let options = MTLCompileOptions::new();
                 options.setLanguageVersion(self.shared.private_caps.msl_version);
-                // Voxy's explicit native compute policy: preserve numerical geometry
-                // and solver arithmetic. Render-stage compilation remains unchanged.
-                // The compatibility setter supports older Metal deployment targets.
+                // Compensated ray arithmetic needs the same numerical contract
+                // in compute and fragment stages. Fast reassociation/contraction
+                // can destroy the low residuals; enabling paired DDA explicitly
+                // opts its render pipeline into this existing precise policy.
+                // Unrelated render pipelines retain their configured behaviour.
                 #[cfg(feature = "metal-safe-compute")]
-                if stage_bit == wgt::ShaderStages::COMPUTE {
+                let precise_math = stage_bit == wgt::ShaderStages::COMPUTE
+                    || stage.constants.get("ARCHIVE_PAIRED_DDA").is_some_and(|v| *v != 0.0);
+                #[cfg(feature = "metal-safe-compute")]
+                if precise_math {
                     #[allow(deprecated)]
                     options.setFastMathEnabled(false);
                 }
@@ -288,7 +293,7 @@ impl super::Device {
                 // Safe math still permits contraction within an expression. Native
                 // geometry kernels specify fused operations explicitly when needed.
                 #[cfg(feature = "metal-safe-compute")]
-                let source = if stage_bit == wgt::ShaderStages::COMPUTE {
+                let source = if precise_math {
                     format!("#pragma STDC FP_CONTRACT OFF\n{source}")
                 } else {
                     source
@@ -1887,6 +1892,17 @@ impl crate::Device for super::Device {
                         format!("new_compute_pipeline_state: {e:?}"),
                     )
                 })?;
+
+            // Native properties are observations, not a hardware occupancy estimate.
+            if std::env::var("WGPU_METAL_COMPUTE_AUDIT").as_deref() == Ok("1") {
+                let size = cs_info.raw_wg_size;
+                let local_threads = size.width.checked_mul(size.height)
+                    .and_then(|v| v.checked_mul(size.depth)).unwrap_or(0);
+                // Compatibility fields for the archived compiler-bound experiment.
+                std::eprintln!("WGPU_METAL_COMPUTE_AUDIT entry={} local={} requested=0 applied=0 native_max={} execution_width={} static_shared={}",
+                    desc.stage.entry_point, local_threads, raw.maxTotalThreadsPerThreadgroup(),
+                    raw.threadExecutionWidth(), raw.staticThreadgroupMemoryLength());
+            }
 
             self.counters.compute_pipelines.add(1);
 

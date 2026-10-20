@@ -1,0 +1,10 @@
+
+running 1 test
+CPU_PAIR,tick_false,17.667,765f7b05dbc9e6a6
+CPU_PAIR,tick_true,17.500,c5fd4d4492632926
+CPU_META,vertices,1277550,geometry,8a4469d46bf376279949e925e63bbd88e3e50cd706c486bfb6ff303910849fed
+CPU_PAIR,real_pose,6288.375,valid
+test animals::tests::cpu_companion_tick_and_pose_bench ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 40 filtered out; finished in 5.93s
+
