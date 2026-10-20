@@ -456,3 +456,6 @@ pub use supersampling::SupersampleResolve;
 pub mod archive_depth_bounds;
 
 mod archive_gpu_timing;
+
+mod shared_upload;
+pub use shared_upload::SharedUploadRing;
