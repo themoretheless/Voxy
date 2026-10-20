@@ -165,6 +165,37 @@ impl SkinnedMotionHistory {
     /// # Errors
     /// Rejects invalid palettes/models or overflowing skinned positions.
     pub fn presented(&mut self, joints: &[Mat4], model: Mat4) -> Result<(), SkinnedUploadError> {
+        // Only immutable geometry and the exact previously admitted pose can reuse
+        // admission. Keep small meshes on the original path, including changed poses.
+        let unchanged = self.mesh.vertices().len() >= 1024
+            && self.presented.as_ref().is_some_and(|pose| {
+                bytemuck::bytes_of(&pose.model) == bytemuck::bytes_of(&model)
+                    && bytemuck::cast_slice::<Mat4, u8>(&pose.joints)
+                        == bytemuck::cast_slice::<Mat4, u8>(joints)
+            });
+        if unchanged {
+            self.generation = std::sync::Arc::new(());
+            return Ok(());
+        }
+        self.mesh.validate_temporal_pose(joints, model)?;
+        if let Some(pose) = &mut self.presented {
+            pose.joints.clone_from_slice(joints);
+            pose.model = model;
+        } else {
+            self.presented = Some(Pose {
+                joints: joints.to_vec(),
+                model,
+            });
+        }
+        self.generation = std::sync::Arc::new(());
+        Ok(())
+    }
+    #[cfg(test)]
+    fn presented_reference(
+        &mut self,
+        joints: &[Mat4],
+        model: Mat4,
+    ) -> Result<(), SkinnedUploadError> {
         self.mesh.validate_temporal_pose(joints, model)?;
         if let Some(pose) = &mut self.presented {
             pose.joints.clone_from_slice(joints);
@@ -404,4 +435,133 @@ mod resident_tests {
                 .history_valid
         );
     }
+}
+
+#[cfg(test)]
+mod admission_cache_tests {
+    use super::*;
+    use crate::SkinnedVertex;
+    fn mesh(count: usize) -> SkinnedMesh {
+        SkinnedMesh::new(
+            (0..count)
+                .map(|i| SkinnedVertex {
+                    position: [(i % 71) as f32 * 0.03, 0.2, 0.3],
+                    normal: [0., 1., 0.],
+                    uv: [0.; 2],
+                    joints: [0; 4],
+                    weights: [65535, 0, 0, 0],
+                })
+                .collect(),
+            vec![0, 1, 2],
+            1,
+        )
+        .unwrap()
+    }
+    #[test]
+    fn reused_pose_keeps_generation_and_rejection_semantics() {
+        let mut cached = SkinnedMotionHistory::new(mesh(2048));
+        let mut reference = cached.clone();
+        let joints = [Mat4::IDENTITY];
+        for model in [
+            Mat4::IDENTITY,
+            Mat4::IDENTITY,
+            Mat4::from_translation(glam::Vec3::X),
+            Mat4::from_translation(glam::Vec3::X),
+        ] {
+            assert_eq!(
+                cached.presented(&joints, model),
+                reference.presented_reference(&joints, model)
+            );
+            assert_eq!(
+                cached.presented.as_ref().unwrap().joints,
+                reference.presented.as_ref().unwrap().joints
+            );
+            assert_eq!(
+                cached.presented.as_ref().unwrap().model,
+                reference.presented.as_ref().unwrap().model
+            );
+        }
+        let snapshot = cached
+            .prepare_frame(&joints, Mat4::IDENTITY, [1.; 4])
+            .unwrap();
+        let generation = cached.generation.clone();
+        cached.presented(&joints, Mat4::IDENTITY).unwrap();
+        cached.presented(&joints, Mat4::IDENTITY).unwrap();
+        assert!(!Arc::ptr_eq(&generation, &cached.generation));
+        assert_eq!(
+            cached.presented_frame(&snapshot),
+            Err(SkinnedUploadError::StaleHistory)
+        );
+        let admitted = cached.presented.clone().unwrap();
+        for (palette, model) in [
+            (
+                &[Mat4::from_cols_array(&[f32::NAN; 16])][..],
+                Mat4::IDENTITY,
+            ),
+            (&[][..], Mat4::IDENTITY),
+            (&joints[..], Mat4::from_scale(glam::Vec3::splat(f32::MAX))),
+        ] {
+            let mut reference = cached.clone();
+            let result = cached.presented(palette, model);
+            assert!(result.is_err());
+            assert_eq!(result, reference.presented_reference(palette, model));
+            assert_eq!(cached.presented.as_ref().unwrap().joints, admitted.joints);
+            assert_eq!(cached.presented.as_ref().unwrap().model, admitted.model);
+        }
+        cached.reset();
+        assert!(cached.presented.is_none());
+        cached.presented(&joints, Mat4::IDENTITY).unwrap();
+    }
+    #[test]
+    #[ignore = "manual CPU paired history benchmark"]
+    fn paired_history_cpu_bench() {
+        use std::{hint::black_box, time::Instant};
+        for (name, count, repeated) in [
+            ("repeat_large", 100_000, true),
+            ("change_large", 100_000, false),
+            ("change_small", 3, false),
+        ] {
+            let base = SkinnedMotionHistory::new(mesh(count));
+            let joints = [Mat4::IDENTITY];
+            let batch = if count < 1024 { 256 } else { 1 };
+            for round in 1..=5 {
+                for (variant, reference) in if round % 2 == 1 {
+                    [("before", true), ("after", false)]
+                } else {
+                    [("after", false), ("before", true)]
+                } {
+                    let mut history = base.clone();
+                    let mut samples = Vec::new();
+                    for sample in 0..34 {
+                        let start = Instant::now();
+                        for i in 0..batch {
+                            let model = if repeated {
+                                Mat4::IDENTITY
+                            } else {
+                                Mat4::from_translation(
+                                    glam::Vec3::X * ((sample * batch + i) % 2) as f32,
+                                )
+                            };
+                            if reference {
+                                black_box(
+                                    history
+                                        .presented_reference(black_box(&joints), black_box(model)),
+                                )
+                                .unwrap();
+                            } else {
+                                black_box(history.presented(black_box(&joints), black_box(model)))
+                                    .unwrap();
+                            }
+                        }
+                        if sample >= 3 {
+                            samples.push(start.elapsed().as_secs_f64() * 1e6 / batch as f64);
+                        }
+                    }
+                    samples.sort_by(f64::total_cmp);
+                    println!("HISTORY_PAIR,{round},{variant},{name},{:.6}", samples[15]);
+                }
+            }
+        }
+    }
+    use std::sync::Arc;
 }

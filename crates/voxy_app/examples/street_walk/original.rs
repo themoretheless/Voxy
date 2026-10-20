@@ -1791,6 +1791,7 @@ mod tests {
                 meshes: Vec::new(),
                 triangles: Vec::new(),
                 rng: 11 + case as u64,
+                age_rng: (11 + case as u64) ^ 0x4147_4549_4e47_5f31,
                 lights: Vec::new(),
             };
             let mut kit_ids = Vec::new();
@@ -1845,6 +1846,7 @@ mod tests {
             meshes: Vec::new(),
             triangles: Vec::new(),
             rng: 7,
+            age_rng: 7 ^ 0x4147_4549_4e47_5f31,
             lights: Vec::new(),
         };
         let m = b.material([0.5, 0.5, 0.5], 0.5, 0., 0., 0., 0.);
@@ -1891,7 +1893,7 @@ mod tests {
     }
     #[test]
     fn original_street_is_independent_and_walkable() {
-        let scene = geometry(0x564f5859).unwrap();
+        let scene = geometry(0x564f5859, Ageing::default()).unwrap();
         assert!(scene.archive.is_none() && scene.images.is_empty());
         assert!(scene.materials.len() >= 34 && scene.lights.len() == 16);
         let rendered_triangles: usize = scene

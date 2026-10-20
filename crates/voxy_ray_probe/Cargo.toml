@@ -10,6 +10,7 @@ default = ["face-demo"]
 face-demo = ["dep:voxy_demos"]
 
 [dependencies]
+bytemuck = "1.25.0"
 voxy_demos = { path = "../voxy_demos", optional = true }
 image = { version = "0.25.10", default-features = false, features = ["png"] }
 voxy_render = { path = "../voxy_render" }
@@ -24,7 +25,6 @@ voxy_runtime = { path = "../voxy_runtime" }
 voxy_ui = { path = "../voxy_ui" }
 voxy_ui_winit = { path = "../voxy_ui_winit" }
 winit = "0.30.13"
-bytemuck = "1.25.0"
 
 [lints]
 workspace = true

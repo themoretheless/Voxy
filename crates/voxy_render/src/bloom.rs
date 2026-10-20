@@ -30,12 +30,17 @@ impl Bloom {
             .map(|&(w, h)| {
                 budget.allocate_texture(&wgpu::TextureDescriptor {
                     label: Some("bloom level"),
-                    size: wgpu::Extent3d { width: w, height: h, depth_or_array_layers: 1 },
+                    size: wgpu::Extent3d {
+                        width: w,
+                        height: h,
+                        depth_or_array_layers: 1,
+                    },
                     mip_level_count: 1,
                     sample_count: 1,
                     dimension: wgpu::TextureDimension::D2,
                     format: FORMAT,
-                    usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::RENDER_ATTACHMENT,
+                    usage: wgpu::TextureUsages::TEXTURE_BINDING
+                        | wgpu::TextureUsages::RENDER_ATTACHMENT,
                     view_formats: &[],
                 })
             })
@@ -44,7 +49,12 @@ impl Bloom {
         // Downsample i reads level i-1 (or the source); upsample i reads i+1.
         let uniform = |size: (u32, u32), first: bool| {
             use wgpu::util::DeviceExt;
-            let values = [1. / size.0 as f32, 1. / size.1 as f32, f32::from(u8::from(first)), 0.];
+            let values = [
+                1. / size.0 as f32,
+                1. / size.1 as f32,
+                f32::from(u8::from(first)),
+                0.,
+            ];
             device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("bloom pass parameters"),
                 contents: bytemuck::cast_slice(&values),
@@ -165,7 +175,11 @@ impl Bloom {
         encoder: &mut wgpu::CommandEncoder,
         source: &wgpu::TextureView,
     ) {
-        let views: Vec<_> = self.levels.iter().map(|t| t.create_view(&Default::default())).collect();
+        let views: Vec<_> = self
+            .levels
+            .iter()
+            .map(|t| t.create_view(&Default::default()))
+            .collect();
         let mut pass = |pass_index: usize,
                         pipeline: &wgpu::RenderPipeline,
                         input: &wgpu::TextureView,
@@ -175,9 +189,18 @@ impl Bloom {
                 label: Some("bloom pass"),
                 layout: &self.layout,
                 entries: &[
-                    wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(input) },
-                    wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&self.sampler) },
-                    wgpu::BindGroupEntry { binding: 2, resource: self.params[pass_index].as_entire_binding() },
+                    wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: wgpu::BindingResource::TextureView(input),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 1,
+                        resource: wgpu::BindingResource::Sampler(&self.sampler),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 2,
+                        resource: self.params[pass_index].as_entire_binding(),
+                    },
                 ],
             });
             let mut render = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -186,7 +209,10 @@ impl Bloom {
                     view: output,
                     depth_slice: None,
                     resolve_target: None,
-                    ops: wgpu::Operations { load, store: wgpu::StoreOp::Store },
+                    ops: wgpu::Operations {
+                        load,
+                        store: wgpu::StoreOp::Store,
+                    },
                 })],
                 ..Default::default()
             });
@@ -200,7 +226,13 @@ impl Bloom {
             pass(i, &self.down, &views[i - 1], &views[i], clear);
         }
         for i in (0..LEVELS - 1).rev() {
-            pass(LEVELS + i, &self.up, &views[i + 1], &views[i], wgpu::LoadOp::Load);
+            pass(
+                LEVELS + i,
+                &self.up,
+                &views[i + 1],
+                &views[i],
+                wgpu::LoadOp::Load,
+            );
         }
     }
 }

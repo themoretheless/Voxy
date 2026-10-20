@@ -260,8 +260,11 @@ fn archive_antialiasing_filters_silhouettes_on_metal() {
 
 #[test]
 fn polygon_temporal_shader_and_jitter_are_valid() {
-    let module =
-        naga::front::wgsl::parse_str(concat!(include_str!("../src/display_transform.wgsl"), include_str!("../src/archive_temporal.wgsl"))).unwrap();
+    let module = naga::front::wgsl::parse_str(concat!(
+        include_str!("../src/display_transform.wgsl"),
+        include_str!("../src/archive_temporal.wgsl")
+    ))
+    .unwrap();
     naga::valid::Validator::new(
         naga::valid::ValidationFlags::all(),
         naga::valid::Capabilities::all(),

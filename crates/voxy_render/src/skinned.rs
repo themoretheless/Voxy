@@ -24,6 +24,9 @@ pub struct SkinnedMesh {
     vertices: Arc<[SkinnedVertex]>,
     indices: Arc<[u32]>,
     joint_count: u16,
+    coherent_weights: bool,
+    /// Vertices grouped by identical influences; present only for large meshes.
+    groups: Option<Arc<InfluenceGroups>>,
 }
 
 impl SkinnedMesh {
@@ -81,7 +84,18 @@ impl SkinnedMesh {
                 }
             }
         }
+        // Select once from immutable influences. Mixed companion surfaces benefit
+        // even when only a quarter of neighboring vertices share the same skin.
+        let coherent_weights = vertices
+            .windows(2)
+            .filter(|pair| pair[0].joints == pair[1].joints && pair[0].weights == pair[1].weights)
+            .count()
+            * 4
+            >= vertices.len().saturating_sub(1);
+        let groups = InfluenceGroups::build(&vertices).map(Arc::new);
         Ok(Self {
+            coherent_weights,
+            groups,
             vertices: vertices.into(),
             indices: indices.into(),
             joint_count,
@@ -162,14 +176,50 @@ impl SkinnedMesh {
         model: Mat4,
     ) -> Result<(), SkinnedUploadError> {
         validate_temporal_palette(self, joints, model)?;
-        for vertex in self.vertices.iter() {
-            // The blended palette is identical for the position and normal tests, and
-            // so is its product with the model matrix: both tests read the same product.
-            let world = model * blended_skin(vertex, joints);
-            skinned_position_in(vertex, world)?;
-            skinned_normal_in(vertex, world)?;
+        let vertices: &[SkinnedVertex] = &self.vertices;
+        let workers = if vertices.len() >= PARALLEL_ADMISSION_MIN_VERTICES {
+            std::thread::available_parallelism()
+                .map_or(1, std::num::NonZeroUsize::get)
+                .min(vertices.len() / PARALLEL_ADMISSION_MIN_CHUNK)
+                .max(1)
+        } else {
+            1
+        };
+        // Certified groups prove the pose admissible without reading vertices; an
+        // uncertified pose takes the exact scan below, which yields the first error.
+        if self
+            .groups
+            .as_ref()
+            .is_some_and(|groups| groups.certify(joints, model, workers))
+        {
+            return Ok(());
         }
-        Ok(())
+        if workers <= 1 {
+            return admit_render_vertices(vertices, joints, model, self.coherent_weights);
+        }
+        // Each contiguous chunk reports its first error; the earliest failing chunk
+        // therefore reproduces exactly the error of the sequential vertex-order scan.
+        let chunk = vertices.len().div_ceil(workers);
+        let coherent = self.coherent_weights;
+        std::thread::scope(|scope| {
+            let mut chunks = vertices.chunks(chunk);
+            let first = chunks.next().unwrap_or(&[]);
+            let handles: Vec<_> = chunks
+                .map(|part| {
+                    scope.spawn(move || admit_render_vertices(part, joints, model, coherent))
+                })
+                .collect();
+            let mut result = admit_render_vertices(first, joints, model, coherent);
+            for handle in handles {
+                let part = handle
+                    .join()
+                    .unwrap_or_else(|panic| std::panic::resume_unwind(panic));
+                if result.is_ok() {
+                    result = part;
+                }
+            }
+            result
+        })
     }
 
     /// Scene shading requires an invertible local blended deformation. A
@@ -201,10 +251,7 @@ impl SkinnedMesh {
         model: Mat4,
     ) -> Result<(), SkinnedUploadError> {
         validate_temporal_palette(self, joints, model)?;
-        for vertex in self.vertices.iter() {
-            skinned_position(vertex, joints, model)?;
-        }
-        Ok(())
+        admit_temporal_vertices(&self.vertices, joints, model, self.coherent_weights)
     }
 
     #[doc(hidden)]
@@ -249,6 +296,8 @@ impl SkinnedMesh {
             return Err(SkinnedMeshError::InvalidIndex);
         }
         Ok(Self {
+            coherent_weights: self.coherent_weights,
+            groups: self.groups.clone(),
             vertices: self.vertices.clone(),
             indices,
             joint_count: self.joint_count,
@@ -280,6 +329,8 @@ pub struct GpuSkinnedMesh {
     pub vertex: wgpu::Buffer,
     pub index: wgpu::Buffer,
     pub index_count: u32,
+    pub opaque_ranges: Vec<std::ops::Range<u32>>,
+    pub fibre_ranges: Vec<std::ops::Range<u32>>,
     pub joint_count: usize,
     pub material_layer: u32,
     pub joint_buffer: wgpu::Buffer,
@@ -432,6 +483,7 @@ pub fn upload_skinned(
     mesh.validate_render_pose(joints, model)?;
     let index_count =
         u32::try_from(mesh.indices.len()).map_err(|_| SkinnedUploadError::TooManyIndices)?;
+    let (opaque_ranges, fibre_ranges) = split_fibre_draws(mesh);
     let vertex = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: Some("Voxy skinned vertices"),
         contents: bytemuck::cast_slice(mesh.vertices()),
@@ -470,12 +522,33 @@ pub fn upload_skinned(
         vertex,
         index,
         index_count,
+        opaque_ranges,
+        fibre_ranges,
         joint_count: joints.len(),
         material_layer,
         joint_buffer,
         bind_group,
         object_buffer,
     })
+}
+
+/// Preserve triangle ordering while separating animal fibre materials from skin.
+fn split_fibre_draws(mesh: &SkinnedMesh) -> (Vec<std::ops::Range<u32>>, Vec<std::ops::Range<u32>>) {
+    let mut opaque: Vec<std::ops::Range<u32>> = Vec::new();
+    let mut fibres: Vec<std::ops::Range<u32>> = Vec::new();
+    for (i, triangle) in mesh.indices().chunks_exact(3).enumerate() {
+        let fibre = triangle
+            .iter()
+            .all(|&v| mesh.vertices()[v as usize].uv[1] < -13000.0);
+        let ranges = if fibre { &mut fibres } else { &mut opaque };
+        let start = i as u32 * 3;
+        if let Some(last) = ranges.last_mut().filter(|last| last.end == start) {
+            last.end += 3;
+        } else {
+            ranges.push(start..start + 3);
+        }
+    }
+    (opaque, fibres)
 }
 
 pub(crate) fn validate_palette(
@@ -516,6 +589,38 @@ mod tests {
             joints,
             weights,
         }
+    }
+
+    #[test]
+    fn animal_fibre_ranges_preserve_all_opaque_triangles_and_original_order() {
+        let mut vertices = Vec::new();
+        let mut indices = Vec::new();
+        for flags in [
+            [false, false, false],
+            [true, true, true],
+            [true, true, true],
+            [false, false, false],
+            [true, false, true],
+        ] {
+            for (k, fibre) in flags.into_iter().enumerate() {
+                let mut v = vertex([65535, 0, 0, 0], [0; 4]);
+                v.position = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]][k];
+                v.uv[1] = if fibre { -13860.125 } else { -10850.0 };
+                indices.push(vertices.len() as u32);
+                vertices.push(v);
+            }
+        }
+        let mesh = SkinnedMesh::new(vertices, indices, 1).unwrap();
+        let (opaque, fibres) = split_fibre_draws(&mesh);
+        assert_eq!(opaque, vec![0..3, 9..15]);
+        assert_eq!(fibres, vec![3..9]);
+        let mut covered = opaque
+            .into_iter()
+            .chain(fibres)
+            .flatten()
+            .collect::<Vec<_>>();
+        covered.sort_unstable();
+        assert_eq!(covered, (0..15).collect::<Vec<_>>());
     }
 
     #[test]
@@ -636,6 +741,199 @@ mod correspondence_tests {
     }
 }
 
+/// Below this size thread startup costs more than the sequential admission scan.
+const PARALLEL_ADMISSION_MIN_VERTICES: usize = 131_072;
+/// Smallest per-thread share once admission is split.
+const PARALLEL_ADMISSION_MIN_CHUNK: usize = 32_768;
+
+/// Scaled-determinant floor above which a group's normal transform provably
+/// accepts every authored normal of admissible magnitude. With scaled entries at
+/// most 1, the cofactor matrix is `det * L^-T` and `sigma_max(L) <= 3`, so the exact
+/// transformed normal (input max component exactly 1) has a max-norm of at least
+/// `det / (3 * sqrt 3)`, about 1.9e-4. Rounding of the cross products and the product
+/// is below 1.5e-5 (entries bounded by 6), so the result can neither round to zero
+/// nor overflow. The determinant passed the existing sign-uncertainty test.
+const CERTIFIED_NORMAL_DETERMINANT: f32 = 1.0 / 1024.0;
+
+/// Immutable grouping of vertices by identical (joints, weights). Every vertex in
+/// a group shares one blended model-times-skin matrix and normal transform. A pose
+/// is admitted by certifying each group from conservative per-group bounds, without
+/// reading the vertices. Any uncertified group falls back to the exact per-vertex
+/// scan, so results (including the first error) are unchanged.
+#[derive(Debug)]
+struct InfluenceGroups {
+    /// Distinct influence sets in first-occurrence order.
+    keys: Vec<([u16; 4], [u16; 4])>,
+    /// Largest absolute position component in each group.
+    max_position: Vec<f32>,
+    /// Whether any nonzero authored normal of the group has an inadmissible magnitude.
+    bad_normal: Vec<bool>,
+}
+
+impl InfluenceGroups {
+    /// Groups large meshes whose influence sets repeat at least twice on average.
+    fn build(vertices: &[SkinnedVertex]) -> Option<Self> {
+        if vertices.len() < PARALLEL_ADMISSION_MIN_VERTICES {
+            return None;
+        }
+        let mut lookup = std::collections::HashMap::with_capacity(vertices.len() / 4);
+        let mut keys = Vec::new();
+        let mut max_position: Vec<f32> = Vec::new();
+        let mut bad_normal = Vec::new();
+        for vertex in vertices {
+            let key = (vertex.joints, vertex.weights);
+            let group = *lookup.entry(key).or_insert_with(|| {
+                keys.push(key);
+                max_position.push(0.0);
+                bad_normal.push(false);
+                keys.len() - 1
+            });
+            if keys.len() * 2 > vertices.len() {
+                return None;
+            }
+            let position = glam::Vec3::from_array(vertex.position).abs().max_element();
+            max_position[group] = max_position[group].max(position);
+            let magnitude = glam::Vec3::from_array(vertex.normal).abs().max_element();
+            if magnitude != 0.0
+                && (magnitude <= f32::MIN_POSITIVE || magnitude >= 1.0 / f32::MIN_POSITIVE)
+            {
+                bad_normal[group] = true;
+            }
+        }
+        Some(Self {
+            keys,
+            max_position,
+            bad_normal,
+        })
+    }
+
+    /// Certifies a group for this pose: no vertex can fail position or normal admission.
+    fn certified(&self, group: usize, joints: &[Mat4], model: Mat4) -> bool {
+        if self.bad_normal[group] {
+            return false;
+        }
+        let (group_joints, weights) = self.keys[group];
+        let mut skin = Mat4::ZERO;
+        for (joint, weight) in group_joints.into_iter().zip(weights) {
+            skin += joints[usize::from(joint)] * (f32::from(weight) / 65535.0);
+        }
+        let world = model * skin;
+        // `f32::max` ignores NaN, so finiteness is checked explicitly first.
+        if !world.is_finite() {
+            return false;
+        }
+        // |(world * p)_i| <= W (3P + 1); a margin of 4 absorbs every rounding step.
+        let entries = world
+            .to_cols_array()
+            .into_iter()
+            .map(f32::abs)
+            .fold(0.0, f32::max);
+        let bound = f64::from(entries) * (3.0 * f64::from(self.max_position[group]) + 1.0);
+        if !entries.is_finite() || bound > f64::from(f32::MAX) * 0.25 {
+            return false;
+        }
+        NormalTransform::new(world)
+            .is_ok_and(|normal| normal.determinant >= CERTIFIED_NORMAL_DETERMINANT)
+    }
+
+    /// `true` when every group is certified, so the whole pose is admissible.
+    fn certify(&self, joints: &[Mat4], model: Mat4, workers: usize) -> bool {
+        let groups = self.keys.len();
+        if workers <= 1 {
+            return (0..groups).all(|group| self.certified(group, joints, model));
+        }
+        let chunk = groups.div_ceil(workers).max(1);
+        std::thread::scope(|scope| {
+            let handles: Vec<_> = (chunk..groups)
+                .step_by(chunk)
+                .map(|start| {
+                    let end = (start + chunk).min(groups);
+                    scope.spawn(move || (start..end).all(|g| self.certified(g, joints, model)))
+                })
+                .collect();
+            let mut all = (0..chunk.min(groups)).all(|g| self.certified(g, joints, model));
+            for handle in handles {
+                all &= handle
+                    .join()
+                    .unwrap_or_else(|panic| std::panic::resume_unwind(panic));
+            }
+            all
+        })
+    }
+}
+
+/// Position-only admission keeps temporal semantics: a singular normal transform
+/// is permitted here. Reuse only bit-identical influence sets within this call.
+fn admit_temporal_vertices(
+    vertices: &[SkinnedVertex],
+    joints: &[Mat4],
+    model: Mat4,
+    coherent: bool,
+) -> Result<(), SkinnedUploadError> {
+    if !coherent {
+        for vertex in vertices {
+            skinned_position(vertex, joints, model)?;
+        }
+        return Ok(());
+    }
+    let mut cached: Option<([u16; 4], [u16; 4], Mat4)> = None;
+    for vertex in vertices {
+        let world = if let Some((_, _, world)) = cached
+            .as_ref()
+            .filter(|(indices, weights, _)| *indices == vertex.joints && *weights == vertex.weights)
+        {
+            *world
+        } else {
+            let world = model * blended_skin(vertex, joints);
+            cached = Some((vertex.joints, vertex.weights, world));
+            world
+        };
+        skinned_position_in(vertex, world)?;
+    }
+    Ok(())
+}
+
+/// Sequential render-pose admission of a contiguous vertex range, returning the
+/// first error in vertex order. The coherent path reuses the model-times-skin
+/// matrix and normal transform across consecutive identical influences.
+fn admit_render_vertices(
+    vertices: &[SkinnedVertex],
+    joints: &[Mat4],
+    model: Mat4,
+    coherent: bool,
+) -> Result<(), SkinnedUploadError> {
+    if coherent {
+        let mut cached: Option<([u16; 4], [u16; 4], Mat4, NormalTransform)> = None;
+        for vertex in vertices {
+            let hit = cached.as_ref().filter(|(joints, weights, _, _)| {
+                *joints == vertex.joints && *weights == vertex.weights
+            });
+            let (world, normal) = if let Some((_, _, world, normal)) = hit {
+                (*world, *normal)
+            } else {
+                let world = model * blended_skin(vertex, joints);
+                // Preserve position-before-normal error ordering.
+                skinned_position_in(vertex, world)?;
+                let normal = NormalTransform::new(world)?;
+                cached = Some((vertex.joints, vertex.weights, world, normal));
+                normal.apply(vertex)?;
+                continue;
+            };
+            skinned_position_in(vertex, world)?;
+            normal.apply(vertex)?;
+        }
+        return Ok(());
+    }
+    for vertex in vertices {
+        // The blended palette is identical for the position and normal tests, and
+        // so is its product with the model matrix: both tests read the same product.
+        let world = model * blended_skin(vertex, joints);
+        skinned_position_in(vertex, world)?;
+        skinned_normal_in(vertex, world)?;
+    }
+    Ok(())
+}
+
 fn validate_temporal_palette(
     mesh: &SkinnedMesh,
     joints: &[Mat4],
@@ -743,4 +1041,496 @@ fn skinned_normal_in(vertex: &SkinnedVertex, world: Mat4) -> Result<[f32; 3], Sk
         return Err(SkinnedUploadError::SingularNormalMatrix);
     }
     Ok((transformed / max).normalize().to_array())
+}
+#[derive(Clone, Copy)]
+struct NormalTransform {
+    cofactor: glam::Mat3,
+    sign: f32,
+    /// Absolute determinant of the scaled linear part (entries at most 1).
+    determinant: f32,
+}
+impl NormalTransform {
+    fn new(world: Mat4) -> Result<Self, SkinnedUploadError> {
+        let mut linear = glam::Mat3::from_mat4(world);
+        let scale = linear
+            .to_cols_array()
+            .into_iter()
+            .map(f32::abs)
+            .fold(0.0, f32::max);
+        if !scale.is_finite() || scale <= f32::MIN_POSITIVE || scale >= 1.0 / f32::MIN_POSITIVE {
+            return Err(SkinnedUploadError::SingularNormalMatrix);
+        }
+        linear *= 1.0 / scale;
+        let determinant = linear.determinant();
+        let a = linear.x_axis.abs();
+        let b = linear.y_axis.abs();
+        let c = linear.z_axis.abs();
+        let terms = a.x * (b.y * c.z + b.z * c.y)
+            + a.y * (b.z * c.x + b.x * c.z)
+            + a.z * (b.x * c.y + b.y * c.x);
+        // Reject an uncertain determinant sign, rather than imposing a fixed
+        // minimum scale ratio on otherwise stable anisotropic transforms.
+        let uncertainty = (16.0 * f32::EPSILON * terms).max(f32::MIN_POSITIVE);
+        if !determinant.is_finite() || determinant.abs() <= uncertainty {
+            return Err(SkinnedUploadError::SingularNormalMatrix);
+        }
+        let cofactor = glam::Mat3::from_cols(
+            linear.y_axis.cross(linear.z_axis),
+            linear.z_axis.cross(linear.x_axis),
+            linear.x_axis.cross(linear.y_axis),
+        );
+        Ok(Self {
+            cofactor,
+            sign: determinant.signum(),
+            determinant: determinant.abs(),
+        })
+    }
+    fn apply(self, vertex: &SkinnedVertex) -> Result<[f32; 3], SkinnedUploadError> {
+        let original = glam::Vec3::from_array(vertex.normal);
+        let magnitude = original.abs().max_element();
+        if magnitude == 0.0 {
+            return Ok(glam::Vec3::ZERO.to_array());
+        }
+        if magnitude <= f32::MIN_POSITIVE || magnitude >= 1.0 / f32::MIN_POSITIVE {
+            return Err(SkinnedUploadError::SingularNormalMatrix);
+        }
+
+        let transformed = self.cofactor * (original / magnitude) * self.sign;
+        let max = transformed.abs().max_element();
+        if !transformed.is_finite() || max == 0.0 {
+            return Err(SkinnedUploadError::SingularNormalMatrix);
+        }
+        Ok((transformed / max).normalize().to_array())
+    }
+}
+
+#[cfg(test)]
+mod coherent_pose_tests {
+    use super::*;
+    /// Same-process pairs avoid comparing identical controls on different CPU cores.
+    #[test]
+    #[ignore = "manual paired CPU kernel benchmark"]
+    fn paired_cache_policy_cpu_bench() {
+        use std::{hint::black_box, time::Instant};
+        for (name, run) in [
+            ("coherent", 64usize),
+            ("alternating", 1),
+            ("mixed_quarter", 0),
+        ] {
+            let vertices: Vec<_> = (0usize..100_000)
+                .map(|i| {
+                    let joint = (if run == 0 {
+                        (i / 4 * 3 + (i % 4).saturating_sub(1)) % 16
+                    } else {
+                        (i / run) % 16
+                    }) as u16;
+                    SkinnedVertex {
+                        position: [(i % 71) as f32 * 0.01, 0.2, 0.3],
+                        normal: [0.2, 0.8, 0.1],
+                        uv: [0.; 2],
+                        joints: [joint, (joint + 1) % 16, 0, 0],
+                        weights: [45000, 20535, 0, 0],
+                    }
+                })
+                .collect();
+            let mesh = SkinnedMesh::new(vertices, vec![0, 1, 2], 16).unwrap();
+            let matches = mesh
+                .vertices
+                .windows(2)
+                .filter(|p| p[0].joints == p[1].joints && p[0].weights == p[1].weights)
+                .count();
+            let old_policy = matches * 2 >= mesh.vertices.len() - 1;
+            let joints: Vec<_> = (0..16)
+                .map(|i| {
+                    Mat4::from_rotation_translation(
+                        glam::Quat::from_rotation_y(i as f32 * 0.01),
+                        Vec3::Y * 0.1,
+                    )
+                })
+                .collect();
+            for round in 1..=5 {
+                for (variant, policy) in [("before", old_policy), ("after", mesh.coherent_weights)]
+                {
+                    for _ in 0..3 {
+                        admit_render_vertices(&mesh.vertices, &joints, Mat4::IDENTITY, policy)
+                            .unwrap();
+                    }
+                    let mut samples = Vec::new();
+                    for _ in 0..31 {
+                        let start = Instant::now();
+                        black_box(admit_render_vertices(
+                            black_box(&mesh.vertices),
+                            black_box(&joints),
+                            black_box(Mat4::IDENTITY),
+                            black_box(policy),
+                        ))
+                        .unwrap();
+                        samples.push(start.elapsed().as_secs_f64() * 1e6);
+                    }
+                    samples.sort_by(f64::total_cmp);
+                    println!("KERNEL_PAIR,{round},{variant},{name},{:.3}", samples[15]);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn cached_admission_matches_original_loop_and_normal_bits() {
+        for run in [1usize, 8, 0] {
+            let vertices: Vec<_> = (0usize..96)
+                .map(|i| SkinnedVertex {
+                    position: [i as f32 * 0.03, 0.2, -0.1],
+                    normal: if i % 7 == 0 {
+                        [0.; 3]
+                    } else {
+                        [0.1, 0.9, -0.3]
+                    },
+                    uv: [0.; 2],
+                    joints: [
+                        (if run == 0 {
+                            (i / 4 + (i % 4).saturating_sub(1)) % 2
+                        } else {
+                            (i / run) % 2
+                        }) as u16,
+                        0,
+                        0,
+                        0,
+                    ],
+                    weights: [65535, 0, 0, 0],
+                })
+                .collect();
+            let mesh = SkinnedMesh::new(vertices, vec![0, 1, 2], 2).unwrap();
+            assert_eq!(mesh.coherent_weights, run != 1);
+            for scale in [
+                Vec3::ONE,
+                Vec3::new(-1., 0.01, 10.),
+                Vec3::ZERO,
+                Vec3::splat(f32::MAX),
+            ] {
+                for angle in [0.0, 0.3, 1.7] {
+                    let joints = [Mat4::from_rotation_y(angle), Mat4::from_scale(scale)];
+                    let model = Mat4::from_translation(Vec3::new(1., -2., 3.));
+                    let reference = (|| {
+                        validate_temporal_palette(&mesh, &joints, model)?;
+                        for v in mesh.vertices.iter() {
+                            let world = model * blended_skin(v, &joints);
+                            skinned_position_in(v, world)?;
+                            skinned_normal_in(v, world)?;
+                        }
+                        Ok::<_, SkinnedUploadError>(())
+                    })();
+                    assert_eq!(mesh.validate_render_pose(&joints, model), reference);
+                    for v in mesh.vertices.iter() {
+                        let world = model * blended_skin(v, &joints);
+                        let original = skinned_normal_in(v, world).map(|n| n.map(f32::to_bits));
+                        let prepared = NormalTransform::new(world)
+                            .and_then(|n| n.apply(v))
+                            .map(|n| n.map(f32::to_bits));
+                        assert_eq!(prepared, original);
+                    }
+                }
+            }
+            let invalid = [Mat4::from_cols_array(&[f32::NAN; 16]); 2];
+            assert_eq!(
+                mesh.validate_render_pose(&invalid, Mat4::IDENTITY),
+                Err(SkinnedUploadError::NonFiniteMatrix)
+            );
+            let shared = mesh.with_shared_indices(Arc::from([2, 1, 0])).unwrap();
+            assert_eq!(shared.coherent_weights, mesh.coherent_weights);
+        }
+    }
+    #[test]
+    fn parallel_admission_matches_sequential_first_error() {
+        let count = PARALLEL_ADMISSION_MIN_VERTICES * 2 + 17;
+        for run in [1usize, 64] {
+            let base: Vec<_> = (0..count)
+                .map(|i| SkinnedVertex {
+                    position: [(i % 97) as f32 * 0.01, 0.2, -0.1],
+                    normal: [0.1, 0.9, -0.3],
+                    uv: [0.; 2],
+                    joints: [((i / run) % 3) as u16, 0, 0, 0],
+                    weights: [65535, 0, 0, 0],
+                })
+                .collect();
+            // Joint 2 collapses normals; place it late and a huge position early, so
+            // a later chunk fails differently than the earliest failing vertex.
+            let mut vertices = base.clone();
+            for v in &mut vertices {
+                v.joints[0] = v.joints[0].min(1);
+            }
+            let late = count - 5;
+            vertices[late].joints = [2, 0, 0, 0];
+            let early = count / 3;
+            vertices[early].position = [f32::MAX, 0.0, 0.0];
+            let mesh = SkinnedMesh::new(vertices, vec![0, 1, 2], 3).unwrap();
+            let joints = [
+                Mat4::from_rotation_y(0.3),
+                Mat4::from_translation(Vec3::Y),
+                Mat4::from_scale(Vec3::new(1.0, 0.0, 1.0)),
+            ];
+            let model = Mat4::from_scale(Vec3::splat(4.0));
+            let sequential =
+                admit_render_vertices(mesh.vertices(), &joints, model, mesh.coherent_weights);
+            assert_eq!(sequential, Err(SkinnedUploadError::NonFiniteMatrix));
+            assert_eq!(mesh.validate_render_pose(&joints, model), sequential);
+            let valid = SkinnedMesh::new(
+                base.iter()
+                    .map(|v| SkinnedVertex {
+                        joints: [v.joints[0].min(1), 0, 0, 0],
+                        ..*v
+                    })
+                    .collect(),
+                vec![0, 1, 2],
+                3,
+            )
+            .unwrap();
+            assert_eq!(valid.validate_render_pose(&joints, model), Ok(()));
+            let mut only_late = base.clone();
+            for v in &mut only_late {
+                v.joints[0] = v.joints[0].min(1);
+            }
+            only_late[late].joints = [2, 0, 0, 0];
+            let only_late = SkinnedMesh::new(only_late, vec![0, 1, 2], 3).unwrap();
+            assert_eq!(
+                only_late.validate_render_pose(&joints, model),
+                Err(SkinnedUploadError::SingularNormalMatrix)
+            );
+        }
+    }
+    #[test]
+    fn grouped_admission_matches_per_vertex_scan() {
+        let count = PARALLEL_ADMISSION_MIN_VERTICES + 1001;
+        // Scattered (non-adjacent) repeats of 5 influence sets, as on authored fur.
+        let vertices: Vec<_> = (0..count)
+            .map(|i| {
+                let set = (i * 7919) % 5;
+                SkinnedVertex {
+                    position: [(i % 113) as f32 * 0.01, 0.2, -0.1],
+                    normal: if i % 11 == 0 {
+                        [0.; 3]
+                    } else {
+                        [0.1, 0.9, -0.3]
+                    },
+                    uv: [0.; 2],
+                    joints: [set as u16, ((set + 1) % 4) as u16, 0, 0],
+                    weights: [40000, 25535, 0, 0],
+                }
+            })
+            .collect();
+        let mesh = SkinnedMesh::new(vertices.clone(), vec![0, 1, 2], 5).unwrap();
+        assert!(mesh.groups.is_some());
+        assert!(!mesh.coherent_weights);
+        let mut late_huge = vertices.clone();
+        late_huge[count - 3].position = [f32::MAX, f32::MAX, 0.0];
+        let late_huge = SkinnedMesh::new(late_huge, vec![0, 1, 2], 5).unwrap();
+        let mut outcomes = std::collections::BTreeSet::new();
+        for scale in [
+            Vec3::ONE,
+            Vec3::new(1.0, 0.0, 1.0),
+            Vec3::new(-1., 0.01, 10.),
+            // Valid, but below the certified determinant: exercises the exact fallback.
+            Vec3::new(1.0, 1e-4, 1.0),
+            Vec3::splat(f32::MAX),
+        ] {
+            for angle in [0.0, 1.1] {
+                let joints = [
+                    Mat4::from_rotation_y(angle),
+                    Mat4::from_scale(scale),
+                    Mat4::from_translation(Vec3::X),
+                    Mat4::from_rotation_x(angle),
+                    Mat4::from_rotation_z(angle),
+                ];
+                for model in [Mat4::IDENTITY, Mat4::from_scale(Vec3::splat(3.0))] {
+                    for mesh in [&mesh, &late_huge] {
+                        let reference = mesh.vertices().iter().try_for_each(|v| {
+                            let world = model * blended_skin(v, &joints);
+                            skinned_position_in(v, world)?;
+                            skinned_normal_in(v, world).map(|_| ())
+                        });
+                        let groups = mesh.groups.as_ref().unwrap();
+                        for workers in [1, 3, 8] {
+                            let certified = groups.certify(&joints, model, workers);
+                            // Certification is sound: it never admits a failing pose.
+                            assert!(!certified || reference.is_ok());
+                            outcomes.insert((certified, reference.is_ok()));
+                        }
+                        assert_eq!(mesh.validate_render_pose(&joints, model), reference);
+                    }
+                }
+            }
+        }
+        // Exercised: certified valid, uncertified valid (fallback), uncertified invalid.
+        assert_eq!(
+            outcomes.into_iter().collect::<Vec<_>>(),
+            [(false, false), (false, true), (true, true)]
+        );
+        let shared = mesh.with_shared_indices(Arc::from([2, 1, 0])).unwrap();
+        assert!(shared.groups.is_some());
+        // Unique influences per vertex disable grouping.
+        let unique: Vec<_> = (0..count)
+            .map(|i| SkinnedVertex {
+                weights: [(i % 60000) as u16 + 1, 65534 - (i % 60000) as u16, 0, 0],
+                joints: [0, (i / 60000) as u16 + 1, 0, 0],
+                ..vertices[0]
+            })
+            .collect();
+        assert!(
+            SkinnedMesh::new(unique, vec![0, 1, 2], 5)
+                .unwrap()
+                .groups
+                .is_none()
+        );
+    }
+    use glam::Vec3;
+}
+
+#[cfg(test)]
+mod temporal_admission_tests {
+    use super::*;
+    fn mesh(run: usize, count: usize) -> SkinnedMesh {
+        SkinnedMesh::new(
+            (0..count)
+                .map(|i| {
+                    let joint = (if run == 0 {
+                        (i / 4 * 3 + (i % 4).saturating_sub(1)) % 16
+                    } else {
+                        (i / run) % 16
+                    }) as u16;
+                    SkinnedVertex {
+                        position: [(i % 71) as f32 * 0.03, 0.2, 0.3],
+                        normal: [0.2, 0.8, 0.1],
+                        uv: [0.; 2],
+                        joints: [joint, 0, 0, 0],
+                        weights: [65535, 0, 0, 0],
+                    }
+                })
+                .collect(),
+            vec![0, 1, 2],
+            16,
+        )
+        .unwrap()
+    }
+    #[test]
+    fn temporal_cache_matches_original_positions_and_errors() {
+        for run in [0, 1, 64] {
+            let mesh = mesh(run, 2048);
+            for scale in [1., 0., -1., f32::MAX] {
+                let model = Mat4::from_scale(glam::Vec3::splat(scale));
+                let joints = std::array::from_fn::<_, 16, _>(|i| {
+                    Mat4::from_translation(glam::Vec3::X * i as f32 * 0.01)
+                });
+                assert_eq!(
+                    admit_temporal_vertices(mesh.vertices(), &joints, model, false),
+                    mesh.validate_temporal_pose(&joints, model)
+                );
+                let mut previous = None;
+                for vertex in mesh.vertices() {
+                    let world = if let Some((indices, weights, world)) = previous {
+                        if vertex.joints == indices && vertex.weights == weights {
+                            world
+                        } else {
+                            model * blended_skin(vertex, &joints)
+                        }
+                    } else {
+                        model * blended_skin(vertex, &joints)
+                    };
+                    previous = Some((vertex.joints, vertex.weights, world));
+                    assert_eq!(
+                        skinned_position(vertex, &joints, model),
+                        skinned_position_in(vertex, world)
+                    );
+                }
+            }
+            for joints in [vec![], vec![Mat4::from_cols_array(&[f32::NAN; 16]); 16]] {
+                let expected =
+                    validate_temporal_palette(&mesh, &joints, Mat4::IDENTITY).and_then(|()| {
+                        admit_temporal_vertices(mesh.vertices(), &joints, Mat4::IDENTITY, false)
+                    });
+                assert_eq!(
+                    mesh.validate_temporal_pose(&joints, Mat4::IDENTITY),
+                    expected
+                );
+            }
+        }
+    }
+    #[test]
+    fn blended_weight_changes_and_cancellation_keep_temporal_contract() {
+        let vertices = (0..48)
+            .map(|i| {
+                let weight = ((i / 3) % 2) * 32767;
+                SkinnedVertex {
+                    position: [2., -3., 4.],
+                    normal: [0.; 3],
+                    uv: [0.; 2],
+                    joints: [0, 1, 0, 0],
+                    weights: [weight, 65535 - weight, 0, 0],
+                }
+            })
+            .collect();
+        let mesh = SkinnedMesh::new(vertices, vec![0, 1, 2], 2).unwrap();
+        assert!(mesh.coherent_weights);
+        for tick in 0..24 {
+            let joints = [
+                Mat4::from_rotation_y(tick as f32 * 0.1),
+                Mat4::from_scale(glam::Vec3::splat(-1.)),
+            ];
+            for model in [
+                Mat4::IDENTITY,
+                Mat4::from_scale(glam::Vec3::splat(f32::MAX)),
+            ] {
+                assert_eq!(
+                    mesh.validate_temporal_pose(&joints, model),
+                    admit_temporal_vertices(mesh.vertices(), &joints, model, false)
+                );
+            }
+        }
+        // Temporal admission checks positions only, including a collapsed blend.
+        assert!(
+            mesh.validate_temporal_pose(&[Mat4::from_scale(glam::Vec3::ZERO); 2], Mat4::IDENTITY)
+                .is_ok()
+        );
+    }
+    #[test]
+    #[ignore = "manual CPU changing-pose paired benchmark"]
+    fn paired_temporal_cpu_bench() {
+        use std::{hint::black_box, time::Instant};
+        for (name, run) in [("coherent", 64), ("mixed_quarter", 0), ("alternating", 1)] {
+            let mesh = mesh(run, 100_000);
+            for round in 1..=5 {
+                for (variant, coherent) in if round % 2 == 1 {
+                    [("before", false), ("after", mesh.coherent_weights)]
+                } else {
+                    [("after", mesh.coherent_weights), ("before", false)]
+                } {
+                    let mut samples = Vec::new();
+                    for sample in 0..54 {
+                        let joints = std::array::from_fn::<_, 16, _>(|i| {
+                            Mat4::from_rotation_translation(
+                                glam::Quat::from_rotation_y(
+                                    sample as f32 * 0.003 + i as f32 * 0.01,
+                                ),
+                                glam::Vec3::X * i as f32 * 0.01,
+                            )
+                        });
+                        let model = Mat4::from_translation(glam::Vec3::Z * sample as f32 * 0.01);
+                        let start = Instant::now();
+                        validate_temporal_palette(&mesh, black_box(&joints), black_box(model))
+                            .unwrap();
+                        admit_temporal_vertices(
+                            black_box(mesh.vertices()),
+                            &joints,
+                            model,
+                            black_box(coherent),
+                        )
+                        .unwrap();
+                        if sample >= 3 {
+                            samples.push(start.elapsed().as_secs_f64() * 1e6);
+                        }
+                    }
+                    samples.sort_by(f64::total_cmp);
+                    println!("TEMPORAL_PAIR,{round},{variant},{name},{:.6}", samples[25]);
+                }
+            }
+        }
+    }
 }

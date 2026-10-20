@@ -305,8 +305,8 @@ impl BodycamRig {
         // Gait envelope and smoothed speed: people do not start or stop swaying instantly.
         let moving = speed > 0.15;
         let envelope_rate = if moving { 3.5 } else { 2.2 };
-        self.gait_amount += (f32::from(u8::from(moving)) - self.gait_amount)
-            * (1.0 - (-envelope_rate * dt).exp());
+        self.gait_amount +=
+            (f32::from(u8::from(moving)) - self.gait_amount) * (1.0 - (-envelope_rate * dt).exp());
         if moving {
             self.gait_speed += (speed - self.gait_speed) * (1.0 - (-4.0 * dt).exp());
         }
@@ -389,7 +389,8 @@ impl BodycamRig {
         } else {
             0.85 // Sluggish gain boost when entering dark rooms
         };
-        self.current_ev100 += (target_ev100 - self.current_ev100) * (1.0 - (-adapt_rate * dt).exp());
+        self.current_ev100 +=
+            (target_ev100 - self.current_ev100) * (1.0 - (-adapt_rate * dt).exp());
 
         // Quantize to 1/10 EV steps to mimic digital ISP register stepping
         let quantized_ev = (self.current_ev100 * 12.0).round() / 12.0;
@@ -463,13 +464,9 @@ impl BodycamRig {
         };
         // Two-octave postural sway so the camera never freezes into a dead CGI screenshot
         let sway_pitch = hand_amp
-            * (0.0042 * (t * 2.1).sin()
-                + 0.0021 * (t * 5.3).cos()
-                + 0.0009 * (t * 11.7).sin());
+            * (0.0042 * (t * 2.1).sin() + 0.0021 * (t * 5.3).cos() + 0.0009 * (t * 11.7).sin());
         let sway_yaw = hand_amp
-            * (0.0038 * (t * 1.7).cos()
-                + 0.0019 * (t * 4.7).sin()
-                + 0.0008 * (t * 10.3).cos());
+            * (0.0038 * (t * 1.7).cos() + 0.0019 * (t * 4.7).sin() + 0.0008 * (t * 10.3).cos());
         let sway_roll = hand_amp * (0.0035 * (t * 2.9).sin() + 0.0012 * (t * 7.1).cos());
 
         let (gait_pos, gait_rot) = self.gait_offsets();

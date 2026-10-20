@@ -54,18 +54,17 @@ mod hdr_resolve;
 pub use hdr_mips::HdrMipPyramid;
 mod dfg;
 pub use dfg::{
+    EncodedGgxEnergyBatch, GGX_ENERGY_GPU_BATCH_LIMIT, GgxEnergyBatchKey, GgxEnergyBatchOutput,
+    GgxEnergyBatchStage, GgxEnergyGpuPrecompute, PendingGgxEnergyBatch,
+};
+pub use dfg::{
+    GgxDfgLut, GgxEnergyPatchData, GgxEnergyPatchError, GgxEnergyRefinementAssessment,
+    GgxEnergyRefinementDecision, GgxEnergyRefinementError, GgxEnergyRefinementObservation,
+    GgxEnergyRefinementPlan, GgxEnergyRefinementPolicy, GgxEnergyRefinementProbe,
+};
+pub use dfg::{
     GgxEnergyAtlasBuild, GgxEnergyAtlasSlot, GgxEnergyBuildBudget, GgxEnergyBuildError,
     GgxEnergyBuildPhase, GgxEnergyBuildProgress, GgxEnergyOracleSample, ReadyGgxEnergyAtlas,
-};
-pub use dfg::{
-    EncodedGgxEnergyBatch, GGX_ENERGY_GPU_BATCH_LIMIT, GgxEnergyBatchKey,
-    GgxEnergyBatchOutput, GgxEnergyBatchStage, GgxEnergyGpuPrecompute, PendingGgxEnergyBatch,
-};
-pub use dfg::{
-    GgxDfgLut, GgxEnergyPatchData, GgxEnergyPatchError,
-    GgxEnergyRefinementAssessment, GgxEnergyRefinementDecision, GgxEnergyRefinementError,
-    GgxEnergyRefinementObservation, GgxEnergyRefinementPlan, GgxEnergyRefinementPolicy,
-    GgxEnergyRefinementProbe,
 };
 mod environment_diffuse;
 mod environment_lighting;
@@ -110,6 +109,13 @@ mod radiance;
 pub use hdr_resolve::{HdrHalfResolveJob, HdrHalfResolvePipeline};
 mod fluid_screen;
 mod ray;
+mod world_nearest_bvh;
+mod world_nearest_job;
+mod world_ray_producer;
+pub use world_nearest_job::{
+    ExactWorldNearest, ExactWorldOptions, WorldRayQueryJob, WorldRayQueryKind,
+};
+pub use world_ray_producer::{ArchiveWorldRayProducer, WORLD_RAY_PRODUCER_WGSL, WorldRayKind};
 mod reconstruction;
 mod reconstruction_distance;
 mod reconstruction_material;
@@ -145,10 +151,10 @@ pub use skinned_lod_gpu::{SkinnedLodGpuError, SkinnedLodResidency};
 pub use skinned_motion::{PreparedSkinnedFrame, SkinnedMotionFrame, SkinnedMotionHistory};
 
 pub use scene::{
-    DEFAULT_SCENE_SHADER, PreparedSceneEnvironment, SceneDepthMode, SceneDraw, SceneError, SceneGeometry, SceneLodGeometry,
-    SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError, SceneSkinError, SceneSkinInstance,
-    SceneSkinLodLevel, SceneSkinPose, SceneSkinSource, SceneSkinner, SceneTexture, SceneTransform,
-    SceneVertex, SceneView, SceneViewTargets,
+    DEFAULT_SCENE_SHADER, PreparedSceneEnvironment, SceneDepthMode, SceneDraw, SceneError,
+    SceneGeometry, SceneLodGeometry, SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError,
+    SceneSkinError, SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource,
+    SceneSkinner, SceneTexture, SceneTransform, SceneVertex, SceneView, SceneViewTargets,
 };
 
 pub use camera::{InvalidSceneCamera, SceneCamera, SceneProjection};
@@ -403,26 +409,28 @@ pub use contact_exact_five::ExperimentalExactFiveContactInput;
 mod contact_five_product_tests;
 
 mod contact_five_qr;
-pub use contact_five_qr::{ExperimentalFiveQrInput, ExperimentalFiveQrReadback, ExperimentalFiveQrValue};
+pub use contact_five_qr::{
+    ExperimentalFiveQrInput, ExperimentalFiveQrReadback, ExperimentalFiveQrValue,
+};
 
 #[cfg(test)]
 mod contact_five_qr_tests;
 
 mod contact_five_gaps;
-pub use contact_five_gaps::{ExperimentalFiveGapInput,ExperimentalFiveGapDecision};
+pub use contact_five_gaps::{ExperimentalFiveGapDecision, ExperimentalFiveGapInput};
 
 mod contact_five_select;
-pub use contact_five_select::{ExperimentalFiveSelection,ExperimentalFiveSelectionInput};
+pub use contact_five_select::{ExperimentalFiveSelection, ExperimentalFiveSelectionInput};
 
 mod contact_five_release;
-pub use contact_five_release::{ExperimentalFiveRelease,ExperimentalFiveReleaseInput};
+pub use contact_five_release::{ExperimentalFiveRelease, ExperimentalFiveReleaseInput};
 
 mod compressed_image;
 pub use compressed_image::Bc7ImageAsset;
 
 pub mod archive_scene;
-pub mod character_material;
 mod bloom;
+pub mod character_material;
 mod probe_gi;
 
 mod native_vegetation;
@@ -433,8 +441,8 @@ pub use archive_temporal::{ArchiveAntialiasing, ArchiveCameraLens, halton_jitter
 #[cfg(target_os = "macos")]
 mod metalfx;
 
-pub mod weather;
 pub mod climate;
+pub mod weather;
 
 mod archive_culling;
 pub use archive_culling::ArchiveInstanceCulling;
@@ -443,3 +451,8 @@ mod archive_frustum;
 
 mod supersampling;
 pub use supersampling::SupersampleResolve;
+
+#[doc(hidden)]
+pub mod archive_depth_bounds;
+
+mod archive_gpu_timing;

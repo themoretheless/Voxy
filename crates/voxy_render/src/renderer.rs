@@ -15,6 +15,8 @@ use wgpu::util::DeviceExt;
 use crate::skinned::{GpuSkinnedMesh, create_skin_layout, create_skinned_pipeline, upload_skinned};
 use crate::{BodycamPostProcess, BodycamRig, MaterialLayer, MaterialPack, MaterialSet};
 use crate::{SkinnedMesh, SkinnedUploadError};
+#[path = "resident_frame_timing.rs"]
+mod resident_frame_timing;
 mod skinned_lod;
 
 #[repr(C)]
@@ -43,6 +45,7 @@ struct PhotorealCameraUniform {
     flashlight_pos: [f32; 4],
     flashlight_dir: [f32; 4],
     subject_spheres: [[f32; 4]; 12],
+    viewport: [f32; 4],
 }
 
 #[repr(C)]
@@ -147,6 +150,9 @@ pub struct SkinnedMotionOutput<'a> {
 
 #[derive(Debug)]
 pub struct Renderer {
+    frame_timing: Option<resident_frame_timing::Timing>,
+    profile_acquire: std::time::Duration,
+    profile_gpu: Option<f64>,
     surface: wgpu::Surface<'static>,
     adapter: wgpu::Adapter,
     readback_pool: crate::ComputeReadbackPool,
@@ -200,6 +206,7 @@ pub struct Renderer {
     photoreal_pipeline: wgpu::RenderPipeline,
     photoreal_indirect_pipeline: wgpu::RenderPipeline,
     photoreal_skinned_pipeline: wgpu::RenderPipeline,
+    photoreal_fibre_pipeline: wgpu::RenderPipeline,
     bodycam_post: BodycamPostProcess,
 }
 
@@ -280,6 +287,9 @@ impl Renderer {
         {
             required_features |= wgpu::Features::MAPPABLE_PRIMARY_BUFFERS;
         }
+        if options.profile_timestamps {
+            required_features |= adapter.features() & wgpu::Features::TIMESTAMP_QUERY;
+        }
         // Ray query is an experimental wgpu feature: requesting it is refused unless the
         // device also opts into experimental features, which needs `unsafe` and is not
         // something this crate does. Requesting it here made device creation fail on
@@ -335,14 +345,18 @@ impl Renderer {
             &skin_layout,
         );
         let photoreal_camera_layout = create_photoreal_camera_layout(&device);
-        let (photoreal_pipeline, photoreal_indirect_pipeline, photoreal_skinned_pipeline) =
-            create_photoreal_pipelines(
-                &device,
-                wgpu::TextureFormat::Rgba16Float,
-                &photoreal_camera_layout,
-                &material_layout,
-                &skin_layout,
-            );
+        let (
+            photoreal_pipeline,
+            photoreal_indirect_pipeline,
+            photoreal_skinned_pipeline,
+            photoreal_fibre_pipeline,
+        ) = create_photoreal_pipelines(
+            &device,
+            wgpu::TextureFormat::Rgba16Float,
+            &photoreal_camera_layout,
+            &material_layout,
+            &skin_layout,
+        );
         let bodycam_post =
             BodycamPostProcess::new(&device, config.format, config.width, config.height);
         let bodycam_rig = BodycamRig::default();
@@ -409,7 +423,14 @@ impl Renderer {
         if let Some(error) = validation_error.or(allocation_error) {
             return Err(RendererError::Initialization(error));
         }
+        let frame_timing = options
+            .profile_timestamps
+            .then(|| resident_frame_timing::Timing::new(&device))
+            .flatten();
         Ok(Self {
+            frame_timing,
+            profile_acquire: std::time::Duration::ZERO,
+            profile_gpu: None,
             surface,
             adapter,
             readback_pool: crate::ComputeReadbackPool::for_device(&device),
@@ -468,6 +489,7 @@ impl Renderer {
             photoreal_pipeline,
             photoreal_indirect_pipeline,
             photoreal_skinned_pipeline,
+            photoreal_fibre_pipeline,
             bodycam_post,
         })
     }
@@ -1015,6 +1037,12 @@ impl Renderer {
     /// Returns surface/device-loss errors when native graphics must be recreated.
     pub fn render(&mut self) -> Result<RenderOutcome, RendererError> {
         self.check_device()?;
+        self.profile_acquire = std::time::Duration::ZERO;
+        self.profile_gpu = None;
+        if let Some(timing) = &mut self.frame_timing {
+            let _ = self.device.poll(wgpu::PollType::Poll);
+            self.profile_gpu = timing.collect(self.queue.get_timestamp_period());
+        }
         if self.state == SurfaceState::Suspended {
             return Ok(RenderOutcome::Suspended);
         }
@@ -1022,7 +1050,10 @@ impl Renderer {
             .resident_presented_frames
             .checked_add(1)
             .ok_or(RendererError::FrameIdExhausted)?;
-        let (frame, suboptimal) = match self.surface.get_current_texture() {
+        let acquire_start = std::time::Instant::now();
+        let acquired = self.surface.get_current_texture();
+        self.profile_acquire = acquire_start.elapsed();
+        let (frame, suboptimal) = match acquired {
             wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
             wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
             wgpu::CurrentSurfaceTexture::Outdated => {
@@ -1057,7 +1088,13 @@ impl Renderer {
             self.encode_resident_voxels(&mut encoder, &view);
         }
         encode_motion_layers(&mut encoder, motion_pass.as_ref(), base_motion.as_ref())?;
+        if let Some(timing) = &self.frame_timing {
+            timing.resolve(&mut encoder);
+        }
         self.queue.submit([encoder.finish()]);
+        if let Some(timing) = &mut self.frame_timing {
+            timing.map();
+        }
         self.queue.present(frame);
         self.resident_presented_frames = frame_id;
         self.skinned_motion_metadata = motion_pass.as_ref().map(|_| (frame_id, reset_motion));
@@ -1093,7 +1130,7 @@ impl Renderer {
                     }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: None,
+                timestamp_writes: self.frame_timing.as_ref().and_then(|t| t.writes()),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1201,7 +1238,7 @@ impl Renderer {
                     }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: None,
+                timestamp_writes: self.frame_timing.as_ref().and_then(|t| t.writes()),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1228,7 +1265,9 @@ impl Renderer {
                 pass.set_bind_group(2, &skinned.bind_group, &[]);
                 pass.set_vertex_buffer(0, skinned.vertex.slice(..));
                 pass.set_index_buffer(skinned.index.slice(..), wgpu::IndexFormat::Uint32);
-                pass.draw_indexed(0..skinned.index_count, 0, 0..1);
+                for range in &skinned.opaque_ranges {
+                    pass.draw_indexed(range.clone(), 0, 0..1);
+                }
             }
             if let Some(indirect) = &self.indirect_mesh {
                 pass.set_pipeline(&self.photoreal_indirect_pipeline);
@@ -1236,6 +1275,19 @@ impl Renderer {
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_vertex_buffer(0, indirect.vertex_buffer.slice(..));
                 pass.draw_indirect(&indirect.indirect_buffer, 0);
+            }
+            if let Some(skinned) = &self.skinned {
+                if !skinned.fibre_ranges.is_empty() {
+                    pass.set_pipeline(&self.photoreal_fibre_pipeline);
+                    pass.set_bind_group(0, &self.photoreal_camera_bind_group, &[]);
+                    pass.set_bind_group(1, &self.material_bind_group, &[]);
+                    pass.set_bind_group(2, &skinned.bind_group, &[]);
+                    pass.set_vertex_buffer(0, skinned.vertex.slice(..));
+                    pass.set_index_buffer(skinned.index.slice(..), wgpu::IndexFormat::Uint32);
+                    for range in &skinned.fibre_ranges {
+                        pass.draw_indexed(range.clone(), 0, 0..1);
+                    }
+                }
             }
         }
         if let Some(plants) = &self.native_vegetation {
@@ -1644,6 +1696,21 @@ impl Renderer {
         Ok(())
     }
     #[must_use]
+    pub fn profile_acquire_time(&self) -> std::time::Duration {
+        self.profile_acquire
+    }
+    /// Most recently collected primary voxel pass; asynchronous, not the current CPU frame.
+    #[must_use]
+    pub fn profile_gpu_ms(&self) -> Option<f64> {
+        self.profile_gpu
+    }
+    /// Count successful submissions followed by presentation, including suboptimal surfaces.
+    #[must_use]
+    pub fn profile_presented_frames(&self) -> u64 {
+        self.resident_presented_frames
+    }
+
+    #[must_use]
     pub fn adapter_info(&self) -> wgpu::AdapterInfo {
         self.adapter.get_info()
     }
@@ -1780,10 +1847,17 @@ fn create_photoreal_pipelines(
     wgpu::RenderPipeline,
     wgpu::RenderPipeline,
     wgpu::RenderPipeline,
+    wgpu::RenderPipeline,
 ) {
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Voxy photoreal HDR PBR shader"),
-        source: wgpu::ShaderSource::Wgsl(concat!(include_str!("skin_hair.wgsl"), include_str!("voxel_photoreal.wgsl")).into()),
+        source: wgpu::ShaderSource::Wgsl(
+            concat!(
+                include_str!("skin_hair.wgsl"),
+                include_str!("voxel_photoreal.wgsl")
+            )
+            .into(),
+        ),
     });
     let voxel_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: Some("Voxy photoreal voxel pipeline layout"),
@@ -1914,14 +1988,14 @@ fn create_photoreal_pipelines(
             module: &shader,
             entry_point: Some("vs_skinned"),
             compilation_options: wgpu::PipelineCompilationOptions::default(),
-            buffers: &[Some(skin_buffer_layout)],
+            buffers: &[Some(skin_buffer_layout.clone())],
         },
         primitive: wgpu::PrimitiveState {
             topology: wgpu::PrimitiveTopology::TriangleList,
             cull_mode: Some(wgpu::Face::Back),
             ..Default::default()
         },
-        depth_stencil,
+        depth_stencil: depth_stencil.clone(),
         multisample: wgpu::MultisampleState::default(),
         fragment: Some(wgpu::FragmentState {
             module: &shader,
@@ -1937,7 +2011,46 @@ fn create_photoreal_pipelines(
         cache: None,
     });
 
-    (voxel_pipeline, indirect_pipeline, skinned_pipeline)
+    let mut fibre_depth = depth_stencil;
+    if let Some(depth) = &mut fibre_depth {
+        depth.depth_write_enabled = Some(false);
+    }
+    let fibre_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: Some("Voxy antialiased animal fibres"),
+        layout: Some(&skinned_layout),
+        vertex: wgpu::VertexState {
+            module: &shader,
+            entry_point: Some("vs_skinned"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            buffers: &[Some(skin_buffer_layout)],
+        },
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            cull_mode: Some(wgpu::Face::Back),
+            ..Default::default()
+        },
+        depth_stencil: fibre_depth,
+        multisample: wgpu::MultisampleState::default(),
+        fragment: Some(wgpu::FragmentState {
+            module: &shader,
+            entry_point: Some("fs_main"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            targets: &[Some(wgpu::ColorTargetState {
+                format: hdr_format,
+                blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        multiview_mask: None,
+        cache: None,
+    });
+
+    (
+        voxel_pipeline,
+        indirect_pipeline,
+        skinned_pipeline,
+        fibre_pipeline,
+    )
 }
 
 fn create_camera_bind_group(
@@ -2182,6 +2295,7 @@ fn photoreal_camera_uniform(
 ) -> PhotorealCameraUniform {
     PhotorealCameraUniform {
         subject_spheres: [[0.0; 4]; 12],
+        viewport: [width as f32, height as f32, 0.0, 0.0],
         view_proj: perspective_camera_view_projection(width, height, camera).to_cols_array_2d(),
         camera_eye: [
             camera.eye.x,
@@ -2714,7 +2828,7 @@ mod tests {
         let photoreal_camera_layout = create_photoreal_camera_layout(&device);
         let material_layout = create_material_layout(&device);
         let skin_layout = create_skin_layout(&device);
-        let (photoreal_pipeline, photoreal_indirect, photoreal_skinned) =
+        let (photoreal_pipeline, photoreal_indirect, photoreal_skinned, photoreal_fibres) =
             create_photoreal_pipelines(
                 &device,
                 wgpu::TextureFormat::Rgba16Float,
@@ -2877,6 +2991,8 @@ mod tests {
             pass.set_bind_group(2, &skinned.bind_group, &[]);
             pass.set_vertex_buffer(0, skinned.vertex.slice(..));
             pass.set_index_buffer(skinned.index.slice(..), wgpu::IndexFormat::Uint32);
+            pass.draw_indexed(0..skinned.index_count, 0, 0..1);
+            pass.set_pipeline(&photoreal_fibres);
             pass.draw_indexed(0..skinned.index_count, 0, 0..1);
         }
         post.encode(&mut encoder, &out_view);

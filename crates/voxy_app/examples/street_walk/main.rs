@@ -1,7 +1,11 @@
 //! Native street walk: original procedural scene by default, imported Bistro via --bistro.
 #[path = "../../src/controls.rs"]
 mod controls;
+#[path = "../../src/frame_profile.rs"]
+mod frame_profile;
 mod aa_validation;
+mod ray_geometry_export;
+mod world_ray_lighting;
 mod day_cycle;
 mod panel;
 mod original;
@@ -45,8 +49,10 @@ enum StreetView {
     Camcorder,
 }
 struct App {
+    profile: Option<frame_profile::Profile>,
     window: Option<Arc<Window>>,
     gpu: Option<Gpu>,
+    probe_bake: Option<voxy_render::archive_scene::ArchiveProbeBake>,
     collision: Option<physics::static_triangle_world::StaticTriangleWorld>,
     input: InputState,
     camera: WalkCamera,
@@ -58,8 +64,12 @@ struct App {
     last: Instant,
     accumulator: f64,
     simulation_time: f64,
+    simulation_steps: u64,
+    measure_simulation_steps: u64,
     frames: u64,
     measure_start: Option<Instant>,
+    measure_start_unix_seconds: Option<f64>,
+    replay_state: blake3::Hasher,
     durations: Vec<f64>,
     skipped_acquires: u64,
     physics_seconds: Vec<f64>,
@@ -67,6 +77,9 @@ struct App {
     acquire_seconds: Vec<f64>,
     snapshot: Option<PathBuf>,
     benchmark: f64,
+    benchmark_complete: bool,
+    world_ray_audit_frames: u64,
+    world_ray_audit_complete: bool,
     offscreen_benchmark: bool,
     failure: Option<String>,
     finished: bool,
@@ -74,7 +87,12 @@ struct App {
     original: bool,
     original_seed: u64,
     ageing: original::Ageing,
+    /// Captured panorama sky instead of the procedural atmosphere.
+    hdri_sky: bool,
+    render: panel::RenderSettings,
     rebuild_scene: bool,
+    /// Set when a panel render setting should be applied to the live renderer.
+    reconfigure: bool,
     weather: voxy_render::weather::Weather,
     weather_start: Instant,
     day_cycle: Option<day_cycle::DayCycle>,
@@ -127,6 +145,7 @@ impl App {
                 .cloned()
         };
         let mut app = Self {
+            profile: None,
             weather: match value("--weather").as_deref() {
                 Some("cloudy") => voxy_render::weather::Weather::CLOUDY,
                 Some("rain") => voxy_render::weather::Weather::STORM,
@@ -145,6 +164,7 @@ impl App {
             rig: voxy_render::BodycamRig::default(),
             window: None,
             gpu: None,
+            probe_bake: None,
             collision: None,
             input: InputState::default(),
             camera: WalkCamera::new(Vec3::NEG_Z),
@@ -156,8 +176,12 @@ impl App {
             last: Instant::now(),
             accumulator: 0.,
             simulation_time: 0.,
+            simulation_steps: 0,
+            measure_simulation_steps: 0,
             frames: 0,
             measure_start: None,
+            measure_start_unix_seconds: None,
+            replay_state: blake3::Hasher::new(),
             durations: Vec::new(),
             skipped_acquires: 0,
             physics_seconds: Vec::new(),
@@ -165,6 +189,9 @@ impl App {
             acquire_seconds: Vec::new(),
             snapshot: value("--snapshot").map(PathBuf::from),
             offscreen_benchmark: args.iter().any(|a| a == "--offscreen-benchmark"),
+            benchmark_complete: false,
+            world_ray_audit_frames: value("--world-ray-audit-frames").and_then(|s|s.parse().ok()).unwrap_or(0),
+            world_ray_audit_complete: false,
             benchmark: value("--benchmark")
                 .and_then(|s| s.parse().ok())
                 .unwrap_or(0.),
@@ -172,7 +199,10 @@ impl App {
             finished: false,
             original: !args.iter().any(|a| a == "--bistro"),
             ageing: original::Ageing::default(),
+            hdri_sky: std::env::var("VOXY_STREET_SKY").as_deref() != Ok("analytic"),
+            render: panel::RenderSettings::from_environment().unwrap_or_else(|error| panic!("{error}")),
             rebuild_scene: false,
+            reconfigure: false,
             original_seed: value("--seed")
                 .and_then(|v| {
                     if let Some(v) = v.strip_prefix("0x") {
@@ -200,7 +230,8 @@ impl App {
         app
     }
     fn init(&mut self, el: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
-        let interactive = (std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() == Ok("1") || self.benchmark == 0.) && self.snapshot.is_none() && self.aa_validation.is_none();
+        if self.benchmark>0. || std::env::var_os("VOXY_STREET_BENCHMARK_PROGRESS").is_some() {eprintln!("STREET RUN pid={} benchmark_seconds={} offscreen={} paired_dda={} tiles={} cell_bounds={} far_bound={}",std::process::id(),self.benchmark,self.offscreen_benchmark,std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some(),std::env::var_os("VOXY_STREET_PAIRED_DDA_TILES").is_some(),std::env::var_os("VOXY_STREET_DDA_CELL_BOUNDS").is_some(),std::env::var_os("VOXY_STREET_DDA_FAR_BOUND").is_some());}
+        let interactive = (std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() == Ok("1") || self.benchmark == 0. && self.profile.is_none()) && self.snapshot.is_none() && self.aa_validation.is_none();
         let scale = el.primary_monitor().map_or(1., |m| m.scale_factor());
         let panel_px = if interactive {(panel::WIDTH as f64 * scale).round() as u32} else {0};
         let window = Arc::new(
@@ -231,9 +262,9 @@ impl App {
             let (environment, sun, sun_colour) = materials::daylight()?;
             scene.sun = sun;
             scene.sun_colour = sun_colour;
-            // The analytic atmosphere is the default sky; VOXY_STREET_SKY=hdri
-            // restores the captured panorama.
-            if std::env::var("VOXY_STREET_SKY").as_deref() == Ok("hdri") {Some(environment)} else {None}
+            // The captured panorama is the default sky; the panel or VOXY_STREET_SKY=analytic
+            // switches to the procedural atmosphere.
+            self.hdri_sky.then_some(environment)
         } else { None };
         let mut direction = scene.direction;
         if let Some(degrees) = self.pitch {
@@ -287,9 +318,11 @@ impl App {
             apply_limit_buckets: false,
         }))?;
         let features = wgpu::Features::TEXTURE_COMPRESSION_BC
+            | if world_ray_lighting::enabled(){wgpu::Features::EXPERIMENTAL_RAY_QUERY}else{wgpu::Features::empty()}
+            | if std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some(){wgpu::Features::SUBGROUP}else{wgpu::Features::empty()}
             | if std::env::var_os("VOXY_STREET_SUBGROUP_CULLING").is_some() {adapter.features() & wgpu::Features::SUBGROUP}else{wgpu::Features::empty()}
             | if self.original { wgpu::Features::FLOAT32_FILTERABLE } else { wgpu::Features::empty() }
-            | if std::env::var_os("VOXY_STREET_GPU_TIMING").is_some() {
+            | if self.profile.is_some() || std::env::var_os("VOXY_STREET_GPU_TIMING").is_some() {
                 adapter.features() & wgpu::Features::TIMESTAMP_QUERY
             } else {
                 wgpu::Features::empty()
@@ -298,12 +331,13 @@ impl App {
             pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
                 label: Some("Voxy full street"),
                 required_features: features,
-                required_limits: wgpu::Limits {
+                experimental_features:world_ray_lighting::experimental_features()?,
+                required_limits: if world_ray_lighting::enabled(){adapter.limits()}else{wgpu::Limits {
                     max_texture_dimension_2d: 16384,
                     max_storage_buffer_binding_size:
                         adapter.limits().max_storage_buffer_binding_size,
                     ..wgpu::Limits::default()
-                },
+                }},
                 ..Default::default()
             }))?;
         let size = window.inner_size();
@@ -364,6 +398,7 @@ impl App {
             .unwrap_or_else(|_| "1".into()).parse()?;
         let supersample = voxy_render::SupersampleResolve::new(&device, scene_width, size.height, render_scale, config.format)?;
         let (render_width, render_height) = supersample.render_size();
+        let world_job=world_ray_lighting::prepare(&device,&queue,&scene.geometry,&scene.materials,scene.images.len())?;
         let mut renderer = ArchiveSceneRenderer::new_with_environment(
             &device,
             &queue,
@@ -379,9 +414,10 @@ impl App {
             scene.bounds,
             environment,
         )?;
+        world_ray_lighting::connect(&mut renderer,world_job)?;
         let validation_headroom = self.aa_validation.as_ref().map(|_| 2.);
         let mode = self.configure_renderer(&mut renderer, validation_headroom.unwrap_or(hdr_headroom.unwrap_or(1.)), None)?;
-        if self.original {bake_street_probes(&mut renderer, scene.bounds)?;}
+        self.probe_bake=if self.original {begin_street_probe_bake(&mut renderer,scene.bounds,self.render.probe_spacing)?}else{None};
         eprintln!("STREET antialiasing={mode:?} render={}x{} output={}x{}", render_width, render_height, size.width, size.height);
 
         let offscreen = if self.offscreen_benchmark {
@@ -433,8 +469,8 @@ impl App {
             bodycam: None,
         });
         self.last = Instant::now();
-        if !self.offscreen_benchmark {window.set_visible(true);window.focus_window();}
-        self.capture(false);
+        if !self.offscreen_benchmark && self.probe_bake.is_none() {window.set_visible(true);window.focus_window();}
+        if !self.offscreen_benchmark {self.capture(false);}
         Ok(())
     }
     /// Per-run renderer settings, shared by start-up and scene rebuilds.
@@ -450,36 +486,20 @@ impl App {
         }
         renderer.set_surface_wetness(self.wetness.map(|w| w.clamp(0., 1.)))?;
         renderer.set_display_headroom(headroom.max(1.))?;
-        let mode = if let Some(mode) = keep_mode { mode } else { match std::env::var("VOXY_STREET_AA").as_deref().unwrap_or("temporal") {
-            "off" => voxy_render::ArchiveAntialiasing::Off,
-            "spatial" => voxy_render::ArchiveAntialiasing::Spatial,
-            "temporal" => voxy_render::ArchiveAntialiasing::Temporal,
-            "metalfx" => voxy_render::ArchiveAntialiasing::MetalFx,
-            value => return Err(format!("unknown VOXY_STREET_AA: {value}").into()),
-        } };
+        let mode = keep_mode.unwrap_or(self.render.antialiasing);
         renderer.set_antialiasing(mode)?;
-        // Off by default (a fixed-focus lens fights a first-person walk). Example:
-        // VOXY_STREET_DOF="5.6,auto,0.5" = 50 mm f/5.6, centre autofocus, 180-degree shutter.
-        let lens = std::env::var("VOXY_STREET_DOF").unwrap_or_else(|_| "off".into());
-        if lens != "off" {
-            let value = lens;
-            let parts: Vec<f32> = value.split(',').filter_map(|v| match v.trim() {"auto" => Some(0.), v => v.parse().ok()}).collect();
-            if parts.len() < 2 {
-                return Err(format!("invalid VOXY_STREET_DOF: {value}").into());
-            }
-            renderer.set_camera_lens(voxy_render::ArchiveCameraLens {
+        // Off by default: a fixed-focus lens fights a first-person walk.
+        renderer.set_camera_lens(match self.render.lens {
+            Some(lens) => voxy_render::ArchiveCameraLens {
                 focal_length_m: 0.05,
-                f_number: parts[0],
-                focus_distance_m: parts[1],
-                shutter_fraction: parts.get(2).copied().unwrap_or(0.),
+                f_number: lens.f_number,
+                focus_distance_m: lens.focus_distance_m,
+                shutter_fraction: lens.shutter_fraction,
                 sensor_width_m: 0.036,
-            })?;
-        }
-        renderer.set_tone_mapper(match std::env::var("VOXY_STREET_TONEMAP").as_deref().unwrap_or("agx") {
-            "aces" => voxy_render::archive_scene::ArchiveToneMapper::Aces,
-            "agx" => voxy_render::archive_scene::ArchiveToneMapper::Agx,
-            value => return Err(format!("unknown VOXY_STREET_TONEMAP: {value}").into()),
-        });
+            },
+            None => voxy_render::ArchiveCameraLens::default(),
+        })?;
+        renderer.set_tone_mapper(self.render.tone_mapper);
         Ok(mode)
     }
     /// Regenerates the original street with the current ageing settings and swaps
@@ -490,9 +510,10 @@ impl App {
         let (environment, sun, sun_colour) = materials::daylight()?;
         scene.sun = sun;
         scene.sun_colour = sun_colour;
-        let environment = (std::env::var("VOXY_STREET_SKY").as_deref() == Ok("hdri")).then_some(environment);
+        let environment = self.hdri_sky.then_some(environment);
         let gpu = self.gpu.as_ref().ok_or("missing gpu")?;
         let (width, height) = gpu.supersample.render_size();
+        let world_job=world_ray_lighting::prepare(&gpu.device,&gpu.queue,&scene.geometry,&scene.materials,scene.images.len())?;
         let mut renderer = ArchiveSceneRenderer::new_with_environment(
             &gpu.device,
             &gpu.queue,
@@ -508,10 +529,10 @@ impl App {
             scene.bounds,
             environment,
         )?;
+        world_ray_lighting::connect(&mut renderer,world_job)?;
         let headroom = gpu.validation_headroom.unwrap_or(gpu.hdr_headroom.unwrap_or(1.));
-        let mode = gpu.renderer.antialiasing();
-        self.configure_renderer(&mut renderer, headroom, Some(mode))?;
-        if self.original {bake_street_probes(&mut renderer, scene.bounds)?;}
+        self.configure_renderer(&mut renderer, headroom, None)?;
+        self.probe_bake=if self.original {begin_street_probe_bake(&mut renderer,scene.bounds,self.render.probe_spacing)?}else{None};
         let gpu = self.gpu.as_mut().ok_or("missing gpu")?;
         gpu.renderer = renderer;
         gpu.bodycam = None;
@@ -540,21 +561,35 @@ impl App {
         if self.finished {
             return Ok(());
         }
+        if let Some(mut bake)=self.probe_bake.take() {
+            let ready=self.gpu.as_mut().ok_or("missing probe renderer")?.renderer.advance_irradiance_probe_bake(&mut bake)?;
+            if ready {
+                eprintln!("STREET probes={} completed in {:.3} s before measurement",bake.progress().1,bake.elapsed_seconds());
+                if !self.offscreen_benchmark {if let Some(window)=&self.window {window.set_visible(true);window.focus_window();}}
+            } else {self.probe_bake=Some(bake);}
+            self.last=Instant::now();
+            return Ok(());
+        }
         let now = Instant::now();
         let elapsed = now.duration_since(self.last).as_secs_f64();
         self.last = now;
-        if self.benchmark > 0. { self.input.cancel_all(); }
+        if self.benchmark > 0. || self.profile.is_some() { self.input.cancel_all(); }
         self.camera.apply_look(self.input.take_look());
-        self.camera.step(elapsed as f32);
-        self.accumulator += elapsed.min(0.25);
+        // Offscreen comparison must replay identical physics and weather states,
+        // independent of shader compilation and previous-frame GPU latency.
+        // Real wall time below remains the sole source for FPS measurement.
+        let simulation_elapsed=if self.offscreen_benchmark&&(self.benchmark>0.||self.world_ray_audit_frames>0) {0.25}else{elapsed};
+        self.camera.step(simulation_elapsed as f32);
+        self.accumulator += simulation_elapsed.min(0.25);
         const DT: f64 = 1. / 120.;
         let collision = self.collision.as_ref().ok_or("missing collision")?;
         let was_grounded = self.grounded;
         let start_feet = self.feet;
         while self.accumulator >= DT {
             self.simulation_time += DT;
+            self.simulation_steps += 1;
             let mut movement = self.input.take_move();
-            if self.benchmark > 0. {
+            if self.benchmark > 0. || self.profile.is_some() {
                 movement.local = Vec2::new(0., if self.simulation_time % 20. < 10. { 1. } else { -1. });
             }
             let (forward, right) = self.camera.planar_basis();
@@ -601,7 +636,7 @@ impl App {
         }
         // The rig runs in every view so the gait phase stays continuous when
         // switching cameras.
-        let dt = (elapsed as f32).max(1e-4);
+        let dt = (simulation_elapsed as f32).max(1e-4);
         let moved = (self.feet - start_feet).as_vec3();
         let planar_speed = Vec2::new(moved.x, moved.z).length() / dt;
         // Keep the rig aimed where the walk camera looks; the rig adds the
@@ -631,6 +666,14 @@ impl App {
         }
         let physics_time = now.elapsed().as_secs_f64();
         let acquire_start = Instant::now();
+        // Panel render changes from the previous frame apply before this one.
+        if std::mem::take(&mut self.reconfigure) {
+            let mut gpu = self.gpu.take().ok_or("missing gpu")?;
+            let headroom = gpu.validation_headroom.unwrap_or(gpu.hdr_headroom.unwrap_or(1.));
+            let applied = self.configure_renderer(&mut gpu.renderer, headroom, None);
+            self.gpu = Some(gpu);
+            applied?;
+        }
         let gpu = self.gpu.as_mut().ok_or("missing renderer")?;
         if gpu.config.color_space.is_hdr() && gpu.hdr_last_check.elapsed().as_secs_f32() >= 1. {
             let info = gpu.surface.display_hdr_info(&gpu.adapter);
@@ -651,10 +694,24 @@ impl App {
                 | wgpu::CurrentSurfaceTexture::Suboptimal(f) => f,
                 wgpu::CurrentSurfaceTexture::Outdated | wgpu::CurrentSurfaceTexture::Lost => {
                     gpu.surface.configure(&gpu.device, &gpu.config);
+                    if let Some(profile) = &mut self.profile {
+                        if profile.record(Instant::now(), std::time::Duration::from_secs_f64(physics_time), std::time::Duration::ZERO, std::time::Duration::ZERO, Some(acquire_start.elapsed()), false) {
+                            profile.finish(&format!("{:?}",gpu.adapter.get_info()))?;
+                            self.finished=true;
+                            el.exit();
+                        }
+                    }
                     return Ok(());
                 }
                 wgpu::CurrentSurfaceTexture::Timeout | wgpu::CurrentSurfaceTexture::Occluded => {
                     self.skipped_acquires += 1;
+                    if let Some(profile) = &mut self.profile {
+                        if profile.record(Instant::now(), std::time::Duration::from_secs_f64(physics_time), std::time::Duration::ZERO, std::time::Duration::ZERO, Some(acquire_start.elapsed()), false) {
+                            profile.finish(&format!("{:?}",gpu.adapter.get_info()))?;
+                            self.finished=true;
+                            el.exit();
+                        }
+                    }
                     return Ok(());
                 }
                 wgpu::CurrentSurfaceTexture::Validation => {
@@ -663,6 +720,7 @@ impl App {
             })
         };
         let acquire_time = acquire_start.elapsed().as_secs_f64();
+        let gpu_samples_before = gpu.renderer.gpu_times_ms.len();
         let render_start = Instant::now();
         let output = frame
             .as_ref()
@@ -677,11 +735,26 @@ impl App {
             gpu.renderer.set_exposure_ev100(self.daylight_ev.unwrap())?;
         }
         if let Some(cycle) = &mut self.day_cycle {
-            let frozen = self.aa_validation.is_some() || self.benchmark > 0. && std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() != Ok("1") || self.snapshot.is_some();
+            let frozen = self.profile.is_some() || self.aa_validation.is_some() || self.benchmark > 0. && std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() != Ok("1") || self.snapshot.is_some();
             cycle.update(&mut gpu.renderer, &mut self.weather, elapsed, frozen, self.wetness.is_some())?;
         }
         gpu.renderer.set_weather(self.weather)?;
-        gpu.renderer.set_weather_time(if self.aa_validation.is_some() {0.} else {self.weather_start.elapsed().as_secs_f32()});
+        let weather_time=if self.aa_validation.is_some() {0.} else if self.profile.is_some() || self.offscreen_benchmark&&(self.benchmark>0.||self.world_ray_audit_frames>0) {self.simulation_time as f32}else{self.weather_start.elapsed().as_secs_f32()};
+        gpu.renderer.set_weather_time(weather_time);
+        if self.offscreen_benchmark&&(self.benchmark>0.||self.world_ray_audit_frames>0) {
+            // Hash exact bits for every rendered state, including warmup. Final
+            // feet alone cannot establish identical interpolated camera paths.
+            self.replay_state.update(&self.frames.to_le_bytes());
+            self.replay_state.update(&self.simulation_steps.to_le_bytes());
+            for value in self.feet.to_array().into_iter().chain(self.previous.to_array()).chain([self.simulation_time,self.accumulator,self.velocity_y]) {
+                self.replay_state.update(&value.to_bits().to_le_bytes());
+            }
+            for value in eye.to_array().into_iter().chain(direction.to_array()).chain([weather_time,gpu.renderer.exposure_ev100()]) {
+                self.replay_state.update(&value.to_bits().to_le_bytes());
+            }
+            self.replay_state.update(&[u8::from(self.grounded),u8::from(lens.is_some())]);
+            if let Some((fov,up))=lens {for value in [fov,up.x,up.y,up.z] {self.replay_state.update(&value.to_bits().to_le_bytes());}}
+        }
         let output_view = output.create_view(&Default::default());
         let scene_view = gpu.scene_target.as_ref().map(|t| t.create_view(&Default::default()));
         let target_view = scene_view.as_ref().unwrap_or(&output_view);
@@ -737,6 +810,33 @@ impl App {
         }
         let render_time = render_start.elapsed().as_secs_f64();
         self.frames += 1;
+        if self.offscreen_benchmark && std::env::var_os("VOXY_STREET_BENCHMARK_PROGRESS").is_some() {
+            eprintln!("STREET completed_frame={} render_ms={:.3} physics_steps={} paired_dda={}",self.frames,render_time*1000.,self.simulation_steps,std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some());
+            if gpu.renderer.gpu_times_ms.len()>gpu_samples_before {
+                let i=gpu.renderer.gpu_times_ms.len()-1;
+                eprintln!("STREET GPU collected_at_frame={} total_ms={:.3} opaque_ms={:.3} transparent_ms={:.3}",self.frames,gpu.renderer.gpu_times_ms[i],gpu.renderer.gpu_shading_times_ms[i][0],gpu.renderer.gpu_shading_times_ms[i][1]);
+                if let Some(gi)=gpu.renderer.gpu_gi_times_ms[i] {eprintln!("STREET GPU GI collected_at_frame={} guides_ms={:.3} traversal_ms={:.3}",self.frames,gi[0],gi[1]);}
+                if let Some(ms)=gpu.renderer.gpu_ssr_times_ms[i] {eprintln!("STREET GPU SSR collected_at_frame={} traversal_ms={:.3}",self.frames,ms);}
+            }
+        }
+        if self.world_ray_audit_frames>0 && self.frames==self.world_ray_audit_frames {
+            gpu.renderer.collect_completed_gpu_times()?;
+            let source_profile=gpu.renderer.world_ray_stage_profile()?;
+            if let Some(profile)=&source_profile {let path=std::env::var_os("VOXY_STREET_WORLD_RAY_STAGE_REPORT").map(PathBuf::from).unwrap_or_else(||PathBuf::from("/tmp/voxy-street-world-ray-stages.json"));std::fs::write(path,serde_json::to_vec_pretty(profile)?)?;}
+            if let Some(path)=self.snapshot.take() {snapshot(gpu,output,&path)?;}
+            let mut report=serde_json::json!({"qualification":"integration_audit_only","simulation_clock":"fixed_30_step_batch","simulation_steps":self.simulation_steps,"rendered_state_blake3":self.replay_state.finalize().to_hex().to_string(),"world_frame_enabled":gpu.renderer.world_ray_frame_enabled(),"world_query_encoded_frames":gpu.renderer.world_ray_query_encoded_frames(),"frames":self.frames,"last_completed_render_ms":render_time*1000.,"source_simplified":false,"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"output_resolution":[gpu.config.width,gpu.config.height],"full_collision_triangles":collision.triangle_count(),"world_regions":gpu.renderer.world_ray_region_count(),"gpu_samples_drained":true,"gpu_gi_samples":gpu.renderer.gpu_gi_times_ms,"gpu_ssr_samples":gpu.renderer.gpu_ssr_times_ms,"complete_motion_cycles":0,"minimum_120_presented_fps_passed":false});
+            report["paired_dda_lazy_cell_bounds"]=false.into();
+            report["paired_dda_touch_guard"]=false.into();
+            report["paired_dda_tile_edge_cache"]=gpu.renderer.paired_dda_tile_edge_cache_enabled().into();
+            report["world_ray_consumer_sorted"]=gpu.renderer.world_ray_consumer_sorted().into();
+            report["metal_compute_max_threads_requested"]=0u32.into();
+            if std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE").as_deref()==Ok("1") {report["consumer_cache_audit"]=consumer_zero_audit(gpu)?;}else if std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_ZERO_AUDIT").as_deref()==Ok("1") {report["consumer_zero_audit"]=consumer_zero_audit(gpu)?;}
+            report["software_traversal_work"]=software_traversal_work(gpu)?;
+            let path=std::env::var_os("VOXY_STREET_WORLD_RAY_AUDIT_REPORT").map(PathBuf::from).unwrap_or_else(||PathBuf::from("/tmp/voxy-street-world-ray-audit.json"));
+            std::fs::write(&path,serde_json::to_vec_pretty(&report)?)?;
+            eprintln!("STREET WORLD AUDIT COMPLETE {report}");
+            self.world_ray_audit_complete=true;self.finished=true;el.exit();return Ok(());
+        }
         if let Some(validation) = &mut self.aa_validation {
             validation.frame_ms.push(render_time*1000.);
             if aa_validation::AaValidation::capture(self.frames as u64) {
@@ -788,8 +888,12 @@ impl App {
                 cycle: &mut self.day_cycle,
                 weather: &mut self.weather,
                 wetness: &mut self.wetness,
-                seed: self.original_seed,
                 ageing: self.original.then_some(&mut self.ageing),
+                hdri_sky: self.original.then_some(&mut self.hdri_sky),
+                seed_mut: self.original.then_some(&mut self.original_seed),
+                sun_elevation: &mut self.sun_elevation,
+                render: &mut self.render,
+                reconfigure: &mut self.reconfigure,
                 rebuild: &mut self.rebuild_scene,
             });
         }
@@ -804,12 +908,40 @@ impl App {
             gpu.surface.configure(&gpu.device, &gpu.config);
         }
         let _ = gpu.device.poll(wgpu::PollType::Poll);
+        if let Some(profile) = &mut self.profile {
+            profile.cpu_stage(Instant::now(), "street_physics", std::time::Duration::from_secs_f64(physics_time));
+            if gpu.renderer.gpu_times_ms.len() > gpu_samples_before {
+                let i = gpu.renderer.gpu_times_ms.len()-1;
+                let shading = gpu.renderer.gpu_shading_times_ms[i];
+                profile.gpu_sample(Instant::now(), [Some(gpu.renderer.gpu_times_ms[i]), Some(shading[0]), Some(shading[1])]);
+            }
+            if profile.record(Instant::now(), std::time::Duration::from_secs_f64(physics_time), std::time::Duration::ZERO, std::time::Duration::from_secs_f64(render_time), Some(std::time::Duration::from_secs_f64(acquire_time)), true) {
+                profile.finish(&format!("{:?}", gpu.adapter.get_info()))?;
+                self.finished = true;
+                el.exit();
+            }
+        }
+        // draw collects the previous frame timestamp. At frame 181 the
+        // latest collected sample still belongs to warmup, not measurement.
+        if self.benchmark > 0. && self.frames == 181 {
+            gpu.renderer.gpu_times_ms.clear();
+            gpu.renderer.gpu_shading_times_ms.clear();
+            gpu.renderer.gpu_gi_times_ms.clear();
+            gpu.renderer.gpu_ssr_times_ms.clear();
+        }
         if self.frames == 180 {
             self.skipped_acquires = 0;
             self.measure_start = Some(Instant::now());
+            if self.benchmark>0. {
+                self.measure_start_unix_seconds=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).ok().map(|d|d.as_secs_f64());
+            }
+            self.measure_simulation_steps=self.simulation_steps;
             self.durations.clear();
         } else if self.frames > 180 {
-            self.durations.push(elapsed);
+            // Offscreen draw waited for THIS GPU submission. A start-to-start
+            // delta would instead attribute frame 180 to sample 181 and omit
+            // the final measured frame. Window sampling keeps its old clock.
+            self.durations.push(if self.offscreen_benchmark {now.elapsed().as_secs_f64()}else{elapsed});
             self.physics_seconds.push(physics_time);
             self.render_seconds.push(render_time);
             self.acquire_seconds.push(acquire_time);
@@ -844,24 +976,80 @@ impl App {
         if self.benchmark > 0.
             && self
                 .measure_start
-                .is_some_and(|t| t.elapsed().as_secs_f64() >= self.benchmark)
+                .is_some_and(|t| self.offscreen_benchmark || t.elapsed().as_secs_f64() >= self.benchmark)
+            && (self.simulation_steps-self.measure_simulation_steps) as f64 * DT >= self.benchmark
         {
             let _ = gpu.device.poll(wgpu::PollType::wait_indefinitely());
             let mut times = self.durations.clone();
             times.sort_by(f64::total_cmp);
             let n = times.len();
-            let report = serde_json::json!({"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":self.offscreen_benchmark||self.skipped_acquires==0,"frames":n,"seconds":self.measure_start.unwrap().elapsed().as_secs_f64(),"mean_fps":n as f64/self.measure_start.unwrap().elapsed().as_secs_f64(),"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_shading_mean_ms":if gpu.renderer.gpu_shading_times_ms.is_empty(){None}else{Some([0usize,1].map(|i|gpu.renderer.gpu_shading_times_ms.iter().map(|v|v[i]).sum::<f64>()/gpu.renderer.gpu_shading_times_ms.len() as f64))},"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
+            let measure_seconds=self.measure_start.unwrap().elapsed().as_secs_f64();
+            let measure_end_unix_seconds=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).ok().map(|d|d.as_secs_f64());
+            let mut report = serde_json::json!({"measurement_start_unix_seconds":self.measure_start_unix_seconds,"measurement_end_unix_seconds":measure_end_unix_seconds,"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"measured_physics_steps":self.simulation_steps-self.measure_simulation_steps,"measured_simulation_seconds":(self.simulation_steps-self.measure_simulation_steps) as f64*DT,"complete_motion_cycles":(self.simulation_steps-self.measure_simulation_steps)/2400,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":!self.offscreen_benchmark&&self.skipped_acquires==0&&!gpu.renderer.opaque_ray_capture_enabled(),"completed_offscreen_measurement_valid":self.offscreen_benchmark&&!gpu.renderer.opaque_ray_capture_enabled(),"frames":n,"seconds":measure_seconds,"mean_fps":n as f64/measure_seconds,"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"max_frame_ms":times[n-1]*1000.,"minimum_sampled_fps":1./times[n-1],"minimum_120_presented_fps_passed":!self.offscreen_benchmark&&!gpu.renderer.opaque_ray_capture_enabled()&&self.skipped_acquires==0&&(self.simulation_steps-self.measure_simulation_steps)>=2400&&times[n-1]<=1./120.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_shading_mean_ms":if gpu.renderer.gpu_shading_times_ms.is_empty(){None}else{Some([0usize,1].map(|i|gpu.renderer.gpu_shading_times_ms.iter().map(|v|v[i]).sum::<f64>()/gpu.renderer.gpu_shading_times_ms.len() as f64))},"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
+            let gi_samples:Vec<_>=gpu.renderer.gpu_gi_times_ms.iter().filter_map(|v|*v).collect();
+            let ssr_samples:Vec<_>=gpu.renderer.gpu_ssr_times_ms.iter().filter_map(|v|*v).collect();
+            let settings=serde_json::json!({"replay_state_blake3":self.replay_state.finalize().to_hex().to_string(),"replay_render_frames":self.frames,"benchmark_stop_policy":if self.offscreen_benchmark {"fixed_simulation_duration"}else{"wall_and_simulation_duration"},"simulation_clock":if self.offscreen_benchmark {"fixed_30_step_batch"}else{"wall_time"},"measurement_start_simulation_steps":self.measure_simulation_steps,"transmission_depth":gpu.renderer.transmission_depth_enabled(),"ray_persistent":gpu.renderer.opaque_ray_persistent_enabled(),"world_ray_frame":gpu.renderer.world_ray_frame_enabled(),"world_ray_regions":gpu.renderer.world_ray_region_count(),"ray_capture_enabled":gpu.renderer.opaque_ray_capture_enabled(),"ray_hierarchy":gpu.renderer.opaque_ray_hierarchy_enabled(),"ray_hierarchy_reciprocal_cache":gpu.renderer.opaque_ray_hierarchy_reciprocal_enabled(),"ray_hierarchy_near_first":gpu.renderer.opaque_ray_hierarchy_near_first_enabled(),"ray_hierarchy_bounds_bytes":gpu.renderer.opaque_ray_hierarchy_bounds_bytes(),"ray_queue":gpu.renderer.opaque_ray_queue_enabled(),"ray_spatial_key":std::env::var_os("VOXY_STREET_RAY_SPATIAL_KEY").is_some(),"ray_queue_total_encoded_frames":gpu.renderer.opaque_ray_queue_encoded_frames(),"paired_dda_interval_cache":std::env::var_os("VOXY_STREET_DDA_INTERVAL_CACHE").is_some(),"ray_coherent":std::env::var_os("VOXY_STREET_RAY_COHERENT").is_some(),"ray_force_fallback":std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some(),"ray_stages":std::env::var_os("VOXY_STREET_RAY_STAGES").is_some()&&std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some(),"paired_dda_plane_cache":std::env::var_os("VOXY_STREET_DDA_PLANE_CACHE").is_some(),"paired_dda_point_cache":std::env::var_os("VOXY_STREET_DDA_POINT_CACHE").is_some(),"gpu_ssr_samples":ssr_samples.len(),"gpu_ssr_mean_ms":if ssr_samples.is_empty(){None}else{Some(ssr_samples.iter().sum::<f64>()/ssr_samples.len() as f64)},"compute_ssr":std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some()&&std::env::var_os("VOXY_STREET_COMPUTE_SSR").is_some(),"gpu_gi_samples":gi_samples.len(),"gpu_gi_mean_ms":if gi_samples.is_empty(){None}else{Some([0usize,1].map(|i|gi_samples.iter().map(|v|v[i]).sum::<f64>()/gi_samples.len() as f64))},"compute_gi":std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some(),"early_gi":std::env::var_os("VOXY_STREET_EARLY_GI").is_some(),"paired_dda_edge_cache":std::env::var_os("VOXY_STREET_DDA_EDGE_CACHE").is_some(),"paired_depth_dda":std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some(),"paired_dda_tiles":std::env::var_os("VOXY_STREET_PAIRED_DDA_TILES").is_some(),"paired_dda_cell_bounds":std::env::var_os("VOXY_STREET_DDA_CELL_BOUNDS").is_some(),"paired_dda_far_bound":std::env::var_os("VOXY_STREET_DDA_FAR_BOUND").is_some(),"paired_dda_hierarchy":std::env::var_os("VOXY_STREET_DDA_HIERARCHY").is_some(),"refinement_cache":std::env::var_os("VOXY_STREET_REFINE_CACHE").is_some(),"fx_off":std::env::var("VOXY_FX_OFF").ok()});
+            if let (serde_json::Value::Object(root),serde_json::Value::Object(settings))=(&mut report,settings) {root.extend(settings);}
+            let query_settings=serde_json::json!({
+                "metal_compute_max_threads_requested":0u32,
+                "metal_compute_audit_requested":std::env::var("WGPU_METAL_COMPUTE_AUDIT").as_deref()==Ok("1"),
+                "measurement_duration_clock":"single_monotonic_elapsed",
+                "frame_sample_clock":if self.offscreen_benchmark {"current_completed_frame"}else{"start_to_start"},
+                "completed_frame_samples_seconds":self.durations,
+                "current_render_samples_seconds":self.render_seconds,
+                "world_query_encoded_frames":gpu.renderer.world_ray_query_encoded_frames(),
+                "world_ray_consumer_cache":std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE").as_deref()==Ok("1"),
+                "paired_dda_tile_edge_cache":gpu.renderer.paired_dda_tile_edge_cache_enabled(),
+                "world_ray_consumer_sorted":gpu.renderer.world_ray_consumer_sorted(),
+                "world_ray_consumer_profile":std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_PROFILE").as_deref()==Ok("1"),
+                "world_ray_consumer_cache_check":std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE_CHECK").as_deref()==Ok("1"),
+                "paired_dda_lazy_cell_bounds":false,
+                "paired_dda_touch_guard":false
+            });
+            if let (serde_json::Value::Object(root),serde_json::Value::Object(settings))=(&mut report,query_settings) {root.extend(settings);}
             std::fs::write(
                 std::env::var_os("VOXY_STREET_BENCHMARK_REPORT").map(PathBuf::from)
                     .unwrap_or_else(|| PathBuf::from("/tmp/voxy-street-benchmark.json")),
                 serde_json::to_vec_pretty(&report)?,
             )?;
             eprintln!("STREET BENCHMARK {report}");
+            if let Some(directory)=std::env::var_os("VOXY_STREET_RAY_CAPTURE_DIR") {let directory=PathBuf::from(directory);gpu.renderer.save_opaque_ray_capture(&directory)?;eprintln!("STREET exact ray diagnostic saved {}",directory.display());}
+            self.benchmark_complete = true;
             self.finished = true;
             el.exit();
         }
         Ok(())
     }
+}
+fn software_traversal_work(gpu:&Gpu)->Result<serde_json::Value,Box<dyn std::error::Error>> {
+    let Some(buffer)=gpu.renderer.world_ray_work_stats_buffer() else{
+        if std::env::var("VOXY_STREET_WORLD_RAY_WORK_STATS").as_deref()==Ok("1") {return Err("work statistics require one shared prepared source owner".into());}
+        return Ok(serde_json::Value::Null)
+    };
+    let read=gpu.device.create_buffer(&wgpu::BufferDescriptor {label:Some("software traversal count snapshot"),size:48,usage:wgpu::BufferUsages::COPY_DST|wgpu::BufferUsages::MAP_READ,mapped_at_creation:false});
+    let mut encoder=gpu.device.create_command_encoder(&Default::default());encoder.copy_buffer_to_buffer(buffer,0,&read,0,48);gpu.queue.submit([encoder.finish()]);
+    let (send,receive)=std::sync::mpsc::channel();read.slice(..).map_async(wgpu::MapMode::Read,move |r|{let _=send.send(r);});gpu.device.poll(wgpu::PollType::wait_indefinitely())?;receive.recv()??;
+    let bytes=read.slice(..).get_mapped_range()?;
+    if let Some(path)=std::env::var_os("VOXY_STREET_WORLD_RAY_WORK_RAW") {std::fs::write(path,&*bytes)?;}
+    let words:Vec<u32>=bytes.chunks_exact(4).map(|v|u32::from_le_bytes(v.try_into().unwrap())).collect();let pair=|i:usize|u64::from(words[i])|(u64::from(words[i+1])<<32);
+    if words[10]==u32::MAX||words[11]==u32::MAX {return Err("diagnostic per-ray work counter saturated".into());}
+    let result=serde_json::json!({"scope":"combined GI/SSR, cumulative job lifetime, software certificate only","diagnostic_only":true,"excluded":"first ray in each encode; all hardware and exact-fallback work","sampled_records":pair(0),"visited_nodes":pair(2),"triangle_tests":pair(4),"records_with_nodes":pair(6),"records_with_triangles":pair(8),"maximum_nodes":words[10],"maximum_triangles":words[11],"raw_words":words,"timing_includes_diagnostic_overhead":true,"fps_qualified":false});
+    drop(bytes);read.unmap();Ok(result)
+}
+fn consumer_zero_audit(gpu:&Gpu)->Result<serde_json::Value,Box<dyn std::error::Error>> {
+    let cache=std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE").as_deref()==Ok("1");
+    let count=gpu.renderer.world_ray_region_count();if count==0 {return Ok(serde_json::Value::Null);}
+    let tiles=gpu.renderer.world_ray_frame_tiles().map(|v|v.len()).unwrap_or(count);
+    let read=gpu.device.create_buffer(&wgpu::BufferDescriptor {label:Some("consumer zero audit counters"),size:count as u64*48,usage:wgpu::BufferUsages::COPY_DST|wgpu::BufferUsages::MAP_READ,mapped_at_creation:false});
+    let mut encoder=gpu.device.create_command_encoder(&Default::default());
+    for i in 0..count {let buffer=gpu.renderer.world_ray_region_audit_buffer(i).ok_or("missing region audit")?;encoder.copy_buffer_to_buffer(buffer,0,&read,i as u64*48,48);}
+    gpu.queue.submit([encoder.finish()]);
+    let (send,receive)=std::sync::mpsc::channel();read.slice(..).map_async(wgpu::MapMode::Read,move |result|{let _=send.send(result);});gpu.device.poll(wgpu::PollType::wait_indefinitely())?;receive.recv()??;
+    let bytes=read.slice(..).get_mapped_range()?;
+    if let Some(path)=std::env::var_os("VOXY_STREET_WORLD_RAY_CONSUMER_ZERO_RAW") {std::fs::write(path,&*bytes)?;}
+    let mut sums=vec![[0u64;4];count.div_ceil(tiles)];let mut records=Vec::new();
+    for (i,row) in bytes.chunks_exact(48).enumerate() {let words:Vec<u32>=row.chunks_exact(4).map(|v|u32::from_le_bytes(v.try_into().unwrap())).collect();let extra=&words[8..12];if cache {if extra[2]!=0 {return Err("cached fallback changed Float32 bits".into());}}else if extra[0]!=extra[1]+extra[2]+extra[3] {return Err("consumer zero classification lost a ray".into());}for k in 0..4 {sums[i/tiles][k]+=u64::from(extra[k]);}records.push(words);}
+    Ok(serde_json::json!({"diagnostic_only":!cache,"consumer_cache":cache,"source_queries_skipped":if !cache {serde_json::json!(0)}else if std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE_CHECK").as_deref()==Ok("1")||std::env::var_os("VOXY_STREET_WORLD_RAY_RESOLVE_AUDIT").is_some() {serde_json::json!(sums.iter().map(|v|v[0]).sum::<u64>())}else{serde_json::Value::Null},"mismatch_counter_scope":"owner lifetime across checked frames","cache_checks_enabled":cache&&std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE_CHECK").as_deref()==Ok("1"),"labels":if cache {vec!["pruned","checked","mismatched","nonfinite"]}else{vec!["eligible","positive_zero","other_finite","nonfinite"]},"by_kind":sums,"region_counters":records,"tiles_per_kind":tiles,"timing_includes_duplicate_fallback_work":!cache||std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE_CHECK").as_deref()==Ok("1"),"minimum_120_fps_qualified":false}))
 }
 fn snapshot(
     gpu: &Gpu,
@@ -1000,15 +1188,17 @@ impl ApplicationHandler for App {
     fn resumed(&mut self, el: &ActiveEventLoop) {
         if self.window.is_none() {
             if let Err(e) = self.init(el) {
+                eprintln!("STREET FAILURE phase=initialization error={e}");
                 self.failure = Some(e.to_string());
                 el.exit();
             }
         }
     }
     fn window_event(&mut self, el: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+        if self.offscreen_benchmark && matches!(&event,WindowEvent::Focused(_)|WindowEvent::KeyboardInput {..}|WindowEvent::MouseInput {..}|WindowEvent::MouseWheel {..}|WindowEvent::CursorMoved {..}) {return;}
         if self.benchmark > 0. {
             match &event {
-                WindowEvent::KeyboardInput { event, .. } if event.physical_key == PhysicalKey::Code(KeyCode::Escape) => { el.exit(); return; }
+                WindowEvent::KeyboardInput { event, .. } if event.physical_key == PhysicalKey::Code(KeyCode::Escape) && event.state == ElementState::Pressed => { eprintln!("STREET BENCHMARK CANCELLED reason=escape frames={}", self.frames); el.exit(); return; }
                 WindowEvent::KeyboardInput { .. } | WindowEvent::MouseInput { .. } | WindowEvent::MouseWheel { .. } => return,
                 _ => {}
             }
@@ -1028,8 +1218,9 @@ impl ApplicationHandler for App {
                 }
             }
         }
+        if self.profile.is_some() && matches!(event, WindowEvent::KeyboardInput { .. } | WindowEvent::MouseInput { .. } | WindowEvent::MouseWheel { .. } | WindowEvent::CursorMoved { .. }) { return; }
         match event {
-            WindowEvent::CloseRequested => el.exit(),
+            WindowEvent::CloseRequested => { if self.benchmark > 0. {eprintln!("STREET BENCHMARK CANCELLED reason=window_close frames={}",self.frames);} el.exit(); },
             WindowEvent::Focused(false) => self.capture(false),
             WindowEvent::MouseInput {
                 state: ElementState::Pressed,
@@ -1098,9 +1289,19 @@ impl ApplicationHandler for App {
             }
         }
     }
+    fn exiting(&mut self,_el:&ActiveEventLoop) {
+        if self.benchmark<=0. {return;}
+        eprintln!("STREET EXIT benchmark_complete={} frames={} simulation_steps={} failure={:?}",self.benchmark_complete,self.frames,self.simulation_steps,self.failure);
+        if !self.benchmark_complete {
+            let path=std::env::var_os("VOXY_STREET_BENCHMARK_REPORT").map(PathBuf::from).unwrap_or_else(||PathBuf::from("/tmp/voxy-street-benchmark.json")).with_extension("interrupted.json");
+            let diagnostic=serde_json::json!({"qualified":false,"benchmark_complete":false,"frames":self.frames,"simulation_steps":self.simulation_steps,"phase":if self.probe_bake.is_some(){"probe_bake"}else if self.frames<=180{"warmup"}else{"measurement"},"failure":self.failure,"minimum_120_presented_fps_passed":false});
+            match serde_json::to_vec_pretty(&diagnostic).map_err(|e|e.to_string()).and_then(|bytes|std::fs::write(&path,bytes).map_err(|e|e.to_string())) {Ok(())=>eprintln!("STREET interrupted diagnostic {}",path.display()),Err(e)=>eprintln!("STREET interruption diagnostic failed: {e}")}
+        }
+    }
     fn about_to_wait(&mut self, el: &ActiveEventLoop) {
         if self.gpu.is_some() && !self.finished {
             if let Err(e) = self.draw(el) {
+                eprintln!("STREET FAILURE phase=draw frames={} simulation_steps={} error={e}",self.frames,self.simulation_steps);
                 self.failure = Some(e.to_string());
                 self.finished = true;
                 el.exit();
@@ -1109,32 +1310,48 @@ impl ApplicationHandler for App {
     }
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let el = EventLoop::new()?;
+    if let Some(directory) = std::env::var_os("VOXY_STREET_EXPORT_RAY_GEOMETRY") {
+        let app = App::new();
+        if !app.original { return Err("ray geometry export requires the original street".into()); }
+        let scene = original::generate(app.original_seed, app.ageing)?;
+        ray_geometry_export::write(std::path::Path::new(&directory), &scene, app.original_seed)?;
+        return Ok(());
+    }
+    let profile = frame_profile::Profile::parse(std::env::args().skip(1), true).map_err(std::io::Error::other)?;
+    let mut event_builder=EventLoop::builder();
+    #[cfg(target_os="macos")]
+    if std::env::args().any(|a|a=="--offscreen-benchmark") {
+        use winit::platform::macos::{ActivationPolicy,EventLoopBuilderExtMacOS};
+        event_builder.with_activation_policy(ActivationPolicy::Accessory).with_activate_ignoring_other_apps(false).with_default_menu(false);
+    }
+    let el=event_builder.build()?;
     el.set_control_flow(ControlFlow::Poll);
     let mut app = App::new();
-    el.run_app(&mut app)?;
+    if profile.is_some() && (app.benchmark > 0. || app.offscreen_benchmark || app.aa_validation.is_some() || app.snapshot.is_some()) { return Err("--profile requires an on-screen run without --benchmark, snapshot or AA validation".into()); }
+    if std::env::args().any(|a|a=="--world-ray-audit-frames") && (app.world_ray_audit_frames<4||!app.offscreen_benchmark||app.benchmark>0.||!world_ray_lighting::enabled()||profile.is_some()||app.aa_validation.is_some()) {return Err("world ray audit requires at least four offscreen frames, world-ray mode, and no timed benchmark/profile/AA comparison".into());}
+    app.profile = profile;
+    let event_result=el.run_app(&mut app);
+    if app.benchmark>0. || std::env::var_os("VOXY_STREET_BENCHMARK_PROGRESS").is_some() {eprintln!("STREET EVENT LOOP RETURN result={event_result:?} frames={} simulation_steps={} benchmark_complete={}",app.frames,app.simulation_steps,app.benchmark_complete);}
+    event_result?;
     if let Some(e) = app.failure {
         return Err(e.into());
     }
+    if app.benchmark>0. && !app.benchmark_complete {return Err("street benchmark interrupted before complete report".into());}
+    if app.world_ray_audit_frames>0 && !app.world_ray_audit_complete {return Err("world ray audit interrupted before completion".into());}
+    if app.profile.as_ref().is_some_and(|p|!p.is_complete()) { return Err("street profile interrupted before report completion".into()); }
     Ok(())
 }
 
 /// Irradiance probes along the street corridor between the facades, so
 /// shaded walls and pavement receive light bounced off the street rather than
-/// only the open sky. VOXY_STREET_PROBES=off skips, or sets the spacing in m.
-fn bake_street_probes(
+/// only the open sky. `None` spacing skips the bake.
+fn begin_street_probe_bake(
     renderer: &mut ArchiveSceneRenderer,
     bounds: (Vec3, Vec3),
-) -> Result<(), Box<dyn std::error::Error>> {
-    let setting = std::env::var("VOXY_STREET_PROBES").unwrap_or_else(|_| "6".into());
-    if setting == "off" {
-        return Ok(());
-    }
-    let spacing: f32 = setting.parse().map_err(|_| format!("invalid VOXY_STREET_PROBES: {setting}"))?;
-    let start = std::time::Instant::now();
+    spacing: Option<f32>,
+) -> Result<Option<voxy_render::archive_scene::ArchiveProbeBake>, Box<dyn std::error::Error>> {
+    let Some(spacing) = spacing else { return Ok(None) };
     let min = Vec3::new(-7., 0.6, bounds.0.z + 4.);
     let max = Vec3::new(7., 12., bounds.1.z - 4.);
-    let count = renderer.bake_irradiance_probes(min, max, spacing)?;
-    eprintln!("STREET probes={count} spacing={spacing} m baked in {:.1} s", start.elapsed().as_secs_f32());
-    Ok(())
+    Ok(Some(renderer.begin_irradiance_probe_bake(min,max,spacing)?))
 }

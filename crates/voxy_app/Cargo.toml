@@ -82,3 +82,39 @@ path = "../../tools/scene-research/qualify_bc7_upload.rs"
 [[example]]
 name = "qualify_float_material_upload"
 path = "../../tools/scene-research/qualify_float_material_upload.rs"
+
+[[example]]
+name = "qualify_screen_dda"
+path = "../../tools/scene-research/qualify_screen_dda.rs"
+
+[[example]]
+name = "qualify_ray_projection"
+path = "../../tools/scene-research/qualify_ray_projection.rs"
+
+[[example]]
+name = "qualify_projected_depth_dda"
+path = "../../tools/scene-research/qualify_projected_depth_dda.rs"
+
+[[example]]
+name = "qualify_probe_bake"
+path = "../../tools/scene-research/qualify_probe_bake.rs"
+
+[[example]]
+name = "qualify_ray_schedule"
+path = "../../tools/scene-research/qualify_ray_schedule.rs"
+
+[[example]]
+name = "qualify_projection_scale"
+path = "../../tools/scene-research/qualify_projection_scale.rs"
+
+[[example]]
+name = "replay_ray_capture"
+path = "../../tools/scene-research/replay_ray_capture.rs"
+
+[[example]]
+name = "qualify_projection_plane_bounds"
+path = "../../tools/scene-research/qualify_projection_plane_bounds.rs"
+
+[[example]]
+name = "qualify_far_plane_fallback"
+path = "../../tools/scene-research/qualify_far_plane_fallback.rs"

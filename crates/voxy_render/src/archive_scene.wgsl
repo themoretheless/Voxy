@@ -1,3 +1,15 @@
+// Qualification-only injection of the existing unsupported-projection fallback.
+override ARCHIVE_RAY_FORCE_FALLBACK:bool=false;
+override ARCHIVE_COMPUTE_SSR:bool=false;
+override ARCHIVE_TRACE_SSR:bool=false;
+override ARCHIVE_COMPUTE_GI:bool=false;
+// Scheduling-only candidate; the query and colour expressions are unchanged.
+override ARCHIVE_EARLY_GI:bool=false;
+// Opt-in until full-scene correctness and paired performance are qualified.
+override ARCHIVE_PAIRED_DDA:bool=false;
+override ARCHIVE_RAY_BOUNDS:bool=true;
+// Candidate only: paired timings have not established a repeatable gain.
+override ARCHIVE_REFINE_CACHE:bool=false;
 struct Camera { vp:mat4x4<f32>, shadow:mat4x4<f32>, inverse_vp:mat4x4<f32>, eye:vec4<f32>, sun:vec4<f32>, sun_colour:vec4<f32>, viewport:vec4<f32>, weather:vec4<f32>, atmosphere:vec4<f32>, wind:vec4<f32>, previous_vp:mat4x4<f32>, previous_inverse_vp:mat4x4<f32>, surface:vec4<f32> }
 struct Light { position_kind:vec4<f32>, colour_intensity:vec4<f32> }
 struct Material { diffuse:vec4<f32>, specular_gloss:vec4<f32>, emissive_normal:vec4<f32>, surface:vec4<f32>, workflow:vec4<f32> }
@@ -15,6 +27,13 @@ struct Lights { count:vec4<u32>, values:array<Light,128> }
 @group(2) @binding(2) var shadow_sampler:sampler_comparison;
 @group(2) @binding(3) var scene_depth:texture_depth_2d;
 @group(2) @binding(4) var opaque_history_depth:texture_depth_2d;
+@group(2) @binding(7) var ray_depth_bounds:texture_2d<f32>;
+@group(2) @binding(10) var ray_pixel_depth_bounds:texture_2d<f32>;
+@group(2) @binding(8) var computed_gi:texture_2d<f32>;
+@group(2) @binding(9) var computed_ssr:texture_2d<f32>;
+@group(1) @binding(6) var gi_world:texture_2d<f32>;
+@group(1) @binding(7) var gi_normal:texture_2d<f32>;
+@group(1) @binding(8) var gi_output:texture_storage_2d<rgba32float,write>;
 @group(3) @binding(0) var environment_specular:texture_cube<f32>;
 @group(3) @binding(1) var environment_dfg:texture_2d<f32>;
 @group(3) @binding(2) var environment_sampler:sampler;
@@ -66,7 +85,10 @@ fn original_bump(p:vec3<f32>,n:vec3<f32>,height:f32)->vec3<f32>{
  let gradient=sign(determinant)*(dpdx(height)*rx+dpdy(height)*ry);
  return normalize(abs(determinant)*n-gradient+1e-20*n);
 }
+// Profiling switch: VOXY_FX_OFF bit mask (1 GI, 2 SSR, 4 contact AO, 8 sun shadow, 16 wet layer).
+fn fx_off(bit:u32)->bool{return (u32(camera.wind.w)&bit)!=0u;}
 fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->f32{
+ if fx_off(4u) {return 1.;}
  let radius=0.65;let projected=clamp(radius*camera.viewport.y/max(distance(p,camera.eye.xyz),0.5),2.,96.);
  var sum=0.;var weight=0.;
  for(var i=0u;i<12u;i++){
@@ -88,27 +110,57 @@ fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->f32{
 // the hit point is reprojected through that frame's matrix.
 // `reach` bounds the march (metres), `growth` scales the step with distance
 // and `refines` sets the binary-search depth after a crossing.
-fn screen_reflection(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32,growth:f32,refines:u32)->vec4<f32>{
+fn screen_reflection(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32,growth:f32,refines:u32,bounded:bool)->vec4<f32>{
+ if history&&camera.surface.z<0.5 {return vec4<f32>(0.);}
+ if ARCHIVE_PAIRED_DDA&&!ARCHIVE_RAY_FORCE_FALLBACK {
+  let segment=dda_project_segment(camera.vp,origin,origin+direction*reach,camera.viewport.xy);
+  // Unsupported projection remains on the complete original path.
+  if segment.state!=2u {return screen_reflection_paired(segment,history);}
+ }
+ return screen_reflection_original(origin,direction,history,reach,growth,refines,bounded);
+}
+fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32,growth:f32,refines:u32,bounded:bool)->vec4<f32>{
  if history&&camera.surface.z<0.5 {return vec4<f32>(0.);}
  var t=0.08;var previous=0.;
+ var cached_tile=vec2<i32>(-1);var cached_lower=0.;
+ var cached_pixel=vec2<i32>(-1);var cached_depth=1.;
  for(var step=0u;step<80u;step++) {
   let q=camera.vp*vec4<f32>(origin+direction*t,1.);
   if q.w<=0. {return vec4<f32>(0.);}
   let uv=q.xy/q.w*vec2<f32>(0.5,-0.5)+0.5;
   if any(uv<=vec2<f32>(0.))||any(uv>=vec2<f32>(1.)){return vec4<f32>(0.);}
-  let depth=textureLoad(scene_depth,vec2<i32>(uv*camera.viewport.xy),0);
+  let ray_pixel=vec2<i32>(uv*camera.viewport.xy);
+  // The minimum is a rejection bound only. Potential hits retain the original
+  // level-zero read, step recurrence, crossing and all binary refinements.
+  var depth=1.;
+  if bounded {
+   let tile=ray_pixel/8;
+   if any(tile!=cached_tile) {cached_lower=textureLoad(ray_depth_bounds,tile,0).x;cached_tile=tile;}
+   if q.z/q.w>=cached_lower {
+    if any(ray_pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,ray_pixel,0);cached_pixel=ray_pixel;}
+    depth=cached_depth;
+   }
+  } else {depth=textureLoad(scene_depth,ray_pixel,0);}
   if depth<1.&&q.z/q.w>=depth {
    var lo=previous;var hi=t;
    for(var refine=0u;refine<refines;refine++) {
     let mid=(lo+hi)*0.5;let clip=camera.vp*vec4<f32>(origin+direction*mid,1.);
     let pixel=clamp(vec2<i32>((clip.xy/clip.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
-    let z=textureLoad(scene_depth,pixel,0);
+    var z=1.;
+    if bounded && ARCHIVE_REFINE_CACHE {
+     if any(pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,pixel,0);cached_pixel=pixel;}
+     z=cached_depth;
+    } else {z=textureLoad(scene_depth,pixel,0);}
     if z<1.&&clip.z/clip.w>=z {hi=mid;} else {lo=mid;}
    }
    let point=origin+direction*hi;let clip=camera.vp*vec4<f32>(point,1.);
    let coord=clip.xy/clip.w*vec2<f32>(0.5,-0.5)+0.5;
    let pixel=clamp(vec2<i32>(coord*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
-   let z=textureLoad(scene_depth,pixel,0);
+   var z=1.;
+   if bounded && ARCHIVE_REFINE_CACHE {
+    if any(pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,pixel,0);cached_pixel=pixel;}
+    z=cached_depth;
+   } else {z=textureLoad(scene_depth,pixel,0);}
    let h=camera.inverse_vp*vec4<f32>((vec2<f32>(pixel)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.),z,1.);
    if distance(h.xyz/h.w,point)<0.20 {
     var edge=min(min(coord.x,coord.y),min(1.-coord.x,1.-coord.y));
@@ -143,14 +195,19 @@ fn screen_reflection(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32
 // frame (which already carries earlier bounces). TAA integrates the noise.
 // Returns hit radiance and coverage; misses keep the sky/environment term.
 fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
+ if fx_off(1u) {return vec4<f32>(0.);}
+ let direction=archive_gi_direction(pixel,n);
+ // Full-distance, full-refinement march; probes supplement offscreen light.
+ return screen_reflection(p+n*0.05,direction,true,60.,1.,8u,ARCHIVE_RAY_BOUNDS);
+}
+fn archive_gi_direction(pixel:vec2<f32>,n:vec3<f32>)->vec3<f32>{
  let seed=fract(sin(dot(pixel+vec2<f32>(camera.atmosphere.x*61.7,camera.atmosphere.x*17.3),vec2<f32>(12.9898,78.233)))*43758.5453);
  let seed2=fract(seed*7.1+fract(dot(pixel,vec2<f32>(0.06711056,0.00583715))*52.9829189));
  let r=sqrt(seed);let phi=6.2831853*seed2;
  let t=normalize(select(cross(n,vec3<f32>(0.,1.,0.)),cross(n,vec3<f32>(1.,0.,0.)),abs(n.y)>0.9));
  let b=cross(n,t);
  let direction=normalize(t*r*cos(phi)+b*r*sin(phi)+n*sqrt(max(1.-seed,0.)));
- // Short coarse march: the baked probes carry the far-field bounce.
- return screen_reflection(p+n*0.05,direction,true,3.,4.,3u);
+ return direction;
 }
 // Rain wetting: porous darkening and lower roughness everywhere exposed, plus
 // flat low-roughness puddles in noise basins on upward-facing surfaces.
@@ -232,7 +289,12 @@ fn surface_uv(f:Fragment)->vec2<f32>{
  }
  return f.uv;
 }
-fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+// One material evaluation owns the final normal used by lighting and ray inputs.
+struct ArchiveSurface {
+ base:vec3<f32>,opacity:f32,uv:vec2<f32>,spec:vec4<f32>,f0:vec3<f32>,
+ roughness:f32,diffuse:vec3<f32>,normal:vec3<f32>,view:vec3<f32>,geometric:vec3<f32>,splash:f32
+}
+fn archive_surface(f:Fragment,front:bool,tex:vec4<f32>)->ArchiveSurface {
  var base=tex.rgb*material.diffuse.rgb;if material.workflow.z>0.5{base*=original_surface(f.world,f.normal,material.workflow.z);}let opacity=select(tex.a,1.,material.workflow.y>1.5)*material.diffuse.a;
  let uv=surface_uv(f);let packed=material.workflow.y>1.5;var packed_normal=vec4<f32>(0.);var spec=vec4<f32>(1.);
  if packed {packed_normal=textureSample(normal_map,material_sampler,uv);spec=vec4<f32>(tex.a,packed_normal.a,0.,1.);}else{spec=textureSample(specular_map,material_sampler,uv);}var f0=spec.rgb*material.specular_gloss.rgb;var roughness=1.-spec.a*material.specular_gloss.a;var diffuse=base*(1.-max(max(f0.r,f0.g),f0.b));
@@ -241,11 +303,20 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  if material.workflow.w>0. {let n=abs(f.normal);if n.x>=n.y&&n.x>=n.z {tangent=vec3<f32>(0.,0.,-sign(f.normal.x));bitangent=vec3<f32>(0.,1.,0.);}else if n.y>=n.z {tangent=vec3<f32>(1.,0.,0.);bitangent=vec3<f32>(0.,0.,-sign(f.normal.y));}else{tangent=vec3<f32>(sign(f.normal.z),0.,0.);bitangent=vec3<f32>(0.,1.,0.);}}var mapped=vec3<f32>(0.,0.,1.);if packed {mapped=packed_normal.xyz*2.-1.;}else if material.workflow.y>0.5{mapped=textureSample(normal_map,material_sampler,uv).xyz*2.-1.;}mapped.x*=material.emissive_normal.w;mapped.y*=material.emissive_normal.w;normal=normalize(mat3x3<f32>(tangent,bitangent,normal)*mapped);if material.workflow.z>0.5{let height=original_height(f.world,material.workflow.z);normal=original_bump(f.world,normal,height);roughness=clamp(roughness+(original_noise(f.world*7.)-0.5)*0.16,0.04,1.);}let view=normalize(camera.eye.xyz-f.world);
  let geometric=normalize(f.normal)*face;
  var splash=0.;
- if material.surface.z==0.&&!(material.workflow.z>5.5&&material.workflow.z<6.5) {
+ if material.surface.z==0.&&!fx_off(16u)&&!(material.workflow.z>5.5&&material.workflow.z<6.5) {
   let wet=wet_layer(f.world,geometric,normal,roughness,dot(base,vec3<f32>(0.2126,0.7152,0.0722)));
   diffuse*=wet.darken;roughness=wet.roughness;normal=wet.normal;f0=mix(f0,max(f0,vec3<f32>(0.02)),wet.puddle);splash=wet.splash;
  }
- let shadow_pos=f.shadow.xyz/f.shadow.w;let shadow_uv=shadow_pos.xy*vec2<f32>(0.5,-0.5)+0.5;var visibility=1.;if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.{visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715)))));}
+ return ArchiveSurface(base,opacity,uv,spec,f0,roughness,diffuse,normal,view,geometric,splash);
+}
+fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+ let surface=archive_surface(f,front,tex);
+ let base=surface.base;let opacity=surface.opacity;let uv=surface.uv;let spec=surface.spec;
+ let f0=surface.f0;let roughness=surface.roughness;let diffuse=surface.diffuse;
+ let normal=surface.normal;let view=surface.view;let geometric=surface.geometric;let splash=surface.splash;
+ var early_bounce=vec4<f32>(0.);
+ if ARCHIVE_COMPUTE_GI {early_bounce=textureLoad(computed_gi,vec2<i32>(f.clip.xy),0);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
+ let shadow_pos=f.shadow.xyz/f.shadow.w;let shadow_uv=shadow_pos.xy*vec2<f32>(0.5,-0.5)+0.5;var visibility=1.;if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.&&!fx_off(8u){visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715)))));}
  let transmission=material.surface.z;let alpha=max(roughness*roughness,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,roughness),0.).rg;let shading=Brdf(normal,view,diffuse*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility;
  for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;let distance2=max(dot(offset,offset),0.0001);let distance=sqrt(distance2);var attenuation=1./distance2;if light.position_kind.w>0.{attenuation*=square(clamp(1.-fourth(distance/light.position_kind.w),0.,1.));}if attenuation==0.{continue;}colour+=brdf(shading,offset/distance)*light.colour_intensity.rgb*light.colour_intensity.a*attenuation;}
  // Directional sky, contact visibility and view-dependent environment Fresnel.
@@ -257,20 +328,20 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   // Skip tracing where Fresnel makes the scene term invisible (steep dielectric views).
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
   let mirror=select((1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,visible),1.,transmission>0.);
-  if mirror>0. {let reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u);radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
-  let bounce=screen_gi(f.clip.xy,f.world,normal);
+  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
+  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
   let probe=probe_irradiance(f.world,normal);
   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
   colour+=diffuse*(1.-transmission)*indirect*multibounce_ao(ao,diffuse)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,roughness);
  } else {
   let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(normal.y*0.5+0.5,0.,1.));
-  let bounce=screen_gi(f.clip.xy,f.world,normal);
+  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
   let probe=probe_irradiance(f.world,normal);
   colour+=diffuse*(1.-transmission)*mix(mix(sky*camera.viewport.w/3.14159265,probe.rgb,probe.a),bounce.rgb,bounce.a)*ao;
   let reflected=reflect(-view,normal);let fresnel=f0+(1.-f0)*fifth(1.-nv);
   var incoming=daylight(reflected,camera.sun.xyz)*(1.-0.7*roughness);
   let mirror=(1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,max(max(fresnel.r,fresnel.g),fresnel.b));
-  if mirror>0. {let reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u);incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
+  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
   colour+=incoming*fresnel*ao;
  }
  if splash>0. {
@@ -295,3 +366,106 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
 
 @fragment fn fs_opaque(f:Fragment,@builtin(front_facing) front:bool)->@location(0) vec4<f32>{return shade(f,front,textureSample(diffuse_map,material_sampler,surface_uv(f)));}
 @fragment fn fs_main(f:Fragment,@builtin(front_facing) front:bool)->@location(0) vec4<f32>{let tex=textureSample(diffuse_map,material_sampler,surface_uv(f));if material.surface.w>=0.&&tex.a*material.diffuse.a<material.surface.w{discard;}return shade(f,front,tex);}
+
+// Full pixel coverage, with paired coordinates through history reprojection.
+fn screen_reflection_paired(segment:DdaProjectedSegment,history:bool)->vec4<f32> {
+ if segment.state!=1u {return vec4<f32>(0.);}
+ let hit=trace_depth_dda_paired(scene_depth,DdaVectorPair(segment.begin,segment.begin_low),DdaVectorPair(segment.end,segment.end_low));
+ return screen_reflection_paired_hit(segment,history,hit);
+}
+fn screen_reflection_paired_hit(segment:DdaProjectedSegment,history:bool,hit:DepthDdaPairHit)->vec4<f32>{
+ if hit.pixel.x<0 {return vec4<f32>(0.);}
+ let world=dda_reconstruct_world_paired(segment,hit.parameter);
+ let parameter=dda_reconstruct_parameter_paired(segment,hit.parameter);
+ return archive_world_history_radiance(world,parameter,hit.pixel,history);
+}
+// Shared radiance reconstruction for projected-depth and original-source hits.
+// Keep world high/low parts through current and previous-camera reprojection.
+fn archive_world_history_radiance(world:DdaVectorPair,parameter:vec2<f32>,pixel:vec2<i32>,history:bool)->vec4<f32>{
+ let current=dda_project_world_pair(camera.vp,world);
+ let coord=dda_clip_ndc(current).xy*vec2<f32>(0.5,-0.5)+0.5;
+ var edge=min(min(coord.x,coord.y),min(1.-coord.x,1.-coord.y));
+ var source=pixel;
+ if history {
+  let old=dda_project_world_pair(camera.previous_vp,world);
+  if precise_le(vec2<f32>(old.high.w,old.low.w),vec2<f32>(0.)) {return vec4<f32>(0.);}
+  let old_uv=dda_clip_ndc(old).xy*vec2<f32>(0.5,-0.5)+0.5;
+  edge=min(edge,min(min(old_uv.x,old_uv.y),min(1.-old_uv.x,1.-old_uv.y)));
+  if edge<=0. {return vec4<f32>(0.);}
+  source=clamp(vec2<i32>(old_uv*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
+  let stored_depth=textureLoad(opaque_history_depth,source,0);
+  if stored_depth>=1. {return vec4<f32>(0.);}
+  let old_ndc=(vec2<f32>(source)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.);
+  let recovered=dda_project_endpoint(camera.previous_inverse_vp,vec4<f32>(old_ndc,stored_depth,1.));
+  if recovered.high.w==0. {return vec4<f32>(0.);}
+  if !archive_paired_history_matches(world,recovered,vec2<f32>(old.high.w,old.low.w),camera.surface.w) {return vec4<f32>(0.);}
+ }
+ let fade=smoothstep(0.,0.04,edge)*(1.-smoothstep(0.75,1.,parameter.x+parameter.y));
+ return vec4<f32>(textureLoad(background,source,0).rgb/camera.viewport.z,fade);
+}
+
+// Retain world residuals even when deciding history admission. The threshold
+// follows archive_history_surface_matches, with compensated arithmetic.
+fn archive_paired_history_matches(point:DdaVectorPair,recovered:DdaVectorPair,clip_w:vec2<f32>,angular:f32)->bool {
+ if !dda_finite4(point.high)||!dda_finite4(point.low)||!dda_finite4(recovered.high)||!dda_finite4(recovered.low)||!dda_finite4(vec4<f32>(clip_w,angular,0.))||precise_le(clip_w,vec2<f32>(0.)) {return false;}
+ let w=vec2<f32>(recovered.high.w,recovered.low.w);if precise_equal(w,vec2<f32>(0.)){return false;}
+ var squared=vec2<f32>(0.);
+ for(var axis=0u;axis<3u;axis++){
+  let actual=projection_pair_div(vec2<f32>(recovered.high[axis],recovered.low[axis]),w);
+  let delta=projection_pair_add(actual,-vec2<f32>(point.high[axis],point.low[axis]));
+  squared=projection_pair_add(squared,projection_pair_mul(delta,delta));
+ }
+ let tolerance=projection_pair_add(vec2<f32>(0.03,0.),projection_pair_mul(vec2<f32>(2.*max(angular,0.),0.),clip_w));
+ return precise_le(squared,projection_pair_mul(tolerance,tolerance));
+}
+
+fn dda_tile_range(tile:vec2<i32>,level:i32)->vec2<f32>{return textureLoad(ray_depth_bounds,tile,level).xy;}
+fn dda_tile_levels()->u32{return textureNumLevels(ray_depth_bounds);}
+fn hierarchy_candidate_levels()->u32 {if ARCHIVE_STACK_PIXEL_LEAVES {return textureNumLevels(ray_pixel_depth_bounds);}return dda_tile_levels();}
+fn hierarchy_candidate_leaf_extent()->i32 {return select(8,1,ARCHIVE_STACK_PIXEL_LEAVES);}
+fn hierarchy_candidate_range(tile:vec2<i32>,level:i32)->vec2<f32> {if ARCHIVE_STACK_PIXEL_LEAVES {return textureLoad(ray_pixel_depth_bounds,tile,level).xy;}return dda_tile_range(tile,level);}
+
+
+// Same reflection admission as the authored shader, without new ray thresholds.
+fn archive_surface_mirror(surface:ArchiveSurface)->f32 {
+ let nv=max(dot(surface.normal,surface.view),0.0001);
+ if camera.eye.w>0.5 {let visible=max(max(surface.f0.r,surface.f0.g),surface.f0.b)+fifth(1.-nv);return select((1.-smoothstep(0.1,0.4,surface.roughness))*smoothstep(0.045,0.07,visible),1.,material.surface.z>0.);}
+ let fresnel=surface.f0+(1.-surface.f0)*fifth(1.-nv);
+ return (1.-smoothstep(0.1,0.4,surface.roughness))*smoothstep(0.045,0.07,max(max(fresnel.r,fresnel.g),fresnel.b));
+}
+// Full precision ray inputs from the same authored surface evaluation.
+struct ArchiveGiGuides {@location(0) world:vec4<f32>,@location(1) normal:vec4<f32>}
+@fragment fn fs_gi_guides(f:Fragment,@builtin(front_facing) front:bool)->ArchiveGiGuides {
+ let tex=textureSample(diffuse_map,material_sampler,surface_uv(f));
+ if material.surface.w>=0.&&tex.a*material.diffuse.a<material.surface.w {discard;}
+ let surface=archive_surface(f,front,tex);
+ var mirror=0.;if ARCHIVE_COMPUTE_SSR {mirror=archive_surface_mirror(surface);}
+ return ArchiveGiGuides(vec4<f32>(f.world,mirror),vec4<f32>(surface.normal,select(-1.,1.,material.surface.z==0.)));
+}
+@compute @workgroup_size(8,8) fn cs_opaque_gi(@builtin(global_invocation_id) id:vec3<u32>) {
+ let size=textureDimensions(gi_world);if any(id.xy>=size){return;}
+ let pixel=vec2<i32>(id.xy);let world=textureLoad(gi_world,pixel,0);
+ var bounce=vec4<f32>(0.);
+ let normal=textureLoad(gi_normal,pixel,0);
+ if normal.w!=0. {
+  if ARCHIVE_TRACE_SSR {if world.w>0.&&!fx_off(2u){let view=normalize(camera.eye.xyz-world.xyz);bounce=screen_reflection(world.xyz+normal.xyz*0.03,reflect(-view,normal.xyz),normal.w>0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}}
+  else{bounce=screen_gi(vec2<f32>(id.xy)+0.5,world.xyz,normal.xyz);}
+ }
+ textureStore(gi_output,pixel,bounce);
+}
+
+// Qualification-only raw float32 GI export, before native HDR rounding.
+@fragment fn fs_gi_reference(f:Fragment,@builtin(front_facing) front:bool)->@location(0) vec4<f32> {
+ let tex=textureSample(diffuse_map,material_sampler,surface_uv(f));
+ if material.surface.w>=0.&&tex.a*material.diffuse.a<material.surface.w {discard;}
+ let surface=archive_surface(f,front,tex);
+ return screen_gi(f.clip.xy,f.world,surface.normal);
+}
+@fragment fn fs_ssr_reference(f:Fragment,@builtin(front_facing) front:bool)->@location(0) vec4<f32> {
+ let tex=textureSample(diffuse_map,material_sampler,surface_uv(f));
+ if material.surface.w>=0.&&tex.a*material.diffuse.a<material.surface.w {discard;}
+ let surface=archive_surface(f,front,tex);
+ var ssr=vec4<f32>(0.);
+ if archive_surface_mirror(surface)>0.&&!fx_off(2u){ssr=screen_reflection(f.world+surface.normal*0.03,reflect(-surface.view,surface.normal),material.surface.z==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}
+ return ssr;
+}

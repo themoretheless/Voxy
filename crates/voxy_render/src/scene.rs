@@ -3053,5 +3053,5 @@ mod opaque_partition_regression;
 mod environment_transaction_tests;
 
 #[cfg(test)]
-#[path="scene/environment_pixel_tests.rs"]
+#[path = "scene/environment_pixel_tests.rs"]
 mod environment_pixel_tests;

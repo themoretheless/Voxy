@@ -15,7 +15,7 @@ struct Bake {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+#[derive(Debug, Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
 pub(crate) struct ProbeGrid {
     pub origin: [f32; 4],
     pub spacing: [f32; 4],
@@ -66,23 +66,37 @@ impl ProbeProjector {
         face: usize,
         basis: [glam::Vec3; 3],
         inverse_exposure: f32,
-    ) {
+    ) -> wgpu::SubmissionIndex {
         let [forward, right, up] = basis;
         let size = height.min(width) as f32;
         let bake = Bake {
             forward: [forward.x, forward.y, forward.z, index as f32],
             right: [right.x, right.y, right.z, face as f32],
             up: [up.x, up.y, up.z, inverse_exposure],
-            square: [((width as f32 - size) * 0.5).floor(), size, (size / 128.).max(1.).floor(), 0.],
+            square: [
+                ((width as f32 - size) * 0.5).floor(),
+                size,
+                (size / 128.).max(1.).floor(),
+                0.,
+            ],
         };
         queue.write_buffer(&self.uniform, 0, bytemuck::bytes_of(&bake));
         let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("irradiance probe face"),
             layout: &self.pipeline.get_bind_group_layout(0),
             entries: &[
-                wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(face_view) },
-                wgpu::BindGroupEntry { binding: 1, resource: self.uniform.as_entire_binding() },
-                wgpu::BindGroupEntry { binding: 2, resource: probes.as_entire_binding() },
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: wgpu::BindingResource::TextureView(face_view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: self.uniform.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: probes.as_entire_binding(),
+                },
             ],
         });
         let mut encoder = device.create_command_encoder(&Default::default());
@@ -92,14 +106,20 @@ impl ProbeProjector {
             pass.set_bind_group(0, &bind, &[]);
             pass.dispatch_workgroups(1, 1, 1);
         }
-        queue.submit([encoder.finish()]);
+        queue.submit([encoder.finish()])
     }
 }
 
 /// Grid of probe positions covering `min..=max` at roughly `spacing`.
 /// Every axis has at least two probes so trilinear lookup is always defined.
-pub(crate) fn grid(min: glam::Vec3, max: glam::Vec3, spacing: f32) -> Option<(ProbeGrid, Vec<glam::Vec3>)> {
-    if !(min.is_finite() && max.is_finite() && spacing.is_finite() && spacing > 0.) || max.cmple(min).any() {
+pub(crate) fn grid(
+    min: glam::Vec3,
+    max: glam::Vec3,
+    spacing: f32,
+) -> Option<(ProbeGrid, Vec<glam::Vec3>)> {
+    if !(min.is_finite() && max.is_finite() && spacing.is_finite() && spacing > 0.)
+        || max.cmple(min).any()
+    {
         return None;
     }
     let extent = max - min;

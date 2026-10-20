@@ -84,7 +84,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
     // Scaling first also keeps tiny posed triangles from losing flat lighting.
     if magnitude > 0. { normal = normalize(normal / magnitude); }
     let light = 0.18 + 0.82 * max(dot(normal, sun), 0.0);
-    if input.coat.a >= 2.0 {
+    if input.coat.a >= 2.0 && input.coat.a < 3.0 {
         let diffuse=sqrt(max(0.0,1.0-pow(dot(normal,sun),2.0)));
         return vec4<f32>(input.coat.rgb*(0.25+0.75*diffuse),1.0);
     }

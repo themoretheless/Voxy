@@ -7,6 +7,9 @@ pub(super) struct Options {
     pub require_nvidia: bool,
     pub rough_image: bool,
     pub face: bool,
+    pub capture: Option<std::path::PathBuf>,
+    pub narrow: bool,
+    pub narrow_control: bool,
 }
 impl Options {
     pub fn parse(args: impl IntoIterator<Item = String>) -> Result<Self, &'static str> {
@@ -15,6 +18,9 @@ impl Options {
             require_nvidia: false,
             rough_image: false,
             face: false,
+            capture: None,
+            narrow: false,
+            narrow_control: false,
         };
         let mut face_arguments = std::collections::BTreeSet::new();
         let mut experimental = false;
@@ -23,9 +29,26 @@ impl Options {
         while let Some(argument) = args.next() {
             match argument.as_str() {
                 "--experimental" if !experimental => experimental = true,
+                "--ray-narrow" if !result.narrow => result.narrow = true,
+                "--ray-narrow-control" if !result.narrow_control => result.narrow_control = true,
+                "--ray-capture"
+                    if result.capture.is_none() && !result.face && !result.rough_image =>
+                {
+                    let path = args.next().ok_or("--ray-capture requires a directory")?;
+                    if path.is_empty() || path.starts_with("--") {
+                        return Err("--ray-capture requires a directory");
+                    }
+                    result.capture = Some(path.into());
+                }
                 "--require-nvidia" if !result.require_nvidia => result.require_nvidia = true,
-                "--rough-image" if !result.rough_image && !result.face => result.rough_image = true,
-                "--face" if !result.face && !result.rough_image => result.face = true,
+                "--rough-image"
+                    if !result.rough_image && !result.face && result.capture.is_none() =>
+                {
+                    result.rough_image = true
+                }
+                "--face" if !result.face && !result.rough_image && result.capture.is_none() => {
+                    result.face = true
+                }
                 "--eye-closeup"
                 | "--lid-close-transition"
                 | "--age-transition"
@@ -77,6 +100,12 @@ impl Options {
         if !face_arguments.is_empty() && !result.face {
             return Err("face rendering arguments require --face");
         }
+        if result.narrow_control && !result.narrow {
+            return Err("--ray-narrow-control requires --ray-narrow");
+        }
+        if result.narrow && result.capture.is_none() {
+            return Err("--ray-narrow requires --ray-capture");
+        }
         if !experimental {
             return Err("use --experimental to run the isolated wgpu ray-query probe");
         }
@@ -88,6 +117,88 @@ mod tests {
     use super::*;
     fn parse(args: &[&str]) -> Result<Options, &'static str> {
         Options::parse(args.iter().map(|arg| (*arg).to_owned()))
+    }
+    #[test]
+    fn matched_control_cannot_be_silently_selected_without_narrow_mode() {
+        assert!(parse(&["--experimental", "--ray-narrow-control"]).is_err());
+        assert!(
+            parse(&[
+                "--experimental",
+                "--ray-capture",
+                "/tmp/capture",
+                "--ray-narrow-control"
+            ])
+            .is_err()
+        );
+        assert!(
+            parse(&[
+                "--experimental",
+                "--ray-capture",
+                "/tmp/capture",
+                "--ray-narrow",
+                "--ray-narrow-control",
+                "--ray-narrow-control"
+            ])
+            .is_err()
+        );
+        assert!(
+            parse(&[
+                "--experimental",
+                "--ray-capture",
+                "/tmp/capture",
+                "--ray-narrow",
+                "--ray-narrow-control"
+            ])
+            .unwrap()
+            .narrow_control
+        );
+    }
+    #[test]
+    fn narrow_requires_capture_and_explicit_experimental_selection() {
+        assert!(parse(&["--experimental", "--ray-narrow"]).is_err());
+        assert!(parse(&["--ray-capture", "/tmp/capture", "--ray-narrow"]).is_err());
+        assert!(
+            parse(&[
+                "--experimental",
+                "--ray-capture",
+                "/tmp/capture",
+                "--ray-narrow",
+                "--ray-narrow"
+            ])
+            .is_err()
+        );
+        assert!(
+            parse(&[
+                "--experimental",
+                "--ray-capture",
+                "/tmp/capture",
+                "--ray-narrow"
+            ])
+            .unwrap()
+            .narrow
+        );
+    }
+    #[test]
+    fn capture_mode_requires_path_and_rejects_mixed_render_modes() {
+        assert!(parse(&["--experimental", "--ray-capture"]).is_err());
+        assert!(parse(&["--experimental", "--ray-capture", "--face"]).is_err());
+        assert!(parse(&["--experimental", "--ray-capture", "/tmp/capture", "--face"]).is_err());
+        assert!(
+            parse(&[
+                "--experimental",
+                "--rough-image",
+                "--ray-capture",
+                "/tmp/capture"
+            ])
+            .is_err()
+        );
+        assert_eq!(
+            parse(&["--experimental", "--ray-capture", "/tmp/capture"])
+                .unwrap()
+                .capture
+                .unwrap(),
+            std::path::PathBuf::from("/tmp/capture")
+        );
     }
     #[test]
     fn selection_rejects_ignored_or_conflicting_arguments() {

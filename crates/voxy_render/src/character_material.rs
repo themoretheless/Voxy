@@ -29,7 +29,10 @@ impl CharacterSurface {
 /// Returns the UV pair that encodes `colour` (linear, 0..=1) and `surface`.
 pub fn encode_character_uv(colour: [f32; 3], surface: CharacterSurface) -> [f32; 2] {
     let c = colour.map(|x| (x.clamp(0., 1.) * 255.).round() as u32);
-    [(c[0] | c[1] << 8 | c[2] << 16) as f32, -10000. - surface.code()]
+    [
+        (c[0] | c[1] << 8 | c[2] << 16) as f32,
+        -10000. - surface.code(),
+    ]
 }
 
 #[cfg(test)]

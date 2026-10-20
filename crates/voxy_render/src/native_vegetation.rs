@@ -639,7 +639,12 @@ impl NativeVegetation {
                 .normalize()
                 .extend(0.)
                 .to_array(),
-            flags: [f32::from(hdr), self.started.elapsed().as_secs_f32() % 3600., 0., 0.],
+            flags: [
+                f32::from(hdr),
+                self.started.elapsed().as_secs_f32() % 3600.,
+                0.,
+                0.,
+            ],
         };
         queue.write_buffer(&self.camera, 0, bytemuck::bytes_of(&camera));
         let shadow_view = self.shadow.create_view(&Default::default());
@@ -760,11 +765,17 @@ mod tests {
     #[test]
     fn plant_shader_with_wind_and_alpha_shadows_validates() {
         let module = naga::front::wgsl::parse_str(include_str!("native_vegetation.wgsl")).unwrap();
-        naga::valid::Validator::new(naga::valid::ValidationFlags::all(), naga::valid::Capabilities::empty())
-            .validate(&module)
-            .unwrap();
+        naga::valid::Validator::new(
+            naga::valid::ValidationFlags::all(),
+            naga::valid::Capabilities::empty(),
+        )
+        .validate(&module)
+        .unwrap();
         for entry in ["vs_main", "vs_shadow", "fs_main", "fs_shadow"] {
-            assert!(module.entry_points.iter().any(|e| e.name == entry), "{entry}");
+            assert!(
+                module.entry_points.iter().any(|e| e.name == entry),
+                "{entry}"
+            );
         }
     }
 }

@@ -1,5 +1,8 @@
 //! Validated triangle acceleration structures for devices with ray queries enabled.
 use wgpu::util::DeviceExt;
+#[path = "ray_archive.rs"]
+mod archive;
+use archive::RayArchiveGeometry;
 
 /// Opaque segment visibility compute shader: bindings TLAS, segments, u32 outputs.
 /// Output is one for unobstructed, zero for blocked; use only validated segments.
@@ -43,13 +46,20 @@ pub enum RaySceneError {
 }
 
 #[derive(Debug)]
+enum RayGeometry {
+    Triangles(wgpu::BlasTriangleGeometrySizeDescriptor),
+    Aabbs(wgpu::BlasAABBGeometrySizeDescriptor),
+    Archive(RayArchiveGeometry),
+}
+
+#[derive(Debug)]
 pub struct RayScene {
     device: wgpu::Device,
     geometry_revision: u64,
     instances: Vec<Option<RayInstanceUpdate>>,
-    vertices: wgpu::Buffer,
-    indices: Option<wgpu::Buffer>,
-    geometry: wgpu::BlasTriangleGeometrySizeDescriptor,
+    vertices: crate::ComputeStorage,
+    indices: Option<crate::ComputeStorage>,
+    geometry: RayGeometry,
     blas: wgpu::Blas,
     tlas: wgpu::Tlas,
     instance_capacity: u32,
@@ -71,6 +81,74 @@ impl RayScene {
         Ok(())
     }
 
+    pub(crate) fn validate_triangles(&self, device: &wgpu::Device) -> Result<(), RaySceneError> {
+        self.validate_device(device)?;
+        if !matches!(self.geometry, RayGeometry::Triangles(_)) {
+            return Err(RaySceneError::InvalidGeometry);
+        }
+        Ok(())
+    }
+
+    /// Creates procedural candidate volumes in this same BLAS/TLAS owner.
+    /// Each box is packed `[min_x,min_y,min_z,max_x,max_y,max_z]` without
+    /// quantization. Candidate shaders must perform their own narrow phase;
+    /// triangle-only consumers explicitly reject this geometry kind.
+    /// # Errors
+    /// Rejects unsupported devices, malformed bounds and allocation/AS limits.
+    pub fn from_aabbs(
+        device: &wgpu::Device,
+        boxes: &[[f32; 6]],
+        capacity: u32,
+    ) -> Result<Self, RaySceneError> {
+        if !device
+            .features()
+            .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
+        {
+            return Err(RaySceneError::Unsupported);
+        }
+        validate_aabbs(boxes)?;
+        let count = u32::try_from(boxes.len()).map_err(|_| RaySceneError::Capacity)?;
+        let limits = device.limits();
+        if capacity == 0
+            || capacity > limits.max_tlas_instance_count
+            || count > limits.max_blas_primitive_count
+            || limits.max_blas_geometry_count == 0
+            || u64::from(count) * 24 > limits.max_buffer_size
+        {
+            return Err(RaySceneError::Capacity);
+        }
+        let [vertices] = crate::ComputeMemoryBudget::for_device(device)
+            .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
+                label: "validated ray candidate AABBs",
+                size: u64::from(count) * 24,
+                contents: Some(bytemuck::cast_slice(boxes)),
+                usage: wgpu::BufferUsages::BLAS_INPUT,
+            }])
+            .map_err(|_| RaySceneError::Capacity)?;
+        let geometry = wgpu::BlasAABBGeometrySizeDescriptor {
+            primitive_count: count,
+            flags: wgpu::AccelerationStructureGeometryFlags::empty(),
+        };
+        let blas = device.create_blas(
+            &wgpu::CreateBlasDescriptor {
+                label: Some("procedural candidate BLAS"),
+                flags: wgpu::AccelerationStructureFlags::PREFER_FAST_TRACE,
+                update_mode: wgpu::AccelerationStructureUpdateMode::Build,
+            },
+            wgpu::BlasGeometrySizeDescriptors::AABBs {
+                descriptors: vec![geometry.clone()],
+            },
+        );
+        Ok(Self::finish_create(
+            device,
+            RayGeometry::Aabbs(geometry),
+            blas,
+            vertices,
+            None,
+            capacity,
+        ))
+    }
+
     /// Updates the instance's row-major 3x4 affine object-to-world transform.
     /// Call `build_instances` after the initial full `build` and before querying.
     /// Submit previous queries before changing the instance; this is not a GPU fence.
@@ -81,6 +159,10 @@ impl RayScene {
     }
 
     /// Sets one shared-BLAS instance; custom indices are limited to 24 bits.
+    /// Archive candidate scenes keep source transforms and IDs immutable; recreate
+    /// the archive for geometry changes. Masks/removal remain supported.
+    /// Use `instance_custom_data` for application identity in shaders: backend
+    /// instance indices can change when inactive TLAS slots are compacted.
     /// # Errors
     /// Rejects capacity/custom-index overflow or invalid transforms atomically.
     pub fn set_instance(
@@ -94,6 +176,7 @@ impl RayScene {
             return Err(RaySceneError::Capacity);
         }
         validate_transform(transform)?;
+        self.validate_archive_native_transform(index, transform, custom_index)?;
         self.instances[index as usize] = Some(RayInstanceUpdate {
             index,
             transform,
@@ -101,7 +184,7 @@ impl RayScene {
             mask,
         });
         self.tlas[index as usize] = Some(wgpu::TlasInstance::new(
-            &self.blas,
+            self.instance_blas(index),
             transform,
             custom_index,
             mask,
@@ -121,17 +204,29 @@ impl RayScene {
                 return Err(RaySceneError::Capacity);
             }
             validate_transform(update.transform)?;
+            self.validate_archive_native_transform(
+                update.index,
+                update.transform,
+                update.custom_index,
+            )?;
         }
         for update in updates {
             self.instances[update.index as usize] = Some(*update);
             self.tlas[update.index as usize] = Some(wgpu::TlasInstance::new(
-                &self.blas,
+                self.instance_blas(update.index),
                 update.transform,
                 update.custom_index,
                 update.mask,
             ));
         }
         Ok(())
+    }
+
+    fn instance_blas(&self, index: u32) -> &wgpu::Blas {
+        match &self.geometry {
+            RayGeometry::Archive(archive) => &archive.blases[archive.instance_mesh[index as usize]],
+            _ => &self.blas,
+        }
     }
 
     /// Removes an instance; rebuild TLAS before querying the changed scene.
@@ -248,6 +343,44 @@ impl RayScene {
                 descriptors: vec![geometry.clone()],
             },
         );
+        let mut descriptors = vec![voxy_gpu_core::ManagedBufferDescriptor {
+            label: "ray triangle positions",
+            size: u64::from(count) * 12,
+            contents: Some(bytemuck::cast_slice(vertices)),
+            usage: wgpu::BufferUsages::BLAS_INPUT,
+        }];
+        if let Some(indices) = indices {
+            descriptors.push(voxy_gpu_core::ManagedBufferDescriptor {
+                label: "ray triangle indices",
+                size: indices.len() as u64 * 4,
+                contents: Some(bytemuck::cast_slice(indices)),
+                usage: wgpu::BufferUsages::BLAS_INPUT,
+            });
+        }
+        let mut buffers = crate::ComputeMemoryBudget::for_device(device)
+            .allocate_buffer_batch(&descriptors)
+            .map_err(|_| RaySceneError::Capacity)?
+            .into_iter();
+        let vertices = buffers.next().expect("validated positions allocation");
+        let indices = buffers.next();
+        Ok(Self::finish_create(
+            device,
+            RayGeometry::Triangles(geometry),
+            blas,
+            vertices,
+            indices,
+            capacity,
+        ))
+    }
+
+    fn finish_create(
+        device: &wgpu::Device,
+        geometry: RayGeometry,
+        blas: wgpu::Blas,
+        vertices: crate::ComputeStorage,
+        indices: Option<crate::ComputeStorage>,
+        capacity: u32,
+    ) -> Self {
         let mut tlas = device.create_tlas(&wgpu::CreateTlasDescriptor {
             label: Some("scene TLAS"),
             max_instances: capacity,
@@ -256,22 +389,10 @@ impl RayScene {
         });
         tlas[0] = Some(wgpu::TlasInstance::new(
             &blas,
-            [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+            [1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0.],
             0,
             255,
         ));
-        let vertices = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("ray triangles"),
-            contents: bytemuck::cast_slice(vertices),
-            usage: wgpu::BufferUsages::BLAS_INPUT,
-        });
-        let indices = indices.map(|indices| {
-            device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("ray triangle indices"),
-                contents: bytemuck::cast_slice(indices),
-                usage: wgpu::BufferUsages::BLAS_INPUT,
-            })
-        });
         let mut instances = vec![None; capacity as usize];
         instances[0] = Some(RayInstanceUpdate {
             index: 0,
@@ -279,7 +400,7 @@ impl RayScene {
             custom_index: 0,
             mask: 255,
         });
-        Ok(Self {
+        Self {
             device: device.clone(),
             geometry_revision: 0,
             instances,
@@ -289,7 +410,7 @@ impl RayScene {
             blas,
             tlas,
             instance_capacity: capacity,
-        })
+        }
     }
     /// Replace indexed geometry while preserving every active/removed instance,
     /// transform, mask and custom index. Upload/validation completes before swap.
@@ -327,21 +448,51 @@ impl RayScene {
 
     /// Encode before any pass using this scene. Build and query may share an encoder.
     pub fn build(&self, encoder: &mut wgpu::CommandEncoder) {
+        if let RayGeometry::Archive(archive) = &self.geometry {
+            let entries: Vec<_> = archive
+                .blases
+                .iter()
+                .zip(&archive.ranges)
+                .map(|(blas, range)| wgpu::BlasBuildEntry {
+                    blas,
+                    geometry: wgpu::BlasGeometries::AabbGeometries(vec![wgpu::BlasAabbGeometry {
+                        size: &range.size,
+                        stride: 24,
+                        aabb_buffer: &archive.bounds,
+                        primitive_offset: range.offset,
+                    }]),
+                })
+                .collect();
+            encoder.build_acceleration_structures(entries.iter(), [&self.tlas]);
+            return;
+        }
+        let geometry = match &self.geometry {
+            RayGeometry::Triangles(size) => {
+                wgpu::BlasGeometries::TriangleGeometries(vec![wgpu::BlasTriangleGeometry {
+                    size,
+                    vertex_buffer: &self.vertices,
+                    first_vertex: 0,
+                    vertex_stride: 12,
+                    index_buffer: self.indices.as_deref(),
+                    first_index: self.indices.as_ref().map(|_| 0),
+                    transform_buffer: None,
+                    transform_buffer_offset: None,
+                }])
+            }
+            RayGeometry::Aabbs(size) => {
+                wgpu::BlasGeometries::AabbGeometries(vec![wgpu::BlasAabbGeometry {
+                    size,
+                    stride: 24,
+                    aabb_buffer: &self.vertices,
+                    primitive_offset: 0,
+                }])
+            }
+            RayGeometry::Archive(_) => unreachable!("archive build handled above"),
+        };
         encoder.build_acceleration_structures(
             [&wgpu::BlasBuildEntry {
                 blas: &self.blas,
-                geometry: wgpu::BlasGeometries::TriangleGeometries(vec![
-                    wgpu::BlasTriangleGeometry {
-                        size: &self.geometry,
-                        vertex_buffer: &self.vertices,
-                        first_vertex: 0,
-                        vertex_stride: 12,
-                        index_buffer: self.indices.as_ref(),
-                        first_index: self.indices.as_ref().map(|_| 0),
-                        transform_buffer: None,
-                        transform_buffer_offset: None,
-                    },
-                ]),
+                geometry,
             }],
             [&self.tlas],
         );
@@ -353,11 +504,36 @@ impl RayScene {
     /// Primitive count shared by every instance of this triangle BLAS.
     #[must_use]
     pub fn triangle_count(&self) -> u32 {
-        self.geometry
-            .index_count
-            .unwrap_or(self.geometry.vertex_count)
-            / 3
+        match &self.geometry {
+            RayGeometry::Triangles(geometry) => {
+                geometry.index_count.unwrap_or(geometry.vertex_count) / 3
+            }
+            RayGeometry::Aabbs(_) | RayGeometry::Archive(_) => 0,
+        }
     }
+    /// Candidate primitives across owned BLASes, without multiplying shared instances.
+    /// Archive singular-instance proxy BLASes contribute their own primitives.
+    #[must_use]
+    pub fn primitive_count(&self) -> u32 {
+        match &self.geometry {
+            RayGeometry::Triangles(_) => self.triangle_count(),
+            RayGeometry::Aabbs(geometry) => geometry.primitive_count,
+            RayGeometry::Archive(archive) => {
+                archive.ranges.iter().map(|r| r.size.primitive_count).sum()
+            }
+        }
+    }
+}
+
+fn validate_aabbs(boxes: &[[f32; 6]]) -> Result<(), RaySceneError> {
+    if boxes.is_empty()
+        || boxes
+            .iter()
+            .any(|b| b.iter().any(|v| !v.is_finite()) || (0..3).any(|i| b[i] > b[i + 3]))
+    {
+        return Err(RaySceneError::InvalidGeometry);
+    }
+    Ok(())
 }
 
 fn validate_transform(m: [f32; 12]) -> Result<(), RaySceneError> {
@@ -376,6 +552,20 @@ fn validate_transform(m: [f32; 12]) -> Result<(), RaySceneError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn procedural_bounds_reject_nonfinite_and_reversed_axes() {
+        assert_eq!(validate_aabbs(&[]), Err(RaySceneError::InvalidGeometry));
+        for axis in 0..3 {
+            let mut b = [0., 0., 0., 1., 1., 1.];
+            b[axis] = 2.;
+            assert!(validate_aabbs(&[b]).is_err());
+            b[axis] = f32::NAN;
+            assert!(validate_aabbs(&[b]).is_err());
+            b[axis] = f32::INFINITY;
+            assert!(validate_aabbs(&[b]).is_err());
+        }
+        assert!(validate_aabbs(&[[-1., 0., 1., 2., 3., 4.], [0.; 6]]).is_ok());
+    }
     #[test]
     fn affine_instance_transform_validation() {
         let translated = [1., 0., 0., 4., 0., 2., 0., -3., 0., 0., -1., 2.];
@@ -456,7 +646,7 @@ impl RayVisibilityPipeline {
         segments: &[RaySegment],
     ) -> Result<RayVisibilityJob, RaySceneError> {
         let device = &self.device;
-        scene.validate_device(device)?;
+        scene.validate_triangles(device)?;
         for segment in segments {
             RaySegment::new(
                 [
