@@ -1,0 +1,114 @@
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1401:19
+     |
+1401 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                   ^^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1402:25
+     |
+1402 |                 * Mat4::look_at_rh(centre + sun * extent * 2., centre, Vec3::Y);
+     |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1776:19
+     |
+1776 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                   ^^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1777:25
+     |
+1777 |                 * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+     |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/archive_scene.rs:2358:24
+     |
+2358 |         let vp = Mat4::perspective_rh(
+     |                        ^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:2363:19
+     |
+2363 |         ) * Mat4::look_at_rh(eye, eye + direction, self.camera_up);
+     |                   ^^^^^^^^^^
+
+warning: associated function `levels` is never used
+   --> crates/voxy_render/src/bloom.rs:168:12
+    |
+ 18 | impl Bloom {
+    | ---------- associated function in this implementation
+...
+168 |     pub fn levels() -> f32 {
+    |            ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_render` (lib test) generated 7 warnings
+    Finished `release` profile [optimized] target(s) in 0.21s
+     Running unittests src/lib.rs (target/release/deps/voxy_render-2c5ac7892e86d51e)
+
+running 1 test
+test surface_rigid_skinning::shared_tests::paired_rigid_palette_benchmark ... shared palette adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+joints,pair,path,cpu_us_per_frame,drained_us_per_frame
+32,1,shared,24.017,179.820
+32,1,legacy,50.513,2730.233
+32,2,legacy,43.898,113.459
+32,2,shared,23.380,58.983
+32,3,shared,22.093,62.379
+32,3,legacy,44.707,871.173
+32,4,legacy,31.527,93.353
+32,4,shared,20.139,59.400
+32,5,shared,19.633,55.604
+32,5,legacy,36.588,94.799
+32,6,legacy,41.061,641.352
+32,6,shared,25.064,82.938
+32,7,shared,21.478,148.930
+32,7,legacy,58.818,2755.153
+32,8,legacy,37.668,113.864
+32,8,shared,25.187,235.979
+32,9,shared,38.615,295.552
+32,9,legacy,60.626,257.338
+1024,1,shared,81.964,253.542
+1024,1,legacy,153.246,1332.295
+1024,2,legacy,179.564,340.520
+1024,2,shared,99.581,1217.363
+1024,3,shared,79.749,2511.004
+1024,3,legacy,136.752,1237.863
+1024,4,legacy,127.687,1046.202
+1024,4,shared,78.115,129.726
+1024,5,shared,69.385,230.461
+1024,5,legacy,147.657,3690.977
+1024,6,legacy,137.147,2195.576
+1024,6,shared,84.112,1217.221
+1024,7,shared,78.025,212.419
+1024,7,legacy,140.779,297.535
+1024,8,legacy,125.167,427.533
+1024,8,shared,78.642,143.994
+1024,9,shared,80.502,202.376
+1024,9,legacy,139.167,792.411
+8192,1,shared,431.576,1801.171
+8192,1,legacy,556.438,3031.629
+8192,2,legacy,536.471,1292.042
+8192,2,shared,428.567,663.220
+8192,3,shared,427.607,566.406
+8192,3,legacy,593.720,6109.010
+8192,4,legacy,566.629,9865.394
+8192,4,shared,439.588,839.909
+8192,5,shared,439.528,7216.917
+8192,5,legacy,535.315,906.983
+8192,6,legacy,565.720,1600.933
+8192,6,shared,435.359,1945.352
+8192,7,shared,426.912,600.286
+8192,7,legacy,547.197,7266.565
+8192,8,legacy,581.723,5095.964
+8192,8,shared,564.029,2888.142
+8192,9,shared,440.155,1244.769
+8192,9,legacy,583.120,2551.694
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 384 filtered out; finished in 4.42s
+

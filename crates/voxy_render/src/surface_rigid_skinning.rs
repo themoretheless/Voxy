@@ -19,6 +19,38 @@ pub(crate) struct SurfaceRigidSkinning {
     count: u32,
     maximum_position: f64,
     initialized: std::sync::atomic::AtomicBool,
+    shared: Option<SharedRigidPalette>,
+}
+#[derive(Debug)]
+struct RigidSnapshot {
+    joints: Vec<(Quat, glam::Vec3)>,
+    offset: glam::Vec3,
+}
+#[derive(Debug)]
+struct SharedRigidPalette {
+    ring: crate::SharedUploadRing,
+    device: wgpu::Device,
+    groups: Vec<wgpu::BindGroup>,
+    parameters: [u32; 8],
+    parameter_offset: usize,
+    snapshot: std::sync::Mutex<Option<RigidSnapshot>>,
+}
+fn dual(rotation: Quat, translation: glam::Vec3) -> Quat {
+    Quat::from_xyzw(translation.x, translation.y, translation.z, 0.) * rotation * 0.5
+}
+fn encode_skin(
+    pipeline: &wgpu::ComputePipeline,
+    group: &wgpu::BindGroup,
+    count: u32,
+    encoder: &mut wgpu::CommandEncoder,
+) {
+    let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+        label: Some("rigid surface skinning"),
+        timestamp_writes: None,
+    });
+    pass.set_pipeline(pipeline);
+    pass.set_bind_group(0, group, &[]);
+    pass.dispatch_workgroups(count.div_ceil(64), 1, 1);
 }
 impl SurfaceRigidSkinning {
     pub fn new(
@@ -144,7 +176,47 @@ impl SurfaceRigidSkinning {
             layout: &pipeline.get_bind_group_layout(0),
             entries: &entries,
         });
+        let palette_bytes = u64::from(joints) * 32;
+        let alignment = u64::from(limits.min_uniform_buffer_offset_alignment);
+        let parameter_offset = palette_bytes.div_ceil(alignment) * alignment;
+        let shared = crate::SharedUploadRing::new(
+            device,
+            parameter_offset + 32,
+            wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::UNIFORM,
+        )
+        .map(|ring| {
+            let groups = ring
+                .buffers()
+                .map(|buffer| {
+                    let mut entries = entries.clone();
+                    entries[0].resource = wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                        buffer,
+                        offset: parameter_offset,
+                        size: std::num::NonZeroU64::new(32),
+                    });
+                    entries[4].resource = wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                        buffer,
+                        offset: 0,
+                        size: std::num::NonZeroU64::new(palette_bytes),
+                    });
+                    device.create_bind_group(&wgpu::BindGroupDescriptor {
+                        label: Some("shared rigid palette bindings"),
+                        layout: &pipeline.get_bind_group_layout(0),
+                        entries: &entries,
+                    })
+                })
+                .collect();
+            SharedRigidPalette {
+                ring,
+                device: device.clone(),
+                groups,
+                parameters,
+                parameter_offset: parameter_offset as usize,
+                snapshot: std::sync::Mutex::new(None),
+            }
+        });
         Ok(Self {
+            shared,
             pipeline,
             group,
             posed,
@@ -176,7 +248,16 @@ impl SurfaceRigidSkinning {
         if matrices.len() != self.joints as usize {
             return Err(SceneError::InvalidTransform);
         }
-        let mut values = Vec::with_capacity(matrices.len() * 2);
+        let mut validated = Vec::with_capacity(if self.shared.is_some() {
+            matrices.len()
+        } else {
+            0
+        });
+        let mut values = Vec::with_capacity(if self.shared.is_none() {
+            matrices.len() * 2
+        } else {
+            0
+        });
         for matrix in matrices {
             if !matrix.is_finite() {
                 return Err(SceneError::InvalidTransform);
@@ -194,17 +275,28 @@ impl SurfaceRigidSkinning {
             }
             // Match the native rigid palette constructor before forming the dual part.
             let rotation = rotation.normalize();
-            let dual =
-                Quat::from_xyzw(translation.x, translation.y, translation.z, 0.) * rotation * 0.5;
-            values.push(rotation.to_array());
-            values.push(dual.to_array());
+            if self.shared.is_some() {
+                validated.push((rotation, translation));
+            } else {
+                values.push(rotation.to_array());
+                values.push(dual(rotation, translation).to_array());
+            }
         }
-        queue.write_buffer(&self.palette, 0, bytemuck::cast_slice(&values));
-        queue.write_buffer(
-            &self._inputs[0],
-            16,
-            bytemuck::cast_slice(&offset.extend(0.).to_array()),
-        );
+        if let Some(shared) = &self.shared {
+            // Snapshot caller-owned transforms; the final dual-quaternion bytes
+            // are produced only in the leased shader buffer during encode.
+            *shared.snapshot.lock().expect("rigid snapshot poisoned") = Some(RigidSnapshot {
+                joints: validated,
+                offset,
+            });
+        } else {
+            queue.write_buffer(&self.palette, 0, bytemuck::cast_slice(&values));
+            queue.write_buffer(
+                &self._inputs[0],
+                16,
+                bytemuck::cast_slice(&offset.extend(0.).to_array()),
+            );
+        }
         self.initialized
             .store(true, std::sync::atomic::Ordering::Release);
         Ok(())
@@ -213,13 +305,90 @@ impl SurfaceRigidSkinning {
         if !self.initialized.load(std::sync::atomic::Ordering::Acquire) {
             return Err(SceneError::InvalidTransform);
         }
-        let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-            label: Some("rigid surface skinning"),
-            timestamp_writes: None,
-        });
-        pass.set_pipeline(&self.pipeline);
-        pass.set_bind_group(0, &self.group, &[]);
-        pass.dispatch_workgroups(self.count.div_ceil(64), 1, 1);
+        if let Some(shared) = &self.shared {
+            let snapshot = shared.snapshot.lock().expect("rigid snapshot poisoned");
+            let snapshot = snapshot.as_ref().ok_or(SceneError::InvalidTransform)?;
+            let used = shared
+                .ring
+                .encode(
+                    encoder,
+                    |bytes| shared.produce(snapshot, bytes),
+                    |index, _, encoder| {
+                        encode_skin(&self.pipeline, &shared.groups[index], self.count, encoder);
+                    },
+                )
+                .map_err(|_| SceneError::InvalidTransform)?;
+            if used {
+                return Ok(());
+            }
+            // Overflow stages a unique immutable snapshot and copies it in this
+            // encoder, before its dispatch. Queue writes into a reusable target
+            // would corrupt multiple still-unsubmitted overflow snapshots.
+            let staging = shared.device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("shared palette overflow staging"),
+                size: shared.parameter_offset as u64 + 32,
+                usage: wgpu::BufferUsages::MAP_WRITE | wgpu::BufferUsages::COPY_SRC,
+                mapped_at_creation: true,
+            });
+            {
+                let mut mapped = staging
+                    .slice(..)
+                    .get_mapped_range_mut()
+                    .map_err(|_| SceneError::InvalidTransform)?;
+                shared.produce(snapshot, mapped.slice(..));
+            }
+            staging.unmap();
+            encoder.copy_buffer_to_buffer(
+                &staging,
+                0,
+                &self.palette,
+                0,
+                u64::from(self.joints) * 32,
+            );
+            encoder.copy_buffer_to_buffer(
+                &staging,
+                shared.parameter_offset as u64,
+                &self._inputs[0],
+                0,
+                32,
+            );
+        }
+        encode_skin(&self.pipeline, &self.group, self.count, encoder);
         Ok(())
     }
 }
+impl SharedRigidPalette {
+    fn produce(&self, snapshot: &RigidSnapshot, bytes: wgpu::WriteOnly<'_, [u8]>) {
+        // Write generated shader values directly, with no packed Vec or
+        // queue.write_buffer/staging/blit on this path.
+        let (palette, parameters) = bytes.split_at(self.parameter_offset);
+        let palette = palette
+            .into_slice(..snapshot.joints.len() * 32)
+            .into_chunks::<32>()
+            .0;
+        for (row, &(rotation, translation)) in palette.into_iter().zip(&snapshot.joints) {
+            row.write(bytemuck::cast([
+                rotation.to_array(),
+                dual(rotation, translation).to_array(),
+            ]));
+        }
+        let mut header = self.parameters;
+        for (to, value) in header[4..]
+            .iter_mut()
+            .zip(snapshot.offset.extend(0.).to_array())
+        {
+            *to = value.to_bits();
+        }
+        parameters
+            .into_chunks::<32>()
+            .0
+            .into_iter()
+            .next()
+            .unwrap()
+            .write(bytemuck::cast(header));
+    }
+}
+
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+#[path = "surface_rigid_shared_tests.rs"]
+pub(crate) mod shared_tests;

@@ -274,6 +274,15 @@ impl SceneSurface {
         output: SurfaceOutput,
         experimental_features: wgpu::ExperimentalFeatures,
     ) -> Result<Self, RendererError> {
+        // Shared transient shader inputs are enabled only for native Apple
+        // Silicon Metal. Unsupported devices keep the portable upload path.
+        #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
+        let required_features = required_features
+            | if adapter.get_info().backend == wgpu::Backend::Metal {
+                adapter.features() & wgpu::Features::MAPPABLE_PRIMARY_BUFFERS
+            } else {
+                wgpu::Features::empty()
+            };
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 label: Some("general scene device"),
