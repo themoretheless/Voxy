@@ -644,7 +644,7 @@ fn interior(b: &mut Builder, k: &Kit, p: &Plan) {
             };
         }
         if let Some((o, _, _)) = door_room {
-            kinds[if o < 0. { 0 } else { 1 }] = Kind::Entry;
+            kinds[usize::from(o >= 0.)] = Kind::Entry;
         }
         let has_kitchen = kinds.contains(&Kind::Kitchen);
         let bath_left = b.random() < 0.5;
@@ -1208,11 +1208,11 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     ]
     .into_iter()
     .map(|c| {
-        let m = b.material(c, 0.7, 0., 0., 0., 0.);
+        let m = b.material(c, 0.7, 0., 15., 0., 0.);
         b.cube(m)
     })
     .collect();
-    let ceramic_m = b.material([0.9, 0.9, 0.87], 0.3, 0., 0., 0., 0.);
+    let ceramic_m = b.material([0.9, 0.9, 0.87], 0.3, 0., 14., 0., 0.);
     let ceramic = b.cube(ceramic_m);
     let foliage = b.cube(leaf_m);
     let plinth_m = b.material([0.27, 0.26, 0.24], 0.85, 0., 1., 0., 0.);
@@ -1225,14 +1225,14 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     ]
     .into_iter()
     .map(|c| {
-        let m = b.material(c, 0.7, 0., 0., 0., 0.);
+        let m = b.material(c, 0.7, 0., 15., 0., 0.);
         b.cube(m)
     })
     .collect();
     let bin = b.round(dark_m, false);
     let ceiling_m = b.material([0.9, 0.89, 0.86], 0.92, 0., 13., 0., 0.);
-    let tile_m = b.material([0.82, 0.86, 0.87], 0.22, 0., 0., 0., 0.);
-    let tile_accent_m = b.material([0.27, 0.43, 0.52], 0.25, 0., 0., 0., 0.);
+    let tile_m = b.material([0.82, 0.86, 0.87], 0.22, 0., 14., 0., 0.);
+    let tile_accent_m = b.material([0.27, 0.43, 0.52], 0.25, 0., 14., 0., 0.);
     let kit = Kit {
         trim,
         metal,
@@ -1311,11 +1311,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 let tone = (b.aged() * stone_tones.len() as f32) as usize;
                 let wear = if b.aged() < track * 0.9 * damage.min(1.) {
                     2
-                } else if b.aged() < 0.45 * damage.min(1.) {
-                    1
-                } else {
-                    0
-                };
+                } else { usize::from(b.aged() < 0.45 * damage.min(1.)) };
                 old_stones[tone][wear]
             };
             let disorder = if relaid { 0.3 } else { 0.25 + 0.75 * damage };
@@ -2177,14 +2173,17 @@ mod tests {
                 for inst in &mesh.instances {
                     let w = inst.world;
                     let ext = |c: usize| (w[0][c].abs() + w[1][c].abs() + w[2][c].abs()) * 0.5;
-                    out += &format!(
-                        "{case},{mesh_id},{},{},{},{},{},{}\n",
-                        w[3][0],
-                        w[3][1],
-                        w[3][2],
-                        ext(0),
-                        ext(1),
-                        ext(2)
+                    let _ = std::fmt::Write::write_fmt(
+                        &mut out,
+                        format_args!(
+                            "{case},{mesh_id},{},{},{},{},{},{}\n",
+                            w[3][0],
+                            w[3][1],
+                            w[3][2],
+                            ext(0),
+                            ext(1),
+                            ext(2)
+                        ),
                     );
                 }
             }

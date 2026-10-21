@@ -8,7 +8,15 @@ fn brdf(s:Brdf,l:vec3<f32>)->vec3<f32>{
  let h=normalize(l+s.v);let nh=max(dot(s.n,h),0.);let vh=max(dot(s.v,h),0.);
  let q=nh*nh*(s.a2-1.)+1.;let d=s.a2/(3.14159265*q*q);
  let gv=nl*s.smith_v;let gl=s.nv*sqrt(nl*nl*(1.-s.a2)+s.a2);let visibility=0.5/max(gv+gl,0.000001);
- let fresnel=s.f0+(1.-s.f0)*bsdf_fifth(1.-vh);return (s.diffuse+d*visibility*fresnel*s.energy)*nl;
+ let fresnel=s.f0+(1.-s.f0)*bsdf_fifth(1.-vh);
+ let fd90=0.5+2.*vh*vh*sqrt(sqrt(s.a2));
+ let burley=(1.+(fd90-1.)*bsdf_fifth(1.-nl))*(1.+(fd90-1.)*bsdf_fifth(1.-s.nv));
+ return (s.diffuse*burley+d*visibility*fresnel*s.energy)*nl;
+}
+// Chan 2018: directional micro-shadowing from ambient occlusion.
+fn micro_shadow(nl:f32,ao:f32)->f32{
+ let aperture=2.*ao*ao;
+ return clamp(abs(nl)+aperture-1.,0.,1.);
 }
 // Kulla-Conty style scale for analytic lights (Filament 4.7.2).
 fn energy_compensation(f0:vec3<f32>,dfg:vec2<f32>)->vec3<f32>{
@@ -19,7 +27,7 @@ fn multiscatter_specular_ibl(f0:vec3<f32>,dfg:vec2<f32>,radiance:vec3<f32>,irrad
  let single=f0*dfg.x+dfg.y;
  let ems=1.-(dfg.x+dfg.y);
  let favg=f0+(1.-f0)/21.;
- let multiple=single*favg/(1.-ems*favg);
+ let multiple=single*favg/max(1.-ems*favg,vec3<f32>(0.0001));
  // irradiance is the cosine-convolved environment already divided by pi.
  return single*radiance+multiple*ems*irradiance;
 }

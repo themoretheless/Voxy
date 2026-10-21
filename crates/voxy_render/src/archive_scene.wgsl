@@ -58,6 +58,21 @@ fn original_noise(p:vec3<f32>)->f32 {
 }
 fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
  let grain=original_noise(p*27.);let broad=original_noise(p*1.8);
+ if kind>14.5 {
+  let petal=original_noise(p*19.);let fine_fibre=original_noise(p*95.);
+  let velvet=0.88+0.18*petal+0.06*(fine_fibre-0.5);
+  return vec3<f32>(velvet*(0.94+0.10*broad));
+ }
+ if kind>13.5 {
+  let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.15;
+  let cell=floor(uv);let f=fract(uv);
+  let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));
+  let fp=max(fwidth(uv.x),fwidth(uv.y));
+  let h=original_hash(vec3<f32>(cell,14.))-0.5;
+  let glaze=0.96+0.06*original_noise(p*11.)+0.04*h;
+  let grout=mix(0.76,1.,smoothstep(0.015,0.045+fp,edge));
+  return vec3<f32>(glaze*grout*(0.98+0.03*grain));
+ }
  if kind>12.5 {
   let macro_v=original_noise(p*0.45);let cloud=original_noise(p*1.6);
   let trowel=original_noise(vec3<f32>(p.x*3.5+cloud*0.4,p.y*7.5,p.z*3.5-cloud*0.4));
@@ -156,6 +171,15 @@ fn original_height(p:vec3<f32>,kind:f32)->f32 {
  let footprint=max(length(dpdx(p)),length(dpdy(p)));
  let fine=1.-smoothstep(0.002,0.012,footprint);
  let medium=1.-smoothstep(0.02,0.08,footprint);
+ if kind>14.5 {
+  return 0.0007*medium*original_noise(p*22.)+0.00025*fine*original_noise(p*110.);
+ }
+ if kind>13.5 {
+  let uv=(p.xz+vec2<f32>(p.y))/0.15;
+  let f=fract(uv);let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));
+  let pillow=smoothstep(0.015,0.08,edge)*medium;
+  return 0.0005*pillow+0.00018*medium*original_noise(p*12.);
+ }
  if kind>12.5 {
   return 0.00055*medium*original_noise(p*8.5)+0.00028*fine*original_noise(p*115.);
  }
@@ -180,6 +204,17 @@ fn original_height(p:vec3<f32>,kind:f32)->f32 {
   let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));
   let pillow=smoothstep(0.04,0.22,edge)*medium;
   return 0.0011*pillow+0.00012*fine*original_noise(p*180.);
+ }
+ if kind>7.5 {
+  let bark_groove=original_noise(p*vec3<f32>(65.,2.5,65.))*medium;
+  return 0.0028*bark_groove+0.0005*fine*original_noise(p*140.);
+ }
+ if kind>6.5 {
+  let uv=p.xy+vec2<f32>(p.z,0.);let row=floor(uv.y/0.075);
+  let cell=fract(vec2<f32>(uv.x/0.225+0.5*(row-2.*floor(row*0.5)),uv.y/0.075));
+  let edge=min(min(cell.x,1.-cell.x)*0.225,min(cell.y,1.-cell.y)*0.075);
+  let mortar=(1.-smoothstep(0.002,0.008,edge))*medium;
+  return 0.0012*medium*original_noise(p*24.)-0.0022*mortar;
  }
  if kind>5.5&&kind<6.5 {
   let cluster=original_noise(p*4.8)*medium;
@@ -445,13 +480,14 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  var early_bounce=vec4<f32>(0.);
  if ARCHIVE_COMPUTE_GI {early_bounce=textureLoad(computed_gi,vec2<i32>(f.clip.xy),0);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
  let shadow_pos=f.shadow.xyz/f.shadow.w;let shadow_uv=shadow_pos.xy*vec2<f32>(0.5,-0.5)+0.5;var visibility=1.;if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.&&!fx_off(8u){visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715)))));}
- let transmission=material.surface.z;let alpha=max(roughness*roughness,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,roughness),0.).rg;let shading=Brdf(normal,view,diffuse*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility;
- for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;let distance2=max(dot(offset,offset),0.0001);let distance=sqrt(distance2);var attenuation=1./distance2;if light.position_kind.w>0.{attenuation*=square(clamp(1.-fourth(distance/light.position_kind.w),0.,1.));}if attenuation==0.{continue;}colour+=brdf(shading,offset/distance)*light.colour_intensity.rgb*light.colour_intensity.a*attenuation;}
- // Directional sky, contact visibility and view-dependent environment Fresnel.
  let ao=contact_occlusion(f.clip.xy,f.world,normal)*select(1.,spec.r,material.workflow.w!=0.);
+ let transmission=material.surface.z;let alpha=max(roughness*roughness,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,roughness),0.).rg;let shading=Brdf(normal,view,diffuse*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility*micro_shadow(dot(normal,camera.sun.xyz),ao);
+ for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;let distance2=max(dot(offset,offset),0.0001);let distance=sqrt(distance2);var attenuation=1./distance2;if light.position_kind.w>0.{attenuation*=square(clamp(1.-fourth(distance/light.position_kind.w),0.,1.));}if attenuation==0.{continue;}let l_dir=offset/distance;colour+=brdf(shading,l_dir)*light.colour_intensity.rgb*light.colour_intensity.a*attenuation*micro_shadow(dot(normal,l_dir),ao);}
+ // Directional sky, contact visibility and view-dependent environment Fresnel.
  if camera.eye.w>0.5 {
   let irradiance=textureSampleLevel(environment_diffuse,environment_sampler,normal,0.).rgb*environment_intensity.x;
   let reflected=reflect(-view,normal);
+  let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric));
   var radiance=textureSampleLevel(environment_specular,environment_sampler,reflected,roughness*f32(textureNumLevels(environment_specular)-1u)).rgb*environment_intensity.x;
   // Skip tracing where Fresnel makes the scene term invisible (steep dielectric views).
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
@@ -464,13 +500,14 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
    let glass_tint=mix(vec3<f32>(1.),vec3<f32>(0.90,0.96,0.95),clamp((1.-nv)*0.75,0.,1.));
    radiance*=glass_tint;
   }
-  colour+=diffuse*(1.-transmission)*indirect*multibounce_ao(ao,diffuse)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,roughness);
+  colour+=diffuse*(1.-transmission)*indirect*multibounce_ao(ao,diffuse)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,roughness)*horizon;
  } else {
   let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(normal.y*0.5+0.5,0.,1.));
   var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
   let probe=probe_irradiance(f.world,normal);
   colour+=diffuse*(1.-transmission)*mix(mix(sky*camera.viewport.w/3.14159265,probe.rgb,probe.a),bounce.rgb,bounce.a)*ao;
   let reflected=reflect(-view,normal);let fresnel=f0+(1.-f0)*fifth(1.-nv);
+  let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric));
   var incoming=daylight(reflected,camera.sun.xyz)*(1.-0.7*roughness);
   let mirror=(1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,max(max(fresnel.r,fresnel.g),fresnel.b));
   if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
@@ -478,7 +515,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
    let glass_tint=mix(vec3<f32>(1.),vec3<f32>(0.90,0.96,0.95),clamp((1.-nv)*0.75,0.,1.));
    incoming*=glass_tint;
   }
-  colour+=incoming*fresnel*ao;
+  colour+=incoming*fresnel*ao*horizon;
  }
  if splash>0. {
   // Water beads scatter the overcast sky; they sit above the ground and ignore its AO.
@@ -502,6 +539,18 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  if material.workflow.z>10.5&&material.workflow.z<11.5 {
   let sheen=pow(1.-nv,3.5)*0.08;
   colour+=base*sheen*camera.sun_colour.rgb*camera.sun_colour.a*max(dot(normal,camera.sun.xyz),0.15)*visibility;
+ }
+ if material.workflow.z>14.5 {
+  let sss=max(dot(-normal,camera.sun.xyz)*0.5+0.5,0.)*pow(1.-nv,2.);
+  colour+=base*vec3<f32>(1.18,1.06,0.92)*camera.sun_colour.rgb*camera.sun_colour.a*sss*0.09*visibility;
+ }
+ if (material.workflow.z>3.5&&material.workflow.z<4.5)||(material.workflow.z>13.5&&material.workflow.z<14.5) {
+  let clear_w=select(0.18,0.45,material.workflow.z>13.5);
+  let fc=0.04+0.96*fifth(1.-max(dot(geometric,view),0.));
+  let r_coat=reflect(-view,normalize(mix(normal,geometric,0.65)));
+  var coat_env=daylight(r_coat,camera.sun.xyz);
+  if camera.eye.w>0.5 {coat_env=textureSampleLevel(environment_specular,environment_sampler,r_coat,1.2).rgb*environment_intensity.x;}
+  colour+=coat_env*fc*clear_w*ao*smoothstep(-0.1,0.05,dot(r_coat,geometric));
  }
  if any(material.emissive_normal.rgb!=vec3<f32>(0.)){
   let day_suppress=mix(1.,0.16+0.84*fifth(nv),smoothstep(0.05,0.35,camera.sun.y));
