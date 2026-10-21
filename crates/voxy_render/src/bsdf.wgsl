@@ -40,3 +40,17 @@ fn multibounce_ao(ao:f32,albedo:vec3<f32>)->vec3<f32>{
 fn specular_occlusion(nv:f32,ao:f32,roughness:f32)->f32{
  return clamp(pow(nv+ao,exp2(-16.*roughness-1.))-1.+ao,0.,1.);
 }
+// Airy 1833 / Belcour & Barla 2017: spectral thin-film interference reflectance
+// for a dielectric coating (oil, oxide patina, weathered glass) of optical path d_nm.
+fn thin_film_iridescence(cos_theta:f32,d_nm:f32)->vec3<f32>{
+ let phase=6.2831853*2.*1.45*d_nm*sqrt(max(1.-0.475*(1.-cos_theta*cos_theta),0.1))
+  /vec3<f32>(650.,550.,450.);
+ return 0.5+0.5*cos(phase);
+}
+// Neubelt & Pettineo 2013 / Estevez & Kulla 2017: microfiber cloth & velvet sheen.
+fn charlie_sheen(nh:f32,nv:f32,nl:f32,roughness:f32)->f32{
+ let inv_r=1./max(roughness,0.06);
+ let sin2=max(1.-nh*nh,1e-5);
+ let d=(2.+inv_r)*pow(sin2,0.5*inv_r)/(2.*3.14159265);
+ return d/(4.*max(nl+nv-nl*nv,0.05));
+}
