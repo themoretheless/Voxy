@@ -116,7 +116,7 @@ fn slopes(xz:vec2<f32>)->Slopes {
 fn caustic_slope(xz:vec2<f32>)->vec2<f32> {
   var s = vec2<f32>(0.);
   for (var c = 1u; c < 4u; c++) {
-    s += textureSampleLevel(deriv_tex, wave_sampler, xz * inv_l(c), c, 3.).xy;
+    s += textureSampleLevel(deriv_tex, wave_sampler, xz * inv_l(c), c, 1.).xy;
   }
   return s;
 }
@@ -161,13 +161,13 @@ fn sun_visible(p:vec3<f32>)->f32 {
 // Sunlight refracted through the surface converges or spreads with the curvature of
 // the waves: intensity ~ 1/det(I + d (1 - 1/n) H) for a floor `d` metres below.
 fn caustic_at(above:vec2<f32>, depth:f32)->f32 {
-  let e = 0.045;
+  let e = 0.032;
   let sx = (caustic_slope(above + vec2<f32>(e, 0.)) - caustic_slope(above - vec2<f32>(e, 0.))) / (2. * e);
   let sz = (caustic_slope(above + vec2<f32>(0., e)) - caustic_slope(above - vec2<f32>(0., e))) / (2. * e);
   let k = depth * (1. - 1. / IOR) * edge_weight(above);
   let det = (1. + k * sx.x) * (1. + k * sz.y) - k * k * sx.y * sz.x;
-  let raw = clamp(1. / max(abs(det), 0.085), 0.22, 3.8);
-  return mix(raw, pow(raw, 1.25), 0.35);
+  let raw = clamp(1. / max(abs(det), 0.075), 0.20, 4.2);
+  return mix(raw, pow(raw, 1.32), 0.42);
 }
 fn caustic(p:vec3<f32>, level:f32)->vec3<f32> {
   let sun = camera.sun.xyz;

@@ -114,7 +114,17 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
  if kind<1.5{
   let macro_var=original_noise(p*0.55);let speck=original_noise(p*64.);
   let damp=1.-0.15*(1.-smoothstep(0.08,0.85,p.y))*(0.35+0.65*broad)*smoothstep(0.3,0.8,1.-abs(n.y));
-  return vec3<f32>((0.82+0.16*broad+0.08*macro_var)*(0.92+0.10*grain+0.05*speck)*damp);
+  let side_slab=smoothstep(4.65,4.85,abs(p.x))*(1.-smoothstep(6.95,7.25,abs(p.x)))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*smoothstep(0.7,0.95,n.y);
+  var joint=1.;
+  if side_slab>0. {
+   let gx=abs(fract(p.x/0.72)-0.5)*0.72;
+   let gz=abs(fract(p.z/0.90)-0.5)*0.90;
+   let d_joint=min(gx,gz);
+   let fp=max(length(dpdx(p.xz)),length(dpdy(p.xz)));
+   let cell_h=original_hash(vec3<f32>(floor(p.x/0.72),floor(p.z/0.90),1.))-0.5;
+   joint=mix(1.,(0.74+0.26*smoothstep(0.004,0.011+fp,d_joint))*(1.+0.08*cell_h),side_slab);
+  }
+  return vec3<f32>((0.82+0.16*broad+0.08*macro_var)*(0.92+0.10*grain+0.05*speck)*damp*joint);
  }
  if kind<2.5 {let damp=1.-0.20*(1.-smoothstep(0.1,1.6,p.y))*(0.3+broad);return vec3<f32>((0.86+0.15*broad+0.08*grain)*damp);}
  if kind<3.5 {
@@ -178,7 +188,13 @@ fn original_height(p:vec3<f32>,kind:f32)->f32 {
   let cell=original_noise(p*135.)*fine;
   return 0.011*cluster+0.0052*sub_cluster+0.0022*leaf+0.00055*cell;
  }
- if kind<1.5 {return 0.003*medium*original_noise(p*16.)+0.00065*fine*original_noise(p*145.);}
+ if kind<1.5 {
+  let side_slab=smoothstep(4.65,4.85,abs(p.x))*(1.-smoothstep(6.95,7.25,abs(p.x)))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*medium;
+  let gx=abs(fract(p.x/0.72)-0.5)*0.72;
+  let gz=abs(fract(p.z/0.90)-0.5)*0.90;
+  let groove=(1.-smoothstep(0.004,0.014,min(gx,gz)))*side_slab;
+  return 0.003*medium*original_noise(p*16.)+0.00065*fine*original_noise(p*145.)-0.0018*groove;
+ }
  if kind<2.5 {return 0.0012*medium*original_noise(p*23.)+0.00035*fine*original_noise(p*180.);}
  if kind<3.5 {
   let course=fract(p.y*12.)*medium;
@@ -495,7 +511,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   // Thin panes do not displace a straight view; only normal-map relief does.
   let bent=camera.vp*vec4<f32>(f.world+(normal-geometric)*0.12,1.);
   var pixel=vec2<i32>(f.clip.xy);
-  if bent.w>0. {let candidate=clamp(vec2<i32>((bent.xy/bent.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);if textureLoad(scene_depth,candidate,0)>f.clip.z {pixel=candidate;}}let behind=textureLoad(background,pixel,0).rgb;let nv=max(dot(normal,view),0.);let fresnel=f0+(1.-f0)*fifth(1.-nv);colour+=behind/camera.viewport.z*base*transmission*(1.-fresnel);}
+  if bent.w>0. {let candidate=clamp(vec2<i32>((bent.xy/bent.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);if textureLoad(scene_depth,candidate,0)>f.clip.z {pixel=candidate;}}let behind=textureLoad(background,pixel,0).rgb;let nv=max(dot(normal,view),0.);let fresnel=f0+(1.-f0)*fifth(1.-nv);let path_tint=exp(-vec3<f32>(0.09,0.025,0.035)/max(nv,0.18));colour+=behind/camera.viewport.z*base*path_tint*transmission*(1.-fresnel);}
  return vec4<f32>(colour*camera.viewport.z,select(1.,opacity,material.surface.w == -2.));
 }
 
