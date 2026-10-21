@@ -157,6 +157,9 @@ fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
             } else {
                 horizon_sky=daylight(sample_dir,camera.sun.xyz)*camera.viewport.z;
             }
+            let cos_sun=clamp(dot(ray,camera.sun.xyz),0.,1.);
+            let mie_forward=pow(cos_sun,5.)*max(camera.sun.y,0.)*0.35;
+            horizon_sky*=(1.+vec3<f32>(1.15,0.98,0.78)*mie_forward);
             x=mix(x,horizon_sky,air);
         }
     }
@@ -166,6 +169,12 @@ fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
         let hit=camera.inverse_vp*vec4<f32>(uv,d,1.);
         let distance=select(length(hit.xyz/hit.w-camera.eye.xyz),12000.,d>=1.);
         x=atmosphere_colour(x,ray,distance,q);
+    }
+    if display.w<0.5 {
+        let aspect=camera.viewport.x/max(camera.viewport.y,1.);
+        let r2=dot(uv*vec2<f32>(aspect*0.5,0.5),uv*vec2<f32>(aspect*0.5,0.5));
+        let cos_theta2=1./(1.+r2*0.24);
+        x*=mix(1.,cos_theta2*cos_theta2,0.22);
     }
     return display_colour(with_bloom(x,q));
 }

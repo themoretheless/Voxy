@@ -199,6 +199,12 @@ fn motion_blur(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
     // Energy-conserving bloom: a small fraction of the radiance is replaced by
     // the mean of the dual Kawase chain (bloom.rs sums its six levels).
     let uv=(p.xy)/vec2<f32>(textureDimensions(final_colour));
+    let ndc=uv*2.-1.;
+    let size=vec2<f32>(textureDimensions(final_colour));
+    let aspect=size.x/max(size.y,1.);
+    let r2=dot(ndc*vec2<f32>(aspect*0.5,0.5),ndc*vec2<f32>(aspect*0.5,0.5));
+    let cos_theta2=1./(1.+r2*0.24);
+    x*=mix(1.,cos_theta2*cos_theta2,0.22);
     let bloom=textureSampleLevel(bloom_chain,bloom_sampler,uv,0.).rgb/6.;
     x=mix(x,bloom,BLOOM_STRENGTH);
     x=display_transform(x,frame.settings.z,frame.settings.w);
