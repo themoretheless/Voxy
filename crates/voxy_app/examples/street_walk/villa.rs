@@ -206,11 +206,11 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     let chrome_box = b.cube(chrome_m);
     let pool_light_m = b.material([0.75, 0.92, 1.], 0.3, 0., 0., 2600., 0.);
     let pool_light = b.round(pool_light_m, false);
-    let render_m = b.material([0.86, 0.85, 0.82], 0.88, 0., 1., 0., 0.);
+    let render_m = b.material([0.86, 0.85, 0.82], 0.86, 0., 13., 0., 0.);
     let render = b.cube(render_m);
     let cladding_m = b.material([0.34, 0.2, 0.1], 0.58, 0., 4., 0., 0.);
     let cladding = b.cube(cladding_m);
-    let wall_m = b.material([0.74, 0.70, 0.62], 0.88, 0., 1., 0., 0.);
+    let wall_m = b.material([0.74, 0.70, 0.62], 0.86, 0., 13., 0., 0.);
     let garden_wall = b.cube(wall_m);
     let canvas_m = b.material([0.88, 0.84, 0.74], 0.92, 0., 11., 0., 0.);
     let canvas = b.round(canvas_m, false);

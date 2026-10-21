@@ -40,7 +40,8 @@ struct Lights { count:vec4<u32>, values:array<Light,128> }
 @group(3) @binding(3) var environment_diffuse:texture_cube<f32>;
 @group(3) @binding(4) var<uniform> environment_intensity:vec4<f32>;
 struct Vertex { @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) tangent:vec4<f32>, @location(3) uv:vec2<f32>, @location(4) w0:vec4<f32>, @location(5) w1:vec4<f32>, @location(6) w2:vec4<f32>, @location(7) w3:vec4<f32>, @location(8) n0:vec4<f32>, @location(9) n1:vec4<f32>, @location(10) n2:vec4<f32> }
-struct Fragment { @builtin(position) clip:vec4<f32>, @location(0) world:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) tangent:vec4<f32>, @location(3) uv:vec2<f32>, @location(4) shadow:vec4<f32> }
+// Match clip positions across depth, material, shadow and guide pipelines.
+struct Fragment { @invariant @builtin(position) clip:vec4<f32>, @location(0) world:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) tangent:vec4<f32>, @location(3) uv:vec2<f32>, @location(4) shadow:vec4<f32> }
 fn vertex(v:Vertex, shadow:bool)->Fragment { let world=mat4x4<f32>(v.w0,v.w1,v.w2,v.w3);let p=world*vec4<f32>(v.position,1.);var f:Fragment;f.world=p.xyz;f.clip=select(camera.vp*p,camera.shadow*p,shadow);f.normal=normalize(mat3x3<f32>(v.n0.xyz,v.n1.xyz,v.n2.xyz)*v.normal);let t=(world*vec4<f32>(v.tangent.xyz,0.)).xyz;let determinant=dot(cross(v.w0.xyz,v.w1.xyz),v.w2.xyz);f.tangent=vec4<f32>(normalize(t),v.tangent.w*sign(determinant));f.uv=v.uv;f.shadow=camera.shadow*p;return f; }
 @vertex fn vs_main(v:Vertex)->Fragment{return vertex(v,false);}
 @vertex fn vs_shadow(v:Vertex)->Fragment{return vertex(v,true);}
@@ -57,18 +58,27 @@ fn original_noise(p:vec3<f32>)->f32 {
 }
 fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
  let grain=original_noise(p*27.);let broad=original_noise(p*1.8);
+ if kind>12.5 {
+  let macro_v=original_noise(p*0.45);let cloud=original_noise(p*1.6);
+  let trowel=original_noise(vec3<f32>(p.x*3.5+cloud*0.4,p.y*7.5,p.z*3.5-cloud*0.4));
+  let sand=original_noise(p*92.);
+  let damp=1.-0.10*(1.-smoothstep(0.08,0.65,p.y))*(0.4+0.6*broad)*smoothstep(0.3,0.8,1.-abs(n.y));
+  let warm=mix(vec3<f32>(0.95,0.94,0.92),vec3<f32>(1.04,1.03,1.00),macro_v*0.6+trowel*0.4);
+  return warm*(0.96+0.05*grain+0.03*sand)*damp;
+ }
  if kind>11.5 {
   let cell=floor(p/0.7+vec3<f32>(0.01));
   let h=original_hash(cell*13.7);let h2=original_hash(cell*31.3+7.);
   let q=p+vec3<f32>(h*4.3,h2*2.7,h*6.1);
-  let vein=original_noise(q*vec3<f32>(2.2,8.,1.5)+original_noise(q*5.)*0.7);
-  let band=smoothstep(0.18,0.82,vein);
-  let fine_vein=smoothstep(0.55,0.85,original_noise(q*vec3<f32>(7.,22.,5.)));
-  let pore=smoothstep(0.65,0.88,original_noise(q*52.));
-  let warm=mix(vec3<f32>(0.76,0.70,0.60),vec3<f32>(1.04,1.01,0.96),band);
-  let veined=mix(warm,vec3<f32>(0.68,0.61,0.50),fine_vein*0.32);
-  let tone=0.84+0.26*h+0.10*(broad-0.5);
-  return veined*tone*(1.-0.16*pore)*(0.94+0.09*grain);
+  let vein=original_noise(q*vec3<f32>(2.4,9.,1.6)+original_noise(q*5.5)*0.85);
+  let band=smoothstep(0.14,0.86,vein);
+  let fine_vein=smoothstep(0.50,0.84,original_noise(q*vec3<f32>(8.,24.,6.)));
+  let cross_vein=smoothstep(0.62,0.88,original_noise(q*vec3<f32>(18.,5.,14.)));
+  let pore=smoothstep(0.62,0.86,original_noise(q*54.));
+  let warm=mix(vec3<f32>(0.73,0.67,0.57),vec3<f32>(1.06,1.02,0.96),band);
+  let veined=mix(warm,vec3<f32>(0.64,0.57,0.46),fine_vein*0.38+cross_vein*0.18);
+  let tone=0.82+0.30*h+0.11*(broad-0.5);
+  return veined*tone*(1.-0.18*pore)*(0.93+0.10*grain);
  }
  if kind>10.5 {
   let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5);
@@ -127,7 +137,8 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
   return vec3<f32>(tone*(0.78+0.22*plank));
  }
  let streak=original_noise(vec3<f32>(p.x*45.,p.y*12.,p.z*45.));
- return vec3<f32>(0.88+0.12*grain+0.06*(streak-0.5));
+ let patina=0.92+0.14*original_noise(p*5.5);
+ return vec3<f32>((0.88+0.12*grain+0.06*(streak-0.5))*patina);
 }
 // Band-limited physical height fields in metres. Screen derivatives suppress
 // unresolved grain instead of allowing moving-camera specular aliasing.
@@ -135,10 +146,13 @@ fn original_height(p:vec3<f32>,kind:f32)->f32 {
  let footprint=max(length(dpdx(p)),length(dpdy(p)));
  let fine=1.-smoothstep(0.002,0.012,footprint);
  let medium=1.-smoothstep(0.02,0.08,footprint);
+ if kind>12.5 {
+  return 0.00055*medium*original_noise(p*8.5)+0.00028*fine*original_noise(p*115.);
+ }
  if kind>11.5 {
   let vein=original_noise(p*vec3<f32>(3.,9.,2.))*medium;
-  let pore=smoothstep(0.62,0.86,original_noise(p*52.))*fine;
-  return 0.0012*vein-0.0007*pore+0.00025*fine*original_noise(p*160.);
+  let pore=smoothstep(0.60,0.85,original_noise(p*54.))*fine;
+  return 0.0014*vein-0.00085*pore+0.00028*fine*original_noise(p*160.);
  }
  if kind>10.5 {
   let weave=(sin(p.x*420.)*sin(p.z*420.)+sin(p.y*420.)*0.5)*fine;
@@ -171,7 +185,7 @@ fn original_height(p:vec3<f32>,kind:f32)->f32 {
   return 0.0022*course+0.0014*medium*original_noise(p*32.)+0.0003*fine*original_noise(p*140.);
  }
  if kind<4.5 {return 0.0006*medium*original_noise(p*24.)+0.00055*fine*original_noise(p*vec3<f32>(110.,18.,110.));}
- return 0.00012*fine*original_noise(p*230.);
+ return 0.00022*medium*original_noise(p*34.)+0.00018*fine*original_noise(p*210.);
 }
 fn original_bump(p:vec3<f32>,n:vec3<f32>,height:f32)->vec3<f32>{
  let px=dpdx(p);let py=dpdy(p);let rx=cross(py,n);let ry=cross(n,px);
@@ -393,12 +407,12 @@ struct ArchiveSurface {
  roughness:f32,diffuse:vec3<f32>,normal:vec3<f32>,view:vec3<f32>,geometric:vec3<f32>,splash:f32
 }
 fn archive_surface(f:Fragment,front:bool,tex:vec4<f32>)->ArchiveSurface {
- var base=tex.rgb*material.diffuse.rgb;if material.workflow.z>0.5{base*=original_surface(f.world,f.normal,material.workflow.z);}let opacity=select(tex.a,1.,material.workflow.y>1.5)*material.diffuse.a;
+ var base=tex.rgb*material.diffuse.rgb;if material.workflow.z>0.5{base*=original_surface(f.world,f.normal,material.workflow.z);}else if material.workflow.w>0.{let damp=1.-0.18*(1.-smoothstep(0.1,1.65,f.world.y))*(0.35+0.65*original_noise(f.world*1.8))*smoothstep(0.3,0.8,1.-abs(f.normal.y));let macro_v=0.92+0.16*original_noise(f.world*0.35);base*=damp*macro_v;}let opacity=select(tex.a,1.,material.workflow.y>1.5)*material.diffuse.a;
  let uv=surface_uv(f);let packed=material.workflow.y>1.5;var packed_normal=vec4<f32>(0.);var spec=vec4<f32>(1.);
  if packed {packed_normal=textureSample(normal_map,material_sampler,uv);spec=vec4<f32>(tex.a,packed_normal.a,0.,1.);}else{spec=textureSample(specular_map,material_sampler,uv);}var f0=spec.rgb*material.specular_gloss.rgb;var roughness=1.-spec.a*material.specular_gloss.a;var diffuse=base*(1.-max(max(f0.r,f0.g),f0.b));
  if material.workflow.x>0.5{let metallic=material.surface.x*spec.b;roughness=material.surface.y*spec.g;f0=mix(vec3<f32>(0.04),base,metallic);diffuse=base*(1.-metallic);}
  let face=select(-1.,1.,front);var normal=normalize(f.normal)*face;var tangent=normalize(f.tangent.xyz-normal*dot(normal,f.tangent.xyz))*face;var bitangent=cross(normal,tangent)*f.tangent.w*face;
- if material.workflow.w>0. {let n=abs(f.normal);if n.x>=n.y&&n.x>=n.z {tangent=vec3<f32>(0.,0.,-sign(f.normal.x));bitangent=vec3<f32>(0.,1.,0.);}else if n.y>=n.z {tangent=vec3<f32>(1.,0.,0.);bitangent=vec3<f32>(0.,0.,-sign(f.normal.y));}else{tangent=vec3<f32>(sign(f.normal.z),0.,0.);bitangent=vec3<f32>(0.,1.,0.);}}var mapped=vec3<f32>(0.,0.,1.);if packed {mapped=packed_normal.xyz*2.-1.;}else if material.workflow.y>0.5{mapped=textureSample(normal_map,material_sampler,uv).xyz*2.-1.;}mapped.x*=material.emissive_normal.w;mapped.y*=material.emissive_normal.w;normal=normalize(mat3x3<f32>(tangent,bitangent,normal)*mapped);if material.workflow.z>0.5{let height=original_height(f.world,material.workflow.z);normal=original_bump(f.world,normal,height);roughness=clamp(roughness+(original_noise(f.world*7.)-0.5)*0.16,0.04,1.);}let view=normalize(camera.eye.xyz-f.world);
+ if material.workflow.w>0. {let n=abs(f.normal);if n.x>=n.y&&n.x>=n.z {tangent=vec3<f32>(0.,0.,-sign(f.normal.x));bitangent=vec3<f32>(0.,1.,0.);}else if n.y>=n.z {tangent=vec3<f32>(1.,0.,0.);bitangent=vec3<f32>(0.,0.,-sign(f.normal.y));}else{tangent=vec3<f32>(sign(f.normal.z),0.,0.);bitangent=vec3<f32>(0.,1.,0.);}}var mapped=vec3<f32>(0.,0.,1.);if packed {mapped=packed_normal.xyz*2.-1.;}else if material.workflow.y>0.5{mapped=textureSample(normal_map,material_sampler,uv).xyz*2.-1.;}mapped.x*=material.emissive_normal.w;mapped.y*=material.emissive_normal.w;normal=normalize(mat3x3<f32>(tangent,bitangent,normal)*mapped);if material.workflow.z>0.5{let height=original_height(f.world,material.workflow.z);normal=original_bump(f.world,normal,height);let r_amp=select(0.16,0.06,material.workflow.z>12.5);roughness=clamp(roughness+(original_noise(f.world*7.)-0.5)*r_amp,0.04,1.);}let dndx=dpdx(normal);let dndy=dpdy(normal);let sigma2=min(dot(dndx,dndx)+dot(dndy,dndy),0.25);roughness=clamp(sqrt(roughness*roughness+0.35*sigma2),0.04,1.);let view=normalize(camera.eye.xyz-f.world);
  let geometric=normalize(f.normal)*face;
  var splash=0.;
  if material.surface.z==0.&&!fx_off(16u)&&!(material.workflow.z>5.5&&material.workflow.z<6.5) {
@@ -430,6 +444,10 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
   let probe=probe_irradiance(f.world,normal);
   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
+  if transmission>0. {
+   let glass_tint=mix(vec3<f32>(1.),vec3<f32>(0.90,0.96,0.95),clamp((1.-nv)*0.75,0.,1.));
+   radiance*=glass_tint;
+  }
   colour+=diffuse*(1.-transmission)*indirect*multibounce_ao(ao,diffuse)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,roughness);
  } else {
   let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(normal.y*0.5+0.5,0.,1.));
@@ -440,6 +458,10 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   var incoming=daylight(reflected,camera.sun.xyz)*(1.-0.7*roughness);
   let mirror=(1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,max(max(fresnel.r,fresnel.g),fresnel.b));
   if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
+  if transmission>0. {
+   let glass_tint=mix(vec3<f32>(1.),vec3<f32>(0.90,0.96,0.95),clamp((1.-nv)*0.75,0.,1.));
+   incoming*=glass_tint;
+  }
   colour+=incoming*fresnel*ao;
  }
  if splash>0. {
