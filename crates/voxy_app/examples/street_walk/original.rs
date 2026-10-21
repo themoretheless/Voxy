@@ -1151,7 +1151,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     ];
     let cloth_m = b.material([0.04, 0.18, 0.23], 0.9, 0., 11., 0., 0.);
     let cloth = b.cube(cloth_m);
-    let plaster_m = b.material([0.82, 0.79, 0.72], 0.92, 0., 1., 0., 0.);
+    let plaster_m = b.material([0.82, 0.79, 0.72], 0.90, 0., 13., 0., 0.);
     let plaster = b.cube(plaster_m);
     let floor_m = b.material([0.36, 0.22, 0.12], 0.6, 0., 4., 0., 0.);
     let floor = b.cube(floor_m);
@@ -1168,7 +1168,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     ]
     .into_iter()
     .map(|c| {
-        let m = b.material(c, 0.9, 0., 1., 0., 0.);
+        let m = b.material(c, 0.88, 0., 13., 0., 0.);
         b.cube(m)
     })
     .collect();
@@ -1230,7 +1230,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     })
     .collect();
     let bin = b.round(dark_m, false);
-    let ceiling_m = b.material([0.9, 0.89, 0.86], 0.95, 0., 1., 0., 0.);
+    let ceiling_m = b.material([0.9, 0.89, 0.86], 0.92, 0., 13., 0., 0.);
     let tile_m = b.material([0.82, 0.86, 0.87], 0.22, 0., 0., 0., 0.);
     let tile_accent_m = b.material([0.27, 0.43, 0.52], 0.25, 0., 0., 0., 0.);
     let kit = Kit {
