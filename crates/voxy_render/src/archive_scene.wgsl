@@ -117,8 +117,21 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
   return mix(shaded,shaded*vec3<f32>(0.80,1.08,0.78),clover*0.42);
  }
  if kind>8.5 {let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.025;let cell=floor(uv);let f=fract(uv);let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));let footprint=max(fwidth(uv.x),fwidth(uv.y));let h=original_hash(vec3<f32>(cell,kind));let h2=original_hash(vec3<f32>(cell.yx,kind+3.));let shimmer=vec3<f32>(0.86+0.20*h,0.90+0.16*h2,0.92+0.16*(1.-h*0.5));let tile=mix(vec3<f32>(0.52,0.56,0.60),shimmer,smoothstep(0.05,0.13+footprint,edge));return mix(tile,vec3<f32>(0.90,0.92,0.94),smoothstep(0.25,0.6,footprint));}
- if kind>7.5 {let grooves=original_noise(p*vec3<f32>(85.,2.5,85.));return vec3<f32>(0.62+0.58*grooves)*(0.9+0.2*broad);}
- if kind>6.5 {let uv=select(p.xy,p.zy,abs(n.x)>0.5);let row=floor(uv.y/0.075);let cell=fract(vec2<f32>(uv.x/0.225+0.5*(row-2.*floor(row*0.5)),uv.y/0.075));let edge=min(min(cell.x,1.-cell.x)*0.225,min(cell.y,1.-cell.y)*0.075);return mix(vec3<f32>(0.40,0.38,0.34),vec3<f32>(0.71,0.40,0.26)*(0.85+0.25*broad),smoothstep(0.002,0.006,edge));}
+ if kind>7.5 {
+  let grooves=original_noise(p*vec3<f32>(85.,2.5,85.));
+  let moss=smoothstep(0.54,0.82,original_noise(p*3.8))*(1.-smoothstep(0.15,0.95,p.y))*smoothstep(-0.2,0.5,-n.z);
+  let bark_col=vec3<f32>(0.62+0.58*grooves)*(0.9+0.2*broad);
+  return mix(bark_col,vec3<f32>(0.42,0.68,0.34),moss*0.55);
+ }
+ if kind>6.5 {
+  let uv=select(p.xy,p.zy,abs(n.x)>0.5);let row=floor(uv.y/0.075);let col=floor(uv.x/0.225+0.5*(row-2.*floor(row*0.5)));
+  let cell=fract(vec2<f32>(uv.x/0.225+0.5*(row-2.*floor(row*0.5)),uv.y/0.075));
+  let edge=min(min(cell.x,1.-cell.x)*0.225,min(cell.y,1.-cell.y)*0.075);
+  let bh=original_hash(vec3<f32>(col,row,7.))-0.5;
+  let salt=smoothstep(0.68,0.90,original_noise(p*2.6))*(1.-smoothstep(0.3,1.8,p.y));
+  let brick_tone=mix(vec3<f32>(0.71,0.40,0.26)*(0.85+0.25*broad+0.16*bh),vec3<f32>(0.92,0.90,0.86),salt*0.28);
+  return mix(vec3<f32>(0.40,0.38,0.34),brick_tone,smoothstep(0.002,0.006,edge));
+ }
  if kind>5.5 {
   let cluster=original_noise(p*4.8);let sub_cluster=original_noise(p*11.5);let leaf_cell=original_noise(p*28.);
   let pocket=smoothstep(0.18,0.78,cluster*0.6+sub_cluster*0.4);
@@ -129,6 +142,8 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
  if kind<1.5{
   let macro_var=original_noise(p*0.55);let speck=original_noise(p*64.);
   let damp=1.-0.15*(1.-smoothstep(0.08,0.85,p.y))*(0.35+0.65*broad)*smoothstep(0.3,0.8,1.-abs(n.y));
+  let gutter=exp(-square((abs(p.x)-4.32)/0.26))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*smoothstep(0.8,0.98,n.y);
+  let litter=smoothstep(0.62,0.86,original_noise(p*11.5))*gutter;
   let side_slab=smoothstep(4.65,4.85,abs(p.x))*(1.-smoothstep(6.95,7.25,abs(p.x)))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*smoothstep(0.7,0.95,n.y);
   var joint=1.;
   if side_slab>0. {
@@ -139,9 +154,14 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
    let cell_h=original_hash(vec3<f32>(floor(p.x/0.72),floor(p.z/0.90),1.))-0.5;
    joint=mix(1.,(0.74+0.26*smoothstep(0.004,0.011+fp,d_joint))*(1.+0.08*cell_h),side_slab);
   }
-  return vec3<f32>((0.82+0.16*broad+0.08*macro_var)*(0.92+0.10*grain+0.05*speck)*damp*joint);
+  let stone_col=vec3<f32>((0.82+0.16*broad+0.08*macro_var)*(0.92+0.10*grain+0.05*speck)*damp*joint);
+  return mix(stone_col,stone_col*vec3<f32>(0.78,0.64,0.44),litter*0.45);
  }
- if kind<2.5 {let damp=1.-0.20*(1.-smoothstep(0.1,1.6,p.y))*(0.3+broad);return vec3<f32>((0.86+0.15*broad+0.08*grain)*damp);}
+ if kind<2.5 {
+  let damp=1.-0.20*(1.-smoothstep(0.1,1.6,p.y))*(0.3+broad);
+  let drip=1.-0.07*smoothstep(0.58,0.88,original_noise(vec3<f32>(p.x*6.5,p.y*0.65,p.z*6.5)))*smoothstep(0.3,0.8,1.-abs(n.y));
+  return vec3<f32>((0.86+0.15*broad+0.08*grain)*damp*drip);
+ }
  if kind<3.5 {
   let uv=select(p.xy,p.zy,abs(n.x)>0.5);let row=floor(uv.y*12.);let col=floor(uv.x*4.+0.5*(row-2.*floor(row*0.5)));
   let cell=fract(vec2<f32>(uv.x*4.+0.5*(row-2.*floor(row*0.5)),uv.y*12.));
@@ -458,7 +478,7 @@ struct ArchiveSurface {
  roughness:f32,diffuse:vec3<f32>,normal:vec3<f32>,view:vec3<f32>,geometric:vec3<f32>,splash:f32
 }
 fn archive_surface(f:Fragment,front:bool,tex:vec4<f32>)->ArchiveSurface {
- var base=tex.rgb*material.diffuse.rgb;if material.workflow.z>0.5{base*=original_surface(f.world,f.normal,material.workflow.z);}else if material.workflow.w>0.{let damp=1.-0.18*(1.-smoothstep(0.1,1.65,f.world.y))*(0.35+0.65*original_noise(f.world*1.8))*smoothstep(0.3,0.8,1.-abs(f.normal.y));let macro_v=0.92+0.16*original_noise(f.world*0.35);base*=damp*macro_v;}let opacity=select(tex.a,1.,material.workflow.y>1.5)*material.diffuse.a;
+ var base=tex.rgb*material.diffuse.rgb;if material.workflow.z>0.5{base*=original_surface(f.world,f.normal,material.workflow.z);}else if material.workflow.w>0.{let damp=1.-0.18*(1.-smoothstep(0.1,1.65,f.world.y))*(0.35+0.65*original_noise(f.world*1.8))*smoothstep(0.3,0.8,1.-abs(f.normal.y));let drip=1.-0.07*smoothstep(0.58,0.88,original_noise(vec3<f32>(f.world.x*6.5,f.world.y*0.65,f.world.z*6.5)))*smoothstep(0.3,0.8,1.-abs(f.normal.y));let macro_v=0.92+0.16*original_noise(f.world*0.35);base*=damp*drip*macro_v;}else if material.workflow.w<0.{let moss=smoothstep(0.54,0.82,original_noise(f.world*3.8))*(1.-smoothstep(0.15,0.95,f.world.y))*smoothstep(-0.2,0.5,-f.normal.z);base=mix(base,vec3<f32>(0.05,0.11,0.03),moss*0.45);}let opacity=select(tex.a,1.,material.workflow.y>1.5)*material.diffuse.a;
  let uv=surface_uv(f);let packed=material.workflow.y>1.5;var packed_normal=vec4<f32>(0.);var spec=vec4<f32>(1.);
  if packed {packed_normal=textureSample(normal_map,material_sampler,uv);spec=vec4<f32>(tex.a,packed_normal.a,0.,1.);}else{spec=textureSample(specular_map,material_sampler,uv);}var f0=spec.rgb*material.specular_gloss.rgb;var roughness=1.-spec.a*material.specular_gloss.a;var diffuse=base*(1.-max(max(f0.r,f0.g),f0.b));
  if material.workflow.x>0.5{let metallic=material.surface.x*spec.b;roughness=material.surface.y*spec.g;f0=mix(vec3<f32>(0.04),base,metallic);diffuse=base*(1.-metallic);}
@@ -481,7 +501,10 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  if ARCHIVE_COMPUTE_GI {early_bounce=textureLoad(computed_gi,vec2<i32>(f.clip.xy),0);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
  let shadow_pos=f.shadow.xyz/f.shadow.w;let shadow_uv=shadow_pos.xy*vec2<f32>(0.5,-0.5)+0.5;var visibility=1.;if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.&&!fx_off(8u){visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715)))));}
  let ao=contact_occlusion(f.clip.xy,f.world,normal)*select(1.,spec.r,material.workflow.w!=0.);
- let transmission=material.surface.z;let alpha=max(roughness*roughness,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,roughness),0.).rg;let shading=Brdf(normal,view,diffuse*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility*micro_shadow(dot(normal,camera.sun.xyz),ao);
+ let dust_mask=smoothstep(0.65,0.95,geometric.y)*(1.-ao)*(1.-camera.surface.x)*select(1.,0.,material.surface.z>0.||(material.workflow.z>8.5&&material.workflow.z<10.5));
+ let rough_eff=mix(roughness,max(roughness,0.88),dust_mask*0.35);
+ let diffuse_eff=mix(diffuse,vec3<f32>(0.54,0.52,0.48),dust_mask*0.14);
+ let transmission=material.surface.z;let alpha=max(rough_eff*rough_eff,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,rough_eff),0.).rg;let shading=Brdf(normal,view,diffuse_eff*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility*micro_shadow(dot(normal,camera.sun.xyz),ao);
  for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;let distance2=max(dot(offset,offset),0.0001);let distance=sqrt(distance2);var attenuation=1./distance2;if light.position_kind.w>0.{attenuation*=square(clamp(1.-fourth(distance/light.position_kind.w),0.,1.));}if attenuation==0.{continue;}let l_dir=offset/distance;colour+=brdf(shading,l_dir)*light.colour_intensity.rgb*light.colour_intensity.a*attenuation*micro_shadow(dot(normal,l_dir),ao);}
  // Directional sky, contact visibility and view-dependent environment Fresnel.
  if camera.eye.w>0.5 {
@@ -537,12 +560,22 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   colour+=base*vec3<f32>(1.2,1.15,0.65)*camera.sun_colour.rgb*camera.sun_colour.a*(0.06+0.12*graze)*tip*visibility;
  }
  if material.workflow.z>10.5&&material.workflow.z<11.5 {
-  let sheen=pow(1.-nv,3.5)*0.08;
-  colour+=base*sheen*camera.sun_colour.rgb*camera.sun_colour.a*max(dot(normal,camera.sun.xyz),0.15)*visibility;
+  let nl_sun=max(dot(normal,camera.sun.xyz),0.);
+  let nh_sun=max(dot(normal,normalize(view+camera.sun.xyz)),0.);
+  let sheen=charlie_sheen(nh_sun,nv,max(nl_sun,0.15),roughness)*0.09+pow(1.-nv,3.5)*0.06;
+  colour+=sqrt(max(base,vec3<f32>(0.01)))*sheen*camera.sun_colour.rgb*camera.sun_colour.a*max(nl_sun,0.15)*visibility;
+ }
+ if material.workflow.z>4.5&&material.workflow.z<5.5 {
+  let film_nm=260.+180.*original_noise(f.world*2.4);
+  let irid=thin_film_iridescence(nv,film_nm);
+  colour*=mix(vec3<f32>(1.),irid,0.08*smoothstep(0.2,0.85,1.-nv));
  }
  if material.workflow.z>14.5 {
+  let nl_sun=max(dot(normal,camera.sun.xyz),0.);
+  let nh_sun=max(dot(normal,normalize(view+camera.sun.xyz)),0.);
+  let velvet=charlie_sheen(nh_sun,nv,max(nl_sun,0.15),0.65)*0.06;
   let sss=max(dot(-normal,camera.sun.xyz)*0.5+0.5,0.)*pow(1.-nv,2.);
-  colour+=base*vec3<f32>(1.18,1.06,0.92)*camera.sun_colour.rgb*camera.sun_colour.a*sss*0.09*visibility;
+  colour+=base*(vec3<f32>(1.18,1.06,0.92)*sss*0.09+velvet)*camera.sun_colour.rgb*camera.sun_colour.a*visibility;
  }
  if (material.workflow.z>3.5&&material.workflow.z<4.5)||(material.workflow.z>13.5&&material.workflow.z<14.5) {
   let clear_w=select(0.18,0.45,material.workflow.z>13.5);

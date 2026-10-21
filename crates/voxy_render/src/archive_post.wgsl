@@ -148,7 +148,8 @@ fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
         let dist=length(delta);
         if dist>14. {
             let ray=delta/dist;
-            let haze_density=0.0011*(1.+2.2*camera.weather.x)*exp(-max(world_p.y,0.)*0.04);
+            let water_mist=1.+0.45*exp(-max(world_p.y-0.08,0.)*2.5)*smoothstep(105.,113.,world_p.z)*(1.-smoothstep(127.,135.,world_p.z))*smoothstep(0.,1.,1.-abs(world_p.x)/4.5);
+            let haze_density=0.0011*(1.+2.2*camera.weather.x)*exp(-max(world_p.y,0.)*0.04)*water_mist;
             let air=clamp(1.-exp(-(dist-14.)*haze_density),0.,0.32);
             var horizon_sky=vec3<f32>(0.);
             let sample_dir=normalize(vec3<f32>(ray.x,max(ray.y,0.06),ray.z));
