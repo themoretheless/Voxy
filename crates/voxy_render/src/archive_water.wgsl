@@ -160,28 +160,38 @@ fn sun_visible(p:vec3<f32>)->f32 {
 
 // Sunlight refracted through the surface converges or spreads with the curvature of
 // the waves: intensity ~ 1/det(I + d (1 - 1/n) H) for a floor `d` metres below.
-fn caustic(p:vec3<f32>, level:f32)->f32 {
-  let sun = camera.sun.xyz;
-  if sun.y <= 0. || water.scatter.w <= 0. { return 1.; }
-  let depth = level - p.y;
-  if depth <= 0. { return 1.; }
-  let t = refract(-sun, vec3<f32>(0., 1., 0.), 1. / IOR);
-  let above = p.xz - t.xz / t.y * depth;
-  let e = 0.05;
+fn caustic_at(above:vec2<f32>, depth:f32)->f32 {
+  let e = 0.045;
   let sx = (caustic_slope(above + vec2<f32>(e, 0.)) - caustic_slope(above - vec2<f32>(e, 0.))) / (2. * e);
   let sz = (caustic_slope(above + vec2<f32>(0., e)) - caustic_slope(above - vec2<f32>(0., e))) / (2. * e);
   let k = depth * (1. - 1. / IOR) * edge_weight(above);
   let det = (1. + k * sx.x) * (1. + k * sz.y) - k * k * sx.y * sz.x;
-  return mix(1., clamp(1. / max(abs(det), 0.1), 0.25, 3.5), water.scatter.w);
+  let raw = clamp(1. / max(abs(det), 0.085), 0.22, 3.8);
+  return mix(raw, pow(raw, 1.25), 0.35);
+}
+fn caustic(p:vec3<f32>, level:f32)->vec3<f32> {
+  let sun = camera.sun.xyz;
+  if sun.y <= 0. || water.scatter.w <= 0. { return vec3<f32>(1.); }
+  let depth = level - p.y;
+  if depth <= 0. { return vec3<f32>(1.); }
+  let t = refract(-sun, vec3<f32>(0., 1., 0.), 1. / IOR);
+  let above = p.xz - t.xz / t.y * depth;
+  let shift = t.xz / t.y * min(depth, 2.0) * 0.011;
+  let cr = caustic_at(above - shift, depth);
+  let cg = caustic_at(above, depth);
+  let cb = caustic_at(above + shift, depth);
+  return mix(vec3<f32>(1.), vec3<f32>(cr, cg, cb), water.scatter.w);
 }
 
 // Light reaching a point under water: what the opaque pass saw, attenuated along `path`,
 // plus in-scattered ambient light. Caustics modulate the directly sunlit share.
 fn under_water(radiance:vec3<f32>, point:vec3<f32>, level:f32, path:f32, ambient:vec3<f32>)->vec3<f32> {
   let sunlit = sun_visible(point) * clamp(camera.sun.y * 3., 0., 1.);
-  let lit = radiance * mix(1., caustic(point, level), 0.75 * sunlit);
+  let lit = radiance * mix(vec3<f32>(1.), caustic(point, level), 0.78 * sunlit);
   let t = exp(-water.absorption.rgb * path);
-  return lit * t + water.scatter.rgb * ambient * (1. - t);
+  let forward = pow(clamp(dot(normalize(point - camera.eye.xyz), -camera.sun.xyz), 0., 1.), 3.) * sunlit;
+  let scatter = water.scatter.rgb * (ambient + camera.sun_colour.rgb * camera.sun_colour.a * forward * 0.08);
+  return lit * t + scatter * (1. - t);
 }
 
 fn ambient_light()->vec3<f32> {

@@ -240,14 +240,19 @@ impl Builder {
         }
         // Smooth area-weighted normals follow the existing curved membrane.
         // The complete original positions, triangles and collision remain unchanged.
-        let mut normals=vec![Vec3::ZERO;vertices.len()];
+        let mut normals = vec![Vec3::ZERO; vertices.len()];
         for triangle in indices.chunks_exact(3) {
-            let p: [Vec3;3]=std::array::from_fn(|i|Vec3::from_array(vertices[triangle[i] as usize].position));
-            let normal=(p[1]-p[0]).cross(p[2]-p[0]);
-            for &i in triangle {normals[i as usize]+=normal;}
+            let p: [Vec3; 3] =
+                std::array::from_fn(|i| Vec3::from_array(vertices[triangle[i] as usize].position));
+            let normal = (p[1] - p[0]).cross(p[2] - p[0]);
+            for &i in triangle {
+                normals[i as usize] += normal;
+            }
         }
-        for (vertex,normal) in vertices.iter_mut().zip(normals) {
-            if normal.length_squared()>0. {vertex.normal=normal.normalize().to_array();}
+        for (vertex, normal) in vertices.iter_mut().zip(normals) {
+            if normal.length_squared() > 0. {
+                vertex.normal = normal.normalize().to_array();
+            }
         }
         self.mesh(material, vertices, indices)
     }
@@ -383,7 +388,11 @@ struct Room {
 }
 impl Room {
     fn put(&self, b: &mut Builder, id: usize, p: [f32; 3], s: [f32; 3]) {
-        b.block(id, [self.side * (7.56 + p[0]), self.base + p[1], self.z + p[2]], s);
+        b.block(
+            id,
+            [self.side * (7.56 + p[0]), self.base + p[1], self.z + p[2]],
+            s,
+        );
     }
     fn at(&self, p: [f32; 3]) -> Vec3 {
         Vec3::new(self.side * (7.56 + p[0]), self.base + p[1], self.z + p[2])
@@ -399,7 +408,12 @@ struct Zone {
 }
 impl Zone {
     fn put(&self, b: &mut Builder, id: usize, p: [f32; 3], s: [f32; 3]) {
-        self.r.put(b, id, [self.d0 + p[2], p[1], self.o * (3.78 - p[0])], [s[2], s[1], s[0]]);
+        self.r.put(
+            b,
+            id,
+            [self.d0 + p[2], p[1], self.o * (3.78 - p[0])],
+            [s[2], s[1], s[0]],
+        );
     }
 }
 #[derive(Clone)]
@@ -500,11 +514,26 @@ fn interior(b: &mut Builder, k: &Kit, p: &Plan) {
         openings.sort_by(|a, b| a.0.total_cmp(&b.0));
         let mut u = -3.825;
         for &(o0, o1) in &openings {
-            wall.put(b, neutral, [3.9, STOREY * 0.5, (u + o0) * 0.5], [0.12, STOREY, o0 - u]);
-            wall.put(b, neutral, [3.9, 2.1 + (STOREY - 2.1) * 0.5, (o0 + o1) * 0.5], [0.12, STOREY - 2.1, o1 - o0]);
+            wall.put(
+                b,
+                neutral,
+                [3.9, STOREY * 0.5, (u + o0) * 0.5],
+                [0.12, STOREY, o0 - u],
+            );
+            wall.put(
+                b,
+                neutral,
+                [3.9, 2.1 + (STOREY - 2.1) * 0.5, (o0 + o1) * 0.5],
+                [0.12, STOREY - 2.1, o1 - o0],
+            );
             u = o1;
         }
-        wall.put(b, neutral, [3.9, STOREY * 0.5, (u + 3.825) * 0.5], [0.12, STOREY, 3.825 - u]);
+        wall.put(
+            b,
+            neutral,
+            [3.9, STOREY * 0.5, (u + 3.825) * 0.5],
+            [0.12, STOREY, 3.825 - u],
+        );
         for &(o0, o1) in &openings {
             let back_door = (o0 - (s - 2.0)).abs() < 0.01 || (o0 - (s + 1.2)).abs() < 0.01;
             if !back_door {
@@ -514,13 +543,28 @@ fn interior(b: &mut Builder, k: &Kit, p: &Plan) {
         }
         // Partition between the two front rooms, doorway near the cross wall.
         for (d0, d1) in [(0., 2.6), (3.5, 3.84)] {
-            wall.put(b, neutral, [(d0 + d1) * 0.5, STOREY * 0.5, s], [d1 - d0, STOREY, 0.1]);
+            wall.put(
+                b,
+                neutral,
+                [(d0 + d1) * 0.5, STOREY * 0.5, s],
+                [d1 - d0, STOREY, 0.1],
+            );
         }
-        wall.put(b, neutral, [3.05, 2.1 + (STOREY - 2.1) * 0.5, s], [0.9, STOREY - 2.1, 0.1]);
+        wall.put(
+            b,
+            neutral,
+            [3.05, 2.1 + (STOREY - 2.1) * 0.5, s],
+            [0.9, STOREY - 2.1, 0.1],
+        );
         casing(b, k, &wall, s, 2.6, 3.5, false);
         // Stairwell side walls and the spine between the flights.
         for e in [-1., 1.] {
-            wall.put(b, neutral, [5.375, STOREY * 0.5, s + e * 1.0], [2.83, STOREY, 0.1]);
+            wall.put(
+                b,
+                neutral,
+                [5.375, STOREY * 0.5, s + e * 1.0],
+                [2.83, STOREY, 0.1],
+            );
         }
         let spine_bottom = if level > 0 { -0.2 } else { 0. };
         let spine_top = if stairs { STOREY } else { 1.0 };
@@ -530,16 +574,31 @@ fn interior(b: &mut Builder, k: &Kit, p: &Plan) {
             [4.91, (spine_bottom + spine_top) * 0.5, s],
             [1.9, spine_top - spine_bottom, 0.1],
         );
-        wall.put(b, neutral, [6.76, (spine_bottom + STOREY) * 0.5, s], [0.04, STOREY - spine_bottom, 1.9]);
+        wall.put(
+            b,
+            neutral,
+            [6.76, (spine_bottom + STOREY) * 0.5, s],
+            [0.04, STOREY - spine_bottom, 1.9],
+        );
         if stairs {
             for i in 1..=7 {
                 let top = i as f32 * RISE;
                 let d0 = 3.965 + (i - 1) as f32 * TREAD;
-                wall.put(b, wall.wood, [d0 + TREAD * 0.5, top - 0.1, s - 0.5], [TREAD, 0.2, 0.88]);
+                wall.put(
+                    b,
+                    wall.wood,
+                    [d0 + TREAD * 0.5, top - 0.1, s - 0.5],
+                    [TREAD, 0.2, 0.88],
+                );
                 let top = (8 + i) as f32 * RISE;
                 let d1 = 5.86 - (i - 1) as f32 * TREAD;
                 let d0 = (d1 - TREAD).max(3.965);
-                wall.put(b, wall.wood, [(d0 + d1) * 0.5, top - 0.1, s + 0.5], [d1 - d0, 0.2, 0.88]);
+                wall.put(
+                    b,
+                    wall.wood,
+                    [(d0 + d1) * 0.5, top - 0.1, s + 0.5],
+                    [d1 - d0, 0.2, 0.88],
+                );
             }
             wall.put(b, wall.wood, [6.3, 8. * RISE - 0.1, s], [0.88, 0.2, 1.88]);
             for (e, h0, h1) in [(-1., 0., 8. * RISE), (1., 16. * RISE, 8. * RISE)] {
@@ -556,7 +615,8 @@ fn interior(b: &mut Builder, k: &Kit, p: &Plan) {
         // Rooms. Front rooms: left (o = -1) and right (o = +1).
         let w_of = |o: f32| 3.73 - o * s;
         let door_room = if level == 0 {
-            p.door.map(|(du, dw)| (if du > s { 1. } else { -1. }, du, dw))
+            p.door
+                .map(|(du, dw)| (if du > s { 1. } else { -1. }, du, dw))
         } else {
             None
         };
@@ -566,9 +626,17 @@ fn interior(b: &mut Builder, k: &Kit, p: &Plan) {
             let narrow = w_of(o) < 3.2;
             let day = (n == 0) == day_first;
             kinds[n] = if narrow {
-                if b.random() < 0.5 { Kind::Study } else { Kind::SingleBed }
+                if b.random() < 0.5 {
+                    Kind::Study
+                } else {
+                    Kind::SingleBed
+                }
             } else if day {
-                if b.random() < 0.55 { Kind::Living } else { Kind::Kitchen }
+                if b.random() < 0.55 {
+                    Kind::Living
+                } else {
+                    Kind::Kitchen
+                }
             } else if b.random() < 0.7 {
                 Kind::DoubleBed
             } else {
@@ -594,7 +662,9 @@ fn interior(b: &mut Builder, k: &Kit, p: &Plan) {
             let front = Zone { r: room, o, d0: 0. };
             linings(b, k, &front, room.paint, w, 3.84, false);
             curtains(b, k, &front, p, level, s, o);
-            let door_a = door_room.filter(|d| d.0 == o).map(|(_, du, dw)| (3.78 - o * du, dw));
+            let door_a = door_room
+                .filter(|d| d.0 == o)
+                .map(|(_, du, dw)| (3.78 - o * du, dw));
             furnish(b, k, &front, kinds[n], w, door_a);
             ceiling_lamp(b, k, &front, w * 0.5, 1.9);
             // Back room on the same side.
@@ -633,12 +703,32 @@ fn casing(b: &mut Builder, k: &Kit, r: &Room, at: f32, o0: f32, o1: f32, across_
     put(b, (o0 + o1) * 0.5, 2.1, o1 - o0 + 0.06, 0.06);
 }
 fn linings(b: &mut Builder, k: &Kit, zn: &Zone, paint: usize, w: f32, depth: f32, back: bool) {
-    zn.put(b, paint, [-0.02, STOREY * 0.5, depth * 0.5], [0.04, STOREY, depth]);
+    zn.put(
+        b,
+        paint,
+        [-0.02, STOREY * 0.5, depth * 0.5],
+        [0.04, STOREY, depth],
+    );
     zn.put(b, k.trim, [0.0125, 0.05, depth * 0.5], [0.025, 0.1, depth]);
-    zn.put(b, k.trim, [0.015, STOREY - 0.03, depth * 0.5], [0.03, 0.06, depth]);
+    zn.put(
+        b,
+        k.trim,
+        [0.015, STOREY - 0.03, depth * 0.5],
+        [0.03, 0.06, depth],
+    );
     if back {
-        zn.put(b, paint, [w * 0.5, STOREY * 0.5, depth + 0.02], [w, STOREY, 0.04]);
-        zn.put(b, k.trim, [w * 0.5 + 0.02, 0.05, depth - 0.0125], [w - 0.04, 0.1, 0.025]);
+        zn.put(
+            b,
+            paint,
+            [w * 0.5, STOREY * 0.5, depth + 0.02],
+            [w, STOREY, 0.04],
+        );
+        zn.put(
+            b,
+            k.trim,
+            [w * 0.5 + 0.02, 0.05, depth - 0.0125],
+            [w - 0.04, 0.1, 0.025],
+        );
     }
 }
 fn curtains(b: &mut Builder, k: &Kit, zn: &Zone, p: &Plan, level: usize, s: f32, o: f32) {
@@ -660,7 +750,11 @@ fn curtains(b: &mut Builder, k: &Kit, zn: &Zone, p: &Plan, level: usize, s: f32,
                 zn.r.put(
                     b,
                     zn.r.accent,
-                    [0.1 + (fold % 2) as f32 * 0.03, 1.2, u - w * 0.5 + fw * (fold as f32 + 0.5)],
+                    [
+                        0.1 + (fold % 2) as f32 * 0.03,
+                        1.2,
+                        u - w * 0.5 + fw * (fold as f32 + 0.5),
+                    ],
                     [0.02, 2.2, fw * 0.98],
                 );
             }
@@ -671,9 +765,19 @@ fn ceiling_lamp(b: &mut Builder, k: &Kit, zn: &Zone, a: f32, d: f32) {
     let lit = b.random() < 0.55;
     if b.random() < 0.5 {
         zn.put(b, k.metal, [a, STOREY - 0.25, d], [0.012, 0.5, 0.012]);
-        zn.put(b, if lit { k.glow } else { k.metal }, [a, STOREY - 0.56, d], [0.36, 0.14, 0.36]);
+        zn.put(
+            b,
+            if lit { k.glow } else { k.metal },
+            [a, STOREY - 0.56, d],
+            [0.36, 0.14, 0.36],
+        );
     } else {
-        zn.put(b, if lit { k.glow } else { k.ceramic }, [a, STOREY - 0.02, d], [0.5, 0.04, 0.5]);
+        zn.put(
+            b,
+            if lit { k.glow } else { k.ceramic },
+            [a, STOREY - 0.02, d],
+            [0.5, 0.04, 0.5],
+        );
     }
 }
 fn pictures(b: &mut Builder, k: &Kit, zn: &Zone, d: f32, y: f32, n: usize) {
@@ -689,7 +793,11 @@ fn plant(b: &mut Builder, k: &Kit, zn: &Zone, a: f32, d: f32) {
     zn.put(b, k.ceramic, [a, 0.17, d], [0.3, 0.34, 0.3]);
     for n in 0..7 {
         let t = n as f32 * 0.9;
-        let c = zn.r.at([zn.d0 + d + t.sin() * 0.12, 0.55 + (n % 3) as f32 * 0.15, zn.o * (3.78 - a - t.cos() * 0.12)]);
+        let c = zn.r.at([
+            zn.d0 + d + t.sin() * 0.12,
+            0.55 + (n % 3) as f32 * 0.15,
+            zn.o * (3.78 - a - t.cos() * 0.12),
+        ]);
         b.put(
             k.foliage,
             c,
@@ -705,7 +813,11 @@ fn chair(b: &mut Builder, zn: &Zone, a: f32, d: f32, back: [f32; 2]) {
     }
     zn.put(b, wood, [a, 0.46, d], [0.4, 0.04, 0.4]);
     let (ba, bd) = (a + back[0] * 0.18, d + back[1] * 0.18);
-    let size = if back[0] != 0. { [0.035, 0.48, 0.4] } else { [0.4, 0.48, 0.035] };
+    let size = if back[0] != 0. {
+        [0.035, 0.48, 0.4]
+    } else {
+        [0.4, 0.48, 0.035]
+    };
     zn.put(b, wood, [ba, 0.72, bd], size);
 }
 fn shelf_unit(b: &mut Builder, k: &Kit, zn: &Zone, d: f32, len: f32) {
@@ -727,7 +839,12 @@ fn shelf_unit(b: &mut Builder, k: &Kit, zn: &Zone, d: f32, len: f32) {
             let h = 0.22 + b.random() * 0.17;
             let id = pick(b, &k.books);
             let inset = b.random() * 0.04;
-            zn.put(b, id, [0.15 + inset, sy + 0.015 + h * 0.5, bd + w * 0.5], [0.2, h, w]);
+            zn.put(
+                b,
+                id,
+                [0.15 + inset, sy + 0.015 + h * 0.5, bd + w * 0.5],
+                [0.2, h, w],
+            );
             bd += w + 0.004;
         }
     }
@@ -762,7 +879,12 @@ fn furnish(b: &mut Builder, k: &Kit, zn: &Zone, kind: Kind, w: f32, door: Option
             zn.put(b, r.accent, [da, 0.006, 1.4], [dw.min(1.0), 0.012, 2.2]);
             zn.put(b, r.wood, [0.03, 1.72, 1.3], [0.04, 0.12, 0.9]);
             for n in 0..4 {
-                zn.put(b, k.metal, [0.08, 1.7, 0.95 + n as f32 * 0.24], [0.07, 0.03, 0.03]);
+                zn.put(
+                    b,
+                    k.metal,
+                    [0.08, 1.7, 0.95 + n as f32 * 0.24],
+                    [0.07, 0.03, 0.03],
+                );
             }
             zn.put(b, r.fabric, [0.15, 1.3, 1.05], [0.18, 0.75, 0.32]);
             zn.put(b, r.accent, [0.14, 1.35, 1.55], [0.16, 0.68, 0.3]);
@@ -884,7 +1006,12 @@ fn furnish(b: &mut Builder, k: &Kit, zn: &Zone, kind: Kind, w: f32, door: Option
             zn.put(b, r.fabric, [1.18, 0.78, 1.3], [0.06, 0.55, 0.46]);
             for spoke in 0..5 {
                 let t = spoke as f32 * std::f32::consts::TAU / 5.;
-                zn.put(b, k.metal, [0.95 + t.cos() * 0.18, 0.03, 1.3 + t.sin() * 0.18], [0.05, 0.04, 0.05]);
+                zn.put(
+                    b,
+                    k.metal,
+                    [0.95 + t.cos() * 0.18, 0.03, 1.3 + t.sin() * 0.18],
+                    [0.05, 0.04, 0.05],
+                );
             }
             shelf_unit(b, k, zn, 2.75, 1.2);
             zn.put(b, r.accent, [w - 0.5, 0.24, 0.95], [0.8, 0.36, 0.8]);
@@ -956,7 +1083,12 @@ pub struct Ageing {
 }
 impl Default for Ageing {
     fn default() -> Self {
-        Self { damage: 1., colour: 1., relaid: 1., dirt: 1. }
+        Self {
+            damage: 1.,
+            colour: 1.,
+            relaid: 1.,
+            dirt: 1.,
+        }
     }
 }
 pub fn generate(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error::Error>> {
@@ -965,7 +1097,12 @@ pub fn generate(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::e
     Ok(scene)
 }
 fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error::Error>> {
-    let Ageing { damage, colour: tone_spread, relaid: relaid_share, dirt } = ageing;
+    let Ageing {
+        damage,
+        colour: tone_spread,
+        relaid: relaid_share,
+        dirt,
+    } = ageing;
     let mut b = Builder {
         materials: Vec::new(),
         meshes: Vec::new(),
@@ -989,7 +1126,11 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     let trim = b.bevel_cube(trim_m);
     // Shared finish batches keep independent frontage choices instanced.
     let mut frame_finishes = vec![timber];
-    for colour in [[0.035, 0.065, 0.055], [0.64, 0.61, 0.52], [0.075, 0.09, 0.11]] {
+    for colour in [
+        [0.035, 0.065, 0.055],
+        [0.64, 0.61, 0.52],
+        [0.075, 0.09, 0.11],
+    ] {
         let material = b.material(colour, 0.65, 0., 4., 0., 0.);
         frame_finishes.push(b.cube(material));
     }
@@ -1008,13 +1149,13 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         [0.42, 0.33, 0.29],
         [0.6, 0.58, 0.51],
     ];
-    let cloth_m = b.material([0.04, 0.18, 0.23], 0.9, 0., 4., 0., 0.);
+    let cloth_m = b.material([0.04, 0.18, 0.23], 0.9, 0., 11., 0., 0.);
     let cloth = b.cube(cloth_m);
     let plaster_m = b.material([0.82, 0.79, 0.72], 0.92, 0., 1., 0., 0.);
     let plaster = b.cube(plaster_m);
     let floor_m = b.material([0.36, 0.22, 0.12], 0.6, 0., 4., 0., 0.);
     let floor = b.cube(floor_m);
-    let rug_m = b.material([0.32, 0.08, 0.06], 0.95, 0., 4., 0., 0.);
+    let rug_m = b.material([0.32, 0.08, 0.06], 0.95, 0., 11., 0., 0.);
     let rug = b.cube(rug_m);
     let _ = (plaster, floor, rug);
     let paints: Vec<usize> = [
@@ -1031,13 +1172,18 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         b.cube(m)
     })
     .collect();
-    let woods: Vec<usize> = [[0.42, 0.27, 0.14], [0.2, 0.1, 0.05], [0.58, 0.45, 0.3], [0.82, 0.8, 0.76]]
-        .into_iter()
-        .map(|c| {
-            let m = b.material(c, 0.55, 0., 4., 0., 0.);
-            b.cube(m)
-        })
-        .collect();
+    let woods: Vec<usize> = [
+        [0.42, 0.27, 0.14],
+        [0.2, 0.1, 0.05],
+        [0.58, 0.45, 0.3],
+        [0.82, 0.8, 0.76],
+    ]
+    .into_iter()
+    .map(|c| {
+        let m = b.material(c, 0.55, 0., 4., 0., 0.);
+        b.cube(m)
+    })
+    .collect();
     let fabrics: Vec<usize> = [
         [0.32, 0.08, 0.06],
         [0.12, 0.2, 0.34],
@@ -1049,29 +1195,40 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     ]
     .into_iter()
     .map(|c| {
-        let m = b.material(c, 0.95, 0., 4., 0., 0.);
+        let m = b.material(c, 0.95, 0., 11., 0., 0.);
         b.cube(m)
     })
     .collect();
-    let books: Vec<usize> = [[0.5, 0.1, 0.08], [0.1, 0.25, 0.4], [0.75, 0.6, 0.2], [0.15, 0.35, 0.2], [0.85, 0.82, 0.75]]
-        .into_iter()
-        .map(|c| {
-            let m = b.material(c, 0.7, 0., 0., 0., 0.);
-            b.cube(m)
-        })
-        .collect();
+    let books: Vec<usize> = [
+        [0.5, 0.1, 0.08],
+        [0.1, 0.25, 0.4],
+        [0.75, 0.6, 0.2],
+        [0.15, 0.35, 0.2],
+        [0.85, 0.82, 0.75],
+    ]
+    .into_iter()
+    .map(|c| {
+        let m = b.material(c, 0.7, 0., 0., 0., 0.);
+        b.cube(m)
+    })
+    .collect();
     let ceramic_m = b.material([0.9, 0.9, 0.87], 0.3, 0., 0., 0., 0.);
     let ceramic = b.cube(ceramic_m);
     let foliage = b.cube(leaf_m);
     let plinth_m = b.material([0.27, 0.26, 0.24], 0.85, 0., 1., 0., 0.);
     let plinth = b.bevel_cube(plinth_m);
-    let bloom_ids: Vec<usize> = [[0.75, 0.08, 0.1], [0.95, 0.75, 0.15], [0.85, 0.4, 0.6], [0.95, 0.95, 0.9]]
-        .into_iter()
-        .map(|c| {
-            let m = b.material(c, 0.7, 0., 0., 0., 0.);
-            b.cube(m)
-        })
-        .collect();
+    let bloom_ids: Vec<usize> = [
+        [0.75, 0.08, 0.1],
+        [0.95, 0.75, 0.15],
+        [0.85, 0.4, 0.6],
+        [0.95, 0.95, 0.9],
+    ]
+    .into_iter()
+    .map(|c| {
+        let m = b.material(c, 0.7, 0., 0., 0., 0.);
+        b.cube(m)
+    })
+    .collect();
     let bin = b.round(dark_m, false);
     let ceiling_m = b.material([0.9, 0.89, 0.86], 0.95, 0., 1., 0., 0.);
     let tile_m = b.material([0.82, 0.86, 0.87], 0.22, 0., 0., 0., 0.);
@@ -1109,7 +1266,9 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     ];
     // [tone][wear]: wear 0 is crisp, 2 is rounded and polished by wheels.
     let mean = [0.316, 0.286, 0.251];
-    let spread = |c: [f32; 3], mean: [f32; 3]| std::array::from_fn(|i| mean[i] + (c[i] - mean[i]) * tone_spread);
+    let spread = |c: [f32; 3], mean: [f32; 3]| {
+        std::array::from_fn(|i| mean[i] + (c[i] - mean[i]) * tone_spread)
+    };
     let old_stones: Vec<[usize; 3]> = stone_tones
         .iter()
         .map(|&c| {
@@ -1150,11 +1309,21 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 new_stones[(b.aged() * new_stones.len() as f32) as usize]
             } else {
                 let tone = (b.aged() * stone_tones.len() as f32) as usize;
-                let wear = if b.aged() < track * 0.9 * damage.min(1.) { 2 } else if b.aged() < 0.45 * damage.min(1.) { 1 } else { 0 };
+                let wear = if b.aged() < track * 0.9 * damage.min(1.) {
+                    2
+                } else if b.aged() < 0.45 * damage.min(1.) {
+                    1
+                } else {
+                    0
+                };
                 old_stones[tone][wear]
             };
             let disorder = if relaid { 0.3 } else { 0.25 + 0.75 * damage };
-            let sunk = if !relaid && roll < 0.08 * damage { 0.008 + b.aged() * 0.016 } else { 0. };
+            let sunk = if !relaid && roll < 0.08 * damage {
+                0.008 + b.aged() * 0.016
+            } else {
+                0.
+            };
             let height = 0.075 + b.aged() * 0.012 * disorder - sunk;
             let jitter_x = (b.aged() - 0.5) * 0.008 * disorder;
             let jitter_z = (b.aged() - 0.5) * 0.008 * disorder;
@@ -1173,9 +1342,21 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 for (part, f) in [(0, cut), (1, 1. - cut)] {
                     let span = if along_x { width } else { length };
                     let piece = span * f - 0.006;
-                    let offset = if part == 0 { -span * 0.5 + piece * 0.5 } else { span * 0.5 - piece * 0.5 };
-                    let drop = if part == 1 { 0.004 + b.aged() * 0.01 } else { 0. };
-                    let local = if along_x { Vec3::new(offset, -drop * 0.5, 0.) } else { Vec3::new(0., -drop * 0.5, offset) };
+                    let offset = if part == 0 {
+                        -span * 0.5 + piece * 0.5
+                    } else {
+                        span * 0.5 - piece * 0.5
+                    };
+                    let drop = if part == 1 {
+                        0.004 + b.aged() * 0.01
+                    } else {
+                        0.
+                    };
+                    let local = if along_x {
+                        Vec3::new(offset, -drop * 0.5, 0.)
+                    } else {
+                        Vec3::new(0., -drop * 0.5, offset)
+                    };
                     let size = if along_x {
                         Vec3::new(piece, height - drop, length)
                     } else {
@@ -1189,14 +1370,19 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             b.put(mesh, centre, Vec3::new(width, height, length), rotation);
         }
     }
-    let kerb_tones: Vec<[usize; 2]> = [[0.7, 0.66, 0.54], [0.58, 0.56, 0.5], [0.64, 0.6, 0.52], [0.5, 0.48, 0.44]]
-        .into_iter()
-        .map(|c| {
-            let c = spread(c, [0.6, 0.575, 0.5]);
-            let m = b.material(c, 0.74, 0., 1., 0., 0.);
-            [b.bevel_cube_e(m, 0.42), b.bevel_cube_e(m, 0.34)]
-        })
-        .collect();
+    let kerb_tones: Vec<[usize; 2]> = [
+        [0.7, 0.66, 0.54],
+        [0.58, 0.56, 0.5],
+        [0.64, 0.6, 0.52],
+        [0.5, 0.48, 0.44],
+    ]
+    .into_iter()
+    .map(|c| {
+        let c = spread(c, [0.6, 0.575, 0.5]);
+        let m = b.material(c, 0.74, 0., 1., 0., 0.);
+        [b.bevel_cube_e(m, 0.42), b.bevel_cube_e(m, 0.34)]
+    })
+    .collect();
     // Sidewalk ageing: tar repairs, stains and cracks lie proud of the slab by a few
     // millimetres so no face is coplanar with it.
     let tar_m = b.material([0.045, 0.045, 0.048], 0.6, 0., 1., 0., 0.);
@@ -1217,7 +1403,11 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             let tone = &kerb_tones[(b.aged() * kerb_tones.len() as f32) as usize];
             let chipped = b.aged() < 0.3 * damage;
             let mesh = tone[chipped as usize];
-            let drop = (if b.aged() < 0.12 * damage { 0.01 + b.aged() * 0.025 } else { b.aged() * 0.006 }) * damage.min(1.5);
+            let drop = (if b.aged() < 0.12 * damage {
+                0.01 + b.aged() * 0.025
+            } else {
+                b.aged() * 0.006
+            }) * damage.min(1.5);
             let len = 0.575 + b.aged() * 0.02;
             let lean = Quat::from_euler(
                 glam::EulerRot::YXZ,
@@ -1237,10 +1427,19 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             let x = side * (4.95 + b.aged() * 1.9);
             let w = (0.25 + b.aged() * 1.1).min(0.9);
             let l = 0.25 + b.aged() * 1.6;
-            let mesh = if b.aged() < 0.35 { tar } else { stain_ms[(b.aged() * stain_ms.len() as f32) as usize] };
+            let mesh = if b.aged() < 0.35 {
+                tar
+            } else {
+                stain_ms[(b.aged() * stain_ms.len() as f32) as usize]
+            };
             let yaw = Quat::from_rotation_y((b.aged() - 0.5) * 0.5);
             let lift = 0.003 + b.aged() * 0.003;
-            b.put(mesh, Vec3::new(x, 0.165 + lift * 0.5, z), Vec3::new(w, 0.01 + lift, l), yaw);
+            b.put(
+                mesh,
+                Vec3::new(x, 0.165 + lift * 0.5, z),
+                Vec3::new(w, 0.01 + lift, l),
+                yaw,
+            );
         }
         for _ in 0..(60. * dirt) as usize {
             // Meandering cracks built from short, slightly turning segments.
@@ -1293,8 +1492,14 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             let house_material =
                 b.material(colour.map(|v| v * tint), 0.88, 0., facade_pattern, 0., 0.);
             let wall = b.cube(house_material);
-            let grime_material =
-                b.material(colour.map(|v| v * tint * 0.58), 0.93, 0., facade_pattern, 0., 0.);
+            let grime_material = b.material(
+                colour.map(|v| v * tint * 0.58),
+                0.93,
+                0.,
+                facade_pattern,
+                0.,
+                0.,
+            );
             let grime = b.cube(grime_material);
             b.block(wall, [side * 14.45, height * 0.5, z], [0.2, height, 7.85]);
             for dz in [-3.925, 3.925] {
@@ -1307,9 +1512,21 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             let door_w = opening.min(1.15);
             for pier in 0..=windows {
                 let half = (spacing - opening) * 0.5;
-                let lo = if pier == 0 { -3.925 } else { -3.75 + pier as f32 * spacing - half };
-                let hi = if pier == windows { 3.925 } else { -3.75 + pier as f32 * spacing + half };
-                b.block(wall, [side * 7.42, top * 0.5, z + (lo + hi) * 0.5], [0.28, top, hi - lo]);
+                let lo = if pier == 0 {
+                    -3.925
+                } else {
+                    -3.75 + pier as f32 * spacing - half
+                };
+                let hi = if pier == windows {
+                    3.925
+                } else {
+                    -3.75 + pier as f32 * spacing + half
+                };
+                b.block(
+                    wall,
+                    [side * 7.42, top * 0.5, z + (lo + hi) * 0.5],
+                    [0.28, top, hi - lo],
+                );
             }
             for level in 0..floors {
                 let f = level as f32 * 2.65;
@@ -1335,7 +1552,11 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                             let run = 0.25 + b.aged() * 0.65;
                             let sz = wz + (b.aged() - 0.5) * opening * 0.9;
                             let sw = 0.03 + b.aged() * 0.09;
-                            b.block(grime, [side * 7.277, f + 0.9 - run * 0.5, sz], [0.006, run, sw]);
+                            b.block(
+                                grime,
+                                [side * 7.277, f + 0.9 - run * 0.5, sz],
+                                [0.006, run, sw],
+                            );
                         }
                     }
                 }
@@ -1352,9 +1573,13 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             // Every house drains its gutter through a downpipe beside the corner
             // pilaster, clear of balconies (which reach at most z + 3.63).
             let pipe_z = z + 3.68;
-            b.block(metal, [side * 7.04, (height + 0.24) * 0.5, pipe_z], [0.085, height + 0.24, 0.085]);
+            b.block(
+                metal,
+                [side * 7.04, (height + 0.24) * 0.5, pipe_z],
+                [0.085, height + 0.24, 0.085],
+            );
             b.block(metal, [side * 6.97, 0.24, pipe_z], [0.22, 0.08, 0.085]);
-            for bracket in 0..(height / 2.4) as usize + 1 {
+            for bracket in 0..=(height / 2.4) as usize {
                 b.block(
                     metal,
                     [side * 7.16, 0.6 + bracket as f32 * 2.4, pipe_z],
@@ -1373,14 +1598,22 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 );
             }
             // Stone plinth course, interrupted at the entrance.
-            let gap = if house % 3 != 0 { door_w * 0.5 + 0.21 } else { 0. };
+            let gap = if house % 3 != 0 {
+                door_w * 0.5 + 0.21
+            } else {
+                0.
+            };
             let spans: Vec<(f32, f32)> = if gap > 0. {
                 vec![(z - 3.775, door_z - gap), (door_z + gap, z + 3.775)]
             } else {
                 vec![(z - 3.775, z + 3.775)]
             };
             for (lo, hi) in spans {
-                b.block(plinth, [side * 7.2, 0.3, (lo + hi) * 0.5], [0.16, 0.6, hi - lo]);
+                b.block(
+                    plinth,
+                    [side * 7.2, 0.3, (lo + hi) * 0.5],
+                    [0.16, 0.6, hi - lo],
+                );
             }
             // Entrance hardware: house number, letter box, bell and a wall lantern.
             if house % 3 != 0 {
@@ -1388,10 +1621,22 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 b.block(trim, [side * 7.265, 2.0, door_z + edge], [0.03, 0.2, 0.26]);
                 b.block(metal, [side * 7.245, 2.0, door_z + edge], [0.02, 0.1, 0.14]);
                 b.block(metal, [side * 7.2, 1.15, door_z + edge], [0.16, 0.32, 0.26]);
-                b.block(trim, [side * 7.115, 1.22, door_z + edge], [0.01, 0.02, 0.18]);
-                b.block(metal, [side * 7.18, 1.3, door_z + door_w * 0.5 + 0.1], [0.02, 0.08, 0.05]);
+                b.block(
+                    trim,
+                    [side * 7.115, 1.22, door_z + edge],
+                    [0.01, 0.02, 0.18],
+                );
+                b.block(
+                    metal,
+                    [side * 7.18, 1.3, door_z + door_w * 0.5 + 0.1],
+                    [0.02, 0.08, 0.05],
+                );
                 b.block(metal, [side * 7.16, 2.2, door_z - edge], [0.24, 0.03, 0.03]);
-                b.block(metal, [side * 7.04, 2.24, door_z - edge], [0.16, 0.03, 0.16]);
+                b.block(
+                    metal,
+                    [side * 7.04, 2.24, door_z - edge],
+                    [0.16, 0.03, 0.16],
+                );
                 b.block(glow, [side * 7.04, 2.11, door_z - edge], [0.12, 0.22, 0.12]);
             }
             // Cornices, deep reveals and casement frames define facade depth.
@@ -1410,20 +1655,40 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                         let leaf = door_w - 0.16;
                         let dx = side * 7.47;
                         for dz in [-1., 1.] {
-                            b.block(timber, [dx, 1.12, wz + dz * (door_w - 0.08) * 0.5], [0.1, 2.24, 0.078]);
-                            b.block(trim, [side * 7.24, 1.17, wz + dz * (door_w * 0.5 + 0.08)], [0.1, 2.34, 0.16]);
+                            b.block(
+                                timber,
+                                [dx, 1.12, wz + dz * (door_w - 0.08) * 0.5],
+                                [0.1, 2.24, 0.078],
+                            );
+                            b.block(
+                                trim,
+                                [side * 7.24, 1.17, wz + dz * (door_w * 0.5 + 0.08)],
+                                [0.1, 2.34, 0.16],
+                            );
                         }
                         b.block(timber, [dx, 2.26, wz], [0.1, 0.078, door_w - 0.004]);
                         b.block(trim, [side * 7.24, 2.42, wz], [0.12, 0.2, door_w + 0.36]);
                         b.block(timber, [dx, 0.67, wz], [0.05, 1.22, leaf]);
                         b.block(timber, [dx, 2.17, wz], [0.05, 0.1, leaf]);
                         for pz in [-1., 1.] {
-                            b.block(timber, [dx, 1.7, wz + pz * (leaf * 0.5 - 0.04)], [0.05, 0.84, 0.08]);
-                            b.block(timber, [side * 7.435, 0.62, wz + pz * leaf * 0.24], [0.02, 0.9, leaf * 0.36]);
+                            b.block(
+                                timber,
+                                [dx, 1.7, wz + pz * (leaf * 0.5 - 0.04)],
+                                [0.05, 0.84, 0.08],
+                            );
+                            b.block(
+                                timber,
+                                [side * 7.435, 0.62, wz + pz * leaf * 0.24],
+                                [0.02, 0.9, leaf * 0.36],
+                            );
                         }
                         b.block(timber, [dx, 1.7, wz], [0.05, 0.84, 0.04]);
                         b.block(glass, [dx, 1.7, wz], [0.015, 0.84, leaf - 0.16]);
-                        b.block(metal, [side * 7.41, 1.05, wz + leaf * 0.38], [0.06, 0.03, 0.12]);
+                        b.block(
+                            metal,
+                            [side * 7.41, 1.05, wz + leaf * 0.38],
+                            [0.06, 0.03, 0.12],
+                        );
                         b.block(trim, [side * 7.24, 0.07, wz], [0.42, 0.14, door_w + 0.4]);
                         continue;
                     }
@@ -1444,7 +1709,11 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                         );
                     }
                     b.block(frame, [fx, y, wz + mullion_offset], [0.07, h - 0.1, 0.05]);
-                    b.block(frame, [fx, y1 - transom_drop, wz], [0.07, 0.05, opening - 0.1]);
+                    b.block(
+                        frame,
+                        [fx, y1 - transom_drop, wz],
+                        [0.07, 0.05, opening - 0.1],
+                    );
                     b.block(glass, [fx, y, wz], [0.015, h - 0.1, opening - 0.1]);
                     // Projecting stone sill and lintel.
                     b.block(
@@ -1463,7 +1732,11 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                         let len = opening - 0.1;
                         b.block(timber, [side * 7.18, y0 - 0.17, wz], [0.2, 0.18, len]);
                         for e in [-0.35, 0.35] {
-                            b.block(metal, [side * 7.2, y0 - 0.275, wz + e * len], [0.16, 0.03, 0.03]);
+                            b.block(
+                                metal,
+                                [side * 7.2, y0 - 0.275, wz + e * len],
+                                [0.16, 0.03, 0.03],
+                            );
                         }
                         let plants = (len / 0.11) as usize;
                         for n in 0..plants {
@@ -1471,13 +1744,22 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                             let t = n as f32 * 2.4;
                             b.put(
                                 foliage,
-                                Vec3::new(side * (7.15 + (n % 2) as f32 * 0.05), y0 + 0.02 + (n % 3) as f32 * 0.03, pz),
+                                Vec3::new(
+                                    side * (7.15 + (n % 2) as f32 * 0.05),
+                                    y0 + 0.02 + (n % 3) as f32 * 0.03,
+                                    pz,
+                                ),
                                 Vec3::new(0.05, 0.2, 0.11),
                                 Quat::from_rotation_y(t) * Quat::from_rotation_x(0.3),
                             );
                             if n % 2 == 0 {
-                                let bloom = bloom_ids[(house + window + level + n) % bloom_ids.len()];
-                                b.block(bloom, [side * 7.12, y0 + 0.1 + (n % 3) as f32 * 0.02, pz], [0.06, 0.05, 0.06]);
+                                let bloom =
+                                    bloom_ids[(house + window + level + n) % bloom_ids.len()];
+                                b.block(
+                                    bloom,
+                                    [side * 7.12, y0 + 0.1 + (n % 3) as f32 * 0.02, pz],
+                                    [0.06, 0.05, 0.06],
+                                );
                             }
                         }
                     }
@@ -1527,7 +1809,11 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                                 let t = n as f32 * 1.05;
                                 b.put(
                                     foliage,
-                                    Vec3::new(side * (6.88 + t.cos() * 0.06), y0 + 0.42 + (n % 2) as f32 * 0.08, pz + t.sin() * 0.06),
+                                    Vec3::new(
+                                        side * (6.88 + t.cos() * 0.06),
+                                        y0 + 0.42 + (n % 2) as f32 * 0.08,
+                                        pz + t.sin() * 0.06,
+                                    ),
                                     Vec3::new(0.07, 0.32, 0.16),
                                     Quat::from_rotation_y(t) * Quat::from_rotation_x(0.35),
                                 );
@@ -1570,9 +1856,17 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             }
             b.block(roof, [side * 11., height + 1.2, z], [0.2, 0.2, 8.2]);
             b.block(wall, [side * 12., height + 1.6, z + 2.3], [0.8, 1.8, 0.9]);
-            b.block(trim, [side * 12., height + 2.55, z + 2.3], [0.95, 0.1, 1.05]);
+            b.block(
+                trim,
+                [side * 12., height + 2.55, z + 2.3],
+                [0.95, 0.1, 1.05],
+            );
             for dz in [-0.2, 0.2] {
-                b.block(metal, [side * 12., height + 2.72, z + 2.3 + dz], [0.14, 0.24, 0.14]);
+                b.block(
+                    metal,
+                    [side * 12., height + 2.72, z + 2.3 + dz],
+                    [0.14, 0.24, 0.14],
+                );
             }
             if house % 3 == 0 {
                 b.put(
@@ -1639,18 +1933,32 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             });
             // Litter bin beside the lamp base and a gully grate at the kerb
             // halfway to the next lamp.
-            b.put(bin, Vec3::new(side * 5.05, 0.57, z + 1.0), Vec3::new(0.42, 0.8, 0.42), Quat::IDENTITY);
+            b.put(
+                bin,
+                Vec3::new(side * 5.05, 0.57, z + 1.0),
+                Vec3::new(0.42, 0.8, 0.42),
+                Quat::IDENTITY,
+            );
             b.block(metal, [side * 5.05, 0.99, z + 1.0], [0.46, 0.04, 0.46]);
             b.block(trim, [side * 5.05, 0.6, z + 1.0], [0.44, 0.06, 0.44]);
             b.block(metal, [side * 4.3, 0.054, z + 6.5], [0.26, 0.012, 0.62]);
             for n in 0..5 {
-                b.block(trim, [side * 4.3, 0.062, z + 6.26 + n as f32 * 0.12], [0.22, 0.006, 0.03]);
+                b.block(
+                    trim,
+                    [side * 4.3, 0.062, z + 6.26 + n as f32 * 0.12],
+                    [0.22, 0.006, 0.03],
+                );
             }
             if side > 0. {
                 // Manhole cover on the carriageway centre line with a raised ring.
                 let mz = z + 9.;
                 b.block(metal, [0., 0.054, mz], [0.68, 0.012, 0.68]);
-                for (dx, dz, sx, sz) in [(-0.33, 0., 0.04, 0.7), (0.33, 0., 0.04, 0.7), (0., -0.33, 0.62, 0.04), (0., 0.33, 0.62, 0.04)] {
+                for (dx, dz, sx, sz) in [
+                    (-0.33, 0., 0.04, 0.7),
+                    (0.33, 0., 0.04, 0.7),
+                    (0., -0.33, 0.62, 0.04),
+                    (0., 0.33, 0.62, 0.04),
+                ] {
                     b.block(trim, [dx, 0.062, mz + dz], [sx, 0.008, sz]);
                 }
             }
@@ -1666,7 +1974,8 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             b.rng = geometry_rng;
             let crown_rotation = Quat::from_rotation_y(crown_orientation);
             let crown_direction = |angle: f32| {
-                crown_rotation * Vec3::new(angle.cos() * crown_aspect, 0., angle.sin() / crown_aspect)
+                crown_rotation
+                    * Vec3::new(angle.cos() * crown_aspect, 0., angle.sin() / crown_aspect)
             };
             b.block(timber, [tx, 0.2, tz], [0.9, 0.4, 0.9]);
             let root = Vec3::new(tx, 0.2, tz);
@@ -1717,7 +2026,10 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                         let size = 0.050 + b.random() * 0.035;
                         let tilt = Quat::from_euler(
                             glam::EulerRot::YXZ,
-                            b.random() * 6.283185,
+                            #[allow(clippy::approx_constant)]
+                            {
+                                b.random() * 6.283185
+                            },
                             b.random() * 2.4 - 1.2,
                             b.random() * 2.4 - 1.2,
                         );
@@ -1808,14 +2120,18 @@ mod tests {
     /// Writes axis-aligned boxes of one generated house to `VOXY_PLAN_DUMP`
     /// for plotting floor plans; run with `--ignored`.
     #[test]
-    #[ignore]
+    #[ignore = "manual floor-plan export via VOXY_PLAN_DUMP"]
     fn dump_house_plan() {
-        let Ok(path) = std::env::var("VOXY_PLAN_DUMP") else { return };
+        let Ok(path) = std::env::var("VOXY_PLAN_DUMP") else {
+            return;
+        };
         let mut out = String::new();
-        for (case, (windows, spacing, opening, door)) in
-            [(2usize, 3.75f32, 2.0f32, Some((1.875f32, 1.15f32))), (3, 2.5, 1.4, Some((0., 1.15)))]
-                .into_iter()
-                .enumerate()
+        for (case, (windows, spacing, opening, door)) in [
+            (2usize, 3.75f32, 2.0f32, Some((1.875f32, 1.15f32))),
+            (3, 2.5, 1.4, Some((0., 1.15))),
+        ]
+        .into_iter()
+        .enumerate()
         {
             let mut b = Builder {
                 materials: Vec::new(),
@@ -1863,7 +2179,12 @@ mod tests {
                     let ext = |c: usize| (w[0][c].abs() + w[1][c].abs() + w[2][c].abs()) * 0.5;
                     out += &format!(
                         "{case},{mesh_id},{},{},{},{},{},{}\n",
-                        w[3][0], w[3][1], w[3][2], ext(0), ext(1), ext(2)
+                        w[3][0],
+                        w[3][1],
+                        w[3][2],
+                        ext(0),
+                        ext(1),
+                        ext(2)
                     );
                 }
             }
@@ -1918,7 +2239,10 @@ mod tests {
             if feet[0] > 7.56 + 5.5 {
                 break;
             }
-            feet = world.move_capsule(feet, 1.8, 0.3, [0.02, -0.004, 0.]).unwrap().0;
+            feet = world
+                .move_capsule(feet, 1.8, 0.3, [0.02, -0.004, 0.])
+                .unwrap()
+                .0;
         }
         assert!(feet[1] > 1.1 && feet[0] > 7.56 + 5.4, "stuck at {feet:?}");
     }
@@ -1993,10 +2317,16 @@ mod tests {
     /// Renders the untextured original street with its water to `VOXY_VILLA_PREVIEW`
     /// (PNG) from `VOXY_VILLA_VIEW=x,y,z,dx,dy,dz` or the pool view; run with `--ignored`.
     #[test]
-    #[ignore]
+    #[ignore = "manual villa preview render via VOXY_VILLA_PREVIEW"]
     fn render_villa_preview() {
-        let Ok(path) = std::env::var("VOXY_VILLA_PREVIEW") else { return };
-        let scene = geometry(0x564f5859, Ageing::default()).unwrap();
+        let Ok(path) = std::env::var("VOXY_VILLA_PREVIEW") else {
+            return;
+        };
+        let scene = if std::env::var("VOXY_VILLA_SCANS").as_deref() == Ok("1") {
+            generate(0x564f5859, Ageing::default()).unwrap()
+        } else {
+            geometry(0x564f5859, Ageing::default()).unwrap()
+        };
         let (mut eye, mut direction) = scene.pool_view.unwrap();
         if let Ok(view) = std::env::var("VOXY_VILLA_VIEW") {
             let v: Vec<f32> = view.split(',').map(|x| x.parse().unwrap()).collect();
@@ -2012,22 +2342,55 @@ mod tests {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
         let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
+            required_features: adapter.features() & wgpu::Features::FLOAT32_FILTERABLE,
             required_limits: wgpu::Limits::default().using_resolution(adapter.limits()),
             ..Default::default()
         }))
         .unwrap();
-        let format = wgpu::TextureFormat::Rgba8Unorm;
+        let format = if std::env::var("VOXY_VILLA_ACES").as_deref() == Ok("1") {
+            wgpu::TextureFormat::Rgba16Float
+        } else {
+            wgpu::TextureFormat::Rgba8UnormSrgb
+        };
+        let environment = if std::env::var("VOXY_VILLA_HDRI").as_deref() == Ok("1") {
+            Some(crate::materials::daylight().unwrap())
+        } else {
+            None
+        };
+        let (sun, sun_colour, env) = match environment {
+            Some((env, sun, sun_colour)) => (sun, sun_colour, Some(env)),
+            None => (scene.sun, scene.sun_colour, None),
+        };
         let mut renderer = ArchiveSceneRenderer::new_with_environment(
-            &device, &queue, format, width, height, scene.images, scene.materials, scene.geometry,
-            &scene.lights, scene.sun, scene.sun_colour, scene.bounds, None,
+            &device,
+            &queue,
+            format,
+            width,
+            height,
+            scene.images,
+            scene.materials,
+            scene.geometry,
+            &scene.lights,
+            sun,
+            sun_colour,
+            scene.bounds,
+            env,
         )
         .unwrap();
-        renderer.set_antialiasing(voxy_render::ArchiveAntialiasing::Off).unwrap();
+        let aa = if std::env::var("VOXY_VILLA_TAA").as_deref() == Ok("1") {
+            voxy_render::ArchiveAntialiasing::Temporal
+        } else {
+            voxy_render::ArchiveAntialiasing::Off
+        };
+        renderer.set_antialiasing(aa).unwrap();
         let mut water = scene.water.clone();
         if let Ok(caustics) = std::env::var("VOXY_VILLA_CAUSTICS") {
             water[0].material.caustics = caustics.parse().unwrap();
         }
-        renderer.set_water(&voxy_render::voxy_water::WaterWorld::new(water, voxy_render::WaveSpectrum::pool()));
+        renderer.set_water(&voxy_render::voxy_water::WaterWorld::new(
+            water,
+            voxy_render::WaveSpectrum::pool(),
+        ));
         if let Ok(splash) = std::env::var("VOXY_VILLA_SPLASH") {
             let v: Vec<f32> = splash.split(',').map(|x| x.parse().unwrap()).collect();
             renderer.advance_water(1. / 30.);
@@ -2035,7 +2398,11 @@ mod tests {
         }
         let target = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("villa preview"),
-            size: wgpu::Extent3d { width, height, depth_or_array_layers: 1 },
+            size: wgpu::Extent3d {
+                width,
+                height,
+                depth_or_array_layers: 1,
+            },
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
@@ -2044,12 +2411,18 @@ mod tests {
             view_formats: &[],
         });
         let view = target.create_view(&Default::default());
-        for _ in 0..std::env::var("VOXY_VILLA_FRAMES").map_or(3, |f| f.parse().unwrap()) {
+        for frame in 0..std::env::var("VOXY_VILLA_FRAMES").map_or(3, |f| f.parse().unwrap()) {
+            renderer.set_weather_time(frame as f32 / 30.);
             renderer.advance_water(1. / 30.);
             renderer.draw(&view, eye, direction);
             device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
         }
-        let row = (width * 4).div_ceil(256) * 256;
+        let bpp = if format == wgpu::TextureFormat::Rgba16Float {
+            8
+        } else {
+            4
+        };
+        let row = (width * bpp).div_ceil(256) * 256;
         let readback = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
             size: u64::from(row * height),
@@ -2061,7 +2434,11 @@ mod tests {
             target.as_image_copy(),
             wgpu::TexelCopyBufferInfo {
                 buffer: &readback,
-                layout: wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(row), rows_per_image: None },
+                layout: wgpu::TexelCopyBufferLayout {
+                    offset: 0,
+                    bytes_per_row: Some(row),
+                    rows_per_image: None,
+                },
             },
             target.size(),
         );
@@ -2069,7 +2446,33 @@ mod tests {
         readback.map_async(wgpu::MapMode::Read, .., |r| r.unwrap());
         device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
         let mapped = readback.get_mapped_range(..).unwrap();
-        let pixels: Vec<u8> = mapped.chunks_exact(row as usize).flat_map(|r| &r[..(width * 4) as usize]).copied().collect();
+        let pixels: Vec<u8> = if format == wgpu::TextureFormat::Rgba16Float {
+            let mut rgba = Vec::with_capacity((width * height * 4) as usize);
+            for r in mapped.chunks_exact(row as usize) {
+                for p in r[..(width * 8) as usize].chunks_exact(8) {
+                    for c in 0..3 {
+                        let x = crate::decode_half(u16::from_le_bytes([p[c * 2], p[c * 2 + 1]]))
+                            .max(0.);
+                        let x = ((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14))
+                            .clamp(0., 1.);
+                        let enc = if x <= 0.0031308 {
+                            12.92 * x
+                        } else {
+                            1.055 * x.powf(1. / 2.4) - 0.055
+                        };
+                        rgba.push((enc * 255.).round().clamp(0., 255.) as u8);
+                    }
+                    rgba.push(255);
+                }
+            }
+            rgba
+        } else {
+            mapped
+                .chunks_exact(row as usize)
+                .flat_map(|r| &r[..(width * 4) as usize])
+                .copied()
+                .collect()
+        };
         image::save_buffer(&path, &pixels, width, height, image::ColorType::Rgba8).unwrap();
     }
     #[test]
@@ -2077,21 +2480,37 @@ mod tests {
         let scene = geometry(0x564f5859, Ageing::default()).unwrap();
         let world = &scene.collision;
         // Walk from the end of the street along the centre line through the gate.
-        let (mut feet, grounded) = world.move_capsule([0., 0.5, 80.], 1.8, 0.3, [0., -2., 0.]).unwrap();
+        let (mut feet, grounded) = world
+            .move_capsule([0., 0.5, 80.], 1.8, 0.3, [0., -2., 0.])
+            .unwrap();
         assert!(grounded);
         for _ in 0..1400 {
-            feet = world.move_capsule(feet, 1.8, 0.3, [0., -0.004, 0.025]).unwrap().0;
+            feet = world
+                .move_capsule(feet, 1.8, 0.3, [0., -0.004, 0.025])
+                .unwrap()
+                .0;
             if feet[2] > 111.0 {
                 break;
             }
         }
-        assert!(feet[2] > 111.0 && feet[1] > 0.1 && feet[1] < 0.3, "stopped at {feet:?}");
+        assert!(
+            feet[2] > 111.0 && feet[1] > 0.1 && feet[1] < 0.3,
+            "stopped at {feet:?}"
+        );
         // Stepping off the coping into the deep end lands on its floor below the water.
-        let (feet, grounded) = world.move_capsule([0., 0.6, 124.], 1.8, 0.3, [0., -4., 0.]).unwrap();
+        let (feet, grounded) = world
+            .move_capsule([0., 0.6, 124.], 1.8, 0.3, [0., -4., 0.])
+            .unwrap();
         assert!(grounded && (feet[1] + 1.9).abs() < 0.05, "{feet:?}");
         let (min, max) = scene.water[0].bounds();
         assert!(max.y < 0.2 && min.y < -1.8 && max.z - min.z > 13.);
-        let world = voxy_render::voxy_water::WaterWorld::new(scene.water.clone(), voxy_render::WaveSpectrum::pool());
-        assert!(world.is_submerged(Vec3::new(0., -1., 124.), 0.) && !world.is_submerged(Vec3::new(0., 1., 124.), 0.));
+        let world = voxy_render::voxy_water::WaterWorld::new(
+            scene.water.clone(),
+            voxy_render::WaveSpectrum::pool(),
+        );
+        assert!(
+            world.is_submerged(Vec3::new(0., -1., 124.), 0.)
+                && !world.is_submerged(Vec3::new(0., 1., 124.), 0.)
+        );
     }
 }

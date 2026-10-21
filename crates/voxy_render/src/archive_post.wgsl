@@ -132,19 +132,37 @@ fn atmosphere_colour(base:vec3<f32>,ray:vec3<f32>,distance:f32,pixel:vec2<i32>)-
 fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
     let q=clamp(pixel,vec2<i32>(0),vec2<i32>(textureDimensions(hdr))-vec2<i32>(1));
     var x=max(textureLoad(hdr,q,0).rgb,vec3<f32>(0.));
-    if textureLoad(scene_depth,q,0)>=1. {
-        let h=camera.inverse_vp*vec4<f32>((vec2<f32>(q)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.),1.,1.);
+    let d=textureLoad(scene_depth,q,0);
+    let uv=(vec2<f32>(q)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.);
+    if d>=1. {
+        let h=camera.inverse_vp*vec4<f32>(uv,1.,1.);
         let direction=normalize(h.xyz/h.w-camera.eye.xyz);
         if camera.eye.w>0.5 {
-            let uv=vec2<f32>(atan2(direction.z,direction.x)/6.2831853+0.5,acos(clamp(direction.y,-1.,1.))/3.14159265);
-            x=textureSampleLevel(sky_panorama,sky_sampler,uv,0.).rgb*environment_intensity.x*camera.viewport.z;
+            let sky_uv=vec2<f32>(atan2(direction.z,direction.x)/6.2831853+0.5,acos(clamp(direction.y,-1.,1.))/3.14159265);
+            x=textureSampleLevel(sky_panorama,sky_sampler,sky_uv,0.).rgb*environment_intensity.x*camera.viewport.z;
         } else {x=daylight(direction,camera.sun.xyz)*camera.viewport.z;}
+    } else {
+        let hit=camera.inverse_vp*vec4<f32>(uv,d,1.);
+        let world_p=hit.xyz/hit.w;
+        let delta=world_p-camera.eye.xyz;
+        let dist=length(delta);
+        if dist>14. {
+            let ray=delta/dist;
+            let haze_density=0.0011*(1.+2.2*camera.weather.x)*exp(-max(world_p.y,0.)*0.04);
+            let air=clamp(1.-exp(-(dist-14.)*haze_density),0.,0.32);
+            var horizon_sky=vec3<f32>(0.);
+            let sample_dir=normalize(vec3<f32>(ray.x,max(ray.y,0.06),ray.z));
+            if camera.eye.w>0.5 {
+                horizon_sky=textureSampleLevel(environment_specular,environment_sampler,sample_dir,2.5).rgb*environment_intensity.x*camera.viewport.z;
+            } else {
+                horizon_sky=daylight(sample_dir,camera.sun.xyz)*camera.viewport.z;
+            }
+            x=mix(x,horizon_sky,air);
+        }
     }
     if camera.weather.x>0. {
-        let uv=(vec2<f32>(q)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.);
         let far=camera.inverse_vp*vec4<f32>(uv,1.,1.);
         let ray=normalize(far.xyz/far.w-camera.eye.xyz);
-        let d=textureLoad(scene_depth,q,0);
         let hit=camera.inverse_vp*vec4<f32>(uv,d,1.);
         let distance=select(length(hit.xyz/hit.w-camera.eye.xyz),12000.,d>=1.);
         x=atmosphere_colour(x,ray,distance,q);
