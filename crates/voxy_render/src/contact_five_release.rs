@@ -160,7 +160,9 @@ mod tests {
             exponent: 0,
             error_bound: 0.,
         };
-        let input = ExperimentalFiveReleaseInput::new(&[v.clone()], &[v]).unwrap();
+        let input =
+            ExperimentalFiveReleaseInput::new(std::slice::from_ref(&v), std::slice::from_ref(&v))
+                .unwrap();
         assert!(input.result(input.bytes()).is_err());
     }
 }

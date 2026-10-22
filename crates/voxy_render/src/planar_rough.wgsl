@@ -36,6 +36,7 @@ struct VertexOutput {
     let v = in.eye - in.world;
     let n = in.normal / max(length(in.normal), 0.0001);
     let nv = clamp(dot(n, v / max(length(v), 0.0001)), 0.0, 1.0);
-    let fresnel = in.f0 + (1.0 - in.f0) * pow(1.0 - nv, 5.0);
+    let t = 1.0 - nv; let t2 = t * t;
+    let fresnel = in.f0 + (1.0 - in.f0) * (t2 * t2 * t);
     return vec4(reflected.rgb, reflected.a * fresnel);
 }

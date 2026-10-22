@@ -46,6 +46,7 @@ pub enum RaySceneError {
 }
 
 #[derive(Debug)]
+#[allow(clippy::large_enum_variant)]
 enum RayGeometry {
     Triangles(wgpu::BlasTriangleGeometrySizeDescriptor),
     Aabbs(wgpu::BlasAABBGeometrySizeDescriptor),

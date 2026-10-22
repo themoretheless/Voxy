@@ -165,6 +165,7 @@ impl Bloom {
         &self.sampler
     }
 
+    #[allow(dead_code)]
     pub fn levels() -> f32 {
         LEVELS as f32
     }

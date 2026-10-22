@@ -393,7 +393,7 @@ impl Liquid {
             .map_err(|_| "invalid accepted carrier enthalpy")?;
         if after == before {
             // No representable change: retain all heat in owned state.
-            candidate.transport = self.transport.clone();
+            candidate.transport.clone_from(&self.transport);
             candidate.suspension_heat_buffer[index] = available;
         } else if after < before
             || (after - before - available).abs()

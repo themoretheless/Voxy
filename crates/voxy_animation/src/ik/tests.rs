@@ -14,7 +14,6 @@ fn make_rig(scale: Vec3, second: f32) -> Skeleton {
                 translation: Vec3::new(0.3, -0.2, 0.5),
                 rotation: Quat::from_rotation_z(0.3),
                 scale,
-                ..Transform::IDENTITY
             },
             inverse_bind: Mat4::IDENTITY,
         },

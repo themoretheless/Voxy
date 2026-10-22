@@ -2,11 +2,36 @@
 //! This proves native RGBA16F frame equality, not unrounded intermediate float32.
 use glam::{Mat4, Vec3};
 use voxy_render::archive_scene::*;
-fn read_queue_proof(device:&wgpu::Device,queue:&wgpu::Queue,source:&wgpu::Buffer)->[u32;10] {
- let read=device.create_buffer(&wgpu::BufferDescriptor {label:Some("independent all-ID queue coverage readback"),size:40,usage:wgpu::BufferUsages::COPY_DST|wgpu::BufferUsages::MAP_READ,mapped_at_creation:false});
- let mut encoder=device.create_command_encoder(&Default::default());encoder.copy_buffer_to_buffer(source,0,&read,0,40);let submission=queue.submit([encoder.finish()]);
- let(tx,rx)=std::sync::mpsc::channel();read.slice(..).map_async(wgpu::MapMode::Read,move|r|tx.send(r).unwrap());device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None}).unwrap();rx.recv().unwrap().unwrap();
- let bytes=read.slice(..).get_mapped_range().unwrap();let result=std::array::from_fn(|i|u32::from_le_bytes(bytes[i*4..i*4+4].try_into().unwrap()));drop(bytes);read.unmap();result
+fn read_queue_proof(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    source: &wgpu::Buffer,
+) -> [u32; 10] {
+    let read = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("independent all-ID queue coverage readback"),
+        size: 40,
+        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+        mapped_at_creation: false,
+    });
+    let mut encoder = device.create_command_encoder(&Default::default());
+    encoder.copy_buffer_to_buffer(source, 0, &read, 0, 40);
+    let submission = queue.submit([encoder.finish()]);
+    let (tx, rx) = std::sync::mpsc::channel();
+    read.slice(..)
+        .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: None,
+        })
+        .unwrap();
+    rx.recv().unwrap().unwrap();
+    let bytes = read.slice(..).get_mapped_range().unwrap();
+    let result =
+        std::array::from_fn(|i| u32::from_le_bytes(bytes[i * 4..i * 4 + 4].try_into().unwrap()));
+    drop(bytes);
+    read.unmap();
+    result
 }
 fn quad(center: Vec3, axis: Vec3, up: Vec3, material: usize) -> ArchiveMeshSource {
     let normal = axis.cross(up).normalize();
@@ -129,7 +154,11 @@ fn main() {
     assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
     let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
         required_features: wgpu::Features::FLOAT32_FILTERABLE
-            | if std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some(){wgpu::Features::SUBGROUP}else{wgpu::Features::empty()}
+            | if std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some() {
+                wgpu::Features::SUBGROUP
+            } else {
+                wgpu::Features::empty()
+            }
             | if args.iter().any(|a| a == "--timing") {
                 assert!(adapter.features().contains(wgpu::Features::TIMESTAMP_QUERY));
                 wgpu::Features::TIMESTAMP_QUERY
@@ -259,16 +288,33 @@ fn main() {
         environment,
     )
     .unwrap();
-    assert_eq!(renderer.opaque_ray_hierarchy_enabled(),std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_some());
-    assert_eq!(renderer.opaque_ray_hierarchy_reciprocal_enabled(),std::env::var_os("VOXY_STREET_RAY_HIERARCHY_RECIPROCAL").is_some());
-    assert_eq!(renderer.opaque_ray_hierarchy_near_first_enabled(),std::env::var_os("VOXY_STREET_RAY_HIERARCHY_NEAR_FIRST").is_some());
-    println!("GPU_RAY_NEAR_FIRST enabled={}",renderer.opaque_ray_hierarchy_near_first_enabled());
-    println!("GPU_RAY_HIERARCHY enabled={} reciprocal_cache={} owned_bounds_bytes={}",renderer.opaque_ray_hierarchy_enabled(),renderer.opaque_ray_hierarchy_reciprocal_enabled(),renderer.opaque_ray_hierarchy_bounds_bytes());
+    assert_eq!(
+        renderer.opaque_ray_hierarchy_enabled(),
+        std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_some()
+    );
+    assert_eq!(
+        renderer.opaque_ray_hierarchy_reciprocal_enabled(),
+        std::env::var_os("VOXY_STREET_RAY_HIERARCHY_RECIPROCAL").is_some()
+    );
+    assert_eq!(
+        renderer.opaque_ray_hierarchy_near_first_enabled(),
+        std::env::var_os("VOXY_STREET_RAY_HIERARCHY_NEAR_FIRST").is_some()
+    );
+    println!(
+        "GPU_RAY_NEAR_FIRST enabled={}",
+        renderer.opaque_ray_hierarchy_near_first_enabled()
+    );
+    println!(
+        "GPU_RAY_HIERARCHY enabled={} reciprocal_cache={} owned_bounds_bytes={}",
+        renderer.opaque_ray_hierarchy_enabled(),
+        renderer.opaque_ray_hierarchy_reciprocal_enabled(),
+        renderer.opaque_ray_hierarchy_bounds_bytes()
+    );
     let stages = renderer.opaque_ray_stages_configuration();
     if std::env::var_os("VOXY_STREET_RAY_STAGES").is_some() {
         let info = stages.expect("staged owner must be active");
         assert!(info[0] > 0);
-        assert!(info[1] <= u64::from(device.limits().max_storage_buffer_binding_size));
+        assert!(info[1] <= device.limits().max_storage_buffer_binding_size);
         if std::env::var_os("VOXY_STREET_RAY_CHUNK_TEST").is_some() {
             assert_eq!(info[0], 16, "fixture must cross partial chunk boundaries");
         }
@@ -278,11 +324,22 @@ fn main() {
         std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some()
     );
     if std::env::var_os("VOXY_STREET_RAY_QUEUE").is_some() {
-        assert!(renderer.opaque_ray_queue_enabled(),"queue request must activate the real owner");
-        if std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_some(){assert!(renderer.opaque_ray_queue_proof_buffer().is_some());}
+        assert!(
+            renderer.opaque_ray_queue_enabled(),
+            "queue request must activate the real owner"
+        );
+        if std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_some() {
+            assert!(renderer.opaque_ray_queue_proof_buffer().is_some());
+        }
     }
-    assert_eq!(renderer.opaque_ray_persistent_enabled(),std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some());
-    println!("GPU_RAY_PERSISTENT enabled={} quantum=16 group_cap=256",renderer.opaque_ray_persistent_enabled());
+    assert_eq!(
+        renderer.opaque_ray_persistent_enabled(),
+        std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some()
+    );
+    println!(
+        "GPU_RAY_PERSISTENT enabled={} quantum=16 group_cap=256",
+        renderer.opaque_ray_persistent_enabled()
+    );
     renderer.set_linear_output(true);
     let texture = device.create_texture(&wgpu::TextureDescriptor {
         label: Some("native scheduling proof"),
@@ -309,9 +366,13 @@ fn main() {
     let mut raw_ssr_hits = 0usize;
     let mut raw_gi_hits = 0usize;
     let mut raw_gi_frames = 0usize;
-    let mut queue_epoch=0u32;let mut queue_proof_frames=0u32;let mut queue_active_jobs=0u64;
+    let mut queue_epoch = 0u32;
+    let mut queue_proof_frames = 0u32;
+    let mut queue_active_jobs = 0u64;
     for frame in 0..24 {
-        if frame==18&&args.iter().any(|a|a=="--history-cut") {renderer.reset_temporal_history();}
+        if frame == 18 && args.iter().any(|a| a == "--history-cut") {
+            renderer.reset_temporal_history();
+        }
         if frame == 12 {
             renderer
                 .set_antialiasing(voxy_render::ArchiveAntialiasing::Temporal)
@@ -365,16 +426,42 @@ fn main() {
         all.extend_from_slice(&mapped);
         drop(mapped);
         read.unmap();
-        if let Some(buffer)=renderer.opaque_ray_queue_proof_buffer() {
-            let counters=read_queue_proof(&device,&queue,buffer);
-            assert_eq!(u64::from(counters[7]),renderer.opaque_ray_queue_encoded_frames(),"GPU queue epoch must match actual CPU scheduling");
-            if counters[7]!=queue_epoch {
-                assert_eq!(&counters[..4],&[0;4],"invalid, duplicate, missing or incorrectly sized ray queue");
-                assert_eq!(&counters[8..10],&[0;2],"queued hit words differ from original-ID traversal");
-                let kinds=if std::env::var_os("VOXY_STREET_COMPUTE_SSR").is_some(){2}else{1};
-                assert_eq!(counters[4],96*64*kinds,"every original ray ID must be processed");
-                assert_eq!(counters[5],96*64*kinds,"coverage must include every chunk and ray kind");
-                queue_epoch=counters[7];queue_proof_frames+=1;queue_active_jobs+=u64::from(counters[6]);
+        if let Some(buffer) = renderer.opaque_ray_queue_proof_buffer() {
+            let counters = read_queue_proof(&device, &queue, buffer);
+            assert_eq!(
+                u64::from(counters[7]),
+                renderer.opaque_ray_queue_encoded_frames(),
+                "GPU queue epoch must match actual CPU scheduling"
+            );
+            if counters[7] != queue_epoch {
+                assert_eq!(
+                    &counters[..4],
+                    &[0; 4],
+                    "invalid, duplicate, missing or incorrectly sized ray queue"
+                );
+                assert_eq!(
+                    &counters[8..10],
+                    &[0; 2],
+                    "queued hit words differ from original-ID traversal"
+                );
+                let kinds = if std::env::var_os("VOXY_STREET_COMPUTE_SSR").is_some() {
+                    2
+                } else {
+                    1
+                };
+                assert_eq!(
+                    counters[4],
+                    96 * 64 * kinds,
+                    "every original ray ID must be processed"
+                );
+                assert_eq!(
+                    counters[5],
+                    96 * 64 * kinds,
+                    "coverage must include every chunk and ray kind"
+                );
+                queue_epoch = counters[7];
+                queue_proof_frames += 1;
+                queue_active_jobs += u64::from(counters[6]);
             }
         }
         if let Some((actual, reference)) = renderer.opaque_gi_precision_textures() {
@@ -400,10 +487,20 @@ fn main() {
         );
     }
     if renderer.opaque_ray_queue_proof_buffer().is_some() {
-        assert!(queue_proof_frames>0);
-        assert_eq!(u64::from(queue_proof_frames),renderer.opaque_ray_queue_encoded_frames());
-        if std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some(){assert_eq!(queue_active_jobs,0);}else{assert!(queue_active_jobs>0);}
-        println!("GPU_RAY_QUEUE_COVERAGE frames={queue_proof_frames} active_jobs={queue_active_jobs} all_original_ids_exactly_once=true all_chunks_and_ray_kinds=true inactive_and_fallback_retained=true intersection_words_bit_exact=true work_count_equality_required={}",!renderer.opaque_ray_hierarchy_enabled());
+        assert!(queue_proof_frames > 0);
+        assert_eq!(
+            u64::from(queue_proof_frames),
+            renderer.opaque_ray_queue_encoded_frames()
+        );
+        if std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some() {
+            assert_eq!(queue_active_jobs, 0);
+        } else {
+            assert!(queue_active_jobs > 0);
+        }
+        println!(
+            "GPU_RAY_QUEUE_COVERAGE frames={queue_proof_frames} active_jobs={queue_active_jobs} all_original_ids_exactly_once=true all_chunks_and_ray_kinds=true inactive_and_fallback_retained=true intersection_words_bit_exact=true work_count_equality_required={}",
+            !renderer.opaque_ray_hierarchy_enabled()
+        );
     }
     assert!(
         all.chunks_exact(8).any(|p| p[..6].iter().any(|&v| v != 0)),
@@ -450,7 +547,11 @@ fn main() {
             samples.len()
         );
     }
-    if let Some(directory)=std::env::var_os("VOXY_STREET_RAY_CAPTURE_DIR") {renderer.save_opaque_ray_capture(std::path::Path::new(&directory)).unwrap();}
+    if let Some(directory) = std::env::var_os("VOXY_STREET_RAY_CAPTURE_DIR") {
+        renderer
+            .save_opaque_ray_capture(std::path::Path::new(&directory))
+            .unwrap();
+    }
     std::fs::write(path, &all).unwrap();
     println!(
         "GPU_RAY_SCHEDULE frames=24 materials=12 hdr={hdr} maps={mapped} native_rgba16f_bytes={} paired_dda={} early_gi={} finite=true moving_camera=true wet_and_dry=true temporal_history=true intermediate_float32_proof=false fps_proof=false",

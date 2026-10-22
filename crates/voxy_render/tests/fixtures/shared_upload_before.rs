@@ -94,6 +94,53 @@ impl SharedUploadRing {
         })
     }
 
+    pub(crate) fn allocation_bytes(&self) -> u64 {
+        self.slots.iter().map(|slot| slot.buffer.size()).sum()
+    }
+
+    /// The returned buffer may be consumed later in this same encoder only.
+    /// Remapping is deferred until the complete command buffer finishes. Overflow
+    /// records a unique staging snapshot before consumers, preserving queue order.
+    pub(crate) fn write_or_stage(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        legacy: &wgpu::Buffer,
+        produce: impl Fn(wgpu::WriteOnly<'_, [u8]>),
+    ) -> Result<(usize, wgpu::Buffer), ComputeError> {
+        let mut selected = None;
+        if self.encode(encoder, &produce, |index, buffer, _| {
+            selected = Some((index, buffer.clone()))
+        })? {
+            return Ok(selected.unwrap());
+        }
+        self.stage_legacy(encoder, legacy, produce)?;
+        Ok((3, legacy.clone()))
+    }
+
+    pub(crate) fn stage_legacy(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        legacy: &wgpu::Buffer,
+        produce: impl Fn(wgpu::WriteOnly<'_, [u8]>),
+    ) -> Result<(), ComputeError> {
+        let staging = self.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("transient input overflow staging"),
+            size: legacy.size(),
+            usage: wgpu::BufferUsages::MAP_WRITE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: true,
+        });
+        {
+            let mut mapped = staging
+                .slice(..)
+                .get_mapped_range_mut()
+                .map_err(|e| ComputeError::Validation(e.to_string()))?;
+            produce(mapped.slice(..));
+        }
+        staging.unmap();
+        encoder.copy_buffer_to_buffer(&staging, 0, legacy, 0, legacy.size());
+        Ok(())
+    }
+
     pub(crate) fn buffers(&self) -> impl Iterator<Item = &wgpu::Buffer> {
         self.slots.iter().map(|slot| &*slot.buffer)
     }
@@ -156,109 +203,4 @@ fn is_apple_metal(device: &wgpu::Device) -> bool {
 #[cfg(not(all(target_os = "macos", target_arch = "aarch64")))]
 fn is_apple_metal(_: &wgpu::Device) -> bool {
     false
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn unsupported_device_keeps_legacy_and_does_not_charge_memory() {
-        let (device, _) = wgpu::Device::noop(&Default::default());
-        let budget = ComputeMemoryBudget::for_device(&device);
-        let before = budget.stats();
-        assert!(SharedUploadRing::new(&device, 1024, wgpu::BufferUsages::STORAGE).is_none());
-        assert_eq!(before, budget.stats());
-    }
-
-    #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
-    #[test]
-    #[ignore = "requires physical Apple Silicon Metal GPU"]
-    fn gpu_shared_ring_preserves_three_unsubmitted_snapshots_and_recycles() {
-        let (device, queue) = super::super::surface_rigid_skinning::shared_tests::device();
-        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let ring = SharedUploadRing::new(&device, 1024, wgpu::BufferUsages::COPY_SRC).unwrap();
-        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-        let read = device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: 3072,
-            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
-            mapped_at_creation: false,
-        });
-        for finish in [false, true, false] {
-            let mut cancelled = device.create_command_encoder(&Default::default());
-            assert!(
-                ring.encode(&mut cancelled, |mut bytes| bytes.fill(0), |_, _, _| {})
-                    .unwrap()
-            );
-            if finish {
-                drop(cancelled.finish());
-            } else {
-                drop(cancelled);
-            }
-        }
-        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-        for cycle in 0..8_u32 {
-            let mut encoders = Vec::new();
-            for frame in 0..3_u32 {
-                let mut encoder = device.create_command_encoder(&Default::default());
-                assert!(
-                    ring.encode(
-                        &mut encoder,
-                        |bytes| {
-                            bytes
-                                .into_chunks::<4>()
-                                .0
-                                .fill((cycle * 3 + frame).to_ne_bytes());
-                        },
-                        |_, buffer, encoder| {
-                            encoder.copy_buffer_to_buffer(
-                                buffer,
-                                0,
-                                &read,
-                                u64::from(frame) * 1024,
-                                1024,
-                            );
-                        }
-                    )
-                    .unwrap()
-                );
-                encoders.push(encoder.finish());
-            }
-            let mut extra = device.create_command_encoder(&Default::default());
-            assert!(
-                !ring
-                    .encode(
-                        &mut extra,
-                        |_| panic!("busy producer"),
-                        |_, _, _| panic!("busy consumer")
-                    )
-                    .unwrap()
-            );
-            queue.submit(encoders);
-            let (tx, rx) = std::sync::mpsc::channel();
-            read.slice(..)
-                .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
-            rx.recv().unwrap().unwrap();
-            let data = read.slice(..).get_mapped_range().unwrap();
-            for (frame, words) in bytemuck::cast_slice::<u8, u32>(&data)
-                .chunks_exact(256)
-                .enumerate()
-            {
-                assert!(words.iter().all(|&v| v == cycle * 3 + frame as u32));
-            }
-            drop(data);
-            read.unmap();
-        }
-        assert!(pollster::block_on(scope.pop()).is_none());
-        // Invalid sizes reject the entire ring without charging a prefix.
-        let before = ComputeMemoryBudget::for_device(&device).stats();
-        assert!(SharedUploadRing::new(&device, 0, wgpu::BufferUsages::COPY_SRC).is_none());
-        assert_eq!(before, ComputeMemoryBudget::for_device(&device).stats());
-        let (limited, _) = super::super::surface_rigid_skinning::shared_tests::device();
-        let budget = ComputeMemoryBudget::configure(&limited, 2048).unwrap();
-        let before = budget.stats();
-        assert!(SharedUploadRing::new(&limited, 1024, wgpu::BufferUsages::COPY_SRC).is_none());
-        assert_eq!(budget.stats(), before);
-    }
 }

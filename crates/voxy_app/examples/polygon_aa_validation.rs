@@ -152,8 +152,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ..Default::default()
     }))?;
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let scale: u32 = std::env::var("VOXY_STREET_RENDER_SCALE").unwrap_or_else(|_| "1".into()).parse()?;
-    let resolve = voxy_render::SupersampleResolve::new(&device, WIDTH, HEIGHT, scale, wgpu::TextureFormat::Rgba16Float)?;
+    let scale: u32 = std::env::var("VOXY_STREET_RENDER_SCALE")
+        .unwrap_or_else(|_| "1".into())
+        .parse()?;
+    let resolve = voxy_render::SupersampleResolve::new(
+        &device,
+        WIDTH,
+        HEIGHT,
+        scale,
+        wgpu::TextureFormat::Rgba16Float,
+    )?;
     let (render_width, render_height) = resolve.render_size();
     let mut renderer = ArchiveSceneRenderer::new_with_environment(
         &device,

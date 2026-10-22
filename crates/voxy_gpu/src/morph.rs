@@ -8,6 +8,7 @@ use wgpu::util::DeviceExt;
 /// Compact GPU representation of a morph control (48 bytes).
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
+#[allow(clippy::pub_underscore_fields)]
 pub struct GpuMorphControl {
     pub center: [f32; 3],
     pub amount: f32,

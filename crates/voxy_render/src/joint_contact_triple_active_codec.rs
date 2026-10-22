@@ -721,14 +721,12 @@ impl ExperimentalTripleActiveContactInput {
                     .ok_or(JointDotError::Shape)?;
                 order.push(row);
             }
-        } else {
-            if !selected
-                .iter()
-                .flat_map(|&row| columns(row).iter().copied())
-                .eq(factors.columns.iter().copied())
-            {
-                return Err(JointDotError::Shape);
-            }
+        } else if !selected
+            .iter()
+            .flat_map(|&row| columns(row).iter().copied())
+            .eq(factors.columns.iter().copied())
+        {
+            return Err(JointDotError::Shape);
         }
         let q_words = 3 * factors.selected * self.width;
         let r = self.layout.immutable + 3 * self.rows * self.width;

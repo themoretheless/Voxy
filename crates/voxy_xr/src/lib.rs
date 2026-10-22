@@ -316,6 +316,28 @@ fn select_extensions(
     }
     Ok(required)
 }
+
+/// Computes a smooth XR comfort vignette strength in `[0.0, max_vignette]` from linear
+/// speed (`m/s`) and yaw angular speed (`rad/s`) to mitigate motion sickness during locomotion.
+#[must_use]
+pub fn comfort_vignette_strength(
+    linear_speed_m_s: f32,
+    angular_speed_rad_s: f32,
+    max_vignette: f32,
+) -> f32 {
+    if !linear_speed_m_s.is_finite()
+        || !angular_speed_rad_s.is_finite()
+        || !max_vignette.is_finite()
+    {
+        return 0.0;
+    }
+    let cap = max_vignette.clamp(0.0, 1.0);
+    let lin_t = ((linear_speed_m_s.abs() - 0.5) / 3.5).clamp(0.0, 1.0);
+    let ang_t = ((angular_speed_rad_s.abs() - 0.25) / 2.0).clamp(0.0, 1.0);
+    let t = lin_t.max(ang_t);
+    let smooth = t * t * (3.0 - 2.0 * t);
+    smooth * cap
+}
 #[cfg(test)]
 mod tests {
     use super::*;

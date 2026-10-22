@@ -2189,21 +2189,48 @@ mod tests {
         for bad in [0, 15, 31] {
             let mut calls = Vec::new();
             let mut errors = Vec::new();
-            let values = isolate_failed_batch(0..32, &mut |range: std::ops::Range<usize>| {
-                calls.push(range.clone());
-                if range.contains(&bad) { Err("rejected") } else { Ok(range.collect::<Vec<_>>()) }
-            }, &mut errors);
-            assert_eq!(calls.len(), 11, "one rejected operator needs one root and two groups per level");
-            assert_eq!(values, (0..32).map(|i| (i != bad).then_some(i)).collect::<Vec<_>>());
+            let values = isolate_failed_batch(
+                0..32,
+                &mut |range: std::ops::Range<usize>| {
+                    calls.push(range.clone());
+                    if range.contains(&bad) {
+                        Err("rejected")
+                    } else {
+                        Ok(range.collect::<Vec<_>>())
+                    }
+                },
+                &mut errors,
+            );
+            assert_eq!(
+                calls.len(),
+                11,
+                "one rejected operator needs one root and two groups per level"
+            );
+            assert_eq!(
+                values,
+                (0..32).map(|i| (i != bad).then_some(i)).collect::<Vec<_>>()
+            );
             assert_eq!(errors, vec![format!("operator {bad}: rejected")]);
         }
         let mut errors = Vec::new();
-        let values = isolate_failed_batch(0..4, &mut |range: std::ops::Range<usize>| -> Result<Vec<usize>, &'static str> {
-            if range.len() > 1 { Ok(Vec::new()) } else { Ok(range.collect()) }
-        }, &mut errors);
+        let values = isolate_failed_batch(
+            0..4,
+            &mut |range: std::ops::Range<usize>| -> Result<Vec<usize>, &'static str> {
+                if range.len() > 1 {
+                    Ok(Vec::new())
+                } else {
+                    Ok(range.collect())
+                }
+            },
+            &mut errors,
+        );
         assert_eq!(values, vec![Some(0), Some(1), Some(2), Some(3)]);
         assert!(errors.is_empty());
-        let values = isolate_failed_batch(0..3, &mut |_| -> Result<Vec<usize>, &'static str> { Err("failed") }, &mut errors);
+        let values = isolate_failed_batch(
+            0..3,
+            &mut |_| -> Result<Vec<usize>, &'static str> { Err("failed") },
+            &mut errors,
+        );
         assert_eq!(values, vec![None, None, None]);
         assert_eq!(errors.len(), 3);
     }
@@ -2378,8 +2405,10 @@ mod tests {
         let budget = voxy_render::ComputeMemoryBudget::configure(&device, 16 * mib).unwrap();
         let program =
             pollster::block_on(ComputeProgram::new(&device, JOINT_CONTACT_QR_SHADER)).unwrap();
-        let mut pool = EqualityWorkspacePool::default();
-        pool.prefer_large_completed = true;
+        let mut pool = EqualityWorkspacePool {
+            prefer_large_completed: true,
+            ..EqualityWorkspacePool::default()
+        };
         for size in [4 * mib, 6 * mib] {
             let bytes = vec![0; size as usize];
             let job = pool.acquire(&device, &queue, &program, &bytes).unwrap();
@@ -2438,8 +2467,10 @@ mod tests {
         assert_eq!(budget.stats().allocated_bytes, 0);
         // A 3 MiB incoming job cannot coexist with retained 6 MiB even
         // after removing 1 MiB. An unsuccessful admission must preserve both.
-        let mut pool = EqualityWorkspacePool::default();
-        pool.prefer_large_completed = true;
+        let mut pool = EqualityWorkspacePool {
+            prefer_large_completed: true,
+            ..EqualityWorkspacePool::default()
+        };
         for size in [6 * mib, mib, 3 * mib] {
             let job = program
                 .create_job(&device, &vec![0; size as usize])
@@ -2481,8 +2512,10 @@ mod tests {
         let qr = pollster::block_on(ComputeProgram::new(&device, JOINT_CONTACT_QR_SHADER)).unwrap();
         let solve = pollster::block_on(ComputeProgram::new(&device, JOINT_CONTACT_EQUALITY_SHADER))
             .unwrap();
-        let mut pool = EqualityWorkspacePool::default();
-        pool.geometric_growth = true;
+        let mut pool = EqualityWorkspacePool {
+            geometric_growth: true,
+            ..EqualityWorkspacePool::default()
+        };
         for full_readback in [true, false] {
             let options = EqualityOptions {
                 resident_columns: false,
@@ -3565,7 +3598,7 @@ mod tests {
                 gpu.joint_equality_submissions - before,
                 expected_submissions
             );
-            if std::ptr::eq(targets, &bounds) {
+            if std::ptr::eq(targets, &raw const bounds) {
                 let bits = responses
                     .iter()
                     .flatten()
@@ -4473,122 +4506,292 @@ mod tests {
     #[test]
     #[ignore = "requires real GPU, original VQC1 physical fixture and five-component opt-in"]
     fn gpu_five_original_physical_projection() {
-        assert_eq!(std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref(),Ok("1"));
-        let (requests,bounds,tolerance,rows,_,_)=captured_original_physical_fixture();
-        let instance=voxy_render::GraphicsOptions::default().create_instance();
-        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
-        assert_ne!(adapter.get_info().device_type,wgpu::DeviceType::Cpu);
-        let(device,queue)=pollster::block_on(adapter.request_device(&super::super::qualification_device_descriptor(&adapter))).unwrap();
-        let mut gpu=pollster::block_on(GpuHairLinearSolver::new(&device,&queue)).unwrap();gpu.joint_contact_qr=true;
-        let(responses,reactions,used)=HairResponseSystem::solve_joint_load_inequalities_expanded(&requests,&bounds,tolerance,&mut gpu).unwrap();
-        HairResponseSystem::validate_joint_solution(&requests,&bounds,&responses,&reactions,tolerance).unwrap();
-        assert!(used,"five-component GPU rejected: {:?}",gpu.last_error);assert!(gpu.last_error.is_none());assert!(gpu.joint_five_programs.is_some());assert!(gpu.joint_equality_submissions>0);assert!(gpu.joint_equality_dispatches>0);
-        let mut columns=vec![Vec::new();rows];
-        for request in &requests {for(column,values) in columns.iter_mut().zip(request.whiten_loads_expanded().unwrap()){column.extend(values);}}
-        let good=physics::hair::HairExpandedCoordinateRequest{columns:&columns,bounds:&bounds,tolerance};
-        let bad=physics::hair::HairExpandedCoordinateRequest{columns:&columns,bounds:&bounds,tolerance:-1.};
-        let candidates=gpu.solve_joint_expanded_candidates(&[good,bad,physics::hair::HairExpandedCoordinateRequest{columns:&columns,bounds:&bounds,tolerance}]).unwrap();
-        assert_eq!(candidates.len(),3);assert!(candidates[0].is_some());assert!(candidates[1].is_none());assert!(candidates[2].is_some());
+        assert_eq!(std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref(), Ok("1"));
+        let (requests, bounds, tolerance, rows, _, _) = captured_original_physical_fixture();
+        let instance = voxy_render::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+        let (device, queue) = pollster::block_on(
+            adapter.request_device(&super::super::qualification_device_descriptor(&adapter)),
+        )
+        .unwrap();
+        let mut gpu = pollster::block_on(GpuHairLinearSolver::new(&device, &queue)).unwrap();
+        gpu.joint_contact_qr = true;
+        let (responses, reactions, used) =
+            HairResponseSystem::solve_joint_load_inequalities_expanded(
+                &requests, &bounds, tolerance, &mut gpu,
+            )
+            .unwrap();
+        HairResponseSystem::validate_joint_solution(
+            &requests, &bounds, &responses, &reactions, tolerance,
+        )
+        .unwrap();
+        assert!(used, "five-component GPU rejected: {:?}", gpu.last_error);
+        assert!(gpu.last_error.is_none());
+        assert!(gpu.joint_five_programs.is_some());
+        assert!(gpu.joint_equality_submissions > 0);
+        assert!(gpu.joint_equality_dispatches > 0);
+        let mut columns = vec![Vec::new(); rows];
+        for request in &requests {
+            for (column, values) in columns
+                .iter_mut()
+                .zip(request.whiten_loads_expanded().unwrap())
+            {
+                column.extend(values);
+            }
+        }
+        let good = physics::hair::HairExpandedCoordinateRequest {
+            columns: &columns,
+            bounds: &bounds,
+            tolerance,
+        };
+        let bad = physics::hair::HairExpandedCoordinateRequest {
+            columns: &columns,
+            bounds: &bounds,
+            tolerance: -1.,
+        };
+        let candidates = gpu
+            .solve_joint_expanded_candidates(&[
+                good,
+                bad,
+                physics::hair::HairExpandedCoordinateRequest {
+                    columns: &columns,
+                    bounds: &bounds,
+                    tolerance,
+                },
+            ])
+            .unwrap();
+        assert_eq!(candidates.len(), 3);
+        assert!(candidates[0].is_some());
+        assert!(candidates[1].is_none());
+        assert!(candidates[2].is_some());
         assert!(gpu.last_error.as_ref().unwrap().contains("five operator 1"));
-        eprintln!("FIVE INTEGRATED ORIGINAL rows={rows} admitted=true mixed_candidate_isolation=true qr_submissions={} qr_dispatches={}",gpu.joint_equality_submissions,gpu.joint_equality_dispatches);
+        eprintln!(
+            "FIVE INTEGRATED ORIGINAL rows={rows} admitted=true mixed_candidate_isolation=true qr_submissions={} qr_dispatches={}",
+            gpu.joint_equality_submissions, gpu.joint_equality_dispatches
+        );
     }
 
     #[test]
     #[ignore = "requires real GPU, VQC1 physical fixture and expanded contact opt-in"]
     fn gpu_expanded_original_physical_sequence() {
-        assert_eq!(std::env::var("VOXY_HAIR_EXPANDED_CONTACT").as_deref(),Ok("1"));
-        let (requests,bounds,tolerance,rows,_,_)=captured_original_physical_fixture();
-        let instance=voxy_render::GraphicsOptions::default().create_instance();
-        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
-        assert_ne!(adapter.get_info().device_type,wgpu::DeviceType::Cpu);
-        let (device,queue)=pollster::block_on(adapter.request_device(&super::super::qualification_device_descriptor(&adapter))).unwrap();
-        let mut gpu=pollster::block_on(GpuHairLinearSolver::new(&device,&queue)).unwrap();
-        gpu.joint_contact_qr=true;
+        assert_eq!(
+            std::env::var("VOXY_HAIR_EXPANDED_CONTACT").as_deref(),
+            Ok("1")
+        );
+        let (requests, bounds, tolerance, rows, _, _) = captured_original_physical_fixture();
+        let instance = voxy_render::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+        let (device, queue) = pollster::block_on(
+            adapter.request_device(&super::super::qualification_device_descriptor(&adapter)),
+        )
+        .unwrap();
+        let mut gpu = pollster::block_on(GpuHairLinearSolver::new(&device, &queue)).unwrap();
+        gpu.joint_contact_qr = true;
         for step in 0..=32 {
-            let phase=if step==0 {0.} else {((step*7)%31) as f64/30.-0.5};
-            let current=bounds.iter().map(|b|b*(1.+phase*2e-6)).collect::<Vec<_>>();
-            let (responses,reactions,used)=HairResponseSystem::solve_joint_load_inequalities_expanded(&requests,&current,tolerance,&mut gpu).unwrap();
-            HairResponseSystem::validate_joint_solution(&requests,&current,&responses,&reactions,tolerance).unwrap();
-            assert!(used,"expanded GPU rejected rows={rows} step={step} error={:?}",gpu.last_error);
+            let phase = if step == 0 {
+                0.
+            } else {
+                ((step * 7) % 31) as f64 / 30. - 0.5
+            };
+            let current = bounds
+                .iter()
+                .map(|b| b * (1. + phase * 2e-6))
+                .collect::<Vec<_>>();
+            let (responses, reactions, used) =
+                HairResponseSystem::solve_joint_load_inequalities_expanded(
+                    &requests, &current, tolerance, &mut gpu,
+                )
+                .unwrap();
+            HairResponseSystem::validate_joint_solution(
+                &requests, &current, &responses, &reactions, tolerance,
+            )
+            .unwrap();
+            assert!(
+                used,
+                "expanded GPU rejected rows={rows} step={step} error={:?}",
+                gpu.last_error
+            );
             eprintln!("EXPANDED ORIGINAL PHYSICAL rows={rows} step={step} admitted=true");
         }
-        if std::env::var("VOXY_HAIR_EXPANDED_FACTOR_REUSE").as_deref()==Ok("1") {assert!(gpu.joint_expanded_factor_reuses>0,"qualification never exercised factor reuse");}
-        eprintln!("EXPANDED FACTOR REUSES {}",gpu.joint_expanded_factor_reuses);
+        if std::env::var("VOXY_HAIR_EXPANDED_FACTOR_REUSE").as_deref() == Ok("1") {
+            assert!(
+                gpu.joint_expanded_factor_reuses > 0,
+                "qualification never exercised factor reuse"
+            );
+        }
+        eprintln!(
+            "EXPANDED FACTOR REUSES {}",
+            gpu.joint_expanded_factor_reuses
+        );
     }
 
     #[test]
     fn expanded_result_key_preserves_low_parts_bounds_and_zero_positions() {
-        use physics::hair::{HairResponseCoefficient as C,HairExpandedCoordinateRequest as R};
-        let mut columns=vec![vec![C::from_parts([1.,2f64.powi(-60)]).unwrap(),C::from_f64(0.).unwrap()]];
-        let key=|c:&[Vec<C>],b:&[f64]|ExpandedCandidateCache::key(&R{columns:c,bounds:b,tolerance:1e-14});
-        let original=key(&columns,&[1.]);
-        assert_eq!(original,key(&columns,&[1.]));
-        assert_ne!(original,key(&columns,&[2.]));
-        columns[0][0]=C::from_parts([1.,2f64.powi(-61)]).unwrap();assert_ne!(original,key(&columns,&[1.]));
-        columns[0].swap(0,1);assert_ne!(original,key(&columns,&[1.]));
+        use physics::hair::{HairExpandedCoordinateRequest as R, HairResponseCoefficient as C};
+        let mut columns = vec![vec![
+            C::from_parts([1., 2f64.powi(-60)]).unwrap(),
+            C::from_f64(0.).unwrap(),
+        ]];
+        let key = |c: &[Vec<C>], b: &[f64]| {
+            ExpandedCandidateCache::key(&R {
+                columns: c,
+                bounds: b,
+                tolerance: 1e-14,
+            })
+        };
+        let original = key(&columns, &[1.]);
+        assert_eq!(original, key(&columns, &[1.]));
+        assert_ne!(original, key(&columns, &[2.]));
+        columns[0][0] = C::from_parts([1., 2f64.powi(-61)]).unwrap();
+        assert_ne!(original, key(&columns, &[1.]));
+        columns[0].swap(0, 1);
+        assert_ne!(original, key(&columns, &[1.]));
     }
 
     #[test]
     #[ignore = "real GPU: exact-zero support must retain low-only coordinates and restore original indexing"]
     fn gpu_expanded_sparse_support_retains_low_parts() {
-        use physics::hair::{HairResponseCoefficient as C, HairExpandedCoordinateRequest};
-        let instance=voxy_render::GraphicsOptions::default().create_instance();
-        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
-        assert_ne!(adapter.get_info().device_type,wgpu::DeviceType::Cpu);
-        let (device,queue)=pollster::block_on(adapter.request_device(&Default::default())).unwrap();
-        let mut gpu=pollster::block_on(GpuHairLinearSolver::new(&device,&queue)).unwrap();
-        let zero=C::from_f64(0.).unwrap();
-        let dense=vec![vec![C::from_parts([1.,2f64.powi(-60)]).unwrap(),C::from_f64(2f64.powi(-30)).unwrap()]];
-        let mut sparse=vec![vec![zero;16384]];
-        sparse[0][123]=dense[0][0];sparse[0][16000]=dense[0][1];
-        let bounds=[1.];
-        let result=gpu.solve_joint_expanded_checked(&[
-            HairExpandedCoordinateRequest{columns:&dense,bounds:&bounds,tolerance:1e-14},
-            HairExpandedCoordinateRequest{columns:&sparse,bounds:&bounds,tolerance:1e-14},
-        ]).unwrap();
-        assert_eq!(result[0].0[0],result[1].0[123]);
-        assert_eq!(result[0].0[1],result[1].0[16000]);
-        assert_eq!(result[0].1,result[1].1);
-        assert_ne!(result[0].0[0].parts()[1],0.,"low component was rounded away");
-        assert_ne!(result[1].0[16000],zero);
-        for (i,value) in result[1].0.iter().enumerate() {if i!=123 && i!=16000 {assert_eq!(*value,zero);}}
-        if std::env::var("VOXY_HAIR_EXPANDED_RESULT_REUSE").as_deref()==Ok("1") {
-            let submissions=gpu.joint_equality_submissions;
-            let repeat=gpu.solve_joint_expanded_checked(&[HairExpandedCoordinateRequest{columns:&sparse,bounds:&bounds,tolerance:1e-14}]).unwrap();
-            assert_eq!(repeat[0],result[1]);assert_eq!(gpu.joint_equality_submissions,submissions);
-            let mut changed=dense.clone();changed[0][0]=C::from_parts([1.,2f64.powi(-61)]).unwrap();
-            let changed_result=gpu.solve_joint_expanded_checked(&[HairExpandedCoordinateRequest{columns:&changed,bounds:&bounds,tolerance:1e-14}]).unwrap();
-            assert_eq!(gpu.joint_equality_submissions,submissions+1,"low part change must submit GPU work");
-            assert_ne!(changed_result[0].0[0],result[0].0[0],"low part change returned stale cached coordinates");
+        use physics::hair::{HairExpandedCoordinateRequest, HairResponseCoefficient as C};
+        let instance = voxy_render::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let mut gpu = pollster::block_on(GpuHairLinearSolver::new(&device, &queue)).unwrap();
+        let zero = C::from_f64(0.).unwrap();
+        let dense = vec![vec![
+            C::from_parts([1., 2f64.powi(-60)]).unwrap(),
+            C::from_f64(2f64.powi(-30)).unwrap(),
+        ]];
+        let mut sparse = vec![vec![zero; 16384]];
+        sparse[0][123] = dense[0][0];
+        sparse[0][16000] = dense[0][1];
+        let bounds = [1.];
+        let result = gpu
+            .solve_joint_expanded_checked(&[
+                HairExpandedCoordinateRequest {
+                    columns: &dense,
+                    bounds: &bounds,
+                    tolerance: 1e-14,
+                },
+                HairExpandedCoordinateRequest {
+                    columns: &sparse,
+                    bounds: &bounds,
+                    tolerance: 1e-14,
+                },
+            ])
+            .unwrap();
+        assert_eq!(result[0].0[0], result[1].0[123]);
+        assert_eq!(result[0].0[1], result[1].0[16000]);
+        assert_eq!(result[0].1, result[1].1);
+        assert_ne!(
+            result[0].0[0].parts()[1],
+            0.,
+            "low component was rounded away"
+        );
+        assert_ne!(result[1].0[16000], zero);
+        for (i, value) in result[1].0.iter().enumerate() {
+            if i != 123 && i != 16000 {
+                assert_eq!(*value, zero);
+            }
+        }
+        if std::env::var("VOXY_HAIR_EXPANDED_RESULT_REUSE").as_deref() == Ok("1") {
+            let submissions = gpu.joint_equality_submissions;
+            let repeat = gpu
+                .solve_joint_expanded_checked(&[HairExpandedCoordinateRequest {
+                    columns: &sparse,
+                    bounds: &bounds,
+                    tolerance: 1e-14,
+                }])
+                .unwrap();
+            assert_eq!(repeat[0], result[1]);
+            assert_eq!(gpu.joint_equality_submissions, submissions);
+            let mut changed = dense.clone();
+            changed[0][0] = C::from_parts([1., 2f64.powi(-61)]).unwrap();
+            let changed_result = gpu
+                .solve_joint_expanded_checked(&[HairExpandedCoordinateRequest {
+                    columns: &changed,
+                    bounds: &bounds,
+                    tolerance: 1e-14,
+                }])
+                .unwrap();
+            assert_eq!(
+                gpu.joint_equality_submissions,
+                submissions + 1,
+                "low part change must submit GPU work"
+            );
+            assert_ne!(
+                changed_result[0].0[0], result[0].0[0],
+                "low part change returned stale cached coordinates"
+            );
         }
     }
 
     #[test]
     #[ignore = "real GPU: one rejected independent operator must not discard sibling candidates"]
     fn gpu_expanded_batch_failure_preserves_independent_siblings() {
-        use physics::hair::{HairLinearSolver, HairResponseCoefficient as C, HairExpandedCoordinateRequest as R};
+        use physics::hair::{
+            HairExpandedCoordinateRequest as R, HairLinearSolver, HairResponseCoefficient as C,
+        };
         let instance = voxy_render::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
         assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
-        let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
         let mut gpu = pollster::block_on(GpuHairLinearSolver::new(&device, &queue)).unwrap();
         let good = vec![vec![C::from_parts([1., 2f64.powi(-60)]).unwrap()]];
-        let bad = vec![vec![C::from_f64(1.).unwrap(); 2], vec![C::from_f64(-1.).unwrap(); 2]];
+        let bad = vec![
+            vec![C::from_f64(1.).unwrap(); 2],
+            vec![C::from_f64(-1.).unwrap(); 2],
+        ];
         let bound = [1.];
         let incompatible = [1., 1.];
-        let valid = R { columns: &good, bounds: &bound, tolerance: 1e-14 };
-        let rejected = R { columns: &bad, bounds: &incompatible, tolerance: 1e-14 };
-        let reference = gpu.solve_joint_expanded_checked(std::slice::from_ref(&valid)).unwrap().remove(0);
+        let valid = R {
+            columns: &good,
+            bounds: &bound,
+            tolerance: 1e-14,
+        };
+        let rejected = R {
+            columns: &bad,
+            bounds: &incompatible,
+            tolerance: 1e-14,
+        };
+        let reference = gpu
+            .solve_joint_expanded_checked(std::slice::from_ref(&valid))
+            .unwrap()
+            .remove(0);
         let submissions = gpu.joint_equality_submissions;
-        assert!(gpu.solve_joint_expanded_checked(std::slice::from_ref(&rejected)).is_err());
-        assert!(gpu.joint_equality_submissions > submissions, "rejection must exercise the GPU, not just input validation");
+        assert!(
+            gpu.solve_joint_expanded_checked(std::slice::from_ref(&rejected))
+                .is_err()
+        );
+        assert!(
+            gpu.joint_equality_submissions > submissions,
+            "rejection must exercise the GPU, not just input validation"
+        );
         // Force both successful siblings through this actual mixed dispatch.
         gpu.joint_expanded_candidates.entries.clear();
         gpu.joint_expanded_factors.clear();
         let submissions = gpu.joint_equality_submissions;
         let dispatches = gpu.joint_equality_dispatches;
-        let results = gpu.solve_joint_expanded_candidates(&[valid, rejected, R { columns: &good, bounds: &bound, tolerance: 1e-14 }]).unwrap();
-        assert_eq!(gpu.joint_equality_submissions - submissions, 1, "mixed readback repeated successful GPU work");
+        let results = gpu
+            .solve_joint_expanded_candidates(&[
+                valid,
+                rejected,
+                R {
+                    columns: &good,
+                    bounds: &bound,
+                    tolerance: 1e-14,
+                },
+            ])
+            .unwrap();
+        assert_eq!(
+            gpu.joint_equality_submissions - submissions,
+            1,
+            "mixed readback repeated successful GPU work"
+        );
         assert_eq!(gpu.joint_equality_dispatches - dispatches, 3);
 
         assert_eq!(results.len(), 3);
@@ -4602,22 +4805,59 @@ mod tests {
     #[test]
     #[ignore = "real GPU: a dependent warm active set must retry cold without CPU substitution"]
     fn gpu_expanded_dependent_warm_basis_retries_cold() {
-        assert_eq!(std::env::var("VOXY_HAIR_EXPANDED_CONTACT").as_deref(),Ok("1"));
-        assert_eq!(std::env::var("VOXY_HAIR_EXPANDED_FACTOR_REUSE").as_deref(),Ok("1"));
-        let instance=voxy_render::GraphicsOptions::default().create_instance();
-        let adapter=pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
-        assert_ne!(adapter.get_info().device_type,wgpu::DeviceType::Cpu);
-        let (device,queue)=pollster::block_on(adapter.request_device(&Default::default())).unwrap();
-        let mut gpu=pollster::block_on(GpuHairLinearSolver::new(&device,&queue)).unwrap();gpu.joint_contact_qr=true;
-        let mut matrix=vec![0.;12*9];for i in 0..12 {matrix[i*9]=1.;}
-        let mut loads=vec![vec![0.;12];3];loads[0][6]=1.;loads[1][7]=1.;loads[2][6]=1.;loads[2][7]=1.;
-        let requests=[HairResponseSystem {system:physics::hair::HairLinearSystem {band_width:9,matrix,rhs:vec![0.;12],active:6..9},loads}];
-        for bounds in [[1.,1.,0.],[0.,0.,1.]] {
-            let (responses,reactions,used)=HairResponseSystem::solve_joint_load_inequalities_expanded(&requests,&bounds,1e-14,&mut gpu).unwrap();
-            HairResponseSystem::validate_joint_solution(&requests,&bounds,&responses,&reactions,1e-14).unwrap();assert!(used,"{:?}",gpu.last_error);
+        assert_eq!(
+            std::env::var("VOXY_HAIR_EXPANDED_CONTACT").as_deref(),
+            Ok("1")
+        );
+        assert_eq!(
+            std::env::var("VOXY_HAIR_EXPANDED_FACTOR_REUSE").as_deref(),
+            Ok("1")
+        );
+        let instance = voxy_render::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let mut gpu = pollster::block_on(GpuHairLinearSolver::new(&device, &queue)).unwrap();
+        gpu.joint_contact_qr = true;
+        let mut matrix = vec![0.; 12 * 9];
+        for i in 0..12 {
+            matrix[i * 9] = 1.;
         }
-        assert_eq!(gpu.joint_equality_submissions,3,"expected rejected warm solve followed by cold GPU solve");
-        assert!(gpu.joint_expanded_factors.is_empty(),"rejected warm cache survived cold recovery");
+        let mut loads = vec![vec![0.; 12]; 3];
+        loads[0][6] = 1.;
+        loads[1][7] = 1.;
+        loads[2][6] = 1.;
+        loads[2][7] = 1.;
+        let requests = [HairResponseSystem {
+            system: physics::hair::HairLinearSystem {
+                band_width: 9,
+                matrix,
+                rhs: vec![0.; 12],
+                active: 6..9,
+            },
+            loads,
+        }];
+        for bounds in [[1., 1., 0.], [0., 0., 1.]] {
+            let (responses, reactions, used) =
+                HairResponseSystem::solve_joint_load_inequalities_expanded(
+                    &requests, &bounds, 1e-14, &mut gpu,
+                )
+                .unwrap();
+            HairResponseSystem::validate_joint_solution(
+                &requests, &bounds, &responses, &reactions, 1e-14,
+            )
+            .unwrap();
+            assert!(used, "{:?}", gpu.last_error);
+        }
+        assert_eq!(
+            gpu.joint_equality_submissions, 3,
+            "expected rejected warm solve followed by cold GPU solve"
+        );
+        assert!(
+            gpu.joint_expanded_factors.is_empty(),
+            "rejected warm cache survived cold recovery"
+        );
     }
 
     fn captured_original_physical_fixture()
@@ -6176,7 +6416,9 @@ pub(super) fn isolate_failed_batch<T, E: std::fmt::Display>(
     run: &mut impl FnMut(std::ops::Range<usize>) -> Result<Vec<T>, E>,
     failures: &mut Vec<String>,
 ) -> Vec<Option<T>> {
-    if range.is_empty() { return Vec::new(); }
+    if range.is_empty() {
+        return Vec::new();
+    }
     let error = match run(range.clone()) {
         Ok(values) if values.len() == range.len() => return values.into_iter().map(Some).collect(),
         Ok(_) => "expanded candidate count changed".to_owned(),
@@ -6200,163 +6442,352 @@ pub(super) struct ExpandedCandidateCache {
 }
 impl ExpandedCandidateCache {
     fn key(r: &physics::hair::HairExpandedCoordinateRequest<'_>) -> Vec<u64> {
-        let mut key=vec![r.columns.len() as u64,r.bounds.len() as u64,r.tolerance.to_bits()];
+        let mut key = vec![
+            r.columns.len() as u64,
+            r.bounds.len() as u64,
+            r.tolerance.to_bits(),
+        ];
         for column in r.columns {
             key.push(column.len() as u64);
-            for (i,value) in column.iter().enumerate() {
-                let [hi,lo]=value.parts().map(f64::to_bits);
+            for (i, value) in column.iter().enumerate() {
+                let [hi, lo] = value.parts().map(f64::to_bits);
                 // Only the bit pattern (+0,+0) is implicit; even signed zero
                 // and every low-component bit participate in exact identity.
-                if hi!=0 || lo!=0 {key.extend([i as u64,hi,lo]);}
+                if hi != 0 || lo != 0 {
+                    key.extend([i as u64, hi, lo]);
+                }
             }
             key.push(u64::MAX);
         }
-        key.extend(r.bounds.iter().map(|v|v.to_bits()));key
+        key.extend(r.bounds.iter().map(|v| v.to_bits()));
+        key
     }
-    fn get(&self,key:&[u64])->Option<ExpandedOutput> {
-        self.entries.iter().rev().find(|(old,_)|old==key).map(|(_,value)|value.clone())
+    fn get(&self, key: &[u64]) -> Option<ExpandedOutput> {
+        self.entries
+            .iter()
+            .rev()
+            .find(|(old, _)| old == key)
+            .map(|(_, value)| value.clone())
     }
-    fn insert(&mut self,key:Vec<u64>,value:ExpandedOutput) {
-        let bytes=|k:&Vec<u64>,v:&ExpandedOutput| k.capacity()*8+v.0.capacity()*16+v.1.capacity()*8;
-        if bytes(&key,&value)>16*1024*1024 {return;}
-        if let Some(i)=self.entries.iter().position(|(old,_)|*old==key) {self.entries.remove(i);}
-        self.entries.push((key,value));
-        while self.entries.len()>32 || self.entries.iter().map(|(k,v)|bytes(k,v)).sum::<usize>()>16*1024*1024 {self.entries.remove(0);}
+    fn insert(&mut self, key: Vec<u64>, value: ExpandedOutput) {
+        let bytes = |k: &Vec<u64>, v: &ExpandedOutput| {
+            k.capacity() * 8 + v.0.capacity() * 16 + v.1.capacity() * 8
+        };
+        if bytes(&key, &value) > 16 * 1024 * 1024 {
+            return;
+        }
+        if let Some(i) = self.entries.iter().position(|(old, _)| *old == key) {
+            self.entries.remove(i);
+        }
+        self.entries.push((key, value));
+        while self.entries.len() > 32
+            || self.entries.iter().map(|(k, v)| bytes(k, v)).sum::<usize>() > 16 * 1024 * 1024
+        {
+            self.entries.remove(0);
+        }
     }
 }
 
 impl GpuHairLinearSolver {
     /// Complete expanded requests use a separate checked transport;
     /// legacy result and factor caches cannot alias their discarded low parts.
-    pub(super) fn solve_joint_expanded_checked(&mut self, requests:&[physics::hair::HairExpandedCoordinateRequest<'_>]) -> Result<Vec<(Vec<physics::hair::HairResponseCoefficient>,Vec<f64>)>,Box<dyn std::error::Error>> {
-        self.solve_joint_expanded_partial_checked(requests)?.into_iter().collect::<Result<Vec<_>, _>>().map_err(Into::into)
+    pub(super) fn solve_joint_expanded_checked(
+        &mut self,
+        requests: &[physics::hair::HairExpandedCoordinateRequest<'_>],
+    ) -> Result<
+        Vec<(Vec<physics::hair::HairResponseCoefficient>, Vec<f64>)>,
+        Box<dyn std::error::Error>,
+    > {
+        self.solve_joint_expanded_partial_checked(requests)?
+            .into_iter()
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(Into::into)
     }
-    pub(super) fn solve_joint_expanded_partial_checked(&mut self, requests:&[physics::hair::HairExpandedCoordinateRequest<'_>]) -> Result<ExpandedResults,Box<dyn std::error::Error>> {
-        if std::env::var("VOXY_HAIR_EXPANDED_RESULT_REUSE").as_deref()==Ok("1") {
-            let mut results=Vec::with_capacity(requests.len());
-            let mut pending=Vec::new();let mut keys=Vec::new();
+    pub(super) fn solve_joint_expanded_partial_checked(
+        &mut self,
+        requests: &[physics::hair::HairExpandedCoordinateRequest<'_>],
+    ) -> Result<ExpandedResults, Box<dyn std::error::Error>> {
+        if std::env::var("VOXY_HAIR_EXPANDED_RESULT_REUSE").as_deref() == Ok("1") {
+            let mut results = Vec::with_capacity(requests.len());
+            let mut pending = Vec::new();
+            let mut keys = Vec::new();
             for r in requests {
-                let key=ExpandedCandidateCache::key(r);
-                if let Some(value)=self.joint_expanded_candidates.get(&key) {
-                    self.joint_result_cache_hits+=1;results.push(Some(Ok(value)));
+                let key = ExpandedCandidateCache::key(r);
+                if let Some(value) = self.joint_expanded_candidates.get(&key) {
+                    self.joint_result_cache_hits += 1;
+                    results.push(Some(Ok(value)));
                 } else {
-                    pending.push(physics::hair::HairExpandedCoordinateRequest {columns:r.columns,bounds:r.bounds,tolerance:r.tolerance});
-                    keys.push(key);results.push(None);
+                    pending.push(physics::hair::HairExpandedCoordinateRequest {
+                        columns: r.columns,
+                        bounds: r.bounds,
+                        tolerance: r.tolerance,
+                    });
+                    keys.push(key);
+                    results.push(None);
                 }
             }
             if !pending.is_empty() {
-                let values=self.solve_joint_expanded_uncached(&pending)?;
-                if values.len()!=pending.len() {return Err("expanded candidate batch length changed".into());}
-                let mut values=keys.into_iter().zip(values);
-                for result in &mut results {if result.is_none() {
-                    let (key,value)=values.next().ok_or("expanded candidate missing")?;
-                    if let Ok(candidate)=&value {self.joint_expanded_candidates.insert(key,candidate.clone());} *result=Some(value);
-                }}
+                let values = self.solve_joint_expanded_uncached(&pending)?;
+                if values.len() != pending.len() {
+                    return Err("expanded candidate batch length changed".into());
+                }
+                let mut values = keys.into_iter().zip(values);
+                for result in &mut results {
+                    if result.is_none() {
+                        let (key, value) = values.next().ok_or("expanded candidate missing")?;
+                        if let Ok(candidate) = &value {
+                            self.joint_expanded_candidates
+                                .insert(key, candidate.clone());
+                        }
+                        *result = Some(value);
+                    }
+                }
             }
             // Reused values are GPU candidates only. The caller still executes
             // full physical admission against the current original operator.
-            return results.into_iter().map(|v|v.ok_or_else(||"expanded candidate missing".into())).collect();
+            return results
+                .into_iter()
+                .map(|v| v.ok_or_else(|| "expanded candidate missing".into()))
+                .collect();
         }
         self.solve_joint_expanded_uncached(requests)
     }
-    fn solve_joint_expanded_uncached(&mut self, requests:&[physics::hair::HairExpandedCoordinateRequest<'_>]) -> Result<ExpandedResults,Box<dyn std::error::Error>> {
-        let retry=std::env::var("VOXY_HAIR_EXPANDED_FACTOR_REUSE").as_deref()==Ok("1") && !self.joint_expanded_factors.is_empty();
-        let mut results=match self.solve_joint_expanded_attempt(requests,true) {
-            Err(_) if retry => { self.joint_expanded_factors.clear(); return self.solve_joint_expanded_attempt(requests,false); },
+    fn solve_joint_expanded_uncached(
+        &mut self,
+        requests: &[physics::hair::HairExpandedCoordinateRequest<'_>],
+    ) -> Result<ExpandedResults, Box<dyn std::error::Error>> {
+        let retry = std::env::var("VOXY_HAIR_EXPANDED_FACTOR_REUSE").as_deref() == Ok("1")
+            && !self.joint_expanded_factors.is_empty();
+        let mut results = match self.solve_joint_expanded_attempt(requests, true) {
+            Err(_) if retry => {
+                self.joint_expanded_factors.clear();
+                return self.solve_joint_expanded_attempt(requests, false);
+            }
             result => result?,
         };
         if retry {
-            let failed=results.iter().enumerate().filter_map(|(i,r)|r.is_err().then_some(i)).collect::<Vec<_>>();
+            let failed = results
+                .iter()
+                .enumerate()
+                .filter_map(|(i, r)| r.is_err().then_some(i))
+                .collect::<Vec<_>>();
             if !failed.is_empty() {
                 self.joint_expanded_factors.clear();
-                let pending=failed.iter().map(|&i|physics::hair::HairExpandedCoordinateRequest {columns:requests[i].columns,bounds:requests[i].bounds,tolerance:requests[i].tolerance}).collect::<Vec<_>>();
+                let pending = failed
+                    .iter()
+                    .map(|&i| physics::hair::HairExpandedCoordinateRequest {
+                        columns: requests[i].columns,
+                        bounds: requests[i].bounds,
+                        tolerance: requests[i].tolerance,
+                    })
+                    .collect::<Vec<_>>();
                 // Cold retry only rejected operators; keep every successful readback.
-                match self.solve_joint_expanded_attempt(&pending,false) {
-                    Ok(cold) if cold.len()==failed.len() => {for (i,value) in failed.into_iter().zip(cold) {results[i]=value;}},
+                match self.solve_joint_expanded_attempt(&pending, false) {
+                    Ok(cold) if cold.len() == failed.len() => {
+                        for (i, value) in failed.into_iter().zip(cold) {
+                            results[i] = value;
+                        }
+                    }
                     Ok(_) => return Err("expanded cold candidate count changed".into()),
-                    Err(error) => {for i in failed {results[i]=Err(error.to_string());}},
+                    Err(error) => {
+                        for i in failed {
+                            results[i] = Err(error.to_string());
+                        }
+                    }
                 }
             }
         }
         Ok(results)
     }
-    fn solve_joint_expanded_attempt(&mut self, requests:&[physics::hair::HairExpandedCoordinateRequest<'_>], allow_reuse:bool) -> Result<ExpandedResults,Box<dyn std::error::Error>> {
+    fn solve_joint_expanded_attempt(
+        &mut self,
+        requests: &[physics::hair::HairExpandedCoordinateRequest<'_>],
+        allow_reuse: bool,
+    ) -> Result<ExpandedResults, Box<dyn std::error::Error>> {
         use physics::hair::HairResponseCoefficient;
-        use voxy_render::{ExperimentalTripleActiveContactInput,ExperimentalTripleActiveContactBatch};
-        let reuse=allow_reuse && std::env::var("VOXY_HAIR_EXPANDED_FACTOR_REUSE").as_deref()==Ok("1");
-        let mut reused=0usize;
-        if requests.is_empty() {return Ok(Vec::new());}
+        use voxy_render::{
+            ExperimentalTripleActiveContactBatch, ExperimentalTripleActiveContactInput,
+        };
+        let reuse =
+            allow_reuse && std::env::var("VOXY_HAIR_EXPANDED_FACTOR_REUSE").as_deref() == Ok("1");
+        let mut reused = 0usize;
+        if requests.is_empty() {
+            return Ok(Vec::new());
+        }
         // Remove only coordinates that are exactly zero in every expanded column.
         // Preserve both source components, original order, and the native owner's
         // full-dimensional admission. No threshold or rounded scalar is involved.
-        let supports=requests.iter().map(|r| {
-            let width=r.columns.first().map_or(0,Vec::len);
-            if width==0 || r.columns.iter().any(|c|c.len()!=width) {
-                return Err(voxy_render::JointDotError::Shape);
-            }
-            let mut support=(0..width).filter(|&i|r.columns.iter().any(|c| {
-                let [hi,lo]=c[i].parts(); hi!=0. || lo!=0.
-            })).collect::<Vec<_>>();
-            // Keep a zero coordinate for the codec's nonempty shape contract.
-            if support.is_empty() {support.push(0);}
-            Ok(support)
-        }).collect::<Result<Vec<_>,voxy_render::JointDotError>>()?;
-        let inputs=requests.iter().zip(&supports).map(|(r,support)| {
-            let columns:Vec<Vec<_>>=r.columns.iter().map(|c|support.iter().map(|&i|c[i].parts()).collect()).collect();
-            let mut input=ExperimentalTripleActiveContactInput::new_expanded(&columns,r.bounds,r.tolerance)?;
-            if reuse && self.joint_expanded_factors.iter().rev().any(|f| input.seed_completed_parallel_factors(f).is_ok()) {reused+=1;}
-            Ok::<_,voxy_render::JointDotError>(input)
-        }).collect::<Result<Vec<_>,_>>()?;
-        let batch=ExperimentalTripleActiveContactBatch::new(inputs)?;
+        let supports = requests
+            .iter()
+            .map(|r| {
+                let width = r.columns.first().map_or(0, Vec::len);
+                if width == 0 || r.columns.iter().any(|c| c.len() != width) {
+                    return Err(voxy_render::JointDotError::Shape);
+                }
+                let mut support = (0..width)
+                    .filter(|&i| {
+                        r.columns.iter().any(|c| {
+                            let [hi, lo] = c[i].parts();
+                            hi != 0. || lo != 0.
+                        })
+                    })
+                    .collect::<Vec<_>>();
+                // Keep a zero coordinate for the codec's nonempty shape contract.
+                if support.is_empty() {
+                    support.push(0);
+                }
+                Ok(support)
+            })
+            .collect::<Result<Vec<_>, voxy_render::JointDotError>>()?;
+        let inputs = requests
+            .iter()
+            .zip(&supports)
+            .map(|(r, support)| {
+                let columns: Vec<Vec<_>> = r
+                    .columns
+                    .iter()
+                    .map(|c| support.iter().map(|&i| c[i].parts()).collect())
+                    .collect();
+                let mut input = ExperimentalTripleActiveContactInput::new_expanded(
+                    &columns,
+                    r.bounds,
+                    r.tolerance,
+                )?;
+                if reuse
+                    && self
+                        .joint_expanded_factors
+                        .iter()
+                        .rev()
+                        .any(|f| input.seed_completed_parallel_factors(f).is_ok())
+                {
+                    reused += 1;
+                }
+                Ok::<_, voxy_render::JointDotError>(input)
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let batch = ExperimentalTripleActiveContactBatch::new(inputs)?;
         if self.joint_expanded_program.is_none() {
-            self.joint_expanded_program=Some(pollster::block_on(ComputeProgram::new(&self.device,&ExperimentalTripleActiveContactBatch::shader_source()))?);
+            self.joint_expanded_program = Some(pollster::block_on(ComputeProgram::new(
+                &self.device,
+                &ExperimentalTripleActiveContactBatch::shader_source(),
+            ))?);
         }
-        let program=self.joint_expanded_program.as_ref().ok_or("expanded contact program missing")?;
+        let program = self
+            .joint_expanded_program
+            .as_ref()
+            .ok_or("expanded contact program missing")?;
         // Keep larger completed allocations useful for subsequent smaller
         // operators, rather than filling all slots with the earliest tiny jobs.
         // The same 8 MiB / 32-job retention limits and retirement owner apply.
-        self.joint_workspaces.prefer_large_completed=true;
-        let created=self.joint_workspaces.creations;let reused_workspaces=self.joint_workspaces.reuses;
-        let job=self.joint_workspaces.acquire(&self.device,&self.queue,program,batch.bytes())?;
-        self.joint_workspace_creations+=self.joint_workspaces.creations-created;
-        self.joint_workspace_reuses+=self.joint_workspaces.reuses-reused_workspaces;
-        let mut encoder=self.device.create_command_encoder(&Default::default());
-        job.encode_step(&mut encoder,batch.workgroups())?;
+        self.joint_workspaces.prefer_large_completed = true;
+        let created = self.joint_workspaces.creations;
+        let reused_workspaces = self.joint_workspaces.reuses;
+        let job =
+            self.joint_workspaces
+                .acquire(&self.device, &self.queue, program, batch.bytes())?;
+        self.joint_workspace_creations += self.joint_workspaces.creations - created;
+        self.joint_workspace_reuses += self.joint_workspaces.reuses - reused_workspaces;
+        let mut encoder = self.device.create_command_encoder(&Default::default());
+        job.encode_step(&mut encoder, batch.workgroups())?;
         // A retained job can be larger than this request. Copy and validate
         // precisely the current complete payload, never stale capacity padding.
-        let snapshot=voxy_render::ComputeDispatch::copy_buffer(&self.device,&mut encoder,job.buffer(),0,batch.bytes().len() as u64)?;
-        let submission=self.queue.submit([encoder.finish()]);
-        self.joint_equality_dispatches+=requests.len(); self.joint_equality_submissions+=1;
-        let mut read=snapshot.begin_read();
-        self.device.poll(wgpu::PollType::Wait {submission_index:Some(submission),timeout:None})?;
-        let bytes=read.try_read()?.ok_or("expanded GPU contact readback incomplete")?;
-        let candidates=batch.expanded_candidate_results(&bytes,false)?;
-        let factors=if reuse {batch.inputs().iter().zip(batch.operator_readbacks(&bytes,false)?).enumerate().filter_map(|(i,(input,bytes))|input.completed_parallel_factors(bytes).ok().map(|f|(i,f))).collect::<Vec<_>>()} else {Vec::new()};
-        fn decode(expansion:voxy_render::ExperimentalTripleExpansion)->Result<Vec<HairResponseCoefficient>, &'static str> {
-            let (words,scales)=expansion.into_parts();
-            words.into_iter().map(|words|HairResponseCoefficient::from_scaled_terms(words.map(|v|f64::from(f32::from_bits(v))),scales)).collect()
+        let snapshot = voxy_render::ComputeDispatch::copy_buffer(
+            &self.device,
+            &mut encoder,
+            job.buffer(),
+            0,
+            batch.bytes().len() as u64,
+        )?;
+        let submission = self.queue.submit([encoder.finish()]);
+        self.joint_equality_dispatches += requests.len();
+        self.joint_equality_submissions += 1;
+        let mut read = snapshot.begin_read();
+        self.device.poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: None,
+        })?;
+        let bytes = read
+            .try_read()?
+            .ok_or("expanded GPU contact readback incomplete")?;
+        let candidates = batch.expanded_candidate_results(&bytes, false)?;
+        let factors = if reuse {
+            batch
+                .inputs()
+                .iter()
+                .zip(batch.operator_readbacks(&bytes, false)?)
+                .enumerate()
+                .filter_map(|(i, (input, bytes))| {
+                    input.completed_parallel_factors(bytes).ok().map(|f| (i, f))
+                })
+                .collect::<Vec<_>>()
+        } else {
+            Vec::new()
+        };
+        fn decode(
+            expansion: voxy_render::ExperimentalTripleExpansion,
+        ) -> Result<Vec<HairResponseCoefficient>, &'static str> {
+            let (words, scales) = expansion.into_parts();
+            words
+                .into_iter()
+                .map(|words| {
+                    HairResponseCoefficient::from_scaled_terms(
+                        words.map(|v| f64::from(f32::from_bits(v))),
+                        scales,
+                    )
+                })
+                .collect()
         }
-        let mut output=Vec::with_capacity(candidates.len());
-        for ((candidate,support),request) in candidates.into_iter().zip(&supports).zip(requests) {
-            let value=(|| -> Result<ExpandedOutput, Box<dyn std::error::Error>> {
-            let (coordinates,reactions)=candidate.map_err(|e|e.to_string())?.into_parts();
-            let compact_coordinates=decode(coordinates)?;
-            if compact_coordinates.len()!=support.len() {return Err("expanded support shape changed".into());}
-            let mut coordinates=vec![HairResponseCoefficient::from_f64(0.)?;request.columns[0].len()];
-            for (&index,value) in support.iter().zip(compact_coordinates) {coordinates[index]=value;}
-            let reactions=decode(reactions)?.into_iter().map(|v| {let [hi,lo]=v.parts();hi+lo}).collect();
-            Ok((coordinates,reactions))
+        let mut output = Vec::with_capacity(candidates.len());
+        for ((candidate, support), request) in candidates.into_iter().zip(&supports).zip(requests) {
+            let value = (|| -> Result<ExpandedOutput, Box<dyn std::error::Error>> {
+                let (coordinates, reactions) = candidate.map_err(|e| e.to_string())?.into_parts();
+                let compact_coordinates = decode(coordinates)?;
+                if compact_coordinates.len() != support.len() {
+                    return Err("expanded support shape changed".into());
+                }
+                let mut coordinates =
+                    vec![HairResponseCoefficient::from_f64(0.)?; request.columns[0].len()];
+                for (&index, value) in support.iter().zip(compact_coordinates) {
+                    coordinates[index] = value;
+                }
+                let reactions = decode(reactions)?
+                    .into_iter()
+                    .map(|v| {
+                        let [hi, lo] = v.parts();
+                        hi + lo
+                    })
+                    .collect();
+                Ok((coordinates, reactions))
             })();
-            output.push(value.map_err(|e|e.to_string()));
+            output.push(value.map_err(|e| e.to_string()));
         }
         // Publish factors only for their independently validated, decoded candidate.
-        self.joint_expanded_factor_reuses+=reused;
-        for (i,factor) in factors {
-            if output[i].is_err() {continue;}
-            if factor.retained_bytes()>16*1024*1024 {continue;}
-            if let Some(index)=self.joint_expanded_factors.iter().position(|f|f.same_basis(&factor)) {self.joint_expanded_factors.remove(index);}
+        self.joint_expanded_factor_reuses += reused;
+        for (i, factor) in factors {
+            if output[i].is_err() {
+                continue;
+            }
+            if factor.retained_bytes() > 16 * 1024 * 1024 {
+                continue;
+            }
+            if let Some(index) = self
+                .joint_expanded_factors
+                .iter()
+                .position(|f| f.same_basis(&factor))
+            {
+                self.joint_expanded_factors.remove(index);
+            }
             self.joint_expanded_factors.push(factor);
-            while self.joint_expanded_factors.len()>32 || self.joint_expanded_factors.iter().map(|f|f.retained_bytes()).sum::<usize>()>16*1024*1024 {self.joint_expanded_factors.remove(0);}
+            while self.joint_expanded_factors.len() > 32
+                || self
+                    .joint_expanded_factors
+                    .iter()
+                    .map(|f| f.retained_bytes())
+                    .sum::<usize>()
+                    > 16 * 1024 * 1024
+            {
+                self.joint_expanded_factors.remove(0);
+            }
         }
         // All GPU work and the complete readback are finished. Local candidate
         // rejection does not leave pending GPU work in this reusable allocation.

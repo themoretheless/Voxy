@@ -94,7 +94,7 @@ pub(super) fn solve_contact_set(
     planes: &[Plane],
 ) -> Result<ContactSolution, &'static str> {
     if rhs.len() < 12
-        || rhs.len() % 6 != 0
+        || !rhs.len().is_multiple_of(6)
         || matrix.len() != rhs.len() * BAND
         || dofs != (6..rhs.len() - 3)
         || rhs
@@ -366,7 +366,7 @@ mod tests {
         assert!(solution.iterations > 1);
         let first = (-0.19 + 0.08 / 2.) / 1001.5;
         assert!((solution.correction[6] - first).abs() < 1e-14);
-        assert!((solution.correction[12] - (0.08 + first) / 2.).abs() < 1e-14);
+        assert!((solution.correction[12] - f64::midpoint(0.08, first)).abs() < 1e-14);
         check_stationarity(&matrix, &rhs, &planes, &solution);
     }
 }

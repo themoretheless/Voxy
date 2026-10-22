@@ -265,12 +265,10 @@ mod tests {
                         bytes[offset + 1],
                     ]))
                     .to_f32();
-                    let linear: f32 = if x > y {
-                        4.
-                    } else if x == y {
-                        1.
-                    } else {
-                        0.
+                    let linear: f32 = match x.cmp(&y) {
+                        std::cmp::Ordering::Greater => 4.,
+                        std::cmp::Ordering::Equal => 1.,
+                        std::cmp::Ordering::Less => 0.,
                     };
                     let expected = if mode == 3. {
                         linear

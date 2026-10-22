@@ -719,7 +719,7 @@ impl FootRuntime {
                 budget.charge_work(1).map_err(|e| e.to_string())?;
                 // Pivot identity is held throughout both live and frozen fades.
                 // Resume target phase ownership only after the source disappears.
-                if !blend.is_some_and(|phases| phases.source.is_some())
+                if blend.is_none_or(|phases| phases.source.is_none())
                     && grounded
                     && binding.plant
                     && weight > 0.
@@ -832,7 +832,7 @@ impl FootRuntime {
                 && grounded
                 && binding.plant
                 && weight == 1.
-                && !blend.is_some_and(|phases| phases.source.is_some())
+                && blend.is_none_or(|phases| phases.source.is_none())
             {
                 if let (Some((geometry, limit)), Some(contact)) =
                     (&foot.geometry, candidate.contact)

@@ -137,7 +137,8 @@ impl Liquid {
             let mut result: Vec<_> = mask
                 .iter()
                 .enumerate()
-                .filter_map(|(i, remove)| (!remove).then(|| buffer.get(i).copied().unwrap_or(0.0)))
+                .filter(|(_, remove)| !**remove)
+                .map(|(i, _)| buffer.get(i).copied().unwrap_or(0.0))
                 .collect();
             result.push(
                 indices

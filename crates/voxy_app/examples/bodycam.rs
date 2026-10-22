@@ -174,7 +174,8 @@ impl BunkerFemaleScene {
         animate_step: bool,
     ) -> Result<(), Box<dyn std::error::Error>> {
         if animate_step {
-            self.model.preview_pose(0.35 + f64::from(elapsed_time) * 0.45);
+            self.model
+                .preview_pose(0.35 + f64::from(elapsed_time) * 0.45);
             let mesh = self.model.mesh()?;
             let (body_indices, hair_indices) = full_model_worker::partition_hair(&mesh)?;
             self.body_geometry.update(queue, &mesh)?;
@@ -259,7 +260,8 @@ impl Default for BodycamDemo {
 }
 
 #[allow(clippy::too_many_lines)]
-pub(crate) fn build_tactical_compound_chunks() -> Result<Vec<voxy_runtime::BootstrapChunk>, String> {
+pub(crate) fn build_tactical_compound_chunks() -> Result<Vec<voxy_runtime::BootstrapChunk>, String>
+{
     let scene = build_procedural_scene(0x56_4f_58_59, 1).map_err(|e| e.to_string())?;
     let mut world = scene.world;
     let stone = world
@@ -292,20 +294,16 @@ pub(crate) fn build_tactical_compound_chunks() -> Result<Vec<voxy_runtime::Boots
                 });
             }
             // Reinforced concrete slab floor with weathered patches and rainwater puddles
-            let floor_block = if (12..=19).contains(&x) && (13..=20).contains(&z) && (x + z) % 3 == 0
-            {
-                water
-            } else if (x * 7 + z * 13) % 11 == 0 {
-                dirt
-            } else {
-                stone
-            };
+            let floor_block =
+                if (12..=19).contains(&x) && (13..=20).contains(&z) && (x + z) % 3 == 0 {
+                    water
+                } else if (x * 7 + z * 13) % 11 == 0 {
+                    dirt
+                } else {
+                    stone
+                };
             writes.push(VoxelWrite {
-                pos: VoxelPos {
-                    x,
-                    y: base_y,
-                    z,
-                },
+                pos: VoxelPos { x, y: base_y, z },
                 block: floor_block,
             });
         }
@@ -335,8 +333,8 @@ pub(crate) fn build_tactical_compound_chunks() -> Result<Vec<voxy_runtime::Boots
         }
         for z in 6..=27 {
             // West wall (x = 6) with vertical daylight slits casting overcast sky shafts
-            let is_west_window =
-                (base_y + 3..=base_y + 6).contains(&y) && ((10..=13).contains(&z) || (21..=24).contains(&z));
+            let is_west_window = (base_y + 3..=base_y + 6).contains(&y)
+                && ((10..=13).contains(&z) || (21..=24).contains(&z));
             if !is_west_window {
                 writes.push(VoxelWrite {
                     pos: VoxelPos { x: 6, y, z },
@@ -357,9 +355,8 @@ pub(crate) fn build_tactical_compound_chunks() -> Result<Vec<voxy_runtime::Boots
     // 3. Heavy concrete roof beams & partial collapsed ceiling slabs (allowing overcast sky GI in)
     for z in 7..=26 {
         for x in 7..=25 {
-            let is_skylight_opening =
-                ((10..=15).contains(&x) && (10..=15).contains(&z))
-                    || ((17..=22).contains(&x) && (20..=24).contains(&z));
+            let is_skylight_opening = ((10..=15).contains(&x) && (10..=15).contains(&z))
+                || ((17..=22).contains(&x) && (20..=24).contains(&z));
             if !is_skylight_opening {
                 writes.push(VoxelWrite {
                     pos: VoxelPos {
@@ -440,10 +437,7 @@ pub(crate) fn build_tactical_compound_chunks() -> Result<Vec<voxy_runtime::Boots
 
     let mut deduped = std::collections::BTreeMap::new();
     for write in writes {
-        deduped.insert(
-            (write.pos.x, write.pos.y, write.pos.z),
-            write,
-        );
+        deduped.insert((write.pos.x, write.pos.y, write.pos.z), write);
     }
     let writes: Vec<VoxelWrite> = deduped.into_values().collect();
 
@@ -499,13 +493,10 @@ impl BodycamDemo {
         renderer.update_camera(camera)?;
         renderer.set_bodycam_flashlight_and_wetness(flash_pos, flash_dir, self.wetness);
 
-        let size = self
-            .window
-            .as_ref()
-            .map_or((1280, 720), |w| {
-                let s = w.inner_size();
-                (s.width.max(1280), s.height.max(720))
-            });
+        let size = self.window.as_ref().map_or((1280, 720), |w| {
+            let s = w.inner_size();
+            (s.width.max(1280), s.height.max(720))
+        });
         if let Some(female_scene) = &mut self.female_scene {
             female_scene.update_for_camera(
                 renderer.queue(),
@@ -513,7 +504,7 @@ impl BodycamDemo {
                 size.0,
                 size.1,
                 dt,
-                self.snapshot_path.is_none() && self.frames % 2 == 0,
+                self.snapshot_path.is_none() && self.frames.is_multiple_of(2),
             )?;
         }
 
@@ -527,7 +518,13 @@ impl BodycamDemo {
             } else {
                 renderer.capture_bodycam_rgba8(self.frames + 1)?
             };
-            image::save_buffer(&snapshot_path, &rgba, width, height, image::ColorType::Rgba8)?;
+            image::save_buffer(
+                &snapshot_path,
+                &rgba,
+                width,
+                height,
+                image::ColorType::Rgba8,
+            )?;
             println!(
                 "BODYCAM SNAPSHOT OK: saved {}x{} PNG to {}",
                 width,
@@ -587,10 +584,7 @@ impl ApplicationHandler for BodycamDemo {
                 }
             }
             let chunks = build_tactical_compound_chunks()?;
-            let uploads: Vec<_> = chunks
-                .iter()
-                .map(|c| (c.pos, &c.mesh, &c.light))
-                .collect();
+            let uploads: Vec<_> = chunks.iter().map(|c| (c.pos, &c.mesh, &c.light)).collect();
             renderer.upload_lit_chunks(&uploads, ChunkPos::default())?;
             let female_scene = BunkerFemaleScene::new(&renderer)?;
             println!(

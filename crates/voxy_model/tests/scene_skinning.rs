@@ -432,14 +432,14 @@ fn gpu_reference_rig_cubic_clips_match_cpu_and_render() {
     let json_size = u32::from_le_bytes(original[12..16].try_into().unwrap()) as usize;
     let mut document: serde_json::Value =
         serde_json::from_slice(&original[20..20 + json_size]).unwrap();
-    let mut outputs = std::collections::BTreeMap::new();
+    let mut outputs = std::collections::BTreeSet::new();
     for animation in document["animations"].as_array().unwrap() {
         for sampler in animation["samplers"].as_array().unwrap() {
             let index = sampler["output"].as_u64().unwrap() as usize;
-            outputs.insert(index, ());
+            outputs.insert(index);
         }
     }
-    for index in outputs.keys() {
+    for index in &outputs {
         let mut accessor = document["accessors"][*index].clone();
         assert_eq!(accessor["componentType"], 5126);
         let view = &document["bufferViews"][accessor["bufferView"].as_u64().unwrap() as usize];
@@ -482,7 +482,7 @@ fn gpu_reference_rig_cubic_clips_match_cpu_and_render() {
     }
     document["buffers"][0]["byteLength"] = binary.len().into();
     let mut json = serde_json::to_vec(&document).unwrap();
-    while json.len() % 4 != 0 {
+    while !json.len().is_multiple_of(4) {
         json.push(b' ');
     }
     let size = 28 + json.len() + binary.len();
@@ -537,7 +537,7 @@ fn gpu_mirrored_rig_matches_cpu_positions_normals_and_render() {
             }
         }
         let mut json = serde_json::to_vec(&document).unwrap();
-        while json.len() % 4 != 0 {
+        while !json.len().is_multiple_of(4) {
             json.push(b' ');
         }
         let size = 28 + json.len() + binary.len();
@@ -575,7 +575,7 @@ fn step_glb(original: &[u8]) -> Vec<u8> {
         }
     }
     let mut json = serde_json::to_vec(&document).unwrap();
-    while json.len() % 4 != 0 {
+    while !json.len().is_multiple_of(4) {
         json.push(b' ');
     }
     let binary_chunk = &original[20 + json_size..];

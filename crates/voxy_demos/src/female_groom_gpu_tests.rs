@@ -1066,7 +1066,7 @@ fn resident_body_preserves_actual_facial_details_on_two_poses() {
             )
             .await
             .unwrap();
-        let mut resident = None;
+        let mut resident: Option<super::resident_body::ResidentBody> = None;
         let mut target: Option<voxy_render::SceneGeometry> = None;
         let mut maximum = 0u8;
         let ticks = if let Ok(list) = std::env::var("VOXY_BODY_POSE_LIST") {
@@ -1103,7 +1103,21 @@ fn resident_body_preserves_actual_facial_details_on_two_poses() {
                 .with_prepared_upload_streams();
             let count = demo.vertices.len();
             assert!(full.vertices().len() > count);
-            if target.is_none() {
+            if let Some(target_geom) = target.as_mut() {
+                assert!(
+                    target_geom
+                        .update_after_deforming_prefix(&queue, &full, full.vertices().len() + 1)
+                        .is_err()
+                );
+                target_geom
+                    .update_after_deforming_prefix(&queue, &full, count)
+                    .unwrap();
+                resident
+                    .as_mut()
+                    .unwrap()
+                    .refresh(&queue, &demo, &full)
+                    .unwrap();
+            } else {
                 let geometry = renderer.upload_compute_mesh(&device, &full).unwrap();
                 resident = Some(
                     super::resident_body::ResidentBody::new(
@@ -1112,24 +1126,6 @@ fn resident_body_preserves_actual_facial_details_on_two_poses() {
                     .unwrap(),
                 );
                 target = Some(geometry);
-            } else {
-                assert!(
-                    target
-                        .as_mut()
-                        .unwrap()
-                        .update_after_deforming_prefix(&queue, &full, full.vertices().len() + 1)
-                        .is_err()
-                );
-                target
-                    .as_mut()
-                    .unwrap()
-                    .update_after_deforming_prefix(&queue, &full, count)
-                    .unwrap();
-                resident
-                    .as_mut()
-                    .unwrap()
-                    .refresh(&queue, &demo, &full)
-                    .unwrap();
             }
             let tail = full.vertices().len() - count;
             let vertex_bytes = (tail * 36) as u64;

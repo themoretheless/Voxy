@@ -9,8 +9,12 @@ mod ids;
 pub use cancel::CancelToken;
 pub use clock::{ClockError, ClockPlan, FixedClock};
 pub use coordinates::{
-    CHUNK_EDGE, CHUNK_VOLUME, ChunkPos, CoordinateOverflow, InvalidLocalPos, LocalIndex, LocalPos,
-    PADDED_EDGE, PADDED_VOLUME, VoxelPos, join_voxel, split_voxel,
+    AabbI64, BitMatrix32, CHUNK_EDGE, CHUNK_VOLUME, ChunkPos, ChunkSphereIterator,
+    CoordinateOverflow, Direction6, FaceMask, FloatingOrigin, InvalidLocalPos, LocalIndex,
+    LocalPos, PADDED_EDGE, PADDED_VOLUME, RayGridIterator, RayVoxelStep, SpiralChunkIterator,
+    SubVoxelCoord, SubVoxelPos, VoxelPos, join_voxel, split_voxel,
 };
-pub use hash::{FastHashBuilder, FastHasher, SeededFastHashBuilder};
-pub use ids::{TickId, WorldEpoch};
+pub use hash::{
+    DeterministicRng, FastHashBuilder, FastHasher, SeededFastHashBuilder, crc32c, crc32c_append,
+};
+pub use ids::{GenerationalId, NonMaxU32, NonMaxU64, SlotMap, TickId, WorldEpoch};

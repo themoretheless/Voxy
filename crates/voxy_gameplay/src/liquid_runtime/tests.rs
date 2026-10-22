@@ -2852,7 +2852,6 @@ fn compound_gap_is_not_filled_by_a_bounding_box() {
                     translation: glam::Vec3::new(0., y, 0.),
                     rotation: glam::Quat::from_rotation_z(0.4),
                     scale: glam::Vec3::new(1., 2., 1.),
-                    ..Default::default()
                 },
             )
             .unwrap();

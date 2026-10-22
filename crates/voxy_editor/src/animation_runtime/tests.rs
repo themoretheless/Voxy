@@ -1788,7 +1788,9 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
             voxy_animation::PoseBlendSource::Clip(source) => {
                 assert_eq!(source.normalized_phase, before_source_phase)
             }
-            _ => panic!("first selection must retain the running clip"),
+            voxy_animation::PoseBlendSource::FrozenPose(_) => {
+                panic!("first selection must retain the running clip")
+            }
         }
         let sole = |frame: &AnimatorFrame, world: glam::Mat4| {
             let mut globals: Vec<glam::Mat4> = Vec::new();
@@ -2840,7 +2842,6 @@ fn production_play_dispatches_moving_fade_and_preserves_late_failure() {
                 speed: 0.,
                 gravity: 0.,
                 jump_speed: 0.,
-                ..Default::default()
             },
         )
         .unwrap();

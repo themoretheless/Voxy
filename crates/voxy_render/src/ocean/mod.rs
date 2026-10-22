@@ -13,12 +13,12 @@
 mod cdlod;
 
 use cdlod::{Cdlod, GRID, MAX_NODES, R0};
-use voxy_water::spectrum::LOOP;
-use voxy_water::{WaveSimulation, WaveSpectrum};
 use std::sync::{
     Arc,
     atomic::{AtomicU8, Ordering},
 };
+use voxy_water::spectrum::LOOP;
+use voxy_water::{WaveSimulation, WaveSpectrum};
 
 const CASCADES: u32 = 6;
 const SKY_W: u32 = 256;
@@ -152,15 +152,43 @@ mod shaders {
     pub(super) const TRANSMITTANCE: &str = wgsl!("atmosphere.wgsl", "sky_transmittance.wgsl");
     pub(super) const MULTISCATTER: &str = wgsl!("atmosphere.wgsl", "sky_multiscatter.wgsl");
     pub(super) const SKY_VIEW: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "sky_view.wgsl");
-    pub(super) const ENV_CUBE: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "noise.wgsl", "sky_render.wgsl", "sky_clouds.wgsl", "env_cube.wgsl");
-    pub(super) const SUN_VISIBILITY: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "noise.wgsl", "sky_render.wgsl", "sky_clouds.wgsl", "sun_visibility.wgsl");
+    pub(super) const ENV_CUBE: &str = wgsl!(
+        "frame.wgsl",
+        "atmosphere.wgsl",
+        "noise.wgsl",
+        "sky_render.wgsl",
+        "sky_clouds.wgsl",
+        "env_cube.wgsl"
+    );
+    pub(super) const SUN_VISIBILITY: &str = wgsl!(
+        "frame.wgsl",
+        "atmosphere.wgsl",
+        "noise.wgsl",
+        "sky_render.wgsl",
+        "sky_clouds.wgsl",
+        "sun_visibility.wgsl"
+    );
     pub(super) const HEIGHT_PROBE: &str = wgsl!("frame.wgsl", "height_probe.wgsl");
-    pub(super) const SURFACE: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "noise.wgsl", "sky_render.wgsl", "surface.wgsl");
-    pub(super) const SKY: &str = wgsl!("frame.wgsl", "atmosphere.wgsl", "noise.wgsl", "sky_render.wgsl", "sky_clouds.wgsl", "sky_background.wgsl");
+    pub(super) const SURFACE: &str = wgsl!(
+        "frame.wgsl",
+        "atmosphere.wgsl",
+        "noise.wgsl",
+        "sky_render.wgsl",
+        "surface.wgsl"
+    );
+    pub(super) const SKY: &str = wgsl!(
+        "frame.wgsl",
+        "atmosphere.wgsl",
+        "noise.wgsl",
+        "sky_render.wgsl",
+        "sky_clouds.wgsl",
+        "sky_background.wgsl"
+    );
     pub(super) const BLOOM_DOWN: &str = wgsl!("fullscreen.wgsl", "bloom_down.wgsl");
     pub(super) const BLOOM_UP: &str = wgsl!("fullscreen.wgsl", "bloom_up.wgsl");
     pub(super) const COMPOSITE: &str = wgsl!("fullscreen.wgsl", "composite.wgsl");
-    pub(super) const FOAM_TEXTURE: &str = wgsl!("noise.wgsl", "periodic_noise.wgsl", "foam_texture.wgsl");
+    pub(super) const FOAM_TEXTURE: &str =
+        wgsl!("noise.wgsl", "periodic_noise.wgsl", "foam_texture.wgsl");
 }
 
 #[derive(Debug)]
@@ -445,37 +473,13 @@ impl OceanRenderer {
                 "ocean foam mips",
                 include_str!("array16_mips.wgsl"),
             ),
-            transmittance: compute_pipeline(
-                device,
-                "sky transmittance",
-                shaders::TRANSMITTANCE,
-            ),
-            multiscatter: compute_pipeline(
-                device,
-                "sky multiscatter",
-                shaders::MULTISCATTER,
-            ),
-            sky_view: compute_pipeline(
-                device,
-                "sky view",
-                shaders::SKY_VIEW,
-            ),
-            env: compute_pipeline(
-                device,
-                "sky environment cube",
-                shaders::ENV_CUBE,
-            ),
+            transmittance: compute_pipeline(device, "sky transmittance", shaders::TRANSMITTANCE),
+            multiscatter: compute_pipeline(device, "sky multiscatter", shaders::MULTISCATTER),
+            sky_view: compute_pipeline(device, "sky view", shaders::SKY_VIEW),
+            env: compute_pipeline(device, "sky environment cube", shaders::ENV_CUBE),
             cube_mips: compute_pipeline(device, "sky cube mips", include_str!("cube_mips.wgsl")),
-            sun_visibility: compute_pipeline(
-                device,
-                "sun visibility",
-                shaders::SUN_VISIBILITY,
-            ),
-            probe: compute_pipeline(
-                device,
-                "ocean height probe",
-                shaders::HEIGHT_PROBE,
-            ),
+            sun_visibility: compute_pipeline(device, "sun visibility", shaders::SUN_VISIBILITY),
+            probe: compute_pipeline(device, "ocean height probe", shaders::HEIGHT_PROBE),
             ocean: render_pipeline(
                 device,
                 &RenderPipelineSpec {
@@ -553,7 +557,8 @@ impl OceanRenderer {
         // simulation
         let settings = OceanSettings::default();
         let waves = WaveSimulation::new(device, settings.spectrum(), 1);
-        let (disp_all, deriv_all, moments_all) = (&waves.displacement, &waves.derivatives, &waves.moments);
+        let (disp_all, deriv_all, moments_all) =
+            (&waves.displacement, &waves.derivatives, &waves.moments);
         let level = |t: &wgpu::Texture, m: u32| view(t, Some(m), D::D2Array);
         let bg = |pipe: &wgpu::BindGroupLayout, label, resources: &[R]| {
             bind_group(device, pipe, label, resources)
@@ -571,11 +576,7 @@ impl OceanRenderer {
             TU::TEXTURE_BINDING | TU::STORAGE_BINDING,
         );
         {
-            let generate = compute_pipeline(
-                device,
-                "ocean foam texture",
-                shaders::FOAM_TEXTURE,
-            );
+            let generate = compute_pipeline(device, "ocean foam texture", shaders::FOAM_TEXTURE);
             let mips = compute_pipeline(
                 device,
                 "ocean foam texture mips",
@@ -1389,7 +1390,7 @@ impl OceanRenderer {
             &self.screen.composite,
         );
 
-        if !self.probe_pending && self.frame_index % 8 == 0 {
+        if !self.probe_pending && self.frame_index.is_multiple_of(8) {
             encoder.copy_buffer_to_buffer(&self.probe_out, 0, &self.probe_read, 0, 16);
             let state = Arc::clone(&self.probe_state);
             encoder.map_buffer_on_submit(
@@ -1441,7 +1442,10 @@ mod tests {
             Validator::new(ValidationFlags::all(), Capabilities::all())
                 .validate(&module)
                 .unwrap_or_else(|e| panic!("{label}: {}", e.emit_to_string(source)));
-            assert!(!module.entry_points.is_empty(), "{label} has no entry points");
+            assert!(
+                !module.entry_points.is_empty(),
+                "{label} has no entry points"
+            );
         }
     }
 }

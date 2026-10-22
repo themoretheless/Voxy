@@ -812,7 +812,7 @@ fn independent_vascular_ports_preserve_local_and_joint_water_protein_ledgers() {
             dm[compartment] += dt * q * concentration;
         }
         let q = blood.flows()[0];
-        let donor = if q >= 0. { 0 } else { 1 };
+        let donor = usize::from(q < 0.);
         let transported_mass = dt * q * blood_mass[donor] / blood.volumes()[donor];
         for i in 0..2 {
             let sign = if i == 0 { -1. } else { 1. };

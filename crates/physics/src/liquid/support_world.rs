@@ -261,7 +261,7 @@ pub(super) fn assemble_reactions(
                 match e {
                     crate::contact::Error::Budget => Error::CollisionBudget,
                     crate::contact::Error::NumericalFailure => Error::NumericalFailure,
-                    _ => Error::InvalidCollision,
+                    crate::contact::Error::InvalidInput => Error::InvalidCollision,
                 }
             })?,
         )
@@ -373,7 +373,7 @@ impl Liquid {
             .map_err(|e| match e {
                 crate::contact::Error::Budget => Error::CollisionBudget,
                 crate::contact::Error::InvalidInput => Error::InvalidCollision,
-                _ => Error::NumericalFailure,
+                crate::contact::Error::NumericalFailure => Error::NumericalFailure,
             })?;
             for (s, f) in reactions.supports.iter().zip(&rate.forces_rate) {
                 if s.second.is_none() {

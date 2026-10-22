@@ -145,8 +145,8 @@ mod tests {
         let source = RootRigidPath::from_twists(&[(twist, 1.), (twist, 2.)], 2).unwrap();
         let target = RootRigidPath::from_twists(&[(twist, 0.5), (twist, 0.5)], 2).unwrap();
         let partition = source.partition_wall_outward(&target, 1., 32).unwrap();
-        assert!(std::ptr::eq(partition.source(), &source));
-        assert!(std::ptr::eq(partition.target(), &target));
+        assert!(std::ptr::eq(partition.source(), &raw const source));
+        assert!(std::ptr::eq(partition.target(), &raw const target));
         let intervals = partition.intervals();
         assert_eq!(intervals[0].start, 0.);
         assert_eq!(intervals.last().unwrap().end, 1.);
@@ -168,9 +168,9 @@ mod tests {
         for part in intervals.iter().filter(|part| !part.key_uncertainty) {
             assert_eq!(
                 part.source_span,
-                Some(if part.end < 1. / 3. { 0 } else { 1 })
+                Some(usize::from(part.end >= 1. / 3.))
             );
-            assert_eq!(part.target_span, Some(if part.end < 0.5 { 0 } else { 1 }));
+            assert_eq!(part.target_span, Some(usize::from(part.end >= 0.5)));
         }
         assert!(source.partition_wall_outward(&target, 1., 1).is_err());
     }

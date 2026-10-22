@@ -6,7 +6,7 @@ mod precision;
 pub use contact_bake::{
     BakedFootContacts, ContactBakeSettings, MAX_CONTACT_BAKE_SAMPLES, bake_periodic_foot_contacts,
 };
-pub use precision::{Pose64, Transform64};
+pub use precision::{Pose64, Transform64, markley_hemisphere_average, so3_exp, so3_log};
 mod events;
 pub use events::{ClipEvent, ClipEventOccurrence, ClipEvents, EventTickError, EventWindow};
 mod exact_quaternion;
@@ -60,7 +60,7 @@ pub use crowd::{CrowdEvaluator, CrowdLod, CrowdOutcome, CrowdPalettes};
 mod gpu_layout;
 pub use gpu_layout::{
     GPU_NO_PARENT, GpuBlendJob, GpuClipTable, GpuJointKey, GpuSkeletonLayout,
-    cpu_reference_palette, nlerp,
+    cpu_reference_palette, nlerp, pack_affine_3x4, unpack_affine_3x4,
 };
 mod gait;
 mod property_track;

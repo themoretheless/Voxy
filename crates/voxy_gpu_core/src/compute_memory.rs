@@ -303,8 +303,16 @@ impl ComputeMemoryBudget {
         descriptor: &wgpu::TextureDescriptor<'_>,
     ) -> Result<Arc<ManagedTexture>, ComputeError> {
         let bytes = colour_texture_bytes(descriptor, &self.0.device.limits())?;
-        if descriptor.format.is_compressed() && !self.0.device.features().contains(wgpu::Features::TEXTURE_COMPRESSION_BC) {
-            return Err(ComputeError::Validation("BC texture compression feature unavailable".into()));
+        if descriptor.format.is_compressed()
+            && !self
+                .0
+                .device
+                .features()
+                .contains(wgpu::Features::TEXTURE_COMPRESSION_BC)
+        {
+            return Err(ComputeError::Validation(
+                "BC texture compression feature unavailable".into(),
+            ));
         }
         let mut state = self.0.state.lock().expect("compute memory state poisoned");
         if bytes > state.max_bytes || state.stats.allocated_bytes > state.max_bytes - bytes {
@@ -575,17 +583,17 @@ fn colour_texture_bytes(
     descriptor: &wgpu::TextureDescriptor<'_>,
     limits: &wgpu::Limits,
 ) -> Result<u64, ComputeError> {
-    let (block_width,block_height,block_bytes) = match descriptor.format {
+    let (block_width, block_height, block_bytes) = match descriptor.format {
         wgpu::TextureFormat::Rgba8Unorm
         | wgpu::TextureFormat::Rgba8UnormSrgb
         | wgpu::TextureFormat::Bgra8Unorm
         | wgpu::TextureFormat::Bgra8UnormSrgb
         | wgpu::TextureFormat::Depth32Float
         | wgpu::TextureFormat::R32Float
-        | wgpu::TextureFormat::Rg16Float => (1,1,4_u64),
-        wgpu::TextureFormat::Rgba16Float | wgpu::TextureFormat::Rg32Float => (1,1,8),
-        wgpu::TextureFormat::Rgba32Float => (1,1,16),
-        wgpu::TextureFormat::Bc7RgbaUnorm | wgpu::TextureFormat::Bc7RgbaUnormSrgb => (4,4,16),
+        | wgpu::TextureFormat::Rg16Float => (1, 1, 4_u64),
+        wgpu::TextureFormat::Rgba16Float | wgpu::TextureFormat::Rg32Float => (1, 1, 8),
+        wgpu::TextureFormat::Rgba32Float => (1, 1, 16),
+        wgpu::TextureFormat::Bc7RgbaUnorm | wgpu::TextureFormat::Bc7RgbaUnormSrgb => (4, 4, 16),
         _ => return Err(ComputeError::InvalidBuffer),
     };
     let size = descriptor.size;
@@ -607,7 +615,9 @@ fn colour_texture_bytes(
     let mut bytes = 0_u64;
     for level in 0..descriptor.mip_level_count {
         let level_bytes = u64::from((size.width >> level).max(1).div_ceil(block_width))
-            .checked_mul(u64::from((size.height >> level).max(1).div_ceil(block_height)))
+            .checked_mul(u64::from(
+                (size.height >> level).max(1).div_ceil(block_height),
+            ))
             .and_then(|n| n.checked_mul(u64::from(size.depth_or_array_layers)))
             .and_then(|n| n.checked_mul(block_bytes))
             .ok_or(ComputeError::InvalidBuffer)?;
@@ -646,11 +656,15 @@ mod tests {
     fn depth_shadow_maps_use_shared_texture_capacity() {
         let (device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
         let budget = ComputeMemoryBudget::configure(&device, 64).unwrap();
-        let mut descriptor = texture_descriptor(4,4,1,wgpu::TextureFormat::Depth32Float);
-        descriptor.usage = wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING;
+        let mut descriptor = texture_descriptor(4, 4, 1, wgpu::TextureFormat::Depth32Float);
+        descriptor.usage =
+            wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING;
         let texture = budget.allocate_texture(&descriptor).unwrap();
-        assert_eq!(texture.allocation_bytes(),64);
-        assert!(matches!(budget.allocate_texture(&descriptor), Err(ComputeError::MemoryBudget)));
+        assert_eq!(texture.allocation_bytes(), 64);
+        assert!(matches!(
+            budget.allocate_texture(&descriptor),
+            Err(ComputeError::MemoryBudget)
+        ));
         drop(texture);
         assert_eq!(budget.stats().retired_textures, 1);
         budget.discard_retired().unwrap();
@@ -665,12 +679,15 @@ mod tests {
         assert_eq!(colour_texture_bytes(&rgba, &limits).unwrap(), 44);
         let hdr = texture_descriptor(3, 2, 2, wgpu::TextureFormat::Rgba16Float);
         assert_eq!(colour_texture_bytes(&hdr, &limits).unwrap(), 56);
-        for format in [wgpu::TextureFormat::R32Float, wgpu::TextureFormat::Rg16Float] {
+        for format in [
+            wgpu::TextureFormat::R32Float,
+            wgpu::TextureFormat::Rg16Float,
+        ] {
             let guide = texture_descriptor(4, 2, 3, format);
             assert_eq!(colour_texture_bytes(&guide, &limits).unwrap(), 44);
         }
-        let depth_range=texture_descriptor(4,2,3,wgpu::TextureFormat::Rg32Float);
-        assert_eq!(colour_texture_bytes(&depth_range,&limits).unwrap(),88);
+        let depth_range = texture_descriptor(4, 2, 3, wgpu::TextureFormat::Rg32Float);
+        assert_eq!(colour_texture_bytes(&depth_range, &limits).unwrap(), 88);
         let budget = ComputeMemoryBudget::configure(&device, 40).unwrap();
         assert!(matches!(
             budget.allocate_texture(&rgba),
@@ -694,19 +711,25 @@ mod tests {
     fn full_precision_material_mips_and_layers_are_charged_exactly() {
         let limits = wgpu::Limits::default();
         let mut descriptor = texture_descriptor(4, 2, 3, wgpu::TextureFormat::Rgba32Float);
-        assert_eq!(colour_texture_bytes(&descriptor, &limits).unwrap(), (8 + 2 + 1) * 16);
+        assert_eq!(
+            colour_texture_bytes(&descriptor, &limits).unwrap(),
+            (8 + 2 + 1) * 16
+        );
         descriptor.size.depth_or_array_layers = 3;
-        assert_eq!(colour_texture_bytes(&descriptor, &limits).unwrap(), (8 + 2 + 1) * 16 * 3);
+        assert_eq!(
+            colour_texture_bytes(&descriptor, &limits).unwrap(),
+            (8 + 2 + 1) * 16 * 3
+        );
     }
     #[test]
     fn bc7_payload_counts_block_padding_mips_and_layers() {
-        let limits=wgpu::Limits::default();
-        let mut descriptor=texture_descriptor(8,4,4,wgpu::TextureFormat::Bc7RgbaUnormSrgb);
-        assert_eq!(colour_texture_bytes(&descriptor,&limits).unwrap(),80);
-        descriptor.size.depth_or_array_layers=2;
-        assert_eq!(colour_texture_bytes(&descriptor,&limits).unwrap(),160);
-        descriptor.size.width=7;
-        assert!(colour_texture_bytes(&descriptor,&limits).is_err());
+        let limits = wgpu::Limits::default();
+        let mut descriptor = texture_descriptor(8, 4, 4, wgpu::TextureFormat::Bc7RgbaUnormSrgb);
+        assert_eq!(colour_texture_bytes(&descriptor, &limits).unwrap(), 80);
+        descriptor.size.depth_or_array_layers = 2;
+        assert_eq!(colour_texture_bytes(&descriptor, &limits).unwrap(), 160);
+        descriptor.size.width = 7;
+        assert!(colour_texture_bytes(&descriptor, &limits).is_err());
     }
     #[test]
     fn shared_texture_and_buffer_retirement_cancellation_keeps_all_charges() {

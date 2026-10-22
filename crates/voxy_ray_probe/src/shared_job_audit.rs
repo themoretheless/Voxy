@@ -26,10 +26,18 @@ fn audit_one(
             certify_order,
             certify_visibility: defer_nearest,
             defer_nearest,
-            exact_worker_limit: std::env::var("VOXY_RAY_SHARED_WORKERS").ok().map(|s|s.parse::<std::num::NonZeroU32>()).transpose()?,
-            exact_group_size: std::env::var("VOXY_RAY_SHARED_GROUP").ok().map(|s|s.parse::<std::num::NonZeroU32>()).transpose()?,
-            previous_hit_seed: defer_nearest && std::env::var("VOXY_RAY_SHARED_PREVIOUS_SEED").as_deref()==Ok("1"),
-            native_seed: defer_nearest && std::env::var("VOXY_RAY_SHARED_NATIVE_SEED").as_deref()==Ok("1"),
+            exact_worker_limit: std::env::var("VOXY_RAY_SHARED_WORKERS")
+                .ok()
+                .map(|s| s.parse::<std::num::NonZeroU32>())
+                .transpose()?,
+            exact_group_size: std::env::var("VOXY_RAY_SHARED_GROUP")
+                .ok()
+                .map(|s| s.parse::<std::num::NonZeroU32>())
+                .transpose()?,
+            previous_hit_seed: defer_nearest
+                && std::env::var("VOXY_RAY_SHARED_PREVIOUS_SEED").as_deref() == Ok("1"),
+            native_seed: defer_nearest
+                && std::env::var("VOXY_RAY_SHARED_NATIVE_SEED").as_deref() == Ok("1"),
             ..Default::default()
         },
     )?;

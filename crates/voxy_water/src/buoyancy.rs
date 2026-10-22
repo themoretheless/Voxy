@@ -31,7 +31,10 @@ impl Floater {
                 }
             }
         }
-        Self { samples, drag: 600.0 }
+        Self {
+            samples,
+            drag: 600.0,
+        }
     }
 
     pub fn volume(&self) -> f32 {
@@ -65,7 +68,9 @@ pub fn buoyancy(
     for &(local, volume) in &floater.samples {
         let offset = rotation * local;
         let point = position + offset;
-        let Some(water) = world.sample(point, time) else { continue };
+        let Some(water) = world.sample(point, time) else {
+            continue;
+        };
         // a sample sphere of this volume is partly wet over its own diameter
         let radius = (volume * 3.0 / (4.0 * std::f32::consts::PI)).cbrt();
         let wet = ((water.submersion(point) + radius) / (2.0 * radius)).clamp(0.0, 1.0);
@@ -91,7 +96,13 @@ mod tests {
     use crate::query::WaveField;
 
     fn still_pool() -> WaterWorld {
-        let mut world = WaterWorld::new(vec![WaterBody::pool(Vec3::new(-10., -3., -10.), Vec3::new(10., 0., 10.))], crate::WaveSpectrum::pool());
+        let mut world = WaterWorld::new(
+            vec![WaterBody::pool(
+                Vec3::new(-10., -3., -10.),
+                Vec3::new(10., 0., 10.),
+            )],
+            crate::WaveSpectrum::pool(),
+        );
         world.waves = WaveField::calm();
         world
     }
@@ -104,12 +115,28 @@ mod tests {
         let mass = 0.5 * WATER_DENSITY * floater.volume();
         let (mut y, mut vy) = (1.0f32, 0.0f32);
         for _ in 0..4000 {
-            let f = buoyancy(&world, &floater, Vec3::Y * y, Quat::IDENTITY, Vec3::Y * vy, Vec3::ZERO, 0.0);
+            let f = buoyancy(
+                &world,
+                &floater,
+                Vec3::Y * y,
+                Quat::IDENTITY,
+                Vec3::Y * vy,
+                Vec3::ZERO,
+                0.0,
+            );
             vy += (f.force.y / mass - 9.81) * 0.005;
             y += vy * 0.005;
         }
         assert!(y.abs() < 0.04, "settled at {y}");
-        let f = buoyancy(&world, &floater, Vec3::Y * y, Quat::IDENTITY, Vec3::ZERO, Vec3::ZERO, 0.0);
+        let f = buoyancy(
+            &world,
+            &floater,
+            Vec3::Y * y,
+            Quat::IDENTITY,
+            Vec3::ZERO,
+            Vec3::ZERO,
+            0.0,
+        );
         assert!((f.submerged - 0.5).abs() < 0.08, "{}", f.submerged);
     }
 
@@ -118,9 +145,25 @@ mod tests {
         let world = still_pool();
         let floater = Floater::cuboid(Vec3::new(1.0, 0.3, 0.5), 3);
         let tilt = Quat::from_rotation_z(0.4);
-        let f = buoyancy(&world, &floater, Vec3::ZERO, tilt, Vec3::ZERO, Vec3::ZERO, 0.0);
+        let f = buoyancy(
+            &world,
+            &floater,
+            Vec3::ZERO,
+            tilt,
+            Vec3::ZERO,
+            Vec3::ZERO,
+            0.0,
+        );
         assert!(f.torque.z < 0.0, "{:?}", f.torque);
-        let dry = buoyancy(&world, &floater, Vec3::Y * 5.0, Quat::IDENTITY, Vec3::ZERO, Vec3::ZERO, 0.0);
+        let dry = buoyancy(
+            &world,
+            &floater,
+            Vec3::Y * 5.0,
+            Quat::IDENTITY,
+            Vec3::ZERO,
+            Vec3::ZERO,
+            0.0,
+        );
         assert_eq!(dry, BuoyancyForces::default());
     }
 }

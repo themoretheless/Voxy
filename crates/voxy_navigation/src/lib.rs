@@ -234,6 +234,58 @@ impl GridSearch {
     }
 }
 
+/// 2D circular agent state for local reciprocal collision avoidance (`ORCA` / `RVO`).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CrowdAgent2D {
+    pub position: [f32; 2],
+    pub velocity: [f32; 2],
+    pub preferred_velocity: [f32; 2],
+    pub radius: f32,
+    pub max_speed: f32,
+}
+
+/// Computes a collision-free 2D velocity for `agent` against `neighbors` over `time_horizon`
+/// using reciprocal velocity-obstacle half-plane projection.
+#[must_use]
+pub fn compute_reciprocal_avoidance_velocity(
+    agent: CrowdAgent2D,
+    neighbors: &[CrowdAgent2D],
+    time_horizon: f32,
+) -> [f32; 2] {
+    let inv_tau = 1.0 / time_horizon.max(0.05);
+    let mut vx = agent.preferred_velocity[0];
+    let mut vy = agent.preferred_velocity[1];
+    for other in neighbors {
+        let rx = other.position[0] - agent.position[0];
+        let ry = other.position[1] - agent.position[1];
+        let combined_r = (agent.radius + other.radius).max(1e-4);
+        let dist_sq = rx * rx + ry * ry;
+        if dist_sq < 1e-10 {
+            continue;
+        }
+        let dist = dist_sq.sqrt();
+        let nx = rx / dist;
+        let ny = ry / dist;
+        let rel_vx = vx - other.velocity[0];
+        let rel_vy = vy - other.velocity[1];
+        let approach_speed = rel_vx * nx + rel_vy * ny;
+        let min_clearance_rate = (dist - combined_r) * inv_tau;
+        if approach_speed > min_clearance_rate {
+            let excess = 0.5 * (approach_speed - min_clearance_rate);
+            vx -= excess * nx;
+            vy -= excess * ny;
+        }
+    }
+    let speed_sq = vx * vx + vy * vy;
+    let max_s = agent.max_speed.max(0.0);
+    if speed_sq > max_s * max_s && speed_sq > 0.0 {
+        let scale = max_s / speed_sq.sqrt();
+        [vx * scale, vy * scale]
+    } else {
+        [vx, vy]
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

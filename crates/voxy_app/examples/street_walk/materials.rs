@@ -1,4 +1,5 @@
 //! CC0 scanned surfaces on independently authored original street geometry.
+#![allow(dead_code)]
 use super::scene::StreetScene;
 use std::path::{Path, PathBuf};
 use voxy_render::archive_scene::ArchiveImageSource;

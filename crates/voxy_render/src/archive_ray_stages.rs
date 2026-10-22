@@ -60,7 +60,7 @@ impl ArchiveRayStages {
         let (mut tw, mut th) = shape(
             width,
             height,
-            u64::from(limits.max_storage_buffer_binding_size),
+            limits.max_storage_buffer_binding_size,
             limits.max_buffer_size,
         )?;
         if std::env::var_os("VOXY_STREET_RAY_CHUNK_TEST").is_some() {
@@ -572,7 +572,6 @@ impl ArchiveRayStages {
                                 true,
                                 stage != 0 || self.queue.is_none(),
                             ),
-                            ..Default::default()
                         });
                         pass.set_pipeline(&pipelines[stage]);
                         pass.set_bind_group(0, &self.groups[kind][0], &[]);
@@ -608,7 +607,6 @@ impl ArchiveRayStages {
                                         ][which],
                                     ),
                                     timestamp_writes: writes,
-                                    ..Default::default()
                                 });
                             pass.set_pipeline(&extra[kind][which]);
                             pass.set_bind_group(0, &self.groups[kind][0], &[]);

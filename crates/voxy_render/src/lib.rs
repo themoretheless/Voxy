@@ -145,6 +145,9 @@ pub use material::{MaterialError, MaterialLayer, MaterialPack, MaterialSet};
 pub use renderer::{
     CameraView, GpuQuad, RenderOutcome, Renderer, RendererError, SkinnedMotionOutput, SurfaceState,
 };
+mod pose_admission_profile;
+mod pose_family_bound;
+pub use pose_admission_profile::RenderPoseProfile;
 pub use skinned::{SkinnedMesh, SkinnedMeshError, SkinnedUploadError, SkinnedVertex};
 pub use voxy_gpu_core::{
     GraphicsBackend, GraphicsCapabilities, GraphicsOptions, PresentPreference,
@@ -441,6 +444,7 @@ mod probe_gi;
 mod native_vegetation;
 pub use native_vegetation::NativeVegetation;
 
+mod archive_hdr_diagnostics;
 mod archive_temporal;
 pub use archive_temporal::{ArchiveAntialiasing, ArchiveCameraLens, halton_jitter};
 #[cfg(target_os = "macos")]
@@ -462,5 +466,17 @@ pub mod archive_depth_bounds;
 
 mod archive_gpu_timing;
 
-mod shared_upload;
-pub use shared_upload::SharedUploadRing;
+pub use voxy_gpu_core::{SharedUploadCopy, SharedUploadRing, SharedUploadSnapshot};
+
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+mod frame_upload_test_support;
+
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+#[allow(dead_code)]
+#[path = "../tests/fixtures/shared_upload_before.rs"]
+mod shared_upload_before;
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+mod shared_upload_move_tests;
+
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+mod full_frame_upload_bench;

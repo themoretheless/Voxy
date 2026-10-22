@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
-use voxy_core::{CHUNK_VOLUME, ChunkPos, LocalIndex};
+use voxy_core::{CHUNK_VOLUME, ChunkPos, LocalIndex, LocalPos};
 
 use crate::BlockStateId;
 
@@ -209,6 +209,77 @@ impl PalettedBlocks {
             }
             Self::Direct(blocks) => size_of::<BlockStateId>() * blocks.len(),
         }
+    }
+
+    /// Counts occurrences of `block` across all `32³` cells without allocating a dense copy.
+    #[must_use]
+    pub fn count_block(&self, block: BlockStateId) -> usize {
+        match self {
+            Self::Uniform(present) => {
+                if *present == block {
+                    CHUNK_VOLUME
+                } else {
+                    0
+                }
+            }
+            Self::Packed {
+                bits_per_index,
+                palette,
+                words,
+            } => {
+                let Ok(target_slot) = palette.binary_search(&block) else {
+                    return 0;
+                };
+                let mut count = 0_usize;
+                for_each_packed(words, *bits_per_index, |slot| {
+                    if slot == target_slot {
+                        count += 1;
+                    }
+                });
+                count
+            }
+            Self::Direct(blocks) => blocks.iter().filter(|&&b| b == block).count(),
+        }
+    }
+
+    /// Fills the inclusive sub-box `min..=max` with `block`, returning the canonical repacked representation.
+    ///
+    /// # Errors
+    ///
+    /// Propagates any internal cell-count invariant failure.
+    pub fn fill_box(
+        &self,
+        min: LocalPos,
+        max: LocalPos,
+        block: BlockStateId,
+    ) -> Result<Self, ChunkError> {
+        if min.x() > max.x() || min.y() > max.y() || min.z() > max.z() {
+            return Ok(self.clone());
+        }
+        if min.x() == 0
+            && min.y() == 0
+            && min.z() == 0
+            && max.x() == 31
+            && max.y() == 31
+            && max.z() == 31
+        {
+            return Ok(Self::Uniform(block));
+        }
+        if let Self::Uniform(existing) = self
+            && *existing == block
+        {
+            return Ok(self.clone());
+        }
+        let mut dense = self.to_dense();
+        for y in min.y()..=max.y() {
+            for z in min.z()..=max.z() {
+                let row_start = 32 * (usize::from(z) + 32 * usize::from(y));
+                let start = row_start + usize::from(min.x());
+                let end = row_start + usize::from(max.x()) + 1;
+                dense[start..end].fill(block);
+            }
+        }
+        Self::from_dense(dense)
     }
 }
 
@@ -647,5 +718,28 @@ mod tests {
                 assert_eq!(*seen, expected, "bits {bits} cell {cell}");
             }
         }
+    }
+
+    #[test]
+    fn fill_box_and_count_block_match_dense_reference() {
+        let base = PalettedBlocks::uniform(id(0));
+        let min = LocalPos::new(4, 2, 8).unwrap();
+        let max = LocalPos::new(11, 5, 15).unwrap();
+        let filled = base.fill_box(min, max, id(7)).unwrap();
+        assert_canonical(&filled);
+        let expected_box = (8 * 4 * 8) as usize;
+        assert_eq!(filled.count_block(id(7)), expected_box);
+        assert_eq!(filled.count_block(id(0)), CHUNK_VOLUME - expected_box);
+        assert_eq!(filled.count_block(id(99)), 0);
+
+        let full = filled
+            .fill_box(
+                LocalPos::new(0, 0, 0).unwrap(),
+                LocalPos::new(31, 31, 31).unwrap(),
+                id(3),
+            )
+            .unwrap();
+        assert_eq!(full, PalettedBlocks::Uniform(id(3)));
+        assert_eq!(full.count_block(id(3)), CHUNK_VOLUME);
     }
 }

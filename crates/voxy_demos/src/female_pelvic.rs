@@ -295,8 +295,7 @@ impl PelvicAnatomy {
                 let abs_x = x.abs();
 
                 // 1. LABIA MAJORA & INTERLABIAL SULCUS (z in [+0.002, +0.058])
-                let vulva_v =
-                    smoothstep(0.000, 0.012, z) * (1.0 - smootherstep(0.044, 0.056, z));
+                let vulva_v = smoothstep(0.000, 0.012, z) * (1.0 - smootherstep(0.044, 0.056, z));
                 let vulva_phase = ((z - 0.002) / 0.052).clamp(0.0, 1.0);
                 let majora_arch = (std::f32::consts::PI * vulva_phase).sin().max(0.0);
                 let majora_center_x = 0.0062 + 0.0024 * majora_arch;
@@ -314,15 +313,14 @@ impl PelvicAnatomy {
                     * (-((x / 0.0085).powi(2))).exp();
 
                 let sulcus_center_x = 0.0040 + 0.0019 * majora_arch;
-                let interlabial_sulcus_profile =
-                    (-((abs_x - sulcus_center_x) / 0.00105).powi(2)).exp()
-                        * smoothstep(0.006, 0.014, z)
-                        * (1.0 - smoothstep(0.046, 0.053, z));
+                let interlabial_sulcus_profile = (-((abs_x - sulcus_center_x) / 0.00105).powi(2))
+                    .exp()
+                    * smoothstep(0.006, 0.014, z)
+                    * (1.0 - smoothstep(0.046, 0.053, z));
                 let interlabial_sulcus_h = -0.0020 * interlabial_sulcus_profile;
 
                 // 2. LABIA MINORA (`Nymphae`), FOURCHETTE & VESTIBULE (z in [+0.008, +0.043])
-                let minora_v =
-                    smoothstep(0.008, 0.014, z) * (1.0 - smoothstep(0.0392, 0.0430, z));
+                let minora_v = smoothstep(0.008, 0.014, z) * (1.0 - smoothstep(0.0392, 0.0430, z));
                 let minora_phase = ((z - 0.008) / 0.035).clamp(0.0, 1.0);
                 let minora_arch = (std::f32::consts::PI * minora_phase)
                     .sin()
@@ -334,10 +332,10 @@ impl PelvicAnatomy {
                 let minora_profile = (-minora_dist * minora_dist).exp() * minora_v;
 
                 let inner_nympho_groove_x = (minora_center_x - 0.00125).max(0.0007);
-                let inner_nympho_groove =
-                    (-((abs_x - inner_nympho_groove_x) / 0.00065).powi(2)).exp()
-                        * smoothstep(0.012, 0.017, z)
-                        * (1.0 - smoothstep(0.038, 0.042, z));
+                let inner_nympho_groove = (-((abs_x - inner_nympho_groove_x) / 0.00065).powi(2))
+                    .exp()
+                    * smoothstep(0.012, 0.017, z)
+                    * (1.0 - smoothstep(0.038, 0.042, z));
 
                 let smooth_sign_x = (x / 0.0010).tanh();
                 let minora_crenulation = 1.0
@@ -349,17 +347,17 @@ impl PelvicAnatomy {
                 let labia_minora_flare_u =
                     0.00075 * smooth_sign_x * minora_profile * (0.68 + 0.32 * (z * 480.0).sin());
 
-                let fourchette_arch = (-((z - 0.0095) / 0.0022).powi(2)).exp()
-                    * (-((x / 0.0028).powi(2))).exp();
+                let fourchette_arch =
+                    (-((z - 0.0095) / 0.0022).powi(2)).exp() * (-((x / 0.0028).powi(2))).exp();
                 let fourchette_h = 0.0026 * fourchette_arch;
                 let fossa_navicularis_h = -0.0015
                     * (-((z - 0.0132) / 0.0022).powi(2)).exp()
                     * (-((x / 0.0022).powi(2))).exp();
 
-                let inside_vestibule =
-                    (1.0 - smoothstep(minora_center_x - 0.0006, minora_center_x + 0.0006, abs_x))
-                        * smoothstep(0.010, 0.015, z)
-                        * (1.0 - smoothstep(0.041, 0.0465, z));
+                let inside_vestibule = (1.0
+                    - smoothstep(minora_center_x - 0.0006, minora_center_x + 0.0006, abs_x))
+                    * smoothstep(0.010, 0.015, z)
+                    * (1.0 - smoothstep(0.041, 0.0465, z));
                 let vestibule_cleft_h = -0.0012 * inside_vestibule;
 
                 // 3. 3D CLITORAL COMPLEX
@@ -379,13 +377,11 @@ impl PelvicAnatomy {
                     * (-((z - (clit_z - 0.0008)) / 0.00090).powi(2)).exp();
                 let clit_glans_mask = 1.0 - smoothstep(0.72, 1.02, clit_r);
                 let clit_glans_base = 0.0068 * clit_dome + 0.0014 * clit_corona;
-                let clit_flare_u = 0.00028
-                    * clit_dx
-                    * (-((clit_r - 0.65) / 0.24).powi(2)).exp();
+                let clit_flare_u = 0.00028 * clit_dx * (-((clit_r - 0.65) / 0.24).powi(2)).exp();
                 let clit_flare_v = -0.00028 * (-((clit_r - 0.58) / 0.28).powi(2)).exp();
 
-                let clit_moat_profile = (-((clit_r - 1.05) / 0.18).powi(2)).exp()
-                    * smoothstep(-0.45, 0.30, clit_dz);
+                let clit_moat_profile =
+                    (-((clit_r - 1.05) / 0.18).powi(2)).exp() * smoothstep(-0.45, 0.30, clit_dz);
                 let clit_moat_h = -0.0019 * clit_moat_profile;
 
                 let hood_rx = 0.0024;
@@ -440,9 +436,8 @@ impl PelvicAnatomy {
                 let vag_theta = vag_dx.atan2(vag_dz);
 
                 let vag_sphincter_ring = (-((vag_r - 1.02) / 0.20).powi(2)).exp();
-                let vag_sphincter_fibers = 1.0
-                    + 0.14 * (16.0 * vag_theta).cos()
-                    + 0.10 * (vag_r * 38.0).sin();
+                let vag_sphincter_fibers =
+                    1.0 + 0.14 * (16.0 * vag_theta).cos() + 0.10 * (vag_r * 38.0).sin();
                 let vag_sphincter_unit = 0.0032 * vag_sphincter_ring * vag_sphincter_fibers;
 
                 let vag_introital_sulcus = (-((vag_r - 0.80) / 0.10).powi(2)).exp();
@@ -458,9 +453,8 @@ impl PelvicAnatomy {
                 let vag_lobe_valley = 1.0 - vag_lobe_wave;
                 let columna_weight = (vag_dz.abs()).powf(1.3) * (-((x / 0.0022).powi(2))).exp();
                 let rugae_wave = 0.5 + 0.5 * (vag_r * 52.0 + 2.0 * (6.0 * vag_theta).cos()).cos();
-                let vag_prolapse_shape = vag_prolapse_torus
-                    * (0.62 + 0.38 * vag_lobe_wave)
-                    * (0.78 + 0.22 * rugae_wave);
+                let vag_prolapse_shape =
+                    vag_prolapse_torus * (0.62 + 0.38 * vag_lobe_wave) * (0.78 + 0.22 * rugae_wave);
                 let vag_prolapse_base_h = 0.0056 * vag_prolapse_shape
                     + 0.0014 * columna_weight * vag_prolapse_torus * rugae_wave;
 
@@ -560,14 +554,11 @@ impl PelvicAnatomy {
                     (0.16 * ure_cuff_unit + 0.20 * vag_sphincter_unit + 0.20 * anal_ext_unit)
                         * perimeter;
 
-                let base_disp_u = (labia_minora_flare_u
-                    + clit_flare_u
-                    + vag_flare_base_u
-                    + anal_flare_base_u)
-                    * perimeter;
+                let base_disp_u =
+                    (labia_minora_flare_u + clit_flare_u + vag_flare_base_u + anal_flare_base_u)
+                        * perimeter;
                 let pulse_disp_u = (0.15 * (vag_flare_base_u + anal_flare_base_u)) * perimeter;
-                let base_disp_v =
-                    (clit_flare_v + vag_flare_base_v + anal_flare_base_v) * perimeter;
+                let base_disp_v = (clit_flare_v + vag_flare_base_v + anal_flare_base_v) * perimeter;
                 let pulse_disp_v = (0.15 * (vag_flare_base_v + anal_flare_base_v)) * perimeter;
 
                 // 9. PRECOMPUTED TISSUE PIGMENTATION & WETNESS COEFFICIENTS
@@ -622,9 +613,9 @@ impl PelvicAnatomy {
                 blend_tint(vaginal_sphincter_tone, 1.14, vag_sphincter_mask * 0.85);
                 wetness = wetness.max(0.75 * vag_sphincter_mask);
 
-                let vag_prolapse_mask =
-                    (smoothstep(0.14, 0.26, vag_r) * (1.0 - smoothstep(0.70, 0.84, vag_r)))
-                        .clamp(0.0, 1.0);
+                let vag_prolapse_mask = (smoothstep(0.14, 0.26, vag_r)
+                    * (1.0 - smoothstep(0.70, 0.84, vag_r)))
+                .clamp(0.0, 1.0);
                 let vag_prolapse_tint = mix3(
                     vaginal_prolapse_crimson,
                     vaginal_rugae_crest,
@@ -652,9 +643,9 @@ impl PelvicAnatomy {
                 blend_tint(anal_intersphincteric_tone, 1.12, intersphincteric_mask);
                 wetness = wetness.max(0.68 * intersphincteric_mask);
 
-                let anal_prolapse_mask =
-                    (smoothstep(0.14, 0.24, anal_r) * (1.0 - smoothstep(0.64, 0.75, anal_r)))
-                        .clamp(0.0, 1.0);
+                let anal_prolapse_mask = (smoothstep(0.14, 0.24, anal_r)
+                    * (1.0 - smoothstep(0.64, 0.75, anal_r)))
+                .clamp(0.0, 1.0);
                 let anal_prolapse_tint = mix3(
                     rectal_prolapse_crimson,
                     rectal_column_crest,
@@ -680,7 +671,7 @@ impl PelvicAnatomy {
                 let lumen_darkness = (0.85 * ure_slit
                     + 0.96 * (1.0 - smoothstep(0.06, 0.23, vag_r))
                     + 0.96 * (1.0 - smoothstep(0.06, 0.21, anal_r)))
-                    .clamp(0.0, 0.97);
+                .clamp(0.0, 0.97);
 
                 let static_wetness = (wetness * perimeter).clamp(0.0, 1.0);
                 let final_roughness = (0.50 + (roughness - 0.50) * perimeter).clamp(0.13, 0.65);
@@ -824,15 +815,13 @@ impl PelvicAnatomy {
                 for iu in 1..(GRID_U - 1) {
                     let idx = row + iu;
                     let w = self.samples[idx].perimeter;
-                    let avg_p = (carrier_pos[idx - 1]
-                        + carrier_pos[idx] * 2.0
-                        + carrier_pos[idx + 1])
-                        * 0.25;
+                    let avg_p =
+                        (carrier_pos[idx - 1] + carrier_pos[idx] * 2.0 + carrier_pos[idx + 1])
+                            * 0.25;
                     scratch_pos[idx] = carrier_pos[idx].lerp(avg_p, 0.85 * w);
-                    let avg_n = (carrier_norm[idx - 1]
-                        + carrier_norm[idx] * 2.0
-                        + carrier_norm[idx + 1])
-                        .normalize_or_zero();
+                    let avg_n =
+                        (carrier_norm[idx - 1] + carrier_norm[idx] * 2.0 + carrier_norm[idx + 1])
+                            .normalize_or_zero();
                     scratch_norm[idx] = carrier_norm[idx]
                         .lerp(avg_n, 0.92 * w.sqrt())
                         .normalize_or_zero();
@@ -895,9 +884,12 @@ impl PelvicAnatomy {
 
             let local_illum = (base_lit_color[0] / 0.84).clamp(0.46, 1.0);
             let pre_lumen = [
-                base_lit_color[0] * sample.color_base_weight + sample.color_illum_rgb[0] * local_illum,
-                base_lit_color[1] * sample.color_base_weight + sample.color_illum_rgb[1] * local_illum,
-                base_lit_color[2] * sample.color_base_weight + sample.color_illum_rgb[2] * local_illum,
+                base_lit_color[0] * sample.color_base_weight
+                    + sample.color_illum_rgb[0] * local_illum,
+                base_lit_color[1] * sample.color_base_weight
+                    + sample.color_illum_rgb[1] * local_illum,
+                base_lit_color[2] * sample.color_base_weight
+                    + sample.color_illum_rgb[2] * local_illum,
             ];
             let color = mix3(pre_lumen, deep_lumen_dark, sample.lumen_darkness);
             let final_color = mix3(base_lit_color, color, sample.perimeter);

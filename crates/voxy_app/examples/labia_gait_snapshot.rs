@@ -15,7 +15,7 @@ use voxy_render::{
     SceneRenderer, SceneVertex,
 };
 
-const ANATOMICAL_MUCOSAL_SHADER: &str = r#"
+const ANATOMICAL_MUCOSAL_SHADER: &str = r"
 struct Transform { mvp: mat4x4<f32>, previous_mvp: mat4x4<f32>, camera: vec4<f32> }
 @group(0) @binding(0) var<uniform> transform: Transform;
 
@@ -197,7 +197,7 @@ fn fs_main(in: Output) -> @location(0) vec4<f32> {
     let mapped = filmic_tonemap(raw_lit * 1.06);
     return vec4<f32>(mapped, 1.0);
 }
-"#;
+";
 
 #[derive(Clone, Copy, Debug)]
 struct PreparedVertexBinding {
@@ -1162,7 +1162,7 @@ fn run_interactive_window(
                             self.step_render_ms_samples.last().copied().unwrap_or(1.0);
                         let compute_fps = 1000.0 / last_work_ms.max(1e-4);
                         self.last_frame_at = Some(now);
-                        if self.frame_count == 1 || self.frame_count % 30 == 0 {
+                        if self.frame_count == 1 || self.frame_count.is_multiple_of(30) {
                             window.set_title(&format!(
                                 "Voxy FEM | Photorealistic Labia Gait & Smearing | FPS: {:.1} (step+render {:.2} ms -> {:.0} FPS) | frame={} gap={:.3}mm",
                                 compute_fps.max(wall_fps),

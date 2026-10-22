@@ -327,7 +327,7 @@ impl SurfaceFilm {
             return Err("invalid film frame timestep");
         }
         let mut next = Self::new(points, self.triangles.clone(), self.material)?;
-        next.volume = self.volume.clone();
+        next.volume.clone_from(&self.volume);
         next.wetting_model = self.wetting_model;
         let added = if sources.is_empty() {
             0.

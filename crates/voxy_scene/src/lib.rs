@@ -21,7 +21,7 @@ mod history;
 pub use history::{SceneEdit, SceneHistory};
 
 mod events;
-pub use events::{EventChannel, EventCursor, EventError, EventRead};
+pub use events::{DoubleBufferedEvents, EventChannel, EventCursor, EventError, EventRead};
 
 mod schedule;
 pub use schedule::{

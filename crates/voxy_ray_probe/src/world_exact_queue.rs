@@ -52,7 +52,7 @@ impl QueuedExact {
             "{}\n{}\n{}\n{}\n{}",
             include_str!("../../voxy_render/src/world_ray_input.wgsl"),
             include_str!("../../voxy_render/src/world_ray_source_bindings.wgsl"),
-        include_str!("../../voxy_render/src/world_exact_integer.wgsl"),
+            include_str!("../../voxy_render/src/world_exact_integer.wgsl"),
             include_str!("../../voxy_render/src/world_exact_ratio.wgsl"),
             include_str!("../../voxy_render/src/world_exact.wgsl")
         );
@@ -189,7 +189,7 @@ impl QueuedExact {
             if pending > count {
                 return Err("GPU exact work queue overflow".into());
             }
-            ids.extend_from_slice(&words[1..1 + pending]);
+            ids.extend_from_slice(&words[1..=pending]);
         }
         self.queue_readback.unmap();
         let unique: std::collections::BTreeSet<_> = ids.iter().copied().collect();

@@ -313,8 +313,10 @@ mod presentation_tests {
             viewport: [200.0; 2],
             elements: Vec::new(),
         };
-        let mut ui = UiLive::default();
-        ui.published = Some(first.clone());
+        let mut ui = UiLive {
+            published: Some(first.clone()),
+            ..UiLive::default()
+        };
         assert!(ui.presented().is_none());
         ui.frame_presented();
         assert_eq!(ui.presented(), Some(&first));

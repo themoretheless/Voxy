@@ -142,8 +142,8 @@ pub(super) fn export_input_to(
     match write() {
         Ok(()) => {
             eprintln!(
-                "HAIR QR INPUT EXPORT {:?} systems={} rows={} refinement={refinement}",
-                path,
+                "HAIR QR INPUT EXPORT {} systems={} rows={} refinement={refinement}",
+                std::path::Path::new(&path).display(),
                 requests.len(),
                 bounds.len()
             );
@@ -211,8 +211,8 @@ pub(super) fn export(
     };
     match write() {
         Ok(()) => eprintln!(
-            "HAIR QR FAILURE EXPORT {:?} systems={} rows={} coordinates={} failed_row={failed_row}",
-            path,
+            "HAIR QR FAILURE EXPORT {} systems={} rows={} coordinates={} failed_row={failed_row}",
+            std::path::Path::new(&path).display(),
             requests.len(),
             bounds.len(),
             coordinates.len()

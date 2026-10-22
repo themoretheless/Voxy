@@ -648,9 +648,10 @@ fn gravity_substep_reuse_benchmark() {
             .map(|(a, b)| (a - b).abs())
             .fold(0., f64::max);
         assert!(difference < 1e-15, "{difference}");
-        report.push_str(&format!(
-            "{sample},{batch:.9},{single:.9},{difference:.3e}\n"
-        ));
+        let _ = std::fmt::Write::write_fmt(
+            &mut report,
+            format_args!("{sample},{batch:.9},{single:.9},{difference:.3e}\n"),
+        );
     }
     println!("{report}");
     if let Ok(path) = std::env::var("VOXY_GRAVITY_CACHE_REPORT") {
@@ -837,9 +838,10 @@ fn self_contact_exchange_converges_to_analytic_uniform_plate_solution() {
         let receiver = h[count..].iter().sum::<f64>() / count as f64;
         let error = (receiver - expected_receiver).abs() / initial_height;
         errors.push(error);
-        report.push_str(&format!(
-            "{dt},{receiver:.15e},{expected_receiver:.15e},{error:.15e}\n"
-        ));
+        let _ = std::fmt::Write::write_fmt(
+            &mut report,
+            format_args!("{dt},{receiver:.15e},{expected_receiver:.15e},{error:.15e}\n"),
+        );
         assert!((film.total_mass() - mass).abs() < mass * 1e-12);
         assert!(
             h[count..]
@@ -879,10 +881,13 @@ fn self_contact_uniform_plate_transfer_is_mesh_invariant() {
         let mass_error = (film.total_mass() - mass).abs() / mass;
         assert!(mass_error < 1e-12);
         receiver_volumes.push(volume);
-        report.push_str(&format!(
-            "{divisions},{},{volume:.15e},{mass_error:.3e}\n",
-            2 * count
-        ));
+        let _ = std::fmt::Write::write_fmt(
+            &mut report,
+            format_args!(
+                "{divisions},{},{volume:.15e},{mass_error:.3e}\n",
+                2 * count
+            ),
+        );
     }
     for volume in &receiver_volumes {
         assert!(

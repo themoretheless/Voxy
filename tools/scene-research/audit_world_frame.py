@@ -13,9 +13,21 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('root', type=Path)
 parser.add_argument('--output', type=Path, required=True)
 parser.add_argument('--existence-witness', action='store_true', help='also prove explicit history existence results against original geometry')
+parser.add_argument('--standalone-replay',action='store_true',help='Explicit separate capture scope: all-ray replay compared to its exact oracle; rendered cache counters validated separately.')
 args = parser.parse_args()
 frame = json.loads((args.root / 'world-frame.json').read_text())
 width, height = frame['size']
+if args.standalone_replay:
+    assert frame.get('source_capture_scope')=='standalone all-ray producer/query replay after render'
+    assert frame.get('render_queries_may_be_consumer_pruned') is True
+    cache=json.loads((args.root/'consumer-zero-audit.json').read_text())
+    assert cache['consumer_cache'] and cache['material_gate_enabled']
+    assert len(cache['region_counters'])==2*len(frame['tiles'])
+    for row,branches in zip(cache['region_counters'],frame['branch_counts']):
+        assert len(row)==12 and row[:8]==branches
+        assert row[10]==row[11]==0 and row[9]>=row[8]
+    assert sum(row[9]for row in cache['region_counters'])>0
+
 reports = []
 os.environ['VOXY_NEAREST_MATERIALS'] = '1'
 for kind in range(2):
@@ -51,7 +63,7 @@ for kind in range(2):
             records.append(hit)
             misses += int(hit[0] == 0)
             tails += int(hit[0] == 1 and hit[15] & 1 != 0)
-        if frame.get('audit_counters_enabled', True):
+        if frame.get('audit_counters_enabled', True) and not args.standalone_replay:
             assert counts[1] == misses and counts[3] == tails
     assert seen == set(range(width * height))
     oracle = build(args.root, cases)
@@ -92,7 +104,7 @@ for kind in range(2):
                     'independent_source_queries': len(records), 'parameters_and_residuals_exact': True, 'canonical_parameters_scope': 'state1_only',
                     'existence_witnesses_checked': witness_count, 'native_source_witnesses_checked': native_witness_count,
                     'uv_audit': uv_report})
-result = {'size': frame['size'], 'kinds': reports, 'original_frame_pass_skipped': True,
+result = {'standalone_replay_scope':args.standalone_replay,'render_and_replay_branch_counts_compared':not args.standalone_replay,'render_cache_checks_validated_separately':args.standalone_replay,'size': frame['size'], 'kinds': reports, 'original_frame_pass_skipped': True,
           'gpu_timing_positive': frame['gpu_gi_ms'][1] > 0 and frame['gpu_ssr_ms'] > 0,
           'full_street_qualified': False, 'fps_qualified': False}
 args.output.write_text(json.dumps(result, indent=2) + '\n')

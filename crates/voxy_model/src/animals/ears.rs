@@ -24,24 +24,41 @@ pub(super) fn append(mesh: &mut AnatomySurface, a: BreedAnatomy) {
                 let width = hw * 0.40 * (1.0 - t).powf(0.72) + height * 0.006;
                 for col in 0..=COLS {
                     let u = col as f32 / COLS as f32 * 2.0 - 1.0;
-                    let envelope=(std::f32::consts::PI*t).sin().max(0.);
+                    let envelope = (std::f32::consts::PI * t).sin().max(0.);
                     let rim = origin.z + height * (0.22 * (1.0 - t) - 0.08 * t);
-                    let bowl=height*0.20*(1.-u*u).max(0.).powf(0.75)*envelope;
-                    let rolled_edge=height*0.035*(-((u.abs()-0.86)/0.13).powi(2)).exp()*envelope;
-                    let fold_envelope=if t<0.55 {(std::f32::consts::PI*t/0.55).sin()} else {0.};
-                    let fold=height*0.070*(-((u-side*(0.24-t*0.30))/0.18).powi(2)).exp()*fold_envelope;
-                    let front=rim-bowl+rolled_edge+fold;
+                    let bowl = height * 0.20 * (1. - u * u).max(0.).powf(0.75) * envelope;
+                    let rolled_edge =
+                        height * 0.035 * (-((u.abs() - 0.86) / 0.13).powi(2)).exp() * envelope;
+                    let fold_envelope = if t < 0.55 {
+                        (std::f32::consts::PI * t / 0.55).sin()
+                    } else {
+                        0.
+                    };
+                    let fold = height
+                        * 0.070
+                        * (-((u - side * (0.24 - t * 0.30)) / 0.18).powi(2)).exp()
+                        * fold_envelope;
+                    let front = rim - bowl + rolled_edge + fold;
                     // The back follows the bowl with positive cartilage
                     // thickness; the former planar back crossed the deep front.
-                    let z=front-if back {height*(0.012+0.025*(1.-t))} else {0.};
+                    let z = front
+                        - if back {
+                            height * (0.012 + 0.025 * (1. - t))
+                        } else {
+                            0.
+                        };
                     mesh.positions.push([
                         side * (hw * 0.78 + height * t * 0.16) + width * u,
                         origin.y + skull * 0.22 + height * t,
                         z,
                     ]);
                     mesh.normals.push([0.0; 3]);
-                    let skin=if back {0.} else {((1.-u*u).max(0.)*envelope).powf(0.65)};
-                    mesh.inner_ear.push(skin>0.25);
+                    let skin = if back {
+                        0.
+                    } else {
+                        ((1. - u * u).max(0.) * envelope).powf(0.65)
+                    };
+                    mesh.inner_ear.push(skin > 0.25);
                     mesh.inner_ear_weight.push(skin);
                 }
             }
@@ -141,11 +158,15 @@ mod tests {
                     .all(|&n| (Vec3::from(n).length() - 1.0).abs() < 0.001)
             );
             assert!(mesh.inner_ear.iter().any(|&v| v));
-            let plane=19*21;
+            let plane = 19 * 21;
             for i in 0..plane {
-                let front=Vec3::from(mesh.positions[i]);
-                let back=Vec3::from(mesh.positions[i+plane]);
-                assert!(front.z>back.z,"pinna surfaces cross at {i}: {}",front.z-back.z);
+                let front = Vec3::from(mesh.positions[i]);
+                let back = Vec3::from(mesh.positions[i + plane]);
+                assert!(
+                    front.z > back.z,
+                    "pinna surfaces cross at {i}: {}",
+                    front.z - back.z
+                );
             }
             let stride = 21;
             let rim = Vec3::from(mesh.positions[9 * stride]);

@@ -1,7 +1,11 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     let smoke = args.iter().any(|arg| arg == "--smoke");
-    let custom = args.iter().find(|arg| arg.ends_with(".r"));
+    let custom = args.iter().find(|arg| {
+        std::path::Path::new(arg)
+            .extension()
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("r"))
+    });
     let path = custom.cloned().unwrap_or_else(|| {
         concat!(
             env!("CARGO_MANIFEST_DIR"),

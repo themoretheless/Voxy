@@ -82,7 +82,7 @@ fn water_entrainment_and_drying_conserve_mass_momentum_and_energy() {
         assert!((new.mass_kg - 2.).abs() < 1e-12);
         assert!((r.water_mass_change_kg - 1.).abs() < 1e-12);
         for v in body.velocities() {
-            assert!((v[0] - (1. + incoming) / 2.).abs() < 1e-12);
+            assert!((v[0] - f64::midpoint(1., incoming)).abs() < 1e-12);
         }
         assert!((new.momentum_kg_m_s[0] - old.momentum_kg_m_s[0] - incoming).abs() < 1e-12);
         assert!((r.carried_water_kinetic_j - 0.5 * incoming * incoming).abs() < 1e-12);
@@ -106,7 +106,7 @@ fn water_entrainment_and_drying_conserve_mass_momentum_and_energy() {
             }
         }
         assert!((r.water_mass_change_kg + 1.).abs() < 1e-12);
-        assert!((r.water_momentum_kg_m_s[0] + (1. + incoming) / 2.).abs() < 1e-12);
+        assert!((r.water_momentum_kg_m_s[0] + f64::midpoint(1., incoming)).abs() < 1e-12);
         assert!(r.kinetic_transfer_loss_j.abs() < 1e-12);
     }
 }

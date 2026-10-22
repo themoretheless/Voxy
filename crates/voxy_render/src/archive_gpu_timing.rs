@@ -15,7 +15,7 @@ pub(crate) fn decode(ticks: &[u64], period_ns: f32) -> Option<[f64; 3]> {
     // On Metal the display pass's end sample can still hold the previous
     // frame's value when resolved; the span then ends at the last shading pass.
     let span = if ticks[5] > ticks[0] {
-        &ticks[..]
+        ticks
     } else {
         &ticks[..5]
     };

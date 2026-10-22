@@ -370,11 +370,7 @@ impl RootRigidPath {
             .filter(|(_, mode)| matches!(mode, RootRigidIntegrationDomain::WholeField))
             .count();
         let variable = intervals.len() - fixed;
-        let capacity = if variable == 0 {
-            1
-        } else {
-            (total_capacity - fixed) / variable
-        };
+        let capacity = (total_capacity - fixed).checked_div(variable).unwrap_or(1);
         let mut count = 1;
         loop {
             let mut spans = Vec::with_capacity(count * variable + fixed);

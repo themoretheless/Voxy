@@ -98,7 +98,7 @@ mod tests {
             .enclose_fade_coordinate_error(&fields, 1, 2)
             .unwrap()
             .unwrap();
-        assert!(std::ptr::eq(proof.path(), &path));
+        assert!(std::ptr::eq(proof.path(), &raw const path));
         assert_eq!(proof.axis(), 1);
         assert!(proof.error_bound() >= 0.25 && proof.error_bound() - 0.25 < 1e-12);
         assert!(path.enclose_fade_coordinate_error(&fields, 1, 1).is_err());

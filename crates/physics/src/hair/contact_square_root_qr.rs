@@ -159,16 +159,26 @@ impl<'a> EqualityQr<'a> {
             // preserves signed zeros, and omitting zero square terms preserves
             // the ordered sum of all nonzero terms (including subnormals).
             let mut support: Vec<usize> = if self.sparse_basis {
-                v.iter().enumerate().filter_map(|(i, &x)| (x != 0.).then_some(i)).collect()
-            } else { Vec::new() };
+                v.iter()
+                    .enumerate()
+                    .filter_map(|(i, &x)| (x != 0.).then_some(i))
+                    .collect()
+            } else {
+                Vec::new()
+            };
             let scale = if self.sparse_basis {
                 support.iter().map(|&i| v[i].abs()).fold(0., f64::max)
-            } else { v.iter().map(|x| x.abs()).fold(0., f64::max) };
+            } else {
+                v.iter().map(|x| x.abs()).fold(0., f64::max)
+            };
             if scale == 0. || !scale.is_finite() {
                 return None;
             }
             let squared = if self.sparse_basis {
-                support.iter().map(|&i| (v[i] / scale) * (v[i] / scale)).sum::<f64>()
+                support
+                    .iter()
+                    .map(|&i| (v[i] / scale) * (v[i] / scale))
+                    .sum::<f64>()
             } else {
                 v.iter().map(|x| (x / scale) * (x / scale)).sum::<f64>()
             };
@@ -178,12 +188,16 @@ impl<'a> EqualityQr<'a> {
             }
             r[k] = norm;
             if self.sparse_basis {
-                for &i in &support { v[i] /= norm; }
+                for &i in &support {
+                    v[i] /= norm;
+                }
                 // Normalization may underflow a previously nonzero coefficient.
                 support.retain(|&i| v[i] != 0.);
                 self.q_supports.push(support);
             } else {
-                for value in &mut v { *value /= norm; }
+                for value in &mut v {
+                    *value /= norm;
+                }
             }
             self.q.push(v);
             self.r.push(r);
@@ -630,6 +644,7 @@ pub(super) struct UnilateralContinuation<'a> {
     failed: bool,
 }
 impl<'a> UnilateralContinuation<'a> {
+    #[allow(clippy::fn_params_excessive_bools)]
     fn new(
         columns: &'a [Vec<f64>],
         bounds: &'a [f64],

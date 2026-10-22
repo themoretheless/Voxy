@@ -65,6 +65,7 @@ impl RootRigidTwistEnclosure {
     }
     /// Componentwise hull containing both represented velocity domains.
     /// This does not establish a derivative bound across their boundary.
+    #[must_use]
     pub fn hull(&self, other: &Self) -> Self {
         let hull = |a: Scalar, b: Scalar| Scalar(a.0.min(b.0), a.1.max(b.1));
         Self {

@@ -108,7 +108,7 @@ impl ChunkGenerator for VegetationGenerator {
                 {
                     continue;
                 }
-                let tree = h % 5 == 0;
+                let tree = h.is_multiple_of(5);
                 let height = if tree { 4 + ((h >> 24) % 3) as i64 } else { 1 };
                 let radius: i64 = if tree { 3 } else { 2 };
                 let mut place = |dx: i64, y: i64, dz: i64, block| {

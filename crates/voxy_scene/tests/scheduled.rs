@@ -52,7 +52,7 @@ fn scheduled_ticks_observe_barrier_and_preserve_typed_failure() {
             assert_eq!(error.system, "step");
             assert_eq!(error.error, 42);
         }
-        other => panic!("unexpected failure: {other:?}"),
+        other @ SimulationStepError::Simulation(_) => panic!("unexpected failure: {other:?}"),
     }
     let frame = simulation
         .advance_scheduled(&mut scene, 0.0, &plan, |_, _, _| -> Result<(), u32> {

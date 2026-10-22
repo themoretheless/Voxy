@@ -114,6 +114,7 @@ impl<const N: usize> Mul<f64> for D<N> {
 }
 impl<const N: usize> Mul for D<N> {
     type Output = Self;
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn mul(self, b: Self) -> Self {
         Self {
             v: self.v * b.v,

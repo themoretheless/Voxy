@@ -1,16 +1,24 @@
 //! Prepared original-source query region, encoded before opaque lighting.
 use crate::{ArchiveWorldRayProducer, ExactWorldNearest, RaySceneError, WorldRayKind};
 use std::sync::Arc;
-#[path="archive_world_ray_profile.rs"]
-mod profile;
-#[path="archive_world_consumer_profile.rs"]
+#[path = "archive_world_consumer_profile.rs"]
 mod consumer_profile;
+#[path = "archive_world_ray_profile.rs"]
+mod profile;
 pub(crate) use consumer_profile::ConsumerWorkspace;
-pub(crate) fn consumer_profile_workspace(device:&wgpu::Device,capacity:u32)->Result<ConsumerWorkspace,RaySceneError> {
- consumer_profile::ConsumerStages::buffers(device,capacity)
+pub(crate) fn consumer_profile_workspace(
+    device: &wgpu::Device,
+    capacity: u32,
+) -> Result<ConsumerWorkspace, RaySceneError> {
+    consumer_profile::ConsumerStages::buffers(device, capacity)
 }
 
-pub(crate) fn consumer_sorted_workspace(device:&wgpu::Device,capacity:u32)->Result<ConsumerWorkspace,RaySceneError> { consumer_profile::ConsumerStages::sorted_buffers(device,capacity) }
+pub(crate) fn consumer_sorted_workspace(
+    device: &wgpu::Device,
+    capacity: u32,
+) -> Result<ConsumerWorkspace, RaySceneError> {
+    consumer_profile::ConsumerStages::sorted_buffers(device, capacity)
+}
 
 /// Exact rectangular partition; tile dimensions bound memory, never ray coverage.
 pub(crate) fn frame_tiles(
@@ -43,7 +51,7 @@ pub(crate) struct ArchiveWorldRayFrame {
     tiles: Vec<[u32; 4]>,
     audit_enabled: bool,
     encoded_frames: std::sync::atomic::AtomicU64,
-    profile:Option<profile::WorldRayProfile>,
+    profile: Option<profile::WorldRayProfile>,
 }
 impl ArchiveWorldRayFrame {
     pub(crate) fn new(
@@ -54,12 +62,38 @@ impl ArchiveWorldRayFrame {
         if tiles.is_empty() || !(1..=2).contains(&templates.len()) {
             return Err(RaySceneError::InvalidGeometry);
         }
-        let mode=templates[0].consumer_stages.as_ref().map(|s|s.is_sorted());
-        if templates.iter().any(|r|r.consumer_stages.as_ref().map(|s|s.is_sorted())!=mode){return Err(RaySceneError::Unsupported);}
-        let profile=if std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref()==Ok("1") {
-            if templates.iter().any(|r|!r.job.can_profile_nearest()) {return Err(RaySceneError::Unsupported);}
-            Some(profile::WorldRayProfile::new(device,templates.len()*tiles.len(),templates[0].job.nearest_profile_stage_count(),templates[0].job.nearest_profile_has_native_hint(),templates[0].job.nearest_profile_has_native_witness(),templates.iter().all(|r|r.cache.is_some()),templates[0].consumer_stages.as_ref().is_some_and(|s|!s.is_sorted()),templates[0].consumer_stages.as_ref().is_some_and(|s|s.is_sorted()),tiles.len())?)
-        }else{None};
+        let mode = templates[0].consumer_stages.as_ref().map(|s| s.is_sorted());
+        if templates
+            .iter()
+            .any(|r| r.consumer_stages.as_ref().map(|s| s.is_sorted()) != mode)
+        {
+            return Err(RaySceneError::Unsupported);
+        }
+        let profile = if std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref() == Ok("1")
+        {
+            if templates.iter().any(|r| !r.job.can_profile_nearest()) {
+                return Err(RaySceneError::Unsupported);
+            }
+            Some(profile::WorldRayProfile::new(
+                device,
+                templates.len() * tiles.len(),
+                templates[0].job.nearest_profile_stage_count(),
+                templates[0].job.nearest_profile_has_native_hint(),
+                templates[0].job.nearest_profile_has_native_witness(),
+                templates.iter().all(|r| r.cache.is_some()),
+                templates[0]
+                    .consumer_stages
+                    .as_ref()
+                    .is_some_and(|s| !s.is_sorted()),
+                templates[0]
+                    .consumer_stages
+                    .as_ref()
+                    .is_some_and(|s| s.is_sorted()),
+                tiles.len(),
+            )?)
+        } else {
+            None
+        };
         let mut kinds = Vec::new();
         for template in templates {
             if template.extent != [tiles[0][2], tiles[0][3]] {
@@ -88,7 +122,12 @@ impl ArchiveWorldRayFrame {
     ) -> bool {
         history_available || !all_guides_use_history || self.audit_enabled
     }
-    pub(super) fn consumer_sorted(&self)->bool {self.kinds.iter().flatten().all(|r|r.consumer_stages.as_ref().is_some_and(|s|s.is_sorted()))}
+    pub(super) fn consumer_sorted(&self) -> bool {
+        self.kinds
+            .iter()
+            .flatten()
+            .all(|r| r.consumer_stages.as_ref().is_some_and(|s| s.is_sorted()))
+    }
     pub(super) fn encoded_frames(&self) -> u64 {
         self.encoded_frames
             .load(std::sync::atomic::Ordering::Relaxed)
@@ -108,17 +147,46 @@ impl ArchiveWorldRayFrame {
                     timing,
                     (index == 0).then_some(base),
                     (index + 1 == regions.len()).then_some(base + 1),
-                    self.profile.as_ref().map(|p|(&p.set,(kind*self.tiles.len()+index) as u32*p.stage_count()*2,p.consumer_stage_count(),p.resolve_query(kind*self.tiles.len()+index))),
+                    self.profile.as_ref().map(|p| {
+                        (
+                            &p.set,
+                            (kind * self.tiles.len() + index) as u32 * p.stage_count() * 2,
+                            p.consumer_stage_count(),
+                            p.resolve_query(kind * self.tiles.len() + index),
+                        )
+                    }),
                 );
             }
         }
     }
-    pub(super) fn profile_snapshot(&self,device:&wgpu::Device,queue:&wgpu::Queue)->Result<Option<serde_json::Value>,Box<dyn std::error::Error>> {
-        self.profile.as_ref().map(|p|p.snapshot(device,queue,self.tiles.len(),self.kinds.len(),self.encoded_frames())).transpose()
+    pub(super) fn profile_snapshot(
+        &self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+        self.profile
+            .as_ref()
+            .map(|p| {
+                p.snapshot(
+                    device,
+                    queue,
+                    self.tiles.len(),
+                    self.kinds.len(),
+                    self.encoded_frames(),
+                )
+            })
+            .transpose()
     }
-    pub(super) fn work_stats_buffer(&self)->Option<&wgpu::Buffer> {
-        let first=&self.kinds.first()?.first()?.job;
-        if self.kinds.iter().flatten().any(|r|!Arc::ptr_eq(&r.job,first)) {return None;}
+    pub(super) fn work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
+        let first = &self.kinds.first()?.first()?.job;
+        if self
+            .kinds
+            .iter()
+            .flatten()
+            .any(|r| !Arc::ptr_eq(&r.job, first))
+        {
+            return None;
+        }
         first.traversal_work_stats_buffer()
     }
     pub(super) fn count(&self) -> usize {
@@ -145,10 +213,10 @@ pub(crate) struct ArchiveWorldRayRegion {
     audit: crate::ComputeStorage,
     views: [wgpu::TextureView; 3],
     audit_enabled: bool,
-    consumer_audit: Option<(wgpu::ComputePipeline,[wgpu::BindGroup;3])>,
+    consumer_audit: Option<(wgpu::ComputePipeline, [wgpu::BindGroup; 3])>,
     cache: Option<Arc<crate::ComputeStorage>>,
-    cache_check:bool,
-    consumer_stages:Option<consumer_profile::ConsumerStages>,
+    cache_check: bool,
+    consumer_stages: Option<consumer_profile::ConsumerStages>,
 }
 
 #[cfg(test)]
@@ -202,8 +270,8 @@ impl ArchiveWorldRayRegion {
         bounds: &wgpu::Texture,
         output: &wgpu::Texture,
         base_constants: &[(&str, f64)],
-        cache_requested:bool,
-        consumer_workspace:Option<ConsumerWorkspace>,
+        cache_requested: bool,
+        consumer_workspace: Option<ConsumerWorkspace>,
     ) -> Result<Self, RaySceneError> {
         if !job.query_kind().supports_surface_nearest() {
             return Err(RaySceneError::Unsupported);
@@ -218,14 +286,30 @@ impl ArchiveWorldRayRegion {
                     | wgpu::BufferUsages::COPY_SRC,
             }])
             .map_err(|_| RaySceneError::Capacity)?;
-        let cache_mode=cache_requested&&job.history_any_hit_enabled();
-        if consumer_workspace.is_some()&&!cache_mode {return Err(RaySceneError::Unsupported);}
-        let cache_check=cache_mode&&std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE_CHECK").as_deref()==Ok("1");
-        let cache=if cache_mode {
-            let [buffer]=crate::ComputeMemoryBudget::for_device(device).allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {label:"shared exact Float32 consumer colours",size:u64::from(job.capacity())*16,contents:None,usage:wgpu::BufferUsages::STORAGE|wgpu::BufferUsages::COPY_SRC}]).map_err(|_|RaySceneError::Capacity)?;
+        let cache_mode = cache_requested && job.history_any_hit_enabled();
+        if consumer_workspace.is_some() && !cache_mode {
+            return Err(RaySceneError::Unsupported);
+        }
+        let cache_check = cache_mode
+            && std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE_CHECK").as_deref() == Ok("1");
+        let cache = if cache_mode {
+            let [buffer] = crate::ComputeMemoryBudget::for_device(device)
+                .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
+                    label: "shared exact Float32 consumer colours",
+                    size: u64::from(job.capacity()) * 16,
+                    contents: None,
+                    usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+                }])
+                .map_err(|_| RaySceneError::Capacity)?;
             Some(Arc::new(buffer))
-        }else{None};
-        let cache_source=if cache_mode {include_str!("archive_world_consumer_cache.wgsl")}else{"fn world_consumer_pruned(index:u32,admission:u32,ray:ArchiveRayInput)->bool {return false;} fn world_consumer_cached(index:u32,ray:ArchiveRayInput)->vec4<f32> {return archive_world_query_fallback(ray);}"};
+        } else {
+            None
+        };
+        let cache_source = if cache_mode {
+            include_str!("archive_world_consumer_cache.wgsl")
+        } else {
+            "fn world_consumer_pruned(index:u32,admission:u32,ray:ArchiveRayInput)->bool {return false;} fn world_consumer_cached(index:u32,ray:ArchiveRayInput)->vec4<f32> {return archive_world_query_fallback(ray);}"
+        };
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("original-source GI/reflection radiance consumer"),
             source: wgpu::ShaderSource::Wgsl(
@@ -235,13 +319,28 @@ impl ArchiveWorldRayRegion {
                     crate::WORLD_RAY_PRODUCER_WGSL,
                     include_str!("archive_world_ray_resolve.wgsl"),
                     cache_source,
-                    consumer_workspace.as_ref().map_or("",ConsumerWorkspace::source)
+                    consumer_workspace
+                        .as_ref()
+                        .map_or("", ConsumerWorkspace::source)
                 )
                 .into(),
             ),
         });
         let audit_enabled = std::env::var_os("VOXY_STREET_WORLD_RAY_RESOLVE_AUDIT").is_some();
         let mut constants = base_constants.to_vec();
+        constants.push((
+            "ARCHIVE_WORLD_POSITION_BASE",
+            job.world_position_offset_bytes()
+                .map_or(0., |offset| (offset / 4) as f64),
+        ));
+        constants.push((
+            "ARCHIVE_WORLD_MATERIAL_SIDES",
+            if job.query_kind() == crate::WorldRayQueryKind::MaterialSurface {
+                1.
+            } else {
+                0.
+            },
+        ));
         constants.extend([
             (
                 "ARCHIVE_WORLD_RESOLVE_AUDIT",
@@ -260,7 +359,12 @@ impl ArchiveWorldRayRegion {
                 },
             ),
         ]);
-        if cache_mode {constants.push(("WORLD_CONSUMER_CACHE_CHECK",if cache_check {1.}else{0.}));}
+        if cache_mode {
+            constants.push((
+                "WORLD_CONSUMER_CACHE_CHECK",
+                if cache_check { 1. } else { 0. },
+            ));
+        }
         let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("source hits to actual GI/reflection texture"),
             layout: None,
@@ -284,32 +388,37 @@ impl ArchiveWorldRayRegion {
             binding,
             resource: wgpu::BindingResource::TextureView(view),
         };
-        let mut resolve_entries=vec![
-                    image(6, &world),
-                    image(7, &normal),
-                    image(8, &out),
-                    wgpu::BindGroupEntry {
-                        binding: 12,
-                        resource: producer.region_uniform().as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 18,
-                        resource: job.input().as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 19,
-                        resource: job.output().as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 20,
-                        resource: audit.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 21,
-                        resource: job.source_material_words().as_entire_binding(),
-                    },
+        let mut resolve_entries = vec![
+            image(6, &world),
+            image(7, &normal),
+            image(8, &out),
+            wgpu::BindGroupEntry {
+                binding: 12,
+                resource: producer.region_uniform().as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 18,
+                resource: job.input().as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 19,
+                resource: job.output().as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 20,
+                resource: audit.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 21,
+                resource: job.source_material_words().as_entire_binding(),
+            },
         ];
-        if let Some(buffer)=&cache {resolve_entries.push(wgpu::BindGroupEntry {binding:22,resource:buffer.as_entire_binding()});}
+        if let Some(buffer) = &cache {
+            resolve_entries.push(wgpu::BindGroupEntry {
+                binding: 22,
+                resource: buffer.as_entire_binding(),
+            });
+        }
         let groups = [
             device.create_bind_group(&wgpu::BindGroupDescriptor {
                 label: None,
@@ -335,18 +444,91 @@ impl ArchiveWorldRayRegion {
                 ],
             }),
         ];
-        let consumer_audit=if cache_mode||(job.history_any_hit_enabled()&&std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_ZERO_AUDIT").as_deref()==Ok("1")) {
-            let audit_pipeline=device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {label:Some("diagnostic complete fallback zero contribution"),layout:None,module:&shader,entry_point:Some(if cache_mode {"cs_world_consumer_cache"}else{"cs_world_consumer_zero_audit"}),compilation_options:wgpu::PipelineCompilationOptions {constants:&constants,..Default::default()},cache:None});
-            let mut audit_entries=vec![image(6,&world),image(7,&normal),wgpu::BindGroupEntry {binding:12,resource:producer.region_uniform().as_entire_binding()},wgpu::BindGroupEntry {binding:20,resource:audit.as_entire_binding()}];
-            if let Some(buffer)=&cache {audit_entries.push(wgpu::BindGroupEntry {binding:17,resource:job.input().as_entire_binding()});audit_entries.push(wgpu::BindGroupEntry {binding:22,resource:buffer.as_entire_binding()});}
-            let audit_groups=[
-                device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&audit_pipeline.get_bind_group_layout(0),entries:&[wgpu::BindGroupEntry {binding:0,resource:camera.as_entire_binding()}]}),
-                device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&audit_pipeline.get_bind_group_layout(1),entries:&audit_entries}),
-                device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&audit_pipeline.get_bind_group_layout(2),entries:&[image(0,&back),image(3,&z),image(4,&old_z),image(7,&ranges)]}),
+        let consumer_audit = if cache_mode
+            || (job.history_any_hit_enabled()
+                && std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_ZERO_AUDIT").as_deref() == Ok("1"))
+        {
+            let audit_pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("diagnostic complete fallback zero contribution"),
+                layout: None,
+                module: &shader,
+                entry_point: Some(if cache_mode {
+                    "cs_world_consumer_cache"
+                } else {
+                    "cs_world_consumer_zero_audit"
+                }),
+                compilation_options: wgpu::PipelineCompilationOptions {
+                    constants: &constants,
+                    ..Default::default()
+                },
+                cache: None,
+            });
+            let mut audit_entries = vec![
+                image(6, &world),
+                image(7, &normal),
+                wgpu::BindGroupEntry {
+                    binding: 12,
+                    resource: producer.region_uniform().as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 20,
+                    resource: audit.as_entire_binding(),
+                },
             ];
-            Some((audit_pipeline,audit_groups))
-        }else{None};
-        let consumer_stages=consumer_workspace.map(|buffers|consumer_profile::ConsumerStages::new(device,&shader,&constants,buffers,camera,[&world,&normal],producer.region_uniform(),job.input(),&audit,cache.as_ref().unwrap(),[&back,&z,&old_z,&ranges]));
+            if let Some(buffer) = &cache {
+                audit_entries.push(wgpu::BindGroupEntry {
+                    binding: 17,
+                    resource: job.input().as_entire_binding(),
+                });
+                audit_entries.push(wgpu::BindGroupEntry {
+                    binding: 22,
+                    resource: buffer.as_entire_binding(),
+                });
+            }
+            let audit_groups = [
+                device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: None,
+                    layout: &audit_pipeline.get_bind_group_layout(0),
+                    entries: &[wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: camera.as_entire_binding(),
+                    }],
+                }),
+                device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: None,
+                    layout: &audit_pipeline.get_bind_group_layout(1),
+                    entries: &audit_entries,
+                }),
+                device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: None,
+                    layout: &audit_pipeline.get_bind_group_layout(2),
+                    entries: &[
+                        image(0, &back),
+                        image(3, &z),
+                        image(4, &old_z),
+                        image(7, &ranges),
+                    ],
+                }),
+            ];
+            Some((audit_pipeline, audit_groups))
+        } else {
+            None
+        };
+        let consumer_stages = consumer_workspace.map(|buffers| {
+            consumer_profile::ConsumerStages::new(
+                device,
+                &shader,
+                &constants,
+                buffers,
+                camera,
+                [&world, &normal],
+                producer.region_uniform(),
+                job.input(),
+                &audit,
+                cache.as_ref().unwrap(),
+                [&back, &z, &old_z, &ranges],
+            )
+        });
         Ok(Self {
             producer,
             job,
@@ -385,44 +567,85 @@ impl ArchiveWorldRayRegion {
             binding,
             resource: wgpu::BindingResource::TextureView(view),
         };
-        let mut resolve_entries=vec![
-                image(6, &self.views[0]),
-                image(7, &self.views[1]),
-                image(8, &self.views[2]),
-                wgpu::BindGroupEntry {
-                    binding: 12,
-                    resource: producer.region_uniform().as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 18,
-                    resource: self.job.input().as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 19,
-                    resource: self.job.output().as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 20,
-                    resource: audit.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 21,
-                    resource: self.job.source_material_words().as_entire_binding(),
-                },
+        let mut resolve_entries = vec![
+            image(6, &self.views[0]),
+            image(7, &self.views[1]),
+            image(8, &self.views[2]),
+            wgpu::BindGroupEntry {
+                binding: 12,
+                resource: producer.region_uniform().as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 18,
+                resource: self.job.input().as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 19,
+                resource: self.job.output().as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 20,
+                resource: audit.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 21,
+                resource: self.job.source_material_words().as_entire_binding(),
+            },
         ];
-        if let Some(buffer)=&self.cache {resolve_entries.push(wgpu::BindGroupEntry {binding:22,resource:buffer.as_entire_binding()});}
+        if let Some(buffer) = &self.cache {
+            resolve_entries.push(wgpu::BindGroupEntry {
+                binding: 22,
+                resource: buffer.as_entire_binding(),
+            });
+        }
         let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("shared world resolve region"),
             layout: &self.pipeline.get_bind_group_layout(1),
             entries: &resolve_entries,
         });
-        let consumer_audit=self.consumer_audit.as_ref().map(|(pipeline,groups)| {
-            let mut entries=vec![image(6,&self.views[0]),image(7,&self.views[1]),wgpu::BindGroupEntry {binding:12,resource:producer.region_uniform().as_entire_binding()},wgpu::BindGroupEntry {binding:20,resource:audit.as_entire_binding()}];
-            if let Some(buffer)=&self.cache {entries.push(wgpu::BindGroupEntry {binding:17,resource:self.job.input().as_entire_binding()});entries.push(wgpu::BindGroupEntry {binding:22,resource:buffer.as_entire_binding()});}
-            let group=device.create_bind_group(&wgpu::BindGroupDescriptor {label:Some("shared consumer diagnostic/cache region"),layout:&pipeline.get_bind_group_layout(1),entries:&entries});
-            (pipeline.clone(),[groups[0].clone(),group,groups[2].clone()])
+        let consumer_audit = self.consumer_audit.as_ref().map(|(pipeline, groups)| {
+            let mut entries = vec![
+                image(6, &self.views[0]),
+                image(7, &self.views[1]),
+                wgpu::BindGroupEntry {
+                    binding: 12,
+                    resource: producer.region_uniform().as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 20,
+                    resource: audit.as_entire_binding(),
+                },
+            ];
+            if let Some(buffer) = &self.cache {
+                entries.push(wgpu::BindGroupEntry {
+                    binding: 17,
+                    resource: self.job.input().as_entire_binding(),
+                });
+                entries.push(wgpu::BindGroupEntry {
+                    binding: 22,
+                    resource: buffer.as_entire_binding(),
+                });
+            }
+            let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("shared consumer diagnostic/cache region"),
+                layout: &pipeline.get_bind_group_layout(1),
+                entries: &entries,
+            });
+            (
+                pipeline.clone(),
+                [groups[0].clone(), group, groups[2].clone()],
+            )
         });
-        let consumer_stages=self.consumer_stages.as_ref().map(|stages|stages.for_region(device,[&self.views[0],&self.views[1]],producer.region_uniform(),self.job.input(),&audit,self.cache.as_ref().unwrap()));
+        let consumer_stages = self.consumer_stages.as_ref().map(|stages| {
+            stages.for_region(
+                device,
+                [&self.views[0], &self.views[1]],
+                producer.region_uniform(),
+                self.job.input(),
+                &audit,
+                self.cache.as_ref().unwrap(),
+            )
+        });
         Ok(Self {
             producer,
             job: self.job.clone(),
@@ -433,8 +656,8 @@ impl ArchiveWorldRayRegion {
             views: self.views.clone(),
             audit_enabled: self.audit_enabled,
             consumer_audit,
-            cache:self.cache.clone(),
-            cache_check:self.cache_check,
+            cache: self.cache.clone(),
+            cache_check: self.cache_check,
             consumer_stages,
         })
     }
@@ -450,14 +673,25 @@ impl ArchiveWorldRayRegion {
         timing: Option<&wgpu::QuerySet>,
         begin: Option<u32>,
         end: Option<u32>,
-    ) {self.encode_profiled(encoder,timing,begin,end,None);}
-    fn encode_profiled(&self,encoder:&mut wgpu::CommandEncoder,timing:Option<&wgpu::QuerySet>,begin:Option<u32>,end:Option<u32>,profile:Option<(&wgpu::QuerySet,u32,u32,Option<u32>)>) {
+    ) {
+        self.encode_profiled(encoder, timing, begin, end, None);
+    }
+    fn encode_profiled(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        timing: Option<&wgpu::QuerySet>,
+        begin: Option<u32>,
+        end: Option<u32>,
+        profile: Option<(&wgpu::QuerySet, u32, u32, Option<u32>)>,
+    ) {
         if self.cache_check {
             // Error count is sticky for this owner, including earlier frames.
             // Fresh managed buffers are zero-initialized by the device contract.
-            encoder.clear_buffer(&self.audit,0,Some(40));
-            encoder.clear_buffer(&self.audit,44,Some(4));
-        }else{encoder.clear_buffer(&self.audit,0,None);}
+            encoder.clear_buffer(&self.audit, 0, Some(40));
+            encoder.clear_buffer(&self.audit, 44, Some(4));
+        } else {
+            encoder.clear_buffer(&self.audit, 0, None);
+        }
         // A pass has only one timestamp pair. Keep the legacy whole-component
         // start in a separate boundary pass only when detailed profiling is on.
         if profile.is_some() {
@@ -469,7 +703,6 @@ impl ArchiveWorldRayRegion {
                         beginning_of_pass_write_index: begin,
                         end_of_pass_write_index: None,
                     }),
-                    ..Default::default()
                 });
             }
         }
@@ -482,35 +715,63 @@ impl ArchiveWorldRayRegion {
                     end_of_pass_write_index: Some(base + 1),
                 })
             } else {
-                timing.filter(|_| begin.is_some()).map(|set| wgpu::ComputePassTimestampWrites {
-                    query_set: set,
-                    beginning_of_pass_write_index: begin,
-                    end_of_pass_write_index: None,
-                })
+                timing
+                    .filter(|_| begin.is_some())
+                    .map(|set| wgpu::ComputePassTimestampWrites {
+                        query_set: set,
+                        beginning_of_pass_write_index: begin,
+                        end_of_pass_write_index: None,
+                    })
             },
         );
-        if let Some(stages)=&self.consumer_stages {
-            stages.encode(encoder,self.extent,profile.map(|(set,base,_,_)|(set,base+2)));
-        }else if let Some((pipeline,groups))=&self.consumer_audit {
-            let mut pass=encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {label:Some("consumer contribution calculation"),timestamp_writes:profile.filter(|p|p.2>0).map(|(set,base,_,_)|wgpu::ComputePassTimestampWrites {query_set:set,beginning_of_pass_write_index:Some(base+2),end_of_pass_write_index:Some(base+3)}),..Default::default()});
-            pass.set_pipeline(pipeline);for (index,group) in groups.iter().enumerate() {pass.set_bind_group(index as u32,group,&[]);}pass.dispatch_workgroups(self.extent[0].div_ceil(8),self.extent[1].div_ceil(8),1);
+        if let Some(stages) = &self.consumer_stages {
+            stages.encode(
+                encoder,
+                self.extent,
+                profile.map(|(set, base, _, _)| (set, base + 2)),
+            );
+        } else if let Some((pipeline, groups)) = &self.consumer_audit {
+            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("consumer contribution calculation"),
+                timestamp_writes: profile.filter(|p| p.2 > 0).map(|(set, base, _, _)| {
+                    wgpu::ComputePassTimestampWrites {
+                        query_set: set,
+                        beginning_of_pass_write_index: Some(base + 2),
+                        end_of_pass_write_index: Some(base + 3),
+                    }
+                }),
+            });
+            pass.set_pipeline(pipeline);
+            for (index, group) in groups.iter().enumerate() {
+                pass.set_bind_group(index as u32, group, &[]);
+            }
+            pass.dispatch_workgroups(self.extent[0].div_ceil(8), self.extent[1].div_ceil(8), 1);
         }
         self.job
-            .encode_profiled(encoder, self.producer.count(),profile.map(|(set,base,consumer,_)|(set,base+2+2*consumer)))
+            .encode_profiled(
+                encoder,
+                self.producer.count(),
+                profile.map(|(set, base, consumer, _)| (set, base + 2 + 2 * consumer)),
+            )
             .expect("immutable prepared source region");
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("original-source GI/reflection resolve"),
-            timestamp_writes: if let Some((set,_,_,Some(sample)))=profile {
+            timestamp_writes: if let Some((set, _, _, Some(sample))) = profile {
                 debug_assert!(end.is_none());
-                Some(wgpu::ComputePassTimestampWrites {query_set:set,beginning_of_pass_write_index:Some(sample),end_of_pass_write_index:Some(sample+1)})
-            }else{timing.filter(|_| end.is_some()).map(|set| {
-                wgpu::ComputePassTimestampWrites {
+                Some(wgpu::ComputePassTimestampWrites {
                     query_set: set,
-                    beginning_of_pass_write_index: None,
-                    end_of_pass_write_index: end,
-                }
-            })},
-            ..Default::default()
+                    beginning_of_pass_write_index: Some(sample),
+                    end_of_pass_write_index: Some(sample + 1),
+                })
+            } else {
+                timing
+                    .filter(|_| end.is_some())
+                    .map(|set| wgpu::ComputePassTimestampWrites {
+                        query_set: set,
+                        beginning_of_pass_write_index: None,
+                        end_of_pass_write_index: end,
+                    })
+            },
         });
         pass.set_pipeline(&self.pipeline);
         for (index, group) in self.groups.iter().enumerate() {

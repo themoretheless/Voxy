@@ -196,7 +196,7 @@ impl FullModelWorker {
                 if let Err(error) = frame.validate_publication() {
                     return self.fail(error);
                 }
-                self.title = frame.title.clone();
+                self.title.clone_from(&frame.title);
                 Ok(Some(frame))
             }
             Ok(Err(error)) => self.fail(error),

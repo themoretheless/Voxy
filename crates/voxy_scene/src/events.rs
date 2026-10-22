@@ -99,6 +99,56 @@ impl<T> EventChannel<T> {
         self.events.clear();
     }
 }
+
+/// Double-buffered frame event queue (`Front` / `Back` buffers):
+/// producers emit into the current frame's write buffer while readers inspect
+/// the previous frame's immutable read buffer without contention or allocation churn.
+#[derive(Clone, Debug)]
+pub struct DoubleBufferedEvents<T> {
+    read_buffer: Vec<T>,
+    write_buffer: Vec<T>,
+    max_per_frame: usize,
+}
+
+impl<T> DoubleBufferedEvents<T> {
+    /// # Errors
+    /// Rejects zero `max_per_frame` capacity.
+    pub fn new(max_per_frame: usize) -> Result<Self, EventError> {
+        if max_per_frame == 0 {
+            return Err(EventError::ZeroCapacity);
+        }
+        Ok(Self {
+            read_buffer: Vec::new(),
+            write_buffer: Vec::new(),
+            max_per_frame,
+        })
+    }
+
+    /// Emits an event into the current frame's write buffer.
+    ///
+    /// # Errors
+    /// Returns [`EventError::SequenceExhausted`] if the per-frame capacity is full.
+    pub fn send(&mut self, event: T) -> Result<(), EventError> {
+        if self.write_buffer.len() >= self.max_per_frame {
+            return Err(EventError::SequenceExhausted);
+        }
+        self.write_buffer.push(event);
+        Ok(())
+    }
+
+    /// Swaps the read and write buffers at the frame barrier, clearing the new write buffer
+    /// while preserving allocated heap capacity.
+    pub fn swap_frames(&mut self) {
+        std::mem::swap(&mut self.read_buffer, &mut self.write_buffer);
+        self.write_buffer.clear();
+    }
+
+    /// Events emitted during the previous frame.
+    #[must_use]
+    pub fn read_previous_frame(&self) -> &[T] {
+        &self.read_buffer
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -136,5 +186,18 @@ mod tests {
         channel.next = u64::MAX;
         assert_eq!(channel.emit(9), Err(EventError::SequenceExhausted));
         assert!(channel.events.is_empty());
+    }
+    #[test]
+    fn double_buffered_events_rotate_across_frames_without_dropping_capacity() {
+        let mut bus = DoubleBufferedEvents::new(2).unwrap();
+        bus.send(10).unwrap();
+        bus.send(20).unwrap();
+        assert_eq!(bus.send(30), Err(EventError::SequenceExhausted));
+        assert!(bus.read_previous_frame().is_empty());
+        bus.swap_frames();
+        assert_eq!(bus.read_previous_frame(), &[10, 20]);
+        bus.send(40).unwrap();
+        bus.swap_frames();
+        assert_eq!(bus.read_previous_frame(), &[40]);
     }
 }

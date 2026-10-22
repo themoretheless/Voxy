@@ -976,7 +976,6 @@ fn tilted_character_floor_contact_jump_and_recovery_use_rotated_shape() {
                 speed: 0.,
                 gravity: 0.,
                 jump_speed: 2.,
-                ..Default::default()
             },
         )
         .unwrap();
@@ -2776,7 +2775,6 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
                 speed: 0.,
                 gravity: 0.,
                 jump_speed: 0.,
-                ..Default::default()
             },
         )
         .unwrap();
@@ -2944,7 +2942,6 @@ fn mixed_certified_fade_tick_rolls_back_and_retries_all_motion_kinds() {
                     speed: 0.,
                     gravity: 0.,
                     jump_speed: 0.,
-                    ..Default::default()
                 },
             )
             .unwrap();

@@ -10,10 +10,20 @@ fn main() {
         .unwrap_or(64);
     assert!([32, 64, 128, 256].contains(&width));
     const REPEATS: u32 = 9;
-    let persistent=args.iter().any(|a|a=="--persistent");
-    let resumed=persistent||args.iter().any(|a|a=="--resumable");
-    let quantum=args.windows(2).find(|a|a[0]=="--quantum").map(|a|a[1].parse::<u32>().unwrap()).unwrap_or(8);assert!((1..=64).contains(&quantum));
-    let groups=args.windows(2).find(|a|a[0]=="--groups").map(|a|a[1].parse::<u32>().unwrap()).unwrap_or(256);assert!((1..=8192).contains(&groups));
+    let persistent = args.iter().any(|a| a == "--persistent");
+    let resumed = persistent || args.iter().any(|a| a == "--resumable");
+    let quantum = args
+        .windows(2)
+        .find(|a| a[0] == "--quantum")
+        .map(|a| a[1].parse::<u32>().unwrap())
+        .unwrap_or(8);
+    assert!((1..=64).contains(&quantum));
+    let groups = args
+        .windows(2)
+        .find(|a| a[0] == "--groups")
+        .map(|a| a[1].parse::<u32>().unwrap())
+        .unwrap_or(256);
+    assert!((1..=8192).contains(&groups));
     let root = Path::new(args.get(1).expect("capture directory"));
     let meta: serde_json::Value =
         serde_json::from_slice(&std::fs::read(root.join("metadata.json")).unwrap()).unwrap();
@@ -27,7 +37,12 @@ fn main() {
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
     assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
     let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
-        required_features: wgpu::Features::TIMESTAMP_QUERY | if persistent {wgpu::Features::SUBGROUP}else{wgpu::Features::empty()},
+        required_features: wgpu::Features::TIMESTAMP_QUERY
+            | if persistent {
+                wgpu::Features::SUBGROUP
+            } else {
+                wgpu::Features::empty()
+            },
         ..Default::default()
     }))
     .unwrap();
@@ -69,11 +84,11 @@ fn main() {
         view_formats: &[],
     });
     let depth_view = depth.create_view(&Default::default());
-    let copy_shader=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:None,source:wgpu::ShaderSource::Wgsl(r#"
+    let copy_shader=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:None,source:wgpu::ShaderSource::Wgsl(r"
 @group(0) @binding(0) var input_depth:texture_2d<f32>;
 @vertex fn vs(@builtin(vertex_index) i:u32)->@builtin(position) vec4<f32>{let p=array<vec2<f32>,3>(vec2<f32>(-1.,-1.),vec2<f32>(3.,-1.),vec2<f32>(-1.,3.));return vec4<f32>(p[i],0.,1.);}
 @fragment fn fs(@builtin(position) p:vec4<f32>)->@builtin(frag_depth) f32{return textureLoad(input_depth,vec2<i32>(p.xy),0).x;}
-"#.into())});
+".into())});
     let copy = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: None,
         layout: None,
@@ -134,9 +149,10 @@ fn dda_tile_levels()->u32{return textureNumLevels(tile_depth);}
 }
 "#
     );
-    let source=if persistent {
-      let start=source.find("@compute @workgroup_size(64) fn main").unwrap();
-      source[..start].to_owned()+r#"
+    let source = if persistent {
+        let start = source.find("@compute @workgroup_size(64) fn main").unwrap();
+        source[..start].to_owned()
+            + r"
 @group(0) @binding(5) var<storage,read_write> next_ray:atomic<u32>;
 @compute @workgroup_size(64) fn main() {
  var cursor:DdaCursor;var index=0u;var ray_pending=false;
@@ -158,11 +174,13 @@ fn dda_tile_levels()->u32{return textureNumLevels(tile_depth);}
   if !subgroupAny(ray_pending||atomicLoad(&next_ray)<arrayLength(&inputs)) {break;}
  }
 }
-"#
-    }else if resumed {
-     source.replace("hit=trace_depth_dda_paired(depth,DdaVectorPair(s.begin,s.begin_low),DdaVectorPair(s.end,s.end_low));",r#"var cursor=dda_cursor_init(depth,DdaVectorPair(s.begin,s.begin_low),DdaVectorPair(s.end,s.end_low));loop {if cursor.done {break;}for(var step=0u;step<QUANTUMu;step++) {if cursor.done {break;}dda_cursor_step(depth,&cursor);}}hit=cursor.hit;"#)
-    }else {source.to_owned()};
-    let source=source.replace("QUANTUM",&quantum.to_string());
+"
+    } else if resumed {
+        source.replace("hit=trace_depth_dda_paired(depth,DdaVectorPair(s.begin,s.begin_low),DdaVectorPair(s.end,s.end_low));",r"var cursor=dda_cursor_init(depth,DdaVectorPair(s.begin,s.begin_low),DdaVectorPair(s.end,s.end_low));loop {if cursor.done {break;}for(var step=0u;step<QUANTUMu;step++) {if cursor.done {break;}dda_cursor_step(depth,&cursor);}}hit=cursor.hit;")
+    } else {
+        source.to_owned()
+    };
+    let source = source.replace("QUANTUM", &quantum.to_string());
     let source = source
         .replace("image:texture_2d<f32>", "image:texture_depth_2d")
         .replace("var depth:texture_2d<f32>", "var depth:texture_depth_2d")
@@ -196,11 +214,13 @@ fn dda_tile_levels()->u32{return textureNumLevels(tile_depth);}
         cache: None,
     });
     let mut reports = Vec::new();
-    let make_queries = || device.create_query_set(&wgpu::QuerySetDescriptor {
-        label: Some("diagnostic replay traversal"),
-        ty: wgpu::QueryType::Timestamp,
-        count: REPEATS * 2,
-    });
+    let make_queries = || {
+        device.create_query_set(&wgpu::QuerySetDescriptor {
+            label: Some("diagnostic replay traversal"),
+            ty: wgpu::QueryType::Timestamp,
+            count: REPEATS * 2,
+        })
+    };
     let timing = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
         size: u64::from(REPEATS) * 16,
@@ -243,22 +263,47 @@ fn dda_tile_levels()->u32{return textureNumLevels(tile_depth);}
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
-        let next=device.create_buffer(&wgpu::BufferDescriptor {label:Some("persistent exact ray cursor"),size:4,usage:wgpu::BufferUsages::STORAGE|wgpu::BufferUsages::COPY_DST,mapped_at_creation:false});
-        let pixel_bounds_view=bounds.texture.create_view(&Default::default());
-        let mut entries=vec![
-          wgpu::BindGroupEntry {binding:0,resource:wgpu::BindingResource::TextureView(&depth_view)},
-          wgpu::BindGroupEntry {binding:1,resource:input.as_entire_binding()},
-          wgpu::BindGroupEntry {binding:2,resource:output.as_entire_binding()},
-          wgpu::BindGroupEntry {binding:3,resource:wgpu::BindingResource::TextureView(&pixel_bounds_view)},
-          wgpu::BindGroupEntry {binding:4,resource:ids.as_entire_binding()},
+        let next = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("persistent exact ray cursor"),
+            size: 4,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let pixel_bounds_view = bounds.texture.create_view(&Default::default());
+        let mut entries = vec![
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: wgpu::BindingResource::TextureView(&depth_view),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: input.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: output.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 3,
+                resource: wgpu::BindingResource::TextureView(&pixel_bounds_view),
+            },
+            wgpu::BindGroupEntry {
+                binding: 4,
+                resource: ids.as_entire_binding(),
+            },
         ];
-        if persistent {entries.push(wgpu::BindGroupEntry {binding:5,resource:next.as_entire_binding()});}
+        if persistent {
+            entries.push(wgpu::BindGroupEntry {
+                binding: 5,
+                resource: next.as_entire_binding(),
+            });
+        }
         let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: None,
             layout: &pipeline.get_bind_group_layout(0),
             entries: &entries,
         });
-        let queries=make_queries();
+        let queries = make_queries();
         let mut encoder = device.create_command_encoder(&Default::default());
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -282,7 +327,9 @@ fn dda_tile_levels()->u32{return textureNumLevels(tile_depth);}
         }
         bounds.encode(&mut encoder);
         for repeat in 0..REPEATS {
-            if persistent {encoder.clear_buffer(&next,0,None);}
+            if persistent {
+                encoder.clear_buffer(&next, 0, None);
+            }
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                 timestamp_writes: Some(wgpu::ComputePassTimestampWrites {
                     query_set: &queries,
@@ -293,12 +340,20 @@ fn dda_tile_levels()->u32{return textureNumLevels(tile_depth);}
             });
             pass.set_pipeline(&pipeline);
             pass.set_bind_group(0, &bind, &[]);
-            pass.dispatch_workgroups(if persistent {groups}else{(n as u32).div_ceil(width)}, 1, 1);
+            pass.dispatch_workgroups(
+                if persistent {
+                    groups
+                } else {
+                    (n as u32).div_ceil(width)
+                },
+                1,
+                1,
+            );
         }
         encoder.resolve_query_set(&queries, 0..REPEATS * 2, &timing, 0);
         encoder.copy_buffer_to_buffer(&timing, 0, &timing_read, 0, u64::from(REPEATS) * 16);
         encoder.copy_buffer_to_buffer(&output, 0, &read, 0, n * 32);
-        let batch_start=std::time::Instant::now();
+        let batch_start = std::time::Instant::now();
         let submission = queue.submit([encoder.finish()]);
         let (tx, rx) = std::sync::mpsc::channel();
         read.slice(..)
@@ -310,7 +365,7 @@ fn dda_tile_levels()->u32{return textureNumLevels(tile_depth);}
             })
             .unwrap();
         rx.recv().unwrap().unwrap();
-        let completed_batch_wall_ms=batch_start.elapsed().as_secs_f64()*1000.;
+        let completed_batch_wall_ms = batch_start.elapsed().as_secs_f64() * 1000.;
         let actual = read.slice(..).get_mapped_range().unwrap();
         let mismatches = actual
             .chunks_exact(32)

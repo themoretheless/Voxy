@@ -33,7 +33,13 @@ const REGION_SPACING: f32 = 0.5;
 const MAX_CELLS: u32 = 384;
 const RIVER_COLUMNS: u32 = 8;
 
-fn grid(lo: Vec2, hi: Vec2, spacing: f32, level: f32, keep: impl Fn(Vec2, f32) -> bool) -> WaterMesh {
+fn grid(
+    lo: Vec2,
+    hi: Vec2,
+    spacing: f32,
+    level: f32,
+    keep: impl Fn(Vec2, f32) -> bool,
+) -> WaterMesh {
     let size = hi - lo;
     let nx = ((size.x / spacing - 1e-3).ceil() as u32).clamp(1, MAX_CELLS);
     let nz = ((size.y / spacing - 1e-3).ceil() as u32).clamp(1, MAX_CELLS);
@@ -42,7 +48,10 @@ fn grid(lo: Vec2, hi: Vec2, spacing: f32, level: f32, keep: impl Fn(Vec2, f32) -
     for j in 0..=nz {
         for i in 0..=nx {
             let p = lo + cell * Vec2::new(i as f32, j as f32);
-            mesh.vertices.push(WaterVertex { position: [p.x, level, p.y], ..Default::default() });
+            mesh.vertices.push(WaterVertex {
+                position: [p.x, level, p.y],
+                ..Default::default()
+            });
         }
     }
     for j in 0..nz {
@@ -95,13 +104,24 @@ pub fn river_mesh(samples: &[RiverSample]) -> WaterMesh {
 /// The surface of `body`; `river_samples` are its resampled centre line (rivers only).
 pub fn surface_mesh(body: &WaterBody, river_samples: &[RiverSample]) -> WaterMesh {
     match &body.shape {
-        WaterShape::Basin { min, max } => grid(Vec2::new(min.x, min.z), Vec2::new(max.x, max.z), BASIN_SPACING, max.y, |_, _| true),
+        WaterShape::Basin { min, max } => grid(
+            Vec2::new(min.x, min.z),
+            Vec2::new(max.x, max.z),
+            BASIN_SPACING,
+            max.y,
+            |_, _| true,
+        ),
         WaterShape::Region { outline, level, .. } => {
-            let (lo, hi) = outline.iter().fold((Vec2::splat(f32::MAX), Vec2::splat(f32::MIN)), |(lo, hi), p| (lo.min(*p), hi.max(*p)));
+            let (lo, hi) = outline.iter().fold(
+                (Vec2::splat(f32::MAX), Vec2::splat(f32::MIN)),
+                |(lo, hi), p| (lo.min(*p), hi.max(*p)),
+            );
             let shore = body.shore.as_ref();
             grid(lo, hi, REGION_SPACING, *level, |c, cell| {
                 // keep a cell of margin so the terrain, not the mesh edge, forms the shore
-                let near = [Vec2::ZERO, Vec2::X, -Vec2::X, Vec2::Y, -Vec2::Y].iter().any(|o| point_in_polygon(c + *o * cell, outline));
+                let near = [Vec2::ZERO, Vec2::X, -Vec2::X, Vec2::Y, -Vec2::Y]
+                    .iter()
+                    .any(|o| point_in_polygon(c + *o * cell, outline));
                 near && shore.is_none_or(|s| s.depth_at(c) > -0.5)
             })
         }
@@ -117,7 +137,10 @@ mod tests {
 
     #[test]
     fn basin_grid_covers_the_pool() {
-        let m = surface_mesh(&WaterBody::pool(Vec3::new(0., -1., 0.), Vec3::new(4., 0.1, 10.)), &[]);
+        let m = surface_mesh(
+            &WaterBody::pool(Vec3::new(0., -1., 0.), Vec3::new(4., 0.1, 10.)),
+            &[],
+        );
         assert_eq!(m.indices.len() as u32, 50 * 125 * 6);
         assert!(m.vertices.iter().all(|v| v.position[1] == 0.1));
     }
@@ -128,11 +151,25 @@ mod tests {
         let lake = surface_mesh(&WaterBody::lake(triangle, 0.0, -3.0, None), &[]);
         let full = 80 * 80 * 6;
         assert!(lake.indices.len() > full / 3 && lake.indices.len() < full * 2 / 3);
-        let node = |z: f32, y: f32| RiverNode { position: Vec3::new(0., y, z), width: 3.0, depth: 0.5 };
-        let river = River::new(vec![node(0., 4.), node(10., 3.9), node(10.5, 1.0), node(20., 0.9)], 1.0);
+        let node = |z: f32, y: f32| RiverNode {
+            position: Vec3::new(0., y, z),
+            width: 3.0,
+            depth: 0.5,
+        };
+        let river = River::new(
+            vec![
+                node(0., 4.),
+                node(10., 3.9),
+                node(10.5, 1.0),
+                node(20., 0.9),
+            ],
+            1.0,
+        );
         let samples = river.samples(0.5);
         let m = river_mesh(&samples);
         assert_eq!(m.vertices.len(), samples.len() * 9);
-        assert!(m.vertices.iter().any(|v| v.falls == 1.0) && m.vertices.iter().any(|v| v.falls == 0.0));
+        assert!(
+            m.vertices.iter().any(|v| v.falls == 1.0) && m.vertices.iter().any(|v| v.falls == 0.0)
+        );
     }
 }

@@ -94,6 +94,126 @@ impl Quad {
     pub fn area(self) -> u16 {
         u16::from(self.extent_u.get()) * u16::from(self.extent_v.get())
     }
+
+    #[must_use]
+    pub fn pack_64(self) -> PackedQuad64 {
+        PackedQuad64::pack(self)
+    }
+}
+
+/// Compact 8-byte (64-bit) GPU-ready greedy quad descriptor.
+///
+/// Bit layout:
+/// - `0..6`: `origin.x` (`0..32`, 6 bits)
+/// - `6..12`: `origin.y` (`0..32`, 6 bits)
+/// - `12..18`: `origin.z` (`0..32`, 6 bits)
+/// - `18..23`: `extent_u - 1` (`0..31` -> `1..32`, 5 bits)
+/// - `23..28`: `extent_v - 1` (`0..31` -> `1..32`, 5 bits)
+/// - `28..31`: `face` (`0..5`, 3 bits)
+/// - `31..33`: `layer` (`0..2`, 2 bits)
+/// - `33..34`: `diagonal` (`0..1`, 1 bit)
+/// - `34..42`: `ao` (`4 x 2-bit` corner ambient occlusion, 8 bits)
+/// - `42..58`: `material` (`u16`, 16 bits)
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[repr(transparent)]
+pub struct PackedQuad64(u64);
+
+impl PackedQuad64 {
+    #[must_use]
+    pub const fn raw(self) -> u64 {
+        self.0
+    }
+
+    #[must_use]
+    pub const fn from_raw(raw: u64) -> Self {
+        Self(raw)
+    }
+
+    #[must_use]
+    pub fn pack(quad: Quad) -> Self {
+        let ox = u64::from(quad.origin[0] & 63);
+        let oy = u64::from(quad.origin[1] & 63);
+        let oz = u64::from(quad.origin[2] & 63);
+        let eu = u64::from(quad.extent_u.get().saturating_sub(1) & 31);
+        let ev = u64::from(quad.extent_v.get().saturating_sub(1) & 31);
+        let face = quad.face.material_index() as u64;
+        let layer = match quad.layer {
+            RenderLayer::Opaque => 0_u64,
+            RenderLayer::Cutout => 1_u64,
+            RenderLayer::Translucent => 2_u64,
+        };
+        let diag = match quad.diagonal {
+            QuadDiagonal::Uv => 0_u64,
+            QuadDiagonal::Vu => 1_u64,
+        };
+        let ao = u64::from(quad.ao[0] & 3)
+            | (u64::from(quad.ao[1] & 3) << 2)
+            | (u64::from(quad.ao[2] & 3) << 4)
+            | (u64::from(quad.ao[3] & 3) << 6);
+        let mat = u64::from(quad.material.0);
+        Self(
+            ox | (oy << 6)
+                | (oz << 12)
+                | (eu << 18)
+                | (ev << 23)
+                | (face << 28)
+                | (layer << 31)
+                | (diag << 33)
+                | (ao << 34)
+                | (mat << 42),
+        )
+    }
+
+    #[must_use]
+    pub fn unpack(self) -> Option<Quad> {
+        let w = self.0;
+        let ox = (w & 63) as u8;
+        let oy = ((w >> 6) & 63) as u8;
+        let oz = ((w >> 12) & 63) as u8;
+        if ox > 32 || oy > 32 || oz > 32 {
+            return None;
+        }
+        let eu = NonZeroU8::new((((w >> 18) & 31) as u8) + 1)?;
+        let ev = NonZeroU8::new((((w >> 23) & 31) as u8) + 1)?;
+        let face = match (w >> 28) & 7 {
+            0 => FaceDir::NegX,
+            1 => FaceDir::PosX,
+            2 => FaceDir::NegY,
+            3 => FaceDir::PosY,
+            4 => FaceDir::NegZ,
+            5 => FaceDir::PosZ,
+            _ => return None,
+        };
+        let layer = match (w >> 31) & 3 {
+            0 => RenderLayer::Opaque,
+            1 => RenderLayer::Cutout,
+            2 => RenderLayer::Translucent,
+            _ => return None,
+        };
+        let diagonal = if ((w >> 33) & 1) == 0 {
+            QuadDiagonal::Uv
+        } else {
+            QuadDiagonal::Vu
+        };
+        let ao_bits = (w >> 34) & 0xFF;
+        let ao = [
+            (ao_bits & 3) as u8,
+            ((ao_bits >> 2) & 3) as u8,
+            ((ao_bits >> 4) & 3) as u8,
+            ((ao_bits >> 6) & 3) as u8,
+        ];
+        let material = MaterialId(((w >> 42) & 0xFFFF) as u16);
+        Some(Quad {
+            origin: [ox, oy, oz],
+            extent_u: eu,
+            extent_v: ev,
+            face,
+            material,
+            layer,
+            ao,
+            diagonal,
+        })
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1194,5 +1314,13 @@ mod tests {
         let greedy = build_mesh(&input, &CancelToken::new()).unwrap();
         assert_eq!(face_areas(&naive), face_areas(&greedy));
         assert!(greedy.quad_count() < naive.quad_count());
+        for &quad in greedy
+            .opaque
+            .iter()
+            .chain(greedy.cutout.iter())
+            .chain(greedy.translucent.iter())
+        {
+            assert_eq!(quad.pack_64().unpack(), Some(quad));
+        }
     }
 }

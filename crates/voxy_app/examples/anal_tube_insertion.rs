@@ -390,8 +390,7 @@ impl AnalSimulation {
         // At frame 3 (t = 0.50 s, u = 0.568), prolapse_t = 0.37 (initial mucosal cuff eversion around shaft);
         // At frame 4 (t = 0.72 s, u = 0.818), prolapse_t = 1.00 (peak rectal mucosal rosette prolapse!).
         let cycle_u = (time_s / INSERTION_PERIOD_SECONDS).rem_euclid(1.0);
-        let prolapse_t =
-            smoothstep(0.46, 0.72, cycle_u) * (1.0 - smoothstep(0.88, 0.98, cycle_u));
+        let prolapse_t = smoothstep(0.46, 0.72, cycle_u) * (1.0 - smoothstep(0.88, 0.98, cycle_u));
 
         // Exact cross-sectional radius of the hemispherical/cylindrical tube at the anal verge rim height
         let z_rim_est = -1.35 - 1.10 * pen + 1.15 * prolapse_t * (1.0 - pen);
@@ -424,8 +423,7 @@ impl AnalSimulation {
         let shear_dir = (-kin.velocity_z_mm_s / 42.0).clamp(-1.0, 1.0);
 
         // Continuous capillary lubricant meniscus strength when the tube contacts the verge
-        let meniscus_contact =
-            smoothstep(2.4, -1.2, kin.tip_z_mm).max(0.75 * prolapse_t);
+        let meniscus_contact = smoothstep(2.4, -1.2, kin.tip_z_mm).max(0.75 * prolapse_t);
 
         let mut positions = vec![Vec3::ZERO; NR * NS];
         let mut colors = vec![[0.0f32; 3]; NR * NS];
@@ -444,9 +442,8 @@ impl AnalSimulation {
                 let sin_t = theta.sin();
 
                 // Subtle organic asymmetry without pinwheel swirl
-                let theta_org = theta
-                    + 0.055 * (2.0 * theta + 0.6).sin()
-                    + 0.035 * (3.0 * theta - 0.9).cos();
+                let theta_org =
+                    theta + 0.055 * (2.0 * theta + 0.6).sin() + 0.035 * (3.0 * theta - 0.9).cos();
 
                 // Plump 6-cushion internal hemorrhoidal/rectal mucosal rosette profile
                 // (wide convex lobes separated by narrow sulcal dimples — never pointy spikes!)
@@ -618,8 +615,7 @@ impl AnalSimulation {
                 let pig_t = smoothstep(3.2, 16.5, r_from_rim);
                 let verge_t = smoothstep(0.0, 2.8, r_from_rim);
                 // When prolapse_t > 0, the everted internal rectal mucosa rolls out to the intersphincteric groove (r ~ 2.25 mm)
-                let prolapse_mucosa_mask =
-                    prolapse_t * (1.0 - smoothstep(1.35, 2.35, r_from_rim));
+                let prolapse_mucosa_mask = prolapse_t * (1.0 - smoothstep(1.35, 2.35, r_from_rim));
                 let prolapse_crease = prolapse_sulcus.clamp(0.0, 1.0);
 
                 let mut col = [0.0f32; 3];
@@ -652,10 +648,13 @@ impl AnalSimulation {
 
                 // Strict wetness localization: glistening wet on the anal verge, capillary meniscus,
                 // and everted rectal mucosal prolapse rosette; natural satin/matte on outer gluteal skin
-                let canal_wet_mask = if is_canal { (u_ring / u_rim).powf(2.5) } else { 1.0 };
-                let wet_zone = ((-r_from_rim * 0.28).exp()
-                    .max(prolapse_mucosa_mask * 0.98))
-                    * canal_wet_mask;
+                let canal_wet_mask = if is_canal {
+                    (u_ring / u_rim).powf(2.5)
+                } else {
+                    1.0
+                };
+                let wet_zone =
+                    ((-r_from_rim * 0.28).exp().max(prolapse_mucosa_mask * 0.98)) * canal_wet_mask;
                 let meniscus_wet = meniscus_contact * (-r_from_rim * 1.3).exp() * canal_wet_mask;
                 let local_wetness = ((0.88 * wet_zone
                     + 0.35 * pen * (-r_from_rim * 0.38).exp() * canal_wet_mask
@@ -691,10 +690,10 @@ impl AnalSimulation {
             .dilation_kernel
             .evaluate_point([0.0110, 0.0], 0.0002, &tube, time_s as f64, 0.0)
             .expect("valid outer probe");
-        self.sphincter_separation_mm =
-            (9.0 + 2000.0 * inner_probe.radial_displacement_xy_m[0].abs() as f32).max(2.0 * orifice_r);
-        self.gluteal_separation_mm =
-            22.0 + 2000.0 * outer_probe.radial_displacement_xy_m[0] as f32;
+        self.sphincter_separation_mm = (9.0
+            + 2000.0 * inner_probe.radial_displacement_xy_m[0].abs() as f32)
+            .max(2.0 * orifice_r);
+        self.gluteal_separation_mm = 22.0 + 2000.0 * outer_probe.radial_displacement_xy_m[0] as f32;
 
         // Compute smooth outward-facing vertex normals (`dr.cross(ds)` points +Z on skin and inward toward lumen in canal)
         let mut vertices = Vec::with_capacity(NR * NS);
@@ -735,9 +734,8 @@ fn append_tube_and_meniscus_mesh(
     kin: Kinematics,
     wetness: f32,
 ) {
-    let withdrawal_lift = 2.45
-        * smoothstep(1.0, 3.0, kin.tip_z_mm)
-        * smoothstep(0.0, 25.0, kin.velocity_z_mm_s);
+    let withdrawal_lift =
+        2.45 * smoothstep(1.0, 3.0, kin.tip_z_mm) * smoothstep(0.0, 25.0, kin.velocity_z_mm_s);
     let tip_z = kin.tip_z_mm + withdrawal_lift;
     let r = TUBE_RADIUS_MM;
     let cyl_top_z = tip_z + 2.0 * TUBE_HALF_LENGTH_MM;
@@ -1038,9 +1036,11 @@ impl GpuPipeline {
             camera_pos: [eye.x, eye.y, eye.z, 1.0],
             params: [time_s, kin.insertion_phase, wetness, kin.tip_z_mm],
         };
-        self.render_device
-            .queue()
-            .write_buffer(&self.uniform_buffer, 0, bytemuck::bytes_of(&uniforms));
+        self.render_device.queue().write_buffer(
+            &self.uniform_buffer,
+            0,
+            bytemuck::bytes_of(&uniforms),
+        );
 
         let device = self.render_device.device();
         let vbuf = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -1063,14 +1063,8 @@ impl GpuPipeline {
         time_s: f32,
         output_path: &Path,
     ) -> Result<Kinematics, Box<dyn Error>> {
-        let (vbuf, ibuf, index_count, kin) = self.build_scene_buffers(
-            sim,
-            time_s,
-            WIDTH as f32 / HEIGHT as f32,
-            0.0,
-            0.73,
-            1.0,
-        );
+        let (vbuf, ibuf, index_count, kin) =
+            self.build_scene_buffers(sim, time_s, WIDTH as f32 / HEIGHT as f32, 0.0, 0.73, 1.0);
         let device = self.render_device.device();
         let queue = self.render_device.queue();
 
@@ -1197,13 +1191,7 @@ impl GpuPipeline {
         if let Some(parent) = output_path.parent() {
             std::fs::create_dir_all(parent)?;
         }
-        image::save_buffer(
-            output_path,
-            &rgba,
-            WIDTH,
-            HEIGHT,
-            image::ColorType::Rgba8,
-        )?;
+        image::save_buffer(output_path, &rgba, WIDTH, HEIGHT, image::ColorType::Rgba8)?;
         Ok(kin)
     }
 }
@@ -1374,8 +1362,8 @@ impl ApplicationHandler for InteractiveApp {
                                     },
                                 );
                                 {
-                                    let mut pass = encoder.begin_render_pass(
-                                        &wgpu::RenderPassDescriptor {
+                                    let mut pass =
+                                        encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                                             label: Some("anal-win-pass"),
                                             color_attachments: &[Some(
                                                 wgpu::RenderPassColorAttachment {
@@ -1406,8 +1394,7 @@ impl ApplicationHandler for InteractiveApp {
                                             timestamp_writes: None,
                                             occlusion_query_set: None,
                                             multiview_mask: None,
-                                        },
-                                    );
+                                        });
                                     pass.set_pipeline(&gpu.pipeline);
                                     pass.set_bind_group(0, &gpu.bind_group, &[]);
                                     pass.set_vertex_buffer(0, vbuf.slice(..));

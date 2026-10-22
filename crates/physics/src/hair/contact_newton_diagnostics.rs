@@ -66,8 +66,8 @@ pub(super) fn export(
     match write() {
         Ok(()) => {
             eprintln!(
-                "HAIR NEWTON FAILURE EXPORT {:?} rods={} rows={} failed_row={failed}",
-                path,
+                "HAIR NEWTON FAILURE EXPORT {} rods={} rows={} failed_row={failed}",
+                std::path::Path::new(&path).display(),
                 original.linear.len(),
                 rows.len()
             );

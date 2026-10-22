@@ -15,6 +15,7 @@ struct Placement {
 #[derive(Debug)]
 pub struct NativePlants {
     placements: Vec<Placement>,
+    by_variant: [Vec<usize>; 4],
     wood: BlockStateId,
     groups: usize,
 }
@@ -57,7 +58,7 @@ impl NativePlants {
                 materials.push(material);
             }
             for (id, mut mesh) in asset.geometry.into_iter().enumerate() {
-                mesh.instances = instances[variant * 3 + id].clone();
+                mesh.instances.clone_from(&instances[variant * 3 + id]);
                 mesh.material += material_offset;
                 geometry.push(mesh);
             }
@@ -185,8 +186,13 @@ impl NativePlants {
             low = Vec3::ZERO;
             high = Vec3::ONE;
         }
+        let mut by_variant: [Vec<usize>; 4] = std::array::from_fn(|_| Vec::new());
+        for (index, plant) in placements.iter().enumerate() {
+            by_variant[plant.variant].push(index);
+        }
         let plants = Self {
             placements,
+            by_variant,
             wood,
             groups: 4,
         };
@@ -281,7 +287,16 @@ impl NativePlants {
             })?)
         };
         if changed {
-            renderer.update_native_vegetation_instances(&self.instances())?;
+            renderer.update_native_vegetation_instances_generated((0..self.groups * 3).map(
+                |group| {
+                    let values = self.by_variant[group / 3]
+                        .iter()
+                        .map(|&index| &self.placements[index])
+                        .filter(|p| p.active);
+                    let count = values.clone().count();
+                    (count, values.map(|p| p.transform))
+                },
+            ))?;
         }
         Ok(receipt)
     }

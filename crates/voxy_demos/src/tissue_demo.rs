@@ -98,6 +98,7 @@ impl EnergyLedger {
     }
 }
 #[derive(Clone, Debug)]
+#[allow(clippy::large_enum_variant)]
 enum DemoTissue {
     Xpbd(Tissue),
     Continuum {
@@ -768,7 +769,7 @@ impl TissueDemo {
     }
     fn center(i: usize) -> [f64; 3] {
         [
-            if i % 2 == 0 { -0.23 } else { 0.23 },
+            if i.is_multiple_of(2) { -0.23 } else { 0.23 },
             if i < 2 { 0.55 } else { -0.25 },
             if i < 2 { 0.25 } else { -0.23 },
         ]
@@ -3422,7 +3423,7 @@ mod search_backend_selection_tests {
                 .with_body_contact_domains(vec![(
                     match &demo.bodies[0] {
                         DemoTissue::Continuum { dynamics, .. } => dynamics.body().surface(),
-                        _ => panic!(),
+                        DemoTissue::Xpbd(_) => panic!(),
                     },
                     vec![false],
                 )])

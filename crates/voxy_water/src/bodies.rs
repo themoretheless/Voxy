@@ -21,13 +21,33 @@ pub struct WaterMaterial {
 
 impl WaterMaterial {
     /// Clear chlorinated pool water.
-    pub const POOL: Self = Self { absorption: [0.42, 0.075, 0.035], scatter: [0.006, 0.030, 0.034], caustics: 1.0, foam: 0.0 };
+    pub const POOL: Self = Self {
+        absorption: [0.42, 0.075, 0.035],
+        scatter: [0.006, 0.030, 0.034],
+        caustics: 1.0,
+        foam: 0.0,
+    };
     /// Green-blue lake water with plankton.
-    pub const LAKE: Self = Self { absorption: [0.55, 0.16, 0.20], scatter: [0.010, 0.040, 0.030], caustics: 0.6, foam: 1.0 };
+    pub const LAKE: Self = Self {
+        absorption: [0.55, 0.16, 0.20],
+        scatter: [0.010, 0.040, 0.030],
+        caustics: 0.6,
+        foam: 1.0,
+    };
     /// Shallow river over stones: clear with a brown tint.
-    pub const RIVER: Self = Self { absorption: [0.50, 0.22, 0.30], scatter: [0.025, 0.035, 0.022], caustics: 0.5, foam: 1.0 };
+    pub const RIVER: Self = Self {
+        absorption: [0.50, 0.22, 0.30],
+        scatter: [0.025, 0.035, 0.022],
+        caustics: 0.5,
+        foam: 1.0,
+    };
     /// Tropical sea over sand.
-    pub const SEA: Self = Self { absorption: [0.45, 0.065, 0.045], scatter: [0.008, 0.045, 0.050], caustics: 0.8, foam: 1.0 };
+    pub const SEA: Self = Self {
+        absorption: [0.45, 0.065, 0.045],
+        scatter: [0.008, 0.045, 0.050],
+        caustics: 0.8,
+        foam: 1.0,
+    };
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -37,7 +57,11 @@ pub enum WaterShape {
     Basin { min: Vec3, max: Vec3 },
     /// A flat surface at `level` over a polygon in the xz plane; the terrain forms the
     /// shore (lakes, ponds, seas). `floor` bounds the volume for underwater checks.
-    Region { outline: Vec<Vec2>, level: f32, floor: f32 },
+    Region {
+        outline: Vec<Vec2>,
+        level: f32,
+        floor: f32,
+    },
     /// Flowing water along a spline.
     River(River),
 }
@@ -56,33 +80,88 @@ pub struct WaterBody {
 
 impl WaterBody {
     pub fn pool(min: Vec3, max: Vec3) -> Self {
-        Self { shape: WaterShape::Basin { min, max }, material: WaterMaterial::POOL, waves: 1.0, shore: None, breakers: ShoreWaves { height: 0.0, ..ShoreWaves::default() } }
+        Self {
+            shape: WaterShape::Basin { min, max },
+            material: WaterMaterial::POOL,
+            waves: 1.0,
+            shore: None,
+            breakers: ShoreWaves {
+                height: 0.0,
+                ..ShoreWaves::default()
+            },
+        }
     }
 
     pub fn lake(outline: Vec<Vec2>, level: f32, floor: f32, shore: Option<ShoreField>) -> Self {
-        Self { shape: WaterShape::Region { outline, level, floor }, material: WaterMaterial::LAKE, waves: 1.0, shore, breakers: ShoreWaves { height: 0.12, period: 3.0, reach: 12.0 } }
+        Self {
+            shape: WaterShape::Region {
+                outline,
+                level,
+                floor,
+            },
+            material: WaterMaterial::LAKE,
+            waves: 1.0,
+            shore,
+            breakers: ShoreWaves {
+                height: 0.12,
+                period: 3.0,
+                reach: 12.0,
+            },
+        }
     }
 
     pub fn sea(outline: Vec<Vec2>, level: f32, floor: f32, shore: ShoreField) -> Self {
-        Self { shape: WaterShape::Region { outline, level, floor }, material: WaterMaterial::SEA, waves: 1.0, shore: Some(shore), breakers: ShoreWaves::default() }
+        Self {
+            shape: WaterShape::Region {
+                outline,
+                level,
+                floor,
+            },
+            material: WaterMaterial::SEA,
+            waves: 1.0,
+            shore: Some(shore),
+            breakers: ShoreWaves::default(),
+        }
     }
 
     pub fn river(river: River) -> Self {
-        Self { shape: WaterShape::River(river), material: WaterMaterial::RIVER, waves: 0.4, shore: None, breakers: ShoreWaves { height: 0.0, ..ShoreWaves::default() } }
+        Self {
+            shape: WaterShape::River(river),
+            material: WaterMaterial::RIVER,
+            waves: 0.4,
+            shore: None,
+            breakers: ShoreWaves {
+                height: 0.0,
+                ..ShoreWaves::default()
+            },
+        }
     }
 
     /// Axis-aligned bounds of the water volume (surface included).
     pub fn bounds(&self) -> (Vec3, Vec3) {
         match &self.shape {
             WaterShape::Basin { min, max } => (*min, *max),
-            WaterShape::Region { outline, level, floor } => {
-                let (lo, hi) = outline.iter().fold((Vec2::splat(f32::MAX), Vec2::splat(f32::MIN)), |(lo, hi), p| (lo.min(*p), hi.max(*p)));
+            WaterShape::Region {
+                outline,
+                level,
+                floor,
+            } => {
+                let (lo, hi) = outline.iter().fold(
+                    (Vec2::splat(f32::MAX), Vec2::splat(f32::MIN)),
+                    |(lo, hi), p| (lo.min(*p), hi.max(*p)),
+                );
                 (Vec3::new(lo.x, *floor, lo.y), Vec3::new(hi.x, *level, hi.y))
             }
-            WaterShape::River(river) => river.nodes.iter().fold((Vec3::splat(f32::MAX), Vec3::splat(f32::MIN)), |(lo, hi), n| {
-                let r = Vec3::new(n.width * 0.5, 0.0, n.width * 0.5);
-                (lo.min(n.position - r - Vec3::Y * n.depth), hi.max(n.position + r))
-            }),
+            WaterShape::River(river) => river.nodes.iter().fold(
+                (Vec3::splat(f32::MAX), Vec3::splat(f32::MIN)),
+                |(lo, hi), n| {
+                    let r = Vec3::new(n.width * 0.5, 0.0, n.width * 0.5);
+                    (
+                        lo.min(n.position - r - Vec3::Y * n.depth),
+                        hi.max(n.position + r),
+                    )
+                },
+            ),
         }
     }
 }
@@ -147,7 +226,12 @@ impl WaterWorld {
                 _ => Vec::new(),
             })
             .collect();
-        Self { bodies, spectrum, waves, river_samples }
+        Self {
+            bodies,
+            spectrum,
+            waves,
+            river_samples,
+        }
     }
 
     pub fn river_samples(&self, body: usize) -> &[RiverSample] {
@@ -165,7 +249,11 @@ impl WaterWorld {
                     }
                     (max.y, min.y, Vec3::ZERO, 0.0)
                 }
-                WaterShape::Region { outline, level, floor } => {
+                WaterShape::Region {
+                    outline,
+                    level,
+                    floor,
+                } => {
                     if !point_in_polygon(xz, outline) {
                         continue;
                     }
@@ -195,7 +283,9 @@ impl WaterWorld {
                 breaker_height = b.height;
                 let dir = shore.shoreward(xz);
                 // crests travel shoreward at the shallow-water celerity
-                breaker_velocity = Vec3::new(dir.x, 0.0, dir.y) * (9.81 * depth.max(0.05)).sqrt() * b.foam.min(1.0);
+                breaker_velocity = Vec3::new(dir.x, 0.0, dir.y)
+                    * (9.81 * depth.max(0.05)).sqrt()
+                    * b.foam.min(1.0);
                 foam = foam.max(b.foam * body.material.foam);
             }
             if fft > 0.0 {
@@ -207,7 +297,8 @@ impl WaterWorld {
                 wave = self.waves.sample(flow_xz, time);
             }
             let surface = level + wave.height * fft + breaker_height;
-            let normal = Vec3::new(wave.normal.x * fft, wave.normal.y, wave.normal.z * fft).normalize();
+            let normal =
+                Vec3::new(wave.normal.x * fft, wave.normal.y, wave.normal.z * fft).normalize();
             return Some(WaterSample {
                 body: index,
                 surface,
@@ -222,7 +313,8 @@ impl WaterWorld {
 
     /// True when `point` is under the surface of some body.
     pub fn is_submerged(&self, point: Vec3, time: f32) -> bool {
-        self.sample(point, time).is_some_and(|s| s.submersion(point) > 0.0)
+        self.sample(point, time)
+            .is_some_and(|s| s.submersion(point) > 0.0)
     }
 }
 
@@ -234,13 +326,35 @@ mod tests {
 
     #[test]
     fn pool_lake_and_river_answer_their_own_points() {
-        let shore = ShoreField::new(&Bathymetry::from_fn(Vec2::new(-50., -50.), 1.0, [100, 100], |p| p.length() * 0.1 - 3.0), 0.0);
-        let node = |z: f32| RiverNode { position: Vec3::new(80., 2.0 - z * 0.01, z), width: 6.0, depth: 1.0 };
+        let shore = ShoreField::new(
+            &Bathymetry::from_fn(Vec2::new(-50., -50.), 1.0, [100, 100], |p| {
+                p.length() * 0.1 - 3.0
+            }),
+            0.0,
+        );
+        let node = |z: f32| RiverNode {
+            position: Vec3::new(80., 2.0 - z * 0.01, z),
+            width: 6.0,
+            depth: 1.0,
+        };
         let world = WaterWorld::new(
             vec![
                 WaterBody::pool(Vec3::new(-2., -1.5, 100.), Vec3::new(2., 0.1, 110.)),
-                WaterBody::lake(vec![Vec2::new(-40., -40.), Vec2::new(40., -40.), Vec2::new(40., 40.), Vec2::new(-40., 40.)], 0.0, -5.0, Some(shore)),
-                WaterBody::river(River::new((0..5).map(|i| node(i as f32 * 10.)).collect(), 1.5)),
+                WaterBody::lake(
+                    vec![
+                        Vec2::new(-40., -40.),
+                        Vec2::new(40., -40.),
+                        Vec2::new(40., 40.),
+                        Vec2::new(-40., 40.),
+                    ],
+                    0.0,
+                    -5.0,
+                    Some(shore),
+                ),
+                WaterBody::river(River::new(
+                    (0..5).map(|i| node(i as f32 * 10.)).collect(),
+                    1.5,
+                )),
             ],
             WaveSpectrum::pond(),
         );

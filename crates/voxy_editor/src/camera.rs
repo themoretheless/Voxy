@@ -10,7 +10,7 @@ pub(crate) fn wheel_steps(delta: winit::event::MouseScrollDelta, scale: f64) -> 
         winit::event::MouseScrollDelta::PixelDelta(point) if scale.is_finite() && scale > 0. => {
             point.y / scale / 40.
         }
-        _ => return 0.,
+        winit::event::MouseScrollDelta::PixelDelta(_) => return 0.,
     };
     if value.is_finite() {
         value.clamp(-20., 20.) as f32
@@ -126,6 +126,31 @@ impl ViewportCamera {
             unproject(vp, center, size, depth)? - unproject(vp, center + delta, size, depth)?;
         self.legacy = false;
         Ok(())
+    }
+
+    /// Focuses the camera on an axis-aligned bounding box `[min, max]`, positioning
+    /// `target` at the AABB center and setting `distance` so the bounding sphere fits
+    /// comfortably inside the vertical field of view.
+    #[must_use]
+    pub fn focus_aabb(&mut self, min: Vec3, max: Vec3, fov_y_radians: f32) -> bool {
+        if !min.is_finite()
+            || !max.is_finite()
+            || min.x > max.x
+            || min.y > max.y
+            || min.z > max.z
+            || !fov_y_radians.is_finite()
+            || fov_y_radians <= 0.05
+            || fov_y_radians >= std::f32::consts::PI - 0.05
+        {
+            return false;
+        }
+        let center = 0.5 * (min + max);
+        let radius = (0.5 * (max - min)).length().max(0.1);
+        let sin_half = (0.5 * fov_y_radians).sin().max(0.1);
+        self.target = center;
+        self.distance = (radius / sin_half * 1.15).clamp(0.01, 10_000.0);
+        self.legacy = false;
+        true
     }
 }
 

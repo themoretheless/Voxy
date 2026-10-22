@@ -1068,9 +1068,7 @@ mod shadow_tests {
                         continue;
                     }
                     world_x > lower && world_x < upper
-                } else {
-                    if x < 16 { x >= 8 } else { x < 24 }
-                };
+                } else if x < 16 { x >= 8 } else { x < 24 };
                 let expected = if blocked { 0 } else { lit };
                 let offset = y * 256 + x * 4;
                 assert!(

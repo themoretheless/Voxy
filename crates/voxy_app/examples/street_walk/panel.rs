@@ -1,9 +1,9 @@
 //! Left-hand settings panel (F1 toggles). It takes input only while the
 //! mouse is released (Esc), so it never fights the walk camera.
 use crate::day_cycle::DayCycle;
+use voxy_render::ArchiveAntialiasing;
 use voxy_render::archive_scene::ArchiveToneMapper;
 use voxy_render::climate::Season;
-use voxy_render::ArchiveAntialiasing;
 use voxy_render::weather::Weather;
 use winit::window::Window;
 
@@ -48,7 +48,12 @@ impl Panel {
             Some(device.limits().max_texture_dimension_2d as usize),
         );
         let renderer = egui_wgpu::Renderer::new(device, format, Default::default());
-        Self { ctx, state, renderer, visible: true }
+        Self {
+            ctx,
+            state,
+            renderer,
+            visible: true,
+        }
     }
     /// True when egui consumed the event.
     pub fn on_event(&mut self, window: &Window, event: &winit::event::WindowEvent) -> bool {
@@ -77,10 +82,13 @@ impl Panel {
                 .resizable(false)
                 .exact_size(WIDTH)
                 .show(ui, |ui| {
-                    egui::ScrollArea::vertical().auto_shrink(false).show(ui, |ui| contents(ui, &mut settings));
+                    egui::ScrollArea::vertical()
+                        .auto_shrink(false)
+                        .show(ui, |ui| contents(ui, &mut settings));
                 });
         });
-        self.state.handle_platform_output(window, output.platform_output);
+        self.state
+            .handle_platform_output(window, output.platform_output);
         let jobs = self.ctx.tessellate(output.shapes, output.pixels_per_point);
         let screen = egui_wgpu::ScreenDescriptor {
             size_in_pixels: size,
@@ -94,7 +102,9 @@ impl Panel {
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("street settings panel"),
         });
-        let extra = self.renderer.update_buffers(device, queue, &mut encoder, &jobs, &screen);
+        let extra = self
+            .renderer
+            .update_buffers(device, queue, &mut encoder, &jobs, &screen);
         {
             let mut pass = encoder
                 .begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -103,7 +113,10 @@ impl Panel {
                         view,
                         depth_slice: None,
                         resolve_target: None,
-                        ops: wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store },
+                        ops: wgpu::Operations {
+                            load: wgpu::LoadOp::Load,
+                            store: wgpu::StoreOp::Store,
+                        },
                     })],
                     depth_stencil_attachment: None,
                     timestamp_writes: None,
@@ -126,7 +139,10 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     ui.separator();
 
     let mut enabled = s.cycle.is_some();
-    if ui.checkbox(&mut enabled, "Смена дня, сезонов и погоды").changed() {
+    if ui
+        .checkbox(&mut enabled, "Смена дня, сезонов и погоды")
+        .changed()
+    {
         *s.cycle = enabled.then(|| DayCycle::new(s.seed_mut.as_deref().copied().unwrap_or(0)));
     }
     if let Some(cycle) = s.cycle.as_mut() {
@@ -140,16 +156,34 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
             (hour.fract() * 60.) as u32,
             season_name(c.season())
         ));
-        if ui.add(egui::Slider::new(&mut hour, 0.0..=23.99).text("час")).changed() {
+        if ui
+            .add(egui::Slider::new(&mut hour, 0.0..=23.99).text("час"))
+            .changed()
+        {
             c.hours = day * 24. + hour;
         }
         let mut day_of_year = day + 1.;
-        if ui.add(egui::Slider::new(&mut day_of_year, 1.0..=365.).integer().text("день года")).changed() {
+        if ui
+            .add(
+                egui::Slider::new(&mut day_of_year, 1.0..=365.)
+                    .integer()
+                    .text("день года"),
+            )
+            .changed()
+        {
             c.hours = (day_of_year - 1.) * 24. + c.hour();
         }
         ui.horizontal(|ui| {
-            for season in [Season::Spring, Season::Summer, Season::Autumn, Season::Winter] {
-                if ui.selectable_label(c.season() == season, season_name(season)).clicked() {
+            for season in [
+                Season::Spring,
+                Season::Summer,
+                Season::Autumn,
+                Season::Winter,
+            ] {
+                if ui
+                    .selectable_label(c.season() == season, season_name(season))
+                    .clicked()
+                {
                     c.hours = season.middle_day() * 24. + c.hour();
                 }
             }
@@ -159,7 +193,11 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
         ui.checkbox(&mut cycle.paused, "Пауза времени");
         let mut minutes = 1. / cycle.time_scale.max(1e-6) * 24. / 60.;
         if ui
-            .add(egui::Slider::new(&mut minutes, 0.5..=240.).logarithmic(true).text("мин на сутки"))
+            .add(
+                egui::Slider::new(&mut minutes, 0.5..=240.)
+                    .logarithmic(true)
+                    .text("мин на сутки"),
+            )
             .changed()
         {
             cycle.time_scale = 24. / (minutes * 60.);
@@ -180,7 +218,11 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
         ] {
             if ui.button(name).clicked() {
                 let (wind, gust) = (s.weather.wind, s.weather.wind_gust);
-                *s.weather = Weather { wind, wind_gust: gust, ..preset };
+                *s.weather = Weather {
+                    wind,
+                    wind_gust: gust,
+                    ..preset
+                };
             }
         }
     });
@@ -192,8 +234,12 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     let [x, z] = w.wind;
     let mut speed = x.hypot(z);
     let mut direction = z.atan2(x).to_degrees().rem_euclid(360.);
-    let wind_speed = ui.add(egui::Slider::new(&mut speed, 0.0..=30.).text("ветер м/с")).changed();
-    let wind_direction = ui.add(egui::Slider::new(&mut direction, 0.0..=359.).text("направление °")).changed();
+    let wind_speed = ui
+        .add(egui::Slider::new(&mut speed, 0.0..=30.).text("ветер м/с"))
+        .changed();
+    let wind_direction = ui
+        .add(egui::Slider::new(&mut direction, 0.0..=359.).text("направление °"))
+        .changed();
     if wind_speed || wind_direction {
         let a = direction.to_radians();
         w.wind = [a.cos() * speed, a.sin() * speed];
@@ -221,7 +267,10 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
             *s.reconfigure = true;
         }
         if let Some(elevation) = s.sun_elevation.as_mut() {
-            if ui.add(egui::Slider::new(elevation, -10.0..=90.).text("высота солнца °")).changed() {
+            if ui
+                .add(egui::Slider::new(elevation, -10.0..=90.).text("высота солнца °"))
+                .changed()
+            {
                 *s.reconfigure = true;
             }
         }
@@ -232,7 +281,9 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
         ui.horizontal(|ui| {
             ui.label(format!("Сид улицы {seed:#x}"));
             if ui.button("Другая улица").clicked() {
-                *seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+                *seed = seed
+                    .wrapping_mul(6364136223846793005)
+                    .wrapping_add(1442695040888963407);
                 *s.rebuild = true;
             }
         });
@@ -291,7 +342,10 @@ impl RenderSettings {
             value => {
                 let parts: Vec<f32> = value
                     .split(',')
-                    .filter_map(|v| match v.trim() { "auto" => Some(0.), v => v.parse().ok() })
+                    .filter_map(|v| match v.trim() {
+                        "auto" => Some(0.),
+                        v => v.parse().ok(),
+                    })
                     .collect();
                 if parts.len() < 2 {
                     return Err(format!("invalid VOXY_STREET_DOF: {value}"));
@@ -305,9 +359,18 @@ impl RenderSettings {
         };
         let probe_spacing = match var("VOXY_STREET_PROBES").as_deref().unwrap_or("6") {
             "off" => None,
-            value => Some(value.parse().map_err(|_| format!("invalid VOXY_STREET_PROBES: {value}"))?),
+            value => Some(
+                value
+                    .parse()
+                    .map_err(|_| format!("invalid VOXY_STREET_PROBES: {value}"))?,
+            ),
         };
-        Ok(Self { antialiasing, tone_mapper, lens, probe_spacing })
+        Ok(Self {
+            antialiasing,
+            tone_mapper,
+            lens,
+            probe_spacing,
+        })
     }
 }
 
@@ -332,11 +395,22 @@ fn render(ui: &mut egui::Ui, r: &mut RenderSettings, reconfigure: &mut bool, reb
         ui.selectable_value(&mut r.tone_mapper, ArchiveToneMapper::Aces, "ACES");
     });
     let mut dof = r.lens.is_some();
-    if ui.checkbox(&mut dof, "Глубина резкости и motion blur").changed() {
-        r.lens = dof.then_some(Lens { f_number: 5.6, focus_distance_m: 0., shutter_fraction: 0.5 });
+    if ui
+        .checkbox(&mut dof, "Глубина резкости и motion blur")
+        .changed()
+    {
+        r.lens = dof.then_some(Lens {
+            f_number: 5.6,
+            focus_distance_m: 0.,
+            shutter_fraction: 0.5,
+        });
     }
     if let Some(lens) = r.lens.as_mut() {
-        ui.add(egui::Slider::new(&mut lens.f_number, 1.4..=22.).logarithmic(true).text("диафрагма f/"));
+        ui.add(
+            egui::Slider::new(&mut lens.f_number, 1.4..=22.)
+                .logarithmic(true)
+                .text("диафрагма f/"),
+        );
         ui.add(egui::Slider::new(&mut lens.focus_distance_m, 0.0..=50.).text("фокус м (0 = авто)"));
         ui.add(egui::Slider::new(&mut lens.shutter_fraction, 0.0..=1.).text("затвор"));
     }
@@ -344,7 +418,10 @@ fn render(ui: &mut egui::Ui, r: &mut RenderSettings, reconfigure: &mut bool, reb
         *reconfigure = true;
     }
     let mut probes = r.probe_spacing.is_some();
-    if ui.checkbox(&mut probes, "Пробы отражённого света").changed() {
+    if ui
+        .checkbox(&mut probes, "Пробы отражённого света")
+        .changed()
+    {
         r.probe_spacing = probes.then_some(6.);
         *rebuild = true;
     }
@@ -373,7 +450,12 @@ fn ageing(ui: &mut egui::Ui, a: &mut crate::original::Ageing, rebuild: &mut bool
     slider(ui, &mut a.dirt, "грязь и трещины");
     ui.horizontal(|ui| {
         if ui.button("Новая").clicked() {
-            *a = crate::original::Ageing { damage: 0., colour: 0., relaid: 0., dirt: 0. };
+            *a = crate::original::Ageing {
+                damage: 0.,
+                colour: 0.,
+                relaid: 0.,
+                dirt: 0.,
+            };
             *rebuild = true;
         }
         if ui.button("По умолчанию").clicked() {

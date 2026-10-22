@@ -1,3 +1,10 @@
+// Optional aligned output tail; zero preserves the original query allocation.
+override WORLD_HIT_POSITION_BASE:u32=0u;
+fn nearest_clear_position(index:u32) {
+ if WORLD_HIT_POSITION_BASE==0u {return;}
+ let out=WORLD_HIT_POSITION_BASE+index*2u;
+ exact_output[out]=vec4<u32>(0u);exact_output[out+1u]=vec4<u32>(0u);
+}
 // Shared conservative source-node rejection. Unproven bounds keep the node.
 struct NearestCounts {values:array<vec4<u32>,4096>}
 @group(0) @binding(9) var<uniform> nearest_counts:NearestCounts;
@@ -49,6 +56,7 @@ fn nearest_node_miss_before(base:u32,ray:u32,far:f32)->bool {
 fn nearest_material_base()->u32 {return nearest_active[2]+nearest_active[1]*8u;}
 fn nearest_material_enabled()->bool {return nearest_active[nearest_material_base()+1u]!=0u;}
 fn nearest_admission_result(index:u32,stride:u32,state:u32,reason:u32) {
+ nearest_clear_position(index);
  let out=index*stride;let ray=index*20u;
  exact_output[out]=vec4<u32>(state,reason,2048u,1u);
  exact_output[out+1u]=vec4<u32>(exact_ray_word(ray+18u),exact_ray_word(ray+19u),4294967295u,4294967295u);

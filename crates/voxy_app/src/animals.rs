@@ -1,4 +1,5 @@
 //! Authored companion surfaces, native quadruped rigging and inertial fur guides.
+#![allow(dead_code)]
 #[path = "animals/breed_asset.rs"]
 mod asset;
 mod collision;
@@ -115,32 +116,41 @@ impl Companion {
             .iter()
             .zip(&groom.roots)
             .map(|(strand, root)| {
-                let rest =
-                    pose[root.bone].transform_point3(root.rest_point(1.0));
+                let rest = pose[root.bone].transform_point3(root.rest_point(1.0));
                 Vec3::from_array(strand.positions()[2].map(|x| x as f32)).distance(rest)
             })
             .fold(0.0, f32::max))
     }
-    pub fn inspection_paw(&self) -> (Vec3,f32) {
-        let a=asset::profile(self.cat);let hip=leg_pivots(self.cat)[1];
-        (self.bones()[6].transform_point3(Vec3::new(hip.x,a.paw_half_width*0.6,
-            hip.z+a.paw_half_width)),a.paw_half_width*7.)
+    pub fn inspection_paw(&self) -> (Vec3, f32) {
+        let a = asset::profile(self.cat);
+        let hip = leg_pivots(self.cat)[1];
+        (
+            self.bones()[6].transform_point3(Vec3::new(
+                hip.x,
+                a.paw_half_width * 0.6,
+                hip.z + a.paw_half_width,
+            )),
+            a.paw_half_width * 7.,
+        )
     }
     pub fn inspection_face(&self) -> (Vec3, f32) {
-        let a=asset::profile(self.cat);
-        let skull=a.head_length-a.muzzle_length;
-        (self.position()+Vec3::Y*(a.head_origin().y+skull*0.1)
-            +self.forward()*(a.head_origin().z+a.head_length*0.45),a.skull_width*3.5)
+        let a = asset::profile(self.cat);
+        let skull = a.head_length - a.muzzle_length;
+        (
+            self.position()
+                + Vec3::Y * (a.head_origin().y + skull * 0.1)
+                + self.forward() * (a.head_origin().z + a.head_length * 0.45),
+            a.skull_width * 3.5,
+        )
     }
     pub fn inspection_center(&self) -> Vec3 {
         let a = asset::profile(self.cat);
         let skull = a.head_length - a.muzzle_length;
         let ear = match a.ears {
             voxy_model::animals::Ear::Upright { height } => height,
-            _ => 0.0,
+            voxy_model::animals::Ear::Folded { .. } => 0.0,
         };
-        self.position()
-            + Vec3::Y * (a.head_origin().y + skull * 0.35 + ear) * 0.48
+        self.position() + Vec3::Y * (a.head_origin().y + skull * 0.35 + ear) * 0.48
     }
     pub fn forward(&self) -> Vec3 {
         Quat::from_rotation_y(self.yaw) * Vec3::Z

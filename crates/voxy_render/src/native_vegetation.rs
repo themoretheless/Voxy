@@ -56,6 +56,9 @@ struct Mesh {
     vertices: ComputeStorage,
     indices: ComputeStorage,
     instances: ComputeStorage,
+    instance_ring: Option<crate::SharedUploadRing>,
+    snapshot: Vec<ArchiveInstance>,
+    generated: Option<crate::SharedUploadSnapshot>,
     count: u32,
     instance_count: u32,
     capacity: usize,
@@ -69,11 +72,15 @@ struct Material {
 pub struct NativeVegetation {
     /// Clock for wind animation in the vertex shader.
     started: std::time::Instant,
+    #[cfg(test)]
+    frozen_benchmark_time: Option<f32>,
     meshes: Vec<Mesh>,
     materials: Vec<Material>,
     _images: Vec<Arc<voxy_gpu_core::ManagedTexture>>,
     camera: ComputeStorage,
     camera_bind: wgpu::BindGroup,
+    camera_ring: Option<crate::SharedUploadRing>,
+    camera_groups: Vec<wgpu::BindGroup>,
     shadow: Arc<voxy_gpu_core::ManagedTexture>,
     shadow_bind: wgpu::BindGroup,
     receiver_layout: wgpu::BindGroupLayout,
@@ -239,6 +246,25 @@ impl NativeVegetation {
                 resource: camera.as_entire_binding(),
             }],
         });
+        let camera_ring =
+            crate::SharedUploadRing::new(device, camera.size(), wgpu::BufferUsages::UNIFORM);
+        let camera_groups = camera_ring
+            .as_ref()
+            .map(|ring| {
+                ring.buffers()
+                    .map(|buffer| {
+                        device.create_bind_group(&wgpu::BindGroupDescriptor {
+                            label: Some("shared vegetation camera"),
+                            layout: &camera_layout,
+                            entries: &[wgpu::BindGroupEntry {
+                                binding: 0,
+                                resource: buffer.as_entire_binding(),
+                            }],
+                        })
+                    })
+                    .collect()
+            })
+            .unwrap_or_default();
         let shadow =
             ComputeMemoryBudget::for_device(device).allocate_texture(&wgpu::TextureDescriptor {
                 label: Some("native vegetation shadow map"),
@@ -400,7 +426,20 @@ impl NativeVegetation {
             {
                 return Err(ComputeError::Validation("invalid botanical mesh".into()));
             }
+            let instance_ring = crate::SharedUploadRing::new(
+                device,
+                (mesh.instances.len() * size_of::<ArchiveInstance>()) as u64,
+                wgpu::BufferUsages::VERTEX,
+            );
+            let snapshot = if instance_ring.is_some() {
+                mesh.instances.clone()
+            } else {
+                Vec::new()
+            };
             meshes.push(Mesh {
+                instance_ring,
+                generated: None,
+                snapshot,
                 vertices: buffer(
                     device,
                     "native plant vertices",
@@ -574,6 +613,8 @@ impl NativeVegetation {
             _images: textures,
             camera,
             camera_bind,
+            camera_ring,
+            camera_groups,
             shadow,
             shadow_bind,
             receiver_layout,
@@ -582,6 +623,8 @@ impl NativeVegetation {
             hdr_pipeline,
             shadow_pipeline,
             started: std::time::Instant::now(),
+            #[cfg(test)]
+            frozen_benchmark_time: None,
             receiver,
             hdr_receiver,
             shadow_vp,
@@ -612,12 +655,142 @@ impl NativeVegetation {
             ));
         }
         for (mesh, values) in self.meshes.iter_mut().zip(instances) {
-            if !values.is_empty() {
+            if mesh.instance_ring.is_some() {
+                mesh.snapshot.clone_from(values);
+            } else if !values.is_empty() {
                 queue.write_buffer(&mesh.instances, 0, bytemuck::cast_slice(values));
             }
+            mesh.generated = None;
             mesh.instance_count = values.len() as u32;
         }
         Ok(())
+    }
+    /// Generate final instance bytes directly in shared memory on Apple Silicon.
+    /// Other devices retain the validated slice upload. Failed groups publish none.
+    pub fn update_instances_generated<I, J>(
+        &mut self,
+        queue: &wgpu::Queue,
+        groups: I,
+    ) -> Result<(), ComputeError>
+    where
+        I: ExactSizeIterator<Item = (usize, J)>,
+        J: Iterator<Item = ArchiveInstance>,
+    {
+        if groups.len() != self.meshes.len() {
+            return Err(ComputeError::Validation(
+                "invalid botanical group count".into(),
+            ));
+        }
+        let mut pending = Vec::with_capacity(self.meshes.len());
+        for (mesh, (count, values)) in self.meshes.iter().zip(groups) {
+            if count > mesh.capacity {
+                return Err(ComputeError::Validation("botanical capacity".into()));
+            }
+            let validate = |value: ArchiveInstance| {
+                // Validate complete SIMD rows while they are in registers. The
+                // scalar flattened iterator prevents vectorization when interleaved
+                // with direct write-only stores for each generated instance.
+                if !Mat4::from_cols_array_2d(&value.world).is_finite()
+                    || !glam::Vec4::from_array(value.normal[0]).is_finite()
+                    || !glam::Vec4::from_array(value.normal[1]).is_finite()
+                    || !glam::Vec4::from_array(value.normal[2]).is_finite()
+                {
+                    Err(ComputeError::Validation(
+                        "invalid botanical transform".into(),
+                    ))
+                } else {
+                    Ok(value)
+                }
+            };
+            let (generated, legacy) = if let Some(ring) =
+                mesh.instance_ring.as_ref().filter(|_| count != 0)
+            {
+                (
+                    Some(
+                        ring.prepare((count * size_of::<ArchiveInstance>()) as u64, |bytes| {
+                            let mut chunks = bytes
+                                .into_chunks::<{ size_of::<ArchiveInstance>() }>()
+                                .0
+                                .into_iter();
+                            for value in values {
+                                let Some(target) = chunks.next() else {
+                                    return Err(ComputeError::InvalidBuffer);
+                                };
+                                let value = validate(value)?;
+                                target.write(bytemuck::cast(value));
+                            }
+                            if chunks.next().is_some() {
+                                return Err(ComputeError::InvalidBuffer);
+                            }
+                            Ok::<_, ComputeError>(())
+                        })?,
+                    ),
+                    Vec::new(),
+                )
+            } else {
+                (None, values.map(validate).collect::<Result<Vec<_>, _>>()?)
+            };
+            if generated.is_none() && legacy.len() != count {
+                return Err(ComputeError::InvalidBuffer);
+            }
+            pending.push((count, generated, legacy));
+        }
+        for (mesh, (count, generated, legacy)) in self.meshes.iter_mut().zip(pending) {
+            if generated.is_none() && !legacy.is_empty() {
+                queue.write_buffer(&mesh.instances, 0, bytemuck::cast_slice(&legacy));
+            }
+            mesh.generated = generated;
+            mesh.snapshot = Vec::new();
+            mesh.instance_count = count as u32;
+        }
+        Ok(())
+    }
+    fn input_buffers(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        queue: &wgpu::Queue,
+        camera: &Camera,
+    ) -> (wgpu::BindGroup, Vec<wgpu::Buffer>) {
+        let camera_group = if let Some(ring) = &self.camera_ring {
+            let (slot, _) = ring
+                .write_or_stage(encoder, &self.camera, |mut bytes| {
+                    bytes.copy_from_slice(bytemuck::bytes_of(camera))
+                })
+                .expect("live shared vegetation camera");
+            self.camera_groups
+                .get(slot)
+                .unwrap_or(&self.camera_bind)
+                .clone()
+        } else {
+            queue.write_buffer(&self.camera, 0, bytemuck::bytes_of(camera));
+            self.camera_bind.clone()
+        };
+        (camera_group, self.instance_buffers(encoder))
+    }
+    fn instance_buffers(&self, encoder: &mut wgpu::CommandEncoder) -> Vec<wgpu::Buffer> {
+        self.meshes
+            .iter()
+            .map(|mesh| {
+                if let Some(snapshot) = &mesh.generated {
+                    return snapshot.buffer_for_encoder(encoder, &mesh.instances);
+                }
+                if let Some(ring) = mesh
+                    .instance_ring
+                    .as_ref()
+                    .filter(|_| mesh.instance_count != 0)
+                {
+                    ring.write_or_stage(encoder, &mesh.instances, |mut bytes| {
+                        bytes
+                            .slice(..mesh.snapshot.len() * size_of::<ArchiveInstance>())
+                            .copy_from_slice(bytemuck::cast_slice(&mesh.snapshot));
+                    })
+                    .expect("live shared vegetation instances")
+                    .1
+                } else {
+                    (*mesh.instances).clone()
+                }
+            })
+            .collect()
     }
     pub(crate) fn encode(
         &self,
@@ -630,6 +803,9 @@ impl NativeVegetation {
         eye: Vec3,
         hdr: bool,
     ) {
+        let wind_time = self.started.elapsed().as_secs_f32() % 3600.;
+        #[cfg(test)]
+        let wind_time = self.frozen_benchmark_time.unwrap_or(wind_time);
         let camera = Camera {
             vp: vp.to_cols_array_2d(),
             inverse_vp: vp.inverse().to_cols_array_2d(),
@@ -639,14 +815,9 @@ impl NativeVegetation {
                 .normalize()
                 .extend(0.)
                 .to_array(),
-            flags: [
-                f32::from(hdr),
-                self.started.elapsed().as_secs_f32() % 3600.,
-                0.,
-                0.,
-            ],
+            flags: [f32::from(hdr), wind_time, 0., 0.],
         };
-        queue.write_buffer(&self.camera, 0, bytemuck::bytes_of(&camera));
+        let (camera_group, instances) = self.input_buffers(encoder, queue, &camera);
         let shadow_view = self.shadow.create_view(&Default::default());
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -663,14 +834,14 @@ impl NativeVegetation {
                 ..Default::default()
             });
             pass.set_pipeline(&self.shadow_pipeline);
-            pass.set_bind_group(0, &self.camera_bind, &[]);
-            for mesh in &self.meshes {
+            pass.set_bind_group(0, &camera_group, &[]);
+            for (mesh, instances) in self.meshes.iter().zip(&instances) {
                 if mesh.instance_count == 0 {
                     continue;
                 }
                 pass.set_bind_group(1, &self.materials[mesh.material].bind, &[]);
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
-                pass.set_vertex_buffer(1, mesh.instances.slice(..));
+                pass.set_vertex_buffer(1, instances.slice(..));
                 pass.set_index_buffer(mesh.indices.slice(..), wgpu::IndexFormat::Uint32);
                 pass.draw_indexed(0..mesh.count, 0, 0..mesh.instance_count);
             }
@@ -712,7 +883,7 @@ impl NativeVegetation {
             } else {
                 &self.receiver
             });
-            pass.set_bind_group(0, &self.camera_bind, &[]);
+            pass.set_bind_group(0, &camera_group, &[]);
             pass.set_bind_group(1, &receiver_bind, &[]);
             pass.draw(0..3, 0..1);
         }
@@ -743,15 +914,15 @@ impl NativeVegetation {
             } else {
                 &self.pipeline
             });
-            pass.set_bind_group(0, &self.camera_bind, &[]);
+            pass.set_bind_group(0, &camera_group, &[]);
             pass.set_bind_group(2, &self.shadow_bind, &[]);
-            for mesh in &self.meshes {
+            for (mesh, instances) in self.meshes.iter().zip(&instances) {
                 if mesh.instance_count == 0 {
                     continue;
                 }
                 pass.set_bind_group(1, &self.materials[mesh.material].bind, &[]);
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
-                pass.set_vertex_buffer(1, mesh.instances.slice(..));
+                pass.set_vertex_buffer(1, instances.slice(..));
                 pass.set_index_buffer(mesh.indices.slice(..), wgpu::IndexFormat::Uint32);
                 pass.draw_indexed(0..mesh.count, 0, 0..mesh.instance_count);
             }
@@ -779,3 +950,7 @@ mod tests {
         }
     }
 }
+
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+#[path = "native_vegetation_shared_tests.rs"]
+mod shared_tests;

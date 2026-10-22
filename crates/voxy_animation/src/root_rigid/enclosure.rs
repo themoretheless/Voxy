@@ -520,6 +520,7 @@ impl RootRigidEnclosure {
     /// Combines this translation enclosure with a separately qualified unit
     /// rotation enclosure. Their independent product may lose correlation but
     /// includes every original combination; no unchecked quaternion boxes enter.
+    #[must_use]
     pub fn with_rotation_from(self, rotation: Self) -> Self {
         Self {
             rotation: rotation.rotation,
@@ -974,7 +975,7 @@ mod tests {
             .collect();
         let point = DVec3::new(0.4, -0.1, 0.7);
         let cache = path.prepare_screw_enclosures(4).unwrap();
-        assert!(std::ptr::eq(cache.path(), &path));
+        assert!(std::ptr::eq(cache.path(), &raw const path));
         assert!(path.prepare_screw_enclosures(3).is_err());
         assert!(cache.sample(4, 0.5).is_err());
         assert!(cache.sample(0, f64::NAN).is_err());
@@ -2109,13 +2110,13 @@ impl RootRigidCurve {
             }
             let end_clock =
                 crate::enclose_root_cycle_phase(cell[1], self.0.duration as f32, self.0.playback)?;
-            if end_clock.cycle() != clock.cycle() {
+            if end_clock.cycle_index() != clock.cycle_index() {
                 visited += 1;
                 if visited > max_cells {
                     return Err(AnimationError::RootRigidBudget);
                 }
                 let Some((error, _)) = self.cycle_world_point_evaluation_error_bounds(
-                    end_clock.cycle(),
+                    end_clock.cycle_index(),
                     [end_clock.phase(); 2],
                     axes,
                     point,

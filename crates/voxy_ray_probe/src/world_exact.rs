@@ -28,17 +28,26 @@ pub(super) fn probe(
         })
         .collect::<Result<_, Box<dyn std::error::Error>>>()?;
     let nearest = std::env::var("VOXY_RAY_WORLD_EXACT_NEAREST").as_deref() == Ok("1");
-    let source_order_probe = std::env::var("VOXY_RAY_WORLD_INTERVAL_PROBE").as_deref() == Ok("source_order");
-    let order_probe = source_order_probe || std::env::var("VOXY_RAY_WORLD_INTERVAL_PROBE").as_deref() == Ok("order");
-    let interval_probe = order_probe || std::env::var("VOXY_RAY_WORLD_INTERVAL_PROBE").as_deref() == Ok("1");
+    let source_order_probe =
+        std::env::var("VOXY_RAY_WORLD_INTERVAL_PROBE").as_deref() == Ok("source_order");
+    let order_probe = source_order_probe
+        || std::env::var("VOXY_RAY_WORLD_INTERVAL_PROBE").as_deref() == Ok("order");
+    let interval_probe =
+        order_probe || std::env::var("VOXY_RAY_WORLD_INTERVAL_PROBE").as_deref() == Ok("1");
     if interval_probe && nearest {
         return Err("interval target audit and world nearest are distinct modes".into());
     }
-    let visibility = nearest && std::env::var("VOXY_RAY_WORLD_VISIBILITY").as_deref()==Ok("1");
-    let nearest_gate = nearest && !visibility && std::env::var("VOXY_RAY_WORLD_NEAREST_GATE").as_deref()==Ok("1");
-    let split_visibility = visibility && std::env::var("VOXY_RAY_WORLD_VISIBILITY_SPLIT").as_deref()==Ok("1");
-    let bounded_visibility = nearest_gate || split_visibility || visibility && std::env::var("VOXY_RAY_WORLD_VISIBILITY_BOUNDED").as_deref()==Ok("1");
-    let visibility_certificate = visibility && std::env::var("VOXY_RAY_WORLD_VISIBILITY_CERTIFICATE").as_deref()!=Ok("0");
+    let visibility = nearest && std::env::var("VOXY_RAY_WORLD_VISIBILITY").as_deref() == Ok("1");
+    let nearest_gate = nearest
+        && !visibility
+        && std::env::var("VOXY_RAY_WORLD_NEAREST_GATE").as_deref() == Ok("1");
+    let split_visibility =
+        visibility && std::env::var("VOXY_RAY_WORLD_VISIBILITY_SPLIT").as_deref() == Ok("1");
+    let bounded_visibility = nearest_gate
+        || split_visibility
+        || visibility && std::env::var("VOXY_RAY_WORLD_VISIBILITY_BOUNDED").as_deref() == Ok("1");
+    let visibility_certificate =
+        visibility && std::env::var("VOXY_RAY_WORLD_VISIBILITY_CERTIFICATE").as_deref() != Ok("0");
     let interval_reject = nearest
         && match std::env::var("VOXY_RAY_WORLD_INTERVAL_REJECT")
             .ok()
@@ -57,18 +66,30 @@ pub(super) fn probe(
             Some("0") => false,
             _ => return Err("interval node flag requires 0 or 1".into()),
         };
-    let interval_order = nearest && interval_reject && std::env::var("VOXY_RAY_WORLD_INTERVAL_ORDER").as_deref()==Ok("1");
-    let interval_mask = u32::from(interval_reject) | (u32::from(interval_nodes) << 1) | (u32::from(interval_order)<<2) | (u32::from(visibility_certificate)<<4);
+    let interval_order = nearest
+        && interval_reject
+        && std::env::var("VOXY_RAY_WORLD_INTERVAL_ORDER").as_deref() == Ok("1");
+    let interval_mask = u32::from(interval_reject)
+        | (u32::from(interval_nodes) << 1)
+        | (u32::from(interval_order) << 2)
+        | (u32::from(visibility_certificate) << 4);
     let interval_stats =
         nearest && std::env::var("VOXY_RAY_WORLD_INTERVAL_STATS").as_deref() == Ok("1");
-    if (nearest_gate || split_visibility) && interval_stats {return Err("split visibility diagnostic uses the production 20-word output".into());}
+    if (nearest_gate || split_visibility) && interval_stats {
+        return Err("split visibility diagnostic uses the production 20-word output".into());
+    }
     let material_admission =
         nearest && std::env::var("VOXY_RAY_WORLD_MATERIALS").as_deref() == Ok("1");
-    let parameters = !visibility && ((nearest || interval_probe)
-        || std::env::var("VOXY_RAY_WORLD_EXACT_PARAMETERS").as_deref() == Ok("1"));
-    let hit_uv = std::env::var("VOXY_RAY_WORLD_EXACT_UV").as_deref()==Ok("1");
-    if hit_uv && (!nearest||visibility) { return Err("exact UV output requires original-source nearest mode".into()); }
-    let words_per_record = if hit_uv { if interval_stats {32}else{28} } else if interval_stats {
+    let parameters = !visibility
+        && ((nearest || interval_probe)
+            || std::env::var("VOXY_RAY_WORLD_EXACT_PARAMETERS").as_deref() == Ok("1"));
+    let hit_uv = std::env::var("VOXY_RAY_WORLD_EXACT_UV").as_deref() == Ok("1");
+    if hit_uv && (!nearest || visibility) {
+        return Err("exact UV output requires original-source nearest mode".into());
+    }
+    let words_per_record = if hit_uv {
+        if interval_stats { 32 } else { 28 }
+    } else if interval_stats {
         24usize
     } else if nearest || interval_probe {
         20usize
@@ -164,7 +185,7 @@ pub(super) fn probe(
     if rays.is_empty() || rays.len() != gold.len() {
         return Err("incomplete exact case/oracle coverage".into());
     }
-    let capacity = rays.len().min(if bounded_visibility {65536}else{16});
+    let capacity = rays.len().min(if bounded_visibility { 65536 } else { 16 });
     let input = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("bounded exact source rays"),
         size: capacity as u64 * 80,
@@ -182,8 +203,11 @@ pub(super) fn probe(
     if timing && !device.features().contains(wgpu::Features::TIMESTAMP_QUERY) {
         return Err("missing timestamp feature".into());
     }
-    let stage_timing = timing && nearest_gate && std::env::var("VOXY_RAY_WORLD_STAGE_TIMING").as_deref()==Ok("1");
-    let query_count=if stage_timing {8}else{2};let timing_bytes=u64::from(query_count)*8;
+    let stage_timing = timing
+        && nearest_gate
+        && std::env::var("VOXY_RAY_WORLD_STAGE_TIMING").as_deref() == Ok("1");
+    let query_count = if stage_timing { 8 } else { 2 };
+    let timing_bytes = u64::from(query_count) * 8;
     let timestamps = timing.then(|| {
         device.create_query_set(&wgpu::QuerySetDescriptor {
             label: Some("exact dispatch GPU duration"),
@@ -213,13 +237,33 @@ pub(super) fn probe(
         usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
         mapped_at_creation: false,
     });
-    let exact_group:u32=std::env::var("VOXY_RAY_WORLD_GROUP").ok().map(|s|s.parse()).transpose()?.unwrap_or(1);
-    let worker_limit:u32=std::env::var("VOXY_RAY_WORLD_WORKERS").ok().map(|s|s.parse()).transpose()?.unwrap_or(16);
-    if exact_group==0||worker_limit==0||exact_group>device.limits().max_compute_invocations_per_workgroup||exact_group>device.limits().max_compute_workgroup_size_x {return Err("invalid exact worker/group admission".into());}
-    if !nearest_gate && (exact_group!=1 || worker_limit!=16) {return Err("exact worker tuning requires deferred nearest mode".into());}
-    let exact_workers=capacity.min(if nearest_gate {worker_limit as usize}else{16});
+    let exact_group: u32 = std::env::var("VOXY_RAY_WORLD_GROUP")
+        .ok()
+        .map(|s| s.parse())
+        .transpose()?
+        .unwrap_or(1);
+    let worker_limit: u32 = std::env::var("VOXY_RAY_WORLD_WORKERS")
+        .ok()
+        .map(|s| s.parse())
+        .transpose()?
+        .unwrap_or(16);
+    if exact_group == 0
+        || worker_limit == 0
+        || exact_group > device.limits().max_compute_invocations_per_workgroup
+        || exact_group > device.limits().max_compute_workgroup_size_x
+    {
+        return Err("invalid exact worker/group admission".into());
+    }
+    if !nearest_gate && (exact_group != 1 || worker_limit != 16) {
+        return Err("exact worker tuning requires deferred nearest mode".into());
+    }
+    let exact_workers = capacity.min(if nearest_gate {
+        worker_limit as usize
+    } else {
+        16
+    });
     let scratch_bytes = exact_workers as u64 * 512 * 128 * 4;
-    if scratch_bytes > u64::from(device.limits().max_storage_buffer_binding_size) {
+    if scratch_bytes > device.limits().max_storage_buffer_binding_size {
         return Err("exact scratch exceeds binding limit".into());
     }
     let poison = std::env::var("VOXY_RAY_WORLD_EXACT_POISON").as_deref() == Ok("1");
@@ -231,9 +275,14 @@ pub(super) fn probe(
     });
     let mut source = format!(
         "{}\n{}\n{}\n{}\n{}",
-            if nearest_gate || split_visibility || std::env::var("VOXY_RAY_WORLD_DEFERRED_INPUT").as_deref()==Ok("1") {
-                include_str!("../../voxy_render/src/world_ray_deferred_input.wgsl")
-            } else {include_str!("../../voxy_render/src/world_ray_input.wgsl")},
+        if nearest_gate
+            || split_visibility
+            || std::env::var("VOXY_RAY_WORLD_DEFERRED_INPUT").as_deref() == Ok("1")
+        {
+            include_str!("../../voxy_render/src/world_ray_deferred_input.wgsl")
+        } else {
+            include_str!("../../voxy_render/src/world_ray_input.wgsl")
+        },
         include_str!("../../voxy_render/src/world_ray_source_bindings.wgsl"),
         include_str!("../../voxy_render/src/world_exact_integer.wgsl"),
         include_str!("../../voxy_render/src/world_exact_ratio.wgsl"),
@@ -244,16 +293,38 @@ pub(super) fn probe(
             "enable wgpu_ray_query;\n{source}\n{}\n{}\n{}",
             include_str!("../../voxy_render/src/archive_projection_pair.wgsl"),
             include_str!("../../voxy_render/src/world_triangle_pair.wgsl"),
-            [include_str!("../../voxy_render/src/world_ray_bvh_interval.wgsl"),include_str!("../../voxy_render/src/world_source_certificate.wgsl"),include_str!("../../voxy_render/src/world_visibility_common.wgsl"),include_str!("../../voxy_render/src/world_nearest.wgsl"),include_str!("../../voxy_render/src/world_visibility.wgsl")].concat()
+            [
+                include_str!("../../voxy_render/src/world_ray_bvh_interval.wgsl"),
+                include_str!("../../voxy_render/src/world_source_certificate.wgsl"),
+                include_str!("../../voxy_render/src/world_visibility_common.wgsl"),
+                include_str!("../../voxy_render/src/world_exact_history_position.wgsl"),
+                include_str!("../../voxy_render/src/world_nearest.wgsl"),
+                include_str!("../../voxy_render/src/world_visibility.wgsl")
+            ]
+            .concat()
         );
     }
-    if nearest_gate {source.push_str(include_str!("../../voxy_render/src/world_nearest_deferred_exact.wgsl"));}
-    if split_visibility {source.push_str(include_str!("../../voxy_render/src/world_visibility_deferred_exact.wgsl"));}
-    let material_words=if nearest {super::world_nearest_material::load(source_root,meshes,material_admission)?}else{vec![0,0,24,0]};
-    let can_bound=voxy_render::WorldRayQueryJob::packed_material_table_known(&material_words)
-        && std::env::var("VOXY_RAY_WORLD_BOUND_WALK").as_deref()!=Ok("0");
-    let previous_seed=nearest_gate && std::env::var("VOXY_RAY_WORLD_PREVIOUS_SEED").as_deref()==Ok("1");
-    let native_seed=nearest_gate && std::env::var("VOXY_RAY_WORLD_NATIVE_SEED").as_deref()==Ok("1");
+    if nearest_gate {
+        source.push_str(include_str!(
+            "../../voxy_render/src/world_nearest_deferred_exact.wgsl"
+        ));
+    }
+    if split_visibility {
+        source.push_str(include_str!(
+            "../../voxy_render/src/world_visibility_deferred_exact.wgsl"
+        ));
+    }
+    let material_words = if nearest {
+        super::world_nearest_material::load(source_root, meshes, material_admission)?
+    } else {
+        vec![0, 0, 24, 0]
+    };
+    let can_bound = voxy_render::WorldRayQueryJob::packed_material_table_known(&material_words)
+        && std::env::var("VOXY_RAY_WORLD_BOUND_WALK").as_deref() != Ok("0");
+    let previous_seed =
+        nearest_gate && std::env::var("VOXY_RAY_WORLD_PREVIOUS_SEED").as_deref() == Ok("1");
+    let native_seed =
+        nearest_gate && std::env::var("VOXY_RAY_WORLD_NATIVE_SEED").as_deref() == Ok("1");
     let fast_pipeline = if nearest_gate || split_visibility {
         let fast = [if native_seed {"enable wgpu_ray_query;"}else{""},include_str!("../../voxy_render/src/world_ray_deferred_input.wgsl"),
             include_str!("../../voxy_render/src/world_ray_source_bindings.wgsl"),
@@ -264,49 +335,134 @@ pub(super) fn probe(
             include_str!("../../voxy_render/src/world_source_certificate.wgsl"),include_str!("../../voxy_render/src/world_visibility_common.wgsl"),
             include_str!("../../voxy_render/src/world_visibility_fast.wgsl"),
             if native_seed {include_str!("../../voxy_render/src/world_visibility_native_seed.wgsl")}else{"fn visibility_seed(ray:u32) {}"}].join("\n");
-        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {label:None,source:wgpu::ShaderSource::Wgsl(fast.into())});
-        Some(device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {label:None,layout:None,module:&shader,entry_point:Some("main_visibility_fast"),compilation_options:wgpu::PipelineCompilationOptions {
-            constants: &[("WORLD_FAST_DEFER_NONCLEAR",if nearest_gate {1.}else{0.}), ("WORLD_FAST_STRIDE",if hit_uv {7.}else{5.}), ("WORLD_FAST_CAN_BOUND",if can_bound {1.}else{0.}), ("WORLD_FAST_PREVIOUS_SEED",if previous_seed {1.}else{0.})],..Default::default()
-        },cache:None}))
-    } else {None};
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(fast.into()),
+        });
+        Some(
+            device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: None,
+                layout: None,
+                module: &shader,
+                entry_point: Some("main_visibility_fast"),
+                compilation_options: wgpu::PipelineCompilationOptions {
+                    constants: &[
+                        (
+                            "WORLD_FAST_DEFER_NONCLEAR",
+                            if nearest_gate { 1. } else { 0. },
+                        ),
+                        ("WORLD_FAST_STRIDE", if hit_uv { 7. } else { 5. }),
+                        ("WORLD_FAST_CAN_BOUND", if can_bound { 1. } else { 0. }),
+                        (
+                            "WORLD_FAST_PREVIOUS_SEED",
+                            if previous_seed { 1. } else { 0. },
+                        ),
+                    ],
+                    ..Default::default()
+                },
+                cache: None,
+            }),
+        )
+    } else {
+        None
+    };
     // Paired qualification changes arithmetic scheduling only, never ray words.
-    if std::env::var("VOXY_RAY_WORLD_CANCEL_RATIO").as_deref()==Ok("0") {
-        source=source.replace("const EX_CANCEL_RATIO:bool=true;", "const EX_CANCEL_RATIO:bool=false;");
+    if std::env::var("VOXY_RAY_WORLD_CANCEL_RATIO").as_deref() == Ok("0") {
+        source = source.replace(
+            "const EX_CANCEL_RATIO:bool=true;",
+            "const EX_CANCEL_RATIO:bool=false;",
+        );
     }
-    if std::env::var("VOXY_RAY_WORLD_NORMALIZE_CERTIFIED").as_deref()==Ok("0") {
-        source=source.replace("const EX_NORMALIZE_CERTIFIED:bool=true;", "const EX_NORMALIZE_CERTIFIED:bool=false;");
+    if std::env::var("VOXY_RAY_WORLD_NORMALIZE_CERTIFIED").as_deref() == Ok("0") {
+        source = source.replace(
+            "const EX_NORMALIZE_CERTIFIED:bool=true;",
+            "const EX_NORMALIZE_CERTIFIED:bool=false;",
+        );
     }
-    if std::env::var("VOXY_RAY_WORLD_CERTIFIED_TARGET").as_deref()==Ok("1") {
-        if nearest || interval_probe {return Err("certified target audit requires primitive parameter mode".into());}
-        source=source.replace(" let decision=ex_triangle(a,b,c,d);", " let decision=ex_triangle_certified(a,b,c,d);");
+    if std::env::var("VOXY_RAY_WORLD_CERTIFIED_TARGET").as_deref() == Ok("1") {
+        if nearest || interval_probe {
+            return Err("certified target audit requires primitive parameter mode".into());
+        }
+        source = source.replace(
+            " let decision=ex_triangle(a,b,c,d);",
+            " let decision=ex_triangle_certified(a,b,c,d);",
+        );
     }
     let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("integer-only closed triangle decision"),
         source: wgpu::ShaderSource::Wgsl(source.into()),
     });
-    let exact_constants=[("WORLD_EXACT_GROUP",f64::from(exact_group))];
-    let winner_pipeline = nearest_gate.then(||device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-        label:Some("isolated exact certified winner"),layout:None,module:&module,
-        entry_point:Some(if hit_uv {"main_nearest_uv_winner"}else{"main_nearest_winner"}),
-        compilation_options:wgpu::PipelineCompilationOptions{constants:&exact_constants,..Default::default()},cache:None,
-    }));
-    let candidates_pipeline = nearest_gate.then(||device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-        label:Some("isolated bounded nearest candidates"),layout:None,module:&module,
-        entry_point:Some(if hit_uv {"main_nearest_uv_candidates"}else{"main_nearest_candidates"}),
-        compilation_options:wgpu::PipelineCompilationOptions{constants:&exact_constants,..Default::default()},cache:None,
-    }));
+    let exact_constants = [("WORLD_EXACT_GROUP", f64::from(exact_group))];
+    let winner_pipeline = nearest_gate.then(|| {
+        device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: Some("isolated exact certified winner"),
+            layout: None,
+            module: &module,
+            entry_point: Some(if hit_uv {
+                "main_nearest_uv_winner"
+            } else {
+                "main_nearest_winner"
+            }),
+            compilation_options: wgpu::PipelineCompilationOptions {
+                constants: &exact_constants,
+                ..Default::default()
+            },
+            cache: None,
+        })
+    });
+    let candidates_pipeline = nearest_gate.then(|| {
+        device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: Some("isolated bounded nearest candidates"),
+            layout: None,
+            module: &module,
+            entry_point: Some(if hit_uv {
+                "main_nearest_uv_candidates"
+            } else {
+                "main_nearest_candidates"
+            }),
+            compilation_options: wgpu::PipelineCompilationOptions {
+                constants: &exact_constants,
+                ..Default::default()
+            },
+            cache: None,
+        })
+    });
     let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
         label: None,
         layout: None,
         module: &module,
-        entry_point: Some(if nearest_gate {if hit_uv {"main_nearest_uv_deferred"}else{"main_nearest_deferred"}} else if split_visibility {"main_visibility_deferred_exact"} else if source_order_probe {"main_source_order_interval_probe"} else if order_probe {
+        entry_point: Some(if nearest_gate {
+            if hit_uv {
+                "main_nearest_uv_deferred"
+            } else {
+                "main_nearest_deferred"
+            }
+        } else if split_visibility {
+            "main_visibility_deferred_exact"
+        } else if source_order_probe {
+            "main_source_order_interval_probe"
+        } else if order_probe {
             "main_order_interval_probe"
         } else if interval_probe {
             "main_interval_probe"
         } else if visibility {
-            if bounded_visibility { if interval_stats {"main_visibility_bounded_stats"}else{"main_visibility_bounded"} } else if interval_stats {"main_visibility_stats"}else{"main_visibility"}
+            if bounded_visibility {
+                if interval_stats {
+                    "main_visibility_bounded_stats"
+                } else {
+                    "main_visibility_bounded"
+                }
+            } else if interval_stats {
+                "main_visibility_stats"
+            } else {
+                "main_visibility"
+            }
         } else if hit_uv {
-            if interval_stats {"main_nearest_uv_stats"}else{"main_nearest_uv"}
+            if interval_stats {
+                "main_nearest_uv_stats"
+            } else {
+                "main_nearest_uv"
+            }
         } else if interval_stats {
             "main_nearest_stats"
         } else if nearest {
@@ -316,7 +472,10 @@ pub(super) fn probe(
         } else {
             "main"
         }),
-        compilation_options: wgpu::PipelineCompilationOptions {constants:if nearest_gate {&exact_constants}else{&[]},..Default::default()},
+        compilation_options: wgpu::PipelineCompilationOptions {
+            constants: if nearest_gate { &exact_constants } else { &[] },
+            ..Default::default()
+        },
         cache: None,
     });
     let [vertices, indices, instances] = scene
@@ -330,11 +489,13 @@ pub(super) fn probe(
         if layout.len() > 2048 || layout.len() != meshes.len() {
             return Err("nearest mesh count exceeds uniform capacity".into());
         }
-        let (mut counts, mut active) = scene.archive_exact_source_metadata().ok_or("missing same-owner exact metadata")?;
+        let (mut counts, mut active) = scene
+            .archive_exact_source_metadata()
+            .ok_or("missing same-owner exact metadata")?;
         counts[4095][3] = interval_mask;
         let material_offset = active.len() as u64 * 4;
         active.extend_from_slice(&material_words);
-        if active.len() as u64 * 4 > u64::from(device.limits().max_storage_buffer_binding_size) {
+        if active.len() as u64 * 4 > device.limits().max_storage_buffer_binding_size {
             return Err("source hierarchy exceeds binding capacity".into());
         }
         let buffers = (
@@ -364,8 +525,8 @@ pub(super) fn probe(
     };
     let mut records = Vec::<u32>::with_capacity(rays.len() * words_per_record);
     let mut gpu_batch_ns = Vec::<f64>::new();
-    let mut gpu_stage_batch_ns=Vec::<[f64;4]>::new();
-    let mut gpu_stage_batch_ticks=Vec::<Vec<u64>>::new();
+    let mut gpu_stage_batch_ns = Vec::<[f64; 4]>::new();
+    let mut gpu_stage_batch_ticks = Vec::<Vec<u64>>::new();
     let mut gpu_batch_ticks = Vec::<[u64; 2]>::new();
     let mut result_batch_ms = Vec::<f64>::new();
     let dispatch_start = std::time::Instant::now();
@@ -383,7 +544,8 @@ pub(super) fn probe(
             wgpu::BindGroupEntry {
                 binding: 0,
                 resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
-                    buffer: &input, offset: 0,
+                    buffer: &input,
+                    offset: 0,
                     size: std::num::NonZeroU64::new(batch.len() as u64 * 80),
                 }),
             },
@@ -430,80 +592,159 @@ pub(super) fn probe(
                 },
             ]);
         }
-        if visibility {entries.retain(|entry|entry.binding!=8);}
+        if visibility {
+            entries.retain(|entry| entry.binding != 8);
+        }
         let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: None,
             layout: &pipeline.get_bind_group_layout(0),
             entries: &entries,
         });
         let fast_group = fast_pipeline.as_ref().map(|pipeline| {
-            let entries: Vec<_> = entries.iter().filter(|entry| entry.binding!=6 && (entry.binding!=8 || native_seed)).cloned().collect();
-            device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&pipeline.get_bind_group_layout(0),entries:&entries})
+            let entries: Vec<_> = entries
+                .iter()
+                .filter(|entry| entry.binding != 6 && (entry.binding != 8 || native_seed))
+                .cloned()
+                .collect();
+            device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: None,
+                layout: &pipeline.get_bind_group_layout(0),
+                entries: &entries,
+            })
         });
         let winner_group = winner_pipeline.as_ref().map(|pipeline| {
-            let entries:Vec<_>=entries.iter().filter(|entry|entry.binding!=8).cloned().collect();
-            device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&pipeline.get_bind_group_layout(0),entries:&entries})
+            let entries: Vec<_> = entries
+                .iter()
+                .filter(|entry| entry.binding != 8)
+                .cloned()
+                .collect();
+            device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: None,
+                layout: &pipeline.get_bind_group_layout(0),
+                entries: &entries,
+            })
         });
         let candidates_group = candidates_pipeline.as_ref().map(|pipeline| {
-            let entries:Vec<_>=entries.iter().filter(|entry|entry.binding!=8).cloned().collect();
-            device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&pipeline.get_bind_group_layout(0),entries:&entries})
+            let entries: Vec<_> = entries
+                .iter()
+                .filter(|entry| entry.binding != 8)
+                .cloned()
+                .collect();
+            device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: None,
+                layout: &pipeline.get_bind_group_layout(0),
+                entries: &entries,
+            })
         });
-        let exact_dispatch=(batch.len().min(exact_workers as usize) as u32).div_ceil(exact_group);
-        if nearest_gate && std::env::var("VOXY_RAY_WORLD_REPLAY_WARMUP").as_deref()==Ok("1") {
+        let exact_dispatch = (batch.len().min(exact_workers as usize) as u32).div_ceil(exact_group);
+        if nearest_gate && std::env::var("VOXY_RAY_WORLD_REPLAY_WARMUP").as_deref() == Ok("1") {
             // Populate real prior hit IDs on GPU, in both A/B modes. No gold,
             // CPU-selected primitive or cached distance enters the timed query.
-            let mut warm=device.create_command_encoder(&Default::default());
-            warm.clear_buffer(&input,28,Some(4));warm.clear_buffer(&input,44,Some(4));
-            for (p,g,n,reset) in [
-                (fast_pipeline.as_ref(),fast_group.as_ref(),(batch.len() as u32).div_ceil(64),false),
-                (winner_pipeline.as_ref(),winner_group.as_ref(),exact_dispatch,true),
-                (candidates_pipeline.as_ref(),candidates_group.as_ref(),exact_dispatch,true),
-                (Some(&pipeline),Some(&group),exact_dispatch,false),
+            let mut warm = device.create_command_encoder(&Default::default());
+            warm.clear_buffer(&input, 28, Some(4));
+            warm.clear_buffer(&input, 44, Some(4));
+            for (p, g, n, reset) in [
+                (
+                    fast_pipeline.as_ref(),
+                    fast_group.as_ref(),
+                    (batch.len() as u32).div_ceil(64),
+                    false,
+                ),
+                (
+                    winner_pipeline.as_ref(),
+                    winner_group.as_ref(),
+                    exact_dispatch,
+                    true,
+                ),
+                (
+                    candidates_pipeline.as_ref(),
+                    candidates_group.as_ref(),
+                    exact_dispatch,
+                    true,
+                ),
+                (Some(&pipeline), Some(&group), exact_dispatch, false),
             ] {
-                if let (Some(p),Some(g))=(p,g) {
-                    {let mut pass=warm.begin_compute_pass(&Default::default());pass.set_pipeline(p);pass.set_bind_group(0,g,&[]);pass.dispatch_workgroups(n,1,1);}
-                    if reset {warm.clear_buffer(&input,44,Some(4));}
+                if let (Some(p), Some(g)) = (p, g) {
+                    {
+                        let mut pass = warm.begin_compute_pass(&Default::default());
+                        pass.set_pipeline(p);
+                        pass.set_bind_group(0, g, &[]);
+                        pass.dispatch_workgroups(n, 1, 1);
+                    }
+                    if reset {
+                        warm.clear_buffer(&input, 44, Some(4));
+                    }
                 }
             }
-            let submission=queue.submit([warm.finish()]);
-            device.poll(wgpu::PollType::Wait{submission_index:Some(submission),timeout:None})?;
-            result_start=std::time::Instant::now();
+            let submission = queue.submit([warm.finish()]);
+            device.poll(wgpu::PollType::Wait {
+                submission_index: Some(submission),
+                timeout: None,
+            })?;
+            result_start = std::time::Instant::now();
         }
         let bytes = batch.len() as u64 * words_per_record as u64 * 4;
         let mut encoder = device.create_command_encoder(&Default::default());
-        if let (Some(pipeline),Some(group)) = (&fast_pipeline,&fast_group) {
-            encoder.clear_buffer(&input,28,Some(4));encoder.clear_buffer(&input,44,Some(4));
-            let mut pass=encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                timestamp_writes:timestamps.as_ref().map(|set|wgpu::ComputePassTimestampWrites {
-                    query_set:set,beginning_of_pass_write_index:Some(0),end_of_pass_write_index:if stage_timing {Some(1)}else{None},
-                }),..Default::default()
+        if let (Some(pipeline), Some(group)) = (&fast_pipeline, &fast_group) {
+            encoder.clear_buffer(&input, 28, Some(4));
+            encoder.clear_buffer(&input, 44, Some(4));
+            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                timestamp_writes: timestamps
+                    .as_ref()
+                    .map(|set| wgpu::ComputePassTimestampWrites {
+                        query_set: set,
+                        beginning_of_pass_write_index: Some(0),
+                        end_of_pass_write_index: if stage_timing { Some(1) } else { None },
+                    }),
+                ..Default::default()
             });
-            pass.set_pipeline(pipeline);pass.set_bind_group(0,group,&[]);
-            pass.dispatch_workgroups((batch.len() as u32).div_ceil(64),1,1);
+            pass.set_pipeline(pipeline);
+            pass.set_bind_group(0, group, &[]);
+            pass.dispatch_workgroups((batch.len() as u32).div_ceil(64), 1, 1);
         }
-        if let (Some(pipeline),Some(group))=(&winner_pipeline,&winner_group) {
+        if let (Some(pipeline), Some(group)) = (&winner_pipeline, &winner_group) {
             {
-                let mut pass=encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                    timestamp_writes:if stage_timing {timestamps.as_ref().map(|set|wgpu::ComputePassTimestampWrites {
-                        query_set:set,beginning_of_pass_write_index:Some(2),end_of_pass_write_index:Some(3),
-                    })}else{None},..Default::default()
+                let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                    timestamp_writes: if stage_timing {
+                        timestamps
+                            .as_ref()
+                            .map(|set| wgpu::ComputePassTimestampWrites {
+                                query_set: set,
+                                beginning_of_pass_write_index: Some(2),
+                                end_of_pass_write_index: Some(3),
+                            })
+                    } else {
+                        None
+                    },
+                    ..Default::default()
                 });
-                pass.set_pipeline(pipeline);pass.set_bind_group(0,group,&[]);
-                pass.dispatch_workgroups(exact_dispatch,1,1);
+                pass.set_pipeline(pipeline);
+                pass.set_bind_group(0, group, &[]);
+                pass.dispatch_workgroups(exact_dispatch, 1, 1);
             }
-            encoder.clear_buffer(&input,44,Some(4));
+            encoder.clear_buffer(&input, 44, Some(4));
         }
-        if let (Some(pipeline),Some(group))=(&candidates_pipeline,&candidates_group) {
+        if let (Some(pipeline), Some(group)) = (&candidates_pipeline, &candidates_group) {
             {
-                let mut pass=encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                    timestamp_writes:if stage_timing {timestamps.as_ref().map(|set|wgpu::ComputePassTimestampWrites {
-                        query_set:set,beginning_of_pass_write_index:Some(4),end_of_pass_write_index:Some(5),
-                    })}else{None},..Default::default()
+                let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                    timestamp_writes: if stage_timing {
+                        timestamps
+                            .as_ref()
+                            .map(|set| wgpu::ComputePassTimestampWrites {
+                                query_set: set,
+                                beginning_of_pass_write_index: Some(4),
+                                end_of_pass_write_index: Some(5),
+                            })
+                    } else {
+                        None
+                    },
+                    ..Default::default()
                 });
-                pass.set_pipeline(pipeline);pass.set_bind_group(0,group,&[]);
-                pass.dispatch_workgroups(exact_dispatch,1,1);
+                pass.set_pipeline(pipeline);
+                pass.set_bind_group(0, group, &[]);
+                pass.dispatch_workgroups(exact_dispatch, 1, 1);
             }
-            encoder.clear_buffer(&input,44,Some(4));
+            encoder.clear_buffer(&input, 44, Some(4));
         }
         {
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
@@ -511,14 +752,30 @@ pub(super) fn probe(
                     .as_ref()
                     .map(|set| wgpu::ComputePassTimestampWrites {
                         query_set: set,
-                        beginning_of_pass_write_index: if stage_timing {Some(6)}else if nearest_gate || split_visibility {None}else{Some(0)},
-                        end_of_pass_write_index: Some(if stage_timing {7}else{1}),
+                        beginning_of_pass_write_index: if stage_timing {
+                            Some(6)
+                        } else if nearest_gate || split_visibility {
+                            None
+                        } else {
+                            Some(0)
+                        },
+                        end_of_pass_write_index: Some(if stage_timing { 7 } else { 1 }),
                     }),
                 ..Default::default()
             });
             pass.set_pipeline(&pipeline);
             pass.set_bind_group(0, &group, &[]);
-            pass.dispatch_workgroups(if nearest_gate {exact_dispatch} else if bounded_visibility { batch.len().min(16) as u32 } else { batch.len() as u32 }, 1, 1);
+            pass.dispatch_workgroups(
+                if nearest_gate {
+                    exact_dispatch
+                } else if bounded_visibility {
+                    batch.len().min(16) as u32
+                } else {
+                    batch.len() as u32
+                },
+                1,
+                1,
+            );
         }
         encoder.copy_buffer_to_buffer(&output, 0, &readback, 0, bytes);
         queue.submit([encoder.finish()]);
@@ -551,12 +808,25 @@ pub(super) fn probe(
             device.poll(wgpu::PollType::wait_indefinitely())?;
             rx.recv()??;
             let data = read.slice(..).get_mapped_range()?;
-            let ticks:Vec<u64>=data.chunks_exact(8).map(|w|u64::from_le_bytes(w.try_into().unwrap())).collect();
-            let begin=ticks[0];let end=ticks[query_count as usize-1];
+            let ticks: Vec<u64> = data
+                .chunks_exact(8)
+                .map(|w| u64::from_le_bytes(w.try_into().unwrap()))
+                .collect();
+            let begin = ticks[0];
+            let end = ticks[query_count as usize - 1];
             if stage_timing {
-                if ticks.iter().any(|&v|v==0||v==u64::MAX)||ticks.windows(2).any(|v|v[1]<v[0]) {return Err("invalid per-stage GPU timestamps".into());}
-                let period=f64::from(queue.get_timestamp_period());
-                gpu_stage_batch_ns.push([(ticks[1]-ticks[0]) as f64*period,(ticks[3]-ticks[2]) as f64*period,(ticks[5]-ticks[4]) as f64*period,(ticks[7]-ticks[6]) as f64*period]);
+                if ticks.iter().any(|&v| v == 0 || v == u64::MAX)
+                    || ticks.windows(2).any(|v| v[1] < v[0])
+                {
+                    return Err("invalid per-stage GPU timestamps".into());
+                }
+                let period = f64::from(queue.get_timestamp_period());
+                gpu_stage_batch_ns.push([
+                    (ticks[1] - ticks[0]) as f64 * period,
+                    (ticks[3] - ticks[2]) as f64 * period,
+                    (ticks[5] - ticks[4]) as f64 * period,
+                    (ticks[7] - ticks[6]) as f64 * period,
+                ]);
                 gpu_stage_batch_ticks.push(ticks);
             }
             if begin == 0 || end == 0 || begin == u64::MAX || end == u64::MAX {
@@ -664,11 +934,15 @@ pub(super) fn probe(
         if interval_probe && record[16] != 0 && record[0] != 0 {
             return Err(format!("false interval rejection id={id} record={record:?}").into());
         }
-        if interval_stats && !visibility && (record[20] + record[21] != record[16] || record[22] != interval_mask)
+        if interval_stats
+            && !visibility
+            && (record[20] + record[21] != record[16] || record[22] != interval_mask)
         {
             return Err("interval work accounting mismatch".into());
         }
-        if visibility && interval_stats && record[20]+record[21]+record[22]!=record[16] {return Err("visibility work accounting mismatch".into());}
+        if visibility && interval_stats && record[20] + record[21] + record[22] != record[16] {
+            return Err("visibility work accounting mismatch".into());
+        }
         max_slots = max_slots.max(record[3]);
         if record[0] > 2 {
             return Err("invalid exact decision state".into());
@@ -695,7 +969,13 @@ pub(super) fn probe(
             .unwrap()
             .iter()
             .find(|r| r["global_ray"].as_u64() == Some(*id))
-            .and_then(|r| if visibility {r["visibility_state"].as_u64()}else{r["expected_state"].as_u64()})
+            .and_then(|r| {
+                if visibility {
+                    r["visibility_state"].as_u64()
+                } else {
+                    r["expected_state"].as_u64()
+                }
+            })
             .unwrap_or(u64::from(gold[id]));
         if u64::from(record[0]) != expected_state {
             return Err(format!(

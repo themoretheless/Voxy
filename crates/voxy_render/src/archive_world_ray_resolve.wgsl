@@ -10,6 +10,13 @@ fn world_resolve_two_sided(material_id:u32)->bool {
  return word<arrayLength(&resolve_source_table)&&resolve_source_table[word]==1u;
 }
 override ARCHIVE_WORLD_HIT_WORDS:u32=20u;
+override ARCHIVE_WORLD_POSITION_BASE:u32=0u;
+override ARCHIVE_WORLD_MATERIAL_SIDES:bool=false;
+fn world_resolve_exact_position(index:u32)->bool {
+ if ARCHIVE_WORLD_POSITION_BASE==0u {return false;}
+ let at=ARCHIVE_WORLD_POSITION_BASE+index*8u;
+ return at+7u<arrayLength(&resolve_hit_words)&&resolve_hit_words[at+6u]==7u&&resolve_hit_words[at+7u]==0u;
+}
 override ARCHIVE_WORLD_RESOLVE_AUDIT:bool=false;
 @group(1) @binding(20) var<storage,read_write> world_resolve_audit:array<atomic<u32>,12>;
 fn world_resolve_count(index:u32) {if ARCHIVE_WORLD_RESOLVE_AUDIT {atomicAdd(&world_resolve_audit[index],1u);}}
@@ -35,18 +42,31 @@ fn cs_world_ray_resolve(@builtin(global_invocation_id) id:vec3<u32>) {
     if (resolve_hit_words[hit+15u]&1u)!=0u {reason=3u;}
     if ((resolve_hit_words[hit+18u]>>2u)&3u)>=2u {reason=4u;}
    }
-   // Only an opaque/mask-tested source hit with a fully represented t can
-   // replace the original query. Never round away the remaining rational tail
-   // or substitute opaque radiance for a transmission/blend event.
+   // A point formed from the unrounded rational may be exact even when t has
+   // a remaining tail. Otherwise retain the complete original query. Optical
+   // layers still require their original layered handling.
    let kind=(resolve_hit_words[hit+18u]>>2u)&3u;
-   if matching&&state==1u&&resolve_hit_words[hit+14u]==1u&&(resolve_hit_words[hit+15u]&1u)==0u&&kind<2u&&world_resolve_two_sided(resolve_hit_words[hit+17u]) {
-    let t=bitcast<vec2<f32>>(vec2<u32>(resolve_hit_words[hit+8u],resolve_hit_words[hit+9u]));
+   let exact_position=world_resolve_exact_position(index);
+   let parameter_usable=(resolve_hit_words[hit+15u]&1u)==0u;
+   let position_usable=select(parameter_usable,exact_position,ARCHIVE_WORLD_POSITION_BASE!=0u);
+   let side_usable=ARCHIVE_WORLD_MATERIAL_SIDES||world_resolve_two_sided(resolve_hit_words[hit+17u]);
+   if ARCHIVE_WORLD_POSITION_BASE!=0u&&state==1u&&!exact_position {reason=3u;}
+   if matching&&state==1u&&resolve_hit_words[hit+14u]==1u&&position_usable&&kind<2u&&side_usable {
+    var t=bitcast<vec2<f32>>(vec2<u32>(resolve_hit_words[hit+8u],resolve_hit_words[hit+9u]));
+    // The high parameter word is RN-even of the full rational. Adding its
+    // rounded low word could double-round a non-dyadic t at a midpoint.
+    if ARCHIVE_WORLD_POSITION_BASE!=0u {t.y=0.;}
     var point=DdaVectorPair(vec4<f32>(0.,0.,0.,1.),vec4<f32>(0.));
     for(var axis=0u;axis<3u;axis++) {
-     let origin=bitcast<vec2<f32>>(vec2<u32>(resolve_ray_words[source+axis],resolve_ray_words[source+4u+axis]));
-     let direction=bitcast<vec2<f32>>(vec2<u32>(resolve_ray_words[source+8u+axis],resolve_ray_words[source+12u+axis]));
-     let value=projection_pair_add(origin,projection_pair_mul(direction,t));
-     point.high[axis]=value.x;point.low[axis]=value.y;
+     if ARCHIVE_WORLD_POSITION_BASE!=0u {
+      let at=ARCHIVE_WORLD_POSITION_BASE+index*8u+axis*2u;
+      point.high[axis]=bitcast<f32>(resolve_hit_words[at]);point.low[axis]=bitcast<f32>(resolve_hit_words[at+1u]);
+     }else {
+      let origin=bitcast<vec2<f32>>(vec2<u32>(resolve_ray_words[source+axis],resolve_ray_words[source+4u+axis]));
+      let direction=bitcast<vec2<f32>>(vec2<u32>(resolve_ray_words[source+8u+axis],resolve_ray_words[source+12u+axis]));
+      let value=projection_pair_add(origin,projection_pair_mul(direction,t));
+      point.high[axis]=value.x;point.low[axis]=value.y;
+     }
     }
     let clip=dda_project_world_pair(camera.vp,point);
     let clip_w=vec2<f32>(clip.high.w,clip.low.w);let clip_z=vec2<f32>(clip.high.z,clip.low.z);

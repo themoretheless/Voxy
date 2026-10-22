@@ -96,7 +96,13 @@ const ALLOWED: &[(&str, &[&str])] = &[
     ("voxy_model", &["voxy_animation", "voxy_render"]),
     (
         "voxy_render",
-        &["voxy_core", "voxy_gpu_core", "voxy_lighting", "voxy_mesher"],
+        &[
+            "voxy_core",
+            "voxy_gpu_core",
+            "voxy_lighting",
+            "voxy_mesher",
+            "voxy_water",
+        ],
     ),
     (
         "voxy_runtime",

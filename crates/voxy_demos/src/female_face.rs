@@ -767,12 +767,15 @@ pub mod tests {
                             && rim_z.is_none_or(|z| z < globe_z - 0.00001);
                         samples += 1;
                         visible += usize::from(exposed);
-                        csv.push_str(&format!(
-                            "{closure},{side},{x},{y},{globe_z},{},{},{}\n",
-                            skin_z.map_or(String::new(), |z| z.to_string()),
-                            rim_z.map_or(String::new(), |z| z.to_string()),
-                            u8::from(exposed)
-                        ));
+                        let _ = std::fmt::Write::write_fmt(
+                            &mut csv,
+                            format_args!(
+                                "{closure},{side},{x},{y},{globe_z},{},{},{}\n",
+                                skin_z.map_or(String::new(), |z| z.to_string()),
+                                rim_z.map_or(String::new(), |z| z.to_string()),
+                                u8::from(exposed)
+                            ),
+                        );
                     }
                 }
                 println!(
@@ -927,14 +930,20 @@ pub mod tests {
                     profile,
                 );
                 let hits = intersections(&posed);
-                csv.push_str(&format!(
-                    "{mode},{closure},{},{}\n",
-                    hits.len(),
-                    hits.difference(&original).count()
-                ));
+                let _ = std::fmt::Write::write_fmt(
+                    &mut csv,
+                    format_args!(
+                        "{mode},{closure},{},{}\n",
+                        hits.len(),
+                        hits.difference(&original).count()
+                    ),
+                );
                 if closure == 1. {
                     for &(a, b) in hits.difference(&original) {
-                        details.push_str(&format!("{mode},{a},{b}\n"));
+                        let _ = std::fmt::Write::write_fmt(
+                            &mut details,
+                            format_args!("{mode},{a},{b}\n"),
+                        );
                     }
                 }
             }
@@ -1004,15 +1013,21 @@ pub mod tests {
                     projected += usize::from(original.z * deformed.z < 0.);
                     if step == 10 && (ratio < 0.01 || dot < 0.) {
                         let center = (a[0] + a[1] + a[2]) / 3.;
-                        details.push_str(&format!(
-                            "{mode},{index},{},{},{},{ratio},{dot}\n",
-                            center.x, center.y, center.z
-                        ));
+                        let _ = std::fmt::Write::write_fmt(
+                            &mut details,
+                            format_args!(
+                                "{mode},{index},{},{},{},{ratio},{dot}\n",
+                                center.x, center.y, center.z
+                            ),
+                        );
                     }
                 }
-                csv.push_str(&format!(
-                    "{mode},{closure},{count},{minimum},{tiny},{reversed},{projected}\n"
-                ));
+                let _ = std::fmt::Write::write_fmt(
+                    &mut csv,
+                    format_args!(
+                        "{mode},{closure},{count},{minimum},{tiny},{reversed},{projected}\n"
+                    ),
+                );
             }
         }
         std::fs::write("/tmp/voxy-lid-topology.csv", &csv).unwrap();

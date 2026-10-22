@@ -91,7 +91,7 @@ impl GgxEnergyRefinementPlan {
         seeds
             .iter()
             .map(|&[nv, r]| {
-                if !(r > 0.) {
+                if !r.is_finite() || r <= 0. {
                     return Err(GgxEnergyRefinementError::InvalidRegion);
                 }
                 let (_, dx) = axis(nv, 1, false)?;
@@ -278,7 +278,7 @@ pub(super) fn validate_reference(
 impl GgxEnergyRefinementPolicy {
     /// The internal target may tighten, but never relax, the external 1e-4 gate.
     pub fn try_new(target: f64, maximum: u32) -> Result<Self, GgxEnergyRefinementError> {
-        if !target.is_finite() || !(target > 0. && target <= 1e-4) || !valid_level(maximum) {
+        if !target.is_finite() || target <= 0. || target > 1e-4 || !valid_level(maximum) {
             return Err(GgxEnergyRefinementError::InvalidPolicy);
         }
         Ok(Self { target, maximum })

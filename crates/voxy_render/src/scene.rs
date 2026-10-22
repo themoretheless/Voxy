@@ -314,7 +314,6 @@ impl SceneGeometry {
         Ok(())
     }
 
-    #[must_use]
     pub fn update_index_partition(
         &mut self,
         queue: &wgpu::Queue,

@@ -999,7 +999,7 @@ fn gait_controller_locks_planted_feet_on_the_real_rig_across_walk_and_jog() {
             let pose = space.evaluate(&rig.skeleton, parameter, phase).unwrap();
             let ankles = ankle_positions(&pose, &rig.skeleton, &feet).unwrap();
             if let Some(prev) = previous {
-                let lower = if ankles[0].y < ankles[1].y { 0 } else { 1 };
+                let lower = usize::from(ankles[0].y >= ankles[1].y);
                 travel += prev[lower].z - ankles[lower].z;
             }
             previous = Some(ankles);

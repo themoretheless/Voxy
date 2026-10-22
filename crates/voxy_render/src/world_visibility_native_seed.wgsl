@@ -2,7 +2,7 @@
 // traversal order and absence are never authoritative for exact coverage.
 @group(0) @binding(8) var fast_seed_scene:acceleration_structure;
 fn visibility_seed(ray:u32) {
- if !WORLD_FAST_DEFER_NONCLEAR||!WORLD_FAST_CAN_BOUND {return;}
+ if !WORLD_FAST_DEFER_NONCLEAR||(!WORLD_FAST_CAN_BOUND&&!WORLD_SOURCE_MATERIAL_SIDES) {return;}
  var origin:vec3<f32>;var direction:vec3<f32>;
  for(var axis=0u;axis<3u;axis++) {
   origin[axis]=bitcast<f32>(exact_ray_word(ray+axis));direction[axis]=bitcast<f32>(exact_ray_word(ray+8u+axis));

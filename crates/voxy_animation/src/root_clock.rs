@@ -8,6 +8,9 @@ pub struct RootCyclePhase {
     bounds: [f64; 2],
 }
 impl RootCyclePhase {
+    pub fn cycle_index(self) -> u64 {
+        self.cycle
+    }
     pub fn cycle(self) -> u64 {
         self.cycle
     }
@@ -124,9 +127,9 @@ pub(crate) fn root_segment_phases(
     }
     let a = enclose_root_cycle_phase(start, duration, playback)?;
     let b = enclose_root_cycle_phase(end, duration, playback)?;
-    let last = if b.cycle() == a.cycle() {
+    let last = if b.cycle_index() == a.cycle_index() {
         b.phase()
-    } else if b.cycle() == a.cycle() + 1 && b.phase() == 0. {
+    } else if b.cycle_index() == a.cycle_index() + 1 && b.phase() == 0. {
         f64::from(duration)
     } else {
         return Err(AnimationError::RootRigidBudget);

@@ -125,7 +125,7 @@ mod tests {
         let cache = candidate.prepare_screw_enclosures(2).unwrap();
         let point = [[-100., 100.], [-2., 3.], [0., 0.]];
         let proof = cache.certify_fade_point_error(&domains, point, 2).unwrap();
-        assert!(std::ptr::eq(proof.candidate(), &cache));
+        assert!(std::ptr::eq(proof.candidate(), &raw const cache));
         assert!(std::ptr::eq(proof.fields().as_ptr(), domains.as_ptr()));
         assert_eq!(proof.point_bounds(), point);
         assert!(proof.radius() >= 1. && proof.radius() < 1.000000000001);

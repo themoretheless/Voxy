@@ -7,9 +7,18 @@ use crate::spectrum::{CASCADES, LOOP, N, WaveSpectrum};
 
 const MIPS: u32 = N.ilog2() + 1;
 
-pub const EVOLVE: &str = concat!(include_str!("../shaders/sim_common.wgsl"), include_str!("../shaders/sim_evolve.wgsl"));
-pub const FFT_ROWS: &str = concat!(include_str!("../shaders/fft_core.wgsl"), include_str!("../shaders/fft_rows.wgsl"));
-pub const FFT_COLS: &str = concat!(include_str!("../shaders/fft_core.wgsl"), include_str!("../shaders/fft_cols.wgsl"));
+pub const EVOLVE: &str = concat!(
+    include_str!("../shaders/sim_common.wgsl"),
+    include_str!("../shaders/sim_evolve.wgsl")
+);
+pub const FFT_ROWS: &str = concat!(
+    include_str!("../shaders/fft_core.wgsl"),
+    include_str!("../shaders/fft_rows.wgsl")
+);
+pub const FFT_COLS: &str = concat!(
+    include_str!("../shaders/fft_core.wgsl"),
+    include_str!("../shaders/fft_cols.wgsl")
+);
 pub const MIP_CHAIN: &str = include_str!("../shaders/sim_mips.wgsl");
 
 #[derive(Debug)]
@@ -44,7 +53,12 @@ impl WaveSimulation {
         let mips = compute_pipeline(device, "wave mips", MIP_CHAIN);
         let spec_bytes = u64::from(N * N) * CASCADES as u64 * 16;
         let buffer = |label, size, usage| {
-            device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size, usage, mapped_at_creation: false })
+            device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some(label),
+                size,
+                usage,
+                mapped_at_creation: false,
+            })
         };
         let uniforms = buffer("wave uniforms", 224, BU::UNIFORM | BU::COPY_DST);
         let h0 = buffer("wave h0", spec_bytes, BU::STORAGE | BU::COPY_DST);
@@ -62,24 +76,47 @@ impl WaveSimulation {
             device,
             &layout(&evolve),
             "wave evolve",
-            &[uniforms.as_entire_binding(), h0.as_entire_binding(), spec_a.as_entire_binding(), spec_b.as_entire_binding()],
+            &[
+                uniforms.as_entire_binding(),
+                h0.as_entire_binding(),
+                spec_a.as_entire_binding(),
+                spec_b.as_entire_binding(),
+            ],
         );
         let rows_group = bind_group(
             device,
             &layout(&rows),
             "wave fft rows",
-            &[spec_a.as_entire_binding(), spec_b.as_entire_binding(), tmp_a.as_entire_binding(), tmp_b.as_entire_binding()],
+            &[
+                spec_a.as_entire_binding(),
+                spec_b.as_entire_binding(),
+                tmp_a.as_entire_binding(),
+                tmp_b.as_entire_binding(),
+            ],
         );
         let (d0, v0, m0) = (level(&disp, 0), level(&deriv, 0), level(&moments, 0));
         let cols_group = bind_group(
             device,
             &layout(&cols),
             "wave fft cols",
-            &[tmp_a.as_entire_binding(), tmp_b.as_entire_binding(), R::TextureView(&d0), R::TextureView(&v0), R::TextureView(&m0)],
+            &[
+                tmp_a.as_entire_binding(),
+                tmp_b.as_entire_binding(),
+                R::TextureView(&d0),
+                R::TextureView(&v0),
+                R::TextureView(&m0),
+            ],
         );
         let mip_groups = (1..MIPS)
             .map(|m| {
-                let views = [level(&disp, m - 1), level(&deriv, m - 1), level(&moments, m - 1), level(&disp, m), level(&deriv, m), level(&moments, m)];
+                let views = [
+                    level(&disp, m - 1),
+                    level(&deriv, m - 1),
+                    level(&moments, m - 1),
+                    level(&disp, m),
+                    level(&deriv, m),
+                    level(&moments, m),
+                ];
                 let resources: Vec<_> = views.iter().map(R::TextureView).collect();
                 bind_group(device, &layout(&mips), "wave mip", &resources)
             })
@@ -136,9 +173,19 @@ impl WaveSimulation {
     }
 
     /// Evolves the field to `time` (seconds) and rebuilds the mip chains.
-    pub fn encode(&mut self, queue: &wgpu::Queue, pass: &mut wgpu::ComputePass, time: f32, dt: f32) {
+    pub fn encode(
+        &mut self,
+        queue: &wgpu::Queue,
+        pass: &mut wgpu::ComputePass,
+        time: f32,
+        dt: f32,
+    ) {
         if self.need_upload {
-            queue.write_buffer(&self.h0, 0, bytemuck::cast_slice(&self.spectrum.initial_amplitudes(self.seed)));
+            queue.write_buffer(
+                &self.h0,
+                0,
+                bytemuck::cast_slice(&self.spectrum.initial_amplitudes(self.seed)),
+            );
             self.need_upload = false;
         }
         self.write_uniforms(queue, time, dt);

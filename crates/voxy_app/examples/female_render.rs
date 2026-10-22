@@ -889,9 +889,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     46_f32,
                 ),
                 _ => {
-                    return Err(
-                        "--pelvic-view must be perineum, vulva, anal, or jump-low".into(),
-                    );
+                    return Err("--pelvic-view must be perineum, vulva, anal, or jump-low".into());
                 }
             };
             let pelvic_camera = SceneCamera {

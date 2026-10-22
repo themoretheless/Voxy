@@ -60,11 +60,11 @@ impl SolidFilmBinding {
             })
             .collect();
         Ok(Self {
-            internal_faces,
             rest,
             cells,
             faces,
             owners,
+            internal_faces,
         })
     }
     fn compatible(&self, body: &InertialBody) -> Result<(), &'static str> {

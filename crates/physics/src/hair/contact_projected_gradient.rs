@@ -250,7 +250,9 @@ mod tests {
         // the cached per-contact response columns used by the matrix-free path.
         for (index, rod) in rods.iter().enumerate() {
             let (mut matrix, mut force) = direct::assemble(&mut rod.clone(), dt).unwrap();
-            matrix.iter_mut().for_each(|v| *v *= dt * dt);
+            for v in &mut matrix {
+                *v *= dt * dt;
+            }
             force.fill(0.);
             for ((constraint, scale), weight) in constraints.iter().zip(&scales).zip(weights) {
                 for entry in constraint

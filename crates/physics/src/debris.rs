@@ -453,7 +453,7 @@ pub fn crumble_debris_on_impact(
         }
         let world_hull = body.world_hull();
         let mut world_piece = body.piece.clone();
-        world_piece.hull = world_hull.clone();
+        world_piece.hull.clone_from(&world_hull);
         world_piece.center_m = body.position_m;
         world_piece.velocity_m_s = body.velocity_m_s;
         let single_release = DebrisRelease {
@@ -606,7 +606,7 @@ pub fn crumble_debris_multi_fragment(
         }
         let world_hull = body.world_hull();
         let mut world_piece = body.piece.clone();
-        world_piece.hull = world_hull.clone();
+        world_piece.hull.clone_from(&world_hull);
         world_piece.center_m = body.position_m;
         world_piece.velocity_m_s = body.velocity_m_s;
         let single_release = DebrisRelease {

@@ -21,8 +21,8 @@ struct Params { size: u32, samples: u32, unused0: u32, unused1: u32 }
         let nl = max(l.z,0.);
         if(nl>0. && vh>0.) {
             let denominator = nl*sqrt(nv*nv*(1.-a2)+a2) + nv*sqrt(nl*nl*(1.-a2)+a2);
-            let weight = 2.*nl*vh/(nh*denominator);
-            let fc = pow(clamp(1.-vh,0.,1.),5.);
+            let weight = 2.*nl*vh/max(nh*denominator,0.000001);
+            let t = clamp(1.-vh,0.,1.); let t2 = t*t; let fc = t2*t2*t;
             ab += vec2(1.-fc,fc)*weight;
         }
     }

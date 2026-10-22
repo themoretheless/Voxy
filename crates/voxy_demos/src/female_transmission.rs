@@ -76,14 +76,22 @@ pub fn apply(
             })
         })
         .collect();
-    if cache.triangles != local_triangles || cache.surface.is_none() {
+    if cache.triangles != local_triangles {
         let Ok(surface) = physics::hair::TriangleMesh::new(&points, &local_triangles) else {
             return;
         };
         cache.surface = Some(surface);
         cache.triangles = local_triangles;
-    } else if cache.surface.as_mut().unwrap().refit(&points).is_err() {
-        return;
+    } else if let Some(surface) = cache.surface.as_mut() {
+        if surface.refit(&points).is_err() {
+            return;
+        }
+    } else {
+        let Ok(surface) = physics::hair::TriangleMesh::new(&points, &local_triangles) else {
+            return;
+        };
+        cache.surface = Some(surface);
+        cache.triangles = local_triangles;
     }
     let surface = cache.surface.as_ref().unwrap();
     let mut normals = vec![Vec3::ZERO; body];

@@ -161,3 +161,65 @@ mod tests {
 
 mod manager;
 pub use manager::*;
+
+/// Wave progression and combo multiplier state for arcade/rush gameplay modes.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RushWaveProgression {
+    pub wave: u32,
+    pub combo_count: u32,
+    pub combo_timer_s: f32,
+    pub score: u64,
+}
+
+impl Default for RushWaveProgression {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl RushWaveProgression {
+    #[must_use]
+    pub const fn new() -> Self {
+        Self {
+            wave: 1,
+            combo_count: 0,
+            combo_timer_s: 0.0,
+            score: 0,
+        }
+    }
+
+    /// Current score multiplier (`1 + min(combo / 5, 8)`).
+    #[must_use]
+    pub const fn multiplier(&self) -> u32 {
+        let bonus = self.combo_count / 5;
+        1 + if bonus > 8 { 8 } else { bonus }
+    }
+
+    /// Enemy spawn budget for the current wave.
+    #[must_use]
+    pub const fn wave_spawn_budget(&self) -> u32 {
+        4 + self.wave.saturating_mul(3)
+    }
+
+    /// Advances combo decay timer and resets combo if expired.
+    pub fn tick(&mut self, dt_s: f32) {
+        if dt_s.is_finite() && dt_s > 0.0 {
+            self.combo_timer_s = (self.combo_timer_s - dt_s).max(0.0);
+            if self.combo_timer_s == 0.0 {
+                self.combo_count = 0;
+            }
+        }
+    }
+
+    /// Records a target elimination and awards multiplied score.
+    pub const fn record_elimination(&mut self, base_points: u32, combo_window_s: f32) {
+        self.combo_count = self.combo_count.saturating_add(1);
+        self.combo_timer_s = if combo_window_s > 0.0 {
+            combo_window_s
+        } else {
+            0.0
+        };
+        let points = (base_points as u64).saturating_mul(self.multiplier() as u64);
+        self.score = self.score.saturating_add(points);
+    }
+}

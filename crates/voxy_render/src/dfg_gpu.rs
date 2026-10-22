@@ -194,18 +194,18 @@ impl GgxEnergyGpuPrecompute {
             &format!(
                 "{}\n{}",
                 include_str!("material_energy_integrate.wgsl"),
-                r#"
+                r"
 @group(0) @binding(0) var<storage,read_write> data:array<u32>;
 @compute @workgroup_size(32) fn cs_main(@builtin(global_invocation_id) id:vec3<u32>){
  if id.x>=data[0]{return;}let b=1u+8u*id.x;
  let m=integrate_ggx_energy(bitcast<f32>(data[b]),bitcast<f32>(data[b+1u]),data[b+2u]);
  for(var c=0u;c<3u;c++){data[b+3u+c]=bitcast<u32>(m.value[c]);}data[b+6u]=m.valid;
 }
-"#
+"
             ),
         )
         .await?;
-        let probes=ComputeProgram::new(device,&format!("{}\n{}",include_str!("material_energy_patch.wgsl"),r#"
+        let probes=ComputeProgram::new(device,&format!("{}\n{}",include_str!("material_energy_patch.wgsl"),r"
 @group(0) @binding(0) var<storage,read_write> data:array<u32>;
 @compute @workgroup_size(8) fn cs_main(@builtin(global_invocation_id) id:vec3<u32>){
  if id.x>=data[0]{return;}let b=1u+162u*id.x;var region:GgxEnergyPatch;
@@ -214,7 +214,7 @@ impl GgxEnergyGpuPrecompute {
  let m=interpolate_ggx_energy_patch(region,vec2<f32>(bitcast<f32>(data[b]),bitcast<f32>(data[b+1u])));
  for(var c=0u;c<3u;c++){data[b+158u+c]=bitcast<u32>(m[c]);}data[b+161u]=select(0u,1u,m.w==1.0);
 }
-"#)).await?;
+")).await?;
         Ok(Self {
             device: device.clone(),
             nodes,

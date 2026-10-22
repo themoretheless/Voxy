@@ -61,7 +61,7 @@ fn film_uptake_matches_capped_network_and_drying_closes_water_and_latent_energy(
         .advance_surface_film_supplies(1., &mut f, 0, &links())
         .unwrap();
     let s1 = 1.05 / 3.5;
-    let s0 = (0.1 + s1) / 2.;
+    let s0 = f64::midpoint(0.1, s1);
     assert!((b.cells()[0].water_kg - s0).abs() < 1e-12);
     assert!((b.cells()[1].water_kg - 2. * s1).abs() < 1e-12);
     assert_eq!(f.component_masses_kg()[0][0], 0.);

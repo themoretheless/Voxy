@@ -45,6 +45,7 @@ pub(super) enum AudioPoll {
     Ready,
     RetryPlay,
 }
+#[allow(clippy::large_enum_variant)]
 pub(super) enum AudioStart {
     Pending,
     Ready(Option<audio_play::AudioPlay>),

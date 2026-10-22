@@ -846,7 +846,7 @@ fn material_point_derivatives_use_nominal_arc_velocity_and_report_knot_sides() {
     let physical = path.initial().point_velocity(start.position).unwrap();
     assert!((start.velocity[1] - physical[1]).abs() > 1e-8);
     for segment in segments {
-        let t = (segment.start_s + segment.end_s) / 2.;
+        let t = f64::midpoint(segment.start_s, segment.end_s);
         let h = (segment.end_s - segment.start_s) * 1e-4;
         let actual = path.sample_material_point(t, local).unwrap();
         let minus = path.sample_material_point(t - h, local).unwrap();
@@ -970,7 +970,7 @@ fn material_point_work_splits_changing_spin_arcs_and_keeps_stationary_arm_moment
                     (0., 8. / 9.),
                     ((3_f64 / 5.).sqrt(), 5. / 9.),
                 ] {
-                    let t = arc.start_s + (i as f64 + (node + 1.) / 2.) * dt;
+                    let t = arc.start_s + (i as f64 + f64::midpoint(node, 1.)) * dt;
                     let sample = path.sample_material_point(t, local).unwrap();
                     let f = std::array::from_fn(|k| force[k] + rate[k] * t);
                     work +=
@@ -1067,7 +1067,7 @@ fn reciprocal_material_point_forces_close_world_moments_on_different_spin_paths(
                     (0., 8. / 9.),
                     ((3_f64 / 5.).sqrt(), 5. / 9.),
                 ] {
-                    let t = interval[0] + (i as f64 + (node + 1.) / 2.) * dt;
+                    let t = interval[0] + (i as f64 + f64::midpoint(node, 1.)) * dt;
                     let point = a.sample_material_point(t, local).unwrap();
                     let state = b.sample(t).unwrap();
                     // Express the shared point in receiver coordinates only at this instant.
@@ -1138,7 +1138,7 @@ fn prescribed_rotating_point_force_drives_analytic_spherical_momentum_and_attitu
         let impulse = 0.4 * (3. * x.sin() / 2. - 2. * (t * x.sin() / 2. + (x.cos() - 1.) / 4.));
         let double =
             0.4 * (3. * (1. - x.cos()) / 4. - 2. * (2. * x.sin() / 8. - t * (1. + x.cos()) / 4.));
-        let angle = (0.7 * t + double) / 2.;
+        let angle = f64::midpoint(0.7 * t, double);
         (
             0.7 + impulse,
             [0., 0., (angle / 2.).sin(), (angle / 2.).cos()],
@@ -2151,7 +2151,7 @@ fn multiple_material_load_motion_preserves_com_work_and_impact_force_phase() {
         .unwrap();
     for t in [0.02, 0.06, 0.1] {
         let state = path.sample(t).unwrap();
-        assert!((state.motion.velocity[0] - 3. - (0.2 * t + 0.05 * t * t) / 2.).abs() < 1e-12);
+        assert!((state.motion.velocity[0] - 3. - f64::midpoint(0.2 * t, 0.05 * t * t)).abs() < 1e-12);
         assert!((state.motion.position[1] - 2. + 9.81 * t * t / 2.).abs() < 1e-12);
         let mut applied_work = 0.;
         for point in points {

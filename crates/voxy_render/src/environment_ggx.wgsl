@@ -25,7 +25,8 @@ fn face_direction(uv: vec2<f32>) -> vec3<f32> {
     let up = select(vec3(0.0, 0.0, 1.0), vec3(1.0, 0.0, 0.0), abs(n.z) > 0.999);
     let tangent = normalize(cross(up, n));
     let bitangent = cross(n, tangent);
-    let alpha2 = pow(params.roughness, 4.0);
+    let r2 = params.roughness * params.roughness;
+    let alpha2 = r2 * r2;
     var total = vec3(0.0);
     var weight = 0.0;
     for (var i = 0u; i < params.samples; i++) {

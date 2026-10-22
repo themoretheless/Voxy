@@ -1,8 +1,34 @@
+override WORLD_EXACT_MATERIAL_SIDES:bool=false;
+override WORLD_EXACT_HISTORY_POSITION_ADMISSION:bool=false;
 @group(0) @binding(8) var nearest_scene:acceleration_structure;
 
 
 
 var<private> nearest_best:ExParameters;
+// Only MaterialSurface uses two more persistent slots for the earliest
+// uncertain but geometrically proved event. Ordinary queries retain seven.
+var<private> nearest_unknown_t:ExInt;
+var<private> nearest_unknown_den:ExInt;
+var<private> nearest_unknown_unbounded:u32;
+var<private> nearest_unknown_min_material:u32;
+fn nearest_temporary_begin()->u32 {return select(7u,9u,WORLD_EXACT_MATERIAL_SIDES);}
+fn nearest_numeric_unknown() {nearest_unknown=1u;nearest_unknown_unbounded=1u;}
+fn nearest_note_unknown(bounded:bool,material:bool) {
+ nearest_unknown=1u;if material {nearest_material_unknown=1u;}
+ if !WORLD_EXACT_MATERIAL_SIDES {return;}
+ if !bounded||ex_parameters.valid==0u {nearest_unknown_unbounded=1u;return;}
+ if nearest_unknown_t.valid!=0u {
+  let cmp=ex_cmp_products(ex_parameters.t,nearest_unknown_den,nearest_unknown_t,ex_parameters.denominator);
+  if cmp.valid==0u {nearest_unknown_unbounded=1u;return;}
+  if cmp.order==0 {nearest_unknown_min_material|=select(0u,1u,material);return;}
+  if cmp.order>0 {return;}
+ }
+ nearest_unknown_min_material=select(0u,1u,material);
+ nearest_unknown_t=exact_copy_parameter(ex_parameters.t,7u);
+ nearest_unknown_den=exact_copy_parameter(ex_parameters.denominator,8u);
+ if (nearest_unknown_t.valid&nearest_unknown_den.valid)==0u {nearest_unknown_unbounded=1u;}
+}
+
 var<private> nearest_slot:u32;
 var<private> nearest_primitive:u32;
 var<private> nearest_candidates:u32;
@@ -24,12 +50,13 @@ fn nearest_instance_bound(slot:u32,axis:u32,upper:bool,ray:u32)->ExInt {
 }
 fn nearest_instance_possible(slot:u32,ray:u32,d:ExVec)->bool {
  // Intersect the three closed slab intervals using unrounded rational bounds.
- // Slots 7..10 retain the current [begin,end]; candidate temporaries start at 11.
- ex_cursor=11u;let zero=ex_zero();let one=ex_one();
- var begin_n=exact_copy_parameter(zero,7u);var begin_d=exact_copy_parameter(one,8u);
- var finish_n=exact_copy_parameter(one,9u);var finish_d=exact_copy_parameter(one,10u);
+ // Four slab slots follow the persistent nearest/unknown event operands.
+ let saved=nearest_temporary_begin();let temporary=saved+4u;
+ ex_cursor=temporary;let zero=ex_zero();let one=ex_one();
+ var begin_n=exact_copy_parameter(zero,saved);var begin_d=exact_copy_parameter(one,saved+1u);
+ var finish_n=exact_copy_parameter(one,saved+2u);var finish_d=exact_copy_parameter(one,saved+3u);
  for(var axis=0u;axis<3u;axis+=1u) {
-  ex_cursor=11u;
+  ex_cursor=temporary;
   var lo=nearest_instance_bound(slot,axis,false,ray);var hi=nearest_instance_bound(slot,axis,true,ray);
   var den=ex_shl(ex_component(d,axis),149u);
   if (lo.valid&hi.valid&den.valid)==0u {return true;}
@@ -42,8 +69,8 @@ fn nearest_instance_possible(slot:u32,ray:u32,d:ExVec)->bool {
   let lower=ex_cmp_products(lo,begin_d,begin_n,den);
   let upper=ex_cmp_products(hi,finish_d,finish_n,den);
   if (lower.valid&upper.valid)==0u {return true;}
-  if lower.order>0 {begin_n=exact_copy_parameter(lo,7u);begin_d=exact_copy_parameter(den,8u);}
-  if upper.order<0 {finish_n=exact_copy_parameter(hi,9u);finish_d=exact_copy_parameter(den,10u);}
+  if lower.order>0 {begin_n=exact_copy_parameter(lo,saved);begin_d=exact_copy_parameter(den,saved+1u);}
+  if upper.order<0 {finish_n=exact_copy_parameter(hi,saved+2u);finish_d=exact_copy_parameter(den,saved+3u);}
   let order=ex_cmp_products(begin_n,finish_d,finish_n,begin_d);
   if order.valid==0u {return true;}if order.order>0 {return false;}
  }
@@ -77,7 +104,7 @@ fn nearest_make_box(ray:u32,d:ExVec)->bool {
    nearest_node_origin[axis]=wi_add(wi_source_word(exact_ray_word(ray+axis)),wi_source_word(exact_ray_word(ray+4u+axis)));
    nearest_node_direction[axis]=wi_add(wi_source_word(exact_ray_word(ray+8u+axis)),wi_source_word(exact_ray_word(ray+12u+axis)));
   }
-  ex_cursor=7u;
+  ex_cursor=nearest_temporary_begin();
   let origin=ex_add(ex_float(exact_ray_word(ray+axis),-149),ex_float(exact_ray_word(ray+4u+axis),-149));
   let end=ex_add(origin,ex_component(d,axis));
   if (origin.valid&end.valid)==0u {return false;}
@@ -105,7 +132,7 @@ fn nearest_source_guard(ray:u32,d:ExVec) {
  stack[0]=nearest_active[3];size=1u;
  while size>0u {
   size-=1u;let node=stack[size];visited+=1u;
-  if node>=nearest_active[1]||visited>nearest_active[1] {nearest_unknown=1u;return;}
+  if node>=nearest_active[1]||visited>nearest_active[1] {nearest_numeric_unknown();return;}
   let base=nearest_active[2]+node*8u;var overlaps=true;
   for(var axis=0u;axis<3u;axis+=1u) {
    overlaps=overlaps&&nearest_ordered(nearest_active[base+axis])<=nearest_box[axis].y&&nearest_ordered(nearest_active[base+3u+axis])>=nearest_box[axis].x;
@@ -114,10 +141,10 @@ fn nearest_source_guard(ray:u32,d:ExVec) {
   if (nearest_counts.values[4095u].w&2u)!=0u&&nearest_node_miss(base,ray) {nearest_node_rejected+=1u;continue;}
   let left=nearest_active[base+6u];let right=nearest_active[base+7u];
   if right<4294967294u {
-   if size+2u>64u {nearest_unknown=1u;return;}
+   if size+2u>64u {nearest_numeric_unknown();return;}
    stack[size]=left;stack[size+1u]=right;size+=2u;continue;
   }
-  let leaf=source_leaf_range(left,right);if leaf.valid==0u {nearest_unknown=1u;return;}
+  let leaf=source_leaf_range(left,right);if leaf.valid==0u {nearest_numeric_unknown();return;}
   let slot=leaf.slot;if nearest_active[4u+slot]==0u {continue;}
   if !nearest_instance_possible(slot,ray,d) {continue;}
   let end=leaf.first+leaf.count;
@@ -202,10 +229,18 @@ fn nearest_source_vertices(slot:u32,primitive:u32,ray:u32)->NearestSourceVertice
  return NearestSourceVertices(a,b,c);
 }
 fn nearest_admit_decision(material:u32,decision:ExDecision)->bool {
- if decision.state==2u {nearest_unknown=1u;return false;}if decision.state!=1u {return false;}
- if ex_parameters.valid==0u {nearest_unknown=1u;return false;}
+ if WORLD_EXACT_MATERIAL_SIDES&&decision.state!=0u {
+  let sides=source_material_sides(material);
+  if sides==0u {nearest_note_unknown(decision.state==1u,false);return false;}
+  if sides==1u {
+   if ex_triangle_facing==2u {return false;}
+   if ex_triangle_facing!=1u {nearest_note_unknown(decision.state==1u,false);return false;}
+  }
+ }
+ if decision.state==2u {nearest_note_unknown(false,false);return false;}if decision.state!=1u {return false;}
+ if ex_parameters.valid==0u {nearest_numeric_unknown();return false;}
  let admission=nearest_material_decision(material);
- if admission.x==2u {nearest_unknown=1u;nearest_material_unknown=1u;return false;}
+ if admission.x==2u {nearest_note_unknown(true,true);return false;}
  if admission.x==0u {return false;}
  nearest_admitted_kind=admission.y;return true;
 }
@@ -223,7 +258,7 @@ fn nearest_evaluate_and_update(slot:u32,primitive:u32,ray:u32,d:ExVec) {
  var replace=nearest_best.valid==0u;
  if !replace {
   let cmp=ex_cmp_products(ex_parameters.t,nearest_best.denominator,nearest_best.t,ex_parameters.denominator);
-  if cmp.valid==0u {nearest_unknown=1u;return;}
+  if cmp.valid==0u {nearest_numeric_unknown();return;}
   if cmp.order==0 {nearest_ties+=1u;}
   replace=cmp.order<0||(cmp.order==0&&(slot<nearest_slot||(slot==nearest_slot&&primitive<nearest_primitive)));
  }
@@ -233,13 +268,14 @@ fn nearest_evaluate_and_update(slot:u32,primitive:u32,ray:u32,d:ExVec) {
 }
 fn nearest_consider(slot:u32,primitive:u32,ray:u32,d:ExVec) {
  if slot>=nearest_active[0]||nearest_active[4u+slot]==0u {return;}
- nearest_candidates+=1u;ex_cursor=7u;ex_parameters.valid=0u;
+ nearest_candidates+=1u;ex_cursor=nearest_temporary_begin();ex_parameters.valid=0u;
  let info=exact_layout[slot];let first=info.z+primitive*3u;
  if (nearest_counts.values[4095u].w&1u)!=0u&&nearest_interval_miss(slot,first,ray,(nearest_counts.values[4095u].w&4u)!=0u) {nearest_interval_rejected+=1u;return;}
  if (nearest_counts.values[4095u].w&4u)!=0u&&nearest_best.valid!=0u&&nearest_best_t.valid!=0u&&nearest_candidate_t.valid!=0u&&nearest_candidate_t.lo>nearest_best_t.hi {
-  // Preserve conservative unknown-material reporting even behind a known hit.
-  let admitted=nearest_material_decision(info.w);ex_cursor=7u;
-  if admitted.x==1u {nearest_interval_rejected+=1u;return;}
+  // Ordinary nearest preserves global unknown reporting. MaterialSurface
+  // may reject every event proved strictly behind its current nearer hit.
+  let admitted=nearest_material_decision(info.w);ex_cursor=nearest_temporary_begin();
+  if WORLD_EXACT_MATERIAL_SIDES||admitted.x==1u {nearest_interval_rejected+=1u;return;}
  }
  nearest_evaluate_and_update(slot,primitive,ray,d);
 }
@@ -263,10 +299,27 @@ fn nearest_exact_uv(axis:u32)->ExPairBits {
 // Explicit guarded producer protocol: inactive is distinct from a miss;
 // unsupported coefficients cannot turn into fabricated intersections.
 
+// O is scaled by 2^-298, D by 2^-149 and exact t by 2^-149.
+// Form (O*den + D*t)/den before either coordinate component is rounded.
+fn nearest_write_position(index:u32,state:u32) {
+ if WORLD_HIT_POSITION_BASE==0u||state!=1u {return;}
+ let ray=index*20u;var pair:array<ExPairBits,3>;
+ for(var axis=0u;axis<3u;axis++) {
+  ex_cursor=nearest_temporary_begin();
+  let o=ex_add(ex_float(exact_ray_word(ray+axis),-298),ex_float(exact_ray_word(ray+4u+axis),-298));
+  let d=ex_add(ex_float(exact_ray_word(ray+8u+axis),-149),ex_float(exact_ray_word(ray+12u+axis),-149));
+  let numerator=ex_add(ex_mul(o,nearest_best.denominator),ex_mul(d,nearest_best.t));
+  pair[axis]=ex_ratio_pair(numerator,nearest_best.denominator,-298);
+ }
+ let out=WORLD_HIT_POSITION_BASE+index*2u;
+ exact_output[out]=vec4<u32>(pair[0].hi,pair[0].lo,pair[1].hi,pair[1].lo);
+ exact_output[out+1u]=vec4<u32>(pair[2].hi,pair[2].lo,pair[0].valid|(pair[1].valid<<1u)|(pair[2].valid<<2u),pair[0].residual_nonzero|(pair[1].residual_nonzero<<1u)|(pair[2].residual_nonzero<<2u));
+}
 fn nearest_start(index:u32,stride:u32,worker:u32)->ExVec {
+ nearest_clear_position(index);
  let ray=index*20u;
  nearest_candidate_t=wi_bad();nearest_best_t=wi_bad();
- ex_begin=worker*EX_ARENA_WORDS;ex_cursor=7u;ex_peak=7u;nearest_best.valid=0u;nearest_slot=4294967295u;nearest_primitive=4294967295u;nearest_candidates=0u;nearest_ties=0u;nearest_unknown=0u;nearest_seen_count=0u;nearest_kind=0u;nearest_material_unknown=0u;nearest_interval_rejected=0u;nearest_exact_calls=0u;nearest_node_rejected=0u;
+ ex_begin=worker*EX_ARENA_WORDS;ex_cursor=nearest_temporary_begin();ex_peak=nearest_temporary_begin();nearest_best.valid=0u;nearest_slot=4294967295u;nearest_primitive=4294967295u;nearest_candidates=0u;nearest_ties=0u;nearest_unknown=0u;nearest_unknown_t.valid=0u;nearest_unknown_den.valid=0u;nearest_unknown_unbounded=0u;nearest_unknown_min_material=0u;nearest_seen_count=0u;nearest_kind=0u;nearest_material_unknown=0u;nearest_interval_rejected=0u;nearest_exact_calls=0u;nearest_node_rejected=0u;
  let out=index*stride;
  exact_output[out]=vec4<u32>(2u,128u,2048u,0u);exact_output[out+1u]=vec4<u32>(exact_ray_word(ray+18u),exact_ray_word(ray+19u),4294967295u,4294967295u);
  let d=ExVec(ex_add(ex_float(exact_ray_word(ray+8u),-149),ex_float(exact_ray_word(ray+12u),-149)),ex_add(ex_float(exact_ray_word(ray+9u),-149),ex_float(exact_ray_word(ray+13u),-149)),ex_add(ex_float(exact_ray_word(ray+10u),-149),ex_float(exact_ray_word(ray+14u),-149)));
@@ -274,14 +327,28 @@ fn nearest_start(index:u32,stride:u32,worker:u32)->ExVec {
  let dx=exact_copy_parameter(d.x,4u);let dy=exact_copy_parameter(d.y,5u);let dz=exact_copy_parameter(d.z,6u);
  return ExVec(dx,dy,dz);
 }
-fn nearest_finish(index:u32,stride:u32,native:bool) {
+fn nearest_finish(index:u32,stride:u32,native:bool,direction:ExVec) {
  let ray=index*20u;let out=index*stride;
+ if WORLD_EXACT_MATERIAL_SIDES&&nearest_unknown!=0u&&nearest_unknown_unbounded==0u&&nearest_unknown_t.valid!=0u&&nearest_best.valid!=0u {
+  // No rounded distance or epsilon: compare the complete original rationals.
+  let cmp=ex_cmp_products(nearest_best.t,nearest_unknown_den,nearest_unknown_t,nearest_best.denominator);
+  if cmp.valid!=0u&&cmp.order<0 {nearest_unknown=0u;nearest_material_unknown=0u;}
+ }
+ if WORLD_EXACT_HISTORY_POSITION_ADMISSION&&nearest_best.valid!=0u&&nearest_unknown==0u {
+  if ex_history_position_non_dyadic(nearest_best.t,nearest_best.denominator,direction) {
+   // Existing history shading requires every world-coordinate residual to be
+   // zero. This exact proof guarantees its full fallback, without rounding t.
+   nearest_admission_result(index,stride,2u,16384u);
+   exact_output[out].w=ex_peak;exact_output[out+4u].z=131072u;return;
+  }
+ }
  var t=ExPairBits(0u,0u,0u,0u);var u=t;var v=t;
- if nearest_best.valid!=0u&&nearest_unknown==0u {ex_cursor=7u;t=ex_ratio_pair(nearest_best.t,nearest_best.denominator,-149);ex_cursor=7u;u=ex_ratio_pair(nearest_best.u,nearest_best.denominator,0);ex_cursor=7u;v=ex_ratio_pair(nearest_best.v,nearest_best.denominator,0);if (t.valid&u.valid&v.valid)==0u {nearest_unknown=1u;}}
+ if nearest_best.valid!=0u&&nearest_unknown==0u {ex_cursor=nearest_temporary_begin();t=ex_ratio_pair(nearest_best.t,nearest_best.denominator,-149);ex_cursor=nearest_temporary_begin();u=ex_ratio_pair(nearest_best.u,nearest_best.denominator,0);ex_cursor=nearest_temporary_begin();v=ex_ratio_pair(nearest_best.v,nearest_best.denominator,0);if (t.valid&u.valid&v.valid)==0u {nearest_numeric_unknown();}}
  var uv_x=ExPairBits(0u,0u,0u,0u);var uv_y=uv_x;
  if stride>=7u&&nearest_best.valid!=0u&&nearest_unknown==0u {
-  ex_cursor=7u;uv_x=nearest_exact_uv(0u);ex_cursor=7u;uv_y=nearest_exact_uv(1u);
+  ex_cursor=nearest_temporary_begin();uv_x=nearest_exact_uv(0u);ex_cursor=nearest_temporary_begin();uv_y=nearest_exact_uv(1u);
  }
+ if WORLD_EXACT_MATERIAL_SIDES&&nearest_unknown!=0u {nearest_material_unknown=select(nearest_unknown_min_material,0u,nearest_unknown_unbounded!=0u);}
  var state=select(0u,1u,nearest_best.valid!=0u);if nearest_unknown!=0u {state=2u;}
  if nearest_unknown!=0u {nearest_slot=4294967295u;nearest_primitive=4294967295u;nearest_kind=0u;t=ExPairBits(0u,0u,0u,0u);u=t;v=t;}
  var reason=select(0u,64u,nearest_unknown!=0u);if nearest_material_unknown!=0u {reason=256u;}
@@ -296,6 +363,7 @@ fn nearest_finish(index:u32,stride:u32,native:bool) {
   exact_output[uv]=vec4<u32>(uv_x.hi,uv_x.lo,uv_y.hi,uv_y.lo);
   exact_output[uv+1u]=vec4<u32>(valid,uv_x.residual_nonzero|(uv_y.residual_nonzero<<1u),select(0u,64u,state==1u&&valid!=3u),0u);
  }
+ nearest_write_position(index,state);
 }
 fn nearest_process_worker(index:u32,stride:u32,worker:u32) {
  let ray=index*20u;if ray+19u>=exact_ray_word_count() {return;}
@@ -313,7 +381,7 @@ fn nearest_process_worker(index:u32,stride:u32,worker:u32) {
  // Never substitute a high-only ray for an exact nonzero low origin/direction.
  for(var k=0u;k<3u;k+=1u) {native=native&&(exact_ray_word(ray+4u+k)&2147483647u)==0u&&(exact_ray_word(ray+12u+k)&2147483647u)==0u;}
 
- if ex_vec_valid(direction)==0u {nearest_unknown=1u;}
+ if ex_vec_valid(direction)==0u {nearest_numeric_unknown();}
  else if native {
   let origin=vec3<f32>(bitcast<f32>(exact_ray_word(ray)),bitcast<f32>(exact_ray_word(ray+1u)),bitcast<f32>(exact_ray_word(ray+2u)));
   let high=vec3<f32>(bitcast<f32>(exact_ray_word(ray+8u)),bitcast<f32>(exact_ray_word(ray+9u)),bitcast<f32>(exact_ray_word(ray+10u)));
@@ -328,7 +396,7 @@ fn nearest_process_worker(index:u32,stride:u32,worker:u32) {
    for(var slot=0u;slot<nearest_active[0];slot+=1u) {if nearest_active[4u+slot]==0u {continue;}if !nearest_instance_possible(slot,ray,direction) {continue;}let count=nearest_counts.values[exact_layout[slot].x*2u].x;for(var primitive=0u;primitive<count;primitive+=1u) {nearest_consider(slot,primitive,ray,direction);}}
   }
  }
- nearest_finish(index,stride,native);
+ nearest_finish(index,stride,native,direction);
 }
 fn nearest_process(index:u32,stride:u32) {nearest_process_worker(index,stride,index);}
 @compute @workgroup_size(1) fn main_nearest(@builtin(global_invocation_id) id:vec3<u32>) {nearest_process(id.x,5u);}

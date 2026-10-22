@@ -1454,7 +1454,7 @@ mod cesium_character_tests {
             serde_json::from_slice(&source[20..20 + json_length]).unwrap();
         let rebuild = |document: &serde_json::Value| {
             let mut json = serde_json::to_vec(document).unwrap();
-            while json.len() % 4 != 0 {
+            while !json.len().is_multiple_of(4) {
                 json.push(b' ');
             }
             let tail = &source[20 + json_length..];
@@ -1635,7 +1635,9 @@ mod joint_budget {
 }
 
 mod scene_archive;
-pub use scene_archive::{SceneArchive,SceneArchiveNode,SceneArchivePrimitive,SceneArchiveTangents,SceneImportLimits};
+pub use scene_archive::{
+    SceneArchive, SceneArchiveNode, SceneArchivePrimitive, SceneArchiveTangents, SceneImportLimits,
+};
 
 mod scene_tangents;
 

@@ -57,7 +57,7 @@ fn capped_source_and_uncapped_source_couple_through_the_same_network() {
     let report = body.advance_with_supplies(1., &mut supplies).unwrap();
     // Capped node: 2*s0-s1=0.1. Uncapped node: -s0+4*s1=1.
     let s1 = 1.05 / 3.5;
-    let s0 = (0.1 + s1) / 2.;
+    let s0 = f64::midpoint(0.1, s1);
     assert!((body.cells()[0].water_kg - s0).abs() < 1e-12);
     assert!((body.cells()[1].water_kg - 2. * s1).abs() < 1e-12);
     assert_eq!(supplies[0].water_kg, 0.);

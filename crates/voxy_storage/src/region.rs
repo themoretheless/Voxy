@@ -197,6 +197,43 @@ impl RegionStore {
     pub fn sync_all(&self) -> Result<(), RegionError> {
         self.file.sync_all().map_err(RegionError::Io)
     }
+
+    /// Rewrites the region file in place with a single consolidated checkpoint frame
+    /// containing only the latest revision of each active chunk slot (`Vacuum`).
+    ///
+    /// Returns `(before_bytes, after_bytes)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns codec or I/O errors if encoding or syncing fails.
+    pub fn vacuum(&mut self, registry: &BlockRegistry) -> Result<(u64, u64), RegionError> {
+        let before = self.cursor;
+        let Some(through) = self.checkpoint_through else {
+            return Ok((before, before));
+        };
+        if self.entries.is_empty() {
+            return Ok((before, before));
+        }
+        let staged: Vec<(u16, StoredChunk, u64)> = self
+            .entries
+            .iter()
+            .map(|(&slot, entry)| (slot, entry.chunk.clone(), entry.last_commit))
+            .collect();
+        let header = encode_header(self.region);
+        let frame = encode_frame(&staged, through, registry)?;
+        let after = u64::try_from(header.len().saturating_add(frame.len()))
+            .map_err(|_| RegionError::FrameTooLarge)?;
+        if after > MAX_FILE {
+            return Err(RegionError::FileTooLarge);
+        }
+        self.file.seek(SeekFrom::Start(0))?;
+        self.file.write_all(&header)?;
+        self.file.write_all(&frame)?;
+        self.file.set_len(after)?;
+        self.file.sync_all()?;
+        self.cursor = after;
+        Ok((before, after))
+    }
 }
 
 #[must_use]
@@ -685,6 +722,32 @@ mod tests {
         ));
         drop(store);
         let (reopened, _) = RegionStore::open(&path, region, &registry).unwrap();
+        assert_eq!(reopened.load(chunk.pos), Some(chunk));
+        fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn vacuum_compacts_superseded_checkpoint_frames_and_preserves_latest_chunks() {
+        let path = temp_path();
+        let (registry, mut chunk) = crate::codec::tests::sample_chunk();
+        let (region, _) = split_region(chunk.pos);
+        let (mut store, _) = RegionStore::open(&path, region, &registry).unwrap();
+        for rev in 1..=4_u64 {
+            chunk.revision = voxy_world::ChunkRevision::from_raw(rev);
+            store
+                .checkpoint(
+                    &[(chunk.clone(), rev)],
+                    WalCursor { offset: rev * 100 },
+                    &registry,
+                )
+                .unwrap();
+        }
+        let (before, after) = store.vacuum(&registry).unwrap();
+        assert!(after < before);
+        drop(store);
+        let (reopened, recovery) = RegionStore::open(&path, region, &registry).unwrap();
+        assert!(!recovery.discarded_tail);
+        assert_eq!(recovery.valid_bytes, after);
         assert_eq!(reopened.load(chunk.pos), Some(chunk));
         fs::remove_file(path).unwrap();
     }

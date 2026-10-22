@@ -12,6 +12,7 @@ experimental-reusable-query-workers = ["physics/experimental-reusable-query-work
 cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda", "voxy_demos/cuda"]
 
 [dependencies]
+bytemuck = { version = "1.25.2", features = ["derive"] }
 image = { version = "0.25.10", default-features = false, features = ["png"] }
 voxy_model = { path = "../voxy_model" }
 voxy_shell = { path = "../voxy_shell" }
@@ -68,7 +69,6 @@ egui = "0.36.2"
 egui-wgpu = { version = "0.36.2", default-features = false }
 egui-winit = { version = "0.36.2", default-features = false }
 half = "2.7.1"
-bytemuck = { version = "1.25.2", features = ["derive"] }
 
 [[example]]
 name = "street_walk"

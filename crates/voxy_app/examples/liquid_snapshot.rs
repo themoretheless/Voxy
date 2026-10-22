@@ -136,13 +136,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             demo.verify()?;
         }
         let mesh = if optical {
-            let (mesh, particles) = demo.optical_scene()?;
+            let mesh = demo.optical_background()?;
+            let (particle_count, particles) = demo.optical_particles()?;
             let films = demo.optical_film_triangles()?;
             eprintln!("OPTICAL FILM frame={frame} cells={}", films.len());
-            fluid.update_with_film(
+            fluid.update_generated_with_film(
                 &queue,
                 camera,
-                &particles,
+                particle_count,
+                particles,
                 &films,
                 1.1,
                 voxy_render::FluidDepthFilter::Bilateral,
@@ -150,7 +152,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if reference {
                 let mut vertices = mesh.vertices().to_vec();
                 let mut indices = mesh.indices().to_vec();
-                for p in &particles {
+                for p in demo.optical_particles()?.1 {
                     let base = vertices.len() as u32;
                     for i in 0..6 {
                         let mut position = [
@@ -341,7 +343,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .chunks_exact(4)
             .filter(|p| p[0] > 70 && p[2] < 40)
             .count();
-        if !optical && !(impacts && frame == 0) && (blue < 100 || gold < 100) {
+        if !optical && (!impacts || frame != 0) && (blue < 100 || gold < 100) {
             return Err("liquid particles missing from rendered pixels".into());
         }
         println!("frame={frame}: blue_pixels={blue}, gold_pixels={gold}");

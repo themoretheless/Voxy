@@ -445,6 +445,57 @@ impl TetraMesh {
                 .collect(),
         )
     }
+
+    /// Computes a Reverse Cuthill-McKee (RCM) node permutation (`new_to_old`)
+    /// that reduces the sparse matrix bandwidth of the tetrahedral mesh connectivity.
+    #[must_use]
+    pub fn rcm_node_ordering(&self) -> Vec<usize> {
+        let n = self.points.len();
+        if n == 0 {
+            return Vec::new();
+        }
+        let mut adj: Vec<Vec<usize>> = vec![Vec::new(); n];
+        for &[a, b, c, d] in &self.cells {
+            let verts = [a, b, c, d];
+            for i in 0..4 {
+                for j in (i + 1)..4 {
+                    let u = verts[i];
+                    let v = verts[j];
+                    if u < n && v < n {
+                        adj[u].push(v);
+                        adj[v].push(u);
+                    }
+                }
+            }
+        }
+        for neighbors in &mut adj {
+            neighbors.sort_unstable();
+            neighbors.dedup();
+        }
+        let mut visited = vec![false; n];
+        let mut order = Vec::with_capacity(n);
+        let mut queue = std::collections::VecDeque::new();
+        while order.len() < n {
+            let start = (0..n)
+                .filter(|&i| !visited[i])
+                .min_by_key(|&i| adj[i].len())
+                .unwrap();
+            visited[start] = true;
+            queue.push_back(start);
+            while let Some(u) = queue.pop_front() {
+                order.push(u);
+                let mut unvisited: Vec<usize> =
+                    adj[u].iter().copied().filter(|&v| !visited[v]).collect();
+                unvisited.sort_by_key(|&v| adj[v].len());
+                for v in unvisited {
+                    visited[v] = true;
+                    queue.push_back(v);
+                }
+            }
+        }
+        order.reverse();
+        order
+    }
 }
 
 #[cfg(test)]
@@ -475,5 +526,18 @@ mod quality_tests {
         let mut invalid = mesh(1., 1.);
         invalid.points[3] = invalid.points[0];
         assert!(invalid.cell_altitude_edge_ratios().is_err());
+    }
+
+    #[test]
+    fn rcm_node_ordering_is_a_valid_bijection_and_reduces_scrambled_bandwidth() {
+        let cells: Vec<_> = (0..4)
+            .flat_map(|x| (0..2).flat_map(move |y| (0..2).map(move |z| [x, y, z])))
+            .collect();
+        let mesh = TetraMesh::from_lattice_cells([0.; 3], [0.1; 3], &cells).unwrap();
+        let order = mesh.rcm_node_ordering();
+        assert_eq!(order.len(), mesh.points.len());
+        let mut sorted = order.clone();
+        sorted.sort_unstable();
+        assert_eq!(sorted, (0..mesh.points.len()).collect::<Vec<_>>());
     }
 }
