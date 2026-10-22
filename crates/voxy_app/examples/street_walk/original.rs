@@ -1927,6 +1927,21 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                         [0.055, 0.125, 1.65],
                     );
                 }
+                // Cast-iron street bollards & bicycle rack loop beside alternate benches
+                if house % 4 == 0 {
+                    let rz = bc + 1.35;
+                    for dz in [-0.28f32, 0.28] {
+                        b.block(metal, [side * 5.15, 0.42, rz + dz], [0.045, 0.72, 0.045]);
+                    }
+                    b.block(metal, [side * 5.15, 0.76, rz], [0.045, 0.045, 0.605]);
+                }
+            } else if house % 3 != 0 {
+                // Entrance ceramic planters with clipped boxwood flanking residential doorways
+                for dz_sign in [-1.0f32, 1.0] {
+                    let pz = door_z + dz_sign * (door_w * 0.5 + 0.42);
+                    b.block(kit.ceramic, [side * 6.96, 0.28, pz], [0.32, 0.36, 0.32]);
+                    b.block(foliage, [side * 6.96, 0.62, pz], [0.36, 0.42, 0.36]);
+                }
             }
             let transform = Mat4::from_translation(Vec3::new(side * setback, 0., z))
                 * Mat4::from_scale(Vec3::new(1., 1., width / 8.))
