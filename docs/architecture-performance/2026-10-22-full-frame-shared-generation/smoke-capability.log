@@ -1,0 +1,20 @@
+
+running 2 tests
+test fluid_screen::shared_tests::paired_full_frame_particles ... 
+thread 'fluid_screen::shared_tests::paired_full_frame_particles' (30741554) panicked at crates/voxy_render/src/full_frame_upload_bench.rs:18:5:
+full frame GPU timing capability required
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test native_vegetation::shared_tests::paired_full_frame_instances ... 
+thread 'native_vegetation::shared_tests::paired_full_frame_instances' (30741583) panicked at crates/voxy_render/src/full_frame_upload_bench.rs:18:5:
+full frame GPU timing capability required
+FAILED
+
+failures:
+
+failures:
+    fluid_screen::shared_tests::paired_full_frame_particles
+    native_vegetation::shared_tests::paired_full_frame_instances
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 411 filtered out; finished in 0.35s
+

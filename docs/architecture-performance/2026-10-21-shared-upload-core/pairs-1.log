@@ -1,0 +1,151 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1403:19
+     |
+1403 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                   ^^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1404:25
+     |
+1404 |                 * Mat4::look_at_rh(centre + sun * extent * 2., centre, Vec3::Y);
+     |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1827:19
+     |
+1827 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                   ^^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1828:25
+     |
+1828 |                 * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+     |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/archive_scene.rs:2416:24
+     |
+2416 |         let vp = Mat4::perspective_rh(
+     |                        ^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:2421:19
+     |
+2421 |         ) * Mat4::look_at_rh(eye, eye + direction, self.camera_up);
+     |                   ^^^^^^^^^^
+
+warning: associated function `levels` is never used
+   --> crates/voxy_render/src/bloom.rs:168:12
+    |
+ 18 | impl Bloom {
+    | ---------- associated function in this implementation
+...
+168 |     pub fn levels() -> f32 {
+    |            ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_render` (lib test) generated 7 warnings
+    Finished `release` profile [optimized] target(s) in 18.33s
+     Running unittests src/lib.rs (target/release/deps/voxy_render-f0ad6f0e67881373)
+
+running 1 test
+test shared_upload_move_tests::paired_shared_upload_relocation ... frame input adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+case,bytes,pair,mode,upload_us,cpu_us,drained_us
+camera,320,1,before,0.349,11.119,34.806
+camera,320,1,after,0.373,10.696,35.145
+camera,320,2,before,0.324,10.064,35.734
+camera,320,2,after,0.340,10.250,35.021
+camera,320,3,before,0.311,10.056,36.071
+camera,320,3,after,0.371,11.035,36.589
+camera,320,4,before,0.339,10.218,37.342
+camera,320,4,after,0.359,10.173,34.734
+camera,320,5,before,0.345,9.998,35.779
+camera,320,5,after,0.328,9.543,33.332
+camera,320,6,before,0.296,9.539,34.115
+camera,320,6,after,0.335,9.881,33.937
+camera,320,7,before,0.330,10.795,37.892
+camera,320,7,after,0.352,10.207,37.995
+camera,320,8,before,0.323,10.335,35.203
+camera,320,8,after,0.368,10.541,36.190
+camera,320,9,before,0.339,10.391,33.816
+camera,320,9,after,0.368,10.528,34.119
+instances,458752,1,before,8.045,18.349,40.637
+instances,458752,1,after,7.947,17.625,42.411
+instances,458752,2,before,8.050,19.017,41.773
+instances,458752,2,after,8.296,19.506,43.067
+instances,458752,3,before,7.945,18.001,42.540
+instances,458752,3,after,8.434,19.492,42.767
+instances,458752,4,before,8.079,19.763,42.874
+instances,458752,4,after,7.991,18.230,42.147
+instances,458752,5,before,7.992,18.882,40.592
+instances,458752,5,after,7.884,18.359,42.216
+instances,458752,6,before,7.785,16.848,39.575
+instances,458752,6,after,7.875,17.783,42.723
+instances,458752,7,before,8.465,21.606,48.791
+instances,458752,7,after,8.437,20.685,46.914
+instances,458752,8,before,9.573,29.047,64.667
+instances,458752,8,after,10.020,26.899,64.490
+instances,458752,9,before,12.218,27.621,64.850
+instances,458752,9,after,8.973,24.349,51.554
+particles,131072,1,before,2.805,13.508,38.242
+particles,131072,1,after,2.873,13.658,39.957
+particles,131072,2,before,2.761,14.049,39.141
+particles,131072,2,after,2.795,13.875,38.588
+particles,131072,3,before,2.753,12.579,37.912
+particles,131072,3,after,2.759,13.204,37.548
+particles,131072,4,before,2.779,12.424,37.754
+particles,131072,4,after,2.748,12.985,37.001
+particles,131072,5,before,2.606,12.379,36.049
+particles,131072,5,after,2.606,11.982,37.904
+particles,131072,6,before,2.697,12.073,38.672
+particles,131072,6,after,2.608,11.711,38.234
+particles,131072,7,before,2.612,12.702,36.275
+particles,131072,7,after,2.568,11.785,36.491
+particles,131072,8,before,2.572,12.005,34.820
+particles,131072,8,after,2.626,12.955,38.378
+particles,131072,9,before,2.614,12.626,36.414
+particles,131072,9,after,2.650,12.678,36.773
+overflow,320,1,before,4.523,21.077,52.268
+overflow,320,1,after,3.916,18.431,49.966
+overflow,320,2,before,4.063,19.222,50.262
+overflow,320,2,after,3.488,17.176,48.577
+overflow,320,3,before,3.389,16.661,47.560
+overflow,320,3,after,3.684,17.869,47.950
+overflow,320,4,before,3.395,16.691,46.757
+overflow,320,4,after,3.335,16.686,45.267
+overflow,320,5,before,3.903,18.849,50.452
+overflow,320,5,after,3.339,16.394,46.219
+overflow,320,6,before,3.570,17.202,48.519
+overflow,320,6,after,3.446,16.621,46.130
+overflow,320,7,before,4.094,19.094,48.883
+overflow,320,7,after,3.391,16.294,50.545
+overflow,320,8,before,3.236,16.005,44.608
+overflow,320,8,after,3.112,15.645,45.776
+overflow,320,9,before,3.998,18.388,48.362
+overflow,320,9,after,3.987,18.024,49.684
+control_aa,320,1,before,0.298,9.015,31.669
+control_aa,320,1,after,0.295,8.964,32.321
+control_aa,320,2,before,0.359,9.153,34.605
+control_aa,320,2,after,0.296,8.831,33.424
+control_aa,320,3,before,0.307,9.324,32.243
+control_aa,320,3,after,0.287,8.649,32.055
+control_aa,320,4,before,0.329,10.595,37.026
+control_aa,320,4,after,0.298,9.782,33.660
+control_aa,320,5,before,0.284,8.941,33.677
+control_aa,320,5,after,0.285,8.771,32.567
+control_aa,320,6,before,0.315,9.950,33.791
+control_aa,320,6,after,0.313,9.898,33.227
+control_aa,320,7,before,0.286,8.766,33.361
+control_aa,320,7,after,0.323,9.622,32.582
+control_aa,320,8,before,0.303,9.681,32.129
+control_aa,320,8,after,0.350,9.818,33.295
+control_aa,320,9,before,0.326,9.755,33.313
+control_aa,320,9,after,0.349,10.434,33.943
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 396 filtered out; finished in 0.76s
+

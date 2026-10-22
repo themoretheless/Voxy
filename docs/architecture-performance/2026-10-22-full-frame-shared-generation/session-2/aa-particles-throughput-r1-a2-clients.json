@@ -1,0 +1,44 @@
+[
+  {
+    "time": 1792615979.447781,
+    "gpu_percent": 7,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      }
+    ]
+  },
+  {
+    "time": 1792615979.7212029,
+    "gpu_percent": 96,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      }
+    ]
+  },
+  {
+    "time": 1792615979.997931,
+    "gpu_percent": 96,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      }
+    ]
+  }
+]

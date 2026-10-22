@@ -1,0 +1,37 @@
+{
+  "platform": "macOS-26.7.2-arm64-arm-64bit-Mach-O",
+  "logical_cpus": 16,
+  "source_snapshot": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt",
+  "repository_head_at_report": "1d5f409cd3bbb989b4d792e8523ad8d6b5e1f15b",
+  "rustc": "rustc 1.98.0-nightly (d1fc603d1 2026-05-26)",
+  "scope": "CPU replay, no event loop/window/surface/device; external competing workloads active",
+  "owned_sources_match_qualified_snapshot": [
+    "crates/voxy_render/src/skinned.rs",
+    "crates/voxy_render/src/pose_admission_profile.rs",
+    "crates/voxy_render/src/pose_family_bound.rs",
+    "crates/voxy_app/src/cpu_replay.rs"
+  ],
+  "binaries": {
+    "before": {
+      "path": "/tmp/voxy-pose-clock-before",
+      "sha256": "e9b31a3f10f3f32bd2ccaaf723639359b4f75e4e46dca80d61b2bfae6da877f0"
+    },
+    "after": {
+      "path": "/tmp/voxy-pose-family-after",
+      "sha256": "24ee03e780b3e5d2fc7846cedcc5b20c3a9ba12886903d3f9ef6df12133b2d2b"
+    }
+  },
+  "qualification_profile_clocks": false,
+  "qualified_phases": 50,
+  "combined_summary": "combined-summary.json",
+  "pairs": {
+    "idle": 10,
+    "motion": 5,
+    "catchup": 10
+  },
+  "all_phase_lifecycle_valid": true,
+  "observed_load_start_1m_range": [
+    22.2890625,
+    220.57080078125
+  ]
+}

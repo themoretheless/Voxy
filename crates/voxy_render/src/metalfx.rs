@@ -68,7 +68,7 @@ impl MetalFxTemporal {
                 let native = texture
                     .as_hal::<wgpu_hal::api::Metal>()
                     .expect("validated Metal texture");
-                Retained::retain(native.raw_handle() as *const _ as *mut _)
+                Retained::retain(std::ptr::from_ref(native.raw_handle()).cast_mut())
                     .expect("live Metal texture")
             };
             let color = retain_texture(color);

@@ -25,8 +25,9 @@ fn specular_brdf(surface: Surface, direction: vec3<f32>, f0: vec3<f32>) -> vec3<
     let alpha2 = r*r*r*r;
     let den = (1.0-nh*nh) + alpha2*nh*nh;
     let d = alpha2/(3.141592653589793*den*den);
-    let g = 1.0/(1.0+smith_lambda(nv,alpha2)+smith_lambda(nl,alpha2));
-    return (f0+(vec3(1.0)-f0)*pow(1.0-vh,5.0))*(d*g/(4.0*nv*nl));
+    let g = 1.0/max(1.0+smith_lambda(nv,alpha2)+smith_lambda(nl,alpha2), 0.0001);
+    let t = 1.0-vh; let t2 = t*t;
+    return (f0+(vec3(1.0)-f0)*(t2*t2*t))*(d*g/max(4.0*nv*nl, 0.0001));
 }
 @compute @workgroup_size(8,8)
 fn cs_main(@builtin(global_invocation_id) id: vec3<u32>) {

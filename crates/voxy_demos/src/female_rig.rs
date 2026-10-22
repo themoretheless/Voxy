@@ -13,6 +13,7 @@ mod jump_rig_tests;
 
 /// Object in the canonical left hand's rest frame. Meshes must be closed and outward wound.
 #[derive(Debug)]
+#[allow(clippy::large_enum_variant)]
 pub enum GraspObject {
     Sphere {
         center: Vec3,
@@ -964,12 +965,12 @@ impl FemaleRig {
         }
     }
     pub fn apply_prepared_grasp(&mut self, prepared: &PreparedGrasp) {
-        self.grasp_object = prepared.object.clone();
-        self.grasp_samples = prepared.samples.clone();
+        self.grasp_object.clone_from(&prepared.object);
+        self.grasp_samples.clone_from(&prepared.samples);
     }
     pub fn copy_grasp_target_from(&mut self, source: &Self) {
-        self.grasp_object = source.grasp_object.clone();
-        self.grasp_samples = source.grasp_samples.clone();
+        self.grasp_object.clone_from(&source.grasp_object);
+        self.grasp_samples.clone_from(&source.grasp_samples);
     }
     pub fn set_grasp_cycle(&mut self, enabled: bool) {
         self.set_grasp(0.).expect("valid neutral grasp");
@@ -1370,7 +1371,7 @@ impl FemaleRig {
                 .inverse()
                 .transform_point3(Vec3::ZERO);
             let pole = palette[knee].transform_point3(rest);
-            self.jump_plants[if knee == 8 { 0 } else { 1 }].target(
+            self.jump_plants[usize::from(knee != 8)].target(
                 voxy_animation::RootRigidTransform::IDENTITY,
                 actor,
                 pole,
@@ -3011,10 +3012,10 @@ mod tests {
                     .map_or(0., |(_, w)| *w);
             if delta.abs() > 0.000001 {
                 let p = rest[i].position;
-                correction.push_str(&format!(
-                    "{:.9},{:.9},{:.9},{:.9}\n",
-                    p[0], p[1], p[2], delta
-                ));
+                let _ = std::fmt::Write::write_fmt(
+                    &mut correction,
+                    format_args!("{:.9},{:.9},{:.9},{:.9}\n", p[0], p[1], p[2], delta),
+                );
             }
         }
         std::fs::write(

@@ -1,0 +1,42 @@
+
+running 2 tests
+test fluid_screen::shared_tests::paired_full_frame_particles ... FULL_ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+FULL_PARITY,particles,ab,1920,1080,2,exact
+FULL_HEADER,path,phase,protocol,pair,block,mode,frame,cpu_us,gpu_us,completion_us,start_us,submit_us,callback_us,gpu_start_tick,gpu_end_tick,start_gap_us,gpu_gap_us,backpressure_us,deadline_miss
+
+thread 'fluid_screen::shared_tests::paired_full_frame_particles' (30804086) panicked at crates/voxy_render/src/full_frame_upload_bench.rs:304:30:
+called `Result::unwrap()` on an `Err` value: WrongSubmissionIndex(40, 38)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'fluid_screen::shared_tests::paired_full_frame_particles' (30804086) panicked at crates/voxy_render/src/full_frame_upload_bench.rs:316:60:
+called `Result::unwrap()` on an `Err` value: SendError { .. }
+stack backtrace:
+   0:        0x100b66d94 - <<std[55c15c20934149c]::sys::backtrace::BacktraceLock>::print::DisplayBacktrace as core[b71867208b3d90dd]::fmt::Display>::fmt
+   1:        0x100b7ad0c - core[b71867208b3d90dd]::fmt::write
+   2:        0x100b6b764 - <std[55c15c20934149c]::sys::stdio::unix::Stderr as std[55c15c20934149c]::io::Write>::write_fmt
+   3:        0x100b4ccd8 - std[55c15c20934149c]::panicking::default_hook::{closure#0}
+   4:        0x100b60048 - std[55c15c20934149c]::panicking::default_hook
+   5:        0x100b60370 - std[55c15c20934149c]::panicking::panic_with_hook
+   6:        0x100b4cd6c - std[55c15c20934149c]::panicking::panic_handler::{closure#0}
+   7:        0x100b442b0 - std[55c15c20934149c]::sys::backtrace::__rust_end_short_backtrace::<std[55c15c20934149c]::panicking::panic_handler::{closure#0}, !>
+   8:        0x100b4d43c - __rustc[7bafd613781bcba]::rust_begin_unwind
+   9:        0x100bb25f0 - core[b71867208b3d90dd]::panicking::panic_fmt
+  10:        0x100bb2420 - core[b71867208b3d90dd]::result::unwrap_failed
+  11:        0x10063ec0c - <voxy_render[eebfcd67626b820b]::full_frame_upload_bench::pairs<voxy_render[eebfcd67626b820b]::native_vegetation::shared_tests::paired_full_frame_instances::{closure#2}>::{closure#5} as core[b71867208b3d90dd]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  12:        0x10092c720 - <wgpu_core[5ea60b2422a38991]::device::UserClosures>::fire
+  13:        0x100977d00 - <wgpu_core[5ea60b2422a38991]::device::queue::Queue as core[b71867208b3d90dd]::ops::drop::Drop>::drop
+  14:        0x10093f0e4 - <alloc[58d1d8d55be567ee]::sync::Arc<wgpu_core[5ea60b2422a38991]::device::queue::Queue>>::drop_slow
+  15:        0x1009f1e7c - <wgpu_core[5ea60b2422a38991]::global::Global>::queue_drop
+  16:        0x1008dee9c - <alloc[58d1d8d55be567ee]::sync::Arc<wgpu[a98923c165c37743]::backend::wgpu_core::CoreQueue>>::drop_slow
+  17:        0x1006a999c - voxy_render[eebfcd67626b820b]::fluid_screen::shared_tests::paired_full_frame_particles
+  18:        0x1005a8e2c - <voxy_render[eebfcd67626b820b]::fluid_screen::shared_tests::paired_full_frame_particles::{closure#0} as core[b71867208b3d90dd]::ops::function::FnOnce<()>>::call_once
+  19:        0x1007f3720 - test[e8fd4e8b0c527660]::__rust_begin_short_backtrace::<core[b71867208b3d90dd]::result::Result<(), alloc[58d1d8d55be567ee]::string::String>, fn() -> core[b71867208b3d90dd]::result::Result<(), alloc[58d1d8d55be567ee]::string::String>>
+  20:        0x1007feb68 - test[e8fd4e8b0c527660]::run_test::{closure#0}
+  21:        0x1007fa900 - std[55c15c20934149c]::sys::backtrace::__rust_begin_short_backtrace::<test[e8fd4e8b0c527660]::run_test::{closure#1}, ()>
+  22:        0x1008010c0 - <std[55c15c20934149c]::thread::lifecycle::spawn_unchecked<test[e8fd4e8b0c527660]::run_test::{closure#1}, ()>::{closure#1} as core[b71867208b3d90dd]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  23:        0x100b6609c - <std[55c15c20934149c]::sys::thread::unix::Thread>::new::thread_start
+  24:        0x1832d0c58 - __pthread_cond_wait
+
+thread 'fluid_screen::shared_tests::paired_full_frame_particles' (30804086) panicked at /rustc/d1fc603d1788cc3c0eebdb94a45a61c4f33b1674/library/core/src/panicking.rs:233:5:
+panic in a destructor during cleanup
+thread caused non-unwinding panic. aborting.

@@ -17,13 +17,61 @@ pub(super) fn run(
     if words.iter().any(|&v| v > 65535) {
         return Err("non-radix16 digit".into());
     }
+    let ratio_seed = std::env::var("VOXY_RAY_INTEGER_RATIO_SEED").as_deref() == Ok("1");
+    let ratio_audit = std::env::var("VOXY_RAY_INTEGER_RATIO").as_deref() == Ok("1");
+    let float_product = std::env::var("VOXY_RAY_INTEGER_FLOAT_PRODUCT").as_deref() == Ok("1");
+    let position_admission =
+        std::env::var("VOXY_RAY_INTEGER_POSITION_ADMISSION").as_deref() == Ok("1");
+    if u32::from(ratio_seed)
+        + u32::from(ratio_audit)
+        + u32::from(float_product)
+        + u32::from(position_admission)
+        > 1
+    {
+        return Err("select one arithmetic audit mode".into());
+    }
     let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("full width integer product audit"),
         source: wgpu::ShaderSource::Wgsl(
             format!(
-                "{}\n{}",
+                "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
                 include_str!("../../voxy_render/src/world_exact_integer.wgsl"),
-                include_str!("integer_product_audit.wgsl")
+                if ratio_audit || ratio_seed {
+                    include_str!("../../voxy_render/src/world_exact_ratio.wgsl")
+                } else {
+                    ""
+                },
+                include_str!("integer_product_audit.wgsl"),
+                if ratio_audit {
+                    include_str!("ratio_rounding_audit.wgsl")
+                } else {
+                    ""
+                },
+                if float_product {
+                    include_str!("float_product_audit.wgsl")
+                } else {
+                    ""
+                },
+                if position_admission {
+                    include_str!("../../voxy_render/src/world_exact_history_position.wgsl")
+                } else {
+                    ""
+                },
+                if position_admission {
+                    include_str!("position_admission_audit.wgsl")
+                } else {
+                    ""
+                },
+                if ratio_seed {
+                    include_str!("../../voxy_render/src/world_exact_ratio_seed.wgsl")
+                } else {
+                    ""
+                },
+                if ratio_seed {
+                    include_str!("ratio_seed_audit.wgsl")
+                } else {
+                    ""
+                }
             )
             .into(),
         ),
@@ -32,7 +80,17 @@ pub(super) fn run(
         label: None,
         layout: None,
         module: &module,
-        entry_point: Some("main_integer_audit"),
+        entry_point: Some(if ratio_seed {
+            "main_ratio_seed_audit"
+        } else if ratio_audit {
+            "main_ratio_audit"
+        } else if float_product {
+            "main_float_product_audit"
+        } else if position_admission {
+            "main_position_admission_audit"
+        } else {
+            "main_integer_audit"
+        }),
         compilation_options: Default::default(),
         cache: None,
     });

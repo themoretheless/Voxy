@@ -1,0 +1,2649 @@
+[
+  {
+    "time": 1792617432.606853,
+    "gpu_percent": 16,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617432.878928,
+    "gpu_percent": 26,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617433.147219,
+    "gpu_percent": 24,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617433.4186208,
+    "gpu_percent": 32,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617433.689787,
+    "gpu_percent": 30,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617433.9598331,
+    "gpu_percent": 31,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617434.2305448,
+    "gpu_percent": 31,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617434.501454,
+    "gpu_percent": 29,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617434.772204,
+    "gpu_percent": 30,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617435.044665,
+    "gpu_percent": 32,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617435.319482,
+    "gpu_percent": 30,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617435.5939698,
+    "gpu_percent": 30,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617435.867558,
+    "gpu_percent": 32,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617436.1390631,
+    "gpu_percent": 30,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617436.4140968,
+    "gpu_percent": 0,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617436.688148,
+    "gpu_percent": 30,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617436.9678788,
+    "gpu_percent": 33,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617437.2433841,
+    "gpu_percent": 32,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617437.5212228,
+    "gpu_percent": 28,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617437.796972,
+    "gpu_percent": 23,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617438.071028,
+    "gpu_percent": 24,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617438.3472059,
+    "gpu_percent": 26,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617438.622729,
+    "gpu_percent": 30,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617438.895522,
+    "gpu_percent": 34,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617439.1700401,
+    "gpu_percent": 31,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617439.439332,
+    "gpu_percent": 31,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617439.7112691,
+    "gpu_percent": 32,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617439.984342,
+    "gpu_percent": 32,
+    "rivals": [],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  },
+  {
+    "time": 1792617440.261347,
+    "gpu_percent": 32,
+    "rivals": [
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "R",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      }
+    ],
+    "clients": [
+      {
+        "pid": 54316,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60464,
+        "ppid": 57713,
+        "state": "R",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 60469,
+        "ppid": 58086,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62829,
+        "ppid": 55135,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70186,
+        "ppid": 49496,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70417,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70752,
+        "ppid": 54294,
+        "state": "T",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 91643,
+        "ppid": 80614,
+        "state": "Ts",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after"
+      },
+      {
+        "pid": 25974,
+        "ppid": 25855,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe"
+      },
+      {
+        "pid": 40409,
+        "ppid": 40381,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 62830,
+        "ppid": 55768,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc"
+      },
+      {
+        "pid": 70650,
+        "ppid": 70472,
+        "state": "T+",
+        "cpu_percent": 0.0,
+        "comm": "/Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc"
+      }
+    ]
+  }
+]

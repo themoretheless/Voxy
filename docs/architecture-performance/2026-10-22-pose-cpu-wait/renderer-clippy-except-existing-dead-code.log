@@ -1,0 +1,8 @@
+    Checking voxy_core v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_core)
+    Checking voxy_water v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_water)
+    Checking voxy_gpu_core v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_gpu_core)
+    Checking voxy_world v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_world)
+    Checking voxy_lighting v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_lighting)
+    Checking voxy_mesher v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_mesher)
+    Checking voxy_render v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_render)
+    Finished `release` profile [optimized] target(s) in 6.33s

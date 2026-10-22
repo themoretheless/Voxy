@@ -1,0 +1,26 @@
+PID PPID STAT %CPU EXECUTABLE (arguments omitted)
+84899 84798 R 77.9 rustc
+486 1 Us 77.6 syspolicyd
+84879 84798 R 73.9 rustc
+84401 8880 Rs 58.1 git
+84903 83975 U+ 25.8 clippy-driver
+84881 83975 R+ 25.5 clippy-driver
+84904 83975 U+ 25.2 clippy-driver
+84897 83975 U+ 25.0 clippy-driver
+84902 83975 U+ 24.4 clippy-driver
+84900 83975 U+ 24.3 clippy-driver
+84906 83975 U+ 24.2 clippy-driver
+84908 83975 U+ 24.1 clippy-driver
+84901 83975 R+ 24.1 clippy-driver
+84909 83975 U+ 23.9 clippy-driver
+84896 83975 R+ 23.9 clippy-driver
+84907 83975 U+ 23.5 clippy-driver
+84905 83975 R+ 22.8 clippy-driver
+84922 83975 U+ 22.5 clippy-driver
+551 1 Ss 21.1 netbird
+79558 79480 S 19.9 Antigravity
+84923 83975 U+ 16.9 clippy-driver
+411 1 Ss 16.2 WindowServer
+341 1 Ss 14.6 fseventsd
+8946 8880 S 12.1 Codex
+79481 79480 S 11.6 Antigravity

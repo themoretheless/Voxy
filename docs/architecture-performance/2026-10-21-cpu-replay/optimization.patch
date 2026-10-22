@@ -1,0 +1,158 @@
+--- a/crates/voxy_render/src/skinned.rs
++++ b/crates/voxy_render/src/skinned.rs
+@@ -25,6 +25,8 @@
+     indices: Arc<[u32]>,
+     joint_count: u16,
+     coherent_weights: bool,
++    /// At least one; bounds every immutable authored position component.
++    max_position_component: f32,
+     /// Vertices grouped by identical influences; present only for large meshes.
+     groups: Option<Arc<InfluenceGroups>>,
+ }
+@@ -47,6 +49,7 @@
+         if joint_count == 0 || usize::from(joint_count) > MAX_SKIN_JOINTS {
+             return Err(SkinnedMeshError::InvalidJointCount(joint_count));
+         }
++        let mut max_position_component = 1.0f32;
+         for (index, vertex) in vertices.iter().enumerate() {
+             if vertex
+                 .position
+@@ -57,6 +60,7 @@
+             {
+                 return Err(SkinnedMeshError::NonFiniteVertex(index));
+             }
++            max_position_component = max_position_component.max(glam::Vec3::from_array(vertex.position).abs().max_element());
+             let weight_sum: u32 = vertex.weights.into_iter().map(u32::from).sum();
+             if weight_sum != u32::from(u16::MAX) {
+                 return Err(SkinnedMeshError::InvalidWeights(index));
+@@ -95,6 +99,7 @@
+         let groups = InfluenceGroups::build(&vertices).map(Arc::new);
+         Ok(Self {
+             coherent_weights,
++            max_position_component,
+             groups,
+             vertices: vertices.into(),
+             indices: indices.into(),
+@@ -251,6 +256,12 @@
+         model: Mat4,
+     ) -> Result<(), SkinnedUploadError> {
+         validate_temporal_palette(self, joints, model)?;
++        // Uncertain/extreme poses retain the original position-only scan.
++        if self.vertices.len() >= 1024
++            && finite_temporal_positions(self.max_position_component, joints, model)
++        {
++            return Ok(());
++        }
+         admit_temporal_vertices(&self.vertices, joints, model, self.coherent_weights)
+     }
+ 
+@@ -297,6 +308,7 @@
+         }
+         Ok(Self {
+             coherent_weights: self.coherent_weights,
++            max_position_component: self.max_position_component,
+             groups: self.groups.clone(),
+             vertices: self.vertices.clone(),
+             indices,
+@@ -862,6 +874,18 @@
+     }
+ }
+ 
++/// Sufficient bound only, after complete finite/affine palette admission.
++/// Four weighted matrices and two four-term dot products have intermediate
++/// magnitude below 2^18 * model_max * joint_max * position_max. The 2^20
++/// admission margin also covers f64 bound rounding; see the CPU replay report.
++fn finite_temporal_positions(position_max: f32, joints: &[Mat4], model: Mat4) -> bool {
++    let model_max = model.to_cols_array().into_iter().map(f32::abs).fold(1.0, f32::max);
++    let joint_max = joints.iter().flat_map(|matrix| matrix.to_cols_array())
++        .map(f32::abs).fold(1.0, f32::max);
++    let bound = f64::from(model_max) * f64::from(joint_max) * f64::from(position_max);
++    bound <= f64::from(f32::MAX) / 1_048_576.0
++}
++
+ /// Position-only admission keeps temporal semantics: a singular normal transform
+ /// is permitted here. Reuse only bit-identical influence sets within this call.
+ fn admit_temporal_vertices(
+@@ -1530,3 +1554,82 @@
+         }
+     }
+ }
++
++#[cfg(test)]
++mod temporal_bound_regressions {
++    use super::*;
++    #[test]
++    fn conservative_temporal_bounds_preserve_position_only_oracle_and_reset_inputs() {
++        let count = PARALLEL_ADMISSION_MIN_VERTICES + 17;
++        let mut outcomes = std::collections::BTreeSet::new();
++        for normal in [[0.,1.,0.], [0.;3], [f32::MAX,0.,0.]] {
++            let vertices = (0..count).map(|i| SkinnedVertex {
++                position: [(i % 71) as f32 * 0.03, -0.2, 0.3], normal,
++                uv:[0.;2],joints:[(i%2) as u16,0,0,0],weights:[65535,0,0,0],
++            }).collect();
++            let mesh=SkinnedMesh::new(vertices,vec![0,1,2],2).unwrap();
++            let shared=mesh.with_shared_indices(Arc::from([2,1,0])).unwrap();
++            for joints in [
++                [Mat4::IDENTITY,Mat4::from_rotation_y(0.3)],
++                [Mat4::from_scale(glam::Vec3::ZERO);2],
++                [Mat4::from_scale(glam::Vec3::new(1.,0.,1.));2],
++            ] {
++                for model in [Mat4::IDENTITY,Mat4::from_scale(glam::Vec3::splat(-1.)),Mat4::from_scale(glam::Vec3::splat(f32::MAX))] {
++                    let reference=admit_temporal_vertices(mesh.vertices(),&joints,model,mesh.coherent_weights);
++                    let certified=finite_temporal_positions(mesh.max_position_component,&joints,model);
++                    assert!(!certified || reference.is_ok());
++                    outcomes.insert((certified,reference.is_ok()));
++                    assert_eq!(mesh.validate_temporal_pose(&joints,model),reference);
++                    assert_eq!(shared.validate_temporal_pose(&joints,model),reference);
++                }
++            }
++            let large_translation = Mat4::from_translation(glam::Vec3::splat(f32::MAX/8.));
++            assert!(!finite_temporal_positions(mesh.max_position_component,&[Mat4::IDENTITY;2],large_translation));
++            let reference=admit_temporal_vertices(mesh.vertices(),&[Mat4::IDENTITY;2],large_translation,false);
++            assert!(reference.is_ok());
++            assert_eq!(mesh.validate_temporal_pose(&[Mat4::IDENTITY;2],large_translation),reference);
++            outcomes.insert((false,true));
++            for palette in [vec![],vec![Mat4::IDENTITY],vec![Mat4::from_cols_array(&[f32::NAN;16]);2]] {
++                let expected=validate_temporal_palette(&mesh,&palette,Mat4::IDENTITY);
++                assert!(expected.is_err());
++                assert_eq!(mesh.validate_temporal_pose(&palette,Mat4::IDENTITY),expected);
++            }
++            // Replacing the model/palette on each call must not retain a certificate.
++            assert!(mesh.validate_temporal_pose(&[Mat4::IDENTITY;2],Mat4::IDENTITY).is_ok());
++            assert!(mesh.validate_temporal_pose(&[Mat4::IDENTITY;2],Mat4::from_scale(glam::Vec3::splat(f32::MAX))).is_err());
++            assert!(mesh.validate_temporal_pose(&[Mat4::IDENTITY;2],Mat4::IDENTITY).is_ok());
++        }
++        assert_eq!(outcomes.into_iter().collect::<Vec<_>>(),vec![(false,false),(false,true),(true,true)]);
++    }
++}
++
++#[cfg(test)]
++mod temporal_bound_exponent_tests {
++    use super::*;
++    #[test]
++    fn bounds_match_exact_scan_across_scale_exponents_and_blends() {
++        let mut certified = 0;
++        let mut uncertain = 0;
++        for position_exponent in [-120, -1, 0, 80, 120] {
++            let p = 2.0f32.powi(position_exponent);
++            let vertices = (0..1025).map(|i| SkinnedVertex {
++                position: [p, -p, p * 0.5], normal: [0.,1.,0.], uv:[0.;2],
++                joints:[0,1,2,0], weights: [[65535,0,0,0],[32768,32767,0,0],[1,65534,0,0],[21845,21845,21845,0]][i%4],
++            }).collect();
++            let mesh=SkinnedMesh::new(vertices,vec![0,1,2],3).unwrap();
++            for joint_exponent in [-120, -1, 0, 80, 120] {
++                let j=2.0f32.powi(joint_exponent);
++                let joints=[Mat4::from_scale(glam::Vec3::splat(j)),Mat4::from_scale(glam::Vec3::splat(-j)),Mat4::from_translation(glam::Vec3::new(j,-j,j))];
++                for model_exponent in [-120, -1, 0, 80, 120] {
++                    let model=Mat4::from_scale(glam::Vec3::splat(2.0f32.powi(model_exponent)));
++                    let reference=admit_temporal_vertices(mesh.vertices(),&joints,model,false);
++                    if finite_temporal_positions(mesh.max_position_component,&joints,model) {
++                        certified+=1;assert!(reference.is_ok());
++                    } else {uncertain+=1;}
++                    assert_eq!(mesh.validate_temporal_pose(&joints,model),reference);
++                }
++            }
++        }
++        assert!(certified>0 && uncertain>0);
++    }
++}

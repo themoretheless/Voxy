@@ -1,0 +1,12 @@
+{
+  "crates/voxy_gpu_core/src/shared_upload.rs": "b25edf7a3f50840ae55acbeca504e5b166fa3827a8a3fd301522c246f8791aed",
+  "crates/voxy_render/src/native_vegetation.rs": "4f472d5fdecb418aee6a0019295d1fc58ad7d2dbcedea59de8f2d04a6c45ebb4",
+  "crates/voxy_render/src/fluid_screen.rs": "07fd80fdad01a310fa1052c7c5ecdf46877dae5d5c330859817c1b67debbb455",
+  "crates/voxy_render/src/native_vegetation_shared_tests.rs": "c397fbbfb3fa0cfc6c2afe3afa292311828be2da6b3938043b3eb25a37020aa7",
+  "crates/voxy_render/src/fluid_shared_tests.rs": "e6b79ba2882f7cc21dfdb2ac62692ab2b26c19c6515a14bf9536a775263427b6",
+  "crates/voxy_render/src/frame_upload_test_support.rs": "63ca2a3e4b02dbc8b0abe1810057a4f5ac40dffff14d530393ea95dc81f0dde9",
+  "crates/voxy_app/src/native_plants.rs": "a831ec9031593de176a2e948f90b83a17b1d73ed826c8d2cb5fe72992d496d69",
+  "crates/voxy_demos/src/liquid_demo.rs": "a4a4075cb86c23c2d76cc31d103758c8ad3cc8d065e3baa7a638787fc0ea4d72",
+  "crates/voxy_shell/src/scene_app.rs": "6b18ec8b3ce598f902df5d02ebe62481892d1c47eca77e8ab37349d12893a2e3",
+  "crates/voxy_app/examples/liquid_snapshot.rs": "409fca8aea5583c3c3178cd8a3ea5e044896b8b8cab4fe1b668f14ca5fd9d406"
+}

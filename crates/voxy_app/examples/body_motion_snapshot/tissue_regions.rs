@@ -92,7 +92,12 @@ fn fields(value: &Value, allowed: &[&str]) -> Result<(), Error> {
     Ok(())
 }
 fn digest_hex(digest: [u8; 32]) -> String {
-    digest.iter().map(|byte| format!("{byte:02x}")).collect()
+    let mut out = String::with_capacity(64);
+    for byte in digest {
+        use std::fmt::Write;
+        let _ = write!(out, "{byte:02x}");
+    }
+    out
 }
 
 fn reference_mesh_quality(mesh: &TetraMesh) -> Result<Value, Error> {

@@ -52,6 +52,10 @@ impl ProbeProjector {
         }
     }
 
+    pub(crate) fn diagnostic_uniform(&self) -> &wgpu::Buffer {
+        &self.uniform
+    }
+
     /// Accumulate one rendered face (90-degree vertical FOV, centred square of
     /// side `height`) into probe `index`. Face 0 resets the slot.
     #[allow(clippy::too_many_arguments)]
@@ -167,3 +171,7 @@ mod tests {
         assert!(grid(Vec3::ZERO, Vec3::splat(1000.), 1.).is_none());
     }
 }
+
+#[cfg(test)]
+#[path = "probe_projection_replay_tests.rs"]
+mod projection_replay_tests;

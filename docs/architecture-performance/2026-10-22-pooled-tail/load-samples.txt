@@ -1,0 +1,12 @@
+2026-10-21T20:47:51.239037+00:00
+ 0:47  up 1 day,  8:02, 5 users, load averages: 50.25 40.57 32.23
+6030 R 658.5 rustc
+6448 R+ 59.5 clippy-driver
+486 Rs 53.8 syspolicyd
+1363 S+ 48.6 k9s
+6129 R 40.8 voxy-tail-before
+776 Ss 21.9 spindump
+411 Rs 20.8 WindowServer
+551 Rs 20.5 netbird
+10693 S 13.9 Terminal
+79558 S 12.7 Antigravity Helper (Renderer)

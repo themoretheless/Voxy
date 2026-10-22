@@ -82,8 +82,8 @@ impl Bc7ImageAsset {
         if !device
             .features()
             .contains(wgpu::Features::TEXTURE_COMPRESSION_BC)
-            || self.width % 4 != 0
-            || self.height % 4 != 0
+            || !self.width.is_multiple_of(4)
+            || !self.height.is_multiple_of(4)
             || self.width > device.limits().max_texture_dimension_2d
             || self.height > device.limits().max_texture_dimension_2d
         {

@@ -456,9 +456,8 @@ fn strand_limits_with_workers(
         let ma = motions[a];
         let mb = motions[b];
         let admit = |ma, mb| {
-            let value = pair_fraction(ma, mb, options).map_err(|error| {
+            let value = pair_fraction(ma, mb, options).inspect_err(|error| {
                 eprintln!("HAIR SWEPT PAIR REJECT a=({ra},{ia}) b=({rb},{ib}) reason={error}");
-                error
             })?;
             if trace_limits && value < 1. {
                 eprintln!(
@@ -772,8 +771,8 @@ fn export_motion_failure(
     let bytes = motion_failure_bytes(rods, start, increment, responses, radius);
     match std::fs::write(&path, &bytes) {
         Ok(()) => eprintln!(
-            "HAIR ROOT MOTION FAILURE EXPORT {:?} rods={} bytes={}",
-            path,
+            "HAIR ROOT MOTION FAILURE EXPORT {} rods={} bytes={}",
+            std::path::Path::new(&path).display(),
             rods.len(),
             bytes.len()
         ),
@@ -898,7 +897,7 @@ fn export_swept_failure_state(
         std::process::id(),
         SERIAL.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
     ));
-    let result = std::fs::create_dir_all(&root).and_then(|_| {
+    let result = std::fs::create_dir_all(&root).and_then(|()| {
         save_swept_failure_state(
             &directory,
             rods,
@@ -915,7 +914,7 @@ fn export_swept_failure_state(
         )
     });
     match result {
-        Ok(()) => eprintln!("HAIR SWEPT FAILURE STATE {directory:?}"),
+        Ok(()) => eprintln!("HAIR SWEPT FAILURE STATE {}", directory.display()),
         Err(error) => eprintln!("HAIR SWEPT FAILURE STATE ERROR {error}"),
     }
 }

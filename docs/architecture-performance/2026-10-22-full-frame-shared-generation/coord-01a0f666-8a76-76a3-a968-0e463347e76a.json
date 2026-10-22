@@ -1,0 +1,37 @@
+{
+  "wall_time": 1792616283.6545238,
+  "user_authorization": "delegated exact user reply \u0414\u0430, \u0441\u043e\u0433\u043b\u0430\u0441\u0443\u0439 \u043e\u0431\u0449\u0435\u0435 \u043e\u043a\u043d\u043e from thread 01a155fb-7cde-7dc3-8f0a-ff049037a551",
+  "processes": [
+    {
+      "pid": 6379,
+      "identity": "6379  6374 T    /opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python",
+      "method": "existing coordinated SIGSTOP, no new signal",
+      "must_resume": true
+    },
+    {
+      "pid": 80614,
+      "identity": "80614 80611 T    /opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python",
+      "method": "existing coordinated SIGSTOP, no new signal",
+      "must_resume": true
+    },
+    {
+      "pid": 91643,
+      "identity": "91643 80614 Ts   /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after",
+      "method": "existing coordinated SIGSTOP, no new signal",
+      "must_resume": true
+    }
+  ],
+  "owned_compilations_and_CPU_tests": "terminal; no heavy jobs currently owned",
+  "no_new_compilation_CPU_benchmark_or_GPU_until_release_message": false,
+  "source_changes_preserved": true,
+  "elapsed_performance_qualification_invalidated": true,
+  "last_verified_wall_time": 1792616935.838784,
+  "measurement_controller_4842_present": false,
+  "session_2_status": {
+    "status": "incomplete",
+    "reason": "no uncontended GPU admission window"
+  },
+  "release_message_received": true,
+  "owned_GPU_and_queue_still_paused": false,
+  "release_wall_time": 1792617566.3386319
+}

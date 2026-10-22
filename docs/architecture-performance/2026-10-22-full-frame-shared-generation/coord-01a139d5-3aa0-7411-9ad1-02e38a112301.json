@@ -1,0 +1,10 @@
+{
+  "thread_id": "01a139d5-3aa0-7411-9ad1-02e38a112301",
+  "recorded_at": "2026-10-21T21:02:53.138322+00:00",
+  "requested_pid": 32897,
+  "requested_pid_present": false,
+  "matching_processes": [],
+  "signals_sent": [],
+  "status": "acknowledged_no_new_heavy_work_until_window_complete",
+  "resumption_obligation": "On window completion inspect provenance and resume any processes stopped for this window; no process was stopped by this acknowledgement."
+}

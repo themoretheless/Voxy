@@ -8,10 +8,13 @@ from pathlib import Path
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--control', type=Path, required=True)
 parser.add_argument('--candidate', type=Path, action='append', required=True)
-parser.add_argument('--optimization', choices=['paired_dda_tile_edge_cache', 'world_ray_source_edge_cache', 'paired_dda_interval_cache', 'ray_queue', 'ray_spatial_key', 'ray_hierarchy', 'ray_hierarchy_reciprocal_cache', 'ray_hierarchy_cached', 'ray_hierarchy_near_first', 'ray_persistent', 'paired_dda_lazy_cell_bounds', 'paired_dda_touch_guard', 'world_ray_consumer_sorted', 'metal_compute_max_threads_requested'], default='paired_dda_interval_cache')
+parser.add_argument('--optimization', choices=['world_gi_consumer_group_32', 'world_sparse_certificates', 'world_scalar_interval_products', 'world_lazy_triangle_certificate', 'paired_dda_tile_edge_cache', 'world_ray_source_edge_cache', 'paired_dda_interval_cache', 'ray_queue', 'ray_spatial_key', 'ray_hierarchy', 'ray_hierarchy_reciprocal_cache', 'ray_hierarchy_cached', 'ray_hierarchy_near_first', 'ray_persistent', 'paired_dda_lazy_cell_bounds', 'paired_dda_touch_guard', 'world_ray_consumer_sorted', 'metal_compute_max_threads_requested'], default='paired_dda_interval_cache')
+parser.add_argument('--require-water-time', action='store_true', help='Require retained ripple time credit and complete fixed-tick integration at both interval boundaries.')
+parser.add_argument('--require-water', action='store_true', help='Require actual water submissions within the measured interval.')
 parser.add_argument('--control-metal-audit', type=Path)
 parser.add_argument('--candidate-metal-audit', type=Path, action='append', default=[])
 args = parser.parse_args()
+if args.require_water_time:args.require_water=True
 control = json.loads(args.control.read_text())
 candidates = [json.loads(p.read_text()) for p in args.candidate]
 world_ray = control.get('world_ray_frame', False)
@@ -22,8 +25,39 @@ fixed = ['scene', 'measurement', 'resolution', 'internal_resolution', 'antialias
          'paired_dda_edge_cache', 'paired_dda_plane_cache', 'paired_dda_point_cache',
          'compute_gi', 'compute_ssr', 'ray_stages', 'ray_coherent', 'ray_force_fallback',
          'refinement_cache', 'early_gi', 'motion_period_seconds', 'frames',
-         'measured_physics_steps', 'measured_simulation_seconds']
+         'measured_physics_steps', 'measured_simulation_seconds', 'replay_state_schema', 'spawn_pool', 'water_scope']
+water_frames=[]
 for report in [control, *candidates]:
+    report.setdefault('replay_state_schema','legacy-camera-weather-v1')
+    report.setdefault('spawn_pool',False)
+    report.setdefault('water_scope',None)
+    report.setdefault('world_gi_consumer_group_size',[8,8] if report.get('world_ray_consumer_cache',False) else None)
+    report.setdefault('world_sparse_certificate_group_size',64 if report.get('world_sparse_certificates',False) else 0)
+    scope=report['water_scope']
+    if args.require_water:
+        assert scope and scope['start'] and scope['end'], 'water submission metadata is required'
+    if scope and scope['start'] and scope['end']:
+        start,end=scope['start'],scope['end']
+        assert start['registered_bodies']==end['registered_bodies']>0
+        count=end['drawn_frames']-start['drawn_frames']
+        draws=end['body_draws']-start['body_draws']
+        assert 0<=count<=report['frames'] and draws>=count
+        assert start['wave_seed']==end['wave_seed']
+        elapsed=end['simulation_seconds']-start['simulation_seconds']
+        assert math.isclose(elapsed,report['measured_simulation_seconds'],rel_tol=1e-5,abs_tol=1e-4), 'water clock differs from physics interval'
+        if args.require_water_time:
+            assert 'ripple_tick_rate'in start and 'ripple_tick_rate'in end, 'ripple clock metadata required'
+            assert start['ripple_tick_rate']==end['ripple_tick_rate']>0
+            for point in [start,end]:
+                assert {'ripple_tick_rate','ripple_pending_seconds','ripple_encoded_seconds','ripple_requested_seconds'}<=point.keys(), 'ripple clock metadata required'
+                pending=point['ripple_pending_seconds'];assert 0<=pending<1/point['ripple_tick_rate']+1e-10, 'ripple solver has unintegrated whole-tick debt'
+                assert math.isclose(point['ripple_encoded_seconds']+pending,point['ripple_requested_seconds'],rel_tol=1e-12,abs_tol=1e-10), 'ripple time was discarded'
+                assert math.isclose(point['ripple_requested_seconds'],point['simulation_seconds'],rel_tol=1e-5,abs_tol=1e-4), 'ripple inputs differ from water clock'
+            assert math.isclose(end['ripple_requested_seconds']-start['ripple_requested_seconds'],report['measured_simulation_seconds'],rel_tol=1e-5,abs_tol=1e-4)
+        if args.require_water:assert count>0 and draws>0, 'water was not submitted during measurement'
+        water_frames.append(count)
+    else:
+        water_frames.append(0)
     assert report['completed_offscreen_measurement_valid']
     assert report['measurement'] == 'completed_full_resolution_offscreen_frames'
     assert report['complete_motion_cycles'] >= 1
@@ -57,6 +91,8 @@ for report in [control, *candidates]:
     assert report['sampled_mean_fps'] > 0
 # Composite mode comparisons explicitly change both algorithm flags. They
 # establish end-to-end differences, not the isolated effect of either flag.
+if args.optimization!='world_sparse_certificates':fixed.append('world_sparse_certificate_group_size')
+if args.optimization!='world_gi_consumer_group_32':fixed.append('world_gi_consumer_group_size')
 changed = ['ray_hierarchy', 'ray_hierarchy_reciprocal_cache'] if args.optimization == 'ray_hierarchy_cached' else [args.optimization]
 if world_ray:
     fixed.extend(['frame_sample_clock', 'world_ray_frame', 'world_ray_regions', 'world_query_encoded_frames',
@@ -67,7 +103,7 @@ for report in [control, *candidates]:
     report.setdefault('metal_compute_max_threads_requested', 0)
 if not compiler_mode:
     fixed.append('metal_compute_max_threads_requested')
-flags = ['paired_dda_tile_edge_cache', 'world_ray_source_edge_cache', 'world_ray_consumer_sorted', 'paired_dda_lazy_cell_bounds', 'paired_dda_touch_guard', 'paired_dda_interval_cache', 'ray_queue', 'ray_spatial_key', 'ray_hierarchy', 'ray_hierarchy_reciprocal_cache', 'ray_hierarchy_near_first', 'ray_persistent']
+flags = ['world_gi_consumer_group_32', 'world_sparse_certificates', 'world_scalar_interval_products', 'world_lazy_triangle_certificate', 'paired_dda_tile_edge_cache', 'world_ray_source_edge_cache', 'world_ray_consumer_sorted', 'paired_dda_lazy_cell_bounds', 'paired_dda_touch_guard', 'paired_dda_interval_cache', 'ray_queue', 'ray_spatial_key', 'ray_hierarchy', 'ray_hierarchy_reciprocal_cache', 'ray_hierarchy_near_first', 'ray_persistent']
 for report in [control, *candidates]:
     for flag in flags:
         if flag not in changed and flag != 'paired_dda_interval_cache':
@@ -117,7 +153,7 @@ trajectory_match = control.get('replay_state_blake3') is not None and all(
 if world_ray:
     assert trajectory_match, 'world-ray cycles must have identical replay states'
 fps_field='mean_fps' if world_ray else 'sampled_mean_fps'
-result = {'optimization': args.optimization, 'world_ray_mode': world_ray, 'fps_clock': 'whole_measurement_wall_time' if world_ray else 'legacy_sample_sum',
+result = {'optimization': args.optimization, 'gi_consumer_group_sizes':{'control':control['world_gi_consumer_group_size'],'candidates':[c['world_gi_consumer_group_size']for c in candidates]}, 'certificate_group_sizes':{'control':control['world_sparse_certificate_group_size'],'candidates':[c['world_sparse_certificate_group_size']for c in candidates]}, 'water_submission_requirement': args.require_water, 'water_time_requirement': args.require_water_time, 'measured_water_frames': water_frames, 'world_ray_mode': world_ray, 'fps_clock': 'whole_measurement_wall_time' if world_ray else 'legacy_sample_sum',
           'isolation_established': False,
           'control_offscreen_fps': control[fps_field],
           'candidate_offscreen_fps': [c[fps_field] for c in candidates],

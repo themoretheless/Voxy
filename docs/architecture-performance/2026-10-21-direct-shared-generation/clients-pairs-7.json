@@ -1,0 +1,54 @@
+[
+  {
+    "time": 1792605703.183121,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "79632 66205 Ss   /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/world-integer-multiply-zero-prefix-connected-v1/street_walk",
+      "92720  8947 Ss   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "93220  8947 Ss   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo-clippy",
+      "93230 93220 S    /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "93465 92720 R    /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "93503 93419 R    /tmp/voxy-direct-generation-input-bench",
+      "93170 93169 S+   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605703.518564,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "79632 66205 Ss   /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/world-integer-multiply-zero-prefix-connected-v1/street_walk",
+      "92720  8947 Ss   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "93220  8947 Ss   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo-clippy",
+      "93230 93220 S    /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "93465 92720 U    /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "93503 93419 R    /tmp/voxy-direct-generation-input-bench",
+      "93170 93169 S+   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605703.816572,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "79632 66205 Ss   /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/world-integer-multiply-zero-prefix-connected-v1/street_walk",
+      "92720  8947 Ss   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "93220  8947 Ss   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo-clippy",
+      "93230 93220 S    /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "93465 92720 S    /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "93503 93419 R    /tmp/voxy-direct-generation-input-bench",
+      "93170 93169 S+   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605704.12004,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "79632 66205 Ss   /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/world-integer-multiply-zero-prefix-connected-v1/street_walk",
+      "92720  8947 Ss   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "93220  8947 Ss   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo-clippy",
+      "93230 93220 S    /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "93465 92720 S    /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "93503 93419 R    /tmp/voxy-direct-generation-input-bench",
+      "93170 93169 S+   /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo"
+    ]
+  }
+]

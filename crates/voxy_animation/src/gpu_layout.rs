@@ -16,6 +16,7 @@ pub const GPU_NO_PARENT: u32 = u32::MAX;
 /// One resampled joint transform: 12 floats (translation, rotation, scale with padding).
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 #[repr(C)]
+#[allow(clippy::pub_underscore_fields)]
 pub struct GpuJointKey {
     pub translation: [f32; 3],
     pub _pad0: f32,
@@ -168,6 +169,7 @@ impl GpuSkeletonLayout {
 /// One instance's blend: clip `a` toward clip `b` by `weight` at `phase`.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(C)]
+#[allow(clippy::pub_underscore_fields)]
 pub struct GpuBlendJob {
     pub instance: u32,
     pub clip_a: u32,
@@ -251,6 +253,28 @@ pub fn cpu_reference_palette(
         globals.push(global);
     }
     Ok(palette)
+}
+
+/// Compact $3 \times 4$ row-major affine matrix representation (12 `f32`s = 48 bytes per bone,
+/// saving 25% GPU storage bandwidth compared to 64-byte $4 \times 4$ matrices).
+#[must_use]
+pub fn pack_affine_3x4(matrix: Mat4) -> [[f32; 4]; 3] {
+    let cols = matrix.to_cols_array_2d();
+    [
+        [cols[0][0], cols[1][0], cols[2][0], cols[3][0]],
+        [cols[0][1], cols[1][1], cols[2][1], cols[3][1]],
+        [cols[0][2], cols[1][2], cols[2][2], cols[3][2]],
+    ]
+}
+
+/// Unpacks a $3 \times 4$ row-major affine bone matrix back into a column-major [`Mat4`]
+/// with bottom row `[0, 0, 0, 1]`.
+#[must_use]
+pub const fn unpack_affine_3x4(rows: [[f32; 4]; 3]) -> Mat4 {
+    Mat4::from_cols_array(&[
+        rows[0][0], rows[1][0], rows[2][0], 0.0, rows[0][1], rows[1][1], rows[2][1], 0.0,
+        rows[0][2], rows[1][2], rows[2][2], 0.0, rows[0][3], rows[1][3], rows[2][3], 1.0,
+    ])
 }
 
 #[cfg(test)]

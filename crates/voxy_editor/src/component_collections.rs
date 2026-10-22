@@ -577,7 +577,7 @@ mod tests {
         assert_eq!(ids(&app), [second.clone(), first.clone()]);
         // The captured delete action still addresses the original item after moving it.
         click(&mut app, delete_first);
-        assert_eq!(ids(&app), [second.clone()]);
+        assert_eq!(ids(&app), std::slice::from_ref(&second));
         let deleted = app.authoring_document().unwrap();
         assert!(app.panel_action(delete_first).is_err());
         assert_eq!(app.authoring_document().unwrap(), deleted);
@@ -590,19 +590,19 @@ mod tests {
         assert_eq!(ids(&app), [first.clone(), second.clone()]);
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
-        assert_eq!(ids(&app), [first.clone(), second.clone()]);
+        assert_eq!(ids(&app), [first.clone(), second]);
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         assert_eq!(app.authoring_document().unwrap(), original);
         app.edit_key(winit::keyboard::KeyCode::KeyY).unwrap();
-        assert_eq!(ids(&app), [first.clone()]);
+        assert_eq!(ids(&app), std::slice::from_ref(&first));
         let directory =
             std::env::temp_dir().join(format!("voxy-collection-controls-{}", std::process::id()));
         std::fs::create_dir_all(&directory).unwrap();
         app.authoring.scene_path = Some(directory.join("scene.json"));
         app.save_authoring().unwrap();
         app.load_authoring().unwrap();
-        assert_eq!(ids(&app), [first.clone()]);
+        assert_eq!(ids(&app), std::slice::from_ref(&first));
         click(&mut app, delete_first);
         click(&mut app, Action::CollectionAdd(key));
         assert_ne!(ids(&app)[0], first);

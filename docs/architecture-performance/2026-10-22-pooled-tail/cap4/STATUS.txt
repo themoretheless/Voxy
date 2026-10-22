@@ -1,0 +1,1 @@
+Rejected diagnostic candidate: four scoped workers. Incomplete series intentionally terminated by owning agent with SIGTERM to process group 84924 after severe tail regressions (catchup-2 after render max 386315 us). All completed phases retained; no acceptance claim. Host load exceeded 47 on 16 logical CPUs.

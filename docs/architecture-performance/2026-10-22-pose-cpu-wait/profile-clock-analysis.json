@@ -1,0 +1,120 @@
+{
+  "before": {
+    "all_median": {
+      "total_wall_us": 8388.041,
+      "caller_cpu_us": 1594.1875,
+      "process_cpu_us": 23318.5,
+      "spawn_wall_us": 178.9795,
+      "spawn_cpu_us": 160.29149999999998,
+      "main_work_wall_us": 1953.0,
+      "main_work_cpu_us": 1333.292,
+      "worker_work_wall_sum_us": 35772.9795,
+      "worker_work_wall_max_us": 4300.4375,
+      "worker_cpu_sum_us": 21206.229,
+      "worker_cpu_max_us": 1935.5625,
+      "launch_delay_max_us": 4094.2709999999997,
+      "join_wall_us": 4979.833500000001,
+      "join_cpu_us": 111.5205
+    },
+    "worst_three_median": {
+      "total_wall_us": 27627.666,
+      "caller_cpu_us": 1541.959,
+      "process_cpu_us": 24546.0,
+      "spawn_wall_us": 127.0,
+      "spawn_cpu_us": 126.792,
+      "main_work_wall_us": 1221.083,
+      "main_work_cpu_us": 1145.375,
+      "worker_work_wall_sum_us": 28007.292,
+      "worker_work_wall_max_us": 3213.375,
+      "worker_cpu_sum_us": 22495.085,
+      "worker_cpu_max_us": 1943.542,
+      "launch_delay_max_us": 5710.625,
+      "join_wall_us": 26275.166,
+      "join_cpu_us": 127.875
+    },
+    "threaded_frames": 240,
+    "vertex_fallback_frames": 0,
+    "lifecycle": {
+      "started_utc": "2026-10-21T21:28:26.236830+00:00",
+      "load_start": [
+        47.689453125,
+        63.4658203125,
+        49.91064453125
+      ],
+      "events": [],
+      "timing_valid": true,
+      "pid": 95744,
+      "returncode": 0,
+      "elapsed_seconds": 13.251174583012471,
+      "load_end": [
+        56.15087890625,
+        64.77880859375,
+        50.5361328125
+      ],
+      "failure": null,
+      "child_user_cpu_seconds": 14.730067,
+      "child_system_cpu_seconds": 0.537095,
+      "voluntary_context_switches": 15,
+      "involuntary_context_switches": 38976
+    }
+  },
+  "after": {
+    "all_median": {
+      "total_wall_us": 47.959,
+      "caller_cpu_us": 48.042,
+      "process_cpu_us": 48.0,
+      "spawn_wall_us": 0.0,
+      "spawn_cpu_us": 0.0,
+      "main_work_wall_us": 45.458,
+      "main_work_cpu_us": 45.25,
+      "worker_work_wall_sum_us": 0.0,
+      "worker_work_wall_max_us": 0.0,
+      "worker_cpu_sum_us": 0.0,
+      "worker_cpu_max_us": 0.0,
+      "launch_delay_max_us": 0.0,
+      "join_wall_us": 0.0,
+      "join_cpu_us": 0.0
+    },
+    "worst_three_median": {
+      "total_wall_us": 597.25,
+      "caller_cpu_us": 80.292,
+      "process_cpu_us": 80.0,
+      "spawn_wall_us": 0.0,
+      "spawn_cpu_us": 0.0,
+      "main_work_wall_us": 592.0,
+      "main_work_cpu_us": 76.959,
+      "worker_work_wall_sum_us": 0.0,
+      "worker_work_wall_max_us": 0.0,
+      "worker_cpu_sum_us": 0.0,
+      "worker_cpu_max_us": 0.0,
+      "launch_delay_max_us": 0.0,
+      "join_wall_us": 0.0,
+      "join_cpu_us": 0.0
+    },
+    "threaded_frames": 1,
+    "vertex_fallback_frames": 0,
+    "lifecycle": {
+      "started_utc": "2026-10-21T21:28:39.506868+00:00",
+      "load_start": [
+        56.15087890625,
+        64.77880859375,
+        50.5361328125
+      ],
+      "events": [],
+      "timing_valid": true,
+      "pid": 97784,
+      "returncode": 0,
+      "elapsed_seconds": 10.501036000001477,
+      "load_end": [
+        64.2021484375,
+        66.21826171875,
+        51.212890625
+      ],
+      "failure": null,
+      "child_user_cpu_seconds": 6.4836459999999985,
+      "child_system_cpu_seconds": 0.19440999999999997,
+      "voluntary_context_switches": 0,
+      "involuntary_context_switches": 9125
+    }
+  }
+}

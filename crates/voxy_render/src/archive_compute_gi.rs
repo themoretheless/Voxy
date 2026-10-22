@@ -3,9 +3,12 @@
 mod stages;
 #[path = "archive_world_ray_resolve.rs"]
 mod world_resolve;
-pub(crate) use world_resolve::{ArchiveWorldRayRegion,ArchiveWorldRayFrame,frame_tiles,consumer_profile_workspace,consumer_sorted_workspace};
 use super::{ComputeMemoryBudget, ComputeStorage, Material, Mesh};
 use std::sync::Arc;
+pub(crate) use world_resolve::{
+    ArchiveWorldRayFrame, ArchiveWorldRayRegion, consumer_profile_workspace,
+    consumer_sorted_workspace, frame_tiles,
+};
 pub(super) fn output_texture(
     device: &wgpu::Device,
     width: u32,
@@ -44,7 +47,7 @@ pub(super) struct ArchiveComputeGi {
     stages: Option<stages::ArchiveRayStages>,
     world_regions: Vec<ArchiveWorldRayRegion>,
     world_frame: Option<ArchiveWorldRayFrame>,
-    ray_constants: Vec<(&'static str,f64)>,
+    ray_constants: Vec<(&'static str, f64)>,
     guides: [wgpu::RenderPipeline; 2],
     ssr: Option<(wgpu::ComputePipeline, [wgpu::BindGroup; 3])>,
     trace: wgpu::ComputePipeline,
@@ -127,7 +130,14 @@ impl ArchiveComputeGi {
                 )
             })
             .collect();
-        constants.push(("ARCHIVE_DDA_TILE_EDGE_CACHE",if std::env::var("VOXY_STREET_DDA_TILE_EDGE_CACHE").as_deref()==Ok("1") {1.}else{0.}));
+        constants.push((
+            "ARCHIVE_DDA_TILE_EDGE_CACHE",
+            if std::env::var("VOXY_STREET_DDA_TILE_EDGE_CACHE").as_deref() == Ok("1") {
+                1.
+            } else {
+                0.
+            },
+        ));
         constants.push((
             "ARCHIVE_RAY_BOUNDS",
             if std::env::var_os("VOXY_STREET_RAY_REFERENCE").is_some() {
@@ -345,23 +355,71 @@ impl ArchiveComputeGi {
             height,
         })
     }
-    pub(super) fn world_query_encoded_frames(&self)->u64 {self.world_frame.as_ref().map_or(0,|f|f.encoded_frames())}
-    pub(super) fn world_work_stats_buffer(&self)->Option<&wgpu::Buffer> {self.world_frame.as_ref()?.work_stats_buffer()}
-    pub(super) fn world_profile_snapshot(&self,device:&wgpu::Device,queue:&wgpu::Queue)->Result<Option<serde_json::Value>,Box<dyn std::error::Error>> {if let Some(frame)=&self.world_frame {frame.profile_snapshot(device,queue)}else{Ok(None)}}
-    pub(super) fn world_frame_enabled(&self)->bool { self.world_frame.is_some() }
-    pub(super) fn world_frame_tiles(&self)->Option<&[[u32;4]]> {Some(self.world_frame.as_ref()?.rectangles())}
-    pub(super) fn tile_edge_cache_enabled(&self)->bool {self.ray_constants.iter().any(|&(name,value)|name=="ARCHIVE_DDA_TILE_EDGE_CACHE"&&value==1.)}
-    pub(super) fn world_consumer_sorted(&self)->bool {self.world_frame.as_ref().is_some_and(|f|f.consumer_sorted())}
-    pub(super) fn set_world_frame(&mut self,frame:ArchiveWorldRayFrame) {self.world_regions.clear();self.world_frame=Some(frame);}
-    pub(super) fn world_resolve_constants(&self)->&[(&str,f64)] { &self.ray_constants }
-    pub(super) fn supports_world_kind(&self,kind:crate::WorldRayKind)->bool {
-        self.ray_constants.iter().any(|&(name,value)|name=="ARCHIVE_PAIRED_DDA"&&value==1.) &&
-        (!matches!(kind,crate::WorldRayKind::Reflection)||self.ssr.is_some())
+    pub(super) fn world_query_encoded_frames(&self) -> u64 {
+        self.world_frame.as_ref().map_or(0, |f| f.encoded_frames())
     }
-    pub(super) fn clear_world_regions(&mut self) { self.world_regions.clear();self.world_frame=None; }
-    pub(super) fn add_world_region(&mut self, region: ArchiveWorldRayRegion) { self.world_regions.push(region); }
-    pub(super) fn world_region_audit_buffer(&self,index:usize)->Option<&wgpu::Buffer> { if let Some(frame)=&self.world_frame {frame.audit_buffer(index)}else{Some(self.world_regions.get(index)?.audit_buffer())} }
-    pub(super) fn world_region_count(&self)->usize { self.world_frame.as_ref().map_or(self.world_regions.len(),|f|f.count()) }
+    pub(super) fn world_work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
+        self.world_frame.as_ref()?.work_stats_buffer()
+    }
+    pub(super) fn world_profile_snapshot(
+        &self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+        if let Some(frame) = &self.world_frame {
+            frame.profile_snapshot(device, queue)
+        } else {
+            Ok(None)
+        }
+    }
+    pub(super) fn world_frame_enabled(&self) -> bool {
+        self.world_frame.is_some()
+    }
+    pub(super) fn world_frame_tiles(&self) -> Option<&[[u32; 4]]> {
+        Some(self.world_frame.as_ref()?.rectangles())
+    }
+    pub(super) fn tile_edge_cache_enabled(&self) -> bool {
+        self.ray_constants
+            .iter()
+            .any(|&(name, value)| name == "ARCHIVE_DDA_TILE_EDGE_CACHE" && value == 1.)
+    }
+    pub(super) fn world_consumer_sorted(&self) -> bool {
+        self.world_frame
+            .as_ref()
+            .is_some_and(|f| f.consumer_sorted())
+    }
+    pub(super) fn set_world_frame(&mut self, frame: ArchiveWorldRayFrame) {
+        self.world_regions.clear();
+        self.world_frame = Some(frame);
+    }
+    pub(super) fn world_resolve_constants(&self) -> &[(&str, f64)] {
+        &self.ray_constants
+    }
+    pub(super) fn supports_world_kind(&self, kind: crate::WorldRayKind) -> bool {
+        self.ray_constants
+            .iter()
+            .any(|&(name, value)| name == "ARCHIVE_PAIRED_DDA" && value == 1.)
+            && (!matches!(kind, crate::WorldRayKind::Reflection) || self.ssr.is_some())
+    }
+    pub(super) fn clear_world_regions(&mut self) {
+        self.world_regions.clear();
+        self.world_frame = None;
+    }
+    pub(super) fn add_world_region(&mut self, region: ArchiveWorldRayRegion) {
+        self.world_regions.push(region);
+    }
+    pub(super) fn world_region_audit_buffer(&self, index: usize) -> Option<&wgpu::Buffer> {
+        if let Some(frame) = &self.world_frame {
+            frame.audit_buffer(index)
+        } else {
+            Some(self.world_regions.get(index)?.audit_buffer())
+        }
+    }
+    pub(super) fn world_region_count(&self) -> usize {
+        self.world_frame
+            .as_ref()
+            .map_or(self.world_regions.len(), |f| f.count())
+    }
     pub(super) fn reference_texture(&self) -> Option<&wgpu::Texture> {
         self.reference.as_ref().map(|(image, _)| &***image)
     }
@@ -369,7 +427,7 @@ impl ArchiveComputeGi {
         self.ssr_reference.as_ref().map(|(image, _)| &***image)
     }
     pub(super) fn ray_persistent_enabled(&self) -> bool {
-        self.world_frame.is_none()&&self.stages.as_ref().is_some_and(|s| s.persistent_enabled())
+        self.world_frame.is_none() && self.stages.as_ref().is_some_and(|s| s.persistent_enabled())
     }
     pub(super) fn capture_enabled(&self) -> bool {
         self.stages.as_ref().is_some_and(|s| s.capture_enabled())
@@ -396,13 +454,21 @@ impl ArchiveComputeGi {
             .is_some_and(|s| s.hierarchy_reciprocal_enabled())
     }
     pub(super) fn ray_queue_enabled(&self) -> bool {
-        self.world_frame.is_none()&&self.stages.as_ref().is_some_and(|s| s.queue_enabled())
+        self.world_frame.is_none() && self.stages.as_ref().is_some_and(|s| s.queue_enabled())
     }
     pub(super) fn ray_queue_proof_buffer(&self) -> Option<&wgpu::Buffer> {
-        if self.world_frame.is_some() {None}else{self.stages.as_ref()?.queue_proof_buffer()}
+        if self.world_frame.is_some() {
+            None
+        } else {
+            self.stages.as_ref()?.queue_proof_buffer()
+        }
     }
     pub(super) fn stages_configuration(&self) -> Option<[u64; 3]> {
-        if self.world_frame.is_some() {None}else{self.stages.as_ref().map(|s| s.configuration())}
+        if self.world_frame.is_some() {
+            None
+        } else {
+            self.stages.as_ref().map(|s| s.configuration())
+        }
     }
     pub(super) fn encode(
         &self,
@@ -473,10 +539,18 @@ impl ArchiveComputeGi {
         }
         // Probe faces and history resets use the identical monolithic query.
         // Avoid streaming large intermediate records for guaranteed GI misses.
-        let all_guides_use_history=materials.iter().all(|m|m.transparent||m.history_guides);
-        if let Some(frame)=self.world_frame.as_ref().filter(|frame|frame.needs_queries(history_available,all_guides_use_history)) {
-            frame.encode(encoder,timing);
-        } else if let Some(stages) = self.stages.as_ref().filter(|_| history_available&&self.world_frame.is_none()) {
+        let all_guides_use_history = materials.iter().all(|m| m.transparent || m.history_guides);
+        if let Some(frame) = self
+            .world_frame
+            .as_ref()
+            .filter(|frame| frame.needs_queries(history_available, all_guides_use_history))
+        {
+            frame.encode(encoder, timing);
+        } else if let Some(stages) = self
+            .stages
+            .as_ref()
+            .filter(|_| history_available && self.world_frame.is_none())
+        {
             stages.encode(encoder, timing);
         } else {
             {
@@ -487,7 +561,6 @@ impl ArchiveComputeGi {
                         beginning_of_pass_write_index: Some(8),
                         end_of_pass_write_index: Some(9),
                     }),
-                    ..Default::default()
                 });
                 pass.set_pipeline(&self.trace);
                 for (i, group) in self.groups.iter().enumerate() {
@@ -503,7 +576,6 @@ impl ArchiveComputeGi {
                         beginning_of_pass_write_index: Some(10),
                         end_of_pass_write_index: Some(11),
                     }),
-                    ..Default::default()
                 });
                 pass.set_pipeline(pipeline);
                 for (i, group) in groups.iter().enumerate() {
@@ -512,7 +584,9 @@ impl ArchiveComputeGi {
                 pass.dispatch_workgroups(self.width.div_ceil(8), self.height.div_ceil(8), 1);
             }
         }
-        for region in &self.world_regions { region.encode(encoder); }
+        for region in &self.world_regions {
+            region.encode(encoder);
+        }
         for (image, pipelines) in [self.reference.as_ref(), self.ssr_reference.as_ref()]
             .into_iter()
             .flatten()

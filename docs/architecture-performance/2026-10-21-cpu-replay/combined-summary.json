@@ -1,0 +1,68 @@
+{
+  "metric": "median per-run CPU replay p99; pooled p99 also reported, not display/frame qualification",
+  "summary": [
+    {
+      "scenario": "idle",
+      "pairs": 5,
+      "metrics": {
+        "before": {
+          "median_run_p99_us": 11130.584,
+          "pooled_p99_us": 23612.458,
+          "max_us": 42736.375,
+          "frames": 1200,
+          "over_8333_us": 600
+        },
+        "after": {
+          "median_run_p99_us": 1887.375,
+          "pooled_p99_us": 2589.042,
+          "max_us": 2887.167,
+          "frames": 1200,
+          "over_8333_us": 0
+        }
+      },
+      "ratio": 0.16956657440436188
+    },
+    {
+      "scenario": "motion",
+      "pairs": 5,
+      "metrics": {
+        "before": {
+          "median_run_p99_us": 10248.042000000001,
+          "pooled_p99_us": 59160.584,
+          "max_us": 272917.333,
+          "frames": 1200,
+          "over_8333_us": 579
+        },
+        "after": {
+          "median_run_p99_us": 2107.5,
+          "pooled_p99_us": 4853.959,
+          "max_us": 6878.084,
+          "frames": 1200,
+          "over_8333_us": 0
+        }
+      },
+      "ratio": 0.20564904008004647
+    },
+    {
+      "scenario": "catchup",
+      "pairs": 10,
+      "metrics": {
+        "before": {
+          "median_run_p99_us": 9378.5415,
+          "pooled_p99_us": 11861.125,
+          "max_us": 39779.292,
+          "frames": 2400,
+          "over_8333_us": 1954
+        },
+        "after": {
+          "median_run_p99_us": 2212.7915,
+          "pooled_p99_us": 12887.875,
+          "max_us": 34161.916,
+          "frames": 2400,
+          "over_8333_us": 76
+        }
+      },
+      "ratio": 0.23594196389705158
+    }
+  ]
+}

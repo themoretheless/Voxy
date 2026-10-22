@@ -159,7 +159,7 @@ fn gpu_five_product_normalization_matches_exact_oracle_input() {
             u32::from(i != negative_radius_index),
             "input-error validation failed case {i}"
         );
-        let zero_denominator = pairs[i].1.iter().all(|w| w & 0x7fffffff == 0);
+        let zero_denominator = pairs[i].1.iter().all(|w| w.trailing_zeros() >= 31);
         assert_eq!(
             record[163],
             u32::from(!zero_denominator),

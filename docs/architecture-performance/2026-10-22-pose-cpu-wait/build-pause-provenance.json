@@ -1,0 +1,33 @@
+{
+  "note": "External controller paused only the owned build; no benchmark resume or unrelated process signals by this task. Source controller /tmp/voxy-hold-build-window.py and extension.",
+  "owned_build_events": [
+    {
+      "pid": 54294,
+      "identity": "54294  8947 Ss   Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792616985.982802,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 54316,
+      "identity": "54316 54294 R    Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792616985.985831,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 54294,
+      "identity": "54294  8947 Ss   Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617237.032379,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 54316,
+      "identity": "54316 54294 R    Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617237.211,
+      "initiator": "user-authorized temporary common build window"
+    }
+  ]
+}

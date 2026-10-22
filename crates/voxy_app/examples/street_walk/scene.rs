@@ -3,6 +3,7 @@ use physics::static_triangle_world::StaticTriangleWorld;
 use std::{path::Path, sync::Arc};
 use voxy_model::{SceneArchive, SceneArchiveTangents, SceneImportLimits};
 use voxy_render::{Bc7ImageAsset, archive_scene::*};
+#[allow(dead_code)]
 pub struct StreetScene {
     pub archive: Option<SceneArchive>,
     pub images: Vec<ArchiveImageSource>,
@@ -19,9 +20,11 @@ pub struct StreetScene {
     /// Eye and direction overlooking the pool, for `--spawn pool`.
     pub pool_view: Option<(Vec3, Vec3)>,
 }
+#[allow(dead_code)]
 fn array<const N: usize>(v: &serde_json::Value, default: [f32; N]) -> [f32; N] {
     std::array::from_fn(|i| v[i].as_f64().map_or(default[i], |x| x as f32))
 }
+#[allow(dead_code)]
 pub fn load(root: &Path) -> Result<StreetScene, Box<dyn std::error::Error>> {
     let source = std::fs::read(root.join("bistro.gltf"))?;
     let json: serde_json::Value = serde_json::from_slice(&source)?;

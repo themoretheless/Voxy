@@ -1,0 +1,104 @@
+{
+  "binaries_sha256": {
+    "before": "e9b31a3f10f3f32bd2ccaaf723639359b4f75e4e46dca80d61b2bfae6da877f0",
+    "after": "24ee03e780b3e5d2fc7846cedcc5b20c3a9ba12886903d3f9ef6df12133b2d2b"
+  },
+  "all_phases_included": 50,
+  "focus": "catchup",
+  "summary": [
+    {
+      "scenario": "idle",
+      "pairs": 10,
+      "before": {
+        "frames": 2400,
+        "pooled_us": {
+          "p50": 1985.0,
+          "p95": 12529.75,
+          "p99": 20733.334
+        },
+        "median_run_p99_us": 13001.3335,
+        "max_us": 77867.292,
+        "over_8333_us": 274,
+        "over_16667_us": 53
+      },
+      "after": {
+        "frames": 2400,
+        "pooled_us": {
+          "p50": 75.083,
+          "p95": 229.5,
+          "p99": 513.875
+        },
+        "median_run_p99_us": 488.9375,
+        "max_us": 234778.167,
+        "over_8333_us": 5,
+        "over_16667_us": 5
+      },
+      "pooled_ratio": 0.024784967048714888,
+      "median_ratio": 0.03760671934151985,
+      "pass": true
+    },
+    {
+      "scenario": "motion",
+      "pairs": 5,
+      "before": {
+        "frames": 1200,
+        "pooled_us": {
+          "p50": 1457.583,
+          "p95": 23952.0,
+          "p99": 61448.334
+        },
+        "median_run_p99_us": 35724.416000000005,
+        "max_us": 197301.0,
+        "over_8333_us": 221,
+        "over_16667_us": 101
+      },
+      "after": {
+        "frames": 1200,
+        "pooled_us": {
+          "p50": 72.417,
+          "p95": 310.584,
+          "p99": 2057.75
+        },
+        "median_run_p99_us": 920.75,
+        "max_us": 10223.416,
+        "over_8333_us": 2,
+        "over_16667_us": 0
+      },
+      "pooled_ratio": 0.0334874823457378,
+      "median_ratio": 0.02577368934456479,
+      "pass": true
+    },
+    {
+      "scenario": "catchup",
+      "pairs": 10,
+      "before": {
+        "frames": 2400,
+        "pooled_us": {
+          "p50": 4597.875,
+          "p95": 10204.458,
+          "p99": 28626.792
+        },
+        "median_run_p99_us": 10564.958999999999,
+        "max_us": 106218.541,
+        "over_8333_us": 249,
+        "over_16667_us": 50
+      },
+      "after": {
+        "frames": 2400,
+        "pooled_us": {
+          "p50": 155.834,
+          "p95": 934.5,
+          "p99": 4357.208
+        },
+        "median_run_p99_us": 1064.6875,
+        "max_us": 51150.583,
+        "over_8333_us": 14,
+        "over_16667_us": 5
+      },
+      "pooled_ratio": 0.15220734478386538,
+      "median_ratio": 0.1007753555882233,
+      "pass": true
+    }
+  ],
+  "cpu_gate": true
+}

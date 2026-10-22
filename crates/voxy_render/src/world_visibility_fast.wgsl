@@ -36,7 +36,7 @@ fn fast_candidate_append(slot:u32,primitive:u32) {
 // One authority for cached and native IDs: neither historic distance nor UV
 // is reused. Re-certify the current original source triangle and exact ray.
 fn visibility_try_seed(slot:u32,primitive:u32,ray:u32)->bool {
- if !WORLD_FAST_DEFER_NONCLEAR||!WORLD_FAST_CAN_BOUND {return false;}
+ if !WORLD_FAST_DEFER_NONCLEAR||(!WORLD_FAST_CAN_BOUND&&!WORLD_SOURCE_MATERIAL_SIDES) {return false;}
  if slot>=nearest_active[0]||nearest_active[4u+slot]==0u {return false;}
  let info=exact_layout[slot];if primitive>=nearest_counts.values[info.x*2u].x {return false;}
  let material=visibility_material(info.w);if material!=1u&&material!=2u {return false;}
@@ -57,6 +57,9 @@ fn visibility_triangle(slot:u32,primitive:u32,ray:u32,material:u32)->bool {
  let source=source_triangle_certificate(slot,exact_layout[slot].z+primitive*3u,ray,WORLD_FAST_DEFER_NONCLEAR&&!WORLD_FAST_HISTORY_ANY_HIT);
  let certificate=source.intersection;
  if certificate.state==0u {visibility_misses+=1u;return false;}
+ // Even an uncertain or unknown-opacity event is irrelevant when its complete
+ // source interval is strictly behind a proved nearer MaterialSurface hit.
+ if WORLD_SOURCE_MATERIAL_SIDES&&WORLD_FAST_CAN_BOUND&&fast_winner_slot!=0xffffffffu&&source.t.valid!=0u&&source.t.lo>fast_winner_t.hi {return false;}
  if certificate.state!=1u {
   if WORLD_FAST_DEFER_NONCLEAR {fast_candidate_append(slot,primitive);return fast_candidate_overflow;}
   visibility_pending=true;return false;
@@ -136,7 +139,7 @@ fn visibility_fast_process(index:u32) {
  visibility_seed(ray);
  if WORLD_FAST_PREVIOUS_SEED&&previous_valid {let accepted=visibility_try_seed(previous.z,previous.w,ray);}
  var blocked=false;
- if !fast_history_witness {blocked=visibility_walk(ray);}
+ if !fast_history_witness {blocked=visibility_fast_walk(ray);}
  // A source-certified admitted surface exists. All possible winners use the
  // same complete consumer fallback; no nearest identity or distance is needed.
  // Absence of a witness still takes the original complete miss/exact path.

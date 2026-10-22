@@ -97,7 +97,7 @@ impl WearSuspension {
         next.slider_pose = Some((global_gap, normal));
         next.energy.friction_input_j = self.energy.friction_input_j;
         next.energy.accumulation_correction_j[2] = self.energy.accumulation_correction_j[2];
-        next.energy_tail[2] = self.energy_tail[2].clone();
+        next.energy_tail[2].clone_from(&self.energy_tail[2]);
         next.energy.contact_spring_j = area * slider.response.tangential_stored_j_m2;
         add_inventory(
             &mut next.energy.contact_numerical_loss_j,

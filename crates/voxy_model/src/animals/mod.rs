@@ -1,7 +1,7 @@
 //! Original breed anatomy studies. Neutral, stationary surfaces before grooming.
 //! This module intentionally does not depend on the rejected companion prototype.
-mod glb;
 mod ears;
+mod glb;
 mod sculpt;
 mod surface;
 use glam::Vec3;
@@ -216,13 +216,13 @@ impl BreedAnatomy {
     pub fn eye_center(&self, side: f32) -> Vec3 {
         let skull = self.head_length - self.muzzle_length;
         let cat = self.breed.species() == Species::Cat;
-        let provisional=self.head_origin()
+        let provisional = self.head_origin()
             + Vec3::new(
                 side * self.skull_width * if cat { 0.29 } else { 0.32 },
                 skull * 0.08,
                 skull * if cat { 0.87 } else { 0.85 },
             );
-        sculpt::eye_anchor(*self,provisional,self.eye_normal(side))
+        sculpt::eye_anchor(*self, provisional, self.eye_normal(side))
     }
     #[must_use]
     pub fn eye_normal(&self, side: f32) -> Vec3 {
@@ -234,14 +234,22 @@ impl BreedAnatomy {
     }
     #[must_use]
     pub fn eye_radius(&self) -> f32 {
-        self.skull_width * if self.breed.species() == Species::Cat { 0.09 } else { 0.072 }
+        self.skull_width
+            * if self.breed.species() == Species::Cat {
+                0.09
+            } else {
+                0.072
+            }
     }
     #[must_use]
-    pub fn digit_tip(&self,side:f32,front:bool,digit:usize) -> Vec3 {
-        let paw=self.paw_half_width;
-        let length=if digit==1 || digit==2 {1.45}else{1.30};
-        Vec3::new(side*self.rib_half_width*0.68+(digit as f32-1.5)*paw*0.42,
-            paw*0.48,(if front {1.}else{-1.})*self.trunk_length*0.36+paw*length)
+    pub fn digit_tip(&self, side: f32, front: bool, digit: usize) -> Vec3 {
+        let paw = self.paw_half_width;
+        let length = if digit == 1 || digit == 2 { 1.45 } else { 1.30 };
+        Vec3::new(
+            side * self.rib_half_width * 0.68 + (digit as f32 - 1.5) * paw * 0.42,
+            paw * 0.48,
+            (if front { 1. } else { -1. }) * self.trunk_length * 0.36 + paw * length,
+        )
     }
     #[must_use]
     pub fn nose_center(&self) -> Vec3 {

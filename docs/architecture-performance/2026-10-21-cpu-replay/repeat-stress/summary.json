@@ -1,0 +1,54 @@
+{
+  "pairs_per_scenario": 5,
+  "metric": "median run CPU replay p99; not displayed frame p99",
+  "focus": "motion",
+  "summary": [
+    {
+      "scenario": "catchup",
+      "before_p99_us": 9336.292,
+      "after_p99_us": 1753.584,
+      "ratio": 0.18782445964629213,
+      "paired_p99_ratios": [
+        0.4915432709044967,
+        0.18748513863962268,
+        0.1865562356948954,
+        0.1880246055382859,
+        0.18919653746462242
+      ],
+      "mean_stage_us": {
+        "before": {
+          "animation": 2.6989833333333326,
+          "character": 3.0328166666666667,
+          "companions": 71.56909583333332,
+          "palette": 3.8274041666666663,
+          "render_admission": 1858.219270833334,
+          "shadow_extraction": 1.7571499999999993,
+          "temporal_admission": 6608.809379166668,
+          "total_cpu": 8555.52955
+        },
+        "after": {
+          "animation": 1.3888666666666665,
+          "character": 1.434220833333333,
+          "companions": 69.52972083333329,
+          "palette": 5.07695,
+          "render_admission": 1562.193962499999,
+          "shadow_extraction": 0.8390541666666669,
+          "temporal_admission": 1.856954166666666,
+          "total_cpu": 1642.9382208333332
+        }
+      },
+      "state_blake3": "e663821f1a02bbcf8eef4474379aac72659b849cefabe8623f139b4179ad9f7d"
+    }
+  ],
+  "cpu_gate": null,
+  "binaries": {
+    "before": {
+      "path": "/private/tmp/voxy-cpu-replay-before",
+      "sha256": "f173501d5ceb1675dbf3781c284e30f8909a64a3113be0413b29da9529d76ce1"
+    },
+    "after": {
+      "path": "/private/tmp/voxy-cpu-replay-after",
+      "sha256": "d6cd6ce430f46f1242ad5c7c32b4a28260f226d67a038c5886ced3fd0a938ed9"
+    }
+  }
+}

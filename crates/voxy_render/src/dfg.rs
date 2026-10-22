@@ -190,13 +190,13 @@ impl GgxDfgLut {
             format!(
                 "{}\n{vertex}\n{}",
                 include_str!("material_energy_integrate.wgsl"),
-                r#"
+                r"
 @fragment fn fs_main(@builtin(position) p:vec4<f32>)->@location(0) vec4<f32>{
  let coordinate=(p.xy-vec2<f32>(0.5))/f32(params.size-1u);
  let m=integrate_ggx_energy(coordinate.x*coordinate.x,coordinate.y,params.samples);
  return vec4<f32>(m.value,f32(m.valid));
 }
-"#
+"
             )
         } else {
             include_str!("dfg.wgsl").to_owned()

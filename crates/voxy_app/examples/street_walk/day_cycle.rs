@@ -2,6 +2,7 @@
 //! The sun shadow map and temporal history are rebuilt on every sun,
 //! exposure or weather change, so updates are applied in small steps
 //! instead of every frame.
+#![allow(dead_code)]
 use glam::Vec3;
 use voxy_render::archive_scene::ArchiveSceneRenderer;
 use voxy_render::climate::{self, Calendar, Season, WeatherSchedule};
@@ -39,8 +40,16 @@ impl DayCycle {
     pub fn base_ev(&self) -> Option<f32> {
         self.base_ev
     }
-    pub fn from_args(value: impl Fn(&str) -> Option<String>, seed: u64, weather_given: bool) -> Option<Self> {
-        let number = |name: &str| value(name).and_then(|v| v.parse::<f64>().ok()).filter(|v| v.is_finite());
+    pub fn from_args(
+        value: impl Fn(&str) -> Option<String>,
+        seed: u64,
+        weather_given: bool,
+    ) -> Option<Self> {
+        let number = |name: &str| {
+            value(name)
+                .and_then(|v| v.parse::<f64>().ok())
+                .filter(|v| v.is_finite())
+        };
         let season = value("--season").and_then(|s| match s.as_str() {
             "spring" => Some(Season::Spring),
             "summer" => Some(Season::Summer),
@@ -98,8 +107,14 @@ impl DayCycle {
         frozen: bool,
         wetness_override: bool,
     ) -> Result<(), voxy_render::ComputeError> {
-        let base_ev = *self.base_ev.get_or_insert_with(|| renderer.exposure_ev100());
-        let hours = if self.paused || frozen { 0. } else { real_seconds.min(0.25) * self.time_scale };
+        let base_ev = *self
+            .base_ev
+            .get_or_insert_with(|| renderer.exposure_ev100());
+        let hours = if self.paused || frozen {
+            0.
+        } else {
+            real_seconds.min(0.25) * self.time_scale
+        };
         self.calendar.advance(hours);
         if self.auto_weather {
             let target = self.schedule.at(self.calendar.hours);

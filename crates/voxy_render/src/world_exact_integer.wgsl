@@ -15,6 +15,8 @@ struct ExVec {x:ExInt,y:ExInt,z:ExInt}
 struct ExDecision {state:u32,reason:u32}
 struct ExParameters {t:ExInt,u:ExInt,v:ExInt,denominator:ExInt,valid:u32}
 var<private> ex_parameters:ExParameters;
+// 0 unknown/coplanar, 1 positive determinant (front), 2 negative (back).
+var<private> ex_triangle_facing:u32;
 fn ex_zero()->ExInt {
  var r:ExInt;if ex_cursor>=EX_SLOTS {return r;}
  let offset=ex_begin+ex_cursor*EX_WORDS;if offset+EX_WORDS>arrayLength(&exact_scratch) {return r;}
@@ -78,6 +80,36 @@ fn ex_float(bits:u32,base:i32)->ExInt {
  return ex_shl(r,u32(power-base));
 }
 fn ex_vec_valid(v:ExVec)->u32 {return v.x.valid&v.y.valid&v.z.valid;}
+// Exact product of the original f32 bit patterns, with no floating operations.
+// A 24x24-bit mantissa product has at most three radix-16 digits. Embed these
+// directly at the requested integer unit instead of multiplying sparse arenas.
+fn ex_float_product(a:u32,b:u32,base:i32)->ExInt {
+ let ae=(a>>23u)&255u;let be=(b>>23u)&255u;
+ if ae==255u||be==255u {return ex_bad();}
+ var am=a&8388607u;var bm=b&8388607u;var ap=-149;var bp=-149;
+ if ae!=0u {am|=8388608u;ap=i32(ae)-150;}
+ if be!=0u {bm|=8388608u;bp=i32(be)-150;}
+ if am==0u||bm==0u {return ex_zero();}
+ let power=ap+bp;if power<base {return ex_bad();}
+ let a0=am&65535u;let a1=am>>16u;let b0=bm&65535u;let b1=bm>>16u;
+ let low=a0*b0;let middle=a0*b1+a1*b0+(low>>16u);
+ let high=a1*b1+(middle>>16u);
+ let shift=u32(power-base);let whole=shift/16u;let part=shift%16u;
+ let p0=low&65535u;let p1=middle&65535u;
+ let w0=(p0<<part)&65535u;
+ let w1=((p1<<part)|(p0>>(16u-part)))&65535u;
+ let w2=((high<<part)|(p1>>(16u-part)))&65535u;
+ let w3=high>>(16u-part);
+ var digits=1u;if w1!=0u {digits=2u;}if w2!=0u {digits=3u;}if w3!=0u {digits=4u;}
+ if whole>=EX_WORDS||digits>EX_WORDS-whole {return ex_bad();}
+ var result=ex_zero();if result.valid==0u {return result;}
+ for(var k=0u;k<whole;k+=1u) {exact_scratch[result.offset+k]=0u;}
+ exact_scratch[result.offset+whole]=w0;
+ if digits>1u {exact_scratch[result.offset+whole+1u]=w1;}
+ if digits>2u {exact_scratch[result.offset+whole+2u]=w2;}
+ if digits>3u {exact_scratch[result.offset+whole+3u]=w3;}
+ result.length=whole+digits;result.negative=(a^b)>>31u;return result;
+}
 fn ex_vec_zero(v:ExVec)->bool {return v.x.length==0u&&v.y.length==0u&&v.z.length==0u;}
 fn ex_vsub(a:ExVec,b:ExVec)->ExVec {return ExVec(ex_sub(a.x,b.x),ex_sub(a.y,b.y),ex_sub(a.z,b.z));}
 fn ex_vneg(a:ExVec)->ExVec {return ExVec(ex_neg(a.x),ex_neg(a.y),ex_neg(a.z));}
@@ -197,6 +229,7 @@ fn ex_cert_vec_view(v:ExVec,digits:u32)->ExVec {return ExVec(ex_cert_view(v.x,di
 // This path still checks the original integer predicate. A zero determinant
 // invalidates the strict source certificate and requests complete fallback.
 fn ex_triangle_certified(a:ExVec,b:ExVec,c:ExVec,d:ExVec)->ExDecision {
+ ex_triangle_facing=0u;
  if (ex_vec_valid(a)&ex_vec_valid(b)&ex_vec_valid(c)&ex_vec_valid(d))==0u {return ex_unresolved();}
  var av=a;var bv=b;var cv=c;var dv=d;var scale_delta=0;
  if EX_NORMALIZE_CERTIFIED {
@@ -208,13 +241,16 @@ fn ex_triangle_certified(a:ExVec,b:ExVec,c:ExVec,d:ExVec)->ExDecision {
  }
  let e1=ex_vsub(bv,av);let e2=ex_vsub(cv,av);let p=ex_cross(dv,e2);let det=ex_dot(e1,p);
  if det.valid==0u||det.length==0u {return ex_unresolved();}
+ ex_triangle_facing=select(1u,2u,det.negative!=0u);
  return ex_triangle_regular_scaled(av,dv,e1,e2,p,det,scale_delta);
 }
 fn ex_triangle(a:ExVec,b:ExVec,c:ExVec,d:ExVec)->ExDecision {
+ ex_triangle_facing=0u;
  if (ex_vec_valid(a)&ex_vec_valid(b)&ex_vec_valid(c)&ex_vec_valid(d))==0u {return ex_unresolved();}
  let e1=ex_vsub(b,a);let e2=ex_vsub(c,a);let p=ex_cross(d,e2);var det=ex_dot(e1,p);
  if det.valid==0u {return ex_unresolved();}
  if det.length!=0u {
+  ex_triangle_facing=select(1u,2u,det.negative!=0u);
   return ex_triangle_regular(a,d,e1,e2,p,det);
  }
  let normal=ex_cross(e1,e2);if ex_vec_valid(normal)==0u {return ex_unresolved();}

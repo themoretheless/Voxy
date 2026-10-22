@@ -1,0 +1,11 @@
+--- a/crates/voxy_render/src/skinned.rs
++++ b/crates/voxy_render/src/skinned.rs
+@@ -196,7 +196,7 @@
+         if self
+             .groups
+             .as_ref()
+-            .is_some_and(|groups| groups.certify(joints, model, workers))
++            .is_some_and(|groups| groups.certify(joints, model, 1))
+         {
+             return Ok(());
+         }

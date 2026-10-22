@@ -7,7 +7,7 @@ struct Ripple {
   snap: vec4<i32>,   // current window centre cell (x, z), previous centre (x, z)
   step: vec4<f32>,   // cell size (m), (c dt / dx)^2, damping per step, impulse count
   mask_min: vec4<f32>, // xz of a rectangle that confines the water, z = 1 when used
-  mask_max: vec4<f32>,
+  mask_max: vec4<f32>, // xz bounds, w = remap-only without a solver tick
 };
 @group(0) @binding(0) var<uniform> U: Ripple;
 @group(0) @binding(1) var previous: texture_2d<f32>;
@@ -39,6 +39,11 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
     return;
   }
   let c = state(g);
+  // A paused/sub-tick frame may scroll the window but must not advance or damp it.
+  if U.mask_max.w > 0.5 {
+    textureStore(next, vec2<i32>(id.xy), vec4<f32>(c, 0., 1.));
+    return;
+  }
   // reflecting walls: dry neighbours mirror the centre cell
   var lap = -4. * c.x;
   for (var k = 0; k < 4; k++) {

@@ -388,12 +388,23 @@ pub trait HairLinearSolver {
         None
     }
     /// Explicit precision-preserving coordinate route; never approximated via legacy callbacks.
-    fn joint_contact_expanded_enabled(&self) -> bool { false }
-    fn solve_joint_expanded_batch(&mut self, _requests: &[HairExpandedCoordinateRequest<'_>]) -> Option<Vec<(Vec<HairResponseCoefficient>,Vec<f64>)>> { None }
+    fn joint_contact_expanded_enabled(&self) -> bool {
+        false
+    }
+    fn solve_joint_expanded_batch(
+        &mut self,
+        _requests: &[HairExpandedCoordinateRequest<'_>],
+    ) -> Option<Vec<(Vec<HairResponseCoefficient>, Vec<f64>)>> {
+        None
+    }
     /// Independent candidates retain input order. A rejected operator must not
     /// discard a valid sibling; every candidate still needs physical admission.
-    fn solve_joint_expanded_candidates(&mut self, requests: &[HairExpandedCoordinateRequest<'_>]) -> Option<Vec<Option<(Vec<HairResponseCoefficient>, Vec<f64>)>>> {
-        self.solve_joint_expanded_batch(requests).map(|values| values.into_iter().map(Some).collect())
+    fn solve_joint_expanded_candidates(
+        &mut self,
+        requests: &[HairExpandedCoordinateRequest<'_>],
+    ) -> Option<Vec<Option<(Vec<HairResponseCoefficient>, Vec<f64>)>>> {
+        self.solve_joint_expanded_batch(requests)
+            .map(|values| values.into_iter().map(Some).collect())
     }
 
     fn joint_contact_hints_enabled(&self) -> bool {
@@ -446,7 +457,7 @@ impl HairLinearSystem {
     fn validate_shape(&self) -> Result<(), &'static str> {
         if self.band_width != direct::BAND
             || self.rhs.len() < 12
-            || self.rhs.len() % 6 != 0
+            || !self.rhs.len().is_multiple_of(6)
             || self.matrix.len() != self.rhs.len() * direct::BAND
             || self.active != (6..self.rhs.len() - 3)
             || self.matrix.iter().chain(&self.rhs).any(|v| !v.is_finite())
@@ -1280,7 +1291,7 @@ impl HairSystem {
                     contact::reconcile_contact_positions(rods, &mut current, dt, radius)
                 }
             };
-            let mut complete=projection.map_err(|error| {
+            let mut complete=projection.inspect_err(|_| {
                 if let Some(path)=std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_EXPORT") {
                     let path=std::path::Path::new(&path);
                     if let Err(export_error)=contact_replay::save(path,rods,meshes,dt,radius,self_collision,merit,continuous_mesh) {eprintln!("HAIR CONTACT REPLAY EXPORT ERROR {export_error}");}
@@ -1293,7 +1304,6 @@ impl HairSystem {
                     }
                     if let Err(export_error)=std::fs::write(path.with_extension("contacts.json"),format!("[{}]",rows.join(","))) {eprintln!("HAIR CONTACT ROW EXPORT ERROR {export_error}");}
                 }
-                error
             })?;
             let mut fresh = if self_collision {
                 contact::refresh_strand_responses(rods, radius, &[])

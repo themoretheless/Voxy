@@ -1,0 +1,77 @@
+{
+  "fixed_dt": 0.01666666753590107,
+  "fixed_ticks_total": 180,
+  "geometry_blake3": "7c819ff4076ddec925e64e9a03bda476e0904da267fb1c3b83bfbdc85d7deb46",
+  "gpu_created": false,
+  "indices_blake3": "ddc1c252f0453beeaab8de4aa76d06bbdaad0ca4c38e7ebe52928580b523ae92",
+  "limitations": [
+    "CPU replay, not presented frame p99",
+    "fixed synthetic 120 Hz schedule or two-tick stress; same production routines, separate orchestration",
+    "water, chunk rebuild, vehicle, LOD, GPU upload, GPU execution and surface excluded",
+    "stage timers and profiling overhead included; geometry setup excluded"
+  ],
+  "measured_frames": 240,
+  "scenario": "motion",
+  "seed": 42,
+  "stages": {
+    "animation": {
+      "max_us": 2.459,
+      "p50_us": 0.0,
+      "p95_us": 2.041,
+      "p99_us": 2.375,
+      "sum_us": 155.54300000000003
+    },
+    "character": {
+      "max_us": 2.875,
+      "p50_us": 0.0,
+      "p95_us": 2.0,
+      "p99_us": 2.7920000000000003,
+      "sum_us": 149.92200000000003
+    },
+    "companions": {
+      "max_us": 48.791000000000004,
+      "p50_us": 0.0,
+      "p95_us": 41.541000000000004,
+      "p99_us": 45.667,
+      "sum_us": 4602.3279999999995
+    },
+    "palette": {
+      "max_us": 5.458,
+      "p50_us": 0.0,
+      "p95_us": 2.0,
+      "p99_us": 4.9590000000000005,
+      "sum_us": 225.00500000000002
+    },
+    "render_admission": {
+      "max_us": 2182.916,
+      "p50_us": 0.0,
+      "p95_us": 2001.1249999999998,
+      "p99_us": 2151.0409999999997,
+      "sum_us": 209802.87499999997
+    },
+    "shadow_extraction": {
+      "max_us": 1.8339999999999999,
+      "p50_us": 0.459,
+      "p95_us": 1.25,
+      "p99_us": 1.583,
+      "sum_us": 147.95700000000005
+    },
+    "temporal_admission": {
+      "max_us": 3.084,
+      "p50_us": 0.583,
+      "p95_us": 2.6670000000000003,
+      "p99_us": 3.0410000000000004,
+      "sum_us": 317.53599999999994
+    },
+    "total_cpu": {
+      "max_us": 2232.333,
+      "p50_us": 1.167,
+      "p95_us": 2044.8749999999998,
+      "p99_us": 2199.375,
+      "sum_us": 215442.79000000004
+    }
+  },
+  "state_blake3": "944b310b019fcb6c467f3a411d08f64761b1f96bb98b96422a31534e1dc2c1db",
+  "vertices": 1990328,
+  "warmup_frames": 120
+}

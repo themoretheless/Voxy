@@ -432,6 +432,312 @@ impl IncompleteCholesky {
         z.chunks_exact(3).map(|v| [v[0], v[1], v[2]]).collect()
     }
 }
+struct BlockSymmetricGaussSeidel {
+    diagonal: Vec<[[f64; 3]; 3]>,
+    inverses: Vec<[[f64; 3]; 3]>,
+}
+impl BlockSymmetricGaussSeidel {
+    fn new(metric: &AssembledMetric, weight: &[f64]) -> Result<Self, &'static str> {
+        if metric.rows.len() != weight.len() {
+            return Err("mismatched block SGS dimension");
+        }
+        let mut diagonal = Vec::with_capacity(weight.len());
+        let mut inverses = Vec::with_capacity(weight.len());
+        for (i, row) in metric.rows.iter().enumerate() {
+            if !weight[i].is_finite() || weight[i] <= 0. {
+                return Err("nonpositive block SGS inertia weight");
+            }
+            let mut block = row
+                .iter()
+                .find(|&&(j, _)| j == i)
+                .map_or([[0.; 3]; 3], |&(_, b)| b);
+            for a in 0..3 {
+                block[a][a] += weight[i];
+            }
+            let det = super::super::super::det(block);
+            let leading = block[0][0] * block[1][1] - block[0][1] * block[1][0];
+            if !det.is_finite() || block[0][0] <= 0. || leading <= 0. || det <= 0. {
+                return Err("nonpositive block SGS diagonal pivot");
+            }
+            diagonal.push(block);
+            inverses.push(super::super::super::inverse(block)?);
+        }
+        Ok(Self { diagonal, inverses })
+    }
+    fn apply(&self, metric: &AssembledMetric, pinned: &[bool], r: &[Vec3]) -> Vec<Vec3> {
+        let n = r.len();
+        let mut y = vec![[0.; 3]; n];
+        for i in 0..n {
+            if pinned[i] {
+                continue;
+            }
+            let mut rhs = r[i];
+            for &(j, block) in &metric.rows[i] {
+                if j >= i {
+                    break;
+                }
+                for a in 0..3 {
+                    rhs[a] -= dot(block[a], y[j]);
+                }
+            }
+            y[i] = self.inverses[i].map(|row| dot(row, rhs));
+        }
+        let mut z = vec![[0.; 3]; n];
+        for i in (0..n).rev() {
+            if pinned[i] {
+                continue;
+            }
+            let mut rhs = self.diagonal[i].map(|row| dot(row, y[i]));
+            for &(j, block) in &metric.rows[i] {
+                if j <= i {
+                    continue;
+                }
+                for a in 0..3 {
+                    rhs[a] -= dot(block[a], z[j]);
+                }
+            }
+            z[i] = self.inverses[i].map(|row| dot(row, rhs));
+        }
+        z
+    }
+}
+#[test]
+fn block_sgs_is_symmetric_positive_definite_holds_pins_and_accelerates_pcg() {
+    let cells: Vec<_> = (0..2)
+        .flat_map(|x| (0..2).flat_map(move |y| (0..2).map(move |z| [x, y, z])))
+        .collect();
+    let mesh = TetraMesh::from_lattice_cells([0.; 3], [0.1; 3], &cells).unwrap();
+    let count = mesh.points.len();
+    let mut pins = vec![false; count];
+    pins[0] = true;
+    let body = mesh
+        .into_body(
+            pins,
+            &Material {
+                shear_pa: 35000.,
+                bulk_pa: 2e6,
+                fibers: vec![],
+            },
+        )
+        .unwrap();
+    let weights = vec![2.; count];
+    let metric = AssembledMetric::new(&body);
+    let sgs = BlockSymmetricGaussSeidel::new(&metric, &weights).unwrap();
+    let u: Vec<Vec3> = (0..count)
+        .map(|i| {
+            [
+                ((i + 1) as f64 * 0.19).sin(),
+                ((i + 2) as f64 * 0.31).cos(),
+                ((i + 3) as f64 * 0.13).sin(),
+            ]
+        })
+        .collect();
+    let v: Vec<Vec3> = (0..count)
+        .map(|i| {
+            [
+                ((i + 4) as f64 * 0.23).cos(),
+                ((i + 5) as f64 * 0.17).sin(),
+                ((i + 6) as f64 * 0.29).cos(),
+            ]
+        })
+        .collect();
+    let mu = sgs.apply(&metric, &body.pinned, &u);
+    let mv = sgs.apply(&metric, &body.pinned, &v);
+    assert_eq!(mu[0], [0.; 3]);
+    assert_eq!(mv[0], [0.; 3]);
+    let u_mv: f64 = (1..count).map(|i| dot(u[i], mv[i])).sum();
+    let v_mu: f64 = (1..count).map(|i| dot(v[i], mu[i])).sum();
+    assert!((u_mv - v_mu).abs() < 1e-13 * u_mv.abs().max(1.));
+    let u_mu: f64 = (1..count).map(|i| dot(u[i], mu[i])).sum();
+    assert!(u_mu > 0.);
+    let coarse = RigidCoarse::partitioned_modes(&body, &weights, true, true);
+    let diagonal: Vec<_> = weights
+        .iter()
+        .zip(&body.diagonal)
+        .map(|(w, k)| [w + k; 3])
+        .collect();
+    let scalar_report = try_preconditioned_direction_report_with_limit::<std::convert::Infallible>(
+        &body.pinned,
+        &u,
+        |x| Ok(rest_material_action(&body, &weights, x)),
+        |r| {
+            r.iter()
+                .zip(&diagonal)
+                .map(|(r, d)| std::array::from_fn(|a| r[a] / d[a]))
+                .collect()
+        },
+        16,
+    )
+    .unwrap();
+    let two_level_report =
+        try_preconditioned_direction_report_with_limit::<std::convert::Infallible>(
+            &body.pinned,
+            &u,
+            |x| Ok(rest_material_action(&body, &weights, x)),
+            |r| {
+                let fine = sgs.apply(&metric, &body.pinned, r);
+                let coarse_part = coarse.apply(r);
+                fine.into_iter()
+                    .zip(coarse_part)
+                    .map(|(a, b)| std::array::from_fn(|k| a[k] + b[k]))
+                    .collect()
+            },
+            16,
+        )
+        .unwrap();
+    let scalar_ratio = true_search_residual_ratio(
+        &body.pinned,
+        &u,
+        &rest_material_action(&body, &weights, &scalar_report.direction),
+    )
+    .unwrap();
+    let two_level_ratio = true_search_residual_ratio(
+        &body.pinned,
+        &u,
+        &rest_material_action(&body, &weights, &two_level_report.direction),
+    )
+    .unwrap();
+    assert!(
+        two_level_ratio < scalar_ratio * 0.1,
+        "two_level_ratio={two_level_ratio} scalar_ratio={scalar_ratio}"
+    );
+    let invalid = AssembledMetric {
+        rows: vec![vec![(0, [[-10., 0., 0.], [0., -10., 0.], [0., 0., -10.]])]],
+    };
+    assert!(BlockSymmetricGaussSeidel::new(&invalid, &[2.]).is_err());
+}
+
+/// GPU-ready $m$-step Chebyshev polynomial preconditioner on $D^{-1} A$ using
+/// Gershgorin spectrum bounds $[\lambda_{\min}, \lambda_{\max}]$, requiring zero global
+/// reductions or sequential forward/backward sweeps.
+struct ChebyshevPolynomialPreconditioner {
+    inv_diag: Vec<[f64; 3]>,
+    lambda_min: f64,
+    lambda_max: f64,
+    degree: usize,
+}
+
+impl ChebyshevPolynomialPreconditioner {
+    fn new(metric: &AssembledMetric, body: &Body, weight: &[f64], degree: usize) -> Self {
+        let n = metric.rows.len();
+        let mut inv_diag = vec![[1.; 3]; n];
+        let mut max_gershgorin = 1.0_f64;
+        for (i, row) in metric.rows.iter().enumerate() {
+            let d = (weight[i] + body.diagonal[i]).max(1e-12);
+            inv_diag[i] = [1.0 / d; 3];
+            if body.pinned[i] {
+                continue;
+            }
+            let mut row_l1 = 0.0_f64;
+            for &(_, block) in row {
+                for r in block {
+                    for val in r {
+                        row_l1 += val.abs();
+                    }
+                }
+            }
+            max_gershgorin = max_gershgorin.max(1.0 + row_l1 / d);
+        }
+        let lambda_max = max_gershgorin.max(1.2);
+        let lambda_min = (0.08 * lambda_max).clamp(0.05, 0.9);
+        Self {
+            inv_diag,
+            lambda_min,
+            lambda_max,
+            degree: degree.max(1),
+        }
+    }
+
+    fn apply(&self, metric: &AssembledMetric, body: &Body, weight: &[f64], r: &[Vec3]) -> Vec<Vec3> {
+        let n = r.len();
+        let theta = 0.5 * (self.lambda_max + self.lambda_min);
+        let delta = 0.5 * (self.lambda_max - self.lambda_min);
+        let sigma1 = theta / delta;
+        let mut rho_prev = 1.0 / sigma1;
+        let mut x_prev = vec![[0.; 3]; n];
+        let mut x_curr: Vec<Vec3> = (0..n)
+            .map(|i| {
+                if body.pinned[i] {
+                    [0.; 3]
+                } else {
+                    std::array::from_fn(|a| (r[i][a] * self.inv_diag[i][a]) / theta)
+                }
+            })
+            .collect();
+        for _ in 1..self.degree {
+            let ax = metric.apply(body, weight, &x_curr);
+            let rho_next = 1.0 / (2.0 * sigma1 - rho_prev);
+            let factor1 = 2.0 * rho_next / delta;
+            let factor2 = rho_next * rho_prev;
+            let mut x_next = vec![[0.; 3]; n];
+            for i in 0..n {
+                if body.pinned[i] {
+                    continue;
+                }
+                for a in 0..3 {
+                    let residual_ia = r[i][a] - ax[i][a];
+                    let z_ia = residual_ia * self.inv_diag[i][a];
+                    x_next[i][a] =
+                        x_curr[i][a] + factor1 * z_ia + factor2 * (x_curr[i][a] - x_prev[i][a]);
+                }
+            }
+            x_prev = x_curr;
+            x_curr = x_next;
+            rho_prev = rho_next;
+        }
+        x_curr
+    }
+}
+
+#[test]
+fn chebyshev_polynomial_preconditioner_is_spd_and_accelerates_pcg_without_sweeps() {
+    let cells: Vec<_> = (0..2)
+        .flat_map(|x| (0..2).flat_map(move |y| (0..2).map(move |z| [x, y, z])))
+        .collect();
+    let mesh = TetraMesh::from_lattice_cells([0.; 3], [0.1; 3], &cells).unwrap();
+    let count = mesh.points.len();
+    let mut pins = vec![false; count];
+    pins[0] = true;
+    let body = mesh
+        .into_body(
+            pins,
+            &Material {
+                shear_pa: 35000.,
+                bulk_pa: 2e6,
+                fibers: vec![],
+            },
+        )
+        .unwrap();
+    let weights = vec![2.; count];
+    let metric = AssembledMetric::new(&body);
+    let cheb = ChebyshevPolynomialPreconditioner::new(&metric, &body, &weights, 3);
+    let u: Vec<Vec3> = (0..count)
+        .map(|i| {
+            [
+                ((i + 1) as f64 * 0.19).sin(),
+                ((i + 2) as f64 * 0.31).cos(),
+                ((i + 3) as f64 * 0.13).sin(),
+            ]
+        })
+        .collect();
+    let v: Vec<Vec3> = (0..count)
+        .map(|i| {
+            [
+                ((i + 4) as f64 * 0.23).cos(),
+                ((i + 5) as f64 * 0.17).sin(),
+                ((i + 6) as f64 * 0.29).cos(),
+            ]
+        })
+        .collect();
+    let mu = cheb.apply(&metric, &body, &weights, &u);
+    let mv = cheb.apply(&metric, &body, &weights, &v);
+    assert_eq!(mu[0], [0.; 3]);
+    let u_mv: f64 = (1..count).map(|i| dot(u[i], mv[i])).sum();
+    let v_mu: f64 = (1..count).map(|i| dot(v[i], mu[i])).sum();
+    assert!((u_mv - v_mu).abs() < 1e-12 * u_mv.abs().max(1.));
+    let u_mu: f64 = (1..count).map(|i| dot(u[i], mu[i])).sum();
+    assert!(u_mu > 0.);
+}
 #[test]
 fn sparse_factor_matches_independent_coupled_node_inverse_and_rejects_bad_pivot() {
     let metric = AssembledMetric {

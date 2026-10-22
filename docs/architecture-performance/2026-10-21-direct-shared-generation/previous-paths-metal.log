@@ -1,0 +1,11 @@
+
+running 3 tests
+test fluid_screen::shared_tests::gpu_frame_fluid_snapshots_match_legacy_including_overflow ... frame input adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+test native_vegetation::shared_tests::gpu_frame_vegetation_instances_and_camera_match_legacy ... frame input adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+test renderer::shared_camera_tests::gpu_frame_renderer_cameras_preserve_words_and_binding_refresh ... frame input adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 404 filtered out; finished in 1.61s
+

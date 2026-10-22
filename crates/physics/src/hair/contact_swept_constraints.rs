@@ -656,7 +656,7 @@ fn activate_with_normal_mode(
             // Relinearize every retained feature on that same current path;
             // obsolete clock paths are not extra physical constraints.
             cut.scales = [scales[cut.pair.a.0], scales[cut.pair.b.0]];
-            let _ = add_cut(
+            add_cut(
                 constraints,
                 rods,
                 start,
@@ -1700,7 +1700,7 @@ pub(super) fn activate_reference(
             // Relinearize every retained feature on that same current path;
             // obsolete clock paths are not extra physical constraints.
             cut.scales = [scales[cut.pair.a.0], scales[cut.pair.b.0]];
-            let _ = add_cut(
+            add_cut(
                 constraints,
                 rods,
                 start,

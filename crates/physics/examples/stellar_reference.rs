@@ -208,13 +208,16 @@ fn main() -> Result<(), String> {
     if let Some(path) = args.get(8) {
         let mut csv = String::from("inner_m,outer_m,density_kg_m3,energy_J_m3\n");
         for (i, cell) in sphere.cells.iter().enumerate() {
-            csv.push_str(&format!(
-                "{},{},{},{}\n",
-                i as f64 * sphere.spacing,
-                (i + 1) as f64 * sphere.spacing,
-                cell.density,
-                cell.energy
-            ));
+            let _ = std::fmt::Write::write_fmt(
+                &mut csv,
+                format_args!(
+                    "{},{},{},{}\n",
+                    i as f64 * sphere.spacing,
+                    (i + 1) as f64 * sphere.spacing,
+                    cell.density,
+                    cell.energy
+                ),
+            );
         }
         std::fs::write(path, csv).map_err(|e| e.to_string())?;
     }

@@ -1,0 +1,66 @@
+{
+  "timestamp_utc": "2026-10-21T20:58:28.401861+00:00",
+  "thread_id": "01a0c079-36c4-7a01-b6a0-7a0cf797b075",
+  "state": "original_jobs_completed",
+  "active_pids": [],
+  "identity": {
+    "repo": "/Users/themoretheless/Documents/Sources/fvid",
+    "last_session_id": 56903,
+    "last_command": "CARGO_TARGET_DIR=/tmp/fvid-444-qualification cargo test --offline --no-default-features --features player --test eac3_transient_presentation",
+    "last_log": "/tmp/fvid-expanded-transient-after.log",
+    "exit_code": 0
+  },
+  "stop_method": "Original sessions resumed externally; this task sent no SIGCONT and started no replacement jobs",
+  "new_heavy_work_held": false,
+  "goal_paused": false,
+  "resume_needed": [
+    "Run expanded transient container/worker acceptance and existing expanded E-AC-3 integration targets",
+    "Run full player-feature library after implementation qualification"
+  ],
+  "contaminated_performance_measurements": [
+    "Build elapsed time includes external suspension; these are functional checks, not performance results"
+  ],
+  "still_quiescent_at_utc": "2026-10-21T21:12:37.955208+00:00",
+  "awaiting_window_completion_message": false,
+  "released_at_utc": "2026-10-21T21:19:22.426751+00:00",
+  "release_evidence": "Original qualify.py controller PID 4842 is absent; no live matching benchmark/controller; quiet hold exceeded approximately five minutes. No benchmark success is inferred.",
+  "paused_processes": [
+    {
+      "pid": 55135,
+      "identity": "55135  8947 Rs   Thu Oct 22 01:10:05 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617007.889188,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55518,
+      "identity": "55518  8947 Ss   Thu Oct 22 01:10:19 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617019.993647,
+      "initiator": "user-authorized temporary common build window"
+    }
+  ],
+  "current_identities": {
+    "55135": "55135  8947 Ts   Thu Oct 22 01:10:05 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+    "55518": "55518  8947 Ts   Thu Oct 22 01:10:19 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo"
+  },
+  "controller_identity": "PID 56044 qualify.py session-2 --resume --wait-seconds 600",
+  "observed_at_utc": "2026-10-21T21:19:05.397436+00:00",
+  "resume_provenance": "/Users/themoretheless/Documents/Sources/voxy/docs/architecture-performance/2026-10-22-full-frame-shared-generation/resumed-common-builds.json",
+  "resume_method": "Coordinator identity-checked SIGCONT, same sessions completed; no restart or signal from FVid task",
+  "completed_at_utc": "2026-10-21T21:23:47.321678+00:00",
+  "completed_sessions": [
+    {
+      "session_id": 52301,
+      "pid": 55135,
+      "exit_code": 0,
+      "log": "/tmp/fvid-expanded-transient-matrix.log"
+    },
+    {
+      "session_id": 12653,
+      "pid": 55518,
+      "exit_code": 0,
+      "log": "/tmp/fvid-expanded-transient-library.log"
+    }
+  ]
+}

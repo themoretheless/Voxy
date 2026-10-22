@@ -5,9 +5,8 @@ fn exact_copy_parameter(a:ExInt,index:u32)->ExInt {
 fn exact_axis(slot:u32,vertex:u32,axis:u32,origin_hi:u32,origin_lo:u32)->ExInt {
  var value=ex_float(exact_instances[slot*28u+12u+axis],-298);
  for(var k=0u;k<3u;k+=1u) {
-  let matrix=ex_float(exact_instances[slot*28u+k*4u+axis],-149);
-  let point=ex_float(exact_vertices[vertex*12u+k],-149);
-  value=ex_add(value,ex_mul(matrix,point));
+  let product=ex_float_product(exact_instances[slot*28u+k*4u+axis],exact_vertices[vertex*12u+k],-298);
+  value=ex_add(value,product);
  }
  value=ex_sub(value,ex_float(origin_hi,-298));return ex_sub(value,ex_float(origin_lo,-298));
 }

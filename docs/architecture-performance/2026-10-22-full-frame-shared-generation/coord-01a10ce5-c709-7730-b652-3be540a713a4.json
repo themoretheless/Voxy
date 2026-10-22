@@ -1,0 +1,10 @@
+{
+  "timestamp_utc": "2026-10-21T20:58:28.737618+00:00",
+  "thread": "01a10ce5-c709-7730-b652-3be540a713a4",
+  "pid": 23635,
+  "identity": "cargo test -p rrrah-dedup --no-default-features --features decode --test png_primary_policy",
+  "method": "Process finished naturally before attempted pause; ps confirmed PID missing, no signal sent",
+  "resume": "No suspended process; new heavy jobs deferred until resource window completion",
+  "provenance": "Coordination request from thread01a155fb-7cde-7dc3-8f0a-ff049037a551",
+  "timing_qualification": "No benchmark timing claim"
+}

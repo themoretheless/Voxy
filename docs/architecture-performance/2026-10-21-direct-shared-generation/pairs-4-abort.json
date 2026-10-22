@@ -1,0 +1,7 @@
+{
+  "time": 1792605522.510679,
+  "signal": "SIGTERM",
+  "target_pid": 89941,
+  "initiator": "this task",
+  "reason": "GPU utilization 99% and severely unstable drain times; reject run. SDF controller found but no active SDF child, competing GPU owner unconfirmed."
+}

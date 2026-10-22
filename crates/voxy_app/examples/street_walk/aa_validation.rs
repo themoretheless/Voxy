@@ -1,6 +1,7 @@
 //! Deterministic full-scene camera route shared by every AA mode.
 use glam::{Quat, Vec3};
 use std::path::PathBuf;
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct AaValidation {
     pub directory: PathBuf,
@@ -9,6 +10,7 @@ pub struct AaValidation {
     pub frame_ms: Vec<f64>,
     pub cycle_metalfx: bool,
 }
+#[allow(dead_code)]
 impl AaValidation {
     pub fn from_environment() -> Option<Self> {
         std::env::var_os("VOXY_STREET_AA_CAPTURE").map(|path| Self {

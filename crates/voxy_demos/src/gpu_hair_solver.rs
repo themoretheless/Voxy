@@ -613,7 +613,8 @@ impl GpuHairLinearSolver {
                 self.calls,
             ) {
                 Ok(true) => eprintln!(
-                    "HAIR STRUCTURAL SAME INPUT AUDIT captured={path:?} call={}",
+                    "HAIR STRUCTURAL SAME INPUT AUDIT captured={} call={}",
+                    std::path::Path::new(&path).display(),
                     self.calls
                 ),
                 Ok(false) => {}
@@ -774,7 +775,7 @@ impl GpuHairLinearSolver {
                             "scope":"exact rejected normalized GPU solve; not an admitted physical correction"});
                         let mut out = std::io::BufWriter::new(file);
                         if let Err(error) =
-                            serde_json::to_writer(&mut out, &report).and_then(|_| {
+                            serde_json::to_writer(&mut out, &report).and_then(|()| {
                                 use std::io::Write;
                                 out.flush().map_err(serde_json::Error::io)
                             })
@@ -977,50 +978,99 @@ impl HairLinearSolver for GpuHairLinearSolver {
         self.joint_contact_qr
     }
     fn joint_contact_coordinate_batches_enabled(&self) -> bool {
-        self.joint_contact_qr && (self.joint_coordinate_batches || self.joint_contact_expanded_enabled())
+        self.joint_contact_qr
+            && (self.joint_coordinate_batches || self.joint_contact_expanded_enabled())
     }
     fn joint_contact_expanded_enabled(&self) -> bool {
-        self.joint_contact_qr && (std::env::var("VOXY_HAIR_EXPANDED_CONTACT").as_deref()==Ok("1") || std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref()==Ok("1"))
+        self.joint_contact_qr
+            && (std::env::var("VOXY_HAIR_EXPANDED_CONTACT").as_deref() == Ok("1")
+                || std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref() == Ok("1"))
     }
-    fn solve_joint_expanded_batch(&mut self, requests:&[physics::hair::HairExpandedCoordinateRequest<'_>]) -> Option<Vec<(Vec<physics::hair::HairResponseCoefficient>,Vec<f64>)>> {
-        if std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref()==Ok("1") {
-            return self.solve_joint_expanded_candidates(requests)?.into_iter().collect();
+    fn solve_joint_expanded_batch(
+        &mut self,
+        requests: &[physics::hair::HairExpandedCoordinateRequest<'_>],
+    ) -> Option<Vec<(Vec<physics::hair::HairResponseCoefficient>, Vec<f64>)>> {
+        if std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref() == Ok("1") {
+            return self
+                .solve_joint_expanded_candidates(requests)?
+                .into_iter()
+                .collect();
         }
-        self.joint_coordinate_calls+=requests.len();
-        match self.solve_joint_expanded_checked(requests) {
-            Ok(result)=> {self.last_error=None;Some(result)},
-            Err(error)=> {self.last_error=Some(error.to_string());None}
-        }
-    }
-    fn solve_joint_expanded_candidates(&mut self, requests: &[physics::hair::HairExpandedCoordinateRequest<'_>]) -> Option<Vec<Option<(Vec<physics::hair::HairResponseCoefficient>, Vec<f64>)>>> {
         self.joint_coordinate_calls += requests.len();
-        if std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref()==Ok("1") {
+        match self.solve_joint_expanded_checked(requests) {
+            Ok(result) => {
+                self.last_error = None;
+                Some(result)
+            }
+            Err(error) => {
+                self.last_error = Some(error.to_string());
+                None
+            }
+        }
+    }
+    fn solve_joint_expanded_candidates(
+        &mut self,
+        requests: &[physics::hair::HairExpandedCoordinateRequest<'_>],
+    ) -> Option<Vec<Option<(Vec<physics::hair::HairResponseCoefficient>, Vec<f64>)>>> {
+        self.joint_coordinate_calls += requests.len();
+        if std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref() == Ok("1") {
             if self.joint_five_programs.is_none() {
                 match pollster::block_on(five::FivePrograms::new(&self.device)) {
-                    Ok(programs)=>self.joint_five_programs=Some(programs),
-                    Err(error)=>{self.last_error=Some(error.to_string());return Some(requests.iter().map(|_|None).collect());}
+                    Ok(programs) => self.joint_five_programs = Some(programs),
+                    Err(error) => {
+                        self.last_error = Some(error.to_string());
+                        return Some(requests.iter().map(|_| None).collect());
+                    }
                 }
             }
-            let programs=self.joint_five_programs.as_mut().unwrap();let mut failures=Vec::new();
-            let previous=(programs.qr_submissions,programs.qr_dispatches);
-            let results=requests.iter().enumerate().map(|(i,request)|match programs.solve(&self.device,&self.queue,request){
-                Ok(value)=>Some(value),Err(error)=>{failures.push(format!("five operator {i}: {error}"));None}
-            }).collect();
-            self.joint_equality_submissions+=programs.qr_submissions-previous.0;
-            self.joint_equality_dispatches+=programs.qr_dispatches-previous.1;
-            self.last_error=if failures.is_empty(){None}else{Some(failures.join("; "))};
+            let programs = self.joint_five_programs.as_mut().unwrap();
+            let mut failures = Vec::new();
+            let previous = (programs.qr_submissions, programs.qr_dispatches);
+            let results = requests
+                .iter()
+                .enumerate()
+                .map(
+                    |(i, request)| match programs.solve(&self.device, &self.queue, request) {
+                        Ok(value) => Some(value),
+                        Err(error) => {
+                            failures.push(format!("five operator {i}: {error}"));
+                            None
+                        }
+                    },
+                )
+                .collect();
+            self.joint_equality_submissions += programs.qr_submissions - previous.0;
+            self.joint_equality_dispatches += programs.qr_dispatches - previous.1;
+            self.last_error = if failures.is_empty() {
+                None
+            } else {
+                Some(failures.join("; "))
+            };
             return Some(results);
         }
         let mut failures = Vec::new();
-        let values = joint::isolate_failed_batch(0..requests.len(), &mut |range| {
-            self.solve_joint_expanded_partial_checked(&requests[range])
-        }, &mut failures);
-        let values = values.into_iter().enumerate().map(|(i, value)| match value {
-            Some(Ok(candidate)) => Some(candidate),
-            Some(Err(error)) => { failures.push(format!("operator {i}: {error}")); None },
-            None => None,
-        }).collect();
-        self.last_error = if failures.is_empty() { None } else { Some(failures.join("; ")) };
+        let values = joint::isolate_failed_batch(
+            0..requests.len(),
+            &mut |range| self.solve_joint_expanded_partial_checked(&requests[range]),
+            &mut failures,
+        );
+        let values = values
+            .into_iter()
+            .enumerate()
+            .map(|(i, value)| match value {
+                Some(Ok(candidate)) => Some(candidate),
+                Some(Err(error)) => {
+                    failures.push(format!("operator {i}: {error}"));
+                    None
+                }
+                None => None,
+            })
+            .collect();
+        self.last_error = if failures.is_empty() {
+            None
+        } else {
+            Some(failures.join("; "))
+        };
         Some(values)
     }
 

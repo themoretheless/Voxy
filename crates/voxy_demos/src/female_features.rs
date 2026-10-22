@@ -1277,12 +1277,10 @@ fn crown_fissure_depth(x: f32, z: f32, cutting_side: f32, tooth: usize) -> f32 {
     0.0005 * longitudinal.max(crossing) * exposure * exposure
 }
 fn crown_exponent(tooth: usize) -> f32 {
-    if tooth == 2 {
-        0.55
-    } else if tooth < 2 {
-        0.38
-    } else {
-        0.5
+    match tooth.cmp(&2) {
+        std::cmp::Ordering::Equal => 0.55,
+        std::cmp::Ordering::Less => 0.38,
+        std::cmp::Ordering::Greater => 0.5,
     }
 }
 /// One continuous dorsum avoids overlapping lobes and their internal seam.
@@ -1890,7 +1888,7 @@ mod tests {
             ));
             assert_eq!(upper.indices(), lower.indices());
             for mesh in [&upper, &lower] {
-                let sign = if std::ptr::eq(mesh, &upper) { -1. } else { 1. };
+                let sign = if std::ptr::eq(mesh, &raw const upper) { -1. } else { 1. };
                 let center = mesh
                     .vertices()
                     .iter()

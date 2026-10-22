@@ -21,7 +21,7 @@ fn read<T: bytemuck::Pod>(
         .map(bytemuck::pod_read_unaligned)
         .collect())
 }
-const SHADER: &str = r#"
+const SHADER: &str = r"
 enable wgpu_ray_query;
 struct Input { origin:vec4<f32>, direction:vec4<f32>, expected:vec4<u32> }
 @group(0) @binding(0) var scene:acceleration_structure;
@@ -35,7 +35,7 @@ struct Input { origin:vec4<f32>, direction:vec4<f32>, expected:vec4<u32> }
  while rayQueryProceed(&q) {let c=rayQueryGetCandidateIntersection(&q);if c.kind==3u {count+=1u;if c.instance_custom_data==input.expected.x && c.primitive_index==input.expected.y && source_layout[c.instance_custom_data].x==input.expected.z {found=1u;}}}
  output[id.x]=vec4<u32>(found,count,input.expected.x,input.expected.y);
 }
-"#;
+";
 pub(super) fn probe(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -84,8 +84,13 @@ pub(super) fn probe(
                         .map(|normal| (primitive, (p[0] + p[1] + p[2]) / 3., normal))
                 })
                 .unwrap_or_else(|| {
-                    let p: Vec<_>=indices[..3].iter().map(|&i|w.transform_point3(glam::Vec3::from(vertices[i as usize].position))).collect();
-                    (0,(p[0]+p[1]+p[2])/3.,glam::Vec3::Z)
+                    let p: Vec<_> = indices[..3]
+                        .iter()
+                        .map(|&i| {
+                            w.transform_point3(glam::Vec3::from(vertices[i as usize].position))
+                        })
+                        .collect();
+                    (0, (p[0] + p[1] + p[2]) / 3., glam::Vec3::Z)
                 });
             let origin = center + normal * 0.25;
             let direction = -normal;
@@ -169,7 +174,11 @@ pub(super) fn probe(
         Err(voxy_render::RaySceneError::InvalidTransform)
     );
     let mut changed = native;
-    changed[3] = if native[3].next_up().is_finite() { native[3].next_up() } else { native[3].next_down() };
+    changed[3] = if native[3].next_up().is_finite() {
+        native[3].next_up()
+    } else {
+        native[3].next_down()
+    };
     assert_eq!(
         scene.set_instances(&[
             voxy_render::RayInstanceUpdate {
@@ -190,8 +199,8 @@ pub(super) fn probe(
     let ray_bytes = inputs.len() as u64 * 48;
     let output_bytes = inputs.len() as u64 * 16;
     let limits = device.limits();
-    if ray_bytes > u64::from(limits.max_storage_buffer_binding_size)
-        || output_bytes > u64::from(limits.max_storage_buffer_binding_size)
+    if ray_bytes > limits.max_storage_buffer_binding_size
+        || output_bytes > limits.max_storage_buffer_binding_size
         || (inputs.len() as u32).div_ceil(64) > limits.max_compute_workgroups_per_dimension
     {
         return Err(
@@ -340,8 +349,8 @@ pub(super) fn probe(
         inputs.len(),
         scene.archive_candidate_proxy_count().unwrap()
     );
-    if std::env::var("VOXY_RAY_WORLD_NARROW").as_deref()==Ok("1") {
-        super::world_narrow::probe(device,queue,&scene,&meshes,all_triangles)?;
+    if std::env::var("VOXY_RAY_WORLD_NARROW").as_deref() == Ok("1") {
+        super::world_narrow::probe(device, queue, &scene, &meshes, all_triangles)?;
     }
     if let Some(slot) = std::env::var_os("VOXY_RAY_WORLD_NEAREST_REMOVE_SLOT") {
         if std::env::var("VOXY_RAY_WORLD_EXACT_NEAREST").as_deref() != Ok("1") {
@@ -352,9 +361,18 @@ pub(super) fn probe(
         scene.build_instances(&mut encoder);
         queue.submit([encoder.finish()]);
     }
-    if let Some(cases)=std::env::var_os("VOXY_RAY_WORLD_EXACT_CASES") {
-        let truth=std::env::var_os("VOXY_RAY_WORLD_EXACT_TRUTH").ok_or("exact cases require an oracle for diagnostic qualification")?;
-        super::world_exact::probe(device,queue,&scene,&meshes,std::path::Path::new(&cases),std::path::Path::new(&truth),root)?;
+    if let Some(cases) = std::env::var_os("VOXY_RAY_WORLD_EXACT_CASES") {
+        let truth = std::env::var_os("VOXY_RAY_WORLD_EXACT_TRUTH")
+            .ok_or("exact cases require an oracle for diagnostic qualification")?;
+        super::world_exact::probe(
+            device,
+            queue,
+            &scene,
+            &meshes,
+            std::path::Path::new(&cases),
+            std::path::Path::new(&truth),
+            root,
+        )?;
     }
     Ok(())
 }

@@ -68,6 +68,71 @@ impl Hasher for FastHasher {
     }
 }
 
+/// Deterministic, forkable SplitMix64 pseudorandom generator for procedural world generation.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DeterministicRng(u64);
+
+impl DeterministicRng {
+    #[must_use]
+    pub const fn new(seed: u64) -> Self {
+        Self(seed)
+    }
+
+    /// Forks a reproducible child generator from a 3D coordinate `(x, y, z)`.
+    #[must_use]
+    #[allow(clippy::cast_sign_loss)]
+    pub const fn fork_coord(self, x: i64, y: i64, z: i64) -> Self {
+        let mut h = self.0;
+        h = (h ^ (x as u64)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
+        h = (h ^ (y as u64)).wrapping_mul(0x94D0_49BB_1331_11EB);
+        h = (h ^ (z as u64)).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+        Self(h ^ (h >> 31))
+    }
+
+    pub const fn next_u64(&mut self) -> u64 {
+        self.0 = self.0.wrapping_add(0x9E37_79B9_7F4A_7C15);
+        let mut z = self.0;
+        z = (z ^ (z >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
+        z = (z ^ (z >> 27)).wrapping_mul(0x94D0_49BB_1331_11EB);
+        z ^ (z >> 31)
+    }
+
+    #[allow(clippy::cast_possible_truncation)]
+    pub const fn next_u32(&mut self) -> u32 {
+        (self.next_u64() >> 32) as u32
+    }
+
+    /// Uniform float in $[0.0, 1.0)$ using the top 24 bits of `next_u64`.
+    #[allow(clippy::cast_precision_loss)]
+    pub fn next_f32(&mut self) -> f32 {
+        ((self.next_u64() >> 40) as f32) * (1.0 / ((1_u32 << 24) as f32))
+    }
+}
+
+/// Castagnoli CRC-32C checksum for verifying region frames and WAL records.
+#[must_use]
+pub const fn crc32c(bytes: &[u8]) -> u32 {
+    crc32c_append(0, bytes)
+}
+
+/// Incrementally updates a Castagnoli CRC-32C checksum over `bytes`.
+#[must_use]
+pub const fn crc32c_append(previous: u32, bytes: &[u8]) -> u32 {
+    let mut crc = !previous;
+    let mut i = 0;
+    while i < bytes.len() {
+        crc ^= bytes[i] as u32;
+        let mut bit = 0;
+        while bit < 8 {
+            let mask = (crc & 1).wrapping_neg();
+            crc = (crc >> 1) ^ (0x82F6_3B78 & mask);
+            bit += 1;
+        }
+        i += 1;
+    }
+    !crc
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,0 +1,21 @@
+{
+  "authorization": "user explicitly authorized pausing street_walk in this chat",
+  "initiator": "this task",
+  "must_resume": true,
+  "processes": [
+    {
+      "pid": 80614,
+      "identity": "80614 80611 S    Thu Oct 22 00:30:06 2026     /opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/run-baselines.py",
+      "signal": "SIGSTOP",
+      "time": 1792615316.886946,
+      "role": "street_walk respawn controller"
+    },
+    {
+      "pid": 91643,
+      "identity": "91643 80614 Ss   Thu Oct 22 00:40:03 2026     /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after --experimental-ray-query --offscreen-benchmark --world-ray-audit-frames 4 --spawn pool --snapshot /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/qualification/repeat-c/report.png",
+      "signal": "SIGSTOP",
+      "time": 1792615317.302882,
+      "role": "street_walk renderer"
+    }
+  ]
+}

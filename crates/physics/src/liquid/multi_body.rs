@@ -1192,8 +1192,8 @@ fn solve_contact(
                         },
                     ]
                 };
-                let prepared = if index >= count && point_loads.is_some() {
-                    let points = point_loads.unwrap()[index - count]
+                let prepared = if let (true, Some(point_loads)) = (index >= count, point_loads) {
+                    let points = point_loads[index - count]
                         .iter()
                         .map(|point| point.shifted(load_offset + dt - remaining))
                         .collect::<Result<Vec<_>, _>>()

@@ -152,7 +152,7 @@ impl Strand {
         colliders: &[SphereCollider],
         frame: [[f64; 3]; 3],
     ) -> Result<(), &'static str> {
-        self.step_oriented_with_boxes(dt,root,acceleration,colliders,&[],frame)
+        self.step_oriented_with_boxes(dt, root, acceleration, colliders, &[], frame)
     }
 
     /// Discrete free-particle contacts against spheres and expanded solid boxes.
@@ -168,7 +168,10 @@ impl Strand {
         boxes: &[BoxCollider],
         frame: [[f64; 3]; 3],
     ) -> Result<(), &'static str> {
-        if boxes.iter().any(|b| !finite(b.min)||!finite(b.max)||(0..3).any(|i|b.min[i]>=b.max[i])) {
+        if boxes
+            .iter()
+            .any(|b| !finite(b.min) || !finite(b.max) || (0..3).any(|i| b.min[i] >= b.max[i]))
+        {
             return Err("invalid strand box collider");
         }
         let dot = |a: [f64; 3], b: [f64; 3]| a.into_iter().zip(b).map(|(x, y)| x * y).sum::<f64>();
@@ -239,7 +242,7 @@ impl Strand {
                         *p = add(c.center, scale(direction, radius));
                     }
                 }
-                *p=project_box_union(*p,boxes,self.config.radius);
+                *p = project_box_union(*p, boxes, self.config.radius);
             }
         }
         if !next.iter().copied().all(finite) {
@@ -249,6 +252,77 @@ impl Strand {
         std::mem::swap(&mut self.previous, &mut self.positions);
         std::mem::swap(&mut self.positions, &mut self.scratch);
         Ok(())
+    }
+
+    /// Solves the linearized tridiagonal inextensibility system along the current segment
+    /// directions in $O(N)$ time using the Thomas algorithm, followed by one exact radial
+    /// normalization pass from the pinned root so every segment length equals `self.lengths[i]`
+    /// to machine precision.
+    pub fn project_inextensible_thomas(&mut self) {
+        let m = self.lengths.len();
+        if m == 0 {
+            return;
+        }
+        let mut dirs = Vec::with_capacity(m);
+        let mut violations = Vec::with_capacity(m);
+        for i in 0..m {
+            let delta = sub(self.positions[i + 1], self.positions[i]);
+            let dist = length(delta);
+            let dir = if dist > 1e-12 {
+                scale(delta, 1.0 / dist)
+            } else {
+                let rest_delta = sub(self.rest[i + 1], self.rest[i]);
+                scale(rest_delta, 1.0 / self.lengths[i])
+            };
+            dirs.push(dir);
+            violations.push(dist - self.lengths[i]);
+        }
+        let dot = |a: [f64; 3], b: [f64; 3]| a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+        // Tridiagonal matrix for Lagrange multipliers lambda_0..lambda_{m-1}:
+        // Segment 0 is pinned at node 0 -> diagonal = 1.0; segments i >= 1 have two free endpoints -> diagonal = 2.0.
+        // Off-diagonal coupling between segment i and i+1 is -dot(dir_i, dir_{i+1}).
+        let mut c_prime = vec![0.0_f64; m];
+        let mut d_prime = vec![0.0_f64; m];
+        for i in 0..m {
+            let diag = if i == 0 { 1.0 } else { 2.0 };
+            let sub_diag = if i > 0 {
+                -dot(dirs[i - 1], dirs[i])
+            } else {
+                0.0
+            };
+            let sup_diag = if i + 1 < m {
+                -dot(dirs[i], dirs[i + 1])
+            } else {
+                0.0
+            };
+            let denom = (diag - sub_diag * if i > 0 { c_prime[i - 1] } else { 0.0 }).max(1e-9);
+            c_prime[i] = sup_diag / denom;
+            let rhs = violations[i] - sub_diag * if i > 0 { d_prime[i - 1] } else { 0.0 };
+            d_prime[i] = rhs / denom;
+        }
+        let mut lambda = vec![0.0_f64; m];
+        lambda[m - 1] = d_prime[m - 1];
+        for i in (0..m - 1).rev() {
+            lambda[i] = d_prime[i] - c_prime[i] * lambda[i + 1];
+        }
+        for i in 0..m {
+            let corr = scale(dirs[i], lambda[i]);
+            if i > 0 {
+                self.positions[i] = add(self.positions[i], corr);
+            }
+            self.positions[i + 1] = sub(self.positions[i + 1], corr);
+        }
+        // Final forward pass from the pinned root guarantees exact nonlinear segment lengths.
+        for i in 0..m {
+            let delta = sub(self.positions[i + 1], self.positions[i]);
+            let dist = length(delta);
+            let dir = if dist > 1e-12 {
+                scale(delta, 1.0 / dist)
+            } else {
+                dirs[i]
+            };
+            self.positions[i + 1] = add(self.positions[i], scale(dir, self.lengths[i]));
+        }
     }
 }
 
@@ -369,7 +443,7 @@ mod scratch_tests {
                 s.previous.as_ptr() as usize,
                 s.scratch.as_ptr() as usize,
             ];
-            a.sort();
+            a.sort_unstable();
             a
         };
         let initial = addresses(&strand);
@@ -385,53 +459,126 @@ mod scratch_tests {
 // Find the nearest axis-aligned exit from the solid union. Expanded adjacent
 // voxels overlap: treating their shared faces as surfaces traps particles at
 // seams. Connected intervals along each axis discard those internal faces.
-fn project_box_union(p: [f64;3], boxes: &[BoxCollider], radius:f64)->[f64;3] {
-    if !boxes.iter().any(|b|(0..3).all(|i|p[i]>b.min[i]-radius&&p[i]<b.max[i]+radius)) {return p;}
-    let mut nearest=(f64::INFINITY,0,0.0);
+fn project_box_union(p: [f64; 3], boxes: &[BoxCollider], radius: f64) -> [f64; 3] {
+    if !boxes
+        .iter()
+        .any(|b| (0..3).all(|i| p[i] > b.min[i] - radius && p[i] < b.max[i] + radius))
+    {
+        return p;
+    }
+    let mut nearest = (f64::INFINITY, 0, 0.0);
     for axis in 0..3 {
-        let (mut lo,mut hi)=(p[axis],p[axis]);
+        let (mut lo, mut hi) = (p[axis], p[axis]);
         loop {
-            let before=(lo,hi);
+            let before = (lo, hi);
             for b in boxes {
-                if (0..3).filter(|&i|i!=axis).all(|i|p[i]>b.min[i]-radius&&p[i]<b.max[i]+radius)
-                    && b.min[axis]-radius<=hi && b.max[axis]+radius>=lo {
-                    lo=lo.min(b.min[axis]-radius);
-                    hi=hi.max(b.max[axis]+radius);
+                if (0..3)
+                    .filter(|&i| i != axis)
+                    .all(|i| p[i] > b.min[i] - radius && p[i] < b.max[i] + radius)
+                    && b.min[axis] - radius <= hi
+                    && b.max[axis] + radius >= lo
+                {
+                    lo = lo.min(b.min[axis] - radius);
+                    hi = hi.max(b.max[axis] + radius);
                 }
             }
-            if before==(lo,hi) {break;}
+            if before == (lo, hi) {
+                break;
+            }
         }
-        for boundary in [lo,hi] {
-            let distance=(p[axis]-boundary).abs();
-            if distance<nearest.0 {nearest=(distance,axis,boundary);}
+        for boundary in [lo, hi] {
+            let distance = (p[axis] - boundary).abs();
+            if distance < nearest.0 {
+                nearest = (distance, axis, boundary);
+            }
         }
     }
-    let mut projected=p;
-    projected[nearest.1]=nearest.2;
+    let mut projected = p;
+    projected[nearest.1] = nearest.2;
     projected
 }
 
 #[cfg(test)]
 mod box_contact_tests {
     use super::*;
-    const FRAME: [[f64;3];3]=[[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]];
+    const FRAME: [[f64; 3]; 3] = [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
     #[test]
     fn floor_contacts_preserve_the_pinned_root_and_particle_clearance() {
-        let root=[0.,0.08,0.];
-        let mut strand=Strand::new_oriented(vec![root,[0.04,-0.03,0.],[0.10,-0.08,0.]],StrandConfig{radius:0.002,..Default::default()},FRAME).unwrap();
-        let floor=BoxCollider{min:[-2.,-2.,-2.],max:[2.,0.,2.]};
+        let root = [0., 0.08, 0.];
+        let mut strand = Strand::new_oriented(
+            vec![root, [0.04, -0.03, 0.], [0.10, -0.08, 0.]],
+            StrandConfig {
+                radius: 0.002,
+                ..Default::default()
+            },
+            FRAME,
+        )
+        .unwrap();
+        let floor = BoxCollider {
+            min: [-2., -2., -2.],
+            max: [2., 0., 2.],
+        };
         for _ in 0..120 {
-            strand.step_oriented_with_boxes(1./60.,root,[0.,-9.81,0.],&[],&[floor],FRAME).unwrap();
-            assert_eq!(strand.positions()[0],root);
-            assert!(strand.positions().iter().skip(1).all(|p|p[1]>=0.002-1e-12));
+            strand
+                .step_oriented_with_boxes(1. / 60., root, [0., -9.81, 0.], &[], &[floor], FRAME)
+                .unwrap();
+            assert_eq!(strand.positions()[0], root);
+            assert!(
+                strand
+                    .positions()
+                    .iter()
+                    .skip(1)
+                    .all(|p| p[1] >= 0.002 - 1e-12)
+            );
         }
     }
     #[test]
     fn invalid_box_rejects_before_publishing_positions() {
-        let mut strand=Strand::new_oriented(vec![[0.,1.,0.],[0.1,1.,0.]],StrandConfig::default(),FRAME).unwrap();
-        let before=strand.positions().to_vec();
-        let invalid=BoxCollider{min:[0.;3],max:[0.;3]};
-        assert!(strand.step_oriented_with_boxes(1./60.,[1.,1.,1.],[0.;3],&[],&[invalid],FRAME).is_err());
-        assert_eq!(strand.positions(),before);
+        let mut strand = Strand::new_oriented(
+            vec![[0., 1., 0.], [0.1, 1., 0.]],
+            StrandConfig::default(),
+            FRAME,
+        )
+        .unwrap();
+        let before = strand.positions().to_vec();
+        let invalid = BoxCollider {
+            min: [0.; 3],
+            max: [0.; 3],
+        };
+        assert!(
+            strand
+                .step_oriented_with_boxes(1. / 60., [1., 1., 1.], [0.; 3], &[], &[invalid], FRAME)
+                .is_err()
+        );
+        assert_eq!(strand.positions(), before);
+    }
+    #[test]
+    fn thomas_inextensible_projection_preserves_pinned_root_and_exact_segment_lengths() {
+        let root = [1.0, 2.0, 3.0];
+        let mut strand = Strand::new(
+            vec![
+                root,
+                [1.0, 2.05, 3.0],
+                [1.0, 2.12, 3.0],
+                [1.0, 2.20, 3.0],
+                [1.0, 2.30, 3.0],
+            ],
+            StrandConfig::default(),
+        )
+        .unwrap();
+        let expected_lengths = strand.lengths.clone();
+        strand.positions[1] = [1.08, 1.92, 3.04];
+        strand.positions[2] = [1.22, 1.80, 2.95];
+        strand.positions[3] = [1.35, 1.65, 3.10];
+        strand.positions[4] = [1.60, 1.40, 3.25];
+        strand.project_inextensible_thomas();
+        assert_eq!(strand.positions()[0], root);
+        for (i, &target_len) in expected_lengths.iter().enumerate() {
+            let actual = length(sub(strand.positions()[i + 1], strand.positions()[i]));
+            assert!(
+                (actual - target_len).abs() < 1e-14,
+                "segment {i}: {actual} vs {target_len}"
+            );
+        }
     }
 }

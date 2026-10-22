@@ -1,0 +1,1 @@
+Rejected. Complete five AB/BA pairs for all three scenarios. Pooled CPU p99 gate false; renderer production code was not modified. Passing CPU correctness checks do not qualify performance.

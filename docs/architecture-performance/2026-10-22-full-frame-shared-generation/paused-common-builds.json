@@ -1,0 +1,1337 @@
+{
+  "authorization": "user: \u0414\u0430, \u0441\u043e\u0433\u043b\u0430\u0441\u0443\u0439 \u043e\u0431\u0449\u0435\u0435 \u043e\u043a\u043d\u043e; coordination messages sent to all active owning tasks",
+  "task": "temporary shared quiet window with work preserved",
+  "must_resume": true,
+  "processes": [
+    {
+      "pid": 41302,
+      "identity": "41302  8947 Ss   Thu Oct 22 01:03:39 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "command_prefix": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo test --manifest-path /private/tmp/osv-conical-graphs-source-20261022/crates/Cargo.toml -p brep-core --lib minkowski3d::curved::atlas:: -- --skip prov",
+      "signal": "SIGSTOP",
+      "time": 1792616658.942244
+    },
+    {
+      "pid": 40381,
+      "identity": "40381 40378 S+   Thu Oct 22 01:03:21 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "command_prefix": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo test --locked --offline --features player --test mp4_signed_offset -- --nocapture",
+      "signal": "SIGSTOP",
+      "time": 1792616658.972505
+    },
+    {
+      "pid": 40409,
+      "identity": "40409 40381 S+   Thu Oct 22 01:03:22 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc",
+      "command_prefix": "/Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc --crate-name mp4_signed_offset --edition=2024 tests/mp4_signed_offset.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep",
+      "signal": "SIGSTOP",
+      "time": 1792616658.990434
+    },
+    {
+      "pid": 41399,
+      "identity": "41399 41302 R    Thu Oct 22 01:03:41 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "command_prefix": "/Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc --crate-name brep_core --edition=2024 brep-core/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat,unused-exter",
+      "signal": "SIGSTOP",
+      "time": 1792616659.010369
+    },
+    {
+      "pid": 49496,
+      "identity": "49496  8947 Ss   Thu Oct 22 01:07:46 2026     /Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792616902.4034739,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 50236,
+      "identity": "50236 49496 R    Thu Oct 22 01:08:17 2026     /Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792616902.410553,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 41302,
+      "identity": "41302  8947 Ss   Thu Oct 22 01:03:39 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792616943.169442,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 52196,
+      "identity": "52196 41302 S    Thu Oct 22 01:09:02 2026     /private/tmp/osv-holed-atlas-target-20261021/debug/build/brep-core/2cd491c790d97f0e/out/brep_core-2cd491c790d97f0e",
+      "signal": "SIGSTOP",
+      "time": 1792616943.175206,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 41302,
+      "identity": "41302  8947 Ss   Thu Oct 22 01:03:39 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792616958.092851,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 52196,
+      "identity": "52196 41302 R    Thu Oct 22 01:09:02 2026     /private/tmp/osv-holed-atlas-target-20261021/debug/build/brep-core/2cd491c790d97f0e/out/brep_core-2cd491c790d97f0e",
+      "signal": "SIGSTOP",
+      "time": 1792616958.097905,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 54294,
+      "identity": "54294  8947 Ss   Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792616985.982802,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 54316,
+      "identity": "54316 54294 R    Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792616985.985831,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55135,
+      "identity": "55135  8947 Rs   Thu Oct 22 01:10:05 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617007.889188,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55518,
+      "identity": "55518  8947 Ss   Thu Oct 22 01:10:19 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617019.993647,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55768,
+      "identity": "55768 12885 Rs+  Thu Oct 22 01:10:30 2026     /Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617031.1149619,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Us   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617098.2532039,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617177.580874,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617177.585102,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617179.7200441,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617179.7238379,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617181.5666912,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617181.575849,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617184.1046689,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617184.11343,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617185.6883562,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617185.693015,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617187.732779,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617187.736419,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617189.8023129,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617189.80573,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617189.808934,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617191.961238,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617191.965375,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617191.969146,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617194.0852091,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617194.089034,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617194.093089,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617196.143105,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617196.146826,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617196.1503859,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617198.17919,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617198.1829262,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617198.186576,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617200.221072,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617200.224705,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617200.228438,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617202.320221,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617202.323534,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617202.3269582,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617204.3987231,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617204.4028108,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 61540,
+      "identity": "61540 61539 R+   Thu Oct 22 01:13:24 2026     /Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617204.406778,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617204.410744,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617206.4348748,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617206.4388428,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617206.443008,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617208.656554,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617208.661881,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617208.667167,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617210.757128,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617210.7617438,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617210.766172,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617212.994281,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617212.998236,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617213.002514,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617214.651843,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617214.655391,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617214.6590688,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617216.856255,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617216.8597288,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617216.864023,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 40381,
+      "identity": "40381 40378 S+   Thu Oct 22 01:03:21 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617236.9814222,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 49496,
+      "identity": "49496  8947 Ss   Thu Oct 22 01:07:46 2026     /Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617237.004933,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 54294,
+      "identity": "54294  8947 Ss   Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617237.032379,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55135,
+      "identity": "55135  8947 Ss   Thu Oct 22 01:10:05 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617237.05675,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55518,
+      "identity": "55518  8947 Ss   Thu Oct 22 01:10:19 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617237.082025,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55768,
+      "identity": "55768 12885 Ss+  Thu Oct 22 01:10:30 2026     /Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617237.0935218,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617237.121197,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617237.143819,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 61540,
+      "identity": "61540 61539 S+   Thu Oct 22 01:13:24 2026     /Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617237.154272,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 40409,
+      "identity": "40409 40381 S+   Thu Oct 22 01:03:22 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617237.178349,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 50236,
+      "identity": "50236 49496 R    Thu Oct 22 01:08:17 2026     /Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617237.197846,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 54316,
+      "identity": "54316 54294 R    Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617237.211,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617237.225217,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 62829,
+      "identity": "62829 55135 R    Thu Oct 22 01:13:52 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617237.2659452,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 62830,
+      "identity": "62830 55768 R+   Thu Oct 22 01:13:52 2026     /Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617237.2934332,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 63993,
+      "identity": "63993 61540 R+   Thu Oct 22 01:13:56 2026     /Users/themoretheless/Documents/Sources/forma/vector-ui/target/debug/deps/forma-c8c7c0d67a03184c",
+      "signal": "SIGSTOP",
+      "time": 1792617237.851307,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 64200,
+      "identity": "64200 64195 S    Thu Oct 22 01:14:00 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617241.076556,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 64206,
+      "identity": "64206 64200 S    Thu Oct 22 01:14:00 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617241.080835,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617249.073982,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617249.077714,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617249.081598,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617265.7271192,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617265.73162,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617265.736373,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617267.28661,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617267.290571,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617267.294864,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617269.346441,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617269.350116,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617269.354508,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 58086,
+      "identity": "58086  8947 Ss   Thu Oct 22 01:11:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617270.745675,
+      "initiator": "user-authorized common window; worktree build"
+    },
+    {
+      "pid": 60469,
+      "identity": "60469 58086 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617270.749467,
+      "initiator": "user-authorized common window; worktree build"
+    },
+    {
+      "pid": 60470,
+      "identity": "60470 58086 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617270.753255,
+      "initiator": "user-authorized common window; worktree build"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617271.888403,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617271.8919191,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617271.895265,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617273.896831,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617273.90038,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617273.9037461,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617275.908006,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617275.911437,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617275.914454,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617277.91978,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617277.923321,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617277.9265542,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617279.953335,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617279.9563892,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617279.959357,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617281.95073,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617281.9541361,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617281.95731,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617283.967125,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617283.9699452,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617283.972851,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617285.9710941,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617285.974048,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617285.977192,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617288.632035,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617288.64291,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617288.651969,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 40381,
+      "identity": "40381 40378 S+   Thu Oct 22 01:03:21 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.82851,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 49496,
+      "identity": "49496  8947 Ss   Thu Oct 22 01:07:46 2026     /Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.8393018,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 54294,
+      "identity": "54294  8947 Ss   Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.852799,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55135,
+      "identity": "55135  8947 Ss   Thu Oct 22 01:10:05 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.863748,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55518,
+      "identity": "55518  8947 Ss   Thu Oct 22 01:10:19 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.874727,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 55768,
+      "identity": "55768 12885 Ss+  Thu Oct 22 01:10:30 2026     /Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.8884149,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.899636,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 58086,
+      "identity": "58086  8947 Ss   Thu Oct 22 01:11:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.9103281,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.916574,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 70472,
+      "identity": "70472 70217 S+   Thu Oct 22 01:16:59 2026     /Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617426.924226,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 40409,
+      "identity": "40409 40381 S+   Thu Oct 22 01:03:22 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.930367,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 54316,
+      "identity": "54316 54294 R    Thu Oct 22 01:09:45 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.939847,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.945844,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60469,
+      "identity": "60469 58086 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.954889,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 62829,
+      "identity": "62829 55135 R    Thu Oct 22 01:13:52 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.960962,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 62830,
+      "identity": "62830 55768 R+   Thu Oct 22 01:13:52 2026     /Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.9665291,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 70186,
+      "identity": "70186 49496 S    Thu Oct 22 01:16:56 2026     /Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.972044,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 70417,
+      "identity": "70417 54294 R    Thu Oct 22 01:16:58 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.977092,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 70650,
+      "identity": "70650 70472 R+   Thu Oct 22 01:17:00 2026     /Users/themoretheless/.rustup/toolchains/1.97.1-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.981951,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 70752,
+      "identity": "70752 54294 R    Thu Oct 22 01:17:03 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617426.986621,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 70946,
+      "identity": "70946 70942 R    Thu Oct 22 01:17:08 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617428.8817332,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617440.2449431,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617440.248435,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617440.2523541,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617442.531206,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617442.5350988,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617442.538257,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617444.3669388,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617444.3704262,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617444.373638,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617446.645896,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617446.648866,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617446.6522229,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617448.4722402,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617448.475724,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617448.4789639,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617450.7491992,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617450.7524989,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617450.755512,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617453.024205,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617453.027329,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617453.030443,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617454.847073,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617454.850759,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617454.854434,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617457.1350589,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617457.13857,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617457.1418471,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617458.969933,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617458.973712,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617458.977487,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617461.259948,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617461.2638562,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617461.26733,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 57713,
+      "identity": "57713  8947 Ss   Thu Oct 22 01:11:38 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617463.097734,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60849,
+      "identity": "60849  8947 Ss   Thu Oct 22 01:13:09 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617463.100917,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617463.104246,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 60464,
+      "identity": "60464 57713 R    Thu Oct 22 01:12:57 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/rustc",
+      "signal": "SIGSTOP",
+      "time": 1792617497.5775082,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 72710,
+      "identity": "72710 12885 Us+  Thu Oct 22 01:18:18 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792617498.572672,
+      "initiator": "user-authorized temporary common build window"
+    }
+  ]
+}

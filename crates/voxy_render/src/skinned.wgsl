@@ -85,12 +85,15 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
     if magnitude > 0. { normal = normalize(normal / magnitude); }
     let light = 0.18 + 0.82 * max(dot(normal, sun), 0.0);
     if input.coat.a >= 2.0 && input.coat.a < 3.0 {
-        let diffuse=sqrt(max(0.0,1.0-pow(dot(normal,sun),2.0)));
+        let ns = dot(normal, sun);
+        let diffuse = sqrt(max(0.0, 1.0 - ns * ns));
         return vec4<f32>(input.coat.rgb*(0.25+0.75*diffuse),1.0);
     }
     if input.coat.a >= 0.0 {
         let wrap = 0.30 + 0.70 * max(dot(normal, sun), 0.0);
-        let rim = pow(1.0-abs(normal.z),4.0)*0.06;
+        let r = 1.0 - abs(normal.z);
+        let r2 = r * r;
+        let rim = (r2 * r2) * 0.06;
         let linear = input.coat.rgb*wrap + vec3<f32>(rim);
         // Targets are *Srgb formats; the hardware applies the only transfer.
         return vec4<f32>(linear,1.0);

@@ -29,7 +29,6 @@ struct RigidSnapshot {
 #[derive(Debug)]
 struct SharedRigidPalette {
     ring: crate::SharedUploadRing,
-    device: wgpu::Device,
     groups: Vec<wgpu::BindGroup>,
     parameters: [u32; 8],
     parameter_offset: usize,
@@ -208,7 +207,6 @@ impl SurfaceRigidSkinning {
                 .collect();
             SharedRigidPalette {
                 ring,
-                device: device.clone(),
                 groups,
                 parameters,
                 parameter_offset: parameter_offset as usize,
@@ -324,34 +322,27 @@ impl SurfaceRigidSkinning {
             // Overflow stages a unique immutable snapshot and copies it in this
             // encoder, before its dispatch. Queue writes into a reusable target
             // would corrupt multiple still-unsubmitted overflow snapshots.
-            let staging = shared.device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("shared palette overflow staging"),
-                size: shared.parameter_offset as u64 + 32,
-                usage: wgpu::BufferUsages::MAP_WRITE | wgpu::BufferUsages::COPY_SRC,
-                mapped_at_creation: true,
-            });
-            {
-                let mut mapped = staging
-                    .slice(..)
-                    .get_mapped_range_mut()
-                    .map_err(|_| SceneError::InvalidTransform)?;
-                shared.produce(snapshot, mapped.slice(..));
-            }
-            staging.unmap();
-            encoder.copy_buffer_to_buffer(
-                &staging,
-                0,
-                &self.palette,
-                0,
-                u64::from(self.joints) * 32,
-            );
-            encoder.copy_buffer_to_buffer(
-                &staging,
-                shared.parameter_offset as u64,
-                &self._inputs[0],
-                0,
-                32,
-            );
+            shared
+                .ring
+                .stage_copies(
+                    encoder,
+                    |bytes| shared.produce(snapshot, bytes),
+                    &[
+                        crate::SharedUploadCopy {
+                            source_offset: 0,
+                            target: &self.palette,
+                            target_offset: 0,
+                            size: u64::from(self.joints) * 32,
+                        },
+                        crate::SharedUploadCopy {
+                            source_offset: shared.parameter_offset as u64,
+                            target: &self._inputs[0],
+                            target_offset: 0,
+                            size: 32,
+                        },
+                    ],
+                )
+                .map_err(|_| SceneError::InvalidTransform)?;
         }
         encode_skin(&self.pipeline, &self.group, self.count, encoder);
         Ok(())

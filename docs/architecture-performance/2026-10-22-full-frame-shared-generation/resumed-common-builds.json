@@ -1,0 +1,115 @@
+{
+  "reason": "release requested",
+  "processes": [
+    {
+      "pid": 72710,
+      "time": 1792617501.787779,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 60464,
+      "time": 1792617501.790606,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 60849,
+      "time": 1792617501.794076,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 57713,
+      "time": 1792617501.797636,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 70946,
+      "time": 1792617501.801234,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 70752,
+      "time": 1792617501.805225,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 70650,
+      "time": 1792617501.809349,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 70417,
+      "time": 1792617501.8133628,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 70186,
+      "time": 1792617501.8173199,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 62830,
+      "time": 1792617501.821328,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 62829,
+      "time": 1792617501.8261209,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 60469,
+      "time": 1792617501.831255,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 54316,
+      "time": 1792617501.8391428,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 40409,
+      "time": 1792617501.9128819,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 70472,
+      "time": 1792617501.9256089,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 58086,
+      "time": 1792617501.949638,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 55768,
+      "time": 1792617501.955234,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 55518,
+      "time": 1792617501.963316,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 55135,
+      "time": 1792617501.9828339,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 54294,
+      "time": 1792617502.003986,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 49496,
+      "time": 1792617502.0224252,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 40381,
+      "time": 1792617502.033828,
+      "signal": "SIGCONT"
+    }
+  ]
+}

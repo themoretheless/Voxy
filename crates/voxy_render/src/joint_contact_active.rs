@@ -371,10 +371,12 @@ mod tests {
             (63, 1024, 0),
             (1024, 63, 0),
         ] {
-            let mut limits = wgpu::Limits::default();
-            limits.max_compute_workgroup_size_x = x;
-            limits.max_compute_invocations_per_workgroup = invocations;
-            limits.max_compute_workgroup_storage_size = 32768;
+            let limits = wgpu::Limits {
+                max_compute_workgroup_size_x: x,
+                max_compute_invocations_per_workgroup: invocations,
+                max_compute_workgroup_storage_size: 32768,
+                ..wgpu::Limits::default()
+            };
             let selected = experimental_seeded_resident_contact_shader(&limits);
             match expected {
                 1024 => assert_eq!(selected, Some(EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER)),
@@ -389,10 +391,12 @@ mod tests {
 
     #[test]
     fn seeded_variant_checks_workgroup_storage_before_pipeline_creation() {
-        let mut limits = wgpu::Limits::default();
-        limits.max_compute_workgroup_size_x = 1024;
-        limits.max_compute_invocations_per_workgroup = 1024;
-        limits.max_compute_workgroup_storage_size = 16384;
+        let mut limits = wgpu::Limits {
+            max_compute_workgroup_size_x: 1024,
+            max_compute_invocations_per_workgroup: 1024,
+            max_compute_workgroup_storage_size: 16384,
+            ..wgpu::Limits::default()
+        };
         assert_eq!(
             experimental_seeded_resident_contact_shader(&limits),
             Some(EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER)

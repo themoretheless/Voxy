@@ -64,7 +64,7 @@ pub(super) fn load(
         || width > 16384
         || height > 16384
         || count == 0
-        || u64::from(count) * 176 > u64::from(device.limits().max_storage_buffer_binding_size)
+        || u64::from(count) * 176 > device.limits().max_storage_buffer_binding_size
     {
         return Err("snapshot dimensions exceed diagnostic limits".into());
     }

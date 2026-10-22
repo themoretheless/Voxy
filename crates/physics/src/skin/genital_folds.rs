@@ -48,7 +48,7 @@ impl PrepuceGeometry {
             } else if row <= 2 * n {
                 let phi = std::f64::consts::PI * (row - n) as f64 / n as f64;
                 (
-                    (self.inner_radius_m + self.outer_radius_m) / 2. - h * phi.cos(),
+                    f64::midpoint(self.inner_radius_m, self.outer_radius_m) - h * phi.cos(),
                     self.length_m - h + h * phi.sin(),
                 )
             } else {
@@ -659,10 +659,13 @@ impl OrificeDilationKernel {
         };
 
         let max_speed = tube.max_speed_m_s().max(1e-4);
-        let norm_vel_z = (0.75 * (tip_vel[2] / max_speed) + 0.25 * lugre_bristle_z).clamp(-1.0, 1.0);
+        let norm_vel_z =
+            (0.75 * (tip_vel[2] / max_speed) + 0.25 * lugre_bristle_z).clamp(-1.0, 1.0);
 
-        let cuff_ring = (-(((dilated_r - tube.radius_m * 1.03) / (tube.radius_m * 0.50)).powi(2))).exp();
-        let withdrawal_grip = -self.withdrawal_cuff_grip_m * norm_vel_z.max(0.0) * cuff_ring * smooth_pen;
+        let cuff_ring =
+            (-(((dilated_r - tube.radius_m * 1.03) / (tube.radius_m * 0.50)).powi(2))).exp();
+        let withdrawal_grip =
+            -self.withdrawal_cuff_grip_m * norm_vel_z.max(0.0) * cuff_ring * smooth_pen;
         let total_radial_shift = delta_r + withdrawal_grip;
 
         let hoop_stretch = (delta_r / (tube.radius_m * 0.50)).clamp(0.0, 1.0);
@@ -775,4 +778,3 @@ mod orifice_tests {
         assert!(wit.meniscus_ridge_dz_m > 0.0002);
     }
 }
-

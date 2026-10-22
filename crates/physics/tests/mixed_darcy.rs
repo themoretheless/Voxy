@@ -616,7 +616,7 @@ fn implicit_protein_preserves_uniform_concentration_and_large_step_positivity() 
             .unwrap();
         assert!(next.iter().all(|m| *m >= 0.));
         assert!((next.iter().sum::<f64>() - 9e-9).abs() < 1e-20);
-        let donor = if q > 0. { 0 } else { 1 };
+        let donor = usize::from(q <= 0.);
         let expected = old[donor] / (1. + 100. * q.abs() / [1e-9, 2e-9][donor]);
         assert!((next[donor] / expected - 1.).abs() < 1e-12);
     }

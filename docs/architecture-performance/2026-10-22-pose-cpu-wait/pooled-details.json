@@ -1,0 +1,224 @@
+{
+  "idle": {
+    "before": {
+      "frames": 1200,
+      "pooled": {
+        "p50_us": 1985.0,
+        "p95_us": 13857.0,
+        "p99_us": 24329.042
+      },
+      "max_us": 77867.292,
+      "over_8333_us": 161,
+      "over_16667_us": 40,
+      "stage_p99_us": {
+        "total_cpu_us": 24329.042,
+        "character_us": 15.75,
+        "animation_us": 18.0,
+        "companions_us": 303.625,
+        "palette_us": 10.625,
+        "render_admission_us": 23972.375,
+        "temporal_admission_us": 20.917,
+        "shadow_extraction_us": 9.667
+      },
+      "lifecycle_stop_events": 0,
+      "phase_seconds": [
+        26.606659458004287,
+        9.84616562500014,
+        7.297538832994178,
+        4.796670374998939,
+        5.36461462501029
+      ],
+      "load_start_1m": [
+        64.2021484375,
+        108.07763671875,
+        80.60888671875,
+        62.369140625,
+        46.42724609375
+      ]
+    },
+    "after": {
+      "frames": 1200,
+      "pooled": {
+        "p50_us": 75.083,
+        "p95_us": 291.792,
+        "p99_us": 613.458
+      },
+      "max_us": 234778.167,
+      "over_8333_us": 3,
+      "over_16667_us": 3,
+      "stage_p99_us": {
+        "total_cpu_us": 613.458,
+        "character_us": 3.75,
+        "animation_us": 3.958,
+        "companions_us": 329.292,
+        "palette_us": 8.5,
+        "render_admission_us": 315.958,
+        "temporal_admission_us": 15.958,
+        "shadow_extraction_us": 2.5
+      },
+      "lifecycle_stop_events": 0,
+      "phase_seconds": [
+        55.504011875003926,
+        15.159710541003733,
+        6.8091139160096645,
+        4.287930541991955,
+        6.08115395900677
+      ],
+      "load_start_1m": [
+        102.23583984375,
+        130.62109375,
+        78.87841796875,
+        66.92822265625,
+        43.669921875
+      ]
+    }
+  },
+  "motion": {
+    "before": {
+      "frames": 1200,
+      "pooled": {
+        "p50_us": 1457.583,
+        "p95_us": 23952.0,
+        "p99_us": 61448.334
+      },
+      "max_us": 197301.0,
+      "over_8333_us": 221,
+      "over_16667_us": 101,
+      "stage_p99_us": {
+        "total_cpu_us": 61448.334,
+        "character_us": 32.583,
+        "animation_us": 30.166,
+        "companions_us": 1448.292,
+        "palette_us": 15.708,
+        "render_admission_us": 61339.5,
+        "temporal_admission_us": 41.042,
+        "shadow_extraction_us": 40.875
+      },
+      "lifecycle_stop_events": 0,
+      "phase_seconds": [
+        68.60594791598851,
+        59.48080000000482,
+        8.64423654199345,
+        4.79253904199868,
+        13.455528999998933
+      ],
+      "load_start_1m": [
+        161.18896484375,
+        83.68701171875,
+        80.4892578125,
+        55.42529296875,
+        41.2939453125
+      ]
+    },
+    "after": {
+      "frames": 1200,
+      "pooled": {
+        "p50_us": 72.417,
+        "p95_us": 310.584,
+        "p99_us": 2057.75
+      },
+      "max_us": 10223.416,
+      "over_8333_us": 2,
+      "over_16667_us": 0,
+      "stage_p99_us": {
+        "total_cpu_us": 2057.75,
+        "character_us": 4.417,
+        "animation_us": 4.083,
+        "companions_us": 684.042,
+        "palette_us": 6.167,
+        "render_admission_us": 717.458,
+        "temporal_admission_us": 8.083,
+        "shadow_extraction_us": 2.583
+      },
+      "lifecycle_stop_events": 0,
+      "phase_seconds": [
+        15.591989458000171,
+        14.370225499995286,
+        5.247933416001615,
+        4.134563249986968,
+        8.036786625001696
+      ],
+      "load_start_1m": [
+        220.57080078125,
+        92.90576171875,
+        78.48193359375,
+        58.33544921875,
+        40.095703125
+      ]
+    }
+  },
+  "catchup": {
+    "before": {
+      "frames": 1200,
+      "pooled": {
+        "p50_us": 3980.166,
+        "p95_us": 10202.542,
+        "p99_us": 32540.542
+      },
+      "max_us": 106218.541,
+      "over_8333_us": 101,
+      "over_16667_us": 32,
+      "stage_p99_us": {
+        "total_cpu_us": 32540.542,
+        "character_us": 20.083,
+        "animation_us": 45.543,
+        "companions_us": 669.457,
+        "palette_us": 18.583,
+        "render_admission_us": 32047.917,
+        "temporal_admission_us": 19.917,
+        "shadow_extraction_us": 18.042
+      },
+      "lifecycle_stop_events": 0,
+      "phase_seconds": [
+        19.085825542002567,
+        20.786461458003032,
+        5.73598050000146,
+        4.781871875005891,
+        12.741424334002659
+      ],
+      "load_start_1m": [
+        193.3037109375,
+        93.748046875,
+        75.15966796875,
+        49.42431640625,
+        38.0859375
+      ]
+    },
+    "after": {
+      "frames": 1200,
+      "pooled": {
+        "p50_us": 158.833,
+        "p95_us": 874.333,
+        "p99_us": 3130.958
+      },
+      "max_us": 28333.667,
+      "over_8333_us": 9,
+      "over_16667_us": 3,
+      "stage_p99_us": {
+        "total_cpu_us": 3130.958,
+        "character_us": 18.249,
+        "animation_us": 29.083,
+        "companions_us": 1044.25,
+        "palette_us": 123.0,
+        "render_admission_us": 1083.917,
+        "temporal_admission_us": 65.625,
+        "shadow_extraction_us": 2.625
+      },
+      "lifecycle_stop_events": 0,
+      "phase_seconds": [
+        22.886170833997312,
+        18.139299083995866,
+        4.310611167005845,
+        3.9813258330104873,
+        25.989792874999694
+      ],
+      "load_start_1m": [
+        172.2744140625,
+        98.59228515625,
+        71.623046875,
+        52.50830078125,
+        39.6005859375
+      ]
+    }
+  }
+}

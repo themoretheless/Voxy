@@ -1,0 +1,77 @@
+--- a/crates/voxy_render/src/skinned.rs
++++ b/crates/voxy_render/src/skinned.rs
+@@ -855,16 +855,25 @@
+         if workers <= 1 {
+             return (0..groups).all(|group| self.certified(group, joints, model));
+         }
+-        let chunk = groups.div_ceil(workers).max(1);
++        // Small dynamically claimed blocks let faster workers absorb the remaining
++        // groups instead of leaving a full static range on a delayed worker.
++        let next = std::sync::atomic::AtomicUsize::new(0);
++        let work = || {
++            loop {
++                let start = next.fetch_add(256, std::sync::atomic::Ordering::Relaxed);
++                if start >= groups {
++                    return true;
++                }
++                if !(start..(start + 256).min(groups))
++                    .all(|group| self.certified(group, joints, model))
++                {
++                    return false;
++                }
++            }
++        };
+         std::thread::scope(|scope| {
+-            let handles: Vec<_> = (chunk..groups)
+-                .step_by(chunk)
+-                .map(|start| {
+-                    let end = (start + chunk).min(groups);
+-                    scope.spawn(move || (start..end).all(|g| self.certified(g, joints, model)))
+-                })
+-                .collect();
+-            let mut all = (0..chunk.min(groups)).all(|g| self.certified(g, joints, model));
++            let handles: Vec<_> = (1..workers).map(|_| scope.spawn(&work)).collect();
++            let mut all = work();
+             for handle in handles {
+                 all &= handle
+                     .join()
+@@ -1707,3 +1716,39 @@
+         assert!(certified > 0 && uncertain > 0);
+     }
+ }
++
++#[cfg(test)]
++mod dynamic_group_tail_tests {
++    use super::*;
++
++    #[test]
++    fn block_boundaries_and_late_rejection_match_exact_oracle() {
++        for bad_group in [None, Some(255), Some(256), Some(511), Some(512), Some(1024)] {
++            let vertices = (0..PARALLEL_ADMISSION_MIN_VERTICES + 1025)
++                .map(|index| {
++                    let group = index % 1025;
++                    let weight = (group + 1) as u16;
++                    SkinnedVertex {
++                        position: [0.25, -0.5, 0.75],
++                        normal: if bad_group == Some(group) { [f32::MAX, 0., 0.] } else { [0., 1., 0.] },
++                        uv: [0.; 2], joints: [0, 1, 0, 0],
++                        weights: [weight, u16::MAX - weight, 0, 0],
++                    }
++                }).collect();
++            let mesh = SkinnedMesh::new(vertices, vec![0, 1, 2], 2).unwrap();
++            let groups = mesh.groups.as_ref().unwrap();
++            assert_eq!(groups.keys.len(), 1025);
++            for joints in [[Mat4::IDENTITY; 2], [Mat4::from_rotation_y(0.3), Mat4::IDENTITY]] {
++                let expected = mesh.vertices().iter().try_for_each(|v| {
++                    let world = blended_skin(v, &joints);
++                    skinned_position_in(v, world)?;
++                    skinned_normal_in(v, world).map(|_| ())
++                });
++                for workers in [1, 3, 8, 16] {
++                    assert_eq!(groups.certify(&joints, Mat4::IDENTITY, workers), bad_group.is_none());
++                }
++                assert_eq!(mesh.validate_render_pose(&joints, Mat4::IDENTITY), expected);
++            }
++        }
++    }
++}

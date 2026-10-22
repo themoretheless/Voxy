@@ -1,0 +1,141 @@
+{
+  "pairs_per_scenario": 5,
+  "metric": "median run and pooled CPU replay p99; not displayed frame p99",
+  "focus": "catchup",
+  "summary": [
+    {
+      "pooled_p99_us": {
+        "before": 24329.042,
+        "after": 613.458
+      },
+      "pooled_p99_ratio": 0.025215049569152784,
+      "scenario": "idle",
+      "before_p99_us": 11809.542,
+      "after_p99_us": 443.125,
+      "ratio": 0.03752262365466841,
+      "paired_p99_ratios": [
+        1.9367881849009911,
+        0.05441574279510586,
+        0.008313431626542652,
+        0.022499528603925994,
+        0.06916983553617959
+      ],
+      "mean_stage_us": {
+        "before": {
+          "animation": 2.2220416666666667,
+          "character": 1.7791791666666663,
+          "companions": 50.80537083333334,
+          "palette": 2.0616291666666657,
+          "render_admission": 3097.5784791666674,
+          "shadow_extraction": 1.6175041666666672,
+          "temporal_admission": 2.8372999999999995,
+          "total_cpu": 3159.4444333333327
+        },
+        "after": {
+          "animation": 0.9035,
+          "character": 0.6297291666666669,
+          "companions": 36.686283333333336,
+          "palette": 1.3243041666666668,
+          "render_admission": 35.5145875,
+          "shadow_extraction": 0.7531375,
+          "temporal_admission": 2.4151083333333343,
+          "total_cpu": 75.24981249999999
+        }
+      },
+      "state_blake3": "7f62430f79661468af6124a4afdb7dd4500b35d58af567206ec6dbca44b1e5e6"
+    },
+    {
+      "pooled_p99_us": {
+        "before": 61448.334,
+        "after": 2057.75
+      },
+      "pooled_p99_ratio": 0.0334874823457378,
+      "scenario": "motion",
+      "before_p99_us": 35724.416000000005,
+      "after_p99_us": 920.75,
+      "ratio": 0.02577368934456479,
+      "paired_p99_ratios": [
+        0.04836095851084031,
+        0.04262431114074384,
+        0.008464004922147288,
+        0.03756519979767324,
+        0.020578101735095472
+      ],
+      "mean_stage_us": {
+        "before": {
+          "animation": 3.017354166666667,
+          "character": 2.9359124999999993,
+          "companions": 49.468745833333315,
+          "palette": 1.9888666666666668,
+          "render_admission": 3811.7367916666676,
+          "shadow_extraction": 1.9479166666666663,
+          "temporal_admission": 2.907474999999999,
+          "total_cpu": 3874.4128416666663
+        },
+        "after": {
+          "animation": 0.87535,
+          "character": 0.6385333333333333,
+          "companions": 49.13246666666668,
+          "palette": 1.989583333333333,
+          "render_admission": 64.08645833333335,
+          "shadow_extraction": 0.8269083333333331,
+          "temporal_admission": 2.165616666666667,
+          "total_cpu": 122.110225
+        }
+      },
+      "state_blake3": "944b310b019fcb6c467f3a411d08f64761b1f96bb98b96422a31534e1dc2c1db"
+    },
+    {
+      "pooled_p99_us": {
+        "before": 32540.542,
+        "after": 3130.958
+      },
+      "pooled_p99_ratio": 0.09621714352514472,
+      "scenario": "catchup",
+      "before_p99_us": 6179.790999999999,
+      "after_p99_us": 679.5,
+      "ratio": 0.10995517485947341,
+      "paired_p99_ratios": [
+        0.0361314902065843,
+        3.5040761087227716,
+        0.02928317442805281,
+        0.043401648168346935,
+        0.012272671783404519
+      ],
+      "mean_stage_us": {
+        "before": {
+          "animation": 3.5116208333333345,
+          "character": 3.9845500000000027,
+          "companions": 107.6185791666667,
+          "palette": 4.740816666666665,
+          "render_admission": 3876.354220833335,
+          "shadow_extraction": 1.8576583333333323,
+          "temporal_admission": 2.9192749999999994,
+          "total_cpu": 4001.955704166665
+        },
+        "after": {
+          "animation": 2.186637499999999,
+          "character": 2.3416791666666663,
+          "companions": 131.57208749999998,
+          "palette": 7.868920833333335,
+          "render_admission": 91.65986666666669,
+          "shadow_extraction": 0.8140666666666669,
+          "temporal_admission": 3.3821249999999994,
+          "total_cpu": 241.45225833333336
+        }
+      },
+      "state_blake3": "e663821f1a02bbcf8eef4474379aac72659b849cefabe8623f139b4179ad9f7d"
+    }
+  ],
+  "cpu_gate": true,
+  "binaries": {
+    "before": {
+      "path": "/private/tmp/voxy-pose-clock-before",
+      "sha256": "e9b31a3f10f3f32bd2ccaaf723639359b4f75e4e46dca80d61b2bfae6da877f0"
+    },
+    "after": {
+      "path": "/private/tmp/voxy-pose-family-after",
+      "sha256": "24ee03e780b3e5d2fc7846cedcc5b20c3a9ba12886903d3f9ef6df12133b2d2b"
+    }
+  }
+}

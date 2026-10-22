@@ -93,6 +93,31 @@ fn texture(
     })
 }
 impl ArchiveTemporal {
+    pub(crate) fn diagnostic_views(&self) -> Vec<(&'static str, wgpu::TextureView)> {
+        vec![
+            (
+                "scene-before-taa",
+                self.current.create_view(&Default::default()),
+            ),
+            (
+                "taa-current",
+                self.color[self.read].create_view(&Default::default()),
+            ),
+            (
+                "taa-previous",
+                self.color[1 - self.read].create_view(&Default::default()),
+            ),
+            ("motion", self.motion.create_view(&Default::default())),
+            (
+                "expected-depth",
+                self.expected.create_view(&Default::default()),
+            ),
+            ("temporal-bloom", self.bloom.output()),
+        ]
+    }
+    pub(crate) fn diagnostic_uniform(&self) -> &wgpu::Buffer {
+        &self.uniform
+    }
     pub fn new(
         device: &wgpu::Device,
         w: u32,

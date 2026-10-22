@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-22",
+  "hardware": "Apple M4 Max",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.7.2\nBuildVersion:\t\t25G325",
+  "rustc": "rustc 1.98.0-nightly (d1fc603d1 2026-05-26)",
+  "head": "8ac83cdb8a6b9c31595bc35d98c959cf4bb00566",
+  "working_tree": "broad pre-existing dirty tree; frozen test binary, no commit/push",
+  "gpu_timing": "TIMESTAMP_QUERY stage-boundary markers with colour-target read dependency; encoder timestamps unsupported"
+}

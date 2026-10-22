@@ -27,8 +27,8 @@ fn s(x: f32, y: f32, z: f32, w: f32, d: f32) -> Section {
 impl AnatomySurface {
     fn loft(&mut self, sections: &[Section]) {
         const N: usize = 16;
-        let delta=sections.last().unwrap().p-sections[0].p;
-        let longitudinal_axis=if delta.y.abs()>delta.z.abs() {1} else {2};
+        let delta = sections.last().unwrap().p - sections[0].p;
+        let longitudinal_axis = if delta.y.abs() > delta.z.abs() { 1 } else { 2 };
         let start = self.positions.len();
         let mut rings = Vec::new();
         for k in 0..sections.len() - 1 {
@@ -49,8 +49,8 @@ impl AnatomySurface {
                 // Keep the sweep coordinate monotone even when Catmull tangents
                 // overshoot a short terminal neck span. Other coordinates and
                 // section radii retain their smooth authored interpolation.
-                p[longitudinal_axis]=b.p[longitudinal_axis]
-                    +(c.p[longitudinal_axis]-b.p[longitudinal_axis])*t;
+                p[longitudinal_axis] =
+                    b.p[longitudinal_axis] + (c.p[longitudinal_axis] - b.p[longitudinal_axis]) * t;
                 let r = spline(
                     Vec3::new(a.w, a.d, 0.),
                     Vec3::new(b.w, b.d, 0.),
@@ -143,19 +143,19 @@ pub(super) fn build(a: BreedAnatomy) -> Result<AnatomySurface, String> {
         ),
         s(0., h - d * 0.49, l * 0.17, w, d * 0.49),
         s(0., h - d * 0.42, f, w * 0.84, d * 0.42),
-        s(0., h-d*0.28, l*0.40, w*0.18, d*0.18),
+        s(0., h - d * 0.28, l * 0.40, w * 0.18, d * 0.18),
     ]);
     let origin = a.head_origin();
     let neck_z = origin.z;
     let head_y = origin.y;
     mesh.loft(&[
-        s(0., h-d*0.56, f-l*0.07, w*0.48, d*0.18),
+        s(0., h - d * 0.56, f - l * 0.07, w * 0.48, d * 0.18),
         s(
             0.,
-            h-a.neck_length*0.05,
-            f+a.neck_length*0.12,
-            w*0.57,
-            d*0.27,
+            h - a.neck_length * 0.05,
+            f + a.neck_length * 0.12,
+            w * 0.57,
+            d * 0.27,
         ),
         s(
             0.,
@@ -173,24 +173,78 @@ pub(super) fn build(a: BreedAnatomy) -> Result<AnatomySurface, String> {
         // and deep compact muzzle. A sphere followed by a second sphere
         // produces the rejected toy silhouette even under dense grooming.
         mesh.loft(&[
-            s(0., head_y, z-skull*0.30, hw*0.45, skull*0.34),
-            s(0., head_y, z, hw*0.88, skull*0.46),
-            s(0., head_y-skull*0.04, z+skull*0.46, hw, skull*0.44),
-            s(0., head_y-skull*0.09, z+skull*0.80, hw*0.82, skull*0.34),
-            s(0., head_y-skull*0.25, z+skull*1.02, hw*0.50, skull*0.22),
-            s(0., head_y-skull*0.27, z+a.head_length*0.82, hw*0.40, skull*0.21),
-            s(0., head_y-skull*0.25, z+a.head_length*0.89, hw*0.34, skull*0.17),
+            s(0., head_y, z - skull * 0.30, hw * 0.45, skull * 0.34),
+            s(0., head_y, z, hw * 0.88, skull * 0.46),
+            s(
+                0.,
+                head_y - skull * 0.04,
+                z + skull * 0.46,
+                hw,
+                skull * 0.44,
+            ),
+            s(
+                0.,
+                head_y - skull * 0.09,
+                z + skull * 0.80,
+                hw * 0.82,
+                skull * 0.34,
+            ),
+            s(
+                0.,
+                head_y - skull * 0.25,
+                z + skull * 1.02,
+                hw * 0.50,
+                skull * 0.22,
+            ),
+            s(
+                0.,
+                head_y - skull * 0.27,
+                z + a.head_length * 0.82,
+                hw * 0.40,
+                skull * 0.21,
+            ),
+            s(
+                0.,
+                head_y - skull * 0.25,
+                z + a.head_length * 0.89,
+                hw * 0.34,
+                skull * 0.17,
+            ),
         ]);
     } else if a.breed == super::Breed::BritishShorthair {
         // Broad cheeks and a short deep muzzle remain distinct from the
         // tapered domestic head and the longer Maine Coon bridge.
         mesh.loft(&[
-            s(0.,head_y,z-skull*0.28,hw*0.45,skull*0.36),
-            s(0.,head_y,z,hw*0.94,skull*0.55),
-            s(0.,head_y-skull*0.02,z+skull*0.56,hw,skull*0.52),
-            s(0.,head_y-skull*0.08,z+skull*0.92,hw*0.84,skull*0.40),
-            s(0.,head_y-skull*0.22,z+a.head_length*0.86,hw*0.45,skull*0.25),
-            s(0.,head_y-skull*0.25,z+a.head_length,hw*0.21,skull*0.13),
+            s(0., head_y, z - skull * 0.28, hw * 0.45, skull * 0.36),
+            s(0., head_y, z, hw * 0.94, skull * 0.55),
+            s(
+                0.,
+                head_y - skull * 0.02,
+                z + skull * 0.56,
+                hw,
+                skull * 0.52,
+            ),
+            s(
+                0.,
+                head_y - skull * 0.08,
+                z + skull * 0.92,
+                hw * 0.84,
+                skull * 0.40,
+            ),
+            s(
+                0.,
+                head_y - skull * 0.22,
+                z + a.head_length * 0.86,
+                hw * 0.45,
+                skull * 0.25,
+            ),
+            s(
+                0.,
+                head_y - skull * 0.25,
+                z + a.head_length,
+                hw * 0.21,
+                skull * 0.13,
+            ),
         ]);
     } else if a.breed.species() == Species::Cat {
         // Short feline face: brow/nasal bridge, paired whisker pads and a
@@ -231,7 +285,13 @@ pub(super) fn build(a: BreedAnatomy) -> Result<AnatomySurface, String> {
         let broad_muzzle = a.breed == super::Breed::Labrador;
         mesh.loft(&[
             s(0., head_y, z - skull * 0.30, hw * 0.40, skull * 0.35),
-            s(0., head_y, z, hw, skull * if broad_muzzle { 0.60 } else { 0.45 }),
+            s(
+                0.,
+                head_y,
+                z,
+                hw,
+                skull * if broad_muzzle { 0.60 } else { 0.45 },
+            ),
             s(
                 0.,
                 head_y - skull * 0.03,
@@ -267,12 +327,27 @@ pub(super) fn build(a: BreedAnatomy) -> Result<AnatomySurface, String> {
         // its rounded lower outline without lengthening the nose.
         for side in [-1.0, 1.0] {
             mesh.loft(&[
-                s(side * hw * 0.22, head_y - skull * 0.27,
-                    z + a.head_length * 0.62, hw * 0.16, skull * 0.12),
-                s(side * hw * 0.22, head_y - skull * 0.28,
-                    z + a.head_length * 0.73, hw * 0.17, skull * 0.13),
-                s(side * hw * 0.16, head_y - skull * 0.30,
-                    z + a.head_length * 0.84, hw * 0.08, skull * 0.07),
+                s(
+                    side * hw * 0.22,
+                    head_y - skull * 0.27,
+                    z + a.head_length * 0.62,
+                    hw * 0.16,
+                    skull * 0.12,
+                ),
+                s(
+                    side * hw * 0.22,
+                    head_y - skull * 0.28,
+                    z + a.head_length * 0.73,
+                    hw * 0.17,
+                    skull * 0.13,
+                ),
+                s(
+                    side * hw * 0.16,
+                    head_y - skull * 0.30,
+                    z + a.head_length * 0.84,
+                    hw * 0.08,
+                    skull * 0.07,
+                ),
             ]);
         }
     }
@@ -293,17 +368,29 @@ pub(super) fn build(a: BreedAnatomy) -> Result<AnatomySurface, String> {
         ]);
         for foot_z in [f, b] {
             mesh.loft(&[
-                s(x, paw * 0.75, foot_z-paw*0.55, paw * 0.65, paw * 0.58),
-                s(x, paw * 0.75, foot_z+paw*0.25, paw, paw * 0.72),
-                s(x, paw*0.60, foot_z+paw*0.80, paw*0.75, paw*0.48),
+                s(x, paw * 0.75, foot_z - paw * 0.55, paw * 0.65, paw * 0.58),
+                s(x, paw * 0.75, foot_z + paw * 0.25, paw, paw * 0.72),
+                s(x, paw * 0.60, foot_z + paw * 0.80, paw * 0.75, paw * 0.48),
             ]);
             for digit in 0..4 {
-                let dx=(digit as f32-1.5)*paw*0.42;
-                let tip=a.digit_tip(side,foot_z>0.,digit);
+                let dx = (digit as f32 - 1.5) * paw * 0.42;
+                let tip = a.digit_tip(side, foot_z > 0., digit);
                 mesh.loft(&[
-                    s(x+dx,paw*0.52,foot_z+paw*0.45,paw*0.23,paw*0.31),
-                    s(x+dx,paw*0.51,foot_z+paw*1.00,paw*0.22,paw*0.34),
-                    s(tip.x,tip.y,tip.z,paw*0.15,paw*0.26),
+                    s(
+                        x + dx,
+                        paw * 0.52,
+                        foot_z + paw * 0.45,
+                        paw * 0.23,
+                        paw * 0.31,
+                    ),
+                    s(
+                        x + dx,
+                        paw * 0.51,
+                        foot_z + paw * 1.00,
+                        paw * 0.22,
+                        paw * 0.34,
+                    ),
+                    s(tip.x, tip.y, tip.z, paw * 0.15, paw * 0.26),
                 ]);
             }
         }
@@ -315,7 +402,7 @@ pub(super) fn build(a: BreedAnatomy) -> Result<AnatomySurface, String> {
                 0.78
             };
         match a.ears {
-            Ear::Upright { .. } => {},
+            Ear::Upright { .. } => {}
             Ear::Folded { length: e } => mesh.loft(&[
                 s(ex, head_y + skull * 0.25, z, hw * 0.42, e * 0.17),
                 s(

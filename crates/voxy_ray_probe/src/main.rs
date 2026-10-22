@@ -1,23 +1,24 @@
 //! Opt-in experimental ray-query verification. Does not enable experiments in games.
 use voxy_render::{GraphicsOptions, RayScene, RaySceneError};
 use wgpu::util::DeviceExt;
-#[cfg(feature = "face-demo")]
-mod face;
-mod options;
 mod aabb_candidates;
-mod world_geometry;
-mod world_narrow;
-mod world_exact;
-mod shared_job_audit;
-mod shared_producer_audit;
-mod world_nearest_material;
-mod integer_product_audit;
-mod world_exact_queue;
 mod captured_aabbs;
 mod captured_narrow;
+#[cfg(feature = "face-demo")]
+mod face;
+mod integer_product_audit;
+mod material_sides_audit;
+mod options;
 mod primary_background;
+mod shared_job_audit;
+mod shared_producer_audit;
 mod specular;
 mod specular_guides;
+mod world_exact;
+mod world_exact_queue;
+mod world_geometry;
+mod world_narrow;
+mod world_nearest_material;
 
 // This probe explicitly acknowledges wgpu's experimental API risk. The engine
 // library remains unsafe_code=forbid. Only this token creation is exempted.
@@ -83,17 +84,44 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err("GPU timestamps unavailable for exact-world profiling".into());
     }
     let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
-        required_features: wgpu::Features::EXPERIMENTAL_RAY_QUERY | if std::env::var("VOXY_RAY_SHARED_PRODUCER_AUDIT").as_deref()==Ok("1"){wgpu::Features::FLOAT32_FILTERABLE}else{wgpu::Features::empty()} | if options.narrow || exact_timing {adapter.features() & wgpu::Features::TIMESTAMP_QUERY}else{wgpu::Features::empty()},
+        required_features: wgpu::Features::EXPERIMENTAL_RAY_QUERY
+            | if std::env::var("VOXY_RAY_SHARED_PRODUCER_AUDIT").as_deref() == Ok("1") {
+                wgpu::Features::FLOAT32_FILTERABLE
+            } else {
+                wgpu::Features::empty()
+            }
+            | if options.narrow || exact_timing {
+                adapter.features() & wgpu::Features::TIMESTAMP_QUERY
+            } else {
+                wgpu::Features::empty()
+            },
         required_limits: adapter.limits(),
         experimental_features: experimental_features(),
         ..Default::default()
     }))?;
-    if std::env::var("VOXY_RAY_SHARED_PRODUCER_AUDIT").as_deref()==Ok("1") { return shared_producer_audit::run(&device,&queue); }
-    if std::env::var("VOXY_RAY_SHARED_JOB_AUDIT").as_deref()==Ok("1") { return shared_job_audit::run(&device,&queue); }
+    if std::env::var("VOXY_RAY_SHARED_PRODUCER_AUDIT").as_deref() == Ok("1") {
+        return shared_producer_audit::run(&device, &queue);
+    }
+    if std::env::var("VOXY_RAY_SHARED_JOB_AUDIT").as_deref() == Ok("1") {
+        return shared_job_audit::run(&device, &queue);
+    }
+    if std::env::var("VOXY_RAY_MATERIAL_SIDES_AUDIT").as_deref() == Ok("1") {
+        return material_sides_audit::run(&device, &queue);
+    }
 
-    if std::env::var("VOXY_RAY_INTEGER_AUDIT").as_deref()==Ok("1") {return integer_product_audit::run(&device,&queue);}
-    if let Some(root) = std::env::var_os("VOXY_RAY_WORLD_GEOMETRY") { return world_geometry::probe(&device, &queue, std::path::Path::new(&root)); }
-    if let Some(root)=&options.capture {return if options.narrow {captured_narrow::probe(&device,&queue,root,options.narrow_control)}else{captured_aabbs::probe(&device,&queue,root)};}
+    if std::env::var("VOXY_RAY_INTEGER_AUDIT").as_deref() == Ok("1") {
+        return integer_product_audit::run(&device, &queue);
+    }
+    if let Some(root) = std::env::var_os("VOXY_RAY_WORLD_GEOMETRY") {
+        return world_geometry::probe(&device, &queue, std::path::Path::new(&root));
+    }
+    if let Some(root) = &options.capture {
+        return if options.narrow {
+            captured_narrow::probe(&device, &queue, root, options.narrow_control)
+        } else {
+            captured_aabbs::probe(&device, &queue, root)
+        };
+    }
     if options.rough_image {
         return specular_guides::render_rough_image(&device, &adapter, &queue);
     }
@@ -354,7 +382,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     visibility_probe(&device, &queue, &mut scene)?;
     shadow_image(&device, &queue, &scene)?;
-    aabb_candidates::probe(&device,&queue)?;
+    aabb_candidates::probe(&device, &queue)?;
     specular::probe(&device, &queue)?;
     specular_guides::probe(&device, &adapter, &queue)?;
     primary_background::probe(&device, &adapter, &queue)?;

@@ -57,7 +57,7 @@ fn cs_main(@builtin(global_invocation_id) id: vec3<u32>) {
             let nl = dot(normal,direction);
             if vh <= 0.0 || nl <= 0.0 { textureStore(distances, vec2<i32>(id.xy), vec4(0.0)); textureStore(colors, vec2<i32>(id.xy), vec4(0.0,0.0,0.0,1.0)); return; }
             half_cosine = clamp(vh,0.0,1.0);
-            weight_scale = vh / (nv*c*(1.0+lambda(nv,alpha2)+lambda(nl,alpha2)));
+            weight_scale = vh / max(nv*c*(1.0+lambda(nv,alpha2)+lambda(nl,alpha2)), 0.0001);
         }
         var query: ray_query;
         rayQueryInitialize(&query, scene, RayDesc(0u,255u,camera.position_bias.w,camera.range.x,surface.position_valid.xyz,direction));
@@ -72,7 +72,8 @@ fn cs_main(@builtin(global_invocation_id) id: vec3<u32>) {
         if hit.kind != 0u && hit.primitive_index < arrayLength(&emission) {
             distance = hit.t;
             let cosine = half_cosine;
-            let weight = f0.rgb + (vec3<f32>(1.0) - f0.rgb) * pow(1.0 - cosine,5.0);
+            let t = 1.0 - cosine; let t2 = t * t;
+            let weight = f0.rgb + (vec3<f32>(1.0) - f0.rgb) * (t2 * t2 * t);
             color = emission[hit.primitive_index].rgb * weight * weight_scale;
         }
     }

@@ -5,6 +5,7 @@ fn audit_operand(base:u32)->ExInt {
  for(var k=0u;k<128u;k+=1u) {exact_scratch[value.offset+k]=audit_input[base+k];}
  value.length=128u;return ex_trim(value);
 }
+// ratio_audit_entry is appended only when the ratio module is present.
 @compute @workgroup_size(1) fn main_integer_audit(@builtin(global_invocation_id) id:vec3<u32>) {
  let base=id.x*512u;if base+511u>=arrayLength(&audit_input) {return;}
  ex_begin=id.x*EX_ARENA_WORDS;ex_cursor=0u;ex_peak=0u;

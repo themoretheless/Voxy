@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-21",
+  "hardware": "Apple M4 Max",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.7.2\nBuildVersion:\t\t25G325",
+  "rustc": "rustc 1.98.0-nightly (d1fc603d1 2026-05-26)",
+  "head": "de6cdd51f1c75dfef8af58d319203692d65a8229",
+  "working_tree": "pre-existing broad dirty tree; no commit, no push",
+  "benchmark": "same-process slice snapshot baseline versus direct generated snapshot"
+}

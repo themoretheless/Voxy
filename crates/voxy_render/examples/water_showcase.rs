@@ -7,7 +7,8 @@
 use glam::{Mat4, Quat, Vec2, Vec3};
 use voxy_render::archive_scene::*;
 use voxy_render::voxy_water::{
-    Bathymetry, Floater, River, RiverNode, ShoreField, WaterBody, WaterWorld, WaveSpectrum, buoyancy,
+    Bathymetry, Floater, River, RiverNode, ShoreField, WaterBody, WaterWorld, WaveSpectrum,
+    buoyancy,
 };
 
 const SIZE: u32 = 220;
@@ -16,7 +17,11 @@ const ORIGIN: Vec2 = Vec2::new(-110.0, -110.0);
 
 /// River centre line: from the plateau (x > 40) over the cliff and across the beach.
 fn river_nodes() -> Vec<RiverNode> {
-    let node = |x: f32, y: f32, z: f32, width: f32| RiverNode { position: Vec3::new(x, y, z), width, depth: 0.8 };
+    let node = |x: f32, y: f32, z: f32, width: f32| RiverNode {
+        position: Vec3::new(x, y, z),
+        width,
+        depth: 0.8,
+    };
     vec![
         node(95., 8.6, 30., 5.0),
         node(75., 8.4, 22., 5.5),
@@ -34,13 +39,17 @@ fn river_nodes() -> Vec<RiverNode> {
 fn terrain(p: Vec2, river: &[Vec3]) -> f32 {
     let beach = ((p.x + 60.0) * 0.07).clamp(-6.0, 1.6) + (p.y * 0.05).sin() * 0.3;
     let cliff = smooth((p.x - 42.0) / 3.0) * 6.2;
-    let dunes = ((p.x * 0.11).sin() * (p.y * 0.13).cos()).max(0.0) * 1.2 * smooth((p.x + 40.0) / 20.0);
+    let dunes =
+        ((p.x * 0.11).sin() * (p.y * 0.13).cos()).max(0.0) * 1.2 * smooth((p.x + 40.0) / 20.0);
     let mut h = beach + cliff + dunes;
     // carve the channel: a trough under the water surface along the river
     let mut best = f32::MAX;
     let mut level = 0.0;
     for pair in river.windows(2) {
-        let (a, b) = (Vec2::new(pair[0].x, pair[0].z), Vec2::new(pair[1].x, pair[1].z));
+        let (a, b) = (
+            Vec2::new(pair[0].x, pair[0].z),
+            Vec2::new(pair[1].x, pair[1].z),
+        );
         let ab = b - a;
         let t = ((p - a).dot(ab) / ab.length_squared()).clamp(0.0, 1.0);
         let d = p.distance(a + ab * t);
@@ -75,14 +84,36 @@ fn material(colour: [f32; 3], rough: f32, pattern: f32) -> ArchiveMaterialSource
     }
 }
 
-fn mesh(material: usize, vertices: Vec<ArchiveVertex>, indices: Vec<u32>, instances: Vec<ArchiveInstance>) -> ArchiveMeshSource {
-    ArchiveMeshSource { vertices, indices, instances, material, center: Vec3::ZERO }
+fn mesh(
+    material: usize,
+    vertices: Vec<ArchiveVertex>,
+    indices: Vec<u32>,
+    instances: Vec<ArchiveInstance>,
+) -> ArchiveMeshSource {
+    ArchiveMeshSource {
+        vertices,
+        indices,
+        instances,
+        material,
+        center: Vec3::ZERO,
+    }
 }
 
 fn cube() -> (Vec<ArchiveVertex>, Vec<u32>) {
     let (mut vertices, mut indices) = (Vec::new(), Vec::new());
-    for normal in [Vec3::X, Vec3::NEG_X, Vec3::Y, Vec3::NEG_Y, Vec3::Z, Vec3::NEG_Z] {
-        let tangent = if normal.y.abs() > 0.5 { Vec3::X } else { Vec3::Y };
+    for normal in [
+        Vec3::X,
+        Vec3::NEG_X,
+        Vec3::Y,
+        Vec3::NEG_Y,
+        Vec3::Z,
+        Vec3::NEG_Z,
+    ] {
+        let tangent = if normal.y.abs() > 0.5 {
+            Vec3::X
+        } else {
+            Vec3::Y
+        };
         let bitangent = normal.cross(tangent);
         let o = vertices.len() as u32;
         for (u, v) in [(-0.5, -0.5), (0.5, -0.5), (0.5, 0.5), (-0.5, 0.5)] {
@@ -106,7 +137,12 @@ struct Args {
 }
 
 fn parse() -> Result<Args, Box<dyn std::error::Error>> {
-    let mut args = Args { shot: "water_showcase.png".into(), view: view("beach")?, size: [960, 540], frames: 8 };
+    let mut args = Args {
+        shot: "water_showcase.png".into(),
+        view: view("beach")?,
+        size: [960, 540],
+        frames: 8,
+    };
     let mut it = std::env::args().skip(1);
     while let Some(flag) = it.next() {
         let value = it.next().ok_or_else(|| format!("{flag} expects a value"))?;
@@ -139,18 +175,45 @@ fn view(name: &str) -> Result<(Vec3, Vec3), Box<dyn std::error::Error>> {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = parse()?;
     let nodes = river_nodes();
-    let centre: Vec<Vec3> = River::new(nodes.clone(), 1.2).samples(2.0).iter().map(|s| s.position).collect();
+    let centre: Vec<Vec3> = River::new(nodes.clone(), 1.2)
+        .samples(2.0)
+        .iter()
+        .map(|s| s.position)
+        .collect();
     let bathymetry = Bathymetry::from_fn(ORIGIN, CELL, [SIZE, SIZE], |p| terrain(p, &centre));
     let shore = ShoreField::new(&bathymetry, 0.0);
-    let sea_outline = vec![Vec2::new(-110., -110.), Vec2::new(-20., -110.), Vec2::new(-20., 110.), Vec2::new(-110., 110.)];
+    let sea_outline = vec![
+        Vec2::new(-110., -110.),
+        Vec2::new(-20., -110.),
+        Vec2::new(-20., 110.),
+        Vec2::new(-110., 110.),
+    ];
     let world = WaterWorld::new(
         vec![
             WaterBody::sea(sea_outline, 0.0, -8.0, shore),
             // open sea beyond the surveyed coast, out to the horizon
-            WaterBody { material: voxy_render::voxy_water::WaterMaterial::SEA, ..WaterBody::lake(vec![Vec2::new(-3000., -3000.), Vec2::new(-110., -3000.), Vec2::new(-110., 3000.), Vec2::new(-3000., 3000.)], 0.0, -40.0, None) },
+            WaterBody {
+                material: voxy_render::voxy_water::WaterMaterial::SEA,
+                ..WaterBody::lake(
+                    vec![
+                        Vec2::new(-3000., -3000.),
+                        Vec2::new(-110., -3000.),
+                        Vec2::new(-110., 3000.),
+                        Vec2::new(-3000., 3000.),
+                    ],
+                    0.0,
+                    -40.0,
+                    None,
+                )
+            },
             WaterBody::river(River::new(nodes, 1.2)),
         ],
-        WaveSpectrum { swell_height: 0.6, wind_speed: 5.0, fetch_m: 20_000.0, ..WaveSpectrum::ocean() },
+        WaveSpectrum {
+            swell_height: 0.6,
+            wind_speed: 5.0,
+            fetch_m: 20_000.0,
+            ..WaveSpectrum::ocean()
+        },
     );
 
     // ---- floating crates: integrate buoyancy against the CPU water surface ----
@@ -158,10 +221,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mass = 0.45 * 1000.0 * floater.volume();
     let inertia = mass * 0.15;
     let time = 6.0;
-    let mut crates: Vec<(Vec3, Quat, Vec3, Vec3)> = [(-70., -8.), (-74., -3.), (-66., -15.), (-78., -11.)]
-        .iter()
-        .map(|&(x, z)| (Vec3::new(x, 1.0, z), Quat::from_rotation_y(x * 0.3), Vec3::ZERO, Vec3::ZERO))
-        .collect();
+    let mut crates: Vec<(Vec3, Quat, Vec3, Vec3)> =
+        [(-70., -8.), (-74., -3.), (-66., -15.), (-78., -11.)]
+            .iter()
+            .map(|&(x, z)| {
+                (
+                    Vec3::new(x, 1.0, z),
+                    Quat::from_rotation_y(x * 0.3),
+                    Vec3::ZERO,
+                    Vec3::ZERO,
+                )
+            })
+            .collect();
     let dt = 1.0 / 120.0;
     for step in 0..(time / dt) as usize {
         let t = step as f32 * dt;
@@ -181,7 +252,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         for x in 0..SIZE {
             let p = ORIGIN + Vec2::new(x as f32, y as f32) * CELL;
             let h = |dx: f32, dz: f32| bathymetry.height(p + Vec2::new(dx, dz));
-            let normal = Vec3::new(h(-1., 0.) - h(1., 0.), 2.0 * CELL, h(0., -1.) - h(0., 1.)).normalize();
+            let normal =
+                Vec3::new(h(-1., 0.) - h(1., 0.), 2.0 * CELL, h(0., -1.) - h(0., 1.)).normalize();
             vertices.push(ArchiveVertex {
                 position: [p.x, h(0., 0.), p.y],
                 normal: normal.to_array(),
@@ -195,9 +267,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         for x in 0..SIZE - 1 {
             let a = y * SIZE + x;
             let quad = [a, a + SIZE, a + SIZE + 1, a, a + SIZE + 1, a + 1];
-            let mid = (vertices[a as usize].position[1] + vertices[(a + SIZE + 1) as usize].position[1]) * 0.5;
+            let mid = (vertices[a as usize].position[1]
+                + vertices[(a + SIZE + 1) as usize].position[1])
+                * 0.5;
             let steep = vertices[a as usize].normal[1] < 0.75;
-            let list = if steep { &mut rock } else if mid < 2.0 && vertices[a as usize].position[0] < 0.0 { &mut sand } else { &mut grass };
+            let list = if steep {
+                &mut rock
+            } else if mid < 2.0 && vertices[a as usize].position[0] < 0.0 {
+                &mut sand
+            } else {
+                &mut grass
+            };
             list.extend_from_slice(&quad);
         }
     }
@@ -211,7 +291,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (cube_vertices, cube_indices) = cube();
     let crate_instances = crates
         .iter()
-        .map(|(p, q, _, _)| ArchiveInstance::new(Mat4::from_scale_rotation_translation(Vec3::new(1.2, 0.6, 0.8), *q, *p)))
+        .map(|(p, q, _, _)| {
+            ArchiveInstance::new(Mat4::from_scale_rotation_translation(
+                Vec3::new(1.2, 0.6, 0.8),
+                *q,
+                *p,
+            ))
+        })
         .collect();
     let geometry = vec![
         mesh(0, vertices.clone(), sand, identity.clone()),
@@ -250,7 +336,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     renderer.advance_water(time);
     let target = device.create_texture(&wgpu::TextureDescriptor {
         label: Some("water showcase"),
-        size: wgpu::Extent3d { width, height, depth_or_array_layers: 1 },
+        size: wgpu::Extent3d {
+            width,
+            height,
+            depth_or_array_layers: 1,
+        },
         mip_level_count: 1,
         sample_count: 1,
         dimension: wgpu::TextureDimension::D2,
@@ -280,16 +370,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut encoder = device.create_command_encoder(&Default::default());
     encoder.copy_texture_to_buffer(
         target.as_image_copy(),
-        wgpu::TexelCopyBufferInfo { buffer: &readback, layout: wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(row), rows_per_image: None } },
+        wgpu::TexelCopyBufferInfo {
+            buffer: &readback,
+            layout: wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(row),
+                rows_per_image: None,
+            },
+        },
         target.size(),
     );
     queue.submit([encoder.finish()]);
     readback.map_async(wgpu::MapMode::Read, .., |r| r.expect("map showcase"));
     device.poll(wgpu::PollType::wait_indefinitely())?;
     let mapped = readback.get_mapped_range(..)?;
-    let pixels: Vec<u8> = mapped.chunks_exact(row as usize).flat_map(|r| &r[..(width * 4) as usize]).copied().collect();
+    let pixels: Vec<u8> = mapped
+        .chunks_exact(row as usize)
+        .flat_map(|r| &r[..(width * 4) as usize])
+        .copied()
+        .collect();
     image::save_buffer(&args.shot, &pixels, width, height, image::ColorType::Rgba8)?;
     let heights: Vec<String> = crates.iter().map(|(p, ..)| format!("{:.2}", p.y)).collect();
-    println!("WATER SHOWCASE {}: crates afloat at y = [{}]", args.shot, heights.join(", "));
+    println!(
+        "WATER SHOWCASE {}: crates afloat at y = [{}]",
+        args.shot,
+        heights.join(", ")
+    );
     Ok(())
 }

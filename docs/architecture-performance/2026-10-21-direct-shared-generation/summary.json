@@ -1,0 +1,148 @@
+{
+  "accepted_runs": [
+    10,
+    11
+  ],
+  "scope": "CPU generation + validation + buffer selection + encoder finish/discard; no draw or queue submission",
+  "gpu_environment": "Concurrent street_walk rendering; CPU-only results, no GPU/FPS qualification",
+  "exclusions": {
+    "1": "exploratory old writer plus concurrent compilation",
+    "2": "old scalar writer before regression fix; monitor omitted street_walk",
+    "3": "old scalar writer, concurrent compilation",
+    "4": "aborted by this task with SIGTERM due GPU contention; partial log retained",
+    "6": "CPU microbench with concurrent compilation and CPU replay",
+    "7": "CPU microbench with concurrent compilation",
+    "8": "CPU microbench with concurrent compilation and unstable A/A",
+    "9": "CPU microbench with concurrent compilation"
+  },
+  "cases": [
+    {
+      "case": "input_particles",
+      "count": 64,
+      "pairs": 18,
+      "before_us": 0.962,
+      "after_us": 0.795,
+      "median_paired_ratio": 0.8312629921330394,
+      "bootstrap_95": [
+        0.8271642883278448,
+        0.8360771855165436
+      ],
+      "per_run_ratios": {
+        "10": 0.8283963227783453,
+        "11": 0.8348115299334812
+      }
+    },
+    {
+      "case": "input_particles",
+      "count": 4096,
+      "pairs": 18,
+      "before_us": 13.6045,
+      "after_us": 4.351,
+      "median_paired_ratio": 0.3241847731488232,
+      "bootstrap_95": [
+        0.31960216764291005,
+        0.3269101192922258
+      ],
+      "per_run_ratios": {
+        "10": 0.3268815707024995,
+        "11": 0.32179306013502906
+      }
+    },
+    {
+      "case": "input_particles_aa",
+      "count": 4096,
+      "pairs": 18,
+      "before_us": 13.439,
+      "after_us": 13.5365,
+      "median_paired_ratio": 1.0010257116550338,
+      "bootstrap_95": [
+        0.9934968267648672,
+        1.0069684391009104
+      ],
+      "per_run_ratios": {
+        "10": 1.0012506079344126,
+        "11": 1.0
+      }
+    },
+    {
+      "case": "input_particles_overflow",
+      "count": 4096,
+      "pairs": 18,
+      "before_us": 35.9045,
+      "after_us": 27.241500000000002,
+      "median_paired_ratio": 0.7432419780339062,
+      "bootstrap_95": [
+        0.7230961784234429,
+        0.7640898480826507
+      ],
+      "per_run_ratios": {
+        "10": 0.7422656669822667,
+        "11": 0.7442182890855458
+      }
+    },
+    {
+      "case": "input_instances",
+      "count": 64,
+      "pairs": 18,
+      "before_us": 1.529,
+      "after_us": 1.069,
+      "median_paired_ratio": 0.6948492891597862,
+      "bootstrap_95": [
+        0.6925820256776034,
+        0.7005833435812419
+      ],
+      "per_run_ratios": {
+        "10": 0.7020169160702667,
+        "11": 0.6925820256776034
+      }
+    },
+    {
+      "case": "input_instances",
+      "count": 4096,
+      "pairs": 18,
+      "before_us": 57.5775,
+      "after_us": 22.599,
+      "median_paired_ratio": 0.38834081808384857,
+      "bootstrap_95": [
+        0.38672757305533556,
+        0.3944515330694378
+      ],
+      "per_run_ratios": {
+        "10": 0.3867435445814363,
+        "11": 0.3888727219817395
+      }
+    },
+    {
+      "case": "input_instances_aa",
+      "count": 4096,
+      "pairs": 18,
+      "before_us": 57.6255,
+      "after_us": 57.753,
+      "median_paired_ratio": 1.000101794353456,
+      "bootstrap_95": [
+        0.9906259334783021,
+        1.0042670603219142
+      ],
+      "per_run_ratios": {
+        "10": 0.9978095671367674,
+        "11": 1.002140822583864
+      }
+    },
+    {
+      "case": "input_instances_overflow",
+      "count": 4096,
+      "pairs": 18,
+      "before_us": 109.27250000000001,
+      "after_us": 72.469,
+      "median_paired_ratio": 0.6654603411629638,
+      "bootstrap_95": [
+        0.6612085825979058,
+        0.6733467760105534
+      ],
+      "per_run_ratios": {
+        "10": 0.6701423999257851,
+        "11": 0.6625773927044798
+      }
+    }
+  ]
+}

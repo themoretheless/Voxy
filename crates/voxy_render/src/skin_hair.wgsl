@@ -23,7 +23,8 @@ fn hair_shading(tangent:vec3<f32>,light:vec3<f32>,view:vec3<f32>,colour:vec3<f32
  let lp=normalize(light-tangent*sin_l+vec3<f32>(1e-5));let vp=normalize(view-tangent*sin_v+vec3<f32>(1e-5));
  let cos_phi=dot(lp,vp);
  let beta=max(roughness*roughness,0.02);let shift=0.035;
- let fresnel=0.04+0.96*pow(1.-sqrt(clamp(0.5+0.5*dot(light,view),0.,1.)),5.);
+ let ft=1.-sqrt(clamp(0.5+0.5*dot(light,view),0.,1.));let ft2=ft*ft;
+ let fresnel=0.04+0.96*(ft2*ft2*ft);
  let r=hair_lobe(sin_l+sin_v,-2.*shift,beta)*0.25*sqrt(clamp(0.5+0.5*cos_phi,0.,1.))*fresnel;
  // Absorption grows with path length through the pigmented fibre.
  let absorb=pow(max(colour,vec3<f32>(0.001)),vec3<f32>(0.5/max(cos_l,0.2)));
@@ -39,7 +40,9 @@ fn hair_shading(tangent:vec3<f32>,light:vec3<f32>,view:vec3<f32>,colour:vec3<f32
 fn cornea_coat(n:vec3<f32>,view:vec3<f32>,light:vec3<f32>,base:vec3<f32>)->vec3<f32>{
  let h=normalize(view+light);let nh=max(dot(n,h),0.);let nl=max(dot(n,light),0.);let nv=max(dot(n,view),1e-4);
  let a2=0.0004;let q=nh*nh*(a2-1.)+1.;let d=a2/(3.14159265*q*q);
- let f=0.025+0.975*pow(1.-max(dot(view,h),0.),5.);
- let coat_view=0.025+0.975*pow(1.-nv,5.);
+ let fh=1.-max(dot(view,h),0.);let fh2=fh*fh;
+ let f=0.025+0.975*(fh2*fh2*fh);
+ let fv=1.-nv;let fv2=fv*fv;
+ let coat_view=0.025+0.975*(fv2*fv2*fv);
  return base*(1.-coat_view)+vec3<f32>(min(d*f*0.25/nv,60.)*nl);
 }

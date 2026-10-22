@@ -103,13 +103,10 @@ impl CleanCamDemo {
         renderer.update_camera(camera)?;
         renderer.set_bodycam_flashlight_and_wetness(flash_pos, flash_dir, self.wetness);
 
-        let size = self
-            .window
-            .as_ref()
-            .map_or((1280, 720), |w| {
-                let s = w.inner_size();
-                (s.width.max(1280), s.height.max(720))
-            });
+        let size = self.window.as_ref().map_or((1280, 720), |w| {
+            let s = w.inner_size();
+            (s.width.max(1280), s.height.max(720))
+        });
         if let Some(female_scene) = &mut self.female_scene {
             female_scene.update_for_camera(
                 renderer.queue(),
@@ -117,7 +114,7 @@ impl CleanCamDemo {
                 size.0,
                 size.1,
                 dt,
-                self.snapshot_path.is_none() && self.frames % 2 == 0,
+                self.snapshot_path.is_none() && self.frames.is_multiple_of(2),
             )?;
         }
 
@@ -131,7 +128,13 @@ impl CleanCamDemo {
             } else {
                 renderer.capture_bodycam_rgba8(self.frames + 1)?
             };
-            image::save_buffer(&snapshot_path, &rgba, width, height, image::ColorType::Rgba8)?;
+            image::save_buffer(
+                &snapshot_path,
+                &rgba,
+                width,
+                height,
+                image::ColorType::Rgba8,
+            )?;
             println!(
                 "CAM SNAPSHOT OK: saved {}x{} PNG to {}",
                 width,
@@ -191,10 +194,7 @@ impl ApplicationHandler for CleanCamDemo {
                 }
             }
             let chunks = bodycam_scene::build_tactical_compound_chunks()?;
-            let uploads: Vec<_> = chunks
-                .iter()
-                .map(|c| (c.pos, &c.mesh, &c.light))
-                .collect();
+            let uploads: Vec<_> = chunks.iter().map(|c| (c.pos, &c.mesh, &c.light)).collect();
             renderer.upload_lit_chunks(&uploads, ChunkPos::default())?;
             let female_scene = bodycam_scene::BunkerFemaleScene::new(&renderer)?;
             println!(

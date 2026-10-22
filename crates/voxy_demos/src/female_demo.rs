@@ -575,8 +575,7 @@ impl FemaleDemo {
         let regions = crate::volume_regions::Region::build(&vertices[..body_vertices])?;
         let features =
             crate::female_features::FaceFeatures::new(&vertices[..body_vertices], &indices);
-        let pelvic =
-            crate::female_pelvic::PelvicAnatomy::new(&vertices[..body_vertices], &indices);
+        let pelvic = crate::female_pelvic::PelvicAnatomy::new(&vertices[..body_vertices], &indices);
         let lid_contour = (std::env::var("VOXY_EXPERIMENTAL_LID_CONTOUR").as_deref() != Ok("0"))
             .then(|| crate::female_face::LidContour::new(&vertices[..body_vertices], &indices));
         let lip_triangles = crate::female_features::open_mouth_surface(&vertices, &mut indices);
@@ -830,11 +829,13 @@ impl FemaleDemo {
                     )?
                 });
             }
-            replacement.parameter_file = self.parameter_file.clone();
+            replacement.parameter_file.clone_from(&self.parameter_file);
             replacement.parameter_revision = self.parameter_revision;
             replacement.film_revision = self.film_revision;
             replacement.view_revision = self.view_revision;
-            replacement.face_parameter_file = self.face_parameter_file.clone();
+            replacement
+                .face_parameter_file
+                .clone_from(&self.face_parameter_file);
             replacement.face_parameter_revision = self.face_parameter_revision;
             replacement.face_parameters = self.face_parameters.clone();
             replacement.show_skin = self.show_skin;
@@ -857,11 +858,9 @@ impl FemaleDemo {
                 let mesh = replacement
                     .mesh()
                     .map_err(|_| "invalid replacement fluid substrate")?;
-                replacement
-                    .film
-                    .as_mut()
-                    .unwrap()
-                    .update_substrate(mesh.vertices())?;
+                if let Some(film) = replacement.film.as_mut() {
+                    film.update_substrate(mesh.vertices())?;
+                }
             }
             *self = replacement;
             return Ok(());
@@ -1522,7 +1521,9 @@ impl FemaleDemo {
         let result = (|| {
             if self.film.is_some() {
                 let vertices = self.film_substrate_vertices()?;
-                self.film.as_mut().unwrap().advance(&vertices, dt)?;
+                if let Some(film) = self.film.as_mut() {
+                    film.advance(&vertices, dt)?;
+                }
             }
             Ok(())
         })();
@@ -1655,7 +1656,9 @@ impl FemaleDemo {
                         return Err("film animation timestep exceeds 0.1 seconds");
                     }
                     let vertices = self.film_substrate_vertices()?;
-                    self.film.as_mut().unwrap().advance(&vertices, dt)?;
+                    if let Some(film) = self.film.as_mut() {
+                        film.advance(&vertices, dt)?;
+                    }
                 }
                 Ok(())
             })();
@@ -2112,7 +2115,10 @@ impl FemaleDemo {
     pub fn gpu_jump_weights(&self) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
         self.rig.gpu_jump_weights()
     }
-    pub fn gpu_secondary_jump_weights(&self, total_vertices: usize) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
+    pub fn gpu_secondary_jump_weights(
+        &self,
+        total_vertices: usize,
+    ) -> Vec<voxy_render::SurfaceRigidSkinWeight> {
         let mut weights = self.rig.gpu_jump_weights();
         let [pelvic_start, pelvic_end] = self.last_pelvic_vertex_range.get();
         if pelvic_start >= weights.len()
@@ -2126,7 +2132,8 @@ impl FemaleDemo {
             };
             weights.resize(pelvic_start, head_weight);
             let base_weights = self.rig.gpu_jump_weights();
-            self.pelvic.append_gpu_jump_weights(&base_weights, &mut weights);
+            self.pelvic
+                .append_gpu_jump_weights(&base_weights, &mut weights);
         }
         weights
     }
@@ -2626,7 +2633,8 @@ impl FemaleDemo {
             Some(&mut pelvic_normals),
             self.pelvic_motion_state(),
         );
-        self.last_pelvic_vertex_range.set([face_end, vertices.len()]);
+        self.last_pelvic_vertex_range
+            .set([face_end, vertices.len()]);
         let hair_start = vertices.len();
         let _hair_index_start = indices.len();
         let mut hair_normals = Vec::new();

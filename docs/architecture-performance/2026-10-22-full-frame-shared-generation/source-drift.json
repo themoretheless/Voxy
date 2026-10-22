@@ -1,0 +1,10 @@
+{
+  "crates/voxy_render/src/lib.rs": {
+    "frozen": "5aeea2c428b0f0b287643eb5341a47ddfbf3056e4b4c315d97f4b4a3fbef9943",
+    "current": "d329ca31935d56feb1571a08557eebd8bb2aac0d4c712c3e9aed2eae8805066a"
+  },
+  "docs/architecture-performance/2026-10-22-full-frame-shared-generation/qualify.py": {
+    "frozen": "42705887f59484a98e1b97a8c73c9b603f4fea0398ac1f62c5cffe540f88eed0",
+    "current": "780245bb353a7beb4d0423c93fa60be3464a60c9f2e20eebc0c23e118b3fdc9c"
+  }
+}

@@ -1,0 +1,984 @@
+[
+  {
+    "time": 1792605482.254797,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605482.529462,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605482.783721,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605483.040313,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 R    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605483.293591,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605483.568217,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605483.986679,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605484.316863,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605484.655991,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605485.014233,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605485.411171,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605485.7467048,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605486.102315,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605486.403038,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605486.826137,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605487.144565,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605487.488398,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605487.756168,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605488.013134,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605488.2721548,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605488.52793,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605488.7897558,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 R    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605489.045323,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605489.412866,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605489.7965178,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605490.1615639,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605490.481162,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605490.8178508,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605491.1664891,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605491.490156,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605491.833125,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605492.15851,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605492.483618,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605492.82008,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 R    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605493.160883,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605493.425337,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605493.695982,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605494.018759,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605494.2984278,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605494.5764139,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605494.8753788,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605495.1417978,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 R    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605495.4040399,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605495.663282,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605495.9209018,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605496.1765661,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605496.42699,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605496.6833339,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605496.932992,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605497.185434,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605497.443038,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605497.702892,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605497.9597409,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605498.217195,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605498.476616,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605498.73312,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605498.991713,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605499.253539,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605499.517782,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605499.783328,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605500.044723,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605500.3114822,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605500.583124,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605500.853445,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605501.118038,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605501.378121,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605501.659422,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605501.9774358,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 R    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605502.27364,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605502.570046,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605502.868083,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605503.1514208,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605503.427995,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605503.7053661,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605503.9810922,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605504.2536929,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605504.5189602,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605504.78061,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605505.044339,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605505.304854,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605505.562547,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605505.82002,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605506.074265,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605506.334475,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605506.593764,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605506.872139,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 R    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605507.171037,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605507.4833071,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605507.848781,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605508.194686,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605508.555871,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605508.870913,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605509.1951628,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605509.535983,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605509.851539,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605510.221131,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605510.51563,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605510.811433,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605511.127578,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605511.412988,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605511.693907,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605511.964941,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605512.2366889,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605512.50559,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605512.7724721,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605513.0353448,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605513.299992,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605513.562009,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605513.8238552,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605514.0852249,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605514.35291,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605514.6203,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605514.88722,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605515.154298,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605515.421626,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench",
+      "90848  8947 Rs   /opt/homebrew/Cellar/rustup/1.29.1_1/libexec/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605515.6937,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench",
+      "90848  8947 Us   /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605515.967137,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench",
+      "90848  8947 Ss   /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605516.2708638,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 R    /tmp/voxy-direct-generation-bench",
+      "90848  8947 Ss   /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605516.602475,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench",
+      "90848  8947 Ss   /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605517.00491,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench",
+      "90848  8947 Ss   /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605517.3919868,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench",
+      "90848  8947 Ss   /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605517.7714,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench",
+      "90848  8947 Ss   /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605518.07263,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 R    /tmp/voxy-direct-generation-bench",
+      "90848  8947 Ss   /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo"
+    ]
+  },
+  {
+    "time": 1792605518.3661,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605518.655998,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605518.940536,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605519.214703,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605519.4846091,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605519.758649,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605520.030889,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605520.300906,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605520.57438,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605520.842211,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605521.1129699,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605521.383306,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605521.646633,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605521.9106061,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 S    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605522.1755352,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  },
+  {
+    "time": 1792605522.441375,
+    "clients": [
+      "  751     1 S    /opt/homebrew/opt/ollama/bin/ollama",
+      "89941 89935 U    /tmp/voxy-direct-generation-bench"
+    ]
+  }
+]

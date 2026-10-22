@@ -1,0 +1,16 @@
+[
+  {
+    "pid": 25855,
+    "identity": "25855 19874 S+   Thu Oct 22 00:56:59 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo test -p voxy_app --example street_walk original::tests::render_villa_preview -- --ignored --nocapture",
+    "signal": "SIGSTOP",
+    "time": 1792616306.595783,
+    "authorization": "user authorized pausing street_walk, including the common quiet window"
+  },
+  {
+    "pid": 25974,
+    "identity": "25974 25855 R+   Thu Oct 22 00:57:01 2026     /Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe original::tests::render_villa_preview --ignored --nocapture",
+    "signal": "SIGSTOP",
+    "time": 1792616306.600885,
+    "authorization": "user authorized pausing street_walk, including the common quiet window"
+  }
+]

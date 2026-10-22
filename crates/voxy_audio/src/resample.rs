@@ -174,7 +174,7 @@ fn compute_filter_weights(fraction: f64, cutoff: f64) -> [f64; 65] {
     weights
 }
 
-#[inline(always)]
+#[inline]
 fn dot_product_stereo_65(window: &[[f32; 2]], kernel: &[f64; 65]) -> (f64, f64) {
     debug_assert_eq!(window.len(), 65);
     let mut s0_0 = 0.0f64;

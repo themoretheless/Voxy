@@ -76,7 +76,7 @@ pub enum FluidDiagnostic {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+#[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 struct CameraUniform {
     view: [[f32; 4]; 4],
     projection: [[f32; 4]; 4],
@@ -94,6 +94,13 @@ struct Target {
     view: wgpu::TextureView,
 }
 
+#[derive(Debug)]
+struct FluidBindings {
+    particle: wgpu::BindGroup,
+    filters: [wgpu::BindGroup; 3],
+    composite: wgpu::BindGroup,
+}
+
 /// Owns particle and film storage, scene background and fluid reconstruction targets.
 /// `encode` produces final colour; it does not supply temporal motion vectors or
 /// write a combined scene/fluid depth for subsequent opaque draws.
@@ -107,9 +114,15 @@ pub struct ScreenSpaceFluidRenderer {
     particles: wgpu::Buffer,
     films: wgpu::Buffer,
     film_count: u32,
-    particle_group: wgpu::BindGroup,
-    filter_groups: [wgpu::BindGroup; 3],
-    composite_group: wgpu::BindGroup,
+    groups: FluidBindings,
+    shared_groups: Vec<FluidBindings>,
+    camera_ring: Option<crate::SharedUploadRing>,
+    particle_ring: Option<crate::SharedUploadRing>,
+    film_ring: Option<crate::SharedUploadRing>,
+    camera_snapshot: CameraUniform,
+    particle_snapshot: Vec<FluidRenderParticle>,
+    generated_particles: Option<crate::SharedUploadSnapshot>,
+    film_snapshot: Vec<FluidRenderFilmTriangle>,
     depth_pipeline: wgpu::RenderPipeline,
     thickness_pipeline: wgpu::RenderPipeline,
     film_depth_pipeline: wgpu::RenderPipeline,
@@ -240,8 +253,10 @@ fn validate_formats(
 }
 
 impl ScreenSpaceFluidRenderer {
-    /// Logical texture texels and buffer bytes, excluding driver allocation padding
-    /// and opaque pipeline/bind-group storage. No GPU resources are created.
+    /// Minimum portable texture and buffer footprint, excluding optional shared
+    /// rings, driver padding and pipeline/bind-group storage. No resources are
+    /// created. Use `allocation_bytes` for an existing renderer's actual footprint;
+    /// `new_with_adapter_budget` admits optional rings within its explicit budget.
     /// # Errors
     /// Empty targets/capacity, compressed/non-color formats or integer overflow.
     pub fn required_allocation_bytes(
@@ -311,7 +326,15 @@ impl ScreenSpaceFluidRenderer {
         {
             return Err("fluid GPU resource budget exceeded");
         }
-        Self::new_with_adapter(device, adapter, format, width, height, capacity)
+        Self::validate_adapter(device, adapter, format)?;
+        Self::new_with_shared_budget(
+            device,
+            format,
+            width,
+            height,
+            capacity,
+            budget - other_live_bytes - required,
+        )
     }
 
     /// Checks actual format capabilities before creating GPU resources.
@@ -327,13 +350,20 @@ impl ScreenSpaceFluidRenderer {
         height: u32,
         capacity: usize,
     ) -> Result<Self, &'static str> {
+        Self::validate_adapter(device, adapter, format)?;
+        Self::new(device, format, width, height, capacity)
+    }
+    fn validate_adapter(
+        device: &wgpu::Device,
+        adapter: &wgpu::Adapter,
+        format: wgpu::TextureFormat,
+    ) -> Result<(), &'static str> {
         if device.adapter_info() != adapter.get_info() {
             return Err("fluid renderer adapter metadata differs from device");
         }
         validate_formats(device.features(), format, |f| {
             adapter.get_texture_format_features(f)
-        })?;
-        Self::new(device, format, width, height, capacity)
+        })
     }
 
     /// Allocates fixed particle and film-cell budgets (`capacity` each) and resolution.
@@ -348,8 +378,20 @@ impl ScreenSpaceFluidRenderer {
         height: u32,
         capacity: usize,
     ) -> Result<Self, &'static str> {
+        Self::new_with_shared_budget(device, format, width, height, capacity, u64::MAX)
+    }
+
+    fn new_with_shared_budget(
+        device: &wgpu::Device,
+        format: wgpu::TextureFormat,
+        width: u32,
+        height: u32,
+        capacity: usize,
+        shared_budget: u64,
+    ) -> Result<Self, &'static str> {
         validate_float_output(device.features(), format)?;
-        let allocation_bytes = Self::required_allocation_bytes(format, width, height, capacity)?;
+        let mut allocation_bytes =
+            Self::required_allocation_bytes(format, width, height, capacity)?;
         let (bytes, film_bytes) =
             validate_device_limits(&device.limits(), width, height, capacity)?;
         let make_target = |label, format, extra| {
@@ -494,50 +536,86 @@ impl ScreenSpaceFluidRenderer {
                 depth_sampler_entry,
             ],
         });
-        let camera_entry = wgpu::BindGroupEntry {
-            binding: 0,
-            resource: camera.as_entire_binding(),
+        let make_bindings = |camera: &wgpu::Buffer| {
+            let camera_entry = wgpu::BindGroupEntry {
+                binding: 0,
+                resource: camera.as_entire_binding(),
+            };
+            let texture_binding = |binding, view| wgpu::BindGroupEntry {
+                binding,
+                resource: wgpu::BindingResource::TextureView(view),
+            };
+            let particle_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("fluid physical particles"),
+                layout: &particle_layout,
+                entries: &[
+                    camera_entry.clone(),
+                    texture_binding(2, &scene_depth.view),
+                    wgpu::BindGroupEntry {
+                        binding: 7,
+                        resource: wgpu::BindingResource::Sampler(&depth_sampler),
+                    },
+                ],
+            });
+            let filter_groups =
+                [&raw_depth.view, &ping_depth.view, &smooth_depth.view].map(|view| {
+                    device.create_bind_group(&wgpu::BindGroupDescriptor {
+                        label: Some("fluid filter input"),
+                        layout: &filter_layout,
+                        entries: &[camera_entry.clone(), texture_binding(1, view)],
+                    })
+                });
+            let composite_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("fluid optical inputs"),
+                layout: &composite_layout,
+                entries: &[
+                    camera_entry,
+                    texture_binding(1, &smooth_depth.view),
+                    texture_binding(2, &thickness.view),
+                    texture_binding(3, &material.view),
+                    texture_binding(4, &background.view),
+                    texture_binding(5, &scene_depth.view),
+                    texture_binding(6, &optical_depth.view),
+                    wgpu::BindGroupEntry {
+                        binding: 7,
+                        resource: wgpu::BindingResource::Sampler(&depth_sampler),
+                    },
+                ],
+            });
+            FluidBindings {
+                particle: particle_group,
+                filters: filter_groups,
+                composite: composite_group,
+            }
         };
-        let texture_binding = |binding, view| wgpu::BindGroupEntry {
-            binding,
-            resource: wgpu::BindingResource::TextureView(view),
-        };
-        let particle_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("fluid physical particles"),
-            layout: &particle_layout,
-            entries: &[
-                camera_entry.clone(),
-                texture_binding(2, &scene_depth.view),
-                wgpu::BindGroupEntry {
-                    binding: 7,
-                    resource: wgpu::BindingResource::Sampler(&depth_sampler),
-                },
-            ],
-        });
-        let filter_groups = [&raw_depth.view, &ping_depth.view, &smooth_depth.view].map(|view| {
-            device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: Some("fluid filter input"),
-                layout: &filter_layout,
-                entries: &[camera_entry.clone(), texture_binding(1, view)],
+        let groups = make_bindings(&camera);
+        let ring_bytes = (camera.size() + particles.size() + films.size())
+            .checked_mul(3)
+            .ok_or("fluid shared buffer size overflow")?;
+        let shared = ring_bytes <= shared_budget;
+        let camera_ring = shared
+            .then(|| {
+                crate::SharedUploadRing::new(device, camera.size(), wgpu::BufferUsages::UNIFORM)
             })
-        });
-        let composite_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("fluid optical inputs"),
-            layout: &composite_layout,
-            entries: &[
-                camera_entry,
-                texture_binding(1, &smooth_depth.view),
-                texture_binding(2, &thickness.view),
-                texture_binding(3, &material.view),
-                texture_binding(4, &background.view),
-                texture_binding(5, &scene_depth.view),
-                texture_binding(6, &optical_depth.view),
-                wgpu::BindGroupEntry {
-                    binding: 7,
-                    resource: wgpu::BindingResource::Sampler(&depth_sampler),
-                },
-            ],
-        });
+            .flatten();
+        let particle_ring = shared
+            .then(|| {
+                crate::SharedUploadRing::new(device, particles.size(), wgpu::BufferUsages::VERTEX)
+            })
+            .flatten();
+        let film_ring = shared
+            .then(|| crate::SharedUploadRing::new(device, films.size(), wgpu::BufferUsages::VERTEX))
+            .flatten();
+        for ring in [&camera_ring, &particle_ring, &film_ring]
+            .into_iter()
+            .flatten()
+        {
+            allocation_bytes += ring.allocation_bytes();
+        }
+        let shared_groups = camera_ring
+            .as_ref()
+            .map(|ring| ring.buffers().map(make_bindings).collect())
+            .unwrap_or_default();
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("screen-space physical liquid"),
             source: wgpu::ShaderSource::Wgsl(crate::depth_sample::shader(
@@ -726,9 +804,15 @@ impl ScreenSpaceFluidRenderer {
             particles,
             films,
             film_count: 0,
-            particle_group,
-            filter_groups,
-            composite_group,
+            groups,
+            shared_groups,
+            camera_ring,
+            particle_ring,
+            film_ring,
+            camera_snapshot: bytemuck::Zeroable::zeroed(),
+            particle_snapshot: Vec::new(),
+            generated_particles: None,
+            film_snapshot: Vec::new(),
             depth_pipeline,
             thickness_pipeline,
             film_depth_pipeline,
@@ -843,15 +927,96 @@ impl ScreenSpaceFluidRenderer {
             ],
             controls: [near, far, 8.0, 1.5],
         };
-        queue.write_buffer(&self.camera, 0, bytemuck::bytes_of(&uniform));
-        if !particles.is_empty() {
+        self.generated_particles = None;
+        self.camera_snapshot = uniform;
+        if self.camera_ring.is_none() {
+            queue.write_buffer(&self.camera, 0, bytemuck::bytes_of(&uniform));
+        }
+        if self.particle_ring.is_some() {
+            self.particle_snapshot.clear();
+            self.particle_snapshot.extend_from_slice(particles);
+        } else if !particles.is_empty() {
             queue.write_buffer(&self.particles, 0, bytemuck::cast_slice(particles));
         }
-        if !films.is_empty() {
+        if self.film_ring.is_some() {
+            self.film_snapshot.clear();
+            self.film_snapshot.extend_from_slice(films);
+        } else if !films.is_empty() {
             queue.write_buffer(&self.films, 0, bytemuck::cast_slice(films));
         }
         self.film_count = films.len() as u32;
         self.count = particles.len() as u32;
+        Ok(())
+    }
+
+    /// Generate final particle structs directly into shared memory. The producer
+    /// runs once; a rejected particle/camera/film leaves the previous frame intact.
+    #[allow(clippy::too_many_arguments)]
+    pub fn update_generated_with_film<I>(
+        &mut self,
+        queue: &wgpu::Queue,
+        camera: crate::SceneCamera,
+        count: usize,
+        particles: I,
+        films: &[FluidRenderFilmTriangle],
+        units_per_metre: f32,
+        filter: FluidDepthFilter,
+    ) -> Result<(), &'static str>
+    where
+        I: Iterator<Item = FluidRenderParticle>,
+    {
+        if count > self.capacity {
+            return Err("fluid particle capacity");
+        }
+        let Some(ring) = self.particle_ring.as_ref().filter(|_| count != 0) else {
+            let particles = particles.collect::<Vec<_>>();
+            if particles.len() != count {
+                return Err("fluid particle count mismatch");
+            }
+            return self.update_with_film(
+                queue,
+                camera,
+                &particles,
+                films,
+                units_per_metre,
+                filter,
+            );
+        };
+        let generated = ring
+            .prepare((count * size_of::<FluidRenderParticle>()) as u64, |bytes| {
+                let mut chunks = bytes
+                    .into_chunks::<{ size_of::<FluidRenderParticle>() }>()
+                    .0
+                    .into_iter();
+                for value in particles {
+                    let Some(target) = chunks.next() else {
+                        return Err(crate::ComputeError::InvalidBuffer);
+                    };
+                    if value
+                        .position_radius
+                        .iter()
+                        .chain(value.absorption_ior.iter())
+                        .any(|x| !x.is_finite())
+                        || value.position_radius[3] <= 0.0
+                        || value.absorption_ior[..3].iter().any(|x| *x < 0.0)
+                        || value.absorption_ior[3] < 1.0
+                    {
+                        return Err(crate::ComputeError::Validation(
+                            "invalid generated particle".into(),
+                        ));
+                    }
+                    target.write(bytemuck::cast(value));
+                }
+                if chunks.next().is_some() {
+                    return Err(crate::ComputeError::InvalidBuffer);
+                }
+                Ok::<_, crate::ComputeError>(())
+            })
+            .map_err(|_| "invalid generated fluid snapshot")?;
+        self.update_with_film(queue, camera, &[], films, units_per_metre, filter)?;
+        self.particle_snapshot = Vec::new();
+        self.generated_particles = Some(generated);
+        self.count = count as u32;
         Ok(())
     }
 
@@ -901,6 +1066,63 @@ impl ScreenSpaceFluidRenderer {
         Ok(())
     }
 
+    fn camera_bindings(&self, encoder: &mut wgpu::CommandEncoder) -> &FluidBindings {
+        if let Some(ring) = &self.camera_ring {
+            let (slot, _) = ring
+                .write_or_stage(encoder, &self.camera, |mut bytes| {
+                    bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot))
+                })
+                .expect("live shared fluid camera");
+            self.shared_groups.get(slot).unwrap_or(&self.groups)
+        } else {
+            &self.groups
+        }
+    }
+
+    fn particle_buffers(&self, encoder: &mut wgpu::CommandEncoder) -> (wgpu::Buffer, wgpu::Buffer) {
+        let particles = if let Some(snapshot) = &self.generated_particles {
+            snapshot.buffer_for_encoder(encoder, &self.particles)
+        } else {
+            self.particle_ring
+                .as_ref()
+                .filter(|_| self.count != 0)
+                .map_or_else(
+                    || self.particles.clone(),
+                    |ring| {
+                        ring.write_or_stage(encoder, &self.particles, |mut bytes| {
+                            bytes
+                                .slice(
+                                    ..self.particle_snapshot.len()
+                                        * size_of::<FluidRenderParticle>(),
+                                )
+                                .copy_from_slice(bytemuck::cast_slice(&self.particle_snapshot));
+                        })
+                        .expect("live shared fluid particles")
+                        .1
+                    },
+                )
+        };
+        let films = self
+            .film_ring
+            .as_ref()
+            .filter(|_| self.film_count != 0)
+            .map_or_else(
+                || self.films.clone(),
+                |ring| {
+                    ring.write_or_stage(encoder, &self.films, |mut bytes| {
+                        bytes
+                            .slice(
+                                ..self.film_snapshot.len() * size_of::<FluidRenderFilmTriangle>(),
+                            )
+                            .copy_from_slice(bytemuck::cast_slice(&self.film_snapshot));
+                    })
+                    .expect("live shared fluid films")
+                    .1
+                },
+            );
+        (particles, films)
+    }
+
     #[allow(clippy::too_many_arguments)]
     fn encode_region(
         &self,
@@ -911,6 +1133,8 @@ impl ScreenSpaceFluidRenderer {
         draws: &[crate::SceneDraw<'_>],
         viewport: Option<[u32; 4]>,
     ) {
+        let groups = self.camera_bindings(encoder);
+        let (particles, films) = self.particle_buffers(encoder);
         let world: Vec<_> = draws
             .iter()
             .filter(|d| !d.overlay)
@@ -954,11 +1178,11 @@ impl ScreenSpaceFluidRenderer {
                 ..Default::default()
             });
             pass.set_pipeline(&self.depth_pipeline);
-            pass.set_bind_group(0, &self.particle_group, &[]);
-            pass.set_vertex_buffer(0, self.particles.slice(..));
+            pass.set_bind_group(0, &groups.particle, &[]);
+            pass.set_vertex_buffer(0, particles.slice(..));
             pass.draw(0..6, 0..self.count);
             pass.set_pipeline(&self.film_depth_pipeline);
-            pass.set_vertex_buffer(0, self.films.slice(..));
+            pass.set_vertex_buffer(0, films.slice(..));
             pass.draw(0..6, 0..self.film_count);
         }
         {
@@ -977,12 +1201,12 @@ impl ScreenSpaceFluidRenderer {
                 }),
                 ..Default::default()
             });
-            pass.set_bind_group(0, &self.particle_group, &[]);
+            pass.set_bind_group(0, &groups.particle, &[]);
             pass.set_pipeline(&self.thickness_pipeline);
-            pass.set_vertex_buffer(0, self.particles.slice(..));
+            pass.set_vertex_buffer(0, particles.slice(..));
             pass.draw(0..6, 0..self.count);
             pass.set_pipeline(&self.film_thickness_pipeline);
-            pass.set_vertex_buffer(0, self.films.slice(..));
+            pass.set_vertex_buffer(0, films.slice(..));
             pass.draw(0..6, 0..self.film_count);
         }
         for (source, target, axis) in [
@@ -995,7 +1219,7 @@ impl ScreenSpaceFluidRenderer {
                 encoder,
                 target,
                 &self.filter_pipelines[axis],
-                &self.filter_groups[source],
+                &groups.filters[source],
                 3,
                 1,
             );
@@ -1023,7 +1247,7 @@ impl ScreenSpaceFluidRenderer {
                 pass.set_scissor_rect(x, y, w, h);
             }
             pass.set_pipeline(&self.composite_pipeline);
-            pass.set_bind_group(0, &self.composite_group, &[]);
+            pass.set_bind_group(0, &groups.composite, &[]);
             pass.draw(0..3, 0..1);
         }
         if viewport.is_none() {
@@ -1065,6 +1289,7 @@ impl ScreenSpaceFluidRenderer {
         output: &wgpu::TextureView,
         diagnostic: FluidDiagnostic,
     ) {
+        let groups = self.camera_bindings(encoder);
         let index = match diagnostic {
             FluidDiagnostic::Depth => 0,
             FluidDiagnostic::Thickness => 1,
@@ -1073,7 +1298,7 @@ impl ScreenSpaceFluidRenderer {
             encoder,
             output,
             &self.diagnostics[index],
-            &self.composite_group,
+            &groups.composite,
             3,
             1,
         );
@@ -1164,6 +1389,12 @@ impl ScreenSpaceFluidRenderer {
         pipeline: &wgpu::ComputePipeline,
         bind_group: &wgpu::BindGroup,
     ) {
+        if let Some(ring) = &self.camera_ring {
+            ring.stage_legacy(encoder, &self.camera, |mut bytes| {
+                bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot))
+            })
+            .expect("live compute filter camera");
+        }
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("fluid compute bilateral filter pass"),
             timestamp_writes: None,
@@ -2053,3 +2284,7 @@ mod allocation_tests {
         println!("logical_live_bytes={actual} rejected_resize_bytes={resized}");
     }
 }
+
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+#[path = "fluid_shared_tests.rs"]
+mod shared_tests;

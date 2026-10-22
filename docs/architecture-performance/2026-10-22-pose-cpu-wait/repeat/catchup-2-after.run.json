@@ -1,0 +1,23 @@
+{
+  "started_utc": "2026-10-21T21:44:24.118494+00:00",
+  "load_start": [
+    22.2890625,
+    47.0654296875,
+    60.37255859375
+  ],
+  "events": [],
+  "timing_valid": true,
+  "pid": 87251,
+  "returncode": 0,
+  "elapsed_seconds": 8.851912333004293,
+  "load_end": [
+    23.3974609375,
+    46.47314453125,
+    60.005859375
+  ],
+  "failure": null,
+  "child_user_cpu_seconds": 5.991515999999997,
+  "child_system_cpu_seconds": 0.2811539999999999,
+  "voluntary_context_switches": 2,
+  "involuntary_context_switches": 25129
+}

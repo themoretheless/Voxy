@@ -1,0 +1,35 @@
+    Checking voxy_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_core)
+    Checking voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+    Checking voxy_water v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_water)
+    Checking voxy_world v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_world)
+    Checking voxy_mesher v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_mesher)
+    Checking voxy_lighting v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_lighting)
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+crates/voxy_render/src/dfg_gpu.rs:197:17: warning: unnecessary hashes around raw string literal
+crates/voxy_render/src/dfg_gpu.rs:208:108: warning: unnecessary hashes around raw string literal
+crates/voxy_render/src/dfg.rs:193:17: warning: unnecessary hashes around raw string literal
+crates/voxy_render/src/world_geometry_bounds.rs:41:16: warning: unnecessary hashes around raw string literal
+crates/voxy_render/src/archive_world_ray_profile.rs:149:358: warning: this looks like an `else if` but the `else` is missing
+crates/voxy_render/src/archive_scene.rs:1403:19: warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+crates/voxy_render/src/archive_scene.rs:1404:25: warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+crates/voxy_render/src/archive_scene.rs:1827:19: warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+crates/voxy_render/src/archive_scene.rs:1828:25: warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+crates/voxy_render/src/archive_scene.rs:2416:24: warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+crates/voxy_render/src/archive_scene.rs:2421:19: warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+crates/voxy_render/src/bloom.rs:168:12: warning: associated function `levels` is never used
+crates/voxy_render/src/dfg_refinement.rs:94:20: warning: the use of negated comparison operators on partially ordered types produces code that is hard to read and refactor, please consider using the `partial_cmp` method instead, to make it clear that the two values could be incomparable
+crates/voxy_render/src/world_geometry_bounds.rs:10:42: warning: useless conversion to the same type: `u64`: help: consider removing `u64::from()`: `limits.max_storage_buffer_binding_size`
+crates/voxy_render/src/world_exact_vertex_cache.rs:17:54: warning: useless conversion to the same type: `u64`: help: consider removing `u64::from()`: `limits.max_storage_buffer_binding_size`
+crates/voxy_render/src/world_nearest_job.rs:268:30: warning: useless conversion to the same type: `u64`: help: consider removing `u64::from()`: `limits.max_storage_buffer_binding_size`
+crates/voxy_render/src/world_nearest_job.rs:269:31: warning: useless conversion to the same type: `u64`: help: consider removing `u64::from()`: `limits.max_storage_buffer_binding_size`
+crates/voxy_render/src/world_nearest_job.rs:272:32: warning: useless conversion to the same type: `u64`: help: consider removing `u64::from()`: `limits.max_storage_buffer_binding_size`
+crates/voxy_render/src/world_nearest_job.rs:303:41: warning: useless conversion to the same type: `u64`: help: consider removing `u64::from()`: `limits.max_storage_buffer_binding_size`
+crates/voxy_render/src/world_nearest_job.rs:721:72: warning: bit mask could be simplified with a call to `trailing_zeros`: help: try: `v.trailing_zeros() >= 31`
+crates/voxy_render/src/archive_ray_stages.rs:63:13: warning: useless conversion to the same type: `u64`: help: consider removing `u64::from()`: `limits.max_storage_buffer_binding_size`
+crates/voxy_render/src/archive_consumer_sorted_layout.rs:7:15: warning: checked cast can be simplified: help: try: `u32::try_from(work_words).is_ok()`
+crates/voxy_render/src/archive_world_consumer_profile.rs:36:44: warning: useless conversion to the same type: `u64`: help: consider removing `u64::from()`: `device.limits().max_storage_buffer_binding_size`
+crates/voxy_render/src/archive_world_consumer_profile.rs:44:49: warning: useless conversion to the same type: `u64`: help: consider removing `u64::from()`: `device.limits().max_storage_buffer_binding_size`
+crates/voxy_render/src/metalfx.rs:71:34: warning: reference as raw pointer: help: try: `std::ptr::from_ref(native.raw_handle())`
+crates/voxy_render/src/archive_gpu_timing.rs:18:9: warning: redundant slicing of the whole range: help: use the original value instead: `ticks`
+warning: `voxy_render` (lib) generated 26 warnings (run `cargo clippy --fix --lib -p voxy_render -- ` to apply 16 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 29.98s

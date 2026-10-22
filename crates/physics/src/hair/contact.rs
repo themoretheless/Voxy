@@ -446,12 +446,10 @@ impl TriangleMesh {
             }
             let normal = if distance > 1e-10 {
                 mul(delta, 1. / distance)
+            } else if dot(tri.normal, forward) < 0. {
+                mul(tri.normal, -1.)
             } else {
-                if dot(tri.normal, forward) < 0. {
-                    mul(tri.normal, -1.)
-                } else {
-                    tri.normal
-                }
+                tri.normal
             };
             if best.as_ref().is_none_or(|c| distance < c.0) {
                 best = Some((distance, t, mul(normal, radius - distance)));

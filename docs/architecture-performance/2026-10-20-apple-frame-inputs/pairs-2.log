@@ -1,0 +1,246 @@
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1403:19
+     |
+1403 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                   ^^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1404:25
+     |
+1404 |                 * Mat4::look_at_rh(centre + sun * extent * 2., centre, Vec3::Y);
+     |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1824:19
+     |
+1824 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                   ^^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1825:25
+     |
+1825 |                 * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+     |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/archive_scene.rs:2406:24
+     |
+2406 |         let vp = Mat4::perspective_rh(
+     |                        ^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:2411:19
+     |
+2411 |         ) * Mat4::look_at_rh(eye, eye + direction, self.camera_up);
+     |                   ^^^^^^^^^^
+
+warning: associated function `levels` is never used
+   --> crates/voxy_render/src/bloom.rs:168:12
+    |
+ 18 | impl Bloom {
+    | ---------- associated function in this implementation
+...
+168 |     pub fn levels() -> f32 {
+    |            ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_render` (lib test) generated 7 warnings
+    Finished `release` profile [optimized] target(s) in 0.90s
+     Running unittests src/lib.rs (target/release/deps/voxy_render-f0ad6f0e67881373)
+
+running 3 tests
+test fluid_screen::shared_tests::paired_frame_fluid_benchmark ... frame input adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+path,count,pair,mode,cpu_us,drained_us
+fluid_camera,0,1,shared,621.030,1478.208
+fluid_camera,0,1,legacy,863.629,1770.630
+fluid_camera,0,2,legacy,604.243,1419.550
+fluid_camera,0,2,shared,513.208,1311.149
+fluid_camera,0,3,shared,586.328,1091.359
+fluid_camera,0,3,legacy,658.286,922.811
+fluid_camera,0,4,legacy,683.835,1472.161
+fluid_camera,0,4,shared,588.236,1619.733
+fluid_camera,0,5,shared,584.477,1580.078
+fluid_camera,0,5,legacy,684.309,1809.715
+fluid_camera,0,6,legacy,632.281,1661.359
+fluid_camera,0,6,shared,559.387,1224.858
+fluid_camera,0,7,shared,590.170,1159.464
+fluid_camera,0,7,legacy,579.243,1002.215
+fluid_camera,0,8,legacy,478.422,989.816
+fluid_camera,0,8,shared,415.457,1470.504
+fluid_camera,0,9,shared,584.616,1401.446
+fluid_camera,0,9,legacy,474.078,1431.196
+fluid_particles,64,1,shared,173.983,277.160
+fluid_particles,64,1,legacy,245.958,386.781
+fluid_particles,64,2,legacy,205.981,352.075
+fluid_particles,64,2,shared,211.686,1289.365
+fluid_particles,64,3,shared,229.399,1246.148
+fluid_particles,64,3,legacy,183.939,608.601
+fluid_particles,64,4,legacy,190.160,301.993
+fluid_particles,64,4,shared,175.406,298.472
+fluid_particles,64,5,shared,157.658,308.090
+fluid_particles,64,5,legacy,183.528,325.597
+fluid_particles,64,6,legacy,196.273,497.738
+fluid_particles,64,6,shared,196.021,627.665
+fluid_particles,64,7,shared,187.936,608.102
+fluid_particles,64,7,legacy,186.472,386.000
+fluid_particles,64,8,legacy,182.021,296.944
+fluid_particles,64,8,shared,166.028,307.764
+fluid_particles,64,9,shared,178.427,384.212
+fluid_particles,64,9,legacy,208.694,397.806
+fluid_particles,4096,1,shared,275.740,3784.394
+fluid_particles,4096,1,legacy,342.264,3008.910
+fluid_particles,4096,2,legacy,331.701,4405.828
+fluid_particles,4096,2,shared,291.007,4244.991
+fluid_particles,4096,3,shared,272.368,1795.510
+fluid_particles,4096,3,legacy,406.130,6540.854
+fluid_particles,4096,4,legacy,383.696,3434.042
+fluid_particles,4096,4,shared,294.212,1299.648
+fluid_particles,4096,5,shared,312.043,3055.010
+fluid_particles,4096,5,legacy,397.603,3838.370
+fluid_particles,4096,6,legacy,351.094,1314.222
+fluid_particles,4096,6,shared,367.920,3140.627
+fluid_particles,4096,7,shared,272.885,1291.918
+fluid_particles,4096,7,legacy,467.604,2211.839
+fluid_particles,4096,8,legacy,363.670,1453.500
+fluid_particles,4096,8,shared,352.686,1231.712
+fluid_particles,4096,9,shared,331.903,11871.318
+fluid_particles,4096,9,legacy,350.439,1216.436
+fluid_films,64,1,shared,287.389,2298.085
+fluid_films,64,1,legacy,284.453,1296.597
+fluid_films,64,2,legacy,242.687,361.580
+fluid_films,64,2,shared,226.240,626.375
+fluid_films,64,3,shared,257.847,1996.292
+fluid_films,64,3,legacy,252.684,2000.026
+fluid_films,64,4,legacy,261.429,2083.984
+fluid_films,64,4,shared,256.969,690.562
+fluid_films,64,5,shared,227.819,729.783
+fluid_films,64,5,legacy,238.863,362.394
+fluid_films,64,6,legacy,215.493,350.960
+fluid_films,64,6,shared,251.927,2318.238
+fluid_films,64,7,shared,242.472,2205.424
+fluid_films,64,7,legacy,273.205,2083.054
+fluid_films,64,8,legacy,270.418,1827.995
+fluid_films,64,8,shared,253.448,794.630
+fluid_films,64,9,shared,243.649,527.663
+fluid_films,64,9,legacy,246.740,349.851
+fluid_films,1024,1,shared,232.854,532.163
+fluid_films,1024,1,legacy,269.986,1429.328
+fluid_films,1024,2,legacy,348.608,3397.849
+fluid_films,1024,2,shared,285.373,1171.800
+fluid_films,1024,3,shared,220.000,551.866
+fluid_films,1024,3,legacy,264.901,557.639
+fluid_films,1024,4,legacy,270.497,536.038
+fluid_films,1024,4,shared,285.148,2313.189
+fluid_films,1024,5,shared,242.410,862.944
+fluid_films,1024,5,legacy,245.464,634.542
+fluid_films,1024,6,legacy,275.047,1266.252
+fluid_films,1024,6,shared,216.422,619.469
+fluid_films,1024,7,shared,199.160,508.837
+fluid_films,1024,7,legacy,316.505,1529.891
+fluid_films,1024,8,legacy,272.969,8726.026
+fluid_films,1024,8,shared,248.927,565.361
+fluid_films,1024,9,shared,232.734,511.399
+fluid_films,1024,9,legacy,267.220,530.450
+ok
+test native_vegetation::shared_tests::paired_frame_vegetation_benchmark ... frame input adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+path,count,pair,mode,cpu_us,drained_us
+vegetation_camera,1,1,shared,34.042,374.333
+vegetation_camera,1,1,legacy,48.896,376.554
+vegetation_camera,1,2,legacy,44.158,372.210
+vegetation_camera,1,2,shared,31.337,414.281
+vegetation_camera,1,3,shared,39.125,373.566
+vegetation_camera,1,3,legacy,56.231,416.377
+vegetation_camera,1,4,legacy,49.562,373.792
+vegetation_camera,1,4,shared,34.679,373.691
+vegetation_camera,1,5,shared,32.425,371.465
+vegetation_camera,1,5,legacy,39.939,185.344
+vegetation_camera,1,6,legacy,31.680,80.969
+vegetation_camera,1,6,shared,25.371,73.668
+vegetation_camera,1,7,shared,27.663,142.776
+vegetation_camera,1,7,legacy,46.812,250.031
+vegetation_camera,1,8,legacy,61.314,1095.417
+vegetation_camera,1,8,shared,31.066,371.715
+vegetation_camera,1,9,shared,26.429,375.035
+vegetation_camera,1,9,legacy,47.003,375.106
+vegetation_instances,64,1,shared,55.004,629.096
+vegetation_instances,64,1,legacy,53.686,578.613
+vegetation_instances,64,2,legacy,55.707,663.345
+vegetation_instances,64,2,shared,48.802,665.174
+vegetation_instances,64,3,shared,55.540,621.785
+vegetation_instances,64,3,legacy,58.537,665.910
+vegetation_instances,64,4,legacy,65.052,198.266
+vegetation_instances,64,4,shared,44.516,100.477
+vegetation_instances,64,5,shared,42.392,154.658
+vegetation_instances,64,5,legacy,52.300,376.312
+vegetation_instances,64,6,legacy,44.983,172.120
+vegetation_instances,64,6,shared,35.653,85.967
+vegetation_instances,64,7,shared,34.889,83.401
+vegetation_instances,64,7,legacy,43.352,100.030
+vegetation_instances,64,8,legacy,41.316,89.137
+vegetation_instances,64,8,shared,35.313,78.623
+vegetation_instances,64,9,shared,33.403,79.726
+vegetation_instances,64,9,legacy,41.009,94.101
+vegetation_instances,4096,1,shared,134.733,204.404
+vegetation_instances,4096,1,legacy,193.036,266.931
+vegetation_instances,4096,2,legacy,210.834,1068.554
+vegetation_instances,4096,2,shared,149.762,1498.134
+vegetation_instances,4096,3,shared,155.601,1539.465
+vegetation_instances,4096,3,legacy,235.434,1626.250
+vegetation_instances,4096,4,legacy,254.738,1622.269
+vegetation_instances,4096,4,shared,182.463,1404.385
+vegetation_instances,4096,5,shared,158.425,235.146
+vegetation_instances,4096,5,legacy,230.672,978.533
+vegetation_instances,4096,6,legacy,232.632,321.087
+vegetation_instances,4096,6,shared,175.300,263.227
+vegetation_instances,4096,7,shared,161.672,243.467
+vegetation_instances,4096,7,legacy,230.132,304.656
+vegetation_instances,4096,8,legacy,218.038,289.611
+vegetation_instances,4096,8,shared,156.271,229.844
+vegetation_instances,4096,9,shared,158.108,234.684
+vegetation_instances,4096,9,legacy,229.278,310.391
+ok
+test renderer::shared_camera_tests::paired_frame_renderer_cameras_benchmark ... frame input adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+path,count,pair,mode,cpu_us,drained_us
+voxel_camera,64,1,shared,26.170,379.203
+voxel_camera,64,1,legacy,48.592,455.373
+voxel_camera,64,2,legacy,45.200,521.129
+voxel_camera,64,2,shared,46.537,390.217
+voxel_camera,64,3,shared,35.260,374.038
+voxel_camera,64,3,legacy,72.113,416.602
+voxel_camera,64,4,legacy,61.960,465.757
+voxel_camera,64,4,shared,118.621,488.688
+voxel_camera,64,5,shared,34.359,370.500
+voxel_camera,64,5,legacy,92.049,290.505
+voxel_camera,64,6,legacy,51.326,134.688
+voxel_camera,64,6,shared,30.663,88.654
+voxel_camera,64,7,shared,29.917,110.047
+voxel_camera,64,7,legacy,73.392,182.507
+voxel_camera,64,8,legacy,74.774,161.450
+voxel_camera,64,8,shared,24.830,95.316
+voxel_camera,64,9,shared,32.944,103.604
+voxel_camera,64,9,legacy,61.722,156.766
+photoreal_camera,320,1,shared,49.799,129.207
+photoreal_camera,320,1,legacy,58.135,138.491
+photoreal_camera,320,2,legacy,77.766,315.776
+photoreal_camera,320,2,shared,43.887,365.214
+photoreal_camera,320,3,shared,49.002,376.274
+photoreal_camera,320,3,legacy,93.998,419.891
+photoreal_camera,320,4,legacy,73.279,411.995
+photoreal_camera,320,4,shared,43.818,361.149
+photoreal_camera,320,5,shared,19.625,61.578
+photoreal_camera,320,5,legacy,35.934,320.684
+photoreal_camera,320,6,legacy,87.691,258.288
+photoreal_camera,320,6,shared,42.543,96.592
+photoreal_camera,320,7,shared,35.851,108.059
+photoreal_camera,320,7,legacy,67.847,148.415
+photoreal_camera,320,8,legacy,56.417,130.682
+photoreal_camera,320,8,shared,31.522,87.333
+photoreal_camera,320,9,shared,27.597,89.290
+photoreal_camera,320,9,legacy,48.137,103.217
+ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 389 filtered out; finished in 5.11s
+

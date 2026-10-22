@@ -49,11 +49,11 @@ pub(super) fn probe(
         view_formats: &[],
     });
     let depth_view = depth.create_view(&Default::default());
-    let copy_shader=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:None,source:wgpu::ShaderSource::Wgsl(r#"
+    let copy_shader=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:None,source:wgpu::ShaderSource::Wgsl(r"
 @group(0) @binding(0) var input_depth:texture_2d<f32>;
 @vertex fn vs(@builtin(vertex_index) i:u32)->@builtin(position) vec4<f32>{let p=array<vec2<f32>,3>(vec2<f32>(-1.,-1.),vec2<f32>(3.,-1.),vec2<f32>(-1.,3.));return vec4<f32>(p[i],0.,1.);}
 @fragment fn fs(@builtin(position) p:vec4<f32>)->@builtin(frag_depth) f32{return textureLoad(input_depth,vec2<i32>(p.xy),0).x;}
-"#.into())});
+".into())});
     let copy = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: None,
         layout: None,
@@ -394,6 +394,16 @@ pub(super) fn probe(
                     native_misses += 1;
                 }
             }
+        }
+        if let Some(directory) = std::env::var_os("VOXY_RAY_NARROW_RECORD_DIR") {
+            let directory = Path::new(&directory);
+            std::fs::create_dir_all(directory)?;
+            use std::io::Write;
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(directory.join(format!("{}-records.bin", capture.kind)))?;
+            file.write_all(&bytes)?;
         }
         drop(bytes);
         read.unmap();

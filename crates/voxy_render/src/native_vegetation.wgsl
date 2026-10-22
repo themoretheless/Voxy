@@ -74,18 +74,20 @@ fn crown_accessibility(local:vec3<f32>)->f32 {
  // Foliage: wrapped diffuse stands in for multiple scattering inside the blade.
  let wrap=leaf*0.35;let nl=max((nl_raw+wrap)/(1.+wrap),0.);
  let nv=max(dot(n,v),0.001);let nh=max(dot(n,h),0.);let vh=max(dot(v,h),0.);
- let rough=clamp(material.surface.y*mr.g,0.08,1.);let a2=pow(rough,4.);
- let d=a2/(3.14159265*pow(nh*nh*(a2-1.)+1.,2.));
+ let rough=clamp(material.surface.y*mr.g,0.08,1.);let r2=rough*rough;let a2=r2*r2;
+ let q=nh*nh*(a2-1.)+1.;
+ let d=a2/(3.14159265*q*q);
  let spec_nl=max(nl_raw,0.);
  let smith_l=2.*spec_nl/max(spec_nl+sqrt(a2+(1.-a2)*spec_nl*spec_nl),0.00001);
- let smith_v=2.*nv/(nv+sqrt(a2+(1.-a2)*nv*nv));
- let fresnel=0.04+0.96*pow(1.-vh,5.);
+ let smith_v=2.*nv/max(nv+sqrt(a2+(1.-a2)*nv*nv),0.00001);
+ let ft=1.-vh;let ft2=ft*ft;
+ let fresnel=0.04+0.96*(ft2*ft2*ft);
  let spec=d*smith_l*smith_v*fresnel/max(4.*spec_nl*nv,0.001);
  let shadow=visibility(f.shadow);let accessibility=crown_accessibility(f.local);
  let sky=mix(vec3<f32>(0.24,0.21,0.15),vec3<f32>(0.55,0.72,1.0),n.y*0.5+0.5);
  // Light through a blade is filtered by chlorophyll: yellower and more saturated.
- let filtered=pow(base,vec3<f32>(0.8))*vec3<f32>(1.05,1.25,0.45);
- let back=max(-nl_raw,0.);let forward_scatter=pow(max(dot(v,-l),0.),6.);
+ let filtered=pow(max(base,vec3<f32>(0.0001)),vec3<f32>(0.8))*vec3<f32>(1.05,1.25,0.45);
+ let back=max(-nl_raw,0.);let fs_dot=max(dot(v,-l),0.);let fs2=fs_dot*fs_dot;let forward_scatter=fs2*fs2*fs2;
  let transmit=leaf*(back*0.55+forward_scatter*1.4)/3.14159265;
  let diffuse=(1.-fresnel)*nl/3.14159265;
  let sunlight=vec3<f32>(2.95,2.76,2.48);

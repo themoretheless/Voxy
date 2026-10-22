@@ -1,0 +1,53 @@
+    Checking voxy_core v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_core)
+    Checking wgpu-hal v30.0.1 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/vendor/wgpu-hal)
+    Checking voxy_world v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_world)
+    Checking voxy_mesher v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_mesher)
+    Checking voxy_lighting v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_lighting)
+    Checking wgpu-core-deps-apple v30.0.1
+    Checking wgpu-core v30.0.1
+    Checking wgpu v30.0.1 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/vendor/wgpu)
+    Checking voxy_water v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_water)
+    Checking voxy_gpu_core v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_gpu_core)
+    Checking voxy_render v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-pose-clock-20261022-llvqpfrt/crates/voxy_render)
+error: constant `LEAF` is never used
+ --> crates/voxy_render/src/world_nearest_wide.rs:5:7
+  |
+5 | const LEAF: u32 = u32::MAX - 1;
+  |       ^^^^
+  |
+  = note: `-D dead-code` implied by `-D warnings`
+  = help: to override `-D warnings` add `#[expect(dead_code)]` or `#[allow(dead_code)]`
+
+error: struct `WideNode` is never constructed
+ --> crates/voxy_render/src/world_nearest_wide.rs:8:19
+  |
+8 | pub(crate) struct WideNode {
+  |                   ^^^^^^^^
+
+error: struct `WideHierarchy` is never constructed
+  --> crates/voxy_render/src/world_nearest_wide.rs:13:19
+   |
+13 | pub(crate) struct WideHierarchy {
+   |                   ^^^^^^^^^^^^^
+
+error: method `to_words` is never used
+  --> crates/voxy_render/src/world_nearest_wide.rs:25:19
+   |
+24 | impl WideHierarchy {
+   | ------------------ method in this implementation
+25 |     pub(crate) fn to_words(&self) -> Result<Vec<u32>, &'static str> {
+   |                   ^^^^^^^^
+
+error: function `convert` is never used
+  --> crates/voxy_render/src/world_nearest_wide.rs:45:15
+   |
+45 | pub(crate) fn convert(source: &[[u32; 8]], root: u32) -> Result<WideHierarchy, &'static str> {
+   |               ^^^^^^^
+
+error: function `emit` is never used
+  --> crates/voxy_render/src/world_nearest_wide.rs:87:4
+   |
+87 | fn emit(
+   |    ^^^^
+
+error: could not compile `voxy_render` (lib) due to 6 previous errors

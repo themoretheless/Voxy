@@ -124,6 +124,142 @@ impl SimulationClock {
     }
 }
 
+/// Zero-allocation sliding window of frame durations (in microseconds) providing
+/// exact median/percentile latency telemetry and micro-stutter detection.
+#[derive(Clone, Debug)]
+pub struct FrameLatencyWindow<const N: usize = 128> {
+    samples_us: [u32; N],
+    cursor: usize,
+    filled: usize,
+    stutters: u64,
+}
+
+impl<const N: usize> Default for FrameLatencyWindow<N> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<const N: usize> FrameLatencyWindow<N> {
+    #[must_use]
+    pub const fn new() -> Self {
+        const { assert!(N > 0, "FrameLatencyWindow capacity must be non-zero") };
+        Self {
+            samples_us: [0_u32; N],
+            cursor: 0,
+            filled: 0,
+            stutters: 0,
+        }
+    }
+
+    /// Records a frame duration in seconds and returns `true` if it exceeded $2\times$ the current rolling mean.
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+    pub fn record_seconds(&mut self, dt_seconds: f64) -> bool {
+        if !dt_seconds.is_finite() || dt_seconds < 0.0 {
+            return false;
+        }
+        let us = (dt_seconds * 1_000_000.0).round().min(f64::from(u32::MAX)) as u32;
+        self.record_micros(us)
+    }
+
+    /// Records a frame duration in microseconds and returns `true` if it was a stutter ($> 2\times$ mean).
+    pub fn record_micros(&mut self, duration_us: u32) -> bool {
+        let mean = self.mean_micros();
+        let is_stutter =
+            self.filled >= 8 && mean > 0 && u64::from(duration_us) > 2 * u64::from(mean);
+        if is_stutter {
+            self.stutters = self.stutters.saturating_add(1);
+        }
+        self.samples_us[self.cursor] = duration_us;
+        self.cursor = (self.cursor + 1) % N;
+        if self.filled < N {
+            self.filled += 1;
+        }
+        is_stutter
+    }
+
+    #[must_use]
+    pub const fn len(&self) -> usize {
+        self.filled
+    }
+
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
+        self.filled == 0
+    }
+
+    #[must_use]
+    pub const fn stutter_count(&self) -> u64 {
+        self.stutters
+    }
+
+    #[must_use]
+    #[allow(clippy::cast_possible_truncation)]
+    pub fn mean_micros(&self) -> u32 {
+        if self.filled == 0 {
+            return 0;
+        }
+        let sum: u64 = self.samples_us[..self.filled]
+            .iter()
+            .map(|&v| u64::from(v))
+            .sum();
+        (sum / (self.filled as u64)) as u32
+    }
+
+    /// Returns `(p50_us, p95_us, p99_us)` over the active window without heap allocations.
+    #[must_use]
+    pub fn percentiles_micros(&self) -> (u32, u32, u32) {
+        if self.filled == 0 {
+            return (0, 0, 0);
+        }
+        let mut sorted = self.samples_us;
+        let active = &mut sorted[..self.filled];
+        active.sort_unstable();
+        let last = self.filled - 1;
+        let p50 = active[last / 2];
+        let p95 = active[(last * 95) / 100];
+        let p99 = active[(last * 99) / 100];
+        (p50, p95, p99)
+    }
+}
+
+/// Token-bucket budget limiter for background chunk meshing and streaming per frame.
+#[derive(Clone, Copy, Debug)]
+pub struct FrameWorkBudget {
+    budget_us: u64,
+    consumed_us: u64,
+}
+
+impl FrameWorkBudget {
+    #[must_use]
+    pub const fn from_micros(budget_us: u64) -> Self {
+        Self {
+            budget_us,
+            consumed_us: 0,
+        }
+    }
+
+    pub const fn reset(&mut self) {
+        self.consumed_us = 0;
+    }
+
+    #[must_use]
+    pub const fn remaining_micros(self) -> u64 {
+        self.budget_us.saturating_sub(self.consumed_us)
+    }
+
+    /// Attempts to spend `cost_us`, returning `true` if within budget.
+    pub const fn try_consume(&mut self, cost_us: u64) -> bool {
+        let next = self.consumed_us.saturating_add(cost_us);
+        if next <= self.budget_us {
+            self.consumed_us = next;
+            true
+        } else {
+            false
+        }
+    }
+}
+
 #[cfg(test)]
 #[allow(clippy::float_cmp)]
 mod tests {
@@ -182,5 +318,26 @@ mod tests {
         assert_eq!(frame.steps, 8);
         assert!(frame.overloaded);
         assert!((0.0..1.0).contains(&frame.alpha));
+    }
+
+    #[test]
+    fn latency_window_tracks_percentiles_and_stutters() {
+        let mut window = FrameLatencyWindow::<16>::new();
+        for _ in 0..12 {
+            assert!(!window.record_micros(8_000));
+        }
+        assert_eq!(window.mean_micros(), 8_000);
+        assert!(window.record_micros(25_000));
+        assert_eq!(window.stutter_count(), 1);
+        let (p50, p95, p99) = window.percentiles_micros();
+        assert_eq!(p50, 8_000);
+        assert!(p95 >= 8_000 && p99 == 25_000);
+
+        let mut budget = FrameWorkBudget::from_micros(1_500);
+        assert!(budget.try_consume(900));
+        assert_eq!(budget.remaining_micros(), 600);
+        assert!(!budget.try_consume(700));
+        assert!(budget.try_consume(600));
+        assert_eq!(budget.remaining_micros(), 0);
     }
 }

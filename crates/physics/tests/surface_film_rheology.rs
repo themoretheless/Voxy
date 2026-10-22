@@ -18,7 +18,7 @@ fn yield_threshold_and_power_law_shear_match_no_slip_profile() {
     linear.flow_index = 1.0;
     linear.yield_stress = 0.0;
     assert!(
-        (linear.flow_rate(0.1, 3.0, 4.0).unwrap() - (3.0 * 0.001 / 3.0 + 4.0 * 0.01 / 2.0) / 2.0)
+        (linear.flow_rate(0.1, 3.0, 4.0).unwrap() - f64::midpoint(3.0 * 0.001 / 3.0, 4.0 * 0.01 / 2.0))
             .abs()
             < 1e-15
     );

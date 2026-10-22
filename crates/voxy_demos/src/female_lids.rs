@@ -732,10 +732,13 @@ mod tests {
                         .clamp(-1., 1.)
                         .acos()
                         .to_degrees();
-                    details.push_str(&format!(
-                        "{closure},{},{},{},{:.9},{:.9},{:.9},{angle:.3}\n",
-                        tri[0], tri[1], tri[2], center.x, center.y, center.z
-                    ));
+                    let _ = std::fmt::Write::write_fmt(
+                        &mut details,
+                        format_args!(
+                            "{closure},{},{},{},{:.9},{:.9},{:.9},{angle:.3}\n",
+                            tri[0], tri[1], tri[2], center.x, center.y, center.z
+                        ),
+                    );
                 }
             }
             let row = format!("{closure},{count},{zero},{tiny},{back},{reversed}\n");
@@ -883,10 +886,13 @@ mod tests {
                 }
                 total += nodes.len();
                 maximum_depth = maximum_depth.max(depth);
-                report.push_str(&format!(
-                    "{part},{column},{},{maximum:.9},{depth:.9}\n",
-                    nodes.len()
-                ));
+                let _ = std::fmt::Write::write_fmt(
+                    &mut report,
+                    format_args!(
+                        "{part},{column},{},{maximum:.9},{depth:.9}\n",
+                        nodes.len()
+                    ),
+                );
             }
         }
         std::fs::write("/tmp/voxy-lid-boundary-subdivision.csv", report).unwrap();

@@ -1,0 +1,15 @@
+    Blocking waiting for file lock on build directory
+    Checking voxy_core v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1/crates/voxy_core)
+    Checking constant_time_eq v0.4.2
+    Checking wgpu-hal v30.0.1 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1/vendor/wgpu-hal)
+    Checking blake3 v1.8.7
+    Checking voxy_world v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1/crates/voxy_world)
+    Checking voxy_lighting v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1/crates/voxy_lighting)
+    Checking voxy_mesher v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1/crates/voxy_mesher)
+    Checking wgpu-core-deps-apple v30.0.1
+    Checking wgpu-core v30.0.1
+    Checking wgpu v30.0.1 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1/vendor/wgpu)
+    Checking voxy_gpu_core v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1/crates/voxy_gpu_core)
+    Checking voxy_water v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1/crates/voxy_water)
+    Checking voxy_render v0.1.0 (/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1/crates/voxy_render)
+    Finished `release` profile [optimized] target(s) in 49.39s

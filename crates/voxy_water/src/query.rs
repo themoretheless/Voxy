@@ -30,7 +30,11 @@ pub struct SurfaceSample {
 }
 
 impl SurfaceSample {
-    pub const FLAT: Self = Self { height: 0.0, normal: Vec3::Y, velocity: Vec3::ZERO };
+    pub const FLAT: Self = Self {
+        height: 0.0,
+        normal: Vec3::Y,
+        velocity: Vec3::ZERO,
+    };
 }
 
 #[derive(Clone, Debug)]
@@ -65,7 +69,10 @@ impl WaveField {
         }
         components.sort_by(|a, b| b.amplitude.total_cmp(&a.amplitude));
         components.truncate(count);
-        Self { components, choppiness: spectrum.choppiness }
+        Self {
+            components,
+            choppiness: spectrum.choppiness,
+        }
     }
 
     pub fn new(spectrum: &WaveSpectrum, seed: u32, count: usize) -> Self {
@@ -74,7 +81,10 @@ impl WaveField {
 
     /// A still surface.
     pub fn calm() -> Self {
-        Self { components: Vec::new(), choppiness: 0.0 }
+        Self {
+            components: Vec::new(),
+            choppiness: 0.0,
+        }
     }
 
     pub fn components(&self) -> &[WaveComponent] {
@@ -125,7 +135,11 @@ impl WaveField {
             );
         }
         let slope = slope / jacobian.max(Vec2::splat(0.15));
-        SurfaceSample { height, normal: Vec3::new(-slope.x, 1.0, -slope.y).normalize(), velocity }
+        SurfaceSample {
+            height,
+            normal: Vec3::new(-slope.x, 1.0, -slope.y).normalize(),
+            velocity,
+        }
     }
 }
 
@@ -139,7 +153,11 @@ mod tests {
         let h0 = spectrum.initial_amplitudes(1);
         let full = WaveSpectrum::significant_height(&h0);
         let field = WaveField::from_amplitudes(&spectrum, &h0, 512);
-        let kept: f32 = field.components.iter().map(|w| w.amplitude * w.amplitude * 0.5).sum();
+        let kept: f32 = field
+            .components
+            .iter()
+            .map(|w| w.amplitude * w.amplitude * 0.5)
+            .sum();
         let hs = 4.0 * kept.sqrt();
         assert!(hs > 0.8 * full && hs <= full * 1.0001, "{hs} of {full}");
     }

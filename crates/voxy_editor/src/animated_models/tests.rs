@@ -265,7 +265,7 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
     );
     let source = |owner: NodeId| match &runtime.owners[&owner].primitives[0] {
         Primitive::Skin { source, .. } => Arc::as_ptr(source),
-        _ => panic!("GPU skin expected"),
+        Primitive::Baked(_) => panic!("GPU skin expected"),
     };
     assert_eq!(source(first), source(second));
     let initial_bytes = runtime.allocation_bytes();
@@ -1076,7 +1076,7 @@ fn fixed_tick_hierarchy_owners_share_gpu_source_at_capacity() {
     let bytes = render.allocation_bytes();
     let source = match &render.owners[&owners[0]].primitives[0] {
         Primitive::Skin { source, .. } => Arc::as_ptr(source),
-        _ => panic!("GPU skin expected"),
+        Primitive::Baked(_) => panic!("GPU skin expected"),
     };
     for &owner in &owners {
         let Primitive::Skin { source: actual, .. } = &render.owners[&owner].primitives[0] else {
@@ -1256,7 +1256,7 @@ fn rig_trajectory_gpu(composed: bool) {
     assert_eq!(render.counts(), (2, 2, 1));
     let source = |owner| match &render.owners[&owner].primitives[0] {
         Primitive::Skin { source, .. } => Arc::as_ptr(source),
-        _ => panic!("GPU skin expected"),
+        Primitive::Baked(_) => panic!("GPU skin expected"),
     };
     assert_eq!(source(first), source(second));
     assert!(Arc::ptr_eq(&render.owners[&first].frame, &accepted));
@@ -1539,7 +1539,7 @@ fn planted_foot_gpu_acceptance(retarget: bool, roll: bool) {
     assert_eq!(render.counts(), (2, 2, 1));
     let source = |owner| match &render.owners[&owner].primitives[0] {
         Primitive::Skin { source, .. } => Arc::as_ptr(source),
-        _ => panic!("GPU skin expected"),
+        Primitive::Baked(_) => panic!("GPU skin expected"),
     };
     assert_eq!(source(first), source(second));
     // Independent expected world points from authored triangle and locked x=.03.

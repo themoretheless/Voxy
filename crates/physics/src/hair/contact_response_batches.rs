@@ -27,7 +27,7 @@ fn prepare_impl(
     rods: &[HairRod],
     dt: f64,
     solver: &mut dyn HairLinearSolver,
-    mut free: Option<&mut PositionIncrement>,
+    free: Option<&mut PositionIncrement>,
 ) -> Result<(), &'static str> {
     let mut requests: Vec<Option<HairResponseSystem>> = vec![None; rods.len()];
     // A free Newton step owns every rod, including rods outside the contact
@@ -130,7 +130,7 @@ fn prepare_impl(
     {
         return Err("invalid shared contact rod compliance");
     }
-    if let Some(free) = free.as_deref_mut() {
+    if let Some(free) = free {
         for (rod, batch_index) in rod_to_batch.iter().enumerate() {
             if let Some(batch_index) = batch_index {
                 let value = &result[*batch_index][0];

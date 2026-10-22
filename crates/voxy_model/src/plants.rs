@@ -129,15 +129,24 @@ impl Growth {
         let length = (self.scale / 6.).clamp(0.6, 1.4) * (0.085 + self.rng.next() * 0.04);
         // Blades turn towards the sky but keep the twig's outward heading.
         let forward = (outward * 0.8
-            + Vec3::new(self.rng.signed(), self.rng.signed() * 0.6 - 0.15, self.rng.signed()) * 0.55)
+            + Vec3::new(
+                self.rng.signed(),
+                self.rng.signed() * 0.6 - 0.15,
+                self.rng.signed(),
+            ) * 0.55)
             .normalize_or(Vec3::Y);
-        let up = (Vec3::Y * 1.2 + outward * 0.4 + Vec3::new(self.rng.signed(), 0., self.rng.signed()) * 0.4)
+        let up = (Vec3::Y * 1.2
+            + outward * 0.4
+            + Vec3::new(self.rng.signed(), 0., self.rng.signed()) * 0.4)
             .normalize();
-        let side = forward.cross(up).normalize_or(forward.any_orthonormal_vector());
+        let side = forward
+            .cross(up)
+            .normalize_or(forward.any_orthonormal_vector());
         let normal = side.cross(forward).normalize();
         let fold = 0.12 + self.rng.next() * 0.18;
         let curl = self.rng.signed() * 0.18 - 0.08;
-        let cell = (self.rng.next() * (LEAF_CELLS * LEAF_CELLS) as f32) as u32 % (LEAF_CELLS * LEAF_CELLS);
+        let cell =
+            (self.rng.next() * (LEAF_CELLS * LEAF_CELLS) as f32) as u32 % (LEAF_CELLS * LEAF_CELLS);
         let cell_u = (cell % LEAF_CELLS) as f32 / LEAF_CELLS as f32;
         let cell_v = (cell / LEAF_CELLS) as f32 / LEAF_CELLS as f32;
         let width = length * 0.62;
@@ -206,7 +215,9 @@ impl Growth {
             let (s, o) = frames[i];
             for col in 0..=sides {
                 let angle = col as f32 / sides as f32 * TAU;
-                let ridges = 1. + 0.035 * (angle * 9. + v_coord * 0.7).sin() + 0.02 * (angle * 17. - v_coord * 1.3).sin();
+                let ridges = 1.
+                    + 0.035 * (angle * 9. + v_coord * 0.7).sin()
+                    + 0.02 * (angle * 17. - v_coord * 1.3).sin();
                 let widen = flare.map_or(1., |height| {
                     let lobes = 1. + 0.35 * (angle * 5. + 0.7).sin().max(0.);
                     1. + 0.9 * (-points[i].y.max(0.) / height).exp().powi(2) * lobes
@@ -224,7 +235,9 @@ impl Growth {
             }
         }
         // Close the tip; the basal ring stays embedded in its parent or the ground.
-        let tip = self.wood.vertex(points[n - 1] + dirs[n - 1] * radii[n - 1], [0.5, v_coord]);
+        let tip = self
+            .wood
+            .vertex(points[n - 1] + dirs[n - 1] * radii[n - 1], [0.5, v_coord]);
         for col in 0..sides {
             let a = start + (n as u32 - 1) * (sides + 1) + col;
             let q = |i: u32| Vec3::from_array(self.wood.positions[i as usize]);
@@ -289,7 +302,14 @@ struct Skeleton {
     metamers: Vec<Metamer>,
 }
 impl Skeleton {
-    fn push(&mut self, parent: Option<usize>, tip: Vec3, dir: Vec3, lateral_dir: Vec3, dormant: bool) -> usize {
+    fn push(
+        &mut self,
+        parent: Option<usize>,
+        tip: Vec3,
+        dir: Vec3,
+        lateral_dir: Vec3,
+        dormant: bool,
+    ) -> usize {
         // Roots start one internode back along their heading; callers may override.
         let base = parent.map_or(tip - dir, |p| self.metamers[p].tip);
         self.metamers.push(Metamer {
@@ -336,7 +356,9 @@ fn grow_skeleton(
     rng: &mut Random,
 ) -> Skeleton {
     let d = model.internode;
-    let mut sk = Skeleton { metamers: Vec::new() };
+    let mut sk = Skeleton {
+        metamers: Vec::new(),
+    };
     // Seed axes: a straight bole up to the crown base, buds dormant below it.
     for &(origin, heading) in stems {
         let mut parent = None;
@@ -373,7 +395,13 @@ fn grow_skeleton(
         }
     }
     let cell = model.influence * d;
-    let key = |p: Vec3| ((p.x / cell).floor() as i32, (p.y / cell).floor() as i32, (p.z / cell).floor() as i32);
+    let key = |p: Vec3| {
+        (
+            (p.x / cell).floor() as i32,
+            (p.y / cell).floor() as i32,
+            (p.z / cell).floor() as i32,
+        )
+    };
     for _year in 0..model.years {
         if sk.metamers.len() >= model.max_metamers {
             break;
@@ -417,7 +445,11 @@ fn grow_skeleton(
                             if dist < model.kill * d {
                                 killed[i] = true;
                             }
-                            if dist < cell && dist > 1e-6 && offset.dot(heading) / dist >= model.cone_cos && dist < best.0 {
+                            if dist < cell
+                                && dist > 1e-6
+                                && offset.dot(heading) / dist >= model.cone_cos
+                                && dist < best.0
+                            {
                                 best = (dist, Some(b));
                             }
                         }
@@ -472,7 +504,10 @@ fn grow_skeleton(
             let (qm, ql) = (m.q_main, m.q_lateral);
             let denominator = model.lambda * qm + (1. - model.lambda) * ql;
             let (vm, vl) = if denominator > 0. {
-                (v * model.lambda * qm / denominator, v * (1. - model.lambda) * ql / denominator)
+                (
+                    v * model.lambda * qm / denominator,
+                    v * (1. - model.lambda) * ql / denominator,
+                )
             } else {
                 (0., 0.)
             };
@@ -528,7 +563,11 @@ fn grow_skeleton(
             sk.metamers[id].age += 1;
             if let Some(c) = sk.metamers[id].lateral {
                 let child = &sk.metamers[c];
-                if child.alive && child.age > 2 && size[c] > 3 && child.q / (size[c] as f32) < model.shed_ratio {
+                if child.alive
+                    && child.age > 2
+                    && size[c] > 3
+                    && child.q / (size[c] as f32) < model.shed_ratio
+                {
                     let mut stack = vec![c];
                     while let Some(x) = stack.pop() {
                         sk.metamers[x].alive = false;
@@ -549,8 +588,13 @@ fn grow_skeleton(
             continue;
         }
         let n = model.murray;
-        let sum = m.main.map_or(0., |c| sk.metamers[c].radius.powf(n)) + m.lateral.map_or(0., |c| sk.metamers[c].radius.powf(n));
-        sk.metamers[id].radius = if sum > 0. { sum.powf(1. / n) } else { model.tip_radius };
+        let sum = m.main.map_or(0., |c| sk.metamers[c].radius.powf(n))
+            + m.lateral.map_or(0., |c| sk.metamers[c].radius.powf(n));
+        sk.metamers[id].radius = if sum > 0. {
+            sum.powf(1. / n)
+        } else {
+            model.tip_radius
+        };
     }
     sk
 }
@@ -560,11 +604,14 @@ impl Growth {
         let leaves_per_metamer = if self.world_detail { 4 } else { 6 };
         for (start, m) in sk.metamers.iter().enumerate() {
             // An axis starts at a root metamer or at a lateral shoot.
-            let starts_axis = m.alive && m.parent.is_none_or(|p| sk.metamers[p].lateral == Some(start));
+            let starts_axis = m.alive
+                && m.parent
+                    .is_none_or(|p| sk.metamers[p].lateral == Some(start));
             if !starts_axis {
                 continue;
             }
-            let mut points = vec![sk.base(start) - m.dir * if m.parent.is_none() { 0.05 } else { 0. }];
+            let mut points =
+                vec![sk.base(start) - m.dir * if m.parent.is_none() { 0.05 } else { 0. }];
             let mut radii = vec![m.radius];
             let mut id = Some(start);
             while let Some(i) = id {
@@ -575,8 +622,13 @@ impl Growth {
                     for k in 0..leaves_per_metamer {
                         let angle = (i * 7 + k) as f32 * 2.399963 + self.rng.next() * 0.5;
                         let side = d_any(x.dir);
-                        let outward = (glam::Quat::from_axis_angle(x.dir, angle) * side + x.dir * 0.6).normalize();
-                        let along = sk.base(i).lerp(x.tip, (k as f32 + self.rng.next()) / leaves_per_metamer as f32);
+                        let outward = (glam::Quat::from_axis_angle(x.dir, angle) * side
+                            + x.dir * 0.6)
+                            .normalize();
+                        let along = sk.base(i).lerp(
+                            x.tip,
+                            (k as f32 + self.rng.next()) / leaves_per_metamer as f32,
+                        );
                         self.leaf(along + outward * x.radius, outward);
                     }
                 }
@@ -589,13 +641,18 @@ impl Growth {
                     points[j] = copy[j] * 0.5 + (copy[j - 1] + copy[j + 1]) * 0.25;
                 }
             }
-            let flare = if m.parent.is_none() { flare_height } else { None };
+            let flare = if m.parent.is_none() {
+                flare_height
+            } else {
+                None
+            };
             self.tube(&points, &radii, flare);
         }
     }
 }
 fn d_any(d: Vec3) -> Vec3 {
-    d.cross(if d.y.abs() > 0.95 { Vec3::X } else { Vec3::Y }).normalize()
+    d.cross(if d.y.abs() > 0.95 { Vec3::X } else { Vec3::Y })
+        .normalize()
 }
 fn noise(x: u32, y: u32, seed: u64) -> f32 {
     let mut r = Random(
@@ -658,7 +715,7 @@ fn bark_texel(u: f32, v: f32, seed: u64) -> (f32, [f32; 3], f32, f32) {
     let edge = f2 - f1;
     let plate = (edge * 5.).clamp(0., 1.).powf(0.6);
     let grain = tile_noise(u, v, 96, 12, seed ^ 31);
-    let flakes = fbm(u, v, 16, seed ^ 41);
+    let flakes = fbm(u, v, 16, seed ^ 0x29);
     let h = plate * (0.55 + flakes * 0.35) + grain * 0.08;
     let tone = 0.75 + 0.5 * fbm(u, v, 3, seed ^ 3);
     let mut rgb = [
@@ -673,23 +730,33 @@ fn bark_texel(u: f32, v: f32, seed: u64) -> (f32, [f32; 3], f32, f32) {
         rgb[1] * (1. - 0.62 * floor),
         rgb[2] * (1. - 0.68 * floor),
     ];
-    let lichen = ((fbm(u, v, 6, seed ^ 99) - 0.58) * 9.).clamp(0., 1.) * plate;
+    let lichen = ((fbm(u, v, 6, seed ^ 0x63) - 0.58) * 9.).clamp(0., 1.) * plate;
     rgb = [
         rgb[0] + (0.46 - rgb[0]) * lichen * 0.75,
         rgb[1] + (0.52 - rgb[1]) * lichen * 0.75,
         rgb[2] + (0.40 - rgb[2]) * lichen * 0.75,
     ];
-    (h + lichen * 0.05, rgb, 0.82 + 0.12 * floor - 0.06 * lichen, 1.)
+    (
+        h + lichen * 0.05,
+        rgb,
+        0.82 + 0.12 * floor - 0.06 * lichen,
+        1.,
+    )
 }
 /// Leaf atlas cell: serrated ovate blade with petiole, midrib and pinnate veins.
 fn leaf_texel(u: f32, v: f32, seed: u64) -> (f32, [f32; 3], f32, f32) {
-    let cell = (u * LEAF_CELLS as f32).floor() as u32 + (v * LEAF_CELLS as f32).floor() as u32 * LEAF_CELLS;
+    let cell = (u * LEAF_CELLS as f32).floor() as u32
+        + (v * LEAF_CELLS as f32).floor() as u32 * LEAF_CELLS;
     let cu = (u * LEAF_CELLS as f32).fract();
     let cv = (v * LEAF_CELLS as f32).fract();
     let x = (cu - 0.5) * 2.;
     // Blade runs from the petiole at the bottom of the cell to the acuminate tip.
     let s = ((cv - 0.12) / 0.86).clamp(0., 1.);
-    let profile = (std::f32::consts::PI * s.powf(0.82)).sin().max(0.).powf(0.78) * (1. - 0.18 * s);
+    let profile = (std::f32::consts::PI * s.powf(0.82))
+        .sin()
+        .max(0.)
+        .powf(0.78)
+        * (1. - 0.18 * s);
     let teeth = 1. - 0.05 * ((s * 46.).fract() - 0.5).abs() * 2.;
     let half = 0.92 * profile * teeth;
     let blade = cv > 0.12 && cv < 0.98 && x.abs() < half;
@@ -698,7 +765,8 @@ fn leaf_texel(u: f32, v: f32, seed: u64) -> (f32, [f32; 3], f32, f32) {
     let mid = x.abs();
     let rib = (-mid * mid * 900.).exp();
     let vein_phase = s * 8. - mid * 2.2;
-    let vein = (-((vein_phase.fract() - 0.5).powi(2)) * 160.).exp() * (1. - mid / half.max(0.05)).clamp(0., 1.);
+    let vein = (-((vein_phase.fract() - 0.5).powi(2)) * 160.).exp()
+        * (1. - mid / half.max(0.05)).clamp(0., 1.);
     let fine = tile_noise(u, v, 128, 128, seed ^ 5);
     let speck = tile_noise(u, v, 40, 40, seed ^ 9);
     let tints: [[f32; 3]; 4] = [
@@ -736,7 +804,12 @@ fn texture_set(leaf: bool, seed: u64) -> Result<[image::RgbaImage; 3], Box<dyn s
                 bark_texel(u, v, seed)
             };
             heights.push(h);
-            colours.extend([srgb(rgb[0]), srgb(rgb[1]), srgb(rgb[2]), (alpha * 255.) as u8]);
+            colours.extend([
+                srgb(rgb[0]),
+                srgb(rgb[1]),
+                srgb(rgb[2]),
+                (alpha * 255.) as u8,
+            ]);
             surface.extend([255, (rough.clamp(0.05, 1.) * 255.) as u8, 0, 255]);
         }
     }
@@ -805,7 +878,7 @@ pub fn generate_world_plant_asset(
     let g = grow(options, true)?;
     // Ground dressing stays within the root's supporting voxel footprint.
     let mut grass = Surface::default();
-    let mut rng = Random(options.seed ^ 0x6a72_6173_73);
+    let mut rng = Random(options.seed ^ 0x006a_7261_7373);
     for _ in 0..180 {
         let angle = rng.next() * TAU;
         let radial = rng.next().sqrt() * 0.35;
@@ -953,10 +1026,18 @@ fn grow(options: PlantOptions, world_detail: bool) -> Result<Growth, Box<dyn std
             let lean = Vec3::new(rng.signed(), 0., rng.signed()) * 0.05;
             let crown_base = height * (0.28 + 0.08 * rng.next());
             let centre = Vec3::new(lean.x * height, height * 0.6, lean.z * height);
-            let radii = Vec3::new(height * 0.36, height * 0.4, height * 0.36) * (0.9 + 0.2 * rng.next());
+            let radii =
+                Vec3::new(height * 0.36, height * 0.4, height * 0.36) * (0.9 + 0.2 * rng.next());
             let markers = if world_detail { 5000 } else { 7000 };
             (
-                grow_skeleton(&model, &[(Vec3::ZERO, Vec3::Y + lean)], crown_base, (centre, radii), markers, &mut rng),
+                grow_skeleton(
+                    &model,
+                    &[(Vec3::ZERO, Vec3::Y + lean)],
+                    crown_base,
+                    (centre, radii),
+                    markers,
+                    &mut rng,
+                ),
                 Some(height * 0.05),
                 model.tip_radius * 2.2,
             )
@@ -968,13 +1049,23 @@ fn grow(options: PlantOptions, world_detail: bool) -> Result<Growth, Box<dyn std
             let stems: Vec<_> = (0..6)
                 .map(|i| {
                     let a = i as f32 * 2.399963 + rng.signed() * 0.3;
-                    (Vec3::new(a.cos(), 0., a.sin()) * internode * 0.6, Vec3::new(a.cos() * 0.35, 1., a.sin() * 0.35))
+                    (
+                        Vec3::new(a.cos(), 0., a.sin()) * internode * 0.6,
+                        Vec3::new(a.cos() * 0.35, 1., a.sin() * 0.35),
+                    )
                 })
                 .collect();
             let centre = Vec3::new(0., height * 0.55, 0.);
             let radii = Vec3::new(height * 0.55, height * 0.5, height * 0.55);
             (
-                grow_skeleton(&model, &stems, internode * 2.5, (centre, radii), 1800, &mut rng),
+                grow_skeleton(
+                    &model,
+                    &stems,
+                    internode * 2.5,
+                    (centre, radii),
+                    1800,
+                    &mut rng,
+                ),
                 None,
                 model.tip_radius * 2.5,
             )
@@ -1015,7 +1106,10 @@ fn grow(options: PlantOptions, world_detail: bool) -> Result<Growth, Box<dyn std
         let extent = ((high - low) * 0.5).max(Vec3::splat(0.05));
         for (n, p) in g.leaves.normals.iter_mut().zip(&g.leaves.positions) {
             let hull = ((Vec3::from_array(*p) - centre) / extent).normalize_or(Vec3::Y);
-            *n = Vec3::from_array(*n).lerp(hull, 0.55).normalize_or(Vec3::Y).to_array();
+            *n = Vec3::from_array(*n)
+                .lerp(hull, 0.55)
+                .normalize_or(Vec3::Y)
+                .to_array();
         }
     }
     Ok(g)
@@ -1031,7 +1125,7 @@ fn generate(
     let mut accessors = Vec::new();
     let mut primitives = Vec::new();
     fn append(binary: &mut Vec<u8>, views: &mut Vec<serde_json::Value>, bytes: &[u8]) -> usize {
-        while binary.len() % 4 != 0 {
+        while !binary.len().is_multiple_of(4) {
             binary.push(0);
         }
         let index = views.len();
@@ -1103,7 +1197,8 @@ fn generate(
     let mut images = Vec::new();
     for pixels in plant_images(options.seed)? {
         // Interchange GLBs stay inside default model image budgets; native assets keep full maps.
-        let pixels = image::imageops::resize(&pixels, 512, 512, image::imageops::FilterType::Triangle);
+        let pixels =
+            image::imageops::resize(&pixels, 512, 512, image::imageops::FilterType::Triangle);
         let mut output = Cursor::new(Vec::new());
         pixels.write_to(&mut output, image::ImageFormat::Png)?;
         let view = append(&mut binary, &mut views, &output.into_inner());
@@ -1117,7 +1212,10 @@ fn generate(
                 .expect("material object")
                 .remove("normalTexture");
             for key in ["alphaMode", "alphaCutoff"] {
-                material.as_object_mut().expect("material object").remove(key);
+                material
+                    .as_object_mut()
+                    .expect("material object")
+                    .remove(key);
             }
             material["pbrMetallicRoughness"]
                 .as_object_mut()
@@ -1241,7 +1339,11 @@ mod tests {
                 assert!(n.dot(t).abs() < 1e-3);
             }
         }
-        for v in asset.geometry[2].vertices.iter().filter(|v| v.uv[1] == 0.12) {
+        for v in asset.geometry[2]
+            .vertices
+            .iter()
+            .filter(|v| v.uv[1] == 0.12)
+        {
             assert!((v.position[1] - 0.004).abs() < 1e-5);
             assert!((v.position[0] * v.position[0] + v.position[2] * v.position[2]).sqrt() < 0.36);
         }
@@ -1278,7 +1380,10 @@ mod tests {
         );
         let alive: Vec<_> = sk.metamers.iter().filter(|m| m.alive).collect();
         assert!(alive.len() > 1000, "crown must fill out: {}", alive.len());
-        assert!(sk.metamers.iter().any(|m| !m.alive), "shading must shed some limbs");
+        assert!(
+            sk.metamers.iter().any(|m| !m.alive),
+            "shading must shed some limbs"
+        );
         for m in &alive {
             let sum: f32 = [m.main, m.lateral]
                 .into_iter()
@@ -1288,7 +1393,10 @@ mod tests {
             if sum > 0. {
                 assert!((m.radius.powf(model.murray) - sum).abs() <= sum * 1e-3);
             }
-            if m.tip.y < crown_base - 0.2 && m.parent.is_none_or(|p| sk.metamers[p].tip.y < crown_base - 0.2) {
+            if m.tip.y < crown_base - 0.2
+                && m.parent
+                    .is_none_or(|p| sk.metamers[p].tip.y < crown_base - 0.2)
+            {
                 assert!(m.lateral.is_none(), "bole below the crown stays clear");
             }
         }

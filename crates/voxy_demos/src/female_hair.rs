@@ -1865,14 +1865,18 @@ mod tests {
                     let mut log = String::new();
                     for (label, hair) in [("native", &native), ("external", &gpu)] {
                         for entry in hair.system.step_trace() {
-                            log.push_str(&format!(
-                                "HAIR PHASE TRACE frame={frame} {label} {entry:?}\n"
-                            ));
+                            let _ = std::fmt::Write::write_fmt(
+                                &mut log,
+                                format_args!("HAIR PHASE TRACE frame={frame} {label} {entry:?}\n"),
+                            );
                         }
                         for entry in hair.system.contact_projection_trace() {
-                            log.push_str(&format!(
-                                "HAIR PROJECTION TRACE frame={frame} {label} {entry:?}\n"
-                            ));
+                            let _ = std::fmt::Write::write_fmt(
+                                &mut log,
+                                format_args!(
+                                    "HAIR PROJECTION TRACE frame={frame} {label} {entry:?}\n"
+                                ),
+                            );
                         }
                     }
                     std::fs::write(directory.join(format!("frame-{frame}-phases.log")), log)

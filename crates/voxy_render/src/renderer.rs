@@ -149,6 +149,55 @@ pub struct SkinnedMotionOutput<'a> {
 }
 
 #[derive(Debug)]
+struct SharedCameraBindings {
+    ring: crate::SharedUploadRing,
+    groups: Vec<wgpu::BindGroup>,
+}
+impl SharedCameraBindings {
+    fn new(
+        device: &wgpu::Device,
+        layout: &wgpu::BindGroupLayout,
+        camera: &wgpu::Buffer,
+        metadata: &wgpu::Buffer,
+        light: &wgpu::Buffer,
+    ) -> Option<Self> {
+        let ring =
+            crate::SharedUploadRing::new(device, camera.size(), wgpu::BufferUsages::UNIFORM)?;
+        let groups = ring
+            .buffers()
+            .map(|buffer| create_camera_bind_group(device, layout, buffer, metadata, light))
+            .collect();
+        Some(Self { ring, groups })
+    }
+    fn refresh(
+        &mut self,
+        device: &wgpu::Device,
+        layout: &wgpu::BindGroupLayout,
+        metadata: &wgpu::Buffer,
+        light: &wgpu::Buffer,
+    ) {
+        self.groups = self
+            .ring
+            .buffers()
+            .map(|buffer| create_camera_bind_group(device, layout, buffer, metadata, light))
+            .collect();
+    }
+    fn select(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        legacy: &wgpu::Buffer,
+        legacy_group: &wgpu::BindGroup,
+        data: &[u8],
+    ) -> wgpu::BindGroup {
+        let (slot, _) = self
+            .ring
+            .write_or_stage(encoder, legacy, |mut bytes| bytes.copy_from_slice(data))
+            .expect("live shared renderer camera");
+        self.groups.get(slot).unwrap_or(legacy_group).clone()
+    }
+}
+
+#[derive(Debug)]
 pub struct Renderer {
     frame_timing: Option<resident_frame_timing::Timing>,
     profile_acquire: std::time::Duration,
@@ -180,6 +229,7 @@ pub struct Renderer {
     camera_layout: wgpu::BindGroupLayout,
     camera_buffer: wgpu::Buffer,
     camera_bind_group: wgpu::BindGroup,
+    shared_camera: Option<SharedCameraBindings>,
     camera: CameraView,
     chunk_meta_buffer: wgpu::Buffer,
     light_buffer: wgpu::Buffer,
@@ -203,6 +253,7 @@ pub struct Renderer {
     photoreal_camera_layout: wgpu::BindGroupLayout,
     photoreal_camera_buffer: wgpu::Buffer,
     photoreal_camera_bind_group: wgpu::BindGroup,
+    shared_photoreal_camera: Option<SharedCameraBindings>,
     photoreal_pipeline: wgpu::RenderPipeline,
     photoreal_indirect_pipeline: wgpu::RenderPipeline,
     photoreal_skinned_pipeline: wgpu::RenderPipeline,
@@ -408,6 +459,20 @@ impl Renderer {
             &chunk_meta_buffer,
             &light_buffer,
         );
+        let shared_camera = SharedCameraBindings::new(
+            &device,
+            &camera_layout,
+            &camera_buffer,
+            &chunk_meta_buffer,
+            &light_buffer,
+        );
+        let shared_photoreal_camera = SharedCameraBindings::new(
+            &device,
+            &photoreal_camera_layout,
+            &photoreal_camera_buffer,
+            &chunk_meta_buffer,
+            &light_buffer,
+        );
         let material_pack = default_material_pack();
         let material_set = MaterialSet::upload(&device, &queue, &material_pack);
         let material_bind_group =
@@ -463,6 +528,7 @@ impl Renderer {
             camera_layout,
             camera_buffer,
             camera_bind_group,
+            shared_camera,
             camera,
             chunk_meta_buffer,
             light_buffer,
@@ -486,6 +552,7 @@ impl Renderer {
             photoreal_camera_layout,
             photoreal_camera_buffer,
             photoreal_camera_bind_group,
+            shared_photoreal_camera,
             photoreal_pipeline,
             photoreal_indirect_pipeline,
             photoreal_skinned_pipeline,
@@ -506,24 +573,28 @@ impl Renderer {
         self.config.width = width;
         self.config.height = height;
         self.surface.configure(&self.device, &self.config);
-        self.queue.write_buffer(
-            &self.camera_buffer,
-            0,
-            bytemuck::bytes_of(&camera_uniform(width, height, self.camera)),
-        );
-        self.queue.write_buffer(
-            &self.photoreal_camera_buffer,
-            0,
-            bytemuck::bytes_of(&photoreal_camera_uniform(
-                width,
-                height,
-                self.camera,
-                &self.bodycam_rig,
-                self.bodycam_flashlight_pos,
-                self.bodycam_flashlight_dir,
-                self.bodycam_wetness,
-            )),
-        );
+        if self.shared_camera.is_none() {
+            self.queue.write_buffer(
+                &self.camera_buffer,
+                0,
+                bytemuck::bytes_of(&camera_uniform(width, height, self.camera)),
+            );
+        }
+        if self.shared_photoreal_camera.is_none() {
+            self.queue.write_buffer(
+                &self.photoreal_camera_buffer,
+                0,
+                bytemuck::bytes_of(&photoreal_camera_uniform(
+                    width,
+                    height,
+                    self.camera,
+                    &self.bodycam_rig,
+                    self.bodycam_flashlight_pos,
+                    self.bodycam_flashlight_dir,
+                    self.bodycam_wetness,
+                )),
+            );
+        }
         self.bodycam_post
             .resize(&self.device, &self.queue, width, height);
         (self.depth_texture, self.depth_view) = create_depth(&self.device, width, height);
@@ -673,6 +744,22 @@ impl Renderer {
         self.light_buffer = light_buffer;
         self.camera_bind_group = camera_bind_group;
         self.photoreal_camera_bind_group = photoreal_camera_bind_group;
+        if let Some(shared) = &mut self.shared_camera {
+            shared.refresh(
+                &self.device,
+                &self.camera_layout,
+                &self.chunk_meta_buffer,
+                &self.light_buffer,
+            );
+        }
+        if let Some(shared) = &mut self.shared_photoreal_camera {
+            shared.refresh(
+                &self.device,
+                &self.photoreal_camera_layout,
+                &self.chunk_meta_buffer,
+                &self.light_buffer,
+            );
+        }
         if let Some(buffer) = quad_buffer {
             self.quad_buffer = buffer;
         }
@@ -716,28 +803,32 @@ impl Renderer {
             return Err(RendererError::InvalidCamera);
         }
         self.camera = camera;
-        self.queue.write_buffer(
-            &self.camera_buffer,
-            0,
-            bytemuck::bytes_of(&camera_uniform(
-                self.config.width,
-                self.config.height,
-                camera,
-            )),
-        );
-        self.queue.write_buffer(
-            &self.photoreal_camera_buffer,
-            0,
-            bytemuck::bytes_of(&photoreal_camera_uniform(
-                self.config.width,
-                self.config.height,
-                camera,
-                &self.bodycam_rig,
-                self.bodycam_flashlight_pos,
-                self.bodycam_flashlight_dir,
-                self.bodycam_wetness,
-            )),
-        );
+        if self.shared_camera.is_none() {
+            self.queue.write_buffer(
+                &self.camera_buffer,
+                0,
+                bytemuck::bytes_of(&camera_uniform(
+                    self.config.width,
+                    self.config.height,
+                    camera,
+                )),
+            );
+        }
+        if self.shared_photoreal_camera.is_none() {
+            self.queue.write_buffer(
+                &self.photoreal_camera_buffer,
+                0,
+                bytemuck::bytes_of(&photoreal_camera_uniform(
+                    self.config.width,
+                    self.config.height,
+                    camera,
+                    &self.bodycam_rig,
+                    self.bodycam_flashlight_pos,
+                    self.bodycam_flashlight_dir,
+                    self.bodycam_wetness,
+                )),
+            );
+        }
         Ok(())
     }
 
@@ -1110,6 +1201,21 @@ impl Renderer {
     }
 
     fn encode_resident_voxels(&self, encoder: &mut wgpu::CommandEncoder, view: &wgpu::TextureView) {
+        let camera_group = self.shared_camera.as_ref().map_or_else(
+            || self.camera_bind_group.clone(),
+            |shared| {
+                shared.select(
+                    encoder,
+                    &self.camera_buffer,
+                    &self.camera_bind_group,
+                    bytemuck::bytes_of(&camera_uniform(
+                        self.config.width,
+                        self.config.height,
+                        self.camera,
+                    )),
+                )
+            },
+        );
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("Voxy voxel pass"),
@@ -1136,7 +1242,7 @@ impl Renderer {
             });
             if self.quad_count != 0 {
                 pass.set_pipeline(&self.pipeline);
-                pass.set_bind_group(0, &self.camera_bind_group, &[]);
+                pass.set_bind_group(0, &camera_group, &[]);
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_vertex_buffer(0, self.quad_buffer.slice(..));
                 let view_projection =
@@ -1149,7 +1255,7 @@ impl Renderer {
             }
             if let Some(skinned) = &self.skinned {
                 pass.set_pipeline(&self.skinned_pipeline);
-                pass.set_bind_group(0, &self.camera_bind_group, &[]);
+                pass.set_bind_group(0, &camera_group, &[]);
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_bind_group(2, &skinned.bind_group, &[]);
                 pass.set_vertex_buffer(0, skinned.vertex.slice(..));
@@ -1158,7 +1264,7 @@ impl Renderer {
             }
             if let Some(indirect) = &self.indirect_mesh {
                 pass.set_pipeline(&self.indirect_pipeline);
-                pass.set_bind_group(0, &self.camera_bind_group, &[]);
+                pass.set_bind_group(0, &camera_group, &[]);
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_vertex_buffer(0, indirect.vertex_buffer.slice(..));
                 pass.draw_indirect(&indirect.indirect_buffer, 0);
@@ -1206,11 +1312,21 @@ impl Renderer {
             self.bodycam_wetness,
         );
         uniform.subject_spheres = self.bodycam_subject_spheres;
-        self.queue.write_buffer(
-            &self.photoreal_camera_buffer,
-            0,
-            bytemuck::bytes_of(&uniform),
-        );
+        let camera_group = if let Some(shared) = &self.shared_photoreal_camera {
+            shared.select(
+                encoder,
+                &self.photoreal_camera_buffer,
+                &self.photoreal_camera_bind_group,
+                bytemuck::bytes_of(&uniform),
+            )
+        } else {
+            self.queue.write_buffer(
+                &self.photoreal_camera_buffer,
+                0,
+                bytemuck::bytes_of(&uniform),
+            );
+            self.photoreal_camera_bind_group.clone()
+        };
         {
             // CIE Overcast Sky linear HDR zenith/horizon skybox clear color
             let hdr_sky_clear = wgpu::Color {
@@ -1244,7 +1360,7 @@ impl Renderer {
             });
             if self.quad_count != 0 {
                 pass.set_pipeline(&self.photoreal_pipeline);
-                pass.set_bind_group(0, &self.photoreal_camera_bind_group, &[]);
+                pass.set_bind_group(0, &camera_group, &[]);
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_vertex_buffer(0, self.quad_buffer.slice(..));
                 let view_projection = perspective_camera_view_projection(
@@ -1260,7 +1376,7 @@ impl Renderer {
             }
             if let Some(skinned) = &self.skinned {
                 pass.set_pipeline(&self.photoreal_skinned_pipeline);
-                pass.set_bind_group(0, &self.photoreal_camera_bind_group, &[]);
+                pass.set_bind_group(0, &camera_group, &[]);
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_bind_group(2, &skinned.bind_group, &[]);
                 pass.set_vertex_buffer(0, skinned.vertex.slice(..));
@@ -1271,7 +1387,7 @@ impl Renderer {
             }
             if let Some(indirect) = &self.indirect_mesh {
                 pass.set_pipeline(&self.photoreal_indirect_pipeline);
-                pass.set_bind_group(0, &self.photoreal_camera_bind_group, &[]);
+                pass.set_bind_group(0, &camera_group, &[]);
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_vertex_buffer(0, indirect.vertex_buffer.slice(..));
                 pass.draw_indirect(&indirect.indirect_buffer, 0);
@@ -1279,7 +1395,7 @@ impl Renderer {
             if let Some(skinned) = &self.skinned {
                 if !skinned.fibre_ranges.is_empty() {
                     pass.set_pipeline(&self.photoreal_fibre_pipeline);
-                    pass.set_bind_group(0, &self.photoreal_camera_bind_group, &[]);
+                    pass.set_bind_group(0, &camera_group, &[]);
                     pass.set_bind_group(1, &self.material_bind_group, &[]);
                     pass.set_bind_group(2, &skinned.bind_group, &[]);
                     pass.set_vertex_buffer(0, skinned.vertex.slice(..));
@@ -1692,6 +1808,20 @@ impl Renderer {
     ) -> Result<(), crate::ComputeError> {
         if let Some(plants) = &mut self.native_vegetation {
             plants.update_instances(&self.queue, instances)?;
+        }
+        Ok(())
+    }
+    /// Generated instance upload with a portable fallback.
+    pub fn update_native_vegetation_instances_generated<I, J>(
+        &mut self,
+        groups: I,
+    ) -> Result<(), crate::ComputeError>
+    where
+        I: ExactSizeIterator<Item = (usize, J)>,
+        J: Iterator<Item = crate::archive_scene::ArchiveInstance>,
+    {
+        if let Some(plants) = &mut self.native_vegetation {
+            plants.update_instances_generated(&self.queue, groups)?;
         }
         Ok(())
     }
@@ -3019,3 +3149,7 @@ fn encode_motion_layers(
 #[cfg(test)]
 #[path = "renderer/legacy_skin_tests.rs"]
 mod legacy_skin_tests;
+
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+#[path = "renderer_shared_camera_tests.rs"]
+mod shared_camera_tests;

@@ -221,6 +221,7 @@ fn legacy_render_admission_rejects_collapsed_blends_and_keeps_history() {
 
 #[test]
 #[ignore = "release-mode CPU admission profiling; no FPS inference"]
+#[allow(clippy::assertions_on_constants)]
 fn profile_legacy_render_admission_reference_rigs() {
     assert!(!cfg!(debug_assertions), "run this profile with --release");
     for (label, bytes) in [

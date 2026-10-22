@@ -658,9 +658,7 @@ impl SceneApp {
             return Ok(());
         }
         let use_gpu_secondary = self.use_gpu_secondary();
-        if use_gpu_secondary
-            && let Some(female) = &mut self.female
-        {
+        if use_gpu_secondary && let Some(female) = &mut self.female {
             if std::env::var_os("VOXY_GPU_SECONDARY").is_none() {
                 female.simulate_hair = false;
             }
@@ -1040,10 +1038,8 @@ impl SceneApp {
             .as_ref()
             .map(|xray| scene.upload_mesh(host.device(), &xray.internal()?))
             .transpose()?;
-        let overlay_mesh = if self.female.is_some() {
-            voxy_demos::diagnostic_legend::mesh(
-                &self.female.as_ref().unwrap().diagnostic_legend_labels(),
-            )?
+        let overlay_mesh = if let Some(female) = &self.female {
+            voxy_demos::diagnostic_legend::mesh(&female.diagnostic_legend_labels())?
         } else {
             SceneMesh::quad([1.0, 1.0, 1.0, 0.8])
         };
@@ -1656,17 +1652,22 @@ impl SceneApp {
                             8192,
                         )?);
                 }
-                let (mesh, particles) = liquids.optical_scene()?;
+                let mesh = liquids.optical_background()?;
+                let (particle_count, particles) = liquids.optical_particles()?;
                 r.cube.update(r.host.queue(), &mesh)?;
                 let films = liquids.optical_film_triangles()?;
-                r.liquid_renderer.as_mut().unwrap().update_with_film(
-                    r.host.queue(),
-                    camera,
-                    &particles,
-                    &films,
-                    1.1,
-                    voxy_render::FluidDepthFilter::Bilateral,
-                )?;
+                r.liquid_renderer
+                    .as_mut()
+                    .unwrap()
+                    .update_generated_with_film(
+                        r.host.queue(),
+                        camera,
+                        particle_count,
+                        particles,
+                        &films,
+                        1.1,
+                        voxy_render::FluidDepthFilter::Bilateral,
+                    )?;
             } else {
                 r.cube.update(r.host.queue(), &liquids.mesh()?)?;
             }

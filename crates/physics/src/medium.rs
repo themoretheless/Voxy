@@ -227,7 +227,7 @@ impl ParticipatingMedium {
             mass_after_kg: Vec::new(),
         };
         if dt == 0. {
-            report.mass_after_kg = report.mass_before_kg.clone();
+            report.mass_after_kg.clone_from(&report.mass_before_kg);
             return Ok(report);
         }
         // Buoyancy: species concentration accelerates the gas along `up`.

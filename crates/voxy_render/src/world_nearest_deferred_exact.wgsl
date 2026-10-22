@@ -8,11 +8,11 @@ fn nearest_winner_process(index:u32,stride:u32,worker:u32) {
   let info=exact_layout[source.z];
   if source.w<nearest_counts.values[info.x*2u].x {
    let direction=nearest_start(index,stride,worker);
-   nearest_candidates=1u;nearest_exact_calls=1u;ex_cursor=7u;ex_parameters.valid=0u;
+   nearest_candidates=1u;nearest_exact_calls=1u;ex_cursor=nearest_temporary_begin();ex_parameters.valid=0u;
    let triangle=nearest_source_vertices(source.z,source.w,index*20u);
    let decision=ex_triangle_certified(triangle.a,triangle.b,triangle.c,direction);
    if nearest_admit_decision(info.w,decision) {
-    nearest_save_parameters(source.z,source.w);nearest_finish(index,stride,false);
+    nearest_save_parameters(source.z,source.w);nearest_finish(index,stride,false,direction);
     exact_output[out+4u].z|=4096u|hint_flags;return;
    }
   }
@@ -65,10 +65,10 @@ fn nearest_candidates_process(index:u32,stride:u32,worker:u32) {
   let info=exact_layout[source.x];
   if source.y>=nearest_counts.values[info.x*2u].x {nearest_admission_result(index,stride,4u,0u);return;}
   if nearest_active[4u+source.x]==0u {continue;}
-  nearest_candidates+=1u;ex_cursor=7u;ex_parameters.valid=0u;
+  nearest_candidates+=1u;ex_cursor=nearest_temporary_begin();ex_parameters.valid=0u;
   nearest_evaluate_and_update(source.x,source.y,index*20u,direction);
  }
- nearest_finish(index,stride,false);exact_output[out+4u].z|=8192u|hint_flags;
+ nearest_finish(index,stride,false,direction);exact_output[out+4u].z|=8192u|hint_flags;
 }
 @compute @workgroup_size(WORLD_EXACT_GROUP)
 fn main_nearest_candidates(@builtin(global_invocation_id) id:vec3<u32>) {

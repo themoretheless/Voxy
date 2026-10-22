@@ -77,17 +77,13 @@ fn complete_boundary_maps_to_unique_cells_and_uses_physical_area() {
     for &(owner, face, g) in &contacts {
         assert_eq!(
             owner,
-            if film.triangles()[face].contains(&3) {
-                0
-            } else {
-                1
-            }
+            usize::from(!film.triangles()[face].contains(&3))
         );
         assert_eq!(g, film.cell_area_m2(face).unwrap() / 2.);
         assert!(!film.triangles()[face].iter().all(|node| *node < 3));
     }
     let total = contacts.iter().map(|c| c.2).sum::<f64>();
-    assert!((total - (2. + 3_f64.sqrt()) / 2.).abs() < 1e-12);
+    assert!((total - f64::midpoint(2., 3_f64.sqrt())).abs() < 1e-12);
 }
 #[test]
 fn stale_geometry_rejects_until_owned_refresh_preserves_mass_and_heat() {

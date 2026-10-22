@@ -10,11 +10,10 @@ fn main() {
     ] {
         let vertices = (0usize..100_000)
             .map(|i| {
-                let joint = (if run == 0 {
-                    (i / 4 * 3 + (i % 4).saturating_sub(1)) % 16
-                } else {
-                    (i / run) % 16
-                }) as u16;
+                let joint = (i
+                    .checked_div(run)
+                    .unwrap_or_else(|| i / 4 * 3 + (i % 4).saturating_sub(1))
+                    % 16) as u16;
                 SkinnedVertex {
                     position: [(i % 71) as f32 * 0.01, 0.2, 0.3],
                     normal: [0.2, 0.8, 0.1],

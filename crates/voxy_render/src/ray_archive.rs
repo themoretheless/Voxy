@@ -100,19 +100,24 @@ impl RayScene {
         meshes: &[ArchiveMeshSource],
         padding: f32,
     ) -> Result<Self, RaySceneError> {
-        Self::from_archive_candidates_impl(device,meshes,padding,false)
+        Self::from_archive_candidates_impl(device, meshes, padding, false)
     }
     /// Retain the same original source/native geometry with a conservative
     /// hierarchy over groups of at most eight stable source primitives.
     /// Selection belongs to this immutable scene owner, independently of other scenes.
     pub fn from_archive_candidates_with_primitive_groups(
-        device:&wgpu::Device,meshes:&[ArchiveMeshSource],padding:f32,
-    )->Result<Self,RaySceneError> {
-        Self::from_archive_candidates_impl(device,meshes,padding,true)
+        device: &wgpu::Device,
+        meshes: &[ArchiveMeshSource],
+        padding: f32,
+    ) -> Result<Self, RaySceneError> {
+        Self::from_archive_candidates_impl(device, meshes, padding, true)
     }
     fn from_archive_candidates_impl(
-        device:&wgpu::Device,meshes:&[ArchiveMeshSource],padding:f32,primitive_groups:bool,
-    )->Result<Self,RaySceneError> {
+        device: &wgpu::Device,
+        meshes: &[ArchiveMeshSource],
+        padding: f32,
+        primitive_groups: bool,
+    ) -> Result<Self, RaySceneError> {
         if !device
             .features()
             .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
@@ -321,8 +326,12 @@ impl RayScene {
                 }
             }
             let masks = vec![255u32; instance_mesh.len()];
-            let hierarchy = if primitive_groups {crate::world_nearest_bvh::pack_groups(meshes,&masks)}else{crate::world_nearest_bvh::pack(meshes,&masks)}
-                .map_err(|_| RaySceneError::InvalidGeometry)?;
+            let hierarchy = if primitive_groups {
+                crate::world_nearest_bvh::pack_groups(meshes, &masks)
+            } else {
+                crate::world_nearest_bvh::pack(meshes, &masks)
+            }
+            .map_err(|_| RaySceneError::InvalidGeometry)?;
             Some((counts, hierarchy))
         } else {
             None
@@ -404,6 +413,28 @@ impl RayScene {
             RayGeometry::Archive(a) => Some(a.proxy_instances.iter().filter(|&&p| p).count()),
             _ => None,
         }
+    }
+    pub(crate) fn archive_source_vertex_counts(&self) -> Option<Vec<u32>> {
+        let RayGeometry::Archive(a) = &self.geometry else {
+            return None;
+        };
+        Some(
+            a.instance_mesh
+                .iter()
+                .map(|&mesh| a.ranges[mesh].source[1])
+                .collect(),
+        )
+    }
+    pub(crate) fn archive_source_primitive_counts(&self) -> Option<Vec<u32>> {
+        let RayGeometry::Archive(a) = &self.geometry else {
+            return None;
+        };
+        Some(
+            a.instance_mesh
+                .iter()
+                .map(|&mesh| a.ranges[mesh].source[3] / 3)
+                .collect(),
+        )
     }
     /// Original vertex, local index, and instance buffers, in that order.
     /// Raw source bytes include singular matrices and their original normal data.

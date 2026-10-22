@@ -1,0 +1,100 @@
+{
+  "pairs_per_scenario": 5,
+  "metric": "median run and pooled CPU replay p99; not displayed frame p99",
+  "focus": "catchup",
+  "summary": [
+    {
+      "pooled_p99_us": {
+        "before": 16841.75,
+        "after": 424.375
+      },
+      "pooled_p99_ratio": 0.025197797141033443,
+      "scenario": "idle",
+      "before_p99_us": 14193.125,
+      "after_p99_us": 534.75,
+      "ratio": 0.03767669206041657,
+      "paired_p99_ratios": [
+        0.01691458823515786,
+        0.013835308020692931,
+        0.07788397551631512,
+        0.0276490547746001,
+        0.03207553747774994
+      ],
+      "mean_stage_us": {
+        "before": {
+          "animation": 2.1354,
+          "character": 2.728629166666668,
+          "companions": 41.48038333333332,
+          "palette": 1.7716708333333337,
+          "render_admission": 2700.1633749999996,
+          "shadow_extraction": 1.837191666666666,
+          "temporal_admission": 3.1385333333333323,
+          "total_cpu": 2842.3869541666663
+        },
+        "after": {
+          "animation": 0.4142166666666666,
+          "character": 0.33663750000000014,
+          "companions": 31.69914166666666,
+          "palette": 1.2324541666666664,
+          "render_admission": 37.5223875,
+          "shadow_extraction": 0.597375,
+          "temporal_admission": 1.8333291666666678,
+          "total_cpu": 74.67654166666668
+        }
+      },
+      "state_blake3": "7f62430f79661468af6124a4afdb7dd4500b35d58af567206ec6dbca44b1e5e6"
+    },
+    {
+      "pooled_p99_us": {
+        "before": 23128.667,
+        "after": 4850.75
+      },
+      "pooled_p99_ratio": 0.2097289048262055,
+      "scenario": "catchup",
+      "before_p99_us": 12071.208999999999,
+      "after_p99_us": 1449.875,
+      "ratio": 0.12011017289154716,
+      "paired_p99_ratios": [
+        0.0299714650292412,
+        0.8134437258112607,
+        0.015557016699818554,
+        0.044742323715476,
+        0.21846305428311336
+      ],
+      "mean_stage_us": {
+        "before": {
+          "animation": 6.928720833333333,
+          "character": 7.628837499999999,
+          "companions": 145.35551666666666,
+          "palette": 6.960462499999995,
+          "render_admission": 5576.368212500002,
+          "shadow_extraction": 4.122612499999999,
+          "temporal_admission": 4.737487499999999,
+          "total_cpu": 5752.027762499998
+        },
+        "after": {
+          "animation": 1.8178874999999999,
+          "character": 1.4598625000000003,
+          "companions": 171.04874166666661,
+          "palette": 7.523687500000005,
+          "render_admission": 98.23645833333335,
+          "shadow_extraction": 0.725379166666667,
+          "temporal_admission": 2.5817333333333345,
+          "total_cpu": 284.103325
+        }
+      },
+      "state_blake3": "e663821f1a02bbcf8eef4474379aac72659b849cefabe8623f139b4179ad9f7d"
+    }
+  ],
+  "cpu_gate": null,
+  "binaries": {
+    "before": {
+      "path": "/private/tmp/voxy-pose-clock-before",
+      "sha256": "e9b31a3f10f3f32bd2ccaaf723639359b4f75e4e46dca80d61b2bfae6da877f0"
+    },
+    "after": {
+      "path": "/private/tmp/voxy-pose-family-after",
+      "sha256": "24ee03e780b3e5d2fc7846cedcc5b20c3a9ba12886903d3f9ef6df12133b2d2b"
+    }
+  }
+}

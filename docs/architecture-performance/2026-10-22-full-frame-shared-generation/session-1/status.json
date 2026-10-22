@@ -1,0 +1,5 @@
+{
+  "status": "aborted before any benchmark",
+  "reason": "idle ollama service incorrectly classified as a llama workload; controller stopped by this task with SIGTERM",
+  "time": 1792615604.699923
+}

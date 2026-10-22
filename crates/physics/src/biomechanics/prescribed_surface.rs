@@ -305,6 +305,7 @@ impl PreparedPrescribedContactPath {
             return Ok(None);
         }
         let mut knots: Vec<_> = self.boundaries.iter().map(|b| b.0).collect();
+        #[allow(clippy::range_plus_one)]
         knots.splice(worst + 1..worst + 1, inserted);
         Ok(Some(knots))
     }

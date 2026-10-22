@@ -52,7 +52,11 @@ pub struct RiverPoint {
 
 impl River {
     pub fn new(nodes: Vec<RiverNode>, speed: f32) -> Self {
-        Self { nodes, speed, falls_slope: 1.2 }
+        Self {
+            nodes,
+            speed,
+            falls_slope: 1.2,
+        }
     }
 
     /// Catmull-Rom resampling of the centre line every `step` metres (or finer).
@@ -74,19 +78,35 @@ impl River {
             // a spline through a short drop between long reaches overshoots the lip and
             // folds the ribbon: drops and their neighbours stay straight
             let straight = steep(i as isize - 1) || steep(i as isize) || steep(i as isize + 1);
-            let (p0, p1, p2, p3) = (node(i as isize - 1), node(i as isize), node(i as isize + 1), node(i as isize + 2));
+            let (p0, p1, p2, p3) = (
+                node(i as isize - 1),
+                node(i as isize),
+                node(i as isize + 1),
+                node(i as isize + 2),
+            );
             let length = p1.position.distance(p2.position);
             let pieces = (length / step).ceil().max(1.0) as usize;
             for j in 0..pieces {
                 let t = j as f32 / pieces as f32;
                 let (t2, t3) = (t * t, t * t * t);
                 let catmull = |a: Vec3, b: Vec3, c: Vec3, d: Vec3| {
-                    0.5 * (2.0 * b + (c - a) * t + (2.0 * a - 5.0 * b + 4.0 * c - d) * t2 + (3.0 * b - a - 3.0 * c + d) * t3)
+                    0.5 * (2.0 * b
+                        + (c - a) * t
+                        + (2.0 * a - 5.0 * b + 4.0 * c - d) * t2
+                        + (3.0 * b - a - 3.0 * c + d) * t3)
                 };
                 // the drop stays monotonic: interpolate height linearly between nodes
-                let mut p = if straight { p1.position.lerp(p2.position, t) } else { catmull(p0.position, p1.position, p2.position, p3.position) };
+                let mut p = if straight {
+                    p1.position.lerp(p2.position, t)
+                } else {
+                    catmull(p0.position, p1.position, p2.position, p3.position)
+                };
                 p.y = p1.position.y + (p2.position.y - p1.position.y) * t;
-                points.push((p, p1.width + (p2.width - p1.width) * t, p1.depth + (p2.depth - p1.depth) * t));
+                points.push((
+                    p,
+                    p1.width + (p2.width - p1.width) * t,
+                    p1.depth + (p2.depth - p1.depth) * t,
+                ));
             }
         }
         let last = self.nodes[n - 1];
@@ -112,16 +132,28 @@ impl River {
             } else if i > 0 && since_falls < f32::MAX {
                 since_falls += points[i].0.distance(points[i - 1].0);
             }
-            let plunge = if since_falls < f32::MAX { (-since_falls / 6.0).exp() } else { 0.0 };
+            let plunge = if since_falls < f32::MAX {
+                (-since_falls / 6.0).exp()
+            } else {
+                0.0
+            };
             out.push(RiverSample {
                 position: points[i].0,
                 tangent,
                 right,
                 width: points[i].1,
                 depth: points[i].2,
-                speed: if falls { (2.0 * 9.81 * horizontal.max(0.5)).sqrt().max(self.speed) } else { self.speed * (1.0 + 6.0 * slope).min(5.0) },
+                speed: if falls {
+                    (2.0 * 9.81 * horizontal.max(0.5)).sqrt().max(self.speed)
+                } else {
+                    self.speed * (1.0 + 6.0 * slope).min(5.0)
+                },
                 along,
-                foam: if falls { 1.0 } else { (slope * 6.0).clamp(0.0, 1.0).max(plunge) },
+                foam: if falls {
+                    1.0
+                } else {
+                    (slope * 6.0).clamp(0.0, 1.0).max(plunge)
+                },
                 falls,
             });
         }
@@ -138,7 +170,10 @@ impl River {
             if a.falls || b.falls {
                 continue;
             }
-            let (a2, b2) = (Vec2::new(a.position.x, a.position.z), Vec2::new(b.position.x, b.position.z));
+            let (a2, b2) = (
+                Vec2::new(a.position.x, a.position.z),
+                Vec2::new(b.position.x, b.position.z),
+            );
             let ab = b2 - a2;
             let t = ((p - a2).dot(ab) / ab.length_squared().max(1e-6)).clamp(0.0, 1.0);
             let distance = p.distance(a2 + ab * t);
@@ -150,10 +185,18 @@ impl River {
             let level = lerp(a.position.y, b.position.y);
             // faster in the middle of the channel than at the banks
             let profile = 1.0 - (distance / half.max(1e-3)).powi(2) * 0.6;
-            let velocity = a.tangent.lerp(b.tangent, t).normalize_or(Vec3::Z) * lerp(a.speed, b.speed) * profile;
+            let velocity = a.tangent.lerp(b.tangent, t).normalize_or(Vec3::Z)
+                * lerp(a.speed, b.speed)
+                * profile;
             best = Some((
                 distance,
-                RiverPoint { level, velocity, depth: lerp(a.depth, b.depth), foam: lerp(a.foam, b.foam), falls: false },
+                RiverPoint {
+                    level,
+                    velocity,
+                    depth: lerp(a.depth, b.depth),
+                    foam: lerp(a.foam, b.foam),
+                    falls: false,
+                },
             ));
         }
         best.map(|(_, p)| p)
@@ -165,8 +208,21 @@ mod tests {
     use super::*;
 
     fn river() -> River {
-        let node = |x: f32, y: f32, z: f32| RiverNode { position: Vec3::new(x, y, z), width: 4.0, depth: 1.0 };
-        River::new(vec![node(0., 5., 0.), node(0., 4.9, 20.), node(0., 4.7, 30.), node(0., 1.0, 31.), node(0., 0.9, 50.)], 1.0)
+        let node = |x: f32, y: f32, z: f32| RiverNode {
+            position: Vec3::new(x, y, z),
+            width: 4.0,
+            depth: 1.0,
+        };
+        River::new(
+            vec![
+                node(0., 5., 0.),
+                node(0., 4.9, 20.),
+                node(0., 4.7, 30.),
+                node(0., 1.0, 31.),
+                node(0., 0.9, 50.),
+            ],
+            1.0,
+        )
     }
 
     #[test]
@@ -180,7 +236,12 @@ mod tests {
         let steep = r.sample(Vec3::new(0.0, 4.8, 25.0), &s).unwrap();
         assert!(steep.velocity.length() > flat.velocity.length());
         let plunge = r.sample(Vec3::new(0.0, 1.0, 33.0), &s).unwrap();
-        assert!(plunge.foam > 0.5 && flat.foam < 0.1, "{} {}", plunge.foam, flat.foam);
+        assert!(
+            plunge.foam > 0.5 && flat.foam < 0.1,
+            "{} {}",
+            plunge.foam,
+            flat.foam
+        );
     }
 
     #[test]

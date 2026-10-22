@@ -1,0 +1,32 @@
+[
+  {
+    "pid": 91643,
+    "signal": "SIGCONT",
+    "time": 1792617521.985203,
+    "identity": "91643 80614 Ts   Thu Oct 22 00:40:03 2026     /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after --experimental-ray-query --offscreen-benchmark --world-ray-audit-frames 4 --spawn pool --snapshot /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/qualification/repeat-c/report.png"
+  },
+  {
+    "pid": 80614,
+    "signal": "SIGCONT",
+    "time": 1792617521.996428,
+    "identity": "80614 80611 T    Thu Oct 22 00:30:06 2026     /opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/run-baselines.py"
+  },
+  {
+    "pid": 25974,
+    "signal": "SIGCONT",
+    "time": 1792617522.0045938,
+    "identity": "25974 25855 T+   Thu Oct 22 00:57:01 2026     /Users/themoretheless/Documents/Sources/voxy/target/debug/examples/street_walk-60b1cb264464f9fe original::tests::render_villa_preview --ignored --nocapture"
+  },
+  {
+    "pid": 25855,
+    "signal": "SIGCONT",
+    "time": 1792617522.011154,
+    "identity": "25855 19874 T+   Thu Oct 22 00:56:59 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/bin/cargo test -p voxy_app --example street_walk original::tests::render_villa_preview -- --ignored --nocapture"
+  },
+  {
+    "pid": 6379,
+    "signal": "SIGCONT",
+    "time": 1792617522.019644,
+    "identity": "T    /opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/projection-replay/run-after-baselines.py"
+  }
+]

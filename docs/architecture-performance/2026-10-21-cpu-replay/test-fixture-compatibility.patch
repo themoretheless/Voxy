@@ -1,0 +1,20 @@
+--- a/crates/voxy_render/src/native_vegetation_shared_tests.rs
++++ b/crates/voxy_render/src/native_vegetation_shared_tests.rs
+@@ -162,7 +162,7 @@
+     let mut pending = Vec::new();
+     for frame in 0..6 {
+         let count = [8, 2, 0, 6, 3, 7][frame as usize];
+-        let data = vec![
++        let data: Vec<Vec<ArchiveInstance>> = vec![
+             (0..count)
+                 .map(|i| {
+                     ArchiveInstance::new(Mat4::from_rotation_translation(
+@@ -272,7 +272,7 @@
+     let mut pending = Vec::new();
+     for frame in 0..6 {
+         let count = [8, 2, 0, 6, 3, 7][frame as usize];
+-        let data = vec![
++        let data: Vec<Vec<ArchiveInstance>> = vec![
+             (0..count)
+                 .map(|i| {
+                     ArchiveInstance::new(Mat4::from_rotation_translation(

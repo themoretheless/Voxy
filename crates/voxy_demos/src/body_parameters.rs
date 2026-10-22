@@ -624,7 +624,7 @@ impl BodyParameters {
                 NavelShape::Horizontal => {
                     rx = rx.max(ry * 1.5);
                 }
-                _ => {}
+                NavelShape::Reference => {}
             }
             pz += front
                 * (-self.navel_depth_mm / 1000. * profile(x, y - 0.10, rx, ry)

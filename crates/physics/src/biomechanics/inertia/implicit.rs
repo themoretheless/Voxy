@@ -283,7 +283,6 @@ impl InertialBody {
                             knots.len() - 1
                         );
                     }
-                    continue;
                 }
                 Err(
                     reason @ ("implicit contact nonlinear nonconvergence"

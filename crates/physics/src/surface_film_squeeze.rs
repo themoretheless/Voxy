@@ -241,14 +241,14 @@ impl SurfaceFilm {
             .collect();
         let vent_volume_flux = pressure.iter().zip(&boundary).map(|(p, b)| p * b).collect();
         Ok(SqueezePressureReport {
-            internal_volume_flux,
-            vent_volume_flux,
             pressure,
             normal_load,
             vented_volume_rate,
             dissipated_power,
             iterations,
             relative_residual,
+            internal_volume_flux,
+            vent_volume_flux,
         })
     }
 }

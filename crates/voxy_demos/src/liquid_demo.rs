@@ -740,14 +740,10 @@ impl LiquidDemo {
     }
     #[allow(clippy::cast_possible_truncation)]
     /// Optical snapshots borrow the simulation; they never create or remove liquid mass.
-    pub fn optical_scene(
-        &self,
-    ) -> Result<(SceneMesh, Vec<voxy_render::FluidRenderParticle>), Box<dyn std::error::Error>>
-    {
+    pub fn optical_background(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
-        let mut samples = Vec::new();
-        for (group, liquid) in self.liquids.iter().enumerate() {
+        for group in 0..self.liquids.len() {
             let offset = if group == 0 { -1.25 } else { 1.25 };
             let world = |p: [f64; 3]| {
                 [
@@ -792,24 +788,70 @@ impl LiquidDemo {
                     }
                 }
             }
-            let materials = liquid.effective_materials()?;
-            for (particle, material) in liquid.particles().iter().zip(materials) {
-                let radius =
-                    (3.0 * particle.mass / material.rest_density / (4.0 * std::f64::consts::PI))
-                        .cbrt() as f32
-                        * 1.1;
-                let p = world(particle.position);
-                samples.push(voxy_render::FluidRenderParticle {
-                    position_radius: [p[0], p[1], p[2], radius],
-                    absorption_ior: if group == 0 {
-                        [0.1, 0.04, 0.02, 1.333]
-                    } else {
-                        [0.3, 3.0, 12.0, 1.47]
-                    },
-                });
-            }
         }
-        Ok((SceneMesh::new(vertices, indices)?, samples))
+        Ok(SceneMesh::new(vertices, indices)?)
+    }
+
+    /// Compatibility snapshot for callers that need owned render particles.
+    pub fn optical_scene(
+        &self,
+    ) -> Result<(SceneMesh, Vec<voxy_render::FluidRenderParticle>), Box<dyn std::error::Error>>
+    {
+        let (_, particles) = self.optical_particles()?;
+        Ok((self.optical_background()?, particles.collect()))
+    }
+
+    /// Borrow simulation particles and form the final GPU struct lazily. Effective
+    /// materials retain their existing simulation representation, with no render Vec.
+    pub fn optical_particles(
+        &self,
+    ) -> Result<
+        (
+            usize,
+            impl Iterator<Item = voxy_render::FluidRenderParticle> + '_,
+        ),
+        Box<dyn std::error::Error>,
+    > {
+        let materials = self
+            .liquids
+            .iter()
+            .map(|liquid| liquid.effective_materials())
+            .collect::<Result<Vec<_>, _>>()?;
+        let count = self
+            .liquids
+            .iter()
+            .map(|liquid| liquid.particles().len())
+            .sum();
+        let particles = self.liquids.iter().zip(materials).enumerate().flat_map(
+            |(group, (liquid, materials))| {
+                liquid
+                    .particles()
+                    .iter()
+                    .zip(materials)
+                    .map(move |(particle, material)| {
+                        let radius = (3.0 * particle.mass
+                            / material.rest_density
+                            / (4.0 * std::f64::consts::PI))
+                            .cbrt() as f32
+                            * 1.1;
+                        let offset = if group == 0 { -1.25 } else { 1.25 };
+                        voxy_render::FluidRenderParticle {
+                            position_radius: [
+                                offset + particle.position[0] as f32 * 1.1,
+                                particle.position[1] as f32 * 1.1 - 0.9,
+                                particle.position[2] as f32 * 1.1,
+                                radius,
+                            ],
+                            absorption_ior: if group == 0 {
+                                [0.1, 0.04, 0.02, 1.333]
+                            } else {
+                                [0.3, 3.0, 12.0, 1.47]
+                            },
+                        }
+                    })
+            },
+        );
+        Ok((count, particles))
     }
 
     /// Borrow exact per-cell film thickness; never mutate physical inventories.
@@ -1290,12 +1332,14 @@ mod tests {
     }
     #[test]
     fn corrupted_mass_inventory_rejects_entire_nominal_frame() {
-        for mut demo in [
+        for mut demo in vec![
             LiquidDemo::new().unwrap(),
             LiquidDemo::new_impacts().unwrap(),
             LiquidDemo::new_finite_sources().unwrap(),
             LiquidDemo::new_finite_impacts().unwrap(),
-        ] {
+        ]
+        .into_boxed_slice()
+        {
             demo.emitted_mass[1] += 0.001;
             let before = format!("{demo:?}");
             assert!(matches!(

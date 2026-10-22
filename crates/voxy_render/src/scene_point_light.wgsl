@@ -47,11 +47,14 @@ struct VertexOutput {
     let roughness = max(material_roughness, 0.04);
     let metallic = select(0.5, in.material.y, in.material.z > 0.5);
     let a = roughness * roughness; let a2 = a * a;
-    let d = a2 / (3.14159265 * pow(nh * nh * (a2 - 1.0) + 1.0, 2.0));
-    let k = pow(roughness + 1.0, 2.0) / 8.0;
+    let q = nh * nh * (a2 - 1.0) + 1.0;
+    let d = a2 / (3.14159265 * q * q);
+    let r1 = roughness + 1.0;
+    let k = (r1 * r1) / 8.0;
     let g = (nl / max(nl * (1.0 - k) + k, 0.0001)) * (nv / (nv * (1.0 - k) + k));
     let f0 = mix(vec3(0.04), base, metallic);
-    let f = f0 + (vec3(1.0) - f0) * pow(1.0 - vh, 5.0);
+    let t = 1.0 - vh; let t2 = t * t;
+    let f = f0 + (vec3(1.0) - f0) * (t2 * t2 * t);
     let specular = d * g * f / max(4.0 * nl * nv, 0.0001);
     let diffuse = (vec3(1.0) - f) * (1.0 - metallic) * base / 3.14159265;
     return vec4((diffuse + specular) * nl * in.light.w / distance2 + base * 0.02, texel.a);

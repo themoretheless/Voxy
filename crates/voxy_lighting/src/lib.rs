@@ -100,6 +100,18 @@ impl LightVolume {
     pub fn bytes(&self) -> &[u8] {
         &self.packed
     }
+
+    /// Returns `true` when every cell in the chunk has zero skylight and zero blocklight.
+    #[must_use]
+    pub fn is_all_dark(&self) -> bool {
+        self.packed.iter().all(|&b| b == 0)
+    }
+
+    /// Returns `true` when every cell in the chunk has full skylight (15) and zero blocklight (`0xF0`).
+    #[must_use]
+    pub fn is_all_full_sky(&self) -> bool {
+        self.packed.iter().all(|&b| b == (MAX_LIGHT << 4))
+    }
 }
 
 /// Padded occlusion and emission of the center chunk plus its one-cell face halo.

@@ -1,0 +1,42 @@
+    Blocking waiting for file lock on build directory
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+    Finished `release` profile [optimized] target(s) in 34.60s
+     Running unittests src/lib.rs (target/release/deps/voxy_gpu_core-99bbafcfb4f18ec3)
+
+running 33 tests
+test backend::tests::explicit_selection_excludes_other_backends ... ok
+test compute::gather_range_tests::gathering_rejects_gaps_overlap_alignment_overflow_and_bounds ... ok
+test compute::gather_range_tests::gpu_multiple_sources_use_one_readback_and_invalid_tail_preserves_pool ... ignored, requires GPU; heterogeneous sources share a single bounded staging lease
+test compute::gather_range_tests::multiple_source_ranges_validate_each_source_before_publication ... ok
+test compute::tests::jobs_reject_different_devices_in_one_instance ... ok
+test compute::tests::resident_pipeline_switch_preserves_allocation_and_rejects_foreign_owner ... ok
+test compute::tests::separate_noop_contexts_are_foreign_and_owner_clones_encode_jobs ... ok
+test compute::tests::timestamp_dispatches_reject_disabled_feature_without_recording_a_pass ... ok
+test compute_memory::tests::batch_validation_and_admission_leave_no_partial_retirement ... ok
+test compute_memory::tests::bc7_payload_counts_block_padding_mips_and_layers ... ok
+test compute_memory::tests::cancelled_async_retirement_preserves_charges ... ok
+test compute_memory::tests::depth_shadow_maps_use_shared_texture_capacity ... ok
+test compute_memory::tests::device_isolation_and_invalid_admission ... ok
+test compute_memory::tests::disconnected_notification_is_an_error_and_keeps_charges ... ok
+test compute_memory::tests::existing_unused_owner_can_be_configured_but_used_owner_cannot ... ok
+test compute_memory::tests::frame_retirement_queue_schedules_and_restores_on_drop ... ok
+test compute_memory::tests::full_precision_material_mips_and_layers_are_charged_exactly ... ok
+test compute_memory::tests::shared_limit_retains_retired_charge_after_last_owner ... ok
+test compute_memory::tests::shared_texture_and_buffer_retirement_cancellation_keeps_all_charges ... ok
+test compute_memory::tests::texture_mip_payload_and_invalid_admission_are_exact ... ok
+test compute_memory::tests::unconfigured_owners_preserve_ordinary_buffer_lifetime ... ok
+test compute_memory::tests::unconfigured_texture_owners_keep_ordinary_lifetime ... ok
+test compute_readback::tests::available_capacity_excludes_live_and_quarantined_but_includes_cache ... ok
+test compute_readback::tests::buffer_count_is_independent_of_byte_capacity ... ok
+test compute_readback::tests::device_identity_and_configuration_are_isolated ... ok
+test compute_readback::tests::shared_admission_and_unconfirmed_cancellation ... ok
+test gravity::tests::a_diverging_backend_names_the_first_body_and_component ... ok
+test gravity::tests::agreeing_solver_and_oracle_report_their_largest_rounding_gap ... ok
+test gravity::tests::backend_budget_failures_and_mass_changes_are_reported ... ok
+test gravity::tests::narrowing_then_widening_round_trips_f32_values ... ok
+test shared_upload::tests::gpu_shared_ring_preserves_three_unsubmitted_snapshots_and_recycles ... ignored, requires physical Apple Silicon Metal GPU
+test shared_upload::tests::gpu_shared_staging_copy_plan_is_atomic_and_preserves_ranges ... ignored, requires physical Apple Silicon Metal GPU
+test shared_upload::tests::unsupported_device_keeps_legacy_and_does_not_charge_memory ... ok
+
+test result: ok. 30 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

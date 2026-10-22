@@ -127,6 +127,73 @@ impl Pose64 {
             .collect()
     }
 }
+
+/// Maps a rotation vector $\omega \in \mathfrak{so}(3)$ (angle = $\|\omega\|$) to $SO(3)$
+/// using a 4th-order Taylor expansion near $\theta \to 0$ to avoid division by zero.
+#[must_use]
+pub fn so3_exp(omega: DVec3) -> DQuat {
+    let theta_sq = omega.length_squared();
+    let half_sq = 0.25 * theta_sq;
+    let (sinc_half, cos_half) = if theta_sq < 1e-8 {
+        (
+            0.5 * (1.0 - half_sq / 6.0 + (half_sq * half_sq) / 120.0),
+            1.0 - 0.5 * half_sq + (half_sq * half_sq) / 24.0,
+        )
+    } else {
+        let theta = theta_sq.sqrt();
+        let half = 0.5 * theta;
+        (half.sin() / theta, half.cos())
+    };
+    let v = omega * sinc_half;
+    DQuat::from_xyzw(v.x, v.y, v.z, cos_half).normalize()
+}
+
+/// Maps a unit quaternion $q \in SO(3)$ to its shortest-arc Lie algebra rotation vector
+/// $\omega \in \mathfrak{so}(3)$ using a Taylor expansion near $\theta \to 0$.
+#[must_use]
+pub fn so3_log(q: DQuat) -> DVec3 {
+    let q = if q.w < 0.0 {
+        -q.normalize()
+    } else {
+        q.normalize()
+    };
+    let v = DVec3::new(q.x, q.y, q.z);
+    let sin_half_sq = v.length_squared();
+    let scale = if sin_half_sq < 1e-8 {
+        2.0 * (1.0 + sin_half_sq / 6.0 + (3.0 * sin_half_sq * sin_half_sq) / 40.0)
+    } else {
+        let sin_half = sin_half_sq.sqrt();
+        let half_theta = sin_half.atan2(q.w);
+        (2.0 * half_theta) / sin_half
+    };
+    v * scale
+}
+
+/// Antipodally consistent weighted barycentric average over $N$ unit quaternions.
+#[must_use]
+pub fn markley_hemisphere_average(rotations: &[(DQuat, f64)]) -> Option<DQuat> {
+    let &(first_q, _) = rotations.first()?;
+    let reference = first_q.normalize();
+    let mut accum = [0.0_f64; 4];
+    let mut weight_sum = 0.0_f64;
+    for &(q, w) in rotations {
+        if !w.is_finite() || w < 0.0 || !q.is_finite() {
+            return None;
+        }
+        let q = q.normalize();
+        let aligned = if reference.dot(q) < 0.0 { -q } else { q };
+        accum[0] += w * aligned.x;
+        accum[1] += w * aligned.y;
+        accum[2] += w * aligned.z;
+        accum[3] += w * aligned.w;
+        weight_sum += w;
+    }
+    if weight_sum <= 0.0 {
+        return None;
+    }
+    let result = DQuat::from_array(accum);
+    (result.length_squared() > 1e-24).then(|| result.normalize())
+}
 impl Skeleton {
     pub fn bind_pose64(&self) -> Pose64 {
         Pose64 {
@@ -681,5 +748,24 @@ mod tests {
             overflowing_pose.skin_matrices(&huge),
             Err(AnimationError::InvalidPose(_))
         ));
+    }
+    #[test]
+    fn so3_exp_log_and_hemisphere_average_are_smooth_and_antipodal_invariant() {
+        for omega in [
+            DVec3::ZERO,
+            DVec3::new(1e-7, -2e-7, 3e-7),
+            DVec3::new(0.4, -0.7, 1.1),
+        ] {
+            let q = so3_exp(omega);
+            let recovered = so3_log(q);
+            assert!((recovered - omega).length() < 1e-13);
+            assert!((so3_log(-q) - omega).length() < 1e-13);
+        }
+        let q1 = so3_exp(DVec3::new(0.2, 0.0, 0.0));
+        let q2 = so3_exp(DVec3::new(0.4, 0.0, 0.0));
+        let avg_pos = markley_hemisphere_average(&[(q1, 0.5), (q2, 0.5)]).unwrap();
+        let avg_neg = markley_hemisphere_average(&[(q1, 0.5), (-q2, 0.5)]).unwrap();
+        assert!((so3_log(avg_pos) - DVec3::new(0.3, 0.0, 0.0)).length() < 1e-12);
+        assert!((so3_log(avg_neg) - DVec3::new(0.3, 0.0, 0.0)).length() < 1e-12);
     }
 }

@@ -1,0 +1,13 @@
+    Finished `release` profile [optimized] target(s) in 1.56s
+     Running unittests src/lib.rs (target/release/deps/voxy_gpu_core-99bbafcfb4f18ec3)
+
+running 3 tests
+test shared_upload::tests::gpu_shared_ring_preserves_three_unsubmitted_snapshots_and_recycles ... core shared upload adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+core shared upload adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+test shared_upload::tests::gpu_shared_staging_copy_plan_is_atomic_and_preserves_ranges ... core shared upload adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+test shared_upload::tests::unsupported_device_keeps_legacy_and_does_not_charge_memory ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.09s
+

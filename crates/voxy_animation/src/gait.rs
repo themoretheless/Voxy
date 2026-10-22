@@ -448,11 +448,7 @@ pub fn measure_authored_stride_speed(
         let pose = clip.try_sample(skeleton, t)?;
         let ankles = ankle_positions(&pose, skeleton, feet)?;
         if let Some(prev) = previous {
-            let lower = if ankles[0].dot(feet.up) < ankles[1].dot(feet.up) {
-                0
-            } else {
-                1
-            };
+            let lower = usize::from(ankles[0].dot(feet.up) >= ankles[1].dot(feet.up));
             let delta = prev[lower] - ankles[lower];
             travel += delta.dot(forward).max(0.0);
         }

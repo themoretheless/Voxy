@@ -1,0 +1,12 @@
+{
+  "hardware": "Apple M4 Max",
+  "backend": "Metal",
+  "macos": "26.7.2 (25G325)",
+  "rustc": "1.98.0-nightly (d1fc603d1 2026-05-26)",
+  "head": "a8c57d98b0533da2dbc723ab7821ac49ac396831",
+  "core_source_sha256": "7efccf665ee13fa976954b8337703686087b34656fa2674050a0db329fa4adcc",
+  "baseline_sha256": "01df61f8900f16378c2b64688c54e519013764f924a8ba131a17b00b15f8e68b",
+  "date": "2026-10-21",
+  "working_tree": "dirty; relocation patch uncommitted",
+  "raw_extracted_baseline_sha256": "016fbbfc154d3cdb511fe801ab7f9c9f416aef92a1c27684f16573d8c546e56c"
+}

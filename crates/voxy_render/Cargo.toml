@@ -12,6 +12,7 @@ openxr = ["dep:openxr"]
 [dependencies]
 thiserror = "2"
 serde_json = "1.0"
+blake3 = "1.8"
 voxy_gpu_core = { path = "../voxy_gpu_core" }
 half = "2.7.1"
 bytemuck = { version = "1.25.2", features = ["derive"] }
@@ -52,3 +53,6 @@ wgpu-hal = { version = "30.0.1", default-features = false, features = ["metal-sa
 objc2 = "0.6.4"
 objc2-metal = { version = "0.3.2", default-features = false, features = ["std", "MTLPixelFormat"] }
 objc2-metal-fx = { version = "0.3.2", default-features = false, features = ["std", "MTLFXTemporalScaler"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"

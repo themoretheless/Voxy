@@ -960,8 +960,8 @@ pub(super) fn stored_slerp_key_angle_error(
     let normalized =
         dot.div_interval_positive(norms[0].sqrt_positive()?.mul(norms[1].sqrt_positive()?)?)?;
     // Exact sign plus Cauchy-Schwarz prove the true normalized dot is in [0,1].
-    let lo = super::linear_source::positive_acos_point(normalized.1.min(1.).max(0.))?;
-    let hi = super::linear_source::positive_acos_point(normalized.0.max(0.).min(1.))?;
+    let lo = super::linear_source::positive_acos_point(normalized.1.clamp(0., 1.))?;
+    let hi = super::linear_source::positive_acos_point(normalized.0.clamp(0., 1.))?;
     let ideal = Scalar(lo.0, hi.1);
     let (rounded_ideal, approximation) = stored_slerp_acos_error(runtime)?;
     let shift = absolute_upper(Scalar(rounded_ideal[0], rounded_ideal[1]).sub(ideal)?);

@@ -1,0 +1,77 @@
+{
+  "fixed_dt": 0.01666666753590107,
+  "fixed_ticks_total": 720,
+  "geometry_blake3": "7c819ff4076ddec925e64e9a03bda476e0904da267fb1c3b83bfbdc85d7deb46",
+  "gpu_created": false,
+  "indices_blake3": "ddc1c252f0453beeaab8de4aa76d06bbdaad0ca4c38e7ebe52928580b523ae92",
+  "limitations": [
+    "CPU replay, not presented frame p99",
+    "fixed synthetic 120 Hz schedule or two-tick stress; same production routines, separate orchestration",
+    "water, chunk rebuild, vehicle, LOD, GPU upload, GPU execution and surface excluded",
+    "stage timers and profiling overhead included; geometry setup excluded"
+  ],
+  "measured_frames": 240,
+  "scenario": "catchup",
+  "seed": 42,
+  "stages": {
+    "animation": {
+      "max_us": 3.6670000000000003,
+      "p50_us": 1.459,
+      "p95_us": 2.418,
+      "p99_us": 2.958,
+      "sum_us": 376.62899999999996
+    },
+    "character": {
+      "max_us": 3.999,
+      "p50_us": 1.417,
+      "p95_us": 2.584,
+      "p99_us": 3.667,
+      "sum_us": 373.58999999999975
+    },
+    "companions": {
+      "max_us": 111.333,
+      "p50_us": 91.25,
+      "p95_us": 100.626,
+      "p99_us": 109.084,
+      "sum_us": 21537.398000000005
+    },
+    "palette": {
+      "max_us": 6.25,
+      "p50_us": 4.041,
+      "p95_us": 4.374,
+      "p99_us": 4.542,
+      "sum_us": 955.0379999999994
+    },
+    "render_admission": {
+      "max_us": 2765.333,
+      "p50_us": 2161.542,
+      "p95_us": 2446.583,
+      "p99_us": 2620.875,
+      "sum_us": 514364.743
+    },
+    "shadow_extraction": {
+      "max_us": 2.0829999999999997,
+      "p50_us": 0.75,
+      "p95_us": 1.292,
+      "p99_us": 1.75,
+      "sum_us": 199.08500000000004
+    },
+    "temporal_admission": {
+      "max_us": 2.75,
+      "p50_us": 2.041,
+      "p95_us": 2.375,
+      "p99_us": 2.542,
+      "sum_us": 487.57700000000017
+    },
+    "total_cpu": {
+      "max_us": 2876.083,
+      "p50_us": 2269.625,
+      "p95_us": 2555.7079999999996,
+      "p99_us": 2724.458,
+      "sum_us": 538439.095
+    }
+  },
+  "state_blake3": "e663821f1a02bbcf8eef4474379aac72659b849cefabe8623f139b4179ad9f7d",
+  "vertices": 1990328,
+  "warmup_frames": 120
+}

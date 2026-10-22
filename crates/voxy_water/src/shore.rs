@@ -24,7 +24,12 @@ impl Bathymetry {
                 heights.push(height(origin + Vec2::new(x as f32, y as f32) * cell));
             }
         }
-        Self { origin, cell, size, heights }
+        Self {
+            origin,
+            cell,
+            size,
+            heights,
+        }
     }
 
     /// Bilinear terrain height (clamped at the grid edge).
@@ -112,10 +117,21 @@ impl ShoreField {
             }
         }
         for (dist, d) in distance.iter_mut().zip(&depth) {
-            let metres = if *dist == f32::MAX { 1.0e4 } else { *dist * bathymetry.cell };
+            let metres = if *dist == f32::MAX {
+                1.0e4
+            } else {
+                *dist * bathymetry.cell
+            };
             *dist = if *d > 0.0 { metres } else { -metres };
         }
-        Self { origin: bathymetry.origin, cell: bathymetry.cell, size: bathymetry.size, level, depth, distance }
+        Self {
+            origin: bathymetry.origin,
+            cell: bathymetry.cell,
+            size: bathymetry.size,
+            level,
+            depth,
+            distance,
+        }
     }
 
     fn grid(&self, xz: Vec2) -> Vec2 {
@@ -148,7 +164,12 @@ impl ShoreField {
                 let xz = self.origin + Vec2::new(x as f32, y as f32) * self.cell;
                 let i = (y * self.size[0] + x) as usize;
                 let s = self.shoreward(xz);
-                out.push([self.depth[i], self.distance[i].clamp(-1.0e4, 1.0e4), s.x, s.y]);
+                out.push([
+                    self.depth[i],
+                    self.distance[i].clamp(-1.0e4, 1.0e4),
+                    s.x,
+                    s.y,
+                ]);
             }
         }
         out
@@ -167,7 +188,11 @@ pub struct ShoreWaves {
 
 impl Default for ShoreWaves {
     fn default() -> Self {
-        Self { height: 0.45, period: 7.0, reach: 35.0 }
+        Self {
+            height: 0.45,
+            period: 7.0,
+            reach: 35.0,
+        }
     }
 }
 
@@ -188,7 +213,12 @@ impl ShoreWaves {
     pub fn height(&self, depth: f32, distance: f32, time: f32) -> Breaker {
         let fft_scale = (depth / 2.5).clamp(0.0, 1.0);
         if distance <= -2.0 || distance > self.reach || self.height <= 0.0 {
-            return Breaker { height: 0.0, slope: 0.0, foam: 0.0, fft_scale };
+            return Breaker {
+                height: 0.0,
+                slope: 0.0,
+                foam: 0.0,
+                fft_scale,
+            };
         }
         let d = depth.max(0.02);
         // shallow-water celerity sqrt(g d): crests slow down and bunch up near the beach
@@ -206,7 +236,8 @@ impl ShoreWaves {
             height: height * crest,
             slope: height * dcrest,
             // white water rides the steep front of each breaking crest
-            foam: (breaking * (phase.sin() * 0.5 + 0.5).powi(8) * 1.3 + swash * 0.6).clamp(0.0, 1.0),
+            foam: (breaking * (phase.sin() * 0.5 + 0.5).powi(8) * 1.3 + swash * 0.6)
+                .clamp(0.0, 1.0),
             fft_scale,
         }
     }
@@ -236,7 +267,9 @@ mod tests {
         let waves = ShoreWaves::default();
         let offshore = waves.height(4.0, 30.0, 0.0);
         assert!(offshore.foam < 0.2 && offshore.fft_scale == 1.0);
-        let peak = (0..64).map(|i| waves.height(0.5, 6.0, i as f32 * 0.1).height).fold(0.0, f32::max);
+        let peak = (0..64)
+            .map(|i| waves.height(0.5, 6.0, i as f32 * 0.1).height)
+            .fold(0.0, f32::max);
         assert!(peak <= 0.78 * 0.5 + 1e-4 && peak > 0.1, "{peak}");
         assert!(waves.height(0.05, 0.3, 0.0).foam > 0.4);
     }

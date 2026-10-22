@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-21",
+  "cpu": "Apple M4 Max",
+  "logical_cpus": 16,
+  "rustc": "rustc 1.98.0-nightly (d1fc603d1 2026-05-26)",
+  "source_snapshot": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-cpu-replay-20261021-ma4j89v1",
+  "profile": "release",
+  "reference_capture_lineage": "a8c57d98b (dirty source snapshot; exact manifests retained)",
+  "head_observed_after_measurement": "de6cdd51f1c75dfef8af58d319203692d65a8229",
+  "changed_snapshot_files": [
+    "crates/voxy_render/src/native_vegetation_shared_tests.rs",
+    "crates/voxy_render/src/skinned.rs"
+  ],
+  "gpu_device_created": false,
+  "other_processes_stopped": false,
+  "rejected_candidates": [
+    "threaded temporal groups",
+    "Rayon per-group pool",
+    "Rayon chunk pool"
+  ]
+}

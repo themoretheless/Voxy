@@ -133,6 +133,54 @@ impl WalWriter {
         })
     }
 
+    /// Appends a batch of consecutive transaction frames in a single write + durability barrier (`GroupCommit`).
+    ///
+    /// # Errors
+    ///
+    /// Rejects empty batches, non-gap-free sequences, oversized frames/WAL, and codec/I/O failures
+    /// without mutating the file on validation errors.
+    pub fn append_batch(
+        &mut self,
+        commits: &[PersistCommit],
+        registry: &BlockRegistry,
+    ) -> Result<WalCursor, WalError> {
+        if commits.is_empty() {
+            return Ok(WalCursor {
+                offset: self.cursor,
+            });
+        }
+        let mut expected_seq = self.next_sequence;
+        let mut combined = Vec::new();
+        for commit in commits {
+            if commit.sequence != expected_seq {
+                return Err(WalError::UnexpectedSequence {
+                    expected: expected_seq,
+                    actual: commit.sequence,
+                });
+            }
+            expected_seq = expected_seq
+                .checked_add(1)
+                .ok_or(WalError::SequenceOverflow)?;
+            let frame = encode_commit(commit, registry)?;
+            combined.extend_from_slice(&frame);
+        }
+        let combined_len = u64::try_from(combined.len()).map_err(|_| WalError::WalTooLarge)?;
+        let next_cursor = self
+            .cursor
+            .checked_add(combined_len)
+            .ok_or(WalError::WalTooLarge)?;
+        if next_cursor > MAX_WAL {
+            return Err(WalError::WalTooLarge);
+        }
+        self.file.write_all(&combined)?;
+        self.file.sync_data()?;
+        self.cursor = next_cursor;
+        self.next_sequence = expected_seq;
+        Ok(WalCursor {
+            offset: self.cursor,
+        })
+    }
+
     /// Flushes file metadata as a stronger checkpoint/shutdown barrier.
     ///
     /// # Errors
@@ -497,5 +545,30 @@ mod tests {
             decode_chunk(&encoded, &registry).unwrap(),
             persisted.chunks[0]
         );
+    }
+
+    #[test]
+    fn append_batch_commits_multiple_frames_atomically() {
+        let path = temp_path();
+        let (registry, chunk) = crate::codec::tests::sample_chunk();
+        let (mut writer, _) = WalWriter::open(&path, &registry).unwrap();
+        let commits = vec![
+            PersistCommit {
+                sequence: 0,
+                chunks: vec![chunk.clone()],
+            },
+            PersistCommit {
+                sequence: 1,
+                chunks: vec![chunk],
+            },
+        ];
+        let cursor = writer.append_batch(&commits, &registry).unwrap();
+        assert!(cursor.offset > 0);
+        assert_eq!(writer.next_sequence(), 2);
+        drop(writer);
+        let recovered = recover_wal(&path, &registry).unwrap();
+        assert_eq!(recovered.commits, commits);
+        assert!(!recovered.discarded_tail);
+        fs::remove_file(path).unwrap();
     }
 }

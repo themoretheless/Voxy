@@ -56,11 +56,7 @@ impl FeatureNormals {
                 incident_count[vertex] += 1;
             }
             for &edge in &edges[face] {
-                let slot = if edge_faces[edge][0] == usize::MAX {
-                    0
-                } else {
-                    1
-                };
+                let slot = usize::from(edge_faces[edge][0] != usize::MAX);
                 edge_faces[edge][slot] = face;
             }
         }

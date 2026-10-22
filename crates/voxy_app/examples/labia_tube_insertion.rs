@@ -395,8 +395,7 @@ impl VulvaSimulation {
         // At frame 3 (t = 0.50 s, u = 0.568), prolapse_t = 0.37 (initial mucosal cuff eversion around shaft);
         // At frame 4 (t = 0.72 s, u = 0.818), prolapse_t = 1.00 (peak vaginal mucosal rosette prolapse!).
         let cycle_u = (time_s / INSERTION_PERIOD_SECONDS).rem_euclid(1.0);
-        let prolapse_t =
-            smoothstep(0.46, 0.72, cycle_u) * (1.0 - smoothstep(0.88, 0.98, cycle_u));
+        let prolapse_t = smoothstep(0.46, 0.72, cycle_u) * (1.0 - smoothstep(0.88, 0.98, cycle_u));
 
         // 26-degree anatomical vaginal canal axis (tilted toward -Y so the probe enters cleanly
         // from the bottom-center of the frame and never obstructs the Vestibule or Clitoris).
@@ -521,21 +520,20 @@ impl VulvaSimulation {
                 let glans_r2 = glans_dx * glans_dx + glans_dy * glans_dy;
                 let r_glans_ellip = glans_r2.sqrt();
                 let glans_mask = (-glans_r2 * 1.35).exp();
-                let glans_tip_dimple = -0.25
-                    * (-(x0 / 0.32).powi(2)).exp()
-                    * (-((vy - 6.55) / 0.55).powi(2)).exp();
+                let glans_tip_dimple =
+                    -0.25 * (-(x0 / 0.32).powi(2)).exp() * (-((vy - 6.55) / 0.55).powi(2)).exp();
                 let clitoral_glans = 3.55 * glans_mask + glans_tip_dimple;
 
                 // Deep Horseshoe Sub-Preputial Moat (`sulcus preputialis`) wrapping around the top and
                 // lateral sides of the Clitoral Glans (`r_glans_ellip ~ 1.18`, `vy > 5.5 mm`):
-                let moat_horseshoe = (-((r_glans_ellip - 1.18) / 0.46).powi(2)).exp()
-                    * smoothstep(5.4, 7.0, vy);
+                let moat_horseshoe =
+                    (-((r_glans_ellip - 1.18) / 0.46).powi(2)).exp() * smoothstep(5.4, 7.0, vy);
                 let glans_moat = -1.45 * moat_horseshoe;
 
                 // Thick Overhanging Horseshoe Clitoral Hood (`preputium clitoridis`) wrapping outside
                 // the moat (`r_glans_ellip ~ 1.82`) and flowing seamlessly into the Labia Minora:
-                let hood_horseshoe = (-((r_glans_ellip - 1.82) / 0.72).powi(2)).exp()
-                    * smoothstep(4.0, 6.2, vy);
+                let hood_horseshoe =
+                    (-((r_glans_ellip - 1.82) / 0.72).powi(2)).exp() * smoothstep(4.0, 6.2, vy);
                 let hood_superior_tail =
                     (-((x0 / 1.70).powi(2) + ((vy - 10.5) / 2.25).powi(2))).exp();
                 let clitoral_hood = 3.35 * (hood_horseshoe + 0.60 * hood_superior_tail).min(1.15);
@@ -596,10 +594,8 @@ impl VulvaSimulation {
                 let minora_skew = (lip_r + lip_l).clamp(0.0, 1.0);
                 // Keep the Labia Minora outside the prolapsing inner introital sphincter cuff (`r_from_introitus > 1.35 mm`)
                 let collar_taper = smoothstep(0.45, 1.75, r_from_introitus);
-                let minora_height = 3.45
-                    * (lip_r * scallop_r + lip_l * scallop_l)
-                    * minora_y_env
-                    * collar_taper;
+                let minora_height =
+                    3.45 * (lip_r * scallop_r + lip_l * scallop_l) * minora_y_env * collar_taper;
 
                 // ── 3. Posterior Fourchette (`frenulum labiorum pudendi`) & Fossa Navicularis ──
                 let fourchette_bridge = 1.55
@@ -612,8 +608,7 @@ impl VulvaSimulation {
                 let sulcus_center_x = 0.65 + (base_ridge_x + w_outer * 0.92) * spindle_env;
                 let sulc_r = (-((x0 - sulcus_center_x) / 0.88).powi(2)).exp();
                 let sulc_l = (-((x0 + sulcus_center_x) / 0.88).powi(2)).exp();
-                let sulc_y_env =
-                    smoothstep(-10.8, -7.5, vy) * (1.0 - smoothstep(10.2, 13.8, vy));
+                let sulc_y_env = smoothstep(-10.8, -7.5, vy) * (1.0 - smoothstep(10.2, 13.8, vy));
                 let interlabial_sulcus = -1.10 * (sulc_r + sulc_l) * sulc_y_env;
 
                 let ant_cleft = -0.85 * smoothstep(10.8, 14.8, vy) * (-x0 * x0 / 2.2).exp();
@@ -661,20 +656,17 @@ impl VulvaSimulation {
                 let intro_sphincter_outer_groove = -0.45
                     * (0.35 + 0.65 * prolapse_t + 0.25 * pen)
                     * (-((r_from_introitus - 1.55) / 0.45).powi(2)).exp();
-                let bulbospongiosus_sphincter = 0.95
-                    * intro_sphincter_env
-                    * (1.0 + 0.35 * pen + 0.35 * prolapse_t)
-                    + intro_sphincter_outer_groove;
+                let bulbospongiosus_sphincter =
+                    0.95 * intro_sphincter_env * (1.0 + 0.35 * pen + 0.35 * prolapse_t)
+                        + intro_sphincter_outer_groove;
 
                 // Fleshy hymenal caruncles & vaginal rugae (`carunculae hymenales` & `columnae rugarum`)
                 let u_8 = (0.5 - 0.5 * (8.0 * theta + 0.25).cos()).powf(2.25);
                 let u_14 = (0.5 - 0.5 * (14.0 * theta - 0.40).cos()).powf(2.40);
                 let rugae_profile = (1.0 - 0.72 * u_8 - 0.28 * u_14) - 0.26;
                 let rugae_effacement = 1.0 - 0.80 * pen - 0.30 * prolapse_t * (1.0 - pen);
-                let rugae_cushions = 0.72
-                    * rugae_profile
-                    * rugae_effacement
-                    * (-r_from_introitus * 0.62).exp();
+                let rugae_cushions =
+                    0.72 * rugae_profile * rugae_effacement * (-r_from_introitus * 0.62).exp();
 
                 // True Vaginal Mucosal Rosette Prolapse (`пролапс слизистой розетки влагалища`):
                 // Compact, plump, rolled toroidal mucosal doughnut (`r_from_introitus = 0..1.55 mm`, `+2.10 mm` high)
@@ -744,8 +736,7 @@ impl VulvaSimulation {
                 // near the rim ensures that at u_ring == u_rim, every vertex (x, y, z_surface) lies
                 // 100% on the tilted probe surface regardless of local cushion/labia height `z_surface`!
                 let rim_tilt_couple = (-r_from_introitus * 0.65).exp();
-                let y_coupled =
-                    y_surf - tan_alpha * (z_surface - z_pivot) * rim_tilt_couple;
+                let y_coupled = y_surf - tan_alpha * (z_surface - z_pivot) * rim_tilt_couple;
 
                 let (y, z) = if is_canal {
                     let t_canal = u_ring / u_rim;
@@ -778,8 +769,8 @@ impl VulvaSimulation {
                 let in_sulcus =
                     (sulc_r + sulc_l).clamp(0.0, 1.0) * sulc_y_env * (1.0 - to_majora * 0.45);
                 let on_minora_crest = minora_skew * minora_y_env * collar_taper;
-                let in_vestibule = vest_floor_env
-                    .max((-r_from_introitus * 0.65).exp() * (1.0 - to_majora));
+                let in_vestibule =
+                    vest_floor_env.max((-r_from_introitus * 0.65).exp() * (1.0 - to_majora));
                 let prolapse_mucosa_mask =
                     prolapse_t * (1.0 - smoothstep(0.95, 1.65, r_from_introitus));
                 let prolapse_crease = prolapse_sulcus.clamp(0.0, 1.0);
@@ -808,8 +799,8 @@ impl VulvaSimulation {
                     // Everted crimson-rose vaginal mucosal prolapse rosette
                     let prolapse_col = vaginal_prolapse_mucosa[c] * (1.0 - prolapse_crease * 0.70)
                         + prolapse_sulcus_crimson[c] * (prolapse_crease * 0.70);
-                    surf = surf * (1.0 - prolapse_mucosa_mask)
-                        + prolapse_col * prolapse_mucosa_mask;
+                    surf =
+                        surf * (1.0 - prolapse_mucosa_mask) + prolapse_col * prolapse_mucosa_mask;
 
                     if is_canal {
                         let t_c = (u_ring / u_rim).powf(2.3);
@@ -826,14 +817,17 @@ impl VulvaSimulation {
                         * (1.0 - 0.85 * prolapse_mucosa_mask)
                 };
 
-                let canal_wet_mask = if is_canal { (u_ring / u_rim).powf(2.4) } else { 1.0 };
+                let canal_wet_mask = if is_canal {
+                    (u_ring / u_rim).powf(2.4)
+                } else {
+                    1.0
+                };
                 let wet_intro = ((-r_from_introitus * 0.30).exp() * (1.0 - to_majora))
                     .max(prolapse_mucosa_mask * 0.98)
                     * canal_wet_mask;
-                let wet_vest = (in_vestibule * 0.90
-                    + glans_mask * 0.85
-                    + urethral_cuff_mask * 0.92)
-                    * canal_wet_mask;
+                let wet_vest =
+                    (in_vestibule * 0.90 + glans_mask * 0.85 + urethral_cuff_mask * 0.92)
+                        * canal_wet_mask;
                 let wet_zone = wet_intro.max(wet_vest);
                 let meniscus_wet =
                     meniscus_contact * (-r_from_introitus * 1.3).exp() * canal_wet_mask;
@@ -884,11 +878,10 @@ impl VulvaSimulation {
                 0.0,
             )
             .expect("valid majora probe");
-        self.minora_separation_mm =
-            (10.0 + 2000.0 * minora_probe.radial_displacement_xy_m[0].abs() as f32)
-                .max(2.0 * orifice_rx);
-        self.majora_separation_mm =
-            22.0 + 2000.0 * majora_probe.radial_displacement_xy_m[0] as f32;
+        self.minora_separation_mm = (10.0
+            + 2000.0 * minora_probe.radial_displacement_xy_m[0].abs() as f32)
+            .max(2.0 * orifice_rx);
+        self.majora_separation_mm = 22.0 + 2000.0 * majora_probe.radial_displacement_xy_m[0] as f32;
 
         // Compute smooth outward-facing vertex normals (`dr.cross(ds)` points +Z on skin and inward toward lumen in canal)
         let mut vertices = Vec::with_capacity(NR * NS);
@@ -937,8 +930,7 @@ fn append_tube_and_meniscus_mesh(
     // Slight inferior approach/withdrawal offset outside the canal so in Frame 0 the resting Vaginal Introitus
     // and in Frame 4 the prolapsed Vaginal Mucosal Rosette are 100% uncovered above the probe tip!
     let withdrawal_extra = smoothstep(0.0, 25.0, kin.velocity_z_mm_s);
-    let approach_y_offset =
-        -(3.4 + 1.8 * withdrawal_extra) * smoothstep(1.0, 5.2, s_tip);
+    let approach_y_offset = -(3.4 + 1.8 * withdrawal_extra) * smoothstep(1.0, 5.2, s_tip);
     let pivot = Vec3::new(0.0, INTROITUS_Y_MM + approach_y_offset, z_pivot);
 
     // 26-degree anatomical vaginal insertion axis (enters cleanly from bottom-center of frame)
@@ -1247,9 +1239,11 @@ impl GpuPipeline {
             camera_pos: [eye.x, eye.y, eye.z, 1.0],
             params: [time_s, kin.insertion_phase, wetness, kin.tip_z_mm],
         };
-        self.render_device
-            .queue()
-            .write_buffer(&self.uniform_buffer, 0, bytemuck::bytes_of(&uniforms));
+        self.render_device.queue().write_buffer(
+            &self.uniform_buffer,
+            0,
+            bytemuck::bytes_of(&uniforms),
+        );
 
         let device = self.render_device.device();
         let vbuf = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -1272,14 +1266,8 @@ impl GpuPipeline {
         time_s: f32,
         output_path: &Path,
     ) -> Result<Kinematics, Box<dyn Error>> {
-        let (vbuf, ibuf, index_count, kin) = self.build_scene_buffers(
-            sim,
-            time_s,
-            WIDTH as f32 / HEIGHT as f32,
-            0.05,
-            1.18,
-            1.0,
-        );
+        let (vbuf, ibuf, index_count, kin) =
+            self.build_scene_buffers(sim, time_s, WIDTH as f32 / HEIGHT as f32, 0.05, 1.18, 1.0);
         let device = self.render_device.device();
         let queue = self.render_device.queue();
 
@@ -1406,13 +1394,7 @@ impl GpuPipeline {
         if let Some(parent) = output_path.parent() {
             std::fs::create_dir_all(parent)?;
         }
-        image::save_buffer(
-            output_path,
-            &rgba,
-            WIDTH,
-            HEIGHT,
-            image::ColorType::Rgba8,
-        )?;
+        image::save_buffer(output_path, &rgba, WIDTH, HEIGHT, image::ColorType::Rgba8)?;
         Ok(kin)
     }
 }
@@ -1583,8 +1565,8 @@ impl ApplicationHandler for InteractiveApp {
                                     },
                                 );
                                 {
-                                    let mut pass = encoder.begin_render_pass(
-                                        &wgpu::RenderPassDescriptor {
+                                    let mut pass =
+                                        encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                                             label: Some("labia-win-pass"),
                                             color_attachments: &[Some(
                                                 wgpu::RenderPassColorAttachment {
@@ -1615,8 +1597,7 @@ impl ApplicationHandler for InteractiveApp {
                                             timestamp_writes: None,
                                             occlusion_query_set: None,
                                             multiview_mask: None,
-                                        },
-                                    );
+                                        });
                                     pass.set_pipeline(&gpu.pipeline);
                                     pass.set_bind_group(0, &gpu.bind_group, &[]);
                                     pass.set_vertex_buffer(0, vbuf.slice(..));

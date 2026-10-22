@@ -554,7 +554,7 @@ impl FilmMixture {
         max_substep: f64,
         thermal: Option<(&mut Vec<f64>, &[f64])>,
     ) -> Result<(), &'static str> {
-        let result = self.transaction(|staged| {
+        self.transaction(|staged| {
             if !dt.is_finite()
                 || dt <= 0.0
                 || dt > 0.1
@@ -651,9 +651,7 @@ impl FilmMixture {
                 *target = values;
             }
             Ok(())
-        })?;
-
-        Ok(result)
+        })
     }
 
     pub(super) fn step_with_energy(
@@ -665,7 +663,7 @@ impl FilmMixture {
         energy: &mut Vec<f64>,
     ) -> Result<(), &'static str> {
         let mut next_energy = energy.clone();
-        let result = self.transaction(|staged| {
+        self.transaction(|staged| {
             let energy = &mut next_energy;
 
             staged.film.step_driven_components(
@@ -681,7 +679,7 @@ impl FilmMixture {
             )
         })?;
         *energy = next_energy;
-        Ok(result)
+        Ok(())
     }
 
     pub(super) fn step_with_shear_energy(
@@ -693,7 +691,7 @@ impl FilmMixture {
         energy: &mut Vec<f64>,
     ) -> Result<(), &'static str> {
         let mut next_energy = energy.clone();
-        let result = self.transaction(|staged| {
+        self.transaction(|staged| {
             let energy = &mut next_energy;
 
             staged.film.step_driven_components(
@@ -709,7 +707,7 @@ impl FilmMixture {
             )
         })?;
         *energy = next_energy;
-        Ok(result)
+        Ok(())
     }
 
     pub fn step(
@@ -718,7 +716,7 @@ impl FilmMixture {
         gravity: [f64; 3],
         max_substep: f64,
     ) -> Result<(), &'static str> {
-        let result = self.transaction(|staged| {
+        self.transaction(|staged| {
             staged.film.step_driven_components(
                 dt,
                 gravity,
@@ -730,9 +728,7 @@ impl FilmMixture {
                 staged.component_viscosities.as_deref(),
                 None,
             )
-        })?;
-
-        Ok(result)
+        })
     }
 
     pub fn step_with_advection(
@@ -742,7 +738,7 @@ impl FilmMixture {
         velocity: &[[f64; 3]],
         max_substep: f64,
     ) -> Result<(), &'static str> {
-        let result = self.transaction(|staged| {
+        self.transaction(|staged| {
             staged.film.step_driven_components(
                 dt,
                 gravity,
@@ -754,9 +750,7 @@ impl FilmMixture {
                 staged.component_viscosities.as_deref(),
                 None,
             )
-        })?;
-
-        Ok(result)
+        })
     }
 
     pub fn step_with_surface_shear(
@@ -766,7 +760,7 @@ impl FilmMixture {
         traction: &[[f64; 3]],
         max_substep: f64,
     ) -> Result<(), &'static str> {
-        let result = self.transaction(|staged| {
+        self.transaction(|staged| {
             staged.film.step_driven_components(
                 dt,
                 gravity,
@@ -778,9 +772,7 @@ impl FilmMixture {
                 staged.component_viscosities.as_deref(),
                 None,
             )
-        })?;
-
-        Ok(result)
+        })
     }
 
     pub fn step_with_rheology(
@@ -791,7 +783,7 @@ impl FilmMixture {
         max_substep: f64,
         model: FilmRheology,
     ) -> Result<(), &'static str> {
-        let result = self.transaction(|staged| {
+        self.transaction(|staged| {
             staged.film.step_driven_components(
                 dt,
                 gravity,
@@ -803,9 +795,7 @@ impl FilmMixture {
                 staged.component_viscosities.as_deref(),
                 None,
             )
-        })?;
-
-        Ok(result)
+        })
     }
 }
 

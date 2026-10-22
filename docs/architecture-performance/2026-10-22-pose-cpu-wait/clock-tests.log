@@ -1,0 +1,8 @@
+    Finished `release` profile [optimized] target(s) in 2.17s
+     Running unittests src/lib.rs (target/release/deps/voxy_render-1c4ff7740b72801b)
+
+running 1 test
+test pose_admission_profile::tests::thread_clock_excludes_sleep ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 420 filtered out; finished in 0.02s
+

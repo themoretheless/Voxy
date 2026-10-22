@@ -4719,8 +4719,8 @@ fn source_loop_enclosure_covers_exact_linear_motion_with_cubic_identity_rotation
         .unwrap();
     assert!(certificate.radius() <= 0.2);
     assert!(certificate.subdivisions() > 1 && certificate.evaluated_cells() <= 128);
-    assert!(std::ptr::eq(certificate.source(), &curve));
-    assert!(std::ptr::eq(certificate.candidate(), &matching));
+    assert!(std::ptr::eq(certificate.source(), &raw const curve));
+    assert!(std::ptr::eq(certificate.candidate(), &raw const matching));
     let far = RootRigidEnclosure::from_transform(RootRigidTransform {
         translation: DVec3::X * 100_000_000.,
         rotation: DQuat::IDENTITY,

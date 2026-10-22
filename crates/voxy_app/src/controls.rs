@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use glam::{Vec2, Vec3};
 use winit::event::{ElementState, Touch, TouchPhase};
 use winit::keyboard::KeyCode;

@@ -27,7 +27,7 @@ fn main() {
             },
         )
         .unwrap();
-    export_surface(&export_directory, "reference", &body, &boundary);
+    export_surface(export_directory.as_deref(), "reference", &body, &boundary);
     if std::env::args().any(|a| a == "--myocardium") {
         let reference_positions = body.positions().to_vec();
         let low = std::array::from_fn::<_, 3, _>(|i| {
@@ -102,7 +102,7 @@ fn main() {
         );
         assert!(equilibrium.converged);
         assert!(after_high - after_low < high[axis] - low[axis]);
-        export_surface(&export_directory, "contracted", &body, &boundary);
+        export_surface(export_directory.as_deref(), "contracted", &body, &boundary);
         if std::env::args().any(|a| a == "--cycle") {
             for i in 0..cells {
                 body.set_activation(i, 0.).unwrap();
@@ -119,7 +119,7 @@ fn main() {
                 relaxed.converged, relaxed.iterations, relaxed.residual_n
             );
             assert!(relaxed.converged);
-            export_surface(&export_directory, "relaxed", &body, &boundary);
+            export_surface(export_directory.as_deref(), "relaxed", &body, &boundary);
         }
         return;
     }
@@ -167,7 +167,7 @@ fn main() {
             body.pore_response_at(body.positions()).unwrap().0
         );
         assert!(equilibrium.converged);
-        export_surface(&export_directory, "swollen", &body, &boundary);
+        export_surface(export_directory.as_deref(), "swollen", &body, &boundary);
         return;
     }
     let report = body.equilibrate(4000, 1e-7).unwrap();
@@ -251,7 +251,12 @@ fn main() {
 }
 
 // Preserve the audited outward boundary and atlas metre coordinates for inspection.
-fn export_surface(directory: &Option<PathBuf>, name: &str, body: &Body, faces: &[[usize; 3]]) {
+fn export_surface(
+    directory: Option<&std::path::Path>,
+    name: &str,
+    body: &Body,
+    faces: &[[usize; 3]],
+) {
     use std::io::Write;
     let Some(directory) = directory else {
         return;

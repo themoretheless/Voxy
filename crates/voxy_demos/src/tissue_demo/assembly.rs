@@ -1721,7 +1721,7 @@ mod contact_tests {
                 panic!()
             };
             for &node in &spec.supports {
-                let joint = if node == 4 { 1 } else { 0 };
+                let joint = usize::from(node == 4);
                 assert_eq!(
                     dynamics.body().positions()[node],
                     palette[joint]

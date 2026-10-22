@@ -1,0 +1,14 @@
+{
+  "source_snapshot": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-tail-current-zzjtc962",
+  "before": "/tmp/voxy-tail-before",
+  "after": "/tmp/voxy-tail-dynamic",
+  "logical_cpus": 16,
+  "before_skinned_sha256": "fcf7c6c57943d5dbe575723ae293e6de6d88222f8cd37e305f391968cf30bd33",
+  "after_skinned_sha256": "ed930980c2087bf06a30b92d4e65af9a51c5ce8f3563aec294796a050d129d3a",
+  "host_load_warning": "Concurrent external builds and Git jobs, load averages 34-47; not a quiet hardware qualification.",
+  "date": "2026-10-22",
+  "head_at_report": "8ac83cdb8a6b9c31595bc35d98c959cf4bb00566",
+  "rustc": "rustc 1.98.0-nightly (d1fc603d1 2026-05-26)",
+  "system": "macOS-26.7.2-arm64-arm-64bit-Mach-O",
+  "production_change_retained": false
+}

@@ -1,3 +1,13 @@
+override WORLD_SOURCE_MATERIAL_SIDES:bool=false;
+// Use the prepared original material word, never shading normals or a rounded
+// native front-face flag. Winding comes from exact transformed source vertices.
+fn source_material_sides(material:u32)->u32 {
+ let header=nearest_material_base();
+ if nearest_active[header+1u]!=1u||material>=nearest_active[header] {return 0u;}
+ let word=nearest_active[header+4u+material*24u+21u];
+ if word>1u {return 0u;}return word+1u;
+}
+
 // One original-source material and triangle proof authority, shared by software and hardware candidate passes.
 fn visibility_material(material:u32)->u32 {
  let header=nearest_material_base();if nearest_active[header+1u]==0u {return 1u;}
@@ -44,6 +54,16 @@ fn source_triangle_certificate(slot:u32,first:u32,ray:u32,order:bool)->SourceTri
  // endpoint-touch cases remain inconclusive and retain exact fallback.
  if (wi_positive(start)&&wi_positive(finish))||(wi_negative(start)&&wi_negative(finish)) {return SourceTriangleCertificate(WorldTriangleCertificate(0u,0u,0u),wi_bad());}
  let certificate=world_triangle_certificate(direction,edge1,edge2,relative,wi_scalar(0.),wi_scalar(1.));
+ if WORLD_SOURCE_MATERIAL_SIDES&&certificate.state!=0u {
+  let sides=source_material_sides(info.w);
+  if sides==0u {return SourceTriangleCertificate(WorldTriangleCertificate(2u,16u,certificate.reverse),wi_bad());}
+  if sides==1u&&(certificate.reason&1u)==0u&&certificate.reverse!=0u {
+   // reverse is set only after a strictly negative determinant interval.
+   // Boundary/invalid origin tests cannot invalidate that orientation proof.
+   return SourceTriangleCertificate(WorldTriangleCertificate(0u,0u,certificate.reverse),wi_bad());
+  }
+ }
+
  var t=wi_bad();
  if order&&certificate.state==1u {
   var denominator=wi3_dot(edge1,wi3_cross(direction,edge2));

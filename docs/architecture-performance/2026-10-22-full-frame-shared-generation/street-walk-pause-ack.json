@@ -1,0 +1,30 @@
+{
+  "authorization_source": "delegated user-authorized coordination message from thread 01a155fb-7cde-7dc3-8f0a-ff049037a551",
+  "processes": [
+    {
+      "pid": 6379,
+      "identity": "6379  6374 S    /opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python",
+      "args": "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/projection-replay/run-after-baselines.py",
+      "signal": "SIGSTOP",
+      "time": 1792615798.625061
+    },
+    {
+      "pid": 80614,
+      "identity": "80614 80611 S    /opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python",
+      "args": "/opt/homebrew/Cellar/python@3.15/3.15.0/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/run-baselines.py",
+      "signal": "SIGSTOP",
+      "time": 1792615798.6250749
+    },
+    {
+      "pid": 91643,
+      "identity": "91643 80614 Us   /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after",
+      "args": "/Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/street_walk-after --experimental-ray-query --offscreen-benchmark --world-ray-audit-frames 4 --spawn pool --snapshot /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-15/probe-compute-input-lineage-v1/qualification/repeat-c/report.png",
+      "signal": "SIGSTOP",
+      "time": 1792615798.625083
+    }
+  ],
+  "no_new_GPU_or_heavy_CPU_until_release": true,
+  "must_resume_original_and_queued_controller_after_measurements": true,
+  "geometry_precision_inputs_unchanged": true,
+  "repeat_c_performance_qualification": false
+}

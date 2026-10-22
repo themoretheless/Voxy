@@ -1,0 +1,67 @@
+{
+  "thread_id": "01a108b0-26d5-7760-8b72-7ac7e298d216",
+  "acknowledged_utc": "2026-10-21T20:58:11.453152+00:00",
+  "status": "coordination_release_received_original_build_resumed",
+  "owned_processes": [
+    {
+      "pid": 49496,
+      "identity": "stable cargo test -p rrrah --bin rrrah narrow_png_pq_white_policies --locked --offline -- --nocapture",
+      "method": "SIGSTOP by coordinator",
+      "provenance": "paused-common-builds.json: time1792616902.4034739; user-authorized temporary common build window"
+    },
+    {
+      "pid": 50236,
+      "identity": "stable rustc child of cargo49496",
+      "method": "SIGSTOP by coordinator",
+      "provenance": "paused-common-builds.json: time1792616902.410553"
+    }
+  ],
+  "completed_processes": [
+    {
+      "session_id": 53025,
+      "identity": "rrrah external_w3c_linear_hdr_reference_swap_and_metal",
+      "terminal_evidence": "metal.log: 1 passed / 0 failed / 0 ignored, 4.34s; session handle missing; matching test process absent"
+    }
+  ],
+  "method": "already_finished_no_signals_sent",
+  "resume": "Coordinator should SIGCONT matching identities for both PIDs; owning thread will poll existing exec session67847, never restart on observation timeout",
+  "scope": "this thread only; processes owned by other rrrah chats are not controlled here",
+  "window_end_observation": {
+    "utc": "2026-10-21T21:07:56.695552+00:00",
+    "controller_pid": 4842,
+    "state": "terminal: TimeoutError: no uncontended GPU admission window",
+    "process_verification": "PID absent; no voxy-full-frame-bench/qualify.py executable active",
+    "action": "resume deferred CPU test build after the temporary measurement window; no new GPU run"
+  },
+  "timing": "Compilation elapsed contaminated by suspension; functional test has not yet run; no performance claim",
+  "updated_utc": "2026-10-21T21:17:59.911291+00:00",
+  "current_owned_processes": [
+    {
+      "pid": 49496,
+      "state": "Ts",
+      "identity": "stable cargo narrow_png_pq_white_policies, original parent retained"
+    },
+    {
+      "pid": 70186,
+      "ppid": 49496,
+      "state": "T",
+      "identity": "stable rustc app test child",
+      "signal_provenance": [
+        {
+          "pid": 70186,
+          "identity": "70186 49496 S    Thu Oct 22 01:16:56 2026     /Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc",
+          "signal": "SIGSTOP",
+          "time": 1792617426.972044,
+          "initiator": "user-authorized temporary common build window"
+        }
+      ]
+    }
+  ],
+  "retired_child_pid": 50236,
+  "release": {
+    "utc": "2026-10-21T21:18:54.429181+00:00",
+    "source_thread": "01a155fb-7cde-7dc3-8f0a-ff049037a551",
+    "evidence": "delegation: all 16 accepted GPU runs saved; identity-checked SIGCONT via resumed-common-builds.json",
+    "observed": "cargo49496 Ss; app rustc70186 R; same exec session67847"
+  }
+}

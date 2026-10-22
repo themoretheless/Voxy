@@ -1,0 +1,68 @@
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1403:19
+     |
+1403 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                   ^^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1404:25
+     |
+1404 |                 * Mat4::look_at_rh(centre + sun * extent * 2., centre, Vec3::Y);
+     |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1824:19
+     |
+1824 |             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+     |                   ^^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:1825:25
+     |
+1825 |                 * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+     |                         ^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+    --> crates/voxy_render/src/archive_scene.rs:2406:24
+     |
+2406 |         let vp = Mat4::perspective_rh(
+     |                        ^^^^^^^^^^^^^^
+
+warning: use of deprecated associated function `glam::Mat4::look_at_rh`: use the `glam::camera::rh::view::look_at_mat4` function instead
+    --> crates/voxy_render/src/archive_scene.rs:2411:19
+     |
+2411 |         ) * Mat4::look_at_rh(eye, eye + direction, self.camera_up);
+     |                   ^^^^^^^^^^
+
+warning: associated function `levels` is never used
+   --> crates/voxy_render/src/bloom.rs:168:12
+    |
+ 18 | impl Bloom {
+    | ---------- associated function in this implementation
+...
+168 |     pub fn levels() -> f32 {
+    |            ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_render` (lib test) generated 7 warnings
+    Finished `release` profile [optimized] target(s) in 0.25s
+     Running unittests src/lib.rs (target/release/deps/voxy_render-f0ad6f0e67881373)
+
+running 11 tests
+test fluid_screen::allocation_tests::footprint_counts_nine_targets_both_geometry_buffers_and_uniform ... ok
+test fluid_screen::allocation_tests::gpu_budget_boundary_and_rejected_resize_preserve_previous_resources ... ignored, requires a physical GPU adapter
+test fluid_screen::film_gpu_tests::film_gpu_integrates_prism_thickness_and_near_clipping ... ignored, requires a physical GPU adapter
+test fluid_screen::film_gpu_tests::refraction_pixel_scale_matches_projected_displacement ... ignored, requires a physical GPU adapter
+test fluid_screen::film_input_tests::device_limits_admit_vertex_instances_without_storage_and_reject_shortfalls ... ok
+test fluid_screen::film_input_tests::film_prism_admission_preserves_geometry_and_rejects_invalid_cells ... ok
+test fluid_screen::film_input_tests::format_admission_rejects_missing_blending_and_nonfloat_outputs ... ok
+test fluid_screen::shader_portability_tests::compute_bilateral_filter_shader_validates ... ok
+test fluid_screen::shader_portability_tests::optical_shaders_translate_to_gles_without_storage_buffers ... ok
+test fluid_screen::shared_tests::gpu_frame_fluid_snapshots_match_legacy_including_overflow ... ignored, physical Apple Silicon Metal; fluid pixel and snapshot parity
+test fluid_screen::shared_tests::paired_frame_fluid_benchmark ... ignored, manual alternating production fluid particle/camera benchmarks
+
+test result: ok. 6 passed; 0 failed; 5 ignored; 0 measured; 381 filtered out; finished in 0.00s
+

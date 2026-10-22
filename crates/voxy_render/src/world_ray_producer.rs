@@ -279,7 +279,6 @@ impl ArchiveWorldRayProducer {
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("live archive world ray producer"),
             timestamp_writes: timestamps,
-            ..Default::default()
         });
         pass.set_pipeline(&self.pipeline);
         pass.set_bind_group(0, &self.groups[0], &[]);

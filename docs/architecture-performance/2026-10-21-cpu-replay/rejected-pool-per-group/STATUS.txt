@@ -1,0 +1,1 @@
+The complete pool-only matrix failed its CPU gate. The following overall comparison was intentionally interrupted; its partial results are not qualifying. All completed phases retained.

@@ -151,7 +151,10 @@ impl WaveSpectrum {
             let hs4 = self.swell_height * 0.25;
             let alpha = hs4 * hs4 * 5.0 * ws.powi(4) / (GRAV * GRAV) * (1.0 - 0.287 * gs.ln());
             s += jonswap(w, ws, alpha, gs)
-                * cos_spread(wrap_angle(theta - self.swell_direction.to_radians()), self.swell_spread);
+                * cos_spread(
+                    wrap_angle(theta - self.swell_direction.to_radians()),
+                    self.swell_spread,
+                );
         }
         s *= (-kl * kl * self.short_cut * self.short_cut).exp();
         s * d_omega(kl) / kl
@@ -179,7 +182,9 @@ impl WaveSpectrum {
         let bands = self.bands();
         let mut h0 = vec![[0.0f32; 4]; CASCADES * (N * N) as usize];
         for c in 0..CASCADES {
-            let base = seed.wrapping_mul(7919).wrapping_add((c as u32).wrapping_mul(1_000_003));
+            let base = seed
+                .wrapping_mul(7919)
+                .wrapping_add((c as u32).wrapping_mul(1_000_003));
             for y in 0..N {
                 for x in 0..N {
                     let k = wave_vector(x, y, self.cascades[c]);
@@ -188,7 +193,8 @@ impl WaveSpectrum {
                     let b = gauss2(base.wrapping_add(my * N + mx));
                     let aa = self.amplitude(k, c, &bands);
                     let ab = self.amplitude([-k[0], -k[1]], c, &bands);
-                    h0[(c * (N * N) as usize) + (y * N + x) as usize] = [a[0] * aa, a[1] * aa, b[0] * ab, -b[1] * ab];
+                    h0[(c * (N * N) as usize) + (y * N + x) as usize] =
+                        [a[0] * aa, a[1] * aa, b[0] * ab, -b[1] * ab];
                 }
             }
         }
@@ -207,8 +213,16 @@ impl WaveSpectrum {
 }
 
 pub(crate) fn wave_vector(x: u32, y: u32, patch: f32) -> [f32; 2] {
-    let nx = if x >= N / 2 { x as i32 - N as i32 } else { x as i32 };
-    let ny = if y >= N / 2 { y as i32 - N as i32 } else { y as i32 };
+    let nx = if x >= N / 2 {
+        x as i32 - N as i32
+    } else {
+        x as i32
+    };
+    let ny = if y >= N / 2 {
+        y as i32 - N as i32
+    } else {
+        y as i32
+    };
     [nx as f32 * TAU / patch, ny as f32 * TAU / patch]
 }
 
@@ -273,7 +287,11 @@ fn rand01(s: u32) -> f32 {
 
 fn gauss2(seed: u32) -> [f32; 2] {
     let u1 = rand01(seed.wrapping_mul(2).wrapping_add(17));
-    let u2 = rand01(seed.wrapping_mul(2).wrapping_add(18).wrapping_add(pcg_hash(seed)));
+    let u2 = rand01(
+        seed.wrapping_mul(2)
+            .wrapping_add(18)
+            .wrapping_add(pcg_hash(seed)),
+    );
     let r = (-2.0 * u1.ln()).sqrt();
     let a = TAU * u2;
     [r * a.cos(), r * a.sin()]
@@ -296,7 +314,10 @@ mod tests {
     /// `Hs = 1.6e-3 U sqrt(F / g)` within the tolerance of the spectral shape.
     #[test]
     fn wind_sea_height_follows_fetch_law() {
-        let spectrum = WaveSpectrum { swell_height: 0.0, ..WaveSpectrum::lake() };
+        let spectrum = WaveSpectrum {
+            swell_height: 0.0,
+            ..WaveSpectrum::lake()
+        };
         let hs = WaveSpectrum::significant_height(&spectrum.initial_amplitudes(1));
         let expected = 1.6e-3 * spectrum.wind_speed * (spectrum.fetch_m / GRAV).sqrt();
         assert!((hs / expected - 1.0).abs() < 0.35, "Hs {hs} vs {expected}");
@@ -317,7 +338,14 @@ mod tests {
     #[test]
     fn storm_is_taller_than_ocean_is_taller_than_pool() {
         let hs = |s: WaveSpectrum| WaveSpectrum::significant_height(&s.initial_amplitudes(1));
-        let (storm, ocean, pool) = (hs(WaveSpectrum::storm()), hs(WaveSpectrum::ocean()), hs(WaveSpectrum::pool()));
-        assert!(storm > ocean && ocean > 1.0 && pool < 0.05, "{storm} {ocean} {pool}");
+        let (storm, ocean, pool) = (
+            hs(WaveSpectrum::storm()),
+            hs(WaveSpectrum::ocean()),
+            hs(WaveSpectrum::pool()),
+        );
+        assert!(
+            storm > ocean && ocean > 1.0 && pool < 0.05,
+            "{storm} {ocean} {pool}"
+        );
     }
 }

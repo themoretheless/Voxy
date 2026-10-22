@@ -21,22 +21,33 @@ impl HairResponseCoefficient {
     }
     /// Normalize a finite two-component source without first rounding its sum.
     pub fn from_parts(parts: [f64; 2]) -> Result<Self, &'static str> {
-        if parts.iter().any(|v| !v.is_finite()) { return Err("nonfinite expanded hair coefficient"); }
+        if parts.iter().any(|v| !v.is_finite()) {
+            return Err("nonfinite expanded hair coefficient");
+        }
         Self::checked(Self::sum(parts[0], parts[1]))
     }
     /// Recover a GPU expansion without rounding its three terms to one scalar.
-    pub fn from_scaled_terms(terms: [f64;3], scales: [f64;2]) -> Result<Self, &'static str> {
+    pub fn from_scaled_terms(terms: [f64; 3], scales: [f64; 2]) -> Result<Self, &'static str> {
         Self::from_expansion_terms(terms, scales)
     }
     /// Recover an explicitly sized GPU expansion in the native two-component
     /// arithmetic, without first collapsing its terms to a single f64.
-    pub fn from_expansion_terms<const N: usize>(terms: [f64; N], scales: [f64;2]) -> Result<Self, &'static str> {
-        if N == 0 {return Err("empty expanded hair coefficient");}
-        let mut result=Self::from_f64(0.)?;
-        for term in terms {result=result.sub(Self::from_f64(-term)?)?;}
+    pub fn from_expansion_terms<const N: usize>(
+        terms: [f64; N],
+        scales: [f64; 2],
+    ) -> Result<Self, &'static str> {
+        if N == 0 {
+            return Err("empty expanded hair coefficient");
+        }
+        let mut result = Self::from_f64(0.)?;
+        for term in terms {
+            result = result.sub(Self::from_f64(-term)?)?;
+        }
         for scale in scales {
-            if !scale.is_finite() || scale<=0. {return Err("invalid expanded hair scale");}
-            result=result.mul(scale)?;
+            if !scale.is_finite() || scale <= 0. {
+                return Err("invalid expanded hair scale");
+            }
+            result = result.mul(scale)?;
         }
         Ok(result)
     }
@@ -82,7 +93,9 @@ impl HairResponseCoefficient {
         }
         // A checked finite nonzero diagonal maps exact zero to exact zero.
         // Keep the diagonal validation above; a zero RHS cannot hide bad factors.
-        if self.parts[0]==0. && self.parts[1]==0. {return Self::from_f64(0.);}
+        if self.parts[0] == 0. && self.parts[1] == 0. {
+            return Self::from_f64(0.);
+        }
         let checked_quotient = |v: f64| -> Result<f64, &'static str> {
             let q = v / divisor;
             if v != 0. && (q == 0. || q.is_subnormal()) {
@@ -109,10 +122,12 @@ pub(super) fn lower(
     for i in active.clone() {
         let mut value = values[i];
         for j in active.start.max(i.saturating_sub(BAND - 1))..i {
-            let coefficient=factor[i * BAND + i - j];
+            let coefficient = factor[i * BAND + i - j];
             // Exact zero products only. Nonfinite off-diagonals still fail,
             // including when the corresponding expanded RHS is zero.
-            if coefficient==0. || (coefficient.is_finite() && values[j].parts==[0.,0.]) {continue;}
+            if coefficient == 0. || (coefficient.is_finite() && values[j].parts == [0., 0.]) {
+                continue;
+            }
             value = value.sub(values[j].mul(coefficient)?)?;
         }
         values[i] = value.div(factor[i * BAND])?;
@@ -121,16 +136,20 @@ pub(super) fn lower(
 }
 
 pub(super) fn upper(
-    factor: &[f64], values: &mut [HairResponseCoefficient], active: std::ops::Range<usize>,
+    factor: &[f64],
+    values: &mut [HairResponseCoefficient],
+    active: std::ops::Range<usize>,
 ) -> Result<(), &'static str> {
     for i in (active.start..active.end).rev() {
-        let mut value=values[i];
-        for j in i+1..(i+BAND).min(active.end) {
-            let coefficient=factor[j*BAND+j-i];
-            if coefficient==0. || (coefficient.is_finite() && values[j].parts==[0.,0.]) {continue;}
-            value=value.sub(values[j].mul(coefficient)?)?;
+        let mut value = values[i];
+        for j in i + 1..(i + BAND).min(active.end) {
+            let coefficient = factor[j * BAND + j - i];
+            if coefficient == 0. || (coefficient.is_finite() && values[j].parts == [0., 0.]) {
+                continue;
+            }
+            value = value.sub(values[j].mul(coefficient)?)?;
         }
-        values[i]=value.div(factor[i*BAND])?;
+        values[i] = value.div(factor[i * BAND])?;
     }
     Ok(())
 }
@@ -147,57 +166,135 @@ mod tests {
     }
     #[test]
     fn five_gpu_terms_retain_native_precision_through_upper_cancellation() {
-        let terms = [1., 2f64.powi(-30), 2f64.powi(-60), 2f64.powi(-90), 2f64.powi(-100)];
-        let source = HairResponseCoefficient::from_expansion_terms(terms, [2f64.powi(33), 2f64.powi(-33)]).unwrap();
+        let terms = [
+            1.,
+            2f64.powi(-30),
+            2f64.powi(-60),
+            2f64.powi(-90),
+            2f64.powi(-100),
+        ];
+        let source =
+            HairResponseCoefficient::from_expansion_terms(terms, [2f64.powi(33), 2f64.powi(-33)])
+                .unwrap();
         let expected = terms.iter().map(|&v| exact(v)).sum::<BigRational>();
         assert_eq!(rational(source), expected);
         let mut factor = vec![0.; 2 * BAND];
-        factor[0] = 1.; factor[BAND] = 1.; factor[BAND + 1] = 1.;
+        factor[0] = 1.;
+        factor[BAND] = 1.;
+        factor[BAND + 1] = 1.;
         let mut values = vec![source, HairResponseCoefficient::from_f64(1.).unwrap()];
         upper(&factor, &mut values, 0..2).unwrap();
         assert_eq!(rational(values[0]), expected - exact(1.));
-        for terms in [[1., 2f64.powi(-60), 2f64.powi(-100)], [-1., -2f64.powi(-60), -2f64.powi(-100)]] {
-            assert_eq!(HairResponseCoefficient::from_scaled_terms(terms, [2., 0.5]).unwrap().parts().map(f64::to_bits), HairResponseCoefficient::from_expansion_terms(terms, [2., 0.5]).unwrap().parts().map(f64::to_bits));
+        for terms in [
+            [1., 2f64.powi(-60), 2f64.powi(-100)],
+            [-1., -2f64.powi(-60), -2f64.powi(-100)],
+        ] {
+            assert_eq!(
+                HairResponseCoefficient::from_scaled_terms(terms, [2., 0.5])
+                    .unwrap()
+                    .parts()
+                    .map(f64::to_bits),
+                HairResponseCoefficient::from_expansion_terms(terms, [2., 0.5])
+                    .unwrap()
+                    .parts()
+                    .map(f64::to_bits)
+            );
         }
-        assert!(HairResponseCoefficient::from_expansion_terms([], [1.,1.]).is_err());
-        assert!(HairResponseCoefficient::from_expansion_terms([1.,f64::NAN,0.,0.,0.], [1.,1.]).is_err());
-        assert!(HairResponseCoefficient::from_expansion_terms([1.,0.,0.,0.,0.], [0.,1.]).is_err());
+        assert!(HairResponseCoefficient::from_expansion_terms([], [1., 1.]).is_err());
+        assert!(
+            HairResponseCoefficient::from_expansion_terms([1., f64::NAN, 0., 0., 0.], [1., 1.])
+                .is_err()
+        );
+        assert!(
+            HairResponseCoefficient::from_expansion_terms([1., 0., 0., 0., 0.], [0., 1.]).is_err()
+        );
     }
 
     #[test]
     fn gpu_terms_survive_physical_upper_cancellation() {
-        let low=2f64.powi(-60); let tail=2f64.powi(-100);
-        let source=HairResponseCoefficient::from_scaled_terms([1.,low,tail],[1.,1.]).unwrap();
-        assert_eq!(rational(source),exact(1.)+exact(low)+exact(tail));
-        let mut factor=vec![0.;2*BAND];factor[0]=1.;factor[BAND]=1.;factor[BAND+1]=1.;
-        let mut values=vec![source,HairResponseCoefficient::from_f64(1.).unwrap()];
-        upper(&factor,&mut values,0..2).unwrap();
-        assert_eq!(rational(values[0]),exact(low)+exact(tail));
-        assert!(HairResponseCoefficient::from_parts([1.,f64::NAN]).is_err());
+        let low = 2f64.powi(-60);
+        let tail = 2f64.powi(-100);
+        let source = HairResponseCoefficient::from_scaled_terms([1., low, tail], [1., 1.]).unwrap();
+        assert_eq!(rational(source), exact(1.) + exact(low) + exact(tail));
+        let mut factor = vec![0.; 2 * BAND];
+        factor[0] = 1.;
+        factor[BAND] = 1.;
+        factor[BAND + 1] = 1.;
+        let mut values = vec![source, HairResponseCoefficient::from_f64(1.).unwrap()];
+        upper(&factor, &mut values, 0..2).unwrap();
+        assert_eq!(rational(values[0]), exact(low) + exact(tail));
+        assert!(HairResponseCoefficient::from_parts([1., f64::NAN]).is_err());
     }
 
     #[test]
     fn expanded_backend_reaches_unchanged_physical_admission() {
-        use crate::hair::{HairLinearSolver,HairLinearSystem,HairResponseSystem,HairExpandedCoordinateRequest};
-        struct Backend {calls:usize}
+        use crate::hair::{
+            HairExpandedCoordinateRequest, HairLinearSolver, HairLinearSystem, HairResponseSystem,
+        };
+        struct Backend {
+            calls: usize,
+        }
         impl HairLinearSolver for Backend {
-            fn joint_contact_expanded_enabled(&self)->bool {true}
-            fn solve(&mut self,_:&[HairLinearSystem])->Result<Vec<Vec<f64>>, &'static str> {panic!("legacy solve unexpectedly used")}
-            fn solve_joint_expanded_batch(&mut self,requests:&[HairExpandedCoordinateRequest<'_>])->Option<Vec<(Vec<HairResponseCoefficient>,Vec<f64>)>> {
-                self.calls+=1;
-                Some(requests.iter().map(|r| {
-                    assert_ne!(r.columns[0][6].parts()[1],0.,"whitening tail was discarded");
-                    (r.columns[0].clone(),vec![1.])
-                }).collect())
+            fn joint_contact_expanded_enabled(&self) -> bool {
+                true
+            }
+            fn solve(&mut self, _: &[HairLinearSystem]) -> Result<Vec<Vec<f64>>, &'static str> {
+                panic!("legacy solve unexpectedly used")
+            }
+            fn solve_joint_expanded_batch(
+                &mut self,
+                requests: &[HairExpandedCoordinateRequest<'_>],
+            ) -> Option<Vec<(Vec<HairResponseCoefficient>, Vec<f64>)>> {
+                self.calls += 1;
+                Some(
+                    requests
+                        .iter()
+                        .map(|r| {
+                            assert_ne!(
+                                r.columns[0][6].parts()[1],
+                                0.,
+                                "whitening tail was discarded"
+                            );
+                            (r.columns[0].clone(), vec![1.])
+                        })
+                        .collect(),
+                )
             }
         }
-        let mut matrix=vec![0.;12*BAND];for i in 0..12 {matrix[i*BAND]=9.;}
-        let mut load=vec![0.;12];load[6]=1.;
-        let request=HairResponseSystem {system:HairLinearSystem {band_width:BAND,matrix,rhs:vec![0.;12],active:6..9},loads:vec![load]};
-        let mut backend=Backend {calls:0};
-        let (responses,reactions,used)=HairResponseSystem::solve_joint_load_inequalities_expanded(std::slice::from_ref(&request),&[1./9.],1e-14,&mut backend).unwrap();
-        HairResponseSystem::validate_joint_solution(&[request],&[1./9.],&responses,&reactions,1e-14).unwrap();
-        assert!(used);assert_eq!(backend.calls,1);
+        let mut matrix = vec![0.; 12 * BAND];
+        for i in 0..12 {
+            matrix[i * BAND] = 9.;
+        }
+        let mut load = vec![0.; 12];
+        load[6] = 1.;
+        let request = HairResponseSystem {
+            system: HairLinearSystem {
+                band_width: BAND,
+                matrix,
+                rhs: vec![0.; 12],
+                active: 6..9,
+            },
+            loads: vec![load],
+        };
+        let mut backend = Backend { calls: 0 };
+        let (responses, reactions, used) =
+            HairResponseSystem::solve_joint_load_inequalities_expanded(
+                std::slice::from_ref(&request),
+                &[1. / 9.],
+                1e-14,
+                &mut backend,
+            )
+            .unwrap();
+        HairResponseSystem::validate_joint_solution(
+            &[request],
+            &[1. / 9.],
+            &responses,
+            &reactions,
+            1e-14,
+        )
+        .unwrap();
+        assert!(used);
+        assert_eq!(backend.calls, 1);
     }
 
     #[test]
@@ -216,16 +313,28 @@ mod tests {
     }
     #[test]
     fn exact_zero_transform_work_still_rejects_invalid_factors() {
-        let zero=HairResponseCoefficient::from_f64(0.).unwrap();
-        let mut valid=vec![0.;2*BAND];valid[0]=3.;valid[BAND]=7.;
-        for transform in [lower,upper] {
-            let mut values=vec![zero;2];transform(&valid,&mut values,0..2).unwrap();assert_eq!(values,vec![zero;2]);
-            for bad in [f64::NAN,f64::INFINITY] {
-                let mut factor=valid.clone();factor[BAND+1]=bad;
-                assert!(transform(&factor,&mut [zero;2],0..2).is_err(),"zero RHS masked nonfinite off-diagonal");
+        let zero = HairResponseCoefficient::from_f64(0.).unwrap();
+        let mut valid = vec![0.; 2 * BAND];
+        valid[0] = 3.;
+        valid[BAND] = 7.;
+        for transform in [lower, upper] {
+            let mut values = vec![zero; 2];
+            transform(&valid, &mut values, 0..2).unwrap();
+            assert_eq!(values, vec![zero; 2]);
+            for bad in [f64::NAN, f64::INFINITY] {
+                let mut factor = valid.clone();
+                factor[BAND + 1] = bad;
+                assert!(
+                    transform(&factor, &mut [zero; 2], 0..2).is_err(),
+                    "zero RHS masked nonfinite off-diagonal"
+                );
             }
-            let mut factor=valid.clone();factor[BAND]=0.;
-            assert!(transform(&factor,&mut [zero;2],0..2).is_err(),"zero RHS masked invalid diagonal");
+            let mut factor = valid.clone();
+            factor[BAND] = 0.;
+            assert!(
+                transform(&factor, &mut [zero; 2], 0..2).is_err(),
+                "zero RHS masked invalid diagonal"
+            );
         }
     }
 

@@ -1,6 +1,6 @@
 //! Procedural broad-phase contract: candidates may include false positives.
 use wgpu::util::DeviceExt;
-const SOURCE: &str = r#"
+const SOURCE: &str = r"
 enable wgpu_ray_query;
 struct Input {origin:vec4<f32>,direction:vec4<f32>}
 @group(0) @binding(0) var scene:acceleration_structure;
@@ -16,7 +16,7 @@ struct Input {origin:vec4<f32>,direction:vec4<f32>}
  }
  outputs[id.x]=vec4<u32>(mask,count,stable_mask,unknown);
 }
-"#;
+";
 fn intersects(b: [f32; 6], origin: [f32; 3], direction: [f32; 3]) -> bool {
     let (mut lo, mut hi) = (0f64, 100f64);
     for axis in 0..3 {

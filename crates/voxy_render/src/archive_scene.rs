@@ -1009,7 +1009,16 @@ impl ArchiveSceneRenderer {
                                     0.
                                 },
                             ),
-                            ("ARCHIVE_DDA_TILE_EDGE_CACHE",if std::env::var("VOXY_STREET_DDA_TILE_EDGE_CACHE").as_deref()==Ok("1") {1.}else{0.}),
+                            (
+                                "ARCHIVE_DDA_TILE_EDGE_CACHE",
+                                if std::env::var("VOXY_STREET_DDA_TILE_EDGE_CACHE").as_deref()
+                                    == Ok("1")
+                                {
+                                    1.
+                                } else {
+                                    0.
+                                },
+                            ),
                             (
                                 "ARCHIVE_DDA_EDGE_CACHE",
                                 if std::env::var_os("VOXY_STREET_DDA_EDGE_CACHE").is_some() {
@@ -1259,7 +1268,7 @@ impl ArchiveSceneRenderer {
                 transparent: source.parameters.surface[2] > 0.
                     || source.parameters.surface[3] == -2.,
                 fully_covering: fully_covering_transmission(&source),
-                history_guides: source.parameters.surface[2]==0.,
+                history_guides: source.parameters.surface[2] == 0.,
                 double_sided: source.double_sided,
                 masked: source.parameters.surface[3] >= 0.,
             });
@@ -1399,6 +1408,7 @@ impl ArchiveSceneRenderer {
             .collect::<Result<Vec<_>, crate::ComputeError>>()?;
         let centre = (bounds.0 + bounds.1) * 0.5;
         let extent = (bounds.1 - bounds.0).length() * 0.5;
+        #[allow(deprecated)]
         let shadow_matrix =
             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
                 * Mat4::look_at_rh(centre + sun * extent * 2., centre, Vec3::Y);
@@ -1741,6 +1751,11 @@ impl ArchiveSceneRenderer {
     pub fn water_time(&self) -> f32 {
         self.water.as_ref().map_or(0., |w| w.time())
     }
+    /// Diagnostic submission counters; these do not certify visible fragments or FPS.
+    #[doc(hidden)]
+    pub fn water_render_stats(&self) -> Option<serde_json::Value> {
+        self.water.as_ref().map(|w| w.render_stats())
+    }
     /// The water the renderer draws, for CPU queries.
     pub fn water(&self) -> Option<&voxy_water::WaterWorld> {
         self.water.as_ref().map(|w| w.world())
@@ -1820,9 +1835,12 @@ impl ArchiveSceneRenderer {
         } else {
             Vec3::Y
         };
-        self.shadow_matrix =
-            Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
-                * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+        #[allow(deprecated)]
+        {
+            self.shadow_matrix =
+                Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
+                    * Mat4::look_at_rh(centre + self.sun * extent * 2., centre, up);
+        }
         self.shadow_ready = false;
         self.reset_temporal_history();
         Ok(())
@@ -1940,6 +1958,9 @@ impl ArchiveSceneRenderer {
                 view_formats: &[],
             },
         )?;
+        if let Some(root) = std::env::var_os("VOXY_STREET_TEXTURE_SOURCE_CAPTURE") {
+            self.capture_texture_sources(&std::path::PathBuf::from(root))?;
+        }
         let view = face.create_view(&Default::default());
         let projector = crate::probe_gi::ProbeProjector::new(&self.device);
         let saved = (
@@ -2029,6 +2050,81 @@ impl ArchiveSceneRenderer {
                     timeout: None,
                 })
                 .map_err(|e| crate::ComputeError::Validation(format!("probe completion: {e}")))?;
+            if let Some(root) = std::env::var_os("VOXY_STREET_PROBE_FACE_CAPTURE") {
+                let selected = if let Some(indices) =
+                    std::env::var_os("VOXY_STREET_PROBE_FACE_CAPTURE_INDICES")
+                {
+                    let indices = indices.to_str().ok_or_else(|| {
+                        crate::ComputeError::Validation("probe trace indices must be UTF-8".into())
+                    })?;
+                    let indices = indices
+                        .split(',')
+                        .map(|v| v.trim().parse::<usize>())
+                        .collect::<Result<Vec<_>, _>>()
+                        .map_err(|e| {
+                            crate::ComputeError::Validation(format!("probe trace index: {e}"))
+                        })?;
+                    if indices.iter().any(|&v| v >= bake.points.len()) {
+                        return Err(crate::ComputeError::Validation(
+                            "probe trace index outside baked grid".into(),
+                        ));
+                    }
+                    indices.contains(&bake.next_probe)
+                } else {
+                    bake.next_probe == 0
+                };
+                if selected {
+                    let root = std::path::PathBuf::from(root);
+                    std::fs::create_dir_all(&root).map_err(|e| {
+                        crate::ComputeError::Validation(format!("probe trace directory: {e}"))
+                    })?;
+                    let mut raster_inputs = vec![
+                        (
+                            "probe-frame-background",
+                            self.background.create_view(&Default::default()),
+                        ),
+                        (
+                            "probe-shadow-depth",
+                            self.shadow.create_view(&Default::default()),
+                        ),
+                    ];
+                    if let Some(gi) = &self.compute_gi {
+                        let [world, normal] = gi.world_ray_guides();
+                        raster_inputs
+                            .push(("probe-world-guide", world.create_view(&Default::default())));
+                        raster_inputs.push((
+                            "probe-normal-guide",
+                            normal.create_view(&Default::default()),
+                        ));
+                    }
+                    if let Some((gi, ssr)) = self.opaque_lighting_outputs() {
+                        raster_inputs.push(("probe-actual-gi", gi.create_view(&Default::default())));
+                        raster_inputs.push(("probe-actual-ssr", ssr.create_view(&Default::default())));
+                    }
+                    crate::archive_hdr_diagnostics::capture_probe_face(
+                        &self.device,
+                        &self.queue,
+                        crate::archive_hdr_diagnostics::ProbeFaceSources {
+                            uniform_inputs: self.diagnostic_lighting_material_uniforms(),
+                            raster_inputs,
+                            face_view: &bake.view,
+                            projection: bake.projector.diagnostic_uniform(),
+                            camera: &self.camera,
+                            coefficients: &self.probe_sh,
+                            point_bits: point.to_array().map(f32::to_bits),
+                            probe_index: bake.next_probe,
+                            face_index: bake.next_face,
+                        },
+                        &root.join(format!(
+                            "probe-{:04}-face-{}",
+                            bake.next_probe, bake.next_face
+                        )),
+                    )
+                    .map_err(|e| {
+                        crate::ComputeError::Validation(format!("original probe face trace: {e}"))
+                    })?;
+                }
+            }
             bake.next_face += 1;
             if bake.next_face == 6 {
                 bake.next_face = 0;
@@ -2055,6 +2151,9 @@ impl ArchiveSceneRenderer {
         self.set_antialiasing(bake.saved.0)?;
         self.previous_vp = None;
         self.reset_temporal_history();
+        if let Some(root) = std::env::var_os("VOXY_STREET_TEXTURE_SOURCE_CAPTURE_AFTER_BAKE") {
+            self.capture_texture_sources(&std::path::PathBuf::from(root))?;
+        }
         bake.finished = true;
         Ok(true)
     }
@@ -2132,6 +2231,129 @@ impl ArchiveSceneRenderer {
     pub fn temporal_motion_texture(&self) -> Option<&wgpu::Texture> {
         self.temporal.as_ref().map(|t| t.motion_texture())
     }
+    /// Optional completed-frame diagnostics; does not change rendering inputs.
+    fn capture_texture_sources(&self, root: &std::path::Path) -> Result<(), crate::ComputeError> {
+        std::fs::create_dir(root).map_err(|e| {
+            crate::ComputeError::Validation(format!("texture source trace: {e}"))
+        })?;
+        let mut sources: Vec<(String, &wgpu::Texture)> = self
+            ._textures
+            .iter()
+            .enumerate()
+            .map(|(index, texture)| (format!("material-texture-{index:04}"), &***texture))
+            .collect();
+        sources.extend([
+            (
+                "environment-specular".to_string(),
+                self._environment.specular().output(),
+            ),
+            (
+                "environment-diffuse".to_string(),
+                self._environment.diffuse().output(),
+            ),
+            (
+                "environment-dfg".to_string(),
+                self._environment.dfg().output(),
+            ),
+            (
+                "environment-input".to_string(),
+                self._environment.specular().input(),
+            ),
+            ("sky".to_string(), &*self._sky),
+        ]);
+        let mut proof = serde_json::Map::new();
+        for (name, texture) in sources {
+            let chain = crate::archive_hdr_diagnostics::capture_texture_chain(
+                &self.device,
+                &self.queue,
+                texture,
+                &root.join(&name),
+            )
+            .map_err(|e| {
+                crate::ComputeError::Validation(format!("original texture chain {name}: {e}"))
+            })?;
+            proof.insert(name, chain);
+        }
+        std::fs::write(
+            root.join("sources.json"),
+            serde_json::to_vec_pretty(&proof)
+                .map_err(|e| crate::ComputeError::Validation(e.to_string()))?,
+        )
+        .map_err(|e| crate::ComputeError::Validation(e.to_string()))?;
+        Ok(())
+    }
+    fn diagnostic_lighting_material_uniforms(&self) -> Vec<(String, &wgpu::Buffer)> {
+        let mut inputs = vec![
+            ("punctual-lights".to_string(), &*self._lights),
+            ("environment-intensity".to_string(), &self.environment_bindings.intensity_buffer),
+            ("probe-grid".to_string(), &*self.probe_grid),
+        ];
+        inputs.extend(self.materials.iter().enumerate().map(|(index, material)|
+            (format!("material-{index:04}"), &*material._uniform)));
+        inputs
+    }
+    pub fn capture_hdr_stages(
+        &self,
+        resolve: &crate::SupersampleResolve,
+        output: &wgpu::Texture,
+        root: &std::path::Path,
+        raw: bool,
+    ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+        let mut views = self
+            .temporal
+            .as_ref()
+            .map_or_else(Vec::new, |t| t.diagnostic_views());
+        views.push((
+            "display-before-downsample",
+            resolve.color.create_view(&Default::default()),
+        ));
+        views.push(("final-output", output.create_view(&Default::default())));
+        let sources = std::env::var("VOXY_STREET_HDR_SOURCE_CAPTURE").as_deref() == Ok("1");
+        if sources {
+            if let Some((gi, ssr)) = self.opaque_lighting_outputs() {
+                views.push(("actual-gi", gi.create_view(&Default::default())));
+                views.push(("actual-ssr", ssr.create_view(&Default::default())));
+            }
+            if let Some(gi) = &self.compute_gi {
+                let [world, normal] = gi.world_ray_guides();
+                views.push(("actual-world-guide", world.create_view(&Default::default())));
+                views.push((
+                    "actual-normal-guide",
+                    normal.create_view(&Default::default()),
+                ));
+            }
+        }
+        let mut proof = crate::archive_hdr_diagnostics::capture(
+            &self.device,
+            &self.queue,
+            views,
+            self.temporal.as_ref().map(|t| t.diagnostic_uniform()),
+            root,
+            raw,
+        )?;
+        if sources {
+            proof["source_query_encodes_before_capture"] =
+                serde_json::json!(self.world_ray_query_encoded_frames());
+            proof["irradiance_probe_coefficients"] =
+                crate::archive_hdr_diagnostics::capture_storage(
+                    &self.device,
+                    &self.queue,
+                    self.irradiance_probe_coefficients_buffer(),
+                    &root.join("probe-sh.native.bin"),
+                    raw,
+                )?;
+            proof["scene_camera_uniform"] = crate::archive_hdr_diagnostics::capture_uniform(
+                &self.device, &self.queue, &self.camera, &root.join("scene-camera-uniform.bin"))?;
+            let mut lighting = serde_json::Map::new();
+            for (name, buffer) in self.diagnostic_lighting_material_uniforms() {
+                lighting.insert(name.clone(), crate::archive_hdr_diagnostics::capture_uniform(
+                    &self.device, &self.queue, buffer, &root.join(format!("{name}.bin")))?);
+            }
+            proof["lighting_material_uniforms"] = serde_json::Value::Object(lighting);
+            std::fs::write(root.join("stages.json"), serde_json::to_vec_pretty(&proof)?)?;
+        }
+        Ok(proof)
+    }
     pub fn antialiasing(&self) -> crate::ArchiveAntialiasing {
         self.antialiasing
     }
@@ -2188,7 +2410,14 @@ impl ArchiveSceneRenderer {
         );
         Ok(self.queue.submit([encoder.finish()]))
     }
-    /// Raw float32 GI textures exist only in the explicit precision diagnostic.
+    /// Access the render graph's actual lighting outputs after a draw fence.
+    /// This does not allocate textures or enable reference/comparison passes.
+    #[doc(hidden)]
+    pub fn opaque_lighting_outputs(&self) -> Option<(&wgpu::Texture, &wgpu::Texture)> {
+        self.compute_gi.as_ref()?;
+        Some((&self._gi_output, &self._ssr_output))
+    }
+    /// Paired actual/reference GI textures require the precision diagnostic.
     #[doc(hidden)]
     pub fn opaque_gi_precision_textures(&self) -> Option<(&wgpu::Texture, &wgpu::Texture)> {
         Some((
@@ -2249,72 +2478,203 @@ impl ArchiveSceneRenderer {
         offset: [u32; 2],
         extent: [u32; 2],
     ) -> Result<(), crate::RaySceneError> {
-        if !job.query_kind().supports_surface_nearest() ||
-           !self.compute_gi.as_ref().is_some_and(|gi|gi.supports_world_kind(kind)&&!gi.world_frame_enabled()) {
+        if !job.query_kind().supports_surface_nearest()
+            || !self
+                .compute_gi
+                .as_ref()
+                .is_some_and(|gi| gi.supports_world_kind(kind) && !gi.world_frame_enabled())
+        {
             return Err(crate::RaySceneError::Unsupported);
         }
-        let producer=self.world_ray_producer(&job,kind,offset,extent)?;
-        let guides=self.compute_gi.as_ref().ok_or(crate::RaySceneError::Unsupported)?.world_ray_guides();
-        let output=if matches!(kind,crate::WorldRayKind::Reflection) { &self._ssr_output } else { &self._gi_output };
-        let region=compute_gi::ArchiveWorldRayRegion::new(&self.device,&self.camera,&guides,producer,job,kind,extent,&self.background,&self.depth,&self.history_depth,&self.depth_bounds.texture,output,self.compute_gi.as_ref().ok_or(crate::RaySceneError::Unsupported)?.world_resolve_constants(),false,None)?;
-        self.compute_gi.as_mut().ok_or(crate::RaySceneError::Unsupported)?.add_world_region(region);
+        let producer = self.world_ray_producer(&job, kind, offset, extent)?;
+        let guides = self
+            .compute_gi
+            .as_ref()
+            .ok_or(crate::RaySceneError::Unsupported)?
+            .world_ray_guides();
+        let output = if matches!(kind, crate::WorldRayKind::Reflection) {
+            &self._ssr_output
+        } else {
+            &self._gi_output
+        };
+        let region = compute_gi::ArchiveWorldRayRegion::new(
+            &self.device,
+            &self.camera,
+            &guides,
+            producer,
+            job,
+            kind,
+            extent,
+            &self.background,
+            &self.depth,
+            &self.history_depth,
+            &self.depth_bounds.texture,
+            output,
+            self.compute_gi
+                .as_ref()
+                .ok_or(crate::RaySceneError::Unsupported)?
+                .world_resolve_constants(),
+            false,
+            None,
+        )?;
+        self.compute_gi
+            .as_mut()
+            .ok_or(crate::RaySceneError::Unsupported)?
+            .add_world_region(region);
         Ok(())
     }
     /// Replace screen traversal with bounded source queries covering every pixel.
     /// Producer/resolve pipelines and the exact query job are shared across tiles.
     /// Prepare transactionally; an invalid partition leaves the previous mode intact.
-    pub fn set_world_ray_frame(&mut self,job:Arc<crate::ExactWorldNearest>,tile:[u32;2])->Result<(),crate::RaySceneError> {
-        let gi=self.compute_gi.as_ref().ok_or(crate::RaySceneError::Unsupported)?;
-        if !job.query_kind().supports_surface_nearest()||!gi.supports_world_kind(crate::WorldRayKind::Diffuse)||gi.capture_enabled() {return Err(crate::RaySceneError::Unsupported);}
-        let tiles=compute_gi::frame_tiles([self.width,self.height],tile,job.capacity())?;
-        let first=tiles[0];let mut templates=Vec::new();
-        let cache_requested=std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE").as_deref()==Ok("1");
-        let sorted_requested=std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_SORTED").as_deref()==Ok("1");
-        let profile_requested=std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_PROFILE").as_deref()==Ok("1");
-        if sorted_requested&&profile_requested {return Err(crate::RaySceneError::Unsupported);}
-        let profile_workspace=if sorted_requested {
-            if !cache_requested||!job.history_any_hit_enabled(){return Err(crate::RaySceneError::Unsupported);}
-            Some(compute_gi::consumer_sorted_workspace(&self.device,job.capacity())?)
-        }else if profile_requested {
-            if !cache_requested||!job.history_any_hit_enabled()||std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref()!=Ok("1") {return Err(crate::RaySceneError::Unsupported);}
-            Some(compute_gi::consumer_profile_workspace(&self.device,job.capacity())?)
-        }else{None};
-        let mut kinds=vec![crate::WorldRayKind::Diffuse];
-        if gi.supports_world_kind(crate::WorldRayKind::Reflection) {kinds.push(crate::WorldRayKind::Reflection);}
-        for kind in kinds {
-            let producer=self.world_ray_producer(&job,kind,[first[0],first[1]],[first[2],first[3]])?;
-            let guides=gi.world_ray_guides();
-            let output=if matches!(kind,crate::WorldRayKind::Reflection){&self._ssr_output}else{&self._gi_output};
-            templates.push(compute_gi::ArchiveWorldRayRegion::new(&self.device,&self.camera,&guides,producer,job.clone(),kind,[first[2],first[3]],&self.background,&self.depth,&self.history_depth,&self.depth_bounds.texture,output,gi.world_resolve_constants(),cache_requested,profile_workspace.clone())?);
+    pub fn set_world_ray_frame(
+        &mut self,
+        job: Arc<crate::ExactWorldNearest>,
+        tile: [u32; 2],
+    ) -> Result<(), crate::RaySceneError> {
+        let gi = self
+            .compute_gi
+            .as_ref()
+            .ok_or(crate::RaySceneError::Unsupported)?;
+        if !job.query_kind().supports_surface_nearest()
+            || !gi.supports_world_kind(crate::WorldRayKind::Diffuse)
+            || gi.capture_enabled()
+        {
+            return Err(crate::RaySceneError::Unsupported);
         }
-        let frame=compute_gi::ArchiveWorldRayFrame::new(&self.device,templates,tiles)?;
-        self.compute_gi.as_mut().ok_or(crate::RaySceneError::Unsupported)?.set_world_frame(frame);
+        let tiles = compute_gi::frame_tiles([self.width, self.height], tile, job.capacity())?;
+        let first = tiles[0];
+        let mut templates = Vec::new();
+        let cache_requested =
+            std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE").as_deref() == Ok("1");
+        let sorted_requested =
+            std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_SORTED").as_deref() == Ok("1");
+        let profile_requested =
+            std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_PROFILE").as_deref() == Ok("1");
+        if sorted_requested && profile_requested {
+            return Err(crate::RaySceneError::Unsupported);
+        }
+        let profile_workspace = if sorted_requested {
+            if !cache_requested || !job.history_any_hit_enabled() {
+                return Err(crate::RaySceneError::Unsupported);
+            }
+            Some(compute_gi::consumer_sorted_workspace(
+                &self.device,
+                job.capacity(),
+            )?)
+        } else if profile_requested {
+            if !cache_requested
+                || !job.history_any_hit_enabled()
+                || std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref() != Ok("1")
+            {
+                return Err(crate::RaySceneError::Unsupported);
+            }
+            Some(compute_gi::consumer_profile_workspace(
+                &self.device,
+                job.capacity(),
+            )?)
+        } else {
+            None
+        };
+        let mut kinds = vec![crate::WorldRayKind::Diffuse];
+        if gi.supports_world_kind(crate::WorldRayKind::Reflection) {
+            kinds.push(crate::WorldRayKind::Reflection);
+        }
+        for kind in kinds {
+            let producer =
+                self.world_ray_producer(&job, kind, [first[0], first[1]], [first[2], first[3]])?;
+            let guides = gi.world_ray_guides();
+            let output = if matches!(kind, crate::WorldRayKind::Reflection) {
+                &self._ssr_output
+            } else {
+                &self._gi_output
+            };
+            templates.push(compute_gi::ArchiveWorldRayRegion::new(
+                &self.device,
+                &self.camera,
+                &guides,
+                producer,
+                job.clone(),
+                kind,
+                [first[2], first[3]],
+                &self.background,
+                &self.depth,
+                &self.history_depth,
+                &self.depth_bounds.texture,
+                output,
+                gi.world_resolve_constants(),
+                cache_requested,
+                profile_workspace.clone(),
+            )?);
+        }
+        let frame = compute_gi::ArchiveWorldRayFrame::new(&self.device, templates, tiles)?;
+        self.compute_gi
+            .as_mut()
+            .ok_or(crate::RaySceneError::Unsupported)?
+            .set_world_frame(frame);
         Ok(())
     }
     /// Prepared compute traversal constant; independent of the current environment.
     #[doc(hidden)]
-    pub fn paired_dda_tile_edge_cache_enabled(&self)->bool {self.compute_gi.as_ref().is_some_and(|g|g.tile_edge_cache_enabled())}
+    pub fn paired_dda_tile_edge_cache_enabled(&self) -> bool {
+        self.compute_gi
+            .as_ref()
+            .is_some_and(|g| g.tile_edge_cache_enabled())
+    }
     /// True only when the prepared frame owns the projected-span queue.
     #[doc(hidden)]
-    pub fn world_ray_consumer_sorted(&self)->bool {self.compute_gi.as_ref().is_some_and(|g|g.world_consumer_sorted())}
+    pub fn world_ray_consumer_sorted(&self) -> bool {
+        self.compute_gi
+            .as_ref()
+            .is_some_and(|g| g.world_consumer_sorted())
+    }
     /// CPU-encoded source-query frames, excluding proved-inactive clears.
-    pub fn world_ray_query_encoded_frames(&self)->u64 {self.compute_gi.as_ref().map_or(0,|gi|gi.world_query_encoded_frames())}
+    pub fn world_ray_query_encoded_frames(&self) -> u64 {
+        self.compute_gi
+            .as_ref()
+            .map_or(0, |gi| gi.world_query_encoded_frames())
+    }
     /// Optional complete last-source-frame stage snapshot, resolved after its GPU fence.
     #[doc(hidden)]
-    pub fn world_ray_work_stats_buffer(&self)->Option<&wgpu::Buffer> {self.compute_gi.as_ref()?.world_work_stats_buffer()}
-    pub fn world_ray_stage_profile(&self)->Result<Option<serde_json::Value>,Box<dyn std::error::Error>> {if let Some(gi)=&self.compute_gi {gi.world_profile_snapshot(&self.device,&self.queue)}else{Ok(None)}}
-    pub fn world_ray_frame_enabled(&self)->bool {self.compute_gi.as_ref().is_some_and(|gi|gi.world_frame_enabled())}
+    pub fn world_ray_work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
+        self.compute_gi.as_ref()?.world_work_stats_buffer()
+    }
+    pub fn world_ray_stage_profile(
+        &self,
+    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+        if let Some(gi) = &self.compute_gi {
+            gi.world_profile_snapshot(&self.device, &self.queue)
+        } else {
+            Ok(None)
+        }
+    }
+    pub fn world_ray_frame_enabled(&self) -> bool {
+        self.compute_gi
+            .as_ref()
+            .is_some_and(|gi| gi.world_frame_enabled())
+    }
     /// One complete non-overlapping partition, shared by GI and optional SSR.
-    pub fn world_ray_frame_tiles(&self)->Option<&[[u32;4]]> {self.compute_gi.as_ref()?.world_frame_tiles()}
+    pub fn world_ray_frame_tiles(&self) -> Option<&[[u32; 4]]> {
+        self.compute_gi.as_ref()?.world_frame_tiles()
+    }
     /// Qualification counters: inactive, miss, source hit, rational-tail fallback,
     /// optical fallback, unresolved fallback, stale-ID fallback, other fallback.
     /// Enable VOXY_STREET_WORLD_RAY_RESOLVE_AUDIT before preparing regions.
     #[doc(hidden)]
-    pub fn world_ray_region_audit_buffer(&self,index:usize)->Option<&wgpu::Buffer> { self.compute_gi.as_ref()?.world_region_audit_buffer(index) }
+    pub fn world_ray_region_audit_buffer(&self, index: usize) -> Option<&wgpu::Buffer> {
+        self.compute_gi.as_ref()?.world_region_audit_buffer(index)
+    }
     /// Drop prepared source owners before replacing the caller's world snapshot.
-    pub fn clear_world_ray_regions(&mut self) { if let Some(gi)=self.compute_gi.as_mut() { gi.clear_world_regions(); } }
+    pub fn clear_world_ray_regions(&mut self) {
+        if let Some(gi) = self.compute_gi.as_mut() {
+            gi.clear_world_regions();
+        }
+    }
     /// Number of opt-in source regions currently connected to opaque lighting.
-    pub fn world_ray_region_count(&self)->usize { self.compute_gi.as_ref().map_or(0,|gi|gi.world_region_count()) }
+    pub fn world_ray_region_count(&self) -> usize {
+        self.compute_gi
+            .as_ref()
+            .map_or(0, |gi| gi.world_region_count())
+    }
     pub fn opaque_ray_persistent_enabled(&self) -> bool {
         self.compute_gi
             .as_ref()
@@ -2377,23 +2737,35 @@ impl ArchiveSceneRenderer {
         self.compute_gi.as_ref()?.ray_queue_proof_buffer()
     }
     fn collect_gpu_time_sample(&mut self) {
-        if let Some(timing)=&mut self.timing {
-            if let Some((ms,gi,ssr))=timing.collect(&self.device,&self.queue) {
-                self.gpu_times_ms.push(ms[0]);self.gpu_shading_times_ms.push([ms[1],ms[2]]);
-                self.gpu_gi_times_ms.push(gi);self.gpu_ssr_times_ms.push(ssr);
+        if let Some(timing) = &mut self.timing {
+            if let Some((ms, gi, ssr)) = timing.collect(&self.device, &self.queue) {
+                self.gpu_times_ms.push(ms[0]);
+                self.gpu_shading_times_ms.push([ms[1], ms[2]]);
+                self.gpu_gi_times_ms.push(gi);
+                self.gpu_ssr_times_ms.push(ssr);
             }
         }
     }
     /// Finish delayed timestamp readback without drawing an extra frame.
     /// Intended for explicit diagnostics/benchmark completion, not interactive draws.
-    pub fn collect_completed_gpu_times(&mut self)->Result<(),crate::ComputeError> {
+    pub fn collect_completed_gpu_times(&mut self) -> Result<(), crate::ComputeError> {
         for _ in 0..3 {
-            self.device.poll(wgpu::PollType::Wait {submission_index:None,timeout:None})
-                .map_err(|e|crate::ComputeError::Validation(format!("completed timestamp readback: {e}")))?;
+            self.device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: None,
+                    timeout: None,
+                })
+                .map_err(|e| {
+                    crate::ComputeError::Validation(format!("completed timestamp readback: {e}"))
+                })?;
             self.collect_gpu_time_sample();
-            if self.timing.as_ref().is_none_or(|t|!t.pending) {return Ok(());}
+            if self.timing.as_ref().is_none_or(|t| !t.pending) {
+                return Ok(());
+            }
         }
-        Err(crate::ComputeError::Validation("completed timestamp readback did not finish".into()))
+        Err(crate::ComputeError::Validation(
+            "completed timestamp readback did not finish".into(),
+        ))
     }
     pub fn draw(
         &mut self,
@@ -2403,6 +2775,7 @@ impl ArchiveSceneRenderer {
     ) -> wgpu::SubmissionIndex {
         self.collect_gpu_time_sample();
         let time_this_frame = self.timing.as_ref().is_some_and(|t| !t.pending);
+        #[allow(deprecated)]
         let vp = Mat4::perspective_rh(
             self.vertical_fov,
             self.width as f32 / self.height as f32,
@@ -2535,7 +2908,12 @@ impl ArchiveSceneRenderer {
         }
         if time_this_frame {
             if let Some(timing) = &mut self.timing {
-                timing.sample_chunks = if ray_history_available && !self.compute_gi.as_ref().is_some_and(|gi|gi.world_frame_enabled()) {
+                timing.sample_chunks = if ray_history_available
+                    && !self
+                        .compute_gi
+                        .as_ref()
+                        .is_some_and(|gi| gi.world_frame_enabled())
+                {
                     timing.phase_chunks
                 } else {
                     0
@@ -2711,15 +3089,19 @@ impl ArchiveSceneRenderer {
         for transparent in [false, true] {
             if transparent {
                 if let Some(water) = &mut self.water {
-                    water.encode(&self.queue, &mut encoder, &crate::archive_water::WaterFrame {
-                        hdr: &self.hdr,
-                        background: &self.background,
-                        depth: &self.depth,
-                        camera: &self.camera_bind,
-                        environment: &self.environment_bindings.group,
-                        eye,
-                        planes: raw_planes,
-                    });
+                    water.encode(
+                        &self.queue,
+                        &mut encoder,
+                        &crate::archive_water::WaterFrame {
+                            hdr: &self.hdr,
+                            background: &self.background,
+                            depth: &self.depth,
+                            camera: &self.camera_bind,
+                            environment: &self.environment_bindings.group,
+                            eye,
+                            planes: raw_planes,
+                        },
+                    );
                 }
                 encoder.copy_texture_to_texture(
                     wgpu::TexelCopyTextureInfo {
@@ -3166,6 +3548,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<Camera>(), 5 * 64 + 8 * 16);
     }
     #[test]
+    #[allow(clippy::assertions_on_constants)]
     fn reflective_presets_route_to_expected_passes() {
         assert_eq!(ArchiveMaterial::MIRROR.surface[2], 0.);
         assert!(ArchiveMaterial::GLASS.surface[2] > 0.);
@@ -3295,3 +3678,7 @@ impl ArchiveProbeBake {
         self.started.elapsed().as_secs_f64()
     }
 }
+
+#[cfg(test)]
+#[path = "archive_vertex_invariance_tests.rs"]
+mod vertex_invariance_tests;

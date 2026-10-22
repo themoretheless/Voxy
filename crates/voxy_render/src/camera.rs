@@ -458,7 +458,7 @@ mod tests {
                     assert!((direction.length() - 1.).abs() < 1e-6);
                     match projection {
                         SceneProjection::Perspective { .. } => assert_eq!(origin, view.eye),
-                        _ => {
+                        SceneProjection::Orthographic { .. } => {
                             assert!((origin - view.eye).dot(forward).abs() < 1e-6);
                             assert!((direction - forward).length() < 1e-6);
                         }
