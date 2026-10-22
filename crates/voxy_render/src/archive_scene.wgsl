@@ -57,107 +57,109 @@ fn original_noise(p:vec3<f32>)->f32 {
  return mix(mix(mix(original_hash(a),original_hash(a+vec3<f32>(1.,0.,0.)),u.x),mix(original_hash(a+vec3<f32>(0.,1.,0.)),original_hash(a+vec3<f32>(1.,1.,0.)),u.x),u.y),mix(mix(original_hash(a+vec3<f32>(0.,0.,1.)),original_hash(a+vec3<f32>(1.,0.,1.)),u.x),mix(original_hash(a+vec3<f32>(0.,1.,1.)),original_hash(a+vec3<f32>(1.,1.,1.)),u.x),u.y),u.z);
 }
 fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
- let grain=original_noise(p*27.);let broad=original_noise(p*1.8);
- if kind>14.5 {
-  let petal=original_noise(p*19.);let fine_fibre=original_noise(p*95.);
-  let velvet=0.88+0.18*petal+0.06*(fine_fibre-0.5);
-  return vec3<f32>(velvet*(0.94+0.10*broad));
- }
- if kind>13.5 {
-  let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.15;
-  let cell=floor(uv);let f=fract(uv);
-  let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));
-  let fp=max(fwidth(uv.x),fwidth(uv.y));
-  let h=original_hash(vec3<f32>(cell,14.))-0.5;
-  let glaze=0.96+0.06*original_noise(p*11.)+0.04*h;
-  let grout=mix(0.76,1.,smoothstep(0.015,0.045+fp,edge));
-  return vec3<f32>(glaze*grout*(0.98+0.03*grain));
- }
- if kind>12.5 {
-  let macro_v=original_noise(p*0.45);let cloud=original_noise(p*1.6);
-  let trowel=original_noise(vec3<f32>(p.x*3.5+cloud*0.4,p.y*7.5,p.z*3.5-cloud*0.4));
-  let sand=original_noise(p*92.);
-  let damp=1.-0.10*(1.-smoothstep(0.08,0.65,p.y))*(0.4+0.6*broad)*smoothstep(0.3,0.8,1.-abs(n.y));
-  let warm=mix(vec3<f32>(0.95,0.94,0.92),vec3<f32>(1.04,1.03,1.00),macro_v*0.6+trowel*0.4);
-  return warm*(0.96+0.05*grain+0.03*sand)*damp;
- }
- if kind>11.5 {
-  let cell=floor(p/0.7+vec3<f32>(0.01));
-  let h=original_hash(cell*13.7);let h2=original_hash(cell*31.3+7.);
-  let q=p+vec3<f32>(h*4.3,h2*2.7,h*6.1);
-  let vein=original_noise(q*vec3<f32>(2.4,9.,1.6)+original_noise(q*5.5)*0.85);
-  let band=smoothstep(0.14,0.86,vein);
-  let fine_vein=smoothstep(0.50,0.84,original_noise(q*vec3<f32>(8.,24.,6.)));
-  let cross_vein=smoothstep(0.62,0.88,original_noise(q*vec3<f32>(18.,5.,14.)));
-  let pore=smoothstep(0.62,0.86,original_noise(q*54.));
-  let warm=mix(vec3<f32>(0.73,0.67,0.57),vec3<f32>(1.06,1.02,0.96),band);
-  let veined=mix(warm,vec3<f32>(0.64,0.57,0.46),fine_vein*0.38+cross_vein*0.18);
-  let tone=0.82+0.30*h+0.11*(broad-0.5);
-  return veined*tone*(1.-0.18*pore)*(0.93+0.10*grain);
- }
- if kind>10.5 {
-  let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5);
-  let footprint=max(length(dpdx(uv)),length(dpdy(uv)));
-  let detail=1.-smoothstep(0.002,0.015,footprint);
-  let warp=sin(uv.x*420.)*0.5+0.5;let weft=sin(uv.y*420.)*0.5+0.5;
-  let weave=mix(1.,0.88+0.22*(warp*0.5+weft*0.5),detail);
-  let fold=0.90+0.16*original_noise(p*4.5)+0.06*broad;
-  return vec3<f32>(weave*fold*(0.96+0.07*grain));
- }
- if kind>9.5 {
-  let turf_broad=original_noise(p*0.42);let medium_patch=original_noise(p*2.1);
-  let tuft=original_noise(vec3<f32>(p.x*16.,p.y*4.,p.z*16.));
-  let blades=original_noise(vec3<f32>(p.x*58.,p.y*8.,p.z*58.));
-  let fine_blades=original_noise(vec3<f32>(p.x*145.,p.y*12.,p.z*145.));
-  let clover=smoothstep(0.55,0.85,original_noise(p*4.5));
-  let lush=mix(vec3<f32>(0.58,0.86,0.36),vec3<f32>(1.22,1.12,0.60),turf_broad*0.55+medium_patch*0.45);
-  let tipped=mix(lush,vec3<f32>(1.36,1.22,0.58),smoothstep(0.52,0.88,tuft)*0.55);
-  let blade_ao=0.36+0.64*(blades*0.65+fine_blades*0.35);
-  let shaded=mix(vec3<f32>(0.34,0.50,0.24),tipped,blade_ao);
-  return mix(shaded,shaded*vec3<f32>(0.80,1.08,0.78),clover*0.42);
- }
- if kind>8.5 {let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.025;let cell=floor(uv);let f=fract(uv);let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));let footprint=max(fwidth(uv.x),fwidth(uv.y));let h=original_hash(vec3<f32>(cell,kind));let h2=original_hash(vec3<f32>(cell.yx,kind+3.));let shimmer=vec3<f32>(0.86+0.20*h,0.90+0.16*h2,0.92+0.16*(1.-h*0.5));let tile=mix(vec3<f32>(0.52,0.56,0.60),shimmer,smoothstep(0.05,0.13+footprint,edge));return mix(tile,vec3<f32>(0.90,0.92,0.94),smoothstep(0.25,0.6,footprint));}
- if kind>7.5 {
-  let grooves=original_noise(p*vec3<f32>(85.,2.5,85.));
-  let moss=smoothstep(0.54,0.82,original_noise(p*3.8))*(1.-smoothstep(0.15,0.95,p.y))*smoothstep(-0.2,0.5,-n.z);
-  let bark_col=vec3<f32>(0.62+0.58*grooves)*(0.9+0.2*broad);
-  return mix(bark_col,vec3<f32>(0.42,0.68,0.34),moss*0.55);
- }
- if kind>6.5 {
-  let uv=select(p.xy,p.zy,abs(n.x)>0.5);let row=floor(uv.y/0.075);let col=floor(uv.x/0.225+0.5*(row-2.*floor(row*0.5)));
-  let cell=fract(vec2<f32>(uv.x/0.225+0.5*(row-2.*floor(row*0.5)),uv.y/0.075));
-  let edge=min(min(cell.x,1.-cell.x)*0.225,min(cell.y,1.-cell.y)*0.075);
-  let bh=original_hash(vec3<f32>(col,row,7.))-0.5;
-  let salt=smoothstep(0.68,0.90,original_noise(p*2.6))*(1.-smoothstep(0.3,1.8,p.y));
-  let brick_tone=mix(vec3<f32>(0.71,0.40,0.26)*(0.85+0.25*broad+0.16*bh),vec3<f32>(0.92,0.90,0.86),salt*0.28);
-  return mix(vec3<f32>(0.40,0.38,0.34),brick_tone,smoothstep(0.002,0.006,edge));
+ let broad=original_noise(p*1.8);
+ if kind>8.5 {
+  if kind>12.5 {
+   if kind>14.5 {
+    let petal=original_noise(p*19.);let fine_fibre=original_noise(p*95.);
+    let velvet=0.88+0.18*petal+0.06*(fine_fibre-0.5);
+    return vec3<f32>(velvet*(0.94+0.10*broad));
+   }
+   if kind>13.5 {
+    let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.15;
+    let cell=floor(uv);let f=fract(uv);
+    let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));
+    let fp=max(fwidth(uv.x),fwidth(uv.y));
+    let h=original_hash(vec3<f32>(cell,14.))-0.5;
+    let glaze=0.96+0.06*original_noise(p*11.)+0.04*h;
+    let grout=mix(0.76,1.,smoothstep(0.015,0.045+fp,edge));
+    return vec3<f32>(glaze*grout*(0.98+0.03*original_noise(p*27.)));
+   }
+   let macro_v=original_noise(p*0.45);let cloud=original_noise(p*1.6);
+   let trowel=original_noise(vec3<f32>(p.x*3.5+cloud*0.4,p.y*7.5,p.z*3.5-cloud*0.4));
+   let sand=original_noise(p*92.);
+   let damp=1.-0.10*(1.-smoothstep(0.08,0.65,p.y))*(0.4+0.6*broad)*smoothstep(0.3,0.8,1.-abs(n.y));
+   let warm=mix(vec3<f32>(0.95,0.94,0.92),vec3<f32>(1.04,1.03,1.00),macro_v*0.6+trowel*0.4);
+   return warm*(0.96+0.05*original_noise(p*27.)+0.03*sand)*damp;
+  }
+  if kind>10.5 {
+   if kind>11.5 {
+    let cell=floor(p/0.7+vec3<f32>(0.01));
+    let h=original_hash(cell*13.7);let h2=original_hash(cell*31.3+7.);
+    let q=p+vec3<f32>(h*4.3,h2*2.7,h*6.1);
+    let vein=original_noise(q*vec3<f32>(2.4,9.,1.6)+original_noise(q*5.5)*0.85);
+    let band=smoothstep(0.14,0.86,vein);
+    let fine_vein=smoothstep(0.50,0.84,original_noise(q*vec3<f32>(8.,24.,6.)));
+    let cross_vein=smoothstep(0.62,0.88,original_noise(q*vec3<f32>(18.,5.,14.)));
+    let pore=smoothstep(0.62,0.86,original_noise(q*54.));
+    let warm=mix(vec3<f32>(0.73,0.67,0.57),vec3<f32>(1.06,1.02,0.96),band);
+    let veined=mix(warm,vec3<f32>(0.64,0.57,0.46),fine_vein*0.38+cross_vein*0.18);
+    let tone=0.82+0.30*h+0.11*(broad-0.5);
+    return veined*tone*(1.-0.18*pore)*(0.93+0.10*original_noise(p*27.));
+   }
+   let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5);
+   let footprint=max(length(dpdx(uv)),length(dpdy(uv)));
+   let detail=1.-smoothstep(0.002,0.015,footprint);
+   let warp=sin(uv.x*420.)*0.5+0.5;let weft=sin(uv.y*420.)*0.5+0.5;
+   let weave=mix(1.,0.88+0.22*(warp*0.5+weft*0.5),detail);
+   let fold=0.90+0.16*original_noise(p*4.5)+0.06*broad;
+   return vec3<f32>(weave*fold*(0.96+0.07*original_noise(p*27.)));
+  }
+  if kind>9.5 {
+   let turf_broad=original_noise(p*0.42);let medium_patch=original_noise(p*2.1);
+   let tuft=original_noise(vec3<f32>(p.x*16.,p.y*4.,p.z*16.));
+   let blades=original_noise(vec3<f32>(p.x*58.,p.y*8.,p.z*58.));
+   let fine_blades=original_noise(vec3<f32>(p.x*145.,p.y*12.,p.z*145.));
+   let clover=smoothstep(0.55,0.85,original_noise(p*4.5));
+   let lush=mix(vec3<f32>(0.58,0.86,0.36),vec3<f32>(1.22,1.12,0.60),turf_broad*0.55+medium_patch*0.45);
+   let tipped=mix(lush,vec3<f32>(1.36,1.22,0.58),smoothstep(0.52,0.88,tuft)*0.55);
+   let blade_ao=0.36+0.64*(blades*0.65+fine_blades*0.35);
+   let shaded=mix(vec3<f32>(0.34,0.50,0.24),tipped,blade_ao);
+   return mix(shaded,shaded*vec3<f32>(0.80,1.08,0.78),clover*0.42);
+  }
+  let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.025;let cell=floor(uv);let f=fract(uv);let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));let footprint=max(fwidth(uv.x),fwidth(uv.y));let h=original_hash(vec3<f32>(cell,kind));let h2=original_hash(vec3<f32>(cell.yx,kind+3.));let shimmer=vec3<f32>(0.86+0.20*h,0.90+0.16*h2,0.92+0.16*(1.-h*0.5));let tile=mix(vec3<f32>(0.52,0.56,0.60),shimmer,smoothstep(0.05,0.13+footprint,edge));return mix(tile,vec3<f32>(0.90,0.92,0.94),smoothstep(0.25,0.6,footprint));
  }
  if kind>5.5 {
+  if kind>7.5 {
+   let grooves=original_noise(p*vec3<f32>(85.,2.5,85.));
+   let moss=smoothstep(0.54,0.82,original_noise(p*3.8))*(1.-smoothstep(0.15,0.95,p.y))*smoothstep(-0.2,0.5,-n.z);
+   let bark_col=vec3<f32>(0.62+0.58*grooves)*(0.9+0.2*broad);
+   return mix(bark_col,vec3<f32>(0.42,0.68,0.34),moss*0.55);
+  }
+  if kind>6.5 {
+   let uv=select(p.xy,p.zy,abs(n.x)>0.5);let row=floor(uv.y/0.075);let col=floor(uv.x/0.225+0.5*(row-2.*floor(row*0.5)));
+   let cell=fract(vec2<f32>(uv.x/0.225+0.5*(row-2.*floor(row*0.5)),uv.y/0.075));
+   let edge=min(min(cell.x,1.-cell.x)*0.225,min(cell.y,1.-cell.y)*0.075);
+   let bh=original_hash(vec3<f32>(col,row,7.))-0.5;
+   let salt=smoothstep(0.68,0.90,original_noise(p*2.6))*(1.-smoothstep(0.3,1.8,p.y));
+   let brick_tone=mix(vec3<f32>(0.71,0.40,0.26)*(0.85+0.25*broad+0.16*bh),vec3<f32>(0.92,0.90,0.86),salt*0.28);
+   return mix(vec3<f32>(0.40,0.38,0.34),brick_tone,smoothstep(0.002,0.006,edge));
+  }
   let cluster=original_noise(p*4.8);let sub_cluster=original_noise(p*11.5);let leaf_cell=original_noise(p*28.);
   let pocket=smoothstep(0.18,0.78,cluster*0.6+sub_cluster*0.4);
   let hue=mix(vec3<f32>(0.46,0.78,0.30),vec3<f32>(1.22,1.14,0.56),broad*0.45+pocket*0.55);
-  return hue*(0.42+0.58*pocket)*(0.72+0.42*leaf_cell)*(0.90+0.16*grain);
- }
-
- if kind<1.5{
-  let macro_var=original_noise(p*0.55);let speck=original_noise(p*64.);
-  let damp=1.-0.15*(1.-smoothstep(0.08,0.85,p.y))*(0.35+0.65*broad)*smoothstep(0.3,0.8,1.-abs(n.y));
-  let gutter=exp(-square((abs(p.x)-4.32)/0.26))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*smoothstep(0.8,0.98,n.y);
-  let litter=smoothstep(0.62,0.86,original_noise(p*11.5))*gutter;
-  let side_slab=smoothstep(4.65,4.85,abs(p.x))*(1.-smoothstep(6.95,7.25,abs(p.x)))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*smoothstep(0.7,0.95,n.y);
-  var joint=1.;
-  if side_slab>0. {
-   let gx=abs(fract(p.x/0.72)-0.5)*0.72;
-   let gz=abs(fract(p.z/0.90)-0.5)*0.90;
-   let d_joint=min(gx,gz);
-   let fp=max(length(dpdx(p.xz)),length(dpdy(p.xz)));
-   let cell_h=original_hash(vec3<f32>(floor(p.x/0.72),floor(p.z/0.90),1.))-0.5;
-   joint=mix(1.,(0.74+0.26*smoothstep(0.004,0.011+fp,d_joint))*(1.+0.08*cell_h),side_slab);
-  }
-  let stone_col=vec3<f32>((0.82+0.16*broad+0.08*macro_var)*(0.92+0.10*grain+0.05*speck)*damp*joint);
-  return mix(stone_col,stone_col*vec3<f32>(0.78,0.64,0.44),litter*0.45);
+  return hue*(0.42+0.58*pocket)*(0.72+0.42*leaf_cell)*(0.90+0.16*original_noise(p*27.));
  }
  if kind<2.5 {
+  let grain=original_noise(p*27.);
+  if kind<1.5 {
+   let macro_var=original_noise(p*0.55);let speck=original_noise(p*64.);
+   let damp=1.-0.15*(1.-smoothstep(0.08,0.85,p.y))*(0.35+0.65*broad)*smoothstep(0.3,0.8,1.-abs(n.y));
+   let gutter=exp(-square((abs(p.x)-4.32)/0.26))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*smoothstep(0.8,0.98,n.y);
+   let litter=smoothstep(0.62,0.86,original_noise(p*11.5))*gutter;
+   let side_slab=smoothstep(4.65,4.85,abs(p.x))*(1.-smoothstep(6.95,7.25,abs(p.x)))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*smoothstep(0.7,0.95,n.y);
+   var joint=1.;
+   if side_slab>0. {
+    let gx=abs(fract(p.x/0.72)-0.5)*0.72;
+    let gz=abs(fract(p.z/0.90)-0.5)*0.90;
+    let d_joint=min(gx,gz);
+    let fp=max(length(dpdx(p.xz)),length(dpdy(p.xz)));
+    let cell_h=original_hash(vec3<f32>(floor(p.x/0.72),floor(p.z/0.90),1.))-0.5;
+    joint=mix(1.,(0.74+0.26*smoothstep(0.004,0.011+fp,d_joint))*(1.+0.08*cell_h),side_slab);
+   }
+   let stone_col=vec3<f32>((0.82+0.16*broad+0.08*macro_var)*(0.92+0.10*grain+0.05*speck)*damp*joint);
+   return mix(stone_col,stone_col*vec3<f32>(0.78,0.64,0.44),litter*0.45);
+  }
   let damp=1.-0.20*(1.-smoothstep(0.1,1.6,p.y))*(0.3+broad);
   let drip=1.-0.07*smoothstep(0.58,0.88,original_noise(vec3<f32>(p.x*6.5,p.y*0.65,p.z*6.5)))*smoothstep(0.3,0.8,1.-abs(n.y));
   return vec3<f32>((0.86+0.15*broad+0.08*grain)*damp*drip);
@@ -168,7 +170,7 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
   let tile_h=original_hash(vec3<f32>(col,row,3.));
   let seam=smoothstep(0.02,0.055,cell.x)*smoothstep(0.03,0.085,cell.y);
   let overlap=0.88+0.16*cell.y;
-  let slate=mix(vec3<f32>(0.78,0.80,0.83),vec3<f32>(1.06,1.02,0.96),tile_h)*(0.84+0.24*grain);
+  let slate=mix(vec3<f32>(0.78,0.80,0.83),vec3<f32>(1.06,1.02,0.96),tile_h)*(0.84+0.24*original_noise(p*27.));
   return slate*(0.42+0.58*seam)*overlap;
  }
  if kind<4.5 {
@@ -183,7 +185,7 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
  }
  let streak=original_noise(vec3<f32>(p.x*45.,p.y*12.,p.z*45.));
  let patina=0.92+0.14*original_noise(p*5.5);
- return vec3<f32>((0.88+0.12*grain+0.06*(streak-0.5))*patina);
+ return vec3<f32>((0.88+0.12*original_noise(p*27.)+0.06*(streak-0.5))*patina);
 }
 // Band-limited physical height fields in metres. Screen derivatives suppress
 // unresolved grain instead of allowing moving-camera specular aliasing.
@@ -191,66 +193,66 @@ fn original_height(p:vec3<f32>,kind:f32)->f32 {
  let footprint=max(length(dpdx(p)),length(dpdy(p)));
  let fine=1.-smoothstep(0.002,0.012,footprint);
  let medium=1.-smoothstep(0.02,0.08,footprint);
- if kind>14.5 {
-  return 0.0007*medium*original_noise(p*22.)+0.00025*fine*original_noise(p*110.);
- }
- if kind>13.5 {
-  let uv=(p.xz+vec2<f32>(p.y))/0.15;
-  let f=fract(uv);let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));
-  let pillow=smoothstep(0.015,0.08,edge)*medium;
-  return 0.0005*pillow+0.00018*medium*original_noise(p*12.);
- }
- if kind>12.5 {
-  return 0.00055*medium*original_noise(p*8.5)+0.00028*fine*original_noise(p*115.);
- }
- if kind>11.5 {
-  let vein=original_noise(p*vec3<f32>(3.,9.,2.))*medium;
-  let pore=smoothstep(0.60,0.85,original_noise(p*54.))*fine;
-  return 0.0014*vein-0.00085*pore+0.00028*fine*original_noise(p*160.);
- }
- if kind>10.5 {
-  let weave=(sin(p.x*420.)*sin(p.z*420.)+sin(p.y*420.)*0.5)*fine;
-  return 0.0006*medium*original_noise(p*14.)+0.00022*weave;
- }
- if kind>9.5 {
-  let tuft=original_noise(vec3<f32>(p.x*16.,p.y*4.,p.z*16.))*medium;
-  let blades=original_noise(vec3<f32>(p.x*58.,p.y*8.,p.z*58.))*medium;
-  let micro=original_noise(vec3<f32>(p.x*165.,p.y*16.,p.z*165.))*fine;
-  return 0.0085*tuft+0.0042*blades+0.0014*micro;
- }
  if kind>8.5 {
+  if kind>12.5 {
+   if kind>14.5 {return 0.0007*medium*original_noise(p*22.)+0.00025*fine*original_noise(p*110.);}
+   if kind>13.5 {
+    let uv=(p.xz+vec2<f32>(p.y))/0.15;
+    let f=fract(uv);let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));
+    let pillow=smoothstep(0.015,0.08,edge)*medium;
+    return 0.0005*pillow+0.00018*medium*original_noise(p*12.);
+   }
+   return 0.00055*medium*original_noise(p*8.5)+0.00028*fine*original_noise(p*115.);
+  }
+  if kind>10.5 {
+   if kind>11.5 {
+    let vein=original_noise(p*vec3<f32>(3.,9.,2.))*medium;
+    let pore=smoothstep(0.60,0.85,original_noise(p*54.))*fine;
+    return 0.0014*vein-0.00085*pore+0.00028*fine*original_noise(p*160.);
+   }
+   let weave=(sin(p.x*420.)*sin(p.z*420.)+sin(p.y*420.)*0.5)*fine;
+   return 0.0006*medium*original_noise(p*14.)+0.00022*weave;
+  }
+  if kind>9.5 {
+   let tuft=original_noise(vec3<f32>(p.x*16.,p.y*4.,p.z*16.))*medium;
+   let blades=original_noise(vec3<f32>(p.x*58.,p.y*8.,p.z*58.))*medium;
+   let micro=original_noise(vec3<f32>(p.x*165.,p.y*16.,p.z*165.))*fine;
+   return 0.0085*tuft+0.0042*blades+0.0014*micro;
+  }
   let uv=p.xz+vec2<f32>(p.y);
   let f=fract(uv/0.025);
   let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));
   let pillow=smoothstep(0.04,0.22,edge)*medium;
   return 0.0011*pillow+0.00012*fine*original_noise(p*180.);
  }
- if kind>7.5 {
-  let bark_groove=original_noise(p*vec3<f32>(65.,2.5,65.))*medium;
-  return 0.0028*bark_groove+0.0005*fine*original_noise(p*140.);
- }
- if kind>6.5 {
-  let uv=p.xy+vec2<f32>(p.z,0.);let row=floor(uv.y/0.075);
-  let cell=fract(vec2<f32>(uv.x/0.225+0.5*(row-2.*floor(row*0.5)),uv.y/0.075));
-  let edge=min(min(cell.x,1.-cell.x)*0.225,min(cell.y,1.-cell.y)*0.075);
-  let mortar=(1.-smoothstep(0.002,0.008,edge))*medium;
-  return 0.0012*medium*original_noise(p*24.)-0.0022*mortar;
- }
- if kind>5.5&&kind<6.5 {
+ if kind>5.5 {
+  if kind>7.5 {
+   let bark_groove=original_noise(p*vec3<f32>(65.,2.5,65.))*medium;
+   return 0.0028*bark_groove+0.0005*fine*original_noise(p*140.);
+  }
+  if kind>6.5 {
+   let uv=p.xy+vec2<f32>(p.z,0.);let row=floor(uv.y/0.075);
+   let cell=fract(vec2<f32>(uv.x/0.225+0.5*(row-2.*floor(row*0.5)),uv.y/0.075));
+   let edge=min(min(cell.x,1.-cell.x)*0.225,min(cell.y,1.-cell.y)*0.075);
+   let mortar=(1.-smoothstep(0.002,0.008,edge))*medium;
+   return 0.0012*medium*original_noise(p*24.)-0.0022*mortar;
+  }
   let cluster=original_noise(p*4.8)*medium;
   let sub_cluster=original_noise(p*12.5)*medium;
   let leaf=original_noise(p*38.)*medium;
   let cell=original_noise(p*135.)*fine;
   return 0.011*cluster+0.0052*sub_cluster+0.0022*leaf+0.00055*cell;
  }
- if kind<1.5 {
-  let side_slab=smoothstep(4.65,4.85,abs(p.x))*(1.-smoothstep(6.95,7.25,abs(p.x)))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*medium;
-  let gx=abs(fract(p.x/0.72)-0.5)*0.72;
-  let gz=abs(fract(p.z/0.90)-0.5)*0.90;
-  let groove=(1.-smoothstep(0.004,0.014,min(gx,gz)))*side_slab;
-  return 0.003*medium*original_noise(p*16.)+0.00065*fine*original_noise(p*145.)-0.0018*groove;
+ if kind<2.5 {
+  if kind<1.5 {
+   let side_slab=smoothstep(4.65,4.85,abs(p.x))*(1.-smoothstep(6.95,7.25,abs(p.x)))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*medium;
+   let gx=abs(fract(p.x/0.72)-0.5)*0.72;
+   let gz=abs(fract(p.z/0.90)-0.5)*0.90;
+   let groove=(1.-smoothstep(0.004,0.014,min(gx,gz)))*side_slab;
+   return 0.003*medium*original_noise(p*16.)+0.00065*fine*original_noise(p*145.)-0.0018*groove;
+  }
+  return 0.0012*medium*original_noise(p*23.)+0.00035*fine*original_noise(p*180.);
  }
- if kind<2.5 {return 0.0012*medium*original_noise(p*23.)+0.00035*fine*original_noise(p*180.);}
  if kind<3.5 {
   let course=fract(p.y*12.)*medium;
   return 0.0022*course+0.0014*medium*original_noise(p*32.)+0.0003*fine*original_noise(p*140.);
@@ -482,11 +484,15 @@ fn archive_surface(f:Fragment,front:bool,tex:vec4<f32>)->ArchiveSurface {
  let uv=surface_uv(f);let packed=material.workflow.y>1.5;var packed_normal=vec4<f32>(0.);var spec=vec4<f32>(1.);
  if packed {packed_normal=textureSample(normal_map,material_sampler,uv);spec=vec4<f32>(tex.a,packed_normal.a,0.,1.);}else{spec=textureSample(specular_map,material_sampler,uv);}var f0=spec.rgb*material.specular_gloss.rgb;var roughness=1.-spec.a*material.specular_gloss.a;var diffuse=base*(1.-max(max(f0.r,f0.g),f0.b));
  if material.workflow.x>0.5{let metallic=material.surface.x*spec.b;roughness=material.surface.y*spec.g;f0=mix(vec3<f32>(0.04),base,metallic);diffuse=base*(1.-metallic);}
- let face=select(-1.,1.,front);var normal=normalize(f.normal)*face;var tangent=normalize(f.tangent.xyz-normal*dot(normal,f.tangent.xyz))*face;var bitangent=cross(normal,tangent)*f.tangent.w*face;
- if material.workflow.w>0. {let n=abs(f.normal);if n.x>=n.y&&n.x>=n.z {tangent=vec3<f32>(0.,0.,-sign(f.normal.x));bitangent=vec3<f32>(0.,1.,0.);}else if n.y>=n.z {tangent=vec3<f32>(1.,0.,0.);bitangent=vec3<f32>(0.,0.,-sign(f.normal.y));}else{tangent=vec3<f32>(sign(f.normal.z),0.,0.);bitangent=vec3<f32>(0.,1.,0.);}}var mapped=vec3<f32>(0.,0.,1.);if packed {mapped=packed_normal.xyz*2.-1.;}else if material.workflow.y>0.5{mapped=textureSample(normal_map,material_sampler,uv).xyz*2.-1.;}mapped.x*=material.emissive_normal.w;mapped.y*=material.emissive_normal.w;normal=normalize(mat3x3<f32>(tangent,bitangent,normal)*mapped);if material.workflow.z>0.5{let height=original_height(f.world,material.workflow.z);normal=original_bump(f.world,normal,height);let r_amp=select(0.16,0.06,material.workflow.z>12.5);roughness=clamp(roughness+(original_noise(f.world*7.)-0.5)*r_amp,0.04,1.);}let dndx=dpdx(normal);let dndy=dpdy(normal);let sigma2=min(dot(dndx,dndx)+dot(dndy,dndy),0.25);roughness=clamp(sqrt(roughness*roughness+0.35*sigma2),0.04,1.);let view=normalize(camera.eye.xyz-f.world);
- let geometric=normalize(f.normal)*face;
+ let face=select(-1.,1.,front);let geometric=normalize(f.normal)*face;var normal=geometric;
+ if material.workflow.y>0.5 {
+  var tangent=normalize(f.tangent.xyz-normal*dot(normal,f.tangent.xyz))*face;var bitangent=cross(normal,tangent)*f.tangent.w*face;
+  if material.workflow.w>0. {let n=abs(f.normal);if n.x>=n.y&&n.x>=n.z {tangent=vec3<f32>(0.,0.,-sign(f.normal.x));bitangent=vec3<f32>(0.,1.,0.);}else if n.y>=n.z {tangent=vec3<f32>(1.,0.,0.);bitangent=vec3<f32>(0.,0.,-sign(f.normal.y));}else{tangent=vec3<f32>(sign(f.normal.z),0.,0.);bitangent=vec3<f32>(0.,1.,0.);}}
+  var mapped=vec3<f32>(0.,0.,1.);if packed {mapped=packed_normal.xyz*2.-1.;}else{mapped=textureSample(normal_map,material_sampler,uv).xyz*2.-1.;}mapped.x*=material.emissive_normal.w;mapped.y*=material.emissive_normal.w;normal=normalize(mat3x3<f32>(tangent,bitangent,normal)*mapped);
+ }
+ if material.workflow.z>0.5{let height=original_height(f.world,material.workflow.z);normal=original_bump(f.world,normal,height);let r_amp=select(0.16,0.06,material.workflow.z>12.5);roughness=clamp(roughness+(original_noise(f.world*7.)-0.5)*r_amp,0.04,1.);}let dndx=dpdx(normal);let dndy=dpdy(normal);let sigma2=min(dot(dndx,dndx)+dot(dndy,dndy),0.25);roughness=clamp(sqrt(roughness*roughness+0.35*sigma2),0.04,1.);let view=normalize(camera.eye.xyz-f.world);
  var splash=0.;
- if material.surface.z==0.&&!fx_off(16u)&&!(material.workflow.z>5.5&&material.workflow.z<6.5) {
+ if camera.surface.x>0.&&material.surface.z==0.&&!fx_off(16u)&&!(material.workflow.z>5.5&&material.workflow.z<6.5) {
   let wet=wet_layer(f.world,geometric,normal,roughness,dot(base,vec3<f32>(0.2126,0.7152,0.0722)));
   diffuse*=wet.darken;roughness=wet.roughness;normal=wet.normal;f0=mix(f0,max(f0,vec3<f32>(0.02)),wet.puddle);splash=wet.splash;
  }
@@ -505,7 +511,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  let rough_eff=mix(roughness,max(roughness,0.88),dust_mask*0.35);
  let diffuse_eff=mix(diffuse,vec3<f32>(0.54,0.52,0.48),dust_mask*0.14);
  let transmission=material.surface.z;let alpha=max(rough_eff*rough_eff,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,rough_eff),0.).rg;let shading=Brdf(normal,view,diffuse_eff*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility*micro_shadow(dot(normal,camera.sun.xyz),ao);
- for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;let distance2=max(dot(offset,offset),0.0001);let distance=sqrt(distance2);var attenuation=1./distance2;if light.position_kind.w>0.{attenuation*=square(clamp(1.-fourth(distance/light.position_kind.w),0.,1.));}if attenuation==0.{continue;}let l_dir=offset/distance;colour+=brdf(shading,l_dir)*light.colour_intensity.rgb*light.colour_intensity.a*attenuation*micro_shadow(dot(normal,l_dir),ao);}
+ for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);let r=light.position_kind.w;if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);colour+=brdf(shading,l_dir)*light.colour_intensity.rgb*light.colour_intensity.a*attenuation*micro_shadow(dot(normal,l_dir),ao);}
  // Directional sky, contact visibility and view-dependent environment Fresnel.
  if camera.eye.w>0.5 {
   let irradiance=textureSampleLevel(environment_diffuse,environment_sampler,normal,0.).rgb*environment_intensity.x;
@@ -546,44 +552,49 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   if camera.eye.w>0.5 {sky_light=textureSampleLevel(environment_diffuse,environment_sampler,vec3<f32>(0.,1.,0.),0.).rgb*environment_intensity.x;}
   colour+=sky_light*min(splash,1.)*0.6;
  }
- if material.workflow.z>5.5&&material.workflow.z<6.5 {
-  let veins=1.-0.18*exp(-abs(f.uv.x-0.5)*130.);
-  let pocket=0.78+0.28*original_noise(f.world*8.5);
-  colour*=veins*pocket;
-  let trans=max(dot(-normal,camera.sun.xyz)*0.7+0.3,0.);
-  let forward=pow(clamp(dot(-view,camera.sun.xyz),0.,1.),3.);
-  colour+=base*vec3<f32>(1.15,1.25,0.65)*camera.sun_colour.rgb*camera.sun_colour.a*(trans*0.18+forward*0.16)*visibility;
- }
- if material.workflow.z>9.5&&material.workflow.z<10.5 {
-  let tip=smoothstep(0.35,0.88,original_noise(vec3<f32>(f.world.x*32.,f.world.y*6.,f.world.z*32.)));
-  let graze=pow(1.-nv,2.);
-  colour+=base*vec3<f32>(1.2,1.15,0.65)*camera.sun_colour.rgb*camera.sun_colour.a*(0.06+0.12*graze)*tip*visibility;
- }
- if material.workflow.z>10.5&&material.workflow.z<11.5 {
-  let nl_sun=max(dot(normal,camera.sun.xyz),0.);
-  let nh_sun=max(dot(normal,normalize(view+camera.sun.xyz)),0.);
-  let sheen=charlie_sheen(nh_sun,nv,max(nl_sun,0.15),roughness)*0.09+pow(1.-nv,3.5)*0.06;
-  colour+=sqrt(max(base,vec3<f32>(0.01)))*sheen*camera.sun_colour.rgb*camera.sun_colour.a*max(nl_sun,0.15)*visibility;
- }
- if material.workflow.z>4.5&&material.workflow.z<5.5 {
-  let film_nm=260.+180.*original_noise(f.world*2.4);
-  let irid=thin_film_iridescence(nv,film_nm);
-  colour*=mix(vec3<f32>(1.),irid,0.08*smoothstep(0.2,0.85,1.-nv));
- }
- if material.workflow.z>14.5 {
-  let nl_sun=max(dot(normal,camera.sun.xyz),0.);
-  let nh_sun=max(dot(normal,normalize(view+camera.sun.xyz)),0.);
-  let velvet=charlie_sheen(nh_sun,nv,max(nl_sun,0.15),0.65)*0.06;
-  let sss=max(dot(-normal,camera.sun.xyz)*0.5+0.5,0.)*pow(1.-nv,2.);
-  colour+=base*(vec3<f32>(1.18,1.06,0.92)*sss*0.09+velvet)*camera.sun_colour.rgb*camera.sun_colour.a*visibility;
- }
- if (material.workflow.z>3.5&&material.workflow.z<4.5)||(material.workflow.z>13.5&&material.workflow.z<14.5) {
-  let clear_w=select(0.18,0.45,material.workflow.z>13.5);
-  let fc=0.04+0.96*fifth(1.-max(dot(geometric,view),0.));
-  let r_coat=reflect(-view,normalize(mix(normal,geometric,0.65)));
-  var coat_env=daylight(r_coat,camera.sun.xyz);
-  if camera.eye.w>0.5 {coat_env=textureSampleLevel(environment_specular,environment_sampler,r_coat,1.2).rgb*environment_intensity.x;}
-  colour+=coat_env*fc*clear_w*ao*smoothstep(-0.1,0.05,dot(r_coat,geometric));
+ let z=material.workflow.z;
+ if z>0.5 {
+  if z>8.5 {
+   if z>9.5&&z<10.5 {
+    let tip=smoothstep(0.35,0.88,original_noise(vec3<f32>(f.world.x*32.,f.world.y*6.,f.world.z*32.)));
+    let graze=pow(1.-nv,2.);
+    colour+=base*vec3<f32>(1.2,1.15,0.65)*camera.sun_colour.rgb*camera.sun_colour.a*(0.06+0.12*graze)*tip*visibility;
+   } else if z>10.5&&z<11.5 {
+    let nl_sun=max(dot(normal,camera.sun.xyz),0.);
+    let nh_sun=max(dot(normal,normalize(view+camera.sun.xyz)),0.);
+    let sheen=charlie_sheen(nh_sun,nv,max(nl_sun,0.15),roughness)*0.09+pow(1.-nv,3.5)*0.06;
+    colour+=sqrt(max(base,vec3<f32>(0.01)))*sheen*camera.sun_colour.rgb*camera.sun_colour.a*max(nl_sun,0.15)*visibility;
+   } else if z>14.5 {
+    let nl_sun=max(dot(normal,camera.sun.xyz),0.);
+    let nh_sun=max(dot(normal,normalize(view+camera.sun.xyz)),0.);
+    let velvet=charlie_sheen(nh_sun,nv,max(nl_sun,0.15),0.65)*0.06;
+    let sss=max(dot(-normal,camera.sun.xyz)*0.5+0.5,0.)*pow(1.-nv,2.);
+    colour+=base*(vec3<f32>(1.18,1.06,0.92)*sss*0.09+velvet)*camera.sun_colour.rgb*camera.sun_colour.a*visibility;
+   } else if z>13.5&&z<14.5 {
+    let fc=0.04+0.96*fifth(1.-max(dot(geometric,view),0.));
+    let r_coat=reflect(-view,normalize(mix(normal,geometric,0.65)));
+    var coat_env=daylight(r_coat,camera.sun.xyz);
+    if camera.eye.w>0.5 {coat_env=textureSampleLevel(environment_specular,environment_sampler,r_coat,1.2).rgb*environment_intensity.x;}
+    colour+=coat_env*fc*0.45*ao*smoothstep(-0.1,0.05,dot(r_coat,geometric));
+   }
+  } else if z>5.5&&z<6.5 {
+   let veins=1.-0.18*exp(-abs(f.uv.x-0.5)*130.);
+   let pocket=0.78+0.28*original_noise(f.world*8.5);
+   colour*=veins*pocket;
+   let trans=max(dot(-normal,camera.sun.xyz)*0.7+0.3,0.);
+   let forward=pow(clamp(dot(-view,camera.sun.xyz),0.,1.),3.);
+   colour+=base*vec3<f32>(1.15,1.25,0.65)*camera.sun_colour.rgb*camera.sun_colour.a*(trans*0.18+forward*0.16)*visibility;
+  } else if z>4.5&&z<5.5 {
+   let film_nm=260.+180.*original_noise(f.world*2.4);
+   let irid=thin_film_iridescence(nv,film_nm);
+   colour*=mix(vec3<f32>(1.),irid,0.08*smoothstep(0.2,0.85,1.-nv));
+  } else if z>3.5&&z<4.5 {
+   let fc=0.04+0.96*fifth(1.-max(dot(geometric,view),0.));
+   let r_coat=reflect(-view,normalize(mix(normal,geometric,0.65)));
+   var coat_env=daylight(r_coat,camera.sun.xyz);
+   if camera.eye.w>0.5 {coat_env=textureSampleLevel(environment_specular,environment_sampler,r_coat,1.2).rgb*environment_intensity.x;}
+   colour+=coat_env*fc*0.18*ao*smoothstep(-0.1,0.05,dot(r_coat,geometric));
+  }
  }
  if any(material.emissive_normal.rgb!=vec3<f32>(0.)){
   let day_suppress=mix(1.,0.16+0.84*fifth(nv),smoothstep(0.05,0.35,camera.sun.y));

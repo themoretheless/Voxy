@@ -687,6 +687,129 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
         tree(b, p, Vec3::new(px, DECK + 0.62, pz), 2.6, 0.95, 30);
     }
 
+    // ---- east poolside pergola & summer bar pavilion ----
+    let (px0, px1, pz0, pz1) = (6.8f32, 10.4f32, 114.6f32, 123.8f32);
+    let py0 = 0.12f32;
+    let py_deck = DECK;
+    b.span(travertine, [px0 - 0.2, py0, pz0 - 0.2], [px1 + 0.2, py_deck, pz1 + 0.2]);
+    // Step stones linking the main pool deck to the pergola terrace
+    for z_step in [116.8f32, 119.2, 121.6] {
+        b.span(
+            travertine,
+            [5.85, py0, z_step - 0.35],
+            [6.55, py_deck - 0.01, z_step + 0.35],
+        );
+    }
+    let py_top = py_deck + 2.55;
+    for &cx in &[px0, px1] {
+        for &cz in &[pz0, (pz0 + pz1) * 0.5, pz1] {
+            b.span(
+                p.metal,
+                [cx - 0.06, py_deck, cz - 0.06],
+                [cx + 0.06, py_top, cz + 0.06],
+            );
+        }
+        b.span(
+            p.metal,
+            [cx - 0.06, py_top - 0.12, pz0 - 0.1],
+            [cx + 0.06, py_top, pz1 + 0.1],
+        );
+    }
+    for &cz in &[pz0, (pz0 + pz1) * 0.5, pz1] {
+        b.span(
+            p.metal,
+            [px0 - 0.1, py_top - 0.12, cz - 0.06],
+            [px1 + 0.1, py_top, cz + 0.06],
+        );
+    }
+    // Timber brise-soleil slats casting sun-dappled shadows across the summer lounge
+    let slat_count = 24usize;
+    for i in 0..slat_count {
+        let sz = pz0 + 0.15 + i as f32 * (pz1 - pz0 - 0.3) / (slat_count - 1) as f32;
+        b.span(
+            p.timber,
+            [px0 - 0.15, py_top, sz - 0.03],
+            [px1 + 0.15, py_top + 0.09, sz + 0.03],
+        );
+    }
+    // Warm architectural LED strip along the central pergola beam
+    b.span(
+        p.glow,
+        [px0 + 0.2, py_top - 0.14, (pz0 + pz1) * 0.5 - 0.04],
+        [px1 - 0.2, py_top - 0.12, (pz0 + pz1) * 0.5 + 0.04],
+    );
+    // Summer kitchen bar counter with glazed ceramic countertop and bar stools
+    b.span(
+        cladding,
+        [px1 - 0.85, py_deck, pz0 + 0.8],
+        [px1 - 0.15, py_deck + 0.92, pz0 + 3.8],
+    );
+    b.span(
+        p.ceramic,
+        [px1 - 0.90, py_deck + 0.92, pz0 + 0.75],
+        [px1 - 0.10, py_deck + 0.97, pz0 + 3.85],
+    );
+    for stool_z in [pz0 + 1.35, pz0 + 2.3, pz0 + 3.25] {
+        let sx = px1 - 1.25;
+        b.span(
+            p.metal,
+            [sx - 0.025, py_deck, stool_z - 0.025],
+            [sx + 0.025, py_deck + 0.66, stool_z + 0.025],
+        );
+        b.span(
+            p.metal,
+            [sx - 0.18, py_deck + 0.01, stool_z - 0.18],
+            [sx + 0.18, py_deck + 0.03, stool_z + 0.18],
+        );
+        b.span(
+            cushion,
+            [sx - 0.19, py_deck + 0.66, stool_z - 0.19],
+            [sx + 0.19, py_deck + 0.72, stool_z + 0.19],
+        );
+    }
+    // Outdoor lounge daybed & low travertine table in the southern half of the pergola
+    b.span(
+        p.timber,
+        [px0 + 0.35, py_deck, pz1 - 3.6],
+        [px1 - 0.35, py_deck + 0.28, pz1 - 0.7],
+    );
+    b.span(
+        cushion,
+        [px0 + 0.42, py_deck + 0.28, pz1 - 3.52],
+        [px1 - 0.42, py_deck + 0.42, pz1 - 0.78],
+    );
+    b.span(
+        cushion,
+        [px1 - 0.68, py_deck + 0.42, pz1 - 3.52],
+        [px1 - 0.42, py_deck + 0.76, pz1 - 0.78],
+    );
+
+    // ---- west garden sunken fire-pit lounge & courtyard benches ----
+    let (fx, fz) = (-9.2f32, 118.5f32);
+    b.span(travertine, [fx - 2.3, 0.12, fz - 2.3], [fx + 2.3, 0.18, fz + 2.3]);
+    b.span(concrete, [fx - 0.65, 0.18, fz - 0.65], [fx + 0.65, 0.52, fz + 0.65]);
+    b.span(p.metal, [fx - 0.48, 0.52, fz - 0.48], [fx + 0.48, 0.56, fz + 0.48]);
+    b.span(p.glow, [fx - 0.28, 0.56, fz - 0.28], [fx + 0.28, 0.62, fz + 0.28]);
+    for (bx0, bx1, bz0, bz1) in [
+        (fx - 2.0, fx - 1.35, fz - 1.5, fz + 1.5),
+        (fx + 1.35, fx + 2.0, fz - 1.5, fz + 1.5),
+        (fx - 1.2, fx + 1.2, fz - 2.0, fz - 1.35),
+    ] {
+        b.span(p.timber, [bx0, 0.18, bz0], [bx1, 0.46, bz1]);
+        b.span(cushion, [bx0 + 0.04, 0.46, bz0 + 0.04], [bx1 - 0.04, 0.54, bz1 - 0.04]);
+    }
+    // Forecourt garden benches and glazed ceramic amphora planters at z = 85.8
+    for side in [-1.0f32, 1.0] {
+        let gx = side * 6.4;
+        b.span(p.timber, [gx - 0.9, 0.38, 85.5], [gx + 0.9, 0.44, 86.0]);
+        for lx in [gx - 0.75, gx + 0.75] {
+            b.span(p.metal, [lx - 0.04, 0.06, 85.54], [lx + 0.04, 0.38, 85.96]);
+        }
+        let vx = side * 4.5;
+        b.span(p.ceramic, [vx - 0.28, 0.06, 85.45], [vx + 0.28, 0.58, 86.05]);
+        b.span(p.foliage, [vx - 0.34, 0.58, 85.40], [vx + 0.34, 1.05, 86.10]);
+    }
+
     // ---- villa: glazed ground floor, cantilevered upper storey, flat roof ----
     let (vx, vz) = (12.0f32, [deck.1[1], 148.0f32]);
     let floor_top = DECK + 0.02;
@@ -926,6 +1049,25 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     b.span(fabric(6), [2.0, u0 + 0.45, 140.05], [3.8, u0 + 0.6, 142.15]);
     b.span(p.timber, [1.9, u0, 142.2], [3.9, u0 + 1.1, 142.3]);
     b.span(p.glow, [4.3, u0 + 0.9, 142.0], [4.5, u0 + 1.05, 142.2]);
+    // upstairs gallery bookshelves, study desk, and west-wing roof terrace lounge
+    b.span(p.wood, [-6.5, u0 + 0.02, 145.6], [-2.2, u0 + 2.25, 146.15]);
+    b.span(p.timber, [-5.4, u0 + 0.72, 138.8], [-3.4, u0 + 0.76, 139.7]);
+    for lx in [-5.3f32, -3.5] {
+        b.span(p.metal, [lx - 0.03, u0 + 0.02, 138.85], [lx + 0.03, u0 + 0.72, 139.65]);
+    }
+    b.span(p.ceramic, [-4.6, u0 + 0.76, 139.1], [-4.2, u0 + 0.98, 139.4]);
+    // Rooftop terrace loungers and glass table over the west wing (x = -11.5 .. -9.3)
+    for rz in [136.8f32, 139.6] {
+        b.span(p.timber, [-11.3, u0, rz - 0.32], [-9.6, u0 + 0.28, rz + 0.32]);
+        b.span(cushion, [-11.25, u0 + 0.28, rz - 0.28], [-9.65, u0 + 0.36, rz + 0.28]);
+    }
+    b.span(p.metal, [-10.7, u0, 138.0], [-10.1, u0 + 0.42, 138.4]);
+    b.span(p.glass, [-10.8, u0 + 0.42, 137.9], [-10.0, u0 + 0.45, 138.5]);
+    // Ground-floor living room library console, ceramic sculpture & indoor planter
+    b.span(p.wood, [-11.65, floor_top, 136.5], [-11.15, floor_top + 1.85, 140.2]);
+    b.span(p.ceramic, [0.4, floor_top + 0.38, 137.75], [0.72, floor_top + 0.56, 138.05]);
+    b.span(p.ceramic, [3.9, floor_top, 135.2], [4.4, floor_top + 0.48, 135.7]);
+    b.span(p.foliage, [3.85, floor_top + 0.48, 135.15], [4.45, floor_top + 1.25, 135.75]);
 
     // ---- garden trees ----
     for (tx, tz, h, r) in [
