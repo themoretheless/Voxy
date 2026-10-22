@@ -272,18 +272,23 @@ fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->f32{
  if fx_off(4u) {return 1.;}
  let radius=0.55;let projected=clamp(radius*camera.viewport.y/max(distance(p,camera.eye.xyz),0.5),2.,96.);
  let ign=fract(52.9829189*fract(dot(floor(pixel),vec2<f32>(0.06711056,0.00583715))))*0.75;
+ var cs=vec2<f32>(cos(ign),sin(ign));
+ let rot=vec2<f32>(-0.7373688,0.6754903);
+ let inv_vp=vec2<f32>(2.,-2.)/camera.viewport.xy;
  var sum=0.;var weight=0.;
  for(var i=0u;i<12u;i++){
-  let a=f32(i)*2.399963+ign;let r=sqrt((f32(i)+0.5)/12.);
-  let uv=pixel+vec2<f32>(cos(a),sin(a))*projected*r;
+  let r=sqrt((f32(i)+0.5)*(1./12.));
+  let uv=pixel+cs*(projected*r);
+  cs=vec2<f32>(cs.x*rot.x-cs.y*rot.y,cs.x*rot.y+cs.y*rot.x);
   if any(uv<vec2<f32>(0.))||any(uv>=camera.viewport.xy){continue;}
   let depth=textureLoad(scene_depth,vec2<i32>(uv),0);
   if depth>=1.{continue;}
-  let h=camera.inverse_vp*vec4<f32>((floor(uv)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.),depth,1.);
-  let delta=h.xyz/h.w-p;let len=length(delta);
-  if len>0.012&&len<radius {
-   let falloff=1.-len/radius;
-   sum+=max(dot(n,delta/len)-0.16,0.)*falloff*falloff;
+  let h=camera.inverse_vp*vec4<f32>((floor(uv)+0.5)*inv_vp+vec2<f32>(-1.,1.),depth,1.);
+  let delta=h.xyz/h.w-p;let d2=dot(delta,delta);
+  if d2>0.000144&&d2<0.3025 {
+   let inv_len=inverseSqrt(d2);
+   let falloff=1.-d2*inv_len*(1./0.55);
+   sum+=max(dot(n,delta)*inv_len-0.16,0.)*falloff*falloff;
   }
   weight+=1.;
  }

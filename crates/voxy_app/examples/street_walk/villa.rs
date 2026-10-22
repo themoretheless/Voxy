@@ -1079,6 +1079,106 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
         tree(b, p, Vec3::new(tx, 0.12, tz), h, r, 48);
     }
 
+    // ---- walled lane parterre gardens & stone gazebo alcoves (z = 89..103) ----
+    for side in [-1.0f32, 1.0] {
+        let s = |x: f32| side * x;
+        // Stepped travertine garden path behind the garden wall (x = ±5.0..14.0)
+        for step in 0..8 {
+            let sz = 90.0 + step as f32 * 1.6;
+            b.span(
+                travertine,
+                [s(5.4).min(s(6.2)), 0.10, sz - 0.28],
+                [s(5.4).max(s(6.2)), 0.15, sz + 0.28],
+            );
+        }
+        // Ornamental stone fountain basin & clipped topiary parterre at x = ±7.2, z = 95.8
+        let (bx, bz) = (s(7.2), 95.8f32);
+        b.span(
+            travertine,
+            [bx - 1.35, 0.10, bz - 1.85],
+            [bx + 1.35, 0.18, bz + 1.85],
+        );
+        b.span(
+            concrete,
+            [bx - 0.85, 0.18, bz - 1.25],
+            [bx + 0.85, 0.54, bz + 1.25],
+        );
+        b.span(
+            mosaic,
+            [bx - 0.72, 0.48, bz - 1.12],
+            [bx + 0.72, 0.52, bz + 1.12],
+        );
+        b.span(
+            p.ceramic,
+            [bx - 0.18, 0.52, bz - 0.18],
+            [bx + 0.18, 1.08, bz + 0.18],
+        );
+        b.span(
+            p.metal,
+            [bx - 0.04, 1.08, bz - 0.04],
+            [bx + 0.04, 1.22, bz + 0.04],
+        );
+        // Four corner topiary shrubs around the parterre court
+        for (dx, dz) in [(-1.1, -1.55), (1.1, -1.55), (-1.1, 1.55), (1.1, 1.55)] {
+            b.span(
+                p.ceramic,
+                [bx + dx - 0.24, 0.18, bz + dz - 0.24],
+                [bx + dx + 0.24, 0.52, bz + dz + 0.24],
+            );
+            b.span(
+                p.foliage,
+                [bx + dx - 0.32, 0.52, bz + dz - 0.32],
+                [bx + dx + 0.32, 1.16, bz + dz + 0.32],
+            );
+        }
+    }
+
+    // ---- rear sculpture courtyard & zen garden behind the villa (z = 148.2..151.3) ----
+    b.span(travertine, [-6.5, 0.12, 148.3], [6.5, 0.18, 151.2]);
+    // Modernist bronze/chrome sculpture plinth and interlocking rings
+    b.span(concrete, [-0.55, 0.18, 149.35], [0.55, 0.88, 150.45]);
+    b.span(travertine, [-0.62, 0.88, 149.28], [0.62, 0.96, 150.52]);
+    b.put(
+        chrome,
+        Vec3::new(0.0, 1.52, 149.9),
+        Vec3::new(0.75, 1.10, 0.22),
+        Quat::from_rotation_y(0.42),
+    );
+    b.put(
+        p.ceramic,
+        Vec3::new(0.0, 1.38, 149.9),
+        Vec3::new(0.36, 0.68, 0.36),
+        Quat::from_rotation_y(-0.35),
+    );
+    for side in [-1.0f32, 1.0] {
+        let bx = side * 3.8;
+        b.span(p.timber, [bx - 0.85, 0.18, 150.35], [bx + 0.85, 0.46, 150.85]);
+        b.span(cushion, [bx - 0.80, 0.46, 150.38], [bx + 0.80, 0.52, 150.82]);
+        let px = side * 5.6;
+        b.span(p.ceramic, [px - 0.32, 0.18, 149.6], [px + 0.32, 0.66, 150.2]);
+        b.span(p.foliage, [px - 0.38, 0.66, 149.55], [px + 0.38, 1.35, 150.25]);
+    }
+
+    // ---- additional villa interior & terrace details ----
+    // Poolside dining table centerpiece (ceramic fruit bowl & glass carafe)
+    b.span(p.ceramic, [-5.05, DECK + 0.76, 124.45], [-4.75, DECK + 0.84, 124.75]);
+    b.span(p.glass, [-4.85, DECK + 0.76, 124.92], [-4.73, DECK + 0.98, 125.04]);
+    // Living room coffee table art books & ceramic tea set, plus bar stools at kitchen island
+    b.span(p.ceramic, [0.85, floor_top + 0.38, 137.85], [1.12, floor_top + 0.44, 138.12]);
+    for i in 0..3 {
+        let sx = 6.5 + i as f32 * 1.1;
+        let sz = 140.55;
+        b.span(p.metal, [sx - 0.025, floor_top, sz - 0.025], [sx + 0.025, floor_top + 0.62, sz + 0.025]);
+        b.span(p.metal, [sx - 0.17, floor_top + 0.01, sz - 0.17], [sx + 0.17, floor_top + 0.03, sz + 0.17]);
+        b.span(fabric(2 + i), [sx - 0.18, floor_top + 0.62, sz - 0.18], [sx + 0.18, floor_top + 0.68, sz + 0.18]);
+    }
+    // Upstairs bedroom nightstands, reading lamps & wardrobe along the east wall
+    for nz in [139.55f32, 142.65] {
+        b.span(p.timber, [3.25, u0, nz - 0.24], [3.75, u0 + 0.48, nz + 0.24]);
+        b.span(p.ceramic, [3.42, u0 + 0.48, nz - 0.08], [3.58, u0 + 0.68, nz + 0.08]);
+    }
+    b.span(p.wood, [10.85, u0 + 0.02, 138.5], [11.55, u0 + 2.35, 143.5]);
+
     Villa {
         water: vec![WaterBody::pool(
             Vec3::new(-x, DEEP, z0),
