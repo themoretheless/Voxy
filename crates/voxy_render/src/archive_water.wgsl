@@ -160,14 +160,18 @@ fn sun_visible(p:vec3<f32>)->f32 {
 
 // Sunlight refracted through the surface converges or spreads with the curvature of
 // the waves: intensity ~ 1/det(I + d (1 - 1/n) H) for a floor `d` metres below.
-fn caustic_at(above:vec2<f32>, depth:f32)->f32 {
+fn caustic_at_k(above:vec2<f32>, k:f32)->f32 {
   let e = 0.032;
-  let sx = (caustic_slope(above + vec2<f32>(e, 0.)) - caustic_slope(above - vec2<f32>(e, 0.))) / (2. * e);
-  let sz = (caustic_slope(above + vec2<f32>(0., e)) - caustic_slope(above - vec2<f32>(0., e))) / (2. * e);
-  let k = depth * (1. - 1. / IOR) * edge_weight(above);
+  let inv_e = 1. / e;
+  let s0 = caustic_slope(above);
+  let sx = (caustic_slope(above + vec2<f32>(e, 0.)) - s0) * inv_e;
+  let sz = (caustic_slope(above + vec2<f32>(0., e)) - s0) * inv_e;
   let det = (1. + k * sx.x) * (1. + k * sz.y) - k * k * sx.y * sz.x;
   let raw = clamp(1. / max(abs(det), 0.075), 0.20, 4.2);
   return mix(raw, pow(raw, 1.32), 0.42);
+}
+fn caustic_at(above:vec2<f32>, depth:f32)->f32 {
+  return caustic_at_k(above, depth * (1. - 1. / IOR) * edge_weight(above));
 }
 fn caustic(p:vec3<f32>, level:f32)->vec3<f32> {
   let sun = camera.sun.xyz;
@@ -176,10 +180,12 @@ fn caustic(p:vec3<f32>, level:f32)->vec3<f32> {
   if depth <= 0. { return vec3<f32>(1.); }
   let t = refract(-sun, vec3<f32>(0., 1., 0.), 1. / IOR);
   let above = p.xz - t.xz / t.y * depth;
+  let k = depth * (1. - 1. / IOR) * edge_weight(above);
+  if k <= 0. { return vec3<f32>(1.); }
   let shift = t.xz / t.y * min(depth, 2.0) * 0.011;
-  let cr = caustic_at(above - shift, depth);
-  let cg = caustic_at(above, depth);
-  let cb = caustic_at(above + shift, depth);
+  let cr = caustic_at_k(above - shift, k);
+  let cg = caustic_at_k(above, k);
+  let cb = caustic_at_k(above + shift, k);
   return mix(vec3<f32>(1.), vec3<f32>(cr, cg, cb), water.scatter.w);
 }
 
@@ -187,7 +193,10 @@ fn caustic(p:vec3<f32>, level:f32)->vec3<f32> {
 // plus in-scattered ambient light. Caustics modulate the directly sunlit share.
 fn under_water(radiance:vec3<f32>, point:vec3<f32>, level:f32, path:f32, ambient:vec3<f32>)->vec3<f32> {
   let sunlit = sun_visible(point) * clamp(camera.sun.y * 3., 0., 1.);
-  let lit = radiance * mix(vec3<f32>(1.), caustic(point, level), 0.78 * sunlit);
+  var lit = radiance;
+  if sunlit > 0. {
+    lit *= mix(vec3<f32>(1.), caustic(point, level), 0.78 * sunlit);
+  }
   let t = exp(-water.absorption.rgb * path);
   let forward = pow(clamp(dot(normalize(point - camera.eye.xyz), -camera.sun.xyz), 0., 1.), 3.) * sunlit;
   let scatter = water.scatter.rgb * (ambient + camera.sun_colour.rgb * camera.sun_colour.a * forward * 0.08);
@@ -340,13 +349,15 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
   // Unresolved ripples spread the reflection: average the sky over the slope
   // distribution (the analytic sky has no prefiltered mips) and fade the mirror trace.
   let spread = sqrt(max(cov.xy, vec2<f32>(0.)));
-  var reflected = vec3<f32>(0.);
-  for (var k = 0; k < 5; k++) {
-    let o = array<vec2<f32>, 5>(vec2<f32>(0.), vec2<f32>(1., 0.), vec2<f32>(-1., 0.), vec2<f32>(0., 1.), vec2<f32>(0., -1.))[k];
-    let rk = reflect(-v, normalize(vec3<f32>(-(s.x + o.x * spread.x), 1., -(s.y + o.y * spread.y))));
-    reflected += sky(vec3<f32>(rk.x, max(rk.y, 0.01), rk.z), roughness) * select(0.15, 0.4, k == 0);
-  }
   let r = reflect(-v, n_up);
+  var reflected = sky(vec3<f32>(r.x, max(r.y, 0.01), r.z), roughness);
+  if camera.eye.w <= 0.5 && max(spread.x, spread.y) > 0.008 {
+    let r_px = reflect(-v, normalize(vec3<f32>(-(s.x + spread.x), 1., -s.y)));
+    let r_mx = reflect(-v, normalize(vec3<f32>(-(s.x - spread.x), 1., -s.y)));
+    reflected = reflected * 0.5
+      + (sky(vec3<f32>(r_px.x, max(r_px.y, 0.01), r_px.z), roughness)
+       + sky(vec3<f32>(r_mx.x, max(r_mx.y, 0.01), r_mx.z), roughness)) * 0.25;
+  }
   let ssr = screen_reflection(f.world + n_up * 0.02, normalize(vec3<f32>(r.x, max(r.y, 0.02), r.z)), 1e9);
   reflected = mix(reflected, ssr.rgb, ssr.a * (1. - smoothstep(0.06, 0.2, length(spread))));
   let nv = max(dot(n_up, v), 0.);

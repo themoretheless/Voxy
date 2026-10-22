@@ -1872,6 +1872,35 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                     Quat::from_rotation_z(side * 0.16),
                 );
                 b.block(cloth, [side * 6.02, 2.49, z], [0.1, 0.32, 5.8]);
+                // Sidewalk bistro café tables, chairs, and porcelain cups under the awning.
+                for tz_off in [-1.45f32, 1.45] {
+                    let tx = side * 6.18;
+                    let tz = z + tz_off;
+                    b.block(metal, [tx, 0.08, tz], [0.34, 0.04, 0.34]);
+                    b.block(metal, [tx, 0.40, tz], [0.045, 0.64, 0.045]);
+                    b.block(kit.ceramic, [tx, 0.73, tz], [0.58, 0.035, 0.58]);
+                    b.block(metal, [tx, 0.725, tz], [0.60, 0.025, 0.60]);
+                    b.block(kit.ceramic, [tx - side * 0.10, 0.775, tz - 0.08], [0.09, 0.06, 0.09]);
+                    b.block(kit.ceramic, [tx + side * 0.08, 0.76, tz + 0.10], [0.12, 0.02, 0.12]);
+                    for cz_dir in [-1.0f32, 1.0] {
+                        let cz = tz + cz_dir * 0.48;
+                        b.block(timber, [tx, 0.44, cz], [0.36, 0.035, 0.36]);
+                        b.block(
+                            timber,
+                            [tx, 0.66, cz + cz_dir * 0.16],
+                            [0.36, 0.42, 0.035],
+                        );
+                        for lx in [-0.15f32, 0.15] {
+                            for lz in [-0.15f32, 0.15] {
+                                b.block(
+                                    metal,
+                                    [tx + lx, 0.22, cz + lz],
+                                    [0.025, 0.42, 0.025],
+                                );
+                            }
+                        }
+                    }
+                }
             }
             // Benches and outdoor tables are built from separate timber and steel parts.
             if house % 2 == 0 {
@@ -2040,7 +2069,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             }
         }
     }
-    // Original end-of-street landmark and fountain.
+    // Original end-of-street landmark and fountain, flanked by civic benches and planters.
     b.block(trim, [0., 0.2, 75.], [6., 0.45, 6.]);
     b.put(
         trunk,
@@ -2054,6 +2083,30 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         Vec3::splat(0.6),
         Quat::IDENTITY,
     );
+    for side in [-1.0f32, 1.0] {
+        for pz in [72.4f32, 77.6] {
+            let px = side * 2.55;
+            b.block(kit.ceramic, [px, 0.62, pz], [0.56, 0.42, 0.56]);
+            b.block(foliage, [px, 1.02, pz], [0.64, 0.52, 0.64]);
+        }
+        let bx = side * 5.2;
+        b.block(timber, [bx, 0.48, 75.0], [0.48, 0.05, 1.8]);
+        b.block(timber, [bx + side * 0.21, 0.74, 75.0], [0.05, 0.48, 1.8]);
+        for dz in [-0.72f32, 0.72] {
+            b.block(metal, [bx, 0.24, 75.0 + dz], [0.44, 0.44, 0.06]);
+        }
+    }
+    // Classical entablature moldings and lantern brackets on the colonnade archway.
+    b.block(trim, [0., 5.08, 87.75], [4.6, 0.18, 0.95]);
+    for side in [-1.0f32, 1.0] {
+        b.block(metal, [side * 1.85, 3.65, 87.02], [0.08, 0.28, 0.18]);
+        b.put(
+            bulb,
+            Vec3::new(side * 1.85, 3.48, 86.95),
+            Vec3::new(0.18, 0.24, 0.18),
+            Quat::IDENTITY,
+        );
+    }
     // The colonnade opens in the middle onto the lane towards the villa.
     for side in [-1., 1.] {
         b.block(trim, [side * 9.02, 2.5, 88.], [13.96, 5., 0.6]);
@@ -2341,7 +2394,8 @@ mod tests {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
         let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
-            required_features: adapter.features() & wgpu::Features::FLOAT32_FILTERABLE,
+            required_features: adapter.features()
+                & (wgpu::Features::FLOAT32_FILTERABLE | wgpu::Features::TIMESTAMP_QUERY),
             required_limits: wgpu::Limits::default().using_resolution(adapter.limits()),
             ..Default::default()
         }))
@@ -2415,6 +2469,28 @@ mod tests {
             renderer.advance_water(1. / 30.);
             renderer.draw(&view, eye, direction);
             device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            let _ = renderer.collect_completed_gpu_times();
+        }
+        if std::env::var("VOXY_VILLA_GPU_TIMING").as_deref() == Ok("1") {
+            let total = &renderer.gpu_times_ms;
+            let shading = &renderer.gpu_shading_times_ms;
+            let mean_skip = |xs: &[f64]| -> f64 {
+                let s = if xs.len() > 2 { &xs[2..] } else { xs };
+                if s.is_empty() {
+                    0.0
+                } else {
+                    s.iter().sum::<f64>() / s.len() as f64
+                }
+            };
+            let op: Vec<f64> = shading.iter().map(|s| s[0]).collect();
+            let tr: Vec<f64> = shading.iter().map(|s| s[1]).collect();
+            eprintln!(
+                "GPU_TIMING samples={} total_mean={:.3}ms opaque_mean={:.3}ms trans_water_mean={:.3}ms",
+                total.len(),
+                mean_skip(total),
+                mean_skip(&op),
+                mean_skip(&tr),
+            );
         }
         let bpp = if format == wgpu::TextureFormat::Rgba16Float {
             8
