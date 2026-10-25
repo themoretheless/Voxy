@@ -1,0 +1,20 @@
+   Compiling wgpu-hal v30.0.1 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/vendor/wgpu-hal)
+   Compiling wgpu v30.0.1 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/vendor/wgpu)
+   Compiling voxy_core v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_core)
+   Compiling physics v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/physics)
+   Compiling voxy_ui v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_ui)
+   Compiling voxy_time v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_time)
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_assets)
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_text)
+   Compiling voxy_ui_winit v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_ui_winit)
+   Compiling voxy_world v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_world)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_scene)
+   Compiling voxy_lighting v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_lighting)
+   Compiling voxy_mesher v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_mesher)
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling voxy_water v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_water)
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_gpu_core)
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/physics_voxel)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/.codex/worktrees/shared-upload-delivery-check/voxy/crates/voxy_render)
+    Finished `release` profile [optimized] target(s) in 1m 25s

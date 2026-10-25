@@ -1,0 +1,18 @@
+{
+  "base": "0a318afc2",
+  "paths_changed": [
+    "crates/voxy_gpu_core/src/shared_upload.rs",
+    "crates/voxy_render/src/full_frame_upload_bench.rs"
+  ],
+  "executables": {
+    "voxy_gpu_core": {
+      "path": "/tmp/voxy-shared-20261025-target/release/deps/voxy_gpu_core-aba4487f592164d7",
+      "sha256": "6770900f394d075d6b1949350e2dd5c03cb9678f2a03ddfec4acb1d91bd3a31a"
+    },
+    "voxy_render": {
+      "path": "/tmp/voxy-shared-20261025-target/release/deps/voxy_render-1c4ff7740b72801b",
+      "sha256": "e54233dd22883dbf6eea8e027b44b00e3e948cca3ca8d54cb77b5a2e21f9c5dc"
+    }
+  },
+  "all_jobs_passed": true
+}

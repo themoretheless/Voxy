@@ -1,0 +1,10 @@
+{
+  "thread": "01a139d5-70ed-7062-ae25-d1eaa97dc6d3",
+  "ack_utc": "2026-10-25T15:26:23.509622+00:00",
+  "paused_identities": [],
+  "status": "no active heavy owned controller; light source audit only during quiet window",
+  "resume": "explicit release file/message or maximum 600 seconds",
+  "maximum_quiet_window_elapsed": true,
+  "updated_utc": "2026-10-25T15:39:46.596782+00:00",
+  "note": "No active owned process remains paused; resumed CPU qualification after maximum 600 seconds. Preliminary timing excluded."
+}

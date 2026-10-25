@@ -1,0 +1,56 @@
+[
+  {
+    "stem": "aa-instances-throughput-r1-a1",
+    "phase": "aa",
+    "repeat": 1,
+    "protocol": "throughput",
+    "owner": "instances",
+    "exit_code": 0,
+    "binary_sha256": "6538376c163bd5b4785173e1d5a28b84e99362e853820c12c733d2271fdabfb9",
+    "accepted": false,
+    "reason": "GPU did not drain to idle after run"
+  },
+  {
+    "stem": "aa-instances-throughput-r1-a2",
+    "phase": "aa",
+    "repeat": 1,
+    "protocol": "throughput",
+    "owner": "instances",
+    "exit_code": 0,
+    "binary_sha256": "6538376c163bd5b4785173e1d5a28b84e99362e853820c12c733d2271fdabfb9",
+    "accepted": true,
+    "ratios": {
+      "cpu_p50": 0.9968449742272212,
+      "gpu_p50": 1.003872910776205,
+      "completion_p50": 1.0025840861740947,
+      "completion_p99": 0.9978641477328807,
+      "gpu_gap_p50": 1.003979875813469,
+      "gpu_gap_p95": 0.99816745754027,
+      "gpu_gap_p99": 0.990429312809521,
+      "start_gap_p99": 1.0860724452895405
+    },
+    "reason": "accepted"
+  },
+  {
+    "stem": "aa-particles-throughput-r1-a1",
+    "phase": "aa",
+    "repeat": 1,
+    "protocol": "throughput",
+    "owner": "particles",
+    "exit_code": 0,
+    "binary_sha256": "6538376c163bd5b4785173e1d5a28b84e99362e853820c12c733d2271fdabfb9",
+    "accepted": false,
+    "reason": "GPU did not drain to idle after run"
+  },
+  {
+    "stem": "aa-particles-throughput-r1-a2",
+    "phase": "aa",
+    "repeat": 1,
+    "protocol": "throughput",
+    "owner": "particles",
+    "exit_code": 0,
+    "binary_sha256": "6538376c163bd5b4785173e1d5a28b84e99362e853820c12c733d2271fdabfb9",
+    "accepted": false,
+    "reason": "GPU did not drain to idle after run"
+  }
+]

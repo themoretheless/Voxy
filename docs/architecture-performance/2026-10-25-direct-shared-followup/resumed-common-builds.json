@@ -1,0 +1,45 @@
+{
+  "reason": "safety deadline or controller stop",
+  "processes": [
+    {
+      "pid": 42651,
+      "time": 1792942680.251636,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 42652,
+      "time": 1792942680.2567198,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 49965,
+      "time": 1792942680.261784,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 46993,
+      "time": 1792942680.266229,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 46133,
+      "time": 1792942680.270541,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 46953,
+      "time": 1792942680.278734,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 44912,
+      "time": 1792942680.285929,
+      "signal": "SIGCONT"
+    },
+    {
+      "pid": 40131,
+      "time": 1792942680.290158,
+      "signal": "SIGCONT"
+    }
+  ]
+}

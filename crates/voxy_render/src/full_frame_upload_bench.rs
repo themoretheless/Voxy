@@ -5,7 +5,7 @@ use std::time::{Duration, Instant};
 pub const WIDTH: u32 = 1920;
 pub const HEIGHT: u32 = 1080;
 pub const COUNT: usize = 4096;
-const FRAMES: u32 = 24;
+const FRAMES: u32 = 48;
 pub fn device() -> (wgpu::Adapter, wgpu::Device, wgpu::Queue) {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
         backends: wgpu::Backends::METAL,
@@ -196,7 +196,7 @@ pub fn pairs(
     });
     let resolve = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
-        size: 512,
+        size: (u64::from(FRAMES) * 16).div_ceil(256) * 256,
         usage: wgpu::BufferUsages::QUERY_RESOLVE | wgpu::BufferUsages::COPY_SRC,
         mapped_at_creation: false,
     });

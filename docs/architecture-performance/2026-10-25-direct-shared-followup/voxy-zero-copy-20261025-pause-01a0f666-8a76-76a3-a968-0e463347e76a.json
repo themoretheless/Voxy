@@ -1,0 +1,31 @@
+{
+  "state": "resumed",
+  "thread_id": "01a0f666-8a76-76a3-a968-0e463347e76a",
+  "pause_started_unix": 1792942072.612344,
+  "deadline_unix": 1792942672.612344,
+  "watcher_pid": 44206,
+  "paused_identities": [
+    {
+      "pid": 22639,
+      "identity": "22639 22636 Sun Oct 25 18:50:42 2026     /opt/homebrew/Cellar/python@3.15/3.15.1/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python artifacts/original-street-realism-2026-10-25/wide-near-first-candidate-v1/qualify-after-baseline.py"
+    },
+    {
+      "pid": 38545,
+      "identity": "38545 22639 Sun Oct 25 19:17:42 2026     /opt/homebrew/Cellar/python@3.15/3.15.1/Frameworks/Python.framework/Versions/3.15/Resources/Python.app/Contents/MacOS/Python /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-25/wide-near-first-candidate-v1/run-source-matrix.py"
+    },
+    {
+      "pid": 42651,
+      "identity": "42651 38545 Sun Oct 25 19:24:17 2026     /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-25/wide-near-first-candidate-v1/voxy_ray_probe --experimental --backend metal"
+    }
+  ],
+  "precision_artifacts_preserved": true,
+  "goal_status": "active",
+  "timing_qualified": false,
+  "resumed_pids": [
+    42651,
+    38545,
+    22639
+  ],
+  "release_seen": false,
+  "safety_deadline_reached": true
+}

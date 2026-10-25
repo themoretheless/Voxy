@@ -1,0 +1,9 @@
+{
+  "complete": true,
+  "candidate_enabled_in_working_tree": true,
+  "observed_load_summary": "session-observed-load/summary.json",
+  "all_controls_stable": true,
+  "all_performance_gates_passed": false,
+  "strict_isolation_required_by_user": false,
+  "correctness_passed": true
+}

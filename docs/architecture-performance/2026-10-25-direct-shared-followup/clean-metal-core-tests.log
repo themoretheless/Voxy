@@ -1,0 +1,36 @@
+
+running 3 tests
+test shared_upload::generated_tests::gpu_generated_snapshots_retain_all_uses_and_reclaim_failures ... 
+thread 'shared_upload::generated_tests::gpu_generated_snapshots_retain_all_uses_and_reclaim_failures' (65832410) panicked at crates/voxy_gpu_core/src/shared_upload.rs:721:62:
+producer unwind regression
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'shared_upload::generated_tests::gpu_generated_snapshots_retain_all_uses_and_reclaim_failures' (65832410) panicked at crates/voxy_gpu_core/src/shared_upload.rs:721:62:
+producer unwind regression
+
+thread 'shared_upload::generated_tests::gpu_generated_snapshots_retain_all_uses_and_reclaim_failures' (65832410) panicked at crates/voxy_gpu_core/src/shared_upload.rs:721:62:
+producer unwind regression
+
+thread 'shared_upload::generated_tests::gpu_generated_snapshots_retain_all_uses_and_reclaim_failures' (65832410) panicked at crates/voxy_gpu_core/src/shared_upload.rs:721:62:
+producer unwind regression
+
+thread 'shared_upload::generated_tests::gpu_generated_snapshots_retain_all_uses_and_reclaim_failures' (65832410) panicked at crates/voxy_gpu_core/src/shared_upload.rs:721:62:
+producer unwind regression
+
+thread 'shared_upload::generated_tests::gpu_generated_snapshots_retain_all_uses_and_reclaim_failures' (65832410) panicked at crates/voxy_gpu_core/src/shared_upload.rs:721:62:
+producer unwind regression
+
+thread 'shared_upload::generated_tests::gpu_generated_snapshots_retain_all_uses_and_reclaim_failures' (65832410) panicked at crates/voxy_gpu_core/src/shared_upload.rs:721:62:
+producer unwind regression
+
+thread 'shared_upload::generated_tests::gpu_generated_snapshots_retain_all_uses_and_reclaim_failures' (65832410) panicked at crates/voxy_gpu_core/src/shared_upload.rs:721:62:
+producer unwind regression
+ok
+test shared_upload::tests::gpu_shared_ring_preserves_three_unsubmitted_snapshots_and_recycles ... core shared upload adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+core shared upload adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+test shared_upload::tests::gpu_shared_staging_copy_plan_is_atomic_and_preserves_ranges ... core shared upload adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 32 filtered out; finished in 0.08s
+

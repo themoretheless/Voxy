@@ -1,0 +1,11 @@
+{
+  "crates/voxy_gpu_core/src/shared_upload.rs": "a501be13b5e580fb826aa0440848a4daea46885b75d4f253bfa312b7076bd37b",
+  "crates/voxy_render/src/full_frame_upload_bench.rs": "eeec2e604171c181260a48467ebd6663fda03add4ebb3b80273b8b2c98064f5d",
+  "crates/voxy_render/src/native_vegetation.rs": "fd42e85d889f52fbf48c03813f303d4693fcfa875e289a8188ecb14005ca4b21",
+  "crates/voxy_render/src/native_vegetation_shared_tests.rs": "57fe17b0ed27eab6d942f60b6585b839e5a56d73bca82d93cb409b6def8116b9",
+  "crates/voxy_render/src/fluid_screen.rs": "07fd80fdad01a310fa1052c7c5ecdf46877dae5d5c330859817c1b67debbb455",
+  "crates/voxy_render/src/fluid_shared_tests.rs": "f6204510028084d690237a13ada14b91d97667ae07b4bf803ea272f861d67fda",
+  "docs/architecture-performance/2026-10-25-direct-shared-followup/criteria.json": "945aa49e688ead1ae4b794807e19f9fee24949da45cba79bdf567d504e754749",
+  "docs/architecture-performance/2026-10-25-direct-shared-followup/qualify.py": "6aa953e0cb59ae9e3f31143157ea9131af62f708e73fe042189a73c97eee0b6a",
+  "docs/architecture-performance/2026-10-25-direct-shared-followup/summarize.py": "dcee93c10723e32b5f96ed08f5df830c5808a6276ca1d45d13415ea64a6e215e"
+}

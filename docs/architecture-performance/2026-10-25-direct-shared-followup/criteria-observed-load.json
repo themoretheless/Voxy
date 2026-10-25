@@ -1,0 +1,50 @@
+{
+  "scope": "1920x1080 complete owner production passes over opaque checker geometry, 4096 dynamic inputs; offscreen only",
+  "protocols": [
+    "unpaced queue depth at most 3",
+    "120 Hz start deadlines, queue depth at most 3"
+  ],
+  "sampling": {
+    "repeats": 2,
+    "measured_pairs_per_repeat": 18,
+    "blocks_per_pair_per_mode": 2,
+    "frames_per_block": 48,
+    "warmup_pairs": 1
+  },
+  "admission": {
+    "gpu_idle_percent_max": 10,
+    "consecutive_quiet_seconds": 5,
+    "exclude_live_gpu_workloads": true,
+    "exclude_active_compilation": true,
+    "stopped_processes": "logged, excluded from active rivals"
+  },
+  "aa_median_ratio_tolerances": {
+    "cpu_p50": 0.1,
+    "gpu_p50": 0.05,
+    "completion_p50": 0.1,
+    "gpu_gap_p50": 0.05
+  },
+  "aa_paced_tail_ratio_tolerances": {
+    "gpu_gap_p95": 0.05,
+    "gpu_gap_p99": 0.1,
+    "start_gap_p99": 0.1
+  },
+  "ab_noninferiority_upper_95ci": {
+    "cpu_p50": 1.05,
+    "gpu_p50": 1.05,
+    "completion_p50": 1.05,
+    "gpu_gap_p50": 1.05,
+    "paced_gpu_gap_p99": 1.1
+  },
+  "ab_paced_max_deadline_miss_increase_percentage_points": 0.5,
+  "ci": "deterministic percentile bootstrap, 36 paired metric ratios, 95% two-sided interval; fixed sample count, no optional stopping",
+  "not_qualified": [
+    "display Present/vsync pacing",
+    "whole street_walk gameplay",
+    "other scene complexities",
+    "M1/M2/M3"
+  ],
+  "candidate": "round-robin selection for generated snapshots only; immutable leases, completion callbacks, fallback unchanged",
+  "prior_evidence": "2026-10-22 matrix retained without pooling; small throughput instance slowdown and paced particle uncertainty",
+  "authorization_override": "User explicitly waived uncontended GPU requirement and asked to proceed/push; --allow-contention skips idle admission and rival termination but logs all observations. Samples are completed diagnostic runs, not isolation-qualified runs."
+}

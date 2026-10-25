@@ -1,0 +1,95 @@
+{
+  "processes": [
+    {
+      "pid": 40131,
+      "identity": "40131 40130 S+   Sun Oct 25 19:21:23 2026     /Users/themoretheless/.rustup/toolchains/1.98.1-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792942140.101042,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 42652,
+      "identity": "42652     1 Rs   Sun Oct 25 19:24:17 2026     /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "signal": "SIGSTOP",
+      "time": 1792942140.104064,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 44912,
+      "identity": "44912 40131 S+   Sun Oct 25 19:28:53 2026     /Users/themoretheless/Documents/Sources/fvid/target/debug/deps/audio_budget_controls_regressions-30350472aacdf0ad",
+      "signal": "SIGSTOP",
+      "time": 1792942140.106847,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 45772,
+      "identity": "45772 45771 U    Sun Oct 25 19:30:07 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792942207.848784,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 46133,
+      "identity": "46133 74975 Ss   Sun Oct 25 19:30:36 2026     /Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792942237.59287,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 46953,
+      "identity": "46953 74975 Ss   Sun Oct 25 19:31:29 2026     /Users/themoretheless/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792942290.099297,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 46993,
+      "identity": "46993 74975 Ss   Sun Oct 25 19:31:32 2026     /Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792942293.717466,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 47842,
+      "identity": "47842 47841 S    Sun Oct 25 19:32:41 2026     /Users/themoretheless/.rustup/toolchains/nightly-2026-09-16-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792942362.329246,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 46133,
+      "identity": "46133 74975 Ss   Sun Oct 25 19:30:36 2026     /Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792942452.009901,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 46993,
+      "identity": "46993 74975 Ss   Sun Oct 25 19:31:32 2026     /Users/themoretheless/.rustup/toolchains/nightly-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792942452.012457,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 49965,
+      "identity": "49965 74975 Ss   Sun Oct 25 19:36:39 2026     /Users/themoretheless/.rustup/toolchains/stable-aarch64-apple-darwin/bin/cargo",
+      "signal": "SIGSTOP",
+      "time": 1792942600.410812,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 42652,
+      "identity": "42652     1 Rs   Sun Oct 25 19:24:17 2026     /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "signal": "SIGSTOP",
+      "time": 1792942672.9020958,
+      "initiator": "user-authorized temporary common build window"
+    },
+    {
+      "pid": 42651,
+      "identity": "42651 38545 Ss   Sun Oct 25 19:24:17 2026     /Users/themoretheless/Documents/Sources/voxy/artifacts/original-street-realism-2026-10-25/wide-near-first-candidate-v1/voxy_ray_probe",
+      "signal": "SIGSTOP",
+      "time": 1792942672.9046369,
+      "initiator": "user-authorized temporary common build window"
+    }
+  ]
+}

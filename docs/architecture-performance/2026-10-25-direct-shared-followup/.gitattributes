@@ -1,0 +1,3 @@
+# Preserve verbatim tool output and unified-diff context whitespace.
+*.log -whitespace
+*.patch -whitespace

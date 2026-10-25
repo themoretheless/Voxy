@@ -1,0 +1,4 @@
+{
+  "status": "incomplete",
+  "reason": "no uncontended GPU admission window"
+}

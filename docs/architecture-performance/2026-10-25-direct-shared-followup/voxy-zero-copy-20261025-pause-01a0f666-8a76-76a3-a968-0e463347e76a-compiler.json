@@ -1,0 +1,17 @@
+{
+  "state": "resumed",
+  "record": {
+    "pid": 42652,
+    "identity": "42652     1 Sun Oct 25 19:24:17 2026     /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+    "client_pid": 42651,
+    "launchctl_target": "pid/42651/com.apple.MTLCompilerService.433A1550-9F44-4FB6-8322-1A14E95FEAB4",
+    "verified_domain_evidence": [
+      "state = running",
+      "domain = pid/42651 [voxy_ray_probe]",
+      "pid = 42652"
+    ]
+  },
+  "resumed": true,
+  "deadline_unix": 1792942672.612344,
+  "release_seen": false
+}

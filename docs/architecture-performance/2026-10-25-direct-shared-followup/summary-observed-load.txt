@@ -1,0 +1,48 @@
+aa instances paced noninferior None
+  cpu_p50 279.615 -> 272.146 ratio 0.9928 CI [0.9653, 1.0088]
+  gpu_p50 868.688 -> 854.25 ratio 0.9953 CI [0.9748, 1.0096]
+  completion_p50 1808.26 -> 1801.854 ratio 0.9947 CI [0.9877, 1.0045]
+  gpu_gap_p99 8930.18 -> 8872.719 ratio 0.9921 CI [0.9869, 1.0046]
+ misses {'before': 147, 'after': 164} gates {'cpu_p50': True, 'gpu_p50': True, 'completion_p50': True, 'gpu_gap_p50': True, 'gpu_gap_p99': True, 'deadline_misses': True}
+aa instances throughput noninferior None
+  cpu_p50 129.0 -> 131.187 ratio 1.0001 CI [0.9777, 1.0179]
+  gpu_p50 188.292 -> 188.688 ratio 1.0022 CI [0.9976, 1.0053]
+  completion_p50 571.198 -> 574.572 ratio 0.9999 CI [0.9967, 1.0053]
+  gpu_gap_p99 277.288 -> 294.94 ratio 0.9986 CI [0.9569, 1.0596]
+ misses {'before': 0, 'after': 0} gates {'cpu_p50': True, 'gpu_p50': True, 'completion_p50': True, 'gpu_gap_p50': True}
+aa particles paced noninferior None
+  cpu_p50 424.729 -> 449.167 ratio 0.981 CI [0.9521, 1.0316]
+  gpu_p50 1415.625 -> 1408.333 ratio 0.9943 CI [0.9837, 1.0094]
+  completion_p50 2679.864 -> 2680.01 ratio 0.9967 CI [0.9886, 1.0055]
+  gpu_gap_p99 8988.611 -> 8976.637 ratio 0.9967 CI [0.9827, 1.0084]
+ misses {'before': 103, 'after': 87} gates {'cpu_p50': True, 'gpu_p50': True, 'completion_p50': True, 'gpu_gap_p50': True, 'gpu_gap_p99': True, 'deadline_misses': True}
+aa particles throughput noninferior None
+  cpu_p50 155.687 -> 154.469 ratio 0.9911 CI [0.9753, 1.0096]
+  gpu_p50 293.031 -> 293.427 ratio 1.0015 CI [1.0009, 1.0022]
+  completion_p50 881.427 -> 881.583 ratio 1.0003 CI [0.9988, 1.0014]
+  gpu_gap_p99 350.23 -> 360.853 ratio 0.9912 CI [0.9515, 1.1041]
+ misses {'before': 0, 'after': 0} gates {'cpu_p50': True, 'gpu_p50': True, 'completion_p50': True, 'gpu_gap_p50': True}
+ab instances paced noninferior True
+  cpu_p50 584.052 -> 515.781 ratio 0.845 CI [0.815, 0.9109]
+  gpu_p50 879.594 -> 892.917 ratio 1.0147 CI [0.9958, 1.0212]
+  completion_p50 3307.698 -> 2965.812 ratio 0.9407 CI [0.8922, 0.9789]
+  gpu_gap_p99 29182.761 -> 20240.084 ratio 0.9871 CI [0.8637, 1.0065]
+ misses {'before': 927, 'after': 821} gates {'cpu_p50': True, 'gpu_p50': True, 'completion_p50': True, 'gpu_gap_p50': True, 'gpu_gap_p99': True, 'deadline_misses': True}
+ab instances throughput noninferior True
+  cpu_p50 464.843 -> 354.031 ratio 0.7337 CI [0.6902, 0.7697]
+  gpu_p50 481.781 -> 459.938 ratio 0.9544 CI [0.9119, 0.9744]
+  completion_p50 1798.437 -> 1695.739 ratio 0.9053 CI [0.8147, 0.965]
+  gpu_gap_p99 19576.38 -> 17124.731 ratio 0.7726 CI [0.5229, 1.5329]
+ misses {'before': 0, 'after': 0} gates {'cpu_p50': True, 'gpu_p50': True, 'completion_p50': True, 'gpu_gap_p50': True}
+ab particles paced noninferior False
+  cpu_p50 779.26 -> 753.865 ratio 0.9876 CI [0.952, 1.0273]
+  gpu_p50 1379.635 -> 1387.333 ratio 0.9979 CI [0.9813, 1.0126]
+  completion_p50 4561.083 -> 4120.239 ratio 0.9183 CI [0.8254, 0.9693]
+  gpu_gap_p99 32335.38 -> 31958.707 ratio 1.0081 CI [0.875, 1.1608]
+ misses {'before': 1385, 'after': 1181} gates {'cpu_p50': True, 'gpu_p50': True, 'completion_p50': True, 'gpu_gap_p50': True, 'gpu_gap_p99': False, 'deadline_misses': True}
+ab particles throughput noninferior False
+  cpu_p50 579.958 -> 538.021 ratio 0.9855 CI [0.9356, 1.0396]
+  gpu_p50 605.646 -> 620.188 ratio 1.0246 CI [0.9628, 1.084]
+  completion_p50 2539.031 -> 2558.188 ratio 0.9997 CI [0.9029, 1.1422]
+  gpu_gap_p99 10330.587 -> 9573.134 ratio 1.11 CI [0.8302, 1.4733]
+ misses {'before': 0, 'after': 0} gates {'cpu_p50': True, 'gpu_p50': False, 'completion_p50': False, 'gpu_gap_p50': False}
