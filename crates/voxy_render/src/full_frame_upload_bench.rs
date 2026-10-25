@@ -6,6 +6,35 @@ pub const WIDTH: u32 = 1920;
 pub const HEIGHT: u32 = 1080;
 pub const COUNT: usize = 4096;
 const FRAMES: u32 = 48;
+
+// A late frame must not trigger a burst of already overdue starts. Preserve the
+// original grid separately in telemetry; moving the next start cannot erase a
+// missed 120 Hz deadline or external GPU contention.
+fn next_due(due: Instant, started: Instant, period: Duration) -> Instant {
+    let next = due + period;
+    if next.saturating_duration_since(started) < period / 2 {
+        started + period
+    } else {
+        next
+    }
+}
+
+#[test]
+fn paced_schedule_does_not_burst_after_preemption() {
+    let epoch = Instant::now();
+    let period = Duration::from_nanos(8_333_333);
+    let late = epoch + period * 12;
+    let next = next_due(epoch, late, period);
+    assert_eq!(next, late + period);
+    assert!(next > epoch + period * 12);
+    assert_eq!(next_due(next, next, period), next + period);
+    assert_eq!(next_due(epoch, epoch, period), epoch + period);
+    // Ordinary scheduler lateness must not accumulate into a lower frame rate.
+    assert_eq!(next_due(epoch, epoch + period / 8, period), epoch + period);
+    let nearly_next = epoch + period * 7 / 8;
+    assert_eq!(next_due(epoch, nearly_next, period), nearly_next + period);
+}
+
 pub fn device() -> (wgpu::Adapter, wgpu::Device, wgpu::Queue) {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
         backends: wgpu::Backends::METAL,
@@ -172,6 +201,9 @@ pub fn pairs(
     let paced = std::env::var("VOXY_FULL_PROTOCOL").unwrap_or_else(|_| "paced".into()) == "paced";
     let protocol = if paced { "paced120" } else { "throughput" };
     let period = Duration::from_secs_f64(1. / 120.);
+    let pacer = std::env::var("VOXY_FULL_PACER").unwrap_or_else(|_| "bounded".into());
+    assert!(matches!(pacer.as_str(), "legacy" | "bounded" | "compare"));
+    println!("FULL_PACER,{pacer},global_deadlines_retained");
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     // Byte-exact full-resolution oracle before timings. No readback in frames.
     for seed in [0, 19] {
@@ -288,12 +320,17 @@ pub fn pairs(
                 [true, false]
             } {
                 let block_start = Instant::now();
+                let legacy_pacer = pacer == "legacy" || (pacer == "compare" && !mode);
+                let queue_depth = if paced && !legacy_pacer { 1usize } else { 3 };
+                let mut due = block_start;
                 let (tx, rx) = std::sync::mpsc::channel();
                 let mut cpu = Vec::new();
                 let mut submissions: Vec<wgpu::SubmissionIndex> = Vec::new();
                 for index in 0..FRAMES {
                     if paced {
-                        let due = block_start + period * index;
+                        if legacy_pacer {
+                            due = block_start + period * index;
+                        }
                         while Instant::now() < due {
                             device.poll(wgpu::PollType::Poll).unwrap();
                             let remaining = due.saturating_duration_since(Instant::now());
@@ -305,16 +342,22 @@ pub fn pairs(
                         }
                     }
                     let waiting = Instant::now();
-                    if index >= 3 {
+                    if index as usize >= queue_depth {
                         device
                             .poll(wgpu::PollType::Wait {
-                                submission_index: Some(submissions[index as usize - 3].clone()),
+                                submission_index: Some(
+                                    submissions[index as usize - queue_depth].clone(),
+                                ),
                                 timeout: None,
                             })
                             .unwrap();
                     }
                     let backpressure_us = waiting.elapsed().as_secs_f64() * 1e6;
                     let started = Instant::now();
+                    let assigned_due = due;
+                    if paced && !legacy_pacer {
+                        due = next_due(due, started, period);
+                    }
                     let mut encoder = device.create_command_encoder(&Default::default());
                     marker(&mut encoder, index * 2, false);
                     frame(mode, block * FRAMES + index, &mut encoder);
@@ -330,6 +373,7 @@ pub fn pairs(
                         submitted,
                         started.elapsed().as_secs_f64() * 1e6,
                         backpressure_us,
+                        assigned_due,
                     ));
                 }
                 device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
@@ -357,7 +401,7 @@ pub fn pairs(
                         ticks[2 * i + 1] > ticks[2 * i],
                         "missing hardware timestamp"
                     );
-                    let (start, submit, cpu_us, backpressure_us) = cpu[i];
+                    let (start, submit, cpu_us, backpressure_us, assigned_due) = cpu[i];
                     let gpu_us = (ticks[2 * i + 1] - ticks[2 * i]) as f64 * timestamp_us;
                     let completion_us = completions[i].duration_since(start).as_secs_f64() * 1e6;
                     let start_gap = if i == 0 {
@@ -370,6 +414,16 @@ pub fn pairs(
                     } else {
                         (ticks[2 * i + 1] - ticks[2 * i - 1]) as f64 * timestamp_us
                     };
+                    if paced {
+                        println!(
+                            "PACE,{path},{phase},{pair},{block},{},{i},{},{:.3},{:.3},{}",
+                            if mode { "after" } else { "before" },
+                            queue_depth,
+                            assigned_due.duration_since(epoch).as_secs_f64() * 1e6,
+                            start.saturating_duration_since(assigned_due).as_secs_f64() * 1e6,
+                            u8::from(completions[i] > assigned_due + period),
+                        );
+                    }
                     println!(
                         "FULL,{path},{phase},{protocol},{pair},{block},{},{i},{cpu_us:.3},{gpu_us:.3},{completion_us:.3},{:.3},{:.3},{:.3},{},{},{start_gap:.3},{gpu_gap:.3},{backpressure_us:.3},{}",
                         if mode { "after" } else { "before" },
