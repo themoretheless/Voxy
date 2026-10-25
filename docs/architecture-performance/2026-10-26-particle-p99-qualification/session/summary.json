@@ -1,0 +1,204 @@
+{
+  "complete": true,
+  "controls_stable": true,
+  "upload_gates": {
+    "cpu_p50": true,
+    "gpu_p50": true,
+    "completion_p50": true,
+    "gpu_gap_p50": true,
+    "gpu_gap_p99": true
+  },
+  "relative_p99_qualified": true,
+  "qualified": true,
+  "scope": "relative noninferiority at 120 Hz offscreen under observed load; no absolute 120 FPS claim",
+  "cases": [
+    {
+      "stage": "control",
+      "pairs": 36,
+      "frames_per_mode": 3456,
+      "metrics": {
+        "cpu_p50": {
+          "before": 238.7085,
+          "after": 234.344,
+          "ratio": 0.9880563168474455,
+          "ci95": [
+            0.9586857765906424,
+            1.0089337990895055
+          ]
+        },
+        "gpu_p50": {
+          "before": 1416.333,
+          "after": 1418.9267499999999,
+          "ratio": 1.0031525860291088,
+          "ci95": [
+            1.0004417496968057,
+            1.0079539586139417
+          ]
+        },
+        "completion_p50": {
+          "before": 2127.719,
+          "after": 2127.667,
+          "ratio": 1.0006800101621942,
+          "ci95": [
+            0.9928161037369669,
+            1.0089725269902572
+          ]
+        },
+        "completion_p99": {
+          "before": 2827.711625,
+          "after": 2809.8242499999997,
+          "ratio": 1.0014061307521156,
+          "ci95": [
+            0.9722679612280158,
+            1.0310331392002152
+          ]
+        },
+        "gpu_gap_p50": {
+          "before": 8339.19775,
+          "after": 8337.97925,
+          "ratio": 1.0001536517680014,
+          "ci95": [
+            0.9995428371484597,
+            1.000411299198193
+          ]
+        },
+        "gpu_gap_p95": {
+          "before": 8630.538649999999,
+          "after": 8619.20445,
+          "ratio": 0.9969293365394305,
+          "ci95": [
+            0.9943555486415598,
+            1.0049527973411385
+          ]
+        },
+        "gpu_gap_p99": {
+          "before": 8809.83881,
+          "after": 8781.727249999996,
+          "ratio": 0.9928939244555278,
+          "ci95": [
+            0.9858311894948606,
+            1.0117645408294453
+          ]
+        },
+        "start_gap_p99": {
+          "before": 8446.461625,
+          "after": 8447.761595,
+          "ratio": 0.9994709982479815,
+          "ci95": [
+            0.997990735499167,
+            1.0004607040963305
+          ]
+        }
+      },
+      "telemetry": {
+        "before": {
+          "frames": 3456,
+          "grid_deadline_misses": 10,
+          "assigned_deadline_misses": 4,
+          "catch_up_starts": 0
+        },
+        "after": {
+          "frames": 3456,
+          "grid_deadline_misses": 0,
+          "assigned_deadline_misses": 0,
+          "catch_up_starts": 0
+        }
+      }
+    },
+    {
+      "stage": "upload",
+      "pairs": 36,
+      "frames_per_mode": 3456,
+      "metrics": {
+        "cpu_p50": {
+          "before": 295.573,
+          "after": 296.2815,
+          "ratio": 0.9969097643271052,
+          "ci95": [
+            0.9627302275189599,
+            1.033014621507215
+          ]
+        },
+        "gpu_p50": {
+          "before": 1425.6039999999998,
+          "after": 1433.0727499999998,
+          "ratio": 1.0033527904583615,
+          "ci95": [
+            0.997262420789484,
+            1.0115592975549368
+          ]
+        },
+        "completion_p50": {
+          "before": 2200.97875,
+          "after": 2202.677,
+          "ratio": 1.0032436582926016,
+          "ci95": [
+            0.9940162304844413,
+            1.01211994386514
+          ]
+        },
+        "completion_p99": {
+          "before": 5259.225749999989,
+          "after": 6183.465799999995,
+          "ratio": 1.0422568464833981,
+          "ci95": [
+            0.9989937821773118,
+            1.1918746648301008
+          ]
+        },
+        "gpu_gap_p50": {
+          "before": 8347.92725,
+          "after": 8350.4585,
+          "ratio": 0.9996076538603276,
+          "ci95": [
+            0.9987096762223884,
+            1.0006693572702754
+          ]
+        },
+        "gpu_gap_p95": {
+          "before": 8840.003175,
+          "after": 8862.763649999997,
+          "ratio": 0.9929734095980749,
+          "ci95": [
+            0.9813251289570872,
+            1.0068674691360289
+          ]
+        },
+        "gpu_gap_p99": {
+          "before": 10151.616654999983,
+          "after": 10018.825874999999,
+          "ratio": 0.9976610137962237,
+          "ci95": [
+            0.961313853827223,
+            1.0322687691989765
+          ]
+        },
+        "start_gap_p99": {
+          "before": 8663.868589999998,
+          "after": 9251.363399999991,
+          "ratio": 1.0026871311827312,
+          "ci95": [
+            0.9969656778188526,
+            1.038702991866589
+          ]
+        }
+      },
+      "telemetry": {
+        "before": {
+          "frames": 3456,
+          "grid_deadline_misses": 1196,
+          "assigned_deadline_misses": 448,
+          "catch_up_starts": 0
+        },
+        "after": {
+          "frames": 3456,
+          "grid_deadline_misses": 1193,
+          "assigned_deadline_misses": 418,
+          "catch_up_starts": 0
+        }
+      }
+    }
+  ],
+  "binary_sha256": "faa40b0726c3283bbb05d7e0b168f634bdd4f621c9a8aaf634315e17524c16c3",
+  "isolated": false
+}

@@ -1,0 +1,6 @@
+{
+  "docs/architecture-performance/2026-10-26-particle-p99-qualification/qualify.py": "c9fc056a60aa1ea41ca4ae5bc580507a065f6298f9895087779de30ebd12b2ff",
+  "docs/architecture-performance/2026-10-26-particle-p99-qualification/criteria.json": "feb527482fe8cd4ec8daef03fa008f3175697e4dd5457073126402d09f269421",
+  "docs/architecture-performance/2026-10-26-particle-p99-qualification/test_qualification.py": "175753574688de4906ea0730acb4ad765b2732b5a840ba266c7d241ad0a27f12",
+  "crates/voxy_render/src/full_frame_upload_bench.rs": "974b4830e484c507ce225c965c526b69a98a0e4b33e4812d602d07141f2e978a"
+}

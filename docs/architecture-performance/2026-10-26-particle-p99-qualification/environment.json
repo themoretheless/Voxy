@@ -1,0 +1,7 @@
+{
+  "python": "3.15.1 (main, Oct 21 2026, 05:55:12) [Clang 21.0.0 (clang-2100.3.34.2)]",
+  "platform": "macOS-26.7.2-arm64-arm-64bit-Mach-O",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.7.2\nBuildVersion:\t\t25G325\n",
+  "hardware": "Apple M4 Max",
+  "head": "4785e251d0c1339876ce8928f99ddd8d307120d2"
+}

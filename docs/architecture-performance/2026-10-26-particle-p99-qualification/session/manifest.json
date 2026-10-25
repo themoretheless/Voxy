@@ -1,0 +1,78 @@
+[
+  {
+    "stage": "control",
+    "repeat": 1,
+    "stem": "control-r1",
+    "binary_sha256": "faa40b0726c3283bbb05d7e0b168f634bdd4f621c9a8aaf634315e17524c16c3",
+    "correctness_passed": true,
+    "schedule_valid": true,
+    "control_stable": true,
+    "ratios": {
+      "cpu_p50": 0.9889046337186924,
+      "gpu_p50": 1.0021506582205495,
+      "completion_p50": 0.9943824810987327,
+      "completion_p99": 0.9944767982580793,
+      "gpu_gap_p50": 0.9999387209301202,
+      "gpu_gap_p95": 0.9963734677435008,
+      "gpu_gap_p99": 0.9957344799586574,
+      "start_gap_p99": 0.9996217405330992
+    }
+  },
+  {
+    "stage": "upload",
+    "repeat": 1,
+    "stem": "upload-r1",
+    "binary_sha256": "faa40b0726c3283bbb05d7e0b168f634bdd4f621c9a8aaf634315e17524c16c3",
+    "correctness_passed": true,
+    "schedule_valid": true,
+    "control_stable": null,
+    "ratios": {
+      "cpu_p50": 0.9969097643271052,
+      "gpu_p50": 1.001939778067344,
+      "completion_p50": 1.0018650113253198,
+      "completion_p99": 1.0193504513302354,
+      "gpu_gap_p50": 0.9989752228804442,
+      "gpu_gap_p95": 0.9967099802304374,
+      "gpu_gap_p99": 0.9940259271516513,
+      "start_gap_p99": 1.0082093689564369
+    }
+  },
+  {
+    "stage": "upload",
+    "repeat": 2,
+    "stem": "upload-r2",
+    "binary_sha256": "faa40b0726c3283bbb05d7e0b168f634bdd4f621c9a8aaf634315e17524c16c3",
+    "correctness_passed": true,
+    "schedule_valid": true,
+    "control_stable": null,
+    "ratios": {
+      "cpu_p50": 0.9968520812021666,
+      "gpu_p50": 1.005511651983383,
+      "completion_p50": 1.0032436582926016,
+      "completion_p99": 1.0652269406583001,
+      "gpu_gap_p50": 0.9997488200291125,
+      "gpu_gap_p95": 0.9929734095980749,
+      "gpu_gap_p99": 0.9979033432986261,
+      "start_gap_p99": 1.0026871311827312
+    }
+  },
+  {
+    "stage": "control",
+    "repeat": 2,
+    "stem": "control-r2",
+    "binary_sha256": "faa40b0726c3283bbb05d7e0b168f634bdd4f621c9a8aaf634315e17524c16c3",
+    "correctness_passed": true,
+    "schedule_valid": true,
+    "control_stable": true,
+    "ratios": {
+      "cpu_p50": 0.9854130957187888,
+      "gpu_p50": 1.0065466950639528,
+      "completion_p50": 1.0016205453370737,
+      "completion_p99": 1.011160441089328,
+      "gpu_gap_p50": 1.0003023791538714,
+      "gpu_gap_p95": 0.9987162004421215,
+      "gpu_gap_p99": 0.9901795910982915,
+      "start_gap_p99": 0.9991589856855315
+    }
+  }
+]

@@ -73,3 +73,7 @@ python3 docs/architecture-performance/2026-10-26-particle-pacing/analyze.py /abs
 `measure.py --output PATH --summarize-only` recomputes the bootstrap. Plain and gzip frame traces are both supported. Frame and client traces are compressed losslessly; recomputation is checked against the original summary. Source digests, build logs, validation logs and raw process/AGX observations are retained. This experiment does not wait for a free GPU or pause other work.
 
 PACE schema: `PACE,path,phase,pair,block,mode,frame,queue_depth,assigned_target_us,start_lateness_us,assigned_deadline_miss`. Absolute microseconds share the FULL host epoch; GPU timestamps remain a separate hardware clock.
+
+## Subsequent independent confirmation
+
+A new bracketed A/A → A/B → A/B → A/A campaign passed both controls and the relative p99 bounds: [confirmation report](../2026-10-26-particle-p99-qualification/README.md). This historical campaign and its failed control remain unchanged; its data were not pooled into the confirmation.
