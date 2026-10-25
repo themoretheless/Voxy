@@ -1,0 +1,151 @@
+diff --git a/crates/voxy_render/src/archive_scene.rs b/crates/voxy_render/src/archive_scene.rs
+index 6c810b216..dfe55ee62 100644
+--- a/crates/voxy_render/src/archive_scene.rs
++++ b/crates/voxy_render/src/archive_scene.rs
+@@ -291,6 +291,7 @@ struct Material {
+     _uniform: ComputeStorage,
+     transparent: bool,
+     fully_covering: bool,
++    zero_diffuse_transmission: bool,
+     history_guides: bool,
+     double_sided: bool,
+     masked: bool,
+@@ -332,6 +333,7 @@ pub struct ArchiveSceneRenderer {
+     transparent_double: wgpu::RenderPipeline,
+     covered_transparent: wgpu::RenderPipeline,
+     covered_transparent_double: wgpu::RenderPipeline,
++    transmission_indirect: Option<[wgpu::RenderPipeline; 4]>,
+     shadow_pipeline: wgpu::RenderPipeline,
+     depth_pipeline: wgpu::RenderPipeline,
+     depth_double: wgpu::RenderPipeline,
+@@ -880,7 +882,8 @@ impl ArchiveSceneRenderer {
+                         shadow: bool,
+                         predepth: bool,
+                         masked: bool,
+-                        covered: bool| {
++                        covered: bool,
++                        diffuse_indirect: bool| {
+             let pipeline_started = std::time::Instant::now();
+             if std::env::var_os("VOXY_STREET_INIT_TRACE").is_some() {
+                 eprintln!(
+@@ -1001,6 +1004,10 @@ impl ArchiveSceneRenderer {
+                                     0.
+                                 },
+                             ),
++                            (
++                                "ARCHIVE_DIFFUSE_INDIRECT",
++                                if diffuse_indirect {1.} else {0.},
++                            ),
+                             (
+                                 "ARCHIVE_EARLY_GI",
+                                 if std::env::var_os("VOXY_STREET_EARLY_GI").is_some() {
+@@ -1099,17 +1106,24 @@ impl ArchiveSceneRenderer {
+             }
+             result
+         };
+-        let opaque = pipeline(false, false, false, false, false, false);
+-        let opaque_double = pipeline(false, true, false, false, false, false);
+-        let masked = pipeline(false, false, false, false, true, false);
+-        let masked_double = pipeline(false, true, false, false, true, false);
+-        let transparent = pipeline(true, false, false, false, false, false);
+-        let transparent_double = pipeline(true, true, false, false, false, false);
+-        let covered_transparent = pipeline(true, false, false, false, false, true);
+-        let covered_transparent_double = pipeline(true, true, false, false, false, true);
+-        let shadow_pipeline = pipeline(false, true, true, false, false, false);
+-        let depth_pipeline = pipeline(false, false, false, true, false, false);
+-        let depth_double = pipeline(false, true, false, true, false, false);
++        let opaque = pipeline(false, false, false, false, false, false, true);
++        let opaque_double = pipeline(false, true, false, false, false, false, true);
++        let masked = pipeline(false, false, false, false, true, false, true);
++        let masked_double = pipeline(false, true, false, false, true, false, true);
++        let transparent = pipeline(true, false, false, false, false, false, true);
++        let transparent_double = pipeline(true, true, false, false, false, false, true);
++        let covered_transparent = pipeline(true, false, false, false, false, true, true);
++        let covered_transparent_double = pipeline(true, true, false, false, false, true, true);
++        let shadow_pipeline = pipeline(false, true, true, false, false, false, true);
++        let depth_pipeline = pipeline(false, false, false, true, false, false, true);
++        let depth_double = pipeline(false, true, false, true, false, false, true);
++        let transmission_indirect = (sources.iter().any(|s| s.parameters.surface[2] == 1.)
++            && std::env::var_os("VOXY_STREET_TRANSMISSION_GI_REFERENCE").is_none()).then(|| [
++                pipeline(true, false, false, false, false, false, false),
++                pipeline(true, true, false, false, false, false, false),
++                pipeline(true, false, false, false, false, true, false),
++                pipeline(true, true, false, false, false, true, false),
++            ]);
+ 
+         let post_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+             label: Some("archive display transform"),
+@@ -1268,6 +1282,7 @@ impl ArchiveSceneRenderer {
+                 transparent: source.parameters.surface[2] > 0.
+                     || source.parameters.surface[3] == -2.,
+                 fully_covering: fully_covering_transmission(&source),
++                zero_diffuse_transmission: source.parameters.surface[2] == 1.,
+                 history_guides: source.parameters.surface[2] == 0.,
+                 double_sided: source.double_sided,
+                 masked: source.parameters.surface[3] >= 0.,
+@@ -1656,6 +1671,7 @@ impl ArchiveSceneRenderer {
+             transparent_double,
+             covered_transparent,
+             covered_transparent_double,
++            transmission_indirect,
+             shadow_pipeline,
+             depth_pipeline,
+             depth_double,
+@@ -3204,7 +3220,12 @@ impl ArchiveSceneRenderer {
+             for mesh in order {
+                 let material = &self.materials[mesh.material];
+                 pass.set_pipeline(
+-                    if transparent && material.fully_covering && transmission_view.is_some() {
++                    if transparent && material.zero_diffuse_transmission
++                        && let Some(pipelines) = &self.transmission_indirect
++                    {
++                        let covered = material.fully_covering && transmission_view.is_some();
++                        &pipelines[usize::from(material.double_sided) + 2 * usize::from(covered)]
++                    } else if transparent && material.fully_covering && transmission_view.is_some() {
+                         if material.double_sided {
+                             &self.covered_transparent_double
+                         } else {
+diff --git a/crates/voxy_render/src/archive_scene.wgsl b/crates/voxy_render/src/archive_scene.wgsl
+index 8f469bda6..0d05272f0 100644
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -5,6 +5,8 @@ override ARCHIVE_TRACE_SSR:bool=false;
+ override ARCHIVE_COMPUTE_GI:bool=false;
+ // Scheduling-only candidate; the query and colour expressions are unchanged.
+ override ARCHIVE_EARLY_GI:bool=false;
++// Specialized only for materials whose transmission is exactly one.
++override ARCHIVE_DIFFUSE_INDIRECT:bool=true;
+ // Opt-in until full-scene correctness and paired performance are qualified.
+ override ARCHIVE_PAIRED_DDA:bool=false;
+ override ARCHIVE_RAY_BOUNDS:bool=true;
+@@ -510,7 +512,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+  let f0=surface.f0;let roughness=surface.roughness;let diffuse=surface.diffuse;
+  let normal=surface.normal;let view=surface.view;let geometric=surface.geometric;let splash=surface.splash;
+  var early_bounce=vec4<f32>(0.);
+- if ARCHIVE_COMPUTE_GI {early_bounce=textureLoad(computed_gi,vec2<i32>(f.clip.xy),0);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
++ if ARCHIVE_COMPUTE_GI {early_bounce=textureLoad(computed_gi,vec2<i32>(f.clip.xy),0);}else if ARCHIVE_EARLY_GI&&ARCHIVE_DIFFUSE_INDIRECT {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
+  let shadow_pos=f.shadow.xyz/f.shadow.w;let shadow_uv=shadow_pos.xy*vec2<f32>(0.5,-0.5)+0.5;var visibility=1.;if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.&&!fx_off(8u){visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715)))));}
+  let ao=contact_occlusion(f.clip.xy,f.world,normal)*select(1.,spec.r,material.workflow.w!=0.);
+  let dust_mask=smoothstep(0.65,0.95,geometric.y)*(1.-ao)*(1.-camera.surface.x)*select(1.,0.,material.surface.z>0.||(material.workflow.z>8.5&&material.workflow.z<10.5));
+@@ -528,8 +530,8 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
+   let mirror=select((1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,visible),1.,transmission>0.);
+   if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
+-  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
+-  let probe=probe_irradiance(f.world,normal);
++  var bounce=early_bounce;if ARCHIVE_DIFFUSE_INDIRECT&&!ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
++  var probe=vec4<f32>(0.);if ARCHIVE_DIFFUSE_INDIRECT {probe=probe_irradiance(f.world,normal);}
+   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
+   if transmission>0. {
+    let glass_tint=mix(vec3<f32>(1.),vec3<f32>(0.90,0.96,0.95),clamp((1.-nv)*0.75,0.,1.));
+@@ -538,8 +540,8 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+   colour+=diffuse*(1.-transmission)*indirect*multibounce_ao(ao,diffuse)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,roughness)*horizon;
+  } else {
+   let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(normal.y*0.5+0.5,0.,1.));
+-  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
+-  let probe=probe_irradiance(f.world,normal);
++  var bounce=early_bounce;if ARCHIVE_DIFFUSE_INDIRECT&&!ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
++  var probe=vec4<f32>(0.);if ARCHIVE_DIFFUSE_INDIRECT {probe=probe_irradiance(f.world,normal);}
+   colour+=diffuse*(1.-transmission)*mix(mix(sky*camera.viewport.w/3.14159265,probe.rgb,probe.a),bounce.rgb,bounce.a)*ao;
+   let reflected=reflect(-view,normal);let fresnel=f0+(1.-f0)*fifth(1.-nv);
+   let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric));

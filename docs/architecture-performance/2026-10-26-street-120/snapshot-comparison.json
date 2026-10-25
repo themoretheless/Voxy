@@ -1,0 +1,103 @@
+{
+  "baseline": "flags-base",
+  "frame": 120,
+  "components": 6220800,
+  "comparisons": [
+    {
+      "name": "flags-base-final",
+      "sha256": "18501e3c280b28444c0f1b6420f238f7242f173e42e13fbc789acb0f6bef673f",
+      "finite": true,
+      "different_components": 0,
+      "max_absolute_linear_hdr_error": 0.0,
+      "mean_absolute_linear_hdr_error": 0.0
+    },
+    {
+      "name": "flags-base-repeat",
+      "sha256": "18501e3c280b28444c0f1b6420f238f7242f173e42e13fbc789acb0f6bef673f",
+      "finite": true,
+      "different_components": 0,
+      "max_absolute_linear_hdr_error": 0.0,
+      "mean_absolute_linear_hdr_error": 0.0
+    },
+    {
+      "name": "flags-base",
+      "sha256": "18501e3c280b28444c0f1b6420f238f7242f173e42e13fbc789acb0f6bef673f",
+      "finite": true,
+      "different_components": 0,
+      "max_absolute_linear_hdr_error": 0.0,
+      "mean_absolute_linear_hdr_error": 0.0
+    },
+    {
+      "name": "flags-cache",
+      "sha256": "6eebbd863bfcb9297a53c4101ca5d073ea14c6de731db1ed94bd28b900454811",
+      "finite": true,
+      "different_components": 319478,
+      "max_absolute_linear_hdr_error": 0.12353515625,
+      "mean_absolute_linear_hdr_error": 2.48186860555484e-05
+    },
+    {
+      "name": "flags-clip-projection",
+      "sha256": "5b2808d3f6b174120029bdbaa15de05f1539fc541ae1aecd1ed3fc37900c6bc3",
+      "finite": true,
+      "different_components": 361672,
+      "max_absolute_linear_hdr_error": 0.75,
+      "mean_absolute_linear_hdr_error": 2.7661545531739914e-05
+    },
+    {
+      "name": "flags-compute-ssr",
+      "sha256": "060e587b8853422847dcb2cc65fdb138ffcc4c57573cedd91b1181f89b7126bc",
+      "finite": true,
+      "different_components": 589396,
+      "max_absolute_linear_hdr_error": 0.853271484375,
+      "mean_absolute_linear_hdr_error": 4.550344659467783e-05
+    },
+    {
+      "name": "flags-compute",
+      "sha256": "73feb427613220f0d04af1f5c10885fa141a57610bf5be81b55507584c808b4d",
+      "finite": true,
+      "different_components": 575918,
+      "max_absolute_linear_hdr_error": 0.853271484375,
+      "mean_absolute_linear_hdr_error": 4.463930986055131e-05
+    },
+    {
+      "name": "flags-early-cache",
+      "sha256": "2159928116907768c35d6e3144d76d01b0d07b0294762396a8bb94b91217ca9e",
+      "finite": true,
+      "different_components": 310381,
+      "max_absolute_linear_hdr_error": 0.12353515625,
+      "mean_absolute_linear_hdr_error": 2.403276815335937e-05
+    },
+    {
+      "name": "flags-early",
+      "sha256": "2e1c955c7376f3603705cddb9215dcd4c51cbac04b4310e1cfacdacc2dfe3d96",
+      "finite": true,
+      "different_components": 3,
+      "max_absolute_linear_hdr_error": 1.52587890625e-05,
+      "mean_absolute_linear_hdr_error": 7.358598120418596e-12
+    },
+    {
+      "name": "flags-reference-depth",
+      "sha256": "18501e3c280b28444c0f1b6420f238f7242f173e42e13fbc789acb0f6bef673f",
+      "finite": true,
+      "different_components": 0,
+      "max_absolute_linear_hdr_error": 0.0,
+      "mean_absolute_linear_hdr_error": 0.0
+    },
+    {
+      "name": "flags-zero-final",
+      "sha256": "18501e3c280b28444c0f1b6420f238f7242f173e42e13fbc789acb0f6bef673f",
+      "finite": true,
+      "different_components": 0,
+      "max_absolute_linear_hdr_error": 0.0,
+      "mean_absolute_linear_hdr_error": 0.0
+    },
+    {
+      "name": "flags-zero-indirect",
+      "sha256": "18501e3c280b28444c0f1b6420f238f7242f173e42e13fbc789acb0f6bef673f",
+      "finite": true,
+      "different_components": 0,
+      "max_absolute_linear_hdr_error": 0.0,
+      "mean_absolute_linear_hdr_error": 0.0
+    }
+  ]
+}

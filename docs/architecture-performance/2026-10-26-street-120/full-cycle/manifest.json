@@ -1,0 +1,177 @@
+{
+  "binaries": {
+    "A": {
+      "path": "/private/tmp/voxy-street-120-before-20261026",
+      "sha256": "c724e7206a97fd5ddd59999bac595c7008fd5a93180dbc7c85a78833cd6903ec"
+    },
+    "B": {
+      "path": "/private/tmp/voxy-street-120-zero-indirect-20261026",
+      "sha256": "d3d35d25c0cb7dab338578d70ecea54fe2610482fd7837de13f49517a8516744"
+    }
+  },
+  "schedule": [
+    [
+      "aa-start-0",
+      "A"
+    ],
+    [
+      "aa-start-1",
+      "A"
+    ],
+    [
+      "pair-0-A",
+      "A"
+    ],
+    [
+      "pair-0-B",
+      "B"
+    ],
+    [
+      "pair-1-B",
+      "B"
+    ],
+    [
+      "pair-1-A",
+      "A"
+    ],
+    [
+      "pair-2-A",
+      "A"
+    ],
+    [
+      "pair-2-B",
+      "B"
+    ],
+    [
+      "pair-3-B",
+      "B"
+    ],
+    [
+      "pair-3-A",
+      "A"
+    ],
+    [
+      "pair-4-A",
+      "A"
+    ],
+    [
+      "pair-4-B",
+      "B"
+    ],
+    [
+      "aa-end-0",
+      "A"
+    ],
+    [
+      "aa-end-1",
+      "A"
+    ]
+  ],
+  "duration_simulation_seconds": 20,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "target_p99_ms": 8.33,
+  "isolation_requested": false,
+  "runs": [
+    {
+      "name": "aa-start-0",
+      "arm": "A",
+      "start": 1792971402.285332,
+      "end": 1792971461.441292,
+      "exit_code": 0
+    },
+    {
+      "name": "aa-start-1",
+      "arm": "A",
+      "start": 1792971461.646348,
+      "end": 1792971517.293986,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-0-A",
+      "arm": "A",
+      "start": 1792971517.3568661,
+      "end": 1792971570.79752,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-0-B",
+      "arm": "B",
+      "start": 1792971570.8610811,
+      "end": 1792971627.2225559,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-1-B",
+      "arm": "B",
+      "start": 1792971627.387176,
+      "end": 1792971682.9149692,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-1-A",
+      "arm": "A",
+      "start": 1792971682.982429,
+      "end": 1792971736.72543,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-2-A",
+      "arm": "A",
+      "start": 1792971736.7896872,
+      "end": 1792971792.434535,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-2-B",
+      "arm": "B",
+      "start": 1792971792.501385,
+      "end": 1792971847.669306,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-3-B",
+      "arm": "B",
+      "start": 1792971847.7372448,
+      "end": 1792971901.5405362,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-3-A",
+      "arm": "A",
+      "start": 1792971901.605856,
+      "end": 1792971955.318351,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-4-A",
+      "arm": "A",
+      "start": 1792971955.382687,
+      "end": 1792972009.3606,
+      "exit_code": 0
+    },
+    {
+      "name": "pair-4-B",
+      "arm": "B",
+      "start": 1792972009.427327,
+      "end": 1792972063.579347,
+      "exit_code": 0
+    },
+    {
+      "name": "aa-end-0",
+      "arm": "A",
+      "start": 1792972063.644655,
+      "end": 1792972117.86465,
+      "exit_code": 0
+    },
+    {
+      "name": "aa-end-1",
+      "arm": "A",
+      "start": 1792972117.932235,
+      "end": 1792972171.5187452,
+      "exit_code": 0
+    }
+  ]
+}

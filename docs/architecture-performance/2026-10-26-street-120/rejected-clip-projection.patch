@@ -1,0 +1,35 @@
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -312,11 +312,13 @@
+ }
+ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32,growth:f32,refines:u32,bounded:bool)->vec4<f32>{
+  if history&&camera.surface.z<0.5 {return vec4<f32>(0.);}
++ let clip_origin=camera.vp*vec4<f32>(origin,1.);
++ let clip_direction=camera.vp*vec4<f32>(direction,0.);
+  var t=0.08;var previous=0.;
+  var cached_tile=vec2<i32>(-1);var cached_lower=0.;
+  var cached_pixel=vec2<i32>(-1);var cached_depth=1.;
+  for(var step=0u;step<80u;step++) {
+-  let q=camera.vp*vec4<f32>(origin+direction*t,1.);
++  let q=clip_origin+clip_direction*t;
+   if q.w<=0. {return vec4<f32>(0.);}
+   let uv=q.xy/q.w*vec2<f32>(0.5,-0.5)+0.5;
+   if any(uv<=vec2<f32>(0.))||any(uv>=vec2<f32>(1.)){return vec4<f32>(0.);}
+@@ -335,7 +337,7 @@
+   if depth<1.&&q.z/q.w>=depth {
+    var lo=previous;var hi=t;
+    for(var refine=0u;refine<refines;refine++) {
+-    let mid=(lo+hi)*0.5;let clip=camera.vp*vec4<f32>(origin+direction*mid,1.);
++    let mid=(lo+hi)*0.5;let clip=clip_origin+clip_direction*mid;
+     let pixel=clamp(vec2<i32>((clip.xy/clip.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
+     var z=1.;
+     if bounded && ARCHIVE_REFINE_CACHE {
+@@ -344,7 +346,7 @@
+     } else {z=textureLoad(scene_depth,pixel,0);}
+     if z<1.&&clip.z/clip.w>=z {hi=mid;} else {lo=mid;}
+    }
+-   let point=origin+direction*hi;let clip=camera.vp*vec4<f32>(point,1.);
++   let point=origin+direction*hi;let clip=clip_origin+clip_direction*hi;
+    let coord=clip.xy/clip.w*vec2<f32>(0.5,-0.5)+0.5;
+    let pixel=clamp(vec2<i32>(coord*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
+    var z=1.;

@@ -1,0 +1,36 @@
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -509,8 +509,10 @@
+  let base=surface.base;let opacity=surface.opacity;let uv=surface.uv;let spec=surface.spec;
+  let f0=surface.f0;let roughness=surface.roughness;let diffuse=surface.diffuse;
+  let normal=surface.normal;let view=surface.view;let geometric=surface.geometric;let splash=surface.splash;
++ // Indirect diffuse cannot contribute on fully transmissive or purely metallic surfaces.
++ let needs_indirect=any(diffuse*(1.-material.surface.z)!=vec3<f32>(0.));
+  var early_bounce=vec4<f32>(0.);
+- if ARCHIVE_COMPUTE_GI {early_bounce=textureLoad(computed_gi,vec2<i32>(f.clip.xy),0);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
++ if ARCHIVE_COMPUTE_GI {early_bounce=textureLoad(computed_gi,vec2<i32>(f.clip.xy),0);}else if ARCHIVE_EARLY_GI&&needs_indirect {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
+  let shadow_pos=f.shadow.xyz/f.shadow.w;let shadow_uv=shadow_pos.xy*vec2<f32>(0.5,-0.5)+0.5;var visibility=1.;if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.&&!fx_off(8u){visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715)))));}
+  let ao=contact_occlusion(f.clip.xy,f.world,normal)*select(1.,spec.r,material.workflow.w!=0.);
+  let dust_mask=smoothstep(0.65,0.95,geometric.y)*(1.-ao)*(1.-camera.surface.x)*select(1.,0.,material.surface.z>0.||(material.workflow.z>8.5&&material.workflow.z<10.5));
+@@ -528,8 +530,8 @@
+   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
+   let mirror=select((1.-smoothstep(0.1,0.4,roughness))*smoothstep(0.045,0.07,visible),1.,transmission>0.);
+   if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
+-  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
+-  let probe=probe_irradiance(f.world,normal);
++  var bounce=early_bounce;if needs_indirect&&!ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
++  var probe=vec4<f32>(0.);if needs_indirect {probe=probe_irradiance(f.world,normal);}
+   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
+   if transmission>0. {
+    let glass_tint=mix(vec3<f32>(1.),vec3<f32>(0.90,0.96,0.95),clamp((1.-nv)*0.75,0.,1.));
+@@ -538,8 +540,8 @@
+   colour+=diffuse*(1.-transmission)*indirect*multibounce_ao(ao,diffuse)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,roughness)*horizon;
+  } else {
+   let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(normal.y*0.5+0.5,0.,1.));
+-  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
+-  let probe=probe_irradiance(f.world,normal);
++  var bounce=early_bounce;if needs_indirect&&!ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
++  var probe=vec4<f32>(0.);if needs_indirect {probe=probe_irradiance(f.world,normal);}
+   colour+=diffuse*(1.-transmission)*mix(mix(sky*camera.viewport.w/3.14159265,probe.rgb,probe.a),bounce.rgb,bounce.a)*ao;
+   let reflected=reflect(-view,normal);let fresnel=f0+(1.-f0)*fifth(1.-nv);
+   let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric));

@@ -1,0 +1,7 @@
+STREET RUN pid=87126 benchmark_seconds=0.25 offscreen=true paired_dda=false tiles=false cell_bounds=false far_bound=false
+ORIGINAL STREET seed=1448040537 source_geometry_assets=0 materials=143 mesh_batches=152 triangles=3544272 instances=119909
+STREET FAILURE phase=initialization error=No such file or directory (os error 2)
+STREET EXIT benchmark_complete=false frames=0 simulation_steps=0 failure=Some("No such file or directory (os error 2)")
+STREET interrupted diagnostic /tmp/voxy-street-benchmark.interrupted.json
+STREET EVENT LOOP RETURN result=Ok(()) frames=0 simulation_steps=0 benchmark_complete=false
+Error: "No such file or directory (os error 2)"
