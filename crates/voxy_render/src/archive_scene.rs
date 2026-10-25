@@ -1962,7 +1962,12 @@ impl ArchiveSceneRenderer {
             self.capture_texture_sources(&std::path::PathBuf::from(root))?;
         }
         let view = face.create_view(&Default::default());
-        let projector = crate::probe_gi::ProbeProjector::new(&self.device);
+        let mut projector = crate::probe_gi::ProbeProjector::new(&self.device);
+        if let Some(index) = std::env::var_os("VOXY_STREET_PROBE_PROJECTOR_TRACE_INDEX") {
+            let index = index.to_str().and_then(|s| s.parse::<usize>().ok())
+                .ok_or_else(|| crate::ComputeError::Validation("invalid projector trace index".into()))?;
+            projector.enable_trace(&self.device, points.len(), index)?;
+        }
         let saved = (
             self.antialiasing,
             self.linear_output,
@@ -2154,6 +2159,7 @@ impl ArchiveSceneRenderer {
         if let Some(root) = std::env::var_os("VOXY_STREET_TEXTURE_SOURCE_CAPTURE_AFTER_BAKE") {
             self.capture_texture_sources(&std::path::PathBuf::from(root))?;
         }
+        bake.projector.save_trace(&self.device, &self.queue)?;
         bake.finished = true;
         Ok(true)
     }
@@ -3682,3 +3688,7 @@ impl ArchiveProbeBake {
 #[cfg(test)]
 #[path = "archive_vertex_invariance_tests.rs"]
 mod vertex_invariance_tests;
+
+#[cfg(test)]
+#[path = "archive_derivative_control_flow_tests.rs"]
+mod derivative_control_flow_tests;

@@ -69,7 +69,7 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
     let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.15;
     let cell=floor(uv);let f=fract(uv);
     let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));
-    let fp=max(fwidth(uv.x),fwidth(uv.y));
+    let fp=max(fwidthFine(uv.x),fwidthFine(uv.y));
     let h=original_hash(vec3<f32>(cell,14.))-0.5;
     let glaze=0.96+0.06*original_noise(p*11.)+0.04*h;
     let grout=mix(0.76,1.,smoothstep(0.015,0.045+fp,edge));
@@ -98,7 +98,7 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
     return veined*tone*(1.-0.18*pore)*(0.93+0.10*original_noise(p*27.));
    }
    let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5);
-   let footprint=max(length(dpdx(uv)),length(dpdy(uv)));
+   let footprint=max(length(dpdxFine(uv)),length(dpdyFine(uv)));
    let detail=1.-smoothstep(0.002,0.015,footprint);
    let warp=sin(uv.x*420.)*0.5+0.5;let weft=sin(uv.y*420.)*0.5+0.5;
    let weave=mix(1.,0.88+0.22*(warp*0.5+weft*0.5),detail);
@@ -117,7 +117,7 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
    let shaded=mix(vec3<f32>(0.34,0.50,0.24),tipped,blade_ao);
    return mix(shaded,shaded*vec3<f32>(0.80,1.08,0.78),clover*0.42);
   }
-  let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.025;let cell=floor(uv);let f=fract(uv);let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));let footprint=max(fwidth(uv.x),fwidth(uv.y));let h=original_hash(vec3<f32>(cell,kind));let h2=original_hash(vec3<f32>(cell.yx,kind+3.));let shimmer=vec3<f32>(0.86+0.20*h,0.90+0.16*h2,0.92+0.16*(1.-h*0.5));let tile=mix(vec3<f32>(0.52,0.56,0.60),shimmer,smoothstep(0.05,0.13+footprint,edge));return mix(tile,vec3<f32>(0.90,0.92,0.94),smoothstep(0.25,0.6,footprint));
+  let uv=select(select(p.xz,p.zy,abs(n.x)>0.5),p.xy,abs(n.z)>0.5)/0.025;let cell=floor(uv);let f=fract(uv);let edge=min(min(f.x,1.-f.x),min(f.y,1.-f.y));let footprint=max(fwidthFine(uv.x),fwidthFine(uv.y));let h=original_hash(vec3<f32>(cell,kind));let h2=original_hash(vec3<f32>(cell.yx,kind+3.));let shimmer=vec3<f32>(0.86+0.20*h,0.90+0.16*h2,0.92+0.16*(1.-h*0.5));let tile=mix(vec3<f32>(0.52,0.56,0.60),shimmer,smoothstep(0.05,0.13+footprint,edge));return mix(tile,vec3<f32>(0.90,0.92,0.94),smoothstep(0.25,0.6,footprint));
  }
  if kind>5.5 {
   if kind>7.5 {
@@ -149,11 +149,12 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
    let litter=smoothstep(0.62,0.86,original_noise(p*11.5))*gutter;
    let side_slab=smoothstep(4.65,4.85,abs(p.x))*(1.-smoothstep(6.95,7.25,abs(p.x)))*smoothstep(-26.,-24.,p.z)*(1.-smoothstep(81.,83.,p.z))*smoothstep(0.7,0.95,n.y);
    var joint=1.;
+   // All neighbouring lanes need the footprint before the pixel-dependent mask.
+   let fp=max(length(dpdxFine(p.xz)),length(dpdyFine(p.xz)));
    if side_slab>0. {
     let gx=abs(fract(p.x/0.72)-0.5)*0.72;
     let gz=abs(fract(p.z/0.90)-0.5)*0.90;
     let d_joint=min(gx,gz);
-    let fp=max(length(dpdx(p.xz)),length(dpdy(p.xz)));
     let cell_h=original_hash(vec3<f32>(floor(p.x/0.72),floor(p.z/0.90),1.))-0.5;
     joint=mix(1.,(0.74+0.26*smoothstep(0.004,0.011+fp,d_joint))*(1.+0.08*cell_h),side_slab);
    }
@@ -190,7 +191,7 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
 // Band-limited physical height fields in metres. Screen derivatives suppress
 // unresolved grain instead of allowing moving-camera specular aliasing.
 fn original_height(p:vec3<f32>,kind:f32)->f32 {
- let footprint=max(length(dpdx(p)),length(dpdy(p)));
+ let footprint=max(length(dpdxFine(p)),length(dpdyFine(p)));
  let fine=1.-smoothstep(0.002,0.012,footprint);
  let medium=1.-smoothstep(0.02,0.08,footprint);
  if kind>8.5 {
@@ -261,9 +262,9 @@ fn original_height(p:vec3<f32>,kind:f32)->f32 {
  return 0.00022*medium*original_noise(p*34.)+0.00018*fine*original_noise(p*210.);
 }
 fn original_bump(p:vec3<f32>,n:vec3<f32>,height:f32)->vec3<f32>{
- let px=dpdx(p);let py=dpdy(p);let rx=cross(py,n);let ry=cross(n,px);
+ let px=dpdxFine(p);let py=dpdyFine(p);let rx=cross(py,n);let ry=cross(n,px);
  let determinant=dot(px,rx);
- let gradient=sign(determinant)*(dpdx(height)*rx+dpdy(height)*ry);
+ let gradient=sign(determinant)*(dpdxFine(height)*rx+dpdyFine(height)*ry);
  return normalize(abs(determinant)*n-gradient+1e-20*n);
 }
 // Profiling switch: VOXY_FX_OFF bit mask (1 GI, 2 SSR, 4 contact AO, 8 sun shadow, 16 wet layer).
@@ -429,7 +430,7 @@ fn wet_layer(p:vec3<f32>,geometric:vec3<f32>,normal:vec3<f32>,roughness:f32,albe
  var w:WetLayer;w.darken=1.;w.roughness=roughness;w.normal=normal;w.puddle=0.;w.splash=0.;
  let wet=camera.surface.x;if wet<=0. {return w;}
  // Pixel footprint, taken in uniform control flow, fades sub-pixel ripples into roughness.
- let footprint=length(fwidth(p));
+ let footprint=length(fwidthFine(p));
  let up=smoothstep(0.7,0.95,geometric.y);
  // Bevels and joints still hold a level water surface; walls do not.
  let open=smoothstep(0.2,0.6,geometric.y);
@@ -495,7 +496,7 @@ fn archive_surface(f:Fragment,front:bool,tex:vec4<f32>)->ArchiveSurface {
   if material.workflow.w>0. {let n=abs(f.normal);if n.x>=n.y&&n.x>=n.z {tangent=vec3<f32>(0.,0.,-sign(f.normal.x));bitangent=vec3<f32>(0.,1.,0.);}else if n.y>=n.z {tangent=vec3<f32>(1.,0.,0.);bitangent=vec3<f32>(0.,0.,-sign(f.normal.y));}else{tangent=vec3<f32>(sign(f.normal.z),0.,0.);bitangent=vec3<f32>(0.,1.,0.);}}
   var mapped=vec3<f32>(0.,0.,1.);if packed {mapped=packed_normal.xyz*2.-1.;}else{mapped=textureSample(normal_map,material_sampler,uv).xyz*2.-1.;}mapped.x*=material.emissive_normal.w;mapped.y*=material.emissive_normal.w;normal=normalize(mat3x3<f32>(tangent,bitangent,normal)*mapped);
  }
- if material.workflow.z>0.5{let height=original_height(f.world,material.workflow.z);normal=original_bump(f.world,normal,height);let r_amp=select(0.16,0.06,material.workflow.z>12.5);roughness=clamp(roughness+(original_noise(f.world*7.)-0.5)*r_amp,0.04,1.);}let dndx=dpdx(normal);let dndy=dpdy(normal);let sigma2=min(dot(dndx,dndx)+dot(dndy,dndy),0.25);roughness=clamp(sqrt(roughness*roughness+0.35*sigma2),0.04,1.);let view=normalize(camera.eye.xyz-f.world);
+ if material.workflow.z>0.5{let height=original_height(f.world,material.workflow.z);normal=original_bump(f.world,normal,height);let r_amp=select(0.16,0.06,material.workflow.z>12.5);roughness=clamp(roughness+(original_noise(f.world*7.)-0.5)*r_amp,0.04,1.);}let dndx=dpdxFine(normal);let dndy=dpdyFine(normal);let sigma2=min(dot(dndx,dndx)+dot(dndy,dndy),0.25);roughness=clamp(sqrt(roughness*roughness+0.35*sigma2),0.04,1.);let view=normalize(camera.eye.xyz-f.world);
  var splash=0.;
  if camera.surface.x>0.&&material.surface.z==0.&&!fx_off(16u)&&!(material.workflow.z>5.5&&material.workflow.z<6.5) {
   let wet=wet_layer(f.world,geometric,normal,roughness,dot(base,vec3<f32>(0.2126,0.7152,0.0722)));
