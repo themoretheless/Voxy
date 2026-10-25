@@ -918,8 +918,10 @@ fn furnish(b: &mut Builder, k: &Kit, zn: &Zone, kind: Kind, w: f32, door: Option
                 zn.put(b, k.metal, [1.55 + da, 0.19, 2.0 + dd], [0.03, 0.38, 0.03]);
             }
             zn.put(b, k.ceramic, [1.5, 0.5, 1.8], [0.1, 0.16, 0.1]);
+            zn.put(b, k.ceramic, [1.58, 0.44, 2.22], [0.22, 0.035, 0.28]);
             zn.put(b, r.wood, [w - 0.25, 0.25, 1.5], [0.4, 0.5, 1.6]);
             zn.put(b, k.metal, [w - 0.04, 1.2, 1.5], [0.03, 0.68, 1.2]);
+            zn.put(b, k.ceramic, [w - 0.24, 0.58, 0.95], [0.14, 0.16, 0.14]);
             zn.put(b, k.metal, [0.3, 0.01, 0.5], [0.28, 0.02, 0.28]);
             zn.put(b, k.metal, [0.3, 0.8, 0.5], [0.025, 1.6, 0.025]);
             let shade = if b.random() < 0.6 { k.glow } else { k.ceramic };

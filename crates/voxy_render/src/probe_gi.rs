@@ -26,7 +26,12 @@ pub(crate) struct ProbeGrid {
 pub(crate) struct ProbeProjector {
     pipeline: wgpu::ComputePipeline,
     uniform: wgpu::Buffer,
+    trace: Option<ProjectionTrace>,
 }
+
+#[path = "probe_projection_trace.rs"]
+mod projection_trace;
+use projection_trace::ProjectionTrace;
 
 impl ProbeProjector {
     pub fn new(device: &wgpu::Device) -> Self {
@@ -35,6 +40,7 @@ impl ProbeProjector {
             source: wgpu::ShaderSource::Wgsl(include_str!("probe_gi.wgsl").into()),
         });
         Self {
+            trace: None,
             pipeline: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("irradiance probe projection"),
                 layout: None,
@@ -50,6 +56,40 @@ impl ProbeProjector {
                 mapped_at_creation: false,
             }),
         }
+    }
+
+    pub(crate) fn enable_trace(
+        &mut self,
+        device: &wgpu::Device,
+        count: usize,
+        target: usize,
+    ) -> Result<(), crate::ComputeError> {
+        let trace = ProjectionTrace::new(device, count, target)?;
+        let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("probe projection operand trace"),
+            source: wgpu::ShaderSource::Wgsl(trace.shader.clone().into()),
+        });
+        self.pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: Some("probe projection operand trace"),
+            layout: None,
+            module: &module,
+            entry_point: Some("cs_project"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        self.trace = Some(trace);
+        Ok(())
+    }
+
+    pub(crate) fn save_trace(
+        &self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+    ) -> Result<(), crate::ComputeError> {
+        if let Some(trace) = &self.trace {
+            trace.save(device, queue)?;
+        }
+        Ok(())
     }
 
     pub(crate) fn diagnostic_uniform(&self) -> &wgpu::Buffer {
@@ -85,23 +125,34 @@ impl ProbeProjector {
             ],
         };
         queue.write_buffer(&self.uniform, 0, bytemuck::bytes_of(&bake));
+        if let Some(trace) = &self.trace {
+            trace.validate_face(index, face, size, bake.square[2]);
+        }
+        let entries = [
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: wgpu::BindingResource::TextureView(face_view),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: self.uniform.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: probes.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 3,
+                resource: self.trace.as_ref().map_or_else(
+                    || probes.as_entire_binding(),
+                    |trace| trace.buffer.as_entire_binding(),
+                ),
+            },
+        ];
         let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("irradiance probe face"),
             layout: &self.pipeline.get_bind_group_layout(0),
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(face_view),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: self.uniform.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: probes.as_entire_binding(),
-                },
-            ],
+            entries: &entries[..if self.trace.is_some() { 4 } else { 3 }],
         });
         let mut encoder = device.create_command_encoder(&Default::default());
         {

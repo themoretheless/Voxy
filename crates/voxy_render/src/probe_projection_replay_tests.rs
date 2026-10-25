@@ -20,7 +20,10 @@ fn captured_faces_replay_through_original_projector() -> Result<(), Box<dyn std:
     let adapter = pollster::block_on(instance.request_adapter(&Default::default()))?;
     assert_eq!(adapter.get_info().backend, wgpu::Backend::Metal);
     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default()))?;
-    let projector = ProbeProjector::new(&device);
+    let mut projector = ProbeProjector::new(&device);
+    if std::env::var_os("VOXY_PROBE_REPLAY_TRACE").is_some() {
+        projector.enable_trace(&device, 1, 0)?;
+    }
     let probes = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("original capacity probe replay"),
         size: MAX_PROBES as u64 * PROBE_BYTES,
@@ -152,6 +155,7 @@ fn captured_faces_replay_through_original_projector() -> Result<(), Box<dyn std:
             comparisons.push(serde_json::json!({"trial":trial,"face":face,"original_result_identical":identical}));
         }
     }
+    projector.save_trace(&device, &queue)?;
     let passed = comparisons
         .iter()
         .all(|x| x["original_result_identical"] == true);

@@ -1179,6 +1179,90 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     }
     b.span(p.wood, [10.85, u0 + 0.02, 138.5], [11.55, u0 + 2.35, 143.5]);
 
+    // ---- east citrus grove & glass-and-steel greenhouse conservatory (x = 11.2..14.4, z = 113.0..121.0) ----
+    let (gx0, gx1, gz0, gz1) = (11.4f32, 14.2f32, 113.8f32, 120.2f32);
+    let gy0 = 0.12f32;
+    let gy_wall = gy0 + 1.95;
+    let gy_ridge = gy0 + 2.55;
+    b.span(travertine, [gx0 - 0.15, gy0, gz0 - 0.15], [gx1 + 0.15, gy0 + 0.08, gz1 + 0.15]);
+    // Low brick/travertine knee wall around the conservatory perimeter
+    for (lo, hi) in [
+        ([gx0, gy0 + 0.08, gz0], [gx1, gy0 + 0.48, gz0 + 0.12]),
+        ([gx0, gy0 + 0.08, gz1 - 0.12], [gx1, gy0 + 0.48, gz1]),
+        ([gx1 - 0.12, gy0 + 0.08, gz0], [gx1, gy0 + 0.48, gz1]),
+        ([gx0, gy0 + 0.08, gz0], [gx0 + 0.12, gy0 + 0.48, gz0 + 2.2]),
+        ([gx0, gy0 + 0.08, gz1 - 2.2], [gx0 + 0.12, gy0 + 0.48, gz1]),
+    ] {
+        b.span(garden_wall, lo, hi);
+    }
+    // Slim dark-steel greenhouse columns, eaves beams, and ridge beam
+    for &cz in &[gz0, gz0 + 2.1, gz1 - 2.1, gz1] {
+        for &cx in &[gx0, gx1] {
+            b.span(p.metal, [cx - 0.035, gy0 + 0.08, cz - 0.035], [cx + 0.035, gy_wall, cz + 0.035]);
+        }
+        let gx_mid = (gx0 + gx1) * 0.5;
+        b.beam(p.metal, Vec3::new(gx0, gy_wall, cz), Vec3::new(gx_mid, gy_ridge, cz), 0.035);
+        b.beam(p.metal, Vec3::new(gx1, gy_wall, cz), Vec3::new(gx_mid, gy_ridge, cz), 0.035);
+    }
+    for &cx in &[gx0, gx1] {
+        b.span(p.metal, [cx - 0.035, gy_wall - 0.04, gz0], [cx + 0.035, gy_wall + 0.02, gz1]);
+    }
+    b.span(
+        p.metal,
+        [(gx0 + gx1) * 0.5 - 0.04, gy_ridge - 0.04, gz0],
+        [(gx0 + gx1) * 0.5 + 0.04, gy_ridge + 0.02, gz1],
+    );
+    // Glazed side walls and pitched glass roof panels
+    b.span(p.glass, [gx1 - 0.05, gy0 + 0.48, gz0 + 0.08], [gx1 - 0.02, gy_wall - 0.04, gz1 - 0.08]);
+    b.span(p.glass, [gx0 + 0.08, gy0 + 0.48, gz0 + 0.02], [gx1 - 0.08, gy_wall - 0.04, gz0 + 0.05]);
+    b.span(p.glass, [gx0 + 0.08, gy0 + 0.48, gz1 - 0.05], [gx1 - 0.08, gy_wall - 0.04, gz1 - 0.02]);
+    // Interior botanical tables, terracotta/ceramic planters, and citrus saplings inside the conservatory
+    b.span(p.timber, [gx1 - 0.85, gy0 + 0.08, gz0 + 0.45], [gx1 - 0.25, gy0 + 0.78, gz1 - 0.45]);
+    for pz in [gz0 + 1.1, gz0 + 2.4, gz0 + 3.8, gz0 + 5.1] {
+        b.span(p.ceramic, [gx1 - 0.72, gy0 + 0.78, pz - 0.22], [gx1 - 0.38, gy0 + 1.08, pz + 0.22]);
+        b.span(p.foliage, [gx1 - 0.78, gy0 + 1.08, pz - 0.28], [gx1 - 0.32, gy0 + 1.58, pz + 0.28]);
+    }
+    for pz in [gz0 + 1.2, gz1 - 1.2] {
+        b.span(p.ceramic, [gx0 + 0.35, gy0 + 0.08, pz - 0.28], [gx0 + 0.90, gy0 + 0.52, pz + 0.28]);
+        tree(b, p, Vec3::new(gx0 + 0.62, gy0 + 0.52, pz), 1.45, 0.55, 18);
+    }
+
+    // ---- west garden classical stone colonnade & pergola walk (x = -13.6..-11.6, z = 112.0..124.5) ----
+    for i in 0..6 {
+        let cz = 112.5 + i as f32 * 2.3;
+        for cx in [-13.4f32, -11.8] {
+            b.span(travertine, [cx - 0.16, 0.12, cz - 0.16], [cx + 0.16, 2.35, cz + 0.16]);
+            b.span(p.trim, [cx - 0.22, 0.12, cz - 0.22], [cx + 0.22, 0.24, cz + 0.22]);
+            b.span(p.trim, [cx - 0.22, 2.25, cz - 0.22], [cx + 0.22, 2.38, cz + 0.22]);
+        }
+        b.span(p.timber, [-13.65, 2.46, cz - 0.06], [-11.55, 2.58, cz + 0.06]);
+    }
+    for cx in [-13.4f32, -11.8] {
+        b.span(p.timber, [cx - 0.07, 2.38, 112.1], [cx + 0.07, 2.48, 124.4]);
+    }
+    b.span(travertine, [-13.2, 0.10, 112.2], [-12.0, 0.15, 124.3]);
+
+    // ---- rooftop solar array & architectural skylight on the upper roof (y = u1 + 0.3) ----
+    let roof_top = u1 + 0.3;
+    // Framed glass skylight over the upper stairwell/gallery
+    b.span(p.metal, [-7.8, roof_top, 141.0], [-4.6, roof_top + 0.18, 143.6]);
+    b.span(p.glass, [-7.65, roof_top + 0.18, 141.15], [-4.75, roof_top + 0.22, 143.45]);
+    // Angled photovoltaic solar panels on the east half of the roof
+    for row in 0..2 {
+        let sz = 139.2 + row as f32 * 3.1;
+        for col in 0..4 {
+            let sx = -1.5 + col as f32 * 2.6;
+            b.span(p.metal, [sx - 0.9, roof_top, sz - 0.55], [sx + 0.9, roof_top + 0.14, sz - 0.45]);
+            b.span(p.metal, [sx - 0.9, roof_top, sz + 0.45], [sx + 0.9, roof_top + 0.38, sz + 0.55]);
+            b.put(
+                mosaic_dark,
+                Vec3::new(sx, roof_top + 0.28, sz),
+                Vec3::new(2.1, 0.04, 1.35),
+                Quat::from_rotation_x(-0.22),
+            );
+        }
+    }
+
     Villa {
         water: vec![WaterBody::pool(
             Vec3::new(-x, DEEP, z0),

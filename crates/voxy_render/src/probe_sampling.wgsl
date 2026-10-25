@@ -21,12 +21,23 @@ fn probe_irradiance(p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
     let c=clamp(g,vec3<f32>(0.),dims-1.);
     let base=vec3<u32>(min(floor(c),dims-2.));
     let f=c-vec3<f32>(base);
-    var sum=vec3<f32>(0.);
-    for(var i=0u;i<8u;i++){
-        let o=vec3<u32>(i&1u,(i>>1u)&1u,(i>>2u)&1u);
-        let q=base+o;
-        let w=select(1.-f.x,f.x,o.x==1u)*select(1.-f.y,f.y,o.y==1u)*select(1.-f.z,f.z,o.z==1u);
-        sum+=probe_eval(q.x+probe_grid.dims.x*(q.y+probe_grid.dims.y*q.z),n)*w;
-    }
-    return vec4<f32>(sum,fade);
+    let nf=1.-f;
+    let dx=probe_grid.dims.x;
+    let dxy=dx*probe_grid.dims.y;
+    let idx0=base.x+dx*(base.y+probe_grid.dims.y*base.z);
+    let e000=probe_eval(idx0,n);
+    let e100=probe_eval(idx0+1u,n);
+    let e010=probe_eval(idx0+dx,n);
+    let e110=probe_eval(idx0+dx+1u,n);
+    let e001=probe_eval(idx0+dxy,n);
+    let e101=probe_eval(idx0+dxy+1u,n);
+    let e011=probe_eval(idx0+dxy+dx,n);
+    let e111=probe_eval(idx0+dxy+dx+1u,n);
+    let c00=e000*nf.x+e100*f.x;
+    let c10=e010*nf.x+e110*f.x;
+    let c01=e001*nf.x+e101*f.x;
+    let c11=e011*nf.x+e111*f.x;
+    let c0=c00*nf.y+c10*f.y;
+    let c1=c01*nf.y+c11*f.y;
+    return vec4<f32>(c0*nf.z+c1*f.z,fade);
 }
