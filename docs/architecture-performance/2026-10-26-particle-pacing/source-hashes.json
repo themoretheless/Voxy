@@ -1,0 +1,5 @@
+{
+  "crates/voxy_render/src/full_frame_upload_bench.rs": "65e4b19d5511c2ec9b1dde55aaa521b9a1426e6612a55d9c950ac85d7412a4c3",
+  "docs/architecture-performance/2026-10-26-particle-pacing/measure.py": "55ee998e3d9a5e59683e40d469001adb38a80f80b8c434d7007d6e850a598df7",
+  "docs/architecture-performance/2026-10-26-particle-pacing/criteria.json": "a84572271ad2cdc6722be8c406abf6c040c914be4eec48b6e91f2e30e24b44dd"
+}

@@ -1,0 +1,222 @@
+{
+  "frames": 6912,
+  "tail_count": 67,
+  "median_gpu_us": 1389.875,
+  "tail_median_gpu_us": 1660.916,
+  "tail_host_delay_dominant": 31,
+  "tail_gpu_service_over_4x_median": 28,
+  "top20": [
+    {
+      "mode": "after",
+      "frame": 43,
+      "cpu": 350834.959,
+      "gpu": 151750.959,
+      "completion": 352785.834,
+      "start_gap": 42248.083,
+      "gpu_gap": 392866.917,
+      "backpressure": 5.709
+    },
+    {
+      "mode": "before",
+      "frame": 4,
+      "cpu": 1304.792,
+      "gpu": 1358.875,
+      "completion": 28847.542,
+      "start_gap": 175698.458,
+      "gpu_gap": 174009.0,
+      "backpressure": 56048.625
+    },
+    {
+      "mode": "after",
+      "frame": 16,
+      "cpu": 160427.125,
+      "gpu": 1660.916,
+      "completion": 164067.5,
+      "start_gap": 2814.084,
+      "gpu_gap": 162121.958,
+      "backpressure": 97.041
+    },
+    {
+      "mode": "after",
+      "frame": 13,
+      "cpu": 77220.209,
+      "gpu": 14051.041,
+      "completion": 133783.584,
+      "start_gap": 69042.5,
+      "gpu_gap": 155739.375,
+      "backpressure": 6.459
+    },
+    {
+      "mode": "after",
+      "frame": 38,
+      "cpu": 719.166,
+      "gpu": 18644.208,
+      "completion": 41492.75,
+      "start_gap": 90907.709,
+      "gpu_gap": 115102.875,
+      "backpressure": 26.958
+    },
+    {
+      "mode": "before",
+      "frame": 21,
+      "cpu": 615.209,
+      "gpu": 1479.542,
+      "completion": 18162.0,
+      "start_gap": 106780.0,
+      "gpu_gap": 106056.875,
+      "backpressure": 106014.5
+    },
+    {
+      "mode": "after",
+      "frame": 29,
+      "cpu": 76921.291,
+      "gpu": 11726.125,
+      "completion": 110092.333,
+      "start_gap": 15970.125,
+      "gpu_gap": 103981.791,
+      "backpressure": 4.958
+    },
+    {
+      "mode": "before",
+      "frame": 14,
+      "cpu": 66020.875,
+      "gpu": 1376.417,
+      "completion": 90344.375,
+      "start_gap": 27737.666,
+      "gpu_gap": 98998.0,
+      "backpressure": 7.375
+    },
+    {
+      "mode": "after",
+      "frame": 20,
+      "cpu": 604.875,
+      "gpu": 1439.25,
+      "completion": 7768.0,
+      "start_gap": 93904.875,
+      "gpu_gap": 95698.875,
+      "backpressure": 75.958
+    },
+    {
+      "mode": "after",
+      "frame": 21,
+      "cpu": 46897.0,
+      "gpu": 1487.959,
+      "completion": 62784.625,
+      "start_gap": 42226.125,
+      "gpu_gap": 93477.625,
+      "backpressure": 41954.583
+    },
+    {
+      "mode": "after",
+      "frame": 35,
+      "cpu": 40603.916,
+      "gpu": 1550.209,
+      "completion": 45404.916,
+      "start_gap": 48565.75,
+      "gpu_gap": 91407.959,
+      "backpressure": 7843.416
+    },
+    {
+      "mode": "after",
+      "frame": 45,
+      "cpu": 77304.792,
+      "gpu": 87728.375,
+      "completion": 100067.042,
+      "start_gap": 1955.542,
+      "gpu_gap": 87729.209,
+      "backpressure": 2.916
+    },
+    {
+      "mode": "after",
+      "frame": 16,
+      "cpu": 1243.833,
+      "gpu": 1340.0,
+      "completion": 9455.833,
+      "start_gap": 87773.375,
+      "gpu_gap": 87229.666,
+      "backpressure": 6.416
+    },
+    {
+      "mode": "before",
+      "frame": 2,
+      "cpu": 1469.875,
+      "gpu": 1380.792,
+      "completion": 4264.125,
+      "start_gap": 82190.333,
+      "gpu_gap": 82420.792,
+      "backpressure": 0.041
+    },
+    {
+      "mode": "before",
+      "frame": 19,
+      "cpu": 14905.833,
+      "gpu": 1523.0,
+      "completion": 121686.208,
+      "start_gap": 68678.834,
+      "gpu_gap": 79889.542,
+      "backpressure": 5.75
+    },
+    {
+      "mode": "after",
+      "frame": 4,
+      "cpu": 446.0,
+      "gpu": 22035.167,
+      "completion": 36428.667,
+      "start_gap": 47736.667,
+      "gpu_gap": 78779.084,
+      "backpressure": 11663.75
+    },
+    {
+      "mode": "after",
+      "frame": 3,
+      "cpu": 66004.875,
+      "gpu": 1390.708,
+      "completion": 68703.875,
+      "start_gap": 11899.25,
+      "gpu_gap": 78212.917,
+      "backpressure": 4.667
+    },
+    {
+      "mode": "before",
+      "frame": 16,
+      "cpu": 66881.75,
+      "gpu": 1477.541,
+      "completion": 74257.875,
+      "start_gap": 10678.792,
+      "gpu_gap": 78164.041,
+      "backpressure": 2.625
+    },
+    {
+      "mode": "after",
+      "frame": 34,
+      "cpu": 36888.792,
+      "gpu": 14786.458,
+      "completion": 60451.917,
+      "start_gap": 26283.666,
+      "gpu_gap": 74195.042,
+      "backpressure": 6.667
+    },
+    {
+      "mode": "before",
+      "frame": 33,
+      "cpu": 25808.292,
+      "gpu": 24684.0,
+      "completion": 43099.084,
+      "start_gap": 51431.25,
+      "gpu_gap": 72711.833,
+      "backpressure": 78.375
+    }
+  ],
+  "scheduler_evidence": {
+    "before": {
+      "frames": 3456,
+      "catch_up_starts": 542,
+      "start_gaps_over_16ms": 144
+    },
+    "after": {
+      "frames": 3456,
+      "catch_up_starts": 446,
+      "start_gaps_over_16ms": 130
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "complete": true,
+  "controls_stable": false,
+  "upload_metric_gates_passed": true,
+  "relative_p99_qualified": false,
+  "absolute_120hz_claim": false,
+  "details": {
+    "control": {
+      "before": {
+        "frames": 3456,
+        "min_start_gap_us": 4188.834,
+        "catch_up_starts": 0,
+        "scheduled_to_completion_p50_us": 2747.8980000000447,
+        "scheduled_to_completion_p99_us": 50133.63090000079,
+        "assigned_deadline_misses": 558,
+        "original_grid_deadline_misses": 1312,
+        "lateness_periods": 331
+      },
+      "after": {
+        "frames": 3456,
+        "min_start_gap_us": 4188.666,
+        "catch_up_starts": 0,
+        "scheduled_to_completion_p50_us": 2747.7199999997392,
+        "scheduled_to_completion_p99_us": 39079.70044999917,
+        "assigned_deadline_misses": 471,
+        "original_grid_deadline_misses": 1404,
+        "lateness_periods": 221
+      }
+    },
+    "pacer": {
+      "before": {
+        "frames": 3456,
+        "min_start_gap_us": 271.875,
+        "catch_up_starts": 7,
+        "scheduled_to_completion_p50_us": 2648.075999999419,
+        "scheduled_to_completion_p99_us": 3442.267949999536,
+        "assigned_deadline_misses": 22,
+        "original_grid_deadline_misses": 22,
+        "lateness_periods": 5
+      },
+      "after": {
+        "frames": 3456,
+        "min_start_gap_us": 6223.833,
+        "catch_up_starts": 0,
+        "scheduled_to_completion_p50_us": 2651.966499999631,
+        "scheduled_to_completion_p99_us": 3409.1871999996624,
+        "assigned_deadline_misses": 10,
+        "original_grid_deadline_misses": 51,
+        "lateness_periods": 8
+      }
+    },
+    "upload": {
+      "before": {
+        "frames": 3456,
+        "min_start_gap_us": 5254.375,
+        "catch_up_starts": 0,
+        "scheduled_to_completion_p50_us": 2645.093499999959,
+        "scheduled_to_completion_p99_us": 4695.655550000289,
+        "assigned_deadline_misses": 26,
+        "original_grid_deadline_misses": 186,
+        "lateness_periods": 5
+      },
+      "after": {
+        "frames": 3456,
+        "min_start_gap_us": 4835.875,
+        "catch_up_starts": 0,
+        "scheduled_to_completion_p50_us": 2649.008500000462,
+        "scheduled_to_completion_p99_us": 3303.808450001376,
+        "assigned_deadline_misses": 9,
+        "original_grid_deadline_misses": 40,
+        "lateness_periods": 2
+      }
+    }
+  }
+}

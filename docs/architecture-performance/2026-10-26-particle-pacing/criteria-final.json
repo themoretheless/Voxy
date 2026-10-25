@@ -1,0 +1,32 @@
+{
+  "load": "observed concurrent load; no waiting, pauses, rejected noisy runs or optional stopping",
+  "groups": [
+    "control: identical slice uploads, bounded scheduler both sides",
+    "pacer: identical slice uploads, legacy before / bounded after",
+    "upload: bounded both sides, slice before / direct generated after"
+  ],
+  "sampling": {
+    "repeats": 2,
+    "pairs_per_repeat": 18,
+    "blocks_per_pair": 2,
+    "frames_per_block": 48,
+    "warmup_pairs": 1
+  },
+  "bootstrap": {
+    "samples": 10000,
+    "paired_ratio_count": 36,
+    "seed": 20261026,
+    "interval": "two-sided percentile 95%"
+  },
+  "upper_ratio_bounds": {
+    "cpu_p50": 1.05,
+    "gpu_p50": 1.05,
+    "completion_p50": 1.05,
+    "gpu_gap_p50": 1.05,
+    "gpu_gap_p99": 1.1
+  },
+  "telemetry": "raw gaps never clipped/excluded; original fixed-grid deadline misses retained, assigned-deadline misses and sub-half-period starts reported separately",
+  "scope": "offscreen benchmark scheduling only; shader/data layout unchanged, no promise to eliminate OS preemption or competing GPU work",
+  "revision": "v2: retain grid for ordinary lateness, rebase only if the next start would be less than half a period after the observed start",
+  "v1_disposition": "preserved separately; rejected for accumulating ordinary lateness into approximately 2.2% lower cadence, not for failing a statistical gate"
+}
