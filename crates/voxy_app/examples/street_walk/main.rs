@@ -73,6 +73,8 @@ struct App {
     measure_start_unix_seconds: Option<f64>,
     replay_state: blake3::Hasher,
     durations: Vec<f64>,
+    completion_intervals: Vec<f64>,
+    last_completion: Option<Instant>,
     skipped_acquires: u64,
     physics_seconds: Vec<f64>,
     render_seconds: Vec<f64>,
@@ -198,6 +200,8 @@ impl App {
             measure_start_unix_seconds: None,
             replay_state: blake3::Hasher::new(),
             durations: Vec::new(),
+            completion_intervals: Vec::new(),
+            last_completion: None,
             skipped_acquires: 0,
             physics_seconds: Vec::new(),
             render_seconds: Vec::new(),
@@ -1383,7 +1387,9 @@ impl App {
         if self.frames == 180 {
             self.measure_water_start = gpu.renderer.water_render_stats();
             self.skipped_acquires = 0;
-            self.measure_start = Some(Instant::now());
+            let completion = Instant::now();
+            self.last_completion = self.offscreen_benchmark.then_some(completion);
+            self.measure_start = Some(completion);
             if self.benchmark > 0. {
                 self.measure_start_unix_seconds = std::time::SystemTime::now()
                     .duration_since(std::time::UNIX_EPOCH)
@@ -1393,6 +1399,12 @@ impl App {
             self.measure_simulation_steps = self.simulation_steps;
             self.durations.clear();
         } else if self.frames > 180 {
+            if self.offscreen_benchmark {
+                let completion = Instant::now();
+                if let Some(previous) = self.last_completion.replace(completion) {
+                    self.completion_intervals.push(completion.duration_since(previous).as_secs_f64());
+                }
+            }
             // Offscreen draw waited for THIS GPU submission. A start-to-start
             // delta would instead attribute frame 180 to sample 181 and omit
             // the final measured frame. Window sampling keeps its old clock.
@@ -1485,6 +1497,8 @@ impl App {
                 "measurement_duration_clock":"single_monotonic_elapsed",
                 "frame_sample_clock":if self.offscreen_benchmark {"current_completed_frame"}else{"start_to_start"},
                 "completed_frame_samples_seconds":self.durations,
+                "host_completion_intervals_seconds":self.completion_intervals,
+                "host_completion_interval_scope":"successive host observations after exact GPU submission completion; includes event-loop gaps; not scanout",
                 "current_render_samples_seconds":self.render_seconds,
                 "world_query_encoded_frames":gpu.renderer.world_ray_query_encoded_frames(),
                 "world_ray_consumer_cache":std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE").as_deref()==Ok("1"),
