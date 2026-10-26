@@ -1263,6 +1263,54 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
         }
     }
 
+    // ---- poolside outdoor shower alcove & towel cabana (x = -6.2..-5.2, z = 127.6..130.0) ----
+    // Architectural travertine privacy screen, teak duckboard grating, chrome rain-shower column, and towel rack
+    b.span(travertine, [-6.15, DECK, 127.7], [-5.92, DECK + 2.25, 129.9]);
+    b.span(cladding, [-6.18, DECK + 0.12, 127.85], [-6.15, DECK + 2.15, 129.75]);
+    for slat in 0..7 {
+        let sz = 127.95 + slat as f32 * 0.28;
+        b.span(p.timber, [-5.90, DECK, sz - 0.08], [-5.25, DECK + 0.035, sz + 0.08]);
+    }
+    b.span(chrome, [-5.92, DECK + 0.04, 128.76], [-5.86, DECK + 2.10, 128.84]);
+    b.span(chrome, [-5.86, DECK + 2.06, 128.76], [-5.48, DECK + 2.10, 128.84]);
+    b.span(chrome, [-5.62, DECK + 2.02, 128.66], [-5.38, DECK + 2.06, 128.94]);
+    b.span(chrome, [-5.90, DECK + 1.05, 128.72], [-5.82, DECK + 1.12, 128.88]);
+    // Towel rack bench and folded pool towels beside the shower
+    b.span(p.timber, [-5.88, DECK, 129.25], [-5.42, DECK + 0.46, 129.82]);
+    b.span(towel, [-5.82, DECK + 0.46, 129.32], [-5.48, DECK + 0.54, 129.75]);
+
+    // ---- southwest zen meditation timber pavilion & bamboo screen (x = -14.1..-12.3, z = 136.0..144.0) ----
+    let (mx0, mx1, mz0, mz1) = (-14.1f32, -12.35f32, 136.2f32, 143.8f32);
+    let my0 = 0.12f32;
+    let my_deck = 0.26f32;
+    b.span(concrete, [mx0 + 0.08, my0, mz0 + 0.08], [mx1 - 0.08, my_deck - 0.04, mz1 - 0.08]);
+    b.span(p.timber, [mx0, my_deck - 0.04, mz0], [mx1, my_deck, mz1]);
+    // Stepping stones from the west colonnade/lawn to the meditation deck
+    for sz in [133.4f32, 134.8] {
+        b.span(travertine, [-13.4, my0, sz - 0.32], [-12.5, my0 + 0.05, sz + 0.32]);
+    }
+    // Low Japanese chabudai tea table and floor zabuton cushions on the timber deck
+    let tz_center = (mz0 + mz1) * 0.5;
+    let tx_center = (mx0 + mx1) * 0.5;
+    b.span(p.wood, [tx_center - 0.42, my_deck + 0.24, tz_center - 0.65], [tx_center + 0.42, my_deck + 0.29, tz_center + 0.65]);
+    for (lx, lz) in [(-0.34, -0.55), (0.34, -0.55), (-0.34, 0.55), (0.34, 0.55)] {
+        b.span(p.wood, [tx_center + lx - 0.03, my_deck, tz_center + lz - 0.03], [tx_center + lx + 0.03, my_deck + 0.24, tz_center + lz + 0.03]);
+    }
+    b.span(p.ceramic, [tx_center - 0.10, my_deck + 0.29, tz_center - 0.10], [tx_center + 0.10, my_deck + 0.40, tz_center + 0.10]);
+    for (cz, col_idx) in [(tz_center - 1.15, 0usize), (tz_center + 1.15, 1)] {
+        b.span(fabric(col_idx), [tx_center - 0.36, my_deck, cz - 0.36], [tx_center + 0.36, my_deck + 0.08, cz + 0.36]);
+    }
+    // Carved stone lantern (Toro) and bamboo/foliage planter screen along the outer edge
+    b.span(travertine, [mx0 + 0.18, my_deck, mz1 - 0.85], [mx0 + 0.58, my_deck + 0.12, mz1 - 0.45]);
+    b.span(travertine, [mx0 + 0.28, my_deck + 0.12, mz1 - 0.75], [mx0 + 0.48, my_deck + 0.68, mz1 - 0.55]);
+    b.span(p.glow, [mx0 + 0.26, my_deck + 0.68, mz1 - 0.77], [mx0 + 0.50, my_deck + 0.90, mz1 - 0.53]);
+    b.span(travertine, [mx0 + 0.14, my_deck + 0.90, mz1 - 0.89], [mx0 + 0.62, my_deck + 1.04, mz1 - 0.41]);
+    for i in 0..5 {
+        let bz = mz0 + 0.7 + i as f32 * 1.45;
+        b.span(p.ceramic, [mx0 - 0.35, my0, bz - 0.22], [mx0 - 0.04, my0 + 0.38, bz + 0.22]);
+        b.span(p.foliage, [mx0 - 0.38, my0 + 0.38, bz - 0.26], [mx0 - 0.02, my0 + 1.85, bz + 0.26]);
+    }
+
     Villa {
         water: vec![WaterBody::pool(
             Vec3::new(-x, DEEP, z0),

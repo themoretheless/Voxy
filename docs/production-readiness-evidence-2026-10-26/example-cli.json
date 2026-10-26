@@ -1,0 +1,10 @@
+{
+  "create_stdout": "Created /Users/themoretheless/Documents/Sources/voxy/examples/empty-project/project.voxy\n",
+  "validate_stdout": "Validated project \"Voxy Starter\": 0 scene objects\n",
+  "returncodes": [
+    0,
+    0
+  ],
+  "cwd": "/",
+  "window_or_GPU_requested": false
+}

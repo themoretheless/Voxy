@@ -122,12 +122,19 @@ fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
     // when either a dependency or the certified source identity changes.
     let mut app = crate::App::new(&root.join("model.vmodel"), false).unwrap();
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-    while app.catalog.snapshot(&app.id).is_none() {
+    while app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .is_none()
+    {
         app.tick().unwrap();
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
-    let before = app.catalog.snapshot(&app.id).unwrap();
+    let before = app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .unwrap();
     assert!(before.value().skinned_lod.is_some());
     std::fs::write(
         root.join("proof.lod"),
@@ -139,7 +146,10 @@ fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
-    let retained = app.catalog.snapshot(&app.id).unwrap();
+    let retained = app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .unwrap();
     assert!(std::sync::Arc::ptr_eq(&before, &retained));
     assert!(
         !retained
@@ -151,12 +161,20 @@ fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
             .is_empty()
     );
     std::fs::write(root.join("proof.lod"), &certificate).unwrap();
-    while std::sync::Arc::ptr_eq(&before, &app.catalog.snapshot(&app.id).unwrap()) {
+    while std::sync::Arc::ptr_eq(
+        &before,
+        &app.catalog
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
+            .unwrap(),
+    ) {
         app.tick().unwrap();
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
-    let repaired = app.catalog.snapshot(&app.id).unwrap();
+    let repaired = app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .unwrap();
     assert!(app.recovered);
     assert!(repaired.value().skinned_lod.is_some());
     app.stop_workers().unwrap();

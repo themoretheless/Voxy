@@ -33,11 +33,15 @@ fn probe_irradiance(p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
     let e101=probe_eval(idx0+dxy+1u,n);
     let e011=probe_eval(idx0+dxy+dx,n);
     let e111=probe_eval(idx0+dxy+dx+1u,n);
-    let c00=e000*nf.x+e100*f.x;
-    let c10=e010*nf.x+e110*f.x;
-    let c01=e001*nf.x+e101*f.x;
-    let c11=e011*nf.x+e111*f.x;
-    let c0=c00*nf.y+c10*f.y;
-    let c1=c01*nf.y+c11*f.y;
-    return vec4<f32>(c0*nf.z+c1*f.z,fade);
+    // Keep the original corner order and rounding sequence after unrolling.
+    var sum=vec3<f32>(0.);
+    sum+=e000*(nf.x*nf.y*nf.z);
+    sum+=e100*(f.x*nf.y*nf.z);
+    sum+=e010*(nf.x*f.y*nf.z);
+    sum+=e110*(f.x*f.y*nf.z);
+    sum+=e001*(nf.x*nf.y*f.z);
+    sum+=e101*(f.x*nf.y*f.z);
+    sum+=e011*(nf.x*f.y*f.z);
+    sum+=e111*(f.x*f.y*f.z);
+    return vec4<f32>(sum,fade);
 }

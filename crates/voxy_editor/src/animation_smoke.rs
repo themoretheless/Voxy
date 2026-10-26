@@ -97,7 +97,10 @@ impl App {
         }
         match smoke.phase {
             0 => {
-                let Some(asset) = self.catalog.snapshot(&self.id) else {
+                let Some(asset) = self
+                    .catalog
+                    .snapshot(self.id.as_ref().expect("model-only fixture"))
+                else {
                     return Ok(false);
                 };
                 let model = asset
@@ -117,11 +120,10 @@ impl App {
                     .or_else(|| model.joint_names().get(1).and_then(Option::as_ref))
                     .filter(|name| model.resolve_joint_name(name).is_ok())
                     .map(std::string::ToString::to_string);
-                if self
-                    .graphics
-                    .as_ref()
-                    .is_none_or(|g| !g.models.contains_key(&self.id))
-                {
+                if self.graphics.as_ref().is_none_or(|g| {
+                    !g.models
+                        .contains_key(self.id.as_ref().expect("model-only fixture"))
+                }) {
                     return Ok(false);
                 }
                 if asset.value().skinned_lod.is_some() {
@@ -396,7 +398,7 @@ impl App {
                 let mut textured = 0;
                 if let Some(model) = graphics
                     .models
-                    .get(&self.id)
+                    .get(self.id.as_ref().expect("model-only fixture"))
                     .and_then(|m| m.animated_model.as_ref())
                 {
                     for (primitive, material) in model.primitives.iter().enumerate() {
@@ -427,12 +429,12 @@ impl App {
                 );
                 if self
                     .catalog
-                    .snapshot(&self.id)
+                    .snapshot(self.id.as_ref().expect("model-only fixture"))
                     .is_some_and(|asset| asset.value().skinned_lod.is_some())
                 {
                     let imported = self
                         .catalog
-                        .snapshot(&self.id)
+                        .snapshot(self.id.as_ref().expect("model-only fixture"))
                         .ok_or("missing native LOD source")?;
                     let lod = imported
                         .value()
@@ -549,14 +551,16 @@ impl App {
                     }
                     return Ok(false);
                 }
-                if self
-                    .graphics
-                    .as_ref()
-                    .is_none_or(|g| !g.models.contains_key(&self.id))
-                {
+                if self.graphics.as_ref().is_none_or(|g| {
+                    !g.models
+                        .contains_key(self.id.as_ref().expect("model-only fixture"))
+                }) {
                     return Ok(false);
                 }
-                let target = self.catalog.snapshot(&self.id).ok_or("missing target")?;
+                let target = self
+                    .catalog
+                    .snapshot(self.id.as_ref().expect("model-only fixture"))
+                    .ok_or("missing target")?;
                 if !target
                     .value()
                     .animated
@@ -761,7 +765,7 @@ impl App {
                 let second = self.instances[1];
                 let target = self
                     .catalog
-                    .snapshot(&self.id)
+                    .snapshot(self.id.as_ref().expect("model-only fixture"))
                     .ok_or("missing angular target")?;
                 let model = target
                     .value()
@@ -866,11 +870,14 @@ impl App {
         }
         match smoke.phase {
             0 => {
-                if self.catalog.snapshot(&self.id).is_none()
-                    || self
-                        .graphics
-                        .as_ref()
-                        .is_none_or(|g| !g.models.contains_key(&self.id))
+                if self
+                    .catalog
+                    .snapshot(self.id.as_ref().expect("model-only fixture"))
+                    .is_none()
+                    || self.graphics.as_ref().is_none_or(|g| {
+                        !g.models
+                            .contains_key(self.id.as_ref().expect("model-only fixture"))
+                    })
                 {
                     return Ok(false);
                 }
@@ -884,7 +891,7 @@ impl App {
                     }
                     if !self
                         .catalog
-                        .snapshot(&self.id)
+                        .snapshot(self.id.as_ref().expect("model-only fixture"))
                         .unwrap()
                         .value()
                         .animated
@@ -1012,7 +1019,7 @@ impl App {
                 let first = self.instances[0];
                 let asset = self
                     .catalog
-                    .snapshot(&self.id)
+                    .snapshot(self.id.as_ref().expect("model-only fixture"))
                     .ok_or("missing foot asset")?;
                 let model = asset
                     .value()

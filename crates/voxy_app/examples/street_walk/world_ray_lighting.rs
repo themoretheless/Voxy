@@ -84,6 +84,8 @@ pub fn prepare(
                 .as_deref()
                 == Ok("1"),
             wide_source_nodes: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref() == Ok("1"),
+            wide_source_near_first: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NEAR_FIRST").as_deref() == Ok("1"),
+            compare_wide_same_producer: std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE").as_deref() == Ok("1"),
             skip_zero_prefix_multiply: std::env::var(
                 "VOXY_STREET_WORLD_RAY_SKIP_ZERO_PREFIX_MULTIPLY",
             )
@@ -180,6 +182,7 @@ pub fn prepare(
     eprintln!("STREET WORLD SCHEDULING {}", serde_json::json!({
         "kind": format!("{:?}",job.query_kind()),
         "wide_source_nodes": job.wide_source_nodes_enabled(),
+        "wide_source_near_first": job.wide_source_near_first_enabled(),
         "wide_source_block_blake3": job.wide_source_digest(),
         "source_simplified": false
     }));

@@ -29,5 +29,5 @@ fn soft_sun_visibility(shadow:mat4x4<f32>,uv:vec2<f32>,depth:f32,noise:f32)->f32
  for(var i=0;i<12;i++){
   visibility+=textureSampleCompareLevel(shadow_map,shadow_sampler,uv+spin*PCSS_TAPS[i]*radius,bias_depth);
  }
- return visibility*(1./12.);
+ return visibility/12.;
 }

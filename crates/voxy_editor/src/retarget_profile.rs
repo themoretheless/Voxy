@@ -171,13 +171,17 @@ mod tests {
             .join("../voxy_render/examples/assets/foot-contact.glb");
         let mut app = crate::App::new(&fixture, false).unwrap();
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-        while app.catalog.snapshot(&app.id).is_none() {
+        while app
+            .catalog
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
+            .is_none()
+        {
             app.tick().unwrap();
             assert!(std::time::Instant::now() < deadline);
             std::thread::sleep(std::time::Duration::from_millis(5));
         }
         let profile: ModelRetarget = serde_json::from_value(serde_json::json!({
-            "source":app.id.0,"joints":[{"source":"hip","target":"hip"}]
+            "source":app.id.as_ref().expect("model-only fixture").clone().0,"joints":[{"source":"hip","target":"hip"}]
         }))
         .unwrap();
         app.scene
@@ -258,7 +262,11 @@ mod tests {
         app.commit_authoring().unwrap();
         let source_id = AssetId("source.glb".into());
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-        while app.catalog.snapshot(&source_id).is_none() || app.catalog.snapshot(&app.id).is_none()
+        while app.catalog.snapshot(&source_id).is_none()
+            || app
+                .catalog
+                .snapshot(app.id.as_ref().expect("model-only fixture"))
+                .is_none()
         {
             app.tick().unwrap();
             assert!(std::time::Instant::now() < deadline);

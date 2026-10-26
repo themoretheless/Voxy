@@ -165,12 +165,17 @@ mod tests {
     use super::*;
     use voxy_render::archive_scene::ArchiveImageSource;
     fn directory() -> std::path::PathBuf {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        static NEXT_ID: AtomicUsize = AtomicUsize::new(0);
         let value = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let root =
-            std::env::temp_dir().join(format!("voxy-image-export-{}-{value}", std::process::id()));
+        let seq = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+        let root = std::env::temp_dir().join(format!(
+            "voxy-image-export-{}-{value}-{seq}",
+            std::process::id()
+        ));
         fs::create_dir(&root).unwrap();
         root
     }

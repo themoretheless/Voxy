@@ -1,6 +1,8 @@
 //! Prepared original-source query region, encoded before opaque lighting.
 use crate::{ArchiveWorldRayProducer, ExactWorldNearest, RaySceneError, WorldRayKind};
 use std::sync::Arc;
+#[path = "world_consumer_pair.rs"]
+mod consumer_pair;
 #[path = "archive_world_consumer_profile.rs"]
 mod consumer_profile;
 #[path = "archive_world_ray_profile.rs"]
@@ -52,6 +54,8 @@ pub(crate) struct ArchiveWorldRayFrame {
     audit_enabled: bool,
     encoded_frames: std::sync::atomic::AtomicU64,
     profile: Option<profile::WorldRayProfile>,
+    consumer_pair: Option<consumer_pair::ConsumerPair>,
+    device: wgpu::Device,
 }
 impl ArchiveWorldRayFrame {
     pub(crate) fn new(
@@ -107,12 +111,36 @@ impl ArchiveWorldRayFrame {
             kinds.push(regions);
         }
         let audit_enabled = kinds[0][0].audit_enabled;
+        let consumer_pair = if kinds[0][0].original_groups.is_some() {
+            let texture = kinds[0][0].views[2].texture();
+            if kinds.iter().flatten().any(|r| {
+                r.original_groups.is_none()
+                    || r.views[2].texture().format() != wgpu::TextureFormat::Rgba32Float
+                    || !r.views[2]
+                        .texture()
+                        .usage()
+                        .contains(wgpu::TextureUsages::COPY_SRC)
+                    || r.views[2].texture().size() != texture.size()
+            }) {
+                return Err(RaySceneError::Unsupported);
+            }
+            Some(consumer_pair::ConsumerPair::new(
+                device,
+                [texture.width(), texture.height()],
+                &tiles,
+                kinds.len(),
+            )?)
+        } else {
+            None
+        };
         Ok(Self {
             kinds,
             tiles,
             audit_enabled,
             encoded_frames: std::sync::atomic::AtomicU64::new(0),
             profile,
+            consumer_pair,
+            device: device.clone(),
         })
     }
     pub(super) fn needs_queries(
@@ -147,6 +175,9 @@ impl ArchiveWorldRayFrame {
                     timing,
                     (index == 0).then_some(base),
                     (index + 1 == regions.len()).then_some(base + 1),
+                    self.consumer_pair
+                        .as_ref()
+                        .map(|p| (p, kind * self.tiles.len() + index)),
                     self.profile.as_ref().map(|p| {
                         (
                             &p.set,
@@ -176,6 +207,27 @@ impl ArchiveWorldRayFrame {
                 )
             })
             .transpose()
+    }
+    pub(super) fn same_producer_comparison(
+        &self,
+        queue: &wgpu::Queue,
+    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+        let Some(first) = self.kinds.first().and_then(|v| v.first()).map(|r| &r.job) else {
+            return Ok(None);
+        };
+        if self
+            .kinds
+            .iter()
+            .flatten()
+            .any(|r| !Arc::ptr_eq(&r.job, first))
+        {
+            return Ok(None);
+        }
+        let mut proof = first.read_same_producer_comparison(queue)?;
+        if let (Some(proof), Some(pair)) = (&mut proof, &self.consumer_pair) {
+            proof["actual_consumer_HDR"] = pair.proof(&self.device, queue)?;
+        }
+        Ok(proof)
     }
     pub(super) fn work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
         let first = &self.kinds.first()?.first()?.job;
@@ -209,6 +261,7 @@ pub(crate) struct ArchiveWorldRayRegion {
     job: Arc<ExactWorldNearest>,
     pipeline: wgpu::ComputePipeline,
     groups: [wgpu::BindGroup; 3],
+    original_groups: Option<([wgpu::BindGroup; 3], crate::ComputeStorage)>,
     extent: [u32; 2],
     audit: crate::ComputeStorage,
     views: [wgpu::TextureView; 3],
@@ -254,6 +307,48 @@ mod tests {
         assert!(frame_tiles([32, 32], [0, 7], 91).is_err());
     }
 }
+
+fn original_groups(
+    device: &wgpu::Device,
+    job: &ExactWorldNearest,
+    pipeline: &wgpu::ComputePipeline,
+    groups: &[wgpu::BindGroup; 3],
+    entries: &[wgpu::BindGroupEntry<'_>],
+) -> Result<Option<([wgpu::BindGroup; 3], crate::ComputeStorage)>, RaySceneError> {
+    let Some((rays, hits)) = job.same_producer_original_buffers() else {
+        return Ok(None);
+    };
+    let [audit] = crate::ComputeMemoryBudget::for_device(device)
+        .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
+            label: "original consumer private audit",
+            size: 48,
+            contents: None,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        }])
+        .map_err(|_| RaySceneError::Capacity)?;
+    let entries: Vec<_> = entries
+        .iter()
+        .map(|e| wgpu::BindGroupEntry {
+            binding: e.binding,
+            resource: match e.binding {
+                18 => rays.as_entire_binding(),
+                19 => hits.as_entire_binding(),
+                20 => audit.as_entire_binding(),
+                _ => e.resource.clone(),
+            },
+        })
+        .collect();
+    let original = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: Some("same resolve PSO original query binding"),
+        layout: &pipeline.get_bind_group_layout(1),
+        entries: &entries,
+    });
+    Ok(Some((
+        [groups[0].clone(), original, groups[2].clone()],
+        audit,
+    )))
+}
+
 impl ArchiveWorldRayRegion {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
@@ -529,11 +624,13 @@ impl ArchiveWorldRayRegion {
                 [&back, &z, &old_z, &ranges],
             )
         });
+        let original_groups = original_groups(device, &job, &pipeline, &groups, &resolve_entries)?;
         Ok(Self {
             producer,
             job,
             pipeline,
             groups,
+            original_groups,
             extent,
             audit,
             views: [world, normal, out],
@@ -646,11 +743,15 @@ impl ArchiveWorldRayRegion {
                 self.cache.as_ref().unwrap(),
             )
         });
+        let groups = [self.groups[0].clone(), group, self.groups[2].clone()];
+        let original_groups =
+            original_groups(device, &self.job, &self.pipeline, &groups, &resolve_entries)?;
         Ok(Self {
             producer,
             job: self.job.clone(),
             pipeline: self.pipeline.clone(),
-            groups: [self.groups[0].clone(), group, self.groups[2].clone()],
+            groups,
+            original_groups,
             extent,
             audit,
             views: self.views.clone(),
@@ -674,7 +775,7 @@ impl ArchiveWorldRayRegion {
         begin: Option<u32>,
         end: Option<u32>,
     ) {
-        self.encode_profiled(encoder, timing, begin, end, None);
+        self.encode_profiled(encoder, timing, begin, end, None, None);
     }
     fn encode_profiled(
         &self,
@@ -682,6 +783,7 @@ impl ArchiveWorldRayRegion {
         timing: Option<&wgpu::QuerySet>,
         begin: Option<u32>,
         end: Option<u32>,
+        consumer_pair: Option<(&consumer_pair::ConsumerPair, usize)>,
         profile: Option<(&wgpu::QuerySet, u32, u32, Option<u32>)>,
     ) {
         if self.cache_check {
@@ -754,6 +856,24 @@ impl ArchiveWorldRayRegion {
                 profile.map(|(set, base, consumer, _)| (set, base + 2 + 2 * consumer)),
             )
             .expect("immutable prepared source region");
+        if let Some((pair, index)) = consumer_pair {
+            let (groups, audit) = self
+                .original_groups
+                .as_ref()
+                .expect("paired original bindings");
+            encoder.clear_buffer(audit, 0, None);
+            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("same PSO original query consumer"),
+                timestamp_writes: None,
+            });
+            pass.set_pipeline(&self.pipeline);
+            for (i, group) in groups.iter().enumerate() {
+                pass.set_bind_group(i as u32, group, &[]);
+            }
+            pass.dispatch_workgroups(self.extent[0].div_ceil(8), self.extent[1].div_ceil(8), 1);
+            drop(pass);
+            pair.original(encoder, self.views[2].texture(), index);
+        }
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("original-source GI/reflection resolve"),
             timestamp_writes: if let Some((set, _, _, Some(sample))) = profile {
@@ -778,5 +898,9 @@ impl ArchiveWorldRayRegion {
             pass.set_bind_group(index as u32, group, &[]);
         }
         pass.dispatch_workgroups(self.extent[0].div_ceil(8), self.extent[1].div_ceil(8), 1);
+        drop(pass);
+        if let Some((pair, index)) = consumer_pair {
+            pair.compare(encoder, self.views[2].texture(), index);
+        }
     }
 }

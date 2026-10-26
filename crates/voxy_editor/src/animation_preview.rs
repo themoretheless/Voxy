@@ -285,7 +285,11 @@ mod tests {
             .unwrap();
         let source_id = voxy_assets::AssetId("source.glb".into());
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-        while app.catalog.snapshot(&app.id).is_none() || app.catalog.snapshot(&source_id).is_none()
+        while app
+            .catalog
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
+            .is_none()
+            || app.catalog.snapshot(&source_id).is_none()
         {
             app.tick().unwrap();
             assert!(std::time::Instant::now() < deadline);
@@ -296,7 +300,7 @@ mod tests {
         app.preview_animation_marker(0, token).unwrap();
         let model = app
             .catalog
-            .snapshot(&app.id)
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
             .unwrap()
             .value()
             .animated
@@ -395,7 +399,11 @@ mod tests {
             .join("../voxy_render/examples/assets/animated-triangle.glb");
         let mut app = crate::App::new(&path, false).unwrap();
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-        while app.catalog.snapshot(&app.id).is_none() {
+        while app
+            .catalog
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
+            .is_none()
+        {
             app.tick().unwrap();
             assert!(std::time::Instant::now() < deadline);
             std::thread::sleep(std::time::Duration::from_millis(5));
@@ -413,7 +421,7 @@ mod tests {
         let owner = app.instances[0];
         let model = app
             .catalog
-            .snapshot(&app.id)
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
             .unwrap()
             .value()
             .animated

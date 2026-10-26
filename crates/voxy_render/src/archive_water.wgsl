@@ -212,21 +212,37 @@ fn ambient_light()->vec3<f32> {
 fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f32> {
   var t = 0.06;
   var previous = 0.;
+  var cached_pixel = vec2<i32>(-1);
+  var cached_depth = 1.;
   for (var i = 0u; i < 56u; i++) {
     let q = to_pixel(origin + direction * t);
     if any(q.xy <= vec2<f32>(0.)) || any(q.xy >= camera.viewport.xy) || q.z <= 0. || q.z >= 1. { return vec4<f32>(0.); }
-    let depth = textureLoad(opaque_depth, vec2<i32>(q.xy), 0);
+    let ray_pixel = vec2<i32>(q.xy);
+    if any(ray_pixel != cached_pixel) {
+      cached_depth = textureLoad(opaque_depth, ray_pixel, 0);
+      cached_pixel = ray_pixel;
+    }
+    let depth = cached_depth;
     if depth < 1. && q.z >= depth {
       var lo = previous; var hi = t;
       for (var r = 0u; r < 6u; r++) {
         let mid = (lo + hi) * 0.5;
         let m = to_pixel(origin + direction * mid);
-        let z = textureLoad(opaque_depth, clamp_pixel(m.xy), 0);
+        let mp = clamp_pixel(m.xy);
+        if any(mp != cached_pixel) {
+          cached_depth = textureLoad(opaque_depth, mp, 0);
+          cached_pixel = mp;
+        }
+        let z = cached_depth;
         if z < 1. && m.z >= z { hi = mid; } else { lo = mid; }
       }
       let hit = origin + direction * hi;
       let pixel = clamp_pixel(to_pixel(hit).xy);
-      let surface = world_at(pixel, textureLoad(opaque_depth, pixel, 0));
+      if any(pixel != cached_pixel) {
+        cached_depth = textureLoad(opaque_depth, pixel, 0);
+        cached_pixel = pixel;
+      }
+      let surface = world_at(pixel, cached_depth);
       if distance(surface, hit) > 0.25 || surface.y > ceiling { return vec4<f32>(0.); }
       let uv = vec2<f32>(pixel) / camera.viewport.xy;
       let edge = min(min(uv.x, uv.y), min(1. - uv.x, 1. - uv.y));

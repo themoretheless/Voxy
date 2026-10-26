@@ -1,0 +1,13 @@
+{
+  "head": "4785e251d0c1339876ce8928f99ddd8d307120d2",
+  "source_sha256": {
+    "crates/voxy_editor/src/project.rs": "ec2820e48f47330d0f5faa7a55cf53314862d491b3a5e7261d0a288bd97112c7",
+    "crates/voxy_editor/src/main.rs": "7276723f176b0609d563cccb6f487c85ffb140f66768f2dfdf97d17ce7ac7aa5",
+    "crates/voxy_editor/src/lib.rs": "c18b3d0afcc8dc9fb399e18c74f3de9a1dcfbb91cbadacfa07adbc90029f7f31"
+  },
+  "editor_binary_sha256": "c315d83410f21ff2ce9a64c242b4788a72831c4d46b678bbd4b2a65987193deb",
+  "project_bootstrap_verified": true,
+  "GUI_project_open_verified": false,
+  "standalone_game_verified": false,
+  "engine_production_ready": false
+}

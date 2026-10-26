@@ -373,16 +373,21 @@ impl App {
                     .transpose()?
                     .flatten();
                 let duplicate = self.scene.spawn(parent, local)?;
-                self.scene.insert_component(
-                    duplicate,
-                    ModelInstance {
-                        asset: node
-                            .and_then(|node| {
-                                self.scene.component::<ModelInstance>(node).ok().flatten()
-                            })
-                            .map_or_else(|| self.id.clone(), |model| model.asset.clone()),
-                    },
-                )?;
+                let model = node
+                    .and_then(|node| self.scene.component::<ModelInstance>(node).ok().flatten())
+                    .map(|model| model.asset.clone())
+                    .or_else(|| {
+                        if node.is_none() {
+                            self.id.clone().or_else(|| self.available.first().cloned())
+                        } else {
+                            None
+                        }
+                    });
+                let is_model = model.is_some();
+                if let Some(asset) = model {
+                    self.scene
+                        .insert_component(duplicate, ModelInstance { asset })?;
+                }
                 if let Some(source) = node {
                     self.authoring
                         .authoring_project
@@ -393,11 +398,18 @@ impl App {
                 }
                 self.scene.set_name(
                     duplicate,
-                    format!("Model {}", self.authoring.next_object_id + 1),
+                    format!(
+                        "{} {}",
+                        if is_model { "Model" } else { "Object" },
+                        self.authoring.next_object_id + 1
+                    ),
                 )?;
                 self.instances.push(duplicate);
-                self.object_ids
-                    .push(ObjectId(format!("model-{}", self.authoring.next_object_id)));
+                self.object_ids.push(ObjectId(format!(
+                    "{}-{}",
+                    if is_model { "model" } else { "object" },
+                    self.authoring.next_object_id
+                )));
                 self.authoring.next_object_id = next;
                 self.selected = self.instances.len() - 1;
             }

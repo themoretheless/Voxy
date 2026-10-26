@@ -1,0 +1,35 @@
+[
+  {
+    "args": [
+      "--create-project",
+      "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-v9i3g2xf/game",
+      "First Game"
+    ],
+    "returncode": 0,
+    "stdout": "Created /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-v9i3g2xf/game/project.voxy\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "--validate-project",
+      "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-v9i3g2xf/game/project.voxy"
+    ],
+    "returncode": 0,
+    "stdout": "Validated project \"First Game\": 0 scene objects\n",
+    "stderr": ""
+  },
+  {
+    "args": [
+      "--create-project",
+      "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-v9i3g2xf/game",
+      "Must Not Replace"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Error: Io(Os { code: 17, kind: AlreadyExists, message: \"File exists\" })\n"
+  },
+  {
+    "relocated_validate": true,
+    "stdout": "Validated project \"First Game\": 0 scene objects\n"
+  }
+]
