@@ -35,7 +35,7 @@ impl App {
                     .components::<ModelRetarget>()
                     .map(|(_, profile)| AssetId(profile.source.clone())),
             )
-            .chain(std::iter::once(self.id.clone()))
+            .chain(self.id.iter().cloned())
             .collect()
     }
 

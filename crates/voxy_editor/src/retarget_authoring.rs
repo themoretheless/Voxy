@@ -384,7 +384,11 @@ mod tests {
         .unwrap();
         let mut app = App::new(&root.join("target.glb"), false).unwrap();
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-        while app.catalog.snapshot(&app.id).is_none() {
+        while app
+            .catalog
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
+            .is_none()
+        {
             app.tick().unwrap();
             assert!(std::time::Instant::now() < deadline);
             std::thread::sleep(std::time::Duration::from_millis(5));
@@ -455,7 +459,8 @@ mod tests {
         );
         let draft_before_reload = app.retarget_draft.as_ref().unwrap().document.clone();
         // Reimport identical names: name lookup alone cannot detect this stale list.
-        app.reload.insert(app.id.clone());
+        app.reload
+            .insert(app.id.as_ref().expect("model-only fixture").clone());
         let reload_deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
         while std::sync::Arc::ptr_eq(&target_model, &app.retarget_bone_model(true).unwrap()) {
             app.tick().unwrap();

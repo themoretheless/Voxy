@@ -1,4 +1,5 @@
 //! Native authoring viewport; IO/decoding is asynchronous, publication/upload is owner-only.
+pub mod project;
 mod app {
     mod audio_control;
     mod authoring;
@@ -341,7 +342,7 @@ struct App {
     retarget_picker: Option<retarget_authoring::BonePicker>,
     tree_scroll: usize,
     parenting: Option<NodeId>,
-    id: AssetId,
+    id: Option<AssetId>,
     catalog: AssetCatalog<ImportedAsset<import::EditorAsset>>,
     sources: SourceDependencies,
     imports: Option<AssetImportWorker<import::EditorAsset>>,
@@ -411,8 +412,18 @@ impl App {
         smoke: bool,
         registry: Arc<ComponentRegistry>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
-        let available = match &recipe {
-            InputRecipe::Direct => BTreeSet::from([id.clone()]),
+        Self::create_session(root, Some(id), recipe, smoke, registry)
+    }
+
+    fn create_session(
+        root: &std::path::Path,
+        id: Option<AssetId>,
+        recipe: InputRecipe,
+        smoke: bool,
+        registry: Arc<ComponentRegistry>,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let available: std::collections::BTreeSet<AssetId> = match &recipe {
+            InputRecipe::Direct => id.iter().cloned().collect(),
             InputRecipe::Manifest(manifest) => {
                 let bytes = FileInputs::new(root)?.read(manifest, 65536)?;
                 AssetLocations::from_json(std::str::from_utf8(&bytes)?, 128, 65536, 65536)?
@@ -432,12 +443,12 @@ impl App {
                     .collect()
             }
         };
-        if !available.contains(&id) {
+        if id.as_ref().is_some_and(|id| !available.contains(id)) {
             return Err("unknown initial model resource".into());
         }
         let authoring_project =
             prefab_authoring::AuthoringProject::with_registry(root, &recipe, registry)?;
-        let reload = BTreeSet::from([id.clone()]);
+        let reload = id.iter().cloned().collect();
         let imports = AssetImportWorker::new(
             FileInputs::new(root)?,
             34,
@@ -467,15 +478,21 @@ impl App {
             },
         )?;
         let mut scene = SceneGraph::new(scene_limits::OBJECTS);
-        let model_node = scene.spawn(
-            None,
-            Transform {
-                translation: Vec3::new(0.0, 0.0, 0.5),
-                ..Transform::default()
-            },
-        )?;
-        scene.set_name(model_node, "Model 1")?;
-        scene.insert_component(model_node, ModelInstance { asset: id.clone() })?;
+        let mut instances = Vec::new();
+        let mut object_ids = Vec::new();
+        if let Some(id) = &id {
+            let model_node = scene.spawn(
+                None,
+                Transform {
+                    translation: Vec3::new(0.0, 0.0, 0.5),
+                    ..Transform::default()
+                },
+            )?;
+            scene.set_name(model_node, "Model 1")?;
+            scene.insert_component(model_node, ModelInstance { asset: id.clone() })?;
+            instances.push(model_node);
+            object_ids.push(ObjectId("model-0".into()));
+        }
         let mut app = Self {
             authoring: authoring_session::AuthoringSession {
                 preview_seek: None,
@@ -506,8 +523,8 @@ impl App {
             scene,
             extraction: SceneExtraction::new(scene_limits::OBJECTS),
             frame_styles: None,
-            object_ids: vec![ObjectId("model-0".into())],
-            instances: vec![model_node],
+            object_ids,
+            instances,
             selected: 0,
             cursor: None,
             camera: camera::ViewportCamera::default(),
@@ -569,6 +586,24 @@ impl App {
             64,
             scene_limits::HISTORY_BYTES,
         )?);
+        Ok(app)
+    }
+
+    fn from_project(path: &std::path::Path) -> Result<Self, Box<dyn std::error::Error>> {
+        let registry = Arc::new(model_registry()?);
+        let opened = project::open(path, &registry)?;
+        let manifest = opened
+            .descriptor
+            .asset_manifest
+            .to_str()
+            .ok_or("manifest path must be UTF-8")?;
+        let recipe = InputRecipe::Manifest(SourcePath::new(manifest)?.observation_id());
+        let mut app = Self::create_session(&opened.root, None, recipe, false, registry)?;
+        if let Err(error) = app.configure_scene(&opened.root.join(&opened.descriptor.startup_scene))
+        {
+            app.stop_workers()?;
+            return Err(error);
+        }
         Ok(app)
     }
 
@@ -1494,6 +1529,24 @@ fn configured_app_with_registry(
     Ok(app)
 }
 
+/// Open a project in the existing native authoring owner without a bootstrap model.
+/// # Errors
+/// Reports invalid project/scene data, resource setup and native window/GPU failures.
+pub fn run_project_editor(path: &std::path::Path) -> Result<(), Box<dyn std::error::Error>> {
+    let mut app = App::from_project(path)?;
+    let event_result = (|| {
+        EventLoop::new()?.run_app(&mut app)?;
+        Ok::<(), Box<dyn std::error::Error>>(())
+    })();
+    let cleanup = app.stop_workers();
+    event_result?;
+    cleanup?;
+    if let Some(error) = app.error.take() {
+        return Err(error.into());
+    }
+    Ok(())
+}
+
 /// Runs with application codecs installed before scene loading or worker setup.
 /// Start from `editor_component_registry()` to retain the built-in components.
 /// The same immutable registry is used for editing, Play, saving and prefab workers.
@@ -1709,7 +1762,7 @@ fn run_model_viewport_configured_registry(
         println!("MODEL DELETE PASS: empty scene and undo/redo restored object identities");
         let resource = app
             .catalog
-            .snapshot(&app.id)
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
             .ok_or("missing recovered resource")?;
         app.edit_key(KeyCode::KeyZ)?;
         app.edit_key(KeyCode::KeyY)?;
@@ -1718,7 +1771,7 @@ fn run_model_viewport_configured_registry(
         }
         let after_undo = app
             .catalog
-            .snapshot(&app.id)
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
             .ok_or("undo removed resource")?;
         if !Arc::ptr_eq(&resource, &after_undo) {
             return Err("undo replaced resource revision".into());

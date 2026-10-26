@@ -259,6 +259,9 @@ fn nearest_evaluate_and_update(slot:u32,primitive:u32,ray:u32,d:ExVec) {
  if !replace {
   let cmp=ex_cmp_products(ex_parameters.t,nearest_best.denominator,nearest_best.t,ex_parameters.denominator);
   if cmp.valid==0u {nearest_numeric_unknown();return;}
+  // A strictly closer hit invalidates ties of the superseded farther winner.
+  // Retaining them makes this semantic result depend on BVH scheduling.
+  if cmp.order<0 {nearest_ties=0u;}
   if cmp.order==0 {nearest_ties+=1u;}
   replace=cmp.order<0||(cmp.order==0&&(slot<nearest_slot||(slot==nearest_slot&&primitive<nearest_primitive)));
  }

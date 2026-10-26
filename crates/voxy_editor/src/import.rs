@@ -589,12 +589,19 @@ mod lod_model_tests {
         assert_eq!(asset.lod.as_ref().unwrap().indices().levels().len(), 2);
         let mut app = crate::App::new(&root.join("mesh.vmodel"), false).unwrap();
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-        while app.catalog.snapshot(&app.id).is_none() {
+        while app
+            .catalog
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
+            .is_none()
+        {
             app.tick().unwrap();
             assert!(std::time::Instant::now() < deadline);
             std::thread::sleep(std::time::Duration::from_millis(5));
         }
-        let last_good = app.catalog.snapshot(&app.id).unwrap();
+        let last_good = app
+            .catalog
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
+            .unwrap();
         std::fs::write(root.join("proof.lod"), b"changed").unwrap();
         while app.failed_at.is_none() {
             app.tick().unwrap();
@@ -603,7 +610,9 @@ mod lod_model_tests {
         }
         assert!(std::sync::Arc::ptr_eq(
             &last_good,
-            &app.catalog.snapshot(&app.id).unwrap()
+            &app.catalog
+                .snapshot(app.id.as_ref().expect("model-only fixture"))
+                .unwrap()
         ));
 
         assert!(
@@ -613,12 +622,24 @@ mod lod_model_tests {
         );
         assert!(load(&source, &provider, &mut ImportInputs::new(3, 32 * 1024)).is_err());
         std::fs::write(root.join("proof.lod"), &bytes).unwrap();
-        while std::sync::Arc::ptr_eq(&last_good, &app.catalog.snapshot(&app.id).unwrap()) {
+        while std::sync::Arc::ptr_eq(
+            &last_good,
+            &app.catalog
+                .snapshot(app.id.as_ref().expect("model-only fixture"))
+                .unwrap(),
+        ) {
             app.tick().unwrap();
             assert!(std::time::Instant::now() < deadline);
             std::thread::sleep(std::time::Duration::from_millis(5));
         }
-        assert!(app.catalog.snapshot(&app.id).unwrap().value().lod.is_some());
+        assert!(
+            app.catalog
+                .snapshot(app.id.as_ref().expect("model-only fixture"))
+                .unwrap()
+                .value()
+                .lod
+                .is_some()
+        );
         app.stop_workers().unwrap();
         std::fs::write(root.join("base.obj"), obj.replace("v 1 0 0", "v 2 0 0")).unwrap();
         assert!(

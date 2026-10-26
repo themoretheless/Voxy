@@ -1,4 +1,5 @@
 //! Native street walk: original procedural scene by default, imported Bistro via --bistro.
+mod benchmark_cycle;
 mod aa_validation;
 #[path = "../../src/controls.rs"]
 mod controls;
@@ -82,6 +83,7 @@ struct App {
     world_ray_audit_frames: u64,
     world_ray_audit_complete: bool,
     offscreen_benchmark: bool,
+    render_every_physics_step: bool,
     failure: Option<String>,
     finished: bool,
     root: PathBuf,
@@ -202,6 +204,7 @@ impl App {
             acquire_seconds: Vec::new(),
             snapshot: value("--snapshot").map(PathBuf::from),
             offscreen_benchmark: args.iter().any(|a| a == "--offscreen-benchmark"),
+            render_every_physics_step: args.iter().any(|a| a == "--offscreen-render-every-step"),
             benchmark_complete: false,
             world_ray_audit_frames: value("--world-ray-audit-frames")
                 .and_then(|s| s.parse().ok())
@@ -752,7 +755,7 @@ impl App {
         let simulation_elapsed = if self.offscreen_benchmark
             && (self.benchmark > 0. || self.world_ray_audit_frames > 0)
         {
-            0.25
+            if self.render_every_physics_step { benchmark_cycle::PHYSICS_DT } else { 0.25 }
         } else {
             elapsed
         };
@@ -1199,6 +1202,16 @@ impl App {
                 report["consumer_zero_audit"] = consumer_zero_audit(gpu)?;
             }
             report["software_traversal_work"] = software_traversal_work(gpu)?;
+            let paired_requested = std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE").as_deref() == Ok("1");
+            if paired_requested {
+                let proof = gpu.renderer.world_ray_same_producer_comparison()?.ok_or("same-producer comparison requires one shared source owner")?;
+                let tiles = gpu.renderer.world_ray_frame_tiles().ok_or("missing paired frame tiles")?;
+                let per_kind: u64 = tiles.iter().map(|t|u64::from(t[2])*u64::from(t[3])).sum();
+                let expected = per_kind * (gpu.renderer.world_ray_region_count()/tiles.len()) as u64 * gpu.renderer.world_ray_query_encoded_frames();
+                report["same_producer_expected_records"] = expected.into();
+                report["same_producer_comparison"] = proof;
+            }
+
             if std::env::var("VOXY_STREET_WORLD_RAY_FLOAT32_HASHES").as_deref() == Ok("1") {
                 report["world_ray_float32_images"] = world_ray_float32_images(gpu)?;
             }
@@ -1206,6 +1219,15 @@ impl App {
                 .map(PathBuf::from)
                 .unwrap_or_else(|| PathBuf::from("/tmp/voxy-street-world-ray-audit.json"));
             std::fs::write(&path, serde_json::to_vec_pretty(&report)?)?;
+            if paired_requested && (report["same_producer_comparison"]["all_protected_words_equal"] != true
+                || report["same_producer_comparison"]["compared_records"] != report["same_producer_expected_records"]
+                || report["same_producer_comparison"]["explicitly_admitted_records"].as_u64().unwrap_or(0) == 0
+                || report["same_producer_comparison"]["matched_hit_records"].as_u64().unwrap_or(0) == 0
+                || report["same_producer_comparison"]["actual_consumer_HDR"]["all_native_words_equal_and_finite"] != true
+                || report["same_producer_comparison"]["actual_consumer_HDR"]["compared_pixels"] != report["same_producer_expected_records"]) {
+                return Err("same-producer traversal native-word comparison failed; complete report retained".into());
+            }
+
             eprintln!("STREET WORLD AUDIT COMPLETE {report}");
             self.world_ray_audit_complete = true;
             self.finished = true;
@@ -1426,6 +1448,16 @@ impl App {
                 .ok()
                 .map(|d| d.as_secs_f64());
             let mut report = serde_json::json!({"measurement_start_unix_seconds":self.measure_start_unix_seconds,"measurement_end_unix_seconds":measure_end_unix_seconds,"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"measured_physics_steps":self.simulation_steps-self.measure_simulation_steps,"measured_simulation_seconds":(self.simulation_steps-self.measure_simulation_steps) as f64*DT,"complete_motion_cycles":(self.simulation_steps-self.measure_simulation_steps)/2400,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":!self.offscreen_benchmark&&self.skipped_acquires==0&&!gpu.renderer.opaque_ray_capture_enabled(),"completed_offscreen_measurement_valid":self.offscreen_benchmark&&!gpu.renderer.opaque_ray_capture_enabled(),"frames":n,"seconds":measure_seconds,"mean_fps":n as f64/measure_seconds,"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"max_frame_ms":times[n-1]*1000.,"minimum_sampled_fps":1./times[n-1],"minimum_120_presented_fps_passed":!self.offscreen_benchmark&&!gpu.renderer.opaque_ray_capture_enabled()&&self.skipped_acquires==0&&(self.simulation_steps-self.measure_simulation_steps)>=2400&&times[n-1]<=1./120.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_shading_mean_ms":if gpu.renderer.gpu_shading_times_ms.is_empty(){None}else{Some([0usize,1].map(|i|gpu.renderer.gpu_shading_times_ms.iter().map(|v|v[i]).sum::<f64>()/gpu.renderer.gpu_shading_times_ms.len() as f64))},"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
+            let rendered_cycle = benchmark_cycle::audit(
+                self.offscreen_benchmark,
+                self.render_every_physics_step,
+                gpu.renderer.opaque_ray_capture_enabled(),
+                self.simulation_steps-self.measure_simulation_steps,
+                &self.durations,
+            );
+            report["rendered_every_physics_step"] = rendered_cycle.every_physics_step_rendered.into();
+            report["complete_120Hz_rendered_motion_cycles"] = rendered_cycle.complete_cycles.into();
+            report["minimum_120_completed_frame_fps_passed"] = rendered_cycle.minimum_120_completed_fps.into();
             report["water_scope"] = serde_json::json!({"start":self.measure_water_start,"end":gpu.renderer.water_render_stats()});
             report["spawn_pool"] = self.spawn_pool.into();
             report["replay_state_schema"] = "camera-weather-water-v2".into();
@@ -1441,7 +1473,7 @@ impl App {
                 .iter()
                 .filter_map(|v| *v)
                 .collect();
-            let settings = serde_json::json!({"replay_state_blake3":self.replay_state.finalize().to_hex().to_string(),"replay_render_frames":self.frames,"benchmark_stop_policy":if self.offscreen_benchmark {"fixed_simulation_duration"}else{"wall_and_simulation_duration"},"simulation_clock":if self.offscreen_benchmark {"fixed_30_step_batch"}else{"wall_time"},"measurement_start_simulation_steps":self.measure_simulation_steps,"transmission_depth":gpu.renderer.transmission_depth_enabled(),"ray_persistent":gpu.renderer.opaque_ray_persistent_enabled(),"world_ray_frame":gpu.renderer.world_ray_frame_enabled(),"world_ray_regions":gpu.renderer.world_ray_region_count(),"ray_capture_enabled":gpu.renderer.opaque_ray_capture_enabled(),"ray_hierarchy":gpu.renderer.opaque_ray_hierarchy_enabled(),"ray_hierarchy_reciprocal_cache":gpu.renderer.opaque_ray_hierarchy_reciprocal_enabled(),"ray_hierarchy_near_first":gpu.renderer.opaque_ray_hierarchy_near_first_enabled(),"ray_hierarchy_bounds_bytes":gpu.renderer.opaque_ray_hierarchy_bounds_bytes(),"ray_queue":gpu.renderer.opaque_ray_queue_enabled(),"ray_spatial_key":std::env::var_os("VOXY_STREET_RAY_SPATIAL_KEY").is_some(),"ray_queue_total_encoded_frames":gpu.renderer.opaque_ray_queue_encoded_frames(),"paired_dda_interval_cache":std::env::var_os("VOXY_STREET_DDA_INTERVAL_CACHE").is_some(),"ray_coherent":std::env::var_os("VOXY_STREET_RAY_COHERENT").is_some(),"ray_force_fallback":std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some(),"ray_stages":std::env::var_os("VOXY_STREET_RAY_STAGES").is_some()&&std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some(),"paired_dda_plane_cache":std::env::var_os("VOXY_STREET_DDA_PLANE_CACHE").is_some(),"paired_dda_point_cache":std::env::var_os("VOXY_STREET_DDA_POINT_CACHE").is_some(),"gpu_ssr_samples":ssr_samples.len(),"gpu_ssr_mean_ms":if ssr_samples.is_empty(){None}else{Some(ssr_samples.iter().sum::<f64>()/ssr_samples.len() as f64)},"compute_ssr":std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some()&&std::env::var_os("VOXY_STREET_COMPUTE_SSR").is_some(),"gpu_gi_samples":gi_samples.len(),"gpu_gi_mean_ms":if gi_samples.is_empty(){None}else{Some([0usize,1].map(|i|gi_samples.iter().map(|v|v[i]).sum::<f64>()/gi_samples.len() as f64))},"compute_gi":std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some(),"early_gi":std::env::var_os("VOXY_STREET_EARLY_GI").is_some(),"paired_dda_edge_cache":std::env::var_os("VOXY_STREET_DDA_EDGE_CACHE").is_some(),"paired_depth_dda":std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some(),"paired_dda_tiles":std::env::var_os("VOXY_STREET_PAIRED_DDA_TILES").is_some(),"paired_dda_cell_bounds":std::env::var_os("VOXY_STREET_DDA_CELL_BOUNDS").is_some(),"paired_dda_far_bound":std::env::var_os("VOXY_STREET_DDA_FAR_BOUND").is_some(),"paired_dda_hierarchy":std::env::var_os("VOXY_STREET_DDA_HIERARCHY").is_some(),"refinement_cache":std::env::var_os("VOXY_STREET_REFINE_CACHE").is_some(),"fx_off":std::env::var("VOXY_FX_OFF").ok()});
+            let settings = serde_json::json!({"replay_state_blake3":self.replay_state.finalize().to_hex().to_string(),"replay_render_frames":self.frames,"benchmark_stop_policy":if self.offscreen_benchmark {"fixed_simulation_duration"}else{"wall_and_simulation_duration"},"simulation_clock":if self.render_every_physics_step {"fixed_one_120Hz_step_per_render"}else if self.offscreen_benchmark {"fixed_30_step_batch"}else{"wall_time"},"measurement_start_simulation_steps":self.measure_simulation_steps,"transmission_depth":gpu.renderer.transmission_depth_enabled(),"ray_persistent":gpu.renderer.opaque_ray_persistent_enabled(),"world_ray_frame":gpu.renderer.world_ray_frame_enabled(),"world_ray_regions":gpu.renderer.world_ray_region_count(),"ray_capture_enabled":gpu.renderer.opaque_ray_capture_enabled(),"ray_hierarchy":gpu.renderer.opaque_ray_hierarchy_enabled(),"ray_hierarchy_reciprocal_cache":gpu.renderer.opaque_ray_hierarchy_reciprocal_enabled(),"ray_hierarchy_near_first":gpu.renderer.opaque_ray_hierarchy_near_first_enabled(),"ray_hierarchy_bounds_bytes":gpu.renderer.opaque_ray_hierarchy_bounds_bytes(),"ray_queue":gpu.renderer.opaque_ray_queue_enabled(),"ray_spatial_key":std::env::var_os("VOXY_STREET_RAY_SPATIAL_KEY").is_some(),"ray_queue_total_encoded_frames":gpu.renderer.opaque_ray_queue_encoded_frames(),"paired_dda_interval_cache":std::env::var_os("VOXY_STREET_DDA_INTERVAL_CACHE").is_some(),"ray_coherent":std::env::var_os("VOXY_STREET_RAY_COHERENT").is_some(),"ray_force_fallback":std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some(),"ray_stages":std::env::var_os("VOXY_STREET_RAY_STAGES").is_some()&&std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some(),"paired_dda_plane_cache":std::env::var_os("VOXY_STREET_DDA_PLANE_CACHE").is_some(),"paired_dda_point_cache":std::env::var_os("VOXY_STREET_DDA_POINT_CACHE").is_some(),"gpu_ssr_samples":ssr_samples.len(),"gpu_ssr_mean_ms":if ssr_samples.is_empty(){None}else{Some(ssr_samples.iter().sum::<f64>()/ssr_samples.len() as f64)},"compute_ssr":std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some()&&std::env::var_os("VOXY_STREET_COMPUTE_SSR").is_some(),"gpu_gi_samples":gi_samples.len(),"gpu_gi_mean_ms":if gi_samples.is_empty(){None}else{Some([0usize,1].map(|i|gi_samples.iter().map(|v|v[i]).sum::<f64>()/gi_samples.len() as f64))},"compute_gi":std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some(),"early_gi":std::env::var_os("VOXY_STREET_EARLY_GI").is_some(),"paired_dda_edge_cache":std::env::var_os("VOXY_STREET_DDA_EDGE_CACHE").is_some(),"paired_depth_dda":std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some(),"paired_dda_tiles":std::env::var_os("VOXY_STREET_PAIRED_DDA_TILES").is_some(),"paired_dda_cell_bounds":std::env::var_os("VOXY_STREET_DDA_CELL_BOUNDS").is_some(),"paired_dda_far_bound":std::env::var_os("VOXY_STREET_DDA_FAR_BOUND").is_some(),"paired_dda_hierarchy":std::env::var_os("VOXY_STREET_DDA_HIERARCHY").is_some(),"refinement_cache":std::env::var_os("VOXY_STREET_REFINE_CACHE").is_some(),"fx_off":std::env::var("VOXY_FX_OFF").ok()});
             if let (serde_json::Value::Object(root), serde_json::Value::Object(settings)) =
                 (&mut report, settings)
             {
@@ -2051,6 +2083,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             || app.aa_validation.is_some())
     {
         return Err("world ray audit requires at least four offscreen frames, world-ray mode, and no timed benchmark/profile/AA comparison".into());
+    }
+    if std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE").as_deref() == Ok("1")
+        && (app.world_ray_audit_frames < 4 || !app.offscreen_benchmark || app.benchmark > 0.
+            || std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref()==Ok("1")
+            || std::env::var("VOXY_STREET_WORLD_RAY_FRAME").as_deref()!=Ok("1")
+            || std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref()!=Ok("1")
+            || std::env::var("VOXY_STREET_WORLD_RAY_WORK_STATS").as_deref()==Ok("1")) {
+        return Err("same-producer comparison requires full-frame wide offscreen world ray audit without timing profile or work statistics".into());
+    }
+    if app.render_every_physics_step && (!app.offscreen_benchmark || app.benchmark <= 0. || app.world_ray_audit_frames > 0 || profile.is_some()) {
+        return Err("--offscreen-render-every-step requires an offscreen timed benchmark without audit/profile mode".into());
     }
     app.profile = profile;
     let event_result = el.run_app(&mut app);

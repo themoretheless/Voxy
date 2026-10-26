@@ -1777,9 +1777,15 @@ fn gizmo_pointer_gestures_constrain_axes_and_undo_without_changing_resource() {
             panic!("unexpected input")
         })
         .unwrap();
-    let ticket = app.catalog.request(app.id.clone()).unwrap();
+    let ticket = app
+        .catalog
+        .request(app.id.as_ref().expect("model-only fixture").clone())
+        .unwrap();
     app.catalog.complete(&ticket, Ok(imported)).unwrap();
-    let resource = app.catalog.snapshot(&app.id).unwrap();
+    let resource = app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .unwrap();
     let before = app.authoring_document().unwrap();
     for (origin, expected_axis) in [
         (Vec2::new(360.0, 240.0), DragAxis::X),
@@ -1813,7 +1819,9 @@ fn gizmo_pointer_gestures_constrain_axes_and_undo_without_changing_resource() {
         assert_eq!(app.authoring_document().unwrap(), before);
         assert!(Arc::ptr_eq(
             &resource,
-            &app.catalog.snapshot(&app.id).unwrap()
+            &app.catalog
+                .snapshot(app.id.as_ref().expect("model-only fixture"))
+                .unwrap()
         ));
     }
     app.stop_workers().unwrap();
@@ -2012,15 +2020,23 @@ fn reload_preserves_scene_instance_and_edited_transform() {
     assert_ne!(duplicate_matrix, edited.matrix().unwrap());
     app.edit_key(KeyCode::Tab).unwrap();
     assert_eq!(app.instances[app.selected], node);
-    let old_ticket = app.catalog.request(app.id.clone()).unwrap();
+    let old_ticket = app
+        .catalog
+        .request(app.id.as_ref().expect("model-only fixture").clone())
+        .unwrap();
     app.catalog
-        .invalidate(std::slice::from_ref(&app.id))
+        .invalidate(std::slice::from_ref(
+            app.id.as_ref().expect("model-only fixture"),
+        ))
         .unwrap();
     assert!(matches!(
         app.catalog.complete(&old_ticket, Err("obsolete".into())),
         Err(AssetError::StaleTicket)
     ));
-    let new_ticket = app.catalog.request(app.id.clone()).unwrap();
+    let new_ticket = app
+        .catalog
+        .request(app.id.as_ref().expect("model-only fixture").clone())
+        .unwrap();
     app.catalog
         .complete(&new_ticket, Err("invalid OBJ".into()))
         .unwrap();
@@ -2033,7 +2049,7 @@ fn reload_preserves_scene_instance_and_edited_transform() {
             .unwrap()
             .unwrap()
             .asset,
-        app.id
+        app.id.as_ref().expect("model-only fixture").clone()
     );
     assert_eq!(
         app.scene.world_matrix(node).unwrap(),
@@ -2045,7 +2061,7 @@ fn reload_preserves_scene_instance_and_edited_transform() {
             .unwrap()
             .unwrap()
             .asset,
-        app.id
+        app.id.as_ref().expect("model-only fixture").clone()
     );
     app.edit_key(KeyCode::KeyZ).unwrap();
     assert_ne!(

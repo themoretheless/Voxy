@@ -358,6 +358,9 @@ impl ArchiveComputeGi {
     pub(super) fn world_query_encoded_frames(&self) -> u64 {
         self.world_frame.as_ref().map_or(0, |f| f.encoded_frames())
     }
+    pub(super) fn world_same_producer_comparison(&self, queue: &wgpu::Queue) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+        match &self.world_frame { Some(frame) => frame.same_producer_comparison(queue), None => Ok(None) }
+    }
     pub(super) fn world_work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
         self.world_frame.as_ref()?.work_stats_buffer()
     }

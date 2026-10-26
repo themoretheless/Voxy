@@ -200,7 +200,11 @@ fn editor_play_drives_root_motion_through_wall_and_preserves_failed_tick() {
         .join("../voxy_render/examples/assets/animated-triangle.glb");
     let mut app = crate::App::new(&source, false).unwrap();
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-    while app.catalog.snapshot(&app.id).is_none() {
+    while app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .is_none()
+    {
         app.tick().unwrap();
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(5));
@@ -255,7 +259,7 @@ fn editor_play_drives_root_motion_through_wall_and_preserves_failed_tick() {
     let wall = app.instances[1];
     let model = app
         .catalog
-        .snapshot(&app.id)
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
         .unwrap()
         .value()
         .animated
@@ -455,7 +459,11 @@ fn editor_expanded_rig_scene_survives_history_save_load_play_and_stop() {
         crate::App::from_manifest(&manifest, AssetId("model.gltf".into()), false).unwrap();
     app.configure_scene(&scene_path).unwrap();
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-    while app.catalog.snapshot(&app.id).is_none() {
+    while app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .is_none()
+    {
         app.tick().unwrap();
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(5));
@@ -569,7 +577,7 @@ fn editor_expanded_rig_scene_survives_history_save_load_play_and_stop() {
     assert_eq!(app.play.animations.serial(), 3);
     let model = app
         .catalog
-        .snapshot(&app.id)
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
         .unwrap()
         .value()
         .animated
@@ -579,7 +587,9 @@ fn editor_expanded_rig_scene_survives_history_save_load_play_and_stop() {
     let animated_owners: Vec<_> = app
         .scene
         .components::<ModelInstance>()
-        .filter(|(_, instance)| instance.asset == app.id)
+        .filter(|(_, instance)| {
+            instance.asset == app.id.as_ref().expect("model-only fixture").clone()
+        })
         .map(|(owner, _)| owner)
         .collect();
     assert_eq!(animated_owners.len(), 50);
@@ -2827,7 +2837,11 @@ fn production_play_dispatches_moving_fade_and_preserves_late_failure() {
     std::fs::write(&source, bytes).unwrap();
     let mut app = crate::App::new(&source, false).unwrap();
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-    while app.catalog.snapshot(&app.id).is_none() {
+    while app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .is_none()
+    {
         app.tick().unwrap();
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(5));
@@ -2868,7 +2882,7 @@ fn production_play_dispatches_moving_fade_and_preserves_late_failure() {
     assert!(app.play.animations.owners[&owner].root_reference.is_some());
     let model = app
         .catalog
-        .snapshot(&app.id)
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
         .unwrap()
         .value()
         .animated

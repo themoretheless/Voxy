@@ -480,3 +480,12 @@ mod shared_upload_move_tests;
 
 #[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
 mod full_frame_upload_bench;
+
+#[cfg(test)]
+mod probe_sampling_precision_tests;
+
+#[cfg(test)]
+mod nearest_tie_count_tests;
+
+#[cfg(test)]
+mod world_wide_order_tests;

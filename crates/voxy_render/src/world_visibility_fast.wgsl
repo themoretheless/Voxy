@@ -183,8 +183,8 @@ fn visibility_node_miss(base:u32,ray:u32)->bool {
  return nearest_node_miss(base,ray);
 }
 // This is a scheduling hint only. It never certifies a hit or rejects a node.
-fn visibility_node_key(node:u32)->f32 {
- let base=nearest_active[2]+node*8u;var rank=0.;
+fn visibility_bound_key(base:u32)->f32 {
+ var rank=0.;
  for(var axis=0u;axis<3u;axis++) {
   let center=bitcast<f32>(nearest_active[base+axis])*.5+bitcast<f32>(nearest_active[base+3u+axis])*.5;
   let origin=nearest_node_origin[axis].lo*.5+nearest_node_origin[axis].hi*.5;
@@ -193,6 +193,7 @@ fn visibility_node_key(node:u32)->f32 {
  }
  if !wi_finite(rank) {return 0.;}return rank;
 }
+fn visibility_node_key(node:u32)->f32 {return visibility_bound_key(nearest_active[2]+node*8u);}
 fn visibility_left_first(left:u32,right:u32,ray:u32)->bool {
  if !WORLD_FAST_DEFER_NONCLEAR||!WORLD_FAST_CAN_BOUND {return false;}
  if left>=nearest_active[1]||right>=nearest_active[1] {return false;}

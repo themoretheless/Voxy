@@ -5,7 +5,11 @@ fn fixture() -> std::path::PathBuf {
 }
 fn ready(app: &mut App) {
     let deadline = Instant::now() + Duration::from_secs(10);
-    while app.catalog.snapshot(&app.id).is_none() {
+    while app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .is_none()
+    {
         app.tick().unwrap();
         assert!(Instant::now() < deadline);
         std::thread::sleep(Duration::from_millis(5));
@@ -17,7 +21,10 @@ fn static_gltf_hierarchy_material_camera_edit_and_persistence_share_resources() 
     let mut app =
         App::from_manifest(&root.join("assets.json"), AssetId("assembly".into()), false).unwrap();
     ready(&mut app);
-    let resource = app.catalog.snapshot(&app.id).unwrap();
+    let resource = app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .unwrap();
     assert_eq!(resource.value().nodes.len(), 3);
     assert_eq!(resource.value().images.len(), 1);
     assert_eq!(resource.value().mesh.indices().len(), 72);
@@ -68,7 +75,9 @@ fn static_gltf_hierarchy_material_camera_edit_and_persistence_share_resources() 
     assert_eq!(loaded.graph.components::<DirectionalLight>().count(), 1);
     assert!(Arc::ptr_eq(
         &resource,
-        &app.catalog.snapshot(&app.id).unwrap()
+        &app.catalog
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
+            .unwrap()
     ));
     app.toggle_play().unwrap();
     app.toggle_play().unwrap();
@@ -154,7 +163,10 @@ fn incompatible_gltf_hierarchy_reload_retains_resource_and_edited_owners() {
     ready(&mut app);
     app.expand_model().unwrap();
     let expected = app.authoring_document().unwrap();
-    let resource = app.catalog.snapshot(&app.id).unwrap();
+    let resource = app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .unwrap();
     let mut bytes = std::fs::read(directory.join("assembly.glb")).unwrap();
     let name = b"Textured cube";
     let index = bytes
@@ -171,7 +183,9 @@ fn incompatible_gltf_hierarchy_reload_retains_resource_and_edited_owners() {
     }
     assert!(Arc::ptr_eq(
         &resource,
-        &app.catalog.snapshot(&app.id).unwrap()
+        &app.catalog
+            .snapshot(app.id.as_ref().expect("model-only fixture"))
+            .unwrap()
     ));
     assert_eq!(app.authoring_document().unwrap(), expected);
     app.stop_workers().unwrap();

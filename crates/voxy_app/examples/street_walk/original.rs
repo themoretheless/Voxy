@@ -1874,6 +1874,15 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                     Quat::from_rotation_z(side * 0.16),
                 );
                 b.block(cloth, [side * 6.02, 2.49, z], [0.1, 0.32, 5.8]);
+                // Wrought-iron hanging shop sign bracket and double-sided emblem above the awning
+                let sign_z = z - 3.15;
+                b.block(metal, [side * 6.95, 3.35, sign_z], [0.68, 0.04, 0.04]);
+                b.block(metal, [side * 7.12, 3.18, sign_z], [0.34, 0.03, 0.03]);
+                for chain_x in [6.72f32, 7.08] {
+                    b.block(metal, [side * chain_x, 3.24, sign_z], [0.025, 0.18, 0.025]);
+                }
+                b.block(kit.woods[2], [side * 6.90, 2.98, sign_z], [0.46, 0.34, 0.04]);
+                b.block(trim, [side * 6.90, 2.98, sign_z], [0.38, 0.24, 0.05]);
                 // Sidewalk bistro café tables, chairs, and porcelain cups under the awning.
                 for tz_off in [-1.45f32, 1.45] {
                     let tx = side * 6.18;
@@ -1944,6 +1953,16 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                     b.block(kit.ceramic, [side * 6.96, 0.28, pz], [0.32, 0.36, 0.32]);
                     b.block(foliage, [side * 6.96, 0.62, pz], [0.36, 0.42, 0.36]);
                 }
+            }
+            // Cast-iron cellar ventilation grille set into the stone plinth away from the entrance
+            let vent_z = if door_z > z { z - 2.4 } else { z + 2.4 };
+            b.block(metal, [side * 7.11, 0.28, vent_z], [0.03, 0.26, 0.54]);
+            for slat in 0..4 {
+                b.block(
+                    trim,
+                    [side * 7.10, 0.19 + slat as f32 * 0.06, vent_z],
+                    [0.015, 0.02, 0.48],
+                );
             }
             let transform = Mat4::from_translation(Vec3::new(side * setback, 0., z))
                 * Mat4::from_scale(Vec3::new(1., 1., width / 8.))

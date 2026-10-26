@@ -2641,6 +2641,9 @@ impl ArchiveSceneRenderer {
     }
     /// Optional complete last-source-frame stage snapshot, resolved after its GPU fence.
     #[doc(hidden)]
+    pub fn world_ray_same_producer_comparison(&self) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+        match &self.compute_gi { Some(gi) => gi.world_same_producer_comparison(&self.queue), None => Ok(None) }
+    }
     pub fn world_ray_work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
         self.compute_gi.as_ref()?.world_work_stats_buffer()
     }

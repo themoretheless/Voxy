@@ -62,7 +62,7 @@ impl ProjectionTrace {
             .ok_or_else(|| fail("projector trace output required"))?
             .into();
         let size = ((count * 6 * FACE_VECS + 6 * 2 * SAMPLES) * 16) as u64;
-        if size > device.limits().max_storage_buffer_binding_size as u64
+        if size > device.limits().max_storage_buffer_binding_size
             || size > device.limits().max_buffer_size
         {
             return Err(fail("projector trace exceeds device buffer limits"));

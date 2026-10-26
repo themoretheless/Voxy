@@ -250,6 +250,9 @@ pub(super) fn run(
             meshes.push(mesh(36., 0., false, false, false, 0));
         }
     }
+    // Two coincident farther events must not survive as ties of a closer hit.
+    let transient_tie_slot = meshes.len() as u32;
+    meshes.extend([mesh(84.,0.,false,false,false,0),mesh(84.,0.,false,false,false,0),mesh(84.,0.5,false,false,false,0)]);
     let scene = Arc::new(RayScene::from_archive_candidates(device, &meshes, 0.)?);
     let mut encoder = device.create_command_encoder(&Default::default());
     scene.build(&mut encoder);
@@ -610,6 +613,7 @@ pub(super) fn run(
         case.words[12] = 0x80000001;
         cases.push(case);
     }
+    cases.push(ray("farther transient ties discarded by nearer winner",83.5,1.,-2.,hit(transient_tie_slot+2,0.25),hit(transient_tie_slot+2,0.25)));
     let repeats = if deferred {
         std::env::var("VOXY_RAY_MATERIAL_SIDES_REPEATS")
             .ok()
@@ -664,6 +668,25 @@ pub(super) fn run(
     ));
     for options in [
         ExactWorldOptions {
+            compare_wide_same_producer: true, wide_source_nodes: true,
+            previous_hit_seed: true, defer_nearest: true, certify_visibility: true,
+            ..Default::default()
+        },
+        ExactWorldOptions {
+            compare_wide_same_producer: true, defer_nearest: true, certify_visibility: true,
+            ..Default::default()
+        },
+        ExactWorldOptions {
+            compare_wide_same_producer: true, wide_source_nodes: true,
+            traversal_work_stats: true, defer_nearest: true, certify_visibility: true,
+            ..Default::default()
+        },
+        ExactWorldOptions {
+            compare_wide_same_producer: true, wide_source_nodes: true,
+            query_kind: WorldRayQueryKind::HistoryAdmission, guarded_input: true,
+            defer_nearest: true, certify_visibility: true, ..Default::default()
+        },
+        ExactWorldOptions {
             geometry_bounds_check: true,
             ..Default::default()
         },
@@ -698,6 +721,7 @@ pub(super) fn run(
             native_source_witness: true,
             ..Default::default()
         },
+        ExactWorldOptions { wide_source_near_first: true, ..Default::default() },
     ] {
         assert!(matches!(
             WorldRayQueryJob::with_options(device, scene.clone(), &materials, 1, 1, options),
@@ -732,6 +756,8 @@ pub(super) fn run(
                         == Ok("1"),
                     node_reciprocal: std::env::var("VOXY_RAY_MATERIAL_SIDES_NODE_RECIPROCAL").as_deref() == Ok("1"),
                     wide_source_nodes: std::env::var("VOXY_RAY_MATERIAL_SIDES_WIDE_NODES").as_deref() == Ok("1"),
+            wide_source_near_first: std::env::var("VOXY_RAY_MATERIAL_SIDES_WIDE_NEAR_FIRST").as_deref() == Ok("1"),
+                    compare_wide_same_producer: std::env::var("VOXY_RAY_MATERIAL_SIDES_COMPARE_WIDE").as_deref() == Ok("1"),
                     skip_zero_prefix_multiply: std::env::var(
                         "VOXY_RAY_MATERIAL_SIDES_SKIP_ZERO_PREFIX_MULTIPLY",
                     )
@@ -964,6 +990,7 @@ pub(super) fn run(
                     assert_eq!(w[0], expected.0, "state {} {kind:?}: {w:?}", c.name);
                     assert_eq!(w[6], expected.1, "source identity {} {kind:?}", c.name);
                     assert_eq!([w[4], w[5]], [c.words[18], c.words[19]]);
+                    if c.name == "farther transient ties discarded by nearer winner" {assert_eq!(w[19],0,"superseded farther ties leaked into final nearest result");}
                     if expected.0 == 1 {
                         assert_eq!(w[7], 0);
                         assert_eq!(
@@ -1122,6 +1149,13 @@ pub(super) fn run(
                 }
                 reports.push(serde_json::json!({"policy":policy,"certify_order":certify_order,"replay":replay,"rays":cases.len(),"routes_miss_winner_candidates_native":routes,"all_expected_states_ids_t_pairs_and_kinds_passed":true,"all_protected_input_words_unchanged":true,"all_input_bytes_unchanged":!deferred,"queue_owns_only_padding_words":[7,11,15]}));
                 println!("MATERIAL SIDES passed policy={policy} replay={replay} routes={routes:?}");
+                if let Some(proof) = job.read_same_producer_comparison(queue)? {
+                    if let Some(root) = &root { std::fs::write(root.join(format!("same-producer-{policy}-order{certify_order}-replay{replay}.json")),serde_json::to_vec_pretty(&proof)?)?; }
+                    assert_eq!(proof["all_protected_words_equal"], true, "same-producer comparison failed: {proof}");
+                    let partial = hit_position && std::env::var("VOXY_RAY_MATERIAL_SIDES_PARTIAL").as_deref() == Ok("1");
+                    assert_eq!(proof["compared_records"], cases.len() as u64 + u64::from(partial), "all requested full and partial records must be compared");
+                }
+
             }
         }
     }

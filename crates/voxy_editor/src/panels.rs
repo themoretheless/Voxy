@@ -268,7 +268,15 @@ impl Panels {
                 .push(([4.0, y, left - 8.0, 23.0], Action::Select(index)));
         }
         for (row, label, action) in [
-            (0, "Duplicate", Action::Duplicate),
+            (
+                0,
+                if document.objects.is_empty() {
+                    "Create object (D)"
+                } else {
+                    "Duplicate"
+                },
+                Action::Duplicate,
+            ),
             (1, "Delete subtree", Action::Delete),
             (
                 2,

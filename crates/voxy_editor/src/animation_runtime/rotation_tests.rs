@@ -223,7 +223,11 @@ fn ordinary_play(composed: bool) {
     });
     let mut app = crate::App::new(&path, false).unwrap();
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
-    while app.catalog.snapshot(&app.id).is_none() {
+    while app
+        .catalog
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
+        .is_none()
+    {
         app.tick().unwrap();
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(std::time::Duration::from_millis(5));
@@ -287,7 +291,7 @@ fn ordinary_play(composed: bool) {
     let wall = app.instances[1];
     let model = app
         .catalog
-        .snapshot(&app.id)
+        .snapshot(app.id.as_ref().expect("model-only fixture"))
         .unwrap()
         .value()
         .animated

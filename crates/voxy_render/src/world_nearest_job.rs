@@ -42,6 +42,10 @@ impl WorldRayQueryKind {
     }
 }
 
+#[path = "world_traversal_pair.rs"]
+mod traversal_pair;
+use traversal_pair::WorldTraversalPair;
+
 /// Immutable query choice and conservative certificates. Defaults preserve nearest queries.
 #[derive(Clone, Copy, Debug, Default)]
 pub struct ExactWorldOptions {
@@ -66,6 +70,11 @@ pub struct ExactWorldOptions {
     pub node_reciprocal: bool,
     /// Candidate eight-child scheduling; original bounds and exact fallback retained.
     pub wide_source_nodes: bool,
+    /// Scheduling-only child ordering; no bounds or source predicates change.
+    pub wide_source_near_first: bool,
+    /// Diagnostic only: original then wide on one actual GPU ray batch, with a
+    /// native-word comparison. Rejects previous-frame seeds and performance profiles.
+    pub compare_wide_same_producer: bool,
     /// Re-certify the previous matching ray ID hit against current source words.
     pub previous_hit_seed: bool,
     /// Bounded queued exact worker pool; absent preserves 16 workers.
@@ -165,6 +174,7 @@ pub struct WorldRayQueryJob {
     pipeline: wgpu::ComputePipeline,
     group: wgpu::BindGroup,
     fast: Option<(wgpu::ComputePipeline, wgpu::BindGroup)>,
+    traversal_pair: Option<WorldTraversalPair>,
     work_stats: Option<(
         wgpu::ComputePipeline,
         wgpu::BindGroup,
@@ -197,6 +207,7 @@ pub struct WorldRayQueryJob {
     exact_group_size: u32,
     skip_zero_prefix_multiply: bool,
     exact_integer_digest: [u8; 32],
+    wide_source_near_first: bool,
     wide_source_base: u32,
     wide_source_digest: [u8; 32],
 }
@@ -235,6 +246,12 @@ impl WorldRayQueryJob {
         options: ExactWorldOptions,
     ) -> Result<Self, RaySceneError> {
         scene.validate_device(device)?;
+        if options.wide_source_near_first && !options.wide_source_nodes { return Err(RaySceneError::Unsupported); }
+        if options.compare_wide_same_producer && (!options.wide_source_nodes || !options.defer_nearest
+            || options.previous_hit_seed || options.traversal_work_stats || options.history_any_hit
+            || !matches!(options.query_kind, WorldRayQueryKind::Nearest | WorldRayQueryKind::MaterialSurface)) {
+            return Err(RaySceneError::Unsupported);
+        }
         let visibility = options.query_kind == WorldRayQueryKind::OpaqueVisibility;
         let history_admission = options.query_kind == WorldRayQueryKind::HistoryAdmission;
         let material_surface = options.query_kind == WorldRayQueryKind::MaterialSurface;
@@ -755,6 +772,8 @@ impl WorldRayQueryJob {
         } else {
             None
         };
+        if options.compare_wide_same_producer && wide_base == 0 { return Err(RaySceneError::Unsupported); }
+        let mut original_fast = None;
         let fast = if deferred {
             let source = [
                 if options.native_seed && !options.separate_native_seed {
@@ -782,6 +801,7 @@ impl WorldRayQueryJob {
                 label: Some("certificate-only opaque visibility"),
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
+            let build = |wide_override: u32| -> Result<_, RaySceneError> {
             let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("certificate-only opaque visibility"),
                 layout: None,
@@ -800,7 +820,8 @@ impl WorldRayQueryJob {
                             if options.traversal_work_stats { 1. } else { 0. },
                         ),
                         ("WORLD_FAST_CAN_BOUND", if can_bound { 1. } else { 0. }),
-                        ("WORLD_WIDE_BASE", wide_base as f64),
+                        ("WORLD_WIDE_BASE", wide_override as f64),
+                        ("WORLD_WIDE_NEAR_FIRST", if options.wide_source_near_first && wide_override != 0 {1.} else {0.}),
                         (
                             "WORLD_SOURCE_MATERIAL_SIDES",
                             if material_surface { 1. } else { 0. },
@@ -849,7 +870,10 @@ impl WorldRayQueryJob {
                 geometry_bounds.as_ref(),
                 vertex_cache.as_ref(),
             )?;
-            Some((pipeline, group))
+            Ok((pipeline, group))
+            };
+            if options.compare_wide_same_producer { original_fast = Some(build(0)?); }
+            Some(build(wide_base)?)
         } else {
             None
         };
@@ -993,7 +1017,10 @@ impl WorldRayQueryJob {
         } else {
             None
         };
+        let traversal_pair = original_fast.map(|original| WorldTraversalPair::new(device, &input, &output, output_words,
+            position_offset.map_or(0, |v| v / 4), original)).transpose()?;
         Ok(Self {
+            traversal_pair,
             geometry_bounds,
             vertex_cache,
             work_stats,
@@ -1028,6 +1055,7 @@ impl WorldRayQueryJob {
             skip_zero_prefix_multiply: options.skip_zero_prefix_multiply,
             exact_integer_digest,
             wide_source_base: wide_base,
+            wide_source_near_first: options.wide_source_near_first && wide_base != 0,
             wide_source_digest,
         })
     }
@@ -1283,6 +1311,7 @@ impl WorldRayQueryJob {
     }
     #[doc(hidden)]
     /// Actual admitted scheduling tail, not merely the requested option.
+    pub const fn wide_source_near_first_enabled(&self) -> bool { self.wide_source_near_first }
     pub const fn wide_source_nodes_enabled(&self) -> bool { self.wide_source_base != 0 }
     pub const fn wide_source_digest(&self) -> [u8; 32] { self.wide_source_digest }
     pub const fn skip_zero_prefix_multiply_enabled(&self) -> bool {
@@ -1402,13 +1431,52 @@ impl WorldRayQueryJob {
         self.native_hint.is_some()
     }
     pub(crate) fn can_profile_nearest(&self) -> bool {
-        self.fast.is_some() && self.winner.is_some() && self.candidates.is_some()
+        self.traversal_pair.is_none() && self.fast.is_some() && self.winner.is_some() && self.candidates.is_some()
     }
     pub(crate) fn encode_profiled(
         &self,
         encoder: &mut wgpu::CommandEncoder,
         count: u32,
         profile: Option<(&wgpu::QuerySet, u32)>,
+    ) -> Result<(), RaySceneError> {
+        if let Some(pair) = &self.traversal_pair {
+            if profile.is_some() { return Err(RaySceneError::Unsupported); }
+            self.encode_once(encoder, count, None, Some(&pair.original_fast))?;
+            if count == 0 { return Ok(()); }
+            pair.snapshot(encoder, &self.input, &self.output);
+            self.encode_once(encoder, count, None, self.fast.as_ref())?;
+            pair.compare(&self.device, encoder, &self.input, &self.output, count);
+            return Ok(());
+        }
+        self.encode_once(encoder, count, profile, self.fast.as_ref())
+    }
+    /// Cumulative diagnostic record count and first protected-word failure.
+    /// No CPU readback occurs during encoding; the caller must fence before reading.
+    pub(crate) fn same_producer_original_buffers(&self) -> Option<(&wgpu::Buffer, &wgpu::Buffer)> {
+        self.traversal_pair.as_ref().map(|pair| pair.original_buffers())
+    }
+    pub fn same_producer_comparison_buffer(&self) -> Option<&wgpu::Buffer> {
+        self.traversal_pair.as_ref().map(|pair| &*pair.stats)
+    }
+    pub fn read_same_producer_comparison(&self, queue: &wgpu::Queue) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+        self.traversal_pair.as_ref().map(|pair| {
+            let mut proof = pair.read_proof(&self.device, queue)?;
+            proof["output_record_words"] = self.output_words.into();
+            proof["explicit_producer_admission_required"] = self.guarded_input.into();
+            proof["world_position_extension_checked"] = self.position_offset.is_some().into();
+            proof["source_geometry_revision"] = self.scene.geometry_revision().into();
+            proof["same_exact_integer_pipeline"] = true.into();
+            proof["expected_query_results_uploaded"] = false.into();
+            proof["exact_integer_module_blake3"] = serde_json::json!(self.exact_integer_digest);
+            proof["wide_source_near_first"] = self.wide_source_near_first.into();
+            proof["wide_source_block_blake3"] = serde_json::json!(self.wide_source_digest);
+            Ok(proof)
+        }).transpose()
+    }
+    fn encode_once(
+        &self, encoder: &mut wgpu::CommandEncoder, count: u32,
+        profile: Option<(&wgpu::QuerySet, u32)>,
+        fast: Option<&(wgpu::ComputePipeline, wgpu::BindGroup)>,
     ) -> Result<(), RaySceneError> {
         if profile.is_some() && !self.can_profile_nearest() {
             return Err(RaySceneError::Unsupported);
@@ -1492,7 +1560,7 @@ impl WorldRayQueryJob {
             pass.set_bind_group(0, partial.as_ref().unwrap_or(group), &[]);
             pass.dispatch_workgroups(count.div_ceil(64), 1, 1);
         }
-        if let Some((pipeline, group)) = &self.fast {
+        if let Some((pipeline, group)) = fast {
             // Reset only reserved padding. Coefficients, admission and IDs are intact.
             encoder.clear_buffer(&self.input, 28, Some(4));
             encoder.clear_buffer(&self.input, 44, Some(4));

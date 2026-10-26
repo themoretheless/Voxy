@@ -227,7 +227,7 @@ impl App {
                 commands.insert_component(
                     owner,
                     ModelInstance {
-                        asset: self.id.clone(),
+                        asset: self.id.as_ref().expect("model-only fixture").clone(),
                     },
                 )?;
                 commands.insert_component(

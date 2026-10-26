@@ -1,6 +1,7 @@
 // Optional scheduling tail in the SAME source hierarchy buffer. Original
 // binary nodes and material offsets remain available to the full exact pass.
 override WORLD_WIDE_BASE:u32=0u;
+override WORLD_WIDE_NEAR_FIRST:bool=false;
 fn visibility_fast_walk(ray:u32)->bool {
  if WORLD_WIDE_BASE==0u {return visibility_walk(ray);}
  let length=arrayLength(&nearest_active);let start=WORLD_WIDE_BASE;
@@ -29,6 +30,17 @@ fn visibility_fast_walk(ray:u32)->bool {
    let group=start+12u+left*68u;let children=nearest_active[group];
    if children<2u||children>8u||size+children>64u {visibility_unknown|=64u;return false;}
    for(var lane=0u;lane<children;lane++) {stack[size+lane]=group+4u+lane*8u;}
+   if WORLD_WIDE_NEAR_FIRST&&WORLD_FAST_DEFER_NONCLEAR&&WORLD_FAST_CAN_BOUND {
+    // Descending keys on the LIFO stack visit nearer hints first. Every child
+    // remains present; this hint never proves an intersection or rejects a node.
+    var keys:array<f32,8>;
+    for(var lane=0u;lane<children;lane++) {keys[lane]=visibility_bound_key(stack[size+lane]);}
+    for(var lane=1u;lane<children;lane++) {
+     let child=stack[size+lane];let key=keys[lane];var at=lane;
+     while at>0u {if keys[at-1u]>=key {break;}keys[at]=keys[at-1u];stack[size+at]=stack[size+at-1u];at-=1u;}
+     keys[at]=key;stack[size+at]=child;
+    }
+   }
    size+=children;continue;
   }
   let leaf=source_leaf_range(left,right);if leaf.valid==0u {visibility_unknown|=64u;return false;}
