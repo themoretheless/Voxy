@@ -1,0 +1,12 @@
+{
+  "colour_space": "ExtendedSrgbLinear",
+  "finite": true,
+  "live_headroom": 1.0,
+  "native_hdr_capture": "/Users/themoretheless/Documents/Sources/voxy/docs/architecture-performance/2026-10-27-gi-120/line-B0.pfm",
+  "peak_relative_sdr_white": 1.0,
+  "pixels": 2073600,
+  "pixels_above_sdr_white": 0,
+  "png_is_sdr_preview": true,
+  "render_headroom": 1.0,
+  "surface_format": "Rgba16Float"
+}

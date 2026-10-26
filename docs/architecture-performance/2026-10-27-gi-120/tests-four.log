@@ -1,0 +1,56 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.48s
+     Running unittests src/lib.rs (/tmp/voxy-shared-20261025-target/debug/deps/voxy_render-9a3ff1e12b53452e)
+
+running 2 tests
+test archive_scene::gi_batch_tests::shader_with_batch_rejection_validates ... FAILED
+test archive_scene::gi_batch_tests::accepted_envelopes_never_skip_an_original_hit ... FAILED
+
+failures:
+
+---- archive_scene::gi_batch_tests::shader_with_batch_rejection_validates stdout ----
+
+thread 'archive_scene::gi_batch_tests::shader_with_batch_rejection_validates' (76300619) panicked at crates/voxy_render/src/gi_batch_tests.rs:29:6:
+called `Result::unwrap()` on an `Err` value: WithSpan { inner: Function { handle: [93], name: "gi_batch_in_front", source: Expression { handle: [188], source: Compose(ComponentType { index: 0 }) } }, spans: [(Span { start: 90552, end: 92194 }, "naga::ir::Function [93]"), (Span { start: 91926, end: 91954 }, "naga::ir::Expression [188]")] }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- archive_scene::gi_batch_tests::accepted_envelopes_never_skip_an_original_hit stdout ----
+
+thread 'archive_scene::gi_batch_tests::accepted_envelopes_never_skip_an_original_hit' (76300618) panicked at vendor/wgpu/src/backend/wgpu_core.rs:1090:30:
+wgpu error: Validation Error
+
+Caused by:
+  In Device::create_shader_module, label = 'actual batch rejection vs original samples'
+    
+Shader validation error: Function [2] 'gi_batch_in_front' is invalid
+   ┌─ actual batch rejection vs original samples:14:1
+   │  
+14 │ ╭ fn gi_batch_in_front(line:GiBatchLine,t0:f32,t1:f32)->bool {
+15 │ │  if !line.valid||!dda_finite4(vec4<f32>(t0,t1,0.,0.))||t0<0.||t1<t0||t1>80.{return false;}
+16 │ │  let q0=line.origin+line.direction*t0;let q1=line.origin+line.direction*t1;
+17 │ │  let lo=min(q0,q1)-line.error;let hi=max(q0,q1)+line.error;
+   · │
+36 │ │  let d10=textureLoad(ray_depth_bounds,vec2<i32>(tile_b.x,tile_a.y),i32(level)).x;
+   │ │                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ naga::ir::Expression [188]
+   · │
+40 │ │  return upper.z<minimum;
+41 │ │ }
+   │ ╰─^ naga::ir::Function [2]
+   │  
+   = Expression [188] is invalid
+   = Composing 0's component type is not expected
+
+
+      Expression [188] is invalid
+        Composing 0's component type is not expected
+
+
+
+
+failures:
+    archive_scene::gi_batch_tests::accepted_envelopes_never_skip_an_original_hit
+    archive_scene::gi_batch_tests::shader_with_batch_rejection_validates
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 437 filtered out; finished in 0.43s
+
+error: test failed, to rerun pass `-p voxy_render --lib`

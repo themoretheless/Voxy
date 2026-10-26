@@ -1,0 +1,318 @@
+{
+  "antialiasing": "Temporal",
+  "benchmark_stop_policy": "fixed_simulation_duration",
+  "camera_controlled": true,
+  "canonical_gi_input_requested": true,
+  "complete_120Hz_rendered_motion_cycles": 0,
+  "complete_motion_cycles": 0,
+  "completed_frame_samples_seconds": [
+    0.02593925,
+    0.025468917,
+    0.025829958,
+    0.025372542,
+    0.026006791,
+    0.025994208,
+    0.026829292,
+    0.025719417,
+    0.025897542,
+    0.025847875,
+    0.025860541,
+    0.025828708
+  ],
+  "completed_offscreen_measurement_valid": true,
+  "compute_gi": true,
+  "compute_ssr": false,
+  "cpu_physics_mean_ms": 0.0774965,
+  "cpu_render_mean_ms": 25.803270750000006,
+  "current_render_samples_seconds": [
+    0.025885917,
+    0.025416458,
+    0.025782833,
+    0.02529225,
+    0.025891084,
+    0.0258965,
+    0.026740166,
+    0.025637333,
+    0.02580875,
+    0.025776,
+    0.025759792,
+    0.025752166
+  ],
+  "early_gi": false,
+  "feet": [
+    0.09878691956775468,
+    0.04492466620533629,
+    -14.36968569426894
+  ],
+  "frame_sample_clock": "current_completed_frame",
+  "frames": 12,
+  "full_collision_triangles": 3554908,
+  "fx_off": null,
+  "gi_input_diagnostic": 0,
+  "gpu_gi_mean_ms": [
+    1.4406668,
+    12.58185
+  ],
+  "gpu_gi_samples": 5,
+  "gpu_mean_ms": 23.8894002,
+  "gpu_samples": 5,
+  "gpu_shading_mean_ms": [
+    18.7440416,
+    4.206575
+  ],
+  "gpu_ssr_mean_ms": null,
+  "gpu_ssr_samples": 0,
+  "grounded": true,
+  "internal_resolution": [
+    1920,
+    1080
+  ],
+  "max_frame_ms": 26.829292000000002,
+  "mean_fps": 38.48863680570897,
+  "measured_physics_steps": 12,
+  "measured_simulation_seconds": 0.1,
+  "measurement": "completed_full_resolution_offscreen_frames",
+  "measurement_duration_clock": "single_monotonic_elapsed",
+  "measurement_end_unix_seconds": 1793053806.006514,
+  "measurement_start_simulation_steps": 180,
+  "measurement_start_unix_seconds": 1793053805.694732,
+  "metal_compute_audit_requested": false,
+  "metal_compute_max_threads_requested": 0,
+  "minimum_120_completed_frame_fps_passed": false,
+  "minimum_120_presented_fps_passed": false,
+  "minimum_sampled_fps": 37.272694337219185,
+  "motion_period_seconds": 20,
+  "occluded_or_timed_out_acquires": 0,
+  "original_gi_queue_direct_scatter_requested": true,
+  "original_gi_queue_proof": {
+    "extra_reference_work_in_timing": true,
+    "native_u32": [
+      0,
+      0,
+      0,
+      0,
+      2073600,
+      2073600,
+      1779434,
+      191,
+      0,
+      0
+    ],
+    "passed": true,
+    "scope": "every rendered frame checked; word 9 is a persistent failure flag"
+  },
+  "original_gi_queue_requested": true,
+  "p50_ms": 25.860541,
+  "p95_ms": 26.829292000000002,
+  "p99_ms": 26.829292000000002,
+  "paired_dda_cell_bounds": false,
+  "paired_dda_edge_cache": false,
+  "paired_dda_far_bound": false,
+  "paired_dda_hierarchy": false,
+  "paired_dda_interval_cache": false,
+  "paired_dda_lazy_cell_bounds": false,
+  "paired_dda_plane_cache": false,
+  "paired_dda_point_cache": false,
+  "paired_dda_tile_edge_cache": false,
+  "paired_dda_tiles": false,
+  "paired_dda_touch_guard": false,
+  "paired_depth_dda": false,
+  "present_mode": "Immediate",
+  "raster_gi_comparison": {
+    "actual_blake3": "e522d5f93544bc5d0ee5969abd3c78b7de6b8cc670ce7130499a0c389a0b1dec",
+    "compared_words": 8294400,
+    "different_words": 43293,
+    "first_differences": [
+      {
+        "channel": 3,
+        "queued_bits": 1024029889,
+        "raster_bits": 1024029644,
+        "x": 34,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1028306840,
+        "raster_bits": 1028455249,
+        "x": 36,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1035531290,
+        "raster_bits": 1035531275,
+        "x": 37,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1046118929,
+        "raster_bits": 1046244001,
+        "x": 41,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1040386297,
+        "raster_bits": 1040386401,
+        "x": 329,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1025586424,
+        "raster_bits": 1025586575,
+        "x": 333,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1009795992,
+        "raster_bits": 1009795673,
+        "x": 336,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1011457336,
+        "raster_bits": 1011558662,
+        "x": 340,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1015412091,
+        "raster_bits": 1015412377,
+        "x": 385,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1015982740,
+        "raster_bits": 1015982441,
+        "x": 387,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1011389850,
+        "raster_bits": 1011445638,
+        "x": 1399,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1028368416,
+        "raster_bits": 1028343442,
+        "x": 1401,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 990909917,
+        "raster_bits": 990933150,
+        "x": 1410,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1035235584,
+        "raster_bits": 1035217669,
+        "x": 1453,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1035520692,
+        "raster_bits": 1035520529,
+        "x": 1454,
+        "y": 0
+      },
+      {
+        "channel": 3,
+        "queued_bits": 1020267989,
+        "raster_bits": 1020267993,
+        "x": 1455,
+        "y": 0
+      }
+    ],
+    "height": 1080,
+    "input_mode": 0,
+    "max_absolute_error": 956.25,
+    "nonfinite_pairs": 0,
+    "raster_blake3": "954da4223cc0dd622d5877e2a8b256763a68843a17874f9ebbd98fac57e1229e",
+    "scope": "last completed frame raw Float32 GI, before HDR/TAA",
+    "strict_parity_passed": false,
+    "width": 1920
+  },
+  "ray_capture_enabled": false,
+  "ray_coherent": false,
+  "ray_force_fallback": false,
+  "ray_hierarchy": false,
+  "ray_hierarchy_bounds_bytes": 0,
+  "ray_hierarchy_near_first": false,
+  "ray_hierarchy_reciprocal_cache": false,
+  "ray_persistent": false,
+  "ray_queue": true,
+  "ray_queue_total_encoded_frames": 191,
+  "ray_spatial_key": false,
+  "ray_stages": false,
+  "refinement_cache": false,
+  "rendered_every_physics_step": true,
+  "replay_render_frames": 192,
+  "replay_state_blake3": "aa52ff162e25874b8f29ebfac54267dcec3985d8e3f0707ac7dbc714904f3a17",
+  "replay_state_schema": "camera-weather-water-v2",
+  "resolution": [
+    1920,
+    1080
+  ],
+  "sampled_frame_seconds": 0.310595041,
+  "sampled_mean_fps": 38.63551704291376,
+  "scene": "Voxy Original Street",
+  "seconds": 0.311780333,
+  "simulation_clock": "fixed_one_120Hz_step_per_render",
+  "source_simplified": false,
+  "spawn_pool": false,
+  "surface_acquire_mean_ms": 0.00011816666666666669,
+  "transmission_depth": false,
+  "water_scope": {
+    "end": {
+      "body_draws": 718,
+      "drawn_frames": 718,
+      "last_drawn_bodies": 1,
+      "last_submitted_time_bits": 1070386371,
+      "registered_bodies": 1,
+      "ripple_encoded_seconds": 1.6,
+      "ripple_encoded_ticks": 384,
+      "ripple_pending_seconds": 8.344650268554687e-8,
+      "ripple_requested_seconds": 1.6000000834465027,
+      "ripple_tick_rate": 240,
+      "simulation_seconds": 1.5999988317489624,
+      "simulation_time_bits": 1070386371,
+      "wave_seed": 1
+    },
+    "start": {
+      "body_draws": 706,
+      "drawn_frames": 706,
+      "last_drawn_bodies": 1,
+      "last_submitted_time_bits": 1069547511,
+      "registered_bodies": 1,
+      "ripple_encoded_seconds": 1.5,
+      "ripple_encoded_ticks": 360,
+      "ripple_pending_seconds": 7.82310962677002e-8,
+      "ripple_requested_seconds": 1.5000000782310963,
+      "ripple_tick_rate": 240,
+      "simulation_seconds": 1.499998927116394,
+      "simulation_time_bits": 1069547511,
+      "wave_seed": 1
+    }
+  },
+  "window_measurement_valid": false,
+  "world_query_encoded_frames": 0,
+  "world_ray_consumer_cache": false,
+  "world_ray_consumer_cache_check": false,
+  "world_ray_consumer_profile": false,
+  "world_ray_consumer_sorted": false,
+  "world_ray_frame": false,
+  "world_ray_regions": 0
+}

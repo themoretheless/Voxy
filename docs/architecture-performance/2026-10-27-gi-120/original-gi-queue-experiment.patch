@@ -1,0 +1,867 @@
+diff --git a/crates/voxy_app/examples/street_walk/main.rs b/crates/voxy_app/examples/street_walk/main.rs
+index 8bb41d6f3..3e33d47f2 100644
+--- a/crates/voxy_app/examples/street_walk/main.rs
++++ b/crates/voxy_app/examples/street_walk/main.rs
+@@ -1,6 +1,6 @@
+ //! Native street walk: original procedural scene by default, imported Bistro via --bistro.
+-mod benchmark_cycle;
+ mod aa_validation;
++mod benchmark_cycle;
+ #[path = "../../src/controls.rs"]
+ mod controls;
+ mod day_cycle;
+@@ -73,6 +73,8 @@ struct App {
+     measure_start_unix_seconds: Option<f64>,
+     replay_state: blake3::Hasher,
+     durations: Vec<f64>,
++    completion_intervals: Vec<f64>,
++    last_completion: Option<Instant>,
+     skipped_acquires: u64,
+     physics_seconds: Vec<f64>,
+     render_seconds: Vec<f64>,
+@@ -198,6 +200,8 @@ impl App {
+             measure_start_unix_seconds: None,
+             replay_state: blake3::Hasher::new(),
+             durations: Vec::new(),
++            completion_intervals: Vec::new(),
++            last_completion: None,
+             skipped_acquires: 0,
+             physics_seconds: Vec::new(),
+             render_seconds: Vec::new(),
+@@ -1383,7 +1387,9 @@ impl App {
+         if self.frames == 180 {
+             self.measure_water_start = gpu.renderer.water_render_stats();
+             self.skipped_acquires = 0;
+-            self.measure_start = Some(Instant::now());
++            let completion = Instant::now();
++            self.last_completion = self.offscreen_benchmark.then_some(completion);
++            self.measure_start = Some(completion);
+             if self.benchmark > 0. {
+                 self.measure_start_unix_seconds = std::time::SystemTime::now()
+                     .duration_since(std::time::UNIX_EPOCH)
+@@ -1393,6 +1399,13 @@ impl App {
+             self.measure_simulation_steps = self.simulation_steps;
+             self.durations.clear();
+         } else if self.frames > 180 {
++            if self.offscreen_benchmark {
++                let completion = Instant::now();
++                if let Some(previous) = self.last_completion.replace(completion) {
++                    self.completion_intervals
++                        .push(completion.duration_since(previous).as_secs_f64());
++                }
++            }
+             // Offscreen draw waited for THIS GPU submission. A start-to-start
+             // delta would instead attribute frame 180 to sample 181 and omit
+             // the final measured frame. Window sampling keeps its old clock.
+@@ -1485,6 +1498,8 @@ impl App {
+                 "measurement_duration_clock":"single_monotonic_elapsed",
+                 "frame_sample_clock":if self.offscreen_benchmark {"current_completed_frame"}else{"start_to_start"},
+                 "completed_frame_samples_seconds":self.durations,
++                "host_completion_intervals_seconds":self.completion_intervals,
++                "host_completion_interval_scope":"successive host observations after exact GPU submission completion; includes event-loop gaps; not scanout",
+                 "current_render_samples_seconds":self.render_seconds,
+                 "world_query_encoded_frames":gpu.renderer.world_ray_query_encoded_frames(),
+                 "world_ray_consumer_cache":std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE").as_deref()==Ok("1"),
+@@ -1500,6 +1515,43 @@ impl App {
+             {
+                 root.extend(settings);
+             }
++            report["canonical_gi_input_requested"] =
++                std::env::var_os("VOXY_STREET_CANONICAL_GI_INPUT")
++                    .is_some()
++                    .into();
++            report["gi_input_diagnostic"] = std::env::var("VOXY_STREET_GI_INPUT_DIAGNOSTIC")
++                .ok()
++                .and_then(|v| v.parse::<u32>().ok())
++                .unwrap_or(0)
++                .into();
++            report["original_gi_queue_requested"] =
++                std::env::var_os("VOXY_STREET_ORIGINAL_GI_QUEUE")
++                    .is_some()
++                    .into();
++            report["original_gi_queue_direct_scatter_requested"] =
++                std::env::var_os("VOXY_STREET_ORIGINAL_GI_DIRECT_SCATTER")
++                    .is_some()
++                    .into();
++            let original_queue_proof =
++                std::env::var_os("VOXY_STREET_ORIGINAL_GI_QUEUE_PROOF").is_some();
++            let mut original_queue_correct = true;
++            if original_queue_proof {
++                let words = original_gi_queue_words(gpu)?;
++                original_queue_correct = [0usize, 1, 2, 3, 8, 9].iter().all(|&i| words[i] == 0)
++                    && words[4] == gpu.config.width * gpu.config.height
++                    && words[5] == words[4]
++                    && words[7] > 0;
++                report["original_gi_queue_proof"] = serde_json::json!({
++                    "native_u32":words,"passed":original_queue_correct,
++                    "scope":"every rendered frame checked; word 9 is a persistent failure flag",
++                    "extra_reference_work_in_timing":true
++                });
++            }
++            if std::env::var_os("VOXY_STREET_ORIGINAL_GI_QUEUE").is_some()
++                && std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_some()
++            {
++                report["raster_gi_comparison"] = original_gi_raster_comparison(gpu)?;
++            }
+             std::fs::write(
+                 std::env::var_os("VOXY_STREET_BENCHMARK_REPORT")
+                     .map(PathBuf::from)
+@@ -1507,6 +1559,9 @@ impl App {
+                 serde_json::to_vec_pretty(&report)?,
+             )?;
+             eprintln!("STREET BENCHMARK {report}");
++            if !original_queue_correct {
++                return Err("original GI queue failed its native output or coverage oracle".into());
++            }
+             if let Some(directory) = std::env::var_os("VOXY_STREET_RAY_CAPTURE_DIR") {
+                 let directory = PathBuf::from(directory);
+                 gpu.renderer.save_opaque_ray_capture(&directory)?;
+@@ -1619,6 +1674,129 @@ fn consumer_zero_audit(gpu: &Gpu) -> Result<serde_json::Value, Box<dyn std::erro
+         serde_json::json!({"diagnostic_only":!cache,"consumer_cache":cache,"source_queries_skipped":if !cache {serde_json::json!(0)}else if std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE_CHECK").as_deref()==Ok("1")||std::env::var_os("VOXY_STREET_WORLD_RAY_RESOLVE_AUDIT").is_some() {serde_json::json!(sums.iter().map(|v|v[0]).sum::<u64>())}else{serde_json::Value::Null},"mismatch_counter_scope":"owner lifetime across checked frames","cache_checks_enabled":cache&&std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE_CHECK").as_deref()==Ok("1"),"labels":if cache {vec!["pruned","checked","mismatched","nonfinite"]}else{vec!["eligible","positive_zero","other_finite","nonfinite"]},"by_kind":sums,"region_counters":records,"tiles_per_kind":tiles,"timing_includes_duplicate_fallback_work":!cache||std::env::var("VOXY_STREET_WORLD_RAY_CONSUMER_CACHE_CHECK").as_deref()==Ok("1"),"minimum_120_fps_qualified":false}),
+     )
+ }
++// Audit readback happens after the measured frame samples have been collected.
++fn original_gi_queue_words(gpu: &Gpu) -> Result<[u32; 10], Box<dyn std::error::Error>> {
++    let source = gpu
++        .renderer
++        .opaque_ray_queue_proof_buffer()
++        .ok_or("missing original GI queue proof buffer")?;
++    let read = gpu.device.create_buffer(&wgpu::BufferDescriptor {
++        label: Some("original GI queue proof readback"),
++        size: 40,
++        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
++        mapped_at_creation: false,
++    });
++    let mut encoder = gpu.device.create_command_encoder(&Default::default());
++    encoder.copy_buffer_to_buffer(source, 0, &read, 0, 40);
++    let submission = gpu.queue.submit([encoder.finish()]);
++    gpu.device.poll(wgpu::PollType::Wait {
++        submission_index: Some(submission),
++        timeout: None,
++    })?;
++    let (send, receive) = std::sync::mpsc::channel();
++    read.slice(..).map_async(wgpu::MapMode::Read, move |r| {
++        let _ = send.send(r);
++    });
++    gpu.device.poll(wgpu::PollType::wait_indefinitely())?;
++    receive.recv()??;
++    let bytes = read.slice(..).get_mapped_range()?;
++    Ok(std::array::from_fn(|i| {
++        u32::from_le_bytes(bytes[i * 4..i * 4 + 4].try_into().unwrap())
++    }))
++}
++// Compare actual raw GI outputs with the original raster query, before HDR/TAA.
++fn original_gi_raster_comparison(
++    gpu: &Gpu,
++) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
++    let (actual, reference) = gpu
++        .renderer
++        .opaque_gi_precision_textures()
++        .ok_or("missing raw raster GI reference")?;
++    let width = actual.width();
++    let height = actual.height();
++    if reference.size() != actual.size()
++        || actual.format() != wgpu::TextureFormat::Rgba32Float
++        || reference.format() != wgpu::TextureFormat::Rgba32Float
++    {
++        return Err("GI comparison format mismatch".into());
++    }
++    let row = width * 16;
++    let pitch = row.div_ceil(256) * 256;
++    let image_bytes = u64::from(pitch) * u64::from(height);
++    let read = gpu.device.create_buffer(&wgpu::BufferDescriptor {
++        label: Some("raw original-vs-queued GI words"),
++        size: image_bytes * 2,
++        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
++        mapped_at_creation: false,
++    });
++    let mut encoder = gpu.device.create_command_encoder(&Default::default());
++    for (i, texture) in [actual, reference].into_iter().enumerate() {
++        encoder.copy_texture_to_buffer(
++            texture.as_image_copy(),
++            wgpu::TexelCopyBufferInfo {
++                buffer: &read,
++                layout: wgpu::TexelCopyBufferLayout {
++                    offset: i as u64 * image_bytes,
++                    bytes_per_row: Some(pitch),
++                    rows_per_image: Some(height),
++                },
++            },
++            texture.size(),
++        );
++    }
++    let submission = gpu.queue.submit([encoder.finish()]);
++    gpu.device.poll(wgpu::PollType::Wait {
++        submission_index: Some(submission),
++        timeout: None,
++    })?;
++    let (send, receive) = std::sync::mpsc::channel();
++    read.slice(..).map_async(wgpu::MapMode::Read, move |r| {
++        let _ = send.send(r);
++    });
++    gpu.device.poll(wgpu::PollType::wait_indefinitely())?;
++    receive.recv()??;
++    let bytes = read.slice(..).get_mapped_range()?;
++    let mut hashes = [blake3::Hasher::new(), blake3::Hasher::new()];
++    let mut different = 0u64;
++    let mut nonfinite = 0u64;
++    let mut maximum = 0f64;
++    let mut first = Vec::new();
++    for y in 0..height as usize {
++        let a = &bytes[y * pitch as usize..y * pitch as usize + row as usize];
++        let b = &bytes[image_bytes as usize + y * pitch as usize
++            ..image_bytes as usize + y * pitch as usize + row as usize];
++        hashes[0].update(a);
++        hashes[1].update(b);
++        for (i, (a, b)) in a.chunks_exact(4).zip(b.chunks_exact(4)).enumerate() {
++            let wa = u32::from_le_bytes(a.try_into().unwrap());
++            let wb = u32::from_le_bytes(b.try_into().unwrap());
++            let fa = f32::from_bits(wa);
++            let fb = f32::from_bits(wb);
++            if !fa.is_finite() || !fb.is_finite() {
++                nonfinite += 1;
++            } else {
++                maximum = maximum.max((f64::from(fa) - f64::from(fb)).abs());
++            }
++            if wa != wb {
++                different += 1;
++                if first.len() < 16 {
++                    first.push(serde_json::json!({"x":i/4,"y":y,"channel":i%4,"queued_bits":wa,"raster_bits":wb}));
++                }
++            }
++        }
++    }
++    let input_mode = std::env::var("VOXY_STREET_GI_INPUT_DIAGNOSTIC")
++        .ok()
++        .and_then(|v| v.parse::<u32>().ok())
++        .unwrap_or(0);
++    Ok(
++        serde_json::json!({"scope":if input_mode==0 {"last completed frame raw Float32 GI, before HDR/TAA"} else {"input tuple diagnostic, no GI timing qualification"},"input_mode":input_mode,
++        "width":width,"height":height,"compared_words":u64::from(width)*u64::from(height)*4,
++        "different_words":different,"nonfinite_pairs":nonfinite,"max_absolute_error":maximum,
++        "strict_parity_passed":different==0&&nonfinite==0,"first_differences":first,
++        "actual_blake3":hashes[0].finalize().to_hex().to_string(),"raster_blake3":hashes[1].finalize().to_hex().to_string()}),
++    )
++}
+ // Read the actual Float32 lighting outputs after the completed-frame fence.
+ // This optional audit preserves every texel bit, without exporting huge images.
+ fn world_ray_float32_images(gpu: &Gpu) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+diff --git a/crates/voxy_render/src/archive_compute_gi.rs b/crates/voxy_render/src/archive_compute_gi.rs
+index c110eb6ef..b09551f1d 100644
+--- a/crates/voxy_render/src/archive_compute_gi.rs
++++ b/crates/voxy_render/src/archive_compute_gi.rs
+@@ -116,6 +116,11 @@ impl ArchiveComputeGi {
+             ("ARCHIVE_DDA_HIERARCHY", "VOXY_STREET_DDA_HIERARCHY"),
+             ("ARCHIVE_DDA_EDGE_CACHE", "VOXY_STREET_DDA_EDGE_CACHE"),
+             ("ARCHIVE_REFINE_CACHE", "VOXY_STREET_REFINE_CACHE"),
++            (
++                "ARCHIVE_CANONICAL_GI_INPUT",
++                "VOXY_STREET_CANONICAL_GI_INPUT",
++            ),
++            ("ARCHIVE_GI_RAY_GUIDES", "VOXY_STREET_ORIGINAL_GI_QUEUE"),
+         ];
+         let mut constants: Vec<_> = flags
+             .iter()
+@@ -130,6 +135,14 @@ impl ArchiveComputeGi {
+                 )
+             })
+             .collect();
++        constants.push((
++            "ARCHIVE_GI_INPUT_DIAGNOSTIC",
++            std::env::var("VOXY_STREET_GI_INPUT_DIAGNOSTIC")
++                .ok()
++                .and_then(|v| v.parse::<u32>().ok())
++                .filter(|&v| v <= 4)
++                .unwrap_or(0) as f64,
++        ));
+         constants.push((
+             "ARCHIVE_DDA_TILE_EDGE_CACHE",
+             if std::env::var("VOXY_STREET_DDA_TILE_EDGE_CACHE").as_deref() == Ok("1") {
+@@ -308,8 +321,9 @@ impl ArchiveComputeGi {
+         } else {
+             None
+         };
+-        let stages = if std::env::var_os("VOXY_STREET_RAY_STAGES").is_some() {
+-            if std::env::var_os("VOXY_STREET_PAIRED_DDA").is_none() {
++        let original_gi = std::env::var_os("VOXY_STREET_ORIGINAL_GI_QUEUE").is_some();
++        let stages = if std::env::var_os("VOXY_STREET_RAY_STAGES").is_some() || original_gi {
++            if std::env::var_os("VOXY_STREET_PAIRED_DDA").is_none() && !original_gi {
+                 return Err(crate::ComputeError::Validation(
+                     "staged rays require paired DDA".into(),
+                 ));
+@@ -358,8 +372,14 @@ impl ArchiveComputeGi {
+     pub(super) fn world_query_encoded_frames(&self) -> u64 {
+         self.world_frame.as_ref().map_or(0, |f| f.encoded_frames())
+     }
+-    pub(super) fn world_same_producer_comparison(&self, queue: &wgpu::Queue) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+-        match &self.world_frame { Some(frame) => frame.same_producer_comparison(queue), None => Ok(None) }
++    pub(super) fn world_same_producer_comparison(
++        &self,
++        queue: &wgpu::Queue,
++    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
++        match &self.world_frame {
++            Some(frame) => frame.same_producer_comparison(queue),
++            None => Ok(None),
++        }
+     }
+     pub(super) fn world_work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
+         self.world_frame.as_ref()?.work_stats_buffer()
+diff --git a/crates/voxy_render/src/archive_ray_stages.rs b/crates/voxy_render/src/archive_ray_stages.rs
+index d731e25d3..c577f5c4c 100644
+--- a/crates/voxy_render/src/archive_ray_stages.rs
++++ b/crates/voxy_render/src/archive_ray_stages.rs
+@@ -12,6 +12,7 @@ pub(super) struct ArchiveRayStages {
+     capture: Option<capture::RayCapture>,
+     work_cursor: Option<ComputeStorage>,
+     queue: Option<(Vec<[wgpu::ComputePipeline; 3]>, bool)>,
++    original_gi: bool,
+     hierarchy_reciprocal: bool,
+     hierarchy_near_first: bool,
+     pipelines: Vec<[wgpu::ComputePipeline; 3]>,
+@@ -32,6 +33,22 @@ fn shape(
+     let h = height.min(512).min(capacity / w);
+     Ok((w, h))
+ }
++fn original_shape(
++    width: u32,
++    height: u32,
++    binding: u64,
++    buffer: u64,
++    groups: u32,
++) -> Result<(u32, u32), crate::ComputeError> {
++    let capacity = (binding.min(buffer) / HIT_STRIDE)
++        .min(u64::from(groups) * 64)
++        .min(u64::from(u32::MAX)) as u32;
++    if width == 0 || height == 0 || capacity == 0 {
++        return Err(crate::ComputeError::InvalidBuffer);
++    }
++    let w = width.min(capacity);
++    Ok((w, height.min(capacity / w)))
++}
+ impl ArchiveRayStages {
+     #[allow(clippy::too_many_arguments)]
+     pub(super) fn new(
+@@ -51,18 +68,39 @@ impl ArchiveRayStages {
+         height: u32,
+     ) -> Result<Self, crate::ComputeError> {
+         let limits = device.limits();
++        let original_gi = std::env::var_os("VOXY_STREET_ORIGINAL_GI_QUEUE").is_some();
++        let queue_enabled = original_gi || std::env::var_os("VOXY_STREET_RAY_QUEUE").is_some();
++        let queue_proof = queue_enabled
++            && (std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_some()
++                || (original_gi
++                    && std::env::var_os("VOXY_STREET_ORIGINAL_GI_QUEUE_PROOF").is_some()));
+         let capture_enabled = std::env::var_os("VOXY_STREET_RAY_CAPTURE_DIR").is_some();
+         let copy_usage = if capture_enabled {
+             wgpu::BufferUsages::COPY_SRC
+         } else {
+             wgpu::BufferUsages::empty()
+         };
+-        let (mut tw, mut th) = shape(
+-            width,
+-            height,
+-            limits.max_storage_buffer_binding_size,
+-            limits.max_buffer_size,
+-        )?;
++        if original_gi && capture_enabled {
++            return Err(crate::ComputeError::Validation(
++                "original GI transport does not produce paired-segment captures".into(),
++            ));
++        }
++        let (mut tw, mut th) = if original_gi {
++            original_shape(
++                width,
++                height,
++                limits.max_storage_buffer_binding_size,
++                limits.max_buffer_size,
++                limits.max_compute_workgroups_per_dimension,
++            )?
++        } else {
++            shape(
++                width,
++                height,
++                limits.max_storage_buffer_binding_size,
++                limits.max_buffer_size,
++            )?
++        };
+         if std::env::var_os("VOXY_STREET_RAY_CHUNK_TEST").is_some() {
+             if std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_none() {
+                 return Err(crate::ComputeError::Validation(
+@@ -91,7 +129,11 @@ impl ArchiveRayStages {
+             ComputeMemoryBudget::for_device(device).allocate_buffers([
+                 voxy_gpu_core::ManagedBufferDescriptor {
+                     label: "exact projected segment chunk",
+-                    size: u64::from(tw) * u64::from(th) * SEGMENT_STRIDE,
++                    size: if original_gi {
++                        SEGMENT_STRIDE
++                    } else {
++                        u64::from(tw) * u64::from(th) * SEGMENT_STRIDE
++                    },
+                     contents: None,
+                     usage: wgpu::BufferUsages::STORAGE | copy_usage,
+                 },
+@@ -122,13 +164,10 @@ impl ArchiveRayStages {
+         } else {
+             None
+         };
+-        let queue_enabled = std::env::var_os("VOXY_STREET_RAY_QUEUE").is_some();
+         let hierarchy_reciprocal =
+             std::env::var_os("VOXY_STREET_RAY_HIERARCHY_RECIPROCAL").is_some();
+         let hierarchy_near_first =
+             std::env::var_os("VOXY_STREET_RAY_HIERARCHY_NEAR_FIRST").is_some();
+-        let queue_proof =
+-            queue_enabled && std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_some();
+         let pixels = u64::from(tw) * u64::from(th);
+         let [order, bins, seen, errors] = ComputeMemoryBudget::for_device(device)
+             .allocate_buffers([
+@@ -260,6 +299,20 @@ impl ArchiveRayStages {
+             ));
+             flags.push(("ARCHIVE_RAY_QUEUE", if queue_enabled { 1. } else { 0. }));
+             flags.push(("ARCHIVE_RAY_QUEUE_PROOF", if queue_proof { 1. } else { 0. }));
++            flags.push((
++                "ARCHIVE_ORIGINAL_GI_QUEUE",
++                if original_gi { 1. } else { 0. },
++            ));
++            flags.push((
++                "ARCHIVE_ORIGINAL_GI_DIRECT_SCATTER",
++                if original_gi
++                    && std::env::var_os("VOXY_STREET_ORIGINAL_GI_DIRECT_SCATTER").is_some()
++                {
++                    1.
++                } else {
++                    0.
++                },
++            ));
+             let hierarchy = std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_some();
+             flags.push(("ARCHIVE_STACK_TRAVERSAL", if hierarchy { 1. } else { 0. }));
+             flags.push((
+@@ -454,6 +507,7 @@ impl ArchiveRayStages {
+             work_cursor,
+             _buffers: [segments, hits, uniforms, order, bins, seen, errors],
+             queue: queue_enabled.then_some((queue_pipelines, queue_proof)),
++            original_gi,
+             hierarchy_reciprocal,
+             hierarchy_near_first,
+             pipelines,
+@@ -509,7 +563,11 @@ impl ArchiveRayStages {
+         let capture_frame = self.capture.as_ref().is_some_and(|c| c.next_frame());
+         if self.queue.as_ref().is_some_and(|q| q.1) {
+             encoder.clear_buffer(&self._buffers[6], 0, Some(28));
+-            encoder.clear_buffer(&self._buffers[6], 32, Some(8));
++            encoder.clear_buffer(
++                &self._buffers[6],
++                32,
++                Some(if self.original_gi { 4 } else { 8 }),
++            );
+         }
+         for (kind, pipelines) in self.pipelines.iter().enumerate() {
+             for (tile, (extent, offset)) in self.tiles.iter().enumerate() {
+@@ -713,6 +771,21 @@ mod tests {
+         }
+     }
+     #[test]
++    fn original_transport_fits_a_whole_1080p_frame_and_honours_dispatch_limits() {
++        assert_eq!(
++            super::original_shape(1920, 1080, 128 * 1024 * 1024, u64::MAX, 65535).unwrap(),
++            (1920, 1080)
++        );
++        for (width, height) in [(3840, 2160), (3841, 2161), (1, 16384)] {
++            let (w, h) =
++                super::original_shape(width, height, 128 * 1024 * 1024, u64::MAX, 65535).unwrap();
++            assert!(u64::from(w) * u64::from(h) * 32 <= 128 * 1024 * 1024);
++            assert!((w * h).div_ceil(64) <= 65535);
++            assert!(w > 0 && h > 0 && w <= width && h <= height);
++        }
++        assert!(super::original_shape(1920, 1080, 31, u64::MAX, 65535).is_err());
++    }
++    #[test]
+     fn full_precision_chunks_fit_default_binding() {
+         let (w, h) = shape(3840, 2160, 128 * 1024 * 1024, u64::MAX).unwrap();
+         assert_eq!((w, h), (1024, 512));
+diff --git a/crates/voxy_render/src/archive_ray_stages.wgsl b/crates/voxy_render/src/archive_ray_stages.wgsl
+index c840e63b3..62df2953c 100644
+--- a/crates/voxy_render/src/archive_ray_stages.wgsl
++++ b/crates/voxy_render/src/archive_ray_stages.wgsl
+@@ -1,6 +1,8 @@
+ // Chunked exact ray scheduling. No fields are quantized at stage boundaries.
+ override ARCHIVE_RAY_COHERENT:bool=false;
+ override ARCHIVE_RAY_QUEUE:bool=false;
++override ARCHIVE_ORIGINAL_GI_QUEUE:bool=false;
++override ARCHIVE_ORIGINAL_GI_DIRECT_SCATTER:bool=false;
+ override ARCHIVE_RAY_SPATIAL_KEY:bool=false;
+ override ARCHIVE_RAY_QUEUE_PROOF:bool=false;
+ struct ArchiveRayBins {header:array<atomic<u32>,8>,counts:array<atomic<u32>,256>}
+@@ -54,12 +56,59 @@ struct ArchiveRayInput {origin:vec3<f32>,direction:vec3<f32>,history:bool,admitt
+ fn archive_ray_input(pixel:vec2<u32>)->ArchiveRayInput {
+  let world=textureLoad(gi_world,vec2<i32>(pixel),0);let normal=textureLoad(gi_normal,vec2<i32>(pixel),0);
+  if normal.w==0. {return ArchiveRayInput(vec3<f32>(0.),vec3<f32>(0.),true,false);}
++ if ARCHIVE_GI_RAY_GUIDES {return ArchiveRayInput(world.xyz,normal.xyz,true,!fx_off(1u)&&!(camera.surface.z<0.5));}
+  if ARCHIVE_TRACE_SSR {
+   let history=normal.w>0.;let admitted=world.w>0.&&!fx_off(2u)&&!(history&&camera.surface.z<0.5);
+   let view=normalize(camera.eye.xyz-world.xyz);
+   return ArchiveRayInput(world.xyz+normal.xyz*0.03,reflect(-view,normal.xyz),history,admitted);
+  }
+- return ArchiveRayInput(world.xyz+normal.xyz*0.05,archive_gi_direction(vec2<f32>(pixel)+0.5,normal.xyz),true,!fx_off(1u)&&!(camera.surface.z<0.5));
++ let gi_normal=archive_gi_normal_input(normal.xyz);
++ return ArchiveRayInput(archive_gi_origin(world.xyz,gi_normal),archive_gi_direction(vec2<f32>(pixel)+0.5,gi_normal),true,!fx_off(1u)&&!(camera.surface.z<0.5));
++}
++// Scheduling keys never enter the original ray or radiance calculations.
++fn archive_original_gi_bin(ray:ArchiveRayInput,pixel:vec2<u32>)->u32 {
++ if !ray.admitted {return 0u;}
++ if !ARCHIVE_RAY_SPATIAL_KEY {
++  let q=camera.vp*vec4<f32>(ray.origin,1.);let v=camera.vp*vec4<f32>(ray.direction,0.);
++  let a=array<f32,5>(q.w+q.x,q.w-q.x,q.w+q.y,q.w-q.y,q.w);
++  let b=array<f32,5>(v.w+v.x,v.w-v.x,v.w+v.y,v.w-v.y,v.w);
++  var exit=60.;
++  for(var i=0u;i<5u;i++){if a[i]<=0.{exit=0.;}else if b[i]<0.{exit=min(exit,-a[i]/b[i]);}}
++  let exponent=i32((bitcast<u32>(exit+0.75)>>23u)&255u)-127;
++  let length_bin=u32(clamp(exponent+1,0,7));
++  let delta=v.xy*q.w-q.xy*v.w;
++  let direction=select(0u,1u,delta.x<0.)|select(0u,2u,delta.y<0.)|select(0u,4u,abs(delta.y)>abs(delta.x))|select(0u,8u,v.z*q.w-q.z*v.w<0.);
++  let region=select(0u,1u,pixel.y>=u32(camera.viewport.y)/2u);
++  return 1u+min(254u,length_bin*32u+direction*2u+region);
++ }
++ let d=ray.direction;var oct=d.xy/(abs(d.x)+abs(d.y)+abs(d.z));
++ if d.z<0. {oct=(1.-abs(oct.yx))*select(vec2<f32>(-1.),vec2<f32>(1.),oct>=vec2<f32>(0.));}
++ let angular=vec2<u32>(clamp((oct*0.5+0.5)*8.,vec2<f32>(0.),vec2<f32>(7.)));
++ let delta=ray.origin-camera.eye.xyz;let distance2=dot(delta,delta);
++ let exponent=i32((bitcast<u32>(distance2)>>23u)&255u)-127;
++ var region=u32(clamp(exponent/4,0,3));
++ if ARCHIVE_RAY_SPATIAL_KEY {region=select(0u,1u,pixel.x>=u32(camera.viewport.x)*1u/2u)|select(0u,2u,pixel.y>=u32(camera.viewport.y)/2u);}
++ return 1u+min(254u,region*64u+angular.y*8u+angular.x);
++}
++fn archive_original_gi_unpack(index:u32)->ArchiveRayInput {
++ let p=staged_hits[index];
++ return ArchiveRayInput(vec3<f32>(bitcast<vec2<f32>>(p.pixel),p.parameter.x),vec3<f32>(p.parameter.y,bitcast<f32>(p.visited),bitcast<f32>(p.padding0)),true,p.padding2!=0u);
++}
++fn archive_original_gi_value(pixel:vec2<u32>,ray:ArchiveRayInput)->vec4<f32> {
++ if !ray.admitted {return vec4<f32>(0.);}
++ if ARCHIVE_GI_INPUT_DIAGNOSTIC==1u {return vec4<f32>(textureLoad(gi_world,vec2<i32>(pixel),0).xyz,1.);}
++ if ARCHIVE_GI_INPUT_DIAGNOSTIC==2u {return vec4<f32>(textureLoad(gi_normal,vec2<i32>(pixel),0).xyz,1.);}
++ if ARCHIVE_GI_INPUT_DIAGNOSTIC==3u {return vec4<f32>(ray.origin,1.);}
++ if ARCHIVE_GI_INPUT_DIAGNOSTIC==4u {return vec4<f32>(ray.direction,1.);}
++ return screen_reflection_original(ray.origin,ray.direction,true,60.,1.,8u,ARCHIVE_RAY_BOUNDS);
++}
++fn archive_ray_input_bin(index:u32)->u32 {
++ if ARCHIVE_ORIGINAL_GI_QUEUE {return staged_hits[index].padding1;}
++ return archive_ray_bin(staged_segments[index]);
++}
++fn archive_ray_queue_error(index:u32) {
++ atomicAdd(&staged_errors[index],1u);
++ if ARCHIVE_ORIGINAL_GI_QUEUE {atomicStore(&staged_errors[9],1u);}
+ }
+ @compute @workgroup_size(8,8) fn cs_ray_project(@builtin(global_invocation_id) id:vec3<u32>,@builtin(local_invocation_index) lane:u32) {
+  if ARCHIVE_RAY_QUEUE {
+@@ -68,11 +117,18 @@ fn archive_ray_input(pixel:vec2<u32>)->ArchiveRayInput {
+  }
+  if all(id.xy<ray_tile.extent) {
+   let index=id.y*ray_tile.extent.x+id.x;let ray_input=archive_ray_input(ray_tile.offset+id.xy);
+-  var segment=dda_projection_empty(0u);
+-  if ray_input.admitted {segment=dda_project_segment(camera.vp,ray_input.origin,ray_input.origin+ray_input.direction*60.,camera.viewport.xy);}
+-  if ARCHIVE_RAY_FORCE_FALLBACK&&ray_input.admitted {segment=dda_projection_empty(2u);}
+-  segment.padding0=select(0u,1u,ray_input.history);staged_segments[index]=segment;
+-  if ARCHIVE_RAY_QUEUE {atomicAdd(&ray_histogram[archive_ray_bin(segment)],1u);}
++  var bin=0u;
++  if ARCHIVE_ORIGINAL_GI_QUEUE {
++   bin=archive_original_gi_bin(ray_input,ray_tile.offset+id.xy);
++   staged_hits[index]=DepthDdaPairHit(bitcast<vec2<i32>>(ray_input.origin.xy),vec2<f32>(ray_input.origin.z,ray_input.direction.x),bitcast<u32>(ray_input.direction.y),bitcast<u32>(ray_input.direction.z),bin,u32(ray_input.admitted));
++  } else {
++   var segment=dda_projection_empty(0u);
++   if ray_input.admitted {segment=dda_project_segment(camera.vp,ray_input.origin,ray_input.origin+ray_input.direction*60.,camera.viewport.xy);}
++   if ARCHIVE_RAY_FORCE_FALLBACK&&ray_input.admitted {segment=dda_projection_empty(2u);}
++   segment.padding0=select(0u,1u,ray_input.history);staged_segments[index]=segment;
++   bin=archive_ray_bin(segment);
++  }
++  if ARCHIVE_RAY_QUEUE {atomicAdd(&ray_histogram[bin],1u);}
+   if ARCHIVE_RAY_QUEUE_PROOF {atomicStore(&staged_seen[index],0u);}
+  }
+  if ARCHIVE_RAY_QUEUE {
+@@ -96,8 +152,14 @@ fn archive_ray_input(pixel:vec2<u32>)->ArchiveRayInput {
+  }
+ }
+ @compute @workgroup_size(64) fn cs_ray_queue_scatter(@builtin(global_invocation_id) id:vec3<u32>,@builtin(local_invocation_index) lane:u32) {
++ if ARCHIVE_ORIGINAL_GI_QUEUE&&ARCHIVE_ORIGINAL_GI_DIRECT_SCATTER {
++  if id.x<ray_tile.extent.x*ray_tile.extent.y {
++   let bin=archive_ray_input_bin(id.x);let slot=atomicAdd(&staged_bins.counts[bin],1u);staged_order[slot]=id.x;
++  }
++  return;
++ }
+  let count=ray_tile.extent.x*ray_tile.extent.y;let valid=id.x<count;
+- var bin=0xffffffffu;if valid {bin=archive_ray_bin(staged_segments[id.x]);}
++ var bin=0xffffffffu;if valid {bin=archive_ray_input_bin(id.x);}
+  scatter_bins[lane]=bin;workgroupBarrier();
+  var first=lane;var rank=0u;var total=0u;
+  for(var j=0u;j<64u;j++) {if scatter_bins[j]==bin {total+=1u;first=min(first,j);if j<lane {rank+=1u;}}}
+@@ -109,10 +171,20 @@ fn archive_ray_input(pixel:vec2<u32>)->ArchiveRayInput {
+  let count=atomicLoad(&staged_bins.header[0]);if id.x>=count||id.x>=ray_tile.extent.x*ray_tile.extent.y {return;}
+  let index=staged_order[id.x];
+  if ARCHIVE_RAY_QUEUE_PROOF {
+-  if index>=ray_tile.extent.x*ray_tile.extent.y {atomicAdd(&staged_errors[0],1u);return;}
+-  if atomicAdd(&staged_seen[index],1u)!=0u {atomicAdd(&staged_errors[1],1u);}
++  if index>=ray_tile.extent.x*ray_tile.extent.y {archive_ray_queue_error(0u);return;}
++  if atomicAdd(&staged_seen[index],1u)!=0u {archive_ray_queue_error(1u);}
+   atomicAdd(&staged_errors[4],1u);
+  }
++ if ARCHIVE_ORIGINAL_GI_QUEUE {
++  let pixel=ray_tile.offset+vec2<u32>(index%ray_tile.extent.x,index/ray_tile.extent.x);
++  let ray=archive_original_gi_unpack(index);var colour=vec4<f32>(0.);
++  if ray.admitted {
++   if ARCHIVE_RAY_QUEUE_PROOF {atomicAdd(&staged_errors[6],1u);}
++   colour=archive_original_gi_value(pixel,ray);
++  }
++  staged_hits[index].pixel=bitcast<vec2<i32>>(colour.xy);staged_hits[index].parameter=colour.zw;
++  return;
++ }
+  let segment=staged_segments[index];var hit=precise_miss(0u);
+  if segment.state==1u {
+   if ARCHIVE_RAY_QUEUE_PROOF {atomicAdd(&staged_errors[6],1u);}
+@@ -123,15 +195,26 @@ fn archive_ray_input(pixel:vec2<u32>)->ArchiveRayInput {
+ @compute @workgroup_size(64) fn cs_ray_queue_check(@builtin(global_invocation_id) id:vec3<u32>) {
+  if !ARCHIVE_RAY_QUEUE_PROOF {return;}
+  let count=ray_tile.extent.x*ray_tile.extent.y;if id.x>=count {return;}
++ if ARCHIVE_ORIGINAL_GI_QUEUE {
++  let pixel=ray_tile.offset+vec2<u32>(id.x%ray_tile.extent.x,id.x/ray_tile.extent.x);
++  let ray=archive_ray_input(pixel);var reference=vec4<f32>(0.);
++  if ray.admitted {reference=archive_original_gi_value(pixel,ray);}
++  let packed=staged_hits[id.x];let actual=vec4<f32>(bitcast<vec2<f32>>(packed.pixel),packed.parameter);
++  if any(bitcast<vec4<u32>>(actual)!=bitcast<vec4<u32>>(reference)){archive_ray_queue_error(8u);}
++  if atomicLoad(&staged_seen[id.x])!=1u {archive_ray_queue_error(2u);}
++  atomicAdd(&staged_errors[5],1u);
++  if id.x==0u&&atomicLoad(&staged_bins.header[0])!=count {archive_ray_queue_error(3u);}
++  return;
++ }
+  // Recompute in original-ID order independently of queue assignment. Compare
+  // every hit word, including the low parameter component and signed zeros.
+  let segment=staged_segments[id.x];var reference=precise_miss(0u);
+  if segment.state==1u {reference=trace_depth_dda_paired(scene_depth,DdaVectorPair(segment.begin,segment.begin_low),DdaVectorPair(segment.end,segment.end_low));}
+  let actual=staged_hits[id.x];
+- if any(actual.pixel!=reference.pixel)||any(bitcast<vec2<u32>>(actual.parameter)!=bitcast<vec2<u32>>(reference.parameter))||(actual.visited!=reference.visited&&!ARCHIVE_STACK_TRAVERSAL)||actual.padding0!=reference.padding0||actual.padding1!=reference.padding1||actual.padding2!=reference.padding2 {atomicAdd(&staged_errors[8],1u);}
+- if atomicLoad(&staged_seen[id.x])!=1u {atomicAdd(&staged_errors[2],1u);}
++ if any(actual.pixel!=reference.pixel)||any(bitcast<vec2<u32>>(actual.parameter)!=bitcast<vec2<u32>>(reference.parameter))||(actual.visited!=reference.visited&&!ARCHIVE_STACK_TRAVERSAL)||actual.padding0!=reference.padding0||actual.padding1!=reference.padding1||actual.padding2!=reference.padding2 {archive_ray_queue_error(8u);}
++ if atomicLoad(&staged_seen[id.x])!=1u {archive_ray_queue_error(2u);}
+  atomicAdd(&staged_errors[5],1u);
+- if id.x==0u&&atomicLoad(&staged_bins.header[0])!=count {atomicAdd(&staged_errors[3],1u);}
++ if id.x==0u&&atomicLoad(&staged_bins.header[0])!=count {archive_ray_queue_error(3u);}
+ }
+ @compute @workgroup_size(8,8) fn cs_ray_traverse(@builtin(global_invocation_id) id:vec3<u32>,@builtin(local_invocation_index) lane:u32,@builtin(workgroup_id) group:vec3<u32>) {
+  var pixel=id.xy;
+@@ -158,6 +241,11 @@ fn archive_ray_input(pixel:vec2<u32>)->ArchiveRayInput {
+ }
+ @compute @workgroup_size(8,8) fn cs_ray_resolve(@builtin(global_invocation_id) id:vec3<u32>) {
+  if any(id.xy>=ray_tile.extent){return;}
++ if ARCHIVE_ORIGINAL_GI_QUEUE {
++  let index=id.y*ray_tile.extent.x+id.x;let packed=staged_hits[index];
++  textureStore(gi_output,vec2<i32>(ray_tile.offset+id.xy),vec4<f32>(bitcast<vec2<f32>>(packed.pixel),packed.parameter));
++  return;
++ }
+  let pixel=ray_tile.offset+id.xy;let index=id.y*ray_tile.extent.x+id.x;let segment=staged_segments[index];var colour=vec4<f32>(0.);
+  if segment.state==1u {colour=screen_reflection_paired_hit(segment,segment.padding0!=0u,staged_hits[index]);}
+  else if segment.state==2u {let ray_input=archive_ray_input(pixel);colour=screen_reflection_original(ray_input.origin,ray_input.direction,ray_input.history,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}
+diff --git a/crates/voxy_render/src/archive_scene.rs b/crates/voxy_render/src/archive_scene.rs
+index 5d0ce4749..ad6be4e6d 100644
+--- a/crates/voxy_render/src/archive_scene.rs
++++ b/crates/voxy_render/src/archive_scene.rs
+@@ -547,6 +547,22 @@ impl ArchiveSceneRenderer {
+         bounds: (Vec3, Vec3),
+         environment: Option<ArchiveEnvironmentSource>,
+     ) -> Result<Self, crate::ComputeError> {
++        if std::env::var_os("VOXY_STREET_ORIGINAL_GI_QUEUE").is_some()
++            && (std::env::var_os("VOXY_STREET_COMPUTE_GI").is_none()
++                || [
++                    "VOXY_STREET_COMPUTE_SSR",
++                    "VOXY_STREET_PAIRED_DDA",
++                    "VOXY_STREET_RAY_PERSISTENT",
++                    "VOXY_STREET_RAY_HIERARCHY",
++                    "VOXY_STREET_RAY_COHERENT",
++                    "VOXY_STREET_RAY_CAPTURE_DIR",
++                    "VOXY_STREET_WORLD_RAY_FRAME",
++                ]
++                .iter()
++                .any(|name| std::env::var_os(name).is_some()))
++        {
++            return Err(crate::ComputeError::Validation("original GI queue requires compute GI without paired, SSR, persistent, hierarchy or capture modes".into()));
++        }
+         if std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some() {
+             if !device.features().contains(wgpu::Features::SUBGROUP)
+                 || [
+@@ -1001,6 +1017,14 @@ impl ArchiveSceneRenderer {
+                                     0.
+                                 },
+                             ),
++                            (
++                                "ARCHIVE_CANONICAL_GI_INPUT",
++                                if std::env::var_os("VOXY_STREET_CANONICAL_GI_INPUT").is_some() {
++                                    1.
++                                } else {
++                                    0.
++                                },
++                            ),
+                             (
+                                 "ARCHIVE_EARLY_GI",
+                                 if std::env::var_os("VOXY_STREET_EARLY_GI").is_some() {
+@@ -1964,8 +1988,12 @@ impl ArchiveSceneRenderer {
+         let view = face.create_view(&Default::default());
+         let mut projector = crate::probe_gi::ProbeProjector::new(&self.device);
+         if let Some(index) = std::env::var_os("VOXY_STREET_PROBE_PROJECTOR_TRACE_INDEX") {
+-            let index = index.to_str().and_then(|s| s.parse::<usize>().ok())
+-                .ok_or_else(|| crate::ComputeError::Validation("invalid projector trace index".into()))?;
++            let index = index
++                .to_str()
++                .and_then(|s| s.parse::<usize>().ok())
++                .ok_or_else(|| {
++                    crate::ComputeError::Validation("invalid projector trace index".into())
++                })?;
+             projector.enable_trace(&self.device, points.len(), index)?;
+         }
+         let saved = (
+@@ -2239,9 +2267,8 @@ impl ArchiveSceneRenderer {
+     }
+     /// Optional completed-frame diagnostics; does not change rendering inputs.
+     fn capture_texture_sources(&self, root: &std::path::Path) -> Result<(), crate::ComputeError> {
+-        std::fs::create_dir(root).map_err(|e| {
+-            crate::ComputeError::Validation(format!("texture source trace: {e}"))
+-        })?;
++        std::fs::create_dir(root)
++            .map_err(|e| crate::ComputeError::Validation(format!("texture source trace: {e}")))?;
+         let mut sources: Vec<(String, &wgpu::Texture)> = self
+             ._textures
+             .iter()
+@@ -2291,11 +2318,18 @@ impl ArchiveSceneRenderer {
+     fn diagnostic_lighting_material_uniforms(&self) -> Vec<(String, &wgpu::Buffer)> {
+         let mut inputs = vec![
+             ("punctual-lights".to_string(), &*self._lights),
+-            ("environment-intensity".to_string(), &self.environment_bindings.intensity_buffer),
++            (
++                "environment-intensity".to_string(),
++                &self.environment_bindings.intensity_buffer,
++            ),
+             ("probe-grid".to_string(), &*self.probe_grid),
+         ];
+-        inputs.extend(self.materials.iter().enumerate().map(|(index, material)|
+-            (format!("material-{index:04}"), &*material._uniform)));
++        inputs.extend(
++            self.materials
++                .iter()
++                .enumerate()
++                .map(|(index, material)| (format!("material-{index:04}"), &*material._uniform)),
++        );
+         inputs
+     }
+     pub fn capture_hdr_stages(
+@@ -2349,11 +2383,22 @@ impl ArchiveSceneRenderer {
+                     raw,
+                 )?;
+             proof["scene_camera_uniform"] = crate::archive_hdr_diagnostics::capture_uniform(
+-                &self.device, &self.queue, &self.camera, &root.join("scene-camera-uniform.bin"))?;
++                &self.device,
++                &self.queue,
++                &self.camera,
++                &root.join("scene-camera-uniform.bin"),
++            )?;
+             let mut lighting = serde_json::Map::new();
+             for (name, buffer) in self.diagnostic_lighting_material_uniforms() {
+-                lighting.insert(name.clone(), crate::archive_hdr_diagnostics::capture_uniform(
+-                    &self.device, &self.queue, buffer, &root.join(format!("{name}.bin")))?);
++                lighting.insert(
++                    name.clone(),
++                    crate::archive_hdr_diagnostics::capture_uniform(
++                        &self.device,
++                        &self.queue,
++                        buffer,
++                        &root.join(format!("{name}.bin")),
++                    )?,
++                );
+             }
+             proof["lighting_material_uniforms"] = serde_json::Value::Object(lighting);
+             std::fs::write(root.join("stages.json"), serde_json::to_vec_pretty(&proof)?)?;
+@@ -2641,8 +2686,13 @@ impl ArchiveSceneRenderer {
+     }
+     /// Optional complete last-source-frame stage snapshot, resolved after its GPU fence.
+     #[doc(hidden)]
+-    pub fn world_ray_same_producer_comparison(&self) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+-        match &self.compute_gi { Some(gi) => gi.world_same_producer_comparison(&self.queue), None => Ok(None) }
++    pub fn world_ray_same_producer_comparison(
++        &self,
++    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
++        match &self.compute_gi {
++            Some(gi) => gi.world_same_producer_comparison(&self.queue),
++            None => Ok(None),
++        }
+     }
+     pub fn world_ray_work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
+         self.compute_gi.as_ref()?.world_work_stats_buffer()
+@@ -3477,7 +3527,7 @@ impl Timing {
+                 queue.get_timestamp_period()
+             );
+         }
+-        if self.sample_chunks > 0 {
++        if self.sample_chunks > 0 && std::env::var_os("VOXY_STREET_GPU_TIMING_TRACE").is_some() {
+             let phases = crate::archive_gpu_timing::ray_stage_durations(
+                 &ticks,
+                 self.base_count,
+diff --git a/crates/voxy_render/src/archive_scene.wgsl b/crates/voxy_render/src/archive_scene.wgsl
+index 8f469bda6..645f90ce7 100644
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -1,8 +1,11 @@
++override ARCHIVE_GI_RAY_GUIDES:bool=false;
+ // Qualification-only injection of the existing unsupported-projection fallback.
+ override ARCHIVE_RAY_FORCE_FALLBACK:bool=false;
+ override ARCHIVE_COMPUTE_SSR:bool=false;
+ override ARCHIVE_TRACE_SSR:bool=false;
+ override ARCHIVE_COMPUTE_GI:bool=false;
++override ARCHIVE_GI_INPUT_DIAGNOSTIC:u32=0u;
++override ARCHIVE_CANONICAL_GI_INPUT:bool=false;
+ // Scheduling-only candidate; the query and colour expressions are unchanged.
+ override ARCHIVE_EARLY_GI:bool=false;
+ // Opt-in until full-scene correctness and paired performance are qualified.
+@@ -385,11 +388,24 @@ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,
+ // marched against the depth buffer and shaded from the reprojected previous
+ // frame (which already carries earlier bounces). TAA integrates the noise.
+ // Returns hit radiance and coverage; misses keep the sky/environment term.
++// Preserve finite Float32 normal bits at the ray boundary. Integer masking
++// prevents material normalization from being reassociated into ray arithmetic.
++fn archive_gi_normal_input(n:vec3<f32>)->vec3<f32> {
++ if !ARCHIVE_CANONICAL_GI_INPUT {return n;}
++ let bits=bitcast<vec3<u32>>(n);let exponent=vec3<u32>(0x7f800000u);
++ let mask=select(vec3<u32>(0u),vec3<u32>(0xffffffffu),(bits&exponent)!=exponent);
++ return bitcast<vec3<f32>>(bits&mask);
++}
++fn archive_gi_origin(p:vec3<f32>,n:vec3<f32>)->vec3<f32> {
++ if ARCHIVE_CANONICAL_GI_INPUT {return fma(n,vec3<f32>(0.05),p);}
++ return p+n*0.05;
++}
+ fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
+  if fx_off(1u) {return vec4<f32>(0.);}
+- let direction=archive_gi_direction(pixel,n);
++ let normal=archive_gi_normal_input(n);
++ let direction=archive_gi_direction(pixel,normal);
+  // Full-distance, full-refinement march; probes supplement offscreen light.
+- return screen_reflection(p+n*0.05,direction,true,60.,1.,8u,ARCHIVE_RAY_BOUNDS);
++ return screen_reflection(archive_gi_origin(p,normal),direction,true,60.,1.,8u,ARCHIVE_RAY_BOUNDS);
+ }
+ fn archive_gi_direction(pixel:vec2<f32>,n:vec3<f32>)->vec3<f32>{
+  let seed=fract(sin(dot(pixel+vec2<f32>(camera.atmosphere.x*61.7,camera.atmosphere.x*17.3),vec2<f32>(12.9898,78.233)))*43758.5453);
+@@ -690,6 +706,7 @@ struct ArchiveGiGuides {@location(0) world:vec4<f32>,@location(1) normal:vec4<f3
+  if material.surface.w>=0.&&tex.a*material.diffuse.a<material.surface.w {discard;}
+  let surface=archive_surface(f,front,tex);
+  var mirror=0.;if ARCHIVE_COMPUTE_SSR {mirror=archive_surface_mirror(surface);}
++ if ARCHIVE_GI_RAY_GUIDES {let n=archive_gi_normal_input(surface.normal);return ArchiveGiGuides(vec4<f32>(archive_gi_origin(f.world,n),1.),vec4<f32>(archive_gi_direction(f.clip.xy,n),1.));}
+  return ArchiveGiGuides(vec4<f32>(f.world,mirror),vec4<f32>(surface.normal,select(-1.,1.,material.surface.z==0.)));
+ }
+ @compute @workgroup_size(8,8) fn cs_opaque_gi(@builtin(global_invocation_id) id:vec3<u32>) {
+@@ -709,6 +726,14 @@ struct ArchiveGiGuides {@location(0) world:vec4<f32>,@location(1) normal:vec4<f3
+  let tex=textureSample(diffuse_map,material_sampler,surface_uv(f));
+  if material.surface.w>=0.&&tex.a*material.diffuse.a<material.surface.w {discard;}
+  let surface=archive_surface(f,front,tex);
++ let gi_normal=archive_gi_normal_input(surface.normal);
++ if ARCHIVE_GI_INPUT_DIAGNOSTIC!=0u {
++  if camera.surface.z<0.5 {return vec4<f32>(0.);}
++  if ARCHIVE_GI_INPUT_DIAGNOSTIC==1u {return vec4<f32>(f.world,1.);}
++  if ARCHIVE_GI_INPUT_DIAGNOSTIC==2u {return vec4<f32>(gi_normal,1.);}
++  if ARCHIVE_GI_INPUT_DIAGNOSTIC==3u {return vec4<f32>(archive_gi_origin(f.world,gi_normal),1.);}
++  return vec4<f32>(archive_gi_direction(f.clip.xy,gi_normal),1.);
++ }
+  return screen_gi(f.clip.xy,f.world,surface.normal);
+ }
+ @fragment fn fs_ssr_reference(f:Fragment,@builtin(front_facing) front:bool)->@location(0) vec4<f32> {

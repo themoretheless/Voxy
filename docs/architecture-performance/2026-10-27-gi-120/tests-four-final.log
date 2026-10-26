@@ -1,0 +1,10 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.69s
+     Running unittests src/lib.rs (/tmp/voxy-shared-20261025-target/debug/deps/voxy_render-9a3ff1e12b53452e)
+
+running 2 tests
+test archive_scene::gi_batch_tests::shader_with_batch_rejection_validates ... ok
+test archive_scene::gi_batch_tests::accepted_envelopes_never_skip_an_original_hit ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 437 filtered out; finished in 1.00s
+

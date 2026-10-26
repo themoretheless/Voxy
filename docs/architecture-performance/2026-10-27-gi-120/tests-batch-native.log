@@ -1,0 +1,24 @@
+warning: use of deprecated associated function `glam::Mat4::orthographic_rh`: use the `glam::camera::rh::proj::directx::orthographic` function instead
+  --> crates/voxy_render/src/gi_batch_tests.rs:76:47
+   |
+76 | ...   let projection=if i%8==0 {glam::Mat4::orthographic_rh(-32.,32.,-16.,16.,0.01,200.)}else{glam::Mat4::perspective_rh(1.5,width a...
+   |                                             ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+  --> crates/voxy_render/src/gi_batch_tests.rs:76:109
+   |
+76 | ...   let projection=if i%8==0 {glam::Mat4::orthographic_rh(-32.,32.,-16.,16.,0.01,200.)}else{glam::Mat4::perspective_rh(1.5,width a...
+   |                                                                                                           ^^^^^^^^^^^^^^
+
+warning: `voxy_render` (lib test) generated 2 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/lib.rs (/tmp/voxy-shared-20261025-target/debug/deps/voxy_render-9a3ff1e12b53452e)
+
+running 2 tests
+test archive_scene::gi_batch_tests::shader_with_batch_rejection_validates ... ok
+test archive_scene::gi_batch_tests::accepted_envelopes_never_skip_an_original_hit ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 437 filtered out; finished in 1.04s
+

@@ -1,0 +1,32 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.01s
+     Running unittests src/lib.rs (/tmp/voxy-shared-20261025-target/debug/deps/voxy_render-9a3ff1e12b53452e)
+
+running 24 tests
+test archive_scene::compute_gi::world_resolve::consumer_pair::metal_tests::raw_hdr_comparison_detects_low_bits_and_nonfinite ... ignored, exclusive Metal GPU, fresh VOXY_CONSUMER_PAIR_PROOF required
+test archive_scene::compute_gi::stages::tests::full_precision_chunks_fit_default_binding ... ok
+test archive_scene::compute_gi::stages::tests::small_limits_preserve_pixels_by_smaller_chunks ... ok
+test archive_scene::exposure_tests::display_mode_selects_transform ... ok
+test archive_scene::tests::camera_layout_matches_shader ... ok
+test archive_scene::exposure_tests::sunny_sixteen_is_about_ev15 ... ok
+test archive_scene::tests::transmission_depth_requires_exact_full_coverage ... ok
+test archive_scene::compute_gi::world_resolve::consumer_profile::sorted_layout::tests::reject_empty_oversized_or_unaddressable_allocations ... ok
+test archive_scene::tests::reflective_presets_route_to_expected_passes ... ok
+test archive_scene::compute_gi::world_resolve::consumer_profile::sorted_layout::tests::full_width_strips_fit_without_truncating_words ... ok
+test archive_scene::exposure_tests::ev100_round_trips_exposure ... ok
+test archive_scene::compute_gi::world_resolve::consumer_profile::tests::workspace_retains_full_records_within_each_binding ... ok
+test archive_scene::compute_gi::world_resolve::consumer_pair::tests::complete_partition_rejects_gaps_overlaps_and_bounds ... ok
+test archive_scene::compute_gi::world_resolve::consumer_pair::tests::comparison_shader_validates ... ok
+test archive_scene::compute_gi::world_resolve::profile::tests::query_ranges_cover_each_slot_once_and_preserve_last_tile_global_timer ... ok
+test archive_scene::compute_gi::stages::tests::resource_bindings_remain_unique_across_ray_and_material_entries ... ok
+test archive_scene::compute_gi::stages::tests::storage_strides_match_actual_wgsl_types ... ok
+test archive_scene::derivative_control_flow_tests::material_footprints_use_explicit_fine_quad_derivatives ... ok
+test archive_scene::derivative_control_flow_tests::sidewalk_filter_derivatives_are_outside_pixel_dependent_mask ... ok
+test archive_scene::compute_gi::stages::tests::queue_bin_buffer_matches_actual_shader_layout ... ok
+test archive_scene::vertex_invariance_tests::scene_vertex_positions_remain_invariant ... ok
+test archive_scene::tests::scene_shader_validates ... ok
+test archive_scene::vertex_invariance_tests::scene_vertex_position_invariance_survives_metal_translation ... ok
+test archive_scene::compute_gi::world_resolve::tests::full_frame_partition_covers_each_pixel_once_and_preserves_partial_edges ... ok
+
+test result: ok. 23 passed; 0 failed; 1 ignored; 0 measured; 413 filtered out; finished in 0.74s
+

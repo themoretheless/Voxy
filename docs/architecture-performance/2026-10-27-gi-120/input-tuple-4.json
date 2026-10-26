@@ -1,0 +1,317 @@
+{
+  "antialiasing": "Temporal",
+  "benchmark_stop_policy": "fixed_simulation_duration",
+  "camera_controlled": true,
+  "complete_120Hz_rendered_motion_cycles": 0,
+  "complete_motion_cycles": 0,
+  "completed_frame_samples_seconds": [
+    0.012723875,
+    0.013154583,
+    0.012518417,
+    0.013120708,
+    0.012930166,
+    0.012398917,
+    0.011969792,
+    0.0119355,
+    0.012334208,
+    0.012234584,
+    0.01197325,
+    0.012245958
+  ],
+  "completed_offscreen_measurement_valid": true,
+  "compute_gi": true,
+  "compute_ssr": false,
+  "cpu_physics_mean_ms": 0.07820499999999998,
+  "cpu_render_mean_ms": 12.381201500000001,
+  "current_render_samples_seconds": [
+    0.012668542,
+    0.01310725,
+    0.01246925,
+    0.013033208,
+    0.012811542,
+    0.012298167,
+    0.011882209,
+    0.011858584,
+    0.012258667,
+    0.012144,
+    0.011879583,
+    0.012163416
+  ],
+  "early_gi": false,
+  "feet": [
+    0.09878691956775468,
+    0.04492466620533629,
+    -14.36968569426894
+  ],
+  "frame_sample_clock": "current_completed_frame",
+  "frames": 12,
+  "full_collision_triangles": 3554908,
+  "fx_off": null,
+  "gi_input_diagnostic": 4,
+  "gpu_gi_mean_ms": [
+    1.4842584,
+    2.9879918
+  ],
+  "gpu_gi_samples": 5,
+  "gpu_mean_ms": 10.5700668,
+  "gpu_samples": 5,
+  "gpu_shading_mean_ms": [
+    5.1927752,
+    3.9662832000000003
+  ],
+  "gpu_ssr_mean_ms": null,
+  "gpu_ssr_samples": 0,
+  "grounded": true,
+  "internal_resolution": [
+    1920,
+    1080
+  ],
+  "max_frame_ms": 13.154582999999999,
+  "mean_fps": 79.89890551283273,
+  "measured_physics_steps": 12,
+  "measured_simulation_seconds": 0.1,
+  "measurement": "completed_full_resolution_offscreen_frames",
+  "measurement_duration_clock": "single_monotonic_elapsed",
+  "measurement_end_unix_seconds": 1793053187.337808,
+  "measurement_start_simulation_steps": 180,
+  "measurement_start_unix_seconds": 1793053187.187618,
+  "metal_compute_audit_requested": false,
+  "metal_compute_max_threads_requested": 0,
+  "minimum_120_completed_frame_fps_passed": false,
+  "minimum_120_presented_fps_passed": false,
+  "minimum_sampled_fps": 76.01913340772566,
+  "motion_period_seconds": 20,
+  "occluded_or_timed_out_acquires": 0,
+  "original_gi_queue_direct_scatter_requested": true,
+  "original_gi_queue_proof": {
+    "extra_reference_work_in_timing": true,
+    "native_u32": [
+      0,
+      0,
+      0,
+      0,
+      2073600,
+      2073600,
+      1779434,
+      191,
+      0,
+      0
+    ],
+    "passed": true,
+    "scope": "every rendered frame checked; word 9 is a persistent failure flag"
+  },
+  "original_gi_queue_requested": true,
+  "p50_ms": 12.398917,
+  "p95_ms": 13.154582999999999,
+  "p99_ms": 13.154582999999999,
+  "paired_dda_cell_bounds": false,
+  "paired_dda_edge_cache": false,
+  "paired_dda_far_bound": false,
+  "paired_dda_hierarchy": false,
+  "paired_dda_interval_cache": false,
+  "paired_dda_lazy_cell_bounds": false,
+  "paired_dda_plane_cache": false,
+  "paired_dda_point_cache": false,
+  "paired_dda_tile_edge_cache": false,
+  "paired_dda_tiles": false,
+  "paired_dda_touch_guard": false,
+  "paired_depth_dda": false,
+  "present_mode": "Immediate",
+  "raster_gi_comparison": {
+    "actual_blake3": "f30b26e10bded4d17fcc3e8b98dbd2928751a019fbad9ac18eb8ba4f1ec1c9fe",
+    "compared_words": 8294400,
+    "different_words": 2603116,
+    "first_differences": [
+      {
+        "channel": 0,
+        "queued_bits": 3209597921,
+        "raster_bits": 3209597922,
+        "x": 0,
+        "y": 0
+      },
+      {
+        "channel": 1,
+        "queued_bits": 1055694932,
+        "raster_bits": 1055694931,
+        "x": 0,
+        "y": 0
+      },
+      {
+        "channel": 1,
+        "queued_bits": 1059432647,
+        "raster_bits": 1059432646,
+        "x": 1,
+        "y": 0
+      },
+      {
+        "channel": 2,
+        "queued_bits": 3193772415,
+        "raster_bits": 3193772416,
+        "x": 1,
+        "y": 0
+      },
+      {
+        "channel": 0,
+        "queued_bits": 3203080933,
+        "raster_bits": 3203080932,
+        "x": 2,
+        "y": 0
+      },
+      {
+        "channel": 1,
+        "queued_bits": 1061834800,
+        "raster_bits": 1061834801,
+        "x": 2,
+        "y": 0
+      },
+      {
+        "channel": 2,
+        "queued_bits": 1053798121,
+        "raster_bits": 1053798123,
+        "x": 2,
+        "y": 0
+      },
+      {
+        "channel": 0,
+        "queued_bits": 3212238159,
+        "raster_bits": 3212238158,
+        "x": 3,
+        "y": 0
+      },
+      {
+        "channel": 1,
+        "queued_bits": 3186309122,
+        "raster_bits": 3186309123,
+        "x": 3,
+        "y": 0
+      },
+      {
+        "channel": 2,
+        "queued_bits": 3195291327,
+        "raster_bits": 3195291326,
+        "x": 3,
+        "y": 0
+      },
+      {
+        "channel": 0,
+        "queued_bits": 3199592317,
+        "raster_bits": 3199592316,
+        "x": 4,
+        "y": 0
+      },
+      {
+        "channel": 0,
+        "queued_bits": 3206285002,
+        "raster_bits": 3206285001,
+        "x": 5,
+        "y": 0
+      },
+      {
+        "channel": 1,
+        "queued_bits": 3202279495,
+        "raster_bits": 3202279494,
+        "x": 5,
+        "y": 0
+      },
+      {
+        "channel": 1,
+        "queued_bits": 3207733991,
+        "raster_bits": 3207734004,
+        "x": 6,
+        "y": 0
+      },
+      {
+        "channel": 2,
+        "queued_bits": 3196768775,
+        "raster_bits": 3196768705,
+        "x": 6,
+        "y": 0
+      },
+      {
+        "channel": 2,
+        "queued_bits": 1059220669,
+        "raster_bits": 1059220668,
+        "x": 8,
+        "y": 0
+      }
+    ],
+    "height": 1080,
+    "input_mode": 4,
+    "max_absolute_error": 5.986308678984642e-6,
+    "nonfinite_pairs": 318,
+    "raster_blake3": "30b28112199107454cd791dc6514ca9aa7c5b715abc05b846fb47d435c04b5ef",
+    "scope": "input tuple diagnostic, no GI timing qualification",
+    "strict_parity_passed": false,
+    "width": 1920
+  },
+  "ray_capture_enabled": false,
+  "ray_coherent": false,
+  "ray_force_fallback": false,
+  "ray_hierarchy": false,
+  "ray_hierarchy_bounds_bytes": 0,
+  "ray_hierarchy_near_first": false,
+  "ray_hierarchy_reciprocal_cache": false,
+  "ray_persistent": false,
+  "ray_queue": true,
+  "ray_queue_total_encoded_frames": 191,
+  "ray_spatial_key": false,
+  "ray_stages": false,
+  "refinement_cache": false,
+  "rendered_every_physics_step": true,
+  "replay_render_frames": 192,
+  "replay_state_blake3": "aa52ff162e25874b8f29ebfac54267dcec3985d8e3f0707ac7dbc714904f3a17",
+  "replay_state_schema": "camera-weather-water-v2",
+  "resolution": [
+    1920,
+    1080
+  ],
+  "sampled_frame_seconds": 0.14953995799999997,
+  "sampled_mean_fps": 80.24611054123743,
+  "scene": "Voxy Original Street",
+  "seconds": 0.150189792,
+  "simulation_clock": "fixed_one_120Hz_step_per_render",
+  "source_simplified": false,
+  "spawn_pool": false,
+  "surface_acquire_mean_ms": 0.00010766666666666668,
+  "transmission_depth": false,
+  "water_scope": {
+    "end": {
+      "body_draws": 718,
+      "drawn_frames": 718,
+      "last_drawn_bodies": 1,
+      "last_submitted_time_bits": 1070386371,
+      "registered_bodies": 1,
+      "ripple_encoded_seconds": 1.6,
+      "ripple_encoded_ticks": 384,
+      "ripple_pending_seconds": 8.344650268554687e-8,
+      "ripple_requested_seconds": 1.6000000834465027,
+      "ripple_tick_rate": 240,
+      "simulation_seconds": 1.5999988317489624,
+      "simulation_time_bits": 1070386371,
+      "wave_seed": 1
+    },
+    "start": {
+      "body_draws": 706,
+      "drawn_frames": 706,
+      "last_drawn_bodies": 1,
+      "last_submitted_time_bits": 1069547511,
+      "registered_bodies": 1,
+      "ripple_encoded_seconds": 1.5,
+      "ripple_encoded_ticks": 360,
+      "ripple_pending_seconds": 7.82310962677002e-8,
+      "ripple_requested_seconds": 1.5000000782310963,
+      "ripple_tick_rate": 240,
+      "simulation_seconds": 1.499998927116394,
+      "simulation_time_bits": 1069547511,
+      "wave_seed": 1
+    }
+  },
+  "window_measurement_valid": false,
+  "world_query_encoded_frames": 0,
+  "world_ray_consumer_cache": false,
+  "world_ray_consumer_cache_check": false,
+  "world_ray_consumer_profile": false,
+  "world_ray_consumer_sorted": false,
+  "world_ray_frame": false,
+  "world_ray_regions": 0
+}

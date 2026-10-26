@@ -3477,7 +3477,7 @@ impl Timing {
                 queue.get_timestamp_period()
             );
         }
-        if self.sample_chunks > 0 {
+        if self.sample_chunks > 0 && std::env::var_os("VOXY_STREET_GPU_TIMING_TRACE").is_some() {
             let phases = crate::archive_gpu_timing::ray_stage_durations(
                 &ticks,
                 self.base_count,

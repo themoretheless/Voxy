@@ -1,0 +1,58 @@
+{
+  "voxy-gi-fragment-rays-20261027": {
+    "path": "/tmp/voxy-gi-fragment-rays-20261027",
+    "sha256": "33ea2d72fc82c526633c048dbb6d71e06e951b0da8fdcb18704ddc674e7c027e"
+  },
+  "voxy-gi-four-20261027": {
+    "path": "/tmp/voxy-gi-four-20261027",
+    "sha256": "ed714b10f6bffe541732723c7aa59d373bc9cfc6e7972418289de627c8f38a2e"
+  },
+  "voxy-gi-before-20261027": {
+    "path": "/tmp/voxy-gi-before-20261027",
+    "sha256": "58c016c73a053eeee219055843ad2c165aab5a524fcdc9f861be80af9e387b76"
+  },
+  "voxy-gi-queue-exit-20261027": {
+    "path": "/tmp/voxy-gi-queue-exit-20261027",
+    "sha256": "4394eb127e30dd2fb248e09a02417dab3c671270d163823d48346364ef54fea3"
+  },
+  "voxy-gi-specialized-20261027": {
+    "path": "/tmp/voxy-gi-specialized-20261027",
+    "sha256": "f1029ebfd849ab2e3948bc048c5740165cc745da0a9256ae824738c91a429aa1"
+  },
+  "voxy-gi-float-depth-20261027": {
+    "path": "/tmp/voxy-gi-float-depth-20261027",
+    "sha256": "3ce5b5ae29a4c360498c826c6cf7e89461a1124b287c569f63b5148429fb5997"
+  },
+  "voxy-gi-before-surface-20261027": {
+    "path": "/tmp/voxy-gi-before-surface-20261027",
+    "sha256": "5fee139c91da725bc54acaa3bab344afd3f30f38714add7da6ec5492d810e1d8"
+  },
+  "voxy-gi-canonical-20261027": {
+    "path": "/tmp/voxy-gi-canonical-20261027",
+    "sha256": "cce9885ba49494d39fe62ce166b7e375471eca5135e2462effe476df96cab83d"
+  },
+  "voxy-gi-final-20261027": {
+    "path": "/tmp/voxy-gi-final-20261027",
+    "sha256": "d34720c030e7d4dc90f7905af53300abd2ef1e669c6cd88125d91979d848aff6"
+  },
+  "voxy-gi-input-diagnostic-20261027": {
+    "path": "/tmp/voxy-gi-input-diagnostic-20261027",
+    "sha256": "3420b8ced6c0e8a8d4ed8891f579a6a163c0724b4ada9a9af2cb5477afb14000"
+  },
+  "voxy-gi-original-queue-20261027": {
+    "path": "/tmp/voxy-gi-original-queue-20261027",
+    "sha256": "e5d1f7eca4b7e02053e8e9ef17e9b5c3dde0ef361565935df8d752e1150c94b7"
+  },
+  "voxy-gi-batched-20261027": {
+    "path": "/tmp/voxy-gi-batched-20261027",
+    "sha256": "9207fb0d9f0c014e169d73f669d680e6a99a1a4515c0db0f021a024352a5d3ab"
+  },
+  "voxy-gi-line-20261027": {
+    "path": "/tmp/voxy-gi-line-20261027",
+    "sha256": "f4b9ad143eae1fc1a99286b975af4447ac6110762bd962ba7e37bc927869465d"
+  },
+  "voxy-gi-retained-20261027": {
+    "path": "/tmp/voxy-gi-retained-20261027",
+    "sha256": "9758c58a2c448da06cac208c5c478569b3c99abaa60adf2ad3a848c42a89a086"
+  }
+}

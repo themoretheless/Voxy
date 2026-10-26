@@ -1,0 +1,138 @@
+   Compiling smallvec v1.16.0
+   Compiling log v0.4.34
+   Compiling naga v30.0.1
+   Compiling syn v2.0.119
+   Compiling glob v0.3.4
+   Compiling serde_json v1.0.151
+   Compiling libc v0.2.189
+   Compiling rustc-hash v2.1.3
+   Compiling minimal-lexical v0.2.1
+   Compiling regex-syntax v0.8.11
+   Compiling glam v0.33.6
+   Compiling either v1.18.0
+   Compiling bindgen v0.72.1
+   Compiling core-foundation-sys v0.8.7
+   Compiling shlex v1.3.0
+   Compiling bitflags v2.13.1
+   Compiling polycool v0.4.0
+   Compiling parking_lot_core v0.9.12
+   Compiling wgpu-types v30.0.1
+   Compiling itertools v0.13.0
+   Compiling color v0.3.3
+   Compiling nom v7.1.3
+   Compiling core-foundation v0.9.4
+   Compiling font-types v0.12.6
+   Compiling clang-sys v1.9.1
+   Compiling euclid v0.22.14
+   Compiling parking_lot v0.12.5
+   Compiling kurbo v0.13.1
+   Compiling self_cell v1.3.0
+   Compiling version_check v0.9.5
+   Compiling linebender_resource_handle v0.1.1
+   Compiling guillotiere v0.7.0
+   Compiling read-fonts v0.41.0
+   Compiling core-graphics-types v0.1.3
+   Compiling cpal v0.15.3
+   Compiling regex-automata v0.4.18
+   Compiling ahash v0.8.12
+   Compiling fearless_simd v0.4.1
+   Compiling unicode-general-category v1.1.0
+   Compiling rustybuzz v0.20.1
+   Compiling cexpr v0.6.0
+   Compiling peniko v0.6.1
+   Compiling core-graphics v0.23.2
+   Compiling emath v0.36.2
+   Compiling mach2 v0.4.3
+   Compiling regex v1.13.1
+   Compiling voxy_input v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_input)
+   Compiling getrandom v0.3.4
+   Compiling dasp_sample v0.11.0
+   Compiling voxy_audio v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_audio)
+   Compiling winit v0.30.13
+   Compiling ecolor v0.36.2
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_assets)
+   Compiling bevy_mikktspace v1.0.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/vendor/bevy_mikktspace)
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_text)
+   Compiling epaint_default_fonts v0.36.2
+   Compiling vello_common v0.1.0
+   Compiling unicode-segmentation v1.13.3
+   Compiling nohash-hasher v0.2.0
+   Compiling themoretheless-tokenizer-core v0.7.0 (https://github.com/themoretheless/tokenizer.git?branch=release#60797844)
+   Compiling uuid v1.26.1
+   Compiling voxy_storage v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_storage)
+   Compiling itertools v0.15.0
+   Compiling accesskit v0.24.1
+   Compiling zerocopy-derive v0.8.56
+   Compiling gltf-derive v1.4.1
+   Compiling vello_cpu v0.1.0
+   Compiling gltf-json v1.4.1
+   Compiling themoretheless-tokenizer-rush v0.7.0 (https://github.com/themoretheless/tokenizer.git?branch=release#60797844)
+   Compiling web-time v1.1.0
+   Compiling voxy_runtime v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_runtime)
+   Compiling type-map v0.5.1
+   Compiling zerocopy v0.8.56
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_animation)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_scene)
+   Compiling harfrust v0.12.0
+   Compiling skrifa v0.44.0
+   Compiling voxy_rush v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_rush)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_gameplay)
+   Compiling gltf v1.4.1
+   Compiling coreaudio-sys v0.2.18
+   Compiling half v2.7.1
+   Compiling epaint v0.36.2
+   Compiling egui v0.36.2
+   Compiling egui-winit v0.36.2
+   Compiling coreaudio-rs v0.11.3
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_audio_device)
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling wgpu-hal v30.0.1 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/vendor/wgpu-hal)
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling wgpu v30.0.1 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/vendor/wgpu)
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_gpu_core)
+   Compiling voxy_water v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_water)
+   Compiling egui-wgpu v0.36.2
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_render)
+   Compiling voxy_cuda v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_cuda)
+   Compiling voxy_gpu v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_gpu)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_model)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_editor)
+   Compiling voxy_demos v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_demos)
+   Compiling voxy_shell v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_shell)
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.24s
+     Running unittests examples/street_walk/main.rs (/tmp/voxy-shared-20261025-target/debug/examples/street_walk-dd4dac8a71b5f344)
+
+running 28 tests
+test controls::tests::wheel_zoom_is_visible_and_bounded ... ok
+test controls::tests::pitch_is_clamped_away_from_camera_poles ... ok
+test hdr_snapshot_tests::half_readback_preserves_reference_white_and_hdr_highlights ... ok
+test controls::tests::diagonal_keyboard_input_is_normalized_and_jump_is_edge_triggered ... ok
+test controls::tests::releasing_one_shift_keeps_the_other_shift_sprinting ... ok
+test controls::walk_camera_tests::invalid_look_and_time_do_not_poison_camera ... ok
+test controls::tests::releasing_one_direction_binding_keeps_its_other_binding_held ... ok
+test benchmark_cycle::tests::a_physics_cycle_with_only_eighty_rendered_frames_cannot_pass ... ok
+test materials::tests::colour_transfer_preserves_endpoints_and_midtones ... ok
+test controls::tests::focus_loss_cancels_pending_actions_and_touch_ownership ... ok
+test controls::walk_camera_tests::smoothing_is_independent_of_frame_subdivision ... ok
+test controls::tests::right_touch_tap_queues_jump_but_drag_only_rotates ... ok
+test controls::walk_camera_tests::zoom_is_smooth_bounded_and_independent_of_frame_rate ... ok
+test original::tests::dump_house_plan ... ignored, manual floor-plan export via VOXY_PLAN_DUMP
+test original::tests::render_villa_preview ... ignored, manual villa preview render via VOXY_VILLA_PREVIEW
+test benchmark_cycle::tests::requires_a_complete_rendered_cycle_and_every_completed_frame_within_budget ... ok
+test frame_profile::tests::rejects_invalid_config ... ok
+test frame_profile::tests::excludes_warmup_and_counts_skips ... ok
+test materials::tests::packed_channels_keep_every_mip_bit_exact ... ok
+test materials::tests::solar_split_keeps_background_and_integrated_irradiance ... ok
+test materials::tests::sixteen_bit_source_levels_survive_decode_without_eight_bit_quantization ... ok
+test ray_geometry_export::tests::rgba_capture_keeps_straight_alpha_bytes ... ok
+test ray_geometry_export::tests::float_capture_keeps_subnormal_signed_zero_and_low_mantissa_bits ... ok
+test frame_profile::tests::report_preserves_missing_metrics_and_incomplete_state ... ok
+test ray_geometry_export::tests::bc7_capture_preserves_every_authored_mip_block ... ok
+test original::tests::house_stairs_climb_to_the_landing ... ok
+test original::tests::original_street_is_independent_and_walkable ... ok
+test original::tests::lane_leads_through_the_colonnade_to_the_pool ... ok
+
+test result: ok. 26 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 23.51s
+

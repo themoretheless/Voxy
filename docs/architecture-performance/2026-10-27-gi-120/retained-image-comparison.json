@@ -1,0 +1,10 @@
+{
+  "scope": "frame-120 full linear Float32 RGB PFM, retained telemetry only; not a GI candidate proof",
+  "sha256": {
+    "retained-A0": "300a35e31da2ca215470c948cff4c76437c09183bb5ae6938308a67022d7f774",
+    "retained-A1": "300a35e31da2ca215470c948cff4c76437c09183bb5ae6938308a67022d7f774",
+    "retained-B": "300a35e31da2ca215470c948cff4c76437c09183bb5ae6938308a67022d7f774"
+  },
+  "aa_byte_equal": true,
+  "ab_byte_equal": true
+}

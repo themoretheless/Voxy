@@ -1,0 +1,176 @@
+diff --git a/crates/voxy_render/src/archive_depth_bounds.rs b/crates/voxy_render/src/archive_depth_bounds.rs
+index 0d64c5a5f..f7694a341 100644
+--- a/crates/voxy_render/src/archive_depth_bounds.rs
++++ b/crates/voxy_render/src/archive_depth_bounds.rs
+@@ -40,6 +40,15 @@ impl ArchiveDepthBounds {
+     ) -> Result<Self, ComputeError> {
+         Self::create(device, depth, width, height, true, true)
+     }
++    /// Exact native-depth copy for random-access ray reads, with no hierarchy.
++    pub fn new_pixel_copy(
++        device: &wgpu::Device,
++        depth: &wgpu::Texture,
++        width: u32,
++        height: u32,
++    ) -> Result<Self, ComputeError> {
++        Self::create(device, depth, width, height, false, true)
++    }
+     fn create(
+         device: &wgpu::Device,
+         depth: &wgpu::Texture,
+@@ -80,7 +89,7 @@ impl ArchiveDepthBounds {
+                 mip_level_count,
+                 sample_count: 1,
+                 dimension: wgpu::TextureDimension::D2,
+-                format: wgpu::TextureFormat::Rg32Float,
++                format: if pixel_leaves && !hierarchy { wgpu::TextureFormat::R32Float } else { wgpu::TextureFormat::Rg32Float },
+                 usage: wgpu::TextureUsages::TEXTURE_BINDING
+                     | wgpu::TextureUsages::STORAGE_BINDING
+                     | wgpu::TextureUsages::COPY_SRC,
+@@ -88,7 +97,13 @@ impl ArchiveDepthBounds {
+             })?;
+         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+             label: Some("exact screen-ray depth bounds"),
+-            source: wgpu::ShaderSource::Wgsl(include_str!("archive_depth_bounds.wgsl").into()),
++            source: wgpu::ShaderSource::Wgsl(
++                if pixel_leaves && !hierarchy {
++                    include_str!("archive_depth_bounds.wgsl").replace("rg32float", "r32float").into()
++                } else {
++                    include_str!("archive_depth_bounds.wgsl").into()
++                },
++            ),
+         });
+         let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+             label: Some("exact screen-ray depth bounds"),
+diff --git a/crates/voxy_render/src/archive_scene.rs b/crates/voxy_render/src/archive_scene.rs
+index 5d0ce4749..d9ebe3e47 100644
+--- a/crates/voxy_render/src/archive_scene.rs
++++ b/crates/voxy_render/src/archive_scene.rs
+@@ -757,10 +757,23 @@ impl ArchiveSceneRenderer {
+             label: Some("authored four-map PBR material"),
+             entries: &material_entries,
+         });
++        // Other experimental compute schedulers retain their original depth path.
++        let float_depth = std::env::var_os("VOXY_STREET_RAY_FLOAT_DEPTH").is_some()
++            && std::env::var_os("VOXY_STREET_COMPUTE_GI").is_none();
+         let frame_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+             label: Some("opaque transmission and sun shadows"),
+             entries: &[
+                 texture_entry(0, false),
++                wgpu::BindGroupLayoutEntry {
++                    binding: 10,
++                    visibility: wgpu::ShaderStages::FRAGMENT,
++                    ty: wgpu::BindingType::Texture {
++                        sample_type: wgpu::TextureSampleType::Float { filterable: false },
++                        view_dimension: wgpu::TextureViewDimension::D2,
++                        multisampled: false,
++                    },
++                    count: None,
++                },
+                 wgpu::BindGroupLayoutEntry {
+                     binding: 9,
+                     visibility: wgpu::ShaderStages::FRAGMENT,
+@@ -1001,6 +1014,10 @@ impl ArchiveSceneRenderer {
+                                     0.
+                                 },
+                             ),
++                            (
++                                "ARCHIVE_RAY_FLOAT_DEPTH",
++                                if float_depth { 1. } else { 0. },
++                            ),
+                             (
+                                 "ARCHIVE_EARLY_GI",
+                                 if std::env::var_os("VOXY_STREET_EARLY_GI").is_some() {
+@@ -1439,6 +1456,10 @@ impl ArchiveSceneRenderer {
+                     height,
+                 )?,
+             )
++        } else if float_depth {
++            Some(crate::archive_depth_bounds::ArchiveDepthBounds::new_pixel_copy(
++                device, &depth_texture, width, height,
++            )?)
+         } else {
+             None
+         };
+@@ -1524,6 +1545,12 @@ impl ArchiveSceneRenderer {
+             label: None,
+             layout: &frame_layout,
+             entries: &[
++                wgpu::BindGroupEntry {
++                    binding: 10,
++                    resource: wgpu::BindingResource::TextureView(
++                        &pixel_depth_bounds.as_ref().unwrap_or(&depth_bounds).texture.create_view(&Default::default()),
++                    ),
++                },
+                 wgpu::BindGroupEntry {
+                     binding: 0,
+                     resource: wgpu::BindingResource::TextureView(
+@@ -3695,3 +3722,7 @@ mod vertex_invariance_tests;
+ #[cfg(test)]
+ #[path = "archive_derivative_control_flow_tests.rs"]
+ mod derivative_control_flow_tests;
++
++#[cfg(test)]
++#[path = "archive_depth_float_tests.rs"]
++mod depth_float_tests;
+diff --git a/crates/voxy_render/src/archive_scene.wgsl b/crates/voxy_render/src/archive_scene.wgsl
+index 8f469bda6..d10e94b84 100644
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -8,6 +8,7 @@ override ARCHIVE_EARLY_GI:bool=false;
+ // Opt-in until full-scene correctness and paired performance are qualified.
+ override ARCHIVE_PAIRED_DDA:bool=false;
+ override ARCHIVE_RAY_BOUNDS:bool=true;
++override ARCHIVE_RAY_FLOAT_DEPTH:bool=false;
+ // Candidate only: paired timings have not established a repeatable gain.
+ override ARCHIVE_REFINE_CACHE:bool=false;
+ struct Camera { vp:mat4x4<f32>, shadow:mat4x4<f32>, inverse_vp:mat4x4<f32>, eye:vec4<f32>, sun:vec4<f32>, sun_colour:vec4<f32>, viewport:vec4<f32>, weather:vec4<f32>, atmosphere:vec4<f32>, wind:vec4<f32>, previous_vp:mat4x4<f32>, previous_inverse_vp:mat4x4<f32>, surface:vec4<f32> }
+@@ -310,6 +311,11 @@ fn screen_reflection(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32
+  }
+  return screen_reflection_original(origin,direction,history,reach,growth,refines,bounded);
+ }
++// The optional full-resolution R32Float copy retains every native depth bit.
++fn ray_level_zero_depth(pixel:vec2<i32>)->f32 {
++ if ARCHIVE_RAY_FLOAT_DEPTH {return textureLoad(ray_pixel_depth_bounds,pixel,0).x;}
++ return textureLoad(scene_depth,pixel,0);
++}
+ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32,growth:f32,refines:u32,bounded:bool)->vec4<f32>{
+  if history&&camera.surface.z<0.5 {return vec4<f32>(0.);}
+  var t=0.08;var previous=0.;
+@@ -328,10 +334,10 @@ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,
+    let tile=ray_pixel/8;
+    if any(tile!=cached_tile) {cached_lower=textureLoad(ray_depth_bounds,tile,0).x;cached_tile=tile;}
+    if q.z/q.w>=cached_lower {
+-    if any(ray_pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,ray_pixel,0);cached_pixel=ray_pixel;}
++    if any(ray_pixel!=cached_pixel) {cached_depth=ray_level_zero_depth(ray_pixel);cached_pixel=ray_pixel;}
+     depth=cached_depth;
+    }
+-  } else {depth=textureLoad(scene_depth,ray_pixel,0);}
++  } else {depth=ray_level_zero_depth(ray_pixel);}
+   if depth<1.&&q.z/q.w>=depth {
+    var lo=previous;var hi=t;
+    for(var refine=0u;refine<refines;refine++) {
+@@ -339,9 +345,9 @@ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,
+     let pixel=clamp(vec2<i32>((clip.xy/clip.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
+     var z=1.;
+     if bounded && ARCHIVE_REFINE_CACHE {
+-     if any(pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,pixel,0);cached_pixel=pixel;}
++     if any(pixel!=cached_pixel) {cached_depth=ray_level_zero_depth(pixel);cached_pixel=pixel;}
+      z=cached_depth;
+-    } else {z=textureLoad(scene_depth,pixel,0);}
++    } else {z=ray_level_zero_depth(pixel);}
+     if z<1.&&clip.z/clip.w>=z {hi=mid;} else {lo=mid;}
+    }
+    let point=origin+direction*hi;let clip=camera.vp*vec4<f32>(point,1.);
+@@ -349,9 +355,9 @@ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,
+    let pixel=clamp(vec2<i32>(coord*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
+    var z=1.;
+    if bounded && ARCHIVE_REFINE_CACHE {
+-    if any(pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,pixel,0);cached_pixel=pixel;}
++    if any(pixel!=cached_pixel) {cached_depth=ray_level_zero_depth(pixel);cached_pixel=pixel;}
+     z=cached_depth;
+-   } else {z=textureLoad(scene_depth,pixel,0);}
++   } else {z=ray_level_zero_depth(pixel);}
+    let h=camera.inverse_vp*vec4<f32>((vec2<f32>(pixel)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.),z,1.);
+    if distance(h.xyz/h.w,point)<0.20 {
+     var edge=min(min(coord.x,coord.y),min(1.-coord.x,1.-coord.y));
