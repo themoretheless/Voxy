@@ -23,15 +23,24 @@ mod component_collections;
 mod component_fields;
 mod fog_draw;
 mod frame_styles;
+mod game_host;
+#[cfg(test)]
+mod game_host_tests;
 mod liquid_draw;
 mod lod_smoke;
 mod packaged_game;
 mod play_session;
+pub use game_host::{BehaviorSetup, GameHost, run_project_with_host};
+mod project_runtime;
+pub use project_runtime::{run_project, run_project_with_components};
 mod prefab_authoring;
 mod prefab_fields;
 mod scene_revision;
 mod view_layout;
-pub use packaged_game::{run_packaged_game, run_packaged_game_with_ui_actions};
+pub use packaged_game::{
+    run_packaged_game, run_packaged_game_with_components, run_packaged_game_with_host,
+    run_packaged_game_with_ui_actions,
+};
 mod prefab_smoke;
 pub use camera::ViewportCamera as EditorCamera;
 mod animation_runtime;
@@ -323,6 +332,7 @@ struct App {
     ui_live: ui_live::UiLive,
     game_ui_input: game_ui_input::GameUiInput,
     ui_action_setup: Option<voxy_gameplay::UiActionSetup>,
+    behavior_setup: Option<BehaviorSetup>,
     retired_ui_workers: Vec<std::thread::JoinHandle<()>>,
     standalone: bool,
     keyboard_device: Option<winit::event::DeviceId>,
@@ -537,6 +547,7 @@ impl App {
             ui_live: ui_live::UiLive::default(),
             game_ui_input: game_ui_input::GameUiInput::new(),
             ui_action_setup: None,
+            behavior_setup: None,
             retired_ui_workers: Vec::new(),
             standalone: false,
             keyboard_device: None,
@@ -589,9 +600,24 @@ impl App {
         Ok(app)
     }
 
+    #[cfg(test)]
     fn from_project(path: &std::path::Path) -> Result<Self, Box<dyn std::error::Error>> {
-        let registry = Arc::new(model_registry()?);
+        Self::from_project_with_registry(path, model_registry()?)
+    }
+
+    fn from_project_with_registry(
+        path: &std::path::Path,
+        registry: ComponentRegistry,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let registry = Arc::new(registry);
         let opened = project::open(path, &registry)?;
+        Self::from_open_project(&opened, registry)
+    }
+
+    fn from_open_project(
+        opened: &project::OpenProject,
+        registry: Arc<ComponentRegistry>,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
         let manifest = opened
             .descriptor
             .asset_manifest
@@ -1379,7 +1405,87 @@ pub fn export_game_package(
     scene: &std::path::Path,
     output: &std::path::Path,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let mut app = configured_app(source, Some(scene), false)?;
+    let app = configured_app(source, Some(scene), false)?;
+    let launch = match source {
+        ModelSource::File(path) => {
+            serde_json::json!({"version":1,"scene":app.authoring.authoring_project.source_path(scene)?.as_str(),"model":app.authoring.authoring_project.source_path(path)?.as_str(),"manifest":null})
+        }
+        ModelSource::Manifest { path, asset } => {
+            serde_json::json!({"version":1,"scene":app.authoring.authoring_project.source_path(scene)?.as_str(),"model":asset.0,"manifest":app.authoring.authoring_project.source_path(path)?.as_str()})
+        }
+    };
+    export_app_package(app, launch, Vec::new(), output)
+}
+
+/// Export a project descriptor and its scene/assets into the existing package format.
+/// # Errors
+/// Rejects invalid projects, failed imports, changed observed sources, quotas and existing output.
+pub fn export_project_package(
+    path: &std::path::Path,
+    output: &std::path::Path,
+) -> Result<(), Box<dyn std::error::Error>> {
+    export_project_package_with_components(path, output, editor_component_registry()?)
+}
+
+/// Export with the application's component codecs, shared with project runtime.
+/// # Errors
+/// Reports project, component, import, source consistency and output errors.
+pub fn export_project_package_with_components(
+    path: &std::path::Path,
+    output: &std::path::Path,
+    registry: ComponentRegistry,
+) -> Result<(), Box<dyn std::error::Error>> {
+    export_project_package_with_host(path, output, GameHost::new(registry))
+}
+
+/// Build using the same executable setup used for project Play and package launch.
+/// Code remains in the host binary; the resource package stores data only.
+/// # Errors
+/// Reports invalid sources, game setup/import failures and output errors.
+pub fn export_project_package_with_host(
+    path: &std::path::Path,
+    output: &std::path::Path,
+    host: GameHost,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let registry = Arc::new(host.components);
+    let (opened, descriptor_text) = project::open_observed(path, &registry)?;
+    let descriptor = SourcePath::new(
+        path.canonicalize()?
+            .file_name()
+            .and_then(|s| s.to_str())
+            .ok_or("descriptor must have a UTF-8 name")?,
+    )?;
+    let manifest = SourcePath::new(
+        opened
+            .descriptor
+            .asset_manifest
+            .to_str()
+            .ok_or("manifest must be UTF-8")?,
+    )?;
+    let manifest_bytes = FileInputs::new(&opened.root)?.read(&manifest.observation_id(), 65536)?;
+    let locations =
+        AssetLocations::from_json(std::str::from_utf8(&manifest_bytes)?, 128, 65536, 65536)?;
+    // Keep every declared source: reopening a project validates the complete manifest.
+    // Referenced models/audio/fonts additionally contribute their observed import closure.
+    let mut extra: Vec<_> = locations
+        .bindings()
+        .map(|(_, source)| (source.clone(), None))
+        .collect();
+    extra.push((descriptor.clone(), Some(descriptor_text.into_bytes())));
+    extra.push((manifest, Some(manifest_bytes)));
+    let mut app = App::from_open_project(&opened, registry)?;
+    app.behavior_setup = host.behaviors;
+    app.ui_action_setup = host.ui_actions;
+    let launch = serde_json::json!({"version":2,"project":descriptor.as_str()});
+    export_app_package(app, launch, extra, output)
+}
+
+fn export_app_package(
+    mut app: App,
+    launch: serde_json::Value,
+    extra: Vec<(SourcePath, Option<Vec<u8>>)>,
+    output: &std::path::Path,
+) -> Result<(), Box<dyn std::error::Error>> {
     let result = (|| {
         app.start_standalone()?;
         let authored = app
@@ -1432,18 +1538,13 @@ pub fn export_game_package(
             }
             observations.insert(id.clone(), input.clone());
         }
-        let paths: Vec<_> = observations
+        let mut paths: Vec<_> = observations
             .keys()
             .map(|id| voxy_assets::SourcePath::new(id.0.clone()))
             .collect::<Result<_, _>>()?;
-        let launch = match source {
-            ModelSource::File(path) => {
-                serde_json::json!({"version":1,"scene":app.authoring.authoring_project.source_path(scene)?.as_str(),"model":app.authoring.authoring_project.source_path(path)?.as_str(),"manifest":null})
-            }
-            ModelSource::Manifest { path, asset } => {
-                serde_json::json!({"version":1,"scene":app.authoring.authoring_project.source_path(scene)?.as_str(),"model":asset.0,"manifest":app.authoring.authoring_project.source_path(path)?.as_str()})
-            }
-        };
+        paths.extend(extra.iter().map(|(source, _)| source.clone()));
+        paths.sort();
+        paths.dedup();
         let package = app
             .authoring
             .authoring_project
@@ -1451,6 +1552,20 @@ pub fn export_game_package(
         for (id, original) in observations {
             if package.inputs().observations().get(&id) != Some(&original) {
                 return Err(format!("package source {} changed after validation", id.0).into());
+            }
+        }
+        for (source, expected) in extra {
+            if let Some(expected) = expected
+                && package
+                    .value()
+                    .read(&source.observation_id(), 64 * 1024 * 1024)?
+                    != expected
+            {
+                return Err(format!(
+                    "project input {} changed during package export",
+                    source.as_str()
+                )
+                .into());
             }
         }
         let bytes = package.value().to_bytes(voxy_assets::PackageLimits {
@@ -1533,18 +1648,7 @@ fn configured_app_with_registry(
 /// # Errors
 /// Reports invalid project/scene data, resource setup and native window/GPU failures.
 pub fn run_project_editor(path: &std::path::Path) -> Result<(), Box<dyn std::error::Error>> {
-    let mut app = App::from_project(path)?;
-    let event_result = (|| {
-        EventLoop::new()?.run_app(&mut app)?;
-        Ok::<(), Box<dyn std::error::Error>>(())
-    })();
-    let cleanup = app.stop_workers();
-    event_result?;
-    cleanup?;
-    if let Some(error) = app.error.take() {
-        return Err(error.into());
-    }
-    Ok(())
+    run_project(path, ViewportMode::Interactive)
 }
 
 /// Runs with application codecs installed before scene loading or worker setup.
@@ -1620,46 +1724,20 @@ fn run_model_viewport_configured_registry(
     if matches!(
         mode,
         ViewportMode::Game | ViewportMode::GameCheck | ViewportMode::GameSmoke
-    ) {
-        if scene_path.is_none_or(|path| !path.is_file()) {
-            return Err("standalone game requires an existing --scene file".into());
-        }
-        app.audio
-            .set_output_mode(if mode == ViewportMode::GameCheck {
-                AudioOutputMode::Offline
-            } else {
-                AudioOutputMode::Native
-            });
-        if let Err(error) = app.start_standalone() {
-            app.stop_workers()?;
-            return Err(error);
-        }
-        if mode == ViewportMode::GameSmoke {
-            app.smoke_deadline = Some(Instant::now() + Duration::from_secs(30));
-        }
-        if mode == ViewportMode::GameCheck {
-            app.check_game_ui()?;
-            for _ in 0..120 {
-                app.advance_game(1.0 / 60.0)?;
-            }
-            println!(
-                "GAME STATE {}",
-                serde_json::to_string(&app.authoring_document()?)?
-            );
-            if let Some(audio) = app.audio.play() {
-                println!("GAME AUDIO frames={} peak={}", audio.frames, audio.peak);
-            }
-            println!(
-                "GAME CHECK PASS ticks={} objects={} prefab_instances={}",
-                app.play.simulation_ticks,
-                app.object_ids.len(),
-                app.authoring
-                    .authoring_source
-                    .as_ref()
-                    .map_or(0, |source| source.value().source.instances.len())
-            );
+    ) && scene_path.is_none_or(|path| !path.is_file())
+    {
+        app.stop_workers()?;
+        return Err("standalone game requires an existing --scene file".into());
+    }
+    match project_runtime::prepare_game(&mut app, mode) {
+        Ok(true) => {
             app.stop_workers()?;
             return Ok(());
+        }
+        Ok(false) => {}
+        Err(error) => {
+            app.stop_workers()?;
+            return Err(error);
         }
     }
     if mode == ViewportMode::AnimationSmoke {

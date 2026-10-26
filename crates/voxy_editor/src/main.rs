@@ -8,8 +8,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("Created {}", path.display());
             return Ok(());
         }
+        [command, path, output] if command == "--build-project" => {
+            return voxy_editor::export_project_package(
+                std::path::Path::new(path),
+                std::path::Path::new(output),
+            );
+        }
+        [command, path, mode] if command == "--package" => {
+            let mode = match mode.as_str() {
+                "--game" => ViewportMode::Game,
+                "--game-check" => ViewportMode::GameCheck,
+                "--game-native-smoke" => ViewportMode::GameSmoke,
+                _ => return Err("package requires a game mode".into()),
+            };
+            return voxy_editor::run_packaged_game(std::path::Path::new(path), mode);
+        }
         [command, path] if command == "--project" => {
             return voxy_editor::run_project_editor(std::path::Path::new(path));
+        }
+        [command, path, mode] if command == "--project" => {
+            let mode = match mode.as_str() {
+                "--game" => ViewportMode::Game,
+                "--game-check" => ViewportMode::GameCheck,
+                "--game-native-smoke" => ViewportMode::GameSmoke,
+                _ => return Err("unknown project mode".into()),
+            };
+            return voxy_editor::run_project(std::path::Path::new(path), mode);
         }
         [command, path] if command == "--validate-project" => {
             let registry = voxy_editor::editor_component_registry()?;
@@ -70,7 +94,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             path: path.into(), asset: voxy_assets::AssetId(asset.clone()),
         },
         [path] if !path.starts_with("--") => ModelSource::File(path.into()),
-        _ => return Err("usage: voxy_editor --create-project NEW_DIRECTORY NAME | --validate-project project.voxy | --project project.voxy | model.obj|model.gltf|model.glb | --manifest assets.json logical-id [--scene scene.json] [--game | --game-check | --smoke | --game-smoke | --scene3d-smoke | --prefab-smoke | --lod-smoke | --animation-smoke]".into()),
+        _ => return Err("usage: voxy_editor --create-project NEW_DIRECTORY NAME | --build-project project.voxy game.vpak | --package game.vpak --game|--game-check | --validate-project project.voxy | --project project.voxy [--game | --game-check | --game-native-smoke] | model.obj|model.gltf|model.glb | --manifest assets.json logical-id [--scene scene.json] [--game | --game-check | --smoke | --game-smoke | --scene3d-smoke | --prefab-smoke | --lod-smoke | --animation-smoke]".into()),
     };
     run_model_viewport_with_scene(&source, mode, scene.as_deref())
 }

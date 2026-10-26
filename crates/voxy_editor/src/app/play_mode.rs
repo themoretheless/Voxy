@@ -295,7 +295,7 @@ impl App {
             self.play.playing = Some(authoring_before_play);
             self.authoring.animation_preview = None;
             self.play.ui_actions = Some(actions);
-            let simulation = SceneSimulation::new(
+            let mut simulation = SceneSimulation::new(
                 &self.scene,
                 SimulationLimits {
                     fixed_step: 1.0 / 60.0,
@@ -304,6 +304,17 @@ impl App {
                     max_commands: 128,
                 },
             )?;
+            if let Some(setup) = &mut self.behavior_setup {
+                if let Err(error) = setup.configure(&mut self.scene, &mut simulation) {
+                    simulation.stop(&mut self.scene)?;
+                    self.play.playing = None;
+                    self.play.stop(&mut self.scene)?;
+                    self.restore_authoring()?;
+                    self.close_audio_device();
+                    return Err(error);
+                }
+                simulation.reset_interpolation(&self.scene)?;
+            }
             let has_characters = self.scene.components::<CharacterBody>().next().is_some()
                 || self.scene.components::<BoxCollider>().next().is_some();
             if has_characters {

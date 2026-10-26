@@ -71,12 +71,20 @@ pub fn open(
     path: &Path,
     registry: &voxy_scene::ComponentRegistry,
 ) -> Result<OpenProject, ProjectError> {
+    open_observed(path, registry).map(|(project, _)| project)
+}
+
+pub(super) fn open_observed(
+    path: &Path,
+    registry: &voxy_scene::ComponentRegistry,
+) -> Result<(OpenProject, String), ProjectError> {
     let path = path.canonicalize()?;
     let root = path
         .parent()
         .ok_or_else(|| ProjectError::Invalid("project parent missing".into()))?
         .to_owned();
-    let descriptor: ProjectDescriptor = serde_json::from_str(&text(&path)?)?;
+    let descriptor_text = text(&path)?;
+    let descriptor: ProjectDescriptor = serde_json::from_str(&descriptor_text)?;
     if descriptor.version != 1 || descriptor.name.trim().is_empty() {
         return Err(ProjectError::Invalid(
             "unsupported version or empty name".into(),
@@ -94,12 +102,15 @@ pub fn open(
     scene
         .load(registry, 100_000)
         .map_err(|e| ProjectError::Invalid(e.to_string()))?;
-    Ok(OpenProject {
-        root,
-        descriptor,
-        scene,
-        assets,
-    })
+    Ok((
+        OpenProject {
+            root,
+            descriptor,
+            scene,
+            assets,
+        },
+        descriptor_text,
+    ))
 }
 /// Exclusively claim a NEW directory. Publish the descriptor last as a readiness
 /// marker. On error remove only files created here; never remove foreign files.
@@ -306,6 +317,179 @@ mod tests {
         );
         assert!(app.id.is_none() && app.instances.is_empty());
         app.stop_workers()?;
+        Ok(())
+    }
+    #[test]
+    fn project_play_stop_and_standalone_share_fixed_motion()
+    -> Result<(), Box<dyn std::error::Error>> {
+        let t = Temp::new();
+        let path = create(&t.0.join("game"), "Motion")?;
+        let mut editor = crate::App::from_project(&path)?;
+        editor.edit_key(winit::keyboard::KeyCode::KeyD)?;
+        editor.scene.insert_component(
+            editor.instances[0],
+            voxy_gameplay::AngularMotion {
+                axis: [0., 0., 1.],
+                radians_per_second: 2.,
+            },
+        )?;
+        editor.commit_authoring()?;
+        editor.save_authoring()?;
+        let authored = editor.authoring_document()?;
+        let authoring_handle = editor.instances[0];
+        editor.toggle_play()?;
+        assert!(editor.scene.local(authoring_handle).is_err());
+        let runtime_handle = editor.instances[0];
+        for _ in 0..120 {
+            editor.advance_game(1.0 / 60.0)?;
+        }
+        let played = editor.authoring_document()?;
+        assert!(
+            editor
+                .scene
+                .local(runtime_handle)?
+                .rotation
+                .angle_between(glam::Quat::from_rotation_z(4.))
+                < 1e-3
+        );
+        assert_eq!(editor.play.simulation_ticks, 120);
+        assert_eq!(
+            editor.authoring.history.as_ref().unwrap().current(),
+            &authored
+        );
+        editor.toggle_play()?;
+        assert!(editor.scene.local(runtime_handle).is_err());
+        assert_eq!(editor.authoring_document()?, authored);
+        assert!(editor.play.simulation.is_none() && editor.play.angular_motion.is_none());
+        editor.stop_workers()?;
+        let mut game = crate::App::from_project(&path)?;
+        assert!(crate::project_runtime::prepare_game(
+            &mut game,
+            crate::ViewportMode::GameCheck
+        )?);
+        assert!(game.standalone && game.play.playing.is_some());
+        assert_eq!(game.play.simulation_ticks, 120);
+        assert_eq!(game.authoring_document()?, played);
+        game.stop_workers()?;
+        crate::run_project(&path, crate::ViewportMode::GameCheck)?;
+        assert!(crate::run_project(&path, crate::ViewportMode::AnimationSmoke).is_err());
+        Ok(())
+    }
+    #[test]
+    fn project_package_runs_without_source_tree_and_contains_import_closure()
+    -> Result<(), Box<dyn std::error::Error>> {
+        let t = Temp::new();
+        let root = t.0.join("game");
+        let path = create(&root, "Packaged Motion")?;
+        let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
+        let parsed = gltf::Gltf::from_slice(glb)?;
+        let json_len = u32::from_le_bytes(glb[12..16].try_into()?) as usize;
+        let mut document: serde_json::Value = serde_json::from_slice(&glb[20..20 + json_len])?;
+        document["buffers"][0]["uri"] = "motion.bin".into();
+        fs::write(root.join("motion.gltf"), serde_json::to_vec(&document)?)?;
+        fs::write(
+            root.join("motion.bin"),
+            parsed.blob.ok_or("fixture buffer missing")?,
+        )?;
+        fs::write(root.join("unused.txt"), "unused declared asset")?;
+        fs::write(
+            root.join("assets.json"),
+            r#"{"version":1,"assets":[{"asset":"mesh","source":"motion.gltf"},{"asset":"unused","source":"unused.txt"}]}"#,
+        )?;
+        let mut editor = crate::App::from_project(&path)?;
+        editor.edit_key(winit::keyboard::KeyCode::KeyD)?;
+        editor.scene.insert_component(
+            editor.instances[0],
+            voxy_gameplay::AngularMotion {
+                axis: [0., 0., 1.],
+                radians_per_second: 2.,
+            },
+        )?;
+        editor.commit_authoring()?;
+        editor.save_authoring()?;
+        editor.stop_workers()?;
+        let output = t.0.join("game.vpak");
+        crate::export_project_package(&path, &output)?;
+        let original = fs::read(&output)?;
+        assert!(crate::export_project_package(&path, &output).is_err());
+        assert_eq!(fs::read(&output)?, original);
+        let package = voxy_assets::ResourcePackage::from_bytes(
+            &original,
+            voxy_assets::PackageLimits {
+                max_entries: 4096,
+                max_payload_bytes: 64 * 1024 * 1024,
+                max_document_bytes: 256 * 1024 * 1024,
+            },
+        )?;
+        for source in [
+            "project.voxy",
+            "assets.json",
+            "main.scene.json",
+            "motion.gltf",
+            "motion.bin",
+            "unused.txt",
+            "__voxy_game.json",
+        ] {
+            assert!(
+                package.paths().any(|path| path == source),
+                "missing {source}"
+            );
+        }
+        fs::remove_dir_all(&root)?;
+        assert!(!path.exists());
+        let cwd = std::env::current_dir()?;
+        crate::run_packaged_game(&output, crate::ViewportMode::GameCheck)?;
+        assert_eq!(std::env::current_dir()?, cwd);
+        let mut corrupt = original;
+        let end = corrupt.len() - 1;
+        corrupt[end] ^= 1;
+        fs::write(&output, corrupt)?;
+        assert!(crate::run_packaged_game(&output, crate::ViewportMode::GameCheck).is_err());
+        Ok(())
+    }
+    #[test]
+    fn project_custom_component_registry_survives_play_build_and_packaged_run()
+    -> Result<(), Box<dyn std::error::Error>> {
+        #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+        struct GameTag {
+            value: u32,
+        }
+        fn registry() -> Result<voxy_scene::ComponentRegistry, Box<dyn std::error::Error>> {
+            let mut registry = crate::editor_component_registry()?;
+            registry.register::<GameTag>("test.game-tag.v1")?;
+            Ok(registry)
+        }
+        let t = Temp::new();
+        let path = create(&t.0.join("game"), "Custom Game")?;
+        let mut editor = crate::App::from_project_with_registry(&path, registry()?)?;
+        editor.edit_key(winit::keyboard::KeyCode::KeyD)?;
+        editor
+            .scene
+            .insert_component(editor.instances[0], GameTag { value: 42 })?;
+        editor.commit_authoring()?;
+        editor.save_authoring()?;
+        let authored = editor.authoring_document()?;
+        editor.toggle_play()?;
+        assert_eq!(
+            editor.scene.component::<GameTag>(editor.instances[0])?,
+            Some(&GameTag { value: 42 })
+        );
+        editor.toggle_play()?;
+        assert_eq!(editor.authoring_document()?, authored);
+        editor.stop_workers()?;
+        assert!(crate::run_project(&path, crate::ViewportMode::GameCheck).is_err());
+        crate::run_project_with_components(&path, crate::ViewportMode::GameCheck, registry()?)?;
+        let output = t.0.join("custom.vpak");
+        assert!(crate::export_project_package(&path, &output).is_err());
+        assert!(!output.exists());
+        crate::export_project_package_with_components(&path, &output, registry()?)?;
+        fs::remove_dir_all(path.parent().unwrap())?;
+        assert!(crate::run_packaged_game(&output, crate::ViewportMode::GameCheck).is_err());
+        crate::run_packaged_game_with_components(
+            &output,
+            crate::ViewportMode::GameCheck,
+            registry()?,
+        )?;
         Ok(())
     }
     #[cfg(unix)]

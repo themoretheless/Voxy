@@ -374,8 +374,11 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
       + (sky(vec3<f32>(r_px.x, max(r_px.y, 0.01), r_px.z), roughness)
        + sky(vec3<f32>(r_mx.x, max(r_mx.y, 0.01), r_mx.z), roughness)) * 0.25;
   }
-  let ssr = screen_reflection(f.world + n_up * 0.02, normalize(vec3<f32>(r.x, max(r.y, 0.02), r.z)), 1e9);
-  reflected = mix(reflected, ssr.rgb, ssr.a * (1. - smoothstep(0.06, 0.2, length(spread))));
+  let ssr_fade = 1. - smoothstep(0.06, 0.2, length(spread));
+  if ssr_fade > 0. {
+    let ssr = screen_reflection(f.world + n_up * 0.02, normalize(vec3<f32>(r.x, max(r.y, 0.02), r.z)), 1e9);
+    reflected = mix(reflected, ssr.rgb, ssr.a * ssr_fade);
+  }
   let nv = max(dot(n_up, v), 0.);
   let fr = fresnel(nv);
 
@@ -388,11 +391,13 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
     let dsl = hs - s;
     let det = max(cov.x * cov.y - cov.z * cov.z, 1e-10);
     let e = (dsl.x * dsl.x * cov.y + dsl.y * dsl.y * cov.x - 2. * dsl.x * dsl.y * cov.z) / det;
-    let pdf = exp(-0.5 * e) / (6.2831853 * sqrt(det));
-    let hy2 = hv.y * hv.y;
-    let d = pdf / max(hy2 * hy2, 1e-6);
-    glitter = camera.sun_colour.rgb * camera.sun_colour.a * sun_visible(f.world)
-      * fresnel(dot(v, hv)) * d / (4. * max(v.y, 0.05));
+    if e < 32. {
+      let pdf = exp(-0.5 * e) / (6.2831853 * sqrt(det));
+      let hy2 = hv.y * hv.y;
+      let d = pdf / max(hy2 * hy2, 1e-6);
+      glitter = camera.sun_colour.rgb * camera.sun_colour.a * sun_visible(f.world)
+        * fresnel(dot(v, hv)) * d / (4. * max(v.y, 0.05));
+    }
   }
   var colour = refracted * (1. - fr) + reflected * fr + glitter;
 

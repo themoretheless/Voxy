@@ -1311,6 +1311,54 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
         b.span(p.foliage, [mx0 - 0.38, my0 + 0.38, bz - 0.26], [mx0 - 0.02, my0 + 1.85, bz + 0.26]);
     }
 
+    // ---- southeast wood-fired outdoor pizza oven & alfresco dining terrace (x = 12.35..14.1, z = 136.2..143.8) ----
+    let (ox0, ox1, oz0, oz1) = (12.35f32, 14.1f32, 136.2f32, 143.8f32);
+    b.span(travertine, [ox0, my0, oz0], [ox1, my0 + 0.10, oz1]);
+    // Stepping stones from the east conservatory/pergola lawn to the alfresco terrace
+    for sz in [133.4f32, 134.8] {
+        b.span(travertine, [12.5, my0, sz - 0.32], [13.4, my0 + 0.05, sz + 0.32]);
+    }
+    // Brick and stucco wood-fired pizza oven with stacked firewood niche, dome, chimney, and glowing hearth
+    let oz_oven = oz1 - 1.15;
+    b.span(render, [ox1 - 1.15, my0 + 0.10, oz_oven - 0.75], [ox1 - 0.12, my0 + 0.92, oz_oven + 0.75]);
+    b.span(travertine, [ox1 - 1.20, my0 + 0.92, oz_oven - 0.80], [ox1 - 0.08, my0 + 0.98, oz_oven + 0.80]);
+    // Firewood logs stacked in the lower base niche
+    for log_i in 0..4 {
+        let lz = oz_oven - 0.36 + log_i as f32 * 0.24;
+        b.span(p.trunk, [ox1 - 1.10, my0 + 0.16, lz - 0.08], [ox1 - 0.35, my0 + 0.34, lz + 0.08]);
+    }
+    // Brick oven dome, glowing ember hearth, and blackened steel flue chimney
+    b.span(garden_wall, [ox1 - 1.05, my0 + 0.98, oz_oven - 0.62], [ox1 - 0.18, my0 + 1.62, oz_oven + 0.62]);
+    b.span(p.ceramic, [ox1 - 0.96, my0 + 1.62, oz_oven - 0.52], [ox1 - 0.26, my0 + 1.78, oz_oven + 0.52]);
+    b.span(p.glow, [ox1 - 1.06, my0 + 1.04, oz_oven - 0.26], [ox1 - 0.88, my0 + 1.34, oz_oven + 0.26]);
+    b.span(p.metal, [ox1 - 0.72, my0 + 1.78, oz_oven - 0.12], [ox1 - 0.50, my0 + 2.58, oz_oven + 0.12]);
+    b.span(p.metal, [ox1 - 0.78, my0 + 2.58, oz_oven - 0.18], [ox1 - 0.44, my0 + 2.64, oz_oven + 0.18]);
+    // Alfresco teak dining table, benches, and terracotta herb pots in the northern half of the terrace
+    let oz_table = oz0 + 2.25;
+    let ox_table = (ox0 + ox1) * 0.5;
+    b.span(p.timber, [ox_table - 0.44, my0 + 0.82, oz_table - 1.05], [ox_table + 0.44, my0 + 0.87, oz_table + 1.05]);
+    for (lx, lz) in [(-0.36, -0.92), (0.36, -0.92), (-0.36, 0.92), (0.36, 0.92)] {
+        b.span(p.metal, [ox_table + lx - 0.03, my0 + 0.10, oz_table + lz - 0.03], [ox_table + lx + 0.03, my0 + 0.82, oz_table + lz + 0.03]);
+    }
+    b.span(p.ceramic, [ox_table - 0.14, my0 + 0.87, oz_table - 0.14], [ox_table + 0.14, my0 + 1.04, oz_table + 0.14]);
+    for bz_off in [-1.38f32, 1.38] {
+        b.span(p.timber, [ox_table - 0.36, my0 + 0.10, oz_table + bz_off - 0.20], [ox_table + 0.36, my0 + 0.52, oz_table + bz_off + 0.20]);
+        b.span(cushion, [ox_table - 0.34, my0 + 0.52, oz_table + bz_off - 0.18], [ox_table + 0.34, my0 + 0.57, oz_table + bz_off + 0.18]);
+    }
+
+    // ---- ground-floor living room modern fireplace hearth & minimalist wall art (z = 136.8..141.2) ----
+    // Architectural travertine chimney breast along the east interior wall (x = 11.15..11.68) with warm glowing firebox
+    b.span(travertine, [11.15, floor_top, 137.0], [11.68, g - 0.02, 139.2]);
+    b.span(concrete, [10.85, floor_top, 136.75], [11.68, floor_top + 0.28, 139.45]);
+    b.span(p.metal, [11.10, floor_top + 0.36, 137.45], [11.22, floor_top + 0.98, 138.75]);
+    b.span(p.glow, [11.14, floor_top + 0.42, 137.58], [11.26, floor_top + 0.68, 138.62]);
+    // Framed canvas triptych on the rear dining wall (z = 147.62)
+    for art_i in 0..3 {
+        let ax = -5.8 + art_i as f32 * 1.05;
+        b.span(p.metal, [ax - 0.38, floor_top + 1.25, 147.60], [ax + 0.38, floor_top + 2.15, 147.66]);
+        b.span(fabric(art_i + 1), [ax - 0.34, floor_top + 1.29, 147.57], [ax + 0.34, floor_top + 2.11, 147.61]);
+    }
+
     Villa {
         water: vec![WaterBody::pool(
             Vec3::new(-x, DEEP, z0),
