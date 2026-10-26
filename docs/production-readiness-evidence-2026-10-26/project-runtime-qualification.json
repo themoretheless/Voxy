@@ -1,0 +1,33 @@
+{
+  "status": "project_play_standalone_package_headless_scenarios_pass",
+  "git_head": "2242d213b64b41261e06c1f62b3abba56786bf95",
+  "source_sha256": {
+    "crates/voxy_editor/src/lib.rs": "d5b4b6f5e95cdab3009ca22ec11dcc52e960865b1fd31752e781b0e754690f04",
+    "crates/voxy_editor/src/main.rs": "6f39c69c09353057ca8141e9bc35cfbd33ea4f78f8d02d20ff10158eb8419928",
+    "crates/voxy_editor/src/project.rs": "00fe031c625f084dee9a45e02fb4d9ecbdca752f626ab77cd7e1a981feba5a0a",
+    "crates/voxy_editor/src/project_runtime.rs": "9795d1c269781a46f9e23e5b51afbfde6091f38b82a050e43f8538f62cca842c",
+    "crates/voxy_editor/src/packaged_game.rs": "589539f40e60a7d80feb5e1c76050bc23178a1e8bcede9fab920cd271bd57a9a"
+  },
+  "tests": {
+    "passed": 201,
+    "ignored": 17,
+    "failed": 0
+  },
+  "clippy_all_targets_warnings_denied": true,
+  "binary_build_pass": true,
+  "cli_proof": "project-runtime-cli-proof.json",
+  "retained_example": "examples/project-motion/project.voxy",
+  "retained_package": "artifacts/project-runtime-2026-10-26/motion.vpak",
+  "native_window_verified": false,
+  "clean_machine_verified": false,
+  "fps_qualified": false,
+  "engine_production_ready": false,
+  "remaining": [
+    "native editor and game visual acceptance",
+    "interactive collision/input/UI/audio scene",
+    "project prefab and reload recovery",
+    "host gameplay behavior registration",
+    "clean machine platform distribution",
+    "remaining ENG-00 through ENG-13 gates"
+  ]
+}

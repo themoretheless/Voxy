@@ -1,0 +1,24 @@
+{
+  "status": "project_editor_owner_roundtrip_verified_native_window_unverified",
+  "focused_tests": 6,
+  "editor_library_tests": {
+    "passed": 198,
+    "ignored": 17,
+    "failed": 0
+  },
+  "no_native_window_launched": true,
+  "fps_qualified": false,
+  "next": [
+    "native window acceptance",
+    "project Play and standalone composition",
+    "package without source tree"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/lib.rs": "9a93196ca2579b6faa77bda1210064b1def8128e248194567457622f98916318",
+    "crates/voxy_editor/src/panels.rs": "cfb8cda90738aca60d3634b6533479f8efd681e12a8fe31e1e2540510074d0b1",
+    "crates/voxy_editor/src/project.rs": "62ddb48548ebb27a0a58fe15e9c12373992fd23bdea92486708bf66749bab6ad",
+    "crates/voxy_editor/src/main.rs": "575254bb310f9092e54eacd2460c308cf605697827575b717d7ee2331443394c",
+    "crates/voxy_editor/src/app/inspector.rs": "863b05b9e196ab5932d535726d102f3d6f2fa8ce39731ff83a2705ebe649d1d0",
+    "crates/voxy_editor/src/app/residency.rs": "ba86be1e9725d4e50376f892a310623ddfd2c661ea7a1d297dc84a24fd371980"
+  }
+}

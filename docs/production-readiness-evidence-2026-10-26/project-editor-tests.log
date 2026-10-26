@@ -1,0 +1,14 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 40.39s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 6 tests
+test project::tests::rejects_missing_dependencies_versions_unknown_fields_and_broken_scene ... ok
+test project::tests::rejects_dependency_symlink_outside_project ... ok
+test project::tests::empty_project_reopens_after_relocation_and_does_not_overwrite ... ok
+test project::tests::nested_manifest_sources_follow_existing_project_root_contract ... ok
+test project::tests::rejects_corrupt_manifest_missing_asset_and_existing_file_destination ... ok
+test project::tests::editor_project_bootstrap_edits_saves_undoes_and_reopens_without_model ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 209 filtered out; finished in 0.14s
+

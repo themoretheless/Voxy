@@ -1,0 +1,72 @@
+{
+  "status": "project_and_package_cli_headless_pass",
+  "runs": [
+    {
+      "args": [
+        "--create-project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-4v0_qlaq/source",
+        "Project motion CLI"
+      ],
+      "exit_code": 0,
+      "stdout": "Created /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-4v0_qlaq/source/project.voxy\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--validate-project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-4v0_qlaq/source/project.voxy"
+      ],
+      "exit_code": 0,
+      "stdout": "Validated project \"Project motion CLI\": 1 scene objects\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-4v0_qlaq/source/project.voxy",
+        "--game-check"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=triangle\nGAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"triangle\",\"parent\":null,\"name\":\"Rotating triangle\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.9092974,-0.4161471],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"triangle\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":2.0}}}]}\nGAME CHECK PASS ticks=120 objects=1 prefab_instances=0\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--build-project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-4v0_qlaq/source/project.voxy",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-4v0_qlaq/game.vpak"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=triangle\nGAME PACKAGE PASS sources=4 bytes=2778\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--build-project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-4v0_qlaq/source/project.voxy",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-4v0_qlaq/game.vpak"
+      ],
+      "exit_code": 1,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=triangle\n",
+      "stderr": "Error: Os { code: 17, kind: AlreadyExists, message: \"File exists\" }\n"
+    },
+    {
+      "args": [
+        "--package",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-cli-4v0_qlaq/game.vpak",
+        "--game-check"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=triangle\nGAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"triangle\",\"parent\":null,\"name\":\"Rotating triangle\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.9092974,-0.4161471],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"triangle\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":2.0}}}]}\nGAME CHECK PASS ticks=120 objects=1 prefab_instances=0\n",
+      "stderr": ""
+    }
+  ],
+  "binary": "/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/voxy_editor",
+  "binary_sha256": "9bb198c4d0b31f24dd5ad1b29e685208b06bd06472f79a72c77ef989d0fd6e09",
+  "package_sha256": "060ca91477e53d76423262e151d2f3d01439ab93b10f6ef7e3c08c632f7a48f5",
+  "source_tree_removed_before_package_launch": true,
+  "project_and_package_state_equal": true,
+  "simulation_ticks": 120,
+  "native_window_verified": false,
+  "fps_qualified": false
+}

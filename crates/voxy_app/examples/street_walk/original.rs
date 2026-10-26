@@ -1912,6 +1912,23 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                         }
                     }
                 }
+                // Folding A-frame wooden chalk menu board at the edge of the bistro terrace
+                let mb_x = side * 5.65;
+                let mb_z = z + 2.45;
+                for tilt_sign in [-1.0f32, 1.0] {
+                    b.put(
+                        kit.woods[2],
+                        Vec3::new(mb_x + tilt_sign * 0.14, 0.46, mb_z),
+                        Vec3::new(0.035, 0.92, 0.54),
+                        Quat::from_rotation_z(-tilt_sign * 0.18),
+                    );
+                    b.put(
+                        metal,
+                        Vec3::new(mb_x + tilt_sign * 0.155, 0.50, mb_z),
+                        Vec3::new(0.015, 0.68, 0.44),
+                        Quat::from_rotation_z(-tilt_sign * 0.18),
+                    );
+                }
             }
             // Benches and outdoor tables are built from separate timber and steel parts.
             if house % 2 == 0 {
@@ -1945,6 +1962,16 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                         b.block(metal, [side * 5.15, 0.42, rz + dz], [0.045, 0.72, 0.045]);
                     }
                     b.block(metal, [side * 5.15, 0.76, rz], [0.045, 0.045, 0.605]);
+                } else if house % 4 == 2 {
+                    // Fluted cast-iron street Drinking Fountain / standpipe with brass basin beside alternate benches
+                    let fz = bc + 1.35;
+                    let fx = side * 5.18;
+                    b.block(trim, [fx, 0.09, fz], [0.42, 0.08, 0.42]);
+                    b.block(metal, [fx, 0.56, fz], [0.18, 0.86, 0.18]);
+                    b.block(metal, [fx, 1.02, fz], [0.24, 0.08, 0.24]);
+                    b.put(bulb, Vec3::new(fx, 1.10, fz), Vec3::splat(0.12), Quat::IDENTITY);
+                    b.block(kit.ceramic, [fx - side * 0.16, 0.62, fz], [0.22, 0.08, 0.26]);
+                    b.block(metal, [fx - side * 0.11, 0.74, fz], [0.12, 0.03, 0.03]);
                 }
             } else if house % 3 != 0 {
                 // Entrance ceramic planters with clipped boxwood flanking residential doorways
