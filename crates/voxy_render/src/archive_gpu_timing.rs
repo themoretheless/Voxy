@@ -313,3 +313,19 @@ mod phase_tests {
         assert!(ray_stage_durations(&[0; 20], 12, 1, 1.).is_none());
     }
 }
+
+/// Never resolve unwritten optional-stage queries on an inline crossover frame.
+pub(crate) fn active_query_count(base:u32,total:u32,chunks:u32,inactive_gi:bool)->u32 {
+    if inactive_gi {6} else if chunks>0 {total} else {base}
+}
+#[cfg(test)]
+mod optional_stage_tests {
+    #[test]
+    fn inactive_gi_never_resolves_stale_or_unwritten_optional_counters() {
+        assert_eq!(super::active_query_count(10,10,0,true),6);
+        assert_eq!(super::active_query_count(12,24,2,true),6);
+        assert_eq!(super::active_query_count(10,10,0,false),10);
+        assert_eq!(super::active_query_count(12,24,2,false),24);
+        assert_eq!(super::active_query_count(6,6,0,false),6);
+    }
+}

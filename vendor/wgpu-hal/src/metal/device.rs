@@ -158,6 +158,9 @@ const fn convert_vertex_format_to_naga(format: wgt::VertexFormat) -> nt::VertexF
     }
 }
 
+#[cfg(feature = "metal-safe-compute")]
+#[path = "original_gi_math.rs"]
+mod original_gi_math;
 impl super::Device {
     fn load_shader(
         &self,
@@ -277,8 +280,12 @@ impl super::Device {
                 // opts its render pipeline into this existing precise policy.
                 // Unrelated render pipelines retain their configured behaviour.
                 #[cfg(feature = "metal-safe-compute")]
-                let precise_math = stage_bit == wgt::ShaderStages::COMPUTE
-                    || stage.constants.get("ARCHIVE_PAIRED_DDA").is_some_and(|v| *v != 0.0);
+                let precise_math = original_gi_math::original_gi_precise_math(
+                    stage_bit == wgt::ShaderStages::COMPUTE,
+                    stage.entry_point,
+                    stage.constants.get("ARCHIVE_PAIRED_DDA").is_some_and(|v| *v != 0.0),
+                    stage.constants.get("ARCHIVE_ORIGINAL_GI_RASTER_MATH").is_some_and(|v| *v != 0.0),
+                );
                 #[cfg(feature = "metal-safe-compute")]
                 if precise_math {
                     #[allow(deprecated)]

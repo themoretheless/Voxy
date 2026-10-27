@@ -1,0 +1,47 @@
+{
+  "scope": "native per-source Float32 opaque GI precision, not performance",
+  "sha256": "77d5c9bbea7a94e78dbe58671a7a95ff1a3b0512c7bfb1d836231530a1bce7d5",
+  "runs": [
+    {
+      "name": "safe-A0",
+      "match_raster": false,
+      "words": 8294400,
+      "different_words": 57919,
+      "max_absolute_error": 4214.0625,
+      "finite": true,
+      "first_difference": {
+        "word": 31,
+        "actual": 0.012132400646805763,
+        "reference": 0.012132433243095875
+      },
+      "actual_sha256": "cc1677e44b859748645e3cb27daf0211dd118dffbc249befb2719f174423cfc4",
+      "reference_sha256": "8933d6e9c3d56c4086f4165301699397f671b13ce26482493eb377c2d805b5d8"
+    },
+    {
+      "name": "safe-A1",
+      "match_raster": false,
+      "words": 8294400,
+      "different_words": 57919,
+      "max_absolute_error": 4214.0625,
+      "finite": true,
+      "first_difference": {
+        "word": 31,
+        "actual": 0.012132400646805763,
+        "reference": 0.012132433243095875
+      },
+      "actual_sha256": "cc1677e44b859748645e3cb27daf0211dd118dffbc249befb2719f174423cfc4",
+      "reference_sha256": "8933d6e9c3d56c4086f4165301699397f671b13ce26482493eb377c2d805b5d8"
+    },
+    {
+      "name": "raster-B",
+      "match_raster": true,
+      "words": 8294400,
+      "different_words": 0,
+      "max_absolute_error": 0.0,
+      "finite": true,
+      "first_difference": null,
+      "actual_sha256": "c6ecfe7b45675912ec19a0a86c809bae2422c42884826455f558f6ffe9f50bd1",
+      "reference_sha256": "c6ecfe7b45675912ec19a0a86c809bae2422c42884826455f558f6ffe9f50bd1"
+    }
+  ]
+}

@@ -342,9 +342,10 @@ pub struct ArchiveSceneRenderer {
     refine_alternates: Option<[wgpu::RenderPipeline;8]>,
     refine_crossover: Option<RefineCrossover>,
     refine_cache_base: bool,
+    gi_stage_crossover: bool,
     benchmark_frame: u64,
     /// Timestamp producer identity, not its later CPU collection frame.
-    /// Each tuple is (producer ordinal, assigned label B, refinement cache enabled).
+    /// Each tuple is (producer ordinal, assigned label B, candidate enabled).
     pub gpu_frame_stamps: Vec<(u64, bool, bool)>,
     pub gpu_times_ms: Vec<f64>,
     /// [opaque shading, transparent shading] GPU intervals, excluding presentation.
@@ -887,7 +888,11 @@ impl ArchiveSceneRenderer {
         });
         let refine_crossover = std::env::var("VOXY_STREET_REFINE_CROSSOVER").ok().map(|s|RefineCrossover::parse(&s)).transpose()?;
         let refine_cache_base=std::env::var_os("VOXY_STREET_REFINE_CACHE").is_some();
-        if refine_crossover.is_some() && (refine_cache_base || ["VOXY_STREET_COMPUTE_GI","VOXY_STREET_PAIRED_DDA","VOXY_STREET_RAY_QUEUE","VOXY_STREET_RAY_HIERARCHY"].iter().any(|key|std::env::var_os(key).is_some())) {return Err(crate::ComputeError::Validation("refinement crossover requires unmodified original raster GI".into()));}
+        let gi_stage_crossover=std::env::var_os("VOXY_STREET_GI_STAGE_CROSSOVER").is_some();
+        let compute_requested=std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some();
+        if gi_stage_crossover && (refine_crossover.is_none() || !compute_requested) {return Err(crate::ComputeError::Validation("GI stage crossover requires a schedule and compute GI".into()));}
+        if refine_crossover.is_some() && (refine_cache_base || (compute_requested && !gi_stage_crossover) || ["VOXY_STREET_PAIRED_DDA","VOXY_STREET_RAY_QUEUE","VOXY_STREET_RAY_HIERARCHY","VOXY_STREET_RAY_STAGES","VOXY_STREET_COMPUTE_SSR"].iter().any(|key|std::env::var_os(key).is_some())) {return Err(crate::ComputeError::Validation("crossover requires the original GI algorithm without other ray experiments".into()));}
+        let compute_variant=std::cell::Cell::new(compute_requested && !gi_stage_crossover);
         let refine_variant=std::cell::Cell::new(refine_cache_base);
         let pipeline = |blend: bool,
                         double: bool,
@@ -1008,7 +1013,7 @@ impl ArchiveSceneRenderer {
                                 if !blend
                                     && !shadow
                                     && !predepth
-                                    && std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some()
+                                    && compute_variant.get()
                                 {
                                     1.
                                 } else {
@@ -1126,7 +1131,8 @@ impl ArchiveSceneRenderer {
         let depth_double = pipeline(false, true, false, true, false, false);
 
         let refine_alternates=refine_crossover.map(|mode| {
-            refine_variant.set(mode.cache_b());
+            refine_variant.set(mode.cache_b() && !gi_stage_crossover);
+            compute_variant.set(if gi_stage_crossover {mode.cache_b()}else{compute_requested});
             let result = [
                 pipeline(false, false, false, false, false, false),
                 pipeline(false, false, false, false, true, false),
@@ -1137,7 +1143,9 @@ impl ArchiveSceneRenderer {
                 pipeline(true, false, false, false, false, true),
                 pipeline(true, true, false, false, false, true),
             ];
-            refine_variant.set(refine_cache_base);result
+            refine_variant.set(refine_cache_base);
+            compute_variant.set(compute_requested && !gi_stage_crossover);
+            result
         });
         let post_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("archive display transform"),
@@ -1547,7 +1555,8 @@ impl ArchiveSceneRenderer {
             .as_ref()
             .and_then(|gi| gi.stages_configuration())
             .map_or(0, |cfg| cfg[0] as u32);
-        let timing = Timing::new(device, compute_enabled, ssr_enabled, phase_chunks)?;
+        let mut timing = Timing::new(device, compute_enabled, ssr_enabled, phase_chunks)?;
+        if let Some(timing)=&mut timing {timing.skip_inactive_gi=gi_stage_crossover;}
         let frame_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: None,
             layout: &frame_layout,
@@ -1691,6 +1700,7 @@ impl ArchiveSceneRenderer {
             refine_alternates,
             refine_crossover,
             refine_cache_base,
+            gi_stage_crossover,
             benchmark_frame: 0,
             gpu_frame_stamps: Vec::new(),
             gpu_times_ms: Vec::new(),
@@ -2362,6 +2372,18 @@ impl ArchiveSceneRenderer {
                 ));
             }
         }
+        if std::env::var_os("VOXY_STREET_GI_RAW_CAPTURE").is_some() {
+            if !self.compute_gi_active_for_frame() {return Err("raw GI capture requires an active compute frame".into());}
+            if let Some((actual, reference))=self.opaque_gi_precision_textures() {
+                if !sources {views.push(("actual-gi",actual.create_view(&Default::default())));}
+                views.push(("reference-gi",reference.create_view(&Default::default())));
+            }
+            if !sources {if let Some(gi)=&self.compute_gi {
+                let [world,normal]=gi.world_ray_guides();
+                views.push(("actual-world-guide",world.create_view(&Default::default())));
+                views.push(("actual-normal-guide",normal.create_view(&Default::default())));
+            }}
+        }
         let mut proof = crate::archive_hdr_diagnostics::capture(
             &self.device,
             &self.queue,
@@ -2781,6 +2803,11 @@ impl ArchiveSceneRenderer {
     /// The app supplies the rendered replay ordinal before encoding its frame.
     pub fn set_benchmark_frame(&mut self,frame:u64) {self.benchmark_frame=frame;}
     pub fn refinement_crossover(&self)->Option<RefineCrossover> {self.refine_crossover}
+    pub fn crossover_candidate(&self)->Option<&'static str> {self.refine_crossover.map(|_|if self.gi_stage_crossover {"original-gi-compute"}else{"refinement-cache"})}
+    pub fn opaque_gi_raster_math_enabled(&self)->bool {self.compute_gi.as_ref().is_some_and(|gi|gi.raster_math_enabled())}
+    fn compute_gi_active_for_frame(&self)->bool {
+        self.compute_gi.is_some() && (!self.gi_stage_crossover || self.refine_crossover.is_some_and(|mode|mode.cache_for_frame(self.benchmark_frame)))
+    }
     fn collect_gpu_time_sample(&mut self) {
         if let Some(timing) = &mut self.timing {
             if let Some((ms, gi, ssr)) = timing.collect(&self.device, &self.queue) {
@@ -3056,7 +3083,8 @@ impl ArchiveSceneRenderer {
         if let Some(bounds) = &self.pixel_depth_bounds {
             bounds.encode(&mut encoder);
         }
-        if let Some(gi) = &self.compute_gi {
+        let compute_active=self.compute_gi_active_for_frame();
+        if let Some(gi) = self.compute_gi.as_ref().filter(|_|compute_active) {
             gi.encode(
                 &mut encoder,
                 &depth_view,
@@ -3406,6 +3434,7 @@ struct Timing {
     ready: Arc<std::sync::atomic::AtomicU8>,
     pending: bool,
     frame_stamp:(u64,bool,bool),
+    skip_inactive_gi:bool,
 }
 impl Timing {
     fn new(
@@ -3457,6 +3486,7 @@ impl Timing {
             ready: Arc::new(std::sync::atomic::AtomicU8::new(0)),
             pending: false,
             frame_stamp:(0,false,false),
+            skip_inactive_gi:false,
         }))
     }
     fn collect(
@@ -3469,11 +3499,10 @@ impl Timing {
                 let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
                     label: Some("completed GPU stage counters"),
                 });
-                let count = if self.sample_chunks > 0 {
-                    self.query_count
-                } else {
-                    self.base_count
-                };
+                let count = crate::archive_gpu_timing::active_query_count(
+                    self.base_count,self.query_count,self.sample_chunks,
+                    self.skip_inactive_gi && !self.frame_stamp.2,
+                );
                 encoder.resolve_query_set(&self.set, 0..count, &self.resolve, 0);
                 encoder.copy_buffer_to_buffer(
                     &self.resolve,
@@ -3485,7 +3514,7 @@ impl Timing {
                 queue.submit([encoder.finish()]);
                 let ready = self.ready.clone();
                 self.readback
-                    .slice(..)
+                    .slice(..u64::from(count) * 8)
                     .map_async(wgpu::MapMode::Read, move |result| {
                         ready.store(
                             if result.is_ok() { 2 } else { 3 },
@@ -3501,7 +3530,11 @@ impl Timing {
             }
             _ => return None,
         }
-        let bytes = match self.readback.slice(..).get_mapped_range() {
+        let count = crate::archive_gpu_timing::active_query_count(
+            self.base_count,self.query_count,self.sample_chunks,
+            self.skip_inactive_gi && !self.frame_stamp.2,
+        );
+        let bytes = match self.readback.slice(..u64::from(count)*8).get_mapped_range() {
             Ok(bytes) => bytes,
             Err(_) => {
                 self.readback.unmap();
@@ -3532,7 +3565,7 @@ impl Timing {
             eprintln!("STREET GPU RAY PHASES project_traverse_resolve_ms={phases:?}");
         }
         crate::archive_gpu_timing::decode_with_rays(
-            &ticks[..self.base_count as usize],
+            &ticks[..if self.skip_inactive_gi && !self.frame_stamp.2 {6}else{self.base_count as usize}],
             queue.get_timestamp_period(),
         )
     }
@@ -3740,3 +3773,8 @@ mod vertex_invariance_tests;
 #[cfg(test)]
 #[path = "archive_derivative_control_flow_tests.rs"]
 mod derivative_control_flow_tests;
+
+// Test the exact backend policy without making the vendored crate a workspace member.
+#[cfg(test)]
+#[path = "../../../vendor/wgpu-hal/src/metal/original_gi_math.rs"]
+mod metal_original_gi_math_policy;
