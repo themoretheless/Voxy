@@ -1,0 +1,11 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "format": "Depth32Float",
+  "mip_levels": 1,
+  "native_pair_blake3": "e15e477f5f1dfee5661599e73ef8439a79a04e7af07983cdad6accaa874805f5",
+  "pixels": 2073600,
+  "predicate_mismatch_pixels": 0,
+  "predicates_tested": 22809600,
+  "production_helper_blake3": "c3ad18b9b72e0450b8ac9638f683e137874acc0586c7ca6b44101d5c2e379799",
+  "unique_depth_values": 1036802
+}

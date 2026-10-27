@@ -1,0 +1,12 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.64s
+     Running unittests src/lib.rs (/tmp/voxy-shared-20261025-target/debug/deps/voxy_render-9a3ff1e12b53452e)
+
+running 4 tests
+test archive_scene::refine_crossover::tests::probe_bake_never_uses_an_alternate ... ok
+test archive_scene::refine_crossover::tests::complementary_routes_cover_identical_states ... ok
+test archive_scene::refine_crossover::tests::only_single_candidate_mode_is_an_absolute_run ... ok
+test archive_scene::refine_crossover::tests::every_gpu_sampling_phase_is_balanced ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 437 filtered out; finished in 0.00s
+

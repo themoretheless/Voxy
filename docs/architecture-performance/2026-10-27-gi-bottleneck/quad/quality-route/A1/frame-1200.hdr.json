@@ -1,0 +1,12 @@
+{
+  "colour_space": "ExtendedSrgbLinear",
+  "finite": true,
+  "live_headroom": 1.0,
+  "native_hdr_capture": "/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/docs/architecture-performance/2026-10-27-gi-bottleneck/quad/quality-route/A1/frame-1200.pfm",
+  "peak_relative_sdr_white": 1.0,
+  "pixels": 2073600,
+  "pixels_above_sdr_white": 0,
+  "png_is_sdr_preview": true,
+  "render_headroom": 1.0,
+  "surface_format": "Rgba16Float"
+}

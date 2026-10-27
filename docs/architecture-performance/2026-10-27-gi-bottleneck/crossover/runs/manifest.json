@@ -1,0 +1,141 @@
+{
+  "binary": "/private/tmp/voxy-refine-crossover-20261027",
+  "sha256": "acac626d3857cb05ac14456c590c2279f1da0db9c81d1f2e5bf488cec41eb48c",
+  "assets": {
+    "bark_willow-Diffuse.png": "007e810e496e1b9d23510f198a7bb448cc5548feb7a997d0c80ec585a361e4f9",
+    "bark_willow-arm.png": "3b4b8717ac5e3824ae4c039b06e2203b3e0cc8b163271909ca5ebae29e929b34",
+    "bark_willow-files.json": "5a83d281276fe1f088857a59b00eb16bb350e0af6995e1485fc24fb5b898219b",
+    "bark_willow-nor_gl.png": "87d29327e12fee05c86169690b9bcd2026d23d27e3844d166bf4f9937600a69f",
+    "brick_wall_001-Diffuse.png": "2f0bdbb4926cbd47c789029de9a14c06b77107731e38edbe94a01425679111dd",
+    "brick_wall_001-arm.png": "462f31e50926592679dd740105c9b09185e91c4d515b4196b4481b2b54c6ca59",
+    "brick_wall_001-files.json": "cff64a9eedc1f7ab28bee730bd34946ba29df564af6a839ebc0181ee42f107e3",
+    "brick_wall_001-nor_gl.png": "001d13d7010234aa1ff59e18c7d08635e8ecc06d3da2515d624bdbf6d3734701",
+    "daylight-provenance.json": "b736d0263a78627ddcc9d3fbd5455c2753be7dca25b6d1d7e596c6b5a0955340",
+    "daylight.hdr": "3061c00a16ecae748e84fd6c44c04804f539c118bb66325db858bad87b11bf88",
+    "plastered_stone_wall-Diffuse.png": "ff3fd8ffcf9e78effc2127dbd2e5f4fead24ae4a6969a774af8e3d06024f9e8f",
+    "plastered_stone_wall-arm.png": "a67e2ead1826787f330c25f07d255cb9e5702a210baef84faa8f271dfe0b4c75",
+    "plastered_stone_wall-files.json": "97991a21471d5362ceffdfe2deb70599d50172f25e9cb6c5d812a27f15ba9c57",
+    "plastered_stone_wall-nor_gl.png": "656e41c3d3074da817d36988592bc4af466fd35c8c94e603595fd8461a763ed4",
+    "provenance.json": "23aa6706317205ad3fd03d1e1bd30eb6196e1180105cbce0c178a90e42c13d79"
+  },
+  "protocol": {
+    "declared_before_campaign": true,
+    "candidate": "existing ARCHIVE_REFINE_CACHE; original 80-step ray, 60m reach and 8 refinements, immutable Depth32Float reads",
+    "schedule": [
+      [
+        "aa-start",
+        "aa"
+      ],
+      [
+        "ab-0",
+        "ab"
+      ],
+      [
+        "ba-0",
+        "ba"
+      ],
+      [
+        "ab-1",
+        "ab"
+      ],
+      [
+        "ba-1",
+        "ba"
+      ],
+      [
+        "bb-0",
+        "bb"
+      ],
+      [
+        "bb-1",
+        "bb"
+      ],
+      [
+        "aa-end",
+        "aa"
+      ]
+    ],
+    "measured_frames_per_run": 2400,
+    "warmup_frames": 180,
+    "duration_simulation_seconds": 20,
+    "assignment_pattern": "ABBA BAAB; BA complements every frame; AA labels identical baseline pipelines",
+    "gpu_query_association": "producer App frame ordinal captured at submission; never collection frame",
+    "gpu_sample_minimum_per_label": 400,
+    "aa_internal_limits": {
+      "service_p50": 0.1,
+      "service_p99": 0.1,
+      "host_completion_p99": 0.1,
+      "gpu_mean": 0.05
+    },
+    "external_start_end_drift": "reported, not an internal contrast gate; the crossover controls within-run drift",
+    "relative_ci95_upper_limits": {
+      "service_p99": 1.05,
+      "host_completion_p99": 1.05,
+      "gpu_mean_for_promotion": 1.0
+    },
+    "bootstrap": "10000 deterministic route-level resamples of four complementary AB/BA full-route contrasts; not independent-frame resampling",
+    "absolute_gate": "both separate BB single-pipeline full routes: service and host completion p99 <=8.33ms",
+    "quality_gate": "two AA full routes plus BB; same declared native-stage ULP bounds, actual GPU uniforms and exact replay; correctness capture runs excluded from performance",
+    "isolation_requested": false,
+    "discard_or_retry_noisy_runs": false,
+    "scope": "GPU-completed offscreen full frames; no scanout claim"
+  },
+  "runs": [
+    {
+      "name": "aa-start",
+      "mode": "aa",
+      "exit_code": 0,
+      "start": 1793102015.939101,
+      "end": 1793102073.9579
+    },
+    {
+      "name": "ab-0",
+      "mode": "ab",
+      "exit_code": 0,
+      "start": 1793102073.969105,
+      "end": 1793102133.046266
+    },
+    {
+      "name": "ba-0",
+      "mode": "ba",
+      "exit_code": 0,
+      "start": 1793102133.0558138,
+      "end": 1793102191.39609
+    },
+    {
+      "name": "ab-1",
+      "mode": "ab",
+      "exit_code": 0,
+      "start": 1793102191.406799,
+      "end": 1793102252.195474
+    },
+    {
+      "name": "ba-1",
+      "mode": "ba",
+      "exit_code": 0,
+      "start": 1793102252.205087,
+      "end": 1793102311.500611
+    },
+    {
+      "name": "bb-0",
+      "mode": "bb",
+      "exit_code": 0,
+      "start": 1793102311.509851,
+      "end": 1793102374.637963
+    },
+    {
+      "name": "bb-1",
+      "mode": "bb",
+      "exit_code": 0,
+      "start": 1793102374.6487381,
+      "end": 1793102434.9927738
+    },
+    {
+      "name": "aa-end",
+      "mode": "aa",
+      "exit_code": 0,
+      "start": 1793102435.001827,
+      "end": 1793102493.398237
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "scope": "ablation diagnostics; disabled GI is not a candidate",
+  "binary_sha256": "9409885e9b372e9a4087ae6303bc1216aec5d86da4999bc5cdaacc3f75fdc006",
+  "runs": [
+    {
+      "name": "A0",
+      "flags": {},
+      "exit_code": 0
+    },
+    {
+      "name": "noGI0",
+      "flags": {
+        "VOXY_FX_OFF": "1"
+      },
+      "exit_code": 0
+    },
+    {
+      "name": "noTiming0",
+      "flags": {
+        "VOXY_STREET_GPU_TIMING": null
+      },
+      "exit_code": 0
+    },
+    {
+      "name": "noTiming1",
+      "flags": {
+        "VOXY_STREET_GPU_TIMING": null
+      },
+      "exit_code": 0
+    },
+    {
+      "name": "noGI1",
+      "flags": {
+        "VOXY_FX_OFF": "1"
+      },
+      "exit_code": 0
+    },
+    {
+      "name": "A1",
+      "flags": {},
+      "exit_code": 0
+    }
+  ]
+}

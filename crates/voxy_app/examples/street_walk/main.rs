@@ -1054,6 +1054,7 @@ impl App {
                 self.replay_state.update(&[0]);
             }
         }
+        gpu.renderer.set_benchmark_frame(self.frames+1);
         let output_view = output.create_view(&Default::default());
         let scene_view = gpu
             .scene_target
@@ -1391,9 +1392,11 @@ impl App {
                 el.exit();
             }
         }
+        if self.frames==180 && self.offscreen_benchmark {gpu.renderer.collect_completed_gpu_times()?;}
         // draw collects the previous frame timestamp. At frame 181 the
         // latest collected sample still belongs to warmup, not measurement.
         if self.benchmark > 0. && self.frames == 181 {
+            gpu.renderer.gpu_frame_stamps.clear();
             gpu.renderer.gpu_times_ms.clear();
             gpu.renderer.gpu_shading_times_ms.clear();
             gpu.renderer.gpu_gi_times_ms.clear();
@@ -1466,6 +1469,7 @@ impl App {
             && (self.simulation_steps - self.measure_simulation_steps) as f64 * DT >= self.benchmark
         {
             let _ = gpu.device.poll(wgpu::PollType::wait_indefinitely());
+            if self.offscreen_benchmark {gpu.renderer.collect_completed_gpu_times()?;}
             let mut times = self.durations.clone();
             times.sort_by(f64::total_cmp);
             let n = times.len();
@@ -1475,6 +1479,9 @@ impl App {
                 .ok()
                 .map(|d| d.as_secs_f64());
             let mut report = serde_json::json!({"measurement_start_unix_seconds":self.measure_start_unix_seconds,"measurement_end_unix_seconds":measure_end_unix_seconds,"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"measured_physics_steps":self.simulation_steps-self.measure_simulation_steps,"measured_simulation_seconds":(self.simulation_steps-self.measure_simulation_steps) as f64*DT,"complete_motion_cycles":(self.simulation_steps-self.measure_simulation_steps)/2400,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":!self.offscreen_benchmark&&self.skipped_acquires==0&&!gpu.renderer.opaque_ray_capture_enabled(),"completed_offscreen_measurement_valid":self.offscreen_benchmark&&!gpu.renderer.opaque_ray_capture_enabled(),"frames":n,"seconds":measure_seconds,"mean_fps":n as f64/measure_seconds,"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"max_frame_ms":times[n-1]*1000.,"minimum_sampled_fps":1./times[n-1],"minimum_120_presented_fps_passed":!self.offscreen_benchmark&&!gpu.renderer.opaque_ray_capture_enabled()&&self.skipped_acquires==0&&(self.simulation_steps-self.measure_simulation_steps)>=2400&&times[n-1]<=1./120.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_shading_mean_ms":if gpu.renderer.gpu_shading_times_ms.is_empty(){None}else{Some([0usize,1].map(|i|gpu.renderer.gpu_shading_times_ms.iter().map(|v|v[i]).sum::<f64>()/gpu.renderer.gpu_shading_times_ms.len() as f64))},"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
+            let crossover=gpu.renderer.refinement_crossover();
+            report["crossover_measurement_valid"]=(self.offscreen_benchmark&&self.render_every_physics_step&&crossover.is_some()).into();
+            if crossover.is_some_and(|mode|mode.mixed()) {report["completed_offscreen_measurement_valid"]=false.into();report["window_measurement_valid"]=false.into();}
             let rendered_cycle = benchmark_cycle::audit(
                 self.offscreen_benchmark,
                 self.render_every_physics_step,
@@ -1512,6 +1519,10 @@ impl App {
                 "measurement_duration_clock":"single_monotonic_elapsed",
                 "frame_sample_clock":if self.offscreen_benchmark {"current_completed_frame"}else{"start_to_start"},
                 "correctness_capture_active":self.hdr_check_dir.is_some(),
+                "refine_crossover_mode":gpu.renderer.refinement_crossover().map(|m|m.key()),
+                "gpu_frame_stamps":gpu.renderer.gpu_frame_stamps,
+                "gpu_completed_samples_ms":gpu.renderer.gpu_times_ms,
+                "measured_frame_ids":(self.frames-n as u64+1..=self.frames).collect::<Vec<_>>(),
                 "completed_frame_samples_seconds":self.durations,
                 "host_completion_intervals_seconds":self.completion_intervals,
                 "host_completion_interval_scope":"successive host observations after exact GPU submission completion; includes event-loop gaps; not scanout",

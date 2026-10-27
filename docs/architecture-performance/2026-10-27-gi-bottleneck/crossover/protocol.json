@@ -1,0 +1,20 @@
+{
+  "declared_before_campaign": true,
+  "candidate": "existing ARCHIVE_REFINE_CACHE; original 80-step ray, 60m reach and 8 refinements, immutable Depth32Float reads",
+  "schedule": [["aa-start","aa"],["ab-0","ab"],["ba-0","ba"],["ab-1","ab"],["ba-1","ba"],["bb-0","bb"],["bb-1","bb"],["aa-end","aa"]],
+  "measured_frames_per_run": 2400,
+  "warmup_frames": 180,
+  "duration_simulation_seconds": 20,
+  "assignment_pattern": "ABBA BAAB; BA complements every frame; AA labels identical baseline pipelines",
+  "gpu_query_association": "producer App frame ordinal captured at submission; never collection frame",
+  "gpu_sample_minimum_per_label": 400,
+  "aa_internal_limits": {"service_p50": 0.10,"service_p99":0.10,"host_completion_p99":0.10,"gpu_mean":0.05},
+  "external_start_end_drift": "reported, not an internal contrast gate; the crossover controls within-run drift",
+  "relative_ci95_upper_limits": {"service_p99":1.05,"host_completion_p99":1.05,"gpu_mean_for_promotion":1.0},
+  "bootstrap": "10000 deterministic route-level resamples of four complementary AB/BA full-route contrasts; not independent-frame resampling",
+  "absolute_gate": "both separate BB single-pipeline full routes: service and host completion p99 <=8.33ms",
+  "quality_gate": "two AA full routes plus BB; same declared native-stage ULP bounds, actual GPU uniforms and exact replay; correctness capture runs excluded from performance",
+  "isolation_requested": false,
+  "discard_or_retry_noisy_runs": false,
+  "scope": "GPU-completed offscreen full frames; no scanout claim"
+}

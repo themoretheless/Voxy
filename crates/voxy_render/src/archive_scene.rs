@@ -1,4 +1,7 @@
 //! Render-ready immutable imported geometry; authoring and physics remain separate owners.
+#[path="archive_refine_crossover.rs"]
+mod refine_crossover;
+pub use refine_crossover::RefineCrossover;
 #[path = "archive_compute_gi.rs"]
 mod compute_gi;
 use crate::{Bc7ImageAsset, ComputeMemoryBudget, ComputeStorage};
@@ -336,6 +339,13 @@ pub struct ArchiveSceneRenderer {
     depth_pipeline: wgpu::RenderPipeline,
     depth_double: wgpu::RenderPipeline,
     timing: Option<Timing>,
+    refine_alternates: Option<[wgpu::RenderPipeline;8]>,
+    refine_crossover: Option<RefineCrossover>,
+    refine_cache_base: bool,
+    benchmark_frame: u64,
+    /// Timestamp producer identity, not its later CPU collection frame.
+    /// Each tuple is (producer ordinal, assigned label B, refinement cache enabled).
+    pub gpu_frame_stamps: Vec<(u64, bool, bool)>,
     pub gpu_times_ms: Vec<f64>,
     /// [opaque shading, transparent shading] GPU intervals, excluding presentation.
     pub gpu_shading_times_ms: Vec<[f64; 2]>,
@@ -875,6 +885,10 @@ impl ArchiveSceneRenderer {
             bind_group_layouts: &[Some(&camera_layout), Some(&material_layout)],
             immediate_size: 0,
         });
+        let refine_crossover = std::env::var("VOXY_STREET_REFINE_CROSSOVER").ok().map(|s|RefineCrossover::parse(&s)).transpose()?;
+        let refine_cache_base=std::env::var_os("VOXY_STREET_REFINE_CACHE").is_some();
+        if refine_crossover.is_some() && (refine_cache_base || ["VOXY_STREET_COMPUTE_GI","VOXY_STREET_PAIRED_DDA","VOXY_STREET_RAY_QUEUE","VOXY_STREET_RAY_HIERARCHY"].iter().any(|key|std::env::var_os(key).is_some())) {return Err(crate::ComputeError::Validation("refinement crossover requires unmodified original raster GI".into()));}
+        let refine_variant=std::cell::Cell::new(refine_cache_base);
         let pipeline = |blend: bool,
                         double: bool,
                         shadow: bool,
@@ -1077,7 +1091,7 @@ impl ArchiveSceneRenderer {
                             ),
                             (
                                 "ARCHIVE_REFINE_CACHE",
-                                if std::env::var_os("VOXY_STREET_REFINE_CACHE").is_some() {
+                                if refine_variant.get() {
                                     1.
                                 } else {
                                     0.
@@ -1111,6 +1125,20 @@ impl ArchiveSceneRenderer {
         let depth_pipeline = pipeline(false, false, false, true, false, false);
         let depth_double = pipeline(false, true, false, true, false, false);
 
+        let refine_alternates=refine_crossover.map(|mode| {
+            refine_variant.set(mode.cache_b());
+            let result = [
+                pipeline(false, false, false, false, false, false),
+                pipeline(false, false, false, false, true, false),
+                pipeline(false, true, false, false, false, false),
+                pipeline(false, true, false, false, true, false),
+                pipeline(true, false, false, false, false, false),
+                pipeline(true, true, false, false, false, false),
+                pipeline(true, false, false, false, false, true),
+                pipeline(true, true, false, false, false, true),
+            ];
+            refine_variant.set(refine_cache_base);result
+        });
         let post_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("archive display transform"),
             source: wgpu::ShaderSource::Wgsl(
@@ -1660,6 +1688,11 @@ impl ArchiveSceneRenderer {
             depth_pipeline,
             depth_double,
             timing,
+            refine_alternates,
+            refine_crossover,
+            refine_cache_base,
+            benchmark_frame: 0,
+            gpu_frame_stamps: Vec::new(),
             gpu_times_ms: Vec::new(),
             gpu_shading_times_ms: Vec::new(),
             gpu_gi_times_ms: Vec::new(),
@@ -2745,9 +2778,13 @@ impl ArchiveSceneRenderer {
     pub fn opaque_ray_queue_proof_buffer(&self) -> Option<&wgpu::Buffer> {
         self.compute_gi.as_ref()?.ray_queue_proof_buffer()
     }
+    /// The app supplies the rendered replay ordinal before encoding its frame.
+    pub fn set_benchmark_frame(&mut self,frame:u64) {self.benchmark_frame=frame;}
+    pub fn refinement_crossover(&self)->Option<RefineCrossover> {self.refine_crossover}
     fn collect_gpu_time_sample(&mut self) {
         if let Some(timing) = &mut self.timing {
             if let Some((ms, gi, ssr)) = timing.collect(&self.device, &self.queue) {
+                self.gpu_frame_stamps.push(timing.frame_stamp);
                 self.gpu_times_ms.push(ms[0]);
                 self.gpu_shading_times_ms.push([ms[1], ms[2]]);
                 self.gpu_gi_times_ms.push(gi);
@@ -3206,7 +3243,7 @@ impl ArchiveSceneRenderer {
             }
             for mesh in order {
                 let material = &self.materials[mesh.material];
-                pass.set_pipeline(
+                let ordinary_pipeline =
                     if transparent && material.fully_covering && transmission_view.is_some() {
                         if material.double_sided {
                             &self.covered_transparent_double
@@ -3222,8 +3259,11 @@ impl ArchiveSceneRenderer {
                             (true, false, _) => &self.transparent,
                             (true, true, _) => &self.transparent_double,
                         }
-                    },
-                );
+                    }
+                ;
+                let alternate=self.refine_crossover.is_some_and(|mode|mode.label_b(self.benchmark_frame));
+                let index=if transparent && material.fully_covering && transmission_view.is_some() {6+usize::from(material.double_sided)} else if transparent {4+usize::from(material.double_sided)} else {2*usize::from(material.double_sided)+usize::from(material.masked)};
+                pass.set_pipeline(if alternate {&self.refine_alternates.as_ref().expect("crossover pipelines")[index]}else{ordinary_pipeline});
                 pass.set_bind_group(1, &material.bind, &[]);
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
                 pass.set_vertex_buffer(1, mesh.visible_instances.slice(..));
@@ -3340,6 +3380,9 @@ impl ArchiveSceneRenderer {
         if time_this_frame {
             let timing = self.timing.as_mut().unwrap();
             timing.pending = true;
+            let label=self.refine_crossover.is_some_and(|mode|mode.label_b(self.benchmark_frame));
+            let cache=self.refine_crossover.map_or(self.refine_cache_base,|mode|mode.cache_for_frame(self.benchmark_frame));
+            timing.frame_stamp=(self.benchmark_frame,label,cache);
             let ready = timing.ready.clone();
             // Resolve only after counter-producing commands have completed;
             // subsequent rendering continues while the readback is pending.
@@ -3362,6 +3405,7 @@ struct Timing {
     readback: ComputeStorage,
     ready: Arc<std::sync::atomic::AtomicU8>,
     pending: bool,
+    frame_stamp:(u64,bool,bool),
 }
 impl Timing {
     fn new(
@@ -3412,6 +3456,7 @@ impl Timing {
             readback,
             ready: Arc::new(std::sync::atomic::AtomicU8::new(0)),
             pending: false,
+            frame_stamp:(0,false,false),
         }))
     }
     fn collect(

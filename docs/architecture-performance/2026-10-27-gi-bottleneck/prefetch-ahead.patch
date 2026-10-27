@@ -1,0 +1,346 @@
+diff --git a/crates/voxy_app/examples/street_walk/main.rs b/crates/voxy_app/examples/street_walk/main.rs
+index 67ef9bad2..b15007fd5 100644
+--- a/crates/voxy_app/examples/street_walk/main.rs
++++ b/crates/voxy_app/examples/street_walk/main.rs
+@@ -1512,6 +1512,7 @@ impl App {
+                 "measurement_duration_clock":"single_monotonic_elapsed",
+                 "frame_sample_clock":if self.offscreen_benchmark {"current_completed_frame"}else{"start_to_start"},
+                 "correctness_capture_active":self.hdr_check_dir.is_some(),
++                "gi_prefetch":std::env::var_os("VOXY_STREET_GI_PREFETCH").is_some(),
+                 "completed_frame_samples_seconds":self.durations,
+                 "host_completion_intervals_seconds":self.completion_intervals,
+                 "host_completion_interval_scope":"successive host observations after exact GPU submission completion; includes event-loop gaps; not scanout",
+diff --git a/crates/voxy_render/src/archive_gi_prefetch.wgsl b/crates/voxy_render/src/archive_gi_prefetch.wgsl
+new file mode 100644
+index 000000000..857626ee4
+--- /dev/null
++++ b/crates/voxy_render/src/archive_gi_prefetch.wgsl
+@@ -0,0 +1,65 @@
++// Four independent original samples in flight; admission stays sequential.
++struct ArchivePrefetch {q:vec4<f32>,uv:vec2<f32>,depth:f32}
++struct ArchiveProbeResult {done:bool,colour:vec4<f32>}
++fn archive_prefetch(origin:vec3<f32>,direction:vec3<f32>,t:f32)->ArchivePrefetch {
++ let q=camera.vp*vec4<f32>(origin+direction*t,1.);
++ let uv=q.xy/q.w*vec2<f32>(0.5,-0.5)+0.5;
++ // Speculative reads are clamped. Original viewport/reach tests precede use.
++ let pixel=clamp(vec2<i32>(uv*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
++ return ArchivePrefetch(q,uv,textureLoad(scene_depth,pixel,0));
++}
++fn archive_admit_prefetch(origin:vec3<f32>,direction:vec3<f32>,history:bool,t:f32,previous:f32,probe:ArchivePrefetch)->ArchiveProbeResult {
++ let reach=60.;let refines=8u;let q=probe.q;let uv=probe.uv;let depth=probe.depth;
++ if t>reach||q.w<=0.||any(uv<=vec2<f32>(0.))||any(uv>=vec2<f32>(1.)){return ArchiveProbeResult(true,vec4<f32>(0.));}
++  if depth<1.&&q.z/q.w>=depth {
++   var lo=previous;var hi=t;
++   for(var refine=0u;refine<refines;refine++) {
++    let mid=(lo+hi)*0.5;let clip=camera.vp*vec4<f32>(origin+direction*mid,1.);
++    let pixel=clamp(vec2<i32>((clip.xy/clip.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
++    let z=textureLoad(scene_depth,pixel,0);
++    if z<1.&&clip.z/clip.w>=z {hi=mid;} else {lo=mid;}
++   }
++   let point=origin+direction*hi;let clip=camera.vp*vec4<f32>(point,1.);
++   let coord=clip.xy/clip.w*vec2<f32>(0.5,-0.5)+0.5;
++   let pixel=clamp(vec2<i32>(coord*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
++   let z=textureLoad(scene_depth,pixel,0);
++   let h=camera.inverse_vp*vec4<f32>((vec2<f32>(pixel)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.),z,1.);
++   if distance(h.xyz/h.w,point)<0.20 {
++    var edge=min(min(coord.x,coord.y),min(1.-coord.x,1.-coord.y));
++    var source=pixel;
++    if history {
++     let hit_world=h.xyz/h.w;
++     let old=camera.previous_vp*vec4<f32>(hit_world,1.);
++     if old.w<=0. {return ArchiveProbeResult(true,vec4<f32>(0.));}
++     let old_uv=old.xy/old.w*vec2<f32>(0.5,-0.5)+0.5;
++     edge=min(edge,min(min(old_uv.x,old_uv.y),min(1.-old_uv.x,1.-old_uv.y)));
++     if edge<=0. {return ArchiveProbeResult(true,vec4<f32>(0.));}
++     source=clamp(vec2<i32>(old_uv*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);
++     let stored_depth=textureLoad(opaque_history_depth,source,0);
++     if stored_depth>=1. {return ArchiveProbeResult(true,vec4<f32>(0.));}
++     let old_ndc=(vec2<f32>(source)+0.5)/camera.viewport.xy*vec2<f32>(2.,-2.)+vec2<f32>(-1.,1.);
++     let recovered=camera.previous_inverse_vp*vec4<f32>(old_ndc,stored_depth,1.);
++     if recovered.w==0. || !archive_history_surface_matches(hit_world,recovered.xyz/recovered.w,old.w,camera.surface.w) {return ArchiveProbeResult(true,vec4<f32>(0.));}
++
++    }
++    let fade=smoothstep(0.,0.04,edge)*(1.-smoothstep(0.75,1.,hi/reach));
++    return ArchiveProbeResult(true,vec4<f32>(textureLoad(background,source,0).rgb/camera.viewport.z,fade));
++   }
++   return ArchiveProbeResult(true,vec4<f32>(0.));
++  }
++ return ArchiveProbeResult(false,vec4<f32>(0.));
++}
++fn archive_gi_prefetched(origin:vec3<f32>,direction:vec3<f32>)->vec4<f32> {
++ if camera.surface.z<0.5 {return vec4<f32>(0.);}
++ var t=0.08;var previous=0.;
++ var probe=archive_prefetch(origin,direction,t);
++ for(var step=0u;step<80u;step++) {
++  let next_t=t+1.*(0.04+0.06*t);
++  let next_probe=archive_prefetch(origin,direction,next_t);
++  let sample=archive_admit_prefetch(origin,direction,true,t,previous,probe);
++  if sample.done {return sample.colour;}
++  previous=t;t=next_t;probe=next_probe;
++  if t>60. {break;}
++ }
++ return vec4<f32>(0.);
++}
+diff --git a/crates/voxy_render/src/archive_gi_prefetch_tests.rs b/crates/voxy_render/src/archive_gi_prefetch_tests.rs
+new file mode 100644
+index 000000000..ac3ee8c4e
+--- /dev/null
++++ b/crates/voxy_render/src/archive_gi_prefetch_tests.rs
+@@ -0,0 +1,212 @@
++//! Check the actual production rejection envelope against all original samples.
++fn function(source: &str, name: &str) -> String {
++    let start = source.find(&format!("fn {name}(")).unwrap();
++    let mut depth = 0;
++    let mut opened = false;
++    for (i, c) in source[start..].char_indices() {
++        if c == '{' {
++            depth += 1;
++            opened = true;
++        }
++        if c == '}' {
++            depth -= 1;
++        }
++        if opened && depth == 0 {
++            return source[start..=start + i].to_owned();
++        }
++    }
++    panic!("unterminated production function")
++}
++
++#[test]
++#[ignore = "native original-query equivalence fixture; VOXY_GI_PREFETCH_PROOF must name a fresh directory"]
++#[cfg(target_os = "macos")]
++fn native_prefetch_matches_original_queries() -> Result<(), Box<dyn std::error::Error>> {
++    use wgpu::util::DeviceExt;
++    let root = std::path::PathBuf::from(
++        std::env::var_os("VOXY_GI_PREFETCH_PROOF").ok_or("proof directory required")?,
++    );
++    std::fs::create_dir(&root)?;
++    let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
++        backends: wgpu::Backends::METAL,
++        ..wgpu::InstanceDescriptor::new_without_display_handle()
++    });
++    let adapter = pollster::block_on(instance.request_adapter(&Default::default()))?;
++    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default()))?;
++    let (width, height) = (259u32, 131u32);
++    let mut state = 0x7167_924bu32;
++    let mut next = || {
++        state = state.wrapping_mul(1664525).wrapping_add(1013904223);
++        (state >> 8) as f32 / 16777216.
++    };
++    let depths: Vec<f32> = (0..width * height)
++        .map(|i| {
++            let x = i % width;
++            let y = i / width;
++            if y < height / 2 {
++                1.
++            } else {
++                0.2 + ((x / 16 + y / 8) % 17) as f32 / 22.
++            }
++        })
++        .collect();
++    let depth = device.create_texture(&wgpu::TextureDescriptor {
++        label: Some("original level-zero depths"),
++        size: wgpu::Extent3d {
++            width,
++            height,
++            depth_or_array_layers: 1,
++        },
++        mip_level_count: 1,
++        sample_count: 1,
++        dimension: wgpu::TextureDimension::D2,
++        format: wgpu::TextureFormat::R32Float,
++        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
++        view_formats: &[],
++    });
++    queue.write_texture(
++        depth.as_image_copy(),
++        bytemuck::cast_slice(&depths),
++        wgpu::TexelCopyBufferLayout {
++            offset: 0,
++            bytes_per_row: Some(width * 4),
++            rows_per_image: Some(height),
++        },
++        depth.size(),
++    );
++    let (mut w, mut h) = (
++        width.div_ceil(8).next_power_of_two(),
++        height.div_ceil(8).next_power_of_two(),
++    );
++    let bounds = device.create_texture(&wgpu::TextureDescriptor {
++        label: Some("independent minimum-depth hierarchy"),
++        size: wgpu::Extent3d {
++            width: w,
++            height: h,
++            depth_or_array_layers: 1,
++        },
++        mip_level_count: w.max(h).ilog2() + 1,
++        sample_count: 1,
++        dimension: wgpu::TextureDimension::D2,
++        format: wgpu::TextureFormat::Rg32Float,
++        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
++        view_formats: &[],
++    });
++    let mut values = vec![[1f32, 0.]; (w * h) as usize];
++    for y in 0..h {
++        for x in 0..w {
++            for dy in 0..8 {
++                for dx in 0..8 {
++                    let z = depths[((y * 8 + dy).min(height - 1) * width
++                        + (x * 8 + dx).min(width - 1)) as usize];
++                    values[(y * w + x) as usize][0] = values[(y * w + x) as usize][0].min(z);
++                }
++            }
++        }
++    }
++    let mut level = 0;
++    loop {
++        queue.write_texture(
++            wgpu::TexelCopyTextureInfo {
++                texture: &bounds,
++                mip_level: level,
++                origin: wgpu::Origin3d::ZERO,
++                aspect: wgpu::TextureAspect::All,
++            },
++            bytemuck::cast_slice(&values),
++            wgpu::TexelCopyBufferLayout {
++                offset: 0,
++                bytes_per_row: Some(w * 8),
++                rows_per_image: Some(h),
++            },
++            wgpu::Extent3d {
++                width: w,
++                height: h,
++                depth_or_array_layers: 1,
++            },
++        );
++        if w == 1 && h == 1 {
++            break;
++        }
++        let (nw, nh) = ((w / 2).max(1), (h / 2).max(1));
++        let mut reduced = vec![[1., 0.]; (nw * nh) as usize];
++        for y in 0..nh {
++            for x in 0..nw {
++                for dy in 0..2 {
++                    for dx in 0..2 {
++                        reduced[(y * nw + x) as usize][0] = f32::min(
++                            reduced[(y * nw + x) as usize][0],
++                            values
++                                [((y * 2 + dy).min(h - 1) * w + (x * 2 + dx).min(w - 1)) as usize]
++                                [0],
++                        );
++                    }
++                }
++            }
++        }
++        values = reduced;
++        w = nw;
++        h = nh;
++        level += 1;
++    }
++
++    const COUNT:u32=65536;
++    let vp=glam::Mat4::perspective_rh(1.5,width as f32/height as f32,0.1,200.);
++    let inverse=vp.inverse();
++    let inputs:Vec<[f32;8]>=(0..COUNT).map(|i| {
++        let z=if i%4==0 {-0.12}else{-0.11-next()*0.9};
++        let p=glam::Vec3::new((next()-0.5)*(-z)*2.,(next()-0.5)*(-z),z);
++        let d=glam::Vec3::new((next()-0.5)*2.,(next()-0.5)*2.,if i%11==0 {1.}else{-1.}).normalize();
++        [p.x,p.y,p.z,0.,d.x,d.y,d.z,0.]
++    }).collect();
++    let radiance:Vec<[f32;4]>=(0..width*height).map(|i|[i as f32*0.125,(i%71) as f32*0.25,(i%143) as f32*0.0625,1.]).collect();
++    let colour=device.create_texture(&wgpu::TextureDescriptor {label:None,size:depth.size(),mip_level_count:1,sample_count:1,dimension:wgpu::TextureDimension::D2,format:wgpu::TextureFormat::Rgba32Float,usage:wgpu::TextureUsages::TEXTURE_BINDING|wgpu::TextureUsages::COPY_DST,view_formats:&[]});
++    queue.write_texture(colour.as_image_copy(),bytemuck::cast_slice(&radiance),wgpu::TexelCopyBufferLayout {offset:0,bytes_per_row:Some(width*16),rows_per_image:Some(height)},colour.size());
++    let production=include_str!("archive_scene.wgsl");
++    let original=function(production,"screen_reflection_original");
++    let helper=include_str!("archive_gi_prefetch.wgsl");
++    let mut query=format!("{}\n{}\n{}",include_str!("archive_history.wgsl"),original,helper);
++    query=query.replace("opaque_history_depth","scene_depth");
++    for p in ["ray_pixel","pixel","source"] {query=query.replace(&format!("textureLoad(scene_depth,{p},0)"),&format!("textureLoad(scene_depth,{p},0).x"));}
++    let code=format!("{}\n{}\n{}",r#"
++const ARCHIVE_REFINE_CACHE:bool=false;
++struct Camera {vp:mat4x4<f32>,inverse_vp:mat4x4<f32>,previous_vp:mat4x4<f32>,previous_inverse_vp:mat4x4<f32>,viewport:vec4<f32>,surface:vec4<f32>}
++var<private> camera:Camera;
++struct Input {origin:vec4<f32>,direction:vec4<f32>}
++struct Result {a:vec4<f32>,b:vec4<f32>}
++@group(0) @binding(0) var scene_depth:texture_2d<f32>;
++@group(0) @binding(1) var ray_depth_bounds:texture_2d<f32>;
++@group(0) @binding(2) var background:texture_2d<f32>;
++@group(0) @binding(3) var<storage,read> inputs:array<Input>;
++@group(0) @binding(4) var<storage,read_write> results:array<Result>;
++@group(0) @binding(5) var<uniform> matrices:array<mat4x4<f32>,2>;
++"#,query,r#"
++@compute @workgroup_size(64) fn check(@builtin(global_invocation_id) id:vec3<u32>) {
++ if id.x>=arrayLength(&inputs){return;}
++ camera=Camera(matrices[0],matrices[1],matrices[0],matrices[1],vec4<f32>(259.,131.,1.,1.),vec4<f32>(0.,0.,1.,1.5/131.));
++ let p=inputs[id.x].origin.xyz;let d=inputs[id.x].direction.xyz;
++ results[id.x]=Result(screen_reflection_original(p,d,true,60.,1.,8u,true),archive_gi_prefetched(p,d));
++}
++"#);
++    let module=device.create_shader_module(wgpu::ShaderModuleDescriptor {label:None,source:wgpu::ShaderSource::Wgsl(code.clone().into())});
++    let pipeline=device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {label:None,layout:None,module:&module,entry_point:Some("check"),compilation_options:Default::default(),cache:None});
++    let input=device.create_buffer_init(&wgpu::util::BufferInitDescriptor {label:None,contents:bytemuck::cast_slice(&inputs),usage:wgpu::BufferUsages::STORAGE});
++    let matrix=device.create_buffer_init(&wgpu::util::BufferInitDescriptor {label:None,contents:bytemuck::cast_slice(&[vp.to_cols_array(),inverse.to_cols_array()]),usage:wgpu::BufferUsages::UNIFORM});
++    let bytes=u64::from(COUNT)*32;
++    let output=device.create_buffer(&wgpu::BufferDescriptor {label:None,size:bytes,usage:wgpu::BufferUsages::STORAGE|wgpu::BufferUsages::COPY_SRC,mapped_at_creation:false});
++    let read=device.create_buffer(&wgpu::BufferDescriptor {label:None,size:bytes,usage:wgpu::BufferUsages::COPY_DST|wgpu::BufferUsages::MAP_READ,mapped_at_creation:false});
++    let dv=depth.create_view(&Default::default());let bv=bounds.create_view(&Default::default());let cv=colour.create_view(&Default::default());
++    let group=device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&pipeline.get_bind_group_layout(0),entries:&[
++        wgpu::BindGroupEntry {binding:0,resource:wgpu::BindingResource::TextureView(&dv)},wgpu::BindGroupEntry {binding:1,resource:wgpu::BindingResource::TextureView(&bv)},wgpu::BindGroupEntry {binding:2,resource:wgpu::BindingResource::TextureView(&cv)},wgpu::BindGroupEntry {binding:3,resource:input.as_entire_binding()},wgpu::BindGroupEntry {binding:4,resource:output.as_entire_binding()},wgpu::BindGroupEntry {binding:5,resource:matrix.as_entire_binding()}]});
++    let mut encoder=device.create_command_encoder(&Default::default());
++    {let mut pass=encoder.begin_compute_pass(&Default::default());pass.set_pipeline(&pipeline);pass.set_bind_group(0,&group,&[]);pass.dispatch_workgroups(COUNT.div_ceil(64),1,1);}
++    encoder.copy_buffer_to_buffer(&output,0,&read,0,bytes);let submitted=queue.submit([encoder.finish()]);
++    let (tx,rx)=std::sync::mpsc::channel();read.slice(..).map_async(wgpu::MapMode::Read,move|r|{let _=tx.send(r);});device.poll(wgpu::PollType::Wait {submission_index:Some(submitted),timeout:None})?;rx.recv()??;
++    let mapped=read.slice(..).get_mapped_range()?;let values:&[[f32;8]]=bytemuck::cast_slice(&mapped);
++    let hits=values.iter().filter(|v|v[3]>0.).count();
++    let mut different=0;let mut max_error=0f32;let mut first=None;
++    for (i,v) in values.iter().enumerate(){for c in 0..4 {if v[c].to_bits()!=v[c+4].to_bits(){different+=1;max_error=max_error.max((v[c]-v[c+4]).abs());if first.is_none(){first=Some((i,c,*v));}}}}
++    std::fs::write(root.join("oracle.wgsl"),code)?;
++    std::fs::write(root.join("proof.json"),serde_json::to_vec_pretty(&serde_json::json!({"rays":COUNT,"original_hits":hits,"different_float32_words":different,"max_absolute_error":max_error,"first_difference":first,"scope":"same production query functions over R32Float depth fixture; scene Depth32Float and fragment quality require separate checks","adapter":format!("{:?}",adapter.get_info()),"input_blake3":blake3::hash(bytemuck::cast_slice(&inputs)).to_hex().to_string()}))?)?;
++    assert!(hits>100);assert_eq!(different,0);Ok(())
++}
+diff --git a/crates/voxy_render/src/archive_scene.rs b/crates/voxy_render/src/archive_scene.rs
+index 596ab1173..73793151b 100644
+--- a/crates/voxy_render/src/archive_scene.rs
++++ b/crates/voxy_render/src/archive_scene.rs
+@@ -944,6 +944,7 @@ impl ArchiveSceneRenderer {
+                     }),
+                     compilation_options: wgpu::PipelineCompilationOptions {
+                         constants: &[
++                            ("ARCHIVE_GI_PREFETCH",if std::env::var_os("VOXY_STREET_GI_PREFETCH").is_some(){1.}else{0.}),
+                             (
+                                 "ARCHIVE_DDA_INTERVAL_CACHE",
+                                 if std::env::var_os("VOXY_STREET_DDA_INTERVAL_CACHE").is_some() {
+@@ -3624,6 +3625,7 @@ fn effects_off() -> f32 {
+ #[doc(hidden)]
+ pub fn archive_shader_source() -> String {
+     let traversal = [
++        include_str!("archive_gi_prefetch.wgsl"),
+         include_str!("archive_depth_dda_paired.wgsl"),
+         include_str!("archive_depth_hierarchy.wgsl"),
+     ]
+@@ -3695,3 +3697,7 @@ mod vertex_invariance_tests;
+ #[cfg(test)]
+ #[path = "archive_derivative_control_flow_tests.rs"]
+ mod derivative_control_flow_tests;
++
++#[cfg(test)]
++#[path="archive_gi_prefetch_tests.rs"]
++mod prefetch_tests;
+diff --git a/crates/voxy_render/src/archive_scene.wgsl b/crates/voxy_render/src/archive_scene.wgsl
+index 8f469bda6..c741cc16d 100644
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -1,3 +1,4 @@
++override ARCHIVE_GI_PREFETCH:bool=false;
+ // Qualification-only injection of the existing unsupported-projection fallback.
+ override ARCHIVE_RAY_FORCE_FALLBACK:bool=false;
+ override ARCHIVE_COMPUTE_SSR:bool=false;
+@@ -389,6 +390,7 @@ fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
+  if fx_off(1u) {return vec4<f32>(0.);}
+  let direction=archive_gi_direction(pixel,n);
+  // Full-distance, full-refinement march; probes supplement offscreen light.
++ if ARCHIVE_GI_PREFETCH&&!ARCHIVE_PAIRED_DDA&&!ARCHIVE_REFINE_CACHE {return archive_gi_prefetched(p+n*0.05,direction);}
+  return screen_reflection(p+n*0.05,direction,true,60.,1.,8u,ARCHIVE_RAY_BOUNDS);
+ }
+ fn archive_gi_direction(pixel:vec2<f32>,n:vec3<f32>)->vec3<f32>{

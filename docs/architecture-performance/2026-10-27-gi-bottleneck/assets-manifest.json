@@ -1,0 +1,97 @@
+{
+  "scope": "read-only APFS copy-on-write asset snapshot for subsequent campaigns",
+  "source": "/Users/themoretheless/Documents/Sources/voxy/assets/environments/original-street/materials",
+  "frozen": "/tmp/voxy-street-materials-frozen-20261027-gi",
+  "files": [
+    {
+      "name": "bark_willow-Diffuse.png",
+      "bytes": 88364007,
+      "sha256": "007e810e496e1b9d23510f198a7bb448cc5548feb7a997d0c80ec585a361e4f9",
+      "source_mtime_ns": 1792055393507723751
+    },
+    {
+      "name": "bark_willow-arm.png",
+      "bytes": 67434915,
+      "sha256": "3b4b8717ac5e3824ae4c039b06e2203b3e0cc8b163271909ca5ebae29e929b34",
+      "source_mtime_ns": 1792055489796963598
+    },
+    {
+      "name": "bark_willow-files.json",
+      "bytes": 33740,
+      "sha256": "5a83d281276fe1f088857a59b00eb16bb350e0af6995e1485fc24fb5b898219b",
+      "source_mtime_ns": 1792055052522762413
+    },
+    {
+      "name": "bark_willow-nor_gl.png",
+      "bytes": 94860029,
+      "sha256": "87d29327e12fee05c86169690b9bcd2026d23d27e3844d166bf4f9937600a69f",
+      "source_mtime_ns": 1792055477798179002
+    },
+    {
+      "name": "brick_wall_001-Diffuse.png",
+      "bytes": 23657719,
+      "sha256": "2f0bdbb4926cbd47c789029de9a14c06b77107731e38edbe94a01425679111dd",
+      "source_mtime_ns": 1792055219319667235
+    },
+    {
+      "name": "brick_wall_001-arm.png",
+      "bytes": 18064983,
+      "sha256": "462f31e50926592679dd740105c9b09185e91c4d515b4196b4481b2b54c6ca59",
+      "source_mtime_ns": 1792055278143761519
+    },
+    {
+      "name": "brick_wall_001-files.json",
+      "bytes": 35036,
+      "sha256": "cff64a9eedc1f7ab28bee730bd34946ba29df564af6a839ebc0181ee42f107e3",
+      "source_mtime_ns": 1792055052367982196
+    },
+    {
+      "name": "brick_wall_001-nor_gl.png",
+      "bytes": 38665971,
+      "sha256": "001d13d7010234aa1ff59e18c7d08635e8ecc06d3da2515d624bdbf6d3734701",
+      "source_mtime_ns": 1792055277847314472
+    },
+    {
+      "name": "daylight-provenance.json",
+      "bytes": 359,
+      "sha256": "b736d0263a78627ddcc9d3fbd5455c2753be7dca25b6d1d7e596c6b5a0955340",
+      "source_mtime_ns": 1792055889415919093
+    },
+    {
+      "name": "daylight.hdr",
+      "bytes": 20674857,
+      "sha256": "3061c00a16ecae748e84fd6c44c04804f539c118bb66325db858bad87b11bf88",
+      "source_mtime_ns": 1792055889337025867
+    },
+    {
+      "name": "plastered_stone_wall-Diffuse.png",
+      "bytes": 89436414,
+      "sha256": "ff3fd8ffcf9e78effc2127dbd2e5f4fead24ae4a6969a774af8e3d06024f9e8f",
+      "source_mtime_ns": 1792055240534962022
+    },
+    {
+      "name": "plastered_stone_wall-arm.png",
+      "bytes": 66896725,
+      "sha256": "a67e2ead1826787f330c25f07d255cb9e5702a210baef84faa8f271dfe0b4c75",
+      "source_mtime_ns": 1792055162490577681
+    },
+    {
+      "name": "plastered_stone_wall-files.json",
+      "bytes": 46025,
+      "sha256": "97991a21471d5362ceffdfe2deb70599d50172f25e9cb6c5d812a27f15ba9c57",
+      "source_mtime_ns": 1792055052199720002
+    },
+    {
+      "name": "plastered_stone_wall-nor_gl.png",
+      "bytes": 99608945,
+      "sha256": "656e41c3d3074da817d36988592bc4af466fd35c8c94e603595fd8461a763ed4",
+      "source_mtime_ns": 1792055244363793197
+    },
+    {
+      "name": "provenance.json",
+      "bytes": 3950,
+      "sha256": "23aa6706317205ad3fd03d1e1bd30eb6196e1180105cbce0c178a90e42c13d79",
+      "source_mtime_ns": 1792055490121641693
+    }
+  ]
+}

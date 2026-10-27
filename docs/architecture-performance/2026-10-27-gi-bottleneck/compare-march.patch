@@ -1,0 +1,312 @@
+diff --git a/crates/voxy_app/examples/street_walk/main.rs b/crates/voxy_app/examples/street_walk/main.rs
+index 67ef9bad2..64c41b077 100644
+--- a/crates/voxy_app/examples/street_walk/main.rs
++++ b/crates/voxy_app/examples/street_walk/main.rs
+@@ -1512,6 +1512,8 @@ impl App {
+                 "measurement_duration_clock":"single_monotonic_elapsed",
+                 "frame_sample_clock":if self.offscreen_benchmark {"current_completed_frame"}else{"start_to_start"},
+                 "correctness_capture_active":self.hdr_check_dir.is_some(),
++                "gi_compare_depth":std::env::var_os("VOXY_STREET_GI_COMPARE_DEPTH").is_some(),
++                "gi_compare_depth_mode":"march-and-refinement",
+                 "completed_frame_samples_seconds":self.durations,
+                 "host_completion_intervals_seconds":self.completion_intervals,
+                 "host_completion_interval_scope":"successive host observations after exact GPU submission completion; includes event-loop gaps; not scanout",
+diff --git a/crates/voxy_render/src/archive_gi_compare_depth.wgsl b/crates/voxy_render/src/archive_gi_compare_depth.wgsl
+new file mode 100644
+index 000000000..e47139d00
+--- /dev/null
++++ b/crates/voxy_render/src/archive_gi_compare_depth.wgsl
+@@ -0,0 +1,9 @@
++
++// Exact nearest comparison preserves all original binary-search decisions.
++@group(2) @binding(11) var gi_depth_compare:sampler_comparison;
++fn archive_gi_depth_crossed(pixel:vec2<i32>,reference:f32)->bool {
++ let uv=(vec2<f32>(pixel)+0.5)/camera.viewport.xy;
++ let crossed=textureSampleCompareLevel(scene_depth,gi_depth_compare,uv,reference)>0.;
++ // A clear-depth texel must remain a miss even beyond the far clip plane.
++ return crossed&&(reference<1.||textureLoad(scene_depth,pixel,0)<1.);
++}
+diff --git a/crates/voxy_render/src/archive_gi_compare_depth_tests.rs b/crates/voxy_render/src/archive_gi_compare_depth_tests.rs
+new file mode 100644
+index 000000000..092cf99fd
+--- /dev/null
++++ b/crates/voxy_render/src/archive_gi_compare_depth_tests.rs
+@@ -0,0 +1,184 @@
++#[test]
++#[cfg(target_os = "macos")]
++#[ignore = "native Metal depth-copy oracle; VOXY_COMPARE_DEPTH_PROOF must be a fresh directory"]
++fn native_comparison_matches_all_original_predicates() -> Result<(), Box<dyn std::error::Error>> {
++    let root = std::path::PathBuf::from(
++        std::env::var_os("VOXY_COMPARE_DEPTH_PROOF").ok_or("proof directory required")?,
++    );
++    std::fs::create_dir(&root)?;
++    let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
++        backends: wgpu::Backends::METAL,
++        ..wgpu::InstanceDescriptor::new_without_display_handle()
++    });
++    let adapter = pollster::block_on(instance.request_adapter(&Default::default()))?;
++    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default()))?;
++    let (width, height) = (1920, 1080);
++    let depth = device.create_texture(&wgpu::TextureDescriptor {
++        label: Some("native raster depth words"),
++        size: wgpu::Extent3d {
++            width,
++            height,
++            depth_or_array_layers: 1,
++        },
++        mip_level_count: 1,
++        sample_count: 1,
++        dimension: wgpu::TextureDimension::D2,
++        format: wgpu::TextureFormat::Depth32Float,
++        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::RENDER_ATTACHMENT,
++        view_formats: &[],
++    });
++    let source = r"
++@vertex fn vertex(@builtin(vertex_index) i:u32)->@builtin(position) vec4<f32>{
++ let p=array<vec2<f32>,3>(vec2<f32>(-1.,-1.),vec2<f32>(3.,-1.),vec2<f32>(-1.,3.));return vec4<f32>(p[i],0.5,1.);
++}
++@fragment fn fragment(@builtin(position) p:vec4<f32>)->@builtin(frag_depth) f32{
++ let index=u32(p.x)+u32(p.y)*1920u;
++ if index%6u==0u{return 0.;}if index%6u==1u{return 1.;}if index%6u==2u{return bitcast<f32>(0x80000000u);}
++ return bitcast<f32>(0x3f000000u|((index*16777619u)&0x007fffffu));
++}
++@group(0) @binding(0) var original:texture_depth_2d;
++@group(0) @binding(1) var comparison:sampler_comparison;
++@group(0) @binding(2) var<storage,read_write> result:array<vec2<u32>>;
++@compute @workgroup_size(8,8) fn compare(@builtin(global_invocation_id) id:vec3<u32>){
++ if any(id.xy>=textureDimensions(original)){return;}
++ let p=vec2<i32>(id.xy);let index=id.x+id.y*1920u;
++ let z=textureLoad(original,p,0);let bits=bitcast<u32>(z);
++ let references=array<f32,11>(-0.,0.,1.,bitcast<f32>(max(bits,1u)-1u),z,bitcast<f32>(bits+1u),1.1,-0.1,bitcast<f32>(0x7fc00000u),bitcast<f32>(0x7f800000u),bitcast<f32>(0xff800000u));
++ var mask=0u;
++ for(var c=0u;c<11u;c++) {let expected=z<1.&&references[c]>=z;let actual=archive_gi_depth_crossed(p,references[c]);if expected!=actual {mask|=1u<<c;}}
++ result[index]=vec2<u32>(mask,bits);
++}
++
++";
++    let helper=include_str!("archive_gi_compare_depth.wgsl").replace("@group(2) @binding(11) var gi_depth_compare:sampler_comparison;","").replace("scene_depth","original").replace("gi_depth_compare","comparison").replace("camera.viewport.xy","vec2<f32>(textureDimensions(original))");
++    let source=format!("{source}\n{helper}");
++    let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
++        label: None,
++        source: wgpu::ShaderSource::Wgsl(source.clone().into()),
++    });
++    let raster = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
++        label: None,
++        layout: None,
++        vertex: wgpu::VertexState {
++            module: &shader,
++            entry_point: Some("vertex"),
++            compilation_options: Default::default(),
++            buffers: &[],
++        },
++        primitive: Default::default(),
++        depth_stencil: Some(wgpu::DepthStencilState {
++            format: wgpu::TextureFormat::Depth32Float,
++            depth_write_enabled: Some(true),
++            depth_compare: Some(wgpu::CompareFunction::Always),
++            stencil: Default::default(),
++            bias: Default::default(),
++        }),
++        multisample: Default::default(),
++        fragment: Some(wgpu::FragmentState {
++            module: &shader,
++            entry_point: Some("fragment"),
++            compilation_options: Default::default(),
++            targets: &[],
++        }),
++        multiview_mask: None,
++        cache: None,
++    });
++    let compare = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
++        label: None,
++        layout: None,
++        module: &shader,
++        entry_point: Some("compare"),
++        compilation_options: Default::default(),
++        cache: None,
++    });
++    let size = u64::from(width) * u64::from(height) * 8;
++    let result = device.create_buffer(&wgpu::BufferDescriptor {
++        label: None,
++        size,
++        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
++        mapped_at_creation: false,
++    });
++    let read = device.create_buffer(&wgpu::BufferDescriptor {
++        label: None,
++        size,
++        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
++        mapped_at_creation: false,
++    });
++    let depth_view = depth.create_view(&Default::default());
++    let sampler=device.create_sampler(&wgpu::SamplerDescriptor {compare:Some(wgpu::CompareFunction::GreaterEqual),..Default::default()});
++    let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
++        label: None,
++        layout: &compare.get_bind_group_layout(0),
++        entries: &[
++            wgpu::BindGroupEntry {
++                binding: 0,
++                resource: wgpu::BindingResource::TextureView(&depth_view),
++            },
++            wgpu::BindGroupEntry {
++                binding: 1,
++                resource: wgpu::BindingResource::Sampler(&sampler),
++            },
++            wgpu::BindGroupEntry {
++                binding: 2,
++                resource: result.as_entire_binding(),
++            },
++        ],
++    });
++    let mut encoder = device.create_command_encoder(&Default::default());
++    {
++        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
++            label: None,
++            color_attachments: &[],
++            depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
++                view: &depth_view,
++                depth_ops: Some(wgpu::Operations {
++                    load: wgpu::LoadOp::Clear(1.),
++                    store: wgpu::StoreOp::Store,
++                }),
++                stencil_ops: None,
++            }),
++            ..Default::default()
++        });
++        pass.set_pipeline(&raster);
++        pass.draw(0..3, 0..1);
++    }
++    {
++        let mut pass = encoder.begin_compute_pass(&Default::default());
++        pass.set_pipeline(&compare);
++        pass.set_bind_group(0, &group, &[]);
++        pass.dispatch_workgroups(width.div_ceil(8), height.div_ceil(8), 1);
++    }
++    encoder.copy_buffer_to_buffer(&result, 0, &read, 0, size);
++    let submission = queue.submit([encoder.finish()]);
++    device.poll(wgpu::PollType::Wait {
++        submission_index: Some(submission),
++        timeout: None,
++    })?;
++    let (send, receive) = std::sync::mpsc::channel();
++    read.slice(..).map_async(wgpu::MapMode::Read, move |r| {
++        send.send(r).unwrap();
++    });
++    device.poll(wgpu::PollType::wait_indefinitely())?;
++    receive.recv()??;
++    let bytes = read.slice(..).get_mapped_range()?;
++    let pairs: &[[u32; 2]] = bytemuck::cast_slice(&bytes);
++    let differences = pairs.iter().filter(|p| p[0] != 0).count();
++    let unique = pairs
++        .iter()
++        .map(|p| p[1])
++        .collect::<std::collections::HashSet<_>>()
++        .len();
++    std::fs::write(root.join("oracle.wgsl"),&source)?;
++    std::fs::write(
++        root.join("proof.json"),
++        serde_json::to_vec_pretty(
++            &serde_json::json!({"pixels":width*height,"production_helper_blake3":blake3::hash(include_bytes!("archive_gi_compare_depth.wgsl")).to_hex().to_string(),"predicate_mismatch_pixels":differences,"predicates_tested":width*height*11,"unique_depth_values":unique,"format":"Depth32Float","mip_levels":1,"native_pair_blake3":blake3::hash(&bytes).to_hex().to_string(),"adapter":format!("{:?}",adapter.get_info())}),
++        )?,
++    )?;
++    assert!(
++        unique > 1000,
++        "the source must contain actual varying native depth"
++    );
++    assert_eq!(differences, 0);
++    Ok(())
++}
+diff --git a/crates/voxy_render/src/archive_scene.rs b/crates/voxy_render/src/archive_scene.rs
+index 596ab1173..46a22d55e 100644
+--- a/crates/voxy_render/src/archive_scene.rs
++++ b/crates/voxy_render/src/archive_scene.rs
+@@ -757,9 +757,15 @@ impl ArchiveSceneRenderer {
+             label: Some("authored four-map PBR material"),
+             entries: &material_entries,
+         });
++        let compare_depth = std::env::var_os("VOXY_STREET_GI_COMPARE_DEPTH").is_some();
++        if compare_depth && std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some() {
++            return Err(crate::ComputeError::Validation("GI comparison experiment requires original raster GI".into()));
++        }
++        let gi_comparison = device.create_sampler(&wgpu::SamplerDescriptor {label:Some("exact nearest GI depth comparison"),compare:Some(wgpu::CompareFunction::GreaterEqual),mag_filter:wgpu::FilterMode::Nearest,min_filter:wgpu::FilterMode::Nearest,mipmap_filter:wgpu::MipmapFilterMode::Nearest,..Default::default()});
+         let frame_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+             label: Some("opaque transmission and sun shadows"),
+             entries: &[
++                wgpu::BindGroupLayoutEntry {binding:11,visibility:wgpu::ShaderStages::FRAGMENT,ty:wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison),count:None},
+                 texture_entry(0, false),
+                 wgpu::BindGroupLayoutEntry {
+                     binding: 9,
+@@ -842,7 +848,7 @@ impl ArchiveSceneRenderer {
+         init_trace("scene_shader_begin");
+         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+             label: Some("archive PBR"),
+-            source: wgpu::ShaderSource::Wgsl(archive_shader_source().into()),
++            source: wgpu::ShaderSource::Wgsl(archive_shader_source_compare_depth(compare_depth).into()),
+         });
+         init_trace("scene_shader_ready");
+         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+@@ -1524,6 +1530,7 @@ impl ArchiveSceneRenderer {
+             label: None,
+             layout: &frame_layout,
+             entries: &[
++                wgpu::BindGroupEntry {binding:11,resource:wgpu::BindingResource::Sampler(&gi_comparison)},
+                 wgpu::BindGroupEntry {
+                     binding: 0,
+                     resource: wgpu::BindingResource::TextureView(
+@@ -3695,3 +3702,56 @@ mod vertex_invariance_tests;
+ #[cfg(test)]
+ #[path = "archive_derivative_control_flow_tests.rs"]
+ mod derivative_control_flow_tests;
++
++/// Private experimental specialization keeps other shader owners unchanged.
++fn archive_shader_source_compare_depth(enabled:bool)->String {
++    let mut source=archive_shader_source();
++    if !enabled {return source;}
++    let start=source.find("fn screen_reflection_original(").expect("original query");
++    let end=source[start..].find("// Screen-space one-bounce GI").expect("original query end")+start;
++    let mut query=source[start..end].replace("fn screen_reflection_original(","fn screen_reflection_compare_depth(");
++    let refine=r#"    var z=1.;
++    if bounded && ARCHIVE_REFINE_CACHE {
++     if any(pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,pixel,0);cached_pixel=pixel;}
++     z=cached_depth;
++    } else {z=textureLoad(scene_depth,pixel,0);}
++    if z<1.&&clip.z/clip.w>=z {hi=mid;} else {lo=mid;}"#;
++    assert!(query.contains(refine));
++    query=query.replacen(refine,"    if archive_gi_depth_crossed(pixel,clip.z/clip.w) {hi=mid;} else {lo=mid;}",1);
++    let march=r#"  var depth=1.;
++  if bounded {
++   let tile=ray_pixel/8;
++   if any(tile!=cached_tile) {cached_lower=textureLoad(ray_depth_bounds,tile,0).x;cached_tile=tile;}
++   if q.z/q.w>=cached_lower {
++    if any(ray_pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,ray_pixel,0);cached_pixel=ray_pixel;}
++    depth=cached_depth;
++   }
++  } else {depth=textureLoad(scene_depth,ray_pixel,0);}
++  if depth<1.&&q.z/q.w>=depth {"#;
++    assert!(query.contains(march));
++    query=query.replacen(march,r#"  var crossed=false;
++  if bounded {
++   let tile=ray_pixel/8;
++   if any(tile!=cached_tile) {cached_lower=textureLoad(ray_depth_bounds,tile,0).x;cached_tile=tile;}
++   if q.z/q.w>=cached_lower {crossed=archive_gi_depth_crossed(ray_pixel,q.z/q.w);}
++  } else {crossed=archive_gi_depth_crossed(ray_pixel,q.z/q.w);}
++  if crossed {"#,1);
++    let original=" return screen_reflection(p+n*0.05,direction,true,60.,1.,8u,ARCHIVE_RAY_BOUNDS);";
++    assert!(source.contains(original));
++    source=source.replacen(original," if !ARCHIVE_PAIRED_DDA&&!ARCHIVE_REFINE_CACHE {return screen_reflection_compare_depth(p+n*0.05,direction,true,60.,1.,8u,ARCHIVE_RAY_BOUNDS); }\n return screen_reflection(p+n*0.05,direction,true,60.,1.,8u,ARCHIVE_RAY_BOUNDS);",1);
++    source.push_str(include_str!("archive_gi_compare_depth.wgsl"));source.push_str(&query);source
++}
++#[cfg(test)]
++mod gi_compare_depth_tests {
++    #[test]
++    fn native_specialization_validates_and_default_module_is_unchanged() {
++        assert_eq!(super::archive_shader_source_compare_depth(false),super::archive_shader_source());
++        let source=super::archive_shader_source_compare_depth(true);
++        let module=naga::front::wgsl::parse_str(&source).unwrap();
++        naga::valid::Validator::new(naga::valid::ValidationFlags::all(),naga::valid::Capabilities::all()).validate(&module).unwrap();
++    }
++}
++
++#[cfg(test)]
++#[path="archive_gi_compare_depth_tests.rs"]
++mod compare_depth_native_tests;
