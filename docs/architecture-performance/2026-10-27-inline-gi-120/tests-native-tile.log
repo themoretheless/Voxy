@@ -1,0 +1,110 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_render)
+error: float literals must have an integer part
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:18:44
+   |
+18 |         let offset=glam::Vec3::new((next()-.5)*shift,(next()-.5)*shift,(next()-.5)*shift);
+   |                                            ^^
+   |
+help: must have an integer part
+   |
+18 |         let offset=glam::Vec3::new((next()-0.5)*shift,(next()-.5)*shift,(next()-.5)*shift);
+   |                                            +
+
+error: float literals must have an integer part
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:18:62
+   |
+18 |         let offset=glam::Vec3::new((next()-.5)*shift,(next()-.5)*shift,(next()-.5)*shift);
+   |                                                              ^^
+   |
+help: must have an integer part
+   |
+18 |         let offset=glam::Vec3::new((next()-.5)*shift,(next()-0.5)*shift,(next()-.5)*shift);
+   |                                                              +
+
+error: float literals must have an integer part
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:18:80
+   |
+18 |         let offset=glam::Vec3::new((next()-.5)*shift,(next()-.5)*shift,(next()-.5)*shift);
+   |                                                                                ^^
+   |
+help: must have an integer part
+   |
+18 |         let offset=glam::Vec3::new((next()-.5)*shift,(next()-.5)*shift,(next()-0.5)*shift);
+   |                                                                                +
+
+error: float literals must have an integer part
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:19:147
+   |
+19 | ...xt()*0.5,100.+next()*900.)*glam::Mat4::from_rotation_y((next()-.5)*4.)*glam::Mat4::from_translation(-offset);
+   |                                                                   ^^
+   |
+help: must have an integer part
+   |
+19 |         let vp=glam::Mat4::perspective_rh((35.+next()*65.).to_radians(),w/h,0.02+next()*0.5,100.+next()*900.)*glam::Mat4::from_rotation_y((next()-0.5)*4.)*glam::Mat4::from_translation(-offset);
+   |                                                                                                                                                   +
+
+error: float literals must have an integer part
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:20:39
+   |
+20 |         let q=glam::Vec4::new((next()-.5)*1.8,(next()-.5)*1.8,0.1+next()*0.89999,1.);
+   |                                       ^^
+   |
+help: must have an integer part
+   |
+20 |         let q=glam::Vec4::new((next()-0.5)*1.8,(next()-.5)*1.8,0.1+next()*0.89999,1.);
+   |                                       +
+
+error: float literals must have an integer part
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:20:55
+   |
+20 |         let q=glam::Vec4::new((next()-.5)*1.8,(next()-.5)*1.8,0.1+next()*0.89999,1.);
+   |                                                       ^^
+   |
+help: must have an integer part
+   |
+20 |         let q=glam::Vec4::new((next()-.5)*1.8,(next()-0.5)*1.8,0.1+next()*0.89999,1.);
+   |                                                       +
+
+error: float literals must have an integer part
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:22:46
+   |
+22 |         let direction=glam::Vec3::new(next()-.5,next()-.5,next()-.5).normalize();
+   |                                              ^^
+   |
+help: must have an integer part
+   |
+22 |         let direction=glam::Vec3::new(next()-0.5,next()-.5,next()-.5).normalize();
+   |                                              +
+
+error: float literals must have an integer part
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:22:56
+   |
+22 |         let direction=glam::Vec3::new(next()-.5,next()-.5,next()-.5).normalize();
+   |                                                        ^^
+   |
+help: must have an integer part
+   |
+22 |         let direction=glam::Vec3::new(next()-.5,next()-0.5,next()-.5).normalize();
+   |                                                        +
+
+error: float literals must have an integer part
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:22:66
+   |
+22 |         let direction=glam::Vec3::new(next()-.5,next()-.5,next()-.5).normalize();
+   |                                                                  ^^
+   |
+help: must have an integer part
+   |
+22 |         let direction=glam::Vec3::new(next()-.5,next()-.5,next()-0.5).normalize();
+   |                                                                  +
+
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+  --> crates/voxy_render/src/archive_gi_tile_skip_tests.rs:19:28
+   |
+19 | ...   let vp=glam::Mat4::perspective_rh((35.+next()*65.).to_radians(),w/h,0.02+next()*0.5,100.+next()*900.)*glam::Mat4::from_rotatio...
+   |                          ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: `voxy_render` (lib test) generated 1 warning
+error: could not compile `voxy_render` (lib test) due to 9 previous errors; 1 warning emitted

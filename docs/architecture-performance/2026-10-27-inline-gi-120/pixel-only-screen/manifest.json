@@ -1,0 +1,31 @@
+{
+  "scope": "short screening, not qualification",
+  "runs": [
+    {
+      "name": "A0",
+      "exit_code": 0
+    },
+    {
+      "name": "B0",
+      "exit_code": 0
+    },
+    {
+      "name": "B1",
+      "exit_code": 0
+    },
+    {
+      "name": "A1",
+      "exit_code": 0
+    }
+  ],
+  "binaries": {
+    "A": {
+      "path": "/private/tmp/voxy-inline-control-20261027",
+      "sha256": "d66c4483c3614e0826aa429df1f963974e3fe94e82ddf2cef318d0156d0e5975"
+    },
+    "B": {
+      "path": "/private/tmp/voxy-inline-pixel-only-20261027",
+      "sha256": "097c65e35cbd302c4bb5b6c59a10218746abf00af5dfd376844d953c11b27669"
+    }
+  }
+}

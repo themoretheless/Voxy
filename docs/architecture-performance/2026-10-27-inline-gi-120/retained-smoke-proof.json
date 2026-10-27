@@ -1,0 +1,8 @@
+{
+  "exit_code": 0,
+  "scope": "capture-harness smoke only; not performance qualification",
+  "binary_sha256": "9409885e9b372e9a4087ae6303bc1216aec5d86da4999bc5cdaacc3f75fdc006",
+  "captures_marked": true,
+  "native_stages": true,
+  "frames": 12
+}

@@ -1,0 +1,128 @@
+{
+  "frame_performance_qualified": false,
+  "rendered_inputs_modified": false,
+  "scope": "post completed frame actual stage textureLoad and original GPU temporal uniform",
+  "stages": [
+    {
+      "blake3": "c682f3b479cc07e2b6d6ad110911706cde6240670303307e83bc19e719ab1802",
+      "bytes": 16588800,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rgba16Float",
+      "stage": "scene-before-taa"
+    },
+    {
+      "blake3": "c6009d3bb28bc4a116d3166bb7e218b05d2a1dff70c0773defcbb497046b2dee",
+      "bytes": 16588800,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rgba16Float",
+      "stage": "taa-current"
+    },
+    {
+      "blake3": "2258b0e27b589f1595824f8d640c68551449a36aadb52591769f013ee18bd5a8",
+      "bytes": 16588800,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rgba16Float",
+      "stage": "taa-previous"
+    },
+    {
+      "blake3": "4f4c6629d2d850e4f14d8488fa405bd2c818711b83c49a52593daaaf572cb17e",
+      "bytes": 8294400,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rg16Float",
+      "stage": "motion"
+    },
+    {
+      "blake3": "aaab4233dfde4e3b23722d5f80870967bbcd72f47b3b31b35f465caad94d61c3",
+      "bytes": 8294400,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "R32Float",
+      "stage": "expected-depth"
+    },
+    {
+      "blake3": "f9c147858a14d67ff311a20f39629ec5d53f599d1c12d37682ebda0e767557e5",
+      "bytes": 8294400,
+      "capture_format": "RGBA32Float bit words, row-major top-down",
+      "captured_channels": 4,
+      "finite_source_channels_preserved_exactly": true,
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        960,
+        540
+      ],
+      "source_format": "Rgba16Float",
+      "stage": "temporal-bloom",
+      "textureLoad_only": true
+    },
+    {
+      "blake3": "35dd5876ff12e5d7fd7d5b499125b9e704b3074db5ec16a0f7add8d61d2ffe70",
+      "bytes": 33177600,
+      "capture_format": "RGBA32Float bit words, row-major top-down",
+      "captured_channels": 4,
+      "finite_source_channels_preserved_exactly": true,
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_format": "Rgba16Float",
+      "stage": "display-before-downsample",
+      "textureLoad_only": true
+    },
+    {
+      "blake3": "b1ab3689d65064c76c95ba9023084d65c4beda8cfbb970c31d46fed772947c3d",
+      "bytes": 16588800,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rgba16Float",
+      "stage": "final-output"
+    }
+  ],
+  "temporal_uniform": {
+    "GPU_original_uniform_words": true,
+    "blake3": "224dc8b0c024011a2f153228cee7f0536ee7df91bbb553266a8268c96d2204b7",
+    "bytes": 272
+  }
+}

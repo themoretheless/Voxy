@@ -1,0 +1,134 @@
+{
+  "frame_performance_qualified": false,
+  "packed_history_channel_word_mismatches": [
+    890774,
+    889745,
+    890211,
+    0
+  ],
+  "rendered_inputs_modified": false,
+  "scope": "post completed frame actual stage textureLoad and original GPU temporal uniform",
+  "stages": [
+    {
+      "blake3": "9c274f9c1e0500632641bae2e4d6ad5032ec25701bcc091af27ef50981ade985",
+      "bytes": 16588800,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rgba16Float",
+      "stage": "scene-before-taa"
+    },
+    {
+      "blake3": "d081b6cd19a5250a515ad50819dafe27cefd21de87de1cb4cdd27bc3041bf8c4",
+      "bytes": 16588800,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rgba16Float",
+      "stage": "taa-current"
+    },
+    {
+      "blake3": "b82d6437b22d79195747d11ecba59e9b087598d5b4663c30c126d5c000ba0976",
+      "bytes": 16588800,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rgba16Float",
+      "stage": "taa-previous"
+    },
+    {
+      "blake3": "4f4c6629d2d850e4f14d8488fa405bd2c818711b83c49a52593daaaf572cb17e",
+      "bytes": 8294400,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rg16Float",
+      "stage": "motion"
+    },
+    {
+      "blake3": "aaab4233dfde4e3b23722d5f80870967bbcd72f47b3b31b35f465caad94d61c3",
+      "bytes": 8294400,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "R32Float",
+      "stage": "expected-depth"
+    },
+    {
+      "blake3": "36c9d51f391cac7014b42dc9d0b86d57973686401680a37b0826a44419d5f15f",
+      "bytes": 8294400,
+      "capture_format": "RGBA32Float bit words, row-major top-down",
+      "captured_channels": 4,
+      "finite_source_channels_preserved_exactly": true,
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        960,
+        540
+      ],
+      "source_format": "Rgba16Float",
+      "stage": "temporal-bloom",
+      "textureLoad_only": true
+    },
+    {
+      "blake3": "78e6753976fefb6c36feb8cb8bc4e63e36f1865947397b851ce5b99d6702b00f",
+      "bytes": 33177600,
+      "capture_format": "RGBA32Float bit words, row-major top-down",
+      "captured_channels": 4,
+      "finite_source_channels_preserved_exactly": true,
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_format": "Rgba16Float",
+      "stage": "display-before-downsample",
+      "textureLoad_only": true
+    },
+    {
+      "blake3": "d6cc34fd46ffe294afd929527c19a37c7cb1ded8f7c02523961a9ee14a61baec",
+      "bytes": 16588800,
+      "capture_format": "native source bit words, row-major top-down, padding excluded",
+      "nonfinite_channels": 0,
+      "raw_saved": true,
+      "size": [
+        1920,
+        1080
+      ],
+      "source_bits_preserved_exactly": true,
+      "source_format": "Rgba16Float",
+      "stage": "final-output"
+    }
+  ],
+  "temporal_uniform": {
+    "GPU_original_uniform_words": true,
+    "blake3": "224dc8b0c024011a2f153228cee7f0536ee7df91bbb553266a8268c96d2204b7",
+    "bytes": 272
+  }
+}

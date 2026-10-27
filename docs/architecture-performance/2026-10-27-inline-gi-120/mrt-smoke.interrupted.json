@@ -1,0 +1,9 @@
+{
+  "benchmark_complete": false,
+  "failure": "compute error: InvalidBuffer",
+  "frames": 0,
+  "minimum_120_presented_fps_passed": false,
+  "phase": "warmup",
+  "qualified": false,
+  "simulation_steps": 0
+}

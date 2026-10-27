@@ -80,6 +80,7 @@ struct App {
     render_seconds: Vec<f64>,
     acquire_seconds: Vec<f64>,
     snapshot: Option<PathBuf>,
+    hdr_check_dir: Option<PathBuf>,
     benchmark: f64,
     benchmark_complete: bool,
     world_ray_audit_frames: u64,
@@ -207,6 +208,7 @@ impl App {
             render_seconds: Vec::new(),
             acquire_seconds: Vec::new(),
             snapshot: value("--snapshot").map(PathBuf::from),
+            hdr_check_dir: std::env::var_os("VOXY_STREET_HDR_CHECK_DIR").map(PathBuf::from),
             offscreen_benchmark: args.iter().any(|a| a == "--offscreen-benchmark"),
             render_every_physics_step: args.iter().any(|a| a == "--offscreen-render-every-step"),
             benchmark_complete: false,
@@ -1306,6 +1308,19 @@ impl App {
                 }
             }
         }
+        // Readbacks contaminate timing; the report makes these runs ineligible.
+        if self.offscreen_benchmark && matches!(self.frames, 120 | 600 | 1200 | 1800 | 2520) {
+            if let Some(root) = &self.hdr_check_dir {
+                std::fs::create_dir_all(root)?;
+                snapshot(gpu, output, &root.join(format!("frame-{}.png", self.frames)))?;
+                gpu.renderer.capture_hdr_stages(
+                    &gpu.supersample,
+                    output,
+                    &root.join(format!("frame-{}", self.frames)),
+                    true,
+                )?;
+            }
+        }
         let capture_now = self.frames >= 120 && self.snapshot.is_some();
         if capture_now {
             if let Some(path) = self.snapshot.take() {
@@ -1496,6 +1511,7 @@ impl App {
                 "metal_compute_audit_requested":std::env::var("WGPU_METAL_COMPUTE_AUDIT").as_deref()==Ok("1"),
                 "measurement_duration_clock":"single_monotonic_elapsed",
                 "frame_sample_clock":if self.offscreen_benchmark {"current_completed_frame"}else{"start_to_start"},
+                "correctness_capture_active":self.hdr_check_dir.is_some(),
                 "completed_frame_samples_seconds":self.durations,
                 "host_completion_intervals_seconds":self.completion_intervals,
                 "host_completion_interval_scope":"successive host observations after exact GPU submission completion; includes event-loop gaps; not scanout",

@@ -1,0 +1,10 @@
+{
+  "scope": "frame-120 full linear Float32 RGB PFM, inline zero-weight GI admission",
+  "sha256": {
+    "weight-A0": "300a35e31da2ca215470c948cff4c76437c09183bb5ae6938308a67022d7f774",
+    "weight-A1": "300a35e31da2ca215470c948cff4c76437c09183bb5ae6938308a67022d7f774",
+    "weight-B": "300a35e31da2ca215470c948cff4c76437c09183bb5ae6938308a67022d7f774"
+  },
+  "aa_byte_equal": true,
+  "ab_byte_equal": true
+}

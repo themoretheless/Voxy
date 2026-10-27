@@ -1,0 +1,16 @@
+STREET RUN pid=24672 benchmark_seconds=0.1 offscreen=true paired_dda=false tiles=false cell_bounds=false far_bound=false
+ORIGINAL STREET seed=1448040537 source_geometry_assets=0 materials=143 mesh_batches=152 triangles=3554908 instances=120220
+ORIGINAL STREET MATERIALS provider=PolyHaven license=CC0 scans=3 source_maps=9 gpu_textures=6 source_resolution=4k gpu=linear_rgba32float packing=lossless_channels
+DAYLIGHT solar_irradiance=[2169.2283, 2185.722, 1982.8407] source_background_unchanged=true indirect_float32=true
+STREET grounded spawn: authored=DVec3(0.6000000238418579, 0.1299999713897706, -18.0) resolved=DVec3(0.44700391757059055, 0.05477531636347348, -17.86699189712493)
+STREET DISPLAY format=Rgba16Float colour_space=ExtendedSrgbLinear hdr_info=DisplayHdrInfo { luminance: None, headroom: Some(DisplayHeadroom { current: Some(1.0), potential: Some(16.0), reference: None }), chromaticity: None, coarse: Some(DisplayCoarseRange { high_dynamic_range: Some(false), gamut: None }), bits_per_color: None }
+STREET GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }; 1920x1080 Immediate; full scene geometry; original mip chains when images are present
+STREET antialiasing=Temporal render=1920x1080 output=1920x1080
+STREET probes=372 completed in 8.429 s before measurement
+STREET HDR PIXELS {"colour_space":"ExtendedSrgbLinear","finite":true,"live_headroom":1.0,"native_hdr_capture":"/Users/themoretheless/Documents/Sources/voxy/docs/architecture-performance/2026-10-27-inline-gi-120/mrt-debug-smoke/frame-120.pfm","peak_relative_sdr_white":1.0,"pixels":2073600,"pixels_above_sdr_white":0,"png_is_sdr_preview":true,"render_headroom":1.0,"surface_format":"Rgba16Float"}
+HISTORY FIRST [890774, 889745, 890211, 0, 161, 1036197888, 1037557760, 1040375808, 1065275246, 1036197888, 1037565952, 1040384000, 1065275246]
+STREET FAILURE phase=draw frames=120 simulation_steps=120 error=packed history differs from original textures
+STREET EXIT benchmark_complete=false frames=120 simulation_steps=120 failure=Some("packed history differs from original textures")
+STREET interrupted diagnostic /Users/themoretheless/Documents/Sources/voxy/docs/architecture-performance/2026-10-27-inline-gi-120/mrt-debug-smoke.interrupted.json
+STREET EVENT LOOP RETURN result=Ok(()) frames=120 simulation_steps=120 benchmark_complete=false
+Error: "packed history differs from original textures"

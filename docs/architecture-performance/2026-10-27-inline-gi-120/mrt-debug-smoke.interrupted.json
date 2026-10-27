@@ -1,0 +1,9 @@
+{
+  "benchmark_complete": false,
+  "failure": "packed history differs from original textures",
+  "frames": 120,
+  "minimum_120_presented_fps_passed": false,
+  "phase": "warmup",
+  "qualified": false,
+  "simulation_steps": 120
+}

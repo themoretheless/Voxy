@@ -1,0 +1,41 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_render)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_model)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_editor)
+   Compiling voxy_demos v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_demos)
+   Compiling voxy_shell v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_shell)
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/.codex/worktrees/street-full-frame-120/voxy/crates/voxy_app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.29s
+     Running unittests examples/street_walk/main.rs (/tmp/voxy-shared-20261025-target/debug/examples/street_walk-dd4dac8a71b5f344)
+
+running 28 tests
+test benchmark_cycle::tests::a_physics_cycle_with_only_eighty_rendered_frames_cannot_pass ... ok
+test benchmark_cycle::tests::requires_a_complete_rendered_cycle_and_every_completed_frame_within_budget ... ok
+test controls::tests::pitch_is_clamped_away_from_camera_poles ... ok
+test controls::tests::releasing_one_direction_binding_keeps_its_other_binding_held ... ok
+test controls::tests::focus_loss_cancels_pending_actions_and_touch_ownership ... ok
+test controls::tests::right_touch_tap_queues_jump_but_drag_only_rotates ... ok
+test controls::tests::releasing_one_shift_keeps_the_other_shift_sprinting ... ok
+test controls::tests::wheel_zoom_is_visible_and_bounded ... ok
+test controls::walk_camera_tests::invalid_look_and_time_do_not_poison_camera ... ok
+test controls::walk_camera_tests::zoom_is_smooth_bounded_and_independent_of_frame_rate ... ok
+test controls::walk_camera_tests::smoothing_is_independent_of_frame_subdivision ... ok
+test hdr_snapshot_tests::half_readback_preserves_reference_white_and_hdr_highlights ... ok
+test original::tests::dump_house_plan ... ignored, manual floor-plan export via VOXY_PLAN_DUMP
+test controls::tests::diagonal_keyboard_input_is_normalized_and_jump_is_edge_triggered ... ok
+test frame_profile::tests::excludes_warmup_and_counts_skips ... ok
+test materials::tests::colour_transfer_preserves_endpoints_and_midtones ... ok
+test frame_profile::tests::rejects_invalid_config ... ok
+test original::tests::render_villa_preview ... ignored, manual villa preview render via VOXY_VILLA_PREVIEW
+test materials::tests::packed_channels_keep_every_mip_bit_exact ... ok
+test materials::tests::solar_split_keeps_background_and_integrated_irradiance ... ok
+test frame_profile::tests::report_preserves_missing_metrics_and_incomplete_state ... ok
+test materials::tests::sixteen_bit_source_levels_survive_decode_without_eight_bit_quantization ... ok
+test ray_geometry_export::tests::float_capture_keeps_subnormal_signed_zero_and_low_mantissa_bits ... ok
+test ray_geometry_export::tests::rgba_capture_keeps_straight_alpha_bytes ... ok
+test ray_geometry_export::tests::bc7_capture_preserves_every_authored_mip_block ... ok
+test original::tests::house_stairs_climb_to_the_landing ... ok
+test original::tests::original_street_is_independent_and_walkable ... ok
+test original::tests::lane_leads_through_the_colonnade_to_the_pool ... ok
+
+test result: ok. 26 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 32.59s
+

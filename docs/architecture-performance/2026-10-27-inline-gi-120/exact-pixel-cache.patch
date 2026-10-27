@@ -1,0 +1,29 @@
+diff --git a/crates/voxy_render/src/archive_scene.wgsl b/crates/voxy_render/src/archive_scene.wgsl
+index 8f469bda6..c0142e0b3 100644
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -313,7 +313,6 @@ fn screen_reflection(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32
+ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,reach:f32,growth:f32,refines:u32,bounded:bool)->vec4<f32>{
+  if history&&camera.surface.z<0.5 {return vec4<f32>(0.);}
+  var t=0.08;var previous=0.;
+- var cached_tile=vec2<i32>(-1);var cached_lower=0.;
+  var cached_pixel=vec2<i32>(-1);var cached_depth=1.;
+  for(var step=0u;step<80u;step++) {
+   let q=camera.vp*vec4<f32>(origin+direction*t,1.);
+@@ -325,12 +324,10 @@ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,
+   // level-zero read, step recurrence, crossing and all binary refinements.
+   var depth=1.;
+   if bounded {
+-   let tile=ray_pixel/8;
+-   if any(tile!=cached_tile) {cached_lower=textureLoad(ray_depth_bounds,tile,0).x;cached_tile=tile;}
+-   if q.z/q.w>=cached_lower {
+-    if any(ray_pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,ray_pixel,0);cached_pixel=ray_pixel;}
+-    depth=cached_depth;
+-   }
++   // This immutable, exact texel also covers steps formerly rejected by a
++   // tile minimum. No original sample, crossing or refinement is omitted.
++   if any(ray_pixel!=cached_pixel) {cached_depth=textureLoad(scene_depth,ray_pixel,0);cached_pixel=ray_pixel;}
++   depth=cached_depth;
+   } else {depth=textureLoad(scene_depth,ray_pixel,0);}
+   if depth<1.&&q.z/q.w>=depth {
+    var lo=previous;var hi=t;

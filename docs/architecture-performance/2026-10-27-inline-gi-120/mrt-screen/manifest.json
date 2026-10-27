@@ -1,0 +1,31 @@
+{
+  "scope": "short screening, not qualification",
+  "runs": [
+    {
+      "name": "A0",
+      "exit_code": 0
+    },
+    {
+      "name": "B0",
+      "exit_code": 0
+    },
+    {
+      "name": "B1",
+      "exit_code": 0
+    },
+    {
+      "name": "A1",
+      "exit_code": 0
+    }
+  ],
+  "binaries": {
+    "A": {
+      "path": "/private/tmp/voxy-inline-native-control-20261027",
+      "sha256": "49ccb67e049c1c171f57b7a3d20729287a58ba31ca4aa271e94e7b86cbf733b6"
+    },
+    "B": {
+      "path": "/private/tmp/voxy-inline-mrt-rtz-20261027",
+      "sha256": "71ad78dbfe73170f49e8817feb123acb9510cffd6bc2c7d47b47a6637d963a63"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "scope": "short screening, not qualification",
+  "runs": [
+    {
+      "name": "A0",
+      "exit_code": 0
+    },
+    {
+      "name": "B0",
+      "exit_code": 0
+    },
+    {
+      "name": "B1",
+      "exit_code": 0
+    },
+    {
+      "name": "A1",
+      "exit_code": 0
+    }
+  ],
+  "binaries": {
+    "A": {
+      "path": "/private/tmp/voxy-inline-native-control-20261027",
+      "sha256": "49ccb67e049c1c171f57b7a3d20729287a58ba31ca4aa271e94e7b86cbf733b6"
+    },
+    "B": {
+      "path": "/private/tmp/voxy-inline-tile-scalar-20261027",
+      "sha256": "94191642200b01c590dd91ab28dcec8c4c80ef2d125bef02c6ec5ea20b751fc9"
+    }
+  }
+}

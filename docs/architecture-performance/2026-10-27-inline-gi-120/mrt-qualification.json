@@ -1,0 +1,25 @@
+{
+  "qualified_120_fps": false,
+  "candidate_promotion_passed": false,
+  "native_quality_bound_passed": false,
+  "packed_history_records_exact": true,
+  "full_performance_campaign_performed": false,
+  "reasons": [
+    "native source-stage quality gate failed; MRT candidate rejected before another full performance campaign",
+    "short ABBA A/A GPU drift exceeds 5 percent",
+    "short candidate service p99 exceeds 8.33 ms"
+  ],
+  "screen_scope": "240 measured frames per run, not complete-route performance qualification",
+  "baseline_gpu_ms": [
+    13.064089630252107,
+    16.201176428571433
+  ],
+  "candidate_gpu_ms": [
+    13.094382336134457,
+    13.128239915966388
+  ],
+  "candidate_p99_ms": [
+    18.049083,
+    18.059041
+  ]
+}

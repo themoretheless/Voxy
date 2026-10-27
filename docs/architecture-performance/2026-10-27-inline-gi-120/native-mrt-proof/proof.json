@@ -1,0 +1,13 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "allocated_bytes": 2097152,
+  "channel_word_mismatches": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "input_blake3": "f215b29b44421935660f5fd2ad29d9fcb456e0e201e542b964916999225ad99f",
+  "pixels": 65536,
+  "source": "finite signed half boundaries with Float32 perturbations; signed zero; subnormals; final row checks clear conversion"
+}

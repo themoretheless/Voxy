@@ -1,0 +1,4 @@
+*.png
+*.pfm
+__pycache__/
+*.bin

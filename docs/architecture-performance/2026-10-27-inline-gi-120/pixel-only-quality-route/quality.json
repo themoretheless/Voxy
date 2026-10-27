@@ -1,0 +1,36 @@
+{
+  "scope": "five full linear Float32 HDR RGB images per deterministic complete route; no performance qualification",
+  "binary_sha256": {
+    "A0": "d66c4483c3614e0826aa429df1f963974e3fe94e82ddf2cef318d0156d0e5975",
+    "A1": "d66c4483c3614e0826aa429df1f963974e3fe94e82ddf2cef318d0156d0e5975",
+    "B": "097c65e35cbd302c4bb5b6c59a10218746abf00af5dfd376844d953c11b27669"
+  },
+  "frame_sha256": {
+    "A0": {
+      "120": "300a35e31da2ca215470c948cff4c76437c09183bb5ae6938308a67022d7f774",
+      "600": "7824b07afcf5e64d970d9aa3007f327d9ac5b738610e52ee4993fd54c7e9fb00",
+      "1200": "feeb43cf60db532e46cf40e75ebcce3ce4082ff4fa02f3a455a229fa094605af",
+      "1800": "ba56fafa0e6ce3c9b4c6f700f76dd384764b4704145a8c8bbb97e0ef52e54711",
+      "2520": "f26c9930dbbba9b81e08ee3edac7ac32d37ff5d08331f686b5c4fc18abe5898c"
+    },
+    "A1": {
+      "120": "300a35e31da2ca215470c948cff4c76437c09183bb5ae6938308a67022d7f774",
+      "600": "7824b07afcf5e64d970d9aa3007f327d9ac5b738610e52ee4993fd54c7e9fb00",
+      "1200": "10dc9cf4dd0fa07711e16271495079a43aa8a3c5041a35504064729643ee2517",
+      "1800": "f55d3168529cd1439bae9575aa5086d9a22f1645c1e4247be52b2e29e785160c",
+      "2520": "f26c9930dbbba9b81e08ee3edac7ac32d37ff5d08331f686b5c4fc18abe5898c"
+    },
+    "B": {
+      "120": "6a30e188b7af0a93b44fcf20419e4cb7c5922574f5acee5d653469029620724c",
+      "600": "a0875d0739cac0806ff15d9bad9a6846125cebcea8ae4f4269c19214910c812a",
+      "1200": "dd37013b7762786bccd014acf79edccd81d856cfde091a500a306ed6de577131",
+      "1800": "da114739688c880164b9a562d58037302e8fa48934715ee34a204ea7ce44ced8",
+      "2520": "53a89041ad43672be1a05950c4e470802bd7e11f91a3d62552185d846881ad8a"
+    }
+  },
+  "aa_byte_equal": false,
+  "ab_byte_equal": false,
+  "same_replay": true,
+  "all_captures_marked": true,
+  "passed": false
+}

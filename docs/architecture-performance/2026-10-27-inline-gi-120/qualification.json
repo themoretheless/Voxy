@@ -1,0 +1,99 @@
+{
+  "qualified_120_fps": false,
+  "candidate_promotion_passed": false,
+  "paired_gpu_ratio_ci95": [
+    1.0099557225658273,
+    1.0539201468550763
+  ],
+  "absolute_p99_passed": false,
+  "native_quality_bound_passed": true,
+  "strict_bit_parity_passed": false,
+  "host_completion_p99_ms": {
+    "aa-start-0": 25.755958999999997,
+    "aa-start-1": 24.874709,
+    "pair-0-A": 26.935917,
+    "pair-0-B": 26.18725,
+    "pair-1-B": 25.343999999999998,
+    "pair-1-A": 23.654459,
+    "pair-2-A": 23.402958,
+    "pair-2-B": 25.653708,
+    "pair-3-B": 24.910083,
+    "pair-3-A": 23.533209,
+    "pair-4-A": 22.985458,
+    "pair-4-B": 23.564458,
+    "aa-end-0": 23.229792,
+    "aa-end-1": 23.415
+  },
+  "aa_passed": true,
+  "relative_p99_nonregression_passed": false,
+  "errors": [],
+  "controls": [
+    {
+      "control": "aa-start",
+      "ratios": {
+        "p50_ms": 0.9696063823629534,
+        "p99_ms": 0.9777530350198391,
+        "gpu_mean_ms": 1.004008377184846,
+        "host_completion_p99_ms": 0.9657846170666758
+      },
+      "passed": true
+    },
+    {
+      "control": "aa-end",
+      "ratios": {
+        "p50_ms": 1.0055649130535356,
+        "p99_ms": 1.0065338466040055,
+        "gpu_mean_ms": 0.9988831638498323,
+        "host_completion_p99_ms": 1.0079728651896667
+      },
+      "passed": true
+    }
+  ],
+  "pairs": [
+    {
+      "pair": 0,
+      "before_p99_ms": 26.671666000000002,
+      "after_p99_ms": 25.980041,
+      "p99_ratio": 0.9740689239284864,
+      "median_ratio": 0.9875204809805121,
+      "gpu_ratio": 0.9899471468697169
+    },
+    {
+      "pair": 1,
+      "before_p99_ms": 23.421834,
+      "after_p99_ms": 25.253208,
+      "p99_ratio": 1.0781908880406206,
+      "median_ratio": 1.0338309289383276,
+      "gpu_ratio": 1.0450818043559544
+    },
+    {
+      "pair": 2,
+      "before_p99_ms": 23.289250000000003,
+      "after_p99_ms": 25.543375,
+      "p99_ratio": 1.0967882177399444,
+      "median_ratio": 1.0600837977436215,
+      "gpu_ratio": 1.057551796183069
+    },
+    {
+      "pair": 3,
+      "before_p99_ms": 23.380458,
+      "after_p99_ms": 24.72325,
+      "p99_ratio": 1.0574322367850963,
+      "median_ratio": 1.0416336034103078,
+      "gpu_ratio": 1.0547328588803124
+    },
+    {
+      "pair": 4,
+      "before_p99_ms": 22.873917000000002,
+      "after_p99_ms": 23.440792,
+      "p99_ratio": 1.0247825940786615,
+      "median_ratio": 1.020435348038535,
+      "gpu_ratio": 1.0241745965210447
+    }
+  ],
+  "paired_p99_ratio_ci95": [
+    1.0065951448619064,
+    1.0813788784789804
+  ],
+  "scope": "GPU-completed full-resolution frames; no display scanout qualification"
+}
