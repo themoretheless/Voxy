@@ -34,6 +34,7 @@ pub(super) fn output_texture(
 }
 #[derive(Debug)]
 pub(super) struct ArchiveComputeGi {
+    raster_math: bool,
     world: Arc<voxy_gpu_core::ManagedTexture>,
     normal: Arc<voxy_gpu_core::ManagedTexture>,
     reference: Option<(
@@ -147,6 +148,12 @@ impl ArchiveComputeGi {
             },
         ));
         constants.push(("ARCHIVE_COMPUTE_SSR", if ssr_enabled { 1. } else { 0. }));
+        let info=device.adapter_info();
+        let match_raster=std::env::var_os("VOXY_STREET_GI_RASTER_MATH").is_some()
+            && cfg!(all(target_os="macos",target_arch="aarch64"))
+            && info.backend==wgpu::Backend::Metal
+            && info.device_type==wgpu::DeviceType::IntegratedGpu;
+        constants.push(("ARCHIVE_ORIGINAL_GI_RASTER_MATH",if match_raster {1.}else{0.}));
         let raster = |entry: &str,
                       pipeline_layout: &wgpu::PipelineLayout,
                       targets: &[Option<wgpu::ColorTargetState>]| {
@@ -338,7 +345,10 @@ impl ArchiveComputeGi {
         } else {
             None
         };
+        let raster_math=match_raster && stages.is_none()
+            && std::env::var_os("VOXY_STREET_PAIRED_DDA").is_none();
         Ok(Self {
+            raster_math,
             world,
             normal,
             reference,
@@ -355,6 +365,7 @@ impl ArchiveComputeGi {
             height,
         })
     }
+    pub(super) fn raster_math_enabled(&self)->bool {self.raster_math}
     pub(super) fn world_query_encoded_frames(&self) -> u64 {
         self.world_frame.as_ref().map_or(0, |f| f.encoded_frames())
     }

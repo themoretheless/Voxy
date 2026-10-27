@@ -1,3 +1,5 @@
+// Original GI may explicitly use the same float contract in compute and raster.
+override ARCHIVE_ORIGINAL_GI_RASTER_MATH:bool=false;
 // Qualification-only injection of the existing unsupported-projection fallback.
 override ARCHIVE_RAY_FORCE_FALLBACK:bool=false;
 override ARCHIVE_COMPUTE_SSR:bool=false;
