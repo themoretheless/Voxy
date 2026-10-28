@@ -8,12 +8,39 @@ use voxy_render::{SceneMesh, Sprite, SpriteBatch};
 use voxy_scene::SceneDocument;
 use voxy_text::{FontLimits, GlyphAtlas, GlyphRegion, RasterFont};
 
+pub(crate) fn side_widths(size: Vec2) -> (f32, f32) {
+    (150.0_f32.min(size.x * 0.25), 180.0_f32.min(size.x * 0.3))
+}
+
+/// Visible physical-pixel area inside one render view after side-panel overlap.
+pub(crate) fn safe_view_rect(viewport: [u32; 2], region: [u32; 4], scale: f32) -> Option<[f32; 4]> {
+    if !scale.is_finite()
+        || scale <= 0.
+        || viewport.contains(&0)
+        || region[2..].contains(&0)
+        || region[0].checked_add(region[2])? > viewport[0]
+        || region[1].checked_add(region[3])? > viewport[1]
+    {
+        return None;
+    }
+    let logical = Vec2::new(viewport[0] as f32, viewport[1] as f32) / scale;
+    let (left, right) = side_widths(logical);
+    let x0 = (left * scale - region[0] as f32).max(0.);
+    let x1 = ((logical.x - right) * scale - region[0] as f32).min(region[2] as f32);
+    (x1 > x0).then_some([x0, 0., x1 - x0, region[3] as f32])
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) enum Action {
     Select(usize),
+    FollowCamera([u8; 32]),
+    FollowTarget([u8; 32]),
+    FollowTargetChoice([u8; 32]),
     Field(usize),
     ResetField(usize),
     PreviewSeek,
+    MorphDefaults([u8; 32]),
+    MorphResume([u8; 32]),
     PreviewPhase(f64),
     MarkerAdd([u8; 32]),
     MarkerPreview(usize, [u8; 32]),
@@ -32,11 +59,15 @@ pub(crate) enum Action {
     Duplicate,
     Delete,
     Resource,
+    RetryModel,
+    RelinkModel,
+    RelinkCancel,
     Parent,
     Active,
     Play,
     Save,
     Load,
+    CancelLoad,
     RevertPrefab,
     PlacePrefab,
     CreatePrefab,
@@ -63,6 +94,13 @@ pub(crate) enum Action {
     AudioSettingsLoad,
     AudioSettingsSave,
 }
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct ResourceNotice {
+    pub lines: [String; 3],
+    pub retry: bool,
+    pub relink: bool,
+    pub editing: bool,
+}
 pub(crate) struct Panels {
     registry: std::sync::Arc<voxy_scene::ComponentRegistry>,
     pub collection_resets: std::collections::BTreeSet<([u8; 32], [u8; 32])>,
@@ -71,7 +109,10 @@ pub(crate) struct Panels {
     pub collection_deleted_items: crate::component_collections::DeletedItems,
     pub deleted_page: usize,
     pub preview_phase: Option<f64>,
+    pub load_status: Option<crate::app::restore_barrier::load::LoadStatus>,
+    pub resource_notice: Option<ResourceNotice>,
     pub retarget_draft: bool,
+    pub follow_pick: Option<[u8; 32]>,
     pub bone_picker: Option<(Vec<String>, usize)>,
     pub overridden_fields: std::collections::BTreeSet<usize>,
     glyphs: BTreeMap<char, (voxy_text::GlyphBitmap, Option<GlyphRegion>)>,
@@ -124,9 +165,12 @@ impl Panels {
         }
         Ok(Self {
             preview_phase: None,
+            load_status: None,
+            resource_notice: None,
             presented: false,
             retarget_draft: false,
             bone_picker: None,
+            follow_pick: None,
             collection_resets: Default::default(),
             collection_order_resets: Default::default(),
             collection_deleted_resets: Default::default(),
@@ -196,8 +240,7 @@ impl Panels {
         self.presented = false;
         self.regions.clear();
         let mut batch = SpriteBatch::new(16000);
-        let left = 150.0_f32.min(size.x * 0.25);
-        let right = 180.0_f32.min(size.x * 0.3);
+        let (left, right) = side_widths(size);
         let rx = size.x - right;
         // Texture white texel is the final unused pixel of the alpha atlas.
         let solid = |batch: &mut SpriteBatch,
@@ -227,7 +270,11 @@ impl Panels {
         )?;
         self.text(
             &mut batch,
-            "SCENE",
+            if self.follow_pick.is_some() {
+                "PICK FOLLOW TARGET"
+            } else {
+                "SCENE"
+            },
             Vec2::new(10.0, 23.0),
             left - 16.0,
             size,
@@ -239,6 +286,70 @@ impl Panels {
             right - 16.0,
             size,
         )?;
+        if let Some(notice) = &self.resource_notice {
+            let width = rx - left - 16.0;
+            if width > 0.0 && size.y >= 80.0 {
+                solid(
+                    &mut batch,
+                    [left + 8.0, 8.0, width, 68.0],
+                    [0.22, 0.12, 0.06, 1.0],
+                )?;
+                for (row, text) in notice.lines.iter().enumerate() {
+                    self.text(
+                        &mut batch,
+                        text,
+                        Vec2::new(left + 16.0, 27.0 + row as f32 * 20.0),
+                        width - 16.0,
+                        size,
+                    )?;
+                }
+                if notice.retry && !notice.editing && size.y >= 108.0 {
+                    let x = left
+                        + 8.0
+                        + if notice.relink {
+                            width.min(240.0) + 8.0
+                        } else {
+                            0.0
+                        };
+                    let remaining = left + 8.0 + width - x;
+                    if remaining >= 120.0 {
+                        let rect = [x, 80.0, remaining.min(200.0), 24.0];
+                        solid(&mut batch, rect, [0.16, 0.28, 0.42, 1.0])?;
+                        self.text(
+                            &mut batch,
+                            "Retry import",
+                            Vec2::new(x + 8.0, 97.0),
+                            rect[2] - 16.0,
+                            size,
+                        )?;
+                        self.regions.push((rect, Action::RetryModel));
+                    }
+                }
+                if notice.relink && size.y >= 108.0 {
+                    let rect = [left + 8.0, 80.0, width.min(240.0), 24.0];
+                    solid(&mut batch, rect, [0.16, 0.28, 0.42, 1.0])?;
+                    self.text(
+                        &mut batch,
+                        if notice.editing {
+                            "Cancel path entry (Esc)"
+                        } else {
+                            "Relink source file"
+                        },
+                        Vec2::new(rect[0] + 8.0, rect[1] + 17.0),
+                        rect[2] - 16.0,
+                        size,
+                    )?;
+                    self.regions.push((
+                        rect,
+                        if notice.editing {
+                            Action::RelinkCancel
+                        } else {
+                            Action::RelinkModel
+                        },
+                    ));
+                }
+            }
+        }
         let mut order = Vec::with_capacity(document.objects.len());
         visit(document, None, 0, &mut order);
         for (row, (index, depth)) in order
@@ -264,8 +375,16 @@ impl Panels {
                 left - x - 4.0,
                 size,
             )?;
-            self.regions
-                .push(([4.0, y, left - 8.0, 23.0], Action::Select(index)));
+            self.regions.push((
+                [4.0, y, left - 8.0, 23.0],
+                if let Some(request) = self.follow_pick {
+                    Action::FollowTargetChoice(crate::camera_authoring::choice_token(
+                        request, &object.id,
+                    ))
+                } else {
+                    Action::Select(index)
+                },
+            ));
         }
         for (row, label, action) in [
             (
@@ -294,7 +413,9 @@ impl Panels {
             ),
             (
                 4,
-                if inspector == InspectorMode::ImportSettings {
+                if let Some(status) = self.load_status {
+                    status.label
+                } else if inspector == InspectorMode::ImportSettings {
                     "Save settings (F5)"
                 } else {
                     "Save (F5)"
@@ -303,12 +424,20 @@ impl Panels {
             ),
             (
                 5,
-                if inspector == InspectorMode::ImportSettings {
+                if self.load_status.is_some_and(|status| status.cancellable) {
+                    "Cancel load (Esc)"
+                } else if self.load_status.is_some() {
+                    "Please wait..."
+                } else if inspector == InspectorMode::ImportSettings {
                     "Reload settings (F9)"
                 } else {
                     "Load (F9)"
                 },
-                Action::Load,
+                if self.load_status.is_some() {
+                    Action::CancelLoad
+                } else {
+                    Action::Load
+                },
             ),
             (6, "Revert instance", Action::RevertPrefab),
             (7, prefab_label, Action::PrefabChoice),
@@ -323,7 +452,14 @@ impl Panels {
                 left - 16.0,
                 size,
             )?;
-            self.regions.push(([4.0, y, left - 8.0, 23.0], action));
+            let enabled = match (row, self.load_status) {
+                (4, Some(_)) => false,
+                (5, Some(status)) => status.cancellable,
+                _ => true,
+            };
+            if enabled {
+                self.regions.push(([4.0, y, left - 8.0, 23.0], action));
+            }
         }
         if let Some(object) = document.objects.get(selected) {
             self.text(
@@ -520,7 +656,19 @@ impl Panels {
                     let y = 116.0 + row as f32 * 26.0;
                     let text = field.filter(|(id, _)| *id == index).map_or_else(
                         || {
-                            if member.schema == "editor.model-animation.v1"
+                            if member.schema == "game.follow-camera.v1" && member.path == "/target"
+                            {
+                                document
+                                    .objects
+                                    .iter()
+                                    .find(|candidate| {
+                                        Some(candidate.id.0.as_str()) == member.value.as_str()
+                                    })
+                                    .map_or_else(
+                                        || member.display(),
+                                        |candidate| candidate.name.clone(),
+                                    )
+                            } else if member.schema == "editor.model-animation.v1"
                                 && member.path == "/events"
                             {
                                 format!("{} markers", member.value.as_array().map_or(0, Vec::len))
@@ -549,8 +697,15 @@ impl Panels {
                                 .and_then(|value| value.parse::<usize>().ok())
                         })
                         .flatten();
-                    let marker_button = if !playing && member.schema == "editor.model-animation.v1"
+                    let marker_button = if !playing
+                        && member.schema == "game.follow-camera.v1"
+                        && member.path == "/target"
                     {
+                        Some((
+                            "Pick",
+                            Action::FollowTarget(crate::camera_authoring::request_token(object)?),
+                        ))
+                    } else if !playing && member.schema == "editor.model-animation.v1" {
                         let token = marker_token;
                         if member.path == "/events" {
                             Some(("Add", Action::MarkerAdd(token)))
@@ -612,7 +767,16 @@ impl Panels {
                             .then(|| foot_field_label(&member.path))
                             .flatten()
                     };
-                    let label = if member.schema == "editor.model-animation.v1"
+                    let label = if member.schema == "game.follow-camera.v1" {
+                        match member.path.as_str() {
+                            "/target" => "Follow target",
+                            "/half_life" => "Follow half-life (s)",
+                            "/offset/0" => "Follow offset X",
+                            "/offset/1" => "Follow offset Y",
+                            "/offset/2" => "Follow offset Z",
+                            _ => member.path.as_str(),
+                        }
+                    } else if member.schema == "editor.model-animation.v1"
                         && member.path == "/root_motion_joint"
                     {
                         "Motion bone index"
@@ -759,6 +923,22 @@ impl Panels {
                         size,
                     )?;
                     self.regions.push((rect, Action::PreviewSeek));
+                    let token = crate::component_fields::morph_edit_token(object);
+                    for (y, label, action) in [
+                        (362., "Import morph defaults", Action::MorphDefaults(token)),
+                        (390., "Resume morph", Action::MorphResume(token)),
+                    ] {
+                        let rect = [rx + 8., y, right - 16., 24.];
+                        solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.])?;
+                        self.text(
+                            &mut batch,
+                            label,
+                            Vec2::new(rect[0] + 6., y + 18.),
+                            rect[2] - 12.,
+                            size,
+                        )?;
+                        self.regions.push((rect, action));
+                    }
                 }
                 for (y, label, forward) in [
                     (280.0, "Previous fields", false),
@@ -1108,6 +1288,15 @@ impl Panels {
             }
             for (row, label, action) in [
                 (
+                    5,
+                    if object.components.contains_key("game.follow-camera.v1") {
+                        "Remove follow camera"
+                    } else {
+                        "Add follow camera"
+                    },
+                    Action::FollowCamera(crate::camera_authoring::request_token(object)?),
+                ),
+                (
                     3,
                     if self.retarget_draft {
                         "Add bone pair"
@@ -1118,9 +1307,9 @@ impl Panels {
                         "Open/reload import settings"
                     } else if matches!(inspector, InspectorMode::Components(_)) {
                         if object.components.contains_key("editor.model-animation.v1") {
-                            "Remove model animation"
+                            "Remove animation"
                         } else {
-                            "Add model animation"
+                            "Add animation"
                         }
                     } else if object.components.contains_key("game.angular-motion.v1") {
                         "Remove angular motion"
@@ -1240,7 +1429,17 @@ impl Panels {
                     },
                 ),
             ] {
+                if row == 5
+                    && (self.retarget_draft || !matches!(inspector, InspectorMode::Components(_)))
+                {
+                    continue;
+                }
                 let y = 354.0
+                    + if matches!(inspector, InspectorMode::Components(_)) && !self.retarget_draft {
+                        64.0
+                    } else {
+                        0.0
+                    }
                     + row as f32 * 24.0
                     + if matches!(inspector, InspectorMode::Collections(_, _)) {
                         30.0
@@ -1270,6 +1469,10 @@ impl Panels {
                     rx + 8.0,
                     if matches!(inspector, InspectorMode::Collections(_, _)) {
                         521.0
+                    } else if matches!(inspector, InspectorMode::Components(_))
+                        && !self.retarget_draft
+                    {
+                        579.0
                     } else {
                         491.0
                     },
@@ -1290,6 +1493,10 @@ impl Panels {
                     rx + 8.0,
                     if matches!(inspector, InspectorMode::Collections(_, _)) {
                         544.0
+                    } else if matches!(inspector, InspectorMode::Components(_))
+                        && !self.retarget_draft
+                    {
+                        602.0
                     } else {
                         514.0
                     },
@@ -1459,3 +1666,29 @@ fn retarget_field_label(path: &str) -> Option<String> {
 
 #[cfg(test)]
 mod gpu_tests;
+
+#[cfg(test)]
+mod safe_view_tests {
+    use super::*;
+    #[test]
+    fn panel_safe_areas_follow_dpi_and_odd_split_regions() {
+        assert_eq!(
+            safe_view_rect([1001, 700], [0, 0, 500, 700], 1.),
+            Some([150., 0., 350., 700.])
+        );
+        assert_eq!(
+            safe_view_rect([1001, 700], [500, 0, 501, 700], 1.),
+            Some([0., 0., 321., 700.])
+        );
+        assert_eq!(
+            safe_view_rect([2002, 1400], [0, 0, 1001, 1400], 2.),
+            Some([300., 0., 701., 1400.])
+        );
+        assert_eq!(
+            safe_view_rect([2002, 1400], [1001, 0, 1001, 1400], 2.),
+            Some([0., 0., 641., 1400.])
+        );
+        assert!(safe_view_rect([1001, 700], [0, 0, 100, 700], 1.).is_none());
+        assert!(safe_view_rect([1001, 700], [0, 0, 500, 700], 0.).is_none());
+    }
+}

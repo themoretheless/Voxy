@@ -1,4 +1,6 @@
 //! Platform-neutral named actions. Platform adapters supply physical control values.
+mod checkpoint;
+pub use checkpoint::{ActionCheckpoint, InputCheckpoint};
 use std::collections::BTreeMap;
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Control {

@@ -6,17 +6,53 @@
 use crate::*;
 
 impl App {
-    #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
     pub(crate) fn draw(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        self.draw_frame(None)
+    }
+    /// Uses the original frame extraction and draw preparation for either a
+    /// surface or caller-owned targets. Offscreen submission does not ACK native
+    /// presentation, UI input ownership, or advance the presented-frame counter.
+    /// Offscreen callers advance simulation explicitly; snapshot rendering never
+    /// consumes wall-clock time or runs an extra gameplay update.
+    #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
+    pub(crate) fn draw_frame(
+        &mut self,
+        offscreen: Option<voxy_render::SceneViewTargets<'_>>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        self.draw_frame_inner(offscreen)?;
+        // Every successful path, including offscreen and skipped presentation,
+        // completes source adoption before advancing the detached load command.
+        self.poll_snapshot_load_command();
+        Ok(())
+    }
+    fn draw_frame_inner(
+        &mut self,
+        offscreen: Option<voxy_render::SceneViewTargets<'_>>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        if let Some(targets) = &offscreen
+            && targets.resolve.is_some() != self.msaa4
+        {
+            return Err("offscreen target sample policy differs from viewport".into());
+        }
         let profile_start = self
             .animation_smoke
             .as_ref()
             .is_some_and(|s| s.profile)
             .then(Instant::now);
         self.tick()?;
-        let elapsed = self.play.simulation_time.elapsed().as_secs_f64();
-        self.play.simulation_time = Instant::now();
-        self.advance_game(elapsed)?;
+        let load_status = self.editor_file_status();
+        if let Some(panels) = &mut self.panels {
+            if panels.load_status != load_status {
+                panels.load_status = load_status;
+                panels.invalidate_presentation();
+                self.panel_cache = None;
+            }
+        }
+        if offscreen.is_none() && !self.restore_play_frozen() {
+            let elapsed = self.play.simulation_time.elapsed().as_secs_f64();
+            self.play.simulation_time = Instant::now();
+            self.advance_game(elapsed)?;
+        }
         // Interpolated ancestor matrices are shared across the instances of one frame.
         let render_world_cache = std::cell::RefCell::new(voxy_scene::RenderWorldCache::default());
         voxy_scene::extraction_schedule()?.run_scene(&mut self.scene, |_, access| {
@@ -77,6 +113,7 @@ impl App {
                     size: [size.width, size.height],
                     playing: self.play.playing.is_some(),
                     inspector: self.inspector,
+                    resource_notice: self.selected_model_notice(),
                     texture_label: self
                         .instances
                         .get(self.selected)
@@ -100,6 +137,7 @@ impl App {
                     field: self.field.clone(),
                     scroll: self.tree_scroll,
                     parenting: self.parenting.is_some(),
+                    follow_pick: self.follow_pick.as_ref().map(|pick| pick.key),
                 };
                 if self.panel_cache.as_ref() != Some(&input) {
                     let overrides = self.prefab_overridden_fields(&input.document)?;
@@ -127,6 +165,12 @@ impl App {
                         .as_mut()
                         .ok_or("missing panels")?
                         .overridden_fields = overrides;
+                    self.panels.as_mut().ok_or("missing panels")?.follow_pick = input.follow_pick;
+                    self.panels
+                        .as_mut()
+                        .ok_or("missing panels")?
+                        .resource_notice
+                        .clone_from(&input.resource_notice);
                     let mesh = self.panels.as_mut().ok_or("missing panels")?.build(
                         &input.document,
                         input.selected,
@@ -141,22 +185,27 @@ impl App {
                         input.import_config,
                     )?;
                     if let Some(graphics) = &mut self.graphics {
-                        graphics.panel_geometry = Some(
-                            graphics
-                                .renderer
-                                .upload_mesh(graphics.host.device(), &mesh)?,
-                        );
+                        graphics.panel_geometry =
+                            Some(graphics.renderer.upload_mesh(&graphics.device, &mesh)?);
                     }
                     self.panel_cache = Some(input);
                 }
             }
         }
-        let viewport = self.window.as_ref().map_or([1, 1], |window| {
-            let size = window.inner_size();
-            [size.width.max(1), size.height.max(1)]
-        });
+        let viewport = offscreen.as_ref().map_or_else(
+            || {
+                self.window.as_ref().map_or([1, 1], |window| {
+                    let size = window.inner_size();
+                    [size.width.max(1), size.height.max(1)]
+                })
+            },
+            |targets| {
+                let size = targets.color.texture().size();
+                [size.width, size.height]
+            },
+        );
         if let Some(graphics) = &mut self.graphics {
-            if self.play.playing.is_some() || self.standalone {
+            if self.play.playing.is_some() || self.standalone || self.restore_barrier.is_some() {
                 if let Err(error) = self.ui_live.poll(
                     &self.scene,
                     &self.authoring.authoring_project,
@@ -171,6 +220,16 @@ impl App {
                 graphics.ui_presented = false;
             }
         }
+        if self.restore_barrier.is_some() {
+            let identities: BTreeMap<_, _> = self
+                .instances
+                .iter()
+                .copied()
+                .zip(self.object_ids.iter().cloned())
+                .collect();
+            self.poll_restore_barrier(|node| identities.get(&node).cloned())?;
+        }
+        self.poll_snapshot_save_command();
         let ring = self
             .ui_live
             .focus_snapshot()
@@ -191,8 +250,8 @@ impl App {
                     graphics.residency_cache.geometry_live = graphics.geometry_bytes();
                     match ui_live::upload_on(
                         &graphics.renderer,
-                        graphics.host.device(),
-                        graphics.host.queue(),
+                        &graphics.device,
+                        &graphics.queue,
                         &mut graphics.residency_cache,
                         &[mesh],
                     ) {
@@ -241,10 +300,7 @@ impl App {
         if views.is_empty() {
             return Ok(());
         }
-        let animation_requests = if self.play.playing.is_some()
-            || self.standalone
-            || self.authoring.animation_preview.is_some()
-        {
+        let animation_requests = {
             self.extraction
                 .instances()
                 .iter()
@@ -271,10 +327,30 @@ impl App {
                         });
                     let frame = if self.play.playing.is_some() || self.standalone {
                         self.play.animations.frame(instance.owner, &model)
+                    } else if let Some(preview) =
+                        self.preview_animation_frame(instance.owner, &model, &settings)
+                    {
+                        Some(preview)
+                    } else if !settings.morph_weights.is_empty() {
+                        match self.graphics.as_ref()?.animated_models.authoring_frame(
+                            instance.owner,
+                            &model,
+                            &settings,
+                        ) {
+                            Ok(frame) => Some(frame),
+                            Err(error) => {
+                                eprintln!(
+                                    "MODEL AUTHORING retained previous frame for {:?}: {error}",
+                                    instance.owner
+                                );
+                                None
+                            }
+                        }
                     } else {
-                        Some(self.preview_animation_frame(instance.owner, &model, &settings)?)
+                        return None;
                     };
                     Some(animated_models::Request {
+                        publication: published.publication.clone(),
                         owner: instance.owner,
                         frame,
                         model,
@@ -285,8 +361,6 @@ impl App {
                     })
                 })
                 .collect()
-        } else {
-            Vec::new()
         };
         let optical_particles = if !self.msaa4 && views.iter().any(|v| v.3.is_some()) {
             self.play
@@ -325,7 +399,7 @@ impl App {
                 }
                 graphics.liquid_geometry = mesh
                     .as_ref()
-                    .map(|mesh| graphics.renderer.upload_mesh(graphics.host.device(), mesh))
+                    .map(|mesh| graphics.renderer.upload_mesh(&graphics.device, mesh))
                     .transpose()?;
                 graphics.liquid_revision = liquid_revision;
             }
@@ -344,9 +418,9 @@ impl App {
                     {
                         let candidate =
                             voxy_render::ScreenSpaceFluidRenderer::new_with_adapter_budget(
-                                graphics.host.device(),
-                                graphics.host.adapter(),
-                                graphics.host.color_format(),
+                                &graphics.device,
+                                &graphics.adapter,
+                                graphics.renderer.color_format(),
                                 region[2],
                                 region[3],
                                 16384,
@@ -356,7 +430,7 @@ impl App {
                         graphics.optical_liquids.insert(id, candidate);
                     }
                     graphics.optical_liquids.get_mut(&id).unwrap().update(
-                        graphics.host.queue(),
+                        &graphics.queue,
                         camera,
                         particles,
                         1.,
@@ -370,16 +444,11 @@ impl App {
             let other_live = graphics
                 .geometry_bytes()
                 .saturating_sub(graphics.animated_models.allocation_bytes());
-            if self.play.playing.is_none()
-                && !self.standalone
-                && self.authoring.animation_preview.is_none()
             {
-                graphics.animated_models.clear();
-            } else {
                 for (owner, error) in graphics.animated_models.synchronize(
                     &graphics.renderer,
-                    graphics.host.device(),
-                    graphics.host.queue(),
+                    &graphics.device,
+                    &graphics.queue,
                     animation_requests,
                     self.play.animations.serial(),
                     other_live,
@@ -420,7 +489,7 @@ impl App {
                 for instance in self.extraction.instances() {
                     if let Err(error) = graphics.animated_models.select_lod(
                         &graphics.renderer,
-                        graphics.host.device(),
+                        &graphics.device,
                         instance.owner,
                         view,
                         camera,
@@ -443,10 +512,10 @@ impl App {
                         std::collections::btree_map::Entry::Vacant(e) => e.insert(
                             graphics
                                 .renderer
-                                .create_transform(graphics.host.device(), Mat4::IDENTITY)?,
+                                .create_transform(&graphics.device, Mat4::IDENTITY)?,
                         ),
                     };
-                    transform.update(graphics.host.queue(), view_projection)?;
+                    transform.update(&graphics.queue, view_projection)?;
                 }
                 for instance in self.extraction.instances() {
                     let key = (view, instance.owner);
@@ -455,10 +524,10 @@ impl App {
                         std::collections::hash_map::Entry::Vacant(entry) => entry.insert(
                             graphics
                                 .renderer
-                                .create_transform(graphics.host.device(), instance.world)?,
+                                .create_transform(&graphics.device, instance.world)?,
                         ),
                     };
-                    transform.update(graphics.host.queue(), view_projection * instance.world)?;
+                    transform.update(&graphics.queue, view_projection * instance.world)?;
                     let material = styles
                         .materials
                         .get(&instance.owner)
@@ -477,7 +546,7 @@ impl App {
                                 ]
                             });
                     transform.update_scene_material(
-                        graphics.host.queue(),
+                        &graphics.queue,
                         instance.world,
                         material.tint,
                         light,
@@ -501,11 +570,11 @@ impl App {
                         std::collections::btree_map::Entry::Vacant(entry) => entry.insert(
                             graphics
                                 .renderer
-                                .create_transform(graphics.host.device(), Mat4::IDENTITY)?,
+                                .create_transform(&graphics.device, Mat4::IDENTITY)?,
                         ),
                     };
                     transform.update(
-                        graphics.host.queue(),
+                        &graphics.queue,
                         view_projection * Mat4::from_translation(instance.world.w_axis.truncate()),
                     )?;
                 }
@@ -519,7 +588,7 @@ impl App {
                     .sum::<u64>();
             let (live, pending) = gpu_model::reconcile_lod_residency(
                 &graphics.renderer,
-                graphics.host.device(),
+                &graphics.device,
                 &mut graphics.models,
                 &requested,
                 other_bytes,
@@ -704,26 +773,93 @@ impl App {
                     overlay: true,
                 });
             }
+            if let Some(targets) = offscreen.as_ref().filter(|_| styles.fog.is_empty()) {
+                let scene_views: Vec<_> = views
+                    .iter()
+                    .zip(&view_draws)
+                    .map(|(view, draws)| voxy_render::SceneView {
+                        viewport: view.1,
+                        draws,
+                    })
+                    .collect();
+                let mut encoder =
+                    graphics
+                        .device
+                        .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                            label: Some("native offscreen viewport frame"),
+                        });
+                let targets = voxy_render::SceneViewTargets {
+                    color: targets.color,
+                    depth: targets.depth,
+                    xray_depth: targets.xray_depth,
+                    resolve: targets.resolve,
+                    overlay_depth: targets.overlay_depth,
+                };
+                if graphics.optical_liquids.is_empty() {
+                    graphics.renderer.encode_view_frame_targets(
+                        &mut encoder,
+                        targets,
+                        wgpu::Color::BLACK,
+                        &scene_views,
+                        &overlays,
+                    )?;
+                } else {
+                    let fluids: Vec<_> = views
+                        .iter()
+                        .enumerate()
+                        .filter_map(|(index, view)| {
+                            graphics
+                                .optical_liquids
+                                .get(&view.0)
+                                .map(|fluid| (index, fluid))
+                        })
+                        .collect();
+                    graphics.renderer.encode_view_frame_with_fluids(
+                        &mut encoder,
+                        targets,
+                        wgpu::Color::BLACK,
+                        &scene_views,
+                        &fluids,
+                        &overlays,
+                    )?;
+                }
+                graphics.queue.submit([encoder.finish()]);
+                return Ok(());
+            }
             let draw_count = view_draws.iter().map(Vec::len).sum::<usize>() + overlays.len();
             let present_start = profile_start.map(|_| Instant::now());
             if styles.fog.is_empty()
                 && let Some(fog) = &mut graphics.fog
-                && fog.deactivate(graphics.host.device())?
+                && fog.deactivate(&graphics.device)?
             {
                 graphics.fog = None;
             }
-            if std::env::var_os("VOXY_WINDOW_PIXEL_PROBE").is_some() {
-                if let Some((frame, pixel)) = graphics.host.take_pixel_probe() {
+            if offscreen.is_none() && std::env::var_os("VOXY_WINDOW_PIXEL_PROBE").is_some() {
+                if let Some((frame, pixel)) = graphics
+                    .host
+                    .as_mut()
+                    .ok_or("missing presentation surface")?
+                    .take_pixel_probe()
+                {
                     println!("WINDOW PIXEL frame={frame} rgba_storage={pixel:?}");
                 }
                 if ((self.trace.pending && self.trace.last_outcome.is_none())
                     || (self.frames > 0 && self.frames.is_multiple_of(60)))
-                    && !graphics.host.pixel_probe_pending()
+                    && !graphics
+                        .host
+                        .as_ref()
+                        .ok_or("missing presentation surface")?
+                        .pixel_probe_pending()
                 {
                     let size = self.window.as_ref().ok_or("missing window")?.inner_size();
                     // Stable floor point in the standalone gameplay diagnostic fixture.
                     let point = [size.width / 2, (f64::from(size.height) * 0.775) as u32];
-                    if let Err(error) = graphics.host.request_pixel_probe(point) {
+                    if let Err(error) = graphics
+                        .host
+                        .as_mut()
+                        .ok_or("missing presentation surface")?
+                        .request_pixel_probe(point)
+                    {
                         eprintln!("WINDOW PIXEL unavailable: {error}");
                     }
                 }
@@ -739,17 +875,21 @@ impl App {
                     return Err("fog/liquid merged optical depth is not yet available".into());
                 }
                 if graphics.fog.is_none() {
+                    let format = if let Some(targets) = &offscreen {
+                        targets.color.texture().format()
+                    } else {
+                        graphics
+                            .host
+                            .as_ref()
+                            .ok_or("missing presentation surface")?
+                            .color_format()
+                    };
                     graphics.fog = Some(pollster::block_on(fog_draw::FogDraw::new(
-                        graphics.host.device(),
-                        graphics.host.color_format(),
+                        &graphics.device,
+                        format,
                     ))?);
                 }
-                let window = self
-                    .window
-                    .as_ref()
-                    .ok_or("missing fog window")?
-                    .inner_size();
-                let device = graphics.host.device().clone();
+                let device = graphics.device.clone();
                 let other = graphics
                     .geometry_bytes()
                     .saturating_sub(graphics.fog.as_ref().unwrap().allocation_bytes());
@@ -761,17 +901,21 @@ impl App {
                 let fog = graphics.fog.as_mut().unwrap();
                 fog.prepare_targets_with_shadow(
                     &device,
-                    [window.width, window.height],
+                    viewport,
                     &views,
                     styles.shadow,
                     view_casters.iter().map(Vec::len).sum(),
                     budget,
                 )?;
-                let result = graphics.host.render_custom(|encoder, output| {
-                    fog.encode(
+                if let Some(targets) = &offscreen {
+                    let mut encoder =
+                        device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                            label: Some("native offscreen fog frame"),
+                        });
+                    if let Err(error) = fog.encode(
                         &device,
-                        encoder,
-                        output,
+                        &mut encoder,
+                        targets.color,
                         &graphics.renderer,
                         &views,
                         &view_draws,
@@ -781,10 +925,36 @@ impl App {
                         styles.light,
                         &view_casters,
                         styles.shadow.map(|(_, settings)| settings),
-                    )
-                });
+                    ) {
+                        fog.discard_unsubmitted();
+                        return Err(error.into());
+                    }
+                    graphics.queue.submit([encoder.finish()]);
+                    fog.submitted(&graphics.queue);
+                    return Ok(());
+                }
+                let result = graphics
+                    .host
+                    .as_mut()
+                    .ok_or("missing presentation surface")?
+                    .render_custom(|encoder, output| {
+                        fog.encode(
+                            &device,
+                            encoder,
+                            output,
+                            &graphics.renderer,
+                            &views,
+                            &view_draws,
+                            &overlays,
+                            *volume,
+                            *bounds,
+                            styles.light,
+                            &view_casters,
+                            styles.shadow.map(|(_, settings)| settings),
+                        )
+                    });
                 if matches!(&result, Ok(voxy_render::RenderOutcome::Presented)) {
-                    fog.submitted(graphics.host.queue());
+                    fog.submitted(&graphics.queue);
                 } else {
                     // render_custom has already discarded any failed encoder.
                     fog.discard_unsubmitted();
@@ -794,18 +964,26 @@ impl App {
                 let mut draws = view_draws.pop().ok_or("missing view draws")?;
                 draws.extend(overlays);
                 if let Some(fluid) = graphics.optical_liquids.get(&views[0].0) {
-                    graphics.host.render_custom(|encoder, output| {
-                        fluid.encode(
-                            &graphics.renderer,
-                            encoder,
-                            output,
-                            wgpu::Color::BLACK,
-                            &draws,
-                        );
-                        Ok::<_, voxy_render::RendererError>(())
-                    })?
+                    graphics
+                        .host
+                        .as_mut()
+                        .ok_or("missing presentation surface")?
+                        .render_custom(|encoder, output| {
+                            fluid.encode(
+                                &graphics.renderer,
+                                encoder,
+                                output,
+                                wgpu::Color::BLACK,
+                                &draws,
+                            );
+                            Ok::<_, voxy_render::RendererError>(())
+                        })?
                 } else {
-                    graphics.host.render_scene(&graphics.renderer, &draws)?
+                    graphics
+                        .host
+                        .as_mut()
+                        .ok_or("missing presentation surface")?
+                        .render_scene(&graphics.renderer, &draws)?
                 }
             } else {
                 let scene_views: Vec<_> = views
@@ -819,6 +997,8 @@ impl App {
                 if graphics.optical_liquids.is_empty() {
                     graphics
                         .host
+                        .as_mut()
+                        .ok_or("missing presentation surface")?
                         .render_scene_views(&graphics.renderer, &scene_views, &overlays)?
                 } else {
                     let fluids: Vec<_> = views
@@ -828,12 +1008,16 @@ impl App {
                             graphics.optical_liquids.get(&view.0).map(|f| (index, f))
                         })
                         .collect();
-                    graphics.host.render_scene_views_with_fluids(
-                        &graphics.renderer,
-                        &scene_views,
-                        &fluids,
-                        &overlays,
-                    )?
+                    graphics
+                        .host
+                        .as_mut()
+                        .ok_or("missing presentation surface")?
+                        .render_scene_views_with_fluids(
+                            &graphics.renderer,
+                            &scene_views,
+                            &fluids,
+                            &overlays,
+                        )?
                 }
             };
             if let Some(start) = profile_start {
@@ -954,9 +1138,7 @@ impl App {
         let size = window.inner_size();
         let size = Vec2::new(size.width as f32, size.height as f32) / scale;
         let cursor = cursor / scale;
-        cursor.x >= 150_f32.min(size.x * 0.25)
-            && cursor.x < size.x - 180_f32.min(size.x * 0.3)
-            && cursor.y >= 0.
-            && cursor.y < size.y
+        let (left, right) = panels::side_widths(size);
+        cursor.x >= left && cursor.x < size.x - right && cursor.y >= 0. && cursor.y < size.y
     }
 }

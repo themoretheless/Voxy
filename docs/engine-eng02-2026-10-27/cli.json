@@ -1,0 +1,72 @@
+{
+  "binary": "/private/tmp/voxy-eng01-20261027-target/debug/voxy_editor",
+  "binary_sha256": "004eb2b78a626e08b55c5a03d03038046c4064d78e6743b67425a713e81175c3",
+  "binary_stable": true,
+  "cwd": "/",
+  "calls": [
+    {
+      "arguments": [
+        "--create-project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng02-cli-ee65zwg8/project",
+        "Lifecycle"
+      ],
+      "exit_code": 0,
+      "stdout": "Created /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng02-cli-ee65zwg8/project/project.voxy\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "--project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng02-cli-ee65zwg8/project/project.voxy",
+        "--game-check"
+      ],
+      "exit_code": 0,
+      "stdout": "GAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"actor\",\"parent\":null,\"name\":\"Actor\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.9092974,-0.4161471],\"scale\":[1.0,1.0,1.0],\"components\":{\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":2.0}}}]}\nGAME CHECK PASS ticks=120 objects=1 prefab_instances=0\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "--project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng02-cli-ee65zwg8/project/project.voxy",
+        "--game-check"
+      ],
+      "exit_code": 0,
+      "stdout": "GAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"actor\",\"parent\":null,\"name\":\"Actor\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.9092974,-0.4161471],\"scale\":[1.0,1.0,1.0],\"components\":{\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":2.0}}}]}\nGAME CHECK PASS ticks=120 objects=1 prefab_instances=0\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "--build-project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng02-cli-ee65zwg8/project/project.voxy",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng02-cli-ee65zwg8/game.vpak"
+      ],
+      "exit_code": 0,
+      "stdout": "GAME PACKAGE PASS sources=3 bytes=2156\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "--package",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng02-cli-ee65zwg8/game.vpak",
+        "--game-check"
+      ],
+      "exit_code": 0,
+      "stdout": "GAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"actor\",\"parent\":null,\"name\":\"Actor\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.9092974,-0.4161471],\"scale\":[1.0,1.0,1.0],\"components\":{\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":2.0}}}]}\nGAME CHECK PASS ticks=120 objects=1 prefab_instances=0\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "--package",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng02-cli-ee65zwg8/game.vpak",
+        "--game-check"
+      ],
+      "exit_code": 0,
+      "stdout": "GAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"actor\",\"parent\":null,\"name\":\"Actor\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.9092974,-0.4161471],\"scale\":[1.0,1.0,1.0],\"components\":{\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":2.0}}}]}\nGAME CHECK PASS ticks=120 objects=1 prefab_instances=0\n",
+      "stderr": ""
+    }
+  ],
+  "project_package_state_equal": true,
+  "authoring_file_unchanged": true,
+  "passed": true,
+  "scope": "Headless game-check only; no GPU/native presentation qualification"
+}

@@ -9,6 +9,9 @@ use crate::{
     SkinnedMesh, SkinnedUploadError, certify_lod_error,
 };
 
+mod checkpoint;
+pub use checkpoint::{SkinnedLodCheckpoint, SkinnedLodCheckpointError, SkinnedLodCheckpointLimits};
+
 #[derive(Debug)]
 struct Source {
     mesh: Arc<SkinnedMesh>,
@@ -139,6 +142,16 @@ impl SkinnedLodMesh {
     #[must_use]
     pub fn mesh(&self) -> &SkinnedMesh {
         &self.0.mesh
+    }
+    /// Immutable mesh ownership for resource-graph checkpoint joins.
+    #[must_use]
+    pub fn source_mesh(&self) -> &Arc<SkinnedMesh> {
+        &self.0.mesh
+    }
+    /// Resource-graph identity; equal proof/mesh data does not imply a shared source.
+    #[must_use]
+    pub fn shares_source_with(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.0, &other.0)
     }
 
     #[must_use]

@@ -7,7 +7,7 @@ use std::f64::consts::PI;
 
 #[path = "liquid/viscoelastic.rs"]
 mod viscoelastic;
-pub use viscoelastic::{Conformation, MaxwellFluid};
+pub use viscoelastic::{Conformation, MaxwellFluid, PolymerCheckpoint};
 #[path = "liquid/water_saturation.rs"]
 mod water_saturation;
 pub use water_saturation::{WaterSaturation, water_saturation, water_saturation_temperature};
@@ -1059,11 +1059,11 @@ mod suspension;
 #[path = "liquid/transport.rs"]
 mod transport;
 pub use suspension::SuspensionCellInventory;
-pub use transport::{LiquidField, TransportMaterial};
+pub use transport::{LiquidField, ThermalFieldCheckpoint, ThermalMaterialCheckpoint, TransportMaterial};
 
 #[path = "liquid/properties.rs"]
 mod properties;
-pub use properties::PropertyResponse;
+pub use properties::{FieldResponseCheckpoint, PropertyResponse, PropertyResponseCheckpoint};
 
 #[path = "liquid/surface.rs"]
 mod surface;
@@ -1081,7 +1081,7 @@ pub use contact_angle::{ContactAngleEstimate, WallFace};
 
 #[path = "liquid/phase.rs"]
 mod phase;
-pub use phase::PhaseChange;
+pub use phase::{PhaseChange, PhaseCheckpoint, SaturationCheckpoint};
 
 #[path = "liquid/dissipation.rs"]
 mod dissipation;
@@ -1351,7 +1351,7 @@ pub use wall_heat::{WallHeatReport, WallThermal};
 
 #[path = "liquid/rheology.rs"]
 mod rheology;
-pub use rheology::{HerschelBulkley, ShearThinning, WhippedCreamProfile};
+pub use rheology::{HerschelBulkley, RheologyCheckpoint, ShearThinning, WhippedCreamProfile};
 
 #[path = "liquid/arrhenius.rs"]
 mod arrhenius;
@@ -1360,7 +1360,7 @@ pub use arrhenius::ArrheniusViscosity;
 #[path = "liquid/emission.rs"]
 mod emission;
 pub use emission::{
-    EmissionPulse, EmissionReaction, PulsedEmitter, SourceAccuracy, ViscosityProfile,
+    EmissionPulse, EmissionReaction, PulsedEmitter, PulsedEmitterCheckpoint, SourceAccuracy, ViscosityProfile,
 };
 
 #[path = "liquid/splitting.rs"]
@@ -1511,3 +1511,32 @@ pub use jet::{
     JetEmissionStep, JetFluidPreset, JetSurfaceImpactReport, LiquidJetNozzle,
     resolve_jet_surface_impact,
 };
+
+#[path = "liquid/particle_checkpoint.rs"]
+mod particle_checkpoint;
+pub use particle_checkpoint::{LiquidCheckpointLimits, LiquidParticleCheckpoint, ParticleCheckpoint};
+
+pub use species::{ReactionAccuracyCheckpoint, ReactionCheckpoint, SpeciesCheckpoint, SpeciesCheckpointLimits, SpeciesPropertiesCheckpoint};
+
+#[path = "liquid/evolution_checkpoint.rs"]
+mod evolution_checkpoint;
+pub use evolution_checkpoint::LiquidEvolutionCheckpoint;
+
+#[path = "liquid/surface_checkpoint.rs"]
+mod surface_checkpoint;
+pub use surface_checkpoint::SurfaceInteractionCheckpoint;
+
+#[path = "liquid/boundary_checkpoint.rs"]
+mod boundary_checkpoint;
+pub use boundary_checkpoint::LiquidBoundaryCheckpoint;
+
+#[path = "liquid/population_heat_checkpoint.rs"]
+mod population_heat_checkpoint;
+pub use population_heat_checkpoint::PopulationHeatCheckpoint;
+
+#[path = "liquid/checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{LiquidCheckpoint, LiquidStateCheckpointLimits};
+
+mod checkpoint_wire;
+pub use checkpoint_wire::LiquidWireLimits;

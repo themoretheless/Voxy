@@ -10,6 +10,10 @@ pub(crate) fn marker_list_token(object: &SceneObject) -> Result<[u8; 32], serde_
     Ok(*blake3::hash(&serde_json::to_vec(&(&object.id, events))?).as_bytes())
 }
 
+pub(crate) fn morph_edit_token(object: &voxy_scene::SceneObject) -> [u8; 32] {
+    *blake3::hash(&serde_json::to_vec(object).expect("scene object serializes")).as_bytes()
+}
+
 #[derive(Clone, Debug)]
 pub(crate) struct ComponentField {
     pub schema: String,
@@ -822,7 +826,8 @@ pub(crate) fn fields(object: &SceneObject) -> Result<Vec<ComponentField>, &'stat
         }
         // Keep the marker list editable even when empty. Replacing the whole
         // list uses the existing atomic component codec/history transaction.
-        if schema == "editor.model-animation.v1" && path == "/events" {
+        if schema == "editor.model-animation.v1" && (path == "/events" || path == "/morph_weights")
+        {
             out.push(ComponentField {
                 schema: schema.into(),
                 path: path.clone(),

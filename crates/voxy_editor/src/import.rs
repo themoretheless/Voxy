@@ -9,6 +9,49 @@ use voxy_render::{
 use voxy_scene::Transform;
 #[cfg(test)]
 mod animated_tests;
+pub(crate) mod asset_checkpoint;
+pub(crate) mod catalog_checkpoint;
+pub(crate) mod node_checkpoint;
+pub(crate) mod publication_checkpoint;
+
+/// Per-source bound shared by model import and its content watcher.
+pub(crate) const MODEL_INPUTS: usize = 34;
+pub(crate) const MODEL_INPUT_BYTES: usize = 32 * 1024 * 1024;
+pub(crate) const SOURCE_BYTES: usize = 16 * 1024 * 1024;
+
+// Current common editor/build manifest policy; descriptor/scene budgets differ.
+pub(crate) const MANIFEST_ENTRIES: usize = 128;
+pub(crate) const MANIFEST_BYTES: usize = 64 * 1024;
+pub(crate) fn manifest_locations(bytes: &[u8]) -> Result<voxy_assets::AssetLocations, EditorError> {
+    voxy_assets::AssetLocations::from_json(
+        std::str::from_utf8(bytes)?,
+        MANIFEST_ENTRIES,
+        MANIFEST_BYTES,
+        MANIFEST_BYTES,
+    )
+    .map_err(EditorError::from)
+}
+
+pub(crate) fn model_inventory(
+    bytes: &[u8],
+) -> Result<std::collections::BTreeSet<AssetId>, EditorError> {
+    let locations = manifest_locations(bytes)?;
+    Ok(locations
+        .bindings()
+        .filter(|(_, source)| {
+            std::path::Path::new(source.as_str())
+                .extension()
+                .and_then(|e| e.to_str())
+                .is_some_and(|e| {
+                    matches!(
+                        e.to_ascii_lowercase().as_str(),
+                        "obj" | "gltf" | "glb" | "vmodel"
+                    )
+                })
+        })
+        .map(|(id, _)| id.clone())
+        .collect())
+}
 
 #[derive(Clone, Debug)]
 pub(crate) struct ImportedNode {
@@ -68,9 +111,7 @@ fn observe(
     id: AssetId,
 ) -> Result<Vec<u8>, EditorError> {
     inputs
-        .read(id, |id, limit| {
-            provider.read(id, limit.min(16 * 1024 * 1024))
-        })
+        .read(id, |id, limit| provider.read(id, limit.min(SOURCE_BYTES)))
         .map(|snapshot| snapshot.bytes.to_vec())
         .map_err(|e| format!("{e:?}"))
         .map_err(Into::into)
@@ -201,7 +242,13 @@ pub(crate) fn load(
     if images.iter().map(|image| image.rgba().len()).sum::<usize>() > 32 * 1024 * 1024 {
         return Err("decoded image budget exceeded".into());
     }
-    if gltf.animations().next().is_some() || gltf.skins().next().is_some() {
+    if gltf.animations().next().is_some()
+        || gltf.skins().next().is_some()
+        || gltf.meshes().any(|mesh| {
+            mesh.primitives()
+                .any(|p| p.morph_targets().next().is_some())
+        })
+    {
         return load_animated_model(&bytes, &buffers, images);
     }
     let raw: Vec<_> = gltf.nodes().collect();
@@ -434,7 +481,7 @@ fn load_animated_model(
     images: Vec<ImageAsset>,
 ) -> Result<EditorAsset, EditorError> {
     let buffers: Vec<_> = buffers.iter().map(Vec::as_slice).collect();
-    let model = voxy_model::ModelAsset::parse(
+    let model = voxy_model::ModelAsset::parse_animated(
         bytes,
         &buffers,
         voxy_model::ModelLimits {
@@ -448,8 +495,7 @@ fn load_animated_model(
     if model.primitives.len() > 128 {
         return Err("animated primitive budget exceeded".into());
     }
-    let pose = model.skeleton.bind_pose();
-    let meshes = model.scene_meshes(&pose)?;
+    let meshes = model.scene_meshes_frame(&model.bind_frame()?)?;
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
     let mut normals = Vec::new();
@@ -514,6 +560,9 @@ fn load_lod_model(
         cells: 262_144,
     };
     if let Some(model) = &asset.animated {
+        if model.has_morph() {
+            return Err("morph LOD needs a morph-aware error certificate".into());
+        }
         if model.primitives.len() != 1 {
             return Err("skeletal LOD requires one primitive".into());
         }
@@ -587,6 +636,39 @@ mod lod_model_tests {
         let asset = load(&source, &provider, &mut inputs).unwrap();
         assert_eq!(inputs.observations().len(), 3);
         assert_eq!(asset.lod.as_ref().unwrap().indices().levels().len(), 2);
+        let whole_limits = asset_checkpoint::EditorAssetCheckpointLimits::default();
+        let whole_checkpoint = asset_checkpoint::EditorAssetCheckpoint::capture(
+            &[std::sync::Arc::new(asset.clone())],
+            whole_limits,
+        )
+        .unwrap();
+        std::fs::write(
+            root.join("whole-static.voxyeda"),
+            whole_checkpoint.to_bytes(whole_limits).unwrap(),
+        )
+        .unwrap();
+        asset_checkpoint::retain_evidence(
+            "static-lod.voxyeda",
+            &whole_checkpoint.to_bytes(whole_limits).unwrap(),
+        );
+        let checkpoint_limits = voxy_render::LodArchiveLimits {
+            bytes: 4096,
+            positions: 3,
+            levels: 2,
+            indices: 6,
+            cells: 2,
+        };
+        let checkpoint = asset
+            .lod
+            .as_ref()
+            .unwrap()
+            .checkpoint(checkpoint_limits)
+            .unwrap();
+        std::fs::write(
+            root.join("accepted-lod.json"),
+            checkpoint.to_json(checkpoint_limits.bytes).unwrap(),
+        )
+        .unwrap();
         let mut app = crate::App::new(&root.join("mesh.vmodel"), false).unwrap();
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
         while app
@@ -654,6 +736,56 @@ mod lod_model_tests {
         )
         .unwrap();
         assert!(load(&source, &provider, &mut ImportInputs::new(3, 32 * 1024)).is_err());
+        for filename in ["base.obj", "proof.lod", "mesh.vmodel"] {
+            std::fs::remove_file(root.join(filename)).unwrap();
+        }
+        let restored_lod = voxy_render::CertifiedLodCheckpoint::from_json(
+            &std::fs::read_to_string(root.join("accepted-lod.json")).unwrap(),
+            checkpoint_limits.bytes,
+        )
+        .unwrap()
+        .prepare(checkpoint_limits)
+        .unwrap();
+        assert_eq!(
+            restored_lod.checkpoint(checkpoint_limits).unwrap(),
+            checkpoint
+        );
+        let whole_assets = asset_checkpoint::EditorAssetCheckpoint::from_bytes(
+            &std::fs::read(root.join("whole-static.voxyeda")).unwrap(),
+            whole_limits,
+        )
+        .unwrap()
+        .prepare(whole_limits)
+        .unwrap();
+        assert_eq!(
+            asset_checkpoint::EditorAssetCheckpoint::capture(&whole_assets, whole_limits).unwrap(),
+            whole_checkpoint
+        );
+        assert_eq!(
+            whole_assets[0]
+                .lod
+                .as_ref()
+                .unwrap()
+                .checkpoint(checkpoint_limits)
+                .unwrap(),
+            checkpoint
+        );
+        let policy = voxy_render::LodPolicy {
+            target_pixels: 1.0,
+            hysteresis: 0.1,
+        };
+        for frame in 0..120 {
+            let pixels = 0.05 + f64::from(frame) / 5.;
+            assert_eq!(
+                policy.select(
+                    last_good.value().lod.as_ref().unwrap().indices().levels(),
+                    1.0,
+                    pixels,
+                    None
+                ),
+                policy.select(restored_lod.indices().levels(), 1.0, pixels, None)
+            );
+        }
         std::fs::remove_dir_all(root).unwrap();
     }
 }

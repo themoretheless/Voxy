@@ -5,6 +5,8 @@ use super::{
 use crate::exact_quaternion as exact_basis;
 use glam::Quat;
 use std::sync::Arc;
+mod checkpoint;
+pub use checkpoint::RetargetBindingCheckpoint;
 mod model_rotations;
 pub use model_rotations::ModelRotationRetarget;
 mod profile;
@@ -492,6 +494,7 @@ impl RetargetBinding {
             joints: self.target.clone(),
         })?;
         Ok(AnimatorFrame {
+            properties: frame.properties.clone(),
             pose,
             skin_matrices,
             root_motion: glam::Vec3::ZERO,
@@ -527,6 +530,7 @@ impl RetargetBinding {
             joints: self.target.clone(),
         })?;
         Ok(AnimatorFrame {
+            properties: frame.properties.clone(),
             pose,
             skin_matrices,
             root_motion,
@@ -609,6 +613,7 @@ mod tests {
         let mut pose = source.bind_pose();
         pose.local[1].translation += Vec3::X;
         let frame = AnimatorFrame {
+            properties: Default::default(),
             skin_matrices: pose.skin_matrices(&source).unwrap(),
             pose,
             root_motion: Vec3::X,
@@ -751,6 +756,7 @@ mod tests {
         invalid.local[0].scale = Vec3::ZERO;
         assert!(binding.apply_pose(&invalid).is_err());
         let frame = AnimatorFrame {
+            properties: Default::default(),
             pose: source.bind_pose(),
             skin_matrices: vec![],
             root_motion: Vec3::ZERO,
@@ -771,6 +777,7 @@ mod tests {
         assert!(binding.apply_pose(&pose).is_err());
         assert_eq!(pose, snapshot);
         let mut frame = AnimatorFrame {
+            properties: Default::default(),
             pose: source.bind_pose(),
             skin_matrices: vec![],
             root_motion: Vec3::splat(f32::MAX),

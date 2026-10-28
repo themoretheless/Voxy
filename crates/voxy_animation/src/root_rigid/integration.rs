@@ -434,18 +434,7 @@ impl RootRigidPath {
                             )?,
                     };
                     prefix = increment.compose(&prefix)?;
-                    let rotation = RootRotationSpan::constant_velocity(
-                        start,
-                        end,
-                        nominal_prefix.rotation,
-                        twist.angular,
-                    )?;
-                    let span = RootRigidSpan {
-                        screw: Some((twist, nominal_prefix)),
-                        rotation,
-                        additive: [DVec3::ZERO; 4],
-                        pivot: [DVec3::ZERO; 4],
-                    };
+                    let span = RootRigidSpan::constant_spatial(twist, nominal_prefix, start, end)?;
                     nominal_prefix = span.sample(1.)?;
                     spans.push(span);
                     start = end;

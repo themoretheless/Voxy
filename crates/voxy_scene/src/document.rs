@@ -6,6 +6,7 @@ use serde_json::Value;
 use std::{
     any::TypeId,
     collections::{BTreeMap, HashMap, HashSet},
+    sync::Arc,
 };
 
 #[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -58,18 +59,29 @@ impl From<SceneGraphError> for DocumentError {
     }
 }
 
-type ReferenceVisitor = Box<dyn Fn(&Component) -> Vec<ObjectId> + Send + Sync>;
-type ReferenceRemapper = Box<
+#[path = "allocation_checkpoint.rs"]
+mod allocation;
+pub use allocation::SceneAllocationCheckpoint;
+
+type ReferenceVisitor = Arc<dyn Fn(&Component) -> Vec<ObjectId> + Send + Sync>;
+type ReferenceRemapper = Arc<
     dyn Fn(&mut Component, &BTreeMap<ObjectId, ObjectId>) -> Result<(), DocumentError>
         + Send
         + Sync,
 >;
 type Decoder = fn(Value) -> Result<Component, serde_json::Error>;
 type Encoder = fn(&Component) -> Result<Value, DocumentError>;
+#[derive(Clone)]
 struct Codec {
     type_id: TypeId,
     decode: Decoder,
     encode: Encoder,
+    encode_any: fn(&(dyn std::any::Any + Send + Sync)) -> Result<Value, DocumentError>,
+    queue_insert: fn(
+        crate::NodeId,
+        Value,
+    ) -> Result<Box<dyn crate::commands::ComponentChange>, serde_json::Error>,
+    queue_remove: fn(crate::NodeId) -> Box<dyn crate::commands::ComponentChange>,
     references: ReferenceVisitor,
     remap: Option<ReferenceRemapper>,
     collections: BTreeMap<String, String>,
@@ -82,11 +94,46 @@ impl std::fmt::Debug for Codec {
             .finish_non_exhaustive()
     }
 }
-#[derive(Debug, Default)]
+/// Cloning retains the registered codec callbacks while copying schema metadata.
+/// Registrations and collection declarations on a clone do not alter its source.
+#[derive(Clone, Debug, Default)]
 pub struct ComponentRegistry {
     codecs: BTreeMap<String, Codec>,
 }
 impl ComponentRegistry {
+    pub(crate) fn queued_schema(&self, type_id: TypeId) -> Result<&str, DocumentError> {
+        self.codecs
+            .iter()
+            .find(|(_, codec)| codec.type_id == type_id)
+            .map(|(name, _)| name.as_str())
+            .ok_or_else(|| DocumentError::Invalid("unregistered queued component".into()))
+    }
+    pub(crate) fn encode_queued(
+        &self,
+        type_id: TypeId,
+        value: &(dyn std::any::Any + Send + Sync),
+    ) -> Result<Value, DocumentError> {
+        let name = self.queued_schema(type_id)?;
+        (self.codecs[name].encode_any)(value)
+    }
+    pub(crate) fn restore_queued(
+        &self,
+        owner: crate::NodeId,
+        name: &str,
+        value: Option<&Value>,
+    ) -> Result<Box<dyn crate::commands::ComponentChange>, DocumentError> {
+        let codec = self
+            .codecs
+            .get(name)
+            .ok_or_else(|| DocumentError::Invalid("unknown queued component schema".into()))?;
+        if let Some(value) = value {
+            self.validate_collections(name, value)?;
+            Ok((codec.queue_insert)(owner, value.clone())?)
+        } else {
+            Ok((codec.queue_remove)(owner))
+        }
+    }
+
     /// Captures registered data components; unregistered runtime-only components
     /// remain owned by the live graph. The final document validates references.
     /// # Errors
@@ -126,6 +173,7 @@ impl ComponentRegistry {
                 (codec.decode)(value).map(|component| (codec.type_id, component))
             })
             .collect::<Result<Vec<_>, _>>()?;
+        scene.bump_structure();
         scene.node_mut(destination)?.components.extend(decoded);
         Ok(())
     }
@@ -157,7 +205,18 @@ impl ComponentRegistry {
                         crate::next_component_revision(),
                     ))
                 },
-                references: Box::new(|_| Vec::new()),
+                encode_any: |value| {
+                    let value = value
+                        .downcast_ref::<T>()
+                        .ok_or_else(|| DocumentError::Invalid("component type mismatch".into()))?;
+                    Ok(serde_json::to_value(value)?)
+                },
+                queue_insert: |owner, value| {
+                    serde_json::from_value::<T>(value)
+                        .map(|value| crate::commands::decoded_insert(owner, value))
+                },
+                queue_remove: crate::commands::decoded_remove::<T>,
+                references: Arc::new(|_| Vec::new()),
                 remap: None,
                 collections: BTreeMap::new(),
                 collection_defaults: BTreeMap::new(),
@@ -323,7 +382,7 @@ impl ComponentRegistry {
         self.codecs
             .get_mut(name)
             .ok_or_else(|| DocumentError::Invalid("registered codec missing".into()))?
-            .references = Box::new(move |component| {
+            .references = Arc::new(move |component| {
             component
                 .0
                 .downcast_ref::<T>()
@@ -348,7 +407,7 @@ impl ComponentRegistry {
         self.codecs
             .get_mut(name)
             .ok_or_else(|| DocumentError::Invalid("registered codec missing".into()))?
-            .remap = Some(Box::new(move |component, ids| {
+            .remap = Some(Arc::new(move |component, ids| {
             let value = component
                 .0
                 .downcast_mut::<T>()
@@ -418,6 +477,19 @@ impl LoadedScene {
             .find_map(|(id, candidate)| (*candidate == node).then_some(id))
     }
 
+    /// Resolve an identity reserved by this scene, including retired objects.
+    /// A retired result is a non-live history token; it never authorizes scene access.
+    #[must_use]
+    pub fn reserved_node(&self, id: &ObjectId) -> Option<NodeId> {
+        self.ids.get(id).copied()
+    }
+    #[must_use]
+    pub fn reserved_identity(&self, node: NodeId) -> Option<&ObjectId> {
+        self.ids
+            .iter()
+            .find_map(|(id, candidate)| (*candidate == node).then_some(id))
+    }
+
     /// Assigns a durable identity to a newly created live object.
     /// # Errors
     /// Rejects stale handles, empty/duplicate IDs and already identified objects.
@@ -438,6 +510,76 @@ impl LoadedScene {
     /// Captures all live objects. Newly spawned objects need an explicit durable ID.
     /// # Errors
     /// Rejects unmapped objects and unregistered components rather than losing data.
+    pub fn capture(&self, registry: &ComponentRegistry) -> Result<SceneDocument, DocumentError> {
+        self.checkpoint_view().capture(registry)
+    }
+    pub fn checkpoint_view(&self) -> SceneCheckpointView<'_> {
+        SceneCheckpointView {
+            graph: &self.graph,
+            ids: std::borrow::Cow::Borrowed(&self.ids),
+        }
+    }
+}
+/// Read-only capture adapter for hosts that own their graph and identity index separately.
+/// It never moves/clones the graph or changes handles while capturing state.
+#[derive(Debug)]
+pub struct SceneCheckpointView<'a> {
+    pub graph: &'a SceneGraph,
+    pub(crate) ids: std::borrow::Cow<'a, BTreeMap<ObjectId, NodeId>>,
+}
+impl<'a> SceneCheckpointView<'a> {
+    pub fn new(
+        graph: &'a SceneGraph,
+        bindings: impl IntoIterator<Item = (ObjectId, NodeId)>,
+    ) -> Result<Self, DocumentError> {
+        let mut ids = BTreeMap::new();
+        let mut nodes = std::collections::HashSet::new();
+        for (id, node) in bindings {
+            if id.0.is_empty()
+                || !graph.owns_handle(node)
+                || (!graph.is_history_handle(node) && node.slot >= graph.slots.len())
+                || !nodes.insert(node)
+                || ids.insert(id, node).is_some()
+            {
+                return Err(DocumentError::Invalid(
+                    "invalid checkpoint identity index".into(),
+                ));
+            }
+        }
+        let view = Self {
+            graph,
+            ids: std::borrow::Cow::Owned(ids),
+        };
+        for (node, _, _) in graph.nodes() {
+            if view.identity(node).is_none() {
+                return Err(DocumentError::Invalid(
+                    "unmapped live checkpoint object".into(),
+                ));
+            }
+        }
+        Ok(view)
+    }
+    pub fn resolve(&self, id: &ObjectId) -> Option<NodeId> {
+        self.ids
+            .get(id)
+            .copied()
+            .filter(|node| self.graph.node(*node).is_ok())
+    }
+    pub fn identity(&self, node: NodeId) -> Option<&ObjectId> {
+        self.graph.node(node).ok()?;
+        self.ids
+            .iter()
+            .find_map(|(id, candidate)| (*candidate == node).then_some(id))
+    }
+    /// Reserved identities include non-live history tokens. Gameplay must use resolve.
+    pub fn reserved_node(&self, id: &ObjectId) -> Option<NodeId> {
+        self.ids.get(id).copied()
+    }
+    pub fn reserved_identity(&self, node: NodeId) -> Option<&ObjectId> {
+        self.ids
+            .iter()
+            .find_map(|(id, candidate)| (*candidate == node).then_some(id))
+    }
     pub fn capture(&self, registry: &ComponentRegistry) -> Result<SceneDocument, DocumentError> {
         let reverse: HashMap<_, _> = self
             .ids
@@ -495,6 +637,7 @@ impl LoadedScene {
         })
     }
 }
+
 impl SceneDocument {
     /// # Errors
     /// Rejects malformed JSON and unknown top-level/object fields.
@@ -608,6 +751,58 @@ mod tests {
         }
     }
     #[test]
+    fn cloned_registry_preserves_custom_reference_codecs_and_isolates_schema_edits() {
+        let mut original = ComponentRegistry::default();
+        original
+            .register_with_reference_remap::<Target>(
+                "game.target",
+                |value| vec![value.target.clone()],
+                |value, ids| {
+                    if let Some(target) = ids.get(&value.target) {
+                        value.target = target.clone();
+                    }
+                },
+            )
+            .unwrap();
+        original.register::<Value>("game.collection").unwrap();
+        original
+            .declare_identified_collection("game.collection", "/items", "id")
+            .unwrap();
+        original
+            .set_collection_default("game.collection", "/items", serde_json::json!({"health":1}))
+            .unwrap();
+        let mut checkpoint = original.clone();
+        checkpoint.register::<u64>("runtime.only").unwrap();
+        let value = serde_json::json!({"health":75,"target":"root"});
+        let mapping = [(ObjectId("root".into()), ObjectId("instance/root".into()))].into();
+        for registry in [&original, &checkpoint] {
+            assert_eq!(
+                registry
+                    .remap_value("game.target", &value, &mapping)
+                    .unwrap(),
+                serde_json::json!({"health":75,"target":"instance/root"})
+            );
+        }
+        assert!(!original.codecs.contains_key("runtime.only"));
+        checkpoint
+            .set_collection_default("game.collection", "/items", serde_json::json!({"health":2}))
+            .unwrap();
+        assert_eq!(
+            original
+                .new_collection_item("game.collection", "/items", "first")
+                .unwrap(),
+            serde_json::json!({"id":"first","health":1})
+        );
+        assert_eq!(
+            checkpoint
+                .new_collection_item("game.collection", "/items", "first")
+                .unwrap(),
+            serde_json::json!({"id":"first","health":2})
+        );
+        original.register::<String>("authoring.only").unwrap();
+        assert!(!checkpoint.codecs.contains_key("authoring.only"));
+    }
+    #[test]
     fn component_copy_retains_durable_reference_and_excludes_runtime_state() {
         let mut registry = ComponentRegistry::default();
         registry
@@ -628,9 +823,13 @@ mod tests {
             )
             .unwrap();
         scene.insert_component(source, 123_u64).unwrap();
+        let previous = scene.change_token();
+        let structure = scene.structure_revision();
         registry
             .copy_registered_components(&mut scene, source, destination)
             .unwrap();
+        assert_ne!(previous, scene.change_token());
+        assert_ne!(structure, scene.structure_revision());
         let copied = scene.component::<Target>(destination).unwrap().unwrap();
         assert_eq!(copied.health, 75);
         assert_eq!(copied.target, ObjectId("root".into()));
@@ -775,5 +974,179 @@ mod tests {
         assert!(loaded.identify(new, ObjectId("a".into())).is_err());
         loaded.identify(new, ObjectId("b".into())).unwrap();
         assert_eq!(loaded.capture(&registry).unwrap().objects.len(), 2);
+    }
+}
+
+#[cfg(test)]
+mod checkpoint_view_tests {
+    use super::*;
+    #[test]
+    fn borrowed_capture_matches_owned_scene_and_keeps_retired_id_reservations() {
+        let registry = ComponentRegistry::default();
+        let mut scene = SceneDocument {
+            version: 1,
+            objects: Vec::new(),
+        }
+        .load(&registry, 4)
+        .unwrap();
+        let alive = scene.graph.spawn(None, Transform::default()).unwrap();
+        scene.identify(alive, ObjectId("alive".into())).unwrap();
+        let retired = scene.graph.spawn(None, Transform::default()).unwrap();
+        scene.identify(retired, ObjectId("retired".into())).unwrap();
+        scene.graph.remove_subtree(retired).unwrap();
+        let bindings = vec![
+            (ObjectId("alive".into()), alive),
+            (ObjectId("retired".into()), retired),
+        ];
+        let view = SceneCheckpointView::new(&scene.graph, bindings.clone()).unwrap();
+        assert_eq!(
+            view.capture(&registry).unwrap(),
+            scene.capture(&registry).unwrap()
+        );
+        assert_eq!(
+            view.allocation_checkpoint(65536).unwrap(),
+            scene.allocation_checkpoint(65536).unwrap()
+        );
+        assert!(view.resolve(&ObjectId("retired".into())).is_none());
+        let simulation = crate::SceneSimulation::new(
+            &scene.graph,
+            crate::SimulationLimits {
+                fixed_step: 0.01,
+                max_steps: 4,
+                max_behaviors: 4,
+                max_commands: 4,
+            },
+        )
+        .unwrap();
+        assert_eq!(
+            simulation
+                .checkpoint(&scene, &registry, 65536)
+                .unwrap()
+                .to_json(65536)
+                .unwrap(),
+            simulation
+                .checkpoint_view(&view, &registry, 65536)
+                .unwrap()
+                .to_json(65536)
+                .unwrap()
+        );
+        assert!(SceneCheckpointView::new(&scene.graph, Vec::new()).is_err());
+        assert!(
+            SceneCheckpointView::new(
+                &scene.graph,
+                [
+                    (ObjectId("one".into()), alive),
+                    (ObjectId("two".into()), alive)
+                ]
+            )
+            .is_err()
+        );
+        assert!(
+            SceneCheckpointView::new(
+                &scene.graph,
+                [
+                    (ObjectId("same".into()), alive),
+                    (ObjectId("same".into()), retired)
+                ]
+            )
+            .is_err()
+        );
+        let mut foreign = SceneGraph::new(4);
+        let other = foreign.spawn(None, Transform::default()).unwrap();
+        assert!(
+            SceneCheckpointView::new(&scene.graph, [(ObjectId("other".into()), other)]).is_err()
+        );
+        assert!(
+            SceneCheckpointView::new(&scene.graph, [(ObjectId(String::new()), alive)]).is_err()
+        );
+        assert_eq!(scene.graph.local(alive).unwrap(), Transform::default());
+    }
+}
+
+#[cfg(test)]
+mod historical_identity_tests {
+    use super::*;
+    #[test]
+    fn restored_retired_identities_are_unique_nonlive_and_never_reallocated() {
+        for capacity in [4, usize::MAX] {
+            let registry = ComponentRegistry::default();
+            let mut source = SceneDocument {
+                version: 1,
+                objects: Vec::new(),
+            }
+            .load(&registry, capacity)
+            .unwrap();
+            let a = source.graph.spawn(None, Transform::default()).unwrap();
+            source.identify(a, ObjectId("a".into())).unwrap();
+            let b = source.graph.spawn(None, Transform::default()).unwrap();
+            source.identify(b, ObjectId("b".into())).unwrap();
+            source.graph.remove_subtree(a).unwrap();
+            source.graph.remove_subtree(b).unwrap();
+            let c = source.graph.spawn(None, Transform::default()).unwrap();
+            source.identify(c, ObjectId("c".into())).unwrap();
+            assert_eq!(source.reserved_identity(a), Some(&ObjectId("a".into())));
+            assert!(source.identity(a).is_none());
+            let limits = crate::SimulationLimits {
+                fixed_step: 0.01,
+                max_steps: 4,
+                max_behaviors: 4,
+                max_commands: 4,
+            };
+            let simulation = crate::SceneSimulation::new(&source.graph, limits).unwrap();
+            let saved = simulation.checkpoint(&source, &registry, 100000).unwrap();
+            let (mut restored, simulation) = saved
+                .prepare(
+                    &registry,
+                    &crate::BehaviorCheckpointRegistry::default(),
+                    limits,
+                    capacity,
+                    100000,
+                )
+                .unwrap();
+            assert_eq!(
+                saved.to_json(100000).unwrap(),
+                simulation
+                    .checkpoint(&restored, &registry, 100000)
+                    .unwrap()
+                    .to_json(100000)
+                    .unwrap()
+            );
+            let first = restored.reserved_node(&ObjectId("a".into())).unwrap();
+            let second = restored.reserved_node(&ObjectId("b".into())).unwrap();
+            assert_ne!(first, second);
+            assert!(restored.resolve(&ObjectId("a".into())).is_none());
+            assert!(restored.resolve(&ObjectId("b".into())).is_none());
+            assert!(restored.graph.owns_handle(first));
+            assert!(!restored.graph.owns_handle(a));
+            assert_eq!(
+                restored.reserved_identity(first),
+                Some(&ObjectId("a".into()))
+            );
+            assert!(restored.graph.local(first).is_err());
+            assert!(restored.graph.insert_component(first, 7_u32).is_err());
+            assert!(restored.graph.remove_subtree(first).is_err());
+            let view = SceneCheckpointView::new(
+                &restored.graph,
+                [
+                    (ObjectId("a".into()), first),
+                    (ObjectId("b".into()), second),
+                    (
+                        ObjectId("c".into()),
+                        restored.resolve(&ObjectId("c".into())).unwrap(),
+                    ),
+                ],
+            )
+            .unwrap();
+            assert_eq!(view.reserved_node(&ObjectId("a".into())), Some(first));
+            assert!(view.resolve(&ObjectId("a".into())).is_none());
+            for _ in 0..3 {
+                let node = restored.graph.spawn(None, Transform::default()).unwrap();
+                assert_ne!(node, first);
+                assert_ne!(node, second);
+                assert!(restored.identify(node, ObjectId("a".into())).is_err());
+            }
+            assert_eq!(restored.graph.len(), 4);
+            assert!(restored.graph.local(first).is_err());
+        }
     }
 }

@@ -29,6 +29,10 @@ voxy_render = { path = "../voxy_render" }
 winit = "0.30.13"
 wgpu = "30.0.1"
 
+[dev-dependencies]
+image = { version = "0.25", default-features = false, features = ["png"] }
+base64 = "0.22"
+
 [lints]
 workspace = true
 

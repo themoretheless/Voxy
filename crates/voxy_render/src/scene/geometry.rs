@@ -3,6 +3,7 @@
 
 use bytemuck::{Pod, Zeroable};
 use glam::Mat4;
+mod checkpoint;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
@@ -122,6 +123,38 @@ impl SceneMesh {
             return Err(SceneError::NonFiniteVertex);
         }
         self.authored_normals = Some(normals);
+        Ok(self)
+    }
+    /// Replace local positions and explicit normals while retaining topology,
+    /// UVs, colors, material parameters and bind-space material coordinates.
+    ///
+    /// # Errors
+    /// Rejects count mismatches or nonfinite replacement values.
+    pub fn with_deformed_geometry(
+        mut self,
+        positions: Vec<[f32; 3]>,
+        normals: Option<Vec<[f32; 3]>>,
+    ) -> Result<Self, SceneError> {
+        if positions.len() != self.vertices.len()
+            || normals.as_ref().is_some_and(|n| n.len() != positions.len())
+        {
+            return Err(SceneError::InvalidGeometry);
+        }
+        if positions
+            .iter()
+            .flatten()
+            .chain(normals.iter().flatten().flatten())
+            .any(|v| !v.is_finite())
+        {
+            return Err(SceneError::NonFiniteVertex);
+        }
+        if self.material_coordinates.is_none() {
+            self.material_coordinates = Some(self.vertices.iter().map(|v| v.position).collect());
+        }
+        for (vertex, position) in self.vertices.iter_mut().zip(positions) {
+            vertex.position = position;
+        }
+        self.authored_normals = normals;
         Ok(self)
     }
     /// Four per-draw shader values supplied at vertex location 4. Existing
@@ -387,3 +420,69 @@ const WELD_HASHER: voxy_core::SeededFastHashBuilder =
 
 #[cfg(test)]
 mod weld_hasher_tests;
+
+#[cfg(test)]
+mod deformation_tests {
+    use super::*;
+
+    #[test]
+    fn local_deformation_retains_material_data_and_rejects_invalid_output() {
+        let vertices = [[0., 0., 0.], [1., 0., 0.], [0., 1., 0.]]
+            .map(|position| SceneVertex {
+                position,
+                uv: [0.5; 2],
+                color: [1.; 4],
+            })
+            .to_vec();
+        let source = SceneMesh::new(vertices, vec![0, 1, 2])
+            .unwrap()
+            .with_material_parameters([1., 2., 3., 4.])
+            .unwrap()
+            .with_material_coordinates(vec![[2.; 3]; 3])
+            .unwrap();
+        let result = source
+            .clone()
+            .with_deformed_geometry(vec![[1.; 3]; 3], Some(vec![[0., 0., 1.]; 3]))
+            .unwrap();
+        assert_eq!(result.material_parameters, source.material_parameters);
+        assert_eq!(result.material_coordinates, source.material_coordinates);
+        assert_eq!(result.indices(), source.indices());
+        assert!(
+            source
+                .clone()
+                .with_deformed_geometry(vec![[0.; 3]; 2], None)
+                .is_err()
+        );
+        assert!(
+            source
+                .clone()
+                .with_deformed_geometry(vec![[f32::NAN; 3]; 3], None)
+                .is_err()
+        );
+        assert!(
+            source
+                .with_deformed_geometry(vec![[0.; 3]; 3], Some(vec![[f32::INFINITY; 3]; 3]))
+                .is_err()
+        );
+    }
+
+    #[test]
+    fn deformation_freezes_implicit_bind_coordinates() {
+        let original = [[0., 0., 0.], [1., 0., 0.], [0., 1., 0.]];
+        let vertices = original
+            .map(|position| SceneVertex {
+                position,
+                uv: [0.; 2],
+                color: [1.; 4],
+            })
+            .to_vec();
+        let source = SceneMesh::new(vertices, vec![0, 1, 2]).unwrap();
+        let result = source
+            .with_deformed_geometry(vec![[2.; 3]; 3], None)
+            .unwrap();
+        assert_eq!(
+            result.explicit_material_coordinates(),
+            Some(original.as_slice())
+        );
+    }
+}

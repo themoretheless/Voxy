@@ -1,0 +1,467 @@
+{
+  "schema_version": 1,
+  "domains": [
+    {
+      "id": "project",
+      "stage": "ENG-01",
+      "status": "partial",
+      "owner": "ProjectDescriptor / editor project",
+      "evidence": {
+        "api": "crates/voxy_editor/src/project.rs",
+        "consumer": "crates/voxy_editor/src/main.rs",
+        "test": "crates/voxy_editor/src/project.rs"
+      },
+      "acceptance": "Create/open/relocate and refuse overwrite",
+      "gap": "Native project creation UI and clean-machine delivery",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "scene",
+      "stage": "ENG-02",
+      "status": "partial",
+      "owner": "SceneGraph / SceneDocument",
+      "evidence": {
+        "api": "crates/voxy_scene/src/document.rs",
+        "consumer": "crates/voxy_editor/src/authoring_session.rs",
+        "test": "crates/voxy_scene/tests/associated_data.rs"
+      },
+      "acceptance": "Transactional loading, IDs, references and component codecs",
+      "gap": "Project migrations and scene transitions",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "prefab",
+      "stage": "ENG-08",
+      "status": "partial",
+      "owner": "PrefabSceneDocument / authoring session",
+      "evidence": {
+        "api": "crates/voxy_scene/src/prefab_document.rs",
+        "consumer": "crates/voxy_editor/src/prefab_authoring.rs",
+        "test": "crates/voxy_scene/tests/persistent_prefabs.rs"
+      },
+      "acceptance": "Nested instances, overrides and history roundtrip",
+      "gap": "Combined authoring UX and background dependency recovery",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "runtime",
+      "stage": "ENG-02",
+      "status": "partial",
+      "owner": "SceneSimulation / domain stores",
+      "evidence": {
+        "api": "crates/voxy_scene/src/simulation.rs",
+        "consumer": "crates/voxy_editor/src/project_runtime.rs",
+        "test": "crates/voxy_scene/tests/scheduled.rs"
+      },
+      "acceptance": "Declared access, command barriers, fixed steps",
+      "gap": "Cross-domain scheduling and transitions with active jobs",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "game-code",
+      "stage": "ENG-06",
+      "status": "partial",
+      "owner": "GameHost / BehaviorRunner",
+      "evidence": {
+        "api": "crates/voxy_editor/src/game_host.rs",
+        "consumer": "crates/voxy_editor/examples/project_game.rs",
+        "test": "crates/voxy_editor/src/game_host_tests.rs"
+      },
+      "acceptance": "Lifecycle parity across Play and source-free package",
+      "gap": "Project code build workflow and runtime/editor layering",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "assets",
+      "stage": "ENG-03",
+      "status": "partial",
+      "owner": "AssetCatalog / observed inputs",
+      "evidence": {
+        "api": "crates/voxy_assets/src/lib.rs",
+        "consumer": "crates/voxy_editor/src/import.rs",
+        "test": "crates/voxy_assets/src/import_worker.rs"
+      },
+      "acceptance": "Revision observation and last-good resource publication",
+      "gap": "All resource classes, cache quotas and dependency-wide reload",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "package",
+      "stage": "ENG-03",
+      "status": "partial",
+      "owner": "ResourcePackage / project exporter",
+      "evidence": {
+        "api": "crates/voxy_assets/src/package.rs",
+        "consumer": "crates/voxy_editor/src/packaged_game.rs",
+        "test": "crates/voxy_editor/src/project.rs"
+      },
+      "acceptance": "Source-free package and rejected corrupt/overwrite output",
+      "gap": "Distributable executable, user game code and platform gates",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "render",
+      "stage": "ENG-05",
+      "status": "partial",
+      "owner": "SceneRenderer / graphics owners",
+      "evidence": {
+        "api": "crates/voxy_render/src/scene.rs",
+        "consumer": "crates/voxy_editor/src/gpu_model.rs",
+        "test": "crates/voxy_render/examples/scene_smoke.rs"
+      },
+      "acceptance": "Combined materials/light/shadow/transparency image oracle",
+      "gap": "GPU tests intentionally not run; full scene/resize/device qualification",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "physics",
+      "stage": "ENG-04",
+      "status": "partial",
+      "owner": "physics stores / gameplay staged tick",
+      "evidence": {
+        "api": "crates/physics/src/lib.rs",
+        "consumer": "crates/voxy_gameplay/src/staged_tick.rs",
+        "test": "crates/voxy_gameplay/tests/integration.rs"
+      },
+      "acceptance": "Bodies, contacts, queries and scene synchronization",
+      "gap": "Audit general joints/triggers/CCD and test actual editor exposure",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "animation",
+      "stage": "ENG-06",
+      "status": "partial",
+      "owner": "Animator / AnimationRuntime",
+      "evidence": {
+        "api": "crates/voxy_animation/src/lib.rs",
+        "consumer": "crates/voxy_editor/src/animation_runtime.rs",
+        "test": "crates/voxy_animation/src/tests.rs"
+      },
+      "acceptance": "Clips/fades/root motion/IK and rejected pose rollback",
+      "gap": "Complete authoring and combined physical motion qualification",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "input",
+      "stage": "ENG-07",
+      "status": "partial",
+      "owner": "InputMap",
+      "evidence": {
+        "api": "crates/voxy_input/src/lib.rs",
+        "consumer": "crates/voxy_editor/src/headless_game.rs",
+        "test": "crates/voxy_input/src/checkpoint.rs"
+      },
+      "acceptance": "Quick taps, focus and pending edge checkpoint",
+      "gap": "Native input/gamepad and project rebinding UI",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "ui",
+      "stage": "ENG-07",
+      "status": "partial",
+      "owner": "UI runtime / focus owner",
+      "evidence": {
+        "api": "crates/voxy_ui/src/lib.rs",
+        "consumer": "crates/voxy_editor/src/game_ui_input.rs",
+        "test": "crates/voxy_editor/src/headless_game_tests.rs"
+      },
+      "acceptance": "Saved layout, focus and callbacks in packaged replay",
+      "gap": "Native controls, complete layout and accessibility policy",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "text",
+      "stage": "ENG-07",
+      "status": "partial",
+      "owner": "Text shaping / atlas",
+      "evidence": {
+        "api": "crates/voxy_text/src/lib.rs",
+        "consumer": "crates/voxy_editor/src/ui_text.rs",
+        "test": "crates/voxy_text/src/shape.rs"
+      },
+      "acceptance": "Font import, Unicode layout and bounded atlas",
+      "gap": "Coverage/fallback and native DPI/layout qualification",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "audio",
+      "stage": "ENG-07",
+      "status": "partial",
+      "owner": "AudioRuntime / output worker",
+      "evidence": {
+        "api": "crates/voxy_audio/src/lib.rs",
+        "consumer": "crates/voxy_editor/src/audio_session.rs",
+        "test": "crates/voxy_gameplay/src/audio_runtime.rs"
+      },
+      "acceptance": "PCM spatial sources, buses and reload retention",
+      "gap": "Device tests intentionally excluded; native lifecycle and authoring",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "navigation",
+      "stage": "ENG-07",
+      "status": "partial",
+      "owner": "NavigationGrid / bounded jobs",
+      "evidence": {
+        "api": "crates/voxy_navigation/src/lib.rs",
+        "consumer": "crates/voxy_scene/examples/navigation_gameplay.rs",
+        "test": "crates/voxy_navigation/src/lib.rs"
+      },
+      "acceptance": "Revision-safe sliced four-connected grid path",
+      "gap": "3D navigation, local avoidance and real moving agents",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "saves",
+      "stage": "ENG-07",
+      "status": "partial",
+      "owner": "Scene/runtime participant owners",
+      "evidence": {
+        "api": "crates/voxy_scene/src/scene_simulation_checkpoint.rs",
+        "consumer": "crates/voxy_editor/src/play_session/checkpoint.rs",
+        "test": "crates/voxy_gameplay/examples/gameplay_save.rs"
+      },
+      "acceptance": "Bounded versioned restore and continuation parity",
+      "gap": "Audit complete session transaction, revision archive and disk slots",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "world",
+      "stage": "ENG-09",
+      "status": "partial",
+      "owner": "Voxel world / rebuild publication",
+      "evidence": {
+        "api": "crates/voxy_world/src/lib.rs",
+        "consumer": "crates/voxy_runtime/src/lib.rs",
+        "test": "crates/voxy_runtime/src/lib.rs"
+      },
+      "acceptance": "Stale jobs, bounded barriers and rebuild/full oracle",
+      "gap": "Moving-world integration, atomic changed mesh upload and budgets",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "clock",
+      "stage": "ENG-02",
+      "status": "partial",
+      "owner": "FrameLoop / time owner",
+      "evidence": {
+        "api": "crates/voxy_time/src/lib.rs",
+        "consumer": "crates/voxy_runtime/src/frame_loop.rs",
+        "test": "crates/voxy_time/src/lib.rs"
+      },
+      "acceptance": "Pause, overload, checkpoints and percentile telemetry",
+      "gap": "Actual frame pacing and domain timing attribution",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "editor",
+      "stage": "ENG-08",
+      "status": "partial",
+      "owner": "AuthoringSession / history",
+      "evidence": {
+        "api": "crates/voxy_editor/src/lib.rs",
+        "consumer": "crates/voxy_editor/src/panels.rs",
+        "test": "crates/voxy_editor/src/project_prefab_tests.rs"
+      },
+      "acceptance": "Create/edit/save/undo and isolated Play",
+      "gap": "Native combined workflow, recovery and authoring completeness",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "platforms",
+      "stage": "ENG-11",
+      "status": "partial",
+      "owner": "Platform shell / XR session",
+      "evidence": {
+        "api": "crates/voxy_xr/src/lib.rs",
+        "consumer": "crates/voxy_mobile/src/lib.rs",
+        "test": "mobile/android/test_build.py"
+      },
+      "acceptance": "Package validation and target-specific lifecycle",
+      "gap": "Actual Windows/Linux/Web/mobile/XR deployment and device matrix",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "network",
+      "stage": "ENG-12",
+      "status": "partial",
+      "owner": "No common owner established by audit",
+      "evidence": {
+        "api": "docs/adr/0002-general-engine-architecture.md",
+        "consumer": "Cargo.toml",
+        "test": "docs/engine-roadmap-2026-10-25.md"
+      },
+      "acceptance": "Authority, replication, loss/reconnect and server test required",
+      "gap": "Locate any prototype, then define runtime contract; not qualified",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    },
+    {
+      "id": "scripting",
+      "stage": "ENG-13",
+      "status": "partial",
+      "owner": "Behavior command/event adapter",
+      "evidence": {
+        "api": "crates/voxy_scene/src/behavior.rs",
+        "consumer": "crates/voxy_editor/src/game_host.rs",
+        "test": "crates/voxy_editor/src/game_host_tests.rs"
+      },
+      "acceptance": "Rust lifecycle is present; additional language not qualified",
+      "gap": "Language ADR, bounded execution and adapter compatibility",
+      "gates": {
+        "core": "not_requalified",
+        "runtime": "not_requalified",
+        "editor": "not_requalified",
+        "persistence": "not_requalified",
+        "standalone": "not_requalified",
+        "platform": "not_requalified"
+      }
+    }
+  ]
+}

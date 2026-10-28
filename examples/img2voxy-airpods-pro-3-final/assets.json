@@ -1,0 +1,109 @@
+{
+  "assets": [
+    {
+      "asset": "case-body",
+      "source": "case-body.obj"
+    },
+    {
+      "asset": "lid",
+      "source": "lid.obj"
+    },
+    {
+      "asset": "status-led",
+      "source": "status-led.obj"
+    },
+    {
+      "asset": "hinge",
+      "source": "hinge.obj"
+    },
+    {
+      "asset": "usb-c-recess",
+      "source": "usb-c-recess.obj"
+    },
+    {
+      "asset": "speaker-0",
+      "source": "speaker-0.obj"
+    },
+    {
+      "asset": "speaker-1",
+      "source": "speaker-1.obj"
+    },
+    {
+      "asset": "speaker-2",
+      "source": "speaker-2.obj"
+    },
+    {
+      "asset": "lanyard-0",
+      "source": "lanyard-0.obj"
+    },
+    {
+      "asset": "lanyard-1",
+      "source": "lanyard-1.obj"
+    },
+    {
+      "asset": "left-body",
+      "source": "left-body.obj"
+    },
+    {
+      "asset": "left-stem",
+      "source": "left-stem.obj"
+    },
+    {
+      "asset": "left-stem-cap",
+      "source": "left-stem-cap.obj"
+    },
+    {
+      "asset": "left-tip",
+      "source": "left-tip.obj"
+    },
+    {
+      "asset": "left-sound-opening",
+      "source": "left-sound-opening.obj"
+    },
+    {
+      "asset": "left-outer-vent",
+      "source": "left-outer-vent.obj"
+    },
+    {
+      "asset": "left-skin-sensor",
+      "source": "left-skin-sensor.obj"
+    },
+    {
+      "asset": "left-stem-mic",
+      "source": "left-stem-mic.obj"
+    },
+    {
+      "asset": "right-body",
+      "source": "right-body.obj"
+    },
+    {
+      "asset": "right-stem",
+      "source": "right-stem.obj"
+    },
+    {
+      "asset": "right-stem-cap",
+      "source": "right-stem-cap.obj"
+    },
+    {
+      "asset": "right-tip",
+      "source": "right-tip.obj"
+    },
+    {
+      "asset": "right-sound-opening",
+      "source": "right-sound-opening.obj"
+    },
+    {
+      "asset": "right-outer-vent",
+      "source": "right-outer-vent.obj"
+    },
+    {
+      "asset": "right-skin-sensor",
+      "source": "right-skin-sensor.obj"
+    },
+    {
+      "asset": "right-stem-mic",
+      "source": "right-stem-mic.obj"
+    }
+  ],
+  "version": 1
+}

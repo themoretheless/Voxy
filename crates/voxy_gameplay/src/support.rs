@@ -1,8 +1,13 @@
 //! Bounded support queries over the same affine boxes used by character physics.
+mod queries;
+pub use queries::{RayHit, RayQuery, SceneQueries};
+#[path = "support_checkpoint.rs"]
+mod checkpoint;
 use super::{
     BoxCollider, PhysicsError, StaticWorld, static_world, validate_extents,
     validate_static_collider,
 };
+pub use checkpoint::SupportAnchorCheckpoint;
 use glam::{DMat3, DVec3};
 use voxy_scene::{NodeId, SceneGraph, SceneId};
 const MAX_COLLIDERS: usize = 4096;

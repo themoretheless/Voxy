@@ -3,8 +3,21 @@
 //! Characters collide with active static boxes, not with each other. Physics owns
 //! translations during ticks. A character may rotate; its scale and ancestor
 //! rotation/scale must be identity. Static boxes support affine transforms.
+mod gameplay_checkpoint;
+pub use gameplay_checkpoint::{
+    GameplayCheckpoint, GameplayCheckpointError, GameplayCheckpointLimits,
+    PreparedGameplayCheckpoint,
+};
+mod input_checkpoint;
+pub use input_checkpoint::{
+    InputCheckpointCodecError, decode_input_checkpoint, encode_input_checkpoint,
+};
+mod character_checkpoint;
+pub use character_checkpoint::{CharacterCheckpointError, CharacterPhysicsCheckpoint};
 mod error;
+mod follow_camera;
 pub use error::GameplayError;
+pub use follow_camera::{FollowCamera, FollowSmoother, FollowSmootherCheckpoint};
 mod rigid_frame;
 pub use rigid_frame::{PreparedRigidPose, RigidBodyFrame, RigidPoseEdit, publish_rigid_poses};
 mod point_loads;
@@ -13,7 +26,8 @@ mod liquid_body;
 pub use liquid_body::{LiquidBody, LiquidMassDistribution, LiquidMassPart};
 mod liquid_runtime;
 pub use liquid_runtime::{
-    SceneLiquidRuntime, SceneLiquidStep, SceneSupportReactions, SceneSupportedLiquidStep,
+    SceneLiquidCheckpoint, SceneLiquidCheckpointLimits, SceneLiquidRuntime, SceneLiquidStep,
+    SceneLiquidWireLimits, SceneSupportReactions, SceneSupportedLiquidStep,
 };
 mod liquid_source;
 pub use liquid_source::{LiquidPulse, LiquidSource};
@@ -22,18 +36,21 @@ mod foot_contact;
 mod staged_tick;
 mod support;
 pub use foot_contact::{
-    FootContactCandidate, FootContactInput, FootContactSettings, FootContactState,
-    FootContactStatus, FootPivotTransfer,
+    FootContactCandidate, FootContactCheckpoint, FootContactCheckpointError, FootContactInput,
+    FootContactSettings, FootContactState, FootContactStatus, FootPivotTransfer,
 };
 pub use staged_tick::{AcceptedCharacterPose, CharacterTickError, CharacterTickPreview};
-pub use support::{SupportAnchor, SupportContact, SupportProbe, SupportQueryBudget, SupportWorld};
+pub use support::{
+    RayHit, RayQuery, SceneQueries, SupportAnchor, SupportAnchorCheckpoint, SupportContact,
+    SupportProbe, SupportQueryBudget, SupportWorld,
+};
 mod audio_assets;
 pub use audio_assets::{
     AudioImportConfig, AudioImportSettings, decode_wav_observed, import_wav_asset,
     import_wav_cached, import_wav_with_inputs, synchronize_audio_assets,
 };
 mod audio_runtime;
-pub use audio_runtime::SceneAudioRuntime;
+pub use audio_runtime::{SceneAudioCheckpoint, SceneAudioCheckpointLimits, SceneAudioRuntime};
 mod audio_scene;
 pub use audio_scene::{
     AudioBus, AudioListener, AudioListenerSnapshot, AudioSource, AudioSourceSnapshot,
@@ -42,16 +59,19 @@ pub use audio_scene::{
 mod ui_text;
 pub use ui_text::{PreparedUiText, decode_ui_font_observed, prepare_ui_text};
 mod ui_actions;
-pub use ui_actions::{UiActionHandlers, UiActionSetup};
+pub use ui_actions::{
+    UiActionCheckpoint, UiActionCheckpointLimits, UiActionCheckpointRegistry, UiActionHandler,
+    UiActionHandlers, UiActionRestoreContext, UiActionSetup, UiActionState,
+};
 mod ui_runtime;
-pub use ui_runtime::{SceneUiRuntime, UiActionEvent};
+pub use ui_runtime::{SceneUiCheckpoint, SceneUiRuntime, SceneUiSnapshotCheckpoint, UiActionEvent};
 mod ui_scene;
 pub use ui_scene::{SceneUiSnapshot, UiElement, UiElementSnapshot, UiText, extract_scene_ui};
 mod behaviors;
 mod convex;
 pub use behaviors::{
-    AngularMotion, AngularMotionBatch, GameplayFixedError, bind_authored_behaviors,
-    gameplay_schedule, validate_behavior_descriptors,
+    AngularMotion, AngularMotionBatch, AngularMotionCheckpoint, GameplayFixedError,
+    bind_authored_behaviors, gameplay_schedule, validate_behavior_descriptors,
 };
 use glam::{Quat, Vec3};
 use physics::{
@@ -176,10 +196,19 @@ impl std::fmt::Display for PhysicsError {
     }
 }
 impl std::error::Error for PhysicsError {}
-/// Adds the durable descriptors; runtime velocity and grounding are never saved.
+/// Adds authoring descriptors; controller velocity/grounding use separate runtime checkpoints.
 /// # Errors
 /// Rejects duplicate schema names/types.
 pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
+    registry.register_with_reference_remap::<FollowCamera>(
+        "game.follow-camera.v1",
+        |camera| vec![camera.target.clone()],
+        |camera, ids| {
+            if let Some(target) = ids.get(&camera.target) {
+                camera.target = target.clone();
+            }
+        },
+    )?;
     registry.register::<RigidPointLoads>("game.rigid-point-loads.v1")?;
     registry.register::<LiquidBody>("game.liquid-body.v1")?;
     registry.register::<LiquidMassDistribution>("game.liquid-mass.v1")?;
@@ -235,6 +264,12 @@ fn validate_common_game_descriptors(
     scene: &SceneGraph,
     capacity: usize,
 ) -> Result<(), GameplayError> {
+    if scene
+        .components::<FollowCamera>()
+        .any(|(_, camera)| !camera.valid())
+    {
+        return Err("invalid game.follow-camera.v1 descriptor".into());
+    }
     validate_behavior_descriptors(scene)?;
     extract_scene_audio(scene, capacity)?;
     extract_scene_ui(scene, [1.0, 1.0], capacity)?;

@@ -15,18 +15,21 @@ pub(super) struct AudioReload {
     watcher: SourcePollWorker,
     sources: SourceDependencies,
     outputs: BTreeSet<AssetId>,
+    recipes: std::collections::BTreeMap<AssetId, Option<String>>,
     queued: BTreeSet<AssetId>,
     importing: bool,
     scanning: bool,
     last_scan: Option<Instant>,
+    checkpoint: Option<checkpoint::Barrier>,
 }
 impl AudioReload {
     pub(super) fn new(
         project: &AuthoringProject,
         worker: AssetImportWorker<Clip>,
-        outputs: BTreeSet<AssetId>,
+        recipes: std::collections::BTreeMap<AssetId, Option<String>>,
         catalog: &AssetCatalog<ImportedAsset<Clip>>,
     ) -> Result<Self, EditorError> {
+        let outputs: BTreeSet<_> = recipes.keys().cloned().collect();
         let mut sources = SourceDependencies::new(128, 768);
         let mut observations = std::collections::BTreeMap::new();
         for id in &outputs {
@@ -53,10 +56,12 @@ impl AudioReload {
             watcher: project.audio_watcher(&observations)?,
             sources,
             outputs,
+            recipes,
             queued: BTreeSet::new(),
             importing: false,
             scanning: false,
             last_scan: None,
+            checkpoint: None,
         })
     }
     pub(super) fn poll(
@@ -99,6 +104,9 @@ impl AudioReload {
                     {}
                 Err(error) => return Err(error.to_string().into()),
             }
+        }
+        if self.checkpoint.is_some() {
+            return Ok(());
         }
         if !self.importing
             && let Some(id) = self.queued.pop_first()
@@ -199,3 +207,6 @@ mod tests {
         assert!(std::sync::Arc::ptr_eq(&after.1, &retained.1));
     }
 }
+
+#[path = "audio_reload_checkpoint.rs"]
+pub(super) mod checkpoint;

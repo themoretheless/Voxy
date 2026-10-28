@@ -11,7 +11,7 @@ fn model() -> Arc<ModelAsset> {
         .unwrap(),
     )
 }
-fn scene_fixture() -> (
+pub(super) fn scene_fixture() -> (
     SceneGraph,
     NodeId,
     Arc<ModelAsset>,

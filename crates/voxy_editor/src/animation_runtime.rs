@@ -1,4 +1,8 @@
 //! Fixed-tick animation authority. Rendering receives immutable accepted frames.
+#[path = "animation_runtime_checkpoint.rs"]
+pub(crate) mod checkpoint;
+#[path = "root_reference_checkpoint.rs"]
+mod reference_checkpoint;
 use crate::EditorError;
 use crate::{ModelAnimation, ModelInstance, ModelPart, model_playback::ModelPlayback};
 use std::{
@@ -185,8 +189,25 @@ struct Owner {
     frame: Arc<AnimatorFrame>,
     feet: Option<crate::foot_placement::FootRuntime>,
 }
-#[derive(Clone, Debug, Default)]
+static NEXT_ANIMATION_CHANGE: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct AnimationChangeToken(u64);
+impl AnimationChangeToken {
+    fn fresh() -> Self {
+        Self(
+            NEXT_ANIMATION_CHANGE
+                .fetch_update(
+                    std::sync::atomic::Ordering::Relaxed,
+                    std::sync::atomic::Ordering::Relaxed,
+                    |n| n.checked_add(1),
+                )
+                .expect("animation change token space exhausted"),
+        )
+    }
+}
+#[derive(Clone, Debug)]
 pub(super) struct AnimationRuntime {
+    change: AnimationChangeToken,
     scene: Option<SceneId>,
     owners: HashMap<NodeId, Owner>,
     serial: u64,
@@ -199,8 +220,26 @@ pub(super) struct AnimationRuntime {
         f64,
     )>,
 }
+impl Default for AnimationRuntime {
+    fn default() -> Self {
+        Self {
+            change: AnimationChangeToken::fresh(),
+            scene: None,
+            owners: Default::default(),
+            serial: 0,
+            motions: Vec::new(),
+            rotations: Vec::new(),
+        }
+    }
+}
 #[allow(dead_code)]
 impl AnimationRuntime {
+    pub(crate) fn change_token(&self) -> AnimationChangeToken {
+        self.change
+    }
+    fn mark_changed(&mut self) {
+        self.change = AnimationChangeToken::fresh();
+    }
     /// Captures a caller-selected authored reference at a known body pose.
     /// A live reference cannot be silently reset by another clip switch.
     pub(super) fn initialize_root_reference(
@@ -210,6 +249,7 @@ impl AnimationRuntime {
         body_to_world: voxy_animation::RootRigidTransform,
         authored_to_body: voxy_animation::RootRigidEnclosure,
     ) -> Result<(), EditorError> {
+        self.mark_changed();
         let body_to_world = voxy_animation::RootRigidEnclosure::from_transform(body_to_world)?;
         let state = self
             .owners
@@ -499,6 +539,7 @@ impl AnimationRuntime {
         let (playback, _, _, _) =
             prepare_playback_selection(Some(state), animation_model, &settings, true)?;
         let mut candidate = self.clone();
+        candidate.mark_changed();
         let next = candidate.owners.get_mut(&owner).unwrap();
         if next.settings.root_motion_joint != settings.root_motion_joint
             || next.settings.root_motion_bone != settings.root_motion_bone
@@ -527,6 +568,7 @@ impl AnimationRuntime {
         max_spans: usize,
     ) -> Result<(Self, Vec<PreparedOwnerFade>), EditorError> {
         let mut candidate = self.clone();
+        candidate.mark_changed();
         let mut prepared = Vec::new();
         for (owner, instance) in scene.active_components::<ModelInstance>() {
             let Some(state) = candidate.owners.get(&owner) else {
@@ -759,6 +801,7 @@ impl AnimationRuntime {
         clip: usize,
         events: Vec<voxy_animation::ClipEvent>,
     ) -> Result<(), EditorError> {
+        self.mark_changed();
         self.owners
             .get_mut(&owner)
             .ok_or("animation event owner is not loaded")?
@@ -768,6 +811,7 @@ impl AnimationRuntime {
     /// Drain only the runtime adopted after the enclosing scene transaction.
     /// Owner ordering is stable; occurrence ordering within an owner is retained.
     pub(super) fn take_events(&mut self) -> Vec<(NodeId, voxy_animation::ClipEventOccurrence)> {
+        self.mark_changed();
         let mut owners: Vec<_> = self.owners.keys().copied().collect();
         owners.sort();
         let mut events = Vec::new();
@@ -816,6 +860,7 @@ impl AnimationRuntime {
         preview: &voxy_gameplay::CharacterTickPreview,
         budget: &mut voxy_gameplay::SupportQueryBudget,
     ) -> Result<Self, EditorError> {
+        self.mark_changed();
         for accepted in &preview.characters {
             let Some(owner) = self.owners.get_mut(&accepted.owner) else {
                 continue;
@@ -896,6 +941,7 @@ impl AnimationRuntime {
                     owner.playback.frozen_source_tick(),
                 )?,
             );
+            owner.model.validate_morph_frame(&owner.frame)?;
         }
         Ok(self)
     }
@@ -908,6 +954,7 @@ impl AnimationRuntime {
         receipt: &voxy_gameplay::AppliedCharacterTrajectoryMotion,
         accepted_pose: &voxy_gameplay::AcceptedCharacterPose,
     ) -> Result<Self, EditorError> {
+        self.mark_changed();
         let staged = admitted.prepared;
         let owner = self
             .owners
@@ -950,6 +997,56 @@ impl AnimationRuntime {
     pub(super) fn serial(&self) -> u64 {
         self.serial
     }
+    pub(crate) fn checkpoint_frame_roots(&self) -> Vec<(NodeId, Arc<AnimatorFrame>)> {
+        let mut roots: Vec<_> = self
+            .owners
+            .iter()
+            .map(|(owner, state)| (*owner, state.frame.clone()))
+            .collect();
+        roots.sort_by_key(|(owner, _)| *owner);
+        roots
+    }
+    /// Join a detached restored frame to its explicitly archived shared owner.
+    /// Exact native checkpoint equality prevents merging different accepted states.
+    pub(crate) fn restore_shared_frame(
+        &mut self,
+        owner: NodeId,
+        frame: Arc<AnimatorFrame>,
+        max: usize,
+    ) -> Result<(), EditorError> {
+        let previous = self
+            .owners
+            .get(&owner)
+            .ok_or("missing shared runtime frame owner")?
+            .frame
+            .clone();
+        // A runtime-only alias class may already have been restored before the
+        // outer GPU join. Admit every target first, then transfer the whole class.
+        for state in self
+            .owners
+            .values()
+            .filter(|state| Arc::ptr_eq(&state.frame, &previous))
+        {
+            state.model.validate_morph_frame(&frame)?;
+            let encode = |frame: &AnimatorFrame| {
+                frame
+                    .checkpoint(&state.model.skeleton, max)
+                    .and_then(|saved| saved.to_json(max))
+                    .map_err(|error| error.to_string())
+            };
+            if encode(&state.frame)? != encode(&frame)? {
+                return Err("shared accepted frame contents differ".into());
+            }
+        }
+        for state in self
+            .owners
+            .values_mut()
+            .filter(|state| Arc::ptr_eq(&state.frame, &previous))
+        {
+            state.frame = frame.clone();
+        }
+        Ok(())
+    }
     pub(super) fn frame(
         &self,
         owner: NodeId,
@@ -962,6 +1059,7 @@ impl AnimationRuntime {
         if self.scene.is_some_and(|id| id != scene.identity()) {
             return Err("foreign animation scene".into());
         }
+        self.mark_changed();
         self.owners.retain(|owner, _| {
             scene
                 .component::<ModelInstance>(*owner)
@@ -1245,6 +1343,7 @@ fn prepare_playback_selection(
         && current.is_some_and(|old| {
             same_clip
                 && old.animation_model.skeleton.joints() == animation_model.skeleton.joints()
+                && old.animation_model.morph_basis_compatible(animation_model)
                 && old
                     .settings
                     .clip
@@ -1318,6 +1417,8 @@ pub(super) fn prepare_displayed_frame(
             frame = frame.without_root_rotation(&model.skeleton)?;
         }
     }
+    settings.apply_morph_weights(model, &mut frame)?;
+    model.validate_morph_frame(&frame)?;
     Ok((frame, displacement))
 }
 

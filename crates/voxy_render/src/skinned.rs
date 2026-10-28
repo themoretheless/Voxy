@@ -2,6 +2,7 @@ use crate::pose_admission_profile::{Clock, RenderPoseProfile, cpu_us};
 /// Joint budget of a skinned mesh; `voxy_model` checks it equals the animation rig budget.
 pub const MAX_SKIN_JOINTS: usize = 256;
 use std::sync::Arc;
+mod checkpoint;
 
 use bytemuck::{Pod, Zeroable};
 use glam::Mat4;
@@ -324,6 +325,15 @@ impl SkinnedMesh {
             }
             result
         })
+    }
+
+    /// Shared admission for scene CPU/GPU consumers, including flat-shaded
+    /// zero normal streams. Performs no writes or pose publication.
+    /// # Errors
+    /// Rejects invalid palettes, overflowing positions and collapsed normal maps.
+    pub fn validate_scene_pose(&self, joints: &[Mat4]) -> Result<(), SkinnedUploadError> {
+        self.validate_temporal_pose(joints, Mat4::IDENTITY)?;
+        self.validate_scene_normals(joints)
     }
 
     /// Scene shading requires an invertible local blended deformation. A

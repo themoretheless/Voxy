@@ -67,6 +67,9 @@ impl ModelRetarget {
         target: &voxy_model::ModelAsset,
     ) -> Result<RetargetBinding, EditorError> {
         self.validate()?;
+        if source.has_morph() || target.has_morph() {
+            return Err("morph retargeting needs an explicit shape mapping".into());
+        }
         let mapping = self
             .joints
             .iter()

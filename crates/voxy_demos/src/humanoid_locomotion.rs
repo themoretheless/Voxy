@@ -272,6 +272,7 @@ impl VoxyHumanoidLocomotion {
         // The shared extraction API verifies rig identity and rebuilds the
         // palette before publication; no stale pre-extraction palette is used.
         let frame = voxy_animation::AnimatorFrame {
+            properties: Default::default(),
             pose,
             skin_matrices: Vec::new(),
             root_motion: offset,

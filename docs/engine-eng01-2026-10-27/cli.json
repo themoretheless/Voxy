@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "binary": "/private/tmp/voxy-eng01-20261027-target/debug/voxy_editor",
+  "binary_sha256": "d20aa6e73411a069f4fde3a3ec4d6f072b924f8ccfa1ce0b5b3c11f6cc0ba7e5",
+  "binary_stable": true,
+  "cwd": "/",
+  "window_gpu_audio_initialization": false,
+  "calls": [
+    {
+      "command": "--help",
+      "arguments": [],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Voxy editor\nHeadless project commands:\n--create-project DIRECTORY NAME\n--validate-project PROJECT\n--rename-project PROJECT NAME\n--build-project PROJECT OUTPUT\n--project PROJECT --game-check\n--package PACKAGE --game-check\nNative editor/game commands (open windows):\n--project PROJECT [--game]\nMODEL.obj|MODEL.gltf|MODEL.glb [--scene SCENE]\n--manifest MANIFEST ASSET [--scene SCENE]\n",
+      "stderr": ""
+    },
+    {
+      "command": "--create-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces",
+        "Первый проект"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Created /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy\n",
+      "stderr": ""
+    },
+    {
+      "command": "--validate-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Validated project \"Первый проект\": 0 scene objects\n",
+      "stderr": ""
+    },
+    {
+      "command": "--create-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces",
+        "Overwrite"
+      ],
+      "returncode": 1,
+      "expected_success": false,
+      "stdout": "",
+      "stderr": "Error: Io(Os { code: 17, kind: AlreadyExists, message: \"File exists\" })\n"
+    },
+    {
+      "command": "--create-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/blank",
+        " "
+      ],
+      "returncode": 1,
+      "expected_success": false,
+      "stdout": "",
+      "stderr": "Error: Invalid(\"empty name\")\n"
+    },
+    {
+      "command": "--rename-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy",
+        "Renamed project"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Saved project \"Renamed project\"\n",
+      "stderr": ""
+    },
+    {
+      "command": "--validate-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Validated project \"Renamed project\": 0 scene objects\n",
+      "stderr": ""
+    },
+    {
+      "command": "--rename-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy",
+        "Сохранён повторно"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Saved project \"Сохранён повторно\"\n",
+      "stderr": ""
+    },
+    {
+      "command": "--validate-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Validated project \"Сохранён повторно\": 0 scene objects\n",
+      "stderr": ""
+    },
+    {
+      "command": "--rename-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy",
+        " "
+      ],
+      "returncode": 1,
+      "expected_success": false,
+      "stdout": "",
+      "stderr": "Error: Invalid(\"unsupported version or empty name\")\n"
+    },
+    {
+      "command": "--validate-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Validated project \"Сохранён повторно\": 0 scene objects\n",
+      "stderr": ""
+    },
+    {
+      "command": "--rename-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy",
+        "Nested scene"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Saved project \"Nested scene\"\n",
+      "stderr": ""
+    },
+    {
+      "command": "--validate-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy"
+      ],
+      "returncode": 1,
+      "expected_success": false,
+      "stdout": "",
+      "stderr": "Error: Invalid(\"unsupported version or empty name\")\n"
+    },
+    {
+      "command": "--rename-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy",
+        "Must fail"
+      ],
+      "returncode": 1,
+      "expected_success": false,
+      "stdout": "",
+      "stderr": "Error: Invalid(\"unsupported version or empty name\")\n"
+    },
+    {
+      "command": "--validate-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy"
+      ],
+      "returncode": 1,
+      "expected_success": false,
+      "stdout": "",
+      "stderr": "Error: Io(Os { code: 2, kind: NotFound, message: \"No such file or directory\" })\n"
+    },
+    {
+      "command": "--rename-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/project with spaces/project.voxy",
+        "Must fail"
+      ],
+      "returncode": 1,
+      "expected_success": false,
+      "stdout": "",
+      "stderr": "Error: Io(Os { code: 2, kind: NotFound, message: \"No such file or directory\" })\n"
+    },
+    {
+      "command": "--validate-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/relocated project/project.voxy"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Validated project \"Nested scene\": 0 scene objects\n",
+      "stderr": ""
+    },
+    {
+      "command": "--rename-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/relocated project/project.voxy",
+        "Relocated"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Saved project \"Relocated\"\n",
+      "stderr": ""
+    },
+    {
+      "command": "--validate-project",
+      "arguments": [
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-eng01-cli-71rwy_vk/relocated project/project.voxy"
+      ],
+      "returncode": 0,
+      "expected_success": true,
+      "stdout": "Validated project \"Relocated\": 0 scene objects\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,10 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (/tmp/voxy-eng01-20261027-target/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 3 tests
+test headless_game::tests::gameplay_input_checkpoint_keeps_quick_jump_and_following_simulation ... ok
+test headless_game::tests::headless_focus_loss_cancels_input_and_ui_capture_and_invalid_events_do_not_advance ... ok
+test headless_game::tests::project_play_standalone_and_source_free_package_share_interactive_replay ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 282 filtered out; finished in 0.57s
+

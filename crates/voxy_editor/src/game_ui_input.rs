@@ -394,3 +394,6 @@ mod tests {
         );
     }
 }
+
+#[path = "game_ui_input_checkpoint.rs"]
+pub(crate) mod checkpoint;

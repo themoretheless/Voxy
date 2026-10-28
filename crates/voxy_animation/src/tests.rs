@@ -1753,6 +1753,7 @@ fn extracted_root_rotation_returns_to_bind_and_rebuilds_the_hierarchical_palette
         scale: Vec3::new(-2., 3., 4.),
     };
     let original = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&rig).unwrap(),
         pose,
         root_motion: Vec3::new(0.1, 0.2, 0.3),
@@ -1845,6 +1846,7 @@ fn extraction_masks_selected_child_axes_and_preserves_other_channels() {
     };
     let original = pose.clone();
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&rig).unwrap(),
         pose,
         root_motion: Vec3::new(0.1, 0.2, 0.3),

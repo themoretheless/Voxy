@@ -4631,6 +4631,7 @@ mod thumb_tip_contact_tests {
             .unwrap();
         let pose = rig.skeleton.bind_pose();
         let source = voxy_animation::AnimatorFrame {
+            properties: Default::default(),
             skin_matrices: pose.skin_matrices(&rig.skeleton).unwrap(),
             pose,
             root_motion: Vec3::ZERO,

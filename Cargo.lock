@@ -157,6 +157,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 
 [[package]]
+name = "base64"
+version = "0.22.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+
+[[package]]
 name = "bevy_mikktspace"
 version = "1.0.0"
 
@@ -526,6 +532,15 @@ name = "crossbeam-epoch"
 version = "0.9.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc74980687109a3b14c72fd458107bf0baa1da1a1a805e178d15501ba9b86d9d"
+dependencies = [
+ "crossbeam-utils",
+]
+
+[[package]]
+name = "crossbeam-queue"
+version = "0.3.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03e8bd762f7479489c70ed6c768ddca99d7296857de437a68dcb2a94365b3fae"
 dependencies = [
  "crossbeam-utils",
 ]
@@ -2853,6 +2868,10 @@ name = "voxy_animation"
 version = "0.1.0"
 dependencies = [
  "glam",
+ "num-bigint",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.20",
 ]
 
 [[package]]
@@ -2915,7 +2934,9 @@ dependencies = [
 name = "voxy_audio_device"
 version = "0.1.0"
 dependencies = [
+ "blake3",
  "cpal",
+ "crossbeam-queue",
  "voxy_audio",
 ]
 
@@ -2970,10 +2991,12 @@ dependencies = [
 name = "voxy_editor"
 version = "0.1.0"
 dependencies = [
+ "base64",
  "blake3",
  "getrandom 0.3.4",
  "glam",
  "gltf",
+ "image",
  "physics",
  "pollster",
  "serde",
@@ -2998,6 +3021,7 @@ dependencies = [
 name = "voxy_gameplay"
 version = "0.1.0"
 dependencies = [
+ "blake3",
  "glam",
  "physics",
  "serde",
@@ -3078,11 +3102,13 @@ name = "voxy_model"
 version = "0.1.0"
 dependencies = [
  "bevy_mikktspace",
+ "blake3",
  "bytemuck",
  "glam",
  "gltf",
  "image",
  "pollster",
+ "serde",
  "serde_json",
  "voxy_animation",
  "voxy_gpu_core",
@@ -3133,6 +3159,7 @@ dependencies = [
  "physics_voxel",
  "pollster",
  "raw-window-handle",
+ "serde",
  "serde_json",
  "thiserror 2.0.20",
  "voxy_assets",

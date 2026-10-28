@@ -1,4 +1,6 @@
 //! Playback state belongs to a model owner, never to the shared imported asset.
+#[path = "model_playback_checkpoint.rs"]
+pub(crate) mod checkpoint;
 use crate::EditorError;
 use std::sync::Arc;
 use voxy_animation::{Animator, AnimatorFrame};
@@ -16,6 +18,10 @@ pub struct ModelAnimationEvent {
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct ModelAnimation {
+    /// Persistent absolute overrides keyed by exact unique authored node name.
+    /// Empty preserves imported defaults and animated weight channels.
+    #[serde(default)]
+    pub morph_weights: std::collections::BTreeMap<String, Vec<f32>>,
     #[serde(default)]
     pub events: Vec<ModelAnimationEvent>,
     pub clip: Option<usize>,
@@ -39,6 +45,7 @@ pub struct ModelAnimation {
 impl Default for ModelAnimation {
     fn default() -> Self {
         Self {
+            morph_weights: Default::default(),
             events: Vec::new(),
             clip: Some(0),
             clip_name: String::new(),
@@ -53,6 +60,24 @@ impl Default for ModelAnimation {
 }
 
 impl ModelAnimation {
+    pub(crate) fn apply_morph_weights(
+        &self,
+        model: &ModelAsset,
+        frame: &mut AnimatorFrame,
+    ) -> Result<(), EditorError> {
+        self.validate(None, None)?;
+        if self.morph_weights.is_empty() {
+            return Ok(());
+        }
+        let mut candidate = frame.clone();
+        for (name, weights) in &self.morph_weights {
+            let node = model.resolve_morph_node_name(name)?;
+            model.set_frame_morph_weights(&mut candidate, node, weights)?;
+        }
+        *frame = candidate;
+        Ok(())
+    }
+
     pub(crate) fn resolve_clip(&self, model: &ModelAsset) -> Result<Option<usize>, EditorError> {
         if self.clip_name.is_empty() {
             return Ok(self.clip);
@@ -83,6 +108,19 @@ impl ModelAnimation {
         clip_count: Option<usize>,
         joint_count: Option<usize>,
     ) -> Result<(), &'static str> {
+        let mut weight_count = 0usize;
+        for (name, weights) in &self.morph_weights {
+            weight_count = weight_count.saturating_add(weights.len());
+            if name.is_empty()
+                || name.len() > 1024
+                || name.contains('\0')
+                || weights.is_empty()
+                || weights.iter().any(|weight| !weight.is_finite())
+                || weight_count > voxy_animation::MAX_PROPERTY_TRACKS
+            {
+                return Err("invalid authored morph weights");
+            }
+        }
         if self.events.len() > 4096
             || self.events.iter().any(|event| {
                 event.name.is_empty()
@@ -135,6 +173,7 @@ pub(crate) struct SourceContactInterval {
 pub(crate) struct ModelPlayback {
     model: Arc<ModelAsset>,
     animator: Option<Animator>,
+    root_motion_receipt: Option<voxy_animation::RootRigidMotionReceipt>,
     event_tracks: std::collections::BTreeMap<usize, voxy_animation::ClipEvents>,
     pending_events: Vec<voxy_animation::ClipEventOccurrence>,
     root_motion_joint: u16,
@@ -171,6 +210,13 @@ impl PreparedModelFade {
             owner,
             prepared: self,
             motion,
+            replay_context: Some(voxy_animation::RootRigidFadeCompileContext {
+                common,
+                scale,
+                origin_tolerance,
+                angular_tolerance,
+                max_spans,
+            }),
         })
     }
 
@@ -195,6 +241,7 @@ impl PreparedModelFade {
             owner,
             prepared: self,
             motion,
+            replay_context: None,
         })
     }
     pub(crate) fn accepted_frame(
@@ -219,8 +266,65 @@ pub(crate) struct PreparedModelFadeMotion {
     owner: voxy_scene::NodeId,
     prepared: PreparedModelFade,
     motion: voxy_animation::RootRigidCertifiedFadeInterval,
+    replay_context: Option<voxy_animation::RootRigidFadeCompileContext>,
 }
 impl PreparedModelFadeMotion {
+    #[allow(dead_code)]
+    pub(crate) fn prepare_checkpoint(
+        owner: voxy_scene::NodeId,
+        current: &ModelPlayback,
+        saved: &voxy_animation::RootRigidFadeCheckpoint,
+        identify: impl Fn(
+            &Arc<voxy_animation::AnimationClip>,
+            Option<&Arc<voxy_animation::PropertyClip>>,
+        ) -> Option<String>,
+        limits: voxy_animation::RootRigidFadeCheckpointLimits,
+    ) -> Result<Self, EditorError> {
+        let initial = current
+            .animator
+            .as_ref()
+            .ok_or("saved fade has no current animator")?;
+        let restored = saved
+            .prepare_from_animator(initial, &current.model.skeleton, identify, limits)
+            .map_err(|e| e.to_string())?;
+        Ok(Self {
+            owner,
+            prepared: PreparedModelFade {
+                model: current.model.clone(),
+                plan: restored.plan,
+            },
+            motion: restored.motion,
+            replay_context: Some(restored.context),
+        })
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn checkpoint_original_sources(
+        &self,
+        identify: impl Fn(
+            &Arc<voxy_animation::AnimationClip>,
+            Option<&Arc<voxy_animation::PropertyClip>>,
+        ) -> Option<String>,
+        limits: voxy_animation::RootRigidFadeCheckpointLimits,
+    ) -> Result<voxy_animation::RootRigidFadeCheckpoint, EditorError> {
+        let context = self
+            .replay_context
+            .ok_or("prepared fade has no original-source replay context")?;
+        self.prepared
+            .plan
+            .checkpoint_original_sources(
+                &self.motion,
+                context.common,
+                context.scale,
+                context.origin_tolerance,
+                context.angular_tolerance,
+                context.max_spans,
+                identify,
+                limits,
+            )
+            .map_err(|e| e.to_string().into())
+    }
+
     /// Stages playback and contact travel for the same accepted physical prefix.
     /// The returned owner state is published only after the physics transaction.
     pub(crate) fn accepted_playback(
@@ -255,6 +359,7 @@ impl PreparedModelFadeMotion {
             .pending_events
             .extend(current.preview_events(wall)?);
         candidate.animator = Some(animator);
+        candidate.root_motion_receipt = None;
         candidate.contact_interval = Some(contact_interval);
         candidate.source_contact_interval = source;
         candidate.frozen_source_tick = frozen;
@@ -373,6 +478,7 @@ impl ModelPlayback {
 
     pub(crate) fn can_rebind(&self, model: &ModelAsset, allow_reorder: bool) -> bool {
         self.model.skeleton.joints() == model.skeleton.joints()
+            && self.model.has_same_morph_animation(model, allow_reorder)
             && self.model.animations.len() == model.animations.len()
             && (self
                 .model
@@ -409,6 +515,12 @@ impl ModelPlayback {
         if self.model.skeleton.joints() != model.skeleton.joints() {
             return Err("animation rebind skeleton changed".into());
         }
+        if !self.model.morph_basis_compatible(&model) {
+            return Err("animation rebind morph basis changed".into());
+        }
+        if let Some(animator) = &mut self.animator {
+            model.register_animator_properties(animator)?;
+        }
         self.model = model;
         Ok(())
     }
@@ -430,7 +542,7 @@ impl ModelPlayback {
             if !clip.is_compatible_with(&model.skeleton) {
                 return Err("animation clip belongs to an incompatible rig".into());
             }
-            let mut animator = Animator::try_new(clip.clone())?;
+            let mut animator = model.animator(index)?;
             animator.set_speed(settings.speed)?;
             animator.set_root_motion_joint(root_motion_joint)?;
             Some(animator)
@@ -441,6 +553,7 @@ impl ModelPlayback {
         let mut playback = Self {
             model,
             animator,
+            root_motion_receipt: None,
             event_tracks: Default::default(),
             pending_events: Vec::new(),
             root_motion_joint,
@@ -585,6 +698,9 @@ impl ModelPlayback {
         self.source_contact_interval.as_ref()
     }
 
+    pub(crate) fn root_motion_receipt(&self) -> Option<&voxy_animation::RootRigidMotionReceipt> {
+        self.root_motion_receipt.as_ref()
+    }
     pub(crate) fn contact_interval(&self) -> Option<voxy_animation::AnimationPhaseInterval> {
         self.contact_interval
     }
@@ -669,32 +785,30 @@ impl ModelPlayback {
         let events = self.preview_events(dt)?;
         let mut candidate = self.animator.clone();
         let mut path = None;
+        let mut root_motion_receipt = None;
         let frame = if let Some(animator) = &mut candidate {
             if rotation {
-                let (frame, rotation) = animator.advance_with_root_rigid_motion_wall(
-                    &self.model.skeleton,
-                    dt,
-                    axes,
-                    voxy_animation::MAX_ROOT_ROTATION_SPANS,
-                )?;
+                let (frame, rotation, receipt) = animator
+                    .advance_with_root_rigid_motion_receipt_wall(
+                        &self.model.skeleton,
+                        dt,
+                        axes,
+                        voxy_animation::MAX_ROOT_ROTATION_SPANS,
+                    )?;
                 path = Some(rotation);
+                root_motion_receipt = Some(receipt);
                 frame
             } else {
                 animator.advance_wall(&self.model.skeleton, dt)?
             }
         } else {
-            let pose = self.model.skeleton.bind_pose();
-            let skin_matrices = pose.skin_matrices(&self.model.skeleton)?;
-            AnimatorFrame {
-                pose,
-                skin_matrices,
-                root_motion: glam::Vec3::ZERO,
-                root_motion_joint: self.root_motion_joint,
-                transition_weight: 1.0,
-            }
+            let mut frame = self.model.bind_frame()?;
+            frame.root_motion_joint = self.root_motion_joint;
+            frame
         };
         let result = publish(&self.model, &frame, path.as_ref())?;
         self.animator = candidate;
+        self.root_motion_receipt = root_motion_receipt;
         self.pending_events.extend(events);
         self.contact_interval = interval;
         self.source_contact_interval = source_interval;
@@ -1379,6 +1493,29 @@ mod physical_fade_receipt_tests {
             }
         };
         let staged = build();
+        let staged = if original_sources {
+            let limits = voxy_animation::RootRigidFadeCheckpointLimits {
+                max_bytes: 4 * 1024 * 1024,
+                max_spans: 4096,
+                max_fields: 4096,
+            };
+            let saved = staged
+                .checkpoint_original_sources(|_, _| Some("source-clip".into()), limits)
+                .unwrap();
+            let text = saved.to_json(limits.max_bytes).unwrap();
+            let saved = voxy_animation::RootRigidFadeCheckpoint::from_json(&text, limits.max_bytes)
+                .unwrap();
+            PreparedModelFadeMotion::prepare_checkpoint(
+                owner,
+                &playback,
+                &saved,
+                |_, _| Some("source-clip".into()),
+                limits,
+            )
+            .unwrap()
+        } else {
+            staged
+        };
         let other = build();
         let request = staged.request(glam::DQuat::IDENTITY, glam::Vec3::ZERO, 1., 1, 0.);
         let mut physics = CharacterPhysics::new(&scene, 1, usize::from(collision));

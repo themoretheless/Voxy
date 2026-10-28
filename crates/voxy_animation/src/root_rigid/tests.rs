@@ -2434,6 +2434,31 @@ fn outward_integrator_preserves_clocks_and_refines_large_screw_angles() {
     )
     .unwrap();
     assert!(result.path.spans().len() >= 8);
+    let checkpoint_limits = RootRigidPathCheckpointLimits {
+        max_bytes: 1024 * 1024,
+        max_nodes: 1,
+        max_spans: 32,
+        max_work_spans: 32,
+    };
+    let saved = result
+        .path
+        .checkpoint_timed_screws(checkpoint_limits)
+        .unwrap();
+    let text = saved.to_json(checkpoint_limits.max_bytes).unwrap();
+    let decoded = RootRigidPathCheckpoint::from_json(&text, checkpoint_limits.max_bytes).unwrap();
+    let restored_path = decoded.prepare(|_| None, checkpoint_limits).unwrap();
+    assert_eq!(
+        restored_path.duration().to_bits(),
+        result.path.duration().to_bits()
+    );
+    for (a, b) in result.path.spans().iter().zip(restored_path.spans()) {
+        assert_eq!(a.start().to_bits(), b.start().to_bits());
+        assert_eq!(a.end().to_bits(), b.end().to_bits());
+        for fraction in [0., 0.1, 0.5, 0.9, 1.] {
+            assert_eq!(a.sample(fraction).unwrap(), b.sample(fraction).unwrap());
+            assert_eq!(a.velocity(fraction).unwrap(), b.velocity(fraction).unwrap());
+        }
+    }
     assert_eq!(result.path.duration(), 0.7);
     assert_eq!(result.origin_error_bound, 0.);
     assert_eq!(result.angular_error_bound, 0.);
@@ -5672,4 +5697,161 @@ fn uniform_screw_point_box_error_covers_all_times_signed_world_mapping_and_publi
     let mut invalid = points;
     invalid[0] = [1., 0.];
     assert!(cache.point_selection_error_bounds(invalid).is_err());
+}
+
+#[test]
+fn path_checkpoint_replays_fresh_cubic_and_step_curves_with_exact_cut_metadata() {
+    for mode in [Interpolation::CubicSpline, Interpolation::Step] {
+        let make = || {
+            let tangents = if mode == Interpolation::CubicSpline {
+                JointTangents {
+                    translation: vec![[Vec3::ZERO, Vec3::Y * 3.], [-Vec3::Y * 3., Vec3::ZERO]],
+                    rotation: vec![[Vec4::ZERO, Vec4::Y * 8.], [-Vec4::Y * 8., Vec4::ZERO]],
+                    ..Default::default()
+                }
+            } else {
+                JointTangents::default()
+            };
+            clip(
+                Vec3::X * 0.6,
+                vec![
+                    Vec3Key {
+                        time: 0.,
+                        value: Vec3::X * 0.6,
+                    },
+                    Vec3Key {
+                        time: 0.5,
+                        value: Vec3::new(1.6, 0.2, 0.),
+                    },
+                ],
+                vec![
+                    QuatKey {
+                        time: 0.,
+                        value: Quat::IDENTITY,
+                    },
+                    QuatKey {
+                        time: 0.5,
+                        value: Quat::from_rotation_y(0.7),
+                    },
+                ],
+                TrackInterpolation {
+                    translation: mode,
+                    rotation: mode,
+                    ..Default::default()
+                },
+                tangents,
+                Playback::Loop,
+            )
+            .1
+            .root_rigid_curve(0)
+            .unwrap()
+        };
+        let curve = make();
+        let base = curve.path(0.25, 1.5, [true; 3], 1024).unwrap();
+        let basis = DQuat::from_rotation_z(0.31);
+        let offset = DVec3::new(0.3, -0.1, 0.7);
+        let path = base
+            .retimed(2.5)
+            .unwrap()
+            .transformed(basis, 1.3, offset)
+            .unwrap()
+            .append_spatial(&base, 1024)
+            .unwrap();
+        let program = RootRigidPathProgram::new(vec![
+            RootRigidPathStep::Curve {
+                revision: "model-revision/root-0".into(),
+                start_bits: 0.25f64.to_bits(),
+                end_bits: 1.5f64.to_bits(),
+                axes: [true; 3],
+            },
+            RootRigidPathStep::Retimed {
+                source: 0,
+                duration_bits: 2.5f64.to_bits(),
+            },
+            RootRigidPathStep::Transformed {
+                source: 1,
+                basis_bits: basis.to_array().map(f64::to_bits),
+                scale_bits: 1.3f64.to_bits(),
+                offset_bits: offset.to_array().map(f64::to_bits),
+            },
+            RootRigidPathStep::Append {
+                first: 2,
+                second: 0,
+            },
+        ]);
+        let limits = RootRigidPathCheckpointLimits {
+            max_bytes: 4 * 1024 * 1024,
+            max_nodes: 8,
+            max_spans: 1024,
+            max_work_spans: 4096,
+        };
+        let saved = path
+            .checkpoint(
+                program,
+                |key| (key == "model-revision/root-0").then(|| curve.clone()),
+                limits,
+            )
+            .unwrap();
+        let json = saved.to_json(limits.max_bytes).unwrap();
+        let saved = RootRigidPathCheckpoint::from_json(&json, limits.max_bytes).unwrap();
+        let fresh = make();
+        assert!(!Arc::ptr_eq(&curve.0, &fresh.0));
+        let restored = saved
+            .prepare(
+                |key| (key == "model-revision/root-0").then(|| fresh.clone()),
+                limits,
+            )
+            .unwrap();
+        assert_eq!(path.duration().to_bits(), restored.duration().to_bits());
+        assert_eq!(path.spans().len(), restored.spans().len());
+        assert!(!path.translation_cut_enclosures().is_empty());
+        for (a, b) in path
+            .translation_cut_enclosures()
+            .iter()
+            .zip(restored.translation_cut_enclosures())
+        {
+            assert_eq!(a.evaluated().to_bits(), b.evaluated().to_bits());
+            assert_eq!(
+                a.exact_source_bounds().map(f64::to_bits),
+                b.exact_source_bounds().map(f64::to_bits)
+            );
+            assert_eq!(
+                a.absolute_error_bound().to_bits(),
+                b.absolute_error_bound().to_bits()
+            );
+        }
+        for (a, b) in path.spans().iter().zip(restored.spans()) {
+            assert_eq!(a.is_step(), b.is_step());
+            for fraction in [0., 0.1, 0.3, 0.5, 0.7, 0.9, 1.] {
+                assert_eq!(a.sample(fraction).unwrap(), b.sample(fraction).unwrap());
+                assert_eq!(a.velocity(fraction).unwrap(), b.velocity(fraction).unwrap());
+            }
+            let point = DVec3::new(0.1, 0.3, -0.2);
+            assert_eq!(
+                a.projection_bounds(point, DVec3::Y)
+                    .unwrap()
+                    .map(f64::to_bits),
+                b.projection_bounds(point, DVec3::Y)
+                    .unwrap()
+                    .map(f64::to_bits)
+            );
+            assert_eq!(
+                a.point_speed_bound(point).unwrap().to_bits(),
+                b.point_speed_bound(point).unwrap().to_bits()
+            );
+        }
+        if mode == Interpolation::Step {
+            assert!(restored.spans().iter().any(RootRigidSpan::is_step));
+        }
+        assert!(saved.prepare(|_| None, limits).is_err());
+        let wrong = linear_turn(Vec3::ZERO).1.root_rigid_curve(0).unwrap();
+        assert!(saved.prepare(|_| Some(wrong.clone()), limits).is_err());
+        let mut corrupt: serde_json::Value = serde_json::from_str(&json).unwrap();
+        let words = corrupt["words"].as_array_mut().unwrap();
+        let last = words.len() - 1;
+        words[last] = (words[last].as_u64().unwrap() ^ 1).into();
+        let corrupt =
+            RootRigidPathCheckpoint::from_json(&corrupt.to_string(), limits.max_bytes).unwrap();
+        assert!(corrupt.prepare(|_| Some(fresh.clone()), limits).is_err());
+    }
 }

@@ -1,16 +1,15 @@
 //! Scene-owner playback and deformation. Immutable attributes are shared by revision;
 //! clocks, palettes and posed geometry are owned by generational scene handles.
+pub(crate) mod checkpoint;
 use crate::EditorError;
 use crate::model_playback::ModelAnimation;
 use std::{
     collections::{HashMap, HashSet},
     sync::{Arc, Weak},
 };
-use voxy_animation::Pose;
 use voxy_model::{ModelAsset, ModelGeometry};
 use voxy_render::{
-    SceneGeometry, SceneMesh, SceneRenderer, SceneSkinError, SceneSkinInstance, SceneSkinSource,
-    SceneSkinner,
+    SceneGeometry, SceneRenderer, SceneSkinError, SceneSkinInstance, SceneSkinSource, SceneSkinner,
 };
 use voxy_scene::NodeId;
 
@@ -43,6 +42,7 @@ impl Primitive {
 }
 #[derive(Debug)]
 struct Owner {
+    publication: Option<Arc<voxy_assets::ImportedAsset<crate::import::EditorAsset>>>,
     model: Arc<ModelAsset>,
     settings: ModelAnimation,
     frame: Arc<voxy_animation::AnimatorFrame>,
@@ -75,6 +75,53 @@ impl LodGeometry {
         }
     }
 }
+struct LodUpload<'a> {
+    renderer: &'a SceneRenderer,
+    device: &'a wgpu::Device,
+    skinner: Option<&'a SceneSkinner>,
+    live: u64,
+    budget: u64,
+}
+impl LodUpload<'_> {
+    fn stage(
+        &self,
+        state: &Owner,
+        source: &voxy_render::SkinnedLodMesh,
+        level: usize,
+    ) -> Result<LodGeometry, EditorError> {
+        if let (Some(skinner), Some(Primitive::Skin { instance, .. })) =
+            (self.skinner, state.primitives.first())
+        {
+            Ok(LodGeometry::Gpu(skinner.create_lod_level(
+                instance,
+                source,
+                level,
+                self.live,
+                self.budget,
+            )?))
+        } else {
+            let local = source.prepare(&state.frame.skin_matrices, glam::Mat4::IDENTITY)?;
+            let mesh = local
+                .posed_scene_mesh(level, state.model.primitives[0].color)?
+                .with_material_coordinates(
+                    source
+                        .mesh()
+                        .vertices()
+                        .iter()
+                        .map(|v| v.position)
+                        .collect(),
+                )?;
+            admit(
+                self.live,
+                SceneRenderer::mesh_allocation_bytes(&mesh),
+                self.budget,
+            )?;
+            Ok(LodGeometry::Cpu(
+                self.renderer.upload_mesh(self.device, &mesh)?,
+            ))
+        }
+    }
+}
 #[derive(Debug)]
 struct SharedSource {
     model: Weak<ModelAsset>,
@@ -82,11 +129,20 @@ struct SharedSource {
 }
 #[derive(Debug)]
 pub(super) struct AnimatedModels {
+    authoring_frames: std::cell::RefCell<HashMap<NodeId, AuthoringFrame>>,
     skinner: Option<SceneSkinner>,
     owners: HashMap<NodeId, Owner>,
     sources: HashMap<(usize, usize), SharedSource>,
 }
+#[derive(Debug)]
+struct AuthoringFrame {
+    model: Weak<ModelAsset>,
+    settings: ModelAnimation,
+    frame: Arc<voxy_animation::AnimatorFrame>,
+}
+
 pub(super) struct Request {
+    pub publication: Option<Arc<voxy_assets::ImportedAsset<crate::import::EditorAsset>>>,
     pub owner: NodeId,
     pub model: Arc<ModelAsset>,
     pub settings: ModelAnimation,
@@ -105,23 +161,94 @@ fn admit(live: u64, additional: u64, budget: u64) -> Result<(), EditorError> {
         Ok(())
     }
 }
-fn rigid_mesh(model: &ModelAsset, pose: &Pose, mesh: &SceneMesh) -> Result<SceneMesh, EditorError> {
-    let transform = model.mesh_transform(pose)?;
-    SceneMesh::new(
-        mesh.vertices()
-            .iter()
-            .map(|v| voxy_render::SceneVertex {
-                position: transform
-                    .transform_point3(glam::Vec3::from_array(v.position))
-                    .to_array(),
-                ..*v
-            })
-            .collect(),
-        mesh.indices().to_vec(),
-    )
-    .map_err(EditorError::from)
-}
 impl AnimatedModels {
+    /// Test oracle: use the existing complete CPU frame evaluator and uploader.
+    #[cfg(test)]
+    pub(super) fn new_cpu_reference(renderer: &SceneRenderer) -> Result<Self, EditorError> {
+        let mut models = Self::new(renderer)?;
+        models.skinner = None;
+        Ok(models)
+    }
+    #[cfg(test)]
+    pub(super) fn source_publications(
+        &self,
+    ) -> Result<Vec<Arc<voxy_assets::ImportedAsset<crate::import::EditorAsset>>>, EditorError> {
+        Ok(self
+            .source_publication_owners()?
+            .into_iter()
+            .map(|(_, p)| p)
+            .collect())
+    }
+    pub(super) fn source_publication_owners(
+        &self,
+    ) -> Result<
+        Vec<(
+            NodeId,
+            Arc<voxy_assets::ImportedAsset<crate::import::EditorAsset>>,
+        )>,
+        EditorError,
+    > {
+        let mut owners: Vec<_> = self.owners.iter().collect();
+        owners.sort_by_key(|(node, _)| **node);
+        owners
+            .into_iter()
+            .map(|(node, owner)| {
+                let publication = owner
+                    .publication
+                    .clone()
+                    .ok_or("animated GPU owner has no retained CPU publication")?;
+                if publication
+                    .value()
+                    .animated
+                    .as_ref()
+                    .is_none_or(|model| !Arc::ptr_eq(model, &owner.model))
+                {
+                    return Err("animated GPU owner publication differs from model".into());
+                }
+                Ok((*node, publication))
+            })
+            .collect()
+    }
+    /// Authoring uses the bind pose plus saved overrides, without advancing any
+    /// gameplay clock. Cache only the current revision/settings for each owner.
+    pub(super) fn authoring_frame(
+        &self,
+        owner: NodeId,
+        model: &Arc<ModelAsset>,
+        settings: &ModelAnimation,
+    ) -> Result<Arc<voxy_animation::AnimatorFrame>, EditorError> {
+        if let Some(cached) = self.authoring_frames.borrow().get(&owner)
+            && cached
+                .model
+                .upgrade()
+                .is_some_and(|old| Arc::ptr_eq(&old, model))
+            && &cached.settings == settings
+        {
+            return Ok(cached.frame.clone());
+        }
+        let mut frame = model.bind_frame()?;
+        settings.apply_morph_weights(model, &mut frame)?;
+        let frame = Arc::new(frame);
+        self.authoring_frames.borrow_mut().insert(
+            owner,
+            AuthoringFrame {
+                model: Arc::downgrade(model),
+                settings: settings.clone(),
+                frame: frame.clone(),
+            },
+        );
+        Ok(frame)
+    }
+
+    /// The exact model revision and frame whose geometry was admitted for display.
+    pub(super) fn accepted_frame(
+        &self,
+        owner: NodeId,
+    ) -> Option<(&Arc<ModelAsset>, &Arc<voxy_animation::AnimatorFrame>)> {
+        let accepted = self.owners.get(&owner)?;
+        Some((&accepted.model, &accepted.frame))
+    }
+
     pub(super) fn texture(
         &self,
         owner: NodeId,
@@ -137,6 +264,7 @@ impl AnimatedModels {
             Err(e) => return Err(e.to_string().into()),
         };
         Ok(Self {
+            authoring_frames: Default::default(),
             skinner,
             owners: HashMap::new(),
             sources: HashMap::new(),
@@ -215,6 +343,7 @@ impl AnimatedModels {
         (self.owners.len(), primitives, sources.len())
     }
     pub(super) fn clear(&mut self) {
+        self.authoring_frames.get_mut().clear();
         self.owners.clear();
         self.sources.clear();
     }
@@ -354,25 +483,14 @@ impl AnimatedModels {
             )
             .map_err(|e| format!("{e:?}"))?;
         if level > 0 && !state.lod_levels.contains_key(&level) {
-            let geometry = if let (Some(skinner), Primitive::Skin { instance, .. }) =
-                (&self.skinner, &state.primitives[0])
-            {
-                LodGeometry::Gpu(skinner.create_lod_level(instance, source, level, live, budget)?)
-            } else {
-                let local = source.prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)?;
-                let mesh = local
-                    .posed_scene_mesh(level, state.model.primitives[0].color)?
-                    .with_material_coordinates(
-                        source
-                            .mesh()
-                            .vertices()
-                            .iter()
-                            .map(|v| v.position)
-                            .collect(),
-                    )?;
-                admit(live, SceneRenderer::mesh_allocation_bytes(&mesh), budget)?;
-                LodGeometry::Cpu(renderer.upload_mesh(device, &mesh)?)
-            };
+            let geometry = LodUpload {
+                renderer,
+                device,
+                skinner: self.skinner.as_ref(),
+                live,
+                budget,
+            }
+            .stage(state, source, level)?;
             state.lod_levels.insert(level, geometry);
         }
         if let Some(candidate) = candidate {
@@ -395,6 +513,9 @@ impl AnimatedModels {
     ) -> Vec<(NodeId, EditorError)> {
         let active: HashSet<_> = requests.iter().map(|r| r.owner).collect();
         self.owners.retain(|owner, _| active.contains(owner));
+        self.authoring_frames
+            .borrow_mut()
+            .retain(|owner, _| active.contains(owner));
         self.sources
             .retain(|_, entry| entry.source.strong_count() > 0 && entry.model.strong_count() > 0);
         let mut errors = Vec::new();
@@ -415,6 +536,7 @@ impl AnimatedModels {
                 request.lod,
                 request.textures,
                 request.texture_storage,
+                request.publication,
                 ticks,
                 other_live,
                 budget,
@@ -436,6 +558,7 @@ impl AnimatedModels {
         lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
         textures: Vec<Option<Arc<voxy_render::SceneTexture>>>,
         texture_storage: Vec<Arc<voxy_render::SceneTexture>>,
+        publication: Option<Arc<voxy_assets::ImportedAsset<crate::import::EditorAsset>>>,
         ticks: u64,
         other_live: u64,
         budget: u64,
@@ -465,17 +588,33 @@ impl AnimatedModels {
             _ => true,
         });
         let unchanged = current.is_some_and(|old| {
-            old.frame.pose == frame.pose && old.frame.skin_matrices == frame.skin_matrices
+            old.frame.pose == frame.pose
+                && old.frame.skin_matrices == frame.skin_matrices
+                && old.frame.properties == frame.properties
         });
         if !replace && !lod_changed && unchanged {
             let state = self.owners.get_mut(&owner).unwrap();
             state.textures = textures;
             state.texture_storage = texture_storage;
+            state.publication = publication;
             state.frame = frame;
             state.settings = settings;
             state.ticks = ticks;
             return Ok(());
         }
+        let weights = model.frame_weights(&frame)?;
+        if model.has_morph() && lod.is_some() {
+            return Err("morph LOD needs a morph-aware error certificate".into());
+        }
+        let needs_cpu = self.skinner.is_none()
+            || model
+                .primitives
+                .iter()
+                .any(|p| matches!(p.geometry, ModelGeometry::Static(_)))
+            || (model.has_morph() && self.skinner.as_ref().is_some_and(|s| !s.supports_morph()));
+        let baked = needs_cpu
+            .then(|| model.scene_meshes_frame(&frame))
+            .transpose()?;
         let prepared_lod = if let Some(source) = &lod {
             let Some(primitive) = model.primitives.first() else {
                 return Err("missing skeletal LOD primitive".into());
@@ -497,14 +636,20 @@ impl AnimatedModels {
         let mut live = other_live.saturating_add(self.allocation_bytes());
         let mut staged = Vec::with_capacity(model.primitives.len());
         for (index, primitive) in model.primitives.iter().enumerate() {
+            let gpu_skinner = self
+                .skinner
+                .as_ref()
+                .filter(|s| weights[index].is_empty() || s.supports_morph());
             if !replace
-                && self.skinner.is_some()
+                && gpu_skinner.is_some()
+                && current
+                    .is_some_and(|old| matches!(old.primitives[index], Primitive::Skin { .. }))
                 && matches!(primitive.geometry, ModelGeometry::Skinned(_))
             {
                 staged.push(None);
                 continue;
             }
-            let result = match (&primitive.geometry, &self.skinner) {
+            let result = match (&primitive.geometry, gpu_skinner) {
                 (ModelGeometry::Skinned(mesh), Some(skinner)) => {
                     let key = (Arc::as_ptr(&model) as usize, index);
                     let source = self.sources.get(&key).and_then(|entry| {
@@ -517,7 +662,11 @@ impl AnimatedModels {
                     let source = if let Some(source) = source {
                         source
                     } else {
-                        let source = skinner.upload_source(Arc::new(mesh.clone()), live, budget)?;
+                        let source = if let Some(morph) = model.morph_source(index)? {
+                            skinner.upload_morph_source(Arc::new(morph), live, budget)?
+                        } else {
+                            skinner.upload_source(Arc::new(mesh.clone()), live, budget)?
+                        };
                         live += source.allocation_bytes();
                         self.sources.insert(
                             key,
@@ -528,28 +677,35 @@ impl AnimatedModels {
                         );
                         source
                     };
-                    let instance = skinner.create_instance(
-                        renderer,
-                        source.clone(),
-                        &frame.skin_matrices,
-                        primitive.color,
-                        live,
-                        budget,
-                    )?;
+                    let instance = if weights[index].is_empty() {
+                        skinner.create_instance(
+                            renderer,
+                            source.clone(),
+                            &frame.skin_matrices,
+                            primitive.color,
+                            live,
+                            budget,
+                        )?
+                    } else {
+                        skinner.create_morph_instance(
+                            renderer,
+                            source.clone(),
+                            &frame.skin_matrices,
+                            &weights[index],
+                            primitive.color,
+                            live,
+                            budget,
+                        )?
+                    };
                     live += instance.allocation_bytes();
                     Primitive::Skin { instance, source }
                 }
                 (geometry, _) => {
-                    let mesh = match geometry {
-                        ModelGeometry::Static(mesh) => rigid_mesh(&model, &frame.pose, mesh)?,
-                        ModelGeometry::Skinned(mesh) => mesh
-                            .posed_scene_mesh(
-                                &frame.skin_matrices,
-                                glam::Mat4::IDENTITY,
-                                primitive.color,
-                            )
-                            .map_err(|e| e.to_string())?,
-                    };
+                    let mesh = baked
+                        .as_ref()
+                        .and_then(|meshes| meshes.get(index))
+                        .ok_or("missing complete CPU animation frame")?
+                        .clone();
                     let coordinates = match geometry {
                         ModelGeometry::Static(source) => {
                             source.explicit_material_coordinates().map_or_else(
@@ -588,18 +744,21 @@ impl AnimatedModels {
                     .or_else(|| primitives.map(|p| &p[i]))
                     .ok_or("missing animated primitive")?;
                 if let Primitive::Skin { instance, .. } = primitive {
-                    prepared.push(skinner.prepare_pose(instance, &frame.skin_matrices)?);
+                    prepared.push(if weights[i].is_empty() {
+                        skinner.prepare_pose(instance, &frame.skin_matrices)?
+                    } else {
+                        skinner.prepare_morph_pose(instance, &frame.skin_matrices, &weights[i])?
+                    });
                 }
             }
-            for pose in &prepared {
-                skinner.encode_prepared_pose(queue, &mut encoder, pose)?;
-            }
+            skinner.encode_prepared_poses_batch(queue, &mut encoder, &prepared)?;
         }
         queue.submit([encoder.finish()]);
         if replace {
             self.owners.insert(
                 owner,
                 Owner {
+                    publication,
                     model,
                     settings,
                     frame,
@@ -630,6 +789,7 @@ impl AnimatedModels {
             state.prepared_lod = prepared_lod;
             state.textures = textures;
             state.texture_storage = texture_storage;
+            state.publication = publication;
             state.frame = frame;
             state.settings = settings;
             state.ticks = ticks;
@@ -639,4 +799,4 @@ impl AnimatedModels {
 }
 
 #[cfg(test)]
-mod tests;
+pub(crate) mod tests;

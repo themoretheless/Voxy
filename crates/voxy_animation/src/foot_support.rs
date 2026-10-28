@@ -18,6 +18,11 @@ pub struct FootSupportPoint {
 }
 
 impl FootSupportPoints {
+    /// Immutable reference points, in their original deterministic tie-break order.
+    #[must_use]
+    pub fn points(&self) -> &[DVec3] {
+        &self.0
+    }
     /// Number of projection evaluations required by a support query.
     pub fn point_count(&self) -> usize {
         self.0.len()

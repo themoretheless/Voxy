@@ -3,6 +3,271 @@ use voxy_model::{ModelAsset, ModelGeometry, ModelLimits};
 use voxy_render::{LodArchiveLimits, LodSurface};
 
 #[test]
+fn accepted_geometry_and_animation_files_restore_without_sources_and_match_all_clips() {
+    use voxy_render::{GeometryArchiveLimits, ImageCheckpoint, SceneMeshCheckpoint};
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    let root = std::env::temp_dir().join(format!(
+        "voxy-model-geometry-{}-{stamp}",
+        std::process::id()
+    ));
+    std::fs::create_dir(&root).unwrap();
+    struct Cleanup(std::path::PathBuf);
+    impl Drop for Cleanup {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+    let _cleanup = Cleanup(root.clone());
+    let sources = root.join("sources");
+    std::fs::create_dir(&sources).unwrap();
+    std::fs::write(
+        sources.join("fox.glb"),
+        include_bytes!("../../../voxy_render/examples/assets/fox/Fox.glb"),
+    )
+    .unwrap();
+    let provider = FileInputs::new(&sources).unwrap();
+    let mut inputs = ImportInputs::new(4, 4 * 1024 * 1024);
+    let asset = load(&SourcePath::new("fox.glb").unwrap(), &provider, &mut inputs).unwrap();
+    let imported = inputs
+        .finish(asset, |id, max| provider.read(id, max))
+        .unwrap();
+    let asset = imported.value();
+    let asset_limits = super::asset_checkpoint::EditorAssetCheckpointLimits::default();
+    let asset_record = super::asset_checkpoint::EditorAssetCheckpoint::capture(
+        &[std::sync::Arc::new(asset.clone())],
+        asset_limits,
+    )
+    .unwrap();
+    let asset_bytes = asset_record.to_bytes(asset_limits).unwrap();
+    std::fs::write(root.join("editor-asset.archive"), &asset_bytes).unwrap();
+    super::asset_checkpoint::retain_evidence("fox.voxyeda", &asset_bytes);
+    let limits = GeometryArchiveLimits::default();
+    let base = asset.mesh.checkpoint();
+    std::fs::write(root.join("base.geometry"), base.to_bytes(limits).unwrap()).unwrap();
+    let model = asset.animated.as_ref().unwrap();
+    let model_limits = voxy_model::ModelAssetCheckpointLimits::default();
+    let model_record =
+        voxy_model::ModelAssetCheckpoint::capture(std::slice::from_ref(model), model_limits)
+            .unwrap();
+    std::fs::write(
+        root.join("model.archive"),
+        model_record.to_bytes(model_limits).unwrap(),
+    )
+    .unwrap();
+    let animation_limits = voxy_animation::AnimationAssetLimits::default();
+    let animations = voxy_animation::AnimationAssetCheckpoint::capture(
+        std::slice::from_ref(&model.skeleton),
+        &model.animations,
+        animation_limits,
+    )
+    .unwrap();
+    std::fs::write(
+        root.join("animation.json"),
+        animations.to_json(animation_limits.max_bytes).unwrap(),
+    )
+    .unwrap();
+    let primitive_limits = voxy_model::MorphArchiveLimits::default();
+    for (index, primitive) in model.primitives.iter().enumerate() {
+        let record = primitive.checkpoint(primitive_limits).unwrap();
+        std::fs::write(
+            root.join(format!("primitive-{index}.geometry")),
+            record.as_bytes(),
+        )
+        .unwrap();
+    }
+    let skin_limits = voxy_render::SkinnedMeshSetLimits::default();
+    let skin_sources: Vec<_> = model
+        .primitives
+        .iter()
+        .filter_map(|p| match &p.geometry {
+            ModelGeometry::Skinned(mesh) => Some(mesh.clone()),
+            ModelGeometry::Static(_) => None,
+        })
+        .collect();
+    let skins = voxy_render::SkinnedMeshSetCheckpoint::capture(&skin_sources, skin_limits).unwrap();
+    std::fs::write(
+        root.join("skin-streams.geometry"),
+        skins.to_bytes(skin_limits).unwrap(),
+    )
+    .unwrap();
+    assert!(!asset.images.is_empty());
+    for (index, image) in asset.images.iter().enumerate() {
+        std::fs::write(
+            root.join(format!("image-{index}.geometry")),
+            image.checkpoint().to_bytes(limits).unwrap(),
+        )
+        .unwrap();
+    }
+    std::fs::remove_dir_all(&sources).unwrap();
+    let loaded_assets = super::asset_checkpoint::EditorAssetCheckpoint::from_bytes(
+        &std::fs::read(root.join("editor-asset.archive")).unwrap(),
+        asset_limits,
+    )
+    .unwrap()
+    .prepare(asset_limits)
+    .unwrap();
+    assert_eq!(
+        super::asset_checkpoint::EditorAssetCheckpoint::capture(&loaded_assets, asset_limits)
+            .unwrap(),
+        asset_record
+    );
+    assert_eq!(loaded_assets[0].mesh.checkpoint(), asset.mesh.checkpoint());
+    assert_eq!(
+        loaded_assets[0]
+            .images
+            .iter()
+            .map(ImageAsset::checkpoint)
+            .collect::<Vec<_>>(),
+        asset
+            .images
+            .iter()
+            .map(ImageAsset::checkpoint)
+            .collect::<Vec<_>>()
+    );
+    let loaded_models = voxy_model::ModelAssetCheckpoint::from_bytes(
+        &std::fs::read(root.join("model.archive")).unwrap(),
+        model_limits,
+    )
+    .unwrap()
+    .prepare(model_limits)
+    .unwrap();
+    let loaded_model = loaded_assets[0].animated.as_ref().unwrap();
+    assert_eq!(
+        loaded_model.animations.len(),
+        loaded_models[0].animations.len()
+    );
+    assert_eq!(
+        voxy_model::ModelAssetCheckpoint::capture(&loaded_models, model_limits).unwrap(),
+        model_record
+    );
+    let restored_base = SceneMeshCheckpoint::from_bytes(
+        &std::fs::read(root.join("base.geometry")).unwrap(),
+        limits,
+    )
+    .unwrap()
+    .prepare(limits)
+    .unwrap();
+    assert_eq!(restored_base.checkpoint(), base);
+    let mut restored = Vec::new();
+    for index in 0..model.primitives.len() {
+        let bytes = std::fs::read(root.join(format!("primitive-{index}.geometry"))).unwrap();
+        restored.push(
+            voxy_model::ModelPrimitiveCheckpoint::from_bytes(&bytes, primitive_limits)
+                .unwrap()
+                .prepare(primitive_limits)
+                .unwrap(),
+        );
+        assert_eq!(
+            restored[index].checkpoint(primitive_limits).unwrap(),
+            model.primitives[index]
+                .checkpoint(primitive_limits)
+                .unwrap()
+        );
+    }
+    let skin_record = voxy_render::SkinnedMeshSetCheckpoint::from_bytes(
+        &std::fs::read(root.join("skin-streams.geometry")).unwrap(),
+        skin_limits,
+    )
+    .unwrap();
+    let skin_meshes = skin_record.prepare(skin_limits).unwrap();
+    assert_eq!(
+        voxy_render::SkinnedMeshSetCheckpoint::capture(&skin_meshes, skin_limits).unwrap(),
+        skins
+    );
+    let mut skin_meshes = skin_meshes.into_iter();
+    for primitive in &mut restored {
+        if let ModelGeometry::Skinned(mesh) = &mut primitive.geometry {
+            let shared = skin_meshes.next().unwrap();
+            assert_eq!(shared.checkpoint(), mesh.checkpoint());
+            *mesh = shared;
+        }
+    }
+    assert!(skin_meshes.next().is_none());
+    for (index, image) in asset.images.iter().enumerate() {
+        let restored = ImageCheckpoint::from_bytes(
+            &std::fs::read(root.join(format!("image-{index}.geometry"))).unwrap(),
+            limits,
+        )
+        .unwrap()
+        .prepare(limits)
+        .unwrap();
+        assert_eq!(restored.checkpoint(), image.checkpoint());
+        assert_eq!(
+            restored
+                .mip_chain()
+                .iter()
+                .map(voxy_render::ImageAsset::checkpoint)
+                .collect::<Vec<_>>(),
+            image
+                .mip_chain()
+                .iter()
+                .map(voxy_render::ImageAsset::checkpoint)
+                .collect::<Vec<_>>()
+        );
+    }
+    let animations = voxy_animation::AnimationAssetCheckpoint::from_json(
+        &std::fs::read_to_string(root.join("animation.json")).unwrap(),
+        animation_limits.max_bytes,
+    )
+    .unwrap()
+    .prepare(animation_limits)
+    .unwrap();
+    assert_eq!(animations.clips.len(), model.animations.len());
+    for clip in 0..model.animations.len() {
+        for frame in 0..120 {
+            let pose = model
+                .sample_pose_phase(Some(clip), f64::from(frame) / 119.)
+                .unwrap();
+            let palette = model.skin_matrices(&pose).unwrap();
+            let restored_pose = loaded_model
+                .sample_pose_phase(Some(clip), f64::from(frame) / 119.)
+                .unwrap();
+            assert_eq!(
+                pose.checkpoint(),
+                restored_pose.checkpoint(),
+                "clip {clip} frame {frame}"
+            );
+            let restored_palette = loaded_model.skin_matrices(&restored_pose).unwrap();
+            let words = |palette: &[Mat4]| {
+                palette
+                    .iter()
+                    .map(|m| m.to_cols_array().map(f32::to_bits))
+                    .collect::<Vec<_>>()
+            };
+            assert_eq!(
+                words(&palette),
+                words(&restored_palette),
+                "clip {clip} frame {frame}"
+            );
+            for (original, restored) in model.primitives.iter().zip(&loaded_model.primitives) {
+                match (&original.geometry, &restored.geometry) {
+                    (ModelGeometry::Skinned(a), ModelGeometry::Skinned(b)) => {
+                        assert_eq!(
+                            a.validate_render_pose(&palette, Mat4::IDENTITY),
+                            b.validate_render_pose(&restored_palette, Mat4::IDENTITY)
+                        );
+                        let a = a
+                            .posed_scene_mesh(&palette, Mat4::IDENTITY, original.color)
+                            .unwrap();
+                        let b = b
+                            .posed_scene_mesh(&restored_palette, Mat4::IDENTITY, restored.color)
+                            .unwrap();
+                        assert_eq!(a.checkpoint(), b.checkpoint(), "frame {frame}");
+                    }
+                    (ModelGeometry::Static(a), ModelGeometry::Static(b)) => {
+                        assert_eq!(a.checkpoint(), b.checkpoint())
+                    }
+                    _ => panic!("primitive kind changed"),
+                }
+            }
+        }
+    }
+}
+
+#[test]
 fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
     let stamp = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -83,9 +348,54 @@ fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
         ])
     );
     let asset = imported.value();
+    let whole_limits = super::asset_checkpoint::EditorAssetCheckpointLimits::default();
+    let whole_checkpoint = super::asset_checkpoint::EditorAssetCheckpoint::capture(
+        &[std::sync::Arc::new(asset.clone())],
+        whole_limits,
+    )
+    .unwrap();
+    std::fs::write(
+        root.join("whole-skinned.voxyeda"),
+        whole_checkpoint.to_bytes(whole_limits).unwrap(),
+    )
+    .unwrap();
+    super::asset_checkpoint::retain_evidence(
+        "skeletal-lod.voxyeda",
+        &whole_checkpoint.to_bytes(whole_limits).unwrap(),
+    );
     assert!(asset.lod.is_none()); // Never apply rest-space metadata as a static pose guarantee.
     let animated = asset.animated.as_ref().unwrap();
     let lod = asset.skinned_lod.as_ref().unwrap();
+    let checkpoint_limits = voxy_render::SkinnedLodCheckpointLimits::default();
+    let lod_checkpoint = lod.checkpoint(checkpoint_limits).unwrap();
+    std::fs::write(
+        root.join("accepted-skinned-lod.json"),
+        lod_checkpoint.to_json(checkpoint_limits.max_bytes).unwrap(),
+    )
+    .unwrap();
+    let model_limits = voxy_model::ModelAssetCheckpointLimits::default();
+    let model_checkpoint =
+        voxy_model::ModelAssetCheckpoint::capture(std::slice::from_ref(animated), model_limits)
+            .unwrap();
+    let mut shared_skins = voxy_model::ModelAssetCheckpoint::source_skin_meshes(
+        std::slice::from_ref(animated),
+        model_limits,
+    )
+    .unwrap();
+    let model_skin_count = shared_skins.len();
+    shared_skins.push(lod.source_mesh().as_ref().clone());
+    let shared_skin_record =
+        voxy_render::SkinnedMeshSetCheckpoint::capture(&shared_skins, model_limits.skins).unwrap();
+    std::fs::write(
+        root.join("accepted-shared-skins.archive"),
+        shared_skin_record.to_bytes(model_limits.skins).unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        root.join("accepted-model.archive"),
+        model_checkpoint.to_bytes(model_limits).unwrap(),
+    )
+    .unwrap();
     assert!(!animated.animations.is_empty());
     let palette = animated
         .skin_matrices(&animated.skeleton.bind_pose())
@@ -178,6 +488,103 @@ fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
     assert!(app.recovered);
     assert!(repaired.value().skinned_lod.is_some());
     app.stop_workers().unwrap();
+    for filename in ["model.vmodel", "motion.gltf", "motion.bin", "proof.lod"] {
+        std::fs::remove_file(root.join(filename)).unwrap();
+    }
+    let shared_skins = voxy_render::SkinnedMeshSetCheckpoint::from_bytes(
+        &std::fs::read(root.join("accepted-shared-skins.archive")).unwrap(),
+        model_limits.skins,
+    )
+    .unwrap()
+    .prepare(model_limits.skins)
+    .unwrap();
+    let restored_models = voxy_model::ModelAssetCheckpoint::from_bytes(
+        &std::fs::read(root.join("accepted-model.archive")).unwrap(),
+        model_limits,
+    )
+    .unwrap()
+    .prepare_with_skin_meshes(model_limits, &shared_skins[..model_skin_count])
+    .unwrap();
+    assert_eq!(
+        voxy_model::ModelAssetCheckpoint::capture(&restored_models, model_limits).unwrap(),
+        model_checkpoint
+    );
+    let whole_assets = super::asset_checkpoint::EditorAssetCheckpoint::from_bytes(
+        &std::fs::read(root.join("whole-skinned.voxyeda")).unwrap(),
+        whole_limits,
+    )
+    .unwrap()
+    .prepare(whole_limits)
+    .unwrap();
+    assert_eq!(
+        super::asset_checkpoint::EditorAssetCheckpoint::capture(&whole_assets, whole_limits)
+            .unwrap(),
+        whole_checkpoint
+    );
+    let restored_model = whole_assets[0].animated.as_ref().unwrap();
+    let ModelGeometry::Skinned(restored_mesh) = &restored_model.primitives[0].geometry else {
+        panic!("skin required")
+    };
+    let joined_lod = voxy_render::SkinnedLodCheckpoint::from_json(
+        &std::fs::read_to_string(root.join("accepted-skinned-lod.json")).unwrap(),
+        checkpoint_limits.max_bytes,
+    )
+    .unwrap()
+    .prepare_with_mesh(
+        std::sync::Arc::new(shared_skins[model_skin_count].clone()),
+        checkpoint_limits,
+    )
+    .unwrap();
+    assert_eq!(
+        joined_lod.source_mesh().vertices().as_ptr(),
+        shared_skins[0].vertices().as_ptr()
+    );
+    let restored_lod = whole_assets[0].skinned_lod.as_ref().unwrap();
+    assert_eq!(
+        restored_lod.source_mesh().vertices().as_ptr(),
+        restored_mesh.vertices().as_ptr()
+    );
+    assert_eq!(
+        restored_lod.source_mesh().indices().as_ptr(),
+        restored_mesh.indices().as_ptr()
+    );
+    for phase in 0..120 {
+        let phase = f64::from(phase) / 119.;
+        let original_pose = animated.sample_pose_phase(Some(0), phase).unwrap();
+        let restored_pose = restored_model.sample_pose_phase(Some(0), phase).unwrap();
+        let model = Mat4::from_translation(Vec3::new(phase as f32, 0., 1.));
+        let a = lod
+            .prepare(&animated.skin_matrices(&original_pose).unwrap(), model)
+            .unwrap();
+        let b = restored_lod
+            .prepare(
+                &restored_model.skin_matrices(&restored_pose).unwrap(),
+                model,
+            )
+            .unwrap();
+        let positions = |p: &[[f32; 3]]| p.iter().map(|p| p.map(f32::to_bits)).collect::<Vec<_>>();
+        assert_eq!(positions(a.positions()), positions(b.positions()));
+        let levels = |v: &[voxy_render::LodLevel]| {
+            v.iter()
+                .map(|v| (v.object_error.to_bits(), v.index_count))
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(levels(a.levels()), levels(b.levels()));
+        for level in 0..2 {
+            assert_eq!(
+                a.posed_scene_mesh(level, animated.primitives[0].color)
+                    .unwrap()
+                    .checkpoint(),
+                b.posed_scene_mesh(level, restored_model.primitives[0].color)
+                    .unwrap()
+                    .checkpoint()
+            );
+        }
+    }
+    assert_eq!(
+        restored_lod.checkpoint(checkpoint_limits).unwrap(),
+        lod_checkpoint
+    );
     std::fs::remove_dir_all(root).unwrap();
 }
 

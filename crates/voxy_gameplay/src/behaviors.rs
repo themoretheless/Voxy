@@ -479,3 +479,7 @@ mod tests {
         simulation.stop(&mut scene).unwrap();
     }
 }
+
+#[path = "angular_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::AngularMotionCheckpoint;

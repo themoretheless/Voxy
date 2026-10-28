@@ -434,3 +434,7 @@ mod tests {
         runtime.stop();
     }
 }
+
+#[path = "audio_runtime_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{SceneAudioCheckpoint, SceneAudioCheckpointLimits};

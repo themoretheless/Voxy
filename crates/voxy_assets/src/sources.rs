@@ -21,14 +21,21 @@ impl Reads {
 /// No OS watcher or job dispatcher is owned here.
 #[derive(Debug)]
 pub struct SourceDependencies {
+    change: crate::AssetChangeToken,
     outputs: BTreeMap<AssetId, Reads>,
     max_outputs: usize,
     max_edges: usize,
 }
 impl SourceDependencies {
+    /// Observes published/failed source mappings, removals and fresh restores.
+    #[must_use]
+    pub const fn change_token(&self) -> crate::AssetChangeToken {
+        self.change
+    }
     #[must_use]
     pub fn new(max_outputs: usize, max_edges: usize) -> Self {
         Self {
+            change: crate::AssetChangeToken::fresh(),
             outputs: BTreeMap::new(),
             max_outputs,
             max_edges,
@@ -44,10 +51,52 @@ impl SourceDependencies {
         inputs: &ImportInputs,
         outcome: ImportOutcome,
     ) -> Result<(), DependencyError> {
+        let replacement = self.replacement(&output, inputs, outcome)?;
+        self.change = crate::AssetChangeToken::fresh();
+        self.outputs.insert(output, replacement);
+        Ok(())
+    }
+    /// Preflight a record against native graph quotas and a watcher's distinct
+    /// source capacity, including one mandatory source outside the graph.
+    /// Does not modify mappings or the change token. Caller must retain exclusive
+    /// ownership until `record`/publication; no IO or ticket validation occurs.
+    /// # Errors
+    /// Rejects invalid identities and output/edge/distinct-source quota overflow.
+    pub fn check_record_sources(
+        &self,
+        output: &AssetId,
+        inputs: &ImportInputs,
+        outcome: ImportOutcome,
+        max_sources: usize,
+        required_source: Option<&AssetId>,
+    ) -> Result<(), DependencyError> {
+        if required_source.is_some_and(|id| id.0.is_empty()) {
+            return Err(DependencyError::InvalidId);
+        }
+        let replacement = self.replacement(output, inputs, outcome)?;
+        let mut sources: BTreeSet<_> = self
+            .outputs
+            .iter()
+            .filter(|(id, _)| *id != output)
+            .flat_map(|(_, reads)| reads.published.union(&reads.attempted).cloned())
+            .collect();
+        sources.extend(replacement.published.union(&replacement.attempted).cloned());
+        sources.extend(required_source.cloned());
+        if sources.len() > max_sources {
+            return Err(DependencyError::Capacity);
+        }
+        Ok(())
+    }
+    fn replacement(
+        &self,
+        output: &AssetId,
+        inputs: &ImportInputs,
+        outcome: ImportOutcome,
+    ) -> Result<Reads, DependencyError> {
         if output.0.is_empty() {
             return Err(DependencyError::InvalidId);
         }
-        if !self.outputs.contains_key(&output) && self.outputs.len() >= self.max_outputs {
+        if !self.outputs.contains_key(output) && self.outputs.len() >= self.max_outputs {
             return Err(DependencyError::Capacity);
         }
         let observed: BTreeSet<_> = inputs.observations().keys().cloned().collect();
@@ -59,19 +108,18 @@ impl SourceDependencies {
             ImportOutcome::Failed => Reads {
                 published: self
                     .outputs
-                    .get(&output)
+                    .get(output)
                     .map(|r| r.published.clone())
                     .unwrap_or_default(),
                 attempted: observed,
             },
         };
-        let existing = self.outputs.get(&output).map_or(0, Reads::count);
+        let existing = self.outputs.get(output).map_or(0, Reads::count);
         let total: usize = self.outputs.values().map(Reads::count).sum();
         if total - existing + replacement.count() > self.max_edges {
             return Err(DependencyError::Capacity);
         }
-        self.outputs.insert(output, replacement);
-        Ok(())
+        Ok(replacement)
     }
     /// Returns sorted, deduplicated outputs that read any changed source.
     /// Feed these outputs into `AssetDependencies::affected` for transitive imports.
@@ -100,7 +148,9 @@ impl SourceDependencies {
     }
     /// Removes all source observations for a deleted output.
     pub fn remove(&mut self, output: &AssetId) {
-        self.outputs.remove(output);
+        if self.outputs.remove(output).is_some() {
+            self.change = crate::AssetChangeToken::fresh();
+        }
     }
 }
 #[cfg(test)]
@@ -189,4 +239,91 @@ mod tests {
         );
         assert!(index.affected([id("unknown")]).is_empty());
     }
+    #[test]
+    fn source_watch_admission_counts_distinct_ids_and_required_source_without_mutation() {
+        let mut index = SourceDependencies::new(2, 8);
+        index
+            .record(id("a"), &inputs("shared", false), ImportOutcome::Published)
+            .unwrap();
+        index
+            .record(id("b"), &inputs("shared", false), ImportOutcome::Published)
+            .unwrap();
+        let mut next = ImportInputs::new(2, 2);
+        for source in ["shared", "new"] {
+            next.read(id(source), |_, _| Ok(vec![1])).unwrap();
+        }
+        let token = index.change_token();
+        index
+            .check_record_sources(&id("a"), &next, ImportOutcome::Published, 2, None)
+            .unwrap();
+        assert_eq!(
+            index.check_record_sources(
+                &id("a"),
+                &next,
+                ImportOutcome::Published,
+                2,
+                Some(&id("manifest"))
+            ),
+            Err(DependencyError::Capacity)
+        );
+        index
+            .check_record_sources(
+                &id("a"),
+                &next,
+                ImportOutcome::Published,
+                3,
+                Some(&id("manifest")),
+            )
+            .unwrap();
+        assert_eq!(
+            index.check_record_sources(&id("a"), &next, ImportOutcome::Published, 3, Some(&id(""))),
+            Err(DependencyError::InvalidId)
+        );
+        assert_eq!(index.source_ids(), vec![id("shared")]);
+        assert_eq!(index.change_token(), token);
+        index
+            .record(id("a"), &next, ImportOutcome::Published)
+            .unwrap();
+        assert_eq!(index.source_ids(), vec![id("new"), id("shared")]);
+    }
+    #[test]
+    fn source_watch_admission_retains_failed_attempt_union_and_native_graph_quotas() {
+        let mut index = SourceDependencies::new(2, 3);
+        index
+            .record(id("a"), &inputs("old", false), ImportOutcome::Published)
+            .unwrap();
+        index
+            .record(id("b"), &inputs("shared", false), ImportOutcome::Published)
+            .unwrap();
+        let next = inputs("new", false);
+        let token = index.change_token();
+        index
+            .check_record_sources(&id("a"), &next, ImportOutcome::Published, 2, None)
+            .unwrap();
+        assert_eq!(
+            index.check_record_sources(&id("a"), &next, ImportOutcome::Failed, 2, None),
+            Err(DependencyError::Capacity)
+        );
+        index
+            .check_record_sources(&id("a"), &next, ImportOutcome::Failed, 3, None)
+            .unwrap();
+        assert_eq!(
+            index.check_record_sources(&id("c"), &next, ImportOutcome::Published, 100, None),
+            Err(DependencyError::Capacity)
+        );
+        let mut too_many = ImportInputs::new(3, 3);
+        for source in ["x", "y", "z"] {
+            too_many.read(id(source), |_, _| Ok(vec![1])).unwrap();
+        }
+        assert_eq!(
+            index.check_record_sources(&id("a"), &too_many, ImportOutcome::Published, 100, None),
+            Err(DependencyError::Capacity)
+        );
+        assert_eq!(index.source_ids(), vec![id("old"), id("shared")]);
+        assert_eq!(index.change_token(), token);
+    }
 }
+
+#[path = "source_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{SourceDependenciesCheckpoint, SourceReadsCheckpoint};

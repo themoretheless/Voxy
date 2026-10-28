@@ -46,6 +46,109 @@ impl App {
         Ok(false)
     }
 
+    /// CPU reference geometry for the same accepted revision/frame as display.
+    /// Used only by explicit authoring interactions, never per render frame.
+    pub(crate) fn displayed_model_meshes(
+        &self,
+        node: NodeId,
+    ) -> Result<Vec<voxy_render::SceneMesh>, Box<dyn std::error::Error>> {
+        let Some(model) = self.scene.component::<ModelInstance>(node)? else {
+            return Ok(Vec::new());
+        };
+        let Some(asset) = self.catalog.snapshot(&model.asset) else {
+            return Ok(Vec::new());
+        };
+        let part = self
+            .scene
+            .component::<ModelPart>(node)?
+            .map(|part| part.node);
+        let meshes = if part.is_none() {
+            if let Some((model, frame)) = self
+                .graphics
+                .as_ref()
+                .and_then(|graphics| graphics.animated_models.accepted_frame(node))
+            {
+                model.scene_meshes_frame(frame)?
+            } else if let Some(model) = &asset.value().animated {
+                let settings = self
+                    .scene
+                    .component::<ModelAnimation>(node)?
+                    .cloned()
+                    .unwrap_or(ModelAnimation {
+                        clip: None,
+                        ..Default::default()
+                    });
+                let frame = if self.play.playing.is_some() || self.standalone {
+                    self.play.animations.frame(node, model)
+                } else {
+                    self.preview_animation_frame(node, model, &settings)
+                };
+                let mut frame =
+                    frame.map_or_else(|| model.bind_frame(), |frame| Ok((*frame).clone()))?;
+                if self.play.playing.is_none() && !self.standalone {
+                    settings.apply_morph_weights(model, &mut frame)?;
+                }
+                model.scene_meshes_frame(&frame)?
+            } else {
+                asset.value().mesh_for(None).cloned().into_iter().collect()
+            }
+        } else {
+            asset.value().mesh_for(part).cloned().into_iter().collect()
+        };
+        Ok(meshes)
+    }
+
+    pub(crate) fn focus_displayed_model(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        let Some(node) = self.instances.get(self.selected).copied() else {
+            return Ok(());
+        };
+        let world = self.scene.world_matrix(node)?.as_dmat4();
+        let mut min = glam::DVec3::splat(f64::INFINITY);
+        let mut max = glam::DVec3::splat(f64::NEG_INFINITY);
+        for mesh in self.displayed_model_meshes(node)? {
+            for vertex in mesh.vertices() {
+                let p = world.transform_point3(Vec3::from_array(vertex.position).as_dvec3());
+                if !p.is_finite() {
+                    return Err("nonfinite displayed model bounds".into());
+                }
+                min = min.min(p);
+                max = max.max(p);
+            }
+        }
+        let mut camera = self.camera.clone();
+        if min.is_finite() {
+            let viewport = self.window.as_ref().map_or([800, 600], |window| {
+                let size = window.inner_size();
+                [size.width, size.height]
+            });
+            let regions = view_layout::regions(viewport, self.split_views());
+            let region = regions
+                .get(usize::from(self.active_view))
+                .or_else(|| regions.first())
+                .ok_or("empty focus viewport")?;
+            let size = Vec2::new(region[2] as f32, region[3] as f32);
+            if self.panels.is_some() {
+                let scale = self
+                    .window
+                    .as_ref()
+                    .map_or(1., |window| window.scale_factor() as f32);
+                let safe = panels::safe_view_rect(viewport, *region, scale)
+                    .ok_or("focus viewport is obscured by panels")?;
+                camera.fit_bounds_in_rect(min, max, size, safe)?;
+            } else {
+                camera.fit_bounds(min, max, size)?;
+            }
+        } else {
+            camera.target = world.w_axis.truncate().as_vec3();
+            camera.legacy = false;
+            if !camera.valid() {
+                return Err("displayed model center exceeds camera limits".into());
+            }
+        }
+        self.camera = camera;
+        Ok(())
+    }
+
     pub(crate) fn pick_model(
         &mut self,
         cursor: Vec2,
@@ -53,29 +156,19 @@ impl App {
     ) -> Result<bool, Box<dyn std::error::Error>> {
         let mut nearest = None;
         for (index, node) in self.instances.iter().enumerate() {
-            let Some(model) = self.scene.component::<ModelInstance>(*node)? else {
-                continue;
-            };
-            let Some(asset) = self.catalog.snapshot(&model.asset) else {
-                continue;
-            };
-            let Some(mesh) = asset.value().mesh_for(
-                self.scene
-                    .component::<ModelPart>(*node)?
-                    .map(|part| part.node),
-            ) else {
-                continue;
-            };
-            if let Some((_, depth)) = picking::pick_mesh_depth(
-                &self.scene,
-                &[*node],
-                mesh,
-                cursor,
-                size,
-                self.camera.matrix(size)?,
-            )? && nearest.is_none_or(|(_, previous)| depth < previous)
-            {
-                nearest = Some((index, depth));
+            let meshes = self.displayed_model_meshes(*node)?;
+            for mesh in meshes {
+                if let Some((_, depth)) = picking::pick_mesh_depth(
+                    &self.scene,
+                    &[*node],
+                    &mesh,
+                    cursor,
+                    size,
+                    self.camera.matrix(size)?,
+                )? && nearest.is_none_or(|(_, previous)| depth < previous)
+                {
+                    nearest = Some((index, depth));
+                }
             }
         }
         if let Some((index, _)) = nearest {
@@ -168,6 +261,7 @@ impl App {
         }
         self.field = None;
         self.parenting = None;
+        self.follow_pick = None;
         if self.play.playing.is_some() || self.standalone {
             self.game_ui_pointer(cursor, viewport, true)?;
             return Ok(());

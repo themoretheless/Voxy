@@ -2349,6 +2349,15 @@ fn retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back() {
         .unwrap();
     for state in [&accepted, &transported] {
         let reference = state.owners[&owner].root_reference.unwrap();
+        let reference_json = serde_json::to_string(&reference.checkpoint()).unwrap();
+        let saved_reference: super::reference_checkpoint::RootReferenceCheckpoint =
+            serde_json::from_str(&reference_json).unwrap();
+        let restored_reference = saved_reference.prepare().unwrap();
+        assert!(reference.matches(&restored_reference));
+        assert_eq!(
+            serde_json::to_string(&restored_reference.checkpoint()).unwrap(),
+            reference_json
+        );
         let anchor = reference
             .body_to_world
             .compose(&reference.authored_to_body)
@@ -3087,5 +3096,407 @@ fn authored_events_round_trip_rebind_and_remove_without_replaying() {
     for _ in 0..20 {
         runtime = runtime.prepare_wall(&scene, &models, 0.0625).unwrap();
         assert!(runtime.take_events().is_empty());
+    }
+}
+
+#[test]
+fn complete_animation_owner_checkpoint_restores_mixed_queues_retarget_and_inactive_frames() {
+    use voxy_scene::ObjectId;
+    fn fixture() -> (
+        SceneGraph,
+        [NodeId; 2],
+        Arc<ModelAsset>,
+        BTreeMap<AssetId, Arc<ModelAsset>>,
+    ) {
+        let (mut scene, hero, model, models) = super::rotation_tests::scene_fixture();
+        scene
+            .insert_component(
+                hero,
+                crate::ModelRetarget {
+                    source: "turn".into(),
+                    joints: vec![crate::RetargetJointProfile {
+                        source: "root".into(),
+                        target: "root".into(),
+                        rotation_basis: [0., 0., 0., 1.],
+                        translation_basis: [0., 0., 0., 1.],
+                        translation_scale: 1.,
+                    }],
+                },
+            )
+            .unwrap();
+        let other = scene.spawn(None, Default::default()).unwrap();
+        scene
+            .insert_component(
+                other,
+                ModelInstance {
+                    asset: AssetId("turn".into()),
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                other,
+                ModelAnimation {
+                    root_motion_axes: [true, false, false],
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                other,
+                voxy_gameplay::CharacterBody {
+                    speed: 0.,
+                    gravity: 0.,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        (scene, [hero, other], model, models)
+    }
+    fn capture(
+        runtime: &AnimationRuntime,
+        scene: &SceneGraph,
+        ids: [NodeId; 2],
+        model: &Arc<ModelAsset>,
+    ) -> String {
+        runtime
+            .checkpoint(
+                scene,
+                |node| {
+                    ids.iter()
+                        .position(|n| *n == node)
+                        .map(|i| ObjectId(format!("owner-{i}")))
+                },
+                |asset| Arc::ptr_eq(asset, model).then(|| "model-v1".into()),
+                |clip, _| {
+                    model
+                        .animations
+                        .iter()
+                        .position(|c| Arc::ptr_eq(c, clip))
+                        .map(|i| format!("clip-{i}"))
+                },
+                4 * 1024 * 1024,
+            )
+            .unwrap()
+            .to_json(4 * 1024 * 1024)
+            .unwrap()
+    }
+    let (mut source, ids, model, models) = fixture();
+    let mut original = AnimationRuntime::default()
+        .prepare_wall(&source, &models, 0.0127)
+        .unwrap();
+    for (index, node) in ids.iter().enumerate() {
+        original
+            .set_clip_events(
+                *node,
+                0,
+                vec![voxy_animation::ClipEvent {
+                    name: format!("marker-{index}").into(),
+                    phase: 0.02,
+                }],
+            )
+            .unwrap();
+    }
+    original = original.prepare_wall(&source, &models, 0.033).unwrap();
+    original
+        .initialize_root_reference(
+            ids[0],
+            &model,
+            voxy_animation::RootRigidTransform::IDENTITY,
+            voxy_animation::RootRigidEnclosure::IDENTITY,
+        )
+        .unwrap();
+    assert_eq!(original.motions.len(), 1);
+    assert_eq!(original.rotations.len(), 1);
+    let json = capture(&original, &source, ids, &model);
+    let saved =
+        super::checkpoint::AnimationRuntimeCheckpoint::from_json(&json, 4 * 1024 * 1024).unwrap();
+    let (mut target, new_ids, new_model, new_models) = fixture();
+    let load = |saved: &super::checkpoint::AnimationRuntimeCheckpoint| {
+        saved.prepare(
+            &target,
+            |id| {
+                new_ids
+                    .iter()
+                    .enumerate()
+                    .find(|(i, _)| id.0 == format!("owner-{i}"))
+                    .map(|(_, n)| *n)
+            },
+            |key| (key == "model-v1").then(|| new_model.clone()),
+            |key| {
+                new_model
+                    .animations
+                    .iter()
+                    .enumerate()
+                    .find(|(i, _)| key == format!("clip-{i}"))
+                    .map(|(_, c)| (c.clone(), None))
+            },
+            4 * 1024 * 1024,
+        )
+    };
+    let mut resumed = load(&saved).unwrap();
+    assert_eq!(capture(&resumed, &target, new_ids, &new_model), json);
+    assert!(resumed.frame(ids[0], &new_model).is_none());
+    let mut corrupt: serde_json::Value = serde_json::from_str(&json).unwrap();
+    corrupt["rotations"][0]["path"][0] =
+        (corrupt["rotations"][0]["path"][0].as_u64().unwrap() ^ 1).into();
+    let bad = super::checkpoint::AnimationRuntimeCheckpoint::from_json(
+        &corrupt.to_string(),
+        4 * 1024 * 1024,
+    )
+    .unwrap();
+    assert!(load(&bad).is_err());
+    assert_eq!(capture(&original, &source, ids, &model), json);
+    for frame in 0..120 {
+        if frame == 5 || frame == 40 {
+            let active = frame == 40;
+            source.set_active(ids[1], active).unwrap();
+            target.set_active(new_ids[1], active).unwrap();
+        }
+        if frame == 60 || frame == 80 {
+            let speed = if frame == 60 { 0. } else { 1.3 };
+            source
+                .component_mut::<ModelAnimation>(ids[0])
+                .unwrap()
+                .unwrap()
+                .speed = speed;
+            target
+                .component_mut::<ModelAnimation>(new_ids[0])
+                .unwrap()
+                .unwrap()
+                .speed = speed;
+        }
+        let dt = [0.003, 0.021, 0.037][frame % 3];
+        original = original.prepare_wall(&source, &models, dt).unwrap();
+        resumed = resumed.prepare_wall(&target, &new_models, dt).unwrap();
+        let a = original
+            .take_events()
+            .into_iter()
+            .map(|(n, e)| (ids.iter().position(|id| *id == n).unwrap(), e))
+            .collect::<Vec<_>>();
+        let b = resumed
+            .take_events()
+            .into_iter()
+            .map(|(n, e)| (new_ids.iter().position(|id| *id == n).unwrap(), e))
+            .collect::<Vec<_>>();
+        assert_eq!(a, b);
+        assert_eq!(
+            capture(&original, &source, ids, &model),
+            capture(&resumed, &target, new_ids, &new_model)
+        );
+    }
+}
+
+#[test]
+fn observation_tokens_detect_clock_adoption_event_mutation_and_clear_without_scene_edits() {
+    let (scene, owner, model, models) = fixture();
+    let scene_token = scene.change_token();
+    let original = AnimationRuntime::default();
+    let before = original.change_token();
+    assert!(original.prepare(&scene, &models, f32::NAN).is_err());
+    assert_eq!(before, original.change_token());
+    let mut accepted = original.prepare(&scene, &models, 0.05).unwrap();
+    assert_ne!(before, accepted.change_token());
+    assert_eq!(scene_token, scene.change_token());
+    let observed = accepted.change_token();
+    let _ = accepted.frame(owner, &model).unwrap();
+    let _ = accepted.clip_phase(owner).unwrap();
+    assert_eq!(observed, accepted.change_token());
+    let mut staged = accepted.clone();
+    assert_eq!(staged.change_token(), observed);
+    staged.set_clip_events(owner, 0, vec![]).unwrap();
+    assert_ne!(staged.change_token(), observed);
+    assert_eq!(accepted.change_token(), observed);
+    let other = accepted.prepare(&scene, &models, 0.05).unwrap();
+    assert_ne!(staged.change_token(), other.change_token());
+    accepted = other;
+    let observed = accepted.change_token();
+    let _ = accepted.take_events();
+    assert_ne!(observed, accepted.change_token());
+    let observed = accepted.change_token();
+    accepted.clear();
+    assert_ne!(observed, accepted.change_token());
+    assert_eq!(scene_token, scene.change_token());
+}
+
+#[test]
+fn runtime_only_frame_aliases_survive_checkpoint_without_merging_equal_frames() {
+    use voxy_scene::ObjectId;
+    let (mut source, first, model, models) = fixture();
+    let mut ids = vec![first];
+    for _ in 0..2 {
+        let owner = source.spawn(None, Default::default()).unwrap();
+        source
+            .insert_component(
+                owner,
+                ModelInstance {
+                    asset: AssetId("rig".into()),
+                },
+            )
+            .unwrap();
+        source
+            .insert_component(owner, ModelAnimation::default())
+            .unwrap();
+        ids.push(owner);
+    }
+    let max = 4 * 1024 * 1024;
+    let mut runtime = AnimationRuntime::default()
+        .prepare(&source, &models, 1. / 60.)
+        .unwrap();
+    let frame = runtime.frame(first, &model).unwrap();
+    runtime
+        .restore_shared_frame(ids[1], frame.clone(), max)
+        .unwrap();
+    assert!(!Arc::ptr_eq(
+        &frame,
+        &runtime.frame(ids[2], &model).unwrap()
+    ));
+    let external = Arc::new((*frame).clone());
+    runtime
+        .restore_shared_frame(first, external.clone(), max)
+        .unwrap();
+    assert!(
+        Arc::ptr_eq(&runtime.frame(ids[1], &model).unwrap(), &external),
+        "joining one runtime role split its existing shared frame class"
+    );
+    assert!(!Arc::ptr_eq(
+        &runtime.frame(ids[2], &model).unwrap(),
+        &external
+    ));
+    source.set_active(ids[1], false).unwrap();
+    let identify_model =
+        |asset: &Arc<ModelAsset>| Arc::ptr_eq(asset, &model).then(|| "model".into());
+    let identify_clip = |clip: &Arc<voxy_animation::AnimationClip>,
+                         _: Option<&Arc<voxy_animation::PropertyClip>>| {
+        model
+            .animations
+            .iter()
+            .position(|candidate| Arc::ptr_eq(candidate, clip))
+            .map(|index| format!("clip-{index}"))
+    };
+    let saved = runtime
+        .checkpoint(
+            &source,
+            |node| {
+                ids.iter()
+                    .position(|candidate| *candidate == node)
+                    .map(|i| ObjectId(format!("role-{i}")))
+            },
+            identify_model,
+            identify_clip,
+            max,
+        )
+        .unwrap();
+    let json = saved.to_json(max).unwrap();
+    let saved = super::checkpoint::AnimationRuntimeCheckpoint::from_json(&json, max).unwrap();
+    let mut target = SceneGraph::new(8);
+    target.spawn(None, Default::default()).unwrap();
+    let restored_ids: Vec<_> = (0..3)
+        .map(|_| target.spawn(None, Default::default()).unwrap())
+        .collect();
+    let resolve = |id: &ObjectId| {
+        restored_ids
+            .iter()
+            .enumerate()
+            .find(|(i, _)| id.0 == format!("role-{i}"))
+            .map(|(_, node)| *node)
+    };
+    let load = |saved: &super::checkpoint::AnimationRuntimeCheckpoint| {
+        saved.prepare(
+            &target,
+            resolve,
+            |key| (key == "model").then(|| model.clone()),
+            |key| {
+                model
+                    .animations
+                    .iter()
+                    .enumerate()
+                    .find(|(i, _)| key == format!("clip-{i}"))
+                    .map(|(_, clip)| (clip.clone(), None))
+            },
+            max,
+        )
+    };
+    let restored = load(&saved).unwrap();
+    let a = restored.frame(restored_ids[0], &model).unwrap();
+    let b = restored.frame(restored_ids[1], &model).unwrap();
+    let c = restored.frame(restored_ids[2], &model).unwrap();
+    assert!(
+        Arc::ptr_eq(&a, &b),
+        "runtime-only shared frame lost Arc identity"
+    );
+    assert!(
+        !Arc::ptr_eq(&a, &c),
+        "equal independent runtime frame was merged"
+    );
+    assert_eq!(
+        a.checkpoint(&model.skeleton, max)
+            .unwrap()
+            .to_json(max)
+            .unwrap(),
+        c.checkpoint(&model.skeleton, max)
+            .unwrap()
+            .to_json(max)
+            .unwrap()
+    );
+    assert_eq!(
+        a.checkpoint(&model.skeleton, max)
+            .unwrap()
+            .to_json(max)
+            .unwrap(),
+        external
+            .checkpoint(&model.skeleton, max)
+            .unwrap()
+            .to_json(max)
+            .unwrap()
+    );
+    assert_eq!(restored.serial(), runtime.serial());
+    let mut conflicting: serde_json::Value = serde_json::from_str(&json).unwrap();
+    conflicting["owners"][1]["frame"]["transition_weight"] = serde_json::json!(0.5_f32.to_bits());
+    let conflicting = super::checkpoint::AnimationRuntimeCheckpoint::from_json(
+        &serde_json::to_string(&conflicting).unwrap(),
+        max,
+    )
+    .unwrap();
+    let error = match load(&conflicting) {
+        Err(error) => error,
+        Ok(_) => panic!("different runtime frame states were joined"),
+    };
+    assert!(
+        error
+            .to_string()
+            .contains("shared accepted frame contents differ"),
+        "{error}"
+    );
+    let mut legacy: serde_json::Value = serde_json::from_str(&json).unwrap();
+    legacy.as_object_mut().unwrap().remove("shared_frames");
+    let legacy = super::checkpoint::AnimationRuntimeCheckpoint::from_json(
+        &serde_json::to_string(&legacy).unwrap(),
+        max,
+    )
+    .unwrap();
+    let legacy = load(&legacy).unwrap();
+    assert!(!Arc::ptr_eq(
+        &legacy.frame(restored_ids[0], &model).unwrap(),
+        &legacy.frame(restored_ids[1], &model).unwrap()
+    ));
+    for roles in [
+        serde_json::json!([["role-1", "role-0"], ["role-1", "role-0"]]),
+        serde_json::json!([["role-1", "missing"]]),
+        serde_json::json!([["role-0", "role-1"]]),
+        serde_json::json!([["role-1", "role-0"], ["role-2", "role-1"]]),
+    ] {
+        let mut invalid: serde_json::Value = serde_json::from_str(&json).unwrap();
+        invalid["shared_frames"] = roles;
+        let invalid = super::checkpoint::AnimationRuntimeCheckpoint::from_json(
+            &serde_json::to_string(&invalid).unwrap(),
+            max,
+        )
+        .unwrap();
+        assert!(
+            load(&invalid).is_err(),
+            "invalid runtime frame alias topology admitted"
+        );
     }
 }

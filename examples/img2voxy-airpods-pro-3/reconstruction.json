@@ -1,0 +1,1082 @@
+{
+  "version": 1,
+  "name": "AirPods Pro 3 — procedural study",
+  "reference": "https://www.apple.com/airpods-pro/specs/",
+  "inferred_regions": [
+    "Closed-case presentation with earbuds displayed outside; differs from open-case reference composition.",
+    "Earbud freeform surfaces and silicone bores approximated by procedural primitives.",
+    "Case corner radii, seam, port, speaker and sensor positions visually estimated; not CAD measurements.",
+    "No cavity, electronics, logos, text, metallic or glossy PBR reconstruction."
+  ],
+  "parts": [
+    {
+      "id": "airpods-pro-3",
+      "parent": null,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": null
+    },
+    {
+      "id": "case",
+      "parent": "airpods-pro-3",
+      "translation": [
+        0.0,
+        0.0236,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": null
+    },
+    {
+      "id": "case-body",
+      "parent": "case",
+      "translation": [
+        0.0,
+        -0.006,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0622,
+        0.0352,
+        0.0218
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": {
+        "kind": "rounded_box",
+        "radius": 0.3,
+        "segments": 64,
+        "rings": 32
+      }
+    },
+    {
+      "id": "lid-seam",
+      "parent": "case",
+      "translation": [
+        0.0,
+        0.01125,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0614,
+        0.00045,
+        0.0213
+      ],
+      "color": [
+        0.23,
+        0.24,
+        0.25
+      ],
+      "geometry": {
+        "kind": "rounded_box",
+        "radius": 0.32,
+        "segments": 64,
+        "rings": 32
+      }
+    },
+    {
+      "id": "lid-pivot",
+      "parent": "case",
+      "translation": [
+        0.0,
+        0.0115,
+        -0.01
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": null
+    },
+    {
+      "id": "lid",
+      "parent": "lid-pivot",
+      "translation": [
+        0.0,
+        0.0053,
+        0.01
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0622,
+        0.0126,
+        0.0218
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": {
+        "kind": "rounded_box",
+        "radius": 0.3,
+        "segments": 64,
+        "rings": 32
+      }
+    },
+    {
+      "id": "status-led",
+      "parent": "case",
+      "translation": [
+        0.0,
+        0.004,
+        0.01094
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.001,
+        0.001,
+        0.00025
+      ],
+      "color": [
+        0.25,
+        0.9,
+        0.4
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "hinge",
+      "parent": "case",
+      "translation": [
+        0.0,
+        0.009,
+        -0.0108
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.021,
+        0.0045,
+        0.0006
+      ],
+      "color": [
+        0.55,
+        0.57,
+        0.6
+      ],
+      "geometry": {
+        "kind": "rounded_box",
+        "radius": 0.16,
+        "segments": 64,
+        "rings": 32
+      }
+    },
+    {
+      "id": "usb-c-recess",
+      "parent": "case",
+      "translation": [
+        0.0,
+        -0.0235,
+        0.0002
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0082,
+        0.00045,
+        0.0027
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "rounded_box",
+        "radius": 0.28,
+        "segments": 64,
+        "rings": 32
+      }
+    },
+    {
+      "id": "speaker-0",
+      "parent": "case",
+      "translation": [
+        0.012,
+        -0.02348,
+        0.001
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.001,
+        0.0004,
+        0.001
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "speaker-1",
+      "parent": "case",
+      "translation": [
+        0.0148,
+        -0.02348,
+        0.001
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.001,
+        0.0004,
+        0.001
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "speaker-2",
+      "parent": "case",
+      "translation": [
+        0.0176,
+        -0.02348,
+        0.001
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.001,
+        0.0004,
+        0.001
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "lanyard-0",
+      "parent": "case",
+      "translation": [
+        0.031,
+        0.001,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0004,
+        0.0022,
+        0.0013
+      ],
+      "color": [
+        0.55,
+        0.57,
+        0.6
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "lanyard-1",
+      "parent": "case",
+      "translation": [
+        0.031,
+        0.005,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0004,
+        0.0022,
+        0.0013
+      ],
+      "color": [
+        0.55,
+        0.57,
+        0.6
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "left-earbud",
+      "parent": "airpods-pro-3",
+      "translation": [
+        -0.023,
+        0.077,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.1097783,
+        0.9939561
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": null
+    },
+    {
+      "id": "left-body",
+      "parent": "left-earbud",
+      "translation": [
+        0.0,
+        0.003,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0178,
+        0.0187,
+        0.0175
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "left-stem",
+      "parent": "left-earbud",
+      "translation": [
+        -0.003,
+        -0.01,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0053,
+        0.022,
+        0.0056
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": {
+        "kind": "rounded_box",
+        "radius": 0.47,
+        "segments": 64,
+        "rings": 32
+      }
+    },
+    {
+      "id": "left-stem-cap",
+      "parent": "left-earbud",
+      "translation": [
+        -0.003,
+        -0.0208,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.005,
+        0.0012,
+        0.0053
+      ],
+      "color": [
+        0.55,
+        0.57,
+        0.6
+      ],
+      "geometry": {
+        "kind": "rounded_box",
+        "radius": 0.4,
+        "segments": 64,
+        "rings": 32
+      }
+    },
+    {
+      "id": "left-tip",
+      "parent": "left-earbud",
+      "translation": [
+        0.008,
+        0.002,
+        0.006
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.012,
+        0.011,
+        0.012
+      ],
+      "color": [
+        0.86,
+        0.87,
+        0.88
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "left-sound-opening",
+      "parent": "left-earbud",
+      "translation": [
+        0.009,
+        0.002,
+        0.0116
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0058,
+        0.0058,
+        0.0007
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "left-outer-vent",
+      "parent": "left-earbud",
+      "translation": [
+        -0.003,
+        0.008,
+        0.0076
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.19866933,
+        0.9800666
+      ],
+      "scale": [
+        0.005,
+        0.0027,
+        0.0012
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "left-skin-sensor",
+      "parent": "left-earbud",
+      "translation": [
+        0.004,
+        -0.002,
+        0.0076
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0028,
+        0.0037,
+        0.001
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "left-stem-mic",
+      "parent": "left-earbud",
+      "translation": [
+        -0.003,
+        -0.016,
+        0.0028
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0014,
+        0.003,
+        0.0005
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "right-earbud",
+      "parent": "airpods-pro-3",
+      "translation": [
+        0.023,
+        0.077,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.1097783,
+        0.9939561
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": null
+    },
+    {
+      "id": "right-body",
+      "parent": "right-earbud",
+      "translation": [
+        0.0,
+        0.003,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0178,
+        0.0187,
+        0.0175
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "right-stem",
+      "parent": "right-earbud",
+      "translation": [
+        0.003,
+        -0.01,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0053,
+        0.022,
+        0.0056
+      ],
+      "color": [
+        0.94,
+        0.95,
+        0.97
+      ],
+      "geometry": {
+        "kind": "rounded_box",
+        "radius": 0.47,
+        "segments": 64,
+        "rings": 32
+      }
+    },
+    {
+      "id": "right-stem-cap",
+      "parent": "right-earbud",
+      "translation": [
+        0.003,
+        -0.0208,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.005,
+        0.0012,
+        0.0053
+      ],
+      "color": [
+        0.55,
+        0.57,
+        0.6
+      ],
+      "geometry": {
+        "kind": "rounded_box",
+        "radius": 0.4,
+        "segments": 64,
+        "rings": 32
+      }
+    },
+    {
+      "id": "right-tip",
+      "parent": "right-earbud",
+      "translation": [
+        -0.008,
+        0.002,
+        0.006
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.012,
+        0.011,
+        0.012
+      ],
+      "color": [
+        0.86,
+        0.87,
+        0.88
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "right-sound-opening",
+      "parent": "right-earbud",
+      "translation": [
+        -0.009,
+        0.002,
+        0.0116
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0058,
+        0.0058,
+        0.0007
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "right-outer-vent",
+      "parent": "right-earbud",
+      "translation": [
+        0.003,
+        0.008,
+        0.0076
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.19866933,
+        0.9800666
+      ],
+      "scale": [
+        0.005,
+        0.0027,
+        0.0012
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "right-skin-sensor",
+      "parent": "right-earbud",
+      "translation": [
+        -0.004,
+        -0.002,
+        0.0076
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0028,
+        0.0037,
+        0.001
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    },
+    {
+      "id": "right-stem-mic",
+      "parent": "right-earbud",
+      "translation": [
+        0.003,
+        -0.016,
+        0.0028
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0014,
+        0.003,
+        0.0005
+      ],
+      "color": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "geometry": {
+        "kind": "sphere",
+        "segments": 48,
+        "rings": 32
+      }
+    }
+  ],
+  "details": [
+    {
+      "description": "Rounded white lower charging case shell; silhouette approximated",
+      "part": "case-body"
+    },
+    {
+      "description": "lid seam",
+      "part": "lid-seam"
+    },
+    {
+      "description": "Separate closed lid; rear pivot available, no animation yet",
+      "part": "lid"
+    },
+    {
+      "description": "status led",
+      "part": "status-led"
+    },
+    {
+      "description": "hinge",
+      "part": "hinge"
+    },
+    {
+      "description": "usb c recess",
+      "part": "usb-c-recess"
+    },
+    {
+      "description": "speaker 0",
+      "part": "speaker-0"
+    },
+    {
+      "description": "speaker 1",
+      "part": "speaker-1"
+    },
+    {
+      "description": "speaker 2",
+      "part": "speaker-2"
+    },
+    {
+      "description": "lanyard 0",
+      "part": "lanyard-0"
+    },
+    {
+      "description": "lanyard 1",
+      "part": "lanyard-1"
+    },
+    {
+      "description": "Sculpted white earbud housing; ellipsoid approximation",
+      "part": "left-body"
+    },
+    {
+      "description": "left stem",
+      "part": "left-stem"
+    },
+    {
+      "description": "left stem cap",
+      "part": "left-stem-cap"
+    },
+    {
+      "description": "Soft silicone tip; simplified solid surface",
+      "part": "left-tip"
+    },
+    {
+      "description": "Dark acoustic opening, represented as inset-colour surface",
+      "part": "left-sound-opening"
+    },
+    {
+      "description": "left outer vent",
+      "part": "left-outer-vent"
+    },
+    {
+      "description": "left skin sensor",
+      "part": "left-skin-sensor"
+    },
+    {
+      "description": "left stem mic",
+      "part": "left-stem-mic"
+    },
+    {
+      "description": "Sculpted white earbud housing; ellipsoid approximation",
+      "part": "right-body"
+    },
+    {
+      "description": "right stem",
+      "part": "right-stem"
+    },
+    {
+      "description": "right stem cap",
+      "part": "right-stem-cap"
+    },
+    {
+      "description": "Soft silicone tip; simplified solid surface",
+      "part": "right-tip"
+    },
+    {
+      "description": "Dark acoustic opening, represented as inset-colour surface",
+      "part": "right-sound-opening"
+    },
+    {
+      "description": "right outer vent",
+      "part": "right-outer-vent"
+    },
+    {
+      "description": "right skin sensor",
+      "part": "right-skin-sensor"
+    },
+    {
+      "description": "right stem mic",
+      "part": "right-stem-mic"
+    }
+  ],
+  "camera": {
+    "target": [
+      0.0,
+      0.046,
+      0.0
+    ],
+    "distance": 0.16,
+    "yaw": 0.32,
+    "pitch": 0.18
+  }
+}

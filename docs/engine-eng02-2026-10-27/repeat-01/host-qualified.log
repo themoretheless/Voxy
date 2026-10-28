@@ -1,0 +1,16 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+     Running unittests src/lib.rs (/tmp/voxy-eng01-20261027-target/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 9 tests
+test game_host_tests::host_behaviors_run_identically_in_repeated_play_standalone_build_and_package ... ok
+test game_host_tests::host_checkpoint_codecs_survive_project_build_and_source_free_package ... ok
+test game_host_tests::host_ui_callback_state_and_pending_click_survive_source_free_package ... ok
+test game_host_tests::late_start_failure_destroys_behaviors_and_restores_editor_for_retry ... ok
+test game_host_tests::rejected_host_setup_destroys_partial_behaviors_restores_authoring_and_allows_retry ... ok
+test game_host_tests::standalone_start_is_explicit_and_does_not_toggle_an_active_session ... ok
+test game_host_tests::stop_discards_pending_commands_input_and_fractional_clock_before_replay ... ok
+test game_host_tests::ui_setup_failure_can_retry_and_failed_standalone_restores_mode ... ok
+test game_host_tests::variable_frame_lifecycle_matches_editor_standalone_and_source_free_package ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 276 filtered out; finished in 0.30s
+

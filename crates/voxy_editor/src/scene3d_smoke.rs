@@ -257,9 +257,10 @@ impl App {
                     let graphics = self.graphics.as_mut().ok_or("missing graphics")?;
                     let budget = graphics.residency_cache.budget;
                     graphics.residency_cache.budget = graphics.residency_cache.live_bytes();
-                    let rejected = crate::ModelGraphics::upload(
+                    let rejected = crate::ModelGraphics::upload_on(
                         &graphics.renderer,
-                        &graphics.host,
+                        &graphics.device,
+                        &graphics.queue,
                         &candidate,
                         &mut graphics.residency_cache,
                     )
@@ -276,9 +277,10 @@ impl App {
                     let geometry_budget = graphics.residency_cache.geometry_budget;
                     graphics.residency_cache.geometry_budget =
                         graphics.residency_cache.geometry_live;
-                    let rejected = crate::ModelGraphics::upload(
+                    let rejected = crate::ModelGraphics::upload_on(
                         &graphics.renderer,
-                        &graphics.host,
+                        &graphics.device,
+                        &graphics.queue,
                         asset.value(),
                         &mut graphics.residency_cache,
                     )

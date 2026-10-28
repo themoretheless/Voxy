@@ -511,3 +511,56 @@ mod material_force_frame_tests {
         );
     }
 }
+
+impl RigidBodyFrame {
+    pub(crate) fn checkpoint_words(self) -> ([u64; 27], [u32; 3]) {
+        let Self {
+            center_root,
+            center_scaled,
+            initial_root_affine,
+            principal_to_root,
+            initial_principal,
+            scale,
+            mass,
+            inertia,
+        } = self;
+        let mut words = [0; 27];
+        words[0..3].copy_from_slice(&center_root.to_array().map(f64::to_bits));
+        words[3..6].copy_from_slice(&center_scaled.to_array().map(f64::to_bits));
+        words[6..15].copy_from_slice(&initial_root_affine.to_cols_array().map(f64::to_bits));
+        words[15..19].copy_from_slice(&principal_to_root.to_array().map(f64::to_bits));
+        words[19..23].copy_from_slice(&initial_principal.to_array().map(f64::to_bits));
+        words[23] = mass.to_bits();
+        words[24..27].copy_from_slice(&inertia.map(f64::to_bits));
+        (words, scale.to_array().map(f32::to_bits))
+    }
+    pub(crate) fn from_checkpoint_words(
+        words: [u64; 27],
+        scale: [u32; 3],
+    ) -> Result<Self, PhysicsError> {
+        let v = words.map(f64::from_bits);
+        let scale = Vec3::from_array(scale.map(f32::from_bits));
+        if v.iter().any(|x| !x.is_finite()) || !scale.is_finite() || scale.to_array().contains(&0.)
+        {
+            return Err(PhysicsError::InvalidBody);
+        }
+        let frame = Self {
+            center_root: DVec3::new(v[0], v[1], v[2]),
+            center_scaled: DVec3::new(v[3], v[4], v[5]),
+            initial_root_affine: DMat3::from_cols_array(&v[6..15].try_into().unwrap()),
+            principal_to_root: DQuat::from_array(v[15..19].try_into().unwrap()),
+            initial_principal: DQuat::from_array(v[19..23].try_into().unwrap()),
+            scale,
+            mass: v[23],
+            inertia: v[24..27].try_into().unwrap(),
+        };
+        if !frame.initial_root_affine.inverse().is_finite()
+            || (frame.principal_to_root.length_squared() - 1.).abs() > 2e-12
+            || (frame.initial_principal.length_squared() - 1.).abs() > 2e-12
+        {
+            return Err(PhysicsError::InvalidBody);
+        }
+        frame.prepare_body([0.; 3], [0.; 3], [0.; 3])?;
+        Ok(frame)
+    }
+}

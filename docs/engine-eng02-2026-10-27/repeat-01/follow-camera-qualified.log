@@ -1,0 +1,10 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+     Running unittests src/lib.rs (/tmp/voxy-eng01-20261027-target/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 3 tests
+test follow_camera_tests::follow_checkpoint_rebinds_fresh_scene_and_preserves_camera_continuation ... ok
+test follow_camera_tests::missing_target_and_ambiguous_camera_retain_view_and_start_failure_restores_authoring ... ok
+test follow_camera_tests::nested_follow_camera_uses_interpolated_poses_and_matches_source_free_package ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 282 filtered out; finished in 0.37s
+

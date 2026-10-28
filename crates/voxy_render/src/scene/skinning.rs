@@ -1,7 +1,7 @@
 //! GPU deformation into the existing scene vertex ABI. Immutable source data is
 //! shared; palette and output streams belong to a single animated instance.
 use super::*;
-use crate::{SkinnedMesh, SkinnedUploadError};
+use crate::{SkinnedMesh, SkinnedMorphMesh, SkinnedUploadError};
 use std::sync::Arc;
 
 #[derive(Debug, thiserror::Error)]
@@ -29,6 +29,7 @@ pub struct SceneSkinner {
     pub pipeline: wgpu::ComputePipeline,
     #[doc(hidden)]
     pub identity: Arc<()>,
+    morph_pipeline: std::sync::OnceLock<wgpu::ComputePipeline>,
 }
 #[derive(Debug)]
 pub struct SceneSkinSource {
@@ -36,6 +37,7 @@ pub struct SceneSkinSource {
     #[doc(hidden)]
     pub mesh: Arc<SkinnedMesh>,
     buffer: crate::ComputeStorage,
+    morph: Option<(Arc<SkinnedMorphMesh>, crate::ComputeStorage)>,
 }
 #[derive(Debug)]
 pub struct SceneSkinInstance {
@@ -48,6 +50,7 @@ pub struct SceneSkinInstance {
     pub palette: Arc<crate::ComputeStorage>,
     binding: wgpu::BindGroup,
     parameters: Arc<crate::ComputeStorage>,
+    morph_weights: Option<Arc<crate::ComputeStorage>>,
 }
 
 /// A pose preflight bound to immutable instance and palette borrows.
@@ -66,6 +69,7 @@ pub struct SceneSkinInstance {
 pub struct SceneSkinPose<'a> {
     instance: &'a SceneSkinInstance,
     joints: &'a [Mat4],
+    weights: Option<&'a [f32]>,
 }
 
 /// One immutable index variant borrowing the owner's deformed GPU streams.
@@ -124,6 +128,7 @@ impl SceneSkinner {
             memory_budget: renderer.compute_memory_budget().clone(),
             pipeline,
             identity: Arc::new(()),
+            morph_pipeline: std::sync::OnceLock::new(),
         })
     }
 
@@ -134,8 +139,86 @@ impl SceneSkinner {
         live: u64,
         budget: u64,
     ) -> Result<Arc<SceneSkinSource>, SceneSkinError> {
-        let bytes = mesh.vertices().len() as u64 * 64;
-        admit(live, bytes, budget)?;
+        self.upload_source_internal(mesh, None, live, budget)
+    }
+
+    #[must_use]
+    pub fn supports_morph(&self) -> bool {
+        self.device.limits().max_storage_buffers_per_shader_stage >= 6
+    }
+
+    /// Immutable exact morph deltas shared across independently weighted instances.
+    /// No source geometry/weights are quantized or reduced.
+    pub fn upload_morph_source(
+        &self,
+        morph: Arc<SkinnedMorphMesh>,
+        live: u64,
+        budget: u64,
+    ) -> Result<Arc<SceneSkinSource>, SceneSkinError> {
+        if !self.supports_morph() {
+            return Err(SceneSkinError::Unsupported);
+        }
+        self.upload_source_internal(morph.mesh().clone(), Some(morph), live, budget)
+    }
+
+    fn morph_pipeline(&self) -> &wgpu::ComputePipeline {
+        self.morph_pipeline.get_or_init(|| {
+            let shader = self
+                .device
+                .create_shader_module(wgpu::ShaderModuleDescriptor {
+                    label: Some("exact morph before scene skinning"),
+                    source: wgpu::ShaderSource::Wgsl(morph_shader_source().into()),
+                });
+            self.device
+                .create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                    label: Some("exact morph before scene skinning"),
+                    layout: None,
+                    module: &shader,
+                    entry_point: Some("deform"),
+                    compilation_options: Default::default(),
+                    cache: None,
+                })
+        })
+    }
+
+    fn pipeline_for(&self, instance: &SceneSkinInstance) -> &wgpu::ComputePipeline {
+        if instance.source.morph.is_some() {
+            self.morph_pipeline()
+        } else {
+            &self.pipeline
+        }
+    }
+
+    fn upload_source_internal(
+        &self,
+        mesh: Arc<SkinnedMesh>,
+        morph: Option<Arc<SkinnedMorphMesh>>,
+        live: u64,
+        budget: u64,
+    ) -> Result<Arc<SceneSkinSource>, SceneSkinError> {
+        let vertices =
+            u64::try_from(mesh.vertices().len()).map_err(|_| SceneSkinError::Unsupported)?;
+        let bytes = vertices
+            .checked_mul(64)
+            .ok_or(SceneSkinError::Unsupported)?;
+        let delta_bytes = if let Some(morph) = &morph {
+            (morph.targets().len() as u64)
+                .checked_mul(vertices)
+                .and_then(|n| n.checked_mul(24))
+                .ok_or(SceneSkinError::Unsupported)?
+        } else {
+            0
+        };
+        if delta_bytes > self.device.limits().max_storage_buffer_binding_size {
+            return Err(SceneSkinError::Unsupported);
+        }
+        admit(
+            live,
+            bytes
+                .checked_add(delta_bytes)
+                .ok_or(SceneSkinError::Unsupported)?,
+            budget,
+        )?;
         if bytes > self.device.limits().max_storage_buffer_binding_size
             || mesh.vertices().len().div_ceil(64)
                 > self.device.limits().max_compute_workgroups_per_dimension as usize
@@ -150,19 +233,33 @@ impl SceneSkinner {
             packed.extend(v.joints.map(f32::from));
             packed.extend(v.weights.map(|w| f32::from(w) / 65535.0));
         }
-        let [buffer] = self
-            .memory_budget
-            .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
-                label: "shared scene skin source",
-                size: bytes,
-                contents: Some(bytemuck::cast_slice(&packed)),
+        let deltas = morph.as_ref().map(|m| m.packed_deltas());
+        let mut descriptors = vec![voxy_gpu_core::ManagedBufferDescriptor {
+            label: "shared scene skin source",
+            size: bytes,
+            contents: Some(bytemuck::cast_slice(&packed)),
+            usage: wgpu::BufferUsages::STORAGE,
+        }];
+        if let Some(deltas) = &deltas {
+            descriptors.push(voxy_gpu_core::ManagedBufferDescriptor {
+                label: "shared exact morph deltas",
+                size: delta_bytes,
+                contents: Some(bytemuck::cast_slice(deltas)),
                 usage: wgpu::BufferUsages::STORAGE,
-            }])
-            .map_err(|error| SceneSkinError::Scene(super::scene_memory_error(error)))?;
+            });
+        }
+        let mut buffers = self
+            .memory_budget
+            .allocate_buffer_batch(&descriptors)
+            .map_err(|error| SceneSkinError::Scene(super::scene_memory_error(error)))?
+            .into_iter();
+        let buffer = buffers.next().expect("source descriptor");
+        let morph = morph.map(|m| (m, buffers.next().expect("morph descriptor")));
         Ok(Arc::new(SceneSkinSource {
             device: self.device.clone(),
             mesh,
             buffer,
+            morph,
         }))
     }
 
@@ -180,29 +277,75 @@ impl SceneSkinner {
         live: u64,
         budget: u64,
     ) -> Result<SceneSkinInstance, SceneSkinError> {
+        if source.morph.is_some() {
+            return Err(SceneSkinError::Unsupported);
+        }
+        self.create_instance_internal(renderer, source, joints, None, color, live, budget)
+    }
+
+    /// Allocate independently weighted morph state with the same geometry/palette
+    /// transaction as skeletal instances. Initial preview uses the exact CPU sum.
+    #[allow(clippy::too_many_arguments)]
+    pub fn create_morph_instance(
+        &self,
+        renderer: &SceneRenderer,
+        source: Arc<SceneSkinSource>,
+        joints: &[Mat4],
+        weights: &[f32],
+        color: [f32; 4],
+        live: u64,
+        budget: u64,
+    ) -> Result<SceneSkinInstance, SceneSkinError> {
+        if source.morph.is_none() {
+            return Err(SceneSkinError::Unsupported);
+        }
+        self.create_instance_internal(renderer, source, joints, Some(weights), color, live, budget)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn create_instance_internal(
+        &self,
+        renderer: &SceneRenderer,
+        source: Arc<SceneSkinSource>,
+        joints: &[Mat4],
+        weights: Option<&[f32]>,
+        color: [f32; 4],
+        live: u64,
+        budget: u64,
+    ) -> Result<SceneSkinInstance, SceneSkinError> {
         if self.device != renderer.device || self.device != source.device {
             return Err(SceneSkinError::Scene(SceneError::DeviceMismatch));
         }
-        source
-            .mesh
+        let deformed = source
+            .morph
+            .as_ref()
+            .map(|(m, _)| {
+                m.evaluate(weights.ok_or(SceneSkinError::Unsupported)?)
+                    .map_err(|e| SceneSkinError::Bake(Box::new(e)))
+            })
+            .transpose()?;
+        let preview = deformed.as_ref().unwrap_or(&source.mesh);
+        preview
             .validate_temporal_pose(joints, Mat4::IDENTITY)
             .map_err(SceneSkinError::Pose)?;
-        source
-            .mesh
+        preview
             .validate_scene_normals(joints)
             .map_err(SceneSkinError::Pose)?;
-        let mesh = source
-            .mesh
+        let mesh = preview
             .posed_scene_mesh(joints, Mat4::IDENTITY, color)
             .map_err(SceneSkinError::Bake)?
             .with_material_coordinates(source.mesh.vertices().iter().map(|v| v.position).collect())
             .map_err(SceneSkinError::Scene)?;
-        let bytes = SceneRenderer::mesh_allocation_bytes(&mesh) + joints.len() as u64 * 64 + 32;
+        let bytes = SceneRenderer::mesh_allocation_bytes(&mesh)
+            + joints.len() as u64 * 64
+            + 32
+            + weights.map_or(0, |w| w.len() as u64 * 4);
         admit(live, bytes, budget)?;
         let mut params = Vec::from(bytemuck::cast_slice::<f32, u8>(&color));
         params.extend((mesh.vertices().len() as u32).to_le_bytes());
-        params.extend([0; 12]);
-        let descriptors = [
+        params.extend(weights.map_or(0, |w| w.len() as u32).to_le_bytes());
+        params.extend([0; 8]);
+        let mut descriptors = vec![
             voxy_gpu_core::ManagedBufferDescriptor {
                 label: "scene instance palette",
                 size: joints.len() as u64 * 64,
@@ -216,6 +359,19 @@ impl SceneSkinner {
                 usage: wgpu::BufferUsages::UNIFORM,
             },
         ];
+        if let Some(weights) = weights {
+            descriptors.push(voxy_gpu_core::ManagedBufferDescriptor {
+                label: "scene instance morph weights",
+                size: weights.len() as u64 * 4,
+                contents: Some(bytemuck::cast_slice(weights)),
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            });
+        }
+        let pipeline = if source.morph.is_some() {
+            self.morph_pipeline()
+        } else {
+            &self.pipeline
+        };
         let mut batch = renderer
             .upload_mesh_buffer_batch(
                 &self.device,
@@ -226,17 +382,21 @@ impl SceneSkinner {
             )
             .map_err(SceneSkinError::Scene)?;
         let geometry = batch.geometries.remove(0);
-        let [palette, parameters]: [_; 2] = batch
-            .additional_buffers
-            .try_into()
-            .expect("validated palette and parameter descriptors");
-        let buffers: [&wgpu::Buffer; 5] = [
+        let mut additional = batch.additional_buffers.into_iter();
+        let palette = additional.next().expect("palette descriptor");
+        let parameters = additional.next().expect("parameter descriptor");
+        let morph_weights = additional.next();
+        let mut buffers: Vec<&wgpu::Buffer> = vec![
             &source.buffer,
             &palette,
             &geometry.vertices,
             &geometry.normals,
             &parameters,
         ];
+        if let (Some((_, deltas)), Some(weights)) = (&source.morph, &morph_weights) {
+            buffers.push(deltas);
+            buffers.push(weights);
+        }
         let entries: Vec<_> = buffers
             .iter()
             .enumerate()
@@ -247,7 +407,7 @@ impl SceneSkinner {
             .collect();
         let binding = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("scene instance skin"),
-            layout: &self.pipeline.get_bind_group_layout(0),
+            layout: &pipeline.get_bind_group_layout(0),
             entries: &entries,
         });
         Ok(SceneSkinInstance {
@@ -257,6 +417,7 @@ impl SceneSkinner {
             palette,
             binding,
             parameters,
+            morph_weights,
         })
     }
 
@@ -310,11 +471,14 @@ impl SceneSkinner {
             return Err(SceneSkinError::ForeignSkinner);
         }
         queue.write_buffer(&instance.palette, 0, bytemuck::cast_slice(pose.joints));
+        if let (Some(buffer), Some(weights)) = (&instance.morph_weights, pose.weights) {
+            queue.write_buffer(buffer, 0, bytemuck::cast_slice(weights));
+        }
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("scene skin pose"),
             timestamp_writes,
         });
-        pass.set_pipeline(&self.pipeline);
+        pass.set_pipeline(self.pipeline_for(instance));
         pass.set_bind_group(0, &instance.binding, &[]);
         pass.dispatch_workgroups(
             instance.source.mesh.vertices().len().div_ceil(64) as u32,
@@ -325,7 +489,8 @@ impl SceneSkinner {
     }
 
     /// Pre-fetches and uploads multiple preflighted palettes, then encodes all
-    /// skeletal deformations inside a single compute pass with one pipeline bind.
+    /// skeletal/morph deformations inside one compute pass, changing pipelines
+    /// only as required by each instance. Duplicate instance owners are rejected.
     ///
     /// # Errors
     /// Rejects foreign skinners before writing any GPU buffers.
@@ -338,21 +503,30 @@ impl SceneSkinner {
         if poses.is_empty() {
             return Ok(());
         }
-        for pose in poses {
+        for (index, pose) in poses.iter().enumerate() {
+            if poses[..index]
+                .iter()
+                .any(|prior| std::ptr::eq(prior.instance, pose.instance))
+            {
+                return Err(SceneSkinError::Scene(SceneError::InvalidGeometry));
+            }
             if !Arc::ptr_eq(&self.identity, &pose.instance.owner) {
                 return Err(SceneSkinError::ForeignSkinner);
             }
         }
         for pose in poses {
             queue.write_buffer(&pose.instance.palette, 0, bytemuck::cast_slice(pose.joints));
+            if let (Some(buffer), Some(weights)) = (&pose.instance.morph_weights, pose.weights) {
+                queue.write_buffer(buffer, 0, bytemuck::cast_slice(weights));
+            }
         }
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("scene skin pose batch"),
             timestamp_writes: None,
         });
-        pass.set_pipeline(&self.pipeline);
         for pose in poses {
             let instance = pose.instance;
+            pass.set_pipeline(self.pipeline_for(instance));
             pass.set_bind_group(0, &instance.binding, &[]);
             pass.dispatch_workgroups(
                 instance.source.mesh.vertices().len().div_ceil(64) as u32,
@@ -436,28 +610,61 @@ impl SceneSkinner {
         instance: &'a SceneSkinInstance,
         joints: &'a [Mat4],
     ) -> Result<SceneSkinPose<'a>, SceneSkinError> {
+        if instance.source.morph.is_some() {
+            return Err(SceneSkinError::Unsupported);
+        }
+        self.prepare_pose_internal(instance, joints, None)
+    }
+
+    /// Preflight exact local morph results and skinning before any GPU mutation.
+    pub fn prepare_morph_pose<'a>(
+        &self,
+        instance: &'a SceneSkinInstance,
+        joints: &'a [Mat4],
+        weights: &'a [f32],
+    ) -> Result<SceneSkinPose<'a>, SceneSkinError> {
+        if instance.source.morph.is_none() {
+            return Err(SceneSkinError::Unsupported);
+        }
+        self.prepare_pose_internal(instance, joints, Some(weights))
+    }
+
+    fn prepare_pose_internal<'a>(
+        &self,
+        instance: &'a SceneSkinInstance,
+        joints: &'a [Mat4],
+        weights: Option<&'a [f32]>,
+    ) -> Result<SceneSkinPose<'a>, SceneSkinError> {
         if self.device != instance.source.device {
             return Err(SceneSkinError::Scene(SceneError::DeviceMismatch));
         }
         if !Arc::ptr_eq(&self.identity, &instance.owner) {
             return Err(SceneSkinError::ForeignSkinner);
         }
-        instance
+        let deformed = instance
             .source
-            .mesh
-            .validate_temporal_pose(joints, Mat4::IDENTITY)
+            .morph
+            .as_ref()
+            .map(|(m, _)| {
+                m.evaluate(weights.ok_or(SceneSkinError::Unsupported)?)
+                    .map_err(|e| SceneSkinError::Bake(Box::new(e)))
+            })
+            .transpose()?;
+        let mesh = deformed.as_ref().unwrap_or(&instance.source.mesh);
+        mesh.validate_temporal_pose(joints, Mat4::IDENTITY)
             .map_err(SceneSkinError::Pose)?;
-        instance
-            .source
-            .mesh
-            .validate_scene_normals(joints)
+        mesh.validate_scene_normals(joints)
             .map_err(SceneSkinError::Pose)?;
-        Ok(SceneSkinPose { instance, joints })
+        Ok(SceneSkinPose {
+            instance,
+            joints,
+            weights,
+        })
     }
 }
 impl SceneSkinSource {
     pub fn allocation_bytes(&self) -> u64 {
-        self.buffer.size()
+        self.buffer.size() + self.morph.as_ref().map_or(0, |(_, buffer)| buffer.size())
     }
 }
 impl SceneSkinInstance {
@@ -465,6 +672,30 @@ impl SceneSkinInstance {
         &self.geometry
     }
     pub fn allocation_bytes(&self) -> u64 {
-        self.geometry.allocation_bytes() + self.palette.size() + self.parameters.size()
+        self.geometry.allocation_bytes()
+            + self.palette.size()
+            + self.parameters.size()
+            + self.morph_weights.as_ref().map_or(0, |w| w.size())
     }
 }
+
+fn morph_shader_source() -> String {
+    let terms = include_str!("../world_exact_fused_affine.wgsl")
+        .split("fn affine_fused_axis")
+        .next()
+        .expect("source term helpers");
+    let skin = include_str!("skinning.wgsl")
+        .replace(
+            "vec4<f32>(source[s], source[s+1u], source[s+2u], 1.)",
+            "vec4<f32>(morph_component(i,0u), morph_component(i,1u), morph_component(i,2u), 1.)",
+        )
+        .replace(
+            "vec3<f32>(source[s+3u], source[s+4u], source[s+5u])",
+            "vec3<f32>(morph_component(i,3u), morph_component(i,4u), morph_component(i,5u))",
+        );
+    format!("{terms}\n{}\n{skin}", include_str!("morph.wgsl"))
+}
+
+#[cfg(test)]
+#[path = "skinning_morph_tests.rs"]
+mod morph_tests;

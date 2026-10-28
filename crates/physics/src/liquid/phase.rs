@@ -10,6 +10,20 @@ pub struct PhaseChange {
     /// Mechanical properties of the high-temperature phase, before field responses.
     pub high_phase: Material,
 }
+impl PhaseChange {
+    pub(super) fn validate(self) -> Result<(), Error> {
+        if !positive(self.temperature)
+            || !positive(self.latent_heat)
+            || !positive(self.high_phase.rest_density)
+            || !positive(self.high_phase.sound_speed)
+            || !self.high_phase.viscosity.is_finite()
+            || self.high_phase.viscosity < 0.
+        {
+            return Err(Error::InvalidPhaseChange);
+        }
+        Ok(())
+    }
+}
 #[derive(Clone, Debug, PartialEq)]
 pub(super) struct PhaseState {
     pub models: Vec<Option<PhaseChange>>,
@@ -35,14 +49,10 @@ impl Liquid {
             .any(|(phase, gas)| phase.is_some() && gas.is_some())
             || models.len() != self.materials.len()
             || fractions.len() != self.particles.len()
-            || models.iter().flatten().any(|model| {
-                !positive(model.temperature)
-                    || !positive(model.latent_heat)
-                    || !positive(model.high_phase.rest_density)
-                    || !positive(model.high_phase.sound_speed)
-                    || !model.high_phase.viscosity.is_finite()
-                    || model.high_phase.viscosity < 0.0
-            })
+            || models
+                .iter()
+                .flatten()
+                .any(|model| model.validate().is_err())
         {
             return Err(Error::InvalidPhaseChange);
         }
@@ -298,3 +308,7 @@ impl PhaseState {
         })
     }
 }
+
+#[path = "phase_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{PhaseCheckpoint, SaturationCheckpoint};

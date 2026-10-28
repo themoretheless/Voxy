@@ -17,7 +17,7 @@ pub struct SpeciesProperties {
     pub viscosity: ViscosityBlend,
 }
 impl SpeciesProperties {
-    fn validate(&self, count: usize) -> Result<(), Error> {
+    pub(super) fn validate(&self, count: usize) -> Result<(), Error> {
         if self.components.len() != count
             || self.components.iter().any(|m| {
                 !positive(m.rest_density)

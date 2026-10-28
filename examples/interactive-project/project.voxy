@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "name": "Interactive project",
+  "asset_manifest": "assets.json",
+  "startup_scene": "main.scene.json"
+}

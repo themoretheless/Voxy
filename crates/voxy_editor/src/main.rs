@@ -3,6 +3,32 @@ use voxy_editor::{ModelSource, ViewportMode, run_model_viewport_with_scene};
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut arguments: Vec<_> = std::env::args().skip(1).collect();
     match arguments.as_slice() {
+        [flag] if flag == "--help" || flag == "-h" => {
+            println!(
+                "Voxy editor\n\
+                 Headless project commands:\n\
+                   --create-project DIRECTORY NAME\n\
+                   --validate-project PROJECT\n\
+                   --rename-project PROJECT NAME\n\
+                   --build-project PROJECT OUTPUT\n\
+                   --project PROJECT --game-check\n\
+                   --package PACKAGE --game-check\n\
+                 Native editor/game commands (open windows):\n\
+                   --project PROJECT [--game]\n\
+                   MODEL.obj|MODEL.gltf|MODEL.glb [--scene SCENE]\n\
+                   --manifest MANIFEST ASSET [--scene SCENE]"
+            );
+            return Ok(());
+        }
+        [command, path, name] if command == "--rename-project" => {
+            let registry = voxy_editor::editor_component_registry()?;
+            let mut project = voxy_editor::project::open(std::path::Path::new(path), &registry)?;
+            let mut descriptor = project.descriptor.clone();
+            descriptor.name.clone_from(name);
+            project.save_descriptor(&descriptor, &registry)?;
+            println!("Saved project {:?}", project.descriptor.name);
+            return Ok(());
+        }
         [command, directory, name] if command == "--create-project" => {
             let path = voxy_editor::project::create(std::path::Path::new(directory), name)?;
             println!("Created {}", path.display());

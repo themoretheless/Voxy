@@ -84,6 +84,8 @@ fn add_totals(a: &mut ExchangeTotals, b: ExchangeTotals) -> Result<(), &'static 
     a.mass += b.mass;
     a.kinetic_energy += b.kinetic_energy;
     a.polymer_energy += b.polymer_energy;
+    a.add_deferred_heat(b.deferred_heat)
+        .map_err(|_| "impact deferred heat overflow")?;
     for k in 0..3 {
         a.momentum[k] += b.momentum[k];
     }

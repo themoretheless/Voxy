@@ -18,7 +18,44 @@ pub struct FocusRouter {
     pressed: Option<WidgetId>,
     held: bool,
 }
+/// Codec-neutral keyboard interaction state. Widget identity is supplied by the host.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FocusCheckpoint {
+    pub order: Vec<WidgetId>,
+    pub focus: Option<WidgetId>,
+    pub pressed: Option<WidgetId>,
+    pub held: bool,
+}
+impl FocusCheckpoint {
+    /// # Errors
+    /// Rejects capacity, duplicate/unknown IDs and impossible activation state.
+    pub fn prepare(&self, capacity: usize) -> Result<FocusRouter, UiError> {
+        let mut router = FocusRouter::new(capacity);
+        router.set_order(&self.order)?;
+        if self.focus.is_some_and(|id| !self.order.contains(&id))
+            || self
+                .pressed
+                .is_some_and(|id| !self.held || self.focus != Some(id))
+        {
+            return Err(UiError::UnknownWidget);
+        }
+        router.focus = self.focus;
+        router.pressed = self.pressed;
+        router.held = self.held;
+        Ok(router)
+    }
+}
 impl FocusRouter {
+    #[must_use]
+    pub fn checkpoint(&self) -> FocusCheckpoint {
+        FocusCheckpoint {
+            order: self.order.clone(),
+            focus: self.focus,
+            pressed: self.pressed,
+            held: self.held,
+        }
+    }
+
     #[must_use]
     pub fn new(capacity: usize) -> Self {
         Self {

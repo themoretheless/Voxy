@@ -1,13 +1,16 @@
-//! Platform output adapter. Bounded standard channel; no hard realtime guarantee.
+//! Platform output adapter. Bounded lock-free PCM queue; no hard realtime guarantee.
+mod queue;
+pub use queue::{
+    FrozenOutputQueue, OutputQueueCheckpoint, PreparedOutputQueue, QueueCheckpointError,
+};
 mod worker;
 pub use worker::{OutputConnection, OutputDeviceWorker};
 mod pump;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-pub use pump::{MixerPump, PcmPump, PumpReport};
+pub use pump::{MixerPump, PcmPump, PcmPumpCheckpoint, PumpReport};
 use std::sync::{
     Arc,
     atomic::{AtomicU64, Ordering},
-    mpsc::{self, SyncSender, TrySendError},
 };
 #[derive(Debug, Default)]
 struct Counters {
@@ -42,8 +45,19 @@ impl std::fmt::Debug for OutputDevice {
     }
 }
 #[derive(Clone, Debug)]
-pub struct OutputSender(SyncSender<[f32; 2]>);
+pub struct OutputSender(Arc<queue::Queue>);
 impl OutputSender {
+    #[must_use]
+    pub fn capacity(&self) -> usize {
+        self.0.capacity()
+    }
+
+    /// Submits an exact prefix while sharing one checkpoint admission across a block.
+    /// On backpressure/error the caller retains the unsent suffix for retry.
+    #[must_use]
+    pub fn submit_frames(&self, frames: &[[f32; 2]]) -> PumpReport {
+        self.0.submit_frames(frames)
+    }
     /// Nonblocking single-frame submission. Retain and retry on `Full`.
     /// # Errors
     /// Rejects invalid PCM, full queues or disconnected output devices.
@@ -54,10 +68,7 @@ impl OutputSender {
         {
             return Err(SubmitError::InvalidFrame);
         }
-        self.0.try_send(frame).map_err(|error| match error {
-            TrySendError::Full(_) => SubmitError::Full,
-            TrySendError::Disconnected(_) => SubmitError::Closed,
-        })
+        self.0.submit(frame)
     }
 }
 impl OutputDevice {
@@ -76,24 +87,14 @@ impl OutputDevice {
             return Err("default output must be stereo f32".into());
         }
         let rate = config.sample_rate().0;
-        let (sender, receiver) = mpsc::sync_channel::<[f32; 2]>(capacity);
+        let (sender, receiver) = queue::output_queue(capacity)?;
         let counters = Arc::new(Counters::default());
         let render_counters = Arc::clone(&counters);
         let error_counters = Arc::clone(&counters);
         let stream = device.build_output_stream(
             &config.into(),
             move |output: &mut [f32], _| {
-                let mut supplied = 0;
-                let mut missing = 0;
-                for frame in output.chunks_exact_mut(2) {
-                    if let Ok(sample) = receiver.try_recv() {
-                        frame.copy_from_slice(&sample);
-                        supplied += 1;
-                    } else {
-                        frame.fill(0.0);
-                        missing += 1;
-                    }
-                }
+                let (supplied, missing) = receiver.render(output);
                 render_counters
                     .supplied
                     .fetch_add(supplied, Ordering::Relaxed);
@@ -112,7 +113,7 @@ impl OutputDevice {
                 rate,
                 counters,
             },
-            OutputSender(sender),
+            sender,
         ))
     }
     #[must_use]
@@ -132,6 +133,12 @@ impl OutputDevice {
     pub fn start(&self) -> Result<(), cpal::PlayStreamError> {
         self.stream.play()
     }
+    /// Pauses the stream on its native owner thread without replacing the application queue.
+    /// # Errors
+    /// Returns the host pause failure; callers must not assume a fence on failure.
+    pub fn pause(&self) -> Result<(), cpal::PauseStreamError> {
+        self.stream.pause()
+    }
 }
 
 #[cfg(test)]
@@ -139,8 +146,7 @@ mod tests {
     use super::*;
     #[test]
     fn bounded_submission_rejects_full_invalid_and_closed() {
-        let (tx, rx) = mpsc::sync_channel(1);
-        let sender = OutputSender(tx);
+        let (sender, rx) = queue::output_queue(1).unwrap();
         assert_eq!(sender.submit([f32::NAN; 2]), Err(SubmitError::InvalidFrame));
         assert_eq!(sender.submit([0.25; 2]), Ok(()));
         assert_eq!(sender.submit([0.5; 2]), Err(SubmitError::Full));
@@ -152,3 +158,9 @@ mod tests {
         assert_eq!(sender.submit([0.0; 2]), Err(SubmitError::Closed));
     }
 }
+
+mod output_checkpoint;
+pub use output_checkpoint::{
+    OfflineOutput, OutputCheckpoint, OutputCheckpointLimits, PreparedOutputCheckpoint,
+    ReadyOutputPublication,
+};

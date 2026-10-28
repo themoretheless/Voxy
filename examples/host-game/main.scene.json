@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "triangle",
+      "parent": null,
+      "name": "Host-driven triangle",
+      "active": true,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "triangle",
+        "sample.move.v1": {
+          "speed": 1.0
+        }
+      }
+    }
+  ]
+}

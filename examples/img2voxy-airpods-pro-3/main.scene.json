@@ -1,0 +1,1074 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "airpods-pro-3",
+      "parent": null,
+      "name": "airpods-pro-3",
+      "active": true,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {}
+    },
+    {
+      "id": "case",
+      "parent": "airpods-pro-3",
+      "name": "case",
+      "active": true,
+      "translation": [
+        0.0,
+        0.0236,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {}
+    },
+    {
+      "id": "case-body",
+      "parent": "case",
+      "name": "case-body",
+      "active": true,
+      "translation": [
+        0.0,
+        -0.006,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0622,
+        0.0352,
+        0.0218
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.9399999976158142,
+            0.949999988079071,
+            0.9700000286102295,
+            1.0
+          ]
+        },
+        "editor.model.v1": "case-body"
+      }
+    },
+    {
+      "id": "lid-seam",
+      "parent": "case",
+      "name": "lid-seam",
+      "active": true,
+      "translation": [
+        0.0,
+        0.01125,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0614,
+        0.00045,
+        0.0213
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.23000000417232513,
+            0.23999999463558197,
+            0.25,
+            1.0
+          ]
+        },
+        "editor.model.v1": "lid-seam"
+      }
+    },
+    {
+      "id": "lid-pivot",
+      "parent": "case",
+      "name": "lid-pivot",
+      "active": true,
+      "translation": [
+        0.0,
+        0.0115,
+        -0.01
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {}
+    },
+    {
+      "id": "lid",
+      "parent": "lid-pivot",
+      "name": "lid",
+      "active": true,
+      "translation": [
+        0.0,
+        0.0053,
+        0.01
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0622,
+        0.0126,
+        0.0218
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.9399999976158142,
+            0.949999988079071,
+            0.9700000286102295,
+            1.0
+          ]
+        },
+        "editor.model.v1": "lid"
+      }
+    },
+    {
+      "id": "status-led",
+      "parent": "case",
+      "name": "status-led",
+      "active": true,
+      "translation": [
+        0.0,
+        0.004,
+        0.01094
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.001,
+        0.001,
+        0.00025
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.25,
+            0.8999999761581421,
+            0.4000000059604645,
+            1.0
+          ]
+        },
+        "editor.model.v1": "status-led"
+      }
+    },
+    {
+      "id": "hinge",
+      "parent": "case",
+      "name": "hinge",
+      "active": true,
+      "translation": [
+        0.0,
+        0.009,
+        -0.0108
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.021,
+        0.0045,
+        0.0006
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.550000011920929,
+            0.5699999928474426,
+            0.6000000238418579,
+            1.0
+          ]
+        },
+        "editor.model.v1": "hinge"
+      }
+    },
+    {
+      "id": "usb-c-recess",
+      "parent": "case",
+      "name": "usb-c-recess",
+      "active": true,
+      "translation": [
+        0.0,
+        -0.0235,
+        0.0002
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0082,
+        0.00045,
+        0.0027
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "usb-c-recess"
+      }
+    },
+    {
+      "id": "speaker-0",
+      "parent": "case",
+      "name": "speaker-0",
+      "active": true,
+      "translation": [
+        0.012,
+        -0.02348,
+        0.001
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.001,
+        0.0004,
+        0.001
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "speaker-0"
+      }
+    },
+    {
+      "id": "speaker-1",
+      "parent": "case",
+      "name": "speaker-1",
+      "active": true,
+      "translation": [
+        0.0148,
+        -0.02348,
+        0.001
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.001,
+        0.0004,
+        0.001
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "speaker-1"
+      }
+    },
+    {
+      "id": "speaker-2",
+      "parent": "case",
+      "name": "speaker-2",
+      "active": true,
+      "translation": [
+        0.0176,
+        -0.02348,
+        0.001
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.001,
+        0.0004,
+        0.001
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "speaker-2"
+      }
+    },
+    {
+      "id": "lanyard-0",
+      "parent": "case",
+      "name": "lanyard-0",
+      "active": true,
+      "translation": [
+        0.031,
+        0.001,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0004,
+        0.0022,
+        0.0013
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.550000011920929,
+            0.5699999928474426,
+            0.6000000238418579,
+            1.0
+          ]
+        },
+        "editor.model.v1": "lanyard-0"
+      }
+    },
+    {
+      "id": "lanyard-1",
+      "parent": "case",
+      "name": "lanyard-1",
+      "active": true,
+      "translation": [
+        0.031,
+        0.005,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0004,
+        0.0022,
+        0.0013
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.550000011920929,
+            0.5699999928474426,
+            0.6000000238418579,
+            1.0
+          ]
+        },
+        "editor.model.v1": "lanyard-1"
+      }
+    },
+    {
+      "id": "left-earbud",
+      "parent": "airpods-pro-3",
+      "name": "left-earbud",
+      "active": true,
+      "translation": [
+        -0.023,
+        0.077,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.1097783,
+        0.9939561
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {}
+    },
+    {
+      "id": "left-body",
+      "parent": "left-earbud",
+      "name": "left-body",
+      "active": true,
+      "translation": [
+        0.0,
+        0.003,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0178,
+        0.0187,
+        0.0175
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.9399999976158142,
+            0.949999988079071,
+            0.9700000286102295,
+            1.0
+          ]
+        },
+        "editor.model.v1": "left-body"
+      }
+    },
+    {
+      "id": "left-stem",
+      "parent": "left-earbud",
+      "name": "left-stem",
+      "active": true,
+      "translation": [
+        -0.003,
+        -0.01,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0053,
+        0.022,
+        0.0056
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.9399999976158142,
+            0.949999988079071,
+            0.9700000286102295,
+            1.0
+          ]
+        },
+        "editor.model.v1": "left-stem"
+      }
+    },
+    {
+      "id": "left-stem-cap",
+      "parent": "left-earbud",
+      "name": "left-stem-cap",
+      "active": true,
+      "translation": [
+        -0.003,
+        -0.0208,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.005,
+        0.0012,
+        0.0053
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.550000011920929,
+            0.5699999928474426,
+            0.6000000238418579,
+            1.0
+          ]
+        },
+        "editor.model.v1": "left-stem-cap"
+      }
+    },
+    {
+      "id": "left-tip",
+      "parent": "left-earbud",
+      "name": "left-tip",
+      "active": true,
+      "translation": [
+        0.008,
+        0.002,
+        0.006
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.012,
+        0.011,
+        0.012
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.8600000143051147,
+            0.8700000047683716,
+            0.8799999952316284,
+            1.0
+          ]
+        },
+        "editor.model.v1": "left-tip"
+      }
+    },
+    {
+      "id": "left-sound-opening",
+      "parent": "left-earbud",
+      "name": "left-sound-opening",
+      "active": true,
+      "translation": [
+        0.009,
+        0.002,
+        0.0116
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0058,
+        0.0058,
+        0.0007
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "left-sound-opening"
+      }
+    },
+    {
+      "id": "left-outer-vent",
+      "parent": "left-earbud",
+      "name": "left-outer-vent",
+      "active": true,
+      "translation": [
+        -0.003,
+        0.008,
+        0.0076
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.19866933,
+        0.9800666
+      ],
+      "scale": [
+        0.005,
+        0.0027,
+        0.0012
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "left-outer-vent"
+      }
+    },
+    {
+      "id": "left-skin-sensor",
+      "parent": "left-earbud",
+      "name": "left-skin-sensor",
+      "active": true,
+      "translation": [
+        0.004,
+        -0.002,
+        0.0076
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0028,
+        0.0037,
+        0.001
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "left-skin-sensor"
+      }
+    },
+    {
+      "id": "left-stem-mic",
+      "parent": "left-earbud",
+      "name": "left-stem-mic",
+      "active": true,
+      "translation": [
+        -0.003,
+        -0.016,
+        0.0028
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0014,
+        0.003,
+        0.0005
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "left-stem-mic"
+      }
+    },
+    {
+      "id": "right-earbud",
+      "parent": "airpods-pro-3",
+      "name": "right-earbud",
+      "active": true,
+      "translation": [
+        0.023,
+        0.077,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.1097783,
+        0.9939561
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {}
+    },
+    {
+      "id": "right-body",
+      "parent": "right-earbud",
+      "name": "right-body",
+      "active": true,
+      "translation": [
+        0.0,
+        0.003,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0178,
+        0.0187,
+        0.0175
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.9399999976158142,
+            0.949999988079071,
+            0.9700000286102295,
+            1.0
+          ]
+        },
+        "editor.model.v1": "right-body"
+      }
+    },
+    {
+      "id": "right-stem",
+      "parent": "right-earbud",
+      "name": "right-stem",
+      "active": true,
+      "translation": [
+        0.003,
+        -0.01,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0053,
+        0.022,
+        0.0056
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.9399999976158142,
+            0.949999988079071,
+            0.9700000286102295,
+            1.0
+          ]
+        },
+        "editor.model.v1": "right-stem"
+      }
+    },
+    {
+      "id": "right-stem-cap",
+      "parent": "right-earbud",
+      "name": "right-stem-cap",
+      "active": true,
+      "translation": [
+        0.003,
+        -0.0208,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.005,
+        0.0012,
+        0.0053
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.550000011920929,
+            0.5699999928474426,
+            0.6000000238418579,
+            1.0
+          ]
+        },
+        "editor.model.v1": "right-stem-cap"
+      }
+    },
+    {
+      "id": "right-tip",
+      "parent": "right-earbud",
+      "name": "right-tip",
+      "active": true,
+      "translation": [
+        -0.008,
+        0.002,
+        0.006
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.012,
+        0.011,
+        0.012
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.8600000143051147,
+            0.8700000047683716,
+            0.8799999952316284,
+            1.0
+          ]
+        },
+        "editor.model.v1": "right-tip"
+      }
+    },
+    {
+      "id": "right-sound-opening",
+      "parent": "right-earbud",
+      "name": "right-sound-opening",
+      "active": true,
+      "translation": [
+        -0.009,
+        0.002,
+        0.0116
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0058,
+        0.0058,
+        0.0007
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "right-sound-opening"
+      }
+    },
+    {
+      "id": "right-outer-vent",
+      "parent": "right-earbud",
+      "name": "right-outer-vent",
+      "active": true,
+      "translation": [
+        0.003,
+        0.008,
+        0.0076
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.19866933,
+        0.9800666
+      ],
+      "scale": [
+        0.005,
+        0.0027,
+        0.0012
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "right-outer-vent"
+      }
+    },
+    {
+      "id": "right-skin-sensor",
+      "parent": "right-earbud",
+      "name": "right-skin-sensor",
+      "active": true,
+      "translation": [
+        -0.004,
+        -0.002,
+        0.0076
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0028,
+        0.0037,
+        0.001
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "right-skin-sensor"
+      }
+    },
+    {
+      "id": "right-stem-mic",
+      "parent": "right-earbud",
+      "name": "right-stem-mic",
+      "active": true,
+      "translation": [
+        0.003,
+        -0.016,
+        0.0028
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.0014,
+        0.003,
+        0.0005
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.017999999225139618,
+            0.02199999988079071,
+            0.026000000536441803,
+            1.0
+          ]
+        },
+        "editor.model.v1": "right-stem-mic"
+      }
+    },
+    {
+      "id": "reconstruction-camera",
+      "parent": null,
+      "name": "Reconstruction camera",
+      "active": true,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {
+        "editor.camera.v1": {
+          "distance": 0.1599999964237213,
+          "legacy": false,
+          "perspective": true,
+          "pitch": 0.18000000715255737,
+          "target": [
+            0.0,
+            0.04600000008940697,
+            0.0
+          ],
+          "yaw": 0.3199999928474426
+        }
+      }
+    }
+  ]
+}

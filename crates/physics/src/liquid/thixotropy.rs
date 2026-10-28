@@ -16,7 +16,7 @@ pub struct Thixotropy {
     pub broken_yield_ratio: f64,
 }
 impl Thixotropy {
-    fn valid(self) -> bool {
+    pub(super) fn valid(self) -> bool {
         [self.recovery_rate, self.breakdown]
             .iter()
             .all(|v| v.is_finite() && *v >= 0.0)

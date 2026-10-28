@@ -4,6 +4,12 @@ use crate::{Behavior, BehaviorRunner, NodeId, SceneCommands, SceneGraph, SceneGr
 use glam::Mat4;
 use std::collections::HashMap;
 use voxy_time::{SimulationClock, TimeDrop, TimeFrame};
+#[path = "simulation_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::SimulationPresentationCheckpoint;
+#[path = "scene_simulation_checkpoint.rs"]
+mod scene_checkpoint;
+pub use scene_checkpoint::{SceneCheckpointError, SceneSimulationCheckpoint};
 
 #[derive(Clone, Copy, Debug, PartialEq, thiserror::Error)]
 #[error("scene simulation error: {self:?}")]
@@ -159,6 +165,91 @@ impl SceneSimulation {
         self.behaviors.attach(scene, owner, behavior)?;
         Ok(())
     }
+    /// Exact fixed-step clock state for an enclosing whole-session checkpoint.
+    /// # Errors
+    /// Rejects foreign/stopped scenes or invalid clock configuration/state.
+    pub fn clock_checkpoint(&self, scene: &SceneGraph) -> Result<[u64; 10], SimulationError> {
+        self.validate(scene)?;
+        if self.stopped {
+            return Err(SimulationError::Stopped);
+        }
+        let clock = self
+            .clock
+            .checkpoint(self.step)
+            .ok_or(SimulationError::InvalidConfiguration)?;
+        let budget =
+            u64::try_from(self.max_steps).map_err(|_| SimulationError::InvalidConfiguration)?;
+        Ok(std::array::from_fn(
+            |i| if i < 9 { clock[i] } else { budget },
+        ))
+    }
+    /// Restore clock state only. Scene/interpolation/behavior state must be
+    /// restored by the enclosing session transaction; this does not reset it.
+    /// # Errors
+    /// Rejects foreign/stopped scenes, changed fixed-step/catch-up configuration or invalid
+    /// checkpoint data without changing the clock.
+    pub fn restore_clock_checkpoint(
+        &mut self,
+        scene: &SceneGraph,
+        words: [u64; 10],
+    ) -> Result<(), SimulationError> {
+        self.validate(scene)?;
+        if self.stopped {
+            return Err(SimulationError::Stopped);
+        }
+        if u64::try_from(self.max_steps).ok() != Some(words[9])
+            || !self
+                .clock
+                .restore_checkpoint(std::array::from_fn(|i| words[i]), self.step)
+        {
+            return Err(SimulationError::InvalidConfiguration);
+        }
+        Ok(())
+    }
+
+    /// Capture opted-in behaviors with their attachment/lifecycle state.
+    /// # Errors
+    /// Rejects foreign/stopped scenes, unsupported behaviors and codec/budget errors.
+    pub fn behavior_checkpoint(
+        &self,
+        scene: &SceneGraph,
+        identify: impl Fn(NodeId) -> Option<crate::ObjectId>,
+        max_bytes: usize,
+    ) -> Result<crate::BehaviorCheckpoint, crate::BehaviorCheckpointError> {
+        self.validate(scene)?;
+        if self.stopped {
+            return Err(SimulationError::Stopped.into());
+        }
+        self.behaviors
+            .checkpoint(scene, identify, self.max_behaviors, max_bytes)
+    }
+    /// Install restored behaviors into a fresh empty simulation without awake or
+    /// lifecycle replay. Whole-session loading must stage this simulation first.
+    /// # Errors
+    /// Rejects nonempty/stopped/foreign targets and invalid saved participants.
+    /// Existing live behaviors are never silently replaced or dropped.
+    pub fn restore_behavior_checkpoint(
+        &mut self,
+        scene: &SceneGraph,
+        saved: &crate::BehaviorCheckpoint,
+        registry: &crate::BehaviorCheckpointRegistry,
+        resolve: impl Fn(&crate::ObjectId) -> Option<NodeId>,
+        max_bytes: usize,
+    ) -> Result<(), crate::BehaviorCheckpointError> {
+        self.validate(scene)?;
+        if self.stopped {
+            return Err(SimulationError::Stopped.into());
+        }
+        if !self.behaviors.is_empty() {
+            return Err(crate::BehaviorCheckpointError::Invalid(
+                "target behavior runner is not empty".into(),
+            ));
+        }
+        let candidate = registry.prepare(scene, saved, resolve, self.max_behaviors, max_bytes)?;
+        self.behaviors = candidate;
+        Ok(())
+    }
+
     pub fn commands(&mut self) -> &mut SceneCommands {
         &mut self.commands
     }
@@ -871,5 +962,75 @@ mod tests {
             assert_eq!(cached.to_cols_array(), direct.to_cols_array(), "{id:?}");
         }
         assert!(cache.worlds.iter().flatten().count() >= ids.len());
+    }
+}
+
+#[cfg(test)]
+mod clock_checkpoint_tests {
+    use super::*;
+    fn limits() -> SimulationLimits {
+        SimulationLimits {
+            fixed_step: 1. / 60.,
+            max_steps: 2,
+            max_behaviors: 0,
+            max_commands: 0,
+        }
+    }
+    #[test]
+    fn scene_clock_checkpoint_json_continues_schedule_on_new_scene() {
+        let mut scene = SceneGraph::new(1);
+        let mut original = SceneSimulation::new(&scene, limits()).unwrap();
+        original.clock().set_target(3.);
+        for _ in 0..7 {
+            original.advance(&mut scene, 0.011).unwrap();
+        }
+        let words = original.clock_checkpoint(&scene).unwrap();
+        let text = serde_json::to_string(&words).unwrap();
+        let words = serde_json::from_str(&text).unwrap();
+        let mut changed_limits = limits();
+        changed_limits.max_steps = 3;
+        let mut incompatible = SceneSimulation::new(&scene, changed_limits).unwrap();
+        assert!(
+            incompatible
+                .restore_clock_checkpoint(&scene, words)
+                .is_err()
+        );
+        let mut other_scene = SceneGraph::new(1);
+        let mut resumed = SceneSimulation::new(&other_scene, limits()).unwrap();
+        resumed
+            .restore_clock_checkpoint(&other_scene, words)
+            .unwrap();
+        assert!(resumed.restore_clock_checkpoint(&scene, words).is_err());
+        for i in 0..120 {
+            let elapsed = [0.003, 0.017, 0.25][i % 3];
+            let a = original.advance(&mut scene, elapsed).unwrap();
+            let b = resumed.advance(&mut other_scene, elapsed).unwrap();
+            assert_eq!(a.time.steps, b.time.steps);
+            assert_eq!(a.time.alpha.to_bits(), b.time.alpha.to_bits());
+            assert_eq!(
+                a.dropped.real_seconds.to_bits(),
+                b.dropped.real_seconds.to_bits()
+            );
+            assert_eq!(
+                a.dropped.simulation_seconds.to_bits(),
+                b.dropped.simulation_seconds.to_bits()
+            );
+        }
+        let before = resumed.clock_checkpoint(&other_scene).unwrap();
+        let mut invalid = before;
+        invalid[0] = 2;
+        assert!(
+            resumed
+                .restore_clock_checkpoint(&other_scene, invalid)
+                .is_err()
+        );
+        assert_eq!(resumed.clock_checkpoint(&other_scene).unwrap(), before);
+        resumed.stop(&mut other_scene).unwrap();
+        assert!(resumed.clock_checkpoint(&other_scene).is_err());
+        assert!(
+            resumed
+                .restore_clock_checkpoint(&other_scene, before)
+                .is_err()
+        );
     }
 }

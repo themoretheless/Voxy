@@ -4,6 +4,15 @@ use crate::{NodeId, SceneGraph, SceneGraphError};
 /// Hooks execute in attachment order. Hooks may edit the scene; activity and handle
 /// validity are checked again before start and update. Panics are not recovered.
 pub trait Behavior: Send + std::fmt::Debug {
+    /// Explicit opt-in state capture. Default refusal prevents silent state loss.
+    /// # Errors
+    /// Reports unsupported behaviors or a behavior-owned codec failure.
+    fn checkpoint(&self) -> Result<crate::BehaviorState, crate::BehaviorCheckpointError> {
+        Err(crate::BehaviorCheckpointError::Unsupported(
+            std::any::type_name::<Self>().into(),
+        ))
+    }
+
     fn awake(&mut self, _scene: &mut SceneGraph, _owner: NodeId) {}
     fn on_enable(&mut self, _scene: &mut SceneGraph, _owner: NodeId) {}
     fn start(&mut self, _scene: &mut SceneGraph, _owner: NodeId) {}
@@ -25,11 +34,11 @@ pub trait Behavior: Send + std::fmt::Debug {
 }
 
 #[derive(Debug)]
-struct Entry {
-    owner: NodeId,
-    behavior: Box<dyn Behavior>,
-    enabled: bool,
-    started: bool,
+pub(crate) struct Entry {
+    pub(crate) owner: NodeId,
+    pub(crate) behavior: Box<dyn Behavior>,
+    pub(crate) enabled: bool,
+    pub(crate) started: bool,
 }
 
 /// A scheduler owns behavior instances; `SceneGraph` owns data components.
@@ -39,11 +48,12 @@ struct Entry {
 /// destroy callbacks are needed; Rust Drop alone does not dispatch callbacks.
 #[derive(Debug, Default)]
 pub struct BehaviorRunner {
-    entries: Vec<Entry>,
+    pub(crate) entries: Vec<Entry>,
 }
 impl BehaviorRunner {
     /// Awake runs immediately, including for inactive nodes. Enable/start are
-    /// deferred until sync/update. Behaviors added by user code are not serialized.
+    /// deferred until sync/update. Scene documents do not serialize behaviors;
+    /// explicit runtime checkpoints require opt-in behavior codecs.
     /// # Errors
     /// Rejects stale or foreign handles before calling awake.
     pub fn attach<B: Behavior + 'static>(

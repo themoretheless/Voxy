@@ -133,7 +133,7 @@ fn collider_template(
 #[derive(Clone, Debug, PartialEq)]
 pub struct SceneLiquidRuntime {
     scene: SceneId,
-    sources: BTreeMap<NodeId, Source>,
+    sources: Vec<(NodeId, Source)>,
     liquid: Liquid,
     body: Vec<BodyOwner>,
 }
@@ -1873,7 +1873,7 @@ impl SceneLiquidRuntime {
             config,
         )
         .map_err(|e| format!("liquid world: {e:?}"))?;
-        let mut sources = BTreeMap::new();
+        let mut sources = Vec::new();
         for (node, descriptor) in scene.components::<LiquidSource>() {
             if sources.len() >= max_sources {
                 return Err("scene liquid source budget exceeded".into());
@@ -1885,15 +1885,16 @@ impl SceneLiquidRuntime {
             let emitter = descriptor
                 .prepare(position, slot)
                 .map_err(|e| format!("liquid source: {e:?}"))?;
-            sources.insert(
+            sources.push((
                 node,
                 Source {
                     descriptor: descriptor.clone(),
                     emitter,
                     position,
                 },
-            );
+            ));
         }
+        sources.sort_by_key(|(node, _)| *node);
         Ok(Self {
             scene: scene.identity(),
             sources,
@@ -1908,7 +1909,10 @@ impl SceneLiquidRuntime {
     }
     #[must_use]
     pub fn source_elapsed(&self, node: NodeId) -> Option<f64> {
-        self.sources.get(&node).map(|s| s.emitter.elapsed())
+        self.sources
+            .iter()
+            .find(|(id, _)| *id == node)
+            .map(|(_, source)| source.emitter.elapsed())
     }
 
     /// Validate the runtime belongs to this scene and still owns its admitted sources.
@@ -2429,3 +2433,6 @@ impl SceneLiquidRuntime {
 
 #[cfg(test)]
 mod tests;
+
+mod checkpoint;
+pub use checkpoint::{SceneLiquidCheckpoint, SceneLiquidCheckpointLimits, SceneLiquidWireLimits};

@@ -165,13 +165,14 @@ impl AudioPreparation {
         let reload = super::audio_reload::AudioReload::new(
             project,
             self.worker,
-            self.recipes.keys().cloned().collect(),
+            self.recipes,
             &self.catalog,
         )?;
         Ok(AudioPlay {
             catalog: self.catalog,
             runtime,
             output,
+            offline_output: None,
             rate,
             reload: Some(reload),
             remainder: 0,
@@ -185,6 +186,7 @@ pub(super) struct AudioPlay {
     pub(super) catalog: AssetCatalog<ImportedAsset<Clip>>,
     runtime: SceneAudioRuntime,
     reload: Option<super::audio_reload::AudioReload>,
+    offline_output: Option<voxy_audio_device::OfflineOutput>,
     output: Option<(
         voxy_audio_device::OutputConnection,
         voxy_audio_device::PcmPump,
@@ -195,6 +197,55 @@ pub(super) struct AudioPlay {
     pub(super) peak: f32,
 }
 impl AudioPlay {
+    pub(crate) fn attach_prepared_native_output(
+        &mut self,
+        connection: voxy_audio_device::OutputConnection,
+    ) -> Result<(), EditorError> {
+        if self.output.is_some() || self.rate != connection.sample_rate() {
+            return Err("native playback output rate or owner mismatch".into());
+        }
+        self.output = Some((connection, voxy_audio_device::PcmPump::new(256)?));
+        Ok(())
+    }
+    pub(crate) fn stage_output_publication(
+        &mut self,
+        prepared: &mut voxy_audio_device::PreparedOutputCheckpoint,
+        frozen: &mut Option<voxy_audio_device::FrozenOutputQueue>,
+    ) -> Result<Option<voxy_audio_device::ReadyOutputPublication>, EditorError> {
+        let (connection, pump) = self.output.as_ref().ok_or("missing staged native output")?;
+        Ok(prepared.stage_publication(connection, frozen, pump)?)
+    }
+    pub(crate) fn publish_ready_output(
+        &mut self,
+        publication: voxy_audio_device::ReadyOutputPublication,
+    ) -> voxy_audio_device::FrozenOutputQueue {
+        let (_, pump) = self.output.as_mut().expect("admitted native output owner");
+        publication.publish(pump).0
+    }
+    #[cfg(test)]
+    pub(crate) fn capture_native_output(
+        &self,
+        frozen: &mut voxy_audio_device::FrozenOutputQueue,
+        max_bytes: usize,
+    ) -> Result<voxy_audio_device::OutputCheckpoint, EditorError> {
+        let (connection, pump) = self.output.as_ref().ok_or("missing native output")?;
+        voxy_audio_device::OutputCheckpoint::capture(
+            connection,
+            frozen,
+            pump,
+            voxy_audio_device::OutputCheckpointLimits {
+                max_bytes,
+                max_queue_frames: 4096,
+                max_pump_frames: 256,
+                sample_rate: self.rate,
+            },
+        )?
+        .ok_or_else(|| "native output queue not ready".into())
+    }
+    pub(crate) fn output_connection(&self) -> Option<&voxy_audio_device::OutputConnection> {
+        self.output.as_ref().map(|(connection, _)| connection)
+    }
+
     pub(super) fn prepare(
         scene: &SceneGraph,
         project: &AuthoringProject,
@@ -251,7 +302,7 @@ impl AudioPlay {
         let reload = super::audio_reload::AudioReload::new(
             project,
             project.audio_worker(rate, recipes.clone())?,
-            recipes.keys().cloned().collect(),
+            recipes,
             &catalog,
         )?;
         Ok(Some(Self {
@@ -259,6 +310,7 @@ impl AudioPlay {
             catalog,
             runtime: SceneAudioRuntime::new(rate, 128, 16)?,
             output,
+            offline_output: None,
             rate,
             remainder: 0,
             frames: 0,
@@ -330,17 +382,9 @@ impl AudioPlay {
             &extract_scene_audio(scene, 128)?,
             &self.catalog,
         )?;
+        let (budget, remainder) = self.checkpoint_clock().sample_budget(steps)?;
+        self.remainder = remainder;
         if let Some((connection, pump)) = &mut self.output {
-            let frames = self
-                .remainder
-                .checked_add(
-                    u64::try_from(steps)?
-                        .checked_mul(u64::from(self.rate))
-                        .ok_or("audio step overflow")?,
-                )
-                .ok_or("audio step overflow")?;
-            let budget = usize::try_from(frames / 60)?;
-            self.remainder = frames % 60;
             let report = pump.pump(connection.sender(), budget, |block| {
                 self.runtime.render(block);
                 self.frames = self.frames.saturating_add(block.len() as u64);
@@ -362,10 +406,18 @@ impl AudioPlay {
             return Ok(());
         }
         let mut output = [[0.; 2]; 800];
-        for _ in 0..steps {
-            self.runtime.render(&mut output);
-            self.frames = self.frames.saturating_add(800);
-            self.peak = output
+        let consumed = self
+            .offline_output
+            .as_mut()
+            .map_or(0, |output| output.discard_frames(budget));
+        let mut remaining = budget - consumed;
+        while remaining != 0 {
+            let count = remaining.min(output.len());
+            let block = &mut output[..count];
+            self.runtime.render(block);
+            self.frames = self.frames.saturating_add(count as u64);
+            remaining -= count;
+            self.peak = block
                 .iter()
                 .flatten()
                 .fold(self.peak, |peak, sample| peak.max(sample.abs()));
@@ -387,6 +439,7 @@ mod tests {
             runtime: SceneAudioRuntime::new(48000, 128, 16).unwrap(),
             reload: None,
             output: None,
+            offline_output: None,
             rate: 48000,
             remainder: 0,
             frames: 0,
@@ -449,3 +502,14 @@ mod tests {
         assert_eq!(budget, before);
     }
 }
+
+#[path = "audio_clock_checkpoint.rs"]
+mod clock_checkpoint;
+#[allow(unused_imports)]
+pub(super) use clock_checkpoint::AudioClockCheckpoint;
+
+#[path = "audio_playback_checkpoint.rs"]
+pub(super) mod playback_checkpoint;
+
+#[path = "audio_owner_checkpoint.rs"]
+pub(crate) mod owner_checkpoint;

@@ -1061,3 +1061,7 @@ mod tests {
         assert!(limited.particles.is_empty());
     }
 }
+
+#[path = "emission_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::PulsedEmitterCheckpoint;

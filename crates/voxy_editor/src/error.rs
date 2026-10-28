@@ -13,6 +13,9 @@ pub enum EditorError {
     /// The scene graph rejected a node lookup or edit.
     #[error(transparent)]
     SceneGraph(#[from] voxy_scene::SceneGraphError),
+    /// A scene document or authoring history checkpoint failed validation.
+    #[error(transparent)]
+    Document(#[from] voxy_scene::DocumentError),
     /// A gameplay runtime call failed.
     #[error(transparent)]
     Gameplay(#[from] voxy_gameplay::GameplayError),

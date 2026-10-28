@@ -517,6 +517,7 @@ fn admitted_pivot_pose_stages_contact_only_for_reachable_ik() {
     assert!(point.distance(candidate.contact.position) < 2e-6);
     assert_eq!(state, candidate.state);
     let original_frame = voxy_animation::AnimatorFrame {
+        properties: Default::default(),
         pose: source.clone(),
         skin_matrices: source.skin_matrices(&rig).unwrap(),
         root_motion: Vec3::new(0.1, 0., 0.2),

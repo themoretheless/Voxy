@@ -1,33 +1,60 @@
 //! Native authoring viewport; IO/decoding is asynchronous, publication/upload is owner-only.
 pub mod project;
+#[cfg(test)]
+mod project_prefab_tests;
 mod app {
     mod audio_control;
     mod authoring;
+    mod authoring_checkpoint;
     mod game_ui;
     mod inspector;
+    mod model_notice;
+    pub(crate) mod model_relink;
+    pub(crate) mod model_reload;
     mod picking_drag;
     mod play_mode;
     mod residency;
+    pub(crate) mod resource_checkpoint;
+    pub(crate) mod restore_barrier;
+    pub(crate) mod restore_guard;
+    pub(crate) mod snapshot_commands;
     mod viewport;
 }
 mod error;
 pub use error::EditorError;
 mod animation_preview;
+mod animation_sources;
+mod asset_checkpoint_wire;
 mod audio_play;
 mod audio_reload;
 mod audio_session;
 mod audio_settings;
 mod authoring_session;
 mod camera;
+mod camera_authoring;
+#[cfg(test)]
+mod camera_authoring_tests;
 mod component_collections;
 mod component_fields;
 mod fog_draw;
+mod follow_camera;
+#[cfg(test)]
+mod follow_camera_tests;
+mod frame_pacing;
 mod frame_styles;
 mod game_host;
+mod headless_game;
+mod ui_action_codecs;
+pub use headless_game::{AnimationSnapshot, HeadlessGame};
 #[cfg(test)]
 mod game_host_tests;
 mod liquid_draw;
+mod locomotion;
+#[cfg(test)]
+mod locomotion_tests;
+pub use locomotion::ModelLocomotion;
 mod lod_smoke;
+mod package_models;
 mod packaged_game;
 mod play_session;
 pub use game_host::{BehaviorSetup, GameHost, run_project_with_host};
@@ -48,6 +75,7 @@ mod foot_placement;
 mod gameplay_smoke;
 mod gizmo;
 mod gpu_model;
+mod gpu_source_bindings;
 mod model_playback;
 mod retarget_authoring;
 mod retarget_profile;
@@ -81,9 +109,24 @@ mod selection;
 pub use selection::selection_outline;
 
 /// A scene instance references a logical resource independently of its geometry revision.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ModelInstance {
+    #[serde(with = "model_instance_asset_id")]
     pub asset: voxy_assets::AssetId,
+}
+mod model_instance_asset_id {
+    pub fn serialize<S: serde::Serializer>(
+        id: &voxy_assets::AssetId,
+        serializer: S,
+    ) -> Result<S::Ok, S::Error> {
+        serializer.serialize_str(&id.0)
+    }
+    pub fn deserialize<'de, D: serde::Deserializer<'de>>(
+        deserializer: D,
+    ) -> Result<voxy_assets::AssetId, D::Error> {
+        <String as serde::Deserialize>::deserialize(deserializer).map(voxy_assets::AssetId)
+    }
 }
 /// Index of an imported hierarchy node in a shared model resource.
 #[derive(Clone, Copy, Debug, serde::Serialize, serde::Deserialize)]
@@ -98,9 +141,11 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
+#[cfg(test)]
+use voxy_assets::AssetLocations;
 use voxy_assets::{
-    AssetCatalog, AssetError, AssetId, AssetImportWorker, AssetLocations, FileInputs,
-    ImportedAsset, PublicationError, SourceDependencies, SourcePath, SourcePollWorker,
+    AssetCatalog, AssetError, AssetId, AssetImportWorker, FileInputs, ImportedAsset,
+    PublicationError, SourceDependencies, SourcePath, SourcePollWorker,
 };
 use voxy_gameplay::{BoxCollider, CharacterBody, CharacterPhysics};
 #[cfg(test)]
@@ -111,8 +156,7 @@ use voxy_render::{
 };
 use voxy_scene::{
     Behavior, ComponentRegistry, NodeId, ObjectId, SceneDocument, SceneEdit, SceneExtraction,
-    SceneGraph, SceneHistory, SceneObject, SceneSimulation, SimulationLimits, Transform,
-    save_scene_file,
+    SceneGraph, SceneHistory, SceneObject, SceneSimulation, Transform, save_scene_file,
 };
 #[cfg(test)]
 use voxy_scene::{PickBounds, PickViewport};
@@ -138,6 +182,7 @@ fn model_registry() -> Result<ComponentRegistry, voxy_scene::DocumentError> {
     registry.register::<String>("editor.model.v1")?;
     registry.register::<ModelPart>("editor.model-part.v1")?;
     registry.register::<ModelAnimation>("editor.model-animation.v1")?;
+    registry.register::<ModelLocomotion>("editor.model-locomotion.v1")?;
     registry.register::<ModelFootPlacement>("editor.foot-placement.v1")?;
     registry.register::<ModelRetarget>("editor.model-retarget.v1")?;
     registry.register::<SceneMaterial>("editor.material.v1")?;
@@ -151,7 +196,10 @@ fn model_registry() -> Result<ComponentRegistry, voxy_scene::DocumentError> {
 }
 #[derive(Debug)]
 struct Graphics {
-    host: SceneSurface,
+    adapter: wgpu::Adapter,
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    host: Option<SceneSurface>,
     fog: Option<fog_draw::FogDraw>,
     renderer: SceneRenderer,
     models: BTreeMap<AssetId, ModelGraphics>,
@@ -178,6 +226,55 @@ struct Graphics {
     ui_presented: bool,
 }
 impl Graphics {
+    fn new(
+        adapter: wgpu::Adapter,
+        device: wgpu::Device,
+        queue: wgpu::Queue,
+        mut renderer: SceneRenderer,
+        host: Option<SceneSurface>,
+        panel_texture: Option<SceneTexture>,
+        budgets: (u64, u64),
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let (image_budget, geometry_budget) = budgets;
+        pollster::block_on(renderer.reload_shader(&device, include_str!("material.wgsl")))?;
+        let texture = renderer.upload_texture(&device, &queue, 1, 1, &[255; 4])?;
+        let gizmo_geometry = renderer.upload_mesh(&device, &translation_gizmo()?)?;
+        let gizmo_transform = renderer.create_transform(&device, Mat4::IDENTITY)?;
+        let panel_transform = renderer.create_transform(&device, Mat4::IDENTITY)?;
+        let animated_models = animated_models::AnimatedModels::new(&renderer)?;
+        let mut graphics = Self {
+            animated_models,
+            adapter,
+            device,
+            queue,
+            host,
+            fog: None,
+            renderer,
+            models: BTreeMap::new(),
+            residency_cache: gpu_model::ResidencyCache::with_budget(image_budget),
+            residency_errors: BTreeMap::new(),
+            optical_liquids: BTreeMap::new(),
+            liquid_revision: None,
+            liquid_geometry: None,
+            liquid_transforms: BTreeMap::new(),
+            gizmo_geometry,
+            gizmo_transforms: BTreeMap::from([(0, gizmo_transform)]),
+            texture,
+            transforms: HashMap::new(),
+            lod_history: HashMap::new(),
+            lod_pending: BTreeSet::new(),
+            panel_geometry: None,
+            panel_texture,
+            panel_transform,
+            ui_draws: Vec::new(),
+            ui_focus: Vec::new(),
+            ui_focus_key: None,
+            ui_focus_deferred: None,
+            ui_presented: false,
+        };
+        graphics.residency_cache.geometry_budget = geometry_budget;
+        Ok(graphics)
+    }
     fn geometry_bytes(&self) -> u64 {
         self.models
             .values()
@@ -212,6 +309,7 @@ impl Graphics {
 }
 #[derive(Debug)]
 struct ModelGraphics {
+    publication: Option<Arc<ImportedAsset<import::EditorAsset>>>,
     geometry: gpu_model::ModelGeometry,
     outline: Option<SceneGeometry>,
     parts: BTreeMap<u32, PartGraphics>,
@@ -254,10 +352,49 @@ impl ModelGraphics {
         }
     }
 }
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 enum InputRecipe {
     Direct,
     Manifest(AssetId),
+}
+
+impl InputRecipe {
+    fn spawn_worker(
+        &self,
+        root: &std::path::Path,
+    ) -> std::io::Result<AssetImportWorker<import::EditorAsset>> {
+        let recipe = self.clone();
+        AssetImportWorker::new(
+            FileInputs::new(root)?,
+            import::MODEL_INPUTS,
+            import::MODEL_INPUT_BYTES,
+            move |asset, provider, inputs| recipe.load(asset, provider, inputs),
+        )
+    }
+    fn load(
+        &self,
+        asset: &AssetId,
+        provider: &FileInputs,
+        inputs: &mut voxy_assets::ImportInputs,
+    ) -> Result<import::EditorAsset, String> {
+        let source_path = match self {
+            InputRecipe::Direct => SourcePath::new(asset.0.clone()).map_err(|e| e.to_string())?,
+            InputRecipe::Manifest(manifest) => {
+                let snapshot = inputs
+                    .read(manifest.clone(), |id, limit| {
+                        provider.read(id, limit.min(import::MANIFEST_BYTES))
+                    })
+                    .map_err(|e| format!("{e:?}"))?;
+                let locations =
+                    import::manifest_locations(&snapshot.bytes).map_err(|e| e.to_string())?;
+                locations
+                    .source(asset)
+                    .cloned()
+                    .ok_or("logical resource not found in manifest")?
+            }
+        };
+        import::load(&source_path, provider, inputs).map_err(|e| e.to_string())
+    }
 }
 #[derive(Debug)]
 struct ModelDrag {
@@ -299,11 +436,13 @@ struct PanelInput {
     playing: bool,
     inspector: InspectorMode,
     texture_label: String,
+    resource_notice: Option<panels::ResourceNotice>,
     prefab_label: String,
     import_config: Option<voxy_gameplay::AudioImportConfig>,
     field: Option<(usize, String)>,
     scroll: usize,
     parenting: bool,
+    follow_pick: Option<[u8; 32]>,
 }
 #[derive(Debug)]
 struct SmokePlay {
@@ -333,6 +472,8 @@ struct App {
     game_ui_input: game_ui_input::GameUiInput,
     ui_action_setup: Option<voxy_gameplay::UiActionSetup>,
     behavior_setup: Option<BehaviorSetup>,
+    behavior_checkpoints: Arc<voxy_scene::BehaviorCheckpointRegistry>,
+    ui_action_checkpoints: Arc<voxy_gameplay::UiActionCheckpointRegistry>,
     retired_ui_workers: Vec<std::thread::JoinHandle<()>>,
     standalone: bool,
     keyboard_device: Option<winit::event::DeviceId>,
@@ -352,12 +493,28 @@ struct App {
     retarget_picker: Option<retarget_authoring::BonePicker>,
     tree_scroll: usize,
     parenting: Option<NodeId>,
+    follow_pick: Option<camera_authoring::FollowPick>,
+    follow_pick_epoch: u64,
     id: Option<AssetId>,
     catalog: AssetCatalog<ImportedAsset<import::EditorAsset>>,
+    import_recipe: InputRecipe,
+    pending_model: Option<app::model_reload::Pending>,
+    model_relink: Option<app::model_relink::Pending>,
+    model_relink_draft: Option<app::model_relink::Draft>,
+    retired_model_relink: Option<std::thread::JoinHandle<()>>,
+    model_relink_error: Option<(AssetId, String)>,
+    resource_checkpoint: Option<app::resource_checkpoint::Barrier>,
+    restore_barrier: Option<app::restore_barrier::RestoreBarrier>,
+    editor_save: Option<app::restore_barrier::save::PendingEditorSave>,
+    editor_load: Option<app::restore_barrier::load::PendingEditorLoad>,
+    snapshot_draft: Option<app::snapshot_commands::SnapshotDraft>,
+    snapshot_error: Option<String>,
     sources: SourceDependencies,
     imports: Option<AssetImportWorker<import::EditorAsset>>,
     watcher: Option<SourcePollWorker>,
     window: Option<Arc<Window>>,
+    window_occluded: bool,
+    presentation: frame_pacing::Presentation,
     graphics: Option<Graphics>,
     reload: BTreeSet<AssetId>,
     available: BTreeSet<AssetId>,
@@ -435,22 +592,8 @@ impl App {
         let available: std::collections::BTreeSet<AssetId> = match &recipe {
             InputRecipe::Direct => id.iter().cloned().collect(),
             InputRecipe::Manifest(manifest) => {
-                let bytes = FileInputs::new(root)?.read(manifest, 65536)?;
-                AssetLocations::from_json(std::str::from_utf8(&bytes)?, 128, 65536, 65536)?
-                    .bindings()
-                    .filter(|(_, source)| {
-                        std::path::Path::new(source.as_str())
-                            .extension()
-                            .and_then(|extension| extension.to_str())
-                            .is_some_and(|extension| {
-                                matches!(
-                                    extension.to_ascii_lowercase().as_str(),
-                                    "obj" | "gltf" | "glb" | "vmodel"
-                                )
-                            })
-                    })
-                    .map(|(id, _)| id.clone())
-                    .collect()
+                let bytes = FileInputs::new(root)?.read(manifest, import::MANIFEST_BYTES)?;
+                import::model_inventory(&bytes)?
             }
         };
         if id.as_ref().is_some_and(|id| !available.contains(id)) {
@@ -459,34 +602,8 @@ impl App {
         let authoring_project =
             prefab_authoring::AuthoringProject::with_registry(root, &recipe, registry)?;
         let reload = id.iter().cloned().collect();
-        let imports = AssetImportWorker::new(
-            FileInputs::new(root)?,
-            34,
-            32 * 1024 * 1024,
-            move |asset, provider, inputs| {
-                let source_path = match &recipe {
-                    InputRecipe::Direct => {
-                        SourcePath::new(asset.0.clone()).map_err(|e| e.to_string())?
-                    }
-                    InputRecipe::Manifest(manifest) => {
-                        let snapshot = inputs
-                            .read(manifest.clone(), |id, limit| {
-                                provider.read(id, limit.min(65536))
-                            })
-                            .map_err(|e| format!("{e:?}"))?;
-                        let json =
-                            std::str::from_utf8(&snapshot.bytes).map_err(|e| e.to_string())?;
-                        let locations = AssetLocations::from_json(json, 128, 65536, 65536)
-                            .map_err(|e| e.to_string())?;
-                        locations
-                            .source(asset)
-                            .cloned()
-                            .ok_or("logical resource not found in manifest")?
-                    }
-                };
-                import::load(&source_path, provider, inputs).map_err(|e| e.to_string())
-            },
-        )?;
+        let import_recipe = recipe.clone();
+        let imports = recipe.spawn_worker(root)?;
         let mut scene = SceneGraph::new(scene_limits::OBJECTS);
         let mut instances = Vec::new();
         let mut object_ids = Vec::new();
@@ -524,6 +641,7 @@ impl App {
                 angular_motion: None,
                 animations: Default::default(),
                 simulation_ticks: 0,
+                follow_camera: None,
                 physics: None,
                 liquid: None,
                 liquid_optics: Vec::new(),
@@ -548,6 +666,8 @@ impl App {
             game_ui_input: game_ui_input::GameUiInput::new(),
             ui_action_setup: None,
             behavior_setup: None,
+            behavior_checkpoints: Default::default(),
+            ui_action_checkpoints: Arc::new(ui_action_codecs::registry()),
             retired_ui_workers: Vec::new(),
             standalone: false,
             keyboard_device: None,
@@ -567,12 +687,32 @@ impl App {
             retarget_picker: None,
             tree_scroll: 0,
             parenting: None,
+            follow_pick: None,
+            follow_pick_epoch: 0,
             id,
             catalog: AssetCatalog::new(128, 1)?,
             sources: SourceDependencies::new(128, 512),
             imports: Some(imports),
-            watcher: Some(SourcePollWorker::new(FileInputs::new(root)?, 257, 65536)?),
+            watcher: Some(SourcePollWorker::new(
+                FileInputs::new(root)?,
+                257,
+                import::SOURCE_BYTES,
+            )?),
+            import_recipe,
+            pending_model: None,
+            model_relink: None,
+            model_relink_draft: None,
+            retired_model_relink: None,
+            model_relink_error: None,
+            resource_checkpoint: None,
+            restore_barrier: None,
+            editor_save: None,
+            editor_load: None,
+            snapshot_draft: None,
+            snapshot_error: None,
             window: None,
+            window_occluded: false,
+            presentation: frame_pacing::Presentation::from_environment()?,
             graphics: None,
             reload,
             available,
@@ -610,7 +750,7 @@ impl App {
         registry: ComponentRegistry,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let registry = Arc::new(registry);
-        let opened = project::open(path, &registry)?;
+        let opened = project::open_for_editor(path, &registry)?;
         Self::from_open_project(&opened, registry)
     }
 
@@ -625,7 +765,8 @@ impl App {
             .ok_or("manifest path must be UTF-8")?;
         let recipe = InputRecipe::Manifest(SourcePath::new(manifest)?.observation_id());
         let mut app = Self::create_session(&opened.root, None, recipe, false, registry)?;
-        if let Err(error) = app.configure_scene(&opened.root.join(&opened.descriptor.startup_scene))
+        if let Err(error) =
+            app.configure_scene_for_editor(&opened.root.join(&opened.descriptor.startup_scene))
         {
             app.stop_workers()?;
             return Err(error);
@@ -662,16 +803,11 @@ impl App {
             size.width,
             size.height,
         ))?;
+        self.presentation.apply(&mut host)?;
         if self.msaa4 {
             host.enable_msaa4()?;
         }
-        let mut renderer = host.create_scene_renderer();
-        pollster::block_on(renderer.reload_shader(host.device(), include_str!("material.wgsl")))?;
-        let texture = renderer.upload_texture(host.device(), host.queue(), 1, 1, &[255; 4])?;
-
-        let gizmo_geometry = renderer.upload_mesh(host.device(), &translation_gizmo()?)?;
-        let gizmo_transform = renderer.create_transform(host.device(), Mat4::IDENTITY)?;
-        let panel_transform = renderer.create_transform(host.device(), Mat4::IDENTITY)?;
+        let renderer = host.create_scene_renderer();
         let panel_texture = if !self.standalone
             && (self.smoke_deadline.is_none()
                 || self.prefab_smoke.is_some()
@@ -686,42 +822,21 @@ impl App {
         } else {
             None
         };
-        let animated_models = animated_models::AnimatedModels::new(&renderer)?;
-        self.graphics = Some(Graphics {
-            animated_models,
-            host,
-            fog: None,
+        let budgets = (
+            std::env::var("VOXY_GPU_IMAGE_BUDGET_BYTES")
+                .map_or(Ok(256 * 1024 * 1024), |value| value.parse::<u64>())?,
+            std::env::var("VOXY_GPU_GEOMETRY_BUDGET_BYTES")
+                .map_or(Ok(256 * 1024 * 1024), |value| value.parse::<u64>())?,
+        );
+        self.graphics = Some(Graphics::new(
+            host.adapter().clone(),
+            host.device().clone(),
+            host.queue().clone(),
             renderer,
-            models: BTreeMap::new(),
-            residency_cache: gpu_model::ResidencyCache::with_budget(
-                std::env::var("VOXY_GPU_IMAGE_BUDGET_BYTES")
-                    .map_or(Ok(256 * 1024 * 1024), |value| value.parse::<u64>())?,
-            ),
-            residency_errors: BTreeMap::new(),
-            optical_liquids: BTreeMap::new(),
-            liquid_revision: None,
-            liquid_geometry: None,
-            liquid_transforms: BTreeMap::new(),
-            gizmo_geometry,
-            gizmo_transforms: BTreeMap::from([(0, gizmo_transform)]),
-            texture,
-            transforms: HashMap::new(),
-            lod_history: HashMap::new(),
-            lod_pending: BTreeSet::new(),
-            panel_geometry: None,
+            Some(host),
             panel_texture,
-            panel_transform,
-            ui_draws: Vec::new(),
-            ui_focus: Vec::new(),
-            ui_focus_key: None,
-            ui_focus_deferred: None,
-            ui_presented: false,
-        });
-        if let Some(graphics) = &mut self.graphics {
-            graphics.residency_cache.geometry_budget =
-                std::env::var("VOXY_GPU_GEOMETRY_BUDGET_BYTES")
-                    .map_or(Ok(256 * 1024 * 1024), |value| value.parse::<u64>())?;
-        }
+            budgets,
+        )?);
         window.set_visible(true);
         window.focus_window();
         window.request_redraw();
@@ -734,146 +849,47 @@ impl App {
 
     #[allow(clippy::too_many_lines)]
     fn tick(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        self.poll_audio_device()?;
-        if let Some(audio) = self.audio.play_mut() {
-            audio.poll_reload(&self.scene)?;
+        self.poll_model_relink();
+        if !self.restore_audio_frozen() {
+            self.poll_audio_device()?;
+            if let Some(audio) = self.audio.play_mut() {
+                audio.poll_reload(&self.scene)?;
+            }
         }
         self.queue_retarget_draft_source();
-        for (_, profile) in self.scene.components::<ModelRetarget>() {
-            let source = AssetId(profile.source.clone());
-            if self.catalog.status(&source).is_none() {
-                self.reload.insert(source);
+        for asset in self.required_cpu_model_assets() {
+            if self.catalog.status(&asset).is_none() {
+                self.reload.insert(asset);
             }
         }
         // Apply known invalidations before accepting any ready import completion.
         self.poll_sources()?;
+        self.poll_pending_model()?;
+        if self.pending_model.is_some() {
+            return Ok(());
+        }
         let Some(imports) = &mut self.imports else {
             return Ok(());
         };
         if let Some(mut completion) = imports.try_result()? {
-            if let Ok(candidate) = &completion.result {
-                let output = completion.ticket.asset();
-                let referenced_parts: Vec<_> = self
-                    .scene
-                    .components::<ModelPart>()
-                    .filter(|(node, _)| {
-                        self.scene
-                            .component::<ModelInstance>(*node)
-                            .ok()
-                            .flatten()
-                            .is_some_and(|model| &model.asset == output)
-                    })
-                    .map(|(_, part)| part.node)
-                    .collect();
-                let invalid_part = referenced_parts.iter().any(|part| {
-                    *part != u32::MAX
-                        && usize::try_from(*part)
-                            .map_or(true, |index| index >= candidate.value().nodes.len())
-                });
-                let changed_hierarchy = !referenced_parts.is_empty()
-                    && self.catalog.snapshot(output).is_some_and(|previous| {
-                        previous.value().nodes.len() != candidate.value().nodes.len()
-                            || previous
-                                .value()
-                                .nodes
-                                .iter()
-                                .zip(&candidate.value().nodes)
-                                .any(|(a, b)| a.parent != b.parent || a.name != b.name)
-                    });
-                if invalid_part || changed_hierarchy {
-                    completion.result = completion.result.and_then(|candidate| Err(candidate.into_failed("imported hierarchy changed; preserve last good model and reimport explicitly".to_owned())));
-                }
+            if let Ok(candidate) = &completion.result
+                && let Err(error) =
+                    self.validate_reload_candidate(completion.ticket.asset(), candidate.value())
+            {
+                completion.result = completion
+                    .result
+                    .and_then(|candidate| Err(candidate.into_failed(error.to_string())));
             }
-            let output = completion.ticket.asset().clone();
-            let successful = completion.result.is_ok();
-            match self.catalog.complete_observed(
-                &mut self.sources,
-                &completion.ticket,
-                completion.result,
-            ) {
-                Ok(()) if successful => {
-                    let asset = self
-                        .catalog
-                        .snapshot(&output)
-                        .ok_or("missing published model")?;
-                    // Inspect the newly published mesh using disjoint fields;
-                    // the import queue remains mutably borrowed until tick ends.
-                    let required =
-                        self.scene
-                            .active_components::<ModelInstance>()
-                            .any(|(node, model)| {
-                                model.asset == output
-                                    && self.catalog.snapshot(&model.asset).is_none_or(|asset| {
-                                        asset
-                                            .value()
-                                            .mesh_for(
-                                                self.scene
-                                                    .component::<ModelPart>(node)
-                                                    .ok()
-                                                    .flatten()
-                                                    .map(|part| part.node),
-                                            )
-                                            .is_some()
-                                    })
-                            });
-                    if required && let Some(graphics) = &mut self.graphics {
-                        graphics.residency_cache.geometry_live = graphics.geometry_bytes();
-                        let model = ModelGraphics::upload(
-                            &graphics.renderer,
-                            &graphics.host,
-                            asset.value(),
-                            &mut graphics.residency_cache,
-                        );
-                        match model {
-                            Ok(model) => {
-                                graphics.models.insert(output.clone(), model);
-                                graphics.residency_errors.remove(&output);
-                            }
-                            Err(error) => {
-                                eprintln!("GPU MODEL RETAINED asset={} error={error}", output.0);
-                                graphics.residency_errors.insert(
-                                    output.clone(),
-                                    gpu_model::DeferredUpload::new(
-                                        &asset,
-                                        &graphics.residency_cache,
-                                        error.to_string(),
-                                    ),
-                                );
-                            }
-                        }
-                    }
-                    self.recovered |= self.failed_at.is_some();
-                    self.last_publication = Some(Instant::now());
-                    if let Some(window) = &self.window {
-                        window.set_title("Voxy — model loaded");
-                    }
-                    println!(
-                        "MODEL PUBLISHED frames={} first_x={} asset={}",
-                        self.frames,
-                        asset.value().mesh.vertices()[0].position[0],
-                        output.0
-                    );
-                }
-                Ok(()) => {
-                    self.failed_at.get_or_insert(self.frames);
-                    if let Some(window) = &self.window {
-                        window.set_title("Voxy — import failed; showing previous model");
-                    }
-                    println!(
-                        "MODEL FAILED frames={} last_good={}",
-                        self.frames,
-                        self.catalog.snapshot(&output).is_some()
-                    );
-                }
-                Err(PublicationError::Asset(AssetError::StaleTicket)) => {}
-                Err(error) => return Err(error.into()),
-            }
+            self.stage_or_complete_reload(completion.ticket, completion.result)?;
         }
+
         let imports = self
             .imports
             .as_mut()
             .ok_or("import worker disappeared during completion")?;
-        if !imports.is_busy()
+        if self.resource_checkpoint.is_none()
+            && self.pending_model.is_none()
+            && !imports.is_busy()
             && let Some(id) = self.reload.first().cloned()
         {
             let ticket = self.catalog.request(id.clone())?;
@@ -885,7 +901,9 @@ impl App {
                 Err(error) => return Err(error.into()),
             }
         }
-        self.synchronize_gpu_residency();
+        if self.pending_model.is_none() && !self.restore_play_frozen() {
+            self.synchronize_gpu_residency();
+        }
         Ok(())
     }
 
@@ -931,6 +949,13 @@ impl App {
 
     fn update_edit_title(&self) {
         if let Some(window) = &self.window {
+            if let Some(notice) = self.snapshot_path_notice() {
+                window.set_title(&format!(
+                    "Voxy — {} | {} | Enter confirms, Esc cancels",
+                    notice.lines[0], notice.lines[1]
+                ));
+                return;
+            }
             if self.audio.is_pending() {
                 window.set_title("Voxy — preparing audio; F6 cancels play");
                 return;
@@ -944,7 +969,7 @@ impl App {
                 return;
             }
             window.set_title(&format!(
-                "Voxy model viewport — instance {}/{} | view {}/{} | F4 split, F10 smoothing, D duplicate, R model, P parent, A active, F6 play/stop, Z undo, Y redo",
+                "Voxy model viewport — instance {}/{} | view {}/{} | F4 split, F10 smoothing, D duplicate, R model, P parent, A active, F6 play/stop, Z undo, Y redo; Ctrl/Cmd+Shift+S/O snapshot save/open",
                 if self.instances.is_empty() { 0 } else { self.selected + 1 },
                 self.instances.len(),
                 if self.split_views() { self.active_view + 1 } else { 1 },
@@ -954,10 +979,21 @@ impl App {
     }
 
     fn stop_workers(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        let mut save_errors = self.finish_editor_file_save();
+        save_errors.extend(self.finish_editor_file_load());
+        self.restore_barrier = None;
+        self.model_relink_draft = None;
         self.close_play_audio();
         self.retired_ui_workers.extend(self.ui_live.close());
         self.close_audio_device();
-        let mut errors = Vec::new();
+        let mut errors = save_errors;
+        let relink = self
+            .model_relink
+            .take()
+            .map(app::model_relink::Pending::close);
+        if let Err(error) = self.cancel_pending_model() {
+            errors.push(format!("model publication stop: {error}"));
+        }
         match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             self.play.stop_simulation(&mut self.scene)
         })) {
@@ -992,6 +1028,14 @@ impl App {
                 "poll worker panicked: {}",
                 panic_message(payload.as_ref())
             ));
+        }
+        for worker in relink.into_iter().chain(self.retired_model_relink.take()) {
+            if let Err(payload) = worker.join() {
+                errors.push(format!(
+                    "model relink worker panicked: {}",
+                    panic_message(payload.as_ref())
+                ));
+            }
         }
         errors.extend(self.audio.join_workers());
         for worker in self.retired_ui_workers.drain(..) {
@@ -1060,10 +1104,10 @@ impl ApplicationHandler for App {
                     panels.invalidate_presentation();
                 }
                 self.graphics.as_mut().map_or(Ok(()), |graphics| {
-                    graphics
-                        .host
-                        .resize(size.width, size.height)
-                        .map_err(|e| -> Box<dyn std::error::Error> { e.into() })
+                    graphics.host.as_mut().map_or(Ok(()), |host| {
+                        host.resize(size.width, size.height)
+                            .map_err(|e| -> Box<dyn std::error::Error> { e.into() })
+                    })
                 })
             }),
             WindowEvent::RedrawRequested => self.draw(),
@@ -1200,14 +1244,22 @@ impl ApplicationHandler for App {
                     self.finish_drag(true)
                 }
             }
-            WindowEvent::Occluded(true) => {
-                self.authoring.preview_seek = None;
-                if let Some(panels) = &mut self.panels {
-                    panels.invalidate_presentation();
+            WindowEvent::Occluded(occluded) => {
+                self.window_occluded = occluded;
+                if occluded {
+                    self.authoring.preview_seek = None;
+                    if let Some(panels) = &mut self.panels {
+                        panels.invalidate_presentation();
+                    }
+                    self.game_ui_input.cancel();
+                    self.camera_drag = None;
+                    self.finish_drag(false)
+                } else {
+                    if let Some(window) = &self.window {
+                        window.request_redraw();
+                    }
+                    Ok(())
                 }
-                self.game_ui_input.cancel();
-                self.camera_drag = None;
-                self.finish_drag(false)
             }
             WindowEvent::ModifiersChanged(modifiers) => {
                 self.modifiers = modifiers.state();
@@ -1235,6 +1287,27 @@ impl ApplicationHandler for App {
             } => {
                 self.keyboard_device = Some(device_id);
                 if let PhysicalKey::Code(key) = event.physical_key {
+                    if event.state == ElementState::Pressed {
+                        let command = if self.snapshot_draft.is_some() {
+                            self.snapshot_path_key(key, event.text.as_deref())
+                                .map(|()| true)
+                        } else if !event.repeat {
+                            self.snapshot_shortcut(key)
+                        } else {
+                            Ok(false)
+                        };
+                        match command {
+                            Ok(true) => return,
+                            Ok(false) => {}
+                            Err(error) => {
+                                self.report_snapshot_error(error);
+                                return;
+                            }
+                        }
+                    }
+                    if event.state == ElementState::Pressed && self.snapshot_escape(key) {
+                        return;
+                    }
                     if self
                         .game_ui_key(key, event.state, event.repeat)
                         .unwrap_or_else(|error| {
@@ -1367,11 +1440,13 @@ impl ApplicationHandler for App {
         }
     }
     fn about_to_wait(&mut self, events: &ActiveEventLoop) {
-        events.set_control_flow(ControlFlow::WaitUntil(
-            Instant::now() + Duration::from_millis(16),
-        ));
         if let Some(window) = &self.window {
+            let size = window.inner_size();
+            let drawable = !self.window_occluded && size.width > 0 && size.height > 0;
+            events.set_control_flow(frame_pacing::control_flow(drawable, Instant::now()));
             window.request_redraw();
+        } else {
+            events.set_control_flow(ControlFlow::Wait);
         }
     }
 }
@@ -1462,9 +1537,9 @@ pub fn export_project_package_with_host(
             .to_str()
             .ok_or("manifest must be UTF-8")?,
     )?;
-    let manifest_bytes = FileInputs::new(&opened.root)?.read(&manifest.observation_id(), 65536)?;
-    let locations =
-        AssetLocations::from_json(std::str::from_utf8(&manifest_bytes)?, 128, 65536, 65536)?;
+    let manifest_bytes =
+        FileInputs::new(&opened.root)?.read(&manifest.observation_id(), import::MANIFEST_BYTES)?;
+    let locations = import::manifest_locations(&manifest_bytes)?;
     // Keep every declared source: reopening a project validates the complete manifest.
     // Referenced models/audio/fonts additionally contribute their observed import closure.
     let mut extra: Vec<_> = locations
@@ -1475,6 +1550,8 @@ pub fn export_project_package_with_host(
     extra.push((manifest, Some(manifest_bytes)));
     let mut app = App::from_open_project(&opened, registry)?;
     app.behavior_setup = host.behaviors;
+    app.behavior_checkpoints = host.behavior_checkpoints;
+    app.ui_action_checkpoints = host.ui_action_checkpoints;
     app.ui_action_setup = host.ui_actions;
     let launch = serde_json::json!({"version":2,"project":descriptor.as_str()});
     export_app_package(app, launch, extra, output)
@@ -1483,10 +1560,26 @@ pub fn export_project_package_with_host(
 fn export_app_package(
     mut app: App,
     launch: serde_json::Value,
-    extra: Vec<(SourcePath, Option<Vec<u8>>)>,
+    mut extra: Vec<(SourcePath, Option<Vec<u8>>)>,
     output: &std::path::Path,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let result = (|| {
+        extra.extend(package_models::declared_sources(&app)?);
+        if let Some(prepared) = app
+            .authoring
+            .authoring_project
+            .liquid_runtime_observed(&app.scene)?
+        {
+            for (id, observation) in prepared.inputs.observations() {
+                let snapshot = observation
+                    .as_ref()
+                    .map_err(|error| format!("liquid package input: {error:?}"))?;
+                extra.push((
+                    SourcePath::new(id.0.clone())?,
+                    Some(snapshot.bytes.to_vec()),
+                ));
+            }
+        }
         app.start_standalone()?;
         let authored = app
             .authoring
@@ -1573,12 +1666,7 @@ fn export_app_package(
             max_payload_bytes: 64 * 1024 * 1024,
             max_document_bytes: 256 * 1024 * 1024,
         })?;
-        let mut file = std::fs::OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(output)?;
-        std::io::Write::write_all(&mut file, &bytes)?;
-        file.sync_all()?;
+        voxy_assets::save_atomic_new_file(output, &bytes, 256 * 1024 * 1024)?;
         println!(
             "GAME PACKAGE PASS sources={} bytes={}",
             paths.len(),
@@ -1612,6 +1700,17 @@ fn configured_app(
 /// Reports invalid built-in component registration.
 pub fn editor_component_registry() -> Result<ComponentRegistry, voxy_scene::DocumentError> {
     model_registry()
+}
+
+/// Opt into logical runtime model bindings in a game-checkpoint registry.
+/// Resource revisions and animation state remain owned by their save participants.
+/// Authoring scenes continue to use their existing model descriptor projection.
+/// # Errors
+/// Rejects a duplicate component type or schema; does not replace an existing codec.
+pub fn register_game_checkpoint_components(
+    registry: &mut ComponentRegistry,
+) -> Result<(), voxy_scene::DocumentError> {
+    registry.register::<ModelInstance>("runtime.model-instance.v1")
 }
 
 fn configured_app_with_registry(
@@ -1874,3 +1973,6 @@ fn run_model_viewport_configured_registry(
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+use voxy_scene::SimulationLimits;

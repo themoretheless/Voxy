@@ -413,3 +413,6 @@ mod worker_tests {
         std::fs::remove_dir_all(root).unwrap();
     }
 }
+
+#[path = "ui_text_checkpoint.rs"]
+pub(crate) mod checkpoint;

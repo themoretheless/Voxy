@@ -1,10 +1,11 @@
 //! Local stdio MCP bridge for the imported body model; stdout is protocol only.
 use serde_json::{Value, json};
-use std::{
-    io::{self, BufRead, Write},
-    path::{Path, PathBuf},
-};
+use std::io::Write as _;
+use std::path::{Path, PathBuf};
 use voxy_demos::body_parameters::BodyParameters;
+
+#[path = "../../../../tools/mcp_stdio.rs"]
+mod mcp_stdio;
 
 const PROTOCOL: &str = "2025-06-18";
 fn parameter_schema() -> Value {
@@ -416,25 +417,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     read(&path)?;
     let mut initialized = false;
-    let mut stdout = io::stdout().lock();
-    for line in io::stdin().lock().lines() {
-        let response = match serde_json::from_str::<Value>(&line?) {
-            Ok(request) => {
-                // Client notifications and responses require no server response.
-                if request.get("method").is_none()
-                    || (request.get("id").is_none() && request["method"].is_string())
-                {
-                    continue;
-                }
-                dispatch(&path, &request, &mut initialized)
-            }
-            Err(_) => {
-                json!({"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}})
-            }
-        };
-        writeln!(stdout, "{response}")?;
-        stdout.flush()?;
-    }
+    mcp_stdio::serve(|request| dispatch(&path, request, &mut initialized))?;
     Ok(())
 }
 #[cfg(test)]

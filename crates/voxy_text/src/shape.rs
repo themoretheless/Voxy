@@ -90,3 +90,10 @@ impl ShapeFont {
             .collect()
     }
 }
+
+impl ShapeFont {
+    pub(crate) fn checkpoint_bytes(&self) -> Vec<u8> {
+        let Self { bytes } = self;
+        bytes.clone()
+    }
+}

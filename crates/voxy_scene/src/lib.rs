@@ -4,7 +4,8 @@ pub use fog::{FogBounds, FogError, FogVolume};
 
 mod simulation;
 pub use simulation::{
-    RenderWorldCache, SceneSimulation, SimulationError, SimulationFrame, SimulationLimits,
+    RenderWorldCache, SceneCheckpointError, SceneSimulation, SceneSimulationCheckpoint,
+    SimulationError, SimulationFrame, SimulationLimits, SimulationPresentationCheckpoint,
     SimulationStepError,
 };
 mod extraction;
@@ -18,7 +19,10 @@ mod file;
 pub use file::{SceneFileError, read_scene_file, save_scene_file};
 
 mod history;
-pub use history::{SceneEdit, SceneHistory};
+pub use history::{
+    HistoryChangeToken, HistoryCheckpointLimits, PreparedSceneHistory, SceneEdit, SceneHistory,
+    SceneHistoryCheckpoint,
+};
 
 mod events;
 pub use events::{DoubleBufferedEvents, EventChannel, EventCursor, EventError, EventRead};
@@ -35,7 +39,7 @@ pub use transaction::{MutationError, SceneMutation};
 mod collection_override;
 mod commands;
 pub use collection_override::{CollectionEdit, CollectionOverride};
-pub use commands::{SceneCommand, SceneCommands};
+pub use commands::{CommandCheckpointError, SceneCommand, SceneCommands, SceneCommandsCheckpoint};
 
 mod table;
 pub use table::{ComponentTable, TableBuildError};
@@ -45,9 +49,15 @@ pub use associated::AssociatedData;
 
 mod document;
 pub use document::{
-    ComponentRegistry, DocumentError, LoadedScene, ObjectId, SceneDocument, SceneObject,
+    ComponentRegistry, DocumentError, LoadedScene, ObjectId, SceneAllocationCheckpoint,
+    SceneCheckpointView, SceneDocument, SceneObject,
 };
 
+mod behavior_checkpoint;
+pub use behavior_checkpoint::{
+    BehaviorCheckpoint, BehaviorCheckpointError, BehaviorCheckpointRegistry,
+    BehaviorRestoreContext, BehaviorState,
+};
 mod behavior;
 pub use behavior::{Behavior, BehaviorRunner};
 
@@ -68,6 +78,14 @@ use std::sync::atomic::{AtomicU64, Ordering};
 /// Opaque runtime identity, deliberately distinct from durable document IDs.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct SceneId(u64);
+
+/// Process-local observation token for scene writes, including transforms and names.
+/// Compare for equality; it is not a persistent revision or content digest.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct SceneChangeToken {
+    scene: SceneId,
+    revision: u64,
+}
 
 static NEXT_SCENE: AtomicU64 = AtomicU64::new(1);
 
@@ -181,8 +199,28 @@ pub struct SceneGraph {
     /// reparent, removal, activity, component insert/mutate/remove); transform
     /// and name edits do not bump it.
     structure_revision: u64,
+    change_revision: u64,
 }
 impl SceneGraph {
+    /// Checks only the opaque scene domain, including invalid retired/history handles.
+    /// This is not a liveness or access check: use local/component lookups for gameplay.
+    #[must_use]
+    pub fn owns_handle(&self, handle: NodeId) -> bool {
+        handle.scene == self.id || self.is_history_handle(handle)
+    }
+    pub(crate) fn is_history_handle(&self, handle: NodeId) -> bool {
+        handle.scene == 0 && handle.generation == self.id
+    }
+    pub(crate) fn history_handle(&self, index: usize) -> NodeId {
+        // Scene zero is never issued by the live allocator. Generation carries
+        // the owning scene domain; slot is only a unique history ordinal.
+        NodeId {
+            scene: 0,
+            slot: index,
+            generation: self.id,
+        }
+    }
+
     /// Counter that changes whenever hierarchy, activity or components change, so
     /// per-tick validators can skip structural re-scans while it is unchanged.
     #[must_use]
@@ -190,7 +228,26 @@ impl SceneGraph {
         self.structure_revision
     }
 
+    /// Conservatively tracks scene mutation APIs and mutable component access.
+    /// Interior mutation through shared component references is not tracked;
+    /// publish such changes through `component_mut`.
+    #[must_use]
+    pub const fn change_token(&self) -> SceneChangeToken {
+        SceneChangeToken {
+            scene: SceneId(self.id),
+            revision: self.change_revision,
+        }
+    }
+
+    fn bump_change(&mut self) {
+        self.change_revision = self
+            .change_revision
+            .checked_add(1)
+            .expect("scene change revision space exhausted");
+    }
+
     fn bump_structure(&mut self) {
+        self.bump_change();
         self.structure_revision = self.structure_revision.wrapping_add(1);
     }
 
@@ -210,6 +267,7 @@ impl SceneGraph {
             capacity,
             count: 0,
             structure_revision: 0,
+            change_revision: 0,
         }
     }
 
@@ -317,6 +375,7 @@ impl SceneGraph {
     /// Rejects stale or foreign handles.
     pub fn set_name(&mut self, id: NodeId, name: impl Into<String>) -> Result<(), SceneGraphError> {
         self.node_mut(id)?.name = name.into();
+        self.bump_change();
         Ok(())
     }
 
@@ -544,6 +603,7 @@ impl SceneGraph {
     pub fn set_local(&mut self, id: NodeId, local: Transform) -> Result<(), SceneGraphError> {
         let matrix = local.matrix()?;
         if self.node(id)?.local != local {
+            self.bump_change();
             self.node_mut(id)?.local = local;
             self.refresh_subtree_with(id, Some(matrix))?;
         }
@@ -571,6 +631,7 @@ impl SceneGraph {
         // vectors: edits are ordered by slot (stable, so the last write to a slot still
         // wins) and dirty ancestry is tested by binary search. Dense batches keep the
         // linear scratch path, which is cheaper once most slots are edited anyway.
+        self.bump_change();
         let roots = if edits.len().saturating_mul(8) < self.slots.len() {
             self.dirty_roots_sparse(edits)?
         } else {
@@ -1218,3 +1279,6 @@ mod cache_tests {
         assert_eq!(scene.world_matrix(leaf).unwrap(), before);
     }
 }
+
+#[cfg(test)]
+mod change_token_tests;

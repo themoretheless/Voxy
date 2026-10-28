@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "player",
+      "parent": null,
+      "name": "player",
+      "active": true,
+      "translation": [
+        0,
+        0.101,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "player",
+        "game.character.v1": {
+          "half_extents": [
+            0.1,
+            0.1,
+            0.1
+          ],
+          "speed": 1.0,
+          "gravity": -9.8,
+          "jump_speed": 3.0
+        },
+        "game.audio-listener.v1": {},
+        "game.audio-source.v1": {
+          "asset": "tone",
+          "bus": 0,
+          "gain": 0.5,
+          "looping": true,
+          "spatial": true,
+          "near": 1.0,
+          "far": 5.0
+        }
+      }
+    },
+    {
+      "id": "ground",
+      "parent": null,
+      "name": "ground",
+      "active": true,
+      "translation": [
+        0,
+        -0.1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "ground",
+        "game.box.v1": {
+          "half_extents": [
+            4,
+            0.1,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "id": "wall",
+      "parent": null,
+      "name": "wall",
+      "active": true,
+      "translation": [
+        1,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "wall",
+        "game.box.v1": {
+          "half_extents": [
+            0.1,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "dismiss",
+      "parent": null,
+      "name": "dismiss",
+      "active": true,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "game.ui-element.v1": {
+          "origin": [
+            0,
+            0
+          ],
+          "size": [
+            0.2,
+            0.1
+          ],
+          "color": [
+            0.2,
+            0.4,
+            0.8,
+            1
+          ],
+          "layer": 0,
+          "enabled": true,
+          "action": "sample.dismiss",
+          "text": null
+        }
+      }
+    },
+    {
+      "id": "camera",
+      "parent": null,
+      "name": "camera",
+      "active": true,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.camera.v1": {
+          "legacy": false,
+          "perspective": true,
+          "target": [
+            0,
+            0.301,
+            0
+          ],
+          "distance": 3.0,
+          "yaw": 0.6,
+          "pitch": 0.35
+        },
+        "game.follow-camera.v1": {
+          "target": "player",
+          "offset": [
+            0,
+            0.2,
+            0
+          ],
+          "half_life": 0.15
+        }
+      }
+    }
+  ]
+}

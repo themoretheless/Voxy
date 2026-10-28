@@ -1,0 +1,6 @@
+{
+  "asset_manifest": "assets.json",
+  "name": "Procedural desk lamp",
+  "startup_scene": "main.scene.json",
+  "version": 1
+}

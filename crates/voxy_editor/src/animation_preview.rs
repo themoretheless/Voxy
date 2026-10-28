@@ -1,4 +1,6 @@
 //! Authoring-only immutable pose preview; no game clock or event queue.
+#[allow(dead_code)]
+pub(crate) mod checkpoint;
 use std::sync::Arc;
 use voxy_model::ModelAsset;
 use voxy_scene::NodeId;
@@ -12,7 +14,110 @@ pub(super) struct Preview {
     profile: Option<crate::ModelRetarget>,
     frame: Arc<voxy_animation::AnimatorFrame>,
 }
+/// Native preview owner observation; immutable resources stay alive for validation.
+#[derive(Clone)]
+pub(crate) struct PreviewObservation {
+    owner: NodeId,
+    phase: u64,
+    model: Arc<ModelAsset>,
+    source: Arc<ModelAsset>,
+    frame: Arc<voxy_animation::AnimatorFrame>,
+}
+impl PartialEq for PreviewObservation {
+    fn eq(&self, other: &Self) -> bool {
+        self.owner == other.owner
+            && self.phase == other.phase
+            && Arc::ptr_eq(&self.model, &other.model)
+            && Arc::ptr_eq(&self.source, &other.source)
+            && Arc::ptr_eq(&self.frame, &other.frame)
+    }
+}
+impl Eq for PreviewObservation {}
+impl Preview {
+    pub(crate) fn observation(&self) -> PreviewObservation {
+        // Settings/profile are private and are rebuilt together with this frame.
+        let Self {
+            owner,
+            phase,
+            model,
+            source,
+            frame,
+            settings: _,
+            profile: _,
+        } = self;
+        PreviewObservation {
+            owner: *owner,
+            phase: phase.to_bits(),
+            model: model.clone(),
+            source: source.clone(),
+            frame: frame.clone(),
+        }
+    }
+}
 impl crate::App {
+    pub(super) fn edit_morph_defaults(
+        &mut self,
+        token: [u8; 32],
+        resume: bool,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        if self.play.playing.is_some() || self.retarget_draft.is_some() {
+            return Err("finish play or retarget editing before editing morph weights".into());
+        }
+        let document = self.panel_document()?;
+        let object = document
+            .objects
+            .get(self.selected)
+            .ok_or("missing morph owner")?;
+        if crate::component_fields::morph_edit_token(object) != token {
+            return Err("morph owner changed during editing".into());
+        }
+        let owner = *self
+            .instances
+            .get(self.selected)
+            .ok_or("missing morph owner")?;
+        let mut settings = self
+            .scene
+            .component::<crate::ModelAnimation>(owner)?
+            .cloned()
+            .ok_or("missing animation component")?;
+        if resume {
+            settings.morph_weights.clear();
+        } else {
+            let instance = self
+                .scene
+                .component::<crate::ModelInstance>(owner)?
+                .ok_or("missing model instance")?;
+            let asset = self
+                .catalog
+                .snapshot(&instance.asset)
+                .ok_or("model is not loaded")?;
+            let model = asset
+                .value()
+                .animated
+                .as_ref()
+                .ok_or("missing animated model")?;
+            let nodes = model.morph_nodes();
+            if nodes.is_empty() {
+                return Err("model has no morph targets".into());
+            }
+            let mut weights = std::collections::BTreeMap::new();
+            for node in nodes {
+                let name = node.name.ok_or("morph node needs a unique authored name")?;
+                if model.resolve_morph_node_name(&name)? != node.source_node {
+                    return Err("morph node identity changed".into());
+                }
+                weights.insert(name.to_string(), node.weights);
+            }
+            settings.morph_weights = weights;
+            let mut frame = model.bind_frame()?;
+            settings.apply_morph_weights(model, &mut frame)?;
+        }
+        self.scene.insert_component(owner, settings)?;
+        self.commit_authoring()?;
+        self.field = None;
+        Ok(())
+    }
+
     pub(super) fn preview_animation_marker(
         &mut self,
         index: usize,
@@ -109,14 +214,8 @@ impl crate::App {
             Some(source.animations.len()),
             Some(source.skeleton.joints().len()),
         )?;
-        let pose = source.sample_pose_phase(settings.resolve_clip(&source)?, phase)?;
-        let frame = voxy_animation::AnimatorFrame {
-            skin_matrices: pose.skin_matrices(&source.skeleton)?,
-            pose,
-            root_motion: glam::Vec3::ZERO,
-            root_motion_joint: settings.resolve_motion_joint(&source)?,
-            transition_weight: 1.,
-        };
+        let mut frame = source.sample_frame_phase(settings.resolve_clip(&source)?, phase)?;
+        frame.root_motion_joint = settings.resolve_motion_joint(&source)?;
         let (frame, _) = crate::animation_runtime::prepare_displayed_frame(
             frame,
             &model,
@@ -225,6 +324,134 @@ impl crate::App {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn prepared_source_guard_observes_preview_frame_identity_and_exact_phase() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../voxy_render/examples/assets/animated-triangle.glb");
+        let mut app = crate::App::new(&path, false).unwrap();
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while app.catalog.snapshot(app.id.as_ref().unwrap()).is_none() {
+            app.tick().unwrap();
+            assert!(std::time::Instant::now() < deadline);
+            std::thread::yield_now();
+        }
+        app.panel_action(crate::panels::Action::Animation).unwrap();
+        let scene = app.scene.change_token();
+        let clock = app.play.animations.serial();
+        let guard = crate::app::restore_guard::SceneAuthoringGuard::capture(&app);
+        app.preview_animation_phase(0.25, false).unwrap();
+        assert!(guard.validate(&app).is_err());
+        let frame_json = |app: &crate::App| {
+            let preview = app.authoring.animation_preview.as_ref().unwrap();
+            preview
+                .frame
+                .checkpoint(&preview.model.skeleton, 8 * 1024 * 1024)
+                .unwrap()
+                .to_json(8 * 1024 * 1024)
+                .unwrap()
+        };
+        let before = frame_json(&app);
+        let preview = app.authoring.animation_preview.as_ref().unwrap();
+        let view = voxy_scene::SceneCheckpointView::new(
+            &app.scene,
+            app.object_ids
+                .iter()
+                .cloned()
+                .zip(app.instances.iter().copied()),
+        )
+        .unwrap();
+        let model = preview.model.clone();
+        let saved = preview
+            .checkpoint(
+                &view,
+                |root| std::sync::Arc::ptr_eq(root, &model).then(|| "model-0".into()),
+                8 * 1024 * 1024,
+            )
+            .unwrap();
+        let json = saved.to_json(8 * 1024 * 1024).unwrap();
+        let decoded =
+            super::checkpoint::PreviewCheckpoint::from_json(&json, 8 * 1024 * 1024).unwrap();
+        let mut target = voxy_scene::SceneGraph::new(4);
+        let owner = target.spawn(None, Default::default()).unwrap();
+        let target_view =
+            voxy_scene::SceneCheckpointView::new(&target, [(app.object_ids[0].clone(), owner)])
+                .unwrap();
+        assert!(
+            decoded
+                .prepare(&target_view, |_| None, 8 * 1024 * 1024)
+                .is_err()
+        );
+        let limits = crate::import::asset_checkpoint::EditorAssetCheckpointLimits::default();
+        let roots = preview.model_roots();
+        assert_eq!(roots.len(), 1);
+        let graph = crate::import::asset_checkpoint::EditorAssetCheckpoint::capture_with_models(
+            &[],
+            &roots,
+            limits,
+        )
+        .unwrap();
+        let bytes = graph.to_bytes(limits).unwrap();
+        let graph =
+            crate::import::asset_checkpoint::EditorAssetCheckpoint::from_bytes(&bytes, limits)
+                .unwrap();
+        let restored_models = graph.prepare_with_models(limits).unwrap();
+        assert_eq!(restored_models.models.len(), 1);
+        let fresh_model = restored_models.models[0].clone();
+        assert!(!std::sync::Arc::ptr_eq(&fresh_model, &model));
+        if let Some(directory) = std::env::var_os("VOXY_PREVIEW_RESOURCE_EVIDENCE_DIR") {
+            let directory = std::path::PathBuf::from(directory);
+            std::fs::create_dir_all(&directory).unwrap();
+            std::fs::write(directory.join("model-graph.voxyasset"), &bytes).unwrap();
+            std::fs::write(directory.join("preview.json"), &json).unwrap();
+        }
+        let restored = decoded
+            .prepare(
+                &target_view,
+                |key| (key == "model-0").then(|| fresh_model.clone()),
+                8 * 1024 * 1024,
+            )
+            .unwrap();
+        let mut bad_alias: serde_json::Value = serde_json::from_str(&json).unwrap();
+        bad_alias["source"] = "model-1".into();
+        let bad_alias = super::checkpoint::PreviewCheckpoint::from_json(
+            &bad_alias.to_string(),
+            8 * 1024 * 1024,
+        )
+        .unwrap();
+        assert!(
+            bad_alias
+                .prepare(&target_view, |_| Some(model.clone()), 8 * 1024 * 1024)
+                .is_err()
+        );
+        assert_ne!(restored.owner, preview.owner);
+        assert_eq!(restored.phase.to_bits(), preview.phase.to_bits());
+        assert!(std::sync::Arc::ptr_eq(&restored.model, &restored.source));
+        assert_eq!(
+            before,
+            restored
+                .frame
+                .checkpoint(&restored.model.skeleton, 8 * 1024 * 1024)
+                .unwrap()
+                .to_json(8 * 1024 * 1024)
+                .unwrap()
+        );
+        let guard = crate::app::restore_guard::SceneAuthoringGuard::capture(&app);
+        app.preview_animation_phase(0.25, false).unwrap();
+        assert_eq!(before, frame_json(&app));
+        assert!(guard.validate(&app).is_err());
+        app.preview_animation_phase(0., false).unwrap();
+        let guard = crate::app::restore_guard::SceneAuthoringGuard::capture(&app);
+        app.authoring.animation_preview.as_mut().unwrap().phase = -0.;
+        assert!(guard.validate(&app).is_err());
+        let guard = crate::app::restore_guard::SceneAuthoringGuard::capture(&app);
+        app.authoring.animation_preview = None;
+        assert!(guard.validate(&app).is_err());
+        assert_eq!(scene, app.scene.change_token());
+        assert_eq!(clock, app.play.animations.serial());
+        assert!(app.play.animations.take_events().is_empty());
+        app.stop_workers().unwrap();
+    }
+
     #[test]
     fn retarget_preview_uses_source_phase_target_bind_and_in_place_axes() {
         let directory = std::env::temp_dir().join(format!(
@@ -354,6 +581,115 @@ mod tests {
             .preview_animation_frame(owner, &model, &settings)
             .unwrap();
         assert!((frame.pose.local()[0].translation - glam::Vec3::new(3., 4., 0.)).length() < 1e-5);
+        let preview = app.authoring.animation_preview.as_ref().unwrap();
+        let roots = preview.model_roots();
+        assert_eq!(roots.len(), 2);
+        let view = voxy_scene::SceneCheckpointView::new(
+            &app.scene,
+            app.object_ids
+                .iter()
+                .cloned()
+                .zip(app.instances.iter().copied()),
+        )
+        .unwrap();
+        let saved = preview
+            .checkpoint(
+                &view,
+                |root| {
+                    roots
+                        .iter()
+                        .position(|candidate| std::sync::Arc::ptr_eq(candidate, root))
+                        .map(|i| format!("model:{i}"))
+                },
+                8 * 1024 * 1024,
+            )
+            .unwrap();
+        let limits = crate::import::asset_checkpoint::EditorAssetCheckpointLimits::default();
+        let graph = crate::import::asset_checkpoint::EditorAssetCheckpoint::capture_with_models(
+            &[],
+            &roots,
+            limits,
+        )
+        .unwrap();
+        let bytes = graph.to_bytes(limits).unwrap();
+        let graph =
+            crate::import::asset_checkpoint::EditorAssetCheckpoint::from_bytes(&bytes, limits)
+                .unwrap();
+        let models = graph.prepare_with_models(limits).unwrap().models;
+        assert!(!std::sync::Arc::ptr_eq(&models[0], &roots[0]));
+        assert!(!std::sync::Arc::ptr_eq(&models[1], &roots[1]));
+        let restored = saved
+            .prepare(
+                &view,
+                |key| {
+                    models
+                        .get(key.strip_prefix("model:")?.parse::<usize>().ok()?)
+                        .cloned()
+                },
+                8 * 1024 * 1024,
+            )
+            .unwrap();
+        assert!(!std::sync::Arc::ptr_eq(&restored.model, &restored.source));
+        assert_eq!(
+            preview
+                .frame
+                .checkpoint(&preview.model.skeleton, 8 * 1024 * 1024)
+                .unwrap()
+                .to_json(8 * 1024 * 1024)
+                .unwrap(),
+            restored
+                .frame
+                .checkpoint(&restored.model.skeleton, 8 * 1024 * 1024)
+                .unwrap()
+                .to_json(8 * 1024 * 1024)
+                .unwrap()
+        );
+        app.begin_model_checkpoint().unwrap();
+        let until = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while !app.poll_model_checkpoint().unwrap() {
+            assert!(std::time::Instant::now() < until);
+            std::thread::yield_now();
+        }
+        let policy = crate::play_session::checkpoint::tests::resource_restore_limits();
+        let resource_file = app
+            .capture_model_resources(policy.catalog)
+            .unwrap()
+            .to_bytes(policy.max_bytes)
+            .unwrap();
+        let empty = directory.join("empty-target");
+        std::fs::create_dir(&empty).unwrap();
+        let resources = crate::app::resource_checkpoint::ModelResourcesCheckpoint::from_bytes(
+            &resource_file,
+            policy.max_bytes,
+        )
+        .unwrap();
+        let mut resources = resources.prepare(&empty, policy).unwrap();
+        assert_eq!(resources.preview_models.len(), 2);
+        assert!(!std::sync::Arc::ptr_eq(
+            &resources.preview_models[0],
+            &resources.preview_models[1]
+        ));
+        for (index, id) in [app.id.as_ref().unwrap(), &source_id]
+            .into_iter()
+            .enumerate()
+        {
+            let publication = resources.resources.catalog.snapshot(id).unwrap();
+            assert!(std::sync::Arc::ptr_eq(
+                &resources.preview_models[index],
+                publication.value().animated.as_ref().unwrap()
+            ));
+            assert!(!std::sync::Arc::ptr_eq(
+                &resources.preview_models[index],
+                &roots[index]
+            ));
+        }
+        if let Some(worker) = resources.imports.take() {
+            worker.close().join().unwrap();
+        }
+        if let Some(worker) = resources.watcher.take() {
+            worker.close().join().unwrap();
+        }
+        assert!(app.resume_model_checkpoint().unwrap());
         let accepted = app
             .authoring
             .animation_preview

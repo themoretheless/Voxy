@@ -395,3 +395,7 @@ impl Liquid {
         Ok(())
     }
 }
+
+#[path = "polymer_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::PolymerCheckpoint;

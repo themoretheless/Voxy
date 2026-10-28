@@ -18,6 +18,9 @@ pub(super) struct AudioSession {
     preparation: Option<audio_play::AudioPreparation>,
     prepared: Option<audio_play::AudioPlay>,
     retired: Vec<std::thread::JoinHandle<()>>,
+    checkpoint_requested: bool,
+    native_checkpoint: Option<checkpoint::NativeCheckpoint>,
+    checkpoint_startup: Option<AudioOutputMode>,
 }
 impl Default for AudioSession {
     fn default() -> Self {
@@ -30,6 +33,9 @@ impl Default for AudioSession {
             preparation: None,
             prepared: None,
             retired: Vec::new(),
+            checkpoint_requested: false,
+            native_checkpoint: None,
+            checkpoint_startup: None,
         }
     }
 }
@@ -78,6 +84,9 @@ impl AudioSession {
     }
 
     pub(super) fn close_play_audio(&mut self) {
+        self.checkpoint_requested = false;
+        self.native_checkpoint = None;
+        self.checkpoint_startup = None;
         if let Some(audio) = self.play.take() {
             self.retired.extend(audio.close());
         }
@@ -149,6 +158,9 @@ impl AudioSession {
     pub(super) fn set_play(&mut self, play: Option<audio_play::AudioPlay>) {
         self.play = play;
     }
+    pub(crate) fn output_mode(&self) -> AudioOutputMode {
+        self.output_mode
+    }
     pub(super) fn set_output_mode(&mut self, mode: AudioOutputMode) {
         self.output_mode = mode;
     }
@@ -219,6 +231,10 @@ impl AudioSession {
             )?))
         }
     }
+    /// Transfer already-closed old playback workers to the host's retirement owner.
+    pub(crate) fn take_retired_workers(&mut self) -> Vec<std::thread::JoinHandle<()>> {
+        std::mem::take(&mut self.retired)
+    }
     pub(super) fn join_workers(&mut self) -> Vec<String> {
         let mut errors = Vec::new();
         if let Some(mut worker) = self.device.take()
@@ -250,3 +266,6 @@ impl AudioSession {
         !self.retired.is_empty()
     }
 }
+
+#[path = "audio_session_checkpoint.rs"]
+pub(crate) mod checkpoint;

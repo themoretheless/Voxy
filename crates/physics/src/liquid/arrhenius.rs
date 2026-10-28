@@ -9,6 +9,15 @@ pub struct ArrheniusViscosity {
     pub activation_energy: f64,
 }
 impl ArrheniusViscosity {
+    pub(super) fn validate(self) -> Result<(), Error> {
+        if !positive(self.reference_temperature)
+            || !self.activation_energy.is_finite()
+            || self.activation_energy < 0.
+        {
+            return Err(Error::InvalidPropertyResponse);
+        }
+        Ok(())
+    }
     /// Illustrative midpoint of the reported 33.8–40.9 kJ/mol commercial milk range.
     /// This is not a measured fit for one brand.
     pub const CONDENSED_MILK_DEMO: Self = Self {
@@ -30,11 +39,7 @@ impl Liquid {
     ) -> Result<(), Error> {
         if models.len() != self.materials.len()
             || self.transport.is_none()
-            || models.iter().flatten().any(|m| {
-                !positive(m.reference_temperature)
-                    || !m.activation_energy.is_finite()
-                    || m.activation_energy < 0.0
-            })
+            || models.iter().flatten().any(|m| m.validate().is_err())
             || models
                 .iter()
                 .zip(&self.property_responses)

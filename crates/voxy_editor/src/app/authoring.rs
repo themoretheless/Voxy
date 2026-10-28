@@ -135,6 +135,7 @@ impl App {
             }
         }
         self.parenting = None;
+        self.follow_pick = None;
         if let Some((_, camera)) = loaded.graph.active_components::<EditorCamera>().next() {
             if !camera.valid() {
                 return Err("invalid authored camera".into());
@@ -250,9 +251,57 @@ impl App {
         Ok(())
     }
 
+    /// Validate a document candidate before removing live objects or history.
+    /// Registered object-reference codecs reject dangling links transactionally.
+    pub(crate) fn delete_authoring_subtree(
+        &mut self,
+        root: &ObjectId,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let mut document = self.authoring_document()?;
+        if !document.objects.iter().any(|object| &object.id == root) {
+            return Err("missing selected object".into());
+        }
+        let mut children: BTreeMap<ObjectId, Vec<ObjectId>> = BTreeMap::new();
+        for object in &document.objects {
+            if let Some(parent) = &object.parent {
+                children
+                    .entry(parent.clone())
+                    .or_default()
+                    .push(object.id.clone());
+            }
+        }
+        let mut removed = std::collections::BTreeSet::new();
+        let mut pending = vec![root.clone()];
+        while let Some(id) = pending.pop() {
+            if removed.insert(id.clone()) {
+                pending.extend(children.remove(&id).unwrap_or_default());
+            }
+        }
+        document
+            .objects
+            .retain(|object| !removed.contains(&object.id));
+        let next = self.validate_authoring_document(&document)?;
+        self.authoring
+            .history
+            .as_mut()
+            .ok_or("missing history")?
+            .commit(document, &self.authoring.authoring_project.registry)?;
+        self.restore_authoring()?;
+        self.authoring.next_object_id = next;
+        self.update_edit_title();
+        Ok(())
+    }
+
     pub(crate) fn validate_authoring_document(
         &self,
         document: &SceneDocument,
+    ) -> Result<u64, Box<dyn std::error::Error>> {
+        self.validate_authoring_document_policy(document, false)
+    }
+    fn validate_authoring_document_policy(
+        &self,
+        document: &SceneDocument,
+        allow_unresolved_models: bool,
     ) -> Result<u64, Box<dyn std::error::Error>> {
         let loaded = document.load(
             &self.authoring.authoring_project.registry,
@@ -282,7 +331,17 @@ impl App {
                 .components
                 .get("editor.model.v1")
                 .and_then(serde_json::Value::as_str)
-                .is_some_and(|id| !self.available.contains(&AssetId(id.into())))
+                .is_some_and(|id| {
+                    let id = AssetId(id.into());
+                    id.0.is_empty()
+                        || (!allow_unresolved_models
+                            && !self.available.contains(&id)
+                            && self.catalog.snapshot(&id).is_none()
+                            && !self
+                                .scene
+                                .components::<ModelInstance>()
+                                .any(|(_, model)| model.asset == id))
+                })
             {
                 return Err("viewport scene requires known model resources".into());
             }
@@ -290,6 +349,7 @@ impl App {
                 .id
                 .0
                 .strip_prefix("model-")
+                .or_else(|| object.id.0.strip_prefix("object-"))
                 .and_then(|value| value.parse::<u64>().ok())
             {
                 next = next.max(
@@ -388,6 +448,33 @@ impl App {
                 animation.resolve_motion_joint(model)?;
             }
         }
+        for (node, controller) in loaded.graph.components::<ModelLocomotion>() {
+            controller.validate()?;
+            loaded
+                .graph
+                .component::<ModelAnimation>(node)?
+                .ok_or("locomotion requires a model animation component")?;
+            locomotion::body_owner(&loaded.graph, node)?;
+            if loaded.graph.component::<ModelPart>(node)?.is_some() {
+                return Err("locomotion requires a logical model owner".into());
+            }
+            let asset = loaded
+                .graph
+                .component::<String>(node)?
+                .ok_or("locomotion requires a model owner")?;
+            let source = loaded
+                .graph
+                .component::<ModelRetarget>(node)?
+                .map_or(asset.as_str(), |profile| profile.source.as_str());
+            if let Some(asset) = self.catalog.snapshot(&AssetId(source.into())) {
+                let model = asset
+                    .value()
+                    .animated
+                    .as_ref()
+                    .ok_or("locomotion requires an animated model")?;
+                controller.validate_model(model)?;
+            }
+        }
         for (node, settings) in loaded.graph.components::<ModelFootPlacement>() {
             settings.validate()?;
             if settings.feet.is_empty() {
@@ -452,6 +539,12 @@ impl App {
     }
 
     pub(crate) fn load_authoring(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        self.load_authoring_policy(false)
+    }
+    fn load_authoring_policy(
+        &mut self,
+        allow_unresolved_models: bool,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         self.finish_drag(false)?;
         let path = self
             .authoring
@@ -468,7 +561,7 @@ impl App {
                 (document, None, Some(revision))
             }
         };
-        let next = self.validate_authoring_document(&document)?;
+        let next = self.validate_authoring_document_policy(&document, allow_unresolved_models)?;
 
         self.authoring
             .history
@@ -522,9 +615,22 @@ impl App {
         &mut self,
         path: &std::path::Path,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        self.configure_scene_policy(path, false)
+    }
+    pub(crate) fn configure_scene_for_editor(
+        &mut self,
+        path: &std::path::Path,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        self.configure_scene_policy(path, true)
+    }
+    fn configure_scene_policy(
+        &mut self,
+        path: &std::path::Path,
+        allow_unresolved_models: bool,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         self.authoring.scene_path = Some(path.into());
         if path.try_exists()? {
-            self.load_authoring()?;
+            self.load_authoring_policy(allow_unresolved_models)?;
             let metadata = self
                 .authoring
                 .history
