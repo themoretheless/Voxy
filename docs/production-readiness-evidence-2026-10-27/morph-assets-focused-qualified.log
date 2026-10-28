@@ -1,0 +1,12 @@
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.32s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_model-04a08d587103bfe4)
+
+running 4 tests
+test morph::checkpoint::tests::malformed_headers_streams_enums_quotas_and_types_reject_without_changing_source ... ok
+test morph::checkpoint::tests::real_file_roundtrip_preserves_cancellation_and_negative_weight_accuracy ... ok
+test morph::checkpoint::tests::imported_gltf_morph_sources_rebuild_after_original_buffers_are_dropped ... ok
+test morph::checkpoint::tests::static_and_skinned_sources_rebuild_exact_metadata_and_120_morph_results ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 45 filtered out; finished in 0.05s
+

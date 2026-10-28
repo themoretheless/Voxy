@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-28",
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Restoring offline playback snapshots to native output from active offline, active native and idle sources",
+  "changes": [
+    "Original native playback preparation accepts an offline archive only at the same sample rate and stages an empty queue/consumed pump; mixer/clock/clip decode remains original",
+    "Shared bounded empty-output builder is reused by silent target retirement and offline-to-native transport",
+    "Host native policy/window selects native preparation for offline playback metadata; normal offline paths keep their previous policy",
+    "Provisional device startup can retain an original active offline owner under its existing logical reload checkpoint",
+    "Source capture uses original offline owner codec while provisional queue remains checked empty and quiescent",
+    "Startup polling receives stable ObjectId bindings for the original offline source instead of assuming no source playback",
+    "Cancel resumes the original offline reload owner before asynchronously closing provisional output, preventing a stranded checkpoint"
+  ],
+  "checks": {
+    "editor": {
+      "passed": 395,
+      "ignored": 49
+    },
+    "gpu_app": {
+      "passed": 11,
+      "device": "Apple M4 Max",
+      "backend": "Metal",
+      "window": false
+    },
+    "native_session": {
+      "passed": 1,
+      "sample_rate": 48000,
+      "gain": 0,
+      "window": false
+    },
+    "clippy": "editor all targets -D warnings, exit 0",
+    "format": "scoped rustfmt passed",
+    "diff": "scoped git diff --check passed; touched sources are preexisting untracked files"
+  },
+  "new_regressions": [
+    "Real offline App file loaded into native output after model/WAV deletion",
+    "Cancellation during Device and Audio stages retains source runtime, clock and PCM; source re-checkpoint succeeds after cancel",
+    "Offline archive loaded with active native output reuses the original connection; after Stop the same archive creates a different connection",
+    "Each of the three native conversions restores original counters and completes 120 game/render frames",
+    "Native Session source-free conversion matches original runtime/clock/raw PCM/imported publications exactly after commit",
+    "New native queue is empty and pump fully consumed before final gate release; already-consumed offline samples are not replayed",
+    "Original active native, idle/native, native/idle, UI/text/model/history/input and source-admission suites remain passing"
+  ],
+  "limits": [
+    "Native sample rate must exactly match the archived clock; no resampling or precision reduction is used",
+    "Native-to-offline conversion of outstanding queued PCM, device replacement/reconnect and rate changes remain open",
+    "Gain-zero physical tests do not qualify audible continuity or analog host-buffer alignment",
+    "Native window, frame pacing/120/160 FPS, latency, power and full ENG-03 through ENG-13 remain open"
+  ],
+  "sources_sha256": {
+    "crates/voxy_editor/src/audio_playback_checkpoint.rs": "deab9565dd914116ac1c0ad7d33bad212c937c92d614f9707946af931d193e88",
+    "crates/voxy_editor/src/audio_owner_checkpoint.rs": "8c85420e259a254255cbb59c762558a3f3e39c4d73eacded5eba1b81ca20c25c",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "612d8c8abd91773e4797fc20d27f4bf5da6f1abf51ce8e84c70e44ae1ef890a8",
+    "crates/voxy_editor/src/app/restore_barrier/load.rs": "08ed2db049a25fd037640858851e225c593febf98c8354cfca41d78a2c3bb7ef",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "3bf6c22e6effb9b3c4b43ce8b7e6e54d52266c1a8d16a1fb35338ee0c04a95e9"
+  },
+  "logs": [
+    "editor.log",
+    "gpu.log",
+    "native_session.log",
+    "clippy.log"
+  ]
+}

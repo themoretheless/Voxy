@@ -1,0 +1,39 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Cooperative cancellation of frame-polled editor file load before publication",
+  "checks": {
+    "focused": {
+      "passed": 5
+    },
+    "editor": {
+      "passed": 386,
+      "ignored": 42
+    },
+    "gpu": {
+      "passed": 7,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "mode": "offscreen"
+    },
+    "clippy": "editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and git diff --check passed"
+  },
+  "verified": [
+    "Blocked reader cancellation leaves authoring edits intact and never fences source",
+    "Preparing cancellation releases original fence before worker completion",
+    "Late cancelled preparation leaves subsequent independent fence untouched",
+    "Actual model and UI GPU validation cancelled without publishing candidate scene in all three editor file GPU scenarios",
+    "Ordinary full load still installs original snapshot after cancellation"
+  ],
+  "limitations": [
+    "No editor button or shortcut connected to cancellation yet",
+    "Offscreen qualification does not prove native window/input/audio-device lifecycle",
+    "No FPS or production-ready claim",
+    "Cancellation waits for ongoing worker/GPU operations to settle cooperatively"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/load.rs": "3e8c56d04dc0786963b622dfb887d816fa56af76e2a9261cebeae9fc10311305",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "b3e52a41706f290a2355f7efb69b4fba4e691bfcadbb10a9e3c7c2607b119fe2"
+  }
+}

@@ -1,0 +1,60 @@
+event_loop.rs:148-173
+/// Set through [`ActiveEventLoop::set_control_flow()`].
+///
+/// Indicates the desired behavior of the event loop after [`Event::AboutToWait`] is emitted.
+///
+/// Defaults to [`Wait`].
+///
+/// [`Wait`]: Self::Wait
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
+pub enum ControlFlow {
+    /// When the current loop iteration finishes, immediately begin a new iteration regardless of
+    /// whether or not new events are available to process.
+    Poll,
+
+    /// When the current loop iteration finishes, suspend the thread until another event arrives.
+    #[default]
+    Wait,
+
+    /// When the current loop iteration finishes, suspend the thread until either another event
+    /// arrives or the given time is reached.
+    ///
+    /// Useful for implementing efficient timers. Applications which want to render at the
+    /// display's native refresh rate should instead use [`Poll`] and the VSync functionality
+    /// of a graphics API to reduce odds of missed frames.
+    ///
+    /// [`Poll`]: Self::Poll
+    WaitUntil(Instant),
+
+platform_impl/macos/app_state.rs:382-412
+        self.handle_event(Event::UserEvent(HandlePendingUserEvents));
+
+        let redraw = mem::take(&mut *self.ivars().pending_redraw.borrow_mut());
+        for window_id in redraw {
+            self.handle_event(Event::WindowEvent {
+                window_id: RootWindowId(window_id),
+                event: WindowEvent::RedrawRequested,
+            });
+        }
+
+        self.handle_event(Event::AboutToWait);
+
+        if self.exiting() {
+            let app = NSApplication::sharedApplication(mtm);
+            stop_app_immediately(&app);
+            notify_windows_of_exit(&app);
+        }
+
+        if self.ivars().stop_before_wait.get() {
+            let app = NSApplication::sharedApplication(mtm);
+            stop_app_immediately(&app);
+        }
+        self.ivars().start_time.set(Some(Instant::now()));
+        let wait_timeout = self.ivars().wait_timeout.get(); // configured by pump_events
+        let app_timeout = match self.control_flow() {
+            ControlFlow::Wait => None,
+            ControlFlow::Poll => Some(Instant::now()),
+            ControlFlow::WaitUntil(instant) => Some(instant),
+        };
+        self.ivars().waker.borrow_mut().start_at(min_timeout(wait_timeout, app_timeout));
+    }

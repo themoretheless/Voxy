@@ -1,0 +1,20 @@
+    Checking voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: implicit borrow as raw pointer
+  --> crates/voxy_editor/src/app/authoring_checkpoint.rs:47:38
+   |
+47 |         if !std::ptr::eq(view.graph, &self.scene) || self.object_ids.len() != self.instances.len() {
+   |                                      ^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#borrow_as_ptr
+   = note: `-D clippy::borrow-as-ptr` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::borrow_as_ptr)]`
+help: use a raw pointer instead
+   |
+47 |         if !std::ptr::eq(view.graph, &raw const self.scene) || self.object_ids.len() != self.instances.len() {
+   |                                       +++++++++
+
+error: could not compile `voxy_editor` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

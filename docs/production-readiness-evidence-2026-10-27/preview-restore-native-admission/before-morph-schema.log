@@ -1,0 +1,19 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.59s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+
+thread 'animation_preview::checkpoint::tests::preview_restore_rejects_foreign_morph_schema_and_unbound_source' (79895484) panicked at crates/voxy_editor/src/animation_preview/checkpoint.rs:163:9:
+preview restored a frame with no required morph properties
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test animation_preview::checkpoint::tests::preview_restore_rejects_foreign_morph_schema_and_unbound_source ... FAILED
+
+failures:
+
+failures:
+    animation_preview::checkpoint::tests::preview_restore_rejects_foreign_morph_schema_and_unbound_source
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 403 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

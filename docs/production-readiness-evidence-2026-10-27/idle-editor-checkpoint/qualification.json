@@ -1,0 +1,45 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "scope": "Idle editor native file capture/read/detached prepare and full history preservation",
+  "baseline": "Regression reproduced running-simulation requirement",
+  "checks": {
+    "editor_library": {
+      "passed": 374,
+      "failed": 0,
+      "ignored": 39
+    },
+    "strict_all_target_clippy": true,
+    "scoped_rustfmt": true,
+    "scoped_diff_check": true
+  },
+  "proofs": [
+    "idle native participant exact JSON roundtrip",
+    "five invalid lifecycle combinations rejected during encode/decode",
+    "original editor file byte roundtrip",
+    "fresh shared scene identity for detached history and game",
+    "full serialized undo/redo history parity after five operations",
+    "restored playing and simulation remain None",
+    "detached worker cleanup"
+  ],
+  "not_qualified": [
+    "whole App atomic publication",
+    "native save/load menus",
+    "preview-bearing idle editor integration",
+    "first presented frame",
+    "GPU",
+    "native audio devices",
+    "FPS",
+    "full engine readiness"
+  ],
+  "logs": [
+    "baseline.log",
+    "participant.log",
+    "editor.log",
+    "clippy.log"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "c76ac3b199c79ea5c870c295dea9915a63510d33d05bfa6207ecdeaff62e57ca",
+    "crates/voxy_editor/src/app/authoring_checkpoint/tests.rs": "c1365cc0ddbee50a09cf25276bea03f6ff2e63370bb890bf012adbdb52ec499c"
+  }
+}

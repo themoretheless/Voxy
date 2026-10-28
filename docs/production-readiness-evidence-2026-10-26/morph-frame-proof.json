@@ -1,0 +1,298 @@
+{
+  "status": "original_asset_animator_property_frame_pass_editor_gpu_pending",
+  "source_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "source_bytes_unchanged": true,
+  "code_sha256": {
+    "crates/voxy_model/src/lib.rs": "d4197663b85027782d844ba4e5c003001200a00e860d34d2a4b785fd89f8dc36",
+    "crates/voxy_model/src/morph.rs": "4c1abfea14c80b4c1bcafb9e905fa6980495b2e09713bbb8119fc7e478b0becf",
+    "crates/voxy_model/examples/morph_import.rs": "d396de90fa8f6f0dca8e686153c3891e012fc963b7607ed5741942cb2f08648f",
+    "crates/voxy_animation/src/property_track.rs": "a3ce59c61beebe372f8d8781ee5504e5deb063e0ac89565a24fa2ff6b36d1da8",
+    "crates/voxy_animation/src/property_playback.rs": "b6429728e1abc64e7a98a21cde426e27ae29e8b79ec0e5d73095cc8288b0ae2c",
+    "crates/voxy_animation/src/lib.rs": "f3cffb59d15d236076d3ef5ea24c98895eb745025cda078e06c7f732a4b545a4",
+    "crates/voxy_animation/src/rigid_fade.rs": "faeafe21964bd096814e2306046fa44053c2eb545fd9de7eab616babe95f56f4",
+    "crates/voxy_animation/src/retarget.rs": "67c2c9450a26311650956024be38fff68f69de08fa90717c69807a5acfffed7f",
+    "crates/voxy_render/src/scene/geometry.rs": "c4c6ea7195ec5cfa3862791fee2aa3349f626f89435d33e432c588486a5c99fa"
+  },
+  "binary_sha256": "c4f1522ce47fa0e00a1ae02771973072e3e8751e3870b61e392e4683afbaedfe",
+  "exit_code": 0,
+  "cwd": "/",
+  "report": {
+    "accepted_playback_integrated": false,
+    "animator_property_frames": 112,
+    "clips": [
+      {
+        "bounds_max": [
+          2.941725969314575,
+          4.58920955657959,
+          2.0583462715148926
+        ],
+        "bounds_min": [
+          -3.0266635417938232,
+          -0.020304441452026367,
+          -1.2817639112472534
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Dance",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          2.7742018699645996,
+          4.476508617401123,
+          1.3531956672668457
+        ],
+        "bounds_min": [
+          -3.337878704071045,
+          -0.607391357421875,
+          -6.484856605529785
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Death",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5787644386291504,
+          4.476508617401123,
+          1.5369346141815186
+        ],
+        "bounds_min": [
+          -1.5206947326660156,
+          -0.020304441452026367,
+          -1.2819204330444336
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Idle",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          2.1015477180480957,
+          5.931900978088379,
+          2.2329695224761963
+        ],
+        "bounds_min": [
+          -1.9340550899505615,
+          -0.21379590034484863,
+          -1.5265833139419556
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Jump",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5787644386291504,
+          4.476508617401123,
+          1.4422417879104614
+        ],
+        "bounds_min": [
+          -1.5206947326660156,
+          -0.020304441452026367,
+          -1.2818021774291992
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "No",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5787644386291504,
+          4.476730823516846,
+          3.0333104133605957
+        ],
+        "bounds_min": [
+          -1.8954366445541382,
+          -0.06711083650588989,
+          -1.7240965366363525
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Punch",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5917662382125854,
+          4.996406555175781,
+          2.243523120880127
+        ],
+        "bounds_min": [
+          -1.5144636631011963,
+          -0.2765843868255615,
+          -2.263800621032715
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Running",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5787649154663086,
+          4.476508617401123,
+          1.3461052179336548
+        ],
+        "bounds_min": [
+          -1.5217392444610596,
+          -0.020304441452026367,
+          -2.0145466327667236
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Sitting",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5787649154663086,
+          4.4798712730407715,
+          1.3794537782669067
+        ],
+        "bounds_min": [
+          -1.5216305255889893,
+          -0.020304441452026367,
+          -1.9468449354171753
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Standing",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5791035890579224,
+          4.477376461029053,
+          2.286438465118408
+        ],
+        "bounds_min": [
+          -1.522775650024414,
+          -0.020304441452026367,
+          -1.281764030456543
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "ThumbsUp",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.6576803922653198,
+          4.516234397888184,
+          1.7452468872070312
+        ],
+        "bounds_min": [
+          -1.5565624237060547,
+          -0.16173863410949707,
+          -1.3115661144256592
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Walking",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5813790559768677,
+          4.979137420654297,
+          2.194469451904297
+        ],
+        "bounds_min": [
+          -1.5415747165679932,
+          -0.2887301445007324,
+          -2.2599258422851562
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "WalkJump",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5787644386291504,
+          4.477631092071533,
+          1.6177165508270264
+        ],
+        "bounds_min": [
+          -3.1729366779327393,
+          -0.020304441452026367,
+          -1.281817078590393
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Wave",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      },
+      {
+        "bounds_max": [
+          1.5787644386291504,
+          4.5713653564453125,
+          1.5767955780029297
+        ],
+        "bounds_min": [
+          -1.5206947326660156,
+          -0.020304441452026367,
+          -1.4562166929244995
+        ],
+        "distinct_geometry_samples": 60,
+        "distinct_weight_samples": 1,
+        "name": "Yes",
+        "samples": 61,
+        "vertices_per_sample": 7214
+      }
+    ],
+    "default_import_error": "only triangle primitives without morph targets are supported",
+    "explicit_shape_probes": [
+      {
+        "changed_vertices": 564,
+        "explicit_additional_weight": 1,
+        "max_displacement": 0.1742637311209198,
+        "target": 0
+      },
+      {
+        "changed_vertices": 564,
+        "explicit_additional_weight": 1,
+        "max_displacement": 0.4662273439332357,
+        "target": 1
+      },
+      {
+        "changed_vertices": 494,
+        "explicit_additional_weight": 1,
+        "max_displacement": 0.21274948120120526,
+        "target": 2
+      }
+    ],
+    "fps_qualified": false,
+    "gpu_morph_integrated": false,
+    "joints": 160,
+    "mesh_instances": 14,
+    "morph_primitives": 3,
+    "primitives": 19,
+    "scope": "explicit_cpu_reference_import_and_sampling"
+  },
+  "weight_channel_note": "Original source channels are constant zero; nonzero deformation is tested by explicit weights without modifying the GLB.",
+  "animator_property_frames_verified": true,
+  "editor_accepted_morph_integrated": false,
+  "gpu_morph_integrated": false,
+  "native_visuals_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

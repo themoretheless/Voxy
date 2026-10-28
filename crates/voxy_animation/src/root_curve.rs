@@ -1,5 +1,7 @@
 use super::{Interpolation, Playback, Vec3Key};
 use glam::{DVec3, Vec3};
+mod checkpoint;
+pub(crate) use checkpoint::RootCurveCheckpoint;
 
 #[derive(Debug)]
 struct Knot {

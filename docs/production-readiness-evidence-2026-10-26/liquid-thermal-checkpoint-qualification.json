@@ -1,0 +1,25 @@
+{
+  "status": "native_temperature_concentration_transport_block_verified",
+  "transport_tests_passed": 3,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps": 120,
+  "covered": [
+    "temperature and dissolved concentration fields",
+    "specific heat conductivity diffusivity and mixing groups",
+    "particle material layout and admission limits",
+    "composition with particle base and Maxwell relaxation heat",
+    "exact particle thermal polymer records and transport total bits",
+    "atomic nonfinite temperature concentration and coefficient rejection"
+  ],
+  "remaining": [
+    "phase saturation species and response laws",
+    "boundary and rigid body state",
+    "full bounded liquid wire archive",
+    "SceneLiquidRuntime and PlaySession publication"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/thermal_checkpoint.rs": "df74171c9410ea50f7b1f87601d89acc505c58a937c3104277040b664618e35f",
+    "crates/physics/src/liquid/transport.rs": "2a7c5e15e20419d861eefdf146c738cf691718873af4246054f6589c39fe6f1a",
+    "crates/physics/src/liquid.rs": "1afc5f00885fe00382e15f4c0cd06216b0e50cbd5853b994d5cb3ce2940eac56"
+  }
+}

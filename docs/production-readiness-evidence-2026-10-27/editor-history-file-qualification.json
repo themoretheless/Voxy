@@ -1,0 +1,36 @@
+{
+  "scope": "One bounded editor history + coordinated game file using existing native participant formats",
+  "format": {
+    "magic": "VOXYEDR1",
+    "header_bytes": 56,
+    "game_bytes": 24216,
+    "authoring_bytes": 1031,
+    "total_bytes": 25303,
+    "sha256": "b136f4a2c82eea72e56ab5a7b5c4207b1b2e21fdd12c0260f2aa014a7702b3af"
+  },
+  "implemented": [
+    "Native coordinated game file remains unchanged and is nested byte for byte",
+    "Native authoring history JSON retains undo/redo, order, selection, next identity and detached gestures",
+    "Independent section budgets, aggregate remaining allowance, checked lengths and BLAKE3 integrity",
+    "Bounded file reads and original atomic trusted-path writer",
+    "Real project Play/capture, disk roundtrip, fresh combined preparation and exact redo/undo checkpoint comparisons",
+    "Corrupt payload, overflowing length, trailing bytes and budget violations reject; failed save preserves old file"
+  ],
+  "checks": {
+    "editor_passed": 318,
+    "editor_ignored": 30,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_diff": "passed"
+  },
+  "not_claimed": [
+    "Other AuthoringSession project/source-revision/preview/settings owners not in this envelope",
+    "No final App publication/menu/first-native-frame input handoff",
+    "Fixture has no active UI/font/audio/model GPU owners; richer inner participants have separate qualification",
+    "No new GPU/window/device audio/physical-memory/FPS claim",
+    "Full ENG-03 through ENG-13 remains open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "d5465d76749afddde57d245eaa18869a21c2535c8ec6c9ef4e15d2d107b5eef6",
+    "crates/voxy_editor/src/app/authoring_checkpoint/tests.rs": "9e0f7b4cf15362f22e7e7d05089f75d274ee877d09b2c2a51a6a80abe492b403"
+  }
+}

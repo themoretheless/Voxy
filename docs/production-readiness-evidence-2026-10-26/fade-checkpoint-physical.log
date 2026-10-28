@@ -1,0 +1,14 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.50s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9bf058ddab5294b3)
+
+running 3 tests
+test model_playback::physical_fade_receipt_tests::original_source_fade_preserves_asset_receipt_and_transactional_rollback ... ok
+test model_playback::physical_fade_receipt_tests::physical_receipt_prepares_only_bound_fade_and_failed_preparation_rolls_back ... ok
+test model_playback::physical_fade_receipt_tests::collision_limited_fade_emits_only_markers_in_accepted_prefix ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 254 filtered out; finished in 0.02s
+

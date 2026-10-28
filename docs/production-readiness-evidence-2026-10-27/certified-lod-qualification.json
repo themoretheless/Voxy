@@ -1,0 +1,116 @@
+{
+  "date": "2026-10-27",
+  "scope": "Retained/reverified native static CertifiedLodIndexSet resource checkpoint; prerequisite to full EditorAsset/App composition.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "toolchain": "nightly-2026-05-27",
+  "source_sha256": {
+    "Cargo.lock": "a0c17e6c8d721ab9a6b8bc8b51e195dbd2a97ccd9bbd249ead8943d2df2d8c5a",
+    "crates/voxy_render/Cargo.toml": "bb14a4d94c6397f5f88a62cc7b17f32c5e6fda7a8a5b9ea5e95ecc26c376aca4",
+    "crates/voxy_render/src/lib.rs": "0c028cb21661943d72c5427030a4a02d7b9c50bd84a08610cf4fc4146acb5eed",
+    "crates/voxy_render/src/certified_lod.rs": "948460b388037d195f7e4de4e91c8dc64d6adf08daae4f90dd74fcdbfd40f0dc",
+    "crates/voxy_render/src/certified_lod/checkpoint.rs": "5e70c5031a3632a91af4146361829155ae8fe510d480682757cfc20559ff7839",
+    "crates/voxy_render/src/certified_lod/checkpoint/tests.rs": "1ba017d098364bdbcfd4d4824210fe178481937f69932adcfa451748da414f50",
+    "crates/voxy_render/examples/certified_lod_checkpoint.rs": "2fefd21a2ac1b46c88d15b5e32a6d3d6ff5d9e89401b68809be39b76a6656650",
+    "crates/voxy_editor/src/import.rs": "082348a3fd84f516c134b2a63af425bcdcef46e51406c6ce70aed5140865a579"
+  },
+  "change": [
+    "Static native LOD constructors now retain their original Whole/Subdivided witnesses instead of discarding them",
+    "Original witness vectors move into owned storage; source/index/error computation is unchanged",
+    "Checkpoint preserves original proof kind, exact source words, indices and f64 error/count/byte receipts",
+    "Prepare repeats native certification and exact recapture; stored error numbers are not proof authority"
+  ],
+  "checks": {
+    "new_native_checkpoint_tests": 3,
+    "focused_certified_lod": {
+      "passed": 5
+    },
+    "actual_import_consumer": {
+      "passed": 1,
+      "scenario": "Actual vmodel import/dependency/last-good checks; save accepted native checkpoint, stop workers, remove OBJ/certificate/recipe files, restore and compare 120 native policy queries"
+    },
+    "render_lib": {
+      "passed": 370,
+      "ignored": 86
+    },
+    "editor_lib": {
+      "passed": 284,
+      "ignored": 21
+    },
+    "strict_clippy": "render/editor all-targets including certified_lod_checkpoint example passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "diff_check": "passed"
+  },
+  "regressions": [
+    "Whole/subdivided JSON files, signed zero/subnormal source words and exact accepted error envelopes",
+    "120 selection steps each, both levels reached, independent previous-level history and hysteresis",
+    "Native base-only objects keep original proof kind",
+    "Forged error/count/index-byte receipts, invalid witness weights/coverage, nonfinite geometry, unknown fields and tight policies reject without changing original"
+  ],
+  "files": [
+    {
+      "blake3": "7ef9c44701f175e9a618a84d14a8d8fd8e66b8b458174076a541465db8e23659",
+      "both_levels_exercised": true,
+      "bytes": 496,
+      "exact_native_checkpoint_equal": true,
+      "file": "whole.json",
+      "original_error_bits": 4604544271217802192,
+      "policy_phases": 120,
+      "restored_error_bits": 4604544271217802192,
+      "path": "certified-lod-files/whole.json",
+      "sha256": "49e6934f5a108cb4baae53847ee8670435ec26d2729cc42f7502fe1a29afc4af"
+    },
+    {
+      "blake3": "573f866d97a83ea2cd11553cdcb4fdb3ccddb13c3e7d81ac43b735ea49287fe8",
+      "both_levels_exercised": true,
+      "bytes": 1335,
+      "exact_native_checkpoint_equal": true,
+      "file": "subdivided.json",
+      "original_error_bits": 4604544271217802195,
+      "policy_phases": 120,
+      "restored_error_bits": 4604544271217802195,
+      "path": "certified-lod-files/subdivided.json",
+      "sha256": "817b7048003cfe3756c7527dcec889787b14a4622ccab9a1c24afee1419cc9da"
+    }
+  ],
+  "receipt": "certified-lod-files/receipt.json",
+  "proof_kind_precision": "The generated Whole and Subdivided example bounds differ by three f64 ULPs; each restored bound equals its original exactly. No conversion between proof kinds.",
+  "policies": [
+    "Cumulative positions/levels/indices/witness cells and encoded/input bytes",
+    "Native subdivision depth and exact uniform cell coverage checks reused before source copies",
+    "Native geometric proof validation before returning a certified owner",
+    "Standalone JSON integrity is supplied by future enclosing EditorAsset envelope; no standalone checksum claim"
+  ],
+  "limits": [
+    "Retained CPU witness storage increases residency relative to the prior discard behavior; physical old-plus-new heap budget not qualified",
+    "LodIndexSet index_bytes remains documented logical index-buffer accounting, not total CPU proof memory",
+    "Static geometric quality only; UV/normal/material/deformation/GPU arithmetic guarantees excluded",
+    "No explicit GPU/window/audio-device/FPS qualification",
+    "Final cleanup after full suites was test-only unnecessary-semicolon removal; final all-target Clippy and standalone example run on delivered sources"
+  ],
+  "rejected_attempts": [
+    "Initial test call omitted LodPolicy::select pixels-per-world-unit argument; corrected before focused/full tests",
+    "Two new-test match semicolons triggered strict Clippy; removed without weakening lint policy"
+  ],
+  "remaining": [
+    "Skeletal LOD source checkpoint and actual mesh sharing with model resources",
+    "Complete EditorAsset images/nodes/LOD graph and original import observations",
+    "Catalog/revision joins, worker/watch barriers and atomic CPU/GPU/App publication",
+    "Whole-session native/platform and physical-memory qualification",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "field_audit": "certified-lod-owner-field-audit.json",
+  "logs": {
+    "initial-check": "certified-lod-initial-check.log",
+    "initial-focused-rejected": "certified-lod-initial-focused-rejected.log",
+    "focused": "certified-lod-focused.log",
+    "consumer": "certified-lod-consumer.log",
+    "initial-clippy-rejected": "certified-lod-initial-clippy-rejected.log",
+    "render-full": "certified-lod-render-full.log",
+    "editor-full": "certified-lod-editor-full.log",
+    "example": "certified-lod-example.log",
+    "clippy": "certified-lod-clippy.log",
+    "format": "certified-lod-format.log",
+    "diff": "certified-lod-diff.log"
+  }
+}

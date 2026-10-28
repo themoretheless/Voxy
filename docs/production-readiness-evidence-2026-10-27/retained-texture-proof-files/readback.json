@@ -1,0 +1,13 @@
+{
+  "width": 64,
+  "height": 64,
+  "format": "RGBA8Unorm",
+  "row_stride_bytes": 256,
+  "reference_equals_restored": true,
+  "reference_vs_current_changed_pixels": 253,
+  "sha256": {
+    "texture-reference.rgba": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464",
+    "texture-current.rgba": "7da6a456732466137c34a7d0bdedce6fa1000702113652194176321afbb66cf0",
+    "texture-restored.rgba": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464"
+  }
+}

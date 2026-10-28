@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-27",
+  "scope": "Native SkinnedMesh set source-buffer and derived influence-cache identity. Prerequisite to full model/App composition, not completion of those owners.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "source_sha256": {
+    "crates/voxy_render/src/lib.rs": "3068d92f29861b6ec4393b5f25be7392c7956784a0513442a46b5d5f1eaa42ec",
+    "crates/voxy_render/src/geometry_checkpoint.rs": "a4902815c48d83271d48989c1a969cdf28e749633c9ddcd272c3e55cceca6d93",
+    "crates/voxy_render/src/geometry_checkpoint/skinned_set.rs": "77ac243fea2ebcf5c60bbf9e0d3e9e56ebe6851d2698590e94b4f11b9a57e3db",
+    "crates/voxy_render/src/skinned/checkpoint.rs": "951d0a90c284ebd85144446601460cb87809314a34269ab27d82c9aa127494b1",
+    "crates/voxy_render/src/skinned/checkpoint/set.rs": "5ece1a2803dc4b0bd7d152b051248f663f509980aa576e339084607930e7fde4",
+    "crates/voxy_render/src/skinned/checkpoint/set/tests.rs": "e82ebf83916d251dc742e0afa19d5fd520196211d1248c95a944eea7cfa03766",
+    "crates/voxy_editor/src/import/animated_tests.rs": "56bee0eff7e1415d800346baf0d03353021dd226f24968345f8fcbf88b37be17"
+  },
+  "archive": {
+    "magic": "VOXYGEO1",
+    "kind": 4,
+    "version": 1,
+    "integrity": "Exact lengths and BLAKE3 body hash",
+    "native_admission": "Prepare rebuilds native meshes, verifies source words and derived values/cache receipts, restores original alias tables and checks exact canonical recapture"
+  },
+  "field_coverage": {
+    "SkinnedMesh": {
+      "vertices": "exact accepted words and actual Arc identity",
+      "indices": "exact order and actual Arc identity",
+      "joint_count": "exact u16",
+      "coherent_weights": "native rebuild must equal captured flag",
+      "max_position_component": "native rebuild must equal captured f32 words",
+      "groups": "actual Arc identity with native-derived receipt"
+    },
+    "InfluenceGroups": [
+      "keys",
+      "families",
+      "has_bad_normal",
+      "max_position",
+      "bad_normal"
+    ]
+  },
+  "policies": [
+    "Aggregate unique source vertices/indices, table counts, mesh count, joint and encoded bytes",
+    "Distinct native vertex reconstruction jobs bounded before allocation",
+    "Distinct vertex/rig/group/index admission combinations bounded before allocation",
+    "Repeated identical mesh records reuse completed native owners",
+    "Index-only variants use native with_shared_indices; no vertex reduction/normalization"
+  ],
+  "checks": {
+    "new_native_tests": 4,
+    "render_lib": {
+      "passed": 367,
+      "ignored": 86
+    },
+    "editor_lib": {
+      "passed": 284,
+      "ignored": 21
+    },
+    "strict_clippy": "render/editor all-targets -D warnings passed",
+    "scoped_rustfmt": "passed",
+    "diff_check": "passed"
+  },
+  "consumer": "Actual Fox import writes skin-set file alongside primitive/image/animation records; source directory removed; restored set assigned into prepared primitives; all clips compare exact local poses, palettes and posed geometry at 120 phases. This is an integrated participant scenario, not complete ModelAsset restoration.",
+  "regressions": [
+    "Dense real file with 131073 vertices per source, two independent vertex buffers and two independent influence-cache owners",
+    "Shared and independent buffer/cache relationships including vertex-only and index-only sharing",
+    "120 native admission phases and 120 small exact posed-geometry phases",
+    "128 repeated instances use one native reconstruction budget; different joint-count jobs require additional budget",
+    "Malformed cache/derived flags, nonfinite source, bad references, unused records, truncated/corrupt files, rechecksummed hostile count and policy errors leave original unchanged"
+  ],
+  "initial_rejected_check": "New test missed glam::Vec3 import; corrected before focused/full qualification; rejected log retained.",
+  "limitations": [
+    "BLAKE3 cache receipts are compared to a fresh native derivation, not trusted as standalone proof",
+    "Policies are not physical peak-memory qualification",
+    "No explicit GPU/window/audio-device/FPS qualification",
+    "Full model cross-participant ownership, source-node metadata, clip mapping, LOD and source observations remain open",
+    "Worker/watch and atomic native CPU/GPU/App publication remain open",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "logs": {
+    "initial-check": "skin-set-initial-check.log",
+    "initial-focused-rejected": "skin-set-initial-focused-rejected.log",
+    "focused-three": "skin-set-focused-three.log",
+    "consumer": "skin-set-consumer.log",
+    "render-full": "skin-set-render-full.log",
+    "editor-full": "skin-set-editor-full.log",
+    "clippy": "skin-set-clippy.log",
+    "format": "skin-set-format.log",
+    "diff": "skin-set-diff.log"
+  }
+}

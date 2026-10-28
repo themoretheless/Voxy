@@ -1,0 +1,38 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Existing resource envelope now includes original PreviewCheckpoint: exact phase words, accepted native frame, settings/profile, durable owner and original model-root keys",
+    "Unbound preview validates original model/frame codec and root-role identity before spawning workers; later binding uses actual prepared scene view",
+    "Model/animation and Play resource preparation retain bound preview through existing resource owner into GPU-ready candidates",
+    "Explicit original Arc sharing with GPU owner captured as role metadata; equal independent preview/GPU frames remain independent",
+    "Source-free CPU test preserves f64 phase 0.25 plus one mantissa bit and complete native checkpoint JSON",
+    "Missing participant, unresolved owner, root mismatch and shared role without GPU frame reject",
+    "M4 Max/Metal source-free GPU test covers shared and equal independent frame modes: exact phase/frame JSON, Arc identity policy and exact nonblank 64x64 geometry pixels after staging",
+    "Controlled fault omitting preview/GPU Arc publication fails at intended identity assertion; final codec restored byte-for-byte"
+  ],
+  "checks": {
+    "editor_passed": 371,
+    "editor_ignored": 39,
+    "gpu_app_passed": 4,
+    "gpu_full_session_passed": 3,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "Preview/runtime direct aliasing without a GPU bridge is not added in this change",
+    "Prepared snapshot owners remain detached; whole-App atomic publication and native save/load UI are unfinished",
+    "GPU reference uses same physical device/renderer and 64x64 geometry images, not complete native window presentation",
+    "Idle whole-editor checkpoint lifecycle and remaining AuthoringSession/Graphics owners still require composition",
+    "No physical total-memory or 120/160 FPS qualification"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/animation_preview/checkpoint.rs": "bb3061f792d935c7176ec21fe62b194a1c440f9dc068e3d1599eb98d8d49bacd",
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "a284bd15bfb1392f04290e834e5c66bb9109b441bb242911d5ec12bdf58dc2a9",
+    "crates/voxy_editor/src/app/resource_checkpoint/play.rs": "4e788a8a68ee2f25ff856d306ff73cdf134e108509ade4156d85a60f7418fcd1",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "bd7277ae3b4c2e6cfa5e48ab2ad97c3ebf534c13b21bb4cf60b41b8b8bbc061d",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "3cc213c0453d7db19ae67c0f443c75b9324b408c8d225290034a889f858302a7",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "7fcd231e97dd689cb420126cc46a823cdf39b8d6f1088d0cf7a6c73360c9461c"
+  }
+}

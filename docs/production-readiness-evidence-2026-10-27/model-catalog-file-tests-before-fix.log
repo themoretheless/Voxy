@@ -1,0 +1,22 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 2 tests
+test import::catalog_checkpoint::tests::mismatched_dependencies_and_limits_reject_without_touching_live_catalog ... FAILED
+test import::catalog_checkpoint::tests::failed_reload_keeps_original_model_sources_and_revision_after_restore ... ok
+
+failures:
+
+---- import::catalog_checkpoint::tests::mismatched_dependencies_and_limits_reject_without_touching_live_catalog stdout ----
+
+thread 'import::catalog_checkpoint::tests::mismatched_dependencies_and_limits_reject_without_touching_live_catalog' (77083768) panicked at crates/voxy_editor/src/import/catalog_checkpoint/tests.rs:28:32:
+called `Result::unwrap()` on an `Err` value: Os { code: 17, kind: AlreadyExists, message: "File exists" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    import::catalog_checkpoint::tests::mismatched_dependencies_and_limits_reject_without_touching_live_catalog
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 313 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

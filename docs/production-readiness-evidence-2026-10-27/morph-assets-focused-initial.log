@@ -1,0 +1,25 @@
+   Compiling serde v1.0.229
+   Compiling naga v30.0.1
+   Compiling image v0.25.10
+   Compiling gltf-json v1.4.1
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling gltf v1.4.1
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling wgpu-hal v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu-hal)
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling wgpu v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu)
+   Compiling voxy_water v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_water)
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.80s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_model-04a08d587103bfe4)
+
+running 3 tests
+test morph::checkpoint::tests::malformed_headers_streams_enums_quotas_and_types_reject_without_changing_source ... ok
+test morph::checkpoint::tests::real_file_roundtrip_preserves_cancellation_and_negative_weight_accuracy ... ok
+test morph::checkpoint::tests::static_and_skinned_sources_rebuild_exact_metadata_and_120_morph_results ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 45 filtered out; finished in 0.06s
+

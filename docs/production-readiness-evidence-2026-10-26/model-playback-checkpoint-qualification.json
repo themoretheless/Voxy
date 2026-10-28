@@ -1,0 +1,21 @@
+{
+  "status": "model_playback_checkpoint_with_events_and_contact_intervals_verified",
+  "source_sha256": {
+    "crates/voxy_editor/src/model_playback_checkpoint.rs": "901de704c193d42bd4875779eda305fa6930367776540948176407bcb77815b1",
+    "crates/voxy_editor/src/model_playback.rs": "cef194349f6cd1d892e56ad2edbe8a9fa65963ce473c7dc4e7176694d0ce25cb",
+    "crates/voxy_animation/src/checkpoint.rs": "70a0d3d86b2cf23b653674b6f49048f29ee026662007b08f8a6f74227003bf59",
+    "crates/voxy_animation/src/lib.rs": "be931e49d1ecf2952989c8baac57ea39073b3fec6901bd52c02414bf51a9a3e4"
+  },
+  "new_tests": 2,
+  "animation_tests_passed": 339,
+  "editor_tests_passed": 231,
+  "editor_tests_ignored": 20,
+  "strict_animation_editor_all_targets_clippy": true,
+  "continuation_frames": 240,
+  "pending_events_drain_once": true,
+  "frozen_and_playing_source_contact_state_preserved": true,
+  "fresh_model_assets": true,
+  "complete_animation_runtime_owner_saved": false,
+  "full_app_save": false,
+  "fps_qualified": false
+}

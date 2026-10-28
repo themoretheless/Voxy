@@ -1,0 +1,28 @@
+{
+  "status": "native_sampled_and_reflecting_boundary_checkpoint_verified",
+  "new_continuation_tests_passed": 1,
+  "continuation_cases": 4,
+  "existing_boundary_tests_passed": 43,
+  "existing_reflecting_tests_passed": 16,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps_per_case": 120,
+  "covered": [
+    "sample positions volumes and prescribed velocities",
+    "static pressure extrapolation",
+    "reflecting box and no-slip policy",
+    "canonical grid reconstruction with exact sample ordering",
+    "replacement from opposite boundary family",
+    "particle response and boundary diagnostic continuation",
+    "invalid geometry velocities version and capacity rejection"
+  ],
+  "remaining": [
+    "particle population and compensated suspension heat ledger",
+    "outer coupled rigid-body owner history",
+    "complete bounded liquid archive",
+    "SceneLiquidRuntime and PlaySession publication"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/boundary_checkpoint.rs": "77a3454b6c4795b538b548baa0e0b4f248a13f7ccbe6a8480bb633b77cdad2f5",
+    "crates/physics/src/liquid.rs": "2b395491fa267ead3fa8e5cf01ae37a71277cbfb8ff330c41873253dba644a88"
+  }
+}

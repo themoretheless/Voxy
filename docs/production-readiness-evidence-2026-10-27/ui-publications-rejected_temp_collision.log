@@ -1,0 +1,30 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.89s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 3 tests
+test ui_live::publications::tests::file_bundle_preserves_two_versions_shared_runs_and_retired_owners_for_120_draw_cycles ... FAILED
+test ui_live::publications::tests::corruption_aliases_late_failures_and_aggregate_limits_preserve_the_source ... FAILED
+test ui_live::publications::tests::shared_publication_and_distinct_equal_publications_remain_distinguishable ... ok
+
+failures:
+
+---- ui_live::publications::tests::file_bundle_preserves_two_versions_shared_runs_and_retired_owners_for_120_draw_cycles stdout ----
+
+thread 'ui_live::publications::tests::file_bundle_preserves_two_versions_shared_runs_and_retired_owners_for_120_draw_cycles' (76318840) panicked at crates/voxy_editor/src/ui_live/publications/tests.rs:51:36:
+called `Result::unwrap()` on an `Err` value: Os { code: 17, kind: AlreadyExists, message: "File exists" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- ui_live::publications::tests::corruption_aliases_late_failures_and_aggregate_limits_preserve_the_source stdout ----
+
+thread 'ui_live::publications::tests::corruption_aliases_late_failures_and_aggregate_limits_preserve_the_source' (76318839) panicked at crates/voxy_editor/src/ui_live/publications/tests.rs:51:36:
+called `Result::unwrap()` on an `Err` value: Os { code: 17, kind: AlreadyExists, message: "File exists" }
+
+
+failures:
+    ui_live::publications::tests::corruption_aliases_late_failures_and_aggregate_limits_preserve_the_source
+    ui_live::publications::tests::file_bundle_preserves_two_versions_shared_runs_and_retired_owners_for_120_draw_cycles
+
+test result: FAILED. 1 passed; 2 failed; 0 ignored; 0 measured; 287 filtered out; finished in 7.97s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

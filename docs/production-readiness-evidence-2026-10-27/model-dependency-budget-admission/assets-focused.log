@@ -1,0 +1,10 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.40s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_assets-c45ad932fb61a65e)
+
+running 2 tests
+test sources::tests::source_watch_admission_counts_distinct_ids_and_required_source_without_mutation ... ok
+test sources::tests::source_watch_admission_retains_failed_attempt_union_and_native_graph_quotas ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 64 filtered out; finished in 0.00s
+

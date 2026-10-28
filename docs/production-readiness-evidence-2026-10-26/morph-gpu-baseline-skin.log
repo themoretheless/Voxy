@@ -1,0 +1,9 @@
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.68s
+     Running tests/scene_skinning.rs (target/research-ray-precision/debug/deps/scene_skinning-ce2c16ee9dd5b66b)
+
+running 1 test
+test gpu_scene_skinning_independent_instances_and_last_good_pose ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.06s
+

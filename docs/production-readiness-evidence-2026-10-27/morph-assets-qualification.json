@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-27",
+  "scope": "Accepted ModelPrimitive metadata and MorphGeometry source-resource checkpoints; integrated file-restored Fox primitive consumer. Not a complete ModelAsset/EditorAsset/App checkpoint.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "source_sha256": {
+    "Cargo.lock": "6b8de2b792999810cba7e998500dce8fc01862d2bc4100cdb8bf2f94d8ac7871",
+    "crates/voxy_model/Cargo.toml": "1fe351b4b611ca12fc1b225a28639a253baad78724dd183cffea3a413645d306",
+    "crates/voxy_model/src/lib.rs": "246ed2c3fb733fad6482b0898dde2d4bea6dc6a3f7dbf1230519699e21145a2b",
+    "crates/voxy_model/src/morph.rs": "0ae81256e00caafa0e2543f05efe7a4da673270d40b1309c7e8e070cf2a3ef63",
+    "crates/voxy_model/src/morph/checkpoint.rs": "e8e35423e55c15ccce1ce26911579dd91769b8c991f84127f9f2e018ca333c0d",
+    "crates/voxy_model/src/morph/checkpoint/tests.rs": "fceafdf61f59b4a4fafd2ae83fa9d4128036848f82e205bfeee5fa5b4760f739",
+    "crates/voxy_editor/src/import/animated_tests.rs": "931fca25e02e1a52fb2da1abca2c72ce5a36bfb42b501a7dcc28f6a3fdb052f1"
+  },
+  "archive": {
+    "magic": "VOXYMRP1",
+    "header_bytes": 48,
+    "integrity": "BLAKE3 over entire typed body; exact checked length",
+    "numeric_policy": "source f32 little-endian words; no weight clamping/normalization; source integer geometry records",
+    "admission": "from_bytes checks envelope/type/integrity; prepare checks native geometry, complete consumption, stream counts before allocation, aggregate quotas and native MorphGeometry constructor"
+  },
+  "checks": {
+    "focused_archive": {
+      "passed": 4
+    },
+    "model_lib": {
+      "passed": 49,
+      "failed": 0,
+      "ignored": 0
+    },
+    "editor_lib": {
+      "passed": 284,
+      "failed": 0,
+      "ignored": 21
+    },
+    "clippy": "voxy_model and voxy_editor all-targets -D warnings passed",
+    "format": "scoped rustfmt passed",
+    "diff_check": "passed"
+  },
+  "consumer_evidence": [
+    "Actual Fox import: save accepted full primitive records, images and animation archive; delete sources; rebuild native data; compare exact record, image/mip, local-pose/palette words and posed geometry for every clip at 120 phases; restored color used by restored geometry",
+    "Actual glTF morph importer: drop original JSON/buffers, rebuild local morph sources, compare native evaluate and positions64 over 120 phases; weight clip owner retained as baseline",
+    "Real file for cancelling large terms, subnormals, signed zero and negative weights"
+  ],
+  "preserved_fields": [
+    "MorphGeometry source and ordered target streams including exact optional presence",
+    "ModelPrimitive geometry, color and optional base_color_texture",
+    "ModelTexture image, sampling and use_mips",
+    "TextureSampling wrap_u, wrap_v, min_filter, mag_filter, mipmap_filter, anisotropy"
+  ],
+  "rejected_initial_check": {
+    "reason": "New import test called ordinary ModelAsset::parse, whose contract rejects morph targets. Corrected test to native MorphModelAsset::parse; production importer contract unchanged.",
+    "retained_logs": [
+      "morph-assets-focused-rejected.log",
+      "morph-assets-model-full-rejected.log"
+    ]
+  },
+  "limits": [
+    "Serialized sampler metadata is not GPU resource admission",
+    "Image indices resolved by enclosing model owner",
+    "Internal geometry stream Arc aliases are not qualified by this participant",
+    "Byte/vector policies do not qualify physical peak heap",
+    "No new explicit GPU/window/audio-device/FPS qualification"
+  ],
+  "remaining": [
+    "MorphImportData property defaults, weight clips, ordered source-node bindings and clip mirrors",
+    "Complete model shared ownership and source observations",
+    "LOD witness preservation/revalidation",
+    "Model worker/watcher drain and atomic CPU/GPU/App publication",
+    "Native audio device queue transfer",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "field_audit": "model-resource-owner-field-audit.json",
+  "logs": {
+    "focused-initial": "morph-assets-focused-initial.log",
+    "focused-rejected": "morph-assets-focused-rejected.log",
+    "focused-qualified": "morph-assets-focused-qualified.log",
+    "model-full-rejected": "morph-assets-model-full-rejected.log",
+    "model-segment-qualified": "morph-assets-model-segment-qualified.log",
+    "model-full-qualified": "morph-assets-model-full-qualified.log",
+    "editor-qualified": "morph-assets-editor-qualified.log",
+    "clippy-qualified": "morph-assets-clippy-qualified.log",
+    "format-qualified": "morph-assets-format-qualified.log",
+    "diff-qualified": "morph-assets-diff-qualified.log"
+  }
+}

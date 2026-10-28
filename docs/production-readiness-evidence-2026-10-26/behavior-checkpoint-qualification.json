@@ -1,0 +1,28 @@
+{
+  "status": "explicit_behavior_state_codecs_and_fresh_simulation_restore_verified",
+  "code_sha256": {
+    "crates/voxy_scene/src/behavior_checkpoint.rs": "3875d5ff9aaf56d7b2ac67efb2247a836c7898f1ef2a93c3fd75d3d2fa781d83",
+    "crates/voxy_scene/src/behavior.rs": "ac931b21348fe3f4a0ad5564840f3809001117625a9f3960e37ac1ecd5159396",
+    "crates/voxy_scene/src/simulation.rs": "9141f559db0871f5d5d6cb67b306b8d89088e61b8502fc4b229fbad2f806e1f5",
+    "crates/voxy_scene/src/lib.rs": "f35506970d2b31e5a061d6d2a9d78fc581f76dbb3bc14061326a34b4cc827eb9"
+  },
+  "scene_library_passed": 82,
+  "editor_library": {
+    "passed": 228,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_scene_gameplay_editor_all_targets_clippy_passed": true,
+  "continuation_updates_exact": 120,
+  "attachment_order_enabled_started_private_state_preserved": true,
+  "awake_start_not_replayed_on_restore": true,
+  "inactive_enable_disable_transitions_tested": true,
+  "opaque_payload_bytes_and_custom_object_id_reference_rebind_tested": true,
+  "unsupported_codecs_budgets_corrupt_payloads_missing_owner_rejected": true,
+  "nonempty_live_simulation_not_replaced": true,
+  "factory_side_effects_outside_engine_not_rollbackable": true,
+  "full_game_checkpoint_envelope_or_slots_implemented": false,
+  "pending_commands_other_runtime_participants_included": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

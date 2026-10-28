@@ -1,0 +1,26 @@
+{
+  "status": "gameplay_input_checkpoint_and_headless_consumer_verified",
+  "code_sha256": {
+    "crates/voxy_input/src/lib.rs": "744cfeff1d31f95104ee930168054917bd746dc1d2160ed97b5e297c33be2090",
+    "crates/voxy_input/src/checkpoint.rs": "eda8fd87385f9973a41217a160c0c0b2f6f8159d52173804b19bb514879ed880",
+    "crates/voxy_editor/src/headless_game.rs": "1589a75eb4a90b584de139d996c4a1a6dbc048e27530b67475896fdd39ec2dbf",
+    "crates/voxy_editor/src/headless_game_tests.rs": "457d16cf8ec690c01eccb3cf8f777896de2d4eeb8f06b7278a4ef069079d2ad2"
+  },
+  "input_library_passed": 8,
+  "editor_library": {
+    "passed": 228,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_input_gameplay_editor_all_targets_clippy_passed": true,
+  "headless_quick_jump_continuation_steps_exact": 120,
+  "bindings_dead_zones_analog_values_controls_focus_pending_edges_preserved": true,
+  "integer_float_bits_no_input_crate_codec_dependency": true,
+  "candidate_state_consistency_checked_by_existing_recompute": true,
+  "invalid_restore_retains_live_input": true,
+  "ui_capture_and_focus_included": false,
+  "device_adapter_compatibility_enforced_by_outer_session": false,
+  "full_game_save_or_disk_slots_implemented": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

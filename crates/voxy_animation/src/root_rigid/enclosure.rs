@@ -1,7 +1,9 @@
 //! Outward-rounded small-angle exponential enclosures.
 //! Assumes IEEE-754 round-to-nearest basic operations and gradual underflow.
 //! No platform sin/cos/atan or platform argument-reduction assumptions are used.
+mod checkpoint;
 use super::*;
+pub use checkpoint::{RootRigidEnclosureCheckpoint, RootUniformScaleCheckpoint};
 mod compilation;
 mod twist;
 pub(crate) use compilation::{

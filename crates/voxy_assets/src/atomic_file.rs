@@ -28,6 +28,28 @@ pub fn save_atomic_file(
     bytes: &[u8],
     max_bytes: usize,
 ) -> Result<(), AtomicSaveError> {
+    save_file(path, bytes, max_bytes, true)
+}
+/// Publishes a fully written and synced sibling file without replacing any existing
+/// destination. A hard link provides atomic no-clobber publication; filesystems
+/// without hard-link support return an error. Temporary cleanup is best effort.
+/// Assumes trusted paths and does not guarantee directory durability.
+/// # Errors
+/// Rejects existing destinations, unsupported filesystems, invalid paths, byte
+/// limits and filesystem IO. Errors before publication leave the destination intact.
+pub fn save_atomic_new_file(
+    path: &Path,
+    bytes: &[u8],
+    max_bytes: usize,
+) -> Result<(), AtomicSaveError> {
+    save_file(path, bytes, max_bytes, false)
+}
+fn save_file(
+    path: &Path,
+    bytes: &[u8],
+    max_bytes: usize,
+    replace: bool,
+) -> Result<(), AtomicSaveError> {
     if bytes.len() > max_bytes {
         return Err(AtomicSaveError::Capacity);
     }
@@ -54,9 +76,13 @@ pub fn save_atomic_file(
         file.write_all(bytes)?;
         file.sync_all()?;
         drop(file);
-        std::fs::rename(&temporary, path)
+        if replace {
+            std::fs::rename(&temporary, path)
+        } else {
+            std::fs::hard_link(&temporary, path)
+        }
     })();
-    if result.is_err() {
+    if !replace || result.is_err() {
         let _ = std::fs::remove_file(&temporary);
     }
     result.map_err(AtomicSaveError::Io)
@@ -64,6 +90,50 @@ pub fn save_atomic_file(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn concurrent_new_publication_never_overwrites_and_cleans_siblings() {
+        let root = std::env::temp_dir().join(format!(
+            "voxy-atomic-new-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let path = root.join("game.vpak");
+        assert!(save_atomic_new_file(&path, b"oversized", 1).is_err());
+        assert!(!path.exists());
+        let barrier = std::sync::Arc::new(std::sync::Barrier::new(8));
+        let workers: Vec<_> = (0_u8..8)
+            .map(|value| {
+                let path = path.clone();
+                let barrier = barrier.clone();
+                std::thread::spawn(move || {
+                    let bytes = vec![value; 65536];
+                    barrier.wait();
+                    save_atomic_new_file(&path, &bytes, bytes.len())
+                        .is_ok()
+                        .then_some(value)
+                })
+            })
+            .collect();
+        let winners: Vec<_> = workers
+            .into_iter()
+            .filter_map(|w| w.join().unwrap())
+            .collect();
+        assert_eq!(winners.len(), 1);
+        assert_eq!(std::fs::read(&path).unwrap(), vec![winners[0]; 65536]);
+        assert_eq!(std::fs::read_dir(&root).unwrap().count(), 1);
+        assert!(save_atomic_new_file(&path, b"replacement", 11).is_err());
+        assert_eq!(std::fs::read(&path).unwrap(), vec![winners[0]; 65536]);
+        let directory = root.join("directory");
+        std::fs::create_dir(&directory).unwrap();
+        assert!(save_atomic_new_file(&directory, b"data", 4).is_err());
+        assert!(directory.is_dir());
+        assert_eq!(std::fs::read_dir(&root).unwrap().count(), 2);
+        std::fs::remove_dir_all(root).unwrap();
+    }
     #[test]
     fn bounded_replace_and_failed_rename_preserve_destination_and_clean_temporary() {
         let root = std::env::temp_dir().join(format!(

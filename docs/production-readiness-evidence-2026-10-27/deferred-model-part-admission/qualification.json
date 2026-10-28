@@ -1,0 +1,35 @@
+{
+  "stage": "ENG-03 deferred imported-part admission",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "bug": "Unused prefab imported ModelPart index was not checked against its actual model nodes; build accepted part zero even for OBJ with no imported hierarchy.",
+  "change": "After native prefab expansion/overrides, explicit non-container model part indices are checked against node count from original InputRecipe decoder and input revalidation. Native grouping nodes and u32::MAX container semantics retained; captured model inputs join existing package source checks.",
+  "verified": [
+    "Pre-fix OBJ part-zero build publishes package incorrectly",
+    "OBJ with no imported nodes rejects explicit part zero",
+    "Index equal to actual glTF imported node count rejects",
+    "Large non-container u32 index rejects",
+    "Nested override changing valid part to out-of-range index rejects",
+    "Existing non-mesh grouping node zero accepts",
+    "u32::MAX container accepts",
+    "Valid textured part builds and after full source deletion native prefab placement/standalone startup loads model with drawable mesh_for(part), then completes one game tick"
+  ],
+  "editor_tests": {
+    "passed": 361,
+    "failed": 0,
+    "ignored": 35
+  },
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/package_models.rs": "10284ed2acb1026692fdbb8342b28729db9465c16a7b7daff9a620d55fe0ad4a",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "23b799534baf5abfa0b26f889a10f489c2e7f4808b2697558cdf9199df2c0c35"
+  },
+  "limits": [
+    "Bounds validation follows existing imported node-index semantics; stable per-part identity across same-count hierarchy changes remains separate architectural work",
+    "An inert ModelPart component without a model descriptor retains existing authoring policy",
+    "No new GPU/view-image, animation deformation, native-device or FPS qualification",
+    "Clip/locomotion and other deferred asset semantics remain separate work",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

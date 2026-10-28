@@ -1,0 +1,23 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.01s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-bcf1b72c587159c3)
+
+running 1 test
+test liquid_runtime::checkpoint::tests::complete_scene_owner_rebinds_reversed_handles_and_continues_120_steps ... FAILED
+
+failures:
+
+---- liquid_runtime::checkpoint::tests::complete_scene_owner_rebinds_reversed_handles_and_continues_120_steps stdout ----
+
+thread 'liquid_runtime::checkpoint::tests::complete_scene_owner_rebinds_reversed_handles_and_continues_120_steps' (75781035) panicked at crates/voxy_gameplay/src/liquid_runtime/checkpoint.rs:502:18:
+called `Result::unwrap()` on an `Err` value: Message("liquid source NodeId { scene: 1, slot: 0, generation: 0 }: ParticleBudget")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    liquid_runtime::checkpoint::tests::complete_scene_owner_rebinds_reversed_handles_and_continues_120_steps
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 195 filtered out; finished in 0.12s
+
+error: test failed, to rerun pass `-p voxy_gameplay --lib`

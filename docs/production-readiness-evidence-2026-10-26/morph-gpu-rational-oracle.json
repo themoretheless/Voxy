@@ -1,0 +1,9 @@
+{
+  "status": "physical_gpu_and_cpu_match_independent_rational_oracle",
+  "cpu64_matches_rational": true,
+  "cases": 41,
+  "max_nonzero_terms": 256,
+  "arithmetic": "exact Fraction source values, independent integer quotient/remainder rounding to binary32",
+  "universal_hardware_claim": false,
+  "fps_qualified": false
+}

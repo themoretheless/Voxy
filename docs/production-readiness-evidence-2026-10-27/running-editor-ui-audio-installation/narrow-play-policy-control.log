@@ -1,0 +1,21 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.05s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+EDITOR HISTORY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=0 asset=rig
+
+thread 'app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_ui_audio_and_continues_game' (80466339) panicked at crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs:1441:10:
+called `Result::unwrap()` on an `Err` value: Message("UI checkpoint version or capacity")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_ui_audio_and_continues_game ... FAILED
+
+failures:
+
+failures:
+    app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_ui_audio_and_continues_game
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 416 filtered out; finished in 0.14s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

@@ -1,0 +1,15 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.19s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 3 tests
+SNAPSHOT OPERATION FAILED: invalid editor file header or budget
+test app::snapshot_commands::tests::path_entry_stays_inert_after_scene_replacement_or_cancel ... ok
+SNAPSHOT OPERATION FAILED: atomic save: Io(Os { code: 2, kind: NotFound, message: "No such file or directory" })
+EDITOR SNAPSHOT SAVED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-70724-1793123690930456000-1/good.voxyedr
+test app::snapshot_commands::tests::shortcut_path_admission_and_background_save_use_desktop_policy ... ok
+SNAPSHOT OPERATION FAILED: invalid editor file header or budget
+test app::snapshot_commands::tests::command_failures_keep_editor_alive_and_allow_edit_save_and_retry ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 429 filtered out; finished in 0.12s
+

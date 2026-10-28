@@ -1,0 +1,16 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.78s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 2 tests
+test import::publication_checkpoint::tests::empty_publication_graph_round_trips ... ok
+test import::publication_checkpoint::tests::original_observations_and_shared_models_survive_source_removal ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 311 filtered out; finished in 0.04s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-ef30924b92d7d41b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

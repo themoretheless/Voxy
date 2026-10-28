@@ -1,0 +1,31 @@
+{
+  "stage": "ENG-03 / ENG-05 GPU qualification",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "change": "Adds explicit hardware GPU coverage of existing native model_texture cache and SceneRenderer sampler bindings. No production sampler/cache behavior changed.",
+  "verified": [
+    "Real Apple M4 Max / Metal adapter; CPU adapter forbidden",
+    "Nearest clamp, linear clamp, nearest repeat and nearest with mip visibility use distinct material-view allocations",
+    "Repeated requests for each exact sampling/mip policy return original material-view Arc",
+    "All four views share identical underlying native image texture allocation",
+    "Residency payload accounts for one 2x2 image with its native mip chain",
+    "Offscreen native 64x64 render/readback yields exactly four nearest colors and more than 100 linear-filter colors",
+    "Repeat wrapping produces distinct pixels from clamp",
+    "Rerendering original view matches original bytes exactly; enabling mip visibility at magnification yields same pixels",
+    "Outer GPU validation error scope clean"
+  ],
+  "gpu_tests_passed": 1,
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/gpu_model.rs": "57c0218893a41893b28cc798f09c48c72067c17feb638f65db4c5e5413a76fad",
+    "crates/voxy_editor/src/gpu_model_sampler_tests.rs": "ec35cb197e147f170d7c95ba91c36a818f144b05b666ec88200263977d2cbeba"
+  },
+  "limits": [
+    "GPU material/cache test is separate from prior CPU watcher/reload/package lifecycle regression; no single full-App GPU reload transaction qualification follows",
+    "No new CPU full-suite run; only test-gated module addition, explicit GPU test and strict all-target compilation were needed",
+    "No native window interaction, physical performance/RSS or FPS claim",
+    "Initial readback API compile failure retained; fixed by checking mapped-range Result",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

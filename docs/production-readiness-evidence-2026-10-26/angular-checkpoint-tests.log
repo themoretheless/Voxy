@@ -1,0 +1,15 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio_device)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.49s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-bcf1b72c587159c3)
+
+running 5 tests
+test behaviors::tests::batch_matches_legacy_activity_capture_deletion_and_reused_handles ... ok
+test behaviors::tests::inactive_motion_and_physics_ownership_use_existing_lifecycle ... ok
+test behaviors::tests::live_admission_capacity_and_physics_conflicts_preserve_poses ... ok
+test behaviors::tests::live_motion_and_grant_denial_do_not_double_apply_ticks ... ok
+test behaviors::checkpoint::tests::fresh_scratch_continues_scene_pose_and_pending_descriptor_failures_exactly ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 190 filtered out; finished in 0.01s
+

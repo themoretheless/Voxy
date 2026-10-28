@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-27",
+  "scope": "Explicit enclosing skin-buffer graph binding for model and skeletal LOD participants; not complete EditorAsset envelope or App publication.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "toolchain": "nightly-2026-05-27",
+  "source_sha256": {
+    "crates/voxy_model/src/checkpoint.rs": "b10174216485d1070ec0d8124f86917357ad1e6426ca076d1d62ba34cf98208f",
+    "crates/voxy_model/src/checkpoint/tests.rs": "37b05cbe7147dd2a5bf6abdbc4048dc66c0ed4f9d24ec361d44f2d618350f93a",
+    "crates/voxy_render/src/skinned_lod.rs": "412b3d60877f3d9f6132abaa837ca2bc61a4ae87a1bba1ec13fcfa7ffb3c9109",
+    "crates/voxy_render/src/skinned_lod/checkpoint/tests.rs": "8161dec9549f1ed249c87a621b8a8cce07dc74686cba7bfd563753f891423ea8",
+    "crates/voxy_editor/src/import/animated_tests.rs": "ea5c1950eb27cf1bbb609102b2edf24bf7c004e102b6320e44ec7b3b87ba8ea4"
+  },
+  "change": [
+    "Canonical live source_skin_meshes collection respects distinct model/morph owners and actual native buffer aliases",
+    "prepare_with_skin_meshes validates full local source words and vertex/index/group identity table before using external values",
+    "Standalone prepare and existing file format unchanged",
+    "Native LOD shares_source_with classifies shared Source Arc versus equal independent sources without exposing serialized pointers"
+  ],
+  "checks": {
+    "new_model_regression": 1,
+    "new_render_source_identity_regression": 1,
+    "model_lib": {
+      "passed": 54,
+      "ignored": 0
+    },
+    "render_lib": {
+      "passed": 374,
+      "ignored": 86
+    },
+    "editor_lib": {
+      "passed": 286,
+      "ignored": 21
+    },
+    "strict_clippy": "render/model/editor all-targets -D warnings passed",
+    "scoped_rustfmt": "passed",
+    "diff_check": "passed"
+  },
+  "actual_consumer": "Skeletal vmodel importer saves shared skin-set file containing model prefix plus LOD mesh; stops workers, removes original recipe/glTF/buffer/certificate files; restores collection once, restores model with explicit prefix and LOD with explicit shared value; verifies actual cross-owner vertex/index pointer sharing and exact 120-phase position/error/geometry results.",
+  "regressions": [
+    "Model and morph skin values use the supplied live native buffers",
+    "Splitting shared allocations and merging independent equal allocations reject",
+    "Wrong collection size rejects; original model graph recapture unchanged",
+    "Cloned LOD Source shares identity; equal independently prepared Source on same mesh does not"
+  ],
+  "initial_rejection": "Actual consumer still used standalone model prepare, so its pointer assertion detected independent buffers. Changed consumer to explicit shared-prefix preparation; assertion retained and final/full checks pass.",
+  "limitations": [
+    "Explicit resource ordering/bindings belong to outer EditorAsset coordinator",
+    "Canonical source collector returns immutable native values; physical peak memory/CPU timing not qualified",
+    "Multiple wrapper/source identity tables and complete six-field EditorAsset file remain open",
+    "No explicit GPU/window/audio-device/FPS qualification"
+  ],
+  "remaining": [
+    "Complete EditorAsset graph and source observations/catalog joins",
+    "Worker/watch barrier and atomic native CPU/GPU/App publication",
+    "Whole-session/native/platform and physical-memory qualification",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "logs": {
+    "focused": "model-skin-join-focused.log",
+    "consumer-rejected": "model-skin-join-consumer-rejected.log",
+    "consumer-qualified": "model-skin-join-consumer-qualified.log",
+    "model-full": "model-skin-join-model-full.log",
+    "render-full": "model-skin-join-render-full.log",
+    "editor-full": "model-skin-join-editor-full.log",
+    "clippy": "model-skin-join-clippy.log",
+    "format": "model-skin-join-format.log",
+    "diff": "model-skin-join-diff.log"
+  }
+}

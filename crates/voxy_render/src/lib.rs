@@ -36,7 +36,8 @@ mod camera_lod;
 pub use camera_lod::SceneLodBounds;
 mod certified_lod;
 pub use certified_lod::{
-    CertifiedLodError, CertifiedLodIndexSet, CertifiedLodSubdivisionVariant, CertifiedLodVariant,
+    CertifiedLodCheckpoint, CertifiedLodCheckpointError, CertifiedLodError, CertifiedLodIndexSet,
+    CertifiedLodSubdivisionVariant, CertifiedLodVariant,
 };
 pub use voxy_gpu_core::{
     ComputeMemoryBudget, ComputeMemoryStats, ComputeStorage, GpuIndirectMesh,
@@ -132,7 +133,13 @@ pub use fluid_screen::{
     FluidDepthFilter, FluidDiagnostic, FluidRenderFilmTriangle, FluidRenderParticle,
     ScreenSpaceFluidRenderer,
 };
+mod geometry_checkpoint;
 mod skinned;
+pub use geometry_checkpoint::{
+    GeometryArchiveLimits, GeometryCheckpointError, ImageCheckpoint, SceneMeshCheckpoint,
+    SkinnedMeshCheckpoint, SkinnedMeshSetCheckpoint, SkinnedMeshSetEntry, SkinnedMeshSetLimits,
+    SkinnedVertexCheckpoint,
+};
 mod skinned_motion;
 mod sprite;
 mod surface;
@@ -149,11 +156,19 @@ mod pose_admission_profile;
 mod pose_family_bound;
 pub use pose_admission_profile::RenderPoseProfile;
 pub use skinned::{SkinnedMesh, SkinnedMeshError, SkinnedUploadError, SkinnedVertex};
+mod skinned_morph;
+pub use skinned_morph::{
+    MAX_MORPH_TARGETS, SkinnedMorphMesh, SkinnedMorphTarget, exact_morph_component,
+    exact_morph_component64,
+};
 pub use voxy_gpu_core::{
     GraphicsBackend, GraphicsCapabilities, GraphicsOptions, PresentPreference,
 };
 mod skinned_lod;
-pub use skinned_lod::{PreparedSkinnedLod, SkinnedLodError, SkinnedLodMesh};
+pub use skinned_lod::{
+    PreparedSkinnedLod, SkinnedLodCheckpoint, SkinnedLodCheckpointError,
+    SkinnedLodCheckpointLimits, SkinnedLodError, SkinnedLodMesh,
+};
 mod skinned_lod_gpu;
 pub use skinned_lod_gpu::{SkinnedLodGpuError, SkinnedLodResidency};
 pub use skinned_motion::{PreparedSkinnedFrame, SkinnedMotionFrame, SkinnedMotionHistory};

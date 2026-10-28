@@ -1,0 +1,33 @@
+{
+  "stage": "ENG-03",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "change": "one shared model inventory parser for initial open and observed import results; current completed tickets publish valid captured manifest inventory without main-thread filesystem reads; invalid manifests preserve old inventory",
+  "verified": [
+    "new model IDs appear after manifest change",
+    "non-model entries excluded",
+    "removing current model ID updates inventory even when its import fails",
+    "removed model last-good Arc and authored scene remain intact",
+    "malformed subsequent manifest preserves inventory and current scene",
+    "stale completion changes neither inventory nor publication; current completion publishes both"
+  ],
+  "suite": {
+    "passed": 326,
+    "failed": 0,
+    "ignored": 30
+  },
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/import.rs": "24dad4767f0793ec729b15adcde0a9b52ecd43c7f00596cf9216592ba24c9cfb",
+    "crates/voxy_editor/src/lib.rs": "c44d6ef1ea563c164ca352e4900f36c7c5880b6d813e65201ef1330daf6478e6",
+    "crates/voxy_editor/src/app/model_reload.rs": "8f506cccfd2efea2c39989e5343046f7c2abd9ec769f637981d3184389c52e4a",
+    "crates/voxy_editor/src/app/model_reload/tests.rs": "9093c92b687b5370626347cd3848b6bedabdf1085beaa694f03a6ed2b916467e",
+    "crates/voxy_editor/src/scene3d_tests.rs": "b2f9630087c8b69f07f273760f62f7cac459576eaa2d0a99f06125ec5bada7d3"
+  },
+  "remaining": [
+    "inventory refresh still depends on a model import completion; empty/no-model projects need independent observed manifest participant",
+    "removed-ID undo/redo, save/reopen and explicit missing-resource UX need qualification",
+    "prefab/audio/UI inventories not unified by this model change",
+    "native windows, GPU frames and full ENG-03 remain open"
+  ]
+}

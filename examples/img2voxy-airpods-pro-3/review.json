@@ -1,0 +1,13 @@
+{
+  "animation_readiness": "unverified",
+  "inferred_regions": [
+    "Closed-case presentation with earbuds displayed outside; differs from open-case reference composition.",
+    "Earbud freeform surfaces and silicone bores approximated by procedural primitives.",
+    "Case corner radii, seam, port, speaker and sensor positions visually estimated; not CAD measurements.",
+    "No cavity, electronics, logos, text, metallic or glossy PBR reconstruction."
+  ],
+  "note": "No visual similarity score has been measured. Review a Voxy render against the reference.",
+  "reference": "https://www.apple.com/airpods-pro/specs/",
+  "structural_validation": "passed",
+  "visual_review": "pending"
+}

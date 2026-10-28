@@ -1,0 +1,31 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: unchecked subtraction of a `Duration`
+  --> crates/voxy_editor/src/app/resource_checkpoint/tests.rs:38:21
+   |
+38 |     app.last_scan = Instant::now() - Duration::from_secs(1);
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `Instant::now().checked_sub(Duration::from_secs(1)).unwrap()`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unchecked_time_subtraction
+   = note: `-D clippy::unchecked-time-subtraction` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::unchecked_time_subtraction)]`
+
+error: unchecked subtraction of a `Duration`
+  --> crates/voxy_editor/src/app/resource_checkpoint/tests.rs:68:21
+   |
+68 |     app.last_scan = Instant::now() - Duration::from_secs(1);
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `Instant::now().checked_sub(Duration::from_secs(1)).unwrap()`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unchecked_time_subtraction
+
+error: unchecked subtraction of a `Duration`
+  --> crates/voxy_editor/src/app/resource_checkpoint/tests.rs:96:21
+   |
+96 |     app.last_scan = Instant::now() - Duration::from_secs(1);
+   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `Instant::now().checked_sub(Duration::from_secs(1)).unwrap()`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unchecked_time_subtraction
+
+error: could not compile `voxy_editor` (lib test) due to 3 previous errors

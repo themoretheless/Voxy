@@ -1,0 +1,20 @@
+{
+  "status": "local_morph_geometry_validated_import_playback_gpu_pending",
+  "sources": {
+    "crates/voxy_model/src/morph.rs": "a5cee25d32c83f01d6560b6ecf41c576387308d97932ebd8c7e35f69790fb685",
+    "crates/voxy_render/src/scene/geometry.rs": "c4c6ea7195ec5cfa3862791fee2aa3349f626f89435d33e432c588486a5c99fa"
+  },
+  "checks": {
+    "model_focused_passed": 3,
+    "renderer_focused_passed": 2,
+    "model_all_targets_clippy": "passed -D warnings",
+    "renderer_lib_clippy": "passed -D warnings",
+    "renderer_all_targets_clippy": "failed: 4 needless_raw_string_hashes in probe_sampling_precision_tests.rs, nearest_tie_count_tests.rs, world_wide_order_tests.rs"
+  },
+  "default_import_accepts_morph": false,
+  "accepted_playback_integrated": false,
+  "gpu_morph_integrated": false,
+  "native_visuals_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

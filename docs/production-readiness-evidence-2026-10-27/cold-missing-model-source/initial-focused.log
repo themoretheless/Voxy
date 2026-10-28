@@ -1,0 +1,17 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.10s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+MODEL FAILED frames=0 last_good=false
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+test project::tests::missing_model_editor_reopen_preserves_scene_and_recovers_without_weakening_build ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 359 filtered out; finished in 0.08s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-cbe125d7235bbd56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

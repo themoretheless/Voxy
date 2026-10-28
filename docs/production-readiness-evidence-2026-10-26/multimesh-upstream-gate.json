@@ -1,0 +1,13 @@
+{
+  "status": "original_asset_advances_to_morph_unsupported_gate",
+  "binary_sha256": "7fdb18f6e2ca51aff69d8196463419f1f8516b90ee3e283ebd3a0ddead9e023a",
+  "model_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "source_bytes_unchanged": true,
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "Error: ModelError(\"only triangle primitives without morph targets are supported\")\n",
+  "multiple_mesh_skin_gate_reached_morph_validation": true,
+  "complete_model_import": false,
+  "native_render_verified": false,
+  "fps_qualified": false
+}

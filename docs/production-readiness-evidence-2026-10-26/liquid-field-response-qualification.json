@@ -1,0 +1,31 @@
+{
+  "status": "native_coupled_thermal_mechanical_response_checkpoint_verified",
+  "new_continuation_tests_passed": 1,
+  "existing_properties_tests_passed": 14,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps_per_case": 120,
+  "cases": [
+    "exponential viscosity response",
+    "Arrhenius viscosity with expansion and solute response"
+  ],
+  "covered": [
+    "all current property response and Arrhenius coefficients",
+    "exact reference material compatibility",
+    "replace opposite viscosity family without intermediate conflict",
+    "moving particle and thermal continuation",
+    "exact effective density sound speed viscosity words",
+    "atomic invalid coefficient conflicting laws and policy rejection"
+  ],
+  "remaining": [
+    "gas equation state",
+    "boundary and coupled rigid body history",
+    "full bounded liquid wire archive",
+    "SceneLiquidRuntime and PlaySession publication"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/field_response_checkpoint.rs": "14a4f35446143730a4ab6a3e26d30b5271f31534b7ef85949aeb9b5529927d19",
+    "crates/physics/src/liquid/properties.rs": "51fcc66e0267a8a686680da54a7cadb97a62ef79e8fde1a356a1d95b27e19450",
+    "crates/physics/src/liquid/arrhenius.rs": "dfa744960c337145028e63af67c024ce1477a04646abab6262c7140481c91be3",
+    "crates/physics/src/liquid.rs": "6ec0c7eb8d2cb06c68cd1585b9dfac06cce5e022bc808d2f0139bf44de51f54f"
+  }
+}

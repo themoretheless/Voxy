@@ -1,0 +1,32 @@
+{
+  "status": "replay_verified_exact_root_path_checkpoint_implemented",
+  "source_sha256": {
+    "crates/voxy_animation/src/root_rigid/checkpoint.rs": "3bf460c7c9df4f478278c8b5dca28d500a4e68473a76362b11968fb832e3ae34",
+    "crates/voxy_animation/src/root_rotation.rs": "7ba472dd735261a1b8dd88a4f31e2b7d080d395a44d348809f26acd572cce098",
+    "crates/voxy_animation/src/root_rigid.rs": "b3edbf52561970a03d8453d7de5362939b19075b3149705f95fb5b18bfb9f401",
+    "crates/voxy_animation/src/root_rigid/integration.rs": "6a044c7db9e536fde01fb9520a5096bc34ebbc7b3bdf6976d86ea2545fe5209e",
+    "crates/voxy_animation/src/root_rigid/tests.rs": "4784e486048ab5fef023606e737dec145b3f08e439185b94f451ba168ef5dd16",
+    "crates/voxy_animation/src/lib.rs": "fb6c2fb675f21c169e3cf24a1454f2b9cd7baa9f31545f7bbb322f6bf8e073d9"
+  },
+  "new_tests": 2,
+  "outward_integrator_clock_test_extended": true,
+  "animation_tests_passed": 346,
+  "editor_tests_passed": 235,
+  "editor_tests_ignored": 20,
+  "strict_animation_editor_all_targets_clippy": true,
+  "replayed_operations": [
+    "curve",
+    "ordered_twists",
+    "explicit_time_twists",
+    "retime",
+    "transform",
+    "append"
+  ],
+  "fresh_cubic_and_step_curves_verified": true,
+  "all_stored_path_fields_compared_as_integer_bits": true,
+  "original_field_approximation_error_proofs_saved": false,
+  "automatic_playback_recipe_capture_integrated": false,
+  "whole_animation_runtime_saved": false,
+  "full_app_save": false,
+  "fps_qualified": false
+}

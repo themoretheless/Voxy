@@ -1,0 +1,42 @@
+{
+  "scope": "Combined detached CPU resources/runtime plus validated GPU participant and destination guard",
+  "checks": {
+    "editor": {
+      "passed": 306,
+      "failed": 0,
+      "ignored": 26
+    },
+    "all_target_clippy": "passed",
+    "explicit_gpu_tests": [
+      "Combined native VOXYMAC1 CPU/runtime/GPU staging with 120-step continuation",
+      "Late GPU rejection, cancellation and destination mismatch guards",
+      "Normal native model reload transaction"
+    ],
+    "adapter": "Apple M4 Max Metal",
+    "format_and_diff": "passed"
+  },
+  "native_bundle": "cpu-gpu-model-runtime-files/gpu-source-role-bundle.voxymac",
+  "verified": [
+    "Prepared CPU catalog, original publications, idle import/watch workers and one original AnimationRuntime stay owned alongside pending GPU validation",
+    "CPU and GPU share exact original publication/model roots",
+    "Restored active animation continues 120 steps with exact phase bits, palette and properties",
+    "Accepted GPU frame deliberately remains older than newest simulation frame",
+    "Foreign scene, different device/queue, replaced cache with equal counters and changed geometry inventory reject destination validation",
+    "Deferred upload retries and ordinary pending reload guards respect cache identity"
+  ],
+  "not_claimed": [
+    "No root App CPU/history epoch guard or actual full-App commit yet",
+    "No first-presentation acknowledgement, UI/audio/non-model Graphics composition",
+    "No physical heap or presented FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/gpu_model.rs": "a13ddb8c79da5d90f1ab694499f1910dafde7dcf1a0a2f673629d58248ffe19b",
+    "crates/voxy_editor/src/gpu_model_restore.rs": "d978127123435ac0ce53cf9595ccdddd8dabfcb873f09f2300c346cdf5a69bcc",
+    "crates/voxy_editor/src/gpu_model_restore/tests.rs": "e9d74f4e1854164d74ee3809c7314323b3b9c01697789da3b35459da46589996",
+    "crates/voxy_editor/src/app/model_reload.rs": "28d25570b282450cecf926aefc3babc4f9c847071652557af0f8e64502994a99",
+    "crates/voxy_editor/src/app/model_reload/tests.rs": "29cddd302ffbb73be6699dfc723da15b1a31639dd7742df92c4a1143a15c909d",
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "e6114b0941425e7c991cdf3de81ff7d29cdf48c4c54db2e58a3f1e3163d77baf",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "cc11c70344206fcf65dec15e90866d586b14305833e7544564b639ac2481b4a3"
+  }
+}

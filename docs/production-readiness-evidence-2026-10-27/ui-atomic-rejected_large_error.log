@@ -1,0 +1,24 @@
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: the `Err`-variant returned from this function is very large
+   --> crates/voxy_editor/src/ui_live/restore.rs:101:10
+    |
+101 |     ) -> Result<PendingUiPublication<'a>, RejectedUiPublication> {
+    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the `Err`-variant is at least 328 bytes
+    |
+    = help: try reducing the size of `ui_live::restore::RejectedUiPublication`, for example by boxing large elements or replacing it with `Box<ui_live::restore::RejectedUiPublication>`
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#result_large_err
+    = note: `-D clippy::result-large-err` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::result_large_err)]`
+
+error: the `Err`-variant returned from this function is very large
+   --> crates/voxy_editor/src/ui_live/restore.rs:108:10
+    |
+108 |     ) -> Result<PendingUiPublication<'a>, RejectedUiPublication> {
+    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the `Err`-variant is at least 328 bytes
+    |
+    = help: try reducing the size of `ui_live::restore::RejectedUiPublication`, for example by boxing large elements or replacing it with `Box<ui_live::restore::RejectedUiPublication>`
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#result_large_err
+
+error: could not compile `voxy_editor` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 2 previous errors

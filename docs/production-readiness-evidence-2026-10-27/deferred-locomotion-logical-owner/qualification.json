@@ -1,0 +1,28 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline packaged ModelLocomotion on imported ModelPart container despite native runtime prohibition",
+    "Build rejects ModelLocomotion plus ModelPart on expanded prefab objects, including u32MAX hierarchy containers",
+    "Direct descriptor and nested ModelPart override both rejected before package publication with logical-owner diagnostic",
+    "Removing incompatible part restores normal package export and native retarget locomotion runtime after source deletion"
+  ],
+  "tests": {
+    "editor_passed": 367,
+    "editor_ignored": 36,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "Does not require local character-body ancestry in partial prefabs; instantiation context remains separate",
+    "Does not qualify all semantic component combinations",
+    "No native GPU/FPS or production rig qualification this turn",
+    "Full ENG-03/06 and engine roadmap remain open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/package_models.rs": "525865fc36fd02df1cce130f2aa68f201ce159dfe9672b325651e7af951db281",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "fa1afae9127d9ba7085356552e64043750e409f5d6382d0f7685d777678d3de3",
+    "crates/voxy_editor/src/locomotion.rs": "cc566c18fffcaffe1e94f261b2e6835b06259160e22164ee94c429402550edd7"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "status": "follow_runtime_participant_verified",
+  "continuation_frames": 120,
+  "editor_tests_passed": 242,
+  "editor_tests_ignored": 20,
+  "strict_editor_library_clippy": true,
+  "scope": "Fresh independently initialized scenes advance to the same simulation boundary; only the camera participant is serialized and replaced. Full scene/session loading is not exercised here.",
+  "remaining": [
+    "whole PlaySession atomic publication",
+    "persisted resource revisions",
+    "UI audio angular liquid owner composition",
+    "native visual acceptance",
+    "FPS qualification"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/follow_camera.rs": "9e872287a6014e16ed66ff1ee210cdc4c10a3ad736c4768f26779610d9e95b33",
+    "crates/voxy_editor/src/follow_camera_tests.rs": "a6f6f44409f53d524330cba70aff46d257822177b26b3fd3b0cabe887e0d0d90",
+    "crates/voxy_gameplay/src/follow_camera.rs": "7b02148dc6faad95395e8cd15ee00a7b50fd4fc51268105357b3383b6553db73"
+  }
+}

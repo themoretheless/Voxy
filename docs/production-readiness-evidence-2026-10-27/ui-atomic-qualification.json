@@ -1,0 +1,91 @@
+{
+  "scope": "transactional UI upload and async GPU-validated exclusive native UI publication participant",
+  "source_sha256": {
+    "crates/voxy_editor/src/ui_live.rs": "30d93b43abd5018a31d05efd117a1900bdbda4a723a84be585860e92bad543d6",
+    "crates/voxy_editor/src/ui_live/restore.rs": "c142bdf7bfdf5d11f5a7c5e6be467734d717232699a0d7c2e97fe0dbad6b21ba",
+    "crates/voxy_editor/src/ui_live/restore/tests.rs": "fd3f2bed391113b0204beeec35fe3e2ed880a37e22861d0fb1cbe8f7cad6900f",
+    "crates/voxy_editor/src/ui_live/publications.rs": "acbb445a58613d610032c31dbe0ec4a3b37cdae5c06db3454a751302896af290",
+    "crates/voxy_editor/src/ui_live/checkpoint.rs": "1a26a8e350367642e6f4e3e6fd4119f057dbe949d229677552b7b19a0820e3e1",
+    "crates/voxy_editor/src/ui_live/reload_checkpoint.rs": "656063ac407fde2ff7fdf71a059936dfffba343368955817ae0e40c2b5b4821f",
+    "crates/voxy_editor/src/gpu_model.rs": "7751d8533a4073c943747e8ec1a5703754bb346e3740ea5ba3a968568cdc41d9",
+    "crates/voxy_editor/src/ui_draw.rs": "737ada39ad8a0ab5e319ccfdde021785a105cd8053f865dda7945c97ca14a79f",
+    "crates/voxy_editor/src/app/viewport.rs": "0de4520f6fb3b972b3b1227b30e4ea12f50e859721abc000b5c17c1e59267c61",
+    "crates/voxy_editor/src/app/game_ui.rs": "dd029c8ee51b92047ce6bfbfca1f71b1b7b3e0bb33501193afa392899216f905"
+  },
+  "result_codes": {
+    "editor": 0,
+    "gpu": 0,
+    "clippy": 0
+  },
+  "checks": {
+    "editor": {
+      "passed": 280,
+      "ignored": 21,
+      "new_cpu_tests": 3
+    },
+    "gpu": {
+      "passed": 2,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "restore_readback": "128x128 RGBA8Unorm, saved reference and restored publication byte-identical, old destination differs",
+      "faults": [
+        "controlled geometry peak exhaustion",
+        "controlled texture peak exhaustion",
+        "late CPU cross-owner rejection after actual upload",
+        "real wgpu buffer validation error after actual upload",
+        "pending cancellation",
+        "validated candidate discard"
+      ]
+    },
+    "clippy": "all editor targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "invariants": [
+    "normal UI and focus upload use private weak cache index; synchronous failure does not alter live index/epoch",
+    "normal UI completion commits cache only after source publication admission",
+    "native UI restore borrows exact destination owner and Graphics UI fields until validated/discarded",
+    "GPU validation/internal/out-of-memory scopes popped synchronously; validation awaits without blocking caller thread",
+    "publication unavailable until scope futures settle successfully",
+    "candidate peak inventory includes old draw and focus geometry before replacement",
+    "final swap clears old focus state and native presented flag, installs CPU/UI/watch owner and candidate cache, rebinds deferred condition to final cache",
+    "active old worker handles are returned for host retirement; no joins inside commit",
+    "restored CPU history cannot admit native input/focus until successful frame acknowledgement"
+  ],
+  "bug_fix": {
+    "reproducer": "fractional origin [0.1,0.1], viewport128, Old office size18 previously rejected with SpriteBatch InvalidSprite",
+    "cause": "roundtrip through origin+glyph_size then subtraction yields local endpoint above1",
+    "fix": "intersect clip directly in glyph-local [0,1] domain; preserve exact full-glyph atlas endpoints; Sprite validity checks unchanged",
+    "evidence": "red/green regression and actual initial GPU failure log retained"
+  },
+  "readback": {
+    "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+    "dimensions": [
+      128,
+      128
+    ],
+    "restored-after": {
+      "blake3": "1faac59faa2c23d202fa31493237ab9609d849b5edaaf5e164e43746204a425a",
+      "bytes": 65536,
+      "sha256": "92052f618dfb527cb39d3c3e8d9bd217c03d69b94a0a418e260f7dc7af5720b0"
+    },
+    "saved-reference": {
+      "blake3": "1faac59faa2c23d202fa31493237ab9609d849b5edaaf5e164e43746204a425a",
+      "bytes": 65536,
+      "sha256": "92052f618dfb527cb39d3c3e8d9bd217c03d69b94a0a418e260f7dc7af5720b0"
+    },
+    "target-before": {
+      "blake3": "c18679bd08b7b1e6f4a1ff9e6cd8391a87455f8eeb485122759ea0677c83c3ab",
+      "bytes": 65536,
+      "sha256": "a26f1c0bda8fa68513fadca16b712b9bd1db195302b3c69b2b37a8235ef3948f"
+    }
+  },
+  "remaining": [
+    "complete App coordinator composing scene, gameplay, input, audio, model resources and UI publication",
+    "native window/swapchain workflow and frame pacing; no FPS qualification",
+    "whole-App async save/load scheduling, background file encoding and atomic disk slot publication",
+    "current native adapter is implemented and compiled; GPU tests exercise its common publication target with real offscreen resources, not a window",
+    "controlled texture/geometry admission tested; backend in-flight allocation/peak heap overhead not measured",
+    "OOM/internal scopes registered; destructive OOM/device-loss fault injection not performed",
+    "other ENG-03 through ENG-13 engine requirements remain open"
+  ]
+}

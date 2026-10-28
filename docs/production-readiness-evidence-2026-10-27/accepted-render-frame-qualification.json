@@ -1,0 +1,44 @@
+{
+  "scope": "Accepted GPU presentation frame values prepared against original publication roles; no complete GPU/App restore claim",
+  "checks": {
+    "editor": {
+      "passed": 306,
+      "ignored": 24,
+      "failed": 0
+    },
+    "all_target_clippy": "passed",
+    "combined_native_envelope": "passed with explicit CPU accepted-frame fixture",
+    "gpu": "Apple M4 Max Metal offscreen readback passed"
+  },
+  "restored_values": [
+    "Native AnimatorFrameCheckpoint pose, palette, properties and metadata",
+    "ModelAnimation descriptor",
+    "u64 accepted ticks",
+    "Model allocation joined to retained original publication via stable owner"
+  ],
+  "readback": {
+    "reference_equals_restored": true,
+    "replacement_changed_pixels": 253,
+    "sha256": {
+      "reference": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464",
+      "current": "7da6a456732466137c34a7d0bdedce6fa1000702113652194176321afbb66cf0",
+      "restored": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464"
+    }
+  },
+  "source_sha256": {
+    "crates/voxy_editor/src/animated_models/checkpoint.rs": "438f8a317b481a7e25ad7bd1b8b6d868e1ae9aa321a6007636745217a67da409",
+    "crates/voxy_editor/src/animated_models.rs": "c1311ea18d95a8a9ca105c009f7d2029968af6cd360a90fc7aa87449b01cf0a4",
+    "crates/voxy_editor/src/animated_models/tests.rs": "e4fce7894d3709e19b40760c350e13a7ef8543a4df52f7f8cb866273dcf256df",
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "7677dffdb98a8ad61fbaee1e62447b4c0ce1d61aabba858c9cc9f616a79603e8",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "46efdf0bbc59f6b4f9bcf8dd1e1d44fc58568e685f9ad8d6183de9acd0d9ee68"
+  },
+  "open": [
+    "Shared accepted frame Arc identity across owners",
+    "Accepted LOD certificate, geometry residency and per-view history",
+    "Retired epoch-only owner history",
+    "Whole-App atomic GPU/UI/audio publication and first presentation acknowledgement",
+    "Native audio-device queue",
+    "Physical frame pacing, FPS and memory",
+    "Remaining ENG-03 through ENG-13"
+  ]
+}

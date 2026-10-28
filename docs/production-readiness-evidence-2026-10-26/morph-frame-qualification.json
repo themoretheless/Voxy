@@ -1,0 +1,39 @@
+{
+  "status": "animator_property_frame_and_cpu_morph_consumer_validated_editor_gpu_pending",
+  "checks": {
+    "animation_lib_passed": 335,
+    "editor_lib_passed": 215,
+    "editor_lib_ignored": 17,
+    "focused_property_playback_passed": 4,
+    "focused_model_import_passed": 3,
+    "all_targets_clippy_packages": [
+      "voxy_animation",
+      "voxy_model",
+      "voxy_editor",
+      "voxy_demos",
+      "voxy_gameplay"
+    ],
+    "all_targets_clippy_result": "passed -D warnings",
+    "upstream_reference": "passed original asset: 14 clips/854 source samples, three explicit shapes, 112 property-carrying Animator frames with interrupted fades"
+  },
+  "proof": "morph-frame-proof.json",
+  "code_sha256": {
+    "crates/voxy_model/src/lib.rs": "d4197663b85027782d844ba4e5c003001200a00e860d34d2a4b785fd89f8dc36",
+    "crates/voxy_model/src/morph.rs": "4c1abfea14c80b4c1bcafb9e905fa6980495b2e09713bbb8119fc7e478b0becf",
+    "crates/voxy_model/examples/morph_import.rs": "d396de90fa8f6f0dca8e686153c3891e012fc963b7607ed5741942cb2f08648f",
+    "crates/voxy_animation/src/property_track.rs": "a3ce59c61beebe372f8d8781ee5504e5deb063e0ac89565a24fa2ff6b36d1da8",
+    "crates/voxy_animation/src/property_playback.rs": "b6429728e1abc64e7a98a21cde426e27ae29e8b79ec0e5d73095cc8288b0ae2c",
+    "crates/voxy_animation/src/lib.rs": "f3cffb59d15d236076d3ef5ea24c98895eb745025cda078e06c7f732a4b545a4",
+    "crates/voxy_animation/src/rigid_fade.rs": "faeafe21964bd096814e2306046fa44053c2eb545fd9de7eab616babe95f56f4",
+    "crates/voxy_animation/src/retarget.rs": "67c2c9450a26311650956024be38fff68f69de08fa90717c69807a5acfffed7f",
+    "crates/voxy_render/src/scene/geometry.rs": "c4c6ea7195ec5cfa3862791fee2aa3349f626f89435d33e432c588486a5c99fa"
+  },
+  "source_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "source_bytes_unchanged": true,
+  "animator_property_snapshot_integrated": true,
+  "editor_accepted_morph_integrated": false,
+  "gpu_morph_integrated": false,
+  "native_visuals_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

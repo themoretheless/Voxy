@@ -1,0 +1,32 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.66s
+     Running tests/liquid_phase.rs (target/research-ray-precision/debug/deps/liquid_phase-21801dbcc2070b3e)
+
+running 13 tests
+test heating_and_cooling_use_latent_plateau_and_are_reversible ... ok
+test cooling_releases_latent_heat_into_a_colder_particle ... ok
+test failed_outer_step_restores_already_exchanged_latent_heat ... ok
+test reservoir_property_failure_rolls_back_and_plateau_equilibrium_has_zero_flux ... ok
+test reservoir_total_enthalpy_overflow_is_atomic_even_when_each_particle_is_finite ... ok
+test zero_conductivity_and_same_plateau_temperature_do_not_exchange_heat ... ok
+test heat_injection_outside_property_domain_rolls_back_phase_and_temperature ... ok
+test invalid_phase_state_and_negative_energy_leave_all_state_unchanged ... ok
+test reservoir_crosses_latent_plateau_with_exact_heating_and_cooling_times ... ok
+test reservoir_exchange_is_partition_independent_and_leaves_motion_unchanged ... ok
+test implicit_heat_exchange_converges_toward_analytic_sensible_heat_solution ... ok
+test conductive_transition_conserves_total_enthalpy_without_temperature_overshoot ... ok
+test pressure_and_symmetric_viscous_heating_drive_latent_transition_with_energy_balance ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/liquid_saturation.rs (target/research-ray-precision/debug/deps/liquid_saturation-fa9397e86f738969)
+
+running 5 tests
+test saturation_roundtrip_monotone_and_domain_validation ... ok
+test invalid_pressure_and_curve_changes_are_atomic ... ok
+test local_pressure_remap_preserves_energy_and_reverses_phase_fraction ... ok
+test source_pressure_and_body_heat_use_local_plateau ... ok
+test local_pressure_plateau_drives_reservoir_heat_and_survives_drains ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

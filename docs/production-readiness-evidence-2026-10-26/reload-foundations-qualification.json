@@ -1,0 +1,27 @@
+{
+  "status": "source_dependency_and_poll_baseline_participants_verified",
+  "assets_passed": 53,
+  "strict_all_target_clippy": true,
+  "poll_continuation_calls": 120,
+  "covered": [
+    "published and failed-attempt dependency edges",
+    "next publication clears superseded failed edges",
+    "poll unknown unavailable content states",
+    "round-robin cursor and change detection continuation",
+    "invalid ids cursors counts and limits rejection"
+  ],
+  "remaining": [
+    "async poll worker snapshot transfer",
+    "AudioReload queued outputs and scheduling state",
+    "bounded wire codecs",
+    "save barrier orchestration",
+    "App/PlaySession composition"
+  ],
+  "sha256": {
+    "crates/voxy_assets/src/source_checkpoint.rs": "a700cc13af4dfc567a5f801fc34348042fdad6f6fd2de2797de36c839a69a75a",
+    "crates/voxy_assets/src/poller_checkpoint.rs": "cc6abafeccc8208bafa1890cc379d0e5ce80d0bbbc8e3ecde0c1591390006242",
+    "crates/voxy_assets/src/sources.rs": "4eea690eb548693983c6ec899cd1377252b0749b0b57d68cc358ee42c90de4d4",
+    "crates/voxy_assets/src/watch.rs": "44754acf296e73c8e5a5f17c9a1904a0d1c33cf5d36a1ff7ec24ad4d311b41eb",
+    "crates/voxy_assets/src/lib.rs": "38b44c6cdeaffc6a64b08c520a1b3f16fdff3bfacd6f4cfa114827f98dba5cf0"
+  }
+}

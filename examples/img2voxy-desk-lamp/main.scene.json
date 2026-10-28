@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "lamp",
+      "parent": null,
+      "name": "lamp",
+      "active": true,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {}
+    },
+    {
+      "id": "base",
+      "parent": "lamp",
+      "name": "base",
+      "active": true,
+      "translation": [
+        0.0,
+        0.06,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.7,
+        0.12,
+        0.7
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.15000000596046448,
+            0.18000000715255737,
+            0.2199999988079071,
+            1.0
+          ]
+        },
+        "editor.model.v1": "base"
+      }
+    },
+    {
+      "id": "stem",
+      "parent": "lamp",
+      "name": "stem",
+      "active": true,
+      "translation": [
+        0.0,
+        0.65,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.06,
+        1.1,
+        0.06
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.5,
+            0.550000011920929,
+            0.6000000238418579,
+            1.0
+          ]
+        },
+        "editor.model.v1": "stem"
+      }
+    },
+    {
+      "id": "head-pivot",
+      "parent": "lamp",
+      "name": "head-pivot",
+      "active": true,
+      "translation": [
+        0.0,
+        1.2,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {}
+    },
+    {
+      "id": "head",
+      "parent": "head-pivot",
+      "name": "head",
+      "active": true,
+      "translation": [
+        0.16,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.5,
+        0.24,
+        0.28
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            0.8999999761581421,
+            0.41999998688697815,
+            0.07999999821186066,
+            1.0
+          ]
+        },
+        "editor.model.v1": "head"
+      }
+    },
+    {
+      "id": "bulb",
+      "parent": "head-pivot",
+      "name": "bulb",
+      "active": true,
+      "translation": [
+        0.16,
+        -0.13,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        0.18,
+        0.1,
+        0.18
+      ],
+      "components": {
+        "editor.material.v1": {
+          "lit": true,
+          "tint": [
+            1.0,
+            0.949999988079071,
+            0.699999988079071,
+            1.0
+          ]
+        },
+        "editor.model.v1": "bulb"
+      }
+    }
+  ]
+}

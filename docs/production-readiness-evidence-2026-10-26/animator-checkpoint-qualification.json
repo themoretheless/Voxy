@@ -1,0 +1,22 @@
+{
+  "status": "animator_json_checkpoint_and_exact_continuation_verified",
+  "source_sha256": {
+    "crates/voxy_animation/src/checkpoint.rs": "dc4fa8d0efef7c0adbb6227197bb93c4bff4523b480c368f2fc9cee4c0e9ae42",
+    "crates/voxy_animation/src/property_playback.rs": "31a143b2c613352f7029337c7a2638713beaf119e3b00bd9180cb510c8a23086",
+    "crates/voxy_animation/src/lib.rs": "116c6c9b09749a65fdfa0c81760e98341832de1233473b20ba71b222a0a292c0",
+    "crates/voxy_animation/Cargo.toml": "c659bd1fca4170d583203691786b0a36ee7934884b9e34b92f90282f3b8dbab9",
+    "Cargo.lock": "f4e89ddc1129753ba439a903330f5ad97452eb24d8219342b1789ed3e7da23dd"
+  },
+  "animation_tests_passed": 339,
+  "editor_tests_passed": 229,
+  "editor_tests_ignored": 20,
+  "strict_animation_editor_all_targets_clippy": true,
+  "new_checkpoint_tests": 3,
+  "frozen_fade_and_properties_following_frames": 240,
+  "ordinary_fade_and_clamp_following_frames": 120,
+  "fresh_immutable_resource_instances": true,
+  "clip_revision_keys_supplied_by_caller": true,
+  "whole_animation_runtime_saved": false,
+  "full_app_save": false,
+  "fps_qualified": false
+}

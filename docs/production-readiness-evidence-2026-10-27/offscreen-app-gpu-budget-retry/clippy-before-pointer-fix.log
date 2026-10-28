@@ -1,0 +1,12 @@
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: reference as raw pointer
+   --> crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs:180:9
+    |
+180 |         app.graphics.as_ref().unwrap().models[&id].geometry.base() as *const SceneGeometry;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `std::ptr::from_ref::<SceneGeometry>(app.graphics.as_ref().unwrap().models[&id].geometry.base())`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ref_as_ptr
+    = note: `-D clippy::ref-as-ptr` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::ref_as_ptr)]`
+
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

@@ -1,0 +1,23 @@
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.79s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_scene-a1e93b38315ca4be)
+
+running 3 tests
+test commands::checkpoint::tests::corrupt_or_unsupported_queue_never_replaces_pending_live_commands ... ok
+
+thread 'commands::checkpoint::tests::registered_component_f64_survives_pending_json_roundtrip_exactly' (73608983) panicked at crates/voxy_scene/src/command_checkpoint.rs:504:13:
+assertion `left == right` failed: bits=723f4114006c08c7
+  left: 8232370198018787526
+ right: 8232370198018787527
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test commands::checkpoint::tests::pending_queue_json_rebind_keeps_order_errors_components_and_spawn_journal ... ok
+test commands::checkpoint::tests::registered_component_f64_survives_pending_json_roundtrip_exactly ... FAILED
+
+failures:
+
+failures:
+    commands::checkpoint::tests::registered_component_f64_survives_pending_json_roundtrip_exactly
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 82 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_scene --lib`

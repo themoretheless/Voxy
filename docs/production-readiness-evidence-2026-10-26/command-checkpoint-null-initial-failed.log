@@ -1,0 +1,19 @@
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.99s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_scene-6cc03d758f9db91e)
+
+running 1 test
+
+thread 'commands::checkpoint::tests::null_component_insertion_is_distinct_from_removal_after_json' (73621155) panicked at crates/voxy_scene/src/command_checkpoint.rs:486:9:
+assertion failed: scene.component::<Marker>(owner).unwrap().is_some()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test commands::checkpoint::tests::null_component_insertion_is_distinct_from_removal_after_json ... FAILED
+
+failures:
+
+failures:
+    commands::checkpoint::tests::null_component_insertion_is_distinct_from_removal_after_json
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 85 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_scene --lib`

@@ -1,0 +1,26 @@
+{
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "editor_tests": {
+    "passed": 362,
+    "ignored": 35,
+    "failed": 0
+  },
+  "clippy_all_targets": "passed -D warnings",
+  "verified": [
+    "Deferred expanded prefab animation selection admitted through native ModelPlayback",
+    "Invalid numeric/named clips, speed and root-motion joints/bones rejected",
+    "Nested overrides validated",
+    "Named clip overrides stale numeric selection",
+    "Retarget source supplies animation when target has no clips",
+    "Package restored and stepped after deletion of original project"
+  ],
+  "limits": [
+    "No native window or GPU animation/full-cycle/FPS qualification",
+    "ENG-03 and complete professional-engine roadmap remain open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/package_models.rs": "7535502d9d76ef9271a345f83196898dc2483f463d8c54af7b89956d9f0325bb",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "9941daa379499cf523de33e2fe4ceba64cc3dee19ca7ca1e11125b41ead707a0"
+  }
+}

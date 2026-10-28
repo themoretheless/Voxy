@@ -1,0 +1,42 @@
+{
+  "scope": "Detached quiescent EditorAsset catalog/source index/file restoration, VOXYEIC1",
+  "verified": [
+    "Original imported model and input observations survive deleted source files and file round-trip",
+    "Failed replacement keeps last-good publication and published revision",
+    "Failed source dependencies remain eligible for invalidation",
+    "Fresh catalog identity rejects previous owner tickets",
+    "Revision allocator continues at revision 4; dirty state preserves published revision",
+    "Dependency/publication mismatch and tighter recorded-policy admission reject without changing live owner",
+    "Audio and models share the existing CatalogWire schema"
+  ],
+  "checks": {
+    "editor_suite": {
+      "passed": 294,
+      "ignored": 21,
+      "failed": 0
+    },
+    "final_file_suite": {
+      "passed": 2,
+      "failed": 0
+    },
+    "all_targets_clippy": "passed -D warnings"
+  },
+  "retained_failure": "Parallel test temp directory names collided before atomic sequence suffix fix; failing log retained. Final file suite passed.",
+  "open": [
+    "Internal codec is not wired to App commands",
+    "Model worker/watch checkpoint barrier and recipes/reload queue",
+    "Whole App atomic CPU/GPU publication and physical display acknowledgement",
+    "Physical memory and FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ],
+  "logs_sha256": {
+    "model-catalog-editor-tests.log": "e6ab64aad96a1fe0dbac7ffd352e9184c0189edcac8c8b3f9dcb93cc60ce391f",
+    "model-catalog-file-tests-before-fix.log": "c839bd5cbdcbb6c68591ce39bf459a750f9d6d8c8efb7766d2c1502b9b3c6db9",
+    "model-catalog-file-tests.log": "8f889c15fd608bc4a375577ccc4ec98e1753337ec4932217459489863d0d0064",
+    "model-catalog-clippy.log": "0b94691518492dde63bdc8926f9476aa232326d3bf893f697f2f5bd9dcad89fc"
+  },
+  "artifacts_sha256": {
+    "failed-model-catalog.voxyeic": "005aaf0798abeb2578aafe792c68ffea368396ba5959082c13d4a8433a8679cc",
+    "preliminary-failed-model-catalog.voxyeic": "005aaf0798abeb2578aafe792c68ffea368396ba5959082c13d4a8433a8679cc"
+  }
+}

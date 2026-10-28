@@ -1,0 +1,32 @@
+{
+  "status": "deformed_owner_triangle_picking_integrated_and_headless_verified",
+  "code_sha256": {
+    "crates/voxy_editor/src/animated_models.rs": "bc7d06df6f6899a9440f6f7df81f6677220989e31fa5856e40ee5ab1358d8a04",
+    "crates/voxy_editor/src/app/picking_drag.rs": "d325718b17839cd9287193d6c5855ea83c93d5f64efe65be6c40dca7e7ce5730",
+    "crates/voxy_editor/src/locomotion_tests.rs": "38508ba536f2185234d33d521b0e6e533b46dd2f93c3238075b27f707603a929"
+  },
+  "editor_library": {
+    "passed": 223,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_editor_all_targets_clippy_passed": true,
+  "regression": "locomotion_tests::model_picking_uses_morphed_triangles_outside_imported_geometry",
+  "synthetic_fixture": true,
+  "tested": [
+    "authored_override_outside_imported_triangles",
+    "old_position_no_false_hit",
+    "orthographic_and_perspective",
+    "mirrored_nonuniform_owner_scale",
+    "timeline_preview_frame",
+    "accepted_standalone_frame",
+    "inactive_owner_no_hit"
+  ],
+  "displayed_model_revision_and_frame_accessor_implemented": true,
+  "first_fixture_failure": "test retained authoring NodeId across Play; corrected to fetch current runtime handle, matching existing handle invalidation contract",
+  "native_click_image_verified": false,
+  "gpu_failure_retention_picking_visually_verified": false,
+  "deformation_bounds_culling_qualified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

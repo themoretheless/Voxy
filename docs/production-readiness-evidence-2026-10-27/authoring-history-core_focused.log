@@ -1,0 +1,12 @@
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.08s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_scene-6cc03d758f9db91e)
+
+running 4 tests
+test history::checkpoint::tests::detached_epoch_allocation_sharing_and_staleness_survive_equal_documents_and_new_history ... ok
+test history::checkpoint::tests::invalid_intermediate_draft_retains_float_payload_words_and_is_rejected_only_at_commit ... ok
+test history::checkpoint::tests::malformed_versions_counts_epochs_documents_and_tight_limits_reject_without_mutating_original ... ok
+test history::checkpoint::tests::history_roundtrip_preserves_both_stacks_metadata_auxiliary_bytes_and_120_continuations ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 91 filtered out; finished in 0.08s
+

@@ -1,0 +1,42 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Keep audio save owner held until UI and model fences release",
+  "status": "coordinated release prerequisite fixed; native audio checkpoint integration still pending",
+  "regression": {
+    "trigger": "Model watcher disappears during model fence release after audio had already resumed",
+    "before": "New regression fails at original restore_barrier.audio-held assertion",
+    "after": "Audio owner still returns held checkpoint; source game ticks, host epoch and scene token remain unchanged; restoring watcher permits release and game continuation"
+  },
+  "changes": [
+    "Release original UI and model owners first",
+    "Do not resume audio while either other owner remains pending or fails",
+    "Resume audio only after both release acknowledgements",
+    "Preserve existing final wall-clock rebase when whole barrier completes"
+  ],
+  "checks": {
+    "editor": {
+      "passed": 392,
+      "ignored": 44
+    },
+    "gpu_app": {
+      "passed": 7,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "mode": "offscreen"
+    },
+    "clippy": "editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "limitations": [
+    "Failure injected by removing original model watcher while retaining/restoring original ready checkpoint and watcher for recovery",
+    "No physical audio device or native window opened",
+    "Regression uses original offline AudioSession owner; does not qualify physical resume timing",
+    "Native AudioSession/AudioOwner admission guards unchanged; pause/queue/archive integration still open",
+    "No FPS claim; full ENG roadmap remains open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/restore_barrier.rs": "aee586c3294d8a099555113b9b9fc43bcc9eebca7f4a690c640a917a3340b2a8",
+    "crates/voxy_editor/src/app/restore_barrier/tests.rs": "e9c2dc7fa52496d50b427cef4e8f0574000da2c10502326307b43f0571cdd577"
+  }
+}

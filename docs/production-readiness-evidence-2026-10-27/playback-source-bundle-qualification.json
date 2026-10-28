@@ -1,0 +1,82 @@
+{
+  "scope": "Native standalone playback sources, exact property allocation keys, and combined CPU model/animation file",
+  "implemented": [
+    "ModelAssetCheckpoint.capture_with_sources/prepare_sources preserve external clip/property source data in the same name/rig/cache graph as model-owned data",
+    "External playback sources propagate through EditorAsset/publication/catalog checkpoints; legacy model-only prepare rejects source roots",
+    "Playback source registry interns actual clip and property Arc identities separately, preserving distinct equal property allocations and shared child tracks",
+    "Source visitor delegates to existing ModelPlayback checkpoint authority, including fade/event/contact/motion sources",
+    "App capture is fenced before querying runtime; ModelResources stores source binding metadata and creates a native resolver on prepare",
+    "ModelAnimationCheckpoint VOXYMAC1 composes existing runtime and model resource participants into one file",
+    "Animation owner restore permits stable-ID remapping in reversed NodeId order and rejects target-node collapse; root graph verification compares allocation sets rather than incidental traversal order"
+  ],
+  "checks": {
+    "editor_suite": {
+      "passed": 302,
+      "failed": 0,
+      "ignored": 23
+    },
+    "model_unit_suite": {
+      "passed": 55,
+      "failed": 0,
+      "ignored": 0
+    },
+    "model_integration_suites": {
+      "passed": 4,
+      "failed": 0,
+      "ignored": 12
+    },
+    "final_focused_model_resource_tests": 6,
+    "final_all_targets_clippy": "passed -D warnings for voxy_model and voxy_editor",
+    "format_diff": "passed"
+  },
+  "verified": [
+    "Native model source file round-trip, repeated and independent clip allocations, shared property tracks, malformed source count and tighter caps, standalone-source-only archive",
+    "120 phases across four external clips with exact f64 skin matrix words and sampled property values",
+    "Separate property outer Arc identities survive round-trip while shared track allocations remain shared",
+    "Native reload-style fade encoded with runtime and resources into one file; no in-memory source resolver supplied on load",
+    "Two scene owners restored into a fresh scene with reversed node allocation order; both poses, fade weight and phase match over 120 steps through completion",
+    "Duplicate binding and collapsed owner resolution rejected; capture refuses to query live runtime before save fence"
+  ],
+  "retained_failures": [
+    "Remapped scene exposed pre-existing ordered-NodeId restriction; replaced with uniqueness guard and positive/negative remapping checks",
+    "Simple GLB had no weight clips; standalone nonempty PropertyClip fixture now exercises outer allocation sharing",
+    "Pose64 has no checkpoint API; exact f64 matrix-word comparison used",
+    "Strict Clippy reference-parameter findings fixed"
+  ],
+  "open": [
+    "Bundle requires the caller-provided scene and ObjectId resolver; complete scene/App save command is not yet implemented",
+    "Whole PlaySession/UI/audio/authoring/resource transaction and GPU publication/presentation remain open",
+    "Historical GPU texture content and original retired EditorAsset observations remain open",
+    "Full morph-fade, retargeting, physics, all platform and displayed-FPS qualification are not established by this bounded CPU test",
+    "ENG-03 through ENG-13 remain incomplete"
+  ],
+  "artifacts": {
+    "playback-source-files/playback-sources.voxymdl": {
+      "bytes": 7408,
+      "sha256": "3351ce3600b000ef6758fd1f3190003ab64420d44dd005ba4782ce58698b0eb8",
+      "role": "model/playback resource graph"
+    },
+    "playback-source-files/active-fade-resources.voxyemr": {
+      "bytes": 130041,
+      "sha256": "6b7915b7afa46ee7aaec5360f033ce7e41658340e713e1b330f35035564ade48",
+      "role": "model/playback resource graph"
+    },
+    "playback-source-bundle-files/active-fade-state.voxymac": {
+      "bytes": 158986,
+      "sha256": "dcb7559eda8488e8f52dd5cd900fea62d2d7a868a819bfe77e2a71915f2129e2",
+      "role": "combined native animation/runtime and model resources"
+    }
+  },
+  "logs_sha256": {
+    "playback-sources-model-and-editor-tests.log": "193e89786beb57f27b7ef1183eea15b67e22c9dfcb2951d3aef9f2bb5b535922",
+    "playback-sources-final-editor-tests.log": "76b0b1a0a20f5c0aa55c8a40e941a67e032e3c64b72f62ed8b24c69f1d20c5b1",
+    "playback-sources-final-focused.log": "700388de95b7b3d045d7ba30d0487e20061c394b43d2121720354b8a3c3042c3",
+    "playback-sources-final-clippy.log": "6a28ee4d385b66b5f6df9c52a901994ef3e2e059f8ff05ca2241a27393e59b6a",
+    "playback-sources-bundle-file-test.log": "153daecb5d2b37d810a6e89187ff303d53e38c7863e73ae18fd29dcf748feb8f",
+    "playback-sources-model-file-test.log": "4844df23810df8679e2b9df7d9092f01998d2527b6b9a4157fe708b92219dd52",
+    "playback-sources-initial-owner-remap-failure.log": "a893146679acf148cde07df558f0794e313412c90b3cb51cf0dbd6a51944dc27",
+    "playback-sources-initial-property-fixture-failure.log": "33f8f19d455a54da58ca32a179e07ef4e870aaf3e6bb46c4c4989cb8fcaac52a",
+    "playback-sources-initial-pose64-build-failure.log": "9c9e60fa7f6a64772801de68e1b23c82c634bffbfcdb94ab7e28ef414e7079b1",
+    "playback-sources-initial-clippy-ref-option.log": "207d01ff60ce980a4696215d8ec687b2345193d4a8b8f4f52a4c7c03e9b2b769"
+  }
+}

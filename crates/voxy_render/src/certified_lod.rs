@@ -25,12 +25,30 @@ pub enum CertifiedLodError {
 }
 
 /// Verified immutable geometry errors bound to exact position bits and indices.
-/// Verification witnesses are discarded after successful construction.
+/// Verification witnesses remain owned so restoration can repeat the proof.
 #[derive(Debug)]
 pub struct CertifiedLodIndexSet {
     positions: Box<[[f32; 3]]>,
     indices: LodIndexSet,
+    verification: Verification,
 }
+#[derive(Debug)]
+struct WholeWitnesses {
+    forward: Vec<LodTriangleWitness>,
+    reverse: Vec<LodTriangleWitness>,
+}
+#[derive(Debug)]
+struct SubdivisionWitnesses {
+    forward: Vec<crate::LodSubdivisionWitness>,
+    reverse: Vec<crate::LodSubdivisionWitness>,
+}
+#[derive(Debug)]
+enum Verification {
+    Whole(Box<[WholeWitnesses]>),
+    Subdivided(Box<[SubdivisionWitnesses]>),
+}
+mod checkpoint;
+pub use checkpoint::{CertifiedLodCheckpoint, CertifiedLodCheckpointError};
 impl CertifiedLodIndexSet {
     /// Verifies complete subdivided coverage directly against the original mesh.
     /// Each published error is a conservative monotonic envelope of verified bounds.
@@ -44,6 +62,7 @@ impl CertifiedLodIndexSet {
         validate_base(&positions, &base)?;
         let mut levels = vec![(0.0, base)];
         let mut error = 0.0_f64;
+        let mut proofs = Vec::new();
         for variant in variants {
             let measured = crate::certify_subdivided_lod_error(
                 LodSurface {
@@ -60,8 +79,16 @@ impl CertifiedLodIndexSet {
             .map_err(CertifiedLodError::Certificate)?;
             error = error.max(measured);
             levels.push((error, variant.indices));
+            proofs.push(SubdivisionWitnesses {
+                forward: variant.source_to_variant,
+                reverse: variant.variant_to_source,
+            });
         }
-        finish(positions, levels)
+        finish(
+            positions,
+            levels,
+            Verification::Subdivided(proofs.into_boxed_slice()),
+        )
     }
     /// Verifies every variant against the original surface, never a preceding
     /// approximation. Errors form a conservative monotonic envelope of verified
@@ -76,6 +103,7 @@ impl CertifiedLodIndexSet {
         validate_base(&positions, &base)?;
         let mut levels = vec![(0.0, base)];
         let mut error = 0.0_f64;
+        let mut proofs = Vec::new();
         for variant in variants {
             let measured = certify_lod_error(
                 LodSurface {
@@ -92,8 +120,16 @@ impl CertifiedLodIndexSet {
             .map_err(CertifiedLodError::Certificate)?;
             error = error.max(measured);
             levels.push((error, variant.indices));
+            proofs.push(WholeWitnesses {
+                forward: variant.source_to_variant,
+                reverse: variant.variant_to_source,
+            });
         }
-        finish(positions, levels)
+        finish(
+            positions,
+            levels,
+            Verification::Whole(proofs.into_boxed_slice()),
+        )
     }
     #[must_use]
     pub fn positions(&self) -> &[[f32; 3]] {
@@ -126,11 +162,13 @@ fn validate_base(positions: &[[f32; 3]], base: &[u32]) -> Result<(), CertifiedLo
 fn finish(
     positions: Vec<[f32; 3]>,
     levels: Vec<(f64, Vec<u32>)>,
+    verification: Verification,
 ) -> Result<CertifiedLodIndexSet, CertifiedLodError> {
     let indices = LodIndexSet::new(positions.len(), levels).map_err(CertifiedLodError::Levels)?;
     Ok(CertifiedLodIndexSet {
         positions: positions.into_boxed_slice(),
         indices,
+        verification,
     })
 }
 
@@ -138,8 +176,9 @@ fn finish(
 mod tests {
     use super::*;
     use crate::LOD_BARYCENTRIC_DENOMINATOR as D;
-    const POSITIONS: [[f32; 3]; 4] = [[0., 0., 0.], [1., 0., 0.], [0., 1., 0.], [1., 1., 0.]];
-    fn variant() -> CertifiedLodVariant {
+    pub(super) const POSITIONS: [[f32; 3]; 4] =
+        [[0., 0., 0.], [1., 0., 0.], [0., 1., 0.], [1., 1., 0.]];
+    pub(super) fn variant() -> CertifiedLodVariant {
         CertifiedLodVariant {
             indices: vec![0, 1, 2],
             source_to_variant: vec![

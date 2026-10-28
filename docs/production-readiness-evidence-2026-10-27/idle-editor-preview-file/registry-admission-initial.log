@@ -1,0 +1,24 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.42s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 2 tests
+test app::authoring_checkpoint::tests::idle_editor_file_retains_preview_after_source_deletion ... FAILED
+test app::authoring_checkpoint::tests::idle_editor_file_restores_scene_and_history_without_play ... ok
+
+failures:
+
+---- app::authoring_checkpoint::tests::idle_editor_file_retains_preview_after_source_deletion stdout ----
+MODEL PUBLISHED frames=0 first_x=0 asset=rig
+
+thread 'app::authoring_checkpoint::tests::idle_editor_file_retains_preview_after_source_deletion' (80368207) panicked at crates/voxy_editor/src/app/authoring_checkpoint/tests.rs:842:10:
+called `Result::unwrap()` on an `Err` value: Message("scene document error: Invalid(\"unregistered component on model-1\")")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    app::authoring_checkpoint::tests::idle_editor_file_retains_preview_after_source_deletion
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 412 filtered out; finished in 0.08s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

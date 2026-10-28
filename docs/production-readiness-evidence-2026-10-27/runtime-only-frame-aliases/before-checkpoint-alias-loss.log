@@ -1,0 +1,19 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.26s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+
+thread 'animation_runtime::tests::runtime_only_frame_aliases_survive_checkpoint_without_merging_equal_frames' (80002037) panicked at crates/voxy_editor/src/animation_runtime/tests.rs:3413:5:
+runtime-only shared frame lost Arc identity
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test animation_runtime::tests::runtime_only_frame_aliases_survive_checkpoint_without_merging_equal_frames ... FAILED
+
+failures:
+
+failures:
+    animation_runtime::tests::runtime_only_frame_aliases_survive_checkpoint_without_merging_equal_frames
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 407 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

@@ -1,0 +1,59 @@
+{
+  "stage": "ENG-03",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "bug": "editor propagated source-index capacity failure while leaving a consumed import ticket Loading; source index could also admit more distinct files than its watcher could scan",
+  "change": "read-only native source-record admission checks output/edge quotas plus distinct watcher capacity and mandatory manifest source; editor settles capacity failures as Failed without changing accepted CPU/GPU owners or prior source watches",
+  "verified": [
+    "pre-fix App regression returns Sources(Capacity) and loses completion",
+    "edge-budget and distinct-watcher-budget refusals release current pending ticket and retain original model Arc",
+    "source mappings and source change token unchanged on refusal",
+    "over-budget stale completion does not settle newer Loading ticket or set failed-at marker",
+    "model checkpoint completes after budget refusal",
+    "shared source IDs count once; required external source counts toward watcher budget",
+    "failed attempts include old published sources in footprint; native output/edge limits remain enforced",
+    "real M4 Max Metal stages GPU candidates then rejects both index-quota and watcher-quota cases retaining CPU/GPU publication Arc, geometry accounting and cache state/identity"
+  ],
+  "suite_results": [
+    {
+      "passed": 66,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 345,
+      "failed": 0,
+      "ignored": 32
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "gpu_tests_passed": 1,
+  "strict_assets_editor_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_assets/src/sources.rs": "ec8b7f7ef585ed3ca92fb416f55d6170546b8407f9d2f97e8be8b91d1156fd43",
+    "crates/voxy_assets/src/watch_worker.rs": "48ea1c014ec6386c2ecf455110b4ee8ea0e277fa913cbe3c187a3d94f962d0e0",
+    "crates/voxy_editor/src/app/model_reload.rs": "f5547817a027ee084885c875e6ecd3f442699f9995a3a1804abf9022028d4902",
+    "crates/voxy_editor/src/app/model_reload/tests.rs": "7b55eb9ec19572d0d7c4c814572430b9012bd1a56ea3638d9859b2cbe68d0fc6"
+  },
+  "limits": [
+    "over-budget candidate and unadmittable new source watches are rejected, not silently reduced or partially published",
+    "retry may require source/manifest edit or explicit retry after budget adjustment; no project-budget UI added",
+    "GPU test validates transaction ownership/cache retention, not rendered pixels or FPS",
+    "restored legacy watcher-policy/source-graph compatibility remains a separate admission gate",
+    "ENG-03 and full engine roadmap remain incomplete"
+  ]
+}

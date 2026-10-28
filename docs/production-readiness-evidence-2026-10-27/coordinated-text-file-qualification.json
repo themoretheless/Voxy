@@ -1,0 +1,49 @@
+{
+  "scope": "Coordinated file with nonempty font/UI and WAV/audio; native scene arena admission fix and sequential file budget",
+  "implemented": [
+    "Capture native UI published/presented generations and font resources together with native scene/game, audio and input",
+    "Delete quad/WAV/font source files, prepare every participant into an empty target project directory",
+    "Compare native restored audio playback checkpoint exactly",
+    "Restore text UI GPU draws from the decoded coordinated UI participant; exact reference/combined RGBA equality",
+    "Scene capacity parameter is an admission ceiling; restore saved allocator capacity exactly",
+    "Reject insufficient arena budget; larger budget preserves full checkpoint and future slot/generation/exhaustion behavior",
+    "Stop aggregate file encoding at an exhausted header/first-section budget; pass remaining allowance to subsequent native codecs"
+  ],
+  "checks": {
+    "editor_passed": 317,
+    "editor_ignored": 30,
+    "scene_passed": 130,
+    "scene_lib_passed": 98,
+    "strict_editor_scene_all_target_clippy": "passed",
+    "scoped_format_diff": "passed",
+    "gpu": "Apple M4 Max Metal passed",
+    "rgba_bytes": 65536,
+    "reference_restored_combined_equal": true,
+    "file_bytes": 9656820,
+    "section_bytes": {
+      "game_models": 59437,
+      "ui": 9592403,
+      "audio": 4671,
+      "input": 237
+    },
+    "sha256": "ef6980d409ef51edf0d165bf64b22c062a381c46a576544e13671d2a3442aacb"
+  },
+  "retained_rejections": [
+    "Source-free complete prepare exposed saved capacity 4 versus budget 16 allocation mismatch",
+    "Initial regression assumed nonexistent SimulationLimits Default; fixed with explicit native configuration"
+  ],
+  "not_claimed": [
+    "Fixture temporarily moves its native scene into App for capture; no complete authoring/extraction host transaction",
+    "Prepared UI group is validated/dropped; pixel publication uses the same decoded UI participant on an explicit offscreen destination",
+    "No full native-window/menu/first-frame/input handoff",
+    "No native audio callback/device queue transfer",
+    "No physical peak-memory/FPS or full ENG-03 through ENG-13 completion"
+  ],
+  "source_sha256": {
+    "crates/voxy_scene/src/allocation_checkpoint.rs": "e6df4193e31716ce075801f286d28c28d49b0ad558f5f808c9d57f5711aaf5c7",
+    "crates/voxy_scene/src/scene_simulation_checkpoint.rs": "e17c9aa850a2631308b8e1f432edfede58a9f6259dec8beae6931baa559eee35",
+    "crates/voxy_editor/src/app/restore_barrier/file.rs": "61b8f3152d4b8eb8625ab6d97f5cdc047eb3f0916156e0950c274c505125d69a",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "5a1b2151b2cc2787a24a08151adfc778cbbd85320a210852580edbcb87ff8e1c",
+    "crates/voxy_editor/src/ui_live/restore/tests.rs": "8ef5f85c5c835a435a799e96cf05aa6465d5fe14f1230e46cfd2b31ce0be7ffb"
+  }
+}

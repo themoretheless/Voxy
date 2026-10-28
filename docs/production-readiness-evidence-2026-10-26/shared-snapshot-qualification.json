@@ -1,0 +1,24 @@
+{
+  "status": "shared_pose_archive_and_animation_contact_identity_continuation_verified",
+  "source_sha256": {
+    "crates/voxy_animation/src/pose_archive.rs": "2df3a6ad7e25122564b512b6e581157dd453c408546e459709b8ff5c688273a2",
+    "crates/voxy_animation/src/checkpoint.rs": "7ac1dc903f1615fb50f25f4ec0cf033440ef632fee1802e9409daca9e9776638",
+    "crates/voxy_animation/src/lib.rs": "80b4fa2232700cdcb1a526a4639a86de9144ef2f49da62d6129bd9143fee6f5b",
+    "crates/voxy_editor/src/model_playback_checkpoint.rs": "0c13560defe3d91202b9b76bb318cfd6450de7835edaced91d93ec66b4a9a796",
+    "crates/voxy_editor/src/model_playback.rs": "a4251b954b699a1103aff6404c47a37344eca8517fd0a09f19b2c8b23465dfd4",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "1bc8f5881284303e003732194f18a051173ef70f54672299d0593fd8269fc805"
+  },
+  "new_tests": 2,
+  "animation_tests_passed": 340,
+  "editor_tests_passed": 234,
+  "editor_tests_ignored": 20,
+  "strict_animation_editor_all_targets_clippy": true,
+  "continuation_frames": 240,
+  "single_archive_entry_shared_by_animator_playback_and_foot": true,
+  "equal_but_distinct_source_allocations_remain_distinct": true,
+  "late_corrupt_archive_entry_preserves_existing_prepared_table": true,
+  "rig_revision_identity_supplied_by_caller": true,
+  "full_animation_runtime_saved": false,
+  "full_app_save": false,
+  "fps_qualified": false
+}

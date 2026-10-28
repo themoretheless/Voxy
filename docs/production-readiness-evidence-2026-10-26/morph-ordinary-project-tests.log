@@ -1,0 +1,14 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.01s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 4 tests
+test animated_models::tests::gpu_morph_weight_only_updates_and_failed_replacement_retains_last_good ... ignored, requires physical GPU; ordinary owner morph updates, CPU fallback and last-good resource acceptance
+test locomotion_tests::overflowing_morph_tick_preserves_accepted_pose_clock_and_body ... ok
+test locomotion_tests::morph_only_reload_fades_old_revision_and_rejects_invalid_defaults ... ok
+test locomotion_tests::morph_locomotion_uses_shared_import_player_and_source_free_package ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 232 filtered out; finished in 0.11s
+

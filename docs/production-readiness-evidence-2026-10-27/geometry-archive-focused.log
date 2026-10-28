@@ -1,0 +1,12 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.28s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_render-8b226b39c0b2a8ce)
+
+running 4 tests
+test geometry_checkpoint::tests::decoded_rgba_bytes_and_all_mip_levels_are_restored_without_image_source ... ok
+test geometry_checkpoint::tests::archive_integrity_lengths_types_and_raw_policy_limits_reject_before_native_publication ... ok
+test geometry_checkpoint::tests::scene_stream_presence_materials_and_float_words_roundtrip_without_regeneration ... ok
+test geometry_checkpoint::tests::skin_integer_weights_exact_streams_and_120_pose_temporal_results_survive_archive ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 444 filtered out; finished in 0.11s
+

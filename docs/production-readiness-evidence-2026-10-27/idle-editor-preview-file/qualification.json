@@ -1,0 +1,49 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "scope": "Original idle editor file with accepted animation preview and undo/redo history, prepared after original source directory deletion",
+  "fixture": "animated-triangle.glb; no production rig or GPU",
+  "initial_observation": "Authoring-only registry rejects unregistered runtime ModelInstance; test uses existing explicit checkpoint registry opt-in",
+  "production_behavior_changed": false,
+  "checks": {
+    "editor_library": {
+      "passed": 375,
+      "failed": 0,
+      "ignored": 39
+    },
+    "focused_idle_file_tests": 2,
+    "scoped_rustfmt": true,
+    "scoped_diff_check": true,
+    "strict_all_target_clippy": true
+  },
+  "proofs": [
+    "original native editor file save/read/exact bytes",
+    "source project directory deleted before detached prepare",
+    "empty destination root",
+    "exact native preview JSON including low f64 phase bit and accepted frame",
+    "restored preview owner resolves through fresh scene identity",
+    "history and preview use same restored scene",
+    "full history equality after five undo/redo operations",
+    "idle lifecycle unchanged",
+    "explicit source and candidate worker shutdown"
+  ],
+  "not_qualified": [
+    "whole App install",
+    "native save/load menus",
+    "first presented frame",
+    "production assets",
+    "GPU frame parity",
+    "FPS",
+    "complete engine readiness"
+  ],
+  "logs": [
+    "registry-admission-initial.log",
+    "focused.log",
+    "editor.log",
+    "clippy.log"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/authoring_checkpoint/tests.rs": "bfdff516980400ea48e5e23334455e07bfde26e3b3dc2291e279dfc704e01c91",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "c76ac3b199c79ea5c870c295dea9915a63510d33d05bfa6207ecdeaff62e57ca"
+  }
+}

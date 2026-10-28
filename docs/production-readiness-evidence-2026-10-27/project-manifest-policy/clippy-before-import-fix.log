@@ -1,0 +1,12 @@
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: unused import: `AssetLocations`
+   --> crates/voxy_editor/src/lib.rs:143:59
+    |
+143 |     AssetCatalog, AssetError, AssetId, AssetImportWorker, AssetLocations, FileInputs,
+    |                                                           ^^^^^^^^^^^^^^
+    |
+    = note: `-D unused-imports` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(unused_imports)]`
+
+error: could not compile `voxy_editor` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

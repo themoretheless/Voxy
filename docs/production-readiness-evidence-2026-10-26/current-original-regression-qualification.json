@@ -1,0 +1,34 @@
+{
+  "status": "current_original_asset_project_package_gpu_owner_regression_pass",
+  "proofs": {
+    "morph-runtime-proof.py": "fe918b99ca7325fffc2f13191777031752aa79b446c67eb22fbef399557ba6c8",
+    "morph-runtime-proof.json": "9b65e23a4886c736cc2f12f49772f5e2d9589fc0b2c2fae3e4b91393a907ec2a",
+    "morph-ordinary-owner-proof.py": "d6fd5b8f62e1eebbf9c5d47ef7a60d03c177a96bd1874641c3e1059fb8f278fb",
+    "morph-ordinary-owner-proof.json": "c02b04e7abd55563416666e4f47a8775061eeafee9cc70ee57ff49cdb07224a9"
+  },
+  "source_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "source_bytes_unchanged": true,
+  "project_and_source_free_package_exact_after_ticks": 240,
+  "artifact": "artifacts/morph-runtime-2026-10-26/original-robot-c06ec15b350618c8d13bbc941f63e4f7962f56d5f83ffca0f0dbd24082d6c80c.vpak",
+  "package_sha256": "c06ec15b350618c8d13bbc941f63e4f7962f56d5f83ffca0f0dbd24082d6c80c",
+  "legacy_artifact_sha256": "c06ec15b350618c8d13bbc941f63e4f7962f56d5f83ffca0f0dbd24082d6c80c",
+  "legacy_artifact_preserved": true,
+  "prior_reports_preserved_in": "evidence-history/",
+  "original_gpu": {
+    "all_primitives_gpu": true,
+    "checked_vertices": 21642,
+    "fps_qualified": false,
+    "frames": 3,
+    "max_position_error": 4.76837158203125e-07,
+    "morph_primitives": 3,
+    "native_image_verified": false,
+    "ordinary_import_and_playback": true,
+    "primitives": 19
+  },
+  "weight_only_gpu_cpu_pixels_equal": true,
+  "failed_replacement_last_good_retained": true,
+  "native_editor_workflow_verified": false,
+  "full_scene_image_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

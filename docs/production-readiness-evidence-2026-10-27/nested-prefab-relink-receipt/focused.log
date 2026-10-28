@@ -1,0 +1,27 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.70s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+MODEL PUBLISHED frames=0 first_x=2 asset=mesh
+MODEL PUBLISHED frames=0 first_x=2 asset=mesh
+GAME PACKAGE PASS sources=6 bytes=5709
+MODEL PUBLISHED frames=0 first_x=2 asset=mesh
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+GAME STATE {"version":1,"objects":[{"id":"5:first13:5:child4:root","parent":null,"name":"Model","active":true,"translation":[0.05,0.0,0.0],"rotation":[0.0,0.0,0.84147096,0.54030234],"scale":[1.0,1.0,1.0],"components":{"editor.model.v1":"mesh","game.angular-motion.v1":{"axis":[0.0,0.0,1.0],"radians_per_second":1.0}}},{"id":"6:second13:5:child4:root","parent":null,"name":"Model","active":true,"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.84147096,0.54030234],"scale":[1.0,1.0,1.0],"components":{"editor.model.v1":"mesh","game.angular-motion.v1":{"axis":[0.0,0.0,1.0],"radians_per_second":1.0}}}]}
+GAME CHECK PASS ticks=120 objects=2 prefab_instances=2
+test app::model_relink::tests::nested_prefab_relink_preserves_unsaved_overrides_and_allows_save_reopen_and_package ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 371 filtered out; finished in 0.34s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-cbe125d7235bbd56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

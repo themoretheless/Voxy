@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-27",
+  "scope": "Complete CPU ModelAsset resource graph, not EditorAsset/App/import provenance",
+  "source_sha256": {
+    "Cargo.lock": "8c9a2f04938d75ecbedc640f3461d2a3c63a6f2b0d7c32d0791164fa74e58ecb",
+    "crates/voxy_animation/src/asset_checkpoint.rs": "c3b2c0df087289b33818c9fd6941523b89b417fa257850ac521bab20efe8fce9",
+    "crates/voxy_animation/src/asset_checkpoint/tests.rs": "7558437f47bbb53884c433ef27778b9487a8663c35200d71f98b44a41082c6f8",
+    "crates/voxy_animation/src/property_track/asset_checkpoint.rs": "f7dec92bb362365d87345247a32572a65c282a48616c2f8a2aaf9b80748d7276",
+    "crates/voxy_animation/src/property_track/asset_checkpoint/tests.rs": "50139d3eb536b7792af2b8463965afd78ba26778cb1cd41a96973cd761a83e1f",
+    "crates/voxy_model/Cargo.toml": "5f101af7d927c281190fa78ded56dbd5fa8039afb9d2f5ddb02391e1a379dd42",
+    "crates/voxy_model/src/lib.rs": "5fdf1a90776ccc3bd1c420c2d773d6c48907a696c8be27cf03cdb5513a4d28c5",
+    "crates/voxy_model/src/morph.rs": "701b0eaeafc01e867132b551b7a3809f36180acd34299c0a2109599bdcb0e0c1",
+    "crates/voxy_model/src/morph/checkpoint/tests.rs": "a570b708441554a6cdfde4524d6cd40e2e1face9b059c32882fbef884343a3eb",
+    "crates/voxy_model/src/checkpoint.rs": "1a91ec1474312b855b5f3121e35feb6663d92bf8a0906e8638e09406549f298f",
+    "crates/voxy_model/src/checkpoint/tests.rs": "903515695142e907915a5d628ed269dbafa91ef99819247d44f4ba14a9d42eea",
+    "crates/voxy_model/examples/model_checkpoint.rs": "938d9188a4aca3bd2bb0d9adccfd492d64c0c68a9a36b261da27e9b45c9d1766",
+    "crates/voxy_editor/src/import/animated_tests.rs": "b658769301501842abee09f65ab548c344b4f6674897bf69ff7208c588bd1b73"
+  },
+  "fields": {
+    "ModelAsset": {
+      "primitives": "native primitive files with exact metadata plus shared skin-set references",
+      "skeleton": "native shared rig participant",
+      "animations": "ordered exact outer clip Arc identities and internal cache ownership",
+      "joint_names": "ordered optional actual name references",
+      "mesh_joint": "exact imported local joint index with native bounds admission",
+      "mesh_instances": "exact nonzero source instance count",
+      "skinned": "exact policy flag",
+      "morph": "actual shared MorphImportData owner table"
+    },
+    "MorphImportData": {
+      "defaults": "native PropertySet exact source words/name aliases",
+      "sources": "actual ordered outer AnimationClip Arc references",
+      "skeleton": "optional native rig reference with original aliases",
+      "primitives": "ordered optional source-node/name/geometry/default bindings",
+      "clips": "native property clip source data and sharing"
+    },
+    "MorphBinding": {
+      "node": "original source node index",
+      "name": "optional name reference in shared cross-participant pool",
+      "geometry": "complete native MorphGeometry archive plus original skin-stream/cache sharing",
+      "defaults": "exact finite f32 words in source target order"
+    },
+    "MorphGeometry": {
+      "source": "complete primitive record; static Vec streams remain owned; skin Arc streams join global skin set",
+      "targets": "native ordered optional source-local position/normal arrays via participant"
+    },
+    "cross_participant_names": {
+      "capture": "collect all actual native and metadata names; intern by pointer identity only",
+      "prepare": "skeletal participant supplies ordered restored names; property participant validates and reuses them",
+      "compatibility": "plain v1 participants omit the optional binding field and retain former wire shape"
+    }
+  }
+}

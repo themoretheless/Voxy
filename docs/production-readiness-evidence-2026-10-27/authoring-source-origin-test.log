@@ -1,0 +1,26 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0425]: cannot find type `PrefabSceneDocument` in this scope
+   --> crates/voxy_editor/src/app/authoring_checkpoint/tests.rs:459:20
+    |
+459 |     let different: PrefabSceneDocument = serde_json::from_value(serde_json::json!({
+    |                    ^^^^^^^^^^^^^^^^^^^
+    |
+   ::: crates/voxy_scene/src/document.rs:39:1
+    |
+ 39 | pub struct SceneDocument {
+    | ------------------------ similarly named struct `SceneDocument` defined here
+    |
+    = note: struct `crate::prefab_authoring::tests::PrefabSceneDocument` exists but is inaccessible
+help: a struct with a similar name exists
+    |
+459 -     let different: PrefabSceneDocument = serde_json::from_value(serde_json::json!({
+459 +     let different: SceneDocument = serde_json::from_value(serde_json::json!({
+    |
+help: consider importing this struct
+    |
+  1 + use voxy_scene::PrefabSceneDocument;
+    |
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `voxy_editor` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

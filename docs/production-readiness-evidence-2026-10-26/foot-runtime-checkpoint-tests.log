@@ -1,0 +1,10 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.61s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-15f68745829f6188)
+
+running 2 tests
+test foot_placement::tests::native_foot_history_checkpoint_uses_skeleton_names_and_rejects_corrupt_history ... ok
+test foot_placement::tests::foot_history_checkpoint_retains_pending_pivot_geometry_and_shared_frozen_pose ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 251 filtered out; finished in 0.03s
+

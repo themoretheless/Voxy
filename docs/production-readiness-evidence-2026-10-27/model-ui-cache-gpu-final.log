@@ -1,0 +1,27 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0308]: mismatched types
+   --> crates/voxy_editor/src/ui_live/restore/tests.rs:713:64
+    |
+713 |             .stage_after_models(*rejected.ui.prepared, &scene, rejected.models)
+    |              ------------------                                ^^^^^^^^^^^^^^^ expected `ReadyModels`, found `Box<ReadyModels>`
+    |              |
+    |              arguments to this method are incorrect
+    |
+    = note: expected struct `ReadyModels`
+               found struct `Box<ReadyModels>`
+note: method defined here
+   --> crates/voxy_editor/src/ui_live/restore.rs:318:19
+    |
+318 |     pub(crate) fn stage_after_models(
+    |                   ^^^^^^^^^^^^^^^^^^
+...
+322 |         models: crate::gpu_model::restore::ReadyModels,
+    |         ----------------------------------------------
+help: consider unboxing the value
+    |
+713 |             .stage_after_models(*rejected.ui.prepared, &scene, *rejected.models)
+    |                                                                +
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `voxy_editor` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

@@ -1,0 +1,63 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "scope": "Original editor history ownership through coordinated pending/ready GPU checkpoint candidates",
+  "hardware": {
+    "device": "Apple M4 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "fixture": "animated-triangle.glb",
+  "checks": {
+    "gpu_app_tests": {
+      "passed": 5,
+      "failed": 0
+    },
+    "editor_library": {
+      "passed": 375,
+      "failed": 0,
+      "ignored": 40
+    },
+    "scoped_rustfmt": true,
+    "scoped_diff_check": true,
+    "strict_all_target_clippy": true,
+    "suite_note": "Library and five GPU App tests passed before Box::pin cleanup for large_futures; final native editor-history GPU rerun recorded separately",
+    "final_boxed_gpu_test": true
+  },
+  "proofs": [
+    "real project edited via App native actions",
+    "duplicate and undo retains redo branch",
+    "ordered model/UI/audio barrier",
+    "original editor file written/read",
+    "entire source project deleted before detached prepare into empty root",
+    "history/selection/object order/node bindings/preview/GPU share one fresh scene",
+    "native preview full JSON exact including low phase mantissa bit",
+    "nonblank new-candidate GPU pixels equal original",
+    "five full serialized history undo/redo comparisons",
+    "wrong prepared scene rejected before upload",
+    "wrong ready history scene rejected at admission",
+    "source history mutation rejects ready candidate",
+    "pending cancel and ready discard leave live cache unchanged",
+    "explicit worker join cleanup"
+  ],
+  "not_qualified": [
+    "atomic App installation",
+    "native save/load menus",
+    "first presented frame",
+    "native audio device transfer",
+    "production rig quality",
+    "FPS",
+    "full engine readiness"
+  ],
+  "logs": [
+    "gpu-app.log",
+    "editor.log",
+    "clippy.log",
+    "clippy-initial.log",
+    "gpu-boxed-final.log"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "41bb3c050867576db7c73b326721a55e45f6b60fb96e944f6e1aaa763e1e8327",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "ec2c6e958ee6e4ff3dd087abac18682833be6e04efd15c86c0af5cb23995a2c6"
+  }
+}

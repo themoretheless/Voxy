@@ -1,0 +1,19 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.08s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 1 test
+
+thread 'animated_models::tests::authoring_override_frames_are_cached_per_owner_revision_and_settings' (73151651) panicked at crates/voxy_editor/src/animated_models/tests.rs:1985:5:
+assertion failed: render.authoring_frame(owner, &model, &settings).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test animated_models::tests::authoring_override_frames_are_cached_per_owner_revision_and_settings ... FAILED
+
+failures:
+
+failures:
+    animated_models::tests::authoring_override_frames_are_cached_per_owner_revision_and_settings
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 241 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

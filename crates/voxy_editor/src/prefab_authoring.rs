@@ -1,4 +1,5 @@
 //! Scene composition uses the same bounded source observations as model import.
+pub(crate) mod model_relink;
 use crate::EditorError;
 #[cfg(test)]
 use crate::model_registry;
@@ -8,8 +9,12 @@ use std::{
     path::{Path, PathBuf},
 };
 use voxy_assets::{AssetId, AssetLocations, FileInputs, ImportInputs, ImportedAsset, SourcePath};
-use voxy_scene::{DocumentError, PrefabLimits, PrefabSceneDocument, SceneDocument};
+#[cfg(test)]
+use voxy_scene::PrefabLimits;
+use voxy_scene::{DocumentError, PrefabSceneDocument, SceneDocument};
+#[derive(Clone)]
 pub(super) struct AuthoringProject {
+    identity: std::sync::Arc<()>,
     pub(super) registry: std::sync::Arc<voxy_scene::ComponentRegistry>,
     root: PathBuf,
     provider: FileInputs,
@@ -30,7 +35,23 @@ pub(super) struct AuthoredScene {
     pub(super) expanded: SceneDocument,
     pub(super) dependencies: std::collections::BTreeMap<String, PrefabSceneDocument>,
 }
+pub(super) struct PreparedLiquidMaterials {
+    materials: Vec<(String, physics::liquid::Material)>,
+    optics: Vec<Option<[f32; 4]>>,
+}
+
+pub(super) struct PreparedLiquidRuntime {
+    pub runtime: voxy_gameplay::SceneLiquidRuntime,
+    pub optics: Vec<Option<[f32; 4]>>,
+    pub inputs: ImportInputs,
+}
 impl AuthoringProject {
+    pub(super) fn root(&self) -> &Path {
+        &self.root
+    }
+    pub(super) fn observation_token(&self) -> std::sync::Arc<()> {
+        self.identity.clone()
+    }
     #[cfg(test)]
     pub(super) fn new(
         root: &Path,
@@ -44,6 +65,7 @@ impl AuthoringProject {
         registry: std::sync::Arc<voxy_scene::ComponentRegistry>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         Ok(Self {
+            identity: std::sync::Arc::new(()),
             registry,
             root: root.canonicalize()?,
             provider: FileInputs::new(root)?,
@@ -58,6 +80,39 @@ impl AuthoringProject {
         scene: &voxy_scene::SceneGraph,
     ) -> Result<Option<(voxy_gameplay::SceneLiquidRuntime, Vec<Option<[f32; 4]>>)>, EditorError>
     {
+        self.liquid_runtime_observed(scene)
+            .map(|prepared| prepared.map(|prepared| (prepared.runtime, prepared.optics)))
+    }
+    /// Retains native validated material observations for build publication.
+    pub(super) fn liquid_runtime_observed(
+        &self,
+        scene: &voxy_scene::SceneGraph,
+    ) -> Result<Option<PreparedLiquidRuntime>, EditorError> {
+        let Some(admitted) = self.liquid_materials_observed(scene)? else {
+            return Ok(None);
+        };
+        voxy_gameplay::SceneLiquidRuntime::new(
+            scene,
+            admitted.value().materials.clone(),
+            physics::liquid::Config::default(),
+            128,
+        )
+        .map(|runtime| {
+            Some(PreparedLiquidRuntime {
+                runtime,
+                optics: admitted.value().optics.clone(),
+                inputs: admitted.inputs().clone(),
+            })
+        })
+        .map_err(EditorError::from)
+    }
+
+    /// Admit material files independently of scene-specific runtime ownership.
+    /// A prefab may acquire its body/collider context only after instantiation.
+    pub(super) fn liquid_materials_observed(
+        &self,
+        scene: &voxy_scene::SceneGraph,
+    ) -> Result<Option<ImportedAsset<PreparedLiquidMaterials>>, EditorError> {
         #[derive(serde::Deserialize)]
         #[serde(deny_unknown_fields)]
         struct MaterialFile {
@@ -119,23 +174,26 @@ impl AuthoringProject {
             ));
             optics.push(None);
         }
-        let admitted = inputs
-            .finish((materials, optics), |id, limit| {
-                self.provider.read(id, limit)
-            })
-            .map_err(|e| format!("liquid material changed: {e:?}"))?;
-        voxy_gameplay::SceneLiquidRuntime::new(
-            scene,
-            admitted.value().0.clone(),
+        // Reuse native physical-coefficient admission without constructing
+        // scene-specific bodies, colliders or source ownership for a prefab.
+        physics::liquid::Liquid::new(
+            Vec::new(),
+            materials.iter().map(|(_, material)| *material).collect(),
             physics::liquid::Config::default(),
-            128,
         )
-        .map(|runtime| Some((runtime, admitted.value().1.clone())))
-        .map_err(EditorError::from)
+        .map_err(|error| format!("liquid materials: {error:?}"))?;
+        let admitted = inputs
+            .finish(
+                PreparedLiquidMaterials { materials, optics },
+                |id, limit| self.provider.read(id, limit),
+            )
+            .map_err(|e| format!("liquid material changed: {e:?}"))?;
+        Ok(Some(admitted))
     }
 
     pub(super) fn worker_project(&self) -> Result<Self, EditorError> {
         Ok(Self {
+            identity: self.identity.clone(),
             registry: self.registry.clone(),
             root: self.root.clone(),
             provider: FileInputs::new(&self.root)?,
@@ -197,6 +255,17 @@ impl AuthoringProject {
         >,
     ) -> Result<voxy_assets::SourcePollWorker, EditorError> {
         self.source_watcher(observations, 768, 8 * 1024 * 1024)
+    }
+    pub(crate) fn audio_watcher_from_checkpoint(
+        &self,
+        saved: &voxy_assets::SourcePollerCheckpoint,
+    ) -> Result<voxy_assets::SourcePollWorker, EditorError> {
+        Ok(voxy_assets::SourcePollWorker::new_with_checkpoint(
+            FileInputs::new(&self.root)?,
+            saved,
+            768,
+            8 * 1024 * 1024,
+        )?)
     }
     pub(super) fn source_watcher(
         &self,
@@ -384,7 +453,22 @@ impl AuthoringProject {
         let relative = absolute.strip_prefix(&self.root)?;
         let id =
             SourcePath::new(relative.to_str().ok_or("scene path must be UTF-8")?)?.observation_id();
+        self.load_source(id, ImportInputs::new(130, 16 * 1024 * 1024))
+    }
+    pub(super) fn load_prefab(
+        &self,
+        asset: &AssetId,
+    ) -> Result<ImportedAsset<AuthoredScene>, Box<dyn std::error::Error>> {
         let mut inputs = ImportInputs::new(130, 16 * 1024 * 1024);
+        let locations = self.project_locations(&mut inputs)?;
+        let source = Self::resolve_project_input(&asset.0, locations.as_ref())?;
+        self.load_source(source.observation_id(), inputs)
+    }
+    fn load_source(
+        &self,
+        id: AssetId,
+        mut inputs: ImportInputs,
+    ) -> Result<ImportedAsset<AuthoredScene>, Box<dyn std::error::Error>> {
         let snapshot = inputs
             .read(id, |id, limit| {
                 self.provider
@@ -441,36 +525,27 @@ impl AuthoringProject {
                 .transpose()?
         };
         let mut dependencies = std::collections::BTreeMap::new();
-        let expanded = source.expand(
-            &self.registry,
-            PrefabLimits {
-                max_objects: scene_limits::OBJECTS,
-                max_instances: 128,
-                max_depth: 16,
-            },
-            |asset| {
-                let path = if let Some(locations) = &locations {
-                    locations
-                        .source(&AssetId(asset.into()))
-                        .cloned()
-                        .ok_or_else(|| {
-                            DocumentError::Invalid(format!("unknown prefab asset {asset}"))
-                        })?
-                } else {
-                    SourcePath::new(asset)
-                        .map_err(|error| DocumentError::Invalid(error.to_string()))?
-                };
-                let snapshot = inputs
-                    .read(path.observation_id(), |id, limit| {
-                        self.provider
-                            .read(id, limit.min(scene_limits::DOCUMENT_BYTES))
-                    })
-                    .map_err(|error| DocumentError::Invalid(format!("prefab input: {error:?}")))?;
-                let document: PrefabSceneDocument = serde_json::from_slice(&snapshot.bytes)?;
-                dependencies.insert(asset.to_owned(), document.clone());
-                Ok(document)
-            },
-        )?;
+        let expanded = source.expand(&self.registry, scene_limits::PREFABS, |asset| {
+            let path = if let Some(locations) = &locations {
+                locations
+                    .source(&AssetId(asset.into()))
+                    .cloned()
+                    .ok_or_else(|| {
+                        DocumentError::Invalid(format!("unknown prefab asset {asset}"))
+                    })?
+            } else {
+                SourcePath::new(asset).map_err(|error| DocumentError::Invalid(error.to_string()))?
+            };
+            let snapshot = inputs
+                .read(path.observation_id(), |id, limit| {
+                    self.provider
+                        .read(id, limit.min(scene_limits::DOCUMENT_BYTES))
+                })
+                .map_err(|error| DocumentError::Invalid(format!("prefab input: {error:?}")))?;
+            let document: PrefabSceneDocument = serde_json::from_slice(&snapshot.bytes)?;
+            dependencies.insert(asset.to_owned(), document.clone());
+            Ok(document)
+        })?;
         inputs
             .finish(
                 AuthoredScene {
@@ -654,11 +729,7 @@ impl AuthoringProject {
             path,
             source,
             &self.registry,
-            PrefabLimits {
-                max_objects: scene_limits::OBJECTS,
-                max_instances: 128,
-                max_depth: 16,
-            },
+            scene_limits::PREFABS,
             scene_limits::DOCUMENT_BYTES,
             |asset| {
                 snapshot.dependencies.get(asset).cloned().ok_or_else(|| {
@@ -748,19 +819,13 @@ fn export_linked_subtree(
     registry: &voxy_scene::ComponentRegistry,
 ) -> Result<PrefabSceneDocument, Box<dyn std::error::Error>> {
     let baseline =
-        snapshot.source.instance_baseline(
-            registry,
-            PrefabLimits {
-                max_objects: scene_limits::OBJECTS,
-                max_instances: 128,
-                max_depth: 16,
-            },
-            |asset| {
+        snapshot
+            .source
+            .instance_baseline(registry, scene_limits::PREFABS, |asset| {
                 snapshot.dependencies.get(asset).cloned().ok_or_else(|| {
                     DocumentError::Invalid(format!("missing historical prefab {asset}"))
                 })
-            },
-        )?;
+            })?;
     let mut source =
         snapshot
             .source
@@ -916,19 +981,14 @@ impl crate::App {
             )?)
         };
         let mut source = if let Some(snapshot) = &snapshot {
-            let baseline = snapshot.source.instance_baseline(
-                &registry,
-                PrefabLimits {
-                    max_objects: scene_limits::OBJECTS,
-                    max_instances: 128,
-                    max_depth: 16,
-                },
-                |asset| {
-                    snapshot.dependencies.get(asset).cloned().ok_or_else(|| {
-                        DocumentError::Invalid(format!("missing historical prefab {asset}"))
-                    })
-                },
-            )?;
+            let baseline =
+                snapshot
+                    .source
+                    .instance_baseline(&registry, scene_limits::PREFABS, |asset| {
+                        snapshot.dependencies.get(asset).cloned().ok_or_else(|| {
+                            DocumentError::Invalid(format!("missing historical prefab {asset}"))
+                        })
+                    })?;
             snapshot
                 .source
                 .capture_edits(&baseline, &edited, &registry, scene_limits::OBJECTS)?
@@ -1042,11 +1102,7 @@ impl crate::App {
             })
             .ok_or("selected object is not a prefab instance")?;
         let registry = self.authoring.authoring_project.registry.clone();
-        let limits = PrefabLimits {
-            max_objects: scene_limits::OBJECTS,
-            max_instances: 128,
-            max_depth: 16,
-        };
+        let limits = scene_limits::PREFABS;
         let resolve =
             |asset: &str| {
                 snapshot.dependencies.get(asset).cloned().ok_or_else(|| {

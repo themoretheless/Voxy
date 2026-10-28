@@ -1,0 +1,26 @@
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+error: couldn't read `crates/voxy_model/src/checkpoint/../../voxy_render/examples/assets/animated-triangle.glb`: No such file or directory (os error 2)
+   --> crates/voxy_model/src/checkpoint/tests.rs:215:17
+    |
+215 |     let bytes = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+help: there is a file with the same name in a different directory
+    |
+215 |     let bytes = include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb");
+    |                                       +++
+
+error[E0599]: no method named `is_skinned` found for struct `std::sync::Arc<ModelAsset>` in the current scope
+   --> crates/voxy_model/src/checkpoint/tests.rs:233:23
+    |
+233 |     assert_eq!(source.is_skinned(), restored[0].is_skinned());
+    |                       ^^^^^^^^^^ method not found in `std::sync::Arc<ModelAsset>`
+
+error[E0599]: no method named `is_skinned` found for struct `std::sync::Arc<ModelAsset>` in the current scope
+   --> crates/voxy_model/src/checkpoint/tests.rs:233:49
+    |
+233 |     assert_eq!(source.is_skinned(), restored[0].is_skinned());
+    |                                                 ^^^^^^^^^^ method not found in `std::sync::Arc<ModelAsset>`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `voxy_model` (lib test) due to 3 previous errors

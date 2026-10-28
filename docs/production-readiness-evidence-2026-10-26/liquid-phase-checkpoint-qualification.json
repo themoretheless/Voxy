@@ -1,0 +1,32 @@
+{
+  "status": "native_phase_and_pressure_saturation_history_verified",
+  "new_continuation_tests_passed": 1,
+  "existing_phase_tests_passed": 13,
+  "existing_saturation_tests_passed": 5,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps_per_case": 120,
+  "cases": [
+    "fixed phase transition",
+    "mixed pressure-dependent and fixed material transitions"
+  ],
+  "covered": [
+    "phase models and fractions",
+    "saturation curves prescribed pressures and exact cached temperatures",
+    "rebuild from particle thermal and phase records",
+    "no extra enthalpy remap during restore",
+    "exact following state and energy with heating and pressure changes",
+    "invalid fraction cache and policy rejection leaves state intact"
+  ],
+  "remaining": [
+    "species reaction and thermal mechanical response state",
+    "boundaries and coupled bodies",
+    "full bounded liquid archive",
+    "SceneLiquidRuntime and PlaySession coordinator"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/phase_checkpoint.rs": "cd71cf05face30f3b8ea76ea9d0432e5d47ae2f07b02b4e163e446912eef6195",
+    "crates/physics/src/liquid/phase.rs": "c2b379a366134ba2fa65f53936394b6f10ffef786713c39085dcfd35be5097fa",
+    "crates/physics/src/liquid/saturation.rs": "c3b8f09fad84fc59f9f9c090b3371ec69ec27785f4eff4c6c7f9318a69173922",
+    "crates/physics/src/liquid.rs": "795b003fefcbbd7b126cd3796192dcd078b22d237685e191a17319ea8665ba00"
+  }
+}

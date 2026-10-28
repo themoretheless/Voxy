@@ -1,0 +1,25 @@
+{
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline packaged missing falling clip; regression failed before fix",
+    "Native ModelLocomotion.validate_model checks all four clip names on playback source",
+    "Invalid speed threshold and transition duration rejected",
+    "Missing ModelAnimation component rejected",
+    "Character-body locomotion with retarget source and clipless target restored and stepped from package after source deletion"
+  ],
+  "tests": {
+    "editor_passed": 363,
+    "editor_ignored": 35,
+    "clippy_all_targets": "passed -D warnings"
+  },
+  "limits": [
+    "Deferred prefab character ancestry and ModelPart admission remain open",
+    "Positive fixture uses same source clip for all four states; no full movement cycle proof",
+    "No GPU or FPS qualification; full ENG-03/06 remain open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/package_models.rs": "9edc737aae6cbbcc694f83095e9e050a52836ab090c479182f53acc73d2f16fd",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "42d3c514c9f9e8eda3a36506e72202ce3cfbfdfb8a3251c3c6030fd2dca7731f"
+  }
+}

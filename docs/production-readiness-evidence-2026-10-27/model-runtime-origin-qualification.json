@@ -1,0 +1,51 @@
+{
+  "scope": "Animation/catalog/source/fence freshness observations in App-aware prepared model transaction",
+  "checks": {
+    "assets_passed": 57,
+    "editor_passed": 309,
+    "editor_ignored": 26,
+    "all_target_clippy": [
+      "voxy_assets",
+      "voxy_editor"
+    ],
+    "explicit_gpu_test": "Combined native bundle passes on Apple M4 Max Metal; updated origin rejects clock advancement",
+    "scoped_format_and_diff": "passed"
+  },
+  "validated": [
+    "Native animation read queries retain token; adopted ticks, events, mutable root reference/pose operations, synchronization and clears invalidate token",
+    "Distinct staged runtime branches receive distinct write observations",
+    "Catalog request, completion, invalidation, removal and fresh restoration are observed",
+    "Source mappings and fresh equal-data index restoration are observed",
+    "Ordered Ready fence identity rejects resume-and-recapture with equal data",
+    "Queue/current asset/recipe/worker-presence observations retained with pending and ready candidates",
+    "Scene/authoring guard can remain valid while model runtime guard rejects 120 advanced animation steps"
+  ],
+  "new_volatile_fields": {
+    "AnimationRuntime.change": "Fresh on default/restore, never durable animation time",
+    "AssetCatalog.change": "Fresh on new/restore, separate from persistent import revision",
+    "SourceDependencies.change": "Fresh on new/restore, no source graph format change",
+    "resource_checkpoint.Barrier.Ready.epoch": "Fresh ordered-fence generation, not persisted",
+    "PendingModelAnimation.model_origin": "Temporary source observation retained until validation",
+    "ReadyModelAnimation.model_origin": "Explicit revalidation immediately before future enclosing commit"
+  },
+  "source_sha256": {
+    "crates/voxy_assets/src/change_token.rs": "8281e7bcaa24f25e4f1905feb9c23fb74699e18bc252f322b55a62ccc30f48e4",
+    "crates/voxy_assets/src/lib.rs": "ec257cffd232b8779c87e4a44ffa749ae2a8cae4568062140b35dba0fe20a797",
+    "crates/voxy_assets/src/sources.rs": "efe39ebc1cc2d0515a468056099f5c2fc318c9f511138a095ee487787ef828db",
+    "crates/voxy_editor/src/animation_runtime.rs": "1d2232931c767998a67f842306c93bbb8617b9bc72d674470ec0262709f9cb0a",
+    "crates/voxy_editor/src/animation_runtime_checkpoint.rs": "75df48f5545ba917fc60df00ba526475d1f19def3a84515ae8974f046f868b00",
+    "crates/voxy_editor/src/animation_runtime/tests.rs": "95aad4d216cc7abd075d43188e1c5ef2f4acc67c144d0cafc31d422d8d8a9d6f",
+    "crates/voxy_editor/src/app/restore_guard.rs": "1788da4c4eb0c68b301a046324cfaadf6b3648c2f3808845fa6bc2a72e03bc12",
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "872bdb7e2b8b15739c6b2cb0b0dab3ba6e576897888745dac4d6ac0e575152de",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "b2a60fdb6f3e555c7ed34083594675e4d24f976f45490f7ef180547c01a6601d"
+  },
+  "native_bundle": "model-runtime-origin-files/gpu-source-role-bundle.voxymac",
+  "open": [
+    "Combined full-App publication and first presentation/input handoff",
+    "Non-animation PlaySession simulation/time/input/physics observations and freeze",
+    "UI/audio/host and non-model Graphics observations/composition",
+    "Static GPU LOD and historical retired owner completion",
+    "Physical memory and displayed FPS",
+    "Remaining ENG-03 through ENG-13"
+  ]
+}

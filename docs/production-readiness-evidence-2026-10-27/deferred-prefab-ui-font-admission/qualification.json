@@ -1,0 +1,28 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline packaged corrupt font referenced only by declared unused prefab; regression failed before fix",
+    "Expanded prefab UI uses original bounded UiTextPreparation.prepare_import at ordinary build viewport 1280x720",
+    "Native text preparation retains font observations in aggregate package source closure",
+    "Deterministic font corruption after prefab admission rejects publication",
+    "Repaired source-free package restores nested prefab, prepares Unicode glyph runs and advances native standalone one fixed tick"
+  ],
+  "tests": {
+    "editor_passed": 367,
+    "editor_ignored": 36,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "Uses local system Unicode font for integration test; not all fonts/scripts qualified",
+    "No GPU text image, native input/focus or interactive UI qualification in this test",
+    "No release-scale build throughput or FPS result",
+    "Full ENG-03/07/08 and engine readiness remain open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/package_models.rs": "21eec0a5cc3b9fa4e4bc481833e486641532877ff5445de7a5be58ccb3a61128",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "b57541a4629fbad7021601ae5eab1a59a5978f8561c517ee73fa8690054cb848"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline accepted missing morph node; regression failed before fix",
+    "Expanded deferred prefab morph overrides validated through original target model frame evaluator",
+    "Missing morph node and wrong target weight count rejected before package publication",
+    "Unclamped weights [1.25,-0.75] preserved in native runtime frame from source-free package"
+  ],
+  "tests": {
+    "focused": 6,
+    "editor_passed": 363,
+    "editor_ignored": 35,
+    "clippy_all_targets": "passed -D warnings"
+  },
+  "limits": [
+    "No GPU image or full-cycle FPS qualification",
+    "Separate retarget source and morph target combination not covered by the new positive fixture",
+    "Full ENG-03/06 and entire engine roadmap remain open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/package_models.rs": "d318f84f7e1051e006a3403d8ac9221309ea185973cb50119efa16e11632c594",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "205413acfe1ed2e0e6d106132e76ac7f4d04cc52c1b05aa4224dadc4710d0700"
+  }
+}

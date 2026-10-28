@@ -1,0 +1,14 @@
+    Checking voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+error: assigning the result of `Clone::clone()` may be inefficient
+   --> crates/voxy_scene/src/allocation_checkpoint.rs:193:9
+    |
+193 |         self.graph.free = saved.free.clone();
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: use `clone_from()`: `self.graph.free.clone_from(&saved.free)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#assigning_clones
+    = note: `-D clippy::assigning-clones` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::assigning_clones)]`
+
+error: could not compile `voxy_scene` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_scene` (lib test) due to 1 previous error

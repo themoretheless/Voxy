@@ -1,0 +1,10 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.18s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 2 tests
+test import::node_checkpoint::tests::invalid_hierarchy_transform_source_and_aggregate_limits_reject_without_live_changes ... ok
+test import::node_checkpoint::tests::exact_node_fields_image_mips_and_120_hierarchy_transforms_survive_file ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 305 filtered out; finished in 0.01s
+

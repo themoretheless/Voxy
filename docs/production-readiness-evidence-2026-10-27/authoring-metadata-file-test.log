@@ -1,0 +1,219 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0277]: the trait bound `voxy_assets::AssetId: serde::Serialize` is not satisfied
+    --> crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs:3:24
+     |
+   3 | #[derive(Clone, Debug, Serialize, Deserialize)]
+     |                        ^^^^^^^^^ the trait `_::_serde::Serialize` is not implemented for `voxy_assets::AssetId`
+...
+   9 |     prefabs: Vec<AssetId>,
+     |     --------------------- required by a bound introduced by this call
+     |
+     = note: for local types consider adding `#[derive(serde::Serialize)]` to your `voxy_assets::AssetId` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `_::_serde::Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 383 others
+     = note: required for `Vec<voxy_assets::AssetId>` to implement `_::_serde::Serialize`
+note: required by a bound in `_::_serde::ser::SerializeStruct::serialize_field`
+    --> /Users/themoretheless/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/src/ser/mod.rs:1917:21
+     |
+1915 |     fn serialize_field<T>(&mut self, key: &'static str, value: &T) -> Result<(), Self::Error>
+     |        --------------- required by a bound in this associated function
+1916 |     where
+1917 |         T: ?Sized + Serialize;
+     |                     ^^^^^^^^^ required by this bound in `SerializeStruct::serialize_field`
+     = note: this error originates in the derive macro `Serialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `voxy_assets::AssetId: serde::Deserialize<'de>` is not satisfied
+    --> crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs:9:14
+     |
+   9 |     prefabs: Vec<AssetId>,
+     |              ^^^^^^^^^^^^ the trait `_::_serde::Deserialize<'_>` is not implemented for `voxy_assets::AssetId`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `voxy_assets::AssetId` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `_::_serde::Deserialize<'de>`:
+               &'a RawValue
+               &'a [u8]
+               &'a std::path::Path
+               &'a str
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+             and 408 others
+     = note: required for `Vec<voxy_assets::AssetId>` to implement `_::_serde::Deserialize<'_>`
+note: required by a bound in `next_element`
+    --> /Users/themoretheless/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/src/de/mod.rs:1771:12
+     |
+1769 |     fn next_element<T>(&mut self) -> Result<Option<T>, Self::Error>
+     |        ------------ required by a bound in this associated function
+1770 |     where
+1771 |         T: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `SeqAccess::next_element`
+     = note: the full name for the type has been written to '/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/deps/voxy_editor-03c2c32c9e44ba1f.long-type-1315635348266773167.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `voxy_assets::AssetId: serde::Deserialize<'de>` is not satisfied
+    --> crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs:9:14
+     |
+   9 |     prefabs: Vec<AssetId>,
+     |              ^^^^^^^^^^^^ the trait `_::_serde::Deserialize<'_>` is not implemented for `voxy_assets::AssetId`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `voxy_assets::AssetId` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `_::_serde::Deserialize<'de>`:
+               &'a RawValue
+               &'a [u8]
+               &'a std::path::Path
+               &'a str
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+             and 408 others
+     = note: required for `Vec<voxy_assets::AssetId>` to implement `_::_serde::Deserialize<'_>`
+note: required by a bound in `next_value`
+    --> /Users/themoretheless/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/src/de/mod.rs:1916:12
+     |
+1914 |     fn next_value<V>(&mut self) -> Result<V, Self::Error>
+     |        ---------- required by a bound in this associated function
+1915 |     where
+1916 |         V: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `MapAccess::next_value`
+     = note: the full name for the type has been written to '/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/deps/voxy_editor-03c2c32c9e44ba1f.long-type-1315635348266773167.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `voxy_assets::AssetId: serde::Deserialize<'de>` is not satisfied
+  --> crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs:3:35
+   |
+ 3 | #[derive(Clone, Debug, Serialize, Deserialize)]
+   |                                   ^^^^^^^^^^^ the trait `_::_serde::Deserialize<'_>` is not implemented for `voxy_assets::AssetId`
+   |
+   = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `voxy_assets::AssetId` type
+   = note: for types from other crates check whether the crate offers a `serde` feature flag
+   = help: the following other types implement trait `_::_serde::Deserialize<'de>`:
+             &'a RawValue
+             &'a [u8]
+             &'a std::path::Path
+             &'a str
+             ()
+             (T,)
+             (T0, T1)
+             (T0, T1, T2)
+           and 408 others
+   = note: required for `Vec<voxy_assets::AssetId>` to implement `_::_serde::Deserialize<'_>`
+note: required by a bound in `_::_serde::__private229::de::missing_field`
+  --> /Users/themoretheless/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs:26:8
+   |
+24 | pub fn missing_field<'de, V, E>(field: &'static str) -> Result<V, E>
+   |        ------------- required by a bound in this function
+25 | where
+26 |     V: Deserialize<'de>,
+   |        ^^^^^^^^^^^^^^^^ required by this bound in `missing_field`
+   = note: the full name for the type has been written to '/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/deps/voxy_editor-03c2c32c9e44ba1f.long-type-1315635348266773167.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+   = note: this error originates in the derive macro `Deserialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `voxy_assets::AssetId: serde::Deserialize<'de>` is not satisfied
+    --> crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs:9:14
+     |
+   9 |     prefabs: Vec<AssetId>,
+     |              ^^^^^^^^^^^^ the trait `_::_serde::Deserialize<'_>` is not implemented for `voxy_assets::AssetId`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `voxy_assets::AssetId` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `_::_serde::Deserialize<'de>`:
+               &'a RawValue
+               &'a [u8]
+               &'a std::path::Path
+               &'a str
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+             and 408 others
+     = note: required for `Vec<voxy_assets::AssetId>` to implement `_::_serde::Deserialize<'_>`
+note: required by a bound in `next_element`
+    --> /Users/themoretheless/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/src/de/mod.rs:1771:12
+     |
+1769 |     fn next_element<T>(&mut self) -> Result<Option<T>, Self::Error>
+     |        ------------ required by a bound in this associated function
+1770 |     where
+1771 |         T: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `SeqAccess::next_element`
+     = note: the full name for the type has been written to '/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744.long-type-17727244677442365163.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `voxy_assets::AssetId: serde::Deserialize<'de>` is not satisfied
+    --> crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs:9:14
+     |
+   9 |     prefabs: Vec<AssetId>,
+     |              ^^^^^^^^^^^^ the trait `_::_serde::Deserialize<'_>` is not implemented for `voxy_assets::AssetId`
+     |
+     = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `voxy_assets::AssetId` type
+     = note: for types from other crates check whether the crate offers a `serde` feature flag
+     = help: the following other types implement trait `_::_serde::Deserialize<'de>`:
+               &'a RawValue
+               &'a [u8]
+               &'a std::path::Path
+               &'a str
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+             and 408 others
+     = note: required for `Vec<voxy_assets::AssetId>` to implement `_::_serde::Deserialize<'_>`
+note: required by a bound in `next_value`
+    --> /Users/themoretheless/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/src/de/mod.rs:1916:12
+     |
+1914 |     fn next_value<V>(&mut self) -> Result<V, Self::Error>
+     |        ---------- required by a bound in this associated function
+1915 |     where
+1916 |         V: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ required by this bound in `MapAccess::next_value`
+     = note: the full name for the type has been written to '/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744.long-type-17727244677442365163.txt'
+     = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `voxy_assets::AssetId: serde::Deserialize<'de>` is not satisfied
+  --> crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs:3:35
+   |
+ 3 | #[derive(Clone, Debug, Serialize, Deserialize)]
+   |                                   ^^^^^^^^^^^ the trait `_::_serde::Deserialize<'_>` is not implemented for `voxy_assets::AssetId`
+   |
+   = note: for local types consider adding `#[derive(serde::Deserialize)]` to your `voxy_assets::AssetId` type
+   = note: for types from other crates check whether the crate offers a `serde` feature flag
+   = help: the following other types implement trait `_::_serde::Deserialize<'de>`:
+             &'a RawValue
+             &'a [u8]
+             &'a std::path::Path
+             &'a str
+             ()
+             (T,)
+             (T0, T1)
+             (T0, T1, T2)
+           and 408 others
+   = note: required for `Vec<voxy_assets::AssetId>` to implement `_::_serde::Deserialize<'_>`
+note: required by a bound in `_::_serde::__private229::de::missing_field`
+  --> /Users/themoretheless/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs:26:8
+   |
+24 | pub fn missing_field<'de, V, E>(field: &'static str) -> Result<V, E>
+   |        ------------- required by a bound in this function
+25 | where
+26 |     V: Deserialize<'de>,
+   |        ^^^^^^^^^^^^^^^^ required by this bound in `missing_field`
+   = note: the full name for the type has been written to '/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744.long-type-17727244677442365163.txt'
+   = note: consider using `--verbose` to print the full type name to the console
+   = note: this error originates in the derive macro `Deserialize` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `voxy_editor` (lib) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 4 previous errors

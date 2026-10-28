@@ -1,0 +1,45 @@
+{
+  "scope": "VOXYEMR1 detached model resource file and fresh import/watch worker preparation",
+  "implemented": [
+    "Bounded checksummed model resource file codec",
+    "Validation of version, canonical output/queue/current identities, manifest path, poll delay, native catalog and native watcher before worker creation",
+    "One shared InputRecipe worker factory for normal App creation and restoration",
+    "No source manifest/model reads during prepare; idle workers retain original saved watcher cursor and fingerprints",
+    "Stopped importer and absent watcher remain absent",
+    "Poll delay remains a paused duration until future App publication"
+  ],
+  "verified": [
+    "File round-trip after deleting original OBJ and manifest",
+    "Restored importer fails missing-file reload while preserving last-good data",
+    "Repaired manifest selects a new OBJ through the same saved recipe",
+    "Restored watcher checkpoint matches saved baseline exactly",
+    "Malformed archives and producer-absent state checked; original live App retains original publication"
+  ],
+  "checks": {
+    "full_editor_suite": {
+      "passed": 298,
+      "ignored": 21,
+      "failed": 0
+    },
+    "final_file_tests": 4,
+    "final_all_targets_clippy": "passed -D warnings",
+    "format_diff": "passed"
+  },
+  "artifact": {
+    "path": "model-resource-files/model-resources.voxyemr",
+    "bytes": 50469,
+    "sha256": "a2b0ed82c8b0183773e07300ac2529b8ccf9ebb07ad57ef666baac79ad92e1b0"
+  },
+  "logs_sha256": {
+    "model-resource-restore-editor-tests.log": "77452d52fc2cb3ede2dec5e04a31c04c51e78fcd99576e548df955e4c752e46e",
+    "model-resource-restore-file-tests.log": "99ab65ba042d09f93bcee0343d83813bbb65a2049f4819a0ed020ea3d762ff0d",
+    "model-resource-restore-clippy.log": "0b94691518492dde63bdc8926f9476aa232326d3bf893f697f2f5bd9dcad89fc"
+  },
+  "open": [
+    "Internal prepare does not commit into existing App",
+    "Authoring/scene/runtime/UI/audio/model shared transaction and GPU publication remain open",
+    "User-facing complete save/load commands remain open",
+    "No physical memory, displayed-frame or FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

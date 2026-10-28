@@ -1,0 +1,28 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+error[E0308]: mismatched types
+   --> crates/voxy_animation/src/checkpoint.rs:534:17
+    |
+530 |             AnimationClip::new(
+    |             ------------------ arguments to this function are incorrect
+...
+534 |                 assets[1].0.tracks.clone(),
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Vec<JointTrack>`, found `Arc<[JointTrack]>`
+    |
+    = note: expected struct `Vec<JointTrack>`
+               found struct `std::sync::Arc<[JointTrack]>`
+note: associated function defined here
+   --> crates/voxy_animation/src/lib.rs:331:12
+    |
+331 |     pub fn new(
+    |            ^^^
+...
+335 |         tracks: Vec<JointTrack>,
+    |         -----------------------
+help: try using a conversion method
+    |
+534 -                 assets[1].0.tracks.clone(),
+534 +                 assets[1].0.tracks.to_vec(),
+    |
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `voxy_animation` (lib test) due to 1 previous error

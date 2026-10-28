@@ -1,0 +1,23 @@
+{
+  "status": "automatic_single_clip_root_path_receipt_and_checkpoint_verified",
+  "source_sha256": {
+    "crates/voxy_animation/src/root_motion_receipt.rs": "202f9003a065a93d2a8aa08561b36cf004bd652fa8c2cf1a3afbe011bf380dc6",
+    "crates/voxy_animation/src/root_rigid/checkpoint.rs": "75cb71995dfce804a04261e28028f7cf4aeca589ec36e068108b406a37773898",
+    "crates/voxy_animation/src/lib.rs": "955e2a013f4c11ccd14e2699968558c481f3519098104eccc2c37c9c5ce412e0",
+    "crates/voxy_editor/src/model_playback.rs": "86a5c5f10c5749adbea107bc3050367817131d07bb4b8f9715d31272d8196476",
+    "crates/voxy_editor/src/model_playback_checkpoint.rs": "f60eabbdceb4bf108dbeb3547377d01a48bc32988ff2cbeecf8706ad83fe8b0c"
+  },
+  "new_editor_tests": 2,
+  "receipt_filter_passed": 5,
+  "animation_tests_passed": 346,
+  "editor_tests_passed": 237,
+  "editor_tests_ignored": 20,
+  "strict_animation_editor_all_targets_clippy": true,
+  "following_frames_exact": 120,
+  "actual_queued_path_checked_against_receipt": true,
+  "late_rejection_preserves_previous_receipt_and_playback": true,
+  "full_animation_runtime_saved": false,
+  "certified_fade_path_receipt_saved": false,
+  "full_app_save": false,
+  "fps_qualified": false
+}

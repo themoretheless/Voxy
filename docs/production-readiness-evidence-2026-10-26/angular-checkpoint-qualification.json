@@ -1,0 +1,25 @@
+{
+  "status": "angular_motion_batch_scene_owned_pose_continuation_verified",
+  "focused_tests_passed": 5,
+  "strict_gameplay_all_target_clippy": true,
+  "continuation_steps": 120,
+  "authoritative_state": "Accumulated rotation lives in saved SceneGraph transforms. Batch motions/staging/edits are overwritten scratch; only capacity policy is persistent.",
+  "covered": [
+    "bounded versioned angular owner record",
+    "fresh scene binding",
+    "pending invalid descriptor failure retains pose",
+    "following speed and activity changes",
+    "exact quaternion bit continuation",
+    "foreign scene rejection"
+  ],
+  "remaining": [
+    "outer PlaySession composition",
+    "liquid and other owner state",
+    "full App save/load and native acceptance"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/angular_checkpoint.rs": "5a473671d289d3c22eb257f1711d04944e01efa3e904e63eb69cc3ae091c7286",
+    "crates/voxy_gameplay/src/behaviors.rs": "76dfe53677b1437d5307aaf3835d57b5b0fb1a021765beca17f71ae3e1014348",
+    "crates/voxy_gameplay/src/lib.rs": "8c3eb11add432607e3bca401587d2bd5e939d82ea4bc4f98a41bb30c067b83c6"
+  }
+}

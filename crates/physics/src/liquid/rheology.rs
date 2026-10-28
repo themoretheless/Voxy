@@ -374,3 +374,7 @@ mod tests {
         assert!(fit.strain_squared().is_err());
     }
 }
+
+#[path = "rheology_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::RheologyCheckpoint;

@@ -1,0 +1,21 @@
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.50s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=quad.obj
+FULL PLAY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+
+thread 'play_session::checkpoint::tests::full_play_resources_gpu_stages_one_runtime_and_original_accepted_frame' (77839512) panicked at crates/voxy_editor/src/import/asset_checkpoint.rs:730:14:
+called `Result::unwrap()` on an `Err` value: Os { code: 17, kind: AlreadyExists, message: "File exists" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test play_session::checkpoint::tests::full_play_resources_gpu_stages_one_runtime_and_original_accepted_frame ... FAILED
+
+failures:
+
+failures:
+    play_session::checkpoint::tests::full_play_resources_gpu_stages_one_runtime_and_original_accepted_frame
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 342 filtered out; finished in 0.68s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

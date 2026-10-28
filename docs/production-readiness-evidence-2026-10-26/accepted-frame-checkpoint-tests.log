@@ -1,0 +1,10 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.92s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_animation-ce2fc45e99bd0e74)
+
+running 2 tests
+test checkpoint::frame_checkpoint::tests::corrupt_cached_palette_or_metadata_is_rejected_without_replacing_frame ... ok
+test checkpoint::frame_checkpoint::tests::accepted_pose_palette_properties_and_metadata_roundtrip_exactly ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 340 filtered out; finished in 0.00s
+

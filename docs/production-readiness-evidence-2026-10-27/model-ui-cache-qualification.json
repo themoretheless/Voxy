@@ -1,0 +1,48 @@
+{
+  "scope": "Joint detached native model/UI GPU staging and one final cache publication",
+  "implemented": [
+    "UI stage continues the prepared native model cache and owns model GPU candidates until acceptance/discard",
+    "Revalidate source GPU device/queue/cache identity/state and native allocation inventory",
+    "Require UI and models to share the exact target SceneChangeToken",
+    "Compute UI peak from source old allocations plus actual prepared model inventory; final inventory replaces old UI geometry",
+    "Return model owners without an independent stale cache that could overwrite the combined index",
+    "Reject foreign target scene and replaced source cache; retain native source fence/resources on rejection and validated discard"
+  ],
+  "checks": {
+    "editor_passed": 317,
+    "editor_ignored": 29,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_diff": "passed",
+    "gpu": "Apple M4 Max Metal passed",
+    "ordinary_ui_gpu_regression": "passed",
+    "combined_ui_pixels_equal_saved_reference": true,
+    "readback_sha256": "92052f618dfb527cb39d3c3e8d9bd217c03d69b94a0a418e260f7dc7af5720b0",
+    "accounting": {
+      "final_geometry": 12840,
+      "final_image_bytes": 1398108,
+      "model_texture_bytes": 4,
+      "new_model_geometry": 10432,
+      "rejected_geometry_limit": 15247,
+      "source_image_bytes": 1398104,
+      "source_ui_geometry": 2408
+    }
+  },
+  "rejected_runs": [
+    "Initial strict Clippy found oversized error variant; boxed retained GPU candidate",
+    "First retry compile needed explicit unboxing; retained log",
+    "Textured fixture initially assumed imported nodes existed; replaced with an explicit native textured mesh part"
+  ],
+  "not_claimed": [
+    "No complete App publication across CPU scene, authoring, extraction, audio and all Graphics owners",
+    "Returned model owners still require infallible host installation",
+    "Shared regression uses static model GPU owners; historical animation/LOD covered separately",
+    "No physical peak-memory, native displayed frame or FPS qualification",
+    "Native audio callback/device queue and full ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/gpu_model_restore.rs": "bf237ee6851ddcd56f3026d7ff1d1843473850f841a11a10b12df8c08d81d10d",
+    "crates/voxy_editor/src/ui_live/restore.rs": "7787ce949848b06ed27baf19f1c394083c4a72fa459838374c0cf6830a53d221",
+    "crates/voxy_editor/src/ui_live/restore/tests.rs": "33e8496e968c068af4ac780db19ef4a0327c8e047c337a65bbe54395033a65f9",
+    "crates/voxy_editor/src/ui_live/checkpoint.rs": "501f9c0b6b31b9aaafe1436b5193c28b56c121f49c9a77eb73eea82cc4f29745"
+  }
+}

@@ -2,6 +2,8 @@
 use super::{AnimationError, Interpolation, Playback, QuatKey};
 use glam::{DQuat, DVec3, DVec4, Quat, Vec4};
 use std::sync::Arc;
+mod checkpoint;
+pub(crate) use checkpoint::RootRotationCheckpoint;
 
 /// Work/storage limits apply to the selected locomotion channel, not every bone.
 pub const MAX_ROOT_ROTATION_KEYS: usize = 65_536;
@@ -69,6 +71,38 @@ pub struct RootRotationSpan {
     speed_bound: Option<f64>,
 }
 impl RootRotationSpan {
+    // Lossless equality record for replay-verified persistence, including cached bounds.
+    pub(crate) fn checkpoint_words(&self, words: &mut Vec<u64>) {
+        words.extend([self.start.to_bits(), self.end.to_bits()]);
+        words.extend(self.left.to_array().map(f64::to_bits));
+        words.extend(self.right.to_array().map(f64::to_bits));
+        words.push(u64::from(self.speed_bound.is_some()));
+        if let Some(speed) = self.speed_bound {
+            words.push(speed.to_bits());
+        }
+        match &self.shape {
+            Shape::Hold(q) => {
+                words.push(0);
+                words.extend(q.to_array().map(f64::to_bits));
+            }
+            Shape::Arc { from, axis } | Shape::Step { from, axis } => {
+                words.push(if matches!(self.shape, Shape::Step { .. }) {
+                    3
+                } else {
+                    1
+                });
+                words.extend(from.to_array().map(f64::to_bits));
+                words.extend(axis.to_array().map(f64::to_bits));
+            }
+            Shape::Cubic(c) => {
+                words.push(2);
+                for q in c {
+                    words.extend(q.to_array().map(f64::to_bits));
+                }
+            }
+        }
+    }
+
     /// Preserves the authored curve while changing its coordinate basis.
     pub(super) fn conjugated(&self, basis: DQuat) -> Self {
         let mut span = self.clone();

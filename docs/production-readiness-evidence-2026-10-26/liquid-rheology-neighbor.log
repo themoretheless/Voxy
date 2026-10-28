@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/physics-8f206cb8622d0c6d)
+
+running 1 test
+test liquid::thixotropy::tests::adaptive_substeps_match_replaying_each_accepted_interval ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 540 filtered out; finished in 0.02s
+

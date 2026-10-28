@@ -1,0 +1,23 @@
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Checking voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+error: unnecessary semicolon
+   --> crates/voxy_render/src/certified_lod/checkpoint/tests.rs:131:10
+    |
+131 |         };
+    |          ^ help: remove
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unnecessary_semicolon
+    = note: `-D clippy::unnecessary-semicolon` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::unnecessary_semicolon)]`
+
+error: unnecessary semicolon
+   --> crates/voxy_render/src/certified_lod/checkpoint/tests.rs:141:10
+    |
+141 |         };
+    |          ^ help: remove
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unnecessary_semicolon
+
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: could not compile `voxy_render` (lib test) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...

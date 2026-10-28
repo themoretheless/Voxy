@@ -1,0 +1,26 @@
+{
+  "status": "native_population_and_compensated_heat_inventory_verified",
+  "new_continuation_tests_passed": 1,
+  "continuation_cases": 3,
+  "existing_domain_tests_passed": 16,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps_per_case": 120,
+  "covered": [
+    "separate high and low heat words without renormalization",
+    "None versus explicit droplet masks",
+    "deferred sub-ULP increments and subsequent actual heat deposit",
+    "normal and carrier/drop stepping",
+    "atomic invalid inventory mask and policy rejection",
+    "capture rejects in-flight carrier stage"
+  ],
+  "initial_failure": "Initial tiny particle mass made the viscosity-limited fixture exceed SubstepBudget. Final fixture uses unit mass with unchanged solver and work caps.",
+  "remaining": [
+    "whole Liquid composition and bounded wire codec",
+    "outer rigid body and source owner restoration",
+    "SceneLiquidRuntime and PlaySession publication"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/population_heat_checkpoint.rs": "ef01321b810eb05bdbc20668d0658e8d0e5ee457f3cca49bbce18a3f7ca5599d",
+    "crates/physics/src/liquid.rs": "d7e3953788b54bc54032b2be00c2e82c1d7d26158cc88ce6525377d13148f009"
+  }
+}

@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 1 test
+test animation_sources::tests::source_pairs_keep_distinct_property_allocations_and_native_model_aliases ... FAILED
+
+failures:
+
+---- animation_sources::tests::source_pairs_keep_distinct_property_allocations_and_native_model_aliases stdout ----
+
+thread 'animation_sources::tests::source_pairs_keep_distinct_property_allocations_and_native_model_aliases' (77219559) panicked at crates/voxy_editor/src/animation_sources/tests.rs:14:22:
+index out of bounds: the len is 0 but the index is 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    animation_sources::tests::source_pairs_keep_distinct_property_allocations_and_native_model_aliases
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 324 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

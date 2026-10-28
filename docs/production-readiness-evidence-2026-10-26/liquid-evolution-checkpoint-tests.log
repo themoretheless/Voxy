@@ -1,0 +1,9 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.55s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/physics-8f206cb8622d0c6d)
+
+running 1 test
+test liquid::evolution_checkpoint::tests::gas_and_liquid_energy_policies_continue_for_all_viscous_integrators ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 545 filtered out; finished in 0.09s
+

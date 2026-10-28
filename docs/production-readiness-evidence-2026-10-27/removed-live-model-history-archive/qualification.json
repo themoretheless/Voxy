@@ -1,0 +1,31 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "bug": "removing a manifest model ID incorrectly made existing scene references invalid and made a resource archive with retained current model unpreparable",
+  "change": "authoring permits available IDs or last-good accepted catalog publications; archive current binding may resolve through archived last-good publication when absent from chooser inventory",
+  "verified": [
+    "real manifest removal empties chooser inventory while retaining accepted model",
+    "existing scene validates, edit/undo/redo preserve correct documents",
+    "scene save/edit/reload works in the current owning App",
+    "bounded resource archive prepares fresh model allocations after original manifest and OBJ deletion",
+    "restored chooser stays empty and current retained model ID is preserved",
+    "never-imported model IDs reject in scene admission and resource archive preparation"
+  ],
+  "suite": {
+    "passed": 328,
+    "failed": 0,
+    "ignored": 30
+  },
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/authoring.rs": "265d9e049a4f73f8f3ec6fd6d1d606402f1ff6e6bd2888066495842fc98bf50d",
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "c853d392ba1025b0fd783505d5439cd6f04d85592dd646340e6b8ae74bfbc9a6",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "ef32057c0154590ed7df2cdd628c275e712530c7428fafa106bbc8110e244fa1"
+  },
+  "limits": [
+    "resource participant restore, not full App session publication",
+    "cold project reopen without retained resource archive still needs explicit missing-resource workflow",
+    "native UI, GPU presentation and full ENG-03 through ENG-13 remain open"
+  ]
+}

@@ -1,0 +1,22 @@
+    Checking voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Checking voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Checking voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+warning: unused import: `ModelAsset`
+ --> crates/voxy_editor/src/import/asset_checkpoint.rs:8:18
+  |
+8 | use voxy_model::{ModelAsset, ModelAssetCheckpoint, ModelAssetCheckpointLimits};
+  |                  ^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CertifiedLodIndexSet`
+  --> crates/voxy_editor/src/import/asset_checkpoint.rs:10:29
+   |
+10 |     CertifiedLodCheckpoint, CertifiedLodIndexSet, GeometryArchiveLimits, LodArchiveLimits,
+   |                             ^^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 2 warnings (run `cargo fix --lib -p voxy_editor` to apply 2 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.46s

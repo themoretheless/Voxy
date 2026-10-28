@@ -1,0 +1,16 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0609]: no field `models` on type `Vec<std::sync::Arc<import::EditorAsset>>`
+   --> crates/voxy_editor/src/animation_preview.rs:398:36
+    |
+398 |         assert_eq!(restored_models.models.len(), 1);
+    |                                    ^^^^^^ unknown field
+
+error[E0609]: no field `models` on type `Vec<std::sync::Arc<import::EditorAsset>>`
+   --> crates/voxy_editor/src/animation_preview.rs:399:43
+    |
+399 |         let fresh_model = restored_models.models[0].clone();
+    |                                           ^^^^^^ unknown field
+
+For more information about this error, try `rustc --explain E0609`.
+error: could not compile `voxy_editor` (lib test) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...

@@ -1,0 +1,27 @@
+{
+  "status": "nonblocking_audio_reload_save_barrier_verified",
+  "editor_passed": 245,
+  "editor_ignored": 20,
+  "strict_all_target_editor_clippy": true,
+  "covered": [
+    "drain scan before import completion application",
+    "stop new scan and import dispatch while fenced",
+    "retain queued output IDs and source dependency index",
+    "ordered watcher checkpoint",
+    "remaining scan cadence captured and restored on resume",
+    "restore fresh workers via explicit project recipe factories",
+    "in-flight import settles before capture",
+    "restored queue publishes identical revision PCM and input observations"
+  ],
+  "remaining": [
+    "bounded reload wire codec",
+    "compose reload record with audio playback archive",
+    "host-wide save orchestration",
+    "native device queue",
+    "App/PlaySession atomic publication"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/audio_reload.rs": "d0ed7596d9054b96ce64123a707de4ca2b5e636febdae3a7dbe023678616259b",
+    "crates/voxy_editor/src/audio_reload_checkpoint.rs": "d0ca78aeec3658222a0610988a820ee8700ee59f94797a77e6edee18feaf0215"
+  }
+}

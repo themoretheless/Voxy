@@ -1,0 +1,87 @@
+{
+  "scope": "authoring history/order/selection/ID allocator and ModelDrag participant; no complete App coordinator",
+  "source_sha256": {
+    "crates/voxy_scene/src/history.rs": "07b9e3f74448271aef162055d1a6b12e72891ddccb9e445a5cc8e226b75c0aaf",
+    "crates/voxy_scene/src/history/checkpoint.rs": "e3d26e0596df8239acc238def381a1868053119bf995dad49ae5f2215e528075",
+    "crates/voxy_scene/src/history/checkpoint/tests.rs": "735ec6502fba61750beb3b260fc0231375f98a746bacedbf83a656b4e33fd32d",
+    "crates/voxy_scene/src/lib.rs": "ea99ea86c02eea60a0e3dc86a55fce09ddbf687445b61f093f875ad88551490e",
+    "crates/voxy_editor/src/app/authoring_checkpoint.rs": "08fadfd15ba5e9e9a94c2c2a2f776aaa5615ca80c12dded52d9bdc7e3f57f98b",
+    "crates/voxy_editor/src/app/authoring_checkpoint/tests.rs": "a621c84d72eee664ff2be56eeaef3cb2b3365a1b3c38b0afae2b1d09c052498a",
+    "crates/voxy_editor/src/error.rs": "593d24c665ecf9909854949f6a05d186d9f33f038f2a0140634d7e83c4b6b5a0",
+    "crates/voxy_editor/src/lib.rs": "4828593ae6ff6e859e960c64117aac054d0e60f9f60067d7283cf9a22a91bae1"
+  },
+  "result_codes": {
+    "scene": 0,
+    "editor": 0,
+    "clippy": 0
+  },
+  "checks": {
+    "scene": {
+      "passed": 95,
+      "new_history_tests": 4
+    },
+    "editor": {
+      "passed": 283,
+      "ignored": 21,
+      "new_real_App_tests": 3
+    },
+    "clippy": "scene/editor all targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "core_ownership": {
+    "SceneHistory": [
+      "current snapshot",
+      "current epoch allocation",
+      "undo in native oldest-first deque order",
+      "redo in native stack order",
+      "max_versions",
+      "max_bytes",
+      "scene_capacity"
+    ],
+    "Snapshot": [
+      "full document",
+      "metadata",
+      "auxiliary",
+      "retained byte counter verified by native validation"
+    ],
+    "SceneEdit": [
+      "full draft document with float words including nonfinite payloads",
+      "actual shared epoch allocation identity relative to current history"
+    ]
+  },
+  "App_slots": [
+    "authoring.history",
+    "authoring.next_object_id",
+    "object_ids order",
+    "instances rebound from reserved durable IDs",
+    "selected index without sorting or clamping",
+    "all ModelDrag fields including detached edit epoch"
+  ],
+  "format": {
+    "version": 1,
+    "data": "bounded JSON with integer float words for documents and gesture coordinates; opaque metadata/auxiliary kept as JSON values",
+    "integrity": "semantic validation and quotas here; enclosing App file container still required",
+    "draft_policy": "drafts may be invalid and retain exact float words; ordinary native commit validation remains authoritative",
+    "epochs": "current allocation zero, canonical first-occurrence stale groups; fresh restored allocations never reuse original owner"
+  },
+  "scenarios": [
+    "current/undo/redo, metadata and auxiliary state, quota accounting and 120 mixed history continuations",
+    "equal-document stale epochs, sharing between detached edits, original edit rejection by fresh history",
+    "NaN payload, negative zero and infinity draft words preserved; invalid commit rejects without changing history",
+    "malformed versions/counts/epochs/counters/references and tighter quotas reject",
+    "actual App creation, nontrivial object order, selected object and active drag restored on a fresh SceneGraph",
+    "120 actual App edit/undo/redo/resource-draft steps match exact checkpoint JSON",
+    "stale drag commit remains rejected; cancel restores original transform without history entry",
+    "late bad gesture metadata/owner does not consume or mutate original live edit"
+  ],
+  "remaining": [
+    "complete App composition and global save/load publication permit",
+    "EditorAsset/model resource archives, model import/watch barriers and resource compatibility",
+    "native audio device queue transfer",
+    "other AuthoringSession fields: previews, source revisions and imported authoring source, resource-draft host state",
+    "remaining App viewport/panels/retarget/native input state and async encoding/disk publication",
+    "runtime identity registration beyond current authoring arrays and cross-scene historical UI scope",
+    "native window, GPU/display, performance and platform qualification; no new device runs this turn",
+    "ENG-03 through ENG-13 program acceptance remains open"
+  ]
+}

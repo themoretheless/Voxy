@@ -1,0 +1,10 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.46s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 2 tests
+test project_prefab_tests::project_prefab_validation_rejects_cycles_unknown_assets_stale_overrides_and_depth ... ok
+test project_prefab_tests::project_nested_prefabs_preserve_overrides_recover_and_package_after_relocation ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 222 filtered out; finished in 0.13s
+

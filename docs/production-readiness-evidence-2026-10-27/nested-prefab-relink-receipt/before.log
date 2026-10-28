@@ -1,0 +1,21 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.49s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+MODEL PUBLISHED frames=0 first_x=2 asset=mesh
+
+thread 'app::model_relink::tests::nested_prefab_relink_preserves_unsaved_overrides_and_allows_save_reopen_and_package' (78893552) panicked at crates/voxy_editor/src/app/model_relink.rs:579:30:
+called `Result::unwrap()` on an `Err` value: "scene dependencies changed; reload before saving: Read(\"input byte limit exceeded\")"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test app::model_relink::tests::nested_prefab_relink_preserves_unsaved_overrides_and_allows_save_reopen_and_package ... FAILED
+
+failures:
+
+failures:
+    app::model_relink::tests::nested_prefab_relink_preserves_unsaved_overrides_and_allows_save_reopen_and_package
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 371 filtered out; finished in 0.25s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

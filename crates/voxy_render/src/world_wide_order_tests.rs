@@ -7,7 +7,7 @@ fn shader() -> String {
     let start = wide.find("   if WORLD_WIDE_NEAR_FIRST&&").unwrap();
     let stop = start + wide[start..].find("   size+=children;continue;").unwrap();
     format!(
-        r#"
+        r"
 struct Pair {{lo:f32,hi:f32}}
 @group(0) @binding(0) var<storage,read> nearest_active:array<u32>;
 @group(0) @binding(1) var<storage,read_write> output:array<u32>;
@@ -28,7 +28,7 @@ fn wi_finite(value:f32)->bool {{return (bitcast<u32>(value)&0x7f800000u)!=0x7f80
  let out=batch*12u;output[out]=stack[0];output[out+1u]=stack[1];output[out+2u]=children;
  for(var lane=0u;lane<children;lane++){{output[out+3u+lane]=(stack[size+children-1u-lane]-begin-8u)/8u;}}
 }}
-"#,
+",
         &fast[begin..end],
         &wide[start..stop]
     )

@@ -1,0 +1,31 @@
+{
+  "status": "ordinary_authoring_override_frame_path_implemented_cache_verified",
+  "code_sha256": {
+    "crates/voxy_editor/src/animated_models.rs": "3ba5e0eb28c77a475c5637720dcff3ca04cd3823f1629851dd97ae58fa5f6fc8",
+    "crates/voxy_editor/src/animated_models/tests.rs": "446f2d4386cfe7890513f4af13e5d31bfbc3a77b43eb75d351c1c7000c4f9232",
+    "crates/voxy_editor/src/app/viewport.rs": "66d80d6205729f46af43ce1161e78a17a5977f79d3e9063be996aed07a80060d"
+  },
+  "editor_library": {
+    "passed": 222,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_editor_all_targets_clippy_passed": true,
+  "cache_regression": "animated_models::tests::authoring_override_frames_are_cached_per_owner_revision_and_settings",
+  "tested": [
+    "override_values",
+    "bind_palette_preserved",
+    "same_owner_revision_settings_arc_reuse",
+    "different_owners_isolated",
+    "settings_change_replaces_cache",
+    "nonfinite_edit_retains_cache",
+    "model_revision_replaces_cache",
+    "clear_releases_cache"
+  ],
+  "first_fixture_failure": "MAX weights with small deltas were representable; invalid-input cache test corrected to nonfinite weights, no valid geometry rejected",
+  "viewport_request_and_owner_path_updated": true,
+  "native_viewport_image_verified": false,
+  "gpu_correctness_rerun": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

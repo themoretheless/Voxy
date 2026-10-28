@@ -1,0 +1,20 @@
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_text)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.25s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_text-dc2adf0503e1a168)
+
+running 6 tests
+test atlas::tests::budget_empty_glyph_and_entry_limit ... ok
+test run::tests::baseline_offsets_and_descender_follow_y_down_coordinates ... ok
+test atlas::tests::packing_gutters_and_failed_insert_are_stable ... ok
+test atlas::checkpoint_tests::restored_shelf_continues_120_insertions_without_repacking ... ok
+test tests::invalid_font_and_limits_are_explicit ... ok
+test run::checkpoint_tests::original_font_and_accepted_runs_rebuild_exact_pixels_and_continue_120_unicode_edits ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+   Doc-tests voxy_text
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

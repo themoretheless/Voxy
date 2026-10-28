@@ -1,0 +1,38 @@
+{
+  "stage": "ENG-02 / ENG-03 / ENG-05 offscreen frame clock and moving shadow",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "bug": "Offscreen frame rendering implicitly consumed wall time and stepped gameplay; regression reproduces six unintended simulation ticks from one snapshot.",
+  "change": "Offscreen frame renders current simulation state without consuming wall-clock time; ordinary surface draw retains original wall-clock update. Offscreen callers explicitly advance gameplay through native advance_game.",
+  "verified": [
+    "Pre-fix hardware regression adds six simulation ticks on one offscreen render",
+    "Offscreen render preserves simulation tick and simulation_time Instant even with 100 ms old timestamp",
+    "Real native AngularMotion component saved in project",
+    "Four explicit 1/60-second steps update object world transform and rendered fog/shadow scene",
+    "Rendering after explicit step does not add simulation ticks",
+    "Source-free package App reproduces initial and moved frames exactly at corresponding explicit ticks",
+    "Fresh third App has no FogDraw before first render, steps directly to moved pose, and reproduces moved frame: earlier cached shadow map cannot pass as oracle",
+    "Existing fog/shadow/caster contribution controls, reload/refusal/Retry, no-native-presentation-ACK and source deletion checks remain",
+    "Source-free GameCheck completes 120 ticks with five objects; GPU validation scope clean"
+  ],
+  "editor_tests": {
+    "passed": 357,
+    "failed": 0,
+    "ignored": 34
+  },
+  "explicit_project_gpu_tests_passed": 1,
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/viewport.rs": "dd753be6c71a50601441c41ee86bbeb0049db09d9bfad31c16e599c45e151c22",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "3969f73edfefb0a26683f6af4b5432f78f0d8888e6a0841d6cd0052578f000ff"
+  },
+  "validation_note": "Full CPU suite precedes test-only checked Instant subtraction cleanup and added timestamp equality assertion; final hardware regression and all-target strict compilation run after both.",
+  "limits": [
+    "Qualifies native rigid angular motion/current world matrices and opaque fog shadows, not skeletal/morph deformation or full animation-cycle coverage",
+    "Fog remains 32 samples; shadow defaults remain 1024/PCF3x3",
+    "Snapshot path still polls resource work; promise concerns gameplay clock, not freezing all asynchronous owners",
+    "No OS presentation/input/audio-device, physical memory or 120/160 FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

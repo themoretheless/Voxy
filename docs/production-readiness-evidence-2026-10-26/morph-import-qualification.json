@@ -1,0 +1,37 @@
+{
+  "status": "gltf_morph_cpu_import_validated_runtime_gpu_pending",
+  "checks": {
+    "model_lib_passed_before_final_linear_interpolation_hardening": 41,
+    "final_morph_focused_passed": 6,
+    "final_animation_lib_passed": 331,
+    "final_editor_lib_passed": 215,
+    "final_editor_lib_ignored": 17,
+    "animation_model_all_targets_clippy": "passed -D warnings",
+    "upstream_original_reference": "passed 14 clips, 854 samples, three explicit original shapes"
+  },
+  "source_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "source_bytes_unchanged": true,
+  "code_sha256": {
+    "crates/voxy_model/src/lib.rs": "54ff333c7e23d1ea09c0c84043ea09293d581fd0f3f990dd6da4ca7071564d88",
+    "crates/voxy_model/src/morph.rs": "da7383d6c33d0a31120186910d6ef62ebd9528c22239bdfde5c98b8bfe6d21f3",
+    "crates/voxy_model/examples/morph_import.rs": "4131b22c6f7f6461358ca612db8fc3fded5755885d4eed8df8563409ac2b5f7f",
+    "crates/voxy_animation/src/property_track.rs": "0d40ae51e52eb7ee7614562805c0b32ad157ed597fcc4181ba93de5bcb9e26ff",
+    "crates/voxy_render/src/scene/geometry.rs": "c4c6ea7195ec5cfa3862791fee2aa3349f626f89435d33e432c588486a5c99fa"
+  },
+  "binary_sha256": "f27cf68888b92a6d004f7298d3047badc8eeeaadf4f61c6f60a3c07551a2077c",
+  "proof": "morph-import-proof.json",
+  "reproduce": "python3 docs/production-readiness-evidence-2026-10-26/morph-import-proof.py",
+  "default_runtime_import_accepts_morph": false,
+  "accepted_playback_integrated": false,
+  "gpu_morph_integrated": false,
+  "native_visuals_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false,
+  "remaining": [
+    "GPU morph payload/upload/deformation and resource admission",
+    "immutable morph weights in accepted pose and interrupted fades",
+    "existing animation/character rollback and reload/package integration",
+    "editor shape controls and native visual acceptance",
+    "tangent morph targets remain explicitly unsupported"
+  ]
+}

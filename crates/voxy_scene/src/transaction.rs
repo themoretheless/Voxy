@@ -24,6 +24,7 @@ impl SceneGraph {
             capacity: self.capacity,
             count: self.count,
             structure_revision: self.structure_revision,
+            change_revision: self.change_revision,
             free: self.free.clone(),
             slots: self
                 .slots

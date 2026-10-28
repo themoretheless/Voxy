@@ -1,0 +1,45 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "change": "panel relink button opens bounded project-relative path draft; native keyboard adapter sends Enter to two-phase background relink and Escape/cancel discards draft; draft bound to owner/model/scene observation/project identity; pending worker also checks current project before authorizing write",
+  "verified": [
+    "cold missing model ID repaired through panel_action and authoring_input_key, not direct request API",
+    "no manifest write while typing",
+    "native model and scene stable IDs retained after background bind/import",
+    "flat authoring scene saves, loads and cold-reopens after relink",
+    "invalid path retains editable draft with error and starts no worker",
+    "Escape/cancel and changed scene/selection/project cancel draft without publication",
+    "input over4096 bytes and control characters rejected",
+    "active path draft fences checkpoint and Play",
+    "project replacement after Enter but before owner decision rejects worker before write",
+    "two real M4 Max Metal offscreen tests validate notice/path glyphs and correct Relink/Cancel hit targets only after presentation ACK",
+    "path-entry PNG visually inspected"
+  ],
+  "suite": {
+    "passed": 339,
+    "failed": 0,
+    "ignored": 32
+  },
+  "gpu_tests_passed": 2,
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/model_relink.rs": "ebf2d560b8116a67f73c11dbe25e7feee6c3ea9c95067215d32fc0ab5ed993da",
+    "crates/voxy_editor/src/app/model_notice.rs": "2bd8df7d2023e00e765256946960d6bcd364d7b8473f0e227e203b5643046e57",
+    "crates/voxy_editor/src/app/inspector.rs": "963dacfc01f51edffeeac2e2b9f3a17924a92430083cba9fad0eb32110ee904b",
+    "crates/voxy_editor/src/app/play_mode.rs": "51bd21ef8c895a40fba834bad44510313969e26d31a49595706319ca795d6994",
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "03c39c6a58cee1e47b1e7ae17fcd6496039181c90c4b046ec29a424fa29dbadb",
+    "crates/voxy_editor/src/lib.rs": "60e51e9de3c25c0f27822007264b5647fe66ed92b500104ebe5b94d4713baee5",
+    "crates/voxy_editor/src/panels.rs": "454a8b5917c419670fe7c95a73eee8d59ba45996c8f9a6bd16d5c4a55348e69b",
+    "crates/voxy_editor/src/panels/gpu_tests.rs": "60c1d24c0b9680f14af0b2f979be926d1e82adf67b328403aac1c0fb0d6f2284",
+    "crates/voxy_editor/src/prefab_authoring.rs": "a1867f57d49eb8a13546a375604d778a34577e32fe0961ac8ffdff11449e46d9"
+  },
+  "retained_initial_failure": "path-entry GPU test initially expected RelinkModel instead of correct RelinkCancel; expectation corrected and both modes passed",
+  "remaining": [
+    "system-native file picker; current UI accepts project-relative typed path",
+    "nested prefab authoring observation refresh after self-authored manifest update requires qualification",
+    "native window/IME/clipboard and DPI/layout matrix not qualified",
+    "GPU model first-presentation after field-driven relink remains separate from panel pixel tests",
+    "ENG-03 and full engine roadmap remain incomplete"
+  ]
+}

@@ -1,0 +1,17 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.50s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=0 asset=rig.glb
+MODEL PUBLISHED frames=0 first_x=0 asset=rig.glb
+test app::resource_checkpoint::tests::preview_runtime_aliases_restore_without_gpu_and_keep_equal_frames_independent ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 410 filtered out; finished in 0.26s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-cbe125d7235bbd56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,45 @@
+{
+  "scope": "Source-origin admission from idle editor as well as running Play for detached game GPU preparation",
+  "checks": {
+    "editor_passed": 311,
+    "editor_ignored": 27,
+    "all_target_clippy": "passed",
+    "explicit_gpu": "Apple M4 Max Metal passed",
+    "format_and_diff": "passed",
+    "readback_nonblack_pixels": 946,
+    "running_idle_and_reference_equal": true,
+    "sha256": "39c4e4256c66809e9ef2c0cd23f537cf5b997ff4955090709251eaa49f9ef27f"
+  },
+  "implemented": [
+    "observe_play_restore_origin selects existing running observation or a bounded idle fingerprint",
+    "Idle fingerprint delegates to existing scene/model/input/physics/follow/angular/liquid/UI checkpoint APIs",
+    "Input mutation and partial idle/Play mode transition reject ready origin validation",
+    "Optional inactive preview state retained in observation rather than discarded",
+    "Idle host draw timer refresh is accepted; active Play retains strict pacing epoch validation",
+    "Live geometry admission includes the earlier detached running candidate while staging an idle-origin candidate"
+  ],
+  "not_claimed": [
+    "No editor menu/load command or SceneSurface presentation qualification",
+    "Actual full-App idle/startup publication and project/bootstrap transaction remain open",
+    "Global simulation/UI/audio freeze, input handoff and first presented-frame acknowledgement remain open",
+    "Static LOD/non-model Graphics and remaining authoring/extraction/audio participants incomplete",
+    "No physical peak memory or displayed FPS claim; ENG-03 through ENG-13 incomplete"
+  ],
+  "volatile_play_field_decisions": {
+    "playing_and_simulation": "Must both be absent for idle; transition rejects",
+    "simulation_time": "Idle host rendering timer ignored; running source checked separately",
+    "animations": "Existing native ModelAnimationCheckpoint and mutation observation",
+    "angular_motion": "Native checkpoint",
+    "simulation_ticks": "Exact u64",
+    "follow_camera": "Native checkpoint",
+    "liquid_optics": "Exact f32 words",
+    "liquid": "Native bounded byte archive",
+    "physics": "Native checkpoint",
+    "player_input": "Native bounded codec",
+    "ui_actions": "Native callback/event checkpoint"
+  },
+  "source_sha256": {
+    "crates/voxy_editor/src/app/resource_checkpoint/play.rs": "2ce056a93bf3c320fa2082b0ec5cb95650bc3e5f06e9dbf5eba2d215d54d447c",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "22b059c297e44514f1712dcce3ee281535aefa07488ea2aa45f5d47e0b437df6"
+  }
+}

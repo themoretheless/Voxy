@@ -1,0 +1,54 @@
+{
+  "scope": "Current catalog models and retained native AnimationRuntime model roots in one CPU resource graph",
+  "implemented": [
+    "Optional external model roots in EditorAssetCheckpoint share the same ModelAsset/skin graph as current EditorAsset and LOD resources",
+    "Publication and catalog envelopes carry and restore these roots without reimport",
+    "AnimationRuntime root collector visits sorted owners, including inactive owners, and interns actual outer Arc identity",
+    "App resource capture automatically includes retained runtime model roots",
+    "Legacy standalone asset/publication prepare rejects external roots instead of silently dropping them; empty-root encoding remains unchanged"
+  ],
+  "checks": {
+    "full_editor_suite": {
+      "passed": 300,
+      "failed": 0,
+      "ignored": 23
+    },
+    "focused_graph_file_test": "passed",
+    "focused_runtime_test": "passed",
+    "final_expanded_runtime_replay": "frozen old-model pose restored exactly; activate and advance 120 steps using current catalog models in both original and restored runtimes; exact pose checkpoint equality",
+    "final_all_targets_clippy": "passed -D warnings"
+  },
+  "verified_aliases": [
+    "Model root aliases with current asset and repeated external roots",
+    "Distinct equal model allocation identities remain distinct",
+    "Shared skin buffers across model clones and certified skeletal LOD",
+    "Shared source clip Arc across retained and current model clones",
+    "External-model-only graph, count corruption and reference-budget rejection"
+  ],
+  "retained_failure": "Initial Clippy required a Serde-specific reference-predicate allowance and exhaustive ModelGeometry match; corrected, failing log retained.",
+  "open": [
+    "Standalone clip/property allocations retained by playback fades still need a global resource join",
+    "Historical GPU textures and original retired EditorAsset import observations are not reconstructed by a ModelAsset root alone",
+    "Runtime checkpoint uses explicit source resolvers in this integration test; whole saved App composition and atomic scene/UI/audio/resource restoration remain open",
+    "No physical memory, rendered/displayed-frame or FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ],
+  "artifacts": {
+    "retained-model-files/external-model-roots.voxyeda": {
+      "bytes": 7704,
+      "sha256": "901545e9888c17e02a2e8ba3e2174226cf679a2c03509d61c39653ae4bf55255"
+    },
+    "retained-model-files/retired-animation-resources.voxyemr": {
+      "bytes": 116409,
+      "sha256": "e6e9fcfb7d9bd53efa91bf3b154b58967274907668e33e63419d40a03b330991"
+    }
+  },
+  "logs_sha256": {
+    "retained-models-editor-tests.log": "359041a0285a43a6401644702ffd0bb237f099e8d14960d53b3e9563f591ed07",
+    "retained-models-file-graph.log": "7cd54b620d05e32a39590aae6b17379443f997ebbfbeb0bfd9b397fd540db28b",
+    "retained-models-file-runtime.log": "df827fbf871178a014c430aacfdface0ca9079f5029f17790b433d72878f1b0e",
+    "retained-models-current-resume.log": "142d022fa33ad30263262056492f791b44ee628e1f34d43e228927f88df819be",
+    "retained-models-clippy-before-fix.log": "c07c9ab07dadec0977018aa1e52e022208880c618c5a44d3e5e7cea8b15dcb9f",
+    "retained-models-clippy.log": "11441e4eb1b9e49c8fd21abaf3826bb3c9a59b7ae4533f56c5bafd3568fbe7fa"
+  }
+}

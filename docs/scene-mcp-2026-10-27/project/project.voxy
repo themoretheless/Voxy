@@ -1,0 +1,6 @@
+{
+  "asset_manifest": "assets.json",
+  "name": "AirPods Pro 3 — procedural study",
+  "startup_scene": "main.scene.json",
+  "version": 1
+}

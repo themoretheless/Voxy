@@ -1,0 +1,23 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 2 tests
+UI ATOMIC RESTORE GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+UI CHECKPOINT GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=2
+UI ARCHIVE GPU RESTORED without font source, including retired owner
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=2
+UI BUNDLE GPU RESTORED both font generations without source or presentation ACK
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=2
+UI ATOMIC RESTORE exact RGBA readback; late CPU/GPU faults and discard preserve live UI/cache; active old worker retired
+test ui_live::restore::tests::gpu_restore_rolls_back_late_failures_and_publishes_exact_pixels_only_after_validation ... ok
+GAME UI GPU PUBLISHED draws=2
+UI SAVE BARRIER GPU drained import, froze dispatch, retained failed last-good and recovered
+test ui_live::gpu_reload_tests::gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 299 filtered out; finished in 6.74s
+

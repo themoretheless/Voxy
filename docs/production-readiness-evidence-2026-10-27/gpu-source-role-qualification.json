@@ -1,0 +1,39 @@
+{
+  "scope": "Stable GPU source publication roles and detached native model-animation bundle preparation",
+  "editor_tests": {
+    "passed": 305,
+    "failed": 0,
+    "ignored": 24
+  },
+  "clippy": "voxy_editor --all-targets -D warnings passed",
+  "gpu_adapter": "Apple M4 Max / Metal",
+  "readback": {
+    "width": 64,
+    "height": 64,
+    "format": "RGBA8",
+    "reference_equals_restored": true,
+    "current_changed_pixels": 253,
+    "sha256": {
+      "reference": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464",
+      "current": "7da6a456732466137c34a7d0bdedce6fa1000702113652194176321afbb66cf0",
+      "restored": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464"
+    }
+  },
+  "native_bundle": "gpu-source-role-bundle-files/gpu-source-role-bundle.voxymac",
+  "validated": [
+    "AssetId static model and ObjectId animated-owner bindings",
+    "Historical and current texture publications remain distinct while shared native model allocations survive",
+    "Reversed target scene node ordering",
+    "Missing or collapsed owner resolution, invalid indices, duplicate stable IDs, limits and missing binding metadata reject",
+    "Combined native VOXYMAC1 composition tested using explicit CPU LiveSources fixture",
+    "Offscreen real GPU texture restoration uses restored stable owner role"
+  ],
+  "open": [
+    "Whole-App atomic restore and presentation acknowledgement",
+    "Complete GPU accepted pose and LOD state",
+    "Retired epoch-only GPU owner history",
+    "Native audio device queue restore",
+    "Physical memory and displayed frame pacing",
+    "Remaining ENG-03 through ENG-13"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Detached native playback/reload/output candidate with destination guards",
+  "status": "native preparation implemented and exercised; native publication and full load still closed",
+  "changes": [
+    "Share original playback and reload reconstruction between offline/native entrypoints",
+    "Native entrypoint requires output archive and validates actual destination rate/capacity before opening staged reload workers",
+    "PreparedNativeAudioSession retains original PreparedAudioSession cleanup plus separate prepared PCM output; no path to ordinary offline publication",
+    "Capture scene change token, original project observation identity and bound output connection identity",
+    "Revalidate destination scene/project/connection and reject consumed PCM candidate",
+    "Avoid duplicate full JSON serialization introduced during initial shared preparation refactor"
+  ],
+  "checks": {
+    "audio_device": {
+      "passed": 21,
+      "ignored": 2
+    },
+    "editor": {
+      "passed": 392,
+      "ignored": 45
+    },
+    "native_session": {
+      "passed": 1,
+      "endpoint": "actual default CPAL/CoreAudio output",
+      "rate": 48000,
+      "gain": 0,
+      "window": false,
+      "cases": [
+        "delete source WAV before native preparation",
+        "reject unresolved saved object references",
+        "prepare valid native candidate from actual persisted JSON",
+        "validate original destination",
+        "reject distinct project identity with same root",
+        "reject destination scene mutation after staging",
+        "discard and join staged reload workers",
+        "prepare/revalidate/discard fresh candidate after scene change",
+        "held original AudioSession JSON remains identical",
+        "original native cancel/resume/save behavior remains working"
+      ]
+    },
+    "gpu_regressions": {
+      "passed": 7,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "mode": "offscreen"
+    },
+    "clippy": "audio_device and editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "limitations": [
+    "Prepared native candidate has not been published into the live device/session",
+    "Destination validator checks identity and format, not native pause/resume acknowledgement or source checkpoint epoch",
+    "Need owned native publication readiness and commit protocol coordinated with queue gate and other App owners",
+    "Default native prepare/load/publication routes remain explicitly gated; no silent offline fallback",
+    "Physical test uses gain zero and no window; no audible continuity or full window restore qualification",
+    "No new CPU/GPU performance or FPS claim; full ENG roadmap remains open"
+  ],
+  "sha256": {
+    "crates/voxy_audio_device/src/queue.rs": "7d3186126b134f65d6fb6cf523df1e323487137b490c6ac4c1c57f9e75fe276f",
+    "crates/voxy_audio_device/src/lib.rs": "77d850b53229f64f81eee96d84527cdaffaeb582716523a390e738f12f2480e2",
+    "crates/voxy_audio_device/src/output_checkpoint.rs": "c2ebb9bf6fcb1f6d205cd1627550c2a13c1b643817c13b51523885e6d2ff9f37",
+    "crates/voxy_editor/src/audio_playback_checkpoint.rs": "bcb7ca9df38f692a49e25f6bee6b0af5b0cd3cdaa3e6ef5409fcdb5450ec63c9",
+    "crates/voxy_editor/src/audio_owner_checkpoint.rs": "0cce1a41111fc0a6a12aa17b54820b82d6223b1fbf7710729f24173b8c63fc0c",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "dd18d6672233f7f7c65654e0d68fc9f8773590b6484ff9edfa1c5d04eec9c195"
+  }
+}

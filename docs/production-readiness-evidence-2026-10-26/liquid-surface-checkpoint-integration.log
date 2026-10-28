@@ -1,0 +1,22 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.02s
+     Running tests/liquid_adhesion.rs (target/research-ray-precision/debug/deps/liquid_adhesion-c3790e0119e8dead)
+
+running 4 tests
+test wall_potential_is_local_symmetric_and_preserves_mass ... ok
+test material_selection_and_absent_container_do_not_apply_unwanted_forces ... ok
+test invalid_configuration_and_substep_exhaustion_are_atomic ... ok
+test adhesion_reaches_wall_without_penetration_and_disable_removes_force ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/liquid_surface.rs (target/research-ray-precision/debug/deps/liquid_surface-5f95a717ee2ca659)
+
+running 2 tests
+test budgets_and_empty_material_selection_do_not_mutate_simulation ... ok
+test isolated_particle_surface_is_closed_outward_and_matches_analytic_volume ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+

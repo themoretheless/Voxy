@@ -1,0 +1,14 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-ffe57fcdab83b83c)
+
+running 7 tests
+test app::model_reload::gpu_app_tests::offscreen_app_sampler_reload_keeps_cpu_gpu_atomic_and_recovers_failed_source ... ok
+test app::model_reload::gpu_app_tests::offscreen_editor_file_keeps_history_preview_and_gpu_in_one_scene ... ok
+test app::model_reload::gpu_app_tests::offscreen_nested_locomotion_cycle_matches_packaged_gpu_frames ... ok
+test app::model_reload::gpu_app_tests::offscreen_optical_liquid_uses_native_runtime_and_matches_packaged_frame ... ok
+test app::model_reload::gpu_app_tests::offscreen_preview_snapshot_restores_exact_phase_frame_and_gpu_identity ... ok
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_text_font_and_continues_game ... ok
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_ui_audio_and_continues_game ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 430 filtered out; finished in 33.30s
+

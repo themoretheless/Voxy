@@ -1,0 +1,38 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "change": "Native resource-error Retry import action queues the selected failed asset through existing catalog invalidation and background import owner, without changing source files or scene documents.",
+  "verified": [
+    "Ready models cannot be retried through error recovery action",
+    "Failed native catalog publication retains previous accepted model until normal worker completion",
+    "Checkpoint fence denies retry and hides retry availability",
+    "Duplicate action while queued is rejected without adding duplicate queue entries",
+    "Unchanged real OBJ source reimports successfully; exact accepted input observations match and authoring document remains identical",
+    "Real Metal panel render has readable retry glyphs and native hit target only after presented-frame acknowledgement",
+    "Automatic file-change reload remains documented and covered by full suite"
+  ],
+  "editor_tests": {
+    "passed": 350,
+    "failed": 0,
+    "ignored": 32
+  },
+  "gpu_tests_passed": 1,
+  "gpu_adapter": "Apple M4 Max / Metal",
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/panels.rs": "9eb095017ec172fb411b2363963a8d5c3ce1a13d2e605d6f71ebaaccfd764ebd",
+    "crates/voxy_editor/src/panels/gpu_tests.rs": "45bbb1a77ebd2b9a214b85d63f97abdef09395c894a6daeeb8fa423432f822c7",
+    "crates/voxy_editor/src/app/model_notice.rs": "fddf6b163cda74354975fa172a32d34abd5492c93627eee6777251fb48720327",
+    "crates/voxy_editor/src/app/model_reload.rs": "8b8dc7774136a1617ab8f488ea457d25f9e4168420686be4439f2a17d1f22fa8",
+    "crates/voxy_editor/src/app/model_reload/tests.rs": "08ff447acf0fdd67b66e9df221afebefb198ef92532ecfe9afccfbc5a4f1bc3f",
+    "crates/voxy_editor/src/app/inspector.rs": "a524bd664a2eb7b22090aece01b241f5cd06f95694eb133d52ad750b47cfd1cc"
+  },
+  "limits": [
+    "Transient failure is injected through native catalog completion; successful retry reads the original real OBJ through existing worker",
+    "GPU panel test covers rendering and presented hit ownership; native window mouse integration remains unqualified",
+    "No changed budget UI, whole-App session publication, native device audio or FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

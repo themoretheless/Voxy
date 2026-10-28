@@ -1,0 +1,877 @@
+   Compiling naga v30.0.1
+   Compiling voxy_ui_winit v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_ui_winit)
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling wgpu-hal v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu-hal)
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling wgpu v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu)
+   Compiling voxy_water v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_water)
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.03s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-95f06cc59fea0249)
+
+running 392 tests
+test animated_models::tests::animated_lod_views_budget_and_cpu_fallback ... ignored, requires GPU; animated editor LOD camera and budget publication
+test animated_models::tests::authored_roll_foot_gpu_matches_independent_pivot_geometry_and_clears_resources ... ignored, requires a graphics adapter
+test animated_models::tests::composed_root_motion_collision_renders_once_with_in_place_gpu_palette ... ignored, requires real GPU; composed root path and in-place skin palette
+test animated_models::tests::cpu_fallback_supports_mixed_primitives_and_removal ... ignored, requires GPU upload; explicit CPU deformation fallback
+test animated_models::tests::curved_root_rotation_collision_renders_once_with_in_place_gpu_palette ... ignored, requires real GPU; curved character turn and in-place skin palette
+test animated_models::tests::fixed_tick_hierarchy_owners_share_gpu_source_at_capacity ... ignored, requires real GPU; fixed-tick hierarchy owners at runtime capacity
+test animated_models::tests::gpu_material_revision_failure_preserves_texture_storage ... ignored, requires GPU; accepted material revision and residency storage lifetime
+test animated_models::tests::gpu_morph_weight_only_updates_and_failed_replacement_retains_last_good ... ignored, requires physical GPU; ordinary owner morph updates, CPU fallback and last-good resource acceptance
+test animated_models::tests::gpu_original_morph_owner_updates_all_primitives ... ignored, requires physical GPU and VOXY_MORPH_UPSTREAM_GLB; ordinary imported owner with all original primitives
+test animated_models::tests::gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision ... ignored, requires real GPU; editor owner playback and scene draw
+test animated_models::tests::gpu_rigid_morph_without_source_skin_uses_common_owner ... ignored, requires physical GPU; unskinned rigid morph node transforms, CPU parity and resource retention
+test animated_models::tests::planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources ... ignored, requires a graphics adapter
+test animated_models::tests::retained_texture_publications_survive_reload_pose_failure_and_source_deletion ... ignored, requires real GPU; retained CPU texture publication and pixel readback
+test animated_models::tests::retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources ... ignored, requires a graphics adapter
+test animation_runtime::reference_checkpoint::tests::reference_json_retains_all_intervals_and_rejects_invalid_unit_box ... ok
+test animation_runtime::rotation_tests::old_authored_settings_default_rotation_off ... ok
+test animation_runtime::tests::authored_events_round_trip_rebind_and_remove_without_replaying ... ok
+test animation_runtime::rotation_tests::signed_uniform_parent_converts_composed_motion_and_unproved_ancestors_reject ... ok
+test animation_runtime::tests::clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks ... ok
+test animation_runtime::rotation_tests::paused_angular_fade_runs_through_owner_and_physics_without_actor_drift ... ok
+test animated_models::checkpoint::tests::accepted_frame_joins_original_publication_and_rejects_invalid_bindings ... ok
+test animation_runtime::tests::first_accepted_pose_bootstraps_root_reference_atomically_without_feet ... ok
+test animation_runtime::tests::fixed_frames_wait_for_assets_pause_resume_and_never_advance_on_read ... ok
+test animation_preview::tests::prepared_source_guard_observes_preview_frame_identity_and_exact_phase ... ok
+test animation_runtime::tests::observation_tokens_detect_clock_adoption_event_mutation_and_clear_without_scene_edits ... ok
+test animation_runtime::tests::imported_model_retains_translation_and_rotation_compilation_proofs ... ok
+test animation_runtime::tests::hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic ... ok
+test animation_runtime::tests::ordinary_preparation_transports_root_reference_without_foot_settings ... ok
+test animation_runtime::tests::owner_events_wait_for_runtime_adoption_and_drain_once ... ok
+test animation_runtime::tests::motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors ... ok
+test animation_runtime::tests::partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomically ... ok
+test animation_runtime::tests::owner_fade_operation_admits_all_owners_before_any_publication ... ok
+test animation_runtime::tests::retarget_source_clock_produces_target_palette_and_failure_keeps_accepted_frame ... ok
+test animated_models::tests::authoring_override_frames_are_cached_per_owner_revision_and_settings ... ok
+test animation_runtime::tests::retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back ... ok
+test animation_runtime::tests::rigid_bind_pose_waits_for_clip_before_reference_bootstrap ... ok
+test animation_runtime::tests::root_reference_initialization_rejects_stale_model_invalid_pose_and_reset ... ok
+test animation_runtime::tests::root_parent_capture_encloses_nested_reflections_and_rejects_moving_frames ... ok
+test animation_runtime::tests::root_reference_lifetime_tracks_asset_and_extraction_identity ... ok
+test animation_runtime::tests::scene_fade_batch_stages_selection_without_advancing_and_rejects_late_owner ... ok
+test animation_runtime::tests::wall_clock_preparation_retains_sub_f32_steps_and_failed_publication ... ok
+test animation_runtime::tests::accepted_physical_fade_uses_runtime_extraction_before_frame_publication ... ok
+test animation_runtime::tests::editor_play_drives_root_motion_through_wall_and_preserves_failed_tick ... ok
+test animation_runtime::tests::signed_reference_scale_survives_body_transport_and_next_fade ... ok
+test animation_sources::tests::source_pairs_keep_distinct_property_allocations_and_native_model_aliases ... ok
+test animation_runtime::rotation_tests::retargeted_pivot_turn_uses_target_origin_and_collision_acceptance ... ok
+test animation_runtime::rotation_tests::prepared_rotation_and_translation_only_owners_publish_one_atomic_tick ... ok
+test animation_preview::tests::retarget_preview_uses_source_phase_target_bind_and_in_place_axes ... ok
+test animation_runtime::rotation_tests::ordinary_play_rotates_from_rig_limits_at_wall_and_stop_restores_authoring ... ok
+test animation_runtime::rotation_tests::ordinary_play_composes_moving_root_and_stop_restores_authoring ... ok
+test animation_preview::tests::marker_preview_is_authoring_only_toggleable_and_rejects_stale_configuration ... ok
+test app::authoring_checkpoint::tests::cancelling_restored_drag_keeps_history_and_late_bad_gesture_does_not_consume_live_edit ... ok
+test animation_runtime::tests::complete_animation_owner_checkpoint_restores_mixed_queues_retarget_and_inactive_frames ... ok
+test app::authoring_checkpoint::tests::stale_drag_stays_stale_and_failed_preparation_preserves_the_original_app ... ok
+test app::authoring_checkpoint::tests::imported_authoring_source_archive_restores_nested_dependencies_without_files ... ok
+test app::authoring_checkpoint::tests::metadata_roundtrip_rebinds_seek_and_retains_original_file_receipt_without_io ... ok
+test app::authoring_checkpoint::tests::coordinated_play_and_history_prepare_share_scene_and_preserve_redo ... ok
+test animation_runtime::tests::editor_expanded_rig_scene_survives_history_save_load_play_and_stop ... ok
+test app::model_reload::gpu_app_tests::offscreen_app_sampler_reload_keeps_cpu_gpu_atomic_and_recovers_failed_source ... ignored, requires real GPU; full App model watcher/reload without presentation
+test app::model_reload::gpu_app_tests::offscreen_optical_liquid_uses_native_runtime_and_matches_packaged_frame ... ignored, requires real GPU; native optical liquid viewport and source-free package
+test app::model_reload::tests::native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work ... ignored, requires real GPU; native reload transaction without a window
+test app::model_reload::tests::model_completions_cannot_override_watcher_owned_manifest_inventory ... ok
+test app::model_reload::tests::explicit_panel_retry_recovers_unchanged_source_and_respects_checkpoint_fence ... ok
+test animation_runtime::tests::certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor ... ok
+test app::model_relink::tests::owner_rejects_incompatible_hierarchy_before_worker_can_write_manifest ... ok
+test app::resource_checkpoint::tests::cancelling_requested_snapshot_consumes_it_before_new_scans ... ok
+test app::model_reload::tests::source_budget_failure_settles_ticket_retains_model_and_does_not_block_checkpoint ... ok
+test app::resource_checkpoint::tests::app_fence_drains_import_and_scan_keeps_queue_and_resumes ... ok
+test app::resource_checkpoint::tests::combined_bundle_stages_original_cpu_resources_runtime_and_gpu_together ... ignored, requires real GPU; combined native model/runtime restore transaction
+test app::model_reload::tests::watcher_capacity_rejects_unwatchable_model_and_settles_ticket_without_graph_changes ... ok
+test app::resource_checkpoint::tests::malformed_restore_rejects_and_stopped_workers_stay_stopped ... ok
+test app::model_relink::tests::changed_authoring_after_authorization_is_not_overwritten_by_late_receipt ... ok
+test app::model_relink::tests::shutdown_before_owner_decision_joins_relink_without_manifest_publication ... ok
+test app::model_relink::tests::path_entry_cancel_invalid_input_and_stale_owner_never_start_publication ... ok
+test app::model_relink::tests::changed_authoring_before_owner_decision_rejects_manifest_publication ... ok
+test app::model_relink::tests::project_change_after_input_confirmation_rejects_worker_before_manifest_write ... ok
+test app::restore_barrier::tests::acquisition_rejection_preserves_existing_fences_and_native_audio_mode ... ok
+test app::resource_checkpoint::tests::inactive_runtime_retains_old_model_after_catalog_replacement_and_resumes_120_frames ... ok
+test app::restore_barrier::tests::cancel_consumes_issued_watcher_fence_without_pausing_unfrozen_time ... ok
+test app::restore_barrier::tests::coordinated_barrier_freezes_game_draw_and_retains_input_until_resume ... ok
+test app::restore_barrier::tests::snapshot_budget_failure_can_cancel_and_resume_the_original_game ... ok
+test app::restore_guard::tests::model_observation_detects_clock_sources_and_ready_fence_replacement ... ok
+test app::restore_guard::tests::native_app_observation_rejects_scene_selection_and_history_changes ... ok
+test app::resource_checkpoint::tests::empty_manifest_restore_reserves_watcher_slot_without_model_publications ... ok
+test app::restore_guard::tests::native_authoring_metadata_changes_invalidate_without_scene_edits ... ok
+test app::resource_checkpoint::tests::restore_preserves_exact_boundary_watcher_policy_and_allows_explicit_offline_owners ... ok
+test app::resource_checkpoint::tests::manifest_recipe_and_original_dependency_bytes_survive_source_deletion ... ok
+test audio_play::tests::aggregate_input_and_pcm_admission_preserve_counters_on_rejection ... ok
+test audio_play::tests::scoped_audio_denial_preserves_counters_and_scene ... ok
+test audio_reload::checkpoint::tests::save_barrier_drains_scan_retains_queue_and_restored_reload_publishes ... ok
+test app::restore_barrier::tests::offline_audio_owner_freezes_with_game_and_keeps_exact_snapshot_during_draw ... ok
+test app::resource_checkpoint::tests::restore_rejects_watcher_policy_that_cannot_cover_accepted_model_sources ... ok
+test audio_reload::tests::replacement_budget_rejects_candidate_and_retains_old_publication ... ok
+test audio_settings::tests::manifest_relocation_rejects_stale_settings_save_until_explicit_reload ... ok
+test camera::fit_tests::fitted_bounds_project_inside_both_camera_types_and_aspects ... ok
+test camera::fit_tests::invalid_or_unframeable_bounds_preserve_camera ... ok
+test camera::safe_fit_tests::fitted_bounds_stay_inside_off_center_safe_rectangles ... ok
+test camera::tests::both_projections_round_trip_after_orbit_pan_zoom ... ok
+test camera::tests::wheel_pixel_units_match_lines_across_dpi_and_event_splitting ... ok
+test app::resource_checkpoint::tests::reloaded_clip_fade_restores_from_resource_file_with_native_source_resolver ... ok
+test app::resource_checkpoint::tests::combined_bundle_resolves_gpu_material_roles_and_rejects_missing_role_metadata ... ok
+test camera_authoring_tests::add_follow_camera_pick_edit_undo_remove_and_reopen_use_existing_authoring_owner ... ok
+test camera_authoring_tests::stale_and_canceled_camera_pick_actions_never_publish_a_change ... ok
+test app::model_relink::tests::background_relink_checks_owner_then_publishes_and_fences_play_and_checkpoint ... ok
+test component_fields::tests::animation_inspector_rejects_invalid_values_and_round_trips_bind_pose_history ... ok
+test component_fields::tests::bound_collection_field_follows_item_id_and_rejects_stale_edits ... ok
+test component_fields::tests::editor_typing_survives_component_reindexing_but_rejects_changed_values ... ok
+test component_fields::tests::escaped_paths_scalar_types_and_atomic_array_reset ... ok
+test component_fields::tests::generic_inspector_commits_validates_and_undoes_registered_fields ... ok
+test component_fields::tests::identified_member_reset_uses_escaped_ids_and_keeps_inner_arrays_atomic ... ok
+test component_fields::tests::installed_custom_codecs_survive_editor_history_scene_io_play_and_workers ... ok
+test fog_draw::shadow_tests::opaque_shadow_views_use_current_geometry_and_preserve_pending_maps ... ignored, requires a physical GPU adapter
+test fog_draw::shadow_tests::skeletal_shadow_views_consume_independently_deformed_gpu_streams ... ignored, requires a physical GPU adapter
+test fog_draw::tests::hdr_fog_views_preserve_local_and_global_editor_overlays ... ignored, requires a physical GPU adapter
+test camera_authoring_tests::nested_target_picker_uses_stable_ids_and_saves_member_overrides ... ok
+test component_collections::tests::collection_buttons_edit_empty_lists_follow_ids_and_round_trip_history ... ok
+test app::model_relink::tests::stale_retry_action_preserves_relink_path_and_failed_publication ... ok
+test foot_placement::contact_events::tests::contacts_share_the_existing_tick_budget_with_each_other_and_support_work ... ok
+test foot_placement::contact_events::tests::mixed_loop_events_are_bounded_and_start_only_events_do_not_release ... ok
+test foot_placement::contact_events::tests::mixed_zero_events_require_both_sources_and_include_completion_tail ... ok
+test component_fields::tests::animation_marker_list_is_editable_empty_and_undoable_through_panel ... ok
+test foot_placement::contact_events::tests::tick_end_does_not_mean_fade_completion_for_live_or_frozen_sources ... ok
+test foot_placement::tests::authored_ankle_roll_keeps_the_support_pivot_and_legacy_alignment_is_default ... ok
+test foot_placement::tests::authored_pivot_keys_round_trip_validate_and_reject_unknown_clips ... ok
+test foot_placement::tests::authored_ankle_roll_publishes_with_the_physical_tick_and_retries_rejected_preparation ... ok
+test app::resource_checkpoint::tests::removed_manifest_model_keeps_authoring_history_and_archived_last_good_owner ... ok
+test foot_placement::tests::binding_rejects_missing_and_dependent_chains ... ok
+test app::model_relink::tests::panel_path_entry_rebinds_cold_missing_id_and_saves_reopens_without_scene_changes ... ok
+test app::model_relink::tests::nested_prefab_relink_preserves_unsaved_overrides_and_allows_save_reopen_and_package ... ok
+test foot_placement::tests::clip_phase_uses_playback_clock_speed_pause_loops_and_failed_publication ... ok
+test foot_placement::tests::clip_phase_drives_pivot_and_live_fade_holds_accepted_point ... ok
+test foot_placement::tests::contact_curves_are_smooth_bounded_and_preserve_crossed_swing_events ... ok
+test foot_placement::tests::contact_blending_keeps_displayed_weight_across_repeated_interruptions_and_staging ... ok
+test foot_placement::tests::contact_key_budget_is_shared_between_named_clips_and_legacy_curve ... ok
+test foot_placement::tests::equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them ... ok
+test foot_placement::tests::fixed_play_candidates_keep_sole_on_anchor_and_failures_preserve_frame_and_clock ... ok
+test follow_camera_tests::missing_target_and_ambiguous_camera_retain_view_and_start_failure_restores_authoring ... ok
+test foot_placement::tests::authoring_clip_switch_requires_contact_mapping_and_preserves_history_on_rejection ... ok
+test foot_placement::tests::interrupted_variable_contact_fade_retains_anchor_and_accepted_snapshot_on_retry ... ok
+test foot_placement::tests::installed_geometry_selects_and_physically_admits_pivot_automatically ... ok
+test foot_placement::tests::native_foot_history_checkpoint_uses_skeleton_names_and_rejects_corrupt_history ... ok
+test foot_placement::tests::named_clip_contacts_select_distinct_curves_and_reject_unmapped_clips ... ok
+test foot_placement::tests::pending_pivot_is_canceled_by_airborne_and_cannot_cross_landing ... ok
+test foot_placement::tests::physical_clip_fades_retain_the_planted_anchor_and_retry_frozen_completion_atomically ... ok
+test foot_placement::tests::physical_mixed_contact_windows_release_only_when_both_clips_are_in_swing ... ok
+test foot_placement::tests::queued_pivot_transfer_publishes_after_ik_and_persists_across_frames ... ok
+test foot_placement::tests::pivot_and_contact_rollback_when_skipped_swing_exhausts_query_budget ... ok
+test foot_placement::tests::retargeted_foot_snapshot_restores_against_source_rig_and_keeps_identity ... ok
+test foot_placement::tests::retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry ... ok
+test foot_placement::tests::shared_snapshot_archive_preserves_playback_and_foot_contact_identity_after_json_load ... ok
+test foot_placement::tests::skipped_swing_rearms_at_new_sole_and_failed_tick_preserves_clip_phase_and_contacts ... ok
+test foot_placement::tests::slope_normal_and_nonuniform_reflected_tip_keep_the_authored_sole_on_surface ... ok
+test foot_placement::tests::support_geometry_schema_preserves_legacy_and_rejects_invalid_assets ... ok
+test foot_placement::tests::ordinary_app_play_applies_foot_ik_and_stop_restores_authored_settings ... ok
+test frame_styles::shadow_snapshot_tests::shadows_follow_selected_light_and_caster_activity_without_mutating_prior_snapshot ... ok
+test foot_placement::tests::unreachable_retained_contact_releases_without_publishing_a_clamped_pose ... ok
+test frame_styles::tests::built_in_registry_admits_fog_and_rejects_invalid_calibration ... ok
+test frame_styles::tests::fog_snapshots_follow_hierarchy_and_preserve_prior_values ... ok
+test frame_styles::tests::styles_own_camera_material_and_light_and_reject_invalid_inputs ... ok
+test frame_styles::tests::ui_owner_snapshot_tracks_activity_removal_and_reused_generation ... ok
+test foot_placement::tests::foot_history_checkpoint_retains_pending_pivot_geometry_and_shared_frozen_pose ... ok
+test audio_session::checkpoint::tests::audio_session_load_publishes_candidate_and_failed_load_keeps_live_playback ... ok
+test audio_session::checkpoint::tests::frozen_audio_publication_retains_owner_on_discard_and_releases_old_fence_on_commit ... ok
+test animation_runtime::tests::production_play_dispatches_moving_fade_and_preserves_late_failure ... ok
+test audio_play::owner_checkpoint::tests::whole_offline_audio_record_restores_playback_and_queued_reload_from_json ... ok
+test audio_play::playback_checkpoint::tests::playback_archive_preserves_old_voice_new_publication_and_failed_reload_together ... ok
+test foot_placement::tests::generated_quaternius_contact_candidates_bind_to_real_clips_and_preserve_loop_events ... ok
+test game_host_tests::late_start_failure_destroys_behaviors_and_restores_editor_for_retry ... ok
+test game_ui_input::checkpoint::historical_tests::deleted_pressed_owner_keeps_history_but_cannot_activate_a_recycled_slot ... ok
+test game_ui_input::checkpoint::tests::pending_layout_change_is_not_reextracted_during_load_and_invalid_data_preserves_input ... ok
+test game_ui_input::checkpoint::tests::tab_cancellation_and_empty_admitted_layout_remain_distinct_from_physical_key_holds ... ok
+test app::model_reload::tests::watcher_byte_budget_refuses_grown_source_and_recovers_when_valid_source_fits_again ... ok
+test game_ui_input::tests::focus_visual_uses_admitted_visible_owner_and_clears_on_cancel_or_publication_change ... ok
+test follow_camera_tests::follow_checkpoint_rebinds_fresh_scene_and_preserves_camera_continuation ... ok
+test game_ui_input::tests::input_waits_for_visible_snapshot_and_cancels_capture_across_publications ... ok
+test gizmo::tests::axis_hits_use_physical_viewport_coordinates ... ok
+test game_ui_input::tests::keyboard_combines_activation_edges_and_revalidates_live_targets ... ok
+test game_ui_input::tests::live_pointer_release_revalidates_removal_disable_and_failed_layout ... ok
+test gpu_model::batch::tests::gpu_batch_preserves_live_cache_on_budget_and_late_validation_failures ... ignored, requires real GPU; detached model batch validation
+test gpu_model::restore::tests::late_gpu_rejection_and_cancellation_preserve_live_cache_and_scope_stack ... ignored, requires real GPU; composed restore late validation and cancellation
+test gpu_model::sampler_tests::gpu_material_sampler_views_share_storage_and_render_distinct_filter_and_wrap_modes ... ignored, requires real GPU; native material sampler cache and rendered pixels
+test game_host_tests::rejected_host_setup_destroys_partial_behaviors_restores_authoring_and_allows_retry ... ok
+test game_ui_input::checkpoint::tests::native_adapter_rebinds_both_activation_keys_pointer_and_admitted_layout_for_120_cycles ... ok
+test game_host_tests::standalone_start_is_explicit_and_does_not_toggle_an_active_session ... ok
+test gpu_model::tests::deferral_wakes_on_source_budget_or_residency_change ... ok
+test gpu_model::tests::global_lod_admission_retains_all_requests_and_recovers_after_eviction ... ok
+test game_host_tests::stop_discards_pending_commands_input_and_fractional_clock_before_replay ... ok
+test gpu_model::tests::residency_drops_with_last_owner_and_dead_entries_are_pruned ... ok
+test gpu_source_bindings::tests::roles_keep_historical_materials_and_aliases_across_reversed_scene_ids ... ok
+test game_host_tests::host_behaviors_run_identically_in_repeated_play_standalone_build_and_package ... ok
+test import::asset_checkpoint::tests::empty_graph_is_a_valid_self_contained_archive ... ok
+test game_host_tests::ui_setup_failure_can_retry_and_failed_standalone_restores_mode ... ok
+test game_host_tests::host_checkpoint_codecs_survive_project_build_and_source_free_package ... ok
+test import::asset_checkpoint::tests::metadata_integrity_late_native_failures_limits_and_unreachable_owners_reject_atomically ... ok
+test foot_placement::tests::scene_physics_input_and_animation_checkpoint_continue_solved_foot_together ... ok
+test game_host_tests::host_ui_callback_state_and_pending_click_survive_source_free_package ... ok
+test gpu_model::tests::animated_preview_preserves_primitive_colors_and_accounts_all_allocations ... ok
+test headless_game::tests::headless_focus_loss_cancels_input_and_ui_capture_and_invalid_events_do_not_advance ... ok
+test import::asset_checkpoint::tests::external_models_preserve_catalog_aliases_retired_roots_and_shared_skin_buffers ... ok
+test import::node_checkpoint::tests::exact_node_fields_image_mips_and_120_hierarchy_transforms_survive_file ... ok
+test game_host_tests::variable_frame_lifecycle_matches_editor_standalone_and_source_free_package ... ok
+test import::asset_checkpoint::tests::partial_model_lod_vertex_and_index_sharing_is_preserved_without_content_deduplication ... ok
+test import::node_checkpoint::tests::invalid_hierarchy_transform_source_and_aggregate_limits_reject_without_live_changes ... ok
+test liquid_draw::gpu_tests::accepted_liquid_mesh_is_visible_on_gpu_and_empty_state_clears ... ignored, requires a physical GPU adapter
+test liquid_draw::optical_tests::explicit_material_and_volume_admission ... ok
+test import::publication_checkpoint::tests::empty_publication_graph_round_trips ... ok
+test liquid_draw::tests::gpu_coordinate_collapse_rejects_the_whole_particle_mesh ... ok
+test liquid_draw::tests::volume_and_centroid_follow_physical_particle ... ok
+test import::catalog_checkpoint::tests::mismatched_dependencies_and_limits_reject_without_touching_live_catalog ... ok
+test import::catalog_checkpoint::tests::retained_only_graph_preserves_publication_identity_and_rejects_wrong_split ... ok
+test import::asset_checkpoint::tests::entire_file_preserves_asset_model_lod_source_mesh_and_independent_equal_ownership ... ok
+test import::publication_checkpoint::tests::original_observations_and_shared_models_survive_source_removal ... ok
+test import::catalog_checkpoint::tests::failed_reload_keeps_original_model_sources_and_revision_after_restore ... ok
+test follow_camera_tests::nested_follow_camera_uses_interpolated_poses_and_matches_source_free_package ... ok
+test import::animated_tests::fox_texture_import_observes_external_image_and_preserves_animation ... ok
+test locomotion_tests::missing_inactive_clip_rejects_reload_and_failed_tick_restores_requests ... ok
+test headless_game::tests::gameplay_input_checkpoint_keeps_quick_jump_and_following_simulation ... ok
+test model_playback::accepted_fade_tests::asset_bound_fade_rejects_rebind_and_changed_clock_before_pose_preparation ... ok
+test model_playback::checkpoint::event_revision_tests::rebind_keeps_old_event_source_revision_in_checkpoint ... ok
+test locomotion_tests::model_picking_uses_morphed_triangles_outside_imported_geometry ... ok
+test model_playback::checkpoint::receipt_tests::changed_receipt_program_or_missing_source_rejects_candidate ... ok
+test model_playback::checkpoint::tests::ordinary_source_interval_and_bind_playback_restore_and_bad_data_is_rejected ... ok
+test locomotion_tests::overflowing_morph_tick_preserves_accepted_pose_clock_and_body ... ok
+test locomotion_tests::morph_only_reload_fades_old_revision_and_rejects_invalid_defaults ... ok
+test model_playback::physical_fade_receipt_tests::original_source_fade_preserves_asset_receipt_and_transactional_rollback ... ok
+test model_playback::physical_fade_receipt_tests::collision_limited_fade_emits_only_markers_in_accepted_prefix ... ok
+test model_playback::tests::bind_only_owner_admits_palette_before_creation ... ok
+test model_playback::tests::bind_selection_and_invalid_settings_are_explicit ... ok
+test locomotion_tests::locomotion_drives_existing_player_and_source_free_package_with_quick_jump ... ok
+test model_playback::tests::cubic_invalid_pose_never_reaches_publication_and_preserves_owner_clock ... ok
+test model_playback::tests::foreign_clip_is_rejected_before_owner_creation_or_publication ... ok
+test model_playback::tests::foreign_rig_rebind_preserves_resource_and_active_playback ... ok
+test model_playback::tests::frozen_source_tick_survives_completion_and_rejection_then_releases_snapshot ... ok
+test model_playback::physical_fade_receipt_tests::physical_receipt_prepares_only_bound_fade_and_failed_preparation_rolls_back ... ok
+test model_playback::tests::named_selection_resolves_imported_names_without_resetting_time ... ok
+test model_playback::tests::initial_palette_overflow_is_rejected_before_owner_creation ... ok
+test model_playback::tests::motion_joint_settings_keep_old_scenes_and_owner_clock_compatible ... ok
+test model_playback::tests::queued_clip_events_publish_after_consumer_and_drain_once ... ok
+test model_playback::tests::shared_asset_has_independent_owner_clocks_and_failed_publication_retries ... ok
+test locomotion_tests::morph_without_skins_or_clips_keeps_defaults_through_project_and_package ... ok
+test package_models::tests::aggregate_count_bytes_conflicts_and_failed_reads_reject_without_partial_retention ... ok
+test package_models::tests::aggregate_sources_deduplicate_and_admit_exact_limits_without_copying_payloads ... ok
+test model_playback::tests::source_contact_interval_survives_fade_completion_and_failed_publication ... ok
+test packaged_game::tests::launch_rejects_traversal_and_nested_bootstrap_before_running ... ok
+test model_playback::checkpoint::tests::saved_pending_events_and_frozen_contact_pose_continue_and_drain_once ... ok
+test panel_focus::tests::component_focus_tracks_schema_and_path_when_fields_are_reindexed ... ok
+test panel_focus::tests::held_activation_cannot_jump_to_reindexed_object ... ok
+test panel_focus::tests::invalid_reconciliation_preserves_live_focus_and_target ... ok
+test panel_focus::tests::repeats_after_focus_loss_cannot_reactivate_a_target ... ok
+test panel_focus::tests::surviving_identity_updates_action_and_context_changes_cancel ... ok
+test panel_focus::ui_scene_integration::ui_scene_validation_undo_and_play_restore_use_common_registry ... ok
+test panels::gpu_tests::marker_controls_render_readable_glyphs_without_hit_overlap ... ignored, requires a real GPU and local TrueType font
+test panels::gpu_tests::missing_model_notice_renders_three_readable_lines_without_control_overlap ... ignored, requires a real GPU and local TrueType font
+test panels::gpu_tests::relink_path_entry_renders_readable_path_and_cancel_target ... ignored, requires a real GPU and local TrueType font
+test panels::safe_view_tests::panel_safe_areas_follow_dpi_and_odd_split_regions ... ok
+test picking::tests::empty_triangle_bounds_do_not_hide_a_real_hit_behind ... ok
+test locomotion_tests::morph_locomotion_uses_shared_import_player_and_source_free_package ... ok
+test locomotion_tests::multiple_mesh_skin_import_uses_one_playback_and_survives_source_free_package ... ok
+test play_session::checkpoint::tests::full_play_resources_gpu_stages_one_runtime_and_original_accepted_frame ... ignored, requires real GPU; full Play/resource file with accepted GPU frame
+test model_playback::checkpoint::receipt_tests::accepted_root_receipt_saves_exact_clocks_replays_queue_and_retains_failed_tick ... ok
+test locomotion_tests::unskinned_rigid_morph_project_and_source_free_package_share_full_frames ... ok
+test play_session::checkpoint::tests::idle_play_origin_tracks_input_preview_state_and_mode_without_starting_a_game ... ok
+test panel_focus::integration_tests::unpresented_panels_block_hits_and_cancel_held_activation_until_represented ... ok
+test panel_focus::integration_tests::real_panels_and_native_key_adapter_share_focus_and_authoring_actions ... ok
+test locomotion_tests::authored_morph_overrides_survive_locomotion_and_source_free_package ... ok
+test prefab_authoring::model_relink::tests::authoring_receipt_refresh_rejects_external_inputs_and_never_rebinds_prefab_ids ... ok
+test prefab_authoring::tests::subtree_export_keeps_nested_links_overrides_and_authored_parent ... ok
+test prefab_authoring::model_relink::tests::relink_rejects_changed_inputs_foreign_owner_and_invalid_sources_without_manifest_write ... ok
+test prefab_authoring::tests::flat_project_scene_save_rejects_external_edits_and_refreshes_own_revision ... ok
+test project::tests::authoring_repeated_save_rejects_external_scene_changes_without_losing_edits ... ok
+test import::animated_tests::observed_skeletal_lod_import_keeps_clips_source_and_last_good ... ok
+test headless_game::tests::project_play_standalone_and_source_free_package_share_interactive_replay ... ok
+test import::lod_model_tests::model_certificate_identity_and_dependency_publication ... ok
+test prefab_authoring::model_relink::tests::prepared_relink_preserves_id_scene_and_unrelated_bindings_through_normal_reload ... ok
+test project::tests::descriptor_save_can_select_nested_scene_and_survives_relocation ... ok
+test prefab_authoring::tests::editor_saves_member_override_and_inherits_other_motion_fields_on_reload ... ok
+test project::tests::descriptor_save_rejects_external_edits_and_accepts_reopen ... ok
+test project::tests::editor_project_bootstrap_edits_saves_undoes_and_reopens_without_model ... ok
+test project::tests::empty_project_reopens_after_relocation_and_does_not_overwrite ... ok
+test project::tests::descriptor_save_validates_before_publication_and_preserves_other_files ... ok
+test project::tests::editor_missing_source_policy_keeps_non_models_and_escaping_paths_strict ... ok
+test project::tests::nested_manifest_sources_follow_existing_project_root_contract ... ok
+test app::authoring_checkpoint::tests::real_app_history_order_selection_and_active_drag_rebind_and_continue_120_edits ... ok
+test prefab_authoring::tests::editor_nested_prefab_edits_save_undo_and_dependency_failure_retain_scene ... ok
+test audio_play::clock_checkpoint::tests::fractional_rate_offline_continuation_and_corrupt_restore_are_exact ... ok
+test project::tests::cold_unresolved_model_id_preserves_authoring_and_recovers_manifest_binding ... ok
+test project::tests::project_play_stop_and_standalone_share_fixed_motion ... ok
+test project::tests::rejects_dependency_symlink_outside_project ... ok
+test project::tests::rejects_corrupt_manifest_missing_asset_and_existing_file_destination ... ok
+test retarget_authoring::tests::full_capacity_profiles_fit_the_paged_component_inspector ... ok
+test project::tests::rejects_missing_dependencies_versions_unknown_fields_and_broken_scene ... ok
+test retarget_profile::tests::defaults_round_trip_and_invalid_authoring_never_reaches_compilation ... ok
+test prefab_fields::collection_reset_tests::collection_member_reset_preserves_topology_other_members_and_source_inheritance ... ok
+test retarget_profile::tests::persisted_names_compile_against_actual_rigs_and_reject_missing_bones ... ok
+test project::tests::project_custom_component_registry_survives_play_build_and_packaged_run ... ok
+test project::tests::package_includes_declared_uninstanced_model_dependencies_and_rejects_broken_inputs ... ok
+test retarget_profile::tests::editor_profile_history_round_trip_and_invalid_bone_edit_are_atomic ... ok
+test retarget_authoring::tests::source_and_pairs_apply_once_invalid_drafts_cancel_and_history_are_atomic ... ok
+test scene3d_tests::camera_and_light_without_model_round_trip_and_unknown_assets_reject ... ok
+test project::tests::project_package_runs_without_source_tree_and_contains_import_closure ... ok
+test scene3d_tests::gpu_residency_requires_active_renderable_descendants ... ok
+test scene3d_tests::geometry_picking_skips_fog_only_objects_and_preserves_their_document ... ok
+test project::tests::missing_model_editor_reopen_preserves_scene_and_recovers_without_weakening_build ... ok
+test project_prefab_tests::deferred_prefabs_are_validated_before_package_publication_and_restore_without_sources ... ok
+test project_prefab_tests::project_prefab_validation_rejects_cycles_unknown_assets_stale_overrides_and_depth ... ok
+test scene3d_tests::textured_static_import_rejects_truncation_and_observes_external_dependencies ... ok
+test scene3d_tests::static_gltf_hierarchy_material_camera_edit_and_persistence_share_resources ... ok
+test shadow_authoring::tests::calibrated_light_camera_and_invalid_authored_settings ... ok
+test retarget_profile::tests::source_only_rig_imports_and_survives_package_without_project_files ... ok
+test shadow_authoring::tests::durable_shadow_components_history_and_owner_validation ... ok
+test tests::audio_inspector_edits_asset_and_parameters_with_validated_history ... ok
+test tests::audio_component_crud_discovers_assets_and_rejects_competing_listener ... ok
+test project::tests::project_manifest_admission_matches_editor_count_and_byte_policy ... ok
+test tests::audio_settings_reference_inspector_supports_default_and_history ... ok
+test tests::authored_character_turn_uses_physics_and_stop_restores_pose ... ok
+test tests::authored_liquid_body_moves_in_play_and_stop_restores_both_descriptors ... ok
+test tests::authored_motion_runs_in_fixed_loop_and_stop_restores_descriptor ... ok
+test tests::authored_liquid_play_steps_and_stop_restores_document ... ok
+test tests::behavior_inspector_edits_undoes_and_rejects_conflicting_writers ... ok
+test tests::deletion_restores_empty_scene_and_preserves_object_identity ... ok
+test tests::custom_ui_setup_recreates_callback_state_per_play_and_rejects_failed_start ... ok
+test tests::drag_is_one_undo_step_and_cancel_preserves_redo ... ok
+test tests::duplication_preserves_registered_behavior_and_activity_with_new_identity ... ok
+test tests::gizmo_pointer_gestures_constrain_axes_and_undo_without_changing_resource ... ok
+test tests::hierarchy_inspector_and_play_preserve_authoring_history ... ok
+test tests::mixer_inspector_round_trip_history_and_duplicate_bus_rollback ... ok
+test tests::mouse_selection_uses_transforms_depth_activity_and_restored_handles ... ok
+test tests::multiple_authored_bodies_collide_in_play_and_restart_from_document ... ok
+test tests::native_play_simulation_ticks_and_stop_preserve_authoring ... ok
+test project_prefab_tests::project_nested_prefabs_preserve_overrides_recover_and_package_after_relocation ... ok
+test tests::pending_play_cancel_keeps_authoring_history_and_simulation_stopped ... ok
+test tests::physics_component_inspector_crud_history_and_play_use_authored_descriptors ... ok
+test tests::play_pointer_path_activates_runtime_ui_and_stop_cancels_capture ... ok
+test tests::playable_fixture_persists_physics_and_rejects_invalid_parenting_or_scale ... ok
+test tests::registered_ui_callback_uses_scene_barrier_without_creating_input_action ... ok
+test tests::reload_preserves_scene_instance_and_edited_transform ... ok
+test tests::shutdown_joins_workers_after_behavior_destroy_panics ... ok
+test tests::shutdown_joins_workers_even_if_simulation_rejects_scene ... ok
+test tests::authoring_file_round_trip_preserves_ids_transforms_and_resource_references ... ok
+test tests::split_view_input_keeps_cameras_independent_and_drag_coordinates_local ... ok
+test tests::standalone_uses_fixed_loop_without_preview_spin_or_authoring_controls ... ok
+test tests::transform_inspector_accepts_character_rotation_and_rejects_scale_atomically ... ok
+test tests::ui_activation_reaches_fixed_input_once_and_stop_resets_custom_actions ... ok
+test project::tests::oversized_project_names_never_publish_unreadable_projects ... ok
+test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip ... ignored, requires a real GPU adapter and local TrueType font
+test ui_draw::focus_tests::ring_is_clipped_inward_and_handles_tiny_controls ... ok
+test ui_draw::tests::backgrounds_follow_scene_painter_order ... ok
+test tests::standalone_playable_fixture_quick_jump_lands_without_losing_actor ... ok
+test scene3d_tests::multi_material_nodes_preserve_parent_transforms_and_all_six_min_filters ... ok
+test ui_live::checkpoint::tests::composed_envelope_rejects_corruption_and_late_operational_failure_without_replacing_source ... ok
+test ui_live::checkpoint::tests::composed_save_requires_ready_barrier_preserves_generations_and_has_no_live_side_effects ... ok
+test ui_live::gpu_reload_tests::gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher ... ignored, requires a real GPU and two local TrueType fonts
+test ui_live::presentation_tests::upload_is_not_input_publication_until_native_frame_acknowledgement ... ok
+test ui_draw::tests::glyph_geometry_clips_uvs_and_rejects_stale_owner_publications ... ok
+test ui_draw::tests::fractional_layout_does_not_round_unclipped_glyph_crop_beyond_one ... ok
+test scene3d_tests::incompatible_gltf_hierarchy_reload_retains_resource_and_edited_owners ... ok
+test scene3d_tests::sampler_only_reload_preserves_geometry_and_survives_source_free_project_package ... ok
+test ui_live::reload_checkpoint::tests::a_retired_worker_is_owned_until_finished_and_empty_state_roundtrips ... ok
+test ui_live::reload_checkpoint::tests::cancellation_consumes_the_pending_watcher_fence_and_reopens_dispatch ... ok
+test ui_live::reload_checkpoint::tests::invalid_records_reject_before_worker_creation_and_deferred_retry_rebinds_explicitly ... ok
+test ui_live::accepted_text_tests::same_layout_font_publications_keep_old_cpu_data_until_frame_ack ... ok
+test ui_live::restore::tests::coordinated_file_restores_real_text_and_audio_without_source_inputs ... ignored, requires real GPU and font; coordinated file with nonempty UI and audio
+test ui_live::restore::tests::gpu_model_and_ui_restore_share_cache_and_admit_combined_peak ... ignored, requires real GPU and local font; combined model/UI cache and peak admission
+test ui_live::restore::tests::gpu_restore_at_completed_barrier_preserves_fence_on_fault_and_discard ... ignored, requires real GPU and local Unicode TrueType font; coordinated frozen UI readback
+test ui_live::restore::tests::gpu_restore_rolls_back_late_failures_and_publishes_exact_pixels_only_after_validation ... ignored, requires real GPU and local Unicode TrueType font; offscreen readback
+test ui_live::restore::tests::restored_history_is_not_native_input_or_focus_until_frame_ack ... ok
+test ui_live::restore::tests::upload_index_fork_does_not_change_live_policies_or_accounting ... ok
+test ui_live::reload_checkpoint::tests::scan_is_drained_failed_dependencies_are_saved_and_restored_baseline_observes_later_changes ... ok
+test ui_live::tests::finished_panic_does_not_lose_unfinished_worker_ownership ... ok
+test ui_live::source_reload_tests::font_content_change_unavailability_and_recovery_invalidate_attempt_without_losing_visible_layout ... ok
+test scene3d_tests::external_texture_watcher_failure_and_recovery_preserve_authored_scene ... ok
+test ui_text::budget_tests::repeated_font_content_still_counts_each_retained_input ... ok
+test scene3d_tests::empty_project_manifest_inventory_updates_without_model_import_and_respects_barrier ... ok
+test ui_text::tests::font_count_budget_rejects_before_any_file_reads ... ok
+test tests::multiple_resources_reload_independently_and_round_trip ... ok
+test ui_text::worker_tests::worker_publication_failure_retains_old_text_and_source_observations ... ok
+test view_layout::tests::odd_width_boundary_and_scaled_pixels_share_one_layout ... ok
+test ui_text::tests::observed_logical_font_unicode_runs_share_atlas_and_invalid_font_retains_prior ... ok
+test scene3d_tests::watcher_reloads_valid_model_sources_larger_than_manifest_budget ... ok
+test tests::play_imports_scene_audio_advances_pcm_and_stop_releases_session ... ok
+test ui_live::publications::tests::a_shared_run_must_match_exact_data_and_the_current_restore_policy ... ok
+test ui_text::checkpoint::tests::retired_visual_owners_restore_as_history_without_reviving_scene_objects ... ok
+test scene3d_tests::manifest_retarget_replaces_watched_dependencies_after_failure_without_scene_edits ... ok
+test model_playback::tests::pinned_character_owner_playback_deforms_and_retries_without_clock_drift ... ok
+test ui_text::checkpoint::tests::real_file_restores_original_font_observations_arc_sharing_and_120_draws_without_sources ... ok
+test play_session::checkpoint::tests::full_play_record_rebuilds_scene_and_continues_120_frames_with_late_failure_atomicity ... ok
+test play_session::checkpoint::tests::full_play_resources_file_owns_models_and_guards_input_physics_and_command_queues ... ok
+test ui_live::publications::tests::file_bundle_preserves_two_versions_shared_runs_and_retired_owners_for_120_draw_cycles ... ok
+test ui_live::publications::tests::shared_publication_and_distinct_equal_publications_remain_distinguishable ... ok
+test import::animated_tests::accepted_geometry_and_animation_files_restore_without_sources_and_match_all_clips ... ok
+test ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs ... ok
+test ui_live::publications::tests::corruption_aliases_late_failures_and_aggregate_limits_preserve_the_source ... ok
+
+test result: ok. 357 passed; 0 failed; 35 ignored; 0 measured; 0 filtered out; finished in 24.74s
+
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_render-bfe782ddd268e9ea)
+
+running 460 tests
+test archive_gpu_timing::tests::reversed_pair_is_invalid ... ok
+test archive_gpu_timing::tests::bad_periods_are_invalid ... ok
+test archive_gpu_timing::tests::unset_or_error_results_are_invalid ... ok
+test archive_gpu_timing::tests::sequential ... ok
+test archive_gpu_timing::tests::stale_display_end_falls_back_to_shading_span ... ok
+test archive_gpu_timing::gi_tests::optional_stages_are_absent ... ok
+test archive_gpu_timing::tests::overlapping_passes ... ok
+test archive_gpu_timing::ray_tests::absent_reflections_are_not_zero_samples ... ok
+test archive_scene::compute_gi::stages::tests::full_precision_chunks_fit_default_binding ... ok
+test archive_scene::compute_gi::world_resolve::consumer_pair::metal_tests::raw_hdr_comparison_detects_low_bits_and_nonfinite ... ignored, exclusive Metal GPU, fresh VOXY_CONSUMER_PAIR_PROOF required
+test archive_gpu_timing::tests::overlap_can_exceed_span_when_summed ... ok
+test archive_scene::compute_gi::stages::tests::small_limits_preserve_pixels_by_smaller_chunks ... ok
+test archive_gpu_timing::phase_tests::invalid_shapes_rejected ... ok
+test archive_gpu_timing::gi_tests::compute_and_fragment_intervals_can_overlap ... ok
+test archive_gpu_timing::phase_tests::sums_each_stage_without_assuming_serial_execution ... ok
+test archive_gpu_timing::ray_tests::includes_reflections_in_frame_span ... ok
+test archive_scene::compute_gi::world_resolve::consumer_profile::sorted_layout::tests::reject_empty_oversized_or_unaddressable_allocations ... ok
+test archive_gpu_timing::gi_tests::includes_gi_in_total_and_ignores_stale_display ... ok
+test archive_scene::compute_gi::world_resolve::consumer_profile::sorted_layout::tests::full_width_strips_fit_without_truncating_words ... ok
+test archive_scene::compute_gi::world_resolve::consumer_profile::tests::workspace_retains_full_records_within_each_binding ... ok
+test archive_scene::exposure_tests::ev100_round_trips_exposure ... ok
+test archive_scene::exposure_tests::sunny_sixteen_is_about_ev15 ... ok
+test archive_scene::exposure_tests::display_mode_selects_transform ... ok
+test archive_gpu_timing::ray_tests::invalid_reflections_rejected ... ok
+test archive_gpu_timing::gi_tests::invalid_gi_samples_rejected ... ok
+test archive_scene::vertex_invariance_tests::metal_gpu_position_invariance ... ignored, actual Metal GPU regression; run alone with VOXY_VERTEX_INVARIANCE_CAPTURE
+test archive_scene::tests::transmission_depth_requires_exact_full_coverage ... ok
+test archive_scene::tests::camera_layout_matches_shader ... ok
+test archive_scene::tests::reflective_presets_route_to_expected_passes ... ok
+test archive_scene::compute_gi::world_resolve::consumer_pair::tests::complete_partition_rejects_gaps_overlaps_and_bounds ... ok
+test banded_solve::tests::bounded_underflow_is_explicit_and_does_not_admit_large_losses ... ok
+test banded_solve::tests::admitted_batch_rejects_bad_status_nonfinite_and_residual_before_publication ... ok
+test banded_solve::tests::compact_readback_preserves_full_admission_and_rejects_corruption ... ok
+test banded_solve::tests::factored_rhs_updates_preserve_headers_and_factor_storage ... ok
+test banded_solve::tests::factored_rhs_updates_reject_changed_matrix_or_layout ... ok
+test banded_solve::tests::malformed_shape_and_unrepresentable_numbers_are_rejected ... ok
+test banded_solve::tests::inactive_degrees_of_freedom_must_remain_unchanged ... ok
+test banded_solve::tests::packed_reference_decodes_immutable_words_and_physical_scales ... ok
+test bodycam::gait_tests::sway_settles_after_stopping ... ok
+test banded_solve::tests::rhs_repacking_is_bitwise_equal_to_fresh_equilibration_and_checks_ranges ... ok
+test archive_frustum::tests::vectorized_selection_equals_scalar_including_boundary_cases ... ok
+test banded_solve::tests::packing_audit_distinguishes_lost_low_bits_from_exact_inputs ... ok
+test bodycam::tests::camcorder_servo_zoom_narrows_fov_and_updates_osd_uniform ... ok
+test bodycam::tests::bodycam_rig_chest_lever_arm_and_free_aim_deadzone_work ... ok
+test archive_scene::compute_gi::world_resolve::consumer_pair::tests::comparison_shader_validates ... ok
+test bodycam::gait_tests::walking_bob_and_lateral_sway_are_human_scale ... ok
+test bodycam::tests::spring_damper_is_stable_and_converges_in_both_regimes ... ok
+test camera::tests::orthographic_scale_is_independent_of_distance ... ok
+test camera::tests::lod_camera_scale_accounts_for_aspect_and_near_plane ... ok
+test camera::tests::perspective_depth_and_foreshortening ... ok
+test camera::tests::reflected_orthographic_camera_and_invalid_planes ... ok
+test camera_lod::tests::lod_bounds_transform_covers_shear_and_rejects_projective_models ... ok
+test camera::tests::pixel_rays_reproject_to_centers_for_both_lenses ... ok
+test camera::tests::rejects_invalid_frusta_and_parallel_up ... ok
+test camera::tests::reflection_preserves_plane_distances_and_projection_parity ... ok
+test certified_lod::tests::derives_bound_and_binds_exact_source_bits ... ok
+test certified_lod::checkpoint::tests::base_only_lods_preserve_verifier_kind_and_exact_zero_error_receipt ... ok
+test certified_lod::tests::rejects_unverified_artifacts_and_invalid_base ... ok
+test character_material::tests::colour_packs_into_exact_float_integer ... ok
+test character_material::tests::surfaces_land_in_disjoint_shader_ranges ... ok
+test climate::tests::seasons_and_calendar_wrap ... ok
+test climate::tests::sun_follows_day_and_season ... ok
+test compressed_image::tests::bc7_keeps_source_blocks ... ok
+test compressed_image::tests::bc7_real_gpu_upload_preserves_last_mip ... ignored, requires physical GPU with BC compression and a real DDS image
+test certified_lod::checkpoint::tests::whole_and_subdivided_file_proofs_restore_exact_error_envelopes_and_policy_results ... ok
+test compressed_image::tests::bc7_rejects_truncation_and_wrong_formats ... ok
+test certified_lod::checkpoint::tests::forged_errors_invalid_original_witnesses_counts_and_limits_reject_without_changing_live_lod ... ok
+test compute_chain::tests::gpu_chain_reuses_only_completed_jobs_and_resizes_without_stale_inputs ... ignored, requires actual GPU; completed storage reuse with changing bytes and buffer shape
+test compute_chain::tests::gpu_multi_stage_chain_retains_jobs_and_transfers_in_order ... ignored, requires actual GPU; four resident jobs, five kernels, one final read
+test compute_chain::tests::transfer_plan_rejects_overlap_alignment_overflow_and_bounds ... ok
+test contact_exact_five::tests::exact_five_retains_tail_and_rejects_stale_or_mutated_readback ... ok
+test contact_exact_five::tests::gpu_exact_five_roundtrip_preserves_all_words ... ignored, requires real GPU; transport only, not five-component contact arithmetic
+test contact_five_gaps::tests::five_gap_input_rejects_stale_and_shape ... ok
+test contact_exact_five::tests::exact_five_roundtrip_shader_validates ... ok
+test contact_five_product_tests::gpu_five_product_normalization_matches_exact_oracle_input ... ignored, requires physical GPU and real five-component coefficient artifact; inner multiplication only
+test contact_five_qr::tests::five_qr_input_rejects_stale_and_mutated_readbacks ... ok
+test archive_gpu_timing::phase_tests::unique_complete_slots ... ok
+test contact_five_qr_tests::gpu_five_gaps_all_original_constraints ... ignored, requires physical GPU, original operator and verified five-component QR state
+test contact_five_qr_tests::gpu_five_qr_diagonal_low_parts ... ignored, requires physical GPU; exact low-part equality coordinates
+test contact_five_qr_tests::gpu_five_qr_original_physical_active_columns ... ignored, requires real GPU, original VQC1 operator and physics-admitted active row baseline
+test contact_five_release::tests::five_release_rejects_stale ... ok
+test climate::tests::schedule_is_continuous_valid_and_seasonal ... ok
+test contact_five_select::tests::five_selection_rejects_stale_and_active_row ... ok
+test archive_scene::compute_gi::world_resolve::profile::tests::query_ranges_cover_each_slot_once_and_preserve_last_tile_global_timer ... ok
+test bodycam::tests::noop_backend_validates_bodycam_post_process_pipeline ... ok
+test contact_five_qr::tests::five_qr_shader_validates ... ok
+test dfg::build::tests::runtime_builder_preserves_old_owner_until_completed_upload ... ignored, requires physical GPU; runtime atlas build and completed-generation handoff
+test contact_five_gaps::tests::five_gap_shader_validates ... ok
+test dfg::energy_tests::energy_moment_owner_attaches_without_float32_filtering ... ignored, requires physical GPU; precise DFG scene and planar binding qualification
+test dfg::build::tests::budgets_and_oracle_fail_before_gpu_work ... ok
+test contact_five_release::tests::five_release_shader_validates ... ok
+test dfg::build::tests::successful_install_returns_old_owner ... ok
+test dfg::gpu::tests::immutable_inputs_and_validity_are_required ... ok
+test dfg::gpu::tests::native_gpu_batch_uses_current_core_and_rejects_stale_results ... ignored, requires physical GPU; nonblocking DFG batch lifecycle
+test dfg::gpu::tests::probe_indices_and_moment_quality_reject_before_encoding ... ok
+test dfg::gpu::tests::rejects_invalid_and_over_budget_inputs ... ok
+test contact_five_select::tests::five_selection_shader_validates ... ok
+test dfg::patch::tests::canonical_rows_preserve_bits_and_touching_bounds ... ok
+test dfg::patch::tests::index_keeps_closed_boundary_ties_and_holes ... ok
+test dfg::patch::tests::overlap_and_capacity_reject_before_upload ... ok
+test dfg::patch::tests::rejects_bounds_outside_support_and_energy_error ... ok
+test contact_five_product_tests::five_product_shader_validates ... ok
+test dfg::patch::tests::rejects_invalid_nodes_and_axes ... ok
+test dfg::build::tests::stale_ready_does_not_replace_current_resource ... ok
+test dfg::refinement::tests::preserves_exact_zero_requirement ... ok
+test dfg::refinement::tests::rejects_bad_regions_and_unrepresentable_axes ... ok
+test dfg::refinement::tests::fixed_probes_and_shared_nodes ... ok
+test dielectric_boundary::gpu_tests::dielectric_gpu_matches_cpu_reference ... ignored, requires physical GPU; dielectric CPU parity
+test dfg::refinement::tests::strict_policy_and_gpu_flag ... ok
+test dfg::refinement::tests::rejects_oracle_and_probe_mismatch ... ok
+test dfg::refinement::tests::structural_conversion_deduplicates_cells ... ok
+test dielectric_boundary::tests::camera_radiance_rejects_branch_mismatch_and_overflow ... ok
+test dielectric_boundary::tests::camera_radiance_preserves_refractive_equilibrium_and_slab_flux ... ok
+test dielectric_boundary::tests::invalid_inputs_and_high_contrast_do_not_silently_default ... ok
+test dielectric_boundary::tests::normal_incidence_identity_and_brewster_angle ... ok
+test direct_lighting::tests::invalid_material_light_and_geometry_are_rejected ... ok
+test dielectric_boundary::tests::snell_flux_and_reciprocity_for_entering_and_exiting_media ... ok
+test direct_lighting::tests::lambertian_inverse_square_and_back_facing_light ... ok
+test fiber_surface::tests::frame_admission_rejects_invalid_basis_and_density ... ok
+test fluid_screen::allocation_tests::gpu_budget_boundary_and_rejected_resize_preserve_previous_resources ... ignored, requires a physical GPU adapter
+test fluid_screen::film_gpu_tests::film_gpu_integrates_prism_thickness_and_near_clipping ... ignored, requires a physical GPU adapter
+test fluid_screen::film_gpu_tests::refraction_pixel_scale_matches_projected_displacement ... ignored, requires a physical GPU adapter
+test droplet_extinction::tests::opaque_depth_unprojection_preserves_pixel_center_and_projection_conventions ... ok
+test fluid_screen::film_input_tests::device_limits_admit_vertex_instances_without_storage_and_reject_shortfalls ... ok
+test fluid_screen::shared_tests::gpu_frame_fluid_snapshots_match_legacy_including_overflow ... ignored, physical Apple Silicon Metal; fluid pixel and snapshot parity
+test fluid_screen::shared_tests::gpu_generated_fluid_matches_snapshot_and_overflow ... ignored, physical Apple Silicon Metal; fluid pixel and snapshot parity
+test fluid_screen::shared_tests::paired_frame_fluid_benchmark ... ignored, manual alternating production fluid particle/camera benchmarks
+test fluid_screen::shared_tests::paired_full_frame_particles ... ignored, idle physical Metal GPU; complete 1080p production fluid passes
+test fluid_screen::shared_tests::paired_generated_input_particles ... ignored, CPU input generation into physical Apple shared buffers; no draw or submission
+test fluid_screen::shared_tests::paired_generated_particles ... ignored, physical Metal paired snapshot versus generated particles
+test fluid_screen::allocation_tests::footprint_counts_nine_targets_both_geometry_buffers_and_uniform ... ok
+test fluid_screen::film_input_tests::film_prism_admission_preserves_geometry_and_rejects_invalid_cells ... ok
+test frame_generation::tests::dynamic_requires_reported_support_and_finite_positive_target ... ok
+test fluid_screen::film_input_tests::format_admission_rejects_missing_blending_and_nonfloat_outputs ... ok
+test frame_generation::tests::runtime_limits_and_reflex_gate_fixed_generation ... ok
+test full_frame_upload_bench::paced_schedule_does_not_burst_after_preemption ... ok
+test geometry_checkpoint::tests::decoded_rgba_bytes_and_all_mip_levels_are_restored_without_image_source ... ok
+test geometry_checkpoint::tests::archive_integrity_lengths_types_and_raw_policy_limits_reject_before_native_publication ... ok
+test geometry_checkpoint::tests::rechecksummed_oversized_counts_reserved_flags_and_impossible_image_headers_reject ... ok
+test geometry_checkpoint::tests::scene_stream_presence_materials_and_float_words_roundtrip_without_regeneration ... ok
+test dfg::patch::tests::balanced_index_prunes_large_atlas ... ok
+test hdr_asset::tests::cpu_radiance_validated ... ok
+test fluid_screen::shader_portability_tests::compute_bilateral_filter_shader_validates ... ok
+test hdr_asset::tests::format_and_exact_budget ... ok
+test hdr_asset::tests::panorama_constant_and_limits ... ok
+test hdr_asset::tests::panorama_face_axes_and_wrapped_seam ... ok
+test hdr_asset::tests::rgbe_linear_hdr_preserved ... ok
+test hdr_asset::tests::source_and_combined_buffers_bounded ... ok
+test image_asset::tests::corruption_and_limits_rejected ... ok
+test image_asset::tests::mips_use_linear_light_and_ignore_transparent_color ... ok
+test image_asset::tests::jpeg_adds_opaque_alpha ... ok
+test image_asset::tests::odd_mips_include_final_column ... ok
+test image_asset::tests::raw_rgba_admission_rejects_size_overflow_and_keeps_straight_alpha ... ok
+test image_asset::tests::png_preserves_rgba_and_dimensions ... ok
+test joint_contact_dot::active::tests::gpu_resident_active_set_candidate_preserves_original_coordinate_kkt ... ignored, requires an actual GPU; experimental complete resident active-set candidate
+test joint_contact_dot::active::tests::gpu_seeded_resident_candidate_uses_current_columns_and_releases_hints ... ignored, requires 1024-lane GPU and seeded shader fixture; coordinate gate only
+test joint_contact_dot::active::tests::resident_hint_upload_preserves_current_operator_and_rejects_bad_hints_cold ... ok
+test joint_contact_dot::active::tests::resident_batch_layout_rejects_overlap_and_incomplete_operators ... ok
+test joint_contact_dot::active::tests::resident_readback_audits_complete_operator_and_output_without_scratch_copy ... ok
+test joint_contact_dot::active::tests::seeded_variant_checks_workgroup_storage_before_pipeline_creation ... ok
+test joint_contact_dot::tests::captured_coordinate_support_scan_matches_original_and_measures_cost ... ignored, paired CPU support scan benchmark on an original VQC1 contact operator
+test joint_contact_dot::tests::gpu_repeated_qr_pass_timestamps_preserve_factors ... ignored, requires an actual GPU with optional pass-boundary timestamp support
+test joint_contact_dot::tests::gpu_resident_qr_keeps_small_positive_pivot_and_rejects_zero_pivot ... ignored, requires an actual GPU; positive tiny QR pivot and exact dependence
+test joint_contact_dot::tests::gpu_validated_qr_prefix_matches_fresh_append_and_release ... ignored, requires an actual GPU; validated QR prefix equals complete fresh factors
+test joint_contact_dot::active::tests::seeded_variant_uses_enabled_limits_and_rejects_insufficient_lanes ... ok
+test joint_contact_dot::tests::equality_rhs_update_preserves_operator_and_rejects_bad_bounds ... ok
+test joint_contact_dot::tests::numeric_range_and_every_row_publication_are_checked ... ok
+test joint_contact_dot::tests::qr_projection_layout_preserves_original_coordinate_order ... ok
+test joint_contact_dot::tests::rescaling_recovers_finite_values_after_intermediate_range_loss ... ok
+test joint_contact_dot::tests::resident_qr_compacts_only_exact_zero_axes ... ok
+test joint_contact_dot::tests::resident_equality_shader_and_transport_gates ... ok
+test joint_contact_dot::tests::normalization_shader_and_zero_range_gates ... ok
+test joint_contact_dot::tests::validated_equality_tail_keeps_result_and_publication_gates ... ok
+test joint_contact_dot::tests::streamed_support_preserves_zero_sign_tiny_terms_and_coordinate_order ... ok
+test joint_contact_dot::tests::resident_qr_shader_and_publication_gates ... ok
+test joint_contact_dot::tests::shader_validates_and_codec_rejects_missing_or_changed_outputs ... ok
+test joint_contact_dot::triple::active_codec::expanded_factor_identity_tests::fresh_factor_seed_distinguishes_coefficients_below_an_f64_ulp ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_active_basis_key_ignores_only_inactive_rows_and_rejects_order_changes ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_active_decoder_rejects_partial_mutated_and_nonfinite_results ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_active_factor_reuse_requires_exact_columns_and_flags ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_active_factor_snapshot_retains_only_selected_qr_and_restores_stride ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_active_layout_checks_total_workspace_before_allocation ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_active_seed_hints_preserve_original_operator_and_validate_shape ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_batch_checks_metadata_and_withholds_valid_prefix_on_late_failure ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_compact_readback_matches_full_and_rejects_missing_or_mutated_original_words ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_expanded_candidate_replays_opaque_gpu_captures ... ignored, requires VOXY_TRIPLE_DECODE_AUDIT_FIXTURES with eight opaque GPU captures
+test joint_contact_dot::triple::active_codec::tests::triple_completed_basis_requires_checked_unique_final_order_and_atomic_match ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_expanded_candidate_does_not_require_representable_f64_projection ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_expanded_candidate_keeps_terms_below_f64_rounding ... ok
+test joint_contact_dot::triple::active_codec::tests::triple_expanded_candidate_sign_survives_wide_cancellation ... ok
+test joint_contact_dot::triple::arithmetic_tests::gpu_triple_arithmetic_retains_cancellation_and_product_tail ... ignored, requires actual GPU; experimental triple arithmetic only
+test joint_contact_dot::triple::arithmetic_tests::gpu_triple_original_column_norms ... ignored, requires actual GPU and original VQC1 capture; vector norm qualification
+test joint_contact_dot::triple::qr_tests::gpu_triple_automatic_original_operator ... ignored, requires actual GPU and original rejected operator; experimental automatic active set
+test joint_contact_dot::triple::qr_tests::gpu_triple_automatic_rejections_and_release ... ignored, requires actual GPU; automatic solver rejection and release paths
+test joint_contact_dot::triple::qr_tests::gpu_triple_batched_independent_operators ... ignored, requires actual GPU; independent triple operators in one dispatch
+test joint_contact_dot::triple::qr_tests::gpu_triple_changed_bounds_decode_audit ... ignored, requires actual GPU and original operator JSON; audits decoded candidate residuals
+test joint_contact_dot::triple::qr_tests::gpu_triple_expanded_input_retains_low_component ... ignored, requires a real GPU; retain a coefficient component below an f64 ulp
+test joint_contact_dot::triple::qr_tests::gpu_triple_qr_original_active_operator ... ignored, requires actual GPU and original rejected operator JSON; experimental QR only
+test joint_contact_dot::triple::qr_tests::gpu_triple_qr_rejects_exact_dependencies_without_rank_cutoff ... ignored, requires actual GPU; exact dependence and tiny independent directions
+test joint_contact_dot::triple::qr_tests::gpu_triple_seeded_original_operator ... ignored, requires actual GPU and original operator JSON; warm hints remain candidates
+test joint_contact_dot::triple::arithmetic_tests::triple_arithmetic_shader_validates ... ok
+test fluid_screen::shader_portability_tests::optical_shaders_translate_to_gles_without_storage_buffers ... ok
+test joint_contact_dot::triple::qr_tests::triple_residual_checker_preserves_bound_cancellation ... ok
+test joint_contact_dot::triple::qr_tests::triple_active_shader_validates ... ok
+test joint_contact_dot::triple::qr_tests::triple_qr_shader_validates ... ok
+test joint_contact_dot::triple::tests::triple_input_preserves_captured_original_operator ... ignored, requires original VQC1 operator capture
+test joint_contact_dot::triple::tests::triple_expanded_input_keeps_sub_f64_ulp_source ... ok
+test joint_contact_dot::triple::tests::triple_input_preserves_original_binary_coefficients ... ok
+test joint_contact_dot::triple::tests::triple_input_rejects_lost_small_terms_and_invalid_shapes ... ok
+test joint_contact_dot::triple::tests::triple_input_rescales_small_original_coefficients_without_subnormal_components ... ok
+test liquid_accumulation::tests::gpu_accumulation_preserves_unequal_mass_and_pair_order ... ignored, requires actual GPU; original ordered force accumulation
+test liquid_density::tests::gpu_density_preserves_three_current_physical_formulations ... ignored, requires actual GPU; density candidate only, not a complete fluid step
+test liquid_density_normal_pipeline::tests::gpu_density_normal_chain_preserves_support_and_native_step ... ignored, requires actual GPU; supported density and normal chain
+test liquid_density::tests::density_shader_validates_and_unwritten_or_changed_inputs_reject ... ok
+test liquid_accumulation::tests::accumulation_shader_validates_and_rejects_partial_or_changed_results ... ok
+test liquid_force_pipeline::tests::gpu_force_chain_preserves_physical_owners_and_resource_lifetime ... ignored, requires actual GPU; force and accumulation chain with one final readback
+test liquid_normals::tests::gpu_normals_preserve_material_boundaries_and_pair_order ... ignored, requires actual GPU; original color-field normal admission
+test liquid_force_pipeline::tests::chain_audits_upstream_status_static_inputs_and_exact_transferred_words ... ok
+test joint_contact_dot::triple::qr_tests::triple_parallel_shader_validates ... ok
+test liquid_density_normal_pipeline::tests::joint_input_rejects_unwritten_results_and_invalid_support ... ok
+test liquid_pair_forces::tests::gpu_pair_forces_admit_original_model_branches ... ignored, requires actual GPU; pair force arithmetic, not a resident fluid simulation
+test liquid_pair_forces::tests::gpu_particle_fields_prepare_pair_forces_without_host_read ... ignored, requires actual GPU; resident particle-to-pair preparation and force law
+test liquid_pipeline::tests::gpu_complete_chain_steps_walls_reflections_and_gas_without_stage_fallback ... ignored, requires actual GPU; complete chain through transactional liquid stepping
+test liquid_pipeline::tests::gpu_liquid_chain_admits_real_density_pressure_force_and_accumulation ... ignored, requires actual GPU; complete arithmetic chain, original physical owners
+test liquid_pair_forces::tests::prepared_pair_input_rejects_invalid_topology_and_unwritten_fields ... ok
+test liquid_pipeline::tests::whole_chain_rejects_cross_stage_geometry_and_material_mismatch ... ok
+test joint_contact_dot::triple::qr_tests::triple_batched_shader_validates ... ok
+test liquid_topology::tests::topology_preserves_original_per_particle_pair_order_and_rejects_invalid_pairs ... ok
+test lod::index_set_tests::counts_come_from_indices_and_selected_variants_share_vertex_domain ... ok
+test lod::index_set_tests::invalid_variant_cannot_enter_the_shared_vertex_domain ... ok
+test lod::projection_tests::projection_accounts_for_off_axis_depth_and_near_plane ... ok
+test lod::tests::invalid_inputs_never_produce_a_draw_index ... ok
+test lod::tests::screen_error_and_scale_control_quality ... ok
+test lod::tests::transitions_have_a_dead_band ... ok
+test lod_archive::tests::encoder_and_decoder_enforce_exact_cumulative_limits ... ok
+test lod_archive::tests::rejects_semantic_corruption_and_cumulative_budget_overruns ... ok
+test liquid_normals::tests::normal_shader_validates_and_decoding_requires_complete_unchanged_input ... ok
+test lod_archive::tests::roundtrip_reverifies_and_preserves_source_bits ... ok
+test lod_certificate::tests::fractional_witness_and_extreme_finite_coordinates ... ok
+test lod_certificate::tests::identical_and_translated_surfaces ... ok
+test lod_certificate::tests::rejects_untrusted_or_incomplete_witnesses ... ok
+test lod_archive::tests::rejects_truncation_trailing_version_and_forged_counts ... ok
+test lod_certificate::tests::reverse_direction_detects_removed_island ... ok
+test lod_certificate::tests::square_to_triangle_bounds_removed_interior ... ok
+test lod_subdivision::tests::rejects_holes_extra_cells_and_excessive_depth ... ok
+test lod_subdivision::tests::canonical_subdivision_covers_the_whole_triangle ... ok
+test lod_search::tests::indexed_search_keeps_removed_island_error ... ok
+test lod_subdivision::tests::subdivision_still_detects_removed_islands ... ok
+test lod_witness::tests::finds_square_triangle_bound_with_exact_work_limit ... ok
+test lod_witness::tests::exact_identity_degenerate_and_removed_island ... ok
+test lod_witness::tests::thin_and_extreme_candidates_still_pass_the_verifier ... ok
+test material::tests::material_pack_validates_exact_rgba_layers ... ok
+test medium_geometry::tests::disconnected_inward_components_nonmanifold_edges_and_creases_are_rejected ... ok
+test medium_geometry::tests::real_entry_exit_snell_distance_and_absorbing_media ... ok
+test medium_geometry::tests::topology_budget_metric_scale_and_ranges_are_explicit ... ok
+test medium_geometry_compute::tests::geometry_input_admits_work_memory_and_numeric_representation ... ok
+test medium_geometry_compute::tests::gpu_geometry_queries_match_cpu_and_reject_ambiguous_hits ... ignored, requires physical GPU; actual metric geometry CPU parity
+test medium_path::opaque_tests::opacity_before_inside_and_behind_water_matches_independent_transport ... ok
+test medium_path::opaque_tests::opaque_geometry_limits_and_coincident_interfaces_reject_atomically ... ok
+test medium_path::opaque_tests::two_sided_opaque_surface_and_sources_stop_at_real_hit ... ok
+test medium_path::tests::all_reflection_orders_match_independent_absorbing_emitting_slab ... ok
+test medium_path::tests::insufficient_budget_is_an_error_and_does_not_mutate_scene ... ok
+test medium_path::tests::nested_liquid_species_replace_medium_occupancy_in_order ... ok
+test medium_path::tests::refractive_equilibrium_and_trapped_emitting_internal_reflections ... ok
+test medium_path::tests::source_and_identity_admission_is_explicit ... ok
+test medium_path_compute::tests::accepted_image_rejects_partial_dimensions_and_half_float_overflow ... ok
+test medium_path_compute::tests::gpu_all_branches_match_cpu_with_opacity_and_budget_rejection ... ignored, requires physical GPU; all-branch medium transport parity
+test medium_path_compute::tests::gpu_image_dispatch_crosses_portable_row_limit ... ignored, requires physical GPU; full-window dispatch beyond 65535 rays
+test liquid_pair_forces::tests::force_shader_validates_and_complete_decode_rejects_corruption ... ok
+test medium_path_compute::tests::gpu_pending_image_retries_after_confirmed_memory_retirement ... ignored, requires physical GPU; image upload budget recovery
+test medium_transport::gpu_tests::medium_gpu_transfer_matches_cpu_reference ... ignored, requires physical GPU; optical transfer CPU parity
+test medium_geometry_compute::tests::geometry_compute_translates_to_gles_310_with_one_storage_binding ... ok
+test medium_transport::tests::homogeneous_transfer_partitions_without_changing_radiance ... ok
+test medium_transport::tests::overlap_and_ordered_layers_have_distinct_independent_solutions ... ok
+test medium_transport::tests::thin_dense_underflow_and_rejections_are_explicit ... ok
+test motion::tests::invalid_updates_preserve_history ... ok
+test motion::tests::skipped_frames_do_not_advance_and_cuts_reset_motion ... ok
+test medium_transport::portability_tests::medium_transfer_translates_to_gles_without_storage ... ok
+test native_vegetation::shared_tests::gpu_frame_vegetation_instances_and_camera_match_legacy ... ignored, physical Apple Metal; cameras and instance fetch parity
+test native_vegetation::shared_tests::gpu_generated_vegetation_matches_snapshot_and_overflow ... ignored, physical Apple Metal; cameras and instance fetch parity
+test native_vegetation::shared_tests::paired_frame_vegetation_benchmark ... ignored, manual alternating camera/instance production input benchmarks
+test native_vegetation::shared_tests::paired_full_frame_instances ... ignored, idle physical Metal GPU; complete 1080p production vegetation passes
+test native_vegetation::shared_tests::paired_generated_input_instances ... ignored, CPU input generation into physical Apple shared buffers; no draw or submission
+test native_vegetation::shared_tests::paired_generated_vegetation ... ignored, physical Metal paired snapshot versus generated instances
+test nearest_tie_count_tests::superseded_ties_do_not_depend_on_visit_order ... ignored, exclusive Metal GPU; fresh VOXY_NEAREST_TIE_PROOF required
+test obj::tests::invalid_data_and_budgets_reject ... ok
+test obj::tests::relative_indices_and_normals ... ok
+test obj::tests::seams_preserved_and_identical_corners_shared ... ok
+test geometry_checkpoint::tests::skin_integer_weights_exact_streams_and_120_pose_temporal_results_survive_archive ... ok
+test native_vegetation::tests::plant_shader_with_wind_and_alpha_shadows_validates ... ok
+test probe_gi::projection_replay_tests::captured_faces_replay_through_original_projector ... ignored, exclusive Metal GPU; requires VOXY_PROBE_REPLAY_INPUT and new VOXY_PROBE_REPLAY_OUTPUT
+test medium_path_compute::tests::transport_abi_limits_and_shader_validation ... ok
+test probe_gi::tests::grid_covers_bounds_with_at_least_two_probes_per_axis ... ok
+test probe_gi::tests::grid_rejects_degenerate_or_oversized_requests ... ok
+test probe_sampling_precision_tests::original_probe_interpolation_words_are_preserved ... ignored, exclusive Metal GPU; VOXY_PROBE_SAMPLING_PROOF must be a fresh directory
+test ray::archive::tests::singular_and_projective_source_instances_are_explicit_errors ... ok
+test ray::archive::tests::singular_world_bounds_keep_flat_geometry_and_enclose_cancellation ... ok
+test ray::archive::tests::source_matrix_layout_keeps_translation_and_signed_scales ... ok
+test ray::cpu_visibility_tests::fallback_is_double_sided_and_bounded_to_light ... ok
+test ray::tests::affine_instance_transform_validation ... ok
+test probe_gi::projection_trace::tests::traced_shader_validates_and_keeps_original_statements_in_order ... ok
+test ray::tests::procedural_bounds_reject_nonfinite_and_reversed_axes ... ok
+test reconstruction_material::ggx_tests::analytic_normal_peak_and_reciprocity ... ok
+test reconstruction_material::ggx_tests::narrow_lobes_keep_finite_pdf_and_mirror_limit_weight ... ok
+test ray::tests::ordinary_device_returns_explicit_unsupported ... ok
+test reconstruction_material::ggx_tests::sampled_furnace_matches_independent_hemisphere_integral ... ok
+test reconstruction_material::tests::invalid_values_and_degenerate_directions_fail ... ok
+test reconstruction_material::tests::metallic_extremes_and_view_dependence ... ok
+test reconstruction_material::tests::mirror_fresnel_endpoints_and_oblique_angle ... ok
+test reflection::tests::invalid_geometry_and_ranges_fail ... ok
+test reflection::tests::reflected_direction_and_surface_distance_origin ... ok
+test renderer::legacy_skin_tests::gpu_legacy_skin_raster_matches_cpu_and_retains_rejected_pose ... ignored, requires GPU; full production legacy skin raster and rejected-pose retention
+test renderer::shared_camera_tests::gpu_frame_renderer_cameras_preserve_words_and_binding_refresh ... ignored, physical Apple Metal; all camera words, overflow and metadata refresh
+test renderer::shared_camera_tests::paired_frame_renderer_cameras_benchmark ... ignored, manual alternating production camera generation, binding and GPU-consumption benchmark
+test renderer::skinned_lod::tests::gpu_skeletal_lod_pose_switches_indices_and_preserves_shared_streams ... ignored, requires real GPU; explicit skeletal LOD color/depth acceptance
+test renderer::tests::clip_space_aabb_culling_rejects_fully_outside_chunks ... ok
+test renderer::tests::gpu_quad_has_stable_pod_layout ... ok
+test pose_admission_profile::tests::thread_clock_excludes_sleep ... ok
+test joint_contact_dot::active::tests::resident_candidate_codec_rejects_incomplete_corrupt_and_unrepresentable_input ... ok
+test renderer::tests::noop_backend_validates_indirect_voxel_pipeline_and_draw ... ok
+test scene::background_upload_regression::authored_normal_cache_tracks_geometry_without_duplicate_streams ... ok
+test scene::background_upload_regression::packed_weld_keys_preserve_seams_and_signed_zero ... ok
+test scene::background_upload_regression::worker_preparation_preserves_default_welded_shading_and_authored_streams ... ok
+test scene::environment_pixel_tests::real_hdr_scene_matches_ibl_oracle_after_atlas_install ... ignored, requires physical GPU; real SceneRenderer HDR pixels and material routing
+test renderer::tests::noop_backend_validates_voxel_pipeline_and_draw ... ok
+test lod_subdivision::tests::subdivision_removes_flat_retriangulation_overestimate ... ok
+test lod_search::tests::indexed_search_prunes_without_changing_flat_geometry_bound ... ok
+test scene::environment_transaction_tests::dropped_preparation_does_not_attach_lighting ... ok
+test scene::environment_transaction_tests::dynamic_intensity_remains_shared_across_preparation ... ok
+test scene::environment_transaction_tests::scene_and_reflection_commit_together_and_stale_capture_rolls_back_all ... ignored, requires physical GPU; joint scene/reflection atlas transaction
+test scene::environment_transaction_tests::invalid_source_preserves_previous_environment ... ok
+test scene::environment_transaction_tests::same_shader_resource_change_invalidates_old_candidate ... ok
+test scene::geometry::deformation_tests::deformation_freezes_implicit_bind_coordinates ... ok
+test scene::geometry::deformation_tests::local_deformation_retains_material_data_and_rejects_invalid_output ... ok
+test archive_scene::derivative_control_flow_tests::material_footprints_use_explicit_fine_quad_derivatives ... ok
+test scene::lod_geometry::tests::certified_upload_rejects_changed_positions_and_preserves_last_good ... ok
+test renderer::tests::noop_backend_validates_photoreal_bodycam_pipelines_and_draw ... ok
+test scene::lod_geometry::tests::gpu_lod_upload_shares_streams_and_counts_all_index_buffers ... ignored, requires a real GPU adapter; run explicitly for LOD acceptance
+test archive_scene::compute_gi::stages::tests::storage_strides_match_actual_wgsl_types ... ok
+test scene::geometry::weld_hasher_tests::welded_normals_match_ordered_reference_on_seam_grid ... ok
+test archive_scene::vertex_invariance_tests::scene_vertex_positions_remain_invariant ... ok
+test scene::environment_transaction_tests::foreign_scene_and_changed_msaa_reject_before_mutation ... ok
+test scene::lod_geometry::tests::lod_camera_selection_falls_back_and_validates_history ... ok
+test scene::memory_tests::gpu_shared_mesh_budget_preserves_replacement_and_lod_owners ... ignored, requires physical GPU; shared mesh budget and retirement qualification
+test scene::multi_view_tests::gpu_disjoint_views_preserve_both_regions_and_clear_gap ... ignored, requires a real GPU adapter; run explicitly for multi-view acceptance
+test scene::multi_view_tests::gpu_disjoint_views_xray_keeps_nearest_internals_and_world_depth ... ignored, requires a real GPU adapter; run explicitly for multi-view X-ray acceptance
+test scene::skinning::morph_tests::gpu_exact_morph_component_edges_and_full_target_budget ... ignored, requires physical GPU; exact morph integer arithmetic readback and rational oracle payload
+test scene::skinning::morph_tests::gpu_exact_morph_precedes_skinning_and_preserves_independent_instance_weights ... ignored, requires physical GPU; exact morph output readback, not a benchmark
+test scene::lod_geometry::tests::lod_history_replacement_failure_and_resource_lifetime ... ok
+test archive_scene::compute_gi::stages::tests::queue_bin_buffer_matches_actual_shader_layout ... ok
+test scene::tests::alpha_sort_tracks_camera_and_rejects_bad_transforms_atomically ... ok
+test scene::tests::cancelling_and_degenerate_fans_have_finite_zero_normals ... ok
+test scene::tests::explicit_material_coordinates_survive_geometry_deformation ... ok
+test archive_scene::compute_gi::stages::tests::resource_bindings_remain_unique_across_ray_and_material_entries ... ok
+test scene::skinning::morph_tests::exact_morph_shader_parses_and_validates ... ok
+test scene::lod_geometry::tests::lod_upload_rejects_foreign_device_and_vertex_domain_before_allocation ... ok
+test scene::tests::material_layer_split_preserves_binding_coordinates_and_parameters ... ok
+test scene::tests::material_layer_split_rejects_ambiguous_faces_and_clears_absent_layer ... ok
+test scene::tests::mesh_admission_rejects_every_nonfinite_vertex_lane ... ok
+test scene::texture_memory_tests::gpu_image_hdr_budget_shares_views_and_preserves_uploaded_mips ... ignored, requires physical GPU; shared colour mip/HDR admission and lifetime
+test scene::tests::rejects_malformed_mesh_and_non_finite_helper_input ... ok
+test scene::tests::smooth_normals_weld_seams_and_follow_deformation ... ok
+test scene::transform_memory_tests::gpu_transform_budget_preserves_independent_uniforms_after_exhaustion ... ignored, requires physical GPU; transform uniform ownership and shared admission
+test scene::opaque_partition_regression::shared_partitions_keep_vertex_owners_and_reject_invalid_replacement ... ok
+test shared_upload_move_tests::paired_shared_upload_relocation ... ignored, physical Metal; alternating pre-move versus core implementation, not legacy staging
+test scene::tests::disjoint_views_validate_regions_and_record_shared_geometry ... ok
+test skinned::checkpoint::set::tests::corrupted_tables_derived_claims_and_rechecksummed_counts_reject_atomically ... ok
+test archive_scene::tests::scene_shader_validates ... ok
+test scene::transform_memory_tests::transform_admission_rejects_before_charging_and_retains_retired_uniforms ... ok
+test scene::transform_memory_tests::empty_scene_and_skinner_preserve_configured_device_owner ... ok
+test skinned::checkpoint::set::tests::repeated_instances_share_native_work_budget_but_distinct_rigs_are_counted ... ok
+test scene::transform_memory_tests::empty_used_scene_cannot_reconfigure_unbounded_history ... ok
+test skinned::coherent_pose_tests::paired_cache_policy_cpu_bench ... ignored, manual paired CPU kernel benchmark
+test skinned::correspondence_tests::weighted_poses_models_indices_and_invalid_palettes ... ok
+test scene::tests::resource_validation_precedes_gpu_upload ... ok
+test skinned::checkpoint::set::tests::exact_small_posed_geometry_and_empty_set_round_trip ... ok
+test scene::skinning::morph_tests::morph_source_instance_admission_and_preflight_preserve_existing_owners ... ok
+test scene::lod_geometry::tests::streamed_indices_obey_budget_share_streams_and_recover_after_eviction ... ok
+test skinned::temporal_admission_tests::blended_weight_changes_and_cancellation_keep_temporal_contract ... ok
+test skinned::family_bound_tests::four_influence_extreme_scales_and_cancellation_never_false_certify ... ok
+test skinned::temporal_admission_tests::paired_temporal_cpu_bench ... ignored, manual CPU changing-pose paired benchmark
+test skinned::coherent_pose_tests::cached_admission_matches_original_loop_and_normal_bits ... ok
+test archive_scene::vertex_invariance_tests::scene_vertex_position_invariance_survives_metal_translation ... ok
+test archive_scene::derivative_control_flow_tests::sidewalk_filter_derivatives_are_outside_pixel_dependent_mask ... ok
+test skinned::tests::animal_fibre_ranges_preserve_all_opaque_triangles_and_original_order ... ok
+test skinned::tests::mesh_rejects_bad_weights_joints_and_indices ... ok
+test skinned::tests::posed_scene_matches_correspondence_and_preserves_indexing ... ok
+test skinned::tests::unused_joint_indices_are_safe_for_shader_reads ... ok
+test skinned_lod::checkpoint::tests::base_only_sources_restore_without_inventing_a_variant ... ok
+test skinned_lod::checkpoint::tests::invalid_mesh_binding_proofs_and_policies_preserve_original_ready_source ... ok
+test skinned_lod::checkpoint::tests::source_identity_distinguishes_clones_from_equal_independent_sources_on_one_mesh ... ok
+test ocean::tests::assembled_shaders_validate ... ok
+test skinned_lod::tests::deformation_recertifies_error_and_two_views_select_independently ... ok
+test skinned_lod::tests::invalid_pose_or_witness_never_changes_last_good_snapshot ... ok
+test skinned_lod::tests::subdivision_archive_binds_exact_source_and_recertifies_deformation ... ok
+test skinned_morph::tests::exact_sum_preserves_cancellation_products_subnormals_and_rounding ... ok
+test skinned_motion::admission_cache_tests::paired_history_cpu_bench ... ignored, manual CPU paired history benchmark
+test skinned_motion::admission_cache_tests::reused_pose_keeps_generation_and_rejection_semantics ... ok
+test skinned_lod::tests::skeletal_gpu_lod_budget_shared_streams_and_topology_history ... ok
+test skinned_motion::resident_tests::commit_and_invalid_pose_reset_resident_history ... ok
+test skinned_motion::tests::prepared_frames_commit_captured_pose_and_reject_stale_or_foreign_candidates ... ok
+test skinned_motion::tests::skipped_and_invalid_frames_preserve_pose_and_reset_clears_it ... ok
+test sprite::tests::invalid_or_full_batch_does_not_publish_partial_geometry ... ok
+test sprite::tests::rotated_sprite_and_atlas_uvs_are_painter_ordered ... ok
+test surface::command_buffer::tests::partition_work_slices_balances_items_and_preserves_order ... ok
+test surface::output_tests::hdr_requires_matching_format_and_color_space_including_opt_in_formats ... ok
+test surface_rigid_skinning::shared_tests::gpu_shared_rigid_matches_legacy_and_rejects_invalid_snapshots ... ignored, requires physical Apple Silicon Metal GPU
+test surface_rigid_skinning::shared_tests::paired_rigid_palette_benchmark ... ignored, manual same-process paired production benchmark on Apple Silicon
+test weather::tests::gust_velocity_matches_integrated_displacement ... ok
+test weather::tests::presets_and_invalid_inputs ... ok
+test world_nearest_bvh::tests::balanced_tree_keeps_every_source_slot_and_encloses_children ... ok
+test world_nearest_bvh::tests::invalid_depth_is_an_error_instead_of_a_truncated_tree ... ok
+test world_nearest_bvh::tests::primitive_groups_keep_every_original_id_under_wide_affine_transforms ... ok
+test world_nearest_bvh::tests::sah_skewed_clusters_keep_all_leaves_and_reduce_total_internal_area ... ok
+test skinned_lod::checkpoint::tests::both_proof_kinds_restore_from_file_and_recertify_120_poses_with_external_mesh_identity ... ok
+test world_nearest_bvh::wide::tests::each_retained_bound_still_owns_the_exact_original_subtree ... ok
+test world_nearest_bvh::wide::tests::large_balanced_tree_retains_all_leaves_within_existing_gpu_stack ... ok
+test world_nearest_bvh::wide::tests::malformed_source_is_rejected_without_partial_result ... ok
+test skinned::temporal_admission_tests::temporal_cache_matches_original_positions_and_errors ... ok
+test world_nearest_bvh::wide::tests::serialized_records_keep_original_bounds_and_leaf_words ... ok
+test world_nearest_job::exact_vertex_cache::layout::tests::reject_overflow_and_incomplete_capacity ... ok
+test world_nearest_job::exact_vertex_cache::layout::tests::source_prefix_records_and_zero_instance_ranges ... ok
+test world_nearest_job::exact_vertex_cache::layout::tests::full_current_street_retains_all_vertices ... ok
+test world_nearest_job::geometry_bounds::layout::tests::exact_prefix_and_record_capacity ... ok
+test world_nearest_job::geometry_bounds::layout::tests::reject_unrepresentable_budgets ... ok
+test world_nearest_job::tests::history_existence_requires_every_material_to_force_consumer_fallback ... ok
+test world_nearest_job::tests::invalid_source_material_is_not_substituted ... ok
+test world_nearest_job::tests::nearest_bound_requires_every_opacity_policy_to_be_known ... ok
+test world_nearest_job::geometry_bounds::layout::tests::complete_current_street_fits_256_mib ... ok
+test world_nearest_job::tests::source_material_transport_preserves_low_bits_and_signed_zero ... ok
+test world_nearest_job::traversal_pair::metal_tests::comparator_detects_protected_low_bits_and_ignores_only_metadata ... ignored, exclusive Metal GPU; requires fresh VOXY_TRAVERSAL_PAIR_COMPARATOR_PROOF
+test world_nearest_job::winner_workspace::tests::bounded_same_allocation ... ok
+test world_nearest_job::winner_workspace::tests::rejects_invalid_or_empty_workspaces ... ok
+test world_nearest_job::traversal_pair::tests::comparator_shader_validates ... ok
+test world_nearest_job::winner_workspace::tests::respects_explicit_worker_limit_and_partial_capacity ... ok
+test world_wide_order_tests::actual_sort_preserves_frontier_and_prior_stack ... ignored, exclusive Metal GPU; fresh VOXY_WIDE_ORDER_PROOF required
+test xr::tests::asymmetric_frustum_maps_all_edges_and_depth ... ok
+test xr::tests::mirrored_runtime_frusta_preserve_edge_mapping ... ok
+test xr::tests::per_eye_positions_produce_distinct_views_and_tracking_is_required ... ok
+test xr::tests::stereo_history_is_independent_atomic_and_recovers_after_tracking_loss ... ok
+test xray::tests::mesh_mask_respects_transform_and_preserves_source ... ok
+test world_wide_order_tests::actual_scheduling_block_validates ... ok
+test xray::tests::regional_mask_feathers_and_handles_extreme_coordinates ... ok
+test xray::tests::reversal_is_continuous_and_restores_original_material ... ok
+test xray::tests::timestep_partition_and_source_transparency_are_preserved ... ok
+test xray::tests::validation_is_transactional_and_zero_duration_is_immediate ... ok
+test world_nearest_bvh::wide::tests::all_original_leaf_words_and_order_survive_both_leaf_tags ... ok
+test skinned::temporal_bound_exponent_tests::bounds_match_exact_scan_across_scale_exponents_and_blends ... ok
+test skinned::disabled_family_bound_tests::diverse_joint_sets_disable_bound_without_vacuous_admission ... ok
+test scene::fiber_surface_draw_tests::fibre_scatter_preserves_draw_streams_and_neighbouring_geometry ... ok
+test supersampling::tests::metal_resolve_preserves_diagonal_coverage_and_linear_hdr ... ok
+test reconstruction_material::ggx_tests::white_furnace_energy_and_analytic_maximum_roughness ... ok
+test scene::fiber_surface_draw_tests::fibre_director_scatter_tracks_pose_and_preserves_neighbours ... ok
+test skinned::family_bound_tests::interval_family_implies_existing_group_certificate_for_all_unorm16_pairs ... ok
+test archive_scene::compute_gi::world_resolve::tests::full_frame_partition_covers_each_pixel_once_and_preserves_partial_edges ... ok
+test skinned::coherent_pose_tests::parallel_admission_matches_sequential_first_error ... ok
+test skinned::checkpoint::set::tests::real_file_preserves_dense_groups_buffer_aliases_and_120_native_admissions ... ok
+test skinned::family_bound_tests::family_fast_path_and_uncertain_fallback_preserve_exact_errors_and_pose_changes ... ok
+test skinned::temporal_bound_regressions::conservative_temporal_bounds_preserve_position_only_oracle_and_reset_inputs ... ok
+test skinned::coherent_pose_tests::grouped_admission_matches_per_vertex_scan ... ok
+
+test result: ok. 374 passed; 0 failed; 86 ignored; 0 measured; 0 filtered out; finished in 7.16s
+

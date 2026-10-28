@@ -1,0 +1,21 @@
+   Compiling voxy_audio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio)
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio_device)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.57s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-bcf1b72c587159c3)
+
+running 11 tests
+test audio_scene::tests::invalid_sources_and_competing_listeners_reject_without_mutation ... ok
+test audio_assets::tests::saved_import_config_rejects_unknown_version_and_engine_cap_escape ... ok
+test audio_runtime::tests::same_asset_publications_reload_atomically_and_motion_keeps_cursor ... ok
+test audio_scene::tests::saved_audio_extracts_parent_motion_activity_and_generation_without_graph_borrow ... ok
+test audio_runtime::tests::scene_mixer_moves_pauses_preserves_on_failure_and_consumes_one_shots ... ok
+test audio_runtime::tests::authored_bus_changes_preserve_cursor_and_failed_preflight_preserves_gain ... ok
+test audio_assets::tests::common_catalog_retains_failed_publication_and_scene_uses_successful_replacement ... ok
+test audio_assets::tests::common_worker_decodes_wav_and_retains_observations ... ok
+test audio_runtime::checkpoint::tests::json_audio_owner_continues_and_does_not_restart_completed_one_shot ... ok
+test audio_assets::tests::import_config_save_round_trip_and_invalid_edit_preserve_previous_file ... ok
+test audio_assets::tests::cached_wav_revalidates_inputs_and_repairs_corrupt_artifact ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 182 filtered out; finished in 0.03s
+

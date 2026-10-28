@@ -1,0 +1,12 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.70s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_animation-b8add508dfae1155)
+
+running 4 tests
+test asset_checkpoint::tests::skeleton_only_and_empty_archives_preserve_accepted_near_unit_quaternion_bits ... ok
+test asset_checkpoint::tests::malformed_source_ownership_receipts_and_policies_reject_without_changing_live_clip ... ok
+test asset_checkpoint::tests::shared_rigs_outer_clip_arcs_clone_caches_and_exact_compiled_receipts_survive_120_phases ... ok
+test asset_checkpoint::tests::consumed_cache_budgets_cached_failures_and_uninitialized_cells_keep_future_behavior ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 348 filtered out; finished in 4.79s
+

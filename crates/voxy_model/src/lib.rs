@@ -1,6 +1,13 @@
 //! Explicit-buffer glTF import into renderer meshes and animation rigs: the one crate that
 //! knows both `voxy_render` and `voxy_animation`. No filesystem or network access is performed.
 pub mod animals;
+mod checkpoint;
+pub use checkpoint::{ModelAssetCheckpoint, ModelAssetCheckpointLimits, PreparedModelSources};
+mod morph;
+pub use morph::{
+    ModelPrimitiveCheckpoint, MorphArchiveLimits, MorphGeometry, MorphGeometryCheckpoint,
+    MorphModelAsset, MorphNode, MorphTarget,
+};
 use std::sync::Arc;
 
 use glam::{DMat4, DVec3, Mat4, Quat, Vec3};
@@ -39,7 +46,7 @@ pub struct ModelSurface64 {
     pub indices: Vec<u32>,
 }
 
-/// A single mesh instance with its complete node hierarchy and optional skin.
+/// Mesh instances sharing one authored node hierarchy and its animation clips.
 #[derive(Clone, Debug)]
 pub struct ModelAsset {
     pub primitives: Vec<ModelPrimitive>,
@@ -47,7 +54,9 @@ pub struct ModelAsset {
     pub animations: Vec<Arc<AnimationClip>>,
     joint_names: Vec<Option<Arc<str>>>,
     mesh_joint: usize,
+    mesh_instances: usize,
     skinned: bool,
+    morph: Arc<morph::MorphImportData>,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -81,6 +90,12 @@ fn fail(message: impl Into<String>) -> ModelError {
 }
 
 impl ModelAsset {
+    /// Number of selected source mesh-node instances, before primitive expansion.
+    #[must_use]
+    pub fn mesh_instance_count(&self) -> usize {
+        self.mesh_instances
+    }
+
     /// Original authored node names, in skeleton order. Unnamed nodes have no stable name.
     #[must_use]
     pub fn joint_names(&self) -> &[Option<Arc<str>>] {
@@ -167,15 +182,40 @@ impl ModelAsset {
     /// Imports GLB's embedded buffer, or glTF buffers provided in document order.
     ///
     /// # Errors
-    /// Rejects budgets, malformed data, multiple mesh instances/skins, morph targets,
+    /// Rejects budgets, malformed data, morph targets,
     /// unsupported material features or interpolation. External URIs are never opened.
-    // Node indices are bounded to MAX_JOINTS above.
-    #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
     pub fn parse(
         source: &[u8],
         buffers: &[&[u8]],
         limits: ModelLimits,
     ) -> Result<Self, ModelError> {
+        Self::parse_internal(source, buffers, limits, false).map(|(model, _)| model)
+    }
+
+    /// Complete animated import retaining morph payload for frame-aware consumers.
+    /// Legacy `parse` stays strict until all ordinary consumers are qualified.
+    /// # Errors
+    /// Rejects malformed, unsupported or over-budget source features.
+    pub fn parse_animated(
+        source: &[u8],
+        buffers: &[&[u8]],
+        limits: ModelLimits,
+    ) -> Result<Self, ModelError> {
+        let (mut model, mut data) = Self::parse_internal(source, buffers, limits, true)?;
+        data.sources.clone_from(&model.animations);
+        data.skeleton = Some(model.skeleton.clone());
+        model.morph = Arc::new(data);
+        Ok(model)
+    }
+
+    // Node indices are bounded to MAX_JOINTS above.
+    #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
+    fn parse_internal(
+        source: &[u8],
+        buffers: &[&[u8]],
+        limits: ModelLimits,
+        allow_morph: bool,
+    ) -> Result<(Self, morph::MorphImportData), ModelError> {
         let total = buffers
             .iter()
             .try_fold(source.len(), |n, b| n.checked_add(b.len()));
@@ -233,15 +273,51 @@ impl ModelAsset {
                 return Err(fail("accessor outside buffer bounds"));
             }
         }
-        let meshes: Vec<_> = nodes.iter().filter(|n| n.mesh().is_some()).collect();
-        if meshes.len() != 1 {
-            return Err(fail("expected one mesh instance"));
+        // A model loads the explicit default scene (or the sole scene). Do not
+        // merge unrelated alternate scenes into one visible model.
+        let selected = gltf.default_scene().or_else(|| {
+            (gltf.scenes().count() == 1)
+                .then(|| gltf.scenes().next())
+                .flatten()
+        });
+        if selected.is_none() && gltf.scenes().count() > 1 {
+            return Err(fail("multiple scenes require an explicit default scene"));
+        }
+        let mut active = std::collections::HashSet::new();
+        if let Some(scene) = selected {
+            let mut pending: Vec<_> = scene.nodes().collect();
+            while let Some(node) = pending.pop() {
+                if active.insert(node.index()) {
+                    pending.extend(node.children());
+                }
+            }
+        } else {
+            active.extend(nodes.iter().map(gltf::Node::index));
+        }
+        let meshes: Vec<_> = nodes
+            .iter()
+            .filter(|node| node.mesh().is_some() && active.contains(&node.index()))
+            .collect();
+        if meshes.is_empty() {
+            return Err(fail("selected scene contains no mesh instance"));
         }
         let mesh_node = meshes[0];
         let skin = mesh_node.skin();
-        if gltf.skins().count() > 1 {
-            return Err(fail("multiple skins unsupported"));
+        let skin_count = gltf.skins().count();
+        if skin_count > voxy_animation::MAX_JOINTS {
+            return Err(fail("skin count budget exceeded"));
         }
+        let rigid_morph = allow_morph
+            && meshes.iter().any(|node| {
+                node.skin().is_none()
+                    && node.mesh().is_some_and(|mesh| {
+                        mesh.primitives()
+                            .any(|primitive| primitive.morph_targets().next().is_some())
+                    })
+            });
+        // Rigid morphs use the existing authored mesh node as their complete
+        // influence. Source nodes/animation are retained; no skin is invented.
+        let unified_palette = meshes.len() > 1 || skin_count > 1 || rigid_morph;
         let mut parents = vec![None; nodes.len()];
         for node in &nodes {
             for child in node.children() {
@@ -267,29 +343,40 @@ impl ModelAsset {
             mapping[node] = joint;
         }
         let mut inverse = vec![Mat4::IDENTITY; nodes.len()];
-        let skin_nodes: Vec<_> = skin
-            .as_ref()
-            .map(|s| s.joints().collect())
-            .unwrap_or_default();
-        let unique: std::collections::HashSet<_> =
-            skin_nodes.iter().map(gltf::Node::index).collect();
-        if unique.len() != skin_nodes.len() {
-            return Err(fail("duplicate skin joint"));
-        }
-        if let Some(skin) = &skin {
-            let matrices: Vec<_> = skin
-                .reader(|b| data.get(b.index()).copied())
+        let mut skin_data = Vec::new();
+        for source_skin in gltf.skins() {
+            let source_nodes: Vec<_> = source_skin.joints().map(|node| node.index()).collect();
+            let unique: std::collections::HashSet<_> = source_nodes.iter().copied().collect();
+            if unique.len() != source_nodes.len() {
+                return Err(fail("duplicate skin joint"));
+            }
+            let matrices: Vec<_> = source_skin
+                .reader(|buffer| data.get(buffer.index()).copied())
                 .read_inverse_bind_matrices()
                 .map_or_else(
-                    || vec![Mat4::IDENTITY; skin_nodes.len()],
-                    |r| r.map(|m| Mat4::from_cols_array_2d(&m)).collect(),
+                    || vec![Mat4::IDENTITY; source_nodes.len()],
+                    |reader| {
+                        reader
+                            .map(|matrix| Mat4::from_cols_array_2d(&matrix))
+                            .collect()
+                    },
                 );
-            if matrices.len() != skin_nodes.len() {
+            if matrices.len() != source_nodes.len() {
                 return Err(fail("inverse bind count mismatch"));
             }
-            for (node, matrix) in skin_nodes.iter().zip(matrices) {
-                inverse[node.index()] = matrix;
+            if matrices.iter().any(|matrix| !matrix.is_finite()) {
+                return Err(fail("nonfinite inverse bind matrix"));
             }
+            if !unified_palette
+                && skin
+                    .as_ref()
+                    .is_some_and(|skin| skin.index() == source_skin.index())
+            {
+                for (&node, &matrix) in source_nodes.iter().zip(&matrices) {
+                    inverse[node] = matrix;
+                }
+            }
+            skin_data.push((source_nodes, matrices));
         }
         let mut joints = Vec::new();
         for &index in &order {
@@ -312,194 +399,268 @@ impl ModelAsset {
                 inverse_bind: inverse[index],
             });
         }
-        let joint_names = order
+        let mut joint_names: Vec<Option<Arc<str>>> = order
             .iter()
             .map(|&index| nodes[index].name().map(Arc::from))
             .collect();
-        let skeleton = Skeleton::new(joints).map_err(|e| fail(e.to_string()))?;
-        let mut primitives = Vec::new();
-        let (mut vertex_count, mut index_count) = (0usize, 0usize);
-        for primitive in mesh_node
-            .mesh()
-            .ok_or_else(|| fail("missing mesh"))?
-            .primitives()
-        {
-            if primitive.mode() != gltf::mesh::Mode::Triangles
-                || primitive.morph_targets().next().is_some()
-            {
-                return Err(fail(
-                    "only triangle primitives without morph targets are supported",
-                ));
+        let used_skins: std::collections::HashSet<_> = meshes
+            .iter()
+            .filter_map(|node| node.skin().map(|skin| skin.index()))
+            .collect();
+        let mut skin_bindings = vec![Vec::new(); skin_data.len()];
+        for (skin_index, (source_nodes, matrices)) in skin_data.iter().enumerate() {
+            if !used_skins.contains(&skin_index) {
+                continue;
             }
-            let material = primitive.material();
-            let pbr = material.pbr_metallic_roughness();
-            if pbr.metallic_roughness_texture().is_some()
-                || material.normal_texture().is_some()
-                || material.occlusion_texture().is_some()
-                || material.emissive_texture().is_some()
-            {
-                return Err(fail("non-base glTF material maps unsupported"));
-            }
-            if pbr.base_color_texture().is_some()
-                && material.alpha_mode() != gltf::material::AlphaMode::Opaque
-            {
-                return Err(fail("textured alpha modes unsupported"));
-            }
-            let base_color_texture = pbr
-                .base_color_texture()
-                .map(|info| {
-                    if info.tex_coord() != 0
-                        || primitive.get(&gltf::Semantic::TexCoords(0)).is_none()
-                    {
-                        return Err(fail("base color texture requires TEXCOORD_0"));
+            for (&node, &matrix) in source_nodes.iter().zip(matrices) {
+                if unified_palette {
+                    if joints.len() >= voxy_animation::MAX_JOINTS {
+                        return Err(fail("combined node/skin palette exceeds joint budget"));
                     }
-                    let sampler = info.texture().sampler();
-                    let wrap = |mode| match mode {
-                        gltf::texture::WrappingMode::ClampToEdge => voxy_render::TextureWrap::Clamp,
-                        gltf::texture::WrappingMode::Repeat => voxy_render::TextureWrap::Repeat,
-                        gltf::texture::WrappingMode::MirroredRepeat => {
-                            voxy_render::TextureWrap::Mirror
+                    skin_bindings[skin_index].push(joints.len() as u16);
+                    // A binding is an identity child of the authored joint. This
+                    // preserves distinct inverse-bind matrices for shared nodes
+                    // across skins while retaining one existing GPU palette.
+                    joints.push(Joint {
+                        name: Arc::from(format!("__skin{skin_index}_node{node}#binding")),
+                        parent: Some(mapping[node] as u16),
+                        bind_local: Transform::IDENTITY,
+                        inverse_bind: matrix,
+                    });
+                    joint_names.push(None);
+                } else {
+                    skin_bindings[skin_index].push(mapping[node] as u16);
+                }
+            }
+        }
+        let skeleton = Skeleton::new(joints).map_err(|error| fail(error.to_string()))?;
+        let mut primitives = Vec::new();
+        let mut morph_data = morph::MorphImportData::default();
+        if allow_morph {
+            morph_data.defaults = morph::import_defaults(&nodes)?;
+        }
+        let mut morph_vectors = 0usize;
+        let (mut vertex_count, mut index_count) = (0usize, 0usize);
+        for mesh_node in &meshes {
+            if allow_morph {
+                morph::node_weights(mesh_node)?;
+            }
+            let current_skin = mesh_node.skin();
+            let current_bindings = current_skin
+                .as_ref()
+                .map(|skin| &skin_bindings[skin.index()]);
+            for primitive in mesh_node
+                .mesh()
+                .ok_or_else(|| fail("missing mesh"))?
+                .primitives()
+            {
+                if primitive.mode() != gltf::mesh::Mode::Triangles
+                    || (!allow_morph && primitive.morph_targets().next().is_some())
+                {
+                    return Err(fail(
+                        "only triangle primitives without morph targets are supported",
+                    ));
+                }
+                let material = primitive.material();
+                let pbr = material.pbr_metallic_roughness();
+                if pbr.metallic_roughness_texture().is_some()
+                    || material.normal_texture().is_some()
+                    || material.occlusion_texture().is_some()
+                    || material.emissive_texture().is_some()
+                {
+                    return Err(fail("non-base glTF material maps unsupported"));
+                }
+                if pbr.base_color_texture().is_some()
+                    && material.alpha_mode() != gltf::material::AlphaMode::Opaque
+                {
+                    return Err(fail("textured alpha modes unsupported"));
+                }
+                let base_color_texture = pbr
+                    .base_color_texture()
+                    .map(|info| {
+                        if info.tex_coord() != 0
+                            || primitive.get(&gltf::Semantic::TexCoords(0)).is_none()
+                        {
+                            return Err(fail("base color texture requires TEXCOORD_0"));
                         }
-                    };
-                    Ok(ModelTexture {
-                        image: info.texture().source().index(),
-                        use_mips: !matches!(
-                            sampler.min_filter(),
-                            Some(
-                                gltf::texture::MinFilter::Nearest
-                                    | gltf::texture::MinFilter::Linear
-                            )
-                        ),
-                        sampling: voxy_render::TextureSampling {
-                            wrap_u: wrap(sampler.wrap_s()),
-                            wrap_v: wrap(sampler.wrap_t()),
-                            min_filter: if matches!(
+                        let sampler = info.texture().sampler();
+                        let wrap = |mode| match mode {
+                            gltf::texture::WrappingMode::ClampToEdge => {
+                                voxy_render::TextureWrap::Clamp
+                            }
+                            gltf::texture::WrappingMode::Repeat => voxy_render::TextureWrap::Repeat,
+                            gltf::texture::WrappingMode::MirroredRepeat => {
+                                voxy_render::TextureWrap::Mirror
+                            }
+                        };
+                        Ok(ModelTexture {
+                            image: info.texture().source().index(),
+                            use_mips: !matches!(
                                 sampler.min_filter(),
                                 Some(
                                     gltf::texture::MinFilter::Nearest
-                                        | gltf::texture::MinFilter::NearestMipmapNearest
-                                        | gltf::texture::MinFilter::NearestMipmapLinear
+                                        | gltf::texture::MinFilter::Linear
                                 )
-                            ) {
-                                voxy_render::TextureFilter::Nearest
-                            } else {
-                                voxy_render::TextureFilter::Linear
-                            },
-                            mag_filter: if sampler.mag_filter()
-                                == Some(gltf::texture::MagFilter::Nearest)
-                            {
-                                voxy_render::TextureFilter::Nearest
-                            } else {
-                                voxy_render::TextureFilter::Linear
-                            },
-                            mipmap_filter: Some(
-                                if matches!(
+                            ),
+                            sampling: voxy_render::TextureSampling {
+                                wrap_u: wrap(sampler.wrap_s()),
+                                wrap_v: wrap(sampler.wrap_t()),
+                                min_filter: if matches!(
                                     sampler.min_filter(),
                                     Some(
-                                        gltf::texture::MinFilter::NearestMipmapNearest
-                                            | gltf::texture::MinFilter::LinearMipmapNearest
+                                        gltf::texture::MinFilter::Nearest
+                                            | gltf::texture::MinFilter::NearestMipmapNearest
+                                            | gltf::texture::MinFilter::NearestMipmapLinear
                                     )
                                 ) {
                                     voxy_render::TextureFilter::Nearest
                                 } else {
                                     voxy_render::TextureFilter::Linear
                                 },
-                            ),
-                            anisotropy: 1,
-                        },
+                                mag_filter: if sampler.mag_filter()
+                                    == Some(gltf::texture::MagFilter::Nearest)
+                                {
+                                    voxy_render::TextureFilter::Nearest
+                                } else {
+                                    voxy_render::TextureFilter::Linear
+                                },
+                                mipmap_filter: Some(
+                                    if matches!(
+                                        sampler.min_filter(),
+                                        Some(
+                                            gltf::texture::MinFilter::NearestMipmapNearest
+                                                | gltf::texture::MinFilter::LinearMipmapNearest
+                                        )
+                                    ) {
+                                        voxy_render::TextureFilter::Nearest
+                                    } else {
+                                        voxy_render::TextureFilter::Linear
+                                    },
+                                ),
+                                anisotropy: 1,
+                            },
+                        })
                     })
-                })
-                .transpose()?;
-            let positions_accessor = primitive
-                .get(&gltf::Semantic::Positions)
-                .ok_or_else(|| fail("missing positions"))?;
-            for (semantic, accessor) in primitive.attributes() {
-                if accessor.count() != positions_accessor.count() {
-                    return Err(fail(format!("attribute count mismatch: {semantic:?}")));
+                    .transpose()?;
+                let positions_accessor = primitive
+                    .get(&gltf::Semantic::Positions)
+                    .ok_or_else(|| fail("missing positions"))?;
+                for (semantic, accessor) in primitive.attributes() {
+                    if accessor.count() != positions_accessor.count() {
+                        return Err(fail(format!("attribute count mismatch: {semantic:?}")));
+                    }
                 }
-            }
-            vertex_count = vertex_count
-                .checked_add(positions_accessor.count())
-                .ok_or_else(|| fail("vertex overflow"))?;
-            let count = primitive
-                .indices()
-                .map_or(positions_accessor.count(), |a| a.count());
-            index_count = index_count
-                .checked_add(count)
-                .ok_or_else(|| fail("index overflow"))?;
-            if vertex_count > limits.vertices || index_count > limits.indices {
-                return Err(fail("geometry budget exceeded"));
-            }
-            let reader = primitive.reader(|b| data.get(b.index()).copied());
-            let positions: Vec<_> = reader
-                .read_positions()
-                .ok_or_else(|| fail("invalid positions"))?
-                .collect();
-            let position_count =
-                u32::try_from(positions.len()).map_err(|_| fail("too many positions"))?;
-            let indices: Vec<u32> = reader
-                .read_indices()
-                .map_or_else(|| (0..position_count).collect(), |r| r.into_u32().collect());
-            let uvs: Vec<_> = reader.read_tex_coords(0).map_or_else(
-                || vec![[0.; 2]; positions.len()],
-                |r| r.into_f32().collect(),
-            );
-            if uvs.len() != positions.len() {
-                return Err(fail("UV count mismatch"));
-            }
-            let color = pbr.base_color_factor();
-            let geometry = if skin.is_some() {
-                let normals: Option<Vec<_>> = reader.read_normals().map(Iterator::collect);
-                let ids: Vec<_> = reader
-                    .read_joints(0)
-                    .ok_or_else(|| fail("missing JOINTS_0"))?
-                    .into_u16()
-                    .collect();
-                let weights: Vec<_> = reader
-                    .read_weights(0)
-                    .ok_or_else(|| fail("missing WEIGHTS_0"))?
-                    .into_f32()
-                    .collect();
-                if reader.read_joints(1).is_some() || reader.read_weights(1).is_some() {
-                    return Err(fail("more than four influences unsupported"));
+                vertex_count = vertex_count
+                    .checked_add(positions_accessor.count())
+                    .ok_or_else(|| fail("vertex overflow"))?;
+                let count = primitive
+                    .indices()
+                    .map_or(positions_accessor.count(), |a| a.count());
+                index_count = index_count
+                    .checked_add(count)
+                    .ok_or_else(|| fail("index overflow"))?;
+                if vertex_count > limits.vertices || index_count > limits.indices {
+                    return Err(fail("geometry budget exceeded"));
                 }
-                if normals
-                    .as_ref()
-                    .is_some_and(|normals| normals.len() != positions.len())
-                    || ids.len() != positions.len()
-                    || weights.len() != positions.len()
-                {
-                    return Err(fail("skin attribute count mismatch"));
-                }
-                let mut vertices = Vec::new();
-                for i in 0..positions.len() {
-                    let mut joints = [0; 4];
-                    let weights = quantize_weights(weights[i])?;
-                    for k in 0..4 {
-                        if weights[k] > 0 {
-                            let node = skin_nodes
-                                .get(usize::from(ids[i][k]))
-                                .ok_or_else(|| fail("joint index outside skin"))?;
-                            joints[k] = mapping[node.index()] as u16;
+                if allow_morph {
+                    for target in primitive.morph_targets() {
+                        if target.tangents().is_some() {
+                            return Err(fail("morph tangent deltas unsupported"));
+                        }
+                        for accessor in [target.positions(), target.normals()].into_iter().flatten()
+                        {
+                            if accessor.count() != positions_accessor.count() {
+                                return Err(fail("morph delta count mismatch"));
+                            }
+                            morph_vectors = morph_vectors
+                                .checked_add(accessor.count())
+                                .ok_or_else(|| fail("morph delta budget overflow"))?;
+                            if morph_vectors > limits.vertices {
+                                return Err(fail("morph delta budget exceeded"));
+                            }
                         }
                     }
-                    vertices.push(SkinnedVertex {
-                        position: positions[i],
-                        normal: normals.as_ref().map_or([0.; 3], |normals| normals[i]),
-                        uv: uvs[i],
-                        joints,
-                        weights,
-                    });
                 }
-                // A zero normal stream marks absent NORMAL. The scene shader
-                // derives one flat face normal from the current deformed geometry.
-                ModelGeometry::Skinned(
-                    SkinnedMesh::new(vertices, indices, nodes.len() as u16)
-                        .map_err(|e| fail(e.to_string()))?,
-                )
-            } else {
-                ModelGeometry::Static(
-                    SceneMesh::new(
+                let reader = primitive.reader(|b| data.get(b.index()).copied());
+                let positions: Vec<_> = reader
+                    .read_positions()
+                    .ok_or_else(|| fail("invalid positions"))?
+                    .collect();
+                let position_count =
+                    u32::try_from(positions.len()).map_err(|_| fail("too many positions"))?;
+                let indices: Vec<u32> = reader
+                    .read_indices()
+                    .map_or_else(|| (0..position_count).collect(), |r| r.into_u32().collect());
+                let uvs: Vec<_> = reader.read_tex_coords(0).map_or_else(
+                    || vec![[0.; 2]; positions.len()],
+                    |r| r.into_f32().collect(),
+                );
+                if uvs.len() != positions.len() {
+                    return Err(fail("UV count mismatch"));
+                }
+                let color = pbr.base_color_factor();
+                let geometry = if current_skin.is_some() || unified_palette {
+                    let normals: Option<Vec<_>> = reader.read_normals().map(Iterator::collect);
+                    let ids: Vec<_> = if current_skin.is_some() {
+                        reader
+                            .read_joints(0)
+                            .ok_or_else(|| fail("missing JOINTS_0"))?
+                            .into_u16()
+                            .collect()
+                    } else {
+                        vec![[0; 4]; positions.len()]
+                    };
+                    let weights: Vec<_> = if current_skin.is_some() {
+                        reader
+                            .read_weights(0)
+                            .ok_or_else(|| fail("missing WEIGHTS_0"))?
+                            .into_f32()
+                            .collect()
+                    } else {
+                        vec![[1., 0., 0., 0.]; positions.len()]
+                    };
+                    if reader.read_joints(1).is_some() || reader.read_weights(1).is_some() {
+                        return Err(fail("more than four influences unsupported"));
+                    }
+                    if normals
+                        .as_ref()
+                        .is_some_and(|normals| normals.len() != positions.len())
+                        || ids.len() != positions.len()
+                        || weights.len() != positions.len()
+                    {
+                        return Err(fail("skin attribute count mismatch"));
+                    }
+                    let mut vertices = Vec::new();
+                    for i in 0..positions.len() {
+                        let mut joints = [0; 4];
+                        let weights = quantize_weights(weights[i])?;
+                        for k in 0..4 {
+                            if weights[k] > 0 {
+                                joints[k] = if let Some(bindings) = current_bindings {
+                                    *bindings
+                                        .get(usize::from(ids[i][k]))
+                                        .ok_or_else(|| fail("joint index outside skin"))?
+                                } else {
+                                    mapping[mesh_node.index()] as u16
+                                };
+                            }
+                        }
+                        vertices.push(SkinnedVertex {
+                            position: positions[i],
+                            normal: normals.as_ref().map_or([0.; 3], |normals| normals[i]),
+                            uv: uvs[i],
+                            joints,
+                            weights,
+                        });
+                    }
+                    // A zero normal stream marks absent NORMAL. The scene shader
+                    // derives one flat face normal from the current deformed geometry.
+                    ModelGeometry::Skinned(
+                        SkinnedMesh::new(vertices, indices, skeleton.joints().len() as u16)
+                            .map_err(|e| fail(e.to_string()))?,
+                    )
+                } else {
+                    let mesh = SceneMesh::new(
                         positions
                             .iter()
                             .zip(&uvs)
@@ -511,14 +672,50 @@ impl ModelAsset {
                             .collect(),
                         indices,
                     )
-                    .map_err(|e| fail(e.to_string()))?,
-                )
-            };
-            primitives.push(ModelPrimitive {
-                geometry,
-                color,
-                base_color_texture,
-            });
+                    .map_err(|e| fail(e.to_string()))?;
+                    ModelGeometry::Static(if allow_morph {
+                        if let Some(normals) = reader.read_normals() {
+                            mesh.with_normals(normals.collect())
+                                .map_err(|e| fail(e.to_string()))?
+                        } else {
+                            mesh
+                        }
+                    } else {
+                        mesh
+                    })
+                };
+                let imported = ModelPrimitive {
+                    geometry,
+                    color,
+                    base_color_texture,
+                };
+                let binding = if allow_morph && primitive.morph_targets().next().is_some() {
+                    let targets = reader
+                        .read_morph_targets()
+                        .map(|(positions, normals, _)| MorphTarget {
+                            positions: positions.map(Iterator::collect),
+                            normals: normals.map(Iterator::collect),
+                        })
+                        .collect();
+                    let geometry = MorphGeometry::new(imported.clone(), targets, limits.vertices)?;
+                    let defaults = morph::node_weights(mesh_node)?;
+                    if defaults.len() != geometry.targets().len() {
+                        return Err(fail("morph primitive target count mismatch"));
+                    }
+                    Some(morph::MorphBinding {
+                        node: mesh_node.index(),
+                        name: mesh_node.name().map(Arc::from),
+                        geometry,
+                        defaults,
+                    })
+                } else {
+                    None
+                };
+                if allow_morph {
+                    morph_data.primitives.push(binding);
+                }
+                primitives.push(imported);
+            }
         }
         if primitives.is_empty() {
             return Err(fail("empty model"));
@@ -526,11 +723,12 @@ impl ModelAsset {
         let mut animations = Vec::new();
         let mut key_count = 0usize;
         for animation in gltf.animations() {
-            let mut tracks = vec![JointTrack::default(); nodes.len()];
-            let mut modes = vec![TrackInterpolation::default(); nodes.len()];
-            let mut tangents = vec![JointTangents::default(); nodes.len()];
+            let mut tracks = vec![JointTrack::default(); skeleton.joints().len()];
+            let mut modes = vec![TrackInterpolation::default(); skeleton.joints().len()];
+            let mut tangents = vec![JointTangents::default(); skeleton.joints().len()];
             let mut seen = std::collections::HashSet::new();
             let mut duration = 0f32;
+            let mut property_tracks = Vec::new();
             for channel in animation.channels() {
                 let mode = match channel.sampler().interpolation() {
                     gltf::animation::Interpolation::Linear => Interpolation::Linear,
@@ -541,6 +739,19 @@ impl ModelAsset {
                 if !seen.insert((target.node().index(), target.property() as u8)) {
                     return Err(fail("duplicate animation channel"));
                 }
+                let morph_count =
+                    if target.property() == gltf::animation::Property::MorphTargetWeights {
+                        if !allow_morph {
+                            return Err(fail("morph animation unsupported"));
+                        }
+                        let count = morph::node_weights(&target.node())?.len();
+                        if count == 0 {
+                            return Err(fail("morph channel has no targets"));
+                        }
+                        count
+                    } else {
+                        1
+                    };
                 let output_count = channel
                     .sampler()
                     .input()
@@ -550,6 +761,7 @@ impl ModelAsset {
                     } else {
                         1
                     })
+                    .and_then(|n| n.checked_mul(morph_count))
                     .ok_or_else(|| fail("animation key overflow"))?;
                 if channel.sampler().output().count() != output_count {
                     return Err(fail("animation output count mismatch"));
@@ -612,10 +824,28 @@ impl ModelAsset {
                             })
                             .collect();
                     }
-                    ReadOutputs::MorphTargetWeights(_) => {
-                        return Err(fail("morph animation unsupported"));
+                    ReadOutputs::MorphTargetWeights(values) => {
+                        morph::import_weight_tracks(
+                            &mut property_tracks,
+                            target.node().index(),
+                            morph_count,
+                            &times,
+                            values.into_f32().collect(),
+                            mode,
+                        )?;
                     }
                 }
+            }
+            if allow_morph {
+                morph_data.clips.push(
+                    voxy_animation::PropertyClip::new(
+                        animation.name().unwrap_or("animation"),
+                        duration.max(f32::EPSILON),
+                        Playback::Loop,
+                        property_tracks,
+                    )
+                    .map_err(|e| fail(e.to_string()))?,
+                );
             }
             animations.push(Arc::new(
                 AnimationClip::new_with_tangents(
@@ -630,14 +860,19 @@ impl ModelAsset {
                 .map_err(|e| fail(e.to_string()))?,
             ));
         }
-        Ok(Self {
-            joint_names,
-            primitives,
-            skeleton,
-            animations,
-            mesh_joint: mapping[mesh_node.index()],
-            skinned: skin.is_some(),
-        })
+        Ok((
+            Self {
+                joint_names,
+                primitives,
+                skeleton,
+                animations,
+                mesh_joint: mapping[mesh_node.index()],
+                mesh_instances: meshes.len(),
+                skinned: unified_palette || skin.is_some(),
+                morph: Arc::new(morph::MorphImportData::default()),
+            },
+            morph_data,
+        ))
     }
 
     /// Samples an explicitly selected clip without retaining playback state in
@@ -728,6 +963,17 @@ impl ModelAsset {
         &self,
         pose: &voxy_animation::Pose64,
     ) -> Result<Vec<ModelSurface64>, ModelError> {
+        if self.has_morph() {
+            return Err(fail("morph surfaces require explicit weights"));
+        }
+        self.scene_surfaces64_internal(pose, None)
+    }
+
+    fn scene_surfaces64_internal(
+        &self,
+        pose: &voxy_animation::Pose64,
+        overrides: Option<&[Option<Vec<[f64; 3]>>]>,
+    ) -> Result<Vec<ModelSurface64>, ModelError> {
         let global = pose
             .global_matrices(&self.skeleton)
             .map_err(|e| fail(e.to_string()))?;
@@ -746,14 +992,23 @@ impl ModelAsset {
         }
         self.primitives
             .iter()
-            .map(|primitive| {
+            .enumerate()
+            .map(|(primitive_index, primitive)| {
+                let morphed = overrides
+                    .and_then(|all| all.get(primitive_index))
+                    .and_then(Option::as_ref);
                 let (positions, indices) = match &primitive.geometry {
                     ModelGeometry::Static(mesh) => (
                         mesh.vertices()
                             .iter()
-                            .map(|v| {
+                            .enumerate()
+                            .map(|(index, v)| {
                                 model
-                                    .transform_point3(DVec3::from_array(v.position.map(f64::from)))
+                                    .transform_point3(DVec3::from_array(
+                                        morphed.map_or(v.position.map(f64::from), |positions| {
+                                            positions[index]
+                                        }),
+                                    ))
                                     .to_array()
                             })
                             .collect(),
@@ -763,26 +1018,32 @@ impl ModelAsset {
                         if palette.len() != usize::from(mesh.joint_count()) {
                             return Err(fail("wide skin palette count mismatch"));
                         }
-                        let positions =
-                            mesh.vertices()
-                                .iter()
-                                .map(|v| {
-                                    let mut skin = DMat4::ZERO;
-                                    for (joint, weight) in v.joints.into_iter().zip(v.weights) {
-                                        if weight != 0 {
-                                            let matrix =
-                                                palette.get(usize::from(joint)).ok_or_else(
-                                                    || fail("wide skin joint outside palette"),
-                                                )?;
-                                            skin += *matrix * (f64::from(weight) / 65535.);
-                                        }
+                        let positions = mesh
+                            .vertices()
+                            .iter()
+                            .enumerate()
+                            .map(|(index, v)| {
+                                let mut skin = DMat4::ZERO;
+                                for (joint, weight) in v.joints.into_iter().zip(v.weights) {
+                                    if weight != 0 {
+                                        let matrix =
+                                            palette.get(usize::from(joint)).ok_or_else(|| {
+                                                fail("wide skin joint outside palette")
+                                            })?;
+                                        skin += *matrix * (f64::from(weight) / 65535.);
                                     }
-                                    Ok((skin
-                                        * DVec3::from_array(v.position.map(f64::from)).extend(1.))
-                                    .truncate()
-                                    .to_array())
-                                })
-                                .collect::<Result<Vec<_>, ModelError>>()?;
+                                }
+                                Ok((skin
+                                    * DVec3::from_array(
+                                        morphed.map_or(v.position.map(f64::from), |positions| {
+                                            positions[index]
+                                        }),
+                                    )
+                                    .extend(1.))
+                                .truncate()
+                                .to_array())
+                            })
+                            .collect::<Result<Vec<_>, ModelError>>()?;
                         (positions, mesh.indices().to_vec())
                     }
                 };
@@ -812,33 +1073,50 @@ impl ModelAsset {
     /// # Errors
     /// Rejects an invalid pose or non-finite deformed geometry.
     pub fn scene_meshes(&self, pose: &voxy_animation::Pose) -> Result<Vec<SceneMesh>, ModelError> {
+        if self.has_morph() {
+            return Err(fail("morph geometry requires a complete animation frame"));
+        }
         let palette = pose
             .skin_matrices(&self.skeleton)
             .map_err(|e| fail(e.to_string()))?;
         let model = self.mesh_transform(pose)?;
         self.primitives
             .iter()
-            .map(|primitive| {
-                let (vertices, indices) = match &primitive.geometry {
-                    ModelGeometry::Static(mesh) => (
-                        mesh.vertices()
-                            .iter()
-                            .map(|v| SceneVertex {
-                                position: model
-                                    .transform_point3(Vec3::from_array(v.position))
-                                    .to_array(),
-                                ..*v
-                            })
-                            .collect(),
-                        mesh.indices().to_vec(),
-                    ),
-                    ModelGeometry::Skinned(mesh) => {
-                        return mesh
-                            .posed_scene_mesh(&palette, Mat4::IDENTITY, primitive.color)
-                            .map_err(|error| fail(error.to_string()));
-                    }
-                };
-                SceneMesh::new(vertices, indices).map_err(|e| fail(e.to_string()))
+            .map(|primitive| match &primitive.geometry {
+                ModelGeometry::Static(mesh) => {
+                    let positions = mesh
+                        .vertices()
+                        .iter()
+                        .map(|v| {
+                            model
+                                .transform_point3(Vec3::from_array(v.position))
+                                .to_array()
+                        })
+                        .collect();
+                    let normals = mesh
+                        .authored_normals()
+                        .map(|values| {
+                            let transform = model.inverse().transpose();
+                            values
+                                .iter()
+                                .map(|normal| {
+                                    let value =
+                                        transform.transform_vector3(Vec3::from_array(*normal));
+                                    if !value.is_finite() {
+                                        return Err(fail("nonfinite transformed model normal"));
+                                    }
+                                    Ok(value.try_normalize().unwrap_or(Vec3::ZERO).to_array())
+                                })
+                                .collect::<Result<Vec<_>, ModelError>>()
+                        })
+                        .transpose()?;
+                    mesh.clone()
+                        .with_deformed_geometry(positions, normals)
+                        .map_err(|e| fail(e.to_string()))
+                }
+                ModelGeometry::Skinned(mesh) => mesh
+                    .posed_scene_mesh(&palette, Mat4::IDENTITY, primitive.color)
+                    .map_err(|error| fail(error.to_string())),
             })
             .collect()
     }
@@ -1080,6 +1358,525 @@ mod tests {
         );
     }
 
+    pub(super) fn morph_import_fixture() -> (serde_json::Value, Vec<u8>) {
+        let (json, mut bytes) = fixture();
+        let mut doc: serde_json::Value = serde_json::from_str(&json).unwrap();
+        let mut accessor = |values: &[f32], count: usize, kind: &str| {
+            let offset = bytes.len();
+            bytes.extend(values.iter().flat_map(|v| v.to_le_bytes()));
+            let view = doc["bufferViews"].as_array().unwrap().len();
+            doc["bufferViews"].as_array_mut().unwrap().push(
+                serde_json::json!({"buffer":0,"byteOffset":offset,"byteLength":values.len()*4}),
+            );
+            let index = doc["accessors"].as_array().unwrap().len();
+            let mut value = serde_json::json!({"bufferView":view,"componentType":5126,"count":count,"type":kind});
+            if kind == "VEC3" {
+                value["min"] = serde_json::json!([-4, -4, -4]);
+                value["max"] = serde_json::json!([4, 4, 4]);
+            }
+            doc["accessors"].as_array_mut().unwrap().push(value);
+            index
+        };
+        let x = accessor(&[2., 0., 0., 2., 0., 0., 2., 0., 0.], 3, "VEC3");
+        let y = accessor(&[0., 4., 0., 0., 4., 0., 0., 4., 0.], 3, "VEC3");
+        let weights = accessor(&[0., 0., 2., -1.], 4, "SCALAR");
+        doc["buffers"][0]["byteLength"] = bytes.len().into();
+        doc["meshes"][0]["primitives"][0]["targets"] =
+            serde_json::json!([{"POSITION":x},{"POSITION":y}]);
+        doc["meshes"][0]["weights"] = serde_json::json!([0.25, 0.25]);
+        doc["nodes"][1]["weights"] = serde_json::json!([0.5, -0.25]);
+        doc["animations"][0]["samplers"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"input":4,"output":weights,"interpolation":"LINEAR"}));
+        doc["animations"][0]["channels"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"sampler":1,"target":{"node":1,"path":"weights"}}));
+        (doc, bytes)
+    }
+
+    #[test]
+    fn morph_names_resolve_source_nodes_independently_of_palette_order() {
+        let (mut doc, bytes) = morph_import_fixture();
+        doc["nodes"][0]["name"] = "Parent".into();
+        doc["nodes"][1]["name"] = "Face".into();
+        doc["nodes"].as_array_mut().unwrap().swap(0, 1);
+        let remap = |value: &mut serde_json::Value| {
+            if let Some(index) = value.as_u64() {
+                *value = (1 - index).into();
+            }
+        };
+        for node in doc["nodes"].as_array_mut().unwrap() {
+            if let Some(children) = node
+                .get_mut("children")
+                .and_then(serde_json::Value::as_array_mut)
+            {
+                children.iter_mut().for_each(&remap);
+            }
+        }
+        for skin in doc["skins"].as_array_mut().unwrap() {
+            skin["joints"]
+                .as_array_mut()
+                .unwrap()
+                .iter_mut()
+                .for_each(&remap);
+            if let Some(root) = skin.get_mut("skeleton") {
+                remap(root);
+            }
+        }
+        if let Some(scenes) = doc
+            .get_mut("scenes")
+            .and_then(serde_json::Value::as_array_mut)
+        {
+            for scene in scenes {
+                scene["nodes"]
+                    .as_array_mut()
+                    .unwrap()
+                    .iter_mut()
+                    .for_each(&remap);
+            }
+        }
+        for animation in doc["animations"].as_array_mut().unwrap() {
+            for channel in animation["channels"].as_array_mut().unwrap() {
+                remap(&mut channel["target"]["node"]);
+            }
+        }
+        let parse = |doc: &serde_json::Value| {
+            ModelAsset::parse_animated(
+                &serde_json::to_vec(doc).unwrap(),
+                &[&bytes],
+                ModelLimits::default(),
+            )
+            .unwrap()
+        };
+        let model = parse(&doc);
+        assert_eq!(model.resolve_morph_node_name("Face").unwrap(), 0);
+        assert_ne!(usize::from(model.resolve_joint_name("Face").unwrap()), 0);
+        let nodes = model.morph_nodes();
+        assert_eq!(nodes.len(), 1);
+        assert_eq!(nodes[0].name.as_deref(), Some("Face"));
+        assert_eq!(nodes[0].weights, vec![0.5, -0.25]);
+        let mut frame = model.bind_frame().unwrap();
+        model
+            .set_frame_morph_weights(
+                &mut frame,
+                model.resolve_morph_node_name("Face").unwrap(),
+                &[1.25, -0.75],
+            )
+            .unwrap();
+        assert_eq!(
+            model.frame_weights(&frame).unwrap(),
+            vec![vec![1.25, -0.75]]
+        );
+        assert!(model.resolve_morph_node_name("Parent").is_err());
+        doc["nodes"][1]["name"] = "Face".into();
+        assert!(parse(&doc).resolve_morph_node_name("Face").is_err());
+    }
+
+    #[test]
+    fn authored_morph_frame_edit_is_atomic_and_keeps_asset_and_pose() {
+        let (doc, bytes) = morph_import_fixture();
+        let source = serde_json::to_vec(&doc).unwrap();
+        let model = MorphModelAsset::parse(&source, &[&bytes], ModelLimits::default()).unwrap();
+        let mut frame = model.bind_frame().unwrap();
+        let before = frame.clone();
+        let node = doc["nodes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .position(|node| node.get("mesh").is_some())
+            .unwrap();
+        model
+            .set_frame_morph_weights(&mut frame, node, &[1.5, -0.5])
+            .unwrap();
+        assert_eq!(model.frame_weights(&frame).unwrap(), vec![vec![1.5, -0.5]]);
+        assert_eq!(frame.skin_matrices, before.skin_matrices);
+        assert_eq!(
+            model.frame_weights(&model.bind_frame().unwrap()).unwrap(),
+            vec![vec![0.5, -0.25]]
+        );
+        assert_ne!(
+            model.scene_meshes_frame(&frame).unwrap()[0].vertices()[0].position,
+            model.scene_meshes_frame(&before).unwrap()[0].vertices()[0].position
+        );
+        let accepted = frame.properties.clone();
+        for (node, weights) in [
+            (node, vec![f32::NAN, 0.]),
+            (node, vec![0.]),
+            (usize::MAX, vec![0., 0.]),
+            (node, vec![f32::MAX, f32::MAX]),
+        ] {
+            assert!(
+                model
+                    .set_frame_morph_weights(&mut frame, node, &weights)
+                    .is_err()
+            );
+            assert_eq!(frame.properties, accepted);
+            assert_eq!(frame.skin_matrices, before.skin_matrices);
+        }
+    }
+
+    #[test]
+    fn morph_import_decodes_defaults_channels_and_deforms_before_skeleton() {
+        let (doc, bytes) = morph_import_fixture();
+        let source = serde_json::to_vec(&doc).unwrap();
+        assert!(ModelAsset::parse(&source, &[&bytes], ModelLimits::default()).is_err());
+        let model = MorphModelAsset::parse(&source, &[&bytes], ModelLimits::default()).unwrap();
+        assert_eq!(
+            model.sample_weights(None, 0.).unwrap(),
+            vec![vec![0.5, -0.25]]
+        );
+        let gpu_source = model.morph_source(0).unwrap().unwrap();
+        assert_eq!(
+            gpu_source.evaluate(&[1.5, -0.5]).unwrap().vertices()[0].position,
+            [3., -2., 0.]
+        );
+        assert!(model.morph_source(1).is_err());
+        assert_eq!(
+            model.sample_meshes(None, 0.).unwrap()[0].vertices()[0].position,
+            [1., -1., 0.]
+        );
+        assert_eq!(
+            model.sample_weights(Some(0), 0.5).unwrap(),
+            vec![vec![1., -0.5]]
+        );
+        assert_eq!(
+            model.sample_meshes(Some(0), 0.5).unwrap()[0].vertices()[0].position,
+            [3., -2., 0.]
+        );
+        assert_eq!(
+            model.sample_weights(Some(0), 1.).unwrap(),
+            vec![vec![0., 0.]]
+        );
+        assert_eq!(
+            model.sample_weights(Some(0), -0.5).unwrap(),
+            model.sample_weights(Some(0), 0.5).unwrap()
+        );
+        assert!(model.sample_meshes(Some(1), 0.).is_err());
+        assert!(model.sample_weights(None, f32::NAN).is_err());
+        let mut animator = model.animator(0).unwrap();
+        let frame = animator.advance_wall(model.skeleton(), 0.5).unwrap();
+        assert_eq!(model.frame_weights(&frame).unwrap(), vec![vec![1., -0.5]]);
+        assert_eq!(
+            model.scene_meshes(&frame).unwrap()[0].vertices()[0].position,
+            [3., -2., 0.]
+        );
+        let mut rejected_candidate = animator.clone();
+        rejected_candidate
+            .advance_wall(model.skeleton(), 0.25)
+            .unwrap();
+        assert_eq!(animator.normalized_phase(), 0.5);
+        assert_eq!(model.frame_weights(&frame).unwrap(), vec![vec![1., -0.5]]);
+        let mut missing_properties = frame.clone();
+        missing_properties.properties = Default::default();
+        assert!(model.scene_meshes(&missing_properties).is_err());
+        assert_eq!(
+            model
+                .sample_meshes_with_weights(None, 0., &[vec![1.5, -0.5]])
+                .unwrap()[0]
+                .vertices()[0]
+                .position,
+            [3., -2., 0.]
+        );
+        assert!(model.sample_meshes_with_weights(None, 0., &[]).is_err());
+        assert!(
+            model
+                .sample_meshes_with_weights(None, 0., &[vec![1.]])
+                .is_err()
+        );
+        let mut static_doc = doc.clone();
+        static_doc["nodes"][1]
+            .as_object_mut()
+            .unwrap()
+            .remove("skin");
+        static_doc["nodes"][1]["scale"] = serde_json::json!([2, 1, 1]);
+        let normal_accessor =
+            static_doc["meshes"][0]["primitives"][0]["targets"][0]["POSITION"].clone();
+        static_doc["meshes"][0]["primitives"][0]["targets"][0]["NORMAL"] = normal_accessor;
+        let static_model = MorphModelAsset::parse(
+            &serde_json::to_vec(&static_doc).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let mesh = static_model.sample_meshes(None, 0.).unwrap().remove(0);
+        assert_eq!(mesh.vertices()[0].position, [2., -1., 0.]);
+        let expected_normal = Vec3::new(0.5, 0., 1.).normalize();
+        assert!(
+            Vec3::from_array(mesh.authored_normals().unwrap()[0])
+                .abs_diff_eq(expected_normal, 1e-6)
+        );
+        let mut mesh_defaults = doc.clone();
+        mesh_defaults["nodes"][1]
+            .as_object_mut()
+            .unwrap()
+            .remove("weights");
+        let model = MorphModelAsset::parse(
+            &serde_json::to_vec(&mesh_defaults).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        assert_eq!(
+            model.sample_weights(None, 0.).unwrap(),
+            vec![vec![0.25, 0.25]]
+        );
+    }
+
+    #[test]
+    fn morph_import_step_cubic_and_instance_defaults_are_independent() {
+        let (mut doc, mut bytes) = morph_import_fixture();
+        doc["nodes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"mesh":0,"skin":0,"weights":[-1,2]}));
+        doc["nodes"][0]["children"] = serde_json::json!([1, 2]);
+        doc["animations"][0]["samplers"][1]["interpolation"] = "STEP".into();
+        let model = MorphModelAsset::parse(
+            &serde_json::to_vec(&doc).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        assert_eq!(
+            model.sample_weights(Some(0), 0.5).unwrap(),
+            vec![vec![0., 0.], vec![-1., 2.]]
+        );
+        let offset = bytes.len();
+        // Cubic layout is [all incoming weights, all values, all outgoing weights] per key.
+        for value in [0f32, 0., 0., 0., 4., 0., 0., 0., 1., -1., 0., 0.] {
+            bytes.extend(value.to_le_bytes());
+        }
+        let view = doc["bufferViews"].as_array().unwrap().len();
+        doc["bufferViews"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"buffer":0,"byteOffset":offset,"byteLength":48}));
+        let output = doc["accessors"].as_array().unwrap().len();
+        doc["accessors"].as_array_mut().unwrap().push(
+            serde_json::json!({"bufferView":view,"componentType":5126,"count":12,"type":"SCALAR"}),
+        );
+        doc["buffers"][0]["byteLength"] = bytes.len().into();
+        doc["animations"][0]["samplers"][1] =
+            serde_json::json!({"input":4,"output":output,"interpolation":"CUBICSPLINE"});
+        let model = MorphModelAsset::parse(
+            &serde_json::to_vec(&doc).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        assert_eq!(
+            model.sample_weights(Some(0), 0.5).unwrap(),
+            vec![vec![1., -0.5], vec![-1., 2.]]
+        );
+        let meshes = model.sample_meshes(Some(0), 0.5).unwrap();
+        assert_eq!(meshes[0].vertices()[0].position, [3., -2., 0.]);
+        assert_eq!(meshes[1].vertices()[0].position, [-1., 8., 0.]);
+    }
+
+    #[test]
+    fn morph_import_rejects_truncation_unsupported_features_and_budgets() {
+        let (doc, bytes) = morph_import_fixture();
+        let parse = |doc: &serde_json::Value, limits| {
+            MorphModelAsset::parse(&serde_json::to_vec(doc).unwrap(), &[&bytes], limits)
+        };
+        assert!(
+            parse(
+                &doc,
+                ModelLimits {
+                    vertices: 5,
+                    ..ModelLimits::default()
+                }
+            )
+            .is_err()
+        );
+        assert!(
+            parse(
+                &doc,
+                ModelLimits {
+                    keys: 5,
+                    ..ModelLimits::default()
+                }
+            )
+            .is_err()
+        );
+        let mut bad = doc.clone();
+        bad["nodes"][1]["weights"] = serde_json::json!([1]);
+        assert!(parse(&bad, ModelLimits::default()).is_err());
+        let mut bad = doc.clone();
+        bad["meshes"][0]["primitives"][0]["targets"][0]["TANGENT"] =
+            bad["meshes"][0]["primitives"][0]["targets"][0]["POSITION"].clone();
+        assert!(
+            parse(&bad, ModelLimits::default())
+                .unwrap_err()
+                .0
+                .contains("tangent")
+        );
+        let mut bad = doc;
+        bad["animations"][0]["samplers"][1]["output"] = 4.into();
+        assert!(parse(&bad, ModelLimits::default()).is_err());
+    }
+
+    #[test]
+    fn shared_morph_asset_preserves_ownership_phase_endpoints_and_clip_reordering() {
+        let (mut doc, bytes) = morph_import_fixture();
+        let source = serde_json::to_vec(&doc).unwrap();
+        let model = ModelAsset::parse_animated(&source, &[&bytes], ModelLimits::default()).unwrap();
+        assert!(model.has_morph());
+        let mut changed_basis = doc.clone();
+        changed_basis["meshes"][0]["primitives"][0]["targets"][0] =
+            changed_basis["meshes"][0]["primitives"][0]["targets"][1].clone();
+        let changed_basis = ModelAsset::parse_animated(
+            &serde_json::to_vec(&changed_basis).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        assert!(model.morph_schema_compatible(&changed_basis));
+        assert!(!model.morph_basis_compatible(&changed_basis));
+        assert!(!model.has_same_morph_animation(&changed_basis, false));
+        assert!(model.scene_meshes(&model.skeleton.bind_pose()).is_err());
+        assert!(
+            model
+                .scene_surfaces64(&model.skeleton.bind_pose64())
+                .is_err()
+        );
+        let end = model.sample_frame_phase(Some(0), 1.).unwrap();
+        let weights = model.frame_weights(&end).unwrap();
+        assert_eq!(weights, vec![vec![2., -1.]]);
+        assert_eq!(
+            model.scene_meshes_frame(&end).unwrap()[0].vertices()[0].position,
+            [6., -4., 0.]
+        );
+        let wide = model.sample_pose_phase64(Some(0), 1.).unwrap();
+        assert_eq!(
+            model
+                .scene_surfaces64_with_weights(&wide, &weights)
+                .unwrap()[0]
+                .positions[0],
+            [6., -4., 0.]
+        );
+        let mut bad = model.clone();
+        bad.primitives.push(bad.primitives[0].clone());
+        assert!(bad.bind_frame().is_err());
+        let mut other = doc["animations"][0].clone();
+        other["name"] = "step-revision".into();
+        other["samplers"][1]["interpolation"] = "STEP".into();
+        doc["animations"].as_array_mut().unwrap().push(other);
+        let mut reordered = ModelAsset::parse_animated(
+            &serde_json::to_vec(&doc).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        reordered.animations.reverse();
+        assert_eq!(
+            reordered.sample_weights(Some(0), 0.5).unwrap(),
+            vec![vec![0., 0.]]
+        );
+        let mut animator = reordered.animator(0).unwrap();
+        let frame = animator.advance_wall(&reordered.skeleton, 0.5).unwrap();
+        assert_eq!(reordered.frame_weights(&frame).unwrap(), vec![vec![0., 0.]]);
+        reordered.animations[0] = Arc::new((*reordered.animations[0]).clone());
+        assert!(reordered.animator(0).is_err());
+    }
+
+    #[test]
+    fn rigid_morph_without_source_skin_keeps_node_animation_mirror_and_normals() {
+        let (mut doc, bytes) = morph_import_fixture();
+        doc.as_object_mut().unwrap().remove("skins");
+        doc["nodes"][1].as_object_mut().unwrap().remove("skin");
+        doc["nodes"][1]["translation"] = serde_json::json!([3, -2, 1]);
+        doc["nodes"][1]["scale"] = serde_json::json!([-2, 3, 0.5]);
+        doc["meshes"][0]["primitives"][0]["attributes"]
+            .as_object_mut()
+            .unwrap()
+            .remove("JOINTS_0");
+        doc["meshes"][0]["primitives"][0]["attributes"]
+            .as_object_mut()
+            .unwrap()
+            .remove("WEIGHTS_0");
+        doc["meshes"][0]["primitives"][0]["targets"][0]["NORMAL"] =
+            doc["meshes"][0]["primitives"][0]["targets"][0]["POSITION"].clone();
+        let source = serde_json::to_vec(&doc).unwrap();
+        let gltf = gltf::Gltf::from_slice(&source).unwrap();
+        assert_eq!(gltf.skins().count(), 0);
+        assert_eq!(gltf.nodes().count(), 2);
+        let model = ModelAsset::parse_animated(&source, &[&bytes], ModelLimits::default()).unwrap();
+        assert_eq!(model.skeleton.joints().len(), 2);
+        let ModelGeometry::Skinned(mesh) = &model.primitives[0].geometry else {
+            panic!("rigid morph needs the common GPU palette");
+        };
+        assert_eq!(mesh.vertices()[0].joints, [1, 0, 0, 0]);
+        assert!(
+            mesh.vertices()
+                .iter()
+                .all(|v| v.weights == [65535, 0, 0, 0])
+        );
+        let bind = model.bind_frame().unwrap();
+        assert_eq!(
+            model.scene_meshes_frame(&bind).unwrap()[0].vertices()[0].position,
+            [1., -5., 1.]
+        );
+        let frame = model.sample_frame_phase(Some(0), 0.5).unwrap();
+        let expected_normal = Vec3::new(-1., 0., 2.).normalize();
+        let posed = model.scene_meshes_frame(&frame).unwrap().remove(0);
+        assert_eq!(posed.vertices()[0].position, [0., -8., 1.]);
+        assert!(
+            Vec3::from_array(posed.authored_normals().unwrap()[0])
+                .abs_diff_eq(expected_normal, 1e-6)
+        );
+        let gpu_source = model.morph_source(0).unwrap().unwrap();
+        let local = gpu_source
+            .evaluate(&model.frame_weights(&frame).unwrap()[0])
+            .unwrap();
+        let gpu_reference = local
+            .posed_scene_mesh(&frame.skin_matrices, Mat4::IDENTITY, [1.; 4])
+            .unwrap();
+        assert_eq!(gpu_reference.vertices()[0].position, [0., -8., 1.]);
+        let wide = model.sample_pose_phase64(Some(0), 0.5).unwrap();
+        assert_eq!(
+            model
+                .scene_surfaces64_with_weights(&wide, &model.frame_weights(&frame).unwrap())
+                .unwrap()[0]
+                .positions[0],
+            [0., -8., 1.]
+        );
+        // Without an authored normal stream the existing zero/flat-shading tag survives.
+        doc["meshes"][0]["primitives"][0]["attributes"]
+            .as_object_mut()
+            .unwrap()
+            .remove("NORMAL");
+        doc["meshes"][0]["primitives"][0]["targets"][0]
+            .as_object_mut()
+            .unwrap()
+            .remove("NORMAL");
+        let flat = ModelAsset::parse_animated(
+            &serde_json::to_vec(&doc).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let flat = flat.morph_source(0).unwrap().unwrap();
+        assert!(flat.mesh().vertices().iter().all(|v| v.normal == [0.; 3]));
+        doc.as_object_mut().unwrap().remove("animations");
+        let still = ModelAsset::parse_animated(
+            &serde_json::to_vec(&doc).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        assert!(still.animations.is_empty());
+        assert!(still.morph_source(0).unwrap().is_some());
+        let frame = still.bind_frame().unwrap();
+        assert_eq!(still.frame_weights(&frame).unwrap(), vec![vec![0.5, -0.25]]);
+        assert_eq!(
+            still.scene_meshes_frame(&frame).unwrap()[0].vertices()[0].position,
+            [1., -5., 1.]
+        );
+    }
+
     fn fixture() -> (String, Vec<u8>) {
         let json = r#"{
           "asset":{"version":"2.0"},
@@ -1174,6 +1971,165 @@ mod tests {
             );
         }
     }
+    fn multi_mesh_fixture() -> (serde_json::Value, Vec<u8>, Mat4) {
+        let (json, mut bytes) = fixture();
+        let mut document: serde_json::Value = serde_json::from_str(&json).unwrap();
+        let inverse = Mat4::from_scale_rotation_translation(
+            Vec3::new(2., 1., 1.),
+            Quat::IDENTITY,
+            Vec3::new(-3., 0., 0.),
+        );
+        let offset = bytes.len();
+        for value in inverse.to_cols_array() {
+            bytes.extend(value.to_le_bytes());
+        }
+        document["buffers"][0]["byteLength"] = bytes.len().into();
+        document["bufferViews"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"buffer":0,"byteOffset":offset,"byteLength":64}));
+        document["accessors"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"bufferView":6,"componentType":5126,"count":1,"type":"MAT4"}));
+        document["skins"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"joints":[0],"inverseBindMatrices":6}));
+        document["nodes"][0]["children"] = serde_json::json!([1, 2, 3]);
+        document["nodes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"mesh":0,"skin":1,"translation":[100,0,0]}));
+        document["nodes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"mesh":1,"translation":[10,2,0]}));
+        document["meshes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"primitives":[{"attributes":{"POSITION":0,"NORMAL":1}}]}));
+        document["scenes"] = serde_json::json!([{"nodes":[0]}]);
+        document["scene"] = serde_json::json!(0);
+        (document, bytes, inverse)
+    }
+    #[test]
+    fn multiple_meshes_preserve_shared_joint_distinct_skin_binds_and_rigid_nodes() {
+        let (document, bytes, inverse) = multi_mesh_fixture();
+        let model = ModelAsset::parse(
+            &serde_json::to_vec(&document).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        assert_eq!(model.mesh_instance_count(), 3);
+        assert_eq!(model.primitives.len(), 3);
+        assert_eq!(model.skeleton.joints().len(), 6);
+        assert!(model.joint_names()[4..].iter().all(Option::is_none));
+        assert_eq!(model.resolve_joint_name("root").unwrap(), 0);
+        let pose = model.sample_pose_phase(Some(0), 0.5).unwrap();
+        let wide = model.sample_pose_phase64(Some(0), 0.5).unwrap();
+        let meshes = model.scene_meshes(&pose).unwrap();
+        let surfaces = model.scene_surfaces64(&wide).unwrap();
+        let palette = model.skin_matrices(&pose).unwrap();
+        let root = Mat4::from_translation(Vec3::X);
+        let expected = [
+            root,
+            root * inverse,
+            root * Mat4::from_translation(Vec3::new(10., 2., 0.)),
+        ];
+        for (index, primitive) in model.primitives.iter().enumerate() {
+            let ModelGeometry::Skinned(mesh) = &primitive.geometry else {
+                panic!("one common palette must represent every instance");
+            };
+            assert_eq!(
+                usize::from(mesh.joint_count()),
+                model.skeleton.joints().len()
+            );
+            for (vertex_id, vertex) in mesh.vertices().iter().enumerate() {
+                let joint = usize::from(vertex.joints[0]);
+                assert!(palette[joint].abs_diff_eq(expected[index], 1e-6));
+                let independent =
+                    expected[index].transform_point3(Vec3::from_array(vertex.position));
+                assert!(
+                    Vec3::from_array(meshes[index].vertices()[vertex_id].position)
+                        .abs_diff_eq(independent, 1e-6)
+                );
+                assert!(
+                    DVec3::from_array(surfaces[index].positions[vertex_id])
+                        .abs_diff_eq(independent.as_dvec3(), 1e-12)
+                );
+            }
+        }
+        // Repeated use of the same skin reuses its binding, with no extra clock.
+        let mut repeated = document.clone();
+        repeated["nodes"][2]["skin"] = serde_json::json!(0);
+        let repeated = ModelAsset::parse(
+            &serde_json::to_vec(&repeated).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        assert_eq!(repeated.skeleton.joints().len(), 5);
+        let pose = repeated.sample_pose_phase(Some(0), 0.5).unwrap();
+        let meshes = repeated.scene_meshes(&pose).unwrap();
+        assert_eq!(meshes[0].vertices(), meshes[1].vertices());
+    }
+    #[test]
+    fn multiple_mesh_selection_and_palette_budgets_fail_without_truncation() {
+        let (mut document, bytes, _) = multi_mesh_fixture();
+        document["nodes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"mesh":1,"translation":[500,0,0]}));
+        document["scenes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"nodes":[4]}));
+        let parse = |document: &serde_json::Value| {
+            ModelAsset::parse(
+                &serde_json::to_vec(document).unwrap(),
+                &[&bytes],
+                ModelLimits::default(),
+            )
+        };
+        assert_eq!(parse(&document).unwrap().mesh_instance_count(), 3);
+        document.as_object_mut().unwrap().remove("scene");
+        assert!(
+            parse(&document)
+                .unwrap_err()
+                .to_string()
+                .contains("explicit default scene")
+        );
+        document["scene"] = serde_json::json!(1);
+        assert_eq!(parse(&document).unwrap().mesh_instance_count(), 1);
+        document["scene"] = serde_json::json!(0);
+        while document["nodes"].as_array().unwrap().len() < voxy_animation::MAX_JOINTS {
+            document["nodes"]
+                .as_array_mut()
+                .unwrap()
+                .push(serde_json::json!({}));
+        }
+        assert!(
+            parse(&document)
+                .unwrap_err()
+                .to_string()
+                .contains("combined node/skin palette")
+        );
+        let (mut document, bytes, _) = multi_mesh_fixture();
+        document["skins"][1]["joints"] = serde_json::json!([0, 0]);
+        assert!(
+            ModelAsset::parse(
+                &serde_json::to_vec(&document).unwrap(),
+                &[&bytes],
+                ModelLimits::default()
+            )
+            .unwrap_err()
+            .to_string()
+            .contains("duplicate skin joint")
+        );
+    }
+
     #[test]
     fn imports_skin_and_animation_and_deforms_vertex() {
         let (json, bytes) = fixture();

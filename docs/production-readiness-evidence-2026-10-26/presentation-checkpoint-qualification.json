@@ -1,0 +1,25 @@
+{
+  "status": "scene_presentation_history_and_clock_checkpoint_verified",
+  "code_sha256": {
+    "crates/voxy_scene/src/simulation_checkpoint.rs": "2c393c6f399ee0c4eeec43380ed74189715830eec603c25b731a9a9f1cb5503d",
+    "crates/voxy_scene/src/simulation.rs": "460a22ecce0a279c9575429cc4538b541dd33794c1c5e70567832807d17e9712",
+    "crates/voxy_scene/src/lib.rs": "d421d512fe2bb270e35ceaa6d45e9d49d306a02c0520108112f9c25d5ce54c63"
+  },
+  "scene_library_passed": 78,
+  "editor_library": {
+    "passed": 227,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_scene_time_gameplay_editor_all_targets_clippy_passed": true,
+  "json_new_scene_render_world_bits_match_immediately": true,
+  "continuation_frames_render_world_and_schedule_exact": 120,
+  "deleted_historical_parent_pruning_preserves_zero_tick_and_following_frames": true,
+  "invalid_alpha_pose_identity_alias_and_composed_overflow_rejection_preserves_state": true,
+  "user_behaviors_or_scene_mutated_during_candidate_validation": false,
+  "whole_session_save_implemented": false,
+  "behavior_commands_and_other_participants_included": false,
+  "bounded_disk_slots_implemented": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

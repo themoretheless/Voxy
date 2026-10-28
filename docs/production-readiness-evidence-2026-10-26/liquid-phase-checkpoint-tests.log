@@ -1,0 +1,9 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.87s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/physics-8f206cb8622d0c6d)
+
+running 1 test
+test liquid::phase::checkpoint::tests::fixed_and_pressure_phase_history_rebuild_without_enthalpy_remap ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 542 filtered out; finished in 0.03s
+

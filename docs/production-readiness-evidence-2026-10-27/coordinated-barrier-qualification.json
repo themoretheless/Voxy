@@ -1,0 +1,42 @@
+{
+  "scope": "Coordinated native model/UI drain, game freeze and Offline audio checkpoint; explicit cancellation",
+  "checks": {
+    "focused_original_tests": 4,
+    "budget_failure_test": "passed",
+    "gpu_adapter": "Apple M4 Max Metal",
+    "readbacks_exact_equal": true,
+    "nonblack_pixels": 946,
+    "readback_sha256": "39c4e4256c66809e9ef2c0cd23f537cf5b997ff4955090709251eaa49f9ef27f",
+    "editor_passed": 316,
+    "editor_ignored": 27,
+    "all_target_clippy": "passed",
+    "scoped_rustfmt": "passed",
+    "tracked_source_diff_check": "passed"
+  },
+  "implemented": [
+    "Reuse existing participant barriers; do not release fences owned by another operation",
+    "Freeze game clock, input consumption, animation and Offline audio after model/UI drain",
+    "Keep exact Offline audio snapshot during frozen draw",
+    "Cancellation consumes issued watcher acknowledgements, preserves pending input and rebases paused wall time",
+    "Budget rejection permits cancellation, game continuation and reacquisition"
+  ],
+  "volatile_state": {
+    "App.restore_barrier": "Transient coordination state; not serialized game state; cleared at shutdown before native worker teardown"
+  },
+  "not_claimed": [
+    "Native audio device queue barrier (explicitly rejected before acquisition)",
+    "Full App atomic publication, menu commands, first presented frame and input handoff",
+    "Rich native UI/window integration; tests use headless draw and explicit offscreen GPU owners",
+    "Physical peak memory, displayed FPS, full ENG-03 through ENG-13 completion"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier.rs": "4d324b74ed4da573ea77ef1ec0f7e59be6c93dcdda2429148d1782155c41e271",
+    "crates/voxy_editor/src/app/restore_barrier/tests.rs": "a58feed192b768bdbaf67c53beef95dd1a3a70dd08bdd7f4b91359b144e707c2",
+    "crates/voxy_editor/src/lib.rs": "c3a791f83813c32a6f115937d629e78253099e2757d502b4f9d97c1f8207475b",
+    "crates/voxy_editor/src/app/play_mode.rs": "c9b91a4acc76fd2354387f15f03a1cba15c44c95d50950ab097b5315e737994c",
+    "crates/voxy_editor/src/app/viewport.rs": "b91f92d03e6551a43ec8c2b2d90e7bf11d7c91f5e623da31dfd0bf47bc302126",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "5202ecb8fd3d41d2fb6311d4bb0ea8476d390d9215dc650557f0f80ad5963076",
+    "crates/voxy_editor/src/ui_live/reload_checkpoint.rs": "c3588bc53f29f5c87fede92b662d64fdf7645498a0bfe92f87a49c4f279ec7b7",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "526cc7b52ce034f7431edd9c37b802e7ce835e097155eb80e26e1eaeadfb1f66"
+  }
+}

@@ -1,0 +1,47 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.82s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 6 tests
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly
+MODEL PUBLISHED frames=0 first_x=-0.25 asset=rig
+GAME PACKAGE PASS sources=6 bytes=3580
+GAME PACKAGE PASS sources=6 bytes=3758
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+GAME PACKAGE PASS sources=7 bytes=9698
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+GAME PACKAGE PASS sources=7 bytes=15318
+GAME STATE {"version":1,"objects":[]}
+GAME CHECK PASS ticks=120 objects=0 prefab_instances=0
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+test project_prefab_tests::deferred_prefabs_are_validated_before_package_publication_and_restore_without_sources ... ok
+GAME STATE {"version":1,"objects":[]}
+GAME CHECK PASS ticks=120 objects=0 prefab_instances=0
+GAME PACKAGE PASS sources=7 bytes=9726
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=morph
+GAME PACKAGE PASS sources=7 bytes=9921
+GAME PACKAGE PASS sources=8 bytes=15946
+test project_prefab_tests::deferred_prefab_model_bindings_validate_expanded_overrides_before_build ... ok
+test project_prefab_tests::deferred_prefab_morph_weights_validate_target_and_survive_package ... ok
+GAME PACKAGE PASS sources=7 bytes=9696
+MODEL PUBLISHED frames=0 first_x=-0.25 asset=rig
+test project_prefab_tests::deferred_prefab_retarget_requires_resolvable_animated_rigs_and_valid_mapping ... ok
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly
+test project_prefab_tests::deferred_prefab_model_parts_check_imported_nodes_after_nested_overrides ... ok
+GAME PACKAGE PASS sources=8 bytes=16281
+MODEL PUBLISHED frames=0 first_x=-0.25 asset=rig
+MODEL PUBLISHED frames=0 first_x=-0.25 asset=target
+test project_prefab_tests::deferred_prefab_animation_selection_uses_native_playback_and_retarget_source ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 392 filtered out; finished in 0.15s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-cbe125d7235bbd56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

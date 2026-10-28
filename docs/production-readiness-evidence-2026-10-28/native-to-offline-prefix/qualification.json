@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-28",
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Device-free consumption and persistence of already mixed native queue/pump PCM; whole-App native-to-offline restore and return",
+  "changes": [
+    "Bounded OfflineOutput is prepared by the original OutputCheckpoint validator and preserves canonical sample bits and queue/pump order",
+    "Offline consumer copies or discards already mixed prefix before requesting new mixer frames; mixer frame counter is not incremented twice",
+    "Partial prefix is saved through the original output wire format, including capacity, complete pump block and exact suffix cursor",
+    "AudioPlay logical owner carries pending prefix; ordinary legacy offline archives without output retain their prior wire shape",
+    "Host policy/window selects actual native destination; a native archive can restore offline without opening hardware",
+    "Native source retiring to a logical target uses the original final permit/receipt: empty old device queue, swap all owners, close device last",
+    "Native transport and logical pending prefix are mutually exclusive in each active AudioPlay; no second mixer/runtime or lossy conversion"
+  ],
+  "checks": {
+    "editor": {
+      "passed": 396,
+      "ignored": 50
+    },
+    "audio_device": {
+      "passed": 23,
+      "ignored": 2
+    },
+    "gpu_app": {
+      "passed": 12,
+      "device": "Apple M4 Max",
+      "backend": "Metal",
+      "window": false
+    },
+    "native_session": {
+      "passed": 1,
+      "rate": 48000,
+      "gain": 0,
+      "window": false
+    },
+    "clippy": "editor and audio-device all targets -D warnings, exit 0",
+    "format": "scoped rustfmt passed",
+    "diff": "scoped git diff --check passed"
+  },
+  "regressions": [
+    "Core renderer preserves negative zero/subnormal/nonzero prefix bits; binary partial checkpoint resumes exact remaining sequence and suffix cursor",
+    "Editor budget case: 1050 already mixed queued frames; first 800 consumes prefix without mixing, second 800 consumes 250 and mixes exactly 550; partial save/prepare matches",
+    "New actual GPU/native case cancels logical destination without closing original native connection or changing scene/counters",
+    "Whole-App native archive loads offline, retains exact runtime/clock/PCM/output wire, consumes prefix over 120 game/render frames with frames=archived+96000-prefix_count",
+    "Same native file then loads on an already logical source without hardware and returns to native output",
+    "Physical native Session decodes to logical owner with entire playback record exactly equal, including outstanding PCM, without device connection",
+    "Legacy negative native-to-offline decoder assertion replaced by exact preserved-output positive assertion; corrupt output rejection retained; initial log preserved"
+  ],
+  "limits": [
+    "Consumed-prefix frame counter intentionally tracks newly mixed frames, not consumption of frames already included in archived mixer position",
+    "Offline AudioPlay uses its established discard sink; standalone OfflineOutput.render_prefix exposes the same exact samples for consumers",
+    "Only application-owned queue/pump data is preserved; native/analog buffers and audible continuity are not qualified",
+    "Reconnect/device replacement/rate changes, native window, latency/power/FPS and full ENG-03 through ENG-13 remain open"
+  ],
+  "sources_sha256": {
+    "crates/voxy_audio_device/src/lib.rs": "2073f5468e8b746de36d357581681a863428fa77ec134c7a1ae1d64d226ce802",
+    "crates/voxy_audio_device/src/output_checkpoint.rs": "42bff522dd45aaa16c3c8e05c4a345b3fdab0792b79f1fc29cddcd873e9f1d1c",
+    "crates/voxy_editor/src/audio_play.rs": "e3d896f342b7de60c6435183fa7e015214bca196dcfad822fcdd949b82c8a7d7",
+    "crates/voxy_editor/src/audio_playback_checkpoint.rs": "b54752e478ed33608526f0cb5560dca1ee70c8f1027c035d31274ce59c5aade7",
+    "crates/voxy_editor/src/audio_owner_checkpoint.rs": "68b59b40b90d70536efb9a97ed4f71948e599b6acbc4e49ca5a23a106cdb2d2b",
+    "crates/voxy_editor/src/audio_clock_checkpoint.rs": "f5693245850d52665f7cb0f4af801998857c9b7c717d6fbe28f993452de5e079",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "0616316aebed1f615ab96dabfaa6f02cda6d62f5f5eec45910d367024e102f16",
+    "crates/voxy_editor/src/app/restore_barrier.rs": "3ae69b7faa2d2380ca67fc92e7514d96bee9309dba7b34007624c01d807fc26a",
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "7a2c29284316234e7aecbdf14fee992d9ad9c88b210a1222e589fcc81e8a5aef",
+    "crates/voxy_editor/src/app/restore_barrier/load.rs": "39509c50e3fd94a7d5083c68b9807ac851544ac7b931bc0439040b3f48bf363e",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "b4ad90cbff0b41c85ac8dae1abdca0fd18288a74079c27d7cd48df1ed5b02444"
+  },
+  "logs": [
+    "editor.log",
+    "device.log",
+    "gpu.log",
+    "native_session.log",
+    "clippy.log",
+    "initial-legacy-negative-assertion.log"
+  ]
+}

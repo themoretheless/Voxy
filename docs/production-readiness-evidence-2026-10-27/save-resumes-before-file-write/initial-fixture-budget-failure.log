@@ -1,0 +1,23 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.74s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-ffe57fcdab83b83c)
+
+running 5 tests
+
+thread 'app::restore_barrier::save::tests::frame_poll_returns_while_the_file_worker_is_deliberately_blocked' (81480083) panicked at crates/voxy_editor/src/app/restore_barrier/save.rs:406:31:
+called `Result::unwrap()` on an `Err` value: Message("UI checkpoint version or capacity")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test app::restore_barrier::save::tests::frame_poll_returns_while_the_file_worker_is_deliberately_blocked ... FAILED
+test app::restore_barrier::save::tests::failed_capture_and_failed_writer_preserve_existing_file_and_resume_source ... ok
+test app::restore_barrier::save::tests::shutdown_finishes_a_started_atomic_write ... ok
+test app::restore_barrier::save::tests::background_save_preserves_custom_components_and_releases_all_fences ... ok
+test app::restore_barrier::save::tests::late_save_stages_never_release_a_newer_restore_barrier ... ok
+
+failures:
+
+failures:
+    app::restore_barrier::save::tests::frame_poll_returns_while_the_file_worker_is_deliberately_blocked
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 433 filtered out; finished in 0.11s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

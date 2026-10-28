@@ -8,7 +8,7 @@ use voxy_scene::SceneDocument;
 
 const MAX_BYTES: usize = crate::scene_limits::DOCUMENT_BYTES;
 
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct SceneRevision {
     path: PathBuf,
     digest: blake3::Hash,
@@ -53,5 +53,31 @@ impl SceneRevision {
             return Err("scene file changed externally; reload before saving".into());
         }
         Ok(())
+    }
+}
+
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(super) struct SceneRevisionCheckpoint {
+    path: PathBuf,
+    digest: [u8; 32],
+}
+impl SceneRevision {
+    pub(super) fn checkpoint(&self) -> SceneRevisionCheckpoint {
+        SceneRevisionCheckpoint {
+            path: self.path.clone(),
+            digest: *self.digest.as_bytes(),
+        }
+    }
+}
+impl SceneRevisionCheckpoint {
+    pub(super) fn prepare(&self, path: Option<&Path>) -> Result<SceneRevision, crate::EditorError> {
+        if path != Some(self.path.as_path()) || self.path.as_os_str().is_empty() {
+            return Err("scene revision checkpoint path differs".into());
+        }
+        Ok(SceneRevision {
+            path: self.path.clone(),
+            digest: blake3::Hash::from_bytes(self.digest),
+        })
     }
 }

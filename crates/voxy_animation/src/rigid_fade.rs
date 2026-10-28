@@ -1,10 +1,17 @@
 //! Read-only rigid fade candidates from the Animator's existing clocks.
+#[path = "rigid_fade_checkpoint.rs"]
+mod checkpoint;
 use super::*;
+pub use checkpoint::{
+    PreparedRootRigidFadeCheckpoint, RootRigidFadeCheckpoint, RootRigidFadeCheckpointLimits,
+    RootRigidFadeCompileContext,
+};
 
 #[derive(Clone, Debug)]
 pub struct RootRigidFadePlan {
     initial: Animator,
     wall_seconds: f64,
+    preparation_capacity: usize,
     extraction_axes: [bool; 3],
     /// Staged full-tick animator. Publish only after motion/physics acceptance.
     pub candidate: Animator,
@@ -218,6 +225,12 @@ impl RootRigidFadePlan {
             || initial.time != animator.time
             || initial.speed != animator.speed
             || initial.motion_joint != animator.motion_joint
+            || initial.accepted_properties != animator.accepted_properties
+            || match (&initial.property_bindings, &animator.property_bindings) {
+                (None, None) => false,
+                (Some(a), Some(b)) => !Arc::ptr_eq(a, b),
+                _ => true,
+            }
         {
             return false;
         }
@@ -230,6 +243,11 @@ impl RootRigidFadePlan {
                     && a.elapsed == b.elapsed
                     && a.duration == b.duration
                     && match (&a.source_pose, &b.source_pose) {
+                        (None, None) => true,
+                        (Some(a), Some(b)) => Arc::ptr_eq(a, b),
+                        _ => false,
+                    }
+                    && match (&a.source_properties, &b.source_properties) {
                         (None, None) => true,
                         (Some(a), Some(b)) => Arc::ptr_eq(a, b),
                         _ => false,
@@ -462,6 +480,7 @@ impl Animator {
         Ok(Some(RootRigidFadePlan {
             initial: self.clone(),
             wall_seconds: wall,
+            preparation_capacity: max_spans,
             extraction_axes: axes,
             candidate,
             frame,

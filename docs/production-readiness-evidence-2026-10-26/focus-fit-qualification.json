@@ -1,0 +1,34 @@
+{
+  "status": "camera_fit_bounds_and_focus_integration_headless_pass",
+  "code_sha256": {
+    "crates/voxy_editor/src/camera.rs": "622fad450b6e9b0859221dd8c18c9658395d156e692e7efae0f1af732b1ec5db",
+    "crates/voxy_editor/src/app/picking_drag.rs": "bb8cb0f5633eb7bdf5743eb1b5665c6e858da7dab0cb84b97ce5e0d84b3516f3",
+    "crates/voxy_editor/src/locomotion_tests.rs": "4785fb1f0aefe8ba80d703a76a791a188b83d7b234c2df4363bfb831cb84f5ea"
+  },
+  "editor_library": {
+    "passed": 225,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_editor_all_targets_clippy_passed": true,
+  "tests": [
+    "camera::fit_tests::fitted_bounds_project_inside_both_camera_types_and_aspects",
+    "camera::fit_tests::invalid_or_unframeable_bounds_preserve_camera",
+    "locomotion_tests::model_picking_uses_morphed_triangles_outside_imported_geometry"
+  ],
+  "tested": [
+    "orthographic_and_perspective",
+    "portrait_landscape_wide_aspects",
+    "orbited_orientation",
+    "point_bounds",
+    "invalid_and_unframeable_rollback",
+    "morphed_mirrored_nonuniform_app_focus_all_vertices_project_inside"
+  ],
+  "active_split_view_region_used": true,
+  "world_bounds_f64": true,
+  "native_visual_acceptance": false,
+  "panel_overlay_safe_area_qualified": false,
+  "gpu_culling_qualified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

@@ -1,0 +1,40 @@
+{
+  "scope": "Complete native PlaySession plus original model-resource file and full native Play origin observation",
+  "format": "VOXYPGR1",
+  "archive_bytes": 158112,
+  "archive_sha256": "57f49be89c10fb3f67c63c44900ad9e6cafda4e6d7c525d481b1418818391171",
+  "native_runtime_path": "play.animations",
+  "resource_runtime_duplicate": false,
+  "checks": {
+    "editor_passed": 310,
+    "editor_ignored": 26,
+    "all_target_clippy": "passed",
+    "full_native_continuation_frames": 120,
+    "original_source_directory": "removed before prepare",
+    "restored_model_arc": "fresh; shared with catalog and runtime root",
+    "existing_model_gpu_test": "passed on Apple M4 Max Metal",
+    "format_and_diff": "passed"
+  },
+  "origin_rejections": [
+    "Sub-fixed-step simulation accumulator advancement with unchanged scene token",
+    "Host pacing Instant change",
+    "Player input event",
+    "Character physics policy change without scene mutation",
+    "Queued UI callback event",
+    "Queued scene command"
+  ],
+  "qualified_scenario": "Rich existing PlaySession fixture temporarily moved into App owner for capture; native behavior/UI callback codecs, physics, liquid, angular motion, input and animation continue identically against independently decoded resource models",
+  "initial_rejection": "Test restore cap 256 was below native watcher policy 257; changed fixture admission to 257. Original rejected log/archive retained.",
+  "not_qualified": [
+    "No complete App lifecycle or native editor/standalone workflow claim",
+    "Full Play/resources CPU file has no GPU roles in this regression; full Play-to-GPU composition still open",
+    "Full root play/UI/audio freeze and exclusive publication",
+    "First presented-frame acknowledgement and input handoff",
+    "Physical memory/FPS and ENG-03 through ENG-13"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "82de5c6aabc9f2a212d7b60d4398819bde780e88437be43e8d19ee6063f54441",
+    "crates/voxy_editor/src/app/resource_checkpoint/play.rs": "594e09f1ce978953dfa2ef8c56ce353612905daf1e6d29f11c77bfb344c4bb5a",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "d95f860211509306d35503122360a09940f33397496631a2d3133c6742564866"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "scope": "Detached combined GPU model, original-material, accepted-frame and skeletal LOD restore candidate",
+  "implementation": [
+    "One fork of native ResidencyCache; live cache unchanged",
+    "Static model publications and per-owner historical source publications",
+    "Material bindings shared per publication without unused fallback geometry upload",
+    "Native accepted owner updates preserve individual ticks",
+    "Native staged accepted LOD reconstruction",
+    "OutOfMemory/Internal/Validation scopes popped synchronously; candidate exposed only after validate"
+  ],
+  "checks": {
+    "editor": {
+      "passed": 306,
+      "failed": 0,
+      "ignored": 25
+    },
+    "explicit_real_gpu_tests": 3,
+    "adapter": "Apple M4 Max / Metal",
+    "all_target_clippy": "passed",
+    "scope_stack_after_late_validation_and_cancellation": "clean",
+    "live_cache_after_failure_and_successful_preparation": "unchanged",
+    "accepted_geometry_accounting": "candidate models plus animated allocations, excluding replaced old geometry"
+  },
+  "lod_readback": [
+    {
+      "view": 0,
+      "matching": true,
+      "nonblack_pixels": 496,
+      "sha256": "692598514cc5b6aba82e58b84abe5a13fbf44520df2baea62e1522a27c576cec"
+    },
+    {
+      "view": 1,
+      "matching": true,
+      "nonblack_pixels": 496,
+      "sha256": "692598514cc5b6aba82e58b84abe5a13fbf44520df2baea62e1522a27c576cec"
+    }
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/gpu_model.rs": "9ce03fe0cb47042912114f91cfc590d1c5c84970d47a35cbc1cac91912a54c22",
+    "crates/voxy_editor/src/gpu_model_restore.rs": "38d8ffe67026ff22e1679296445da46dc4516d39b5755817a29a2d98ed7016bf",
+    "crates/voxy_editor/src/gpu_model_restore/tests.rs": "472847bddad8d8ee90d874ab7edd2a5648b2c532ee215e2fae3c31a5b84bf42c",
+    "crates/voxy_editor/src/animated_models/checkpoint.rs": "40628d63780802c1ef5de37fcb7a198b5834fd9e620b0f67251db2a217074085",
+    "crates/voxy_editor/src/animated_models/tests.rs": "7d34868679a8738a619e62824875bb6aaa9f243105c2ee0be287602da029c7d3"
+  },
+  "open": [
+    "Whole-App atomic publication and stale-candidate guard at commit",
+    "First presented-frame acknowledgement and input handoff",
+    "Full static GPU LOD residency/history and non-model Graphics fields",
+    "Retired epoch-only owners and authoring caches",
+    "Native audio-device queue",
+    "Physical memory/FPS and remaining ENG-03 through ENG-13"
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-27",
+  "scope": "Complete native CPU ModelAsset resource graph file and pure native reconstruction; broader EditorAsset/App/engine qualification remains open.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "toolchain": "nightly-2026-05-27",
+  "source_sha256": {
+    "Cargo.lock": "8c9a2f04938d75ecbedc640f3461d2a3c63a6f2b0d7c32d0791164fa74e58ecb",
+    "crates/voxy_animation/src/asset_checkpoint.rs": "c3b2c0df087289b33818c9fd6941523b89b417fa257850ac521bab20efe8fce9",
+    "crates/voxy_animation/src/asset_checkpoint/tests.rs": "7558437f47bbb53884c433ef27778b9487a8663c35200d71f98b44a41082c6f8",
+    "crates/voxy_animation/src/property_track/asset_checkpoint.rs": "f7dec92bb362365d87345247a32572a65c282a48616c2f8a2aaf9b80748d7276",
+    "crates/voxy_animation/src/property_track/asset_checkpoint/tests.rs": "50139d3eb536b7792af2b8463965afd78ba26778cb1cd41a96973cd761a83e1f",
+    "crates/voxy_model/Cargo.toml": "5f101af7d927c281190fa78ded56dbd5fa8039afb9d2f5ddb02391e1a379dd42",
+    "crates/voxy_model/src/lib.rs": "5fdf1a90776ccc3bd1c420c2d773d6c48907a696c8be27cf03cdb5513a4d28c5",
+    "crates/voxy_model/src/morph.rs": "701b0eaeafc01e867132b551b7a3809f36180acd34299c0a2109599bdcb0e0c1",
+    "crates/voxy_model/src/morph/checkpoint/tests.rs": "a570b708441554a6cdfde4524d6cd40e2e1face9b059c32882fbef884343a3eb",
+    "crates/voxy_model/src/checkpoint.rs": "1a91ec1474312b855b5f3121e35feb6663d92bf8a0906e8638e09406549f298f",
+    "crates/voxy_model/src/checkpoint/tests.rs": "903515695142e907915a5d628ed269dbafa91ef99819247d44f4ba14a9d42eea",
+    "crates/voxy_model/examples/model_checkpoint.rs": "938d9188a4aca3bd2bb0d9adccfd492d64c0c68a9a36b261da27e9b45c9d1766",
+    "crates/voxy_editor/src/import/animated_tests.rs": "b658769301501842abee09f65ab548c344b4f6674897bf69ff7208c588bd1b73"
+  },
+  "archive": {
+    "magic": "VOXYMDL1",
+    "version": 1,
+    "header_bytes": 48,
+    "integrity": "exact body length and BLAKE3 over metadata/chunk framing and all participant blocks",
+    "framing": "bounded strict JSON metadata followed by typed length-prefixed native participant files",
+    "publication": "pure prepare returning staged Arc<ModelAsset> graph; no live App mutation"
+  },
+  "preserved": [
+    "All 8 ModelAsset fields, 5 MorphImportData fields, 4 binding fields and complete primitive/morph payloads",
+    "Repeated outer ModelAsset references and distinct clones sharing morph/rig/clip/skin resources",
+    "Independent equal resources remain independent",
+    "Source-clip identity mappings, including reordered/repeated references and their existing native error behavior",
+    "Cross-field and cross-participant name Arc aliases; empty metadata names; optional refs",
+    "Native lazy cache masks/reservations/errors and exact compiled curve receipts through skeletal participant"
+  ],
+  "checks": {
+    "name_binding_regressions": 2,
+    "new_model_graph_regressions": 4,
+    "animation_lib": {
+      "passed": 357,
+      "ignored": 0
+    },
+    "model_lib": {
+      "passed": 53,
+      "ignored": 0
+    },
+    "editor_lib": {
+      "passed": 284,
+      "ignored": 21
+    },
+    "strict_clippy": "animation/model/editor all-targets including model_checkpoint example passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "diff_check": "passed"
+  },
+  "consumer_evidence": [
+    "Real Fox editor importer: complete model file saved, source directory removed, own restored ModelAsset APIs compared for all clips at 120 phases",
+    "Actual morph glTF import: complete graph file with shared/independent models, source clip references, skin streams and metadata names; 120 phases of exact pose/weight/posed geometry",
+    "Static unskinned transformed geometry, legacy skin/default morph owner and empty graph",
+    "Standalone CPU model_checkpoint example persisted a 443069-byte Fox model archive and performed 1080 exact pose/weight/posed-mesh comparisons with no source resolver supplied to prepare"
+  ],
+  "file_artifact": {
+    "path": "model-graph-file/model.voxymdl",
+    "bytes": 443069,
+    "sha256": "9735218130d2a505e756dc8026ab53dfedffbc405284f210bcc10ccb72f868e6",
+    "blake3": "991a76f6639b253ae75ef2f1bc82697c2573b6f4d3825264b42c9e8fd2a2121c",
+    "receipt": "model-graph-file/receipt.json",
+    "exact_comparisons": 1080
+  },
+  "admission": [
+    "Version, metadata/file/chunk, model/reference/morph/primitive/name/string and nested participant limits",
+    "Canonical first-use rooted model/morph tables and unique ordered geometry-block ownership checked before native reconstruction",
+    "Private mesh-joint/name count and source/property-clip count invariants protect native indexing",
+    "Exact source skin agreement before installing shared buffers; every cache rebuilt natively and verified",
+    "Final complete canonical recapture rejects inconsistent or unused graph records",
+    "Wrong external name text/length or merged/split identities reject without changing original resources"
+  ],
+  "rejected_attempts": [
+    "Initial test-only GLB fixture path and nonexistent is_skinned method corrected",
+    "Clippy map-entry and exhaustive test match corrected",
+    "Duplicate clip test incorrectly expected Animator success; original native Animator also rejects duplicated source identity. Final test compares original/restored errors and verifies a valid independent Animator; native validation unchanged",
+    "Initial canonical-preflight patch had placement/borrow compile errors; corrected before final focused/full tests"
+  ],
+  "limitations": [
+    "Decoded images, imported scene nodes, LOD witnesses, original import observations and catalog revision IDs belong to enclosing owners and are not included",
+    "Caller-owned asset-query barrier is required; model worker/watch barrier not implemented here",
+    "Pure preparation is not atomic CPU/GPU/App installation",
+    "Physical peak heap/native output device and cross-platform compiler receipts are not qualified",
+    "No explicit GPU/window/audio-device/FPS qualification"
+  ],
+  "remaining": [
+    "Complete EditorAsset graph and source observations/LOD policy",
+    "Catalog/revision joins and model import/watch barriers",
+    "Atomic native CPU/GPU/App publication and native audio queue transfer",
+    "Whole-session disk/native/platform acceptance",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "field_audit": "model-graph-owner-field-audit.json",
+  "logs": {
+    "linked-names-focused": "model-graph-linked-names-focused.log",
+    "initial-model-check": "model-graph-initial-model-check.log",
+    "initial-focused-compile-rejected": "model-graph-initial-focused-compile-rejected.log",
+    "initial-focused-contract-rejected": "model-graph-initial-focused-contract-rejected.log",
+    "initial-clippy-rejected": "model-graph-initial-clippy-rejected.log",
+    "canonical-compile-rejected": "model-graph-canonical-compile-rejected.log",
+    "focused-final": "model-graph-focused-final.log",
+    "animation-full": "model-graph-animation-full.log",
+    "model-precanonical": "model-graph-model-precanonical.log",
+    "model-final": "model-graph-model-final.log",
+    "editor-final": "model-graph-editor-final.log",
+    "fox-consumer": "model-graph-fox-consumer.log",
+    "file-example": "model-graph-file-example.log",
+    "clippy": "model-graph-clippy.log",
+    "format": "model-graph-format.log",
+    "diff": "model-graph-diff.log"
+  }
+}

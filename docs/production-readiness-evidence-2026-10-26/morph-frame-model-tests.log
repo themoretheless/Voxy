@@ -1,0 +1,12 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.85s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_model-eb514cad44b6bd0a)
+
+running 3 tests
+test tests::morph_import_step_cubic_and_instance_defaults_are_independent ... ok
+test tests::morph_import_rejects_truncation_unsupported_features_and_budgets ... ok
+test tests::morph_import_decodes_defaults_channels_and_deforms_before_skeleton ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 0.00s
+

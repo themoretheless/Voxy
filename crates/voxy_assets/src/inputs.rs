@@ -17,7 +17,7 @@ pub enum InputError {
 }
 /// A decoded value and its captured inputs share one immutable publication.
 /// Use `AssetCatalog<ImportedAsset<T>>` to replace them together.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImportedAsset<T> {
     value: T,
     inputs: ImportInputs,
@@ -26,6 +26,45 @@ impl<T> ImportedAsset<T> {
     #[must_use]
     pub const fn value(&self) -> &T {
         &self.value
+    }
+    /// Stages a receipt for an owner-authored replacement of exactly one input.
+    /// All original inputs are validated first; unchanged snapshots retain their
+    /// Arc identities and the decoded value is cloned without re-decoding.
+    /// This is detached state: install it only after publishing exactly `after`.
+    /// It does not write files or authorize unrelated input changes.
+    /// # Errors
+    /// Rejects a stale baseline, invalid replacement digest or original quotas.
+    pub fn prepare_input_replacement(
+        &self,
+        id: &AssetId,
+        before: &InputSnapshot,
+        after: InputSnapshot,
+        reader: impl FnMut(&AssetId, usize) -> Result<Vec<u8>, String>,
+    ) -> Result<Self, InputError>
+    where
+        T: Clone,
+    {
+        if self.inputs.observations.get(id) != Some(&Ok(before.clone())) {
+            return Err(InputError::Changed(id.clone()));
+        }
+        let bytes = self
+            .inputs
+            .bytes
+            .checked_sub(before.bytes.len())
+            .and_then(|n| n.checked_add(after.bytes.len()))
+            .filter(|n| *n <= self.inputs.max_bytes)
+            .ok_or(InputError::Capacity)?;
+        if after.digest != *blake3::hash(&after.bytes).as_bytes() {
+            return Err(InputError::Changed(id.clone()));
+        }
+        self.inputs.validate(reader)?;
+        let mut inputs = self.inputs.clone();
+        inputs.bytes = bytes;
+        inputs.observations.insert(id.clone(), Ok(after));
+        Ok(Self {
+            value: self.value.clone(),
+            inputs,
+        })
     }
     /// Rejects a decoded candidate while retaining its source observations.
     /// This lets owners enforce compatibility with existing scene references.
@@ -56,7 +95,7 @@ pub struct RejectedImport<T> {
     pub error: InputError,
 }
 /// A read attempt remains observable even when loading fails. Failed reads remain cached for this import attempt; successful reads always return the same captured bytes.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ImportInputs {
     observations: BTreeMap<AssetId, Result<InputSnapshot, InputError>>,
     max_inputs: usize,
@@ -518,4 +557,114 @@ mod tests {
                 .is_ok()
         );
     }
+    #[test]
+    fn staged_input_replacement_preserves_payload_bits_and_unchanged_snapshot_arcs() {
+        let manifest = AssetId("manifest".into());
+        let leaf = AssetId("leaf".into());
+        let reader = |id: &AssetId, _: usize| {
+            Ok(if id == &manifest {
+                b"old".to_vec()
+            } else {
+                b"leaf".to_vec()
+            })
+        };
+        let mut inputs = ImportInputs::new(2, 8);
+        let before = inputs.read(manifest.clone(), reader).unwrap();
+        let sibling = inputs.read(leaf.clone(), reader).unwrap();
+        let payload = Arc::new(vec![f64::from_bits(0x3ff0_0000_0000_0001), -0.0]);
+        let original = inputs.finish(payload.clone(), reader).unwrap();
+        let after = InputSnapshot {
+            bytes: Arc::from(&b"new!"[..]),
+            digest: *blake3::hash(b"new!").as_bytes(),
+        };
+        let staged = original
+            .prepare_input_replacement(&manifest, &before, after.clone(), reader)
+            .unwrap();
+        assert!(Arc::ptr_eq(original.value(), staged.value()));
+        assert_eq!(staged.value()[0].to_bits(), 0x3ff0_0000_0000_0001);
+        assert_eq!(staged.value()[1].to_bits(), (-0.0_f64).to_bits());
+        assert_eq!(original.inputs().captured_bytes(), 7);
+        assert_eq!(staged.inputs().captured_bytes(), 8);
+        let unchanged = staged
+            .inputs()
+            .observations()
+            .get(&leaf)
+            .unwrap()
+            .as_ref()
+            .unwrap();
+        assert!(Arc::ptr_eq(&sibling.bytes, &unchanged.bytes));
+        assert!(Arc::ptr_eq(
+            &after.bytes,
+            &staged.inputs().observations()[&manifest]
+                .as_ref()
+                .unwrap()
+                .bytes
+        ));
+        assert_eq!(
+            staged.inputs().validate(|id, _| Ok(if id == &manifest {
+                b"new!".to_vec()
+            } else {
+                b"leaf".to_vec()
+            })),
+            Ok(())
+        );
+    }
+    #[test]
+    fn staged_input_replacement_rejects_quota_forgery_and_unrelated_input_drift() {
+        let id = AssetId("manifest".into());
+        let mut inputs = ImportInputs::new(2, 7);
+        let read = |key: &AssetId, _: usize| {
+            Ok(if key == &id {
+                b"old".to_vec()
+            } else {
+                b"leaf".to_vec()
+            })
+        };
+        let before = inputs.read(id.clone(), read).unwrap();
+        inputs.read(AssetId("leaf".into()), read).unwrap();
+        let original = inputs.finish((), read).unwrap();
+        let oversized = InputSnapshot {
+            bytes: Arc::from(&b"four"[..]),
+            digest: *blake3::hash(b"four").as_bytes(),
+        };
+        assert_eq!(
+            original
+                .prepare_input_replacement(&id, &before, oversized, |_, _| panic!(
+                    "quota must reject before IO"
+                ))
+                .unwrap_err(),
+            InputError::Capacity
+        );
+        let forged = InputSnapshot {
+            bytes: Arc::from(&b"new"[..]),
+            digest: [0; 32],
+        };
+        assert_eq!(
+            original
+                .prepare_input_replacement(&id, &before, forged, |_, _| panic!(
+                    "digest must reject before IO"
+                ))
+                .unwrap_err(),
+            InputError::Changed(id.clone())
+        );
+        let after = InputSnapshot {
+            bytes: Arc::from(&b"new"[..]),
+            digest: *blake3::hash(b"new").as_bytes(),
+        };
+        assert!(
+            original
+                .prepare_input_replacement(&id, &before, after, |key, _| Ok(if key == &id {
+                    b"old".to_vec()
+                } else {
+                    b"xxxx".to_vec()
+                }))
+                .is_err()
+        );
+        assert_eq!(original.inputs().captured_bytes(), 7);
+        assert_eq!(original.inputs().validate(read), Ok(()));
+    }
 }
+
+#[path = "imported_archive.rs"]
+mod archive;
+pub use archive::ImportedArchiveLimits;

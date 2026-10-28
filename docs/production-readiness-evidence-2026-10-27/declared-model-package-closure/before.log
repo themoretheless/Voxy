@@ -1,0 +1,20 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.73s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+GAME PACKAGE PASS sources=4 bytes=5704
+
+thread 'project::tests::package_includes_declared_uninstanced_model_dependencies_and_rejects_broken_inputs' (79218604) panicked at crates/voxy_editor/src/project.rs:644:9:
+missing uninstanced model dependency was packaged
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test project::tests::package_includes_declared_uninstanced_model_dependencies_and_rejects_broken_inputs ... FAILED
+
+failures:
+
+failures:
+    project::tests::package_includes_declared_uninstanced_model_dependencies_and_rejects_broken_inputs
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 383 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

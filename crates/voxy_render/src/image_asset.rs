@@ -1,6 +1,7 @@
 //! PNG/JPEG assets with explicit source, dimension and decoded-buffer limits.
 use image::{ImageDecoder, ImageFormat, ImageReader};
 use std::io::Cursor;
+mod checkpoint;
 
 #[derive(Clone, Copy, Debug)]
 pub struct ImageLimits {

@@ -100,7 +100,11 @@ impl SceneUiRuntime {
     /// # Errors
     /// Reports an inconsistent focus target; successful refresh prevalidates it.
     pub fn pointer_press(&mut self) -> Result<bool, GameplayError> {
+        let was_held = self.pointer.held();
         let result = self.pointer.press();
+        if was_held {
+            return Ok(result.consumed);
+        }
         let target = match result.action {
             PointerAction::Press(id) => Some(id),
             _ => None,
@@ -223,3 +227,7 @@ mod tests {
         assert_eq!(ui.key_release(), None);
     }
 }
+
+#[path = "ui_runtime_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{SceneUiCheckpoint, SceneUiSnapshotCheckpoint};

@@ -1,0 +1,64 @@
+{
+  "scope": "UiLive import/watch barrier and composed portable file checkpoint; no full App restore qualification",
+  "source_sha256": {
+    "crates/voxy_editor/src/ui_live.rs": "0bc5c2d919a637b05712321ed570c168c27c986aece1cd16eb06bf274eb4d936",
+    "crates/voxy_editor/src/ui_live/reload_checkpoint.rs": "656063ac407fde2ff7fdf71a059936dfffba343368955817ae0e40c2b5b4821f",
+    "crates/voxy_editor/src/ui_live/reload_checkpoint/tests.rs": "5d117a127c6d1b481c6113b01d1523c4680c187ed41a7f3ac20f4fc80c8823bb",
+    "crates/voxy_editor/src/ui_live/checkpoint.rs": "1a26a8e350367642e6f4e3e6fd4119f057dbe949d229677552b7b19a0820e3e1",
+    "crates/voxy_editor/src/ui_live/publications.rs": "2d75cee6ec615a109d1b9324824e3f259568cd71ffd41e993724eba7f1e2c3ad",
+    "crates/voxy_editor/src/ui_live/gpu_reload_tests.rs": "9cd3eaed5f50ab0afaddf763d93a5cfc6e2ebbf9433c983c019a3b09389fb45d",
+    "crates/voxy_editor/src/asset_checkpoint_wire.rs": "3c038ca708b2b7629c439a039640784414030dd520deb1621efae1d5b88ddc9b",
+    "crates/voxy_editor/src/audio_reload_checkpoint.rs": "e6cc1e34dc9518b6fc5196fff8197bafb0e5b5fffee5bd71c8c08b2154114277",
+    "crates/voxy_editor/src/lib.rs": "11ce24f874bad30019915735cb890d54d83f67b5326f07a13fb034aed81db9b6"
+  },
+  "result_codes": {
+    "editor": 0,
+    "gpu": 0,
+    "clippy": 0
+  },
+  "checks": {
+    "editor": {
+      "passed": 277,
+      "ignored": 20,
+      "new_tests": 6
+    },
+    "gpu": {
+      "passed": 1,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "proof": "actual outstanding production UI import drained, dispatch frozen with changed viewport and deleted font, composed archive loaded and uploaded without font file, last-good retained on failure after resume and source repair recovered"
+    },
+    "clippy": "editor all targets -D warnings passed",
+    "formatting": "scoped rustfmt and git diff --check passed"
+  },
+  "format": {
+    "magic": "VOXYUIL1",
+    "header_bytes": 56,
+    "body": "original VOXYUIP1 publications plus bounded reload JSON, length and BLAKE3 protected"
+  },
+  "operational_invariants": [
+    "known invalidations precede accepted import publication",
+    "barrier suppresses new scans and imports while draining existing results normally",
+    "ordered watcher snapshot consumed before Ready; retired imports fully reaped",
+    "cancel Requested consumes its response before reopening dispatch",
+    "failed-attempt dependency edges retained along with published dependency edges",
+    "fingerprint baseline and polling cursor restored without filesystem rebaseline",
+    "optional scan delay preserved and rebased; process Instant never serialized",
+    "deferred GPU retry explicitly rebound to caller final restored cache state",
+    "late validation failure leaves original owner unchanged; invalid records rejected before watcher factory",
+    "full file capture requires Ready; stage is private and does not publish native frame"
+  ],
+  "remaining": [
+    "transactional GPU cache/resource staging and native frame-boundary publication permit",
+    "atomic complete App resource/session/file integration",
+    "background archive encoding/disk slot publication in full save workflow",
+    "cross-scene historical identity scope and target platform acceptance",
+    "rendered pixel/native swapchain and full FPS qualification",
+    "ENG-03 through ENG-13 broader engine acceptance"
+  ],
+  "notes": [
+    "asset checkpoint adapters moved from audio-specific module to one shared asset_checkpoint_wire module; audio uses identical adapter logic",
+    "archive encoding is synchronous bounded CPU work; nonblocking refers to barrier waiting/dispatch, not full-file encoding",
+    "parsed font/allocator peak heap overhead not qualified"
+  ]
+}

@@ -1,0 +1,35 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+error[E0599]: no associated function or constant named `default` found for struct `simulation::SimulationLimits` in the current scope
+   --> crates/voxy_scene/src/scene_simulation_checkpoint.rs:545:80
+    |
+545 |         let simulation = SceneSimulation::new(&source.graph, SimulationLimits::default()).unwrap();
+    |                                                                                ^^^^^^^ associated function or constant not found in `simulation::SimulationLimits`
+    |
+   ::: crates/voxy_scene/src/simulation.rs:63:1
+    |
+ 63 | pub struct SimulationLimits {
+    | --------------------------- associated function or constant `default` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following trait defines an item `default`, perhaps you need to implement it:
+            candidate #1: `Default`
+
+error[E0599]: no associated function or constant named `default` found for struct `simulation::SimulationLimits` in the current scope
+   --> crates/voxy_scene/src/scene_simulation_checkpoint.rs:551:35
+    |
+551 |                 SimulationLimits::default(),
+    |                                   ^^^^^^^ associated function or constant not found in `simulation::SimulationLimits`
+    |
+   ::: crates/voxy_scene/src/simulation.rs:63:1
+    |
+ 63 | pub struct SimulationLimits {
+    | --------------------------- associated function or constant `default` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following trait defines an item `default`, perhaps you need to implement it:
+            candidate #1: `Default`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `voxy_scene` (lib test) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...

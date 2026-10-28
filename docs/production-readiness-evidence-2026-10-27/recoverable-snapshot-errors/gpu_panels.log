@@ -1,0 +1,19 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.01s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 5 tests
+test panels::gpu_tests::load_progress_and_cancel_render_readable_glyphs ... MARKER PANEL GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+test panels::gpu_tests::marker_controls_render_readable_glyphs_without_hit_overlap ... MARKER PANEL GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+test panels::gpu_tests::missing_model_notice_renders_three_readable_lines_without_control_overlap ... MARKER PANEL GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+test panels::gpu_tests::relink_path_entry_renders_readable_path_and_cancel_target ... MARKER PANEL GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+test panels::gpu_tests::snapshot_failure_notice_renders_diagnostic_and_retry_hint_without_overlap ... SNAPSHOT OPERATION FAILED: Cannot write snapshot: permission denied
+MARKER PANEL GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 428 filtered out; finished in 0.47s
+

@@ -1,0 +1,16 @@
+   Compiling voxy_time v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_time)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_time-13bc7a81122eb43c)
+
+running 8 tests
+test checkpoint_tests::invalid_clock_checkpoint_preserves_state ... ok
+test tests::fixed_steps_and_budget ... ok
+test tests::latency_window_tracks_percentiles_and_stutters ... ok
+test tests::percentile_nearest_rank_handles_short_windows_and_ring_replacement ... ok
+test tests::retarget_is_continuous_and_invalid_inputs_are_ignored ... ok
+test tests::braking_pause_and_real_time_resume ... ok
+test tests::zero_elapsed_cannot_emit_subpicosecond_ticks ... ok
+test checkpoint_tests::clock_checkpoint_preserves_ramps_remainder_pause_and_overload_exactly ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

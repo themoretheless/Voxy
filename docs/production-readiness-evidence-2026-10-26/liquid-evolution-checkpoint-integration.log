@@ -1,0 +1,48 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.75s
+     Running tests/liquid_dissipation.rs (target/research-ray-precision/debug/deps/liquid_dissipation-27c36f229bea9adf)
+
+running 10 tests
+test exact_heated_viscosity_does_not_require_explicit_diffusion_substeps ... ok
+test failure_after_heating_rolls_back_both_velocity_and_enthalpy ... ok
+test viscous_loss_can_change_phase_fraction_without_raising_temperature ... ok
+test rigid_spin_has_no_internal_viscous_force_or_spurious_heating ... ok
+test viscosity_conserves_kinetic_plus_thermal_energy_and_pair_momentum ... ok
+test oblique_many_particle_viscosity_preserves_angular_momentum_and_heats ... ok
+test disabling_heating_retains_previous_viscosity_mode_and_requires_fields ... ok
+test explicit_oblique_viscosity_preserves_angular_momentum_without_heating ... ok
+test whipped_cream_yield_term_increases_damping_and_conserves_heat_and_momentum ... ok
+test central_viscosity_matches_interior_divergence_free_quadratic_shear ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+
+     Running tests/liquid_gas.rs (target/research-ray-precision/debug/deps/liquid_gas-5e86c878fdc8ebcf)
+
+running 10 tests
+test incompatible_heat_capacity_and_latent_eos_are_rejected_atomically ... ok
+test ideal_gas_pressure_and_acoustic_speed_follow_temperature ... ok
+test gas_pressure_is_independent_of_liquid_reference_density ... ok
+test expansion_cools_and_compression_heats_with_total_energy_and_momentum_balance ... ok
+test isolated_gas_particle_falls_ballistically_without_gravity_heating ... ok
+test gas_wall_work_preserves_total_energy_and_fixture_force_balance ... ok
+test gas_corner_and_face_loads_match_isentropic_internal_energy_gradients ... ok
+test gas_gravity_and_wall_pressure_refine_adiabatic_and_potential_energy_balance ... ok
+test gas_wall_adiabatic_entropy_error_decreases_under_time_refinement ... ok
+test multi_particle_gas_corner_flow_has_second_order_temperature_and_motion ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.16s
+
+     Running tests/liquid_pressure_work.rs (target/research-ray-precision/debug/deps/liquid_pressure_work-138d19b994ceacc6)
+
+running 8 tests
+test insufficient_thermal_energy_rolls_back_pressure_kicks ... ok
+test disabled_pressure_work_retains_the_previous_isothermal_mode ... ok
+test compression_heats_and_expansion_cools_without_losing_total_energy ... ok
+test pressure_work_is_stored_in_latent_heat_on_the_phase_plateau ... ok
+test pressure_work_and_viscous_heat_conserve_energy_together_in_a_cloud ... ok
+test volume_pressure_work_uses_the_same_force_and_conserves_total_energy ... ok
+test thermal_conduction_and_temperature_response_keep_the_pressure_energy_balance ... ok
+test repeated_pressure_work_conserves_energy_through_the_motion ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

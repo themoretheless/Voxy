@@ -1,0 +1,59 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "change": "single bounded two-phase background relink job; native App validates candidate compatibility before authorizing worker manifest write; source and project clones perform no filesystem IO; nonblocking tick consumption and joined shutdown",
+  "verified": [
+    "ordinary App request prepares, validates, commits and reloads new model preserving authoring document",
+    "second concurrent request rejects",
+    "active relink fences Play, model checkpoint and coordinated restoration; rejected restoration leaves no root/model fence",
+    "invalid source reports job error without changing manifest or scene",
+    "shutdown without owner decision closes channels, joins worker and retains original manifest",
+    "valid decoded candidate with incompatible hierarchy rejects before manifest write",
+    "finished worker handles are reaped only after is_finished; shutdown joins remaining handles"
+  ],
+  "suite_results": [
+    {
+      "passed": 59,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 336,
+      "failed": 0,
+      "ignored": 31
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_assets/src/files.rs": "a9a0dd4890109fb9c6600e3134e9a2673093ebbf36ec129cfbfb06863a486ae6",
+    "crates/voxy_editor/src/prefab_authoring.rs": "a0871c47a5b5a2ea872a7a4db6ee814102ac2d95087d2bb3492efc66c3af884a",
+    "crates/voxy_editor/src/prefab_authoring/model_relink.rs": "69dbc837a8afc58804fcc05a6939fa8e5ba87c06b5979064786aa9bd6a3fc1fa",
+    "crates/voxy_editor/src/app/model_relink.rs": "8fd5ed5aacfc06cc5be2a500b20b84296244e2829cace6df4e84f836b1197514",
+    "crates/voxy_editor/src/lib.rs": "41d365a202db45e5ffe4243ae9aeb0db1e05923b68afc37ca4a7638abaedf777",
+    "crates/voxy_editor/src/app/play_mode.rs": "bf9d01ca184298a34d786d1498c8376e1468b0c660a050a8c66d9c6b81e42b78",
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "997b625ac8a7c95552b62db99259cf5d071972de5267347e897910dce166214b"
+  },
+  "limits": [
+    "input/dialog integration not yet connected; request API exercised directly by native App tests",
+    "GPU admission remains the ordinary post-manifest reload gate; relink does not qualify first presented frame",
+    "new jobs denied until previous thread reaped; no unbounded relink queue",
+    "trusted-path manifest validate+rename is not cross-writer CAS",
+    "full engine roadmap and ENG-03 remain incomplete"
+  ]
+}

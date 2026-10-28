@@ -1,0 +1,51 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Asynchronous native output pause/resume control prerequisite for device-queue checkpoints",
+  "status": "control protocol implemented; native PCM snapshot still unavailable",
+  "checks": {
+    "audio_device": {
+      "passed": 10,
+      "doc_tests": 0,
+      "hardware": "controlled owner; no physical device opened"
+    },
+    "editor": {
+      "passed": 391,
+      "ignored": 44
+    },
+    "clippy": "audio_device and editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "verified": [
+    "Pause/resume APIs execute on original output-device worker, never on caller",
+    "Blocked transition request and polling return before controlled native API release",
+    "State is acknowledged only after transition completion",
+    "Same in-flight request is idempotent and opposite request rejects",
+    "Failed pause and failed resume invalidate known state; recovery command cannot be elided as a stale-state no-op",
+    "Close during blocked native API suppresses late acknowledgement; destruction stays on owner thread",
+    "Owner panic propagates failure, prevents successful transition publication and preserves idempotent shutdown",
+    "Unpublished/closed devices reject control requests",
+    "Existing bounded PCM submission and pump backpressure/exact suffix checkpoint tests still pass",
+    "Editor still rejects Native checkpoint admission before fence acquisition; Offline remains usable"
+  ],
+  "limitations": [
+    "No physical CPAL device or audio stream was opened in qualification",
+    "Controlled-owner tests exercise original worker protocol, not OS hardware pause semantics",
+    "Queued device PCM and host/device playback position are not captured or serialized",
+    "Pause acknowledgement is not a queue checkpoint or proof of audible continuity",
+    "New controls are not yet wired into AudioSession snapshot barrier or UI Play/Pause",
+    "Native checkpoint guard deliberately remains unchanged",
+    "No native window, GPU benchmark or FPS claim; full ENG roadmap remains open"
+  ],
+  "remaining": [
+    "Exact device queue capture and restoration with producer exclusion and retained PCM ordering",
+    "Compose device queue with original PcmPump unsent suffix and playback clock/rate",
+    "Coordinated cancellation, rollback and publication through original AudioSession owner barrier",
+    "Physical audio-device and native editor lifecycle qualification"
+  ],
+  "sha256": {
+    "crates/voxy_audio_device/src/lib.rs": "d1943c44d80419fec3d5be4eb08c6715729fbd3a53a7fccea2bd1d6192e28530",
+    "crates/voxy_audio_device/src/worker.rs": "224826c976c53c2d9b89e13eb000035cc05c8335bea5e52c6af6a7cbb9feb811",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "41080790f479478c76cf1b6572078845c4faca6526655c5c7f7122e7e877b4a6"
+  }
+}

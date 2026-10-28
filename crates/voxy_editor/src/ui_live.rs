@@ -6,6 +6,12 @@ use voxy_gameplay::SceneUiSnapshot;
 use voxy_render::{ImageAsset, ImageLimits, SceneGeometry, SceneTexture};
 use voxy_scene::{NodeId, SceneGraph};
 
+pub(crate) mod checkpoint;
+mod publications;
+pub(crate) mod reload_checkpoint;
+mod restore;
+pub(crate) use restore::{PendingDetachedModelsUi, ReadyDetachedModelsUi};
+
 #[derive(Debug)]
 pub(super) struct GpuDraw {
     pub(super) owner: NodeId,
@@ -17,6 +23,8 @@ pub(super) struct UiLive {
     attempted: Option<SceneUiSnapshot>,
     published: Option<SceneUiSnapshot>,
     presented: Option<SceneUiSnapshot>,
+    published_text: Option<Arc<voxy_assets::ImportedAsset<ui_text::UiTextPreparation>>>,
+    presented_text: Option<Arc<voxy_assets::ImportedAsset<ui_text::UiTextPreparation>>>,
     worker: Option<AssetImportWorker<ui_text::UiTextPreparation>>,
     retired: Vec<std::thread::JoinHandle<()>>,
     deferred: Option<(u64, u64, u64, u64)>,
@@ -24,16 +32,22 @@ pub(super) struct UiLive {
     watcher: Option<voxy_assets::SourcePollWorker>,
     scanning: bool,
     last_scan: Option<std::time::Instant>,
+    checkpoint: Option<reload_checkpoint::Barrier>,
+    awaiting_first_presentation: bool,
 }
 impl UiLive {
     pub(super) fn close(&mut self) -> Vec<std::thread::JoinHandle<()>> {
         self.attempted = None;
         self.published = None;
         self.presented = None;
+        self.published_text = None;
+        self.presented_text = None;
         self.deferred = None;
         self.sources = None;
         self.scanning = false;
         self.last_scan = None;
+        self.checkpoint = None;
+        self.awaiting_first_presentation = false;
         self.retired.extend(
             self.watcher
                 .take()
@@ -44,16 +58,21 @@ impl UiLive {
         std::mem::take(&mut self.retired)
     }
     pub(super) fn focus_snapshot(&self) -> Option<&SceneUiSnapshot> {
-        (self.published == self.presented)
+        (!self.awaiting_first_presentation && self.published == self.presented)
             .then_some(self.published.as_ref())
             .flatten()
     }
     pub(super) fn presented(&self) -> Option<&SceneUiSnapshot> {
-        self.presented.as_ref()
+        (!self.awaiting_first_presentation)
+            .then_some(self.presented.as_ref())
+            .flatten()
     }
     // Only call after a successful native presentation, never on GPU upload or
     // an occluded/skipped surface. Keep the old visible snapshot until that point.
     pub(super) fn frame_presented(&mut self) {
+        self.awaiting_first_presentation = false;
+        // Font revisions can change without changing the layout descriptor.
+        self.presented_text.clone_from(&self.published_text);
         if self.presented != self.published {
             self.presented.clone_from(&self.published);
         }
@@ -93,7 +112,8 @@ impl UiLive {
                 self.deferred = None;
             }
         }
-        if !self.scanning
+        if self.checkpoint.is_none()
+            && !self.scanning
             && self
                 .last_scan
                 .is_none_or(|last| last.elapsed() >= std::time::Duration::from_millis(200))
@@ -118,8 +138,8 @@ impl UiLive {
             project,
             viewport,
             &graphics.renderer,
-            graphics.host.device(),
-            graphics.host.queue(),
+            &graphics.device,
+            &graphics.queue,
             &mut graphics.residency_cache,
             &mut graphics.ui_draws,
             &mut graphics.ui_presented,
@@ -139,8 +159,17 @@ impl UiLive {
         ui_presented: &mut bool,
     ) -> Result<(), Box<dyn std::error::Error>> {
         self.reap()?;
+        if matches!(
+            self.checkpoint,
+            Some(reload_checkpoint::Barrier::Requested | reload_checkpoint::Barrier::Ready(_))
+        ) {
+            return Ok(());
+        }
         self.poll_sources()?;
-        if self.worker.is_none() && self.deferred.is_some_and(|state| state != cache.state()) {
+        if self.checkpoint.is_none()
+            && self.worker.is_none()
+            && self.deferred.is_some_and(|state| state != cache.state())
+        {
             self.attempted = None;
             self.deferred = None;
         }
@@ -174,7 +203,7 @@ impl UiLive {
                 let staged = (|| {
                     let prepared = completion.result.map_err(|failed| failed.error)?;
                     let meshes = ui_draw::build(&snapshot, &prepared.value().runs)?;
-                    let candidate = upload_on(renderer, device, queue, cache, &meshes)?;
+                    let candidate = stage_upload_on(renderer, device, queue, cache, &meshes)?;
                     self.sources
                         .as_mut()
                         .ok_or("missing UI source index")?
@@ -183,9 +212,9 @@ impl UiLive {
                             prepared.inputs(),
                             voxy_assets::ImportOutcome::Published,
                         )?;
-                    Ok::<_, Box<dyn std::error::Error>>(candidate)
+                    Ok::<_, Box<dyn std::error::Error>>((candidate.publish(), prepared))
                 })();
-                let candidate = match staged {
+                let (candidate, prepared) = match staged {
                     Ok(candidate) => candidate,
                     Err(error) => {
                         self.deferred = Some(cache.state());
@@ -196,11 +225,12 @@ impl UiLive {
                 *draws = candidate;
                 *ui_presented = false;
                 self.published = Some(snapshot);
+                self.published_text = Some(Arc::new(prepared));
                 println!("GAME UI GPU PUBLISHED draws={}", draws.len());
                 return Ok(());
             }
         }
-        if self.attempted.as_ref() != Some(&snapshot) {
+        if self.checkpoint.is_none() && self.attempted.as_ref() != Some(&snapshot) {
             let mut worker =
                 ui_text::UiTextPlan::from_snapshot(scene, snapshot.clone())?.worker(project)?;
             let mut catalog =
@@ -214,6 +244,41 @@ impl UiLive {
     }
 }
 pub(super) fn upload_on(
+    renderer: &voxy_render::SceneRenderer,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    cache: &mut super::gpu_model::ResidencyCache,
+    meshes: &[ui_draw::UiDrawMesh],
+) -> Result<Vec<GpuDraw>, Box<dyn std::error::Error>> {
+    Ok(stage_upload_on(renderer, device, queue, cache, meshes)?.publish())
+}
+struct PendingUpload<'a> {
+    target: &'a mut super::gpu_model::ResidencyCache,
+    cache: super::gpu_model::ResidencyCache,
+    draws: Vec<GpuDraw>,
+}
+impl PendingUpload<'_> {
+    fn publish(self) -> Vec<GpuDraw> {
+        *self.target = self.cache;
+        self.draws
+    }
+}
+fn stage_upload_on<'a>(
+    renderer: &voxy_render::SceneRenderer,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    cache: &'a mut super::gpu_model::ResidencyCache,
+    meshes: &[ui_draw::UiDrawMesh],
+) -> Result<PendingUpload<'a>, Box<dyn std::error::Error>> {
+    let mut candidate = cache.fork_for_upload();
+    let draws = upload_into(renderer, device, queue, &mut candidate, meshes)?;
+    Ok(PendingUpload {
+        target: cache,
+        cache: candidate,
+        draws,
+    })
+}
+fn upload_into(
     renderer: &voxy_render::SceneRenderer,
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -409,3 +474,108 @@ mod source_reload_tests {
 
 #[cfg(test)]
 mod gpu_reload_tests;
+
+#[cfg(test)]
+mod accepted_text_tests {
+    use super::*;
+    #[test]
+    fn same_layout_font_publications_keep_old_cpu_data_until_frame_ack() {
+        let root = std::env::temp_dir().join(format!(
+            "voxy-ui-accepted-font-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let mut bytes = [
+            "/System/Library/Fonts/Supplemental/Arial.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "C:/Windows/Fonts/arial.ttf",
+        ]
+        .iter()
+        .find_map(|path| std::fs::read(path).ok())
+        .expect("Unicode font fixture required");
+        std::fs::write(root.join("font.ttf"), &bytes).unwrap();
+        std::fs::write(
+            root.join("assets.json"),
+            r#"{"version":1,"assets":[{"asset":"interface","source":"font.ttf"}]}"#,
+        )
+        .unwrap();
+        let project = AuthoringProject::new(
+            &root,
+            &crate::InputRecipe::Manifest(AssetId("assets.json".into())),
+        )
+        .unwrap();
+        let mut scene = SceneGraph::new(2);
+        let owner = scene.spawn(None, Default::default()).unwrap();
+        scene
+            .insert_component(
+                owner,
+                voxy_gameplay::UiElement {
+                    origin: [0.; 2],
+                    size: [1.; 2],
+                    color: [1.; 4],
+                    layer: 0,
+                    enabled: true,
+                    action: Some("click".into()),
+                    text: Some(voxy_gameplay::UiText {
+                        font: "interface".into(),
+                        content: "office café".into(),
+                        size: 18.,
+                        color: [1.; 4],
+                    }),
+                },
+            )
+            .unwrap();
+        let layout = voxy_gameplay::extract_scene_ui(&scene, [100.; 2], 128).unwrap();
+        let first =
+            ui_text::UiTextPreparation::prepare_import(&scene, &project, [100.; 2]).unwrap();
+        bytes.push(0);
+        std::fs::write(root.join("font.ttf"), bytes).unwrap();
+        let second =
+            ui_text::UiTextPreparation::prepare_import(&scene, &project, [100.; 2]).unwrap();
+        assert!(!Arc::ptr_eq(&first, &second));
+        assert_ne!(
+            first.inputs().observations(),
+            second.inputs().observations()
+        );
+        assert_eq!(
+            first.value().runs[0].run.checkpoint(),
+            second.value().runs[0].run.checkpoint()
+        );
+        let mut ui = UiLive {
+            published: Some(layout.clone()),
+            published_text: Some(first.clone()),
+            ..Default::default()
+        };
+        assert!(ui.presented_text.is_none());
+        ui.frame_presented();
+        assert!(Arc::ptr_eq(ui.presented_text.as_ref().unwrap(), &first));
+        ui.published_text = Some(second.clone());
+        assert_eq!(ui.presented.as_ref(), Some(&layout));
+        assert!(Arc::ptr_eq(ui.presented_text.as_ref().unwrap(), &first));
+        assert_eq!(Arc::strong_count(&first), 2);
+        ui.frame_presented();
+        assert!(Arc::ptr_eq(ui.presented_text.as_ref().unwrap(), &second));
+        assert_eq!(Arc::strong_count(&first), 1);
+        assert!(ui.close().is_empty());
+        assert!(ui.published_text.is_none());
+        assert!(ui.presented_text.is_none());
+        assert_eq!(Arc::strong_count(&second), 1);
+        std::fs::remove_dir_all(root).unwrap();
+    }
+}
+
+#[cfg(test)]
+pub(crate) fn checkpoint_pixels(
+    renderer: &voxy_render::SceneRenderer,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    draws: &[GpuDraw],
+) -> Vec<u8> {
+    restore::tests::pixels(renderer, device, queue, draws)
+}
+
+pub(crate) use publications::UiPublicationLimits;

@@ -10,16 +10,49 @@ impl App {
         let Some(watcher) = &mut self.watcher else {
             return Ok(());
         };
-        if let Some(changes) = watcher.try_result()? {
+        let scan = watcher.try_observed_result()?;
+        if let Some(scan) = scan {
             self.scan_active = false;
-            let affected = self.sources.affected(changes);
+            let manifest_changed = matches!(&self.import_recipe,
+                InputRecipe::Manifest(manifest) if scan.changes.contains(manifest));
+            let inventory = scan.observation.and_then(|(id, bytes)| {
+                if manifest_changed
+                    && matches!(&self.import_recipe, InputRecipe::Manifest(manifest) if manifest == &id)
+                {
+                    bytes.ok().and_then(|bytes| import::model_inventory(&bytes).ok())
+                } else { None }
+            });
+            let mut affected: BTreeSet<_> =
+                self.sources.affected(scan.changes).into_iter().collect();
+            if manifest_changed {
+                // A first import may not have recorded its dependencies yet. Its
+                // ticket must still be invalidated before accepting a completion.
+                affected.extend(
+                    self.required_cpu_model_assets()
+                        .into_iter()
+                        .filter(|id| self.catalog.status(id).is_some()),
+                );
+            }
             if !affected.is_empty() {
-                self.catalog.invalidate(&affected)?;
+                self.catalog
+                    .invalidate(&affected.iter().cloned().collect::<Vec<_>>())?;
                 self.reload.extend(affected);
             }
+            if let Some(inventory) = inventory {
+                self.available = inventory;
+            }
         }
-        if !self.scan_active && self.last_scan.elapsed() >= Duration::from_millis(200) {
-            watcher.request(&self.sources, 129)?;
+        if self.resource_checkpoint.is_none()
+            && !self.scan_active
+            && self.last_scan.elapsed() >= Duration::from_millis(200)
+        {
+            let watcher = self.watcher.as_mut().ok_or("source watcher disappeared")?;
+            match &self.import_recipe {
+                InputRecipe::Manifest(manifest) => {
+                    watcher.request_with_observation(&self.sources, manifest.clone(), 65536, 129)?
+                }
+                InputRecipe::Direct => watcher.request(&self.sources, 129)?,
+            }
             self.scan_active = true;
             self.last_scan = Instant::now();
         }
@@ -84,14 +117,16 @@ impl App {
                 {
                     continue;
                 }
-                let model = ModelGraphics::upload(
+                let model = ModelGraphics::upload_on(
                     &graphics.renderer,
-                    &graphics.host,
+                    &graphics.device,
+                    &graphics.queue,
                     asset.value(),
                     &mut graphics.residency_cache,
                 );
                 match model {
-                    Ok(model) => {
+                    Ok(mut model) => {
+                        model.publication = Some(asset.clone());
                         graphics.models.insert(id.clone(), model);
                         graphics.residency_cache.geometry_live = graphics.geometry_bytes();
                         graphics.residency_errors.remove(&id);

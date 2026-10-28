@@ -1,0 +1,31 @@
+    Blocking waiting for file lock on build directory
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: use of `Option<Option<T>>`
+  --> crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs:23:13
+   |
+23 |     source: Option<Option<ImportedAsset<crate::prefab_authoring::AuthoredScene>>>,
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: consider using `Option<ImportedAsset<crate::prefab_authoring::AuthoredScene>>`, or a custom enum if you need to distinguish all 3 cases
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#option_option
+   = note: `-D clippy::option-option` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::option_option)]`
+
+error: could not compile `voxy_editor` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: called `map(f)` on an `Option` value where `f` is a closure that returns the unit type `()`
+   --> crates/voxy_editor/src/app/authoring_checkpoint/tests.rs:665:5
+    |
+665 |     archive.last_mut().map(|b| *b = serde_json::json!(255));
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#option_map_unit_fn
+    = note: `-D clippy::option-map-unit-fn` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::option_map_unit_fn)]`
+help: use `if let` instead
+    |
+665 -     archive.last_mut().map(|b| *b = serde_json::json!(255));
+665 +     if let Some(b) = archive.last_mut() { ... }
+    |
+
+error: could not compile `voxy_editor` (lib test) due to 2 previous errors

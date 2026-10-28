@@ -1,0 +1,10 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.07s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 2 tests
+test ui_live::checkpoint::tests::composed_save_requires_ready_barrier_preserves_generations_and_has_no_live_side_effects ... ok
+test ui_live::checkpoint::tests::composed_envelope_rejects_corruption_and_late_operational_failure_without_replacing_source ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 295 filtered out; finished in 0.01s
+

@@ -1,0 +1,30 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.61s
+     Running tests/liquid_droplet_population.rs (target/research-ray-precision/debug/deps/liquid_droplet_population-fe7f78c335285899)
+
+running 5 tests
+test invalid_mask_and_failed_split_leave_classification_and_state_unchanged ... ok
+test source_defaults_and_survivors_keep_population_alignment ... ok
+test flow_step_retains_population_marks ... ok
+test only_two_marked_droplets_can_coalesce ... ok
+test explicit_fragmentation_marks_children_without_marking_survivors ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_suspension.rs (target/research-ray-precision/debug/deps/liquid_suspension-15b7564e25e862b1)
+
+running 11 tests
+test drag_feedback_conserves_momentum_and_heats_latent_plateau ... ok
+test mixture_inventory_counts_solid_volume_and_tracks_thermal_carrier_density ... ok
+test invalid_carrier_or_regime_preserves_both_inventories ... ok
+test common_free_fall_generates_no_spurious_drag_heat_or_buoyancy ... ok
+test forced_carrier_thermal_bridge_balances_weight_and_enthalpy ... ok
+test later_cell_failure_restores_prior_cell_feedback_and_drift ... ok
+test spatial_two_cell_feedback_balances_global_energy_and_momentum ... ok
+test spatial_drift_reassigns_carrier_without_losing_particle_mass ... ok
+test sub_ulp_drag_heat_is_owned_in_buffer_without_losing_particle_feedback ... ok
+test sub_ulp_buffer_increments_preserve_their_rounding_residue ... ok
+test joint_free_interval_advects_fluid_and_cloud_and_preserves_outer_transaction ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

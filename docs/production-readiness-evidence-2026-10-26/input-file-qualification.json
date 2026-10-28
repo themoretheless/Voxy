@@ -1,0 +1,14 @@
+{
+  "status": "input_file_codec_and_existing_game_continuation_verified",
+  "focused_tests": 2,
+  "editor_integration_tests": 1,
+  "following_frames": 120,
+  "strict_gameplay_all_targets_clippy": true,
+  "whole_game_save": false,
+  "fps_qualified": false,
+  "source_sha256": {
+    "crates/voxy_gameplay/src/input_checkpoint.rs": "caba36cc1f5dd3423414548f9a05d7d159766f800841a6226142932a03fc65e5",
+    "crates/voxy_gameplay/src/lib.rs": "ad14d21421fc8126e43153839f3cd5b2eb8f4e33d0329f4b39cd84a0efbbf991",
+    "crates/voxy_editor/src/headless_game_tests.rs": "160cddbab0e450d19c491513a1d95549a94d59d0850b34ea8829e65941016cf9"
+  }
+}

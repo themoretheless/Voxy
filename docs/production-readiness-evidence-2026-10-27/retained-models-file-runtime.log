@@ -1,0 +1,14 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 1 test
+test app::resource_checkpoint::tests::inactive_runtime_retains_old_model_after_catalog_replacement_and_resumes_120_frames ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 322 filtered out; finished in 0.02s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-ef30924b92d7d41b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

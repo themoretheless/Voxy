@@ -12,6 +12,7 @@ openxr = ["dep:openxr"]
 [dependencies]
 thiserror = "2"
 serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
 blake3 = "1.8"
 voxy_gpu_core = { path = "../voxy_gpu_core" }
 half = "2.7.1"

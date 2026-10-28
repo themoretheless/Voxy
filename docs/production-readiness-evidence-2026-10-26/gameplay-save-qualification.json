@@ -1,0 +1,20 @@
+{
+  "status": "staged_scene_simulation_character_input_tick_checkpoint_verified",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/gameplay_checkpoint.rs": "9e02fc774022a40cf147c0be8c081422c588c716ca2101eea2aa11b989c06fd6",
+    "crates/voxy_gameplay/src/lib.rs": "0f5f868598a760c1735fee728d6b25f7b46593064aff2284dfaa5932e20073cd",
+    "crates/voxy_gameplay/examples/gameplay_save.rs": "2e4e137170371c466e521ee988fd7d67e686639335afa0dbee05108f5a5c2ea2"
+  },
+  "new_tests_passed": 2,
+  "scene_tests_passed": 89,
+  "following_frames": 240,
+  "example_exit": 0,
+  "example_checkpoint_bytes": 3050,
+  "example_final_ticks": 292,
+  "strict_all_targets_clippy": true,
+  "compatibility_key_supplied_by_caller": true,
+  "project_asset_identity_derived": false,
+  "full_app_save": false,
+  "animation_audio_ui_liquid_or_camera_included": false,
+  "fps_qualified": false
+}

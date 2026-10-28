@@ -1,0 +1,32 @@
+{
+  "scope": "Immutable coordinated capture of existing Play/model, UiLive and Offline AudioSession participants",
+  "implemented": [
+    "Completed common barrier required before capture",
+    "Reuse native model/runtime and UiLive codecs without introducing another runtime",
+    "Return one owned capture of game, model resources, UI resources/reload and Offline audio",
+    "UI budget failure leaves the source frozen and retryable"
+  ],
+  "checks": {
+    "editor_passed": 316,
+    "editor_ignored": 27,
+    "strict_all_target_clippy": "passed",
+    "scoped_rustfmt": "passed",
+    "tracked_diff_check": "passed",
+    "gpu": "Apple M4 Max Metal passed",
+    "reference_running_idle_readbacks_equal": true,
+    "nonblack_pixels": 946,
+    "readback_sha256": "39c4e4256c66809e9ef2c0cd23f537cf5b997ff4955090709251eaa49f9ef27f"
+  },
+  "not_claimed": [
+    "No enclosing full-session disk format or cross-owner detached prepare/publication yet",
+    "Authoring history, extraction, non-model Graphics, first native presentation/input handoff remain separate",
+    "Native audio device queue barrier remains unimplemented; only Offline audio supported",
+    "No physical peak-memory, displayed FPS or whole-engine completion claim"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier.rs": "f05aa1837717312825d8a2d694d177348d78f2cb3483d9724567cc8e29a87cbe",
+    "crates/voxy_editor/src/ui_live.rs": "2805c988f0b8a642a97721936326f84cb2bc9dbb8693c8dfae822a4e19f68cd6",
+    "crates/voxy_editor/src/ui_live/checkpoint.rs": "5fbe45a9f1e0055b7d9954bde39576d1c355c1defa833f1e03462dec227075f8",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "a738bb1a4252034d6159da0574859e12a0e6a371b8579e4311932c735b2b7042"
+  }
+}

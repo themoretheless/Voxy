@@ -1,0 +1,23 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.29s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 1 test
+test app::resource_checkpoint::tests::reloaded_clip_fade_restores_from_resource_file_with_native_source_resolver ... FAILED
+
+failures:
+
+---- app::resource_checkpoint::tests::reloaded_clip_fade_restores_from_resource_file_with_native_source_resolver stdout ----
+MODEL PUBLISHED frames=0 first_x=0 asset=animated-triangle.glb
+
+thread 'app::resource_checkpoint::tests::reloaded_clip_fade_restores_from_resource_file_with_native_source_resolver' (77252774) panicked at crates/voxy_editor/src/app/resource_checkpoint/tests.rs:594:10:
+called `Result::unwrap()` on an `Err` value: Message("animation owner ordering changed on reload")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    app::resource_checkpoint::tests::reloaded_clip_fade_restores_from_resource_file_with_native_source_resolver
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 324 filtered out; finished in 0.08s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

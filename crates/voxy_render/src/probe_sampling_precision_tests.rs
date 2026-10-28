@@ -54,7 +54,7 @@ fn original_probe_interpolation_words_are_preserved() -> Result<(), Box<dyn std:
         "{}\n{}\n{}",
         include_str!("probe_sampling.wgsl").replace("@group(2)", "@group(0)"),
         REFERENCE,
-        r#"
+        r"
 struct Sample { p:vec4<f32>, n:vec4<f32> }
 @group(0) @binding(0) var<storage,read> samples:array<Sample>;
 @group(0) @binding(1) var<storage,read_write> result:array<vec4<u32>>;
@@ -62,7 +62,7 @@ struct Sample { p:vec4<f32>, n:vec4<f32> }
  if id.x>=arrayLength(&samples){return;}let s=samples[id.x];
  result[id.x*2u]=bitcast<vec4<u32>>(probe_irradiance(s.p.xyz,s.n.xyz));
  result[id.x*2u+1u]=bitcast<vec4<u32>>(reference_probe_irradiance(s.p.xyz,s.n.xyz));
-}"#
+}"
     );
     let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("original probe interpolation order"),
@@ -177,7 +177,7 @@ struct Sample { p:vec4<f32>, n:vec4<f32> }
 }
 
 #[cfg(all(test, target_os = "macos"))]
-const REFERENCE: &str = r#"
+const REFERENCE: &str = r"
 fn reference_probe_irradiance(p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
  if probe_grid.origin.w<0.5{return vec4<f32>(0.);}
  let dims=vec3<f32>(probe_grid.dims.xyz);
@@ -192,4 +192,4 @@ fn reference_probe_irradiance(p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
   sum+=probe_eval(q.x+probe_grid.dims.x*(q.y+probe_grid.dims.y*q.z),n)*w;
  }
  return vec4<f32>(sum,fade);
-}"#;
+}";

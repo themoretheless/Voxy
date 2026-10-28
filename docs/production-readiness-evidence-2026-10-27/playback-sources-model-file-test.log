@@ -1,0 +1,27 @@
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.66s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_model-861f31498f2668d0)
+
+running 1 test
+test checkpoint::tests::standalone_playback_sources_share_model_rigs_clips_and_property_tracks_for_120_phases ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 54 filtered out; finished in 0.02s
+
+     Running tests/quaternius_animation_library.rs (target/research-ray-precision/debug/deps/quaternius_animation_library-c38ccb14e1b63cce)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/scene_skinning.rs (target/research-ray-precision/debug/deps/scene_skinning-21695dd83d63a60f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/skinned_normal_gpu.rs (target/research-ray-precision/debug/deps/skinned_normal_gpu-0af644ff0f73a06a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+

@@ -1,0 +1,43 @@
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation/src/lib.rs:4:
+ pub use root_motion_receipt::{RootRigidMotionCheckpoint, RootRigidMotionReceipt};
+ mod pose_archive;
+ pub use pose_archive::{PoseSnapshotArchive, PoseSnapshotBuilder, PreparedPoseSnapshots};
+-mod checkpoint;
+ mod asset_checkpoint;
+-pub use asset_checkpoint::{AnimationAssetCheckpoint, AnimationAssetError, AnimationAssetLimits, PreparedAnimationAssets};
++mod checkpoint;
++pub use asset_checkpoint::{
++    AnimationAssetCheckpoint, AnimationAssetError, AnimationAssetLimits, PreparedAnimationAssets,
++};
+ pub use checkpoint::{
+     AnimatorCheckpoint, AnimatorCheckpointError, AnimatorFrameCheckpoint, PoseCheckpoint,
+ };
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation/src/root_rigid.rs:124:
+ #[derive(Clone, Debug)]
+ pub struct RootRigidCurve(Arc<Curve>);
+ impl RootRigidCurve {
+-    pub(crate) fn asset_checkpoint_words(&self)->[u64;8] {
++    pub(crate) fn asset_checkpoint_words(&self) -> [u64; 8] {
+         // Links are reconstructed by the clip's own motion/rotation cache APIs;
+         // all coefficient words are verified by those two source receipts.
+-        let Curve {translation:_,rotation:_,origin,bind,duration,playback}=self.0.as_ref();
+-        let mut words=[0;8];words[..3].copy_from_slice(&origin.to_array().map(f64::to_bits));
+-        words[3..6].copy_from_slice(&bind.to_array().map(f64::to_bits));words[6]=duration.to_bits();
+-        words[7]=u64::from(crate::asset_checkpoint::playback(*playback));words
++        let Curve {
++            translation: _,
++            rotation: _,
++            origin,
++            bind,
++            duration,
++            playback,
++        } = self.0.as_ref();
++        let mut words = [0; 8];
++        words[..3].copy_from_slice(&origin.to_array().map(f64::to_bits));
++        words[3..6].copy_from_slice(&bind.to_array().map(f64::to_bits));
++        words[6] = duration.to_bits();
++        words[7] = u64::from(crate::asset_checkpoint::playback(*playback));
++        words
+     }
+ }
+ /// Origin linear velocity and angular velocity in the interval-start frame,

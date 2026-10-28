@@ -1,0 +1,31 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline accepted pooled GPU frame missing target morph properties",
+    "Capture validates each owner target through original ModelAsset.validate_morph_frame before assigning pooled frame role",
+    "Prepare validates target morph frame for both legacy v1 and pooled v2 formats",
+    "Valid shared frame roots restore shared Arc; equal independent frames restore independent Arc",
+    "Valid native morph properties are preserved exactly; archive format unchanged",
+    "Existing native GPU restore late-rejection/cancellation regression passes on Apple M4 Max / Metal"
+  ],
+  "checks": {
+    "focused_checkpoint_passed": 2,
+    "native_gpu_restore_passed": 1,
+    "editor_passed": 369,
+    "editor_ignored": 36,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "Original GPU frame pool remains separate from runtime/preview participants",
+    "No composed whole-editor frame/root graph or atomic App publication completed",
+    "Hardware test covers existing detached GPU restore failure/cancellation, not whole-App restore",
+    "No FPS or production rig qualification"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/animated_models/checkpoint.rs": "f68a07de1909776e21939f6097326ead1cddf7e9604f198a73880da79e0d238e",
+    "crates/voxy_model/src/morph.rs": "701b0eaeafc01e867132b551b7a3809f36180acd34299c0a2109599bdcb0e0c1"
+  }
+}

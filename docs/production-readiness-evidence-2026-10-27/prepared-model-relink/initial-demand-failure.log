@@ -1,0 +1,20 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.17s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 2 tests
+test prefab_authoring::model_relink::tests::relink_rejects_changed_inputs_foreign_owner_and_invalid_sources_without_manifest_write ... ok
+
+thread 'prefab_authoring::model_relink::tests::prepared_relink_preserves_id_scene_and_unrelated_bindings_through_normal_reload' (78707040) panicked at crates/voxy_editor/src/prefab_authoring/model_relink.rs:143:13:
+assertion failed: Instant::now() < until
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test prefab_authoring::model_relink::tests::prepared_relink_preserves_id_scene_and_unrelated_bindings_through_normal_reload ... FAILED
+
+failures:
+
+failures:
+    prefab_authoring::model_relink::tests::prepared_relink_preserves_id_scene_and_unrelated_bindings_through_normal_reload
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 362 filtered out; finished in 10.08s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

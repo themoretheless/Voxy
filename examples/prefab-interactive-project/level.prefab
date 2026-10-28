@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "objects": [],
+  "instances": [
+    {
+      "id": "world",
+      "asset": "world-content",
+      "parent": null,
+      "overrides": {}
+    }
+  ]
+}

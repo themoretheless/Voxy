@@ -1,0 +1,20 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.85s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=0 asset=character
+
+thread 'app::model_relink::tests::stale_retry_action_preserves_relink_path_and_failed_publication' (79166529) panicked at crates/voxy_editor/src/app/model_relink.rs:543:9:
+assertion failed: app.panel_action(panels::Action::RetryModel).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test app::model_relink::tests::stale_retry_action_preserves_relink_path_and_failed_publication ... FAILED
+
+failures:
+
+failures:
+    app::model_relink::tests::stale_retry_action_preserves_relink_path_and_failed_publication
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 382 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

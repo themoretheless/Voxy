@@ -1,0 +1,11 @@
+    Checking voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Checking voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+    Checking voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Checking voxy_cuda v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_cuda)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Checking voxy_gpu v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu)
+    Checking voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Checking voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.07s

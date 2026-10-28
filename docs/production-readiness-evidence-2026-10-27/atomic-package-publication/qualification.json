@@ -1,0 +1,56 @@
+{
+  "stage": "ENG-03",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "change": "ordinary package export uses existing atomic writer with no-clobber publication via synced sibling and hard link",
+  "verified": [
+    "eight concurrent creators produce exactly one complete 65536-byte winner without overwrites or remaining temporary siblings",
+    "capacity rejection creates no destination",
+    "existing file and directory survive rejected publication",
+    "corrupt external PNG rejects project build without creating output",
+    "repaired dependency permits ordinary build",
+    "repeated build cannot overwrite accepted package",
+    "source-free package restores scene and pixel bytes and completes 120 ticks"
+  ],
+  "suite_results": [
+    {
+      "passed": 58,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 323,
+      "failed": 0,
+      "ignored": 30
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_assets/src/atomic_file.rs": "ca0a5d602b7a045599428552de0e194fa6edf1eddf3daa3b87dc559c1c4d01ab",
+    "crates/voxy_assets/src/lib.rs": "19ff8904bc859c3d0dd23bfa77719e2d8f2c3c77caa4d90e1fa68b59af1a54f5",
+    "crates/voxy_editor/src/lib.rs": "9677017990021828cae5d8e92df88e057fc3614e100be9b3ba34e62f41cc401b",
+    "crates/voxy_editor/src/scene3d_tests.rs": "c3c3e473f4ad68927002ef19c7825be6e5b87b3d1cbe7a9578aaafe7ffbbe6cf"
+  },
+  "limits": [
+    "trusted paths; directory crash durability not guaranteed",
+    "hard-link support required; unsupported filesystem returns error",
+    "temporary cleanup is best effort",
+    "validated on current macOS filesystem; Windows/Linux and injected filesystem IO faults not qualified",
+    "ENG-03 and full engine plan remain incomplete"
+  ]
+}

@@ -1,0 +1,73 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+  --> crates/voxy_editor/src/app/authoring_checkpoint/source.rs:43:6
+   |
+36 |   ) -> Result<Vec<u8>, EditorError> {
+   |        ---------------------------- expected `error::EditorError` because of this
+37 |       Ok(source.to_checkpoint_bytes(
+   |  _______________-
+38 | |         |value| {
+39 | |             validate(value, registry)?;
+40 | |             serde_json::to_vec(value).map_err(invalid)
+41 | |         },
+42 | |         policy(max),
+43 | |     )?)
+   | |     -^ the trait `From<voxy_assets::InputError>` is not implemented for `error::EditorError`
+   | |_____|
+   |       this can't be annotated with `?` because it has type `Result<_, voxy_assets::InputError>`
+   |
+note: `error::EditorError` needs to implement `From<voxy_assets::InputError>`
+  --> crates/voxy_editor/src/error.rs:6:1
+   |
+ 6 | pub enum EditorError {
+   | ^^^^^^^^^^^^^^^^^^^^
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+   = help: `error::EditorError` implements trait `From<T>`:
+             From<&str>
+             From<AnimationError>
+             From<AudioError>
+             From<DependencyError>
+             From<DocumentError>
+             From<FogError>
+             From<GameplayError>
+             From<ImageAssetError>
+           and 22 others
+
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+  --> crates/voxy_editor/src/app/authoring_checkpoint/source.rs:58:6
+   |
+49 |   ) -> Result<ImportedAsset<AuthoredScene>, EditorError> {
+   |        ------------------------------------------------- expected `error::EditorError` because of this
+50 |       Ok(ImportedAsset::from_checkpoint_bytes(
+   |  ________-
+51 | |         bytes,
+52 | |         |payload| {
+53 | |             let value: AuthoredScene = serde_json::from_slice(payload).map_err(invalid)?;
+...  |
+57 | |         policy(max),
+58 | |     )?)
+   | |     -^ the trait `From<voxy_assets::InputError>` is not implemented for `error::EditorError`
+   | |_____|
+   |       this can't be annotated with `?` because it has type `Result<_, voxy_assets::InputError>`
+   |
+note: `error::EditorError` needs to implement `From<voxy_assets::InputError>`
+  --> crates/voxy_editor/src/error.rs:6:1
+   |
+ 6 | pub enum EditorError {
+   | ^^^^^^^^^^^^^^^^^^^^
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+   = help: `error::EditorError` implements trait `From<T>`:
+             From<&str>
+             From<AnimationError>
+             From<AudioError>
+             From<DependencyError>
+             From<DocumentError>
+             From<FogError>
+             From<GameplayError>
+             From<ImageAssetError>
+           and 22 others
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `voxy_editor` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 2 previous errors

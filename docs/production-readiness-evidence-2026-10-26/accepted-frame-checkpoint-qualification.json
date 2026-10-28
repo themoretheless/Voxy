@@ -1,0 +1,22 @@
+{
+  "status": "accepted_animation_frame_exact_checkpoint_verified",
+  "source_sha256": {
+    "crates/voxy_animation/src/frame_checkpoint.rs": "8888282033bf8b5ad889a72a775be6f71b0792e375e9db4cdcbded146fea4693",
+    "crates/voxy_animation/src/checkpoint.rs": "fa23e548da4ab80348b398017b1db0221c78ddf35fc07c077059e4b83f412dbe",
+    "crates/voxy_animation/src/lib.rs": "331791e1a68be65f2cbf372206ac19cf5c3037c07a85ea86281017d2f37e9a71",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "8665afb5f2c9bf721d43eae7033ff7f9abc497ad63cdd7872eb93b4428024e47"
+  },
+  "new_tests": 2,
+  "real_physics_and_foot_ik_test_extended": true,
+  "animation_tests_passed": 342,
+  "editor_tests_passed": 234,
+  "editor_tests_ignored": 20,
+  "strict_animation_editor_all_targets_clippy": true,
+  "accepted_frame_and_solved_sole_bits_match": true,
+  "palette_one_bit_corruption_rejected": true,
+  "target_rig_revision_is_outer_contract": true,
+  "root_reference_enclosure_codec_implemented": false,
+  "whole_animation_runtime_saved": false,
+  "full_app_save": false,
+  "native_image_and_fps_qualified": false
+}

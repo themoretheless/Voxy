@@ -1,0 +1,28 @@
+{
+  "status": "authored_named_overrides_project_package_and_panel_history_pass",
+  "code_sha256": {
+    "crates/voxy_editor/src/model_playback.rs": "3d00a530ab8a3abb928d17da1a1666c40fdf76106133eba88e34d6f5e049952e",
+    "crates/voxy_editor/src/animation_runtime.rs": "82677181358e3c46c38a93b2432d5422869118590e7c32fbba7d1bdc82d18eff",
+    "crates/voxy_editor/src/component_fields.rs": "fce858da6e6c87c25a8432011347473bab6e28843bb4985252fdf82a9c3244e3",
+    "crates/voxy_editor/src/locomotion_tests.rs": "3fd689a55ef04c551082799334438029baf4326a92723ec1fbed803fb1b591fd",
+    "crates/voxy_model/src/morph.rs": "afae54bc1c99c1b451f1399d9370125c391dcca9fe6a0835d2c71d59f702a741"
+  },
+  "editor_library": {
+    "passed": 221,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_editor_model_all_targets_clippy_passed": true,
+  "tested_scenario": "locomotion_tests::authored_morph_overrides_survive_locomotion_and_source_free_package",
+  "absolute_weights_no_clamping": true,
+  "unique_authored_node_names_required": true,
+  "panel_edit_undo_redo_invalid_count_rejection_save_reopen_tested": true,
+  "locomotion_transitions_and_source_free_package_exact_trace_tested": true,
+  "synthetic_fixture": true,
+  "preview_uses_shared_preparation_path": true,
+  "preview_visual_acceptance": false,
+  "native_editor_controls_verified": false,
+  "slider_and_named_target_picker_implemented": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

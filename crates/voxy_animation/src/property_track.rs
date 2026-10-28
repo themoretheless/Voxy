@@ -1,11 +1,16 @@
 //! Animated property tracks (scalar, vector, color, boolean) for driving morph weights,
 //! shader/material uniforms, wetness/sweat factors, and gameplay curves alongside skeletal poses.
 
+mod asset_checkpoint;
+pub use asset_checkpoint::{
+    PreparedPropertyAssets, PropertyAssetCheckpoint, PropertyAssetError, PropertyAssetLimits,
+};
+
 use std::sync::Arc;
 
 use glam::Vec3;
 
-use crate::{AnimationError, Playback, TrackError};
+use crate::{AnimationError, Interpolation, Playback, TrackError};
 
 fn sample_time(time: f32, duration: f32, playback: Playback) -> f32 {
     match playback {
@@ -56,6 +61,10 @@ impl PropertyValue {
     /// # Errors
     /// Rejects nonfinite weights, invalid values, or mismatched property kinds.
     pub fn blend(self, other: Self, weight: f32) -> Result<Self, AnimationError> {
+        self.blend64(other, f64::from(weight))
+    }
+
+    fn blend64(self, other: Self, weight: f64) -> Result<Self, AnimationError> {
         if !weight.is_finite() {
             return Err(AnimationError::InvalidBlendWeight);
         }
@@ -63,11 +72,16 @@ impl PropertyValue {
             return Err(AnimationError::InvalidGraphParam);
         }
         let w = weight.clamp(0.0, 1.0);
+        // Finite endpoints can have an unrepresentable f32 difference, even
+        // when the interpolated value is representable (e.g. -MAX to MAX).
+        let mix = |a: f32, b: f32| (f64::from(a) + (f64::from(b) - f64::from(a)) * w) as f32;
         let out = match (self, other) {
-            (Self::Float(a), Self::Float(b)) => Self::Float(a + (b - a) * w),
-            (Self::Vec3(a), Self::Vec3(b)) => Self::Vec3(a + (b - a) * w),
+            (Self::Float(a), Self::Float(b)) => Self::Float(mix(a, b)),
+            (Self::Vec3(a), Self::Vec3(b)) => {
+                Self::Vec3(Vec3::from_array(std::array::from_fn(|i| mix(a[i], b[i]))))
+            }
             (Self::Color(a), Self::Color(b)) => {
-                Self::Color(std::array::from_fn(|i| a[i] + (b[i] - a[i]) * w))
+                Self::Color(std::array::from_fn(|i| mix(a[i], b[i])))
             }
             (Self::Bool(a), Self::Bool(b)) => Self::Bool(if w >= 0.5 { b } else { a }),
             _ => return Err(AnimationError::InvalidGraphParam),
@@ -130,6 +144,8 @@ pub struct PropertyKey {
 pub struct PropertyTrack {
     name: Arc<str>,
     keys: Arc<[PropertyKey]>,
+    interpolation: Interpolation,
+    tangents: Arc<[(PropertyValue, PropertyValue)]>,
 }
 
 impl PropertyTrack {
@@ -184,7 +200,53 @@ impl PropertyTrack {
         Ok(Self {
             name,
             keys: keys.into(),
+            interpolation: Interpolation::Linear,
+            tangents: Arc::from([]),
         })
+    }
+
+    /// Creates a channel with explicit interpolation and incoming/outgoing
+    /// derivatives per key. Cubic derivatives are per second, not per segment.
+    /// Boolean tracks support only step interpolation through this constructor.
+    ///
+    /// # Errors
+    /// Rejects invalid keys, mismatched or nonfinite derivatives, and derivatives
+    /// supplied for non-cubic channels. Cubic values may overshoot their keys.
+    pub fn new_with_interpolation(
+        name: impl Into<Arc<str>>,
+        keys: Vec<PropertyKey>,
+        duration: f32,
+        interpolation: Interpolation,
+        tangents: Vec<(PropertyValue, PropertyValue)>,
+    ) -> Result<Self, AnimationError> {
+        let mut track = Self::new(name, keys, duration)?;
+        let kind = track.keys[0].value;
+        let cubic = interpolation == Interpolation::CubicSpline;
+        if (matches!(kind, PropertyValue::Bool(_)) && interpolation != Interpolation::Step)
+            || (cubic && tangents.len() != track.keys.len())
+            || (!cubic && !tangents.is_empty())
+            || tangents.iter().any(|(incoming, outgoing)| {
+                !incoming.is_valid()
+                    || !outgoing.is_valid()
+                    || !kind.same_kind(*incoming)
+                    || !kind.same_kind(*outgoing)
+            })
+        {
+            return Err(AnimationError::InvalidGraphParam);
+        }
+        track.interpolation = interpolation;
+        track.tangents = tangents.into();
+        Ok(track)
+    }
+
+    #[must_use]
+    pub fn interpolation(&self) -> Interpolation {
+        self.interpolation
+    }
+
+    #[must_use]
+    pub fn tangents(&self) -> &[(PropertyValue, PropertyValue)] {
+        &self.tangents
     }
 
     #[must_use]
@@ -200,29 +262,93 @@ impl PropertyTrack {
     /// Samples this track at `time` (seconds) using the given `duration` and `playback` policy.
     #[must_use]
     pub fn sample(&self, time: f32, duration: f32, playback: Playback) -> PropertyValue {
-        let t = sample_time(time, duration, playback);
+        self.sample_at(f64::from(sample_time(time, duration, playback)))
+    }
+
+    /// Sample from an existing f64 animation clock without narrowing the time.
+    /// # Errors
+    /// Rejects invalid time/duration and nonfinite interpolated output.
+    pub fn sample_clock(
+        &self,
+        time: f64,
+        duration: f32,
+        playback: Playback,
+    ) -> Result<PropertyValue, AnimationError> {
+        if !time.is_finite() || !duration.is_finite() || duration <= 0. {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let duration = f64::from(duration);
+        let t = match playback {
+            Playback::Loop => time.rem_euclid(duration),
+            Playback::Clamp => time.clamp(0., duration),
+        };
+        let value = self.sample_at(t);
+        if !value.is_valid() {
+            return Err(AnimationError::InvalidGraphParam);
+        }
+        Ok(value)
+    }
+
+    fn sample_at(&self, t: f64) -> PropertyValue {
         let keys = &self.keys;
-        if keys.len() == 1 || t <= keys[0].time {
+        if keys.len() == 1 || t <= f64::from(keys[0].time) {
             return keys[0].value;
         }
         let last = keys.len() - 1;
-        if t >= keys[last].time {
+        if t >= f64::from(keys[last].time) {
             return keys[last].value;
         }
-        let next = keys.partition_point(|k| k.time <= t);
+        let next = keys.partition_point(|k| f64::from(k.time) <= t);
         let prev = next - 1;
         let a = keys[prev];
         let b = keys[next];
-        let span = b.time - a.time;
+        let span = f64::from(b.time) - f64::from(a.time);
         if span <= 0.0 {
             return b.value;
         }
-        let alpha = ((t - a.time) / span).clamp(0.0, 1.0);
+        let alpha = ((t - f64::from(a.time)) / span).clamp(0.0, 1.0);
         // Bool tracks hold their previous value until the next keyframe time.
-        if matches!(a.value, PropertyValue::Bool(_)) {
+        if self.interpolation == Interpolation::Step || matches!(a.value, PropertyValue::Bool(_)) {
             a.value
+        } else if self.interpolation == Interpolation::CubicSpline {
+            let outgoing = self.tangents[prev].1;
+            let incoming = self.tangents[next].0;
+            // Evaluate in f64 so a finite f32 derivative times the segment
+            // length does not overflow before cancellation in the polynomial.
+            let t = alpha;
+            let t2 = t * t;
+            let t3 = t2 * t;
+            let scalar = |a: f32, b: f32, outgoing: f32, incoming: f32| {
+                ((2.0 * t3 - 3.0 * t2 + 1.0) * f64::from(a)
+                    + (t3 - 2.0 * t2 + t) * span * f64::from(outgoing)
+                    + (-2.0 * t3 + 3.0 * t2) * f64::from(b)
+                    + (t3 - t2) * span * f64::from(incoming)) as f32
+            };
+            match (a.value, b.value, outgoing, incoming) {
+                (
+                    PropertyValue::Float(a),
+                    PropertyValue::Float(b),
+                    PropertyValue::Float(o),
+                    PropertyValue::Float(i),
+                ) => PropertyValue::Float(scalar(a, b, o, i)),
+                (
+                    PropertyValue::Vec3(a),
+                    PropertyValue::Vec3(b),
+                    PropertyValue::Vec3(o),
+                    PropertyValue::Vec3(i),
+                ) => PropertyValue::Vec3(Vec3::from_array(std::array::from_fn(|n| {
+                    scalar(a[n], b[n], o[n], i[n])
+                }))),
+                (
+                    PropertyValue::Color(a),
+                    PropertyValue::Color(b),
+                    PropertyValue::Color(o),
+                    PropertyValue::Color(i),
+                ) => PropertyValue::Color(std::array::from_fn(|n| scalar(a[n], b[n], o[n], i[n]))),
+                _ => unreachable!("validated cubic property schema"),
+            }
         } else {
-            a.value.blend(b.value, alpha).unwrap_or(a.value)
+            a.value.blend64(b.value, alpha).unwrap_or(a.value)
         }
     }
 }
@@ -447,20 +573,53 @@ impl PropertyClip {
     /// # Errors
     /// Rejects nonfinite sample times.
     pub fn sample(&self, time: f32) -> Result<PropertySet, AnimationError> {
+        self.sample_clock(f64::from(time))
+    }
+
+    /// Uses the skeletal animator's existing f64 clock with the same loop/clamp policy.
+    /// # Errors
+    /// Rejects nonfinite times and interpolated values.
+    pub fn sample_clock(&self, time: f64) -> Result<PropertySet, AnimationError> {
         if !time.is_finite() {
             return Err(AnimationError::InvalidSampleTime);
         }
         let entries = self
             .tracks
             .iter()
-            .map(|t| {
-                (
-                    Arc::clone(&t.name),
-                    t.sample(time, self.duration, self.playback),
-                )
+            .map(|track| {
+                Ok((
+                    Arc::clone(&track.name),
+                    track.sample_clock(time, self.duration, self.playback)?,
+                ))
             })
-            .collect();
-        Ok(PropertySet { entries })
+            .collect::<Result<Vec<_>, AnimationError>>()?;
+        let result = PropertySet { entries };
+        if result.entries.iter().any(|(_, value)| !value.is_valid()) {
+            return Err(AnimationError::InvalidGraphParam);
+        }
+        Ok(result)
+    }
+
+    /// Inclusive authored-phase preview independent of the runtime loop policy.
+    /// Uses f64 time and includes the last key at phase one.
+    /// # Errors
+    /// Rejects phases outside [0,1], nonfinite phases or invalid sampled values.
+    pub fn sample_authored_phase(&self, phase: f64) -> Result<PropertySet, AnimationError> {
+        if !phase.is_finite() || !(0.0..=1.0).contains(&phase) {
+            return Err(AnimationError::InvalidAnimationPhase);
+        }
+        let time = phase * f64::from(self.duration);
+        let entries = self
+            .tracks
+            .iter()
+            .map(|track| {
+                Ok((
+                    track.name.clone(),
+                    track.sample_clock(time, self.duration, Playback::Clamp)?,
+                ))
+            })
+            .collect::<Result<Vec<_>, AnimationError>>()?;
+        PropertySet::new(entries)
     }
 
     /// Samples all property tracks at normalized `phase` in `[0, 1]`.
@@ -471,14 +630,206 @@ impl PropertyClip {
         if !phase.is_finite() {
             return Err(AnimationError::InvalidSampleTime);
         }
-        let p = phase.rem_euclid(1.0) as f32;
-        self.sample(p * self.duration)
+        self.sample_clock(phase * f64::from(self.duration))
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn linear_property_extremes_interpolate_without_overflow_or_fallback() {
+        for (a, b, zero) in [
+            (
+                PropertyValue::Float(-f32::MAX),
+                PropertyValue::Float(f32::MAX),
+                PropertyValue::Float(0.),
+            ),
+            (
+                PropertyValue::Vec3(Vec3::splat(-f32::MAX)),
+                PropertyValue::Vec3(Vec3::splat(f32::MAX)),
+                PropertyValue::Vec3(Vec3::ZERO),
+            ),
+            (
+                PropertyValue::Color([-f32::MAX; 4]),
+                PropertyValue::Color([f32::MAX; 4]),
+                PropertyValue::Color([0.; 4]),
+            ),
+        ] {
+            assert_eq!(a.blend(b, 0.5).unwrap(), zero);
+            let track = PropertyTrack::new(
+                "weight",
+                vec![
+                    PropertyKey { time: 0., value: a },
+                    PropertyKey { time: 1., value: b },
+                ],
+                1.,
+            )
+            .unwrap();
+            assert_eq!(track.sample(0.5, 1., Playback::Clamp), zero);
+        }
+    }
+
+    #[test]
+    fn cubic_property_derivatives_use_segment_seconds_and_preserve_overshoot() {
+        let keys = vec![
+            PropertyKey {
+                time: 1.0,
+                value: PropertyValue::Float(0.0),
+            },
+            PropertyKey {
+                time: 3.0,
+                value: PropertyValue::Float(1.0),
+            },
+        ];
+        let tangents = vec![
+            (PropertyValue::Float(0.0), PropertyValue::Float(4.0)),
+            (PropertyValue::Float(0.0), PropertyValue::Float(0.0)),
+        ];
+        let cubic = PropertyTrack::new_with_interpolation(
+            "weight",
+            keys.clone(),
+            4.0,
+            Interpolation::CubicSpline,
+            tangents,
+        )
+        .unwrap();
+        // Hermite midpoint: .5 + .125 * 2 seconds * 4/second = 1.5.
+        assert_eq!(
+            cubic.sample(2.0, 4.0, Playback::Clamp),
+            PropertyValue::Float(1.5)
+        );
+        assert_eq!(cubic.sample(1.0, 4.0, Playback::Clamp), keys[0].value);
+        assert_eq!(cubic.sample(3.0, 4.0, Playback::Clamp), keys[1].value);
+        let step =
+            PropertyTrack::new_with_interpolation("weight", keys, 4.0, Interpolation::Step, vec![])
+                .unwrap();
+        assert_eq!(
+            step.sample(2.99, 4.0, Playback::Clamp),
+            PropertyValue::Float(0.0)
+        );
+        assert_eq!(
+            step.sample(3.0, 4.0, Playback::Clamp),
+            PropertyValue::Float(1.0)
+        );
+        let clip = PropertyClip::new("shape", 4.0, Playback::Loop, vec![cubic]).unwrap();
+        assert_eq!(clip.sample(-2.0).unwrap().get_float("weight"), Some(1.5));
+    }
+
+    #[test]
+    fn cubic_property_schema_and_overflow_are_rejected() {
+        let keys = vec![
+            PropertyKey {
+                time: 0.0,
+                value: PropertyValue::Float(0.0),
+            },
+            PropertyKey {
+                time: 16.0,
+                value: PropertyValue::Float(0.0),
+            },
+        ];
+        assert!(
+            PropertyTrack::new_with_interpolation(
+                "x",
+                keys.clone(),
+                16.0,
+                Interpolation::CubicSpline,
+                vec![]
+            )
+            .is_err()
+        );
+        let wrong = vec![
+            (
+                PropertyValue::Vec3(Vec3::ZERO),
+                PropertyValue::Vec3(Vec3::ZERO)
+            );
+            2
+        ];
+        assert!(
+            PropertyTrack::new_with_interpolation(
+                "x",
+                keys.clone(),
+                16.0,
+                Interpolation::CubicSpline,
+                wrong
+            )
+            .is_err()
+        );
+        let bad = vec![(PropertyValue::Float(0.0), PropertyValue::Float(f32::NAN)); 2];
+        assert!(
+            PropertyTrack::new_with_interpolation(
+                "x",
+                keys.clone(),
+                16.0,
+                Interpolation::CubicSpline,
+                bad
+            )
+            .is_err()
+        );
+        let tangents = vec![
+            (PropertyValue::Float(0.0), PropertyValue::Float(f32::MAX)),
+            (PropertyValue::Float(-f32::MAX), PropertyValue::Float(0.0)),
+        ];
+        assert!(
+            PropertyTrack::new_with_interpolation(
+                "x",
+                keys.clone(),
+                16.0,
+                Interpolation::Step,
+                tangents.clone()
+            )
+            .is_err()
+        );
+        let track = PropertyTrack::new_with_interpolation(
+            "x",
+            keys,
+            16.0,
+            Interpolation::CubicSpline,
+            tangents,
+        )
+        .unwrap();
+        let clip = PropertyClip::new("shape", 16.0, Playback::Clamp, vec![track]).unwrap();
+        assert!(clip.sample(8.0).is_err());
+    }
+
+    #[test]
+    fn cubic_vector_and_color_properties_follow_the_same_curve() {
+        for (name, zero, one, expected) in [
+            (
+                "vector",
+                PropertyValue::Vec3(Vec3::ZERO),
+                PropertyValue::Vec3(Vec3::ONE),
+                PropertyValue::Vec3(Vec3::splat(0.15625)),
+            ),
+            (
+                "color",
+                PropertyValue::Color([0.0; 4]),
+                PropertyValue::Color([1.0; 4]),
+                PropertyValue::Color([0.15625; 4]),
+            ),
+        ] {
+            let keys = vec![
+                PropertyKey {
+                    time: 0.0,
+                    value: zero,
+                },
+                PropertyKey {
+                    time: 2.0,
+                    value: one,
+                },
+            ];
+            let track = PropertyTrack::new_with_interpolation(
+                name,
+                keys,
+                2.0,
+                Interpolation::CubicSpline,
+                vec![(zero, zero); 2],
+            )
+            .unwrap();
+            assert_eq!(track.sample(0.5, 2.0, Playback::Clamp), expected);
+        }
+    }
 
     #[test]
     fn property_tracks_sample_blend_and_apply_additive_curves() {

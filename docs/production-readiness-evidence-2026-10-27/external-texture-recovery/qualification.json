@@ -1,0 +1,24 @@
+{
+  "stage": "ENG-03",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "regression": "external_texture_watcher_failure_and_recovery_preserve_authored_scene",
+  "verified": [
+    "external glTF image dependency corruption detected by normal watcher and import worker",
+    "failed decode retains exact accepted catalog Arc and authoring document including duplicated instance",
+    "restoring only PNG automatically republishes model without manual reload",
+    "recovery retains authoring document and decoded image"
+  ],
+  "editor": {
+    "passed": 323,
+    "failed": 0,
+    "ignored": 30
+  },
+  "strict_all_target_clippy": "passed",
+  "source_sha256": "2a5ca1ca668abb5b67b38950e456f0a5fde3f226ca4166ba1d9d195ac0db1ca2",
+  "limits": [
+    "headless filesystem/watcher/import/CPU-publication regression",
+    "GPU transaction qualified separately; no combined watcher/GPU image proof",
+    "packaging and remaining ENG-03 criteria remain open"
+  ]
+}

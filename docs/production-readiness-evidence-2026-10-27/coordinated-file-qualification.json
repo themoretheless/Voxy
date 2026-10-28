@@ -1,0 +1,50 @@
+{
+  "scope": "Bounded coordinated Play/model/UI/audio/input file using existing native participant codecs",
+  "format": {
+    "magic": "VOXYCGR1",
+    "header_bytes": 72,
+    "lengths": "four checked u64 little-endian section lengths",
+    "integrity": "BLAKE3 of length table and concatenated participant payloads",
+    "file_bytes": 160216,
+    "section_bytes": {
+      "game_models": 158945,
+      "ui": 266,
+      "audio": 25,
+      "native_ui_input": 908
+    },
+    "sha256": "ac6485db02ef47a2652f795bda2cf13e9e86e21200cc369bbbd9ed0ff8ef7fa5"
+  },
+  "implemented": [
+    "Independent participant caps and enclosing encoded-file cap",
+    "Native atomic writer encodes before replacing a trusted local path",
+    "Bounded read against opened-file metadata and max+1 read limit",
+    "Exact file re-encoding and reject corruption/trailing bytes/overflowing length/invalid UTF8/per-section caps",
+    "Rejected budget save leaves existing file bytes intact",
+    "Actual GPU accepted model/frame payload transported through coordinated file and loaded after source project removal",
+    "Fresh group preparation and original GPU/120-frame game continuation use decoded native game participant"
+  ],
+  "checks": {
+    "editor_passed": 317,
+    "editor_ignored": 29,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_diff": "passed",
+    "gpu": "Apple M4 Max Metal passed",
+    "readbacks_equal": true,
+    "nonblack_pixels": 946
+  },
+  "retained_rejections": [
+    "Initial missing local EditorError conversions",
+    "Unused legacy import after replacing direct participant read with coordinated file read"
+  ],
+  "not_claimed": [
+    "Not full App/session persistence: authoring/extraction/non-model Graphics remain separate",
+    "No native menu/publication/first-presented-frame input transaction",
+    "Rich fixture has empty UiLive/audio; native UI input is nonempty and historical accepted model GPU state is present",
+    "Native callback queue, physical memory/FPS and full ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/file.rs": "466a9db46eb9e225569aac584a7f871e50c9c4db6367bbd6f8533dbf1b487dcd",
+    "crates/voxy_editor/src/app/restore_barrier.rs": "815330e72a466105587fe94d32006a39c109000038fcfc8f967a6b34f4dd7ffe",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "aa169292927e7f6e0cffc17f60e43854b126239d2874aba46294351971df8099"
+  }
+}

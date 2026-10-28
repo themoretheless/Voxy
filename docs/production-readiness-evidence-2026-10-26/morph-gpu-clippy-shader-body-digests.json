@@ -1,0 +1,18 @@
+[
+  {
+    "file": "crates/voxy_render/src/probe_sampling_precision_tests.rs",
+    "body_sha256": "ca4fef44575a664b102e75db2403f314c46fb29bd08a446aacf42cd745cdb965"
+  },
+  {
+    "file": "crates/voxy_render/src/probe_sampling_precision_tests.rs",
+    "body_sha256": "13d189dcdc7b87ccc4915130913b7248701950f5309a227ae253ec458240f04a"
+  },
+  {
+    "file": "crates/voxy_render/src/nearest_tie_count_tests.rs",
+    "body_sha256": "bf9a574aa1b1532314c7f9425c30c713856b35456b7d703d051cac63204ed60a"
+  },
+  {
+    "file": "crates/voxy_render/src/world_wide_order_tests.rs",
+    "body_sha256": "bcc2efec2e6406c9a319fcabdeab9c70adba0612778d6623e1f6a1e3c3c13765"
+  }
+]

@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+EDITOR HISTORY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=0 asset=rig
+MODEL FAILED frames=0 last_good=true
+
+thread 'app::model_reload::gpu_app_tests::offscreen_editor_file_keeps_history_preview_and_gpu_in_one_scene' (80717615) panicked at crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs:1993:9:
+frame-polled load did not settle: Some(Reading)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test app::model_reload::gpu_app_tests::offscreen_editor_file_keeps_history_preview_and_gpu_in_one_scene ... FAILED
+
+failures:
+
+failures:
+    app::model_reload::gpu_app_tests::offscreen_editor_file_keeps_history_preview_and_gpu_in_one_scene
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 425 filtered out; finished in 30.66s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

@@ -1,0 +1,43 @@
+{
+  "status": "current_animation_runtime_checkpoint_and_combined_continuation_verified",
+  "evidence_kind": "retained_test_logs_inspected_not_rerun_this_turn",
+  "tests": {
+    "animation_passed": 348,
+    "editor_passed": 241,
+    "editor_ignored": 20,
+    "strict_all_target_clippy": true
+  },
+  "continuation_frames": 120,
+  "covered": [
+    "current AnimationRuntime owners and queued motion",
+    "compiled retarget bindings",
+    "shared interrupted-fade pose identity",
+    "scene physics input and solved foot continuation",
+    "event track immutable clip revision after rebind"
+  ],
+  "model_playback_schema": 2,
+  "not_qualified": [
+    "atomic App/PlaySession publication",
+    "persisted complete model and clip revision archive",
+    "audio UI camera angular and liquid owners",
+    "native save slots",
+    "platform release",
+    "120 or 160 FPS"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/animation_runtime_checkpoint.rs": "e6eb65701b54aa9b8c880eb9f4927636fe067faaf7fe33a5ae200c0bc744ef46",
+    "crates/voxy_editor/src/model_playback_checkpoint.rs": "8e5161c6d428756bce5a2d72da7f339577ad4396a8fa37792a36635092298fb2",
+    "crates/voxy_editor/src/foot_runtime_checkpoint.rs": "1db8336c20f9c70853ede3cc56741f5c784ad4bd531ac7ea59027eb8e0a131ed",
+    "crates/voxy_editor/src/animation_runtime/tests.rs": "eadf719781c6039b7938c1f0cc3b8235af46cbf7bbca1581c9357d050b03e687",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "bbfc6457c6879ce53585b4e6e6afa5870f80ad0d997d1dcbb7827100cbde15fb",
+    "crates/voxy_editor/src/lib.rs": "8c7fce0b7a0408f2047239cda6dfd7cfac9b88a095aa1021b7488b1e971e72d0",
+    "crates/voxy_animation/src/retarget/checkpoint.rs": "220c7868ca4bc86fdacc0f292f184d077b6a10e1180919bb7c72d7d928f416ba",
+    "crates/voxy_animation/src/root_rigid/checkpoint.rs": "72f346ebbd6a61f51ce74bf7b09c667a16843ec35e7517b1b37417ec23050c6d"
+  },
+  "logs": [
+    "animation-owner-full.log",
+    "animation-owner-clippy.log",
+    "animation-owner-event-revision.log",
+    "animation-owner-physical-frozen.log"
+  ]
+}

@@ -20,7 +20,7 @@ fn superseded_ties_do_not_depend_on_visit_order() -> Result<(), Box<dyn std::err
     let update = extract("nearest_evaluate_and_update");
     let old = update.replace("  if cmp.order<0 {nearest_ties=0u;}\n", "");
     assert_ne!(old, update);
-    let support = r#"
+    let support = r"
 struct ExInt{value:u32,valid:u32}
 struct ExParameters{t:ExInt,u:ExInt,v:ExInt,denominator:ExInt,valid:u32}
 struct ExVec{x:u32}
@@ -54,7 +54,7 @@ fn nearest_numeric_unknown(){unknown=true;}
  for(var slot=0u;slot<3u;slot++){nearest_evaluate_and_update(slot,0u,0u,ExVec(0u));}
  result[event]=vec4<u32>(nearest_best.t.value,nearest_ties,nearest_slot,select(0u,1u,unknown));
 }
-"#;
+";
     let events = [
         [3u32, 3, 1, 0],
         [3, 1, 3, 0],

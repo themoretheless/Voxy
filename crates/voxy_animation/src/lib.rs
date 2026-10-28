@@ -1,5 +1,17 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
+mod root_motion_receipt;
+pub use root_motion_receipt::{RootRigidMotionCheckpoint, RootRigidMotionReceipt};
+mod pose_archive;
+pub use pose_archive::{PoseSnapshotArchive, PoseSnapshotBuilder, PreparedPoseSnapshots};
+mod asset_checkpoint;
+mod checkpoint;
+pub use asset_checkpoint::{
+    AnimationAssetCheckpoint, AnimationAssetError, AnimationAssetLimits, PreparedAnimationAssets,
+};
+pub use checkpoint::{
+    AnimatorCheckpoint, AnimatorCheckpointError, AnimatorFrameCheckpoint, PoseCheckpoint,
+};
 mod contact_bake;
 mod loop_closure;
 mod precision;
@@ -20,8 +32,8 @@ mod foot_plant;
 pub use foot_plant::FootPlant;
 mod retarget;
 pub use retarget::{
-    BoneRole, HumanoidProfile, ModelRotationRetarget, RetargetBinding, RetargetJoint,
-    RetargetRootSimilarity, Side,
+    BoneRole, HumanoidProfile, ModelRotationRetarget, RetargetBinding, RetargetBindingCheckpoint,
+    RetargetJoint, RetargetRootSimilarity, Side,
 };
 mod blend_phase;
 pub use blend_phase::{
@@ -34,18 +46,25 @@ pub use ik::limits::{JointLimit, swing_twist_angles};
 pub use ik::look_at::{LookAtChain, look_at_error};
 pub use ik::{PlantedLegsResult, TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod rigid_fade;
-pub use rigid_fade::RootRigidFadePlan;
+pub use rigid_fade::{
+    PreparedRootRigidFadeCheckpoint, RootRigidFadeCheckpoint, RootRigidFadeCheckpointLimits,
+    RootRigidFadeCompileContext, RootRigidFadePlan,
+};
 mod root_rigid;
 pub use root_rigid::{
     RootAngularDerivativeBounds, RootMotionInterval, RootMotionPartition, RootMotionStep,
     RootRigidApproximation, RootRigidCertifiedFadeInterval, RootRigidCoordinateCertificate,
-    RootRigidCurve, RootRigidEnclosure, RootRigidErrorAccumulator, RootRigidEvaluatedPose,
-    RootRigidFadeDomain, RootRigidFadeFieldInterval, RootRigidFadePointCertificate,
-    RootRigidFieldInterval, RootRigidIntegrationDomain, RootRigidMappedField, RootRigidMappedPath,
-    RootRigidPath, RootRigidSourceField, RootRigidSpan, RootRigidTransform, RootRigidTwist,
-    RootRigidTwistEnclosure, RootRigidVelocity, RootRigidWallInterval, RootRigidWallPartition,
-    RootScrewEnclosurePath, RootSourceScrewPointCertificate, RootSpatialTwistBounds,
-    RootTimeCutEnclosure, RootTwistErrorBounds, RootTwistRateBounds, RootUniformScaleEnclosure,
+    RootRigidCurve, RootRigidEnclosure, RootRigidEnclosureCheckpoint, RootRigidErrorAccumulator,
+    RootRigidEvaluatedPose, RootRigidFadeDomain, RootRigidFadeFieldInterval,
+    RootRigidFadePointCertificate, RootRigidFieldInterval, RootRigidIntegrationDomain,
+    RootRigidMappedField, RootRigidMappedPath, RootRigidPath, RootRigidPathCheckpoint,
+    RootRigidPathCheckpointLimits, RootRigidPathProgram, RootRigidPathStateRecord,
+    RootRigidPathStep, RootRigidSourceField, RootRigidSpan, RootRigidTimedTwistStep,
+    RootRigidTransform, RootRigidTwist, RootRigidTwistEnclosure, RootRigidTwistStep,
+    RootRigidVelocity, RootRigidWallInterval, RootRigidWallPartition, RootScrewEnclosurePath,
+    RootSourceScrewPointCertificate, RootSpatialTwistBounds, RootTimeCutEnclosure,
+    RootTwistErrorBounds, RootTwistRateBounds, RootUniformScaleCheckpoint,
+    RootUniformScaleEnclosure,
 };
 mod root_rotation;
 pub use root_rotation::{
@@ -63,11 +82,13 @@ pub use gpu_layout::{
     cpu_reference_palette, nlerp, pack_affine_3x4, unpack_affine_3x4,
 };
 mod gait;
+mod property_playback;
 mod property_track;
 mod ragdoll;
 pub use compressed::{CompressedClip, CompressionReport, CompressionSettings};
 pub use property_track::{
-    MAX_PROPERTY_KEYS, MAX_PROPERTY_TRACKS, PropertyClip, PropertyKey, PropertySet, PropertyTrack,
+    MAX_PROPERTY_KEYS, MAX_PROPERTY_TRACKS, PreparedPropertyAssets, PropertyAssetCheckpoint,
+    PropertyAssetError, PropertyAssetLimits, PropertyClip, PropertyKey, PropertySet, PropertyTrack,
     PropertyValue,
 };
 pub use ragdoll::{
@@ -1222,6 +1243,7 @@ struct Transition {
     source_time: f64,
     // Interruption captures the displayed blend once; staging shares this snapshot.
     source_pose: Option<Arc<Pose>>,
+    source_properties: Option<Arc<PropertySet>>,
     elapsed: f64,
     duration: f64,
 }
@@ -1242,10 +1264,14 @@ pub struct Animator {
     time: f64,
     speed: f32,
     transition: Option<Transition>,
+    property_bindings: Option<Arc<property_playback::PropertyBindings>>,
+    accepted_properties: PropertySet,
 }
 
 #[derive(Clone, Debug)]
 pub struct AnimatorFrame {
+    /// Properties sampled/blended transactionally from the same clocks as this pose.
+    pub properties: PropertySet,
     pub pose: Pose,
     pub skin_matrices: Vec<Mat4>,
     /// Translation displacement in the selected joint's parent-local frame.
@@ -1356,6 +1382,8 @@ impl Animator {
             time: 0.0,
             speed: 1.0,
             transition: None,
+            property_bindings: None,
+            accepted_properties: PropertySet::default(),
         }
     }
 
@@ -1577,13 +1605,20 @@ impl Animator {
         next.try_sample_clock(&skeleton, next_time)?
             .skin_matrices(&skeleton)?;
         let next_curve = next.motion_curve(self.motion_joint)?;
+        let next_properties = self.sample_bound_properties(&next, next_time)?;
         if duration == 0.0 {
             self.motion_curve = next_curve;
             self.current = next;
             self.time = next_time;
             self.transition = None;
+            self.accepted_properties = next_properties;
             return Ok(());
         }
+        let source_properties = if self.transition.is_some() && self.property_bindings.is_some() {
+            Some(Arc::new(self.sample_displayed_properties()?))
+        } else {
+            None
+        };
         let source_pose = if let Some(transition) = &self.transition {
             let target = self.current.try_sample_clock(&skeleton, self.time)?;
             let sampled;
@@ -1609,6 +1644,7 @@ impl Animator {
         self.transition = Some(Transition {
             source_curve: self.motion_curve.clone(),
             source_pose,
+            source_properties,
             source: Arc::clone(&self.current),
             source_time: self.time,
             elapsed: 0.0,
@@ -1756,7 +1792,10 @@ impl Animator {
         if let Some(transition) = &mut self.transition {
             transition.source_time = transition.source.phase(transition.source_time);
         }
+        let properties = self.sample_displayed_properties()?;
+        self.accepted_properties = properties.clone();
         Ok(AnimatorFrame {
+            properties,
             pose,
             skin_matrices,
             root_motion,
@@ -1950,14 +1989,16 @@ impl Timed for QuatKey {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum TrackError {
     InvalidTangents,
     InvalidTime,
     InvalidValue,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum AnimationError {
     InvalidRetargetBinding,
     InvalidIkChain,

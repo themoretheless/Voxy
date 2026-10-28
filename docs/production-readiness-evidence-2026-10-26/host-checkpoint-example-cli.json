@@ -1,0 +1,5 @@
+{
+  "exit_code": 0,
+  "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=triangle\nHOST MOVE END fixed=120 x=1.999999\nHOST BEHAVIOR CHECKPOINT PASS bytes=278 ticks=120 full_game_save=false\n",
+  "stderr": ""
+}

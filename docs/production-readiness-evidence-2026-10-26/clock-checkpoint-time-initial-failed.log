@@ -1,0 +1,28 @@
+   Compiling voxy_time v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_time)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.32s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_time-13bc7a81122eb43c)
+
+running 7 tests
+test checkpoint_tests::invalid_clock_checkpoint_preserves_state ... ok
+test tests::zero_elapsed_cannot_emit_subpicosecond_ticks ... ok
+test tests::retarget_is_continuous_and_invalid_inputs_are_ignored ... ok
+test tests::braking_pause_and_real_time_resume ... ok
+test tests::fixed_steps_and_budget ... ok
+test tests::latency_window_tracks_percentiles_and_stutters ... FAILED
+test checkpoint_tests::clock_checkpoint_preserves_ramps_remainder_pause_and_overload_exactly ... ok
+
+failures:
+
+---- tests::latency_window_tracks_percentiles_and_stutters stdout ----
+
+thread 'tests::latency_window_tracks_percentiles_and_stutters' (73404265) panicked at crates/voxy_time/src/lib.rs:392:9:
+assertion failed: p95 >= 8_000 && p99 == 25_000
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tests::latency_window_tracks_percentiles_and_stutters
+
+test result: FAILED. 6 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_time --lib`

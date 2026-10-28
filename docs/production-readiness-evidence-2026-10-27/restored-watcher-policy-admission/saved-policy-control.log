@@ -1,0 +1,9 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.83s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_assets-c45ad932fb61a65e)
+
+running 1 test
+test watch_worker::checkpoint_tests::restored_worker_frontend_keeps_saved_capacity_instead_of_caller_upper_bound ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 66 filtered out; finished in 0.00s
+

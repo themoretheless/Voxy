@@ -1,0 +1,25 @@
+{
+  "status": "audio_candidate_and_admitted_infallible_publication_verified",
+  "editor_passed": 247,
+  "editor_ignored": 20,
+  "strict_all_target_editor_clippy": true,
+  "covered": [
+    "independent prepared session candidate",
+    "explicit discard returns worker joins",
+    "fallback drop closes unpublished worker channels",
+    "late rejection by another participant leaves live audio untouched",
+    "publication admission rejects active checkpoint",
+    "permit borrow prevents target transitions before publication",
+    "successful convenience load uses staged path",
+    "existing 120 step continuation regression"
+  ],
+  "remaining": [
+    "whole App coordinator consuming all staged participants",
+    "angular liquid and resource ownership gaps",
+    "native audio device queue",
+    "user save slots and native acceptance"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "f02c2ba002d1264f8de81d464956e09f5ad9ae72b0cf07e10907d692136312f9"
+  }
+}

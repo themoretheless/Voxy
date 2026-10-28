@@ -1,0 +1,26 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+error[E0433]: cannot find type `Vec3` in this scope
+  --> crates/voxy_render/src/skinned/checkpoint/set/tests.rs:68:36
+   |
+68 |             Mat4::from_translation(Vec3::new(t, 0., 0.)),
+   |                                    ^^^^ use of undeclared type `Vec3`
+   |
+   = note: struct `crate::archive_frustum::tests::Vec3` exists but is inaccessible
+help: a struct with a similar name exists
+   |
+68 -             Mat4::from_translation(Vec3::new(t, 0., 0.)),
+68 +             Mat4::from_translation(Vec::new(t, 0., 0.)),
+   |
+help: consider importing one of these items
+   |
+ 1 + use glam::Vec3;
+   |
+ 1 + use physics::biomechanics::Vec3;
+   |
+ 1 + use physics::cohesive::Vec3;
+   |
+ 1 + use physics::friction::Vec3;
+   |
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `voxy_render` (lib test) due to 1 previous error

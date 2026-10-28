@@ -11,6 +11,7 @@ pub(super) struct PlaySession {
     pub(super) animations: crate::animation_runtime::AnimationRuntime,
     pub(super) angular_motion: Option<voxy_gameplay::AngularMotionBatch>,
     pub(super) simulation_ticks: u64,
+    pub(super) follow_camera: Option<crate::follow_camera::FollowRuntime>,
     pub(super) liquid_optics: Vec<Option<[f32; 4]>>,
     pub(super) liquid: Option<voxy_gameplay::SceneLiquidRuntime>,
     pub(super) physics: Option<CharacterPhysics>,
@@ -32,7 +33,10 @@ impl PlaySession {
         &mut self,
         scene: &mut SceneGraph,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        self.stop_simulation(scene)?;
+        let stopped = self.stop_simulation(scene);
+        self.playing = None;
+        self.simulation_ticks = 0;
+        self.follow_camera = None;
         self.physics = None;
         self.liquid = None;
         self.liquid_optics.clear();
@@ -40,6 +44,8 @@ impl PlaySession {
         self.angular_motion = None;
         self.ui_actions = None;
         self.player_input = voxy_gameplay::player_input()?;
-        Ok(())
+        stopped
     }
 }
+
+pub(crate) mod checkpoint;

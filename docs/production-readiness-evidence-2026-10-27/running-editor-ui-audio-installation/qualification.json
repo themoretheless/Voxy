@@ -1,0 +1,75 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "production_behavior_changed_this_step": false,
+  "scope": "Expanded native App installation qualification: running scene, accepted nonempty UI rectangle and offline audio, 120 continued App simulation/render cycles and Stop",
+  "hardware": {
+    "device": "Apple M4 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "fixture": "animated-triangle.glb plus generated tone.wav and one UiElement rectangle; no UI text/font",
+  "checks": {
+    "gpu_app": {
+      "passed": 6,
+      "failed": 0
+    },
+    "editor_library": {
+      "passed": 376,
+      "failed": 0,
+      "ignored": 41
+    },
+    "scoped_rustfmt": true,
+    "scoped_diff_check": true,
+    "strict_all_target_clippy": true
+  },
+  "proofs": [
+    "actual manifest-declared AudioSource loaded through normal Play preparation",
+    "nonempty source UI GPU publication accepted before save",
+    "original native editor file written/read before entire source directory deletion",
+    "running snapshot installed into actual App via original guarded GPU/UI/audio publication path",
+    "accepted geometry pixels equal original before continuation",
+    "native UI publication archive exactly equals original after installation",
+    "complete audio playback checkpoint exactly equals saved source immediately after installation",
+    "120 App game steps and 120 ordinary offscreen draws after installation",
+    "simulation tick count advances exactly 120",
+    "audio advances 96000 stereo PCM frames",
+    "each-step frames and peak bits equal independently restored native audio owner",
+    "both actual and reference use native reload polling and retain last-good data after missing-source failures",
+    "complete native audio playback checkpoint equals independent owner at end",
+    "Stop restores authoring and releases simulation and audio",
+    "existing history/native source guards, cancellation and retired-worker cleanup in both idle/running variants"
+  ],
+  "controls": {
+    "undeclared_audio": "test manifest corrected; native admission preserved",
+    "play_and_ui_policies": "empty-fixture limits replaced by bounded policies retaining native source capacities",
+    "unaccepted_ui": "test waits for ordinary async UI publication before taking full checkpoint",
+    "reference_without_reload": "catalog statuses differed legitimately; corrected reference polls the same native reload owner rather than removing fields from comparison"
+  },
+  "not_qualified": [
+    "UI text/font full App installation",
+    "native audio output device queues",
+    "native surface/input presentation",
+    "save/load menus",
+    "project Save As",
+    "production assets",
+    "FPS",
+    "full engine readiness"
+  ],
+  "logs": [
+    "gpu.log",
+    "gpu-suite.log",
+    "editor.log",
+    "undeclared-audio-control.log",
+    "narrow-play-policy-control.log",
+    "unaccepted-ui-control.log",
+    "narrow-ui-archive-control.log",
+    "reference-without-reload-control.log",
+    "clippy.log"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "74f053c7345d0c95cc95126bd87cef6a89de8f00e49317d7a4018efab39844cd",
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "61c563ab44963bd7eb40b60b9e88c72a6852a9a3a8a845325d927e16039f02c1",
+    "crates/voxy_editor/src/audio_session.rs": "cd33899e140389530ec03b3ba0942f21b4cb7d070ecc33da34ff05821bab854d"
+  }
+}

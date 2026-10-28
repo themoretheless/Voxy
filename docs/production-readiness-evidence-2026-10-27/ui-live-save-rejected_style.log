@@ -1,0 +1,23 @@
+    Blocking waiting for file lock on build directory
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: struct constructor field order is inconsistent with struct definition field order
+   --> crates/voxy_editor/src/ui_live/reload_checkpoint/tests.rs:151:9
+    |
+151 | /         sources,
+152 | |         watcher,
+153 | |         last_scan,
+154 | |         deferred,
+    | |________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#inconsistent_struct_constructor
+    = note: `-D clippy::inconsistent-struct-constructor` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::inconsistent_struct_constructor)]`
+help: try
+    |
+151 ~         deferred,
+152 +         sources,
+153 +         watcher,
+154 ~         last_scan,
+    |
+
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

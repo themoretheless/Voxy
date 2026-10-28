@@ -1,0 +1,16 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0063]: missing field `cache_identity` in initializer of `model_reload::Pending`
+   --> crates/voxy_editor/src/app/model_reload/tests.rs:149:30
+    |
+149 |     app.pending_model = Some(Pending {
+    |                              ^^^^^^^ missing `cache_identity`
+
+error[E0063]: missing field `cache_identity` in initializer of `model_reload::Pending`
+   --> crates/voxy_editor/src/app/model_reload/tests.rs:171:30
+    |
+171 |     app.pending_model = Some(Pending {
+    |                              ^^^^^^^ missing `cache_identity`
+
+For more information about this error, try `rustc --explain E0063`.
+error: could not compile `voxy_editor` (lib test) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...

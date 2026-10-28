@@ -1,0 +1,28 @@
+   Compiling quote v1.0.47
+   Compiling libc v0.2.189
+   Compiling crossbeam-utils v0.8.22
+   Compiling voxy_audio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio)
+   Compiling mach2 v0.4.3
+   Compiling syn v2.0.119
+   Compiling crossbeam-queue v0.3.14
+   Compiling bindgen v0.72.1
+   Compiling coreaudio-sys v0.2.18
+   Compiling coreaudio-rs v0.11.3
+   Compiling cpal v0.15.3
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio_device)
+    Finished `release` profile [optimized] target(s) in 7.07s
+     Running unittests src/lib.rs (target/research-ray-precision/release/deps/voxy_audio_device-c00e8b254fc6b780)
+
+running 1 test
+PCM_QUEUE_PAIR pair=0 frames=1048576 reference_ns=7358542 checkpointable_ns=8825208
+PCM_QUEUE_PAIR pair=1 frames=1048576 reference_ns=7525417 checkpointable_ns=8770708
+PCM_QUEUE_PAIR pair=2 frames=1048576 reference_ns=7619250 checkpointable_ns=8650292
+PCM_QUEUE_PAIR pair=3 frames=1048576 reference_ns=7584458 checkpointable_ns=8583042
+PCM_QUEUE_PAIR pair=4 frames=1048576 reference_ns=7556834 checkpointable_ns=8681167
+PCM_QUEUE_PAIR pair=5 frames=1048576 reference_ns=7562958 checkpointable_ns=8583042
+PCM_QUEUE_PAIR pair=6 frames=1048576 reference_ns=7343916 checkpointable_ns=8615250
+PCM_QUEUE_PAIR pair=7 frames=1048576 reference_ns=7381584 checkpointable_ns=8543875
+test queue::benchmarks::paired_former_channel_and_checkpointable_queue ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.13s
+

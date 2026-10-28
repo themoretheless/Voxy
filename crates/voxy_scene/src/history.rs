@@ -1,6 +1,17 @@
 //! Bounded authoring-document history, independent of live simulation/resources.
 use crate::{ComponentRegistry, DocumentError, SceneDocument};
 use std::{collections::VecDeque, sync::Arc};
+mod checkpoint;
+pub use checkpoint::{HistoryCheckpointLimits, PreparedSceneHistory, SceneHistoryCheckpoint};
+/// Opaque process-local observation of the native history transaction epoch.
+#[derive(Clone, Debug)]
+pub struct HistoryChangeToken(Arc<()>);
+impl PartialEq for HistoryChangeToken {
+    fn eq(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.0, &other.0)
+    }
+}
+impl Eq for HistoryChangeToken {}
 #[derive(Debug)]
 struct Snapshot {
     document: SceneDocument,
@@ -13,15 +24,22 @@ struct Snapshot {
 #[derive(Debug)]
 pub struct SceneEdit {
     document: SceneDocument,
+    edit_epoch: Arc<()>,
     epoch: Arc<()>,
 }
 impl SceneEdit {
+    /// Changes on mutable draft access; separate drafts never share a token.
+    #[must_use]
+    pub fn change_token(&self) -> HistoryChangeToken {
+        HistoryChangeToken(self.edit_epoch.clone())
+    }
     #[must_use]
     pub fn document(&self) -> &SceneDocument {
         &self.document
     }
     /// Candidate edits are validated on commit; intermediate previews may be invalid.
     pub fn document_mut(&mut self) -> &mut SceneDocument {
+        self.edit_epoch = Arc::new(());
         &mut self.document
     }
 }
@@ -36,6 +54,12 @@ pub struct SceneHistory {
     scene_capacity: usize,
 }
 impl SceneHistory {
+    /// Changes on commits, metadata refresh and undo/redo, including a return
+    /// to equal document content. Detached edits have their own mutable state.
+    #[must_use]
+    pub fn change_token(&self) -> HistoryChangeToken {
+        HistoryChangeToken(self.epoch.clone())
+    }
     fn validate(
         document: SceneDocument,
         metadata: serde_json::Value,
@@ -137,6 +161,7 @@ impl SceneHistory {
     #[must_use]
     pub fn begin_edit(&self) -> SceneEdit {
         SceneEdit {
+            edit_epoch: Arc::new(()),
             document: self.current.document.clone(),
             epoch: Arc::clone(&self.epoch),
         }
@@ -361,16 +386,33 @@ mod tests {
             4096,
         )
         .unwrap();
+        let original_epoch = history.change_token();
+        let mut isolated = history.begin_edit();
+        let another = history.begin_edit();
+        assert_ne!(isolated.change_token(), another.change_token());
+        let before_draft = isolated.change_token();
+        let _ = isolated.document_mut();
+        assert_ne!(before_draft, isolated.change_token());
+        assert_eq!(original_epoch, history.change_token());
+
         let stale = history.begin_edit();
         let draft = serde_json::json!({"settings": {"frames": 10}});
         history.commit_auxiliary(draft.clone(), &registry).unwrap();
+        assert_ne!(original_epoch, history.change_token());
         assert_eq!(history.current(), &original);
         assert_eq!(history.metadata(), &serde_json::json!({"composition": 1}));
         assert!(history.commit_edit(stale, &registry).is_err());
+        let committed_epoch = history.change_token();
         assert!(history.undo());
+        assert_ne!(original_epoch, history.change_token());
+        assert_ne!(committed_epoch, history.change_token());
+        let undone_epoch = history.change_token();
         assert!(history.auxiliary().is_null());
         assert!(history.redo());
+        assert_ne!(committed_epoch, history.change_token());
+        assert_ne!(undone_epoch, history.change_token());
         assert_eq!(history.auxiliary(), &draft);
+        let accepted_epoch = history.change_token();
         let bytes = history.retained_bytes();
         assert!(
             history
@@ -382,6 +424,7 @@ mod tests {
         );
         assert_eq!(history.auxiliary(), &draft);
         assert_eq!(history.retained_bytes(), bytes);
+        assert_eq!(accepted_epoch, history.change_token());
         history
             .refresh_metadata(serde_json::json!({"composition": 2}), &registry)
             .unwrap();

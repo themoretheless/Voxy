@@ -1,0 +1,59 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "scope": "Exclusive actual App snapshot installation with model/UI GPU and offline-audio publication permits; idle source-free GPU integration and native retirement lifecycle",
+  "hardware": {
+    "device": "Apple M4 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "checks": {
+    "gpu_app": {
+      "passed": 5,
+      "failed": 0
+    },
+    "editor_library": {
+      "passed": 376,
+      "failed": 0,
+      "ignored": 40
+    },
+    "strict_all_target_clippy": true,
+    "scoped_rustfmt": true,
+    "scoped_diff_check": true
+  },
+  "proofs": [
+    "native snapshot file prepared after original source directory deletion",
+    "GPU staged against actual App renderer/device/cache and replacement inventory",
+    "rejected target history identity leaves source scene/history tokens and cache unchanged with barrier retained",
+    "actual App scene/history/preview/resources/GPU installation",
+    "exact accepted geometry pixels after publication",
+    "native preview low phase mantissa bit preserved",
+    "source authoring registry Arc retained",
+    "runtime ModelInstance schema absent from authoring document",
+    "restore/model fences released after success",
+    "ordinary App offscreen render executes after install",
+    "old native simulation callbacks use old scene identity",
+    "callback panic captured and worker joins continue"
+  ],
+  "not_qualified": [
+    "whole running-session App installation",
+    "nonempty UI/audio full App installation integration",
+    "native output-device queue transfer",
+    "native surface presentation",
+    "save/load menus",
+    "project Save As",
+    "production rigs/content",
+    "120/160 FPS",
+    "full engine readiness"
+  ],
+  "logs": [
+    "gpu-app.log",
+    "editor.log",
+    "clippy.log"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "61c563ab44963bd7eb40b60b9e88c72a6852a9a3a8a845325d927e16039f02c1",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "001f6fef8d0dc659437bd3179e21b23c3e17a1ed7dc3829e91262003945e82de",
+    "crates/voxy_editor/src/audio_session.rs": "cd33899e140389530ec03b3ba0942f21b4cb7d070ecc33da34ff05821bab854d"
+  }
+}

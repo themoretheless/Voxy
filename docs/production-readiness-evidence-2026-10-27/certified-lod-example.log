@@ -1,0 +1,28 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.89s
+     Running `target/research-ray-precision/debug/examples/certified_lod_checkpoint docs/production-readiness-evidence-2026-10-27/certified-lod-files`
+{
+  "receipts": [
+    {
+      "blake3": "7ef9c44701f175e9a618a84d14a8d8fd8e66b8b458174076a541465db8e23659",
+      "both_levels_exercised": true,
+      "bytes": 496,
+      "exact_native_checkpoint_equal": true,
+      "file": "whole.json",
+      "original_error_bits": 4604544271217802192,
+      "policy_phases": 120,
+      "restored_error_bits": 4604544271217802192
+    },
+    {
+      "blake3": "573f866d97a83ea2cd11553cdcb4fdb3ccddb13c3e7d81ac43b735ea49287fe8",
+      "both_levels_exercised": true,
+      "bytes": 1335,
+      "exact_native_checkpoint_equal": true,
+      "file": "subdivided.json",
+      "original_error_bits": 4604544271217802195,
+      "policy_phases": 120,
+      "restored_error_bits": 4604544271217802195
+    }
+  ],
+  "scope": "native static geometric LOD proof restoration; no GPU, material/normal/UV/deformation or frame-rate qualification"
+}

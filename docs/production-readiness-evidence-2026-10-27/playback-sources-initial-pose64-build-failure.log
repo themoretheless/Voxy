@@ -1,0 +1,26 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+error[E0599]: no method named `checkpoint` found for struct `Pose64` in the current scope
+   --> crates/voxy_model/src/checkpoint/tests.rs:101:22
+    |
+ 98 | /                 source
+ 99 | |                     .try_sample_phase64(&models[rig].skeleton, phase)
+100 | |                     .unwrap()
+101 | |                     .checkpoint(),
+    | |                     -^^^^^^^^^^ method not found in `Pose64`
+    | |_____________________|
+    |
+
+error[E0599]: no method named `checkpoint` found for struct `Pose64` in the current scope
+   --> crates/voxy_model/src/checkpoint/tests.rs:105:22
+    |
+102 | /                 restored
+103 | |                     .try_sample_phase64(&loaded.models[rig].skeleton, phase)
+104 | |                     .unwrap()
+105 | |                     .checkpoint()
+    | |                     -^^^^^^^^^^ method not found in `Pose64`
+    | |_____________________|
+    |
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `voxy_model` (lib test) due to 2 previous errors

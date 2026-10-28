@@ -1,0 +1,74 @@
+{
+  "pairs": [
+    {
+      "pair": 0,
+      "frames": 1048576,
+      "reference_ns": 7375000,
+      "single_ns": 8430416,
+      "batch_ns": 6326292
+    },
+    {
+      "pair": 1,
+      "frames": 1048576,
+      "reference_ns": 7450625,
+      "single_ns": 8453500,
+      "batch_ns": 6288292
+    },
+    {
+      "pair": 2,
+      "frames": 1048576,
+      "reference_ns": 7428834,
+      "single_ns": 8463417,
+      "batch_ns": 6176584
+    },
+    {
+      "pair": 3,
+      "frames": 1048576,
+      "reference_ns": 7402417,
+      "single_ns": 8490375,
+      "batch_ns": 6154958
+    },
+    {
+      "pair": 4,
+      "frames": 1048576,
+      "reference_ns": 7864875,
+      "single_ns": 8048917,
+      "batch_ns": 6454792
+    },
+    {
+      "pair": 5,
+      "frames": 1048576,
+      "reference_ns": 7219583,
+      "single_ns": 8389000,
+      "batch_ns": 5967416
+    },
+    {
+      "pair": 6,
+      "frames": 1048576,
+      "reference_ns": 7269625,
+      "single_ns": 8414375,
+      "batch_ns": 6198083
+    },
+    {
+      "pair": 7,
+      "frames": 1048576,
+      "reference_ns": 7280708,
+      "single_ns": 8111709,
+      "batch_ns": 6227250
+    },
+    {
+      "pair": 8,
+      "frames": 1048576,
+      "reference_ns": 7317416,
+      "single_ns": 8026542,
+      "batch_ns": 6161250
+    }
+  ],
+  "median_reference_ns": 7375000,
+  "median_single_ns": 8414375,
+  "median_batch_ns": 6198083,
+  "median_paired_batch_ratio": 0.8419980495847168,
+  "median_paired_single_ratio": 1.139265865948815,
+  "scope": "Release CPU-only queue microbenchmark against reference former std::sync::mpsc algorithm, 9 rotated-order triples; not a prior executable or device/latency/FPS benchmark",
+  "isolation": "Our final build/test/clippy processes confirmed complete before qualified repeat; no claim of whole-machine isolation"
+}

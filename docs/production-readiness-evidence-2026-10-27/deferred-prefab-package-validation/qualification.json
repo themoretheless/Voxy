@@ -1,0 +1,33 @@
+{
+  "stage": "ENG-03",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "bug": "Project export copied declared prefab files without parsing or expanding prefab assets absent from the startup scene; malformed or cyclic deferred prefabs could be published.",
+  "change": "Build uses native AuthoringProject prefab loader/expander with existing registry, observations, quotas and input revalidation for all declared prefab choices; model and prefab input merging shares consistency validation. Existing scene file load and new logical prefab load share the same source loader. Captured bytes feed original package publication checks.",
+  "verified": [
+    "Pre-fix export accepts malformed unused prefab",
+    "Malformed unused leaf and cyclic unused nested prefab reject without output",
+    "Corrected nested prefab exports with its native manifest and leaf observations",
+    "After entire source project deletion, materialized package opens with unchanged empty startup scene and loads declared nested prefab with original model component",
+    "Source-free GameCheck succeeds",
+    "Full existing nested-prefab, model-package and project-host suites remain green"
+  ],
+  "editor_tests": {
+    "passed": 353,
+    "failed": 0,
+    "ignored": 32
+  },
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/prefab_authoring.rs": "b0a03c83d58a2b358a11dd45f85b56017d67225a78162e7597ae859d40def2d5",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "f5b515b5b2fb0980a8bf305ebabbf8faa805fc3b782173ccdeb40d566c6b568a",
+    "crates/voxy_editor/src/package_models.rs": "2141ae4d07426e348fae85f684e73ee1d7fe80d42e76fbb0e0a19129c95b3bb9"
+  },
+  "limits": [
+    "Validates native prefab document composition and source dependencies, not every future gameplay composition or external override",
+    "No new dynamic prefab runtime spawning API or asset type added",
+    "No new GPU/window/frame-rate or native audio-device qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

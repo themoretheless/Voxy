@@ -212,6 +212,7 @@ fn weights_and_frame_palette_preserve_root_motion_and_publication_metadata() {
         );
     }
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&rig).unwrap(),
         pose,
         root_motion: Vec3::new(0.2, 0., -0.1),
@@ -390,6 +391,7 @@ fn softened_frame_rebuilds_palette_without_modifying_extracted_motion() {
         let length = point(&pose, &rig, 2).distance(start)
             + point(&pose, &rig, 3).distance(point(&pose, &rig, 2));
         let frame = AnimatorFrame {
+            properties: Default::default(),
             skin_matrices: pose.skin_matrices(&rig).unwrap(),
             pose,
             root_motion: Vec3::new(0.1, -0.2, 0.3),
@@ -606,6 +608,7 @@ fn planted_frame_correction_does_not_become_actor_root_motion() {
     let (rig, chains) = planted_rig();
     let pose = rig.bind_pose();
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&rig).unwrap(),
         pose,
         root_motion: Vec3::new(0.3, 0., 0.2),

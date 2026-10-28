@@ -1,0 +1,26 @@
+{
+  "status": "durable_support_contact_and_foot_runtime_history_checkpoint_verified",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/support_checkpoint.rs": "f38638cefcac7d602bd5de1b800ea2f502cfe5027ee6f48f36606f094d595f51",
+    "crates/voxy_gameplay/src/foot_contact_checkpoint.rs": "5396ac9d7f1ba9086c4fe8f16aa0bb504d76228dab6e3f34fccd57131b5afba9",
+    "crates/voxy_gameplay/src/support.rs": "0b8245f73825729844e66da71b1cd26536d23b64f84c97f1ff4dfede85815467",
+    "crates/voxy_gameplay/src/foot_contact.rs": "3d2b637419dae73519097f544e4cc8e4f7d04c0c023181fac826a689cbc9da19",
+    "crates/voxy_gameplay/src/lib.rs": "2b1e74a5cd40f174afad7c53a1cc6d415b23f40c815804d4acf842ff4be6e211",
+    "crates/voxy_animation/src/foot_support.rs": "ebe64455af684fa8e2f8ae551cac19e65dd9afacb3c8a899e6dd6496e04a2388",
+    "crates/voxy_editor/src/foot_runtime_checkpoint.rs": "9ad52cf3d33b3f69e909fb733a351b3f0b0269f470a5ffbfc84e7b9a03a3716a",
+    "crates/voxy_editor/src/foot_placement.rs": "47588baf7d8a02706adb1ebc3526db05d7cf5f24744508d38ef0001b069a91ee",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "f1542bdf04f38c48556e314549b33bff4933c10c98ab1e17e7258a5306269fbb"
+  },
+  "new_tests": 4,
+  "contact_tests_passed": 10,
+  "support_filter_tests_passed": 29,
+  "animation_tests_passed": 339,
+  "editor_tests_passed": 233,
+  "editor_tests_ignored": 20,
+  "strict_all_targets_clippy": true,
+  "moving_platform_history_steps": 180,
+  "shared_frozen_pose_resolver_required": true,
+  "imported_model_and_native_skeleton_binding_verified": true,
+  "native_window_or_gpu_fps_qualified": false,
+  "full_animation_runtime_or_game_save": false
+}

@@ -1,0 +1,24 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.71s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-bcf1b72c587159c3)
+
+running 3 tests
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_runtime::checkpoint::tests::fresh_scene_restores_pointer_and_key_hold_and_reconciles_pending_action_change ... FAILED
+
+failures:
+
+---- ui_runtime::checkpoint::tests::fresh_scene_restores_pointer_and_key_hold_and_reconciles_pending_action_change stdout ----
+
+thread 'ui_runtime::checkpoint::tests::fresh_scene_restores_pointer_and_key_hold_and_reconciles_pending_action_change' (74579318) panicked at crates/voxy_gameplay/src/ui_runtime_checkpoint.rs:266:30:
+called `Option::unwrap()` on a `None` value
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    ui_runtime::checkpoint::tests::fresh_scene_restores_pointer_and_key_hold_and_reconciles_pending_action_change
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 189 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_gameplay --lib`

@@ -1,0 +1,9 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.64s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/physics-8f206cb8622d0c6d)
+
+running 1 test
+test liquid::species::checkpoint::tests::composition_chemistry_and_mixture_heat_restore_without_remapping_temperature ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 543 filtered out; finished in 0.04s
+

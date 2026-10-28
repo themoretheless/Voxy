@@ -1,0 +1,21 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.90s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly
+GAME PACKAGE PASS sources=7 bytes=9684
+
+thread 'project_prefab_tests::deferred_prefab_model_parts_check_imported_nodes_after_nested_overrides' (79626641) panicked at crates/voxy_editor/src/project_prefab_tests.rs:475:9:
+deferred prefab accepted nonexistent imported part mesh:0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test project_prefab_tests::deferred_prefab_model_parts_check_imported_nodes_after_nested_overrides ... FAILED
+
+failures:
+
+failures:
+    project_prefab_tests::deferred_prefab_model_parts_check_imported_nodes_after_nested_overrides
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 395 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

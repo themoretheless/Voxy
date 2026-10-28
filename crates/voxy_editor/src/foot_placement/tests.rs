@@ -145,6 +145,37 @@ fn fixed_play_candidates_keep_sole_on_anchor_and_failures_preserve_frame_and_clo
         );
     }
     let frame = runtime.frame(owner, &model).unwrap();
+    let frame_json = frame
+        .checkpoint(&model.skeleton, 1024 * 1024)
+        .unwrap()
+        .to_json(1024 * 1024)
+        .unwrap();
+    let fresh_model = self::model();
+    let restored_frame =
+        voxy_animation::AnimatorFrameCheckpoint::from_json(&frame_json, 1024 * 1024)
+            .unwrap()
+            .prepare(&fresh_model.skeleton, 1024 * 1024)
+            .unwrap();
+    assert_eq!(
+        restored_frame
+            .checkpoint(&fresh_model.skeleton, 1024 * 1024)
+            .unwrap()
+            .to_json(1024 * 1024)
+            .unwrap(),
+        frame_json
+    );
+    assert_eq!(
+        sole(&model, &frame, scene.world_matrix(owner).unwrap())
+            .to_array()
+            .map(f32::to_bits),
+        sole(
+            &fresh_model,
+            &restored_frame,
+            scene.world_matrix(owner).unwrap()
+        )
+        .to_array()
+        .map(f32::to_bits)
+    );
     let serial = runtime.serial();
     let pose = scene.local(owner).unwrap();
     physics = physics.with_angular_trajectory_query_budget(1).unwrap();
@@ -244,6 +275,7 @@ fn slope_normal_and_nonuniform_reflected_tip_keep_the_authored_sole_on_surface()
     };
     let pose = model.skeleton.bind_pose();
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),
         pose,
         root_motion: Vec3::new(0.3, 0., 0.),
@@ -456,6 +488,7 @@ fn unreachable_retained_contact_releases_without_publishing_a_clamped_pose() {
     };
     let pose = model.skeleton.bind_pose();
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),
         pose,
         root_motion: Vec3::ZERO,
@@ -2164,6 +2197,7 @@ fn authored_ankle_roll_keeps_the_support_pivot_and_legacy_alignment_is_default()
             pose.set_joint_rotation(2, glam::Quat::from_rotation_x(angle))
                 .unwrap();
             let frame = AnimatorFrame {
+                properties: Default::default(),
                 skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),
                 pose,
                 root_motion: Vec3::X * 0.17,
@@ -2458,6 +2492,7 @@ fn queued_pivot_transfer_publishes_after_ik_and_persists_across_frames() {
     let mut runtime = FootRuntime::new(&model, settings()).unwrap();
     let pose = model.skeleton.bind_pose();
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),
         pose,
         root_motion: Vec3::X * 0.2,
@@ -2629,6 +2664,7 @@ fn pending_pivot_is_canceled_by_airborne_and_cannot_cross_landing() {
     );
     let pose = model.skeleton.bind_pose();
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),
         pose,
         root_motion: Vec3::ZERO,
@@ -2706,6 +2742,7 @@ fn pivot_and_contact_rollback_when_skipped_swing_exhausts_query_budget() {
     let mut runtime = FootRuntime::new(&model, settings()).unwrap();
     let pose = model.skeleton.bind_pose();
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),
         pose,
         root_motion: Vec3::ZERO,
@@ -2906,6 +2943,7 @@ fn clip_phase_drives_pivot_and_live_fade_holds_accepted_point() {
     };
     let pose = model.skeleton.bind_pose();
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),
         pose,
         root_motion: Vec3::ZERO,
@@ -3057,6 +3095,7 @@ fn installed_geometry_selects_and_physically_admits_pivot_automatically() {
         FootRuntime::from_skeleton(&model.skeleton, native, &model.animations).unwrap();
     let pose = model.skeleton.bind_pose();
     let frame = AnimatorFrame {
+        properties: Default::default(),
         skin_matrices: pose.skin_matrices(&model.skeleton).unwrap(),
         pose,
         root_motion: Vec3::X * 0.2,
@@ -3187,4 +3226,771 @@ fn support_geometry_schema_preserves_legacy_and_rejects_invalid_assets() {
     let mut encoded = serde_json::to_value(config).unwrap();
     encoded["feet"][0]["support_geometry"]["unexpected"] = serde_json::json!(true);
     assert!(serde_json::from_value::<ModelFootPlacement>(encoded).is_err());
+}
+
+#[test]
+fn foot_history_checkpoint_retains_pending_pivot_geometry_and_shared_frozen_pose() {
+    use voxy_scene::{ComponentRegistry, ObjectId, SceneDocument};
+    let model = model();
+    let mut registry = ComponentRegistry::default();
+    voxy_gameplay::register_components(&mut registry).unwrap();
+    let doc=SceneDocument::from_json(r#"{"version":1,"objects":[{"id":"platform","parent":null,"name":"platform","active":true,"translation":[0,-0.1,0],"rotation":[0,0,0,1],"scale":[1,1,1],"components":{"game.box.v1":{"half_extents":[2,0.1,2]}}}]}"#).unwrap();
+    let mut source = doc.load(&registry, 8).unwrap();
+    let mut target = doc.load(&registry, 8).unwrap();
+    let mut authored = settings();
+    authored.feet[0].orientation = FootOrientation::Authored;
+    let mut original = FootRuntime::new(&model, authored).unwrap();
+    let request = FootContactInput {
+        sole: DVec3::new(0.1, 0., 0.2),
+        up: DVec3::Y,
+        grounded: true,
+        plant: true,
+    };
+    original.feet[0].state = FootContactState::default()
+        .prepare(
+            &voxy_gameplay::SupportWorld::from_scene(&source.graph, 4).unwrap(),
+            FootContactSettings::default(),
+            request,
+            &mut SupportQueryBudget::new(64).unwrap(),
+        )
+        .unwrap()
+        .state;
+    original
+        .request_pivot_transfer(0, DVec3::new(0.02, -0.1, 0.), 0.03)
+        .unwrap();
+    original
+        .set_support_geometry(
+            0,
+            voxy_animation::FootSupportPoints::new(vec![
+                DVec3::new(0.2, -0.1, 0.),
+                DVec3::new(-0.2, -0.1, 0.),
+            ])
+            .unwrap(),
+            0.04,
+        )
+        .unwrap();
+    let frozen = Arc::new(model.skeleton.bind_pose());
+    original.feet[0].blend = ContactBlendState {
+        last_weight: Some(0.8),
+        frozen: Some((frozen.clone(), 0.25)),
+    };
+    let saved = original
+        .checkpoint(
+            &source.graph,
+            |n| source.identity(n).cloned(),
+            |p| Arc::ptr_eq(p, &frozen).then(|| "snapshot-1".into()),
+            1024 * 1024,
+        )
+        .unwrap();
+    let text = saved.to_json(1024 * 1024).unwrap();
+    let saved = super::checkpoint::FootRuntimeCheckpoint::from_json(&text, 1024 * 1024).unwrap();
+    let fresh_model = self::model();
+    let restored_snapshot = Arc::new(fresh_model.skeleton.bind_pose());
+    let mut resumed = saved
+        .prepare(
+            super::checkpoint::FootCheckpointRig::Model(&fresh_model),
+            &fresh_model.animations,
+            &target.graph,
+            |id| target.resolve(id),
+            |key| (key == "snapshot-1").then(|| restored_snapshot.clone()),
+            1024 * 1024,
+        )
+        .unwrap();
+    assert!(Arc::ptr_eq(
+        &resumed.feet[0].blend.frozen.as_ref().unwrap().0,
+        &restored_snapshot
+    ));
+    assert_eq!(
+        resumed.feet[0]
+            .blend
+            .snapshot_weight(&restored_snapshot)
+            .unwrap()
+            .to_bits(),
+        0.25f32.to_bits()
+    );
+    assert_eq!(
+        original.feet[0].pending_pivot,
+        resumed.feet[0].pending_pivot
+    );
+    assert_eq!(
+        original.feet[0].geometry.as_ref().unwrap().0.points(),
+        resumed.feet[0].geometry.as_ref().unwrap().0.points()
+    );
+    let a = source.resolve(&ObjectId("platform".into())).unwrap();
+    let b = target.resolve(&ObjectId("platform".into())).unwrap();
+    for frame in 0..180 {
+        let x = (frame % 20) as f32 * 0.001;
+        let transform = Transform {
+            translation: Vec3::new(x, -0.1, 0.),
+            ..Default::default()
+        };
+        source.graph.set_local(a, transform).unwrap();
+        target.graph.set_local(b, transform).unwrap();
+        let mut input = request;
+        input.sole.x += f64::from(x);
+        input.plant = !(40..50).contains(&frame);
+        for (runtime, scene) in [(&mut original, &source), (&mut resumed, &target)] {
+            runtime.feet[0].state = runtime.feet[0]
+                .state
+                .prepare(
+                    &voxy_gameplay::SupportWorld::from_scene(&scene.graph, 4).unwrap(),
+                    FootContactSettings::default(),
+                    input,
+                    &mut SupportQueryBudget::new(64).unwrap(),
+                )
+                .unwrap()
+                .state;
+        }
+        let a = original
+            .checkpoint(
+                &source.graph,
+                |n| source.identity(n).cloned(),
+                |_| Some("snapshot-1".into()),
+                1024 * 1024,
+            )
+            .unwrap();
+        let b = resumed
+            .checkpoint(
+                &target.graph,
+                |n| target.identity(n).cloned(),
+                |_| Some("snapshot-1".into()),
+                1024 * 1024,
+            )
+            .unwrap();
+        assert_eq!(
+            a.to_json(1024 * 1024).unwrap(),
+            b.to_json(1024 * 1024).unwrap()
+        );
+    }
+    assert!(
+        saved
+            .prepare(
+                super::checkpoint::FootCheckpointRig::Model(&fresh_model),
+                &fresh_model.animations,
+                &target.graph,
+                |id| target.resolve(id),
+                |_| None,
+                1024 * 1024
+            )
+            .is_err()
+    );
+    assert!(super::checkpoint::FootRuntimeCheckpoint::from_json(&text, 1).is_err());
+}
+
+#[test]
+fn native_foot_history_checkpoint_uses_skeleton_names_and_rejects_corrupt_history() {
+    let model = model();
+    let mut authored = settings();
+    for name in &mut authored.feet[0].bones {
+        let joint = model.resolve_joint_name(name).unwrap();
+        *name = model.skeleton.joints()[usize::from(joint)].name.to_string();
+    }
+    let runtime = FootRuntime::from_skeleton(&model.skeleton, authored, &[]).unwrap();
+    let scene = SceneGraph::new(8);
+    let saved = runtime
+        .checkpoint(&scene, |_| None, |_| None, 65536)
+        .unwrap();
+    let text = saved.to_json(65536).unwrap();
+    let restored = saved
+        .prepare(
+            super::checkpoint::FootCheckpointRig::Skeleton(&model.skeleton),
+            &[],
+            &scene,
+            |_| None,
+            |_| None,
+            65536,
+        )
+        .unwrap();
+    assert_eq!(
+        restored
+            .checkpoint(&scene, |_| None, |_| None, 65536)
+            .unwrap()
+            .to_json(65536)
+            .unwrap(),
+        text
+    );
+    for field in ["last_weight", "pivot", "pending"] {
+        let mut wire: serde_json::Value = serde_json::from_str(&text).unwrap();
+        match field {
+            "last_weight" => wire["feet"][0][field] = f32::NAN.to_bits().into(),
+            "pivot" => wire["feet"][0][field][0] = f64::NAN.to_bits().into(),
+            _ => wire["feet"][0][field] = serde_json::json!([[0, 0, 0], (1e7f64).to_bits()]),
+        }
+        let bad =
+            super::checkpoint::FootRuntimeCheckpoint::from_json(&wire.to_string(), 65536).unwrap();
+        assert!(
+            bad.prepare(
+                super::checkpoint::FootCheckpointRig::Skeleton(&model.skeleton),
+                &[],
+                &scene,
+                |_| None,
+                |_| None,
+                65536
+            )
+            .is_err()
+        );
+    }
+    assert_eq!(
+        runtime
+            .checkpoint(&scene, |_| None, |_| None, 65536)
+            .unwrap()
+            .to_json(65536)
+            .unwrap(),
+        text
+    );
+}
+
+#[test]
+fn shared_snapshot_archive_preserves_playback_and_foot_contact_identity_after_json_load() {
+    use crate::model_playback::{ModelPlayback, checkpoint::ModelPlaybackCheckpoint};
+    use voxy_animation::{PoseBlendSource, PoseSnapshotArchive, PoseSnapshotBuilder};
+    fn asset() -> Arc<ModelAsset> {
+        let mut asset = (*model()).clone();
+        for name in ["walk", "jump", "land"] {
+            asset.animations.push(Arc::new(
+                voxy_animation::AnimationClip::new(
+                    name,
+                    1.,
+                    voxy_animation::Playback::Loop,
+                    vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
+                    &asset.skeleton,
+                )
+                .unwrap(),
+            ));
+        }
+        Arc::new(asset)
+    }
+    fn sample(feet: &mut FootRuntime, playback: &ModelPlayback) -> f32 {
+        let phases = playback.pose_blend_phases().unwrap();
+        feet.feet[0]
+            .blend
+            .sample(
+                &feet.settings.feet[0],
+                Some(phases.target.clip.name()),
+                Some(phases.target.normalized_phase),
+                Some(phases),
+            )
+            .unwrap()
+    }
+    let original_asset = asset();
+    let mut config = settings();
+    for (name, weight) in [("walk", 1.), ("jump", 0.), ("land", 1.)] {
+        config.feet[0].clip_contact_curves.insert(
+            name.into(),
+            vec![
+                FootContactKey { phase: 0., weight },
+                FootContactKey { phase: 1., weight },
+            ],
+        );
+    }
+    let mut playback =
+        ModelPlayback::new(original_asset.clone(), crate::ModelAnimation::default()).unwrap();
+    for index in 0..3 {
+        playback
+            .set_clip_events(
+                index,
+                vec![voxy_animation::ClipEvent {
+                    name: "step".into(),
+                    phase: 0.1,
+                }],
+            )
+            .unwrap();
+    }
+    let mut feet = FootRuntime::new(&original_asset, config).unwrap();
+    playback.advance_with(0.1, |_, _| Ok(())).unwrap();
+    assert_eq!(sample(&mut feet, &playback), 1.);
+    playback.transition_to_clip(1, 0.5).unwrap();
+    playback.advance_with(0.1, |_, _| Ok(())).unwrap();
+    sample(&mut feet, &playback);
+    playback.transition_to_clip(2, 0.5).unwrap();
+    playback.advance_with(0.1, |_, _| Ok(())).unwrap();
+    sample(&mut feet, &playback);
+    let frozen = feet.feet[0].blend.frozen.as_ref().unwrap();
+    assert_ne!(
+        frozen.1.to_bits(),
+        feet.feet[0].blend.last_weight.unwrap().to_bits()
+    );
+    let scene = SceneGraph::new(8);
+    let builder = std::cell::RefCell::new(PoseSnapshotBuilder::new(8));
+    let identify_pose =
+        |p: &Arc<voxy_animation::Pose>| builder.borrow_mut().intern(p, "rig-v1").ok();
+    let identify_clip = |c: &Arc<voxy_animation::AnimationClip>,
+                         _: Option<&Arc<voxy_animation::PropertyClip>>| {
+        original_asset
+            .animations
+            .iter()
+            .position(|a| Arc::ptr_eq(a, c))
+            .map(|i| format!("clip-{i}"))
+    };
+    let saved_playback = playback
+        .checkpoint_with_snapshots(identify_clip, identify_pose, 65536)
+        .unwrap();
+    let saved_feet = feet
+        .checkpoint(&scene, |_| None, identify_pose, 65536)
+        .unwrap();
+    let archive = builder.into_inner().finish(65536).unwrap();
+    let json = serde_json::json!({"poses":archive,"playback":saved_playback,"feet":saved_feet})
+        .to_string();
+    let decoded: serde_json::Value = serde_json::from_str(&json).unwrap();
+    assert_eq!(decoded["poses"]["entries"].as_array().unwrap().len(), 1);
+    let fresh_asset = asset();
+    let archive = PoseSnapshotArchive::from_json(&decoded["poses"].to_string(), 65536, 8).unwrap();
+    let poses = archive
+        .prepare(
+            |key| (key == "rig-v1").then(|| fresh_asset.skeleton.clone()),
+            65536,
+            8,
+        )
+        .unwrap();
+    let saved_playback =
+        ModelPlaybackCheckpoint::from_json(&decoded["playback"].to_string(), 65536).unwrap();
+    let resolve_clip = |key: &str| {
+        fresh_asset
+            .animations
+            .iter()
+            .enumerate()
+            .find(|(i, _)| key == format!("clip-{i}"))
+            .map(|(_, clip)| (clip.clone(), None))
+    };
+    assert!(
+        saved_playback
+            .prepare(fresh_asset.clone(), resolve_clip, 65536)
+            .is_err()
+    );
+    let mut restored_playback = saved_playback
+        .prepare_with_snapshots(
+            fresh_asset.clone(),
+            resolve_clip,
+            |key| poses.resolve(key),
+            65536,
+        )
+        .unwrap();
+    let saved_feet =
+        super::checkpoint::FootRuntimeCheckpoint::from_json(&decoded["feet"].to_string(), 65536)
+            .unwrap();
+    let mut restored_feet = saved_feet
+        .prepare(
+            super::checkpoint::FootCheckpointRig::Model(&fresh_asset),
+            &fresh_asset.animations,
+            &scene,
+            |_| None,
+            |key| poses.resolve(key),
+            65536,
+        )
+        .unwrap();
+    let animator_pose = match restored_playback
+        .pose_blend_phases()
+        .unwrap()
+        .source
+        .unwrap()
+    {
+        PoseBlendSource::FrozenPose(p) => p.clone(),
+        PoseBlendSource::Clip(_) => panic!("expected frozen source"),
+    };
+    assert!(Arc::ptr_eq(
+        &animator_pose,
+        &restored_playback.frozen_source_tick().unwrap().0
+    ));
+    assert!(Arc::ptr_eq(
+        &animator_pose,
+        &restored_feet.feet[0].blend.frozen.as_ref().unwrap().0
+    ));
+    assert_eq!(
+        sample(&mut feet, &playback).to_bits(),
+        sample(&mut restored_feet, &restored_playback).to_bits()
+    );
+    for frame in 0..240 {
+        if frame == 60 || frame == 90 {
+            let clip = if frame == 60 { 1 } else { 2 };
+            playback.transition_to_clip(clip, 0.5).unwrap();
+            restored_playback.transition_to_clip(clip, 0.5).unwrap();
+        }
+        let dt = [0.003, 0.021, 0.037][frame % 3];
+        let a = playback
+            .advance_with_motion_wall(dt, false, [false; 3], |_, f, _| Ok(f.clone()))
+            .unwrap();
+        let b = restored_playback
+            .advance_with_motion_wall(dt, false, [false; 3], |_, f, _| Ok(f.clone()))
+            .unwrap();
+        assert_eq!(a.pose, b.pose);
+        assert_eq!(a.skin_matrices, b.skin_matrices);
+        assert_eq!(
+            a.root_motion.to_array().map(f32::to_bits),
+            b.root_motion.to_array().map(f32::to_bits)
+        );
+        assert_eq!(
+            sample(&mut feet, &playback).to_bits(),
+            sample(&mut restored_feet, &restored_playback).to_bits()
+        );
+        if frame % 11 == 0 {
+            assert_eq!(playback.take_events(), restored_playback.take_events());
+        }
+    }
+}
+
+#[test]
+fn retargeted_foot_snapshot_restores_against_source_rig_and_keeps_identity() {
+    let target = model();
+    let mut source_joints = target.skeleton.joints().to_vec();
+    for (index, joint) in source_joints.iter_mut().enumerate() {
+        joint.name = format!("source-{index}").into();
+    }
+    let source = voxy_animation::Skeleton::new(source_joints).unwrap();
+    let snapshot = Arc::new(source.bind_pose());
+    let clip = Arc::new(
+        voxy_animation::AnimationClip::new(
+            "source-walk",
+            1.,
+            voxy_animation::Playback::Loop,
+            vec![voxy_animation::JointTrack::default(); source.joints().len()],
+            &source,
+        )
+        .unwrap(),
+    );
+    let clips = vec![clip];
+    let mut original = FootRuntime::new_with_clips(&target, settings(), &clips).unwrap();
+    original.feet[0].blend = ContactBlendState {
+        last_weight: Some(0.8),
+        frozen: Some((snapshot.clone(), 0.25)),
+    };
+    let scene = SceneGraph::new(4);
+    let saved = original
+        .checkpoint(
+            &scene,
+            |_| None,
+            |pose| Arc::ptr_eq(pose, &snapshot).then(|| "source-snapshot".into()),
+            65536,
+        )
+        .unwrap();
+    let json = saved.to_json(65536).unwrap();
+    let decoded = super::checkpoint::FootRuntimeCheckpoint::from_json(&json, 65536).unwrap();
+    assert!(
+        decoded
+            .prepare(
+                super::checkpoint::FootCheckpointRig::Model(&target),
+                &clips,
+                &scene,
+                |_| None,
+                |_| Some(snapshot.clone()),
+                65536
+            )
+            .is_err()
+    );
+    let mut restored = decoded
+        .prepare_with_source_skeleton(
+            super::checkpoint::FootCheckpointRig::Model(&target),
+            Some(&source),
+            &clips,
+            &scene,
+            |_| None,
+            |key| (key == "source-snapshot").then(|| snapshot.clone()),
+            65536,
+        )
+        .unwrap();
+    assert!(Arc::ptr_eq(
+        &restored.feet[0].blend.frozen.as_ref().unwrap().0,
+        &snapshot
+    ));
+    assert_eq!(
+        restored.feet[0]
+            .blend
+            .snapshot_weight(&snapshot)
+            .unwrap()
+            .to_bits(),
+        0.25f32.to_bits()
+    );
+    assert_eq!(
+        restored
+            .checkpoint(&scene, |_| None, |_| Some("source-snapshot".into()), 65536)
+            .unwrap()
+            .to_json(65536)
+            .unwrap(),
+        json
+    );
+    assert!(
+        decoded
+            .prepare_with_source_skeleton(
+                super::checkpoint::FootCheckpointRig::Model(&target),
+                Some(&target.skeleton),
+                &clips,
+                &scene,
+                |_| None,
+                |_| Some(snapshot.clone()),
+                65536
+            )
+            .is_err()
+    );
+}
+
+#[test]
+fn scene_physics_input_and_animation_checkpoint_continue_solved_foot_together() {
+    use voxy_gameplay::{GameplayCheckpoint, GameplayCheckpointLimits, PreparedGameplayCheckpoint};
+    use voxy_scene::{LoadedScene, ObjectId, SceneDocument, SceneSimulation, SimulationLimits};
+    fn animated_model() -> Arc<ModelAsset> {
+        let mut asset = (*self::model()).clone();
+        for name in ["walk", "jump", "land"] {
+            asset.animations.push(Arc::new(
+                voxy_animation::AnimationClip::new(
+                    name,
+                    1.,
+                    voxy_animation::Playback::Loop,
+                    vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
+                    &asset.skeleton,
+                )
+                .unwrap(),
+            ));
+        }
+        Arc::new(asset)
+    }
+    let mut registry = crate::editor_component_registry().unwrap();
+    crate::register_game_checkpoint_components(&mut registry).unwrap();
+    let mut loaded = SceneDocument::from_json(r#"{"version":1,"objects":[]}"#)
+        .unwrap()
+        .load(&registry, 8)
+        .unwrap();
+    let hero = loaded
+        .graph
+        .spawn(
+            None,
+            Transform {
+                translation: Vec3::Y,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    loaded.identify(hero, ObjectId("hero".into())).unwrap();
+    loaded
+        .graph
+        .insert_component(
+            hero,
+            crate::ModelInstance {
+                asset: AssetId("feet".into()),
+            },
+        )
+        .unwrap();
+    loaded
+        .graph
+        .insert_component(
+            hero,
+            crate::ModelAnimation {
+                clip: Some(0),
+                transition_seconds: 0.5,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let mut feet_settings = settings();
+    for (name, weight) in [("walk", 1.), ("jump", 0.), ("land", 1.)] {
+        feet_settings.feet[0].clip_contact_curves.insert(
+            name.into(),
+            vec![
+                FootContactKey { phase: 0., weight },
+                FootContactKey { phase: 1., weight },
+            ],
+        );
+    }
+    loaded.graph.insert_component(hero, feet_settings).unwrap();
+    loaded
+        .graph
+        .insert_component(
+            hero,
+            CharacterBody {
+                half_extents: [0.1, 1., 0.1],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let floor = loaded
+        .graph
+        .spawn(
+            None,
+            Transform {
+                translation: -Vec3::Y * 0.1,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    loaded.identify(floor, ObjectId("floor".into())).unwrap();
+    loaded
+        .graph
+        .insert_component(
+            floor,
+            BoxCollider {
+                half_extents: [4., 0.1, 4.],
+            },
+        )
+        .unwrap();
+    let limits = GameplayCheckpointLimits {
+        simulation: SimulationLimits {
+            fixed_step: 1. / 60.,
+            max_steps: 4,
+            max_behaviors: 8,
+            max_commands: 16,
+        },
+        scene_capacity: 8,
+        max_bodies: 4,
+        max_colliders: 4,
+        max_actions: 131,
+        max_bindings: 5,
+        max_bytes: 4 * 1024 * 1024,
+    };
+    let physics = CharacterPhysics::new(&loaded.graph, 4, 4);
+    let simulation = SceneSimulation::new(&loaded.graph, limits.simulation).unwrap();
+    let mut game = PreparedGameplayCheckpoint {
+        scene: loaded,
+        physics,
+        simulation,
+        input: player_input().unwrap(),
+        fixed_ticks: 0,
+    };
+    let model = animated_model();
+    let models = BTreeMap::from([(AssetId("feet".into()), model.clone())]);
+    let mut animations = crate::animation_runtime::AnimationRuntime::default();
+    fn advance(
+        game: &mut PreparedGameplayCheckpoint,
+        animations: &mut crate::animation_runtime::AnimationRuntime,
+        models: &BTreeMap<AssetId, Arc<ModelAsset>>,
+        elapsed: f64,
+    ) {
+        let owner = game.scene.resolve(&ObjectId("hero".into())).unwrap();
+        let PreparedGameplayCheckpoint {
+            scene,
+            simulation,
+            physics,
+            input,
+            fixed_ticks,
+        } = game;
+        simulation
+            .advance_with(&mut scene.graph, elapsed, |graph, step| {
+                let candidate = animations.prepare_wall(graph, models, step)?;
+                let (_, accepted) = physics
+                    .fixed_step_with_preparation(
+                        graph,
+                        input,
+                        step,
+                        &[(owner, Vec3::X * 0.002)],
+                        &[],
+                        |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
+                    )
+                    .map_err(|e| match e {
+                        voxy_gameplay::CharacterTickError::Physics(e) => {
+                            crate::EditorError::from(e)
+                        }
+                        voxy_gameplay::CharacterTickError::Preparation(e) => e,
+                    })?;
+                *animations = accepted;
+                *fixed_ticks += 1;
+                Ok::<_, crate::EditorError>(())
+            })
+            .unwrap();
+    }
+    fn capture(
+        runtime: &crate::animation_runtime::AnimationRuntime,
+        scene: &LoadedScene,
+        model: &Arc<ModelAsset>,
+    ) -> String {
+        runtime
+            .checkpoint(
+                &scene.graph,
+                |n| scene.identity(n).cloned(),
+                |m| Arc::ptr_eq(m, model).then(|| "feet-v1".into()),
+                |clip, _| {
+                    model
+                        .animations
+                        .iter()
+                        .position(|c| Arc::ptr_eq(c, clip))
+                        .map(|i| format!("feet-clip-{i}"))
+                },
+                4 * 1024 * 1024,
+            )
+            .unwrap()
+            .to_json(4 * 1024 * 1024)
+            .unwrap()
+    }
+    for tick in 0..4 {
+        if tick == 1 || tick == 2 {
+            game.scene
+                .graph
+                .component_mut::<crate::ModelAnimation>(hero)
+                .unwrap()
+                .unwrap()
+                .clip = Some(tick);
+        }
+        advance(&mut game, &mut animations, &models, 0.019);
+    }
+    let saved_game = game.checkpoint(&registry, "combined-v1", limits).unwrap();
+    let saved_animation = capture(&animations, &game.scene, &model);
+    let saved_state: serde_json::Value = serde_json::from_str(&saved_animation).unwrap();
+    assert_eq!(saved_state["poses"]["entries"].as_array().unwrap().len(), 1);
+    let owner = &saved_state["owners"][0];
+    assert_eq!(
+        owner["playback"]["animator"]["fade"]["pose_key"],
+        owner["playback"]["frozen_key"][0]
+    );
+    assert_eq!(
+        owner["playback"]["frozen_key"][0],
+        owner["feet"]["feet"][0]["frozen"][0]
+    );
+    assert_ne!(
+        owner["feet"]["feet"][0]["last_weight"],
+        owner["feet"]["feet"][0]["frozen"][1]
+    );
+
+    let game_json = saved_game.to_json(limits.max_bytes).unwrap();
+    let mut resumed = GameplayCheckpoint::from_json(&game_json, limits.max_bytes)
+        .unwrap()
+        .prepare(
+            &registry,
+            &voxy_scene::BehaviorCheckpointRegistry::default(),
+            "combined-v1",
+            limits,
+        )
+        .unwrap();
+    let new_model = animated_model();
+    let new_models = BTreeMap::from([(AssetId("feet".into()), new_model.clone())]);
+    let saved = crate::animation_runtime::checkpoint::AnimationRuntimeCheckpoint::from_json(
+        &saved_animation,
+        limits.max_bytes,
+    )
+    .unwrap();
+    let mut restored = saved
+        .prepare(
+            &resumed.scene.graph,
+            |id| resumed.scene.resolve(id),
+            |key| (key == "feet-v1").then(|| new_model.clone()),
+            |key| {
+                new_model
+                    .animations
+                    .iter()
+                    .enumerate()
+                    .find(|(i, _)| key == format!("feet-clip-{i}"))
+                    .map(|(_, c)| (c.clone(), None))
+            },
+            limits.max_bytes,
+        )
+        .unwrap();
+    assert_eq!(
+        capture(&restored, &resumed.scene, &new_model),
+        saved_animation
+    );
+    for frame in 0..120 {
+        let elapsed = [0.003, 0.021, 0.037][frame % 3];
+        advance(&mut game, &mut animations, &models, elapsed);
+        advance(&mut resumed, &mut restored, &new_models, elapsed);
+        assert_eq!(
+            game.checkpoint(&registry, "combined-v1", limits)
+                .unwrap()
+                .to_json(limits.max_bytes)
+                .unwrap(),
+            resumed
+                .checkpoint(&registry, "combined-v1", limits)
+                .unwrap()
+                .to_json(limits.max_bytes)
+                .unwrap()
+        );
+        assert_eq!(
+            capture(&animations, &game.scene, &model),
+            capture(&restored, &resumed.scene, &new_model)
+        );
+    }
 }

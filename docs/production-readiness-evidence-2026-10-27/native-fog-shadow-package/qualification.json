@@ -1,0 +1,31 @@
+{
+  "stage": "ENG-03 / ENG-05 native fog shadow integration qualification",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "change": "Extends joined native App/project/package hardware regression with authored directional light, default directional shadow settings and original opaque caster components on imported hierarchy. Production render path is unchanged; qualifies existing shared FogDraw shadow transport through App scene extraction and source-free package.",
+  "verified": [
+    "Real Apple M4 Max / Metal",
+    "Native directional shadow defaults retained: 1024x1024 map, PCF3x3, existing bias and light extent; fog retains 32 samples",
+    "Disabling shadows changes native fog scene pixels; reenabling restores exact frame",
+    "Disabling opaque scene caster markers changes frame while shadow configuration remains enabled; restoring markers reproduces exact frame",
+    "Fog on/off control remains meaningful",
+    "Saved light/shadow/caster/camera/fog components survive build and complete source deletion",
+    "Fresh package App renders same scene RGBA bytes with independent resources",
+    "Existing GPU reload/refusal/Retry and no-presentation-ACK assertions retained",
+    "Source-free GameCheck completes 120 ticks with five objects; GPU error scope clean"
+  ],
+  "explicit_project_gpu_tests_passed": 1,
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "52b3a3dc23880574acd457f6648c3ad6baeb2766cde9aced7d547e9f933538c1"
+  },
+  "limits": [
+    "Test-only coverage extension; no new production shadow algorithm or full CPU-suite rerun",
+    "Qualifies static opaque-caster contribution to fog transport, not all surface shadow receivers, animated casters, cascades or transparency",
+    "Resolution/readback remains 128x128; no physical frame-rate or memory qualification",
+    "Overlapping fog/MSAA/merged fog-liquid and offscreen optical fluid scope remain open",
+    "No native OS presentation/input/audio-device qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

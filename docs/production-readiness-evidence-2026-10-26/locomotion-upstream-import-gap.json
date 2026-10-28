@@ -1,0 +1,20 @@
+{
+  "status": "reproduced_missing_import_capabilities",
+  "model_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "source_unchanged": true,
+  "observed_cli_error": "expected one mesh instance",
+  "required": {
+    "mesh_instances": 14,
+    "skins": 2,
+    "morph_primitives": 3,
+    "morph_animation_channels": 14
+  },
+  "source_guards": "crates/voxy_model/src/lib.rs: ModelAsset::parse rejects multiple mesh instances, multiple skins, morph primitives and weight animation channels",
+  "next": [
+    "all original mesh instances and skin bindings",
+    "morph target geometry and animated weights",
+    "accepted CPU/GPU playback and bounds with no stripped features"
+  ],
+  "visual_demo_accepted": false,
+  "engine_ready": false
+}

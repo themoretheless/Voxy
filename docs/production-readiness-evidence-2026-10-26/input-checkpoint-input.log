@@ -1,0 +1,15 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_input-2340c01219153642)
+
+running 8 tests
+test tests::invalid_bindings_and_capacity_preserve_previous_configuration ... ok
+test tests::analog_dead_zone_rejects_drift_rescales_and_preserves_rebinding ... ok
+test tests::disconnection_releases_only_its_device_and_focus_cancels_pending_taps ... ok
+test tests::logical_activation_preserves_physical_hold_and_fixed_frame_edges ... ok
+test tests::axis_rebinding_focus_and_disconnect ... ok
+test tests::taps_repeat_and_multiple_bindings_preserve_edges ... ok
+test checkpoint::tests::invalid_checkpoint_retains_values_bindings_and_pending_edges ... ok
+test checkpoint::tests::checkpoint_keeps_analog_quick_taps_logical_edges_and_focus ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

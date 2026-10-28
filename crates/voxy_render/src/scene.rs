@@ -720,6 +720,11 @@ pub struct SceneRenderer {
 }
 
 impl SceneRenderer {
+    /// Attachment format used by the native scene pipelines.
+    #[must_use]
+    pub const fn color_format(&self) -> wgpu::TextureFormat {
+        self.color_format
+    }
     /// Shared device owner retained even when no scene resource is resident.
     #[must_use]
     pub fn compute_memory_budget(&self) -> &crate::ComputeMemoryBudget {
@@ -2608,6 +2613,55 @@ impl SceneRenderer {
                 setup.isolated_xray,
             );
         }
+        Ok(())
+    }
+
+    /// Compose native scene, disjoint optical fluid views and global UI using
+    /// the same targets for surface and offscreen callers. No work is submitted.
+    /// # Errors
+    /// Rejects MSAA, duplicate/mismatched fluid views and invalid native targets.
+    #[allow(clippy::too_many_arguments)]
+    pub fn encode_view_frame_with_fluids(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        targets: SceneViewTargets<'_>,
+        clear: wgpu::Color,
+        views: &[SceneView<'_>],
+        fluids: &[(usize, &crate::ScreenSpaceFluidRenderer)],
+        overlays: &[SceneDraw<'_>],
+    ) -> Result<(), SceneError> {
+        if targets.resolve.is_some()
+            || targets.color.texture().sample_count() != 1
+            || overlays.iter().any(|draw| !draw.overlay)
+            || fluids.iter().enumerate().any(|(i, (index, fluid))| {
+                views
+                    .get(*index)
+                    .is_none_or(|v| v.viewport[2..] != fluid.size())
+                    || fluids[..i].iter().any(|(other, _)| other == index)
+            })
+        {
+            return Err(SceneError::InvalidGeometry);
+        }
+        let output = targets.color;
+        let depth = targets.overlay_depth;
+        let size = output.texture().size();
+        self.encode_view_frame_targets(encoder, targets, clear, views, &[])?;
+        for (index, fluid) in fluids {
+            let view = &views[*index];
+            fluid
+                .encode_viewport(
+                    self,
+                    encoder,
+                    output,
+                    depth,
+                    [size.width, size.height],
+                    view.viewport,
+                    clear,
+                    view.draws,
+                )
+                .map_err(|_| SceneError::InvalidGeometry)?;
+        }
+        self.encode_overlays(encoder, output, depth, overlays);
         Ok(())
     }
 

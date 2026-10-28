@@ -1,0 +1,28 @@
+{
+  "status": "exact_root_reference_interval_checkpoint_verified",
+  "source_sha256": {
+    "crates/voxy_animation/src/root_rigid/enclosure/checkpoint.rs": "933c9a700d30c137f3d8b4f9e36cbd3db25168f6cfd7a08d555a9198340b6077",
+    "crates/voxy_animation/src/root_rigid/enclosure.rs": "0cee522a5f844f99b4a94d61e010714fc385b56c7c36d8a7b19dc9e3057cd20d",
+    "crates/voxy_animation/src/root_rigid.rs": "b4a6766860f65a612e6ac18df78a766db265db5d97cf96c039f373dd22469918",
+    "crates/voxy_animation/src/lib.rs": "cdf1589e373d3735349386899ec332298854935151b32ecfb795038156a00403",
+    "crates/voxy_animation/Cargo.toml": "87c574e15b531bedc9c40bbbd853745e0a48e2c7145687cff44c967423c3c898",
+    "Cargo.lock": "e7916c447cebc56c4d7cdfdd778245328385945399115ee881d2c52c912cddd8",
+    "crates/voxy_editor/src/root_reference_checkpoint.rs": "888c2586500ed5ac041b8bf0df92be279e180b5fa0bdf103b9ac9ad9501d60ce",
+    "crates/voxy_editor/src/animation_runtime.rs": "2262a03d2171c8aafcdab5f793ddfb1818d4cdc23a085c9663d861aeb886882d",
+    "crates/voxy_editor/src/animation_runtime/tests.rs": "927eca5de9b3a19d608af44f868941ac5811b9feafae2715f30f5d2dc84bd510"
+  },
+  "new_tests": 3,
+  "animation_tests_passed": 344,
+  "editor_tests_passed": 235,
+  "editor_tests_ignored": 20,
+  "strict_animation_editor_all_targets_clippy": true,
+  "transport_continuation_steps": 180,
+  "unit_quaternion_box_admission": "exact_dyadic_min_and_max_squared_norm_using_biguint",
+  "rejects_squared_norm_excess_2_pow_minus_2148": true,
+  "interval_endpoints_widened_or_normalized_on_restore": false,
+  "physical_retarget_and_reflected_parent_test_extended": true,
+  "authenticates_saved_asset_or_reference_provenance": false,
+  "whole_animation_runtime_saved": false,
+  "full_app_save": false,
+  "fps_qualified": false
+}

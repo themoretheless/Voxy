@@ -1,0 +1,34 @@
+{
+  "status": "composite_audio_playback_with_resource_archives_verified",
+  "assets_passed": 51,
+  "editor_passed": 244,
+  "editor_ignored": 20,
+  "strict_editor_assets_all_target_clippy": true,
+  "imported_archive_audio_integration_passed": true,
+  "continuation_frames": 120,
+  "covered": [
+    "self-contained accepted payload and source input archive",
+    "archive length checksum per-input digest and policy validation",
+    "catalog publication revisions and failed reload state",
+    "old runtime PCM retained alongside newer catalog publication",
+    "fresh scene ObjectId rebinding",
+    "audio sample clock",
+    "exact full playback record continuation"
+  ],
+  "remaining": [
+    "reload worker queue and dependency watcher state",
+    "native device queue save barrier and pump composition",
+    "global App/PlaySession publication",
+    "native visible audible acceptance"
+  ],
+  "sha256": {
+    "crates/voxy_assets/src/imported_archive.rs": "167380ba4f5172f541b561d63ff546e0bb63533641b84f8f1081d9ae35725be1",
+    "crates/voxy_assets/src/inputs.rs": "07874897c35930afc017d7c4ad40511412caf2110211a10199a3ab44e7239524",
+    "crates/voxy_assets/src/lib.rs": "b24aafb4aaa059fa5e0ecff7f10658e697cc96ac1d13893b5320b8e0ec3427e8",
+    "crates/voxy_editor/src/audio_playback_checkpoint.rs": "09e251179e06de50eee8e1d8870fe9cf63d19a1f2fa4b198867e3ffc86726d19",
+    "crates/voxy_editor/src/audio_play.rs": "732f152253ccf8d8eeeceec45112f196d56b9a9afadffd44f45fa6b9eca2c12c",
+    "crates/voxy_editor/src/audio_clock_checkpoint.rs": "c44be3db657e8911a739d9f2371f7b869a29b6c21585c3a3747f2ca329d37e40",
+    "crates/voxy_gameplay/src/audio_runtime_checkpoint.rs": "e2a532e12e87c60cf333459bd027b275e4961a954fd23ad36b381d4cdabaa5c1",
+    "crates/voxy_audio/src/lib.rs": "8fb0ce23acfa2b278ea5ca1931db4b3b8fd3bf0666e21eb1355e524b523c56da"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "status": "unskinned_morph_common_gpu_binding_project_package_pass",
+  "code_sha256": {
+    "crates/voxy_model/src/lib.rs": "df4235ce62a960466c3bd2e849f7643b62d999b5fb4277ec00be358b52f83d7a",
+    "crates/voxy_model/src/morph.rs": "82998326aeaed1d3e3aede77991478fecaebdf5d0e9ac2769782e7ff65726d41",
+    "crates/voxy_editor/src/locomotion_tests.rs": "902af69f33d935a707e4e82927578755b5b21e912bb69c1ccf459f7789db53e3",
+    "crates/voxy_editor/src/animated_models/tests.rs": "a53f2ef901cb74ac4f0b418b56ba12b9d7e3959471eda1f710999e08dd04f9ba"
+  },
+  "synthetic_unskinned_fixture": true,
+  "new_nodes_or_bones_added": false,
+  "extra_playback_clock": false,
+  "source_node_transform_and_animation_preserved": true,
+  "mirrored_nonuniform_scale_tested": true,
+  "authored_normals_and_flat_normal_tag_tested": true,
+  "no_skin_no_clips_no_playback_component_defaults_tested": true,
+  "source_free_package_frames_equal": true,
+  "physical_gpu_owner_and_cpu_pixels_equal": true,
+  "last_good_gpu_resources_retained_on_tested_failures": true,
+  "upstream_unchanged_regression": "morph-ordinary-owner-proof.json",
+  "original_source_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "full_native_image_verified": false,
+  "native_editor_controls_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

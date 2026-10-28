@@ -1,0 +1,31 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Before fix, detached preview restore accepted a morph frame missing required target properties",
+    "After morph fix alone, regression demonstrated separate source rig accepted without a retarget profile",
+    "Capture and restore now reuse native target validate_morph_frame",
+    "Capture and restore reject separate target/source allocations when no retarget profile is present",
+    "Valid accepted frame JSON is preserved exactly; original phase bits and source/model aliasing remain unchanged",
+    "Existing retarget preview and original shared model graph regressions still pass"
+  ],
+  "checks": {
+    "focused_preview_passed": 4,
+    "editor_passed": 368,
+    "editor_ignored": 36,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "Preview not yet composed with outer editor model-root union and shared accepted-frame pool",
+    "No atomic whole-App restore/publication completion",
+    "No GPU preview reconstruction or native save/load menu qualification",
+    "Full ENG-07/08 and engine roadmap remain open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/animation_preview/checkpoint.rs": "ae10ae461e3a9d32466b68bbb0f582619e34dc188dafd8ad9d85545d6e6a0423",
+    "crates/voxy_editor/src/animation_preview.rs": "f58b648fbb7ffc124fcfd4c66ea3bea720b598578ee34ea2c4e60ab28414d00f",
+    "crates/voxy_model/src/morph.rs": "701b0eaeafc01e867132b551b7a3809f36180acd34299c0a2109599bdcb0e0c1"
+  }
+}

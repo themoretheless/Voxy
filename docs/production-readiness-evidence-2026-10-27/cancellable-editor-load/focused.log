@@ -1,0 +1,13 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.58s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 5 tests
+test app::restore_barrier::load::tests::cancelled_reader_never_fences_or_publishes_and_keeps_edits ... ok
+test app::restore_barrier::load::tests::reader_poll_returns_without_waiting_for_a_blocked_worker ... ok
+test app::restore_barrier::load::tests::cancellation_releases_only_its_own_fence_before_worker_finishes ... ok
+test app::restore_barrier::load::tests::corrupt_and_oversized_reads_never_freeze_the_source_or_allow_another_job ... ok
+test app::restore_barrier::load::tests::prepare_failure_after_valid_read_releases_the_original_fences ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 423 filtered out; finished in 0.08s
+

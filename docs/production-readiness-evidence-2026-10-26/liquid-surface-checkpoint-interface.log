@@ -1,0 +1,13 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on shared package cache
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.79s
+     Running tests/liquid.rs (target/research-ray-precision/debug/deps/liquid-906f2cefeeead34e)
+
+running 3 tests
+test interface_penalty_is_symmetric_local_and_configuration_is_atomic ... ok
+test interface_penalty_force_matches_potential_gradient_and_separates_materials ... ok
+test oblique_interfaces_preserve_linear_and_angular_momentum_over_time ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+

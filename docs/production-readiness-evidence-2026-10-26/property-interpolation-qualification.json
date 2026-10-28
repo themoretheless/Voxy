@@ -1,0 +1,22 @@
+{
+  "status": "property_interpolation_validated_morph_integration_pending",
+  "source": "crates/voxy_animation/src/property_track.rs",
+  "source_sha256": "db1e4b305a72ebc824096a31d0826daa6b3e5b9dfbb492aea619512f791af9de",
+  "checks": {
+    "focused_passed": 4,
+    "animation_lib_passed": 330,
+    "animation_lib_failed": 0,
+    "all_targets_clippy": "passed -D warnings"
+  },
+  "scope": [
+    "STEP and CUBICSPLINE property channels",
+    "per-second typed incoming/outgoing derivatives",
+    "finite and schema validation",
+    "unclamped cubic overshoot",
+    "nonfinite cubic output rejected by PropertyClip"
+  ],
+  "morph_import_complete": false,
+  "morph_render_complete": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

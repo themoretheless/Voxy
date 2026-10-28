@@ -1,0 +1,22 @@
+{
+  "status": "frame_edit_api_verified_in_isolation",
+  "code_sha256": {
+    "crates/voxy_model/src/morph.rs": "afae54bc1c99c1b451f1399d9370125c391dcca9fe6a0835d2c71d59f702a741",
+    "crates/voxy_model/src/lib.rs": "7350e6025f82e7ecda09d38fb8fe7accfd520ba8e33202171159d93fc5e1b235"
+  },
+  "focused_morph_tests_passed": 9,
+  "strict_model_all_targets_clippy_passed": true,
+  "atomic_rejection_tested": [
+    "nonfinite_weights",
+    "wrong_target_count",
+    "missing_node",
+    "deformation_overflow"
+  ],
+  "asset_defaults_preserved": true,
+  "palette_preserved": true,
+  "scene_persistence_implemented": false,
+  "inspector_implemented": false,
+  "undo_redo_qualified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

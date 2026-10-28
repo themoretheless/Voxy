@@ -1,0 +1,32 @@
+{
+  "scope": "Original imported authoring publication participates in coordinated/editor source freshness",
+  "implemented": [
+    "Fingerprint the original bounded imported archive including typed prefab payload, inputs and saved input policy",
+    "Retain explicit source absence and archive byte policy in CoordinatedOrigin",
+    "Recompute native fingerprint before accepting source freshness; no filesystem/provider read",
+    "Reuse original pure dependency-expansion validation and existing coordinated game/UI/audio/history observations"
+  ],
+  "checks": {
+    "editor_passed": 321,
+    "editor_ignored": 30,
+    "strict_all_target_clippy": "passed",
+    "scoped_rustfmt": "passed",
+    "missing_or_different_import_rejects": true,
+    "scene_and_history_tokens_unchanged_during_import_replacement": true,
+    "returning_original_archived_content_revalidates": true
+  },
+  "retained_rejections": [
+    "Initial new test needed an explicit voxy_scene::PrefabSceneDocument type path"
+  ],
+  "not_claimed": [
+    "Fingerprint compares accepted in-memory archive content, not publication pointer identity or a fresh filesystem baseline",
+    "No completed animation-preview state/guard or final full App transaction",
+    "No new GPU/window/device-audio/physical-memory/FPS qualification",
+    "Menu/first-presentation/input handoff and ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/authoring_checkpoint/source.rs": "91cda66b9cc4b028e8f98fa52950d447f00bfd684d794ac7aae4f2fe00d66598",
+    "crates/voxy_editor/src/app/restore_barrier.rs": "cddec906a1d6d1bceb9c18449d9f064dc7e8ea2f02ca2a2a9a814626eb636ba3",
+    "crates/voxy_editor/src/app/authoring_checkpoint/tests.rs": "5d714e5576101ba7c7cb9719e6a6fc324a7cf29fbfb062bdad651b1bce24874c"
+  }
+}

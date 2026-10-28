@@ -1,0 +1,18 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running tests/scene_skinning.rs (target/research-ray-precision/debug/deps/scene_skinning-ce2c16ee9dd5b66b)
+
+running 11 tests
+test gpu_fox_all_clips_match_cpu_and_render ... ignored, requires GPU; 24-bone Fox with Survey, Walk and Run
+test gpu_fox_step_clips_match_cpu_and_render ... ignored, requires GPU; intermediate STEP keys in Survey, Walk and Run
+test gpu_mirrored_rig_matches_cpu_positions_normals_and_render ... ignored, requires GPU; mirrored bind hierarchy and animated negative scale
+test gpu_reference_rig_cubic_clips_match_cpu_and_render ... ignored, requires GPU; cubic rig pose and normal comparison
+test gpu_reference_rig_full_clip_matches_cpu_positions ... ignored, requires GPU; upstream 19-bone rig and host timing diagnostics
+test gpu_reference_rig_step_clips_match_cpu_and_render ... ignored, requires GPU; STEP interpolation through the skeletal renderer
+test gpu_scene_skinning_independent_instances_and_last_good_pose ... ignored, requires GPU; scene ABI deformation readback
+test gpu_skeletal_device_budget_admits_whole_instances_and_retains_source ... ignored, requires physical GPU; atomic shared skeletal memory admission
+test gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission ... ignored, requires GPU; skeletal LOD shared deformation streams
+test gpu_skin_normals_follow_inverse_transpose_and_keep_last_good ... ignored, requires GPU; affine skin normal tangency and rejected collapsed pose
+test authored_normal_changes_invalidate_upload_cache_without_geometry_changes ... ok
+
+test result: ok. 1 passed; 0 failed; 10 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

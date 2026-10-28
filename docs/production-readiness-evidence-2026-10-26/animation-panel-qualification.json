@@ -1,0 +1,26 @@
+{
+  "status": "animation_panel_overlap_fixed_and_gpu_image_reviewed",
+  "code_sha256": {
+    "crates/voxy_editor/src/panels.rs": "4ba7f713ae1891d5bdafea40e84f8bbfb6a9b00376f4b74525bc06c63827c9ab",
+    "crates/voxy_editor/src/panels/gpu_tests.rs": "a88b808c27e3c38478ce69007e1d39abd08a92328b399d4dcc9e800afe972992"
+  },
+  "gpu": "Apple M4 Max / Metal",
+  "physical_gpu_panel_test_passed": true,
+  "control_count": 7,
+  "controls_checked_against_all_hit_regions": true,
+  "image": "animation-panel-gpu.png",
+  "image_sha256": "dc4313f8cddbface1d2b7e2842e8d72ff9fc654b9d3420858efaa316c90da8b7",
+  "image_reviewed": true,
+  "editor_library": {
+    "passed": 227,
+    "failed": 0,
+    "ignored": 20,
+    "note": "full suite before final animation label shortening; final physical GPU and strict Clippy rerun after shortening"
+  },
+  "strict_editor_all_targets_clippy_passed": true,
+  "native_window_input_verified": false,
+  "other_sizes_dpi_panel_images_verified": false,
+  "full_engine_image_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

@@ -1,0 +1,27 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.84s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 1 test
+test import::animated_tests::observed_skeletal_lod_import_keeps_clips_source_and_last_good ... FAILED
+
+failures:
+
+---- import::animated_tests::observed_skeletal_lod_import_keeps_clips_source_and_last_good stdout ----
+MODEL PUBLISHED frames=0 first_x=0 asset=model.vmodel
+MODEL FAILED frames=0 last_good=true
+MODEL PUBLISHED frames=0 first_x=0 asset=model.vmodel
+
+thread 'import::animated_tests::observed_skeletal_lod_import_keeps_clips_source_and_last_good' (76962607) panicked at crates/voxy_editor/src/import/animated_tests.rs:469:5:
+assertion `left == right` failed
+  left: 0x88d0246f0
+ right: 0x88d024790
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    import::animated_tests::observed_skeletal_lod_import_keeps_clips_source_and_last_good
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 306 filtered out; finished in 0.44s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

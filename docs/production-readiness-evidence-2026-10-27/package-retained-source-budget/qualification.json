@@ -1,0 +1,31 @@
+{
+  "stage": "ENG-03",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "change": "Declared model/prefab source accumulation now preflights the existing package payload ceiling of 64 MiB and 4096 distinct source IDs before retaining another imported input group. Shared IDs count once; conflicting revisions or failed reads reject the entire group without changing previously captured state. Native input payload Arcs are retained without copying during accumulation.",
+  "verified": [
+    "Exact aggregate byte/count limit accepted",
+    "Repeated shared source observations do not consume additional quota or replace original payload allocation",
+    "Count or byte overflow rejects whole group without partial retention",
+    "Conflicting captured bytes reject without changing earlier accepted set",
+    "Failed read after successful input does not partially retain the successful input",
+    "Full editor package/source-free/nested-prefab suites pass"
+  ],
+  "editor_tests": {
+    "passed": 355,
+    "failed": 0,
+    "ignored": 32
+  },
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/package_models.rs": "bf68b2ead23939a4e06e3fdabbeb554189a704bf4d7f5c6d81a62f75195a4331"
+  },
+  "limits": [
+    "Bounds retained deferred-source payloads, not complete exporter heap, decoded model output, process RSS or physical GPU memory",
+    "One import may allocate its original bounded decode/input state before aggregate admission",
+    "Required-scene sources and final serialization retain their existing separate validation paths",
+    "No new GPU/window/FPS or native device audio qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

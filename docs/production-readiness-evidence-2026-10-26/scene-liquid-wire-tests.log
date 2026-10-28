@@ -1,0 +1,11 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.25s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-f3403aa334dec0f5)
+
+running 3 tests
+test liquid_runtime::checkpoint::wire::tests::exact_scalar_codec_preserves_signed_zero_and_rejects_invalid_tags ... ok
+test liquid_runtime::checkpoint::wire::tests::file_rejects_every_truncation_single_byte_corruption_and_resource_limits ... ok
+test liquid_runtime::checkpoint::tests::complete_scene_owner_rebinds_reversed_handles_and_continues_120_steps ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 195 filtered out; finished in 1.91s
+

@@ -123,6 +123,7 @@ impl PhysicalStance {
             .map_err(|e| e.to_string())?;
         }
         let source = AnimatorFrame {
+            properties: Default::default(),
             skin_matrices: pose
                 .skin_matrices(&rig.skeleton)
                 .map_err(|e| e.to_string())?,

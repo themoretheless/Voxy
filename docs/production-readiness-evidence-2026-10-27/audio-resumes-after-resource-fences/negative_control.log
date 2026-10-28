@@ -1,0 +1,20 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.05s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-ffe57fcdab83b83c)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=0 asset=animated-triangle.glb
+
+thread 'app::restore_barrier::tests::model_release_failure_keeps_audio_and_game_frozen_until_recovery' (81200397) panicked at crates/voxy_editor/src/app/restore_barrier/tests.rs:278:5:
+assertion failed: app.restore_barrier.as_ref().unwrap().audio
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test app::restore_barrier::tests::model_release_failure_keeps_audio_and_game_frozen_until_recovery ... FAILED
+
+failures:
+
+failures:
+    app::restore_barrier::tests::model_release_failure_keeps_audio_and_game_frozen_until_recovery
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 435 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

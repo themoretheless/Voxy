@@ -1,0 +1,10 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.21s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_assets-c45ad932fb61a65e)
+
+running 2 tests
+test atomic_file::tests::bounded_replace_and_failed_rename_preserve_destination_and_clean_temporary ... ok
+test atomic_file::tests::concurrent_new_publication_never_overwrites_and_cleans_siblings ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 56 filtered out; finished in 0.05s
+

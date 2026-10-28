@@ -1,0 +1,22 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.86s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 6 tests
+test app::restore_guard::tests::native_app_observation_rejects_scene_selection_and_history_changes ... ok
+test animation_runtime::tests::observation_tokens_detect_clock_adoption_event_mutation_and_clear_without_scene_edits ... ok
+test app::restore_guard::tests::model_observation_detects_clock_sources_and_ready_fence_replacement ... ok
+test import::publication_checkpoint::tests::original_observations_and_shared_models_survive_source_removal ... ok
+test ui_text::worker_tests::worker_publication_failure_retains_old_text_and_source_observations ... ok
+test ui_text::checkpoint::tests::real_file_restores_original_font_observations_arc_sharing_and_120_draws_without_sources ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 329 filtered out; finished in 3.38s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-ef30924b92d7d41b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

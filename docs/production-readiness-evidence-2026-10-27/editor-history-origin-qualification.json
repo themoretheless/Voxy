@@ -1,0 +1,28 @@
+{
+  "scope": "Bind editor game/history candidate to the native coordinated source observation",
+  "implemented": [
+    "EditorCheckpoint.prepare_guarded retains the original CoordinatedOrigin in its prepared game owner",
+    "PreparedEditorCheckpoint.validate_origin checks target scene pairing and delegates native source validation",
+    "Native history epoch rejects redo and subsequent undo even if values return to the original checkpoint",
+    "Candidates without source observations and mismatched target history scene identities reject"
+  ],
+  "checks": {
+    "editor_passed": 318,
+    "editor_ignored": 30,
+    "strict_all_target_clippy": "passed",
+    "scoped_rustfmt": "passed",
+    "actual_project_Play_path": true,
+    "redo_undo_epoch_rejection": true,
+    "unguarded_and_foreign_scene_rejection": true
+  },
+  "not_claimed": [
+    "No borrow-scoped full App commit or publication implementation yet",
+    "No other AuthoringSession metadata/source revision/preview/settings ownership",
+    "No new GPU/window/device audio or physical memory/FPS qualification",
+    "Menu/first-presented-frame input handoff and ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "19443c1e461d31406c0130228621f8476ea1225e2ab4e57386760408e198f404",
+    "crates/voxy_editor/src/app/authoring_checkpoint/tests.rs": "3a043d52dbcc5f3fd99dd029016ad7fa026a52b193f54a8b075648feefedfe83"
+  }
+}

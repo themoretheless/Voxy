@@ -1,0 +1,22 @@
+{
+  "status": "audio_clock_and_unsent_pcm_participants_verified",
+  "editor_passed": 243,
+  "editor_ignored": 20,
+  "audio_device_passed": 5,
+  "strict_editor_device_all_target_clippy": true,
+  "clock_continuation_steps": 720,
+  "pcm_backpressure_continuation_submissions": 120,
+  "fixed_behavior": "offline output now derives sample count from actual rate and carries numerator remainder, rather than assuming 800 frames per step",
+  "remaining": [
+    "compose clock mixer and pump into one AudioPlay checkpoint",
+    "persist resource publications and reload owner state",
+    "quiesce or replace already submitted native device queue",
+    "full App/PlaySession atomic publication"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/audio_clock_checkpoint.rs": "c4437ab36f9ba5e6e177a9091ddfbc84b2ba39d35db788fe4dbf751abf5251b5",
+    "crates/voxy_editor/src/audio_play.rs": "5487a2e4db21b9bfd8facfa37d0b0e0d0fdcce6029b0b14592049b8b1675449b",
+    "crates/voxy_audio_device/src/pump.rs": "3e8d4690513320a6241d97ef3caa278bbfafbcc6cb59c332e5fc8534e5270d8b",
+    "crates/voxy_audio_device/src/lib.rs": "01d2838001e9db69090626216ed1b65cfd9ddb81006d5b978cc2afd383e9ef1f"
+  }
+}

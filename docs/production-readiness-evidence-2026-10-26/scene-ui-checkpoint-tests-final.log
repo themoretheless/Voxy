@@ -1,0 +1,18 @@
+   Compiling voxy_ui v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_ui)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.21s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-bcf1b72c587159c3)
+
+running 9 tests
+test ui_actions::tests::application_callback_runs_once_at_barrier_and_rejects_expired_or_foreign_events ... ok
+test ui_actions::tests::failed_handler_and_full_barrier_discard_all_staged_scene_commands ... ok
+test ui_scene::tests::nested_layout_uses_ui_ancestry_clips_and_inherited_activity ... ok
+test ui_actions::tests::foreign_command_queue_rejects_before_callback_and_preserves_pending_event ... ok
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_scene::tests::aggregate_text_budget_counts_inactive_elements_before_publication ... ok
+test ui_scene::tests::strict_registered_unicode_descriptors_round_trip_and_validate_bounds ... ok
+test ui_runtime::checkpoint::tests::fresh_scene_restores_pointer_and_key_hold_and_reconciles_pending_action_change ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 183 filtered out; finished in 0.00s
+

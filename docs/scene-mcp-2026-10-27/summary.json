@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "tools": 6,
+  "checks": [
+    "initialization",
+    "atomic batch rejection",
+    "stale revision rejection",
+    "scene edits",
+    "material/camera/render",
+    "inline PNG",
+    "undo pixel equality",
+    "redo pixel equality",
+    "create/reparent/subtree removal",
+    "save",
+    "external edit refusal"
+  ],
+  "initial_scene_hash": "1be61fe35c460892bb6e0cc0d78f8683deffb6d7fed700f7704c33a08b426dcd",
+  "final_scene_hash": "1be61fe35c460892bb6e0cc0d78f8683deffb6d7fed700f7704c33a08b426dcd",
+  "baseline_sha256": "3f562725cab946eb0c650865d10e4475f13245907597ca34b185c98c4457ccb4",
+  "edited_sha256": "fb4e73aeea1d4f025115d273d42788531f3b2d06cf905892a6315e3235f97a85",
+  "live_editor_sync": false
+}

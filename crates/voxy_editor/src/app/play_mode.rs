@@ -6,30 +6,29 @@
 use crate::*;
 
 impl App {
-    pub(crate) fn advance_game(&mut self, elapsed: f64) -> Result<(), Box<dyn std::error::Error>> {
-        let mut models: BTreeMap<_, _> = if let Some(graphics) = &self.graphics {
-            graphics
-                .models
-                .iter()
-                .filter_map(|(id, resource)| {
-                    resource
-                        .animated_model
-                        .as_ref()
-                        .map(|model| (id.clone(), model.clone()))
-                })
-                .collect()
-        } else {
-            self.scene
-                .components::<ModelInstance>()
-                .filter_map(|(_, instance)| {
-                    let resource = self.catalog.snapshot(&instance.asset)?;
-                    Some((
-                        instance.asset.clone(),
-                        resource.value().animated.as_ref()?.clone(),
-                    ))
-                })
-                .collect()
-        };
+    fn animation_models(&self) -> BTreeMap<AssetId, Arc<voxy_model::ModelAsset>> {
+        // Simulation also owns inactive/offscreen models whose GPU residency may
+        // have been evicted. Prefer the displayed publication when it exists so
+        // deferred uploads still animate the same accepted revision as rendering.
+        let mut models: BTreeMap<_, _> = self
+            .scene
+            .components::<ModelInstance>()
+            .filter_map(|(_, instance)| {
+                let resource = self.catalog.snapshot(&instance.asset)?;
+                Some((
+                    instance.asset.clone(),
+                    resource.value().animated.as_ref()?.clone(),
+                ))
+            })
+            .collect();
+        if let Some(graphics) = &self.graphics {
+            models.extend(graphics.models.iter().filter_map(|(id, resource)| {
+                resource
+                    .animated_model
+                    .as_ref()
+                    .map(|model| (id.clone(), model.clone()))
+            }));
+        }
         for (_, profile) in self.scene.components::<ModelRetarget>() {
             let source = AssetId(profile.source.clone());
             if let Some(asset) = self.catalog.snapshot(&source)
@@ -38,6 +37,17 @@ impl App {
                 models.insert(source, model.clone());
             }
         }
+        models
+    }
+
+    pub(crate) fn advance_game(&mut self, elapsed: f64) -> Result<(), Box<dyn std::error::Error>> {
+        if !elapsed.is_finite() || elapsed < 0. {
+            return Err("invalid game elapsed time".into());
+        }
+        if self.restore_play_frozen() {
+            return Ok(());
+        }
+        let models = self.animation_models();
         self.play.animations.synchronize(&self.scene)?;
         if let Some(simulation) = &mut self.play.simulation {
             if let Some(actions) = &mut self.play.ui_actions {
@@ -91,25 +101,24 @@ impl App {
                             access.require_write("player.input").map_err(|error| {
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string())
                             })?;
-                            self.play
-                                .animations
-                                .fixed_step(
-                                    access.write().map_err(|error| {
-                                        voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                                    })?,
-                                    &models,
-                                    physics,
-                                    &mut self.play.player_input,
-                                    dt,
-                                )
-                                .map_err(|error| match error {
-                                    voxy_gameplay::CharacterTickError::Physics(error) => {
-                                        voxy_gameplay::GameplayFixedError::Physics(error)
-                                    }
-                                    voxy_gameplay::CharacterTickError::Preparation(error) => {
-                                        voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                                    }
-                                })?
+                            locomotion::fixed_step(
+                                &self.play.animations,
+                                access.write().map_err(|error| {
+                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                })?,
+                                &models,
+                                physics,
+                                &mut self.play.player_input,
+                                dt,
+                            )
+                            .map_err(|error| match error {
+                                voxy_gameplay::CharacterTickError::Physics(error) => {
+                                    voxy_gameplay::GameplayFixedError::Physics(error)
+                                }
+                                voxy_gameplay::CharacterTickError::Preparation(error) => {
+                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                }
+                            })?
                         } else {
                             let candidate = self
                                 .play
@@ -190,10 +199,14 @@ impl App {
                 physics.synchronize(&self.scene)?;
             }
         }
+        self.update_follow_camera(elapsed)?;
         Ok(())
     }
 
     pub(crate) fn start_standalone(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        if self.play.playing.is_some() || self.audio.is_pending() {
+            return Err("game session is already running or starting".into());
+        }
         let required = self.required_cpu_model_assets();
         let deadline = Instant::now() + Duration::from_secs(15);
         loop {
@@ -215,11 +228,22 @@ impl App {
             std::thread::sleep(Duration::from_millis(2));
         }
         self.validate_authoring_document(&self.authoring_document()?)?;
+        let previous = self.standalone;
         self.standalone = true;
-        self.toggle_play()
+        if let Err(error) = self.toggle_play() {
+            self.standalone = previous;
+            return Err(error);
+        }
+        Ok(())
     }
 
     pub(crate) fn toggle_play(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        if self.model_relink.is_some() || self.model_relink_draft.is_some() {
+            return Err("finish model relink before changing Play mode".into());
+        }
+        if self.restore_barrier.is_some() {
+            return Err("finish or cancel restoration before changing Play mode".into());
+        }
         if self.retarget_draft.is_some() {
             return Err("apply or cancel the retarget profile edit before Play".into());
         }
@@ -230,11 +254,22 @@ impl App {
             self.update_edit_title();
             return Ok(());
         }
-        self.game_ui_input.cancel();
+        // Play/Stop replaces the graph and its generational handles. Runtime UI
+        // publications and input belong to that graph, including retained layout
+        // snapshots that cancel() intentionally preserves for focus handling.
+        self.game_ui_input = game_ui_input::GameUiInput::new();
+        self.retired_ui_workers.extend(self.ui_live.close());
+        if let Some(graphics) = &mut self.graphics {
+            graphics.ui_draws.clear();
+            graphics.ui_presented = false;
+            graphics.ui_focus.clear();
+            graphics.ui_focus_key = None;
+            graphics.ui_focus_deferred = None;
+        }
         if let Some(expected) = self.play.playing.take() {
             self.close_play_audio();
             self.close_audio_device();
-            self.play.stop(&mut self.scene)?;
+            let stopped = self.play.stop(&mut self.scene);
             if let Some(graphics) = &mut self.graphics {
                 graphics.animated_models.clear();
             }
@@ -242,7 +277,16 @@ impl App {
             if self.authoring_document()? != expected {
                 return Err("Stop failed to restore authoring scene".into());
             }
+            stopped?;
         } else {
+            for id in self.required_cpu_model_assets() {
+                if !self.available.contains(&id) && self.catalog.snapshot(&id).is_none() {
+                    return Err(
+                        format!("game model {} is unresolved in the asset manifest", id.0).into(),
+                    );
+                }
+            }
+            locomotion::validate_scene(&self.scene, &self.animation_models())?;
             CharacterPhysics::new(&self.scene, 128, 128)
                 .with_depenetration(true)
                 .validate_start(&self.scene)?;
@@ -270,64 +314,63 @@ impl App {
                 }
                 audio_session::AudioStart::Ready(audio) => audio,
             };
-            self.play.player_input = voxy_gameplay::player_input()?;
-            let authoring_before_play = self.authoring_document()?;
-            self.restore_authoring()?; // Detached runtime graph, fresh generational handles.
-            let liquid = self
-                .authoring
-                .authoring_project
-                .liquid_runtime(&self.scene)?;
-            let mut actions = voxy_gameplay::UiActionHandlers::new(&self.scene, 128, 128, 128);
-            actions.register("voxy.ui.hide".into(), |_, event, commands| {
-                commands
-                    .push(voxy_scene::SceneCommand::SetActive(event.owner, false))
-                    .map_err(EditorError::from)
-                    .map_err(|e| e.to_string().into())
-            })?;
-            if let Some(setup) = &mut self.ui_action_setup {
-                setup.configure(&mut actions)?;
-            }
-            let (liquid, optics) = liquid.map_or((None, Vec::new()), |(runtime, optics)| {
-                (Some(runtime), optics)
-            });
-            self.play.liquid_optics = optics;
-            self.play.liquid = liquid;
-            self.play.playing = Some(authoring_before_play);
-            self.authoring.animation_preview = None;
-            self.play.ui_actions = Some(actions);
-            let mut simulation = SceneSimulation::new(
-                &self.scene,
-                SimulationLimits {
-                    fixed_step: 1.0 / 60.0,
-                    max_steps: 8,
-                    max_behaviors: 128,
-                    max_commands: 128,
-                },
-            )?;
-            if let Some(setup) = &mut self.behavior_setup {
-                if let Err(error) = setup.configure(&mut self.scene, &mut simulation) {
-                    simulation.stop(&mut self.scene)?;
-                    self.play.playing = None;
-                    self.play.stop(&mut self.scene)?;
-                    self.restore_authoring()?;
-                    self.close_audio_device();
-                    return Err(error);
+            let started = (|| -> Result<(), Box<dyn std::error::Error>> {
+                self.play.player_input = voxy_gameplay::player_input()?;
+                let authoring_before_play = self.authoring_document()?;
+                self.restore_authoring()?; // Detached runtime graph, fresh generational handles.
+                let liquid = self
+                    .authoring
+                    .authoring_project
+                    .liquid_runtime(&self.scene)?;
+                let mut actions = voxy_gameplay::UiActionHandlers::new(&self.scene, 128, 128, 128);
+                crate::ui_action_codecs::register_handlers(&mut actions)?;
+                if let Some(setup) = &mut self.ui_action_setup {
+                    setup.configure(&mut actions)?;
                 }
-                simulation.reset_interpolation(&self.scene)?;
+                let (liquid, optics) = liquid.map_or((None, Vec::new()), |(runtime, optics)| {
+                    (Some(runtime), optics)
+                });
+                self.play.liquid_optics = optics;
+                self.play.liquid = liquid;
+                self.play.playing = Some(authoring_before_play);
+                self.authoring.animation_preview = None;
+                self.play.ui_actions = Some(actions);
+                self.play.simulation =
+                    Some(SceneSimulation::new(&self.scene, scene_limits::SIMULATION)?);
+                if let Some(setup) = &mut self.behavior_setup {
+                    let simulation = self.play.simulation.as_mut().expect("new simulation");
+                    setup.configure(&mut self.scene, simulation)?;
+                    simulation.reset_interpolation(&self.scene)?;
+                }
+                let has_characters = self.scene.components::<CharacterBody>().next().is_some()
+                    || self.scene.components::<BoxCollider>().next().is_some();
+                if has_characters {
+                    self.play.physics =
+                        Some(CharacterPhysics::new(&self.scene, 128, 128).with_depenetration(true));
+                }
+                self.play.angular_motion =
+                    Some(voxy_gameplay::AngularMotionBatch::new(&self.scene, 128)?);
+                self.audio.set_play(audio);
+                self.update_follow_camera(0.)?;
+                self.play.simulation_ticks = 0;
+                self.play.animations.clear();
+                self.play.simulation_time = Instant::now();
+                Ok(())
+            })();
+            if let Err(error) = started {
+                self.close_play_audio();
+                self.close_audio_device();
+                let stopped = self.play.stop(&mut self.scene);
+                let restored = self.restore_authoring();
+                self.update_edit_title();
+                if let Err(cleanup) = stopped.and(restored) {
+                    return Err(format!(
+                        "Play startup failed: {error}; rollback failed: {cleanup}"
+                    )
+                    .into());
+                }
+                return Err(error);
             }
-            let has_characters = self.scene.components::<CharacterBody>().next().is_some()
-                || self.scene.components::<BoxCollider>().next().is_some();
-            if has_characters {
-                self.play.physics =
-                    Some(CharacterPhysics::new(&self.scene, 128, 128).with_depenetration(true));
-            }
-            self.play.angular_motion =
-                Some(voxy_gameplay::AngularMotionBatch::new(&self.scene, 128)?);
-            self.audio.set_play(audio);
-            self.play.simulation = Some(simulation);
-            self.play.simulation_ticks = 0;
-            self.play.animations.clear();
-            self.play.simulation_time = Instant::now();
         }
         self.update_edit_title();
         Ok(())

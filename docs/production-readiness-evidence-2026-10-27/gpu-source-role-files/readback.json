@@ -1,0 +1,12 @@
+{
+  "width": 64,
+  "height": 64,
+  "format": "RGBA8",
+  "reference_equals_restored": true,
+  "current_changed_pixels": 253,
+  "sha256": {
+    "reference": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464",
+    "current": "7da6a456732466137c34a7d0bdedce6fa1000702113652194176321afbb66cf0",
+    "restored": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464"
+  }
+}

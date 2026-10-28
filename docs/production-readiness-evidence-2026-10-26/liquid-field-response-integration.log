@@ -1,0 +1,22 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.57s
+     Running tests/liquid_properties.rs (target/research-ray-precision/debug/deps/liquid_properties-a6b579900a434d8b)
+
+running 14 tests
+test mass_fraction_blend_uses_specific_volume_and_affects_viscosity ... ok
+test response_configuration_validates_the_current_phase_not_only_the_base_material ... ok
+test buoyancy_uses_temperature_adjusted_carrier_density ... ok
+test invalid_response_and_incompatible_field_replacement_are_atomic ... ok
+test arrhenius_response_rejects_duplicate_temperature_laws_and_invalid_cooling_atomically ... ok
+test heat_exchange_outside_constitutive_domain_rolls_back_the_entire_step ... ok
+test temperature_dependent_density_changes_pressure_force ... ok
+test hot_liquid_expands_and_is_less_viscous_in_actual_force_integration ... ok
+test arrhenius_condensed_milk_temperature_response_composes_with_shear_thinning ... ok
+test affine_strain_fit_is_exact_on_irregular_cloud_and_ignores_spin_and_translation ... ok
+test shear_thinning_advection_and_heating_preserve_discrete_energy ... ok
+test symmetric_heated_advection_updates_temperature_dependent_viscosity_and_expansion ... ok
+test condensed_milk_demo_thins_under_shear_but_not_rigid_rotation ... ok
+test shear_rate_estimate_reproduces_unit_affine_shear_away_from_cloud_edges ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+

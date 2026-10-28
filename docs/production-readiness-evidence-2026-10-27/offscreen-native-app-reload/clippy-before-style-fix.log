@@ -1,0 +1,26 @@
+    Blocking waiting for file lock on build directory
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: this `else { if .. }` block can be collapsed
+   --> crates/voxy_editor/src/app/inspector.rs:183:24
+    |
+183 |                   } else {
+    |  ________________________^
+184 | |                     if let Some(host) = &mut graphics.host {
+185 | |                         host.disable_msaa4();
+186 | |                     }
+187 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_else_if
+    = note: `-D clippy::collapsible-else-if` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_else_if)]`
+help: collapse nested if block
+    |
+183 ~                 } else if let Some(host) = &mut graphics.host {
+184 +                     host.disable_msaa4();
+185 +                 }
+    |
+
+error: could not compile `voxy_editor` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

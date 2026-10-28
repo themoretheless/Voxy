@@ -1,0 +1,30 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline packaged corrupt WAV referenced only by deferred prefab; regression failed before fix",
+    "Expanded prefab AudioSource descriptors use native validation and observed import_audio decoder at ordinary offline 48000 Hz",
+    "Import settings and waveform input snapshots included in aggregate retained-source admission",
+    "Corrupt WAV, malformed import settings and frame-limit violation rejected before publication",
+    "Conflicting per-asset import settings across nested prefab sources rejected",
+    "Changes to WAV and valid import-settings bytes after admission rejected by final package checks",
+    "Restored nested prefab emits nonzero offline PCM from source-free package"
+  ],
+  "tests": {
+    "editor_passed": 366,
+    "editor_ignored": 36,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "No physical audio device or alternate output-rate qualification",
+    "Deferred prefab overall voice/bus/listener scene limits are not comprehensively admitted here",
+    "No all-resource closure or full ENG-03/07 completion",
+    "No FPS qualification"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/package_models.rs": "34e7ae82b6f404b529b019c8fb2031d91f70dc7c57ae237e6054586f7e3c551e",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "f81b3930c81b62f392e97c1d0f5834e53dc27e6db18144fda2a4d6f670fb7801"
+  }
+}

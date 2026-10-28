@@ -1,0 +1,26 @@
+{
+  "status": "qualified scoped historical-owner restoration; complete UiLive and App integration open",
+  "source_sha256": {
+    "crates/voxy_scene/src/lib.rs": "062d894832408f3f3e18cdb9d0e4ca0e24be5ec2572bb2e96344263a1dc02ecd",
+    "crates/voxy_scene/src/document.rs": "57c3778cef333abb6786b67b8a58596db29f4a80d503e6fff45c4543cdea66b7",
+    "crates/voxy_scene/src/allocation_checkpoint.rs": "a5b377bcb04e05f93669b6ed0a4cf05cff35a7dd1198d7c0b6dae6aa33e93c21",
+    "crates/voxy_gameplay/src/ui_runtime_checkpoint.rs": "b705e526b59ed1c2dca0ea2c7ffcf581746eb8816927a6e694666aa8bdd9ba39",
+    "crates/voxy_editor/src/ui_text_checkpoint.rs": "e085496b40f49935287deac97799ef7cfd42c1c08567443e2b952be2926a85ac",
+    "crates/voxy_editor/src/game_ui_input_checkpoint.rs": "1c90eb8390ce1e8d8d31609a1e74f35251fd30965379052332eb98641ba37060",
+    "crates/voxy_editor/src/ui_live/gpu_reload_tests.rs": "8c07e8c3246a8db9216e02bf819355276723f83196ac3a4367a1b44272078376"
+  },
+  "checks": {
+    "scene": "91 passed, corrected capacity-preserving fixture",
+    "editor": "267 passed, 20 ignored; prior accepted run",
+    "gpu": "1 explicit offscreen upload test passed, Apple M4 Max / Metal; prior accepted run",
+    "clippy": "scene/gameplay/editor all-target strict passed; prior accepted run",
+    "scene_clippy": "fresh strict all-target passed after fixture correction"
+  },
+  "history_namespace": "scene zero, owner scene ID as generation, unique ordinal as slot; never allocated as a live node",
+  "limits": [
+    "No complete UiLive publication bundle or worker/watcher save barrier",
+    "No complete atomic App persistence",
+    "No rendered pixel readback, swapchain presentation or FPS qualification"
+  ],
+  "rejected_fixture": "MAX capacity source restored with capacity 4; corrected test restores original capacity, production capacity check unchanged"
+}

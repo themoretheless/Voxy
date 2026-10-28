@@ -1,0 +1,25 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.40s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 4 tests
+test app::model_reload::tests::native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work ... ignored, requires real GPU; native reload transaction without a window
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=quad.obj
+test app::model_reload::tests::model_completions_cannot_override_watcher_owned_manifest_inventory ... ok
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=quad.obj
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=quad.obj
+MODEL FAILED frames=0 last_good=true
+MODEL FAILED frames=0 last_good=true
+test app::model_reload::tests::source_budget_failure_settles_ticket_retains_model_and_does_not_block_checkpoint ... ok
+test app::model_reload::tests::watcher_capacity_rejects_unwatchable_model_and_settles_ticket_without_graph_changes ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 373 filtered out; finished in 0.02s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-cbe125d7235bbd56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

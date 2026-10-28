@@ -1,0 +1,28 @@
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.46s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_model-e023b919f97c2495)
+
+running 7 tests
+test morph::checkpoint::tests::malformed_headers_streams_enums_quotas_and_types_reject_without_changing_source ... ok
+test morph::checkpoint::tests::real_file_roundtrip_preserves_cancellation_and_negative_weight_accuracy ... ok
+test checkpoint::tests::legacy_rigid_and_empty_resource_graphs_restore_without_morph_publication ... ok
+test checkpoint::tests::malformed_graph_metadata_and_late_native_errors_preserve_original_models ... ok
+test morph::checkpoint::tests::imported_gltf_morph_sources_rebuild_after_original_buffers_are_dropped ... ok
+test morph::checkpoint::tests::static_and_skinned_sources_rebuild_exact_metadata_and_120_morph_results ... ok
+test checkpoint::tests::complete_model_file_preserves_outer_morph_skin_rig_clip_and_name_aliases_for_120_frames ... FAILED
+
+failures:
+
+---- checkpoint::tests::complete_model_file_preserves_outer_morph_skin_rig_clip_and_name_aliases_for_120_frames stdout ----
+
+thread 'checkpoint::tests::complete_model_file_preserves_outer_morph_skin_rig_clip_and_name_aliases_for_120_frames' (76758886) panicked at crates/voxy_model/src/checkpoint/tests.rs:127:5:
+assertion failed: restored[0].animator(1).is_ok()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    checkpoint::tests::complete_model_file_preserves_outer_morph_skin_rig_clip_and_name_aliases_for_120_frames
+
+test result: FAILED. 6 passed; 1 failed; 0 ignored; 0 measured; 45 filtered out; finished in 0.15s
+
+error: test failed, to rerun pass `-p voxy_model --lib`

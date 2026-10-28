@@ -1,0 +1,25 @@
+    Blocking waiting for file lock on build directory
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: used `sort` on primitive type `tuple`
+   --> crates/voxy_editor/src/animated_models/checkpoint.rs:100:9
+    |
+100 |         history.sort();
+    |         ^^^^^^^^^^^^^^ help: try: `history.sort_unstable()`
+    |
+    = note: an unstable sort typically performs faster without any observable difference for this data type
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#stable_sort_primitive
+    = note: `-D clippy::stable-sort-primitive` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::stable_sort_primitive)]`
+
+error: used `sort` on primitive type `usize`
+   --> crates/voxy_editor/src/animated_models/checkpoint.rs:102:9
+    |
+102 |         resident.sort();
+    |         ^^^^^^^^^^^^^^^ help: try: `resident.sort_unstable()`
+    |
+    = note: an unstable sort typically performs faster without any observable difference for this data type
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#stable_sort_primitive
+
+error: could not compile `voxy_editor` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 2 previous errors

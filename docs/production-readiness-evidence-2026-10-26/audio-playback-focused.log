@@ -1,0 +1,13 @@
+   Compiling voxy_audio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio)
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio_device)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.79s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9bf058ddab5294b3)
+
+running 1 test
+test audio_play::playback_checkpoint::tests::playback_archive_preserves_old_voice_new_publication_and_failed_reload_together ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 263 filtered out; finished in 0.28s
+

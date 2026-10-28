@@ -1,0 +1,55 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "scope": "GPU staging and admission for original coordinated game/project/UI/audio/input candidate",
+  "hardware": {
+    "device": "Apple M4 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "checks": {
+    "gpu_variants_passed": 3,
+    "editor_library": {
+      "passed": 375,
+      "failed": 0,
+      "ignored": 39
+    },
+    "editor_suite_note": "Production changes checked; final test-only additions extend ignored GPU variant pixel and Arc assertions, qualified by final physical GPU run",
+    "scoped_rustfmt": true,
+    "scoped_diff_check": true,
+    "strict_all_target_clippy": true
+  },
+  "proofs": [
+    "source-free original native file",
+    "prepared outer project/UI/audio/historical UI input retained through GPU validation",
+    "previous accepted frame, shared frame, equal independent frame variants",
+    "exact pixels from new coordinated GPU candidate match original reference",
+    "runtime/GPU Arc relation matches original sharing",
+    "unguarded and incomplete candidates rejected",
+    "pending cancellation and ready discard join all worker classes",
+    "live upload cache unchanged",
+    "post-stage native audio output policy changes rejected",
+    "post-stage gameplay input changes rejected",
+    "source values restored allow admission again"
+  ],
+  "not_qualified": [
+    "final App publication",
+    "authoring-history transfer through coordinated GPU staging",
+    "native save/load menus",
+    "first presented frame",
+    "native audio device transfer",
+    "production rigs",
+    "120/160 FPS",
+    "full engine readiness"
+  ],
+  "logs": [
+    "gpu.log",
+    "editor.log",
+    "clippy.log"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/restore_barrier.rs": "2780b35d48cc8d157a5fddbd6cc547cefb7df232f9b8feb3aa464d1cbf8be05a",
+    "crates/voxy_editor/src/app/resource_checkpoint/play.rs": "80c9d7f7d085082305d9e77a25fe7bad3073e657a466ba7bf8c9e902c2b9a02c",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "6590d805af818665e912f4cca1f83bef9f78e20b7988fb2cdeee031a666c9800"
+  }
+}

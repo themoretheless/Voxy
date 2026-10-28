@@ -1,0 +1,56 @@
+{
+  "stage": "ENG-03",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "change": "SourcePollWorker hashes complete files through FileInputs::fingerprint using fixed 65536-byte heap scratch rather than whole-file Vec; shared opened-file metadata admission rejects known oversized files before reading",
+  "verified": [
+    "streaming/full BLAKE3 equality at 0,1,65535,65536,65537,200003 bytes",
+    "last-byte changes alter digest correctly across block boundaries",
+    "exact byte-limit succeeds and one-byte-under limit rejects",
+    "missing and escaping paths reject",
+    "normal watcher reloads >64KiB model, rejects >16MiB input retaining original publication, and recovers",
+    "external PNG corruption, removal and recreation retain authoring edits and recover through ordinary watcher",
+    "recovered project packages and launches without source tree"
+  ],
+  "suite_results": [
+    {
+      "passed": 59,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 324,
+      "failed": 0,
+      "ignored": 30
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_assets/src/files.rs": "9ae01da03e9fededc730dfd5e2c66e1092ff5331dec2d9bceeee7a0fc0756acb",
+    "crates/voxy_assets/src/watch.rs": "2198118b40b548f136e6eaa717b4cb0f458a6d2b06db41308c2df8719822c5a9",
+    "crates/voxy_assets/src/watch_worker.rs": "2a7de034dac988d5887fc4f94eaa211200241681ef3a3fecbb66f2a601b70d11",
+    "crates/voxy_editor/src/scene3d_tests.rs": "4aa426ccd748386d7e57c6743048eaee746c41b314741ed1c8f147f54cbfc2a9"
+  },
+  "limits": [
+    "64KiB bound describes hashing scratch, not total process or filesystem cache memory",
+    "no measured speedup or FPS claim",
+    "file IO remains on background worker; total scan time still depends on source bytes",
+    "concurrent edits are not filesystem snapshots; import publication still validates observations",
+    "native window and broader ENG stages remain incomplete"
+  ]
+}

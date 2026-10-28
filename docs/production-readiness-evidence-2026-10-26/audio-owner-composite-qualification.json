@@ -1,0 +1,32 @@
+{
+  "status": "offline_audio_playback_reload_json_composition_verified",
+  "editor_passed": 246,
+  "editor_ignored": 20,
+  "strict_all_target_editor_clippy": true,
+  "continuation_steps": 120,
+  "covered": [
+    "bounded complete offline audio JSON record",
+    "published PCM and importer inputs",
+    "catalog revision state",
+    "mixer and clock history",
+    "reload queue dependency edges poll baseline cadence",
+    "original worker import recipes retained",
+    "fresh scene ObjectId rebind and fresh worker creation",
+    "queued reload subsequently publishes matching revision",
+    "complete playback records match after following advances",
+    "duplicate recipe keys rejected"
+  ],
+  "remaining": [
+    "native submitted device queue and pump composition",
+    "AudioSession host request/load/publication",
+    "global App/PlaySession save slots",
+    "native audible visible acceptance"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/audio_owner_checkpoint.rs": "3672906b0bd6d3edfff9d88fad55dee5972bf9debec9555b6fd77c3e8842a7f0",
+    "crates/voxy_editor/src/audio_reload_checkpoint_wire.rs": "3c038ca708b2b7629c439a039640784414030dd520deb1621efae1d5b88ddc9b",
+    "crates/voxy_editor/src/audio_reload_checkpoint.rs": "0618e10db4695a53973e76cb09907ffbf2915308cab7cc80ff8adb3c1ff51f3f",
+    "crates/voxy_editor/src/audio_reload.rs": "5d1fe6642221c82837dfbf59a3de022e3759634ab9f2a6995fa00b189073568e",
+    "crates/voxy_editor/src/audio_play.rs": "646b42ecaf7d3540f7cb908b0ea65bcbd0faa71a5511fa24456cbcb01f4e9b1d"
+  }
+}

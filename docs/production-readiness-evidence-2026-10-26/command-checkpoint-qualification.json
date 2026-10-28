@@ -1,0 +1,35 @@
+{
+  "status": "pending_scene_command_checkpoint_registered_payloads_and_exact_float_json_verified",
+  "code_sha256": {
+    "crates/voxy_scene/Cargo.toml": "a2fc270fb988ab75136a1e97f6e5af7870580607ec68c0953d7608f08d695988",
+    "crates/voxy_scene/src/commands.rs": "7904482c1e0d67d3f4bd32413635392fecd34323a4dd33d5db60ae01761bdeaf",
+    "crates/voxy_scene/src/command_checkpoint.rs": "75406cd7a97d31ad560bf99b83d813fd4111dcb2162bf735476ae9ca1942eab6",
+    "crates/voxy_scene/src/document.rs": "b8cfc51c0877a27d9ba9010a081802a3c381ae8e185297e1146327473c68f2fe",
+    "crates/voxy_scene/src/lib.rs": "47226b123b2489aeb25d36d6ff8a024110f7abde7551ea3915bf5db1243cd630"
+  },
+  "scene_library_passed": 86,
+  "editor_library": {
+    "passed": 229,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_scene_gameplay_editor_all_targets_clippy_passed": true,
+  "tested": [
+    "structural_command_order_and_result_errors",
+    "stale_and_foreign_handle_failures",
+    "deleted_slot_reuse",
+    "registered_component_insert_remove",
+    "spawn_journal_durable_rebind",
+    "no_duplicate_apply",
+    "unknown_component_codec_rejected_without_draining",
+    "invalid_restore_keeps_live_queue",
+    "null_insert_distinct_from_remove",
+    "1024_deterministic_f64_bit_patterns_roundtrip"
+  ],
+  "existing_component_registry_and_typed_apply_reused": true,
+  "serde_json_float_roundtrip_enabled": true,
+  "initial_f64_counterexample_bits": "723f4114006c08c7",
+  "whole_game_save_envelope_or_slots_implemented": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

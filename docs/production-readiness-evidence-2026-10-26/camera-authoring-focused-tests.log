@@ -1,0 +1,11 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.38s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 3 tests
+test camera_authoring_tests::stale_and_canceled_camera_pick_actions_never_publish_a_change ... ok
+test camera_authoring_tests::add_follow_camera_pick_edit_undo_remove_and_reopen_use_existing_authoring_owner ... ok
+test camera_authoring_tests::nested_target_picker_uses_stable_ids_and_saves_member_overrides ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 226 filtered out; finished in 0.09s
+

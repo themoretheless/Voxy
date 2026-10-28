@@ -1,0 +1,50 @@
+{
+  "status": "native_complete_scene_liquid_owner_restore_verified",
+  "passed": {
+    "physics": 38,
+    "owner": 1,
+    "sources": 1,
+    "point_load": 1,
+    "integration": 20,
+    "film_ledgers": 34,
+    "clippy": 0,
+    "rejected_heat_shape": 0,
+    "rejected_capacity_fixture": 0
+  },
+  "continuation_steps": 120,
+  "new_scene_identity": true,
+  "source_handle_order_reversed": true,
+  "captured": [
+    "native full Liquid record",
+    "source descriptor, emitter clock/sample counter/settings, previous position",
+    "body physical state, spin, principal templates, published pose",
+    "durable collider identities and transform paths",
+    "mass descriptor/properties, original rigid frame, point loads and elapsed time"
+  ],
+  "fixes": [
+    "source iteration order retained independently of new NodeId ordering",
+    "particle exchange preserves both deferred heat words for survivors and initializes new entries",
+    "removed deferred heat represented separately in exchange receipts and film aggregate"
+  ],
+  "tested": [
+    "7 warmup steps followed by capture and independent restore into new scene",
+    "120 exact checkpoint/physical continuation steps with nonzero-radius emission, moving and inactive source, compound body and time-dependent point force",
+    "missing and aliased identities, pulse and binding budgets reject",
+    "capture failure leaves live runtime unchanged",
+    "sub-ULP survivor and removal heat words retained",
+    "old scene bindings reject restored scene"
+  ],
+  "remaining": [
+    "native records still contain exact cloned frame/geometry values; full SceneLiquidCheckpoint file codec not yet implemented",
+    "bounded aggregate archive and integrity",
+    "atomic PlaySession/App publication and native acceptance",
+    "rest of ENG-00..13"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "cd16ba82a6413b4bd3b212049d0701fc0c3756bc421add8170c779723dfc01ad",
+    "crates/voxy_gameplay/src/liquid_runtime/checkpoint.rs": "b3a0fac61f4cd209702869ce334afc3fbb9c8ff940589e46dbae359a6a17a135",
+    "crates/voxy_gameplay/src/lib.rs": "7c65f5481727f4bed0fa4d50fafee003dbfe863de2d879ee1a53ec5f4e4db217",
+    "crates/physics/src/liquid/exchange.rs": "cddeba09678c29a85a54a7112d07f6bf43ba638659e19a1b1d6dbfb0eb140b4d",
+    "crates/physics/src/liquid/film_impact_events.rs": "5e64bf43dbdbcf404440ec3603e730f4a2648391d293414a49a648e8ab2fe24e"
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "date": "2026-10-27",
+  "scope": "Complete six-field CPU EditorAsset graph file; original import/catalog/provenance and live CPU/GPU/App installation remain separate.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "toolchain": "nightly-2026-05-27",
+  "source_sha256": {
+    "crates/voxy_editor/src/import.rs": "a14ffe46b99cf5d7a89cc63de1121c7132874636cde422f8a7de235a7ce41c43",
+    "crates/voxy_editor/src/import/asset_checkpoint.rs": "808408857865cb5a9390a3d895db2f7e086b8f8fa1bef7a091ebf644004785c7",
+    "crates/voxy_editor/src/import/asset_checkpoint/tests.rs": "ec9f0e689d424d437318b46a59405c913f3fe047fbab7a456df272d96026c59d",
+    "crates/voxy_editor/src/import/animated_tests.rs": "b80ee7b75255044366ee8eff5202443e204dad7952a96177e76c95ee6ac50eee",
+    "crates/voxy_editor/src/scene3d_tests.rs": "24a4a75cad2c20c247909ba4bf7abd0b92a75bde634b401babcb0a8aa239726e"
+  },
+  "format": {
+    "magic": "VOXYEDA1",
+    "version": 1,
+    "header_bytes": 48,
+    "integrity": "Exact body length and BLAKE3 over metadata/framing/all blocks",
+    "framing": "bounded strict JSON manifest plus typed length-prefixed native component blocks",
+    "publication": "pure detached preparation returning staged Arc<EditorAsset> values"
+  },
+  "preserved": [
+    "All six EditorAsset fields and exact native component data",
+    "Repeated asset handles and distinct clones with shared model/static LOD resources",
+    "Skeletal outer wrapper aliases versus distinct wrappers sharing one native Source",
+    "Equal independent Source owners remain independent even when they share a mesh Arc",
+    "Actual mesh Arc identities and global model/morph/LOD vertex/index/influence-cache aliases",
+    "Both partial-sharing combinations: shared vertices/different index buffers and different vertex buffers/shared indices",
+    "Owned static Vec geometry and decoded image buffers remain owned per distinct asset"
+  ],
+  "checks": {
+    "new_native_graph_tests": 4,
+    "editor_lib": {
+      "passed": 290,
+      "ignored": 21
+    },
+    "evidence_producing_full_suite": {
+      "passed": 290,
+      "ignored": 21
+    },
+    "strict_clippy": "editor all-targets -D warnings passed",
+    "scoped_rustfmt": "passed",
+    "diff_check": "passed"
+  },
+  "real_consumers": [
+    "Fox complete file restored after source removal; restored model public pose/palette/primitive methods compared for every clip at 120 phases; base/image data matches",
+    "Skeletal vmodel complete file restored after original recipe/glTF/buffer/proof removal; own model/LOD buffers share identity and 120 pose/error/geometry phases match",
+    "Static vmodel complete file validates original base/certificate proof binding after source removal",
+    "Six actual static multi-material/instance glTF sampler cases restore complete files with node/image/group identity metadata and 720 exact hierarchy comparisons"
+  ],
+  "admission": [
+    "Version/file/metadata/chunk/asset/reference and nested component policies",
+    "Canonical first-use reachable asset/static/source/wrapper/mesh tables",
+    "Unique component-block ownership and exact final graph recapture",
+    "Explicit shared skin prefix binds model graph; original mesh Arc table binds each skeletal source",
+    "Static LOD/base identity and model texture image domains",
+    "Aggregate node/image/pixel/base/static-node vertex/index policies"
+  ],
+  "file_artifacts": [
+    {
+      "path": "editor-asset-files/fox.voxyeda",
+      "bytes": 15247805,
+      "sha256": "20beedf4d95784a5274dd6250870e14d476079df7c6be473b33766da7611ca1d",
+      "assets": 1,
+      "references": 1,
+      "static_lods": 0,
+      "skeletal_sources": 0,
+      "skeletal_wrappers": 0,
+      "mesh_arcs": 0
+    },
+    {
+      "path": "editor-asset-files/identity-graph.voxyeda",
+      "bytes": 13875,
+      "sha256": "676b6add0bd76036507875951d2db591a93e41e15c1b3c99d48776cbe9197d80",
+      "assets": 7,
+      "references": 8,
+      "static_lods": 1,
+      "skeletal_sources": 3,
+      "skeletal_wrappers": 4,
+      "mesh_arcs": 2
+    },
+    {
+      "path": "editor-asset-files/skeletal-lod.voxyeda",
+      "bytes": 4696,
+      "sha256": "3eac8c3fb900ce6b81900f9bf8754e638847262333ad73fbe9ac53984de0acb2",
+      "assets": 1,
+      "references": 1,
+      "static_lods": 0,
+      "skeletal_sources": 1,
+      "skeletal_wrappers": 1,
+      "mesh_arcs": 1
+    },
+    {
+      "path": "editor-asset-files/static-9728.voxyeda",
+      "bytes": 17853,
+      "sha256": "28136a75c0366724403462f6399e865dbd26b3cc627df5471d37e5c938037714",
+      "assets": 1,
+      "references": 1,
+      "static_lods": 0,
+      "skeletal_sources": 0,
+      "skeletal_wrappers": 0,
+      "mesh_arcs": 0
+    },
+    {
+      "path": "editor-asset-files/static-9729.voxyeda",
+      "bytes": 17853,
+      "sha256": "fa7b12fa331f47027e6817562258ea94bf54353d85582de358fa5f78995676a3",
+      "assets": 1,
+      "references": 1,
+      "static_lods": 0,
+      "skeletal_sources": 0,
+      "skeletal_wrappers": 0,
+      "mesh_arcs": 0
+    },
+    {
+      "path": "editor-asset-files/static-9984.voxyeda",
+      "bytes": 17849,
+      "sha256": "893c6178169e3ca000d8cc7c4bd6a30c3cbf0084865c7bfb8045b37106bda401",
+      "assets": 1,
+      "references": 1,
+      "static_lods": 0,
+      "skeletal_sources": 0,
+      "skeletal_wrappers": 0,
+      "mesh_arcs": 0
+    },
+    {
+      "path": "editor-asset-files/static-9985.voxyeda",
+      "bytes": 17849,
+      "sha256": "16377d3b4094474390571d71b2af11c41e535a81973b4bdc7a1207a33ee1cd38",
+      "assets": 1,
+      "references": 1,
+      "static_lods": 0,
+      "skeletal_sources": 0,
+      "skeletal_wrappers": 0,
+      "mesh_arcs": 0
+    },
+    {
+      "path": "editor-asset-files/static-9986.voxyeda",
+      "bytes": 17849,
+      "sha256": "22e921612a31df9800136a4c4de31e01fb0e0666550ac1e888d9a60193f227e5",
+      "assets": 1,
+      "references": 1,
+      "static_lods": 0,
+      "skeletal_sources": 0,
+      "skeletal_wrappers": 0,
+      "mesh_arcs": 0
+    },
+    {
+      "path": "editor-asset-files/static-9987.voxyeda",
+      "bytes": 17849,
+      "sha256": "939872cb1538dc4e928031cf9fff87284dc74f0fe8b64416d8a10b0c50632739",
+      "assets": 1,
+      "references": 1,
+      "static_lods": 0,
+      "skeletal_sources": 0,
+      "skeletal_wrappers": 0,
+      "mesh_arcs": 0
+    },
+    {
+      "path": "editor-asset-files/static-lod.voxyeda",
+      "bytes": 1402,
+      "sha256": "bf6c55977b427e7bf2cf8a9ae2d6921ba3475d424ce65f5ff2cf7e14bd021024",
+      "assets": 1,
+      "references": 1,
+      "static_lods": 1,
+      "skeletal_sources": 0,
+      "skeletal_wrappers": 0,
+      "mesh_arcs": 0
+    }
+  ],
+  "initial_warnings": "Removed unused ModelAsset/CertifiedLodIndexSet imports before strict qualification. No test/lint policy weakened.",
+  "limitations": [
+    "Internal codec explicitly permits dead_code pending actual production App/catalog save coordination; native importer consumers and pure CPU preparation are qualified",
+    "Physical parser/native peak heap, old-plus-new GPU residency and cross-platform compiler receipts not qualified",
+    "Original ImportInputs observations, catalog revision IDs and watch/worker state are external to EditorAsset and absent from this file",
+    "No explicit GPU/window/audio-device/FPS qualification"
+  ],
+  "remaining": [
+    "ImportedAsset/provenance and catalog/revision adapter joins",
+    "Ordered model import/watch barriers",
+    "Atomic native CPU/GPU/App publication and native audio queue transfer",
+    "Whole-session disk/native/platform/physical-memory acceptance",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "field_audit": "editor-asset-owner-field-audit.json",
+  "logs": {
+    "initial-check-warnings": "editor-asset-initial-check-warnings.log",
+    "focused-initial": "editor-asset-focused-initial.log",
+    "focused-final": "editor-asset-focused-final.log",
+    "fox-consumer": "editor-asset-fox-consumer.log",
+    "static-consumer": "editor-asset-static-consumer.log",
+    "skeletal-consumer": "editor-asset-skeletal-consumer.log",
+    "static-lod-consumer": "editor-asset-static-lod-consumer.log",
+    "editor-full": "editor-asset-editor-full.log",
+    "evidence-full": "editor-asset-evidence-full.log",
+    "clippy": "editor-asset-clippy.log",
+    "format": "editor-asset-format.log",
+    "diff": "editor-asset-diff.log"
+  }
+}

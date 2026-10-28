@@ -1,0 +1,26 @@
+{
+  "status": "native_surface_interface_wall_response_checkpoint_verified",
+  "new_continuation_tests_passed": 1,
+  "existing_domain_tests_passed": 9,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps": 120,
+  "covered": [
+    "cohesion coefficients",
+    "canonical positive inter-material penalty map",
+    "optional wall attraction coefficients",
+    "exact reference material compatibility",
+    "obsolete interface entries removed during replacement",
+    "particle and interface energy continuation under external container walls",
+    "atomic duplicate invalid coefficient and policy rejection"
+  ],
+  "remaining": [
+    "sampled and reflecting boundaries",
+    "coupled rigid bodies and population metadata audit",
+    "full bounded liquid archive",
+    "SceneLiquidRuntime and PlaySession publication"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/surface_checkpoint.rs": "e8d0912fa241f6693a68891b5d0f40355620e2a79b26f6940222c72d5844070a",
+    "crates/physics/src/liquid.rs": "cdcd9d6e3eb2beeefeb423c578559d9cf1673dd0d24b1eb7a23f8dbe67132f47"
+  }
+}

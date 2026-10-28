@@ -1,0 +1,32 @@
+{
+  "status": "panel_safe_camera_fit_geometry_and_layout_verified",
+  "code_sha256": {
+    "crates/voxy_editor/src/camera.rs": "30afc9fee797ac38ba5559a6f7513962d1ccc12183b737c5ef25ef24acf5ceaa",
+    "crates/voxy_editor/src/panels.rs": "47ac077540eff3849c491baa36467a033f954f6262ed3e273e6c82dad2975483",
+    "crates/voxy_editor/src/app/picking_drag.rs": "f661b3b98474b91afc8a2c275bdaebe55bb13a5be98276d2da93a9c5dd37b6bb",
+    "crates/voxy_editor/src/app/viewport.rs": "0de4520f6fb3b972b3b1227b30e4ea12f50e859721abc000b5c17c1e59267c61"
+  },
+  "editor_library": {
+    "passed": 227,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_editor_all_targets_clippy_passed": true,
+  "tests": [
+    "camera::safe_fit_tests::fitted_bounds_stay_inside_off_center_safe_rectangles",
+    "panels::safe_view_tests::panel_safe_areas_follow_dpi_and_odd_split_regions"
+  ],
+  "shared_side_panel_dimensions_for_build_pointer_and_focus": true,
+  "off_center_rect_adjusts_target_without_orbit_change": true,
+  "tested": [
+    "both_projections",
+    "off_center_and_center_excluding_rectangles",
+    "rotated_cameras",
+    "dpi_1_and_2",
+    "odd_split_regions",
+    "fully_obscured_view_rejected"
+  ],
+  "native_visual_acceptance": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

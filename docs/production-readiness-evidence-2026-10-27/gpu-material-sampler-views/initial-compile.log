@@ -1,0 +1,22 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0599]: no method named `to_vec` found for enum `std::result::Result<T, E>` in the current scope
+   --> crates/voxy_editor/src/gpu_model_sampler_tests.rs:215:54
+    |
+215 |     let pixels = buffer.slice(..).get_mapped_range().to_vec();
+    |                                                      ^^^^^^ method not found in `std::result::Result<BufferView, MapRangeError>`
+    |
+note: the method `to_vec` exists on the type `BufferView`
+   --> /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/slice.rs:372:5
+    |
+372 | /     pub fn to_vec(&self) -> Vec<T>
+373 | |     where
+374 | |         T: Clone,
+    | |_________________^
+help: consider using `Result::expect` to unwrap the `BufferView` value, panicking if the value is a `Result::Err`
+    |
+215 |     let pixels = buffer.slice(..).get_mapped_range().expect("REASON").to_vec();
+    |                                                     +++++++++++++++++
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `voxy_editor` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

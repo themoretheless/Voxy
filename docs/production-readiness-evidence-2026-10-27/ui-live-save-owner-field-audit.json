@@ -1,0 +1,60 @@
+{
+  "source": "crates/voxy_editor/src/ui_live.rs",
+  "sha256": "0bc5c2d919a637b05712321ed570c168c27c986aece1cd16eb06bf274eb4d936",
+  "field_count": 13,
+  "fields": [
+    {
+      "field": "attempted",
+      "policy": "exact archived layout; no pending import survives Ready"
+    },
+    {
+      "field": "published",
+      "policy": "exact uploaded CPU layout archive"
+    },
+    {
+      "field": "presented",
+      "policy": "exact historical visible CPU layout; native transfer still required"
+    },
+    {
+      "field": "published_text",
+      "policy": "bounded imported archive with actual Arc identity"
+    },
+    {
+      "field": "presented_text",
+      "policy": "bounded imported archive sharing publication and run allocations"
+    },
+    {
+      "field": "worker",
+      "policy": "drained through production completion path; None at Ready"
+    },
+    {
+      "field": "retired",
+      "policy": "finished handles reaped; empty at Ready; unfinished threads retained during drain"
+    },
+    {
+      "field": "deferred",
+      "policy": "exact original cache tuple archived; explicit rebind to caller final restored cache state"
+    },
+    {
+      "field": "sources",
+      "policy": "published and failed-attempt SourceDependenciesCheckpoint"
+    },
+    {
+      "field": "watcher",
+      "policy": "ordered SourcePollerCheckpoint including unknown/unavailable/content baseline and cursor"
+    },
+    {
+      "field": "scanning",
+      "policy": "false at Ready; pending scan results consumed before snapshot"
+    },
+    {
+      "field": "last_scan",
+      "policy": "optional remaining 200ms scan delay; rebased at resume/restore"
+    },
+    {
+      "field": "checkpoint",
+      "policy": "transient Draining/Requested/Ready protocol; Ready data archived, restored protocol inactive"
+    }
+  ],
+  "limits": "complete portable UiLive participant; no App/native install acceptance"
+}

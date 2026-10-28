@@ -1,0 +1,4 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.92s
+     Running `target/research-ray-precision/debug/examples/gameplay_save`
+GAMEPLAY CHECKPOINT PASS bytes=3050 following_frames=240 ticks=292 full_app_save=false

@@ -1,0 +1,317 @@
+{
+  "status": "locomotion_controller_regression_pass_upstream_import_incomplete",
+  "runs": [
+    {
+      "args": [
+        "--check",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-locomotion-cli-9qlexh73/source/project.voxy"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=rig\nLOCOMOTION RESULT {\"animation\":{\"clip_name\":\"Idle\",\"phase\":0.4833333333333346,\"skin_matrices\":[[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.9666666388511658,0.0,0.0,1.0],[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.9666666388511658,0.0,0.0,1.0]],\"transition_weight\":1.0},\"camera\":{\"distance\":2.0,\"legacy\":true,\"perspective\":false,\"pitch\":0.0,\"target\":[0.0,0.0,0.5],\"yaw\":0.0},\"pose_hashes\":[\"02be1a8e04235ec85083d4ae7f9e116e2e0e860b00ced34d518ca0f1080b7bc9\",\"0656f4f18ede23807b89086d8bb2c87f4a2a6b9f156e0294061b783d465775f8\",\"0679efcaafe5d9c5aa8d8e4d5bbae4b0a04e07690329288a05b64126cebca582\",\"086287e90b9cd3c1dad493347f4f4ec06ce83d506ccd8a2cddff759ea4303398\",\"09b58637080763c2bf31680916db5ae8b47bb41295abd1fbb0dc62b652a3c4cf\",\"0bc9247756633252236ea4e27f65aa083a908ecacbe5a00c88f98d2b3c392b14\",\"10c40bf5d9a7b1ba7731e0f3713ca4695131bb3c309bace99015682e71a319d5\",\"1a838a3b110ea3c75d4ef5bbbeb15c8764b61f7e6cf0a03b3dada7cea05a80cb\",\"1af75f01c1b989091b8253eb585c4fe1ec8f0e4c2bf26a0aba4555ea456e9bad\",\"1e3ef7e2eb2b20c4e8f0fb51b03e319f8dedc19d23cd2a543ab4be3e26ce668a\",\"256692095c6a1221e421566ddb06f05d080388ed82b88e0fea6bd72350352154\",\"259e47a51788dac7069e1cd1bc5c5de1624ab2371cce9dfe3275c69db948a29b\",\"28a1b92f3f807f3bbca165084004dcbbc8ba1d2cce067cece42f689a4a176005\",\"2920654b49ecd2a9507460e08fbf9b0f55b3865ff58682a91b71ca4d2b89040a\",\"2c561c2293ff84d79247e8e673cd2557900e1608674b4a17aba1723ba0b09ab1\",\"2cfba58dd3120e8eebeb9a69e3ba7acd240b9fd2659c35fec261b10a7d16bd40\",\"2ef9ad3f1b3af1e49be34b14ac79f2edb5b6f89764f582afbf2f5b73e88bba8b\",\"31e510203e58ae7e512986c6853739618d06f784beb98ee8b49851e470a17200\",\"3877b4535e40611685bd12bd60986acc8fc9c2520858863b82427db44a79f26f\",\"3b40b213c0c0d0bb99c518c5b4a260b14712f6b5bc09ee11ef895480523e2dc3\",\"3c32af9ae2e28b19743ff84864fc7b192e8a195c2355f05b1eb7f67dfa036ba2\",\"3ec3f8a3f235290b00b7fdae442eeda3585f03ca320ac1cab79fbb724283a364\",\"3ee5df782c5307322927640eeb48a32454d3d1a94cedd1215deda13f8024d5a2\",\"423346ad339d4de73ddd60dbb511dac0102bdfd4a01ec1e577a18ea9cc6639aa\",\"4ff808f00cca7b898f6d6c67a0ac7df1973a814b8099a6d5feb35aa41c8bc300\",\"519a1469365285db58e9bbefddcc90693d99502afd86d0c08ed0c5f89689fb90\",\"51a0c2579574f31b04f8adc4dd071d6efa028d3e5362764a3f476aa2190d90a8\",\"5543b8e15dc76320eee7b5d9d21ac4588e844c6264e65e4c387b428d25e135d2\",\"634ee3531a44889505cd66b3cc2abcc18d22a8348187412ef5a1763b4b2326a8\",\"6550b1f436d0e3e3da07400eae4816059b86c023b7e809033455efe0236ce2e9\",\"68dd060d3fc55e68cabaace4e528615c18d41a4a2ba2c8d8a64d9d406c4251fc\",\"6ce71591c2f795ef2f3bd46e81f0d9d46d76f42988418de83bcf91c94775c208\",\"76a0783f647b37a99ab92e9312cfcbc44edb197949b41cb1cbf3b984380d6d1a\",\"76e3a1d4b134c93e71a86d7702a13971dca5d423fcff15111292e293e45ba3e2\",\"78932d0a266cd94aeead6e51351687288cd98615fff6b91911f79d43cb27b104\",\"7e5a2606bcc7b8720bfa4d5f5c245c18f2001a8b1b462b4edc4d456d805d9499\",\"801032e333f84e3f77abd8092593c85e8ab48b85e969b6ed7ac555e4a78b51f5\",\"8397443aac940100a1c982244b8035f23ea1a99056e0d37a815ee0f59dd9aa21\",\"8503ca9f26e5f4957568545c280f4696733848edc06b4fa96494ee86e1225d12\",\"8ce778566f7cbc6f90b162dd0ba3166008d743ff048798a9131853a49d4930ea\",\"944eba9bc8879ed73f57c3edde5f93603a295ada98cd394b5846d1bb5d4617c1\",\"9a112aa5eca5d06c511207c0f08c7a1b3c12e097272e1ad924871cdfecbe1b51\",\"a732b45f0917d59f2dfd6ff157848a9aa1962c54a6136e1d701e4b3bb019dcfa\",\"ab15699d075b8907139b8b7eb162c0dd64a7fe75aa098916c58e3531d450664d\",\"b72eaf1f3f4cdae1553ce88241468be5afb969125094fc4a4a254fb6f972648e\",\"be96290543fc49a16ab05d20a6f3cba95b89dfc8160018a770271c67bed4dbb6\",\"c5872974f6d7d4f880e467b736011eaf202e01bb5f9ec896e28787333a4b2bd6\",\"c963d8f4d5d420ff8efb302945e032d9b72a235d592d8b18e725b6182581c217\",\"c9fd79a14f5ac0978ce80b4c85165e07d3225828cf42a4cc0d4bb8a9b62e9c1a\",\"cfaed36032d69dadf25e4cf63364d3f96264c9d9b730b2f1327964f3586a470d\",\"d1b9c447b302d394660c4d7eb217b447995ffd17edd5ef35203b01abd2ba7b1a\",\"d410f3c93d1e4657c07ef58a4749084070e2b9cd501b967d1c3b930a535ef305\",\"de42d7e1a0387f6a0fb1b33db3e8946da3486680f9c87488d7064142d2b3dce7\",\"e3f6ed89bfe72d0b6bd95d806dbc59f98bbfc2188528566d0b6aa72491ecf65c\",\"e3faf5d8016e921b31d8a06bfd9e3f59bb7e8a0cc0c9fe361cb791f333bf6edd\",\"e5e7210d227ec9aff553389e5401671ba4504bcc666f11f1597986f099fffa38\",\"e75c2d3b7b37c0ada7824f672d85d7bcfeaa5c033dfb31cc13aa3b3b67e5572d\",\"e8eca233ac9e80a787c8358fbc1b0149d0b8e5ff9bf4c1eb72c06912544c1231\",\"e9c53e084732b8bbe9862a23aadab41cf7e0e8ffb14099888b3ffbb433c954b4\",\"ecb5b215ecb92b59db20c2d2f314630c70cbfe2ce6ca03a4859e4e1dcccb2402\",\"ecbe7aa6a99918482f51edc06df02cb299518a64c6668798b6c4a8844a5c384e\",\"ed88f7f4001d916fe5f4e921d03e7a60cef856256a4447794c79e839ea73ab21\",\"f8ad5d5054b79b518f0b68ed8b402893a5f7ff5b5556fc0ad06c7d357cecc97b\",\"fa338bdfebcafc9d3575583b142113457d6e3eab26bb9111d67f232f7feefea9\",\"fbb8d108e74f4d01437f1cc1d0d58ca6d97ae49c31f96f34a8ab953ac3c9bc5f\",\"feb391ed354f15bb7b7e8dcfb64a16714c0003835bb48f8fb5baa9cfcca63330\",\"ffd6017ab38bfa8dc923b663373d7ae27baff9363a729d36a520ce92d511fb61\"],\"scene\":{\"objects\":[{\"active\":true,\"components\":{\"game.character.v1\":{\"gravity\":-9.8,\"half_extents\":[0.10000000149011612,0.10000000149011612,0.10000000149011612],\"jump_speed\":3.0,\"speed\":1.0}},\"id\":\"body\",\"name\":\"body\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[2.0,0.10000000149011612,0.0]},{\"active\":true,\"components\":{\"editor.model-animation.v1\":{\"clip\":0,\"clip_name\":\"Idle\",\"events\":[],\"root_motion_axes\":[false,false,false],\"root_motion_bone\":\"\",\"root_motion_joint\":0,\"root_motion_rotation\":false,\"speed\":1.0,\"transition_seconds\":0.05000000074505806},\"editor.model-locomotion.v1\":{\"falling\":\"Jump\",\"idle\":\"Idle\",\"moving\":\"Walking\",\"rising\":\"Jump\",\"speed_threshold\":0.01,\"transition_seconds\":0.05000000074505806},\"editor.model.v1\":\"rig\"},\"id\":\"visual\",\"name\":\"visual\",\"parent\":\"body\",\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,0.0,0.0]},{\"active\":true,\"components\":{\"game.box.v1\":{\"half_extents\":[10.0,0.10000000149011612,10.0]}},\"id\":\"ground\",\"name\":\"ground\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,-0.10000000149011612,0.0]}],\"version\":1},\"ticks\":240,\"transitions\":[[0,\"Idle\"],[31,\"Walking\"],[60,\"Jump\"],[96,\"Walking\"],[151,\"Idle\"]]}\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--build",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-locomotion-cli-9qlexh73/source/project.voxy",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-locomotion-cli-9qlexh73/locomotion.vpak"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=rig\nGAME PACKAGE PASS sources=4 bytes=10251\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--package-check",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-locomotion-cli-9qlexh73/locomotion.vpak"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=rig\nLOCOMOTION RESULT {\"animation\":{\"clip_name\":\"Idle\",\"phase\":0.4833333333333346,\"skin_matrices\":[[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.9666666388511658,0.0,0.0,1.0],[1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.9666666388511658,0.0,0.0,1.0]],\"transition_weight\":1.0},\"camera\":{\"distance\":2.0,\"legacy\":true,\"perspective\":false,\"pitch\":0.0,\"target\":[0.0,0.0,0.5],\"yaw\":0.0},\"pose_hashes\":[\"02be1a8e04235ec85083d4ae7f9e116e2e0e860b00ced34d518ca0f1080b7bc9\",\"0656f4f18ede23807b89086d8bb2c87f4a2a6b9f156e0294061b783d465775f8\",\"0679efcaafe5d9c5aa8d8e4d5bbae4b0a04e07690329288a05b64126cebca582\",\"086287e90b9cd3c1dad493347f4f4ec06ce83d506ccd8a2cddff759ea4303398\",\"09b58637080763c2bf31680916db5ae8b47bb41295abd1fbb0dc62b652a3c4cf\",\"0bc9247756633252236ea4e27f65aa083a908ecacbe5a00c88f98d2b3c392b14\",\"10c40bf5d9a7b1ba7731e0f3713ca4695131bb3c309bace99015682e71a319d5\",\"1a838a3b110ea3c75d4ef5bbbeb15c8764b61f7e6cf0a03b3dada7cea05a80cb\",\"1af75f01c1b989091b8253eb585c4fe1ec8f0e4c2bf26a0aba4555ea456e9bad\",\"1e3ef7e2eb2b20c4e8f0fb51b03e319f8dedc19d23cd2a543ab4be3e26ce668a\",\"256692095c6a1221e421566ddb06f05d080388ed82b88e0fea6bd72350352154\",\"259e47a51788dac7069e1cd1bc5c5de1624ab2371cce9dfe3275c69db948a29b\",\"28a1b92f3f807f3bbca165084004dcbbc8ba1d2cce067cece42f689a4a176005\",\"2920654b49ecd2a9507460e08fbf9b0f55b3865ff58682a91b71ca4d2b89040a\",\"2c561c2293ff84d79247e8e673cd2557900e1608674b4a17aba1723ba0b09ab1\",\"2cfba58dd3120e8eebeb9a69e3ba7acd240b9fd2659c35fec261b10a7d16bd40\",\"2ef9ad3f1b3af1e49be34b14ac79f2edb5b6f89764f582afbf2f5b73e88bba8b\",\"31e510203e58ae7e512986c6853739618d06f784beb98ee8b49851e470a17200\",\"3877b4535e40611685bd12bd60986acc8fc9c2520858863b82427db44a79f26f\",\"3b40b213c0c0d0bb99c518c5b4a260b14712f6b5bc09ee11ef895480523e2dc3\",\"3c32af9ae2e28b19743ff84864fc7b192e8a195c2355f05b1eb7f67dfa036ba2\",\"3ec3f8a3f235290b00b7fdae442eeda3585f03ca320ac1cab79fbb724283a364\",\"3ee5df782c5307322927640eeb48a32454d3d1a94cedd1215deda13f8024d5a2\",\"423346ad339d4de73ddd60dbb511dac0102bdfd4a01ec1e577a18ea9cc6639aa\",\"4ff808f00cca7b898f6d6c67a0ac7df1973a814b8099a6d5feb35aa41c8bc300\",\"519a1469365285db58e9bbefddcc90693d99502afd86d0c08ed0c5f89689fb90\",\"51a0c2579574f31b04f8adc4dd071d6efa028d3e5362764a3f476aa2190d90a8\",\"5543b8e15dc76320eee7b5d9d21ac4588e844c6264e65e4c387b428d25e135d2\",\"634ee3531a44889505cd66b3cc2abcc18d22a8348187412ef5a1763b4b2326a8\",\"6550b1f436d0e3e3da07400eae4816059b86c023b7e809033455efe0236ce2e9\",\"68dd060d3fc55e68cabaace4e528615c18d41a4a2ba2c8d8a64d9d406c4251fc\",\"6ce71591c2f795ef2f3bd46e81f0d9d46d76f42988418de83bcf91c94775c208\",\"76a0783f647b37a99ab92e9312cfcbc44edb197949b41cb1cbf3b984380d6d1a\",\"76e3a1d4b134c93e71a86d7702a13971dca5d423fcff15111292e293e45ba3e2\",\"78932d0a266cd94aeead6e51351687288cd98615fff6b91911f79d43cb27b104\",\"7e5a2606bcc7b8720bfa4d5f5c245c18f2001a8b1b462b4edc4d456d805d9499\",\"801032e333f84e3f77abd8092593c85e8ab48b85e969b6ed7ac555e4a78b51f5\",\"8397443aac940100a1c982244b8035f23ea1a99056e0d37a815ee0f59dd9aa21\",\"8503ca9f26e5f4957568545c280f4696733848edc06b4fa96494ee86e1225d12\",\"8ce778566f7cbc6f90b162dd0ba3166008d743ff048798a9131853a49d4930ea\",\"944eba9bc8879ed73f57c3edde5f93603a295ada98cd394b5846d1bb5d4617c1\",\"9a112aa5eca5d06c511207c0f08c7a1b3c12e097272e1ad924871cdfecbe1b51\",\"a732b45f0917d59f2dfd6ff157848a9aa1962c54a6136e1d701e4b3bb019dcfa\",\"ab15699d075b8907139b8b7eb162c0dd64a7fe75aa098916c58e3531d450664d\",\"b72eaf1f3f4cdae1553ce88241468be5afb969125094fc4a4a254fb6f972648e\",\"be96290543fc49a16ab05d20a6f3cba95b89dfc8160018a770271c67bed4dbb6\",\"c5872974f6d7d4f880e467b736011eaf202e01bb5f9ec896e28787333a4b2bd6\",\"c963d8f4d5d420ff8efb302945e032d9b72a235d592d8b18e725b6182581c217\",\"c9fd79a14f5ac0978ce80b4c85165e07d3225828cf42a4cc0d4bb8a9b62e9c1a\",\"cfaed36032d69dadf25e4cf63364d3f96264c9d9b730b2f1327964f3586a470d\",\"d1b9c447b302d394660c4d7eb217b447995ffd17edd5ef35203b01abd2ba7b1a\",\"d410f3c93d1e4657c07ef58a4749084070e2b9cd501b967d1c3b930a535ef305\",\"de42d7e1a0387f6a0fb1b33db3e8946da3486680f9c87488d7064142d2b3dce7\",\"e3f6ed89bfe72d0b6bd95d806dbc59f98bbfc2188528566d0b6aa72491ecf65c\",\"e3faf5d8016e921b31d8a06bfd9e3f59bb7e8a0cc0c9fe361cb791f333bf6edd\",\"e5e7210d227ec9aff553389e5401671ba4504bcc666f11f1597986f099fffa38\",\"e75c2d3b7b37c0ada7824f672d85d7bcfeaa5c033dfb31cc13aa3b3b67e5572d\",\"e8eca233ac9e80a787c8358fbc1b0149d0b8e5ff9bf4c1eb72c06912544c1231\",\"e9c53e084732b8bbe9862a23aadab41cf7e0e8ffb14099888b3ffbb433c954b4\",\"ecb5b215ecb92b59db20c2d2f314630c70cbfe2ce6ca03a4859e4e1dcccb2402\",\"ecbe7aa6a99918482f51edc06df02cb299518a64c6668798b6c4a8844a5c384e\",\"ed88f7f4001d916fe5f4e921d03e7a60cef856256a4447794c79e839ea73ab21\",\"f8ad5d5054b79b518f0b68ed8b402893a5f7ff5b5556fc0ad06c7d357cecc97b\",\"fa338bdfebcafc9d3575583b142113457d6e3eab26bb9111d67f232f7feefea9\",\"fbb8d108e74f4d01437f1cc1d0d58ca6d97ae49c31f96f34a8ab953ac3c9bc5f\",\"feb391ed354f15bb7b7e8dcfb64a16714c0003835bb48f8fb5baa9cfcca63330\",\"ffd6017ab38bfa8dc923b663373d7ae27baff9363a729d36a520ce92d511fb61\"],\"scene\":{\"objects\":[{\"active\":true,\"components\":{\"game.character.v1\":{\"gravity\":-9.8,\"half_extents\":[0.10000000149011612,0.10000000149011612,0.10000000149011612],\"jump_speed\":3.0,\"speed\":1.0}},\"id\":\"body\",\"name\":\"body\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[2.0,0.10000000149011612,0.0]},{\"active\":true,\"components\":{\"editor.model-animation.v1\":{\"clip\":0,\"clip_name\":\"Idle\",\"events\":[],\"root_motion_axes\":[false,false,false],\"root_motion_bone\":\"\",\"root_motion_joint\":0,\"root_motion_rotation\":false,\"speed\":1.0,\"transition_seconds\":0.05000000074505806},\"editor.model-locomotion.v1\":{\"falling\":\"Jump\",\"idle\":\"Idle\",\"moving\":\"Walking\",\"rising\":\"Jump\",\"speed_threshold\":0.01,\"transition_seconds\":0.05000000074505806},\"editor.model.v1\":\"rig\"},\"id\":\"visual\",\"name\":\"visual\",\"parent\":\"body\",\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,0.0,0.0]},{\"active\":true,\"components\":{\"game.box.v1\":{\"half_extents\":[10.0,0.10000000149011612,10.0]}},\"id\":\"ground\",\"name\":\"ground\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,-0.10000000149011612,0.0]}],\"version\":1},\"ticks\":240,\"transitions\":[[0,\"Idle\"],[31,\"Walking\"],[60,\"Jump\"],[96,\"Walking\"],[151,\"Idle\"]]}\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--asset-info",
+        "/Users/themoretheless/Documents/Sources/voxy/artifacts/locomotion-2026-10-26/upstream-robot/RobotExpressive.glb"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Error: ModelError(\"expected one mesh instance\")\n"
+    }
+  ],
+  "binary_sha256": "92c2613520f1862c3252f5c0d78d753e4b445e2fadaeacec51e5808786dafcca",
+  "package_sha256": "5f85d7a31dadb7a1eea65d6a7d2f13262da6bfe5725cb797dee33415d7a16ef6",
+  "outcome": {
+    "animation": {
+      "clip_name": "Idle",
+      "phase": 0.4833333333333346,
+      "skin_matrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.9666666388511658,
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.9666666388511658,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "transition_weight": 1.0
+    },
+    "camera": {
+      "distance": 2.0,
+      "legacy": true,
+      "perspective": false,
+      "pitch": 0.0,
+      "target": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "yaw": 0.0
+    },
+    "pose_hashes": [
+      "02be1a8e04235ec85083d4ae7f9e116e2e0e860b00ced34d518ca0f1080b7bc9",
+      "0656f4f18ede23807b89086d8bb2c87f4a2a6b9f156e0294061b783d465775f8",
+      "0679efcaafe5d9c5aa8d8e4d5bbae4b0a04e07690329288a05b64126cebca582",
+      "086287e90b9cd3c1dad493347f4f4ec06ce83d506ccd8a2cddff759ea4303398",
+      "09b58637080763c2bf31680916db5ae8b47bb41295abd1fbb0dc62b652a3c4cf",
+      "0bc9247756633252236ea4e27f65aa083a908ecacbe5a00c88f98d2b3c392b14",
+      "10c40bf5d9a7b1ba7731e0f3713ca4695131bb3c309bace99015682e71a319d5",
+      "1a838a3b110ea3c75d4ef5bbbeb15c8764b61f7e6cf0a03b3dada7cea05a80cb",
+      "1af75f01c1b989091b8253eb585c4fe1ec8f0e4c2bf26a0aba4555ea456e9bad",
+      "1e3ef7e2eb2b20c4e8f0fb51b03e319f8dedc19d23cd2a543ab4be3e26ce668a",
+      "256692095c6a1221e421566ddb06f05d080388ed82b88e0fea6bd72350352154",
+      "259e47a51788dac7069e1cd1bc5c5de1624ab2371cce9dfe3275c69db948a29b",
+      "28a1b92f3f807f3bbca165084004dcbbc8ba1d2cce067cece42f689a4a176005",
+      "2920654b49ecd2a9507460e08fbf9b0f55b3865ff58682a91b71ca4d2b89040a",
+      "2c561c2293ff84d79247e8e673cd2557900e1608674b4a17aba1723ba0b09ab1",
+      "2cfba58dd3120e8eebeb9a69e3ba7acd240b9fd2659c35fec261b10a7d16bd40",
+      "2ef9ad3f1b3af1e49be34b14ac79f2edb5b6f89764f582afbf2f5b73e88bba8b",
+      "31e510203e58ae7e512986c6853739618d06f784beb98ee8b49851e470a17200",
+      "3877b4535e40611685bd12bd60986acc8fc9c2520858863b82427db44a79f26f",
+      "3b40b213c0c0d0bb99c518c5b4a260b14712f6b5bc09ee11ef895480523e2dc3",
+      "3c32af9ae2e28b19743ff84864fc7b192e8a195c2355f05b1eb7f67dfa036ba2",
+      "3ec3f8a3f235290b00b7fdae442eeda3585f03ca320ac1cab79fbb724283a364",
+      "3ee5df782c5307322927640eeb48a32454d3d1a94cedd1215deda13f8024d5a2",
+      "423346ad339d4de73ddd60dbb511dac0102bdfd4a01ec1e577a18ea9cc6639aa",
+      "4ff808f00cca7b898f6d6c67a0ac7df1973a814b8099a6d5feb35aa41c8bc300",
+      "519a1469365285db58e9bbefddcc90693d99502afd86d0c08ed0c5f89689fb90",
+      "51a0c2579574f31b04f8adc4dd071d6efa028d3e5362764a3f476aa2190d90a8",
+      "5543b8e15dc76320eee7b5d9d21ac4588e844c6264e65e4c387b428d25e135d2",
+      "634ee3531a44889505cd66b3cc2abcc18d22a8348187412ef5a1763b4b2326a8",
+      "6550b1f436d0e3e3da07400eae4816059b86c023b7e809033455efe0236ce2e9",
+      "68dd060d3fc55e68cabaace4e528615c18d41a4a2ba2c8d8a64d9d406c4251fc",
+      "6ce71591c2f795ef2f3bd46e81f0d9d46d76f42988418de83bcf91c94775c208",
+      "76a0783f647b37a99ab92e9312cfcbc44edb197949b41cb1cbf3b984380d6d1a",
+      "76e3a1d4b134c93e71a86d7702a13971dca5d423fcff15111292e293e45ba3e2",
+      "78932d0a266cd94aeead6e51351687288cd98615fff6b91911f79d43cb27b104",
+      "7e5a2606bcc7b8720bfa4d5f5c245c18f2001a8b1b462b4edc4d456d805d9499",
+      "801032e333f84e3f77abd8092593c85e8ab48b85e969b6ed7ac555e4a78b51f5",
+      "8397443aac940100a1c982244b8035f23ea1a99056e0d37a815ee0f59dd9aa21",
+      "8503ca9f26e5f4957568545c280f4696733848edc06b4fa96494ee86e1225d12",
+      "8ce778566f7cbc6f90b162dd0ba3166008d743ff048798a9131853a49d4930ea",
+      "944eba9bc8879ed73f57c3edde5f93603a295ada98cd394b5846d1bb5d4617c1",
+      "9a112aa5eca5d06c511207c0f08c7a1b3c12e097272e1ad924871cdfecbe1b51",
+      "a732b45f0917d59f2dfd6ff157848a9aa1962c54a6136e1d701e4b3bb019dcfa",
+      "ab15699d075b8907139b8b7eb162c0dd64a7fe75aa098916c58e3531d450664d",
+      "b72eaf1f3f4cdae1553ce88241468be5afb969125094fc4a4a254fb6f972648e",
+      "be96290543fc49a16ab05d20a6f3cba95b89dfc8160018a770271c67bed4dbb6",
+      "c5872974f6d7d4f880e467b736011eaf202e01bb5f9ec896e28787333a4b2bd6",
+      "c963d8f4d5d420ff8efb302945e032d9b72a235d592d8b18e725b6182581c217",
+      "c9fd79a14f5ac0978ce80b4c85165e07d3225828cf42a4cc0d4bb8a9b62e9c1a",
+      "cfaed36032d69dadf25e4cf63364d3f96264c9d9b730b2f1327964f3586a470d",
+      "d1b9c447b302d394660c4d7eb217b447995ffd17edd5ef35203b01abd2ba7b1a",
+      "d410f3c93d1e4657c07ef58a4749084070e2b9cd501b967d1c3b930a535ef305",
+      "de42d7e1a0387f6a0fb1b33db3e8946da3486680f9c87488d7064142d2b3dce7",
+      "e3f6ed89bfe72d0b6bd95d806dbc59f98bbfc2188528566d0b6aa72491ecf65c",
+      "e3faf5d8016e921b31d8a06bfd9e3f59bb7e8a0cc0c9fe361cb791f333bf6edd",
+      "e5e7210d227ec9aff553389e5401671ba4504bcc666f11f1597986f099fffa38",
+      "e75c2d3b7b37c0ada7824f672d85d7bcfeaa5c033dfb31cc13aa3b3b67e5572d",
+      "e8eca233ac9e80a787c8358fbc1b0149d0b8e5ff9bf4c1eb72c06912544c1231",
+      "e9c53e084732b8bbe9862a23aadab41cf7e0e8ffb14099888b3ffbb433c954b4",
+      "ecb5b215ecb92b59db20c2d2f314630c70cbfe2ce6ca03a4859e4e1dcccb2402",
+      "ecbe7aa6a99918482f51edc06df02cb299518a64c6668798b6c4a8844a5c384e",
+      "ed88f7f4001d916fe5f4e921d03e7a60cef856256a4447794c79e839ea73ab21",
+      "f8ad5d5054b79b518f0b68ed8b402893a5f7ff5b5556fc0ad06c7d357cecc97b",
+      "fa338bdfebcafc9d3575583b142113457d6e3eab26bb9111d67f232f7feefea9",
+      "fbb8d108e74f4d01437f1cc1d0d58ca6d97ae49c31f96f34a8ab953ac3c9bc5f",
+      "feb391ed354f15bb7b7e8dcfb64a16714c0003835bb48f8fb5baa9cfcca63330",
+      "ffd6017ab38bfa8dc923b663373d7ae27baff9363a729d36a520ce92d511fb61"
+    ],
+    "scene": {
+      "objects": [
+        {
+          "active": true,
+          "components": {
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.10000000149011612,
+                0.10000000149011612,
+                0.10000000149011612
+              ],
+              "jump_speed": 3.0,
+              "speed": 1.0
+            }
+          },
+          "id": "body",
+          "name": "body",
+          "parent": null,
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "translation": [
+            2.0,
+            0.10000000149011612,
+            0.0
+          ]
+        },
+        {
+          "active": true,
+          "components": {
+            "editor.model-animation.v1": {
+              "clip": 0,
+              "clip_name": "Idle",
+              "events": [],
+              "root_motion_axes": [
+                false,
+                false,
+                false
+              ],
+              "root_motion_bone": "",
+              "root_motion_joint": 0,
+              "root_motion_rotation": false,
+              "speed": 1.0,
+              "transition_seconds": 0.05000000074505806
+            },
+            "editor.model-locomotion.v1": {
+              "falling": "Jump",
+              "idle": "Idle",
+              "moving": "Walking",
+              "rising": "Jump",
+              "speed_threshold": 0.01,
+              "transition_seconds": 0.05000000074505806
+            },
+            "editor.model.v1": "rig"
+          },
+          "id": "visual",
+          "name": "visual",
+          "parent": "body",
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "active": true,
+          "components": {
+            "game.box.v1": {
+              "half_extents": [
+                10.0,
+                0.10000000149011612,
+                10.0
+              ]
+            }
+          },
+          "id": "ground",
+          "name": "ground",
+          "parent": null,
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            -0.10000000149011612,
+            0.0
+          ]
+        }
+      ],
+      "version": 1
+    },
+    "ticks": 240,
+    "transitions": [
+      [
+        0,
+        "Idle"
+      ],
+      [
+        31,
+        "Walking"
+      ],
+      [
+        60,
+        "Jump"
+      ],
+      [
+        96,
+        "Walking"
+      ],
+      [
+        151,
+        "Idle"
+      ]
+    ]
+  },
+  "synthetic_fixture": true,
+  "original_source_removed_before_package": true,
+  "accepted_animation_and_scene_equal": true,
+  "robot_import_passed": false,
+  "native_window_verified": false,
+  "fps_qualified": false
+}

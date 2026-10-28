@@ -1,0 +1,35 @@
+{
+  "stage": "ENG-03",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "bug": "model watcher used manifest-sized 64 KiB limit despite model import accepting 16 MiB; repeated changes in larger valid models coalesced as Unavailable",
+  "fix": "share per-source SOURCE_BYTES between importer read and model SourcePollWorker; update restore test policies to admit original watcher configuration",
+  "verified": [
+    "pre-fix real watcher test fails after two settled scans on a valid 70000+ byte OBJ",
+    "same watcher test passes after fix and publishes changed vertex",
+    "source exceeding 16 MiB rejects import while retaining exact last-good publication Arc",
+    "source restored below budget reloads and publishes new vertex automatically"
+  ],
+  "suite": {
+    "passed": 324,
+    "failed": 0,
+    "ignored": 30
+  },
+  "strict_all_target_clippy": "passed",
+  "retained_rejections": [
+    "pre-fix missed reload",
+    "five restore tests correctly rejected outdated 64 KiB restore policy; policies updated, runtime admission unchanged"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/import.rs": "6d5e2d4ef4ee48767c59236d37b165d857c59a74b57cc9d17fc6882001085eed",
+    "crates/voxy_editor/src/lib.rs": "7d5c1e8563ab19288bc264d873cfc08c5c3fc04ced5e0048053c428370dea09e",
+    "crates/voxy_editor/src/scene3d_tests.rs": "20f4cc80c337a7c9cc0f76064da51878e9dec38a3385e7623cab248af03d68b2",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "7c111946fdeb9c623a7794c59f1f531fe868718289b6ffcd51f512f0029a4c40",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "babfbb9f44dd879fae61773e9d2e0255d4e9fcc78757d071055b74bb567b7016"
+  },
+  "limits": [
+    "headless watcher/import/publication; no native window or FPS claim",
+    "background hashing may read up to 16 MiB per checked source; IO performance not qualified",
+    "ENG-03 and broad engine goal remain incomplete"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "status": "controller_checkpoint_implemented_focused_pass_broad_checks_running",
+  "observed_utc": "2026-10-26T07:13:11.842162+00:00",
+  "code_sha256": {
+    "crates/voxy_gameplay/src/character_checkpoint.rs": "c05dfaeb0b9d4708cab69000a73399ee6c06d829d9a9bca2567e4a35941cd69e",
+    "crates/voxy_gameplay/src/lib.rs": "976c82a1b034fb9bfbaeb62a012553ebca345a3eff4ce22c1c707d700ea261f0"
+  },
+  "focused_tests_passed": 2,
+  "cross_scene_rebind_after_json": true,
+  "post_restore_exact_steps": 180,
+  "nonfinite_duplicate_missing_version_rejection_tested": true,
+  "f64_low_bits_json_preserved": true,
+  "broad_check_session": 38935,
+  "broad_check_log": "/tmp/voxy-character-checkpoint-gameplay.log",
+  "queued_checks": [
+    "voxy_editor library",
+    "strict gameplay/editor all-targets Clippy"
+  ],
+  "broad_checks_passed": false,
+  "full_game_save_implemented": false,
+  "scene_input_animation_audio_liquid_restore_integrated": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

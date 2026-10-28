@@ -1,0 +1,41 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+error[E0061]: this method takes 4 arguments but 3 arguments were supplied
+   --> crates/voxy_render/src/certified_lod/checkpoint/tests.rs:88:28
+    |
+ 88 |             let a = policy.select(source.indices().levels(), f64::from(phase) + 1., None);
+    |                            ^^^^^^                                                   ---- argument #3 of type `f64` is missing
+    |
+note: method defined here
+   --> crates/voxy_render/src/lod.rs:96:12
+    |
+ 96 |     pub fn select(
+    |            ^^^^^^
+...
+100 |         pixels_per_world_unit: f64,
+    |         --------------------------
+help: provide the argument
+    |
+ 88 |             let a = policy.select(source.indices().levels(), f64::from(phase) + 1., /* f64 */, None);
+    |                                                                                     ++++++++++
+
+error[E0061]: this method takes 4 arguments but 3 arguments were supplied
+   --> crates/voxy_render/src/certified_lod/checkpoint/tests.rs:89:28
+    |
+ 89 |             let b = policy.select(restored.indices().levels(), f64::from(phase) + 1., None);
+    |                            ^^^^^^                                                     ---- argument #3 of type `f64` is missing
+    |
+note: method defined here
+   --> crates/voxy_render/src/lod.rs:96:12
+    |
+ 96 |     pub fn select(
+    |            ^^^^^^
+...
+100 |         pixels_per_world_unit: f64,
+    |         --------------------------
+help: provide the argument
+    |
+ 89 |             let b = policy.select(restored.indices().levels(), f64::from(phase) + 1., /* f64 */, None);
+    |                                                                                       ++++++++++
+
+For more information about this error, try `rustc --explain E0061`.
+error: could not compile `voxy_render` (lib test) due to 2 previous errors

@@ -1,0 +1,33 @@
+{
+  "scope": "Preview target/source roots use the original shared EditorAsset/ModelAsset resource graph",
+  "implemented": [
+    "Preview exposes canonical original model/source allocation roots; same Arc appears once",
+    "Original EditorAssetCheckpoint captures external roots without a second asset encoder",
+    "Native prepare_with_models creates fresh decoded model roots; preview accepted-frame restore consumes those roots",
+    "Single shared model/source and two distinct retarget roots retain their alias relations",
+    "Accepted frames remain exact after native model graph restore; no resampling or clock advancement"
+  ],
+  "checks": {
+    "editor_passed": 322,
+    "editor_ignored": 30,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_diff": "passed",
+    "preview_tests_passed": 3,
+    "fresh_model_allocation_and_exact_frame_json": true,
+    "retarget_two_distinct_roots_and_exact_target_frame": true,
+    "model_graph_bytes": 3183,
+    "model_graph_sha256": "b73608fc866c722bb8bf6b0bb0f73398e9fab8eda4bf8cee99245b02cb691828"
+  },
+  "retained_rejection": "Initial test selected the asset-only prepare return type; corrected to native prepare_with_models for external roots",
+  "not_claimed": [
+    "Runtime/catalog/preview roots are not yet unioned in one editor transaction",
+    "Shared preview/GPU/runtime accepted-frame Arc pool still needs composition",
+    "Preview checkpoint is not yet persisted in the whole editor envelope",
+    "No new GPU/window/physical-memory/FPS/device-audio qualification",
+    "Full App publication and ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/animation_preview.rs": "f58b648fbb7ffc124fcfd4c66ea3bea720b598578ee34ea2c4e60ab28414d00f",
+    "crates/voxy_editor/src/animation_preview/checkpoint.rs": "ce6db5b266e50354d5bcd0ce9882604b5ba61c6078a051845fbb7022118d5a3c"
+  }
+}

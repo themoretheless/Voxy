@@ -1,0 +1,24 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "bug": "RetryModel panel dispatch cleared an active relink path draft before testing retry availability; a stale action could consequently queue an import and discard user input.",
+  "change": "Retry eligibility checked before any panel authoring side effects, retaining the existing second admission check at the queue operation.",
+  "regression": "Pre-fix test fails because stale retry action succeeds; fixed test preserves relink draft text, native source change token, authoring document, accepted model Arc and manifest bytes, then completes original relink successfully.",
+  "focused_tests_passed": 1,
+  "full_editor_suite": {
+    "passed": 351,
+    "failed": 0,
+    "ignored": 32
+  },
+  "strict_clippy": "passed; editor all targets, warnings denied",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/inspector.rs": "de12264b9f80d7bbadae5c228dd1676b4b284d8df157bea0cb6df1248282605c",
+    "crates/voxy_editor/src/app/model_relink.rs": "d2ecc17bef30851e35f50e2232d43205d5f5f0149c0c73a830a2af2155b8766d"
+  },
+  "limits": [
+    "No new GPU/window/FPS or device-audio qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ],
+  "scoped_format_and_diff": "passed"
+}

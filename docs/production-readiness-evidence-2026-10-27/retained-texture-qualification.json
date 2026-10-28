@@ -1,0 +1,89 @@
+{
+  "scope": "CPU publication lifetime for live static/animated GPU owners and retained-publication resource archive",
+  "implemented": [
+    "ModelGraphics retains the exact canonical catalog publication after successful CPU/GPU commit or residency upload",
+    "Viewport requests and AnimatedModels owner propagate that Arc alongside textures; failed updates retain old publication; unchanged-geometry material updates switch publication",
+    "Whole source payload and original ImportInputs remain available without copying pixels per frame",
+    "Catalog archive carries ordered retained publication roots in the same global resource graph as current catalog and runtime sources",
+    "App model-resource capture collects static and animated GPU publication roots and rejects owners with missing provenance",
+    "Retained-only graphs, repeated publication aliases and malformed root/catalog split checked"
+  ],
+  "checks": {
+    "editor_default_suite": {
+      "passed": 303,
+      "failed": 0,
+      "ignored": 24
+    },
+    "explicit_real_gpu_tests": {
+      "passed": 2,
+      "adapter": "Apple M4 Max Metal",
+      "tests": [
+        "retained texture readback/file round-trip",
+        "native CPU/GPU transaction retains canonical publication Arc"
+      ]
+    },
+    "all_targets_clippy": "passed -D warnings",
+    "scoped_format_diff": "passed"
+  },
+  "gpu_readback": {
+    "width": 64,
+    "height": 64,
+    "format": "RGBA8Unorm",
+    "row_stride_bytes": 256,
+    "reference_equals_restored": true,
+    "reference_vs_current_changed_pixels": 253,
+    "sha256": {
+      "texture-reference.rgba": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464",
+      "texture-current.rgba": "7da6a456732466137c34a7d0bdedce6fa1000702113652194176321afbb66cf0",
+      "texture-restored.rgba": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464"
+    }
+  },
+  "verified": [
+    "Old red texture remains displayed after deliberately invalid new pose while catalog contains green texture",
+    "Original GLB/raw texture source directory deleted before archive capture and restoration",
+    "Current catalog publication and repeated historical publication aliases restored exactly; original historical image/input bytes match red source",
+    "Historical material rebuilt using a fresh residency cache and accepted reference frame; RGBA output exactly matches original 64x64 readback",
+    "Successful texture-only update changes visible pixels and publication via unchanged-geometry path, then last old publication releases"
+  ],
+  "retained_failures": [
+    "Added publication parameter required updating test-only raw update call sites; fixed",
+    "Strict Clippy requested clone_from for canonical publication assignment; fixed"
+  ],
+  "open": [
+    "Archive retains publication payload roots; stable GPU owner-to-source role mapping and complete GPU owner frame/LOD state are not yet serialized",
+    "Readback uses an externally supplied accepted reference frame; this is not full displayed-frame restoration",
+    "Whole scene/runtime/UI/audio/authoring/model transaction and physical presentation acknowledgement remain open",
+    "Retained CPU heap admission/physical peak memory and FPS are unqualified",
+    "ENG-03 through ENG-13 remain incomplete"
+  ],
+  "artifacts": {
+    "retained-texture-proof-files/retained-textures.voxyeic": {
+      "bytes": 140075,
+      "sha256": "cab6150506360651e3040767e7bdb9eb433cc41d4d93d570392d2e1e146300c0"
+    },
+    "retained-texture-proof-files/texture-current.rgba": {
+      "bytes": 16384,
+      "sha256": "7da6a456732466137c34a7d0bdedce6fa1000702113652194176321afbb66cf0"
+    },
+    "retained-texture-proof-files/texture-reference.rgba": {
+      "bytes": 16384,
+      "sha256": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464"
+    },
+    "retained-texture-proof-files/readback.json": {
+      "bytes": 479,
+      "sha256": "0b4a7e1facce439573229022bb5d7579abe32a2f41cfc8b6cee2af2b6a4abbb1"
+    },
+    "retained-texture-proof-files/texture-restored.rgba": {
+      "bytes": 16384,
+      "sha256": "ff7aab7e4add1a4e59f1325ad09460f8bed840e81dab10e7825ada417d17c464"
+    }
+  },
+  "logs_sha256": {
+    "retained-texture-editor-tests.log": "3961457f2c7614c4f2fcb934d5624ea68a0a769a75303fa6d8822d4e26b56e10",
+    "retained-texture-metal-pixels.log": "1077f626459f40bbfdf0c4cc9d2941fe0a8b69b712aef448cf025cec615745c2",
+    "retained-texture-native-publication.log": "816c1ebf734ba8ee1d48c06fd524d7d80d78d89792483437020343c0559c5953",
+    "retained-texture-clippy.log": "b7d29bffbeab9dd0f72150a96b24bce9cb109ab5a0a2e19f891445ef85c5cae2",
+    "retained-texture-initial-callsite-build.log": "98482fd261bd13e7f705e48a43b82ebaae7e925d5aea0eb306b622dcb83765d8",
+    "retained-texture-initial-clippy.log": "f86d74faf74a137abe6447bfda71ff5ad58c6f912f9ac6f139f15f09929a3d62"
+  }
+}

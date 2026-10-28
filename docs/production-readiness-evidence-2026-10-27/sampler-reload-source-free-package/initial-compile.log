@@ -1,0 +1,20 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0433]: cannot find module or crate `bytemuck` in this scope
+    --> crates/voxy_editor/src/scene3d_tests.rs:1071:9
+     |
+1071 |         bytemuck::cast_slice::<_, u8>(before.value().mesh.vertices()),
+     |         ^^^^^^^^ use of unresolved module or unlinked crate `bytemuck`
+     |
+     = help: if you wanted to use a crate named `bytemuck`, use `cargo add bytemuck` to add it to your `Cargo.toml`
+
+error[E0433]: cannot find module or crate `bytemuck` in this scope
+    --> crates/voxy_editor/src/scene3d_tests.rs:1072:9
+     |
+1072 |         bytemuck::cast_slice::<_, u8>(accepted.value().mesh.vertices())
+     |         ^^^^^^^^ use of unresolved module or unlinked crate `bytemuck`
+     |
+     = help: if you wanted to use a crate named `bytemuck`, use `cargo add bytemuck` to add it to your `Cargo.toml`
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `voxy_editor` (lib test) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...

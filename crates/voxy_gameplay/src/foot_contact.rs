@@ -1,7 +1,10 @@
 //! Per-foot contact authority. Update returns a candidate; publication is caller-owned.
+#[path = "foot_contact_checkpoint.rs"]
+mod checkpoint;
 use super::{
     PhysicsError, SupportAnchor, SupportContact, SupportProbe, SupportQueryBudget, SupportWorld,
 };
+pub use checkpoint::{FootContactCheckpoint, FootContactCheckpointError};
 use glam::DVec3;
 use serde::{Deserialize, Serialize};
 

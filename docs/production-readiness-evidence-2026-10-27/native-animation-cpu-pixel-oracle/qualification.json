@@ -1,0 +1,32 @@
+{
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "gpu": "Apple M4 Max / Metal",
+  "change_scope": "Test-only CPU-reference constructor and native GPU regression; production backend unchanged",
+  "verified": [
+    "1440 GPU-deformed frames compared exactly to CPU-evaluated geometry rendered through original scene pipeline",
+    "720 project ticks plus 720 packaged ticks after deletion of original project",
+    "GPU path asserted gpu_deformed for model primitives; CPU oracle asserted non-GPU geometry",
+    "Same world transform at ticks 5 and 18 but distinct pixels establishes visible deformation independent of object movement",
+    "CPU reference uses original ModelAsset.scene_meshes_frame evaluator, no weight clamping or clock resampling",
+    "No simulation or presented-frame increment from oracle draws; GPU validation scope clean",
+    "Existing source/package CPU state and RGBA equality remains checked"
+  ],
+  "checks": {
+    "gpu_focused": "passed 1 test",
+    "strict_clippy_all_targets": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed",
+    "full_editor_suite": "Not rerun for these test-only edits; previous 364/36 result not asserted as fresh"
+  },
+  "limits": [
+    "Pixel oracle shares original rasterizer and material pipeline, independently evaluates deformation only",
+    "Single small rig/morph fixture and 128x128 RGBA8 rasterization; not all attributes or full float buffer parity",
+    "No native window, production character quality, 1080p frame pacing or FPS qualification",
+    "No full ENG-05/06 closure"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/animated_models.rs": "715e6f19b118cfa7e2b771e8548eb8c7134b2c5ac7d5241f946535e101250f6c",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "83673c9f49a0169e84dbc253be8b7b9f17075b63590c0941f721af040e0155c3"
+  }
+}

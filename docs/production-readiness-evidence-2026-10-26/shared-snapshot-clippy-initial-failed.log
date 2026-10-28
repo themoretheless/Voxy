@@ -1,0 +1,16 @@
+    Blocking waiting for file lock on build directory
+    Checking voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Checking voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: wildcard matches only a single variant and will also match any future added variants
+    --> crates/voxy_editor/src/foot_placement/tests.rs:3557:9
+     |
+3557 |         _ => panic!("expected frozen source"),
+     |         ^ help: try: `PoseBlendSource::Clip(_)`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#match_wildcard_for_single_variants
+     = note: `-D clippy::match-wildcard-for-single-variants` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::match_wildcard_for_single_variants)]`
+
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

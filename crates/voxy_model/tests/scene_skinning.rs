@@ -173,12 +173,7 @@ fn gpu_scene_skinning_independent_instances_and_last_good_pose() {
         overlay: true,
     }];
     let mut encoder = device.create_command_encoder(&Default::default());
-    let other = SceneSkinner {
-        device: device.clone(),
-        memory_budget: skinner.memory_budget.clone(),
-        pipeline: skinner.pipeline.clone(),
-        identity: Arc::new(()),
-    };
+    let other = SceneSkinner::new(&renderer).unwrap();
     assert!(matches!(
         other.encode_pose(&queue, &mut encoder, &first, &palette),
         Err(SceneSkinError::ForeignSkinner)

@@ -1,0 +1,38 @@
+{
+  "stage": "ENG-03 / ENG-05 resource ownership preparation",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "change": "Graphics explicitly retains original wgpu Device/Queue handle clones from surface initialization. Model reload/residency, UI preparation/restore and viewport GPU resource work use these handles directly. Removed surface-only model upload wrapper; normal residency and smoke callers use native upload_on shared with offscreen qualifications. No second device requested.",
+  "verified": [
+    "Full editor CPU suite passes",
+    "Real M4 Max/Metal native CPU/GPU transaction rejection and retention test passes",
+    "Real M4 Max/Metal sampler cache/render-readback test passes",
+    "Strict editor all-target Clippy and scoped format/diff pass"
+  ],
+  "editor_tests": {
+    "passed": 357,
+    "failed": 0,
+    "ignored": 33
+  },
+  "explicit_gpu_tests_passed": 2,
+  "strict_editor_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/inspector.rs": "6d8fab2fa7e745c280c24413cef9200741a4b01c6811b92da829bc991b22cbed",
+    "crates/voxy_editor/src/app/model_reload.rs": "b4b71654178b43f691a60d8e74c8015412750b490c28b27d83510befbf37ef74",
+    "crates/voxy_editor/src/app/residency.rs": "f2593937c9ef0be552740141298e80cdc6879cb4cafda6b15b97361b994423fa",
+    "crates/voxy_editor/src/app/viewport.rs": "01700bc11f8e1fa460686c7c62aacff9a694f2d46ee19a4dc5aeade5c34a869e",
+    "crates/voxy_editor/src/gpu_model.rs": "7d399d3417f6efd425582f02417b70ad736f1340a85122cff4c03387ed7e8075",
+    "crates/voxy_editor/src/lib.rs": "728a03f3766757d44aee18d32f15c962610f0d028ff63d4a9279b13b89616684",
+    "crates/voxy_editor/src/scene3d_smoke.rs": "78b4f19c4f7fb4f5601c636c0f46aaa2bedd815df0e2a65378069e6c67ecbd5f",
+    "crates/voxy_editor/src/ui_live.rs": "3affcf350e7c2450e0ad4656af821e870d209ccd0f9db7d62e6617b8bb74e59a",
+    "crates/voxy_editor/src/ui_live/restore.rs": "48a35e85064829783b9447a409a51b751658f5355c2e5a81a872a393312a3b93"
+  },
+  "validation_note": "Full suite preceded a Clippy-only comparison cleanup from borrowed handle equality to equivalent direct equality; both explicit GPU tests and final all-target Clippy run after cleanup.",
+  "limits": [
+    "This separates device access from presentation, not the complete Graphics owner from SceneSurface",
+    "Native initialization still requires surface; no full-App GPU sampler reload was run",
+    "No windows launched; no new native audio or frame pacing/FPS qualification",
+    "Next step is presentation-optional GPU owner construction and then combined native App reload qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

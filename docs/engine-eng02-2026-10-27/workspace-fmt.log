@@ -1,0 +1,3155 @@
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/physics/src/biomechanics/inertia/implicit/assembled_metric_profile.rs:648:
+         }
+     }
+ 
+-    fn apply(&self, metric: &AssembledMetric, body: &Body, weight: &[f64], r: &[Vec3]) -> Vec<Vec3> {
++    fn apply(
++        &self,
++        metric: &AssembledMetric,
++        body: &Body,
++        weight: &[f64],
++        r: &[Vec3],
++    ) -> Vec<Vec3> {
+         let n = r.len();
+         let theta = 0.5 * (self.lambda_max + self.lambda_min);
+         let delta = 0.5 * (self.lambda_max - self.lambda_min);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/physics/src/liquid.rs:1059:
+ #[path = "liquid/transport.rs"]
+ mod transport;
+ pub use suspension::SuspensionCellInventory;
+-pub use transport::{LiquidField, ThermalFieldCheckpoint, ThermalMaterialCheckpoint, TransportMaterial};
++pub use transport::{
++    LiquidField, ThermalFieldCheckpoint, ThermalMaterialCheckpoint, TransportMaterial,
++};
+ 
+ #[path = "liquid/properties.rs"]
+ mod properties;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/physics/src/liquid.rs:1360:
+ #[path = "liquid/emission.rs"]
+ mod emission;
+ pub use emission::{
+-    EmissionPulse, EmissionReaction, PulsedEmitter, PulsedEmitterCheckpoint, SourceAccuracy, ViscosityProfile,
++    EmissionPulse, EmissionReaction, PulsedEmitter, PulsedEmitterCheckpoint, SourceAccuracy,
++    ViscosityProfile,
+ };
+ 
+ #[path = "liquid/splitting.rs"]
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/physics/src/liquid.rs:1514:
+ 
+ #[path = "liquid/particle_checkpoint.rs"]
+ mod particle_checkpoint;
+-pub use particle_checkpoint::{LiquidCheckpointLimits, LiquidParticleCheckpoint, ParticleCheckpoint};
++pub use particle_checkpoint::{
++    LiquidCheckpointLimits, LiquidParticleCheckpoint, ParticleCheckpoint,
++};
+ 
+-pub use species::{ReactionAccuracyCheckpoint, ReactionCheckpoint, SpeciesCheckpoint, SpeciesCheckpointLimits, SpeciesPropertiesCheckpoint};
++pub use species::{
++    ReactionAccuracyCheckpoint, ReactionCheckpoint, SpeciesCheckpoint, SpeciesCheckpointLimits,
++    SpeciesPropertiesCheckpoint,
++};
+ 
+ #[path = "liquid/evolution_checkpoint.rs"]
+ mod evolution_checkpoint;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/physics/tests/rigid_motion.rs:2151:
+         .unwrap();
+     for t in [0.02, 0.06, 0.1] {
+         let state = path.sample(t).unwrap();
+-        assert!((state.motion.velocity[0] - 3. - f64::midpoint(0.2 * t, 0.05 * t * t)).abs() < 1e-12);
++        assert!(
++            (state.motion.velocity[0] - 3. - f64::midpoint(0.2 * t, 0.05 * t * t)).abs() < 1e-12
++        );
+         assert!((state.motion.position[1] - 2. + 9.81 * t * t / 2.).abs() < 1e-12);
+         let mut applied_work = 0.;
+         for point in points {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/physics/tests/solid_film_binding.rs:75:
+     assert_eq!(film.triangles().len(), 6);
+     let contacts = binding.heat_contacts(&body, &film, &[2.; 6]).unwrap();
+     for &(owner, face, g) in &contacts {
+-        assert_eq!(
+-            owner,
+-            usize::from(!film.triangles()[face].contains(&3))
+-        );
++        assert_eq!(owner, usize::from(!film.triangles()[face].contains(&3)));
+         assert_eq!(g, film.cell_area_m2(face).unwrap() / 2.);
+         assert!(!film.triangles()[face].iter().all(|node| *node < 3));
+     }
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/physics/tests/surface_film.rs:883:
+         receiver_volumes.push(volume);
+         let _ = std::fmt::Write::write_fmt(
+             &mut report,
+-            format_args!(
+-                "{divisions},{},{volume:.15e},{mass_error:.3e}\n",
+-                2 * count
+-            ),
++            format_args!("{divisions},{},{volume:.15e},{mass_error:.3e}\n", 2 * count),
+         );
+     }
+     for volume in &receiver_volumes {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/physics/tests/surface_film_rheology.rs:18:
+     linear.flow_index = 1.0;
+     linear.yield_stress = 0.0;
+     assert!(
+-        (linear.flow_rate(0.1, 3.0, 4.0).unwrap() - f64::midpoint(3.0 * 0.001 / 3.0, 4.0 * 0.01 / 2.0))
+-            .abs()
++        (linear.flow_rate(0.1, 3.0, 4.0).unwrap()
++            - f64::midpoint(3.0 * 0.001 / 3.0, 4.0 * 0.01 / 2.0))
++        .abs()
+             < 1e-15
+     );
+ }
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation/src/root_rigid/enclosure/wall_partition.rs:166:
+             (1., 3., 1., [guarded.start, guarded.end])
+         );
+         for part in intervals.iter().filter(|part| !part.key_uncertainty) {
+-            assert_eq!(
+-                part.source_span,
+-                Some(usize::from(part.end >= 1. / 3.))
+-            );
++            assert_eq!(part.source_span, Some(usize::from(part.end >= 1. / 3.)));
+             assert_eq!(part.target_span, Some(usize::from(part.end >= 0.5)));
+         }
+         assert!(source.partition_wall_outward(&target, 1., 1).is_err());
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1313:
+                 let tone = (b.aged() * stone_tones.len() as f32) as usize;
+                 let wear = if b.aged() < track * 0.9 * damage.min(1.) {
+                     2
+-                } else { usize::from(b.aged() < 0.45 * damage.min(1.)) };
++                } else {
++                    usize::from(b.aged() < 0.45 * damage.min(1.))
++                };
+                 old_stones[tone][wear]
+             };
+             let disorder = if relaid { 0.3 } else { 0.25 + 0.75 * damage };
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1881:
+                 for chain_x in [6.72f32, 7.08] {
+                     b.block(metal, [side * chain_x, 3.24, sign_z], [0.025, 0.18, 0.025]);
+                 }
+-                b.block(kit.woods[2], [side * 6.90, 2.98, sign_z], [0.46, 0.34, 0.04]);
++                b.block(
++                    kit.woods[2],
++                    [side * 6.90, 2.98, sign_z],
++                    [0.46, 0.34, 0.04],
++                );
+                 b.block(trim, [side * 6.90, 2.98, sign_z], [0.38, 0.24, 0.05]);
+                 // Sidewalk bistro café tables, chairs, and porcelain cups under the awning.
+                 for tz_off in [-1.45f32, 1.45] {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1891:
+                     b.block(metal, [tx, 0.40, tz], [0.045, 0.64, 0.045]);
+                     b.block(kit.ceramic, [tx, 0.73, tz], [0.58, 0.035, 0.58]);
+                     b.block(metal, [tx, 0.725, tz], [0.60, 0.025, 0.60]);
+-                    b.block(kit.ceramic, [tx - side * 0.10, 0.775, tz - 0.08], [0.09, 0.06, 0.09]);
+-                    b.block(kit.ceramic, [tx + side * 0.08, 0.76, tz + 0.10], [0.12, 0.02, 0.12]);
++                    b.block(
++                        kit.ceramic,
++                        [tx - side * 0.10, 0.775, tz - 0.08],
++                        [0.09, 0.06, 0.09],
++                    );
++                    b.block(
++                        kit.ceramic,
++                        [tx + side * 0.08, 0.76, tz + 0.10],
++                        [0.12, 0.02, 0.12],
++                    );
+                     for cz_dir in [-1.0f32, 1.0] {
+                         let cz = tz + cz_dir * 0.48;
+                         b.block(timber, [tx, 0.44, cz], [0.36, 0.035, 0.36]);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1899:
+-                        b.block(
+-                            timber,
+-                            [tx, 0.66, cz + cz_dir * 0.16],
+-                            [0.36, 0.42, 0.035],
+-                        );
++                        b.block(timber, [tx, 0.66, cz + cz_dir * 0.16], [0.36, 0.42, 0.035]);
+                         for lx in [-0.15f32, 0.15] {
+                             for lz in [-0.15f32, 0.15] {
+-                                b.block(
+-                                    metal,
+-                                    [tx + lx, 0.22, cz + lz],
+-                                    [0.025, 0.42, 0.025],
+-                                );
++                                b.block(metal, [tx + lx, 0.22, cz + lz], [0.025, 0.42, 0.025]);
+                             }
+                         }
+                     }
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1969:
+                     b.block(trim, [fx, 0.09, fz], [0.42, 0.08, 0.42]);
+                     b.block(metal, [fx, 0.56, fz], [0.18, 0.86, 0.18]);
+                     b.block(metal, [fx, 1.02, fz], [0.24, 0.08, 0.24]);
+-                    b.put(bulb, Vec3::new(fx, 1.10, fz), Vec3::splat(0.12), Quat::IDENTITY);
+-                    b.block(kit.ceramic, [fx - side * 0.16, 0.62, fz], [0.22, 0.08, 0.26]);
++                    b.put(
++                        bulb,
++                        Vec3::new(fx, 1.10, fz),
++                        Vec3::splat(0.12),
++                        Quat::IDENTITY,
++                    );
++                    b.block(
++                        kit.ceramic,
++                        [fx - side * 0.16, 0.62, fz],
++                        [0.22, 0.08, 0.26],
++                    );
+                     b.block(metal, [fx - side * 0.11, 0.74, fz], [0.12, 0.03, 0.03]);
+                 }
+             } else if house % 3 != 0 {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:691:
+     let (px0, px1, pz0, pz1) = (6.8f32, 10.4f32, 114.6f32, 123.8f32);
+     let py0 = 0.12f32;
+     let py_deck = DECK;
+-    b.span(travertine, [px0 - 0.2, py0, pz0 - 0.2], [px1 + 0.2, py_deck, pz1 + 0.2]);
++    b.span(
++        travertine,
++        [px0 - 0.2, py0, pz0 - 0.2],
++        [px1 + 0.2, py_deck, pz1 + 0.2],
++    );
+     // Step stones linking the main pool deck to the pergola terrace
+     for z_step in [116.8f32, 119.2, 121.6] {
+         b.span(
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:786:
+ 
+     // ---- west garden sunken fire-pit lounge & courtyard benches ----
+     let (fx, fz) = (-9.2f32, 118.5f32);
+-    b.span(travertine, [fx - 2.3, 0.12, fz - 2.3], [fx + 2.3, 0.18, fz + 2.3]);
+-    b.span(concrete, [fx - 0.65, 0.18, fz - 0.65], [fx + 0.65, 0.52, fz + 0.65]);
+-    b.span(p.metal, [fx - 0.48, 0.52, fz - 0.48], [fx + 0.48, 0.56, fz + 0.48]);
+-    b.span(p.glow, [fx - 0.28, 0.56, fz - 0.28], [fx + 0.28, 0.62, fz + 0.28]);
++    b.span(
++        travertine,
++        [fx - 2.3, 0.12, fz - 2.3],
++        [fx + 2.3, 0.18, fz + 2.3],
++    );
++    b.span(
++        concrete,
++        [fx - 0.65, 0.18, fz - 0.65],
++        [fx + 0.65, 0.52, fz + 0.65],
++    );
++    b.span(
++        p.metal,
++        [fx - 0.48, 0.52, fz - 0.48],
++        [fx + 0.48, 0.56, fz + 0.48],
++    );
++    b.span(
++        p.glow,
++        [fx - 0.28, 0.56, fz - 0.28],
++        [fx + 0.28, 0.62, fz + 0.28],
++    );
+     for (bx0, bx1, bz0, bz1) in [
+         (fx - 2.0, fx - 1.35, fz - 1.5, fz + 1.5),
+         (fx + 1.35, fx + 2.0, fz - 1.5, fz + 1.5),
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:796:
+         (fx - 1.2, fx + 1.2, fz - 2.0, fz - 1.35),
+     ] {
+         b.span(p.timber, [bx0, 0.18, bz0], [bx1, 0.46, bz1]);
+-        b.span(cushion, [bx0 + 0.04, 0.46, bz0 + 0.04], [bx1 - 0.04, 0.54, bz1 - 0.04]);
++        b.span(
++            cushion,
++            [bx0 + 0.04, 0.46, bz0 + 0.04],
++            [bx1 - 0.04, 0.54, bz1 - 0.04],
++        );
+     }
+     // Forecourt garden benches and glazed ceramic amphora planters at z = 85.8
+     for side in [-1.0f32, 1.0] {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:806:
+             b.span(p.metal, [lx - 0.04, 0.06, 85.54], [lx + 0.04, 0.38, 85.96]);
+         }
+         let vx = side * 4.5;
+-        b.span(p.ceramic, [vx - 0.28, 0.06, 85.45], [vx + 0.28, 0.58, 86.05]);
+-        b.span(p.foliage, [vx - 0.34, 0.58, 85.40], [vx + 0.34, 1.05, 86.10]);
++        b.span(
++            p.ceramic,
++            [vx - 0.28, 0.06, 85.45],
++            [vx + 0.28, 0.58, 86.05],
++        );
++        b.span(
++            p.foliage,
++            [vx - 0.34, 0.58, 85.40],
++            [vx + 0.34, 1.05, 86.10],
++        );
+     }
+ 
+     // ---- villa: glazed ground floor, cantilevered upper storey, flat roof ----
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1053:
+     b.span(p.wood, [-6.5, u0 + 0.02, 145.6], [-2.2, u0 + 2.25, 146.15]);
+     b.span(p.timber, [-5.4, u0 + 0.72, 138.8], [-3.4, u0 + 0.76, 139.7]);
+     for lx in [-5.3f32, -3.5] {
+-        b.span(p.metal, [lx - 0.03, u0 + 0.02, 138.85], [lx + 0.03, u0 + 0.72, 139.65]);
++        b.span(
++            p.metal,
++            [lx - 0.03, u0 + 0.02, 138.85],
++            [lx + 0.03, u0 + 0.72, 139.65],
++        );
+     }
+-    b.span(p.ceramic, [-4.6, u0 + 0.76, 139.1], [-4.2, u0 + 0.98, 139.4]);
++    b.span(
++        p.ceramic,
++        [-4.6, u0 + 0.76, 139.1],
++        [-4.2, u0 + 0.98, 139.4],
++    );
+     // Rooftop terrace loungers and glass table over the west wing (x = -11.5 .. -9.3)
+     for rz in [136.8f32, 139.6] {
+-        b.span(p.timber, [-11.3, u0, rz - 0.32], [-9.6, u0 + 0.28, rz + 0.32]);
+-        b.span(cushion, [-11.25, u0 + 0.28, rz - 0.28], [-9.65, u0 + 0.36, rz + 0.28]);
++        b.span(
++            p.timber,
++            [-11.3, u0, rz - 0.32],
++            [-9.6, u0 + 0.28, rz + 0.32],
++        );
++        b.span(
++            cushion,
++            [-11.25, u0 + 0.28, rz - 0.28],
++            [-9.65, u0 + 0.36, rz + 0.28],
++        );
+     }
+     b.span(p.metal, [-10.7, u0, 138.0], [-10.1, u0 + 0.42, 138.4]);
+-    b.span(p.glass, [-10.8, u0 + 0.42, 137.9], [-10.0, u0 + 0.45, 138.5]);
++    b.span(
++        p.glass,
++        [-10.8, u0 + 0.42, 137.9],
++        [-10.0, u0 + 0.45, 138.5],
++    );
+     // Ground-floor living room library console, ceramic sculpture & indoor planter
+-    b.span(p.wood, [-11.65, floor_top, 136.5], [-11.15, floor_top + 1.85, 140.2]);
+-    b.span(p.ceramic, [0.4, floor_top + 0.38, 137.75], [0.72, floor_top + 0.56, 138.05]);
+-    b.span(p.ceramic, [3.9, floor_top, 135.2], [4.4, floor_top + 0.48, 135.7]);
+-    b.span(p.foliage, [3.85, floor_top + 0.48, 135.15], [4.45, floor_top + 1.25, 135.75]);
++    b.span(
++        p.wood,
++        [-11.65, floor_top, 136.5],
++        [-11.15, floor_top + 1.85, 140.2],
++    );
++    b.span(
++        p.ceramic,
++        [0.4, floor_top + 0.38, 137.75],
++        [0.72, floor_top + 0.56, 138.05],
++    );
++    b.span(
++        p.ceramic,
++        [3.9, floor_top, 135.2],
++        [4.4, floor_top + 0.48, 135.7],
++    );
++    b.span(
++        p.foliage,
++        [3.85, floor_top + 0.48, 135.15],
++        [4.45, floor_top + 1.25, 135.75],
++    );
+ 
+     // ---- garden trees ----
+     for (tx, tz, h, r) in [
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1152:
+     );
+     for side in [-1.0f32, 1.0] {
+         let bx = side * 3.8;
+-        b.span(p.timber, [bx - 0.85, 0.18, 150.35], [bx + 0.85, 0.46, 150.85]);
+-        b.span(cushion, [bx - 0.80, 0.46, 150.38], [bx + 0.80, 0.52, 150.82]);
++        b.span(
++            p.timber,
++            [bx - 0.85, 0.18, 150.35],
++            [bx + 0.85, 0.46, 150.85],
++        );
++        b.span(
++            cushion,
++            [bx - 0.80, 0.46, 150.38],
++            [bx + 0.80, 0.52, 150.82],
++        );
+         let px = side * 5.6;
+-        b.span(p.ceramic, [px - 0.32, 0.18, 149.6], [px + 0.32, 0.66, 150.2]);
+-        b.span(p.foliage, [px - 0.38, 0.66, 149.55], [px + 0.38, 1.35, 150.25]);
++        b.span(
++            p.ceramic,
++            [px - 0.32, 0.18, 149.6],
++            [px + 0.32, 0.66, 150.2],
++        );
++        b.span(
++            p.foliage,
++            [px - 0.38, 0.66, 149.55],
++            [px + 0.38, 1.35, 150.25],
++        );
+     }
+ 
+     // ---- additional villa interior & terrace details ----
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1163:
+     // Poolside dining table centerpiece (ceramic fruit bowl & glass carafe)
+-    b.span(p.ceramic, [-5.05, DECK + 0.76, 124.45], [-4.75, DECK + 0.84, 124.75]);
+-    b.span(p.glass, [-4.85, DECK + 0.76, 124.92], [-4.73, DECK + 0.98, 125.04]);
++    b.span(
++        p.ceramic,
++        [-5.05, DECK + 0.76, 124.45],
++        [-4.75, DECK + 0.84, 124.75],
++    );
++    b.span(
++        p.glass,
++        [-4.85, DECK + 0.76, 124.92],
++        [-4.73, DECK + 0.98, 125.04],
++    );
+     // Living room coffee table art books & ceramic tea set, plus bar stools at kitchen island
+-    b.span(p.ceramic, [0.85, floor_top + 0.38, 137.85], [1.12, floor_top + 0.44, 138.12]);
++    b.span(
++        p.ceramic,
++        [0.85, floor_top + 0.38, 137.85],
++        [1.12, floor_top + 0.44, 138.12],
++    );
+     for i in 0..3 {
+         let sx = 6.5 + i as f32 * 1.1;
+         let sz = 140.55;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1171:
+-        b.span(p.metal, [sx - 0.025, floor_top, sz - 0.025], [sx + 0.025, floor_top + 0.62, sz + 0.025]);
+-        b.span(p.metal, [sx - 0.17, floor_top + 0.01, sz - 0.17], [sx + 0.17, floor_top + 0.03, sz + 0.17]);
+-        b.span(fabric(2 + i), [sx - 0.18, floor_top + 0.62, sz - 0.18], [sx + 0.18, floor_top + 0.68, sz + 0.18]);
++        b.span(
++            p.metal,
++            [sx - 0.025, floor_top, sz - 0.025],
++            [sx + 0.025, floor_top + 0.62, sz + 0.025],
++        );
++        b.span(
++            p.metal,
++            [sx - 0.17, floor_top + 0.01, sz - 0.17],
++            [sx + 0.17, floor_top + 0.03, sz + 0.17],
++        );
++        b.span(
++            fabric(2 + i),
++            [sx - 0.18, floor_top + 0.62, sz - 0.18],
++            [sx + 0.18, floor_top + 0.68, sz + 0.18],
++        );
+     }
+     // Upstairs bedroom nightstands, reading lamps & wardrobe along the east wall
+     for nz in [139.55f32, 142.65] {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1177:
+-        b.span(p.timber, [3.25, u0, nz - 0.24], [3.75, u0 + 0.48, nz + 0.24]);
+-        b.span(p.ceramic, [3.42, u0 + 0.48, nz - 0.08], [3.58, u0 + 0.68, nz + 0.08]);
++        b.span(
++            p.timber,
++            [3.25, u0, nz - 0.24],
++            [3.75, u0 + 0.48, nz + 0.24],
++        );
++        b.span(
++            p.ceramic,
++            [3.42, u0 + 0.48, nz - 0.08],
++            [3.58, u0 + 0.68, nz + 0.08],
++        );
+     }
+     b.span(p.wood, [10.85, u0 + 0.02, 138.5], [11.55, u0 + 2.35, 143.5]);
+ 
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1184:
+     let gy0 = 0.12f32;
+     let gy_wall = gy0 + 1.95;
+     let gy_ridge = gy0 + 2.55;
+-    b.span(travertine, [gx0 - 0.15, gy0, gz0 - 0.15], [gx1 + 0.15, gy0 + 0.08, gz1 + 0.15]);
++    b.span(
++        travertine,
++        [gx0 - 0.15, gy0, gz0 - 0.15],
++        [gx1 + 0.15, gy0 + 0.08, gz1 + 0.15],
++    );
+     // Low brick/travertine knee wall around the conservatory perimeter
+     for (lo, hi) in [
+         ([gx0, gy0 + 0.08, gz0], [gx1, gy0 + 0.48, gz0 + 0.12]),
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1198:
+     // Slim dark-steel greenhouse columns, eaves beams, and ridge beam
+     for &cz in &[gz0, gz0 + 2.1, gz1 - 2.1, gz1] {
+         for &cx in &[gx0, gx1] {
+-            b.span(p.metal, [cx - 0.035, gy0 + 0.08, cz - 0.035], [cx + 0.035, gy_wall, cz + 0.035]);
++            b.span(
++                p.metal,
++                [cx - 0.035, gy0 + 0.08, cz - 0.035],
++                [cx + 0.035, gy_wall, cz + 0.035],
++            );
+         }
+         let gx_mid = (gx0 + gx1) * 0.5;
+-        b.beam(p.metal, Vec3::new(gx0, gy_wall, cz), Vec3::new(gx_mid, gy_ridge, cz), 0.035);
+-        b.beam(p.metal, Vec3::new(gx1, gy_wall, cz), Vec3::new(gx_mid, gy_ridge, cz), 0.035);
++        b.beam(
++            p.metal,
++            Vec3::new(gx0, gy_wall, cz),
++            Vec3::new(gx_mid, gy_ridge, cz),
++            0.035,
++        );
++        b.beam(
++            p.metal,
++            Vec3::new(gx1, gy_wall, cz),
++            Vec3::new(gx_mid, gy_ridge, cz),
++            0.035,
++        );
+     }
+     for &cx in &[gx0, gx1] {
+-        b.span(p.metal, [cx - 0.035, gy_wall - 0.04, gz0], [cx + 0.035, gy_wall + 0.02, gz1]);
++        b.span(
++            p.metal,
++            [cx - 0.035, gy_wall - 0.04, gz0],
++            [cx + 0.035, gy_wall + 0.02, gz1],
++        );
+     }
+     b.span(
+         p.metal,
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1213:
+         [(gx0 + gx1) * 0.5 + 0.04, gy_ridge + 0.02, gz1],
+     );
+     // Glazed side walls and pitched glass roof panels
+-    b.span(p.glass, [gx1 - 0.05, gy0 + 0.48, gz0 + 0.08], [gx1 - 0.02, gy_wall - 0.04, gz1 - 0.08]);
+-    b.span(p.glass, [gx0 + 0.08, gy0 + 0.48, gz0 + 0.02], [gx1 - 0.08, gy_wall - 0.04, gz0 + 0.05]);
+-    b.span(p.glass, [gx0 + 0.08, gy0 + 0.48, gz1 - 0.05], [gx1 - 0.08, gy_wall - 0.04, gz1 - 0.02]);
++    b.span(
++        p.glass,
++        [gx1 - 0.05, gy0 + 0.48, gz0 + 0.08],
++        [gx1 - 0.02, gy_wall - 0.04, gz1 - 0.08],
++    );
++    b.span(
++        p.glass,
++        [gx0 + 0.08, gy0 + 0.48, gz0 + 0.02],
++        [gx1 - 0.08, gy_wall - 0.04, gz0 + 0.05],
++    );
++    b.span(
++        p.glass,
++        [gx0 + 0.08, gy0 + 0.48, gz1 - 0.05],
++        [gx1 - 0.08, gy_wall - 0.04, gz1 - 0.02],
++    );
+     // Interior botanical tables, terracotta/ceramic planters, and citrus saplings inside the conservatory
+-    b.span(p.timber, [gx1 - 0.85, gy0 + 0.08, gz0 + 0.45], [gx1 - 0.25, gy0 + 0.78, gz1 - 0.45]);
++    b.span(
++        p.timber,
++        [gx1 - 0.85, gy0 + 0.08, gz0 + 0.45],
++        [gx1 - 0.25, gy0 + 0.78, gz1 - 0.45],
++    );
+     for pz in [gz0 + 1.1, gz0 + 2.4, gz0 + 3.8, gz0 + 5.1] {
+-        b.span(p.ceramic, [gx1 - 0.72, gy0 + 0.78, pz - 0.22], [gx1 - 0.38, gy0 + 1.08, pz + 0.22]);
+-        b.span(p.foliage, [gx1 - 0.78, gy0 + 1.08, pz - 0.28], [gx1 - 0.32, gy0 + 1.58, pz + 0.28]);
++        b.span(
++            p.ceramic,
++            [gx1 - 0.72, gy0 + 0.78, pz - 0.22],
++            [gx1 - 0.38, gy0 + 1.08, pz + 0.22],
++        );
++        b.span(
++            p.foliage,
++            [gx1 - 0.78, gy0 + 1.08, pz - 0.28],
++            [gx1 - 0.32, gy0 + 1.58, pz + 0.28],
++        );
+     }
+     for pz in [gz0 + 1.2, gz1 - 1.2] {
+-        b.span(p.ceramic, [gx0 + 0.35, gy0 + 0.08, pz - 0.28], [gx0 + 0.90, gy0 + 0.52, pz + 0.28]);
++        b.span(
++            p.ceramic,
++            [gx0 + 0.35, gy0 + 0.08, pz - 0.28],
++            [gx0 + 0.90, gy0 + 0.52, pz + 0.28],
++        );
+         tree(b, p, Vec3::new(gx0 + 0.62, gy0 + 0.52, pz), 1.45, 0.55, 18);
+     }
+ 
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1231:
+     for i in 0..6 {
+         let cz = 112.5 + i as f32 * 2.3;
+         for cx in [-13.4f32, -11.8] {
+-            b.span(travertine, [cx - 0.16, 0.12, cz - 0.16], [cx + 0.16, 2.35, cz + 0.16]);
+-            b.span(p.trim, [cx - 0.22, 0.12, cz - 0.22], [cx + 0.22, 0.24, cz + 0.22]);
+-            b.span(p.trim, [cx - 0.22, 2.25, cz - 0.22], [cx + 0.22, 2.38, cz + 0.22]);
++            b.span(
++                travertine,
++                [cx - 0.16, 0.12, cz - 0.16],
++                [cx + 0.16, 2.35, cz + 0.16],
++            );
++            b.span(
++                p.trim,
++                [cx - 0.22, 0.12, cz - 0.22],
++                [cx + 0.22, 0.24, cz + 0.22],
++            );
++            b.span(
++                p.trim,
++                [cx - 0.22, 2.25, cz - 0.22],
++                [cx + 0.22, 2.38, cz + 0.22],
++            );
+         }
+-        b.span(p.timber, [-13.65, 2.46, cz - 0.06], [-11.55, 2.58, cz + 0.06]);
++        b.span(
++            p.timber,
++            [-13.65, 2.46, cz - 0.06],
++            [-11.55, 2.58, cz + 0.06],
++        );
+     }
+     for cx in [-13.4f32, -11.8] {
+         b.span(p.timber, [cx - 0.07, 2.38, 112.1], [cx + 0.07, 2.48, 124.4]);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1245:
+     // ---- rooftop solar array & architectural skylight on the upper roof (y = u1 + 0.3) ----
+     let roof_top = u1 + 0.3;
+     // Framed glass skylight over the upper stairwell/gallery
+-    b.span(p.metal, [-7.8, roof_top, 141.0], [-4.6, roof_top + 0.18, 143.6]);
+-    b.span(p.glass, [-7.65, roof_top + 0.18, 141.15], [-4.75, roof_top + 0.22, 143.45]);
++    b.span(
++        p.metal,
++        [-7.8, roof_top, 141.0],
++        [-4.6, roof_top + 0.18, 143.6],
++    );
++    b.span(
++        p.glass,
++        [-7.65, roof_top + 0.18, 141.15],
++        [-4.75, roof_top + 0.22, 143.45],
++    );
+     // Angled photovoltaic solar panels on the east half of the roof
+     for row in 0..2 {
+         let sz = 139.2 + row as f32 * 3.1;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1253:
+         for col in 0..4 {
+             let sx = -1.5 + col as f32 * 2.6;
+-            b.span(p.metal, [sx - 0.9, roof_top, sz - 0.55], [sx + 0.9, roof_top + 0.14, sz - 0.45]);
+-            b.span(p.metal, [sx - 0.9, roof_top, sz + 0.45], [sx + 0.9, roof_top + 0.38, sz + 0.55]);
++            b.span(
++                p.metal,
++                [sx - 0.9, roof_top, sz - 0.55],
++                [sx + 0.9, roof_top + 0.14, sz - 0.45],
++            );
++            b.span(
++                p.metal,
++                [sx - 0.9, roof_top, sz + 0.45],
++                [sx + 0.9, roof_top + 0.38, sz + 0.55],
++            );
+             b.put(
+                 mosaic_dark,
+                 Vec3::new(sx, roof_top + 0.28, sz),
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1265:
+ 
+     // ---- poolside outdoor shower alcove & towel cabana (x = -6.2..-5.2, z = 127.6..130.0) ----
+     // Architectural travertine privacy screen, teak duckboard grating, chrome rain-shower column, and towel rack
+-    b.span(travertine, [-6.15, DECK, 127.7], [-5.92, DECK + 2.25, 129.9]);
+-    b.span(cladding, [-6.18, DECK + 0.12, 127.85], [-6.15, DECK + 2.15, 129.75]);
++    b.span(
++        travertine,
++        [-6.15, DECK, 127.7],
++        [-5.92, DECK + 2.25, 129.9],
++    );
++    b.span(
++        cladding,
++        [-6.18, DECK + 0.12, 127.85],
++        [-6.15, DECK + 2.15, 129.75],
++    );
+     for slat in 0..7 {
+         let sz = 127.95 + slat as f32 * 0.28;
+-        b.span(p.timber, [-5.90, DECK, sz - 0.08], [-5.25, DECK + 0.035, sz + 0.08]);
++        b.span(
++            p.timber,
++            [-5.90, DECK, sz - 0.08],
++            [-5.25, DECK + 0.035, sz + 0.08],
++        );
+     }
+-    b.span(chrome, [-5.92, DECK + 0.04, 128.76], [-5.86, DECK + 2.10, 128.84]);
+-    b.span(chrome, [-5.86, DECK + 2.06, 128.76], [-5.48, DECK + 2.10, 128.84]);
+-    b.span(chrome, [-5.62, DECK + 2.02, 128.66], [-5.38, DECK + 2.06, 128.94]);
+-    b.span(chrome, [-5.90, DECK + 1.05, 128.72], [-5.82, DECK + 1.12, 128.88]);
++    b.span(
++        chrome,
++        [-5.92, DECK + 0.04, 128.76],
++        [-5.86, DECK + 2.10, 128.84],
++    );
++    b.span(
++        chrome,
++        [-5.86, DECK + 2.06, 128.76],
++        [-5.48, DECK + 2.10, 128.84],
++    );
++    b.span(
++        chrome,
++        [-5.62, DECK + 2.02, 128.66],
++        [-5.38, DECK + 2.06, 128.94],
++    );
++    b.span(
++        chrome,
++        [-5.90, DECK + 1.05, 128.72],
++        [-5.82, DECK + 1.12, 128.88],
++    );
+     // Towel rack bench and folded pool towels beside the shower
+-    b.span(p.timber, [-5.88, DECK, 129.25], [-5.42, DECK + 0.46, 129.82]);
+-    b.span(towel, [-5.82, DECK + 0.46, 129.32], [-5.48, DECK + 0.54, 129.75]);
++    b.span(
++        p.timber,
++        [-5.88, DECK, 129.25],
++        [-5.42, DECK + 0.46, 129.82],
++    );
++    b.span(
++        towel,
++        [-5.82, DECK + 0.46, 129.32],
++        [-5.48, DECK + 0.54, 129.75],
++    );
+ 
+     // ---- southwest zen meditation timber pavilion & bamboo screen (x = -14.1..-12.3, z = 136.0..144.0) ----
+     let (mx0, mx1, mz0, mz1) = (-14.1f32, -12.35f32, 136.2f32, 143.8f32);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1284:
+     let my0 = 0.12f32;
+     let my_deck = 0.26f32;
+-    b.span(concrete, [mx0 + 0.08, my0, mz0 + 0.08], [mx1 - 0.08, my_deck - 0.04, mz1 - 0.08]);
++    b.span(
++        concrete,
++        [mx0 + 0.08, my0, mz0 + 0.08],
++        [mx1 - 0.08, my_deck - 0.04, mz1 - 0.08],
++    );
+     b.span(p.timber, [mx0, my_deck - 0.04, mz0], [mx1, my_deck, mz1]);
+     // Stepping stones from the west colonnade/lawn to the meditation deck
+     for sz in [133.4f32, 134.8] {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1290:
+-        b.span(travertine, [-13.4, my0, sz - 0.32], [-12.5, my0 + 0.05, sz + 0.32]);
++        b.span(
++            travertine,
++            [-13.4, my0, sz - 0.32],
++            [-12.5, my0 + 0.05, sz + 0.32],
++        );
+     }
+     // Low Japanese chabudai tea table and floor zabuton cushions on the timber deck
+     let tz_center = (mz0 + mz1) * 0.5;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1294:
+     let tx_center = (mx0 + mx1) * 0.5;
+-    b.span(p.wood, [tx_center - 0.42, my_deck + 0.24, tz_center - 0.65], [tx_center + 0.42, my_deck + 0.29, tz_center + 0.65]);
++    b.span(
++        p.wood,
++        [tx_center - 0.42, my_deck + 0.24, tz_center - 0.65],
++        [tx_center + 0.42, my_deck + 0.29, tz_center + 0.65],
++    );
+     for (lx, lz) in [(-0.34, -0.55), (0.34, -0.55), (-0.34, 0.55), (0.34, 0.55)] {
+-        b.span(p.wood, [tx_center + lx - 0.03, my_deck, tz_center + lz - 0.03], [tx_center + lx + 0.03, my_deck + 0.24, tz_center + lz + 0.03]);
++        b.span(
++            p.wood,
++            [tx_center + lx - 0.03, my_deck, tz_center + lz - 0.03],
++            [tx_center + lx + 0.03, my_deck + 0.24, tz_center + lz + 0.03],
++        );
+     }
+-    b.span(p.ceramic, [tx_center - 0.10, my_deck + 0.29, tz_center - 0.10], [tx_center + 0.10, my_deck + 0.40, tz_center + 0.10]);
++    b.span(
++        p.ceramic,
++        [tx_center - 0.10, my_deck + 0.29, tz_center - 0.10],
++        [tx_center + 0.10, my_deck + 0.40, tz_center + 0.10],
++    );
+     for (cz, col_idx) in [(tz_center - 1.15, 0usize), (tz_center + 1.15, 1)] {
+-        b.span(fabric(col_idx), [tx_center - 0.36, my_deck, cz - 0.36], [tx_center + 0.36, my_deck + 0.08, cz + 0.36]);
++        b.span(
++            fabric(col_idx),
++            [tx_center - 0.36, my_deck, cz - 0.36],
++            [tx_center + 0.36, my_deck + 0.08, cz + 0.36],
++        );
+     }
+     // Carved stone lantern (Toro) and bamboo/foliage planter screen along the outer edge
+-    b.span(travertine, [mx0 + 0.18, my_deck, mz1 - 0.85], [mx0 + 0.58, my_deck + 0.12, mz1 - 0.45]);
+-    b.span(travertine, [mx0 + 0.28, my_deck + 0.12, mz1 - 0.75], [mx0 + 0.48, my_deck + 0.68, mz1 - 0.55]);
+-    b.span(p.glow, [mx0 + 0.26, my_deck + 0.68, mz1 - 0.77], [mx0 + 0.50, my_deck + 0.90, mz1 - 0.53]);
+-    b.span(travertine, [mx0 + 0.14, my_deck + 0.90, mz1 - 0.89], [mx0 + 0.62, my_deck + 1.04, mz1 - 0.41]);
++    b.span(
++        travertine,
++        [mx0 + 0.18, my_deck, mz1 - 0.85],
++        [mx0 + 0.58, my_deck + 0.12, mz1 - 0.45],
++    );
++    b.span(
++        travertine,
++        [mx0 + 0.28, my_deck + 0.12, mz1 - 0.75],
++        [mx0 + 0.48, my_deck + 0.68, mz1 - 0.55],
++    );
++    b.span(
++        p.glow,
++        [mx0 + 0.26, my_deck + 0.68, mz1 - 0.77],
++        [mx0 + 0.50, my_deck + 0.90, mz1 - 0.53],
++    );
++    b.span(
++        travertine,
++        [mx0 + 0.14, my_deck + 0.90, mz1 - 0.89],
++        [mx0 + 0.62, my_deck + 1.04, mz1 - 0.41],
++    );
+     for i in 0..5 {
+         let bz = mz0 + 0.7 + i as f32 * 1.45;
+-        b.span(p.ceramic, [mx0 - 0.35, my0, bz - 0.22], [mx0 - 0.04, my0 + 0.38, bz + 0.22]);
+-        b.span(p.foliage, [mx0 - 0.38, my0 + 0.38, bz - 0.26], [mx0 - 0.02, my0 + 1.85, bz + 0.26]);
++        b.span(
++            p.ceramic,
++            [mx0 - 0.35, my0, bz - 0.22],
++            [mx0 - 0.04, my0 + 0.38, bz + 0.22],
++        );
++        b.span(
++            p.foliage,
++            [mx0 - 0.38, my0 + 0.38, bz - 0.26],
++            [mx0 - 0.02, my0 + 1.85, bz + 0.26],
++        );
+     }
+ 
+     // ---- southeast wood-fired outdoor pizza oven & alfresco dining terrace (x = 12.35..14.1, z = 136.2..143.8) ----
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1316:
+     b.span(travertine, [ox0, my0, oz0], [ox1, my0 + 0.10, oz1]);
+     // Stepping stones from the east conservatory/pergola lawn to the alfresco terrace
+     for sz in [133.4f32, 134.8] {
+-        b.span(travertine, [12.5, my0, sz - 0.32], [13.4, my0 + 0.05, sz + 0.32]);
++        b.span(
++            travertine,
++            [12.5, my0, sz - 0.32],
++            [13.4, my0 + 0.05, sz + 0.32],
++        );
+     }
+     // Brick and stucco wood-fired pizza oven with stacked firewood niche, dome, chimney, and glowing hearth
+     let oz_oven = oz1 - 1.15;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1323:
+-    b.span(render, [ox1 - 1.15, my0 + 0.10, oz_oven - 0.75], [ox1 - 0.12, my0 + 0.92, oz_oven + 0.75]);
+-    b.span(travertine, [ox1 - 1.20, my0 + 0.92, oz_oven - 0.80], [ox1 - 0.08, my0 + 0.98, oz_oven + 0.80]);
++    b.span(
++        render,
++        [ox1 - 1.15, my0 + 0.10, oz_oven - 0.75],
++        [ox1 - 0.12, my0 + 0.92, oz_oven + 0.75],
++    );
++    b.span(
++        travertine,
++        [ox1 - 1.20, my0 + 0.92, oz_oven - 0.80],
++        [ox1 - 0.08, my0 + 0.98, oz_oven + 0.80],
++    );
+     // Firewood logs stacked in the lower base niche
+     for log_i in 0..4 {
+         let lz = oz_oven - 0.36 + log_i as f32 * 0.24;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1328:
+-        b.span(p.trunk, [ox1 - 1.10, my0 + 0.16, lz - 0.08], [ox1 - 0.35, my0 + 0.34, lz + 0.08]);
++        b.span(
++            p.trunk,
++            [ox1 - 1.10, my0 + 0.16, lz - 0.08],
++            [ox1 - 0.35, my0 + 0.34, lz + 0.08],
++        );
+     }
+     // Brick oven dome, glowing ember hearth, and blackened steel flue chimney
+-    b.span(garden_wall, [ox1 - 1.05, my0 + 0.98, oz_oven - 0.62], [ox1 - 0.18, my0 + 1.62, oz_oven + 0.62]);
+-    b.span(p.ceramic, [ox1 - 0.96, my0 + 1.62, oz_oven - 0.52], [ox1 - 0.26, my0 + 1.78, oz_oven + 0.52]);
+-    b.span(p.glow, [ox1 - 1.06, my0 + 1.04, oz_oven - 0.26], [ox1 - 0.88, my0 + 1.34, oz_oven + 0.26]);
+-    b.span(p.metal, [ox1 - 0.72, my0 + 1.78, oz_oven - 0.12], [ox1 - 0.50, my0 + 2.58, oz_oven + 0.12]);
+-    b.span(p.metal, [ox1 - 0.78, my0 + 2.58, oz_oven - 0.18], [ox1 - 0.44, my0 + 2.64, oz_oven + 0.18]);
++    b.span(
++        garden_wall,
++        [ox1 - 1.05, my0 + 0.98, oz_oven - 0.62],
++        [ox1 - 0.18, my0 + 1.62, oz_oven + 0.62],
++    );
++    b.span(
++        p.ceramic,
++        [ox1 - 0.96, my0 + 1.62, oz_oven - 0.52],
++        [ox1 - 0.26, my0 + 1.78, oz_oven + 0.52],
++    );
++    b.span(
++        p.glow,
++        [ox1 - 1.06, my0 + 1.04, oz_oven - 0.26],
++        [ox1 - 0.88, my0 + 1.34, oz_oven + 0.26],
++    );
++    b.span(
++        p.metal,
++        [ox1 - 0.72, my0 + 1.78, oz_oven - 0.12],
++        [ox1 - 0.50, my0 + 2.58, oz_oven + 0.12],
++    );
++    b.span(
++        p.metal,
++        [ox1 - 0.78, my0 + 2.58, oz_oven - 0.18],
++        [ox1 - 0.44, my0 + 2.64, oz_oven + 0.18],
++    );
+     // Alfresco teak dining table, benches, and terracotta herb pots in the northern half of the terrace
+     let oz_table = oz0 + 2.25;
+     let ox_table = (ox0 + ox1) * 0.5;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1339:
+-    b.span(p.timber, [ox_table - 0.44, my0 + 0.82, oz_table - 1.05], [ox_table + 0.44, my0 + 0.87, oz_table + 1.05]);
++    b.span(
++        p.timber,
++        [ox_table - 0.44, my0 + 0.82, oz_table - 1.05],
++        [ox_table + 0.44, my0 + 0.87, oz_table + 1.05],
++    );
+     for (lx, lz) in [(-0.36, -0.92), (0.36, -0.92), (-0.36, 0.92), (0.36, 0.92)] {
+-        b.span(p.metal, [ox_table + lx - 0.03, my0 + 0.10, oz_table + lz - 0.03], [ox_table + lx + 0.03, my0 + 0.82, oz_table + lz + 0.03]);
++        b.span(
++            p.metal,
++            [ox_table + lx - 0.03, my0 + 0.10, oz_table + lz - 0.03],
++            [ox_table + lx + 0.03, my0 + 0.82, oz_table + lz + 0.03],
++        );
+     }
+-    b.span(p.ceramic, [ox_table - 0.14, my0 + 0.87, oz_table - 0.14], [ox_table + 0.14, my0 + 1.04, oz_table + 0.14]);
++    b.span(
++        p.ceramic,
++        [ox_table - 0.14, my0 + 0.87, oz_table - 0.14],
++        [ox_table + 0.14, my0 + 1.04, oz_table + 0.14],
++    );
+     for bz_off in [-1.38f32, 1.38] {
+-        b.span(p.timber, [ox_table - 0.36, my0 + 0.10, oz_table + bz_off - 0.20], [ox_table + 0.36, my0 + 0.52, oz_table + bz_off + 0.20]);
+-        b.span(cushion, [ox_table - 0.34, my0 + 0.52, oz_table + bz_off - 0.18], [ox_table + 0.34, my0 + 0.57, oz_table + bz_off + 0.18]);
++        b.span(
++            p.timber,
++            [ox_table - 0.36, my0 + 0.10, oz_table + bz_off - 0.20],
++            [ox_table + 0.36, my0 + 0.52, oz_table + bz_off + 0.20],
++        );
++        b.span(
++            cushion,
++            [ox_table - 0.34, my0 + 0.52, oz_table + bz_off - 0.18],
++            [ox_table + 0.34, my0 + 0.57, oz_table + bz_off + 0.18],
++        );
+     }
+ 
+     // ---- ground-floor living room modern fireplace hearth & minimalist wall art (z = 136.8..141.2) ----
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1350:
+     // Architectural travertine chimney breast along the east interior wall (x = 11.15..11.68) with warm glowing firebox
+-    b.span(travertine, [11.15, floor_top, 137.0], [11.68, g - 0.02, 139.2]);
+-    b.span(concrete, [10.85, floor_top, 136.75], [11.68, floor_top + 0.28, 139.45]);
+-    b.span(p.metal, [11.10, floor_top + 0.36, 137.45], [11.22, floor_top + 0.98, 138.75]);
+-    b.span(p.glow, [11.14, floor_top + 0.42, 137.58], [11.26, floor_top + 0.68, 138.62]);
++    b.span(
++        travertine,
++        [11.15, floor_top, 137.0],
++        [11.68, g - 0.02, 139.2],
++    );
++    b.span(
++        concrete,
++        [10.85, floor_top, 136.75],
++        [11.68, floor_top + 0.28, 139.45],
++    );
++    b.span(
++        p.metal,
++        [11.10, floor_top + 0.36, 137.45],
++        [11.22, floor_top + 0.98, 138.75],
++    );
++    b.span(
++        p.glow,
++        [11.14, floor_top + 0.42, 137.58],
++        [11.26, floor_top + 0.68, 138.62],
++    );
+     // Framed canvas triptych on the rear dining wall (z = 147.62)
+     for art_i in 0..3 {
+         let ax = -5.8 + art_i as f32 * 1.05;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1358:
+-        b.span(p.metal, [ax - 0.38, floor_top + 1.25, 147.60], [ax + 0.38, floor_top + 2.15, 147.66]);
+-        b.span(fabric(art_i + 1), [ax - 0.34, floor_top + 1.29, 147.57], [ax + 0.34, floor_top + 2.11, 147.61]);
++        b.span(
++            p.metal,
++            [ax - 0.38, floor_top + 1.25, 147.60],
++            [ax + 0.38, floor_top + 2.15, 147.66],
++        );
++        b.span(
++            fabric(art_i + 1),
++            [ax - 0.34, floor_top + 1.29, 147.57],
++            [ax + 0.34, floor_top + 2.11, 147.61],
++        );
+     }
+ 
+     Villa {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/main.rs:1:
+ //! Native street walk: original procedural scene by default, imported Bistro via --bistro.
+-mod benchmark_cycle;
+ mod aa_validation;
++mod benchmark_cycle;
+ #[path = "../../src/controls.rs"]
+ mod controls;
+ mod day_cycle;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/main.rs:755:
+         let simulation_elapsed = if self.offscreen_benchmark
+             && (self.benchmark > 0. || self.world_ray_audit_frames > 0)
+         {
+-            if self.render_every_physics_step { benchmark_cycle::PHYSICS_DT } else { 0.25 }
++            if self.render_every_physics_step {
++                benchmark_cycle::PHYSICS_DT
++            } else {
++                0.25
++            }
+         } else {
+             elapsed
+         };
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/main.rs:1202:
+                 report["consumer_zero_audit"] = consumer_zero_audit(gpu)?;
+             }
+             report["software_traversal_work"] = software_traversal_work(gpu)?;
+-            let paired_requested = std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE").as_deref() == Ok("1");
++            let paired_requested =
++                std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE").as_deref() == Ok("1");
+             if paired_requested {
+-                let proof = gpu.renderer.world_ray_same_producer_comparison()?.ok_or("same-producer comparison requires one shared source owner")?;
+-                let tiles = gpu.renderer.world_ray_frame_tiles().ok_or("missing paired frame tiles")?;
+-                let per_kind: u64 = tiles.iter().map(|t|u64::from(t[2])*u64::from(t[3])).sum();
+-                let expected = per_kind * (gpu.renderer.world_ray_region_count()/tiles.len()) as u64 * gpu.renderer.world_ray_query_encoded_frames();
++                let proof = gpu
++                    .renderer
++                    .world_ray_same_producer_comparison()?
++                    .ok_or("same-producer comparison requires one shared source owner")?;
++                let tiles = gpu
++                    .renderer
++                    .world_ray_frame_tiles()
++                    .ok_or("missing paired frame tiles")?;
++                let per_kind: u64 = tiles
++                    .iter()
++                    .map(|t| u64::from(t[2]) * u64::from(t[3]))
++                    .sum();
++                let expected = per_kind
++                    * (gpu.renderer.world_ray_region_count() / tiles.len()) as u64
++                    * gpu.renderer.world_ray_query_encoded_frames();
+                 report["same_producer_expected_records"] = expected.into();
+                 report["same_producer_comparison"] = proof;
+             }
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/main.rs:1219:
+                 .map(PathBuf::from)
+                 .unwrap_or_else(|| PathBuf::from("/tmp/voxy-street-world-ray-audit.json"));
+             std::fs::write(&path, serde_json::to_vec_pretty(&report)?)?;
+-            if paired_requested && (report["same_producer_comparison"]["all_protected_words_equal"] != true
+-                || report["same_producer_comparison"]["compared_records"] != report["same_producer_expected_records"]
+-                || report["same_producer_comparison"]["explicitly_admitted_records"].as_u64().unwrap_or(0) == 0
+-                || report["same_producer_comparison"]["matched_hit_records"].as_u64().unwrap_or(0) == 0
+-                || report["same_producer_comparison"]["actual_consumer_HDR"]["all_native_words_equal_and_finite"] != true
+-                || report["same_producer_comparison"]["actual_consumer_HDR"]["compared_pixels"] != report["same_producer_expected_records"]) {
++            if paired_requested
++                && (report["same_producer_comparison"]["all_protected_words_equal"] != true
++                    || report["same_producer_comparison"]["compared_records"]
++                        != report["same_producer_expected_records"]
++                    || report["same_producer_comparison"]["explicitly_admitted_records"]
++                        .as_u64()
++                        .unwrap_or(0)
++                        == 0
++                    || report["same_producer_comparison"]["matched_hit_records"]
++                        .as_u64()
++                        .unwrap_or(0)
++                        == 0
++                    || report["same_producer_comparison"]["actual_consumer_HDR"]["all_native_words_equal_and_finite"]
++                        != true
++                    || report["same_producer_comparison"]["actual_consumer_HDR"]["compared_pixels"]
++                        != report["same_producer_expected_records"])
++            {
+                 return Err("same-producer traversal native-word comparison failed; complete report retained".into());
+             }
+ 
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/main.rs:1452:
+                 self.offscreen_benchmark,
+                 self.render_every_physics_step,
+                 gpu.renderer.opaque_ray_capture_enabled(),
+-                self.simulation_steps-self.measure_simulation_steps,
++                self.simulation_steps - self.measure_simulation_steps,
+                 &self.durations,
+             );
+-            report["rendered_every_physics_step"] = rendered_cycle.every_physics_step_rendered.into();
++            report["rendered_every_physics_step"] =
++                rendered_cycle.every_physics_step_rendered.into();
+             report["complete_120Hz_rendered_motion_cycles"] = rendered_cycle.complete_cycles.into();
+-            report["minimum_120_completed_frame_fps_passed"] = rendered_cycle.minimum_120_completed_fps.into();
++            report["minimum_120_completed_frame_fps_passed"] =
++                rendered_cycle.minimum_120_completed_fps.into();
+             report["water_scope"] = serde_json::json!({"start":self.measure_water_start,"end":gpu.renderer.water_render_stats()});
+             report["spawn_pool"] = self.spawn_pool.into();
+             report["replay_state_schema"] = "camera-weather-water-v2".into();
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/main.rs:2085:
+         return Err("world ray audit requires at least four offscreen frames, world-ray mode, and no timed benchmark/profile/AA comparison".into());
+     }
+     if std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE").as_deref() == Ok("1")
+-        && (app.world_ray_audit_frames < 4 || !app.offscreen_benchmark || app.benchmark > 0.
+-            || std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref()==Ok("1")
+-            || std::env::var("VOXY_STREET_WORLD_RAY_FRAME").as_deref()!=Ok("1")
+-            || std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref()!=Ok("1")
+-            || std::env::var("VOXY_STREET_WORLD_RAY_WORK_STATS").as_deref()==Ok("1")) {
++        && (app.world_ray_audit_frames < 4
++            || !app.offscreen_benchmark
++            || app.benchmark > 0.
++            || std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref() == Ok("1")
++            || std::env::var("VOXY_STREET_WORLD_RAY_FRAME").as_deref() != Ok("1")
++            || std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref() != Ok("1")
++            || std::env::var("VOXY_STREET_WORLD_RAY_WORK_STATS").as_deref() == Ok("1"))
++    {
+         return Err("same-producer comparison requires full-frame wide offscreen world ray audit without timing profile or work statistics".into());
+     }
+-    if app.render_every_physics_step && (!app.offscreen_benchmark || app.benchmark <= 0. || app.world_ray_audit_frames > 0 || profile.is_some()) {
++    if app.render_every_physics_step
++        && (!app.offscreen_benchmark
++            || app.benchmark <= 0.
++            || app.world_ray_audit_frames > 0
++            || profile.is_some())
++    {
+         return Err("--offscreen-render-every-step requires an offscreen timed benchmark without audit/profile mode".into());
+     }
+     app.profile = profile;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1313:
+                 let tone = (b.aged() * stone_tones.len() as f32) as usize;
+                 let wear = if b.aged() < track * 0.9 * damage.min(1.) {
+                     2
+-                } else { usize::from(b.aged() < 0.45 * damage.min(1.)) };
++                } else {
++                    usize::from(b.aged() < 0.45 * damage.min(1.))
++                };
+                 old_stones[tone][wear]
+             };
+             let disorder = if relaid { 0.3 } else { 0.25 + 0.75 * damage };
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1881:
+                 for chain_x in [6.72f32, 7.08] {
+                     b.block(metal, [side * chain_x, 3.24, sign_z], [0.025, 0.18, 0.025]);
+                 }
+-                b.block(kit.woods[2], [side * 6.90, 2.98, sign_z], [0.46, 0.34, 0.04]);
++                b.block(
++                    kit.woods[2],
++                    [side * 6.90, 2.98, sign_z],
++                    [0.46, 0.34, 0.04],
++                );
+                 b.block(trim, [side * 6.90, 2.98, sign_z], [0.38, 0.24, 0.05]);
+                 // Sidewalk bistro café tables, chairs, and porcelain cups under the awning.
+                 for tz_off in [-1.45f32, 1.45] {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1891:
+                     b.block(metal, [tx, 0.40, tz], [0.045, 0.64, 0.045]);
+                     b.block(kit.ceramic, [tx, 0.73, tz], [0.58, 0.035, 0.58]);
+                     b.block(metal, [tx, 0.725, tz], [0.60, 0.025, 0.60]);
+-                    b.block(kit.ceramic, [tx - side * 0.10, 0.775, tz - 0.08], [0.09, 0.06, 0.09]);
+-                    b.block(kit.ceramic, [tx + side * 0.08, 0.76, tz + 0.10], [0.12, 0.02, 0.12]);
++                    b.block(
++                        kit.ceramic,
++                        [tx - side * 0.10, 0.775, tz - 0.08],
++                        [0.09, 0.06, 0.09],
++                    );
++                    b.block(
++                        kit.ceramic,
++                        [tx + side * 0.08, 0.76, tz + 0.10],
++                        [0.12, 0.02, 0.12],
++                    );
+                     for cz_dir in [-1.0f32, 1.0] {
+                         let cz = tz + cz_dir * 0.48;
+                         b.block(timber, [tx, 0.44, cz], [0.36, 0.035, 0.36]);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1899:
+-                        b.block(
+-                            timber,
+-                            [tx, 0.66, cz + cz_dir * 0.16],
+-                            [0.36, 0.42, 0.035],
+-                        );
++                        b.block(timber, [tx, 0.66, cz + cz_dir * 0.16], [0.36, 0.42, 0.035]);
+                         for lx in [-0.15f32, 0.15] {
+                             for lz in [-0.15f32, 0.15] {
+-                                b.block(
+-                                    metal,
+-                                    [tx + lx, 0.22, cz + lz],
+-                                    [0.025, 0.42, 0.025],
+-                                );
++                                b.block(metal, [tx + lx, 0.22, cz + lz], [0.025, 0.42, 0.025]);
+                             }
+                         }
+                     }
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/original.rs:1969:
+                     b.block(trim, [fx, 0.09, fz], [0.42, 0.08, 0.42]);
+                     b.block(metal, [fx, 0.56, fz], [0.18, 0.86, 0.18]);
+                     b.block(metal, [fx, 1.02, fz], [0.24, 0.08, 0.24]);
+-                    b.put(bulb, Vec3::new(fx, 1.10, fz), Vec3::splat(0.12), Quat::IDENTITY);
+-                    b.block(kit.ceramic, [fx - side * 0.16, 0.62, fz], [0.22, 0.08, 0.26]);
++                    b.put(
++                        bulb,
++                        Vec3::new(fx, 1.10, fz),
++                        Vec3::splat(0.12),
++                        Quat::IDENTITY,
++                    );
++                    b.block(
++                        kit.ceramic,
++                        [fx - side * 0.16, 0.62, fz],
++                        [0.22, 0.08, 0.26],
++                    );
+                     b.block(metal, [fx - side * 0.11, 0.74, fz], [0.12, 0.03, 0.03]);
+                 }
+             } else if house % 3 != 0 {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:691:
+     let (px0, px1, pz0, pz1) = (6.8f32, 10.4f32, 114.6f32, 123.8f32);
+     let py0 = 0.12f32;
+     let py_deck = DECK;
+-    b.span(travertine, [px0 - 0.2, py0, pz0 - 0.2], [px1 + 0.2, py_deck, pz1 + 0.2]);
++    b.span(
++        travertine,
++        [px0 - 0.2, py0, pz0 - 0.2],
++        [px1 + 0.2, py_deck, pz1 + 0.2],
++    );
+     // Step stones linking the main pool deck to the pergola terrace
+     for z_step in [116.8f32, 119.2, 121.6] {
+         b.span(
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:786:
+ 
+     // ---- west garden sunken fire-pit lounge & courtyard benches ----
+     let (fx, fz) = (-9.2f32, 118.5f32);
+-    b.span(travertine, [fx - 2.3, 0.12, fz - 2.3], [fx + 2.3, 0.18, fz + 2.3]);
+-    b.span(concrete, [fx - 0.65, 0.18, fz - 0.65], [fx + 0.65, 0.52, fz + 0.65]);
+-    b.span(p.metal, [fx - 0.48, 0.52, fz - 0.48], [fx + 0.48, 0.56, fz + 0.48]);
+-    b.span(p.glow, [fx - 0.28, 0.56, fz - 0.28], [fx + 0.28, 0.62, fz + 0.28]);
++    b.span(
++        travertine,
++        [fx - 2.3, 0.12, fz - 2.3],
++        [fx + 2.3, 0.18, fz + 2.3],
++    );
++    b.span(
++        concrete,
++        [fx - 0.65, 0.18, fz - 0.65],
++        [fx + 0.65, 0.52, fz + 0.65],
++    );
++    b.span(
++        p.metal,
++        [fx - 0.48, 0.52, fz - 0.48],
++        [fx + 0.48, 0.56, fz + 0.48],
++    );
++    b.span(
++        p.glow,
++        [fx - 0.28, 0.56, fz - 0.28],
++        [fx + 0.28, 0.62, fz + 0.28],
++    );
+     for (bx0, bx1, bz0, bz1) in [
+         (fx - 2.0, fx - 1.35, fz - 1.5, fz + 1.5),
+         (fx + 1.35, fx + 2.0, fz - 1.5, fz + 1.5),
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:796:
+         (fx - 1.2, fx + 1.2, fz - 2.0, fz - 1.35),
+     ] {
+         b.span(p.timber, [bx0, 0.18, bz0], [bx1, 0.46, bz1]);
+-        b.span(cushion, [bx0 + 0.04, 0.46, bz0 + 0.04], [bx1 - 0.04, 0.54, bz1 - 0.04]);
++        b.span(
++            cushion,
++            [bx0 + 0.04, 0.46, bz0 + 0.04],
++            [bx1 - 0.04, 0.54, bz1 - 0.04],
++        );
+     }
+     // Forecourt garden benches and glazed ceramic amphora planters at z = 85.8
+     for side in [-1.0f32, 1.0] {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:806:
+             b.span(p.metal, [lx - 0.04, 0.06, 85.54], [lx + 0.04, 0.38, 85.96]);
+         }
+         let vx = side * 4.5;
+-        b.span(p.ceramic, [vx - 0.28, 0.06, 85.45], [vx + 0.28, 0.58, 86.05]);
+-        b.span(p.foliage, [vx - 0.34, 0.58, 85.40], [vx + 0.34, 1.05, 86.10]);
++        b.span(
++            p.ceramic,
++            [vx - 0.28, 0.06, 85.45],
++            [vx + 0.28, 0.58, 86.05],
++        );
++        b.span(
++            p.foliage,
++            [vx - 0.34, 0.58, 85.40],
++            [vx + 0.34, 1.05, 86.10],
++        );
+     }
+ 
+     // ---- villa: glazed ground floor, cantilevered upper storey, flat roof ----
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1053:
+     b.span(p.wood, [-6.5, u0 + 0.02, 145.6], [-2.2, u0 + 2.25, 146.15]);
+     b.span(p.timber, [-5.4, u0 + 0.72, 138.8], [-3.4, u0 + 0.76, 139.7]);
+     for lx in [-5.3f32, -3.5] {
+-        b.span(p.metal, [lx - 0.03, u0 + 0.02, 138.85], [lx + 0.03, u0 + 0.72, 139.65]);
++        b.span(
++            p.metal,
++            [lx - 0.03, u0 + 0.02, 138.85],
++            [lx + 0.03, u0 + 0.72, 139.65],
++        );
+     }
+-    b.span(p.ceramic, [-4.6, u0 + 0.76, 139.1], [-4.2, u0 + 0.98, 139.4]);
++    b.span(
++        p.ceramic,
++        [-4.6, u0 + 0.76, 139.1],
++        [-4.2, u0 + 0.98, 139.4],
++    );
+     // Rooftop terrace loungers and glass table over the west wing (x = -11.5 .. -9.3)
+     for rz in [136.8f32, 139.6] {
+-        b.span(p.timber, [-11.3, u0, rz - 0.32], [-9.6, u0 + 0.28, rz + 0.32]);
+-        b.span(cushion, [-11.25, u0 + 0.28, rz - 0.28], [-9.65, u0 + 0.36, rz + 0.28]);
++        b.span(
++            p.timber,
++            [-11.3, u0, rz - 0.32],
++            [-9.6, u0 + 0.28, rz + 0.32],
++        );
++        b.span(
++            cushion,
++            [-11.25, u0 + 0.28, rz - 0.28],
++            [-9.65, u0 + 0.36, rz + 0.28],
++        );
+     }
+     b.span(p.metal, [-10.7, u0, 138.0], [-10.1, u0 + 0.42, 138.4]);
+-    b.span(p.glass, [-10.8, u0 + 0.42, 137.9], [-10.0, u0 + 0.45, 138.5]);
++    b.span(
++        p.glass,
++        [-10.8, u0 + 0.42, 137.9],
++        [-10.0, u0 + 0.45, 138.5],
++    );
+     // Ground-floor living room library console, ceramic sculpture & indoor planter
+-    b.span(p.wood, [-11.65, floor_top, 136.5], [-11.15, floor_top + 1.85, 140.2]);
+-    b.span(p.ceramic, [0.4, floor_top + 0.38, 137.75], [0.72, floor_top + 0.56, 138.05]);
+-    b.span(p.ceramic, [3.9, floor_top, 135.2], [4.4, floor_top + 0.48, 135.7]);
+-    b.span(p.foliage, [3.85, floor_top + 0.48, 135.15], [4.45, floor_top + 1.25, 135.75]);
++    b.span(
++        p.wood,
++        [-11.65, floor_top, 136.5],
++        [-11.15, floor_top + 1.85, 140.2],
++    );
++    b.span(
++        p.ceramic,
++        [0.4, floor_top + 0.38, 137.75],
++        [0.72, floor_top + 0.56, 138.05],
++    );
++    b.span(
++        p.ceramic,
++        [3.9, floor_top, 135.2],
++        [4.4, floor_top + 0.48, 135.7],
++    );
++    b.span(
++        p.foliage,
++        [3.85, floor_top + 0.48, 135.15],
++        [4.45, floor_top + 1.25, 135.75],
++    );
+ 
+     // ---- garden trees ----
+     for (tx, tz, h, r) in [
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1152:
+     );
+     for side in [-1.0f32, 1.0] {
+         let bx = side * 3.8;
+-        b.span(p.timber, [bx - 0.85, 0.18, 150.35], [bx + 0.85, 0.46, 150.85]);
+-        b.span(cushion, [bx - 0.80, 0.46, 150.38], [bx + 0.80, 0.52, 150.82]);
++        b.span(
++            p.timber,
++            [bx - 0.85, 0.18, 150.35],
++            [bx + 0.85, 0.46, 150.85],
++        );
++        b.span(
++            cushion,
++            [bx - 0.80, 0.46, 150.38],
++            [bx + 0.80, 0.52, 150.82],
++        );
+         let px = side * 5.6;
+-        b.span(p.ceramic, [px - 0.32, 0.18, 149.6], [px + 0.32, 0.66, 150.2]);
+-        b.span(p.foliage, [px - 0.38, 0.66, 149.55], [px + 0.38, 1.35, 150.25]);
++        b.span(
++            p.ceramic,
++            [px - 0.32, 0.18, 149.6],
++            [px + 0.32, 0.66, 150.2],
++        );
++        b.span(
++            p.foliage,
++            [px - 0.38, 0.66, 149.55],
++            [px + 0.38, 1.35, 150.25],
++        );
+     }
+ 
+     // ---- additional villa interior & terrace details ----
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1163:
+     // Poolside dining table centerpiece (ceramic fruit bowl & glass carafe)
+-    b.span(p.ceramic, [-5.05, DECK + 0.76, 124.45], [-4.75, DECK + 0.84, 124.75]);
+-    b.span(p.glass, [-4.85, DECK + 0.76, 124.92], [-4.73, DECK + 0.98, 125.04]);
++    b.span(
++        p.ceramic,
++        [-5.05, DECK + 0.76, 124.45],
++        [-4.75, DECK + 0.84, 124.75],
++    );
++    b.span(
++        p.glass,
++        [-4.85, DECK + 0.76, 124.92],
++        [-4.73, DECK + 0.98, 125.04],
++    );
+     // Living room coffee table art books & ceramic tea set, plus bar stools at kitchen island
+-    b.span(p.ceramic, [0.85, floor_top + 0.38, 137.85], [1.12, floor_top + 0.44, 138.12]);
++    b.span(
++        p.ceramic,
++        [0.85, floor_top + 0.38, 137.85],
++        [1.12, floor_top + 0.44, 138.12],
++    );
+     for i in 0..3 {
+         let sx = 6.5 + i as f32 * 1.1;
+         let sz = 140.55;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1171:
+-        b.span(p.metal, [sx - 0.025, floor_top, sz - 0.025], [sx + 0.025, floor_top + 0.62, sz + 0.025]);
+-        b.span(p.metal, [sx - 0.17, floor_top + 0.01, sz - 0.17], [sx + 0.17, floor_top + 0.03, sz + 0.17]);
+-        b.span(fabric(2 + i), [sx - 0.18, floor_top + 0.62, sz - 0.18], [sx + 0.18, floor_top + 0.68, sz + 0.18]);
++        b.span(
++            p.metal,
++            [sx - 0.025, floor_top, sz - 0.025],
++            [sx + 0.025, floor_top + 0.62, sz + 0.025],
++        );
++        b.span(
++            p.metal,
++            [sx - 0.17, floor_top + 0.01, sz - 0.17],
++            [sx + 0.17, floor_top + 0.03, sz + 0.17],
++        );
++        b.span(
++            fabric(2 + i),
++            [sx - 0.18, floor_top + 0.62, sz - 0.18],
++            [sx + 0.18, floor_top + 0.68, sz + 0.18],
++        );
+     }
+     // Upstairs bedroom nightstands, reading lamps & wardrobe along the east wall
+     for nz in [139.55f32, 142.65] {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1177:
+-        b.span(p.timber, [3.25, u0, nz - 0.24], [3.75, u0 + 0.48, nz + 0.24]);
+-        b.span(p.ceramic, [3.42, u0 + 0.48, nz - 0.08], [3.58, u0 + 0.68, nz + 0.08]);
++        b.span(
++            p.timber,
++            [3.25, u0, nz - 0.24],
++            [3.75, u0 + 0.48, nz + 0.24],
++        );
++        b.span(
++            p.ceramic,
++            [3.42, u0 + 0.48, nz - 0.08],
++            [3.58, u0 + 0.68, nz + 0.08],
++        );
+     }
+     b.span(p.wood, [10.85, u0 + 0.02, 138.5], [11.55, u0 + 2.35, 143.5]);
+ 
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1184:
+     let gy0 = 0.12f32;
+     let gy_wall = gy0 + 1.95;
+     let gy_ridge = gy0 + 2.55;
+-    b.span(travertine, [gx0 - 0.15, gy0, gz0 - 0.15], [gx1 + 0.15, gy0 + 0.08, gz1 + 0.15]);
++    b.span(
++        travertine,
++        [gx0 - 0.15, gy0, gz0 - 0.15],
++        [gx1 + 0.15, gy0 + 0.08, gz1 + 0.15],
++    );
+     // Low brick/travertine knee wall around the conservatory perimeter
+     for (lo, hi) in [
+         ([gx0, gy0 + 0.08, gz0], [gx1, gy0 + 0.48, gz0 + 0.12]),
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1198:
+     // Slim dark-steel greenhouse columns, eaves beams, and ridge beam
+     for &cz in &[gz0, gz0 + 2.1, gz1 - 2.1, gz1] {
+         for &cx in &[gx0, gx1] {
+-            b.span(p.metal, [cx - 0.035, gy0 + 0.08, cz - 0.035], [cx + 0.035, gy_wall, cz + 0.035]);
++            b.span(
++                p.metal,
++                [cx - 0.035, gy0 + 0.08, cz - 0.035],
++                [cx + 0.035, gy_wall, cz + 0.035],
++            );
+         }
+         let gx_mid = (gx0 + gx1) * 0.5;
+-        b.beam(p.metal, Vec3::new(gx0, gy_wall, cz), Vec3::new(gx_mid, gy_ridge, cz), 0.035);
+-        b.beam(p.metal, Vec3::new(gx1, gy_wall, cz), Vec3::new(gx_mid, gy_ridge, cz), 0.035);
++        b.beam(
++            p.metal,
++            Vec3::new(gx0, gy_wall, cz),
++            Vec3::new(gx_mid, gy_ridge, cz),
++            0.035,
++        );
++        b.beam(
++            p.metal,
++            Vec3::new(gx1, gy_wall, cz),
++            Vec3::new(gx_mid, gy_ridge, cz),
++            0.035,
++        );
+     }
+     for &cx in &[gx0, gx1] {
+-        b.span(p.metal, [cx - 0.035, gy_wall - 0.04, gz0], [cx + 0.035, gy_wall + 0.02, gz1]);
++        b.span(
++            p.metal,
++            [cx - 0.035, gy_wall - 0.04, gz0],
++            [cx + 0.035, gy_wall + 0.02, gz1],
++        );
+     }
+     b.span(
+         p.metal,
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1213:
+         [(gx0 + gx1) * 0.5 + 0.04, gy_ridge + 0.02, gz1],
+     );
+     // Glazed side walls and pitched glass roof panels
+-    b.span(p.glass, [gx1 - 0.05, gy0 + 0.48, gz0 + 0.08], [gx1 - 0.02, gy_wall - 0.04, gz1 - 0.08]);
+-    b.span(p.glass, [gx0 + 0.08, gy0 + 0.48, gz0 + 0.02], [gx1 - 0.08, gy_wall - 0.04, gz0 + 0.05]);
+-    b.span(p.glass, [gx0 + 0.08, gy0 + 0.48, gz1 - 0.05], [gx1 - 0.08, gy_wall - 0.04, gz1 - 0.02]);
++    b.span(
++        p.glass,
++        [gx1 - 0.05, gy0 + 0.48, gz0 + 0.08],
++        [gx1 - 0.02, gy_wall - 0.04, gz1 - 0.08],
++    );
++    b.span(
++        p.glass,
++        [gx0 + 0.08, gy0 + 0.48, gz0 + 0.02],
++        [gx1 - 0.08, gy_wall - 0.04, gz0 + 0.05],
++    );
++    b.span(
++        p.glass,
++        [gx0 + 0.08, gy0 + 0.48, gz1 - 0.05],
++        [gx1 - 0.08, gy_wall - 0.04, gz1 - 0.02],
++    );
+     // Interior botanical tables, terracotta/ceramic planters, and citrus saplings inside the conservatory
+-    b.span(p.timber, [gx1 - 0.85, gy0 + 0.08, gz0 + 0.45], [gx1 - 0.25, gy0 + 0.78, gz1 - 0.45]);
++    b.span(
++        p.timber,
++        [gx1 - 0.85, gy0 + 0.08, gz0 + 0.45],
++        [gx1 - 0.25, gy0 + 0.78, gz1 - 0.45],
++    );
+     for pz in [gz0 + 1.1, gz0 + 2.4, gz0 + 3.8, gz0 + 5.1] {
+-        b.span(p.ceramic, [gx1 - 0.72, gy0 + 0.78, pz - 0.22], [gx1 - 0.38, gy0 + 1.08, pz + 0.22]);
+-        b.span(p.foliage, [gx1 - 0.78, gy0 + 1.08, pz - 0.28], [gx1 - 0.32, gy0 + 1.58, pz + 0.28]);
++        b.span(
++            p.ceramic,
++            [gx1 - 0.72, gy0 + 0.78, pz - 0.22],
++            [gx1 - 0.38, gy0 + 1.08, pz + 0.22],
++        );
++        b.span(
++            p.foliage,
++            [gx1 - 0.78, gy0 + 1.08, pz - 0.28],
++            [gx1 - 0.32, gy0 + 1.58, pz + 0.28],
++        );
+     }
+     for pz in [gz0 + 1.2, gz1 - 1.2] {
+-        b.span(p.ceramic, [gx0 + 0.35, gy0 + 0.08, pz - 0.28], [gx0 + 0.90, gy0 + 0.52, pz + 0.28]);
++        b.span(
++            p.ceramic,
++            [gx0 + 0.35, gy0 + 0.08, pz - 0.28],
++            [gx0 + 0.90, gy0 + 0.52, pz + 0.28],
++        );
+         tree(b, p, Vec3::new(gx0 + 0.62, gy0 + 0.52, pz), 1.45, 0.55, 18);
+     }
+ 
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1231:
+     for i in 0..6 {
+         let cz = 112.5 + i as f32 * 2.3;
+         for cx in [-13.4f32, -11.8] {
+-            b.span(travertine, [cx - 0.16, 0.12, cz - 0.16], [cx + 0.16, 2.35, cz + 0.16]);
+-            b.span(p.trim, [cx - 0.22, 0.12, cz - 0.22], [cx + 0.22, 0.24, cz + 0.22]);
+-            b.span(p.trim, [cx - 0.22, 2.25, cz - 0.22], [cx + 0.22, 2.38, cz + 0.22]);
++            b.span(
++                travertine,
++                [cx - 0.16, 0.12, cz - 0.16],
++                [cx + 0.16, 2.35, cz + 0.16],
++            );
++            b.span(
++                p.trim,
++                [cx - 0.22, 0.12, cz - 0.22],
++                [cx + 0.22, 0.24, cz + 0.22],
++            );
++            b.span(
++                p.trim,
++                [cx - 0.22, 2.25, cz - 0.22],
++                [cx + 0.22, 2.38, cz + 0.22],
++            );
+         }
+-        b.span(p.timber, [-13.65, 2.46, cz - 0.06], [-11.55, 2.58, cz + 0.06]);
++        b.span(
++            p.timber,
++            [-13.65, 2.46, cz - 0.06],
++            [-11.55, 2.58, cz + 0.06],
++        );
+     }
+     for cx in [-13.4f32, -11.8] {
+         b.span(p.timber, [cx - 0.07, 2.38, 112.1], [cx + 0.07, 2.48, 124.4]);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1245:
+     // ---- rooftop solar array & architectural skylight on the upper roof (y = u1 + 0.3) ----
+     let roof_top = u1 + 0.3;
+     // Framed glass skylight over the upper stairwell/gallery
+-    b.span(p.metal, [-7.8, roof_top, 141.0], [-4.6, roof_top + 0.18, 143.6]);
+-    b.span(p.glass, [-7.65, roof_top + 0.18, 141.15], [-4.75, roof_top + 0.22, 143.45]);
++    b.span(
++        p.metal,
++        [-7.8, roof_top, 141.0],
++        [-4.6, roof_top + 0.18, 143.6],
++    );
++    b.span(
++        p.glass,
++        [-7.65, roof_top + 0.18, 141.15],
++        [-4.75, roof_top + 0.22, 143.45],
++    );
+     // Angled photovoltaic solar panels on the east half of the roof
+     for row in 0..2 {
+         let sz = 139.2 + row as f32 * 3.1;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1253:
+         for col in 0..4 {
+             let sx = -1.5 + col as f32 * 2.6;
+-            b.span(p.metal, [sx - 0.9, roof_top, sz - 0.55], [sx + 0.9, roof_top + 0.14, sz - 0.45]);
+-            b.span(p.metal, [sx - 0.9, roof_top, sz + 0.45], [sx + 0.9, roof_top + 0.38, sz + 0.55]);
++            b.span(
++                p.metal,
++                [sx - 0.9, roof_top, sz - 0.55],
++                [sx + 0.9, roof_top + 0.14, sz - 0.45],
++            );
++            b.span(
++                p.metal,
++                [sx - 0.9, roof_top, sz + 0.45],
++                [sx + 0.9, roof_top + 0.38, sz + 0.55],
++            );
+             b.put(
+                 mosaic_dark,
+                 Vec3::new(sx, roof_top + 0.28, sz),
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1265:
+ 
+     // ---- poolside outdoor shower alcove & towel cabana (x = -6.2..-5.2, z = 127.6..130.0) ----
+     // Architectural travertine privacy screen, teak duckboard grating, chrome rain-shower column, and towel rack
+-    b.span(travertine, [-6.15, DECK, 127.7], [-5.92, DECK + 2.25, 129.9]);
+-    b.span(cladding, [-6.18, DECK + 0.12, 127.85], [-6.15, DECK + 2.15, 129.75]);
++    b.span(
++        travertine,
++        [-6.15, DECK, 127.7],
++        [-5.92, DECK + 2.25, 129.9],
++    );
++    b.span(
++        cladding,
++        [-6.18, DECK + 0.12, 127.85],
++        [-6.15, DECK + 2.15, 129.75],
++    );
+     for slat in 0..7 {
+         let sz = 127.95 + slat as f32 * 0.28;
+-        b.span(p.timber, [-5.90, DECK, sz - 0.08], [-5.25, DECK + 0.035, sz + 0.08]);
++        b.span(
++            p.timber,
++            [-5.90, DECK, sz - 0.08],
++            [-5.25, DECK + 0.035, sz + 0.08],
++        );
+     }
+-    b.span(chrome, [-5.92, DECK + 0.04, 128.76], [-5.86, DECK + 2.10, 128.84]);
+-    b.span(chrome, [-5.86, DECK + 2.06, 128.76], [-5.48, DECK + 2.10, 128.84]);
+-    b.span(chrome, [-5.62, DECK + 2.02, 128.66], [-5.38, DECK + 2.06, 128.94]);
+-    b.span(chrome, [-5.90, DECK + 1.05, 128.72], [-5.82, DECK + 1.12, 128.88]);
++    b.span(
++        chrome,
++        [-5.92, DECK + 0.04, 128.76],
++        [-5.86, DECK + 2.10, 128.84],
++    );
++    b.span(
++        chrome,
++        [-5.86, DECK + 2.06, 128.76],
++        [-5.48, DECK + 2.10, 128.84],
++    );
++    b.span(
++        chrome,
++        [-5.62, DECK + 2.02, 128.66],
++        [-5.38, DECK + 2.06, 128.94],
++    );
++    b.span(
++        chrome,
++        [-5.90, DECK + 1.05, 128.72],
++        [-5.82, DECK + 1.12, 128.88],
++    );
+     // Towel rack bench and folded pool towels beside the shower
+-    b.span(p.timber, [-5.88, DECK, 129.25], [-5.42, DECK + 0.46, 129.82]);
+-    b.span(towel, [-5.82, DECK + 0.46, 129.32], [-5.48, DECK + 0.54, 129.75]);
++    b.span(
++        p.timber,
++        [-5.88, DECK, 129.25],
++        [-5.42, DECK + 0.46, 129.82],
++    );
++    b.span(
++        towel,
++        [-5.82, DECK + 0.46, 129.32],
++        [-5.48, DECK + 0.54, 129.75],
++    );
+ 
+     // ---- southwest zen meditation timber pavilion & bamboo screen (x = -14.1..-12.3, z = 136.0..144.0) ----
+     let (mx0, mx1, mz0, mz1) = (-14.1f32, -12.35f32, 136.2f32, 143.8f32);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1284:
+     let my0 = 0.12f32;
+     let my_deck = 0.26f32;
+-    b.span(concrete, [mx0 + 0.08, my0, mz0 + 0.08], [mx1 - 0.08, my_deck - 0.04, mz1 - 0.08]);
++    b.span(
++        concrete,
++        [mx0 + 0.08, my0, mz0 + 0.08],
++        [mx1 - 0.08, my_deck - 0.04, mz1 - 0.08],
++    );
+     b.span(p.timber, [mx0, my_deck - 0.04, mz0], [mx1, my_deck, mz1]);
+     // Stepping stones from the west colonnade/lawn to the meditation deck
+     for sz in [133.4f32, 134.8] {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1290:
+-        b.span(travertine, [-13.4, my0, sz - 0.32], [-12.5, my0 + 0.05, sz + 0.32]);
++        b.span(
++            travertine,
++            [-13.4, my0, sz - 0.32],
++            [-12.5, my0 + 0.05, sz + 0.32],
++        );
+     }
+     // Low Japanese chabudai tea table and floor zabuton cushions on the timber deck
+     let tz_center = (mz0 + mz1) * 0.5;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1294:
+     let tx_center = (mx0 + mx1) * 0.5;
+-    b.span(p.wood, [tx_center - 0.42, my_deck + 0.24, tz_center - 0.65], [tx_center + 0.42, my_deck + 0.29, tz_center + 0.65]);
++    b.span(
++        p.wood,
++        [tx_center - 0.42, my_deck + 0.24, tz_center - 0.65],
++        [tx_center + 0.42, my_deck + 0.29, tz_center + 0.65],
++    );
+     for (lx, lz) in [(-0.34, -0.55), (0.34, -0.55), (-0.34, 0.55), (0.34, 0.55)] {
+-        b.span(p.wood, [tx_center + lx - 0.03, my_deck, tz_center + lz - 0.03], [tx_center + lx + 0.03, my_deck + 0.24, tz_center + lz + 0.03]);
++        b.span(
++            p.wood,
++            [tx_center + lx - 0.03, my_deck, tz_center + lz - 0.03],
++            [tx_center + lx + 0.03, my_deck + 0.24, tz_center + lz + 0.03],
++        );
+     }
+-    b.span(p.ceramic, [tx_center - 0.10, my_deck + 0.29, tz_center - 0.10], [tx_center + 0.10, my_deck + 0.40, tz_center + 0.10]);
++    b.span(
++        p.ceramic,
++        [tx_center - 0.10, my_deck + 0.29, tz_center - 0.10],
++        [tx_center + 0.10, my_deck + 0.40, tz_center + 0.10],
++    );
+     for (cz, col_idx) in [(tz_center - 1.15, 0usize), (tz_center + 1.15, 1)] {
+-        b.span(fabric(col_idx), [tx_center - 0.36, my_deck, cz - 0.36], [tx_center + 0.36, my_deck + 0.08, cz + 0.36]);
++        b.span(
++            fabric(col_idx),
++            [tx_center - 0.36, my_deck, cz - 0.36],
++            [tx_center + 0.36, my_deck + 0.08, cz + 0.36],
++        );
+     }
+     // Carved stone lantern (Toro) and bamboo/foliage planter screen along the outer edge
+-    b.span(travertine, [mx0 + 0.18, my_deck, mz1 - 0.85], [mx0 + 0.58, my_deck + 0.12, mz1 - 0.45]);
+-    b.span(travertine, [mx0 + 0.28, my_deck + 0.12, mz1 - 0.75], [mx0 + 0.48, my_deck + 0.68, mz1 - 0.55]);
+-    b.span(p.glow, [mx0 + 0.26, my_deck + 0.68, mz1 - 0.77], [mx0 + 0.50, my_deck + 0.90, mz1 - 0.53]);
+-    b.span(travertine, [mx0 + 0.14, my_deck + 0.90, mz1 - 0.89], [mx0 + 0.62, my_deck + 1.04, mz1 - 0.41]);
++    b.span(
++        travertine,
++        [mx0 + 0.18, my_deck, mz1 - 0.85],
++        [mx0 + 0.58, my_deck + 0.12, mz1 - 0.45],
++    );
++    b.span(
++        travertine,
++        [mx0 + 0.28, my_deck + 0.12, mz1 - 0.75],
++        [mx0 + 0.48, my_deck + 0.68, mz1 - 0.55],
++    );
++    b.span(
++        p.glow,
++        [mx0 + 0.26, my_deck + 0.68, mz1 - 0.77],
++        [mx0 + 0.50, my_deck + 0.90, mz1 - 0.53],
++    );
++    b.span(
++        travertine,
++        [mx0 + 0.14, my_deck + 0.90, mz1 - 0.89],
++        [mx0 + 0.62, my_deck + 1.04, mz1 - 0.41],
++    );
+     for i in 0..5 {
+         let bz = mz0 + 0.7 + i as f32 * 1.45;
+-        b.span(p.ceramic, [mx0 - 0.35, my0, bz - 0.22], [mx0 - 0.04, my0 + 0.38, bz + 0.22]);
+-        b.span(p.foliage, [mx0 - 0.38, my0 + 0.38, bz - 0.26], [mx0 - 0.02, my0 + 1.85, bz + 0.26]);
++        b.span(
++            p.ceramic,
++            [mx0 - 0.35, my0, bz - 0.22],
++            [mx0 - 0.04, my0 + 0.38, bz + 0.22],
++        );
++        b.span(
++            p.foliage,
++            [mx0 - 0.38, my0 + 0.38, bz - 0.26],
++            [mx0 - 0.02, my0 + 1.85, bz + 0.26],
++        );
+     }
+ 
+     // ---- southeast wood-fired outdoor pizza oven & alfresco dining terrace (x = 12.35..14.1, z = 136.2..143.8) ----
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1316:
+     b.span(travertine, [ox0, my0, oz0], [ox1, my0 + 0.10, oz1]);
+     // Stepping stones from the east conservatory/pergola lawn to the alfresco terrace
+     for sz in [133.4f32, 134.8] {
+-        b.span(travertine, [12.5, my0, sz - 0.32], [13.4, my0 + 0.05, sz + 0.32]);
++        b.span(
++            travertine,
++            [12.5, my0, sz - 0.32],
++            [13.4, my0 + 0.05, sz + 0.32],
++        );
+     }
+     // Brick and stucco wood-fired pizza oven with stacked firewood niche, dome, chimney, and glowing hearth
+     let oz_oven = oz1 - 1.15;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1323:
+-    b.span(render, [ox1 - 1.15, my0 + 0.10, oz_oven - 0.75], [ox1 - 0.12, my0 + 0.92, oz_oven + 0.75]);
+-    b.span(travertine, [ox1 - 1.20, my0 + 0.92, oz_oven - 0.80], [ox1 - 0.08, my0 + 0.98, oz_oven + 0.80]);
++    b.span(
++        render,
++        [ox1 - 1.15, my0 + 0.10, oz_oven - 0.75],
++        [ox1 - 0.12, my0 + 0.92, oz_oven + 0.75],
++    );
++    b.span(
++        travertine,
++        [ox1 - 1.20, my0 + 0.92, oz_oven - 0.80],
++        [ox1 - 0.08, my0 + 0.98, oz_oven + 0.80],
++    );
+     // Firewood logs stacked in the lower base niche
+     for log_i in 0..4 {
+         let lz = oz_oven - 0.36 + log_i as f32 * 0.24;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1328:
+-        b.span(p.trunk, [ox1 - 1.10, my0 + 0.16, lz - 0.08], [ox1 - 0.35, my0 + 0.34, lz + 0.08]);
++        b.span(
++            p.trunk,
++            [ox1 - 1.10, my0 + 0.16, lz - 0.08],
++            [ox1 - 0.35, my0 + 0.34, lz + 0.08],
++        );
+     }
+     // Brick oven dome, glowing ember hearth, and blackened steel flue chimney
+-    b.span(garden_wall, [ox1 - 1.05, my0 + 0.98, oz_oven - 0.62], [ox1 - 0.18, my0 + 1.62, oz_oven + 0.62]);
+-    b.span(p.ceramic, [ox1 - 0.96, my0 + 1.62, oz_oven - 0.52], [ox1 - 0.26, my0 + 1.78, oz_oven + 0.52]);
+-    b.span(p.glow, [ox1 - 1.06, my0 + 1.04, oz_oven - 0.26], [ox1 - 0.88, my0 + 1.34, oz_oven + 0.26]);
+-    b.span(p.metal, [ox1 - 0.72, my0 + 1.78, oz_oven - 0.12], [ox1 - 0.50, my0 + 2.58, oz_oven + 0.12]);
+-    b.span(p.metal, [ox1 - 0.78, my0 + 2.58, oz_oven - 0.18], [ox1 - 0.44, my0 + 2.64, oz_oven + 0.18]);
++    b.span(
++        garden_wall,
++        [ox1 - 1.05, my0 + 0.98, oz_oven - 0.62],
++        [ox1 - 0.18, my0 + 1.62, oz_oven + 0.62],
++    );
++    b.span(
++        p.ceramic,
++        [ox1 - 0.96, my0 + 1.62, oz_oven - 0.52],
++        [ox1 - 0.26, my0 + 1.78, oz_oven + 0.52],
++    );
++    b.span(
++        p.glow,
++        [ox1 - 1.06, my0 + 1.04, oz_oven - 0.26],
++        [ox1 - 0.88, my0 + 1.34, oz_oven + 0.26],
++    );
++    b.span(
++        p.metal,
++        [ox1 - 0.72, my0 + 1.78, oz_oven - 0.12],
++        [ox1 - 0.50, my0 + 2.58, oz_oven + 0.12],
++    );
++    b.span(
++        p.metal,
++        [ox1 - 0.78, my0 + 2.58, oz_oven - 0.18],
++        [ox1 - 0.44, my0 + 2.64, oz_oven + 0.18],
++    );
+     // Alfresco teak dining table, benches, and terracotta herb pots in the northern half of the terrace
+     let oz_table = oz0 + 2.25;
+     let ox_table = (ox0 + ox1) * 0.5;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1339:
+-    b.span(p.timber, [ox_table - 0.44, my0 + 0.82, oz_table - 1.05], [ox_table + 0.44, my0 + 0.87, oz_table + 1.05]);
++    b.span(
++        p.timber,
++        [ox_table - 0.44, my0 + 0.82, oz_table - 1.05],
++        [ox_table + 0.44, my0 + 0.87, oz_table + 1.05],
++    );
+     for (lx, lz) in [(-0.36, -0.92), (0.36, -0.92), (-0.36, 0.92), (0.36, 0.92)] {
+-        b.span(p.metal, [ox_table + lx - 0.03, my0 + 0.10, oz_table + lz - 0.03], [ox_table + lx + 0.03, my0 + 0.82, oz_table + lz + 0.03]);
++        b.span(
++            p.metal,
++            [ox_table + lx - 0.03, my0 + 0.10, oz_table + lz - 0.03],
++            [ox_table + lx + 0.03, my0 + 0.82, oz_table + lz + 0.03],
++        );
+     }
+-    b.span(p.ceramic, [ox_table - 0.14, my0 + 0.87, oz_table - 0.14], [ox_table + 0.14, my0 + 1.04, oz_table + 0.14]);
++    b.span(
++        p.ceramic,
++        [ox_table - 0.14, my0 + 0.87, oz_table - 0.14],
++        [ox_table + 0.14, my0 + 1.04, oz_table + 0.14],
++    );
+     for bz_off in [-1.38f32, 1.38] {
+-        b.span(p.timber, [ox_table - 0.36, my0 + 0.10, oz_table + bz_off - 0.20], [ox_table + 0.36, my0 + 0.52, oz_table + bz_off + 0.20]);
+-        b.span(cushion, [ox_table - 0.34, my0 + 0.52, oz_table + bz_off - 0.18], [ox_table + 0.34, my0 + 0.57, oz_table + bz_off + 0.18]);
++        b.span(
++            p.timber,
++            [ox_table - 0.36, my0 + 0.10, oz_table + bz_off - 0.20],
++            [ox_table + 0.36, my0 + 0.52, oz_table + bz_off + 0.20],
++        );
++        b.span(
++            cushion,
++            [ox_table - 0.34, my0 + 0.52, oz_table + bz_off - 0.18],
++            [ox_table + 0.34, my0 + 0.57, oz_table + bz_off + 0.18],
++        );
+     }
+ 
+     // ---- ground-floor living room modern fireplace hearth & minimalist wall art (z = 136.8..141.2) ----
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1350:
+     // Architectural travertine chimney breast along the east interior wall (x = 11.15..11.68) with warm glowing firebox
+-    b.span(travertine, [11.15, floor_top, 137.0], [11.68, g - 0.02, 139.2]);
+-    b.span(concrete, [10.85, floor_top, 136.75], [11.68, floor_top + 0.28, 139.45]);
+-    b.span(p.metal, [11.10, floor_top + 0.36, 137.45], [11.22, floor_top + 0.98, 138.75]);
+-    b.span(p.glow, [11.14, floor_top + 0.42, 137.58], [11.26, floor_top + 0.68, 138.62]);
++    b.span(
++        travertine,
++        [11.15, floor_top, 137.0],
++        [11.68, g - 0.02, 139.2],
++    );
++    b.span(
++        concrete,
++        [10.85, floor_top, 136.75],
++        [11.68, floor_top + 0.28, 139.45],
++    );
++    b.span(
++        p.metal,
++        [11.10, floor_top + 0.36, 137.45],
++        [11.22, floor_top + 0.98, 138.75],
++    );
++    b.span(
++        p.glow,
++        [11.14, floor_top + 0.42, 137.58],
++        [11.26, floor_top + 0.68, 138.62],
++    );
+     // Framed canvas triptych on the rear dining wall (z = 147.62)
+     for art_i in 0..3 {
+         let ax = -5.8 + art_i as f32 * 1.05;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/villa.rs:1358:
+-        b.span(p.metal, [ax - 0.38, floor_top + 1.25, 147.60], [ax + 0.38, floor_top + 2.15, 147.66]);
+-        b.span(fabric(art_i + 1), [ax - 0.34, floor_top + 1.29, 147.57], [ax + 0.34, floor_top + 2.11, 147.61]);
++        b.span(
++            p.metal,
++            [ax - 0.38, floor_top + 1.25, 147.60],
++            [ax + 0.38, floor_top + 2.15, 147.66],
++        );
++        b.span(
++            fabric(art_i + 1),
++            [ax - 0.34, floor_top + 1.29, 147.57],
++            [ax + 0.34, floor_top + 2.11, 147.61],
++        );
+     }
+ 
+     Villa {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/world_ray_lighting.rs:83:
+             exact_vertex_cache: std::env::var("VOXY_STREET_WORLD_RAY_EXACT_VERTEX_CACHE")
+                 .as_deref()
+                 == Ok("1"),
+-            wide_source_nodes: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref() == Ok("1"),
+-            wide_source_near_first: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NEAR_FIRST").as_deref() == Ok("1"),
+-            compare_wide_same_producer: std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE").as_deref() == Ok("1"),
++            wide_source_nodes: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref()
++                == Ok("1"),
++            wide_source_near_first: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NEAR_FIRST")
++                .as_deref()
++                == Ok("1"),
++            compare_wide_same_producer: std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE")
++                .as_deref()
++                == Ok("1"),
+             skip_zero_prefix_multiply: std::env::var(
+                 "VOXY_STREET_WORLD_RAY_SKIP_ZERO_PREFIX_MULTIPLY",
+             )
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/examples/street_walk/world_ray_lighting.rs:179:
+         job.exact_worker_count(),
+         job.exact_workgroup_size()
+     );
+-    eprintln!("STREET WORLD SCHEDULING {}", serde_json::json!({
+-        "kind": format!("{:?}",job.query_kind()),
+-        "wide_source_nodes": job.wide_source_nodes_enabled(),
+-        "wide_source_near_first": job.wide_source_near_first_enabled(),
+-        "wide_source_block_blake3": job.wide_source_digest(),
+-        "source_simplified": false
+-    }));
++    eprintln!(
++        "STREET WORLD SCHEDULING {}",
++        serde_json::json!({
++            "kind": format!("{:?}",job.query_kind()),
++            "wide_source_nodes": job.wide_source_nodes_enabled(),
++            "wide_source_near_first": job.wide_source_near_first_enabled(),
++            "wide_source_block_blake3": job.wide_source_digest(),
++            "source_simplified": false
++        })
++    );
+     if std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_SLOTS").is_some()
+         || std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_WORKERS").is_some()
+     {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/src/animals/fur.rs:280:
+                     vertex.joints = skin_joints;
+                     vertex.weights = skin_weights;
+                 } else if let Some(guide) = guide {
+-                    let influence = ((root.length / result.roots[guide].length).min(1.0)
+-                        * 65535.0)
++                    let influence = ((root.length / result.roots[guide].length).min(1.0) * 65535.0)
+                         .round() as u16;
+                     let tip = (influence as f32 * (t * 2. - 1.).max(0.)).round() as u16;
+                     let mid = if t >= 0.5 {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/src/main.rs:1:
+ const FIXED_DT: f32 = 1.0 / 60.0;
+ const WALK_SPEED: f32 = 5.0;
+-mod cpu_replay;
+ mod animals;
+ mod controls;
++mod cpu_replay;
+ mod frame_profile;
+ mod graphics_options;
+ mod native_plants;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_app/src/main.rs:2650:
+     }
+     let arguments: Vec<_> = std::env::args().skip(1).collect();
+     if let Some(index) = arguments.iter().position(|arg| arg == "--cpu-replay") {
+-        let path = arguments.get(index + 1).ok_or("--cpu-replay requires a CSV path")?;
+-        let scenario = arguments.iter().position(|arg| arg == "--cpu-replay-scenario")
+-            .map(|i| arguments.get(i + 1).map(String::as_str).ok_or("missing CPU replay scenario"))
+-            .transpose()?.unwrap_or("motion");
+-        return cpu_replay::run(std::path::Path::new(path), scenario,
+-            arguments.iter().any(|arg| arg == "--cpu-replay-profile-pose"));
++        let path = arguments
++            .get(index + 1)
++            .ok_or("--cpu-replay requires a CSV path")?;
++        let scenario = arguments
++            .iter()
++            .position(|arg| arg == "--cpu-replay-scenario")
++            .map(|i| {
++                arguments
++                    .get(i + 1)
++                    .map(String::as_str)
++                    .ok_or("missing CPU replay scenario")
++            })
++            .transpose()?
++            .unwrap_or("motion");
++        return cpu_replay::run(
++            std::path::Path::new(path),
++            scenario,
++            arguments
++                .iter()
++                .any(|arg| arg == "--cpu-replay-profile-pose"),
++        );
+     }
+     if arguments.first().is_some_and(|arg| arg == "--vegetation") {
+         let kind = match arguments.get(1).map(String::as_str) {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos/src/female_features.rs:1888:
+             ));
+             assert_eq!(upper.indices(), lower.indices());
+             for mesh in [&upper, &lower] {
+-                let sign = if std::ptr::eq(mesh, &raw const upper) { -1. } else { 1. };
++                let sign = if std::ptr::eq(mesh, &raw const upper) {
++                    -1.
++                } else {
++                    1.
++                };
+                 let center = mesh
+                     .vertices()
+                     .iter()
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos/src/female_lids.rs:888:
+                 maximum_depth = maximum_depth.max(depth);
+                 let _ = std::fmt::Write::write_fmt(
+                     &mut report,
+-                    format_args!(
+-                        "{part},{column},{},{maximum:.9},{depth:.9}\n",
+-                        nodes.len()
+-                    ),
++                    format_args!("{part},{column},{},{maximum:.9},{depth:.9}\n", nodes.len()),
+                 );
+             }
+         }
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor/src/lib.rs:32:
+ mod follow_camera_tests;
+ mod frame_styles;
+ mod game_host;
+-mod ui_action_codecs;
+ mod headless_game;
++mod ui_action_codecs;
+ pub use headless_game::{AnimationSnapshot, HeadlessGame};
+ #[cfg(test)]
+ mod game_host_tests;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:252:
+     }
+     // Two coincident farther events must not survive as ties of a closer hit.
+     let transient_tie_slot = meshes.len() as u32;
+-    meshes.extend([mesh(84.,0.,false,false,false,0),mesh(84.,0.,false,false,false,0),mesh(84.,0.5,false,false,false,0)]);
++    meshes.extend([
++        mesh(84., 0., false, false, false, 0),
++        mesh(84., 0., false, false, false, 0),
++        mesh(84., 0.5, false, false, false, 0),
++    ]);
+     let scene = Arc::new(RayScene::from_archive_candidates(device, &meshes, 0.)?);
+     let mut encoder = device.create_command_encoder(&Default::default());
+     scene.build(&mut encoder);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:613:
+         case.words[12] = 0x80000001;
+         cases.push(case);
+     }
+-    cases.push(ray("farther transient ties discarded by nearer winner",83.5,1.,-2.,hit(transient_tie_slot+2,0.25),hit(transient_tie_slot+2,0.25)));
++    cases.push(ray(
++        "farther transient ties discarded by nearer winner",
++        83.5,
++        1.,
++        -2.,
++        hit(transient_tie_slot + 2, 0.25),
++        hit(transient_tie_slot + 2, 0.25),
++    ));
+     let repeats = if deferred {
+         std::env::var("VOXY_RAY_MATERIAL_SIDES_REPEATS")
+             .ok()
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:668:
+     ));
+     for options in [
+         ExactWorldOptions {
+-            compare_wide_same_producer: true, wide_source_nodes: true,
+-            previous_hit_seed: true, defer_nearest: true, certify_visibility: true,
++            compare_wide_same_producer: true,
++            wide_source_nodes: true,
++            previous_hit_seed: true,
++            defer_nearest: true,
++            certify_visibility: true,
+             ..Default::default()
+         },
+         ExactWorldOptions {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:676:
+-            compare_wide_same_producer: true, defer_nearest: true, certify_visibility: true,
++            compare_wide_same_producer: true,
++            defer_nearest: true,
++            certify_visibility: true,
+             ..Default::default()
+         },
+         ExactWorldOptions {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:680:
+-            compare_wide_same_producer: true, wide_source_nodes: true,
+-            traversal_work_stats: true, defer_nearest: true, certify_visibility: true,
++            compare_wide_same_producer: true,
++            wide_source_nodes: true,
++            traversal_work_stats: true,
++            defer_nearest: true,
++            certify_visibility: true,
+             ..Default::default()
+         },
+         ExactWorldOptions {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:685:
+-            compare_wide_same_producer: true, wide_source_nodes: true,
+-            query_kind: WorldRayQueryKind::HistoryAdmission, guarded_input: true,
+-            defer_nearest: true, certify_visibility: true, ..Default::default()
++            compare_wide_same_producer: true,
++            wide_source_nodes: true,
++            query_kind: WorldRayQueryKind::HistoryAdmission,
++            guarded_input: true,
++            defer_nearest: true,
++            certify_visibility: true,
++            ..Default::default()
+         },
+         ExactWorldOptions {
+             geometry_bounds_check: true,
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:721:
+             native_source_witness: true,
+             ..Default::default()
+         },
+-        ExactWorldOptions { wide_source_near_first: true, ..Default::default() },
++        ExactWorldOptions {
++            wide_source_near_first: true,
++            ..Default::default()
++        },
+     ] {
+         assert!(matches!(
+             WorldRayQueryJob::with_options(device, scene.clone(), &materials, 1, 1, options),
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:754:
+                     exact_vertex_cache: std::env::var("VOXY_RAY_MATERIAL_SIDES_EXACT_VERTEX_CACHE")
+                         .as_deref()
+                         == Ok("1"),
+-                    node_reciprocal: std::env::var("VOXY_RAY_MATERIAL_SIDES_NODE_RECIPROCAL").as_deref() == Ok("1"),
+-                    wide_source_nodes: std::env::var("VOXY_RAY_MATERIAL_SIDES_WIDE_NODES").as_deref() == Ok("1"),
+-            wide_source_near_first: std::env::var("VOXY_RAY_MATERIAL_SIDES_WIDE_NEAR_FIRST").as_deref() == Ok("1"),
+-                    compare_wide_same_producer: std::env::var("VOXY_RAY_MATERIAL_SIDES_COMPARE_WIDE").as_deref() == Ok("1"),
++                    node_reciprocal: std::env::var("VOXY_RAY_MATERIAL_SIDES_NODE_RECIPROCAL")
++                        .as_deref()
++                        == Ok("1"),
++                    wide_source_nodes: std::env::var("VOXY_RAY_MATERIAL_SIDES_WIDE_NODES")
++                        .as_deref()
++                        == Ok("1"),
++                    wide_source_near_first: std::env::var(
++                        "VOXY_RAY_MATERIAL_SIDES_WIDE_NEAR_FIRST",
++                    )
++                    .as_deref()
++                        == Ok("1"),
++                    compare_wide_same_producer: std::env::var(
++                        "VOXY_RAY_MATERIAL_SIDES_COMPARE_WIDE",
++                    )
++                    .as_deref()
++                        == Ok("1"),
+                     skip_zero_prefix_multiply: std::env::var(
+                         "VOXY_RAY_MATERIAL_SIDES_SKIP_ZERO_PREFIX_MULTIPLY",
+                     )
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:808:
+                 },
+             )?;
+             assert_eq!(job.query_kind(), kind);
+-            let wide_requested = std::env::var("VOXY_RAY_MATERIAL_SIDES_WIDE_NODES").as_deref() == Ok("1");
+-            if wide_requested && deferred { assert!(job.wide_source_nodes_enabled(), "small source fixture must actually admit BVH8"); }
++            let wide_requested =
++                std::env::var("VOXY_RAY_MATERIAL_SIDES_WIDE_NODES").as_deref() == Ok("1");
++            if wide_requested && deferred {
++                assert!(
++                    job.wide_source_nodes_enabled(),
++                    "small source fixture must actually admit BVH8"
++                );
++            }
+             if wide_requested {
+                 if let Some(root) = &root {
+-                    std::fs::write(root.join(format!("wide-source-{kind:?}-order-{certify_order}.json")),
+-                        serde_json::to_vec_pretty(&serde_json::json!({"requested":true,"actually_admitted":job.wide_source_nodes_enabled(),"node_reciprocal":job.node_reciprocal_enabled(),"scheduling_block_blake3":job.wide_source_digest(),"original_exact_binary_fallback_retained":true,"performance_qualified":false}))?)?;
++                    std::fs::write(
++                        root.join(format!("wide-source-{kind:?}-order-{certify_order}.json")),
++                        serde_json::to_vec_pretty(
++                            &serde_json::json!({"requested":true,"actually_admitted":job.wide_source_nodes_enabled(),"node_reciprocal":job.node_reciprocal_enabled(),"scheduling_block_blake3":job.wide_source_digest(),"original_exact_binary_fallback_retained":true,"performance_qualified":false}),
++                        )?,
++                    )?;
+                 }
+             }
+ 
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:990:
+                     assert_eq!(w[0], expected.0, "state {} {kind:?}: {w:?}", c.name);
+                     assert_eq!(w[6], expected.1, "source identity {} {kind:?}", c.name);
+                     assert_eq!([w[4], w[5]], [c.words[18], c.words[19]]);
+-                    if c.name == "farther transient ties discarded by nearer winner" {assert_eq!(w[19],0,"superseded farther ties leaked into final nearest result");}
++                    if c.name == "farther transient ties discarded by nearer winner" {
++                        assert_eq!(
++                            w[19], 0,
++                            "superseded farther ties leaked into final nearest result"
++                        );
++                    }
+                     if expected.0 == 1 {
+                         assert_eq!(w[7], 0);
+                         assert_eq!(
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/material_sides_audit.rs:1150:
+                 reports.push(serde_json::json!({"policy":policy,"certify_order":certify_order,"replay":replay,"rays":cases.len(),"routes_miss_winner_candidates_native":routes,"all_expected_states_ids_t_pairs_and_kinds_passed":true,"all_protected_input_words_unchanged":true,"all_input_bytes_unchanged":!deferred,"queue_owns_only_padding_words":[7,11,15]}));
+                 println!("MATERIAL SIDES passed policy={policy} replay={replay} routes={routes:?}");
+                 if let Some(proof) = job.read_same_producer_comparison(queue)? {
+-                    if let Some(root) = &root { std::fs::write(root.join(format!("same-producer-{policy}-order{certify_order}-replay{replay}.json")),serde_json::to_vec_pretty(&proof)?)?; }
+-                    assert_eq!(proof["all_protected_words_equal"], true, "same-producer comparison failed: {proof}");
+-                    let partial = hit_position && std::env::var("VOXY_RAY_MATERIAL_SIDES_PARTIAL").as_deref() == Ok("1");
+-                    assert_eq!(proof["compared_records"], cases.len() as u64 + u64::from(partial), "all requested full and partial records must be compared");
++                    if let Some(root) = &root {
++                        std::fs::write(
++                            root.join(format!(
++                                "same-producer-{policy}-order{certify_order}-replay{replay}.json"
++                            )),
++                            serde_json::to_vec_pretty(&proof)?,
++                        )?;
++                    }
++                    assert_eq!(
++                        proof["all_protected_words_equal"], true,
++                        "same-producer comparison failed: {proof}"
++                    );
++                    let partial = hit_position
++                        && std::env::var("VOXY_RAY_MATERIAL_SIDES_PARTIAL").as_deref() == Ok("1");
++                    assert_eq!(
++                        proof["compared_records"],
++                        cases.len() as u64 + u64::from(partial),
++                        "all requested full and partial records must be compared"
++                    );
+                 }
+-
+             }
+         }
+     }
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/shared_producer_audit.rs:1436:
+         0,
+         16,
+         ExactWorldOptions {
+-            wide_source_nodes: std::env::var("VOXY_RAY_SHARED_POSITION_WIDE_NODES").as_deref() == Ok("1"),
++            wide_source_nodes: std::env::var("VOXY_RAY_SHARED_POSITION_WIDE_NODES").as_deref()
++                == Ok("1"),
+             skip_zero_prefix_multiply: std::env::var(
+                 "VOXY_RAY_SHARED_POSITION_SKIP_ZERO_PREFIX_MULTIPLY",
+             )
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe/src/shared_producer_audit.rs:1481:
+         },
+     )?);
+     if std::env::var("VOXY_RAY_SHARED_POSITION_WIDE_NODES").as_deref() == Ok("1") {
+-        assert!(job.wide_source_nodes_enabled(), "small consumer fixture must actually admit BVH8");
++        assert!(
++            job.wide_source_nodes_enabled(),
++            "small consumer fixture must actually admit BVH8"
++        );
+     }
+     let mut encoder = device.create_command_encoder(&Default::default());
+     job.build_scene(&mut encoder);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/examples/../src/archive_hdr_diagnostics.rs:253:
+     for (name, view) in views {
+         let texture = view.texture();
+         let depth = texture.format() == wgpu::TextureFormat::Depth32Float;
+-        let size = u64::from(texture.width()) * u64::from(texture.height()) * if depth {4} else {16};
++        let size =
++            u64::from(texture.width()) * u64::from(texture.height()) * if depth { 4 } else { 16 };
+         if texture.format() != wgpu::TextureFormat::Depth32Float
+             && texture.usage().contains(wgpu::TextureUsages::COPY_SRC)
+         {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/examples/../src/archive_hdr_diagnostics.rs:328:
+             .filter(|b| u32::from_le_bytes((*b).try_into().unwrap()) & 0x7f800000 == 0x7f800000)
+             .count();
+         if raw {
+-            let suffix = if depth {"r32.bin"} else {"rgba32.bin"};
++            let suffix = if depth { "r32.bin" } else { "rgba32.bin" };
+             std::fs::write(root.join(format!("{name}.{suffix}")), &bytes)?;
+         }
+         stages.push(serde_json::json!({"stage":name,"source_format":format!("{:?}",texture.format()),"size":[texture.width(),texture.height()],"capture_format":if depth {"R32Float bit words, row-major top-down"} else {"RGBA32Float bit words, row-major top-down"},"captured_channels":if depth {1} else {4},"textureLoad_only":true,"finite_source_channels_preserved_exactly":true,"nonfinite_channels":nonfinite,"bytes":bytes.len(),"blake3":blake3::hash(&bytes).to_hex().to_string(),"raw_saved":raw}));
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/examples/../src/archive_hdr_diagnostics.rs:352:
+     raw: bool,
+ ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+     let size = source.size();
+-    if size == 0 || !size.is_multiple_of(4) || !source.usage().contains(wgpu::BufferUsages::COPY_SRC) {
++    if size == 0
++        || !size.is_multiple_of(4)
++        || !source.usage().contains(wgpu::BufferUsages::COPY_SRC)
++    {
+         return Err("native storage diagnostic requires nonempty aligned COPY_SRC buffer".into());
+     }
+     let [staging] = ComputeMemoryBudget::for_device(device).allocate_buffers([
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/examples/hdr_stage_capture.rs:350:
+         }
+         assert_eq!(native_depth.len(), 67 * 5 * 4);
+         assert_eq!(observed.len(), 67 * 5 * 4);
+-        assert_eq!(observed, native_depth, "compact observer must preserve every original depth word");
++        assert_eq!(
++            observed, native_depth,
++            "compact observer must preserve every original depth word"
++        );
+     }
+     let mut chain_subresources = 0usize;
+     let mut chain_words = 0usize;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_compute_gi.rs:358:
+     pub(super) fn world_query_encoded_frames(&self) -> u64 {
+         self.world_frame.as_ref().map_or(0, |f| f.encoded_frames())
+     }
+-    pub(super) fn world_same_producer_comparison(&self, queue: &wgpu::Queue) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+-        match &self.world_frame { Some(frame) => frame.same_producer_comparison(queue), None => Ok(None) }
++    pub(super) fn world_same_producer_comparison(
++        &self,
++        queue: &wgpu::Queue,
++    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
++        match &self.world_frame {
++            Some(frame) => frame.same_producer_comparison(queue),
++            None => Ok(None),
++        }
+     }
+     pub(super) fn world_work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
+         self.world_frame.as_ref()?.work_stats_buffer()
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_hdr_diagnostics.rs:253:
+     for (name, view) in views {
+         let texture = view.texture();
+         let depth = texture.format() == wgpu::TextureFormat::Depth32Float;
+-        let size = u64::from(texture.width()) * u64::from(texture.height()) * if depth {4} else {16};
++        let size =
++            u64::from(texture.width()) * u64::from(texture.height()) * if depth { 4 } else { 16 };
+         if texture.format() != wgpu::TextureFormat::Depth32Float
+             && texture.usage().contains(wgpu::TextureUsages::COPY_SRC)
+         {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_hdr_diagnostics.rs:328:
+             .filter(|b| u32::from_le_bytes((*b).try_into().unwrap()) & 0x7f800000 == 0x7f800000)
+             .count();
+         if raw {
+-            let suffix = if depth {"r32.bin"} else {"rgba32.bin"};
++            let suffix = if depth { "r32.bin" } else { "rgba32.bin" };
+             std::fs::write(root.join(format!("{name}.{suffix}")), &bytes)?;
+         }
+         stages.push(serde_json::json!({"stage":name,"source_format":format!("{:?}",texture.format()),"size":[texture.width(),texture.height()],"capture_format":if depth {"R32Float bit words, row-major top-down"} else {"RGBA32Float bit words, row-major top-down"},"captured_channels":if depth {1} else {4},"textureLoad_only":true,"finite_source_channels_preserved_exactly":true,"nonfinite_channels":nonfinite,"bytes":bytes.len(),"blake3":blake3::hash(&bytes).to_hex().to_string(),"raw_saved":raw}));
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_hdr_diagnostics.rs:352:
+     raw: bool,
+ ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+     let size = source.size();
+-    if size == 0 || !size.is_multiple_of(4) || !source.usage().contains(wgpu::BufferUsages::COPY_SRC) {
++    if size == 0
++        || !size.is_multiple_of(4)
++        || !source.usage().contains(wgpu::BufferUsages::COPY_SRC)
++    {
+         return Err("native storage diagnostic requires nonempty aligned COPY_SRC buffer".into());
+     }
+     let [staging] = ComputeMemoryBudget::for_device(device).allocate_buffers([
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_scene.rs:1964:
+         let view = face.create_view(&Default::default());
+         let mut projector = crate::probe_gi::ProbeProjector::new(&self.device);
+         if let Some(index) = std::env::var_os("VOXY_STREET_PROBE_PROJECTOR_TRACE_INDEX") {
+-            let index = index.to_str().and_then(|s| s.parse::<usize>().ok())
+-                .ok_or_else(|| crate::ComputeError::Validation("invalid projector trace index".into()))?;
++            let index = index
++                .to_str()
++                .and_then(|s| s.parse::<usize>().ok())
++                .ok_or_else(|| {
++                    crate::ComputeError::Validation("invalid projector trace index".into())
++                })?;
+             projector.enable_trace(&self.device, points.len(), index)?;
+         }
+         let saved = (
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_scene.rs:2103:
+                         ));
+                     }
+                     if let Some((gi, ssr)) = self.opaque_lighting_outputs() {
+-                        raster_inputs.push(("probe-actual-gi", gi.create_view(&Default::default())));
+-                        raster_inputs.push(("probe-actual-ssr", ssr.create_view(&Default::default())));
++                        raster_inputs
++                            .push(("probe-actual-gi", gi.create_view(&Default::default())));
++                        raster_inputs
++                            .push(("probe-actual-ssr", ssr.create_view(&Default::default())));
+                     }
+                     crate::archive_hdr_diagnostics::capture_probe_face(
+                         &self.device,
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_scene.rs:2239:
+     }
+     /// Optional completed-frame diagnostics; does not change rendering inputs.
+     fn capture_texture_sources(&self, root: &std::path::Path) -> Result<(), crate::ComputeError> {
+-        std::fs::create_dir(root).map_err(|e| {
+-            crate::ComputeError::Validation(format!("texture source trace: {e}"))
+-        })?;
++        std::fs::create_dir(root)
++            .map_err(|e| crate::ComputeError::Validation(format!("texture source trace: {e}")))?;
+         let mut sources: Vec<(String, &wgpu::Texture)> = self
+             ._textures
+             .iter()
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_scene.rs:2291:
+     fn diagnostic_lighting_material_uniforms(&self) -> Vec<(String, &wgpu::Buffer)> {
+         let mut inputs = vec![
+             ("punctual-lights".to_string(), &*self._lights),
+-            ("environment-intensity".to_string(), &self.environment_bindings.intensity_buffer),
++            (
++                "environment-intensity".to_string(),
++                &self.environment_bindings.intensity_buffer,
++            ),
+             ("probe-grid".to_string(), &*self.probe_grid),
+         ];
+-        inputs.extend(self.materials.iter().enumerate().map(|(index, material)|
+-            (format!("material-{index:04}"), &*material._uniform)));
++        inputs.extend(
++            self.materials
++                .iter()
++                .enumerate()
++                .map(|(index, material)| (format!("material-{index:04}"), &*material._uniform)),
++        );
+         inputs
+     }
+     pub fn capture_hdr_stages(
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_scene.rs:2349:
+                     raw,
+                 )?;
+             proof["scene_camera_uniform"] = crate::archive_hdr_diagnostics::capture_uniform(
+-                &self.device, &self.queue, &self.camera, &root.join("scene-camera-uniform.bin"))?;
++                &self.device,
++                &self.queue,
++                &self.camera,
++                &root.join("scene-camera-uniform.bin"),
++            )?;
+             let mut lighting = serde_json::Map::new();
+             for (name, buffer) in self.diagnostic_lighting_material_uniforms() {
+-                lighting.insert(name.clone(), crate::archive_hdr_diagnostics::capture_uniform(
+-                    &self.device, &self.queue, buffer, &root.join(format!("{name}.bin")))?);
++                lighting.insert(
++                    name.clone(),
++                    crate::archive_hdr_diagnostics::capture_uniform(
++                        &self.device,
++                        &self.queue,
++                        buffer,
++                        &root.join(format!("{name}.bin")),
++                    )?,
++                );
+             }
+             proof["lighting_material_uniforms"] = serde_json::Value::Object(lighting);
+             std::fs::write(root.join("stages.json"), serde_json::to_vec_pretty(&proof)?)?;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_scene.rs:2641:
+     }
+     /// Optional complete last-source-frame stage snapshot, resolved after its GPU fence.
+     #[doc(hidden)]
+-    pub fn world_ray_same_producer_comparison(&self) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+-        match &self.compute_gi { Some(gi) => gi.world_same_producer_comparison(&self.queue), None => Ok(None) }
++    pub fn world_ray_same_producer_comparison(
++        &self,
++    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
++        match &self.compute_gi {
++            Some(gi) => gi.world_same_producer_comparison(&self.queue),
++            None => Ok(None),
++        }
+     }
+     pub fn world_ray_work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
+         self.compute_gi.as_ref()?.world_work_stats_buffer()
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_vertex_invariance_tests.rs:4:
+ #[test]
+ fn scene_vertex_positions_remain_invariant() {
+     let module = naga::front::wgsl::parse_str(&archive_shader_source()).unwrap();
+-    let vertices: Vec<_> = module.entry_points.iter()
+-        .filter(|entry| entry.stage == naga::ShaderStage::Vertex).collect();
+-    assert!(vertices.len() >= 2, "material and shadow pipelines must be covered");
++    let vertices: Vec<_> = module
++        .entry_points
++        .iter()
++        .filter(|entry| entry.stage == naga::ShaderStage::Vertex)
++        .collect();
++    assert!(
++        vertices.len() >= 2,
++        "material and shadow pipelines must be covered"
++    );
+     for entry in vertices {
+         let result = entry.function.result.as_ref().unwrap();
+         let naga::TypeInner::Struct { ref members, .. } = module.types[result.ty].inner else {
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_vertex_invariance_tests.rs:13:
+             panic!("vertex output must expose its position binding");
+         };
+-        let position = members.iter().find(|member| matches!(member.binding,
+-            Some(naga::Binding::BuiltIn(naga::BuiltIn::Position { .. })))).unwrap();
+-        assert!(matches!(position.binding,
+-            Some(naga::Binding::BuiltIn(naga::BuiltIn::Position { invariant: true }))),
+-            "{} lost cross-pass position invariance", entry.name);
++        let position = members
++            .iter()
++            .find(|member| {
++                matches!(
++                    member.binding,
++                    Some(naga::Binding::BuiltIn(naga::BuiltIn::Position { .. }))
++                )
++            })
++            .unwrap();
++        assert!(
++            matches!(
++                position.binding,
++                Some(naga::Binding::BuiltIn(naga::BuiltIn::Position {
++                    invariant: true
++                }))
++            ),
++            "{} lost cross-pass position invariance",
++            entry.name
++        );
+     }
+ }
+ #[cfg(target_os = "macos")]
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_vertex_invariance_tests.rs:23:
+ #[test]
+ fn scene_vertex_position_invariance_survives_metal_translation() {
+     let module = naga::front::wgsl::parse_str(&archive_shader_source()).unwrap();
+-    let info = naga::valid::Validator::new(naga::valid::ValidationFlags::all(),
+-        naga::valid::Capabilities::all()).validate(&module).unwrap();
+-    for entry in module.entry_points.iter().filter(|entry| entry.stage == naga::ShaderStage::Vertex) {
++    let info = naga::valid::Validator::new(
++        naga::valid::ValidationFlags::all(),
++        naga::valid::Capabilities::all(),
++    )
++    .validate(&module)
++    .unwrap();
++    for entry in module
++        .entry_points
++        .iter()
++        .filter(|entry| entry.stage == naga::ShaderStage::Vertex)
++    {
+         let (active, active_info) = naga::back::pipeline_constants::process_overrides(
+-            &module, &info, Some((entry.stage, &entry.name)), &Default::default()).unwrap();
+-        let (metal, translated) = naga::back::msl::write_string(&active, &active_info,
+-            &naga::back::msl::Options { lang_version: (2, 4), ..Default::default() },
+-            &Default::default()).unwrap();
++            &module,
++            &info,
++            Some((entry.stage, &entry.name)),
++            &Default::default(),
++        )
++        .unwrap();
++        let (metal, translated) = naga::back::msl::write_string(
++            &active,
++            &active_info,
++            &naga::back::msl::Options {
++                lang_version: (2, 4),
++                ..Default::default()
++            },
++            &Default::default(),
++        )
++        .unwrap();
+         assert!(translated.entry_point_names.iter().all(Result::is_ok));
+-        assert!(metal.contains("[[position, invariant]]"),
+-            "{} lost the actual Metal position attribute", entry.name);
++        assert!(
++            metal.contains("[[position, invariant]]"),
++            "{} lost the actual Metal position attribute",
++            entry.name
++        );
+     }
+ }
+ 
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_vertex_invariance_tests.rs:44:
+ #[ignore = "actual Metal GPU regression; run alone with VOXY_VERTEX_INVARIANCE_CAPTURE"]
+ fn metal_gpu_position_invariance() -> Result<(), Box<dyn std::error::Error>> {
+     use wgpu::util::DeviceExt;
+-    let root = std::path::PathBuf::from(std::env::var_os("VOXY_VERTEX_INVARIANCE_CAPTURE")
+-        .ok_or("new artifact directory is required")?);
++    let root = std::path::PathBuf::from(
++        std::env::var_os("VOXY_VERTEX_INVARIANCE_CAPTURE")
++            .ok_or("new artifact directory is required")?,
++    );
+     std::fs::create_dir(&root)?;
+     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
+-        backends: wgpu::Backends::METAL, ..wgpu::InstanceDescriptor::new_without_display_handle()
++        backends: wgpu::Backends::METAL,
++        ..wgpu::InstanceDescriptor::new_without_display_handle()
+     });
+     let adapter = pollster::block_on(instance.request_adapter(&Default::default()))?;
+     assert_eq!(adapter.get_info().backend, wgpu::Backend::Metal);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/archive_vertex_invariance_tests.rs:55:
+     assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default()))?;
+-    let source = format!("{}\n@fragment fn capture_position_a(f:Fragment)->@location(0) vec4<f32>{{return f.clip;}}\n@fragment fn capture_position_b(f:Fragment)->@location(0) vec4<f32>{{return vec4<f32>(f.clip.xy,f.clip.zw);}}",archive_shader_source());
++    let source = format!(
++        "{}\n@fragment fn capture_position_a(f:Fragment)->@location(0) vec4<f32>{{return f.clip;}}\n@fragment fn capture_position_b(f:Fragment)->@location(0) vec4<f32>{{return vec4<f32>(f.clip.xy,f.clip.zw);}}",
++        archive_shader_source()
++    );
+     std::fs::write(root.join("actual-shader.wgsl"), &source)?;
+     let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+-        label: Some("actual archive invariant vertex source"), source: wgpu::ShaderSource::Wgsl(source.into())
++        label: Some("actual archive invariant vertex source"),
++        source: wgpu::ShaderSource::Wgsl(source.into()),
+     });
+-    let vertex_attributes = wgpu::vertex_attr_array![0=>Float32x3,1=>Float32x3,2=>Float32x4,3=>Float32x2];
++    let vertex_attributes =
++        wgpu::vertex_attr_array![0=>Float32x3,1=>Float32x3,2=>Float32x4,3=>Float32x2];
+     let instance_attributes = wgpu::vertex_attr_array![4=>Float32x4,5=>Float32x4,6=>Float32x4,7=>Float32x4,8=>Float32x4,9=>Float32x4,10=>Float32x4];
+-    let layouts = [Some(wgpu::VertexBufferLayout {array_stride:48,step_mode:wgpu::VertexStepMode::Vertex,attributes:&vertex_attributes}),Some(wgpu::VertexBufferLayout {array_stride:112,step_mode:wgpu::VertexStepMode::Instance,attributes:&instance_attributes})];
++    let layouts = [
++        Some(wgpu::VertexBufferLayout {
++            array_stride: 48,
++            step_mode: wgpu::VertexStepMode::Vertex,
++            attributes: &vertex_attributes,
++        }),
++        Some(wgpu::VertexBufferLayout {
++            array_stride: 112,
++            step_mode: wgpu::VertexStepMode::Instance,
++            attributes: &instance_attributes,
++        }),
++    ];
+     let mut pipelines = Vec::new();
+-    for (vertex, fragment) in [("vs_main","capture_position_a"),("vs_main","capture_position_b"),("vs_shadow","capture_position_a")] {
+-        pipelines.push(device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+-            label:Some(vertex),layout:None,
+-            vertex:wgpu::VertexState {module:&module,entry_point:Some(vertex),compilation_options:Default::default(),buffers:&layouts},
+-            primitive:Default::default(),depth_stencil:None,multisample:Default::default(),
+-            fragment:Some(wgpu::FragmentState {module:&module,entry_point:Some(fragment),compilation_options:Default::default(),targets:&[Some(wgpu::ColorTargetState {format:wgpu::TextureFormat::Rgba32Float,blend:None,write_mask:wgpu::ColorWrites::ALL})]}),multiview_mask:None,cache:None,
+-        }));
++    for (vertex, fragment) in [
++        ("vs_main", "capture_position_a"),
++        ("vs_main", "capture_position_b"),
++        ("vs_shadow", "capture_position_a"),
++    ] {
++        pipelines.push(
++            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
++                label: Some(vertex),
++                layout: None,
++                vertex: wgpu::VertexState {
++                    module: &module,
++                    entry_point: Some(vertex),
++                    compilation_options: Default::default(),
++                    buffers: &layouts,
++                },
++                primitive: Default::default(),
++                depth_stencil: None,
++                multisample: Default::default(),
++                fragment: Some(wgpu::FragmentState {
++                    module: &module,
++                    entry_point: Some(fragment),
++                    compilation_options: Default::default(),
++                    targets: &[Some(wgpu::ColorTargetState {
++                        format: wgpu::TextureFormat::Rgba32Float,
++                        blend: None,
++                        write_mask: wgpu::ColorWrites::ALL,
++                    })],
++                }),
++                multiview_mask: None,
++                cache: None,
++            }),
++        );
+     }
+     let mut vertices = Vec::<f32>::new();
+-    for y in 0..16 {for x in 0..16 {
+-        let cx=x as f32/8.-0.94;let cy=y as f32/8.-0.94;
+-        let radius=0.025+((x+y)%3) as f32*0.004;
+-        for (dx,dy) in [(-radius,-radius),(radius,-radius),(0.,radius)] {
+-            vertices.extend_from_slice(&[cx+dx,cy+dy,0.,0.,0.,1.,1.,0.,0.,1.,0.,0.]);
++    for y in 0..16 {
++        for x in 0..16 {
++            let cx = x as f32 / 8. - 0.94;
++            let cy = y as f32 / 8. - 0.94;
++            let radius = 0.025 + ((x + y) % 3) as f32 * 0.004;
++            for (dx, dy) in [(-radius, -radius), (radius, -radius), (0., radius)] {
++                vertices.extend_from_slice(&[
++                    cx + dx,
++                    cy + dy,
++                    0.,
++                    0.,
++                    0.,
++                    1.,
++                    1.,
++                    0.,
++                    0.,
++                    1.,
++                    0.,
++                    0.,
++                ]);
++            }
+         }
+-    }}
+-    let input=device.create_buffer_init(&wgpu::util::BufferInitDescriptor {label:Some("original vertex words"),contents:bytemuck::cast_slice(&vertices),usage:wgpu::BufferUsages::VERTEX});
+-    std::fs::write(root.join("original-vertices.bin"),bytemuck::cast_slice(&vertices))?;
+-    let mut compared_words=0usize;let mut covered_pixels=Vec::new();
+-    for (case,translation) in [0f32,8192.,262144.].into_iter().enumerate() {
+-        let mut instance_words=[0f32;28];
+-        let world=glam::Mat4::from_cols(glam::Vec4::new(0.875,0.125,0.,0.),glam::Vec4::new(-0.125,0.875,0.,0.),glam::Vec4::Z,glam::Vec4::new(translation,translation*0.5,-translation,1.));
+-        instance_words[..16].copy_from_slice(&world.to_cols_array());instance_words[16]=1.;instance_words[21]=1.;instance_words[26]=1.;
+-        let copies=device.create_buffer_init(&wgpu::util::BufferInitDescriptor {label:Some("original instance words"),contents:bytemuck::cast_slice(&instance_words),usage:wgpu::BufferUsages::VERTEX});
+-        let vp=glam::Mat4::from_cols(glam::Vec4::X,glam::Vec4::Y,glam::Vec4::new(0.,0.,0.25,0.),glam::Vec4::new(-translation,-translation*0.5,translation*0.25+0.5,1.));
+-        let mut camera_words=[0f32;112];camera_words[..16].copy_from_slice(&vp.to_cols_array());camera_words[16..32].copy_from_slice(&vp.to_cols_array());
+-        let camera=device.create_buffer_init(&wgpu::util::BufferInitDescriptor {label:Some("identical original main/shadow matrices"),contents:bytemuck::cast_slice(&camera_words),usage:wgpu::BufferUsages::UNIFORM});
+-        std::fs::write(root.join(format!("case-{case}-camera.bin")),bytemuck::cast_slice(&camera_words))?;
+-        std::fs::write(root.join(format!("case-{case}-instances.bin")),bytemuck::cast_slice(&instance_words))?;
+-        let mut reference:Option<Vec<u8>>=None;
+-        for (index,pipeline) in pipelines.iter().enumerate() {
+-            let target=device.create_texture(&wgpu::TextureDescriptor {label:Some("actual rasterized position words"),size:wgpu::Extent3d {width:256,height:256,depth_or_array_layers:1},mip_level_count:1,sample_count:1,dimension:wgpu::TextureDimension::D2,format:wgpu::TextureFormat::Rgba32Float,usage:wgpu::TextureUsages::RENDER_ATTACHMENT|wgpu::TextureUsages::COPY_SRC,view_formats:&[]});
+-            let view=target.create_view(&Default::default());
+-            let bind=device.create_bind_group(&wgpu::BindGroupDescriptor {label:None,layout:&pipeline.get_bind_group_layout(0),entries:&[wgpu::BindGroupEntry {binding:0,resource:camera.as_entire_binding()}]});
+-            let mut encoder=device.create_command_encoder(&Default::default());
+-            {let mut pass=encoder.begin_render_pass(&wgpu::RenderPassDescriptor {label:Some("actual production vertex coverage"),color_attachments:&[Some(wgpu::RenderPassColorAttachment {view:&view,depth_slice:None,resolve_target:None,ops:wgpu::Operations {load:wgpu::LoadOp::Clear(wgpu::Color {r:-1.,g:-1.,b:-1.,a:-1.}),store:wgpu::StoreOp::Store}})],..Default::default()});pass.set_pipeline(pipeline);pass.set_bind_group(0,&bind,&[]);pass.set_vertex_buffer(0,input.slice(..));pass.set_vertex_buffer(1,copies.slice(..));pass.draw(0..(vertices.len()/12) as u32,0..1);}
++    }
++    let input = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
++        label: Some("original vertex words"),
++        contents: bytemuck::cast_slice(&vertices),
++        usage: wgpu::BufferUsages::VERTEX,
++    });
++    std::fs::write(
++        root.join("original-vertices.bin"),
++        bytemuck::cast_slice(&vertices),
++    )?;
++    let mut compared_words = 0usize;
++    let mut covered_pixels = Vec::new();
++    for (case, translation) in [0f32, 8192., 262144.].into_iter().enumerate() {
++        let mut instance_words = [0f32; 28];
++        let world = glam::Mat4::from_cols(
++            glam::Vec4::new(0.875, 0.125, 0., 0.),
++            glam::Vec4::new(-0.125, 0.875, 0., 0.),
++            glam::Vec4::Z,
++            glam::Vec4::new(translation, translation * 0.5, -translation, 1.),
++        );
++        instance_words[..16].copy_from_slice(&world.to_cols_array());
++        instance_words[16] = 1.;
++        instance_words[21] = 1.;
++        instance_words[26] = 1.;
++        let copies = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
++            label: Some("original instance words"),
++            contents: bytemuck::cast_slice(&instance_words),
++            usage: wgpu::BufferUsages::VERTEX,
++        });
++        let vp = glam::Mat4::from_cols(
++            glam::Vec4::X,
++            glam::Vec4::Y,
++            glam::Vec4::new(0., 0., 0.25, 0.),
++            glam::Vec4::new(
++                -translation,
++                -translation * 0.5,
++                translation * 0.25 + 0.5,
++                1.,
++            ),
++        );
++        let mut camera_words = [0f32; 112];
++        camera_words[..16].copy_from_slice(&vp.to_cols_array());
++        camera_words[16..32].copy_from_slice(&vp.to_cols_array());
++        let camera = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
++            label: Some("identical original main/shadow matrices"),
++            contents: bytemuck::cast_slice(&camera_words),
++            usage: wgpu::BufferUsages::UNIFORM,
++        });
++        std::fs::write(
++            root.join(format!("case-{case}-camera.bin")),
++            bytemuck::cast_slice(&camera_words),
++        )?;
++        std::fs::write(
++            root.join(format!("case-{case}-instances.bin")),
++            bytemuck::cast_slice(&instance_words),
++        )?;
++        let mut reference: Option<Vec<u8>> = None;
++        for (index, pipeline) in pipelines.iter().enumerate() {
++            let target = device.create_texture(&wgpu::TextureDescriptor {
++                label: Some("actual rasterized position words"),
++                size: wgpu::Extent3d {
++                    width: 256,
++                    height: 256,
++                    depth_or_array_layers: 1,
++                },
++                mip_level_count: 1,
++                sample_count: 1,
++                dimension: wgpu::TextureDimension::D2,
++                format: wgpu::TextureFormat::Rgba32Float,
++                usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
++                view_formats: &[],
++            });
++            let view = target.create_view(&Default::default());
++            let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
++                label: None,
++                layout: &pipeline.get_bind_group_layout(0),
++                entries: &[wgpu::BindGroupEntry {
++                    binding: 0,
++                    resource: camera.as_entire_binding(),
++                }],
++            });
++            let mut encoder = device.create_command_encoder(&Default::default());
++            {
++                let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
++                    label: Some("actual production vertex coverage"),
++                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
++                        view: &view,
++                        depth_slice: None,
++                        resolve_target: None,
++                        ops: wgpu::Operations {
++                            load: wgpu::LoadOp::Clear(wgpu::Color {
++                                r: -1.,
++                                g: -1.,
++                                b: -1.,
++                                a: -1.,
++                            }),
++                            store: wgpu::StoreOp::Store,
++                        },
++                    })],
++                    ..Default::default()
++                });
++                pass.set_pipeline(pipeline);
++                pass.set_bind_group(0, &bind, &[]);
++                pass.set_vertex_buffer(0, input.slice(..));
++                pass.set_vertex_buffer(1, copies.slice(..));
++                pass.draw(0..(vertices.len() / 12) as u32, 0..1);
++            }
+             queue.submit([encoder.finish()]);
+-            let folder=root.join(format!("case-{case}-pipeline-{index}"));
+-            crate::archive_hdr_diagnostics::capture(&device,&queue,vec![("position",view)],None,&folder,true)?;
+-            let actual=std::fs::read(folder.join("position.native.bin"))?;
+-            assert_eq!(actual.len(),256*256*16);
+-            let covered=actual.chunks_exact(16).filter(|pixel|f32::from_le_bytes(pixel[12..16].try_into().unwrap())>0.).count();assert!(covered>512,"test must actually rasterize geometry");
+-            assert!(actual.chunks_exact(4).all(|word|f32::from_le_bytes(word.try_into().unwrap()).is_finite()));
+-            if let Some(expected)=&reference {assert!(actual.as_slice()==expected.as_slice(),"coverage or fragment position differs in case {case} pipeline {index}");compared_words+=actual.len()/4;}else{covered_pixels.push(covered);reference=Some(actual);}
++            let folder = root.join(format!("case-{case}-pipeline-{index}"));
++            crate::archive_hdr_diagnostics::capture(
++                &device,
++                &queue,
++                vec![("position", view)],
++                None,
++                &folder,
++                true,
++            )?;
++            let actual = std::fs::read(folder.join("position.native.bin"))?;
++            assert_eq!(actual.len(), 256 * 256 * 16);
++            let covered = actual
++                .chunks_exact(16)
++                .filter(|pixel| f32::from_le_bytes(pixel[12..16].try_into().unwrap()) > 0.)
++                .count();
++            assert!(covered > 512, "test must actually rasterize geometry");
++            assert!(
++                actual
++                    .chunks_exact(4)
++                    .all(|word| f32::from_le_bytes(word.try_into().unwrap()).is_finite())
++            );
++            if let Some(expected) = &reference {
++                assert!(
++                    actual.as_slice() == expected.as_slice(),
++                    "coverage or fragment position differs in case {case} pipeline {index}"
++                );
++                compared_words += actual.len() / 4;
++            } else {
++                covered_pixels.push(covered);
++                reference = Some(actual);
++            }
+         }
+     }
+-    let proof=serde_json::json!({"status":"actual_Metal_production_vertex_coverage_and_position_words_match_across_pipeline_variants","matrix_cases":3,"pipelines_per_case":3,"original_triangles_per_case":256,"actual_position_words_compared":compared_words,"covered_pixels_per_case":covered_pixels,"CPU_expected_position_results_uploaded":false,"original_shader_position_expressions_replaced":false,"whole_scene_HDR_bug_fixed":false,"minimum_120_fps_qualified":false});
+-    std::fs::write(root.join("proof.json"),serde_json::to_vec_pretty(&proof)?)?;
+-    println!("{proof}");Ok(())
++    let proof = serde_json::json!({"status":"actual_Metal_production_vertex_coverage_and_position_words_match_across_pipeline_variants","matrix_cases":3,"pipelines_per_case":3,"original_triangles_per_case":256,"actual_position_words_compared":compared_words,"covered_pixels_per_case":covered_pixels,"CPU_expected_position_results_uploaded":false,"original_shader_position_expressions_replaced":false,"whole_scene_HDR_bug_fixed":false,"minimum_120_fps_qualified":false});
++    std::fs::write(root.join("proof.json"), serde_json::to_vec_pretty(&proof)?)?;
++    println!("{proof}");
++    Ok(())
+ }
+ 
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_exact_winner_workspace.rs:11:
+     capacity: u32,
+ ) -> Option<Plan> {
+     let slots = slots.unwrap_or(512);
+-    if slots < 16 || slots > 512 || !slots.is_multiple_of(16) || full_workers == 0 || capacity == 0 {
++    if slots < 16 || slots > 512 || !slots.is_multiple_of(16) || full_workers == 0 || capacity == 0
++    {
+         return None;
+     }
+     let available = u64::from(full_workers) * 512 / u64::from(slots);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:246:
+         options: ExactWorldOptions,
+     ) -> Result<Self, RaySceneError> {
+         scene.validate_device(device)?;
+-        if options.wide_source_near_first && !options.wide_source_nodes { return Err(RaySceneError::Unsupported); }
+-        if options.compare_wide_same_producer && (!options.wide_source_nodes || !options.defer_nearest
+-            || options.previous_hit_seed || options.traversal_work_stats || options.history_any_hit
+-            || !matches!(options.query_kind, WorldRayQueryKind::Nearest | WorldRayQueryKind::MaterialSurface)) {
++        if options.wide_source_near_first && !options.wide_source_nodes {
+             return Err(RaySceneError::Unsupported);
+         }
++        if options.compare_wide_same_producer
++            && (!options.wide_source_nodes
++                || !options.defer_nearest
++                || options.previous_hit_seed
++                || options.traversal_work_stats
++                || options.history_any_hit
++                || !matches!(
++                    options.query_kind,
++                    WorldRayQueryKind::Nearest | WorldRayQueryKind::MaterialSurface
++                ))
++        {
++            return Err(RaySceneError::Unsupported);
++        }
+         let visibility = options.query_kind == WorldRayQueryKind::OpaqueVisibility;
+         let history_admission = options.query_kind == WorldRayQueryKind::HistoryAdmission;
+         let material_surface = options.query_kind == WorldRayQueryKind::MaterialSurface;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:476:
+         // and material table. Only the certificate pipeline receives its base.
+         let (wide_base, wide_source_digest) = if options.wide_source_nodes && deferred {
+             let offset = hierarchy[2] as usize;
+-            let words = (hierarchy[1] as usize).checked_mul(8).ok_or(RaySceneError::Capacity)?;
++            let words = (hierarchy[1] as usize)
++                .checked_mul(8)
++                .ok_or(RaySceneError::Capacity)?;
+             let end = offset.checked_add(words).ok_or(RaySceneError::Capacity)?;
+-            let source = hierarchy.get(offset..end).ok_or(RaySceneError::InvalidGeometry)?;
+-            let wide = crate::world_nearest_bvh::wide::convert(bytemuck::cast_slice(source), hierarchy[3])
+-                .map_err(|_| RaySceneError::InvalidGeometry)?;
++            let source = hierarchy
++                .get(offset..end)
++                .ok_or(RaySceneError::InvalidGeometry)?;
++            let wide =
++                crate::world_nearest_bvh::wide::convert(bytemuck::cast_slice(source), hierarchy[3])
++                    .map_err(|_| RaySceneError::InvalidGeometry)?;
+             // Optional scheduling must not turn a supported original scene
+             // into a capacity error. Preflight before allocating/uploading tail.
+-            let final_bytes = wide.packed_word_len().ok()
++            let final_bytes = wide
++                .packed_word_len()
++                .ok()
+                 .and_then(|n| hierarchy.len().checked_add(n))
+                 .and_then(|n| n.checked_mul(4))
+                 .and_then(|n| u64::try_from(n).ok());
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:490:
+-            let fits = final_bytes.is_some_and(|bytes| bytes <= limits.max_storage_buffer_binding_size
+-                && bytes <= limits.max_buffer_size);
++            let fits = final_bytes.is_some_and(|bytes| {
++                bytes <= limits.max_storage_buffer_binding_size && bytes <= limits.max_buffer_size
++            });
+             if fits && wide.pending_capacity <= 64 && wide.root.is_some() {
+                 let base = u32::try_from(hierarchy.len()).map_err(|_| RaySceneError::Capacity)?;
+                 let tail = wide.to_words().map_err(|_| RaySceneError::Capacity)?;
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:495:
+                 let digest = *blake3::hash(bytemuck::cast_slice(&tail)).as_bytes();
+                 hierarchy.extend(tail);
+                 (base, digest)
+-            } else { (0, [0; 32]) }
+-        } else { (0, [0; 32]) };
++            } else {
++                (0, [0; 32])
++            }
++        } else {
++            (0, [0; 32])
++        };
+ 
+         if hierarchy.len() as u64 * 4 > limits.max_storage_buffer_binding_size {
+             return Err(RaySceneError::Capacity);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:772:
+         } else {
+             None
+         };
+-        if options.compare_wide_same_producer && wide_base == 0 { return Err(RaySceneError::Unsupported); }
++        if options.compare_wide_same_producer && wide_base == 0 {
++            return Err(RaySceneError::Unsupported);
++        }
+         let mut original_fast = None;
+         let fast = if deferred {
+             let source = [
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:802:
+                 source: wgpu::ShaderSource::Wgsl(source.into()),
+             });
+             let build = |wide_override: u32| -> Result<_, RaySceneError> {
+-            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+-                label: Some("certificate-only opaque visibility"),
+-                layout: None,
+-                module: &shader,
+-                entry_point: Some("main_visibility_fast"),
+-                compilation_options: wgpu::PipelineCompilationOptions {
+-                    constants: &[
+-                        (
+-                            "WORLD_FAST_DEFER_NONCLEAR",
+-                            if options.defer_nearest { 1. } else { 0. },
+-                        ),
+-                        ("WORLD_HIT_POSITION_BASE", position_base as f64),
+-                        ("WORLD_FAST_STRIDE", if options.hit_uv { 7. } else { 5. }),
+-                        (
+-                            "WORLD_FAST_WORK_STATS",
+-                            if options.traversal_work_stats { 1. } else { 0. },
+-                        ),
+-                        ("WORLD_FAST_CAN_BOUND", if can_bound { 1. } else { 0. }),
+-                        ("WORLD_WIDE_BASE", wide_override as f64),
+-                        ("WORLD_WIDE_NEAR_FIRST", if options.wide_source_near_first && wide_override != 0 {1.} else {0.}),
+-                        (
+-                            "WORLD_SOURCE_MATERIAL_SIDES",
+-                            if material_surface { 1. } else { 0. },
+-                        ),
+-                        (
+-                            "WORLD_FAST_HISTORY_ANY_HIT",
+-                            if history_any_hit { 1. } else { 0. },
+-                        ),
+-                        (
+-                            "WORLD_FAST_NATIVE_WITNESS",
+-                            if native_source_witness { 1. } else { 0. },
+-                        ),
+-                        (
+-                            "WORLD_FAST_NODE_RECIPROCAL",
+-                            if options.node_reciprocal { 1. } else { 0. },
+-                        ),
+-                        (
+-                            "WORLD_FAST_SEPARATE_SEED",
+-                            if options.separate_native_seed { 1. } else { 0. },
+-                        ),
+-                        (
+-                            "WORLD_FAST_PREVIOUS_SEED",
+-                            if options.previous_hit_seed || options.separate_native_seed {
+-                                1.
+-                            } else {
+-                                0.
+-                            },
+-                        ),
+-                    ],
+-                    ..Default::default()
+-                },
+-                cache: None,
+-            });
+-            let group = Self::make_group(
+-                device,
+-                &scene,
+-                &pipeline,
+-                &input,
+-                &output,
+-                &scratch,
+-                &counts,
+-                &hierarchy,
+-                !options.native_seed || options.separate_native_seed,
+-                capacity,
+-                true,
+-                geometry_bounds.as_ref(),
+-                vertex_cache.as_ref(),
+-            )?;
+-            Ok((pipeline, group))
++                let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
++                    label: Some("certificate-only opaque visibility"),
++                    layout: None,
++                    module: &shader,
++                    entry_point: Some("main_visibility_fast"),
++                    compilation_options: wgpu::PipelineCompilationOptions {
++                        constants: &[
++                            (
++                                "WORLD_FAST_DEFER_NONCLEAR",
++                                if options.defer_nearest { 1. } else { 0. },
++                            ),
++                            ("WORLD_HIT_POSITION_BASE", position_base as f64),
++                            ("WORLD_FAST_STRIDE", if options.hit_uv { 7. } else { 5. }),
++                            (
++                                "WORLD_FAST_WORK_STATS",
++                                if options.traversal_work_stats { 1. } else { 0. },
++                            ),
++                            ("WORLD_FAST_CAN_BOUND", if can_bound { 1. } else { 0. }),
++                            ("WORLD_WIDE_BASE", wide_override as f64),
++                            (
++                                "WORLD_WIDE_NEAR_FIRST",
++                                if options.wide_source_near_first && wide_override != 0 {
++                                    1.
++                                } else {
++                                    0.
++                                },
++                            ),
++                            (
++                                "WORLD_SOURCE_MATERIAL_SIDES",
++                                if material_surface { 1. } else { 0. },
++                            ),
++                            (
++                                "WORLD_FAST_HISTORY_ANY_HIT",
++                                if history_any_hit { 1. } else { 0. },
++                            ),
++                            (
++                                "WORLD_FAST_NATIVE_WITNESS",
++                                if native_source_witness { 1. } else { 0. },
++                            ),
++                            (
++                                "WORLD_FAST_NODE_RECIPROCAL",
++                                if options.node_reciprocal { 1. } else { 0. },
++                            ),
++                            (
++                                "WORLD_FAST_SEPARATE_SEED",
++                                if options.separate_native_seed { 1. } else { 0. },
++                            ),
++                            (
++                                "WORLD_FAST_PREVIOUS_SEED",
++                                if options.previous_hit_seed || options.separate_native_seed {
++                                    1.
++                                } else {
++                                    0.
++                                },
++                            ),
++                        ],
++                        ..Default::default()
++                    },
++                    cache: None,
++                });
++                let group = Self::make_group(
++                    device,
++                    &scene,
++                    &pipeline,
++                    &input,
++                    &output,
++                    &scratch,
++                    &counts,
++                    &hierarchy,
++                    !options.native_seed || options.separate_native_seed,
++                    capacity,
++                    true,
++                    geometry_bounds.as_ref(),
++                    vertex_cache.as_ref(),
++                )?;
++                Ok((pipeline, group))
+             };
+-            if options.compare_wide_same_producer { original_fast = Some(build(0)?); }
++            if options.compare_wide_same_producer {
++                original_fast = Some(build(0)?);
++            }
+             Some(build(wide_base)?)
+         } else {
+             None
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:1017:
+         } else {
+             None
+         };
+-        let traversal_pair = original_fast.map(|original| WorldTraversalPair::new(device, &input, &output, output_words,
+-            position_offset.map_or(0, |v| v / 4), original)).transpose()?;
++        let traversal_pair = original_fast
++            .map(|original| {
++                WorldTraversalPair::new(
++                    device,
++                    &input,
++                    &output,
++                    output_words,
++                    position_offset.map_or(0, |v| v / 4),
++                    original,
++                )
++            })
++            .transpose()?;
+         Ok(Self {
+             traversal_pair,
+             geometry_bounds,
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:1311:
+     }
+     #[doc(hidden)]
+     /// Actual admitted scheduling tail, not merely the requested option.
+-    pub const fn wide_source_near_first_enabled(&self) -> bool { self.wide_source_near_first }
+-    pub const fn wide_source_nodes_enabled(&self) -> bool { self.wide_source_base != 0 }
+-    pub const fn wide_source_digest(&self) -> [u8; 32] { self.wide_source_digest }
++    pub const fn wide_source_near_first_enabled(&self) -> bool {
++        self.wide_source_near_first
++    }
++    pub const fn wide_source_nodes_enabled(&self) -> bool {
++        self.wide_source_base != 0
++    }
++    pub const fn wide_source_digest(&self) -> [u8; 32] {
++        self.wide_source_digest
++    }
+     pub const fn skip_zero_prefix_multiply_enabled(&self) -> bool {
+         self.skip_zero_prefix_multiply
+     }
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:1431:
+         self.native_hint.is_some()
+     }
+     pub(crate) fn can_profile_nearest(&self) -> bool {
+-        self.traversal_pair.is_none() && self.fast.is_some() && self.winner.is_some() && self.candidates.is_some()
++        self.traversal_pair.is_none()
++            && self.fast.is_some()
++            && self.winner.is_some()
++            && self.candidates.is_some()
+     }
+     pub(crate) fn encode_profiled(
+         &self,
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:1440:
+         profile: Option<(&wgpu::QuerySet, u32)>,
+     ) -> Result<(), RaySceneError> {
+         if let Some(pair) = &self.traversal_pair {
+-            if profile.is_some() { return Err(RaySceneError::Unsupported); }
++            if profile.is_some() {
++                return Err(RaySceneError::Unsupported);
++            }
+             self.encode_once(encoder, count, None, Some(&pair.original_fast))?;
+-            if count == 0 { return Ok(()); }
++            if count == 0 {
++                return Ok(());
++            }
+             pair.snapshot(encoder, &self.input, &self.output);
+             self.encode_once(encoder, count, None, self.fast.as_ref())?;
+             pair.compare(&self.device, encoder, &self.input, &self.output, count);
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:1453:
+     /// Cumulative diagnostic record count and first protected-word failure.
+     /// No CPU readback occurs during encoding; the caller must fence before reading.
+     pub(crate) fn same_producer_original_buffers(&self) -> Option<(&wgpu::Buffer, &wgpu::Buffer)> {
+-        self.traversal_pair.as_ref().map(|pair| pair.original_buffers())
++        self.traversal_pair
++            .as_ref()
++            .map(|pair| pair.original_buffers())
+     }
+     pub fn same_producer_comparison_buffer(&self) -> Option<&wgpu::Buffer> {
+         self.traversal_pair.as_ref().map(|pair| &*pair.stats)
+Diff in /Users/themoretheless/Documents/Sources/voxy/crates/voxy_render/src/world_nearest_job.rs:1460:
+     }
+-    pub fn read_same_producer_comparison(&self, queue: &wgpu::Queue) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+-        self.traversal_pair.as_ref().map(|pair| {
+-            let mut proof = pair.read_proof(&self.device, queue)?;
+-            proof["output_record_words"] = self.output_words.into();
+-            proof["explicit_producer_admission_required"] = self.guarded_input.into();
+-            proof["world_position_extension_checked"] = self.position_offset.is_some().into();
+-            proof["source_geometry_revision"] = self.scene.geometry_revision().into();
+-            proof["same_exact_integer_pipeline"] = true.into();
+-            proof["expected_query_results_uploaded"] = false.into();
+-            proof["exact_integer_module_blake3"] = serde_json::json!(self.exact_integer_digest);
+-            proof["wide_source_near_first"] = self.wide_source_near_first.into();
+-            proof["wide_source_block_blake3"] = serde_json::json!(self.wide_source_digest);
+-            Ok(proof)
+-        }).transpose()
++    pub fn read_same_producer_comparison(
++        &self,
++        queue: &wgpu::Queue,
++    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
++        self.traversal_pair
++            .as_ref()
++            .map(|pair| {
++                let mut proof = pair.read_proof(&self.device, queue)?;
++                proof["output_record_words"] = self.output_words.into();
++                proof["explicit_producer_admission_required"] = self.guarded_input.into();
++                proof["world_position_extension_checked"] = self.position_offset.is_some().into();
++                proof["source_geometry_revision"] = self.scene.geometry_revision().into();
++                proof["same_exact_integer_pipeline"] = true.into();
++                proof["expected_query_results_uploaded"] = false.into();
++                proof["exact_integer_module_blake3"] = serde_json::json!(self.exact_integer_digest);
++                proof["wide_source_near_first"] = self.wide_source_near_first.into();
++                proof["wide_source_block_blake3"] = serde_json::json!(self.wide_source_digest);
++                Ok(proof)
++            })
++            .transpose()
+     }
+     fn encode_once(
+-        &self, encoder: &mut wgpu::CommandEncoder, count: u32,
++        &self,
++        encoder: &mut wgpu::CommandEncoder,
++        count: u32,
+         profile: Option<(&wgpu::QuerySet, u32)>,
+         fast: Option<&(wgpu::ComputePipeline, wgpu::BindGroup)>,
+     ) -> Result<(), RaySceneError> {

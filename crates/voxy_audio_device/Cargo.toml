@@ -6,6 +6,8 @@ license.workspace = true
 rust-version.workspace = true
 [dependencies]
 cpal = "0.15.3"
+blake3 = "1.8"
+crossbeam-queue = "=0.3.14"
 voxy_audio = { path = "../voxy_audio" }
 [lints]
 workspace = true

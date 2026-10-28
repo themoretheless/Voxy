@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/mrdoob/three.js",
+  "commit": "3efcf0f0a3d8ae5107742cba2f7de81d811f130e",
+  "source": "https://raw.githubusercontent.com/mrdoob/three.js/3efcf0f0a3d8ae5107742cba2f7de81d811f130e/examples/models/gltf/RobotExpressive/RobotExpressive.glb",
+  "license_source": "https://raw.githubusercontent.com/mrdoob/three.js/3efcf0f0a3d8ae5107742cba2f7de81d811f130e/examples/models/gltf/RobotExpressive/README.md",
+  "model_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "license": "CC0 1.0",
+  "authors": [
+    "Tom\u00e1s Laulh\u00e9",
+    "Don McCurdy"
+  ],
+  "license_sha256": "14687ac4a51d5e013b0fbc5486dabc743f76c1e37b7ca872af74cfb93115b4b2"
+}

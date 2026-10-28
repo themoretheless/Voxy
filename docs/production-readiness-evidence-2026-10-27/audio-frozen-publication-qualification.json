@@ -1,0 +1,30 @@
+{
+  "scope": "Exclusive Offline AudioSession publication under the completed source save barrier",
+  "implemented": [
+    "checkpoint_publication_at_barrier polls the original native owner checkpoint without waiting",
+    "Absent or unfinished checkpoint and serialization budget failure reject before owner replacement",
+    "Ordinary publication continues to reject a held save fence",
+    "Dropping admitted permit retains source frames, complete checkpoint and save fence",
+    "Successful publication clears old session checkpoint request and retires old owner workers",
+    "Existing native formats and prepared audio owners reused"
+  ],
+  "checks": {
+    "editor_passed": 317,
+    "editor_ignored": 28,
+    "strict_all_target_clippy": "passed",
+    "scoped_rustfmt": "passed",
+    "tracked_source_diff": "passed",
+    "continuation_steps": 120,
+    "exact_playback_checkpoint_and_peak_comparison": true,
+    "real_wav_owner": true
+  },
+  "not_claimed": [
+    "Native output-device callback queue transfer remains gated; Offline only",
+    "No combined full App/UI/model/audio atomic publication yet",
+    "No new GPU, native window, physical memory or displayed FPS qualification",
+    "Full ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "3ef6848567dafc935cf4383ff584d96c1783977a28c5eaf83b85b3a1dfd3541d"
+  }
+}

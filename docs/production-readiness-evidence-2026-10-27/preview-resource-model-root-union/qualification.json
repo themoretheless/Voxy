@@ -1,0 +1,37 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline native resource archive omitted preview-only external model root",
+    "Runtime roots keep existing indices; preview adds distinct original allocations to same native catalog/model graph",
+    "Optional preview root roles checked for count, uniqueness and bounds before worker construction",
+    "Decoded preview roots share original catalog model allocations and are fresh relative to source allocations",
+    "Resource and combined model/animation archives restore preview-only root after original source directory deletion",
+    "Combined archive rejects preview model root without owning role",
+    "Real retarget preview restores two distinct target/source roots from same resource graph against empty provider root, preserving both catalog aliases",
+    "Three existing native full-session GPU variants remain green"
+  ],
+  "checks": {
+    "focused_root_test_passed": 1,
+    "retarget_test_passed": 1,
+    "native_gpu_session_passed": 3,
+    "editor_passed": 371,
+    "editor_ignored": 38,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "This archives preview model roots, not yet the accepted preview frame/phase in the whole-editor file",
+    "Preview frame alias composition with runtime/GPU remains open",
+    "Two-root retarget provider root is empty; separate one-root test actually deletes source directory",
+    "Native GPU session tests do not qualify GPU preview reconstruction",
+    "No whole-App atomic publication or FPS qualification"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "03fb7b4f5ba1a2f67497790f500ee390c1ad0c1b8dc207b40a93f989c0f524b0",
+    "crates/voxy_editor/src/app/resource_checkpoint/play.rs": "1628c3bcef04d8f906d551404715b24333c7019efe02cffa50b0efcb2b888ab0",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "e7f8471ed3dbb902fb3f99d888ccae16498a71b9cce3b36c05d50de144c2a385",
+    "crates/voxy_editor/src/animation_preview.rs": "51fd070431d0e7f1b893177121a57cc7fd938103e36d25f550fb73f0e9f8e205"
+  }
+}

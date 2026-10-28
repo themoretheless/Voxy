@@ -1,0 +1,27 @@
+{
+  "status": "native_pulsed_emitter_participant_verified",
+  "emission_tests_passed": 10,
+  "strict_physics_all_target_clippy": true,
+  "continuation_intervals": 120,
+  "covered": [
+    "all current PulsedEmitter fields as exact integer words",
+    "elapsed clock and aperture sample sequence",
+    "pulse schedule and template optional transported fields",
+    "moving source velocity",
+    "full subsequent emission and idle tail",
+    "invalid clock pulse capacity rejection",
+    "pending invalid mutable settings remain pending"
+  ],
+  "scope": "Fluid state is cloned in the continuation fixture, not serialized/restored. This is only the native emitter participant, not a liquid-world save.",
+  "remaining": [
+    "bounded file adapter",
+    "complete Liquid materials constitutive transport boundary and particle state",
+    "SceneLiquidRuntime source and body ObjectIds",
+    "PlaySession coordinator"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/emission_checkpoint.rs": "95e0048b8e616f1ca640c0923508d8d97c3b70a70c0572914ce140400fa7426b",
+    "crates/physics/src/liquid/emission.rs": "7aefb404845c16a04e8fbf76cef9555641bdf18d9bd14fdd26e4fcfcf30d2f63",
+    "crates/physics/src/liquid.rs": "d22dafc9c250f0cdab37bbd204f7ff2004deffc0418fbf08c1025a8a3f44d014"
+  }
+}

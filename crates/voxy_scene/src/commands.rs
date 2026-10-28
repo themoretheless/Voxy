@@ -8,7 +8,14 @@ pub enum SceneCommand {
     Reparent(NodeId, Option<NodeId>),
     RemoveSubtree(NodeId),
 }
-trait ComponentChange: Send + Sync + std::fmt::Debug {
+pub(crate) struct ComponentIntent<'a> {
+    owner: NodeId,
+    type_id: std::any::TypeId,
+    value: Option<&'a (dyn std::any::Any + Send + Sync)>,
+}
+pub(crate) trait ComponentChange: Send + Sync + std::fmt::Debug {
+    fn intent(&self) -> ComponentIntent<'_>;
+
     fn apply(self: Box<Self>, scene: &mut SceneGraph) -> Result<(), SceneGraphError>;
 }
 struct Insert<T> {
@@ -24,6 +31,13 @@ impl<T> std::fmt::Debug for Insert<T> {
     }
 }
 impl<T: std::any::Any + Send + Sync> ComponentChange for Insert<T> {
+    fn intent(&self) -> ComponentIntent<'_> {
+        ComponentIntent {
+            owner: self.owner,
+            type_id: std::any::TypeId::of::<T>(),
+            value: Some(&self.value),
+        }
+    }
     fn apply(self: Box<Self>, scene: &mut SceneGraph) -> Result<(), SceneGraphError> {
         scene.insert_component(self.owner, self.value).map(|_| ())
     }
@@ -41,10 +55,35 @@ impl<T> std::fmt::Debug for Remove<T> {
     }
 }
 impl<T: std::any::Any + Send + Sync> ComponentChange for Remove<T> {
+    fn intent(&self) -> ComponentIntent<'_> {
+        ComponentIntent {
+            owner: self.owner,
+            type_id: std::any::TypeId::of::<T>(),
+            value: None,
+        }
+    }
     fn apply(self: Box<Self>, scene: &mut SceneGraph) -> Result<(), SceneGraphError> {
         scene.remove_component::<T>(self.owner).map(|_| ())
     }
 }
+pub(crate) fn decoded_insert<T: std::any::Any + Send + Sync>(
+    owner: NodeId,
+    value: T,
+) -> Box<dyn ComponentChange> {
+    Box::new(Insert { owner, value })
+}
+pub(crate) fn decoded_remove<T: std::any::Any + Send + Sync>(
+    owner: NodeId,
+) -> Box<dyn ComponentChange> {
+    Box::new(Remove::<T> {
+        owner,
+        marker: std::marker::PhantomData,
+    })
+}
+#[path = "command_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{CommandCheckpointError, SceneCommandsCheckpoint};
+
 #[derive(Debug)]
 enum Queued {
     Scene(SceneCommand),

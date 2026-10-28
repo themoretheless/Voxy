@@ -1,0 +1,11 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.17s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 3 tests
+test ui_live::publications::tests::file_bundle_preserves_two_versions_shared_runs_and_retired_owners_for_120_draw_cycles ... ok
+test ui_live::publications::tests::shared_publication_and_distinct_equal_publications_remain_distinguishable ... ok
+test ui_live::publications::tests::corruption_aliases_late_failures_and_aggregate_limits_preserve_the_source ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 287 filtered out; finished in 24.80s
+

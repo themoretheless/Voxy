@@ -1,0 +1,37 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "changes": [
+    "prepared AuthoringProject model relink uses existing AssetLocations binding/relocation, native model importer, source observations and atomic manifest writer",
+    "tick now demands every required CPU model with no catalog entry, fixing newly authored models never importing until scene reload"
+  ],
+  "verified": [
+    "first newly authored model imports through ordinary tick without scene reopen",
+    "preparation decodes new source without altering original manifest or accepted model",
+    "original scene compatibility validator accepts staged candidate",
+    "manifest publication preserves logical ID and unrelated bindings",
+    "ordinary watcher imports new source and preserves full authoring document",
+    "missing, traversal, unsupported and source-collision attempts do not write manifest",
+    "changed new source, external manifest edit and foreign project identity reject publication without overwriting existing data"
+  ],
+  "suite": {
+    "passed": 333,
+    "failed": 0,
+    "ignored": 31
+  },
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/prefab_authoring.rs": "565f9106eb89890b8d65ec6941d1db30ee804856a5e27ae8803a546a5ace987c",
+    "crates/voxy_editor/src/prefab_authoring/model_relink.rs": "339a7cc9c353c9603da796b3561310ec54cb94ed1da3cc45910583f6b587a2ee",
+    "crates/voxy_editor/src/lib.rs": "fef1605c129a3193f0f83ba33f21fba8081d25631da32650f8dc9bb876be7e41"
+  },
+  "limits": [
+    "prepared blocking participant, not connected to UI input or background relink owner yet",
+    "prepare/publish must run on IO worker before UI integration; no synchronous frame-handler calls added",
+    "scene/GPU compatibility and first-presentation handoff still require frontend composition",
+    "trusted local manifest validation plus rename is not cross-writer CAS",
+    "removed-ID rebind branch and external-image relink dependencies still need integrated qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

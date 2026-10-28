@@ -1,0 +1,22 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.29s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 1 test
+test ui_draw::tests::fractional_layout_does_not_round_unclipped_glyph_crop_beyond_one ... FAILED
+
+failures:
+
+---- ui_draw::tests::fractional_layout_does_not_round_unclipped_glyph_crop_beyond_one stdout ----
+
+thread 'ui_draw::tests::fractional_layout_does_not_round_unclipped_glyph_crop_beyond_one' (76401709) panicked at crates/voxy_editor/src/ui_draw.rs:203:48:
+called `Result::unwrap()` on an `Err` value: SpriteBatch(InvalidSprite)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    ui_draw::tests::fractional_layout_does_not_round_unclipped_glyph_crop_beyond_one
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 300 filtered out; finished in 0.08s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

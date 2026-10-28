@@ -1,0 +1,14 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0282]: type annotations needed
+   --> crates/voxy_editor/src/import/node_checkpoint.rs:296:25
+    |
+296 |                         Ok(record)
+    |                         ^^ cannot infer type of the type parameter `E` declared on the enum `Result`
+    |
+help: consider specifying the generic arguments
+    |
+296 |                         Ok::<SceneMeshCheckpoint, E>(record)
+    |                           ++++++++++++++++++++++++++
+
+For more information about this error, try `rustc --explain E0282`.
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

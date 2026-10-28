@@ -1,0 +1,18 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.19s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 2 tests
+test prefab_authoring::model_relink::tests::relink_rejects_changed_inputs_foreign_owner_and_invalid_sources_without_manifest_write ... ok
+MODEL PUBLISHED frames=0 first_x=0 asset=character
+MODEL PUBLISHED frames=0 first_x=2 asset=character
+test prefab_authoring::model_relink::tests::prepared_relink_preserves_id_scene_and_unrelated_bindings_through_normal_reload ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 362 filtered out; finished in 0.25s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-cbe125d7235bbd56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

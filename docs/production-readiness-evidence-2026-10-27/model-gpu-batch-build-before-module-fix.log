@@ -1,0 +1,5563 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0433]: cannot find type `App` in this scope
+ --> crates/voxy_editor/src/tests.rs:7:19
+  |
+7 |     let mut app = App::new(&fixture, false).unwrap();
+  |                   ^^^ use of undeclared type `App`
+  |
+help: consider importing this struct
+  |
+1 + use crate::App;
+  |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+  --> crates/voxy_editor/src/tests.rs:12:18
+   |
+12 |     app.edit_key(KeyCode::F10).unwrap();
+   |                  ^^^^^^^ use of undeclared type `KeyCode`
+   |
+help: consider importing one of these enums
+   |
+ 1 + use crate::KeyCode;
+   |
+ 1 + use winit::keyboard::KeyCode;
+   |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+  --> crates/voxy_editor/src/tests.rs:14:18
+   |
+14 |     app.edit_key(KeyCode::F4).unwrap();
+   |                  ^^^^^^^ use of undeclared type `KeyCode`
+   |
+help: consider importing one of these enums
+   |
+ 1 + use crate::KeyCode;
+   |
+ 1 + use winit::keyboard::KeyCode;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:17:23
+   |
+17 |         .view_pointer(Vec2::new(750., 350.), Vec2::new(1001., 700.))
+   |                       ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+17 -         .view_pointer(Vec2::new(750., 350.), Vec2::new(1001., 700.))
+17 +         .view_pointer(Vec::new(750., 350.), Vec2::new(1001., 700.))
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:17:46
+   |
+17 |         .view_pointer(Vec2::new(750., 350.), Vec2::new(1001., 700.))
+   |                                              ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+17 -         .view_pointer(Vec2::new(750., 350.), Vec2::new(1001., 700.))
+17 +         .view_pointer(Vec2::new(750., 350.), Vec::new(1001., 700.))
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:23:13
+   |
+23 |             Vec2::new(250., 350.),
+   |             ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+23 -             Vec2::new(250., 350.),
+23 +             Vec::new(250., 350.),
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:24:13
+   |
+24 |             Vec2::new(501., 700.),
+   |             ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+24 -             Vec2::new(501., 700.),
+24 +             Vec::new(501., 700.),
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:25:13
+   |
+25 |             Vec2::new(500., 0.)
+   |             ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+25 -             Vec2::new(500., 0.)
+25 +             Vec::new(500., 0.)
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:30:26
+   |
+30 |         app.view_pointer(Vec2::ZERO, Vec2::new(1., 700.))
+   |                          ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+30 -         app.view_pointer(Vec2::ZERO, Vec2::new(1., 700.))
+30 +         app.view_pointer(Vec::ZERO, Vec2::new(1., 700.))
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:30:38
+   |
+30 |         app.view_pointer(Vec2::ZERO, Vec2::new(1., 700.))
+   |                                      ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+30 -         app.view_pointer(Vec2::ZERO, Vec2::new(1., 700.))
+30 +         app.view_pointer(Vec2::ZERO, Vec::new(1., 700.))
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:47:39
+   |
+47 |     app.preview_drag(origin + local + Vec2::new(10., 0.))
+   |                                       ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+47 -     app.preview_drag(origin + local + Vec2::new(10., 0.))
+47 +     app.preview_drag(origin + local + Vec::new(10., 0.))
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:50:22
+   |
+50 |     app.view_pointer(Vec2::new(250., 350.), Vec2::new(1001., 700.))
+   |                      ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+50 -     app.view_pointer(Vec2::new(250., 350.), Vec2::new(1001., 700.))
+50 +     app.view_pointer(Vec::new(250., 350.), Vec2::new(1001., 700.))
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `Vec2` in this scope
+  --> crates/voxy_editor/src/tests.rs:50:45
+   |
+50 |     app.view_pointer(Vec2::new(250., 350.), Vec2::new(1001., 700.))
+   |                                             ^^^^ use of undeclared type `Vec2`
+   |
+help: a struct with a similar name exists
+   |
+50 -     app.view_pointer(Vec2::new(250., 350.), Vec2::new(1001., 700.))
+50 +     app.view_pointer(Vec2::new(250., 350.), Vec::new(1001., 700.))
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Vec2;
+   |
+ 1 + use glam::Vec2;
+   |
+ 1 + use physics::planar::Vec2;
+   |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+  --> crates/voxy_editor/src/tests.rs:59:18
+   |
+59 |     app.edit_key(KeyCode::F4).unwrap();
+   |                  ^^^^^^^ use of undeclared type `KeyCode`
+   |
+help: consider importing one of these enums
+   |
+ 1 + use crate::KeyCode;
+   |
+ 1 + use winit::keyboard::KeyCode;
+   |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+  --> crates/voxy_editor/src/tests.rs:63:18
+   |
+63 |     app.edit_key(KeyCode::F10).unwrap();
+   |                  ^^^^^^^ use of undeclared type `KeyCode`
+   |
+help: consider importing one of these enums
+   |
+ 1 + use crate::KeyCode;
+   |
+ 1 + use winit::keyboard::KeyCode;
+   |
+
+error[E0425]: cannot find type `App` in this scope
+  --> crates/voxy_editor/src/tests.rs:69:39
+   |
+69 | fn verify_native_play_audio(app: &mut App, expected: &SceneDocument) {
+   |                                       ^^^ not found in this scope
+   |
+help: consider importing this struct
+   |
+ 1 + use crate::App;
+   |
+
+error[E0425]: cannot find type `SceneDocument` in this scope
+  --> crates/voxy_editor/src/tests.rs:69:55
+   |
+69 | fn verify_native_play_audio(app: &mut App, expected: &SceneDocument) {
+   |                                                       ^^^^^^^^^^^^^ not found in this scope
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::SceneDocument;
+   |
+ 1 + use voxy_scene::SceneDocument;
+   |
+
+error[E0433]: cannot find type `AudioOutputMode` in this scope
+  --> crates/voxy_editor/src/tests.rs:79:35
+   |
+79 |         app.audio.set_output_mode(AudioOutputMode::Native);
+   |                                   ^^^^^^^^^^^^^^^ use of undeclared type `AudioOutputMode`
+   |
+help: consider importing this enum through its public re-export
+   |
+ 1 + use crate::AudioOutputMode;
+   |
+
+error[E0433]: cannot find type `Instant` in this scope
+  --> crates/voxy_editor/src/tests.rs:83:24
+   |
+83 |         let deadline = Instant::now() + Duration::from_mins(3);
+   |                        ^^^^^^^ use of undeclared type `Instant`
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Instant;
+   |
+ 1 + use std::time::Instant;
+   |
+
+error[E0433]: cannot find type `Duration` in this scope
+  --> crates/voxy_editor/src/tests.rs:83:41
+   |
+83 |         let deadline = Instant::now() + Duration::from_mins(3);
+   |                                         ^^^^^^^^ use of undeclared type `Duration`
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Duration;
+   |
+ 1 + use std::time::Duration;
+   |
+
+error[E0433]: cannot find type `Instant` in this scope
+  --> crates/voxy_editor/src/tests.rs:86:21
+   |
+86 |             assert!(Instant::now() < deadline);
+   |                     ^^^^^^^ use of undeclared type `Instant`
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Instant;
+   |
+ 1 + use std::time::Instant;
+   |
+
+error[E0433]: cannot find type `Duration` in this scope
+  --> crates/voxy_editor/src/tests.rs:87:32
+   |
+87 |             std::thread::sleep(Duration::from_millis(10));
+   |                                ^^^^^^^^ use of undeclared type `Duration`
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Duration;
+   |
+ 1 + use std::time::Duration;
+   |
+
+error[E0433]: cannot find type `Duration` in this scope
+  --> crates/voxy_editor/src/tests.rs:90:28
+   |
+90 |         std::thread::sleep(Duration::from_millis(150));
+   |                            ^^^^^^^^ use of undeclared type `Duration`
+   |
+help: consider importing one of these structs
+   |
+ 1 + use crate::Duration;
+   |
+ 1 + use std::time::Duration;
+   |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:102:26
+    |
+102 |         app.panel_action(panels::Action::AudioBus).unwrap();
+    |                          ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+102 -         app.panel_action(panels::Action::AudioBus).unwrap();
+102 +         app.panel_action(Action::AudioBus).unwrap();
+    |
+
+error[E0425]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:106:37
+    |
+106 | fn wait_audio_publication(app: &mut App, failed: bool, after: u64) -> u64 {
+    |                                     ^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find type `Instant` in this scope
+   --> crates/voxy_editor/src/tests.rs:107:20
+    |
+107 |     let deadline = Instant::now() + Duration::from_secs(5);
+    |                    ^^^^^^^ use of undeclared type `Instant`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Instant;
+    |
+  1 + use std::time::Instant;
+    |
+
+error[E0433]: cannot find type `Duration` in this scope
+   --> crates/voxy_editor/src/tests.rs:107:37
+    |
+107 |     let deadline = Instant::now() + Duration::from_secs(5);
+    |                                     ^^^^^^^^ use of undeclared type `Duration`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Duration;
+    |
+  1 + use std::time::Duration;
+    |
+
+error[E0433]: cannot find type `Instant` in this scope
+   --> crates/voxy_editor/src/tests.rs:124:17
+    |
+124 |         assert!(Instant::now() < deadline, "audio watch did not settle");
+    |                 ^^^^^^^ use of undeclared type `Instant`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Instant;
+    |
+  1 + use std::time::Instant;
+    |
+
+error[E0433]: cannot find type `Duration` in this scope
+   --> crates/voxy_editor/src/tests.rs:125:28
+    |
+125 |         std::thread::sleep(Duration::from_millis(1));
+    |                            ^^^^^^^^ use of undeclared type `Duration`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Duration;
+    |
+  1 + use std::time::Duration;
+    |
+
+error[E0425]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:128:38
+    |
+128 | fn verify_play_audio_watch(app: &mut App, root: &std::path::Path) {
+    |                                      ^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find type `Instant` in this scope
+   --> crates/voxy_editor/src/tests.rs:137:20
+    |
+137 |     let deadline = Instant::now() + Duration::from_millis(400);
+    |                    ^^^^^^^ use of undeclared type `Instant`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Instant;
+    |
+  1 + use std::time::Instant;
+    |
+
+error[E0433]: cannot find type `Duration` in this scope
+   --> crates/voxy_editor/src/tests.rs:137:37
+    |
+137 |     let deadline = Instant::now() + Duration::from_millis(400);
+    |                                     ^^^^^^^^ use of undeclared type `Duration`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Duration;
+    |
+  1 + use std::time::Duration;
+    |
+
+error[E0433]: cannot find type `Instant` in this scope
+   --> crates/voxy_editor/src/tests.rs:138:11
+    |
+138 |     while Instant::now() < deadline {
+    |           ^^^^^^^ use of undeclared type `Instant`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Instant;
+    |
+  1 + use std::time::Instant;
+    |
+
+error[E0433]: cannot find type `Duration` in this scope
+   --> crates/voxy_editor/src/tests.rs:141:28
+    |
+141 |         std::thread::sleep(Duration::from_millis(1));
+    |                            ^^^^^^^^ use of undeclared type `Duration`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Duration;
+    |
+  1 + use std::time::Duration;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:210:19
+    |
+210 |     let mut app = App::from_manifest(&manifest, AssetId("mesh".into()), false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0425]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:251:50
+    |
+251 | fn verify_background_audio_preparation(app: &mut App, expected: &SceneDocument) {
+    |                                                  ^^^ not found in this scope
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0425]: cannot find type `SceneDocument` in this scope
+   --> crates/voxy_editor/src/tests.rs:251:66
+    |
+251 | fn verify_background_audio_preparation(app: &mut App, expected: &SceneDocument) {
+    |                                                                  ^^^^^^^^^^^^^ not found in this scope
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::SceneDocument;
+    |
+  1 + use voxy_scene::SceneDocument;
+    |
+
+error[E0433]: cannot find module or crate `audio_play` in this scope
+   --> crates/voxy_editor/src/tests.rs:253:9
+    |
+253 |         audio_play::AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000)
+    |         ^^^^^^^^^^ use of unresolved module or unlinked crate `audio_play`
+    |
+help: to make use of source file crates/voxy_editor/src/audio_play.rs, use `mod audio_play` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod audio_play;
+    |
+help: consider importing this struct
+    |
+  1 + use crate::audio_play::AudioPreparation;
+    |
+help: if you import `AudioPreparation`, refer to it directly
+    |
+253 -         audio_play::AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000)
+253 +         AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000)
+    |
+
+error[E0433]: cannot find type `Instant` in this scope
+   --> crates/voxy_editor/src/tests.rs:256:20
+    |
+256 |     let deadline = Instant::now() + Duration::from_secs(5);
+    |                    ^^^^^^^ use of undeclared type `Instant`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Instant;
+    |
+  1 + use std::time::Instant;
+    |
+
+error[E0433]: cannot find type `Duration` in this scope
+   --> crates/voxy_editor/src/tests.rs:256:37
+    |
+256 |     let deadline = Instant::now() + Duration::from_secs(5);
+    |                                     ^^^^^^^^ use of undeclared type `Duration`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Duration;
+    |
+  1 + use std::time::Duration;
+    |
+
+error[E0433]: cannot find type `Instant` in this scope
+   --> crates/voxy_editor/src/tests.rs:258:17
+    |
+258 |         assert!(Instant::now() < deadline);
+    |                 ^^^^^^^ use of undeclared type `Instant`
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::Instant;
+    |
+  1 + use std::time::Instant;
+    |
+
+error[E0433]: cannot find module or crate `audio_play` in this scope
+   --> crates/voxy_editor/src/tests.rs:275:9
+    |
+275 |         audio_play::AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000)
+    |         ^^^^^^^^^^ use of unresolved module or unlinked crate `audio_play`
+    |
+help: to make use of source file crates/voxy_editor/src/audio_play.rs, use `mod audio_play` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod audio_play;
+    |
+help: consider importing this struct
+    |
+  1 + use crate::audio_play::AudioPreparation;
+    |
+help: if you import `AudioPreparation`, refer to it directly
+    |
+275 -         audio_play::AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000)
+275 +         AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000)
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:315:19
+    |
+315 |     let mut app = App::new(&model, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find module or crate `audio_settings` in this scope
+   --> crates/voxy_editor/src/tests.rs:349:5
+    |
+349 |     audio_settings::tests::verify_settings_editor(&mut app, &settings_path);
+    |     ^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `audio_settings`
+    |
+help: to make use of source file crates/voxy_editor/src/audio_settings.rs, use `mod audio_settings` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod audio_settings;
+    |
+help: consider importing this module
+    |
+  1 + use crate::audio_settings::tests;
+    |
+help: if you import `tests`, refer to it directly
+    |
+349 -     audio_settings::tests::verify_settings_editor(&mut app, &settings_path);
+349 +     tests::verify_settings_editor(&mut app, &settings_path);
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:380:19
+    |
+380 |     let mut app = App::new(&fixture, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:397:19
+    |
+397 |     let mut app = App::new(&fixture, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find type `InspectorMode` in this scope
+   --> crates/voxy_editor/src/tests.rs:414:21
+    |
+414 |     app.inspector = InspectorMode::Audio;
+    |                     ^^^^^^^^^^^^^ use of undeclared type `InspectorMode`
+    |
+help: consider importing this enum
+    |
+  1 + use crate::InspectorMode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:415:22
+    |
+415 |     app.panel_action(panels::Action::Field(7)).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+415 -     app.panel_action(panels::Action::Field(7)).unwrap();
+415 +     app.panel_action(Action::Field(7)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:416:19
+    |
+416 |     app.field_key(KeyCode::KeyA, Some("audio/tone.import.json"))
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:418:19
+    |
+418 |     app.field_key(KeyCode::Enter, None).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:424:22
+    |
+424 |     app.panel_action(panels::Action::Field(7)).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+424 -     app.panel_action(panels::Action::Field(7)).unwrap();
+424 +     app.panel_action(Action::Field(7)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:425:19
+    |
+425 |     app.field_key(KeyCode::Enter, None).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:432:18
+    |
+432 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:434:18
+    |
+434 |     app.edit_key(KeyCode::KeyY).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:457:19
+    |
+457 |     let mut app = App::new(&model, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:459:30
+    |
+459 |     assert!(app.panel_action(panels::Action::AudioSource).is_err());
+    |                              ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+459 -     assert!(app.panel_action(panels::Action::AudioSource).is_err());
+459 +     assert!(app.panel_action(Action::AudioSource).is_err());
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:462:22
+    |
+462 |     app.panel_action(panels::Action::AudioSource).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+462 -     app.panel_action(panels::Action::AudioSource).unwrap();
+462 +     app.panel_action(Action::AudioSource).unwrap();
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:468:22
+    |
+468 |     app.panel_action(panels::Action::AudioSource).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+468 -     app.panel_action(panels::Action::AudioSource).unwrap();
+468 +     app.panel_action(Action::AudioSource).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:469:18
+    |
+469 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:471:18
+    |
+471 |     app.edit_key(KeyCode::KeyD).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:473:22
+    |
+473 |     app.panel_action(panels::Action::AudioListener).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+473 -     app.panel_action(panels::Action::AudioListener).unwrap();
+473 +     app.panel_action(Action::AudioListener).unwrap();
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:476:30
+    |
+476 |     assert!(app.panel_action(panels::Action::AudioListener).is_err());
+    |                              ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+476 -     assert!(app.panel_action(panels::Action::AudioListener).is_err());
+476 +     assert!(app.panel_action(Action::AudioListener).is_err());
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:479:22
+    |
+479 |     app.panel_action(panels::Action::AudioListener).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+479 -     app.panel_action(panels::Action::AudioListener).unwrap();
+479 +     app.panel_action(Action::AudioListener).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:480:18
+    |
+480 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:482:18
+    |
+482 |     app.edit_key(KeyCode::KeyY).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:498:19
+    |
+498 |     let mut app = App::new(&fixture, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find type `InspectorMode` in this scope
+   --> crates/voxy_editor/src/tests.rs:499:21
+    |
+499 |     app.inspector = InspectorMode::Mixer;
+    |                     ^^^^^^^^^^^^^ use of undeclared type `InspectorMode`
+    |
+help: consider importing this enum
+    |
+  1 + use crate::InspectorMode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:500:22
+    |
+500 |     app.panel_action(panels::Action::AudioBus).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+500 -     app.panel_action(panels::Action::AudioBus).unwrap();
+500 +     app.panel_action(Action::AudioBus).unwrap();
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:501:22
+    |
+501 |     app.panel_action(panels::Action::Field(1)).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+501 -     app.panel_action(panels::Action::Field(1)).unwrap();
+501 +     app.panel_action(Action::Field(1)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:502:19
+    |
+502 |     app.field_key(KeyCode::Digit2, Some("0.25")).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:503:19
+    |
+503 |     app.field_key(KeyCode::Enter, None).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:509:18
+    |
+509 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:514:18
+    |
+514 |     app.edit_key(KeyCode::KeyY).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0425]: cannot find type `SceneDocument` in this scope
+   --> crates/voxy_editor/src/tests.rs:517:16
+    |
+517 |     let saved: SceneDocument = serde_json::from_str(&serialized).unwrap();
+    |                ^^^^^^^^^^^^^ not found in this scope
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::SceneDocument;
+    |
+  1 + use voxy_scene::SceneDocument;
+    |
+
+error[E0425]: cannot find function `model_registry` in this scope
+   --> crates/voxy_editor/src/tests.rs:518:30
+    |
+518 |     let loaded = saved.load(&model_registry().unwrap(), 128).unwrap();
+    |                              ^^^^^^^^^^^^^^ not found in this scope
+    |
+help: consider importing this function
+    |
+  1 + use crate::model_registry;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:528:22
+    |
+528 |     app.panel_action(panels::Action::Field(1)).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+528 -     app.panel_action(panels::Action::Field(1)).unwrap();
+528 +     app.panel_action(Action::Field(1)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:529:19
+    |
+529 |     app.field_key(KeyCode::Digit2, Some("2")).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:530:27
+    |
+530 |     assert!(app.field_key(KeyCode::Enter, None).is_err());
+    |                           ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:532:26
+    |
+532 |     assert!(app.edit_key(KeyCode::KeyD).is_err());
+    |                          ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:534:22
+    |
+534 |     app.panel_action(panels::Action::AudioBus).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+534 -     app.panel_action(panels::Action::AudioBus).unwrap();
+534 +     app.panel_action(Action::AudioBus).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:535:18
+    |
+535 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:546:19
+    |
+546 |     let mut app = App::new(&fixture, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:563:22
+    |
+563 |     app.panel_action(panels::Action::Behavior).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+563 -     app.panel_action(panels::Action::Behavior).unwrap();
+563 +     app.panel_action(Action::Behavior).unwrap();
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:564:22
+    |
+564 |     app.panel_action(panels::Action::Behavior).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+564 -     app.panel_action(panels::Action::Behavior).unwrap();
+564 +     app.panel_action(Action::Behavior).unwrap();
+    |
+
+error[E0433]: cannot find type `InspectorMode` in this scope
+   --> crates/voxy_editor/src/tests.rs:565:31
+    |
+565 |     assert_eq!(app.inspector, InspectorMode::Audio);
+    |                               ^^^^^^^^^^^^^ use of undeclared type `InspectorMode`
+    |
+help: consider importing this enum
+    |
+  1 + use crate::InspectorMode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:575:26
+    |
+575 |         app.panel_action(panels::Action::Field(index)).unwrap();
+    |                          ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+575 -         app.panel_action(panels::Action::Field(index)).unwrap();
+575 +         app.panel_action(Action::Field(index)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:576:23
+    |
+576 |         app.field_key(KeyCode::Digit1, Some(text)).unwrap();
+    |                       ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:577:23
+    |
+577 |         app.field_key(KeyCode::Enter, None).unwrap();
+    |                       ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:586:26
+    |
+586 |         app.panel_action(panels::Action::Field(index)).unwrap();
+    |                          ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+586 -         app.panel_action(panels::Action::Field(index)).unwrap();
+586 +         app.panel_action(Action::Field(index)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:587:23
+    |
+587 |         app.field_key(KeyCode::Digit1, Some(text)).unwrap();
+    |                       ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:588:31
+    |
+588 |         assert!(app.field_key(KeyCode::Enter, None).is_err());
+    |                               ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:591:19
+    |
+591 |     app.field_key(KeyCode::Escape, None).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:592:18
+    |
+592 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:597:18
+    |
+597 |     app.edit_key(KeyCode::KeyY).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:606:19
+    |
+606 |     let mut app = App::new(&fixture, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:607:22
+    |
+607 |     app.panel_action(panels::Action::Character).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+607 -     app.panel_action(panels::Action::Character).unwrap();
+607 +     app.panel_action(Action::Character).unwrap();
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:610:26
+    |
+610 |         app.panel_action(panels::Action::Field(index)).unwrap();
+    |                          ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+610 -         app.panel_action(panels::Action::Field(index)).unwrap();
+610 +         app.panel_action(Action::Field(index)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:611:23
+    |
+611 |         app.field_key(KeyCode::Digit2, Some(text)).unwrap();
+    |                       ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:612:31
+    |
+612 |         assert!(app.field_key(KeyCode::Enter, None).is_err());
+    |                               ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:616:22
+    |
+616 |     app.panel_action(panels::Action::Field(4)).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+616 -     app.panel_action(panels::Action::Field(4)).unwrap();
+616 +     app.panel_action(Action::Field(4)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:617:19
+    |
+617 |     app.field_key(KeyCode::Digit9, Some("90")).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:618:19
+    |
+618 |     app.field_key(KeyCode::Enter, None).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:626:18
+    |
+626 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:628:18
+    |
+628 |     app.edit_key(KeyCode::KeyY).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:630:22
+    |
+630 |     app.panel_action(panels::Action::Field(0)).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+630 -     app.panel_action(panels::Action::Field(0)).unwrap();
+630 +     app.panel_action(Action::Field(0)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:631:19
+    |
+631 |     app.field_key(KeyCode::Digit2, Some("2")).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:632:19
+    |
+632 |     app.field_key(KeyCode::Enter, None).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:635:18
+    |
+635 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:637:18
+    |
+637 |     app.edit_key(KeyCode::KeyY).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:646:19
+    |
+646 |     let mut app = App::new(&fixture, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:647:22
+    |
+647 |     app.panel_action(panels::Action::Motion).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+647 -     app.panel_action(panels::Action::Motion).unwrap();
+647 +     app.panel_action(Action::Motion).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:648:18
+    |
+648 |     app.edit_key(KeyCode::KeyA).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:650:18
+    |
+650 |     app.edit_key(KeyCode::KeyD).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:659:18
+    |
+659 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:661:18
+    |
+661 |     app.edit_key(KeyCode::KeyY).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:670:19
+    |
+670 |     let mut app = App::new(&fixture, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:671:22
+    |
+671 |     app.panel_action(panels::Action::Motion).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+671 -     app.panel_action(panels::Action::Motion).unwrap();
+671 +     app.panel_action(Action::Motion).unwrap();
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:672:22
+    |
+672 |     app.panel_action(panels::Action::Behavior).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+672 -     app.panel_action(panels::Action::Behavior).unwrap();
+672 +     app.panel_action(Action::Behavior).unwrap();
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:673:22
+    |
+673 |     app.panel_action(panels::Action::Field(3)).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+673 -     app.panel_action(panels::Action::Field(3)).unwrap();
+673 +     app.panel_action(Action::Field(3)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:674:19
+    |
+674 |     app.field_key(KeyCode::Minus, Some("-2")).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:675:19
+    |
+675 |     app.field_key(KeyCode::Enter, None).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:681:22
+    |
+681 |     app.panel_action(panels::Action::Field(1)).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+681 -     app.panel_action(panels::Action::Field(1)).unwrap();
+681 +     app.panel_action(Action::Field(1)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:682:19
+    |
+682 |     app.field_key(KeyCode::Digit0, Some("0")).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:683:27
+    |
+683 |     assert!(app.field_key(KeyCode::Enter, None).is_err());
+    |                           ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:685:19
+    |
+685 |     app.field_key(KeyCode::Escape, None).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:686:30
+    |
+686 |     assert!(app.panel_action(panels::Action::Collider).is_err());
+    |                              ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+686 -     assert!(app.panel_action(panels::Action::Collider).is_err());
+686 +     assert!(app.panel_action(Action::Collider).is_err());
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:688:22
+    |
+688 |     app.panel_action(panels::Action::Motion).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+688 -     app.panel_action(panels::Action::Motion).unwrap();
+688 +     app.panel_action(Action::Motion).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:689:18
+    |
+689 |     app.edit_key(KeyCode::KeyZ).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:691:18
+    |
+691 |     app.edit_key(KeyCode::KeyY).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:710:19
+    |
+710 |     let mut app = App::new(&root.join("quad.obj"), false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0422]: cannot find struct, variant or union type `BoxCollider` in this scope
+   --> crates/voxy_editor/src/tests.rs:720:30
+    |
+720 |         serde_json::to_value(BoxCollider {
+    |                              ^^^^^^^^^^^ not found in this scope
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::BoxCollider;
+    |
+  1 + use physics::strand::BoxCollider;
+    |
+  1 + use voxy_gameplay::BoxCollider;
+    |
+
+error[E0425]: cannot find function, tuple struct or tuple variant `ObjectId` in this scope
+   --> crates/voxy_editor/src/tests.rs:745:17
+    |
+745 |     second.id = ObjectId("second-body".into());
+    |                 ^^^^^^^^ not found in this scope
+    |
+help: consider importing one of these tuple structs
+    |
+  1 + use crate::ObjectId;
+    |
+  1 + use voxy_scene::ObjectId;
+    |
+
+error[E0425]: cannot find function, tuple struct or tuple variant `ObjectId` in this scope
+   --> crates/voxy_editor/src/tests.rs:757:16
+    |
+757 |     child.id = ObjectId("body-shape".into());
+    |                ^^^^^^^^ not found in this scope
+    |
+help: consider importing one of these tuple structs
+    |
+  1 + use crate::ObjectId;
+    |
+  1 + use voxy_scene::ObjectId;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:835:19
+    |
+835 |     let mut app = App::new(&root.join("quad.obj"), false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0422]: cannot find struct, variant or union type `BoxCollider` in this scope
+   --> crates/voxy_editor/src/tests.rs:843:30
+    |
+843 |         serde_json::to_value(BoxCollider {
+    |                              ^^^^^^^^^^^ not found in this scope
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::BoxCollider;
+    |
+  1 + use physics::strand::BoxCollider;
+    |
+  1 + use voxy_gameplay::BoxCollider;
+    |
+
+error[E0425]: cannot find function, tuple struct or tuple variant `ObjectId` in this scope
+   --> crates/voxy_editor/src/tests.rs:857:14
+    |
+857 |     jet.id = ObjectId("jet-1".into());
+    |              ^^^^^^^^ not found in this scope
+    |
+help: consider importing one of these tuple structs
+    |
+  1 + use crate::ObjectId;
+    |
+  1 + use voxy_scene::ObjectId;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:933:19
+    |
+933 |     let mut app = App::new(&root.join("quad.obj"), false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find type `App` in this scope
+   --> crates/voxy_editor/src/tests.rs:990:19
+    |
+990 |     let mut app = App::new(&fixture, false).unwrap();
+    |                   ^^^ use of undeclared type `App`
+    |
+help: consider importing this struct
+    |
+  1 + use crate::App;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:991:18
+    |
+991 |     app.edit_key(KeyCode::KeyC).unwrap();
+    |                  ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:992:22
+    |
+992 |     app.panel_action(panels::Action::Physics).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+992 -     app.panel_action(panels::Action::Physics).unwrap();
+992 +     app.panel_action(Action::Physics).unwrap();
+    |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+   --> crates/voxy_editor/src/tests.rs:993:22
+    |
+993 |     app.panel_action(panels::Action::Field(0)).unwrap();
+    |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+    |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+   --> crates/voxy_editor/src/lib.rs:2:1
+    |
+  2 + mod panels;
+    |
+help: consider importing this enum
+    |
+  1 + use crate::panels::Action;
+    |
+help: if you import `Action`, refer to it directly
+    |
+993 -     app.panel_action(panels::Action::Field(0)).unwrap();
+993 +     app.panel_action(Action::Field(0)).unwrap();
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:994:19
+    |
+994 |     app.field_key(KeyCode::Digit8, Some("0.08")).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+   --> crates/voxy_editor/src/tests.rs:995:19
+    |
+995 |     app.field_key(KeyCode::Enter, None).unwrap();
+    |                   ^^^^^^^ use of undeclared type `KeyCode`
+    |
+help: consider importing one of these enums
+    |
+  1 + use crate::KeyCode;
+    |
+  1 + use winit::keyboard::KeyCode;
+    |
+
+error[E0425]: cannot find type `CharacterBody` in this scope
+   --> crates/voxy_editor/src/tests.rs:999:26
+    |
+999 |             .component::<CharacterBody>(owner)
+    |                          ^^^^^^^^^^^^^ not found in this scope
+    |
+help: consider importing one of these structs
+    |
+  1 + use crate::CharacterBody;
+    |
+  1 + use voxy_gameplay::CharacterBody;
+    |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1008:18
+     |
+1008 |     app.edit_key(KeyCode::KeyC).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0425]: cannot find type `CharacterBody` in this scope
+    --> crates/voxy_editor/src/tests.rs:1011:26
+     |
+1011 |             .component::<CharacterBody>(app.instances[0])
+     |                          ^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::CharacterBody;
+     |
+   1 + use voxy_gameplay::CharacterBody;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1015:18
+     |
+1015 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+    --> crates/voxy_editor/src/tests.rs:1017:22
+     |
+1017 |     app.panel_action(panels::Action::Field(0)).unwrap();
+     |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+     |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+    -->  crates/voxy_editor/src/lib.rs:2:1
+     |
+   2 + mod panels;
+     |
+help: consider importing this enum
+     |
+   1 + use crate::panels::Action;
+     |
+help: if you import `Action`, refer to it directly
+     |
+1017 -     app.panel_action(panels::Action::Field(0)).unwrap();
+1017 +     app.panel_action(Action::Field(0)).unwrap();
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1018:19
+     |
+1018 |     app.field_key(KeyCode::Minus, Some("-1")).unwrap();
+     |                   ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1019:27
+     |
+1019 |     assert!(app.field_key(KeyCode::Enter, None).is_err());
+     |                           ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1021:19
+     |
+1021 |     app.field_key(KeyCode::Escape, None).unwrap();
+     |                   ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1026:18
+     |
+1026 |     app.game_key(KeyCode::ArrowRight, ElementState::Pressed)
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1026:39
+     |
+1026 |     app.game_key(KeyCode::ArrowRight, ElementState::Pressed)
+     |                                       ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1044:18
+     |
+1044 |     app.edit_key(KeyCode::KeyD).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0425]: cannot find type `CharacterBody` in this scope
+    --> crates/voxy_editor/src/tests.rs:1045:39
+     |
+1045 |     assert_eq!(app.scene.components::<CharacterBody>().count(), 2);
+     |                                       ^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::CharacterBody;
+     |
+   1 + use voxy_gameplay::CharacterBody;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1046:18
+     |
+1046 |     app.edit_key(KeyCode::KeyB).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0425]: cannot find type `CharacterBody` in this scope
+    --> crates/voxy_editor/src/tests.rs:1049:26
+     |
+1049 |             .component::<CharacterBody>(app.instances[1])
+     |                          ^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::CharacterBody;
+     |
+   1 + use voxy_gameplay::CharacterBody;
+     |
+
+error[E0425]: cannot find type `BoxCollider` in this scope
+    --> crates/voxy_editor/src/tests.rs:1055:26
+     |
+1055 |             .component::<BoxCollider>(app.instances[1])
+     |                          ^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::BoxCollider;
+     |
+   1 + use physics::strand::BoxCollider;
+     |
+   1 + use voxy_gameplay::BoxCollider;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1059:18
+     |
+1059 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0425]: cannot find type `CharacterBody` in this scope
+    --> crates/voxy_editor/src/tests.rs:1060:39
+     |
+1060 |     assert_eq!(app.scene.components::<CharacterBody>().count(), 2);
+     |                                       ^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::CharacterBody;
+     |
+   1 + use voxy_gameplay::CharacterBody;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1066:9
+     |
+1066 |         App::from_manifest(&root.join("assets.json"), AssetId("player".into()), false).unwrap();
+     |         ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0425]: cannot find type `BoxCollider` in this scope
+    --> crates/voxy_editor/src/tests.rs:1070:39
+     |
+1070 |     assert_eq!(app.scene.components::<BoxCollider>().count(), 2);
+     |                                       ^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::BoxCollider;
+     |
+   1 + use physics::strand::BoxCollider;
+     |
+   1 + use voxy_gameplay::BoxCollider;
+     |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+    --> crates/voxy_editor/src/tests.rs:1073:22
+     |
+1073 |     app.panel_action(panels::Action::Field(6)).unwrap();
+     |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+     |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+    -->  crates/voxy_editor/src/lib.rs:2:1
+     |
+   2 + mod panels;
+     |
+help: consider importing this enum
+     |
+   1 + use crate::panels::Action;
+     |
+help: if you import `Action`, refer to it directly
+     |
+1073 -     app.panel_action(panels::Action::Field(6)).unwrap();
+1073 +     app.panel_action(Action::Field(6)).unwrap();
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1074:19
+     |
+1074 |     app.field_key(KeyCode::Digit2, Some("2")).unwrap();
+     |                   ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1075:27
+     |
+1075 |     assert!(app.field_key(KeyCode::Enter, None).is_err());
+     |                           ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1076:19
+     |
+1076 |     app.field_key(KeyCode::Escape, None).unwrap();
+     |                   ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1086:19
+     |
+1086 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1129:19
+     |
+1129 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0422]: cannot find struct, variant or union type `CharacterBody` in this scope
+    --> crates/voxy_editor/src/tests.rs:1134:13
+     |
+1134 |             CharacterBody {
+     |             ^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::CharacterBody;
+     |
+   1 + use voxy_gameplay::CharacterBody;
+     |
+
+error[E0405]: cannot find trait `Behavior` in this scope
+    --> crates/voxy_editor/src/tests.rs:1171:10
+     |
+1171 |     impl Behavior for PanickingDestroy {
+     |          ^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these traits
+     |
+   1 + use crate::Behavior;
+     |
+   1 + use voxy_scene::Behavior;
+     |
+
+error[E0425]: cannot find type `SceneGraph` in this scope
+    --> crates/voxy_editor/src/tests.rs:1172:42
+     |
+1172 |         fn on_destroy(&mut self, _: &mut SceneGraph, _: NodeId) {
+     |                                          ^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::SceneGraph;
+     |
+   1 + use voxy_scene::SceneGraph;
+     |
+
+error[E0425]: cannot find type `NodeId` in this scope
+    --> crates/voxy_editor/src/tests.rs:1172:57
+     |
+1172 |         fn on_destroy(&mut self, _: &mut SceneGraph, _: NodeId) {
+     |                                                         ^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::NodeId;
+     |
+   1 + use voxy_animation::NodeId;
+     |
+   1 + use voxy_scene::NodeId;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1178:19
+     |
+1178 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `SceneSimulation` in this scope
+    --> crates/voxy_editor/src/tests.rs:1179:26
+     |
+1179 |     let mut simulation = SceneSimulation::new(
+     |                          ^^^^^^^^^^^^^^^ use of undeclared type `SceneSimulation`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::SceneSimulation;
+     |
+   1 + use voxy_scene::SceneSimulation;
+     |
+
+error[E0422]: cannot find struct, variant or union type `SimulationLimits` in this scope
+    --> crates/voxy_editor/src/tests.rs:1181:9
+     |
+1181 |         SimulationLimits {
+     |         ^^^^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::SimulationLimits;
+     |
+   1 + use voxy_scene::SimulationLimits;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1207:19
+     |
+1207 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `SceneGraph` in this scope
+    --> crates/voxy_editor/src/tests.rs:1208:19
+     |
+1208 |     let foreign = SceneGraph::new(1);
+     |                   ^^^^^^^^^^ use of undeclared type `SceneGraph`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::SceneGraph;
+     |
+   1 + use voxy_scene::SceneGraph;
+     |
+
+error[E0433]: cannot find type `SceneSimulation` in this scope
+    --> crates/voxy_editor/src/tests.rs:1210:9
+     |
+1210 |         SceneSimulation::new(
+     |         ^^^^^^^^^^^^^^^ use of undeclared type `SceneSimulation`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::SceneSimulation;
+     |
+   1 + use voxy_scene::SceneSimulation;
+     |
+
+error[E0422]: cannot find struct, variant or union type `SimulationLimits` in this scope
+    --> crates/voxy_editor/src/tests.rs:1212:13
+     |
+1212 |             SimulationLimits {
+     |             ^^^^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::SimulationLimits;
+     |
+   1 + use voxy_scene::SimulationLimits;
+     |
+
+error[E0425]: cannot find function `configured_app` in this scope
+    --> crates/voxy_editor/src/tests.rs:1235:19
+     |
+1235 |     let mut app = configured_app(
+     |                   ^^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing this function
+     |
+   1 + use crate::configured_app;
+     |
+
+error[E0433]: cannot find type `ModelSource` in this scope
+    --> crates/voxy_editor/src/tests.rs:1236:10
+     |
+1236 |         &ModelSource::Manifest {
+     |          ^^^^^^^^^^^ use of undeclared type `ModelSource`
+     |
+help: consider importing this enum
+     |
+   1 + use crate::ModelSource;
+     |
+
+error[E0425]: cannot find type `CharacterBody` in this scope
+    --> crates/voxy_editor/src/tests.rs:1245:40
+     |
+1245 |     let actor = app.scene.components::<CharacterBody>().next().unwrap().0;
+     |                                        ^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::CharacterBody;
+     |
+   1 + use voxy_gameplay::CharacterBody;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1260:18
+     |
+1260 |     app.game_key(KeyCode::Space, ElementState::Pressed).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1260:34
+     |
+1260 |     app.game_key(KeyCode::Space, ElementState::Pressed).unwrap();
+     |                                  ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1261:18
+     |
+1261 |     app.game_key(KeyCode::Space, ElementState::Released)
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1261:34
+     |
+1261 |     app.game_key(KeyCode::Space, ElementState::Released)
+     |                                  ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1274:44
+     |
+1274 |         let projection = app.camera.matrix(Vec2::new(640., 480.)).unwrap();
+     |                                            ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1274 -         let projection = app.camera.matrix(Vec2::new(640., 480.)).unwrap();
+1274 +         let projection = app.camera.matrix(Vec::new(640., 480.)).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:1275:24
+     |
+1275 |         for corner in [Vec3::new(-0.04, -0.04, 0.), Vec3::new(0.04, 0.04, 0.)] {
+     |                        ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+1275 -         for corner in [Vec3::new(-0.04, -0.04, 0.), Vec3::new(0.04, 0.04, 0.)] {
+1275 +         for corner in [Vec::new(-0.04, -0.04, 0.), Vec3::new(0.04, 0.04, 0.)] {
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:1275:53
+     |
+1275 |         for corner in [Vec3::new(-0.04, -0.04, 0.), Vec3::new(0.04, 0.04, 0.)] {
+     |                                                     ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+1275 -         for corner in [Vec3::new(-0.04, -0.04, 0.), Vec3::new(0.04, 0.04, 0.)] {
+1275 +         for corner in [Vec3::new(-0.04, -0.04, 0.), Vec::new(0.04, 0.04, 0.)] {
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0425]: cannot find type `ModelInstance` in this scope
+    --> crates/voxy_editor/src/tests.rs:1287:30
+     |
+1287 |                 .component::<ModelInstance>(actor)
+     |                              ^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing this struct
+     |
+   1 + use crate::ModelInstance;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1318:19
+     |
+1318 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1327:9
+     |
+1327 |         KeyCode::F6,
+     |         ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1328:9
+     |
+1328 |         KeyCode::Delete,
+     |         ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1329:9
+     |
+1329 |         KeyCode::KeyD,
+     |         ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1330:9
+     |
+1330 |         KeyCode::F5,
+     |         ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1331:9
+     |
+1331 |         KeyCode::F9,
+     |         ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1344:19
+     |
+1344 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `Transform` in this scope
+    --> crates/voxy_editor/src/tests.rs:1346:39
+     |
+1346 |     let owner = app.scene.spawn(None, Transform::default()).unwrap();
+     |                                       ^^^^^^^^^ use of undeclared type `Transform`
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Transform;
+     |
+   1 + use gltf::scene::Transform;
+     |
+   1 + use voxy_animation::Transform;
+     |
+   1 + use voxy_scene::Transform;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1361:23
+     |
+1361 |     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                       ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1361 -     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+1361 +     app.pointer_press(Vec::splat(50.0), Vec2::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1361:42
+     |
+1361 |     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                                          ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1361 -     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+1361 +     app.pointer_press(Vec2::splat(50.0), Vec::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1363:25
+     |
+1363 |     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+     |                         ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1363 -     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+1363 +     app.game_ui_pointer(Vec::splat(50.0), Vec2::splat(100.0), false)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1363:44
+     |
+1363 |     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+     |                                            ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1363 -     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+1363 +     app.game_ui_pointer(Vec2::splat(50.0), Vec::splat(100.0), false)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1376:19
+     |
+1376 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `Transform` in this scope
+    --> crates/voxy_editor/src/tests.rs:1378:39
+     |
+1378 |     let owner = app.scene.spawn(None, Transform::default()).unwrap();
+     |                                       ^^^^^^^^^ use of undeclared type `Transform`
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Transform;
+     |
+   1 + use gltf::scene::Transform;
+     |
+   1 + use voxy_animation::Transform;
+     |
+   1 + use voxy_scene::Transform;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1393:21
+     |
+1393 |     app.game_ui_key(KeyCode::Tab, ElementState::Pressed, false)
+     |                     ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1393:35
+     |
+1393 |     app.game_ui_key(KeyCode::Tab, ElementState::Pressed, false)
+     |                                   ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1395:17
+     |
+1395 |     for key in [KeyCode::Enter, KeyCode::Space] {
+     |                 ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1395:33
+     |
+1395 |     for key in [KeyCode::Enter, KeyCode::Space] {
+     |                                 ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1396:30
+     |
+1396 |         app.game_ui_key(key, ElementState::Pressed, false).unwrap();
+     |                              ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1398:21
+     |
+1398 |     app.game_ui_key(KeyCode::Enter, ElementState::Released, false)
+     |                     ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1398:37
+     |
+1398 |     app.game_ui_key(KeyCode::Enter, ElementState::Released, false)
+     |                                     ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1401:21
+     |
+1401 |     app.game_ui_key(KeyCode::Space, ElementState::Released, false)
+     |                     ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1401:37
+     |
+1401 |     app.game_ui_key(KeyCode::Space, ElementState::Released, false)
+     |                                     ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1413:23
+     |
+1413 |     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                       ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1413 -     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+1413 +     app.pointer_press(Vec::splat(50.0), Vec2::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1413:42
+     |
+1413 |     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                                          ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1413 -     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+1413 +     app.pointer_press(Vec2::splat(50.0), Vec::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1415:25
+     |
+1415 |     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+     |                         ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1415 -     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+1415 +     app.game_ui_pointer(Vec::splat(50.0), Vec2::splat(100.0), false)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1415:44
+     |
+1415 |     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+     |                                            ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1415 -     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+1415 +     app.game_ui_pointer(Vec2::splat(50.0), Vec::splat(100.0), false)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1429:19
+     |
+1429 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `Transform` in this scope
+    --> crates/voxy_editor/src/tests.rs:1438:29
+     |
+1438 |             let mut local = Transform::default();
+     |                             ^^^^^^^^^ use of undeclared type `Transform`
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Transform;
+     |
+   1 + use gltf::scene::Transform;
+     |
+   1 + use voxy_animation::Transform;
+     |
+   1 + use voxy_scene::Transform;
+     |
+
+error[E0433]: cannot find type `EditorError` in this scope
+    --> crates/voxy_editor/src/tests.rs:1442:26
+     |
+1442 |                 .map_err(EditorError::from)
+     |                          ^^^^^^^^^^^ use of undeclared type `EditorError`
+     |
+help: consider importing this enum through its public re-export
+     |
+   1 + use crate::EditorError;
+     |
+
+error[E0433]: cannot find type `Transform` in this scope
+    --> crates/voxy_editor/src/tests.rs:1448:43
+     |
+1448 |         let owner = app.scene.spawn(None, Transform::default()).unwrap();
+     |                                           ^^^^^^^^^ use of undeclared type `Transform`
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Transform;
+     |
+   1 + use gltf::scene::Transform;
+     |
+   1 + use voxy_animation::Transform;
+     |
+   1 + use voxy_scene::Transform;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1489:19
+     |
+1489 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `Transform` in this scope
+    --> crates/voxy_editor/src/tests.rs:1491:39
+     |
+1491 |     let owner = app.scene.spawn(None, Transform::default()).unwrap();
+     |                                       ^^^^^^^^^ use of undeclared type `Transform`
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Transform;
+     |
+   1 + use gltf::scene::Transform;
+     |
+   1 + use voxy_animation::Transform;
+     |
+   1 + use voxy_scene::Transform;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1507:25
+     |
+1507 |         app.game_ui_key(KeyCode::Tab, ElementState::Pressed, false)
+     |                         ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1507:39
+     |
+1507 |         app.game_ui_key(KeyCode::Tab, ElementState::Pressed, false)
+     |                                       ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1511:25
+     |
+1511 |         app.game_ui_key(KeyCode::Enter, ElementState::Pressed, false)
+     |                         ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1511:41
+     |
+1511 |         app.game_ui_key(KeyCode::Enter, ElementState::Pressed, false)
+     |                                         ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1519:13
+     |
+1519 |             KeyCode::Enter,
+     |             ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/tests.rs:1520:13
+     |
+1520 |             ElementState::Released,
+     |             ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::ElementState;
+     |
+   1 + use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1526:23
+     |
+1526 |     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                       ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1526 -     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+1526 +     app.pointer_press(Vec::splat(50.0), Vec2::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1526:42
+     |
+1526 |     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                                          ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1526 -     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+1526 +     app.pointer_press(Vec2::splat(50.0), Vec::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1540:25
+     |
+1540 |     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), true)
+     |                         ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1540 -     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), true)
+1540 +     app.game_ui_pointer(Vec::splat(50.0), Vec2::splat(100.0), true)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1540:44
+     |
+1540 |     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), true)
+     |                                            ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1540 -     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), true)
+1540 +     app.game_ui_pointer(Vec2::splat(50.0), Vec::splat(100.0), true)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1542:25
+     |
+1542 |     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+     |                         ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1542 -     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+1542 +     app.game_ui_pointer(Vec::splat(50.0), Vec2::splat(100.0), false)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1542:44
+     |
+1542 |     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+     |                                            ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1542 -     app.game_ui_pointer(Vec2::splat(50.0), Vec2::splat(100.0), false)
+1542 +     app.game_ui_pointer(Vec2::splat(50.0), Vec::splat(100.0), false)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1548:23
+     |
+1548 |     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                       ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1548 -     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+1548 +     app.pointer_press(Vec::splat(50.0), Vec2::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1548:42
+     |
+1548 |     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                                          ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1548 -     app.pointer_press(Vec2::splat(50.0), Vec2::splat(100.0))
+1548 +     app.pointer_press(Vec2::splat(50.0), Vec::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1563:19
+     |
+1563 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1593:19
+     |
+1593 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1594:18
+     |
+1594 |     app.edit_key(KeyCode::KeyD).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1595:18
+     |
+1595 |     app.edit_key(KeyCode::KeyP).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+    --> crates/voxy_editor/src/tests.rs:1596:22
+     |
+1596 |     app.panel_action(panels::Action::Select(0)).unwrap();
+     |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+     |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+    -->  crates/voxy_editor/src/lib.rs:2:1
+     |
+   2 + mod panels;
+     |
+help: consider importing this enum
+     |
+   1 + use crate::panels::Action;
+     |
+help: if you import `Action`, refer to it directly
+     |
+1596 -     app.panel_action(panels::Action::Select(0)).unwrap();
+1596 +     app.panel_action(Action::Select(0)).unwrap();
+     |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+    --> crates/voxy_editor/src/tests.rs:1607:22
+     |
+1607 |     app.panel_action(panels::Action::Field(0)).unwrap();
+     |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+     |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+    -->  crates/voxy_editor/src/lib.rs:2:1
+     |
+   2 + mod panels;
+     |
+help: consider importing this enum
+     |
+   1 + use crate::panels::Action;
+     |
+help: if you import `Action`, refer to it directly
+     |
+1607 -     app.panel_action(panels::Action::Field(0)).unwrap();
+1607 +     app.panel_action(Action::Field(0)).unwrap();
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1608:19
+     |
+1608 |     app.field_key(KeyCode::Digit2, Some("2")).unwrap();
+     |                   ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1609:19
+     |
+1609 |     app.field_key(KeyCode::Enter, None).unwrap();
+     |                   ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1614:18
+     |
+1614 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+    --> crates/voxy_editor/src/tests.rs:1616:22
+     |
+1616 |     app.panel_action(panels::Action::Field(8)).unwrap();
+     |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+     |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+    -->  crates/voxy_editor/src/lib.rs:2:1
+     |
+   2 + mod panels;
+     |
+help: consider importing this enum
+     |
+   1 + use crate::panels::Action;
+     |
+help: if you import `Action`, refer to it directly
+     |
+1616 -     app.panel_action(panels::Action::Field(8)).unwrap();
+1616 +     app.panel_action(Action::Field(8)).unwrap();
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1618:27
+     |
+1618 |     assert!(app.field_key(KeyCode::Enter, None).is_err());
+     |                           ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1620:19
+     |
+1620 |     app.field_key(KeyCode::Escape, None).unwrap();
+     |                   ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:1626:19
+     |
+1626 |     local.scale = Vec3::splat(2.0);
+     |                   ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+1626 -     local.scale = Vec3::splat(2.0);
+1626 +     local.scale = Vec::splat(2.0);
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0425]: cannot find function `model_registry` in this scope
+    --> crates/voxy_editor/src/tests.rs:1633:28
+     |
+1633 |         .commit(document, &model_registry().unwrap())
+     |                            ^^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing this function
+     |
+   1 + use crate::model_registry;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1636:20
+     |
+1636 |     app.begin_drag(Vec2::ZERO, Vec2::splat(100.0)).unwrap();
+     |                    ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1636 -     app.begin_drag(Vec2::ZERO, Vec2::splat(100.0)).unwrap();
+1636 +     app.begin_drag(Vec::ZERO, Vec2::splat(100.0)).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1636:32
+     |
+1636 |     app.begin_drag(Vec2::ZERO, Vec2::splat(100.0)).unwrap();
+     |                                ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1636 -     app.begin_drag(Vec2::ZERO, Vec2::splat(100.0)).unwrap();
+1636 +     app.begin_drag(Vec2::ZERO, Vec::splat(100.0)).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `DragAxis` in this scope
+    --> crates/voxy_editor/src/tests.rs:1637:39
+     |
+1637 |     app.drag.as_mut().unwrap().axis = DragAxis::X;
+     |                                       ^^^^^^^^ use of undeclared type `DragAxis`
+     |
+help: consider importing this enum through its public re-export
+     |
+   1 + use crate::DragAxis;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1638:22
+     |
+1638 |     app.preview_drag(Vec2::new(10.0, 0.0)).unwrap();
+     |                      ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1638 -     app.preview_drag(Vec2::new(10.0, 0.0)).unwrap();
+1638 +     app.preview_drag(Vec::new(10.0, 0.0)).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:1640:43
+     |
+1640 |     assert!((after_world - before_world - Vec3::new(0.2, 0.0, 0.0)).length() < 1e-5);
+     |                                           ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+1640 -     assert!((after_world - before_world - Vec3::new(0.2, 0.0, 0.0)).length() < 1e-5);
+1640 +     assert!((after_world - before_world - Vec::new(0.2, 0.0, 0.0)).length() < 1e-5);
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:1647:25
+     |
+1647 |     local.translation = Vec3::splat(9.0);
+     |                         ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+1647 -     local.translation = Vec3::splat(9.0);
+1647 +     local.translation = Vec::splat(9.0);
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1649:18
+     |
+1649 |     app.edit_key(KeyCode::Delete).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1655:18
+     |
+1655 |     app.edit_key(KeyCode::Delete).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1657:18
+     |
+1657 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1684:9
+     |
+1684 |         App::from_manifest(&directory.join("assets.json"), AssetId("a".into()), false).unwrap();
+     |         ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1685:18
+     |
+1685 |     app.edit_key(KeyCode::KeyD).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1686:18
+     |
+1686 |     app.edit_key(KeyCode::KeyR).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `Instant` in this scope
+    --> crates/voxy_editor/src/tests.rs:1689:20
+     |
+1689 |     let deadline = Instant::now() + Duration::from_secs(5);
+     |                    ^^^^^^^ use of undeclared type `Instant`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Instant;
+     |
+   1 + use std::time::Instant;
+     |
+
+error[E0433]: cannot find type `Duration` in this scope
+    --> crates/voxy_editor/src/tests.rs:1689:37
+     |
+1689 |     let deadline = Instant::now() + Duration::from_secs(5);
+     |                                     ^^^^^^^^ use of undeclared type `Duration`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Duration;
+     |
+   1 + use std::time::Duration;
+     |
+
+error[E0433]: cannot find type `Instant` in this scope
+    --> crates/voxy_editor/src/tests.rs:1692:17
+     |
+1692 |         assert!(Instant::now() < deadline);
+     |                 ^^^^^^^ use of undeclared type `Instant`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Instant;
+     |
+   1 + use std::time::Instant;
+     |
+
+error[E0433]: cannot find type `Duration` in this scope
+    --> crates/voxy_editor/src/tests.rs:1693:28
+     |
+1693 |         std::thread::sleep(Duration::from_millis(5));
+     |                            ^^^^^^^^ use of undeclared type `Duration`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Duration;
+     |
+   1 + use std::time::Duration;
+     |
+
+error[E0433]: cannot find type `Instant` in this scope
+    --> crates/voxy_editor/src/tests.rs:1696:18
+     |
+1696 |     let settle = Instant::now() + Duration::from_millis(650);
+     |                  ^^^^^^^ use of undeclared type `Instant`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Instant;
+     |
+   1 + use std::time::Instant;
+     |
+
+error[E0433]: cannot find type `Duration` in this scope
+    --> crates/voxy_editor/src/tests.rs:1696:35
+     |
+1696 |     let settle = Instant::now() + Duration::from_millis(650);
+     |                                   ^^^^^^^^ use of undeclared type `Duration`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Duration;
+     |
+   1 + use std::time::Duration;
+     |
+
+error[E0433]: cannot find type `Instant` in this scope
+    --> crates/voxy_editor/src/tests.rs:1697:11
+     |
+1697 |     while Instant::now() < settle {
+     |           ^^^^^^^ use of undeclared type `Instant`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Instant;
+     |
+   1 + use std::time::Instant;
+     |
+
+error[E0433]: cannot find type `Duration` in this scope
+    --> crates/voxy_editor/src/tests.rs:1699:28
+     |
+1699 |         std::thread::sleep(Duration::from_millis(5));
+     |                            ^^^^^^^^ use of undeclared type `Duration`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Duration;
+     |
+   1 + use std::time::Duration;
+     |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+    --> crates/voxy_editor/src/tests.rs:1709:22
+     |
+1709 |     app.panel_action(panels::Action::Parent).unwrap();
+     |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+     |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+    -->  crates/voxy_editor/src/lib.rs:2:1
+     |
+   2 + mod panels;
+     |
+help: consider importing this enum
+     |
+   1 + use crate::panels::Action;
+     |
+help: if you import `Action`, refer to it directly
+     |
+1709 -     app.panel_action(panels::Action::Parent).unwrap();
+1709 +     app.panel_action(Action::Parent).unwrap();
+     |
+
+error[E0433]: cannot find module or crate `panels` in this scope
+    --> crates/voxy_editor/src/tests.rs:1710:22
+     |
+1710 |     app.panel_action(panels::Action::Select(0)).unwrap();
+     |                      ^^^^^^ use of unresolved module or unlinked crate `panels`
+     |
+help: to make use of source file crates/voxy_editor/src/panels.rs, use `mod panels` in this file to declare the module
+    -->  crates/voxy_editor/src/lib.rs:2:1
+     |
+   2 + mod panels;
+     |
+help: consider importing this enum
+     |
+   1 + use crate::panels::Action;
+     |
+help: if you import `Action`, refer to it directly
+     |
+1710 -     app.panel_action(panels::Action::Select(0)).unwrap();
+1710 +     app.panel_action(Action::Select(0)).unwrap();
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1719:24
+     |
+1719 |         app.pick_model(Vec2::new(200.0, 300.0), Vec2::new(640.0, 480.0))
+     |                        ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1719 -         app.pick_model(Vec2::new(200.0, 300.0), Vec2::new(640.0, 480.0))
+1719 +         app.pick_model(Vec::new(200.0, 300.0), Vec2::new(640.0, 480.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1719:49
+     |
+1719 |         app.pick_model(Vec2::new(200.0, 300.0), Vec2::new(640.0, 480.0))
+     |                                                 ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1719 -         app.pick_model(Vec2::new(200.0, 300.0), Vec2::new(640.0, 480.0))
+1719 +         app.pick_model(Vec2::new(200.0, 300.0), Vec::new(640.0, 480.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1725:21
+     |
+1725 |     let mut fresh = App::from_manifest(&directory.join("assets.json"), a.clone(), false).unwrap();
+     |                     ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1730:18
+     |
+1730 |     app.edit_key(KeyCode::KeyZ).unwrap(); // detach undo
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1731:18
+     |
+1731 |     app.edit_key(KeyCode::KeyZ).unwrap(); // resource undo
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1736:18
+     |
+1736 |     app.edit_key(KeyCode::KeyY).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1737:18
+     |
+1737 |     app.edit_key(KeyCode::KeyY).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `Instant` in this scope
+    --> crates/voxy_editor/src/tests.rs:1742:17
+     |
+1742 |         assert!(Instant::now() < deadline);
+     |                 ^^^^^^^ use of undeclared type `Instant`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Instant;
+     |
+   1 + use std::time::Instant;
+     |
+
+error[E0433]: cannot find type `Duration` in this scope
+    --> crates/voxy_editor/src/tests.rs:1743:28
+     |
+1743 |         std::thread::sleep(Duration::from_millis(5));
+     |                            ^^^^^^^^ use of undeclared type `Duration`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Duration;
+     |
+   1 + use std::time::Duration;
+     |
+
+error[E0433]: cannot find type `Instant` in this scope
+    --> crates/voxy_editor/src/tests.rs:1750:17
+     |
+1750 |         assert!(Instant::now() < deadline);
+     |                 ^^^^^^^ use of undeclared type `Instant`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Instant;
+     |
+   1 + use std::time::Instant;
+     |
+
+error[E0433]: cannot find type `Duration` in this scope
+    --> crates/voxy_editor/src/tests.rs:1751:28
+     |
+1751 |         std::thread::sleep(Duration::from_millis(5));
+     |                            ^^^^^^^^ use of undeclared type `Duration`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Duration;
+     |
+   1 + use std::time::Duration;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1764:19
+     |
+1764 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `ObjAsset` in this scope
+    --> crates/voxy_editor/src/tests.rs:1765:17
+     |
+1765 |     let asset = ObjAsset::parse(
+     |                 ^^^^^^^^ use of undeclared type `ObjAsset`
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::ObjAsset;
+     |
+   1 + use voxy_render::ObjAsset;
+     |
+
+error[E0422]: cannot find struct, variant or union type `ObjLimits` in this scope
+    --> crates/voxy_editor/src/tests.rs:1767:9
+     |
+1767 |         ObjLimits {
+     |         ^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::ObjLimits;
+     |
+   1 + use voxy_render::ObjLimits;
+     |
+
+error[E0433]: cannot find module or crate `import` in this scope
+    --> crates/voxy_editor/src/tests.rs:1776:17
+     |
+1776 |         .finish(import::EditorAsset::from(asset), |_, _| {
+     |                 ^^^^^^ use of unresolved module or unlinked crate `import`
+     |
+help: to make use of source file crates/voxy_editor/src/import.rs, use `mod import` in this file to declare the module
+    -->  crates/voxy_editor/src/lib.rs:2:1
+     |
+   2 + mod import;
+     |
+help: consider importing this struct
+     |
+   1 + use crate::import::EditorAsset;
+     |
+help: if you import `EditorAsset`, refer to it directly
+     |
+1776 -         .finish(import::EditorAsset::from(asset), |_, _| {
+1776 +         .finish(EditorAsset::from(asset), |_, _| {
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1791:10
+     |
+1791 |         (Vec2::new(360.0, 240.0), DragAxis::X),
+     |          ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1791 -         (Vec2::new(360.0, 240.0), DragAxis::X),
+1791 +         (Vec::new(360.0, 240.0), DragAxis::X),
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `DragAxis` in this scope
+    --> crates/voxy_editor/src/tests.rs:1791:35
+     |
+1791 |         (Vec2::new(360.0, 240.0), DragAxis::X),
+     |                                   ^^^^^^^^ use of undeclared type `DragAxis`
+     |
+help: consider importing this enum through its public re-export
+     |
+   1 + use crate::DragAxis;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1792:10
+     |
+1792 |         (Vec2::new(320.0, 200.0), DragAxis::Y),
+     |          ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1792 -         (Vec2::new(320.0, 200.0), DragAxis::Y),
+1792 +         (Vec::new(320.0, 200.0), DragAxis::Y),
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `DragAxis` in this scope
+    --> crates/voxy_editor/src/tests.rs:1792:35
+     |
+1792 |         (Vec2::new(320.0, 200.0), DragAxis::Y),
+     |                                   ^^^^^^^^ use of undeclared type `DragAxis`
+     |
+help: consider importing this enum through its public re-export
+     |
+   1 + use crate::DragAxis;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1793:10
+     |
+1793 |         (Vec2::new(320.0, 240.0), DragAxis::Z),
+     |          ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1793 -         (Vec2::new(320.0, 240.0), DragAxis::Z),
+1793 +         (Vec::new(320.0, 240.0), DragAxis::Z),
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `DragAxis` in this scope
+    --> crates/voxy_editor/src/tests.rs:1793:35
+     |
+1793 |         (Vec2::new(320.0, 240.0), DragAxis::Z),
+     |                                   ^^^^^^^^ use of undeclared type `DragAxis`
+     |
+help: consider importing this enum through its public re-export
+     |
+   1 + use crate::DragAxis;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1795:35
+     |
+1795 |         app.pointer_press(origin, Vec2::new(640.0, 480.0)).unwrap();
+     |                                   ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1795 -         app.pointer_press(origin, Vec2::new(640.0, 480.0)).unwrap();
+1795 +         app.pointer_press(origin, Vec::new(640.0, 480.0)).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1797:35
+     |
+1797 |         app.preview_drag(origin + Vec2::new(20.0, -20.0)).unwrap();
+     |                                   ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1797 -         app.preview_drag(origin + Vec2::new(20.0, -20.0)).unwrap();
+1797 +         app.preview_drag(origin + Vec::new(20.0, -20.0)).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `DragAxis` in this scope
+    --> crates/voxy_editor/src/tests.rs:1801:13
+     |
+1801 |             DragAxis::X => {
+     |             ^^^^^^^^ use of undeclared type `DragAxis`
+     |
+help: consider importing this enum through its public re-export
+     |
+   1 + use crate::DragAxis;
+     |
+
+error[E0433]: cannot find type `DragAxis` in this scope
+    --> crates/voxy_editor/src/tests.rs:1806:13
+     |
+1806 |             DragAxis::Y => {
+     |             ^^^^^^^^ use of undeclared type `DragAxis`
+     |
+help: consider importing this enum through its public re-export
+     |
+   1 + use crate::DragAxis;
+     |
+
+error[E0433]: cannot find type `DragAxis` in this scope
+    --> crates/voxy_editor/src/tests.rs:1811:13
+     |
+1811 |             DragAxis::Z => {
+     |             ^^^^^^^^ use of undeclared type `DragAxis`
+     |
+help: consider importing this enum through its public re-export
+     |
+   1 + use crate::DragAxis;
+     |
+
+error[E0433]: cannot find type `DragAxis` in this scope
+    --> crates/voxy_editor/src/tests.rs:1816:13
+     |
+1816 |             DragAxis::Plane => panic!("expected axis"),
+     |             ^^^^^^^^ use of undeclared type `DragAxis`
+     |
+help: consider importing this enum through its public re-export
+     |
+   1 + use crate::DragAxis;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1818:22
+     |
+1818 |         app.edit_key(KeyCode::KeyZ).unwrap();
+     |                      ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1844:21
+     |
+1844 |     let mut first = App::new(&fixture, false).unwrap();
+     |                     ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1846:20
+     |
+1846 |     first.edit_key(KeyCode::KeyD).unwrap();
+     |                    ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1847:20
+     |
+1847 |     first.edit_key(KeyCode::ArrowUp).unwrap();
+     |                    ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:1854:19
+     |
+1854 |     local.scale = Vec3::new(1.5, 0.75, 1.0);
+     |                   ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+1854 -     local.scale = Vec3::new(1.5, 0.75, 1.0);
+1854 +     local.scale = Vec::new(1.5, 0.75, 1.0);
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1859:24
+     |
+1859 |     let mut reopened = App::new(&fixture, false).unwrap();
+     |                        ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1877:23
+     |
+1877 |     reopened.edit_key(KeyCode::KeyD).unwrap();
+     |                       ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0425]: cannot find function, tuple struct or tuple variant `ObjectId` in this scope
+    --> crates/voxy_editor/src/tests.rs:1878:40
+     |
+1878 |     assert_eq!(reopened.object_ids[2], ObjectId("model-2".into()));
+     |                                        ^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these tuple structs
+     |
+   1 + use crate::ObjectId;
+     |
+   1 + use voxy_scene::ObjectId;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1893:23
+     |
+1893 |     reopened.edit_key(KeyCode::KeyZ).unwrap();
+     |                       ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1904:19
+     |
+1904 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1906:20
+     |
+1906 |     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                    ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1906 -     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+1906 +     app.begin_drag(Vec::splat(50.0), Vec2::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1906:39
+     |
+1906 |     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                                       ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1906 -     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+1906 +     app.begin_drag(Vec2::splat(50.0), Vec::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1909:26
+     |
+1909 |         app.preview_drag(Vec2::new(f32::from(x), 40.0)).unwrap();
+     |                          ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1909 -         app.preview_drag(Vec2::new(f32::from(x), 40.0)).unwrap();
+1909 +         app.preview_drag(Vec::new(f32::from(x), 40.0)).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1915:18
+     |
+1915 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1917:20
+     |
+1917 |     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                    ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1917 -     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+1917 +     app.begin_drag(Vec::splat(50.0), Vec2::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1917:39
+     |
+1917 |     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                                       ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1917 -     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+1917 +     app.begin_drag(Vec2::splat(50.0), Vec::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1919:22
+     |
+1919 |     app.preview_drag(Vec2::splat(80.0)).unwrap();
+     |                      ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1919 -     app.preview_drag(Vec2::splat(80.0)).unwrap();
+1919 +     app.preview_drag(Vec::splat(80.0)).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1920:18
+     |
+1920 |     app.edit_key(KeyCode::Escape).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1922:18
+     |
+1922 |     app.edit_key(KeyCode::KeyY).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1924:20
+     |
+1924 |     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                    ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1924 -     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+1924 +     app.begin_drag(Vec::splat(50.0), Vec2::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1924:39
+     |
+1924 |     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+     |                                       ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1924 -     app.begin_drag(Vec2::splat(50.0), Vec2::splat(100.0))
+1924 +     app.begin_drag(Vec2::splat(50.0), Vec::splat(100.0))
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1926:22
+     |
+1926 |     app.preview_drag(Vec2::splat(60.0)).unwrap();
+     |                      ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1926 -     app.preview_drag(Vec2::splat(60.0)).unwrap();
+1926 +     app.preview_drag(Vec::splat(60.0)).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1936:19
+     |
+1936 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1937:18
+     |
+1937 |     app.edit_key(KeyCode::KeyD).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1939:18
+     |
+1939 |     app.edit_key(KeyCode::Delete).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0425]: cannot find function, tuple struct or tuple variant `ObjectId` in this scope
+    --> crates/voxy_editor/src/tests.rs:1940:37
+     |
+1940 |     assert_eq!(app.object_ids, vec![ObjectId("model-0".into())]);
+     |                                     ^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these tuple structs
+     |
+   1 + use crate::ObjectId;
+     |
+   1 + use voxy_scene::ObjectId;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1941:18
+     |
+1941 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1943:18
+     |
+1943 |     app.edit_key(KeyCode::KeyY).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1944:18
+     |
+1944 |     app.edit_key(KeyCode::Backspace).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1946:18
+     |
+1946 |     app.edit_key(KeyCode::Tab).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1947:18
+     |
+1947 |     app.edit_key(KeyCode::ArrowRight).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1948:18
+     |
+1948 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0425]: cannot find function, tuple struct or tuple variant `ObjectId` in this scope
+    --> crates/voxy_editor/src/tests.rs:1949:37
+     |
+1949 |     assert_eq!(app.object_ids, vec![ObjectId("model-0".into())]);
+     |                                     ^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these tuple structs
+     |
+   1 + use crate::ObjectId;
+     |
+   1 + use voxy_scene::ObjectId;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1950:18
+     |
+1950 |     app.edit_key(KeyCode::KeyY).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1952:18
+     |
+1952 |     app.edit_key(KeyCode::KeyD).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0425]: cannot find function, tuple struct or tuple variant `ObjectId` in this scope
+    --> crates/voxy_editor/src/tests.rs:1955:35
+     |
+1955 |     assert_ne!(app.object_ids[0], ObjectId("model-0".into()));
+     |                                   ^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these tuple structs
+     |
+   1 + use crate::ObjectId;
+     |
+   1 + use voxy_scene::ObjectId;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:1963:19
+     |
+1963 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1964:18
+     |
+1964 |     app.edit_key(KeyCode::KeyD).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0422]: cannot find struct, variant or union type `PickBounds` in this scope
+    --> crates/voxy_editor/src/tests.rs:1965:18
+     |
+1965 |     let bounds = PickBounds {
+     |                  ^^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::PickBounds;
+     |
+   1 + use voxy_scene::PickBounds;
+     |
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:1966:14
+     |
+1966 |         min: Vec3::new(-0.1, -0.1, 0.0),
+     |              ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+1966 -         min: Vec3::new(-0.1, -0.1, 0.0),
+1966 +         min: Vec::new(-0.1, -0.1, 0.0),
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:1967:14
+     |
+1967 |         max: Vec3::new(0.1, 0.1, 0.0),
+     |              ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+1967 -         max: Vec3::new(0.1, 0.1, 0.0),
+1967 +         max: Vec::new(0.1, 0.1, 0.0),
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1970:16
+     |
+1970 |     let size = Vec2::splat(100.0);
+     |                ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1970 -     let size = Vec2::splat(100.0);
+1970 +     let size = Vec::splat(100.0);
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1972:25
+     |
+1972 |         app.pick_bounds(Vec2::new(57.5, 50.0), size, bounds)
+     |                         ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1972 -         app.pick_bounds(Vec2::new(57.5, 50.0), size, bounds)
+1972 +         app.pick_bounds(Vec::new(57.5, 50.0), size, bounds)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1976:29
+     |
+1976 |     assert!(app.pick_bounds(Vec2::splat(50.0), size, bounds).unwrap());
+     |                             ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1976 -     assert!(app.pick_bounds(Vec2::splat(50.0), size, bounds).unwrap());
+1976 +     assert!(app.pick_bounds(Vec::splat(50.0), size, bounds).unwrap());
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1978:30
+     |
+1978 |     assert!(!app.pick_bounds(Vec2::ZERO, size, bounds).unwrap());
+     |                              ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1978 -     assert!(!app.pick_bounds(Vec2::ZERO, size, bounds).unwrap());
+1978 +     assert!(!app.pick_bounds(Vec::ZERO, size, bounds).unwrap());
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0422]: cannot find struct, variant or union type `Transform` in this scope
+    --> crates/voxy_editor/src/tests.rs:1983:13
+     |
+1983 |             Transform {
+     |             ^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::InspectorMode::Transform;
+     |
+   1 + use crate::Transform;
+     |
+   1 + use voxy_animation::Transform;
+     |
+   1 + use voxy_scene::Transform;
+     |
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:1984:30
+     |
+1984 |                 translation: Vec3::new(0.0, 0.0, 0.25),
+     |                              ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+1984 -                 translation: Vec3::new(0.0, 0.0, 0.25),
+1984 +                 translation: Vec::new(0.0, 0.0, 0.25),
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0433]: cannot find type `Transform` in this scope
+    --> crates/voxy_editor/src/tests.rs:1985:19
+     |
+1985 |                 ..Transform::default()
+     |                   ^^^^^^^^^ use of undeclared type `Transform`
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Transform;
+     |
+   1 + use gltf::scene::Transform;
+     |
+   1 + use voxy_animation::Transform;
+     |
+   1 + use voxy_scene::Transform;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1989:29
+     |
+1989 |     assert!(app.pick_bounds(Vec2::splat(50.0), size, bounds).unwrap());
+     |                             ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1989 -     assert!(app.pick_bounds(Vec2::splat(50.0), size, bounds).unwrap());
+1989 +     assert!(app.pick_bounds(Vec::splat(50.0), size, bounds).unwrap());
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1992:21
+     |
+1992 |     app.pick_bounds(Vec2::splat(50.0), size, bounds).unwrap();
+     |                     ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1992 -     app.pick_bounds(Vec2::splat(50.0), size, bounds).unwrap();
+1992 +     app.pick_bounds(Vec::splat(50.0), size, bounds).unwrap();
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1994:18
+     |
+1994 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:1995:18
+     |
+1995 |     app.edit_key(KeyCode::KeyY).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `Vec2` in this scope
+    --> crates/voxy_editor/src/tests.rs:1997:25
+     |
+1997 |         app.pick_bounds(Vec2::new(57.5, 50.0), size, bounds)
+     |                         ^^^^ use of undeclared type `Vec2`
+     |
+help: a struct with a similar name exists
+     |
+1997 -         app.pick_bounds(Vec2::new(57.5, 50.0), size, bounds)
+1997 +         app.pick_bounds(Vec::new(57.5, 50.0), size, bounds)
+     |
+help: consider importing one of these structs
+     |
+   1 + use crate::Vec2;
+     |
+   1 + use glam::Vec2;
+     |
+   1 + use physics::planar::Vec2;
+     |
+
+error[E0433]: cannot find type `App` in this scope
+    --> crates/voxy_editor/src/tests.rs:2008:19
+     |
+2008 |     let mut app = App::new(&fixture, false).unwrap();
+     |                   ^^^ use of undeclared type `App`
+     |
+help: consider importing this struct
+     |
+   1 + use crate::App;
+     |
+
+error[E0422]: cannot find struct, variant or union type `Transform` in this scope
+    --> crates/voxy_editor/src/tests.rs:2010:18
+     |
+2010 |     let edited = Transform {
+     |                  ^^^^^^^^^ not found in this scope
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::InspectorMode::Transform;
+     |
+   1 + use crate::Transform;
+     |
+   1 + use voxy_animation::Transform;
+     |
+   1 + use voxy_scene::Transform;
+     |
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:2011:22
+     |
+2011 |         translation: Vec3::new(0.2, -0.1, 0.5),
+     |                      ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+2011 -         translation: Vec3::new(0.2, -0.1, 0.5),
+2011 +         translation: Vec::new(0.2, -0.1, 0.5),
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0433]: cannot find type `Vec3` in this scope
+    --> crates/voxy_editor/src/tests.rs:2012:16
+     |
+2012 |         scale: Vec3::splat(0.75),
+     |                ^^^^ use of undeclared type `Vec3`
+     |
+help: a struct with a similar name exists
+     |
+2012 -         scale: Vec3::splat(0.75),
+2012 +         scale: Vec::splat(0.75),
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Vec3;
+     |
+   1 + use glam::Vec3;
+     |
+   1 + use physics::biomechanics::Vec3;
+     |
+   1 + use physics::cohesive::Vec3;
+     |
+     = and 1 other candidate
+
+error[E0433]: cannot find type `Transform` in this scope
+    --> crates/voxy_editor/src/tests.rs:2013:11
+     |
+2013 |         ..Transform::default()
+     |           ^^^^^^^^^ use of undeclared type `Transform`
+     |
+help: consider importing one of these items
+     |
+   1 + use crate::Transform;
+     |
+   1 + use gltf::scene::Transform;
+     |
+   1 + use voxy_animation::Transform;
+     |
+   1 + use voxy_scene::Transform;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2016:18
+     |
+2016 |     app.edit_key(KeyCode::KeyD).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2018:18
+     |
+2018 |     app.edit_key(KeyCode::ArrowRight).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2021:18
+     |
+2021 |     app.edit_key(KeyCode::Tab).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `AssetError` in this scope
+    --> crates/voxy_editor/src/tests.rs:2034:13
+     |
+2034 |         Err(AssetError::StaleTicket)
+     |             ^^^^^^^^^^ use of undeclared type `AssetError`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::AssetError;
+     |
+   1 + use voxy_assets::AssetError;
+     |
+
+error[E0425]: cannot find type `ModelInstance` in this scope
+    --> crates/voxy_editor/src/tests.rs:2048:26
+     |
+2048 |             .component::<ModelInstance>(duplicate)
+     |                          ^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing this struct
+     |
+   1 + use crate::ModelInstance;
+     |
+
+error[E0425]: cannot find type `ModelInstance` in this scope
+    --> crates/voxy_editor/src/tests.rs:2060:26
+     |
+2060 |             .component::<ModelInstance>(node)
+     |                          ^^^^^^^^^^^^^ not found in this scope
+     |
+help: consider importing this struct
+     |
+   1 + use crate::ModelInstance;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2066:18
+     |
+2066 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2071:18
+     |
+2071 |     app.edit_key(KeyCode::KeyY).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2076:18
+     |
+2076 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2077:18
+     |
+2077 |     app.edit_key(KeyCode::KeyZ).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2079:18
+     |
+2079 |     app.edit_key(KeyCode::KeyY).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2081:18
+     |
+2081 |     app.edit_key(KeyCode::ArrowUp).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/tests.rs:2083:18
+     |
+2083 |     app.edit_key(KeyCode::KeyY).unwrap();
+     |                  ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+   1 + use crate::KeyCode;
+     |
+   1 + use winit::keyboard::KeyCode;
+     |
+
+Some errors have detailed explanations: E0405, E0422, E0425, E0433.
+For more information about an error, try `rustc --explain E0405`.
+error: could not compile `voxy_editor` (lib test) due to 371 previous errors
+warning: build failed, waiting for other jobs to finish...

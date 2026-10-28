@@ -1,0 +1,47 @@
+{
+  "scope": "Native scene/history/draft freshness observations connected to App-aware model preparation",
+  "checks": {
+    "scene_unit_and_integration_tests": 129,
+    "scene_units": 97,
+    "editor_passed": 307,
+    "editor_ignored": 26,
+    "explicit_gpu_tests": 2,
+    "adapter": "Apple M4 Max Metal",
+    "all_target_clippy": [
+      "voxy_scene",
+      "voxy_editor"
+    ],
+    "format_and_diff": "passed"
+  },
+  "implemented": [
+    "SceneChangeToken includes scene identity plus checked process-local write revision",
+    "Names and local transforms invalidate full token without invalidating structural-only caches",
+    "Component copy now bumps native structural and change tokens",
+    "Allocation restoration invalidates token before slot changes",
+    "HistoryChangeToken reuses native commit epoch; separate draft tokens track mutable access",
+    "App observation captures scene/history/draft tokens, object order, node order, selection, next ID and exact drag scalar bits",
+    "App-aware pending/ready model preparation carries origin guard",
+    "GPU destination validation rejects edits and reverts within the same SceneId"
+  ],
+  "limitations": [
+    "Shared-reference interior component mutation must publish through component_mut",
+    "Scene/authoring guard is not a complete App-origin guard: runtime clocks, source publication, UI/audio and host epochs remain separate",
+    "No complete App commit or first-presentation/input handoff",
+    "Static LOD/non-model Graphics and device audio remain open",
+    "No physical memory/FPS claim; ENG-03 through ENG-13 incomplete"
+  ],
+  "source_sha256": {
+    "crates/voxy_scene/src/lib.rs": "b1f4adef18c84f418a0e3872524c32fd7830299920aa4e4817d5a8ddc2f52f2d",
+    "crates/voxy_scene/src/change_token_tests.rs": "fd0e49adfd0558d83b559ec046c9500c83e28d6dad93e6242c2fc717bb912ada",
+    "crates/voxy_scene/src/history.rs": "3675b36d1397eedb35542ba0cbd77678adc36ec07ea571be640625690c8c2eff",
+    "crates/voxy_scene/src/history/checkpoint.rs": "28ccc06be74ab7f512667bbfa23fed1d4d55ca67aaa14e9f4eddbd5d0ff1e112",
+    "crates/voxy_scene/src/transaction.rs": "415c9804e4dbb0ca4bc338d0ba28afd18072f6741e71410edefc291f35d7f123",
+    "crates/voxy_scene/src/document.rs": "4365e42357c5a15b7bcd54df83594b727f72cd7c5c5943b06c73ef74b364bde2",
+    "crates/voxy_scene/src/allocation_checkpoint.rs": "ea442b1093571577e865fd5b82f266bd52ce247d3baf9eacffc444e128e6c72a",
+    "crates/voxy_editor/src/app/restore_guard.rs": "ea88402fb92c4d0c55b26dd686f572f256f44671738973ab5e60ebbe098bb221",
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "2adf11b8aa21ad3124e96a7ad30374d39ae3d0c15f4fbdb31fdb2d613d2af840",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "231ab33aaa7af17e5a4d1d8e8c45738d160598b411cf7560fbf6a3812482b50e",
+    "crates/voxy_editor/src/gpu_model_restore.rs": "79f84a75211fe427531b4f84784f5ed1ce244c4f8027de7c4041009f948c1d40",
+    "crates/voxy_editor/src/gpu_model_restore/tests.rs": "a57e15c422a047a2c8a839c964c53157301055f37f982914ac8fc1076a7c9c10"
+  }
+}

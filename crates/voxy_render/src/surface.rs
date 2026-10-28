@@ -984,10 +984,9 @@ impl SceneSurface {
         }
         let xray = self.xray_depth_view.clone();
         let depth = self.depth_view.clone();
-        let size = [self.config.width, self.config.height];
         self.render_custom(|encoder, output| {
             scene
-                .encode_view_frame_targets(
+                .encode_view_frame_with_fluids(
                     encoder,
                     crate::SceneViewTargets {
                         color: output,
@@ -998,26 +997,10 @@ impl SceneSurface {
                     },
                     wgpu::Color::BLACK,
                     views,
-                    &[],
+                    fluids,
+                    overlays,
                 )
-                .map_err(RendererError::Scene)?;
-            for (index, fluid) in fluids {
-                let view = &views[*index];
-                fluid
-                    .encode_viewport(
-                        scene,
-                        encoder,
-                        output,
-                        &depth,
-                        size,
-                        view.viewport,
-                        wgpu::Color::BLACK,
-                        view.draws,
-                    )
-                    .map_err(|_| RendererError::Scene(crate::SceneError::InvalidGeometry))?;
-            }
-            scene.encode_overlays(encoder, output, &depth, overlays);
-            Ok(())
+                .map_err(RendererError::Scene)
         })
     }
 

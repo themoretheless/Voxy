@@ -1,0 +1,17 @@
+
+running 1 test
+
+thread 'follow_camera::tests::invalid_samples_preserve_history_and_extreme_half_lives_stay_finite' (71098829) panicked at crates/voxy_gameplay/src/follow_camera.rs:152:9:
+assertion `left == right` failed
+  left: DVec3(3.2101030212800104e-308, 1.0, 0.0)
+ right: DVec3(0.0, 1.0, 0.0)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test follow_camera::tests::invalid_samples_preserve_history_and_extreme_half_lives_stay_finite ... FAILED
+
+failures:
+
+failures:
+    follow_camera::tests::invalid_samples_preserve_history_and_extreme_half_lives_stay_finite
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 180 filtered out; finished in 0.00s
+

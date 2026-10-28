@@ -1,0 +1,28 @@
+{
+  "scope": "Single native skeletal LOD source data and explicit mesh binding",
+  "source_sha256": {
+    "crates/voxy_render/src/lib.rs": "e38c07e2eb4dc8afdd154bd69d7bcc24b642647fa00321d437372109e71c29a2",
+    "crates/voxy_render/src/skinned_lod.rs": "80844dc9bc3eca8e6123e27c5feb66a47117e35c0a6d6010aa7cabc5b6684b76",
+    "crates/voxy_render/src/skinned_lod/checkpoint.rs": "2469e5cd3d1724b2fd44edfdf11d9693ff2f539d5b7485938b11b5658fe99819",
+    "crates/voxy_render/src/skinned_lod/checkpoint/tests.rs": "b694eb0b2838bccbe3a9934a167553936fdaa335933cee8418216f61b164350f",
+    "crates/voxy_render/src/certified_lod/checkpoint.rs": "5af72f2f34257b5452fc7bed9cc1384996ac7d8f09fb7a211f5e56f20d8c888f",
+    "crates/voxy_render/examples/skinned_lod_checkpoint.rs": "7c7e45be9ec14bce9e9ef8ab8a7b8157efb20340487bfa9fc0a82ad025e8365f",
+    "crates/voxy_editor/src/import/animated_tests.rs": "d5def0a18c22100eb5ab6a702d272cd77c86fae4215f45b2f13537ef699dbe59"
+  },
+  "fields": {
+    "SkinnedLodMesh": "Single Arc<Source> data; enclosing graph must preserve wrapper/source reference tables",
+    "Source": {
+      "mesh": "Exact singleton skin-set record including derived cache receipts; standalone reconstruction or explicit immutable Arc join",
+      "variants": "Native ordered index/witness arrays with exact rest certificate receipt"
+    },
+    "Variant": {
+      "indices": "Exact u32 order",
+      "witnesses": "Native Whole/Subdivided directions/cells via proof participant"
+    },
+    "Witnesses": [
+      "Whole(forward,reverse)",
+      "Subdivided(forward,reverse)"
+    ],
+    "PreparedSkinnedLod": "Not archived by this source participant; future prepare re-evaluates candidate pose and its quality"
+  }
+}

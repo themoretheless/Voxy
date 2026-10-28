@@ -1,0 +1,9 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.92s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_animation-b8add508dfae1155)
+
+running 1 test
+test root_rigid::tests::path_checkpoint_replays_fresh_cubic_and_step_curves_with_exact_cut_metadata ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 345 filtered out; finished in 0.01s
+

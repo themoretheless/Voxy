@@ -1,0 +1,15 @@
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_text)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.06s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 5 tests
+test ui_live::gpu_reload_tests::gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher ... ignored, requires a real GPU and two local TrueType fonts
+test ui_live::presentation_tests::upload_is_not_input_publication_until_native_frame_acknowledgement ... ok
+test ui_live::tests::finished_panic_does_not_lose_unfinished_worker_ownership ... ok
+test ui_live::source_reload_tests::font_content_change_unavailability_and_recovery_invalidate_attempt_without_losing_visible_layout ... ok
+test ui_live::accepted_text_tests::same_layout_font_publications_keep_old_cpu_data_until_frame_ack ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 268 filtered out; finished in 0.17s
+

@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-27",
+  "scope": "Exact immutable property source clips/default sets and internal native Arc sharing; real imported morph consumer. Not full model/App archive or engine completion.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "d793628c5954baf5cf3ef441328984a64749bbc1d1ddcf30be177dc6175076f1",
+    "crates/voxy_animation/src/property_track.rs": "80d70af8d005e68fce3f6d642cf6cb0b1ab786e4dd9a1d910ba159b997d89194",
+    "crates/voxy_animation/src/property_track/asset_checkpoint.rs": "534d414f017d06f99d96db76175589a5f73e7e8814e411ac54b06a2ff14f6c99",
+    "crates/voxy_animation/src/property_track/asset_checkpoint/tests.rs": "c31385283ed8c45663625de4bb6f44835e4ff214292dfddb8c328c2e8bcfe6ce",
+    "crates/voxy_model/src/morph/checkpoint/tests.rs": "be599ea39ccd2b4d1774bc3d1e6a7f103aa800db0032fd3830c2d0b4ada3958b"
+  },
+  "native_field_coverage": {
+    "PropertyClip": [
+      "name",
+      "duration",
+      "playback",
+      "tracks"
+    ],
+    "PropertyTrack": [
+      "name",
+      "keys",
+      "interpolation",
+      "tangents"
+    ],
+    "PropertyKey": [
+      "time",
+      "value"
+    ],
+    "PropertySet": [
+      "entries"
+    ],
+    "PropertyValue": [
+      "Float",
+      "Vec3",
+      "Color",
+      "Bool"
+    ]
+  },
+  "preserved": [
+    "Exact source f32 words including signed zero/subnormals and scalar/vector/color derivative values",
+    "Actual name, key, tangent and track-array Arc alias identities; independent equal arrays remain independent",
+    "Partial key/tangent/name sharing between distinct clip track arrays",
+    "Native legacy boolean Linear acceptance and stricter explicit interpolation contract",
+    "Canonical native ordering and typed source validation before returning prepared resources"
+  ],
+  "checks": {
+    "focused_archive": {
+      "passed": 3
+    },
+    "real_morph_consumer": {
+      "passed": 1,
+      "scenario": "serialize defaults and original weight clips; restore; drop original JSON/buffers; recovered property values drive restored morph source at 120 phases with exact weights/f32 geometry/f64 positions"
+    },
+    "animation_lib": {
+      "passed": 355,
+      "ignored": 0
+    },
+    "model_lib": {
+      "passed": 49,
+      "ignored": 0
+    },
+    "editor_lib": {
+      "passed": 284,
+      "ignored": 21
+    },
+    "strict_clippy": "animation/model/editor all-targets -D warnings passed",
+    "scoped_rustfmt": "passed",
+    "diff_check": "passed"
+  },
+  "archive_policy": [
+    "Versioned strict JSON with integer source words and identity-table indices",
+    "Input/output byte caps and aggregate clip/set/track/key/tangent/string limits",
+    "Native prepare then exact recapture rejects unknown versions/modes/references, malformed values and unused records",
+    "Integrity belongs to future enclosing model file; no standalone checksum",
+    "Not a physical peak-heap or cross-platform runtime qualification"
+  ],
+  "initial_rejection": "Initial cargo check found missing mut on iterator argument used by try_fold; corrected before focused/full tests. Rejected log retained.",
+  "remaining": [
+    "Join all resource participants into complete ModelAsset/MorphImportData archive",
+    "Original source-node binding metadata/default arrays and skeletal/property clip identity mapping",
+    "Model field/name and internal geometry stream sharing",
+    "LOD witnesses and original source observations",
+    "Model workers/watchers and atomic CPU/GPU/App publication",
+    "Native audio queue transfer and full-session file/native/platform acceptance",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "no_new_gpu_or_fps_claim": true,
+  "logs": {
+    "initial-check-rejected": "property-assets-initial-check-rejected.log",
+    "focused": "property-assets-focused.log",
+    "consumer": "property-assets-consumer.log",
+    "animation-full": "property-assets-animation-full.log",
+    "model-full": "property-assets-model-full.log",
+    "editor-full": "property-assets-editor-full.log",
+    "clippy": "property-assets-clippy.log",
+    "format": "property-assets-format.log",
+    "diff": "property-assets-diff.log"
+  }
+}

@@ -1,0 +1,22 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.38s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/physics-8f206cb8622d0c6d)
+
+running 1 test
+test liquid::population_heat_checkpoint::tests::sub_ulp_inventory_and_population_survive_restore_and_later_heat_deposit ... FAILED
+
+failures:
+
+---- liquid::population_heat_checkpoint::tests::sub_ulp_inventory_and_population_survive_restore_and_later_heat_deposit stdout ----
+
+thread 'liquid::population_heat_checkpoint::tests::sub_ulp_inventory_and_population_survive_restore_and_later_heat_deposit' (75712731) panicked at crates/physics/src/liquid/population_heat_checkpoint.rs:176:53:
+called `Result::unwrap()` on an `Err` value: SubstepBudget
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    liquid::population_heat_checkpoint::tests::sub_ulp_inventory_and_population_survive_restore_and_later_heat_deposit
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 548 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p physics --lib`

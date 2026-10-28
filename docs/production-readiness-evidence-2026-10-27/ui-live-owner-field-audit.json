@@ -1,0 +1,55 @@
+{
+  "status": "source_inventory_and_accepted_cpu_publication_retention_only_not_full_UiLive_save",
+  "fields": [
+    {
+      "name": "attempted",
+      "remaining_policy": "accepted layout snapshot; wire codec available, owner composition pending"
+    },
+    {
+      "name": "published",
+      "remaining_policy": "GPU-uploaded layout; snapshot codec available, coupled publication archive pending"
+    },
+    {
+      "name": "presented",
+      "remaining_policy": "last acknowledged layout; snapshot codec available, native transfer fence pending"
+    },
+    {
+      "name": "published_text",
+      "remaining_policy": "actual accepted imported font/glyph publication now retained; composed archive pending"
+    },
+    {
+      "name": "presented_text",
+      "remaining_policy": "actual last-acknowledged imported publication now retained independently; composed archive pending"
+    },
+    {
+      "name": "worker",
+      "remaining_policy": "in-flight import needs drain or exact staged request/retry recipe"
+    },
+    {
+      "name": "retired",
+      "remaining_policy": "worker lifetime/join fence required; never discard active ownership"
+    },
+    {
+      "name": "deferred",
+      "remaining_policy": "resource-dependent retry condition must rebind to restored ResidencyCache state"
+    },
+    {
+      "name": "sources",
+      "remaining_policy": "existing SourceDependenciesCheckpoint available; integrate complete owner"
+    },
+    {
+      "name": "watcher",
+      "remaining_policy": "ordered SourcePollerCheckpoint available; integrate request/drain/resume protocol"
+    },
+    {
+      "name": "scanning",
+      "remaining_policy": "outstanding scan must drain before capture, preserving invalidation order"
+    },
+    {
+      "name": "last_scan",
+      "remaining_policy": "capture remaining cadence and rebase Instant, as in audio reload protocol"
+    }
+  ],
+  "field_count": 12,
+  "sha256": "66d62b854ea847dae9e709e4d7239fc0d5b5e817024c1b7dac47f173c24fe628"
+}

@@ -1,0 +1,22 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.52s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+test play_session::checkpoint::tests::idle_session_checkpoint_restores_without_starting_simulation ... FAILED
+
+failures:
+
+---- play_session::checkpoint::tests::idle_session_checkpoint_restores_without_starting_simulation stdout ----
+
+thread 'play_session::checkpoint::tests::idle_session_checkpoint_restores_without_starting_simulation' (80343551) panicked at crates/voxy_editor/src/play_session/checkpoint.rs:644:14:
+called `Result::unwrap()` on an `Err` value: "Play checkpoint requires running simulation"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    play_session::checkpoint::tests::idle_session_checkpoint_restores_without_starting_simulation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 411 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

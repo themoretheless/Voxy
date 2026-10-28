@@ -1,0 +1,17 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/physics-8f206cb8622d0c6d)
+
+running 10 tests
+test liquid::emission::tests::reaction_books_actual_momentum_and_origin_dependent_torque_atomically ... ok
+test liquid::emission::tests::pulses_conserve_volume_momentum_and_rollback ... ok
+test liquid::emission::tests::aperture_emission_is_invariant_under_extreme_direction_rescaling ... ok
+test liquid::emission::tests::idle_finite_source_advances_only_clock_and_rejects_invalid_composition ... ok
+test liquid::emission::tests::moving_nozzle_is_galilean_covariant_and_invalid_velocity_rolls_back ... ok
+test liquid::emission::tests::finite_source_large_boost_admission_and_energy_rounding_are_bounded ... ok
+test liquid::emission::tests::finite_source_recoil_conserves_mass_momentum_energy_and_late_failure ... ok
+test liquid::emission::tests::circular_aperture_samples_area_in_the_normal_plane_and_rolls_back ... ok
+test liquid::emission::tests::finite_source_recoil_refines_to_continuous_variable_mass_solution ... ok
+test liquid::emission::checkpoint::tests::restored_nozzle_sample_sequence_and_source_history_match_following_emission ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 529 filtered out; finished in 0.01s
+

@@ -1,0 +1,14 @@
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.44s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=0.153125 asset=rig
+MODEL PUBLISHED frames=0 first_x=0.153125 asset=rig
+GAME PACKAGE PASS sources=4 bytes=15684
+MODEL PUBLISHED frames=0 first_x=0.153125 asset=rig
+test locomotion_tests::unskinned_rigid_morph_project_and_source_free_package_share_full_frames ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 239 filtered out; finished in 0.18s
+

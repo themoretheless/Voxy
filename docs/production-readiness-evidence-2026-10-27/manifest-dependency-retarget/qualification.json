@@ -1,0 +1,34 @@
+{
+  "stage": "ENG-03",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "regression": "manifest_retarget_replaces_watched_dependencies_after_failure_without_scene_edits",
+  "verified": [
+    "invalid manifest retains original model publication Arc and edited authoring document",
+    "repair manifest changing mesh source from a.obj to b.obj automatically recovers with new geometry",
+    "native source index drops a.obj and records b.obj",
+    "breaking obsolete a.obj leaves accepted publication and Ready status unchanged over real scans",
+    "editing b.obj automatically republishes changed geometry",
+    "authoring document remains exact through complete sequence"
+  ],
+  "suite": {
+    "passed": 325,
+    "failed": 0,
+    "ignored": 30
+  },
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/scene3d_tests.rs": "9458f2aa1d2bf622c4ea6f631a567e401232980825a1ea985911aada2baf23ff",
+    "crates/voxy_editor/src/lib.rs": "7d5c1e8563ab19288bc264d873cfc08c5c3fc04ced5e0048053c428370dea09e"
+  },
+  "next_gap": {
+    "observation": "create_session builds available model-ID inventory from manifest once; dynamic inventory refresh is not covered by this source-retarget test",
+    "source": "crates/voxy_editor/src/lib.rs::App::create_session",
+    "required": "coherent model inventory refresh including new/removed IDs and live-reference preservation"
+  },
+  "limits": [
+    "headless filesystem watcher and native CPU resource owners",
+    "does not qualify live manifest inventory changes or concurrent authoring actions",
+    "does not qualify GPU image or all ENG-03 requirements"
+  ]
+}

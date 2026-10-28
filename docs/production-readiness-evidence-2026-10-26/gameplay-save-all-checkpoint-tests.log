@@ -1,0 +1,14 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-bf29a78b430bcde9)
+
+running 7 tests
+test character_checkpoint::tests::corrupt_checkpoint_and_ambiguous_bindings_preserve_live_controller ... ok
+test character_checkpoint::tests::bounded_checkpoint_codec_rejects_limits_unknown_schema_and_corrupt_bits ... ok
+test input_checkpoint::tests::corrupt_or_oversized_records_cannot_modify_live_input ... ok
+test input_checkpoint::tests::file_codec_preserves_analog_and_unconsumed_edges_and_continuation ... ok
+test gameplay_checkpoint::tests::late_physics_failure_or_compatibility_mismatch_preserves_source ... ok
+test character_checkpoint::tests::controller_checkpoint_json_rebinds_new_scene_and_matches_full_fall_cycle ... ok
+test gameplay_checkpoint::tests::combined_json_restores_midfall_and_matches_full_landing_and_jump_cycle ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 181 filtered out; finished in 0.07s
+

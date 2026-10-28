@@ -1,0 +1,38 @@
+{
+  "scope": "Nonempty real WAV Offline audio in the coordinated game/resource/UI/input file and source-free restoration",
+  "implemented": [
+    "Rich fixture owns an actual looping WAV AudioSource and native AudioPlay before common freeze",
+    "Initial and current coordinated files transport nonempty AudioOwnerCheckpoint",
+    "After source directory removal, prepare all participants from file into empty root",
+    "Publish prepared audio into an independent native Offline AudioSession against the restored scene",
+    "Advance original and restored native audio owners for 120 mixed tick counts; exact frame/peak-bit and final playback JSON comparison",
+    "Retain existing source-free 120-frame game continuation and actual accepted-model GPU readback checks"
+  ],
+  "checks": {
+    "editor_passed": 317,
+    "editor_ignored": 29,
+    "all_target_clippy": "passed",
+    "scoped_format_diff": "passed",
+    "gpu": "Apple M4 Max Metal passed",
+    "readbacks_equal": true,
+    "coordinated_file_bytes": 164992,
+    "section_bytes": {
+      "game_models": 159074,
+      "ui": 266,
+      "audio": 4672,
+      "native_ui_input": 908
+    },
+    "sha256": "1861767b5a9aeddbcdfad4c1568756bb9c0df7dd1184c016b7084253bc1dd06e"
+  },
+  "not_claimed": [
+    "Audio and game continuation controls run separately, not a single installed App lifecycle",
+    "UiLive published text remains empty in this rich fixture; native UI input is nonempty",
+    "No native output-device callback queue transfer or actual audible-device qualification",
+    "No atomic whole-App publication/menu/first-presentation/input handoff",
+    "No physical memory/FPS or full ENG-03 through ENG-13 completion"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "a0038ce199418e53d5f422d6395d7aea117a561679e1f17279ef532622c15e38",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "521651ad96190fa3a386c67f636e8b7a252de0e37d2ad3dbc5329662513d24bb"
+  }
+}

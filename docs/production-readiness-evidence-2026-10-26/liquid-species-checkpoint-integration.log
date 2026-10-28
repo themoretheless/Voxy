@@ -1,0 +1,51 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.78s
+     Running tests/liquid_mixture_heat.rs (target/research-ray-precision/debug/deps/liquid_mixture_heat-56f8b1a3159f7949)
+
+running 3 tests
+test configuration_preserves_energy_and_invalid_configuration_is_atomic ... ok
+test reservoir_uses_actual_component_capacity_and_energy_ledger ... ok
+test diffusing_components_carry_heat_and_preserve_isothermal_state ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_mixture_properties.rs (target/research-ray-precision/debug/deps/liquid_mixture_properties-efa3f15f486591d4)
+
+running 5 tests
+test coefficients_match_additive_volume_wood_and_viscosity_closures ... ok
+test sources_replacement_and_configuration_conflicts_are_atomic ... ok
+test selective_evaporation_increases_solution_density_and_viscosity ... ok
+test composition_changes_actual_viscous_damping_without_energy_creation ... ok
+test transported_composition_changes_mechanics_and_respects_thermal_response_order ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_reaction.rs (target/research-ray-precision/debug/deps/liquid_reaction-37ff791ea18bdb97)
+
+running 12 tests
+test excess_reactant_and_large_time_stay_positive ... ok
+test reactive_heat_advances_latent_fraction_without_false_temperature_rise ... ok
+test reaction_with_different_component_capacities_decodes_actual_composition ... ok
+test reactive_heat_uses_pressure_shifted_latent_plateau ... ok
+test thermal_coefficient_and_activation_cutoff ... ok
+test analytic_stoichiometry_and_energy ... ok
+test exhausted_chemical_accuracy_rolls_back_full_step ... ok
+test automatic_steps_and_atomic_invalid_configuration ... ok
+test thermal_acceleration_converges_against_independent_ode ... ok
+test adaptive_chemistry_resolves_single_large_step_and_tolerance_refinement ... ok
+test default_adaptive_kinetics_matches_rapid_self_heating_reference ... ok
+test thermal_kinetics_couples_to_both_flow_integrators ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/liquid_species.rs (target/research-ray-precision/debug/deps/liquid_species-743c7d1751de9fa8)
+
+running 5 tests
+test species_sources_drains_and_emission_preserve_component_masses ... ok
+test mixing_groups_block_and_enable_complete_vector_diffusion ... ok
+test invalid_compositions_sources_and_failed_motion_roll_back_complete_state ... ok
+test complete_species_diffusion_is_analytic_positive_and_mass_conserving ... ok
+test complete_composition_advects_with_gas_without_creating_thermal_energy ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

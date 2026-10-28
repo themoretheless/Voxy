@@ -1,0 +1,106 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-ffe57fcdab83b83c)
+
+running 8 tests
+test app::model_reload::gpu_app_tests::offscreen_app_sampler_reload_keeps_cpu_gpu_atomic_and_recovers_failed_source ... OFFSCREEN APP GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly.glb
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly.glb
+MODEL FAILED frames=0 last_good=true
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly.glb
+MODEL FAILED frames=0 last_good=true
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly.glb
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly.glb
+GAME PACKAGE PASS sources=4 bytes=19935
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly.glb
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly.glb
+MODEL PUBLISHED frames=0 first_x=-0.02606931 asset=assembly.glb
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+GAME STATE {"version":1,"objects":[{"id":"model-1","parent":null,"name":"Model 2","active":true,"translation":[0.05,0.0,0.5],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"components":{"editor.camera.v1":{"distance":2.0,"legacy":false,"perspective":true,"pitch":0.0,"target":[0.0,0.0,0.5],"yaw":0.0},"editor.directional-shadow.v1":{"bias":0.00009999999747378752,"center":[0.0,0.0,0.0],"enabled":true,"extent":[10.0,10.0,10.0],"filter":"pcf3x3","resolution":1024,"up":[0.0,1.0,0.0]},"editor.light.v1":{"direction":[1.0,1.0,1.0],"intensity":4.0},"editor.model-part.v1":{"node":4294967295},"editor.model.v1":"assembly.glb"}},{"id":"model-2","parent":"model-1","name":"Assembly","active":true,"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"components":{"editor.model-part.v1":{"node":0},"editor.model.v1":"assembly.glb","editor.opaque-shadow-caster.v1":{"enabled":true}}},{"id":"model-3","parent":"model-2","name":"Textured cube","active":true,"translation":[0.0,-0.35,0.5],"rotation":[0.0,0.01681352,0.0,0.9998587],"scale":[0.1,0.1,0.1],"components":{"editor.model-part.v1":{"node":1},"editor.model.v1":"assembly.glb","editor.opaque-shadow-caster.v1":{"enabled":true},"game.angular-motion.v1":{"axis":[0.0,1.0,0.0],"radians_per_second":6.0}}},{"id":"model-4","parent":"model-2","name":"Second cube","active":true,"translation":[0.35,-0.38,0.55],"rotation":[0.0,0.0,0.0,1.0],"scale":[0.07,0.07,0.07],"components":{"editor.model-part.v1":{"node":2},"editor.model.v1":"assembly.glb","editor.opaque-shadow-caster.v1":{"enabled":true}}},{"id":"fog-volume","parent":null,"name":"Fog volume","active":true,"translation":[-2.0,-2.0,-2.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"components":{"scene.fog.v1":{"asymmetry":0.0,"enabled":true,"extinction_m_inverse":0.5,"samples":32,"single_scattering_albedo":0.800000011920929,"size":[4.0,4.0,4.0]}}}]}
+GAME CHECK PASS ticks=120 objects=5 prefab_instances=0
+ok
+test app::model_reload::gpu_app_tests::offscreen_editor_file_keeps_history_preview_and_gpu_in_one_scene ... EDITOR HISTORY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=0 asset=rig
+EDITOR SNAPSHOT LOADED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-56869-1793130617663730000-1/target/editor.voxyedr
+ok
+test app::model_reload::gpu_app_tests::offscreen_native_editor_file_commits_scene_ui_input_and_audio_together ... NATIVE EDITOR GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=0 asset=rig
+GAME UI GPU PUBLISHED draws=1
+NATIVE EDITOR output rate=48000, gain=0, ticks=6, frames=4864
+EDITOR SNAPSHOT SAVED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-56869-1793130618550968000-2/target/native.voxyedr
+MODEL FAILED frames=0 last_good=true
+EDITOR SNAPSHOT LOADED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-56869-1793130618550968000-2/target/native.voxyedr
+audio reload tone.wav: project manifest: Read("No such file or directory (os error 2)")
+MODEL FAILED frames=0 last_good=true
+EDITOR SNAPSHOT LOADED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-56869-1793130618550968000-2/target/native.voxyedr
+audio reload tone.wav: project manifest: Read("No such file or directory (os error 2)")
+MODEL FAILED frames=0 last_good=true
+NATIVE EDITOR save/cancel/two source-free loads/120-frame continuations PASS
+ok
+test app::model_reload::gpu_app_tests::offscreen_nested_locomotion_cycle_matches_packaged_gpu_frames ... LOCOMOTION CYCLE GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+GAME PACKAGE PASS sources=6 bytes=18998
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+GAME UI GPU PUBLISHED draws=0
+GPU CYCLE PASS ticks=720 packaged_ticks=720 exact_rgba_frames=720 cpu_oracle_frames=1440
+ok
+test app::model_reload::gpu_app_tests::offscreen_optical_liquid_uses_native_runtime_and_matches_packaged_frame ... OFFSCREEN LIQUID APP GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=-1 asset=background
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=-1 asset=background
+GAME PACKAGE PASS sources=5 bytes=7251
+MODEL PUBLISHED frames=0 first_x=-1 asset=background
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=-1 asset=background
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+GAME STATE {"version":1,"objects":[{"id":"model-1","parent":null,"name":"Model 2","active":true,"translation":[0.0,0.0,0.5],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"components":{"editor.camera.v1":{"distance":2.0,"legacy":false,"perspective":true,"pitch":0.0,"target":[0.0,0.0,0.5],"yaw":0.0},"editor.model.v1":"background"}},{"id":"jet","parent":null,"name":"Liquid source","active":true,"translation":[0.0,0.0,0.9],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"components":{"game.liquid-source.v1":{"density_kg_m3":1000.0,"direction":[0.0,0.0,-1.0],"material_asset":"liquid","nozzle_radius_m":0.0,"particle_volume_m3":0.008,"pulses":[{"duration_s":0.016666666666666666,"speed_m_s":0.0,"start_s":0.0,"volume_m3":0.008}]}}}]}
+GAME CHECK PASS ticks=120 objects=2 prefab_instances=0
+ok
+test app::model_reload::gpu_app_tests::offscreen_preview_snapshot_restores_exact_phase_frame_and_gpu_identity ... PREVIEW SNAPSHOT GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=0 asset=rig.glb
+PREVIEW SNAPSHOT PASS independent=false bridge=false exact_phase_frame_pixels=true
+MODEL PUBLISHED frames=0 first_x=0 asset=rig.glb
+PREVIEW SNAPSHOT PASS independent=true bridge=false exact_phase_frame_pixels=true
+MODEL PUBLISHED frames=0 first_x=0 asset=rig.glb
+PREVIEW SNAPSHOT PASS independent=false bridge=true exact_phase_frame_pixels=true
+ok
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_text_font_and_continues_game ... EDITOR HISTORY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+EDITOR UI FONT bytes=773236 blake3=920ba7d77f5d36a356b34b87b2443e1ffefb0e0d3849576edc09f24862dde29f
+MODEL PUBLISHED frames=0 first_x=0 asset=rig
+GAME UI GPU PUBLISHED draws=2
+audio reload tone.wav: project manifest: Read("No such file or directory (os error 2)")
+MODEL FAILED frames=0 last_good=true
+GAME UI publication retained previous resources: project manifest: Read("No such file or directory (os error 2)")
+audio reload tone.wav: project manifest: Read("No such file or directory (os error 2)")
+EDITOR SNAPSHOT LOADED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-56869-1793130625701543000-8/target/editor.voxyedr
+audio reload tone.wav: project manifest: Read("No such file or directory (os error 2)")
+GAME UI publication retained previous resources: project manifest: Read("No such file or directory (os error 2)")
+MODEL FAILED frames=0 last_good=true
+EDITOR SNAPSHOT SAVED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-56869-1793130625701543000-8/target/desktop.voxyedr
+EDITOR SNAPSHOT LOADED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-56869-1793130625701543000-8/target/desktop.voxyedr
+GAME UI publication retained previous resources: project manifest: Read("No such file or directory (os error 2)")
+SNAPSHOT OPERATION FAILED: invalid editor file header or budget
+MODEL FAILED frames=0 last_good=true
+SNAPSHOT OPERATION FAILED: atomic save: Io(Os { code: 2, kind: NotFound, message: "No such file or directory" })
+EDITOR SNAPSHOT LOADED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-56869-1793130625701543000-8/target/desktop.voxyedr
+ok
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_ui_audio_and_continues_game ... EDITOR HISTORY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=0 asset=rig
+GAME UI GPU PUBLISHED draws=1
+audio reload tone.wav: project manifest: Read("No such file or directory (os error 2)")
+MODEL FAILED frames=0 last_good=true
+audio reload tone.wav: project manifest: Read("No such file or directory (os error 2)")
+EDITOR SNAPSHOT LOADED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-56869-1793130652102552000-9/target/editor.voxyedr
+ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 431 filtered out; finished in 37.11s
+

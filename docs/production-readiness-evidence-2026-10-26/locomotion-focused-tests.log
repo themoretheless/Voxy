@@ -1,0 +1,10 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.61s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 2 tests
+test locomotion_tests::missing_inactive_clip_rejects_reload_and_failed_tick_restores_requests ... ok
+test locomotion_tests::locomotion_drives_existing_player_and_source_free_package_with_quick_jump ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 229 filtered out; finished in 0.12s
+

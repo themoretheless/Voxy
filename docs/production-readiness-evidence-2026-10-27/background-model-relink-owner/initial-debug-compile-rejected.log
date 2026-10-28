@@ -1,0 +1,29 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0277]: `app::model_relink::Pending` doesn't implement `Debug`
+   --> crates/voxy_editor/src/lib.rs:445:5
+    |
+396 | #[derive(Debug)]
+    |          ----- in this derive macro expansion
+...
+445 |     model_relink: Option<app::model_relink::Pending>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Debug` is not implemented for `app::model_relink::Pending`
+    |
+    = note: add `#[derive(Debug)]` to `app::model_relink::Pending` or manually `impl Debug for app::model_relink::Pending`
+help: the trait `Debug` is implemented for `std::option::Option<T>`
+   --> /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/option.rs:591:16
+    |
+591 | #[derive(Copy, Debug, Hash)]
+    |                ^^^^^
+help: consider annotating `app::model_relink::Pending` with `#[derive(Debug)]`
+   --> crates/voxy_editor/src/app/model_relink.rs:6:1
+    |
+  6 + #[derive(Debug)]
+  7 | pub(crate) struct Pending {
+    |
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `voxy_editor` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

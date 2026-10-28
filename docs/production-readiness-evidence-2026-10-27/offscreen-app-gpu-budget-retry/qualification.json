@@ -1,0 +1,29 @@
+{
+  "stage": "ENG-03 / ENG-05 native GPU refusal and recovery qualification",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "change": "Extends native offscreen App GPU regression to cover actual geometry-budget refusal followed by original panel Retry action on unchanged valid GLB source. Existing production implementation passes; no production fallback or quality reduction added.",
+  "verified": [
+    "Real M4 Max / Metal native App source-watcher change attempts GPU upload with geometry budget zero",
+    "Catalog explicitly fails with GPU geometry budget exceeded, pending ticket count zero, no pending GPU job",
+    "Accepted catalog/GPU publication Arcs, base geometry allocation, sampler binding, native cache identity/state and rendered pixels are preserved",
+    "Native model checkpoint completes after refusal and resumes successfully",
+    "Restoring original geometry budget and dispatching RetryModel reimports unchanged source file through normal worker/GPU pipeline",
+    "Successful retry installs same imported publication Arc in CPU catalog and GPU model",
+    "Source file bytes unchanged across Retry; final pixels equal original expected linear-filter image exactly",
+    "Authoring document unchanged; workers stopped; native GPU validation scope clean"
+  ],
+  "explicit_app_gpu_tests_passed": 1,
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "8b3de1dec15a464d85bb57edf497ab94c779164e663d1fd9f547905af9a3defc"
+  },
+  "limits": [
+    "No new CPU full-suite run for test-only extension; explicit hardware regression and all-target strict compilation pass",
+    "GPU budget is adjusted programmatically in regression; no new budget editor UI is introduced",
+    "Readback uses published native model material on diagnostic quad, not full viewport rendering",
+    "No native presentation/input/audio-device or physical memory/FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

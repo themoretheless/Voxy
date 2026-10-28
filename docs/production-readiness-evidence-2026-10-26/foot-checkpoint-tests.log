@@ -1,0 +1,11 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.41s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-55a4417fa2fc3270)
+
+running 2 tests
+test foot_contact::checkpoint::tests::awaiting_swing_and_corrupt_anchor_preserve_contact_policy ... ok
+test foot_contact::checkpoint::tests::planted_contact_rebinds_and_follows_moving_platform_and_swing_exactly ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 188 filtered out; finished in 0.01s
+

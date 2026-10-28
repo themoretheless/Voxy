@@ -1,0 +1,35 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline runtime checkpoint lost original shared frame Arc identity without GPU roles",
+    "Runtime checkpoint records canonical original frame identity classes as optional durable owner metadata",
+    "Prepare preserves shared frames including inactive source owner and keeps equal independent frames distinct",
+    "Legacy files without metadata restore independent frames rather than guessing aliases from content",
+    "Duplicate/missing/forward/chained alias roles reject",
+    "Different complete native frame contents reject before alias transfer",
+    "Cross-participant frame join validates every existing runtime class target before transferring the entire class; baseline reproduced split class before fix",
+    "Native frame checkpoint JSON and runtime serial preserved",
+    "All three existing full-session GPU variants pass after original source deletion and physical GPU staging"
+  ],
+  "checks": {
+    "focused_passed": 1,
+    "native_gpu_session_passed": 3,
+    "editor_passed": 370,
+    "editor_ignored": 38,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "Frame payloads still use existing per-owner native codecs; this adds alias topology rather than compression",
+    "Preview roots/frames still require outer editor graph composition",
+    "No whole-App atomic publication or native save/load UI qualification",
+    "No FPS, physical total-memory or production character qualification"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/animation_runtime.rs": "554c5438f51cba0e90e52ffb7383fd07e6d6720d0d2a8f70b9b3b2c6b2043adf",
+    "crates/voxy_editor/src/animation_runtime_checkpoint.rs": "baca9f0d1101c5b491cc97fdc78f7deb065a3d9f5641a5b43199988805b3cd4c",
+    "crates/voxy_editor/src/animation_runtime/tests.rs": "96bb89c4a7add00b39a82cad200d7616df52c17d7d4521b2a6cc12a96ccab253"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "status": "complete_current_play_session_native_json_staging_verified",
+  "scene_unit_tests_passed": 90,
+  "editor_unit_tests_passed": 249,
+  "editor_tests_ignored": 20,
+  "strict_all_target_clippy": [
+    "voxy_scene",
+    "voxy_editor"
+  ],
+  "continuation_frames": 120,
+  "owner_fields": 12,
+  "host_clock_policy": "Instant is a frame-pacing epoch rebased on load; SceneSimulation saves actual accumulator/presentation state. Capture is for a host frame boundary.",
+  "covered": [
+    "borrowed capture of existing host-owned graph without graph clone/move",
+    "same scene/allocation/simulation codec as LoadedScene; retired ID reservations retained",
+    "scene allocator, behavior state/lifecycle and pending scene commands",
+    "active skeleton animation frame/state with explicit external model/clip revision resolvers",
+    "character state, held input and pending press/release edges",
+    "angular scratch policy and tick count",
+    "full scene-liquid binary state and exact optical words",
+    "UI callback state and pending events",
+    "authoring Stop document and primary camera; optional follow participant is composed",
+    "late UI codec failure leaves source complete JSON unchanged",
+    "fresh SceneId and complete JSON equality after prepare and after each of 120 variable elapsed frames",
+    "wrong compatibility, invalid optics, corrupt liquid bytes and byte budget reject"
+  ],
+  "test_scope_limits": [
+    "combined fixture exercises no active follow owner, retarget/IK or rigid liquid body; those have component-level proofs rather than a new full-session cross-product proof",
+    "resource resolution uses explicit caller revision keys and retained model Arcs; full resource archive is outside this participant",
+    "no App publication, UI/audio/viewport live load or game save file command exposed yet"
+  ],
+  "remaining": [
+    "stage App resources, audio, UI pointer/focus, viewport and authoring integration around PreparedPlaySession",
+    "atomic whole-App publication and retiring old owners",
+    "bounded complete-game file IO/integrity and compatibility derivation",
+    "native interactive save/load acceptance",
+    "full ENG-00 through ENG-13 program"
+  ],
+  "sha256": {
+    "crates/voxy_scene/src/document.rs": "11cc3230109b2081d67f662d335d5e4378992713872be66378c73fbd9485439f",
+    "crates/voxy_scene/src/allocation_checkpoint.rs": "6b42e9531218b466e8652e0c641430d1e4cb496bda5b76fa09ab56c037229690",
+    "crates/voxy_scene/src/scene_simulation_checkpoint.rs": "1317cc74df5e66ba2fcd2c04c4f57382a1f45aeba577e03f32f0207d2cb92885",
+    "crates/voxy_scene/src/lib.rs": "3a332ac3ec6cf412f059631d72c108a4fab2d9a6286704558ab97477e59769e3",
+    "crates/voxy_editor/src/play_session.rs": "59b1768dca0323538bf04a3f940c39730305ae82ecd40c7293ba279bf032d8b1",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "1a334b3919b9708216d3a9e48ce611cd11e05214bb9b398886d2c540b92b9b6e"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "change": "explicit project-editor bootstrap accepts nonempty unresolved model references; later authoring validation permits references retained in current scene; ordinary scene configuration remains strict; Play and strict project validation reject unresolved models",
+  "verified": [
+    "cold project with removed manifest model ID preserves exact scene document",
+    "Play rejects unresolved ID by name without entering game or changing scene document",
+    "edit/undo/redo/save and second cold reopen preserve unresolved reference and transforms",
+    "strict open/export reject unresolved ID and produce no package",
+    "standalone start fails before entering Play",
+    "restored manifest binding reloads original model through ordinary watcher/import path",
+    "subsequent Play/Stop restores edited authoring scene",
+    "existing ordinary scene unknown-resource rejection tests pass"
+  ],
+  "suite": {
+    "passed": 331,
+    "failed": 0,
+    "ignored": 30
+  },
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/authoring.rs": "5aefcb54edbf2caf74bd85f394e2a15d436e8edc474bb001d84edeb2a4194eef",
+    "crates/voxy_editor/src/app/play_mode.rs": "9a9957e3a1ecc4c4a2a138502b86109ab5e06f4394cdf2566c584ebe4abb06d9",
+    "crates/voxy_editor/src/lib.rs": "772e3266a58eda48c4cdfc20f0886202629235eaaabf25a1d76ca7179aeec257",
+    "crates/voxy_editor/src/project.rs": "2ec346fbd21621bc110a30ae9d8427b21a89b704ea5b8d7896271a5b7f408df8"
+  },
+  "limits": [
+    "model references only; missing prefab documents still reject expansion",
+    "native missing-resource visuals and relink dialog not qualified",
+    "full App atomic save/load and remaining ENG-03 through ENG-13 remain open"
+  ]
+}

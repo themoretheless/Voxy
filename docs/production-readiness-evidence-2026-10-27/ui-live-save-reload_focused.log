@@ -1,0 +1,12 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.09s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 4 tests
+test ui_live::reload_checkpoint::tests::a_retired_worker_is_owned_until_finished_and_empty_state_roundtrips ... ok
+test ui_live::reload_checkpoint::tests::cancellation_consumes_the_pending_watcher_fence_and_reopens_dispatch ... ok
+test ui_live::reload_checkpoint::tests::invalid_records_reject_before_worker_creation_and_deferred_retry_rebinds_explicitly ... ok
+test ui_live::reload_checkpoint::tests::scan_is_drained_failed_dependencies_are_saved_and_restored_baseline_observes_later_changes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 291 filtered out; finished in 0.01s
+

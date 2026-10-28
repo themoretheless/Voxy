@@ -1,4 +1,6 @@
 //! Authored rig bindings; contact and palettes are staged against accepted physics.
+#[path = "foot_runtime_checkpoint.rs"]
+pub(crate) mod checkpoint;
 mod contact_events;
 use glam::{DMat3, DMat4, DQuat, DVec3};
 use serde::{Deserialize, Serialize};

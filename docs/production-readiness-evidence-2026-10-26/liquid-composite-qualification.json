@@ -1,0 +1,40 @@
+{
+  "status": "complete_current_native_liquid_owner_capture_and_prepare_verified",
+  "liquid_unit_tests_passed": 35,
+  "existing_integration_tests_passed": 70,
+  "strict_physics_all_target_clippy": true,
+  "complete_owner_continuation_cases": 5,
+  "steps_per_case": 120,
+  "additional_adversarial_cases": [
+    "valid mixture with base heat reference overflow",
+    "capture rejects incompatible Maxwell density response"
+  ],
+  "covered": [
+    "all 33 current Liquid fields explicitly classified by exhaustive Rust pattern",
+    "all persistent record blocks composed before final coupled evaluation",
+    "derived grid rebuilt",
+    "transient coupling flags rejected",
+    "complete record and Liquid state equality during continuation",
+    "native standalone restore admission retained",
+    "rich chemistry rheology Maxwell and boundary combinations",
+    "phase saturation gas reflecting and nonthermal population cases"
+  ],
+  "existing_engine_limitation": "Maxwell polymer energy rejects changing reference density; tested separately from thermal expansion. This limitation is retained as an open engine capability gap.",
+  "remaining": [
+    "bounded binary wire codec",
+    "outer rigid body/source and SceneLiquidRuntime composition",
+    "PlaySession/App save/load publication and native acceptance"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/checkpoint.rs": "af513803bf8462702cde263898d072abd77100f5900cbc94f7ff33e94c682845",
+    "crates/physics/src/liquid/polymer_checkpoint.rs": "bf71cee44eb7bb3f2e578d9be3ef59159d503298cba732c15fa8d72814df4c39",
+    "crates/physics/src/liquid/rheology_checkpoint.rs": "bd39bfd2aef0faf7d668b8b55f8e3268e75bd6d69bfe0e1efb6ea713da3b8fdb",
+    "crates/physics/src/liquid/field_response_checkpoint.rs": "584cbecfa16b3f8cd7d973007c542ce9775c642b70122c01208e396d74f80340",
+    "crates/physics/src/liquid/phase_checkpoint.rs": "2bf8216b38804eb76dcb9edc7bbb2d1b299269b681cd16a77030aada550db174",
+    "crates/physics/src/liquid/thermal_checkpoint.rs": "b17d7ea5e67878afa17a20fd24ecc0442e7d3ea7198e0c64d45547578aade9e5",
+    "crates/physics/src/liquid/species_checkpoint.rs": "3ece630e8530463fcb6248be4dc3dc117b0eebe1f601f755a8934fe35bd053e6",
+    "crates/physics/src/liquid/transport.rs": "8c8f6fabaea3680dd919ed7872930293e73a66a033c44236ed8a9189899b451f",
+    "crates/physics/src/liquid/mixture_properties.rs": "1a8e57b7aeb8199c985d4d1f7ef61bb9fd299b8a14c3602841871f933408c820",
+    "crates/physics/src/liquid.rs": "0e313b44cd283f9358f92445ca69dd05cd8f8bc42a597f47f926687439ae9f26"
+  }
+}

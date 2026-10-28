@@ -1,0 +1,10 @@
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.34s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_assets-c45ad932fb61a65e)
+
+running 2 tests
+test inputs::tests::staged_input_replacement_rejects_quota_forgery_and_unrelated_input_drift ... ok
+test inputs::tests::staged_input_replacement_preserves_payload_bits_and_unchanged_snapshot_arcs ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 59 filtered out; finished in 0.00s
+

@@ -1,0 +1,41 @@
+{
+  "status": "application_behavior_host_headless_qualified",
+  "git_head": "8acd97edce5fe2024fe173a2ba792dad27e087fe",
+  "source_sha256": {
+    "crates/voxy_editor/src/game_host.rs": "24eec1c59ca97dea5fb456c1506dfa4d0c4f3a19f572632cde7b4e201114a7d5",
+    "crates/voxy_editor/src/game_host_tests.rs": "6eca742beb36da2fd65b87968b086f62b009698faa95dcca0f1c550f77830d06",
+    "crates/voxy_editor/src/lib.rs": "79a453755fd8b8b8db7c32b866c795acb45bca7b8b6e9b53e91993078549de4b",
+    "crates/voxy_editor/src/project_runtime.rs": "8e413b6d258f568c9df9fbc4e336fe47ab478130863becbfe18980c72c8644f3",
+    "crates/voxy_editor/src/packaged_game.rs": "93846f0707d1c84efaff63010929e4e0b5acf2acc64f94c6f0f04099674aaace",
+    "crates/voxy_editor/src/app/play_mode.rs": "7ac5296650322298ab4a7a019da1dbd58e9f9eada6a9a3ddb95674a3b4b51167",
+    "crates/voxy_editor/examples/project_game.rs": "158ebb037fff771ef69fcc73b48e568f772f174ca22c4d59dafa7f4b04765928"
+  },
+  "editor_tests": {
+    "passed": 203,
+    "ignored": 17,
+    "failed": 0
+  },
+  "clippy_all_targets_warnings_denied": true,
+  "public_example_built": true,
+  "cli_proof": "game-host-cli-proof.json",
+  "native_window_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false,
+  "bounded_coverage": [
+    "fresh behaviors per Play",
+    "fixed movement in editor and standalone",
+    "lifecycle teardown at Stop and shutdown",
+    "setup error cleanup and retry",
+    "custom schemas with behavior host",
+    "UI setup invocation only",
+    "project build with matching host",
+    "public API example and package run after source deletion"
+  ],
+  "remaining": [
+    "UI event dispatch in combined project",
+    "input/collision/animation integration",
+    "project prefab/reload scenario",
+    "native editor/game validation",
+    "full engine roadmap"
+  ]
+}

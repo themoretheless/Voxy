@@ -1,0 +1,28 @@
+{
+  "animation_readiness": "unverified",
+  "inferred_regions": [
+    "Closed-case presentation with earbuds displayed outside; differs from open-case reference composition.",
+    "Earbud freeform surfaces and silicone bores approximated by procedural primitives.",
+    "Case corner radii, seam, port, speaker and sensor positions visually estimated; not CAD measurements.",
+    "No cavity, electronics, logos, text, metallic or glossy PBR reconstruction."
+  ],
+  "note": "No visual similarity score has been measured. Review a Voxy render against the reference.",
+  "reference": "https://www.apple.com/airpods-pro/specs/",
+  "structural_validation": "passed",
+  "visual_review": "reviewed_approximation",
+  "visual_gate": "not_qualified_as_exact_reconstruction",
+  "renderer": "Voxy SceneRenderer / editor material.wgsl / Apple M4 Max / Metal",
+  "render": "preview.png",
+  "game_check": "PASS: 120 ticks, 32 objects",
+  "findings": [
+    "Case body/lid contour now shared; visible seam faceting remains.",
+    "Earbud and silicone geometry approximate; no glossy PBR or accurate hidden cavities.",
+    "Closed-case composition differs from open-case reference."
+  ],
+  "hashes": {
+    "reconstruction.json": "e916564ed93ac33a836ccf77f45d547e9ea2087088bb73ca5d68007f241b0cfc",
+    "main.scene.json": "91852ad4f806be9617d8737fc67139927dd9dc84f9c150d088f1f2d65ae9d47e",
+    "preview.png": "0d75c9db0a3666f8637d53eec793ac908a1e9bda7b51e18c81e1d700cbc3cc4b",
+    "game-check.log": "1d2e5ff963daf8e00871cdf98942b2e62cf742da2f10fdf4961b01e504a0fa05"
+  }
+}

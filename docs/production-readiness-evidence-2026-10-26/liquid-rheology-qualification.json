@@ -1,0 +1,28 @@
+{
+  "status": "native_shear_yield_and_structural_memory_checkpoint_verified",
+  "new_continuation_tests_passed": 1,
+  "existing_adaptive_thixotropy_tests_passed": 1,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps": 120,
+  "covered": [
+    "shear thinning coefficients and yield stresses",
+    "thixotropy models and evolving particle structure",
+    "particle material layout validation",
+    "composition with restored particle base and Maxwell memory",
+    "exact particle rheology and polymer records during continuation",
+    "atomic invalid structure and nonfinite yield rejection",
+    "caller material limits"
+  ],
+  "remaining": [
+    "thermal phase species and other constitutive extensions",
+    "boundaries and coupled rigid bodies",
+    "bounded full-liquid wire format",
+    "SceneLiquidRuntime and PlaySession composition"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/rheology_checkpoint.rs": "47da9f8df9113e4cb681035e14811e7b869324a7193276d41a5b1f955873376f",
+    "crates/physics/src/liquid/rheology.rs": "16d343f625f2073eb08f29c882eff29b07f409f23a10df0bc55faa00957cfea2",
+    "crates/physics/src/liquid/thixotropy.rs": "702e87fe807928a75af207f8cf27822ad3a3b3fd0a78a187e4479f0bfa8c28de",
+    "crates/physics/src/liquid.rs": "8ba763ed5bec8ef0b464d8ded953e798811b4eb0e66d065490c2d3bffb99b8af"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "scope": "Native exclusive UI publication while retaining a completed source reload barrier",
+  "implemented": [
+    "checkpoint_publication_at_barrier uses existing native publication/GPU staging implementation",
+    "Frozen publication rejects absent or unfinished barrier and in-flight UI work",
+    "Original ordinary publication still rejects held save barriers",
+    "CPU/GPU staging rejection and pending/ready discard retain source barrier, cache, focus, text allocations and pixels",
+    "Successful native owner swap retires previous watcher and clears old barrier",
+    "Restored UI routing remains gated until frame_presented acknowledgement"
+  ],
+  "checks": {
+    "editor_passed": 316,
+    "editor_ignored": 28,
+    "strict_all_target_clippy": "passed",
+    "scoped_rustfmt": "passed",
+    "gpu_frozen": "Apple M4 Max Metal passed",
+    "gpu_standard": "Apple M4 Max Metal passed",
+    "saved_restored_pixels_equal": true,
+    "different_old_target_pixels": true,
+    "dimensions": [
+      128,
+      128
+    ],
+    "readback_sha256": "92052f618dfb527cb39d3c3e8d9bd217c03d69b94a0a418e260f7dc7af5720b0"
+  },
+  "rejected_test_setup": "Initial frozen test omitted normal owner polling of an outstanding watcher scan; deadline failure retained. Corrected test drains through poll_gpu while source scene/font remain available.",
+  "not_claimed": [
+    "Full App transaction across model/UI cache forks, audio and authoring not implemented",
+    "No native window presentation proof; frame acknowledgement exercised explicitly offscreen",
+    "Native output audio, physical memory/FPS and ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/ui_live/restore.rs": "8fcde2854f46fbede1c806f42acc2be68c177e88fbfc1d4d2d0f3d4ad2d2f266",
+    "crates/voxy_editor/src/ui_live/restore/tests.rs": "2dc5cae8d8714bb4ecac4aecc3c3b5305557c78ac3b29ce65d6034691305c75d"
+  }
+}

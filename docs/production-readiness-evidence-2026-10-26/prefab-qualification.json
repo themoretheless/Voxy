@@ -1,0 +1,51 @@
+{
+  "status": "project_nested_prefab_owner_and_package_scenarios_pass",
+  "git_head": "8acd97edce5fe2024fe173a2ba792dad27e087fe",
+  "source_sha256": {
+    "crates/voxy_editor/src/project.rs": "1b404eac3a6ac5625353b42a428bc5b7ac6e9fec6c11cb795e648698b9e5e22e",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "99bdd138f583215922d65fc83392428f230dfcee28fbdca2408dec8c44db2b99",
+    "crates/voxy_editor/src/prefab_authoring.rs": "594005854898333251c5022a0bcc53291d7e92ef770cf1608cd048266a3540d9",
+    "crates/voxy_editor/src/scene_limits.rs": "dafdd75f7c1c8638d3b6edf54c9a898ecd140f18bfb06270e0224b02b8b811a5",
+    "crates/voxy_editor/examples/interactive_project.rs": "b828277e5669f3bfd8abdfa06e7350c079133bba94cdef175dcdea912432b1b3",
+    "examples/prefab-interactive-project/world.prefab": "2c0445f2bd3259e774c0be8d0cf90e3ec98adf62426b5e60575826290b7381c7",
+    "examples/prefab-interactive-project/project.voxy": "47cdfa163b7658b86f52167c292cc553504e803bfa7d186451be1280177795a6",
+    "examples/prefab-interactive-project/main.scene.json": "aa47232dd2d91271f698e588616b83d1d497a77edc9712e326ff09865afb4c1c",
+    "examples/prefab-interactive-project/player.obj": "7a75b49afbd51aa343e3c6633feff451b4a8a99e33be226cc3e76cdccce78c19",
+    "examples/prefab-interactive-project/tone.wav": "7fb5c19a1c87858cac57ce714e1af1abfdb91d93234d0841b57a07587581448a",
+    "examples/prefab-interactive-project/ground.obj": "7bfe3757563e14b37b3688de37406a980b0f7eeec2a124081acd2bfbfefbe154",
+    "examples/prefab-interactive-project/level.prefab": "473ccbe06ac5cf0289237849c414196016c4787094194b0ba74a1bc0b773ef3a",
+    "examples/prefab-interactive-project/assets.json": "3662a53bededdb2c7dfb5078445077fc2a0b9403e43a5008a1d8c51448fb2900",
+    "examples/prefab-interactive-project/wall.obj": "5cb898338a3ac77042592ae93a8e62369461c596f02e2d767ada1d2dac32d81a"
+  },
+  "editor_tests": {
+    "passed": 207,
+    "ignored": 17,
+    "failed": 0
+  },
+  "clippy_all_targets_warnings_denied": true,
+  "editor_and_public_example_built": true,
+  "cli_proof": "prefab-cli-proof.json",
+  "verified": [
+    "nested project validation and expansion",
+    "save preserves links and member overrides",
+    "undo/redo",
+    "inherited source edits",
+    "stable object IDs",
+    "failed dependency load/save retains good state and disk",
+    "dependency repair",
+    "relocation",
+    "Play Stop restoration",
+    "source-free package state parity",
+    "cycle/unknown asset/stale override/version/depth rejection"
+  ],
+  "native_window_verified": false,
+  "native_audio_device_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false,
+  "remaining": [
+    "native prefab UI acceptance",
+    "variants/apply/conflict workflow qualification",
+    "camera and animation integration",
+    "complete engine roadmap"
+  ]
+}

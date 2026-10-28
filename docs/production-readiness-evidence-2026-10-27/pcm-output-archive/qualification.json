@@ -1,0 +1,70 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Exact binary transport and prepared queue/pump publication, optional original playback archive field",
+  "status": "logical output participant implemented; native AudioSession barrier integration still closed",
+  "format": {
+    "magic": "VOXYOUT1",
+    "header_bytes": 80,
+    "sample_format": "stereo f32 bit patterns, little endian",
+    "fields": [
+      "sample rate",
+      "channels=2",
+      "queue capacity",
+      "queued frame count",
+      "pump block count",
+      "pump cursor",
+      "BLAKE3(header+payload)",
+      "queued PCM",
+      "pump block PCM"
+    ]
+  },
+  "checks": {
+    "audio_device_debug": {
+      "passed": 20,
+      "ignored": 1
+    },
+    "audio_device_release": {
+      "passed": 20,
+      "ignored": 1
+    },
+    "editor": {
+      "passed": 391,
+      "ignored": 44
+    },
+    "clippy": "audio_device and editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "verified": [
+    "Decoder rejects truncation at every length, trailing data, corruption at every byte, wrong rate and byte budgets",
+    "Correctly checksummed oversized counts/cursor and NaN/infinity/out-of-range PCM reject before publication",
+    "Queue and pump reconstruct exact sample bits, retaining negative zero and subnormal",
+    "Connection/freeze identity is validated; foreign tokens cannot capture or publish another queue",
+    "Queue and pump replacement retains exact old participant for rollback and consumes candidate only on successful publication",
+    "Inadmissible old pump rejects without changing live queue or pump",
+    "Binary roundtrip and publication continue 720 irregular callbacks with identical PCM, pump cursor/checkpoint and renderer clock",
+    "Original AudioPlayback JSON preserves optional output bytes, stages their validation, rejects corrupted embedded output",
+    "Original offline JSON omits new optional field and stays byte-for-byte stable in regression",
+    "Normal offline playback prepare rejects output-bearing archive rather than silently dropping native output",
+    "Full editor Native admission guard regression remains passing"
+  ],
+  "limitations": [
+    "No physical CPAL device or native window opened",
+    "Logical native AudioPlay capture helper implemented but not exercised with a physical native AudioPlay",
+    "AudioOwner/AudioSession native save/load still reject before capture; new participant not yet admitted through native device owner barrier",
+    "Host queued buffers and hardware playback position are not captured",
+    "Binary transport carries sample rate, while mixer state, clock remainder and playback counters remain in original outer playback archive",
+    "No native audible continuity, latency or FPS claim; no new performance benchmark needed for cold transport code",
+    "Full ENG roadmap remains open"
+  ],
+  "sha256": {
+    "crates/voxy_audio_device/Cargo.toml": "a7a18d34e6d2472f91917ec70bc3e0345ebfda31b8dbfee44028b9a1d84fab66",
+    "crates/voxy_audio_device/src/lib.rs": "96e5419affac0efbc4ac50803e94fe7db3fb0631c17b81a392b37c667e216609",
+    "crates/voxy_audio_device/src/output_checkpoint.rs": "a23eedcfc871dd151ffc4319a514b0773dc550ac4354e936cccb91a1f6325140",
+    "crates/voxy_audio_device/src/queue.rs": "d21250e415e829cbf41c121f8a5a1c3c42b16d8d781991c008e713444534e60a",
+    "crates/voxy_audio_device/src/pump.rs": "863117a2f5dbbed06fce144b07bea74e109e19c1f481906a1854576a4830c6a8",
+    "crates/voxy_audio_device/src/worker.rs": "cca975dffdd131e257e4204b9a6600a4ab29025ab6007e7fb28566b76d9cfd24",
+    "crates/voxy_editor/src/audio_playback_checkpoint.rs": "513396f51f00ae8e0ae45c4e68b6bf08180b66c1d6eceee033b8785b30cbbccc",
+    "Cargo.lock": "7930a92506d5b3716a9fe3f6ff031170d0235d23c0b9dfb1fe13ef0339045c21"
+  }
+}

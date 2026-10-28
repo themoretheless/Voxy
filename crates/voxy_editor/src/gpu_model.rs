@@ -4,12 +4,11 @@ use std::{
     collections::BTreeMap,
     sync::{Arc, Weak},
 };
-use voxy_render::{
-    SceneError, SceneGeometry, SceneRenderer, SceneSurface, SceneTexture, TextureSampling,
-};
+use voxy_render::{SceneError, SceneGeometry, SceneRenderer, SceneTexture, TextureSampling};
 /// Weak references do not retain images after their last model revision is gone.
 #[derive(Debug)]
 pub(super) struct ResidencyCache {
+    identity: Arc<()>,
     images: BTreeMap<[u8; 32], (Weak<SceneTexture>, u64)>,
     pub(super) budget: u64,
     epoch: u64,
@@ -22,14 +21,38 @@ impl Default for ResidencyCache {
     }
 }
 impl ResidencyCache {
+    /// Private transaction index. Weak entries preserve sharing and live-byte
+    /// admission without retaining or mutating the original publication.
+    pub(super) fn fork_for_upload(&self) -> Self {
+        let Self {
+            images,
+            identity: _,
+            budget,
+            epoch,
+            geometry_live,
+            geometry_budget,
+        } = self;
+        Self {
+            identity: Arc::new(()),
+            images: images.clone(),
+            budget: *budget,
+            epoch: *epoch,
+            geometry_live: *geometry_live,
+            geometry_budget: *geometry_budget,
+        }
+    }
     pub(super) fn with_budget(budget: u64) -> Self {
         Self {
+            identity: Arc::new(()),
             images: BTreeMap::new(),
             budget,
             epoch: 0,
             geometry_live: 0,
             geometry_budget: 256 * 1024 * 1024,
         }
+    }
+    pub(super) fn identity(&self) -> Arc<()> {
+        self.identity.clone()
     }
     pub(super) fn state(&self) -> (u64, u64, u64, u64) {
         (
@@ -103,14 +126,6 @@ impl ResidencyCache {
             self.epoch = self.epoch.wrapping_add(1);
         }
     }
-    pub(super) fn get_or_upload(
-        &mut self,
-        renderer: &SceneRenderer,
-        host: &SceneSurface,
-        image: &voxy_render::ImageAsset,
-    ) -> Result<Arc<SceneTexture>, SceneError> {
-        self.get_or_upload_on(renderer, host.device(), host.queue(), image)
-    }
     pub(super) fn get_or_upload_on(
         &mut self,
         renderer: &SceneRenderer,
@@ -150,6 +165,7 @@ pub(super) struct DeferredUpload {
     pub(super) message: String,
     source: Weak<voxy_assets::ImportedAsset<EditorAsset>>,
     state: (u64, u64, u64, u64),
+    cache_identity: Weak<()>,
 }
 impl DeferredUpload {
     pub(super) fn new(
@@ -161,6 +177,7 @@ impl DeferredUpload {
             message,
             source: Arc::downgrade(source),
             state: cache.state(),
+            cache_identity: Arc::downgrade(&cache.identity),
         }
     }
     pub(super) fn blocks(
@@ -168,7 +185,9 @@ impl DeferredUpload {
         source: &Arc<voxy_assets::ImportedAsset<EditorAsset>>,
         cache: &ResidencyCache,
     ) -> bool {
-        self.state == cache.state() && Weak::ptr_eq(&self.source, &Arc::downgrade(source))
+        self.state == cache.state()
+            && Weak::ptr_eq(&self.cache_identity, &Arc::downgrade(&cache.identity))
+            && Weak::ptr_eq(&self.source, &Arc::downgrade(source))
     }
 }
 fn mip_bytes(mut width: u32, mut height: u32) -> u64 {
@@ -202,12 +221,12 @@ pub(super) enum ModelGeometry {
 impl ModelGeometry {
     fn upload(
         renderer: &SceneRenderer,
-        host: &SceneSurface,
+        device: &wgpu::Device,
         asset: &EditorAsset,
     ) -> Result<Self, SceneError> {
         Ok(if let Some(certificate) = &asset.lod {
             let bundle = renderer.upload_streaming_certified_lod_mesh(
-                host.device(),
+                device,
                 &asset.mesh,
                 Arc::clone(certificate),
             )?;
@@ -220,7 +239,7 @@ impl ModelGeometry {
             }
             ModelGeometry::Lod { bundle, min, max }
         } else {
-            ModelGeometry::Single(renderer.upload_mesh(host.device(), &asset.mesh)?)
+            ModelGeometry::Single(renderer.upload_mesh(device, &asset.mesh)?)
         })
     }
     pub(super) fn base(&self) -> &SceneGeometry {
@@ -327,7 +346,8 @@ struct CachedTexture {
 #[allow(clippy::too_many_arguments)]
 fn model_texture(
     renderer: &SceneRenderer,
-    host: &SceneSurface,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
     asset: &EditorAsset,
     image_index_option: Option<usize>,
     sampling: TextureSampling,
@@ -347,7 +367,7 @@ fn model_texture(
                     .images
                     .get(image_index)
                     .ok_or(SceneError::InvalidTexture)?;
-                let storage = residency_cache.get_or_upload(renderer, host, image)?;
+                let storage = residency_cache.get_or_upload_on(renderer, device, queue, image)?;
                 entry.insert(storage);
             }
             let image = &images[&image_index];
@@ -356,7 +376,7 @@ fn model_texture(
             } else {
                 1
             };
-            let texture = renderer.texture_binding(host.device(), image, sampling, levels)?;
+            let texture = renderer.texture_binding(device, image, sampling, levels)?;
             let texture = Arc::new(texture);
             textures.push(CachedTexture {
                 image: image_index,
@@ -372,6 +392,61 @@ fn model_texture(
     Ok(texture)
 }
 
+#[derive(Clone)]
+pub(crate) struct AnimatedMaterials {
+    pub textures: Vec<Option<Arc<SceneTexture>>>,
+    pub storage: Vec<Arc<SceneTexture>>,
+}
+/// Uses the same native texture storage/binding path as normal model uploads.
+pub(crate) fn upload_animated_materials(
+    renderer: &SceneRenderer,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    asset: &EditorAsset,
+    cache: &mut ResidencyCache,
+) -> Result<AnimatedMaterials, Box<dyn std::error::Error>> {
+    cache.prune();
+    let model = asset
+        .animated
+        .as_ref()
+        .ok_or("missing animated material source")?;
+    let mut incoming = BTreeMap::new();
+    for primitive in &model.primitives {
+        if let Some(texture) = primitive.base_color_texture {
+            let image = asset
+                .images
+                .get(texture.image)
+                .ok_or(SceneError::InvalidTexture)?;
+            let key = image_key(image);
+            if !cache.images.contains_key(&key) {
+                incoming.insert(key, mip_bytes(image.width(), image.height()));
+            }
+        }
+    }
+    cache.admit(incoming.values().sum())?;
+    let mut bindings = Vec::new();
+    let mut images = BTreeMap::new();
+    let mut textures = Vec::new();
+    for primitive in &model.primitives {
+        let texture = primitive.base_color_texture;
+        textures.push(model_texture(
+            renderer,
+            device,
+            queue,
+            asset,
+            texture.map(|t| t.image),
+            texture.map_or_else(TextureSampling::default, |t| t.sampling),
+            texture.is_some_and(|t| t.use_mips),
+            cache,
+            &mut bindings,
+            &mut images,
+        )?);
+    }
+    Ok(AnimatedMaterials {
+        textures,
+        storage: images.into_values().collect(),
+    })
+}
 impl ModelGraphics {
     pub(super) fn geometry_residency_valid(&self, asset: &EditorAsset) -> bool {
         let minimum = Self::geometry_estimate(asset);
@@ -394,7 +469,7 @@ impl ModelGraphics {
     ) -> Result<Vec<voxy_render::SceneMesh>, voxy_model::ModelError> {
         match &asset.animated {
             Some(model) if model.primitives.len() > 1 => {
-                model.scene_meshes(&model.skeleton.bind_pose())
+                model.scene_meshes_frame(&model.bind_frame()?)
             }
             _ => Ok(Vec::new()),
         }
@@ -466,9 +541,10 @@ impl ModelGraphics {
                 .map(SceneGeometry::allocation_bytes)
                 .sum::<u64>()
     }
-    pub(super) fn upload(
+    pub(super) fn upload_on(
         renderer: &SceneRenderer,
-        host: &SceneSurface,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
         asset: &EditorAsset,
         residency_cache: &mut ResidencyCache,
     ) -> Result<Self, Box<dyn std::error::Error>> {
@@ -486,10 +562,10 @@ impl ModelGraphics {
             .into());
         }
         residency_cache.preflight(asset)?;
-        let geometry = ModelGeometry::upload(renderer, host, asset)?;
+        let geometry = ModelGeometry::upload(renderer, device, asset)?;
         let outline = selection_outline(&asset.mesh)
             .ok()
-            .map(|mesh| renderer.upload_mesh(host.device(), &mesh))
+            .map(|mesh| renderer.upload_mesh(device, &mesh))
             .transpose()?;
         let mut parts = BTreeMap::new();
         let mut geometry_cache: BTreeMap<(usize, usize), SharedGeometry> = BTreeMap::new();
@@ -503,17 +579,18 @@ impl ModelGraphics {
             let (geometry, outline) = if let Some(geometry) = geometry_cache.get(&key) {
                 geometry.clone()
             } else {
-                let geometry = Arc::new(renderer.upload_mesh(host.device(), mesh)?);
+                let geometry = Arc::new(renderer.upload_mesh(device, mesh)?);
                 let outline = selection_outline(mesh)
                     .ok()
-                    .map(|mesh| renderer.upload_mesh(host.device(), &mesh).map(Arc::new))
+                    .map(|mesh| renderer.upload_mesh(device, &mesh).map(Arc::new))
                     .transpose()?;
                 geometry_cache.insert(key, (Arc::clone(&geometry), outline.clone()));
                 (geometry, outline)
             };
             let texture = model_texture(
                 renderer,
-                host,
+                device,
+                queue,
                 asset,
                 node.image,
                 node.sampling,
@@ -537,7 +614,8 @@ impl ModelGraphics {
                 let texture = primitive.base_color_texture;
                 animated_textures.push(model_texture(
                     renderer,
-                    host,
+                    device,
+                    queue,
                     asset,
                     texture.map(|t| t.image),
                     texture.map_or_else(TextureSampling::default, |t| t.sampling),
@@ -550,7 +628,7 @@ impl ModelGraphics {
         }
         let animated_preview = preview
             .iter()
-            .map(|mesh| renderer.upload_mesh(host.device(), mesh))
+            .map(|mesh| renderer.upload_mesh(device, mesh))
             .collect::<Result<Vec<_>, _>>()?;
         Ok(Self {
             geometry,
@@ -561,6 +639,7 @@ impl ModelGraphics {
             animated_model: asset.animated.clone(),
             animated_lod: asset.skinned_lod.clone(),
             _images: images.into_values().collect(),
+            publication: None,
         })
     }
 }
@@ -751,6 +830,7 @@ mod tests {
             animated_model: asset.animated.clone(),
             animated_lod: None,
             _images: vec![],
+            publication: None,
         };
         assert_eq!(
             graphics.geometry_bytes(),
@@ -823,6 +903,7 @@ mod tests {
             animated_model: None,
             animated_lod: None,
             _images: vec![],
+            publication: None,
         };
         let a = voxy_assets::AssetId("a".into());
         let b = voxy_assets::AssetId("b".into());
@@ -998,6 +1079,7 @@ mod tests {
                     animated_model: None,
                     animated_lod: None,
                     _images: vec![],
+                    publication: None,
                 },
             ),
         ]);
@@ -1141,6 +1223,11 @@ mod tests {
         let deferred = DeferredUpload::new(&first, &cache, "pressure".into());
         assert!(deferred.blocks(&Arc::clone(&first), &cache));
         assert!(!deferred.blocks(&other, &cache));
+        let replacement = cache.fork_for_upload();
+        assert_eq!(cache.state(), replacement.state());
+        assert!(!Arc::ptr_eq(&cache.identity(), &replacement.identity()));
+        assert!(!deferred.blocks(&first, &replacement));
+
         assert_eq!(Arc::strong_count(&first), 1);
         cache.budget = 8;
         assert!(!deferred.blocks(&first, &cache));
@@ -1192,3 +1279,13 @@ mod tests {
         assert!(cache.admit(4).is_ok());
     }
 }
+
+#[cfg(test)]
+#[path = "gpu_model_sampler_tests.rs"]
+pub(crate) mod sampler_tests;
+
+#[path = "gpu_model_batch.rs"]
+pub(crate) mod batch;
+
+#[path = "gpu_model_restore.rs"]
+pub(crate) mod restore;

@@ -1,0 +1,33 @@
+{
+  "scope": "Coordinated source freshness observation bound to detached candidate",
+  "implemented": [
+    "Process-local unique Arc epoch for each common barrier acquisition",
+    "Reuse native running/idle PlayResourceGuard for scene, history, input, physics, models and timing",
+    "Fingerprint native UiLive checkpoint and freshly polled Offline AudioSession owner, not cached audio snapshot",
+    "prepare_guarded retains source observation; validate_origin rejects missing observation",
+    "Source input changes and native audio mode switch reject; exact restoration revalidates",
+    "Cancellation and reacquisition permanently invalidate previous barrier epoch",
+    "Real WAV owner mutation changes native audio fingerprint while barrier cached audio remains unchanged"
+  ],
+  "checks": {
+    "editor_passed": 316,
+    "editor_ignored": 27,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_and_diff": "passed",
+    "gpu": "Apple M4 Max Metal passed",
+    "readbacks_equal": true,
+    "nonblack_pixels": 946
+  },
+  "retained_rejected_run": "gpu-final log: reused evidence output directory rejected create_new; rerun used distinct gpu-final-files without deleting original evidence",
+  "not_claimed": [
+    "No final App publication or borrow-scoped commit permit yet",
+    "Window/input routing and first presentation not covered by these source observations",
+    "No native output-device audio or physical memory/FPS qualification",
+    "Authoring/extraction/non-model Graphics and complete ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier.rs": "319d2284508ac881838e7db74f087d2ceeb57c41877ceaa3f6943a4b2e4fc99a",
+    "crates/voxy_editor/src/app/restore_barrier/tests.rs": "b4226c82f27b089efe4b8c4aa4b7d52b0b0d0dccb27ef83b589bbcf09f1127c3",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "3ce0820547d46375a70d62423071243c720911c1aef1e7b2379b3844b3db4997"
+  }
+}

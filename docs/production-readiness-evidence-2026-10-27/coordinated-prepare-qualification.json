@@ -1,0 +1,31 @@
+{
+  "scope": "Detached preparation of the coordinated Play/model, UiLive and Offline audio owners against one restored scene",
+  "implemented": [
+    "Retain one original PreparedPlayResources and its LoadedScene",
+    "Create candidate AuthoringProject with original recipe and shared component registry",
+    "Prepare native UI publications/reload and audio sources against candidate durable IDs",
+    "Nonblocking Drop closes candidate model/UI/audio workers; explicit discard returns join handles",
+    "Native audio semantic rejection after game and UI preparation leaves source unchanged; retry succeeds",
+    "Prepare succeeds into empty target root after deletion of source project directory"
+  ],
+  "checks": {
+    "strict_all_target_clippy": "passed",
+    "scoped_format_and_diff": "passed",
+    "explicit_gpu": "Apple M4 Max Metal passed",
+    "exact_readbacks": true,
+    "nonblack_pixels": 946,
+    "editor_passed": 316,
+    "editor_ignored": 27
+  },
+  "limitations": [
+    "Coordinator rich fixture has no active audio source or presented UI text; nonempty native participants have separate tests",
+    "No whole-App publication, menu integration or native first-presentation/input transfer",
+    "No enclosing full-session file, authoring/extraction/non-model graphics composition",
+    "Native output-device queue barrier and physical memory/FPS remain open",
+    "Full ENG-03 through ENG-13 goal remains open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier.rs": "c6ad6785a438fd52c1d0617ebfab8069691f9e7bd6d9bc42875ee1dc08451373",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "59f8333ada25d34799ad83fdfb0f8c08f663494c7cac02d9a91eedeec6d01cc6"
+  }
+}

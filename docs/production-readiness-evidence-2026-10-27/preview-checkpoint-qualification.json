@@ -1,0 +1,33 @@
+{
+  "scope": "Native immutable animation-preview source observation and accepted-frame checkpoint participant",
+  "implemented": [
+    "Observe preview owner, f64 phase words and strong model/source/frame Arc identities through SceneAuthoringGuard",
+    "Private settings/profile rebuild with the accepted frame; replacing even an equal pose invalidates the source observation",
+    "Serialize original owner ID, exact phase, canonical external model roots, settings/profile and native AnimatorFrameCheckpoint",
+    "Prepare a fresh preview by original root resolution and native accepted-frame reconstruction without clip sampling or clock steps",
+    "Validate canonical model-root alias relations on capture and prepare"
+  ],
+  "checks": {
+    "editor_passed": 322,
+    "editor_ignored": 30,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_diff": "passed",
+    "same_pose_recomputed_frame_invalidates": true,
+    "signed_zero_phase_and_removal_invalidate": true,
+    "scene_token_game_clock_events_unchanged": true,
+    "prepared_owner_rebinds_and_exact_frame_json_matches": true,
+    "missing_root_and_wrong_aliases_reject": true
+  },
+  "not_claimed": [
+    "Preview participant not yet joined to original model/resource root archive or outer editor file",
+    "Shared preview/GPU/runtime frame Arc pooling not yet composed",
+    "Fresh source observation is not full App commit or first-frame handoff",
+    "No new GPU/window/physical-memory/FPS/device-audio qualification",
+    "Full ENG-03 through ENG-13 remains open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/animation_preview.rs": "bc9fb203e46eeeb5a59bb77d5d5d520e99a62e3e1f261f1e3da815df33570ba8",
+    "crates/voxy_editor/src/animation_preview/checkpoint.rs": "ebc723c33a1bcb0f300005176c46bcd63702526c9f56fdb5814495603ba55a06",
+    "crates/voxy_editor/src/app/restore_guard.rs": "097eeba759ea62e47d04edd997b0a7ef14e8a17172a8c15819be00e25a4664a1"
+  }
+}

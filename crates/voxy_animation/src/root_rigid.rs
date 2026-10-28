@@ -5,15 +5,21 @@ use super::{
 use crate::root_curve::RootCurve;
 use glam::{DQuat, DVec3, Vec3};
 use std::sync::Arc;
+mod checkpoint;
+pub use checkpoint::{
+    RootRigidPathCheckpoint, RootRigidPathCheckpointLimits, RootRigidPathProgram,
+    RootRigidPathStateRecord, RootRigidPathStep, RootRigidTimedTwistStep, RootRigidTwistStep,
+};
 mod enclosure;
 mod integration;
 pub use enclosure::{
     RootAngularDerivativeBounds, RootRigidCertifiedFadeInterval, RootRigidCoordinateCertificate,
-    RootRigidEnclosure, RootRigidErrorAccumulator, RootRigidEvaluatedPose, RootRigidFadeDomain,
-    RootRigidFadeFieldInterval, RootRigidFadePointCertificate, RootRigidFieldInterval,
-    RootRigidMappedField, RootRigidMappedPath, RootRigidSourceField, RootRigidTwistEnclosure,
-    RootRigidWallInterval, RootRigidWallPartition, RootScrewEnclosurePath,
-    RootSourceScrewPointCertificate, RootTimeCutEnclosure, RootTwistErrorBounds,
+    RootRigidEnclosure, RootRigidEnclosureCheckpoint, RootRigidErrorAccumulator,
+    RootRigidEvaluatedPose, RootRigidFadeDomain, RootRigidFadeFieldInterval,
+    RootRigidFadePointCertificate, RootRigidFieldInterval, RootRigidMappedField,
+    RootRigidMappedPath, RootRigidSourceField, RootRigidTwistEnclosure, RootRigidWallInterval,
+    RootRigidWallPartition, RootScrewEnclosurePath, RootSourceScrewPointCertificate,
+    RootTimeCutEnclosure, RootTwistErrorBounds, RootUniformScaleCheckpoint,
     RootUniformScaleEnclosure,
 };
 pub(crate) use enclosure::{
@@ -117,6 +123,26 @@ struct Curve {
 /// not create additional compiled key arrays; this object contains no clock.
 #[derive(Clone, Debug)]
 pub struct RootRigidCurve(Arc<Curve>);
+impl RootRigidCurve {
+    pub(crate) fn asset_checkpoint_words(&self) -> [u64; 8] {
+        // Links are reconstructed by the clip's own motion/rotation cache APIs;
+        // all coefficient words are verified by those two source receipts.
+        let Curve {
+            translation: _,
+            rotation: _,
+            origin,
+            bind,
+            duration,
+            playback,
+        } = self.0.as_ref();
+        let mut words = [0; 8];
+        words[..3].copy_from_slice(&origin.to_array().map(f64::to_bits));
+        words[3..6].copy_from_slice(&bind.to_array().map(f64::to_bits));
+        words[6] = duration.to_bits();
+        words[7] = u64::from(crate::asset_checkpoint::playback(*playback));
+        words
+    }
+}
 /// Origin linear velocity and angular velocity in the interval-start frame,
 /// measured per clip second. This is not a body-coordinate twist.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -240,6 +266,22 @@ pub struct RootRigidSpan {
     pivot: [DVec3; 4],
 }
 impl RootRigidSpan {
+    fn constant_spatial(
+        twist: RootRigidTwist,
+        initial: RootRigidTransform,
+        start: f64,
+        end: f64,
+    ) -> Result<Self, AnimationError> {
+        let rotation =
+            RootRotationSpan::constant_velocity(start, end, initial.rotation, twist.angular)?;
+        Ok(Self {
+            screw: Some((twist, initial)),
+            rotation,
+            additive: [DVec3::ZERO; 4],
+            pivot: [DVec3::ZERO; 4],
+        })
+    }
+
     #[must_use]
     pub fn start(&self) -> f64 {
         self.rotation.start()
@@ -509,14 +551,7 @@ impl RootRigidPath {
             if !next.is_finite() || next <= time {
                 return Err(AnimationError::NumericalOverflow);
             }
-            let rotation =
-                RootRotationSpan::constant_velocity(time, next, end.rotation, twist.angular)?;
-            let span = RootRigidSpan {
-                screw: Some((twist, end)),
-                rotation,
-                additive: [DVec3::ZERO; 4],
-                pivot: [DVec3::ZERO; 4],
-            };
+            let span = RootRigidSpan::constant_spatial(twist, end, time, next)?;
             end = span.sample(1.)?;
             spans.push(span);
             time = next;

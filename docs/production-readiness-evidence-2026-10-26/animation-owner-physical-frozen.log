@@ -1,0 +1,9 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.50s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9bf058ddab5294b3)
+
+running 1 test
+test foot_placement::tests::scene_physics_input_and_animation_checkpoint_continue_solved_foot_together ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 259 filtered out; finished in 0.20s
+

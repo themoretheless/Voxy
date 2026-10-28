@@ -1,0 +1,39 @@
+{
+  "scope": "Native UI input routing joins coordinated capture, preparation and source freshness",
+  "implemented": [
+    "Capture original GameUiInputCheckpoint including runtime, activation key mask and admitted snapshot using reserved historical IDs",
+    "Prepare native routing against the same restored LoadedScene as game/UI/audio",
+    "Bound native input with existing UI element/layout-byte limits",
+    "Include current native adapter checkpoint in coordinated source fingerprint",
+    "Held Enter/focus survives native checkpoint/rebind; release emits one click on rebound owner and repeat release emits none",
+    "Cancel of source adapter invalidates guarded candidate; exact native restoration revalidates",
+    "Atomic counter makes parallel audio fixtures use distinct directories"
+  ],
+  "gpu_checks": {
+    "adapter": "Apple M4 Max Metal",
+    "full_play_resource_test": "passed",
+    "reference_running_idle_pixels_equal": true,
+    "nonblack_pixels": 946
+  },
+  "not_claimed": [
+    "No complete App atomic publication or actual native first-frame/input handoff",
+    "UI admission in rich fixture uses an explicit supplied snapshot, not a window presentation event",
+    "OS keyboard device/modifiers and native routing handoff remain host work",
+    "Native audio queue, physical memory/FPS and full ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier.rs": "1bba5d6088746d7b48b968bd8731e70104e14dcda23a3ce8383105589ec40f24",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "5c9af65bb3ce4e504b2f104ae0732aaac1f6683bae999be52ebc13d6e1274429",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "40d80d38e695a09a9a911d744e4b4a00b6abb3425c6ebfcd9ca6d827892d526a"
+  },
+  "checks": {
+    "editor_passed": 317,
+    "editor_ignored": 29,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_diff": "passed"
+  },
+  "retained_failures": [
+    "Initial test compilation lacked explicit winit KeyCode/ElementState imports",
+    "Parallel audio fixtures collided because PID plus wall-clock timestamp was not unique; fixed with a process-local atomic counter"
+  ]
+}

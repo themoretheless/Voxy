@@ -1,0 +1,32 @@
+    Checking voxy_text v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_text)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0308]: mismatched types
+   --> crates/voxy_editor/src/ui_live.rs:205:44
+    |
+205 |                 self.published_text = Some(prepared);
+    |                                       ---- ^^^^^^^^ expected `Arc<ImportedAsset<UiTextPreparation>>`, found `ImportedAsset<UiTextPreparation>`
+    |                                       |
+    |                                       arguments to this enum variant are incorrect
+    |
+    = note: expected struct `std::sync::Arc<voxy_assets::ImportedAsset<_>>`
+               found struct `voxy_assets::ImportedAsset<_>`
+help: the type constructed contains `voxy_assets::ImportedAsset<UiTextPreparation>` due to the type of the argument passed
+   --> crates/voxy_editor/src/ui_live.rs:205:39
+    |
+205 |                 self.published_text = Some(prepared);
+    |                                       ^^^^^--------^
+    |                                            |
+    |                                            this argument influences the type of `Some`
+note: tuple variant defined here
+   --> /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/option.rs:605:5
+    |
+605 |     Some(#[stable(feature = "rust1", since = "1.0.0")] T),
+    |     ^^^^
+help: call `Into::into` on this expression to convert `voxy_assets::ImportedAsset<UiTextPreparation>` into `std::sync::Arc<voxy_assets::ImportedAsset<UiTextPreparation>>`
+    |
+205 |                 self.published_text = Some(prepared.into());
+    |                                                    +++++++
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `voxy_editor` (lib) due to 1 previous error

@@ -1,0 +1,42 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on shared package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_audio_device-423c8481ec040f40)
+
+running 25 tests
+test queue::benchmarks::paired_former_channel_and_checkpointable_queue ... ignored, controlled CPU microbenchmark, no audio device or frame-rate qualification
+test tests::bounded_submission_rejects_full_invalid_and_closed ... ok
+test queue::tests::malformed_or_mismatched_candidate_and_budget_failure_preserve_source_queue ... ok
+test queue::tests::capture_replace_and_rollback_keep_exact_pcm_order_and_original_sender ... ok
+test output_checkpoint::tests::owned_publication_cancel_preserves_source_and_commit_keeps_pcm_gated ... ok
+test pump::tests::queue_backpressure_preserves_pcm_and_zero_budget_preserves_clock ... ok
+test queue::tests::batch_validation_and_backpressure_match_single_frame_prefixes ... ok
+test queue::tests::in_flight_operation_defers_capture_and_cancel_does_not_discard_its_frame ... ok
+test output_checkpoint::tests::destination_metadata_admission_does_not_mutate_queue_and_rejects_consumed_candidate ... ok
+test worker::native_checkpoint_tests::physical_device_pause_freeze_capture_and_resume_zero_pcm ... ignored, physical default output device; only zero PCM, no window
+test output_checkpoint::tests::correctly_checksummed_semantic_corruption_is_rejected_before_publication ... ok
+test output_checkpoint::tests::offline_prefix_preserves_queue_suffix_bits_and_roundtrips_partial_consumption ... ok
+test pump::checkpoint_tests::unsent_pcm_resumes_after_backpressure_without_rendering_it_twice ... ok
+test worker::tests::initialization_failure_is_explicit_and_shutdown_idempotent ... ok
+test worker::tests::blocked_initialization_poll_and_close_never_wait_and_late_owner_is_destroyed ... ok
+test worker::transition_tests::close_during_blocked_pause_suppresses_late_ack_and_destroys_on_owner_thread ... ok
+test worker::transition_tests::failed_pause_does_not_report_old_state_and_resume_reaches_native_owner ... ok
+test worker::transition_tests::blocked_native_pause_and_resume_never_block_caller_or_acknowledge_early ... ok
+test worker::transition_tests::failed_resume_requires_explicit_recovery_instead_of_claiming_paused ... ok
+test output_checkpoint::tests::invalid_wire_and_foreign_or_over_budget_publication_leave_live_output_intact ... ok
+test worker::transition_tests::native_owner_panic_cannot_publish_a_successful_transition ... ok
+test output_checkpoint::tests::binary_output_roundtrip_publishes_queue_and_suffix_and_continues_720_callbacks ... ok
+test queue::tests::queued_pcm_and_unsent_pump_suffix_continue_720_callbacks_without_duplication ... ok
+test queue::tests::concurrent_producer_and_callback_preserve_sequence_through_repeated_freezes ... ok
+test pump::batch_tests::batched_pump_matches_original_cursor_clock_and_pcm_for_720_irregular_callbacks ... ok
+
+test result: ok. 23 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests voxy_audio_device
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

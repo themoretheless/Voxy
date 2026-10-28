@@ -1,0 +1,22 @@
+    Checking voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+error: `as` casting between raw pointers without changing their constness
+   --> crates/voxy_animation/src/asset_checkpoint.rs:191:19
+    |
+191 |         let key = Arc::as_ptr(name) as *const u8 as usize;
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try `pointer::cast`, a safer alternative: `Arc::as_ptr(name).cast::<u8>()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_as_ptr
+    = note: `-D clippy::ptr-as-ptr` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::ptr_as_ptr)]`
+
+error: `as` casting between raw pointers without changing their constness
+   --> crates/voxy_animation/src/asset_checkpoint.rs:201:19
+    |
+201 |         let key = Arc::as_ptr(rig) as *const Joint as usize;
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try `pointer::cast`, a safer alternative: `Arc::as_ptr(rig).cast::<Joint>()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ptr_as_ptr
+
+error: could not compile `voxy_animation` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_animation` (lib test) due to 2 previous errors

@@ -1,0 +1,9 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.01s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_animation-b8add508dfae1155)
+
+running 1 test
+test rigid_fade::checkpoint::tests::fresh_source_replay_retains_fade_completion_frozen_source_and_every_proof_bit ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 346 filtered out; finished in 0.02s
+

@@ -1,0 +1,49 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Frame-polled editor save releases its own resource/audio boundary independently of file serialization, sync and rename",
+  "changes": [
+    "Capture and all save retirement stages own the exact restore epoch",
+    "Writing polls source resume before observing writer completion; never joins an unfinished writer",
+    "Capture rejects a replaced boundary; late writer or completion never releases a newer boundary",
+    "Resume failure retains writer, result and fence for retry"
+  ],
+  "checks": {
+    "editor": {
+      "passed": 393,
+      "ignored": 45
+    },
+    "offscreen_gpu_app": {
+      "passed": 7,
+      "ignored": 0,
+      "window": false
+    },
+    "clippy": "editor all targets, -D warnings, exit 0",
+    "format": "scoped rustfmt check passed",
+    "diff_check": "scoped git diff --check passed; save.rs is preexisting untracked source"
+  },
+  "regressions": [
+    "Blocked writer while real running Play resumes and simulation tick counter advances",
+    "Actual model watcher disappearance keeps writer and audio/game fence; restored original watcher permits retry",
+    "Old Capturing/Writing/Resuming stages leave newer actual restore/model boundaries untouched",
+    "Custom component u64 beyond f64 exact range survives actual archive read/prepare",
+    "Capture and writer failures preserve prior destination; shutdown joins started write"
+  ],
+  "fixture_correction": "Initial running-Play test used small generic test UI capacity (8); switched to the actual desktop save policy matching runtime capacity (128). Initial failed log retained.",
+  "limits": [
+    "No native audio device test run for this change",
+    "No native window or frame-time/FPS qualification",
+    "GPU regressions use offline audio",
+    "Native audio still needs connection into full App scene/GPU/UI/input publication",
+    "ENG-03 through ENG-13 and full professional engine scope remain open"
+  ],
+  "sources_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/save.rs": "c74d7b7e6111509c5b0f5b108405ad13541c40b0c8f9153fc0cc5b5aed5187dd"
+  },
+  "logs": [
+    "editor.log",
+    "gpu.log",
+    "clippy.log",
+    "initial-fixture-budget-failure.log"
+  ]
+}

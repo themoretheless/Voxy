@@ -1,0 +1,35 @@
+{
+  "stage": "ENG-03",
+  "scope": "native CPU/GPU model reload publication transaction",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "command": "CARGO_TARGET_DIR=target/research-ray-precision cargo +nightly-2026-05-27 test -p voxy_editor native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work -- --ignored --nocapture",
+  "result": {
+    "passed": 1,
+    "failed": 0,
+    "device": "Apple M4 Max",
+    "backend": "Metal",
+    "window": false
+  },
+  "verified": [
+    "old CPU publication and GPU geometry retained during staging",
+    "successful CPU/GPU publication shares catalog publication identity",
+    "stale ticket rejects prepared GPU result without changing accepted publication or cache",
+    "failed import retains accepted publication, geometry and cache",
+    "deferred GPU failure clears pending ticket and retains accepted publication",
+    "shutdown cancels unfinished GPU preparation and retains accepted publication"
+  ],
+  "limits": [
+    "direct transaction fixture; not full watcher/filesystem import lifecycle",
+    "no rendered-image comparison",
+    "no FPS or memory-peak qualification",
+    "ENG-03 remains incomplete"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/model_reload.rs": "28d25570b282450cecf926aefc3babc4f9c847071652557af0f8e64502994a99",
+    "crates/voxy_editor/src/app/model_reload/tests.rs": "29cddd302ffbb73be6699dfc723da15b1a31639dd7742df92c4a1143a15c909d",
+    "crates/voxy_editor/src/lib.rs": "c3a791f83813c32a6f115937d629e78253099e2757d502b4f9d97c1f8207475b",
+    "Cargo.lock": "a0c17e6c8d721ab9a6b8bc8b51e195dbd2a97ccd9bbd249ead8943d2df2d8c5a"
+  },
+  "log_sha256": "06e61eca83efd7567aff779f1566052909e87753197d90e7b196e8cea79390ac"
+}

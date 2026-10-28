@@ -1,0 +1,11 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.00s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 3 tests
+test ui_draw::tests::backgrounds_follow_scene_painter_order ... ok
+test ui_draw::tests::fractional_layout_does_not_round_unclipped_glyph_crop_beyond_one ... ok
+test ui_draw::tests::glyph_geometry_clips_uvs_and_rejects_stale_owner_publications ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 298 filtered out; finished in 0.08s
+

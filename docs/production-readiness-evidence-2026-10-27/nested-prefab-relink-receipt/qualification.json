@@ -1,0 +1,60 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "bug": "model relink updated manifest but left nested-prefab authoring receipt observing old manifest, blocking subsequent save",
+  "change": "native detached single-input receipt replacement validates original inputs, replacement digest and quotas; background relink stages matching manifest receipt, revalidates all authoring inputs before write and installs receipt only while original project/path/source fingerprint still match",
+  "verified": [
+    "nested two-instance prefab scene preserves unsaved first-instance override and durable IDs through panel-driven model relink",
+    "save retains nested instance source, first override and untouched second instance; leaf/nested prefab file bytes unchanged",
+    "cold reopen matches edited authoring document",
+    "package launches for120ticks with2objects and2prefabinstances after deleting original source directory",
+    "decoded payload float low bits and signed zero preserved; untouched input snapshot Arc identities retained",
+    "replacement quota, forged digest and unrelated input drift reject",
+    "external prefab edit before manifest publication rejects without writing manifest",
+    "stale authoring manifest rejects receipt attachment; later external prefab edits remain detectable after own manifest update",
+    "prefab dependency IDs cannot be reinterpreted as models",
+    "changed App authoring source before authorization rejects manifest write",
+    "changed App authoring source after authorization remains intact; committed model update is reported with reload-required diagnostic rather than overwriting current source"
+  ],
+  "suite_results": [
+    {
+      "passed": 61,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 343,
+      "failed": 0,
+      "ignored": 32
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_assets/src/inputs.rs": "c97ba91cecd7cf058fa301c6af26a8bc0b1d728e6824f6c7aa2e2cc9a295b4f8",
+    "crates/voxy_editor/src/prefab_authoring/model_relink.rs": "5b8c99cce96d2f550df653f005e7dcee9a7a8f0f35ad16006245709d29b19040",
+    "crates/voxy_editor/src/app/model_relink.rs": "af8a9994cc994a3371f0d76f2731a144da27f69ccda1b913a6adabae221dccce",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "bcf508f92ce2c73c2d6f397086d95955da9d35d945a8c0f0b39b06d20457e96b"
+  },
+  "limits": [
+    "fingerprint/clone cost per relink not profiled; no FPS or physical-memory claim",
+    "native window/file picker and GPU model first-presentation gate remain open",
+    "trusted local validation+rename is not cross-writer CAS or directory crash durability",
+    "full App save/load publication and ENG-03 through ENG-13 remain incomplete"
+  ]
+}

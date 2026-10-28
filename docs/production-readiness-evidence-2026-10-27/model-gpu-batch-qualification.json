@@ -1,0 +1,35 @@
+{
+  "scope": "Detached GPU model batch staging, native upload code shared with SceneSurface",
+  "implemented": [
+    "ModelGraphics::upload delegates to device/queue upload_on for identical native and offscreen paths",
+    "Whole batch stages into a forked ResidencyCache, retaining exact CPU publication Arcs",
+    "Peak geometry admission includes old live allocations and all earlier candidates; accepted accounting subtracts only replaced geometry",
+    "Validation/Internal/OOM scopes popped synchronously; Ready requires asynchronous scope validation",
+    "Upload failure, late owner failure, device validation failure and pending cancellation leave original cache unchanged"
+  ],
+  "qualification": {
+    "gpu": "Apple M4 Max, Metal, real non-CPU adapter",
+    "explicit_gpu_test": "passed; three models including animated GLB and two different textures",
+    "editor_suite": {
+      "passed": 298,
+      "ignored": 22,
+      "failed": 0
+    },
+    "all_targets_clippy": "passed -D warnings",
+    "format_diff": "passed"
+  },
+  "retained_failure": "Initial test module resolved src/tests.rs; explicit module test path fixed build. Original compiler log retained. Rustfmt edition corrected to project Rust 2024.",
+  "open": [
+    "Batch is detached; it is not integrated into native App reload/restore commit",
+    "Current normal reload still publishes CPU before GPU; mismatch is diagnosed, not fixed by this batch alone",
+    "App destination epoch/scene/animation/UI/audio joins and exclusive final publication remain open",
+    "No rendered pixel, displayed-frame, physical memory or FPS qualification in this test",
+    "ENG-03 through ENG-13 remain incomplete"
+  ],
+  "logs_sha256": {
+    "model-gpu-batch-editor-tests.log": "1375e29984dc216259c74953dffa19eb471cacb3c8f4c0d3233b3e60917efaee",
+    "model-gpu-batch-metal.log": "d4ae63177680adb0cc02bcd765cafbbc8da6bdc37e409ef1030659901d87191e",
+    "model-gpu-batch-clippy.log": "aa272793ef12fedc3b9682b84afada225c4761952f6764caf0b196a8916edf1d",
+    "model-gpu-batch-build-before-module-fix.log": "2c7a3ef24816362656d2325ffc22e0bfa0b4adedce39c8d21c6dbb09bba43d08"
+  }
+}

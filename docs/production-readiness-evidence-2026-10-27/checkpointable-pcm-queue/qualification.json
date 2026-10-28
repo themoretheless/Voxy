@@ -1,0 +1,63 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Exact application PCM queue capture/restore and batched pump prerequisite for native audio snapshots",
+  "status": "queue primitive implemented in original CPAL callback path; AudioSession native snapshot integration remains open",
+  "dependency": "crossbeam-queue =0.3.14 from cached source; reuse ArrayQueue, no new unsafe queue implementation",
+  "checks": {
+    "audio_device_debug": {
+      "passed": 17,
+      "ignored": 1
+    },
+    "audio_device_release": {
+      "passed": 17,
+      "ignored": 1
+    },
+    "editor": {
+      "passed": 391,
+      "ignored": 44
+    },
+    "stress": {
+      "release_runs": 100,
+      "stereo_frames": 2000000,
+      "freezes": 10000
+    },
+    "clippy": "audio_device and editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "verified": [
+    "Original CPAL callback consumes bounded ArrayQueue via exact shared receiver path; no callback mutex or allocation added",
+    "Unique RAII freeze excludes new producer/callback operations and polls in-flight completion without waiting",
+    "Capture rotates only quiescent queue, retaining allocation, sender identity and exact PCM ordering",
+    "Checkpoint stores sample bits, including negative zero/subnormal; bounded preparation rejects malformed PCM/capacity before publication",
+    "Replacement returns exact old queue for outer rollback; mismatched/failed candidates leave source intact",
+    "Cancellation during in-flight operation resumes same queue without discarding frame; closed queue cannot be resurrected",
+    "720 callback continuation composes queued PCM with original PcmPump unsent suffix",
+    "Batched PcmPump matches original single-frame algorithm for 720 irregular callbacks at capacities 1/5/128, including cursor, renderer clock and PCM bits",
+    "Batch submission validation/backpressure prefixes match original single-frame semantics for active/frozen/closed queues",
+    "Concurrent producer/callback stress and repeated capture/replace preserve every expected sample in order"
+  ],
+  "performance": {
+    "report": "cpu-pairs.json",
+    "batch_ratio": 0.8419980495847168,
+    "single_ratio": 1.139265865948815,
+    "limitation": "Single-frame API is slower than former reference; production PcmPump now batches. No claim all submission forms are faster, no hardware or FPS claim"
+  },
+  "limitations": [
+    "No physical audio device, native window or GPU benchmark run",
+    "Queue checkpoint covers application PCM only, not host buffers or playback position/rate",
+    "OutputQueueCheckpoint is an in-memory typed record; persistent outer archive composition remains open",
+    "Unique freeze token intentionally supplies silence if callback is invoked; real native checkpoint must pair it with native pause acknowledgement",
+    "AudioSession Native checkpoint guard remains unchanged and verified by full editor tests",
+    "Frame pacing, audible continuity, latency and power need actual-device qualification",
+    "Full ENG roadmap remains open"
+  ],
+  "sha256": {
+    "crates/voxy_audio_device/Cargo.toml": "78e1799d4787f2efc813b51657ff7b1797afaf790283fa9a6e8ab43d6dd88bc9",
+    "crates/voxy_audio_device/src/lib.rs": "d4af463615c8301354f67f105f972e5b711330f8039046ea562fd2a82b886a3c",
+    "crates/voxy_audio_device/src/queue.rs": "69bbfcf85cf42c84f88592d5ae6a09f259feed8759d6b2e78490b27e2fbb98f8",
+    "crates/voxy_audio_device/src/pump.rs": "3f2a277a525ec1db8305219273271b8598c220b1ad7d910d2d30a10ba1c027aa",
+    "crates/voxy_audio_device/src/worker.rs": "3bb3e7f2e893f77ca818940eef2430c15cac6e55df3bfbb332e511c94f9ad279",
+    "Cargo.lock": "35fd5e1257ed8800e60f2702c129779157cb3ed94d7a67966a3ddeb3bb71660b"
+  }
+}

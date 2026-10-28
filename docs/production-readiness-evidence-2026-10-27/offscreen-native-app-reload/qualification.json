@@ -1,0 +1,44 @@
+{
+  "stage": "ENG-03 / ENG-05 native App GPU integration",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "change": "Graphics has a shared constructor for native GPU resources with optional SceneSurface. Normal window initialization and offscreen native App tests use the same material shader, renderer, animation/gizmo/UI resource setup, residency owners and explicit budgets. Presentation operations require actual surface; source/import/GPU publication does not.",
+  "verified": [
+    "Real Apple M4 Max / Metal; CPU adapter rejected",
+    "Native App with no window and no surface loads original GLB through import worker and GPU residency path",
+    "Filesystem watcher detects sampler-only GLB update through normal App.tick",
+    "Pending GPU admission retains original CPU and GPU publication identity",
+    "Successful publication installs same new imported Arc in catalog and GPU model",
+    "Sampler binding changes while underlying image storage and image-residency bytes are reused",
+    "Published model texture drawn on diagnostic quad through original App renderer produces changed pixels",
+    "Corrupt source retains accepted CPU/GPU publication and identical accepted pixels",
+    "Corrected source automatically recovers CPU/GPU publication and reproduces accepted pixels exactly",
+    "Original authored scene unchanged, no pending GPU job on completion, workers closed and GPU validation scope clean"
+  ],
+  "editor_tests": {
+    "passed": 357,
+    "failed": 0,
+    "ignored": 34
+  },
+  "explicit_app_gpu_tests_passed": 1,
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/lib.rs": "9ddbfb95be6da1001304b9fc21fd8125b0b8ec40eec6b876dd31dec63d7578c1",
+    "crates/voxy_editor/src/app/viewport.rs": "08d80b83728b3f26f9afb45ca637f71181a890b1546e4f2a15f078733b07b2bb",
+    "crates/voxy_editor/src/app/inspector.rs": "006b02cddb4e6418ac5ae4e87aed18b11bc437fb4893227a0186fa067a35155b",
+    "crates/voxy_editor/src/app/model_reload.rs": "72a6d86e80c79e8c84aa6591fdb05ac940a02553da37f520660da579a1465dff",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "a2b2e26c32d3887dc9f27c3609faff91dfb399382f166ba557237f6e2f8bf5ce",
+    "crates/voxy_editor/src/gpu_model.rs": "f250a27377b84eedd6c0464080c09fc8f363b2ed7a5353ee54cdeffa5753df8a",
+    "crates/voxy_editor/src/gpu_model_sampler_tests.rs": "7ad5209667d9bca1a7cf8363a8884581f4ed6511d6cb53776075049777c99de5",
+    "crates/voxy_editor/src/scene3d_tests.rs": "cf401ed14a7502986a1e69f6746735dea290ed5a0eb9d628e2b4ac74814d11c4"
+  },
+  "validation_note": "Full CPU suite precedes equivalent F10 branch style cleanup and addition of an outer GPU validation assertion; final explicit App GPU test and all-target Clippy run after both.",
+  "limits": [
+    "Native App direct-model import/watch/GPU lifecycle is qualified; material readback uses a diagnostic quad, not a complete viewport scene image",
+    "No OS-window presentation/input, native audio device or complete editor-session load publication qualification",
+    "Package/source-free scenarios remain separately qualified; not one combined full-game GPU/package test",
+    "No physical memory, full-frame pacing or 120/160 FPS claim",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

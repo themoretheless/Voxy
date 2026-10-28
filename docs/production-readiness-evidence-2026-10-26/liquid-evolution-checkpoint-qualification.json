@@ -1,0 +1,28 @@
+{
+  "status": "native_gas_eos_and_energy_evolution_checkpoint_verified",
+  "new_continuation_tests_passed": 1,
+  "continuation_cases": 6,
+  "existing_integration_tests_passed": 28,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps_per_case": 120,
+  "covered": [
+    "gas EOS coefficients and material compatibility",
+    "density formulation and viscosity integration selection",
+    "pressure work and viscous heat modes",
+    "tensile pressure floor",
+    "gas and liquid reconstruction with thermal fields",
+    "exact following particle thermal and energy records",
+    "invalid EOS enum and incompatible energy mode atomic rejection"
+  ],
+  "remaining": [
+    "surface interface and wall response configuration",
+    "boundary and coupled rigid body history",
+    "other particle population metadata and scratch audit",
+    "full bounded liquid archive",
+    "SceneLiquidRuntime and PlaySession publication"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/evolution_checkpoint.rs": "9119fc2b40259fc61b283502717990405528750cdf4bd70c136478654a83624c",
+    "crates/physics/src/liquid.rs": "d8cc783529993f6f3c732f84ac430e71b90af930c93c10f865c687e89d080d7f"
+  }
+}

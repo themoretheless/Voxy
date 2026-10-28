@@ -1,0 +1,27 @@
+{
+  "status": "native_particle_base_and_maxwell_memory_blocks_verified",
+  "focused_tests_passed": 1,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps": 120,
+  "covered": [
+    "all particle position velocity mass material fields",
+    "material coefficients and configuration policies",
+    "Maxwell laws conformation tensors and relaxation heat ledger",
+    "rebuild from native integer-word records rather than fluid clone",
+    "exact following particle and polymer record bits",
+    "atomic invalid memory rejection",
+    "caller policy and material index rejection"
+  ],
+  "remaining": [
+    "bounded full liquid wire codec",
+    "other constitutive thermal phase species and boundary state",
+    "scene source and rigid body composition",
+    "PlaySession transaction"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/particle_checkpoint.rs": "3835988b5f22217f58ddac9805d7b2d9071e325ea8afb284791b76261f979bc6",
+    "crates/physics/src/liquid/polymer_checkpoint.rs": "c2aa02d5a1b32efbb183bb0dd95fe7338857de3ff304b7924f30e2d444d96121",
+    "crates/physics/src/liquid/viscoelastic.rs": "592abfc924efb295e3453f2eec8c19760a7e16f39b645d5093f9278a09fb2e9a",
+    "crates/physics/src/liquid.rs": "fa6af6c07f53ac1e1f8ee3e6dd92ce74b83a53ffdcfd064033e4e2c221ef3e13"
+  }
+}

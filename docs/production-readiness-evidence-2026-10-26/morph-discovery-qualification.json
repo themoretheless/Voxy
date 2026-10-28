@@ -1,0 +1,29 @@
+{
+  "status": "source_node_identity_and_default_resume_authoring_verified",
+  "code_sha256": {
+    "crates/voxy_model/src/lib.rs": "2f7c4ae7565ad9cef4077c5234a29af5e92072ea9254f1904e1ac0c8c9f0e8dd",
+    "crates/voxy_model/src/morph.rs": "944652b5773fc15fa62d322e869a056525479e5267a13e7e047e42335db19f6e",
+    "crates/voxy_editor/src/model_playback.rs": "78c8ee85a09e738218af17b97ede23b992acd7238c4cf4d8dcc115a3a6eeacca",
+    "crates/voxy_editor/src/animation_preview.rs": "41f1632e5cafd93bd1e328ef29965e139408a6640be926dc53230e96fd7cde1c",
+    "crates/voxy_editor/src/component_fields.rs": "740b52616c8fb6205e286ef1e76b0a2a3ab2239358089dd5d9ab7bfaae4c190a",
+    "crates/voxy_editor/src/app/inspector.rs": "c6f491688f01458204a2ab18b2b422271c097a3979e3d1ff41f14548a5bd9c28",
+    "crates/voxy_editor/src/panels.rs": "61697ec3c66aa8e380193a5091b149198b0b9e568875dd81d886677ab450d8ae",
+    "crates/voxy_editor/src/locomotion_tests.rs": "cdb68b7f01494139fc40ff4d055dcb57cad6ca74155db2d15c7894740d27f92b"
+  },
+  "model_focused_passed": 10,
+  "editor": {
+    "passed": 221,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_model_editor_all_targets_clippy_passed": true,
+  "source_node_differs_from_palette_order_regression": true,
+  "missing_and_ambiguous_names_rejected": true,
+  "import_defaults_resume_undo_and_stale_action_rejection_tested": true,
+  "resume_preview_matches_sampled_animation": true,
+  "edit_save_reopen_locomotion_source_free_package_tested": true,
+  "first_attempt_failed": "fixture invoked command before asynchronous asset publication; repaired fixture waits via existing tick with bounded deadline",
+  "native_visual_acceptance": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

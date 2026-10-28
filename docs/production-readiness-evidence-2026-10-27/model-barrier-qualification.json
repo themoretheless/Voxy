@@ -1,0 +1,33 @@
+{
+  "scope": "App model import/watch nonblocking checkpoint fence",
+  "implemented": [
+    "Draining/Requested/Ready state integrated with normal App tick",
+    "New import submission and periodic scans fenced while existing results drain in normal invalidation-before-publication order",
+    "Ordered native watcher checkpoint and explicit cancellation consumption",
+    "Snapshot includes catalog/source/publication archive, direct-or-manifest recipe, available outputs, queued reloads, current logical model, watcher baseline/cursor, remaining poll delay",
+    "Resume retains queued requests and rebases poll delay"
+  ],
+  "checks": {
+    "real_worker_tests": 3,
+    "full_editor_suite": {
+      "passed": 297,
+      "ignored": 21,
+      "failed": 0
+    },
+    "all_target_clippy": "passed -D warnings",
+    "format_diff_check": "passed"
+  },
+  "retained_failure": "Initial strict Clippy rejected unchecked test Instant subtraction; final tests use checked_sub and final Clippy passes.",
+  "open": [
+    "Internal API has no user save/load command yet",
+    "Restoring complete model resource snapshot into fresh workers remains open",
+    "Atomic scene/CPU/GPU publication, native acknowledgement and whole App save remain open",
+    "No physical memory or FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ],
+  "logs_sha256": {
+    "model-barrier-editor-tests.log": "6def6964c0da3c25585eb062878fc47fb68526924b433a5f5dca529e7f54ed18",
+    "model-barrier-clippy-before-fix.log": "f5a627baca3406c8467fcdce208c2dcb0da8bce5654c292596798d38e58927c6",
+    "model-barrier-clippy.log": "9ec56119f53aacbce87e135c0083ca9b3744fd24bc91c6bafdf23c26cff06d97"
+  }
+}

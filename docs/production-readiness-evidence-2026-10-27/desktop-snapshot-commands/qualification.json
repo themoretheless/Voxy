@@ -1,0 +1,67 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Desktop checkpoint profile and explicit native editor snapshot commands",
+  "commands": {
+    "save": "Ctrl/Cmd+Shift+S",
+    "open": "Ctrl/Cmd+Shift+O",
+    "confirm_path": "Enter",
+    "cancel_path_or_pending_load": "Escape",
+    "format": ".voxyedr",
+    "relative_path_base": "current authoring project root"
+  },
+  "checks": {
+    "editor": {
+      "passed": 388,
+      "ignored": 43
+    },
+    "gpu_app": {
+      "passed": 7,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "mode": "offscreen"
+    },
+    "clippy": "editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "verified": [
+    "Real shortcut adapter enters path draft without modifying scene",
+    "Invalid extension and control characters rejected before file request",
+    "Unicode backspace and stale scene identity handled",
+    "Desktop policy captures and reads actual headless snapshot",
+    "Original authored-scene Save/Load retain F5/F9",
+    "Running GPU model/font/UI/offline-audio scene saved through actual path command, restored through actual path command, exact geometry and glyph pixels preserved, simulation ticks and audio frames preserved",
+    "Play simulation profile and snapshot profile use the same fixed-step contract",
+    "Original importer aggregate input budget and checkpoint profile use the same constant"
+  ],
+  "regression_found": {
+    "error": "editor imported publication graph: Capacity",
+    "cause": "Per-source 16 MiB budget used in place of aggregate importer input capacity 32 MiB",
+    "fix": "Share MODEL_INPUT_BYTES between actual importer and desktop checkpoint profile",
+    "failed_log": "gpu_initial_budget_failure.log",
+    "passed_log": "gpu_desktop_cycle.log"
+  },
+  "limitations": [
+    "No native window opened; real keyboard/window event routing inspected, command adapters exercised",
+    "Audio-device queue transfer remains gated and unqualified; tests use offline audio",
+    "Path is typed in existing panel, not an OS file chooser; no filesystem browsing or clipboard integration added",
+    "Desktop admission profile is explicit in source; project-editable budget settings remain open",
+    "No FPS claim; full ENG roadmap remains open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/policy.rs": "b66fe130d516e2df3adaf32ca987dd6e8c66977178e564ad4606c031787317e9",
+    "crates/voxy_editor/src/app/snapshot_commands.rs": "0ced6d2fe5c0b0f30173b9b680f1ffbac4db6d26c7d191c20182b7041c47432b",
+    "crates/voxy_editor/src/app/restore_barrier.rs": "c526d85db9b9c9bbabd8d66a6cc3567cd020fc562d42bd7b15fed89ac1f56432",
+    "crates/voxy_editor/src/scene_limits.rs": "4cf75f45b902e563ab4430051998de7489676fb35e352b219a4fbefb2f1a0a70",
+    "crates/voxy_editor/src/app/play_mode.rs": "8ea023b3ee3bb4da9fda1f3ac6bc4831c3570173fe35b4ab7a3d20a433154e97",
+    "crates/voxy_editor/src/prefab_authoring.rs": "fe67efb940ba3cc4a67ea17258e96eca1fddd090bbd3a59ea3a303503697a684",
+    "crates/voxy_editor/src/ui_live.rs": "730c8966edbc6447cca4d22df7e7a166e67ea07365d3957215acdb064073258d",
+    "crates/voxy_editor/src/lib.rs": "6d2f6210051ddce08c015741f799a98979c10b220750711bf5c432534e673cfa",
+    "crates/voxy_editor/src/app/inspector.rs": "ea62fdb6ff1be308c8369110fec39968a857ed64139fd5be860bd44651671273",
+    "crates/voxy_editor/src/app/model_notice.rs": "69a6f7a701198103a19fcb5217300328a3da8f03a93a977e0f1b493d5ac8dbbf",
+    "crates/voxy_editor/src/app/restore_barrier/save.rs": "f31cbb765fd335c92d013bec44cb352c5d8f25f46262abe98c1dbca1a83bd12e",
+    "crates/voxy_editor/src/app/viewport.rs": "8913948613d39df73ebdc85515ba7efac936428adc366fef52989f39d512c93e",
+    "crates/voxy_editor/src/import.rs": "67f0c252a82407ea62ba8aa61754c51f55251b185b209e9673798ab6cec9b52a",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "5ed1370be070ed1c684a360f3fe311ee00e22d09133fb017230706034bcdbc16"
+  }
+}

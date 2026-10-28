@@ -1,0 +1,31 @@
+{
+  "status": "controller_checkpoint_and_bounded_codec_verified",
+  "code_sha256": {
+    "crates/voxy_gameplay/src/character_checkpoint.rs": "258ee7ac3c9b50b28d532c15bc400f5241a19b7472a90138ed9f9ee6ba9d327a",
+    "crates/voxy_gameplay/src/lib.rs": "652b7ac6cc9cd847907f8e2279bae14c05164aa0297890a8eb89d22dea42a5d2"
+  },
+  "gameplay_full_before_codec_wrapper": {
+    "passed": 183,
+    "failed": 0,
+    "ignored": 0
+  },
+  "final_codec_focused": {
+    "passed": 3,
+    "failed": 0
+  },
+  "editor_library": {
+    "passed": 227,
+    "failed": 0,
+    "ignored": 20
+  },
+  "final_strict_gameplay_editor_all_targets_clippy_passed": true,
+  "post_restore_exact_steps": 180,
+  "durable_ids_rebind_new_scene_handles": true,
+  "json_uses_exact_float_bits": true,
+  "byte_body_limits_and_unknown_fields_rejected": true,
+  "invalid_restore_preserves_live_state": true,
+  "full_game_save_implemented": false,
+  "outer_file_slots_scene_identity_and_other_owners_integrated": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

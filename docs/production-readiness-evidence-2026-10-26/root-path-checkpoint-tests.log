@@ -1,0 +1,9 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.06s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_animation-b8add508dfae1155)
+
+running 1 test
+test root_rigid::checkpoint::tests::ordered_twists_retime_transform_and_append_replay_exactly ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 344 filtered out; finished in 0.00s
+

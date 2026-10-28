@@ -1,0 +1,53 @@
+{
+  "status": "opt_in_ui_callback_state_queue_and_host_package_roundtrip_verified",
+  "gameplay_ui_tests_passed": 6,
+  "editor_tests_passed": 248,
+  "editor_tests_ignored": 20,
+  "strict_all_targets_clippy": [
+    "voxy_gameplay",
+    "voxy_editor"
+  ],
+  "continuation_barriers": 120,
+  "native_case": [
+    "opaque exact callback private state and saved scene references",
+    "fresh reversed scene handles and FIFO pending events",
+    "expired accepted targets preserve normal dispatch errors",
+    "failed callbacks retain private mutation while staged commands are discarded",
+    "duplicate/missing codecs, identities and resource policies reject",
+    "factory re-capture must match original state exactly",
+    "arbitrary legacy closures reject checkpoint without consuming pending events",
+    "read-only binding contexts detect unresolved/aliased handles"
+  ],
+  "host_case": [
+    "GameHost carries UI codec registry through project/editor/headless/build/package",
+    "engine builtin hide callback uses same explicit save contract",
+    "23 actual UI clicks plus one queued activation captured",
+    "source-free package restores custom callback state and queued activation",
+    "unknown codec leaves existing callback owner unchanged",
+    "120 further interactive-input cycles compare callback records and scenes"
+  ],
+  "contract": [
+    "application codecs own schema migration and exact opaque payload encoding",
+    "factory and capture purity required; arbitrary external side effects cannot be rolled back",
+    "these APIs save/restore the UI callback participant only"
+  ],
+  "remaining": [
+    "complete PlaySession snapshot and immutable scene/resource staging",
+    "App audio/UI/viewport/resource participant composition",
+    "atomic whole-game file publication and native acceptance",
+    "full ENG-00 through ENG-13 qualification"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/ui_actions.rs": "1a3af07cbed75a53379cd9b03b22a94cb9017d81b891e85585284d8740c6dfda",
+    "crates/voxy_gameplay/src/ui_actions/checkpoint.rs": "f740d7f6cee955fbf6b1e99033db89df4bf37b5b6dd7afdb77fb3d4b86f329cd",
+    "crates/voxy_gameplay/src/lib.rs": "3b3ec10b95fa47950928c3c5136417b17c426018088558767178de523c9f9a91",
+    "crates/voxy_editor/src/ui_action_codecs.rs": "87fdd99fe4f9146c5ddcdd10704c1a342a49d54792726a0586946041c480cfe9",
+    "crates/voxy_editor/src/game_host.rs": "c2b005116c82fb667629d2ffd6c2a1a4912b39ea297705e5b4014937fb41de37",
+    "crates/voxy_editor/src/game_host_tests.rs": "6801b7c2cd5d7be5ffb435712b7811aacdaee4a44dedfff809f83024d6bcf9ed",
+    "crates/voxy_editor/src/headless_game.rs": "4f5374e9f20ba3efd9c9a1fdec160779c560d440fdfd7622832d73a2bb77a58a",
+    "crates/voxy_editor/src/lib.rs": "6e53600b5a76b9660ec79eb0e2be0f25d9a13906d28d226d3d1c1f633e4b0300",
+    "crates/voxy_editor/src/project_runtime.rs": "848f7e582319535d870443139e32df4861f453dada6c58d39ff3afba78bbf54c",
+    "crates/voxy_editor/src/packaged_game.rs": "2918bb9d663aa56b73fe19809d26ca8fb7fbb321eeebcb0814c2e5cb42d64852",
+    "crates/voxy_editor/src/app/play_mode.rs": "81e3291da9f238aeec52505b7549f9e9f3f8225bce09b0077a5875ecfb3fa761"
+  }
+}

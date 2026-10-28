@@ -1,0 +1,58 @@
+{
+  "scope": "five CPU publication fields of UiLive; complete operational owner not yet archived",
+  "source_sha256": {
+    "crates/voxy_editor/src/ui_live.rs": "bd14221bd34d3ae3536fe95b24c4cb7780ec8105c8dcf1052aaa692bdd9522b2",
+    "crates/voxy_editor/src/ui_live/publications.rs": "9d8ca9524b0a102dd84927cf3c271c05b9a9931f04b0fa4302a8b07f2c651f8d",
+    "crates/voxy_editor/src/ui_live/publications/tests.rs": "72f7c1df161d800270811faa00d5077bdc3ce04244b26dfad97bc7056b4ff960",
+    "crates/voxy_editor/src/ui_text_checkpoint.rs": "0bde67a92014cd424e255952c6e760f886caaadb5df66d1ef8823881eb44793e",
+    "crates/voxy_editor/src/ui_live/gpu_reload_tests.rs": "4f8b303438695333894d054501cd92f0b99e5a5e918ff42552a955b5267c7dfa",
+    "crates/voxy_assets/src/imported_archive.rs": "df85780dee96666d1133b0551b9fdb0282715245769e226feb977398c16f6859",
+    "crates/voxy_gameplay/src/ui_runtime_checkpoint.rs": "b705e526b59ed1c2dca0ea2c7ffcf581746eb8816927a6e694666aa8bdd9ba39",
+    "crates/voxy_scene/src/document.rs": "57c3778cef333abb6786b67b8a58596db29f4a80d503e6fff45c4543cdea66b7"
+  },
+  "results": {
+    "editor": 0,
+    "gpu": 0,
+    "clippy": 0
+  },
+  "checks": {
+    "editor": {
+      "passed": 271,
+      "ignored": 20,
+      "new_publication_tests": 4
+    },
+    "gpu": {
+      "passed": 1,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "proof": "actual production worker/watcher generates two different font revisions; saved before new frame ACK; original font file removed; both restored and uploaded using production upload_on; existing live publication pointers unchanged"
+    },
+    "clippy": "all editor targets, -D warnings passed"
+  },
+  "format": {
+    "magic": "VOXYUIP1",
+    "header_bytes": 56,
+    "metadata": "versioned bounded JSON with float words in layout records and allocation references",
+    "resources": "up to two original VOXYIMP1 independent checksummed archives",
+    "sharing": "actual publication Arc identity, local and cross-publication TextRun Arc identity; distinct equal data stays distinct"
+  },
+  "scenarios": [
+    "file roundtrip after deleting all font source files",
+    "fresh scene allocation and explicit retired owner rebinding without resurrecting actor",
+    "120 changing viewport/clip/text color draw cycles for both generations; vertex/UV/color float words, indices and atlas records equal",
+    "publication and run sharing preserved, including distinct equal resources",
+    "pending attempted layout distinct from uploaded and visible history",
+    "late invalid owner/reference/resource record rejection leaves live source and shared pool unchanged",
+    "byte/input/pixel/glyph/run/layout/element limits and inner/outer corruption checks",
+    "shared run exact data agreement and current per-run policy admission"
+  ],
+  "limits": [
+    "Does not drain or archive worker/watcher/source dependencies/cache retry state; five-field participant only",
+    "Prepared CPU state is not automatically installed into live App or treated as a presented native frame",
+    "GPU proof is upload and validation, not rendered pixel readback, native swapchain or FPS",
+    "Archive byte and resource content limits are bounded; parsed-font and allocator peak heap overhead unmeasured",
+    "Cross-publication run records remain in independent typed resource envelopes; restored allocation identity is shared",
+    "No cross-scene history registry migration or complete App atomic save/load acceptance"
+  ],
+  "rejected_fixture": "Concurrent tests initially collided on timestamp-only temporary directories; fixture uses an atomic serial in addition to process ID/time, production code unchanged for that failure"
+}

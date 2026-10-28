@@ -1,0 +1,13 @@
+   Compiling num-traits v0.2.19
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.31s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_animation-b8add508dfae1155)
+
+running 2 tests
+test root_rigid::enclosure::checkpoint::tests::exact_unit_sphere_check_detects_subnormal_excess_lost_by_float_norm ... ok
+test root_rigid::enclosure::checkpoint::tests::exact_interval_json_roundtrip_preserves_transport_and_scale_products ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 342 filtered out; finished in 0.01s
+

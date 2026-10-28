@@ -1,0 +1,22 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.69s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=0 asset=rig.glb
+
+thread 'app::resource_checkpoint::tests::preview_models_join_original_resource_graph_without_source_reimport' (80046018) panicked at crates/voxy_editor/src/app/resource_checkpoint/tests.rs:1231:5:
+assertion `left == right` failed: native resource graph omitted preview-only model root
+  left: 0
+ right: 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test app::resource_checkpoint::tests::preview_models_join_original_resource_graph_without_source_reimport ... FAILED
+
+failures:
+
+failures:
+    app::resource_checkpoint::tests::preview_models_join_original_resource_graph_without_source_reimport
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 408 filtered out; finished in 0.06s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

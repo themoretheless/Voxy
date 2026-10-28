@@ -1,0 +1,120 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.09s
+     Running tests/liquid_mixture_heat.rs (target/research-ray-precision/debug/deps/liquid_mixture_heat-56f8b1a3159f7949)
+
+running 3 tests
+test configuration_preserves_energy_and_invalid_configuration_is_atomic ... ok
+test reservoir_uses_actual_component_capacity_and_energy_ledger ... ok
+test diffusing_components_carry_heat_and_preserve_isothermal_state ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_mixture_properties.rs (target/research-ray-precision/debug/deps/liquid_mixture_properties-efa3f15f486591d4)
+
+running 5 tests
+test coefficients_match_additive_volume_wood_and_viscosity_closures ... ok
+test selective_evaporation_increases_solution_density_and_viscosity ... ok
+test sources_replacement_and_configuration_conflicts_are_atomic ... ok
+test composition_changes_actual_viscous_damping_without_energy_creation ... ok
+test transported_composition_changes_mechanics_and_respects_thermal_response_order ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_phase.rs (target/research-ray-precision/debug/deps/liquid_phase-21801dbcc2070b3e)
+
+running 13 tests
+test invalid_phase_state_and_negative_energy_leave_all_state_unchanged ... ok
+test reservoir_crosses_latent_plateau_with_exact_heating_and_cooling_times ... ok
+test heating_and_cooling_use_latent_plateau_and_are_reversible ... ok
+test reservoir_total_enthalpy_overflow_is_atomic_even_when_each_particle_is_finite ... ok
+test heat_injection_outside_property_domain_rolls_back_phase_and_temperature ... ok
+test reservoir_property_failure_rolls_back_and_plateau_equilibrium_has_zero_flux ... ok
+test cooling_releases_latent_heat_into_a_colder_particle ... ok
+test failed_outer_step_restores_already_exchanged_latent_heat ... ok
+test zero_conductivity_and_same_plateau_temperature_do_not_exchange_heat ... ok
+test reservoir_exchange_is_partition_independent_and_leaves_motion_unchanged ... ok
+test implicit_heat_exchange_converges_toward_analytic_sensible_heat_solution ... ok
+test conductive_transition_conserves_total_enthalpy_without_temperature_overshoot ... ok
+test pressure_and_symmetric_viscous_heating_drive_latent_transition_with_energy_balance ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/liquid_properties.rs (target/research-ray-precision/debug/deps/liquid_properties-a6b579900a434d8b)
+
+running 14 tests
+test response_configuration_validates_the_current_phase_not_only_the_base_material ... ok
+test mass_fraction_blend_uses_specific_volume_and_affects_viscosity ... ok
+test buoyancy_uses_temperature_adjusted_carrier_density ... ok
+test invalid_response_and_incompatible_field_replacement_are_atomic ... ok
+test heat_exchange_outside_constitutive_domain_rolls_back_the_entire_step ... ok
+test arrhenius_response_rejects_duplicate_temperature_laws_and_invalid_cooling_atomically ... ok
+test temperature_dependent_density_changes_pressure_force ... ok
+test hot_liquid_expands_and_is_less_viscous_in_actual_force_integration ... ok
+test arrhenius_condensed_milk_temperature_response_composes_with_shear_thinning ... ok
+test affine_strain_fit_is_exact_on_irregular_cloud_and_ignores_spin_and_translation ... ok
+test shear_thinning_advection_and_heating_preserve_discrete_energy ... ok
+test symmetric_heated_advection_updates_temperature_dependent_viscosity_and_expansion ... ok
+test condensed_milk_demo_thins_under_shear_but_not_rigid_rotation ... ok
+test shear_rate_estimate_reproduces_unit_affine_shear_away_from_cloud_edges ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+
+     Running tests/liquid_reaction.rs (target/research-ray-precision/debug/deps/liquid_reaction-37ff791ea18bdb97)
+
+running 12 tests
+test reactive_heat_advances_latent_fraction_without_false_temperature_rise ... ok
+test excess_reactant_and_large_time_stay_positive ... ok
+test reactive_heat_uses_pressure_shifted_latent_plateau ... ok
+test reaction_with_different_component_capacities_decodes_actual_composition ... ok
+test thermal_coefficient_and_activation_cutoff ... ok
+test analytic_stoichiometry_and_energy ... ok
+test exhausted_chemical_accuracy_rolls_back_full_step ... ok
+test automatic_steps_and_atomic_invalid_configuration ... ok
+test thermal_acceleration_converges_against_independent_ode ... ok
+test adaptive_chemistry_resolves_single_large_step_and_tolerance_refinement ... ok
+test default_adaptive_kinetics_matches_rapid_self_heating_reference ... ok
+test thermal_kinetics_couples_to_both_flow_integrators ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/liquid_species.rs (target/research-ray-precision/debug/deps/liquid_species-743c7d1751de9fa8)
+
+running 5 tests
+test species_sources_drains_and_emission_preserve_component_masses ... ok
+test mixing_groups_block_and_enable_complete_vector_diffusion ... ok
+test invalid_compositions_sources_and_failed_motion_roll_back_complete_state ... ok
+test complete_species_diffusion_is_analytic_positive_and_mass_conserving ... ok
+test complete_composition_advects_with_gas_without_creating_thermal_energy ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_thixotropy.rs (target/research-ray-precision/debug/deps/liquid_thixotropy-014134472ac4471f)
+
+running 8 tests
+test structural_memory_follows_survivors_and_new_sources_start_recovered ... ok
+test ordinary_and_symmetric_steps_evolve_structure_without_creating_heat_at_rest ... ok
+test invalid_kinetics_and_failed_flow_preserve_structure_and_complete_state ... ok
+test rest_and_rigid_spin_recover_without_regularization_induced_breakdown ... ok
+test constant_shear_structure_is_analytic_bounded_and_partition_independent ... ok
+test evolving_shear_structure_changes_damping_and_preserves_heat_and_momentum ... ok
+test advecting_pressurized_structured_flow_refines_in_all_evolved_variables ... ok
+test coupled_structure_and_viscosity_refine_toward_the_same_solution ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.36s
+
+     Running tests/liquid_viscoelastic.rs (target/research-ray-precision/debug/deps/liquid_viscoelastic-b4784fc728c7d7d4)
+
+running 10 tests
+test invalid_memory_and_late_substep_failure_are_atomic ... ok
+test exact_quiescent_relaxation_and_free_energy_to_heat ... ok
+test rotation_is_objective_and_does_not_create_polymer_heat ... ok
+test split_and_merge_preserve_memory_and_account_for_mixing_energy ... ok
+test thin_filament_resolves_longitudinal_stress_without_spurious_rotation_strain ... ok
+test planar_cloud_rigid_rotation_preserves_relaxed_conformation ... ok
+test isolated_particle_relaxation_heats_transport_without_motion ... ok
+test coupled_stress_accelerates_particles_and_conserves_linear_and_angular_momentum ... ok
+test shear_matches_analytic_oldroyd_b_with_second_order_time_refinement ... ok
+test coupled_mechanical_energy_error_decreases_with_time_step ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+

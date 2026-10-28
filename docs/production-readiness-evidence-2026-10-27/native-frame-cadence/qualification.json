@@ -1,0 +1,40 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Remove active-window 16ms event-loop wait and expose explicit unthrottled presentation",
+  "status": "implemented; native cadence and FPS unqualified",
+  "changes": [
+    "Active non-occluded nonzero window requests redraw with ControlFlow::Poll",
+    "Occluded/zero-size window keeps original 16ms background wait policy",
+    "Occlusion restore queues redraw; no-window state waits for events",
+    "VOXY_EDITOR_PRESENTATION=vsync default, or unthrottled; invalid/non-Unicode values reject startup",
+    "Unthrottled uses original SceneSurface capability-checked API; logs actual selected native mode or propagates error",
+    "Fixed simulation step, camera, shaders, resource precision and scene quality are unchanged"
+  ],
+  "checks": {
+    "editor": {
+      "passed": 390,
+      "ignored": 44
+    },
+    "gpu_regressions": {
+      "passed": 7,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "mode": "offscreen"
+    },
+    "clippy": "editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "source_basis": "winit 0.30.13 ControlFlow docs recommend Poll + GPU VSync; macOS before_wait schedules configured timer after AboutToWait",
+  "limitations": [
+    "No native window opened",
+    "Offscreen tests do not execute native about_to_wait or surface presentation configuration",
+    "No measured baseline/after FPS, native frame pacing, input latency, power or CPU usage results",
+    "Unsupported unthrottled mode error and actual selected surface mode are not hardware-qualified here",
+    "120/160 FPS and full ENG roadmap remain open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/frame_pacing.rs": "5cda7b8f476ecb9beb11d6674e9abdb168183cd41bbe0514cc6e2f97e0345f54",
+    "crates/voxy_editor/src/lib.rs": "15233d57b7ef87dd3dc677ebec2250cc81f1a059628502a18fecb4f084ad3457"
+  }
+}

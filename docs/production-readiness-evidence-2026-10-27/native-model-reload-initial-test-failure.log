@@ -1,0 +1,22 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.70s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 1 test
+NATIVE MODEL RELOAD GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=quad.obj
+
+thread 'app::model_reload::tests::native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work' (77151531) panicked at crates/voxy_editor/src/app/model_reload/tests.rs:156:5:
+assertion failed: !app.poll_model_checkpoint().unwrap()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+MODEL FAILED frames=0 last_good=true
+test app::model_reload::tests::native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work ... FAILED
+
+failures:
+
+failures:
+    app::model_reload::tests::native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 320 filtered out; finished in 0.07s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

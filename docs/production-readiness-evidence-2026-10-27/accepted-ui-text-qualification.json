@@ -1,0 +1,59 @@
+{
+  "status": "native_text_records_and_actual_accepted_UiLive_cpu_generations_verified_not_complete_UiLive_archive",
+  "text_tests_passed": 6,
+  "editor_tests_passed": 258,
+  "editor_tests_ignored": 20,
+  "explicit_offscreen_gpu_tests_passed": 1,
+  "gpu": {
+    "name": "Apple M4 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu",
+    "cpu_adapter_rejected": true,
+    "rendered_pixel_readback": false,
+    "native_surface_presentation": false,
+    "fps_qualified": false
+  },
+  "strict_all_target_clippy": [
+    "voxy_text",
+    "voxy_editor"
+  ],
+  "continuation": {
+    "atlas_insertions_after_restore": 120,
+    "unicode_edits_after_font_restore": 120
+  },
+  "native_records": [
+    "all GlyphAtlas shelf fields, entry policy and alpha pixels",
+    "all TextRun placed glyph region/origin/cluster words and total advance",
+    "same original face-zero font bytes and original raster admission policy",
+    "parsed fontdue tables are derived; exact accepted runs restore independently without shaping"
+  ],
+  "retention": [
+    "successful GPU publication retains actual ImportedAsset<UiTextPreparation>",
+    "last acknowledged CPU publication retained independently until frame acknowledgement",
+    "same-layout font revision still advances acknowledged CPU asset identity",
+    "failed font import preserves actual prior CPU publication and GPU texture",
+    "repair and original-font recovery update texture/resources while retaining old acknowledged CPU source",
+    "close releases both accepted generation references"
+  ],
+  "scope_limits": [
+    "native records have no composed UiTextPreparation/UiLive file codec yet",
+    "offscreen GPU test validates import/watch/upload/ownership and wgpu validation; frame acknowledgement is explicit API exercise, not native swapchain presentation",
+    "current rendered UI generations now retain parsed fonts and runs; quantitative peak CPU/backend allocation overhead has not been measured",
+    "one local TrueType face covers font restore and multiple Unicode scripts; no universal font-corpus claim"
+  ],
+  "remaining": [
+    "bounded composed publication archive preserving run/asset Arc sharing and original observations",
+    "UiLive worker/watcher drain/capture/resume protocol and source dependency state",
+    "deferred cache retry policy and native transfer/rebuild fence",
+    "App resource archive and whole-App publication/file/native acceptance",
+    "remaining ENG-00 through ENG-13 objective"
+  ],
+  "sha256": {
+    "crates/voxy_text/src/lib.rs": "f6898e0b3f4ac839915d05b9362dc718c360036d4c88b3d6e72ee28f191a5d88",
+    "crates/voxy_text/src/atlas.rs": "05faf7a95323c322c4008dfb557c76cb0db0db04d5cb5ef997585eba410cf96f",
+    "crates/voxy_text/src/shape.rs": "25602a0bd95e194e4664527a0a87ec2e41e30ce0845599be5d3612da61ac3798",
+    "crates/voxy_text/src/run.rs": "fc7cbd458098adc717f1685821e1eab9c4734cfec8adf2d9e944329d2e95bb2c",
+    "crates/voxy_editor/src/ui_live.rs": "66d62b854ea847dae9e709e4d7239fc0d5b5e817024c1b7dac47f173c24fe628",
+    "crates/voxy_editor/src/ui_live/gpu_reload_tests.rs": "5f51a99aba6e896429936c2eec5bb4c392cf3ce97d1076e262a5eb9ce5e7a0f1"
+  }
+}

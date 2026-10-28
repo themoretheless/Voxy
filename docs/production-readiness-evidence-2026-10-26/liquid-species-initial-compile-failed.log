@@ -1,0 +1,21 @@
+    Checking physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+error[E0422]: cannot find struct, variant or union type `Material` in this scope
+   --> crates/physics/src/liquid/species_checkpoint.rs:215:29
+    |
+215 | ...                   Material {
+    |                       ^^^^^^^^ not found in this scope
+    |
+help: consider importing one of these structs
+    |
+  3 + use crate::biomechanics::Material;
+    |
+  3 + use crate::cohesive::Material;
+    |
+  3 + use crate::friction::Material;
+    |
+  3 + use crate::liquid::Material;
+    |
+    = and 4 other candidates
+
+For more information about this error, try `rustc --explain E0422`.
+error: could not compile `physics` (lib) due to 1 previous error

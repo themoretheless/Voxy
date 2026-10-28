@@ -1,0 +1,65 @@
+{
+  "status": "follow_camera_editor_owner_actions_pass_native_ui_unverified",
+  "git_head": "8acd97edce5fe2024fe173a2ba792dad27e087fe",
+  "source_sha256": {
+    "crates/voxy_editor/src/camera_authoring.rs": "b054dded2fe9ddd40939ab62ece2f41322938e8b952aa8a82fe4a394e569db2a",
+    "crates/voxy_editor/src/camera_authoring_tests.rs": "4a3ac0475563ef723db83bda995d4c4edf249f4ee5f3826d99ed8459e01ec02a",
+    "crates/voxy_editor/src/panels.rs": "884f65f11f8fdace51bc8ca043f9f259624081a86c31a646348330e941c52c68",
+    "crates/voxy_editor/src/app/viewport.rs": "282320277a993731ab35507eef8e84b3f4638a8d2fa3c6fee0476e04d793127e",
+    "crates/voxy_editor/src/app/inspector.rs": "7ddfcca004c3cbe3990d0ee4b52f2cecc6889d671dc27a66cd0fb044e57c8a51",
+    "crates/voxy_editor/src/app/authoring.rs": "8b2b6748d806910722026dd15e65073c2c1ddff9fc5868952c9abb257841610a",
+    "crates/voxy_editor/src/app/picking_drag.rs": "cd8ea45f9b1a57265fa457fcf91037989866286d9b882844d5d5fc1e380d2f4e",
+    "crates/voxy_editor/src/lib.rs": "b3f402c875958bb0a887d74b843854d0bc14f4a5bcb765327439cf6b7c0c77c9"
+  },
+  "editor_tests": {
+    "passed": 212,
+    "failed": 0,
+    "ignored": 17
+  },
+  "gameplay_full_recheck": {
+    "passed": 181,
+    "failed": 0,
+    "ignored": 0,
+    "log": "camera-gameplay-recheck.log",
+    "gameplay_sources_match_prior_qualification": true
+  },
+  "checks": [
+    {
+      "stage": "clippy",
+      "exit_code": 0
+    },
+    {
+      "stage": "full-tests",
+      "exit_code": 0
+    },
+    {
+      "stage": "build",
+      "exit_code": 0
+    }
+  ],
+  "binary_sha256": "db0a27cc1aad27d8b31b14a854c5bdb13921cc9c91018decfa3a892941fdb2db",
+  "verified": [
+    "add follow camera and required view as one history entry",
+    "hierarchy target pick with stable IDs and per-request epoch",
+    "generic half-life numeric editing and validation",
+    "add/remove undo and redo",
+    "save and reopen",
+    "nested reference override local scope and remap",
+    "prefab target override reset and undo",
+    "canceled and stale picker action rejection",
+    "picker canceled at Play",
+    "camera replacement guard",
+    "generated ordinary object ID allocation after reopen",
+    "referenced subtree deletion rejects before live graph mutation",
+    "panel action regions generated"
+  ],
+  "native_ui_visually_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false,
+  "remaining": [
+    "native camera UI acceptance",
+    "mouse orbit smoothing and camera collision/blending",
+    "character animation integration",
+    "complete engine roadmap"
+  ]
+}

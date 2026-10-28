@@ -1,0 +1,40 @@
+{
+  "scope": "Imported node/image participant; not complete EditorAsset",
+  "source_sha256": {
+    "crates/voxy_editor/src/import.rs": "debc4f9e4226393c09dca1701e086fc41bed59e1e9a2a5b33814a96270b9cbfc",
+    "crates/voxy_editor/src/import/node_checkpoint.rs": "f8c879188a0847fffa79f05f97d6e6a16a363c2ccc63cbb2da57a7095ce9062a",
+    "crates/voxy_editor/src/import/node_checkpoint/tests.rs": "8aa55d1ccfad81e3a1e66dc17a0fdbd37a3451dde91df12a3b3bfe3cfa8d138b",
+    "crates/voxy_editor/src/scene3d_tests.rs": "04885df6caefc8441af16dd932cc50a232142e96ac80216f3704af4a515f4f57"
+  },
+  "fields": {
+    "ImportedNode": [
+      "name",
+      "parent",
+      "local",
+      "mesh",
+      "image",
+      "sampling",
+      "use_mips",
+      "geometry_key"
+    ],
+    "Transform": [
+      "translation",
+      "rotation",
+      "scale"
+    ],
+    "TextureSampling": [
+      "wrap_u",
+      "wrap_v",
+      "min_filter",
+      "mag_filter",
+      "mipmap_filter",
+      "anisotropy"
+    ],
+    "ImageAsset": [
+      "width",
+      "height",
+      "rgba"
+    ],
+    "SceneMesh": "Native complete SceneMeshCheckpoint; process-local validation rebuilt"
+  }
+}

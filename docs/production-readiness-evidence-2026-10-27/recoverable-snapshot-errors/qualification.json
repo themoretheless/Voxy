@@ -1,0 +1,52 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Recoverable editor snapshot errors and retry through actual frame commands",
+  "checks": {
+    "editor": {
+      "passed": 389,
+      "ignored": 44
+    },
+    "gpu_app": {
+      "passed": 7,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "mode": "offscreen"
+    },
+    "gpu_panels": {
+      "passed": 5,
+      "mode": "offscreen"
+    },
+    "clippy": "editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "verified": [
+    "Snapshot read/write failures no longer populate App fatal error field",
+    "Actual frame save/load adapters report errors to panel/title diagnostic",
+    "Escape dismisses error without changing current scene",
+    "Corrupt file leaves source identity and scene token intact",
+    "After corrupt read user can edit scene, encounter writer IO failure, then save successfully",
+    "Writer failure resumes model/UI/audio fences and keeps source state",
+    "Subsequent accepted file operation clears previous diagnostic; later independent failure is reported",
+    "GPU path-command scenario renders source after corrupt read and writer failure, then reopens valid model/font/UI/offline-audio snapshot with exact ticks and audio frames",
+    "GPU panel test uses actual App-generated failure notice and verifies glyph pixels on all three lines without overlapping controls"
+  ],
+  "limitations": [
+    "No native window opened; actual native event loop not executed",
+    "Audio-device transfer remains gated; tests use offline audio",
+    "Error notice is general and does not promise rollback after a post-publication retirement failure",
+    "Draw/runtime failures still propagate through original fatal path",
+    "Full ENG roadmap and 120/160 FPS qualification remain open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/lib.rs": "4f9780dfe7c54cb8d580d559735374581a0d95b294529b30b464ea3c1f92764c",
+    "crates/voxy_editor/src/app/viewport.rs": "023b80fd55117fbc2bcef7448fa9c1c069b7b1a3b3be3bec47924495c2acbd43",
+    "crates/voxy_editor/src/app/snapshot_commands.rs": "c09c1bcf89bf2ed83779482d140f059e076e4851c14982d9323d27c2350e289e",
+    "crates/voxy_editor/src/app/model_notice.rs": "bb017270bffca9e63c17d16a240228c1ca3887686000bf8fec5b5bcf77792036",
+    "crates/voxy_editor/src/app/restore_barrier/load.rs": "f12db11e797cefa3fbd8d2a8bd09e68ae3d96cdab0a0e0e97ea145d818197887",
+    "crates/voxy_editor/src/app/restore_barrier/save.rs": "a4eb8195d6c04b1d5583d666cf0ddd9c62bb80a94cabf0f64f28e34e8d7c8d1a",
+    "crates/voxy_editor/src/app/inspector.rs": "4b0ced47bc3e62d3fd0b17e986d563d8a6d85ae10b1f98652c44953c241672e8",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "2e4d08dacdfc15a7caec5a87309969cebc1db5c59c30c673604136608bcee514",
+    "crates/voxy_editor/src/panels/gpu_tests.rs": "5f1472d7342171e25da732de6a72416ea04f89b16025a20099264bbf72787158"
+  }
+}

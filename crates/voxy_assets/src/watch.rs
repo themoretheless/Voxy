@@ -16,6 +16,9 @@ pub struct SourcePoller {
     max_file_bytes: usize,
 }
 impl SourcePoller {
+    pub(crate) const fn source_byte_capacity(&self) -> usize {
+        self.max_file_bytes
+    }
     #[must_use]
     pub fn new(max_sources: usize, max_file_bytes: usize) -> Self {
         Self {
@@ -104,14 +107,28 @@ impl SourcePoller {
         max_checks: usize,
         mut reader: impl FnMut(&AssetId, usize) -> Result<Vec<u8>, String>,
     ) -> Vec<AssetId> {
+        self.poll_fingerprints(max_checks, |id, limit| {
+            let bytes = reader(id, limit)?;
+            if bytes.len() > limit {
+                return Err("input byte limit exceeded".into());
+            }
+            Ok(*blake3::hash(&bytes).as_bytes())
+        })
+    }
+    /// Uses full-content digests supplied by a bounded provider without requiring
+    /// whole-file allocations. Scheduling and unavailable/recovery semantics are
+    /// identical to `poll`; the provider must hash all bytes within the limit.
+    pub(crate) fn poll_fingerprints(
+        &mut self,
+        max_checks: usize,
+        mut reader: impl FnMut(&AssetId, usize) -> Result<[u8; 32], String>,
+    ) -> Vec<AssetId> {
         let mut changed = Vec::new();
         for _ in 0..max_checks.min(self.sources.len()) {
             let (id, previous) = &mut self.sources[self.cursor];
             let current = match reader(id, self.max_file_bytes) {
-                Ok(bytes) if bytes.len() <= self.max_file_bytes => {
-                    Fingerprint::Content(*blake3::hash(&bytes).as_bytes())
-                }
-                _ => Fingerprint::Unavailable,
+                Ok(digest) => Fingerprint::Content(digest),
+                Err(_) => Fingerprint::Unavailable,
             };
             if previous.as_ref() != Some(&current) {
                 changed.push(id.clone());
@@ -222,3 +239,7 @@ mod tests {
         assert!(poller.poll(1, |_, _| panic!()).is_empty());
     }
 }
+
+#[path = "poller_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{SourceFingerprint, SourcePollerCheckpoint};

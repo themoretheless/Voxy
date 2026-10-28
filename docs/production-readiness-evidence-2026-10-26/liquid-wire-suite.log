@@ -1,0 +1,46 @@
+    Blocking waiting for file lock on build directory
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.56s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/physics-8f206cb8622d0c6d)
+
+running 37 tests
+test liquid::checkpoint_wire::tests::nested_allocations_and_strings_share_global_budgets ... ok
+test liquid::density_kernel_tests::normalized_volume_kernels_and_wendland_nonnegative_spectral_samples ... ok
+test liquid::emission::tests::idle_finite_source_advances_only_clock_and_rejects_invalid_composition ... ok
+test liquid::emission::tests::reaction_books_actual_momentum_and_origin_dependent_torque_atomically ... ok
+test liquid::emission::tests::aperture_emission_is_invariant_under_extreme_direction_rescaling ... ok
+test liquid::emission::tests::moving_nozzle_is_galilean_covariant_and_invalid_velocity_rolls_back ... ok
+test liquid::emission::tests::finite_source_large_boost_admission_and_energy_rounding_are_bounded ... ok
+test liquid::emission::tests::finite_source_recoil_conserves_mass_momentum_energy_and_late_failure ... ok
+test liquid::emission::tests::pulses_conserve_volume_momentum_and_rollback ... ok
+test liquid::emission::tests::circular_aperture_samples_area_in_the_normal_plane_and_rolls_back ... ok
+test liquid::jet::tests::oblique_jet_surface_impact_conserves_mass_and_splits_film_smear_and_splash ... ok
+test liquid::jet::tests::seven_liquid_presets_emit_jets_with_recoil_and_breakup_scaling ... ok
+test liquid::rheology::tests::rank_deficient_strain_fit_requests_fallback_and_overflow_is_rejected ... ok
+test liquid::checkpoint::tests::capture_rejects_currently_incompatible_physics_before_emitting_a_record ... ok
+test liquid::checkpoint::tests::joint_staging_accepts_valid_mixture_with_overflowing_base_heat_reference ... ok
+test liquid::emission::tests::finite_source_recoil_refines_to_continuous_variable_mass_solution ... ok
+test liquid::transport::implicit_heat_tests::opposite_extreme_bounds_do_not_overflow_the_midpoint ... ok
+test liquid::transport::implicit_heat_tests::subresolution_exchange_still_admits_temperature_difference ... ok
+test liquid::checkpoint_wire::tests::exact_record_rejects_every_truncation_trailing_data_and_limits ... ok
+test liquid::emission::checkpoint::tests::restored_nozzle_sample_sequence_and_source_history_match_following_emission ... ok
+test liquid::wall_pressure::tests::hydrostatic_affine_pressure_is_reproduced_for_irregular_neighbor_volumes ... ok
+test liquid::water_helmholtz::tests::water_helmholtz_critical_density_axis_has_finite_derivatives_away_from_critical_temperature ... ok
+test liquid::water_helmholtz::tests::water_helmholtz_matches_official_table_six_derivatives ... ok
+test liquid::surface_checkpoint::tests::all_surface_response_fields_restore_and_continue_with_container_walls ... ok
+test liquid::properties::checkpoint::tests::coupled_field_responses_restore_without_invalid_intermediate_configuration ... ok
+test liquid::rheology::tests::cream_flow_curve_density_and_atomic_configuration ... ok
+test liquid::phase::checkpoint::tests::fixed_and_pressure_phase_history_rebuild_without_enthalpy_remap ... ok
+test liquid::population_heat_checkpoint::tests::sub_ulp_inventory_and_population_survive_restore_and_later_heat_deposit ... ok
+test liquid::species::checkpoint::tests::composition_chemistry_and_mixture_heat_restore_without_remapping_temperature ... ok
+test liquid::thixotropy::tests::adaptive_substeps_match_replaying_each_accepted_interval ... ok
+test liquid::transport::checkpoint::tests::transported_heat_and_solute_continue_from_exact_restored_fields ... ok
+test liquid::viscoelastic::checkpoint::tests::particle_and_polymer_blocks_rebuild_stressed_fluid_and_continue_exactly ... ok
+test liquid::boundary_checkpoint::tests::sampled_and_reflecting_boundaries_rebuild_grid_and_continue_exactly ... ok
+test liquid::checkpoint::tests::complete_owner_covers_phase_gas_reflections_and_nonthermal_population ... ok
+test liquid::rheology::checkpoint::tests::structural_viscosity_history_rebuilds_and_continues_without_reset ... ok
+test liquid::evolution_checkpoint::tests::gas_and_liquid_energy_policies_continue_for_all_viscous_integrators ... ok
+test liquid::checkpoint::tests::complete_owner_continues_combined_transport_chemistry_rheology_and_boundaries ... ok
+
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 518 filtered out; finished in 0.16s
+

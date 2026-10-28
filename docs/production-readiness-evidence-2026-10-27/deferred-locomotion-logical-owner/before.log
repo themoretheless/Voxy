@@ -1,0 +1,22 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.14s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=-0.25 asset=rig
+GAME PACKAGE PASS sources=8 bytes=15946
+GAME PACKAGE PASS sources=8 bytes=17470
+
+thread 'project_prefab_tests::deferred_prefab_animation_selection_uses_native_playback_and_retarget_source' (79878742) panicked at crates/voxy_editor/src/project_prefab_tests.rs:699:10:
+deferred locomotion on imported hierarchy part was packaged: ()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test project_prefab_tests::deferred_prefab_animation_selection_uses_native_playback_and_retarget_source ... FAILED
+
+failures:
+
+failures:
+    project_prefab_tests::deferred_prefab_animation_selection_uses_native_playback_and_retarget_source
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 402 filtered out; finished in 0.17s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

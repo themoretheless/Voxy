@@ -1,0 +1,18 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0369]: binary operation `==` cannot be applied to type `Vec<voxy_render::ImageAsset>`
+   --> crates/voxy_editor/src/scene3d_tests.rs:266:5
+    |
+266 |     assert_eq!(restored_asset.value().images, accepted.value().images);
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     |
+    |     Vec<voxy_render::ImageAsset>
+    |     Vec<voxy_render::ImageAsset>
+    |
+note: `voxy_render::ImageAsset` does not implement `PartialEq`
+   --> crates/voxy_render/src/image_asset.rs:24:1
+    |
+ 24 | pub struct ImageAsset {
+    | ^^^^^^^^^^^^^^^^^^^^^ `voxy_render::ImageAsset` is defined in another crate
+
+For more information about this error, try `rustc --explain E0369`.
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

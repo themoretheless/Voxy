@@ -1,0 +1,19 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.45s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+
+thread 'animated_models::checkpoint::morph_admission_tests::accepted_frame_pool_checks_target_morph_schema_and_preserves_aliases' (79915406) panicked at crates/voxy_editor/src/animated_models/checkpoint.rs:603:9:
+pooled GPU frame restored without required morph properties
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test animated_models::checkpoint::morph_admission_tests::accepted_frame_pool_checks_target_morph_schema_and_preserves_aliases ... FAILED
+
+failures:
+
+failures:
+    animated_models::checkpoint::morph_admission_tests::accepted_frame_pool_checks_target_morph_schema_and_preserves_aliases
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 404 filtered out; finished in 0.06s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

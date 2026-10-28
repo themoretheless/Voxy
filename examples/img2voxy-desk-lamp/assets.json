@@ -1,0 +1,21 @@
+{
+  "assets": [
+    {
+      "asset": "base",
+      "source": "base.obj"
+    },
+    {
+      "asset": "stem",
+      "source": "stem.obj"
+    },
+    {
+      "asset": "head",
+      "source": "head.obj"
+    },
+    {
+      "asset": "bulb",
+      "source": "bulb.obj"
+    }
+  ],
+  "version": 1
+}

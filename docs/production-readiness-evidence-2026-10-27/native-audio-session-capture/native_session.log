@@ -1,0 +1,13 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.05s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-ffe57fcdab83b83c)
+
+running 1 test
+NATIVE SESSION rate=48000
+NATIVE SESSION CAPTURE bytes=74488 frames=5376
+NATIVE SESSION CAPTURE bytes=74488 frames=5888
+NATIVE SESSION SAVE/CANCEL/RESUME PASS
+test audio_session::checkpoint::tests::physical_native_session_save_cancel_resume_and_closed_load_admission ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 436 filtered out; finished in 0.56s
+

@@ -1,10 +1,13 @@
 //! Bounded Unicode glyph rasterization. Shaping and layout are separate layers.
 mod run;
-pub use run::{PlacedGlyph, RunOptions, TextFont, TextRun};
+pub use run::{
+    PlacedGlyph, PlacedGlyphCheckpoint, RunOptions, TextFont, TextFontCheckpoint, TextRun,
+    TextRunCheckpoint,
+};
 mod shape;
 pub use shape::{RunDirection, ShapeFont, ShapedGlyph};
 mod atlas;
-pub use atlas::{GlyphAtlas, GlyphRegion};
+pub use atlas::{GlyphAtlas, GlyphAtlasCheckpoint, GlyphRegion};
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TextError {
     InvalidFont,

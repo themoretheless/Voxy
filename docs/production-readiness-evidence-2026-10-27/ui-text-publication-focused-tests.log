@@ -1,0 +1,10 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.32s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 2 tests
+test ui_text::checkpoint::tests::real_file_restores_original_font_observations_arc_sharing_and_120_draws_without_sources ... ok
+test ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 283 filtered out; finished in 12.26s
+

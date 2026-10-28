@@ -1,0 +1,34 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline source-free restore split originally shared preview/runtime frame despite preserving equal values",
+    "Original preview/runtime Arc sharing now captured as an explicit durable runtime owner role in existing resource envelope",
+    "Equal independent preview/runtime frames remain independent without value-based deduplication",
+    "Hidden source model restores exact preview/runtime native frame JSON, f64 phase words and runtime serial with no GPU",
+    "Missing role, scene owner without runtime frame and different native frame contents reject",
+    "GPU bridge explicitly joins preview/runtime/render owner groups after native state equality checks; Play binds preview after runtime/GPU joins",
+    "M4 Max/Metal preview fixture covers shared GPU-only, equal independent GPU-only and three-way preview/runtime/GPU sharing with source deletion, exact phase/frame checkpoint and 64x64 geometry pixels"
+  ],
+  "checks": {
+    "editor_passed": 372,
+    "editor_ignored": 39,
+    "gpu_app_passed": 4,
+    "gpu_full_session_passed": 3,
+    "preview_gpu_rechecked_after_lint_only_copy_callback_cleanup": true,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "New no-GPU and three-way identity fixtures use supported bind-pose playback; active clip GPU-only variants also pass",
+    "No whole-App atomic install, idle editor lifecycle or native save/load menus qualified",
+    "No production character, full-window presentation, physical total-memory or target FPS qualification"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "0065f1ed3bd46a119206408ffc9e84f2b2b6b66c3f936a158339141e1f7fcfed",
+    "crates/voxy_editor/src/app/resource_checkpoint/play.rs": "c35ed21c3cdd76fba3310c219d10d80d87a97121cf39fbdbc63888ce62afa3af",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "7d5787c2ac240fa1743c7a3ec5ae02fd29885db2ad5ffd0652d4b18d4111655e",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "241c5bc1242b3ec5991cf154e8597c93706ab56192e51f71753fcbb30bf236de"
+  }
+}

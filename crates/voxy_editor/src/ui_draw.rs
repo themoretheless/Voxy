@@ -107,9 +107,16 @@ pub(super) fn build(
                 let origin =
                     Vec2::new(element.rect[0], element.rect[1]) + Vec2::from_array(glyph.origin);
                 let size = Vec2::new(glyph.region.size[0] as f32, glyph.region.size[1] as f32);
-                let start = origin.max(Vec2::new(clip[0], clip[1]));
-                let end = (origin + size).min(Vec2::new(clip[0] + clip[2], clip[1] + clip[3]));
-                if (end - start).min_element() <= 0.0 {
+                if size.min_element() <= 0.0 {
+                    continue;
+                }
+                // Intersect in the glyph's local [0,1] domain. A roundtrip via
+                // (origin + size) - origin can exceed size at fractional origins,
+                // rejecting a fully visible glyph or changing its atlas endpoints.
+                let crop_min = ((Vec2::new(clip[0], clip[1]) - origin) / size).max(Vec2::ZERO);
+                let crop_max = ((Vec2::new(clip[0] + clip[2], clip[1] + clip[3]) - origin) / size)
+                    .min(Vec2::ONE);
+                if (crop_max - crop_min).min_element() <= 0.0 {
                     continue;
                 }
                 let mut sprite = Sprite::from_logical_rect(
@@ -128,7 +135,7 @@ pub(super) fn build(
                     Vec2::new(glyph.region.origin[0] as f32, glyph.region.origin[1] as f32)
                         / atlas_size;
                 sprite.uv_max = sprite.uv_min + size / atlas_size;
-                batch.push(sprite.cropped((start - origin) / size, (end - origin) / size)?)?;
+                batch.push(sprite.cropped(crop_min, crop_max)?)?;
                 visible += 1;
                 glyphs += 1;
                 if glyphs > 8192 {
@@ -181,6 +188,70 @@ mod tests {
     use super::*;
     use voxy_gameplay::{UiElement, UiText};
     use voxy_scene::{SceneGraph, Transform};
+    #[test]
+    fn fractional_layout_does_not_round_unclipped_glyph_crop_beyond_one() {
+        let bytes = [
+            "/System/Library/Fonts/Supplemental/Arial.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "C:/Windows/Fonts/arial.ttf",
+        ]
+        .iter()
+        .find_map(|path| std::fs::read(path).ok())
+        .expect("Unicode font fixture");
+        let font = voxy_text::TextFont::parse(
+            &bytes,
+            voxy_text::FontLimits {
+                max_font_bytes: 4 * 1024 * 1024,
+                max_glyph_pixels: 16384,
+                max_size: 128.,
+            },
+        )
+        .unwrap();
+        let mut scene = SceneGraph::new(1);
+        let owner = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(
+                owner,
+                UiElement {
+                    origin: [0.1; 2],
+                    size: [0.8; 2],
+                    color: [0.2, 0.3, 0.4, 1.],
+                    layer: 0,
+                    enabled: true,
+                    action: None,
+                    text: Some(UiText {
+                        font: "font".into(),
+                        content: "Old office".into(),
+                        size: 18.,
+                        color: [1.; 4],
+                    }),
+                },
+            )
+            .unwrap();
+        let snapshot = voxy_gameplay::extract_scene_ui(&scene, [128.; 2], 128).unwrap();
+        let labels = voxy_gameplay::prepare_ui_text(&snapshot, |_| Some(&font)).unwrap();
+        let meshes = build(&snapshot, &labels).unwrap();
+        let glyphs = labels[0]
+            .run
+            .glyphs()
+            .iter()
+            .filter(|glyph| glyph.region.size.iter().all(|size| *size > 0))
+            .collect::<Vec<_>>();
+        assert_eq!(meshes[1].mesh.vertices().len(), glyphs.len() * 4);
+        let dimensions = labels[0].run.atlas().dimensions();
+        for (quad, glyph) in meshes[1].mesh.vertices().chunks_exact(4).zip(glyphs) {
+            let min = [
+                glyph.region.origin[0] as f32 / dimensions[0] as f32,
+                glyph.region.origin[1] as f32 / dimensions[1] as f32,
+            ];
+            let max = [
+                (glyph.region.origin[0] + glyph.region.size[0]) as f32 / dimensions[0] as f32,
+                (glyph.region.origin[1] + glyph.region.size[1]) as f32 / dimensions[1] as f32,
+            ];
+            assert_eq!(quad[0].uv, [min[0], max[1]]);
+            assert_eq!(quad[2].uv, [max[0], min[1]]);
+        }
+    }
     #[test]
     #[allow(clippy::too_many_lines)]
     fn glyph_geometry_clips_uvs_and_rejects_stale_owner_publications() {

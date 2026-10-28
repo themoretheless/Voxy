@@ -154,3 +154,107 @@ mod tests {
         assert_eq!(atlas.insert(&empty), Ok(None));
     }
 }
+
+/// Exact atlas pixels and append-only shelf state. No packing is replayed on restore.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct GlyphAtlasCheckpoint {
+    pub version: u32,
+    pub dimensions: [usize; 2],
+    pub alpha: Vec<u8>,
+    pub cursor: [usize; 3],
+    pub entries: usize,
+    pub max_entries: usize,
+}
+impl GlyphAtlas {
+    pub fn checkpoint(&self) -> GlyphAtlasCheckpoint {
+        let Self {
+            width,
+            height,
+            alpha,
+            x,
+            y,
+            row_height,
+            entries,
+            max_entries,
+        } = self;
+        GlyphAtlasCheckpoint {
+            version: 1,
+            dimensions: [*width, *height],
+            alpha: alpha.clone(),
+            cursor: [*x, *y, *row_height],
+            entries: *entries,
+            max_entries: *max_entries,
+        }
+    }
+}
+impl GlyphAtlasCheckpoint {
+    pub fn prepare(&self, max_pixels: usize, max_entries: usize) -> Result<GlyphAtlas, TextError> {
+        let [width, height] = self.dimensions;
+        let [x, y, row_height] = self.cursor;
+        if width
+            .checked_mul(height)
+            .is_none_or(|pixels| pixels > max_pixels || pixels != self.alpha.len())
+            || self.entries > self.max_entries
+            || self.max_entries > max_entries
+        {
+            return Err(TextError::Capacity);
+        }
+        if self.version != 1
+            || width == 0
+            || height == 0
+            || x > width
+            || y.checked_add(row_height)
+                .is_none_or(|bottom| bottom > height)
+            || (self.entries == 0 && (self.cursor != [0; 3] || self.alpha.iter().any(|v| *v != 0)))
+            || (self.entries > 0 && (x < 3 || row_height < 3))
+        {
+            return Err(TextError::InvalidBitmap);
+        }
+        Ok(GlyphAtlas {
+            width,
+            height,
+            alpha: self.alpha.clone(),
+            x,
+            y,
+            row_height,
+            entries: self.entries,
+            max_entries: self.max_entries,
+        })
+    }
+}
+
+#[cfg(test)]
+mod checkpoint_tests {
+    use super::*;
+    #[test]
+    fn restored_shelf_continues_120_insertions_without_repacking() {
+        let mut original = GlyphAtlas::new(64, 64, 4096, 128).unwrap();
+        let glyph = GlyphBitmap {
+            width: 1,
+            height: 1,
+            bearing: [0; 2],
+            advance: 1.,
+            alpha: vec![173],
+        };
+        for _ in 0..7 {
+            original.insert(&glyph).unwrap();
+        }
+        let saved = original.checkpoint();
+        let mut restored = saved.prepare(4096, 128).unwrap();
+        for _ in 0..120 {
+            assert_eq!(
+                original.insert(&glyph).unwrap(),
+                restored.insert(&glyph).unwrap()
+            );
+            assert_eq!(original.checkpoint(), restored.checkpoint());
+        }
+        let mut bad = saved.clone();
+        bad.cursor[1] = usize::MAX;
+        assert!(bad.prepare(4096, 128).is_err());
+        bad = saved.clone();
+        bad.alpha.pop();
+        assert!(bad.prepare(4096, 128).is_err());
+        assert!(saved.prepare(4095, 128).is_err());
+        assert!(saved.prepare(4096, 127).is_err());
+    }
+}

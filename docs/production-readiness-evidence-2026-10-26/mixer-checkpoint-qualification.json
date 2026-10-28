@@ -1,0 +1,28 @@
+{
+  "status": "codec_neutral_mixer_checkpoint_verified",
+  "audio_passed": 16,
+  "editor_passed": 242,
+  "editor_ignored": 20,
+  "strict_audio_all_target_clippy": true,
+  "continuation_blocks": 120,
+  "equality": "all PCM sample bits and complete mixer checkpoint after every block",
+  "covered": [
+    "exact cursors and slot order including holes",
+    "paused and looping voices",
+    "one-shot completion",
+    "voice stereo channel and bus ramp history",
+    "fresh mixer ownership and old handle rejection",
+    "resource and capacity validation"
+  ],
+  "remaining": [
+    "bounded host wire codec",
+    "SceneAudioRuntime source ObjectIds and completed source history",
+    "immutable PCM revision archive",
+    "device callback queue synchronization",
+    "whole App/PlaySession publication"
+  ],
+  "sha256": {
+    "crates/voxy_audio/src/checkpoint.rs": "8c42ab8509d0e6fccd1c778eb8d030cf85f71a01a75997636168bc0639daee3b",
+    "crates/voxy_audio/src/lib.rs": "a509b2122184d8aa84f682e3bfd60beed1ea589dea08e430b5a43b8ab485b31c"
+  }
+}

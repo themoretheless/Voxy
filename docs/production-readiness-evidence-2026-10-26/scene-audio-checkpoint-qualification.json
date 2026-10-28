@@ -1,0 +1,33 @@
+{
+  "status": "scene_audio_owner_checkpoint_verified",
+  "tests": {
+    "gameplay_audio_passed": 11,
+    "audio_passed": 16,
+    "editor_passed": 242,
+    "editor_ignored": 20,
+    "strict_audio_gameplay_all_target_clippy": true
+  },
+  "continuation_blocks": 120,
+  "covered": [
+    "bounded JSON wire codec",
+    "ObjectId rebind to fresh scene handles",
+    "PCM archive decoded to fresh clip allocation",
+    "accepted descriptors publication revisions and authored buses",
+    "active exact PCM continuation",
+    "completed one-shot tombstone before next synchronize",
+    "no restart for unchanged publication",
+    "missing resources owners rate mismatch invalid serial and byte rejection"
+  ],
+  "remaining": [
+    "full resource revision archive ownership",
+    "device callback and queued PCM synchronization",
+    "AudioPlay wall-to-sample clock state",
+    "whole App/PlaySession atomic publication"
+  ],
+  "sha256": {
+    "crates/voxy_audio/src/checkpoint.rs": "b7d16e64c023aac0eef2ca5c8a6be9588faccecc4252117642e5afd0af792159",
+    "crates/voxy_gameplay/src/audio_runtime_checkpoint.rs": "c70156b46194c150eff7696d73629783d20d32845975189421eb82c795798e8a",
+    "crates/voxy_gameplay/src/audio_runtime.rs": "96ffd194a0314c0b3a4aaacc969eb738c9c235cf94a5a16ca3e1bbedd8695264",
+    "crates/voxy_gameplay/src/lib.rs": "091d9e26775a81fe2ae749bd5b4c039df733aa7f950870bdb201d63f2fec26c5"
+  }
+}

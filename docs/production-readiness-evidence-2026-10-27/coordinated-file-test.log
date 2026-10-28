@@ -1,0 +1,55 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+  --> crates/voxy_editor/src/app/restore_barrier/file.rs:68:95
+   |
+68 |             let length = usize::try_from(u64::from_le_bytes(bytes[start..start + 8].try_into()?))?;
+   |                                                                                     ----------^ the trait `From<TryFromSliceError>` is not implemented for `error::EditorError`
+   |                                                                                     |
+   |                                                                                     this can't be annotated with `?` because it has type `Result<_, TryFromSliceError>`
+   |
+note: `error::EditorError` needs to implement `From<TryFromSliceError>`
+  --> crates/voxy_editor/src/error.rs:6:1
+   |
+ 6 | pub enum EditorError {
+   | ^^^^^^^^^^^^^^^^^^^^
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+   = help: `error::EditorError` implements trait `From<T>`:
+             From<&str>
+             From<AnimationError>
+             From<AudioError>
+             From<DependencyError>
+             From<DocumentError>
+             From<FogError>
+             From<GameplayError>
+             From<ImageAssetError>
+           and 22 others
+
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+   --> crates/voxy_editor/src/app/restore_barrier/file.rs:104:70
+    |
+104 |         voxy_assets::save_atomic_file(path, &bytes, limits.max_bytes)?;
+    |         -------------------------------------------------------------^ the trait `From<AtomicSaveError>` is not implemented for `error::EditorError`
+    |         |
+    |         this can't be annotated with `?` because it has type `Result<_, AtomicSaveError>`
+    |
+note: `error::EditorError` needs to implement `From<AtomicSaveError>`
+   --> crates/voxy_editor/src/error.rs:6:1
+    |
+  6 | pub enum EditorError {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: `error::EditorError` implements trait `From<T>`:
+              From<&str>
+              From<AnimationError>
+              From<AudioError>
+              From<DependencyError>
+              From<DocumentError>
+              From<FogError>
+              From<GameplayError>
+              From<ImageAssetError>
+            and 22 others
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `voxy_editor` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 2 previous errors

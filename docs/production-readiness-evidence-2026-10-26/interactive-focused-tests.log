@@ -1,0 +1,10 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.24s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 2 tests
+test headless_game::tests::headless_focus_loss_cancels_input_and_ui_capture_and_invalid_events_do_not_advance ... ok
+test headless_game::tests::project_play_standalone_and_source_free_package_share_interactive_replay ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 220 filtered out; finished in 0.36s
+

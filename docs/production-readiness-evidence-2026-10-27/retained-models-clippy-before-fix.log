@@ -1,0 +1,27 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: this argument (8 byte) is passed by reference, but would be more efficient if passed by value (limit: 8 byte)
+   --> crates/voxy_editor/src/import/asset_checkpoint.rs:100:16
+    |
+100 | fn zero(value: &usize) -> bool {
+    |                ^^^^^^ help: consider passing by value instead: `usize`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#trivially_copy_pass_by_ref
+    = note: `-D clippy::trivially-copy-pass-by-ref` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::trivially_copy_pass_by_ref)]`
+
+error: could not compile `voxy_editor` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: wildcard matches only a single variant and will also match any future added variants
+   --> crates/voxy_editor/src/import/asset_checkpoint/tests.rs:341:9
+    |
+341 |         _ => panic!("skin required"),
+    |         ^ help: try: `ModelGeometry::Static(_)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#match_wildcard_for_single_variants
+    = note: `-D clippy::match-wildcard-for-single-variants` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::match_wildcard_for_single_variants)]`
+
+error: could not compile `voxy_editor` (lib test) due to 2 previous errors

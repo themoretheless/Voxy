@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-28",
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Whole-App loading of an idle/no-playback archive over active owned native audio",
+  "changes": [
+    "Original native candidate can stage a silent target using the original OutputCheckpoint/PcmPump with empty queue and consumed zero block",
+    "Destination guards require exactly one active playback or silent transport; no archive format change or alternate audio runtime",
+    "All source/destination checks and final permit cancellation retain original PCM and active device",
+    "Commit installs the empty queue and suffix while the original output gate remains held across world publication",
+    "Final receipt asynchronously closes the original device owner after all host owners swap; session polling/shutdown retains original worker ownership",
+    "Existing active audio-only hold behavior is unchanged; new silent audio-only replacement releases its final receipt and retires output immediately"
+  ],
+  "checks": {
+    "editor": {
+      "passed": 394,
+      "ignored": 48
+    },
+    "gpu_app": {
+      "passed": 10,
+      "backend": "Metal",
+      "device": "Apple M4 Max",
+      "window": false
+    },
+    "native_session": {
+      "passed": 1,
+      "sample_rate": 48000,
+      "gain": 0,
+      "window": false
+    },
+    "clippy": "editor all targets, -D warnings, exit 0",
+    "format": "scoped rustfmt passed",
+    "diff": "scoped diff check passed; touched sources are preexisting untracked files"
+  },
+  "regressions": [
+    "New actual GPU/CoreAudio active-to-idle scene load after original model/WAV removal",
+    "Cancellation at native readiness preserves original scene token and playback frame counter",
+    "Original active native GPU save/cancel/two loads/120-frame continuations/Stop/idle-save-load scenario remains separately tested",
+    "Native Session discards silent candidate and cancels final permit with exact original source JSON",
+    "Committed silent native receipt has no playback but retains original connection until finish",
+    "Original frozen queue inspected empty before final release; staged pump pending frames exactly zero",
+    "Finish clears source checkpoint and connection, joins workers outside frame, preserves native policy and permits a new idle checkpoint"
+  ],
+  "limitations": [
+    "Application-owned PCM queue is cleared; previously submitted host/analog buffers are not retroactively removed",
+    "Native device is closed asynchronously and admission can remain pending until normal polling retires it",
+    "Idle-to-native archive/device startup, nonempty offline/native conversions, reconnect and rate changes remain open",
+    "Native window, audible continuity, latency/power/FPS, and full ENG-03 through ENG-13 remain open"
+  ],
+  "sources_sha256": {
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "82baf8b82d4fa9d7f4eee52b590e0c488b7f786403c253a24c0c0bb4917077b5",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "96f8216651176eb4384d05e5a147ba93cfebf775c72e16f5ba0de82ad56bf831"
+  },
+  "logs": [
+    "editor.log",
+    "gpu.log",
+    "native_session.log",
+    "clippy.log"
+  ]
+}

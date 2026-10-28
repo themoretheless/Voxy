@@ -1,0 +1,24 @@
+{
+  "status": "original_source_certified_fade_checkpoint_replayed_and_used_by_physics",
+  "source_sha256": {
+    "crates/voxy_animation/src/rigid_fade_checkpoint.rs": "038ab2ab82842cd9d3486661c506cf77b25e135b6a37d86587a435f941de8416",
+    "crates/voxy_animation/src/rigid_fade.rs": "db56478540feff2b15617fd34247052e02ea3bafc65f98383c42cce93c278606",
+    "crates/voxy_animation/src/root_rigid/checkpoint.rs": "d76f41952fa9283184743192991515ad9bece1867c15843ca61759e1183b8eb7",
+    "crates/voxy_animation/src/lib.rs": "d8a105777aec513ffb7866b8117d914b269d979d6b72d099b7e784d55047993e",
+    "crates/voxy_editor/src/model_playback.rs": "fd3c8dbbcec02466b26202cf7d04af64ff6bdb1b5da4314a749922e93326381d"
+  },
+  "new_animation_tests": 1,
+  "physical_fade_filter_passed": 3,
+  "animation_tests_passed": 347,
+  "editor_tests_passed": 237,
+  "editor_tests_ignored": 20,
+  "strict_animation_editor_all_targets_clippy": true,
+  "fresh_source_completion_and_frozen_source_verified": true,
+  "all_path_error_and_field_bits_compared": true,
+  "restored_certificate_consumed_by_existing_physical_request_flow": true,
+  "linked_plan_retains_staged_animator_pointer_identity": true,
+  "full_animation_runtime_saved": false,
+  "other_fade_compiler_variants_saved": false,
+  "full_app_save": false,
+  "fps_qualified": false
+}

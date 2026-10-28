@@ -1,0 +1,17 @@
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.55s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_model-eb514cad44b6bd0a)
+
+running 9 tests
+test morph::tests::morph_rejects_bad_streams_weights_budgets_and_overflow ... ok
+test morph::tests::static_morph_retains_material_streams_and_normal_deltas ... ok
+test morph::tests::morph_is_local_before_skinning_and_preserves_source_and_influences ... ok
+test tests::morph_import_step_cubic_and_instance_defaults_are_independent ... ok
+test tests::morph_import_rejects_truncation_unsupported_features_and_budgets ... ok
+test tests::authored_morph_frame_edit_is_atomic_and_keeps_asset_and_pose ... ok
+test tests::morph_import_decodes_defaults_channels_and_deforms_before_skeleton ... ok
+test tests::shared_morph_asset_preserves_ownership_phase_endpoints_and_clip_reordering ... ok
+test tests::rigid_morph_without_source_skin_keeps_node_animation_mirror_and_normals ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 35 filtered out; finished in 0.01s
+

@@ -1,0 +1,29 @@
+{
+  "status": "offline_audio_session_checkpoint_publication_verified",
+  "editor_passed": 247,
+  "editor_ignored": 20,
+  "strict_all_target_editor_clippy": true,
+  "continuation_steps": 120,
+  "covered": [
+    "session request poll resume lifecycle",
+    "bounded session JSON record",
+    "real WAV importer and actual project worker factories",
+    "stage before replacing live audio owner",
+    "failed missing-owner load preserves running playback",
+    "fresh scene ObjectId rebinding",
+    "old worker cleanup after publication",
+    "full playback records equal after continuation",
+    "completed retired handles reaped on subsequent load"
+  ],
+  "remaining": [
+    "App whole scene and PlaySession atomic publication",
+    "user save slot/file UI",
+    "native device queue fence and restore",
+    "native audible acceptance"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/audio_session.rs": "28bb3dbf35d2ebe493677813c83de9b12766a716bbda2e7a642b8de7ac95641d",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "dc02ea6615d6566cbcf78d9dc0cda5c5effaee04bf83c9813aabf32068eaeea7",
+    "crates/voxy_editor/src/prefab_authoring.rs": "723996396d141787076a8e8ed0dda3647a68c9591e12437c8821718118e3cc26"
+  }
+}

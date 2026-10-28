@@ -35,6 +35,11 @@ impl BehaviorSetup {
 /// Register durable component codecs and supply fresh runtime behavior/UI setup.
 #[derive(Debug)]
 pub struct GameHost {
+    /// Executable behavior state decoders, shared with all project launch paths.
+    /// The resource package never serializes these factories.
+    pub behavior_checkpoints: std::sync::Arc<voxy_scene::BehaviorCheckpointRegistry>,
+    /// Explicit state decoders for opted-in UI callbacks, shared across launch paths.
+    pub ui_action_checkpoints: std::sync::Arc<voxy_gameplay::UiActionCheckpointRegistry>,
     pub components: ComponentRegistry,
     pub behaviors: Option<BehaviorSetup>,
     pub ui_actions: Option<voxy_gameplay::UiActionSetup>,
@@ -43,6 +48,8 @@ impl GameHost {
     #[must_use]
     pub fn new(components: ComponentRegistry) -> Self {
         Self {
+            behavior_checkpoints: Default::default(),
+            ui_action_checkpoints: std::sync::Arc::new(crate::ui_action_codecs::registry()),
             components,
             behaviors: None,
             ui_actions: None,

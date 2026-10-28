@@ -1,0 +1,122 @@
+{
+  "date": "2026-10-27",
+  "scope": "Exact imported node hierarchy, static geometry metadata and ordered decoded images; pending complete EditorAsset graph coordinator.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "toolchain": "nightly-2026-05-27",
+  "source_sha256": {
+    "crates/voxy_editor/src/import.rs": "debc4f9e4226393c09dca1701e086fc41bed59e1e9a2a5b33814a96270b9cbfc",
+    "crates/voxy_editor/src/import/node_checkpoint.rs": "f8c879188a0847fffa79f05f97d6e6a16a363c2ccc63cbb2da57a7095ce9062a",
+    "crates/voxy_editor/src/import/node_checkpoint/tests.rs": "8aa55d1ccfad81e3a1e66dc17a0fdbd37a3451dde91df12a3b3bfe3cfa8d138b",
+    "crates/voxy_editor/src/scene3d_tests.rs": "04885df6caefc8441af16dd932cc50a232142e96ac80216f3704af4a515f4f57"
+  },
+  "preserved": [
+    "All eight ImportedNode fields in original order",
+    "Exact accepted TRS words including near-unit quaternion without renormalization, signed zero and subnormal values",
+    "Complete optional native SceneMesh records",
+    "Image references, sampler/mip/anisotropy settings and geometry_key grouping",
+    "All decoded RGBA images and deterministic identical mip chains; native owned Vec semantics"
+  ],
+  "admission": [
+    "Strict versioned bounded JSON and typed native mesh/image records",
+    "Topological parent and image-reference domains, native local Transform.matrix validation and sampler enum tags",
+    "Required geometry_key for mesh-bearing nodes; repeated keys must have identical mesh bytes, matching actual GPU geometry cache contract",
+    "Byte/node/image/string and aggregate vertex/index/pixel policies before native resource construction",
+    "Exact native recapture before returning prepared node/image data; original owners untouched on failure"
+  ],
+  "checks": {
+    "new_tests": 2,
+    "editor_lib": {
+      "passed": 286,
+      "ignored": 21
+    },
+    "actual_consumer": "Actual glTF multi-material/instance importer; six min-filter modes, delete source GLB, restore node/image file, preserve grouping and compare 120 hierarchical transforms per mode (720 comparisons)",
+    "strict_clippy": "editor all-targets passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "diff_check": "passed",
+    "final_test_only_change": "Evidence file emitter added after full suite; real consumer and all-target Clippy rerun successfully."
+  },
+  "file_artifacts": [
+    {
+      "path": "node-image-files/nodes-9728.json",
+      "bytes": 13262,
+      "sha256": "6b08c90d205a619451811df105d926f7b870c5659c5e378aaa4add6d2407ee9e",
+      "nodes": 7,
+      "images": 1,
+      "hierarchy_steps_checked": 120
+    },
+    {
+      "path": "node-image-files/nodes-9729.json",
+      "bytes": 13262,
+      "sha256": "4b4d319c0c8f9bb9c844cdaa263cc2eb9008f26376b181db3fb920fcdafc5299",
+      "nodes": 7,
+      "images": 1,
+      "hierarchy_steps_checked": 120
+    },
+    {
+      "path": "node-image-files/nodes-9984.json",
+      "bytes": 13258,
+      "sha256": "f054d85a6f08e3a9ade74579bdbd939534d849d6fc8afef3f2d98e7d7d7d9b1d",
+      "nodes": 7,
+      "images": 1,
+      "hierarchy_steps_checked": 120
+    },
+    {
+      "path": "node-image-files/nodes-9985.json",
+      "bytes": 13258,
+      "sha256": "f5e8173c561ef9d8d06b3e660781518bdf5336e5c9f6ecdd952c013861a5739e",
+      "nodes": 7,
+      "images": 1,
+      "hierarchy_steps_checked": 120
+    },
+    {
+      "path": "node-image-files/nodes-9986.json",
+      "bytes": 13258,
+      "sha256": "2da6d791eb8bfb8f1581c4e72b435cff2fe8fd65b0e60cec27d543428787d762",
+      "nodes": 7,
+      "images": 1,
+      "hierarchy_steps_checked": 120
+    },
+    {
+      "path": "node-image-files/nodes-9987.json",
+      "bytes": 13258,
+      "sha256": "73a80d2b3d9e73d1e94ff247af97739c66924b49142d079e5835e3edf1f7ffd7",
+      "nodes": 7,
+      "images": 1,
+      "hierarchy_steps_checked": 120
+    }
+  ],
+  "regressions": [
+    "Real node/image file, exact mesh/transform/sampler/geometry-key/native image words and mips",
+    "120 hierarchical instance transforms in focused test",
+    "Invalid parent/image/sampler/local transform/native payload and geometry-key collisions reject",
+    "Aggregate pixel/vertex/index/string/byte quotas reject; original remains unchanged; empty participant accepted"
+  ],
+  "initial_rejection": "Compiler required explicit EditorError type in parsed-mesh closure; fixed before focused/consumer/full suites.",
+  "limits": [
+    "Internal participant module explicitly allows dead_code until actual EditorAsset/App coordinator integration, following existing authoring-checkpoint convention",
+    "No complete App save or whole EditorAsset resource publication wiring yet",
+    "JSON integrity belongs to enclosing owner; no standalone checksum claimed",
+    "Logical caps do not qualify parser/native physical peak heap or old-plus-new GPU residency",
+    "GPU sampler capability validation is separate; source requested values retained",
+    "No explicit GPU/window/audio-device/FPS qualification"
+  ],
+  "remaining": [
+    "Compose all six EditorAsset fields with actual model/LOD buffer and wrapper/source aliases",
+    "Original import observations and catalog revision/source joins",
+    "Worker/watch barriers and atomic native CPU/GPU/App publication",
+    "Whole-session disk/native/platform and physical-memory qualification",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "field_audit": "node-image-owner-field-audit.json",
+  "logs": {
+    "initial-compile-rejected": "node-image-initial-compile-rejected.log",
+    "focused": "node-image-focused.log",
+    "initial-consumer": "node-image-initial-consumer.log",
+    "editor-full": "node-image-editor-full.log",
+    "evidence-consumer": "node-image-evidence-consumer.log",
+    "clippy": "node-image-clippy.log",
+    "format": "node-image-format.log",
+    "diff": "node-image-diff.log"
+  }
+}

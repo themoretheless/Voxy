@@ -1,0 +1,83 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Native AudioSession source capture/cancellation/resume using original device, queue, playback/reload participants",
+  "status": "native source save supported for a live owned connection; native replacement/load remains explicitly rejected",
+  "state_machine": [
+    "Admission validates original worker/connection/playback queue identities and quiescent session transitions",
+    "Acquire original reload Draining fence, queue native pause request, rollback reload on rejected request",
+    "Poll native pause ACK before acquiring unique queue freeze",
+    "Poll reload and queued output capture into original AudioOwner/AudioSession archive",
+    "Release original reload fence; wait pending pause if cancellation was early",
+    "Queue explicit native resume, retain queue freeze until ACK, then release original queue and clear save state"
+  ],
+  "checks": {
+    "audio_device": {
+      "passed": 20,
+      "ignored": 2
+    },
+    "editor": {
+      "passed": 392,
+      "ignored": 45
+    },
+    "native_device": {
+      "passed": 1,
+      "backend": "CPAL/CoreAudio default system output",
+      "rate": 48000,
+      "pcm": "zero stereo f32",
+      "window": false
+    },
+    "native_session": {
+      "passed": 1,
+      "rate": 48000,
+      "pcm": "gain=0",
+      "archive_bytes": 74488,
+      "cases": [
+        "early cancellation before capture",
+        "two repeated stable source captures",
+        "real JSON file write/read",
+        "closed load/publication admission",
+        "missing current connection keeps queue and native pause held",
+        "restore original owner and resume",
+        "playback frame progress after resume",
+        "output errors remain zero",
+        "joined shutdown"
+      ]
+    },
+    "gpu_regressions": {
+      "passed": 7,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "mode": "offscreen"
+    },
+    "clippy": "audio_device and editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "verified": [
+    "Original native worker records published connection identity; callers cannot substitute another queue",
+    "Source NativeCheckpoint holds original connection identity through capture and resume",
+    "No queue consumption before native pause ACK or before native resume ACK plus freeze release",
+    "Native archive includes original queue/pump output bytes; repeated captures remain identical while held",
+    "Missing owner on resume rejects before touching the paused source and preserves its queue fence",
+    "Native prepare/publication still fails closed instead of replacing native output with offline playback",
+    "Default Offline behavior and GPU save/load/cancel regressions remain passing"
+  ],
+  "limitations": [
+    "No native editor window opened; full window/input/project save workflow is not qualified",
+    "Default system endpoint model/physical routing was not recorded; actual CPAL stream used, not controlled test owner",
+    "Native tests intentionally use zero PCM/gain=0: no listening test or audible continuity claim",
+    "Native AudioSession archive captured/written/read; loading into a native device remains gated pending prepared publication/handoff",
+    "Host queued buffers and hardware playback position are not serialized",
+    "Transient host pause/resume failures covered by lower worker controlled-owner tests; full AudioSession hardware failure/reconnect injection not performed",
+    "Source resume retries after a failed resume are implemented, but hardware transient-failure recovery not qualified",
+    "Native idle mode without an owned active playback connection still rejects capture",
+    "No FPS/latency/power claim; full ENG roadmap remains open"
+  ],
+  "sha256": {
+    "crates/voxy_audio_device/src/worker.rs": "a49420a0cf352d891d9f7903f0f30aaba4b946e1ea732ebcb86268137133d397",
+    "crates/voxy_editor/src/audio_play.rs": "db24f744764b945a95272e5c67f9e8cda58a277aa63e26f9da102dffea23d82c",
+    "crates/voxy_editor/src/audio_owner_checkpoint.rs": "41392643cedc92c808fe3bac1cc012f03acebae022afa9b38c73d86833ee11a3",
+    "crates/voxy_editor/src/audio_session.rs": "520a7213fed50dcff10bd8e33d0fec52911ffb1202f77e2473b35ff692b6358e",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "cbe91956ddcfac88bb733daa7e976b7bbc182dfc5a6ed5474760797722ce17fa"
+  }
+}

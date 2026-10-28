@@ -1,0 +1,12 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.56s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_animation-1c86ad0fc320fa33)
+
+running 4 tests
+test property_track::tests::cubic_vector_and_color_properties_follow_the_same_curve ... ok
+test property_track::tests::cubic_property_schema_and_overflow_are_rejected ... ok
+test property_track::tests::cubic_property_derivatives_use_segment_seconds_and_preserve_overshoot ... ok
+test property_track::tests::property_tracks_sample_blend_and_apply_additive_curves ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 326 filtered out; finished in 0.00s
+

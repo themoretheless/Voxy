@@ -1,0 +1,35 @@
+{
+  "stage": "ENG-03 / ENG-05 native scene frame integration",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "change": "App.draw delegates to shared draw_frame with optional original SceneViewTargets. Surface and offscreen frames share tick, simulation/extraction, native camera, animation, LOD, material/transform preparation and draw lists. Offscreen output encodes the same native view frame into caller targets and returns after queue submission without surface/UI presentation ACK.",
+  "verified": [
+    "Real M4 Max / Metal native App project regression retains prior watcher/reload/refusal/Retry/package coverage",
+    "Imported model expanded through original editor operation into four scene objects with hierarchy/parts and saved transform edit",
+    "Original standalone App renders actual hierarchy through original frame extraction/camera/material/draw path into native 128x128 targets",
+    "Readback contains non-black geometry pixels",
+    "Whole source project removed; new package App imports independent resources and renders actual scene with exact same RGBA bytes",
+    "Offscreen rendering leaves presented frame count and native UI-presented flag unchanged",
+    "Source-free GameCheck completes 120 ticks with four objects; GPU validation error scope clean"
+  ],
+  "editor_tests": {
+    "passed": 357,
+    "failed": 0,
+    "ignored": 34
+  },
+  "explicit_project_gpu_tests_passed": 1,
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/viewport.rs": "377a5486e9c8a695df3a015ea625782715d7147966934ec98fd55254c21b7044",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "927a7fd843e755cb7a5be8c884ef7e2dbff900999d688624bafc6fbe86ad6efc"
+  },
+  "limits": [
+    "Qualification covers static hierarchical scene with camera/materials, not complete renderer capability matrix or photorealistic street",
+    "Nonempty fog and optical-fluid offscreen paths explicitly reject until their output targets/adapter ownership are connected; no effect silently omitted",
+    "Offscreen MSAA targets must match current viewport policy; native target encoder retains validation",
+    "No new native OS presentation/input, audio-device, physical memory or frame-rate qualification",
+    "GPU source/package Apps use same device with independent caches/allocations; no separate-process GPU run",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

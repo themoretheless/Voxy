@@ -1,0 +1,19 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.11s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 1 test
+
+thread 'panels::gpu_tests::marker_controls_render_readable_glyphs_without_hit_overlap' (73247495) panicked at crates/voxy_editor/src/panels/gpu_tests.rs:60:17:
+animation control [852.0, 334.0, 164.0, 24.0] overlaps Character at [848.0, 354.0, 172.0, 23.0]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test panels::gpu_tests::marker_controls_render_readable_glyphs_without_hit_overlap ... FAILED
+
+failures:
+
+failures:
+    panels::gpu_tests::marker_controls_render_readable_glyphs_without_hit_overlap
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 246 filtered out; finished in 0.08s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

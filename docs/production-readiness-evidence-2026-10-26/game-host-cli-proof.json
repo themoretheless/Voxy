@@ -1,0 +1,52 @@
+{
+  "status": "public_game_host_cli_pass",
+  "runs": [
+    {
+      "args": [
+        "--check",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-host-cli-idkbcoin/source/project.voxy"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=triangle\nGAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"triangle\",\"parent\":null,\"name\":\"Host-driven triangle\",\"active\":true,\"translation\":[1.9999988,0.0,0.0],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"triangle\",\"sample.move.v1\":{\"speed\":1.0}}}]}\nGAME CHECK PASS ticks=120 objects=1 prefab_instances=0\nHOST MOVE END fixed=120 x=1.999999\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--build",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-host-cli-idkbcoin/source/project.voxy",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-host-cli-idkbcoin/host.vpak"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=triangle\nGAME PACKAGE PASS sources=4 bytes=3286\nHOST MOVE END fixed=0 x=0.000000\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--build",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-host-cli-idkbcoin/source/project.voxy",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-host-cli-idkbcoin/rejected.vpak"
+      ],
+      "exit_code": 1,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=triangle\n",
+      "stderr": "Error: \"sample speed must be finite and within [-10, 10]\"\n"
+    },
+    {
+      "args": [
+        "--package-check",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-host-cli-idkbcoin/host.vpak"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=0 asset=triangle\nGAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"triangle\",\"parent\":null,\"name\":\"Host-driven triangle\",\"active\":true,\"translation\":[1.9999988,0.0,0.0],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"triangle\",\"sample.move.v1\":{\"speed\":1.0}}}]}\nGAME CHECK PASS ticks=120 objects=1 prefab_instances=0\nHOST MOVE END fixed=120 x=1.999999\n",
+      "stderr": ""
+    }
+  ],
+  "binary": "/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/examples/project_game",
+  "binary_sha256": "644e4803436c404d7e4f90b4bf32fbb9a93995f35513155a69fffbd1d938993d",
+  "package_sha256": "6098cf3e7ece1c7cb6948e77bef251874b853ae90c73f90a9aa9ba3b27320d12",
+  "source_tree_removed_before_package_launch": true,
+  "project_and_package_state_equal": true,
+  "simulation_fixed_ticks": 120,
+  "invalid_game_setup_rejected_without_output": true,
+  "native_window_verified": false,
+  "fps_qualified": false
+}

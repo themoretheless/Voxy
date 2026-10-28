@@ -1,0 +1,20 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.76s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+GAME PACKAGE PASS sources=7 bytes=4634
+
+thread 'project_prefab_tests::deferred_prefab_ui_font_is_validated_observed_and_available_without_sources' (79866434) panicked at crates/voxy_editor/src/project_prefab_tests.rs:1072:5:
+deferred UI font was not decoded during build
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test project_prefab_tests::deferred_prefab_ui_font_is_validated_observed_and_available_without_sources ... FAILED
+
+failures:
+
+failures:
+    project_prefab_tests::deferred_prefab_ui_font_is_validated_observed_and_available_without_sources
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 402 filtered out; finished in 0.07s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

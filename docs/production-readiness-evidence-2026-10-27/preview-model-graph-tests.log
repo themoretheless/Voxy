@@ -1,0 +1,17 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.45s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 3 tests
+test animation_preview::tests::prepared_source_guard_observes_preview_frame_identity_and_exact_phase ... ok
+test animation_preview::tests::retarget_preview_uses_source_phase_target_bind_and_in_place_axes ... ok
+test animation_preview::tests::marker_preview_is_authoring_only_toggleable_and_rejects_stale_configuration ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 349 filtered out; finished in 0.09s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-ef30924b92d7d41b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

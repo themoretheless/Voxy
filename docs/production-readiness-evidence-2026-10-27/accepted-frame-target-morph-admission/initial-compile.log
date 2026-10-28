@@ -1,0 +1,18 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0277]: `?` couldn't convert the error: `voxy_assets::InputError: StdError` is not satisfied
+   --> crates/voxy_editor/src/animated_models/checkpoint.rs:541:90
+    |
+529 |     -> Result<(), Box<dyn std::error::Error>> {
+    |        -------------------------------------- required `voxy_assets::InputError: StdError` because of this
+...
+541 |         let publication = Arc::new(inputs.finish(asset, |id, max| provider.read(id, max))?);
+    |                                           -----------------------------------------------^ the trait `StdError` is not implemented for `voxy_assets::InputError`
+    |                                           |
+    |                                           this has type `Result<_, voxy_assets::InputError>`
+    |
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = note: required for `Box<dyn StdError>` to implement `From<voxy_assets::InputError>`
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `voxy_editor` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

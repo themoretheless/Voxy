@@ -1,0 +1,13 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.92s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-15f68745829f6188)
+
+running 2 tests
+test model_playback::checkpoint::tests::ordinary_source_interval_and_bind_playback_restore_and_bad_data_is_rejected ... ok
+test model_playback::checkpoint::tests::saved_pending_events_and_frozen_contact_pose_continue_and_drain_once ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 249 filtered out; finished in 0.03s
+

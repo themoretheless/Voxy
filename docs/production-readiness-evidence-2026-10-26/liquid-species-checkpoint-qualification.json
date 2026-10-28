@@ -1,0 +1,31 @@
+{
+  "status": "complete_current_native_species_owner_checkpoint_verified",
+  "new_continuation_tests_passed": 1,
+  "existing_domain_tests_passed": 25,
+  "strict_physics_all_target_clippy": true,
+  "continuation_steps_per_case": 120,
+  "cases": [
+    "constant reaction rate",
+    "thermal kinetics with custom adaptive accuracy mixture mechanics and heat capacities"
+  ],
+  "covered": [
+    "all current SpeciesState fields",
+    "schema and complete mass fractions",
+    "reaction coefficients chemical energies kinetics and accuracy",
+    "mixture viscosity closure and component properties",
+    "component heat capacities restored without temperature remap",
+    "exact following particle thermal species and chemical energy state",
+    "invalid fractions indices policy rejection is atomic"
+  ],
+  "remaining": [
+    "other thermal mechanical response and gas state",
+    "boundaries and coupled bodies",
+    "full bounded liquid wire archive",
+    "SceneLiquidRuntime and PlaySession publication"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/species_checkpoint.rs": "e0d5053c72c0f6cbf7661baee3fcf1cdc365c0214d0fc1a173e8cb732cd5ca57",
+    "crates/physics/src/liquid/species.rs": "b47d78f9df8bb4d8819f4efbf99d24ecd125738dac1944aa21a0ca245fcc7101",
+    "crates/physics/src/liquid.rs": "7f68b70bd19c02df4458921e41e60023a62582a674ec194ed75e3870a4ba4ac8"
+  }
+}

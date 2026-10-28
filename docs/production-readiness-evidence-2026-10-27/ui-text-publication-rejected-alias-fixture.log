@@ -1,0 +1,32 @@
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_text)
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.63s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 2 tests
+test ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs ... FAILED
+test ui_text::checkpoint::tests::real_file_restores_original_font_observations_arc_sharing_and_120_draws_without_sources ... FAILED
+
+failures:
+
+---- ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs stdout ----
+
+thread 'ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs' (76114586) panicked at crates/voxy_editor/src/ui_text_checkpoint.rs:490:90:
+called `Result::unwrap()` on an `Err` value: Message("asset location error: SourceInUse")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- ui_text::checkpoint::tests::real_file_restores_original_font_observations_arc_sharing_and_120_draws_without_sources stdout ----
+
+thread 'ui_text::checkpoint::tests::real_file_restores_original_font_observations_arc_sharing_and_120_draws_without_sources' (76114587) panicked at crates/voxy_editor/src/ui_text_checkpoint.rs:490:90:
+called `Result::unwrap()` on an `Err` value: Message("asset location error: SourceInUse")
+
+
+failures:
+    ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs
+    ui_text::checkpoint::tests::real_file_restores_original_font_observations_arc_sharing_and_120_draws_without_sources
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 278 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

@@ -1,0 +1,10 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 1 test
+ordinary morph owner adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+VOXY_MORPH_OWNER_GPU weight_only_updates=true cpu_pixels_equal=true last_good_retained=true stop_owners=0 fps_qualified=false
+test animated_models::tests::gpu_morph_weight_only_updates_and_failed_replacement_retains_last_good ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 246 filtered out; finished in 0.12s
+

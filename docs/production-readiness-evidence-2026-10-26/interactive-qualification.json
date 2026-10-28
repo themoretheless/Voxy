@@ -1,0 +1,49 @@
+{
+  "status": "combined_interactive_project_headless_scenarios_pass",
+  "git_head": "8acd97edce5fe2024fe173a2ba792dad27e087fe",
+  "source_sha256": {
+    "crates/voxy_editor/src/headless_game.rs": "dc957331742b3ec8b8404ca63f4a7dd6ca959ca739ff001b57cf5509d852ac4d",
+    "crates/voxy_editor/src/headless_game_tests.rs": "14103197614bc25c6775d8a4267a619785f6c2a60e62c7ec70a02265e431d374",
+    "crates/voxy_editor/src/packaged_game.rs": "777d575e8795153188f2c0a2f7b2916b5053c271db6fb03cf3f586ffc1b914e3",
+    "crates/voxy_editor/src/lib.rs": "fdd48a294bd5c2732df0e5eb2bafcbeafdeb410f856a3bb0b4aa6b7b60aaf5f8",
+    "crates/voxy_editor/examples/interactive_project.rs": "babc762b073ed6f9afcfe2cfcb13d4a6b517222d626abb6d05b30f97576158a4",
+    "examples/interactive-project/project.voxy": "ce1971cc665b4368cdc87886b9049b705cf60b7801c5a821f78bfd5022e5ff0f",
+    "examples/interactive-project/main.scene.json": "2c0445f2bd3259e774c0be8d0cf90e3ec98adf62426b5e60575826290b7381c7",
+    "examples/interactive-project/player.obj": "7a75b49afbd51aa343e3c6633feff451b4a8a99e33be226cc3e76cdccce78c19",
+    "examples/interactive-project/tone.wav": "7fb5c19a1c87858cac57ce714e1af1abfdb91d93234d0841b57a07587581448a",
+    "examples/interactive-project/ground.obj": "7bfe3757563e14b37b3688de37406a980b0f7eeec2a124081acd2bfbfefbe154",
+    "examples/interactive-project/assets.json": "be88b8cf3c40dde9b379976c8d6a7f4bcfbebb6d9d478b74ff6035bbcff867b1",
+    "examples/interactive-project/wall.obj": "5cb898338a3ac77042592ae93a8e62369461c596f02e2d767ada1d2dac32d81a"
+  },
+  "editor_tests": {
+    "passed": 205,
+    "ignored": 17,
+    "failed": 0
+  },
+  "clippy_all_targets_warnings_denied": true,
+  "public_example_built": true,
+  "cli_proof": "interactive-cli-proof.json",
+  "package_sha256": "787d5640b374a2d877ab077dcf979bdd4455b58c1486dd7a2b08d502561be6ca",
+  "verified": [
+    "same replay in editor Play/project/package",
+    "wall and floor nonpenetration during replay",
+    "jump and landing",
+    "UI pointer callback and command barrier",
+    "keyboard UI consumption",
+    "focus loss releases movement and cancels capture",
+    "invalid event/time rejection before advancement",
+    "144000 mixed PCM frames with nonzero peak",
+    "exact scene and audio-stat equality after source deletion",
+    "package storage released after shutdown"
+  ],
+  "native_window_verified": false,
+  "native_audio_device_verified": false,
+  "fps_qualified": false,
+  "engine_production_ready": false,
+  "remaining": [
+    "native window and device acceptance",
+    "character animation and smooth follow camera integration",
+    "project prefab and reload recovery",
+    "full engine roadmap ENG-00 through ENG-13"
+  ]
+}

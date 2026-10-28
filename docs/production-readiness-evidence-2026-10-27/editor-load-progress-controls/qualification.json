@@ -1,0 +1,36 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Editor panel load phases and cancellation controls",
+  "verified": [
+    "Phase labels represent real pending load states without fabricated percentages",
+    "Load panel replaces Save/Load hit targets with progress and Cancel while load active",
+    "Cancellation cleanup has no active Cancel hit target",
+    "Presented Cancel action cancels blocked reader through panel_action adapter",
+    "Stale Cancel action does not edit scene",
+    "Escape takes precedence over game UI in native event routing; direct helper tested",
+    "Phase changes invalidate panel presentation and mesh cache",
+    "Four native renderer panel GPU tests pass, including glyph pixel counts for progress and cancel and presented hit target"
+  ],
+  "checks": {
+    "editor_log": "editor.log",
+    "gpu_panel_tests": 4,
+    "focused_load_tests": 5,
+    "clippy": "editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "limitations": [
+    "No native window was opened",
+    "New checkpoint file open/save commands and path selection are not yet connected; existing authoring Save/Load retain original behavior",
+    "No native audio device qualification or FPS claim",
+    "Full ENG roadmap remains open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/lib.rs": "734e3fabe134a94b3f16830d64b2d1b6867eb75080f80f0fcba4c4f2a2ca2b5f",
+    "crates/voxy_editor/src/panels.rs": "f048bf61f3481e35ab29d50f2a60733a41acfb88d8d958b49bb4a7251e8a495c",
+    "crates/voxy_editor/src/panels/gpu_tests.rs": "a48448372ba73ba10d37741c1c08b9ae9f298ff10a63d3934dcff4953785d9aa",
+    "crates/voxy_editor/src/app/restore_barrier/load.rs": "df27961d0a1cd90940a088749fd9399bb91b9cbe12628e69bb51d548e7725833",
+    "crates/voxy_editor/src/app/viewport.rs": "2c7cb179dc9a0b379aebc75e3c49be6d816b5ffbcb8bdcf66d19e32170ea6274",
+    "crates/voxy_editor/src/app/inspector.rs": "3fe9b53210717dffd6ea18054db4f4518487b997874176ade46549dfe1e83166"
+  }
+}

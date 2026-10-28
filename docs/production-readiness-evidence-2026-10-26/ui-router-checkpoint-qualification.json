@@ -1,0 +1,21 @@
+{
+  "status": "codec_neutral_router_checkpoint_verified",
+  "tests_passed": 10,
+  "strict_all_target_clippy": true,
+  "covered": [
+    "pointer position capture held state and ordered regions",
+    "keyboard focus press held and traversal order",
+    "cancelled activation remains held until release",
+    "invalid identity geometry capacity and activation rejection"
+  ],
+  "not_covered": [
+    "SceneUiRuntime durable ObjectId binding and snapshot",
+    "serialization wire codec",
+    "whole App session publication",
+    "native input device synchronization"
+  ],
+  "sha256": {
+    "crates/voxy_ui/src/lib.rs": "9a37ad0f6d88f718c9acee27d3d59bd9a0cf2570cdf727f45f80911a25575b52",
+    "crates/voxy_ui/src/focus.rs": "e9e05df561d95895ed3108e11c3b80386b7dc2cf50abc80867d41f213345240e"
+  }
+}

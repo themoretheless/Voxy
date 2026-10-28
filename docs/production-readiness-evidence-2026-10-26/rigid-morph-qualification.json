@@ -1,0 +1,28 @@
+{
+  "status": "bounded_rigid_morph_gate_passed",
+  "proof": "rigid-morph-proof.json",
+  "code_sha256": {
+    "crates/voxy_model/src/lib.rs": "df4235ce62a960466c3bd2e849f7643b62d999b5fb4277ec00be358b52f83d7a",
+    "crates/voxy_model/src/morph.rs": "82998326aeaed1d3e3aede77991478fecaebdf5d0e9ac2769782e7ff65726d41",
+    "crates/voxy_editor/src/locomotion_tests.rs": "902af69f33d935a707e4e82927578755b5b21e912bb69c1ccf459f7789db53e3",
+    "crates/voxy_editor/src/animated_models/tests.rs": "a53f2ef901cb74ac4f0b418b56ba12b9d7e3959471eda1f710999e08dd04f9ba"
+  },
+  "editor_library": {
+    "passed": 220,
+    "failed": 0,
+    "ignored": 20
+  },
+  "model_focused_passed": 8,
+  "physical_rigid_gpu_test_passed_separately": true,
+  "strict_all_targets_clippy_packages": [
+    "voxy_animation",
+    "voxy_render",
+    "voxy_model",
+    "voxy_editor",
+    "voxy_demos",
+    "voxy_gameplay"
+  ],
+  "native_workflow_qualified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

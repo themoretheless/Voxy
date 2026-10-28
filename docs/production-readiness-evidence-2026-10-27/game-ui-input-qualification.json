@@ -1,0 +1,46 @@
+{
+  "status": "complete_current_native_game_ui_input_and_accepted_layout_staging_verified",
+  "editor_tests_passed": 252,
+  "editor_tests_ignored": 20,
+  "editor_native_ui_input_tests_passed": 7,
+  "gameplay_ui_layout_tests_passed": 4,
+  "strict_all_target_clippy": [
+    "voxy_gameplay",
+    "voxy_editor"
+  ],
+  "native_input_owner_fields": 3,
+  "continuation_cycles_per_case": 120,
+  "cases": 2,
+  "covered": [
+    "complete router state, independent Enter/Space physical activation mask and admitted accepted layout",
+    "fresh scene handles through durable ObjectIds",
+    "concurrent Enter/Space and pointer capture followed by exact release behavior",
+    "Tab cancellation retains physical key mask while logical focus hold is false",
+    "empty admitted layout remains distinct from missing admission",
+    "resize, descriptor/action edits and disabled/re-enabled controls",
+    "accepted old snapshot is retained until normal re-admission; no load-time re-extraction",
+    "exact full native adapter JSON equality each cycle",
+    "immutable layout preserves original painter order, Unicode text and old descriptors with reversed handles",
+    "invalid versions/key bits, byte/element policies, canonical-layout hidden interaction state, missing/aliased owners reject",
+    "failed capture/prepare retains current input owner"
+  ],
+  "scope_limits": [
+    "accepted CPU snapshot does not certify GPU presentation or accepted font/resource state",
+    "GameUiInput checkpoint is not yet published through a complete App load command",
+    "the App audit inventories all 61 current fields but does not qualify them"
+  ],
+  "remaining": [
+    "UiLive attempted/published/presented snapshots, font/import workers and native GPU publication barrier",
+    "accepted EditorAsset/resource catalog archive and import/reload ownership",
+    "App identity array ordering, host viewport and authoring rebind policies",
+    "atomic whole-App publication and complete game file/native acceptance",
+    "remaining full ENG-00 through ENG-13 scope"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/ui_runtime_checkpoint.rs": "637b44723a50eb1517bedae4699bfd7331703e173054546bae9d61b152cf2a84",
+    "crates/voxy_gameplay/src/ui_runtime.rs": "b47c0c2a2459eb5523a532f1b4646620f84cec65d203d95ab28b8e8ed0633031",
+    "crates/voxy_gameplay/src/lib.rs": "216ae2b54edfa6bec737a0c6855ba03f6f08f30f7b0d19b3b7d7af48ebd78b9b",
+    "crates/voxy_editor/src/game_ui_input.rs": "592251bea3247f4ede4501adc8cf09f5ba56ce71594e1eaa5eb3ec90290cdb6d",
+    "crates/voxy_editor/src/game_ui_input_checkpoint.rs": "5ba5d132922ee78b952d284dc643f811a3a764cb66257a70749ba01e0020ccc8"
+  }
+}

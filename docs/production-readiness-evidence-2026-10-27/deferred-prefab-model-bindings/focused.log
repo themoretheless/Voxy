@@ -1,0 +1,21 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.15s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+GAME PACKAGE PASS sources=6 bytes=3758
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+GAME STATE {"version":1,"objects":[]}
+GAME CHECK PASS ticks=120 objects=0 prefab_instances=0
+test project_prefab_tests::deferred_prefab_model_bindings_validate_expanded_overrides_before_build ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 393 filtered out; finished in 0.06s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-cbe125d7235bbd56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

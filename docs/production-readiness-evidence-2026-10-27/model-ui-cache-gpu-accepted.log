@@ -1,0 +1,23 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.84s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 1 test
+UI ATOMIC RESTORE GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=2
+
+thread 'ui_live::restore::tests::gpu_model_and_ui_restore_share_cache_and_admit_combined_peak' (77886008) panicked at crates/voxy_editor/src/ui_live/restore/tests.rs:630:14:
+called `Option::unwrap()` on a `None` value
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test ui_live::restore::tests::gpu_model_and_ui_restore_share_cache_and_admit_combined_peak ... FAILED
+
+failures:
+
+failures:
+    ui_live::restore::tests::gpu_model_and_ui_restore_share_cache_and_admit_combined_peak
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 345 filtered out; finished in 4.12s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

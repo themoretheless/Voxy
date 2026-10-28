@@ -1,0 +1,13 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.45s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-d1e87afde0f86560)
+
+running 2 tests
+test game_host_tests::rejected_host_setup_destroys_partial_behaviors_restores_authoring_and_allows_retry ... ok
+test game_host_tests::host_behaviors_run_identically_in_repeated_play_standalone_build_and_package ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 218 filtered out; finished in 0.07s
+

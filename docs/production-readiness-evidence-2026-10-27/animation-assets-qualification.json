@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-27",
+  "scope": "Native skeleton and AnimationClip resource checkpoint; source-free geometry and animation consumer. Not complete ModelAsset/App archive.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "d63b6095c012dea6ff56df4b76eab099012d7c499f44ef54413ac8a1a9b976a5",
+    "crates/voxy_animation/src/asset_checkpoint.rs": "eba65143a922e3b3ba191ec1ee1c7faa573f427797ad1d4564c334228054df0f",
+    "crates/voxy_animation/src/asset_checkpoint/tests.rs": "0cfd24abeb4d6e08e4321ce2704e24ed912b3a03d2aefa6bcb140f7daf41c0a2",
+    "crates/voxy_animation/src/root_curve.rs": "0079e3fb22cda22f69bf5f59928ed88f70b0080ab6eca7b724b6bb3dd63244ce",
+    "crates/voxy_animation/src/root_curve/checkpoint.rs": "a13539dc2dc525ba1fcf6b77f8ed18e485468e75a2f3a4bf7b15d35c80746d3c",
+    "crates/voxy_animation/src/root_rotation.rs": "a49b6307bd95601b2e332aa2879d94ce0ed8ce71d50a8a0b1d56dffdd63b4075",
+    "crates/voxy_animation/src/root_rotation/checkpoint.rs": "5e669af69e626c19f390e05c689205f9212c7fc5dc78c9cea39f500e0b0dcdae",
+    "crates/voxy_animation/src/root_rigid.rs": "abee8253fbc711ab7b53d95182db0f9f3c79e6349a7d1666b72da41f323baa1e",
+    "crates/voxy_editor/src/import/animated_tests.rs": "cd1644652ae200c92f4442ec50e95fa740b2332453bb8702fd3b64fd9bb324f8"
+  },
+  "checks": {
+    "animation_lib": {
+      "passed": 352,
+      "ignored": 0
+    },
+    "editor_lib": {
+      "passed": 284,
+      "ignored": 21,
+      "qualification": "Before final additional exact local-pose assertion; final focused consumer rerun and strict Clippy pass after that assertion."
+    },
+    "focused_archive": {
+      "passed": 4
+    },
+    "final_consumer": {
+      "passed": 1,
+      "scenario": "Real Fox import; save geometry/images/skeletons/clips, remove sources, restore files; every clip at 120 phases: exact local pose, palette and posed geometry."
+    },
+    "clippy": "animation/editor all-targets -D warnings passed",
+    "scoped_rustfmt": "passed"
+  },
+  "preserved": [
+    "Skeleton rig allocation sharing and independent equal rigs",
+    "Joint names, parents, exact bind transforms and canonical inverse-bind words",
+    "Clip outer Arc aliases, distinct Arc clones sharing internal allocations, independent equal clips",
+    "All 15 AnimationClip fields classified; source keys, interpolation, tangents, constants",
+    "Lazy cache initialized masks, aggregate reservations, cold cells and cached failures",
+    "Exact compiled root translation/rotation coefficient and error-bound receipts; rigid child links rebuilt natively"
+  ],
+  "limits": [
+    "Capture requires caller-owned asset-query barrier; detects observed changing masks/reservations but does not implement global worker barrier",
+    "JSON input bytes and semantic table/key caps; not physical peak heap qualification",
+    "Exact compiler receipt mismatch rejects; no approximate cross-platform fallback",
+    "Participant JSON integrity belongs to enclosing archive; no standalone checksum",
+    "No new GPU/window/audio-device/FPS qualification"
+  ],
+  "remaining": [
+    "Complete ModelAsset/EditorAsset archive: morph/material/node metadata and sharing",
+    "LOD witnesses and original source observations",
+    "Model worker/watcher drain and atomic CPU/GPU publication",
+    "Whole-App composition and native audio queue barrier",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "logs": {
+    "focused": "animation-assets-focused.log",
+    "animation-full": "animation-assets-animation-full.log",
+    "editor-full": "animation-assets-editor-full.log",
+    "consumer-final": "animation-assets-consumer-final.log",
+    "clippy": "animation-assets-clippy.log",
+    "format": "animation-assets-format.log",
+    "clippy-initial-rejected": "animation-assets-clippy-initial-rejected.log",
+    "format-initial-rejected": "animation-assets-format-initial-rejected.log"
+  }
+}

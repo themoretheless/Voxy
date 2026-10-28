@@ -1,0 +1,11 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.28s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_render-8b226b39c0b2a8ce)
+
+running 3 tests
+test skinned::checkpoint::set::tests::corrupted_tables_derived_claims_and_rechecksummed_counts_reject_atomically ... ok
+test skinned::checkpoint::set::tests::exact_small_posed_geometry_and_empty_set_round_trip ... ok
+test skinned::checkpoint::set::tests::real_file_preserves_dense_groups_buffer_aliases_and_120_native_admissions ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 449 filtered out; finished in 1.54s
+

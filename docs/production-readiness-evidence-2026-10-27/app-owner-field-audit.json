@@ -1,0 +1,258 @@
+{
+  "status": "source_field_inventory_only_not_whole_App_save_qualification",
+  "app_field_count": 61,
+  "sha256": "6e53600b5a76b9660ec79eb0e2be0f25d9a13906d28d226d3d1c1f633e4b0300",
+  "fields": [
+    {
+      "name": "authoring",
+      "disposition": "identity_order_selection_and_authoring_rebinding_open"
+    },
+    {
+      "name": "play",
+      "disposition": "play_native_checkpoint_staged"
+    },
+    {
+      "name": "audio",
+      "disposition": "offline_audio_checkpoint_staged_native_device_transfer_open"
+    },
+    {
+      "name": "scene",
+      "disposition": "play_native_checkpoint_staged"
+    },
+    {
+      "name": "extraction",
+      "disposition": "native_host_mode_window_gpu_and_derived_cache_rebuild_open"
+    },
+    {
+      "name": "frame_styles",
+      "disposition": "native_host_mode_window_gpu_and_derived_cache_rebuild_open"
+    },
+    {
+      "name": "object_ids",
+      "disposition": "identity_order_selection_and_authoring_rebinding_open"
+    },
+    {
+      "name": "instances",
+      "disposition": "identity_order_selection_and_authoring_rebinding_open"
+    },
+    {
+      "name": "selected",
+      "disposition": "identity_order_selection_and_authoring_rebinding_open"
+    },
+    {
+      "name": "cursor",
+      "disposition": "viewport_and_native_input_state_policy_open"
+    },
+    {
+      "name": "camera",
+      "disposition": "play_native_checkpoint_staged"
+    },
+    {
+      "name": "secondary_camera",
+      "disposition": "viewport_and_native_input_state_policy_open"
+    },
+    {
+      "name": "active_view",
+      "disposition": "viewport_and_native_input_state_policy_open"
+    },
+    {
+      "name": "msaa4",
+      "disposition": "viewport_and_native_input_state_policy_open"
+    },
+    {
+      "name": "camera_drag",
+      "disposition": "viewport_and_native_input_state_policy_open"
+    },
+    {
+      "name": "drag",
+      "disposition": "viewport_and_native_input_state_policy_open"
+    },
+    {
+      "name": "ui_live",
+      "disposition": "ui_layout_font_worker_and_gpu_presentation_owner_open"
+    },
+    {
+      "name": "game_ui_input",
+      "disposition": "game_ui_native_checkpoint_staged"
+    },
+    {
+      "name": "ui_action_setup",
+      "disposition": "executable_host_contract_compatibility_not_serialized_code"
+    },
+    {
+      "name": "behavior_setup",
+      "disposition": "executable_host_contract_compatibility_not_serialized_code"
+    },
+    {
+      "name": "behavior_checkpoints",
+      "disposition": "executable_host_contract_compatibility_not_serialized_code"
+    },
+    {
+      "name": "ui_action_checkpoints",
+      "disposition": "executable_host_contract_compatibility_not_serialized_code"
+    },
+    {
+      "name": "retired_ui_workers",
+      "disposition": "ui_layout_font_worker_and_gpu_presentation_owner_open"
+    },
+    {
+      "name": "standalone",
+      "disposition": "native_host_mode_window_gpu_and_derived_cache_rebuild_open"
+    },
+    {
+      "name": "keyboard_device",
+      "disposition": "viewport_and_native_input_state_policy_open"
+    },
+    {
+      "name": "inspector",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "smoke_play",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "gameplay_smoke",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "scene3d_smoke",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "lod_smoke",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "animation_smoke",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "prefab_smoke",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "panels",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "panel_cache",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "modifiers",
+      "disposition": "viewport_and_native_input_state_policy_open"
+    },
+    {
+      "name": "field",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "component_edit",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "retarget_draft",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "retarget_picker",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "tree_scroll",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "parenting",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "follow_pick",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "follow_pick_epoch",
+      "disposition": "editor_workspace_rebind_and_gesture_policy_open"
+    },
+    {
+      "name": "id",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "catalog",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "sources",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "imports",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "watcher",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "window",
+      "disposition": "native_host_mode_window_gpu_and_derived_cache_rebuild_open"
+    },
+    {
+      "name": "graphics",
+      "disposition": "native_host_mode_window_gpu_and_derived_cache_rebuild_open"
+    },
+    {
+      "name": "reload",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "available",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "scan_active",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "last_scan",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "last_publication",
+      "disposition": "resource_archive_and_import_barrier_open"
+    },
+    {
+      "name": "frames",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "trace",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "failed_at",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "recovered",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "smoke_deadline",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    },
+    {
+      "name": "error",
+      "disposition": "host_lifecycle_smoke_and_diagnostic_policy_open"
+    }
+  ],
+  "notes": [
+    "Native participant staging is not atomic App publication.",
+    "Each open group needs implementation/verification or an explicit host-level lifecycle policy.",
+    "Model/clip resources remain external revision-key resolvers in PlaySession; actual accepted payload/resource archive is still required.",
+    "GameUiInput accepted layout does not certify UiLive GPU presentation, fonts or worker state.",
+    "Identity arrays may carry ordering/selection semantics beyond LoadedScene mappings."
+  ]
+}

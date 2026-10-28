@@ -1,0 +1,25 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.27s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+LOCOMOTION CYCLE GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+GAME PACKAGE PASS sources=6 bytes=18998
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig
+GAME UI GPU PUBLISHED draws=0
+GPU CYCLE PASS ticks=720 packaged_ticks=720 exact_rgba_frames=720 cpu_oracle_frames=1440
+test app::model_reload::gpu_app_tests::offscreen_nested_locomotion_cycle_matches_packaged_gpu_frames ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 399 filtered out; finished in 8.32s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-cbe125d7235bbd56)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

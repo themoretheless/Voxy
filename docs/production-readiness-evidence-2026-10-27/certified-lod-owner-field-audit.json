@@ -1,0 +1,38 @@
+{
+  "scope": "Native static geometric LOD source and proof state",
+  "source_sha256": {
+    "Cargo.lock": "a0c17e6c8d721ab9a6b8bc8b51e195dbd2a97ccd9bbd249ead8943d2df2d8c5a",
+    "crates/voxy_render/Cargo.toml": "bb14a4d94c6397f5f88a62cc7b17f32c5e6fda7a8a5b9ea5e95ecc26c376aca4",
+    "crates/voxy_render/src/lib.rs": "0c028cb21661943d72c5427030a4a02d7b9c50bd84a08610cf4fc4146acb5eed",
+    "crates/voxy_render/src/certified_lod.rs": "948460b388037d195f7e4de4e91c8dc64d6adf08daae4f90dd74fcdbfd40f0dc",
+    "crates/voxy_render/src/certified_lod/checkpoint.rs": "5e70c5031a3632a91af4146361829155ae8fe510d480682757cfc20559ff7839",
+    "crates/voxy_render/src/certified_lod/checkpoint/tests.rs": "1ba017d098364bdbcfd4d4824210fe178481937f69932adcfa451748da414f50",
+    "crates/voxy_render/examples/certified_lod_checkpoint.rs": "2fefd21a2ac1b46c88d15b5e32a6d3d6ff5d9e89401b68809be39b76a6656650",
+    "crates/voxy_editor/src/import.rs": "082348a3fd84f516c134b2a63af425bcdcef46e51406c6ce70aed5140865a579"
+  },
+  "fields": {
+    "CertifiedLodIndexSet": {
+      "positions": "exact source f32 words",
+      "indices": "all levels/index order and exact derived error/count/index-byte receipts; vertex domain derived from positions",
+      "verification": "new retained native Whole/Subdivided witness storage, not regenerated proposals"
+    },
+    "LodIndexSet": {
+      "vertex_count": "native constructor derives from exact source position count",
+      "index_bytes": "exact derived u64 receipt checked after native reconstruction",
+      "indices": "exact ordered u32 arrays",
+      "levels": "all object_error f64 words and index_count u32 receipts"
+    },
+    "LodTriangleWitness": [
+      "target_triangle",
+      "weights"
+    ],
+    "LodSubdivisionWitness": [
+      "depth",
+      "cells"
+    ],
+    "LodLevel": [
+      "object_error",
+      "index_count"
+    ]
+  }
+}

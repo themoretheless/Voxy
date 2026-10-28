@@ -1,0 +1,29 @@
+{
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "verified": [
+    "Two nested prefab levels preserve durable character and visual identities",
+    "720 fixed ticks in source project and 720 in source-free package",
+    "Four repetitions each include Idle Walking Jump Fall, blended transitions and return to Idle",
+    "Each cycle physically walks over 0.5 units, rises over 0.1 units and lands within 0.01 units of starting height",
+    "Every AnimationSnapshot exactly matches across source and package: clip, phase, transition, skin matrices, morph weights",
+    "Morph values vary and include negative weights without clamping",
+    "Final serialized scenes match exactly after original project deletion"
+  ],
+  "tests": {
+    "editor_passed": 364,
+    "editor_ignored": 35,
+    "clippy_all_targets": "passed -D warnings"
+  },
+  "limits": [
+    "CPU headless qualification only, no GPU pixels/native window/frame pacing/FPS",
+    "Fixture uses a small animated triangle, not a production character rig",
+    "Not a full-engine or all-animation-feature qualification",
+    "Initial focused log predates added physical trajectory assertions; final suite includes them"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/locomotion_tests.rs": "90ed64f02bcee8399518886ec030719cfce8812b547ecb4d0742ebff94088ece",
+    "crates/voxy_editor/src/locomotion.rs": "cc566c18fffcaffe1e94f261b2e6835b06259160e22164ee94c429402550edd7",
+    "crates/voxy_editor/src/headless_game.rs": "2f83a22dda887be921dd0483240ba8e707c0889d39213acd3e8278afdd50ec1f"
+  }
+}

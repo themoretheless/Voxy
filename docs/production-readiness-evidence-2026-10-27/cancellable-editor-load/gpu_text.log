@@ -1,0 +1,18 @@
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.94s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+EDITOR HISTORY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+EDITOR UI FONT bytes=773236 blake3=920ba7d77f5d36a356b34b87b2443e1ffefb0e0d3849576edc09f24862dde29f
+MODEL PUBLISHED frames=0 first_x=0 asset=rig
+GAME UI GPU PUBLISHED draws=2
+audio reload tone.wav: project manifest: Read("No such file or directory (os error 2)")
+MODEL FAILED frames=0 last_good=true
+GAME UI publication retained previous resources: project manifest: Read("No such file or directory (os error 2)")
+audio reload tone.wav: project manifest: Read("No such file or directory (os error 2)")
+EDITOR SNAPSHOT LOADED /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-project-prefab-62569-1793122851294273000-0/target/editor.voxyedr
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_text_font_and_continues_game ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 427 filtered out; finished in 19.11s
+

@@ -1,0 +1,15 @@
+    Checking naga v30.0.1
+    Checking gltf-json v1.4.1
+    Checking image v0.25.10
+    Checking voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Checking gltf v1.4.1
+    Checking wgpu-naga-bridge v30.0.1
+    Checking wgpu-hal v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu-hal)
+    Checking wgpu-core-deps-apple v30.0.1
+    Checking wgpu-core v30.0.1
+    Checking wgpu v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu)
+    Checking voxy_water v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_water)
+    Checking voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Checking voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.17s

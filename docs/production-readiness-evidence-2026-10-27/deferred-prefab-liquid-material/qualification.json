@@ -1,0 +1,30 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Baseline built unused prefab with invalid liquid material; regression failed before fix",
+    "One shared observed material decoder used by native runtime and declared expanded prefabs",
+    "Material coefficient admission reuses native Liquid constructor without scene-specific body/collider requirements",
+    "Malformed JSON, negative density and invalid optical index rejected before publication",
+    "BehaviorSetup callback mutates material after deferred prefab admission; both corrupt bytes and valid changed coefficients rejected by final observed-input check",
+    "Source-free package restores nested prefab and emits one native liquid particle"
+  ],
+  "tests": {
+    "editor_passed": 365,
+    "editor_ignored": 36,
+    "native_gpu_app_passed": 3,
+    "strict_all_target_clippy": "passed -D warnings",
+    "diff_check_exit": 0
+  },
+  "limits": [
+    "No full deferred audio/font/material dependency closure qualification",
+    "Deferred material hot-reload and PlaySession watcher/checkpoint ownership remain open",
+    "No production-scale physical accuracy or 120/160 FPS result",
+    "Full ENG-03 and engine roadmap remain open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/prefab_authoring.rs": "6581a49cfba63bae411848020d43e19c7aff39151e27cbbb8150d92b811c5e27",
+    "crates/voxy_editor/src/package_models.rs": "f1414fc5a2f3a186a110d788cdde195f88b08247fd0a0965b49a34816a086e38",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "65894f36184bc203b16450938acd7cbf6e193844d74a3763909fd22ac663b951"
+  }
+}

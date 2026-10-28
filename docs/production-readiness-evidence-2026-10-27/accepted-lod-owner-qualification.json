@@ -1,0 +1,68 @@
+{
+  "scope": "Native accepted render frame alias graph and skeletal LOD history/residency restoration",
+  "checks": {
+    "editor_suite": "306 passed, 24 ignored",
+    "alias_regression": "passed after final production sorting fix",
+    "explicit_gpu_lod": "passed GPU skinning and CPU fallback against independently decoded original publication",
+    "explicit_gpu_texture": "passed with version 2 frame references",
+    "all_target_clippy": "passed after replacing primitive stable sorts",
+    "scoped_format_and_diff": "passed"
+  },
+  "readbacks": [
+    {
+      "path": "lod-gpu-view-0",
+      "width": 64,
+      "height": 64,
+      "equal": true,
+      "nonblack_pixels": 496,
+      "sha256": "692598514cc5b6aba82e58b84abe5a13fbf44520df2baea62e1522a27c576cec"
+    },
+    {
+      "path": "lod-gpu-view-1",
+      "width": 64,
+      "height": 64,
+      "equal": true,
+      "nonblack_pixels": 496,
+      "sha256": "692598514cc5b6aba82e58b84abe5a13fbf44520df2baea62e1522a27c576cec"
+    },
+    {
+      "path": "lod-cpu-view-0",
+      "width": 64,
+      "height": 64,
+      "equal": true,
+      "nonblack_pixels": 496,
+      "sha256": "692598514cc5b6aba82e58b84abe5a13fbf44520df2baea62e1522a27c576cec"
+    },
+    {
+      "path": "lod-cpu-view-1",
+      "width": 64,
+      "height": 64,
+      "equal": true,
+      "nonblack_pixels": 496,
+      "sha256": "692598514cc5b6aba82e58b84abe5a13fbf44520df2baea62e1522a27c576cec"
+    }
+  ],
+  "preserved": [
+    "Shared frame Arc aliases, independent equal frame owners remain distinct",
+    "Historical LOD source from native original publication graph",
+    "Per-view previous LOD selection",
+    "Exact f32 world/joint/position bits and f64 level error bits",
+    "Resident non-base level inventory",
+    "Original accepted ticks and frame values"
+  ],
+  "transaction": "All retained LOD geometry stages before history/certificate/level-map replacement; budget rejection leaves old state intact",
+  "evidence_scope": "Native publication archive decoded from bytes into fresh resource graph, snapshot roundtrip via JSON; no whole-App file or presented-frame claim",
+  "source_sha256": {
+    "crates/voxy_editor/src/animated_models.rs": "127998a5bf7ef9718409ab00a5e36a9e4bb21262e7a49689f3867bc52d5fe606",
+    "crates/voxy_editor/src/animated_models/checkpoint.rs": "b16aab305ba0e3566138ddecb8e1497eadf7c26d660482506ee4a91828c54a96",
+    "crates/voxy_editor/src/animated_models/tests.rs": "8667d10e75ba4599823b652bea8b9be31209a9c196041efce66c487f5b55c3a6"
+  },
+  "open": [
+    "Whole-App atomic restore and first presentation acknowledgement",
+    "Retired epoch-only owners and shared historical GPU resource graph across subsystems",
+    "Authoring frame weak-cache reconstruction and full static GPU LOD state",
+    "Native device audio queue",
+    "Physical memory and presented FPS qualification",
+    "Remaining ENG-03 through ENG-13"
+  ]
+}

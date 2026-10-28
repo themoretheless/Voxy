@@ -49,6 +49,8 @@ pub(super) fn run_project_host(
     let mut app = App::from_project_with_registry(path, host.components)?;
     app.ui_action_setup = host.ui_actions;
     app.behavior_setup = host.behaviors;
+    app.behavior_checkpoints = host.behavior_checkpoints;
+    app.ui_action_checkpoints = host.ui_action_checkpoints;
     let result: Result<(), Box<dyn std::error::Error>> = (|| {
         if !prepare_game(&mut app, mode)? {
             EventLoop::new()?.run_app(&mut app)?;

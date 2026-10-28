@@ -1,0 +1,58 @@
+{
+  "stage": "ENG-03",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "change": "existing SourcePollWorker can include one source outside dependency index and return bounded bytes from same read used for fingerprint; model inventory now owned only by manifest scan, not model completion",
+  "verified": [
+    "empty project updates inventory without any model publication, import ticket or scene object",
+    "malformed manifest retains prior inventory",
+    "original model checkpoint barrier freezes manifest scans; resume detects subsequent change",
+    "model completions cannot override watcher-owned inventory",
+    "populated project add/remove/retarget source regressions pass",
+    "checkpoint and model resource suites pass"
+  ],
+  "assets_results": [
+    {
+      "passed": 59,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "editor_results": [
+    {
+      "passed": 327,
+      "failed": 0,
+      "ignored": 30
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_assets/src/watch_worker.rs": "b023562f16e76ef7acc6889baee5cb811c3569641a4b1b5ba8658a3e0145b9d0",
+    "crates/voxy_assets/src/lib.rs": "b6477fdf3df9efcd2906721e6c1efc17c883953ff61452aff3cf2a210bef25d4",
+    "crates/voxy_editor/src/app/residency.rs": "1aa5e44e4d5a99eb0ad3bbcef057594529018372d8180b3dd208d0a4fe3b85ed",
+    "crates/voxy_editor/src/app/model_reload.rs": "28d25570b282450cecf926aefc3babc4f9c847071652557af0f8e64502994a99",
+    "crates/voxy_editor/src/app/model_reload/tests.rs": "7acecc0e8779580a927dfa543836d12f7dfa5eeb6485ba3b5270cfe5a3328729",
+    "crates/voxy_editor/src/scene3d_tests.rs": "6bdcf4d6ebc3da99d36539f13a4183930ebc7622c762d063821629b8934960d4"
+  },
+  "observation_fix": "prior test inferred completed model from updated inventory; now drains original resource barrier before storing accepted model pointer",
+  "remaining": [
+    "explicit save/reopen and undo/redo for removed-but-live resource references",
+    "direct protocol fault/capacity tests for optional observed-source API",
+    "native editor UX and remaining ENG-03 through ENG-13"
+  ]
+}

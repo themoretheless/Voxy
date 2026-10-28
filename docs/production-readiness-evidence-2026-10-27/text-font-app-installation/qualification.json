@@ -1,0 +1,66 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "production_behavior_changed_this_step": false,
+  "scope": "Text-bearing running App installation and exact native UI atlas GPU output, with source-free 120-frame continuation",
+  "hardware": {
+    "device": "Apple M4 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "font_fixture": {
+    "bytes": 773236,
+    "blake3": "920ba7d77f5d36a356b34b87b2443e1ffefb0e0d3849576edc09f24862dde29f",
+    "text": "Voxy Привет é",
+    "raw_font_in_evidence": false
+  },
+  "checks": {
+    "gpu_app": {
+      "passed": 7,
+      "failed": 0
+    },
+    "editor_library": {
+      "passed": 376,
+      "failed": 0,
+      "ignored": 42
+    },
+    "scoped_rustfmt": true,
+    "scoped_diff_check": true,
+    "strict_all_target_clippy": true
+  },
+  "proofs": [
+    "font copied into temporary project and declared through normal manifest",
+    "ordinary async UI importer produces actual glyph-atlas GPU texture draws",
+    "original full editor file written/read",
+    "source project including font deleted before prepare/install",
+    "exact native UI publication bytes after App installation including accepted font/atlas/metrics",
+    "existing native UI restore pixel harness shared under cfg(test)",
+    "128x128 UI-only readback source equals installed output",
+    "white glyph and texture-bearing draw controls exclude rectangle-only equality",
+    "same UI pixels after 120 ordinary App simulation/render cycles with missing-source reload failures",
+    "existing independent complete audio playback equality and 96000 stereo PCM frame continuation",
+    "source guards, history, cancellation, retirement and Stop in idle/plain/text variants"
+  ],
+  "not_qualified": [
+    "all fonts/languages",
+    "native surface and input presentation",
+    "native audio output-device queues",
+    "menu integration",
+    "Save As",
+    "production scenes",
+    "FPS",
+    "full engine readiness"
+  ],
+  "logs": [
+    "gpu.log",
+    "gpu-suite.log",
+    "editor.log",
+    "clippy.log"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "cbd4af7f14c051f80b7a6d3c17d38216ca1a3e267fbd94a8b41dec9b6733f633",
+    "crates/voxy_editor/src/ui_live.rs": "32e45a3e73c2c12dc87efeadd2bfe210dc8232aab35f6cfdd967ff0782f217b2",
+    "crates/voxy_editor/src/ui_live/restore.rs": "9348c547c435ff899d0fa25014d2fb1d27f993c1d661ece348d244f55335bbc5",
+    "crates/voxy_editor/src/ui_live/restore/tests.rs": "ecab2b4f59d56fa4b90af4df97908c982af1594d9c527d38980a9b275e2603c8"
+  }
+}

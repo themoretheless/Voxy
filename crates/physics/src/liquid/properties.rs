@@ -146,3 +146,7 @@ impl Liquid {
         Ok(properties)
     }
 }
+
+#[path = "field_response_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{FieldResponseCheckpoint, PropertyResponseCheckpoint};

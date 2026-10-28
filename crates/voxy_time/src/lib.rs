@@ -40,6 +40,64 @@ impl Default for SimulationClock {
 }
 
 impl SimulationClock {
+    /// Version, fixed-step bits, then exact scale/target/velocity/accumulator,
+    /// damping and last-drop bits. The outer save format can serialize these
+    /// integers without introducing a serde dependency in the clock crate.
+    /// Returns None for invalid state or a step incompatible with the remainder.
+    /// Callers must supply the same fixed step used to produce this state.
+    #[must_use]
+    pub fn checkpoint(&self, step: f64) -> Option<[u64; 9]> {
+        let words = [
+            1,
+            step.to_bits(),
+            self.scale.to_bits(),
+            self.target.to_bits(),
+            self.velocity.to_bits(),
+            self.accumulator.to_bits(),
+            self.damping.to_bits(),
+            self.last_drop.real_seconds.to_bits(),
+            self.last_drop.simulation_seconds.to_bits(),
+        ];
+        let mut candidate = Self::default();
+        candidate.restore_checkpoint(words, step).then_some(words)
+    }
+
+    /// Restore only this clock, preserving state if version/configuration or
+    /// finite-value invariants fail. Scene poses, behaviors and input are owned
+    /// by the enclosing game checkpoint and must be restored separately.
+    #[must_use]
+    pub fn restore_checkpoint(&mut self, words: [u64; 9], step: f64) -> bool {
+        if words[0] != 1 || words[1] != step.to_bits() || !step.is_finite() || step <= 0. {
+            return false;
+        }
+        let values: [f64; 7] = std::array::from_fn(|i| f64::from_bits(words[i + 2]));
+        if values.iter().any(|v| !v.is_finite())
+            || values[0] < 0.
+            || values[0] > f64::MAX / 512.
+            || !(0. ..=4.).contains(&values[1])
+            || values[2].abs() > f64::MAX / 64.
+            || values[3] < 0.
+            || values[3] >= step
+            || ![0.55f64.to_bits(), 1f64.to_bits()].contains(&words[6])
+            || values[5] < 0.
+            || values[6] < 0.
+        {
+            return false;
+        }
+        *self = Self {
+            scale: values[0],
+            target: values[1],
+            velocity: values[2],
+            accumulator: values[3],
+            damping: values[4],
+            last_drop: TimeDrop {
+                real_seconds: values[5],
+                simulation_seconds: values[6],
+            },
+        };
+        true
+    }
+
     #[must_use]
     pub fn scale(&self) -> f64 {
         self.scale
@@ -217,8 +275,14 @@ impl<const N: usize> FrameLatencyWindow<N> {
         active.sort_unstable();
         let last = self.filled - 1;
         let p50 = active[last / 2];
-        let p95 = active[(last * 95) / 100];
-        let p99 = active[(last * 99) / 100];
+        // Nearest rank: ceil(n*p/100)-1. Using floor((n-1)*p/100)
+        // discards the maximum in every short window, hiding isolated stalls.
+        let rank = |percent: usize| {
+            let count = self.filled / 100 * percent + (self.filled % 100 * percent).div_ceil(100);
+            count.saturating_sub(1)
+        };
+        let p95 = active[rank(95)];
+        let p99 = active[rank(99)];
         (p50, p95, p99)
     }
 }
@@ -321,6 +385,23 @@ mod tests {
     }
 
     #[test]
+    fn percentile_nearest_rank_handles_short_windows_and_ring_replacement() {
+        let mut one = FrameLatencyWindow::<1>::new();
+        assert_eq!(one.percentiles_micros(), (0, 0, 0));
+        one.record_micros(42);
+        assert_eq!(one.percentiles_micros(), (42, 42, 42));
+        let mut window = FrameLatencyWindow::<4>::new();
+        window.record_micros(10);
+        window.record_micros(20);
+        assert_eq!(window.percentiles_micros(), (10, 20, 20));
+        window.record_micros(30);
+        window.record_micros(40);
+        assert_eq!(window.percentiles_micros(), (20, 40, 40));
+        window.record_micros(50);
+        assert_eq!(window.percentiles_micros(), (30, 50, 50));
+    }
+
+    #[test]
     fn latency_window_tracks_percentiles_and_stutters() {
         let mut window = FrameLatencyWindow::<16>::new();
         for _ in 0..12 {
@@ -339,5 +420,63 @@ mod tests {
         assert!(!budget.try_consume(700));
         assert!(budget.try_consume(600));
         assert_eq!(budget.remaining_micros(), 0);
+    }
+}
+
+#[cfg(test)]
+mod checkpoint_tests {
+    use super::*;
+    #[test]
+    fn clock_checkpoint_preserves_ramps_remainder_pause_and_overload_exactly() {
+        let step = 1. / 60.;
+        let mut original = SimulationClock::default();
+        original.set_target(3.5);
+        for _ in 0..13 {
+            original.advance(0.011, step, 3);
+        }
+        let saved = original.checkpoint(step).unwrap();
+        let mut restored = SimulationClock::default();
+        assert!(restored.restore_checkpoint(saved, step));
+        assert_eq!(restored.checkpoint(step), Some(saved));
+        for i in 0..720 {
+            if i % 60 == 0 {
+                let target = [0., 4., 0.5, 1.][(i / 60) % 4];
+                original.set_target(target);
+                restored.set_target(target);
+            }
+            let dt = [0.003, 0.017, 0.25, 0., 0.009][i % 5];
+            let a = original.advance(dt, step, 2);
+            let b = restored.advance(dt, step, 2);
+            assert_eq!(a.steps, b.steps);
+            assert_eq!(a.alpha.to_bits(), b.alpha.to_bits());
+            assert_eq!(a.overloaded, b.overloaded);
+            assert_eq!(
+                original.checkpoint(step).unwrap(),
+                restored.checkpoint(step).unwrap()
+            );
+        }
+    }
+    #[test]
+    fn invalid_clock_checkpoint_preserves_state() {
+        let step = 1. / 60.;
+        let mut clock = SimulationClock::default();
+        clock.advance(0.013, step, 4);
+        let saved = clock.checkpoint(step).unwrap();
+        for (index, value) in [
+            (0, 2),
+            (1, (1. / 30f64).to_bits()),
+            (2, f64::NAN.to_bits()),
+            (3, 5f64.to_bits()),
+            (4, f64::MAX.to_bits()),
+            (5, step.to_bits()),
+            (6, 0f64.to_bits()),
+            (7, (-1f64).to_bits()),
+            (8, f64::INFINITY.to_bits()),
+        ] {
+            let mut bad = saved;
+            bad[index] = value;
+            assert!(!clock.restore_checkpoint(bad, step));
+            assert_eq!(clock.checkpoint(step), Some(saved));
+        }
     }
 }

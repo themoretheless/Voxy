@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "name": "Nested prefab interactive project",
+  "asset_manifest": "assets.json",
+  "startup_scene": "main.scene.json"
+}

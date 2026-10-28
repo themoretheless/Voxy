@@ -1,0 +1,73 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Existing editor file load transaction now publishes active native audio alongside scene, GPU, UI, input, project, history and Play owners",
+  "status": "Integrated and qualified for active owned native output at matching sample rate/capacity; broad engine goal remains open",
+  "implementation": [
+    "Host clones only its already-fenced OutputConnection into existing detached CPU preparation; archive cannot start a device",
+    "PreparedCoordinatedAudio distinguishes original offline preparation from original native preparation; discards use original owners",
+    "Original frame-polled load adds cancellable Audio readiness after actual model/UI GPU validation",
+    "Source origin and destination scene/project are checked while native device resume ACK completes under held PCM queue",
+    "Final native permit is acquired before final UI admission; unpublished permit restores queue token on failure",
+    "After all fallible checks, original infallible model/UI/audio and host field publications complete; receipt releases PCM last without device API/wait",
+    "Exclusive async installer also awaits original audio readiness; frame-polled event-loop path retains owned candidate without borrowing App across frames"
+  ],
+  "checks": {
+    "editor": {
+      "passed": 393,
+      "ignored": 46
+    },
+    "gpu_app": {
+      "passed": 8,
+      "backend": "Metal",
+      "device": "Apple M4 Max",
+      "window": false,
+      "includes_native_output_test": true
+    },
+    "native_session": {
+      "passed": 1,
+      "sample_rate": 48000,
+      "gain": 0,
+      "window": false
+    },
+    "clippy": "editor all targets, -D warnings, exit 0",
+    "format": "scoped rustfmt passed",
+    "diff": "scoped git diff --check passed; touched sources are preexisting untracked files"
+  },
+  "new_end_to_end": [
+    "Real native device started through original App Play lifecycle, gain zero",
+    "Actual desktop policy save writes a native output-bearing editor archive",
+    "Original rig.glb and tone.wav removed before loading",
+    "Cancel after native resume request preserves original scene token, audio frame counter and releases own barriers",
+    "Two complete frame-polled file/CPU/GPU/UI/audio loads restore archive after sources removed",
+    "Exact historical input JSON, animated model pixels and UI pixels match saved state",
+    "Each load restores simulation tick/audio frame counters; each continues 120 native game/render frames",
+    "Output retains sample rate and reports zero backend errors; shutdown joins original workers"
+  ],
+  "observations": [
+    "Missing source/manifest watcher diagnostics occur during source-free editor continuation; previous valid model/UI/audio publications remain active",
+    "GPU/native test uses zero gain; it does not prove audible continuity or analog host-buffer alignment"
+  ],
+  "open": [
+    "Native idle/no active owned playback checkpoint handling",
+    "Cross-mode offline/native archive transitions and device reconnect/rate changes",
+    "Native window and interactive editor qualification",
+    "CPU/GPU frame pacing, 120/160 FPS, audible continuity, latency and power qualification",
+    "Full ENG-03 through ENG-13 and professional engine feature coverage"
+  ],
+  "sources_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier.rs": "83cfe9c210e42ad116f2b763fa63cef80da1c706e1cf9e346dd6ff698053baf4",
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "0ed5bd70443a539554d8046f2375542d41fdd6c67a8e6bd9c7e43a763f8ea9d3",
+    "crates/voxy_editor/src/app/restore_barrier/load.rs": "761a48afb94e9652c280656bc675e3f6570b3f79e8ebf70128a4426e481e1b32",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "c6cc50a89631ac23785e7521f6102724a917a781cba40ee63efe8376125820c0",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "0ecc6f005a41579ff3d23743deb95c5de8ff9b6e7f8ccbfc30c58e0b003415a9",
+    "crates/voxy_editor/src/ui_live/restore/tests.rs": "ca6f604f665a8a8d057e4cf5a16617bea3dc17a8e0b6f260b5c003119b37bbed",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "55d7e1f04e629d1d59e9685d9f577ef4d6d935474b4d5334a31a18e4eb35aa7b"
+  },
+  "logs": [
+    "editor.log",
+    "gpu_app.log",
+    "native_session.log",
+    "clippy.log"
+  ]
+}

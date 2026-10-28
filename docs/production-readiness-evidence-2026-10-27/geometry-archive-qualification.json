@@ -1,0 +1,90 @@
+{
+  "scope": "exact native SceneMesh, SkinnedMesh and ImageAsset checkpoints; model resource substrate only",
+  "source_sha256": {
+    "crates/voxy_render/src/geometry_checkpoint.rs": "a3efedf2caf752546517701fb56479d162ff347686655486a08219119c40c640",
+    "crates/voxy_render/src/geometry_checkpoint/tests.rs": "30fb1fd08f0e2e6cf88363e60d8a1e7ba78fc8472391fc896ffaac1a83ca6bd7",
+    "crates/voxy_render/src/scene/geometry/checkpoint.rs": "1c4177ca8028408002c4982baa1635144b5b4ca948594e29570b86374b5feeae",
+    "crates/voxy_render/src/skinned/checkpoint.rs": "d3e04ea96e1c5ff486b2677dc9f2df4e4e5faabc4052a1060a16c4db02cc248e",
+    "crates/voxy_render/src/image_asset/checkpoint.rs": "c88ae7aff270a055709e5a82314a69bf7e95b17038214b476b43362fb9724ed7",
+    "crates/voxy_render/src/scene/geometry.rs": "2710e8b5477feca9a12fd9f503d5a2727bc4e4f290072dce828470f4d5e0907f",
+    "crates/voxy_render/src/skinned.rs": "42db16303b84e304751803129062446a223b186bbc43dcc00c25a2b75d1a7b65",
+    "crates/voxy_render/src/image_asset.rs": "65907974f7578ab5f19573bc9abb20bdf51eb51cd3ff445ce7b2f8fff26e22ea",
+    "crates/voxy_render/src/lib.rs": "62b58323d8a0cd69249fd68c3088abbb2bf438189058a8c3292b01f029bd2b58",
+    "crates/voxy_editor/src/import/animated_tests.rs": "6c53cbfea5fcc31aacea36d4d1b437caeb19b246581c74448134b54962754c86"
+  },
+  "result_codes": {
+    "render": 0,
+    "editor": 0,
+    "clippy": 0
+  },
+  "checks": {
+    "render": {
+      "passed": 363,
+      "ignored": 86,
+      "new_geometry_tests": 5
+    },
+    "editor": {
+      "passed": 284,
+      "ignored": 21,
+      "new_accepted_import_consumer": 1
+    },
+    "clippy": "render/editor all targets -D warnings passed",
+    "format": "scoped rustfmt/root module order/diff check passed; only root module ordering formatted after accepted suite"
+  },
+  "format": {
+    "magic": "VOXYGEO1",
+    "header_bytes": 48,
+    "encoding": "type-tagged bounded little-endian binary; float attributes as exact u32 words; native indices and UNORM16 joints/weights unchanged; RGBA8 decoded pixels exact",
+    "integrity": "length and BLAKE3 body digest before allocation/parsing; checksum is not a signature",
+    "policies": [
+      "archive bytes",
+      "vertex and index counts",
+      "joint count",
+      "image dimensions and pixel byte count",
+      "checked count-stride multiplication against remaining body before vectors allocate"
+    ],
+    "record_vs_owner": "from_bytes validates framing/structural policy; prepare independently applies native semantic admission"
+  },
+  "native_coverage": {
+    "SceneMesh": [
+      "positions",
+      "UVs",
+      "colors",
+      "index order",
+      "optional explicit normals including zero normals",
+      "optional material coordinates",
+      "material parameters",
+      "validated process-local proof independently re-established"
+    ],
+    "SkinnedMesh": [
+      "exact immutable source vertices/indices/joint count",
+      "zero-weight inactive joint canonicalization must not rewrite archived attributes",
+      "coherent-weight/group/bound metadata rebuilt from exact source buffers",
+      "no floating weight renormalization"
+    ],
+    "ImageAsset": [
+      "width",
+      "height",
+      "decoded RGBA bytes",
+      "all derived mip levels match"
+    ]
+  },
+  "scenarios": [
+    "absent/prepared/explicit material and normal streams preserve exact words including signed zero and subnormal values",
+    "120 small-mesh pose/temporal continuations match and dense 9000-vertex admission matches",
+    "native policies and malformed floats/indices/weights reject",
+    "corrupt/truncated/trailing/cross-type frames reject",
+    "rechecksummed huge counts, stride overflow, reserved flags and impossible image headers reject",
+    "actual accepted Fox import geometry and texture streams saved to files; complete source directory removed; file-only restore matches accepted streams and mip levels",
+    "120 Fox poses match exact posed SceneMesh checkpoints using separately retained original skeleton/animation owner"
+  ],
+  "remaining": [
+    "complete EditorAsset/ModelAsset archive, original observations and resource catalog identity",
+    "skeletons/clips/morph metadata and shared primitive stream ownership",
+    "LOD certificate/witness resource participant; no trust-based certificate restoration",
+    "native model import/watch barrier and atomic CPU/GPU model publication",
+    "full App transaction, native audio and broader engine ENG-03 through ENG-13 acceptance",
+    "no new explicit GPU/readback/window/FPS or physical memory peak qualification in this turn",
+    "record/raw stream content bounded; constructor/parser/allocator peak overhead not measured"
+  ]
+}

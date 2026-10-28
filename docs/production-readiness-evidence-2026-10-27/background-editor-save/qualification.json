@@ -1,0 +1,62 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "scope": "Native registry fork preserves project codecs; App snapshot save command captures at original fence and writes atomically on background worker",
+  "checks": {
+    "editor_library": {
+      "passed": 380,
+      "failed": 0,
+      "ignored": 42
+    },
+    "scene_library": {
+      "passed": 99,
+      "failed": 0
+    },
+    "gpu_app": {
+      "passed": 7,
+      "failed": 0
+    },
+    "strict_all_target_clippy": true,
+    "scoped_rustfmt": true,
+    "scoped_diff_check": true
+  },
+  "proofs": [
+    "cloned custom reference codec remaps original durable IDs",
+    "registration and collection-default mutations isolated between registries",
+    "background file preserves custom project component and exact integer above 2^53",
+    "source authoring registry Arc retained",
+    "duplicate save request rejected",
+    "capture failure and writer budget failure preserve prior file and scene token",
+    "source restore/model fences released after either outcome",
+    "deliberately blocked worker does not prevent frame-poll return",
+    "completed writer joined before receipt",
+    "shutdown finishes a started atomic write",
+    "existing native GPU/App source-free installs including text/audio still pass"
+  ],
+  "limits": [
+    "snapshot capture remains synchronous under its source fence",
+    "background save command qualified headless; viewport polling integration compiled and existing frame regressions passed",
+    "no capture latency or frame pacing qualification"
+  ],
+  "not_qualified": [
+    "buttons/keybindings/file chooser/default policy integration",
+    "nonblocking load command",
+    "native audio output-device barrier",
+    "native surface presentation",
+    "120/160 FPS",
+    "full engine readiness"
+  ],
+  "logs": [
+    "core-editor.log",
+    "gpu.log",
+    "clippy.log",
+    "focused.log"
+  ],
+  "sha256": {
+    "crates/voxy_scene/src/document.rs": "4f79c5febbffc65fd7ed235afedead3e7c8c7e691af036a691cb3247779ba177",
+    "crates/voxy_editor/src/app/restore_barrier/save.rs": "082e3c3366934f79ec6f65257efaa192a408bb5d8a865e09f2204750ce57acea",
+    "crates/voxy_editor/src/app/restore_barrier.rs": "737100f5fc691cecc49d5c115d0bdeffffb0d77ec1e1a511db86fd9e3c0c1893",
+    "crates/voxy_editor/src/lib.rs": "56ab5e61f10f65119a69fa184b088a8020eb67634d6f6c44b369e5d523e89767",
+    "crates/voxy_editor/src/app/viewport.rs": "938f74008ea6ffb56fbcba57010280b4e9054ec468e540167bcd65fa97c21d9f"
+  }
+}

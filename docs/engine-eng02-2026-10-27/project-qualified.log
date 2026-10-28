@@ -1,0 +1,22 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.54s
+     Running unittests src/lib.rs (/tmp/voxy-eng01-20261027-target/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 14 tests
+test project::tests::authoring_repeated_save_rejects_external_scene_changes_without_losing_edits ... ok
+test project::tests::descriptor_save_can_select_nested_scene_and_survives_relocation ... ok
+test project::tests::descriptor_save_rejects_external_edits_and_accepts_reopen ... ok
+test project::tests::descriptor_save_validates_before_publication_and_preserves_other_files ... ok
+test project::tests::editor_project_bootstrap_edits_saves_undoes_and_reopens_without_model ... ok
+test project::tests::empty_project_reopens_after_relocation_and_does_not_overwrite ... ok
+test project::tests::nested_manifest_sources_follow_existing_project_root_contract ... ok
+test project::tests::oversized_project_names_never_publish_unreadable_projects ... ok
+test project::tests::project_custom_component_registry_survives_play_build_and_packaged_run ... ok
+test project::tests::project_package_runs_without_source_tree_and_contains_import_closure ... ok
+test project::tests::project_play_stop_and_standalone_share_fixed_motion ... ok
+test project::tests::rejects_corrupt_manifest_missing_asset_and_existing_file_destination ... ok
+test project::tests::rejects_dependency_symlink_outside_project ... ok
+test project::tests::rejects_missing_dependencies_versions_unknown_fields_and_broken_scene ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 271 filtered out; finished in 0.73s
+

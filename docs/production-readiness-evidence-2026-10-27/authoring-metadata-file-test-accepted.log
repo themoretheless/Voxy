@@ -1,0 +1,33 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 29.78s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 5 tests
+test app::authoring_checkpoint::tests::metadata_roundtrip_rebinds_seek_and_retains_original_file_receipt_without_io ... FAILED
+test app::authoring_checkpoint::tests::stale_drag_stays_stale_and_failed_preparation_preserves_the_original_app ... FAILED
+test app::authoring_checkpoint::tests::cancelling_restored_drag_keeps_history_and_late_bad_gesture_does_not_consume_live_edit ... ok
+test app::authoring_checkpoint::tests::coordinated_play_and_history_prepare_share_scene_and_preserve_redo ... ok
+test app::authoring_checkpoint::tests::real_app_history_order_selection_and_active_drag_rebind_and_continue_120_edits ... ok
+
+failures:
+
+---- app::authoring_checkpoint::tests::metadata_roundtrip_rebinds_seek_and_retains_original_file_receipt_without_io stdout ----
+
+thread 'app::authoring_checkpoint::tests::metadata_roundtrip_rebinds_seek_and_retains_original_file_receipt_without_io' (78227123) panicked at crates/voxy_editor/src/app/authoring_checkpoint/tests.rs:517:59:
+index out of bounds: the len is 0 but the index is 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- app::authoring_checkpoint::tests::stale_drag_stays_stale_and_failed_preparation_preserves_the_original_app stdout ----
+
+thread 'app::authoring_checkpoint::tests::stale_drag_stays_stale_and_failed_preparation_preserves_the_original_app' (78227125) panicked at crates/voxy_editor/src/app/authoring_checkpoint/tests.rs:206:9:
+assertion failed: bad.prepare(&view(&source), &source.authoring.authoring_project.registry,
+        limits()).is_err()
+
+
+failures:
+    app::authoring_checkpoint::tests::metadata_roundtrip_rebinds_seek_and_retains_original_file_receipt_without_io
+    app::authoring_checkpoint::tests::stale_drag_stays_stale_and_failed_preparation_preserves_the_original_app
+
+test result: FAILED. 3 passed; 2 failed; 0 ignored; 0 measured; 345 filtered out; finished in 2.29s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

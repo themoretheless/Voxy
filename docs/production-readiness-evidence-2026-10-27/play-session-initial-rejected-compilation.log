@@ -1,0 +1,116 @@
+    Checking voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: implementation of `std::ops::Fn` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:218:27
+    |
+218 |             .map(|follow| follow.prepare(&scene.graph, resolve))
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `std::ops::Fn` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `std::ops::Fn<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `std::ops::Fn<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: implementation of `FnOnce` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:218:27
+    |
+218 |             .map(|follow| follow.prepare(&scene.graph, resolve))
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `FnOnce` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `FnOnce<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `FnOnce<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: implementation of `std::ops::Fn` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:229:17
+    |
+229 | /                 SceneLiquidCheckpoint::from_bytes(bytes, limits.liquid_wire)?.prepare(
+230 | |                     &scene.graph,
+231 | |                     resolve,
+232 | |                     limits.liquid,
+233 | |                 )
+    | |_________________^ implementation of `std::ops::Fn` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `std::ops::Fn<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `std::ops::Fn<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: implementation of `FnOnce` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:229:17
+    |
+229 | /                 SceneLiquidCheckpoint::from_bytes(bytes, limits.liquid_wire)?.prepare(
+230 | |                     &scene.graph,
+231 | |                     resolve,
+232 | |                     limits.liquid,
+233 | |                 )
+    | |_________________^ implementation of `FnOnce` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `FnOnce<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `FnOnce<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: implementation of `std::ops::Fn` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:255:17
+    |
+255 |                 physics.restore_checkpoint(&scene.graph, saved, resolve)?;
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `std::ops::Fn` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `std::ops::Fn<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `std::ops::Fn<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: implementation of `FnOnce` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:255:17
+    |
+255 |                 physics.restore_checkpoint(&scene.graph, saved, resolve)?;
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `FnOnce` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `FnOnce<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `FnOnce<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: implementation of `std::ops::Fn` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:271:23
+    |
+271 |             .map(|ui| ui_codecs.prepare(&scene.graph, ui, resolve, limits.ui))
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `std::ops::Fn` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `std::ops::Fn<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `std::ops::Fn<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: implementation of `FnOnce` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:271:23
+    |
+271 |             .map(|ui| ui_codecs.prepare(&scene.graph, ui, resolve, limits.ui))
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `FnOnce` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `FnOnce<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `FnOnce<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: implementation of `std::ops::Fn` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:204:26
+    |
+204 |           let animations = self.animations.prepare(
+    |  __________________________^
+205 | |             &scene.graph,
+206 | |             resolve,
+207 | |             resolve_model,
+208 | |             resolve_clip,
+209 | |             limits.core.max_bytes,
+210 | |         )?;
+    | |_________^ implementation of `std::ops::Fn` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `std::ops::Fn<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `std::ops::Fn<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: implementation of `FnOnce` is not general enough
+   --> crates/voxy_editor/src/play_session/checkpoint.rs:204:26
+    |
+204 |           let animations = self.animations.prepare(
+    |  __________________________^
+205 | |             &scene.graph,
+206 | |             resolve,
+207 | |             resolve_model,
+208 | |             resolve_clip,
+209 | |             limits.core.max_bytes,
+210 | |         )?;
+    | |_________^ implementation of `FnOnce` is not general enough
+    |
+    = note: closure with signature `fn(&'2 voxy_scene::ObjectId) -> std::option::Option<voxy_scene::NodeId>` must implement `FnOnce<(&'1 voxy_scene::ObjectId,)>`, for any lifetime `'1`...
+    = note: ...but it actually implements `FnOnce<(&'2 voxy_scene::ObjectId,)>`, for some specific lifetime `'2`
+
+error: could not compile `voxy_editor` (lib) due to 10 previous errors

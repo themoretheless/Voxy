@@ -1,0 +1,15 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.13s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 7 tests
+test play_session::checkpoint::tests::full_play_resources_gpu_keeps_equal_independent_frames_distinct ... ignored, requires real GPU; equal independent runtime/render frames remain distinct
+test play_session::checkpoint::tests::full_play_resources_gpu_restores_shared_runtime_frame_identity ... ignored, requires real GPU; shared runtime/render frame restored from source-free session
+test play_session::checkpoint::tests::full_play_resources_gpu_stages_one_runtime_and_original_accepted_frame ... ignored, requires real GPU; full Play/resource file with accepted GPU frame
+test play_session::checkpoint::tests::idle_session_checkpoint_restores_without_starting_simulation ... ok
+test play_session::checkpoint::tests::idle_play_origin_tracks_input_preview_state_and_mode_without_starting_a_game ... ok
+test play_session::checkpoint::tests::full_play_record_rebuilds_scene_and_continues_120_frames_with_late_failure_atomicity ... ok
+test play_session::checkpoint::tests::full_play_resources_file_owns_models_and_guards_input_physics_and_command_queues ... ok
+
+test result: ok. 4 passed; 0 failed; 3 ignored; 0 measured; 405 filtered out; finished in 5.98s
+

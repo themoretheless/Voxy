@@ -1,0 +1,41 @@
+{
+  "status": "complete_scene_liquid_file_roundtrip_and_continuation_verified",
+  "format": "VOXYSL01",
+  "header_bytes": 48,
+  "digest": "BLAKE3 over complete payload; corruption detection, not authentication",
+  "tests_passed": 7,
+  "strict_gameplay_all_targets_clippy": true,
+  "continuation_steps": 120,
+  "coverage": [
+    "actual temporary file write/read into independent scene with reversed source handles",
+    "exact full encoded record bytes survive decode/re-encode",
+    "initially rotated and nonuniformly scaled compound body retains original COM/principal frame",
+    "moving and temporarily inactive nonzero-radius sources retain emission order/history",
+    "time-dependent point forces retain elapsed phase and spin",
+    "every truncated prefix and every single-byte bitflip rejected",
+    "forged length and root version rejected with recomputed digest",
+    "outer and nested liquid resource policies tested independently",
+    "signed zero exact scalar roundtrip; invalid tags and nested element budget rejected",
+    "missing principal templates, nonfinite elapsed time and invalid material slot reject preparation"
+  ],
+  "budgets": [
+    "outer input/output bytes, cumulative requested heap payload, values",
+    "separate explicit native Liquid byte/allocation/value budget",
+    "physical source/body/pulse/binding limits in prepare",
+    "allocator overhead and subsequent native physical preparation outside decoder payload budget"
+  ],
+  "remaining": [
+    "atomic PlaySession/App composition and file publication",
+    "native interactive save/load acceptance",
+    "broader release, rendering and full ENG-00 through ENG-13 qualification"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime/checkpoint.rs": "fd55f5c5d947aedf915d593f1a189aac366f8bc300a7613f9b3fc71c7160dcc8",
+    "crates/voxy_gameplay/src/liquid_runtime/checkpoint/wire.rs": "78bc706c61e123e68e8d38e4341592e14fd1e579957366f32daf55fc069030db",
+    "crates/voxy_gameplay/src/rigid_frame.rs": "4818f7aadd2ee447c9ce1008b05f762b5f2ea3938d1ad83ea9b8fc58663abec0",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "126ef1037c8053952d0cee4fac097f9ed11908cdf297b09c7c29cc19461e1d93",
+    "crates/voxy_gameplay/src/lib.rs": "a5bbca7c56347478af154bb90af16c7903becda7ed11712f84a7739e67f99a45",
+    "crates/voxy_gameplay/Cargo.toml": "cea99b187eb663bf60fda71b561708e9e09029f7b8fc379eca1c18dbe4111bf5",
+    "Cargo.lock": "74cd330c297b4620002bb784397ea88ec71f8df6a2fea8739c2ef73505736c18"
+  }
+}

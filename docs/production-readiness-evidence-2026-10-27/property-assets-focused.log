@@ -1,0 +1,11 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.01s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_animation-b8add508dfae1155)
+
+running 3 tests
+test property_track::asset_checkpoint::tests::empty_sets_and_empty_clip_track_allocations_keep_identity ... ok
+test property_track::asset_checkpoint::tests::bad_refs_source_words_order_modes_unused_records_and_caps_reject_atomically ... ok
+test property_track::asset_checkpoint::tests::exact_words_native_sharing_legacy_boolean_and_120_sample_cycles_survive ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 352 filtered out; finished in 0.00s
+

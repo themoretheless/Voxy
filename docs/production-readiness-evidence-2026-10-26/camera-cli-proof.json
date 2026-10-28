@@ -1,0 +1,276 @@
+{
+  "status": "nested_follow_camera_project_package_cli_pass",
+  "runs": [
+    {
+      "binary": "/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/voxy_editor",
+      "args": [
+        "--validate-project",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-camera-cli-reqwrsow/moved/project.voxy"
+      ],
+      "exit_code": 0,
+      "stdout": "Validated project \"Nested project with smooth follow camera\": 5 scene objects\n",
+      "stderr": ""
+    },
+    {
+      "binary": "/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/examples/interactive_project",
+      "args": [
+        "--check",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-camera-cli-reqwrsow/moved/project.voxy"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=-4 asset=ground\nMODEL PUBLISHED frames=0 first_x=-0.1 asset=player\nMODEL PUBLISHED frames=0 first_x=-0.1 asset=wall\nINTERACTIVE RESULT {\"audio_frames\":144000,\"audio_peak\":0.0883883461356163,\"camera\":{\"distance\":3.0,\"legacy\":false,\"perspective\":true,\"pitch\":0.3499999940395355,\"target\":[0.7999944686889648,0.3000268340110779,0.0],\"yaw\":0.6000000238418579},\"max_height\":0.534500002861023,\"scene\":{\"objects\":[{\"active\":true,\"components\":{\"editor.model.v1\":\"player\",\"game.audio-listener.v1\":{},\"game.audio-source.v1\":{\"asset\":\"tone\",\"bus\":0,\"far\":5.0,\"gain\":0.5,\"looping\":true,\"near\":1.0,\"spatial\":true},\"game.character.v1\":{\"gravity\":-9.8,\"half_extents\":[0.10000000149011612,0.10000000149011612,0.10000000149011612],\"jump_speed\":3.0,\"speed\":1.2}},\"id\":\"5:level15:5:world6:player\",\"name\":\"player\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.800000011920929,0.10000000149011612,0.0]},{\"active\":true,\"components\":{\"editor.model.v1\":\"ground\",\"game.box.v1\":{\"half_extents\":[4.0,0.10000000149011612,4.0]}},\"id\":\"5:level15:5:world6:ground\",\"name\":\"ground\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,-0.10000000149011612,0.0]},{\"active\":true,\"components\":{\"editor.model.v1\":\"wall\",\"game.box.v1\":{\"half_extents\":[0.10000000149011612,1.0,1.0]}},\"id\":\"5:level13:5:world4:wall\",\"name\":\"wall\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[1.0,1.0,0.0]},{\"active\":false,\"components\":{\"game.ui-element.v1\":{\"action\":\"sample.dismiss\",\"color\":[0.20000000298023224,0.4000000059604645,0.800000011920929,1.0],\"enabled\":true,\"layer\":0,\"origin\":[0.0,0.0],\"size\":[0.20000000298023224,0.10000000149011612]}},\"id\":\"5:level16:5:world7:dismiss\",\"name\":\"dismiss\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,0.0,0.0]},{\"active\":true,\"components\":{\"editor.camera.v1\":{\"distance\":3.0,\"legacy\":false,\"perspective\":true,\"pitch\":0.3499999940395355,\"target\":[0.0,0.3009999990463257,0.0],\"yaw\":0.6000000238418579},\"game.follow-camera.v1\":{\"half_life\":0.15,\"offset\":[0.0,0.20000000298023224,0.0],\"target\":\"5:level15:5:world6:player\"}},\"id\":\"5:level15:5:world6:camera\",\"name\":\"camera\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,0.0,0.0]}],\"version\":1},\"ticks\":180}\n",
+      "stderr": ""
+    },
+    {
+      "binary": "/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/examples/interactive_project",
+      "args": [
+        "--build",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-camera-cli-reqwrsow/moved/project.voxy",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-camera-cli-reqwrsow/follow-camera.vpak"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=-4 asset=ground\nMODEL PUBLISHED frames=0 first_x=-0.1 asset=player\nMODEL PUBLISHED frames=0 first_x=-0.1 asset=wall\nGAME PACKAGE PASS sources=9 bytes=21199\n",
+      "stderr": ""
+    },
+    {
+      "binary": "/Users/themoretheless/Documents/Sources/voxy/target/research-ray-precision/debug/examples/interactive_project",
+      "args": [
+        "--package-check",
+        "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-camera-cli-reqwrsow/follow-camera.vpak"
+      ],
+      "exit_code": 0,
+      "stdout": "MODEL PUBLISHED frames=0 first_x=-4 asset=ground\nMODEL PUBLISHED frames=0 first_x=-0.1 asset=player\nMODEL PUBLISHED frames=0 first_x=-0.1 asset=wall\nINTERACTIVE RESULT {\"audio_frames\":144000,\"audio_peak\":0.0883883461356163,\"camera\":{\"distance\":3.0,\"legacy\":false,\"perspective\":true,\"pitch\":0.3499999940395355,\"target\":[0.7999944686889648,0.3000268340110779,0.0],\"yaw\":0.6000000238418579},\"max_height\":0.534500002861023,\"scene\":{\"objects\":[{\"active\":true,\"components\":{\"editor.model.v1\":\"player\",\"game.audio-listener.v1\":{},\"game.audio-source.v1\":{\"asset\":\"tone\",\"bus\":0,\"far\":5.0,\"gain\":0.5,\"looping\":true,\"near\":1.0,\"spatial\":true},\"game.character.v1\":{\"gravity\":-9.8,\"half_extents\":[0.10000000149011612,0.10000000149011612,0.10000000149011612],\"jump_speed\":3.0,\"speed\":1.2}},\"id\":\"5:level15:5:world6:player\",\"name\":\"player\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.800000011920929,0.10000000149011612,0.0]},{\"active\":true,\"components\":{\"editor.model.v1\":\"ground\",\"game.box.v1\":{\"half_extents\":[4.0,0.10000000149011612,4.0]}},\"id\":\"5:level15:5:world6:ground\",\"name\":\"ground\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,-0.10000000149011612,0.0]},{\"active\":true,\"components\":{\"editor.model.v1\":\"wall\",\"game.box.v1\":{\"half_extents\":[0.10000000149011612,1.0,1.0]}},\"id\":\"5:level13:5:world4:wall\",\"name\":\"wall\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[1.0,1.0,0.0]},{\"active\":false,\"components\":{\"game.ui-element.v1\":{\"action\":\"sample.dismiss\",\"color\":[0.20000000298023224,0.4000000059604645,0.800000011920929,1.0],\"enabled\":true,\"layer\":0,\"origin\":[0.0,0.0],\"size\":[0.20000000298023224,0.10000000149011612]}},\"id\":\"5:level16:5:world7:dismiss\",\"name\":\"dismiss\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,0.0,0.0]},{\"active\":true,\"components\":{\"editor.camera.v1\":{\"distance\":3.0,\"legacy\":false,\"perspective\":true,\"pitch\":0.3499999940395355,\"target\":[0.0,0.3009999990463257,0.0],\"yaw\":0.6000000238418579},\"game.follow-camera.v1\":{\"half_life\":0.15,\"offset\":[0.0,0.20000000298023224,0.0],\"target\":\"5:level15:5:world6:player\"}},\"id\":\"5:level15:5:world6:camera\",\"name\":\"camera\",\"parent\":null,\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"translation\":[0.0,0.0,0.0]}],\"version\":1},\"ticks\":180}\n",
+      "stderr": ""
+    }
+  ],
+  "outcome": {
+    "audio_frames": 144000,
+    "audio_peak": 0.0883883461356163,
+    "camera": {
+      "distance": 3.0,
+      "legacy": false,
+      "perspective": true,
+      "pitch": 0.3499999940395355,
+      "target": [
+        0.7999944686889648,
+        0.3000268340110779,
+        0.0
+      ],
+      "yaw": 0.6000000238418579
+    },
+    "max_height": 0.534500002861023,
+    "scene": {
+      "objects": [
+        {
+          "active": true,
+          "components": {
+            "editor.model.v1": "player",
+            "game.audio-listener.v1": {},
+            "game.audio-source.v1": {
+              "asset": "tone",
+              "bus": 0,
+              "far": 5.0,
+              "gain": 0.5,
+              "looping": true,
+              "near": 1.0,
+              "spatial": true
+            },
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.10000000149011612,
+                0.10000000149011612,
+                0.10000000149011612
+              ],
+              "jump_speed": 3.0,
+              "speed": 1.2
+            }
+          },
+          "id": "5:level15:5:world6:player",
+          "name": "player",
+          "parent": null,
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "translation": [
+            0.800000011920929,
+            0.10000000149011612,
+            0.0
+          ]
+        },
+        {
+          "active": true,
+          "components": {
+            "editor.model.v1": "ground",
+            "game.box.v1": {
+              "half_extents": [
+                4.0,
+                0.10000000149011612,
+                4.0
+              ]
+            }
+          },
+          "id": "5:level15:5:world6:ground",
+          "name": "ground",
+          "parent": null,
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            -0.10000000149011612,
+            0.0
+          ]
+        },
+        {
+          "active": true,
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                1.0,
+                1.0
+              ]
+            }
+          },
+          "id": "5:level13:5:world4:wall",
+          "name": "wall",
+          "parent": null,
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "translation": [
+            1.0,
+            1.0,
+            0.0
+          ]
+        },
+        {
+          "active": false,
+          "components": {
+            "game.ui-element.v1": {
+              "action": "sample.dismiss",
+              "color": [
+                0.20000000298023224,
+                0.4000000059604645,
+                0.800000011920929,
+                1.0
+              ],
+              "enabled": true,
+              "layer": 0,
+              "origin": [
+                0.0,
+                0.0
+              ],
+              "size": [
+                0.20000000298023224,
+                0.10000000149011612
+              ]
+            }
+          },
+          "id": "5:level16:5:world7:dismiss",
+          "name": "dismiss",
+          "parent": null,
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "active": true,
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.0,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3499999940395355,
+              "target": [
+                0.0,
+                0.3009999990463257,
+                0.0
+              ],
+              "yaw": 0.6000000238418579
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.15,
+              "offset": [
+                0.0,
+                0.20000000298023224,
+                0.0
+              ],
+              "target": "5:level15:5:world6:player"
+            }
+          },
+          "id": "5:level15:5:world6:camera",
+          "name": "camera",
+          "parent": null,
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "version": 1
+    },
+    "ticks": 180
+  },
+  "editor_sha256": "e4ce1df566c8dc1e1834cca251b0db315ac7c9df9047c2b043090cd749f1b85e",
+  "game_sha256": "22d15bdbc6c5570b990253ce4fdd5c73af9b2fc47c3faf7354c263f979397dab",
+  "package_sha256": "603732dc828f84d13efd47a2d8ca4869727ef655ec342af14ea4d9a8c9356bc7",
+  "project_relocated_before_validation": true,
+  "source_deleted_before_package_launch": true,
+  "nested_override_applied": true,
+  "project_and_package_identical": true,
+  "native_window_verified": false,
+  "native_audio_device_verified": false,
+  "fps_qualified": false
+}

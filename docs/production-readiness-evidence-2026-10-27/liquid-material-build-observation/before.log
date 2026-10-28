@@ -1,0 +1,20 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.08s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+GAME PACKAGE PASS sources=4 bytes=3205
+
+thread 'project::tests::liquid_material_change_during_game_host_setup_rejects_package_publication' (79544814) panicked at crates/voxy_editor/src/project.rs:460:9:
+build published material changed after native runtime preparation
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test project::tests::liquid_material_change_during_game_host_setup_rejects_package_publication ... FAILED
+
+failures:
+
+failures:
+    project::tests::liquid_material_change_during_game_host_setup_rejects_package_publication
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 392 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

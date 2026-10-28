@@ -1,0 +1,13 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.40s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_render-6d1c875d3777361f)
+
+running 5 tests
+test certified_lod::tests::rejects_unverified_artifacts_and_invalid_base ... ok
+test certified_lod::tests::derives_bound_and_binds_exact_source_bits ... ok
+test certified_lod::checkpoint::tests::base_only_lods_preserve_verifier_kind_and_exact_zero_error_receipt ... ok
+test certified_lod::checkpoint::tests::forged_errors_invalid_original_witnesses_counts_and_limits_reject_without_changing_live_lod ... ok
+test certified_lod::checkpoint::tests::whole_and_subdivided_file_proofs_restore_exact_error_envelopes_and_policy_results ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 451 filtered out; finished in 0.01s
+

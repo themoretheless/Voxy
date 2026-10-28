@@ -1,0 +1,29 @@
+{
+  "status": "bounded_exact_native_liquid_wire_verified",
+  "format": "VOXYLQ01",
+  "unit_tests_passed": 37,
+  "all_target_strict_clippy": true,
+  "continuation_cases": 5,
+  "steps_per_case": 120,
+  "checks": [
+    "exact complete record and full owner continuation after byte encoding and decoding",
+    "real temporary file write/read",
+    "every truncated prefix rejected",
+    "trailing bytes, bad magic/root version, forged lengths, invalid bool/option tags, invalid UTF-8 rejected",
+    "independent byte, cumulative requested heap payload, and element budgets",
+    "nested empty vectors charged to shared budget",
+    "signed zero and compensated heat words preserved",
+    "finite actual mixture energy despite overflowing base heat reference survives codec"
+  ],
+  "limits": [
+    "structural decode requires prepare for component versions and physical validation",
+    "wire has no integrity checksum; arbitrary corruption can produce another valid record",
+    "no outer source/rigid body or full game archive yet",
+    "allocator overhead and preparation allocations are outside decoder payload budget"
+  ],
+  "sha256": {
+    "crates/physics/src/liquid/checkpoint_wire.rs": "d33b0a64d111ac52e3d4bd64397c390cfe3433e29cdc0acfef776d1f72ba5cf2",
+    "crates/physics/src/liquid/checkpoint.rs": "22710b683c1570530794760fb39daa86cd8b174581c15bd94e367a90646f1d72",
+    "crates/physics/src/liquid.rs": "e24f500b3029b40f7852f19f2252f503de876cc716974c96e68864fb94f1ecec"
+  }
+}

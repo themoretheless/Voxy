@@ -1,0 +1,62 @@
+{
+  "stage": "ENG-03",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "change": "Reject restored watcher policies unable to cover retained dependencies and accepted input bytes before provider access or worker creation; gate live model publication against actual watcher byte policy.",
+  "verified": [
+    "Pre-fix restore regression accepted an incompatible saved watcher policy",
+    "Distinct dependency IDs plus mandatory manifest fit saved source-count capacity",
+    "Accepted watched model input bytes fit saved per-file byte capacity",
+    "Exact boundary policies restore without enlargement",
+    "Explicit offline owners remain supported",
+    "Oversized changed model retains last accepted publication and automatically recovers after source fits again",
+    "Native Metal candidate refusals retain CPU/GPU publication and cache ownership"
+  ],
+  "suite_results": [
+    {
+      "passed": 67,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 349,
+      "failed": 0,
+      "ignored": 32
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "gpu_tests_passed": 1,
+  "gpu_adapter": "Apple M4 Max / Metal",
+  "strict_assets_editor_all_target_clippy": "passed",
+  "scoped_format": "passed",
+  "scoped_diff_check": "passed",
+  "source_sha256": {
+    "crates/voxy_assets/src/watch.rs": "ae2281cc904b414fdb55936d57eaa966caa05fa4dabeb51427f6d31db511c62d",
+    "crates/voxy_assets/src/watch_worker.rs": "5b88d964587e1c2f689efc0af0fc8038fb538789cac5df9e416cd7a76554ec79",
+    "crates/voxy_editor/src/app/resource_checkpoint.rs": "1f835e82a7f9ad3e290993cccb17ecbbf15213cd5016be374587e5768a855b8f",
+    "crates/voxy_editor/src/app/resource_checkpoint/tests.rs": "9381c08b7e82ce9cad1d133f1c309503e1ce26d94eb533bdcdb0a5c05b7c719f",
+    "crates/voxy_editor/src/app/model_reload.rs": "2070b950af1822231fe2468c31c661bbf94e98a16f8ce7b1d08fb86c39bf12c5",
+    "crates/voxy_editor/src/app/model_reload/tests.rs": "c8f674e32029d5f22e17dea7dc3b0dbefc8053aa9966ca92030e2e0eb5700c92"
+  },
+  "limits": [
+    "Saved source-count capacity was already preserved by worker restoration; added test confirms existing behavior",
+    "Rejects incompatible archive policy; does not silently enlarge budgets or migrate legacy archives",
+    "GPU test covers resource transaction ownership, not visual frame parity or FPS",
+    "No native whole-App session installation or device-audio qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

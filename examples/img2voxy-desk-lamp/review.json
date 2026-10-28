@@ -1,0 +1,10 @@
+{
+  "animation_readiness": "unverified",
+  "inferred_regions": [
+    "Entire demonstration is authored; no image likeness claim."
+  ],
+  "note": "No visual similarity score has been measured. Review a Voxy render against the reference.",
+  "reference": "synthetic:desk-lamp-demo (no photograph supplied)",
+  "structural_validation": "passed",
+  "visual_review": "pending"
+}

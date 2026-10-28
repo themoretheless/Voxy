@@ -1,0 +1,38 @@
+{
+  "status": "one_file_scene_and_scene_simulation_owner_checkpoint_verified",
+  "code_sha256": {
+    "crates/voxy_scene/src/allocation_checkpoint.rs": "b6cf86b770d4f6b029689f5da2d524d3f59a162c2fc97cc0ba9d17d76e8b33fb",
+    "crates/voxy_scene/src/scene_simulation_checkpoint.rs": "4d160f951f8de0c55dd28907d5182d12fb54d27e3ae0db28ccdc070fb85b0ed4",
+    "crates/voxy_scene/src/simulation.rs": "32ae52c29e951adf2f181bf6748ff60dce581e86770fb33aede600c07a2f63cc",
+    "crates/voxy_scene/src/document.rs": "c309deef1cc55337590bea46e3ad2bab4c9d817dfec16210448b8f97aafa1aa6",
+    "crates/voxy_scene/src/lib.rs": "1ef7934578932d3582e0e712dbefb63f28b9bbf678456d38e199d946edff9b44"
+  },
+  "scene_library_passed": 89,
+  "editor_library": {
+    "passed": 229,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_scene_time_gameplay_editor_all_targets_clippy_passed": true,
+  "test": "simulation::scene_checkpoint::tests::one_file_restores_scene_allocator_history_behaviors_commands_and_continuation",
+  "participants": [
+    "registered_scene_data",
+    "allocation_slots_generations_free_list",
+    "sibling_order_and_reserved_deleted_object_ids",
+    "clock_and_interpolation_history",
+    "registered_behavior_instances_and_lifecycle",
+    "pending_commands_and_spawn_journal"
+  ],
+  "disk_file_written_and_reloaded": true,
+  "following_frames_exact": 120,
+  "first_render_world_bits_match": true,
+  "slot_iteration_order_after_spawns_preserved": true,
+  "loaded_scene_identity_fresh_old_handles_invalid": true,
+  "invalid_candidates_and_byte_limits_preserve_prior_file_and_live_pair_in_tests": true,
+  "uses_existing_atomic_scene_file_writer": true,
+  "post_rename_error_reports_committed_flag": true,
+  "whole_game_state_implemented": false,
+  "physics_input_animation_audio_assets_or_app_session_integrated": false,
+  "native_window_and_fps_qualified": false,
+  "engine_ready": false
+}

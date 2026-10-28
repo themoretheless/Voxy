@@ -1,0 +1,18 @@
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio_device)
+    Finished `release` profile [optimized] target(s) in 1.15s
+     Running unittests src/lib.rs (target/research-ray-precision/release/deps/voxy_audio_device-c00e8b254fc6b780)
+
+running 1 test
+PCM_QUEUE_PAIR pair=0 frames=1048576 reference_ns=7588833 checkpointable_ns=8537333 batched_ns=6328125
+PCM_QUEUE_PAIR pair=1 frames=1048576 reference_ns=7540334 checkpointable_ns=8671791 batched_ns=6315666
+PCM_QUEUE_PAIR pair=2 frames=1048576 reference_ns=7546875 checkpointable_ns=8602791 batched_ns=6391666
+PCM_QUEUE_PAIR pair=3 frames=1048576 reference_ns=7477667 checkpointable_ns=8469584 batched_ns=6378375
+PCM_QUEUE_PAIR pair=4 frames=1048576 reference_ns=7578625 checkpointable_ns=8645167 batched_ns=6360833
+PCM_QUEUE_PAIR pair=5 frames=1048576 reference_ns=7453291 checkpointable_ns=8686542 batched_ns=6329625
+PCM_QUEUE_PAIR pair=6 frames=1048576 reference_ns=7560583 checkpointable_ns=8547458 batched_ns=6410417
+PCM_QUEUE_PAIR pair=7 frames=1048576 reference_ns=7563750 checkpointable_ns=8668875 batched_ns=6318875
+PCM_QUEUE_PAIR pair=8 frames=1048576 reference_ns=7538166 checkpointable_ns=8586000 batched_ns=6388250
+test queue::benchmarks::paired_former_channel_and_checkpointable_queue ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.20s
+

@@ -5,7 +5,7 @@ pub use scroll::ScrollPanel;
 mod layout;
 pub use layout::{Axis, LayoutItem, Length, layout_linear};
 mod focus;
-pub use focus::{FocusRouter, KeyAction};
+pub use focus::{FocusCheckpoint, FocusRouter, KeyAction};
 use std::collections::BTreeSet;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct WidgetId(pub u64);
@@ -91,7 +91,49 @@ pub struct PointerRouter {
     captured: Option<WidgetId>,
     held: bool,
 }
+/// Codec-neutral pointer history, including held-without-capture cancellation state.
+#[derive(Clone, Debug, PartialEq)]
+pub struct PointerCheckpoint {
+    pub regions: Vec<HitRegion>,
+    pub position: Option<[f32; 2]>,
+    pub captured: Option<WidgetId>,
+    pub held: bool,
+}
+impl PointerCheckpoint {
+    /// # Errors
+    /// Rejects invalid geometry, capacity, identities and impossible capture state.
+    pub fn prepare(&self, capacity: usize) -> Result<PointerRouter, UiError> {
+        let mut router = PointerRouter::new(capacity);
+        router.set_regions(&self.regions)?;
+        if self
+            .position
+            .is_some_and(|p| p.iter().any(|v| !v.is_finite()))
+        {
+            return Err(UiError::InvalidGeometry);
+        }
+        if self
+            .captured
+            .is_some_and(|id| !self.held || !self.regions.iter().any(|r| r.id == id && r.enabled))
+        {
+            return Err(UiError::UnknownWidget);
+        }
+        router.position = self.position;
+        router.captured = self.captured;
+        router.held = self.held;
+        Ok(router)
+    }
+}
 impl PointerRouter {
+    #[must_use]
+    pub fn checkpoint(&self) -> PointerCheckpoint {
+        PointerCheckpoint {
+            regions: self.regions.clone(),
+            position: self.position,
+            captured: self.captured,
+            held: self.held,
+        }
+    }
+
     #[must_use]
     pub fn new(capacity: usize) -> Self {
         Self {
@@ -145,6 +187,11 @@ impl PointerRouter {
     #[must_use]
     pub fn captured(&self) -> Option<WidgetId> {
         self.captured
+    }
+    /// Whether the primary button is held, including after capture cancellation.
+    #[must_use]
+    pub fn held(&self) -> bool {
+        self.held
     }
     /// Coordinates are logical viewport-local pixels. None represents pointer leave.
     /// Nonfinite coordinates are treated as outside rather than routed to widgets.
@@ -304,5 +351,53 @@ mod tests {
             Err(UiError::InvalidGeometry)
         );
         assert_eq!(router.hovered(), None);
+    }
+}
+
+#[cfg(test)]
+mod checkpoint_tests {
+    use super::*;
+    #[test]
+    fn held_pointer_and_keyboard_continue_without_duplicate_activation() {
+        let region = HitRegion {
+            id: WidgetId(17),
+            origin: [-0., 0.],
+            size: [20., 20.],
+            enabled: true,
+        };
+        let mut pointer = PointerRouter::new(2);
+        pointer.set_regions(&[region]).unwrap();
+        pointer.move_to(Some([3., 4.]));
+        pointer.press();
+        let saved = pointer.checkpoint();
+        let mut restored = saved.prepare(2).unwrap();
+        assert_eq!(pointer.press(), restored.press());
+        assert_eq!(pointer.release(), restored.release());
+        assert_eq!(pointer.checkpoint(), restored.checkpoint());
+        let mut bad = saved.clone();
+        bad.held = false;
+        assert!(bad.prepare(2).is_err());
+        assert!(saved.prepare(0).is_err());
+        let mut bad = saved;
+        bad.position = Some([f32::NAN, 0.]);
+        assert!(bad.prepare(2).is_err());
+
+        let mut focus = FocusRouter::new(2);
+        focus.set_order(&[WidgetId(17), WidgetId(18)]).unwrap();
+        focus.traverse(false);
+        focus.press();
+        let saved = focus.checkpoint();
+        let mut restored = saved.prepare(2).unwrap();
+        assert_eq!(focus.press(), restored.press());
+        assert_eq!(focus.traverse(false), restored.traverse(false));
+        // Cancelled activation retains held until release; a new down cannot click.
+        let mut restored = focus.checkpoint().prepare(2).unwrap();
+        assert_eq!(focus.press(), restored.press());
+        assert_eq!(focus.release(), restored.release());
+        assert_eq!(focus.press(), restored.press());
+        assert_eq!(focus.release(), restored.release());
+        let mut bad = saved;
+        bad.held = false;
+        assert!(bad.prepare(2).is_err());
     }
 }

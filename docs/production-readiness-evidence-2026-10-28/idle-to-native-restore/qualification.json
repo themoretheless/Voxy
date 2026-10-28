@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-28",
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Whole-App native playback archive load from an idle/no-device source, using the existing session/device worker and common restore transaction",
+  "changes": [
+    "Reader thread validates the nested original PCM output archive before acquiring source fences or opening a native device; Fencing uses constant-time rate metadata lookup",
+    "Cancellable owned Device load stage has 20-second observation timeout and polls original native worker initialization/pause",
+    "Host native policy or an existing native window is required; an archive cannot independently authorize output",
+    "Original idle checkpoint remains logically null while its provisional empty device is prepared and queue is frozen",
+    "Provisional output mode is guarded; sample rate must match exactly and no resampling is performed",
+    "Original CPU/GPU/UI/native readiness and final receipt publish saved PCM/pump/scene/Play and adopt the prepared device only at commit",
+    "Cancellation/error asynchronously closes only provisional output through original session ownership; no frame-thread device join",
+    "Active native, native-to-idle and ordinary offline paths remain in the same owners/codecs"
+  ],
+  "checks": {
+    "editor": {
+      "passed": 395,
+      "ignored": 48
+    },
+    "gpu_app": {
+      "passed": 10,
+      "device": "Apple M4 Max",
+      "backend": "Metal",
+      "window": false
+    },
+    "native_session": {
+      "passed": 1,
+      "sample_rate": 48000,
+      "gain": 0,
+      "window": false
+    },
+    "clippy": "editor all targets -D warnings, exit 0",
+    "format": "scoped rustfmt passed",
+    "diff": "scoped git diff --check passed; touched sources are preexisting untracked files"
+  },
+  "regressions": [
+    "Complete source-free active→idle→native file/CPU/GPU/UI/device/PCM cycle followed by 120 game/render frames",
+    "Cancellation during device initialization and after native readiness preserves original idle scene and playback state; worker retirement polled normally",
+    "Valid outer editor file with damaged nested output rejects on reader before any source barrier or device",
+    "Failure after provisional device reached paused/ready state restores original idle source and retires the new device",
+    "Actual native Session sample-rate mismatch and output-policy change reject and clean up without changing source playback",
+    "Idle source JSON remains exact while prepared device is held",
+    "Committed PCM queue and pump suffix match original archived bits exactly before final gate release; final receipt retains the adopted native device",
+    "CPU test verifies source checkpoint and host authorization requirements without opening any device",
+    "Existing model/UI pixel comparisons, counters, full active-native/Stop/idle workflows and late-source guards pass"
+  ],
+  "limitations": [
+    "Provisional device may emit empty zero-filled callbacks before pause; gain-zero tests do not prove audible continuity or analog host-buffer alignment",
+    "After cancel/timeout, native initialization/destruction remains owned and asynchronous; further restore admission may wait for normal worker retirement",
+    "Offline playback archives without native queues still require an explicit cross-mode conversion path; active offline source to native is not qualified",
+    "Different sample rates/capacities are rejected without lossy conversion; reconnect and device replacement remain open",
+    "Native window, frame-time/120/160 FPS, latency, power and full ENG-03 through ENG-13 remain open"
+  ],
+  "sources_sha256": {
+    "crates/voxy_editor/src/audio_session.rs": "e3fae1ca0c6b29d9d436df37d3dcdc5b05929cf738a4510482c2203620dd8bc4",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "a64d9654f679d5eb57b0b08f8608b1ad9b096e2de969734236e7de0a8e64fb39",
+    "crates/voxy_editor/src/audio_owner_checkpoint.rs": "b5222193185fb17e7226fda7e2f30f10c04d470106fa4647a7c5438143af4a06",
+    "crates/voxy_editor/src/audio_playback_checkpoint.rs": "479d1422b3ed9ec881e8403e850d1f81053365f95072f95fceafa36770ad89b9",
+    "crates/voxy_editor/src/app/restore_barrier/load.rs": "20d1567313ae903de6f40ac25ddf5e436bad659f31cf818cc360871d225aa73f",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "453c2c0991dccce6cebe52c8e9042ab255f956f7882051ba1563dc82a8ab5b42"
+  },
+  "logs": [
+    "editor.log",
+    "gpu.log",
+    "native_session.log",
+    "clippy.log"
+  ]
+}

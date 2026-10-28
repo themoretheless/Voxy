@@ -1,0 +1,144 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+   --> crates/voxy_editor/src/animation_preview/checkpoint.rs:128:74
+    |
+125 |     fn preview_restore_rejects_foreign_morph_schema_and_unbound_source() -> Result<(), EditorError>
+    |                                                                             ----------------------- expected `error::EditorError` because of this
+...
+128 |         let (_, bytes) = crate::locomotion_tests::morph_project(&fixture)?;
+    |                          ------------------------------------------------^ the trait `From<Box<dyn StdError>>` is not implemented for `error::EditorError`
+    |                          |
+    |                          this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+    |
+note: `error::EditorError` needs to implement `From<Box<dyn StdError>>`
+   --> crates/voxy_editor/src/error.rs:6:1
+    |
+  6 | pub enum EditorError {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: `error::EditorError` implements trait `From<T>`:
+              From<&str>
+              From<AnimationError>
+              From<AudioError>
+              From<DependencyError>
+              From<DocumentError>
+              From<FogError>
+              From<GameplayError>
+              From<ImageAssetError>
+            and 22 others
+
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+   --> crates/voxy_editor/src/animation_preview/checkpoint.rs:152:50
+    |
+125 |     fn preview_restore_rejects_foreign_morph_schema_and_unbound_source() -> Result<(), EditorError>
+    |                                                                             ----------------------- expected `error::EditorError` because of this
+...
+152 |                 .checkpoint(&model.skeleton, max)?
+    |                  --------------------------------^ the trait `From<AnimatorCheckpointError>` is not implemented for `error::EditorError`
+    |                  |
+    |                  this can't be annotated with `?` because it has type `Result<_, AnimatorCheckpointError>`
+    |
+note: `error::EditorError` needs to implement `From<AnimatorCheckpointError>`
+   --> crates/voxy_editor/src/error.rs:6:1
+    |
+  6 | pub enum EditorError {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: `error::EditorError` implements trait `From<T>`:
+              From<&str>
+              From<AnimationError>
+              From<AudioError>
+              From<DependencyError>
+              From<DocumentError>
+              From<FogError>
+              From<GameplayError>
+              From<ImageAssetError>
+            and 22 others
+
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+   --> crates/voxy_editor/src/animation_preview/checkpoint.rs:153:30
+    |
+125 |     fn preview_restore_rejects_foreign_morph_schema_and_unbound_source() -> Result<(), EditorError>
+    |                                                                             ----------------------- expected `error::EditorError` because of this
+...
+153 |                 .to_json(max)?,
+    |                  ------------^ the trait `From<AnimatorCheckpointError>` is not implemented for `error::EditorError`
+    |                  |
+    |                  this can't be annotated with `?` because it has type `Result<_, AnimatorCheckpointError>`
+    |
+note: `error::EditorError` needs to implement `From<AnimatorCheckpointError>`
+   --> crates/voxy_editor/src/error.rs:6:1
+    |
+  6 | pub enum EditorError {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: `error::EditorError` implements trait `From<T>`:
+              From<&str>
+              From<AnimationError>
+              From<AudioError>
+              From<DependencyError>
+              From<DocumentError>
+              From<FogError>
+              From<GameplayError>
+              From<ImageAssetError>
+            and 22 others
+
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+   --> crates/voxy_editor/src/animation_preview/checkpoint.rs:156:50
+    |
+125 |     fn preview_restore_rejects_foreign_morph_schema_and_unbound_source() -> Result<(), EditorError>
+    |                                                                             ----------------------- expected `error::EditorError` because of this
+...
+156 |                 .checkpoint(&model.skeleton, max)?
+    |                  --------------------------------^ the trait `From<AnimatorCheckpointError>` is not implemented for `error::EditorError`
+    |                  |
+    |                  this can't be annotated with `?` because it has type `Result<_, AnimatorCheckpointError>`
+    |
+note: `error::EditorError` needs to implement `From<AnimatorCheckpointError>`
+   --> crates/voxy_editor/src/error.rs:6:1
+    |
+  6 | pub enum EditorError {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: `error::EditorError` implements trait `From<T>`:
+              From<&str>
+              From<AnimationError>
+              From<AudioError>
+              From<DependencyError>
+              From<DocumentError>
+              From<FogError>
+              From<GameplayError>
+              From<ImageAssetError>
+            and 22 others
+
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+   --> crates/voxy_editor/src/animation_preview/checkpoint.rs:157:30
+    |
+125 |     fn preview_restore_rejects_foreign_morph_schema_and_unbound_source() -> Result<(), EditorError>
+    |                                                                             ----------------------- expected `error::EditorError` because of this
+...
+157 |                 .to_json(max)?
+    |                  ------------^ the trait `From<AnimatorCheckpointError>` is not implemented for `error::EditorError`
+    |                  |
+    |                  this can't be annotated with `?` because it has type `Result<_, AnimatorCheckpointError>`
+    |
+note: `error::EditorError` needs to implement `From<AnimatorCheckpointError>`
+   --> crates/voxy_editor/src/error.rs:6:1
+    |
+  6 | pub enum EditorError {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: `error::EditorError` implements trait `From<T>`:
+              From<&str>
+              From<AnimationError>
+              From<AudioError>
+              From<DependencyError>
+              From<DocumentError>
+              From<FogError>
+              From<GameplayError>
+              From<ImageAssetError>
+            and 22 others
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `voxy_editor` (lib test) due to 5 previous errors
+warning: build failed, waiting for other jobs to finish...

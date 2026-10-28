@@ -1,0 +1,21 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.26s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 1 test
+test game_host_tests::host_ui_callback_state_and_pending_click_survive_source_free_package ... FAILED
+
+failures:
+
+---- game_host_tests::host_ui_callback_state_and_pending_click_survive_source_free_package stdout ----
+Error: Message("UI action does not support checkpoints: voxy.ui.hide")
+
+
+failures:
+    game_host_tests::host_ui_callback_state_and_pending_click_survive_source_free_package
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 267 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

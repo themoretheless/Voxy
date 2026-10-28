@@ -13,7 +13,9 @@ impl App {
             panels.focus.cancel();
         }
         self.field = None;
+        self.model_relink_draft = None;
         self.parenting = None;
+        self.follow_pick = None;
     }
 
     pub(crate) fn panel_document(&self) -> Result<SceneDocument, Box<dyn std::error::Error>> {
@@ -74,6 +76,7 @@ impl App {
         if self.standalone
             || self.play.playing.is_some()
             || self.field.is_some()
+            || self.model_relink_draft.is_some()
             || !matches!(key, KeyCode::Tab | KeyCode::Enter | KeyCode::Space)
             || self.panels.is_none()
         {
@@ -120,6 +123,15 @@ impl App {
         key: KeyCode,
         text: Option<&str>,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        if self.snapshot_draft.is_some() {
+            return Ok(self.snapshot_path_key(key, text)?);
+        }
+        if self.snapshot_shortcut(key)? {
+            return Ok(());
+        }
+        if self.snapshot_escape(key) {
+            return Ok(());
+        }
         if self.play.playing.is_none()
             && key != KeyCode::Escape
             && self
@@ -135,7 +147,10 @@ impl App {
             }
             return Ok(());
         }
-        if self.field.is_some() {
+        if self.model_relink_draft.is_some() {
+            self.model_relink_key(key, text);
+            Ok(())
+        } else if self.field.is_some() {
             self.field_key(key, text)
         } else {
             self.edit_key(key)
@@ -159,6 +174,9 @@ impl App {
         }
         self.trace.pending = true;
         self.trace.last_outcome = None;
+        if self.follow_pick.take().is_some() {
+            self.panel_cache = None;
+        }
         self.finish_drag(false)?;
         if key == KeyCode::KeyH && self.play.playing.is_none() {
             return self.expand_model();
@@ -167,10 +185,12 @@ impl App {
             let enabled = !self.msaa4;
             if let Some(graphics) = &mut self.graphics {
                 if enabled {
-                    pollster::block_on(graphics.renderer.enable_msaa4(graphics.host.device()))?;
-                    graphics.host.enable_msaa4()?;
-                } else {
-                    graphics.host.disable_msaa4();
+                    pollster::block_on(graphics.renderer.enable_msaa4(&graphics.device))?;
+                    if let Some(host) = &mut graphics.host {
+                        host.enable_msaa4()?;
+                    }
+                } else if let Some(host) = &mut graphics.host {
+                    host.disable_msaa4();
                 }
             }
             self.msaa4 = enabled;
@@ -208,11 +228,7 @@ impl App {
             return Ok(());
         }
         if key == KeyCode::KeyF {
-            if let Some(node) = self.instances.get(self.selected) {
-                self.camera.target = self.scene.world_matrix(*node)?.w_axis.truncate();
-                self.camera.legacy = false;
-            }
-            return Ok(());
+            return self.focus_displayed_model();
         }
         if key == KeyCode::F6 {
             return self.toggle_play();
@@ -261,6 +277,18 @@ impl App {
                     .components::<EditorCamera>()
                     .map(|(owner, _)| owner)
                     .collect();
+                for owner in &owners {
+                    if *owner != node
+                        && self
+                            .scene
+                            .component::<voxy_gameplay::FollowCamera>(*owner)?
+                            .is_some()
+                    {
+                        return Err(
+                            "remove the other follow camera before replacing its view".into()
+                        );
+                    }
+                }
                 for owner in owners {
                     self.scene.remove_component::<EditorCamera>(owner)?;
                 }
@@ -414,20 +442,12 @@ impl App {
                 self.selected = self.instances.len() - 1;
             }
             KeyCode::Delete | KeyCode::Backspace => {
-                self.scene
-                    .remove_subtree(node.ok_or("missing selected node")?)?;
-                let surviving: Vec<_> = self
-                    .instances
-                    .iter()
-                    .copied()
-                    .zip(self.object_ids.iter().cloned())
-                    .filter(|(node, _)| self.scene.local(*node).is_ok())
-                    .collect();
-                (self.instances, self.object_ids) = surviving.into_iter().unzip();
-                self.selected = self.selected.min(self.instances.len().saturating_sub(1));
-                if let Some(graphics) = &mut self.graphics {
-                    graphics.transforms.clear();
-                }
+                let root = self
+                    .object_ids
+                    .get(self.selected)
+                    .cloned()
+                    .ok_or("missing selected object")?;
+                return self.delete_authoring_subtree(&root);
             }
             KeyCode::Tab => self.selected = (self.selected + 1) % self.instances.len(),
             KeyCode::ArrowLeft => {
@@ -463,6 +483,16 @@ impl App {
         &mut self,
         action: panels::Action,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        if action == panels::Action::CancelLoad {
+            self.cancel_editor_file_load();
+            self.panel_cache = None;
+            return Ok(());
+        }
+        // A presented panel action may outlive the state that admitted it.
+        // Validate retry before finishing drags or clearing any authoring draft.
+        if action == panels::Action::RetryModel && !self.can_retry_selected_model() {
+            return Err("model import retry unavailable in the current editor state".into());
+        }
         if self.retarget_draft.is_some()
             && !matches!(
                 action,
@@ -485,14 +515,26 @@ impl App {
         self.trace.pending = true;
         self.trace.last_outcome = None;
         self.field = None;
+        self.model_relink_draft = None;
         self.component_edit = None;
         if !matches!(action, panels::Action::Select(_) | panels::Action::Parent) {
             self.parenting = None;
+        }
+        if !matches!(
+            action,
+            panels::Action::FollowTarget(_)
+                | panels::Action::FollowCamera(_)
+                | panels::Action::FollowTargetChoice(_)
+        ) {
+            self.follow_pick = None;
         }
         if self.play.playing.is_some() && action != panels::Action::Play {
             return Ok(());
         }
         match action {
+            panels::Action::FollowCamera(token) => self.begin_follow_pick(token, true),
+            panels::Action::FollowTarget(token) => self.begin_follow_pick(token, false),
+            panels::Action::FollowTargetChoice(token) => self.choose_follow_target(token),
             panels::Action::Select(index) => {
                 if index < self.instances.len() {
                     if let Some(node) = self.parenting.take() {
@@ -523,6 +565,8 @@ impl App {
                 Ok(())
             }
             panels::Action::ResetField(index) => self.reset_prefab_field(index),
+            panels::Action::MorphDefaults(token) => self.edit_morph_defaults(token, false),
+            panels::Action::MorphResume(token) => self.edit_morph_defaults(token, true),
             panels::Action::PreviewSeek => self.preview_animation_phase(0.5, false),
             panels::Action::PreviewPhase(phase) => self.preview_animation_phase(phase, false),
             panels::Action::MarkerAdd(token) => self.edit_animation_marker(None, token),
@@ -535,6 +579,12 @@ impl App {
             panels::Action::Duplicate => self.edit_key(KeyCode::KeyD),
             panels::Action::Delete => self.edit_key(KeyCode::Delete),
             panels::Action::Resource => self.edit_key(KeyCode::KeyR),
+            panels::Action::RetryModel => self.retry_selected_model(),
+            panels::Action::RelinkModel => self.begin_model_relink_edit().map_err(Into::into),
+            panels::Action::RelinkCancel => {
+                self.model_relink_error = None;
+                Ok(())
+            }
             panels::Action::Parent => {
                 if let Some(node) = self.instances.get(self.selected).copied() {
                     if self.scene.parent(node)?.is_some() {
@@ -676,6 +726,7 @@ impl App {
             panels::Action::Play => self.edit_key(KeyCode::F6),
             panels::Action::Save => self.edit_key(KeyCode::F5),
             panels::Action::Load => self.edit_key(KeyCode::F9),
+            panels::Action::CancelLoad => unreachable!(),
             panels::Action::RevertPrefab => self.revert_prefab(),
             panels::Action::PlacePrefab => self.place_prefab(),
             panels::Action::CreatePrefab => self.create_prefab_from_selection(),

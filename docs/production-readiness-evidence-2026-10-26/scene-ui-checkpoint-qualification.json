@@ -1,0 +1,31 @@
+{
+  "status": "scene_ui_durable_checkpoint_verified",
+  "tests": {
+    "gameplay_ui_passed": 9,
+    "editor_passed": 242,
+    "editor_ignored": 20,
+    "ui_passed": 10,
+    "strict_gameplay_ui_all_target_clippy": true
+  },
+  "covered": [
+    "fresh scene rebinding by ObjectId",
+    "accepted snapshot and monotonic widget identity allocation",
+    "pointer and keyboard held state",
+    "pending action descriptor change reconciled on next refresh",
+    "byte and element limits",
+    "invalid capture and missing owner rejection",
+    "repeat pointer down preserves keyboard focus"
+  ],
+  "remaining": [
+    "whole App/PlaySession publication",
+    "native device input synchronization",
+    "UI action handler code compatibility",
+    "text worker glyph resource state"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/ui_runtime_checkpoint.rs": "f3bc1488dfa2da4de82563b857fc763d6b554409816ad023e7843e75f6f1cea7",
+    "crates/voxy_gameplay/src/ui_runtime.rs": "d07480e1c9c6e849e971fe6018450b0fe7c36b00441663ea3b15e04b86a6b4ad",
+    "crates/voxy_gameplay/src/lib.rs": "4d18ffbaa33987d3c03761d34ae06a65a074e2905db9adb48804c6e8e020baf8",
+    "crates/voxy_ui/src/lib.rs": "37db21102a7f3c5b4ae7a71eb15554ec3a28167337594027684b941ec9f207e3"
+  }
+}

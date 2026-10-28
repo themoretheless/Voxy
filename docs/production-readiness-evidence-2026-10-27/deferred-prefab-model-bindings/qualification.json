@@ -1,0 +1,35 @@
+{
+  "stage": "ENG-03 deferred prefab binding admission",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "bug": "Declared prefab build validation expanded document structure but did not reject model references outside native model inventory; unused prefab with missing logical model ID was packaged successfully.",
+  "change": "Build checks native expanded prefab objects after nested overrides against existing model inventory. No second catalog, format or standalone-prefab gameplay validator introduced; editor unresolved-reference repair policy unchanged.",
+  "verified": [
+    "Pre-fix build accepts unused prefab with missing-model reference",
+    "Missing, empty and declared-but-non-model references reject without output",
+    "Structurally valid nested component override resolves to missing model and rejects at build",
+    "Corrected override exports successfully",
+    "After deleting complete original source tree, packaged prefab expands with correct binding",
+    "Native editor place_prefab from materialized package creates object; normal standalone startup loads model and AngularMotion updates world transform after one fixed tick",
+    "Original empty-startup package GameCheck also completes 120 ticks"
+  ],
+  "editor_tests": {
+    "passed": 359,
+    "failed": 0,
+    "ignored": 35
+  },
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/package_models.rs": "b97c8ebb58837e0cf70d09d7d3aa15ff030a0d369ae40854bc96e8db5b5fc712",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "21652a6e7346a6a80b7979d3d5c6df7b19cacc2b3d2e2d097e37623034f5860e"
+  },
+  "validation_note": "Full suite precedes test-only positive placement/startup/motion extension; final targeted regression and strict all-target compilation run after extension.",
+  "limits": [
+    "Checks editor.model.v1 references; retarget sources, clip/part/profile compatibility and other deferred typed asset links remain separate admission work",
+    "Positive prefab placement occurs through native editor authoring followed by standalone startup; not new in-game prefab-spawn API",
+    "GameCheck uses original empty startup scene; one-tick placed-object motion is asserted separately inside same regression",
+    "No new GPU/window/input/audio-device, physical memory or FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

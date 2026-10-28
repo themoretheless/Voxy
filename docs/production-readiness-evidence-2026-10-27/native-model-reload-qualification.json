@@ -1,0 +1,48 @@
+{
+  "scope": "Normal App model reload deferred GPU admission and exclusive catalog/GPU transaction",
+  "implemented": [
+    "App tick retains model result until nonblocking GPU error-scope validation completes",
+    "Normal reload uses detached batch and old live resources remain installed during preparation",
+    "Destination device/cache/allocation inventory and hierarchy/locomotion bindings rechecked before commit",
+    "Native complete_transaction performs source/catalog admission before infallible model-map/cache swap under exclusive borrow",
+    "Stale tickets and GPU rejection preserve last-good CPU/GPU data",
+    "Pending GPU publication gates new imports and model checkpoint readiness",
+    "Shutdown cancels pending publication, releases future resources and settles current catalog ticket with retained observations"
+  ],
+  "checks": {
+    "full_editor_suite": {
+      "passed": 298,
+      "ignored": 23,
+      "failed": 0
+    },
+    "explicit_gpu_transaction_test": "passed Apple M4 Max Metal, no window",
+    "gpu_test_scope": [
+      "same commit helper used by App",
+      "CPU publication unchanged while staging",
+      "CPU/GPU allocation versions switch together",
+      "stale-ticket rejection leaves accepted CPU/GPU/cache unchanged",
+      "failed and deferred-error results retain last-good",
+      "checkpoint waits and shutdown settles pending candidate"
+    ],
+    "all_target_clippy": "passed -D warnings",
+    "scoped_format_diff": "passed"
+  },
+  "retained_failures": [
+    "Initial build needed Debug for Pending; fixed",
+    "Initial GPU test injected pending work into an already Ready barrier; test now starts a new fence before checking drain behavior"
+  ],
+  "open": [
+    "Full saved App restoration is separate and not yet committed",
+    "Running scene/animation/UI/audio/model identity joins for saved state remain open",
+    "No native window/rendered pixels, displayed frame pacing, physical memory or FPS qualification",
+    "Device/cache change during staging rejects reload rather than publishing a mismatched candidate",
+    "ENG-03 through ENG-13 remain incomplete"
+  ],
+  "logs_sha256": {
+    "native-model-reload-editor-tests.log": "03d57d3c5560d165f9d3f24d8ae47e5b6547ec215822f32c98f88a6cdc558a4e",
+    "native-model-reload-metal.log": "ec9f28e055d74d134e80d83642bd656e434f76b3dff4178f11387e469341cb0d",
+    "native-model-reload-clippy.log": "031b2b7797f46ded023caf34300ac25b2b3e031d3969d19ef334a5baf3408ed6",
+    "native-model-reload-initial-test-failure.log": "1e3859298f156dd2866b1f3e789aaf3660909d153eac4ea7363b807739c24ef2",
+    "native-model-reload-initial-build-failure.log": "fa307ef4424c477da86e273c12000cbc2ded5673f62228b63473d753a3ea38e4"
+  }
+}

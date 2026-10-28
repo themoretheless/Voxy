@@ -1,0 +1,30 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.72s
+     Running `target/research-ray-precision/debug/examples/skinned_lod_checkpoint docs/production-readiness-evidence-2026-10-27/skinned-lod-files`
+{
+  "receipts": [
+    {
+      "blake3": "7ec994afe015591d76e5fc0994160d4792dc9b16025560513d7dc4d1e1e91eab",
+      "bytes": 1346,
+      "exact_geometry_checks": 240,
+      "external_mesh_arc_preserved": true,
+      "file": "whole.json",
+      "pose_frames": 120,
+      "quality_trajectory_blake3": "bfee50e4d0292d6c104d355d82578d39ce569991dc5d85c6aa2cdee4829bc168",
+      "quality_varies_with_pose": true,
+      "source_checkpoint_equal_after_continuation": true
+    },
+    {
+      "blake3": "8b59ea98626f9c269a031717f160e117f1823ca0f01958b807bad1418573d65c",
+      "bytes": 2224,
+      "exact_geometry_checks": 240,
+      "external_mesh_arc_preserved": true,
+      "file": "subdivided.json",
+      "pose_frames": 120,
+      "quality_trajectory_blake3": "47a84a7a720b095c8a41b2b16e238c2651f82e5e73f64aa23c3d8a61cfd5e0f4",
+      "quality_varies_with_pose": true,
+      "source_checkpoint_equal_after_continuation": true
+    }
+  ],
+  "scope": "native CPU skeletal source and pose-specific quality; no GPU/frame-rate qualification"
+}

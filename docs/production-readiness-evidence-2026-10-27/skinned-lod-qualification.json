@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-27",
+  "scope": "Native single skeletal LOD source checkpoint and explicit model-mesh join; not complete EditorAsset/App publication.",
+  "base_revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_tree": true,
+  "toolchain": "nightly-2026-05-27",
+  "source_sha256": {
+    "crates/voxy_render/src/lib.rs": "e38c07e2eb4dc8afdd154bd69d7bcc24b642647fa00321d437372109e71c29a2",
+    "crates/voxy_render/src/skinned_lod.rs": "80844dc9bc3eca8e6123e27c5feb66a47117e35c0a6d6010aa7cabc5b6684b76",
+    "crates/voxy_render/src/skinned_lod/checkpoint.rs": "2469e5cd3d1724b2fd44edfdf11d9693ff2f539d5b7485938b11b5658fe99819",
+    "crates/voxy_render/src/skinned_lod/checkpoint/tests.rs": "b694eb0b2838bccbe3a9934a167553936fdaa335933cee8418216f61b164350f",
+    "crates/voxy_render/src/certified_lod/checkpoint.rs": "5af72f2f34257b5452fc7bed9cc1384996ac7d8f09fb7a211f5e56f20d8c888f",
+    "crates/voxy_render/examples/skinned_lod_checkpoint.rs": "7c7e45be9ec14bce9e9ef8ab8a7b8157efb20340487bfa9fc0a82ad025e8365f",
+    "crates/voxy_editor/src/import/animated_tests.rs": "d5def0a18c22100eb5ab6a702d272cd77c86fae4215f45b2f13537ef699dbe59"
+  },
+  "change": [
+    "Exact accepted mesh/cache source and Whole/Subdivided witnesses stored in strict versioned JSON",
+    "Native rest certification and exact receipts reverified on reconstruction; each future pose still recertified normally",
+    "prepare_with_mesh validates canonical singleton mesh bytes and preserves the exact supplied Arc",
+    "Static and skeletal restoration share one native proof-proposal decoder",
+    "Source vertex/index/cell/level counts checked before witness copying; nested mesh decoder constrained to one source"
+  ],
+  "checks": {
+    "new_native_tests": 3,
+    "actual_import_consumer": {
+      "passed": 1
+    },
+    "render_lib": {
+      "passed": 373,
+      "ignored": 86
+    },
+    "editor_lib": {
+      "passed": 284,
+      "ignored": 21
+    },
+    "strict_clippy": "render/editor all-targets including new example passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "diff_check": "passed"
+  },
+  "consumer": "Actual skeletal vmodel import/dependency/last-good path; save complete ModelAsset and skeletal LOD checkpoints, stop workers, remove model.vmodel/motion.gltf/motion.bin/proof.lod, restore both files and explicitly bind LOD to restored model mesh. Vertex/index pointers shared; 120 source/restored pose positions, f64 error/count receipts and both geometry levels match.",
+  "regressions": [
+    "Whole and subdivided real files; standalone and externally bound mesh identity",
+    "120 deformed poses with nonuniform instance transforms; exact positions, errors and posed geometry; error envelopes vary with pose",
+    "Near/far camera policy with independent history, hysteresis and both levels reached",
+    "Same positions with changed influences reject as wrong source binding",
+    "Forged receipt/corrupt mesh/unknown fields/limits and invalid future pose leave original accepted source/ready pose unchanged",
+    "Base-only native sources restore no invented variants; source itself stores no empty-kind discriminator"
+  ],
+  "file_artifacts": [
+    {
+      "blake3": "7ec994afe015591d76e5fc0994160d4792dc9b16025560513d7dc4d1e1e91eab",
+      "bytes": 1346,
+      "exact_geometry_checks": 240,
+      "external_mesh_arc_preserved": true,
+      "file": "whole.json",
+      "pose_frames": 120,
+      "quality_trajectory_blake3": "bfee50e4d0292d6c104d355d82578d39ce569991dc5d85c6aa2cdee4829bc168",
+      "quality_varies_with_pose": true,
+      "source_checkpoint_equal_after_continuation": true,
+      "path": "skinned-lod-files/whole.json",
+      "sha256": "496a84717213be5baaa779086b1e1d495297c8e3bd10fce2eccc275dcac98035"
+    },
+    {
+      "blake3": "8b59ea98626f9c269a031717f160e117f1823ca0f01958b807bad1418573d65c",
+      "bytes": 2224,
+      "exact_geometry_checks": 240,
+      "external_mesh_arc_preserved": true,
+      "file": "subdivided.json",
+      "pose_frames": 120,
+      "quality_trajectory_blake3": "47a84a7a720b095c8a41b2b16e238c2651f82e5e73f64aa23c3d8a61cfd5e0f4",
+      "quality_varies_with_pose": true,
+      "source_checkpoint_equal_after_continuation": true,
+      "path": "skinned-lod-files/subdivided.json",
+      "sha256": "a1d61e6fd3c41e12f050ffb689a4d1ce119f7ad69369822ff003a9caac12d55d"
+    }
+  ],
+  "receipt": "skinned-lod-files/receipt.json",
+  "logical_policy": "Input/output bytes, one native source mesh, geometry/joint counts and cumulative rest witness geometry/depth/cell policies. Not physical peak heap qualification.",
+  "limits": [
+    "Source constructors currently use one proof kind per native source; unexpected internal mixed state rejects",
+    "Explicit external mesh binding is supplied by enclosing owner; no heuristic source matching",
+    "One source is prepared at a time; enclosing EditorAsset graph must preserve wrapper/source alias tables",
+    "JSON integrity belongs to enclosing resource file; standalone checksum not claimed",
+    "No whole-animation/GPU arithmetic/material/normal/UV quality guarantee",
+    "No explicit GPU/window/audio-device/FPS qualification"
+  ],
+  "remaining": [
+    "Complete EditorAsset image/node/LOD/source-observation graph and identity tables",
+    "Catalog/revision joins, worker/watch barriers and atomic CPU/GPU/App publication",
+    "Whole-session disk/native/platform and physical-memory acceptance",
+    "ENG-03 through ENG-13 remain open"
+  ],
+  "field_audit": "skinned-lod-owner-field-audit.json",
+  "logs": {
+    "check": "skinned-lod-check.log",
+    "focused": "skinned-lod-focused.log",
+    "actual-consumer": "skinned-lod-actual-consumer.log",
+    "render-full": "skinned-lod-render-full.log",
+    "editor-full": "skinned-lod-editor-full.log",
+    "example": "skinned-lod-example.log",
+    "clippy": "skinned-lod-clippy.log",
+    "format": "skinned-lod-format.log",
+    "diff": "skinned-lod-diff.log"
+  }
+}

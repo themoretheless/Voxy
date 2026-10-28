@@ -1,0 +1,68 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Final native audio publication permit and infallible gate release for future whole-App commit",
+  "status": "permit/receipt implemented; full native App load still not connected",
+  "changes": [
+    "Core stage validates connection/capacity/rate/source queue/pump and allocates prepared installation before moving freeze token",
+    "Owned ready installation preserves source until publish; cancel returns original gate and reusable candidate",
+    "Native publication permit exclusively borrows session/candidate plus immutable destination scene/project until audio commit",
+    "Dropping unpublished permit restores source queue token and prepared output; no native backend call",
+    "Permit publish installs PCM/pump/playback with no remaining fallible admission",
+    "Committed receipt retains mutable session borrow and queue token while other host fields can be swapped",
+    "Receipt finish clears original checkpoint state and releases PCM without native API, poll, wait or revalidation",
+    "Legacy explicit audio-only resume wrapper reuses same permit through hold path; obsolete implementation removed"
+  ],
+  "checks": {
+    "audio_device": {
+      "passed": 22,
+      "ignored": 2
+    },
+    "editor": {
+      "passed": 392,
+      "ignored": 45
+    },
+    "native_session": {
+      "passed": 1,
+      "endpoint": "actual default CPAL/CoreAudio system output",
+      "rate": 48000,
+      "gain": 0,
+      "window": false,
+      "cases": [
+        "new core ready/cancel/publication state transition",
+        "source-free native staging and original epoch/source/scene failure cases retained",
+        "drop final native permit to simulate another owner admission failure",
+        "held source AudioSession JSON identical after permit cancellation",
+        "reacquire same candidate and commit",
+        "backend already active but PCM remains frozen 20ms while committed receipt is held",
+        "exact archive OutputCheckpoint equality after commit",
+        "modify real scene owner after audio commit while PCM is held",
+        "infallible receipt.finish clears source gate/checkpoint without backend resume",
+        "joined retired source workers outside commit"
+      ]
+    },
+    "gpu_regressions": {
+      "passed": 7,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "mode": "offscreen"
+    },
+    "clippy": "audio_device and editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "limitations": [
+    "Full scene/GPU/UI/input loader has not yet been wired to this permit/receipt; ordinary native file load remains gated",
+    "All fallible admission for other owners must precede permit publish; no general rollback of committed audio/world state is supplied",
+    "Dropping a committed receipt releases committed PCM; it is not an abort/rollback operation",
+    "Logical commit is infallible after admission, not a guarantee against asynchronous device loss or allocation abort",
+    "No native editor window or listening test; hardware test uses gain zero",
+    "No FPS, latency or power qualification; full ENG roadmap remains open"
+  ],
+  "sha256": {
+    "crates/voxy_audio_device/src/queue.rs": "209ade9d4e0e3a840c3b09b7416417038ee8f8b0fe62c4403fc53dfb40acd565",
+    "crates/voxy_audio_device/src/output_checkpoint.rs": "76982ef5c9bdd12b40fb8ff7945d36ef1479b18bab7eda0bbd2dfadced1ace5d",
+    "crates/voxy_audio_device/src/lib.rs": "9554cfb900e94d7423b061d2a0925215f5a63a71434555650663edad83200ab6",
+    "crates/voxy_editor/src/audio_play.rs": "e042987e6cc80cfba321d27f80405b4b791f4696c072968b6a6a78a474e6004b",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "3bbef4ff4378125d38b3b164b84b669ba2bd97df2eb37a8bfa5d92ab7c830420"
+  }
+}

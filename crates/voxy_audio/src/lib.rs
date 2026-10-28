@@ -1,5 +1,7 @@
 //! Owner-thread PCM mixer. Device I/O and decoding belong to separate adapters.
+mod checkpoint;
 mod pcm_archive;
+pub use checkpoint::{GainCheckpoint, MixerCheckpoint, VoiceCheckpoint};
 mod resample;
 mod stream;
 pub use stream::{PcmStream, StreamRead};
@@ -41,6 +43,11 @@ impl Clip {
     #[must_use]
     pub fn sample_rate(&self) -> u32 {
         self.rate
+    }
+    /// Whether two handles refer to the same immutable PCM allocation.
+    #[must_use]
+    pub fn shares_pcm(&self, other: &Self) -> bool {
+        self.rate == other.rate && Arc::ptr_eq(&self.frames, &other.frames)
     }
     #[must_use]
     pub fn frame_count(&self) -> usize {

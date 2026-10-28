@@ -1,0 +1,19 @@
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.50s
+     Running `target/research-ray-precision/debug/examples/model_checkpoint crates/voxy_render/examples/assets/fox/Fox.glb docs/production-readiness-evidence-2026-10-27/model-graph-file`
+{
+  "animation_clips": 3,
+  "archive": "model.voxymdl",
+  "archive_blake3": "991a76f6639b253ae75ef2f1bc82697c2573b6f4d3825264b42c9e8fd2a2121c",
+  "archive_bytes": 443069,
+  "canonical_resource_graph_equal_before_and_after_continuation": true,
+  "exact_pose_weight_mesh_checks": 1080,
+  "gpu_or_fps_qualification": false,
+  "model_references": 3,
+  "original_resource_resolver_supplied_to_prepare": false,
+  "original_source_bytes_dropped_before_prepare": true,
+  "outer_model_aliases_equal": true,
+  "phases_per_clip": 120,
+  "scope": "CPU native ModelAsset file; images, LOD, import provenance and GPU/editor publication are outside this owner",
+  "source_blake3": "4516ca89e98fd8949d14cc554213a1b3a0141a361f50157c1d17e2f598a36011"
+}

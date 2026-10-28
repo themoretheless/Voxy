@@ -1,0 +1,13 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0609]: no field `expanded` on type `&import::EditorAsset`
+  --> crates/voxy_editor/src/package_models.rs:87:53
+   |
+87 |                     for object in &imported.value().expanded.objects {
+   |                                                     ^^^^^^^^ unknown field
+   |
+   = note: available fields are: `mesh`, `lod`, `animated`, `skinned_lod`, `nodes`, `images`
+
+For more information about this error, try `rustc --explain E0609`.
+error: could not compile `voxy_editor` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

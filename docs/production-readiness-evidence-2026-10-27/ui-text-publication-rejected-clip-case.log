@@ -1,0 +1,23 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.20s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 2 tests
+test ui_text::checkpoint::tests::real_file_restores_original_font_observations_arc_sharing_and_120_draws_without_sources ... ok
+test ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs ... FAILED
+
+failures:
+
+---- ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs stdout ----
+
+thread 'ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs' (76129141) panicked at crates/voxy_editor/src/ui_text_checkpoint.rs:688:13:
+accepted malformed case 7
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    ui_text::checkpoint::tests::malformed_payloads_and_tight_policies_reject_without_reinterpreting_accepted_runs
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 280 filtered out; finished in 12.58s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

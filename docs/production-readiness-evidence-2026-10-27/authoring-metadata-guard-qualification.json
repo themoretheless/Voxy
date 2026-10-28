@@ -1,0 +1,32 @@
+{
+  "scope": "Expand native source freshness guard to authoring metadata and project ownership",
+  "implemented": [
+    "Observe settings_written hashes, scene path and exact stored SceneRevision receipt",
+    "Observe prefab inventory/choice and pending preview seek using exact f32 words",
+    "AuthoringProject has a process-local observation identity; worker_project preserves the same identity",
+    "Hold native project identity and component registry Arcs in the guard; project or registry replacement rejects",
+    "Reuse SceneAuthoringGuard automatically through existing coordinated/editor source observations"
+  ],
+  "checks": {
+    "editor_passed": 319,
+    "editor_ignored": 30,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_diff": "passed",
+    "metadata_mutation_without_scene_change_rejects": true,
+    "signed_zero_seek_change_rejects": true,
+    "worker_project_alias_accepts": true,
+    "project_registry_replacement_rejects": true
+  },
+  "not_claimed": [
+    "Observed metadata is not yet persisted/restored by editor file",
+    "Completed animation preview and imported authoring-source provenance remain outside this guard",
+    "Stored SceneRevision comparison does not perform a fresh filesystem read; native save validation remains separate",
+    "No final App publication/menu/window/device-audio/physical-memory/FPS qualification",
+    "Full ENG-03 through ENG-13 remains open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_guard.rs": "da1000ef6b3abf2d4dd15b44674ae7deef4df0507ba537a79ef8bdabcd4c0ffe",
+    "crates/voxy_editor/src/prefab_authoring.rs": "29fabf2bcac6a1d37ea491de9cd6f4289a47ba25ee27970919a1c75029dc67dd",
+    "crates/voxy_editor/src/scene_revision.rs": "8a7e142d42574de7155dc336326e753c0132b1c751e51084426cd9b2938e176c"
+  }
+}

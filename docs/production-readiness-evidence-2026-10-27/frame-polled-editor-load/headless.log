@@ -1,0 +1,11 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.16s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 3 tests
+test app::restore_barrier::load::tests::reader_poll_returns_without_waiting_for_a_blocked_worker ... ok
+test app::restore_barrier::load::tests::corrupt_and_oversized_reads_never_freeze_the_source_or_allow_another_job ... ok
+test app::restore_barrier::load::tests::prepare_failure_after_valid_read_releases_the_original_fences ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 423 filtered out; finished in 0.06s
+

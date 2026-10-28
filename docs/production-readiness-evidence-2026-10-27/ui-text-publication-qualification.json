@@ -1,0 +1,51 @@
+{
+  "status": "bounded_accepted_ui_text_file_archive_and_source_free_cpu_gpu_restore_verified",
+  "assets_tests_passed": 55,
+  "editor_tests_passed": 265,
+  "editor_tests_ignored": 20,
+  "focused_archive_tests_passed": 2,
+  "explicit_gpu_test_passed": true,
+  "gpu": "Apple M4 Max / Metal; CPU adapter rejected",
+  "strict_all_target_clippy": [
+    "voxy_assets",
+    "voxy_editor"
+  ],
+  "continuation_draw_builds": 120,
+  "preserved": [
+    "all UiTextPreparation fields: original fonts, accepted runs/labels, observations",
+    "original font bytes and original native raster policies",
+    "exact atlas pixels, glyph placement/advance/cluster and label float words",
+    "shared Arc<TextRun> identities; equal but distinct runs remain distinct",
+    "label order and durable owner identities across reversed fresh handles",
+    "value observation byte Arcs share the same verified data as outer ImportedAsset inputs",
+    "generic ImportedAsset legacy decoder behavior delegates to the same checked parser"
+  ],
+  "proof": [
+    "actual archive file survives complete original font directory deletion",
+    "decode and re-encode bytes identical",
+    "120 source/restored UI draws compare exact vertex/UV/color words, indices, owners and atlas records",
+    "missing/aliased owners and explicit count/pixel/glyph/font/byte policies reject",
+    "truncation and checksum corruption reject",
+    "recomputed-checksum unknown version, invalid run reference, duplicate owner, NaN origin, invalid cluster, unobserved font source, unused run and overflowing clip reject",
+    "GPU decoder/upload succeeds with font file deleted and reuses original texture/index count"
+  ],
+  "scope_limits": [
+    "CPU draw equivalence and offscreen GPU upload do not establish rendered pixel readback, native surface transfer or FPS",
+    "payload encoding currently uses integer-word JSON inside the existing checksummed ImportedAsset archive; allocator/font-parser peak overhead is not measured",
+    "owner restoration requires live resolved scene handles; historical UI publications referencing destroyed owners need an explicit history/tombstone policy",
+    "whole UiLive uploaded/presented publication aliasing and worker/watcher barrier are not composed yet"
+  ],
+  "remaining": [
+    "UiLive multi-publication bundle with alias preservation",
+    "historical/retired UI owner identity handling for last-good visuals",
+    "UiLive worker/watcher/source/cadence save barrier and GPU retry/presentation transfer",
+    "App accepted resource archive, whole-App publication/file/native acceptance",
+    "full ENG-00 through ENG-13 scope"
+  ],
+  "sha256": {
+    "crates/voxy_assets/src/imported_archive.rs": "df85780dee96666d1133b0551b9fdb0282715245769e226feb977398c16f6859",
+    "crates/voxy_editor/src/ui_text.rs": "635c425f1866c95e6726dd2cabc4a21407bcce3204db73957622acb705a44c15",
+    "crates/voxy_editor/src/ui_text_checkpoint.rs": "8510c397054cf3e6a56fe6d316ecebd327205a60af516b759393b15156d0d1f2",
+    "crates/voxy_editor/src/ui_live/gpu_reload_tests.rs": "873f22d02f867d62c703f119916733c28c78210ca240de3640be4ff08e57132d"
+  }
+}

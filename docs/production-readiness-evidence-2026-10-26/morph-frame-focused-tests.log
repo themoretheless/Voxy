@@ -1,0 +1,12 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.37s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_animation-1c86ad0fc320fa33)
+
+running 4 tests
+test property_playback::tests::failed_property_sample_or_transition_preserves_clocks_and_snapshot ... ok
+test property_playback::tests::property_step_boundaries_use_the_same_unnarrowed_f64_clock ... ok
+test property_playback::tests::property_snapshots_follow_live_fades_repeated_interruptions_and_completion ... ok
+test property_playback::tests::prepared_rigid_prefix_includes_property_receipt_and_frozen_snapshot ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 331 filtered out; finished in 0.00s
+

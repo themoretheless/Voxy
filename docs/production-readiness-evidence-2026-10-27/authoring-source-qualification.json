@@ -1,0 +1,40 @@
+{
+  "scope": "Archive the accepted imported AuthoredScene publication with original inputs and prefab dependency graph",
+  "implemented": [
+    "Authoring checkpoint v3 embeds native ImportedAsset archive for optional original authoring source",
+    "Preserve original source, expanded document, dependency documents, accepted input bytes/hashes and input policy",
+    "Replay original bounded prefab expander against archived dependencies using original registry; compare exact expanded document and dependency inventory",
+    "Restore source without filesystem/provider reads",
+    "Legacy v2 leaves undeclared source ownership unchanged; v3 explicit source absence clears it",
+    "Use original ImportedArchive byte/input quotas and enclosing authoring archive budget"
+  ],
+  "checks": {
+    "editor_passed": 321,
+    "editor_ignored": 30,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_diff": "passed",
+    "nested_prefab_source_removed_and_exact_publication_inputs_restored": true,
+    "valid_envelope_wrong_expansion_and_missing_dependency_reject": true,
+    "legacy_and_explicit_absence": true,
+    "exported_editor_bytes": 27143,
+    "exported_authoring_version": 3,
+    "exported_input_records": 1
+  },
+  "retained_rejections": [
+    "Mapped native InputError locally rather than relying on a missing EditorError conversion",
+    "Clippy required an explicit legacy/replace enum instead of nested Option and explicit test mutation instead of unit-returning Option.map"
+  ],
+  "not_claimed": [
+    "Imported authoring-source freshness guard and completed animation preview are still separate work",
+    "Existing local paths retain host semantics; no cross-machine Save As migration",
+    "No full App/project/publication/menu/first-native-frame input transaction",
+    "No new GPU/window/audio-device/physical-memory/FPS qualification",
+    "Full ENG-03 through ENG-13 remains open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/authoring_checkpoint.rs": "e6f5665865038754747aba669274f43a8447dac140e40c0c6c2048a87d6b755a",
+    "crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs": "54ae2bd81c26b91158b52590459e1986c4d109579a33fce4364040a5c8165d48",
+    "crates/voxy_editor/src/app/authoring_checkpoint/source.rs": "2404ccf85f71ca03480e8a0c9b4ea98675b1c53ccc482323a9c173c92828dc0c",
+    "crates/voxy_editor/src/app/authoring_checkpoint/tests.rs": "4eca1a9b96079078b1d01e7e85f4ff3351762412aac9b12b0baba5d639cf73b1"
+  }
+}

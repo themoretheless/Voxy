@@ -1,0 +1,11 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-f3403aa334dec0f5)
+
+running 4 tests
+test rigid_frame::tests::quarter_turn_moves_pivot_around_fixed_com_and_converts_pivot_velocity ... ok
+test rigid_frame::tests::stored_scaled_affine_points_obey_publication_residual_gate ... ok
+test rigid_frame::tests::shared_off_center_impulse_spin_and_scene_publication_keep_physical_com ... ok
+test rigid_frame::tests::late_publication_overflow_duplicate_and_parented_owner_preserve_all_poses ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 194 filtered out; finished in 0.00s
+

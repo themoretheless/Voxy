@@ -1,0 +1,12 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.07s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 4 tests
+test import::asset_checkpoint::tests::empty_graph_is_a_valid_self_contained_archive ... ok
+test import::asset_checkpoint::tests::metadata_integrity_late_native_failures_limits_and_unreachable_owners_reject_atomically ... ok
+test import::asset_checkpoint::tests::partial_model_lod_vertex_and_index_sharing_is_preserved_without_content_deduplication ... ok
+test import::asset_checkpoint::tests::entire_file_preserves_asset_model_lod_source_mesh_and_independent_equal_ownership ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 307 filtered out; finished in 0.06s
+

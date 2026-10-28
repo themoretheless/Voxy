@@ -1,0 +1,36 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0277]: `?` couldn't convert the error to `error::EditorError`
+   --> crates/voxy_editor/src/app/resource_checkpoint/play.rs:411:14
+    |
+406 |               input: voxy_gameplay::encode_input_checkpoint(
+    |  ____________________-
+407 | |                 &player_input.checkpoint(),
+408 | |                 limits.core.max_bytes,
+409 | |                 limits.core.max_actions,
+410 | |                 limits.core.max_bindings,
+411 | |             )?,
+    | |             -^ the trait `From<InputCheckpointCodecError>` is not implemented for `error::EditorError`
+    | |_____________|
+    |               this can't be annotated with `?` because it has type `Result<_, InputCheckpointCodecError>`
+    |
+note: `error::EditorError` needs to implement `From<InputCheckpointCodecError>`
+   --> crates/voxy_editor/src/error.rs:6:1
+    |
+  6 | pub enum EditorError {
+    | ^^^^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: `error::EditorError` implements trait `From<T>`:
+              From<&str>
+              From<AnimationError>
+              From<AudioError>
+              From<DependencyError>
+              From<DocumentError>
+              From<FogError>
+              From<GameplayError>
+              From<ImageAssetError>
+            and 22 others
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `voxy_editor` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

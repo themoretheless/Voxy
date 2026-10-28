@@ -15,7 +15,7 @@ pub struct SaturationCurve {
     pub max_temperature: f64,
 }
 impl SaturationCurve {
-    fn validate(self) -> Result<(), Error> {
+    pub(super) fn validate(self) -> Result<(), Error> {
         if [
             self.reference_temperature,
             self.reference_pressure,

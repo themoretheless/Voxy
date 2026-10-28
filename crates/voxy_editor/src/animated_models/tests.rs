@@ -135,18 +135,421 @@ fn request(owner: NodeId, model: &Arc<ModelAsset>, speed: f32) -> Request {
         lod: None,
         textures: vec![],
         texture_storage: vec![],
+        publication: None,
         settings: ModelAnimation {
             speed,
             ..ModelAnimation::default()
         },
     }
 }
-fn pixels(
+
+#[test]
+#[ignore = "requires real GPU; retained CPU texture publication and pixel readback"]
+fn retained_texture_publications_survive_reload_pose_failure_and_source_deletion() {
+    use voxy_assets::{
+        AssetCatalog, AssetId, FileInputs, ImportInputs, SourceDependencies, SourcePath,
+    };
+    let root = std::env::temp_dir().join(format!("voxy-retained-texture-{}", std::process::id()));
+    std::fs::create_dir(&root).unwrap();
+    std::fs::write(
+        root.join("mesh.glb"),
+        include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
+    )
+    .unwrap();
+    let red = [220, 20, 20, 255];
+    let green = [20, 220, 20, 255];
+    std::fs::write(root.join("texture.rgba"), red).unwrap();
+    let provider = FileInputs::new(&root).unwrap();
+    let mut inputs = ImportInputs::new(4, 4 * 1024 * 1024);
+    let mut asset = crate::import::load(
+        &SourcePath::new("mesh.glb").unwrap(),
+        &provider,
+        &mut inputs,
+    )
+    .unwrap();
+    let observed = inputs
+        .read(AssetId("texture.rgba".into()), |id, max| {
+            provider.read(id, max)
+        })
+        .unwrap();
+    asset.images = vec![
+        voxy_render::ImageAsset::from_rgba(1, 1, observed.bytes.to_vec(), Default::default())
+            .unwrap(),
+    ];
+    Arc::make_mut(asset.animated.as_mut().unwrap()).primitives[0].base_color_texture =
+        Some(voxy_model::ModelTexture {
+            image: 0,
+            sampling: Default::default(),
+            use_mips: true,
+        });
+    let asset = inputs
+        .finish(asset, |id, max| provider.read(id, max))
+        .unwrap();
+    let id = AssetId("model".into());
+    let mut catalog = AssetCatalog::new(4, 1).unwrap();
+    let mut sources = SourceDependencies::new(4, 16);
+    let ticket = catalog.request(id.clone()).unwrap();
+    catalog
+        .complete_observed(&mut sources, &ticket, Ok(asset))
+        .unwrap();
+    let old = catalog.snapshot(&id).unwrap();
+    let weak = Arc::downgrade(&old);
+    let model = old.value().animated.as_ref().unwrap().clone();
+    let instance = voxy_render::GraphicsOptions::default().create_instance();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+    println!("RETAINED TEXTURE GPU {:?}", adapter.get_info());
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let mut cache = crate::gpu_model::ResidencyCache::default();
+    let mut old_gpu =
+        crate::ModelGraphics::upload_on(&renderer, &device, &queue, old.value(), &mut cache)
+            .unwrap();
+    old_gpu.publication = Some(old.clone());
+    let mut scene = voxy_scene::SceneGraph::new(4);
+    let owner = scene.spawn(None, Default::default()).unwrap();
+    let frame = test_frame(&model, ModelAnimation::default(), 0.1);
+    let make_request = |gpu: &crate::ModelGraphics, frame| Request {
+        owner,
+        publication: gpu.publication.clone(),
+        model: model.clone(),
+        settings: Default::default(),
+        frame: Some(frame),
+        lod: None,
+        textures: gpu.animated_textures.clone(),
+        texture_storage: gpu._images.clone(),
+    };
+    let mut render = AnimatedModels::new(&renderer).unwrap();
+    assert!(
+        render
+            .synchronize(
+                &renderer,
+                &device,
+                &queue,
+                vec![make_request(&old_gpu, frame.clone())],
+                1,
+                old_gpu.geometry_bytes(),
+                64 << 20
+            )
+            .is_empty()
+    );
+    let matrix = glam::Mat4::from_scale(glam::Vec3::splat(0.7));
+    let before = pixels_with_texture(
+        &renderer,
+        &device,
+        &queue,
+        render.geometries(owner).unwrap().collect(),
+        matrix,
+        render.texture(owner, 0),
+    );
+    assert!(before.chunks_exact(4).any(|p| p[0] > p[1]));
+    std::fs::write(root.join("texture.rgba"), green).unwrap();
+    let mut replacement = old.value().clone();
+    replacement.images[0] =
+        voxy_render::ImageAsset::from_rgba(1, 1, green.to_vec(), Default::default()).unwrap();
+    let mut inputs = ImportInputs::new(4, 4 * 1024 * 1024);
+    for source in old.inputs().observations().keys() {
+        inputs
+            .read(source.clone(), |id, max| provider.read(id, max))
+            .unwrap();
+    }
+    let replacement = inputs
+        .finish(replacement, |id, max| provider.read(id, max))
+        .unwrap();
+    let ticket = catalog.request(id.clone()).unwrap();
+    catalog
+        .complete_observed(&mut sources, &ticket, Ok(replacement))
+        .unwrap();
+    let current = catalog.snapshot(&id).unwrap();
+    let mut current_gpu =
+        crate::ModelGraphics::upload_on(&renderer, &device, &queue, current.value(), &mut cache)
+            .unwrap();
+    current_gpu.publication = Some(current.clone());
+    let green_pixels = pixels_with_texture(
+        &renderer,
+        &device,
+        &queue,
+        render.geometries(owner).unwrap().collect(),
+        matrix,
+        current_gpu.animated_textures[0].as_deref(),
+    );
+    assert_ne!(before, green_pixels);
+    let mut invalid = frame.as_ref().clone();
+    invalid.skin_matrices[0] = glam::Mat4::ZERO;
+    assert_eq!(
+        render
+            .synchronize(
+                &renderer,
+                &device,
+                &queue,
+                vec![make_request(&current_gpu, Arc::new(invalid))],
+                2,
+                current_gpu.geometry_bytes(),
+                64 << 20
+            )
+            .len(),
+        1
+    );
+    drop(old_gpu);
+    drop(old);
+    assert!(weak.upgrade().is_some());
+    assert_eq!(
+        before,
+        pixels_with_texture(
+            &renderer,
+            &device,
+            &queue,
+            render.geometries(owner).unwrap().collect(),
+            matrix,
+            render.texture(owner, 0)
+        )
+    );
+    let live = crate::gpu_source_bindings::LiveSources {
+        models: vec![(id.clone(), current_gpu.publication.clone().unwrap())],
+        owners: render.source_publication_owners().unwrap(),
+    };
+    let bindings = crate::gpu_source_bindings::GpuSourceBindings::capture(
+        &live,
+        |node| (node == owner).then(|| voxy_scene::ObjectId("actor".into())),
+        4,
+    )
+    .unwrap();
+    let accepted = render
+        .checkpoint_accepted_frames(
+            |node| (node == owner).then(|| voxy_scene::ObjectId("actor".into())),
+            4 * 1024 * 1024,
+        )
+        .unwrap();
+    assert!(
+        render
+            .checkpoint_accepted_frames(|_| None, 4 * 1024 * 1024)
+            .is_err()
+    );
+    assert!(
+        render
+            .checkpoint_accepted_frames(|_| Some(voxy_scene::ObjectId("actor".into())), 1,)
+            .is_err()
+    );
+    let retained = live.publications();
+    drop(live);
+    std::fs::remove_dir_all(&root).unwrap();
+    let limits = crate::import::catalog_checkpoint::Limits {
+        assets: Default::default(),
+        inputs: voxy_assets::ImportedArchiveLimits {
+            max_inputs: 4,
+            max_input_bytes: 4 * 1024 * 1024,
+            max_archive_bytes: 32 * 1024 * 1024,
+        },
+        max_bytes: 64 * 1024 * 1024,
+        max_catalog_assets: 4,
+        max_pending: 1,
+        max_source_outputs: 4,
+        max_source_edges: 16,
+    };
+    let bytes = crate::import::catalog_checkpoint::capture_with_retained(
+        &catalog,
+        &sources,
+        &[],
+        &[],
+        &[],
+        &retained,
+        limits,
+    )
+    .unwrap();
+    crate::import::asset_checkpoint::retain_evidence("retained-textures.voxyeic", &bytes);
+    let file = std::env::temp_dir().join(format!(
+        "voxy-retained-textures-{}.voxyeic",
+        std::process::id()
+    ));
+    let package = serde_json::to_vec(&(bindings, accepted, &bytes)).unwrap();
+    crate::import::asset_checkpoint::retain_evidence("retained-texture-roles.json", &package);
+    std::fs::write(&file, &package).unwrap();
+    let package = std::fs::read(&file).unwrap();
+    let (bindings, accepted, read): (
+        crate::gpu_source_bindings::GpuSourceBindings,
+        checkpoint::AcceptedFrames,
+        Vec<u8>,
+    ) = serde_json::from_slice(&package).unwrap();
+    std::fs::remove_file(file).unwrap();
+    let loaded = crate::import::catalog_checkpoint::prepare(&read, limits).unwrap();
+    assert!(Arc::ptr_eq(
+        &loaded.retained[0],
+        &loaded.catalog.snapshot(&id).unwrap()
+    ));
+    let mut target = voxy_scene::SceneGraph::new(4);
+    let _unused = target.spawn(None, Default::default()).unwrap();
+    let new_owner = target.spawn(None, Default::default()).unwrap();
+    let roles = bindings
+        .prepare(
+            &target,
+            |id| (id.0 == "actor").then_some(new_owner),
+            &loaded.retained,
+            4,
+        )
+        .unwrap();
+    assert_eq!(roles.scene, target.identity());
+    assert!(Arc::ptr_eq(
+        &roles.models[&id],
+        &loaded.catalog.snapshot(&id).unwrap()
+    ));
+    assert_eq!(loaded.retained[1].value().images[0].rgba(), red);
+    assert_eq!(loaded.retained[0].value().images[0].rgba(), green);
+    assert_eq!(
+        &*loaded.retained[1].inputs().observations()[&AssetId("texture.rgba".into())]
+            .as_ref()
+            .unwrap()
+            .bytes,
+        red
+    );
+    let prepared_frames = accepted
+        .prepare(
+            &target,
+            |id| (id.0 == "actor").then_some(new_owner),
+            &roles,
+            4 * 1024 * 1024,
+        )
+        .unwrap();
+    assert!(
+        accepted
+            .prepare(&target, |_| None, &roles, 4 * 1024 * 1024)
+            .is_err()
+    );
+    let foreign = voxy_scene::SceneGraph::new(4);
+    assert!(
+        accepted
+            .prepare(&foreign, |_| Some(new_owner), &roles, 4 * 1024 * 1024)
+            .is_err()
+    );
+    let accepted_state = &prepared_frames[&new_owner];
+    assert_eq!(accepted_state.ticks, render.owners[&owner].ticks);
+    assert_eq!(accepted_state.settings, render.owners[&owner].settings);
+    assert_eq!(
+        accepted_state.frame.skin_matrices,
+        render.owners[&owner].frame.skin_matrices
+    );
+    let live_geometry = current_gpu.geometry_bytes() + render.allocation_bytes();
+    let old_cache_state = cache.state();
+    let old_cache_images = cache.live_bytes();
+    let old_cache_budget = cache.geometry_budget;
+    cache.geometry_budget = live_geometry;
+    assert!(
+        crate::gpu_model::batch::UploadTarget {
+            renderer: &renderer,
+            device: &device,
+            queue: &queue,
+            cache: &cache,
+            live_geometry,
+            replaced_geometry: live_geometry,
+        }
+        .stage_restore(&target, &roles, prepared_frames)
+        .is_err()
+    );
+    cache.geometry_budget = old_cache_budget;
+    assert_eq!(cache.state(), old_cache_state);
+    assert_eq!(cache.live_bytes(), old_cache_images);
+    let prepared_frames = accepted
+        .prepare(
+            &target,
+            |id| (id.0 == "actor").then_some(new_owner),
+            &roles,
+            4 * 1024 * 1024,
+        )
+        .unwrap();
+    let pending = crate::gpu_model::batch::UploadTarget {
+        renderer: &renderer,
+        device: &device,
+        queue: &queue,
+        cache: &cache,
+        live_geometry,
+        replaced_geometry: live_geometry,
+    }
+    .stage_restore(&target, &roles, prepared_frames)
+    .unwrap();
+    let restored_gpu = pollster::block_on(pending.validate()).unwrap();
+    assert_eq!(restored_gpu.scene, target.identity());
+    assert!(Arc::ptr_eq(
+        restored_gpu.models[&id].publication.as_ref().unwrap(),
+        &roles.models[&id]
+    ));
+    assert_eq!(cache.state(), old_cache_state);
+    assert_eq!(cache.live_bytes(), old_cache_images);
+    assert_eq!(
+        restored_gpu.cache.geometry_live,
+        restored_gpu
+            .models
+            .values()
+            .map(crate::ModelGraphics::geometry_bytes)
+            .sum::<u64>()
+            + restored_gpu.animated.allocation_bytes()
+    );
+    let restored_render = &restored_gpu.animated;
+    let restored_pixels = pixels_with_texture(
+        &renderer,
+        &device,
+        &queue,
+        restored_render.geometries(new_owner).unwrap().collect(),
+        matrix,
+        restored_render.texture(new_owner, 0),
+    );
+    assert_eq!(before, restored_pixels);
+    for (name, bytes) in [
+        ("texture-reference.rgba", &before),
+        ("texture-current.rgba", &green_pixels),
+        ("texture-restored.rgba", &restored_pixels),
+    ] {
+        crate::import::asset_checkpoint::retain_evidence(name, bytes);
+    }
+    assert!(
+        render
+            .synchronize(
+                &renderer,
+                &device,
+                &queue,
+                vec![make_request(&current_gpu, frame)],
+                3,
+                current_gpu.geometry_bytes(),
+                64 << 20
+            )
+            .is_empty()
+    );
+    assert!(Arc::ptr_eq(
+        &render.source_publications().unwrap()[0],
+        &current
+    ));
+    assert_eq!(
+        green_pixels,
+        pixels_with_texture(
+            &renderer,
+            &device,
+            &queue,
+            render.geometries(owner).unwrap().collect(),
+            matrix,
+            render.texture(owner, 0)
+        )
+    );
+    drop(retained);
+    assert!(weak.upgrade().is_none());
+    render.clear();
+    assert!(weak.upgrade().is_none());
+    assert!(pollster::block_on(scope.pop()).is_none());
+}
+pub(crate) fn pixels(
     renderer: &SceneRenderer,
     device: &wgpu::Device,
     queue: &wgpu::Queue,
     geometries: Vec<&SceneGeometry>,
     matrix: glam::Mat4,
+) -> Vec<u8> {
+    pixels_with_texture(renderer, device, queue, geometries, matrix, None)
+}
+fn pixels_with_texture(
+    renderer: &SceneRenderer,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    geometries: Vec<&SceneGeometry>,
+    matrix: glam::Mat4,
+    material: Option<&voxy_render::SceneTexture>,
 ) -> Vec<u8> {
     let target = |format, usage| {
         device.create_texture(&wgpu::TextureDescriptor {
@@ -175,12 +578,13 @@ fn pixels(
     let texture = renderer
         .upload_texture(device, queue, 1, 1, &[255; 4])
         .unwrap();
+    let texture = material.unwrap_or(&texture);
     let transform = renderer.create_transform(device, matrix).unwrap();
     let draws: Vec<_> = geometries
         .into_iter()
         .map(|geometry| voxy_render::SceneDraw {
             geometry,
-            texture: &texture,
+            texture,
             transform: &transform,
             overlay: true,
         })
@@ -434,6 +838,7 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
                 None,
                 vec![],
                 vec![],
+                None,
                 9,
                 0,
                 initial_bytes
@@ -491,6 +896,7 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
     let model = Arc::new(model);
     let mut runtime = FrameFixture {
         render: AnimatedModels {
+            authoring_frames: Default::default(),
             skinner: None,
             owners: HashMap::new(),
             sources: HashMap::new(),
@@ -579,6 +985,24 @@ fn animated_lod_views_budget_and_cpu_fallback() {
     );
     model.primitives[0].geometry = ModelGeometry::Skinned(mesh);
     let model = Arc::new(model);
+    let publication = Arc::new(
+        voxy_assets::ImportInputs::new(0, 0)
+            .finish(
+                crate::import::EditorAsset {
+                    mesh: model
+                        .scene_meshes_frame(&model.bind_frame().unwrap())
+                        .unwrap()[0]
+                        .clone(),
+                    lod: None,
+                    animated: Some(model.clone()),
+                    skinned_lod: Some(lod.clone()),
+                    nodes: Vec::new(),
+                    images: Vec::new(),
+                },
+                |_, _| unreachable!(),
+            )
+            .unwrap(),
+    );
     let mut graph = voxy_scene::SceneGraph::new(8);
     let owner = graph.spawn(None, voxy_scene::Transform::default()).unwrap();
     let far = voxy_render::SceneCamera {
@@ -617,6 +1041,7 @@ fn animated_lod_views_budget_and_cpu_fallback() {
             lod: Some(lod.clone()),
             textures: vec![],
             texture_storage: vec![],
+            publication: Some(publication.clone()),
         };
         assert!(
             owners
@@ -726,6 +1151,223 @@ fn animated_lod_views_budget_and_cpu_fallback() {
         let reference = lod.prepare(cached.joints(), world).unwrap();
         assert_eq!(cached.positions(), reference.positions());
         assert_eq!(cached.levels(), reference.levels());
+        let accepted = owners
+            .checkpoint_accepted_frames(
+                |_| Some(voxy_scene::ObjectId("actor".into())),
+                4 * 1024 * 1024,
+            )
+            .unwrap();
+        let packet = serde_json::to_vec(&accepted).unwrap();
+        let accepted: checkpoint::AcceptedFrames = serde_json::from_slice(&packet).unwrap();
+        let asset_limits = crate::import::asset_checkpoint::EditorAssetCheckpointLimits::default();
+        let input_limits = voxy_assets::ImportedArchiveLimits {
+            max_inputs: 4,
+            max_input_bytes: 4 * 1024 * 1024,
+            max_archive_bytes: 64 * 1024 * 1024,
+        };
+        let source_bytes = crate::import::publication_checkpoint::capture(
+            std::slice::from_ref(&publication),
+            asset_limits,
+            input_limits,
+            64 * 1024 * 1024,
+        )
+        .unwrap();
+        let loaded_publication = crate::import::publication_checkpoint::prepare(
+            &source_bytes,
+            asset_limits,
+            input_limits,
+            64 * 1024 * 1024,
+        )
+        .unwrap()
+        .remove(0);
+        crate::import::asset_checkpoint::retain_evidence(
+            &format!(
+                "accepted-lod-source-{}.voxyeip",
+                if cpu { "cpu" } else { "gpu" }
+            ),
+            &source_bytes,
+        );
+        let roles = crate::gpu_source_bindings::PreparedBindings {
+            scene: graph.identity(),
+            models: Default::default(),
+            owners: [(owner, loaded_publication.clone())].into(),
+        };
+        let loaded = accepted
+            .prepare(&graph, |_| Some(owner), &roles, 4 * 1024 * 1024)
+            .unwrap();
+        let accepted_lod = loaded[&owner].lod.as_ref().unwrap();
+        assert!(Arc::ptr_eq(
+            &accepted_lod.source,
+            loaded_publication.value().skinned_lod.as_ref().unwrap()
+        ));
+        assert!(!Arc::ptr_eq(&accepted_lod.source, &lod));
+        assert_eq!(accepted_lod.history, [(0, 1), (1, 0)].into());
+        assert_eq!(accepted_lod.resident, vec![1]);
+        let proof = accepted_lod.prepared.as_ref().unwrap();
+        assert_eq!(proof.model(), world);
+        assert_eq!(proof.positions(), cached.positions());
+        assert_eq!(proof.levels(), cached.levels());
+        if !cpu {
+            let cache = crate::gpu_model::ResidencyCache::default();
+            let frames = accepted
+                .prepare(&graph, |_| Some(owner), &roles, 4 * 1024 * 1024)
+                .unwrap();
+            let pending = crate::gpu_model::batch::UploadTarget {
+                renderer: &renderer,
+                device: &device,
+                queue: &queue,
+                cache: &cache,
+                live_geometry: owners.allocation_bytes(),
+                replaced_geometry: owners.allocation_bytes(),
+            }
+            .stage_restore(&graph, &roles, frames)
+            .unwrap();
+            let ready = pollster::block_on(pending.validate()).unwrap();
+            assert!(ready.models.is_empty());
+            assert_eq!(ready.cache.geometry_live, ready.animated.allocation_bytes());
+            assert_eq!(
+                ready.animated.owners[&owner].lod_history,
+                owners.owners[&owner].lod_history
+            );
+            for view in [0, 1] {
+                let original_pixels = pixels(
+                    &renderer,
+                    &device,
+                    &queue,
+                    owners.geometries_for_view(owner, view).unwrap().collect(),
+                    glam::Mat4::IDENTITY,
+                );
+                let actual = pixels(
+                    &renderer,
+                    &device,
+                    &queue,
+                    ready
+                        .animated
+                        .geometries_for_view(owner, view)
+                        .unwrap()
+                        .collect(),
+                    glam::Mat4::IDENTITY,
+                );
+                assert_eq!(original_pixels, actual);
+                crate::import::asset_checkpoint::retain_evidence(
+                    &format!("composed-lod-view-{view}.rgba"),
+                    &actual,
+                );
+            }
+        }
+        let mut restored = AnimatedModels::new(&renderer).unwrap();
+        if cpu {
+            restored.skinner = None;
+        }
+        let saved_frame = &loaded[&owner];
+        assert!(
+            restored
+                .synchronize(
+                    &renderer,
+                    &device,
+                    &queue,
+                    vec![Request {
+                        owner,
+                        publication: Some(loaded_publication.clone()),
+                        model: saved_frame.model.clone(),
+                        settings: saved_frame.settings.clone(),
+                        frame: Some(saved_frame.frame.clone()),
+                        lod: Some(accepted_lod.source.clone()),
+                        textures: vec![],
+                        texture_storage: vec![],
+                    }],
+                    saved_frame.ticks,
+                    0,
+                    8192
+                )
+                .is_empty()
+        );
+        let recover_lod = || {
+            accepted
+                .prepare(&graph, |_| Some(owner), &roles, 4 * 1024 * 1024)
+                .unwrap()
+                .remove(&owner)
+                .unwrap()
+                .lod
+                .unwrap()
+        };
+        let base = restored.allocation_bytes();
+        assert!(
+            restored
+                .restore_accepted_lod(&renderer, &device, owner, recover_lod(), 0, base)
+                .is_err()
+        );
+        assert_eq!(restored.allocation_bytes(), base);
+        assert!(restored.owners[&owner].lod_history.is_empty());
+        restored
+            .restore_accepted_lod(&renderer, &device, owner, recover_lod(), 0, 8192)
+            .unwrap();
+        assert_eq!(
+            restored.owners[&owner].lod_history,
+            owners.owners[&owner].lod_history
+        );
+        assert_eq!(
+            restored.owners[&owner]
+                .prepared_lod
+                .as_ref()
+                .unwrap()
+                .model(),
+            world
+        );
+        for view in [0, 1] {
+            assert_eq!(
+                restored.lod_selection(owner, view),
+                owners.lod_selection(owner, view)
+            );
+            let original_pixels = pixels(
+                &renderer,
+                &device,
+                &queue,
+                owners.geometries_for_view(owner, view).unwrap().collect(),
+                glam::Mat4::IDENTITY,
+            );
+            let restored_pixels = pixels(
+                &renderer,
+                &device,
+                &queue,
+                restored.geometries_for_view(owner, view).unwrap().collect(),
+                glam::Mat4::IDENTITY,
+            );
+            assert_eq!(original_pixels, restored_pixels);
+            crate::import::asset_checkpoint::retain_evidence(
+                &format!(
+                    "lod-{}-view-{view}-reference.rgba",
+                    if cpu { "cpu" } else { "gpu" }
+                ),
+                &original_pixels,
+            );
+            crate::import::asset_checkpoint::retain_evidence(
+                &format!(
+                    "lod-{}-view-{view}-restored.rgba",
+                    if cpu { "cpu" } else { "gpu" }
+                ),
+                &restored_pixels,
+            );
+        }
+        crate::import::asset_checkpoint::retain_evidence(
+            &format!("accepted-lod-{}.json", if cpu { "cpu" } else { "gpu" }),
+            &packet,
+        );
+        let mut bad: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+        bad["owners"][0]["lod"]["resident"] = serde_json::json!([]);
+        let bad: checkpoint::AcceptedFrames = serde_json::from_value(bad).unwrap();
+        assert!(
+            bad.prepare(&graph, |_| Some(owner), &roles, 4 * 1024 * 1024)
+                .is_err()
+        );
+        let mut bad: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+        bad["owners"][0]["lod"]["prepared"]["positions"][0][0] = serde_json::json!(0);
+        let bad: checkpoint::AcceptedFrames = serde_json::from_value(bad).unwrap();
+        assert!(
+            bad.prepare(&graph, |_| Some(owner), &roles, 4 * 1024 * 1024)
+                .is_err()
+        );
+
         owners
             .select_lod(
                 &renderer,
@@ -1623,4 +2265,380 @@ fn planted_foot_gpu_acceptance(retarget: bool, roll: bool) {
     println!(
         "VOXY_FOOT_GPU retarget={retarget} authored_roll={roll} cpu_pixels_equal=true uncorrected_differs=true sources=1 bytes={bytes} stop_bytes=0"
     );
+}
+
+#[test]
+#[ignore = "requires physical GPU; ordinary owner morph updates, CPU fallback and last-good resource acceptance"]
+fn gpu_morph_weight_only_updates_and_failed_replacement_retains_last_good()
+-> Result<(), Box<dyn std::error::Error>> {
+    morph_weight_only_owner_acceptance(false)
+}
+
+#[test]
+#[ignore = "requires physical GPU; unskinned rigid morph node transforms, CPU parity and resource retention"]
+fn gpu_rigid_morph_without_source_skin_uses_common_owner() -> Result<(), Box<dyn std::error::Error>>
+{
+    morph_weight_only_owner_acceptance(true)
+}
+
+fn morph_weight_only_owner_acceptance(rigid: bool) -> Result<(), Box<dyn std::error::Error>> {
+    let temp = crate::locomotion_tests::Temp::new();
+    let (_, source) = if rigid {
+        crate::locomotion_tests::rigid_morph_project(&temp)?
+    } else {
+        crate::locomotion_tests::morph_project(&temp)?
+    };
+    if rigid {
+        assert_eq!(gltf::Gltf::from_slice(&source)?.skins().count(), 0);
+    }
+    let model = Arc::new(ModelAsset::parse_animated(
+        &source,
+        &[],
+        voxy_model::ModelLimits::default(),
+    )?);
+    let graphics = voxy_render::GraphicsOptions::default().create_instance();
+    let adapter = pollster::block_on(graphics.request_adapter(&Default::default()))?;
+    eprintln!("ordinary morph owner adapter: {:?}", adapter.get_info());
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default()))?;
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let mut scene = voxy_scene::SceneGraph::new(1);
+    let owner = scene.spawn(None, Default::default())?;
+    let mut gpu = AnimatedModels::new(&renderer)?;
+    let mut cpu = AnimatedModels::new(&renderer)?;
+    cpu.skinner = None;
+    let settings = ModelAnimation {
+        clip: None,
+        ..Default::default()
+    };
+    let first = Arc::new(model.bind_frame()?);
+    let update = |render: &mut AnimatedModels,
+                  model: Arc<ModelAsset>,
+                  frame: Arc<voxy_animation::AnimatorFrame>,
+                  tick,
+                  budget| {
+        render.update(
+            &renderer,
+            &device,
+            &queue,
+            owner,
+            model,
+            settings.clone(),
+            Some(frame),
+            None,
+            Vec::new(),
+            Vec::new(),
+            None,
+            tick,
+            0,
+            budget,
+        )
+    };
+    update(&mut gpu, model.clone(), first.clone(), 1, 1 << 20)?;
+    assert!(matches!(
+        gpu.owners[&owner].primitives[0],
+        Primitive::Skin { .. }
+    ));
+    let matrix = glam::Mat4::from_translation(glam::Vec3::new(-0.4, -0.4, 0.5))
+        * glam::Mat4::from_scale(glam::Vec3::splat(0.5));
+    let before = pixels(
+        &renderer,
+        &device,
+        &queue,
+        vec![gpu.owners[&owner].primitives[0].geometry()],
+        matrix,
+    );
+    let mut changed = (*first).clone();
+    changed.properties = voxy_animation::PropertySet::new(
+        first
+            .properties
+            .entries()
+            .iter()
+            .enumerate()
+            .map(|(i, (name, _))| {
+                (
+                    name.clone(),
+                    voxy_animation::PropertyValue::Float([1.5, -0.25][i]),
+                )
+            })
+            .collect(),
+    )?;
+    let changed = Arc::new(changed);
+    assert_eq!(changed.pose, first.pose);
+    update(&mut gpu, model.clone(), changed.clone(), 2, 1 << 20)?;
+    update(&mut cpu, model.clone(), changed.clone(), 2, 1 << 20)?;
+    let after = pixels(
+        &renderer,
+        &device,
+        &queue,
+        vec![gpu.owners[&owner].primitives[0].geometry()],
+        matrix,
+    );
+    let reference = pixels(
+        &renderer,
+        &device,
+        &queue,
+        vec![cpu.owners[&owner].primitives[0].geometry()],
+        matrix,
+    );
+    assert_ne!(before, after);
+    assert_eq!(after, reference);
+    assert_eq!(gpu.owners[&owner].frame.properties, changed.properties);
+    let mut invalid = (*changed).clone();
+    invalid.properties = Default::default();
+    assert!(update(&mut gpu, model.clone(), Arc::new(invalid), 3, 1 << 20).is_err());
+    let bytes = gpu.allocation_bytes();
+    assert!(
+        update(
+            &mut gpu,
+            Arc::new((*model).clone()),
+            changed.clone(),
+            3,
+            bytes
+        )
+        .is_err()
+    );
+    assert_eq!(gpu.allocation_bytes(), bytes);
+    assert!(Arc::ptr_eq(&gpu.owners[&owner].model, &model));
+    assert!(Arc::ptr_eq(&gpu.owners[&owner].frame, &changed));
+    let retained = pixels(
+        &renderer,
+        &device,
+        &queue,
+        vec![gpu.owners[&owner].primitives[0].geometry()],
+        matrix,
+    );
+    assert_eq!(retained, after);
+    gpu.clear();
+    cpu.clear();
+    assert_eq!(gpu.counts(), (0, 0, 0));
+    assert!(pollster::block_on(scope.pop()).is_none());
+    println!(
+        "VOXY_MORPH_OWNER_GPU weight_only_updates=true cpu_pixels_equal=true last_good_retained=true stop_owners=0 fps_qualified=false"
+    );
+    if rigid {
+        println!(
+            "VOXY_RIGID_MORPH_OWNER_GPU source_skins=0 gpu=true mirrored_nonuniform_node=true cpu_pixels_equal=true last_good_retained=true fps_qualified=false"
+        );
+    }
+    Ok(())
+}
+
+#[test]
+#[ignore = "requires physical GPU and VOXY_MORPH_UPSTREAM_GLB; ordinary imported owner with all original primitives"]
+fn gpu_original_morph_owner_updates_all_primitives() -> Result<(), Box<dyn std::error::Error>> {
+    let source_path = std::env::var_os("VOXY_MORPH_UPSTREAM_GLB")
+        .ok_or("set VOXY_MORPH_UPSTREAM_GLB to the pinned original asset")?;
+    let bytes = std::fs::read(source_path)?;
+    let temp = crate::locomotion_tests::Temp::new();
+    let (path, _) = crate::locomotion_tests::morph_project(&temp)?;
+    let root = path.parent().unwrap();
+    std::fs::write(root.join("rig.glb"), &bytes)?;
+    let scene_path = root.join("main.scene.json");
+    let mut scene: serde_json::Value = serde_json::from_slice(&std::fs::read(&scene_path)?)?;
+    scene["objects"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|o| o["id"] == "visual")
+        .unwrap()["components"]["editor.model-locomotion.v1"]["falling"] = "Jump".into();
+    std::fs::write(scene_path, serde_json::to_vec(&scene)?)?;
+    let mut app = crate::App::from_project(&path)?;
+    app.start_standalone()?;
+    let model = app
+        .catalog
+        .snapshot(&voxy_assets::AssetId("rig".into()))
+        .unwrap()
+        .value()
+        .animated
+        .as_ref()
+        .unwrap()
+        .clone();
+    assert_eq!(
+        (
+            model.mesh_instance_count(),
+            model.primitives.len(),
+            model.morph_primitive_count()
+        ),
+        (14, 19, 3)
+    );
+    let owner = app.instances[1];
+    let graphics = voxy_render::GraphicsOptions::default().create_instance();
+    let adapter = pollster::block_on(graphics.request_adapter(&Default::default()))?;
+    eprintln!("ordinary original morph adapter: {:?}", adapter.get_info());
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default()))?;
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let mut render = AnimatedModels::new(&renderer)?;
+    let settings = app
+        .scene
+        .component::<ModelAnimation>(owner)?
+        .unwrap()
+        .clone();
+    let mut checked = 0;
+    let mut maximum = 0f64;
+    for tick in 1..=3 {
+        app.advance_game(1. / 60.)?;
+        let frame = app.play.animations.frame(owner, &model).unwrap();
+        render.update(
+            &renderer,
+            &device,
+            &queue,
+            owner,
+            model.clone(),
+            settings.clone(),
+            Some(frame.clone()),
+            None,
+            Vec::new(),
+            Vec::new(),
+            None,
+            tick,
+            0,
+            64 << 20,
+        )?;
+        let state = &render.owners[&owner];
+        assert_eq!(state.primitives.len(), 19);
+        assert!(
+            state
+                .primitives
+                .iter()
+                .all(|p| matches!(p, Primitive::Skin { .. }))
+        );
+        let expected = model.scene_meshes_frame(&frame)?;
+        let sizes = expected
+            .iter()
+            .map(|mesh| mesh.vertices().len() as u64 * 36)
+            .collect::<Vec<_>>();
+        let staging = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("ordinary original full owner readback"),
+            size: sizes.iter().sum(),
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let mut encoder = device.create_command_encoder(&Default::default());
+        let mut offset = 0;
+        for (primitive, size) in state.primitives.iter().zip(&sizes) {
+            encoder.copy_buffer_to_buffer(
+                &primitive.geometry().vertices,
+                0,
+                &staging,
+                offset,
+                *size,
+            );
+            offset += size;
+        }
+        queue.submit([encoder.finish()]);
+        let (tx, rx) = std::sync::mpsc::channel();
+        staging
+            .slice(..)
+            .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
+        device.poll(wgpu::PollType::wait_indefinitely())?;
+        rx.recv()??;
+        let mapped = staging.slice(..).get_mapped_range()?;
+        let actual = mapped
+            .chunks_exact(4)
+            .map(|bytes| f32::from_le_bytes(bytes.try_into().expect("one scalar")))
+            .collect::<Vec<_>>();
+        let mut first = 0;
+        for (mesh, size) in expected.iter().zip(&sizes) {
+            let end = first + *size as usize / 4;
+            for (gpu, cpu) in actual[first..end].chunks_exact(9).zip(mesh.vertices()) {
+                for axis in 0..3 {
+                    let error = (f64::from(gpu[axis]) - f64::from(cpu.position[axis])).abs();
+                    assert!(error.is_finite() && error <= 1e-5);
+                    maximum = maximum.max(error);
+                }
+                checked += 1;
+            }
+            first = end;
+        }
+        drop(mapped);
+        staging.unmap();
+    }
+    assert_eq!(checked, 7214 * 3);
+    render.clear();
+    assert_eq!(render.counts(), (0, 0, 0));
+    app.stop_workers()?;
+    assert!(pollster::block_on(scope.pop()).is_none());
+    println!(
+        "VOXY_ORIGINAL_MORPH_OWNER_GPU {}",
+        serde_json::json!({"primitives":19,"morph_primitives":3,"frames":3,"checked_vertices":checked,"max_position_error":maximum,"ordinary_import_and_playback":true,"all_primitives_gpu":true,"native_image_verified":false,"fps_qualified":false})
+    );
+    Ok(())
+}
+
+#[test]
+fn authoring_override_frames_are_cached_per_owner_revision_and_settings()
+-> Result<(), Box<dyn std::error::Error>> {
+    let temp = crate::locomotion_tests::Temp::new();
+    let (_, source) = crate::locomotion_tests::morph_project(&temp)?;
+    let glb = gltf::binary::Glb::from_slice(&source)?;
+    let mut document: serde_json::Value = serde_json::from_slice(&glb.json)?;
+    let node = document["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .position(|node| node.get("mesh").is_some())
+        .unwrap();
+    document["nodes"][node]["name"] = "EditableMorph".into();
+    let source = gltf::binary::Glb {
+        header: glb.header,
+        json: serde_json::to_vec(&document)?.into(),
+        bin: glb.bin,
+    }
+    .to_vec()?;
+    let model = Arc::new(ModelAsset::parse_animated(
+        &source,
+        &[],
+        voxy_model::ModelLimits::default(),
+    )?);
+    let mut render = AnimatedModels {
+        authoring_frames: Default::default(),
+        skinner: None,
+        owners: HashMap::new(),
+        sources: HashMap::new(),
+    };
+    let mut scene = voxy_scene::SceneGraph::new(2);
+    let owner = scene.spawn(None, Default::default())?;
+    let other = scene.spawn(None, Default::default())?;
+    let mut settings = ModelAnimation {
+        morph_weights: [("EditableMorph".into(), vec![1.25, -0.75])].into(),
+        ..Default::default()
+    };
+    let first = render.authoring_frame(owner, &model, &settings)?;
+    assert_eq!(model.frame_weights(&first)?, vec![vec![1.25, -0.75]]);
+    assert_eq!(first.skin_matrices, model.bind_frame()?.skin_matrices);
+    assert!(Arc::ptr_eq(
+        &first,
+        &render.authoring_frame(owner, &model, &settings)?
+    ));
+    assert!(!Arc::ptr_eq(
+        &first,
+        &render.authoring_frame(other, &model, &settings)?
+    ));
+    settings
+        .morph_weights
+        .insert("EditableMorph".into(), vec![0.25, 0.5]);
+    let edited = render.authoring_frame(owner, &model, &settings)?;
+    assert!(!Arc::ptr_eq(&first, &edited));
+    assert_eq!(model.frame_weights(&edited)?, vec![vec![0.25, 0.5]]);
+    settings
+        .morph_weights
+        .insert("EditableMorph".into(), vec![f32::NAN, 0.]);
+    assert!(render.authoring_frame(owner, &model, &settings).is_err());
+    assert!(Arc::ptr_eq(
+        &render.authoring_frames.borrow()[&owner].frame,
+        &edited
+    ));
+    settings
+        .morph_weights
+        .insert("EditableMorph".into(), vec![0.25, 0.5]);
+    let revision = Arc::new((*model).clone());
+    assert!(!Arc::ptr_eq(
+        &edited,
+        &render.authoring_frame(owner, &revision, &settings)?
+    ));
+    render.clear();
+    assert!(render.authoring_frames.borrow().is_empty());
+    Ok(())
 }

@@ -1,0 +1,33 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "verified": [
+    "Original runtime/GPU Arc identity captured as explicit durable owner joins, never inferred from equal frame values",
+    "Existing native participant encoders remain authoritative; optional role metadata backward-reads missing joins as independent",
+    "Detached Play restore joins runtime frames to original accepted GPU pool after exact full AnimatorFrameCheckpoint JSON equality and target morph admission",
+    "Shared frame Arc identity survives source-free session file restore and physical GPU staging",
+    "Equal independent frames remain distinct; prior accepted GPU frame remains independent from newest runtime frame",
+    "Duplicate/missing roles and attempts to join different states reject before candidate publication",
+    "Native GPU rendered reference pixels and accepted frame ticks remain preserved by existing full-session fixture",
+    "Controlled fault omitting Arc publication fails precisely at shared runtime/render identity assertion; final source restored byte-for-byte"
+  ],
+  "checks": {
+    "native_gpu_session_passed": 3,
+    "editor_passed": 369,
+    "editor_ignored": 38,
+    "strict_all_target_clippy": "passed -D warnings",
+    "scoped_rustfmt": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "limits": [
+    "Preview roots/frames not yet composed with outer editor graph",
+    "Runtime-only shared frame classes without a GPU role not covered by these joins",
+    "No whole-App atomic publication, native input handoff or save/load menu completion",
+    "No production character, physical total-memory or 120/160 FPS qualification"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/animation_runtime.rs": "cd1f36248dfdaaaa4fd7d64656b8a0ba623126efc20a369a33ff72205d9ba30d",
+    "crates/voxy_editor/src/app/resource_checkpoint/play.rs": "bfb0883254cd0c7f68ba20e4d669c83b85eb9942493e54bf640f5a43c347b69c",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "c7a8165df287d268eb2ff6c0d4265bdb97edd7207ddb9f35c211512887fa4a0c"
+  }
+}

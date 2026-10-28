@@ -1,0 +1,20 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.32s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-7d02fc0502a2652b)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+
+thread 'app::resource_checkpoint::tests::removed_manifest_model_keeps_authoring_history_and_archived_last_good_owner' (78560304) panicked at crates/voxy_editor/src/app/resource_checkpoint/tests.rs:1005:48:
+called `Result::unwrap()` on an `Err` value: "viewport scene requires known model resources"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test app::resource_checkpoint::tests::removed_manifest_model_keeps_authoring_history_and_archived_last_good_owner ... FAILED
+
+failures:
+
+failures:
+    app::resource_checkpoint::tests::removed_manifest_model_keeps_authoring_history_and_archived_last_good_owner
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 357 filtered out; finished in 0.23s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

@@ -1,0 +1,10 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.85s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_model-04a08d587103bfe4)
+
+running 1 test
+test morph::checkpoint::tests::imported_gltf_morph_sources_rebuild_after_original_buffers_are_dropped ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 48 filtered out; finished in 0.02s
+

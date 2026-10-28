@@ -1,0 +1,35 @@
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+error[E0425]: cannot find value `next_chunk` in this scope
+   --> crates/voxy_model/src/checkpoint.rs:316:16
+    |
+316 |             if next_chunk != self.chunks.len() {
+    |                ^^^^^^^^^^ not found in this scope
+
+error[E0424]: expected value, found module `self`
+   --> crates/voxy_model/src/checkpoint.rs:316:30
+    |
+238 |     pub fn capture(
+    |            ------- this function doesn't have a `self` parameter
+...
+316 |             if next_chunk != self.chunks.len() {
+    |                              ^^^^ `self` value is a keyword only available in methods with a `self` parameter
+    |
+help: add a `self` receiver parameter to make the associated `fn` a method
+    |
+239 |         &self, models: &[Arc<ModelAsset>],
+    |         ++++++
+
+error[E0502]: cannot borrow `repeated_chunk.manifest.models` as immutable because it is also borrowed as mutable
+   --> crates/voxy_model/src/checkpoint/tests.rs:199:15
+    |
+197 |     repeated_chunk.manifest.models[0]
+    |     ------------------------------ mutable borrow occurs here
+198 |         .primitives
+199 |         .push(repeated_chunk.manifest.models[0].primitives[0].clone());
+    |          ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ immutable borrow occurs here
+    |          |
+    |          mutable borrow later used by call
+
+Some errors have detailed explanations: E0424, E0425, E0502.
+For more information about an error, try `rustc --explain E0424`.
+error: could not compile `voxy_model` (lib test) due to 3 previous errors

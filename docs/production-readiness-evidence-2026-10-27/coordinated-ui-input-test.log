@@ -1,0 +1,108 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/play_session/checkpoint.rs:1007:17
+     |
+1007 |                 KeyCode::Tab,
+     |                 ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+ 296 +     use crate::KeyCode;
+     |
+ 296 +     use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/play_session/checkpoint.rs:1008:17
+     |
+1008 |                 ElementState::Pressed,
+     |                 ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+ 296 +     use crate::ElementState;
+     |
+ 296 +     use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/play_session/checkpoint.rs:1018:21
+     |
+1018 |                     KeyCode::Enter,
+     |                     ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+ 296 +     use crate::KeyCode;
+     |
+ 296 +     use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/play_session/checkpoint.rs:1019:21
+     |
+1019 |                     ElementState::Pressed,
+     |                     ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+ 296 +     use crate::ElementState;
+     |
+ 296 +     use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/play_session/checkpoint.rs:1142:17
+     |
+1142 |                 KeyCode::Enter,
+     |                 ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+ 296 +     use crate::KeyCode;
+     |
+ 296 +     use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/play_session/checkpoint.rs:1143:17
+     |
+1143 |                 ElementState::Released,
+     |                 ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+ 296 +     use crate::ElementState;
+     |
+ 296 +     use winit::event::ElementState;
+     |
+
+error[E0433]: cannot find type `KeyCode` in this scope
+    --> crates/voxy_editor/src/play_session/checkpoint.rs:1164:21
+     |
+1164 |                     KeyCode::Enter,
+     |                     ^^^^^^^ use of undeclared type `KeyCode`
+     |
+help: consider importing one of these enums
+     |
+ 296 +     use crate::KeyCode;
+     |
+ 296 +     use winit::keyboard::KeyCode;
+     |
+
+error[E0433]: cannot find type `ElementState` in this scope
+    --> crates/voxy_editor/src/play_session/checkpoint.rs:1165:21
+     |
+1165 |                     ElementState::Released,
+     |                     ^^^^^^^^^^^^ use of undeclared type `ElementState`
+     |
+help: consider importing one of these enums
+     |
+ 296 +     use crate::ElementState;
+     |
+ 296 +     use winit::event::ElementState;
+     |
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `voxy_editor` (lib test) due to 8 previous errors
+warning: build failed, waiting for other jobs to finish...

@@ -3,9 +3,14 @@ use crate::GameplayError;
 use crate::{UiActionEvent, UiElement};
 use std::collections::{BTreeMap, VecDeque};
 use voxy_scene::{SceneCommands, SceneGraph, SceneId};
-type Handler = Box<
+type Callback = Box<
     dyn FnMut(&SceneGraph, &UiActionEvent, &mut SceneCommands) -> Result<(), GameplayError> + Send,
 >;
+
+enum Handler {
+    Callback(Callback),
+    Checkpointed(Box<dyn UiActionHandler>),
+}
 
 pub struct UiActionHandlers {
     scene: SceneId,
@@ -58,7 +63,7 @@ impl UiActionHandlers {
         + Send
         + 'static,
     ) -> Result<(), GameplayError> {
-        if action.is_empty() || action.len() > 128 || action.chars().any(char::is_control) {
+        if !valid_action_name(&action) {
             return Err("invalid UI action name".into());
         }
         if self.handlers.contains_key(&action) {
@@ -67,7 +72,8 @@ impl UiActionHandlers {
         if self.handlers.len() >= self.handler_capacity {
             return Err("UI handler capacity exceeded".into());
         }
-        self.handlers.insert(action, Box::new(handler));
+        self.handlers
+            .insert(action, Handler::Callback(Box::new(handler)));
         Ok(())
     }
     /// Whether application logic owns this named action.
@@ -146,7 +152,12 @@ impl UiActionHandlers {
                     .get_mut(&event.action)
                     .ok_or_else(|| format!("unhandled UI action: {}", event.action))?;
                 let mut staged = SceneCommands::new(scene, self.command_capacity);
-                handler(scene, &event, &mut staged)?;
+                match handler {
+                    Handler::Callback(handler) => handler(scene, &event, &mut staged)?,
+                    Handler::Checkpointed(handler) => {
+                        handler.dispatch(scene, &event, &mut staged)?
+                    }
+                }
                 commands.append(&mut staged).map_err(GameplayError::from)
             })();
             results.push(result);
@@ -288,3 +299,12 @@ impl UiActionSetup {
         (self.0)(handlers)
     }
 }
+
+fn valid_action_name(action: &str) -> bool {
+    !action.is_empty() && action.len() <= 128 && !action.chars().any(char::is_control)
+}
+mod checkpoint;
+pub use checkpoint::{
+    UiActionCheckpoint, UiActionCheckpointLimits, UiActionCheckpointRegistry, UiActionHandler,
+    UiActionRestoreContext, UiActionState,
+};

@@ -1,0 +1,49 @@
+{
+  "scope": "Detached full native PlaySession/resources plus validated model GPU candidate",
+  "checks": {
+    "editor_passed": 310,
+    "editor_ignored": 27,
+    "explicit_full_play_gpu": "passed Apple M4 Max Metal",
+    "all_target_clippy": "passed",
+    "format_and_diff": "passed",
+    "continuation_frames": 120
+  },
+  "archive": {
+    "bytes": 158945,
+    "sha256": "d8450417b0e83c121b0cfff209f86d868cb9f26e7c69de54e7dd27fac6c0c062",
+    "runtime_path": "play.animations",
+    "model_resource_runtime_duplicate": false,
+    "accepted_gpu_ticks": 731
+  },
+  "readback": {
+    "width": 64,
+    "height": 64,
+    "equal": true,
+    "nonblack_pixels": 946,
+    "sha256": "39c4e4256c66809e9ef2c0cd23f537cf5b997ff4955090709251eaa49f9ef27f"
+  },
+  "validated": [
+    "Original source directory removed before native preparation into empty target directory",
+    "Model reconstructed independently from archived graph and shared by catalog/runtime/render owner",
+    "Actual accepted offscreen renderer snapshot supplied to the same typed host capture path",
+    "Accepted bind frame remains distinct from newer simulation frame and retains ticks",
+    "Complete native game/resource participant held until GPU validation succeeds",
+    "Budget rejection and cancellation preserve source CPU file and cache state",
+    "Source input mutation rejects origin validation; exact input restore revalidates",
+    "Outer GPU validation scope clean after rejected/cancelled/successful staging"
+  ],
+  "scope_limits": [
+    "Model-only offscreen readback uses a controlled projection; no complete scene/window presentation claim",
+    "Offscreen renderer supplies live typed GPU owners explicitly because the fixture has no SceneSurface",
+    "Guard currently requires a running source PlaySession; idle/startup origin admission remains open",
+    "No full App freeze, authoring/extraction/non-model Graphics/UI/audio composition, commit or first-presentation handoff",
+    "No physical peak memory or displayed FPS qualification",
+    "ENG-03 through ENG-13 incomplete"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/resource_checkpoint/play.rs": "b383be1e19586852fa7d31e04306ca6daf99b4006a5e367f37e97e943528b855",
+    "crates/voxy_editor/src/animated_models.rs": "050bd34dd83bbfb065beb98fbd40900698483c9feaf4af717b96f8d2361e9242",
+    "crates/voxy_editor/src/animated_models/tests.rs": "5132e2e6795ccc1c5550806485313ce4fec9fc5e6539e1729d354ef89644b556",
+    "crates/voxy_editor/src/play_session/checkpoint.rs": "2ef08002a67a5b3b4e0e3b31be7a086664e81d2fa9e6373029a30b3766d70db8"
+  }
+}

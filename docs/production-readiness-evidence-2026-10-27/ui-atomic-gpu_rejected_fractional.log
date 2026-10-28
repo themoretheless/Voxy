@@ -1,0 +1,19 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 1 test
+UI ATOMIC RESTORE GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+
+thread 'ui_live::restore::tests::gpu_restore_rolls_back_late_failures_and_publishes_exact_pixels_only_after_validation' (76398186) panicked at crates/voxy_editor/src/ui_live/restore/tests.rs:259:5:
+called `Result::unwrap()` on an `Err` value: SpriteBatch(InvalidSprite)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test ui_live::restore::tests::gpu_restore_rolls_back_late_failures_and_publishes_exact_pixels_only_after_validation ... FAILED
+
+failures:
+
+failures:
+    ui_live::restore::tests::gpu_restore_rolls_back_late_failures_and_publishes_exact_pixels_only_after_validation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 299 filtered out; finished in 0.12s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

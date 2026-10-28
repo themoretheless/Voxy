@@ -1,0 +1,69 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Owned native AudioSession readiness and audio-owner publication with held PCM gate",
+  "status": "AudioSession native publication implemented and exercised; ordinary coordinated App native file load remains closed",
+  "changes": [
+    "Bind candidate to unique source checkpoint epoch and exact original audio snapshot before native readiness",
+    "Revalidate destination scene/project/connection and known device errors before readiness/commit",
+    "Resume native API while retaining original frozen PCM queue; poll nonblocking ACK",
+    "Revalidate source audio state and native ACK immediately before changing queue/playback",
+    "Replace prepared PCM queue/pump and playback owner, return old source worker handles without joining",
+    "Keep queue frozen and checkpoint held after audio commit until enclosing caller resumes",
+    "Reject repeated publication, source mutation, late destination mutation and stale source epochs"
+  ],
+  "checks": {
+    "audio_device": {
+      "passed": 21,
+      "ignored": 2
+    },
+    "editor": {
+      "passed": 392,
+      "ignored": 45
+    },
+    "native_session": {
+      "passed": 1,
+      "endpoint": "actual default CPAL/CoreAudio system output",
+      "rate": 48000,
+      "gain": 0,
+      "window": false,
+      "successful_publications": 2,
+      "cases": [
+        "source-free preparation from persisted native JSON after WAV removal",
+        "reject publication before native readiness",
+        "reject changed playback counter after readiness while preserving changed source",
+        "reject destination scene mutation after readiness; original audio snapshot unchanged",
+        "cancel ready candidate and acquire fresh source checkpoint",
+        "reject old candidate epoch before touching fresh source",
+        "successful queue/pump/playback commit",
+        "PCM remains held for 20ms after native API resumes and after audio commit",
+        "exact OutputCheckpoint equality with saved native output bytes",
+        "restored playback frame counter equals archived value",
+        "reject duplicate commit",
+        "join retired source workers outside frame method",
+        "explicit source release and further playback progress"
+      ]
+    },
+    "gpu_regressions": {
+      "passed": 7,
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "mode": "offscreen"
+    },
+    "clippy": "audio_device and editor all-targets -D warnings passed",
+    "format": "scoped rustfmt and diff check passed"
+  },
+  "limitations": [
+    "New API commits the audio owner only; not wired into the complete App scene/GPU/UI/input publication transaction",
+    "Existing ordinary native prepare/load/publication entrypoints still reject native replacement",
+    "The enclosing host must complete all other fallible admission before audio-owner commit; no general rollback of already committed audio is provided here",
+    "Explicit resume after commit still uses original checkpoint resume protocol; integration needs final coordinated gate-release design",
+    "Physical tests use gain zero; no audible continuity, host-buffer position or listening qualification",
+    "Known native device error counters reject admission; actual hardware failure/reconnect injection not tested",
+    "No native editor window or FPS/latency/power qualification; full ENG roadmap remains open"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/audio_play.rs": "6f4ea03874e1277855c35f1cae451c96fb9bc2157ffd32346861e9e12bb10e69",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "9cd68f493161d481257d127616640218d970e53b379ca71147f0f6da28cedea2"
+  }
+}

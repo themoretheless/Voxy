@@ -1,0 +1,38 @@
+{
+  "status": "locomotion_request_adapter_regression_qualified_real_asset_import_incomplete",
+  "git_head": "8acd97edce5fe2024fe173a2ba792dad27e087fe",
+  "source_sha256": {
+    "crates/voxy_editor/src/locomotion.rs": "cc566c18fffcaffe1e94f261b2e6835b06259160e22164ee94c429402550edd7",
+    "crates/voxy_editor/src/locomotion_tests.rs": "ee9a38b4ae78991a48267bed9fbb32a2b79fcbbd8b651c59f437c2820174e0e8",
+    "crates/voxy_editor/src/lib.rs": "8d639436b173d23e691a2e9a760b37e3641d924a26e2041ef476d0c799150df5",
+    "crates/voxy_editor/src/app/play_mode.rs": "044f3180f915d98c9031e160840e638db53571ca7e62c4f2fcfa1e7cd63fb23a",
+    "crates/voxy_editor/src/app/authoring.rs": "28b248fe249c7df4b63b8d8c081139416fd9fbb9361e3e035bc2c3e28042ad6c",
+    "crates/voxy_editor/src/headless_game.rs": "d28b618885cef205e2c930385d1e167e2dcf81e46439edf926b2ebada97d83bd",
+    "crates/voxy_editor/examples/locomotion_project.rs": "306b7541a26a578c6f5ffc37e56ec2673e800aff46d7c2d11b911df473ecaba0"
+  },
+  "editor_tests": {
+    "passed": 214,
+    "failed": 0,
+    "ignored": 17
+  },
+  "clippy_all_targets_warnings_denied": true,
+  "native_editor_and_public_example_built": true,
+  "cli_proof": "locomotion-cli-proof.json",
+  "synthetic_fixture_only": true,
+  "source_free_package_frame_trace_equal": true,
+  "positive_case_uses_distinct_idle_move_rise_fall_clip_names": true,
+  "upstream_model_import_passed": false,
+  "upstream_import_gap": "locomotion-upstream-import-gap.json",
+  "native_window_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false,
+  "remaining": [
+    "full original multiple mesh/skin import",
+    "morph geometry and animated weights",
+    "real character visual and foot-contact acceptance",
+    "positive locomotion/root-motion transition qualification",
+    "general GraphPlayer/editor state-machine integration",
+    "controller add-component and clip-choice UI",
+    "full engine roadmap"
+  ]
+}

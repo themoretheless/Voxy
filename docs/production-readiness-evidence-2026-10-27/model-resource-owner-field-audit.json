@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-27",
+  "source_sha256": {
+    "crates/voxy_model/Cargo.toml": "1fe351b4b611ca12fc1b225a28639a253baad78724dd183cffea3a413645d306",
+    "crates/voxy_model/src/lib.rs": "246ed2c3fb733fad6482b0898dde2d4bea6dc6a3f7dbf1230519699e21145a2b",
+    "crates/voxy_model/src/morph.rs": "0ae81256e00caafa0e2543f05efe7a4da673270d40b1309c7e8e070cf2a3ef63",
+    "crates/voxy_model/src/morph/checkpoint.rs": "e8e35423e55c15ccce1ce26911579dd91769b8c991f84127f9f2e018ca333c0d",
+    "crates/voxy_model/src/morph/checkpoint/tests.rs": "fceafdf61f59b4a4fafd2ae83fa9d4128036848f82e205bfeee5fa5b4760f739",
+    "crates/voxy_editor/src/import/animated_tests.rs": "931fca25e02e1a52fb2da1abca2c72ce5a36bfb42b501a7dcc28f6a3fdb052f1"
+  },
+  "fields": {
+    "ModelAsset": {
+      "primitives": "native per-primitive archive implemented; model-wide ordering and aliases remain",
+      "skeleton": "AnimationAssetCheckpoint available; enclosing resource identity remains",
+      "animations": "AnimationAssetCheckpoint available; enclosing resource identity remains",
+      "joint_names": "original optional name array and alias composition remain",
+      "mesh_joint": "exact model field remains",
+      "mesh_instances": "exact model field remains",
+      "skinned": "exact model field remains",
+      "morph": "shared MorphImportData owner composition remains"
+    },
+    "MorphImportData": {
+      "defaults": "PropertySet schema/value archive remains",
+      "sources": "must join actual clip Arc identities through animation asset table",
+      "skeleton": "must preserve optional shared skeleton identity through animation asset table",
+      "primitives": "MorphGeometry archive available; optional ordered bindings and metadata remain",
+      "clips": "PropertyClip source keys/modes/tangents and sharing archive remains"
+    },
+    "MorphBinding": {
+      "node": "source-node identity, not skeleton index",
+      "name": "optional authored node name and sharing",
+      "geometry": "native MorphGeometryCheckpoint implemented",
+      "defaults": "exact weight words remain in owner composition"
+    },
+    "MorphGeometry": {
+      "source": "complete native primitive payload archived",
+      "targets": "ordered optional source-local streams archived"
+    },
+    "ModelPrimitive": {
+      "geometry": "existing native SceneMesh/SkinnedMesh binary admission",
+      "color": "all four f32 bit patterns",
+      "base_color_texture": "optional image index, full sampler and use_mips; image resolver remains"
+    }
+  },
+  "warning": "Foundation field coverage is not proof of complete model owner restoration or preserved internal geometry stream Arc aliases."
+}

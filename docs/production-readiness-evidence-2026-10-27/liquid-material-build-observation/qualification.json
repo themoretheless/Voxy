@@ -1,0 +1,34 @@
+{
+  "stage": "ENG-03 liquid material build consistency",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "bug": "Liquid materials were decoded/revalidated during runtime creation but their original input observations were discarded before final package comparison. A normal GameHost setup could replace material bytes after preparation and export still published the changed unvalidated payload.",
+  "change": "Native liquid preparation can return PreparedLiquidRuntime with original validated ImportInputs alongside unchanged runtime/optics. Existing runtime callers retain original tuple interface. Export captures those exact observations before host startup and feeds their expected bytes into original final package consistency checks before atomic publication.",
+  "verified": [
+    "Pre-fix public GameHost setup reproducer changes material after native runtime preparation and export incorrectly succeeds",
+    "Normal host setup executes exactly once; corrupt replacement rejects specifically as changed liquid.json input with no output package",
+    "Syntactically valid replacement with changed sound-speed coefficient also rejects before publication",
+    "Restoring original material allows ordinary export and source-free GameCheck after deleting entire project",
+    "Native optical-liquid App GPU/source-free image and f64 particle-state regression still passes"
+  ],
+  "editor_tests": {
+    "passed": 358,
+    "failed": 0,
+    "ignored": 35
+  },
+  "explicit_optical_gpu_tests_passed": 1,
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/lib.rs": "89a98e20fb565157e697b8581a0931d436f2cbe9e686d31eb1d0ba47ffde7649",
+    "crates/voxy_editor/src/project.rs": "61c1c3d95477562f8c153acfdb372cfc4a0cb4fbe118d8f13128f7db2e4ca959",
+    "crates/voxy_editor/src/prefab_authoring.rs": "37088920da1175149e0a17c5bee4bcdb2b72a8cf5ebc0ffc23aa6cd032dab49a"
+  },
+  "limits": [
+    "Build captures validated material bytes before startup; this is content observation/revalidation, not filesystem locking or concurrent-writer CAS",
+    "No new long-lived PlaySession liquid source watcher, checkpoint participant or live material reload is introduced",
+    "Existing liquid import limits, material coefficients, solver and optical representation unchanged",
+    "No native OS/input/audio-device, physical memory or FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

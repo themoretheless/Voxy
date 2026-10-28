@@ -1,0 +1,58 @@
+{
+  "status": "exact_gpu_morph_deformation_verified_editor_default_pending",
+  "proof": "morph-gpu-proof.json",
+  "code_sha256": {
+    "crates/voxy_render/src/skinned_morph.rs": "5ec560ba91fa6b94d702045852ea0b4ab12b9b07127c1d1bebf0b842cc1931dc",
+    "crates/voxy_render/src/scene/skinning.rs": "35bba321e1dd3a75802754ed21e1f2881bde5a5ea0deea4ec6102fa5bf64b387",
+    "crates/voxy_render/src/scene/skinning.wgsl": "066aca1e8f047f5941c67046c235813d5f2c533054cbc46beb37d1308d96040f",
+    "crates/voxy_render/src/scene/morph.wgsl": "edcfc2134a8e47f6ca1c8c48dd946fa74bebb5cfb435d08afd55a2604290264f",
+    "crates/voxy_render/src/scene/skinning_morph_tests.rs": "a8880fab649823bc7fc1fdea23f91d25fe637beea43f6509ef6bdaa05857df27",
+    "crates/voxy_render/src/world_exact_fused_affine.wgsl": "37ebffc43ac1395d0f30a80046d84a28ca037fbc6e0057874078cac982e3ca38",
+    "crates/voxy_render/src/lib.rs": "34d733abd79ab6e40d7ab88cbd4116651cf420151ec279b8da5927d0812cb73a",
+    "crates/voxy_model/src/lib.rs": "43084d1492b7b6c0e0f9fb50edf9a0aa7c1b252fe419c2c6485dce9cde2a8194",
+    "crates/voxy_model/src/morph.rs": "bdb182385831910bf5b24391db31caa856fa8692b4c3da5e3ee0a2f8509c7e1e",
+    "crates/voxy_model/examples/morph_gpu.rs": "ab6fd90db95a236ad113bc1b5a5644b62b0d0180d8307c7c43d29de5347294ad"
+  },
+  "source_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "source_bytes_unchanged": true,
+  "checks": {
+    "renderer_lib_passed": 358,
+    "renderer_lib_ignored": 86,
+    "model_morph_focused_passed": 6,
+    "editor_lib_passed": 215,
+    "editor_lib_ignored": 17,
+    "all_targets_clippy": "render/model/editor passed -D warnings",
+    "physical_gpu_morph_instances": "passed positions/UVs/normals and independent weights",
+    "physical_gpu_exact_arithmetic": "41 cases including 256 nonzero terms; matched independent exact rational binary32 and CPU binary64 oracle",
+    "physical_gpu_baseline_skeletal": "passed color parity, independent instances and last-good pose",
+    "original_imported_morph_gpu": {
+      "adapter": "Apple M4 Max",
+      "backend": "Metal",
+      "checked_vertices": 20904,
+      "editor_integrated": false,
+      "explicit_weight_overrides": true,
+      "fps_qualified": false,
+      "frames": 12,
+      "full_model_image_verified": false,
+      "gpu_morph_primitives": 3,
+      "max_world_position_error": 4.76837158203125e-07,
+      "scope": "headless_gpu_imported_morph_correctness",
+      "source_channels_unchanged": true,
+      "source_primitives": 19
+    }
+  },
+  "source_arithmetic": "exact finite binary32 products accumulated as 36 radix-65536 signed digits, one ties-to-even rounding before existing skinning",
+  "precision_scope": "exact source-local morph sum; existing f32 palette/normal skinning semantics retained; device correctness qualified only on the recorded Metal adapter",
+  "new_morph_path_optional": true,
+  "default_editor_integrated": false,
+  "native_full_model_image_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false,
+  "remaining": [
+    "default importer/editor accepted-frame consumers and fallback/reload",
+    "source-free package with morph animation and failure rollback",
+    "static single-mesh GPU morph rigid binding",
+    "morph-aware LOD/culling error admission",
+    "native full-scene visual and performance qualification"
+  ]
+}

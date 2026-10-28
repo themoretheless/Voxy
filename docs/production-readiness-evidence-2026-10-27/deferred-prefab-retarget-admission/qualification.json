@@ -1,0 +1,35 @@
+{
+  "stage": "ENG-03 / ENG-06 deferred retarget build admission",
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "bug": "Unused declared prefab retarget profiles were serialized into packages without source-model admission or native skeleton binding compilation; a missing retarget source was accepted by build.",
+  "change": "After native prefab expansion/overrides, build validates ModelRetarget with original validate/compile_models against models decoded through unchanged InputRecipe and source quotas. Captured rig inputs join original bounded package observations; identical source/target ID uses same imported owner. Shared generic decode scaffolding preserves early dropping of unused model payloads.",
+  "verified": [
+    "Pre-fix missing-rig profile exports successfully and regression fails",
+    "Missing source ID, declared prefab ID as source and static model as source reject without output",
+    "Missing source bone and missing target bone reject using native imported rig resolver",
+    "Invalid rotation calibration rejects via original profile validator",
+    "Static target model rejects",
+    "Nested override introducing missing retarget source rejects",
+    "Correct same-rig hip mapping builds; after source deletion native editor placement from materialized package starts standalone, loads animated rig and advances one tick",
+    "Whole editor suite passes"
+  ],
+  "editor_tests": {
+    "passed": 360,
+    "failed": 0,
+    "ignored": 35
+  },
+  "strict_editor_all_target_clippy": "passed",
+  "scoped_format_and_diff": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/package_models.rs": "79be33a688d3d7a58e5efbc51c49ddd9ef7b953dc7949ced65a142eab506d951",
+    "crates/voxy_editor/src/project_prefab_tests.rs": "21dd08f334a9a0d2aef27479d1d566c337525809e5bd2dcbcfec329e5a4944aa"
+  },
+  "limits": [
+    "Build-only native retarget validation; no new runtime retarget algorithm or new GPU/pose-image qualification",
+    "At most source/target imported models are retained for a profile; repeated build validation is not a measured persistent-cache optimization or physical memory bound",
+    "Clip/part/locomotion compatibility, morph shape mapping and other deferred asset links remain separate work",
+    "No native OS/input/audio-device or 120/160 FPS qualification",
+    "ENG-03 through ENG-13 remain incomplete"
+  ]
+}

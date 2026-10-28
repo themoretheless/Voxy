@@ -1,0 +1,60 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty": true,
+  "scope": "Native output policy with no actual output ownership supports idle save/load; Play/Stop retires UI publications and input belonging to the replaced graph",
+  "changes": [
+    "Logical audio checkpoint admission depends on actual device/connection/output ownership instead of selected output policy",
+    "Partial native ownership and nonquiescent transitions remain rejected; no device is started for idle checkpoints",
+    "Coordinator source fingerprint now includes unsaved host output mode, rejecting mode changes even when no device exists",
+    "Logical playback candidate validation rejects an offline playback publication under native policy until a native device is admitted",
+    "Play/Stop closes original UiLive workers and clears GPU UI/focus slots; creates fresh SceneUiRuntime input for the replacement graph"
+  ],
+  "discovered_bug": "Real native Stop followed immediately by save retained old accepted UI NodeIds while restore_authoring had installed fresh graph handles. Initial full GPU suite failed with unidentified accepted UI owner. Original failure log retained; fixed lifecycle and repeated full suites.",
+  "checks": {
+    "editor": {
+      "passed": 394,
+      "ignored": 47
+    },
+    "gpu_app": {
+      "passed": 9,
+      "device": "Apple M4 Max",
+      "backend": "Metal",
+      "window": false,
+      "native_audio": "actual default CoreAudio output, 48000 Hz, gain zero"
+    },
+    "clippy": "editor all targets -D warnings, exit 0",
+    "format": "scoped rustfmt check passed",
+    "diff": "scoped git diff --check passed"
+  },
+  "regressions": [
+    "Idle Session captures/cancels/prepares/publishes without creating device; native mode preserved and pending Play rejected",
+    "Actual empty project desktop-policy files save before Play and during empty Play; decoded audio remains null and no device is owned",
+    "Real GPU native-idle editor source-free model/history workflow and complete load preserve native policy",
+    "Real native Play save/cancel/two source-free loads and 120-frame continuations still pass",
+    "Real native Stop retires asynchronous device, then idle desktop file save/read/load succeeds without restarting playback/device",
+    "Existing running/idle/text/model/UI/input/late-guard regressions pass; exact native App restored input JSON and model/UI pixels still match",
+    "Real offline playback preparation rejects native-mode logical publication before commitment"
+  ],
+  "limits": [
+    "Native idle with device still retiring is deliberately rejected until normal device polling retires the owner",
+    "Nonempty offline/native archive transitions need actual device preparation; no silent offline playback fallback",
+    "Reconnect/rate changes, native window, audible continuity, latency, power and FPS qualification remain open",
+    "Full professional engine coverage and ENG-03 through ENG-13 remain open"
+  ],
+  "sources_sha256": {
+    "crates/voxy_editor/src/audio_session.rs": "5287d6b4e49b30697b5b70f6650ac2594516b8fe68706a015bc351b85efc43ea",
+    "crates/voxy_editor/src/audio_session_checkpoint.rs": "073b7e23a9293c3dbe24a9909a3f7e19e15e450f68c4b37c0932f5e223d132c5",
+    "crates/voxy_editor/src/app/restore_barrier.rs": "05ddf40e400e7be45bb84565a5911b98e5c9d68734d81fa25736621a93ab0f92",
+    "crates/voxy_editor/src/app/restore_barrier/tests.rs": "7fe5c914fe64a0f6039b050504d351961fa7386015996be4526fc582b9d71cdb",
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "4ad3817135f8796ee59980fc325a372bbbbe927778ea8f216b661c53ff66fed4",
+    "crates/voxy_editor/src/app/restore_barrier/save.rs": "bf5f3a738021c161026950715ef56fafba16e84c47d0fdd36c51068d404ff042",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "9c92cf4b6c3d97b9bdd0dfdcc42e1ba0fbcfc4914d92e0f37b87cfcb081a3d1f",
+    "crates/voxy_editor/src/app/play_mode.rs": "3ddd719732c5fc1471a2b7ad2d0c0a6e9d7b43336bf93025dca6b6108eca68eb"
+  },
+  "logs": [
+    "editor.log",
+    "gpu.log",
+    "clippy.log",
+    "initial-stop-ui-failure.log"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "status": "ordinary_morph_import_runtime_gpu_reload_package_verified_native_acceptance_pending",
+  "code_sha256": {
+    "crates/voxy_model/src/lib.rs": "0cf1e16a501afa9ed10674f15d4a5f788a6b2e202438a0e37c7622cc9077f0fc",
+    "crates/voxy_model/src/morph.rs": "6bca95a7c193b36994eb6b407a2b56d5331dc1725b80e9850691fdc16235d128",
+    "crates/voxy_animation/src/property_playback.rs": "aaabe6a44b262d351c7c5f4442855bc4806008510d3a4ac9ed826cf1bff9ffb0",
+    "crates/voxy_animation/src/property_track.rs": "1ece889aacda834dfe495144f3d1b615cd401d74f8a3ebdffbe45393b37aa7c6",
+    "crates/voxy_editor/src/import.rs": "cea5881e74e5e20c948bbad869e24794617593b3c5c96089c126d7e56ff85eeb",
+    "crates/voxy_editor/src/model_playback.rs": "3a8ba1c9df04aa4cc2c2f1adf4162809de92de3142b9a0a0b20cda74fb59ff62",
+    "crates/voxy_editor/src/animation_runtime.rs": "0386d2dda5e5db8d5cb453fbe8e15536e84666109615abdd0e4f475ebfbfbd75",
+    "crates/voxy_editor/src/animated_models.rs": "c85c38faaac824de9a4b3d93feb7c7760120a7bb3f8754fd5c750bfcf12a2a23",
+    "crates/voxy_editor/src/animation_preview.rs": "5ed21050af3e2c6e36b88c00f8ab87d1a73fae1e1b0b91664995f1e1ff294db3",
+    "crates/voxy_editor/src/headless_game.rs": "ea5a368ac4da6e0a7c199906e6a387ab1e1c6bef5f00646a331aca1a453dca7c",
+    "crates/voxy_editor/src/gpu_model.rs": "d0dbd15a2f12dc119855e5aa809297e427398b16bb294f946f0bbbdf4709e7b0",
+    "crates/voxy_editor/src/retarget_profile.rs": "859ff25fc4960c70beef0e734bc98c62d3d50723d97c20fd2a817dc03d7063e2",
+    "crates/voxy_editor/examples/locomotion_project.rs": "7e22443907e2554acde7936992738dc992873403aa6258f1df44f03af2c661ab",
+    "crates/voxy_render/src/skinned.rs": "c65b6ab4867d7625499c3f9c23fad263f8140e1ed0c5b6f37b12d944f13357de",
+    "crates/voxy_render/src/skinned_morph.rs": "33425f95a631bca7742d9575476647e2167f9d0888f5acb5d6b5a324d36a7705",
+    "crates/voxy_render/src/scene/skinning.rs": "3ec26053c3f3e0bb2571c1ddae6a29519d3019eb2a6c9b4b8dcc745d2221f0ff",
+    "crates/voxy_editor/src/animated_models/tests.rs": "5b8a2c9075eeeced5f0bcc0c5765c701a56b5efcf5da82930caf2716290d91d8",
+    "crates/voxy_editor/src/locomotion_tests.rs": "846d36b780eda7d68a1103b363cbaeeba335178f7c9b6ac0344abfecc473bd3f",
+    "crates/voxy_render/src/scene/morph.wgsl": "edcfc2134a8e47f6ca1c8c48dd946fa74bebb5cfb435d08afd55a2604290264f",
+    "crates/voxy_render/src/scene/skinning.wgsl": "066aca1e8f047f5941c67046c235813d5f2c533054cbc46beb37d1308d96040f",
+    "crates/voxy_render/src/world_exact_fused_affine.wgsl": "37ebffc43ac1395d0f30a80046d84a28ca037fbc6e0057874078cac982e3ca38"
+  },
+  "source_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "source_bytes_unchanged": true,
+  "proofs": [
+    "morph-runtime-proof.json",
+    "morph-ordinary-owner-proof.json"
+  ],
+  "checks": {
+    "model_lib_passed_before_final_basis_guard_refinement": 42,
+    "model_final_morph_focused_passed": 7,
+    "animation_lib_passed": 336,
+    "editor_lib_final_passed": 218,
+    "editor_lib_default_ignored": 19,
+    "ignored_gpu_tests_separately_executed": 2,
+    "property_registry_focused_passed": 5,
+    "project_morph_focused_passed": 3,
+    "strict_all_targets_clippy_packages": [
+      "voxy_animation",
+      "voxy_render",
+      "voxy_model",
+      "voxy_editor",
+      "voxy_demos",
+      "voxy_gameplay"
+    ],
+    "strict_all_targets_clippy_result": "passed -D warnings"
+  },
+  "ordinary_original_gpu": {
+    "all_primitives_gpu": true,
+    "checked_vertices": 21642,
+    "fps_qualified": false,
+    "frames": 3,
+    "max_position_error": 4.76837158203125e-07,
+    "morph_primitives": 3,
+    "native_image_verified": false,
+    "ordinary_import_and_playback": true,
+    "primitives": 19
+  },
+  "original_project_package": {
+    "ticks": 240,
+    "accepted_scene_and_animation_equal": true,
+    "source_tree_removed": true,
+    "package_sha256": "c06ec15b350618c8d13bbc941f63e4f7962f56d5f83ffca0f0dbd24082d6c80c",
+    "artifact": "artifacts/morph-runtime-2026-10-26/original-robot-regression.vpak"
+  },
+  "qualified": [
+    "complete morph payload in the same ModelAsset owner",
+    "ordinary editor project import and ModelPlayback/Animator snapshots",
+    "per-revision source defaults and interrupted fades during reload",
+    "weight-only GPU owner updates and explicit CPU fallback pixel parity",
+    "last-good asset/frame/GPU resource retention on tested failures",
+    "geometry overflow rejects simulation tick before body/clock publication",
+    "source-free package replay with exact accepted morph-weight traces",
+    "wide reference surfaces with explicit weights and inclusive authored preview"
+  ],
+  "limitations": [
+    "legacy pose-only ModelAsset::parse remains intentionally strict; frame-aware consumers use parse_animated",
+    "morph LOD/culling certificates and native scene picking remain unqualified",
+    "cross-rig morph retargeting requires explicit mapping and is rejected",
+    "changed delta bases restart playback rather than reusing old indexed weight sources",
+    "static single-mesh morph uses complete CPU fallback until rigid GPU binding exists",
+    "morph authoring controls, full native image/interaction and scene performance remain unqualified"
+  ],
+  "native_editor_verified": false,
+  "full_scene_image_verified": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

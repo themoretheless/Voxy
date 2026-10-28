@@ -1,0 +1,93 @@
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+error: unnecessary hashes around raw string literal
+  --> crates/voxy_render/src/probe_sampling_precision_tests.rs:57:9
+   |
+57 | /         r#"
+58 | | struct Sample { p:vec4<f32>, n:vec4<f32> }
+59 | | @group(0) @binding(0) var<storage,read> samples:array<Sample>;
+60 | | @group(0) @binding(1) var<storage,read_write> result:array<vec4<u32>>;
+...  |
+64 | |  result[id.x*2u+1u]=bitcast<vec4<u32>>(reference_probe_irradiance(s.p.xyz,s.n.xyz));
+65 | | }"#
+   | |___^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_raw_string_hashes
+   = note: `-D clippy::needless-raw-string-hashes` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::needless_raw_string_hashes)]`
+help: remove all the hashes around the string literal
+   |
+57 ~         r"
+58 | struct Sample { p:vec4<f32>, n:vec4<f32> }
+...
+64 |  result[id.x*2u+1u]=bitcast<vec4<u32>>(reference_probe_irradiance(s.p.xyz,s.n.xyz));
+65 ~ }"
+   |
+
+error: unnecessary hashes around raw string literal
+   --> crates/voxy_render/src/probe_sampling_precision_tests.rs:180:25
+    |
+180 |   const REFERENCE: &str = r#"
+    |  _________________________^
+181 | | fn reference_probe_irradiance(p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
+182 | |  if probe_grid.origin.w<0.5{return vec4<f32>(0.);}
+183 | |  let dims=vec3<f32>(probe_grid.dims.xyz);
+...   |
+194 | |  return vec4<f32>(sum,fade);
+195 | | }"#;
+    | |___^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_raw_string_hashes
+help: remove all the hashes around the string literal
+    |
+180 ~ const REFERENCE: &str = r"
+181 | fn reference_probe_irradiance(p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
+...
+194 |  return vec4<f32>(sum,fade);
+195 ~ }";
+    |
+
+error: unnecessary hashes around raw string literal
+  --> crates/voxy_render/src/nearest_tie_count_tests.rs:23:19
+   |
+23 |       let support = r#"
+   |  ___________________^
+24 | | struct ExInt{value:u32,valid:u32}
+25 | | struct ExParameters{t:ExInt,u:ExInt,v:ExInt,denominator:ExInt,valid:u32}
+26 | | struct ExVec{x:u32}
+...  |
+57 | | "#;
+   | |__^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_raw_string_hashes
+help: remove all the hashes around the string literal
+   |
+23 ~     let support = r"
+24 | struct ExInt{value:u32,valid:u32}
+...
+56 | }
+57 ~ ";
+   |
+
+error: unnecessary hashes around raw string literal
+  --> crates/voxy_render/src/world_wide_order_tests.rs:10:9
+   |
+10 | /         r#"
+11 | | struct Pair {{lo:f32,hi:f32}}
+12 | | @group(0) @binding(0) var<storage,read> nearest_active:array<u32>;
+13 | | @group(0) @binding(1) var<storage,read_write> output:array<u32>;
+...  |
+30 | | }}
+31 | | "#,
+   | |__^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_raw_string_hashes
+help: remove all the hashes around the string literal
+   |
+10 ~         r"
+11 | struct Pair {{lo:f32,hi:f32}}
+...
+30 | }}
+31 ~ ",
+   |
+
+error: could not compile `voxy_render` (lib test) due to 4 previous errors

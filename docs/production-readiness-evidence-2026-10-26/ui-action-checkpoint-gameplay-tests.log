@@ -1,0 +1,14 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.97s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-f3403aa334dec0f5)
+
+running 6 tests
+test ui_actions::tests::foreign_command_queue_rejects_before_callback_and_preserves_pending_event ... ok
+test ui_actions::tests::failed_handler_and_full_barrier_discard_all_staged_scene_commands ... ok
+test ui_actions::tests::application_callback_runs_once_at_barrier_and_rejects_expired_or_foreign_events ... ok
+test ui_actions::checkpoint::tests::legacy_callbacks_reject_capture_without_consuming_pending_work ... ok
+test ui_actions::checkpoint::tests::malformed_codecs_limits_and_failed_preparation_preserve_live_owner ... ok
+test ui_actions::checkpoint::tests::callback_state_and_pending_events_rebind_and_continue_120_barriers ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 195 filtered out; finished in 0.02s
+

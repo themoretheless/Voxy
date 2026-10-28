@@ -1,0 +1,19 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.08s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-55a4417fa2fc3270)
+
+running 10 tests
+test foot_contact::tests::admitted_pivot_target_includes_projection_and_converts_actor_frame ... ok
+test foot_contact::tests::acquisition_distance_validation_and_failed_budget_leave_published_state_intact ... ok
+test foot_contact::tests::pivot_transfer_admits_same_support_and_preserves_old_state_on_rejection ... ok
+test foot_contact::tests::missing_or_steep_support_releases_instead_of_transferring_a_planted_foot ... ok
+test foot_contact::tests::release_hysteresis_prevents_replanting_until_swing_and_landing_rearms ... ok
+test foot_contact::tests::contact_holds_surface_point_through_animation_drift_and_platform_transform ... ok
+test foot_contact::tests::admitted_heel_to_toe_transfer_rolls_about_physical_surface_and_moves_with_platform ... ok
+test foot_contact::tests::admitted_pivot_pose_stages_contact_only_for_reachable_ik ... ok
+test foot_contact::checkpoint::tests::awaiting_swing_and_corrupt_anchor_preserve_contact_policy ... ok
+test foot_contact::checkpoint::tests::planted_contact_rebinds_and_follows_moving_platform_and_swing_exactly ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 180 filtered out; finished in 0.01s
+

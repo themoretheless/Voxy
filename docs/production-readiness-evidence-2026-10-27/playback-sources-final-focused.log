@@ -1,0 +1,20 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.11s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-c847998f8bd61744)
+
+running 6 tests
+test app::resource_checkpoint::tests::cancelling_requested_snapshot_consumes_it_before_new_scans ... ok
+test app::resource_checkpoint::tests::app_fence_drains_import_and_scan_keeps_queue_and_resumes ... ok
+test app::resource_checkpoint::tests::malformed_restore_rejects_and_stopped_workers_stay_stopped ... ok
+test app::resource_checkpoint::tests::manifest_recipe_and_original_dependency_bytes_survive_source_deletion ... ok
+test app::resource_checkpoint::tests::inactive_runtime_retains_old_model_after_catalog_replacement_and_resumes_120_frames ... ok
+test app::resource_checkpoint::tests::reloaded_clip_fade_restores_from_resource_file_with_native_source_resolver ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 319 filtered out; finished in 0.10s
+
+     Running unittests src/main.rs (target/research-ray-precision/debug/deps/voxy_editor-ef30924b92d7d41b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,35 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "change": "selected model notice derives from native catalog status and current manifest inventory; panel cache observes notice transitions; existing native panel renderer draws three-line diagnostic and repair guidance",
+  "verified": [
+    "cold unresolved model produces ID and retained-reference notice",
+    "failed declared model produces import diagnostic and automatic-reload guidance",
+    "notice disappears after manifest recovery and accepted import",
+    "physical Apple M4 Max Metal offscreen panel render passes readable glyph checks for all three rows",
+    "diagnostic does not overlap existing action rectangles at 1024x640",
+    "PNG visually inspected with matching model ID in inspector"
+  ],
+  "suite": {
+    "passed": 331,
+    "failed": 0,
+    "ignored": 31
+  },
+  "gpu_tests_passed": 1,
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/app/model_notice.rs": "6ddaab5ffec38c738581ecbd232c772c404253876088054481980fe955b1e9ca",
+    "crates/voxy_editor/src/app/viewport.rs": "9912f6fe3f62533ae162b98ce13993dcf7d8917fe58458b5346428a6e42a251b",
+    "crates/voxy_editor/src/lib.rs": "8fedebb41a13f6d9a83f1493532fe54ce4b81c3846974d51fe467262cefc081e",
+    "crates/voxy_editor/src/panels.rs": "e92bbf98940797b418a5f7ccf58be0c906db8033ee02d33fe76950580d205fea",
+    "crates/voxy_editor/src/panels/gpu_tests.rs": "52c2aa11a057d4acf6388117f07ce0e0da49ca7faee119c205ee2176e427e965",
+    "crates/voxy_editor/src/project.rs": "9ff5f882d15f1b25b119364aed44aa9a2c33a3a42aa886789411dd768e07c895"
+  },
+  "limits": [
+    "offscreen panel fixture; no native window interaction qualification",
+    "guidance uses existing Model selector and manifest/source restoration; dedicated file-relink dialog remains open",
+    "small viewport/DPI layout matrix remains unqualified",
+    "no FPS claim; ENG-03 and broad engine roadmap remain incomplete"
+  ]
+}

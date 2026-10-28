@@ -1,0 +1,85 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/lib.rs (/tmp/voxy-eng00-20261027-target/debug/deps/voxy_core-f8e2b90345e67007)
+
+running 17 tests
+test clock::tests::client_discard_is_explicit_and_tick_aligned ... ok
+test clock::tests::planning_does_not_consume_ticks ... ok
+test clock::tests::rejects_time_reversal_and_overcommit ... ok
+test coordinates::tests::join_detects_both_overflow_directions ... ok
+test coordinates::tests::floating_origin_and_sub_voxel_preserve_precision_at_large_coordinates ... ok
+test coordinates::tests::bit_matrix_and_border_faces_round_trip ... ok
+test cancel::tests::cancellation_is_shared_across_clones ... ok
+test cancel::tests::child_token_inherits_parent_cancellation_without_cancelling_parent ... ok
+test coordinates::tests::spiral_sphere_and_ray_grid_iterators_are_exact ... ok
+test coordinates::tests::split_join_round_trips_representative_domain ... ok
+test coordinates::tests::split_uses_euclidean_coordinates_around_boundaries ... ok
+test hash::tests::pinned_values_keep_iteration_order_stable_across_releases ... ok
+test hash::tests::typed_writes_match_byte_writes ... ok
+test ids::tests::non_max_niche_matches_primitive_size ... ok
+test ids::tests::slot_map_rejects_stale_generations_after_remove_and_reuse ... ok
+test coordinates::tests::local_index_layout_is_bijective ... ok
+test coordinates::tests::morton_z_order_is_bijective_and_preserves_locality ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/tmp/voxy-eng00-20261027-target/debug/deps/voxy_input-2340c01219153642)
+
+running 8 tests
+test tests::axis_rebinding_focus_and_disconnect ... ok
+test tests::logical_activation_preserves_physical_hold_and_fixed_frame_edges ... ok
+test tests::invalid_bindings_and_capacity_preserve_previous_configuration ... ok
+test tests::disconnection_releases_only_its_device_and_focus_cancels_pending_taps ... ok
+test tests::analog_dead_zone_rejects_drift_rescales_and_preserves_rebinding ... ok
+test tests::taps_repeat_and_multiple_bindings_preserve_edges ... ok
+test checkpoint::tests::invalid_checkpoint_retains_values_bindings_and_pending_edges ... ok
+test checkpoint::tests::checkpoint_keeps_analog_quick_taps_logical_edges_and_focus ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/tmp/voxy-eng00-20261027-target/debug/deps/voxy_navigation-795f771b5ed49e25)
+
+running 5 tests
+test tests::changed_or_foreign_grid_invalidates_job_and_zero_budget_preserves_frontier ... ok
+test tests::budgets_endpoints_unreachable_and_dimensions ... ok
+test tests::shortest_detour_and_dynamic_obstacles ... ok
+test tests::sliced_search_matches_one_shot_and_never_exceeds_expansion_budget ... ok
+test tests::empty_grid_all_routes_match_manhattan_shortest_distance ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/tmp/voxy-eng00-20261027-target/debug/deps/voxy_runtime-300c5d706faa1cb7)
+
+running 16 tests
+test frame_loop::tests::invalid_elapsed_does_not_poison_next_frame ... ok
+test frame_loop::tests::repeated_running_state_preserves_partial_tick ... ok
+test frame_loop::tests::pause_and_platform_reset_discard_partial_ticks ... ok
+test frame_loop::tests::stall_is_bounded_and_backlog_is_reported ... ok
+test bootstrap::tests::rejects_unbounded_bootstrap_radius ... ok
+test tests::stale_epoch_and_duplicate_are_rejected ... ok
+test tests::exhausted_epoch_preserves_pending_results ... ok
+test tests::count_budget_leaves_remainder_for_next_barrier ... ok
+test tests::barrier_order_is_independent_of_arrival_order ... ok
+test tests::world_transition_discards_pending_and_rejects_late_jobs ... ok
+test tests::rejected_results_preserve_the_first_accepted_value ... ok
+test bootstrap::tests::bootstrap_scene_is_deterministic_and_nonempty ... ok
+test bootstrap::tests::multi_chunk_scene_is_sorted_halo_correct_and_deterministic ... ok
+test bootstrap::tests::mesh_plants_keep_authoritative_blocks_without_duplicate_voxel_surfaces ... ok
+test bootstrap::tests::procedural_scene_is_deterministic_and_meshes_natural_water ... ok
+test bootstrap::tests::invalidated_chunks_rebuild_equals_full_rebuild ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.42s
+
+     Running unittests src/lib.rs (/tmp/voxy-eng00-20261027-target/debug/deps/voxy_time-13bc7a81122eb43c)
+
+running 8 tests
+test checkpoint_tests::invalid_clock_checkpoint_preserves_state ... ok
+test tests::fixed_steps_and_budget ... ok
+test tests::retarget_is_continuous_and_invalid_inputs_are_ignored ... ok
+test tests::percentile_nearest_rank_handles_short_windows_and_ring_replacement ... ok
+test tests::latency_window_tracks_percentiles_and_stutters ... ok
+test tests::braking_pause_and_real_time_resume ... ok
+test tests::zero_elapsed_cannot_emit_subpicosecond_ticks ... ok
+test checkpoint_tests::clock_checkpoint_preserves_ramps_remainder_pause_and_overload_exactly ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

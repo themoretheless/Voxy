@@ -16,6 +16,9 @@ pub struct ExchangeTotals {
     pub kinetic_energy: f64,
     /// Polymer free energy transported out with removed particles; separate from heat.
     pub polymer_energy: f64,
+    /// Compensated high/low dissipative inventory transported with these particles.
+    /// This energy has not yet been deposited in `thermal_energy`.
+    pub deferred_heat: [f64; 2],
     /// Present exactly when transport is enabled; includes latent heat.
     pub thermal_energy: Option<f64>,
     pub dissolved_mass: Option<f64>,
@@ -24,6 +27,23 @@ pub struct ExchangeTotals {
 pub struct ParticleExchange {
     pub added: ExchangeTotals,
     pub removed: ExchangeTotals,
+}
+impl ExchangeTotals {
+    pub(super) fn add_deferred_heat(&mut self, words: [f64; 2]) -> Result<(), Error> {
+        for value in words {
+            let [old, correction] = self.deferred_heat;
+            let sum = old + value;
+            let recovered = sum - old;
+            let error = (old - (sum - recovered)) + (value - recovered);
+            let low = correction + error;
+            let high = sum + low;
+            self.deferred_heat = [high, low - (high - sum)];
+        }
+        if self.deferred_heat.iter().any(|v| !v.is_finite()) {
+            return Err(Error::NumericalFailure);
+        }
+        Ok(())
+    }
 }
 impl Liquid {
     /// Atomically removes indexed particles and appends source particles in input order.
@@ -125,6 +145,18 @@ impl Liquid {
             .enumerate()
             .filter_map(|(i, c)| (!mask[i]).then_some(*c))
             .collect();
+        candidate.suspension_heat_buffer = self
+            .suspension_heat_buffer
+            .iter()
+            .enumerate()
+            .filter_map(|(i, value)| (!mask[i]).then_some(*value))
+            .collect();
+        candidate.suspension_heat_correction = self
+            .suspension_heat_correction
+            .iter()
+            .enumerate()
+            .filter_map(|(i, value)| (!mask[i]).then_some(*value))
+            .collect();
         candidate.retain_transport(&mask);
         for (source_index, source) in add.iter().enumerate() {
             let particle = source.particle;
@@ -170,6 +202,8 @@ impl Liquid {
                 _ => return Err(Error::InvalidTransport),
             }
             candidate.particles.push(particle);
+            candidate.suspension_heat_buffer.push(0.);
+            candidate.suspension_heat_correction.push(0.);
             candidate.structure.push(1.0);
             candidate.conformation.push(super::viscoelastic::IDENTITY);
             if let Some(flags) = &mut candidate.droplet_population {
@@ -313,6 +347,10 @@ impl Liquid {
         let properties = self.evaluate_materials(&self.particles, self.transport.as_ref())?;
         for index in indices {
             let particle = self.particles[index];
+            total.add_deferred_heat([
+                self.suspension_heat_buffer[index],
+                self.suspension_heat_correction[index],
+            ])?;
             total.polymer_energy +=
                 self.polymer_particle_energy(index, &particle, properties[index])?;
             total.mass += particle.mass;
@@ -339,7 +377,8 @@ impl Liquid {
                     particle.mass * transport.fields[index].concentration;
             }
         }
-        if !total.mass.is_finite()
+        if total.deferred_heat.iter().any(|v| !v.is_finite())
+            || !total.mass.is_finite()
             || !finite(total.momentum)
             || !total.kinetic_energy.is_finite()
             || !total.polymer_energy.is_finite()
@@ -349,5 +388,82 @@ impl Liquid {
             return Err(Error::NumericalFailure);
         }
         Ok(total)
+    }
+}
+
+#[cfg(test)]
+mod checkpoint_heat_tests {
+    use super::*;
+    #[test]
+    fn exchange_retains_both_heat_words_and_reports_removed_inventory() {
+        let particle = Particle {
+            position: [0.; 3],
+            velocity: [0.; 3],
+            mass: 1.,
+            material: 0,
+        };
+        let mut liquid = Liquid::new(
+            vec![particle; 2],
+            vec![super::super::Material::WATER],
+            super::super::Config::default(),
+        )
+        .unwrap();
+        let field = LiquidField {
+            temperature: 1e10,
+            concentration: 0.,
+        };
+        liquid
+            .configure_transport(
+                vec![field; 2],
+                vec![super::super::TransportMaterial {
+                    specific_heat: 1e16,
+                    conductivity: 0.,
+                    diffusivity: 0.,
+                    mixing_group: 0,
+                }],
+            )
+            .unwrap();
+        liquid.deposit_dissipation_heat(&[1., 2.]).unwrap();
+        let tiny = f64::EPSILON / 4.;
+        liquid.deposit_dissipation_heat(&[tiny, tiny * 2.]).unwrap();
+        let high = liquid.suspension_heat_buffer.clone();
+        let low = liquid.suspension_heat_correction.clone();
+        assert_ne!(low[0], 0.);
+        let before = liquid.clone();
+        assert!(liquid.exchange_particles(&[0, 0], &[]).is_err());
+        assert_eq!(before, liquid);
+        let report = liquid
+            .exchange_particles(
+                &[0],
+                &[ParticleInput {
+                    particle,
+                    field: Some(field),
+                    phase_fraction: None,
+                }],
+            )
+            .unwrap();
+        assert_eq!(
+            report.removed.deferred_heat.map(f64::to_bits),
+            [high[0], low[0]].map(f64::to_bits)
+        );
+        assert_eq!(report.added.deferred_heat, [0.; 2]);
+        assert_eq!(
+            liquid
+                .suspension_heat_buffer
+                .iter()
+                .map(|v| v.to_bits())
+                .collect::<Vec<_>>(),
+            [high[1].to_bits(), 0]
+        );
+        assert_eq!(
+            liquid
+                .suspension_heat_correction
+                .iter()
+                .map(|v| v.to_bits())
+                .collect::<Vec<_>>(),
+            [low[1].to_bits(), 0]
+        );
+        assert!(liquid.checkpoint().is_ok());
+        liquid.deposit_dissipation_heat(&[tiny, 0.]).unwrap();
     }
 }

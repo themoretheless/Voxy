@@ -1,0 +1,23 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.80s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/physics-8f206cb8622d0c6d)
+
+running 2 tests
+test liquid::checkpoint::tests::joint_staging_accepts_valid_mixture_with_overflowing_base_heat_reference ... ok
+test liquid::checkpoint::tests::complete_owner_continues_combined_transport_chemistry_rheology_and_boundaries ... FAILED
+
+failures:
+
+---- liquid::checkpoint::tests::complete_owner_continues_combined_transport_chemistry_rheology_and_boundaries stdout ----
+
+thread 'liquid::checkpoint::tests::complete_owner_continues_combined_transport_chemistry_rheology_and_boundaries' (75732589) panicked at crates/physics/src/liquid/checkpoint.rs:326:42:
+called `Result::unwrap()` on an `Err` value: InvalidConfig
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    liquid::checkpoint::tests::complete_owner_continues_combined_transport_chemistry_rheology_and_boundaries
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 549 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p physics --lib`

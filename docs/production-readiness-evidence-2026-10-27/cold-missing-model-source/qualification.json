@@ -1,0 +1,33 @@
+{
+  "stage": "ENG-03 / ENG-08",
+  "revision": "0bfc8df318033f9194a32c5b151f349928505b05",
+  "dirty_worktree": true,
+  "change": "separate authoring project-open policy permits missing declared model files while preserving strict open/validation/export; ordinary App project initialization uses authoring policy",
+  "verified": [
+    "cold App opens scene with declared but absent OBJ preserving owner document",
+    "standalone start rejects failed model without entering Play",
+    "strict project open and package export reject missing file, no output package created",
+    "editor can edit/save and cold-reopen document while OBJ remains absent",
+    "second cold App waits for Failed import then detects recreated OBJ automatically without losing scene edits",
+    "missing model directories under project are allowed",
+    "missing audio/prefab, traversal, external symlink ancestor and dangling symlink reject"
+  ],
+  "suite": {
+    "passed": 330,
+    "failed": 0,
+    "ignored": 30
+  },
+  "strict_all_target_clippy": "passed",
+  "source_sha256": {
+    "crates/voxy_editor/src/project.rs": "30eed6173daf1a8edf01714ac9ea2bb2a02102c11e70b3bac3b0326dbbe55499",
+    "crates/voxy_editor/src/lib.rs": "5832cbdb4d8f841e66ccc5e6e7251b117c39365706589ca1987d1bde1a3029d3",
+    "crates/voxy_editor/src/import/asset_checkpoint/tests.rs": "7b5f41c817ae247d05cf147bb6db9a9f6fed5a4fe1e214558bc291af573f8b39"
+  },
+  "test_fixture_fix": "parallel native asset fixture now adds AtomicU64 nonce; initial timestamp directory collision retained in log",
+  "limits": [
+    "model ID must still be declared in manifest; deleted/unknown IDs on cold open remain unsupported",
+    "missing prefab expansion still rejects; no placeholder prefab loss",
+    "headless authoring workflow; native missing-resource visuals and file relinking UI remain open",
+    "ENG-03 and broad engine roadmap remain incomplete"
+  ]
+}

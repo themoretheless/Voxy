@@ -1,0 +1,73 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.91s
+     Running tests/liquid_boundary.rs (target/research-ray-precision/debug/deps/liquid_boundary-667b808ba3b33504)
+
+running 43 tests
+test boundary_viscosity_damps_tangential_motion_and_deposits_lost_energy_as_heat ... ok
+test explicit_wall_viscosity_reaction_balances_the_lost_particle_momentum ... ok
+test insufficient_boundary_pressure_energy_rolls_back_motion_and_fields ... ok
+test boundary_translation_rebuilds_index_and_preserves_surface_velocity ... ok
+test grid_search_matches_full_kernel_sum_across_cell_boundaries ... ok
+test empty_fluid_still_advances_sampled_body_under_gravity ... ok
+test approaching_a_pressurized_boundary_heats_the_fluid ... ok
+test fast_prescribed_surface_restricts_substep_displacement_and_rolls_back_on_budget ... ok
+test extrapolated_static_pressure_preserves_reaction_and_thermal_work_balance ... ok
+test general_tensor_pressure_work_preserves_combined_energy_and_angular_momentum ... ok
+test boundary_support_matches_a_mirrored_fluid_neighbor_and_reaction_balances_impulse ... ok
+test boundary_viscosity_substep_exhaustion_restores_already_deposited_heat ... ok
+test boundary_pressure_can_draw_work_from_latent_heat_on_the_plateau ... ok
+test invalid_tensor_and_non_unit_orientation_leave_every_state_unchanged ... ok
+test invalid_configuration_and_work_exhaustion_are_atomic ... ok
+test invalid_surface_velocity_is_atomic_and_geometry_replacement_resets_motion ... ok
+test sampled_body_pressure_work_conserves_combined_thermal_and_kinetic_energy ... ok
+test rotating_geometry_preserves_volume_and_radius_without_particles ... ok
+test prescribed_wall_motion_supplies_mechanical_work_and_viscous_heat ... ok
+test sampled_body_pressure_work_is_invariant_under_uniform_velocity_shift ... ok
+test off_center_sample_pressure_spins_body_and_preserves_angular_energy_balance ... ok
+test opposing_wall_velocities_heat_fluid_without_net_translation ... ok
+test sampled_body_viscosity_heats_only_relative_kinetic_energy ... ok
+test rotational_viscosity_transfers_spin_and_heats_with_conserved_angular_momentum ... ok
+test sampled_body_substep_failure_restores_geometry_fields_and_body ... ok
+test tensor_mobility_respects_body_orientation_and_off_diagonal_inertia ... ok
+test support_is_local_and_does_not_change_fluid_mass_or_configuration_on_query ... ok
+test rotational_failure_rolls_back_orientation_and_thermal_fields ... ok
+test tensor_substep_failure_restores_orientation_and_sample_geometry ... ok
+test tensor_torque_free_drift_matches_euler_acceleration ... ok
+test unrepresentable_boundary_translation_preserves_geometry_index_and_velocity ... ok
+test three_dimensional_rotational_viscosity_conserves_pair_energy_and_momenta ... ok
+test tensor_viscous_relaxation_heats_with_conserved_energy_and_angular_momentum ... ok
+test sampled_body_pressure_recoils_and_moves_samples_with_body ... ok
+test sampled_body_multimaterial_pressure_preserves_total_momentum_over_substeps ... ok
+test wall_extrapolation_is_invariant_to_coincident_particle_mass_splitting ... ok
+test distant_boundary_geometry_does_not_consume_local_neighbor_budget ... ok
+test boundary_pressure_converts_thermal_energy_into_motion_without_energy_creation ... ok
+test volume_wall_and_fluid_forces_differentiate_the_same_compression_energy ... ok
+test interior_boundary_pressure_and_viscous_heat_share_one_energy_balance ... ok
+test asymmetric_free_rotation_preserves_energy_world_momentum_and_sample_shape ... ok
+test sampled_half_space_converges_to_half_the_normalized_kernel_volume ... ok
+test tensor_orientation_converges_when_time_step_is_halved ... ok
+
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/liquid_reflecting.rs (target/research-ray-precision/debug/deps/liquid_reflecting-268601005d4c57b2)
+
+running 16 tests
+test central_wall_self_image_damps_normal_velocity_and_deposits_exact_heat ... ok
+test frozen_viscous_stage_preserves_geometry_and_reports_integrated_fixture_balance ... ok
+test symmetric_integrator_rejects_sampled_walls_atomically_in_both_configuration_orders ... ok
+test mass_density_self_image_matches_mirrored_neighbor_at_doubled_distance ... ok
+test crossing_a_reflecting_domain_rolls_back_motion_and_thermal_fields ... ok
+test reflected_geometry_and_budget_failures_are_atomic ... ok
+test ordinary_step_uses_selected_symmetric_viscosity_and_advects_relaxed_velocity ... ok
+test pressure_impulses_and_torque_balance_the_stationary_fixture ... ok
+test mass_density_far_from_walls_has_no_images_and_matches_an_unbounded_fluid ... ok
+test corner_image_relaxation_conserves_heat_and_cannot_increase_kinetic_energy ... ok
+test viscous_fixture_loads_match_velocity_gradient_and_particle_impulses ... ok
+test reflected_corner_forces_and_face_reactions_are_energy_gradients ... ok
+test mechanical_energy_error_decreases_with_time_step ... ok
+test reflected_pressure_work_matches_explicit_kicks_and_balances_heat ... ok
+test symmetric_viscous_stage_has_second_order_frozen_time_convergence ... ok
+test frozen_viscous_stage_converges_under_time_refinement ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+

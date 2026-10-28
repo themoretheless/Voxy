@@ -1,0 +1,17 @@
+    Finished `release` profile [optimized] target(s) in 0.07s
+     Running unittests src/lib.rs (target/research-ray-precision/release/deps/voxy_audio_device-c00e8b254fc6b780)
+
+running 1 test
+PCM_QUEUE_PAIR pair=0 frames=1048576 reference_ns=7375000 checkpointable_ns=8430416 batched_ns=6326292
+PCM_QUEUE_PAIR pair=1 frames=1048576 reference_ns=7450625 checkpointable_ns=8453500 batched_ns=6288292
+PCM_QUEUE_PAIR pair=2 frames=1048576 reference_ns=7428834 checkpointable_ns=8463417 batched_ns=6176584
+PCM_QUEUE_PAIR pair=3 frames=1048576 reference_ns=7402417 checkpointable_ns=8490375 batched_ns=6154958
+PCM_QUEUE_PAIR pair=4 frames=1048576 reference_ns=7864875 checkpointable_ns=8048917 batched_ns=6454792
+PCM_QUEUE_PAIR pair=5 frames=1048576 reference_ns=7219583 checkpointable_ns=8389000 batched_ns=5967416
+PCM_QUEUE_PAIR pair=6 frames=1048576 reference_ns=7269625 checkpointable_ns=8414375 batched_ns=6198083
+PCM_QUEUE_PAIR pair=7 frames=1048576 reference_ns=7280708 checkpointable_ns=8111709 batched_ns=6227250
+PCM_QUEUE_PAIR pair=8 frames=1048576 reference_ns=7317416 checkpointable_ns=8026542 batched_ns=6161250
+test queue::benchmarks::paired_former_channel_and_checkpointable_queue ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.20s
+

@@ -1,0 +1,12 @@
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+error: manual implementation of `.is_multiple_of()`
+   --> crates/voxy_gameplay/src/ui_actions/checkpoint.rs:347:16
+    |
+347 |             if self.calls % 17 == 0 {
+    |                ^^^^^^^^^^^^^^^^^^^^ help: replace with: `self.calls.is_multiple_of(17)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_is_multiple_of
+    = note: `-D clippy::manual-is-multiple-of` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::manual_is_multiple_of)]`
+
+error: could not compile `voxy_gameplay` (lib test) due to 1 previous error

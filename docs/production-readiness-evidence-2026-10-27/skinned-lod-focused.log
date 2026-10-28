@@ -1,0 +1,11 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.57s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_render-6d1c875d3777361f)
+
+running 3 tests
+test skinned_lod::checkpoint::tests::base_only_sources_restore_without_inventing_a_variant ... ok
+test skinned_lod::checkpoint::tests::invalid_mesh_binding_proofs_and_policies_preserve_original_ready_source ... ok
+test skinned_lod::checkpoint::tests::both_proof_kinds_restore_from_file_and_recertify_120_poses_with_external_mesh_identity ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 456 filtered out; finished in 0.04s
+

@@ -1,0 +1,41 @@
+    Checking voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+error: usage of `contains_key` followed by `insert` on a `HashMap`
+   --> crates/voxy_model/src/checkpoint.rs:249:13
+    |
+249 | /             if !morph_ids.contains_key(&ptr) {
+250 | |                 let id = source_morphs.len();
+251 | |                 if id >= limits.max_morph_owners {
+252 | |                     return Err(capacity());
+...   |
+255 | |                 morph_ids.insert(ptr, id);
+256 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#map_entry
+    = note: `-D clippy::map-entry` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::map_entry)]`
+help: try
+    |
+249 ~             if let std::collections::hash_map::Entry::Vacant(e) = morph_ids.entry(ptr) {
+250 +                 let id = source_morphs.len();
+251 +                 if id >= limits.max_morph_owners {
+252 +                     return Err(capacity());
+253 +                 }
+254 +                 source_morphs.push(&model.morph);
+255 +                 e.insert(id);
+256 +             }
+    |
+
+error: could not compile `voxy_model` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: wildcard matches only a single variant and will also match any future added variants
+  --> crates/voxy_model/src/checkpoint/tests.rs:96:13
+   |
+96 |             _ => panic!("skin required"),
+   |             ^ help: try: `ModelGeometry::Static(_)`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#match_wildcard_for_single_variants
+   = note: `-D clippy::match-wildcard-for-single-variants` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::match_wildcard_for_single_variants)]`
+
+error: could not compile `voxy_model` (lib test) due to 2 previous errors

@@ -1,0 +1,10 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.38s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_editor-9f56c4360ba3120b)
+
+running 2 tests
+test app::authoring_checkpoint::tests::stale_drag_stays_stale_and_failed_preparation_preserves_the_original_app ... ok
+test app::authoring_checkpoint::tests::real_app_history_order_selection_and_active_drag_rebind_and_continue_120_edits ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 301 filtered out; finished in 1.13s
+

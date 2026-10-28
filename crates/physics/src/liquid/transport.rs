@@ -53,24 +53,12 @@ impl Liquid {
         {
             return Err(Error::InvalidPhaseChange);
         }
-        if fields.len() != self.particles.len()
-            || materials.len() != self.materials.len()
-            || fields.iter().any(|f| {
-                !f.temperature.is_finite()
-                    || f.temperature < 0.0
-                    || !f.concentration.is_finite()
-                    || !(0.0..=1.0).contains(&f.concentration)
-            })
-            || materials.iter().any(|m| {
-                !positive(m.specific_heat)
-                    || !m.conductivity.is_finite()
-                    || m.conductivity < 0.0
-                    || !m.diffusivity.is_finite()
-                    || m.diffusivity < 0.0
-            })
-        {
-            return Err(Error::InvalidTransport);
-        }
+        validate_checkpoint_arrays(
+            &fields,
+            &materials,
+            self.particles.len(),
+            self.materials.len(),
+        )?;
         let mut total_heat = 0.0;
         for (particle, field) in self.particles.iter().zip(&fields) {
             let capacity = particle.mass * materials[particle.material].specific_heat;
@@ -409,4 +397,35 @@ impl Liquid {
         self.evaluate_materials(particles, Some(fields))?;
         Ok(pressure_acceleration)
     }
+}
+
+#[path = "thermal_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{ThermalFieldCheckpoint, ThermalMaterialCheckpoint};
+
+fn validate_checkpoint_arrays(
+    fields: &[LiquidField],
+    materials: &[TransportMaterial],
+    particle_count: usize,
+    material_count: usize,
+) -> Result<(), Error> {
+    if fields.len() != particle_count
+        || materials.len() != material_count
+        || fields.iter().any(|f| {
+            !f.temperature.is_finite()
+                || f.temperature < 0.0
+                || !f.concentration.is_finite()
+                || !(0.0..=1.0).contains(&f.concentration)
+        })
+        || materials.iter().any(|m| {
+            !positive(m.specific_heat)
+                || !m.conductivity.is_finite()
+                || m.conductivity < 0.0
+                || !m.diffusivity.is_finite()
+                || m.diffusivity < 0.0
+        })
+    {
+        return Err(Error::InvalidTransport);
+    }
+    Ok(())
 }

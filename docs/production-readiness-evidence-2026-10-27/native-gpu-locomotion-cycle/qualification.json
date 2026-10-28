@@ -1,0 +1,34 @@
+{
+  "revision": "6672bbf959dfd52ef802fc61cecbdee54cff526d",
+  "dirty_worktree": true,
+  "gpu": "Apple M4 Max / Metal / non-CPU adapter",
+  "verified": [
+    "Native App simulation keeps CPU animation sources when invisible models release GPU residency; GPU publication remains preferred when resident",
+    "Visible/hidden pixel oracle and verified GPU eviction with CPU asset retained",
+    "720 fixed ticks and native 128x128 RGBA readbacks through original draw_frame/SceneSkinner path",
+    "Four movement cycles include all four named clips and varying images",
+    "720 exact CPU debug-state and RGBA comparisons against fresh packaged App after deletion of original project",
+    "Offscreen draws preserve simulation tick and presented frame counts",
+    "GPU validation error scope clean",
+    "All three native GPU App scenarios pass: reload, liquid, animation"
+  ],
+  "tests": {
+    "gpu_passed": 3,
+    "editor_passed": 364,
+    "editor_ignored": 36,
+    "clippy_all_targets": "passed -D warnings",
+    "diff_check_exit": 0
+  },
+  "limits": [
+    "Initial native watcher inventory/reloads settled before controlled replay; arbitrary reload timing during transitions not qualified",
+    "Small skeletal/morph triangle fixture, not realistic character asset",
+    "128x128 offscreen readback, not 1080p presentation, frame pacing or 120/160 FPS",
+    "Matching source/package images do not independently prove correct skinning against a CPU pixel oracle",
+    "Full ENG-03/05/06 and entire engine program remain incomplete"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/play_mode.rs": "0c912fbe55c42724bd81dc929128de7493c4f0477a93eec33f26a7cb09499db6",
+    "crates/voxy_editor/src/locomotion_tests.rs": "9548a8e1ad7240fc64339864635151b124972c4f0b9ee87613c9f7111f86a022",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "90a6792d62515699f6c303daa4f20dfc9d009fcd0c1a0762a9c3c96545a6cf61"
+  }
+}

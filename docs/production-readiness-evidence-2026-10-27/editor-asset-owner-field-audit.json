@@ -1,0 +1,34 @@
+{
+  "scope": "Complete CPU EditorAsset graph, not ImportedAsset/catalog/App",
+  "source_sha256": {
+    "crates/voxy_editor/src/import.rs": "a14ffe46b99cf5d7a89cc63de1121c7132874636cde422f8a7de235a7ce41c43",
+    "crates/voxy_editor/src/import/asset_checkpoint.rs": "808408857865cb5a9390a3d895db2f7e086b8f8fa1bef7a091ebf644004785c7",
+    "crates/voxy_editor/src/import/asset_checkpoint/tests.rs": "ec9f0e689d424d437318b46a59405c913f3fe047fbab7a456df272d96026c59d",
+    "crates/voxy_editor/src/import/animated_tests.rs": "b80ee7b75255044366ee8eff5202443e204dad7952a96177e76c95ee6ac50eee",
+    "crates/voxy_editor/src/scene3d_tests.rs": "24a4a75cad2c20c247909ba4bf7abd0b92a75bde634b401babcb0a8aa239726e"
+  },
+  "fields": {
+    "EditorAsset": {
+      "mesh": "complete native base SceneMesh record",
+      "lod": "optional static certified owner with actual Arc identity",
+      "animated": "optional complete native ModelAsset graph reference",
+      "skinned_lod": "optional outer wrapper, inner Source and mesh Arc identity tables",
+      "nodes": "complete original ImportedNode vector participant",
+      "images": "ordered decoded RGBA owner vector and sampler references through node/image participant"
+    },
+    "sharing_tables": [
+      "Root asset references/unique owners",
+      "Native model Arc graph",
+      "Static LOD Arc owners",
+      "Skeletal outer wrapper allocations",
+      "Skeletal inner Source groups",
+      "Source mesh Arc allocations",
+      "One global native vertex/index/influence-cache graph across models/morphs and LOD sources"
+    ],
+    "external_owners": [
+      "ImportedAsset input observations/provenance",
+      "Catalog revision and source/watch/worker state",
+      "Native GPU/App publication and in-flight draws"
+    ]
+  }
+}

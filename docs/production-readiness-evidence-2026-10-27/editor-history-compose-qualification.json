@@ -1,0 +1,32 @@
+{
+  "scope": "Compose native authoring history/order/selection/drafts with the coordinated game candidate",
+  "implemented": [
+    "EditorCheckpoint immutable capture under existing completed common barrier",
+    "Reuse AuthoringHistoryCheckpoint and CoordinatedPlayCheckpoint, no second scene/history runtime",
+    "Prepare authoring identities against the exact LoadedScene owned by prepared game",
+    "Late authoring failure drops detached game candidate without borrowing source App mutably"
+  ],
+  "checks": {
+    "editor_passed": 318,
+    "editor_ignored": 30,
+    "strict_all_target_clippy": "passed",
+    "scoped_format": "passed",
+    "actual_project_Play_path": true,
+    "history_redo_undo_native_checkpoints_equal": true,
+    "foreign_authoring_identity_rejected": true,
+    "source_history_unchanged_after_rejection": true,
+    "prepared_game_authoring_scene_identity_equal": true
+  },
+  "not_claimed": [
+    "Typed composition only; authoring is not yet part of the coordinated disk envelope",
+    "Complete AuthoringSession source metadata/paths/previews/settings ownership not yet composed",
+    "No final App publication/menu/presentation/input handoff",
+    "No new GPU/window/physical-memory/FPS evidence",
+    "Native output audio and ENG-03 through ENG-13 remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "6ee09bb46227db2b1d717b1a3413ac9e479af85f895446a918263e65d343be1b",
+    "crates/voxy_editor/src/app/restore_barrier.rs": "2cec9a838bbbd3705f34cd7973a5ff1243b3dc4ec2c10fe886ba74b24a6bce5e",
+    "crates/voxy_editor/src/app/authoring_checkpoint/tests.rs": "9f676945ff9445320fb27a048f984fe34619a30e56f4648785be84c0e004292d"
+  }
+}

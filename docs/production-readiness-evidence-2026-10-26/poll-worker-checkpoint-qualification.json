@@ -1,0 +1,25 @@
+{
+  "status": "ordered_async_poll_snapshot_transfer_verified",
+  "assets_passed": 54,
+  "editor_passed": 244,
+  "editor_ignored": 20,
+  "strict_assets_all_target_clippy": true,
+  "covered": [
+    "ordered snapshot command after submitted scan",
+    "new scan fence until snapshot consumption",
+    "independent prior scan result retained",
+    "fresh worker starts at exact baseline and cursor",
+    "real file changes and unavailable source recovery match",
+    "explicit bounded command backpressure",
+    "joined worker shutdown"
+  ],
+  "remaining": [
+    "AudioReload save barrier orchestration",
+    "AudioReload queued outputs and cadence serialization",
+    "native audio queue",
+    "App/PlaySession publication"
+  ],
+  "sha256": {
+    "crates/voxy_assets/src/watch_worker.rs": "a438870e170fc28400947aa08bdc24eb8271d6aa2c4e7d0f5f34fcdcd59e7b35"
+  }
+}

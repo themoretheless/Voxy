@@ -1,0 +1,25 @@
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+error: it is more idiomatic to use `Option<&T>` instead of `&Option<T>`
+   --> crates/voxy_editor/src/app/resource_checkpoint.rs:325:5
+    |
+325 | /     fn capture_model_resources_at_barrier(
+326 | |         &self,
+327 | |         limits: import::catalog_checkpoint::Limits,
+328 | |         watcher: &Option<SourcePollerCheckpoint>,
+...   |
+365 | |         })
+366 | |     }
+    | |_____^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#ref_option
+    = note: `-D clippy::ref-option` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::ref_option)]`
+help: change this to
+    |
+328 -         watcher: &Option<SourcePollerCheckpoint>,
+328 +         watcher: Option<&SourcePollerCheckpoint>,
+    |
+
+error: could not compile `voxy_editor` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `voxy_editor` (lib test) due to 1 previous error

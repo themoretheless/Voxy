@@ -1,0 +1,30 @@
+   Compiling voxy_audio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.45s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_audio-115d515d36c83556)
+
+running 16 tests
+test stream::tests::invalid_blocks_and_seek_preserve_accounting ... ok
+test spatial::tests::orientation_distance_and_invalid_geometry ... ok
+test stream::tests::wraparound_backpressure_and_underrun ... ok
+test pcm_archive::tests::archive_roundtrip_bounds_and_nonfinite_samples ... ok
+test resample::tests::known_samples_duration_and_caps ... ok
+test tests::buses_capacity_foreign_handles_and_invalid_inputs ... ok
+test tests::chunk_boundaries_pause_loop_and_completion ... ok
+test tests::ramps_retarget_and_pause_on_sample_clock ... ok
+test tests::ramp_results_are_block_partition_independent ... ok
+test tests::rendering_is_independent_of_block_partition ... ok
+test tests::spatial_gains_route_mono_voice_without_affecting_bus ... ok
+test wav::tests::malformed_and_all_truncated_prefixes_are_rejected ... ok
+test wav::tests::mono_stereo_and_frame_budget ... ok
+test resample::tests::filtered_downsampling_rejects_alias_and_preserves_dc ... ok
+test checkpoint::tests::exact_pcm_continuation_preserves_ramps_pauses_holes_and_new_identity ... ok
+test resample::tests::passband_and_stopband_sines_at_two_to_one_ratio ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests voxy_audio
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

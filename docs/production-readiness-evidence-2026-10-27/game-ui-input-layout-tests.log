@@ -1,0 +1,13 @@
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.76s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-f3403aa334dec0f5)
+
+running 4 tests
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test ui_runtime::checkpoint::tests::fresh_scene_restores_pointer_and_key_hold_and_reconciles_pending_action_change ... ok
+test ui_runtime::checkpoint::tests::immutable_layout_keeps_painter_order_text_and_old_descriptors_with_fresh_handles ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 198 filtered out; finished in 0.01s
+

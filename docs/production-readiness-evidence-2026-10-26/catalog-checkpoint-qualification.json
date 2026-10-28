@@ -1,0 +1,26 @@
+{
+  "status": "quiescent_catalog_checkpoint_verified",
+  "assets_tests_passed": 50,
+  "strict_all_target_clippy": true,
+  "covered": [
+    "current revision allocator and publication revision retention",
+    "failed replacement retains last good payload",
+    "failed missing publication",
+    "dirty invalidation roundtrip",
+    "fresh catalog identity rejects old worker tickets",
+    "matching next publication revision after restore",
+    "unknown payload and capacity corruption rejection"
+  ],
+  "save_boundary": "No pending import tickets; active jobs return DependencyNotReady. Host must implement a real save barrier and job recipes.",
+  "remaining": [
+    "bounded wire codec",
+    "payload and importer input archive",
+    "save barrier scheduling with workers",
+    "AudioPlay composition",
+    "App/PlaySession publication"
+  ],
+  "sha256": {
+    "crates/voxy_assets/src/catalog_checkpoint.rs": "b0aea10596eff5dcc6f10428124077cfc6245cd4f8c8d88f2df6e6d61904008e",
+    "crates/voxy_assets/src/lib.rs": "efa5bde0cbea18d9c8f577a9d4b51d7899eb74cdf9f1b5a0feb0e00f3dabb3a9"
+  }
+}

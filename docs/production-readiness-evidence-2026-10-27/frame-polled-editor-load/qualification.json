@@ -1,0 +1,76 @@
+{
+  "revision": "fbe07fd16bc7f1f7f834ddf67e2301f8564e6a93",
+  "dirty_worktree": true,
+  "scope": "Background read/prepare with owned model/UI GPU checks and guarded frame-polled App installation, offline audio and native offscreen GPU",
+  "hardware": {
+    "device": "Apple M4 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "checks": {
+    "editor_library": {
+      "passed": 384,
+      "failed": 0,
+      "ignored": 42
+    },
+    "gpu_app": {
+      "passed": 7,
+      "failed": 0
+    },
+    "strict_all_target_clippy": true,
+    "scoped_rustfmt": true,
+    "scoped_diff_check": true,
+    "controlled_regression_source_restored_byte_for_byte": true
+  },
+  "proofs": [
+    "corrupt and oversized file rejection before any source freeze",
+    "save/load and duplicate requests mutually excluded",
+    "deliberately delayed reader does not block poll or source editing",
+    "incompatible CPU prepare resumes original fences and preserves source/file",
+    "native registered Send/Sync codec factories and project registry used on prepare worker",
+    "model/UI futures polled with Device Poll after source-frame adoption",
+    "source-free idle/running rectangle-audio/running text-font commands settle solely through ordinary offscreen frames",
+    "fresh scene and exact simulation/audio counters restored",
+    "accepted geometry/text UI pixels unchanged",
+    "old callbacks dispatched before resuming new host epoch, worker joins deferred until finished",
+    "controlled old preparation epoch fails and restored publication epoch passes",
+    "existing 120-step and independent audio-reference checks retained"
+  ],
+  "controls": {
+    "offscreen_hook": "tail-only hook was bypassed by successful offscreen return; common frame wrapper fixed genuine stalled Reading integration",
+    "host_epoch": "temporarily removed only final rebase; deterministic assertion failed; original source restored exactly and native GPU test passed"
+  },
+  "limits": [
+    "capture/source-observation serialization remains synchronous",
+    "registered restore factories execute on background CPU prepare thread",
+    "joins of unfinished IO workers occur only during shutdown, not frame polling"
+  ],
+  "not_qualified": [
+    "user buttons/keybindings/default policies/file chooser",
+    "interactive cancellation command",
+    "failing-source-frame recovery and load while occluded",
+    "native audio device queue transfer",
+    "native surface/input presentation",
+    "capture/load latency and physical memory",
+    "120/160 FPS",
+    "full engine readiness"
+  ],
+  "logs": [
+    "headless.log",
+    "editor.log",
+    "gpu.log",
+    "clippy.log",
+    "offscreen-hook-before.log",
+    "host-epoch-before.log",
+    "host-epoch-after.log"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/app/restore_barrier/load.rs": "f2bfb985b2eb24f17d3407388a67391f12927b29df9b02fa6199bfd7e8203268",
+    "crates/voxy_editor/src/app/restore_barrier/save.rs": "2e8a0398efb4dedb895beabe0aa7902a0ab22230fea30076364be43a00028c84",
+    "crates/voxy_editor/src/app/restore_barrier/editor.rs": "3df10f34209e4620befbf3fd24e5300bbaddd7ad44535d6ed7f9d0192a5a3db9",
+    "crates/voxy_editor/src/app/restore_barrier.rs": "31eb9b44f4542045ae61269e170a92e0412477b44f1466db94f7154711626358",
+    "crates/voxy_editor/src/lib.rs": "70d53bee5b1bb73b248f1ea5acb3f667568bb9d01f82c808329f75930d94545a",
+    "crates/voxy_editor/src/app/viewport.rs": "1a31440bbee07025e6ad0ff51aebd26aa7163502fda0118fc255133e2c169f49",
+    "crates/voxy_editor/src/app/model_reload/gpu_app_tests.rs": "0f6f21f1037a2997b2d53fce1d1eea83531f2b7052f73439629866dd09948e20"
+  }
+}

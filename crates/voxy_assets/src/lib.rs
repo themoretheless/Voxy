@@ -1,7 +1,11 @@
 //! Single-writer asset publication with bounded pending jobs and immutable versions.
 mod artifact_cache;
+mod change_token;
+pub use change_token::AssetChangeToken;
+mod catalog_checkpoint;
+pub use catalog_checkpoint::{AssetCatalogCheckpoint, CatalogEntryCheckpoint};
 mod atomic_file;
-pub use atomic_file::{AtomicSaveError, save_atomic_file};
+pub use atomic_file::{AtomicSaveError, save_atomic_file, save_atomic_new_file};
 mod dependencies;
 pub use artifact_cache::{ArtifactCache, ArtifactCacheError};
 mod files;
@@ -79,12 +83,15 @@ mod watch_worker;
 pub use dependencies::{AssetDependencies, DependencyError};
 pub use files::FileInputs;
 pub use inputs::{
-    FailedImport, ImportInputs, ImportedAsset, InputError, InputSnapshot, RejectedImport,
+    FailedImport, ImportInputs, ImportedArchiveLimits, ImportedAsset, InputError, InputSnapshot,
+    RejectedImport,
 };
 pub use publication::PublicationError;
-pub use sources::{ImportOutcome, SourceDependencies};
-pub use watch::SourcePoller;
-pub use watch_worker::{PollWorkerError, SourcePollWorker};
+pub use sources::{
+    ImportOutcome, SourceDependencies, SourceDependenciesCheckpoint, SourceReadsCheckpoint,
+};
+pub use watch::{SourceFingerprint, SourcePoller, SourcePollerCheckpoint};
+pub use watch_worker::{ObservedSourceScan, PollWorkerError, SourcePollWorker};
 
 use std::{
     collections::BTreeMap,
@@ -160,6 +167,7 @@ struct Entry<T> {
 /// or superseded workers still running outside this catalog.
 #[derive(Debug)]
 pub struct AssetCatalog<T> {
+    change: AssetChangeToken,
     id: u64,
     revision: u64,
     entries: BTreeMap<AssetId, Entry<T>>,
@@ -168,6 +176,11 @@ pub struct AssetCatalog<T> {
     pending: usize,
 }
 impl<T> AssetCatalog<T> {
+    /// Observes catalog mutations, including completion, removal and replacement.
+    #[must_use]
+    pub const fn change_token(&self) -> AssetChangeToken {
+        self.change
+    }
     /// # Errors
     /// Rejects exhaustion of process-local catalog identifiers.
     pub fn new(max_assets: usize, max_pending: usize) -> Result<Self, AssetError> {
@@ -175,6 +188,7 @@ impl<T> AssetCatalog<T> {
             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
             .map_err(|_| AssetError::Exhausted)?;
         Ok(Self {
+            change: AssetChangeToken::fresh(),
             id,
             revision: 0,
             entries: BTreeMap::new(),
@@ -227,6 +241,9 @@ impl<T> AssetCatalog<T> {
         self.revision
             .checked_add(count)
             .ok_or(AssetError::Exhausted)?;
+        if !unique.is_empty() {
+            self.change = AssetChangeToken::fresh();
+        }
         for id in unique {
             if let Some(entry) = self.entries.get_mut(id) {
                 self.revision += 1;
@@ -284,6 +301,7 @@ impl<T> AssetCatalog<T> {
             return Err(AssetError::Capacity);
         }
         let revision = self.revision.checked_add(1).ok_or(AssetError::Exhausted)?;
+        self.change = AssetChangeToken::fresh();
         self.revision = revision;
         if !already_pending {
             self.pending += 1;
@@ -353,6 +371,7 @@ impl<T> AssetCatalog<T> {
                 entry.revision == ticket.revision && entry.status == AssetStatus::Loading
             })
             .ok_or(AssetError::StaleTicket)?;
+        self.change = AssetChangeToken::fresh();
         self.pending -= 1;
         if !dependencies_current {
             entry.status = AssetStatus::Failed("dependency changed during import".into());
@@ -387,6 +406,7 @@ impl<T> AssetCatalog<T> {
     }
     pub fn remove(&mut self, asset: &AssetId) -> bool {
         if let Some(entry) = self.entries.remove(asset) {
+            self.change = AssetChangeToken::fresh();
             if entry.status == AssetStatus::Loading {
                 self.pending -= 1;
             }

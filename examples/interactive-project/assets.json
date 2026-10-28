@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "asset": "player",
+      "source": "player.obj"
+    },
+    {
+      "asset": "ground",
+      "source": "ground.obj"
+    },
+    {
+      "asset": "wall",
+      "source": "wall.obj"
+    },
+    {
+      "asset": "tone",
+      "source": "tone.wav"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.37s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_scene-6cc03d758f9db91e)
+
+running 3 tests
+test simulation::scene_checkpoint::tests::corrupt_allocation_or_configuration_is_rejected_before_candidate_publication ... ok
+test simulation::scene_checkpoint::tests::invalid_candidate_never_overwrites_good_file_or_live_pair ... ok
+test simulation::scene_checkpoint::tests::one_file_restores_scene_allocator_history_behaviors_commands_and_continuation ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 86 filtered out; finished in 0.03s
+

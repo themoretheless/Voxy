@@ -1,0 +1,29 @@
+{
+  "status": "focus_uses_current_display_geometry_bounds",
+  "code_sha256": {
+    "crates/voxy_editor/src/app/picking_drag.rs": "f8971cf1e648e4432bdd355a5e640da3ea4d940edbc2aae3a9e55cfd1f0f526c",
+    "crates/voxy_editor/src/app/inspector.rs": "65e00d5e12a74dc3ee6156006a9e3dc54b5ad5c49aadc37d9ff01c0ae444433c",
+    "crates/voxy_editor/src/locomotion_tests.rs": "a75b24a7d94bd654ace92940094a28a8b7394bca423033c3f602673f8fd54636"
+  },
+  "editor_library": {
+    "passed": 223,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_editor_all_targets_clippy_passed": true,
+  "shared_picking_and_focus_geometry_provider": true,
+  "world_bounds_accumulated_in_f64": true,
+  "camera_distance_preserved": true,
+  "tested": [
+    "morph_displaced_away_from_owner_origin",
+    "both_projections",
+    "mirrored_nonuniform_scale",
+    "focus_key_retargets_geometry_center",
+    "previous_picking_preview_runtime_regressions"
+  ],
+  "frustum_culling_implemented": false,
+  "gpu_conservative_bounds_qualified": false,
+  "native_visual_acceptance": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

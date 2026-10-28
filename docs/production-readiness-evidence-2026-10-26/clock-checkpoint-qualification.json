@@ -1,0 +1,31 @@
+{
+  "status": "exact_clock_checkpoint_scene_owner_and_nearest_rank_telemetry_verified",
+  "code_sha256": {
+    "crates/voxy_time/src/lib.rs": "205c76e24af1b2fe0a0bd3d663be2a9bef7dadeae5cc4d2931720610e3c2fa6e",
+    "crates/voxy_scene/src/simulation.rs": "eba402f329b2d313e24edf51bd271c94b9a7d2533f4afaa6293048def7329592"
+  },
+  "time_library_passed": 8,
+  "scene_library_passed": 75,
+  "editor_library": {
+    "passed": 227,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_all_targets_packages": [
+    "voxy_time",
+    "voxy_scene",
+    "voxy_gameplay",
+    "voxy_editor"
+  ],
+  "clock_continuation_frames_exact": 720,
+  "scene_schedule_json_continuation_frames_exact": 120,
+  "clock_state_and_last_drop_bits_preserved": true,
+  "scene_fixed_step_and_catchup_budget_match_required": true,
+  "foreign_stopped_and_corrupt_restore_rejected": true,
+  "percentile_fix": "nearest rank p95/p99; lower median unchanged; singleton/short/ring regression",
+  "full_session_restore_implemented": false,
+  "interpolation_pose_history_restored": false,
+  "disk_slots_and_other_owners_integrated": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

@@ -1,0 +1,10 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.79s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-bf29a78b430bcde9)
+
+running 2 tests
+test gameplay_checkpoint::tests::late_physics_failure_or_compatibility_mismatch_preserves_source ... ok
+test gameplay_checkpoint::tests::combined_json_restores_midfall_and_matches_full_landing_and_jump_cycle ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 186 filtered out; finished in 0.09s
+

@@ -1,0 +1,48 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
+     Running tests/liquid_droplet_lifecycle.rs (target/research-ray-precision/debug/deps/liquid_droplet_lifecycle-499a03ff0de953ed)
+
+running 24 tests
+test growing_merged_sphere_cannot_penetrate_the_substrate ... ok
+test growth_capture_does_not_accept_a_fast_merged_drop ... ok
+test captures_report_thermal_energy_in_the_receiving_cell ... ok
+test invalid_free_surface_side_rolls_back_complete_liquid_and_film_inventory ... ok
+test engulfment_budget_failure_restores_all_prepared_deposits_and_components ... ok
+test ballistic_endpoint_mismatch_and_geometry_budget_roll_back ... ok
+test fast_immersed_drop_is_rejected_without_tunneling_or_partial_deposition ... ok
+test growth_contact_can_capture_slow_merged_droplets_and_rolls_back_on_budget ... ok
+test merged_drop_can_fragment_into_unequal_children_after_wall_contact ... ok
+test droplets_merge_then_deposit_in_the_same_interval ... ok
+test late_failure_rolls_back_prepared_deposit_and_coalescence ... ok
+test ballistic_elastic_bounce_keeps_gravity_after_contact ... ok
+test population_mask_keeps_sph_samples_out_of_unified_coalescence ... ok
+test ballistic_capture_uses_contact_velocity_and_only_precontact_external_work ... ok
+test newborn_fragment_flight_balances_external_work_and_impulse ... ok
+test same_acceleration_merge_follows_center_of_mass_parabola ... ok
+test prepared_deposition_raises_surface_and_engulfs_another_drop_in_same_call ... ok
+test ballistic_curved_path_captures_even_when_endpoint_chord_misses ... ok
+test slow_immersed_drop_is_captured_at_time_zero_with_all_ledgers ... ok
+test simultaneous_wall_and_drop_contact_uses_wall_priority ... ok
+test sub_inventory_resolution_capture_preserves_droplet_and_thermal_film ... ok
+test wall_rebound_changes_the_next_droplet_collision ... ok
+test reconstructed_wet_surface_captures_earlier_and_retains_component_inventory ... ok
+test thermal_lifecycle_credits_receiving_cells_and_rolls_back_late_failure ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_impact_events.rs (target/research-ray-precision/debug/deps/liquid_impact_events-e6e319e6cdbeaf01)
+
+running 10 tests
+test invalid_onset_rolls_back_liquid_and_film ... ok
+test tangential_speed_does_not_trigger_normal_splash_onset ... ok
+test fragment_velocity_advances_only_after_birth_for_remaining_time ... ok
+test parent_rebounds_twice_then_deposits_within_the_same_interval ... ok
+test chronological_index_changes_preserve_distinct_parent_composition_and_temperature ... ok
+test daughter_and_granddaughter_impacts_keep_inventory_and_energy_balances ... ok
+test unequal_fragment_cascade_deposits_all_mass_and_species ... ok
+test onset_gate_changes_fragmentation_without_losing_mass_or_energy ... ok
+test viscous_material_suppresses_splash_for_identical_impact_and_energy_budget ... ok
+test late_event_lineage_and_particle_budgets_restore_both_complete_states ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

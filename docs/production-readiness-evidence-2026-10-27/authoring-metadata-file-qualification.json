@@ -1,0 +1,49 @@
+{
+  "scope": "Authoring snapshot v2 persists bounded local metadata through the existing editor file",
+  "implemented": [
+    "Native authoring v2 adds required metadata; v1 reads with explicit metadata absence",
+    "Retain settings-write digests, local scene path/revision, prefab inventory/selection and pending preview rectangle/owner",
+    "Exact bit-word rectangle encoding and durable historical identity rebinding",
+    "Reconstruct native SceneRevision from original path/hash without filesystem IO; native later-save validation remains unchanged",
+    "PreparedMetadata installs original authoring fields infallibly after outer staging",
+    "Metadata asset inventory is bounded by archive bytes, independent of scene draft object capacity"
+  ],
+  "checks": {
+    "editor_passed": 320,
+    "editor_ignored": 30,
+    "strict_all_target_clippy": "passed",
+    "scoped_format_diff": "passed",
+    "missing_source_prepare": "passed",
+    "recreated_original_receipt_accepts_and_changed_bytes_reject": "passed",
+    "signed_zero_rectangle_rebind": "passed",
+    "v1_absence_v2_required_and_revision_path_mismatch": "passed",
+    "editor_file_bytes": 25528,
+    "authoring_version": 2,
+    "metadata_fields": [
+      "settings",
+      "scene_path",
+      "revision",
+      "prefabs",
+      "choice",
+      "seek"
+    ]
+  },
+  "retained_rejections": [
+    "Initial AssetId serde assumption fixed by native logical ID string encoding",
+    "Former invalid-version case advanced to unknown v3 after adding v2",
+    "New fixture indexed empty project before adding an object; corrected with normal editor duplicate/create command"
+  ],
+  "not_claimed": [
+    "Paths retain local trusted-host semantics; no cross-machine Save As relocation qualification",
+    "No complete animation-preview pose or imported AuthoredScene provenance checkpoint",
+    "No complete AuthoringSession/project/app publication or native first-presentation/input handoff",
+    "No new GPU/window/device-audio/physical-memory/FPS qualification",
+    "Full ENG-03 through ENG-13 remains open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/app/authoring_checkpoint.rs": "21d40e13ce1305c7d5133f068a251592ea25882c4d5b3a3904e622160e738e02",
+    "crates/voxy_editor/src/app/authoring_checkpoint/metadata.rs": "f0dc52c44906b54bd6fcbdaeda2273277bc1f29878fdca3a3689ed032382402d",
+    "crates/voxy_editor/src/app/authoring_checkpoint/tests.rs": "c880e553bd4440a4b1ed77880b22b9e14325ff2b813b138c15c4e3033a56e95c",
+    "crates/voxy_editor/src/scene_revision.rs": "bc740041e1543dc5d4925b916c456acd6b24812b711112ac267541af9e1cdac1"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "scope": "Detached CPU ImportedAsset<EditorAsset> publication graph, VOXYEIP1",
+  "implemented": [
+    "Native VOXYIMP1 envelopes retain original observations, digests and admission policies",
+    "Global EditorAssetCheckpoint retains shared model/LOD/buffer owners across distinct publications",
+    "Canonical first-use publication IDs retain repeated outer Arc references without content deduplication",
+    "Archive corruption, reference ordering and tighter policy rejection"
+  ],
+  "qualification": {
+    "full_editor_tests": {
+      "passed": 292,
+      "ignored": 21,
+      "failed": 0
+    },
+    "final_focused_tests": {
+      "passed": 2,
+      "failed": 0
+    },
+    "final_clippy_all_targets": "passed -D warnings"
+  },
+  "limits": [
+    "Internal codec only; not wired to App save/load commands",
+    "Catalog revisions, failed-reload last-good transaction and worker/watch barriers remain open",
+    "CPU/GPU atomic commit, physical memory, native display and FPS remain unqualified",
+    "Outer JSON input bytes are bounded; physical peak allocation is not qualified"
+  ],
+  "logs_sha256": {
+    "editor-publication-full-tests.log": "ec15a4d0a18e400d0176dc167c90721b6fbaefc449554a46217e346e7a390b6f",
+    "editor-publication-focused-tests.log": "4a9b49ed21974d7509aeff94a35239565b6a6232bd88958a6db5a9e4e3262971",
+    "editor-publication-clippy.log": "4ed7aebc975b2d97906d4cda7b4fe144881d9e250f74fa066eccd187a5b5e2d6"
+  }
+}

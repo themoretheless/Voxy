@@ -1,0 +1,33 @@
+{
+  "status": "game_host_checkpoint_codecs_project_build_package_consumer_verified",
+  "code_sha256": {
+    "crates/voxy_scene/src/behavior_checkpoint.rs": "9d90cac260d7dc94d6bf7ad45d8d22004b755a64bb4419c09d94be4e27cba574",
+    "crates/voxy_editor/src/game_host.rs": "d3d0efffa3695315a1e98a7cb8677f3fa9a1fce01c79fd5b8e0085e2eb77b309",
+    "crates/voxy_editor/src/headless_game.rs": "99f5776d7712c5b45cc27caa94e6ea22fc900ccc357847b58b6d5434fa09d6ec",
+    "crates/voxy_editor/src/lib.rs": "dfeba359c25c544760023c42debc5b032c8bcdf463dfe380343e5c30e98acaad",
+    "crates/voxy_editor/src/project_runtime.rs": "5d9408f67daf171d7d631bd3330dba4f07cf2153677695b1ed555bcd031ff59f",
+    "crates/voxy_editor/src/packaged_game.rs": "bf8d9471ef605816939d7c196e04b02284d679c377c069e88f2d752f1b372b86",
+    "crates/voxy_editor/src/game_host_tests.rs": "d6cb6311f22503b4454c85363b3c422b25d8c771e2bcf93dc6d01fb564f773f4",
+    "crates/voxy_editor/examples/project_game.rs": "3c93e376ac7b9c848e7cd5507edf24f19948e45f239dbc7741b67b503bba2b56"
+  },
+  "scene_library_passed": 82,
+  "editor_library": {
+    "passed": 229,
+    "failed": 0,
+    "ignored": 20
+  },
+  "strict_scene_gameplay_editor_all_targets_clippy_passed": true,
+  "test": "game_host_tests::host_checkpoint_codecs_survive_project_build_and_source_free_package",
+  "project_source_removed_before_package_restore": true,
+  "behavior_json_restored_with_host_factories": true,
+  "subsequent_scene_and_behavior_steps_match": 120,
+  "missing_codec_and_nonempty_runner_leave_state_unchanged": true,
+  "sample_behavior_check_cli_exit_code": 0,
+  "sample_behavior_check_ticks": 120,
+  "sample_binary_sha256": "e112c20d792108cddd693a57faaa7cf55fbac4fbdc7b364d004d6f4c9479a354",
+  "sample_cli_scope": "behavior participant JSON roundtrip, not complete session restore",
+  "native_window_verified": false,
+  "whole_game_save_or_atomic_slots_implemented": false,
+  "fps_qualified": false,
+  "engine_ready": false
+}

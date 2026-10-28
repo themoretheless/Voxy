@@ -151,3 +151,10 @@ impl Liquid {
         Ok(Some(totals))
     }
 }
+
+#[path = "species_checkpoint.rs"]
+mod checkpoint;
+pub use checkpoint::{
+    ReactionAccuracyCheckpoint, ReactionCheckpoint, SpeciesCheckpoint, SpeciesCheckpointLimits,
+    SpeciesPropertiesCheckpoint,
+};

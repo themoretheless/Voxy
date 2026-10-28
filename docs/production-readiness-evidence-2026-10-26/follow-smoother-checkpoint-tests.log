@@ -1,0 +1,13 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.08s
+     Running unittests src/lib.rs (target/research-ray-precision/debug/deps/voxy_gameplay-bcf1b72c587159c3)
+
+running 4 tests
+test follow_camera::tests::tiny_residual_is_preserved_for_fast_response_to_zero ... ok
+test follow_camera::tests::invalid_samples_preserve_history_and_extreme_half_lives_stay_finite ... ok
+test follow_camera::tests::linear_target_response_matches_across_frame_partitions_and_analytic_solution ... ok
+test follow_camera::checkpoint_tests::restored_history_preserves_every_continuation_bit_and_rejects_corruption ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 187 filtered out; finished in 0.00s
+
