@@ -88,6 +88,51 @@ impl SoftBody {
             .map(|&t| volume(&self.positions, t).abs())
             .sum()
     }
+
+    /// Partitions distance constraints (`edges`) into conflict-free color batches using greedy
+    /// graph coloring so edges within any single batch share no vertices and can be solved in
+    /// parallel without atomic writes.
+    #[must_use]
+    pub fn color_edge_batches(&self) -> Vec<Vec<usize>> {
+        let mut batches: Vec<Vec<usize>> = Vec::new();
+        let mut vertex_color_used: Vec<u64> = vec![0; self.positions.len()];
+        let mut overflow_used: Vec<Vec<bool>> = Vec::new();
+        for (edge_idx, &(a, b, _)) in self.edges.iter().enumerate() {
+            let mask_a = vertex_color_used[a];
+            let mask_b = vertex_color_used[b];
+            let free_mask = !(mask_a | mask_b);
+            let color = if free_mask != 0 {
+                let c = free_mask.trailing_zeros() as usize;
+                vertex_color_used[a] |= 1_u64 << c;
+                vertex_color_used[b] |= 1_u64 << c;
+                c
+            } else {
+                let mut chosen = None;
+                for (extra_idx, used_vertices) in overflow_used.iter_mut().enumerate() {
+                    if !used_vertices[a] && !used_vertices[b] {
+                        used_vertices[a] = true;
+                        used_vertices[b] = true;
+                        chosen = Some(64 + extra_idx);
+                        break;
+                    }
+                }
+                if let Some(c) = chosen {
+                    c
+                } else {
+                    let mut used_vertices = vec![false; self.positions.len()];
+                    used_vertices[a] = true;
+                    used_vertices[b] = true;
+                    overflow_used.push(used_vertices);
+                    64 + overflow_used.len() - 1
+                }
+            };
+            if color >= batches.len() {
+                batches.resize_with(color + 1, Vec::new);
+            }
+            batches[color].push(edge_idx);
+        }
+        batches
+    }
     /// Compliance in solver units; fixed steps <= 1/120 s. Entire step is atomic.
     pub fn step(
         &mut self,
@@ -200,5 +245,73 @@ impl SoftBody {
         self.positions = p;
         self.velocities = velocities;
         Ok(())
+    }
+}
+
+/// Computes the signed dihedral angle in radians (`[-pi, pi]`) between two triangles
+/// `(p0, p1, p2)` and `(p0, p1, p3)` sharing the hinge edge `p0 -> p1`.
+#[must_use]
+pub fn dihedral_angle_radians(p0: V, p1: V, p2: V, p3: V) -> f64 {
+    let e = sub(p1, p0);
+    let e_len = dot(e, e).sqrt();
+    if e_len < 1e-12 {
+        return 0.0;
+    }
+    let e_hat = e.map(|x| x / e_len);
+    let n1 = cross(e, sub(p2, p0));
+    let n2 = cross(sub(p3, p0), e);
+    let l1 = dot(n1, n1).sqrt();
+    let l2 = dot(n2, n2).sqrt();
+    if l1 < 1e-12 || l2 < 1e-12 {
+        return 0.0;
+    }
+    let n1_hat = n1.map(|x| x / l1);
+    let n2_hat = n2.map(|x| x / l2);
+    let sin_theta = dot(cross(n1_hat, n2_hat), e_hat);
+    let cos_theta = dot(n1_hat, n2_hat).clamp(-1.0, 1.0);
+    sin_theta.atan2(cos_theta)
+}
+
+#[cfg(test)]
+mod coloring_and_bending_tests {
+    use super::*;
+
+    #[test]
+    fn edge_coloring_produces_disjoint_vertex_batches() {
+        let positions = vec![
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [1.0, 1.0, 1.0],
+        ];
+        let weights = vec![1.0; 5];
+        let tets = vec![[0, 1, 2, 3], [1, 2, 3, 4]];
+        let body = SoftBody::new(positions, weights, tets).unwrap();
+        let batches = body.color_edge_batches();
+        let total_colored: usize = batches.iter().map(Vec::len).sum();
+        assert_eq!(total_colored, body.edges.len());
+        for batch in &batches {
+            let mut seen = BTreeSet::new();
+            for &edge_idx in batch {
+                let (a, b, _) = body.edges[edge_idx];
+                assert!(seen.insert(a), "duplicate vertex {a} in batch");
+                assert!(seen.insert(b), "duplicate vertex {b} in batch");
+            }
+        }
+    }
+
+    #[test]
+    fn dihedral_angle_zero_for_coplanar_and_ninety_deg_for_folded() {
+        let p0 = [0.0, 0.0, 0.0];
+        let p1 = [1.0, 0.0, 0.0];
+        let p2 = [0.0, 1.0, 0.0];
+        let p3_flat = [0.0, -1.0, 0.0];
+        assert!(dihedral_angle_radians(p0, p1, p2, p3_flat).abs() < 1e-12);
+        let p3_perp = [0.0, 0.0, 1.0];
+        assert!(
+            (dihedral_angle_radians(p0, p1, p2, p3_perp).abs() - std::f64::consts::FRAC_PI_2).abs()
+                < 1e-12
+        );
     }
 }

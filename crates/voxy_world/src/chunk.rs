@@ -281,6 +281,55 @@ impl PalettedBlocks {
         }
         Self::from_dense(dense)
     }
+
+    /// Downsamples the $32^3$ chunk into a $16^3$ (`4096`-cell) LOD mip volume using majority
+    /// voting over each $2 \times 2 \times 2$ cell octant (preferring non-air blocks so thin
+    /// silhouettes are preserved at distance).
+    #[must_use]
+    pub fn downsample_2x(&self) -> Box<[BlockStateId; 4096]> {
+        if let Self::Uniform(block) = self {
+            return Box::new([*block; 4096]);
+        }
+        let dense = self.to_dense();
+        let mut mip = Box::new([BlockStateId::AIR; 4096]);
+        for my in 0_usize..16 {
+            for mz in 0_usize..16 {
+                for mx in 0_usize..16 {
+                    let mut samples = [BlockStateId::AIR; 8];
+                    let mut k = 0_usize;
+                    for dy in 0_usize..2 {
+                        let y = my * 2 + dy;
+                        for dz in 0_usize..2 {
+                            let z = mz * 2 + dz;
+                            let base = 32 * (z + 32 * y) + mx * 2;
+                            samples[k] = dense[base];
+                            samples[k + 1] = dense[base + 1];
+                            k += 2;
+                        }
+                    }
+                    let mut best = BlockStateId::AIR;
+                    let mut best_count = 0_u8;
+                    for &candidate in &samples {
+                        if candidate == BlockStateId::AIR {
+                            continue;
+                        }
+                        let mut count = 0_u8;
+                        for &other in &samples {
+                            if other == candidate {
+                                count += 1;
+                            }
+                        }
+                        if count > best_count {
+                            best_count = count;
+                            best = candidate;
+                        }
+                    }
+                    mip[mx + 16 * (mz + 16 * my)] = best;
+                }
+            }
+        }
+        mip
+    }
 }
 
 /// Sorted distinct blocks of a chunk, or `None` once more than [`MAX_PALETTE`] occur.
@@ -741,5 +790,9 @@ mod tests {
             .unwrap();
         assert_eq!(full, PalettedBlocks::Uniform(id(3)));
         assert_eq!(full.count_block(id(3)), CHUNK_VOLUME);
+
+        let mip = filled.downsample_2x();
+        assert_eq!(mip[2 + 16 * (4 + 16)], id(7));
+        assert_eq!(mip[0], id(0));
     }
 }

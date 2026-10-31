@@ -243,6 +243,81 @@ impl ShoreWaves {
     }
 }
 
+/// Second-order Total Variation Diminishing (`TVD`) flux limiter schemes for shallow-water
+/// wave and foam transport without spurious numerical oscillations near steep fronts.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum FluxLimiter {
+    MinMod,
+    VanLeer,
+    Superbee,
+}
+
+impl FluxLimiter {
+    /// Evaluates the symmetric TVD limiter $\phi(r)$ for consecutive gradient ratio $r$.
+    #[must_use]
+    pub fn evaluate(self, r: f32) -> f32 {
+        if !r.is_finite() || r <= 0.0 {
+            return 0.0;
+        }
+        match self {
+            Self::MinMod => r.min(1.0),
+            Self::VanLeer => (r + r.abs()) / (1.0 + r.abs()),
+            Self::Superbee => (2.0 * r).min(1.0).max(r.min(2.0)),
+        }
+    }
+
+    /// Reconstructs the limited slope between left difference `du_minus = u_i - u_{i-1}`
+    /// and right difference `du_plus = u_{i+1} - u_i`.
+    #[must_use]
+    pub fn limited_slope(self, du_minus: f32, du_plus: f32) -> f32 {
+        if du_minus * du_plus <= 0.0 || du_plus.abs() < 1e-12 {
+            return 0.0;
+        }
+        let r = du_minus / du_plus;
+        self.evaluate(r) * du_plus
+    }
+}
+
+/// Advances a 2D surface foam concentration field (`[0, 1]`) by one semi-Lagrangian advection
+/// + exponential dissipation + breaker injection step on a `size[0] x size[1]` grid.
+#[must_use]
+pub fn advect_foam_step(
+    foam: &[f32],
+    velocity: &[Vec2],
+    injection: &[f32],
+    size: [u32; 2],
+    cell_size: f32,
+    dt: f32,
+    decay_rate: f32,
+) -> Vec<f32> {
+    let [w, h] = size;
+    let total = (w * h) as usize;
+    if w == 0
+        || h == 0
+        || foam.len() != total
+        || velocity.len() != total
+        || injection.len() != total
+        || cell_size <= 0.0
+        || dt < 0.0
+    {
+        return Vec::new();
+    }
+    let attenuation = (-decay_rate.max(0.0) * dt).exp();
+    let inv_cell = 1.0 / cell_size;
+    let mut next = Vec::with_capacity(total);
+    for y in 0..h {
+        for x in 0..w {
+            let idx = (y * w + x) as usize;
+            let vel = velocity[idx];
+            let back_pos = Vec2::new(x as f32, y as f32) - vel * (dt * inv_cell);
+            let advected = bilinear(foam, size, back_pos);
+            let updated = (advected * attenuation + injection[idx] * dt).clamp(0.0, 1.0);
+            next.push(updated);
+        }
+    }
+    next
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -272,5 +347,21 @@ mod tests {
             .fold(0.0, f32::max);
         assert!(peak <= 0.78 * 0.5 + 1e-4 && peak > 0.1, "{peak}");
         assert!(waves.height(0.05, 0.3, 0.0).foam > 0.4);
+    }
+
+    #[test]
+    fn tvd_flux_limiters_and_foam_advection_remain_bounded() {
+        assert_eq!(FluxLimiter::MinMod.evaluate(-1.0), 0.0);
+        assert!((FluxLimiter::VanLeer.evaluate(1.0) - 1.0).abs() < 1e-6);
+        assert!((FluxLimiter::Superbee.evaluate(0.5) - 1.0).abs() < 1e-6);
+        assert_eq!(FluxLimiter::VanLeer.limited_slope(1.0, -1.0), 0.0);
+
+        let foam = vec![0.0, 1.0, 0.0, 0.0];
+        let vel = vec![Vec2::new(1.0, 0.0); 4];
+        let inj = vec![0.1; 4];
+        let step = advect_foam_step(&foam, &vel, &inj, [4, 1], 1.0, 1.0, 0.5);
+        assert_eq!(step.len(), 4);
+        assert!(step.iter().all(|&f| (0.0..=1.0).contains(&f)));
+        assert!(step[2] > 0.5);
     }
 }

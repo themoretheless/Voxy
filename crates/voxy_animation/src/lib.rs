@@ -78,7 +78,7 @@ mod crowd;
 pub use crowd::{CrowdEvaluator, CrowdLod, CrowdOutcome, CrowdPalettes};
 mod gpu_layout;
 pub use gpu_layout::{
-    GPU_NO_PARENT, GpuBlendJob, GpuClipTable, GpuJointKey, GpuSkeletonLayout,
+    DualQuat, GPU_NO_PARENT, GpuBlendJob, GpuClipTable, GpuJointKey, GpuSkeletonLayout,
     cpu_reference_palette, nlerp, pack_affine_3x4, unpack_affine_3x4,
 };
 mod gait;

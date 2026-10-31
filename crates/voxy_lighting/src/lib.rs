@@ -112,6 +112,42 @@ impl LightVolume {
     pub fn is_all_full_sky(&self) -> bool {
         self.packed.iter().all(|&b| b == (MAX_LIGHT << 4))
     }
+
+    /// Downsamples the $32^3$ packed light volume into a $16^3$ (`4096`-byte) LOD mip
+    /// volume by taking the component-wise maximum of skylight (`high nibble`) and
+    /// blocklight (`low nibble`) across each $2 \times 2 \times 2$ cell octant.
+    #[must_use]
+    pub fn downsample_2x_max(&self) -> Box<[u8; 4096]> {
+        if self.is_all_dark() {
+            return Box::new([0_u8; 4096]);
+        }
+        if self.is_all_full_sky() {
+            return Box::new([MAX_LIGHT << 4; 4096]);
+        }
+        let mut mip = Box::new([0_u8; 4096]);
+        for my in 0_usize..16 {
+            for mz in 0_usize..16 {
+                for mx in 0_usize..16 {
+                    let mut max_sky = 0_u8;
+                    let mut max_block = 0_u8;
+                    for dy in 0_usize..2 {
+                        let y = my * 2 + dy;
+                        for dz in 0_usize..2 {
+                            let z = mz * 2 + dz;
+                            let base = EDGE * (z + EDGE * y) + mx * 2;
+                            for dx in 0_usize..2 {
+                                let p = self.packed[base + dx];
+                                max_sky = max_sky.max(p >> 4);
+                                max_block = max_block.max(p & 0x0f);
+                            }
+                        }
+                    }
+                    mip[mx + 16 * (mz + 16 * my)] = (max_sky << 4) | max_block;
+                }
+            }
+        }
+        mip
+    }
 }
 
 /// Padded occlusion and emission of the center chunk plus its one-cell face halo.
@@ -609,6 +645,8 @@ mod tests {
         assert_eq!(light.block(lamp_pos.index()), 15);
         assert_eq!(light.block(stone_pos.index()), 0);
         assert_eq!(light.block(LocalPos::new(15, 16, 16).unwrap().index()), 14);
+        let mip = light.downsample_2x_max();
+        assert_eq!(mip[8 + 16 * (8 + 16 * 8)] & 0x0f, 15);
     }
 
     #[test]

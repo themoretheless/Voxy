@@ -277,5 +277,95 @@ pub const fn unpack_affine_3x4(rows: [[f32; 4]; 3]) -> Mat4 {
     ])
 }
 
+/// Unit dual quaternion $\hat{q} = q_r + \epsilon q_d$ (32 bytes / 8 `f32`s) for volume-preserving
+/// Dual Quaternion Skinning (`DQS`), eliminating the "candy-wrapper" collapse of linear blend skinning.
+#[derive(Clone, Copy, Debug, PartialEq)]
+#[repr(C)]
+pub struct DualQuat {
+    pub real: Quat,
+    pub dual: Quat,
+}
+
+impl DualQuat {
+    pub const IDENTITY: Self = Self {
+        real: Quat::IDENTITY,
+        dual: Quat::from_xyzw(0.0, 0.0, 0.0, 0.0),
+    };
+
+    /// Constructs a unit dual quaternion from a unit rotation `rotation` and `translation`.
+    ///
+    /// $$\quad q_d = \frac{1}{2} (t_x i + t_y j + t_z k) q_r$$
+    #[must_use]
+    pub fn from_rotation_translation(rotation: Quat, translation: Vec3) -> Self {
+        let r = rotation.normalize();
+        let t_quat = Quat::from_xyzw(translation.x, translation.y, translation.z, 0.0);
+        let d = (t_quat * r) * 0.5;
+        Self { real: r, dual: d }
+    }
+
+    /// Extracts the unit rotation and translation vector from a normalized dual quaternion.
+    #[must_use]
+    pub fn to_rotation_translation(self) -> (Quat, Vec3) {
+        let norm = self.real.length();
+        if norm < 1e-8 {
+            return (Quat::IDENTITY, Vec3::ZERO);
+        }
+        let r = self.real / norm;
+        let d = self.dual / norm;
+        let t_quat = (d * 2.0) * r.conjugate();
+        (r, Vec3::new(t_quat.x, t_quat.y, t_quat.z))
+    }
+
+    /// Transforms a 3D point using this dual quaternion.
+    #[must_use]
+    pub fn transform_point3(self, point: Vec3) -> Vec3 {
+        let (r, t) = self.to_rotation_translation();
+        r * point + t
+    }
+
+    /// Blends up to 4 weighted joint dual quaternions with antipodal sign alignment (DLB)
+    /// and normalizes the resulting dual quaternion.
+    #[must_use]
+    pub fn blend_weighted(joints: &[Self], weights: &[f32]) -> Self {
+        let Some(&first) = joints.first() else {
+            return Self::IDENTITY;
+        };
+        let ref_real = first.real;
+        let mut sum_r = Quat::from_xyzw(0.0, 0.0, 0.0, 0.0);
+        let mut sum_d = Quat::from_xyzw(0.0, 0.0, 0.0, 0.0);
+        for (&dq, &w) in joints.iter().zip(weights) {
+            let signed_w = if ref_real.dot(dq.real) < 0.0 { -w } else { w };
+            sum_r = Quat::from_xyzw(
+                sum_r.x + dq.real.x * signed_w,
+                sum_r.y + dq.real.y * signed_w,
+                sum_r.z + dq.real.z * signed_w,
+                sum_r.w + dq.real.w * signed_w,
+            );
+            sum_d = Quat::from_xyzw(
+                sum_d.x + dq.dual.x * signed_w,
+                sum_d.y + dq.dual.y * signed_w,
+                sum_d.z + dq.dual.z * signed_w,
+                sum_d.w + dq.dual.w * signed_w,
+            );
+        }
+        let len = sum_r.length();
+        if len < 1e-8 {
+            return Self::IDENTITY;
+        }
+        let inv_len = 1.0 / len;
+        let r = sum_r * inv_len;
+        let d_raw = sum_d * inv_len;
+        // Enforce Plücker orthogonality <r, d> == 0
+        let dot_rd = r.dot(d_raw);
+        let d = Quat::from_xyzw(
+            d_raw.x - r.x * dot_rd,
+            d_raw.y - r.y * dot_rd,
+            d_raw.z - r.z * dot_rd,
+            d_raw.w - r.w * dot_rd,
+        );
+        Self { real: r, dual: d }
+    }
+}
+
 #[cfg(test)]
 mod tests;
