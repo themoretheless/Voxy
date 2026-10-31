@@ -1972,7 +1972,17 @@ impl ApplicationHandler for App {
                         self.capture(false);
                     } else if event.state == ElementState::Pressed
                         && !event.repeat
-                        && self.day_cycle.as_mut().is_some_and(|c| c.key(key))
+                        && (matches!(
+                            key,
+                            KeyCode::KeyT
+                                | KeyCode::BracketLeft
+                                | KeyCode::BracketRight
+                                | KeyCode::KeyY
+                        ) || self.day_cycle.is_some())
+                        && self
+                            .day_cycle
+                            .get_or_insert_with(|| day_cycle::DayCycle::new(self.original_seed))
+                            .key(key)
                     {
                     } else if event.state == ElementState::Pressed
                         && !event.repeat

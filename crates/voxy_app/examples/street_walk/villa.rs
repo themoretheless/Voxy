@@ -1359,6 +1359,44 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
         b.span(fabric(art_i + 1), [ax - 0.34, floor_top + 1.29, 147.57], [ax + 0.34, floor_top + 2.11, 147.61]);
     }
 
+    // ---- west garden bocce / pétanque court & spectator bench (x = -14.2..-11.2, z = 127.4..132.8) ----
+    let (bx0, bx1, bz0, bz1) = (-14.15f32, -11.35f32, 127.6f32, 132.6f32);
+    // Compacted gravel/mortar playing surface and timber bumper surround
+    b.span(concrete, [bx0 + 0.12, 0.10, bz0 + 0.12], [bx1 - 0.12, 0.14, bz1 - 0.12]);
+    for (lo, hi) in [
+        ([bx0, 0.10, bz0], [bx1, 0.24, bz0 + 0.12]),
+        ([bx0, 0.10, bz1 - 0.12], [bx1, 0.24, bz1]),
+        ([bx0, 0.10, bz0 + 0.12], [bx0 + 0.12, 0.24, bz1 - 0.12]),
+        ([bx1 - 0.12, 0.10, bz0 + 0.12], [bx1, 0.24, bz1 - 0.12]),
+    ] {
+        b.span(p.timber, lo, hi);
+    }
+    // Pallino target jack (ceramic) and chrome/ceramic bocce boules clustered near the far end
+    b.put(p.ceramic, Vec3::new(-12.68, 0.165, 131.15), Vec3::splat(0.05), Quat::IDENTITY);
+    for (bx_ball, bz_ball, mesh_id) in [
+        (-12.52f32, 130.92f32, chrome),
+        (-12.88, 131.28, chrome),
+        (-12.42, 131.36, p.ceramic),
+        (-12.95, 130.74, p.ceramic),
+    ] {
+        b.put(mesh_id, Vec3::new(bx_ball, 0.19, bz_ball), Vec3::splat(0.10), Quat::IDENTITY);
+    }
+    // Travertine and teak player bench with scoreboard post along the west side of the court
+    b.span(travertine, [bx0 - 0.55, 0.10, 129.3], [bx0 - 0.18, 0.44, 130.9]);
+    b.span(p.timber, [bx0 - 0.58, 0.44, 129.25], [bx0 - 0.15, 0.50, 130.95]);
+    b.span(p.metal, [bx0 - 0.36, 0.10, 131.45], [bx0 - 0.30, 1.28, 131.51]);
+    b.span(p.wood, [bx0 - 0.38, 0.96, 131.30], [bx0 - 0.28, 1.26, 131.66]);
+
+    // ---- upstairs master suite private terrace planters & interior floor lamp ----
+    for px in [1.8f32, 5.8, 9.4] {
+        b.span(p.ceramic, [px - 0.34, u0, 135.42], [px + 0.34, u0 + 0.38, 135.78]);
+        b.span(p.foliage, [px - 0.38, u0 + 0.38, 135.38], [px + 0.38, u0 + 0.86, 135.82]);
+    }
+    // Minimalist brass/dark-steel reading floor lamp beside the master suite lounge
+    b.span(p.metal, [9.85, u0 + 0.02, 136.85], [10.15, u0 + 0.05, 137.15]);
+    b.span(p.metal, [9.98, u0 + 0.05, 136.98], [10.02, u0 + 1.58, 137.02]);
+    b.span(p.glow, [9.82, u0 + 1.54, 136.82], [10.18, u0 + 1.78, 137.18]);
+
     Villa {
         water: vec![WaterBody::pool(
             Vec3::new(-x, DEEP, z0),
