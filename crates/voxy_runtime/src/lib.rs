@@ -2,7 +2,7 @@
 
 mod bootstrap;
 mod frame_loop;
-pub use frame_loop::{FrameLoop, FrameWork};
+pub use frame_loop::{FrameLoop, FrameWork, snap_frame_delta_to_refresh_rate};
 mod time;
 pub use time::{SimulationClock, TimeDrop, TimeFrame};
 

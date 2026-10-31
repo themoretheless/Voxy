@@ -248,6 +248,46 @@ impl PointerRouter {
         }
     }
 }
+
+/// Accessibility color-vision deficiency simulation / daltonization mode (Machado et al. 2009).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ColorVisionMode {
+    Normal,
+    Protanopia,
+    Deuteranopia,
+    Tritanopia,
+}
+
+impl ColorVisionMode {
+    /// Applies the 3×3 linear RGB transformation matrix to an `[r, g, b, a]` color,
+    /// clamping output channels to `[0.0, 1.0]` and preserving alpha.
+    #[must_use]
+    pub fn transform_rgba(self, rgba: [f32; 4]) -> [f32; 4] {
+        let m: [[f32; 3]; 3] = match self {
+            Self::Normal => [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+            Self::Protanopia => [
+                [0.152_286, 1.052_583, -0.204_868],
+                [0.114_503, 0.786_281, 0.099_216],
+                [-0.003_882, -0.048_116, 1.051_998],
+            ],
+            Self::Deuteranopia => [
+                [0.367_322, 0.860_646, -0.227_968],
+                [0.280_085, 0.672_501, 0.047_413],
+                [-0.011_820, 0.042_940, 0.968_881],
+            ],
+            Self::Tritanopia => [
+                [1.255_528, -0.076_749, -0.178_779],
+                [-0.078_411, 0.930_809, 0.147_602],
+                [0.004_733, 0.691_367, 0.303_900],
+            ],
+        };
+        let r = (m[0][0] * rgba[0] + m[0][1] * rgba[1] + m[0][2] * rgba[2]).clamp(0.0, 1.0);
+        let g = (m[1][0] * rgba[0] + m[1][1] * rgba[1] + m[1][2] * rgba[2]).clamp(0.0, 1.0);
+        let b = (m[2][0] * rgba[0] + m[2][1] * rgba[1] + m[2][2] * rgba[2]).clamp(0.0, 1.0);
+        [r, g, b, rgba[3].clamp(0.0, 1.0)]
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -351,6 +391,22 @@ mod tests {
             Err(UiError::InvalidGeometry)
         );
         assert_eq!(router.hovered(), None);
+    }
+    #[test]
+    fn color_vision_filter_preserves_neutrals_and_clamps_channels() {
+        let white = [1.0, 1.0, 1.0, 0.8];
+        for mode in [
+            ColorVisionMode::Normal,
+            ColorVisionMode::Protanopia,
+            ColorVisionMode::Deuteranopia,
+            ColorVisionMode::Tritanopia,
+        ] {
+            let out = mode.transform_rgba(white);
+            for ch in 0..3 {
+                assert!((out[ch] - 1.0).abs() < 1e-4);
+            }
+            assert!((out[3] - 0.8).abs() < 1e-6);
+        }
     }
 }
 

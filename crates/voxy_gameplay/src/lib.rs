@@ -54,7 +54,7 @@ pub use audio_runtime::{SceneAudioCheckpoint, SceneAudioCheckpointLimits, SceneA
 mod audio_scene;
 pub use audio_scene::{
     AudioBus, AudioListener, AudioListenerSnapshot, AudioSource, AudioSourceSnapshot,
-    SceneAudioSnapshot, extract_scene_audio,
+    SceneAudioSnapshot, compute_doppler_pitch_shift, extract_scene_audio,
 };
 mod ui_text;
 pub use ui_text::{PreparedUiText, decode_ui_font_observed, prepare_ui_text};

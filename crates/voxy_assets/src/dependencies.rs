@@ -133,6 +133,60 @@ impl AssetDependencies {
         }
         Ok(result)
     }
+
+    /// Computes wavefront parallel execution layers for the affected rebuild subgraph.
+    /// Assets in layer `k` only depend on unaffected ready assets or assets in layers `< k`.
+    /// # Errors
+    /// Rejects undeclared changed IDs and internal graph cycles.
+    pub fn wavefront_layers(
+        &self,
+        changed: impl IntoIterator<Item = AssetId>,
+    ) -> Result<Vec<Vec<AssetId>>, DependencyError> {
+        let ordered = self.affected(changed)?;
+        if ordered.is_empty() {
+            return Ok(Vec::new());
+        }
+        let mut remaining: BTreeSet<_> = ordered.into_iter().collect();
+        let mut completed = BTreeSet::new();
+        let mut layers = Vec::new();
+        while !remaining.is_empty() {
+            let ready: Vec<_> = remaining
+                .iter()
+                .filter(|asset| {
+                    self.edges[*asset]
+                        .iter()
+                        .all(|dep| !remaining.contains(dep) || completed.contains(dep))
+                })
+                .cloned()
+                .collect();
+            if ready.is_empty() {
+                return Err(DependencyError::Cycle);
+            }
+            for asset in &ready {
+                remaining.remove(asset);
+                completed.insert(asset.clone());
+            }
+            layers.push(ready);
+        }
+        Ok(layers)
+    }
+
+    /// Exports the dependency graph in Mermaid `flowchart TD` syntax for diagnostics.
+    #[must_use]
+    pub fn to_mermaid(&self) -> String {
+        use std::fmt::Write as _;
+        let mut out = String::from("flowchart TD\n");
+        for (asset, deps) in &self.edges {
+            if deps.is_empty() {
+                let _ = writeln!(out, "    [\"{}\"]", asset.0);
+            } else {
+                for dep in deps {
+                    let _ = writeln!(out, "    [\"{}\"] --> [\"{}\"]", dep.0, asset.0);
+                }
+            }
+        }
+        out
+    }
 }
 #[cfg(test)]
 mod tests {
@@ -188,5 +242,29 @@ mod tests {
             graph.affected([id("a")]).unwrap(),
             vec![id("a"), id("b"), id("c")]
         );
+    }
+    #[test]
+    fn wavefront_layers_group_independent_dependents_and_export_mermaid() {
+        let mut graph = AssetDependencies::new(5, 8);
+        for asset in ["texture", "material", "mesh", "scene", "other"] {
+            graph.declare(id(asset)).unwrap();
+        }
+        graph.set(&id("material"), [id("texture")]).unwrap();
+        graph.set(&id("mesh"), [id("texture")]).unwrap();
+        graph
+            .set(&id("scene"), [id("material"), id("mesh")])
+            .unwrap();
+        let layers = graph.wavefront_layers([id("texture")]).unwrap();
+        assert_eq!(
+            layers,
+            vec![
+                vec![id("texture")],
+                vec![id("material"), id("mesh")],
+                vec![id("scene")],
+            ]
+        );
+        let mermaid = graph.to_mermaid();
+        assert!(mermaid.starts_with("flowchart TD\n"));
+        assert!(mermaid.contains("[\"texture\"] --> [\"material\"]"));
     }
 }

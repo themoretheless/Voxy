@@ -138,6 +138,38 @@ pub fn extract_scene_audio(
         sources,
     })
 }
+
+/// Computes the acoustic Doppler pitch multiplier for a source and listener moving in 3D space.
+/// Clamps radial speeds to `0.9 * speed_of_sound` and pitch shift to `[0.25, 4.0]` to avoid
+/// sonic-boom singularities.
+#[must_use]
+pub fn compute_doppler_pitch_shift(
+    source_pos: [f32; 3],
+    source_vel: [f32; 3],
+    listener_pos: [f32; 3],
+    listener_vel: [f32; 3],
+    speed_of_sound: f32,
+) -> f32 {
+    if !speed_of_sound.is_finite() || speed_of_sound <= 1.0 {
+        return 1.0;
+    }
+    let dir = Vec3::from_array(listener_pos) - Vec3::from_array(source_pos);
+    let dist_sq = dir.length_squared();
+    if !dist_sq.is_finite() || dist_sq <= 1e-8 {
+        return 1.0;
+    }
+    let unit_to_listener = dir / dist_sq.sqrt();
+    let v_s = Vec3::from_array(source_vel).dot(unit_to_listener);
+    let v_l = Vec3::from_array(listener_vel).dot(unit_to_listener);
+    if !v_s.is_finite() || !v_l.is_finite() {
+        return 1.0;
+    }
+    let max_radial = 0.9 * speed_of_sound;
+    let clamped_vs = v_s.clamp(-max_radial, max_radial);
+    let clamped_vl = v_l.clamp(-max_radial, max_radial);
+    ((speed_of_sound - clamped_vl) / (speed_of_sound - clamped_vs)).clamp(0.25, 4.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -250,5 +282,32 @@ mod tests {
         assert!(extract_scene_audio(&scene, 1).unwrap().sources.is_empty());
         assert_ne!(scene.spawn(None, Transform::default()).unwrap(), source);
         assert!(extract_scene_audio(&loaded.graph, 0).is_err());
+    }
+    #[test]
+    fn doppler_pitch_shift_increases_on_approach_and_clamps_extremes() {
+        let approaching = compute_doppler_pitch_shift(
+            [0.0, 0.0, 0.0],
+            [34.3, 0.0, 0.0],
+            [10.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            343.0,
+        );
+        assert!(approaching > 1.1 && approaching < 1.12);
+        let receding = compute_doppler_pitch_shift(
+            [0.0, 0.0, 0.0],
+            [-34.3, 0.0, 0.0],
+            [10.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            343.0,
+        );
+        assert!(receding < 0.92 && receding > 0.90);
+        let supersonic = compute_doppler_pitch_shift(
+            [0.0, 0.0, 0.0],
+            [5000.0, 0.0, 0.0],
+            [10.0, 0.0, 0.0],
+            [-5000.0, 0.0, 0.0],
+            343.0,
+        );
+        assert!((supersonic - 4.0).abs() < 1e-6);
     }
 }

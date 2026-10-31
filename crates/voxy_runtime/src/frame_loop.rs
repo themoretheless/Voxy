@@ -75,6 +75,32 @@ impl FrameLoop {
     }
 }
 
+/// Snaps a measured wall-clock frame delta to the nearest standard display refresh interval
+/// (`60`, `72`, `90`, `120`, `144`, `165`, `240` Hz) when within `tolerance_ratio` (e.g. `0.03`).
+/// Eliminates VSync micro-stutter on fixed-step accumulators while preserving large deviations.
+#[must_use]
+pub fn snap_frame_delta_to_refresh_rate(elapsed_seconds: f64, tolerance_ratio: f64) -> f64 {
+    if !elapsed_seconds.is_finite()
+        || elapsed_seconds <= 0.0
+        || !tolerance_ratio.is_finite()
+        || !(0.0..=0.25).contains(&tolerance_ratio)
+    {
+        return elapsed_seconds;
+    }
+    const REFRESH_RATES_HZ: [f64; 7] = [60.0, 72.0, 90.0, 120.0, 144.0, 165.0, 240.0];
+    let mut best_target = elapsed_seconds;
+    let mut best_rel_err = tolerance_ratio;
+    for rate in REFRESH_RATES_HZ {
+        let period = 1.0 / rate;
+        let rel_err = ((elapsed_seconds - period) / period).abs();
+        if rel_err <= best_rel_err {
+            best_rel_err = rel_err;
+            best_target = period;
+        }
+    }
+    best_target
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -117,5 +143,14 @@ mod tests {
         assert_eq!(scheduler.advance(0.02).fixed.steps, 1);
         assert!(FrameLoop::new(0.0, 1).is_none());
         assert!(FrameLoop::new(0.02, 0).is_none());
+    }
+    #[test]
+    fn refresh_rate_snapping_locks_near_standard_periods() {
+        let snapped_60 = snap_frame_delta_to_refresh_rate(0.016_75, 0.02);
+        assert!((snapped_60 - 1.0 / 60.0).abs() < 1e-12);
+        let snapped_144 = snap_frame_delta_to_refresh_rate(0.006_98, 0.02);
+        assert!((snapped_144 - 1.0 / 144.0).abs() < 1e-12);
+        let unsnapped = snap_frame_delta_to_refresh_rate(0.025, 0.02);
+        assert!((unsnapped - 0.025).abs() < 1e-12);
     }
 }
