@@ -1167,6 +1167,49 @@ fn quantize_weights(weights: [f32; 4]) -> Result<[u16; 4], ModelError> {
     Ok(result)
 }
 
+/// Selects up to 4 most-influential `(joint, weight)` bindings, zeroing weights below `min_weight`
+/// and renormalizing the surviving 4 influences to sum to `1.0` (with quantized `u16` weights
+/// summing to `65535`).
+///
+/// # Errors
+/// Rejects non-finite/negative weights or sets where all influences are zero / below threshold.
+pub fn select_top4_joint_influences(
+    influences: &[(u16, f32)],
+    min_weight: f32,
+) -> Result<([u16; 4], [u16; 4]), ModelError> {
+    if !min_weight.is_finite() || min_weight < 0.0 {
+        return Err(fail("invalid minimum skin weight threshold"));
+    }
+    let mut filtered: Vec<(u16, f32)> = Vec::with_capacity(influences.len());
+    for &(joint, weight) in influences {
+        if !weight.is_finite() || weight < 0.0 {
+            return Err(fail("invalid skin weights"));
+        }
+        if weight > min_weight && weight > 0.0 {
+            if let Some(existing) = filtered.iter_mut().find(|(j, _)| *j == joint) {
+                existing.1 += weight;
+            } else {
+                filtered.push((joint, weight));
+            }
+        }
+    }
+    filtered.sort_by(|a, b| b.1.total_cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+    filtered.truncate(4);
+    let mut joints = [0_u16; 4];
+    let mut raw_weights = [0.0_f32; 4];
+    for (idx, (joint, weight)) in filtered.into_iter().enumerate() {
+        joints[idx] = joint;
+        raw_weights[idx] = weight;
+    }
+    let quantized = quantize_weights(raw_weights)?;
+    for idx in 0..4 {
+        if quantized[idx] == 0 {
+            joints[idx] = 0;
+        }
+    }
+    Ok((joints, quantized))
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -2257,6 +2300,13 @@ mod tests {
         }
         assert!(quantize_weights([0.; 4]).is_err());
         assert!(quantize_weights([f32::NAN; 4]).is_err());
+        let (joints, weights) = select_top4_joint_influences(
+            &[(7, 0.05), (2, 0.4), (5, 0.3), (1, 0.2), (9, 0.1), (2, 0.1)],
+            0.08,
+        )
+        .unwrap();
+        assert_eq!(joints, [2, 5, 1, 9]);
+        assert_eq!(weights.iter().map(|&w| u32::from(w)).sum::<u32>(), 65535);
     }
 }
 

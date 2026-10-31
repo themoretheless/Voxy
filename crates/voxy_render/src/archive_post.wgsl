@@ -150,7 +150,8 @@ fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
             let ray=delta/dist;
             let water_mist=1.+0.45*exp(-max(world_p.y-0.08,0.)*2.5)*smoothstep(105.,113.,world_p.z)*(1.-smoothstep(127.,135.,world_p.z))*smoothstep(0.,1.,1.-abs(world_p.x)/4.5);
             let haze_density=0.0011*(1.+2.2*camera.weather.x)*exp(-max(world_p.y,0.)*0.04)*water_mist;
-            let air=clamp(1.-exp(-(dist-14.)*haze_density),0.,0.32);
+            let extinction=(dist-14.)*haze_density*vec3<f32>(0.72,0.96,1.34);
+            let transmittance=clamp(exp(-extinction),vec3<f32>(0.66),vec3<f32>(1.));
             var horizon_sky=vec3<f32>(0.);
             let sample_dir=normalize(vec3<f32>(ray.x,max(ray.y,0.06),ray.z));
             if camera.eye.w>0.5 {
@@ -160,8 +161,9 @@ fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
             }
             let cos_sun=clamp(dot(ray,camera.sun.xyz),0.,1.);
             let mie_forward=pow(cos_sun,5.)*max(camera.sun.y,0.)*0.35;
-            horizon_sky*=(1.+vec3<f32>(1.15,0.98,0.78)*mie_forward);
-            x=mix(x,horizon_sky,air);
+            let mie_back=pow(clamp(-dot(ray,camera.sun.xyz),0.,1.),3.)*max(camera.sun.y,0.)*0.06;
+            horizon_sky*=(1.+vec3<f32>(1.15,0.98,0.78)*mie_forward+vec3<f32>(0.88,0.94,1.08)*mie_back);
+            x=x*transmittance+horizon_sky*(1.-transmittance);
         }
     }
     if camera.weather.x>0. {

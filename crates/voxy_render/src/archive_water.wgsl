@@ -341,6 +341,8 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
   // ---- refraction: march the bent ray the distance the straight ray travels under water ----
   let straight_world = world_at(pixel, straight_depth);
   let under = max(distance(straight_world, f.world), 0.01);
+  let nv = max(dot(n_up, v), 0.);
+  let fr = fresnel(nv);
   let bent = refract(-v, n_up, 1. / IOR);
   var hit_point = f.world + bent * under;
   var q = to_pixel(hit_point);
@@ -358,8 +360,18 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
     }
   }
   if behind_pixel.x == pixel.x && behind_pixel.y == pixel.y { hit_point = straight_world; }
-  let behind = opaque_radiance(behind_pixel);
-  let refracted = under_water(behind, hit_point, f.world.y, path, ambient);
+  var behind = opaque_radiance(behind_pixel);
+  // Chromatic dispersion of refracted basin tiles at oblique angles when ray bent away from pixel
+  if (behind_pixel.x != pixel.x || behind_pixel.y != pixel.y) && path > 0.12 {
+    let disp_px = clamp((vec2<f32>(behind_pixel) - vec2<f32>(pixel)) * 0.065 * (1. - nv), vec2<f32>(-2.5), vec2<f32>(2.5));
+    let pr = clamp_pixel(vec2<f32>(behind_pixel) - disp_px);
+    let pb = clamp_pixel(vec2<f32>(behind_pixel) + disp_px);
+    if textureLoad(opaque_depth, pr, 0) > surface_depth && textureLoad(opaque_depth, pb, 0) > surface_depth {
+      behind = vec3<f32>(opaque_radiance(pr).r, behind.g, opaque_radiance(pb).b);
+    }
+  }
+  let meniscus = smoothstep(0., 0.10, f.world.y - hit_point.y);
+  let refracted = mix(behind, under_water(behind, hit_point, f.world.y, path, ambient), meniscus);
 
   // ---- reflection ----
   // Unresolved ripples spread the reflection: average the sky over the slope
@@ -379,8 +391,7 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
     let ssr = screen_reflection(f.world + n_up * 0.02, normalize(vec3<f32>(r.x, max(r.y, 0.02), r.z)), 1e9);
     reflected = mix(reflected, ssr.rgb, ssr.a * ssr_fade);
   }
-  let nv = max(dot(n_up, v), 0.);
-  let fr = fresnel(nv);
+  let fr_eff = fr * meniscus;
 
   // ---- sun glitter: anisotropic Gaussian slope distribution ----
   let l = camera.sun.xyz;
@@ -399,7 +410,7 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
         * fresnel(dot(v, hv)) * d / (4. * max(v.y, 0.05));
     }
   }
-  var colour = refracted * (1. - fr) + reflected * fr + glitter;
+  var colour = refracted * (1. - fr_eff) + reflected * fr_eff + glitter * meniscus;
 
   // ---- white water: rapids, falls, breakers and swash ----
   let crest_foam = clamp((0.6 - min(jx, jz)) * 2., 0., 1.) * 0.5;

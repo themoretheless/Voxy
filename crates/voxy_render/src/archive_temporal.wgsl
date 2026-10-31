@@ -193,15 +193,30 @@ fn motion_blur(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
  return sum/8.;
 }
 @fragment fn fs_display(@builtin(position) p:vec4<f32>)->@location(0) vec4<f32> {
-    var x=max(textureLoad(final_colour,vec2<i32>(p.xy),0).rgb,vec3<f32>(0.));
-    x=depth_of_field(vec2<i32>(p.xy),x);
-    x=motion_blur(vec2<i32>(p.xy),x);
+    let q=vec2<i32>(p.xy);
+    let size=vec2<i32>(textureDimensions(final_colour));
+    var x=max(textureLoad(final_colour,q,0).rgb,vec3<f32>(0.));
+    if frame.lens.x<=0. && frame.lens.w<=0. {
+        let n=max(textureLoad(final_colour,clamp(q+vec2<i32>(0,-1),vec2<i32>(0),size-1),0).rgb,vec3<f32>(0.));
+        let s=max(textureLoad(final_colour,clamp(q+vec2<i32>(0,1),vec2<i32>(0),size-1),0).rgb,vec3<f32>(0.));
+        let w=max(textureLoad(final_colour,clamp(q+vec2<i32>(-1,0),vec2<i32>(0),size-1),0).rgb,vec3<f32>(0.));
+        let e=max(textureLoad(final_colour,clamp(q+vec2<i32>(1,0),vec2<i32>(0),size-1),0).rgb,vec3<f32>(0.));
+        let low=min(x,min(min(n,s),min(w,e)));
+        let high=max(x,max(max(n,s),max(w,e)));
+        let luma=vec3<f32>(0.2126,0.7152,0.0722);
+        let contrast=(dot(high-low,luma))/max(dot(high,luma)+0.02,0.02);
+        let sharp_w=0.14*(1.-0.75*clamp(contrast,0.,1.));
+        let lap=x*4.-(n+s+w+e);
+        x=clamp(x+lap*sharp_w,low,high);
+    }
+    x=depth_of_field(q,x);
+    x=motion_blur(q,x);
     // Energy-conserving bloom: a small fraction of the radiance is replaced by
     // the mean of the dual Kawase chain (bloom.rs sums its six levels).
-    let uv=(p.xy)/vec2<f32>(textureDimensions(final_colour));
+    let uv=(p.xy)/vec2<f32>(size);
     let ndc=uv*2.-1.;
-    let size=vec2<f32>(textureDimensions(final_colour));
-    let aspect=size.x/max(size.y,1.);
+    let fsize=vec2<f32>(size);
+    let aspect=fsize.x/max(fsize.y,1.);
     let r2=dot(ndc*vec2<f32>(aspect*0.5,0.5),ndc*vec2<f32>(aspect*0.5,0.5));
     let cos_theta2=1./(1.+r2*0.24);
     x*=mix(1.,cos_theta2*cos_theta2,0.22);

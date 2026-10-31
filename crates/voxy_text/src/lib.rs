@@ -99,6 +99,21 @@ impl RasterFont {
         })
     }
 }
+
+/// Quantizes a logical horizontal glyph coordinate into an integer pixel coordinate
+/// and one of 4 quarter-pixel subpixel phases (`0..4`), rounding to nearest quarter-pixel.
+#[must_use]
+#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+pub fn quantize_subpixel_x(x: f32) -> (i32, u8) {
+    if !x.is_finite() {
+        return (0, 0);
+    }
+    let quarters = (f64::from(x) * 4.0).round() as i64;
+    let pixel = quarters.div_euclid(4) as i32;
+    let phase = quarters.rem_euclid(4) as u8;
+    (pixel, phase)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -127,5 +142,14 @@ mod tests {
             ),
             Err(TextError::InvalidSize)
         ));
+    }
+    #[test]
+    fn subpixel_quarter_phase_quantization_wraps_cleanly() {
+        assert_eq!(quantize_subpixel_x(10.0), (10, 0));
+        assert_eq!(quantize_subpixel_x(10.24), (10, 1));
+        assert_eq!(quantize_subpixel_x(10.51), (10, 2));
+        assert_eq!(quantize_subpixel_x(10.74), (10, 3));
+        assert_eq!(quantize_subpixel_x(10.95), (11, 0));
+        assert_eq!(quantize_subpixel_x(-0.25), (-1, 3));
     }
 }

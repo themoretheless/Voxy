@@ -169,6 +169,59 @@ impl FracturePlan {
     }
 }
 
+/// Partitions an arbitrary set of voxel positions into 6-connected (face-adjacent) islands.
+/// Islands are returned sorted by their minimum `VoxelPos`, with voxels inside each island
+/// also sorted in canonical order.
+#[must_use]
+pub fn partition_connected_voxel_islands(
+    voxels: impl IntoIterator<Item = VoxelPos>,
+) -> Vec<Vec<VoxelPos>> {
+    let mut remaining: BTreeSet<VoxelPos> = voxels.into_iter().collect();
+    let mut islands = Vec::new();
+    let mut queue = Vec::new();
+    while let Some(seed) = remaining.pop_first() {
+        let mut component = vec![seed];
+        queue.push(seed);
+        while let Some(cur) = queue.pop() {
+            let neighbors = [
+                VoxelPos {
+                    x: cur.x.saturating_sub(1),
+                    ..cur
+                },
+                VoxelPos {
+                    x: cur.x.saturating_add(1),
+                    ..cur
+                },
+                VoxelPos {
+                    y: cur.y.saturating_sub(1),
+                    ..cur
+                },
+                VoxelPos {
+                    y: cur.y.saturating_add(1),
+                    ..cur
+                },
+                VoxelPos {
+                    z: cur.z.saturating_sub(1),
+                    ..cur
+                },
+                VoxelPos {
+                    z: cur.z.saturating_add(1),
+                    ..cur
+                },
+            ];
+            for next in neighbors {
+                if remaining.remove(&next) {
+                    component.push(next);
+                    queue.push(next);
+                }
+            }
+        }
+        component.sort();
+        islands.push(component);
+    }
+    islands
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::BTreeMap;
@@ -332,5 +385,20 @@ mod tests {
             plan_fracture(&world, &registry, EditSource::Simulation, &release, bad).err(),
             Some(DestructionError::InvalidLimits)
         );
+    }
+
+    #[test]
+    fn connected_voxel_islands_split_disconnected_and_diagonal_clusters() {
+        let pts = [
+            VoxelPos { x: 0, y: 0, z: 0 },
+            VoxelPos { x: 1, y: 0, z: 0 },
+            VoxelPos { x: 1, y: 1, z: 0 },
+            // Diagonal only (not 6-connected to (1,1,0))
+            VoxelPos { x: 2, y: 2, z: 0 },
+        ];
+        let islands = partition_connected_voxel_islands(pts);
+        assert_eq!(islands.len(), 2);
+        assert_eq!(islands[0].len(), 3);
+        assert_eq!(islands[1], vec![VoxelPos { x: 2, y: 2, z: 0 }]);
     }
 }

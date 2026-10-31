@@ -206,6 +206,88 @@ impl InputMap {
         }
     }
 }
+
+/// Applies a radial deadzone and power response curve to a 2D analog stick vector.
+/// Preserves direction while mapping magnitudes in `(dead_zone, 1.0]` smoothly to `(0.0, 1.0]`.
+///
+/// # Errors
+/// Rejects non-finite inputs, `dead_zone` outside `[0.0, 1.0)`, or `exponent <= 0.0`.
+pub fn apply_radial_deadzone(
+    stick: [f32; 2],
+    dead_zone: f32,
+    exponent: f32,
+) -> Result<[f32; 2], InputError> {
+    if !stick[0].is_finite()
+        || !stick[1].is_finite()
+        || !dead_zone.is_finite()
+        || !(0.0..1.0).contains(&dead_zone)
+        || !exponent.is_finite()
+        || exponent <= 0.0
+    {
+        return Err(InputError::InvalidValue);
+    }
+    let mag = stick[0].hypot(stick[1]);
+    if mag <= dead_zone {
+        return Ok([0.0, 0.0]);
+    }
+    let clamped = mag.min(1.0);
+    let normalized = (clamped - dead_zone) / (1.0 - dead_zone);
+    let curved = normalized.powf(exponent);
+    let scale = curved / mag;
+    Ok([stick[0] * scale, stick[1] * scale])
+}
+
+/// Fixed-capacity action lookahead buffer (e.g. 150 ms pre-land jump buffering).
+#[derive(Clone, Debug, PartialEq)]
+pub struct ActionBuffer {
+    entries: BTreeMap<String, f32>,
+    max_entries: usize,
+}
+
+impl ActionBuffer {
+    #[must_use]
+    pub const fn new(max_entries: usize) -> Self {
+        Self {
+            entries: BTreeMap::new(),
+            max_entries,
+        }
+    }
+
+    /// Records or refreshes a buffered action with a positive time-to-live in seconds.
+    ///
+    /// # Errors
+    /// Rejects empty action names, non-positive/non-finite TTL, or capacity overflow.
+    pub fn record(&mut self, action: &str, ttl_seconds: f32) -> Result<(), InputError> {
+        if action.is_empty() {
+            return Err(InputError::InvalidBinding);
+        }
+        if !ttl_seconds.is_finite() || ttl_seconds <= 0.0 {
+            return Err(InputError::InvalidValue);
+        }
+        if !self.entries.contains_key(action) && self.entries.len() >= self.max_entries {
+            return Err(InputError::Capacity);
+        }
+        self.entries.insert(action.to_owned(), ttl_seconds);
+        Ok(())
+    }
+
+    /// Advances timers by `dt_seconds` and expires elapsed buffered actions.
+    pub fn step(&mut self, dt_seconds: f32) {
+        if !dt_seconds.is_finite() || dt_seconds <= 0.0 {
+            return;
+        }
+        self.entries.retain(|_, remaining| {
+            *remaining -= dt_seconds;
+            *remaining > 0.0
+        });
+    }
+
+    /// Consumes the buffered action if it is still active.
+    pub fn consume(&mut self, action: &str) -> bool {
+        self.entries.remove(action).is_some()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -341,5 +423,25 @@ mod tests {
             map.set_dead_zone("missing", 0.1),
             Err(InputError::UnknownAction)
         );
+    }
+    #[test]
+    fn radial_deadzone_and_action_buffer_window() {
+        assert_eq!(apply_radial_deadzone([0.1, 0.1], 0.2, 1.0).unwrap(), [0.0, 0.0]);
+        let out = apply_radial_deadzone([0.6, 0.0], 0.2, 2.0).unwrap();
+        assert!((out[0] - 0.25).abs() < 1e-6 && out[1].abs() < 1e-6);
+        assert_eq!(
+            apply_radial_deadzone([0.0, 0.0], 1.0, 1.0),
+            Err(InputError::InvalidValue)
+        );
+
+        let mut buffer = ActionBuffer::new(1);
+        buffer.record("jump", 0.15).unwrap();
+        assert_eq!(buffer.record("dash", 0.15), Err(InputError::Capacity));
+        buffer.step(0.10);
+        assert!(buffer.consume("jump"));
+        assert!(!buffer.consume("jump"));
+        buffer.record("jump", 0.05).unwrap();
+        buffer.step(0.06);
+        assert!(!buffer.consume("jump"));
     }
 }

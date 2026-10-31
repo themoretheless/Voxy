@@ -65,6 +65,53 @@ pub struct DlssRenderSize {
     pub height: u32,
 }
 
+impl DlssQuality {
+    /// Standard upscale ratio (`output / input`) for each DLSS quality preset.
+    #[must_use]
+    pub const fn upscale_factor(self) -> f32 {
+        match self {
+            Self::UltraPerformance => 3.0,
+            Self::Performance => 2.0,
+            Self::Balanced => 1.7,
+            Self::Quality => 1.5,
+            Self::UltraQuality => 1.3,
+            Self::Dlaa => 1.0,
+        }
+    }
+
+    /// Computes the recommended internal render resolution for a given display output size,
+    /// rounding dimensions to even pixel counts (`>= 2`).
+    ///
+    /// # Errors
+    /// Rejects zero or `u32::MAX` output dimensions.
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+    pub fn recommended_render_size(
+        self,
+        output: DlssRenderSize,
+    ) -> Result<DlssRenderSize, StreamlineError> {
+        if output.width == 0
+            || output.height == 0
+            || output.width == u32::MAX
+            || output.height == u32::MAX
+        {
+            return Err(StreamlineError::InvalidOptions);
+        }
+        if self == Self::Dlaa {
+            return Ok(output);
+        }
+        let factor = f64::from(self.upscale_factor());
+        let scale_dim = |dim: u32| -> u32 {
+            let raw = (f64::from(dim) / factor).round() as u32;
+            let even = (raw.max(2) + 1) & !1;
+            even.min(dim).max(2)
+        };
+        Ok(DlssRenderSize {
+            width: scale_dim(output.width),
+            height: scale_dim(output.height),
+        })
+    }
+}
+
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 #[repr(u32)]
 pub enum ReflexMode {
@@ -1497,6 +1544,41 @@ mod camera_tests {
         assert_eq!(
             CameraConstants::from_perspective(&frame),
             Err(StreamlineError::InvalidOptions)
+        );
+    }
+    #[test]
+    fn dlss_quality_recommended_render_size_scales_and_rounds_to_even() {
+        let out = DlssRenderSize {
+            width: 3840,
+            height: 2160,
+        };
+        assert_eq!(
+            DlssQuality::Quality.recommended_render_size(out).unwrap(),
+            DlssRenderSize {
+                width: 2560,
+                height: 1440,
+            }
+        );
+        assert_eq!(
+            DlssQuality::Performance
+                .recommended_render_size(out)
+                .unwrap(),
+            DlssRenderSize {
+                width: 1920,
+                height: 1080,
+            }
+        );
+        assert_eq!(
+            DlssQuality::Dlaa.recommended_render_size(out).unwrap(),
+            out
+        );
+        assert!(
+            DlssQuality::Quality
+                .recommended_render_size(DlssRenderSize {
+                    width: 0,
+                    height: 1080
+                })
+                .is_err()
         );
     }
 }
