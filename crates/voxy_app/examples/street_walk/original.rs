@@ -1866,6 +1866,28 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                     [0.14, 0.24, 0.14],
                 );
             }
+            // Street-facing attic dormer window on pitched roofs of alternate houses
+            if house % 2 == 0 {
+                let dz_dormer = if house % 4 == 0 { -1.35 } else { 1.35 };
+                let dx_dormer = side * 9.05;
+                let dy_dormer = height + 0.72;
+                b.block(trim, [dx_dormer, dy_dormer, z + dz_dormer], [1.15, 0.96, 1.08]);
+                b.block(
+                    roof,
+                    [dx_dormer - side * 0.05, dy_dormer + 0.54, z + dz_dormer],
+                    [1.32, 0.12, 1.24],
+                );
+                b.block(
+                    frame,
+                    [dx_dormer - side * 0.56, dy_dormer, z + dz_dormer],
+                    [0.08, 0.72, 0.78],
+                );
+                b.block(
+                    glass,
+                    [dx_dormer - side * 0.59, dy_dormer, z + dz_dormer],
+                    [0.02, 0.62, 0.68],
+                );
+            }
             if house % 3 == 0 {
                 b.put(
                     cloth,
@@ -2158,6 +2180,23 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         for dz in [-0.72f32, 0.72] {
             b.block(metal, [bx, 0.24, 75.0 + dz], [0.44, 0.44, 0.06]);
         }
+        // Ornamental cast-iron street-corner clock & directional signpost pillar at the plaza entry (z = 71.2)
+        let cx = side * 4.85;
+        let cz = 71.2f32;
+        b.block(trim, [cx, 0.14, cz], [0.46, 0.18, 0.46]);
+        b.block(metal, [cx, 0.48, cz], [0.28, 0.50, 0.28]);
+        b.block(metal, [cx, 1.95, cz], [0.11, 2.45, 0.11]);
+        // Directional street-name blades below the clock drum
+        b.block(metal, [cx - side * 0.34, 2.72, cz], [0.64, 0.12, 0.03]);
+        b.block(trim, [cx - side * 0.34, 2.72, cz], [0.56, 0.08, 0.04]);
+        b.block(metal, [cx, 2.88, cz - 0.34], [0.03, 0.12, 0.64]);
+        b.block(trim, [cx, 2.88, cz - 0.34], [0.04, 0.08, 0.56]);
+        // Illuminated double-sided drum clock and finial spire
+        b.block(metal, [cx, 3.38, cz], [0.16, 0.52, 0.52]);
+        b.block(glow, [cx, 3.38, cz], [0.18, 0.42, 0.42]);
+        b.block(metal, [cx, 3.38, cz], [0.20, 0.16, 0.03]);
+        b.block(metal, [cx, 3.38, cz], [0.20, 0.03, 0.18]);
+        b.block(metal, [cx, 3.74, cz], [0.06, 0.22, 0.06]);
     }
     // Classical entablature moldings and lantern brackets on the colonnade archway.
     b.block(trim, [0., 5.08, 87.75], [4.6, 0.18, 0.95]);

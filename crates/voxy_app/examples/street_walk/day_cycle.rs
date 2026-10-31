@@ -171,3 +171,37 @@ impl DayCycle {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn day_cycle_keys_scrub_time_season_and_speed() {
+        let mut cycle = DayCycle::new(0x564f5859);
+        assert!(!cycle.paused);
+        assert!((cycle.calendar.hour() - 9.0).abs() < 1e-4);
+        assert_eq!(cycle.calendar.season(), Season::Summer);
+
+        assert!(cycle.key(KeyCode::KeyT));
+        assert!(cycle.paused);
+        assert!(cycle.key(KeyCode::BracketRight));
+        assert!((cycle.calendar.hour() - 10.0).abs() < 1e-4);
+        assert!(cycle.key(KeyCode::BracketLeft));
+        assert!((cycle.calendar.hour() - 9.0).abs() < 1e-4);
+        assert!(cycle.key(KeyCode::KeyY));
+        assert_eq!(cycle.calendar.season(), Season::Autumn);
+
+        let initial_scale = cycle.time_scale;
+        assert!(cycle.key(KeyCode::Equal));
+        assert!((cycle.time_scale - initial_scale * 2.0).abs() < 1e-6);
+        assert!(cycle.key(KeyCode::Minus));
+        assert!((cycle.time_scale - initial_scale).abs() < 1e-6);
+
+        // Weather preset keys disable auto_weather and pass through so main.rs applies the preset.
+        assert!(!cycle.key(KeyCode::Digit3));
+        assert!(!cycle.auto_weather);
+        assert!(cycle.key(KeyCode::Digit0));
+        assert!(cycle.auto_weather);
+    }
+}
