@@ -242,6 +242,39 @@ impl ChunkMesh {
     pub fn quad_count(&self) -> usize {
         self.opaque.len() + self.cutout.len() + self.translucent.len()
     }
+
+    /// Packs all quads across opaque, cutout, and translucent layers into compact 8-byte
+    /// [`PackedQuad64`] GPU descriptors.
+    #[must_use]
+    pub fn to_packed_64(&self) -> PackedChunkMesh64 {
+        PackedChunkMesh64 {
+            opaque: self.opaque.iter().copied().map(Quad::pack_64).collect(),
+            cutout: self.cutout.iter().copied().map(Quad::pack_64).collect(),
+            translucent: self
+                .translucent
+                .iter()
+                .copied()
+                .map(Quad::pack_64)
+                .collect(),
+            bounds: self.bounds,
+        }
+    }
+}
+
+/// Compact GPU-ready representation of a [`ChunkMesh`] where each quad occupies 8 bytes.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct PackedChunkMesh64 {
+    pub opaque: Box<[PackedQuad64]>,
+    pub cutout: Box<[PackedQuad64]>,
+    pub translucent: Box<[PackedQuad64]>,
+    pub bounds: LocalAabb,
+}
+
+impl PackedChunkMesh64 {
+    #[must_use]
+    pub fn quad_count(&self) -> usize {
+        self.opaque.len() + self.cutout.len() + self.translucent.len()
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -797,18 +830,44 @@ fn merge_mask(
     output: &mut Vec<Quad>,
 ) -> Result<(), MeshError> {
     let (normal_axis, u_axis, v_axis) = face.axes();
-    for v in 0_usize..32 {
+    // Build a 32x32 occupancy bitmatrix (`1` = cell present in `mask`).
+    let mut active = [0_u32; 32];
+    for (v, row_bits) in active.iter_mut().enumerate() {
+        let mut bits = 0_u32;
+        let row_base = v * 32;
         for u in 0_usize..32 {
-            let Some(key) = mask[v * 32 + u] else {
+            if mask[row_base + u].is_some() {
+                bits |= 1_u32 << u;
+            }
+        }
+        *row_bits = bits;
+    }
+
+    for v in 0_usize..32 {
+        while active[v] != 0 {
+            let u = active[v].trailing_zeros() as usize;
+            let v_row = v * 32;
+            let Some(key) = mask[v_row + u] else {
+                active[v] &= !(1_u32 << u);
                 continue;
             };
-            let v_row = v * 32;
             let mut width = 1_usize;
-            while u + width < 32 && mask[v_row + u + width] == Some(key) {
+            while u + width < 32
+                && (active[v] & (1_u32 << (u + width))) != 0
+                && mask[v_row + u + width] == Some(key)
+            {
                 width += 1;
             }
+            let span_mask = if width == 32 {
+                u32::MAX
+            } else {
+                ((1_u32 << width) - 1) << u
+            };
             let mut height = 1_usize;
             'find_height: while v + height < 32 {
+                if (active[v + height] & span_mask) != span_mask {
+                    break;
+                }
                 let row_base = (v + height) * 32 + u;
                 for col in 0..width {
                     if mask[row_base + col] != Some(key) {
@@ -818,6 +877,7 @@ fn merge_mask(
                 height += 1;
             }
             for row in 0..height {
+                active[v + row] &= !span_mask;
                 let row_base = (v + row) * 32 + u;
                 mask[row_base..row_base + width].fill(None);
             }
@@ -1314,6 +1374,9 @@ mod tests {
         let greedy = build_mesh(&input, &CancelToken::new()).unwrap();
         assert_eq!(face_areas(&naive), face_areas(&greedy));
         assert!(greedy.quad_count() < naive.quad_count());
+        let packed = greedy.to_packed_64();
+        assert_eq!(packed.quad_count(), greedy.quad_count());
+        assert_eq!(packed.bounds, greedy.bounds);
         for &quad in greedy
             .opaque
             .iter()

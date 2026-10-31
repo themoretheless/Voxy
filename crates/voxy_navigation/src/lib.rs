@@ -104,6 +104,91 @@ impl NavigationGrid {
                 .windows(2)
                 .all(|pair| pair[0].x.abs_diff(pair[1].x) + pair[0].y.abs_diff(pair[1].y) == 1)
     }
+
+    /// Tests whether the straight segment between `a` and `b` is completely free of blocked cells
+    /// using a 4-connected supercover Bresenham/Amanatides-Woo line traversal.
+    #[must_use]
+    pub fn has_line_of_sight(&self, a: Cell, b: Cell) -> bool {
+        let Ok(idx_a) = self.index(a) else {
+            return false;
+        };
+        let Ok(idx_b) = self.index(b) else {
+            return false;
+        };
+        if self.blocked[idx_a] || self.blocked[idx_b] {
+            return false;
+        }
+        let mut x0 = a.x as isize;
+        let mut y0 = a.y as isize;
+        let x1 = b.x as isize;
+        let y1 = b.y as isize;
+        let dx = (x1 - x0).abs();
+        let dy = (y1 - y0).abs();
+        let sx = if x0 < x1 { 1 } else { -1 };
+        let sy = if y0 < y1 { 1 } else { -1 };
+        let mut err = dx - dy;
+        while x0 != x1 || y0 != y1 {
+            let e2 = 2 * err;
+            if e2 > -dy && e2 < dx {
+                // Diagonal step crosses corner: require both adjacent cardinal cells to be free
+                let cx1 = Cell {
+                    x: (x0 + sx) as usize,
+                    y: y0 as usize,
+                };
+                let cy1 = Cell {
+                    x: x0 as usize,
+                    y: (y0 + sy) as usize,
+                };
+                if self.index(cx1).map_or(true, |i| self.blocked[i])
+                    || self.index(cy1).map_or(true, |i| self.blocked[i])
+                {
+                    return false;
+                }
+                err -= dy;
+                err += dx;
+                x0 += sx;
+                y0 += sy;
+            } else if e2 > -dy {
+                err -= dy;
+                x0 += sx;
+            } else {
+                err += dx;
+                y0 += sy;
+            }
+            let current = Cell {
+                x: x0 as usize,
+                y: y0 as usize,
+            };
+            if self.index(current).map_or(true, |i| self.blocked[i]) {
+                return false;
+            }
+        }
+        true
+    }
+
+    /// Simplifies a grid path into minimal line-of-sight waypoints (string pulling) so
+    /// continuous steering agents do not zig-zag along staircase grid edges.
+    #[must_use]
+    pub fn smooth_path_waypoints(&self, path: &GridPath) -> Vec<Cell> {
+        if path.cells.len() <= 2 {
+            return path.cells.clone();
+        }
+        let mut waypoints = Vec::new();
+        let mut anchor = 0_usize;
+        waypoints.push(path.cells[anchor]);
+        while anchor + 1 < path.cells.len() {
+            let mut farthest = anchor + 1;
+            for candidate in (anchor + 2..path.cells.len()).rev() {
+                if self.has_line_of_sight(path.cells[anchor], path.cells[candidate]) {
+                    farthest = candidate;
+                    break;
+                }
+            }
+            waypoints.push(path.cells[farthest]);
+            anchor = farthest;
+        }
+        waypoints
+    }
     /// Breadth-first search with deterministic left/right/up/down neighbor order.
     /// Allocates scratch proportional to grid cells, bounded by construction.
     /// # Errors
@@ -399,5 +484,19 @@ mod tests {
             search.advance(&foreign, 16),
             Err(NavigationError::StaleSearch)
         );
+    }
+
+    #[test]
+    fn line_of_sight_string_pulling_collapses_open_grid_staircase() {
+        let mut grid = NavigationGrid::new(6, 6, 36).unwrap();
+        let path = grid.find_path(cell(0, 0), cell(5, 5), 36).unwrap();
+        assert_eq!(path.cells.len(), 11);
+        let smoothed = grid.smooth_path_waypoints(&path);
+        assert_eq!(smoothed, vec![cell(0, 0), cell(5, 5)]);
+
+        grid.set_blocked(cell(2, 2), true).unwrap();
+        let detoured = grid.find_path(cell(0, 0), cell(5, 5), 36).unwrap();
+        let smoothed_detour = grid.smooth_path_waypoints(&detoured);
+        assert!(smoothed_detour.len() > 2 && smoothed_detour.len() < detoured.cells.len());
     }
 }

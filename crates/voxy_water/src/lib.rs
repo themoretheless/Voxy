@@ -35,7 +35,9 @@ pub use gpu::{RippleField, WaveSimulation};
 pub use mesh::{WaterMesh, WaterVertex, surface_mesh};
 pub use query::{SurfaceSample, WaveField};
 pub use river::{River, RiverNode};
-pub use shore::{Bathymetry, ShoreField, ShoreWaves};
+pub use shore::{
+    Bathymetry, FluxLimiter, ShoreField, ShoreWaves, advect_foam_step,
+};
 pub use spectrum::{CASCADES, WaveSpectrum};
 
 /// Shared WGSL functions: `shore_wave`, `flow_phases`, `foam_pattern`.

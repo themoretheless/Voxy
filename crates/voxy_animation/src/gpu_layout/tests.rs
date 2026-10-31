@@ -104,3 +104,17 @@ fn blend_weight_endpoints_and_header_words() {
     assert_eq!(layout.parents[0], GPU_NO_PARENT);
     assert_eq!(layout.parents[1], 0);
 }
+
+#[test]
+fn dual_quat_skinning_preserves_radius_under_180_deg_twist() {
+    let q0 = DualQuat::from_rotation_translation(Quat::IDENTITY, Vec3::new(0.0, 2.0, 0.0));
+    let q1 = DualQuat::from_rotation_translation(
+        Quat::from_rotation_z(3.0),
+        Vec3::new(0.0, 2.0, 0.0),
+    );
+    let blended = DualQuat::blend_weighted(&[q0, q1], &[0.5, 0.5]);
+    let p = Vec3::new(1.0, 0.0, 0.0);
+    let out = blended.transform_point3(p);
+    let radial_dist = (out - Vec3::new(0.0, 2.0, 0.0)).length();
+    assert!((radial_dist - 1.0).abs() < 1e-5);
+}

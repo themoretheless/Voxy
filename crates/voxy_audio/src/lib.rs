@@ -8,7 +8,9 @@ pub use stream::{PcmStream, StreamRead};
 mod wav;
 pub use wav::decode_wav;
 mod spatial;
-pub use spatial::spatial_gains;
+pub use spatial::{
+    sabine_eyring_rt60, spatial_gains, trace_voxel_occlusion_gain,
+};
 use std::sync::{
     Arc,
     atomic::{AtomicU64, Ordering},
