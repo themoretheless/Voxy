@@ -76,4 +76,4 @@ pub use medium_solver::{
 };
 
 mod residency;
-pub use residency::body_chunks;
+pub use residency::{ResidencyEvictionCandidate, body_chunks, select_eviction_victims};

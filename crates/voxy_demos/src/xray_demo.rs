@@ -216,6 +216,28 @@ impl XrayDemo {
         Ok(mesh)
     }
 }
+
+/// Maps a radiodensity value in Hounsfield Units (HU) through a clinical CT Window Level (`wl_hu`)
+/// and Window Width (`ww_hu`) transfer function into normalized grayscale intensity `[0.0, 1.0]`.
+///
+/// # Errors
+///
+/// Rejects non-finite inputs or `window_width_hu <= 0.0`.
+pub fn hounsfield_window_intensity(
+    hu: f32,
+    window_level_hu: f32,
+    window_width_hu: f32,
+) -> Result<f32, &'static str> {
+    if !hu.is_finite()
+        || !window_level_hu.is_finite()
+        || !window_width_hu.is_finite()
+        || window_width_hu <= 0.0
+    {
+        return Err("invalid Hounsfield window parameters");
+    }
+    let lo = window_level_hu - 0.5 * window_width_hu;
+    Ok(((hu - lo) / window_width_hu).clamp(0.0, 1.0))
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -280,5 +302,13 @@ mod tests {
                 .all(|v| v.color[3] == 1.0)
         );
         assert!(demo.advance(f64::NAN).is_err());
+    }
+    #[test]
+    fn hounsfield_window_transfer_maps_air_water_and_bone() {
+        // Soft-tissue CT window: WL = 40 HU, WW = 400 HU => [-160, 240]
+        assert_eq!(hounsfield_window_intensity(-1000.0, 40.0, 400.0), Ok(0.0));
+        assert_eq!(hounsfield_window_intensity(40.0, 40.0, 400.0), Ok(0.5));
+        assert_eq!(hounsfield_window_intensity(1000.0, 40.0, 400.0), Ok(1.0));
+        assert!(hounsfield_window_intensity(0.0, 40.0, 0.0).is_err());
     }
 }

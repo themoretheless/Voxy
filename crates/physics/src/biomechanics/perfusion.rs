@@ -210,3 +210,64 @@ impl PorePerfusion {
         &self.port_edges
     }
 }
+
+/// Evaluates skin capillary perfusion under compressive contact stress (diascopy blanching)
+/// and post-release reactive hyperemia.
+///
+/// Returns normalized blood perfusion in `[0.0, 1.0 + max_hyperemia_boost]`:
+/// - When `compressive_stress_pa >= capillary_closing_pressure_pa`, capillary bed blanches toward `0.0`.
+/// - After release (`compressive_stress_pa == 0.0`), reactive hyperemia decays exponentially over `hyperemia_tau_s`.
+///
+/// # Errors
+///
+/// Rejects negative or non-finite pressures, time constants, or hyperemia parameters.
+pub fn diascopy_blanching_factor(
+    compressive_stress_pa: f64,
+    capillary_closing_pressure_pa: f64,
+    time_since_release_s: f64,
+    hyperemia_boost: f64,
+    hyperemia_tau_s: f64,
+) -> Result<f64, &'static str> {
+    if ![
+        compressive_stress_pa,
+        capillary_closing_pressure_pa,
+        time_since_release_s,
+        hyperemia_boost,
+        hyperemia_tau_s,
+    ]
+    .iter()
+    .all(|v| v.is_finite())
+        || compressive_stress_pa < 0.0
+        || capillary_closing_pressure_pa <= 0.0
+        || time_since_release_s < 0.0
+        || !(0.0..=2.0).contains(&hyperemia_boost)
+        || hyperemia_tau_s <= 0.0
+    {
+        return Err("invalid diascopy blanching parameters");
+    }
+
+    let ratio = (compressive_stress_pa / capillary_closing_pressure_pa).clamp(0.0, 1.0);
+    // Smoothstep capillary occlusion curve
+    let occlusion = ratio * ratio * (3.0 - 2.0 * ratio);
+    let base_perfusion = 1.0 - occlusion;
+    let hyperemia =
+        (1.0 - occlusion) * hyperemia_boost * (-time_since_release_s / hyperemia_tau_s).exp();
+    Ok(base_perfusion + hyperemia)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn diascopy_blanches_under_compression_and_rebounds_on_release() {
+        let blanched = diascopy_blanching_factor(5000.0, 4200.0, 0.0, 0.5, 3.0).unwrap();
+        assert!(blanched.abs() < 1e-9);
+
+        let rebound = diascopy_blanching_factor(0.0, 4200.0, 0.0, 0.4, 3.0).unwrap();
+        assert!((rebound - 1.4).abs() < 1e-9);
+
+        let settled = diascopy_blanching_factor(0.0, 4200.0, 30.0, 0.4, 3.0).unwrap();
+        assert!((settled - 1.0).abs() < 1e-4);
+    }
+}

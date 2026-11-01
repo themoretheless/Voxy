@@ -62,6 +62,22 @@ impl WindowUi {
     pub fn focus(&self) -> &FocusRouter {
         &self.focus
     }
+    /// Current DPI scale factor applied to physical cursor and scroll deltas.
+    #[must_use]
+    pub fn scale(&self) -> f64 {
+        self.scale
+    }
+    /// Converts a physical window coordinate `[px, py]` into logical UI coordinates.
+    #[must_use]
+    pub fn physical_to_logical(&self, physical_xy: [f64; 2]) -> Option<[f32; 2]> {
+        let lx = (physical_xy[0] / self.scale) as f32;
+        let ly = (physical_xy[1] / self.scale) as f32;
+        if lx.is_finite() && ly.is_finite() {
+            Some([lx, ly])
+        } else {
+            None
+        }
+    }
     /// Uses enabled hit regions as the keyboard order. Cancellation actions must
     /// be delivered by the caller when widgets disappear or become disabled.
     /// This immediately admits input; render loops should instead use
@@ -374,6 +390,8 @@ mod tests {
         ui.update_cursor();
         assert_eq!(ui.pointer.hovered(), None);
         ui.set_scale(2.0).unwrap();
+        assert!((ui.scale() - 2.0).abs() < f64::EPSILON);
+        assert_eq!(ui.physical_to_logical([20.0, 40.0]), Some([10.0, 20.0]));
         assert_eq!(ui.pointer.hovered(), Some(WidgetId(1)));
         ui.keyboard(KeyCode::Tab, true);
         ui.keyboard(KeyCode::Tab, false);

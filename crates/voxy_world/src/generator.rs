@@ -9,6 +9,38 @@ use crate::{BlockStateId, ChunkData, PalettedBlocks};
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct WorldSeed(pub u64);
 
+impl WorldSeed {
+    /// Deterministically derives a 64-bit world seed from a human-readable mnemonic phrase.
+    #[must_use]
+    pub fn from_mnemonic(phrase: &str) -> Self {
+        let mut hash = 0xcbf2_9ce4_8422_2325_u64;
+        for byte in phrase.trim().bytes() {
+            let normalized = byte.to_ascii_lowercase();
+            hash ^= u64::from(normalized);
+            hash = hash.wrapping_mul(0x0100_0000_01b3);
+        }
+        Self(splitmix64(hash))
+    }
+
+    /// Formats the 64-bit seed into a deterministic human-readable mnemonic (`adj-noun-xxxx`).
+    #[must_use]
+    pub fn to_mnemonic(self) -> String {
+        const ADJECTIVES: [&str; 16] = [
+            "amber", "ancient", "azure", "cobalt", "crimson", "crystal", "emerald", "frozen",
+            "golden", "lunar", "misty", "obsidian", "radiant", "silent", "solar", "verdant",
+        ];
+        const NOUNS: [&str; 16] = [
+            "basin", "canyon", "citadel", "crater", "fjord", "glacier", "harbor", "horizon",
+            "island", "meadow", "monolith", "mountain", "plateau", "river", "summit", "valley",
+        ];
+        let mixed = splitmix64(self.0);
+        let adj = ADJECTIVES[(mixed & 0x0f) as usize];
+        let noun = NOUNS[((mixed >> 4) & 0x0f) as usize];
+        let suffix = (mixed >> 8) & 0xffff;
+        format!("{adj}-{noun}-{suffix:04x}")
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct GeneratorDescriptor {
     pub id: Arc<str>,
@@ -199,5 +231,14 @@ mod tests {
             generator().generate(ChunkPos { x: 0, y: 0, z: 0 }, WorldSeed(1), &token),
             Err(GenerationError::Cancelled)
         ));
+    }
+
+    #[test]
+    fn world_seed_mnemonic_is_case_insensitive_and_deterministic() {
+        let seed_a = WorldSeed::from_mnemonic("  Crystal-Mountain-42 ");
+        let seed_b = WorldSeed::from_mnemonic("crystal-mountain-42");
+        assert_eq!(seed_a, seed_b);
+        let label = seed_a.to_mnemonic();
+        assert_eq!(label.split('-').count(), 3);
     }
 }

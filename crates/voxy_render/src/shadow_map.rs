@@ -237,3 +237,49 @@ impl ShadowMap {
         &self.view
     }
 }
+
+/// Snaps a light-space orthographic cascade center `[cx, cy]` to exact shadow-map texel increments
+/// so sub-texel camera panning does not cause shadow-edge shimmering.
+///
+/// Returns `(snapped_min_xy, snapped_max_xy)`. Returns `None` if `world_extent <= 0.0`,
+/// `resolution == 0`, or inputs are non-finite.
+#[must_use]
+pub fn snap_cascade_ortho_bounds(
+    light_space_center_xy: [f32; 2],
+    world_extent: f32,
+    resolution: u32,
+) -> Option<([f32; 2], [f32; 2])> {
+    if !light_space_center_xy[0].is_finite()
+        || !light_space_center_xy[1].is_finite()
+        || !world_extent.is_finite()
+        || world_extent <= 0.0
+        || resolution == 0
+    {
+        return None;
+    }
+    let texel_size = world_extent / (resolution as f32);
+    if !texel_size.is_finite() || texel_size <= 0.0 {
+        return None;
+    }
+    let snapped_cx = (light_space_center_xy[0] / texel_size).floor() * texel_size;
+    let snapped_cy = (light_space_center_xy[1] / texel_size).floor() * texel_size;
+    let half = 0.5 * world_extent;
+    Some(([snapped_cx - half, snapped_cy - half], [snapped_cx + half, snapped_cy + half]))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn snap_cascade_ortho_bounds_stabilizes_sub_texel_panning() {
+        // 100m cascade over 1000px => 0.1m texel size.
+        let (min_a, max_a) = snap_cascade_ortho_bounds([12.31, -4.52], 100.0, 1000).unwrap();
+        let (min_b, max_b) = snap_cascade_ortho_bounds([12.38, -4.59], 100.0, 1000).unwrap();
+        assert!((min_a[0] - min_b[0]).abs() < 1e-5);
+        assert!((min_a[1] - min_b[1]).abs() < 1e-5);
+        assert!(((max_a[0] - min_a[0]) - 100.0).abs() < 1e-4);
+        assert!(((max_b[1] - min_b[1]) - 100.0).abs() < 1e-4);
+        assert!(snap_cascade_ortho_bounds([0.0, 0.0], 0.0, 1024).is_none());
+    }
+}

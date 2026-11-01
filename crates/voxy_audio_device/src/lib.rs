@@ -24,6 +24,37 @@ pub struct OutputStats {
     pub missing: u64,
     pub errors: u64,
 }
+impl OutputStats {
+    /// Returns the fraction of requested callback samples that suffered an underrun (`[0.0, 1.0]`).
+    #[must_use]
+    pub fn underrun_ratio(self) -> f64 {
+        let total = self.supplied.saturating_add(self.missing);
+        if total == 0 {
+            0.0
+        } else {
+            (self.missing as f64) / (total as f64)
+        }
+    }
+
+    /// Recommends an updated ring-buffer capacity by scaling up on underruns (`missing > 0`)
+    /// while respecting `[min_capacity, max_capacity]`.
+    #[must_use]
+    pub fn recommended_queue_capacity(
+        self,
+        current_capacity: usize,
+        min_capacity: usize,
+        max_capacity: usize,
+    ) -> usize {
+        let lo = min_capacity.max(1);
+        let hi = max_capacity.max(lo);
+        let base = current_capacity.clamp(lo, hi);
+        if self.missing > 0 {
+            base.saturating_mul(2).clamp(lo, hi)
+        } else {
+            base
+        }
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SubmitError {
     InvalidFrame,
@@ -156,6 +187,23 @@ mod tests {
         );
         drop(rx);
         assert_eq!(sender.submit([0.0; 2]), Err(SubmitError::Closed));
+    }
+    #[test]
+    fn output_stats_underrun_ratio_and_adaptive_capacity() {
+        let stats = OutputStats {
+            supplied: 900,
+            missing: 100,
+            errors: 0,
+        };
+        assert!((stats.underrun_ratio() - 0.1).abs() < 1e-12);
+        assert_eq!(stats.recommended_queue_capacity(1024, 512, 4096), 2048);
+        let clean = OutputStats {
+            supplied: 1000,
+            missing: 0,
+            errors: 0,
+        };
+        assert_eq!(clean.underrun_ratio(), 0.0);
+        assert_eq!(clean.recommended_queue_capacity(1024, 512, 4096), 1024);
     }
 }
 

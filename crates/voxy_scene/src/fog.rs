@@ -55,6 +55,40 @@ pub struct FogBounds {
     pub origin: [f64; 3],
     pub extent: [f64; 3],
 }
+impl FogBounds {
+    /// Evaluates a smooth cubic Hermite boundary weight in `[0.0, 1.0]` for a world-space point,
+    /// tapering from `0.0` at the outer box boundary to `1.0` at inward distance `falloff_m`
+    /// so camera transitions into and out of local fog volumes do not pop.
+    ///
+    /// # Errors
+    ///
+    /// Rejects non-finite coordinates, invalid bounds, or negative `falloff_m`.
+    pub fn boundary_weight(&self, point: [f64; 3], falloff_m: f64) -> Result<f64, FogError> {
+        if point.iter().any(|v| !v.is_finite())
+            || self.origin.iter().any(|v| !v.is_finite())
+            || self.extent.iter().any(|v| !v.is_finite() || *v <= 0.0)
+            || !falloff_m.is_finite()
+            || falloff_m < 0.0
+        {
+            return Err(FogError::InvalidCalibration);
+        }
+        let mut min_clearance = f64::INFINITY;
+        for axis in 0..3 {
+            let d_low = point[axis] - self.origin[axis];
+            let d_high = (self.origin[axis] + self.extent[axis]) - point[axis];
+            let d = d_low.min(d_high);
+            if d <= 0.0 {
+                return Ok(0.0);
+            }
+            min_clearance = min_clearance.min(d);
+        }
+        if falloff_m == 0.0 {
+            return Ok(1.0);
+        }
+        let t = (min_clearance / falloff_m).clamp(0.0, 1.0);
+        Ok(t * t * (3.0 - 2.0 * t))
+    }
+}
 #[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
 #[error("fog volume error: {self:?}")]
 pub enum FogError {
@@ -257,5 +291,16 @@ mod tests {
         assert!(history.undo());
         assert!(history.redo());
         assert_eq!(history.current(), &edited);
+    }
+    #[test]
+    fn fog_bounds_boundary_weight_tapers_smoothly_near_faces() {
+        let bounds = FogBounds {
+            origin: [0.0, 0.0, 0.0],
+            extent: [10.0, 10.0, 10.0],
+        };
+        assert_eq!(bounds.boundary_weight([-1.0, 5.0, 5.0], 2.0), Ok(0.0));
+        assert_eq!(bounds.boundary_weight([5.0, 5.0, 5.0], 2.0), Ok(1.0));
+        let half = bounds.boundary_weight([1.0, 5.0, 5.0], 2.0).unwrap();
+        assert!((half - 0.5).abs() < 1e-12);
     }
 }

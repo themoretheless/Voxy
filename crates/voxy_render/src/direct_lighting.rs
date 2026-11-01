@@ -165,6 +165,32 @@ impl DirectLightingJob {
     }
 }
 
+/// Computes the 0-based logarithmic depth slice index `[0, num_slices - 1]` for a clustered
+/// forward/deferred light grid (`slice = floor(log(z / z_near) / log(z_far / z_near) * num_slices)`).
+///
+/// Returns `None` if `z_near <= 0.0`, `z_far <= z_near`, `num_slices == 0`, or inputs are non-finite.
+#[must_use]
+pub fn cluster_depth_slice(
+    view_z: f32,
+    z_near: f32,
+    z_far: f32,
+    num_slices: u32,
+) -> Option<u32> {
+    if !view_z.is_finite()
+        || !z_near.is_finite()
+        || !z_far.is_finite()
+        || z_near <= 0.0
+        || z_far <= z_near
+        || num_slices == 0
+    {
+        return None;
+    }
+    let clamped_z = view_z.clamp(z_near, z_far);
+    let log_ratio = (clamped_z / z_near).ln() / (z_far / z_near).ln();
+    let raw = (log_ratio * (num_slices as f32)).floor().max(0.0) as u32;
+    Some(raw.min(num_slices - 1))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -233,5 +259,16 @@ mod tests {
             )
             .is_err()
         );
+    }
+    #[test]
+    fn logarithmic_cluster_depth_slice_partitions_view_frustum() {
+        assert_eq!(cluster_depth_slice(0.1, 0.1, 100.0, 24), Some(0));
+        assert_eq!(cluster_depth_slice(100.0, 0.1, 100.0, 24), Some(23));
+        // Geometric mean sqrt(0.1 * 100.0) = sqrt(10) ≈ 3.1622777 maps to slice 12 of 24.
+        assert_eq!(
+            cluster_depth_slice(10.0_f32.sqrt(), 0.1, 100.0, 24),
+            Some(12)
+        );
+        assert!(cluster_depth_slice(1.0, 0.0, 100.0, 24).is_none());
     }
 }
