@@ -1397,6 +1397,50 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     b.span(p.metal, [9.98, u0 + 0.05, 136.98], [10.02, u0 + 1.58, 137.02]);
     b.span(p.glow, [9.82, u0 + 1.54, 136.82], [10.18, u0 + 1.78, 137.18]);
 
+    // ---- east garden Nordic cedar sauna cabin & cold-plunge wellness spa alcove (x = 11.45..14.15, z = 126.8..132.4) ----
+    let (sx0, sx1, sz0, sz1) = (11.55f32, 14.05f32, 127.0f32, 132.2f32);
+    let sy0 = 0.12f32;
+    // Travertine spa deck and stepping stones connecting to the pool pergola
+    b.span(travertine, [sx0 - 0.15, sy0, sz0 - 0.15], [sx1 + 0.15, sy0 + 0.08, sz1 + 0.15]);
+    // Nordic cedar sauna cabin in the northern half (z = 127.15..130.15)
+    let sz_cabin1 = 130.15f32;
+    let sy_sauna_top = sy0 + 2.38;
+    b.span(p.timber, [sx0 + 0.08, sy0 + 0.08, sz0 + 0.12], [sx1 - 0.08, sy0 + 0.14, sz_cabin1 - 0.12]);
+    // Rear, north, and east cedar walls + overhanging fascia roof
+    b.span(cladding, [sx0, sy0 + 0.08, sz0 + 0.05], [sx1, sy_sauna_top, sz0 + 0.22]);
+    b.span(cladding, [sx0, sy0 + 0.08, sz_cabin1 - 0.22], [sx1, sy_sauna_top, sz_cabin1 - 0.05]);
+    b.span(cladding, [sx1 - 0.20, sy0 + 0.08, sz0 + 0.22], [sx1, sy_sauna_top, sz_cabin1 - 0.22]);
+    b.span(cladding, [sx0 - 0.12, sy_sauna_top, sz0 - 0.05], [sx1 + 0.12, sy_sauna_top + 0.16, sz_cabin1 + 0.05]);
+    b.span(p.metal, [sx0 - 0.14, sy_sauna_top + 0.16, sz0 - 0.07], [sx1 + 0.14, sy_sauna_top + 0.20, sz_cabin1 + 0.07]);
+    // West panoramic glass facade facing the pool & pergola
+    b.span(p.metal, [sx0 + 0.02, sy0 + 0.08, sz0 + 0.22], [sx0 + 0.08, sy_sauna_top, sz0 + 0.28]);
+    b.span(p.metal, [sx0 + 0.02, sy0 + 0.08, sz_cabin1 - 0.28], [sx0 + 0.08, sy_sauna_top, sz_cabin1 - 0.22]);
+    b.span(p.metal, [sx0 + 0.02, sy0 + 0.08, (sz0 + sz_cabin1) * 0.5 - 0.03], [sx0 + 0.08, sy_sauna_top, (sz0 + sz_cabin1) * 0.5 + 0.03]);
+    b.span(p.glass, [sx0 + 0.04, sy0 + 0.14, sz0 + 0.28], [sx0 + 0.06, sy_sauna_top - 0.06, sz_cabin1 - 0.28]);
+    // Interior two-tier cedar sauna benches and warm under-bench LED strip
+    b.span(p.timber, [sx1 - 1.15, sy0 + 0.14, sz0 + 0.26], [sx1 - 0.65, sy0 + 0.52, sz_cabin1 - 0.26]);
+    b.span(p.timber, [sx1 - 0.68, sy0 + 0.14, sz0 + 0.26], [sx1 - 0.22, sy0 + 0.92, sz_cabin1 - 0.26]);
+    b.span(p.glow, [sx1 - 0.72, sy0 + 0.86, sz0 + 0.35], [sx1 - 0.68, sy0 + 0.90, sz_cabin1 - 0.35]);
+    // Finnish sauna stove with basalt stones and warm ember glow in the northwest corner
+    b.span(p.metal, [sx0 + 0.24, sy0 + 0.14, sz0 + 0.34], [sx0 + 0.68, sy0 + 0.78, sz0 + 0.78]);
+    b.span(mosaic_dark, [sx0 + 0.28, sy0 + 0.78, sz0 + 0.38], [sx0 + 0.64, sy0 + 0.88, sz0 + 0.74]);
+    b.span(p.glow, [sx0 + 0.32, sy0 + 0.72, sz0 + 0.42], [sx0 + 0.60, sy0 + 0.84, sz0 + 0.70]);
+    // Travertine & cedar cold-plunge tub with chrome filler spout in the southern half (z = 130.55..132.05)
+    let (cz0, cz1) = (130.55f32, 132.05f32);
+    for (lo, hi) in [
+        ([sx0 + 0.15, sy0 + 0.08, cz0], [sx1 - 0.25, sy0 + 0.74, cz0 + 0.14]),
+        ([sx0 + 0.15, sy0 + 0.08, cz1 - 0.14], [sx1 - 0.25, sy0 + 0.74, cz1]),
+        ([sx0 + 0.15, sy0 + 0.08, cz0 + 0.14], [sx0 + 0.29, sy0 + 0.74, cz1 - 0.14]),
+        ([sx1 - 0.39, sy0 + 0.08, cz0 + 0.14], [sx1 - 0.25, sy0 + 0.74, cz1 - 0.14]),
+    ] {
+        b.span(travertine, lo, hi);
+    }
+    b.span(mosaic, [sx0 + 0.29, sy0 + 0.08, cz0 + 0.14], [sx1 - 0.39, sy0 + 0.62, cz1 - 0.14]);
+    b.span(p.glass, [sx0 + 0.29, sy0 + 0.64, cz0 + 0.14], [sx1 - 0.39, sy0 + 0.66, cz1 - 0.14]);
+    b.span(p.timber, [sx0 - 0.05, sy0 + 0.08, cz0 + 0.25], [sx0 + 0.15, sy0 + 0.42, cz1 - 0.25]);
+    b.span(chrome, [sx1 - 0.24, sy0 + 0.08, (cz0 + cz1) * 0.5 - 0.03], [sx1 - 0.18, sy0 + 0.92, (cz0 + cz1) * 0.5 + 0.03]);
+    b.span(chrome, [sx1 - 0.44, sy0 + 0.88, (cz0 + cz1) * 0.5 - 0.03], [sx1 - 0.18, sy0 + 0.92, (cz0 + cz1) * 0.5 + 0.03]);
+
     Villa {
         water: vec![WaterBody::pool(
             Vec3::new(-x, DEEP, z0),

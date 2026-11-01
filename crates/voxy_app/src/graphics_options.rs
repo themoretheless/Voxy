@@ -5,6 +5,7 @@ pub fn parse(args: impl IntoIterator<Item = String>) -> Result<GraphicsOptions, 
     let mut args = args.into_iter();
     let mut options = GraphicsOptions::default();
     let mut selected = false;
+    let mut present_selected = false;
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--profile" => options.profile_timestamps = true,
@@ -24,6 +25,10 @@ pub fn parse(args: impl IntoIterator<Item = String>) -> Result<GraphicsOptions, 
                 };
             }
             "--present-mode" => {
+                if present_selected {
+                    return Err("--present-mode must be specified once".into());
+                }
+                present_selected = true;
                 options.present = match args.next().as_deref() {
                     Some("auto") => PresentPreference::Default,
                     Some("fifo") => PresentPreference::Fifo,
@@ -73,6 +78,7 @@ mod tests {
             vec!["--backend", "nope"],
             vec!["--backend", "webgpu"],
             vec!["--backend", "metal", "--backend", "vulkan"],
+            vec!["--present-mode", "fifo", "--present-mode", "mailbox"],
         ] {
             assert!(options(&args).is_err(), "{args:?}");
         }

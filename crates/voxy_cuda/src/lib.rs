@@ -72,6 +72,38 @@ pub struct CudaCapabilities {
     pub allocation_budget_bytes: usize,
 }
 
+impl CudaCapabilities {
+    /// Returns the NVRTC `--gpu-architecture=compute_<major><minor>` flag for this device,
+    /// or `None` if `compute_capability` is below SM 5.0 or malformed.
+    #[must_use]
+    pub fn nvrtc_arch_flag(&self) -> Option<String> {
+        let (major, minor) = self.compute_capability;
+        if major < 5 || !(0..=9).contains(&minor) {
+            return None;
+        }
+        Some(format!("--gpu-architecture=compute_{major}{minor}"))
+    }
+}
+
+/// Computes the 1D CUDA grid block count `ceil(element_count / block_threads)` while checking
+/// that `element_count > 0`, `block_threads` is in `1..=1024`, and the grid fits CUDA's
+/// `2^31 - 1` 1D grid limit.
+///
+/// # Errors
+///
+/// Returns [`CudaError::BufferLimit`] on zero counts, invalid block size, or grid overflow.
+pub fn grid_dim_1d(element_count: usize, block_threads: u32) -> Result<u32, CudaError> {
+    if element_count == 0 || !(1..=1024).contains(&block_threads) {
+        return Err(CudaError::BufferLimit);
+    }
+    let blocks = element_count.div_ceil(block_threads as usize);
+    let blocks_u32 = u32::try_from(blocks).map_err(|_| CudaError::BufferLimit)?;
+    if blocks_u32 > (i32::MAX as u32) {
+        return Err(CudaError::BufferLimit);
+    }
+    Ok(blocks_u32)
+}
+
 #[derive(Debug)]
 pub struct CudaCompute {
     #[cfg(feature = "cuda")]
@@ -552,6 +584,21 @@ mod tests {
                 Err(CudaError::BufferLimit)
             ));
         }
+        assert_eq!(grid_dim_1d(257, 256).unwrap(), 2);
+        assert!(grid_dim_1d(0, 256).is_err());
+        assert!(grid_dim_1d(10, 2048).is_err());
+        let caps = CudaCapabilities {
+            ordinal: 0,
+            uuid: [0; 16],
+            name: "Ada".into(),
+            compute_capability: (8, 9),
+            total_memory_bytes: 1024,
+            allocation_budget_bytes: 512,
+        };
+        assert_eq!(
+            caps.nvrtc_arch_flag().as_deref(),
+            Some("--gpu-architecture=compute_89")
+        );
     }
     #[test]
     fn large_ordinals_do_not_truncate_to_a_different_device() {

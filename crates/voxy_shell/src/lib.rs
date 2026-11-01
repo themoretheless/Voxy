@@ -5,6 +5,7 @@ mod camera_motion;
 mod scene_app;
 mod touch;
 pub use scene_app::SceneApp;
+pub use touch::pinch_zoom_ratio;
 
 mod scene_input;
 pub use scene_input::{SceneInput, SceneInputActions};

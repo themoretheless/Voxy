@@ -2197,6 +2197,40 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         b.block(metal, [cx, 3.38, cz], [0.20, 0.16, 0.03]);
         b.block(metal, [cx, 3.38, cz], [0.20, 0.03, 0.18]);
         b.block(metal, [cx, 3.74, cz], [0.06, 0.22, 0.06]);
+        // Parisian wrought-iron & glass flower/news kiosk on the north side of the plaza (z = 78.6)
+        let kx = side * 4.85;
+        let kz = 78.6f32;
+        b.block(trim, [kx, 0.12, kz], [1.45, 0.14, 1.45]);
+        b.block(metal, [kx, 0.54, kz], [1.28, 0.72, 1.28]);
+        b.block(trim, [kx, 0.92, kz], [1.36, 0.06, 1.36]);
+        // Corner cast-iron mullions & glazed display vitrine with warm interior glow
+        for (dx, dz) in [(-0.56f32, -0.56f32), (0.56, -0.56), (-0.56, 0.56), (0.56, 0.56)] {
+            b.block(metal, [kx + dx, 1.62, kz + dz], [0.07, 1.34, 0.07]);
+        }
+        b.block(glass, [kx, 1.60, kz], [1.14, 1.26, 1.14]);
+        b.block(glow, [kx, 2.08, kz], [0.58, 0.14, 0.58]);
+        // Stepped zinc/cast-iron cupola roof and ornamental spire finial
+        b.block(metal, [kx, 2.34, kz], [1.48, 0.12, 1.48]);
+        b.block(metal, [kx, 2.58, kz], [1.16, 0.36, 1.16]);
+        b.block(metal, [kx, 2.86, kz], [0.76, 0.24, 0.76]);
+        b.block(metal, [kx, 3.16, kz], [0.08, 0.38, 0.08]);
+        // Flower display buckets flanking the kiosk facing the fountain
+        for dz in [-0.42f32, 0.42] {
+            let fx = kx - side * 0.86;
+            b.block(kit.ceramic, [fx, 0.24, kz + dz], [0.28, 0.34, 0.28]);
+            b.block(foliage, [fx, 0.52, kz + dz], [0.34, 0.32, 0.34]);
+        }
+    }
+    // Compass-rose stone mosaic inlay framing the civic fountain plinth (z = 75.0)
+    b.block(curb, [0., 0.052, 75.0], [7.2, 0.012, 7.2]);
+    for angle_idx in 0..8 {
+        let a = angle_idx as f32 * std::f32::consts::FRAC_PI_4;
+        b.put(
+            trim,
+            Vec3::new(a.cos() * 3.85, 0.058, 75.0 + a.sin() * 3.85),
+            Vec3::new(0.85, 0.014, 0.26),
+            Quat::from_rotation_y(-a),
+        );
     }
     // Classical entablature moldings and lantern brackets on the colonnade archway.
     b.block(trim, [0., 5.08, 87.75], [4.6, 0.18, 0.95]);

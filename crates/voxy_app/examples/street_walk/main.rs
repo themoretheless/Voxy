@@ -1978,12 +1978,30 @@ impl ApplicationHandler for App {
                                 | KeyCode::BracketLeft
                                 | KeyCode::BracketRight
                                 | KeyCode::KeyY
+                                | KeyCode::F9
+                                | KeyCode::F10
+                                | KeyCode::F11
+                                | KeyCode::F12
                         ) || self.day_cycle.is_some())
                         && self
                             .day_cycle
                             .get_or_insert_with(|| day_cycle::DayCycle::new(self.original_seed))
                             .key(key)
                     {
+                    } else if key == KeyCode::KeyG
+                        && event.state == ElementState::Pressed
+                        && !event.repeat
+                    {
+                        if let Some(gpu) = &mut self.gpu {
+                            let (forward, _) = self.camera.planar_basis();
+                            let drop_xz = Vec2::new(self.feet.x as f32, self.feet.z as f32)
+                                + Vec2::new(forward.x, forward.z) * 2.5;
+                            let splash_xz = Vec2::new(
+                                drop_xz.x.clamp(-3.2, 3.2),
+                                drop_xz.y.clamp(112.8, 129.2),
+                            );
+                            gpu.renderer.water_splash(splash_xz, 0.65, -0.08);
+                        }
                     } else if event.state == ElementState::Pressed
                         && !event.repeat
                         && matches!(

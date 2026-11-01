@@ -111,6 +111,23 @@ impl Options {
         }
         Ok(result)
     }
+
+    #[cfg(test)]
+    pub(super) const fn active_mode_label(&self) -> &'static str {
+        if self.face {
+            "face"
+        } else if self.rough_image {
+            "rough-image"
+        } else if self.narrow_control {
+            "ray-narrow-control"
+        } else if self.narrow {
+            "ray-narrow"
+        } else if self.capture.is_some() {
+            "ray-capture"
+        } else {
+            "default-probe"
+        }
+    }
 }
 #[cfg(test)]
 mod tests {
@@ -225,6 +242,16 @@ mod tests {
         assert_eq!(
             parse(&["--experimental"]).unwrap().backend,
             GraphicsBackend::Auto
+        );
+        assert_eq!(
+            parse(&["--experimental"]).unwrap().active_mode_label(),
+            "default-probe"
+        );
+        assert_eq!(
+            parse(&["--experimental", "--face"])
+                .unwrap()
+                .active_mode_label(),
+            "face"
         );
     }
     #[test]

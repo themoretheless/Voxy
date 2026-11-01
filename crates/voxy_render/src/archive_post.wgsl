@@ -160,7 +160,9 @@ fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
                 horizon_sky=daylight(sample_dir,camera.sun.xyz)*camera.viewport.z;
             }
             let cos_sun=clamp(dot(ray,camera.sun.xyz),0.,1.);
-            let mie_forward=pow(cos_sun,5.)*max(camera.sun.y,0.)*0.35;
+            let low_sun=smoothstep(0.55,0.08,camera.sun.y)*smoothstep(-0.04,0.06,camera.sun.y);
+            let shaft_mod=0.82+0.36*sin(dot(world_p.xz,camera.sun.zx)*0.38+world_p.y*0.25);
+            let mie_forward=pow(cos_sun,5.)*max(camera.sun.y,0.)*(0.35+0.28*low_sun*shaft_mod);
             let mie_back=pow(clamp(-dot(ray,camera.sun.xyz),0.,1.),3.)*max(camera.sun.y,0.)*0.06;
             horizon_sky*=(1.+vec3<f32>(1.15,0.98,0.78)*mie_forward+vec3<f32>(0.88,0.94,1.08)*mie_back);
             x=x*transmittance+horizon_sky*(1.-transmittance);
