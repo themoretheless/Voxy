@@ -1068,6 +1068,46 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     b.span(p.ceramic, [0.4, floor_top + 0.38, 137.75], [0.72, floor_top + 0.56, 138.05]);
     b.span(p.ceramic, [3.9, floor_top, 135.2], [4.4, floor_top + 0.48, 135.7]);
     b.span(p.foliage, [3.85, floor_top + 0.48, 135.15], [4.45, floor_top + 1.25, 135.75]);
+    // Parlor grand piano, open acoustic lid, brass soundboard, keyboard & bench in the east living room (x = 7.4..9.1, z = 135.2..136.9)
+    let (px0, px1, pz0, pz1) = (7.45f32, 8.95f32, 135.35f32, 136.85f32);
+    // Soundbox rim & curved tail section
+    b.span(p.metal, [px0, floor_top + 0.68, pz0], [px1, floor_top + 0.96, pz0 + 0.85]);
+    b.span(p.metal, [px0 + 0.22, floor_top + 0.68, pz0 + 0.85], [px1, floor_top + 0.96, pz1]);
+    // Warm cedar/brass interior soundboard & cast-iron harp frame
+    b.span(p.timber, [px0 + 0.08, floor_top + 0.92, pz0 + 0.08], [px1 - 0.08, floor_top + 0.95, pz0 + 0.80]);
+    b.span(p.timber, [px0 + 0.28, floor_top + 0.92, pz0 + 0.80], [px1 - 0.08, floor_top + 0.95, pz1 - 0.08]);
+    // Three tapered piano legs with brass casters and lyre pedal assembly
+    for (lx, lz) in [(px0 + 0.14, pz0 + 0.14), (px1 - 0.14, pz0 + 0.14), (px0 + 0.62, pz1 - 0.16)] {
+        b.span(p.metal, [lx - 0.045, floor_top, lz - 0.045], [lx + 0.045, floor_top + 0.68, lz + 0.045]);
+    }
+    b.span(p.metal, [8.14, floor_top + 0.05, pz0 + 0.16], [8.26, floor_top + 0.68, pz0 + 0.22]);
+    b.span(chrome, [8.08, floor_top + 0.03, pz0 + 0.08], [8.32, floor_top + 0.06, pz0 + 0.16]);
+    // Keybed, ivory/porcelain white keys, ebony sharps, and music desk
+    b.span(p.metal, [px0 + 0.04, floor_top + 0.64, pz0 - 0.24], [px1 - 0.04, floor_top + 0.74, pz0]);
+    b.span(p.ceramic, [px0 + 0.10, floor_top + 0.74, pz0 - 0.21], [px1 - 0.10, floor_top + 0.77, pz0 - 0.03]);
+    b.span(p.metal, [px0 + 0.12, floor_top + 0.77, pz0 - 0.12], [px1 - 0.12, floor_top + 0.79, pz0 - 0.03]);
+    b.put(
+        p.wood,
+        Vec3::new(8.20, floor_top + 1.08, pz0 + 0.08),
+        Vec3::new(0.72, 0.26, 0.025),
+        Quat::from_rotation_x(-0.24),
+    );
+    // Open angled grand piano lid & brass prop stick
+    b.put(
+        p.metal,
+        Vec3::new(8.22, floor_top + 1.24, 136.05),
+        Vec3::new(1.42, 0.03, 1.38),
+        Quat::from_rotation_z(0.38),
+    );
+    b.put(
+        chrome,
+        Vec3::new(7.62, floor_top + 1.12, 135.75),
+        Vec3::new(0.025, 0.42, 0.025),
+        Quat::from_rotation_z(-0.18),
+    );
+    // Tufted upholstered duet piano bench facing the keyboard
+    b.span(p.metal, [7.82, floor_top, pz0 - 0.72], [8.58, floor_top + 0.44, pz0 - 0.38]);
+    b.span(fabric(0), [7.80, floor_top + 0.44, pz0 - 0.74], [8.60, floor_top + 0.50, pz0 - 0.36]);
 
     // ---- garden trees ----
     for (tx, tz, h, r) in [

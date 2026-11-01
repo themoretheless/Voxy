@@ -195,6 +195,11 @@ fn motion_blur(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
 @fragment fn fs_display(@builtin(position) p:vec4<f32>)->@location(0) vec4<f32> {
     let q=vec2<i32>(p.xy);
     let size=vec2<i32>(textureDimensions(final_colour));
+    let fsize=vec2<f32>(size);
+    let uv=(p.xy)/fsize;
+    let ndc=uv*2.-1.;
+    let aspect=fsize.x/max(fsize.y,1.);
+    let r2=dot(ndc*vec2<f32>(aspect*0.5,0.5),ndc*vec2<f32>(aspect*0.5,0.5));
     var x=max(textureLoad(final_colour,q,0).rgb,vec3<f32>(0.));
     if frame.lens.x<=0. && frame.lens.w<=0. {
         let n=max(textureLoad(final_colour,clamp(q+vec2<i32>(0,-1),vec2<i32>(0),size-1),0).rgb,vec3<f32>(0.));
@@ -208,16 +213,15 @@ fn motion_blur(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
         let sharp_w=0.14*(1.-0.75*clamp(contrast,0.,1.));
         let lap=x*4.-(n+s+w+e);
         x=clamp(x+lap*sharp_w,low,high);
+        let ca=clamp((r2-0.12)*0.18,0.,0.12);
+        let r_ch=select(w.r,e.r,ndc.x>0.);
+        let b_ch=select(e.b,w.b,ndc.x>0.);
+        x=vec3<f32>(mix(x.r,r_ch,ca),x.g,mix(x.b,b_ch,ca));
     }
     x=depth_of_field(q,x);
     x=motion_blur(q,x);
     // Energy-conserving bloom: a small fraction of the radiance is replaced by
     // the mean of the dual Kawase chain (bloom.rs sums its six levels).
-    let uv=(p.xy)/vec2<f32>(size);
-    let ndc=uv*2.-1.;
-    let fsize=vec2<f32>(size);
-    let aspect=fsize.x/max(fsize.y,1.);
-    let r2=dot(ndc*vec2<f32>(aspect*0.5,0.5),ndc*vec2<f32>(aspect*0.5,0.5));
     let cos_theta2=1./(1.+r2*0.24);
     x*=mix(1.,cos_theta2*cos_theta2,0.22);
     let bloom=textureSampleLevel(bloom_chain,bloom_sampler,uv,0.).rgb/6.;

@@ -399,8 +399,8 @@ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,
 fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
  if fx_off(1u) {return vec4<f32>(0.);}
  let direction=archive_gi_direction(pixel,n);
- // Full-distance, full-refinement march; probes supplement offscreen light.
- return screen_reflection(p+n*0.05,direction,true,60.,1.,8u,ARCHIVE_RAY_BOUNDS);
+ // Cosine-distributed diffuse bounce march; probes supplement offscreen light.
+ return screen_reflection(p+n*0.05,direction,true,42.,1.22,5u,ARCHIVE_RAY_BOUNDS);
 }
 fn archive_gi_direction(pixel:vec2<f32>,n:vec3<f32>)->vec3<f32>{
  let seed=fract(sin(dot(pixel+vec2<f32>(camera.atmosphere.x*61.7,camera.atmosphere.x*17.3),vec2<f32>(12.9898,78.233)))*43758.5453);
@@ -513,6 +513,15 @@ fn archive_surface(f:Fragment,front:bool,tex:vec4<f32>)->ArchiveSurface {
   let wet=wet_layer(f.world,geometric,normal,roughness,dot(base,vec3<f32>(0.2126,0.7152,0.0722)));
   diffuse*=wet.darken;roughness=wet.roughness;normal=wet.normal;f0=mix(f0,max(f0,vec3<f32>(0.02)),wet.puddle);splash=wet.splash;
  }
+ if camera.weather.w>0.&&material.surface.z==0. {
+  let snow_up=smoothstep(0.45,0.82,geometric.y);
+  let snow_drift=0.65+0.55*original_noise(f.world*1.3);
+  let snow_cover=clamp(camera.weather.w*snow_up*snow_drift,0.,0.92);
+  let crystal=smoothstep(0.92,0.995,original_hash(floor(f.world*95.)));
+  diffuse=mix(diffuse,vec3<f32>(0.86,0.91,0.97)+vec3<f32>(0.25)*crystal,snow_cover);
+  roughness=mix(roughness,max(0.18,0.46-0.28*crystal),snow_cover);
+  normal=normalize(mix(normal,geometric,snow_cover*0.55));
+ }
  return ArchiveSurface(base,opacity,uv,spec,f0,roughness,diffuse,normal,view,geometric,splash);
 }
 fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
@@ -531,11 +540,12 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   let shadow_pos=f.shadow.xyz/f.shadow.w;let shadow_uv=shadow_pos.xy*vec2<f32>(0.5,-0.5)+0.5;
   if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.&&!fx_off(8u){visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715)))));}
  }
- let ao=contact_occlusion(f.clip.xy,f.world,normal)*select(1.,spec.r,material.workflow.w!=0.);
- let dust_mask=smoothstep(0.65,0.95,geometric.y)*(1.-ao)*(1.-camera.surface.x)*select(1.,0.,material.surface.z>0.||(z>8.5&&z<10.5));
+ let transmission=material.surface.z;
+ var ao=1.;if transmission<0.9 {ao=contact_occlusion(f.clip.xy,f.world,normal)*select(1.,spec.r,material.workflow.w!=0.);}
+ let dust_mask=smoothstep(0.65,0.95,geometric.y)*(1.-ao)*(1.-camera.surface.x)*select(1.,0.,transmission>0.||(z>8.5&&z<10.5));
  let rough_eff=mix(roughness,max(roughness,0.88),dust_mask*0.35);
  let diffuse_eff=mix(diffuse,vec3<f32>(0.54,0.52,0.48),dust_mask*0.14);
- let transmission=material.surface.z;let alpha=max(rough_eff*rough_eff,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,rough_eff),0.).rg;let shading=Brdf(normal,view,diffuse_eff*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=vec3<f32>(0.);if visibility>0.&&nl_sun>0.{colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility*micro_shadow(nl_sun,ao);}
+ let alpha=max(rough_eff*rough_eff,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,rough_eff),0.).rg;let shading=Brdf(normal,view,diffuse_eff*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=vec3<f32>(0.);if visibility>0.&&nl_sun>0.{colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility*micro_shadow(nl_sun,ao);}
  let halo_weight=clamp(smoothstep(0.25,-0.05,camera.sun.y)*0.032+camera.weather.z*0.024,0.,0.05);
  var pt_diffuse=vec3<f32>(0.);
  for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);let r=light.position_kind.w;if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);let l_rad=light.colour_intensity.rgb*light.colour_intensity.a*attenuation;colour+=brdf(shading,l_dir)*l_rad*micro_shadow(dot(normal,l_dir),ao);pt_diffuse+=l_rad;}
