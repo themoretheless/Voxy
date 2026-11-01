@@ -159,3 +159,86 @@ impl Body {
         Ok(())
     }
 }
+
+/// Computes the Zajac-style pennate muscle-tendon actuator force transferred along the tendon axis.
+///
+/// Given constant-volume pennate kinematics (`fiber_length * sin(alpha) = optimal_length * sin(alpha_0)`),
+/// returns `(tendon_force_n, pennation_angle_rad)`.
+///
+/// # Errors
+///
+/// Rejects non-finite inputs, non-positive lengths or isometric force, pennation outside `[0, pi/2)`,
+/// or geometric fiber locking (`sin(alpha) >= 1`).
+pub fn zajac_pennate_tendon_force(
+    activation: f64,
+    max_isometric_force_n: f64,
+    optimal_fiber_length_m: f64,
+    fiber_length_m: f64,
+    optimal_pennation_rad: f64,
+    passive_tension_normalized: f64,
+) -> Result<(f64, f64), &'static str> {
+    if ![
+        activation,
+        max_isometric_force_n,
+        optimal_fiber_length_m,
+        fiber_length_m,
+        optimal_pennation_rad,
+        passive_tension_normalized,
+    ]
+    .iter()
+    .all(|v| v.is_finite())
+        || !(0.0..=1.0).contains(&activation)
+        || max_isometric_force_n <= 0.0
+        || optimal_fiber_length_m <= 0.0
+        || fiber_length_m <= 0.0
+        || !(0.0..std::f64::consts::FRAC_PI_2).contains(&optimal_pennation_rad)
+        || passive_tension_normalized < 0.0
+    {
+        return Err("invalid Zajac pennate actuator parameters");
+    }
+
+    let sin_alpha = optimal_fiber_length_m * optimal_pennation_rad.sin() / fiber_length_m;
+    if sin_alpha >= 1.0 {
+        return Err("pennate fiber geometric lock");
+    }
+    let alpha = sin_alpha.asin();
+    let cos_alpha = (1.0 - sin_alpha * sin_alpha).sqrt();
+    let stretch = fiber_length_m / optimal_fiber_length_m;
+    let law = ActiveFiberLengthLaw {
+        optimal_stretch: 1.0,
+        half_width: 0.45,
+    };
+    let (active_tension, _) = law.response(stretch)?;
+    let fiber_force =
+        max_isometric_force_n * (activation * active_tension + passive_tension_normalized);
+    let tendon_force = fiber_force * cos_alpha;
+    if !tendon_force.is_finite() {
+        return Err("pennate tendon force overflow");
+    }
+    Ok((tendon_force, alpha))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn zajac_pennate_tendon_force_respects_pennation_projection() {
+        let (force_0, alpha_0) =
+            zajac_pennate_tendon_force(1.0, 1000.0, 0.1, 0.1, 0.0, 0.0).unwrap();
+        assert!((force_0 - 1000.0).abs() < 1e-9);
+        assert!(alpha_0.abs() < 1e-9);
+
+        let (force_pennate, alpha_p) = zajac_pennate_tendon_force(
+            1.0,
+            1000.0,
+            0.1,
+            0.1,
+            std::f64::consts::FRAC_PI_6,
+            0.0,
+        )
+        .unwrap();
+        assert!((alpha_p - std::f64::consts::FRAC_PI_6).abs() < 1e-9);
+        assert!((force_pennate - 1000.0 * std::f64::consts::FRAC_PI_6.cos()).abs() < 1e-6);
+    }
+}

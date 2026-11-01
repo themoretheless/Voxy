@@ -191,7 +191,7 @@ pub use xr::{XrFov, XrMotionHistory, XrView, XrViewError};
 pub use sprite::{Sprite, SpriteBatch, SpriteBatchError};
 
 pub use depth_motion::DepthMotionPass;
-pub use direct_lighting::{DirectLightingJob, PointLightSample};
+pub use direct_lighting::{DirectLightingJob, PointLightSample, cluster_depth_slice};
 pub use previous_position::{
     PreviousDepthPass, PreviousPositionPass, PreviousPositionVertex, RasterMotionPass,
 };
@@ -268,7 +268,7 @@ pub use temporal_resolve::{
 pub const TEXTURED_POINT_LIGHT_SHADER: &str = include_str!("scene_point_light.wgsl");
 
 mod shadow_map;
-pub use shadow_map::{ShadowDraw, ShadowDrawMask, ShadowMap};
+pub use shadow_map::{ShadowDraw, ShadowDrawMask, ShadowMap, snap_cascade_ortho_bounds};
 
 mod shadow_visibility;
 pub use shadow_visibility::{ShadowFilter, ShadowSettings};

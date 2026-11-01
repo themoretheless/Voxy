@@ -38,6 +38,64 @@ pub fn body_chunks(body: physics::AnchoredAabb) -> Result<Vec<ChunkPos>, SweepEr
     Ok(chunks)
 }
 
+/// Candidate chunk allocation considered for VRAM residency eviction.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ResidencyEvictionCandidate {
+    pub chunk: ChunkPos,
+    pub bytes: u64,
+    /// Number of frames since this chunk was last visible or touched.
+    pub age_frames: u32,
+    /// Estimated screen-space coverage fraction in `[0.0, 1.0]`.
+    pub screen_coverage: f32,
+}
+
+impl ResidencyEvictionCandidate {
+    /// Higher eviction score means the candidate should be evicted earlier:
+    /// old chunks with negligible screen coverage score highest.
+    #[must_use]
+    pub fn eviction_score(self) -> f64 {
+        let coverage = if self.screen_coverage.is_finite() {
+            f64::from(self.screen_coverage.clamp(0.0, 1.0))
+        } else {
+            0.0
+        };
+        (f64::from(self.age_frames) + 1.0) / (coverage + 1e-4)
+    }
+}
+
+/// Selects the minimal set of [`ResidencyEvictionCandidate`]s to evict (ordered highest-priority
+/// victim first) until at least `bytes_to_free` bytes have been reclaimed.
+#[must_use]
+pub fn select_eviction_victims(
+    candidates: &[ResidencyEvictionCandidate],
+    bytes_to_free: u64,
+) -> Vec<ChunkPos> {
+    if bytes_to_free == 0 || candidates.is_empty() {
+        return Vec::new();
+    }
+    let mut indexed: Vec<(usize, ResidencyEvictionCandidate)> =
+        candidates.iter().copied().enumerate().collect();
+    indexed.sort_by(|(idx_a, a), (idx_b, b)| {
+        b.eviction_score()
+            .total_cmp(&a.eviction_score())
+            .then_with(|| idx_a.cmp(idx_b))
+    });
+
+    let mut freed = 0_u64;
+    let mut victims = Vec::new();
+    for (_, candidate) in indexed {
+        if candidate.bytes == 0 {
+            continue;
+        }
+        victims.push(candidate.chunk);
+        freed = freed.saturating_add(candidate.bytes);
+        if freed >= bytes_to_free {
+            break;
+        }
+    }
+    victims
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -68,5 +126,37 @@ mod tests {
             body_chunks(body),
             Err(SweepError::CoordinateOverflow)
         ));
+    }
+
+    #[test]
+    fn select_eviction_victims_prioritizes_stale_low_coverage_chunks() {
+        let candidates = [
+            ResidencyEvictionCandidate {
+                chunk: ChunkPos { x: 0, y: 0, z: 0 },
+                bytes: 4096,
+                age_frames: 2,
+                screen_coverage: 0.45,
+            },
+            ResidencyEvictionCandidate {
+                chunk: ChunkPos { x: 10, y: 0, z: 10 },
+                bytes: 4096,
+                age_frames: 60,
+                screen_coverage: 0.0,
+            },
+            ResidencyEvictionCandidate {
+                chunk: ChunkPos { x: 5, y: 0, z: 5 },
+                bytes: 4096,
+                age_frames: 15,
+                screen_coverage: 0.05,
+            },
+        ];
+        let victims = select_eviction_victims(&candidates, 6000);
+        assert_eq!(
+            victims,
+            vec![
+                ChunkPos { x: 10, y: 0, z: 10 },
+                ChunkPos { x: 5, y: 0, z: 5 },
+            ]
+        );
     }
 }

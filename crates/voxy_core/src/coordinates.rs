@@ -914,6 +914,136 @@ impl Iterator for RayGridIterator {
     }
 }
 
+/// 16-bit octahedral unit-normal encoding (`[i8; 2]` SNORM) for compact vertex and voxel normals.
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub struct QuantizedNormal16(pub [i8; 2]);
+
+impl QuantizedNormal16 {
+    /// Encodes a 3D direction into octahedral `[i8; 2]` SNORM coordinates.
+    #[must_use]
+    pub fn encode(normal: [f32; 3]) -> Self {
+        let l1 = normal[0].abs() + normal[1].abs() + normal[2].abs();
+        if !l1.is_finite() || l1 <= 1e-12 {
+            return Self([0, 127]);
+        }
+        let mut nx = normal[0] / l1;
+        let mut ny = normal[1] / l1;
+        let nz = normal[2] / l1;
+        if nz < 0.0 {
+            let ox = (1.0 - ny.abs()) * if nx >= 0.0 { 1.0 } else { -1.0 };
+            let oy = (1.0 - nx.abs()) * if ny >= 0.0 { 1.0 } else { -1.0 };
+            nx = ox;
+            ny = oy;
+        }
+        let qx = (nx.clamp(-1.0, 1.0) * 127.0).round() as i8;
+        let qy = (ny.clamp(-1.0, 1.0) * 127.0).round() as i8;
+        Self([qx, qy])
+    }
+
+    /// Decodes the octahedral `[i8; 2]` representation back into a normalized 3D vector.
+    #[must_use]
+    pub fn decode(self) -> [f32; 3] {
+        let mut x = f32::from(self.0[0]) / 127.0;
+        let mut y = f32::from(self.0[1]) / 127.0;
+        let z = 1.0 - x.abs() - y.abs();
+        if z < 0.0 {
+            let ox = (1.0 - y.abs()) * if x >= 0.0 { 1.0 } else { -1.0 };
+            let oy = (1.0 - x.abs()) * if y >= 0.0 { 1.0 } else { -1.0 };
+            x = ox;
+            y = oy;
+        }
+        let len = (x * x + y * y + z * z).sqrt();
+        if len <= 1e-12 {
+            [0.0, 0.0, 1.0]
+        } else {
+            [x / len, y / len, z / len]
+        }
+    }
+}
+
+/// Converts a single-precision `f32` to IEEE 754 binary16 (`u16` bits).
+#[must_use]
+pub fn f32_to_f16(value: f32) -> u16 {
+    let bits = value.to_bits();
+    let sign = ((bits >> 16) & 0x8000) as u16;
+    let exp = ((bits >> 23) & 0xff) as i32;
+    let mantissa = bits & 0x007f_ffff;
+
+    if exp == 0xff {
+        if mantissa != 0 {
+            return sign | 0x7e00;
+        }
+        return sign | 0x7c00;
+    }
+
+    let half_exp = exp - 127 + 15;
+    if half_exp >= 0x1f {
+        return sign | 0x7c00;
+    }
+    if half_exp <= 0 {
+        if half_exp < -10 {
+            return sign;
+        }
+        let full_mantissa = mantissa | 0x0080_0000;
+        let shift = (14 - half_exp) as u32;
+        let half_mantissa = (full_mantissa >> shift) as u16;
+        return sign | half_mantissa;
+    }
+
+    sign | ((half_exp as u16) << 10) | ((mantissa >> 13) as u16)
+}
+
+/// Converts IEEE 754 binary16 (`u16` bits) to a single-precision `f32`.
+#[must_use]
+pub fn f16_to_f32(bits: u16) -> f32 {
+    let sign = (u32::from(bits & 0x8000)) << 16;
+    let exp = u32::from((bits >> 10) & 0x1f);
+    let mantissa = u32::from(bits & 0x03ff);
+
+    if exp == 0 {
+        if mantissa == 0 {
+            return f32::from_bits(sign);
+        }
+        let mut m = mantissa;
+        let mut e = -14_i32;
+        while (m & 0x0400) == 0 {
+            m <<= 1;
+            e -= 1;
+        }
+        m &= 0x03ff;
+        let f32_exp = ((e + 127) as u32) << 23;
+        return f32::from_bits(sign | f32_exp | (m << 13));
+    }
+    if exp == 0x1f {
+        return f32::from_bits(sign | 0x7f80_0000 | (mantissa << 13));
+    }
+
+    let f32_exp = (exp + 127 - 15) << 23;
+    f32::from_bits(sign | f32_exp | (mantissa << 13))
+}
+
+/// Converts an IEC 61966-2-1 sRGB channel in `[0.0, 1.0]` to linear light.
+#[must_use]
+pub fn srgb_to_linear(channel: f32) -> f32 {
+    let c = channel.clamp(0.0, 1.0);
+    if c <= 0.04045 {
+        c / 12.92
+    } else {
+        ((c + 0.055) / 1.055).powf(2.4)
+    }
+}
+
+/// Converts a linear light channel in `[0.0, 1.0]` to IEC 61966-2-1 sRGB.
+#[must_use]
+pub fn linear_to_srgb(channel: f32) -> f32 {
+    let c = channel.clamp(0.0, 1.0);
+    if c <= 0.003_130_8 {
+        c * 12.92
+    } else {
+        1.055 * c.powf(1.0 / 2.4) - 0.055
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1095,5 +1225,32 @@ mod tests {
         assert_eq!(ray[1].voxel, VoxelPos { x: 1, y: 0, z: 0 });
         assert_eq!(ray[1].entered_face, Some(Direction6::NegX));
         assert_eq!(ray[2].voxel, VoxelPos { x: 2, y: 0, z: 0 });
+    }
+
+    #[test]
+    fn quantized_normal_f16_and_srgb_round_trip() {
+        for dir in [
+            [1.0_f32, 0.0, 0.0],
+            [0.0, -1.0, 0.0],
+            [0.0, 0.0, -1.0],
+            [0.577_350_26, 0.577_350_26, -0.577_350_26],
+        ] {
+            let encoded = QuantizedNormal16::encode(dir);
+            let decoded = encoded.decode();
+            let dot = dir[0] * decoded[0] + dir[1] * decoded[1] + dir[2] * decoded[2];
+            assert!(dot > 0.99);
+        }
+
+        for val in [0.0_f32, -0.0, 1.0, -2.5, 0.125, 65504.0] {
+            let half = f32_to_f16(val);
+            let back = f16_to_f32(half);
+            assert!((back - val).abs() <= 1e-3);
+        }
+
+        for srgb in [0.0_f32, 0.02, 0.5, 0.85, 1.0] {
+            let lin = srgb_to_linear(srgb);
+            let back = linear_to_srgb(lin);
+            assert!((back - srgb).abs() < 1e-5);
+        }
     }
 }

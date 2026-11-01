@@ -45,9 +45,13 @@ pub use viscoelastic_hgo::ViscoelasticHgo;
 mod muscle_velocity;
 pub use muscle_velocity::{ActiveFiberVelocityLaw, MuscleVelocityResponse};
 mod muscle_activation;
-pub use muscle_activation::{ActivationKinetics, ActiveFiberLengthLaw, MuscleRegionDrive};
+pub use muscle_activation::{
+    ActivationKinetics, ActiveFiberLengthLaw, MuscleRegionDrive, zajac_pennate_tendon_force,
+};
 mod perfusion;
-pub use perfusion::{PerfusionCellSolute, PerfusionPort, PorePerfusion};
+pub use perfusion::{
+    PerfusionCellSolute, PerfusionPort, PorePerfusion, diascopy_blanching_factor,
+};
 mod contact_mollifier;
 mod lbfgs;
 mod surface_contact;

@@ -11,8 +11,9 @@ pub use clock::{ClockError, ClockPlan, FixedClock};
 pub use coordinates::{
     AabbI64, BitMatrix32, CHUNK_EDGE, CHUNK_VOLUME, ChunkPos, ChunkSphereIterator,
     CoordinateOverflow, Direction6, FaceMask, FloatingOrigin, InvalidLocalPos, LocalIndex,
-    LocalPos, PADDED_EDGE, PADDED_VOLUME, RayGridIterator, RayVoxelStep, SpiralChunkIterator,
-    SubVoxelCoord, SubVoxelPos, VoxelPos, join_voxel, split_voxel,
+    LocalPos, PADDED_EDGE, PADDED_VOLUME, QuantizedNormal16, RayGridIterator, RayVoxelStep,
+    SpiralChunkIterator, SubVoxelCoord, SubVoxelPos, VoxelPos, f16_to_f32, f32_to_f16, join_voxel,
+    linear_to_srgb, split_voxel, srgb_to_linear,
 };
 pub use hash::{
     DeterministicRng, FastHashBuilder, FastHasher, SeededFastHashBuilder, crc32c, crc32c_append,
