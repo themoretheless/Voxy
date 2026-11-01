@@ -1329,6 +1329,8 @@ impl App {
                 eprintln!("STREET snapshot {}", path.display());
             }
         }
+        let mut trigger_splash = false;
+        let mut teleport_request = None;
         if let (Some(panel), Some(window)) = (self.panel.as_mut(), self.window.as_ref()) {
             panel.draw(
                 window,
@@ -1347,8 +1349,28 @@ impl App {
                     render: &mut self.render,
                     reconfigure: &mut self.reconfigure,
                     rebuild: &mut self.rebuild_scene,
+                    splash: &mut trigger_splash,
+                    teleport: &mut teleport_request,
                 },
             );
+        }
+        if trigger_splash {
+            let (forward, _) = self.camera.planar_basis();
+            let drop_xz = Vec2::new(self.feet.x as f32, self.feet.z as f32)
+                + Vec2::new(forward.x, forward.z) * 2.5;
+            let splash_xz = Vec2::new(
+                drop_xz.x.clamp(-3.2, 3.2),
+                drop_xz.y.clamp(112.8, 129.2),
+            );
+            gpu.renderer.water_splash(splash_xz, 0.65, -0.08);
+        }
+        if let Some((feet, dir)) = teleport_request {
+            self.feet = DVec3::from_array(feet);
+            self.previous = self.feet;
+            self.velocity_y = 0.;
+            self.grounded = true;
+            self.camera = WalkCamera::new(Vec3::from_array(dir).normalize());
+            gpu.renderer.reset_temporal_history();
         }
         if let Some(frame) = frame {
             gpu.queue.present(frame);

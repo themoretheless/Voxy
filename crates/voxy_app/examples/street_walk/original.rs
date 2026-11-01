@@ -2220,6 +2220,30 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             b.block(kit.ceramic, [fx, 0.24, kz + dz], [0.28, 0.34, 0.28]);
             b.block(foliage, [fx, 0.52, kz + dz], [0.34, 0.32, 0.34]);
         }
+        // Cast-iron perimeter plaza bollards with brass/emissive neck rings framing the square
+        for bz in [71.8f32, 75.0, 78.2] {
+            let bx_bol = side * 3.85;
+            b.block(trim, [bx_bol, 0.08, bz], [0.26, 0.08, 0.26]);
+            b.block(metal, [bx_bol, 0.46, bz], [0.15, 0.68, 0.15]);
+            b.block(glow, [bx_bol, 0.76, bz], [0.16, 0.04, 0.16]);
+            b.block(metal, [bx_bol, 0.84, bz], [0.18, 0.12, 0.18]);
+        }
+        // Illuminated Parisian Morris cultural poster column (Colonne Morris) at z = 73.2
+        let mx = side * 4.85;
+        let mz = 73.2f32;
+        b.block(trim, [mx, 0.14, mz], [0.98, 0.18, 0.98]);
+        b.block(metal, [mx, 0.36, mz], [0.86, 0.26, 0.86]);
+        b.block(kit.woods[2], [mx, 1.48, mz], [0.76, 1.98, 0.76]);
+        // Backlit theatre/concert poster panels on the four cardinal faces of the drum
+        b.block(glow, [mx, 1.48, mz], [0.78, 1.42, 0.52]);
+        b.block(glow, [mx, 1.48, mz], [0.52, 1.42, 0.78]);
+        b.block(trim, [mx, 1.48, mz], [0.80, 1.24, 0.44]);
+        b.block(trim, [mx, 1.48, mz], [0.44, 1.24, 0.80]);
+        // Ornamental cast-iron overhang cornice, hexagonal dome & spire finial
+        b.block(metal, [mx, 2.54, mz], [1.04, 0.14, 1.04]);
+        b.block(metal, [mx, 2.76, mz], [0.82, 0.30, 0.82]);
+        b.block(metal, [mx, 3.02, mz], [0.48, 0.22, 0.48]);
+        b.block(metal, [mx, 3.28, mz], [0.07, 0.32, 0.07]);
     }
     // Compass-rose stone mosaic inlay framing the civic fountain plinth (z = 75.0)
     b.block(curb, [0., 0.052, 75.0], [7.2, 0.012, 7.2]);

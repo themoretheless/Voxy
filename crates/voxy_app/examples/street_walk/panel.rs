@@ -33,6 +33,10 @@ pub struct Settings<'a> {
     pub hdri_sky: Option<&'a mut bool>,
     /// Set when an ageing change should regenerate the street.
     pub rebuild: &'a mut bool,
+    /// Set when the user clicks the interactive water splash button.
+    pub splash: &'a mut bool,
+    /// Set when the user selects a quick camera teleport viewpoint.
+    pub teleport: &'a mut Option<([f64; 3], [f32; 3])>,
 }
 
 impl Panel {
@@ -145,6 +149,20 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     {
         *s.cycle = enabled.then(|| DayCycle::new(s.seed_mut.as_deref().copied().unwrap_or(0)));
     }
+    ui.horizontal_wrapped(|ui| {
+        for (label, target_hour) in [
+            ("Утро (F9)", 7.5_f64),
+            ("Полдень (F10)", 12.5),
+            ("Закат (F11)", 17.75),
+            ("Ночь (F12)", 22.0),
+        ] {
+            if ui.button(label).clicked() {
+                let seed = s.seed_mut.as_deref().copied().unwrap_or(0);
+                let cycle = s.cycle.get_or_insert_with(|| DayCycle::new(seed));
+                cycle.calendar.hours = cycle.calendar.day() * 24. + target_hour;
+            }
+        }
+    });
     if let Some(cycle) = s.cycle.as_mut() {
         let c = &mut cycle.calendar;
         let mut hour = c.hour();
@@ -297,6 +315,37 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     if let Some(a) = s.ageing.as_deref_mut() {
         ageing(ui, a, s.rebuild);
     }
+    ui.separator();
+    ui.label("Локации и интерактив");
+    if ui.button("Всплеск воды в бассейне (G)").clicked() {
+        *s.splash = true;
+    }
+    ui.horizontal_wrapped(|ui| {
+        for (name, feet, dir) in [
+            ("Улица", [0.6, 0.13, -18.0], [-0.10, 0.025, 1.0]),
+            ("Площадь и киоски", [0.0, 0.13, 66.0], [0.0, 0.02, 1.0]),
+            ("Бассейн и вилла", [-6.2, 0.05, 110.5], [0.27, -0.05, 0.96]),
+            (
+                "Сауна и оранжерея",
+                [8.5, 0.05, 121.5],
+                [0.45, -0.02, 0.89],
+            ),
+            (
+                "Дзен-сад и бочче",
+                [-8.5, 0.05, 121.5],
+                [-0.45, -0.02, 0.89],
+            ),
+            (
+                "Терраса на крыше",
+                [-2.0, 6.95, 134.5],
+                [0.18, -0.10, -0.98],
+            ),
+        ] {
+            if ui.button(name).clicked() {
+                *s.teleport = Some((feet, dir));
+            }
+        }
+    });
 }
 
 /// Renderer options that used to be environment-only; the environment still
