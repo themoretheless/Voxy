@@ -536,7 +536,8 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  let rough_eff=mix(roughness,max(roughness,0.88),dust_mask*0.35);
  let diffuse_eff=mix(diffuse,vec3<f32>(0.54,0.52,0.48),dust_mask*0.14);
  let transmission=material.surface.z;let alpha=max(rough_eff*rough_eff,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,rough_eff),0.).rg;let shading=Brdf(normal,view,diffuse_eff*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=vec3<f32>(0.);if visibility>0.&&nl_sun>0.{colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility*micro_shadow(nl_sun,ao);}
- for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);let r=light.position_kind.w;if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);colour+=brdf(shading,l_dir)*light.colour_intensity.rgb*light.colour_intensity.a*attenuation*micro_shadow(dot(normal,l_dir),ao);}
+ let halo_weight=clamp(smoothstep(0.25,-0.05,camera.sun.y)*0.032+camera.weather.z*0.024,0.,0.05);
+ for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;let distance2=max(dot(offset,offset),0.0001);let r=light.position_kind.w;if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let nl_pt=dot(normal,offset);if nl_pt>0.{let l_dir=offset*inverseSqrt(distance2);colour+=brdf(shading,l_dir)*light.colour_intensity.rgb*light.colour_intensity.a*attenuation*micro_shadow(dot(normal,l_dir),ao);}if halo_weight>0.{colour+=diffuse_eff*(1.-transmission)*light.colour_intensity.rgb*light.colour_intensity.a*attenuation*halo_weight*ao;}}
  // Directional sky, contact visibility and view-dependent environment Fresnel.
  if camera.eye.w>0.5 {
   let irradiance=textureSampleLevel(environment_diffuse,environment_sampler,normal,0.).rgb*environment_intensity.x;
@@ -548,7 +549,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
   let mirror=select((1.-smoothstep(0.1,0.4,rough_eff))*smoothstep(0.045,0.07,visible),1.,transmission>0.);
   if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
-  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
+  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
   let probe=probe_irradiance(f.world,normal);
   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
   if transmission>0. {
@@ -558,7 +559,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   colour+=diffuse_eff*(1.-transmission)*indirect*multibounce_ao(ao,diffuse_eff)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,rough_eff)*horizon;
  } else {
   let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(normal.y*0.5+0.5,0.,1.))*camera.viewport.w/3.14159265;
-  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI {bounce=screen_gi(f.clip.xy,f.world,normal);}
+  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
   let probe=probe_irradiance(f.world,normal);
   let indirect=mix(mix(sky,probe.rgb,probe.a),bounce.rgb,bounce.a);
   let n_bend=rough_eff*rough_eff*(1.-rough_eff);

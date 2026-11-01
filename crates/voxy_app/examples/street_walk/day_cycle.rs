@@ -87,6 +87,10 @@ impl DayCycle {
             KeyCode::BracketLeft => self.calendar.advance(-1.),
             KeyCode::BracketRight => self.calendar.advance(1.),
             KeyCode::KeyY => self.calendar.advance(91.25 * 24.),
+            KeyCode::F9 => self.calendar.hours = self.calendar.day() * 24. + 7.5,
+            KeyCode::F10 => self.calendar.hours = self.calendar.day() * 24. + 12.5,
+            KeyCode::F11 => self.calendar.hours = self.calendar.day() * 24. + 17.75,
+            KeyCode::F12 => self.calendar.hours = self.calendar.day() * 24. + 22.0,
             KeyCode::Minus => self.time_scale = (self.time_scale * 0.5).max(1. / 3600.),
             KeyCode::Equal => self.time_scale = (self.time_scale * 2.).min(24.),
             KeyCode::Digit0 => self.auto_weather = true,
@@ -203,5 +207,17 @@ mod tests {
         assert!(!cycle.auto_weather);
         assert!(cycle.key(KeyCode::Digit0));
         assert!(cycle.auto_weather);
+
+        // Time-of-day presets F9..F12 jump directly to Morning, Noon, Golden Hour, and Night on the current day.
+        let day = cycle.calendar.day();
+        assert!(cycle.key(KeyCode::F9));
+        assert_eq!(cycle.calendar.day(), day);
+        assert!((cycle.calendar.hour() - 7.5).abs() < 1e-4);
+        assert!(cycle.key(KeyCode::F10));
+        assert!((cycle.calendar.hour() - 12.5).abs() < 1e-4);
+        assert!(cycle.key(KeyCode::F11));
+        assert!((cycle.calendar.hour() - 17.75).abs() < 1e-4);
+        assert!(cycle.key(KeyCode::F12));
+        assert!((cycle.calendar.hour() - 22.0).abs() < 1e-4);
     }
 }

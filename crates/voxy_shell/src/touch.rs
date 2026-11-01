@@ -58,6 +58,36 @@ impl TouchControls {
         action
     }
 }
+
+/// Evaluates a two-finger pinch-zoom distance ratio `current_span / initial_span`, clamped to
+/// `[min_scale, max_scale]`. Returns `None` if Touch points are non-finite or `initial_span <= 1e-4`.
+#[must_use]
+pub fn pinch_zoom_ratio(
+    initial_a: Vec2,
+    initial_b: Vec2,
+    current_a: Vec2,
+    current_b: Vec2,
+    min_scale: f32,
+    max_scale: f32,
+) -> Option<f32> {
+    if !initial_a.is_finite()
+        || !initial_b.is_finite()
+        || !current_a.is_finite()
+        || !current_b.is_finite()
+        || !min_scale.is_finite()
+        || !max_scale.is_finite()
+        || min_scale <= 0.0
+        || max_scale < min_scale
+    {
+        return None;
+    }
+    let initial_span = initial_a.distance(initial_b);
+    if initial_span <= 1e-4 {
+        return None;
+    }
+    let current_span = current_a.distance(current_b);
+    Some((current_span / initial_span).clamp(min_scale, max_scale))
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -103,6 +133,22 @@ mod tests {
         assert_eq!(
             controls.update(1, TouchPhase::Ended, Vec2::ZERO),
             TouchAction::None
+        );
+    }
+    #[test]
+    fn pinch_zoom_ratio_computes_clamped_span_factor() {
+        let ratio = pinch_zoom_ratio(
+            Vec2::new(0.0, 0.0),
+            Vec2::new(0.2, 0.0),
+            Vec2::new(0.0, 0.0),
+            Vec2::new(0.4, 0.0),
+            0.5,
+            3.0,
+        )
+        .unwrap();
+        assert!((ratio - 2.0).abs() < 1e-5);
+        assert!(
+            pinch_zoom_ratio(Vec2::ZERO, Vec2::ZERO, Vec2::ZERO, Vec2::ONE, 0.5, 2.0).is_none()
         );
     }
 }

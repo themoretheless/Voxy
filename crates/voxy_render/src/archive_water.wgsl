@@ -214,7 +214,7 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
   var previous = 0.;
   var cached_pixel = vec2<i32>(-1);
   var cached_depth = 1.;
-  for (var i = 0u; i < 56u; i++) {
+  for (var i = 0u; i < 48u; i++) {
     let q = to_pixel(origin + direction * t);
     if any(q.xy <= vec2<f32>(0.)) || any(q.xy >= camera.viewport.xy) || q.z <= 0. || q.z >= 1. { return vec4<f32>(0.); }
     let ray_pixel = vec2<i32>(q.xy);
@@ -225,7 +225,7 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
     let depth = cached_depth;
     if depth < 1. && q.z >= depth {
       var lo = previous; var hi = t;
-      for (var r = 0u; r < 6u; r++) {
+      for (var r = 0u; r < 5u; r++) {
         let mid = (lo + hi) * 0.5;
         let m = to_pixel(origin + direction * mid);
         let mp = clamp_pixel(m.xy);
@@ -249,7 +249,7 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
       return vec4<f32>(opaque_radiance(pixel), smoothstep(0., 0.05, edge) * (1. - smoothstep(25., 40., hi)));
     }
     previous = t;
-    t += 0.05 + 0.07 * t;
+    t += 0.055 + 0.08 * t;
     if t > 40. { break; }
   }
   return vec4<f32>(0.);
@@ -362,12 +362,14 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
   if behind_pixel.x == pixel.x && behind_pixel.y == pixel.y { hit_point = straight_world; }
   var behind = opaque_radiance(behind_pixel);
   // Chromatic dispersion of refracted basin tiles at oblique angles when ray bent away from pixel
-  if (behind_pixel.x != pixel.x || behind_pixel.y != pixel.y) && path > 0.12 {
+  if (behind_pixel.x != pixel.x || behind_pixel.y != pixel.y) && path > 0.12 && fr < 0.65 {
     let disp_px = clamp((vec2<f32>(behind_pixel) - vec2<f32>(pixel)) * 0.065 * (1. - nv), vec2<f32>(-2.5), vec2<f32>(2.5));
-    let pr = clamp_pixel(vec2<f32>(behind_pixel) - disp_px);
-    let pb = clamp_pixel(vec2<f32>(behind_pixel) + disp_px);
-    if textureLoad(opaque_depth, pr, 0) > surface_depth && textureLoad(opaque_depth, pb, 0) > surface_depth {
-      behind = vec3<f32>(opaque_radiance(pr).r, behind.g, opaque_radiance(pb).b);
+    if abs(disp_px.x) + abs(disp_px.y) >= 0.5 {
+      let pr = clamp_pixel(vec2<f32>(behind_pixel) - disp_px);
+      let pb = clamp_pixel(vec2<f32>(behind_pixel) + disp_px);
+      if textureLoad(opaque_depth, pr, 0) > surface_depth && textureLoad(opaque_depth, pb, 0) > surface_depth {
+        behind = vec3<f32>(opaque_radiance(pr).r, behind.g, opaque_radiance(pb).b);
+      }
     }
   }
   let meniscus = smoothstep(0., 0.10, f.world.y - hit_point.y);

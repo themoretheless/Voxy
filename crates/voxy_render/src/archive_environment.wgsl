@@ -53,5 +53,17 @@ fn daylight(direction:vec3<f32>,sun:vec3<f32>)->vec3<f32>{
   let depth=optical_depth(vec3<f32>(0.,EARTH_RADIUS+2.,0.),sun);
   disk=vec3<f32>(200000.,185000.,150000.)*exp(-(RAYLEIGH*depth.x+MIE*1.1*depth.y))*smoothstep(0.999975,0.99999,cosine);
  }
- return scattered_sky(vec3<f32>(d.x,max(d.y,0.002),d.z),sun)+disk;
+ var sky=scattered_sky(vec3<f32>(d.x,max(d.y,0.002),d.z),sun)+disk;
+ if sun.y<0.06 {
+  let night=smoothstep(0.06,-0.12,sun.y);
+  let twilight=smoothstep(-0.20,0.04,sun.y)*(1.-smoothstep(-0.02,0.06,sun.y));
+  let horizon_belt=exp(-d.y*8.5)*(0.45+0.55*clamp(cosine*0.5+0.5,0.,1.));
+  let airglow=mix(vec3<f32>(0.55,0.78,1.35),vec3<f32>(0.22,0.34,0.68),clamp(d.y,0.,1.))*night;
+  let dusk_glow=vec3<f32>(14.,6.5,3.2)*horizon_belt*twilight;
+  let cell=floor(d*340.);
+  let h=fract(sin(dot(cell,vec3<f32>(127.1,311.7,74.7)))*43758.5453);
+  let star=smoothstep(0.9972,0.9998,h)*smoothstep(0.08,0.35,d.y)*night*vec3<f32>(2.4,2.6,3.1);
+  sky+=airglow+dusk_glow+star;
+ }
+ return sky;
 }
