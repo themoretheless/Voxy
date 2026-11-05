@@ -9,6 +9,64 @@ use voxy_render::climate::{self, Calendar, Season, WeatherSchedule};
 use voxy_render::weather::Weather;
 use winit::keyboard::KeyCode;
 
+/// Preset combinations of season, time of day, and weather with smooth interpolation support.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DayWeatherPreset {
+    ClearMorning,
+    GoldenHour,
+    RainyDusk,
+    WinterBlizzard,
+}
+
+impl DayWeatherPreset {
+    /// Returns the canonical `(day_of_year, hour_of_day, Weather)` target for this preset.
+    pub fn parameters(self) -> (f64, f64, Weather) {
+        match self {
+            Self::ClearMorning => (Season::Summer.middle_day(), 8.5, Weather::CLEAR),
+            Self::GoldenHour => (
+                Season::Autumn.middle_day(),
+                17.75,
+                Weather {
+                    coverage: 0.25,
+                    density: 0.20,
+                    rain: 0.0,
+                    snow: 0.0,
+                    wind: [1.5, 0.5],
+                    ..Weather::CLEAR
+                },
+            ),
+            Self::RainyDusk => (
+                Season::Autumn.middle_day(),
+                19.0,
+                Weather::STORM,
+            ),
+            Self::WinterBlizzard => (
+                Season::Winter.middle_day(),
+                15.0,
+                Weather::SNOW,
+            ),
+        }
+    }
+
+    /// Blends `calendar` and `weather` toward this preset by `alpha` in `[0.0, 1.0]`.
+    pub fn apply_interpolated(self, calendar: &mut Calendar, weather: &mut Weather, alpha: f32) {
+        let t = if alpha.is_finite() {
+            alpha.clamp(0.0, 1.0)
+        } else {
+            0.0
+        };
+        let (target_day, target_hour, target_w) = self.parameters();
+        let target_hours = target_day * 24.0 + target_hour;
+        calendar.hours = calendar.hours + (target_hours - calendar.hours) * f64::from(t);
+        weather.coverage += (target_w.coverage - weather.coverage) * t;
+        weather.density += (target_w.density - weather.density) * t;
+        weather.rain += (target_w.rain - weather.rain) * t;
+        weather.snow += (target_w.snow - weather.snow) * t;
+        weather.wind[0] += (target_w.wind[0] - weather.wind[0]) * t;
+        weather.wind[1] += (target_w.wind[1] - weather.wind[1]) * t;
+    }
+}
+
 pub struct DayCycle {
     pub calendar: Calendar,
     /// Simulated hours per real second.
@@ -219,5 +277,16 @@ mod tests {
         assert!((cycle.calendar.hour() - 17.75).abs() < 1e-4);
         assert!(cycle.key(KeyCode::F12));
         assert!((cycle.calendar.hour() - 22.0).abs() < 1e-4);
+    }
+
+    #[test]
+    fn day_weather_preset_interpolates_smoothly() {
+        let mut cal = Calendar::new(Season::Summer.middle_day(), 12.0);
+        let mut weather = Weather::CLEAR;
+        DayWeatherPreset::WinterBlizzard.apply_interpolated(&mut cal, &mut weather, 0.5);
+        assert!(weather.snow > 0.0 && weather.snow < Weather::SNOW.snow);
+        DayWeatherPreset::WinterBlizzard.apply_interpolated(&mut cal, &mut weather, 1.0);
+        assert!((weather.snow - Weather::SNOW.snow).abs() < 1e-5);
+        assert_eq!(cal.season(), Season::Winter);
     }
 }

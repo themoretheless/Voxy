@@ -47,3 +47,40 @@ impl AaValidation {
             || [64, 96, 97, 98, 112, 128, 129, 130, 144, 160].contains(&frame)
     }
 }
+
+/// Computes the RMS subpixel temporal luma flicker score across high-contrast edges
+/// between two consecutive frames of equal length.
+#[allow(dead_code)]
+pub fn edge_flicker_score(prev_luma: &[f32], curr_luma: &[f32]) -> Option<f32> {
+    if prev_luma.is_empty() || prev_luma.len() != curr_luma.len() {
+        return None;
+    }
+    let mut sum_sq = 0.0_f64;
+    let mut count = 0usize;
+    for (&p, &c) in prev_luma.iter().zip(curr_luma.iter()) {
+        if p.is_finite() && c.is_finite() {
+            let diff = f64::from(c - p);
+            sum_sq += diff * diff;
+            count += 1;
+        }
+    }
+    if count == 0 {
+        return None;
+    }
+    Some((sum_sq / count as f64).sqrt() as f32)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn edge_flicker_score_is_zero_for_identical_frames() {
+        let a = [0.1, 0.5, 0.9, 0.2];
+        assert_eq!(edge_flicker_score(&a, &a), Some(0.0));
+        let b = [0.2, 0.4, 0.8, 0.3];
+        let score = edge_flicker_score(&a, &b).unwrap();
+        assert!((score - 0.1).abs() < 1e-6);
+        assert_eq!(edge_flicker_score(&a, &[0.1]), None);
+    }
+}

@@ -37,6 +37,8 @@ pub struct Settings<'a> {
     pub splash: &'a mut bool,
     /// Set when the user selects a quick camera teleport viewpoint.
     pub teleport: &'a mut Option<([f64; 3], [f32; 3])>,
+    /// Live frame render time in ms and optional GPU pass timings `[total, opaque, transparent]`.
+    pub perf_ms: (f64, Option<[f64; 3]>),
 }
 
 impl Panel {
@@ -140,6 +142,17 @@ impl Panel {
 fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     ui.heading("Настройки");
     ui.label("F1 скрыть · Esc отпустить мышь");
+    if s.perf_ms.0 > 0. {
+        let fps = (1000. / s.perf_ms.0).min(999.);
+        if let Some([tot, opq, trn]) = s.perf_ms.1 {
+            ui.label(format!(
+                "Кадр {:.2} мс ({:.0} FPS) · GPU {:.2} мс (opq {:.2} · wtr {:.2})",
+                s.perf_ms.0, fps, tot, opq, trn
+            ));
+        } else {
+            ui.label(format!("Кадр {:.2} мс ({:.0} FPS)", s.perf_ms.0, fps));
+        }
+    }
     ui.separator();
 
     let mut enabled = s.cycle.is_some();
@@ -340,6 +353,16 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
                 [-2.0, 6.95, 134.5],
                 [0.18, -0.10, -0.98],
             ),
+            (
+                "Обсерватория",
+                [-3.2, 10.15, 136.5],
+                [-0.85, 0.12, -0.51],
+            ),
+            (
+                "Винный грот",
+                [6.2, 0.05, 101.0],
+                [0.92, 0.05, 0.38],
+            ),
         ] {
             if ui.button(name).clicked() {
                 *s.teleport = Some((feet, dir));
@@ -520,5 +543,56 @@ fn season_name(season: Season) -> &'static str {
         Season::Summer => "лето",
         Season::Autumn => "осень",
         Season::Winter => "зима",
+    }
+}
+
+/// Named camera viewpoint bookmark with eye coordinates and look direction vector.
+#[allow(dead_code)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct TeleportBookmark {
+    pub name: &'static str,
+    pub position: [f64; 3],
+    pub direction: [f32; 3],
+}
+
+/// Filters `bookmarks` case-insensitively by substring match on `name`.
+#[allow(dead_code)]
+pub fn filter_teleport_bookmarks(
+    bookmarks: &[TeleportBookmark],
+    query: &str,
+) -> Vec<TeleportBookmark> {
+    let needle = query.trim().to_lowercase();
+    if needle.is_empty() {
+        return bookmarks.to_vec();
+    }
+    bookmarks
+        .iter()
+        .copied()
+        .filter(|b| b.name.to_lowercase().contains(&needle))
+        .collect()
+}
+
+#[cfg(test)]
+mod panel_tests {
+    use super::*;
+
+    #[test]
+    fn teleport_bookmarks_filter_case_insensitively() {
+        let bookmarks = [
+            TeleportBookmark {
+                name: "Start Square",
+                position: [0.0, 1.7, 8.0],
+                direction: [0.0, 0.0, 1.0],
+            },
+            TeleportBookmark {
+                name: "Villa Pool",
+                position: [2.9, 1.82, 107.4],
+                direction: [-0.2, -0.2, 0.96],
+            },
+        ];
+        assert_eq!(filter_teleport_bookmarks(&bookmarks, "").len(), 2);
+        let filtered = filter_teleport_bookmarks(&bookmarks, "villa");
+        assert_eq!(filtered.len(), 1);
+        assert_eq!(filtered[0].name, "Villa Pool");
     }
 }

@@ -405,3 +405,49 @@ fn separate_sun(
         irradiance,
     ))
 }
+
+/// Converts a correlated color temperature in Kelvin (`1800..=12000 K`) along the Planckian locus
+/// into normalized linear sRGB `[r, g, b]` for street lanterns and kiosk signage.
+pub fn planckian_locus_rgb(kelvin: f32) -> [f32; 3] {
+    if !kelvin.is_finite() {
+        return [1.0, 1.0, 1.0];
+    }
+    let t = (kelvin.clamp(1800.0, 12000.0)) / 100.0;
+    let r = if t <= 66.0 {
+        1.0
+    } else {
+        (1.292_936_2 * (t - 60.0).powf(-0.133_204_76)).clamp(0.0, 1.0)
+    };
+    let g = if t <= 66.0 {
+        (0.390_081_58 * t.ln() - 0.631_841_4).clamp(0.0, 1.0)
+    } else {
+        (1.129_890_9 * (t - 60.0).powf(-0.075_514_846)).clamp(0.0, 1.0)
+    };
+    let b = if t >= 66.0 {
+        1.0
+    } else if t <= 19.0 {
+        0.0
+    } else {
+        (0.543_206_8 * (t - 10.0).ln() - 1.196_254_1).clamp(0.0, 1.0)
+    };
+    [
+        srgb_to_linear(r),
+        srgb_to_linear(g),
+        srgb_to_linear(b),
+    ]
+}
+
+#[cfg(test)]
+mod planckian_tests {
+    use super::*;
+
+    #[test]
+    fn planckian_locus_shifts_from_warm_amber_to_cool_blue() {
+        let warm = planckian_locus_rgb(2400.0);
+        let daylight = planckian_locus_rgb(6500.0);
+        let cool = planckian_locus_rgb(10000.0);
+        assert!(warm[0] > warm[1] && warm[1] > warm[2]);
+        assert!((daylight[0] - 1.0).abs() < 0.05);
+        assert!(cool[2] > cool[0]);
+    }
+}

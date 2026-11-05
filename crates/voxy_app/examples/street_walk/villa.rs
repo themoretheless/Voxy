@@ -1481,6 +1481,70 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     b.span(chrome, [sx1 - 0.24, sy0 + 0.08, (cz0 + cz1) * 0.5 - 0.03], [sx1 - 0.18, sy0 + 0.92, (cz0 + cz1) * 0.5 + 0.03]);
     b.span(chrome, [sx1 - 0.44, sy0 + 0.88, (cz0 + cz1) * 0.5 - 0.03], [sx1 - 0.18, sy0 + 0.92, (cz0 + cz1) * 0.5 + 0.03]);
 
+    // ---- rooftop astronomical observatory rotunda & refractor telescope (x = -6.8..-4.2, z = 135.2..137.8, y = roof_top) ----
+    let (rx_c, rz_c) = (-5.5f32, 136.5f32);
+    // Stepped travertine & dark-steel circular/octagonal observatory plinth
+    b.span(travertine, [rx_c - 1.35, roof_top, rz_c - 1.35], [rx_c + 1.35, roof_top + 0.10, rz_c + 1.35]);
+    b.span(p.timber, [rx_c - 1.18, roof_top + 0.10, rz_c - 1.18], [rx_c + 1.18, roof_top + 0.16, rz_c + 1.18]);
+    // Open steel & glass observatory pavilion columns and ring cornice
+    for (dx, dz) in [(-1.08f32, -1.08f32), (1.08, -1.08), (-1.08, 1.08), (1.08, 1.08)] {
+        b.span(p.metal, [rx_c + dx - 0.04, roof_top + 0.16, rz_c + dz - 0.04], [rx_c + dx + 0.04, roof_top + 2.18, rz_c + dz + 0.04]);
+    }
+    b.span(p.metal, [rx_c - 1.22, roof_top + 2.18, rz_c - 1.22], [rx_c + 1.22, roof_top + 2.28, rz_c + 1.22]);
+    b.span(p.metal, [rx_c - 0.92, roof_top + 2.28, rz_c - 0.92], [rx_c + 0.92, roof_top + 2.48, rz_c + 0.92]);
+    // Equatorial mount tripod, counterweight shaft, and brass/chrome refractor telescope tube aimed at the southern sky
+    for angle_i in 0..3 {
+        let a = angle_i as f32 * 2.094395;
+        let lx = rx_c + a.cos() * 0.36;
+        let lz = rz_c + a.sin() * 0.36;
+        b.beam(p.metal, Vec3::new(lx, roof_top + 0.16, lz), Vec3::new(rx_c, roof_top + 1.18, rz_c), 0.03);
+    }
+    b.span(chrome, [rx_c - 0.06, roof_top + 1.14, rz_c - 0.06], [rx_c + 0.06, roof_top + 1.36, rz_c + 0.06]);
+    b.put(
+        chrome,
+        Vec3::new(rx_c, roof_top + 1.48, rz_c - 0.08),
+        Vec3::new(0.11, 0.11, 1.15),
+        Quat::from_rotation_x(-0.52) * Quat::from_rotation_y(0.24),
+    );
+    b.put(
+        p.metal,
+        Vec3::new(rx_c + 0.10, roof_top + 1.18, rz_c + 0.32),
+        Vec3::new(0.05, 0.05, 0.24),
+        Quat::from_rotation_x(-0.52) * Quat::from_rotation_y(0.24),
+    );
+    // Astronomer's chart table, star-atlas lamp, and upholstered observation stool
+    b.span(p.timber, [rx_c + 0.45, roof_top + 0.16, rz_c - 0.35], [rx_c + 0.98, roof_top + 0.78, rz_c + 0.35]);
+    b.span(p.glow, [rx_c + 0.64, roof_top + 0.78, rz_c - 0.08], [rx_c + 0.80, roof_top + 0.92, rz_c + 0.08]);
+
+    // ---- vineyard pergola & stone wine cellar tasting alcove in the east parterre garden (x = 8.8..12.6, z = 98.6..103.4) ----
+    let (wx0, wx1, wz0, wz1) = (9.0f32, 12.2f32, 98.8f32, 103.2f32);
+    let wy0 = 0.10f32;
+    b.span(travertine, [wx0 - 0.15, wy0, wz0 - 0.15], [wx1 + 0.15, wy0 + 0.08, wz1 + 0.15]);
+    // Arched stone wine cellar grotto wall along the east edge with oak barrel niche
+    b.span(garden_wall, [wx1 - 0.45, wy0 + 0.08, wz0], [wx1, wy0 + 2.25, wz1]);
+    b.span(travertine, [wx1 - 0.52, wy0 + 2.25, wz0 - 0.08], [wx1 + 0.06, wy0 + 2.38, wz1 + 0.08]);
+    // Aged oak wine barrels stacked on timber cradles against the cellar wall
+    for (bz_bar, by_bar) in [(wz0 + 0.85, wy0 + 0.38), (wz0 + 2.20, wy0 + 0.38), (wz0 + 3.55, wy0 + 0.38), (wz0 + 1.52, wy0 + 0.92), (wz0 + 2.88, wy0 + 0.92)] {
+        b.span(p.wood, [wx1 - 1.15, by_bar - 0.24, bz_bar - 0.28], [wx1 - 0.48, by_bar + 0.24, bz_bar + 0.28]);
+        b.span(p.metal, [wx1 - 1.16, by_bar - 0.25, bz_bar - 0.18], [wx1 - 0.47, by_bar + 0.25, bz_bar - 0.14]);
+        b.span(p.metal, [wx1 - 1.16, by_bar - 0.25, bz_bar + 0.14], [wx1 - 0.47, by_bar + 0.25, bz_bar + 0.18]);
+    }
+    // Timber vineyard trellis posts, overhead beams, and hanging grapevine foliage canopy
+    for &vz in &[wz0 + 0.2, (wz0 + wz1) * 0.5, wz1 - 0.2] {
+        b.span(p.timber, [wx0 + 0.12, wy0 + 0.08, vz - 0.05], [wx0 + 0.22, wy0 + 2.25, vz + 0.05]);
+        b.span(p.timber, [wx0 + 0.05, wy0 + 2.25, vz - 0.05], [wx1 - 0.45, wy0 + 2.35, vz + 0.05]);
+    }
+    b.span(p.foliage, [wx0 + 0.15, wy0 + 2.18, wz0 + 0.15], [wx1 - 0.50, wy0 + 2.48, wz1 - 0.15]);
+    b.span(p.glow, [wx1 - 0.52, wy0 + 1.85, wz0 + 0.6], [wx1 - 0.46, wy0 + 1.92, wz1 - 0.6]);
+    // Sommelier tasting table, wine decanter, and oak stools under the vine trellis
+    let wz_mid = (wz0 + wz1) * 0.5;
+    b.span(p.wood, [wx0 + 0.65, wy0 + 0.08, wz_mid - 0.55], [wx0 + 1.35, wy0 + 0.88, wz_mid + 0.55]);
+    b.span(travertine, [wx0 + 0.60, wy0 + 0.88, wz_mid - 0.60], [wx0 + 1.40, wy0 + 0.94, wz_mid + 0.60]);
+    b.span(p.glass, [wx0 + 0.92, wy0 + 0.94, wz_mid - 0.12], [wx0 + 1.08, wy0 + 1.18, wz_mid + 0.04]);
+    for sz_st in [wz_mid - 0.85, wz_mid + 0.85] {
+        b.span(p.timber, [wx0 + 0.82, wy0 + 0.08, sz_st - 0.18], [wx0 + 1.18, wy0 + 0.58, sz_st + 0.18]);
+    }
+
     Villa {
         water: vec![WaterBody::pool(
             Vec3::new(-x, DEEP, z0),
@@ -1490,5 +1554,48 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
             Vec3::new(2.9, 1.82, 107.4),
             Vec3::new(-0.22, -0.2, 1.).normalize(),
         ),
+    }
+}
+
+/// Estimates normalized steam density in `[0.0, 1.0]` inside the Nordic cedar sauna cabin
+/// given stove stone temperature (°C), ladled water volume (mL), cabin volume ($\text{m}^3$),
+/// and time elapsed since ladling (seconds).
+#[allow(dead_code)]
+pub fn sauna_steam_density(
+    stove_temp_c: f32,
+    water_ladled_ml: f32,
+    cabin_volume_m3: f32,
+    elapsed_s: f32,
+) -> f32 {
+    if !stove_temp_c.is_finite()
+        || !water_ladled_ml.is_finite()
+        || !cabin_volume_m3.is_finite()
+        || !elapsed_s.is_finite()
+        || stove_temp_c <= 100.0
+        || water_ladled_ml <= 0.0
+        || cabin_volume_m3 <= 0.5
+        || elapsed_s < 0.0
+    {
+        return 0.0;
+    }
+    let superheat = ((stove_temp_c - 100.0) / 180.0).clamp(0.0, 1.5);
+    let specific_load = (water_ladled_ml / (cabin_volume_m3 * 25.0)).clamp(0.0, 2.0);
+    // Rapid flash-evaporation rise over ~4s followed by ventilation decay over ~45s.
+    let rise = 1.0 - (-elapsed_s / 3.5).exp();
+    let decay = (-elapsed_s / 45.0).exp();
+    (superheat * specific_load * rise * decay).clamp(0.0, 1.0)
+}
+
+#[cfg(test)]
+mod sauna_tests {
+    use super::*;
+
+    #[test]
+    fn sauna_steam_rises_then_decays_with_ventilation() {
+        assert_eq!(sauna_steam_density(85.0, 200.0, 12.0, 5.0), 0.0);
+        let early = sauna_steam_density(240.0, 250.0, 12.0, 5.0);
+        let late = sauna_steam_density(240.0, 250.0, 12.0, 90.0);
+        assert!(early > 0.2 && early <= 1.0);
+        assert!(late < early);
     }
 }
