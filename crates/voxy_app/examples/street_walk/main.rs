@@ -1331,6 +1331,10 @@ impl App {
         }
         let mut trigger_splash = false;
         let mut teleport_request = None;
+        let gpu_hud = gpu.renderer.gpu_times_ms.last().copied().and_then(|tot| {
+            let [opq, trn] = *gpu.renderer.gpu_shading_times_ms.last()?;
+            Some([tot, opq, trn])
+        });
         if let (Some(panel), Some(window)) = (self.panel.as_mut(), self.window.as_ref()) {
             panel.draw(
                 window,
@@ -1351,6 +1355,7 @@ impl App {
                     rebuild: &mut self.rebuild_scene,
                     splash: &mut trigger_splash,
                     teleport: &mut teleport_request,
+                    perf_ms: (render_time * 1000., gpu_hud),
                 },
             );
         }

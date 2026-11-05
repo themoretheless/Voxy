@@ -2002,6 +2002,24 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                     b.block(kit.ceramic, [side * 6.96, 0.28, pz], [0.32, 0.36, 0.32]);
                     b.block(foliage, [side * 6.96, 0.62, pz], [0.36, 0.42, 0.36]);
                 }
+                // Parisian bouquiniste antiquarian bookstall with open green/timber display chest and leather-bound volumes
+                let bk_z = if door_z > z { z - 2.1 } else { z + 2.1 };
+                let bk_x = side * 5.95;
+                for dz_leg in [-0.52f32, 0.52] {
+                    b.block(metal, [bk_x, 0.36, bk_z + dz_leg], [0.42, 0.64, 0.05]);
+                }
+                b.block(kit.woods[2], [bk_x, 0.78, bk_z], [0.54, 0.22, 1.24]);
+                b.put(
+                    kit.woods[1],
+                    Vec3::new(bk_x + side * 0.18, 1.06, bk_z),
+                    Vec3::new(0.46, 0.03, 1.22),
+                    Quat::from_rotation_z(-side * 0.62),
+                );
+                for vol in 0..5 {
+                    let vz = bk_z - 0.44 + vol as f32 * 0.22;
+                    let book_mat = kit.fabrics[vol % kit.fabrics.len()];
+                    b.block(book_mat, [bk_x - side * 0.06, 0.92, vz], [0.24, 0.08, 0.16]);
+                }
             }
             // Cast-iron cellar ventilation grille set into the stone plinth away from the entrance
             let vent_z = if door_z > z { z - 2.4 } else { z + 2.4 };
@@ -2748,4 +2766,34 @@ mod tests {
                 && !world.is_submerged(Vec3::new(0., 1., 124.), 0.)
         );
     }
+
+    #[test]
+    fn piano_string_inharmonicity_shifts_upper_partials_upward() {
+        let f1 = piano_string_inharmonicity_hz(440.0, 1, 0.0004);
+        let f2_ideal = 880.0;
+        let f2_stiff = piano_string_inharmonicity_hz(440.0, 2, 0.0004);
+        assert!(f1 > 440.0);
+        assert!(f2_stiff > f2_ideal);
+        assert_eq!(piano_string_inharmonicity_hz(440.0, 0, 0.0004), 0.0);
+    }
+}
+
+/// Computes the stiff-string partial frequency $f_n = n f_0 \sqrt{1 + B n^2}$ in Hz
+/// for the interactive grand piano in the street salon.
+#[allow(dead_code)]
+pub fn piano_string_inharmonicity_hz(
+    fundamental_hz: f32,
+    partial_index: u32,
+    inharmonicity_b: f32,
+) -> f32 {
+    if !fundamental_hz.is_finite()
+        || !inharmonicity_b.is_finite()
+        || fundamental_hz <= 0.0
+        || partial_index == 0
+    {
+        return 0.0;
+    }
+    let n = partial_index as f32;
+    let b = inharmonicity_b.clamp(0.0, 0.1);
+    n * fundamental_hz * (1.0 + b * n * n).sqrt()
 }

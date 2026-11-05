@@ -36,6 +36,55 @@ pub fn audit(
     }
 }
 
+/// Outcome of comparing baseline and candidate p99 frame times.
+#[allow(dead_code)]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct BenchmarkRegressionVerdict {
+    pub baseline_p99_ms: f64,
+    pub candidate_p99_ms: f64,
+    pub relative_delta: f64,
+    pub regressed: bool,
+}
+
+fn percentile_99_ms(samples_seconds: &[f64]) -> Option<f64> {
+    let mut valid: Vec<f64> = samples_seconds
+        .iter()
+        .copied()
+        .filter(|s| s.is_finite() && *s > 0.0)
+        .map(|s| s * 1000.0)
+        .collect();
+    if valid.is_empty() {
+        return None;
+    }
+    valid.sort_by(|a, b| a.total_cmp(b));
+    let idx = ((valid.len() - 1) * 99) / 100;
+    Some(valid[idx])
+}
+
+/// Compares the 99th-percentile frame durations of `baseline_seconds` and `candidate_seconds`,
+/// flagging a regression when the relative increase exceeds `max_regression_fraction`.
+#[allow(dead_code)]
+pub fn compare_cycle_p99_ms(
+    baseline_seconds: &[f64],
+    candidate_seconds: &[f64],
+    max_regression_fraction: f64,
+) -> Option<BenchmarkRegressionVerdict> {
+    let base_p99 = percentile_99_ms(baseline_seconds)?;
+    let cand_p99 = percentile_99_ms(candidate_seconds)?;
+    let tol = if max_regression_fraction.is_finite() {
+        max_regression_fraction.max(0.0)
+    } else {
+        0.05
+    };
+    let relative_delta = (cand_p99 - base_p99) / base_p99;
+    Some(BenchmarkRegressionVerdict {
+        baseline_p99_ms: base_p99,
+        candidate_p99_ms: cand_p99,
+        relative_delta,
+        regressed: relative_delta > tol,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -59,5 +108,16 @@ mod tests {
             samples[123] = invalid;
             assert!(!audit(true, true, false, 2400, &samples).minimum_120_completed_fps);
         }
+    }
+
+    #[test]
+    fn compare_cycle_p99_detects_frame_time_regression() {
+        let base = vec![0.006; 100];
+        let ok_cand = vec![0.0062; 100];
+        let bad_cand = vec![0.0075; 100];
+        let ok = compare_cycle_p99_ms(&base, &ok_cand, 0.05).unwrap();
+        assert!(!ok.regressed);
+        let bad = compare_cycle_p99_ms(&base, &bad_cand, 0.05).unwrap();
+        assert!(bad.regressed);
     }
 }

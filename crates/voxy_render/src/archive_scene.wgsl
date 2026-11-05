@@ -282,14 +282,18 @@ fn original_bump(p:vec3<f32>,n:vec3<f32>,height:f32)->vec3<f32>{
 fn fx_off(bit:u32)->bool{return (u32(camera.wind.w)&bit)!=0u;}
 fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->f32{
  if fx_off(4u) {return 1.;}
- let radius=0.55;let projected=clamp(radius*camera.viewport.y/max(distance(p,camera.eye.xyz),0.5),2.,96.);
+ let view_dist=max(distance(p,camera.eye.xyz),0.5);
+ if view_dist>68. {return 1.;}
+ let radius=0.55;let projected=clamp(radius*camera.viewport.y/view_dist,2.,96.);
  let ign=fract(52.9829189*fract(dot(floor(pixel),vec2<f32>(0.06711056,0.00583715))))*0.75;
  var cs=vec2<f32>(cos(ign),sin(ign));
  let rot=vec2<f32>(-0.7373688,0.6754903);
  let inv_vp=vec2<f32>(2.,-2.)/camera.viewport.xy;
+ let steps=select(12u,select(8u,6u,view_dist>36.),view_dist>18.);
+ let inv_steps=1./f32(steps);
  var sum=0.;var weight=0.;
- for(var i=0u;i<12u;i++){
-  let r=sqrt((f32(i)+0.5)*(1./12.));
+ for(var i=0u;i<steps;i++){
+  let r=sqrt((f32(i)+0.5)*inv_steps);
   let uv=pixel+cs*(projected*r);
   cs=vec2<f32>(cs.x*rot.x-cs.y*rot.y,cs.x*rot.y+cs.y*rot.x);
   if any(uv<vec2<f32>(0.))||any(uv>=camera.viewport.xy){continue;}
@@ -398,6 +402,14 @@ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,
 // Returns hit radiance and coverage; misses keep the sky/environment term.
 fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
  if fx_off(1u) {return vec4<f32>(0.);}
+ if !ARCHIVE_COMPUTE_GI&&!ARCHIVE_PAIRED_DDA {
+  let d2=dot(p-camera.eye.xyz,p-camera.eye.xyz);
+  if d2>2704. {return vec4<f32>(0.);}
+  let direction=archive_gi_direction(pixel,n);
+  let far_fade=1.-smoothstep(1296.,2704.,d2);
+  let gi=screen_reflection(p+n*0.05,direction,true,select(38.,22.,d2>784.),select(1.26,1.48,d2>784.),select(5u,4u,d2>784.),ARCHIVE_RAY_BOUNDS);
+  return vec4<f32>(gi.rgb,gi.a*far_fade);
+ }
  let direction=archive_gi_direction(pixel,n);
  // Cosine-distributed diffuse bounce march; probes supplement offscreen light.
  return screen_reflection(p+n*0.05,direction,true,42.,1.22,5u,ARCHIVE_RAY_BOUNDS);
@@ -559,8 +571,9 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   var radiance=textureSampleLevel(environment_specular,environment_sampler,reflected,rough_eff*f32(textureNumLevels(environment_specular)-1u)).rgb*environment_intensity.x;
   // Skip tracing where Fresnel makes the scene term invisible (steep dielectric views).
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
-  let mirror=select((1.-smoothstep(0.1,0.4,rough_eff))*smoothstep(0.045,0.07,visible),1.,transmission>0.);
-  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
+  let d2_view=dot(f.world-camera.eye.xyz,f.world-camera.eye.xyz);
+  let mirror=select((1.-smoothstep(0.1,0.4,rough_eff))*smoothstep(0.045,0.07,visible)*(1.-smoothstep(900.,2304.,d2_view)),1.,transmission>0.);
+  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,select(54.,28.,d2_view>576.),select(1.08,1.35,d2_view>576.),select(7u,5u,d2_view>576.),ARCHIVE_RAY_BOUNDS);}radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
   var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
   let probe=probe_irradiance(f.world,normal);
   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
@@ -579,8 +592,9 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric));
   var incoming=daylight(reflected,camera.sun.xyz)*(1.-0.7*rough_eff);
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
-  let mirror=select((1.-smoothstep(0.1,0.4,rough_eff))*smoothstep(0.045,0.07,visible),1.,transmission>0.);
-  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,60.,1.,8u,ARCHIVE_RAY_BOUNDS);}incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
+  let d2_view=dot(f.world-camera.eye.xyz,f.world-camera.eye.xyz);
+  let mirror=select((1.-smoothstep(0.1,0.4,rough_eff))*smoothstep(0.045,0.07,visible)*(1.-smoothstep(900.,2304.,d2_view)),1.,transmission>0.);
+  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,select(54.,28.,d2_view>576.),select(1.08,1.35,d2_view>576.),select(7u,5u,d2_view>576.),ARCHIVE_RAY_BOUNDS);}incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
   if transmission>0. {
    let glass_tint=mix(vec3<f32>(1.),vec3<f32>(0.90,0.96,0.95),clamp((1.-nv)*0.75,0.,1.));
    incoming*=glass_tint;
@@ -624,21 +638,45 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
    let trans=max(dot(-normal,camera.sun.xyz)*0.7+0.3,0.);
    let forward=pow(clamp(dot(-view,camera.sun.xyz),0.,1.),3.);
    colour+=base*vec3<f32>(1.15,1.25,0.65)*camera.sun_colour.rgb*camera.sun_colour.a*(trans*0.18+forward*0.16)*visibility;
+   if camera.surface.x>0. {
+    let wet_fc=0.04+0.96*fifth(1.-nv);
+    let r_leaf=reflect(-view,normal);
+    var leaf_env=daylight(r_leaf,camera.sun.xyz);
+    if camera.eye.w>0.5 {leaf_env=textureSampleLevel(environment_specular,environment_sampler,r_leaf,1.0).rgb*environment_intensity.x;}
+    colour+=leaf_env*wet_fc*camera.surface.x*0.32*ao;
+   }
   } else if z>4.5&&z<5.5 {
    let film_nm=260.+180.*original_noise(f.world*2.4);
    let irid=thin_film_iridescence(nv,film_nm);
    colour*=mix(vec3<f32>(1.),irid,0.08*smoothstep(0.2,0.85,1.-nv));
+   let aniso_t=normalize(cross(normal,vec3<f32>(0.,1.,0.))+vec3<f32>(1e-4,0.,0.));
+   let th=dot(aniso_t,normalize(view+camera.sun.xyz));
+   let streak=pow(max(1.-th*th,0.),14.)*max(nl_sun,0.)*visibility;
+   colour+=f0*camera.sun_colour.rgb*camera.sun_colour.a*streak*0.09;
   } else if z>3.5&&z<4.5 {
    let fc=0.04+0.96*fifth(1.-max(dot(geometric,view),0.));
    let r_coat=reflect(-view,normalize(mix(normal,geometric,0.65)));
    var coat_env=daylight(r_coat,camera.sun.xyz);
    if camera.eye.w>0.5 {coat_env=textureSampleLevel(environment_specular,environment_sampler,r_coat,1.2).rgb*environment_intensity.x;}
-   colour+=coat_env*fc*0.18*ao*smoothstep(-0.1,0.05,dot(r_coat,geometric));
+   let wood_t=normalize(cross(normal,vec3<f32>(1.,0.,0.))+vec3<f32>(0.,1e-4,0.));
+   let th_w=dot(wood_t,normalize(view+camera.sun.xyz));
+   let fiber_glint=pow(max(1.-th_w*th_w,0.),10.)*max(nl_sun,0.)*visibility*0.05;
+   colour+=coat_env*fc*0.18*ao*smoothstep(-0.1,0.05,dot(r_coat,geometric))+base*camera.sun_colour.rgb*camera.sun_colour.a*fiber_glint;
   }
  } else if transmission>0. {
   let film_nm=320.+140.*original_noise(f.world*0.85);
   let irid=thin_film_iridescence(nv,film_nm);
   colour*=mix(vec3<f32>(1.),irid,0.045*smoothstep(0.25,0.9,1.-nv));
+  let dusk_window=smoothstep(0.14,-0.06,camera.sun.y)*smoothstep(0.95,0.2,abs(geometric.y))*smoothstep(86.,76.,f.world.z);
+  if dusk_window>0. {
+   let room_cell=floor(vec3<f32>(f.world.x*0.35,f.world.y*0.42,f.world.z*0.28));
+   let room_lit=smoothstep(0.28,0.62,original_hash(room_cell));
+   let p_in=f.world-view*0.65/max(nv,0.22);
+   let drape=0.65+0.35*sin(p_in.z*5.5+p_in.x*3.5);
+   let ceil_glow=smoothstep(-0.4,0.8,sin(p_in.y*2.1));
+   let warm_room=vec3<f32>(1.45,0.86,0.42)*(0.45+0.55*ceil_glow)*drape;
+   colour+=warm_room*dusk_window*room_lit*(1.-f0.r)*camera.viewport.w*420.;
+  }
  }
  if any(material.emissive_normal.rgb!=vec3<f32>(0.)){
   let day_suppress=mix(1.,0.16+0.84*fifth(nv),smoothstep(0.05,0.35,camera.sun.y));
