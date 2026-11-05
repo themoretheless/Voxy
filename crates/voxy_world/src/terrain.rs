@@ -159,6 +159,29 @@ fn noise(x: i64, z: i64, period: i64, seed: u64) -> i64 {
     )
 }
 
+/// Performs smoothstep-weighted bilinear interpolation of a climate scalar
+/// (such as temperature or humidity) across a biome grid cell `(c00, c10, c01, c11)`
+/// for fractional coordinates `tx, tz` in `[0.0, 1.0]`.
+#[must_use]
+pub fn bilinear_climate_blend(c00: f32, c10: f32, c01: f32, c11: f32, tx: f32, tz: f32) -> f32 {
+    if !c00.is_finite()
+        || !c10.is_finite()
+        || !c01.is_finite()
+        || !c11.is_finite()
+        || !tx.is_finite()
+        || !tz.is_finite()
+    {
+        return 0.0;
+    }
+    let ux = tx.clamp(0.0, 1.0);
+    let uz = tz.clamp(0.0, 1.0);
+    let sx = ux * ux * (3.0 - 2.0 * ux);
+    let sz = uz * uz * (3.0 - 2.0 * uz);
+    let top = c00 + (c10 - c00) * sx;
+    let bot = c01 + (c11 - c01) * sx;
+    top + (bot - top) * sz
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -263,5 +286,7 @@ mod tests {
             ),
             Err(GenerationError::CoordinateOverflow)
         ));
+        assert!((bilinear_climate_blend(0.0, 10.0, 0.0, 10.0, 0.5, 0.5) - 5.0).abs() < 1e-5);
+        assert!((bilinear_climate_blend(2.0, 4.0, 6.0, 8.0, 0.0, 1.0) - 6.0).abs() < 1e-5);
     }
 }

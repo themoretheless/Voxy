@@ -482,5 +482,45 @@ mod tests {
         .unwrap();
         assert!(matches!(outcome, ProjectileOutcome::Impact(hit) if hit.pos.x == 3));
         assert_eq!(projectile, before);
+        let (low, high) = solve_ballistic_elevation_angles(30.0, 9.81, 50.0, 0.0).unwrap();
+        assert!(low > 0.0 && low < high && high < std::f64::consts::FRAC_PI_2);
+        assert!(solve_ballistic_elevation_angles(10.0, 9.81, 500.0, 0.0).is_none());
     }
+}
+
+/// Solves for the `(low_arc_rad, high_arc_rad)` launch elevation angles required for a projectile
+/// fired with muzzle speed `speed_m_s` under downward gravity `gravity_m_s2` to hit a target at
+/// horizontal distance `horizontal_dist_m` and altitude difference `vertical_delta_m`.
+/// Returns `None` if the target is out of ballistic range or parameters are invalid.
+#[must_use]
+pub fn solve_ballistic_elevation_angles(
+    speed_m_s: f64,
+    gravity_m_s2: f64,
+    horizontal_dist_m: f64,
+    vertical_delta_m: f64,
+) -> Option<(f64, f64)> {
+    if !speed_m_s.is_finite()
+        || !gravity_m_s2.is_finite()
+        || !horizontal_dist_m.is_finite()
+        || !vertical_delta_m.is_finite()
+        || speed_m_s <= 0.0
+        || gravity_m_s2 <= 0.0
+        || horizontal_dist_m <= 0.0
+    {
+        return None;
+    }
+    let v2 = speed_m_s * speed_m_s;
+    let v4 = v2 * v2;
+    let x = horizontal_dist_m;
+    let y = vertical_delta_m;
+    let g = gravity_m_s2;
+    let disc = v4 - g * (g * x * x + 2.0 * y * v2);
+    if disc < 0.0 {
+        return None;
+    }
+    let root = disc.sqrt();
+    let gx = g * x;
+    let low = ((v2 - root) / gx).atan();
+    let high = ((v2 + root) / gx).atan();
+    Some((low.min(high), low.max(high)))
 }

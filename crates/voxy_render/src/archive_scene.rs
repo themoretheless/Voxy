@@ -3766,6 +3766,73 @@ impl ArchiveProbeBake {
     }
 }
 
+/// Remaps a dry dielectric roughness in `[0.04, 1.0]` and diffuse albedo factor under a thin
+/// water film of `wetness` in `[0.0, 1.0]` (Sebastien Lagarde / porous medium darkening model).
+///
+/// Returns `(effective_roughness, porosity_albedo_scale)`.
+#[must_use]
+pub fn wet_roughness_remapping(dry_roughness: f32, wetness: f32, porosity: f32) -> (f32, f32) {
+    let r = if dry_roughness.is_finite() {
+        dry_roughness.clamp(0.04, 1.0)
+    } else {
+        0.5
+    };
+    let w = if wetness.is_finite() {
+        wetness.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    let p = if porosity.is_finite() {
+        porosity.clamp(0.0, 1.0)
+    } else {
+        0.5
+    };
+    // Water film fills micro-cavities and smooths roughness toward ~0.06 at saturation:
+    let wet_r = (r * (1.0 - 0.85 * w)).clamp(0.04, 1.0);
+    // Internal total reflection in water-filled pores darkens porous stone/asphalt:
+    let darken = 1.0 - 0.65 * p * w;
+    (wet_r, darken.clamp(0.2, 1.0))
+}
+
+/// Selects an adaptive screen-space GI ray-march step budget in `[min_steps, max_steps]`
+/// proportional to the available frame budget ratio `target_frame_ms / measured_frame_ms`.
+#[must_use]
+pub fn adaptive_gi_ray_budget(
+    measured_frame_ms: f32,
+    target_frame_ms: f32,
+    min_steps: u32,
+    max_steps: u32,
+) -> u32 {
+    let lo = min_steps.max(4);
+    let hi = max_steps.max(lo);
+    if !measured_frame_ms.is_finite()
+        || !target_frame_ms.is_finite()
+        || measured_frame_ms <= 0.0
+        || target_frame_ms <= 0.0
+    {
+        return lo;
+    }
+    let ratio = (target_frame_ms / measured_frame_ms).clamp(0.25, 2.0);
+    let t = ((ratio - 0.5) / 1.0).clamp(0.0, 1.0);
+    let steps = (lo as f32 + (hi - lo) as f32 * t).round() as u32;
+    steps.clamp(lo, hi)
+}
+
+#[cfg(test)]
+mod n1_archive_scene_tests {
+    use super::*;
+
+    #[test]
+    fn wet_roughness_remapping_smooths_and_darkens_porous_surfaces() {
+        let (dry_r, dry_scale) = wet_roughness_remapping(0.8, 0.0, 0.7);
+        let (wet_r, wet_scale) = wet_roughness_remapping(0.8, 1.0, 0.7);
+        assert!(wet_r < dry_r);
+        assert!(wet_scale < dry_scale);
+        assert_eq!(adaptive_gi_ray_budget(4.0, 8.33, 8, 32), 32);
+        assert_eq!(adaptive_gi_ray_budget(20.0, 8.33, 8, 32), 8);
+    }
+}
+
 #[cfg(test)]
 #[path = "archive_vertex_invariance_tests.rs"]
 mod vertex_invariance_tests;

@@ -288,6 +288,43 @@ impl ActionBuffer {
     }
 }
 
+/// Evaluates a single-step 1€ (One-Euro) adaptive low-pass filter (Casiez et al. 2012)
+/// that smooths slow jitter via `min_cutoff_hz` while opening bandwidth via `beta` during fast motion.
+#[must_use]
+pub fn one_euro_smooth(
+    prev_value: f32,
+    raw_value: f32,
+    dt_s: f32,
+    min_cutoff_hz: f32,
+    beta: f32,
+) -> f32 {
+    if !raw_value.is_finite() {
+        return if prev_value.is_finite() {
+            prev_value
+        } else {
+            0.0
+        };
+    }
+    if !prev_value.is_finite()
+        || !dt_s.is_finite()
+        || dt_s <= 0.0
+        || !min_cutoff_hz.is_finite()
+        || min_cutoff_hz <= 0.0
+    {
+        return raw_value;
+    }
+    let speed = ((raw_value - prev_value) / dt_s).abs();
+    let b = if beta.is_finite() && beta >= 0.0 {
+        beta
+    } else {
+        0.0
+    };
+    let cutoff = min_cutoff_hz + b * speed;
+    let tau = 1.0 / (2.0 * std::f32::consts::PI * cutoff);
+    let alpha = (1.0 / (1.0 + tau / dt_s)).clamp(0.0, 1.0);
+    prev_value + alpha * (raw_value - prev_value)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -443,5 +480,9 @@ mod tests {
         buffer.record("jump", 0.05).unwrap();
         buffer.step(0.06);
         assert!(!buffer.consume("jump"));
+
+        let slow = one_euro_smooth(0.0, 0.01, 1.0 / 60.0, 1.0, 0.5);
+        let fast = one_euro_smooth(0.0, 10.0, 1.0 / 60.0, 1.0, 0.5);
+        assert!(slow / 0.01 < fast / 10.0);
     }
 }

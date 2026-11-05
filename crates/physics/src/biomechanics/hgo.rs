@@ -96,6 +96,31 @@ impl HgoMaterial {
     }
 }
 
+/// Computes the Gasser–Ogden–Holzapfel dispersed fiber effective invariant
+/// $\overline{I}_4^* = \kappa \overline{I}_1 + (1 - 3\kappa)\overline{I}_4$ for fiber dispersion
+/// parameter $\kappa \in [0, 1/3]$ (`0` = perfectly aligned fibers, `1/3` = isotropic).
+///
+/// # Errors
+///
+/// Rejects non-finite inputs, $\overline{I}_1 < 3$, $\overline{I}_4 \le 0$, or $\kappa \notin [0, 1/3]$.
+pub fn hgo_dispersion_effective_stretch(
+    i1_bar: f64,
+    i4_bar: f64,
+    kappa: f64,
+) -> Result<f64, &'static str> {
+    if !i1_bar.is_finite()
+        || !i4_bar.is_finite()
+        || !kappa.is_finite()
+        || i1_bar < 3.0 - 1e-9
+        || i4_bar <= 0.0
+        || !(0.0..=1.0 / 3.0 + 1e-12).contains(&kappa)
+    {
+        return Err("invalid HGO dispersion parameters");
+    }
+    let k = kappa.clamp(0.0, 1.0 / 3.0);
+    Ok(k * i1_bar + (1.0 - 3.0 * k) * i4_bar)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -214,5 +239,10 @@ mod tests {
         let rest = m.response(IDENTITY).unwrap();
         assert_eq!(rest.energy_density, 0.);
         assert!(rest.first_piola.iter().flatten().all(|x| x.abs() < 1e-10));
+        assert!((hgo_dispersion_effective_stretch(3.4, 1.44, 0.0).unwrap() - 1.44).abs() < 1e-12);
+        assert!(
+            (hgo_dispersion_effective_stretch(3.6, 1.44, 1.0 / 3.0).unwrap() - 1.2).abs() < 1e-12
+        );
+        assert!(hgo_dispersion_effective_stretch(3.4, 1.44, 0.5).is_err());
     }
 }

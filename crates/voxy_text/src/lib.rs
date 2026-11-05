@@ -114,6 +114,25 @@ pub fn quantize_subpixel_x(x: f32) -> (i32, u8) {
     (pixel, phase)
 }
 
+/// Computes the effective screen-space SDF pixel range (`>= 1.0`) for anti-aliased MSDF glyph rendering.
+#[must_use]
+pub fn msdf_screen_px_range(
+    rendered_glyph_px: f32,
+    atlas_glyph_px: f32,
+    distance_range_px: f32,
+) -> f32 {
+    if !rendered_glyph_px.is_finite()
+        || rendered_glyph_px <= 0.0
+        || !atlas_glyph_px.is_finite()
+        || atlas_glyph_px <= 0.0
+        || !distance_range_px.is_finite()
+        || distance_range_px <= 0.0
+    {
+        return 1.0;
+    }
+    ((rendered_glyph_px / atlas_glyph_px) * distance_range_px).max(1.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -151,5 +170,7 @@ mod tests {
         assert_eq!(quantize_subpixel_x(10.74), (10, 3));
         assert_eq!(quantize_subpixel_x(10.95), (11, 0));
         assert_eq!(quantize_subpixel_x(-0.25), (-1, 3));
+        assert!((msdf_screen_px_range(64.0, 32.0, 4.0) - 8.0).abs() < 1e-6);
+        assert_eq!(msdf_screen_px_range(4.0, 32.0, 4.0), 1.0);
     }
 }

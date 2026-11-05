@@ -95,3 +95,32 @@ pub fn mesh(rows: &[[&str; 3]]) -> Result<SceneMesh, voxy_render::SceneError> {
     }
     SceneMesh::new(vertices, indices)
 }
+
+/// Evaluates a branchless polynomial fit of the perceptually uniform Viridis colormap
+/// in linear sRGB `[r, g, b]` for normalized scalar `t` in `[0.0, 1.0]`.
+#[must_use]
+pub fn viridis_colormap_rgb(t: f32) -> [f32; 3] {
+    let x = if t.is_finite() { t.clamp(0.0, 1.0) } else { 0.0 };
+    let r = (0.280268
+        + x * (-0.143511 + x * (2.225794 + x * (-5.076385 + x * (5.166253 - x * 1.45906)))))
+        .clamp(0.0, 1.0);
+    let g = (0.003362 + x * (1.268001 + x * (-0.270901 - x * 0.116085))).clamp(0.0, 1.0);
+    let b = (0.33001 + x * (1.394112 + x * (-4.414325 + x * (4.106652 - x * 1.29812))))
+        .clamp(0.0, 1.0);
+    [r, g, b]
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn viridis_colormap_spans_dark_purple_to_bright_yellow() {
+        let low = viridis_colormap_rgb(0.0);
+        let mid = viridis_colormap_rgb(0.5);
+        let high = viridis_colormap_rgb(1.0);
+        assert!(low[2] > low[1]);
+        assert!(mid[1] > low[1] && high[1] > mid[1]);
+        assert!(high[0] > 0.85 && high[1] > 0.80);
+    }
+}

@@ -285,6 +285,13 @@ impl<const N: usize> FrameLatencyWindow<N> {
         let p99 = active[rank(99)];
         (p50, p95, p99)
     }
+
+    /// Returns the peak-to-median frame pacing jitter `(p99 - p50)` in nanoseconds.
+    #[must_use]
+    pub fn jitter_ns(&self) -> u64 {
+        let (p50, _, p99) = self.percentiles_micros();
+        u64::from(p99.saturating_sub(p50)).saturating_mul(1_000)
+    }
 }
 
 /// Token-bucket budget limiter for background chunk meshing and streaming per frame.
@@ -413,6 +420,7 @@ mod tests {
         let (p50, p95, p99) = window.percentiles_micros();
         assert_eq!(p50, 8_000);
         assert!(p95 >= 8_000 && p99 == 25_000);
+        assert_eq!(window.jitter_ns(), 17_000_000);
 
         let mut budget = FrameWorkBudget::from_micros(1_500);
         assert!(budget.try_consume(900));

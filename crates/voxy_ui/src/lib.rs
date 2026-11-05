@@ -288,6 +288,19 @@ impl ColorVisionMode {
     }
 }
 
+/// Computes the WCAG 2.1 contrast ratio (`1.0..=21.0`) between two relative luminances in `[0.0, 1.0]`.
+#[must_use]
+pub fn wcag_contrast_ratio(luma_a: f32, luma_b: f32) -> f32 {
+    if !luma_a.is_finite() || !luma_b.is_finite() {
+        return 1.0;
+    }
+    let a = luma_a.clamp(0.0, 1.0);
+    let b = luma_b.clamp(0.0, 1.0);
+    let lighter = a.max(b);
+    let darker = a.min(b);
+    ((lighter + 0.05) / (darker + 0.05)).clamp(1.0, 21.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -407,6 +420,8 @@ mod tests {
             }
             assert!((out[3] - 0.8).abs() < 1e-6);
         }
+        assert!((wcag_contrast_ratio(1.0, 0.0) - 21.0).abs() < 1e-5);
+        assert!((wcag_contrast_ratio(0.5, 0.5) - 1.0).abs() < 1e-5);
     }
 }
 

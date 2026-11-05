@@ -139,6 +139,33 @@ impl<T: Any + Clone + Send + Sync> SceneExtraction<T> {
         Ok(())
     }
 }
+
+/// Computes the vertical screen-space height fraction (`0.0..=1.0+`) occupied by a bounding sphere
+/// of `world_radius` at `distance` under `vertical_fov_rad`.
+#[must_use]
+pub fn projected_screen_height_fraction(
+    world_radius: f32,
+    distance: f32,
+    vertical_fov_rad: f32,
+) -> f32 {
+    if !world_radius.is_finite()
+        || world_radius <= 0.0
+        || !distance.is_finite()
+        || !vertical_fov_rad.is_finite()
+        || vertical_fov_rad <= 0.0
+        || vertical_fov_rad >= std::f32::consts::PI
+    {
+        return 0.0;
+    }
+    if distance <= world_radius {
+        return 1.0;
+    }
+    let half_tan = (vertical_fov_rad * 0.5).tan();
+    if !half_tan.is_finite() || half_tan <= 0.0 {
+        return 0.0;
+    }
+    (world_radius / (distance * half_tan)).clamp(0.0, 1.0)
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -274,5 +301,15 @@ mod tests {
             Err(SceneGraphError::WorldOverflow)
         );
         assert!(projection.instances().is_empty());
+    }
+    #[test]
+    fn projected_screen_height_fraction_decreases_with_distance() {
+        let fov = std::f32::consts::FRAC_PI_2;
+        let near = projected_screen_height_fraction(1.0, 2.0, fov);
+        let far = projected_screen_height_fraction(1.0, 10.0, fov);
+        assert!((near - 0.5).abs() < 1e-5);
+        assert!((far - 0.1).abs() < 1e-5);
+        assert_eq!(projected_screen_height_fraction(2.0, 1.0, fov), 1.0);
+        assert_eq!(projected_screen_height_fraction(-1.0, 5.0, fov), 0.0);
     }
 }

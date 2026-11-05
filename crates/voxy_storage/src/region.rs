@@ -234,6 +234,34 @@ impl RegionStore {
         self.cursor = after;
         Ok((before, after))
     }
+
+    /// Estimates the storage fragmentation ratio in `[0.0, 1.0)` of the region file
+    /// (`0.0` when only the latest checkpoint frames exist, approaching `1.0` as superseded
+    /// historical frames accumulate) so background compaction (`vacuum`) can be scheduled.
+    #[must_use]
+    pub fn fragmentation_ratio(&self, registry: &BlockRegistry) -> f64 {
+        let total = self.cursor.saturating_sub(HEADER_LEN as u64);
+        if total == 0 || self.entries.is_empty() {
+            return 0.0;
+        }
+        let Some(through) = self.checkpoint_through else {
+            return 0.0;
+        };
+        let staged: Vec<(u16, StoredChunk, u64)> = self
+            .entries
+            .iter()
+            .map(|(&slot, entry)| (slot, entry.chunk.clone(), entry.last_commit))
+            .collect();
+        let Ok(live_frame) = encode_frame(&staged, through, registry) else {
+            return 0.0;
+        };
+        let live = live_frame.len() as u64;
+        if live >= total {
+            0.0
+        } else {
+            ((total - live) as f64 / total as f64).clamp(0.0, 1.0)
+        }
+    }
 }
 
 #[must_use]
@@ -744,6 +772,7 @@ mod tests {
         }
         let (before, after) = store.vacuum(&registry).unwrap();
         assert!(after < before);
+        assert!(store.fragmentation_ratio(&registry) < 1e-6);
         drop(store);
         let (reopened, recovery) = RegionStore::open(&path, region, &registry).unwrap();
         assert!(!recovery.discarded_tail);

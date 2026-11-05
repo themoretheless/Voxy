@@ -123,9 +123,39 @@ pub fn translation_gizmo() -> Result<SceneMesh, SceneError> {
     SceneMesh::new(vertices, indices)
 }
 
+/// Snaps a 3D world translation to the nearest uniform `grid_step` increment when `grid_step > 0.0`.
+#[must_use]
+pub fn snap_translation_to_grid(position: Vec3, grid_step: f32) -> Vec3 {
+    if !position.is_finite() || !grid_step.is_finite() || grid_step <= 0.0 {
+        return position;
+    }
+    (position / grid_step).round() * grid_step
+}
+
+/// Snaps a rotation angle in radians to the nearest `step_rad` increment when `step_rad > 0.0`.
+#[must_use]
+pub fn snap_angle_radians(angle_rad: f32, step_rad: f32) -> f32 {
+    if !angle_rad.is_finite() || !step_rad.is_finite() || step_rad <= 0.0 {
+        return angle_rad;
+    }
+    (angle_rad / step_rad).round() * step_rad
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn snap_translation_and_angle_quantize_to_step() {
+        let p = snap_translation_to_grid(Vec3::new(1.24, -0.26, 0.51), 0.25);
+        assert!((p - Vec3::new(1.25, -0.25, 0.50)).length() < 1e-6);
+        assert_eq!(
+            snap_translation_to_grid(Vec3::new(1.2, 2.3, 3.4), 0.0),
+            Vec3::new(1.2, 2.3, 3.4)
+        );
+        let step = std::f32::consts::FRAC_PI_4;
+        let a = snap_angle_radians(0.70, step);
+        assert!((a - step).abs() < 1e-6);
+    }
     #[test]
     fn axis_hits_use_physical_viewport_coordinates() {
         let size = Vec2::new(640.0, 480.0);

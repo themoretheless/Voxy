@@ -1381,3 +1381,53 @@ use crate::math::sub;
 pub use thermal::{
     CompleteDryingReport, FilmSubstrateHeat, ThermalFilmMixture, ThermalFilmWithdrawal,
 };
+
+/// Computes the attractive Young–Laplace capillary meniscus bridge force (Newtons)
+/// between two wetted spherical asperities of effective radius `radius_m` separated by `gap_m`:
+/// $F_{\text{cap}} = \frac{4 \pi R \gamma \cos\theta}{1 + h / (2 d_{\text{imm}})}$.
+///
+/// # Errors
+///
+/// Rejects non-finite inputs, non-positive radius, negative surface tension, negative gap,
+/// or contact angle outside `[0, pi/2]`.
+pub fn capillary_bridge_force_n(
+    radius_m: f64,
+    surface_tension_n_m: f64,
+    contact_angle_rad: f64,
+    gap_m: f64,
+    film_thickness_m: f64,
+) -> Result<f64, &'static str> {
+    if !radius_m.is_finite()
+        || !surface_tension_n_m.is_finite()
+        || !contact_angle_rad.is_finite()
+        || !gap_m.is_finite()
+        || !film_thickness_m.is_finite()
+        || radius_m <= 0.0
+        || surface_tension_n_m < 0.0
+        || !(0.0..=std::f64::consts::FRAC_PI_2).contains(&contact_angle_rad)
+        || gap_m < 0.0
+        || film_thickness_m <= 0.0
+    {
+        return Err("invalid capillary meniscus bridge parameters");
+    }
+    let f_max = 4.0 * std::f64::consts::PI * radius_m * surface_tension_n_m * contact_angle_rad.cos();
+    let denom = 1.0 + gap_m / (2.0 * film_thickness_m);
+    let force = f_max / denom;
+    if !force.is_finite() {
+        return Err("capillary bridge force overflow");
+    }
+    Ok(force)
+}
+
+#[cfg(test)]
+mod capillary_bridge_tests {
+    use super::*;
+
+    #[test]
+    fn capillary_bridge_force_decays_with_separation_gap() {
+        let contact = capillary_bridge_force_n(0.01, 0.072, 0.2, 0.0, 1e-4).unwrap();
+        let separated = capillary_bridge_force_n(0.01, 0.072, 0.2, 2e-4, 1e-4).unwrap();
+        assert!(contact > separated && separated > 0.0);
+        assert!((contact / separated - 2.0).abs() < 1e-9);
+    }
+}

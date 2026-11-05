@@ -568,4 +568,48 @@ mod tests {
         );
         assert_eq!(progress.next_checkpoint, 0);
     }
+
+    #[test]
+    fn pacejka_lateral_force_is_odd_and_bounded_by_peak_friction() {
+        let f0 = pacejka_lateral_force(0.0, 4000.0, 10.0, 1.3, 0.9).unwrap();
+        assert_eq!(f0, 0.0);
+        let pos = pacejka_lateral_force(0.12, 4000.0, 10.0, 1.3, 0.9).unwrap();
+        let neg = pacejka_lateral_force(-0.12, 4000.0, 10.0, 1.3, 0.9).unwrap();
+        assert!(pos > 0.0 && pos <= 4000.0 * 0.9 + 1e-6);
+        assert!((pos + neg).abs() < 1e-9);
+    }
+}
+
+/// Evaluates the simplified Pacejka Magic Formula lateral tire force
+/// $F_y = \mu F_z \sin\!\left(C \arctan(B \alpha)\right)$ in Newtons for slip angle
+/// `slip_angle_rad`, vertical tire load `normal_load_n`, stiffness factor `b`, shape factor `c`,
+/// and road friction coefficient `mu`.
+///
+/// # Errors
+///
+/// Rejects non-finite inputs, negative normal load, or non-positive `b`, `c`, `mu`.
+pub fn pacejka_lateral_force(
+    slip_angle_rad: f64,
+    normal_load_n: f64,
+    b: f64,
+    c: f64,
+    mu: f64,
+) -> Result<f64, VehicleError> {
+    if !slip_angle_rad.is_finite()
+        || !normal_load_n.is_finite()
+        || !b.is_finite()
+        || !c.is_finite()
+        || !mu.is_finite()
+        || normal_load_n < 0.0
+        || b <= 0.0
+        || c <= 0.0
+        || mu <= 0.0
+    {
+        return Err(VehicleError::InvalidState);
+    }
+    let force = mu * normal_load_n * (c * (b * slip_angle_rad).atan()).sin();
+    if !force.is_finite() {
+        return Err(VehicleError::NumericalOverflow);
+    }
+    Ok(force)
 }

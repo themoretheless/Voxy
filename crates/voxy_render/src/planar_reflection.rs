@@ -236,3 +236,37 @@ impl PlanarReflectionJob {
         &self.current_depth
     }
 }
+
+/// Computes anisotropic `(roughness_along_view, roughness_across_view)` for elongated vertical
+/// reflection streaks on wet roads at grazing viewing angles (`n_dot_v` in `[0.0, 1.0]`).
+#[must_use]
+pub fn anisotropic_road_streak_roughness(base_roughness: f32, n_dot_v: f32) -> (f32, f32) {
+    let r = if base_roughness.is_finite() {
+        base_roughness.clamp(0.02, 1.0)
+    } else {
+        0.2
+    };
+    let nv = if n_dot_v.is_finite() {
+        n_dot_v.clamp(0.02, 1.0)
+    } else {
+        0.5
+    };
+    // At grazing incidence, micro-facets foreshorten along the view direction, stretching highlights:
+    let grazing_stretch = 1.0 + 2.5 * (1.0 - nv).powi(2);
+    let along = (r * grazing_stretch).clamp(0.02, 1.0);
+    let across = (r * 0.65).clamp(0.02, 1.0);
+    (along, across)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn anisotropic_road_streak_elongates_along_view_at_grazing_angles() {
+        let (along_grazing, across) = anisotropic_road_streak_roughness(0.15, 0.1);
+        let (along_normal, _) = anisotropic_road_streak_roughness(0.15, 0.95);
+        assert!(along_grazing > along_normal);
+        assert!(along_grazing > across);
+    }
+}

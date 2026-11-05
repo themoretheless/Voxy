@@ -293,3 +293,32 @@ impl GpuMediumProgram {
         })
     }
 }
+
+/// Evaluates the normalized 3D Henyey–Greenstein anisotropic scattering phase function
+/// $\Phi(\cos\theta; g) = \frac{1 - g^2}{4\pi (1 + g^2 - 2 g \cos\theta)^{3/2}}$
+/// for cosine scattering angle `cos_theta` $\in [-1, 1]$ and asymmetry factor `g` $\in (-1, 1)$.
+#[must_use]
+pub fn henyey_greenstein_phase(cos_theta: f32, g: f32) -> f32 {
+    if !cos_theta.is_finite() || !g.is_finite() {
+        return 0.0;
+    }
+    let mu = cos_theta.clamp(-1.0, 1.0);
+    let g_clamped = g.clamp(-0.99, 0.99);
+    let g2 = g_clamped * g_clamped;
+    let denom_base = (1.0 + g2 - 2.0 * g_clamped * mu).max(1e-5);
+    (1.0 - g2) / (4.0 * std::f32::consts::PI * denom_base * denom_base.sqrt())
+}
+
+#[cfg(test)]
+mod phase_tests {
+    use super::*;
+
+    #[test]
+    fn henyey_greenstein_favors_forward_scattering_for_positive_g() {
+        let iso = henyey_greenstein_phase(0.0, 0.0);
+        assert!((iso - 1.0 / (4.0 * std::f32::consts::PI)).abs() < 1e-6);
+        let fwd = henyey_greenstein_phase(1.0, 0.7);
+        let back = henyey_greenstein_phase(-1.0, 0.7);
+        assert!(fwd > back * 10.0);
+    }
+}

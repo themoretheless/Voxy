@@ -110,6 +110,13 @@ impl DlssQuality {
             height: scale_dim(output.height),
         })
     }
+
+    /// Computes the negative texture sampler mipmap LOD bias (`-log2(upscale_factor)`)
+    /// recommended by NVIDIA DLSS programming guidelines to preserve full-resolution texture sharpness.
+    #[must_use]
+    pub fn recommended_mipmap_bias(self) -> f32 {
+        -self.upscale_factor().log2()
+    }
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
@@ -1580,6 +1587,8 @@ mod camera_tests {
                 })
                 .is_err()
         );
+        assert!((DlssQuality::Performance.recommended_mipmap_bias() + 1.0).abs() < 1e-6);
+        assert_eq!(DlssQuality::Dlaa.recommended_mipmap_bias(), 0.0);
     }
 }
 

@@ -400,5 +400,33 @@ mod tests {
         assert_eq!(islands.len(), 2);
         assert_eq!(islands[0].len(), 3);
         assert_eq!(islands[1], vec![VoxelPos { x: 2, y: 2, z: 0 }]);
+
+        let m = voxel_cantilever_bending_moment(4, 10.0, 9.81, 0.5).unwrap();
+        // M = N * m * g * (N * edge / 2) = 4 * 10 * 9.81 * (4 * 0.5 / 2) = 392.4 N*m
+        assert!((m - 392.4).abs() < 1e-6);
     }
+}
+
+/// Computes the root bending moment (N·m) exerted at the wall support by a horizontal
+/// cantilever beam of `overhang_voxels` uniform voxels under self-weight:
+/// $M = \frac{1}{2} N^2 m_{\text{voxel}} g L_{\text{voxel}}$.
+#[must_use]
+pub fn voxel_cantilever_bending_moment(
+    overhang_voxels: u32,
+    voxel_mass_kg: f64,
+    gravity_m_s2: f64,
+    voxel_edge_m: f64,
+) -> Option<f64> {
+    if !voxel_mass_kg.is_finite()
+        || !gravity_m_s2.is_finite()
+        || !voxel_edge_m.is_finite()
+        || voxel_mass_kg <= 0.0
+        || gravity_m_s2 <= 0.0
+        || voxel_edge_m <= 0.0
+    {
+        return None;
+    }
+    let n = f64::from(overhang_voxels);
+    let moment = 0.5 * n * n * voxel_mass_kg * gravity_m_s2 * voxel_edge_m;
+    moment.is_finite().then_some(moment)
 }

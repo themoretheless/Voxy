@@ -2648,3 +2648,99 @@ pub use scene_archive::{
 mod scene_tangents;
 
 pub mod plants;
+
+/// Computes the Lengyel / MikkTSpace-style triangle tangent `[tx, ty, tz, handedness]`
+/// from triangle positions and UV coordinates. Returns `None` if UV or geometric area is degenerate.
+#[must_use]
+pub fn compute_triangle_tangent(
+    p0: [f32; 3],
+    p1: [f32; 3],
+    p2: [f32; 3],
+    uv0: [f32; 2],
+    uv1: [f32; 2],
+    uv2: [f32; 2],
+) -> Option<[f32; 4]> {
+    let v0 = Vec3::from_array(p0);
+    let v1 = Vec3::from_array(p1);
+    let v2 = Vec3::from_array(p2);
+    let e1 = v1 - v0;
+    let e2 = v2 - v0;
+    let n = e1.cross(e2).try_normalize()?;
+    let du1 = uv1[0] - uv0[0];
+    let dv1 = uv1[1] - uv0[1];
+    let du2 = uv2[0] - uv0[0];
+    let dv2 = uv2[1] - uv0[1];
+    let det = du1 * dv2 - du2 * dv1;
+    if !det.is_finite() || det.abs() <= 1e-8 {
+        return None;
+    }
+    let inv_det = 1.0 / det;
+    let t_raw = (e1 * dv2 - e2 * dv1) * inv_det;
+    let b_raw = (e2 * du1 - e1 * du2) * inv_det;
+    let t_ortho = (t_raw - n * n.dot(t_raw)).try_normalize()?;
+    let handedness = if n.cross(t_ortho).dot(b_raw) < 0.0 {
+        -1.0
+    } else {
+        1.0
+    };
+    Some([t_ortho.x, t_ortho.y, t_ortho.z, handedness])
+}
+
+/// Checks whether a triangle index buffer forms a closed, watertight 2-manifold mesh
+/// (every directed edge `(u, v)` has no duplicates and has a matching opposite edge `(v, u)`).
+#[must_use]
+pub fn is_watertight_manifold_mesh(indices: &[u32]) -> bool {
+    if indices.is_empty() || !indices.len().is_multiple_of(3) {
+        return false;
+    }
+    let mut directed_edges = std::collections::BTreeSet::new();
+    for tri in indices.chunks_exact(3) {
+        let (a, b, c) = (tri[0], tri[1], tri[2]);
+        if a == b || b == c || c == a {
+            return false;
+        }
+        for edge in [(a, b), (b, c), (c, a)] {
+            if !directed_edges.insert(edge) {
+                return false;
+            }
+        }
+    }
+    directed_edges
+        .iter()
+        .all(|&(u, v)| directed_edges.contains(&(v, u)))
+}
+
+#[cfg(test)]
+mod n7_mesh_topology_tests {
+    use super::*;
+
+    #[test]
+    fn triangle_tangent_and_watertight_manifold_checks_work() {
+        let tangent = compute_triangle_tangent(
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+        )
+        .unwrap();
+        assert!((tangent[0] - 1.0).abs() < 1e-6);
+        assert_eq!(tangent[3], 1.0);
+        assert!(
+            compute_triangle_tangent(
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, 0.0],
+                [0.0, 0.0],
+                [0.0, 0.0],
+            )
+            .is_none()
+        );
+
+        let tetrahedron = [0, 1, 2, 0, 2, 3, 0, 3, 1, 1, 3, 2];
+        assert!(is_watertight_manifold_mesh(&tetrahedron));
+        assert!(!is_watertight_manifold_mesh(&[0, 1, 2]));
+    }
+}

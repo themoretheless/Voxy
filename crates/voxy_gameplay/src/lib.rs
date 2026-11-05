@@ -1874,3 +1874,77 @@ mod post_snap_relocation_error_tests {
         );
     }
 }
+
+/// Evaluates a normalized logistic utility response curve in `[0.0, 1.0]` for AI decision scoring.
+#[must_use]
+pub fn utility_response_curve(input: f32, slope: f32, midpoint: f32) -> f32 {
+    if !input.is_finite() || !slope.is_finite() || !midpoint.is_finite() {
+        return 0.0;
+    }
+    let x = input.clamp(0.0, 1.0);
+    let m = midpoint.clamp(0.0, 1.0);
+    let k = slope.clamp(-50.0, 50.0);
+    (1.0 / (1.0 + (-k * (x - m)).exp())).clamp(0.0, 1.0)
+}
+
+/// Computes an AI sensory perception visibility factor in `[0.0, 1.0]` based on distance and vision cone angle.
+#[must_use]
+pub fn perception_cone_visibility(
+    eye: [f32; 3],
+    forward: [f32; 3],
+    target: [f32; 3],
+    max_range: f32,
+    half_fov_cos: f32,
+) -> f32 {
+    if !max_range.is_finite() || max_range <= 0.0 || !half_fov_cos.is_finite() {
+        return 0.0;
+    }
+    let eye_v = Vec3::from_array(eye);
+    let fwd_v = match Vec3::from_array(forward).try_normalize() {
+        Some(v) => v,
+        None => return 0.0,
+    };
+    let delta = Vec3::from_array(target) - eye_v;
+    let dist = delta.length();
+    if !dist.is_finite() || dist > max_range {
+        return 0.0;
+    }
+    if dist <= 1e-5 {
+        return 1.0;
+    }
+    let dir = delta / dist;
+    let cos_theta = fwd_v.dot(dir);
+    let min_cos = half_fov_cos.clamp(-1.0, 0.9999);
+    if cos_theta < min_cos {
+        return 0.0;
+    }
+    let angular = ((cos_theta - min_cos) / (1.0 - min_cos)).clamp(0.0, 1.0);
+    let radial = (1.0 - dist / max_range).clamp(0.0, 1.0);
+    (angular * radial).clamp(0.0, 1.0)
+}
+
+#[cfg(test)]
+mod n8_gameplay_ai_tests {
+    use super::*;
+
+    #[test]
+    fn utility_curve_and_perception_cone_score_targets_monotonically() {
+        let low = utility_response_curve(0.1, 10.0, 0.5);
+        let mid = utility_response_curve(0.5, 10.0, 0.5);
+        let high = utility_response_curve(0.9, 10.0, 0.5);
+        assert!(low < mid && mid < high);
+        assert!((mid - 0.5).abs() < 1e-6);
+
+        let vis_center =
+            perception_cone_visibility([0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, 5.0], 10.0, 0.5);
+        let vis_behind = perception_cone_visibility(
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, -5.0],
+            10.0,
+            0.5,
+        );
+        assert!((vis_center - 0.5).abs() < 1e-5);
+        assert_eq!(vis_behind, 0.0);
+    }
+}

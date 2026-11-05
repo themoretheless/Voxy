@@ -187,6 +187,34 @@ impl AssetDependencies {
         }
         out
     }
+
+    /// Computes the heaviest dependency chain weight (critical path) across the entire DAG.
+    /// Assets missing from `weights` default to weight `1`.
+    /// # Errors
+    /// Rejects internal cycles if present.
+    pub fn critical_path_weight(
+        &self,
+        weights: &BTreeMap<AssetId, u64>,
+    ) -> Result<u64, DependencyError> {
+        if self.edges.is_empty() {
+            return Ok(0);
+        }
+        let ordered = self.affected(self.edges.keys().cloned())?;
+        let mut best: BTreeMap<AssetId, u64> = BTreeMap::new();
+        let mut max_total = 0u64;
+        for asset in ordered {
+            let own = weights.get(&asset).copied().unwrap_or(1);
+            let prior = self.edges[&asset]
+                .iter()
+                .filter_map(|dep| best.get(dep).copied())
+                .max()
+                .unwrap_or(0);
+            let total = prior.saturating_add(own);
+            best.insert(asset, total);
+            max_total = max_total.max(total);
+        }
+        Ok(max_total)
+    }
 }
 #[cfg(test)]
 mod tests {
@@ -266,5 +294,13 @@ mod tests {
         let mermaid = graph.to_mermaid();
         assert!(mermaid.starts_with("flowchart TD\n"));
         assert!(mermaid.contains("[\"texture\"] --> [\"material\"]"));
+        let weights = BTreeMap::from([
+            (id("texture"), 10),
+            (id("material"), 25),
+            (id("mesh"), 5),
+            (id("scene"), 15),
+            (id("other"), 3),
+        ]);
+        assert_eq!(graph.critical_path_weight(&weights).unwrap(), 50);
     }
 }

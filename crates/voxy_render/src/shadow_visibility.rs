@@ -177,3 +177,40 @@ fn shadow_visibility(world: vec3<f32>) -> f32 {
     return visibility / (width * width);
 }
 ";
+
+/// Computes the 4-cascade far split distances `[split_0, split_1, split_2, z_far]` using
+/// Zhang et al.'s Practical Split Scheme (`lambda` blending logarithmic and uniform splits).
+///
+/// Returns `None` if `z_near <= 0.0`, `z_far <= z_near`, or inputs are non-finite.
+#[must_use]
+pub fn practical_cascade_splits(z_near: f32, z_far: f32, lambda: f32) -> Option<[f32; 4]> {
+    if !z_near.is_finite()
+        || !z_far.is_finite()
+        || !lambda.is_finite()
+        || z_near <= 0.0
+        || z_far <= z_near
+    {
+        return None;
+    }
+    let l = lambda.clamp(0.0, 1.0);
+    let ratio = z_far / z_near;
+    Some(std::array::from_fn(|i| {
+        let p = (i + 1) as f32 / 4.0;
+        let c_log = z_near * ratio.powf(p);
+        let c_uni = z_near + (z_far - z_near) * p;
+        l * c_log + (1.0 - l) * c_uni
+    }))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn practical_cascade_splits_are_strictly_increasing_and_reach_far_plane() {
+        let splits = practical_cascade_splits(0.1, 200.0, 0.75).unwrap();
+        assert!(splits[0] > 0.1 && splits[0] < splits[1]);
+        assert!(splits[1] < splits[2] && splits[2] < splits[3]);
+        assert!((splits[3] - 200.0).abs() < 1e-4);
+    }
+}

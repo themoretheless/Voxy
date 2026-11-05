@@ -2075,5 +2075,27 @@ mod tests {
         hair.append(&mut vertices, &mut indices);
         assert_eq!((vertices.len(), indices.len()), sizes);
         voxy_render::SceneMesh::new(vertices, indices).unwrap();
+        let lobes = marschner_longitudinal_lobes(0.1, -0.05, 0.12);
+        assert!(lobes[0] > 0.0 && lobes[1] > 0.0 && lobes[2] > 0.0);
     }
+}
+
+/// Evaluates the 3 Marschner longitudinal hair scattering Gaussian lobes `[M_R, M_TT, M_TRT]`
+/// as a function of half-angle $\theta_h$ (radians), cuticle tilt $\alpha$ (radians, e.g. `-0.05`),
+/// and longitudinal roughness $\beta \in [0.02, 0.5]$.
+#[must_use]
+pub fn marschner_longitudinal_lobes(theta_h_rad: f32, cuticle_tilt_rad: f32, beta_rad: f32) -> [f32; 3] {
+    if !theta_h_rad.is_finite() || !cuticle_tilt_rad.is_finite() || !beta_rad.is_finite() {
+        return [0.0; 3];
+    }
+    let b = beta_rad.clamp(0.02, 0.5);
+    let gauss = |center: f32, width: f32| -> f32 {
+        let d = (theta_h_rad - center) / width;
+        (-0.5 * d * d).exp() / (width * (2.0 * std::f32::consts::PI).sqrt())
+    };
+    [
+        gauss(2.0 * cuticle_tilt_rad, b),
+        gauss(-cuticle_tilt_rad, 0.5 * b),
+        gauss(-3.0 * cuticle_tilt_rad, 2.0 * b),
+    ]
 }

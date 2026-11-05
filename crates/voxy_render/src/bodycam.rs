@@ -1057,5 +1057,43 @@ mod tests {
         assert!(rig.camcorder_zoom > 1.5);
         let (cam_zoomed, _, _) = rig.camera_and_flashlight(Vec3::ZERO);
         assert!(cam_zoomed.vertical_fov_radians < cam_1x.vertical_fov_radians);
+        let coc = circle_of_confusion_px(0.035, 2.0, 2.0, 10.0, 0.036, 1920);
+        assert!(coc > 1.0);
+        assert_eq!(circle_of_confusion_px(0.035, 2.0, 2.0, 2.0, 0.036, 1920), 0.0);
     }
+}
+
+/// Computes the physical thin-lens Circle of Confusion (CoC) diameter in pixels for a point at
+/// `depth_m` given `focal_length_m`, `f_number` ($N$), `focus_distance_m`, `sensor_width_m`,
+/// and `viewport_width_px`.
+#[must_use]
+pub fn circle_of_confusion_px(
+    focal_length_m: f32,
+    f_number: f32,
+    focus_distance_m: f32,
+    depth_m: f32,
+    sensor_width_m: f32,
+    viewport_width_px: u32,
+) -> f32 {
+    if ![
+        focal_length_m,
+        f_number,
+        focus_distance_m,
+        depth_m,
+        sensor_width_m,
+    ]
+    .iter()
+    .all(|v| v.is_finite() && *v > 0.0)
+        || viewport_width_px == 0
+        || focus_distance_m <= focal_length_m
+    {
+        return 0.0;
+    }
+    let aperture_m = focal_length_m / f_number;
+    let coc_sensor_m = (aperture_m
+        * (focal_length_m / (focus_distance_m - focal_length_m))
+        * (depth_m - focus_distance_m).abs()
+        / depth_m)
+        .max(0.0);
+    (coc_sensor_m / sensor_width_m) * (viewport_width_px as f32)
 }

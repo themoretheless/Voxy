@@ -462,5 +462,24 @@ mod ownership_tests {
             program.create_job(&other, &bodies, parameters),
             Err(GravityComputeError::Compute(ComputeError::DeviceMismatch))
         ));
+        assert!(barnes_hut_mac_satisfied(2.0, 10.0, 0.5));
+        assert!(!barnes_hut_mac_satisfied(6.0, 10.0, 0.5));
     }
+}
+
+/// Evaluates the Barnes–Hut Multipole Acceptance Criterion (MAC) $s / d < \theta$ for an octree
+/// cell of edge length `cell_size_m` at center-of-mass distance `distance_m` with opening angle
+/// threshold `theta` (typically `0.5`).
+#[must_use]
+pub fn barnes_hut_mac_satisfied(cell_size_m: f32, distance_m: f32, theta: f32) -> bool {
+    if !cell_size_m.is_finite()
+        || !distance_m.is_finite()
+        || !theta.is_finite()
+        || cell_size_m < 0.0
+        || distance_m <= 0.0
+        || theta <= 0.0
+    {
+        return false;
+    }
+    cell_size_m < theta * distance_m
 }

@@ -288,6 +288,26 @@ impl WindowUi {
         }
     }
 }
+
+/// Clamps a logical popup/tooltip origin `[x, y]` of size `popup_size` so that it remains inside `viewport_size`.
+#[must_use]
+pub fn clamp_popup_to_viewport(
+    popup_pos: [f32; 2],
+    popup_size: [f32; 2],
+    viewport_size: [f32; 2],
+) -> [f32; 2] {
+    std::array::from_fn(|i| {
+        if !popup_pos[i].is_finite()
+            || !popup_size[i].is_finite()
+            || !viewport_size[i].is_finite()
+            || viewport_size[i] <= 0.0
+        {
+            return 0.0;
+        }
+        let max_origin = (viewport_size[i] - popup_size[i].max(0.0)).max(0.0);
+        popup_pos[i].clamp(0.0, max_origin)
+    })
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -414,5 +434,9 @@ mod tests {
             KeyAction::Cancel(WidgetId(1))
         );
         assert_eq!(ui.keyboard(KeyCode::Enter, true), UiDispatch::default());
+        assert_eq!(
+            clamp_popup_to_viewport([750.0, -10.0], [100.0, 50.0], [800.0, 600.0]),
+            [700.0, 0.0]
+        );
     }
 }

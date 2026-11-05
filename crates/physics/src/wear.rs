@@ -176,3 +176,41 @@ pub use suspension::{
     WearSliderInput, WearSliderStep, WearSuspension, WearSuspensionEnergy, WearSuspensionInput,
     WearSuspensionStep,
 };
+
+/// Evaluates cumulative linear fatigue damage $D = \sum_i \frac{n_i}{N_i}$ under the
+/// Palmgren–Miner rule across stress-amplitude bins `(applied_cycles, failure_cycles)`.
+///
+/// # Errors
+///
+/// Rejects mismatched slice lengths or any bin with `failure_cycles == 0`.
+pub fn miner_fatigue_damage(
+    applied_cycles: &[u64],
+    failure_cycles: &[u64],
+) -> Result<f64, &'static str> {
+    if applied_cycles.len() != failure_cycles.len() {
+        return Err("Palmgren-Miner cycle slice length mismatch");
+    }
+    let mut damage = 0.0_f64;
+    for (&n, &nf) in applied_cycles.iter().zip(failure_cycles.iter()) {
+        if nf == 0 {
+            return Err("zero fatigue endurance limit in Palmgren-Miner rule");
+        }
+        damage += (n as f64) / (nf as f64);
+    }
+    if !damage.is_finite() {
+        return Err("fatigue damage overflow");
+    }
+    Ok(damage)
+}
+
+#[cfg(test)]
+mod miner_tests {
+    use super::*;
+
+    #[test]
+    fn miner_fatigue_sums_cycle_fractions_and_rejects_zero_endurance() {
+        let d = miner_fatigue_damage(&[500, 250], &[1000, 1000]).unwrap();
+        assert!((d - 0.75).abs() < 1e-12);
+        assert!(miner_fatigue_damage(&[10], &[0]).is_err());
+    }
+}

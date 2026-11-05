@@ -635,3 +635,46 @@ impl Body {
         Err("vascular pore coupling did not converge")
     }
 }
+
+/// Computes transcapillary fluid filtration flux $J_v = L_p \left(\Delta P - \sigma \Delta \Pi\right)$
+/// under the revised Starling–glycocalyx principle, where `sigma` $\in [0, 1]$ is the
+/// Staverman oncotic reflection coefficient of the endothelial glycocalyx layer.
+///
+/// # Errors
+///
+/// Rejects non-finite inputs, negative hydraulic conductance $L_p$, or $\sigma \notin [0, 1]$.
+pub fn starling_glycocalyx_filtration(
+    hydraulic_conductance: f64,
+    delta_p_pa: f64,
+    sigma: f64,
+    delta_pi_pa: f64,
+) -> Result<f64, &'static str> {
+    if !hydraulic_conductance.is_finite()
+        || !delta_p_pa.is_finite()
+        || !sigma.is_finite()
+        || !delta_pi_pa.is_finite()
+        || hydraulic_conductance < 0.0
+        || !(0.0..=1.0).contains(&sigma)
+    {
+        return Err("invalid Starling glycocalyx filtration parameters");
+    }
+    let flux = hydraulic_conductance * (delta_p_pa - sigma * delta_pi_pa);
+    if !flux.is_finite() {
+        return Err("Starling filtration flux overflow");
+    }
+    Ok(flux)
+}
+
+#[cfg(test)]
+mod glycocalyx_tests {
+    use super::*;
+
+    #[test]
+    fn starling_glycocalyx_filtration_balances_hydrostatic_and_oncotic_gradients() {
+        let out = starling_glycocalyx_filtration(1e-9, 3200.0, 0.9, 2500.0).unwrap();
+        assert!(out > 0.0);
+        let reabsorb = starling_glycocalyx_filtration(1e-9, 1500.0, 0.9, 2500.0).unwrap();
+        assert!(reabsorb < 0.0);
+        assert!(starling_glycocalyx_filtration(1e-9, 1500.0, 1.2, 2500.0).is_err());
+    }
+}

@@ -79,6 +79,18 @@ impl GpuMeshResult {
     pub fn into_indirect_mesh(self) -> voxy_gpu_core::GpuIndirectMesh {
         self.into()
     }
+
+    /// Computes the vertex buffer compaction ratio `emitted_vertices / reserved_vertices` in `[0.0, 1.0]`
+    /// for a completed indirect draw vertex count against `self.max_quads * 6`.
+    #[must_use]
+    pub fn compression_ratio(&self, emitted_vertex_count: u32) -> f32 {
+        let reserved = u64::from(self.max_quads) * 6;
+        if reserved == 0 {
+            return 0.0;
+        }
+        (f64::from(emitted_vertex_count) / reserved as f64).clamp(0.0, 1.0) as f32
+    }
+
     /// Read back vertex and indirect parameters to CPU memory for test or fallback processing.
     /// # Errors
     /// Returns an error if device polling or buffer mapping fails.
@@ -559,6 +571,7 @@ mod tests {
 
         // A 2x2x2 cube has 6 faces of 2x2 = 24 quads = 144 vertices (interior faces culled!)
         assert_eq!(indirect_args.vertex_count, 144);
+        assert!((result.compression_ratio(indirect_args.vertex_count) - (144.0 / 6144.0)).abs() < 1e-6);
         assert_eq!(vertices.len(), 144);
         for v in &vertices {
             assert_eq!(v.material, 7);

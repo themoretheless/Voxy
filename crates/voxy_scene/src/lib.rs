@@ -11,9 +11,12 @@ pub use simulation::{
 mod extraction;
 pub use extraction::{
     ExtractedInstance, SceneExtraction, ScopedExtractionError, extraction_schedule,
+    projected_screen_height_fraction,
 };
 mod picking;
-pub use picking::{PickBounds, PickError, PickHit, PickRay, PickResult, PickViewport};
+pub use picking::{
+    PickBounds, PickError, PickHit, PickRay, PickResult, PickViewport, sah_split_cost,
+};
 
 mod file;
 pub use file::{SceneFileError, read_scene_file, save_scene_file};
@@ -64,7 +67,8 @@ pub use behavior::{Behavior, BehaviorRunner};
 mod prefab_document;
 pub use prefab_document::{
     ExpandedScene, ObjectOverride, ParentOverride, PrefabInstance, PrefabLimits,
-    PrefabSceneDocument, instance_object_id, read_prefab_scene_file, save_prefab_scene_file,
+    PrefabSceneDocument, has_parent_override_cycle, instance_object_id, read_prefab_scene_file,
+    save_prefab_scene_file,
 };
 
 mod prefab;

@@ -119,3 +119,45 @@ impl Myocardium {
         })
     }
 }
+
+/// Evaluates the Frank–Starling length-dependent active tension multiplier in `[0.0, 1.0]`
+/// for myocardium sarcomeres as a function of fiber stretch $\lambda_f$ relative to
+/// slack stretch (`0.80 * optimal_stretch`) and `optimal_stretch` ($\approx 1.15\text{–}1.25$).
+///
+/// # Errors
+///
+/// Rejects non-finite or non-positive stretch values.
+pub fn frank_starling_preload_scale(
+    sarcomere_stretch: f64,
+    optimal_stretch: f64,
+) -> Result<f64, &'static str> {
+    if !sarcomere_stretch.is_finite()
+        || !optimal_stretch.is_finite()
+        || sarcomere_stretch <= 0.0
+        || optimal_stretch <= 0.85
+    {
+        return Err("invalid sarcomere stretch for Frank-Starling law");
+    }
+    let slack = 0.80 * optimal_stretch;
+    if sarcomere_stretch <= slack {
+        return Ok(0.0);
+    }
+    let width = optimal_stretch - slack;
+    let delta = (sarcomere_stretch - optimal_stretch) / width;
+    Ok((1.0 - delta * delta).max(0.0))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn frank_starling_peaks_at_optimal_sarcomere_stretch() {
+        let slack = frank_starling_preload_scale(0.85, 1.2).unwrap();
+        let mid = frank_starling_preload_scale(1.08, 1.2).unwrap();
+        let peak = frank_starling_preload_scale(1.2, 1.2).unwrap();
+        assert_eq!(slack, 0.0);
+        assert!(mid > 0.0 && mid < peak);
+        assert!((peak - 1.0).abs() < 1e-12);
+    }
+}

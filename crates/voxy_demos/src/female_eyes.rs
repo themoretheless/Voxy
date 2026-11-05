@@ -198,5 +198,23 @@ mod tests {
         assert!(pigment(Vec2::from_array(posterior)).min_element() > 0.7);
         assert!(!is_eye_uv([0., 0.]));
         assert!(!is_eye_uv([0.5, 0.5]));
+        let dark = pupil_diameter_mm(0.01);
+        let bright = pupil_diameter_mm(1000.0);
+        assert!(dark > bright && bright >= 1.8 && dark <= 8.0);
     }
+}
+
+/// Computes the physiological human pupil diameter in millimeters (`1.8..=8.0 mm`) as a
+/// function of adapting luminance `luminance_cd_m2` ($\text{cd/m}^2$) using the Stanley–Davies /
+/// Watson–Yellott pupillary light reflex formula.
+#[must_use]
+pub fn pupil_diameter_mm(luminance_cd_m2: f32) -> f32 {
+    if !luminance_cd_m2.is_finite() || luminance_cd_m2 <= 0.0 {
+        return 7.75;
+    }
+    // Field diameter a = 10 deg -> corneal flux density F = L * a = 10 * L
+    let f = (luminance_cd_m2 * 10.0).clamp(1e-4, 1e6);
+    let x = (f / 846.0).powf(0.41);
+    let d = 7.75 - 5.75 * (x / (x + 2.0));
+    d.clamp(1.8, 8.0)
 }

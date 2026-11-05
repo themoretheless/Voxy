@@ -171,3 +171,61 @@ impl PhysicalStance {
         Ok(())
     }
 }
+
+/// Computes the signed Zero Moment Point (ZMP) stability margin in meters relative to an
+/// axis-aligned biped support polygon `[min_x, max_x] x [min_z, max_z]`.
+/// Positive values indicate the ZMP lies strictly inside the support footprint; negative values
+/// measure distance outside the boundary.
+#[must_use]
+pub fn zmp_stability_margin(
+    com_pos: [f64; 3],
+    com_accel: [f64; 3],
+    gravity_y: f64,
+    support_min_xz: [f64; 2],
+    support_max_xz: [f64; 2],
+) -> Option<f64> {
+    if com_pos.iter().chain(&com_accel).any(|v| !v.is_finite())
+        || !gravity_y.is_finite()
+        || gravity_y <= 0.0
+        || support_min_xz[0] > support_max_xz[0]
+        || support_min_xz[1] > support_max_xz[1]
+    {
+        return None;
+    }
+    let denom = gravity_y + com_accel[1];
+    if denom.abs() < 1e-6 {
+        return None;
+    }
+    let zmp_x = com_pos[0] - (com_pos[1] * com_accel[0]) / denom;
+    let zmp_z = com_pos[2] - (com_pos[1] * com_accel[2]) / denom;
+    let margin_x = (zmp_x - support_min_xz[0]).min(support_max_xz[0] - zmp_x);
+    let margin_z = (zmp_z - support_min_xz[1]).min(support_max_xz[1] - zmp_z);
+    Some(margin_x.min(margin_z))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn zmp_stability_margin_is_positive_inside_support_and_negative_under_high_acceleration() {
+        let rest = zmp_stability_margin(
+            [0.0, 0.9, 0.0],
+            [0.0, 0.0, 0.0],
+            9.81,
+            [-0.12, -0.10],
+            [0.12, 0.15],
+        )
+        .unwrap();
+        assert!((rest - 0.10).abs() < 1e-9);
+        let tipping = zmp_stability_margin(
+            [0.0, 0.9, 0.0],
+            [3.5, 0.0, 0.0],
+            9.81,
+            [-0.12, -0.10],
+            [0.12, 0.15],
+        )
+        .unwrap();
+        assert!(tipping < 0.0);
+    }
+}

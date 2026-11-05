@@ -35,6 +35,33 @@ pub fn encode_character_uv(colour: [f32; 3], surface: CharacterSurface) -> [f32;
     ]
 }
 
+/// Evaluates Kaplanyan & Toksvig Specular Anti-Aliasing roughness in `[0.04, 1.0]` from base
+/// `roughness` and normal-map screen-space derivatives `dndu` / `dndv` (or averaged normal length),
+/// widening the GGX lobe on subpixel high-frequency normal variations to prevent specular aliasing.
+#[must_use]
+pub fn specular_aa_roughness(
+    base_roughness: f32,
+    dndu: [f32; 3],
+    dndv: [f32; 3],
+    max_variance: f32,
+) -> f32 {
+    let r = if base_roughness.is_finite() {
+        base_roughness.clamp(0.04, 1.0)
+    } else {
+        0.5
+    };
+    if dndu.iter().chain(&dndv).any(|v| !v.is_finite())
+        || !max_variance.is_finite()
+        || max_variance <= 0.0
+    {
+        return r;
+    }
+    let du2 = dndu[0] * dndu[0] + dndu[1] * dndu[1] + dndu[2] * dndu[2];
+    let dv2 = dndv[0] * dndv[0] + dndv[1] * dndv[1] + dndv[2] * dndv[2];
+    let kernel_roughness2 = (0.5 * (du2 + dv2)).min(max_variance);
+    (r * r + kernel_roughness2).sqrt().clamp(0.04, 1.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -60,5 +87,9 @@ mod tests {
     fn colour_packs_into_exact_float_integer() {
         let [packed, _] = encode_character_uv([1., 0., 0.5], CharacterSurface::Eye);
         assert_eq!(packed as u32, 255 | 128 << 16);
+        let smooth = specular_aa_roughness(0.1, [0.0; 3], [0.0; 3], 0.18);
+        let filtered = specular_aa_roughness(0.1, [0.3, 0.0, 0.0], [0.0, 0.3, 0.0], 0.18);
+        assert!((smooth - 0.1).abs() < 1e-6);
+        assert!(filtered > smooth);
     }
 }

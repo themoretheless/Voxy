@@ -498,3 +498,36 @@ pub fn halton_jitter(frame: u32) -> Vec2 {
     let i = frame % 8 + 1;
     Vec2::new(halton(i, 2) - 0.5, halton(i, 3) - 0.5)
 }
+
+/// Converts linear RGB into YCoCg color space `[Y, Co, Cg]` for Temporal AA neighborhood clamping.
+#[must_use]
+pub fn rgb_to_ycocg(rgb: [f32; 3]) -> [f32; 3] {
+    let [r, g, b] = rgb;
+    [
+        0.25 * r + 0.5 * g + 0.25 * b,
+        0.5 * r - 0.5 * b,
+        -0.25 * r + 0.5 * g - 0.25 * b,
+    ]
+}
+
+/// Converts YCoCg `[Y, Co, Cg]` back into linear RGB.
+#[must_use]
+pub fn ycocg_to_rgb(ycocg: [f32; 3]) -> [f32; 3] {
+    let [y, co, cg] = ycocg;
+    let tmp = y - cg;
+    [tmp + co, y + cg, tmp - co]
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ycocg_round_trips_linear_rgb() {
+        let rgb = [0.8_f32, 0.35, 0.15];
+        let back = ycocg_to_rgb(rgb_to_ycocg(rgb));
+        for i in 0..3 {
+            assert!((rgb[i] - back[i]).abs() < 1e-6);
+        }
+    }
+}

@@ -401,6 +401,61 @@ impl From<CodecError> for WalError {
     }
 }
 
+/// Compact XOR + zero-run-length encoded delta patch between two equal-length serialized
+/// chunk payloads (`XorDeltaChunkPatch`) for bandwidth-efficient WAL journaling.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct XorDeltaChunkPatch {
+    pub len: usize,
+    pub runs: Vec<(u32, Vec<u8>)>,
+}
+
+impl XorDeltaChunkPatch {
+    /// Computes the sparse non-zero XOR diff spans (`(offset, xor_bytes)`) between `prev` and `curr`.
+    #[must_use]
+    pub fn encode(prev: &[u8], curr: &[u8]) -> Option<Self> {
+        if prev.len() != curr.len() || prev.len() > u32::MAX as usize {
+            return None;
+        }
+        let mut runs = Vec::new();
+        let mut i = 0usize;
+        while i < prev.len() {
+            if prev[i] == curr[i] {
+                i += 1;
+                continue;
+            }
+            let start = i;
+            let mut diff = Vec::new();
+            while i < prev.len() && prev[i] != curr[i] {
+                diff.push(prev[i] ^ curr[i]);
+                i += 1;
+            }
+            runs.push((start as u32, diff));
+        }
+        Some(Self {
+            len: prev.len(),
+            runs,
+        })
+    }
+
+    /// Reconstructs `curr` by applying the XOR delta runs onto `prev`.
+    #[must_use]
+    pub fn apply(&self, prev: &[u8]) -> Option<Vec<u8>> {
+        if prev.len() != self.len {
+            return None;
+        }
+        let mut out = prev.to_vec();
+        for (offset, diff) in &self.runs {
+            let start = *offset as usize;
+            let end = start.checked_add(diff.len())?;
+            let slice = out.get_mut(start..end)?;
+            for (dst, &xor_byte) in slice.iter_mut().zip(diff) {
+                *dst ^= xor_byte;
+            }
+        }
+        Some(out)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::fs;
@@ -570,5 +625,11 @@ mod tests {
         assert_eq!(recovered.commits, commits);
         assert!(!recovered.discarded_tail);
         fs::remove_file(path).unwrap();
+
+        let prev = vec![10_u8, 20, 30, 40, 50, 60];
+        let curr = vec![10_u8, 25, 31, 40, 50, 99];
+        let patch = XorDeltaChunkPatch::encode(&prev, &curr).unwrap();
+        assert_eq!(patch.runs.len(), 2);
+        assert_eq!(patch.apply(&prev).unwrap(), curr);
     }
 }

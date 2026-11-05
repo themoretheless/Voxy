@@ -891,5 +891,48 @@ mod tests {
             .unwrap(),
             LiquidPlan::Settled
         );
+        let buoy = submerged_aabb_buoyancy(0.0, 2.0, 1.0, 1.5, 1000.0, 9.81).unwrap();
+        assert!((buoy - 1.5 * 1000.0 * 9.81).abs() < 1e-6);
+        assert_eq!(
+            submerged_aabb_buoyancy(2.0, 3.0, 1.0, 1.5, 1000.0, 9.81).unwrap(),
+            0.0
+        );
     }
+}
+
+/// Computes the upward Archimedes buoyant force (Newtons) on an axis-aligned box spanning
+/// `[min_y, max_y]` with horizontal `footprint_area_m2` partially or fully submerged below
+/// `water_surface_y`.
+///
+/// # Errors
+///
+/// Rejects non-finite inputs, `min_y >= max_y`, or non-positive area, density, or gravity.
+pub fn submerged_aabb_buoyancy(
+    min_y: f64,
+    max_y: f64,
+    water_surface_y: f64,
+    footprint_area_m2: f64,
+    fluid_density_kg_m3: f64,
+    gravity_m_s2: f64,
+) -> Result<f64, &'static str> {
+    if !min_y.is_finite()
+        || !max_y.is_finite()
+        || !water_surface_y.is_finite()
+        || !footprint_area_m2.is_finite()
+        || !fluid_density_kg_m3.is_finite()
+        || !gravity_m_s2.is_finite()
+        || min_y >= max_y
+        || footprint_area_m2 <= 0.0
+        || fluid_density_kg_m3 <= 0.0
+        || gravity_m_s2 <= 0.0
+    {
+        return Err("invalid submerged AABB buoyancy parameters");
+    }
+    let submerged_height = (water_surface_y.min(max_y) - min_y).max(0.0);
+    let displaced_volume = submerged_height * footprint_area_m2;
+    let force = displaced_volume * fluid_density_kg_m3 * gravity_m_s2;
+    if !force.is_finite() {
+        return Err("submerged buoyancy force overflow");
+    }
+    Ok(force)
 }

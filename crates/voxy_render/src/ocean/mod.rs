@@ -1406,6 +1406,25 @@ impl OceanRenderer {
     }
 }
 
+/// Evaluates Beer-Lambert spectral underwater transmittance `[r, g, b]` in `[0.0, 1.0]` over
+/// optical path length `depth_m` (metres) with coastal `turbidity` in `[0.0, 10.0]`.
+/// Pure water strongly absorbs red ($650\text{ nm}$), moderately absorbs green, and transmits blue.
+#[must_use]
+pub fn water_spectral_transmittance(depth_m: f32, turbidity: f32) -> [f32; 3] {
+    if !depth_m.is_finite() || !turbidity.is_finite() || depth_m <= 0.0 {
+        return [1.0; 3];
+    }
+    let d = depth_m.max(0.0);
+    let t = turbidity.clamp(0.0, 10.0);
+    // Clear Jerlov Type I attenuation + CDOM/sediment turbidity contribution:
+    let k_rgb = [
+        0.35 + 0.08 * t,
+        0.065 + 0.05 * t,
+        0.018 + 0.09 * t,
+    ];
+    k_rgb.map(|k| (-k * d).exp().clamp(0.0, 1.0))
+}
+
 #[cfg(test)]
 mod tests {
     use wgpu::naga::{
@@ -1447,5 +1466,7 @@ mod tests {
                 "{label} has no entry points"
             );
         }
+        let trans = super::water_spectral_transmittance(3.0, 1.0);
+        assert!(trans[0] < trans[1] && trans[1] < trans[2]);
     }
 }

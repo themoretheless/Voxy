@@ -24,6 +24,7 @@ mod blit;
 mod bodycam;
 pub use bodycam::{
     BodycamPostProcess, BodycamPostUniforms, BodycamRig, PhotorealLensProfile, SpringDamper3D,
+    circle_of_confusion_px,
 };
 mod camera;
 mod planar_capture;
@@ -104,7 +105,7 @@ pub use lod_subdivision::{
 mod motion;
 mod obj;
 mod ocean;
-pub use ocean::{OceanCamera, OceanRenderer, OceanSettings};
+pub use ocean::{OceanCamera, OceanRenderer, OceanSettings, water_spectral_transmittance};
 pub use voxy_water;
 pub use voxy_water::WaveSpectrum;
 mod archive_water;
@@ -112,7 +113,7 @@ mod previous_position;
 mod primary_motion;
 mod primary_surface;
 mod radiance;
-pub use hdr_resolve::{HdrHalfResolveJob, HdrHalfResolvePipeline};
+pub use hdr_resolve::{HdrHalfResolveJob, HdrHalfResolvePipeline, bilateral_upsample_weight};
 mod fluid_screen;
 mod ray;
 mod world_nearest_bvh;
@@ -271,7 +272,7 @@ mod shadow_map;
 pub use shadow_map::{ShadowDraw, ShadowDrawMask, ShadowMap, snap_cascade_ortho_bounds};
 
 mod shadow_visibility;
-pub use shadow_visibility::{ShadowFilter, ShadowSettings};
+pub use shadow_visibility::{ShadowFilter, ShadowSettings, practical_cascade_splits};
 
 mod reflection_correspondence;
 pub use reflection_correspondence::{
@@ -280,13 +281,16 @@ pub use reflection_correspondence::{
 mod planar_reflection;
 pub use planar_reflection::{
     PlanarReflectionCameras, PlanarReflectionJob, PlanarReflectionPipeline,
+    anisotropic_road_streak_roughness,
 };
 
 mod planar_temporal;
 pub use planar_temporal::{PlanarTemporalError, PlanarTemporalFrame, PlanarTemporalPipeline};
 
 mod dielectric_boundary;
-pub use dielectric_boundary::{DielectricBoundarySample, dielectric_boundary_sample};
+pub use dielectric_boundary::{
+    DielectricBoundarySample, cauchy_ior_rgb, dielectric_boundary_sample,
+};
 
 mod medium_geometry;
 pub use medium_geometry::{
@@ -453,15 +457,19 @@ pub use compressed_image::Bc7ImageAsset;
 
 pub mod archive_scene;
 mod bloom;
+pub use bloom::karis_firefly_clamp_rgb;
 pub mod character_material;
 mod probe_gi;
+pub use probe_gi::chebyshev_probe_visibility;
 
 mod native_vegetation;
 pub use native_vegetation::NativeVegetation;
 
 mod archive_hdr_diagnostics;
 mod archive_temporal;
-pub use archive_temporal::{ArchiveAntialiasing, ArchiveCameraLens, halton_jitter};
+pub use archive_temporal::{
+    ArchiveAntialiasing, ArchiveCameraLens, halton_jitter, rgb_to_ycocg, ycocg_to_rgb,
+};
 #[cfg(target_os = "macos")]
 mod metalfx;
 
@@ -474,7 +482,7 @@ pub use archive_culling::ArchiveInstanceCulling;
 mod archive_frustum;
 
 mod supersampling;
-pub use supersampling::SupersampleResolve;
+pub use supersampling::{SupersampleResolve, rcas_sharpening_gain};
 
 #[doc(hidden)]
 pub mod archive_depth_bounds;

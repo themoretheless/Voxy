@@ -237,3 +237,29 @@ impl Bloom {
         }
     }
 }
+
+/// Applies Brian Karis's inverse-luminance firefly weight `rgb / (1.0 + luma / firefly_knee)`
+/// to suppress single-pixel subpixel specular spikes before the first bloom downsample.
+#[must_use]
+pub fn karis_firefly_clamp_rgb(rgb: [f32; 3], firefly_knee: f32) -> [f32; 3] {
+    if rgb.iter().any(|v| !v.is_finite() || *v < 0.0)
+        || !firefly_knee.is_finite()
+        || firefly_knee <= 0.0
+    {
+        return [0.0; 3];
+    }
+    let luma = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+    let weight = 1.0 / (1.0 + luma / firefly_knee.max(1e-4));
+    rgb.map(|c| c * weight)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn karis_firefly_clamp_bounds_extreme_specular_outliers() {
+        let clamped = karis_firefly_clamp_rgb([1000.0, 1000.0, 1000.0], 10.0);
+        assert!(clamped[0] < 10.0 && clamped[0] > 9.8);
+    }
+}

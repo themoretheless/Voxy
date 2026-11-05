@@ -1383,5 +1383,41 @@ mod tests {
         }
         demo.verify().unwrap();
         assert!(demo.mesh().unwrap().vertices().len() <= 60_024);
+        assert_eq!(cfl_substep_count(1.0 / 60.0, 4.0, 0.02, 0.4, 16), 9);
+        assert_eq!(cfl_substep_count(1.0 / 120.0, 0.0, 0.02, 0.4, 16), 1);
+    }
+}
+
+/// Computes the adaptive Courant–Friedrichs–Lewy (CFL) substep count in `1..=max_substeps`
+/// required so that no fluid particle travels more than `cfl_number * particle_diameter_m`
+/// during a single substep.
+#[must_use]
+pub fn cfl_substep_count(
+    frame_dt_s: f64,
+    max_speed_m_s: f64,
+    particle_diameter_m: f64,
+    cfl_number: f64,
+    max_substeps: u32,
+) -> u32 {
+    let cap = max_substeps.max(1);
+    if !frame_dt_s.is_finite()
+        || !max_speed_m_s.is_finite()
+        || !particle_diameter_m.is_finite()
+        || !cfl_number.is_finite()
+        || frame_dt_s <= 0.0
+        || max_speed_m_s <= 0.0
+        || particle_diameter_m <= 0.0
+        || cfl_number <= 0.0
+    {
+        return 1;
+    }
+    let max_step_dist = cfl_number * particle_diameter_m;
+    let required = ((frame_dt_s * max_speed_m_s) / max_step_dist).ceil();
+    if !required.is_finite() || required <= 1.0 {
+        1
+    } else if required >= f64::from(cap) {
+        cap
+    } else {
+        required as u32
     }
 }

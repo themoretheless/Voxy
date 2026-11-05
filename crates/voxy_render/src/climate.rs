@@ -193,6 +193,29 @@ impl WeatherSchedule {
     }
 }
 
+/// Evaluates snow accumulation weight in `[0.0, 1.0]` for a surface normal `normal` given
+/// `snow_intensity` in `[0.0, 1.0]` and horizontal `wind_xz` (m/s), accounting for gravity
+/// shedding on steep slopes and windward drift deposition.
+#[must_use]
+pub fn snow_accumulation_weight(normal: Vec3, snow_intensity: f32, wind_xz: [f32; 2]) -> f32 {
+    if !normal.is_finite() || !snow_intensity.is_finite() || snow_intensity <= 0.0 {
+        return 0.0;
+    }
+    let n = normal.normalize_or_zero();
+    // Snow only sticks when the upward component exceeds ~cos(65 deg) ≈ 0.42:
+    let up_factor = ((n.y - 0.35) / 0.55).clamp(0.0, 1.0);
+    let up_smooth = up_factor * up_factor * (3.0 - 2.0 * up_factor);
+    let wind_vec = Vec3::new(wind_xz[0], 0.0, wind_xz[1]);
+    let wind_speed = wind_vec.length();
+    let wind_bias = if wind_speed > 1e-3 && wind_speed.is_finite() {
+        let wind_dir = wind_vec / wind_speed;
+        (1.0 + 0.25 * (-n.dot(wind_dir)).clamp(-1.0, 1.0)).clamp(0.5, 1.25)
+    } else {
+        1.0
+    };
+    (snow_intensity.clamp(0.0, 1.0) * up_smooth * wind_bias).clamp(0.0, 1.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -258,5 +281,7 @@ mod tests {
         }
         assert_eq!(snow_summer, 0.);
         assert!(snow_winter > 10.);
+        assert!(snow_accumulation_weight(Vec3::Y, 0.9, [4.0, 0.0]) > 0.8);
+        assert_eq!(snow_accumulation_weight(Vec3::NEG_Y, 1.0, [0.0, 0.0]), 0.0);
     }
 }

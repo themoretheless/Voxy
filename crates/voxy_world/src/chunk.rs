@@ -330,6 +330,97 @@ impl PalettedBlocks {
         }
         mip
     }
+
+    /// Computes a hierarchical 2-level sparse octree occupancy mask (`SparseChunkOctreeMask`)
+    /// indicating which $16^3$ octants (8 bits) and $8^3$ sub-octants (64 bits) contain at least
+    /// one non-air voxel.
+    #[must_use]
+    pub fn sparse_octree_mask(&self) -> SparseChunkOctreeMask {
+        match self {
+            Self::Uniform(block) => {
+                if *block == BlockStateId::AIR {
+                    SparseChunkOctreeMask {
+                        octants_16: 0,
+                        sub_octants_8: 0,
+                    }
+                } else {
+                    SparseChunkOctreeMask {
+                        octants_16: u8::MAX,
+                        sub_octants_8: u64::MAX,
+                    }
+                }
+            }
+            _ => {
+                let dense = self.to_dense();
+                let mut octants_16 = 0_u8;
+                let mut sub_octants_8 = 0_u64;
+                for sy in 0_usize..4 {
+                    for sz in 0_usize..4 {
+                        for sx in 0_usize..4 {
+                            let sub_bit = sx + 4 * (sz + 4 * sy);
+                            let mut occupied = false;
+                            'cell: for dy in 0_usize..8 {
+                                let y = sy * 8 + dy;
+                                for dz in 0_usize..8 {
+                                    let z = sz * 8 + dz;
+                                    let base = 32 * (z + 32 * y) + sx * 8;
+                                    for &b in &dense[base..base + 8] {
+                                        if b != BlockStateId::AIR {
+                                            occupied = true;
+                                            break 'cell;
+                                        }
+                                    }
+                                }
+                            }
+                            if occupied {
+                                sub_octants_8 |= 1_u64 << sub_bit;
+                                let oct_bit = (sx >> 1) + 2 * ((sz >> 1) + 2 * (sy >> 1));
+                                octants_16 |= 1_u8 << oct_bit;
+                            }
+                        }
+                    }
+                }
+                SparseChunkOctreeMask {
+                    octants_16,
+                    sub_octants_8,
+                }
+            }
+        }
+    }
+
+    /// Returns the highest local `y` coordinate (`0..32`) containing a non-air voxel
+    /// in the `(x, z)` column, or `None` if the column is entirely air or out of bounds.
+    #[must_use]
+    pub fn column_top_solid_y(&self, x: u8, z: u8) -> Option<u8> {
+        if x >= 32 || z >= 32 {
+            return None;
+        }
+        if let Self::Uniform(block) = self {
+            return (*block != BlockStateId::AIR).then_some(31);
+        }
+        for y in (0..32_u8).rev() {
+            let pos = LocalPos::new(x, y, z).ok()?;
+            if self.get(pos.index()) != BlockStateId::AIR {
+                return Some(y);
+            }
+        }
+        None
+    }
+}
+
+/// Two-level hierarchical occupancy bitmask for a $32^3$ chunk (`8` $16^3$ octants and
+/// `64` $8^3$ sub-octants).
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct SparseChunkOctreeMask {
+    pub octants_16: u8,
+    pub sub_octants_8: u64,
+}
+
+impl SparseChunkOctreeMask {
+    #[must_use]
+    pub const fn is_empty(self) -> bool {
+        self.octants_16 == 0 && self.sub_octants_8 == 0
+    }
 }
 
 /// Sorted distinct blocks of a chunk, or `None` once more than [`MAX_PALETTE`] occur.
@@ -794,5 +885,12 @@ mod tests {
         let mip = filled.downsample_2x();
         assert_eq!(mip[2 + 16 * (4 + 16)], id(7));
         assert_eq!(mip[0], id(0));
+
+        let mask = filled.sparse_octree_mask();
+        assert!(!mask.is_empty());
+        assert_eq!(mask.octants_16 & 1, 1);
+        assert!(base.sparse_octree_mask().is_empty());
+        assert_eq!(filled.column_top_solid_y(4, 8), Some(5));
+        assert_eq!(filled.column_top_solid_y(0, 0), None);
     }
 }
