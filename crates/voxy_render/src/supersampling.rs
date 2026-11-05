@@ -171,6 +171,57 @@ impl SupersampleResolve {
     }
 }
 
+/// Computes an HDR-safe Robust Contrast-Adaptive Sharpening (RCAS) tap weight in `[-0.25, 0.0]`
+/// from the 5-tap cross neighborhood luminances `(center, north, south, east, west)` and user
+/// `sharpness` in `[0.0, 1.0]`, attenuating sharpening around high-contrast HDR highlights to
+/// prevent negative ringing halos.
+#[must_use]
+pub fn rcas_sharpening_gain(
+    center_luma: f32,
+    neighbors_luma: [f32; 4],
+    sharpness: f32,
+) -> f32 {
+    if !center_luma.is_finite()
+        || neighbors_luma.iter().any(|v| !v.is_finite() || *v < 0.0)
+        || !sharpness.is_finite()
+        || center_luma < 0.0
+    {
+        return 0.0;
+    }
+    let s = sharpness.clamp(0.0, 1.0);
+    if s <= 1e-6 {
+        return 0.0;
+    }
+    let min_l = neighbors_luma
+        .iter()
+        .copied()
+        .fold(center_luma, f32::min);
+    let max_l = neighbors_luma
+        .iter()
+        .copied()
+        .fold(center_luma, f32::max)
+        .max(1e-5);
+    let contrast = (max_l - min_l) / max_l;
+    // Attenuate sharpening on high local contrast and HDR specular peaks (> 1.0):
+    let hdr_damp = 1.0 / (1.0 + max_l.max(1.0) - 1.0);
+    let adaptive = (1.0 - contrast).clamp(0.0, 1.0) * hdr_damp;
+    (-0.25 * s * adaptive).clamp(-0.25, 0.0)
+}
+
+#[cfg(test)]
+mod rcas_tests {
+    use super::*;
+
+    #[test]
+    fn rcas_sharpening_gain_damps_hdr_highlights_and_zero_sharpness() {
+        assert_eq!(rcas_sharpening_gain(0.5, [0.4, 0.5, 0.6, 0.5], 0.0), 0.0);
+        let sdr = rcas_sharpening_gain(0.5, [0.45, 0.55, 0.48, 0.52], 1.0);
+        let hdr = rcas_sharpening_gain(5.0, [4.5, 5.5, 4.8, 5.2], 1.0);
+        assert!(sdr < 0.0 && sdr >= -0.25);
+        assert!(hdr.abs() < sdr.abs());
+    }
+}
+
 #[cfg(all(test, target_os = "macos"))]
 mod tests {
     use super::*;

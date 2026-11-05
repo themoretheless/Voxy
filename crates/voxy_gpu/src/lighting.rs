@@ -561,5 +561,14 @@ mod tests {
         let neighbor_local = 16 + 32 * (15 + 32 * 15);
         let neighbor_block = result[neighbor_local] & 0x0f;
         assert_eq!(neighbor_block, 13);
+        assert_eq!(estimate_dirty_light_mip_voxels(2), 2 * (32768 + 4096 + 512 + 64 + 8 + 1));
     }
+}
+
+/// Estimates the total number of 3D mip-pyramid voxel texels (`32^3 + 16^3 + 8^3 + 4^3 + 2^3 + 1 = 37,449`
+/// per chunk) that must be updated when `dirty_chunk_count` lighting volumes are invalidated.
+#[must_use]
+pub const fn estimate_dirty_light_mip_voxels(dirty_chunk_count: u32) -> u64 {
+    const MIP_CHAIN_VOXELS_PER_CHUNK: u64 = 32768 + 4096 + 512 + 64 + 8 + 1;
+    (dirty_chunk_count as u64).saturating_mul(MIP_CHAIN_VOXELS_PER_CHUNK)
 }

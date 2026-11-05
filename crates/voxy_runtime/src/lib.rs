@@ -251,3 +251,83 @@ mod tests {
 }
 
 pub use bootstrap::build_generated_scene_with_mesh_plants;
+
+/// Deterministic 64-bit FNV-1a frame state digest for lockstep/replay desync detection.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct FrameStateDigest(u64);
+
+impl Default for FrameStateDigest {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl FrameStateDigest {
+    const OFFSET_BASIS: u64 = 0xcbf2_9ce4_8422_2325;
+    const PRIME: u64 = 0x0100_0000_01b3;
+
+    #[must_use]
+    pub const fn new() -> Self {
+        Self(Self::OFFSET_BASIS)
+    }
+
+    pub const fn write_bytes(&mut self, bytes: &[u8]) {
+        let mut i = 0;
+        while i < bytes.len() {
+            self.0 ^= bytes[i] as u64;
+            self.0 = self.0.wrapping_mul(Self::PRIME);
+            i += 1;
+        }
+    }
+
+    pub const fn write_u64(&mut self, value: u64) {
+        self.write_bytes(&value.to_le_bytes());
+    }
+
+    #[must_use]
+    pub const fn finish(self) -> u64 {
+        self.0
+    }
+}
+
+/// Computes a predictive chunk-prefetch offset `[dx, dy, dz]` (in 32-voxel chunks)
+/// from player velocity (`m/s`) and `lookahead_s`, clamped to `[-max_chunk_offset, max_chunk_offset]`.
+#[must_use]
+#[allow(clippy::cast_possible_truncation)]
+pub fn velocity_lookahead_chunk_offset(
+    velocity_m_s: [f32; 3],
+    lookahead_s: f32,
+    max_chunk_offset: i32,
+) -> [i32; 3] {
+    if !lookahead_s.is_finite() || lookahead_s <= 0.0 || max_chunk_offset <= 0 {
+        return [0, 0, 0];
+    }
+    let cap = max_chunk_offset;
+    velocity_m_s.map(|v| {
+        if !v.is_finite() {
+            0
+        } else {
+            let chunks = (v * lookahead_s / 32.0).round() as i32;
+            chunks.clamp(-cap, cap)
+        }
+    })
+}
+
+#[cfg(test)]
+mod n8_runtime_tests {
+    use super::*;
+
+    #[test]
+    fn frame_state_digest_and_velocity_lookahead_offset_are_deterministic() {
+        let mut d1 = FrameStateDigest::new();
+        d1.write_u64(42);
+        d1.write_bytes(b"voxy");
+        let mut d2 = FrameStateDigest::new();
+        d2.write_u64(42);
+        d2.write_bytes(b"voxy");
+        assert_eq!(d1.finish(), d2.finish());
+
+        let offset = velocity_lookahead_chunk_offset([64.0, 0.0, -96.0], 1.0, 2);
+        assert_eq!(offset, [2, 0, -2]);
+    }
+}

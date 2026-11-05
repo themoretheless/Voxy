@@ -293,5 +293,35 @@ mod tests {
             plan_explosion(&world, &registry, EditSource::Simulation, explosion),
             Err(DestructionError::Unloaded { .. })
         ));
+        let near = blast_overpressure_impulse(8.0, 2.0).unwrap();
+        let far = blast_overpressure_impulse(8.0, 6.0).unwrap();
+        assert!(near > far && far > 0.0);
     }
+}
+
+/// Computes the Sadovsky–Kingery peak blast overpressure ($\text{kPa}$) as a function of
+/// equivalent TNT charge mass `charge_weight_kg` and standoff `distance_m` using the
+/// Hopkinson–Cranz scaled distance $Z = R / W^{1/3}$:
+/// $\Delta P = \frac{84}{Z} + \frac{270}{Z^2} + \frac{700}{Z^3}$.
+///
+/// # Errors
+///
+/// Rejects non-finite or non-positive charge mass or distance.
+pub fn blast_overpressure_impulse(
+    charge_weight_kg: f64,
+    distance_m: f64,
+) -> Result<f64, DestructionError> {
+    if !charge_weight_kg.is_finite()
+        || !distance_m.is_finite()
+        || charge_weight_kg <= 0.0
+        || distance_m <= 0.0
+    {
+        return Err(DestructionError::InvalidLimits);
+    }
+    let z = (distance_m / charge_weight_kg.cbrt()).max(0.05);
+    let overpressure_kpa = 84.0 / z + 270.0 / (z * z) + 700.0 / (z * z * z);
+    if !overpressure_kpa.is_finite() {
+        return Err(DestructionError::EnergyOverflow);
+    }
+    Ok(overpressure_kpa)
 }

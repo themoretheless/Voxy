@@ -7,6 +7,48 @@ pub struct PickBounds {
     pub max: Vec3,
     pub layers: u32,
 }
+impl PickBounds {
+    /// Returns the world/local AABB surface area `2 * (dx*dy + dy*dz + dz*dx)`, or `None` for invalid/inverted bounds.
+    #[must_use]
+    pub fn surface_area(self) -> Option<f32> {
+        if !self.min.is_finite() || !self.max.is_finite() || self.min.cmpgt(self.max).any() {
+            return None;
+        }
+        let d = self.max - self.min;
+        let area = 2.0 * (d.x * d.y + d.y * d.z + d.z * d.x);
+        area.is_finite().then_some(area)
+    }
+}
+
+/// Evaluates the Surface Area Heuristic (SAH) cost for splitting a parent bounding box into two child partitions.
+#[must_use]
+pub fn sah_split_cost(
+    parent_area: f32,
+    left_area: f32,
+    left_count: u32,
+    right_area: f32,
+    right_count: u32,
+    traversal_cost: f32,
+    intersection_cost: f32,
+) -> Option<f32> {
+    if !parent_area.is_finite()
+        || parent_area <= 0.0
+        || !left_area.is_finite()
+        || left_area < 0.0
+        || !right_area.is_finite()
+        || right_area < 0.0
+        || !traversal_cost.is_finite()
+        || traversal_cost < 0.0
+        || !intersection_cost.is_finite()
+        || intersection_cost <= 0.0
+    {
+        return None;
+    }
+    let cost = traversal_cost
+        + intersection_cost
+            * ((left_area * left_count as f32 + right_area * right_count as f32) / parent_area);
+    cost.is_finite().then_some(cost)
+}
 /// Logical-pixel viewport rectangle inside a platform window.
 #[derive(Clone, Copy, Debug)]
 pub struct PickViewport {
@@ -365,5 +407,23 @@ mod tests {
             );
         }
         assert!(viewport.ray(Mat4::IDENTITY, Vec2::ZERO, 0.0).is_err());
+    }
+    #[test]
+    fn pick_bounds_surface_area_and_sah_split_cost_validate_inputs() {
+        let unit = PickBounds {
+            min: Vec3::ZERO,
+            max: Vec3::ONE,
+            layers: 1,
+        };
+        assert_eq!(unit.surface_area(), Some(6.0));
+        let inverted = PickBounds {
+            min: Vec3::ONE,
+            max: Vec3::ZERO,
+            layers: 1,
+        };
+        assert_eq!(inverted.surface_area(), None);
+        let cost = sah_split_cost(10.0, 4.0, 5, 4.0, 5, 1.0, 2.0).unwrap();
+        assert!((cost - 9.0).abs() < 1e-6);
+        assert!(sah_split_cost(0.0, 4.0, 5, 4.0, 5, 1.0, 2.0).is_none());
     }
 }

@@ -387,4 +387,42 @@ mod tests {
         assert!(plants.refresh(&world));
         assert_eq!(plants.active_count(), count - 2);
     }
+
+    #[test]
+    fn wind_canopy_sway_increases_nonlinearly_with_height() {
+        assert_eq!(wind_canopy_sway(0.0, 5.0, [4.0, 2.0], 1.0), [0.0, 0.0]);
+        let mid = wind_canopy_sway(2.5, 5.0, [4.0, 0.0], 0.0);
+        let top = wind_canopy_sway(5.0, 5.0, [4.0, 0.0], 0.0);
+        assert!(top[0].abs() > mid[0].abs() && mid[0].abs() > 0.0);
+    }
+}
+
+/// Computes horizontal `[dx, dz]` canopy displacement (meters) for a tree or shrub at
+/// `height_above_root_m` using a cantilever beam deflection profile and gust oscillation.
+#[allow(dead_code)]
+pub fn wind_canopy_sway(
+    height_above_root_m: f32,
+    crown_height_m: f32,
+    wind_xz: [f32; 2],
+    time_s: f32,
+) -> [f32; 2] {
+    if !height_above_root_m.is_finite()
+        || !crown_height_m.is_finite()
+        || !wind_xz[0].is_finite()
+        || !wind_xz[1].is_finite()
+        || !time_s.is_finite()
+        || height_above_root_m <= 0.0
+        || crown_height_m <= 0.1
+    {
+        return [0.0, 0.0];
+    }
+    let u = (height_above_root_m / crown_height_m).clamp(0.0, 1.5);
+    // Cantilever beam mode shape: u^2 * (3 - u) / 2
+    let bend = 0.5 * u * u * (3.0 - u.min(1.5));
+    let gust = 1.0 + 0.25 * (time_s * 2.2 + u * 1.7).sin();
+    let scale = 0.035 * bend * gust;
+    [
+        (wind_xz[0] * scale).clamp(-0.6, 0.6),
+        (wind_xz[1] * scale).clamp(-0.6, 0.6),
+    ]
 }

@@ -54,6 +54,66 @@ impl MobileThermalState {
             Self::Critical => (0.50, 30),
         }
     }
+
+    /// Transitions mobile thermal state from `skin_temp_c` (°C) using deadband `hysteresis_c`
+    /// around thresholds (`38 °C`, `42 °C`, `46 °C`) to prevent quality-budget oscillation.
+    #[must_use]
+    pub fn step_with_hysteresis(self, skin_temp_c: f32, hysteresis_c: f32) -> Self {
+        if !skin_temp_c.is_finite() {
+            return self;
+        }
+        let h = if hysteresis_c.is_finite() && hysteresis_c >= 0.0 {
+            hysteresis_c
+        } else {
+            1.5
+        };
+        match self {
+            Self::Nominal => {
+                if skin_temp_c >= 46.0 {
+                    Self::Critical
+                } else if skin_temp_c >= 42.0 {
+                    Self::Serious
+                } else if skin_temp_c >= 38.0 {
+                    Self::Fair
+                } else {
+                    Self::Nominal
+                }
+            }
+            Self::Fair => {
+                if skin_temp_c >= 46.0 {
+                    Self::Critical
+                } else if skin_temp_c >= 42.0 {
+                    Self::Serious
+                } else if skin_temp_c <= 38.0 - h {
+                    Self::Nominal
+                } else {
+                    Self::Fair
+                }
+            }
+            Self::Serious => {
+                if skin_temp_c >= 46.0 {
+                    Self::Critical
+                } else if skin_temp_c <= 38.0 - h {
+                    Self::Nominal
+                } else if skin_temp_c <= 42.0 - h {
+                    Self::Fair
+                } else {
+                    Self::Serious
+                }
+            }
+            Self::Critical => {
+                if skin_temp_c <= 38.0 - h {
+                    Self::Nominal
+                } else if skin_temp_c <= 42.0 - h {
+                    Self::Fair
+                } else if skin_temp_c <= 46.0 - h {
+                    Self::Serious
+                } else {
+                    Self::Critical
+                }
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -68,5 +128,13 @@ mod tests {
         let (s3, fps3) = MobileThermalState::Critical.quality_budget();
         assert!(s0 > s1 && s1 > s2 && s2 > s3);
         assert!(fps0 >= fps1 && fps1 > fps2 && fps2 > fps3);
+
+        let state = MobileThermalState::Nominal.step_with_hysteresis(38.5, 1.5);
+        assert_eq!(state, MobileThermalState::Fair);
+        assert_eq!(state.step_with_hysteresis(37.2, 1.5), MobileThermalState::Fair);
+        assert_eq!(
+            state.step_with_hysteresis(36.0, 1.5),
+            MobileThermalState::Nominal
+        );
     }
 }

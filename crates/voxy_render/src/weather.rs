@@ -73,6 +73,33 @@ impl Default for Weather {
         Self::CLEAR
     }
 }
+
+/// Evaluates twilight atmospheric spectral transmittance `[r, g, b]` in `[0.0, 1.0]` combining
+/// Rayleigh scattering, Mie aerosol extinction, and Chappuis-band stratospheric ozone absorption
+/// (which peaks in orange-red $550\text{–}650\text{ nm}$ and produces deep cobalt-blue twilight
+/// skies when `sun_elevation_deg` is in `[-12.0, 10.0]`).
+#[must_use]
+pub fn twilight_ozone_transmittance_rgb(sun_elevation_deg: f32, turbidity: f32) -> [f32; 3] {
+    if !sun_elevation_deg.is_finite() || !turbidity.is_finite() {
+        return [0.0; 3];
+    }
+    let elev = sun_elevation_deg.clamp(-18.0, 90.0);
+    let t = turbidity.clamp(1.0, 10.0);
+    // Relative optical airmass with spherical-shell horizon continuation down to -18 deg:
+    let eff_deg = elev.max(-6.0) + 6.5;
+    let air_mass = (1.0 / eff_deg.to_radians().sin().max(0.035)).min(38.0);
+    // Ozone path length peaks near the horizon (stratospheric layer at ~22 km):
+    let ozone_mass = (air_mass * 0.65).min(18.0);
+    let beta_rayleigh = [0.0058_f32, 0.0135, 0.0331];
+    let beta_mie = 0.0045 * t;
+    // Chappuis ozone absorption cross-section is strongest in red/green, weak in blue:
+    let beta_ozone = [0.065_f32, 0.048, 0.003];
+    let night_fade = ((elev + 14.0) / 14.0).clamp(0.0, 1.0);
+    std::array::from_fn(|i| {
+        let tau = beta_rayleigh[i] * air_mass + beta_mie * air_mass + beta_ozone[i] * ozone_mass;
+        ((-tau).exp() * night_fade).clamp(0.0, 1.0)
+    })
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -125,5 +152,9 @@ mod tests {
             }
             .is_valid()
         );
+        let civil_twilight = twilight_ozone_transmittance_rgb(-3.0, 2.0);
+        let noon = twilight_ozone_transmittance_rgb(60.0, 2.0);
+        assert!(noon[0] > civil_twilight[0]);
+        assert!(civil_twilight[0] > 0.0 && civil_twilight[2] > 0.0);
     }
 }

@@ -1111,5 +1111,27 @@ mod tests {
                 );
             }
         }
+        assert_eq!(eyelid_blink_curve(0.0), 0.0);
+        assert!((eyelid_blink_curve(0.3) - 1.0).abs() < 1e-5);
+        assert!(eyelid_blink_curve(0.15) > eyelid_blink_curve(0.75));
+    }
+}
+
+/// Evaluates an asymmetric human eyelid blink closure curve in `[0.0, 1.0]` for normalized
+/// blink phase `phase` $\in [0, 1]$, featuring rapid down-stroke closure (`0..0.30`) and
+/// damped exponential-smoothstep reopening (`0.30..1.0`).
+#[must_use]
+pub fn eyelid_blink_curve(phase: f32) -> f32 {
+    if !phase.is_finite() || !(0.0..=1.0).contains(&phase) {
+        return 0.0;
+    }
+    const PEAK_PHASE: f32 = 0.30;
+    if phase <= PEAK_PHASE {
+        let u = (phase / PEAK_PHASE).clamp(0.0, 1.0);
+        u * u * (3.0 - 2.0 * u)
+    } else {
+        let u = ((phase - PEAK_PHASE) / (1.0 - PEAK_PHASE)).clamp(0.0, 1.0);
+        let inv = 1.0 - u;
+        inv * inv * (2.0 * u + 1.0)
     }
 }

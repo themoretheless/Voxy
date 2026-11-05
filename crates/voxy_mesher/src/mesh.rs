@@ -77,6 +77,66 @@ pub enum QuadDiagonal {
     Vu,
 }
 
+/// Selects the anisotropy-free triangulation diagonal (`QuadDiagonal::Uv` or `QuadDiagonal::Vu`)
+/// from the 4 corner Ambient Occlusion levels `[c00, c10, c01, c11]` (`0..=3`) so that
+/// interpolated AO gradients stay symmetric across quad diagonals.
+#[must_use]
+pub const fn select_ao_quad_diagonal(ao_corners: [u8; 4]) -> QuadDiagonal {
+    let diag_uv = (ao_corners[0] as u16) + (ao_corners[3] as u16);
+    let diag_vu = (ao_corners[1] as u16) + (ao_corners[2] as u16);
+    if diag_uv < diag_vu {
+        QuadDiagonal::Vu
+    } else {
+        QuadDiagonal::Uv
+    }
+}
+
+/// Symmetric $6 \times 6$ face-to-face visibility bitmask (`u16`, 15 unique unordered face pairs)
+/// used by conservative cave culling (Tommaso Checchi's Advanced Cave Culling Algorithm).
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
+#[repr(transparent)]
+pub struct ChunkVisibilityGraph6(u16);
+
+impl ChunkVisibilityGraph6 {
+    pub const OPAQUE: Self = Self(0);
+    pub const ALL_VISIBLE: Self = Self(0x7fff);
+
+    const fn pair_bit(a: FaceDir, b: FaceDir) -> Option<u32> {
+        let ia = a.material_index() as u32;
+        let ib = b.material_index() as u32;
+        if ia == ib {
+            return None;
+        }
+        let (lo, hi) = if ia < ib { (ia, ib) } else { (ib, ia) };
+        // Maps (lo, hi) with 0 <= lo < hi < 6 to 0..15.
+        Some((hi * (hi - 1)) / 2 + lo)
+    }
+
+    /// Marks two chunk boundary faces as mutually visible through an open interior cavity.
+    #[must_use]
+    pub const fn with_connection(self, a: FaceDir, b: FaceDir) -> Self {
+        match Self::pair_bit(a, b) {
+            Some(bit) => Self(self.0 | (1_u16 << bit)),
+            None => self,
+        }
+    }
+
+    /// Returns `true` if a ray can conservatively enter through face `a` and exit through `b`.
+    #[must_use]
+    pub const fn can_see_through(self, a: FaceDir, b: FaceDir) -> bool {
+        match Self::pair_bit(a, b) {
+            Some(bit) => (self.0 & (1_u16 << bit)) != 0,
+            None => true,
+        }
+    }
+
+    /// Returns the number of connected unordered face pairs (`0..=15`).
+    #[must_use]
+    pub const fn connected_pair_count(self) -> u32 {
+        (self.0 & 0x7fff).count_ones()
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Quad {
     pub origin: [u8; 3],
@@ -1385,5 +1445,15 @@ mod tests {
         {
             assert_eq!(quad.pack_64().unpack(), Some(quad));
         }
+        assert_eq!(select_ao_quad_diagonal([3, 3, 3, 3]), QuadDiagonal::Uv);
+        assert_eq!(select_ao_quad_diagonal([1, 3, 3, 1]), QuadDiagonal::Vu);
+
+        let vis = ChunkVisibilityGraph6::OPAQUE
+            .with_connection(FaceDir::NegX, FaceDir::PosX)
+            .with_connection(FaceDir::NegY, FaceDir::PosZ);
+        assert!(vis.can_see_through(FaceDir::PosX, FaceDir::NegX));
+        assert!(vis.can_see_through(FaceDir::NegY, FaceDir::PosZ));
+        assert!(!vis.can_see_through(FaceDir::NegX, FaceDir::PosY));
+        assert_eq!(vis.connected_pair_count(), 2);
     }
 }

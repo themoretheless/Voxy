@@ -695,3 +695,69 @@ impl PrefabSceneDocument {
         Ok(result)
     }
 }
+
+/// Detects whether internal (non-external) `ParentOverride` links within an instance override map form a cycle.
+#[must_use]
+pub fn has_parent_override_cycle(overrides: &BTreeMap<ObjectId, ObjectOverride>) -> bool {
+    for start in overrides.keys() {
+        let mut current = start;
+        let mut steps = 0usize;
+        while let Some(ov) = overrides.get(current) {
+            let Some(parent_ov) = &ov.parent else {
+                break;
+            };
+            if parent_ov.external {
+                break;
+            }
+            let Some(next) = &parent_ov.parent else {
+                break;
+            };
+            if next == start {
+                return true;
+            }
+            current = next;
+            steps += 1;
+            if steps > overrides.len() {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+#[cfg(test)]
+mod prefab_cycle_tests {
+    use super::*;
+
+    #[test]
+    fn detects_internal_parent_override_cycles_and_allows_external_or_dag() {
+        let mut overrides = BTreeMap::new();
+        overrides.insert(
+            ObjectId("a".into()),
+            ObjectOverride {
+                parent: Some(ParentOverride {
+                    external: false,
+                    parent: Some(ObjectId("b".into())),
+                }),
+                ..ObjectOverride::default()
+            },
+        );
+        overrides.insert(
+            ObjectId("b".into()),
+            ObjectOverride {
+                parent: Some(ParentOverride {
+                    external: false,
+                    parent: Some(ObjectId("a".into())),
+                }),
+                ..ObjectOverride::default()
+            },
+        );
+        assert!(has_parent_override_cycle(&overrides));
+
+        overrides.get_mut(&ObjectId("b".into())).unwrap().parent = Some(ParentOverride {
+            external: true,
+            parent: Some(ObjectId("a".into())),
+        });
+        assert!(!has_parent_override_cycle(&overrides));
+    }
+}

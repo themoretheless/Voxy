@@ -109,6 +109,29 @@ impl PetState {
             self.hygiene,
         )
     }
+
+    /// Computes a circadian and weather comfort multiplier in `[0.25, 1.25]` affecting
+    /// pet happiness/energy based on rain, snow, and hour of day (`0..24`).
+    #[allow(dead_code)]
+    pub fn weather_comfort_modifier(self, rain: f32, snow: f32, hour_of_day: f32) -> f32 {
+        let r = if rain.is_finite() { rain.clamp(0.0, 1.0) } else { 0.0 };
+        let s = if snow.is_finite() { snow.clamp(0.0, 1.0) } else { 0.0 };
+        let h = if hour_of_day.is_finite() {
+            hour_of_day.rem_euclid(24.0)
+        } else {
+            12.0
+        };
+        let is_night = !(6.5..=20.5).contains(&h);
+        let circadian = if self.sleeping {
+            if is_night { 1.15 } else { 0.95 }
+        } else if is_night {
+            0.80
+        } else {
+            1.10
+        };
+        let precipitation_penalty = r * 0.35 + s * 0.45;
+        (circadian - precipitation_penalty).clamp(0.25, 1.25)
+    }
 }
 
 #[cfg(test)]
@@ -136,5 +159,16 @@ mod tests {
         assert!(pet.hunger.abs() < f32::EPSILON);
         assert!(pet.health < 100.0);
         assert!(pet.title().contains("SICK"));
+    }
+
+    #[test]
+    fn weather_comfort_modifier_prefers_clear_daytime_and_night_sleep() {
+        let mut pet = PetState::default();
+        let clear_day = pet.weather_comfort_modifier(0.0, 0.0, 14.0);
+        let stormy_day = pet.weather_comfort_modifier(1.0, 0.5, 14.0);
+        assert!(clear_day > 1.0);
+        assert!(stormy_day < clear_day);
+        pet.act(PetAction::Sleep);
+        assert!(pet.weather_comfort_modifier(0.0, 0.0, 2.0) > 1.0);
     }
 }

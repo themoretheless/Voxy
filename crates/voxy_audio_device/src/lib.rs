@@ -212,3 +212,35 @@ pub use output_checkpoint::{
     OfflineOutput, OutputCheckpoint, OutputCheckpointLimits, PreparedOutputCheckpoint,
     ReadyOutputPublication,
 };
+
+/// Applies a master stereo soft-clipping `tanh` saturator to `[left, right]` with pre-gain `drive`,
+/// guaranteeing finite samples strictly within `[-1.0, 1.0]`.
+#[must_use]
+pub fn soft_clip_tanh_stereo(left: f32, right: f32, drive: f32) -> [f32; 2] {
+    let g = if drive.is_finite() && drive > 0.0 {
+        drive
+    } else {
+        1.0
+    };
+    let sat = |x: f32| -> f32 {
+        if !x.is_finite() {
+            0.0
+        } else {
+            (x * g).tanh().clamp(-1.0, 1.0)
+        }
+    };
+    [sat(left), sat(right)]
+}
+
+#[cfg(test)]
+mod limiter_tests {
+    use super::*;
+
+    #[test]
+    fn soft_clip_tanh_stereo_bounds_overdriven_signals() {
+        let out = soft_clip_tanh_stereo(3.0, -3.0, 1.5);
+        assert!(out[0] > 0.99 && out[0] <= 1.0);
+        assert!(out[1] < -0.99 && out[1] >= -1.0);
+        assert_eq!(soft_clip_tanh_stereo(f32::NAN, 0.0, 1.0), [0.0, 0.0]);
+    }
+}

@@ -223,3 +223,40 @@ impl RushWaveProgression {
         self.score = self.score.saturating_add(points);
     }
 }
+
+/// Returns the remaining fraction (`0.0..=1.0`) of a Rush script `ExecutionLimits` step budget.
+#[must_use]
+pub fn remaining_step_budget_fraction(limits: ExecutionLimits, used_steps: usize) -> f32 {
+    if limits.steps == 0 {
+        return 0.0;
+    }
+    let remaining = limits.steps.saturating_sub(used_steps);
+    (remaining as f32 / limits.steps as f32).clamp(0.0, 1.0)
+}
+
+#[cfg(test)]
+mod n8_rush_progression_tests {
+    use super::*;
+
+    #[test]
+    fn rush_wave_progression_and_step_budget_fraction_behave_deterministically() {
+        let mut prog = RushWaveProgression::new();
+        assert_eq!(prog.multiplier(), 1);
+        for _ in 0..10 {
+            prog.record_elimination(100, 2.0);
+        }
+        assert_eq!(prog.multiplier(), 3);
+        prog.tick(2.5);
+        assert_eq!(prog.combo_count, 0);
+        assert_eq!(prog.multiplier(), 1);
+
+        let limits = ExecutionLimits {
+            steps: 1000,
+            max_depth: 16,
+            max_collection_items: 64,
+            max_string_bytes: 1024,
+        };
+        assert!((remaining_step_budget_fraction(limits, 250) - 0.75).abs() < 1e-6);
+        assert_eq!(remaining_step_budget_fraction(limits, 2000), 0.0);
+    }
+}

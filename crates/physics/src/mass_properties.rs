@@ -149,3 +149,53 @@ pub fn from_boxes(
         principal_axes: axes,
     })
 }
+
+/// Shifts a $3 \times 3$ center-of-mass inertia tensor `com_inertia` by `offset_m` for a rigid body
+/// of `mass_kg` using the Huygens–Steiner parallel-axis theorem:
+/// $I_{ij}' = I_{ij} + m \left(\|\mathbf{d}\|^2 \delta_{ij} - d_i d_j\right)$.
+///
+/// # Errors
+///
+/// Rejects non-finite inputs, non-positive mass, or asymmetric/overflowing tensors.
+pub fn parallel_axis_inertia(
+    com_inertia: Matrix,
+    mass_kg: f64,
+    offset_m: Vector,
+) -> Result<Matrix, &'static str> {
+    if !mass_kg.is_finite()
+        || mass_kg <= 0.0
+        || !finite(offset_m)
+        || com_inertia.iter().flatten().any(|v| !v.is_finite())
+    {
+        return Err("invalid parallel-axis inertia input");
+    }
+    let d2 = dot(offset_m, offset_m);
+    let mut shifted = com_inertia;
+    for i in 0..3 {
+        shifted[i][i] += mass_kg * (d2 - offset_m[i] * offset_m[i]);
+        for j in (i + 1)..3 {
+            let off = -mass_kg * offset_m[i] * offset_m[j];
+            shifted[i][j] += off;
+            shifted[j][i] += off;
+        }
+    }
+    if shifted.iter().flatten().any(|v| !v.is_finite()) {
+        return Err("parallel-axis inertia overflow");
+    }
+    Ok(shifted)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parallel_axis_shifts_diagonal_and_off_diagonal_moments() {
+        let base = [[2.0, 0.0, 0.0], [0.0, 3.0, 0.0], [0.0, 0.0, 4.0]];
+        let shifted = parallel_axis_inertia(base, 5.0, [0.0, 2.0, 0.0]).unwrap();
+        // d = (0, 2, 0), d^2 = 4 -> Ixx' = 2 + 5*4 = 22, Iyy' = 3, Izz' = 4 + 5*4 = 24
+        assert!((shifted[0][0] - 22.0).abs() < 1e-12);
+        assert!((shifted[1][1] - 3.0).abs() < 1e-12);
+        assert!((shifted[2][2] - 24.0).abs() < 1e-12);
+    }
+}

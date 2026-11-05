@@ -14,7 +14,7 @@ pub use terrain_task::{PendingTerrain, TerrainDispatch, TerrainJob, TerrainProgr
 mod gravity;
 pub use gravity::{
     BlockingGravityJob, GravityBody, GravityBudget, GravityComputeError, GravityJob,
-    GravityParameters, GravityProgram, GravityReadback, PendingGravity,
+    GravityParameters, GravityProgram, GravityReadback, PendingGravity, barnes_hut_mac_satisfied,
 };
 
 mod gravity_view;
@@ -62,7 +62,7 @@ pub use voxel_mesh::{
 };
 
 mod lighting;
-pub use lighting::{GpuLightingError, GpuLightingProgram};
+pub use lighting::{GpuLightingError, GpuLightingProgram, estimate_dirty_light_mip_voxels};
 
 mod morph;
 pub use morph::{GpuMorphControl, GpuMorphError, GpuMorphProgram};
@@ -73,6 +73,7 @@ pub use pose_eval::{GpuClipSet, GpuPoseEvalError, GpuPoseEvalProgram};
 mod medium_solver;
 pub use medium_solver::{
     GpuMediumError, GpuMediumProgram, MediumTransportJob, MediumTransportResult,
+    henyey_greenstein_phase,
 };
 
 mod residency;

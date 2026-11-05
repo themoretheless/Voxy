@@ -54,6 +54,24 @@ pub const fn align_external_allocation_size(size: u64, alignment: u64) -> Option
     }
 }
 
+/// Validates that an 8-byte Direct3D 12 / Vulkan `VkPhysicalDeviceIDProperties::deviceLUID`
+/// matches a CUDA device LUID and contains at least one non-zero byte.
+#[must_use]
+pub const fn luid_is_valid_non_zero(adapter_luid: &[u8; 8], cuda_luid: &[u8; 8]) -> bool {
+    let mut non_zero = false;
+    let mut i = 0;
+    while i < 8 {
+        if adapter_luid[i] != cuda_luid[i] {
+            return false;
+        }
+        if adapter_luid[i] != 0 {
+            non_zero = true;
+        }
+        i += 1;
+    }
+    non_zero
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -68,5 +86,7 @@ mod tests {
         assert_eq!(align_external_allocation_size(4097, 4096), Some(8192));
         assert_eq!(align_external_allocation_size(0, 4096), None);
         assert_eq!(align_external_allocation_size(1024, 3000), None);
+        assert!(!luid_is_valid_non_zero(&[0_u8; 8], &[0_u8; 8]));
+        assert!(luid_is_valid_non_zero(&[1, 0, 0, 0, 0, 0, 0, 0], &[1, 0, 0, 0, 0, 0, 0, 0]));
     }
 }

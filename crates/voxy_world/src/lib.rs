@@ -5,13 +5,15 @@ mod chunk;
 mod generator;
 mod terrain;
 mod world;
-pub use terrain::{Biome, ProceduralTerrainGenerator, TerrainColumn};
+pub use terrain::{Biome, ProceduralTerrainGenerator, TerrainColumn, bilinear_climate_blend};
 
 pub use block::{
     BlockDef, BlockRegistry, BlockStateId, CollisionShape, InterfaceGroupId, MaterialId, Occlusion,
     RegistryError, RenderKind, ResourceKey,
 };
-pub use chunk::{ChunkData, ChunkError, ChunkRevision, ChunkSnapshot, PalettedBlocks};
+pub use chunk::{
+    ChunkData, ChunkError, ChunkRevision, ChunkSnapshot, PalettedBlocks, SparseChunkOctreeMask,
+};
 pub use generator::{
     ChunkGenerator, GeneratedChunk, GenerationError, GeneratorDescriptor, SimpleTerrainGenerator,
     TerrainPalette, WorldSeed,
@@ -23,4 +25,4 @@ pub use world::{
 };
 
 mod vegetation;
-pub use vegetation::{VegetationGenerator, VegetationPalette};
+pub use vegetation::{VegetationGenerator, VegetationPalette, can_plant_on_slope};

@@ -674,3 +674,38 @@ pub use pose_eval::{
     POSE_EVAL_HEADER_WORDS, POSE_EVAL_MAX_CLIPS, POSE_EVAL_MAX_JOBS, POSE_EVAL_MAX_JOINTS,
     POSE_EVAL_NO_PARENT, cpu_pose_eval_words, pack_pose_eval_job, unpack_pose_eval_palettes,
 };
+
+/// Computes a warp-aligned 1D CUDA block size (`32..=1024`, multiple of 32 threads) that fits
+/// within the streaming multiprocessor register file budget (`max_registers_per_block`, e.g. `65536`)
+/// given `registers_per_thread`.
+#[must_use]
+pub const fn optimal_block_threads_1d(
+    registers_per_thread: u32,
+    max_registers_per_block: u32,
+) -> Option<u32> {
+    if registers_per_thread == 0 || max_registers_per_block < 32 * registers_per_thread {
+        return None;
+    }
+    let raw_threads = max_registers_per_block / registers_per_thread;
+    let capped = if raw_threads > 1024 { 1024 } else { raw_threads };
+    let warp_aligned = (capped / 32) * 32;
+    if warp_aligned < 32 {
+        None
+    } else {
+        // Prefer 256 threads per block when register budget comfortably allows it,
+        // avoiding over-large blocks that limit multi-block SM residency.
+        Some(if warp_aligned > 256 { 256 } else { warp_aligned })
+    }
+}
+
+#[cfg(test)]
+mod launch_occupancy_tests {
+    use super::*;
+
+    #[test]
+    fn optimal_block_threads_respects_warp_multiples_and_register_file() {
+        assert_eq!(optimal_block_threads_1d(32, 65536), Some(256));
+        assert_eq!(optimal_block_threads_1d(512, 65536), Some(128));
+        assert_eq!(optimal_block_threads_1d(4096, 65536), None);
+    }
+}

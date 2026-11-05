@@ -11,6 +11,28 @@ mod spatial;
 pub use spatial::{
     sabine_eyring_rt60, spatial_gains, trace_voxel_occlusion_gain,
 };
+
+/// Evaluates Woodworth's spherical-head Interaural Time Difference (ITD) in seconds
+/// for horizontal azimuth `azimuth_rad` (`-pi/2..=pi/2`), `head_radius_m`, and `speed_of_sound_m_s`.
+#[must_use]
+pub fn woodworth_itd_seconds(
+    azimuth_rad: f32,
+    head_radius_m: f32,
+    speed_of_sound_m_s: f32,
+) -> f32 {
+    if !azimuth_rad.is_finite()
+        || !head_radius_m.is_finite()
+        || head_radius_m <= 0.0
+        || !speed_of_sound_m_s.is_finite()
+        || speed_of_sound_m_s <= 0.0
+    {
+        return 0.0;
+    }
+    let theta = azimuth_rad.clamp(-std::f32::consts::FRAC_PI_2, std::f32::consts::FRAC_PI_2);
+    let abs_theta = theta.abs();
+    let delay = (head_radius_m / speed_of_sound_m_s) * (abs_theta + abs_theta.sin());
+    delay.copysign(theta)
+}
 use std::sync::{
     Arc,
     atomic::{AtomicU64, Ordering},
@@ -453,5 +475,8 @@ mod tests {
         assert_eq!(out[0], [1.0; 2]);
         assert!(Clip::new(0, vec![[0.0; 2]]).is_err());
         assert!(Clip::new(48_000, vec![[f32::INFINITY; 2]]).is_err());
+        let itd_right = woodworth_itd_seconds(std::f32::consts::FRAC_PI_2, 0.0875, 343.0);
+        let itd_left = woodworth_itd_seconds(-std::f32::consts::FRAC_PI_2, 0.0875, 343.0);
+        assert!(itd_right > 0.0006 && (itd_right + itd_left).abs() < 1e-7);
     }
 }

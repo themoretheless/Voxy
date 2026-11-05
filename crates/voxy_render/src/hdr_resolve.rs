@@ -92,3 +92,62 @@ impl HdrHalfResolveJob {
         &self.output
     }
 }
+
+/// Evaluates an edge-preserving bilateral upsampling weight in `[0.0, 1.0]` between a full-res
+/// target pixel `(hi_depth, hi_normal)` and a half-res sample `(lo_depth, lo_normal)` for
+/// half-resolution Screen-Space GI and volumetric shafts.
+#[must_use]
+pub fn bilateral_upsample_weight(
+    hi_depth: f32,
+    lo_depth: f32,
+    hi_normal: [f32; 3],
+    lo_normal: [f32; 3],
+    depth_sigma: f32,
+    normal_power: f32,
+) -> f32 {
+    if !hi_depth.is_finite()
+        || !lo_depth.is_finite()
+        || !depth_sigma.is_finite()
+        || !normal_power.is_finite()
+        || hi_depth <= 0.0
+        || lo_depth <= 0.0
+        || depth_sigma <= 0.0
+        || normal_power < 0.0
+    {
+        return 0.0;
+    }
+    let rel_depth = (hi_depth - lo_depth).abs() / hi_depth.max(1e-4);
+    let w_depth = (-0.5 * (rel_depth / depth_sigma).powi(2)).exp();
+    let nh = glam::Vec3::from_array(hi_normal).normalize_or_zero();
+    let nl = glam::Vec3::from_array(lo_normal).normalize_or_zero();
+    let dot = nh.dot(nl).clamp(0.0, 1.0);
+    let w_norm = dot.powf(normal_power);
+    (w_depth * w_norm).clamp(0.0, 1.0)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bilateral_upsample_weight_rejects_discontinuous_depth_and_normal_edges() {
+        let same = bilateral_upsample_weight(
+            5.0,
+            5.0,
+            [0.0, 1.0, 0.0],
+            [0.0, 1.0, 0.0],
+            0.05,
+            16.0,
+        );
+        let edge = bilateral_upsample_weight(
+            5.0,
+            12.0,
+            [0.0, 1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            0.05,
+            16.0,
+        );
+        assert!((same - 1.0).abs() < 1e-6);
+        assert!(edge < 1e-4);
+    }
+}

@@ -338,6 +338,43 @@ impl SceneHistory {
         edit(&mut candidate)?;
         self.commit(candidate, registry)
     }
+    /// Commits a document change, coalescing with the top undo state if both transitions
+    /// only modify the exact same single `ObjectId` and neither metadata nor auxiliary drafts changed.
+    /// # Errors
+    /// Rejects invalid or oversized documents while preserving existing history.
+    pub fn commit_coalesced(
+        &mut self,
+        document: SceneDocument,
+        registry: &ComponentRegistry,
+    ) -> Result<bool, DocumentError> {
+        let can_coalesce = self.redo.is_empty()
+            && self.undo.back().is_some_and(|prev| {
+                prev.metadata == self.current.metadata
+                    && prev.auxiliary == self.current.auxiliary
+                    && single_modified_object_id(&prev.document, &self.current.document)
+                        .zip(single_modified_object_id(&self.current.document, &document))
+                        .is_some_and(|(a, b)| a == b)
+            });
+        if can_coalesce {
+            let next = Self::validate(
+                document,
+                self.current.metadata.clone(),
+                self.current.auxiliary.clone(),
+                registry,
+                self.scene_capacity,
+                self.max_bytes,
+            )?;
+            self.current = next;
+            self.epoch = Arc::new(());
+            while self.undo.len() + 1 > self.max_versions || self.retained_bytes() > self.max_bytes
+            {
+                self.undo.pop_front();
+            }
+            Ok(true)
+        } else {
+            self.commit(document, registry)
+        }
+    }
     pub fn undo(&mut self) -> bool {
         if let Some(previous) = self.undo.pop_back() {
             self.epoch = Arc::new(());
@@ -358,6 +395,28 @@ impl SceneHistory {
             false
         }
     }
+}
+
+fn single_modified_object_id<'a>(
+    before: &'a SceneDocument,
+    after: &'a SceneDocument,
+) -> Option<&'a crate::ObjectId> {
+    if before.version != after.version || before.objects.len() != after.objects.len() {
+        return None;
+    }
+    let mut modified = None;
+    for (a, b) in before.objects.iter().zip(&after.objects) {
+        if a.id != b.id {
+            return None;
+        }
+        if a != b {
+            if modified.is_some() {
+                return None;
+            }
+            modified = Some(&a.id);
+        }
+    }
+    modified
 }
 #[cfg(test)]
 mod tests {
@@ -534,5 +593,20 @@ mod tests {
         assert_eq!(history.current().objects[0].name, "saved");
         let unchanged = history.begin_edit();
         assert!(!history.commit_edit(unchanged, &registry).unwrap());
+    }
+    #[test]
+    fn coalesced_commits_merge_same_object_edits_into_single_undo_step() {
+        let registry = registry();
+        let original = document();
+        let mut history = SceneHistory::new(original.clone(), &registry, 8, 8, 100_000).unwrap();
+        for step in ["step1", "step2", "step3"] {
+            let mut next = history.current().clone();
+            next.objects[0].name = step.into();
+            assert!(history.commit_coalesced(next, &registry).unwrap());
+        }
+        assert_eq!(history.current().objects[0].name, "step3");
+        assert!(history.undo());
+        assert_eq!(history.current(), &original);
+        assert!(!history.undo());
     }
 }

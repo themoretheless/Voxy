@@ -159,3 +159,29 @@ impl FollowRuntimeCheckpoint {
         ))
     }
 }
+
+/// Frame-rate-independent exponential decay step toward `target` governed by `half_life_s`.
+#[must_use]
+pub fn follow_camera_spring_step(current: f64, target: f64, half_life_s: f64, dt_s: f64) -> f64 {
+    if !current.is_finite() || !target.is_finite() || !dt_s.is_finite() || dt_s <= 0.0 {
+        return current;
+    }
+    if !half_life_s.is_finite() || half_life_s <= 0.0 {
+        return target;
+    }
+    let decay = (-std::f64::consts::LN_2 * dt_s / half_life_s).exp();
+    target + (current - target) * decay
+}
+
+#[cfg(test)]
+mod spring_step_tests {
+    use super::*;
+
+    #[test]
+    fn follow_camera_spring_step_halves_distance_every_half_life() {
+        let stepped = follow_camera_spring_step(0.0, 10.0, 0.25, 0.25);
+        assert!((stepped - 5.0).abs() < 1e-12);
+        let two_half_lives = follow_camera_spring_step(stepped, 10.0, 0.25, 0.25);
+        assert!((two_half_lives - 7.5).abs() < 1e-12);
+    }
+}

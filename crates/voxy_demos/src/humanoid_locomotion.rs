@@ -681,3 +681,37 @@ impl VoxyHumanoidLocomotion {
         )?)
     }
 }
+
+/// Computes the dimensionless Alexander Froude number $\text{Fr} = \frac{v^2}{g L_{\text{leg}}}$
+/// and corresponding stride cadence (steps/second) for bipedal locomotion.
+/// Note: walk-to-run transition naturally occurs near $\text{Fr} \approx 0.5$.
+#[must_use]
+pub fn froude_gait_cadence(speed_m_s: f32, leg_length_m: f32, gravity_m_s2: f32) -> (f32, f32) {
+    if !speed_m_s.is_finite()
+        || !leg_length_m.is_finite()
+        || !gravity_m_s2.is_finite()
+        || speed_m_s <= 0.0
+        || leg_length_m <= 0.1
+        || gravity_m_s2 <= 0.0
+    {
+        return (0.0, 0.0);
+    }
+    let froude = (speed_m_s * speed_m_s) / (gravity_m_s2 * leg_length_m);
+    let stride_length = (1.35 * leg_length_m * froude.powf(0.30)).max(0.25 * leg_length_m);
+    let cadence_hz = (speed_m_s / stride_length).clamp(0.2, 6.0);
+    (froude, cadence_hz)
+}
+
+#[cfg(test)]
+mod froude_tests {
+    use super::*;
+
+    #[test]
+    fn froude_gait_cadence_scales_monotonically_with_speed() {
+        assert_eq!(froude_gait_cadence(0.0, 0.9, 9.81), (0.0, 0.0));
+        let (fr_walk, cad_walk) = froude_gait_cadence(1.4, 0.9, 9.81);
+        let (fr_run, cad_run) = froude_gait_cadence(3.5, 0.9, 9.81);
+        assert!(fr_walk < 0.5 && fr_run > 0.5);
+        assert!(cad_run > cad_walk && cad_walk > 0.5);
+    }
+}

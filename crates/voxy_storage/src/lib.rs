@@ -14,4 +14,6 @@ pub use region::{
     RegionCheckpoint, RegionError, RegionPos, RegionRecovery, RegionStore, split_region,
 };
 pub use voxy_core::WorldEpoch;
-pub use wal::{PersistCommit, WalCursor, WalError, WalRecovery, WalWriter, recover_wal};
+pub use wal::{
+    PersistCommit, WalCursor, WalError, WalRecovery, WalWriter, XorDeltaChunkPatch, recover_wal,
+};

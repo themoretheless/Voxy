@@ -338,6 +338,29 @@ pub fn comfort_vignette_strength(
     let smooth = t * t * (3.0 - 2.0 * t);
     smooth * cap
 }
+
+/// Returns the fixed-foveated Variable Rate Shading (VRS) coarse pixel rate (`1`, `2`, or `4`)
+/// for normalized device coordinates `ndc_uv` (`[-1, 1]^2`) given `inner_radius` and `middle_radius`.
+#[must_use]
+pub fn foveated_shading_rate(ndc_uv: [f32; 2], inner_radius: f32, middle_radius: f32) -> u8 {
+    if !ndc_uv[0].is_finite()
+        || !ndc_uv[1].is_finite()
+        || !inner_radius.is_finite()
+        || !middle_radius.is_finite()
+    {
+        return 1;
+    }
+    let r = ndc_uv[0].hypot(ndc_uv[1]);
+    let r_in = inner_radius.max(0.0);
+    let r_mid = middle_radius.max(r_in);
+    if r <= r_in {
+        1
+    } else if r <= r_mid {
+        2
+    } else {
+        4
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -384,5 +407,8 @@ mod tests {
             select_extensions(&available, XrGraphics::DirectX12),
             Err(XrRuntimeError::MissingGraphicsExtension)
         ));
+        assert_eq!(foveated_shading_rate([0.0, 0.0], 0.35, 0.70), 1);
+        assert_eq!(foveated_shading_rate([0.5, 0.0], 0.35, 0.70), 2);
+        assert_eq!(foveated_shading_rate([0.9, 0.0], 0.35, 0.70), 4);
     }
 }

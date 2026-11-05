@@ -18,21 +18,28 @@ pub use collision::{
     AnchoredAabb, SweepConfig, SweepError, SweepObstacle, SweepResult, sweep_aabb,
     sweep_candidate_bounds,
 };
-pub use destruction::{DestructionError, DestructionPlan, Explosion, plan_explosion};
+pub use destruction::{
+    DestructionError, DestructionPlan, Explosion, blast_overpressure_impulse, plan_explosion,
+};
 mod fracture;
 pub use fracture::{
     FractureFrame, FracturePlan, VoxelChunkPiece, partition_connected_voxel_islands, plan_fracture,
+    voxel_cantilever_bending_moment,
 };
 pub use projectile::{
     ProjectileConfig, ProjectileError, ProjectileOutcome, ProjectileState, plan_impact_explosion,
-    spawn_projectile, step_projectile, step_projectile_in_field, step_projectile_with_motion,
+    solve_ballistic_elevation_angles, spawn_projectile, step_projectile, step_projectile_in_field,
+    step_projectile_with_motion,
 };
 pub use raycast::{RayOrigin, RaycastConfig, RaycastError, RaycastResult, VoxelHit, raycast};
 pub use vehicle::{
     RaceCheckpoint, RaceError, RaceProgress, RaceTrack, VehicleConfig, VehicleError, VehicleInput,
-    VehicleState, VehicleStep, step_vehicle, step_vehicle_with_chassis_step, update_race,
+    VehicleState, VehicleStep, pacejka_lateral_force, step_vehicle, step_vehicle_with_chassis_step,
+    update_race,
 };
-pub use water::{WaterBudget, WaterError, WaterPlan, WaterStates, step_water};
+pub use water::{
+    WaterBudget, WaterError, WaterPlan, WaterStates, step_water, submerged_aabb_buoyancy,
+};
 
 pub use water::{LiquidBudget, LiquidError, LiquidFlow, LiquidPlan, LiquidStates, step_liquid};
 

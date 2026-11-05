@@ -226,6 +226,100 @@ impl RingSuballocator {
     }
 }
 
+/// Computes a validated 3D compute workgroup dispatch grid `[gx, gy, gz]` for `threads_3d`
+/// elements using `workgroup_size_3d` threads per workgroup, rejecting zero sizes or any axis
+/// exceeding `max_workgroups_per_dim`.
+///
+/// # Errors
+///
+/// Returns [`ComputeError::InvalidBuffer`] if any thread or workgroup dimension is `0`, or
+/// [`ComputeError::MemoryBudget`] if any workgroup count exceeds `max_workgroups_per_dim`.
+pub const fn checked_dispatch_3d(
+    threads_3d: [u32; 3],
+    workgroup_size_3d: [u32; 3],
+    max_workgroups_per_dim: u32,
+) -> Result<[u32; 3], ComputeError> {
+    let mut out = [0_u32; 3];
+    let mut i = 0;
+    while i < 3 {
+        if threads_3d[i] == 0 || workgroup_size_3d[i] == 0 {
+            return Err(ComputeError::InvalidBuffer);
+        }
+        let groups = threads_3d[i].div_ceil(workgroup_size_3d[i]);
+        if groups == 0 || groups > max_workgroups_per_dim {
+            return Err(ComputeError::MemoryBudget);
+        }
+        out[i] = groups;
+        i += 1;
+    }
+    Ok(out)
+}
+
+/// Greedy interval-graph coloring planner (`TransientBufferLifetimes`) that assigns transient
+/// render/compute buffers with non-overlapping `[first_pass, last_pass]` lifetimes to shared
+/// physical memory slots to reduce peak VRAM consumption.
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct TransientBufferLifetimes {
+    intervals: Vec<(u32, u32)>,
+}
+
+impl TransientBufferLifetimes {
+    /// Creates an empty transient lifetime table.
+    #[must_use]
+    pub const fn new() -> Self {
+        Self {
+            intervals: Vec::new(),
+        }
+    }
+
+    /// Registers a transient resource live from `first_pass` through `last_pass` (inclusive).
+    #[must_use]
+    pub fn with_buffer(mut self, first_pass: u32, last_pass: u32) -> Self {
+        let lo = if first_pass <= last_pass {
+            first_pass
+        } else {
+            last_pass
+        };
+        let hi = if first_pass <= last_pass {
+            last_pass
+        } else {
+            first_pass
+        };
+        self.intervals.push((lo, hi));
+        self
+    }
+
+    /// Assigns each registered transient buffer a `0..slot_count` physical slot index such that
+    /// no two buffers with overlapping pass intervals share a slot. Returns `(slot_for_buffer, slot_count)`.
+    #[must_use]
+    pub fn assign_aliased_slots(&self) -> (Vec<usize>, usize) {
+        let n = self.intervals.len();
+        if n == 0 {
+            return (Vec::new(), 0);
+        }
+        let mut order: Vec<usize> = (0..n).collect();
+        order.sort_by_key(|&idx| self.intervals[idx]);
+        let mut slot_last_pass: Vec<u32> = Vec::new();
+        let mut assigned = vec![0_usize; n];
+        for idx in order {
+            let (first, last) = self.intervals[idx];
+            if let Some((slot, end)) = slot_last_pass
+                .iter_mut()
+                .enumerate()
+                .find(|(_, end)| **end < first)
+            {
+                *end = last;
+                assigned[idx] = slot;
+            } else {
+                let slot = slot_last_pass.len();
+                slot_last_pass.push(last);
+                assigned[idx] = slot;
+            }
+        }
+        (assigned, slot_last_pass.len())
+    }
+}
+
 #[cfg(test)]
 mod ring_suballocator_tests {
     use super::*;
@@ -262,5 +356,23 @@ mod ring_suballocator_tests {
         };
         assert_eq!(args.to_words()[0], 36);
         assert_eq!(args.to_words()[3] as i32, -4);
+
+        assert_eq!(
+            checked_dispatch_3d([65, 32, 8], [64, 8, 8], 65535),
+            Ok([2, 4, 1])
+        );
+        assert_eq!(
+            checked_dispatch_3d([1000, 1, 1], [8, 1, 1], 64),
+            Err(ComputeError::MemoryBudget)
+        );
+
+        let lifetimes = TransientBufferLifetimes::new()
+            .with_buffer(0, 2)
+            .with_buffer(1, 4)
+            .with_buffer(3, 5);
+        let (slots, count) = lifetimes.assign_aliased_slots();
+        assert_eq!(count, 2);
+        assert_eq!(slots[0], slots[2]);
+        assert_ne!(slots[0], slots[1]);
     }
 }

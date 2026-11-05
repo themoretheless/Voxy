@@ -172,6 +172,25 @@ pub fn dielectric_boundary_sample(
     Ok(result)
 }
 
+/// Evaluates Cauchy chromatic refractive indices `[ior_red, ior_green, ior_blue]` at
+/// wavelengths `(650 nm, 550 nm, 450 nm)` from base index `n_a` and dispersion `cauchy_b_um2`
+/// ($\mu\text{m}^2$, e.g., `0.0042` for BK7 crown glass or `0.0134` for dense flint glass).
+///
+/// # Errors
+///
+/// Rejects `n_a < 1.0`, negative `cauchy_b_um2`, or non-finite inputs.
+pub fn cauchy_ior_rgb(n_a: f64, cauchy_b_um2: f64) -> Result<[f64; 3], &'static str> {
+    if !n_a.is_finite() || !cauchy_b_um2.is_finite() || n_a < 1.0 || cauchy_b_um2 < 0.0 {
+        return Err("invalid Cauchy dispersion parameters");
+    }
+    const WAVELENGTHS_UM: [f64; 3] = [0.650, 0.550, 0.450];
+    let iors = WAVELENGTHS_UM.map(|lambda| n_a + cauchy_b_um2 / (lambda * lambda));
+    if iors.iter().any(|v| !v.is_finite()) {
+        return Err("Cauchy dispersion overflow");
+    }
+    Ok(iors)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -504,5 +523,8 @@ struct Result { reflected:vec4f, transmitted:vec4f, fractions:vec4f, weights:vec
             "DIELECTRIC GPU PASS probes={} scalar_checks={checks}",
             probes.len()
         );
+        let rgb_ior = cauchy_ior_rgb(1.5046, 0.0042).unwrap();
+        assert!(rgb_ior[0] < rgb_ior[1] && rgb_ior[1] < rgb_ior[2]);
+        assert!(cauchy_ior_rgb(0.9, 0.0042).is_err());
     }
 }

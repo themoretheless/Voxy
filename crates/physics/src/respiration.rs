@@ -395,3 +395,49 @@ fn cholesky_solve(mut a: Vec<f64>, mut rhs: Vec<f64>) -> Result<Vec<f64>, &'stat
     }
     Ok(rhs)
 }
+
+/// Evaluates the Hill oxyhemoglobin dissociation curve
+/// $S_{\text{O}_2} = \frac{P_{\text{O}_2}^n}{P_{\text{O}_2}^n + P_{50}^n} \in [0, 1]$
+/// given oxygen partial pressure `po2_mmhg`, half-saturation pressure `p50_mmhg` ($\approx 26.6\text{ mmHg}$),
+/// and Hill cooperativity coefficient `hill_n` ($\approx 2.7$).
+///
+/// # Errors
+///
+/// Rejects non-finite inputs, negative $P_{\text{O}_2}$, or non-positive $P_{50}$ / $n$.
+pub fn hill_oxygen_saturation(
+    po2_mmhg: f64,
+    p50_mmhg: f64,
+    hill_n: f64,
+) -> Result<f64, &'static str> {
+    if !po2_mmhg.is_finite()
+        || !p50_mmhg.is_finite()
+        || !hill_n.is_finite()
+        || po2_mmhg < 0.0
+        || p50_mmhg <= 0.0
+        || hill_n <= 0.0
+    {
+        return Err("invalid Hill oxygen saturation parameters");
+    }
+    if po2_mmhg == 0.0 {
+        return Ok(0.0);
+    }
+    let ratio = (po2_mmhg / p50_mmhg).powf(hill_n);
+    if !ratio.is_finite() {
+        return Ok(1.0);
+    }
+    Ok((ratio / (1.0 + ratio)).clamp(0.0, 1.0))
+}
+
+#[cfg(test)]
+mod hill_tests {
+    use super::*;
+
+    #[test]
+    fn hill_oxygen_saturation_is_half_at_p50_and_sigmoidal() {
+        assert_eq!(hill_oxygen_saturation(0.0, 26.6, 2.7).unwrap(), 0.0);
+        let half = hill_oxygen_saturation(26.6, 26.6, 2.7).unwrap();
+        let arterial = hill_oxygen_saturation(100.0, 26.6, 2.7).unwrap();
+        assert!((half - 0.5).abs() < 1e-12);
+        assert!(arterial > 0.96);
+    }
+}

@@ -170,5 +170,21 @@ mod tests {
             assert!(p[0] >= p[1] && p[1] >= p[2]);
             previous = p;
         }
+        let thin = subsurface_thickness_attenuation(0.001, 0.8);
+        let thick = subsurface_thickness_attenuation(0.015, 0.8);
+        assert!(thin[0] > thick[0] && thin[0] > thin[2]);
     }
+}
+
+/// Evaluates backlit RGB subsurface transmittance `[r, g, b]` for thin anatomical regions
+/// (pinna of the ear, nasal alae) of physical thickness `thickness_m` and forward-scattering
+/// cosine `back_light_dot` $\in [0, 1]$.
+#[must_use]
+pub fn subsurface_thickness_attenuation(thickness_m: f32, back_light_dot: f32) -> [f32; 3] {
+    if !thickness_m.is_finite() || !back_light_dot.is_finite() || back_light_dot <= 0.0 {
+        return [0.0; 3];
+    }
+    let p = profile(f64::from(thickness_m.max(0.0)));
+    let phase = back_light_dot.clamp(0.0, 1.0).powf(1.5);
+    [p[0] * phase, p[1] * phase, p[2] * phase]
 }

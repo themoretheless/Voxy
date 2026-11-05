@@ -873,5 +873,33 @@ mod tests {
     fn blemishes_have_signed_relief() {
         assert!(sample(Vec2::new(-0.048, 0.670), SkinLayers::default()).height > 0.0004);
         assert!(sample(Vec2::new(0.0585, 0.675), SkinLayers::default()).height < -0.0001);
+        let base = regional_chromophore_tint(0.1, 0.1);
+        let flush = regional_chromophore_tint(0.1, 0.8);
+        assert!(flush[0] / flush[1] > base[0] / base[1]);
     }
+}
+
+/// Computes linear RGB diffuse reflectance `[r, g, b]` from epidermal melanin volume fraction
+/// `melanin` (`0..=1`) and dermal hemoglobin blood fraction `hemoglobin` (`0..=1`) using
+/// Donner & Jensen's two-chromophore spectral skin absorption fit.
+#[must_use]
+pub fn regional_chromophore_tint(melanin: f32, hemoglobin: f32) -> [f32; 3] {
+    let m = if melanin.is_finite() {
+        melanin.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    let h = if hemoglobin.is_finite() {
+        hemoglobin.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    // Effective RGB optical absorption coefficients for eumelanin and oxyhemoglobin.
+    let sigma_m = [0.65_f32, 1.15, 1.75];
+    let sigma_h = [0.12_f32, 0.95, 1.10];
+    [
+        (-(sigma_m[0] * m + sigma_h[0] * h)).exp().clamp(0.02, 1.0),
+        (-(sigma_m[1] * m + sigma_h[1] * h)).exp().clamp(0.02, 1.0),
+        (-(sigma_m[2] * m + sigma_h[2] * h)).exp().clamp(0.02, 1.0),
+    ]
 }

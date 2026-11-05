@@ -120,6 +120,41 @@ impl LocalPos {
         }
         FaceMask(bits)
     }
+
+    /// Returns a 27-bit mask of the $3 \times 3 \times 3$ chunk neighborhood (`dx, dy, dz` in `-1..=1`,
+    /// indexed as `(dx + 1) + 3 * ((dz + 1) + 3 * (dy + 1))`) whose 1-voxel-padded meshing or lighting
+    /// boundary is touched when editing the voxel at `self`.
+    ///
+    /// Bit `13` (`dx = 0, dy = 0, dz = 0`) is always set for the center chunk itself.
+    #[must_use]
+    pub const fn affected_neighbor_chunks(self) -> u32 {
+        let mut mask = 0_u32;
+        let mut dy = -1_i8;
+        while dy <= 1 {
+            let y_ok = (dy == 0) || (dy == -1 && self.y == 0) || (dy == 1 && self.y == 31);
+            if y_ok {
+                let mut dz = -1_i8;
+                while dz <= 1 {
+                    let z_ok = (dz == 0) || (dz == -1 && self.z == 0) || (dz == 1 && self.z == 31);
+                    if z_ok {
+                        let mut dx = -1_i8;
+                        while dx <= 1 {
+                            let x_ok =
+                                (dx == 0) || (dx == -1 && self.x == 0) || (dx == 1 && self.x == 31);
+                            if x_ok {
+                                let bit = (dx + 1) as u32 + 3 * ((dz + 1) as u32 + 3 * (dy + 1) as u32);
+                                mask |= 1_u32 << bit;
+                            }
+                            dx += 1;
+                        }
+                    }
+                    dz += 1;
+                }
+            }
+            dy += 1;
+        }
+        mask
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1204,6 +1239,11 @@ mod tests {
         matrix.set(corner.index(), true);
         assert!(matrix.get(corner.index()));
         assert_eq!(matrix.count_ones(), 1);
+        // Corner voxel touches 1 center + 3 faces + 3 edges + 1 corner = 8 chunks.
+        assert_eq!(corner.affected_neighbor_chunks().count_ones(), 8);
+        // Interior voxel touches only the center chunk (bit 13).
+        let interior = LocalPos::new(10, 10, 10).unwrap();
+        assert_eq!(interior.affected_neighbor_chunks(), 1_u32 << 13);
     }
 
     #[test]

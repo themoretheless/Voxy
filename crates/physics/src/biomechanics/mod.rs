@@ -7,6 +7,7 @@ mod vascular_pore;
 pub use implicit_pore::{ImplicitPoreConfig, ImplicitPoreReport};
 pub use vascular_pore::{
     OsmoticPressureLaw, VascularPoreConfig, VascularPorePort, VascularPoreReport,
+    starling_glycocalyx_filtration,
 };
 mod mixed_darcy;
 pub(crate) use mixed_darcy::solve_protein;
@@ -32,6 +33,7 @@ pub use inertia::{
     ViscoelasticDynamicStep, ViscoelasticSupportAccuracyStep,
 };
 mod invariants;
+pub use invariants::f_bar_modified_gradient;
 mod myocardium;
 pub use coupling::{CouplingConfig, FemChamber};
 mod viscoelastic;
@@ -39,7 +41,7 @@ pub use viscoelastic::{MaxwellBranch, OgdenTerm, ViscoelasticOgden};
 mod stress_memory;
 pub use stress_memory::{FrozenStressPotential, ReferenceStressMemory};
 mod hgo;
-pub use hgo::HgoMaterial;
+pub use hgo::{HgoMaterial, hgo_dispersion_effective_stretch};
 mod viscoelastic_hgo;
 pub use viscoelastic_hgo::ViscoelasticHgo;
 mod muscle_velocity;
@@ -85,7 +87,7 @@ mod genital_pads;
 pub use genital_pads::{LabiaGaitSimulation, LabiaMajoraGeometry, LabialPad};
 mod specimens;
 mod stress;
-pub use myocardium::{ExponentialTerm, Myocardium};
+pub use myocardium::{ExponentialTerm, Myocardium, frank_starling_preload_scale};
 pub use specimens::*;
 pub use stress::{ElementStress, Stress};
 pub type Vec3 = [f64; 3];

@@ -2062,3 +2062,84 @@ mod authored_phase_preview_tests;
 
 #[cfg(test)]
 mod inverse_bind_validation_tests;
+
+/// Evaluates a quintic $C^2$ inertialization transition offset from initial error `x0`
+/// and velocity `v0` over `duration` at elapsed time `t`.
+#[must_use]
+pub fn inertialize_scalar_transition(x0: f32, v0: f32, duration: f32, t: f32) -> f32 {
+    if !x0.is_finite() || !v0.is_finite() || !duration.is_finite() || !t.is_finite() {
+        return 0.0;
+    }
+    if duration <= 0.0 || t >= duration {
+        return 0.0;
+    }
+    if t <= 0.0 {
+        return x0;
+    }
+    let s = (t / duration).clamp(0.0, 1.0);
+    let one_minus_s = 1.0 - s;
+    let h0 = one_minus_s * one_minus_s * one_minus_s * (1.0 + 3.0 * s + 6.0 * s * s);
+    let h1 = t * one_minus_s * one_minus_s * one_minus_s * (1.0 + 3.0 * s);
+    x0 * h0 + v0 * h1
+}
+
+/// Computes normalized barycentric coordinates `[w_a, w_b, w_c]` for point `p` inside
+/// 2D blend-space triangle `(a, b, c)`, clamping outside points to the triangle and returning
+/// `None` if the triangle is degenerate.
+#[must_use]
+pub fn barycentric_blend_space_2d(
+    p: [f32; 2],
+    a: [f32; 2],
+    b: [f32; 2],
+    c: [f32; 2],
+) -> Option<[f32; 3]> {
+    let v0 = [b[0] - a[0], b[1] - a[1]];
+    let v1 = [c[0] - a[0], c[1] - a[1]];
+    let v2 = [p[0] - a[0], p[1] - a[1]];
+    let den = v0[0] * v1[1] - v1[0] * v0[1];
+    if !den.is_finite() || den.abs() <= 1e-7 {
+        return None;
+    }
+    let inv_den = 1.0 / den;
+    let v = ((v2[0] * v1[1] - v1[0] * v2[1]) * inv_den).max(0.0);
+    let w = ((v0[0] * v2[1] - v2[0] * v0[1]) * inv_den).max(0.0);
+    let u = (1.0 - v - w).max(0.0);
+    let sum = u + v + w;
+    if !sum.is_finite() || sum <= 0.0 {
+        return None;
+    }
+    Some([u / sum, v / sum, w / sum])
+}
+
+/// Clamps a signed swing/twist joint deflection angle `angle_rad` symmetrically to `[-max_cone_rad, max_cone_rad]`.
+#[must_use]
+pub fn clamp_swing_twist_angle(angle_rad: f32, max_cone_rad: f32) -> f32 {
+    if !angle_rad.is_finite() || !max_cone_rad.is_finite() || max_cone_rad <= 0.0 {
+        return 0.0;
+    }
+    let limit = max_cone_rad.min(std::f32::consts::PI);
+    angle_rad.clamp(-limit, limit)
+}
+
+#[cfg(test)]
+mod n8_animation_math_tests {
+    use super::*;
+
+    #[test]
+    fn inertialize_barycentric_and_swing_twist_clamp_behave_smoothly() {
+        assert!((inertialize_scalar_transition(2.0, -1.0, 0.5, 0.0) - 2.0).abs() < 1e-6);
+        assert_eq!(inertialize_scalar_transition(2.0, -1.0, 0.5, 0.5), 0.0);
+        let mid = inertialize_scalar_transition(2.0, 0.0, 1.0, 0.5);
+        assert!((mid - 1.0).abs() < 1e-5);
+
+        let weights =
+            barycentric_blend_space_2d([0.25, 0.25], [0.0, 0.0], [1.0, 0.0], [0.0, 1.0]).unwrap();
+        assert!((weights[0] - 0.5).abs() < 1e-6);
+        assert!((weights[1] - 0.25).abs() < 1e-6);
+        assert!((weights[2] - 0.25).abs() < 1e-6);
+        assert!(barycentric_blend_space_2d([0.0, 0.0], [0.0, 0.0], [1.0, 0.0], [2.0, 0.0]).is_none());
+
+        assert!((clamp_swing_twist_angle(1.2, 0.5) - 0.5).abs() < 1e-6);
+        assert!((clamp_swing_twist_angle(-1.2, 0.5) + 0.5).abs() < 1e-6);
+    }
+}

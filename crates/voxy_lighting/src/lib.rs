@@ -528,6 +528,30 @@ fn padded_index(pos: [i64; 3]) -> usize {
     (y * PADDED_EDGE + z) * PADDED_EDGE + x
 }
 
+/// Computes the attenuated 4-bit light level (`0..=15`) after passing through a translucent
+/// medium (stained glass, water, foliage) with `filter_transmittance` in `0..=15` and an
+/// additional medium `step_cost` (`1..=15`).
+#[must_use]
+pub const fn attenuate_filtered_light(
+    incident_level: u8,
+    filter_transmittance: u8,
+    step_cost: u8,
+) -> u8 {
+    let level = if incident_level > MAX_LIGHT {
+        MAX_LIGHT
+    } else {
+        incident_level
+    };
+    let trans = if filter_transmittance > MAX_LIGHT {
+        MAX_LIGHT
+    } else {
+        filter_transmittance
+    };
+    let cost = if step_cost == 0 { 1 } else { step_cost };
+    let scaled = ((level as u16) * (trans as u16) + 7) / (MAX_LIGHT as u16);
+    (scaled as u8).saturating_sub(cost)
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 #[error("lighting error: {self:?}")]
 pub enum LightingError {
@@ -1028,5 +1052,8 @@ mod tests {
                 assert_eq!(minimal_budget(&input, build_light), budget);
             }
         }
+        assert_eq!(attenuate_filtered_light(15, 15, 1), 14);
+        assert_eq!(attenuate_filtered_light(15, 8, 2), 6);
+        assert_eq!(attenuate_filtered_light(15, 0, 1), 0);
     }
 }

@@ -370,6 +370,26 @@ impl WalkCamera {
         (forward, Vec3::new(-forward.z, 0., forward.x))
     }
 }
+
+/// Computes a 1:2 Lissajous figure-eight procedural head-bob offset in local camera space
+/// (`x` lateral sway, `y` vertical bounce, `z` forward surge) scaled by locomotion speed.
+pub fn lissajous_head_bob_offset(stride_phase_rad: f32, speed_mps: f32, amplitude_m: f32) -> Vec3 {
+    if !stride_phase_rad.is_finite()
+        || !speed_mps.is_finite()
+        || !amplitude_m.is_finite()
+        || speed_mps <= 0.0
+        || amplitude_m <= 0.0
+    {
+        return Vec3::ZERO;
+    }
+    let speed_weight = (speed_mps / 4.5).clamp(0.0, 1.5);
+    let amp = amplitude_m.clamp(0.0, 0.15) * speed_weight;
+    let x = stride_phase_rad.sin() * amp;
+    let y = (stride_phase_rad * 2.0).cos().mul_add(-0.5, 0.5) * amp * 1.25;
+    let z = (stride_phase_rad * 2.0).sin() * amp * 0.25;
+    Vec3::new(x, y, z)
+}
+
 #[cfg(test)]
 mod walk_camera_tests {
     use super::*;
@@ -405,5 +425,14 @@ mod walk_camera_tests {
         camera.step(f32::INFINITY);
         assert!(camera.direction().is_finite());
         assert!(camera.direction().distance(Vec3::NEG_Z) < 1e-6);
+    }
+
+    #[test]
+    fn lissajous_head_bob_is_zero_at_rest_and_periodic_in_motion() {
+        assert_eq!(lissajous_head_bob_offset(1.0, 0.0, 0.03), Vec3::ZERO);
+        let a = lissajous_head_bob_offset(0.8, 3.5, 0.03);
+        let b = lissajous_head_bob_offset(0.8 + std::f32::consts::TAU, 3.5, 0.03);
+        assert!(a.length() > 0.0);
+        assert!(a.distance(b) < 1e-5);
     }
 }

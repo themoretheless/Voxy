@@ -209,6 +209,19 @@ impl NavigationGrid {
     }
 }
 
+/// Evaluates the Tobler hiking function traversal cost multiplier (`>= 1.0` relative to optimal -5% grade)
+/// for a terrain slope `dz_dx_slope = dh / dx`.
+#[must_use]
+pub fn tobler_hiking_cost_multiplier(dz_dx_slope: f32) -> f32 {
+    if !dz_dx_slope.is_finite() {
+        return 100.0;
+    }
+    let s = dz_dx_slope.clamp(-2.0, 2.0);
+    // Tobler speed v(s) = 6 * exp(-3.5 * |s + 0.05|); cost multiplier relative to flat v(0):
+    // cost(s) / cost(0) = exp(3.5 * (|s + 0.05| - 0.05)).
+    (3.5 * ((s + 0.05).abs() - 0.05)).exp().clamp(0.5, 100.0)
+}
+
 #[derive(Debug, Eq, PartialEq)]
 pub enum SearchProgress {
     Pending { expanded: usize },
@@ -498,5 +511,15 @@ mod tests {
         let detoured = grid.find_path(cell(0, 0), cell(5, 5), 36).unwrap();
         let smoothed_detour = grid.smooth_path_waypoints(&detoured);
         assert!(smoothed_detour.len() > 2 && smoothed_detour.len() < detoured.cells.len());
+    }
+
+    #[test]
+    fn tobler_hiking_cost_penalizes_steep_inclines() {
+        let flat = tobler_hiking_cost_multiplier(0.0);
+        let gentle_down = tobler_hiking_cost_multiplier(-0.05);
+        let steep_up = tobler_hiking_cost_multiplier(0.35);
+        assert!((flat - 1.0).abs() < 1e-5);
+        assert!(gentle_down < flat);
+        assert!(steep_up > 3.0);
     }
 }

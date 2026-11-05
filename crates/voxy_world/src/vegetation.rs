@@ -147,6 +147,22 @@ impl ChunkGenerator for VegetationGenerator {
     }
 }
 
+/// Checks whether a plant root at `center_height` can anchor stably given its 4 cardinal
+/// neighbor column heights `[north, east, south, west]` and a maximum allowed slope step.
+#[must_use]
+pub fn can_plant_on_slope(
+    center_height: i64,
+    neighbors_nesw: [i64; 4],
+    max_slope_delta: i64,
+) -> bool {
+    if max_slope_delta < 0 {
+        return false;
+    }
+    neighbors_nesw
+        .iter()
+        .all(|&h| (h - center_height).saturating_abs() <= max_slope_delta)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -225,5 +241,7 @@ mod tests {
             Err(GenerationError::Cancelled)
         ));
         assert_ne!(g.descriptor(), g.base.descriptor());
+        assert!(can_plant_on_slope(10, [10, 11, 9, 10], 1));
+        assert!(!can_plant_on_slope(10, [10, 13, 9, 10], 1));
     }
 }

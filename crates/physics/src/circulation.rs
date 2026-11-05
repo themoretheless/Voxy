@@ -623,3 +623,44 @@ fn solve_spd(mut a: Vec<f64>, mut rhs: Vec<f64>) -> Result<Vec<f64>, &'static st
     }
     Ok(rhs)
 }
+
+/// Computes laminar Hagen–Poiseuille endothelial wall shear stress
+/// $\tau_w = \frac{4 \mu Q}{\pi r^3}$ in Pascals (`Pa`) for a cylindrical vessel of radius
+/// `radius_m` carrying volumetric flow `flow_m3_s`.
+///
+/// # Errors
+///
+/// Rejects non-finite inputs, non-positive viscosity or radius, or numerical overflow.
+pub fn wall_shear_stress_pa(
+    viscosity_pa_s: f64,
+    flow_m3_s: f64,
+    radius_m: f64,
+) -> Result<f64, &'static str> {
+    if !viscosity_pa_s.is_finite()
+        || !flow_m3_s.is_finite()
+        || !radius_m.is_finite()
+        || viscosity_pa_s <= 0.0
+        || radius_m <= 0.0
+    {
+        return Err("invalid wall shear stress input");
+    }
+    let denom = std::f64::consts::PI * radius_m * radius_m * radius_m;
+    let tau = 4.0 * viscosity_pa_s * flow_m3_s / denom;
+    if !tau.is_finite() {
+        return Err("wall shear stress overflow");
+    }
+    Ok(tau)
+}
+
+#[cfg(test)]
+mod wss_tests {
+    use super::*;
+
+    #[test]
+    fn wall_shear_stress_scales_inversely_with_cube_of_radius() {
+        let r1 = wall_shear_stress_pa(0.0035, 1e-6, 0.001).unwrap();
+        let r2 = wall_shear_stress_pa(0.0035, 1e-6, 0.002).unwrap();
+        assert!((r1 / r2 - 8.0).abs() < 1e-9);
+        assert!(wall_shear_stress_pa(0.0, 1e-6, 0.001).is_err());
+    }
+}

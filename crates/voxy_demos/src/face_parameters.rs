@@ -2859,5 +2859,30 @@ mod tests {
         assert!(v[0].position[0] > original[0].position[0]);
         assert_eq!(v[0].position[1], original[0].position[1]);
         assert_eq!(v[1], original[1]);
+        assert_eq!(clamp_antagonist_facs_weights(0.8, 0.6), (0.571_428_6, 0.428_571_43));
+        assert_eq!(clamp_antagonist_facs_weights(0.3, 0.4), (0.3, 0.4));
+    }
+}
+
+/// Normalizes a pair of mutually antagonistic Facial Action Coding System (FACS) weights
+/// `(primary_au, antagonist_au)` (such as brow raiser AU1/2 vs brow lowerer AU4, or lip corner
+/// puller AU12 vs depressor AU15) into `[0.0, 1.0]` with `primary + antagonist <= 1.0`.
+#[must_use]
+pub fn clamp_antagonist_facs_weights(primary_au: f32, antagonist_au: f32) -> (f32, f32) {
+    let a = if primary_au.is_finite() {
+        primary_au.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    let b = if antagonist_au.is_finite() {
+        antagonist_au.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    let sum = a + b;
+    if sum > 1.0 {
+        (a / sum, b / sum)
+    } else {
+        (a, b)
     }
 }

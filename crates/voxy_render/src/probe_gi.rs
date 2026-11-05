@@ -201,6 +201,34 @@ pub(crate) fn grid(
     ))
 }
 
+/// Evaluates the one-tailed Chebyshev upper-bound visibility weight in `[0.0, 1.0]` for an
+/// irradiance probe at distance `distance` from a shaded point, given the probe's radial depth
+/// moments `(mean_depth, mean_squared_depth)`. Prevents light leaking through thin walls.
+#[must_use]
+pub fn chebyshev_probe_visibility(
+    distance: f32,
+    mean_depth: f32,
+    mean_squared_depth: f32,
+    min_variance: f32,
+) -> f32 {
+    if !distance.is_finite()
+        || !mean_depth.is_finite()
+        || !mean_squared_depth.is_finite()
+        || !min_variance.is_finite()
+        || distance < 0.0
+    {
+        return 0.0;
+    }
+    if distance <= mean_depth {
+        return 1.0;
+    }
+    let variance = (mean_squared_depth - mean_depth * mean_depth).max(min_variance.max(1e-5));
+    let diff = distance - mean_depth;
+    let p_max = variance / (variance + diff * diff);
+    // Cube-sharpen the tail to crush low-probability light leaks:
+    (p_max * p_max * p_max).clamp(0.0, 1.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -220,6 +248,8 @@ mod tests {
         assert!(grid(Vec3::ZERO, Vec3::ZERO, 1.).is_none());
         assert!(grid(Vec3::ZERO, Vec3::ONE, 0.).is_none());
         assert!(grid(Vec3::ZERO, Vec3::splat(1000.), 1.).is_none());
+        assert_eq!(chebyshev_probe_visibility(1.5, 2.0, 4.1, 1e-3), 1.0);
+        assert!(chebyshev_probe_visibility(4.0, 1.5, 2.3, 1e-3) < 0.02);
     }
 }
 
