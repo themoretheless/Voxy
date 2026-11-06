@@ -2284,6 +2284,34 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             Vec3::new(0.18, 0.24, 0.18),
             Quat::IDENTITY,
         );
+        // Ornamental wrought-iron open gate leaf folded back against the colonnade archway pier
+        let gx0 = side * 1.72;
+        let gx1 = side * 2.12;
+        let gz0 = 87.88f32;
+        let gz1 = 88.95f32;
+        b.beam(
+            metal,
+            Vec3::new(gx1, 0.22, gz0),
+            Vec3::new(gx0, 0.22, gz1),
+            0.035,
+        );
+        b.beam(
+            metal,
+            Vec3::new(gx1, 2.35, gz0),
+            Vec3::new(gx0, 2.55, gz1),
+            0.035,
+        );
+        for bar in 0..7 {
+            let t = (bar as f32 + 0.5) / 7.0;
+            let bx = gx1 + (gx0 - gx1) * t;
+            let bz = gz0 + (gz1 - gz0) * t;
+            let top_y = 2.38 + 0.20 * t;
+            b.block(metal, [bx, top_y * 0.5 + 0.08, bz], [0.022, top_y, 0.022]);
+            b.block(glow, [bx, top_y + 0.11, bz], [0.034, 0.06, 0.034]);
+        }
+        // Brass/emissive estate plaque on the colonnade entrance pillar
+        b.block(metal, [side * 2.20, 1.65, 87.08], [0.28, 0.18, 0.03]);
+        b.block(glow, [side * 2.20, 1.65, 87.07], [0.22, 0.11, 0.02]);
     }
     // The colonnade opens in the middle onto the lane towards the villa.
     for side in [-1., 1.] {

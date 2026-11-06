@@ -478,6 +478,73 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
             [x, top + 0.004, za + 0.4],
         );
     }
+    // stainless/chrome shallow-end entry handrails flanking the steps
+    for side in [-1.0f32, 1.0] {
+        let hx = side * (x - 0.55);
+        b.beam(
+            chrome,
+            Vec3::new(hx, DECK, z0 - 0.18),
+            Vec3::new(hx, DECK + 0.78, z0 - 0.18),
+            0.036,
+        );
+        b.beam(
+            chrome,
+            Vec3::new(hx, -0.72, z0 + 1.05),
+            Vec3::new(hx, 0.16, z0 + 1.05),
+            0.036,
+        );
+        b.beam(
+            chrome,
+            Vec3::new(hx, DECK + 0.78, z0 - 0.18),
+            Vec3::new(hx, 0.16, z0 + 1.05),
+            0.038,
+        );
+        b.beam(
+            chrome,
+            Vec3::new(hx, DECK + 0.42, z0 - 0.18),
+            Vec3::new(hx, -0.20, z0 + 1.05),
+            0.028,
+        );
+    }
+    // side-wall underwater chrome/emissive spotlight bezels along the pool walls
+    for side in [-1.0f32, 1.0] {
+        let wx = side * (x - 0.012);
+        for wz in [116.2f32, 121.0, 125.8] {
+            b.put(
+                chrome,
+                Vec3::new(wx, -0.62, wz),
+                Vec3::new(0.24, 0.022, 0.24),
+                Quat::from_rotation_z(side * std::f32::consts::FRAC_PI_2),
+            );
+            b.put(
+                pool_light,
+                Vec3::new(wx - side * 0.006, -0.62, wz),
+                Vec3::new(0.18, 0.018, 0.18),
+                Quat::from_rotation_z(side * std::f32::consts::FRAC_PI_2),
+            );
+        }
+    }
+    // floating ceramic and warm-glow lotus lanterns on the water surface near the pool corners
+    for (lx, lz) in [(2.85f32, 114.35f32), (-2.75, 127.85), (2.70, 128.15)] {
+        b.put(
+            p.ceramic,
+            Vec3::new(lx, 0.005, lz),
+            Vec3::new(0.28, 0.035, 0.28),
+            Quat::IDENTITY,
+        );
+        b.put(
+            p.ceramic,
+            Vec3::new(lx, 0.025, lz),
+            Vec3::new(0.22, 0.04, 0.22),
+            Quat::from_rotation_y(std::f32::consts::FRAC_PI_4),
+        );
+        b.put(
+            p.glow,
+            Vec3::new(lx, 0.055, lz),
+            Vec3::new(0.11, 0.07, 0.11),
+            Quat::IDENTITY,
+        );
+    }
     // coping: bevelled travertine overhanging the water by 4 cm
     let coping = |b: &mut Builder, lo: [f32; 2], hi: [f32; 2]| {
         let length = (hi[0] - lo[0]).max(hi[1] - lo[1]);

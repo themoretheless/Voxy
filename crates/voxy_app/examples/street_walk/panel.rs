@@ -17,6 +17,38 @@ pub struct Panel {
     pub visible: bool,
 }
 
+/// Key viewpoints around the street and villa for quick teleport and cinematic auto-tour.
+pub const TOUR_WAYPOINTS: [(&str, [f64; 3], [f32; 3]); 8] = [
+    ("Улица", [0.6, 0.13, -18.0], [-0.10, 0.025, 1.0]),
+    ("Площадь и киоски", [0.0, 0.13, 66.0], [0.0, 0.02, 1.0]),
+    ("Бассейн и вилла", [-6.2, 0.05, 110.5], [0.27, -0.05, 0.96]),
+    (
+        "Сауна и оранжерея",
+        [8.5, 0.05, 121.5],
+        [0.45, -0.02, 0.89],
+    ),
+    (
+        "Дзен-сад и бочче",
+        [-8.5, 0.05, 121.5],
+        [-0.45, -0.02, 0.89],
+    ),
+    (
+        "Терраса на крыше",
+        [-2.0, 6.95, 134.5],
+        [0.18, -0.10, -0.98],
+    ),
+    (
+        "Обсерватория",
+        [-3.2, 10.15, 136.5],
+        [-0.85, 0.12, -0.51],
+    ),
+    (
+        "Винный грот",
+        [6.2, 0.05, 101.0],
+        [0.92, 0.05, 0.38],
+    ),
+];
+
 pub struct Settings<'a> {
     pub cycle: &'a mut Option<DayCycle>,
     pub weather: &'a mut Weather,
@@ -37,6 +69,8 @@ pub struct Settings<'a> {
     pub splash: &'a mut bool,
     /// Set when the user clicks the photo-mode screenshot button (F2).
     pub photo: &'a mut bool,
+    /// Active state of the cinematic camera auto-tour (F3).
+    pub tour: &'a mut bool,
     /// Set when the user selects a quick camera teleport viewpoint.
     pub teleport: &'a mut Option<([f64; 3], [f32; 3])>,
     /// Live frame render time in ms and optional GPU pass timings `[total, opaque, transparent]`.
@@ -339,39 +373,12 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
         if ui.button("Скриншот без UI (F2)").clicked() {
             *s.photo = true;
         }
+        ui.checkbox(s.tour, "Кино-тур по локациям (F3)");
     });
     ui.horizontal_wrapped(|ui| {
-        for (name, feet, dir) in [
-            ("Улица", [0.6, 0.13, -18.0], [-0.10, 0.025, 1.0]),
-            ("Площадь и киоски", [0.0, 0.13, 66.0], [0.0, 0.02, 1.0]),
-            ("Бассейн и вилла", [-6.2, 0.05, 110.5], [0.27, -0.05, 0.96]),
-            (
-                "Сауна и оранжерея",
-                [8.5, 0.05, 121.5],
-                [0.45, -0.02, 0.89],
-            ),
-            (
-                "Дзен-сад и бочче",
-                [-8.5, 0.05, 121.5],
-                [-0.45, -0.02, 0.89],
-            ),
-            (
-                "Терраса на крыше",
-                [-2.0, 6.95, 134.5],
-                [0.18, -0.10, -0.98],
-            ),
-            (
-                "Обсерватория",
-                [-3.2, 10.15, 136.5],
-                [-0.85, 0.12, -0.51],
-            ),
-            (
-                "Винный грот",
-                [6.2, 0.05, 101.0],
-                [0.92, 0.05, 0.38],
-            ),
-        ] {
+        for (name, feet, dir) in TOUR_WAYPOINTS {
             if ui.button(name).clicked() {
+                *s.tour = false;
                 *s.teleport = Some((feet, dir));
             }
         }

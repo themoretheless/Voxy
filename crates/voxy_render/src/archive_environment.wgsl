@@ -62,8 +62,21 @@ fn daylight(direction:vec3<f32>,sun:vec3<f32>)->vec3<f32>{
   let dusk_glow=vec3<f32>(14.,6.5,3.2)*horizon_belt*twilight;
   let cell=floor(d*340.);
   let h=fract(sin(dot(cell,vec3<f32>(127.1,311.7,74.7)))*43758.5453);
-  let star=smoothstep(0.9972,0.9998,h)*smoothstep(0.08,0.35,d.y)*night*vec3<f32>(2.4,2.6,3.1);
-  sky+=airglow+dusk_glow+star;
+  let twinkle=0.72+0.28*sin(h*62.83+d.x*19.+d.z*23.);
+  let star=smoothstep(0.9970,0.9998,h)*smoothstep(0.08,0.35,d.y)*night*twinkle*vec3<f32>(2.4,2.6,3.2);
+  let mw_plane=abs(dot(d,vec3<f32>(0.58,0.46,-0.67)));
+  let mw_band=exp(-mw_plane*mw_plane*18.)*smoothstep(0.10,0.45,d.y)*(0.55+0.45*sin(d.x*6.5-d.z*5.2));
+  let milky_way=vec3<f32>(0.38,0.46,0.72)*mw_band*night;
+  let moon_dir=normalize(vec3<f32>(-sun.x,max(-sun.y,0.28),-sun.z));
+  let cos_moon=clamp(dot(d,moon_dir),-1.,1.);
+  let moon_halo=(exp((cos_moon-1.)*180.)*4.2+exp((cos_moon-1.)*18.)*0.48)*vec3<f32>(0.72,0.84,1.12)*night;
+  var moon_disk=vec3<f32>(0.);
+  if cos_moon>0.99986 {
+   let mare=0.74+0.26*sin(d.x*420.+d.y*310.-d.z*380.);
+   let limb=sqrt(clamp((cos_moon-0.99986)/0.00014,0.,1.));
+   moon_disk=vec3<f32>(210.,225.,255.)*mare*(0.45+0.55*limb)*smoothstep(0.99986,0.99989,cos_moon)*night;
+  }
+  sky+=airglow+dusk_glow+star+milky_way+moon_halo+moon_disk;
  }
  return sky;
 }
