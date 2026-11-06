@@ -1330,6 +1330,7 @@ impl App {
             }
         }
         let mut trigger_splash = false;
+        let mut trigger_photo = false;
         let mut teleport_request = None;
         let gpu_hud = gpu.renderer.gpu_times_ms.last().copied().and_then(|tot| {
             let [opq, trn] = *gpu.renderer.gpu_shading_times_ms.last()?;
@@ -1354,10 +1355,18 @@ impl App {
                     reconfigure: &mut self.reconfigure,
                     rebuild: &mut self.rebuild_scene,
                     splash: &mut trigger_splash,
+                    photo: &mut trigger_photo,
                     teleport: &mut teleport_request,
                     perf_ms: (render_time * 1000., gpu_hud),
                 },
             );
+        }
+        if trigger_photo {
+            let photo_path =
+                PathBuf::from(format!("voxy-photo-{:05}.png", self.frames));
+            let clean_tex = gpu.scene_target.as_ref().unwrap_or(output);
+            snapshot(gpu, clean_tex, &photo_path)?;
+            eprintln!("STREET photo saved {}", photo_path.display());
         }
         if trigger_splash {
             let (forward, _) = self.camera.planar_basis();
@@ -1772,8 +1781,8 @@ fn snapshot(
     texture: &wgpu::Texture,
     path: &std::path::Path,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let w = gpu.config.width;
-    let h = gpu.config.height;
+    let w = texture.width();
+    let h = texture.height();
     let hdr = gpu.config.format == wgpu::TextureFormat::Rgba16Float;
     let bytes_per_pixel = if hdr { 8 } else { 4 };
     let stride = (w * bytes_per_pixel).div_ceil(256) * 256;
@@ -2015,6 +2024,23 @@ impl ApplicationHandler for App {
                             .get_or_insert_with(|| day_cycle::DayCycle::new(self.original_seed))
                             .key(key)
                     {
+                    } else if key == KeyCode::F2
+                        && event.state == ElementState::Pressed
+                        && !event.repeat
+                    {
+                        if let Some(gpu) = &self.gpu {
+                            if let Some(clean_tex) =
+                                gpu.scene_target.as_ref().or(gpu.offscreen.as_ref())
+                            {
+                                let photo_path = PathBuf::from(format!(
+                                    "voxy-photo-{:05}.png",
+                                    self.frames
+                                ));
+                                if snapshot(gpu, clean_tex, &photo_path).is_ok() {
+                                    eprintln!("STREET photo saved {}", photo_path.display());
+                                }
+                            }
+                        }
                     } else if key == KeyCode::KeyG
                         && event.state == ElementState::Pressed
                         && !event.repeat
