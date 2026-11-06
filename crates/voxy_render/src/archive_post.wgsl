@@ -67,7 +67,7 @@ fn march_jitter(pixel:vec2<i32>)->f32 {
 // Returns opacity of the precipitation layer; evaluated once per output pixel.
 const STREAK_GAIN:f32=1.5;
 fn precipitation_opacity(ray:vec3<f32>,distance:f32,pixel:vec2<i32>)->f32 {
- let reach=min(distance,36.);let step=reach/48.;var opacity=0.;
+ let reach=min(distance,36.);let step=reach/32.;var opacity=0.;
  let jitter=march_jitter(pixel);
  let drift=wind_displacement();let t=camera.atmosphere.x;
  // Rain space is linear in p: shear streaks along wind / terminal fall velocity.
@@ -80,8 +80,8 @@ fn precipitation_opacity(ray:vec3<f32>,distance:f32,pixel:vec2<i32>)->f32 {
  // Looking steeply up, streaks collapse into lines converging on the zenith; fade them there.
  let side=smoothstep(0.25,0.65,length(ray.xz));
  // World length of the ray inside one streak core (~0.1 cell wide).
- let streak_length=min(reach/48.,0.1/max(length(rain_dir.xz),1e-3))*STREAK_GAIN;
- for(var i=0;i<48;i++) {
+ let streak_length=min(reach/32.,0.1/max(length(rain_dir.xz),1e-3))*STREAK_GAIN;
+ for(var i=0;i<32;i++) {
   let d=(f32(i)+jitter)*step;
   if rain_on>0. && side>0. {
    // Closest approach of this step's segment to the streak column of the cell
@@ -115,14 +115,17 @@ fn atmosphere_colour(base:vec3<f32>,ray:vec3<f32>,distance:f32,pixel:vec2<i32>)-
   let b=(camera.atmosphere.y+camera.atmosphere.z-camera.eye.y)/ray.y;
   let start=max(min(a,b),0.);let end=min(max(a,b),min(distance,12000.));
   if end>start {
-   let step=(end-start)/32.;var transmission=1.;var scattered=vec3<f32>(0.);
-   for(var i=0;i<32;i++) {
+   let step=(end-start)/20.;var transmission=1.;var scattered=vec3<f32>(0.);
+   for(var i=0;i<20;i++) {
     let p=camera.eye.xyz+ray*(start+(f32(i)+jitter)*step);
-    let density=cloud_density(p);let opacity=1.-exp(-density*step*0.035);
-    let shade=exp(-cloud_density(p+camera.sun.xyz*70.)*5.);
-    let light=mix(vec3<f32>(65.,80.,105.),vec3<f32>(740.,710.,660.),shade*max(camera.sun.y,0.));
-    scattered+=transmission*opacity*light;transmission*=1.-opacity;
-    if transmission<0.01 {break;}
+    let density=cloud_density(p);
+    if density>0.0005 {
+     let opacity=1.-exp(-density*step*0.035);
+     let shade=exp(-cloud_density(p+camera.sun.xyz*70.)*5.);
+     let light=mix(vec3<f32>(65.,80.,105.),vec3<f32>(740.,710.,660.),shade*max(camera.sun.y,0.));
+     scattered+=transmission*opacity*light;transmission*=1.-opacity;
+     if transmission<0.01 {break;}
+    }
    }
    result=result*transmission+scattered*camera.viewport.z;
   }

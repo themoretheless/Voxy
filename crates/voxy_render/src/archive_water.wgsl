@@ -395,7 +395,7 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
   }
   let fr_eff = fr * meniscus;
 
-  // ---- sun glitter: anisotropic Gaussian slope distribution ----
+  // ---- sun & lunar glitter: anisotropic Gaussian slope distribution ----
   let l = camera.sun.xyz;
   var glitter = vec3<f32>(0.);
   if l.y > 0. {
@@ -410,6 +410,20 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
       let d = pdf / max(hy2 * hy2, 1e-6);
       glitter = camera.sun_colour.rgb * camera.sun_colour.a * sun_visible(f.world)
         * fresnel(dot(v, hv)) * d / (4. * max(v.y, 0.05));
+    }
+  } else if l.y < -0.02 {
+    let moon_l = normalize(vec3<f32>(-l.x, max(-l.y, 0.28), -l.z));
+    let hv = normalize(v + moon_l);
+    let hs = -hv.xz / max(hv.y, 1e-3);
+    let dsl = hs - s;
+    let det = max(cov.x * cov.y - cov.z * cov.z, 1e-10);
+    let e = (dsl.x * dsl.x * cov.y + dsl.y * dsl.y * cov.x - 2. * dsl.x * dsl.y * cov.z) / det;
+    if e < 32. {
+      let pdf = exp(-0.5 * e) / (6.2831853 * sqrt(det));
+      let hy2 = hv.y * hv.y;
+      let d = pdf / max(hy2 * hy2, 1e-6);
+      let night_w = smoothstep(-0.02, -0.14, l.y);
+      glitter = vec3<f32>(18., 22., 32.) * night_w * fresnel(dot(v, hv)) * d / (4. * max(v.y, 0.05));
     }
   }
   var colour = refracted * (1. - fr_eff) + reflected * fr_eff + glitter * meniscus;

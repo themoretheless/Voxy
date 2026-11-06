@@ -112,6 +112,9 @@ struct App {
     aa_validation: Option<aa_validation::AaValidation>,
     view: StreetView,
     rig: voxy_render::BodycamRig,
+    /// Cinematic camera auto-tour across the 8 viewpoints (F3).
+    tour_active: bool,
+    tour_time: f64,
 }
 impl App {
     fn cycle_view(&mut self) {
@@ -179,6 +182,8 @@ impl App {
             aa_validation: aa_validation::AaValidation::from_environment(),
             view: StreetView::FirstPerson,
             rig: voxy_render::BodycamRig::default(),
+            tour_active: false,
+            tour_time: 0.,
             window: None,
             gpu: None,
             probe_bake: None,
@@ -776,6 +781,11 @@ impl App {
             self.simulation_time += DT;
             self.simulation_steps += 1;
             let mut movement = self.input.take_move();
+            if self.tour_active
+                && (movement.local.length_squared() > 0.01 || movement.jump_pressed)
+            {
+                self.tour_active = false;
+            }
             if self.benchmark > 0. || self.profile.is_some() {
                 movement.local = Vec2::new(
                     0.,
@@ -810,6 +820,29 @@ impl App {
                 self.velocity_y = 0.;
             }
             self.accumulator -= DT;
+        }
+        if self.tour_active && self.benchmark <= 0. && self.profile.is_none() {
+            self.tour_time += simulation_elapsed;
+            let seg_duration = 5.5_f64;
+            let count = panel::TOUR_WAYPOINTS.len();
+            let total_seg = self.tour_time / seg_duration;
+            let idx0 = (total_seg.floor() as usize) % count;
+            let idx1 = (idx0 + 1) % count;
+            let u = total_seg.fract();
+            let s = u * u * (3.0 - 2.0 * u);
+            let (_, f0, d0) = panel::TOUR_WAYPOINTS[idx0];
+            let (_, f1, d1) = panel::TOUR_WAYPOINTS[idx1];
+            let feet_interp = DVec3::from_array(f0).lerp(DVec3::from_array(f1), s);
+            let dir_interp = Vec3::from_array(d0)
+                .lerp(Vec3::from_array(d1), s as f32)
+                .normalize_or_zero();
+            self.feet = feet_interp;
+            self.previous = feet_interp;
+            self.velocity_y = 0.;
+            self.grounded = true;
+            if dir_interp.length_squared() > 0.1 {
+                self.camera = WalkCamera::new(dir_interp);
+            }
         }
         let actor = self
             .previous
@@ -1356,6 +1389,7 @@ impl App {
                     rebuild: &mut self.rebuild_scene,
                     splash: &mut trigger_splash,
                     photo: &mut trigger_photo,
+                    tour: &mut self.tour_active,
                     teleport: &mut teleport_request,
                     perf_ms: (render_time * 1000., gpu_hud),
                 },
@@ -2041,6 +2075,11 @@ impl ApplicationHandler for App {
                                 }
                             }
                         }
+                    } else if key == KeyCode::F3
+                        && event.state == ElementState::Pressed
+                        && !event.repeat
+                    {
+                        self.tour_active = !self.tour_active;
                     } else if key == KeyCode::KeyG
                         && event.state == ElementState::Pressed
                         && !event.repeat
