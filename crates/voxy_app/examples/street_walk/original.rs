@@ -14,20 +14,19 @@ struct Builder {
     age_rng: u64,
     lights: Vec<ArchiveLight>,
 }
+/// Advances a 64-bit Knuth LCG state and returns a uniform `f32` in `[0.0, 1.0)`.
+fn step_lcg_u24(state: &mut u64) -> f32 {
+    *state = state
+        .wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407);
+    ((*state >> 40) as f32) / 16777216.
+}
 impl Builder {
     fn random(&mut self) -> f32 {
-        self.rng = self
-            .rng
-            .wrapping_mul(6364136223846793005)
-            .wrapping_add(1442695040888963407);
-        ((self.rng >> 40) as f32) / 16777216.
+        step_lcg_u24(&mut self.rng)
     }
     fn aged(&mut self) -> f32 {
-        self.age_rng = self
-            .age_rng
-            .wrapping_mul(6364136223846793005)
-            .wrapping_add(1442695040888963407);
-        ((self.age_rng >> 40) as f32) / 16777216.
+        step_lcg_u24(&mut self.age_rng)
     }
     fn material(
         &mut self,

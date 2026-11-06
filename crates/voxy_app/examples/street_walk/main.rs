@@ -116,7 +116,40 @@ struct App {
     tour_active: bool,
     tour_time: f64,
 }
+/// Returns the 2D pool surface coordinate in front of `(feet, camera)` where an interactive water splash lands.
+fn pool_splash_target(feet: DVec3, camera: &WalkCamera) -> Vec2 {
+    let (forward, _) = camera.planar_basis();
+    let drop_xz =
+        Vec2::new(feet.x as f32, feet.z as f32) + Vec2::new(forward.x, forward.z) * 2.5;
+    Vec2::new(drop_xz.x.clamp(-3.2, 3.2), drop_xz.y.clamp(112.8, 129.2))
+}
+/// Applies a grounded teleport state to `(feet, previous, velocity_y, grounded, camera)`.
+fn apply_teleport_state(
+    feet: &mut DVec3,
+    previous: &mut DVec3,
+    velocity_y: &mut f64,
+    grounded: &mut bool,
+    camera: &mut WalkCamera,
+    target_feet: [f64; 3],
+    target_dir: [f32; 3],
+) {
+    *feet = DVec3::from_array(target_feet);
+    *previous = *feet;
+    *velocity_y = 0.;
+    *grounded = true;
+    let d = Vec3::from_array(target_dir).normalize_or_zero();
+    if d.length_squared() > 0.1 {
+        *camera = WalkCamera::new(d);
+    }
+}
 impl App {
+    /// Triggers a water splash in front of the player inside the villa pool.
+    fn trigger_pool_splash(&mut self) {
+        let splash_xz = pool_splash_target(self.feet, &self.camera);
+        if let Some(gpu) = &mut self.gpu {
+            gpu.renderer.water_splash(splash_xz, 0.65, -0.08);
+        }
+    }
     fn cycle_view(&mut self) {
         self.view = match self.view {
             StreetView::FirstPerson => StreetView::ThirdPerson,
@@ -823,26 +856,16 @@ impl App {
         }
         if self.tour_active && self.benchmark <= 0. && self.profile.is_none() {
             self.tour_time += simulation_elapsed;
-            let seg_duration = 5.5_f64;
-            let count = panel::TOUR_WAYPOINTS.len();
-            let total_seg = self.tour_time / seg_duration;
-            let idx0 = (total_seg.floor() as usize) % count;
-            let idx1 = (idx0 + 1) % count;
-            let u = total_seg.fract();
-            let s = u * u * (3.0 - 2.0 * u);
-            let (_, f0, d0) = panel::TOUR_WAYPOINTS[idx0];
-            let (_, f1, d1) = panel::TOUR_WAYPOINTS[idx1];
-            let feet_interp = DVec3::from_array(f0).lerp(DVec3::from_array(f1), s);
-            let dir_interp = Vec3::from_array(d0)
-                .lerp(Vec3::from_array(d1), s as f32)
-                .normalize_or_zero();
-            self.feet = feet_interp;
-            self.previous = feet_interp;
-            self.velocity_y = 0.;
-            self.grounded = true;
-            if dir_interp.length_squared() > 0.1 {
-                self.camera = WalkCamera::new(dir_interp);
-            }
+            let (feet_interp, dir_interp) = panel::sample_cinematic_tour(self.tour_time);
+            apply_teleport_state(
+                &mut self.feet,
+                &mut self.previous,
+                &mut self.velocity_y,
+                &mut self.grounded,
+                &mut self.camera,
+                feet_interp,
+                dir_interp,
+            );
         }
         let actor = self
             .previous
@@ -1403,21 +1426,19 @@ impl App {
             eprintln!("STREET photo saved {}", photo_path.display());
         }
         if trigger_splash {
-            let (forward, _) = self.camera.planar_basis();
-            let drop_xz = Vec2::new(self.feet.x as f32, self.feet.z as f32)
-                + Vec2::new(forward.x, forward.z) * 2.5;
-            let splash_xz = Vec2::new(
-                drop_xz.x.clamp(-3.2, 3.2),
-                drop_xz.y.clamp(112.8, 129.2),
-            );
-            gpu.renderer.water_splash(splash_xz, 0.65, -0.08);
+            gpu.renderer
+                .water_splash(pool_splash_target(self.feet, &self.camera), 0.65, -0.08);
         }
         if let Some((feet, dir)) = teleport_request {
-            self.feet = DVec3::from_array(feet);
-            self.previous = self.feet;
-            self.velocity_y = 0.;
-            self.grounded = true;
-            self.camera = WalkCamera::new(Vec3::from_array(dir).normalize());
+            apply_teleport_state(
+                &mut self.feet,
+                &mut self.previous,
+                &mut self.velocity_y,
+                &mut self.grounded,
+                &mut self.camera,
+                feet,
+                dir,
+            );
             gpu.renderer.reset_temporal_history();
         }
         if let Some(frame) = frame {
@@ -2084,16 +2105,7 @@ impl ApplicationHandler for App {
                         && event.state == ElementState::Pressed
                         && !event.repeat
                     {
-                        if let Some(gpu) = &mut self.gpu {
-                            let (forward, _) = self.camera.planar_basis();
-                            let drop_xz = Vec2::new(self.feet.x as f32, self.feet.z as f32)
-                                + Vec2::new(forward.x, forward.z) * 2.5;
-                            let splash_xz = Vec2::new(
-                                drop_xz.x.clamp(-3.2, 3.2),
-                                drop_xz.y.clamp(112.8, 129.2),
-                            );
-                            gpu.renderer.water_splash(splash_xz, 0.65, -0.08);
-                        }
+                        self.trigger_pool_splash();
                     } else if event.state == ElementState::Pressed
                         && !event.repeat
                         && matches!(
@@ -2101,16 +2113,14 @@ impl ApplicationHandler for App {
                             KeyCode::Digit1 | KeyCode::Digit2 | KeyCode::Digit3 | KeyCode::Digit4
                         )
                     {
-                        let wind = self.weather.wind;
-                        let gust = self.weather.wind_gust;
-                        self.weather = match key {
+                        let preset = match key {
                             KeyCode::Digit2 => voxy_render::weather::Weather::CLOUDY,
                             KeyCode::Digit3 => voxy_render::weather::Weather::STORM,
                             KeyCode::Digit4 => voxy_render::weather::Weather::SNOW,
                             _ => voxy_render::weather::Weather::CLEAR,
                         };
-                        self.weather.wind = wind;
-                        self.weather.wind_gust = gust;
+                        self.weather =
+                            day_cycle::apply_weather_preset_preserving_wind(self.weather, preset);
                     } else if event.state == ElementState::Pressed
                         && !event.repeat
                         && matches!(key, KeyCode::F5 | KeyCode::F6 | KeyCode::F7 | KeyCode::F8)

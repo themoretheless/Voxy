@@ -43,6 +43,9 @@ fn scattered_sky(direction:vec3<f32>,sun:vec3<f32>)->vec3<f32>{
  let phase_m=3./(8.*3.14159265)*((1.-g*g)*(1.+mu*mu))/((2.+g*g)*mie_base*sqrt(mie_base));
  return (rayleigh*RAYLEIGH*phase_r+mie*MIE*phase_m)*SKY_CALIBRATION;
 }
+fn moon_direction(sun:vec3<f32>)->vec3<f32>{
+ return normalize(vec3<f32>(-sun.x,max(-sun.y,0.28),-sun.z));
+}
 fn daylight(direction:vec3<f32>,sun:vec3<f32>)->vec3<f32>{
  let d=normalize(direction);
  // The 0.02 floor holds by day; below the horizon the ground fades with the sky.
@@ -67,7 +70,7 @@ fn daylight(direction:vec3<f32>,sun:vec3<f32>)->vec3<f32>{
   let mw_plane=abs(dot(d,vec3<f32>(0.58,0.46,-0.67)));
   let mw_band=exp(-mw_plane*mw_plane*18.)*smoothstep(0.10,0.45,d.y)*(0.55+0.45*sin(d.x*6.5-d.z*5.2));
   let milky_way=vec3<f32>(0.38,0.46,0.72)*mw_band*night;
-  let moon_dir=normalize(vec3<f32>(-sun.x,max(-sun.y,0.28),-sun.z));
+  let moon_dir=moon_direction(sun);
   let cos_moon=clamp(dot(d,moon_dir),-1.,1.);
   let moon_halo=(exp((cos_moon-1.)*180.)*4.2+exp((cos_moon-1.)*18.)*0.48)*vec3<f32>(0.72,0.84,1.12)*night;
   var moon_disk=vec3<f32>(0.);

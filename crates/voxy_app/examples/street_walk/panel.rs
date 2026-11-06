@@ -49,6 +49,39 @@ pub const TOUR_WAYPOINTS: [(&str, [f64; 3], [f32; 3]); 8] = [
     ),
 ];
 
+/// Advances a 64-bit LCG seed to produce the next deterministic street seed.
+pub const fn next_street_seed(seed: u64) -> u64 {
+    seed.wrapping_mul(6364136223846793005)
+        .wrapping_add(1442695040888963407)
+}
+
+/// Evaluates the cinematic camera tour position and normalized look direction at `tour_time` seconds.
+pub fn sample_cinematic_tour(tour_time: f64) -> ([f64; 3], [f32; 3]) {
+    let seg_duration = 5.5_f64;
+    let count = TOUR_WAYPOINTS.len();
+    let total_seg = tour_time.max(0.0) / seg_duration;
+    let idx0 = (total_seg.floor() as usize) % count;
+    let idx1 = (idx0 + 1) % count;
+    let u = total_seg.fract();
+    let s = u * u * (3.0 - 2.0 * u);
+    let (_, f0, d0) = TOUR_WAYPOINTS[idx0];
+    let (_, f1, d1) = TOUR_WAYPOINTS[idx1];
+    let feet = std::array::from_fn(|i| f0[i] + (f1[i] - f0[i]) * s);
+    let sf = s as f32;
+    let raw = [
+        d0[0] + (d1[0] - d0[0]) * sf,
+        d0[1] + (d1[1] - d0[1]) * sf,
+        d0[2] + (d1[2] - d0[2]) * sf,
+    ];
+    let len = (raw[0] * raw[0] + raw[1] * raw[1] + raw[2] * raw[2]).sqrt();
+    let dir = if len > 1e-4 {
+        [raw[0] / len, raw[1] / len, raw[2] / len]
+    } else {
+        d0
+    };
+    (feet, dir)
+}
+
 pub struct Settings<'a> {
     pub cycle: &'a mut Option<DayCycle>,
     pub weather: &'a mut Weather,
@@ -199,16 +232,11 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
         *s.cycle = enabled.then(|| DayCycle::new(s.seed_mut.as_deref().copied().unwrap_or(0)));
     }
     ui.horizontal_wrapped(|ui| {
-        for (label, target_hour) in [
-            ("Утро (F9)", 7.5_f64),
-            ("Полдень (F10)", 12.5),
-            ("Закат (F11)", 17.75),
-            ("Ночь (F12)", 22.0),
-        ] {
+        for (label, target_hour) in crate::day_cycle::TIME_OF_DAY_PRESETS {
             if ui.button(label).clicked() {
                 let seed = s.seed_mut.as_deref().copied().unwrap_or(0);
                 let cycle = s.cycle.get_or_insert_with(|| DayCycle::new(seed));
-                cycle.calendar.hours = cycle.calendar.day() * 24. + target_hour;
+                cycle.set_hour_of_day(target_hour);
             }
         }
     });
@@ -284,12 +312,7 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
             ("Снег", Weather::SNOW),
         ] {
             if ui.button(name).clicked() {
-                let (wind, gust) = (s.weather.wind, s.weather.wind_gust);
-                *s.weather = Weather {
-                    wind,
-                    wind_gust: gust,
-                    ..preset
-                };
+                *s.weather = crate::day_cycle::apply_weather_preset_preserving_wind(*s.weather, preset);
             }
         }
     });
@@ -348,9 +371,7 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
         ui.horizontal(|ui| {
             ui.label(format!("Сид улицы {seed:#x}"));
             if ui.button("Другая улица").clicked() {
-                *seed = seed
-                    .wrapping_mul(6364136223846793005)
-                    .wrapping_add(1442695040888963407);
+                *seed = next_street_seed(*seed);
                 *s.rebuild = true;
             }
         });
@@ -608,5 +629,19 @@ mod panel_tests {
         let filtered = filter_teleport_bookmarks(&bookmarks, "villa");
         assert_eq!(filtered.len(), 1);
         assert_eq!(filtered[0].name, "Villa Pool");
+    }
+
+    #[test]
+    fn sample_cinematic_tour_hits_waypoints_and_stays_normalized() {
+        let (f0, d0) = sample_cinematic_tour(0.0);
+        assert_eq!(f0, TOUR_WAYPOINTS[0].1);
+        let len0 = (d0[0] * d0[0] + d0[1] * d0[1] + d0[2] * d0[2]).sqrt();
+        assert!((len0 - 1.0).abs() < 1e-4);
+
+        let (f1, d1) = sample_cinematic_tour(5.5);
+        assert!((f1[0] - TOUR_WAYPOINTS[1].1[0]).abs() < 1e-5);
+        assert!((f1[2] - TOUR_WAYPOINTS[1].1[2]).abs() < 1e-5);
+        let len1 = (d1[0] * d1[0] + d1[1] * d1[1] + d1[2] * d1[2]).sqrt();
+        assert!((len1 - 1.0).abs() < 1e-4);
     }
 }

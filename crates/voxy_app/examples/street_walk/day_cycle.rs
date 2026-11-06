@@ -9,6 +9,23 @@ use voxy_render::climate::{self, Calendar, Season, WeatherSchedule};
 use voxy_render::weather::Weather;
 use winit::keyboard::KeyCode;
 
+/// Canonical time-of-day presets `(label, target_hour)` shared by `F9..F12` hotkeys and the `F1` settings panel.
+pub const TIME_OF_DAY_PRESETS: [(&str, f64); 4] = [
+    ("Утро (F9)", 7.5),
+    ("Полдень (F10)", 12.5),
+    ("Закат (F11)", 17.75),
+    ("Ночь (F12)", 22.0),
+];
+
+/// Applies a weather preset while preserving the active wind vector and gust strength.
+pub const fn apply_weather_preset_preserving_wind(current: Weather, preset: Weather) -> Weather {
+    Weather {
+        wind: current.wind,
+        wind_gust: current.wind_gust,
+        ..preset
+    }
+}
+
 /// Preset combinations of season, time of day, and weather with smooth interpolation support.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum DayWeatherPreset {
@@ -98,6 +115,10 @@ impl DayCycle {
     pub fn base_ev(&self) -> Option<f32> {
         self.base_ev
     }
+    /// Sets the hour of day on the current calendar day.
+    pub fn set_hour_of_day(&mut self, hour: f64) {
+        self.calendar.hours = self.calendar.day() * 24. + hour;
+    }
     pub fn from_args(
         value: impl Fn(&str) -> Option<String>,
         seed: u64,
@@ -145,10 +166,10 @@ impl DayCycle {
             KeyCode::BracketLeft => self.calendar.advance(-1.),
             KeyCode::BracketRight => self.calendar.advance(1.),
             KeyCode::KeyY => self.calendar.advance(91.25 * 24.),
-            KeyCode::F9 => self.calendar.hours = self.calendar.day() * 24. + 7.5,
-            KeyCode::F10 => self.calendar.hours = self.calendar.day() * 24. + 12.5,
-            KeyCode::F11 => self.calendar.hours = self.calendar.day() * 24. + 17.75,
-            KeyCode::F12 => self.calendar.hours = self.calendar.day() * 24. + 22.0,
+            KeyCode::F9 => self.set_hour_of_day(TIME_OF_DAY_PRESETS[0].1),
+            KeyCode::F10 => self.set_hour_of_day(TIME_OF_DAY_PRESETS[1].1),
+            KeyCode::F11 => self.set_hour_of_day(TIME_OF_DAY_PRESETS[2].1),
+            KeyCode::F12 => self.set_hour_of_day(TIME_OF_DAY_PRESETS[3].1),
             KeyCode::Minus => self.time_scale = (self.time_scale * 0.5).max(1. / 3600.),
             KeyCode::Equal => self.time_scale = (self.time_scale * 2.).min(24.),
             KeyCode::Digit0 => self.auto_weather = true,
