@@ -399,31 +399,15 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
   let l = camera.sun.xyz;
   var glitter = vec3<f32>(0.);
   if l.y > 0. {
-    let hv = normalize(v + l);
-    let hs = -hv.xz / max(hv.y, 1e-3);
-    let dsl = hs - s;
-    let det = max(cov.x * cov.y - cov.z * cov.z, 1e-10);
-    let e = (dsl.x * dsl.x * cov.y + dsl.y * dsl.y * cov.x - 2. * dsl.x * dsl.y * cov.z) / det;
-    if e < 32. {
-      let pdf = exp(-0.5 * e) / (6.2831853 * sqrt(det));
-      let hy2 = hv.y * hv.y;
-      let d = pdf / max(hy2 * hy2, 1e-6);
-      glitter = camera.sun_colour.rgb * camera.sun_colour.a * sun_visible(f.world)
-        * fresnel(dot(v, hv)) * d / (4. * max(v.y, 0.05));
+    let g_term = wave_slope_glitter(v, l, s, cov);
+    if g_term > 0. {
+      glitter = camera.sun_colour.rgb * camera.sun_colour.a * sun_visible(f.world) * g_term;
     }
   } else if l.y < -0.02 {
-    let moon_l = normalize(vec3<f32>(-l.x, max(-l.y, 0.28), -l.z));
-    let hv = normalize(v + moon_l);
-    let hs = -hv.xz / max(hv.y, 1e-3);
-    let dsl = hs - s;
-    let det = max(cov.x * cov.y - cov.z * cov.z, 1e-10);
-    let e = (dsl.x * dsl.x * cov.y + dsl.y * dsl.y * cov.x - 2. * dsl.x * dsl.y * cov.z) / det;
-    if e < 32. {
-      let pdf = exp(-0.5 * e) / (6.2831853 * sqrt(det));
-      let hy2 = hv.y * hv.y;
-      let d = pdf / max(hy2 * hy2, 1e-6);
+    let g_term = wave_slope_glitter(v, moon_direction(l), s, cov);
+    if g_term > 0. {
       let night_w = smoothstep(-0.02, -0.14, l.y);
-      glitter = vec3<f32>(18., 22., 32.) * night_w * fresnel(dot(v, hv)) * d / (4. * max(v.y, 0.05));
+      glitter = vec3<f32>(18., 22., 32.) * night_w * g_term;
     }
   }
   var colour = refracted * (1. - fr_eff) + reflected * fr_eff + glitter * meniscus;
@@ -458,7 +442,21 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
   return vec4<f32>(colour * camera.viewport.z, 1.);
 }
 
-// ---- underwater view: fog the opaque frame between the eye and each surface ----
+// Anisotropic Gaussian slope-distribution glitter brdf term for a directional light `l_dir`.
+fn wave_slope_glitter(v:vec3<f32>, l_dir:vec3<f32>, s:vec2<f32>, cov:vec3<f32>) -> f32 {
+  let hv = normalize(v + l_dir);
+  let hs = -hv.xz / max(hv.y, 1e-3);
+  let dsl = hs - s;
+  let det = max(cov.x * cov.y - cov.z * cov.z, 1e-10);
+  let e = (dsl.x * dsl.x * cov.y + dsl.y * dsl.y * cov.x - 2. * dsl.x * dsl.y * cov.z) / det;
+  if e >= 32. {
+    return 0.;
+  }
+  let pdf = exp(-0.5 * e) / (6.2831853 * sqrt(det));
+  let hy2 = hv.y * hv.y;
+  let d = pdf / max(hy2 * hy2, 1e-6);
+  return fresnel(dot(v, hv)) * d / (4. * max(v.y, 0.05));
+}
 struct FsOut { @builtin(position) clip:vec4<f32> };
 @vertex fn vs_fullscreen(@builtin(vertex_index) i:u32)->FsOut {
   let p = vec2<f32>(f32((i << 1u) & 2u), f32(i & 2u)) * 2. - 1.;
