@@ -35,6 +35,8 @@ pub struct Settings<'a> {
     pub rebuild: &'a mut bool,
     /// Set when the user clicks the interactive water splash button.
     pub splash: &'a mut bool,
+    /// Set when the user clicks the photo-mode screenshot button (F2).
+    pub photo: &'a mut bool,
     /// Set when the user selects a quick camera teleport viewpoint.
     pub teleport: &'a mut Option<([f64; 3], [f32; 3])>,
     /// Live frame render time in ms and optional GPU pass timings `[total, opaque, transparent]`.
@@ -330,9 +332,14 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     }
     ui.separator();
     ui.label("Локации и интерактив");
-    if ui.button("Всплеск воды в бассейне (G)").clicked() {
-        *s.splash = true;
-    }
+    ui.horizontal_wrapped(|ui| {
+        if ui.button("Всплеск воды (G)").clicked() {
+            *s.splash = true;
+        }
+        if ui.button("Скриншот без UI (F2)").clicked() {
+            *s.photo = true;
+        }
+    });
     ui.horizontal_wrapped(|ui| {
         for (name, feet, dir) in [
             ("Улица", [0.6, 0.13, -18.0], [-0.10, 0.025, 1.0]),
