@@ -226,6 +226,15 @@ fn motion_blur(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
     x*=mix(1.,cos_theta2*cos_theta2,0.22);
     let bloom=textureSampleLevel(bloom_chain,bloom_sampler,uv,0.).rgb/6.;
     x=mix(x,bloom,BLOOM_STRENGTH);
+    // Physiological Purkinje mesopic/scotopic rod shift in deep shadows:
+    // human rods peak at ~507 nm (blue-cyan) when scene luminance is very low.
+    let pre_luma=dot(x,vec3<f32>(0.2126,0.7152,0.0722));
+    let scotopic_w=(1.-smoothstep(0.002,0.045,pre_luma))*0.28;
+    if scotopic_w>0. {
+        let rod_signal=dot(x,vec3<f32>(0.06,0.52,0.42));
+        let rod_tint=vec3<f32>(0.68,0.88,1.28)*rod_signal;
+        x=mix(x,rod_tint,scotopic_w);
+    }
     x=display_transform(x,frame.settings.z,frame.settings.w);
     return vec4<f32>(x,1.);
 }

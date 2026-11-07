@@ -6,7 +6,7 @@ struct Brdf {n:vec3<f32>,v:vec3<f32>,diffuse:vec3<f32>,f0:vec3<f32>,a2:f32,nv:f3
 fn brdf(s:Brdf,l:vec3<f32>)->vec3<f32>{
  let nl=max(dot(s.n,l),0.);if nl==0.{return vec3<f32>(0.);}
  let h=normalize(l+s.v);let nh=max(dot(s.n,h),0.);let vh=max(dot(s.v,h),0.);
- let q=nh*nh*(s.a2-1.)+1.;let d=s.a2/(3.14159265*q*q);
+ let q=nh*nh*(s.a2-1.)+1.;let d=mix(s.a2/(3.14159265*q*q),substrate_specular_haze(nh,s.a2),0.14*(1.-smoothstep(0.02,0.28,s.a2)));
  let gv=nl*s.smith_v;let gl=s.nv*sqrt(nl*nl*(1.-s.a2)+s.a2);let visibility=0.5/max(gv+gl,0.000001);
  let fresnel=s.f0+(1.-s.f0)*bsdf_fifth(1.-vh);
  let fd90=0.5+2.*vh*vh*sqrt(sqrt(s.a2));
@@ -53,4 +53,11 @@ fn charlie_sheen(nh:f32,nv:f32,nl:f32,roughness:f32)->f32{
  let sin2=max(1.-nh*nh,1e-5);
  let d=(2.+inv_r)*pow(sin2,0.5*inv_r)/(2.*3.14159265);
  return d/(4.*max(nl+nv-nl*nv,0.05));
+}
+// Unreal Engine Substrate dual-lobe specular haziness: a wider secondary GGX lobe (14x alpha^2)
+// that captures microscopic surface bloom around sharp highlights without breaking energy conservation.
+fn substrate_specular_haze(nh:f32,a2:f32)->f32{
+ let h_a2=min(a2*14.,0.64);
+ let q=nh*nh*(h_a2-1.)+1.;
+ return h_a2/(3.14159265*q*q);
 }

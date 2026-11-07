@@ -198,8 +198,13 @@ fn under_water(radiance:vec3<f32>, point:vec3<f32>, level:f32, path:f32, ambient
     lit *= mix(vec3<f32>(1.), caustic(point, level), 0.78 * sunlit);
   }
   let t = exp(-water.absorption.rgb * path);
-  let forward = pow(clamp(dot(normalize(point - camera.eye.xyz), -camera.sun.xyz), 0., 1.), 3.) * sunlit;
-  let scatter = water.scatter.rgb * (ambient + camera.sun_colour.rgb * camera.sun_colour.a * forward * 0.08);
+  let view_ray = normalize(point - camera.eye.xyz);
+  let refr_sun = refract(-camera.sun.xyz, vec3<f32>(0., 1., 0.), 1. / IOR);
+  let forward = (pow(clamp(dot(view_ray, refr_sun), 0., 1.), 5.) * 1.4
+    + pow(clamp(dot(view_ray, -camera.sun.xyz), 0., 1.), 3.) * 0.6) * sunlit;
+  let night_glow = smoothstep(0.04, -0.10, camera.sun.y) * 14.;
+  let scatter = water.scatter.rgb * (ambient + vec3<f32>(0.25, 0.62, 0.85) * night_glow
+    + camera.sun_colour.rgb * camera.sun_colour.a * forward * 0.08);
   return lit * t + scatter * (1. - t);
 }
 

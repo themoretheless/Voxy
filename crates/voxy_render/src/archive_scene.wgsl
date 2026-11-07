@@ -310,6 +310,32 @@ fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->f32{
  }
  return clamp(1.-2.4*sum/max(weight,1.),0.25,1.);
 }
+// Screen-Space Contact Shadows (UE5 / Unity HDRP SSCS): 4-step short-range depth march
+// along the sun vector to ground thin geometry (chair legs, railings, leaves, kerbs).
+fn contact_shadow(p:vec3<f32>,sun:vec3<f32>,jitter:f32)->f32{
+ if fx_off(8u) {return 1.;}
+ let d2=dot(p-camera.eye.xyz,p-camera.eye.xyz);
+ if d2>900. {return 1.;}
+ let inv_vp=vec2<f32>(2.,-2.)/camera.viewport.xy;
+ for(var i=0u;i<4u;i++){
+  let t=(f32(i)+0.35+jitter*0.65)*0.075;
+  let q=camera.vp*vec4<f32>(p+sun*t,1.);
+  if q.w<=0. {break;}
+  let uv=q.xy/q.w*vec2<f32>(0.5,-0.5)+0.5;
+  if any(uv<=vec2<f32>(0.))||any(uv>=vec2<f32>(1.)){break;}
+  let px=vec2<i32>(uv*camera.viewport.xy);
+  let z=textureLoad(scene_depth,px,0);
+  if z<1. {
+   let ray_z=q.z/q.w;
+   if ray_z>z+0.00003 {
+    let h=camera.inverse_vp*vec4<f32>((vec2<f32>(px)+0.5)*inv_vp+vec2<f32>(-1.,1.),z,1.);
+    let thickness=distance(h.xyz/h.w,p+sun*t);
+    if thickness<0.22 {return mix(0.18,1.,smoothstep(625.,900.,d2));}
+   }
+  }
+ }
+ return 1.;
+}
 // Trace against the current full-resolution opaque depth and radiance. A miss
 // retains the HDR environment; no screen-space result replaces hidden geometry.
 // With `history`, the opaque pass reads the previous frame's opaque radiance:
@@ -550,14 +576,24 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  if nl_sun>0.||translucent_sun {
   visibility=1.;
   let shadow_pos=f.shadow.xyz/f.shadow.w;let shadow_uv=shadow_pos.xy*vec2<f32>(0.5,-0.5)+0.5;
-  if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.&&!fx_off(8u){visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715)))));}
+  let shadow_ign=fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715))));
+  if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.&&!fx_off(8u){visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,shadow_ign);}
+  if visibility>0.05&&nl_sun>0.&&material.surface.z<0.9 {visibility*=contact_shadow(f.world+geometric*0.015,camera.sun.xyz,shadow_ign);}
  }
  let transmission=material.surface.z;
  var ao=1.;if transmission<0.9 {ao=contact_occlusion(f.clip.xy,f.world,normal)*select(1.,spec.r,material.workflow.w!=0.);}
  let dust_mask=smoothstep(0.65,0.95,geometric.y)*(1.-ao)*(1.-camera.surface.x)*select(1.,0.,transmission>0.||(z>8.5&&z<10.5));
  let rough_eff=mix(roughness,max(roughness,0.88),dust_mask*0.35);
  let diffuse_eff=mix(diffuse,vec3<f32>(0.54,0.52,0.48),dust_mask*0.14);
- let alpha=max(rough_eff*rough_eff,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,rough_eff),0.).rg;let shading=Brdf(normal,view,diffuse_eff*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=vec3<f32>(0.);if visibility>0.&&nl_sun>0.{colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility*micro_shadow(nl_sun,ao);}
+ let alpha=max(rough_eff*rough_eff,0.0001);let a2=alpha*alpha;let nv=max(dot(normal,view),0.0001);let dfg=textureSampleLevel(environment_dfg,environment_sampler,vec2<f32>(nv,rough_eff),0.).rg;let shading=Brdf(normal,view,diffuse_eff*(1.-transmission)/3.14159265,f0,a2,nv,sqrt(nv*nv*(1.-a2)+a2),energy_compensation(f0,dfg));var colour=vec3<f32>(0.);if visibility>0.&&nl_sun>0.{
+  colour=brdf(shading,camera.sun.xyz)*camera.sun_colour.rgb*camera.sun_colour.a*visibility*micro_shadow(nl_sun,ao);
+  if (z>0.5&&z<1.5)||(z>4.5&&z<5.5)||(z>11.5&&z<12.5) {
+   let h_sun=normalize(view+camera.sun.xyz);
+   let glint_cell=floor(f.world*85.+h_sun*14.);
+   let glint=smoothstep(0.985,0.999,original_hash(glint_cell))*pow(max(dot(normal,h_sun),0.),12.);
+   colour+=camera.sun_colour.rgb*camera.sun_colour.a*visibility*glint*0.045;
+  }
+ }
  let halo_weight=clamp(smoothstep(0.25,-0.05,camera.sun.y)*0.032+camera.weather.z*0.024,0.,0.05);
  var pt_diffuse=vec3<f32>(0.);
  for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);let r=light.position_kind.w;if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);let l_rad=light.colour_intensity.rgb*light.colour_intensity.a*attenuation;colour+=brdf(shading,l_dir)*l_rad*micro_shadow(dot(normal,l_dir),ao);pt_diffuse+=l_rad;}

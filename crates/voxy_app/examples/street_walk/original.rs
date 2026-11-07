@@ -2261,6 +2261,48 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         b.block(metal, [mx, 2.76, mz], [0.82, 0.30, 0.82]);
         b.block(metal, [mx, 3.02, mz], [0.48, 0.22, 0.48]);
         b.block(metal, [mx, 3.28, mz], [0.07, 0.32, 0.07]);
+        // Parisian Art Nouveau Métro entrance edicule (Guimard style) at the south plaza edge (z = 69.1)
+        let ex = side * 5.05;
+        let ez = 69.1f32;
+        // Stone curb surround and stepped descent header
+        b.block(trim, [ex - side * 0.52, 0.16, ez], [0.16, 0.22, 2.10]);
+        b.block(trim, [ex + side * 0.52, 0.16, ez], [0.16, 0.22, 2.10]);
+        b.block(trim, [ex, 0.16, ez + 0.97], [1.20, 0.22, 0.16]);
+        // Wrought-iron Art Nouveau side balustrades with shield cartouches
+        for rx_s in [-1.0f32, 1.0] {
+            let rx = ex + rx_s * 0.50;
+            b.block(metal, [rx, 0.62, ez], [0.06, 0.72, 1.98]);
+            for cart in [-0.58f32, 0.0, 0.58] {
+                b.block(foliage, [rx, 0.64, ez + cart], [0.09, 0.44, 0.36]);
+            }
+        }
+        b.block(metal, [ex, 0.62, ez + 0.96], [1.06, 0.72, 0.06]);
+        // Twin sinuous Guimard lamp stalksarching over the entrance with glowing amber flower-bud globes
+        for rx_s in [-1.0f32, 1.0] {
+            let sx = ex + rx_s * 0.50;
+            let sz = ez - 0.92;
+            b.beam(
+                metal,
+                Vec3::new(sx, 0.22, sz),
+                Vec3::new(sx - rx_s * 0.06, 2.38, sz - 0.08),
+                0.055,
+            );
+            b.beam(
+                metal,
+                Vec3::new(sx - rx_s * 0.06, 2.38, sz - 0.08),
+                Vec3::new(ex + rx_s * 0.26, 2.76, sz - 0.24),
+                0.045,
+            );
+            b.put(
+                glow,
+                Vec3::new(ex + rx_s * 0.26, 2.62, sz - 0.26),
+                Vec3::new(0.18, 0.24, 0.18),
+                Quat::IDENTITY,
+            );
+        }
+        // Illuminated "METROPOLITAIN" Art Nouveau arch sign panel spanning the stalks
+        b.block(metal, [ex, 2.48, ez - 0.96], [0.96, 0.26, 0.05]);
+        b.block(glow, [ex, 2.48, ez - 0.96], [0.84, 0.16, 0.06]);
     }
     // Compass-rose stone mosaic inlay framing the civic fountain plinth (z = 75.0)
     b.block(curb, [0., 0.052, 75.0], [7.2, 0.012, 7.2]);

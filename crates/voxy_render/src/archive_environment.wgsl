@@ -79,7 +79,34 @@ fn daylight(direction:vec3<f32>,sun:vec3<f32>)->vec3<f32>{
    let limb=sqrt(clamp((cos_moon-0.99986)/0.00014,0.,1.));
    moon_disk=vec3<f32>(210.,225.,255.)*mare*(0.45+0.55*limb)*smoothstep(0.99986,0.99989,cos_moon)*night;
   }
-  sky+=airglow+dusk_glow+star+milky_way+moon_halo+moon_disk;
+  var aurora=vec3<f32>(0.);
+  if d.y>0.06 && d.z>0.05 {
+   let ribbon=sin(d.x*7.5+sin(d.z*4.2)*1.6)*0.5+0.5;
+   let curtain=exp(-pow((d.y-0.28-0.08*ribbon)/0.14,2.))*smoothstep(0.05,0.45,d.z)*smoothstep(0.06,0.18,d.y);
+   let rays=0.65+0.35*sin(d.x*38.+d.z*19.);
+   let au_col=mix(vec3<f32>(0.18,1.65,0.68),vec3<f32>(0.85,0.28,1.35),smoothstep(0.22,0.48,d.y));
+   aurora=au_col*curtain*rays*night*0.85;
+  }
+  sky+=airglow+dusk_glow+star+milky_way+moon_halo+moon_disk+aurora;
+ } else if sun.y<0.68 {
+  let cos_anti=clamp(-cosine,-1.,1.);
+  if cos_anti>0.58 && cos_anti<0.78 {
+   let bow_elev=smoothstep(0.01,0.12,sun.y)*(1.-smoothstep(0.45,0.68,sun.y))*smoothstep(0.02,0.18,d.y);
+   let p_t=(cos_anti-0.732)/0.022;
+   let primary=exp(-p_t*p_t*2.5)*vec3<f32>(
+    exp(-pow(p_t+0.65,2.)*2.2),
+    exp(-pow(p_t,2.)*2.6),
+    exp(-pow(p_t-0.65,2.)*2.2)
+   );
+   let s_t=(cos_anti-0.630)/0.028;
+   let secondary=exp(-s_t*s_t*2.2)*vec3<f32>(
+    exp(-pow(s_t-0.60,2.)*2.0),
+    exp(-pow(s_t,2.)*2.4),
+    exp(-pow(s_t+0.60,2.)*2.0)
+   )*0.38;
+   let alexander=1.-0.06*smoothstep(0.64,0.67,cos_anti)*(1.-smoothstep(0.70,0.73,cos_anti))*bow_elev;
+   sky=sky*alexander+(primary+secondary)*bow_elev*18.;
+  }
  }
  return sky;
 }
