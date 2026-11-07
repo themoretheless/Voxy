@@ -18,9 +18,9 @@ pub struct Panel {
 }
 
 /// Key viewpoints around the street and villa for quick teleport and cinematic auto-tour.
-pub const TOUR_WAYPOINTS: [(&str, [f64; 3], [f32; 3]); 8] = [
+pub const TOUR_WAYPOINTS: [(&str, [f64; 3], [f32; 3]); 9] = [
     ("Улица", [0.6, 0.13, -18.0], [-0.10, 0.025, 1.0]),
-    ("Площадь и киоски", [0.0, 0.13, 66.0], [0.0, 0.02, 1.0]),
+    ("Площадь и метро", [0.0, 0.13, 66.0], [0.0, 0.02, 1.0]),
     ("Бассейн и вилла", [-6.2, 0.05, 110.5], [0.27, -0.05, 0.96]),
     (
         "Сауна и оранжерея",
@@ -46,6 +46,11 @@ pub const TOUR_WAYPOINTS: [(&str, [f64; 3], [f32; 3]); 8] = [
         "Винный грот",
         [6.2, 0.05, 101.0],
         [0.92, 0.05, 0.38],
+    ),
+    (
+        "Ателье художника",
+        [-6.2, 0.05, 101.0],
+        [-0.92, 0.05, 0.38],
     ),
 ];
 
@@ -237,6 +242,18 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
                 let seed = s.seed_mut.as_deref().copied().unwrap_or(0);
                 let cycle = s.cycle.get_or_insert_with(|| DayCycle::new(seed));
                 cycle.set_hour_of_day(target_hour);
+            }
+        }
+    });
+    ui.label("Сценарии освещения (Unity/UE)");
+    ui.horizontal_wrapped(|ui| {
+        for (label, scenario) in crate::day_cycle::LIGHTING_SCENARIOS {
+            if ui.button(label).clicked() {
+                let seed = s.seed_mut.as_deref().copied().unwrap_or(0);
+                let cycle = s.cycle.get_or_insert_with(|| DayCycle::new(seed));
+                cycle.auto_weather = false;
+                scenario.apply_interpolated(&mut cycle.calendar, s.weather, 1.0);
+                *s.reconfigure = true;
             }
         }
     });

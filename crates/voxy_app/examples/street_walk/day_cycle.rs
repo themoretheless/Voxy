@@ -33,7 +33,17 @@ pub enum DayWeatherPreset {
     GoldenHour,
     RainyDusk,
     WinterBlizzard,
+    AuroraNight,
 }
+
+/// Canonical Unity/UE lighting scenarios exposed in the `F1` settings panel.
+pub const LIGHTING_SCENARIOS: [(&str, DayWeatherPreset); 5] = [
+    ("Ясное утро", DayWeatherPreset::ClearMorning),
+    ("Золотой час", DayWeatherPreset::GoldenHour),
+    ("Дождь и радуга", DayWeatherPreset::RainyDusk),
+    ("Зимняя буря", DayWeatherPreset::WinterBlizzard),
+    ("Ночь и Аврора", DayWeatherPreset::AuroraNight),
+];
 
 impl DayWeatherPreset {
     /// Returns the canonical `(day_of_year, hour_of_day, Weather)` target for this preset.
@@ -53,14 +63,33 @@ impl DayWeatherPreset {
                 },
             ),
             Self::RainyDusk => (
-                Season::Autumn.middle_day(),
-                19.0,
-                Weather::STORM,
+                Season::Summer.middle_day(),
+                17.2,
+                Weather {
+                    coverage: 0.55,
+                    density: 0.85,
+                    rain: 0.65,
+                    snow: 0.0,
+                    wind: [2.8, 1.2],
+                    ..Weather::STORM
+                },
             ),
             Self::WinterBlizzard => (
                 Season::Winter.middle_day(),
                 15.0,
                 Weather::SNOW,
+            ),
+            Self::AuroraNight => (
+                Season::Winter.middle_day(),
+                23.0,
+                Weather {
+                    coverage: 0.08,
+                    density: 0.05,
+                    rain: 0.0,
+                    snow: 0.0,
+                    wind: [0.8, 0.3],
+                    ..Weather::CLEAR
+                },
             ),
         }
     }

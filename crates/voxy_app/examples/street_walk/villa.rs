@@ -111,6 +111,36 @@ fn hedge(b: &mut Builder, p: &Parts, from: Vec3, to: Vec3, height: f32, depth: f
     }
 }
 
+/// Builds a 4-wall rectangular perimeter surround with wall thickness `t`.
+fn rect_perimeter_walls(b: &mut Builder, id: usize, lo: [f32; 3], hi: [f32; 3], t: f32) {
+    let [x0, y0, z0] = lo;
+    let [x1, y1, z1] = hi;
+    b.span(id, [x0, y0, z0], [x1, y1, z0 + t]);
+    b.span(id, [x0, y0, z1 - t], [x1, y1, z1]);
+    b.span(id, [x0, y0, z0 + t], [x0 + t, y1, z1 - t]);
+    b.span(id, [x1 - t, y0, z0 + t], [x1, y1, z1 - t]);
+}
+
+/// Places a ceramic planter pot with a slightly wider clipped foliage crown on top.
+fn planter_box(
+    b: &mut Builder,
+    p: &Parts,
+    x: f32,
+    y0: f32,
+    z: f32,
+    pot_half: [f32; 2],
+    pot_h: f32,
+    foliage_h: f32,
+) {
+    let [hx, hz] = pot_half;
+    b.span(p.ceramic, [x - hx, y0, z - hz], [x + hx, y0 + pot_h, z + hz]);
+    b.span(
+        p.foliage,
+        [x - (hx + 0.05), y0 + pot_h, z - (hz + 0.05)],
+        [x + (hx + 0.05), y0 + pot_h + foliage_h, z + (hz + 0.05)],
+    );
+}
+
 fn bollard(b: &mut Builder, p: &Parts, x: f32, ground: f32, z: f32, light: bool) {
     b.span(
         p.metal,
@@ -1470,14 +1500,7 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     let (bx0, bx1, bz0, bz1) = (-14.15f32, -11.35f32, 127.6f32, 132.6f32);
     // Compacted gravel/mortar playing surface and timber bumper surround
     b.span(concrete, [bx0 + 0.12, 0.10, bz0 + 0.12], [bx1 - 0.12, 0.14, bz1 - 0.12]);
-    for (lo, hi) in [
-        ([bx0, 0.10, bz0], [bx1, 0.24, bz0 + 0.12]),
-        ([bx0, 0.10, bz1 - 0.12], [bx1, 0.24, bz1]),
-        ([bx0, 0.10, bz0 + 0.12], [bx0 + 0.12, 0.24, bz1 - 0.12]),
-        ([bx1 - 0.12, 0.10, bz0 + 0.12], [bx1, 0.24, bz1 - 0.12]),
-    ] {
-        b.span(p.timber, lo, hi);
-    }
+    rect_perimeter_walls(b, p.timber, [bx0, 0.10, bz0], [bx1, 0.24, bz1], 0.12);
     // Pallino target jack (ceramic) and chrome/ceramic bocce boules clustered near the far end
     b.put(p.ceramic, Vec3::new(-12.68, 0.165, 131.15), Vec3::splat(0.05), Quat::IDENTITY);
     for (bx_ball, bz_ball, mesh_id) in [
@@ -1496,8 +1519,7 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
 
     // ---- upstairs master suite private terrace planters & interior floor lamp ----
     for px in [1.8f32, 5.8, 9.4] {
-        b.span(p.ceramic, [px - 0.34, u0, 135.42], [px + 0.34, u0 + 0.38, 135.78]);
-        b.span(p.foliage, [px - 0.38, u0 + 0.38, 135.38], [px + 0.38, u0 + 0.86, 135.82]);
+        planter_box(b, p, px, u0, 135.60, [0.34, 0.18], 0.38, 0.48);
     }
     // Minimalist brass/dark-steel reading floor lamp beside the master suite lounge
     b.span(p.metal, [9.85, u0 + 0.02, 136.85], [10.15, u0 + 0.05, 137.15]);
@@ -1534,14 +1556,7 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     b.span(p.glow, [sx0 + 0.32, sy0 + 0.72, sz0 + 0.42], [sx0 + 0.60, sy0 + 0.84, sz0 + 0.70]);
     // Travertine & cedar cold-plunge tub with chrome filler spout in the southern half (z = 130.55..132.05)
     let (cz0, cz1) = (130.55f32, 132.05f32);
-    for (lo, hi) in [
-        ([sx0 + 0.15, sy0 + 0.08, cz0], [sx1 - 0.25, sy0 + 0.74, cz0 + 0.14]),
-        ([sx0 + 0.15, sy0 + 0.08, cz1 - 0.14], [sx1 - 0.25, sy0 + 0.74, cz1]),
-        ([sx0 + 0.15, sy0 + 0.08, cz0 + 0.14], [sx0 + 0.29, sy0 + 0.74, cz1 - 0.14]),
-        ([sx1 - 0.39, sy0 + 0.08, cz0 + 0.14], [sx1 - 0.25, sy0 + 0.74, cz1 - 0.14]),
-    ] {
-        b.span(travertine, lo, hi);
-    }
+    rect_perimeter_walls(b, travertine, [sx0 + 0.15, sy0 + 0.08, cz0], [sx1 - 0.25, sy0 + 0.74, cz1], 0.14);
     b.span(mosaic, [sx0 + 0.29, sy0 + 0.08, cz0 + 0.14], [sx1 - 0.39, sy0 + 0.62, cz1 - 0.14]);
     b.span(p.glass, [sx0 + 0.29, sy0 + 0.64, cz0 + 0.14], [sx1 - 0.39, sy0 + 0.66, cz1 - 0.14]);
     b.span(p.timber, [sx0 - 0.05, sy0 + 0.08, cz0 + 0.25], [sx0 + 0.15, sy0 + 0.42, cz1 - 0.25]);
@@ -1610,6 +1625,67 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     b.span(p.glass, [wx0 + 0.92, wy0 + 0.94, wz_mid - 0.12], [wx0 + 1.08, wy0 + 1.18, wz_mid + 0.04]);
     for sz_st in [wz_mid - 0.85, wz_mid + 0.85] {
         b.span(p.timber, [wx0 + 0.82, wy0 + 0.08, sz_st - 0.18], [wx0 + 1.18, wy0 + 0.58, sz_st + 0.18]);
+    }
+
+    // ---- northwest parterre artist atelier pavilion & sculpture garden (x = -12.2..-9.0, z = 98.8..103.2) ----
+    let (ax0, ax1, az0, az1) = (-12.2f32, -9.0f32, 98.8f32, 103.2f32);
+    let ay0 = 0.10f32;
+    b.span(travertine, [ax0 - 0.15, ay0, az0 - 0.15], [ax1 + 0.15, ay0 + 0.08, az1 + 0.15]);
+    // West studio wall, overhanging travertine cornice, and steel/glass north-light studio frame
+    b.span(garden_wall, [ax0, ay0 + 0.08, az0], [ax0 + 0.42, ay0 + 2.25, az1]);
+    b.span(travertine, [ax0 - 0.06, ay0 + 2.25, az0 - 0.08], [ax0 + 0.50, ay0 + 2.38, az1 + 0.08]);
+    for &az_col in &[az0 + 0.2, (az0 + az1) * 0.5, az1 - 0.2] {
+        b.span(p.metal, [ax1 - 0.22, ay0 + 0.08, az_col - 0.04], [ax1 - 0.14, ay0 + 2.25, az_col + 0.04]);
+        b.span(p.metal, [ax0 + 0.42, ay0 + 2.20, az_col - 0.04], [ax1 - 0.10, ay0 + 2.28, az_col + 0.04]);
+    }
+    b.span(p.glass, [ax0 + 0.45, ay0 + 2.28, az0 + 0.18], [ax1 - 0.15, ay0 + 2.32, az1 - 0.18]);
+    b.span(p.glow, [ax0 + 0.46, ay0 + 2.14, az0 + 0.65], [ax0 + 0.52, ay0 + 2.20, az1 - 0.65]);
+    // Artist's timber easel, framed painting canvas, and painter's palette table
+    let (ex_c, ez_c) = (-10.35f32, 100.35f32);
+    for (dx_leg, dz_leg) in [(-0.26f32, -0.24f32), (-0.26, 0.24), (0.28, 0.0)] {
+        b.beam(
+            p.timber,
+            Vec3::new(ex_c + dx_leg, ay0 + 0.08, ez_c + dz_leg),
+            Vec3::new(ex_c, ay0 + 1.72, ez_c),
+            0.032,
+        );
+    }
+    b.span(p.wood, [ex_c - 0.08, ay0 + 0.88, ez_c - 0.42], [ex_c + 0.06, ay0 + 0.92, ez_c + 0.42]);
+    b.put(
+        canvas,
+        Vec3::new(ex_c - 0.04, ay0 + 1.24, ez_c),
+        Vec3::new(0.04, 0.68, 0.76),
+        Quat::from_rotation_z(-0.14),
+    );
+    b.put(
+        fabric(2),
+        Vec3::new(ex_c - 0.065, ay0 + 1.24, ez_c),
+        Vec3::new(0.015, 0.56, 0.64),
+        Quat::from_rotation_z(-0.14),
+    );
+    // Classical marble/ceramic sculpture bust on a fluted travertine pedestal in the southern half
+    let (sx_ped, sz_ped) = (-10.85f32, 102.05f32);
+    b.span(travertine, [sx_ped - 0.28, ay0 + 0.08, sz_ped - 0.28], [sx_ped + 0.28, ay0 + 0.96, sz_ped + 0.28]);
+    b.span(p.trim, [sx_ped - 0.32, ay0 + 0.96, sz_ped - 0.32], [sx_ped + 0.32, ay0 + 1.04, sz_ped + 0.32]);
+    b.put(p.ceramic, Vec3::new(sx_ped, ay0 + 1.32, sz_ped), Vec3::new(0.32, 0.52, 0.28), Quat::from_rotation_y(0.35));
+    b.put(chrome, Vec3::new(sx_ped, ay0 + 1.56, sz_ped), Vec3::splat(0.22), Quat::IDENTITY);
+    planter_box(b, p, ax0 + 0.85, ay0 + 0.08, az0 + 0.55, [0.24, 0.24], 0.34, 0.46);
+
+    // ---- upstairs gallery billiards / pool table & overhead pendant (x = -5.8..-3.4, z = 141.8..144.2, y = u0) ----
+    let (bx_t0, bx_t1, bz_t0, bz_t1) = (-5.7f32, -3.5f32, 141.9f32, 144.1f32);
+    for (lx, lz) in [(bx_t0 + 0.16, bz_t0 + 0.16), (bx_t1 - 0.16, bz_t0 + 0.16), (bx_t0 + 0.16, bz_t1 - 0.16), (bx_t1 - 0.16, bz_t1 - 0.16)] {
+        b.span(p.wood, [lx - 0.06, u0 + 0.02, lz - 0.06], [lx + 0.06, u0 + 0.74, lz + 0.06]);
+    }
+    b.span(p.wood, [bx_t0, u0 + 0.72, bz_t0], [bx_t1, u0 + 0.82, bz_t1]);
+    rect_perimeter_walls(b, p.wood, [bx_t0 - 0.04, u0 + 0.80, bz_t0 - 0.04], [bx_t1 + 0.04, u0 + 0.86, bz_t1 + 0.04], 0.10);
+    b.span(lawn, [bx_t0 + 0.06, u0 + 0.82, bz_t0 + 0.06], [bx_t1 - 0.06, u0 + 0.84, bz_t1 - 0.06]);
+    for (ball_x, ball_z, ball_m) in [
+        (-4.60f32, 142.55f32, p.ceramic),
+        (-4.52, 143.35, chrome),
+        (-4.68, 143.42, p.ceramic),
+        (-4.42, 143.52, p.glow),
+    ] {
+        b.put(ball_m, Vec3::new(ball_x, u0 + 0.865, ball_z), Vec3::splat(0.055), Quat::IDENTITY);
     }
 
     Villa {

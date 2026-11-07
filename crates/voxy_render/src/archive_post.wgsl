@@ -116,12 +116,16 @@ fn atmosphere_colour(base:vec3<f32>,ray:vec3<f32>,distance:f32,pixel:vec2<i32>)-
   let start=max(min(a,b),0.);let end=min(max(a,b),min(distance,12000.));
   if end>start {
    let step=(end-start)/20.;var transmission=1.;var scattered=vec3<f32>(0.);
+   let cos_sun=max(dot(ray,camera.sun.xyz),0.);
+   let silver_lining=pow(cos_sun,8.)*1.35+pow(cos_sun,2.)*0.22;
    for(var i=0;i<20;i++) {
     let p=camera.eye.xyz+ray*(start+(f32(i)+jitter)*step);
     let density=cloud_density(p);
     if density>0.0005 {
      let opacity=1.-exp(-density*step*0.035);
-     let shade=exp(-cloud_density(p+camera.sun.xyz*70.)*5.);
+     let optical_sun=cloud_density(p+camera.sun.xyz*70.)*5.;
+     let powder=1.-0.45*exp(-density*28.);
+     let shade=exp(-optical_sun)*(1.+silver_lining*powder);
      let light=mix(vec3<f32>(65.,80.,105.),vec3<f32>(740.,710.,660.),shade*max(camera.sun.y,0.));
      scattered+=transmission*opacity*light;transmission*=1.-opacity;
      if transmission<0.01 {break;}
