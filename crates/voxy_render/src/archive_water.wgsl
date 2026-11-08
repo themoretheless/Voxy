@@ -151,11 +151,44 @@ fn clamp_pixel(p:vec2<f32>)->vec2<i32> {
 }
 
 fn sun_visible(p:vec3<f32>)->f32 {
+  var vis = 1.;
   let s = camera.shadow * vec4<f32>(p, 1.);
   let q = s.xyz / s.w;
   let uv = q.xy * vec2<f32>(0.5, -0.5) + 0.5;
-  if any(uv < vec2<f32>(0.)) || any(uv > vec2<f32>(1.)) || q.z < 0. || q.z > 1. { return 1.; }
-  return textureSampleCompareLevel(shadow_map, shadow_sampler, uv, q.z - 0.0015);
+  if all(uv >= vec2<f32>(0.)) && all(uv <= vec2<f32>(1.)) && q.z >= 0. && q.z <= 1. {
+    vis = textureSampleCompareLevel(shadow_map, shadow_sampler, uv, q.z - 0.0015);
+  }
+  if vis > 0. && camera.weather.x > 0.01 && camera.sun.y > 0.02 {
+    let t = camera.atmosphere.x;
+    let travel = t + camera.wind.z * (0.65 * (1. - cos(0.7 * t)) / 0.7 + 0.35 * (1. - cos(1.9 * t)) / 1.9);
+    let drift = vec2<f32>(camera.wind.x, camera.wind.y) * travel;
+    let ray_t = max((camera.atmosphere.y + camera.atmosphere.z * 0.35 - p.y) / max(camera.sun.y, 0.05), 0.);
+    let cp = (p.xz + camera.sun.xz * ray_t - drift) * 0.006;
+    let n = water_value_noise(cp + vec2<f32>(0., t * 0.003)) * 0.65 + water_value_noise(cp * 2.1 + vec2<f32>(t * 0.002, -t * 0.009)) * 0.25;
+    let d = max(n - (1. - camera.weather.x), 0.) * camera.weather.y;
+    vis *= clamp(exp(-d * 1.85), 0.32, 1.);
+  }
+  return vis;
+}
+
+// Raindrop impact ring slopes on water basins during rainstorms (`camera.weather.z > 0.`).
+fn water_rain_slope(xz:vec2<f32>)->vec2<f32> {
+  if camera.weather.z <= 0.01 { return vec2<f32>(0.); }
+  let t = camera.atmosphere.x;
+  var slope = vec2<f32>(0.);
+  for (var layer = 0; layer < 2; layer++) {
+    let g = xz * 3.8 + f32(layer) * vec2<f32>(0.37, 0.71);
+    let cell = floor(g);
+    let seed = fract(sin(dot(cell + f32(layer) * 17., vec2<f32>(127.1, 311.7))) * 43758.5453);
+    if seed > camera.weather.z * 0.85 { continue; }
+    let age = fract(t * 2.1 + seed);
+    let centre = cell + vec2<f32>(0.25) + 0.5 * vec2<f32>(fract(seed * 13.7), fract(seed * 29.3));
+    let d = g - centre;
+    let r = length(d);
+    let wave = sin((r - age * 1.35) * 26.) * exp(-r * 3.8) * (1. - age);
+    slope += d / max(r, 1e-3) * wave * 0.045 * camera.weather.z;
+  }
+  return slope;
 }
 
 // Sunlight refracted through the surface converges or spreads with the curvature of
@@ -290,6 +323,9 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
     let e = water.ripple.z / 256.;
     s += vec2<f32>(ripple_at(f.world.xz + vec2<f32>(e, 0.)) - ripple_at(f.world.xz - vec2<f32>(e, 0.)),
                    ripple_at(f.world.xz + vec2<f32>(0., e)) - ripple_at(f.world.xz - vec2<f32>(0., e))) / (2. * e);
+  }
+  if f.falls < 0.5 && camera.weather.z > 0.01 {
+    s += water_rain_slope(f.world.xz) * mix(0.35, 1., w);
   }
   var cov = sl.cov * w * w + vec3<f32>(0.00015, 0.00015, 0.);
   // specular anti-aliasing: unresolved slope variation widens the lobe

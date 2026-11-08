@@ -77,6 +77,30 @@ fn rgb_to_ycocg(c:vec3<f32>)->vec3<f32> {
 fn ycocg_to_rgb(y:vec3<f32>)->vec3<f32> {
     return vec3<f32>(y.x+y.y-y.z,y.x+y.z,y.x-y.y-y.z);
 }
+// 5-tap Catmull-Rom bicubic history reconstruction (Jimenez / Karis TSR) to prevent
+// bilinear history blur during camera walks while keeping energy-bounded taps.
+fn sample_history_catmull_rom(pos:vec2<f32>,size:vec2<u32>)->vec3<f32> {
+    let base=vec2<i32>(floor(pos));let f=fract(pos);
+    let limit=vec2<i32>(size)-1;
+    let w0=f*(-0.5+f*(1.-0.5*f));
+    let w1=1.+f*f*(-2.5+1.5*f);
+    let w2=f*(0.5+f*(2.-1.5*f));
+    let w3=f*f*(-0.5+0.5*f);
+    let w12=w1+w2;
+    let c00=textureLoad(history,clamp(base,vec2<i32>(0),limit),0).rgb;
+    let c10=textureLoad(history,clamp(base+vec2<i32>(1,0),vec2<i32>(0),limit),0).rgb;
+    let c01=textureLoad(history,clamp(base+vec2<i32>(0,1),vec2<i32>(0),limit),0).rgb;
+    let c11=textureLoad(history,clamp(base+vec2<i32>(1,1),vec2<i32>(0),limit),0).rgb;
+    let c_n=textureLoad(history,clamp(base+vec2<i32>(0,-1),vec2<i32>(0),limit),0).rgb;
+    let c_s=textureLoad(history,clamp(base+vec2<i32>(0,2),vec2<i32>(0),limit),0).rgb;
+    let c_w=textureLoad(history,clamp(base+vec2<i32>(-1,0),vec2<i32>(0),limit),0).rgb;
+    let c_e=textureLoad(history,clamp(base+vec2<i32>(2,0),vec2<i32>(0),limit),0).rgb;
+    let bilin=mix(mix(c00,c10,f.x),mix(c01,c11,f.x),f.y);
+    let horiz=(c_w*w0.x+(c00*w1.x+c10*w2.x)+c_e*w3.x)/(w0.x+w12.x+w3.x);
+    let vert=(c_n*w0.y+(c00*w1.y+c01*w2.y)+c_s*w3.y)/(w0.y+w12.y+w3.y);
+    let sharp=bilin*1.18-(horiz+vert)*0.09;
+    return select(bilin,max(sharp,vec3<f32>(0.)),finite(sharp));
+}
 fn current_stable(p:vec2<i32>,size:vec2<u32>)->vec3<f32> {
     let position=vec2<f32>(p)+frame.jitter.xy*vec2<f32>(size);
     let base=vec2<i32>(floor(position));let f=fract(position);
@@ -129,11 +153,17 @@ fn current_stable(p:vec2<i32>,size:vec2<u32>)->vec3<f32> {
             let sigma=sqrt(max(m2-m1*m1,vec3<f32>(0.)));
             let box_low=max(low,m1-1.25*sigma);
             let box_high=min(high,m1+1.25*sigma);
-            let old=max(ycocg_to_rgb(clamp(rgb_to_ycocg(accumulated/total),box_low,box_high)),vec3<f32>(0.));
-            // Luminance disagreement reduces history on changing/translucent surfaces.
+            var raw_hist=accumulated/total;
+            if frame.eye.w<=0.5 && total>0.99 {
+                raw_hist=mix(raw_hist,sample_history_catmull_rom(pos,size),0.65);
+            }
+            let old=max(ycocg_to_rgb(clamp(rgb_to_ycocg(raw_hist),box_low,box_high)),vec3<f32>(0.));
+            // Luminance disagreement and subpixel velocity attenuate history on fast pans.
             let luma=vec3<f32>(0.2126,0.7152,0.0722);
             let disagreement=abs(dot(old-color,luma))/max(max(dot(old,luma),dot(color,luma)),0.01);
-            let weight=select(frame.settings.y*(1.-0.8*disagreement),0.95,frame.eye.w>0.5);
+            let vel_px=length(textureLoad(motion,p,0).xy*vec2<f32>(size));
+            let vel_atten=clamp(1.-vel_px*0.012,0.68,1.);
+            let weight=select(frame.settings.y*(1.-0.8*disagreement)*vel_atten,0.95,frame.eye.w>0.5);
             color=mix(color,old,weight);
         }
     }
@@ -184,10 +214,14 @@ fn depth_of_field(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
   let r=sqrt((f32(i)+0.5)/32.);let a=f32(i)*2.3999632;
   let offset=vec2<f32>(cos(a),sin(a))*r*radius;
   let q=clamp(p+vec2<i32>(offset),vec2<i32>(0),size-1);
-  // Gather-as-scatter: a tap contributes when its own blur reaches this pixel.
-  let reach=coc_pixels(view_distance(q,size),width)*0.5;
-  let w=clamp(reach-length(offset)+1.,0.,1.);
-  sum+=max(textureLoad(final_colour,q,0).rgb,vec3<f32>(0.))*w;total+=w;
+  // Gather-as-scatter: a tap contributes when its own blur reaches this pixel,
+  // with energy-weighted specular bokeh highlights.
+  let tap_dist=view_distance(q,size);
+  let reach=coc_pixels(tap_dist,width)*0.5;
+  let tap_col=max(textureLoad(final_colour,q,0).rgb,vec3<f32>(0.));
+  let bokeh_gain=1.+min(dot(tap_col,vec3<f32>(0.2126,0.7152,0.0722)),8.)*0.16;
+  let w=clamp(reach-length(offset)+1.,0.,1.)*bokeh_gain;
+  sum+=tap_col*w;total+=w;
  }
  return sum/total;
 }
@@ -241,17 +275,15 @@ fn motion_blur(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
     x=mix(x,bloom,BLOOM_STRENGTH);
     // Physiological Eye Adaptation (Auto-Exposure) from 5-point center-weighted bloom chain luminance:
     // adapts exposure smoothly when walking between dark interiors/grottos and sunlit terraces.
-    if frame.settings.z<2.5 {
-        let luma_w=vec3<f32>(0.2126,0.7152,0.0722);
-        let c0=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.5,0.5),0.).rgb/6.,luma_w);
-        let c1=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.3,0.5),0.).rgb/6.,luma_w);
-        let c2=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.7,0.5),0.).rgb/6.,luma_w);
-        let c3=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.5,0.3),0.).rgb/6.,luma_w);
-        let c4=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.5,0.7),0.).rgb/6.,luma_w);
-        let scene_luma=max(c0*0.4+(c1+c2+c3+c4)*0.15,0.03);
-        let auto_ev=clamp(pow(0.26/scene_luma,0.16),0.82,1.34);
-        x*=auto_ev;
-    }
+    let luma_w=vec3<f32>(0.2126,0.7152,0.0722);
+    let c0=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.5,0.5),0.).rgb/6.,luma_w);
+    let c1=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.3,0.5),0.).rgb/6.,luma_w);
+    let c2=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.7,0.5),0.).rgb/6.,luma_w);
+    let c3=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.5,0.3),0.).rgb/6.,luma_w);
+    let c4=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.5,0.7),0.).rgb/6.,luma_w);
+    let scene_luma=max(c0*0.4+(c1+c2+c3+c4)*0.15,0.03);
+    let auto_ev=clamp(pow(0.26/scene_luma,0.16),0.82,1.34);
+    x*=auto_ev;
     // Physiological Purkinje mesopic/scotopic rod shift in deep shadows:
     // human rods peak at ~507 nm (blue-cyan) when scene luminance is very low.
     let pre_luma=dot(x,vec3<f32>(0.2126,0.7152,0.0722));

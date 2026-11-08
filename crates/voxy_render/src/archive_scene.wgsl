@@ -748,6 +748,22 @@ fn interior_mapping_window(p:vec3<f32>,geometric:vec3<f32>,view:vec3<f32>)->vec3
  let room_radiance=mix(wall_col*illum,warm_tint*0.48*folds,curtain_edge*0.55);
  return room_radiance*room_lit;
 }
+// 3D world-space volumetric cloud shadow projection onto scene surfaces (UE5 / Unity HDRP Cloud Layer):
+// intersects the sun ray from `p` with the mid-cloud slab and evaluates wind-advected cloud optical depth.
+fn cloud_sun_transmittance(p:vec3<f32>)->f32 {
+ if camera.weather.x<=0.01 || camera.sun.y<=0.02 {return 1.;}
+ let t=camera.atmosphere.x;
+ let travel=t+camera.wind.z*(0.65*(1.-cos(0.7*t))/0.7+0.35*(1.-cos(1.9*t))/1.9);
+ let drift=vec3<f32>(camera.wind.x,0.,camera.wind.y)*travel;
+ let slab_y=camera.atmosphere.y+camera.atmosphere.z*0.35;
+ let ray_t=max((slab_y-p.y)/max(camera.sun.y,0.05),0.);
+ let cp=p+camera.sun.xyz*ray_t;
+ let q=(cp-drift)*0.006;
+ let n=original_noise(q+vec3<f32>(0.,t*0.003,0.))*0.65
+  +original_noise(q*2.1+vec3<f32>(t*0.002,-t*0.009,0.))*0.25;
+ let d=max(n-(1.-camera.weather.x),0.)*camera.weather.y;
+ return clamp(exp(-d*1.85),0.32,1.);
+}
 fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  let surface=archive_surface(f,front,tex);
  let base=surface.base;let opacity=surface.opacity;let uv=surface.uv;let spec=surface.spec;
@@ -768,6 +784,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
    visibility*=contact_shadow(f.world+geometric*0.015,camera.sun.xyz,shadow_ign);
    if z>0.5 {visibility*=pom_self_shadow(f.world,geometric,camera.sun.xyz,z);}
   }
+  visibility*=cloud_sun_transmittance(f.world);
  }
  let transmission=material.surface.z;
  var ao=1.;var bent_normal=normal;
@@ -794,7 +811,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  let reflected=reflect(-view,normalize(mix(normal,view,n_bend)));
  let bent_cone=clamp(dot(reflected,bent_normal)*0.5+0.5,0.35,1.);
  var pt_diffuse=vec3<f32>(0.);
- for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let r=light.position_kind.w;if r>0.&&abs(light.position_kind.z-f.world.z)>=r{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);let l_occ=point_light_occlusion(f.world+geometric*0.02,light.position_kind.xyz,d2_view,distance2);let l_rad=light.colour_intensity.rgb*light.colour_intensity.a*attenuation*l_occ;let spec_dir=area_light_spec_dir(f.world,light.position_kind.xyz,reflected,r);let diff_l=shading.diffuse*max(dot(normal,l_dir),0.);let spec_l=(brdf(shading,spec_dir)-shading.diffuse*max(dot(normal,spec_dir),0.))*max(dot(normal,l_dir),0.)/max(dot(normal,spec_dir),0.05);colour+=(diff_l+max(spec_l,vec3<f32>(0.)))*l_rad*micro_shadow(dot(normal,l_dir),ao);pt_diffuse+=l_rad;}
+ for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let r=light.position_kind.w;if r>0.&&abs(light.position_kind.z-f.world.z)>=r{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);let l_occ=point_light_occlusion(f.world+geometric*0.02,light.position_kind.xyz,d2_view,distance2);let warm_flicker=select(1.,1.+0.045*sin(camera.atmosphere.x*9.7+f32(i)*2.3)*sin(camera.atmosphere.x*19.3+f32(i)*1.1),light.colour_intensity.r>light.colour_intensity.b*1.45);let l_rad=light.colour_intensity.rgb*light.colour_intensity.a*attenuation*l_occ*warm_flicker;let spec_dir=area_light_spec_dir(f.world,light.position_kind.xyz,reflected,r);let diff_l=shading.diffuse*max(dot(normal,l_dir),0.);let spec_l=(brdf(shading,spec_dir)-shading.diffuse*max(dot(normal,spec_dir),0.))*max(dot(normal,l_dir),0.)/max(dot(normal,spec_dir),0.05);colour+=(diff_l+max(spec_l,vec3<f32>(0.)))*l_rad*micro_shadow(dot(normal,l_dir),ao);pt_diffuse+=l_rad;}
  if halo_weight>0. {colour+=diffuse_eff*(1.-transmission)*pt_diffuse*halo_weight*ao;}
  // Directional sky, contact visibility and view-dependent environment Fresnel.
  if camera.eye.w>0.5 {
