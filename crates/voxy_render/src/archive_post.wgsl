@@ -13,9 +13,9 @@ struct Camera { vp:mat4x4<f32>, shadow:mat4x4<f32>, inverse_vp:mat4x4<f32>, eye:
 @group(0) @binding(7) var shadow_map:texture_depth_2d;
 @group(0) @binding(8) var shadow_sampler:sampler_comparison;
 // Energy-conserving bloom from the dual Kawase chain (bloom.rs, six levels).
-// Only for direct display; temporal and linear output bloom elsewhere.
+// Only for direct display; temporal output blooms in archive_temporal.wgsl.
 fn with_bloom(x:vec3<f32>,q:vec2<i32>)->vec3<f32>{
-    if display.w>0.5 || display.x>2.5 {return x;}
+    if display.w>0.5 {return x;}
     let uv=(vec2<f32>(q)+0.5)/vec2<f32>(textureDimensions(hdr));
     let bloomed=mix(x,textureSampleLevel(bloom_chain,sky_sampler,uv,0.).rgb/6.,0.04);
     let luma_w=vec3<f32>(0.2126,0.7152,0.0722);
@@ -26,7 +26,14 @@ fn with_bloom(x:vec3<f32>,q:vec2<i32>)->vec3<f32>{
     let c4=dot(textureSampleLevel(bloom_chain,sky_sampler,vec2<f32>(0.5,0.7),0.).rgb/6.,luma_w);
     let scene_luma=max(c0*0.4+(c1+c2+c3+c4)*0.15,0.03);
     let auto_ev=clamp(pow(0.26/scene_luma,0.16),0.82,1.34);
-    return bloomed*auto_ev;
+    var out_col=bloomed*auto_ev;
+    let pre_luma=dot(out_col,luma_w);
+    let scotopic_w=(1.-smoothstep(0.002,0.045,pre_luma))*0.28;
+    if scotopic_w>0. {
+        let rod_signal=dot(out_col,vec3<f32>(0.06,0.52,0.42));
+        out_col=mix(out_col,vec3<f32>(0.68,0.88,1.28)*rod_signal,scotopic_w);
+    }
+    return out_col;
 }
 struct Out { @builtin(position) position:vec4<f32> }
 @vertex fn vs_main(@builtin(vertex_index) i:u32)->Out {
@@ -164,7 +171,15 @@ fn atmosphere_colour(base:vec3<f32>,ray:vec3<f32>,distance:f32,pixel:vec2<i32>)-
      let optical_sun=cloud_density(p+camera.sun.xyz*70.)*5.;
      let powder=1.-0.45*exp(-density*28.);
      let shade=exp(-optical_sun)*(1.+silver_lining*powder);
-     let light=mix(vec3<f32>(65.,80.,105.),vec3<f32>(740.,710.,660.),shade*max(camera.sun.y,0.));
+     var light=mix(vec3<f32>(65.,80.,105.),vec3<f32>(740.,710.,660.),shade*max(camera.sun.y,0.));
+     if camera.weather.z>0.5 {
+      let flash_t=camera.atmosphere.x*3.7;
+      let bolt=pow(max(sin(flash_t)*sin(flash_t*2.3+1.7),0.),16.)*(camera.weather.z-0.5)*2.;
+      if bolt>0.01 {
+       let cell_flash=smoothstep(0.3,0.9,weather_noise(p*0.0018+vec3<f32>(floor(flash_t),0.,0.)));
+       light+=vec3<f32>(420.,480.,680.)*bolt*cell_flash*exp(-density*12.);
+      }
+     }
      scattered+=transmission*opacity*light;transmission*=1.-opacity;
      if transmission<0.01 {break;}
     }

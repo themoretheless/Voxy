@@ -3326,7 +3326,7 @@ impl ArchiveSceneRenderer {
             .map(|t| t.current.create_view(&Default::default()));
         // Without temporal AA the display pass applies bloom itself; the
         // temporal display pass has its own chain over the resolved image.
-        if self.temporal.is_none() && !self.linear_output {
+        if self.temporal.is_none() {
             self.bloom.encode(
                 &self.device,
                 &mut encoder,
