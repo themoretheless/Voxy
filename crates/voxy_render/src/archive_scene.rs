@@ -1450,7 +1450,7 @@ impl ArchiveSceneRenderer {
             })
             .collect::<Result<Vec<_>, crate::ComputeError>>()?;
         let centre = (bounds.0 + bounds.1) * 0.5;
-        let extent = (bounds.1 - bounds.0).length() * 0.5;
+        let extent = ((bounds.1 - bounds.0).length() * 0.44).max(1.);
         #[allow(deprecated)]
         let shadow_matrix =
             Mat4::orthographic_rh(-extent, extent, -extent, extent, 0.1, extent * 4.)
@@ -1889,7 +1889,7 @@ impl ArchiveSceneRenderer {
         self.sun = direction.normalize();
         self.sun_colour = colour;
         let centre = (self.shadow_bounds.0 + self.shadow_bounds.1) * 0.5;
-        let extent = ((self.shadow_bounds.1 - self.shadow_bounds.0).length() * 0.5).max(1.);
+        let extent = ((self.shadow_bounds.1 - self.shadow_bounds.0).length() * 0.44).max(1.);
         let up = if self.sun.dot(Vec3::Y).abs() > 0.99 {
             Vec3::Z
         } else {

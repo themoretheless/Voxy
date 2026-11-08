@@ -17,7 +17,16 @@ struct Camera { vp:mat4x4<f32>, shadow:mat4x4<f32>, inverse_vp:mat4x4<f32>, eye:
 fn with_bloom(x:vec3<f32>,q:vec2<i32>)->vec3<f32>{
     if display.w>0.5 || display.x>2.5 {return x;}
     let uv=(vec2<f32>(q)+0.5)/vec2<f32>(textureDimensions(hdr));
-    return mix(x,textureSampleLevel(bloom_chain,sky_sampler,uv,0.).rgb/6.,0.04);
+    let bloomed=mix(x,textureSampleLevel(bloom_chain,sky_sampler,uv,0.).rgb/6.,0.04);
+    let luma_w=vec3<f32>(0.2126,0.7152,0.0722);
+    let c0=dot(textureSampleLevel(bloom_chain,sky_sampler,vec2<f32>(0.5,0.5),0.).rgb/6.,luma_w);
+    let c1=dot(textureSampleLevel(bloom_chain,sky_sampler,vec2<f32>(0.3,0.5),0.).rgb/6.,luma_w);
+    let c2=dot(textureSampleLevel(bloom_chain,sky_sampler,vec2<f32>(0.7,0.5),0.).rgb/6.,luma_w);
+    let c3=dot(textureSampleLevel(bloom_chain,sky_sampler,vec2<f32>(0.5,0.3),0.).rgb/6.,luma_w);
+    let c4=dot(textureSampleLevel(bloom_chain,sky_sampler,vec2<f32>(0.5,0.7),0.).rgb/6.,luma_w);
+    let scene_luma=max(c0*0.4+(c1+c2+c3+c4)*0.15,0.03);
+    let auto_ev=clamp(pow(0.26/scene_luma,0.16),0.82,1.34);
+    return bloomed*auto_ev;
 }
 struct Out { @builtin(position) position:vec4<f32> }
 @vertex fn vs_main(@builtin(vertex_index) i:u32)->Out {

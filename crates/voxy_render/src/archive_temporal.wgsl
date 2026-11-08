@@ -226,6 +226,19 @@ fn motion_blur(p:vec2<i32>,centre:vec3<f32>)->vec3<f32>{
     x*=mix(1.,cos_theta2*cos_theta2,0.22);
     let bloom=textureSampleLevel(bloom_chain,bloom_sampler,uv,0.).rgb/6.;
     x=mix(x,bloom,BLOOM_STRENGTH);
+    // Physiological Eye Adaptation (Auto-Exposure) from 5-point center-weighted bloom chain luminance:
+    // adapts exposure smoothly when walking between dark interiors/grottos and sunlit terraces.
+    if frame.settings.z<2.5 {
+        let luma_w=vec3<f32>(0.2126,0.7152,0.0722);
+        let c0=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.5,0.5),0.).rgb/6.,luma_w);
+        let c1=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.3,0.5),0.).rgb/6.,luma_w);
+        let c2=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.7,0.5),0.).rgb/6.,luma_w);
+        let c3=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.5,0.3),0.).rgb/6.,luma_w);
+        let c4=dot(textureSampleLevel(bloom_chain,bloom_sampler,vec2<f32>(0.5,0.7),0.).rgb/6.,luma_w);
+        let scene_luma=max(c0*0.4+(c1+c2+c3+c4)*0.15,0.03);
+        let auto_ev=clamp(pow(0.26/scene_luma,0.16),0.82,1.34);
+        x*=auto_ev;
+    }
     // Physiological Purkinje mesopic/scotopic rod shift in deep shadows:
     // human rods peak at ~507 nm (blue-cyan) when scene luminance is very low.
     let pre_luma=dot(x,vec3<f32>(0.2126,0.7152,0.0722));
