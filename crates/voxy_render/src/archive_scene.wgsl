@@ -531,6 +531,30 @@ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,
 // marched against the depth buffer and shaded from the reprojected previous
 // frame (which already carries earlier bounces). TAA integrates the noise.
 // Returns hit radiance and coverage; misses keep the sky/environment term.
+fn clamp_gi_firefly(gi:vec4<f32>)->vec4<f32>{
+ let luma=dot(gi.rgb,vec3<f32>(0.2126,0.7152,0.0722));
+ let cap=1600.;
+ if luma>cap {
+  return vec4<f32>(gi.rgb*(cap/max(luma,1e-4)),gi.a);
+ }
+ return gi;
+}
+fn load_computed_gi_filtered(pixel:vec2<i32>,center_z:f32)->vec4<f32>{
+ let dims=vec2<i32>(textureDimensions(computed_gi));
+ let p=clamp(pixel,vec2<i32>(0),dims-vec2<i32>(1));
+ let c=clamp_gi_firefly(textureLoad(computed_gi,p,0));
+ var sum=c*2.0;
+ var w_sum=2.0;
+ let offsets=array<vec2<i32>,4>(vec2<i32>(2,0),vec2<i32>(-2,0),vec2<i32>(0,2),vec2<i32>(0,-2));
+ for(var i=0;i<4;i++){
+  let q=clamp(p+offsets[i],vec2<i32>(0),dims-vec2<i32>(1));
+  let dz=abs(textureLoad(scene_depth,q,0)-center_z);
+  let w=exp(-dz*650.);
+  sum+=clamp_gi_firefly(textureLoad(computed_gi,q,0))*w;
+  w_sum+=w;
+ }
+ return sum/w_sum;
+}
 fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
  if fx_off(1u) {return vec4<f32>(0.);}
  if !ARCHIVE_COMPUTE_GI&&!ARCHIVE_PAIRED_DDA {
@@ -538,12 +562,12 @@ fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
   if d2>2704. {return vec4<f32>(0.);}
   let direction=archive_gi_direction(pixel,n);
   let far_fade=1.-smoothstep(1296.,2704.,d2);
-  let gi=screen_reflection(p+n*0.05,direction,true,select(38.,22.,d2>784.),select(1.26,1.48,d2>784.),select(5u,4u,d2>784.),ARCHIVE_RAY_BOUNDS);
+  let gi=clamp_gi_firefly(screen_reflection(p+n*0.05,direction,true,select(38.,22.,d2>784.),select(1.26,1.48,d2>784.),select(5u,4u,d2>784.),ARCHIVE_RAY_BOUNDS));
   return vec4<f32>(gi.rgb,gi.a*far_fade);
  }
  let direction=archive_gi_direction(pixel,n);
  // Cosine-distributed diffuse bounce march; probes supplement offscreen light.
- return screen_reflection(p+n*0.05,direction,true,42.,1.22,5u,ARCHIVE_RAY_BOUNDS);
+ return clamp_gi_firefly(screen_reflection(p+n*0.05,direction,true,42.,1.22,5u,ARCHIVE_RAY_BOUNDS));
 }
 fn archive_gi_direction(pixel:vec2<f32>,n:vec3<f32>)->vec3<f32>{
  let seed=fract(sin(dot(pixel+vec2<f32>(camera.atmosphere.x*61.7,camera.atmosphere.x*17.3),vec2<f32>(12.9898,78.233)))*43758.5453);
@@ -672,13 +696,65 @@ fn archive_surface(f:Fragment,front:bool,tex:vec4<f32>)->ArchiveSurface {
  }
  return ArchiveSurface(base,opacity,uv,spec,f0,roughness,diffuse,normal,view,geometric,splash);
 }
+// True 3D Ray-Box Interior Mapping (van Dongen 2007 / UE5 Interior Cubemap):
+// intersects the refracted view ray against a virtual 3D room cell behind facade glass,
+// shading ceiling, hardwood floor, back wall, side walls, pendant lamp, and window curtains.
+fn interior_mapping_window(p:vec3<f32>,geometric:vec3<f32>,view:vec3<f32>)->vec3<f32>{
+ let cell_size=vec3<f32>(3.2,2.65,3.2);
+ let room_cell=floor(p/cell_size);
+ let room_seed=original_hash(room_cell);
+ let room_lit=smoothstep(0.24,0.58,room_seed);
+ if room_lit<=0.001 {return vec3<f32>(0.);}
+ // Refract incoming ray (-view) slightly into the room interior (IOR ~ 1.15 effective pane bend).
+ let n_out=normalize(vec3<f32>(geometric.x,0.,geometric.z)+vec3<f32>(1e-5,0.,0.));
+ let ray=normalize(mix(-view,-n_out,0.18));
+ // Local room coordinates: u in [-0.5, 0.5] along facade, v in [0, 1] floor-to-ceiling, d in [0, 1] depth inward.
+ let tangent=vec3<f32>(-n_out.z,0.,n_out.x);
+ let u0=fract(dot(p,tangent)/3.2)-0.5;
+ let v0=fract(p.y/2.65);
+ let ru=dot(ray,tangent)/3.2;
+ let rv=ray.y/2.65;
+ let rd=max(dot(ray,-n_out)/3.4,0.08);
+ let t_back=1.0/rd;
+ let t_side=select((-0.5-u0)/min(ru,-1e-4),(0.5-u0)/max(ru,1e-4),ru>=0.);
+ let t_vert=select(-v0/min(rv,-1e-4),(1.0-v0)/max(rv,1e-4),rv>=0.);
+ let t_hit=min(t_back,min(t_side,t_vert));
+ let hit=vec3<f32>(u0+ru*t_hit,clamp(v0+rv*t_hit,0.,1.),clamp(rd*t_hit,0.,1.));
+ // Room surface albedo by intersected plane (ceiling, hardwood floor, back wall with art/bookshelf, side walls).
+ var wall_col=mix(vec3<f32>(0.78,0.72,0.62),vec3<f32>(0.66,0.72,0.74),fract(room_seed*7.3));
+ if t_vert<=t_back && t_vert<=t_side {
+  if rv>0. {
+   let rose=smoothstep(0.22,0.18,length(vec2<f32>(hit.x,hit.z-0.45)));
+   wall_col=vec3<f32>(0.92,0.89,0.83)*(1.+0.18*rose);
+  } else {
+   let plank=0.82+0.18*sin(hit.x*42.+floor(hit.z*8.)*1.7);
+   wall_col=vec3<f32>(0.38,0.23,0.12)*plank;
+  }
+ } else if t_back<=t_side {
+  let shelf=step(0.18,abs(hit.x))*step(abs(hit.y-0.48),0.28);
+  let stripes=0.7+0.3*sin(hit.y*28.+hit.x*16.);
+  wall_col=mix(wall_col,vec3<f32>(0.42,0.26,0.16)*stripes,shelf*0.65);
+ }
+ // Warm ceiling pendant light at (u = 0, v = 0.82, d = 0.45) with inverse-square radial attenuation.
+ let lamp_pos=vec3<f32>(0.0,0.82,0.45);
+ let d_lamp= hit-lamp_pos;
+ let dist2=dot(d_lamp,d_lamp)+0.09;
+ let fixture=smoothstep(0.09,0.02,length(vec2<f32>(hit.x,hit.z-0.45)))*smoothstep(0.72,0.96,hit.y);
+ let warm_tint=mix(vec3<f32>(1.55,0.88,0.40),vec3<f32>(1.35,0.96,0.62),fract(room_seed*13.7));
+ let illum=warm_tint*(0.28/dist2+fixture*2.2)*smoothstep(1.15,0.15,hit.z);
+ // Sheer side curtains near the window glass plane (u0 near +-0.5).
+ let curtain_edge=smoothstep(0.24,0.46,abs(u0));
+ let folds=0.75+0.25*sin(u0*58.+room_seed*12.);
+ let room_radiance=mix(wall_col*illum,warm_tint*0.48*folds,curtain_edge*0.55);
+ return room_radiance*room_lit;
+}
 fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  let surface=archive_surface(f,front,tex);
  let base=surface.base;let opacity=surface.opacity;let uv=surface.uv;let spec=surface.spec;
  let f0=surface.f0;let roughness=surface.roughness;let diffuse=surface.diffuse;
  let normal=surface.normal;let view=surface.view;let geometric=surface.geometric;let splash=surface.splash;
  var early_bounce=vec4<f32>(0.);
- if ARCHIVE_COMPUTE_GI {early_bounce=textureLoad(computed_gi,vec2<i32>(f.clip.xy),0);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
+ if ARCHIVE_COMPUTE_GI {early_bounce=load_computed_gi_filtered(vec2<i32>(f.clip.xy),f.clip.z);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
  let z=material.workflow.z;
  let nl_sun=dot(normal,camera.sun.xyz);
  let translucent_sun=z>5.5&&((z>5.5&&z<6.5)||(z>9.5&&z<11.5)||z>14.5);
@@ -718,7 +794,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  let reflected=reflect(-view,normalize(mix(normal,view,n_bend)));
  let bent_cone=clamp(dot(reflected,bent_normal)*0.5+0.5,0.35,1.);
  var pt_diffuse=vec3<f32>(0.);
- for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);let r=light.position_kind.w;if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);let l_occ=point_light_occlusion(f.world+geometric*0.02,light.position_kind.xyz,d2_view,distance2);let l_rad=light.colour_intensity.rgb*light.colour_intensity.a*attenuation*l_occ;let spec_dir=area_light_spec_dir(f.world,light.position_kind.xyz,reflected,r);let diff_l=shading.diffuse*max(dot(normal,l_dir),0.);let spec_l=(brdf(shading,spec_dir)-shading.diffuse*max(dot(normal,spec_dir),0.))*max(dot(normal,l_dir),0.)/max(dot(normal,spec_dir),0.05);colour+=(diff_l+max(spec_l,vec3<f32>(0.)))*l_rad*micro_shadow(dot(normal,l_dir),ao);pt_diffuse+=l_rad;}
+ for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let r=light.position_kind.w;if r>0.&&abs(light.position_kind.z-f.world.z)>=r{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);let l_occ=point_light_occlusion(f.world+geometric*0.02,light.position_kind.xyz,d2_view,distance2);let l_rad=light.colour_intensity.rgb*light.colour_intensity.a*attenuation*l_occ;let spec_dir=area_light_spec_dir(f.world,light.position_kind.xyz,reflected,r);let diff_l=shading.diffuse*max(dot(normal,l_dir),0.);let spec_l=(brdf(shading,spec_dir)-shading.diffuse*max(dot(normal,spec_dir),0.))*max(dot(normal,l_dir),0.)/max(dot(normal,spec_dir),0.05);colour+=(diff_l+max(spec_l,vec3<f32>(0.)))*l_rad*micro_shadow(dot(normal,l_dir),ao);pt_diffuse+=l_rad;}
  if halo_weight>0. {colour+=diffuse_eff*(1.-transmission)*pt_diffuse*halo_weight*ao;}
  // Directional sky, contact visibility and view-dependent environment Fresnel.
  if camera.eye.w>0.5 {
@@ -819,15 +895,10 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   let film_nm=320.+140.*original_noise(f.world*0.85);
   let irid=thin_film_iridescence(nv,film_nm);
   colour*=mix(vec3<f32>(1.),irid,0.045*smoothstep(0.25,0.9,1.-nv));
-  let dusk_window=smoothstep(0.14,-0.06,camera.sun.y)*smoothstep(0.95,0.2,abs(geometric.y))*smoothstep(86.,76.,f.world.z);
+  let dusk_window=smoothstep(0.28,-0.06,camera.sun.y)*smoothstep(0.95,0.2,abs(geometric.y))*smoothstep(86.,76.,f.world.z);
   if dusk_window>0. {
-   let room_cell=floor(vec3<f32>(f.world.x*0.35,f.world.y*0.42,f.world.z*0.28));
-   let room_lit=smoothstep(0.28,0.62,original_hash(room_cell));
-   let p_in=f.world-view*0.65/max(nv,0.22);
-   let drape=0.65+0.35*sin(p_in.z*5.5+p_in.x*3.5);
-   let ceil_glow=smoothstep(-0.4,0.8,sin(p_in.y*2.1));
-   let warm_room=vec3<f32>(1.45,0.86,0.42)*(0.45+0.55*ceil_glow)*drape;
-   colour+=warm_room*dusk_window*room_lit*(1.-f0.r)*camera.viewport.w*420.;
+   let warm_room=interior_mapping_window(f.world,geometric,view);
+   colour+=warm_room*dusk_window*(1.-f0.r)*camera.viewport.w*420.;
   }
  }
  if any(material.emissive_normal.rgb!=vec3<f32>(0.)){

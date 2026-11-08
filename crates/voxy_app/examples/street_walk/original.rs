@@ -1231,6 +1231,12 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     })
     .collect();
     let bin = b.round(dark_m, false);
+    let metal_sphere = b.round(dark_m, true);
+    let trim_cyl = b.round(trim_m, false);
+    let ceramic_cyl = b.round(ceramic_m, false);
+    let ceramic_sphere = b.round(ceramic_m, true);
+    let foliage_sphere = b.round(leaf_m, true);
+    let glow_cyl = b.round(warm_m, false);
     let ceiling_m = b.material([0.9, 0.89, 0.86], 0.92, 0., 13., 0., 0.);
     let tile_m = b.material([0.82, 0.86, 0.87], 0.22, 0., 14., 0., 0.);
     let tile_accent_m = b.material([0.27, 0.43, 0.52], 0.25, 0., 14., 0., 0.);
@@ -1908,12 +1914,12 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 for tz_off in [-1.45f32, 1.45] {
                     let tx = side * 6.18;
                     let tz = z + tz_off;
-                    b.block(metal, [tx, 0.08, tz], [0.34, 0.04, 0.34]);
-                    b.block(metal, [tx, 0.40, tz], [0.045, 0.64, 0.045]);
-                    b.block(kit.ceramic, [tx, 0.73, tz], [0.58, 0.035, 0.58]);
-                    b.block(metal, [tx, 0.725, tz], [0.60, 0.025, 0.60]);
-                    b.block(kit.ceramic, [tx - side * 0.10, 0.775, tz - 0.08], [0.09, 0.06, 0.09]);
-                    b.block(kit.ceramic, [tx + side * 0.08, 0.76, tz + 0.10], [0.12, 0.02, 0.12]);
+                    b.block(bin, [tx, 0.08, tz], [0.34, 0.04, 0.34]);
+                    b.block(bin, [tx, 0.40, tz], [0.045, 0.64, 0.045]);
+                    b.block(ceramic_cyl, [tx, 0.73, tz], [0.58, 0.035, 0.58]);
+                    b.block(bin, [tx, 0.725, tz], [0.60, 0.025, 0.60]);
+                    b.block(ceramic_cyl, [tx - side * 0.10, 0.775, tz - 0.08], [0.09, 0.06, 0.09]);
+                    b.block(ceramic_cyl, [tx + side * 0.08, 0.76, tz + 0.10], [0.12, 0.02, 0.12]);
                     for cz_dir in [-1.0f32, 1.0] {
                         let cz = tz + cz_dir * 0.48;
                         b.block(timber, [tx, 0.44, cz], [0.36, 0.035, 0.36]);
@@ -1925,7 +1931,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                         for lx in [-0.15f32, 0.15] {
                             for lz in [-0.15f32, 0.15] {
                                 b.block(
-                                    metal,
+                                    bin,
                                     [tx + lx, 0.22, cz + lz],
                                     [0.025, 0.42, 0.025],
                                 );
@@ -1980,26 +1986,31 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 if house % 4 == 0 {
                     let rz = bc + 1.35;
                     for dz in [-0.28f32, 0.28] {
-                        b.block(metal, [side * 5.15, 0.42, rz + dz], [0.045, 0.72, 0.045]);
+                        b.block(bin, [side * 5.15, 0.42, rz + dz], [0.045, 0.72, 0.045]);
                     }
-                    b.block(metal, [side * 5.15, 0.76, rz], [0.045, 0.045, 0.605]);
+                    b.beam(
+                        bin,
+                        Vec3::new(side * 5.15, 0.76, rz - 0.28),
+                        Vec3::new(side * 5.15, 0.76, rz + 0.28),
+                        0.045,
+                    );
                 } else if house % 4 == 2 {
                     // Fluted cast-iron street Drinking Fountain / standpipe with brass basin beside alternate benches
                     let fz = bc + 1.35;
                     let fx = side * 5.18;
-                    b.block(trim, [fx, 0.09, fz], [0.42, 0.08, 0.42]);
-                    b.block(metal, [fx, 0.56, fz], [0.18, 0.86, 0.18]);
-                    b.block(metal, [fx, 1.02, fz], [0.24, 0.08, 0.24]);
+                    b.block(trim_cyl, [fx, 0.09, fz], [0.42, 0.08, 0.42]);
+                    b.block(bin, [fx, 0.56, fz], [0.18, 0.86, 0.18]);
+                    b.block(metal_sphere, [fx, 1.02, fz], [0.24, 0.12, 0.24]);
                     b.put(bulb, Vec3::new(fx, 1.10, fz), Vec3::splat(0.12), Quat::IDENTITY);
-                    b.block(kit.ceramic, [fx - side * 0.16, 0.62, fz], [0.22, 0.08, 0.26]);
-                    b.block(metal, [fx - side * 0.11, 0.74, fz], [0.12, 0.03, 0.03]);
+                    b.block(ceramic_sphere, [fx - side * 0.16, 0.62, fz], [0.24, 0.10, 0.26]);
+                    b.block(bin, [fx - side * 0.11, 0.74, fz], [0.12, 0.03, 0.03]);
                 }
             } else if house % 3 != 0 {
                 // Entrance ceramic planters with clipped boxwood flanking residential doorways
                 for dz_sign in [-1.0f32, 1.0] {
                     let pz = door_z + dz_sign * (door_w * 0.5 + 0.42);
-                    b.block(kit.ceramic, [side * 6.96, 0.28, pz], [0.32, 0.36, 0.32]);
-                    b.block(foliage, [side * 6.96, 0.62, pz], [0.36, 0.42, 0.36]);
+                    b.block(ceramic_cyl, [side * 6.96, 0.28, pz], [0.34, 0.36, 0.34]);
+                    b.block(foliage_sphere, [side * 6.96, 0.64, pz], [0.40, 0.44, 0.40]);
                 }
                 // Parisian bouquiniste antiquarian bookstall with open green/timber display chest and leather-bound volumes
                 let bk_z = if door_z > z { z - 2.1 } else { z + 2.1 };
@@ -2038,16 +2049,16 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         for i in 0..8 {
             let z = -21. + i as f32 * 13.;
             let x = side * 4.95;
-            b.block(metal, [x, 0.22, z], [0.4, 0.45, 0.4]);
-            b.block(metal, [x, 0.55, z], [0.23, 0.35, 0.23]);
-            b.block(metal, [x, 3., z], [0.12, 4.8, 0.12]);
+            b.block(bin, [x, 0.22, z], [0.4, 0.45, 0.4]);
+            b.block(bin, [x, 0.55, z], [0.23, 0.35, 0.23]);
+            b.block(bin, [x, 3., z], [0.12, 4.8, 0.12]);
             b.beam(
                 pole,
                 Vec3::new(x, 5.35, z),
                 Vec3::new(x - side * 0.65, 5.6, z),
                 0.09,
             );
-            b.block(metal, [x - side * 0.65, 5.55, z], [0.42, 0.13, 0.42]);
+            b.block(metal_sphere, [x - side * 0.65, 5.55, z], [0.42, 0.13, 0.42]);
             b.put(
                 bulb,
                 Vec3::new(x - side * 0.65, 5.32, z),
@@ -2066,8 +2077,8 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 Vec3::new(0.42, 0.8, 0.42),
                 Quat::IDENTITY,
             );
-            b.block(metal, [side * 5.05, 0.99, z + 1.0], [0.46, 0.04, 0.46]);
-            b.block(trim, [side * 5.05, 0.6, z + 1.0], [0.44, 0.06, 0.44]);
+            b.block(bin, [side * 5.05, 0.99, z + 1.0], [0.46, 0.04, 0.46]);
+            b.block(trim_cyl, [side * 5.05, 0.6, z + 1.0], [0.44, 0.06, 0.44]);
             b.block(metal, [side * 4.3, 0.054, z + 6.5], [0.26, 0.012, 0.62]);
             for n in 0..5 {
                 b.block(
@@ -2079,15 +2090,10 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             if side > 0. {
                 // Manhole cover on the carriageway centre line with a raised ring.
                 let mz = z + 9.;
-                b.block(metal, [0., 0.054, mz], [0.68, 0.012, 0.68]);
-                for (dx, dz, sx, sz) in [
-                    (-0.33, 0., 0.04, 0.7),
-                    (0.33, 0., 0.04, 0.7),
-                    (0., -0.33, 0.62, 0.04),
-                    (0., 0.33, 0.62, 0.04),
-                ] {
-                    b.block(trim, [dx, 0.062, mz + dz], [sx, 0.008, sz]);
-                }
+                b.block(trim_cyl, [0., 0.052, mz], [0.76, 0.010, 0.76]);
+                b.block(bin, [0., 0.056, mz], [0.68, 0.012, 0.68]);
+                b.block(trim_cyl, [0., 0.062, mz], [0.42, 0.008, 0.42]);
+                b.block(bin, [0., 0.064, mz], [0.36, 0.008, 0.36]);
             }
             let tx = side * (5.65 + b.random() * 0.45);
             let tz = z + 4. + b.random() * 2.;
@@ -2172,7 +2178,10 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         }
     }
     // Original end-of-street landmark and fountain, flanked by civic benches and planters.
-    b.block(trim, [0., 0.2, 75.], [6., 0.45, 6.]);
+    b.block(trim_cyl, [0., 0.2, 75.], [6., 0.45, 6.]);
+    b.block(ceramic_cyl, [0., 0.46, 75.], [5.2, 0.08, 5.2]);
+    b.block(trim_cyl, [0., 1.15, 75.], [2.6, 0.14, 2.6]);
+    b.block(ceramic_sphere, [0., 1.24, 75.], [2.2, 0.22, 2.2]);
     b.put(
         trunk,
         Vec3::new(0., 1.1, 75.),
@@ -2188,8 +2197,8 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     for side in [-1.0f32, 1.0] {
         for pz in [72.4f32, 77.6] {
             let px = side * 2.55;
-            b.block(kit.ceramic, [px, 0.62, pz], [0.56, 0.42, 0.56]);
-            b.block(foliage, [px, 1.02, pz], [0.64, 0.52, 0.64]);
+            b.block(ceramic_cyl, [px, 0.62, pz], [0.62, 0.42, 0.62]);
+            b.block(foliage_sphere, [px, 1.06, pz], [0.72, 0.62, 0.72]);
         }
         let bx = side * 5.2;
         b.block(timber, [bx, 0.48, 75.0], [0.48, 0.05, 1.8]);
@@ -2200,67 +2209,77 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         // Ornamental cast-iron street-corner clock & directional signpost pillar at the plaza entry (z = 71.2)
         let cx = side * 4.85;
         let cz = 71.2f32;
-        b.block(trim, [cx, 0.14, cz], [0.46, 0.18, 0.46]);
-        b.block(metal, [cx, 0.48, cz], [0.28, 0.50, 0.28]);
-        b.block(metal, [cx, 1.95, cz], [0.11, 2.45, 0.11]);
+        b.block(trim_cyl, [cx, 0.14, cz], [0.48, 0.18, 0.48]);
+        b.block(bin, [cx, 0.48, cz], [0.28, 0.50, 0.28]);
+        b.block(bin, [cx, 1.95, cz], [0.11, 2.45, 0.11]);
         // Directional street-name blades below the clock drum
         b.block(metal, [cx - side * 0.34, 2.72, cz], [0.64, 0.12, 0.03]);
         b.block(trim, [cx - side * 0.34, 2.72, cz], [0.56, 0.08, 0.04]);
         b.block(metal, [cx, 2.88, cz - 0.34], [0.03, 0.12, 0.64]);
         b.block(trim, [cx, 2.88, cz - 0.34], [0.04, 0.08, 0.56]);
         // Illuminated double-sided drum clock and finial spire
-        b.block(metal, [cx, 3.38, cz], [0.16, 0.52, 0.52]);
-        b.block(glow, [cx, 3.38, cz], [0.18, 0.42, 0.42]);
+        b.put(
+            bin,
+            Vec3::new(cx, 3.38, cz),
+            Vec3::new(0.54, 0.16, 0.54),
+            Quat::from_rotation_z(std::f32::consts::FRAC_PI_2),
+        );
+        b.put(
+            glow_cyl,
+            Vec3::new(cx, 3.38, cz),
+            Vec3::new(0.44, 0.18, 0.44),
+            Quat::from_rotation_z(std::f32::consts::FRAC_PI_2),
+        );
         b.block(metal, [cx, 3.38, cz], [0.20, 0.16, 0.03]);
         b.block(metal, [cx, 3.38, cz], [0.20, 0.03, 0.18]);
-        b.block(metal, [cx, 3.74, cz], [0.06, 0.22, 0.06]);
+        b.block(metal_sphere, [cx, 3.74, cz], [0.09, 0.24, 0.09]);
         // Parisian wrought-iron & glass flower/news kiosk on the north side of the plaza (z = 78.6)
         let kx = side * 4.85;
         let kz = 78.6f32;
-        b.block(trim, [kx, 0.12, kz], [1.45, 0.14, 1.45]);
-        b.block(metal, [kx, 0.54, kz], [1.28, 0.72, 1.28]);
-        b.block(trim, [kx, 0.92, kz], [1.36, 0.06, 1.36]);
+        b.block(trim_cyl, [kx, 0.12, kz], [1.54, 0.14, 1.54]);
+        b.block(bin, [kx, 0.54, kz], [1.34, 0.72, 1.34]);
+        b.block(trim_cyl, [kx, 0.92, kz], [1.42, 0.06, 1.42]);
         // Corner cast-iron mullions & glazed display vitrine with warm interior glow
         for (dx, dz) in [(-0.56f32, -0.56f32), (0.56, -0.56), (-0.56, 0.56), (0.56, 0.56)] {
-            b.block(metal, [kx + dx, 1.62, kz + dz], [0.07, 1.34, 0.07]);
+            b.block(bin, [kx + dx, 1.62, kz + dz], [0.07, 1.34, 0.07]);
         }
         b.block(glass, [kx, 1.60, kz], [1.14, 1.26, 1.14]);
-        b.block(glow, [kx, 2.08, kz], [0.58, 0.14, 0.58]);
+        b.block(glow_cyl, [kx, 2.08, kz], [0.62, 0.14, 0.62]);
         // Stepped zinc/cast-iron cupola roof and ornamental spire finial
-        b.block(metal, [kx, 2.34, kz], [1.48, 0.12, 1.48]);
-        b.block(metal, [kx, 2.58, kz], [1.16, 0.36, 1.16]);
-        b.block(metal, [kx, 2.86, kz], [0.76, 0.24, 0.76]);
-        b.block(metal, [kx, 3.16, kz], [0.08, 0.38, 0.08]);
+        b.block(bin, [kx, 2.34, kz], [1.56, 0.12, 1.56]);
+        b.block(metal_sphere, [kx, 2.58, kz], [1.36, 0.54, 1.36]);
+        b.block(metal_sphere, [kx, 2.88, kz], [0.76, 0.34, 0.76]);
+        b.block(bin, [kx, 3.18, kz], [0.07, 0.38, 0.07]);
         // Flower display buckets flanking the kiosk facing the fountain
         for dz in [-0.42f32, 0.42] {
             let fx = kx - side * 0.86;
-            b.block(kit.ceramic, [fx, 0.24, kz + dz], [0.28, 0.34, 0.28]);
-            b.block(foliage, [fx, 0.52, kz + dz], [0.34, 0.32, 0.34]);
+            b.block(ceramic_cyl, [fx, 0.24, kz + dz], [0.30, 0.34, 0.30]);
+            b.block(foliage_sphere, [fx, 0.54, kz + dz], [0.38, 0.36, 0.38]);
         }
         // Cast-iron perimeter plaza bollards with brass/emissive neck rings framing the square
         for bz in [71.8f32, 75.0, 78.2] {
             let bx_bol = side * 3.85;
-            b.block(trim, [bx_bol, 0.08, bz], [0.26, 0.08, 0.26]);
-            b.block(metal, [bx_bol, 0.46, bz], [0.15, 0.68, 0.15]);
-            b.block(glow, [bx_bol, 0.76, bz], [0.16, 0.04, 0.16]);
-            b.block(metal, [bx_bol, 0.84, bz], [0.18, 0.12, 0.18]);
+            b.block(trim_cyl, [bx_bol, 0.08, bz], [0.28, 0.08, 0.28]);
+            b.block(bin, [bx_bol, 0.46, bz], [0.16, 0.68, 0.16]);
+            b.block(glow_cyl, [bx_bol, 0.76, bz], [0.17, 0.04, 0.17]);
+            b.block(metal_sphere, [bx_bol, 0.84, bz], [0.19, 0.16, 0.19]);
         }
         // Illuminated Parisian Morris cultural poster column (Colonne Morris) at z = 73.2
         let mx = side * 4.85;
         let mz = 73.2f32;
-        b.block(trim, [mx, 0.14, mz], [0.98, 0.18, 0.98]);
-        b.block(metal, [mx, 0.36, mz], [0.86, 0.26, 0.86]);
-        b.block(kit.woods[2], [mx, 1.48, mz], [0.76, 1.98, 0.76]);
-        // Backlit theatre/concert poster panels on the four cardinal faces of the drum
-        b.block(glow, [mx, 1.48, mz], [0.78, 1.42, 0.52]);
-        b.block(glow, [mx, 1.48, mz], [0.52, 1.42, 0.78]);
-        b.block(trim, [mx, 1.48, mz], [0.80, 1.24, 0.44]);
-        b.block(trim, [mx, 1.48, mz], [0.44, 1.24, 0.80]);
+        b.block(trim_cyl, [mx, 0.14, mz], [1.04, 0.18, 1.04]);
+        b.block(bin, [mx, 0.36, mz], [0.90, 0.26, 0.90]);
+        b.block(ceramic_cyl, [mx, 1.48, mz], [0.78, 1.98, 0.78]);
+        // Backlit theatre/concert poster drum bands
+        b.block(glow_cyl, [mx, 1.48, mz], [0.80, 1.42, 0.80]);
+        b.block(trim_cyl, [mx, 1.48, mz], [0.81, 0.12, 0.81]);
+        b.block(trim_cyl, [mx, 1.96, mz], [0.81, 0.08, 0.81]);
+        b.block(trim_cyl, [mx, 1.00, mz], [0.81, 0.08, 0.81]);
         // Ornamental cast-iron overhang cornice, hexagonal dome & spire finial
-        b.block(metal, [mx, 2.54, mz], [1.04, 0.14, 1.04]);
-        b.block(metal, [mx, 2.76, mz], [0.82, 0.30, 0.82]);
-        b.block(metal, [mx, 3.02, mz], [0.48, 0.22, 0.48]);
-        b.block(metal, [mx, 3.28, mz], [0.07, 0.32, 0.07]);
+        b.block(bin, [mx, 2.54, mz], [1.10, 0.14, 1.10]);
+        b.block(metal_sphere, [mx, 2.78, mz], [0.92, 0.46, 0.92]);
+        b.block(metal_sphere, [mx, 3.04, mz], [0.48, 0.26, 0.48]);
+        b.block(bin, [mx, 3.28, mz], [0.06, 0.34, 0.06]);
         // Parisian Art Nouveau Métro entrance edicule (Guimard style) at the south plaza edge (z = 69.1)
         let ex = side * 5.05;
         let ez = 69.1f32;
@@ -2282,19 +2301,19 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             let sx = ex + rx_s * 0.50;
             let sz = ez - 0.92;
             b.beam(
-                metal,
+                pole,
                 Vec3::new(sx, 0.22, sz),
                 Vec3::new(sx - rx_s * 0.06, 2.38, sz - 0.08),
                 0.055,
             );
             b.beam(
-                metal,
+                pole,
                 Vec3::new(sx - rx_s * 0.06, 2.38, sz - 0.08),
                 Vec3::new(ex + rx_s * 0.26, 2.76, sz - 0.24),
                 0.045,
             );
             b.put(
-                glow,
+                bulb,
                 Vec3::new(ex + rx_s * 0.26, 2.62, sz - 0.26),
                 Vec3::new(0.18, 0.24, 0.18),
                 Quat::IDENTITY,
@@ -2383,6 +2402,12 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             fabrics: kit.fabrics.clone(),
             ceramic: kit.ceramic,
             wood: kit.woods[3],
+            ceramic_cyl,
+            ceramic_sphere,
+            foliage_sphere,
+            metal_cyl: bin,
+            metal_sphere,
+            glow_cyl,
         },
     );
     let count = b.triangles.len();

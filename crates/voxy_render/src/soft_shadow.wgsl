@@ -10,10 +10,11 @@ fn soft_sun_visibility(shadow:mat4x4<f32>,uv:vec2<f32>,depth:f32,noise:f32)->f32
  let size=vec2<f32>(textureDimensions(shadow_map));
  // Orthographic light: world metres per uv unit and per depth unit.
  let metres_per_uv=2./length(vec3<f32>(shadow[0].x,shadow[1].x,shadow[2].x));
- let search=clamp(0.6/metres_per_uv,2./size.x,48./size.x);
+ let search=clamp(0.55/metres_per_uv,1.5/size.x,44./size.x);
  let rotation=noise*6.2831853;let c=cos(rotation);let s=sin(rotation);
  let spin=mat2x2<f32>(c,s,-s,c);
- let bias_depth=depth-0.00004;
+ let texel_bias=clamp(metres_per_uv/(size.x*3200.),0.000018,0.000045);
+ let bias_depth=depth-texel_bias;
  var blockers=0.;var blocker_depth=0.;
  for(var i=0;i<12;i++){
   let p=clamp(vec2<i32>((uv+spin*PCSS_TAPS[i]*search)*size),vec2<i32>(0),vec2<i32>(size)-1);
@@ -24,7 +25,7 @@ fn soft_sun_visibility(shadow:mat4x4<f32>,uv:vec2<f32>,depth:f32,noise:f32)->f32
  blocker_depth/=blockers;
  let metres_per_depth=1./length(vec3<f32>(shadow[0].z,shadow[1].z,shadow[2].z));
  let penumbra_metres=(depth-blocker_depth)*metres_per_depth*2.*SUN_TAN_HALF_ANGLE;
- let radius=clamp(penumbra_metres/metres_per_uv,1./size.x,search);
+ let radius=clamp(penumbra_metres/metres_per_uv,0.65/size.x,search);
  var visibility=0.;
  for(var i=0;i<12;i++){
   visibility+=textureSampleCompareLevel(shadow_map,shadow_sampler,uv+spin*PCSS_TAPS[i]*radius,bias_depth);
