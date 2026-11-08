@@ -906,10 +906,20 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   colour+=textureSample(emissive_map,material_sampler,uv).rgb*material.emissive_normal.rgb*day_suppress;
  }
  if transmission>0.{
-  // Thin panes do not displace a straight view; only normal-map relief does.
-  let bent=camera.vp*vec4<f32>(f.world+(normal-geometric)*0.12,1.);
-  var pixel=vec2<i32>(f.clip.xy);
-  if bent.w>0. {let candidate=clamp(vec2<i32>((bent.xy/bent.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),vec2<i32>(camera.viewport.xy)-1);if textureLoad(scene_depth,candidate,0)>f.clip.z {pixel=candidate;}}let behind=textureLoad(background,pixel,0).rgb;let nv=max(dot(normal,view),0.);let fresnel=f0+(1.-f0)*fifth(1.-nv);let path_tint=exp(-vec3<f32>(0.09,0.025,0.035)/max(nv,0.18));colour+=behind/camera.viewport.z*base*path_tint*transmission*(1.-fresnel);}
+  // Thin panes do not displace a straight view; only normal-map relief does, with 3-channel RGB dispersion.
+  let disp=normal-geometric;
+  let bent_r=camera.vp*vec4<f32>(f.world+disp*0.10,1.);
+  let bent_g=camera.vp*vec4<f32>(f.world+disp*0.12,1.);
+  let bent_b=camera.vp*vec4<f32>(f.world+disp*0.14,1.);
+  let base_px=vec2<i32>(f.clip.xy);
+  let max_px=vec2<i32>(camera.viewport.xy)-1;
+  var px_r=base_px;var px_g=base_px;var px_b=base_px;
+  if bent_r.w>0. {let c=clamp(vec2<i32>((bent_r.xy/bent_r.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),max_px);if textureLoad(scene_depth,c,0)>f.clip.z {px_r=c;}}
+  if bent_g.w>0. {let c=clamp(vec2<i32>((bent_g.xy/bent_g.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),max_px);if textureLoad(scene_depth,c,0)>f.clip.z {px_g=c;}}
+  if bent_b.w>0. {let c=clamp(vec2<i32>((bent_b.xy/bent_b.w*vec2<f32>(0.5,-0.5)+0.5)*camera.viewport.xy),vec2<i32>(0),max_px);if textureLoad(scene_depth,c,0)>f.clip.z {px_b=c;}}
+  let behind=vec3<f32>(textureLoad(background,px_r,0).r,textureLoad(background,px_g,0).g,textureLoad(background,px_b,0).b);
+  let nv=max(dot(normal,view),0.);let fresnel=f0+(1.-f0)*fifth(1.-nv);let path_tint=exp(-vec3<f32>(0.09,0.025,0.035)/max(nv,0.18));colour+=behind/camera.viewport.z*base*path_tint*transmission*(1.-fresnel);
+ }
  return vec4<f32>(colour*camera.viewport.z,select(1.,opacity,material.surface.w == -2.));
 }
 

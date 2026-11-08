@@ -2319,9 +2319,26 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 Quat::IDENTITY,
             );
         }
-        // Illuminated "METROPOLITAIN" Art Nouveau arch sign panel spanning the stalks
+        // Illuminated "METROPOLITAIN" Art Nouveau arch sign panel spanning the stalks + cast-iron arch rib & steps
         b.block(metal, [ex, 2.48, ez - 0.96], [0.96, 0.26, 0.05]);
         b.block(glow, [ex, 2.48, ez - 0.96], [0.84, 0.16, 0.06]);
+        b.beam(
+            pole,
+            Vec3::new(ex - 0.48, 2.38, ez - 0.96),
+            Vec3::new(ex, 2.74, ez - 0.96),
+            0.038,
+        );
+        b.beam(
+            pole,
+            Vec3::new(ex + 0.48, 2.38, ez - 0.96),
+            Vec3::new(ex, 2.74, ez - 0.96),
+            0.038,
+        );
+        for step_idx in 0..3 {
+            let step_z = ez - 0.82 + step_idx as f32 * 0.42;
+            let step_h = 0.14 - step_idx as f32 * 0.04;
+            b.block(curb, [ex, step_h * 0.5, step_z], [0.92, step_h, 0.38]);
+        }
     }
     // Compass-rose stone mosaic inlay framing the civic fountain plinth (z = 75.0)
     b.block(curb, [0., 0.052, 75.0], [7.2, 0.012, 7.2]);
