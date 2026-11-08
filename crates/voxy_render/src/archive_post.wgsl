@@ -10,6 +10,8 @@ struct Camera { vp:mat4x4<f32>, shadow:mat4x4<f32>, inverse_vp:mat4x4<f32>, eye:
 @group(0) @binding(4) var sky_panorama:texture_2d<f32>;
 @group(0) @binding(5) var sky_sampler:sampler;
 @group(0) @binding(6) var bloom_chain:texture_2d<f32>;
+@group(0) @binding(7) var shadow_map:texture_depth_2d;
+@group(0) @binding(8) var shadow_sampler:sampler_comparison;
 // Energy-conserving bloom from the dual Kawase chain (bloom.rs, six levels).
 // Only for direct display; temporal and linear output bloom elsewhere.
 fn with_bloom(x:vec3<f32>,q:vec2<i32>)->vec3<f32>{
@@ -62,6 +64,33 @@ fn cloud_density(p:vec3<f32>)->f32 {
 fn march_jitter(pixel:vec2<i32>)->f32 {
  let p=vec2<f32>(pixel);
  return fract(52.9829189*fract(dot(p,vec2<f32>(0.06711056,0.00583715))));
+}
+// True geometric volumetric shadow shafts (UE5 / Unity HDRP Volumetric Fog):
+// 8-step interleaved-gradient-jittered march against the 8192x8192 directional sun shadow map.
+fn volumetric_sun_transmittance(ray:vec3<f32>,dist:f32,pixel:vec2<i32>)->f32 {
+ if camera.sun.y<=0. {return 0.;}
+ let reach=min(dist,56.);
+ if reach<=1.5 {return 1.;}
+ let step=reach*0.125;
+ let jitter=march_jitter(pixel);
+ var lit=0.;
+ for(var i=0;i<8;i++) {
+  let t=(f32(i)+jitter)*step;
+  let sample_p=camera.eye.xyz+ray*t;
+  let sh=camera.shadow*vec4<f32>(sample_p,1.);
+  if sh.w>0. {
+   let sp=sh.xyz/sh.w;
+   let suv=sp.xy*vec2<f32>(0.5,-0.5)+0.5;
+   if all(suv>=vec2<f32>(0.))&&all(suv<=vec2<f32>(1.))&&sp.z>=0.&&sp.z<=1. {
+    lit+=textureSampleCompareLevel(shadow_map,shadow_sampler,suv,sp.z-0.0006);
+   } else {
+    lit+=1.;
+   }
+  } else {
+   lit+=1.;
+  }
+ }
+ return lit*0.125;
 }
 // World-space precipitation cells stop at the first scene surface.
 // Returns opacity of the precipitation layer; evaluated once per output pixel.
@@ -168,10 +197,10 @@ fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
             }
             let cos_sun=clamp(dot(ray,camera.sun.xyz),0.,1.);
             let low_sun=smoothstep(0.55,0.08,camera.sun.y)*smoothstep(-0.04,0.06,camera.sun.y);
-            let shaft_mod=0.82+0.36*sin(dot(world_p.xz,camera.sun.zx)*0.38+world_p.y*0.25);
-            let mie_forward=pow(cos_sun,5.)*max(camera.sun.y,0.)*(0.35+0.28*low_sun*shaft_mod);
-            let mie_back=pow(clamp(-dot(ray,camera.sun.xyz),0.,1.),3.)*max(camera.sun.y,0.)*0.06;
-            horizon_sky*=(1.+vec3<f32>(1.15,0.98,0.78)*mie_forward+vec3<f32>(0.88,0.94,1.08)*mie_back);
+            let vol_vis=volumetric_sun_transmittance(ray,dist,q);
+            let mie_forward=pow(cos_sun,4.)*max(camera.sun.y,0.)*(0.30+0.68*low_sun)*vol_vis;
+            let mie_back=pow(clamp(-dot(ray,camera.sun.xyz),0.,1.),3.)*max(camera.sun.y,0.)*0.06*mix(0.4,1.,vol_vis);
+            horizon_sky*=mix(0.68,1.14,vol_vis)*(1.+vec3<f32>(1.25,1.02,0.78)*mie_forward+vec3<f32>(0.88,0.94,1.08)*mie_back);
             x=x*transmittance+horizon_sky*(1.-transmittance);
         }
     }

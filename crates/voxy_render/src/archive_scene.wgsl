@@ -198,10 +198,7 @@ fn original_surface(p:vec3<f32>,n:vec3<f32>,kind:f32)->vec3<f32>{
 }
 // Band-limited physical height fields in metres. Screen derivatives suppress
 // unresolved grain instead of allowing moving-camera specular aliasing.
-fn original_height(p:vec3<f32>,kind:f32)->f32 {
- let footprint=max(length(dpdxFine(p)),length(dpdyFine(p)));
- let fine=1.-smoothstep(0.002,0.012,footprint);
- let medium=1.-smoothstep(0.02,0.08,footprint);
+fn original_height_lod(p:vec3<f32>,kind:f32,fine:f32,medium:f32)->f32 {
  if kind>8.5 {
   if kind>12.5 {
    if kind>14.5 {return 0.0007*medium*original_noise(p*22.)+0.00025*fine*original_noise(p*110.);}
@@ -272,6 +269,70 @@ fn original_height(p:vec3<f32>,kind:f32)->f32 {
  if kind<4.5 {return 0.0006*medium*original_noise(p*24.)+0.00055*fine*original_noise(p*vec3<f32>(110.,18.,110.));}
  return 0.00022*medium*original_noise(p*34.)+0.00018*fine*original_noise(p*210.);
 }
+fn original_height(p:vec3<f32>,kind:f32)->f32 {
+ let footprint=max(length(dpdxFine(p)),length(dpdyFine(p)));
+ let fine=1.-smoothstep(0.002,0.012,footprint);
+ let medium=1.-smoothstep(0.02,0.08,footprint);
+ return original_height_lod(p,kind,fine,medium);
+}
+// Wind-driven micro-flutter for foliage, grass, flower petals, and awning/parasol fabrics
+// without altering @invariant clip positions or TAA history depth alignment.
+fn wind_flutter_world(p:vec3<f32>,kind:f32)->vec3<f32> {
+ let w_len=length(camera.wind.xy);
+ if w_len<=0.01 {return p;}
+ let is_foliage=(kind>5.5&&kind<6.5)||(kind>9.5&&kind<11.5)||kind>14.5;
+ if !is_foliage {return p;}
+ let t=camera.atmosphere.x;
+ let gust=1.+0.35*camera.wind.z*sin(t*1.4+dot(p.xz,vec2<f32>(0.35,0.28)));
+ let phase=dot(p,vec3<f32>(2.4,1.7,2.1))+t*(2.2+0.6*w_len);
+ let amp=select(0.0045,0.0085,kind>5.5&&kind<6.5)*min(w_len,3.5)*gust;
+ return p+vec3<f32>(sin(phase)*camera.wind.x,cos(phase*1.3)*0.35*w_len,cos(phase)*camera.wind.y)*amp;
+}
+// 4-step Parallax Occlusion Mapping (POM) in world tangent plane for high-relief materials
+// (cobblestone/slabs, roof slate, brick masonry, bark, travertine, ceramic tiles).
+fn pom_world(p:vec3<f32>,n:vec3<f32>,view:vec3<f32>,kind:f32)->vec3<f32> {
+ let has_relief=(kind>0.5&&kind<1.5)||(kind>2.5&&kind<3.5)||(kind>6.5&&kind<8.5)||(kind>11.5&&kind<12.5)||(kind>13.5&&kind<14.5);
+ if !has_relief {return p;}
+ let d2=dot(p-camera.eye.xyz,p-camera.eye.xyz);
+ if d2>256. {return p;}
+ let fade=1.-smoothstep(121.,256.,d2);
+ let nv=max(dot(n,view),0.22);
+ let tangent_ray=(view-n*dot(n,view))/nv;
+ let scale=select(3.2,4.5,(kind>6.5&&kind<7.5)||(kind>2.5&&kind<3.5))*fade;
+ var curr_p=p;
+ var prev_p=p;
+ var prev_diff=0.;
+ for(var i=1u;i<=4u;i++) {
+  let layer=f32(i)*0.25;
+  let test_p=p-tangent_ray*(layer*0.0032*scale);
+  let h=clamp(0.5-original_height_lod(test_p,kind,0.5,1.)*180.,0.,1.);
+  let diff=layer-h;
+  if diff>=0. {
+   let t_interp=prev_diff/max(prev_diff-diff,1e-4);
+   curr_p=mix(prev_p,test_p,clamp(t_interp,0.,1.));
+   break;
+  }
+  prev_p=test_p;
+  prev_diff=diff;
+  curr_p=test_p;
+ }
+ return curr_p;
+}
+// 2-step POM self-shadowing along the sun direction in the micro-heightfield.
+fn pom_self_shadow(p:vec3<f32>,n:vec3<f32>,sun:vec3<f32>,kind:f32)->f32 {
+ let has_relief=(kind>0.5&&kind<1.5)||(kind>2.5&&kind<3.5)||(kind>6.5&&kind<8.5)||(kind>11.5&&kind<12.5);
+ if !has_relief {return 1.;}
+ let d2=dot(p-camera.eye.xyz,p-camera.eye.xyz);
+ if d2>225. {return 1.;}
+ let nl=dot(n,sun);
+ if nl<=0.05 {return 1.;}
+ let sun_tan=normalize(sun-n*nl+vec3<f32>(1e-5));
+ let h0=original_height_lod(p,kind,0.4,1.);
+ let h1=original_height_lod(p+sun_tan*0.006,kind,0.4,1.);
+ let h2=original_height_lod(p+sun_tan*0.014,kind,0.4,1.);
+ let dh=max(max(h1-h0-0.0005*nl,h2-h0-0.0012*nl),0.);
+ return clamp(1.-dh*240.*(1.-smoothstep(121.,225.,d2)),0.42,1.);
+}
 fn original_bump(p:vec3<f32>,n:vec3<f32>,height:f32)->vec3<f32>{
  let px=dpdxFine(p);let py=dpdyFine(p);let rx=cross(py,n);let ry=cross(n,px);
  let determinant=dot(px,rx);
@@ -280,10 +341,10 @@ fn original_bump(p:vec3<f32>,n:vec3<f32>,height:f32)->vec3<f32>{
 }
 // Profiling switch: VOXY_FX_OFF bit mask (1 GI, 2 SSR, 4 contact AO, 8 sun shadow, 16 wet layer).
 fn fx_off(bit:u32)->bool{return (u32(camera.wind.w)&bit)!=0u;}
-fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->f32{
- if fx_off(4u) {return 1.;}
+fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
+ if fx_off(4u) {return vec4<f32>(n,1.);}
  let view_dist=max(distance(p,camera.eye.xyz),0.5);
- if view_dist>68. {return 1.;}
+ if view_dist>68. {return vec4<f32>(n,1.);}
  let radius=0.55;let projected=clamp(radius*camera.viewport.y/view_dist,2.,96.);
  let ign=fract(52.9829189*fract(dot(floor(pixel),vec2<f32>(0.06711056,0.00583715))))*0.75;
  var cs=vec2<f32>(cos(ign),sin(ign));
@@ -291,7 +352,7 @@ fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->f32{
  let inv_vp=vec2<f32>(2.,-2.)/camera.viewport.xy;
  let steps=select(12u,select(8u,6u,view_dist>36.),view_dist>18.);
  let inv_steps=1./f32(steps);
- var sum=0.;var weight=0.;
+ var sum=0.;var weight=0.;var occl_dir=vec3<f32>(0.);
  for(var i=0u;i<steps;i++){
   let r=sqrt((f32(i)+0.5)*inv_steps);
   let uv=pixel+cs*(projected*r);
@@ -303,12 +364,56 @@ fn contact_occlusion(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->f32{
   let delta=h.xyz/h.w-p;let d2=dot(delta,delta);
   if d2>0.000144&&d2<0.3025 {
    let inv_len=inverseSqrt(d2);
+   let dir=delta*inv_len;
    let falloff=1.-d2*inv_len*(1./0.55);
-   sum+=max(dot(n,delta)*inv_len-0.16,0.)*falloff*falloff;
+   let w_occ=max(dot(n,dir)-0.16,0.)*falloff*falloff;
+   sum+=w_occ;
+   occl_dir+=dir*w_occ;
   }
   weight+=1.;
  }
- return clamp(1.-2.4*sum/max(weight,1.),0.25,1.);
+ let inv_w=1./max(weight,1.);
+ let ao=clamp(1.-2.4*sum*inv_w,0.25,1.);
+ let bent_n=normalize(n-occl_dir*(1.65*inv_w)+1e-5*n);
+ return vec4<f32>(bent_n,ao);
+}
+// Screen-space depth occlusion for punctual lights (prevents streetlights/lamps bleeding through walls).
+fn point_light_occlusion(p:vec3<f32>,light_pos:vec3<f32>,d2_view:f32,distance2:f32)->f32{
+ if d2_view>324.||distance2>64.||distance2<0.12 {return 1.;}
+ let to_l=light_pos-p;
+ let inv_vp=vec2<f32>(2.,-2.)/camera.viewport.xy;
+ let sample_p=p+to_l*0.48;
+ let q=camera.vp*vec4<f32>(sample_p,1.);
+ if q.w<=0. {return 1.;}
+ let uv=q.xy/q.w*vec2<f32>(0.5,-0.5)+0.5;
+ if any(uv<=vec2<f32>(0.))||any(uv>=vec2<f32>(1.)){return 1.;}
+ let px=vec2<i32>(uv*camera.viewport.xy);
+ let z=textureLoad(scene_depth,px,0);
+ if z<1.&&q.z/q.w>z+0.00008 {
+  let h=camera.inverse_vp*vec4<f32>((vec2<f32>(px)+0.5)*inv_vp+vec2<f32>(-1.,1.),z,1.);
+  let blocker_d=distance(h.xyz/h.w,sample_p);
+  if blocker_d>0.06&&blocker_d<1.25 {return mix(0.28,1.,smoothstep(196.,324.,d2_view));}
+ }
+ return 1.;
+}
+// Karis / LTC Representative Point for linear tube and area lights:
+// shifts the specular evaluation vector toward the closest point on the light segment/sphere.
+fn area_light_spec_dir(p:vec3<f32>,light_pos:vec3<f32>,reflected:vec3<f32>,radius:f32)->vec3<f32>{
+ let l_vec=light_pos-p;
+ if radius<4.5 {return normalize(l_vec);}
+ let tube_half=clamp((radius-4.0)*0.11,0.12,0.65);
+ let axis=select(vec3<f32>(0.,0.,1.),vec3<f32>(1.,0.,0.),abs(light_pos.x)>4.2);
+ let l0=l_vec-axis*tube_half;
+ let l1=l_vec+axis*tube_half;
+ let ld=l1-l0;
+ let r_dot_ld=dot(reflected,ld);
+ let ld_len2=max(dot(ld,ld),1e-4);
+ let t_seg=clamp((dot(reflected,l0)*r_dot_ld-dot(l0,ld))/max(ld_len2-r_dot_ld*r_dot_ld,1e-4),0.,1.);
+ let closest_seg=l0+ld*t_seg;
+ let center_ray=dot(closest_seg,reflected)*reflected-closest_seg;
+ let sphere_r=0.14;
+ let closest=closest_seg+center_ray*clamp(sphere_r*inverseSqrt(max(dot(center_ray,center_ray),1e-5)),0.,1.);
+ return normalize(closest);
 }
 // Screen-Space Contact Shadows (UE5 / Unity HDRP SSCS): 4-step short-range depth march
 // along the sun vector to ground thin geometry (chair legs, railings, leaves, kerbs).
@@ -535,17 +640,22 @@ struct ArchiveSurface {
  roughness:f32,diffuse:vec3<f32>,normal:vec3<f32>,view:vec3<f32>,geometric:vec3<f32>,splash:f32
 }
 fn archive_surface(f:Fragment,front:bool,tex:vec4<f32>)->ArchiveSurface {
- var base=tex.rgb*material.diffuse.rgb;if material.workflow.z>0.5{base*=original_surface(f.world,f.normal,material.workflow.z);}else if material.workflow.w>0.{let damp=1.-0.18*(1.-smoothstep(0.1,1.65,f.world.y))*(0.35+0.65*original_noise(f.world*1.8))*smoothstep(0.3,0.8,1.-abs(f.normal.y));let drip=1.-0.07*smoothstep(0.58,0.88,original_noise(vec3<f32>(f.world.x*6.5,f.world.y*0.65,f.world.z*6.5)))*smoothstep(0.3,0.8,1.-abs(f.normal.y));let macro_v=0.92+0.16*original_noise(f.world*0.35);base*=damp*drip*macro_v;}else if material.workflow.w<0.{let moss=smoothstep(0.54,0.82,original_noise(f.world*3.8))*(1.-smoothstep(0.15,0.95,f.world.y))*smoothstep(-0.2,0.5,-f.normal.z);base=mix(base,vec3<f32>(0.05,0.11,0.03),moss*0.45);}let opacity=select(tex.a,1.,material.workflow.y>1.5)*material.diffuse.a;
+ let face=select(-1.,1.,front);let geometric=normalize(f.normal)*face;let view=normalize(camera.eye.xyz-f.world);
+ var p_mat=f.world;
+ if material.workflow.z>0.5 {
+  p_mat=pom_world(wind_flutter_world(f.world,material.workflow.z),geometric,view,material.workflow.z);
+ }
+ var base=tex.rgb*material.diffuse.rgb;if material.workflow.z>0.5{base*=original_surface(p_mat,f.normal,material.workflow.z);}else if material.workflow.w>0.{let damp=1.-0.18*(1.-smoothstep(0.1,1.65,f.world.y))*(0.35+0.65*original_noise(f.world*1.8))*smoothstep(0.3,0.8,1.-abs(f.normal.y));let drip=1.-0.07*smoothstep(0.58,0.88,original_noise(vec3<f32>(f.world.x*6.5,f.world.y*0.65,f.world.z*6.5)))*smoothstep(0.3,0.8,1.-abs(f.normal.y));let macro_v=0.92+0.16*original_noise(f.world*0.35);base*=damp*drip*macro_v;}else if material.workflow.w<0.{let moss=smoothstep(0.54,0.82,original_noise(f.world*3.8))*(1.-smoothstep(0.15,0.95,f.world.y))*smoothstep(-0.2,0.5,-f.normal.z);base=mix(base,vec3<f32>(0.05,0.11,0.03),moss*0.45);}let opacity=select(tex.a,1.,material.workflow.y>1.5)*material.diffuse.a;
  let uv=surface_uv(f);let packed=material.workflow.y>1.5;var packed_normal=vec4<f32>(0.);var spec=vec4<f32>(1.);
  if packed {packed_normal=textureSample(normal_map,material_sampler,uv);spec=vec4<f32>(tex.a,packed_normal.a,0.,1.);}else{spec=textureSample(specular_map,material_sampler,uv);}var f0=spec.rgb*material.specular_gloss.rgb;var roughness=1.-spec.a*material.specular_gloss.a;var diffuse=base*(1.-max(max(f0.r,f0.g),f0.b));
  if material.workflow.x>0.5{let metallic=material.surface.x*spec.b;roughness=material.surface.y*spec.g;f0=mix(vec3<f32>(0.04),base,metallic);diffuse=base*(1.-metallic);}
- let face=select(-1.,1.,front);let geometric=normalize(f.normal)*face;var normal=geometric;
+ var normal=geometric;
  if material.workflow.y>0.5 {
   var tangent=normalize(f.tangent.xyz-normal*dot(normal,f.tangent.xyz))*face;var bitangent=cross(normal,tangent)*f.tangent.w*face;
   if material.workflow.w>0. {let n=abs(f.normal);if n.x>=n.y&&n.x>=n.z {tangent=vec3<f32>(0.,0.,-sign(f.normal.x));bitangent=vec3<f32>(0.,1.,0.);}else if n.y>=n.z {tangent=vec3<f32>(1.,0.,0.);bitangent=vec3<f32>(0.,0.,-sign(f.normal.y));}else{tangent=vec3<f32>(sign(f.normal.z),0.,0.);bitangent=vec3<f32>(0.,1.,0.);}}
   var mapped=vec3<f32>(0.,0.,1.);if packed {mapped=packed_normal.xyz*2.-1.;}else{mapped=textureSample(normal_map,material_sampler,uv).xyz*2.-1.;}mapped.x*=material.emissive_normal.w;mapped.y*=material.emissive_normal.w;normal=normalize(mat3x3<f32>(tangent,bitangent,normal)*mapped);
  }
- if material.workflow.z>0.5{let height=original_height(f.world,material.workflow.z);normal=original_bump(f.world,normal,height);let r_amp=select(0.16,0.06,material.workflow.z>12.5);roughness=clamp(roughness+(original_noise(f.world*7.)-0.5)*r_amp,0.04,1.);}let dndx=dpdxFine(normal);let dndy=dpdyFine(normal);let sigma2=min(dot(dndx,dndx)+dot(dndy,dndy),0.25);roughness=clamp(sqrt(roughness*roughness+0.35*sigma2),0.04,1.);let view=normalize(camera.eye.xyz-f.world);
+ if material.workflow.z>0.5{let height=original_height(p_mat,material.workflow.z);normal=original_bump(p_mat,normal,height);let r_amp=select(0.16,0.06,material.workflow.z>12.5);roughness=clamp(roughness+(original_noise(p_mat*7.)-0.5)*r_amp,0.04,1.);}let dndx=dpdxFine(normal);let dndy=dpdyFine(normal);let sigma2=min(dot(dndx,dndx)+dot(dndy,dndy),0.25);roughness=clamp(sqrt(roughness*roughness+0.35*sigma2),0.04,1.);
  var splash=0.;
  if camera.surface.x>0.&&material.surface.z==0.&&!fx_off(16u)&&!(material.workflow.z>5.5&&material.workflow.z<6.5) {
   let wet=wet_layer(f.world,geometric,normal,roughness,dot(base,vec3<f32>(0.2126,0.7152,0.0722)));
@@ -578,10 +688,18 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   let shadow_pos=f.shadow.xyz/f.shadow.w;let shadow_uv=shadow_pos.xy*vec2<f32>(0.5,-0.5)+0.5;
   let shadow_ign=fract(52.9829189*fract(dot(f.clip.xy,vec2<f32>(0.06711056,0.00583715))));
   if all(shadow_uv>=vec2<f32>(0.))&&all(shadow_uv<=vec2<f32>(1.))&&shadow_pos.z>=0.&&shadow_pos.z<=1.&&!fx_off(8u){visibility=soft_sun_visibility(camera.shadow,shadow_uv,shadow_pos.z,shadow_ign);}
-  if visibility>0.05&&nl_sun>0.&&material.surface.z<0.9 {visibility*=contact_shadow(f.world+geometric*0.015,camera.sun.xyz,shadow_ign);}
+  if visibility>0.05&&nl_sun>0.&&material.surface.z<0.9 {
+   visibility*=contact_shadow(f.world+geometric*0.015,camera.sun.xyz,shadow_ign);
+   if z>0.5 {visibility*=pom_self_shadow(f.world,geometric,camera.sun.xyz,z);}
+  }
  }
  let transmission=material.surface.z;
- var ao=1.;if transmission<0.9 {ao=contact_occlusion(f.clip.xy,f.world,normal)*select(1.,spec.r,material.workflow.w!=0.);}
+ var ao=1.;var bent_normal=normal;
+ if transmission<0.9 {
+  let gtao=contact_occlusion(f.clip.xy,f.world,normal);
+  bent_normal=gtao.xyz;
+  ao=gtao.w*select(1.,spec.r,material.workflow.w!=0.);
+ }
  let dust_mask=smoothstep(0.65,0.95,geometric.y)*(1.-ao)*(1.-camera.surface.x)*select(1.,0.,transmission>0.||(z>8.5&&z<10.5));
  let rough_eff=mix(roughness,max(roughness,0.88),dust_mask*0.35);
  let diffuse_eff=mix(diffuse,vec3<f32>(0.54,0.52,0.48),dust_mask*0.14);
@@ -595,23 +713,24 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   }
  }
  let halo_weight=clamp(smoothstep(0.25,-0.05,camera.sun.y)*0.032+camera.weather.z*0.024,0.,0.05);
+ let d2_view=dot(f.world-camera.eye.xyz,f.world-camera.eye.xyz);
+ let n_bend=rough_eff*rough_eff*(1.-rough_eff);
+ let reflected=reflect(-view,normalize(mix(normal,view,n_bend)));
+ let bent_cone=clamp(dot(reflected,bent_normal)*0.5+0.5,0.35,1.);
  var pt_diffuse=vec3<f32>(0.);
- for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);let r=light.position_kind.w;if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);let l_rad=light.colour_intensity.rgb*light.colour_intensity.a*attenuation;colour+=brdf(shading,l_dir)*l_rad*micro_shadow(dot(normal,l_dir),ao);pt_diffuse+=l_rad;}
+ for(var i=0u;i<lights.count.x;i++){let light=lights.values[i];if light.colour_intensity.a==0.{continue;}let offset=light.position_kind.xyz-f.world;if dot(normal,offset)<=0.{continue;}let distance2=max(dot(offset,offset),0.0001);let r=light.position_kind.w;if r>0.&&distance2>=r*r{continue;}var attenuation=1./distance2;if r>0.{let d2_r2=distance2/(r*r);attenuation*=square(clamp(1.-d2_r2*d2_r2,0.,1.));}let l_dir=offset*inverseSqrt(distance2);let l_occ=point_light_occlusion(f.world+geometric*0.02,light.position_kind.xyz,d2_view,distance2);let l_rad=light.colour_intensity.rgb*light.colour_intensity.a*attenuation*l_occ;let spec_dir=area_light_spec_dir(f.world,light.position_kind.xyz,reflected,r);let diff_l=shading.diffuse*max(dot(normal,l_dir),0.);let spec_l=(brdf(shading,spec_dir)-shading.diffuse*max(dot(normal,spec_dir),0.))*max(dot(normal,l_dir),0.)/max(dot(normal,spec_dir),0.05);colour+=(diff_l+max(spec_l,vec3<f32>(0.)))*l_rad*micro_shadow(dot(normal,l_dir),ao);pt_diffuse+=l_rad;}
  if halo_weight>0. {colour+=diffuse_eff*(1.-transmission)*pt_diffuse*halo_weight*ao;}
  // Directional sky, contact visibility and view-dependent environment Fresnel.
  if camera.eye.w>0.5 {
-  let irradiance=textureSampleLevel(environment_diffuse,environment_sampler,normal,0.).rgb*environment_intensity.x;
-  let n_bend=rough_eff*rough_eff*(1.-rough_eff);
-  let reflected=reflect(-view,normalize(mix(normal,view,n_bend)));
-  let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric));
+  let irradiance=textureSampleLevel(environment_diffuse,environment_sampler,bent_normal,0.).rgb*environment_intensity.x;
+  let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric))*mix(1.,bent_cone,1.-ao);
   var radiance=textureSampleLevel(environment_specular,environment_sampler,reflected,rough_eff*f32(textureNumLevels(environment_specular)-1u)).rgb*environment_intensity.x;
   // Skip tracing where Fresnel makes the scene term invisible (steep dielectric views).
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
-  let d2_view=dot(f.world-camera.eye.xyz,f.world-camera.eye.xyz);
   let mirror=select((1.-smoothstep(0.1,0.4,rough_eff))*smoothstep(0.045,0.07,visible)*(1.-smoothstep(900.,2304.,d2_view)),1.,transmission>0.);
   if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,select(54.,28.,d2_view>576.),select(1.08,1.35,d2_view>576.),select(7u,5u,d2_view>576.),ARCHIVE_RAY_BOUNDS);}radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
   var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
-  let probe=probe_irradiance(f.world,normal);
+  let probe=probe_irradiance(f.world,bent_normal);
   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
   if transmission>0. {
    let glass_tint=mix(vec3<f32>(1.),vec3<f32>(0.90,0.96,0.95),clamp((1.-nv)*0.75,0.,1.));
@@ -619,16 +738,13 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   }
   colour+=diffuse_eff*(1.-transmission)*indirect*multibounce_ao(ao,diffuse_eff)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,rough_eff)*horizon;
  } else {
-  let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(normal.y*0.5+0.5,0.,1.))*camera.viewport.w/3.14159265;
+  let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(bent_normal.y*0.5+0.5,0.,1.))*camera.viewport.w/3.14159265;
   var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
-  let probe=probe_irradiance(f.world,normal);
+  let probe=probe_irradiance(f.world,bent_normal);
   let indirect=mix(mix(sky,probe.rgb,probe.a),bounce.rgb,bounce.a);
-  let n_bend=rough_eff*rough_eff*(1.-rough_eff);
-  let reflected=reflect(-view,normalize(mix(normal,view,n_bend)));
-  let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric));
+  let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric))*mix(1.,bent_cone,1.-ao);
   var incoming=daylight(reflected,camera.sun.xyz)*(1.-0.7*rough_eff);
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
-  let d2_view=dot(f.world-camera.eye.xyz,f.world-camera.eye.xyz);
   let mirror=select((1.-smoothstep(0.1,0.4,rough_eff))*smoothstep(0.045,0.07,visible)*(1.-smoothstep(900.,2304.,d2_view)),1.,transmission>0.);
   if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,select(54.,28.,d2_view>576.),select(1.08,1.35,d2_view>576.),select(7u,5u,d2_view>576.),ARCHIVE_RAY_BOUNDS);}incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
   if transmission>0. {
