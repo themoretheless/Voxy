@@ -175,10 +175,12 @@ fn caustic_at(above:vec2<f32>, depth:f32)->f32 {
 }
 fn caustic(p:vec3<f32>, level:f32)->vec3<f32> {
   let sun = camera.sun.xyz;
-  if sun.y <= 0. || water.scatter.w <= 0. { return vec3<f32>(1.); }
+  let moon = moon_direction(sun);
+  let active_dir = select(moon, sun, sun.y > 0.);
+  if active_dir.y <= 0. || water.scatter.w <= 0. { return vec3<f32>(1.); }
   let depth = level - p.y;
   if depth <= 0. { return vec3<f32>(1.); }
-  let t = refract(-sun, vec3<f32>(0., 1., 0.), 1. / IOR);
+  let t = refract(-active_dir, vec3<f32>(0., 1., 0.), 1. / IOR);
   let above = p.xz - t.xz / t.y * depth;
   let k = depth * (1. - 1. / IOR) * edge_weight(above);
   if k <= 0. { return vec3<f32>(1.); }
@@ -186,23 +188,29 @@ fn caustic(p:vec3<f32>, level:f32)->vec3<f32> {
   let cr = caustic_at_k(above - shift, k);
   let cg = caustic_at_k(above, k);
   let cb = caustic_at_k(above + shift, k);
-  return mix(vec3<f32>(1.), vec3<f32>(cr, cg, cb), water.scatter.w);
+  let night_w = smoothstep(0.0, -0.08, sun.y) * 0.42;
+  let strength = select(night_w, 1., sun.y > 0.) * water.scatter.w;
+  return mix(vec3<f32>(1.), vec3<f32>(cr, cg, cb), strength);
 }
 
 // Light reaching a point under water: what the opaque pass saw, attenuated along `path`,
-// plus in-scattered ambient light. Caustics modulate the directly sunlit share.
+// plus in-scattered ambient light. Caustics modulate the directly sunlit (or moonlit) share.
 fn under_water(radiance:vec3<f32>, point:vec3<f32>, level:f32, path:f32, ambient:vec3<f32>)->vec3<f32> {
   let sunlit = sun_visible(point) * clamp(camera.sun.y * 3., 0., 1.);
+  let moon = moon_direction(camera.sun.xyz);
+  let moonlit = smoothstep(0.0, -0.10, camera.sun.y) * clamp(moon.y * 2.5, 0., 1.);
   var lit = radiance;
-  if sunlit > 0. {
-    lit *= mix(vec3<f32>(1.), caustic(point, level), 0.78 * sunlit);
+  if sunlit > 0. || moonlit > 0. {
+    lit *= mix(vec3<f32>(1.), caustic(point, level), max(0.78 * sunlit, 0.35 * moonlit));
   }
   let t = exp(-water.absorption.rgb * path);
   let view_ray = normalize(point - camera.eye.xyz);
   let refr_sun = refract(-camera.sun.xyz, vec3<f32>(0., 1., 0.), 1. / IOR);
+  let refr_moon = refract(-moon, vec3<f32>(0., 1., 0.), 1. / IOR);
   let forward = (pow(clamp(dot(view_ray, refr_sun), 0., 1.), 5.) * 1.4
     + pow(clamp(dot(view_ray, -camera.sun.xyz), 0., 1.), 3.) * 0.6) * sunlit;
-  let night_glow = smoothstep(0.04, -0.10, camera.sun.y) * 14.;
+  let moon_forward = pow(clamp(dot(view_ray, refr_moon), 0., 1.), 4.) * 0.9 * moonlit;
+  let night_glow = smoothstep(0.04, -0.10, camera.sun.y) * (14. + 6. * moon_forward);
   let scatter = water.scatter.rgb * (ambient + vec3<f32>(0.25, 0.62, 0.85) * night_glow
     + camera.sun_colour.rgb * camera.sun_colour.a * forward * 0.08);
   return lit * t + scatter * (1. - t);

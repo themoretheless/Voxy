@@ -1683,6 +1683,19 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
         Vec3::new(0.015, 0.56, 0.64),
         Quat::from_rotation_z(-0.14),
     );
+    // Painter's side table with oval wooden palette, pigment dabs, ceramic brush jar, and studio spotlight
+    let (pt_x, pt_z) = (ex_c + 0.52, ez_c + 0.58);
+    b.span(p.timber, [pt_x - 0.24, ay0 + 0.08, pt_z - 0.24], [pt_x + 0.24, ay0 + 0.72, pt_z + 0.24]);
+    b.span(p.wood, [pt_x - 0.28, ay0 + 0.72, pt_z - 0.28], [pt_x + 0.28, ay0 + 0.76, pt_z + 0.28]);
+    b.put(cladding_cyl, Vec3::new(pt_x - 0.06, ay0 + 0.77, pt_z - 0.04), Vec3::new(0.26, 0.018, 0.18), Quat::from_rotation_y(0.4));
+    for (dab_dx, dab_dz, dab_m) in [(-0.12f32, -0.06f32, fabric(0)), (-0.04, -0.09, fabric(1)), (0.02, -0.02, p.glow)] {
+        b.put(dab_m, Vec3::new(pt_x + dab_dx, ay0 + 0.785, pt_z + dab_dz), Vec3::new(0.035, 0.014, 0.035), Quat::IDENTITY);
+    }
+    b.put(p.ceramic_cyl, Vec3::new(pt_x + 0.14, ay0 + 0.83, pt_z + 0.10), Vec3::new(0.09, 0.14, 0.09), Quat::IDENTITY);
+    b.beam(p.timber, Vec3::new(pt_x + 0.14, ay0 + 0.84, pt_z + 0.10), Vec3::new(pt_x + 0.19, ay0 + 1.02, pt_z + 0.13), 0.008);
+    b.beam(p.timber, Vec3::new(pt_x + 0.14, ay0 + 0.84, pt_z + 0.10), Vec3::new(pt_x + 0.10, ay0 + 1.01, pt_z + 0.07), 0.008);
+    b.put(p.metal_cyl, Vec3::new(ex_c + 0.35, ay0 + 2.16, ez_c), Vec3::new(0.10, 0.14, 0.10), Quat::from_rotation_z(0.55));
+    b.put(p.bulb, Vec3::new(ex_c + 0.31, ay0 + 2.12, ez_c), Vec3::splat(0.065), Quat::IDENTITY);
     // Classical marble/ceramic sculpture bust on a fluted travertine column pedestal in the southern half
     let (sx_ped, sz_ped) = (-10.85f32, 102.05f32);
     b.span(travertine_cyl, [sx_ped - 0.28, ay0 + 0.08, sz_ped - 0.28], [sx_ped + 0.28, ay0 + 0.96, sz_ped + 0.28]);
@@ -1708,6 +1721,23 @@ pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     ] {
         b.put(ball_m, Vec3::new(ball_x, u0 + 0.865, ball_z), Vec3::splat(0.055), Quat::IDENTITY);
     }
+    // 6 billiard pockets (corners and mid-rails), wooden triangle rack, and two tapered cue sticks
+    let bz_mid = (bz_t0 + bz_t1) * 0.5;
+    for (pk_x, pk_z) in [
+        (bx_t0 + 0.05, bz_t0 + 0.05),
+        (bx_t1 - 0.05, bz_t0 + 0.05),
+        (bx_t0 + 0.04, bz_mid),
+        (bx_t1 - 0.04, bz_mid),
+        (bx_t0 + 0.05, bz_t1 - 0.05),
+        (bx_t1 - 0.05, bz_t1 - 0.05),
+    ] {
+        b.put(p.metal_cyl, Vec3::new(pk_x, u0 + 0.845, pk_z), Vec3::new(0.11, 0.03, 0.11), Quat::IDENTITY);
+    }
+    b.beam(p.timber, Vec3::new(-4.82, u0 + 0.855, 143.62), Vec3::new(-4.32, u0 + 0.855, 143.62), 0.016);
+    b.beam(p.timber, Vec3::new(-4.82, u0 + 0.855, 143.62), Vec3::new(-4.57, u0 + 0.855, 143.20), 0.016);
+    b.beam(p.timber, Vec3::new(-4.32, u0 + 0.855, 143.62), Vec3::new(-4.57, u0 + 0.855, 143.20), 0.016);
+    b.beam(p.timber, Vec3::new(bx_t0 - 0.12, u0 + 0.87, bz_t0 + 0.25), Vec3::new(bx_t0 + 0.95, u0 + 0.86, bz_t0 + 1.10), 0.015);
+    b.beam(p.timber, Vec3::new(bx_t1 + 0.12, u0 + 0.87, bz_t1 - 0.30), Vec3::new(bx_t1 - 0.92, u0 + 0.86, bz_t1 - 1.05), 0.015);
 
     Villa {
         water: vec![WaterBody::pool(

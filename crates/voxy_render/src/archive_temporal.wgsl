@@ -71,6 +71,12 @@ struct Guides { @location(0) motion:vec2<f32>, @location(1) expected:f32 }
 @group(1) @binding(5) var resolved:texture_storage_2d<rgba16float,write>;
 @group(1) @binding(6) var saved_depth:texture_storage_2d<r32float,write>;
 fn finite(c:vec3<f32>)->bool {return all((bitcast<vec3<u32>>(c)&vec3<u32>(0x7f800000u))!=vec3<u32>(0x7f800000u));}
+fn rgb_to_ycocg(c:vec3<f32>)->vec3<f32> {
+    return vec3<f32>(0.25*c.r+0.5*c.g+0.25*c.b,0.5*c.r-0.5*c.b,-0.25*c.r+0.5*c.g-0.25*c.b);
+}
+fn ycocg_to_rgb(y:vec3<f32>)->vec3<f32> {
+    return vec3<f32>(y.x+y.y-y.z,y.x+y.z,y.x-y.y-y.z);
+}
 fn current_stable(p:vec2<i32>,size:vec2<u32>)->vec3<f32> {
     let position=vec2<f32>(p)+frame.jitter.xy*vec2<f32>(size);
     let base=vec2<i32>(floor(position));let f=fract(position);
@@ -111,12 +117,19 @@ fn current_stable(p:vec2<i32>,size:vec2<u32>)->vec3<f32> {
             }
         }}
         if total>0.01 {
-            var low=color;var high=color;
+            let center_y=rgb_to_ycocg(color);
+            var low=center_y;var high=center_y;
+            var m1=vec3<f32>(0.);var m2=vec3<f32>(0.);
             for(var y=-1;y<=1;y++) {for(var x=-1;x<=1;x++) {
-                let c=textureLoad(current,clamp(p+vec2<i32>(x,y),vec2<i32>(0),vec2<i32>(size)-1),0).rgb;
+                let c=rgb_to_ycocg(textureLoad(current,clamp(p+vec2<i32>(x,y),vec2<i32>(0),vec2<i32>(size)-1),0).rgb);
                 low=min(low,c);high=max(high,c);
+                m1+=c;m2+=c*c;
             }}
-            let old=clamp(accumulated/total,low,high);
+            m1*=1./9.;m2*=1./9.;
+            let sigma=sqrt(max(m2-m1*m1,vec3<f32>(0.)));
+            let box_low=max(low,m1-1.25*sigma);
+            let box_high=min(high,m1+1.25*sigma);
+            let old=max(ycocg_to_rgb(clamp(rgb_to_ycocg(accumulated/total),box_low,box_high)),vec3<f32>(0.));
             // Luminance disagreement reduces history on changing/translucent surfaces.
             let luma=vec3<f32>(0.2126,0.7152,0.0722);
             let disagreement=abs(dot(old-color,luma))/max(max(dot(old,luma),dot(color,luma)),0.01);
