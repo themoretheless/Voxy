@@ -848,6 +848,13 @@ impl ArchiveSceneRenderer {
                     count: None,
                 },
                 texture_entry(6, false),
+                texture_entry(7, true),
+                wgpu::BindGroupLayoutEntry {
+                    binding: 8,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison),
+                    count: None,
+                },
             ],
         });
         init_trace("scene_shader_begin");
@@ -1667,6 +1674,16 @@ impl ArchiveSceneRenderer {
                 wgpu::BindGroupEntry {
                     binding: 6,
                     resource: wgpu::BindingResource::TextureView(&bloom.output()),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 7,
+                    resource: wgpu::BindingResource::TextureView(
+                        &shadow.create_view(&Default::default()),
+                    ),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 8,
+                    resource: wgpu::BindingResource::Sampler(&comparison),
                 },
             ],
         });
