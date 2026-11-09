@@ -124,7 +124,7 @@ pub(crate) fn directional_bound(
 
 /// Proxy points are only used for distance evaluation; coverage uses exact
 /// dyadic coordinates. The returned radius bounds f32 proxy quantization.
-#[allow(clippy::cast_possible_truncation)] // Quantization is explicitly bounded below.
+// Quantization is explicitly bounded below.
 pub(crate) fn barycentric_proxy(triangle: [[f32; 3]; 3], weights: [u32; 3]) -> ([f32; 3], f64) {
     let mut point = [0.0_f32; 3];
     let mut squared = 0.0;
@@ -179,7 +179,7 @@ impl Interval {
             high: (self.high + other.high).next_up(),
         }
     }
-    #[allow(clippy::float_cmp)] // Singleton interval identity; tolerance would underbound.
+    // Singleton interval identity; tolerance would underbound.
     fn subtract_exact(self, value: f64) -> Self {
         if self.low == value && self.high == value {
             return Self::exact(0.0);

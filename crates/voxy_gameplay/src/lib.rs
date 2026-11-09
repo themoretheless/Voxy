@@ -472,7 +472,6 @@ struct StaticWorld(Vec<StaticBox>, SceneId, Vec<convex::AffineBox>, bool);
 impl CollisionWorld for StaticWorld {
     type Obstacle = NodeId;
     type Error = PhysicsError;
-    #[allow(clippy::cast_precision_loss)]
     fn sweep_aabb(
         &self,
         body: AnchoredAabb,
@@ -1539,7 +1538,6 @@ fn step_affine(
     runtime.state.velocity = velocity.to_array();
     runtime.state.grounded = grounded;
 }
-#[allow(clippy::cast_precision_loss)]
 fn precise_center(body: AnchoredAabb) -> glam::DVec3 {
     glam::DVec3::new(
         body.anchor.x as f64,
@@ -1547,7 +1545,6 @@ fn precise_center(body: AnchoredAabb) -> glam::DVec3 {
         body.anchor.z as f64,
     ) + (glam::DVec3::from_array(body.min) + glam::DVec3::from_array(body.max)) * 0.5
 }
-#[allow(clippy::cast_precision_loss)]
 fn relocate(runtime: &mut RuntimeBody, position: glam::DVec3, descriptor: CharacterBody) {
     let fresh_state = fresh(
         position.as_vec3(),
@@ -1732,7 +1729,6 @@ fn fresh(
         published_rotation: rotation,
     }
 }
-#[allow(clippy::cast_precision_loss, clippy::cast_possible_truncation)]
 fn center_of(body: AnchoredAabb) -> Result<Vec3, PhysicsError> {
     let anchor = [
         body.anchor.x as f64,

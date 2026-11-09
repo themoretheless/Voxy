@@ -458,7 +458,7 @@ impl QuadraticBody {
     /// Same SI loading/constraint and transactional-history contract as linear FEM.
     /// # Errors
     /// Invalid input, singular support/tangent, inversion or assembly overflow.
-    #[allow(clippy::too_many_lines)] // Newton candidates and all quadrature histories commit together.
+    // Newton candidates and all quadrature histories commit together.
     pub fn equilibrate(
         &mut self,
         loads: &[Vec3],

@@ -60,7 +60,6 @@ impl SceneMesh {
     /// # Errors
     /// Rejects nonfinite tags, mixed-tag faces and a layer without an opaque substrate.
     // UV tags are exact shader identifiers, rather than measured coordinates.
-    #[allow(clippy::float_cmp)]
     pub fn split_material_layer(
         &self,
         tag: f32,
@@ -338,7 +337,7 @@ impl NormalCache {
     // UV/colour updates do not change normals. Compare exact current geometry;
     // Geometry or authored normal changes refresh the stream; generated normals
     // rebuild the weld map only when no authored stream is supplied.
-    #[allow(clippy::float_cmp)] // Exact geometry equality is the cache invalidation contract.
+    // Exact geometry equality is the cache invalidation contract.
     #[doc(hidden)]
     pub fn refresh(&mut self, mesh: &SceneMesh) -> bool {
         let indices_equal = self.indices == mesh.indices;

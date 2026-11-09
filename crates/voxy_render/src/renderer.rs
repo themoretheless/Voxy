@@ -281,7 +281,6 @@ impl Renderer {
     /// # Errors
     ///
     /// Returns a typed initialization error when surface, adapter, device, or capabilities fail.
-    #[allow(clippy::too_many_lines)]
     pub async fn new<T>(target: T, width: u32, height: u32) -> Result<Self, RendererError>
     where
         T: Into<wgpu::SurfaceTarget<'static>>,
@@ -293,7 +292,6 @@ impl Renderer {
     ///
     /// # Errors
     /// Returns an initialization error if the selected backend or surface is unavailable.
-    #[allow(clippy::too_many_lines)]
     pub async fn new_with_options<T>(
         target: T,
         width: u32,
@@ -311,7 +309,6 @@ impl Renderer {
     /// Instance backend policy must match `options`; its display must match target.
     /// # Errors
     /// Reports unavailable surfaces, adapters, devices and renderer capabilities.
-    #[allow(clippy::too_many_lines)]
     pub async fn new_with_instance<T>(
         target: T,
         width: u32,
@@ -1902,14 +1899,12 @@ use pipelines::{
     create_photoreal_pipelines, create_pipeline, default_material_pack,
 };
 
-#[allow(clippy::cast_precision_loss)]
 fn camera_uniform(width: u32, height: u32, camera: CameraView) -> CameraUniform {
     CameraUniform {
         view_proj: camera_view_projection(width, height, camera).to_cols_array_2d(),
     }
 }
 
-#[allow(clippy::cast_precision_loss)]
 fn photoreal_camera_uniform(
     width: u32,
     height: u32,
@@ -1944,7 +1939,6 @@ fn photoreal_camera_uniform(
     }
 }
 
-#[allow(clippy::cast_precision_loss)]
 fn perspective_camera_view_projection(width: u32, height: u32, camera: CameraView) -> Mat4 {
     let aspect = width.max(1) as f32 / height.max(1) as f32;
     let fov = camera.vertical_fov_radians.clamp(0.15, 2.65);
@@ -1955,7 +1949,6 @@ fn perspective_camera_view_projection(width: u32, height: u32, camera: CameraVie
     projection * view
 }
 
-#[allow(clippy::cast_precision_loss)]
 fn camera_view_projection(width: u32, height: u32, camera: CameraView) -> Mat4 {
     let [half_width, half_height] = camera_half_extents(width, height, camera);
     // Swap near/far to retain the renderer's reverse-Z depth convention.
@@ -1971,7 +1964,6 @@ fn camera_view_projection(width: u32, height: u32, camera: CameraView) -> Mat4 {
     projection * view
 }
 
-#[allow(clippy::cast_precision_loss)]
 fn camera_half_extents(width: u32, height: u32, camera: CameraView) -> [f32; 2] {
     let aspect = width.max(1) as f32 / height.max(1) as f32;
     let distance = camera.eye.distance(camera.target);
@@ -1981,13 +1973,11 @@ fn camera_half_extents(width: u32, height: u32, camera: CameraView) -> [f32; 2] 
 }
 
 fn chunk_intersects_frustum(view_projection: Mat4, relative_origin: [i32; 4]) -> bool {
-    #[allow(clippy::cast_precision_loss)]
     let min = Vec3::new(
         relative_origin[0] as f32,
         relative_origin[1] as f32,
         relative_origin[2] as f32,
     );
-    #[allow(clippy::cast_precision_loss)]
     let max = min + Vec3::splat(CHUNK_EDGE as f32);
     let corners = [
         Vec3::new(min.x, min.y, min.z),
@@ -2142,7 +2132,6 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::too_many_lines)]
     fn noop_backend_validates_voxel_pipeline_and_draw() {
         let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor {
             label: Some("Voxy validation device"),

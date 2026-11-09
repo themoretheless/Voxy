@@ -176,7 +176,6 @@ pub fn sweep_aabb_with_bounds(
                 }) {
                     return Err(SweepError::InvalidCollisionBounds);
                 }
-                #[allow(clippy::cast_precision_loss)]
                 let base = [x as f64, y as f64, z as f64];
                 let obstacle_min = std::array::from_fn(|i| base[i] + local_min[i]);
                 let obstacle_max = std::array::from_fn(|i| base[i] + local_max[i]);
@@ -258,10 +257,7 @@ fn candidate_count(min: [i64; 3], max: [i64; 3]) -> Result<usize, SweepError> {
 
 fn floor_to_i64(value: f64) -> i64 {
     // Validation bounds the value far inside i64's exactly representable range.
-    #[allow(clippy::cast_possible_truncation)]
-    {
-        value.floor() as i64
-    }
+    value.floor() as i64
 }
 
 fn next_down(value: f64) -> f64 {

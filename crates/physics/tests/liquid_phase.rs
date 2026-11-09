@@ -1,4 +1,4 @@
-#![allow(clippy::float_cmp)] // Exact plateau and atomic-state assertions.
+// Exact plateau and atomic-state assertions.
 use physics::liquid::Particle;
 use physics::liquid::{
     Config, Error, Liquid, LiquidField, Material, PhaseChange, TransportMaterial,

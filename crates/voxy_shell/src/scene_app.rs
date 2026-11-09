@@ -1196,7 +1196,6 @@ impl SceneApp {
         self.last = Instant::now();
         Ok(())
     }
-    #[allow(clippy::cast_precision_loss, clippy::too_many_lines)]
     fn draw(&mut self, event_loop: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
         if self.done {
             return Ok(());
@@ -2340,7 +2339,6 @@ impl ApplicationHandler for SceneApp {
                 if let Some(window) = &self.window {
                     let size = window.inner_size();
                     if size.width != 0 && size.height != 0 {
-                        #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
                         let position = glam::Vec2::new(
                             touch.location.x as f32 / size.width as f32,
                             touch.location.y as f32 / size.height as f32,

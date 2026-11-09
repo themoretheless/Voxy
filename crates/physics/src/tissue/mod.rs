@@ -1,5 +1,4 @@
 //! Compliant soft tissues in local metre/kilogram/second coordinates.
-#![allow(clippy::many_single_char_names)]
 use crate::strand::SphereCollider;
 mod contact;
 mod geometry;
@@ -273,7 +272,6 @@ impl Tissue {
     /// Fixed steps <= 1/30 s. Discrete particle/sphere contact; no self-contact.
     /// # Errors
     /// Invalid inputs and numerical overflow leave the state unchanged.
-    #[allow(clippy::too_many_lines)]
     pub fn step(
         &mut self,
         dt: f64,

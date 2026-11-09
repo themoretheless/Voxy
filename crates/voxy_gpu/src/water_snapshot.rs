@@ -121,7 +121,6 @@ impl WaterTransferProgram {
     /// # Errors
     /// Rejects invalid states/budgets and graph inputs before submission; lazy
     /// reads and transaction failures are returned later by `try_plan`.
-    #[allow(clippy::too_many_arguments)]
     pub fn begin_plan_world(
         &self,
         queue: &wgpu::Queue,
@@ -172,7 +171,6 @@ impl WaterTransferProgram {
     /// Rejects invalid states/budgets, graph limits, lazy device reads, numerical
     /// coordinate overflow, malformed output and transaction budget violations.
     /// The queue must belong to this program's device. No world mutation occurs.
-    #[allow(clippy::too_many_arguments)]
     pub fn plan_world(
         &self,
         queue: &wgpu::Queue,
@@ -216,7 +214,6 @@ impl crate::CudaWaterTransferProgram {
     /// # Errors
     /// Rejects invalid budgets/states, missing/unknown samples, CUDA failures and
     /// invalid output before returning a transaction.
-    #[allow(clippy::too_many_arguments)]
     pub fn plan_world(
         &self,
         view: &impl VoxelView,

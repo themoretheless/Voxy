@@ -1,5 +1,4 @@
 // Exact equality intentionally checks unchanged masses and exactly zero states.
-#![allow(clippy::float_cmp)]
 use physics::liquid::{Config, Container, Error, Liquid, Material, Particle};
 
 fn particle(x: f64, mass: f64, velocity: f64) -> Particle {

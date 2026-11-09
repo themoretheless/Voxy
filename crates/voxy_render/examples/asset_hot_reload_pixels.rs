@@ -171,7 +171,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some(&imported_images()?),
     )
 }
-#[allow(clippy::too_many_lines)]
 fn render_frames(
     meshes: &[SceneMesh],
     images: Option<&[voxy_render::ImageAsset]>,

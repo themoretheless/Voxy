@@ -345,7 +345,6 @@ impl SceneSimulation {
             }
             self.current = poses(scene);
         }
-        #[allow(clippy::cast_possible_truncation)]
         {
             self.alpha = time.alpha as f32;
         }

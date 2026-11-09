@@ -234,7 +234,6 @@ impl SceneSurface {
     /// ordinary constructors retain the default experimental-feature policy.
     /// # Errors
     /// Reports unsupported surface/output/features or device creation failures.
-    #[allow(clippy::too_many_arguments)]
     pub async fn new_with_adapter_and_output_experimental<T>(
         target: T,
         width: u32,

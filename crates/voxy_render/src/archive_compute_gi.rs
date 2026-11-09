@@ -60,7 +60,6 @@ impl ArchiveComputeGi {
     pub(super) fn world_ray_guides(&self) -> [Arc<voxy_gpu_core::ManagedTexture>; 2] {
         [self.world.clone(), self.normal.clone()]
     }
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn new(
         device: &wgpu::Device,
         shader: &wgpu::ShaderModule,

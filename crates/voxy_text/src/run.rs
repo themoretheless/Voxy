@@ -138,7 +138,7 @@ fn placement(
             - f64::from(height),
     ])
 }
-#[allow(clippy::cast_possible_truncation)] // Result validated after conversion.
+// Result validated after conversion.
 fn finite_pixels(values: [f64; 2]) -> Result<[f32; 2], TextError> {
     let pixels = values.map(|x| x as f32);
     if pixels.iter().all(|x| x.is_finite()) {

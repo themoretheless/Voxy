@@ -123,7 +123,6 @@ impl FootRuntimeCheckpoint {
     ) -> Result<FootRuntime, String> {
         self.prepare_with_source_skeleton(rig, None, clips, scene, resolve, resolve_pose, max_bytes)
     }
-    #[allow(clippy::too_many_arguments)]
     pub(crate) fn prepare_with_source_skeleton(
         &self,
         rig: FootCheckpointRig<'_>,

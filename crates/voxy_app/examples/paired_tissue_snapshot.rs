@@ -3,7 +3,6 @@ use glam::Vec3;
 use physics::biomechanics::{InertialBody, Material, TesticularGeometry};
 use voxy_demos::fem_surface;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
-#[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args()
         .nth(1)

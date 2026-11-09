@@ -35,8 +35,8 @@ impl ScrollPanel {
     /// Scrolls by logical pixels and returns whether the offset changed.
     /// # Errors
     /// Rejects nonfinite deltas without changing state.
-    #[allow(clippy::float_cmp)] // Exact finite position change drives geometry invalidation.
-    #[allow(clippy::cast_possible_truncation)] // Sum clamped to finite f32 content bounds.
+    // Exact finite position change drives geometry invalidation.
+    // Sum clamped to finite f32 content bounds.
     pub fn scroll(&mut self, delta: [f32; 2]) -> Result<bool, UiError> {
         if delta.iter().any(|x| !x.is_finite()) {
             return Err(UiError::InvalidGeometry);

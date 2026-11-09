@@ -1246,7 +1246,6 @@ fn rough_reference(
     seed: u32,
 ) -> Result<([f64; 3], f64), Box<dyn std::error::Error>> {
     let key = rough_hash(index ^ rough_hash(seed.wrapping_add(0x9e3779b9)));
-    #[allow(clippy::cast_precision_loss)]
     let u = [
         (key >> 8) as f32 / 16777216.0,
         (rough_hash(key) >> 8) as f32 / 16777216.0,

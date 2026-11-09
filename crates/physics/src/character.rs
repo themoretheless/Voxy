@@ -130,7 +130,6 @@ pub fn step_character_with_acceleration<W: CollisionWorld>(
 /// # Errors
 /// Invalid controller state, nonfinite motion or collision/rebase failures leave
 /// the character unchanged. The caller is responsible for integration semantics.
-#[allow(clippy::too_many_arguments)]
 pub fn step_character_with_motion<W: CollisionWorld>(
     world: &W,
     state: &mut CharacterState,
@@ -296,7 +295,6 @@ fn clip_against_plane(vector: &mut [f64; 3], normal: [i8; 3]) {
 
 fn rebase<E>(body: &mut AnchoredAabb) -> Result<(), CharacterError<E>> {
     for axis in 0..3 {
-        #[allow(clippy::cast_possible_truncation)]
         let shift = body.min[axis].floor() as i64;
         let anchor = match axis {
             0 => &mut body.anchor.x,
@@ -306,7 +304,6 @@ fn rebase<E>(body: &mut AnchoredAabb) -> Result<(), CharacterError<E>> {
         *anchor = anchor
             .checked_add(shift)
             .ok_or(CharacterError::CoordinateOverflow)?;
-        #[allow(clippy::cast_precision_loss)]
         let shift = shift as f64;
         body.min[axis] -= shift;
         body.max[axis] -= shift;

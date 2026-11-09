@@ -37,7 +37,7 @@ impl Liquid {
     /// This changes the energy reference; it does not inject heat automatically.
     /// # Errors
     /// Invalid models/fractions, absent transport or nonfinite resulting energy/properties.
-    #[allow(clippy::float_cmp)] // Phase endpoints must be exactly pure outside the plateau.
+    // Phase endpoints must be exactly pure outside the plateau.
     pub fn configure_phase_change(
         &mut self,
         models: Vec<Option<PhaseChange>>,
@@ -258,7 +258,7 @@ impl Transport {
         }
         Ok(result)
     }
-    #[allow(clippy::float_cmp)] // Equal plateau temperatures drive exactly zero conductive heat.
+    // Equal plateau temperatures drive exactly zero conductive heat.
     pub(super) fn exchange_phase_heat(
         &mut self,
         i: usize,

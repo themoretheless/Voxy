@@ -283,7 +283,7 @@ impl crate::astrophysics_spherical::Sphere {
             None,
         )
     }
-    #[allow(clippy::too_many_arguments)] // Shared transfer controls plus local/uniform EOS.
+    // Shared transfer controls plus local/uniform EOS.
     fn radiation_rates_eos(
         &self,
         specific_heat: f64,
@@ -409,7 +409,7 @@ impl crate::astrophysics_spherical::Sphere {
             .collect::<Result<Vec<_>, _>>()?;
         self.radiate_local(dt, settings, None, Some(&local), Some(table))
     }
-    #[allow(clippy::too_many_lines)] // Keep thermal budget and transactional update together.
+    // Keep thermal budget and transactional update together.
     fn radiate_local(
         &mut self,
         dt: f64,
@@ -644,7 +644,6 @@ impl crate::astrophysics_spherical::Sphere {
     /// Radiation and burning around equilibrium-preserving spherical transport.
     /// # Errors
     /// Any local physical/domain error or shared work-budget failure.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_reactive_radiating_balanced(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -665,7 +664,6 @@ impl crate::astrophysics_spherical::Sphere {
             Some(reference),
         )
     }
-    #[allow(clippy::too_many_arguments)]
     fn step_reactive_radiating_impl(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -680,7 +678,6 @@ impl crate::astrophysics_spherical::Sphere {
             fractions, network, dt, settings, table, exterior, reference, None,
         )
     }
-    #[allow(clippy::too_many_arguments)]
     fn step_reactive_radiating_spectrum_impl(
         &mut self,
         fractions: &mut [Vec<f64>],

@@ -44,7 +44,7 @@ impl Liquid {
     }
 }
 impl Transport {
-    #[allow(clippy::float_cmp)] // Exact equality means zero reservoir flux, including the latent plateau.
+    // Exact equality means zero reservoir flux, including the latent plateau.
     fn reservoir_exchange(
         &mut self,
         index: usize,

@@ -78,7 +78,6 @@ impl Body {
     /// Explicit ports keep their vertex identities while their geometry deforms.
     /// # Errors
     /// Any solve/validation failure preserves body, cell protein and reservoir.
-    #[allow(clippy::too_many_arguments)]
     pub fn implicit_cell_pore_reservoir_step(
         &mut self,
         protein_kg: &mut [f64],
@@ -132,7 +131,6 @@ impl Body {
     /// by the caller, which must account for the returned fluxes and mass change.
     /// # Errors
     /// Failure preserves geometry, fluid inventories and caller protein.
-    #[allow(clippy::too_many_arguments)]
     pub fn implicit_cell_pore_boundary_protein_step(
         &mut self,
         protein_kg: &mut [f64],
@@ -158,7 +156,6 @@ impl Body {
     /// Inflow uses the specified port concentration; outflow uses tissue protein.
     /// # Errors
     /// Invalid port/concentration assignments or any failed solve preserve state.
-    #[allow(clippy::too_many_arguments)]
     pub fn implicit_cell_pore_boundary_protein_step_with_concentrations(
         &mut self,
         protein_kg: &mut [f64],
@@ -184,7 +181,6 @@ impl Body {
     /// Resistances are explicit boundary triangles and values in Pa s/m³.
     /// # Errors
     /// Invalid assignments or any failed subsolve preserve tissue and protein.
-    #[allow(clippy::too_many_arguments)]
     pub fn implicit_cell_pore_boundary_protein_step_with_resistances(
         &mut self,
         protein_kg: &mut [f64],
@@ -218,7 +214,6 @@ impl Body {
     /// Deforming pressure-controlled tissue with selective per-port protein membranes.
     /// # Errors
     /// Invalid membrane assignments or failed mechanics/transport preserve all state.
-    #[allow(clippy::too_many_arguments)]
     pub fn implicit_cell_pore_boundary_protein_step_with_membranes(
         &mut self,
         protein_kg: &mut [f64],

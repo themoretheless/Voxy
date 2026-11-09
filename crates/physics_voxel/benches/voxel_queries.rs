@@ -48,7 +48,6 @@ fn fold(checksum: u64, value: u64) -> u64 {
     (checksum ^ value).wrapping_mul(0x0100_0000_01b3)
 }
 
-#[allow(clippy::cast_sign_loss)]
 fn fold_pos(checksum: u64, pos: VoxelPos) -> u64 {
     fold(
         fold(fold(checksum, pos.x as u64), pos.y as u64),
@@ -115,7 +114,6 @@ fn reservoir(x: i64, y: i64, z: i64) -> bool {
     (88..112).contains(&x) && (52..76).contains(&z) && (height..height + 8).contains(&y)
 }
 
-#[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
 fn build_world(registry: &Arc<BlockRegistry>, states: WaterStates) -> (World, Vec<VoxelPos>) {
     let stone = state(registry, "stone");
     let mut world = World::new(
@@ -256,12 +254,10 @@ impl Lcg {
         self.0 >> 33
     }
 
-    #[allow(clippy::cast_possible_wrap)]
     fn range(&mut self, span: u64) -> i64 {
         (self.next() % span) as i64
     }
 
-    #[allow(clippy::cast_precision_loss)]
     fn unit(&mut self) -> f64 {
         (self.next() % 10_007) as f64 / 10_007.0
     }

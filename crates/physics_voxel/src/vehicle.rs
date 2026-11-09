@@ -285,7 +285,6 @@ pub fn update_race(
 
 // Race circuits are local gameplay zones. World streaming rebases their checkpoint frame before
 // this conversion; keeping the integrator local avoids carrying global floats in canonical state.
-#[allow(clippy::cast_precision_loss)]
 fn center(body: AnchoredAabb) -> [f64; 3] {
     [
         body.anchor.x as f64 + (body.min[0] + body.max[0]) * 0.5,

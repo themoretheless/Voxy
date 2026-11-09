@@ -6,7 +6,6 @@
 use crate::*;
 
 impl App {
-    #[allow(clippy::too_many_lines)]
     pub(crate) fn authoring_document(&self) -> Result<SceneDocument, voxy_scene::SceneGraphError> {
         CharacterPhysics::new(&self.scene, 128, 128)
             .validate(&self.scene)

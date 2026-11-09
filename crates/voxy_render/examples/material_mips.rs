@@ -5,7 +5,6 @@ use voxy_render::{
     TextureSampling,
 };
 
-#[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let backend = match std::env::var("VOXY_ASSET_BACKEND").as_deref() {
         Err(std::env::VarError::NotPresent) | Ok("auto") => GraphicsBackend::Auto,

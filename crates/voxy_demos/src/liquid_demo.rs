@@ -738,7 +738,6 @@ impl LiquidDemo {
         }
         Ok(())
     }
-    #[allow(clippy::cast_possible_truncation)]
     /// Optical snapshots borrow the simulation; they never create or remove liquid mass.
     pub fn optical_background(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
         let mut vertices = Vec::new();

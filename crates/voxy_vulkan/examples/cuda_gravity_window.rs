@@ -313,10 +313,7 @@ mod native {
             } else if self.smoke {
                 4
             } else {
-                #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
-                {
-                    (self.accumulator * 240.0).floor().min(24.0) as u32
-                }
+                (self.accumulator * 240.0).floor().min(24.0) as u32
             };
             let device = resources.host.device().clone();
             let queue = resources.host.queue().clone();

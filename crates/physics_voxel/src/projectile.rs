@@ -196,12 +196,10 @@ fn translated(origin: RayOrigin, displacement: [f64; 3]) -> Result<RayOrigin, Pr
     let mut offset = origin.offset;
     for axis in 0..3 {
         let value = offset[axis] + displacement[axis];
-        #[allow(clippy::cast_possible_truncation)]
         let shift = value.floor() as i64;
         voxel[axis] = voxel[axis]
             .checked_add(shift)
             .ok_or(ProjectileError::CoordinateOverflow)?;
-        #[allow(clippy::cast_precision_loss)]
         let shift = shift as f64;
         offset[axis] = value - shift;
     }

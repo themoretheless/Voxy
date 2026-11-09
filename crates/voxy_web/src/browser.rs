@@ -26,11 +26,9 @@ impl BrowserGravity {
     ) -> Result<(), JsValue> {
         self.accumulator += (seconds - self.seconds).clamp(0.0, 0.1);
         self.seconds = seconds;
-        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let steps = (self.accumulator * 240.0).floor().min(24.0) as u32;
         if steps > 0 {
             self.job.encode_steps(encoder, steps).map_err(error)?;
-            #[allow(clippy::cast_precision_loss)]
             {
                 self.accumulator = (self.accumulator - steps as f32 / 240.0).max(0.0);
             }
@@ -78,7 +76,6 @@ impl WebEngine {
     /// Creates a strict WebGPU or WebGL renderer, or automatically detects WebGPU.
     /// # Errors
     /// Returns initialization diagnostics for unavailable APIs or invalid GPU resources.
-    #[allow(clippy::too_many_lines)]
     pub async fn create(
         canvas: web_sys::HtmlCanvasElement,
         backend: String,
@@ -975,7 +972,6 @@ impl WebEngine {
     /// Draws one animation frame; returns false for a temporary surface event.
     /// # Errors
     /// Returns diagnostics for invalid sizes, matrices or surface validation errors.
-    #[allow(clippy::cast_precision_loss)]
     pub fn render(&mut self, seconds: f32, width: u32, height: u32) -> Result<bool, JsValue> {
         if let Some(failure) = self.device_failure() {
             return Err(error(failure));
@@ -1139,7 +1135,6 @@ impl WebEngine {
         }
         Ok(())
     }
-    #[allow(clippy::cast_precision_loss)]
     fn update_scene_camera(&self, seconds: f32, width: u32, height: u32) -> Result<(), JsValue> {
         let aspect = width as f32 / height as f32;
         let (eye, target, far) = voxel_camera(self.voxel_world.as_ref(), aspect)?;

@@ -185,7 +185,6 @@ pub(crate) mod tests {
         }
     }
     #[test]
-    #[allow(clippy::float_cmp)]
     fn nested_layout_uses_ui_ancestry_clips_and_inherited_activity() {
         let mut scene = SceneGraph::new(3);
         let root = scene.spawn(None, Transform::default()).unwrap();

@@ -526,7 +526,6 @@ mod integration_tests {
     }
 
     #[test]
-    #[allow(clippy::too_many_lines)]
     fn real_panels_and_native_key_adapter_share_focus_and_authoring_actions() {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../voxy_render/examples/assets/quad.obj");

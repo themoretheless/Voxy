@@ -2032,7 +2032,6 @@ impl FemaleDemo {
             && self.body_parameters == Default::default()
             && self.time == 0.
     }
-    #[allow(clippy::cast_possible_truncation)]
     pub fn gpu_secondary_binding(
         &self,
         count: usize,

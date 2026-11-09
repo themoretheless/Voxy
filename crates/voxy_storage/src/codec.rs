@@ -40,7 +40,6 @@ pub struct StoredChunk {
 /// # Errors
 ///
 /// Rejects unknown IDs and data outside bounded format limits.
-#[allow(clippy::too_many_lines)]
 pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec<u8>, CodecError> {
     let (src_palette, slots) = chunk.data.blocks.palette_indices();
     let mut src_keys = Vec::with_capacity(src_palette.len());
@@ -124,7 +123,6 @@ pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec
 /// # Errors
 ///
 /// Rejects corruption, truncation, unknown content and non-canonical encoding.
-#[allow(clippy::too_many_lines)]
 pub fn decode_chunk(bytes: &[u8], registry: &BlockRegistry) -> Result<StoredChunk, CodecError> {
     if bytes.len() < 4 {
         return Err(CodecError::Truncated);

@@ -358,7 +358,7 @@ fn central_viscosity_matches_interior_divergence_free_quadratic_shear() {
 }
 
 #[test]
-#[allow(clippy::float_cmp)] // Frozen viscous stages must preserve positions exactly.
+// Frozen viscous stages must preserve positions exactly.
 fn whipped_cream_yield_term_increases_damping_and_conserves_heat_and_momentum() {
     use physics::liquid::WhippedCreamProfile;
     let profile = WhippedCreamProfile::DEMO;

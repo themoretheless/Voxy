@@ -106,7 +106,6 @@ pub fn step_character_in_field(
     step_character_acceleration(view, registry, state, input, dt, config, acceleration)
 }
 
-#[allow(clippy::too_many_arguments)]
 fn step_character_acceleration(
     view: &impl VoxelView,
     registry: &BlockRegistry,
@@ -148,7 +147,6 @@ fn step_character_acceleration(
 /// Applies device-integrated motion with the authoritative voxel sweep controller.
 /// # Errors
 /// Invalid state/motion or world query errors preserve the original character.
-#[allow(clippy::too_many_arguments)]
 pub fn step_character_with_motion(
     view: &impl VoxelView,
     registry: &BlockRegistry,
@@ -502,7 +500,6 @@ mod tests {
 /// Shared sweep-and-slide controller using partially worn voxel surfaces.
 /// # Errors
 /// Invalid inputs or stale/unavailable geometry leave character state unchanged.
-#[allow(clippy::too_many_arguments)]
 pub fn step_character_with_wear(
     view: &impl VoxelView,
     registry: &BlockRegistry,

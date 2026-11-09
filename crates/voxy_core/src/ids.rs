@@ -151,7 +151,6 @@ impl GenerationalId {
     }
 
     #[must_use]
-    #[allow(clippy::cast_possible_truncation)]
     pub const fn from_u64(packed: u64) -> Option<Self> {
         Self::new(packed as u32, (packed >> 32) as u32)
     }

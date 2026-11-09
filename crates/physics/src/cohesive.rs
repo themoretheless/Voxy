@@ -122,7 +122,7 @@ impl Material {
     /// Commit history only after a global step has converged. No healing.
     /// # Errors
     /// Rejects invalid normal, nonfinite jumps and unrepresentable responses.
-    #[allow(clippy::too_many_lines)] // Validate the joint cohesive/contact candidate before publication.
+    // Validate the joint cohesive/contact candidate before publication.
     pub fn response(
         &self,
         old: &State,

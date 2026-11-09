@@ -2257,7 +2257,6 @@ fn physical_rotation_runtime_errors(
     Ok((reframed, normalization_uniform_error(raw)?))
 }
 
-#[allow(clippy::too_many_arguments)]
 pub(super) fn physical_body_runtime_error(
     source: &RootRigidEnclosure,
     translation_error: [f64; 3],
@@ -2283,7 +2282,6 @@ pub(super) fn physical_body_runtime_error(
     .0)
 }
 
-#[allow(clippy::too_many_arguments)]
 pub(super) fn physical_body_runtime_domains(
     source: &RootRigidEnclosure,
     translation_error: [f64; 3],

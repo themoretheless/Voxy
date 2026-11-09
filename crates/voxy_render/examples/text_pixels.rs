@@ -2,7 +2,6 @@
 use glam::{Mat4, Vec2};
 use voxy_render::{SceneDraw, SceneRenderer, Sprite, SpriteBatch};
 use voxy_text::{FontLimits, GlyphAtlas, RasterFont};
-#[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter =

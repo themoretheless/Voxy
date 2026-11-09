@@ -208,7 +208,6 @@ impl QuadraticCohesiveFace {
     #[must_use]
     pub fn is_fully_broken(&self) -> bool {
         // Full damage is an exact clamped constitutive endpoint, not a tolerance.
-        #[allow(clippy::float_cmp)]
         self.states.iter().all(|s| self.material.damage(s) == 1.)
     }
     #[must_use]

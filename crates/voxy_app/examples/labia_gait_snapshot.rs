@@ -229,7 +229,6 @@ struct PreparedAnatomicalSurface {
 }
 
 impl PreparedAnatomicalSurface {
-    #[allow(clippy::too_many_lines)]
     fn new(display_scale: f64) -> Self {
         let nu = 128usize;
         let nv = 144usize;
@@ -569,7 +568,6 @@ impl PreparedAnatomicalSurface {
     }
 }
 
-#[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let window_mode = std::env::args().any(|a| a == "--window");
     let max_window_frames: Option<u64> =
@@ -901,7 +899,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[allow(clippy::too_many_arguments)]
 fn run_interactive_window(
     instance: wgpu::Instance,
     adapter: wgpu::Adapter,

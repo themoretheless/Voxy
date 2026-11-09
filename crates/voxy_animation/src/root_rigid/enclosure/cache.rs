@@ -754,7 +754,6 @@ impl RootScrewEnclosurePath<'_> {
     /// translated by that exact stored snap fraction; the physical snap itself
     /// is not counted as numerical error. Does not qualify fraction selection,
     /// runtime phase arithmetic or composed f32 scene publication.
-    #[allow(clippy::too_many_arguments)]
     pub fn physical_post_snap_selection_error_bounds(
         &self,
         center: DVec3,

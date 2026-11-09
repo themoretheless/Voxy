@@ -19,7 +19,6 @@ impl CollisionWorld for Boxes {
         if self.0.len() > budget {
             return Err("budget");
         }
-        #[allow(clippy::cast_precision_loss)]
         let origin = [
             body.anchor.x as f64,
             body.anchor.y as f64,

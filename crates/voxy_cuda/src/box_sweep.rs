@@ -126,7 +126,6 @@ fn pack(inputs: &[CudaBoxSweep], max_bytes: usize) -> Result<(u32, Vec<f64>), Cu
 }
 #[cfg(any(feature = "cuda", test))]
 // Hit flags and axis normals are discrete protocol values, so approximate equality is invalid.
-#[allow(clippy::float_cmp)]
 fn decode(words: &[f64]) -> Result<Vec<CudaBoxContact>, CudaError> {
     if !words.len().is_multiple_of(5) {
         return Err(CudaError::InvalidVoxelInput);
@@ -150,7 +149,6 @@ fn decode(words: &[f64]) -> Result<Vec<CudaBoxContact>, CudaError> {
             {
                 return Err(CudaError::InvalidVoxelInput);
             }
-            #[allow(clippy::cast_possible_truncation)]
             Ok(Some((row[1], [row[2] as i8, row[3] as i8, row[4] as i8])))
         })
         .collect()

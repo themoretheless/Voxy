@@ -135,7 +135,6 @@ impl AudioOwnerCheckpoint {
         let prepared = self.playback.prepare(scene, resolve, max_bytes)?;
         self.prepare_playback(prepared, make_worker, make_watcher)
     }
-    #[allow(clippy::too_many_arguments)]
     pub(crate) fn prepare_native(
         &self,
         scene: &SceneGraph,

@@ -164,7 +164,6 @@ fn query(remaining: &mut usize) -> Result<(), PhysicsError> {
 }
 
 // One advancement kernel serves constant-axis arcs and complete cubic spans.
-#[allow(clippy::too_many_arguments)]
 fn advance(
     candidates: &[&AffineBox],
     sample: impl Fn(f64) -> Result<(DVec3, [DVec3; 3]), PhysicsError>,
@@ -190,7 +189,6 @@ fn advance(
 // Advancing by the nominal speed is sufficient: the fixed envelope's boundary
 // moves with that speed too. This is not a true-contact witness or an evaluation
 // error certificate; callers must prove the envelope before physical admission.
-#[allow(clippy::too_many_arguments)]
 fn advance_with_clearance(
     candidates: &[&AffineBox],
     sample: impl Fn(f64) -> Result<(DVec3, [DVec3; 3]), PhysicsError>,
@@ -216,7 +214,6 @@ fn advance_with_clearance(
     )
 }
 
-#[allow(clippy::too_many_arguments)]
 fn advance_with_enclosures(
     candidates: &[&AffineBox],
     sample: impl Fn(f64) -> Result<(DVec3, [DVec3; 3]), PhysicsError>,
@@ -367,7 +364,6 @@ fn corners(edges: [DVec3; 3]) -> [DVec3; 8] {
 }
 
 /// Steps and queries are shared over all spans, never reset at a key boundary.
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_path(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -535,7 +531,6 @@ pub(crate) fn sweep_path(
 
 /// Collision admission for simultaneous authored translation and rotation.
 /// The source frame is conjugated as A M A^-1, including its translated origin.
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_rigid_path(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -696,7 +691,6 @@ fn rigid_body_clearance(
 /// Source-field approximation error is carried separately by the approximation;
 /// grounding and final scene publication are checked at the transaction boundary.
 #[cfg_attr(not(test), allow(dead_code))]
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_rigid_approximation(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -729,7 +723,6 @@ pub(crate) fn sweep_rigid_approximation(
 /// Read-only acceptance query for one immutable assembled fade. The directional
 /// proof is constructed from the same owned source domains as the trajectory.
 #[cfg_attr(not(test), allow(dead_code))]
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_certified_rigid_fade(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -761,7 +754,6 @@ pub(crate) fn sweep_certified_rigid_fade(
     )
 }
 
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_certified_rigid_fade_with_axis_errors(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -798,7 +790,6 @@ pub(crate) fn sweep_certified_rigid_fade_with_axis_errors(
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_rigid_approximation_with_coordinate_certificate(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -832,7 +823,6 @@ pub(crate) fn sweep_rigid_approximation_with_coordinate_certificate(
 
 /// Both the whole-body radius and world-axis bounds are caller proof obligations.
 /// Axis bounds apply in world coordinates, after actor and authored-frame mapping.
-#[allow(clippy::too_many_arguments)]
 fn sweep_rigid_approximation_with_axis_errors(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -970,7 +960,6 @@ fn sweep_rigid_approximation_with_axis_errors(
     Ok(hit)
 }
 
-#[allow(clippy::too_many_arguments)]
 fn sweep_rigid_path_with_clearance(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -1122,7 +1111,6 @@ fn invariant_projection_separates(
     Ok(separated)
 }
 
-#[allow(clippy::too_many_arguments)]
 fn sweep_rigid_path_with_bounds(
     center: DVec3,
     rest_edges: [DVec3; 3],

@@ -387,7 +387,6 @@ impl AnimationClip {
     /// # Errors
     /// Rejects missing, non-finite, unused or incorrectly sized derivative streams,
     /// or cubic channels with fewer than two keys, in addition to `new` validation.
-    #[allow(clippy::too_many_arguments)]
     pub fn new_with_tangents(
         name: impl Into<Arc<str>>,
         duration: f32,

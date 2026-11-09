@@ -565,7 +565,6 @@ impl App {
         )
     }
 
-    #[allow(clippy::too_many_lines)]
     fn create(
         root: &std::path::Path,
         id: AssetId,
@@ -850,7 +849,6 @@ impl App {
         Ok(())
     }
 
-    #[allow(clippy::too_many_lines)]
     fn tick(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         self.poll_model_relink();
         if !self.restore_audio_frozen() {
@@ -1077,11 +1075,6 @@ impl ApplicationHandler for App {
             events.exit();
         }
     }
-    #[allow(
-        clippy::too_many_lines,
-        clippy::cast_possible_truncation,
-        clippy::cast_precision_loss
-    )]
     fn window_event(&mut self, events: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         if self.trace.enabled
             && matches!(
@@ -1785,7 +1778,6 @@ pub fn run_model_viewport(
 /// Runs the viewport with an optional authoring file; existing files load before the window opens.
 /// # Errors
 /// Reports invalid scene/resource references, IO and native viewport failures.
-#[allow(clippy::too_many_lines)]
 pub fn run_model_viewport_with_scene(
     source: &ModelSource,
     mode: ViewportMode,
@@ -1805,7 +1797,6 @@ pub fn run_model_viewport_with_ui_actions(
 ) -> Result<(), Box<dyn std::error::Error>> {
     run_model_viewport_configured(source, mode, scene_path, Some(setup))
 }
-#[allow(clippy::too_many_lines)]
 fn run_model_viewport_configured(
     source: &ModelSource,
     mode: ViewportMode,

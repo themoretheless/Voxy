@@ -40,7 +40,6 @@ impl std::error::Error for MotionError {}
 /// on the CPU. No coordinate anchors are converted to device floats.
 /// # Errors
 /// CUDA or controller failures leave the original character/chassis unchanged.
-#[allow(clippy::too_many_arguments)]
 pub fn step_character(
     compute: &CudaCompute,
     view: &impl VoxelView,
@@ -98,7 +97,6 @@ pub fn character_motion(
 /// Executes the shared controller with CUDA broadphase and f64 contact kernels.
 /// # Errors
 /// CUDA/controller failures leave the original state unchanged; no CPU fallback.
-#[allow(clippy::too_many_arguments)]
 pub fn step_character_collision(
     compute: &CudaCompute,
     view: &impl VoxelView,

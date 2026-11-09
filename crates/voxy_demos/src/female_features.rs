@@ -1,5 +1,5 @@
 //! Surface-attached brow/lash/fuzz strands and animated oral geometry.
-#![allow(clippy::cast_precision_loss)] // Small fixed tessellation counts fit f32 exactly.
+// Small fixed tessellation counts fit f32 exactly.
 use glam::{Mat3, Mat4, Quat, Vec3};
 use voxy_render::SceneVertex;
 
@@ -275,7 +275,7 @@ impl FaceFeatures {
             lash_contact_cache: Default::default(),
         }
     }
-    #[allow(clippy::too_many_arguments)] // Surface attachment inputs and existing render buffers.
+    // Surface attachment inputs and existing render buffers.
     pub fn append(
         &self,
         body: &[SceneVertex],
@@ -295,7 +295,6 @@ impl FaceFeatures {
             &crate::face_parameters::FaceParameters::default(),
         );
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn append_configured(
         &self,
         body: &[SceneVertex],
@@ -310,7 +309,6 @@ impl FaceFeatures {
             body, normals, vertices, indices, head, pose, parameters, None,
         );
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn append_configured_with_bindings(
         &self,
         body: &[SceneVertex],
@@ -770,7 +768,7 @@ pub fn open_mouth_surface(vertices: &[SceneVertex], indices: &mut Vec<u32>) -> u
     *indices = kept;
     (before - indices.len()) / 3
 }
-#[allow(clippy::many_single_char_names)] // Local tube basis and endpoint notation.
+// Local tube basis and endpoint notation.
 fn groom_noise(seed: usize) -> f32 {
     let mut bits = (seed as u32).wrapping_add(0x9e37_79b9);
     bits = (bits ^ (bits >> 16)).wrapping_mul(0x85eb_ca6b);
@@ -1414,7 +1412,6 @@ fn ellipsoid(
         false,
     );
 }
-#[allow(clippy::too_many_arguments)]
 fn ellipsoid_sampled(
     vertices: &mut Vec<SceneVertex>,
     indices: &mut Vec<u32>,

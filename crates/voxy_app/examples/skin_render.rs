@@ -7,7 +7,6 @@ use voxy_demos::female_demo;
 use voxy_demos::female_eyes;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
-#[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut model = female_demo::FemaleDemo::new()?;
     let sequence = std::env::args().any(|a| a == "--sequence");

@@ -39,7 +39,6 @@ impl NewtonianField<'_> {
     /// first-order tidal acceleration. Uniform fields have zero gradient.
     /// # Errors
     /// Invalid sources, singular point masses, or numerical overflow.
-    #[allow(clippy::cast_precision_loss)]
     pub fn tidal_tensor(self, anchor: Origin, local: [f64; 3]) -> Result<[[f64; 3]; 3], Error> {
         // Validate against exactly the same field contract as acceleration.
         self.acceleration(anchor, local)?;
@@ -79,7 +78,7 @@ impl NewtonianField<'_> {
 }
 
 impl GravityField for NewtonianField<'_> {
-    #[allow(clippy::cast_precision_loss)] // Subtract integer origins before conversion.
+    // Subtract integer origins before conversion.
     fn acceleration(&self, anchor: Origin, local: [f64; 3]) -> Result<[f64; 3], Error> {
         self.gravity.accelerations(&[])?;
         if local.iter().any(|v| !v.is_finite()) {

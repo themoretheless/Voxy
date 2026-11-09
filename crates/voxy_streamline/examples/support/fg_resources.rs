@@ -14,7 +14,7 @@ pub fn verify(device: &wgpu::Device, queue: &wgpu::Queue) -> Result<(), String> 
     Ok(())
 }
 
-#[allow(unsafe_code, clippy::too_many_lines)]
+#[allow(unsafe_code)]
 fn verify_resources(device: &wgpu::Device, queue: &wgpu::Queue) -> Result<(), String> {
     use voxy_streamline::scene_dx12::SceneFrameGeneration;
     let create = |width, format, usage| {

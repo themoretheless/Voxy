@@ -41,7 +41,6 @@ struct Smoke {
     )>,
 }
 impl Smoke {
-    #[allow(clippy::too_many_lines)]
     fn draw(&mut self) -> Result<bool, String> {
         if let Some((program, _)) = &mut self.integrated
             && self.attempt == 2
@@ -383,7 +382,6 @@ impl Smoke {
     }
 }
 impl ApplicationHandler for Smoke {
-    #[allow(clippy::too_many_lines)]
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         if self.window.is_some() {
             return;

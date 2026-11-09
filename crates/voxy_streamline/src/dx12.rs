@@ -805,7 +805,7 @@ impl Drop for Submission {
         }
     }
 }
-#[allow(clippy::needless_pass_by_value)] // Used directly as Result::map_err callback.
+// Used directly as Result::map_err callback.
 fn native_error(error: windows::core::Error) -> StreamlineError {
     StreamlineError::Dxgi {
         hresult: error.code().0,

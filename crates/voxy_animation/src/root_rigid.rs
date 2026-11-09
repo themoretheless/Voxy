@@ -1002,7 +1002,6 @@ impl RootRigidCurve {
     /// # Errors
     /// Invalid time, singular rotations, collapsed key times or span/loop work
     /// exhaustion reject the whole path without an accepted prefix.
-    #[allow(clippy::too_many_lines)]
     pub fn path(
         &self,
         start: f64,

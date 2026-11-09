@@ -343,7 +343,6 @@ struct CachedTexture {
     mips: bool,
     texture: Arc<SceneTexture>,
 }
-#[allow(clippy::too_many_arguments)]
 fn model_texture(
     renderer: &SceneRenderer,
     device: &wgpu::Device,

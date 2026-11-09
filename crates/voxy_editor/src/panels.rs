@@ -1,6 +1,5 @@
 //! Small native editor panels rendered through the existing scene renderer.
 // Glyph metrics are bounded to a 512x128 atlas, UI rows to 128 scene objects.
-#![allow(clippy::cast_precision_loss)]
 use crate::InspectorMode;
 use glam::Vec2;
 use std::collections::BTreeMap;
@@ -217,12 +216,6 @@ impl Panels {
             .hovered()
             .and_then(|id| self.focus.action_for(id))
     }
-    #[allow(
-        clippy::too_many_lines,
-        clippy::too_many_arguments,
-        clippy::cast_possible_truncation,
-        clippy::cast_sign_loss
-    )]
     pub fn build(
         &mut self,
         document: &SceneDocument,

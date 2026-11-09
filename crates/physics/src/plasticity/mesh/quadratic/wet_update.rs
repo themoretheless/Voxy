@@ -340,7 +340,6 @@ impl FiniteQuadraticDynamics {
     /// Parameter work remains explicit in the two returned mechanical reports.
     /// # Errors
     /// Any bulk or cohesive failure rolls back mass, velocities, laws and histories.
-    #[allow(clippy::too_many_arguments)]
     pub fn apply_moisture_with_cohesion(
         &mut self,
         water: &[crate::moisture::Cell],
@@ -366,7 +365,6 @@ impl FiniteQuadraticDynamics {
     /// # Errors
     /// Any transport, inertia, constitutive or cohesive failure preserves the
     /// source inventories, material water and entire dynamic body.
-    #[allow(clippy::too_many_arguments)]
     pub fn advance_moisture_supplies_with_cohesion(
         &mut self,
         dt_s: f64,
@@ -420,7 +418,6 @@ impl FiniteQuadraticDynamics {
     /// # Errors
     /// Any uptake, history migration or dynamic integration failure rolls back
     /// sources, water, mechanics and accepted positions for the whole interval.
-    #[allow(clippy::too_many_arguments)]
     pub fn advance_wet_loaded(
         &mut self,
         interval_s: f64,
@@ -467,7 +464,6 @@ impl FiniteQuadraticDynamics {
     /// Gas velocity is an explicit incoming nodal field. Outgoing water momentum
     /// and kinetic energy remain boundary transfers in the bulk report; the
     /// vapor reservoir stores water/latent heat, not gas momentum or sensible heat.
-    #[allow(clippy::too_many_arguments)]
     pub fn advance_moisture_vapor_with_cohesion(
         &mut self,
         dt_s: f64,
@@ -525,7 +521,6 @@ impl FiniteQuadraticDynamics {
     /// material/cohesive update, then adaptive loaded motion. Boundary momentum
     /// and material parameter work are reported separately from dynamic defects.
     /// Any motion failure restores solid, material water and vapor inventories.
-    #[allow(clippy::too_many_arguments)]
     pub fn advance_vapor_loaded(
         &mut self,
         interval_s: f64,
@@ -576,7 +571,6 @@ impl FiniteQuadraticDynamics {
     /// Thermal stores close water enthalpy; free-body water mixing loss heats
     /// material. Supported-body mixing loss, parameter work and other mechanical
     /// dissipation remain report terms. This entry point uses temperature-independent laws.
-    #[allow(clippy::too_many_arguments)]
     pub fn advance_heated_vapor_loaded(
         &mut self,
         interval_s: f64,
@@ -626,7 +620,6 @@ impl FiniteQuadraticDynamics {
     /// All cells and interfaces use the lumped material temperature after heat
     /// and water exchange, before subsequent mixing-loss heat deposition.
     /// Parameter work remains explicit; this is not a monolithic thermal solve.
-    #[allow(clippy::too_many_arguments)]
     pub fn advance_heated_vapor_loaded_calibrated(
         &mut self,
         interval_s: f64,
@@ -672,7 +665,6 @@ impl FiniteQuadraticDynamics {
         )
     }
 
-    #[allow(clippy::too_many_arguments)]
     fn advance_heated_vapor_loaded_impl(
         &mut self,
         interval_s: f64,
@@ -850,7 +842,6 @@ impl FiniteQuadraticDynamics {
     /// Parameter work remains in the returned reports, not thermal-store heat.
     /// # Errors
     /// Invalid fields/laws or healing migration leaves the entire solid unchanged.
-    #[allow(clippy::too_many_arguments)]
     pub fn apply_thermal_moisture_with_cohesion(
         &mut self,
         water: &[crate::moisture::Cell],

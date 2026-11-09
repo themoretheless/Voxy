@@ -165,7 +165,6 @@ fn encode_chain_inner(
         reuses,
     })
 }
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn encode_two_stage(
     device: &wgpu::Device,
     encoder: &mut wgpu::CommandEncoder,

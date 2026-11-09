@@ -1,4 +1,4 @@
-#![allow(clippy::float_cmp)] // Exactly representable impulses and unchanged positions.
+// Exactly representable impulses and unchanged positions.
 use physics::liquid::{Config, Error, Liquid, Material, Particle};
 fn fluid() -> Liquid {
     Liquid::new(

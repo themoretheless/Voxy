@@ -48,7 +48,7 @@ pub fn spatial_gains(
             .clamp(-1.0, 1.0)
     };
     let attenuation = ((f64::from(far) - distance) / f64::from(far - near)).clamp(0.0, 1.0);
-    #[allow(clippy::cast_possible_truncation)] // Normalized gains within [0, 1].
+    // Normalized gains within [0, 1].
     Ok([
         (((1.0 - pan) * 0.5).sqrt() * attenuation) as f32,
         (((1.0 + pan) * 0.5).sqrt() * attenuation) as f32,
@@ -81,7 +81,6 @@ pub fn sabine_eyring_rt60(
     }
     let neg_ln = -(1.0 - f64::from(mean_absorption)).ln();
     let denom = f64::from(surface_area_m2) * neg_ln.max(1e-6);
-    #[allow(clippy::cast_possible_truncation)]
     Ok((0.161 * f64::from(volume_m3) / denom).max(0.0) as f32)
 }
 
@@ -192,7 +191,6 @@ where
         }
     }
     let total_db_loss = f64::from(occluded_voxels) * f64::from(db_loss_per_solid_voxel);
-    #[allow(clippy::cast_possible_truncation)]
     Ok(10.0_f64.powf(-total_db_loss / 20.0).clamp(0.0, 1.0) as f32)
 }
 #[cfg(test)]

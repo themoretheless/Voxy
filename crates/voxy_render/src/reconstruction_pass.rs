@@ -60,7 +60,7 @@ impl ReconstructionGuideMesh {
     /// Material parameters are uniform metallic/roughness for this mesh.
     /// # Errors
     /// Rejects invalid/singular transforms, degenerate normals, reflectance and limits.
-    #[allow(clippy::float_cmp)] // Exact affine row; projective transforms are rejected.
+    // Exact affine row; projective transforms are rejected.
     pub fn from_scene_mesh(
         device: &wgpu::Device,
         mesh: &crate::SceneMesh,
@@ -309,7 +309,6 @@ impl ReconstructionGuidePass {
     /// Use a noncomparison sampler on this device; guide camera/mesh UVs must match.
     /// # Errors
     /// Rejects unsupported texture descriptors and existing camera/distance errors.
-    #[allow(clippy::too_many_arguments)]
     pub fn textured_inputs(
         &self,
         device: &wgpu::Device,
@@ -353,7 +352,6 @@ impl ReconstructionGuidePass {
             material.sampler(),
         )
     }
-    #[allow(clippy::too_many_arguments)]
     fn material_inputs(
         &self,
         device: &wgpu::Device,

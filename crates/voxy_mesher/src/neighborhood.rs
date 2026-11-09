@@ -183,7 +183,6 @@ pub struct MeshingInput {
 }
 
 #[inline]
-#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 pub(crate) fn sample_relative(
     input: &MeshingInput,
     x: i16,
