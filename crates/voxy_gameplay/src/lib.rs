@@ -463,13 +463,17 @@ struct RuntimeBody {
 struct StaticBox {
     half_extents: [f32; 3],
     shape: convex::AffineBox,
-    axis_aligned: bool,
     owner: NodeId,
     min: [f64; 3],
     max: [f64; 3],
 }
 #[derive(Debug)]
-struct StaticWorld(Vec<StaticBox>, SceneId);
+struct StaticWorld(
+    Vec<StaticBox>,
+    SceneId,
+    Vec<convex::AffineBox>,
+    bool,
+);
 impl CollisionWorld for StaticWorld {
     type Obstacle = NodeId;
     type Error = PhysicsError;
@@ -999,24 +1003,19 @@ impl CharacterPhysics {
             .map(|(_, paths)| paths)
     }
 
-    fn fixed_step_with_paths(
-        &mut self,
-        scene: &mut SceneGraph,
-        input: &mut InputMap,
+    fn validate_trajectory_requests<'a>(
+        paths: &[CharacterTrajectoryMotion<'a>],
+        rigid_paths: &[CharacterRigidTrajectoryMotion<'a>],
+        certified: &'a [CharacterCertifiedFadeMotion<'a>],
         dt: f64,
-        motions: &[CharacterMotion],
-        paths: &[CharacterTrajectoryMotion<'_>],
-        rigid_paths: &[CharacterRigidTrajectoryMotion<'_>],
-        certified: &[CharacterCertifiedFadeMotion<'_>],
-        prepare: Option<&mut staged_tick::Prepare<'_>>,
     ) -> Result<
         (
-            Vec<AppliedCharacterMotion>,
-            Vec<AppliedCharacterTrajectoryMotion>,
+            HashMap<NodeId, (&'a voxy_animation::RootRotationPath, glam::DQuat, glam::DVec3)>,
+            HashMap<NodeId, CharacterRigidTrajectoryMotion<'a>>,
+            HashMap<NodeId, &'a CharacterCertifiedFadeMotion<'a>>,
         ),
         PhysicsError,
     > {
-        self.validate_cached(scene)?;
         let mut requested_paths = HashMap::with_capacity(paths.len());
         let mut total_spans = 0_usize;
         for path in paths {
@@ -1085,6 +1084,29 @@ impl CharacterPhysics {
                 return Err(PhysicsError::InvalidMotion);
             }
         }
+        Ok((requested_paths, requested_rigid, certified_by_owner))
+    }
+
+    fn fixed_step_with_paths(
+        &mut self,
+        scene: &mut SceneGraph,
+        input: &mut InputMap,
+        dt: f64,
+        motions: &[CharacterMotion],
+        paths: &[CharacterTrajectoryMotion<'_>],
+        rigid_paths: &[CharacterRigidTrajectoryMotion<'_>],
+        certified: &[CharacterCertifiedFadeMotion<'_>],
+        prepare: Option<&mut staged_tick::Prepare<'_>>,
+    ) -> Result<
+        (
+            Vec<AppliedCharacterMotion>,
+            Vec<AppliedCharacterTrajectoryMotion>,
+        ),
+        PhysicsError,
+    > {
+        self.validate_cached(scene)?;
+        let (requested_paths, requested_rigid, certified_by_owner) =
+            Self::validate_trajectory_requests(paths, rigid_paths, certified, dt)?;
         let mut trajectory_queries = self.trajectory_queries;
         let mut applied_paths = Vec::with_capacity(paths.len() + rigid_paths.len());
         if motions.len() > self.max_bodies {
@@ -1167,6 +1189,7 @@ impl CharacterPhysics {
         let mut next = self.states.clone();
         next.retain(|owner, _| live.contains(owner));
         let world = static_world(scene)?;
+        let shapes = &world.2;
         let move_x = f64::from(input.state("move_x").map_or(0.0, |state| state.value));
         let move_z = f64::from(input.state("move_z").map_or(0.0, |state| state.value));
         let length = move_x.hypot(move_z).max(1.0);
@@ -1190,8 +1213,7 @@ impl CharacterPhysics {
                     return Err(PhysicsError::InitialOverlap);
                 }
                 let mut recovered = precise_center(runtime.state.body);
-                let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();
-                convex::recover_affine(&mut recovered, runtime.edges, &shapes)?;
+                convex::recover_affine(&mut recovered, runtime.edges, shapes)?;
                 relocate(runtime, recovered, *descriptor);
             }
             let config = CharacterConfig {
@@ -1203,9 +1225,7 @@ impl CharacterPhysics {
                 max_slide_iterations: 4,
                 max_candidates_per_sweep: self.max_colliders.max(1),
             };
-            if !aligned_edges(runtime.edges)
-                || world.0.iter().any(|obstacle| !obstacle.axis_aligned)
-            {
+            if !aligned_edges(runtime.edges) || world.3 {
                 step_affine(
                     runtime,
                     *descriptor,
@@ -1237,14 +1257,13 @@ impl CharacterPhysics {
                 let start = precise_center(runtime.state.body);
                 let mut position = start;
                 let mut motion = request.displacement.as_dvec3();
-                let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();
                 let mut carried_velocity = glam::DVec3::from_array(runtime.state.velocity);
                 let grounded = convex::move_body_affine_carrying_velocity(
                     &mut position,
                     runtime.edges,
                     &mut motion,
                     1.0,
-                    &shapes,
+                    shapes,
                     Some(&mut carried_velocity),
                 );
                 relocate(runtime, position, *descriptor);
@@ -1263,7 +1282,7 @@ impl CharacterPhysics {
                         path,
                         *basis,
                         *pivot,
-                        &shapes,
+                        shapes,
                         self.angular_iterations,
                         &mut trajectory_queries,
                     )?;
@@ -1299,7 +1318,7 @@ impl CharacterPhysics {
                             path.scale,
                             request.evaluation_radius,
                             request.evaluation_axes,
-                            &shapes,
+                            shapes,
                             self.angular_iterations,
                             &mut trajectory_queries,
                         )?
@@ -1312,7 +1331,7 @@ impl CharacterPhysics {
                             path.basis,
                             path.origin.as_dvec3(),
                             path.scale,
-                            &shapes,
+                            shapes,
                             self.angular_iterations,
                             &mut trajectory_queries,
                         )?
@@ -1343,7 +1362,7 @@ impl CharacterPhysics {
                         position,
                         runtime.edges,
                         world_angular,
-                        &shapes,
+                        shapes,
                         self.angular_iterations,
                     )?;
                     angular_fraction = hit.fraction;
@@ -1376,7 +1395,7 @@ impl CharacterPhysics {
                         runtime.edges,
                         &mut zero,
                         0.,
-                        &shapes,
+                        shapes,
                         Some(&mut carried_velocity),
                     );
                     runtime.state.velocity = carried_velocity.to_array();
@@ -1406,7 +1425,6 @@ impl CharacterPhysics {
             let mut local = scene.local(owner)?;
             local.translation += position - center;
             local.rotation = runtime.published_rotation;
-            local.matrix()?;
             let matrix = local.matrix()?;
             let composed = if let Some(parent) = scene.parent(owner)? {
                 scene.world_matrix(parent)? * matrix
@@ -1428,11 +1446,10 @@ impl CharacterPhysics {
             if requested_rigid.contains_key(&owner) {
                 // Check both representations after snap/relocation. The rounded
                 // scene matrix is the pose the preparation callback/render sees.
-                let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();
                 angular_sweep::certify_published_pose(
                     physical_center,
                     runtime.edges,
-                    &shapes,
+                    shapes,
                     &mut trajectory_queries,
                 )?;
                 let displayed_edges = [composed.x_axis, composed.y_axis, composed.z_axis]
@@ -1443,7 +1460,7 @@ impl CharacterPhysics {
                 angular_sweep::certify_published_pose(
                     published.as_dvec3(),
                     displayed_edges,
-                    &shapes,
+                    shapes,
                     &mut trajectory_queries,
                 )?;
                 if let Some(receipt) = applied_paths.iter_mut().find(|r| r.owner == owner)
@@ -1461,10 +1478,11 @@ impl CharacterPhysics {
             let mut characters = Vec::with_capacity(edits.len());
             for &(owner, local) in &edits {
                 let runtime = &next[&owner];
+                let local_matrix = local.matrix()?;
                 let world_matrix = if let Some(parent) = scene.parent(owner)? {
-                    scene.world_matrix(parent)? * local.matrix()?
+                    scene.world_matrix(parent)? * local_matrix
                 } else {
-                    local.matrix()?
+                    local_matrix
                 };
                 characters.push(AcceptedCharacterPose {
                     owner,
@@ -1507,13 +1525,12 @@ fn step_affine(
         velocity.y = descriptor.jump_speed;
     }
     velocity.y = (velocity.y + descriptor.gravity * dt).max(-100.);
-    let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();
     let grounded = convex::move_body_affine_carrying_velocity(
         &mut position,
         runtime.edges,
         &mut velocity,
         dt,
-        &shapes,
+        &world.2,
         None,
     );
     relocate(runtime, position, descriptor);
@@ -1549,6 +1566,8 @@ fn relocate(runtime: &mut RuntimeBody, position: glam::DVec3, descriptor: Charac
 }
 fn static_world(scene: &SceneGraph) -> Result<StaticWorld, PhysicsError> {
     let mut boxes = Vec::new();
+    let mut shapes = Vec::new();
+    let mut any_non_axis_aligned = false;
     for (owner, collider) in scene.active_components::<BoxCollider>() {
         let shape = affine_box(scene, owner, collider.half_extents)?;
         let extent = shape
@@ -1558,23 +1577,24 @@ fn static_world(scene: &SceneGraph) -> Result<StaticWorld, PhysicsError> {
             .sum::<glam::DVec3>();
         let min = (shape.center - extent).to_array();
         let max = (shape.center + extent).to_array();
-        let axis_aligned = shape.edges.iter().all(|edge| {
-            edge.to_array()
-                .into_iter()
-                .filter(|value| *value != 0.)
-                .count()
-                == 1
-        });
+        if !aligned_edges(shape.edges) {
+            any_non_axis_aligned = true;
+        }
+        shapes.push(shape);
         boxes.push(StaticBox {
             half_extents: collider.half_extents,
             shape,
-            axis_aligned,
             owner,
             min,
             max,
         });
     }
-    Ok(StaticWorld(boxes, scene.identity()))
+    Ok(StaticWorld(
+        boxes,
+        scene.identity(),
+        shapes,
+        any_non_axis_aligned,
+    ))
 }
 fn aligned_edges(edges: [glam::DVec3; 3]) -> bool {
     edges.iter().all(|edge| {

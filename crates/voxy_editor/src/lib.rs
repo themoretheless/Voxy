@@ -1378,38 +1378,7 @@ impl ApplicationHandler for App {
             events.exit();
         }
         if self.error.is_none() {
-            match if self.standalone && self.smoke_deadline.is_some() {
-                if self.frames >= 3
-                    && self.play.simulation_ticks > 0
-                    && self.graphics.as_ref().is_some_and(|graphics| {
-                        self.required_gpu_assets()
-                            .iter()
-                            .all(|id| graphics.models.contains_key(id))
-                            && self.ui_live.ready()
-                            && graphics.ui_presented
-                    })
-                {
-                    println!(
-                        "GAME NATIVE PASS frames={} ticks={}",
-                        self.frames, self.play.simulation_ticks
-                    );
-                    Ok(true)
-                } else {
-                    Ok(false)
-                }
-            } else if self.animation_smoke.is_some() {
-                self.animation_acceptance()
-            } else if self.prefab_smoke.is_some() {
-                self.prefab_acceptance()
-            } else if self.lod_smoke.is_some() {
-                self.lod_acceptance()
-            } else if self.scene3d_smoke.is_some() {
-                self.scene3d_acceptance()
-            } else if self.gameplay_smoke.is_some() {
-                self.gameplay_acceptance()
-            } else {
-                self.smoke_acceptance()
-            } {
+            match self.evaluate_window_acceptance() {
                 Ok(true) => events.exit(),
                 Ok(false) => {}
                 Err(error) => {
@@ -1450,6 +1419,42 @@ impl ApplicationHandler for App {
             window.request_redraw();
         } else {
             events.set_control_flow(ControlFlow::Wait);
+        }
+    }
+}
+impl App {
+    fn evaluate_window_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
+        if self.standalone && self.smoke_deadline.is_some() {
+            if self.frames >= 3
+                && self.play.simulation_ticks > 0
+                && self.graphics.as_ref().is_some_and(|graphics| {
+                    self.required_gpu_assets()
+                        .iter()
+                        .all(|id| graphics.models.contains_key(id))
+                        && self.ui_live.ready()
+                        && graphics.ui_presented
+                })
+            {
+                println!(
+                    "GAME NATIVE PASS frames={} ticks={}",
+                    self.frames, self.play.simulation_ticks
+                );
+                Ok(true)
+            } else {
+                Ok(false)
+            }
+        } else if self.animation_smoke.is_some() {
+            self.animation_acceptance()
+        } else if self.prefab_smoke.is_some() {
+            self.prefab_acceptance()
+        } else if self.lod_smoke.is_some() {
+            self.lod_acceptance()
+        } else if self.scene3d_smoke.is_some() {
+            self.scene3d_acceptance()
+        } else if self.gameplay_smoke.is_some() {
+            self.gameplay_acceptance()
+        } else {
+            self.smoke_acceptance()
         }
     }
 }

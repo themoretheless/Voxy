@@ -52,6 +52,7 @@ pub mod medium;
 pub mod moisture;
 pub mod planar;
 pub mod rigid_motion;
+pub mod rotation;
 pub mod spin_path;
 pub mod strand;
 mod symmetric_eigen;
@@ -173,11 +174,8 @@ pub mod circulation;
 /// Conservative plasma/interstitial/lymph fluid and protein exchange.
 pub mod lymph;
 
-mod tissue_contact;
-
 pub mod surface_film;
 
-mod surface_film_contact;
 mod triangle_index;
 
 pub mod suspension;

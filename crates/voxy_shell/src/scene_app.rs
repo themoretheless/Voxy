@@ -1238,71 +1238,7 @@ impl SceneApp {
         self.frame_loop.set_paused(self.paused);
         let frame_work = self.frame_loop.advance(f64::from(elapsed));
         if !self.paused {
-            if let Some(female) = &mut self.female {
-                if self.full_model_worker.is_none() {
-                    let step = if self.smoke {
-                        1.0 / 60.0
-                    } else {
-                        f64::from(elapsed)
-                    };
-                    match self.hair_solver.as_mut() {
-                        Some(solver) => female.advance_with_hair_solver(step, solver)?,
-                        None => female.advance(step)?,
-                    }
-                }
-            } else if let Some(xray) = &mut self.xray {
-                if self.smoke {
-                    xray.enabled = !(40..80).contains(&self.frames);
-                    xray.slow = self.frames >= 80;
-                }
-                xray.advance(f64::from(dt))?;
-            } else if let Some(fem) = &mut self.fem {
-                fem.advance(if self.smoke {
-                    1.0 / 60.0
-                } else {
-                    f64::from(dt)
-                })?;
-            } else if let Some(wear) = &mut self.wear {
-                wear.advance(if self.smoke {
-                    1.0 / 60.0
-                } else {
-                    f64::from(dt)
-                })?;
-            } else if let Some(liquids) = &mut self.liquids {
-                liquids.advance(if self.smoke {
-                    1.0 / 60.0
-                } else {
-                    f64::from(dt)
-                })?;
-            } else if let Some(tissues) = &mut self.tissues {
-                tissues.advance(f64::from(dt))?;
-                if let Some(title) = tissues
-                    .body_motion_title()
-                    .or_else(|| tissues.biomechanics_title())
-                    && let Some(window) = &self.window
-                {
-                    set_title_if_changed(window, &mut self.last_title, title);
-                }
-            } else if let Some(gravity) = &mut self.gravity {
-                if self.smoke && self.frames >= 30 && self.gravity_smoke_stage == 0 {
-                    gravity.reset(true);
-                    self.gravity_smoke_stage = 1;
-                }
-                if self.smoke
-                    && self.frames >= 90
-                    && self.gravity_smoke_stage == 1
-                    && gravity.contacts > 0
-                {
-                    println!("GRAVITY COLLISION PASS: {} contacts", gravity.contacts);
-                    gravity.planet();
-                    self.gravity_smoke_stage = 2;
-                }
-                gravity.advance(f64::from(dt))?;
-            } else if let Some(strands) = &mut self.strands {
-                strands.advance(f64::from(dt))?;
-            } else {
-                self.angle += dt;
-            }
+            self.advance_active_demo(elapsed, dt)?;
         }
         if self.rush.is_none() {
             self.graph.set_local(
@@ -1372,6 +1308,8 @@ impl SceneApp {
         if size.width == 0 || size.height == 0 {
             return Ok(());
         }
+        let camera = self.build_scene_camera(size)?;
+        let vp = camera.view_projection()?;
         let Some(r) = &mut self.resources else {
             return Ok(());
         };
@@ -1406,48 +1344,6 @@ impl SceneApp {
                 return Err("resized surface exposed uninitialized motion frame".into());
             }
         }
-        let camera = SceneCamera {
-            eye: if let Some(female) = &self.female {
-                female.eye()
-            } else if let Some(xray) = &self.xray {
-                xray.eye(self.graph.world_matrix(self.object)?)
-            } else if self.liquid_optics && self.liquids.is_some() {
-                Vec3::new(0.0, 0.1, 3.5)
-            } else if self.liquids.is_some() || self.wear.is_some() || self.fem.is_some() {
-                Vec3::new(0.0, 1.4, 6.0)
-            } else if let Some(gravity) = &self.gravity {
-                Vec3::new(
-                    0.0,
-                    0.0,
-                    gravity.camera_distance(size.width as f32 / size.height as f32),
-                )
-            } else if self.strands.is_some() || self.tissues.is_some() {
-                Vec3::new(0.0, 0.2, 6.0)
-            } else {
-                Vec3::new(3.0, 2.0, 4.0)
-            },
-            target: if let Some(female) = &self.female {
-                female.focus()
-            } else if let Some(xray) = &self.xray {
-                self.graph
-                    .world_matrix(self.object)?
-                    .transform_point3(xray.focus())
-            } else if self.liquid_optics && self.liquids.is_some() {
-                Vec3::new(0.0, -0.35, 0.0)
-            } else {
-                Vec3::ZERO
-            },
-            up: Vec3::Y,
-            projection: SceneProjection::Perspective {
-                vertical_fov: 55_f32.to_radians(),
-                aspect: size.width as f32 / size.height as f32,
-                near: 0.1,
-                far: self.gravity.as_ref().map_or(100.0, |gravity| {
-                    gravity.camera_distance(size.width as f32 / size.height as f32) * 3.0
-                }),
-            },
-        };
-        let vp = camera.view_projection()?;
         if let Some(female) = &self.female {
             if let Some((creases, pixels)) = r
                 .atlas_update
@@ -1748,7 +1644,7 @@ impl SceneApp {
         let mut surface_light_audit_encoded = false;
         let mut temporal_candidate = None;
         let mut temporal_submitted = None;
-        let mut draw_list = Vec::new();
+        let mut draw_list = Vec::with_capacity(3);
         let draws = [
             SceneDraw {
                 geometry: r
@@ -2086,117 +1982,250 @@ impl SceneApp {
             self.frames += 1;
         }
         if self.smoke {
-            if self.frames == 30 {
-                let _ = window.request_inner_size(winit::dpi::PhysicalSize::new(720, 540));
+            self.verify_smoke_completion(outcome, event_loop)?;
+        }
+        Ok(())
+    }
+
+    fn advance_active_demo(
+        &mut self,
+        elapsed: f32,
+        dt: f32,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        if let Some(female) = &mut self.female {
+            if self.full_model_worker.is_none() {
+                let step = if self.smoke {
+                    1.0 / 60.0
+                } else {
+                    f64::from(elapsed)
+                };
+                match self.hair_solver.as_mut() {
+                    Some(solver) => female.advance_with_hair_solver(step, solver)?,
+                    None => female.advance(step)?,
+                }
             }
-            if self.frames == 60 {
-                let _ = window.request_inner_size(winit::dpi::PhysicalSize::new(900, 650));
+        } else if let Some(xray) = &mut self.xray {
+            if self.smoke {
+                xray.enabled = !(40..80).contains(&self.frames);
+                xray.slow = self.frames >= 80;
             }
-            if self.frames >= 120
-                && self
+            xray.advance(f64::from(dt))?;
+        } else if let Some(fem) = &mut self.fem {
+            fem.advance(if self.smoke {
+                1.0 / 60.0
+            } else {
+                f64::from(dt)
+            })?;
+        } else if let Some(wear) = &mut self.wear {
+            wear.advance(if self.smoke {
+                1.0 / 60.0
+            } else {
+                f64::from(dt)
+            })?;
+        } else if let Some(liquids) = &mut self.liquids {
+            liquids.advance(if self.smoke {
+                1.0 / 60.0
+            } else {
+                f64::from(dt)
+            })?;
+        } else if let Some(tissues) = &mut self.tissues {
+            tissues.advance(f64::from(dt))?;
+            if let Some(title) = tissues
+                .body_motion_title()
+                .or_else(|| tissues.biomechanics_title())
+                && let Some(window) = &self.window
+            {
+                set_title_if_changed(window, &mut self.last_title, title);
+            }
+        } else if let Some(gravity) = &mut self.gravity {
+            if self.smoke && self.frames >= 30 && self.gravity_smoke_stage == 0 {
+                gravity.reset(true);
+                self.gravity_smoke_stage = 1;
+            }
+            if self.smoke
+                && self.frames >= 90
+                && self.gravity_smoke_stage == 1
+                && gravity.contacts > 0
+            {
+                println!("GRAVITY COLLISION PASS: {} contacts", gravity.contacts);
+                gravity.planet();
+                self.gravity_smoke_stage = 2;
+            }
+            gravity.advance(f64::from(dt))?;
+        } else if let Some(strands) = &mut self.strands {
+            strands.advance(f64::from(dt))?;
+        } else {
+            self.angle += dt;
+        }
+        Ok(())
+    }
+
+    fn build_scene_camera(
+        &self,
+        size: winit::dpi::PhysicalSize<u32>,
+    ) -> Result<SceneCamera, Box<dyn std::error::Error>> {
+        let aspect = size.width as f32 / size.height as f32;
+        Ok(SceneCamera {
+            eye: if let Some(female) = &self.female {
+                female.eye()
+            } else if let Some(xray) = &self.xray {
+                xray.eye(self.graph.world_matrix(self.object)?)
+            } else if self.liquid_optics && self.liquids.is_some() {
+                Vec3::new(0.0, 0.1, 3.5)
+            } else if self.liquids.is_some() || self.wear.is_some() || self.fem.is_some() {
+                Vec3::new(0.0, 1.4, 6.0)
+            } else if let Some(gravity) = &self.gravity {
+                Vec3::new(0.0, 0.0, gravity.camera_distance(aspect))
+            } else if self.strands.is_some() || self.tissues.is_some() {
+                Vec3::new(0.0, 0.2, 6.0)
+            } else {
+                Vec3::new(3.0, 2.0, 4.0)
+            },
+            target: if let Some(female) = &self.female {
+                female.focus()
+            } else if let Some(xray) = &self.xray {
+                self.graph
+                    .world_matrix(self.object)?
+                    .transform_point3(xray.focus())
+            } else if self.liquid_optics && self.liquids.is_some() {
+                Vec3::new(0.0, -0.35, 0.0)
+            } else {
+                Vec3::ZERO
+            },
+            up: Vec3::Y,
+            projection: SceneProjection::Perspective {
+                vertical_fov: 55_f32.to_radians(),
+                aspect,
+                near: 0.1,
+                far: self
                     .gravity
                     .as_ref()
-                    .is_none_or(|g| self.gravity_smoke_stage == 2 && g.planet_verified())
-            {
-                if let Some(gravity) = &self.gravity {
-                    if gravity.contacts == 0 {
-                        return Err("gravity smoke did not observe a collision".into());
-                    }
-                    println!(
-                        "GRAVITY SMOKE PASS: {} steps, {} contacts; inverted walking, jump and landing verified",
-                        gravity.steps, gravity.contacts
-                    );
+                    .map_or(100.0, |gravity| gravity.camera_distance(aspect) * 3.0),
+            },
+        })
+    }
+
+    fn verify_smoke_completion(
+        &mut self,
+        outcome: RenderOutcome,
+        event_loop: &ActiveEventLoop,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let Some(window) = &self.window else {
+            return Ok(());
+        };
+        let Some(r) = &self.resources else {
+            return Ok(());
+        };
+        if self.frames == 30 {
+            let _ = window.request_inner_size(winit::dpi::PhysicalSize::new(720, 540));
+        }
+        if self.frames == 60 {
+            let _ = window.request_inner_size(winit::dpi::PhysicalSize::new(900, 650));
+        }
+        if self.frames >= 120
+            && self
+                .gravity
+                .as_ref()
+                .is_none_or(|g| self.gravity_smoke_stage == 2 && g.planet_verified())
+        {
+            if let Some(gravity) = &self.gravity {
+                if gravity.contacts == 0 {
+                    return Err("gravity smoke did not observe a collision".into());
                 }
-                if let Some(fem) = &self.fem {
-                    fem.verify()?;
-                    println!(
-                        "FEM SMOKE PASS: {} accepted steps; mass, momenta, fracture energy and work budgets verified",
-                        fem.steps
-                    );
-                }
-                if let Some(wear) = &self.wear {
-                    wear.verify()?;
-                    println!(
-                        "WEAR SMOKE PASS: {} steps, voxel geometry/collision and grain mass verified",
-                        wear.steps
-                    );
-                }
-                if let Some(liquids) = &self.liquids {
-                    liquids.verify()?;
-                    if self.liquid_optics {
-                        if r.optical_frames != u64::from(self.frames) {
-                            return Err("liquid optical passes missing from presented frame".into());
-                        }
-                        println!(
-                            "LIQUID OPTICAL SMOKE PASS: {} presented frames",
-                            r.optical_frames
-                        );
-                    }
-                    println!(
-                        "LIQUID SMOKE PASS: {} fixed steps, both reservoirs conserve mass and spread",
-                        liquids.steps
-                    );
-                }
-                if let Some(female) = &self.female {
-                    female.verify()?;
-                    if female.film.is_some() {
-                        if r.optical_frames != u64::from(self.frames) {
-                            return Err(
-                                "film layers were absent from a presented smoke frame".into()
-                            );
-                        }
-                        if r.film_mass_checks != u64::from(self.frames) {
-                            return Err("film mass checks missed a presented smoke frame".into());
-                        }
-                        println!(
-                            "FILM MASS SMOKE PASS: {} checks, max source-adjusted relative error={:.9e}",
-                            r.film_mass_checks, r.film_mass_max_relative_error
-                        );
-                        println!(
-                            "FILM OPTICAL SMOKE PASS: {} presented layers, temporal={}, resize_stages={}",
-                            r.optical_frames,
-                            self.motion_vectors == MotionMode::Enabled,
-                            self.resize_stages
-                        );
-                    }
-                    println!(
-                        "FEMALE SKIN SMOKE PASS: {} nonlinear steps with rendered surface deformation",
-                        female.steps
-                    );
-                }
-                if self.resize_stages != 3 {
-                    return Err("requested resize events were not observed".into());
-                }
-                if self.rush_smoke {
-                    let rush = self.rush.as_mut().ok_or("missing Rush smoke runtime")?;
-                    rush.verify_smoke(&self.graph)?;
-                    if r.script_transforms.len() != 2 {
-                        return Err("spawned Rush cube was not submitted for rendering".into());
-                    }
-                    println!(
-                        "RUSH SMOKE PASS: player moved, one cube rendered, reward event changed scale, real physics contacts delivered"
-                    );
-                }
-                println!("SCENE SMOKE PASS: {} presented frames", self.frames);
-                self.done = true;
-                event_loop.exit();
-            } else if self.started.elapsed().as_secs()
-                > if self.xray.is_some()
-                    || self.female.is_some()
-                    || self.strands.is_some()
-                    || self.gravity.is_some()
-                {
-                    60
-                } else {
-                    20
-                }
-            {
-                return Err(format!(
-                    "scene smoke timed out: frames={}, resize_stages={}, outcome={outcome:?}",
-                    self.frames, self.resize_stages
-                )
-                .into());
+                println!(
+                    "GRAVITY SMOKE PASS: {} steps, {} contacts; inverted walking, jump and landing verified",
+                    gravity.steps, gravity.contacts
+                );
             }
+            if let Some(fem) = &self.fem {
+                fem.verify()?;
+                println!(
+                    "FEM SMOKE PASS: {} accepted steps; mass, momenta, fracture energy and work budgets verified",
+                    fem.steps
+                );
+            }
+            if let Some(wear) = &self.wear {
+                wear.verify()?;
+                println!(
+                    "WEAR SMOKE PASS: {} steps, voxel geometry/collision and grain mass verified",
+                    wear.steps
+                );
+            }
+            if let Some(liquids) = &self.liquids {
+                liquids.verify()?;
+                if self.liquid_optics {
+                    if r.optical_frames != u64::from(self.frames) {
+                        return Err("liquid optical passes missing from presented frame".into());
+                    }
+                    println!(
+                        "LIQUID OPTICAL SMOKE PASS: {} presented frames",
+                        r.optical_frames
+                    );
+                }
+                println!(
+                    "LIQUID SMOKE PASS: {} fixed steps, both reservoirs conserve mass and spread",
+                    liquids.steps
+                );
+            }
+            if let Some(female) = &self.female {
+                female.verify()?;
+                if female.film.is_some() {
+                    if r.optical_frames != u64::from(self.frames) {
+                        return Err(
+                            "film layers were absent from a presented smoke frame".into()
+                        );
+                    }
+                    if r.film_mass_checks != u64::from(self.frames) {
+                        return Err("film mass checks missed a presented smoke frame".into());
+                    }
+                    println!(
+                        "FILM MASS SMOKE PASS: {} checks, max source-adjusted relative error={:.9e}",
+                        r.film_mass_checks, r.film_mass_max_relative_error
+                    );
+                    println!(
+                        "FILM OPTICAL SMOKE PASS: {} presented layers, temporal={}, resize_stages={}",
+                        r.optical_frames,
+                        self.motion_vectors == MotionMode::Enabled,
+                        self.resize_stages
+                    );
+                }
+                println!(
+                    "FEMALE SKIN SMOKE PASS: {} nonlinear steps with rendered surface deformation",
+                    female.steps
+                );
+            }
+            if self.resize_stages != 3 {
+                return Err("requested resize events were not observed".into());
+            }
+            if self.rush_smoke {
+                let rush = self.rush.as_mut().ok_or("missing Rush smoke runtime")?;
+                rush.verify_smoke(&self.graph)?;
+                if r.script_transforms.len() != 2 {
+                    return Err("spawned Rush cube was not submitted for rendering".into());
+                }
+                println!(
+                    "RUSH SMOKE PASS: player moved, one cube rendered, reward event changed scale, real physics contacts delivered"
+                );
+            }
+            println!("SCENE SMOKE PASS: {} presented frames", self.frames);
+            self.done = true;
+            event_loop.exit();
+        } else if self.started.elapsed().as_secs()
+            > if self.xray.is_some()
+                || self.female.is_some()
+                || self.strands.is_some()
+                || self.gravity.is_some()
+            {
+                60
+            } else {
+                20
+            }
+        {
+            return Err(format!(
+                "scene smoke timed out: frames={}, resize_stages={}, outcome={outcome:?}",
+                self.frames, self.resize_stages
+            )
+            .into());
         }
         Ok(())
     }

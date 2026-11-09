@@ -1189,9 +1189,29 @@ impl Pose {
     /// Rejects a pose created for a different skeleton, invalid blend data,
     /// or overflowing global/palette matrices.
     pub fn skin_matrices(&self, skeleton: &Skeleton) -> Result<Vec<Mat4>, AnimationError> {
-        let mut global = Vec::with_capacity(self.local.len());
+        if self.local.len() != skeleton.joints.len() {
+            return Err(AnimationError::PoseCountMismatch);
+        }
+        if !rigs_match(&self.rig, &skeleton.joints) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
+        let mut global = [Mat4::IDENTITY; MAX_JOINTS];
         let mut skin = Vec::with_capacity(self.local.len());
-        self.skin_matrices_into(skeleton, &mut global, &mut skin)?;
+        for (index, (local, joint)) in self.local.iter().zip(skeleton.joints.iter()).enumerate() {
+            if !local.is_valid() {
+                return Err(AnimationError::InvalidPose(index));
+            }
+            let matrix = joint.parent.map_or_else(
+                || local.matrix(),
+                |parent| global[usize::from(parent)] * local.matrix(),
+            );
+            let palette = matrix * joint.inverse_bind;
+            if !usable_linear(matrix.as_dmat4()) || !usable_linear(palette.as_dmat4()) {
+                return Err(AnimationError::InvalidPose(index));
+            }
+            global[index] = matrix;
+            skin.push(palette);
+        }
         Ok(skin)
     }
 

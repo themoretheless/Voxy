@@ -2,6 +2,7 @@ use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::Path;
 
+use voxy_core::{ByteReader, ByteWriter};
 use voxy_world::{BlockRegistry, CommitReceipt};
 
 use crate::codec::checksum;
@@ -271,107 +272,89 @@ fn encode_commit(commit: &PersistCommit, registry: &BlockRegistry) -> Result<Vec
     if commit.chunks.is_empty() || commit.chunks.len() > MAX_CHUNKS_PER_COMMIT {
         return Err(WalError::InvalidChunkCount(commit.chunks.len()));
     }
-    let mut payload = Vec::new();
-    put_u16(&mut payload, VERSION);
-    put_u64(&mut payload, commit.sequence);
-    put_u16(
-        &mut payload,
+    let mut payload_buf = Vec::new();
+    let mut payload = ByteWriter::new(&mut payload_buf);
+    payload.write_u16_le(VERSION);
+    payload.write_u64_le(commit.sequence);
+    payload.write_u16_le(
         u16::try_from(commit.chunks.len())
             .map_err(|_| WalError::InvalidChunkCount(commit.chunks.len()))?,
     );
     for chunk in &commit.chunks {
         let bytes = encode_chunk(chunk, registry)?;
-        put_u32(
-            &mut payload,
+        payload.write_u32_le(
             u32::try_from(bytes.len()).map_err(|_| WalError::FrameTooLarge)?,
         );
-        payload.extend_from_slice(&bytes);
+        payload.write_bytes(&bytes);
     }
     if payload.len() > MAX_FRAME {
         return Err(WalError::FrameTooLarge);
     }
-    let mut frame = Vec::with_capacity(payload.len() + 12);
-    frame.extend_from_slice(MAGIC);
-    put_u32(
-        &mut frame,
+    let mut frame_buf = Vec::with_capacity(payload.len() + 12);
+    let mut frame = ByteWriter::new(&mut frame_buf);
+    frame.write_bytes(MAGIC);
+    frame.write_u32_le(
         u32::try_from(payload.len()).map_err(|_| WalError::FrameTooLarge)?,
     );
-    frame.extend_from_slice(&payload);
-    let crc = checksum(&frame);
-    put_u32(&mut frame, crc);
-    Ok(frame)
+    frame.write_bytes(payload.as_slice());
+    let crc = checksum(frame.as_slice());
+    frame.write_u32_le(crc);
+    Ok(frame_buf)
 }
 
 fn decode_commit(bytes: &[u8], registry: &BlockRegistry) -> Result<PersistCommit, WalError> {
-    let mut reader = Reader::new(bytes);
-    if reader.u16()? != VERSION {
+    let mut reader = ByteReader::new(bytes);
+    if reader.read_u16_le().map_err(|_| WalError::Truncated)? != VERSION {
         return Err(WalError::UnsupportedVersion);
     }
-    let sequence = reader.u64()?;
-    let count = usize::from(reader.u16()?);
+    let sequence = reader.read_u64_le().map_err(|_| WalError::Truncated)?;
+    let count = usize::from(reader.read_u16_le().map_err(|_| WalError::Truncated)?);
     if count == 0 || count > MAX_CHUNKS_PER_COMMIT {
         return Err(WalError::InvalidChunkCount(count));
     }
     let mut chunks = Vec::with_capacity(count);
     for _ in 0..count {
-        let length = usize::try_from(reader.u32()?).map_err(|_| WalError::FrameTooLarge)?;
+        let length = usize::try_from(reader.read_u32_le().map_err(|_| WalError::Truncated)?)
+            .map_err(|_| WalError::FrameTooLarge)?;
         if length > MAX_FRAME {
             return Err(WalError::FrameTooLarge);
         }
-        chunks.push(decode_chunk(reader.take(length)?, registry)?);
+        let chunk_bytes = reader.read_bytes(length).map_err(|_| WalError::Truncated)?;
+        chunks.push(decode_chunk(chunk_bytes, registry)?);
     }
-    if !reader.done() {
+    if !reader.is_empty() {
         return Err(WalError::TrailingBytes);
     }
     Ok(PersistCommit { sequence, chunks })
 }
 
-fn put_u16(output: &mut Vec<u8>, value: u16) {
-    output.extend_from_slice(&value.to_le_bytes());
-}
-fn put_u32(output: &mut Vec<u8>, value: u32) {
-    output.extend_from_slice(&value.to_le_bytes());
-}
-fn put_u64(output: &mut Vec<u8>, value: u64) {
-    output.extend_from_slice(&value.to_le_bytes());
-}
-
-struct Reader<'a> {
-    bytes: &'a [u8],
-    offset: usize,
-}
-
-impl<'a> Reader<'a> {
-    fn new(bytes: &'a [u8]) -> Self {
-        Self { bytes, offset: 0 }
+/// Computes a normalized WAL checkpoint urgency score in `[0.0, 1.0]` combining log size
+/// pressure (`wal_bytes / max_wal_bytes`), dirty-page count pressure, and time elapsed since the
+/// last region checkpoint.
+#[must_use]
+pub fn wal_checkpoint_urgency_score(
+    wal_bytes: u64,
+    max_wal_bytes: u64,
+    dirty_pages: usize,
+    elapsed_since_sync_s: f32,
+) -> f32 {
+    let size_ratio = if max_wal_bytes > 0 {
+        (wal_bytes as f64 / max_wal_bytes as f64).clamp(0.0, 1.0) as f32
+    } else {
+        1.0
+    };
+    let page_ratio = (dirty_pages as f32 / 256.0).clamp(0.0, 1.0);
+    let time_ratio = if elapsed_since_sync_s.is_finite() && elapsed_since_sync_s > 0.0 {
+        (elapsed_since_sync_s / 60.0).clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    if size_ratio >= 0.95 {
+        return 1.0;
     }
-    fn take(&mut self, length: usize) -> Result<&'a [u8], WalError> {
-        let end = self.offset.checked_add(length).ok_or(WalError::Truncated)?;
-        let value = self
-            .bytes
-            .get(self.offset..end)
-            .ok_or(WalError::Truncated)?;
-        self.offset = end;
-        Ok(value)
-    }
-    fn u16(&mut self) -> Result<u16, WalError> {
-        Ok(u16::from_le_bytes(
-            self.take(2)?.try_into().map_err(|_| WalError::Truncated)?,
-        ))
-    }
-    fn u32(&mut self) -> Result<u32, WalError> {
-        Ok(u32::from_le_bytes(
-            self.take(4)?.try_into().map_err(|_| WalError::Truncated)?,
-        ))
-    }
-    fn u64(&mut self) -> Result<u64, WalError> {
-        Ok(u64::from_le_bytes(
-            self.take(8)?.try_into().map_err(|_| WalError::Truncated)?,
-        ))
-    }
-    fn done(&self) -> bool {
-        self.offset == self.bytes.len()
-    }
+    (0.55 * size_ratio + 0.30 * page_ratio + 0.15 * time_ratio)
+        .max(size_ratio)
+        .clamp(0.0, 1.0)
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -635,31 +618,4 @@ mod tests {
         assert!((wal_checkpoint_urgency_score(0, 1024, 0, 0.0) - 0.0).abs() < 1e-6);
         assert!(wal_checkpoint_urgency_score(900, 1000, 128, 30.0) > 0.85);
     }
-}
-
-/// Computes a normalized WAL checkpoint urgency score in `[0.0, 1.0]` combining log size
-/// pressure (`wal_bytes / max_wal_bytes`), dirty-page count pressure, and time elapsed since the
-/// last region checkpoint.
-#[must_use]
-pub fn wal_checkpoint_urgency_score(
-    wal_bytes: u64,
-    max_wal_bytes: u64,
-    dirty_pages: usize,
-    elapsed_since_sync_s: f32,
-) -> f32 {
-    let size_ratio = if max_wal_bytes > 0 {
-        (wal_bytes as f64 / max_wal_bytes as f64).clamp(0.0, 1.0) as f32
-    } else {
-        1.0
-    };
-    let page_ratio = (dirty_pages as f32 / 256.0).clamp(0.0, 1.0);
-    let time_ratio = if elapsed_since_sync_s.is_finite() && elapsed_since_sync_s > 0.0 {
-        (elapsed_since_sync_s / 60.0).clamp(0.0, 1.0)
-    } else {
-        0.0
-    };
-    if size_ratio >= 0.95 {
-        return 1.0;
-    }
-    (0.55 * size_ratio + 0.30 * page_ratio + 0.15 * time_ratio).clamp(0.0, 1.0)
 }

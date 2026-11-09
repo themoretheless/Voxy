@@ -440,21 +440,21 @@ pub(super) fn material_point_wrenches(
             MotionLoad {
                 force: load.force,
                 force_rate: rate.force,
-                torque: crate::astrophysics_spin::TorquePolynomial {
+                torque: crate::rotation::TorquePolynomial {
                     value: load.torque,
                     rate: rate.torque,
-                    ..crate::astrophysics_spin::TorquePolynomial::constant([0.; 3])
+                    ..crate::rotation::TorquePolynomial::constant([0.; 3])
                 },
             },
             MotionLoad {
                 force: moment.force,
                 force_rate: moment.force_rate,
-                torque: crate::astrophysics_spin::TorquePolynomial {
+                torque: crate::rotation::TorquePolynomial {
                     value: moment.torque_at(orientation, 0.).map_err(load_error)?,
                     rate: moment
                         .torque_rate_at(orientation, omega, 0.)
                         .map_err(load_error)?,
-                    ..crate::astrophysics_spin::TorquePolynomial::constant([0.; 3])
+                    ..crate::rotation::TorquePolynomial::constant([0.; 3])
                 },
             },
         ])

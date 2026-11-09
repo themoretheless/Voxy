@@ -1,6 +1,6 @@
 //! Point-contact impulse mechanics, shared by particles and finite rigid bodies.
 //! Geometry, event timing and persistent ownership remain with their callers.
-use crate::{astrophysics_spin::Spin, gravity::Body};
+use crate::{gravity::Body, rotation::Spin};
 type Vector = [f64; 3];
 mod reaction;
 pub use reaction::{

@@ -1,10 +1,7 @@
 //! Versioned project identity manifest. File IO belongs outside the frame loop.
-use crate::{AssetId, AssetLocations, LocationError, SourcePath};
+use crate::{AssetId, AssetLocations, LocationError, SourcePath, serialize_json_bounded};
 use serde::{Deserialize, Serialize};
-use std::{
-    io::{Read, Write},
-    path::Path,
-};
+use std::{io::Read, path::Path};
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Manifest {
@@ -26,22 +23,6 @@ struct ManifestRef<'a> {
 struct BindingRef<'a> {
     asset: &'a str,
     source: &'a str,
-}
-struct LimitedWriter {
-    bytes: Vec<u8>,
-    limit: usize,
-}
-impl Write for LimitedWriter {
-    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
-        if bytes.len() > self.limit - self.bytes.len() {
-            return Err(std::io::Error::other("manifest capacity exceeded"));
-        }
-        self.bytes.extend_from_slice(bytes);
-        Ok(bytes.len())
-    }
-    fn flush(&mut self) -> std::io::Result<()> {
-        Ok(())
-    }
 }
 #[derive(Debug)]
 pub enum ManifestError {
@@ -69,13 +50,7 @@ impl AssetLocations {
                 })
                 .collect(),
         };
-        let mut writer = LimitedWriter {
-            bytes: Vec::new(),
-            limit: max_document_bytes,
-        };
-        serde_json::to_writer_pretty(&mut writer, &manifest)
-            .map_err(|_| LocationError::Capacity)?;
-        String::from_utf8(writer.bytes).map_err(|_| LocationError::InvalidManifest)
+        serialize_json_bounded(&manifest, max_document_bytes).map_err(|_| LocationError::Capacity)
     }
     /// Builds a detached validated registry; failures cannot modify a live table.
     /// Limits bound document bytes before parsing, then binding count/logical bytes.

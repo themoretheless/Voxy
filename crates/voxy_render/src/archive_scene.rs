@@ -469,34 +469,103 @@ fn depth(device: &wgpu::Device, w: u32, h: u32) -> wgpu::Texture {
         view_formats: &[],
     })
 }
-fn texture_entry(binding: u32, depth: bool) -> wgpu::BindGroupLayoutEntry {
-    wgpu::BindGroupLayoutEntry {
-        binding,
-        visibility: wgpu::ShaderStages::FRAGMENT,
-        ty: wgpu::BindingType::Texture {
-            sample_type: if depth {
-                wgpu::TextureSampleType::Depth
-            } else {
-                wgpu::TextureSampleType::Float { filterable: true }
-            },
-            view_dimension: wgpu::TextureViewDimension::D2,
-            multisampled: false,
-        },
-        count: None,
+fn validate_street_ray_env_config(device: &wgpu::Device) -> Result<(), crate::ComputeError> {
+    if std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some() {
+        if !device.features().contains(wgpu::Features::SUBGROUP)
+            || [
+                "VOXY_STREET_RAY_QUEUE",
+                "VOXY_STREET_RAY_STAGES",
+                "VOXY_STREET_PAIRED_DDA",
+                "VOXY_STREET_COMPUTE_GI",
+            ]
+            .iter()
+            .any(|key| std::env::var_os(key).is_none())
+            || std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_some()
+        {
+            return Err(crate::ComputeError::Validation(
+                "persistent exact DDA requires subgroup support and queued staged paired compute; select either persistent DDA or pixel-stack traversal".into(),
+            ));
+        }
     }
-}
-fn uniform_entry(binding: u32, visibility: wgpu::ShaderStages) -> wgpu::BindGroupLayoutEntry {
-    wgpu::BindGroupLayoutEntry {
-        binding,
-        visibility,
-        ty: wgpu::BindingType::Buffer {
-            ty: wgpu::BufferBindingType::Uniform,
-            has_dynamic_offset: false,
-            min_binding_size: None,
-        },
-        count: None,
+    if std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some()
+        && std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_none()
+    {
+        return Err(crate::ComputeError::Validation(
+            "forced fallback is reserved for precision qualification".into(),
+        ));
     }
+    if std::env::var_os("VOXY_STREET_RAY_CAPTURE_DIR").is_some()
+        && [
+            "VOXY_STREET_RAY_QUEUE",
+            "VOXY_STREET_RAY_STAGES",
+            "VOXY_STREET_PAIRED_DDA",
+            "VOXY_STREET_COMPUTE_GI",
+        ]
+        .iter()
+        .any(|key| std::env::var_os(key).is_none())
+    {
+        return Err(crate::ComputeError::Validation(
+            "ray capture requires queued staged paired compute queries".into(),
+        ));
+    }
+    if std::env::var_os("VOXY_STREET_RAY_HIERARCHY_NEAR_FIRST").is_some()
+        && std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_none()
+    {
+        return Err(crate::ComputeError::Validation(
+            "near-first scheduling requires the pixel ray hierarchy".into(),
+        ));
+    }
+    if std::env::var_os("VOXY_STREET_RAY_HIERARCHY_RECIPROCAL").is_some()
+        && std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_none()
+    {
+        return Err(crate::ComputeError::Validation(
+            "reciprocal intervals require the pixel ray hierarchy".into(),
+        ));
+    }
+    if std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_some()
+        && [
+            "VOXY_STREET_RAY_QUEUE",
+            "VOXY_STREET_RAY_STAGES",
+            "VOXY_STREET_PAIRED_DDA",
+            "VOXY_STREET_COMPUTE_GI",
+            "VOXY_STREET_DDA_HIERARCHY",
+        ]
+        .iter()
+        .any(|key| std::env::var_os(key).is_none())
+    {
+        return Err(crate::ComputeError::Validation(
+            "pixel ray hierarchy requires queued staged paired compute and depth hierarchy".into(),
+        ));
+    }
+    if std::env::var_os("VOXY_STREET_RAY_SPATIAL_KEY").is_some()
+        && std::env::var_os("VOXY_STREET_RAY_QUEUE").is_none()
+    {
+        return Err(crate::ComputeError::Validation(
+            "spatial ray key requires the global queue".into(),
+        ));
+    }
+    if std::env::var_os("VOXY_STREET_RAY_QUEUE").is_some() {
+        if [
+            "VOXY_STREET_RAY_STAGES",
+            "VOXY_STREET_PAIRED_DDA",
+            "VOXY_STREET_COMPUTE_GI",
+        ]
+        .iter()
+        .any(|key| std::env::var_os(key).is_none())
+        {
+            return Err(crate::ComputeError::Validation(
+                "ray queue requires staged paired compute queries".into(),
+            ));
+        }
+        if std::env::var_os("VOXY_STREET_RAY_COHERENT").is_some() {
+            return Err(crate::ComputeError::Validation(
+                "choose global queue or local ray permutation".into(),
+            ));
+        }
+    }
+    Ok(())
 }
+
 impl ArchiveSceneRenderer {
     pub fn new(
         device: &wgpu::Device,
@@ -562,98 +631,7 @@ impl ArchiveSceneRenderer {
         bounds: (Vec3, Vec3),
         environment: Option<ArchiveEnvironmentSource>,
     ) -> Result<Self, crate::ComputeError> {
-        if std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some() {
-            if !device.features().contains(wgpu::Features::SUBGROUP)
-                || [
-                    "VOXY_STREET_RAY_QUEUE",
-                    "VOXY_STREET_RAY_STAGES",
-                    "VOXY_STREET_PAIRED_DDA",
-                    "VOXY_STREET_COMPUTE_GI",
-                ]
-                .iter()
-                .any(|key| std::env::var_os(key).is_none())
-                || std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_some()
-            {
-                return Err(crate::ComputeError::Validation("persistent exact DDA requires subgroup support and queued staged paired compute; select either persistent DDA or pixel-stack traversal".into()));
-            }
-        }
-        if std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some()
-            && std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_none()
-        {
-            return Err(crate::ComputeError::Validation(
-                "forced fallback is reserved for precision qualification".into(),
-            ));
-        }
-        if std::env::var_os("VOXY_STREET_RAY_CAPTURE_DIR").is_some()
-            && [
-                "VOXY_STREET_RAY_QUEUE",
-                "VOXY_STREET_RAY_STAGES",
-                "VOXY_STREET_PAIRED_DDA",
-                "VOXY_STREET_COMPUTE_GI",
-            ]
-            .iter()
-            .any(|key| std::env::var_os(key).is_none())
-        {
-            return Err(crate::ComputeError::Validation(
-                "ray capture requires queued staged paired compute queries".into(),
-            ));
-        }
-        if std::env::var_os("VOXY_STREET_RAY_HIERARCHY_NEAR_FIRST").is_some()
-            && std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_none()
-        {
-            return Err(crate::ComputeError::Validation(
-                "near-first scheduling requires the pixel ray hierarchy".into(),
-            ));
-        }
-        if std::env::var_os("VOXY_STREET_RAY_HIERARCHY_RECIPROCAL").is_some()
-            && std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_none()
-        {
-            return Err(crate::ComputeError::Validation(
-                "reciprocal intervals require the pixel ray hierarchy".into(),
-            ));
-        }
-        if std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_some()
-            && [
-                "VOXY_STREET_RAY_QUEUE",
-                "VOXY_STREET_RAY_STAGES",
-                "VOXY_STREET_PAIRED_DDA",
-                "VOXY_STREET_COMPUTE_GI",
-                "VOXY_STREET_DDA_HIERARCHY",
-            ]
-            .iter()
-            .any(|key| std::env::var_os(key).is_none())
-        {
-            return Err(crate::ComputeError::Validation(
-                "pixel ray hierarchy requires queued staged paired compute and depth hierarchy"
-                    .into(),
-            ));
-        }
-        if std::env::var_os("VOXY_STREET_RAY_SPATIAL_KEY").is_some()
-            && std::env::var_os("VOXY_STREET_RAY_QUEUE").is_none()
-        {
-            return Err(crate::ComputeError::Validation(
-                "spatial ray key requires the global queue".into(),
-            ));
-        }
-        if std::env::var_os("VOXY_STREET_RAY_QUEUE").is_some() {
-            if [
-                "VOXY_STREET_RAY_STAGES",
-                "VOXY_STREET_PAIRED_DDA",
-                "VOXY_STREET_COMPUTE_GI",
-            ]
-            .iter()
-            .any(|key| std::env::var_os(key).is_none())
-            {
-                return Err(crate::ComputeError::Validation(
-                    "ray queue requires staged paired compute queries".into(),
-                ));
-            }
-            if std::env::var_os("VOXY_STREET_RAY_COHERENT").is_some() {
-                return Err(crate::ComputeError::Validation(
-                    "choose global queue or local ray permutation".into(),
-                ));
-            }
-        }
+        validate_street_ray_env_config(device)?;
         let init_started = std::time::Instant::now();
         let init_trace = |stage: &str| {
             if std::env::var_os("VOXY_STREET_INIT_TRACE").is_some() {
@@ -742,125 +720,53 @@ impl ArchiveSceneRenderer {
         let mut preparation = device.create_command_encoder(&Default::default());
         environment.encode(&mut preparation);
         queue.submit([preparation.finish()]);
-        let camera_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("archive camera and lights"),
-            entries: &[
-                uniform_entry(0, wgpu::ShaderStages::VERTEX_FRAGMENT),
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-            ],
-        });
-        let mut material_entries = vec![uniform_entry(0, wgpu::ShaderStages::FRAGMENT)];
+        let frag = wgpu::ShaderStages::FRAGMENT;
+        let unfilterable_float = wgpu::TextureSampleType::Float { filterable: false };
+        let filterable_float = wgpu::TextureSampleType::Float { filterable: true };
+        let depth_sample = wgpu::TextureSampleType::Depth;
+        let camera_layout =
+            voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(Some("archive camera and lights"), 2)
+                .uniform_buffer(0, wgpu::ShaderStages::VERTEX_FRAGMENT)
+                .uniform_buffer(1, frag)
+                .build(device);
+        let mut material_builder = voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(
+            Some("authored four-map PBR material"),
+            6,
+        )
+        .uniform_buffer(0, frag);
         for i in 1..=4 {
-            material_entries.push(texture_entry(i, false));
+            material_builder = material_builder.texture_2d(i, frag, filterable_float);
         }
-        material_entries.push(wgpu::BindGroupLayoutEntry {
-            binding: 5,
-            visibility: wgpu::ShaderStages::FRAGMENT,
-            ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-            count: None,
-        });
-        let material_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("authored four-map PBR material"),
-            entries: &material_entries,
-        });
-        let frame_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("opaque transmission and sun shadows"),
-            entries: &[
-                texture_entry(0, false),
-                wgpu::BindGroupLayoutEntry {
-                    binding: 9,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture {
-                        sample_type: wgpu::TextureSampleType::Float { filterable: false },
-                        view_dimension: wgpu::TextureViewDimension::D2,
-                        multisampled: false,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 8,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture {
-                        sample_type: wgpu::TextureSampleType::Float { filterable: false },
-                        view_dimension: wgpu::TextureViewDimension::D2,
-                        multisampled: false,
-                    },
-                    count: None,
-                },
-                texture_entry(1, true),
-                texture_entry(3, true),
-                texture_entry(4, true),
-                wgpu::BindGroupLayoutEntry {
-                    binding: 7,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture {
-                        sample_type: wgpu::TextureSampleType::Float { filterable: false },
-                        view_dimension: wgpu::TextureViewDimension::D2,
-                        multisampled: false,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 5,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 6,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison),
-                    count: None,
-                },
-            ],
-        });
-        let post_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("archive HDR display"),
-            entries: &[
-                texture_entry(0, false),
-                uniform_entry(1, wgpu::ShaderStages::FRAGMENT),
-                texture_entry(2, true),
-                uniform_entry(3, wgpu::ShaderStages::FRAGMENT),
-                texture_entry(4, false),
-                wgpu::BindGroupLayoutEntry {
-                    binding: 5,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-                    count: None,
-                },
-                texture_entry(6, false),
-                texture_entry(7, true),
-                wgpu::BindGroupLayoutEntry {
-                    binding: 8,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison),
-                    count: None,
-                },
-            ],
-        });
+        let material_layout = material_builder
+            .sampler(5, frag, wgpu::SamplerBindingType::Filtering)
+            .build(device);
+        let frame_layout = voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(
+            Some("opaque transmission and sun shadows"),
+            10,
+        )
+        .texture_2d(0, frag, filterable_float)
+        .texture_2d(9, frag, unfilterable_float)
+        .texture_2d(8, frag, unfilterable_float)
+        .texture_2d(1, frag, depth_sample)
+        .texture_2d(3, frag, depth_sample)
+        .texture_2d(4, frag, depth_sample)
+        .texture_2d(7, frag, unfilterable_float)
+        .storage_buffer(5, frag, true)
+        .uniform_buffer(6, frag)
+        .sampler(2, frag, wgpu::SamplerBindingType::Comparison)
+        .build(device);
+        let post_layout =
+            voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(Some("archive HDR display"), 9)
+                .texture_2d(0, frag, filterable_float)
+                .uniform_buffer(1, frag)
+                .texture_2d(2, frag, depth_sample)
+                .uniform_buffer(3, frag)
+                .texture_2d(4, frag, filterable_float)
+                .sampler(5, frag, wgpu::SamplerBindingType::Filtering)
+                .texture_2d(6, frag, filterable_float)
+                .texture_2d(7, frag, depth_sample)
+                .sampler(8, frag, wgpu::SamplerBindingType::Comparison)
+                .build(device);
         init_trace("scene_shader_begin");
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("archive PBR"),

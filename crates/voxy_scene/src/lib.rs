@@ -318,7 +318,7 @@ impl SceneGraph {
         local: Transform,
     ) -> Result<NodeId, SceneGraphError> {
         self.bump_structure();
-        local.matrix()?;
+        let local_matrix = local.matrix()?;
         if let Some(parent) = parent {
             self.node(parent)?;
         }
@@ -339,7 +339,6 @@ impl SceneGraph {
             slot,
             generation: self.slots[slot].generation,
         };
-        let local_matrix = local.matrix()?;
         let (world, effective_active) = if let Some(parent) = parent {
             let parent = self.node(parent)?;
             (
@@ -464,14 +463,31 @@ impl SceneGraph {
     pub fn active_components_with_revisions<A: Any + Send + Sync, B: Any + Send + Sync>(
         &self,
     ) -> impl Iterator<Item = (NodeId, &A, ComponentRevision, &B, ComponentRevision)> + '_ {
+        let first_key = TypeId::of::<A>();
         let second_key = TypeId::of::<B>();
-        self.slot_components::<A>()
-            .filter(|(_, node, _)| node.effective_active)
-            .filter_map(move |(owner, node, first)| {
-                let first_revision = node.components.get(&TypeId::of::<A>())?.1;
+        self.slots
+            .iter()
+            .enumerate()
+            .filter_map(move |(slot, entry)| {
+                let node = entry.node.as_ref()?;
+                if !node.effective_active {
+                    return None;
+                }
+                let first = node.components.get(&first_key)?;
+                let first_value = first.0.downcast_ref::<A>()?;
                 let second = node.components.get(&second_key)?;
-                let value = second.0.downcast_ref::<B>()?;
-                Some((owner, first, first_revision, value, second.1))
+                let second_value = second.0.downcast_ref::<B>()?;
+                Some((
+                    NodeId {
+                        scene: self.id,
+                        slot,
+                        generation: entry.generation,
+                    },
+                    first_value,
+                    first.1,
+                    second_value,
+                    second.1,
+                ))
             })
     }
 

@@ -11,8 +11,12 @@ pub use artifact_cache::{ArtifactCache, ArtifactCacheError, gdsf_cache_eviction_
 mod files;
 mod import_worker;
 mod inputs;
+mod json_document;
+pub use json_document::{JsonDocument, JsonDocumentError, serialize_json_bounded};
 mod locations;
 mod manifest;
+mod package;
+pub use package::{PackageLimits, ResourcePackage};
 
 mod streaming;
 pub use streaming::{
@@ -425,6 +429,35 @@ impl<T> AssetCatalog<T> {
         self.pending
     }
 }
+
+/// Estimates the total byte footprint of a full 2D mipmap pyramid down to `1x1`
+/// for either 4-byte-per-pixel RGBA8 (`false`) or 16-byte `4x4` BC7 blocks (`true`).
+#[must_use]
+pub fn estimate_mip_chain_bytes(width: u32, height: u32, block_compressed_bc7: bool) -> u64 {
+    if width == 0 || height == 0 {
+        return 0;
+    }
+    let mut w = width;
+    let mut h = height;
+    let mut total = 0u64;
+    loop {
+        let level_bytes = if block_compressed_bc7 {
+            let blocks_x = u64::from(w.div_ceil(4));
+            let blocks_y = u64::from(h.div_ceil(4));
+            blocks_x.saturating_mul(blocks_y).saturating_mul(16)
+        } else {
+            u64::from(w).saturating_mul(u64::from(h)).saturating_mul(4)
+        };
+        total = total.saturating_add(level_bytes);
+        if w == 1 && h == 1 {
+            break;
+        }
+        w = (w / 2).max(1);
+        h = (h / 2).max(1);
+    }
+    total
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -615,42 +648,6 @@ mod tests {
         catalog.complete(&ticket, Ok(5)).unwrap();
         assert_eq!(*catalog.snapshot(&id()).unwrap(), 5);
     }
-}
-
-mod package;
-pub use package::{PackageLimits, ResourcePackage};
-
-/// Estimates the total byte footprint of a full 2D mipmap pyramid down to `1x1`
-/// for either 4-byte-per-pixel RGBA8 (`false`) or 16-byte `4x4` BC7 blocks (`true`).
-#[must_use]
-pub fn estimate_mip_chain_bytes(width: u32, height: u32, block_compressed_bc7: bool) -> u64 {
-    if width == 0 || height == 0 {
-        return 0;
-    }
-    let mut w = width;
-    let mut h = height;
-    let mut total = 0u64;
-    loop {
-        let level_bytes = if block_compressed_bc7 {
-            let blocks_x = u64::from(w.div_ceil(4));
-            let blocks_y = u64::from(h.div_ceil(4));
-            blocks_x.saturating_mul(blocks_y).saturating_mul(16)
-        } else {
-            u64::from(w).saturating_mul(u64::from(h)).saturating_mul(4)
-        };
-        total = total.saturating_add(level_bytes);
-        if w == 1 && h == 1 {
-            break;
-        }
-        w = (w / 2).max(1);
-        h = (h / 2).max(1);
-    }
-    total
-}
-
-#[cfg(test)]
-mod mip_budget_tests {
-    use super::*;
 
     #[test]
     fn estimate_mip_chain_bytes_handles_rgba8_and_bc7_block_floors() {

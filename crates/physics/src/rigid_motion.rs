@@ -1,8 +1,8 @@
 //! Prepared COM motion and shared rotation under affine point forces or polynomial torque.
 //! Collision geometry and event response remain with the owning world.
 use crate::{
-    astrophysics_spin::TorquePolynomial,
     contact::ContactBody,
+    rotation::TorquePolynomial,
     spin_path::{Config, PathError, SpinPath},
 };
 
@@ -365,7 +365,7 @@ impl ContactBody {
                     external,
                 }) = material
                 {
-                    use crate::astrophysics_spin::{ArcTorque, RotatingArmForce, rotate};
+                    use crate::rotation::{ArcTorque, RotatingArmForce, rotate};
                     let relative = TorquePolynomial::moving_affine_arm(
                         std::array::from_fn(|k| {
                             source.initial.motion.position[k] - self.motion.position[k]
@@ -988,7 +988,7 @@ impl RigidMotion {
         force: [f64; 3],
         force_rate: [f64; 3],
     ) -> Result<MaterialPointWork, Error> {
-        use crate::astrophysics_spin::{cross, rotate, rotating_arm_integrals};
+        use crate::rotation::{cross, rotate, rotating_arm_integrals};
         if local.iter().any(|x| !x.is_finite())
             || (source.initial.spin.is_none() && local != [0.; 3])
             || (self.initial.spin.is_none() && (self != source || local != [0.; 3]))
@@ -1079,7 +1079,7 @@ impl RigidMotion {
         time: f64,
         local: [f64; 3],
     ) -> Result<MaterialPointMotion, Error> {
-        use crate::astrophysics_spin::{cross, rotate};
+        use crate::rotation::{cross, rotate};
         if local.iter().any(|x| !x.is_finite()) {
             return Err(Error::InvalidInput);
         }

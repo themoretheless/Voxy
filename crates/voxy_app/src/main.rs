@@ -449,19 +449,14 @@ impl ApplicationHandler for VoxyApp {
                         && event.state == ElementState::Pressed
                         && !event.repeat
                     {
-                        if self.bodycam_mode && !self.clean_cam_mode && !self.camcorder_mode {
-                            self.bodycam_mode = false;
-                        } else {
-                            self.bodycam_mode = true;
-                            self.clean_cam_mode = false;
-                            self.camcorder_mode = false;
-                        }
-                        if let Some(renderer) = &mut self.renderer {
-                            renderer
-                                .bodycam_rig_mut()
-                                .set_lens_profile(voxy_render::PhotorealLensProfile::Bodycam);
-                            renderer.set_bodycam_enabled(self.bodycam_mode);
-                        }
+                        let enable =
+                            !(self.bodycam_mode && !self.clean_cam_mode && !self.camcorder_mode);
+                        self.apply_camera_profile(
+                            enable,
+                            false,
+                            false,
+                            voxy_render::PhotorealLensProfile::Bodycam,
+                        );
                         println!(
                             "Voxy Bodycam Photorealistic Mode: {}",
                             if self.bodycam_mode { "ON" } else { "OFF" }
@@ -470,20 +465,13 @@ impl ApplicationHandler for VoxyApp {
                         && event.state == ElementState::Pressed
                         && !event.repeat
                     {
-                        if self.bodycam_mode && self.clean_cam_mode {
-                            self.bodycam_mode = false;
-                            self.clean_cam_mode = false;
-                        } else {
-                            self.bodycam_mode = true;
-                            self.clean_cam_mode = true;
-                            self.camcorder_mode = false;
-                        }
-                        if let Some(renderer) = &mut self.renderer {
-                            renderer
-                                .bodycam_rig_mut()
-                                .set_lens_profile(voxy_render::PhotorealLensProfile::CleanCam);
-                            renderer.set_bodycam_enabled(self.bodycam_mode);
-                        }
+                        let enable = !(self.bodycam_mode && self.clean_cam_mode);
+                        self.apply_camera_profile(
+                            enable,
+                            enable,
+                            false,
+                            voxy_render::PhotorealLensProfile::CleanCam,
+                        );
                         println!(
                             "Voxy Clean Photorealistic Camera (Cam): {}",
                             if self.bodycam_mode && self.clean_cam_mode {
@@ -496,20 +484,13 @@ impl ApplicationHandler for VoxyApp {
                         && event.state == ElementState::Pressed
                         && !event.repeat
                     {
-                        if self.bodycam_mode && self.camcorder_mode {
-                            self.bodycam_mode = false;
-                            self.camcorder_mode = false;
-                        } else {
-                            self.bodycam_mode = true;
-                            self.clean_cam_mode = false;
-                            self.camcorder_mode = true;
-                        }
-                        if let Some(renderer) = &mut self.renderer {
-                            renderer
-                                .bodycam_rig_mut()
-                                .set_lens_profile(voxy_render::PhotorealLensProfile::Camcorder);
-                            renderer.set_bodycam_enabled(self.bodycam_mode);
-                        }
+                        let enable = !(self.bodycam_mode && self.camcorder_mode);
+                        self.apply_camera_profile(
+                            enable,
+                            false,
+                            enable,
+                            voxy_render::PhotorealLensProfile::Camcorder,
+                        );
                         println!(
                             "Voxy Hand-Held Video Camcorder Mode: {}",
                             if self.bodycam_mode && self.camcorder_mode {
@@ -842,6 +823,22 @@ impl ApplicationHandler for VoxyApp {
 }
 
 impl VoxyApp {
+    fn apply_camera_profile(
+        &mut self,
+        bodycam: bool,
+        clean_cam: bool,
+        camcorder: bool,
+        profile: voxy_render::PhotorealLensProfile,
+    ) {
+        self.bodycam_mode = bodycam;
+        self.clean_cam_mode = clean_cam;
+        self.camcorder_mode = camcorder;
+        if let Some(renderer) = &mut self.renderer {
+            renderer.bodycam_rig_mut().set_lens_profile(profile);
+            renderer.set_bodycam_enabled(self.bodycam_mode);
+        }
+    }
+
     fn handle_pet_key(&mut self, code: KeyCode) -> bool {
         let action = match code {
             KeyCode::KeyE => PetAction::Feed,
@@ -1448,11 +1445,19 @@ impl VoxyApp {
         };
         if let Some(world) = &self.world {
             self.animal_check_tick += 1;
-            let mut companion_bodies: Vec<_> = self
-                .companions
-                .iter()
-                .map(animals::Companion::body)
-                .collect();
+            let empty_aabb = AnchoredAabb {
+                anchor: VoxelPos { x: 0, y: 0, z: 0 },
+                min: [0.0; 3],
+                max: [0.0; 3],
+            };
+            let mut companion_bodies = [empty_aabb; 4];
+            let companion_count = self.companions.len().min(companion_bodies.len());
+            for (slot, animal) in companion_bodies[..companion_count]
+                .iter_mut()
+                .zip(&self.companions)
+            {
+                *slot = animal.body();
+            }
             for (index, animal) in self.companions.iter_mut().enumerate() {
                 let target = if self.animal_check
                     && (self.animal_check_tick < 180
@@ -1471,21 +1476,30 @@ impl VoxyApp {
                 } else {
                     self.actor_position + Vec3::X * if index == 0 { 1.2 } else { -1.2 }
                 };
-                let mut obstacles: Vec<_> = companion_bodies
-                    .iter()
-                    .enumerate()
-                    .filter(|(other, _)| *other != index)
-                    .map(|(_, body)| *body)
-                    .collect();
-                if let Some(character) = &self.character {
-                    obstacles.push(character.body);
+                let mut obstacles = [empty_aabb; 4];
+                let mut obstacle_count = 0;
+                for (other, &body) in companion_bodies[..companion_count].iter().enumerate() {
+                    if other != index && obstacle_count < obstacles.len() {
+                        obstacles[obstacle_count] = body;
+                        obstacle_count += 1;
+                    }
                 }
-                if let Err(error) = animal.tick_with_bodies(world, target, dt, &obstacles) {
+                if let Some(character) = &self.character
+                    && obstacle_count < obstacles.len()
+                {
+                    obstacles[obstacle_count] = character.body;
+                    obstacle_count += 1;
+                }
+                if let Err(error) =
+                    animal.tick_with_bodies(world, target, dt, &obstacles[..obstacle_count])
+                {
                     self.startup_failure = Some(format!("Animal physics failed: {error}"));
                     event_loop.exit();
                     return false;
                 }
-                companion_bodies[index] = animal.body();
+                if index < companion_count {
+                    companion_bodies[index] = animal.body();
+                }
             }
         }
         if self.renderer.is_some() {

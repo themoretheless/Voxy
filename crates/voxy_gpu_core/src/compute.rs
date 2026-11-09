@@ -78,37 +78,25 @@ impl ComputeProgram {
             return Err(ComputeError::Validation(error.to_string()));
         }
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let mut entries = vec![wgpu::BindGroupLayoutEntry {
-            binding: 0,
-            visibility: wgpu::ShaderStages::COMPUTE,
-            ty: wgpu::BindingType::Buffer {
-                ty: wgpu::BufferBindingType::Storage { read_only: false },
-                has_dynamic_offset: false,
-                min_binding_size: None,
-            },
-            count: None,
-        }];
+        let mut layout_builder = crate::BindGroupLayoutBuilder::with_capacity(
+            Some("compute storage ABI"),
+            if scene_inputs { 3 } else { 1 },
+        )
+        .storage_buffer(0, wgpu::ShaderStages::COMPUTE, false);
         if scene_inputs {
-            for (binding, sample_type) in [
-                (1, wgpu::TextureSampleType::Float { filterable: false }),
-                (2, wgpu::TextureSampleType::Depth),
-            ] {
-                entries.push(wgpu::BindGroupLayoutEntry {
-                    binding,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Texture {
-                        sample_type,
-                        view_dimension: wgpu::TextureViewDimension::D2,
-                        multisampled: false,
-                    },
-                    count: None,
-                });
-            }
+            layout_builder = layout_builder
+                .texture_2d(
+                    1,
+                    wgpu::ShaderStages::COMPUTE,
+                    wgpu::TextureSampleType::Float { filterable: false },
+                )
+                .texture_2d(
+                    2,
+                    wgpu::ShaderStages::COMPUTE,
+                    wgpu::TextureSampleType::Depth,
+                );
         }
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("compute storage ABI"),
-            entries: &entries,
-        });
+        let layout = layout_builder.build(device);
         let mut layouts = vec![Some(&layout)];
         if let Some(additional) = additional_layout {
             layouts.push(Some(additional));

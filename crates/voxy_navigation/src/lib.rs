@@ -359,20 +359,13 @@ impl GridSearch {
             work += 1;
             self.expanded += 1;
             let cell = grid.cell(index);
-            let neighbors = [
-                cell.x.checked_sub(1).map(|x| Cell { x, ..cell }),
-                (cell.x + 1 < grid.width).then_some(Cell {
-                    x: cell.x + 1,
-                    ..cell
-                }),
-                cell.y.checked_sub(1).map(|y| Cell { y, ..cell }),
-                (cell.y + 1 < grid.height).then_some(Cell {
-                    y: cell.y + 1,
-                    ..cell
-                }),
+            let candidates = [
+                (cell.x > 0).then(|| index - 1),
+                (cell.x + 1 < grid.width).then(|| index + 1),
+                (cell.y > 0).then(|| index - grid.width),
+                (cell.y + 1 < grid.height).then(|| index + grid.width),
             ];
-            for cell in neighbors.into_iter().flatten() {
-                let next = grid.index(cell)?;
+            for next in candidates.into_iter().flatten() {
                 if !grid.blocked[next] && self.parents[next] == usize::MAX {
                     self.parents[next] = index;
                     self.queue.push_back(next);
