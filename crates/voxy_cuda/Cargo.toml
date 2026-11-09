@@ -18,4 +18,4 @@ cudarc = { version = "0.19.9", optional = true, default-features = false, featur
 workspace = true
 
 [target.'cfg(target_os = "linux")'.dev-dependencies]
-ash = "0.38.0"
+ash.workspace = true

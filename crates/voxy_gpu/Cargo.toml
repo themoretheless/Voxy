@@ -10,7 +10,7 @@ default = []
 cuda = ["voxy_cuda/cuda"]
 
 [dependencies]
-thiserror = "2"
+thiserror.workspace = true
 physics = { path = "../physics" }
 physics_voxel = { path = "../physics_voxel" }
 voxy_cuda = { path = "../voxy_cuda" }
@@ -18,10 +18,10 @@ voxy_core = { path = "../voxy_core" }
 voxy_animation = { path = "../voxy_animation" }
 voxy_world = { path = "../voxy_world" }
 voxy_gpu_core = { path = "../voxy_gpu_core" }
-wgpu = "30.0.1"
-pollster = "1.0.1"
-bytemuck = "1.25.2"
-glam = "0.33.6"
+wgpu.workspace = true
+pollster.workspace = true
+bytemuck.workspace = true
+glam.workspace = true
 
 [lints]
 workspace = true

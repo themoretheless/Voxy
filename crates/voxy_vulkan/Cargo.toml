@@ -11,11 +11,11 @@ cuda = ["dep:voxy_cuda", "voxy_cuda/cuda"]
 
 [target.'cfg(any(target_os = "linux", target_os = "windows"))'.dependencies]
 voxy_cuda = { path = "../voxy_cuda", optional = true }
-ash = "0.38.0"
-wgpu = "30.0.1"
+ash.workspace = true
+wgpu.workspace = true
 
 [target.'cfg(target_os = "windows")'.dependencies]
-windows = { version = "0.62", features = ["Win32_Graphics_Direct3D12", "Win32_Graphics_Dxgi_Common", "Win32_Security"] }
+windows = { workspace = true, features = ["Win32_Graphics_Direct3D12", "Win32_Graphics_Dxgi_Common", "Win32_Security"] }
 
 [lints]
 workspace = true
@@ -23,8 +23,8 @@ workspace = true
 [target.'cfg(any(target_os = "linux", target_os = "windows"))'.dev-dependencies]
 voxy_gpu = { path = "../voxy_gpu" }
 voxy_render = { path = "../voxy_render" }
-pollster = "1.0.1"
-winit = "0.30.13"
+pollster.workspace = true
+winit.workspace = true
 
 [[example]]
 name = "cuda_gravity_render"

@@ -7,12 +7,12 @@ rust-version.workspace = true
 description = "Water generation: FFT wave spectra, water bodies, rivers, shorelines, interactive ripples and buoyancy"
 
 [dependencies]
-bytemuck = { version = "1.25.2", features = ["derive"] }
-glam = { version = "0.33.6", features = ["bytemuck"] }
-wgpu = { version = "30.0.1" }
+bytemuck = { workspace = true, features = ["derive"] }
+glam = { workspace = true, features = ["bytemuck"] }
+wgpu.workspace = true
 
 [dev-dependencies]
-pollster = "1.0.1"
+pollster.workspace = true
 
 [lints]
 workspace = true

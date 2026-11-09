@@ -7,7 +7,7 @@ rust-version.workspace = true
 
 [dependencies]
 voxy_ui = { path = "../voxy_ui" }
-openxr = { version = "0.22.0", default-features = false, features = ["loaded"] }
+openxr = { workspace = true, features = ["loaded"] }
 
 [target.'cfg(target_os = "android")'.dependencies]
 android-activity = { version = "0.6.1", features = ["native-activity"] }

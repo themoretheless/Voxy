@@ -7,13 +7,13 @@ publish = false
 description = "Device-level GPU utilities shared by the renderer and the compute backends"
 
 [dependencies]
-thiserror = "2"
-wgpu = { version = "30.0.1", features = ["noop"] }
-raw-window-handle = "0.6.2"
+thiserror.workspace = true
+wgpu = { workspace = true, features = ["noop"] }
+raw-window-handle.workspace = true
 
 [dev-dependencies]
-pollster = "1.0.1"
-bytemuck = { version = "1.25.2", features = ["derive"] }
+pollster.workspace = true
+bytemuck = { workspace = true, features = ["derive"] }
 
 [lints]
 workspace = true
