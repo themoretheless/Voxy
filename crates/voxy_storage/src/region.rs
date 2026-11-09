@@ -779,5 +779,22 @@ mod tests {
         assert_eq!(recovery.valid_bytes, after);
         assert_eq!(reopened.load(chunk.pos), Some(chunk));
         fs::remove_file(path).unwrap();
+
+        assert!((region_sector_fragmentation_ratio(10, 10) - 0.0).abs() < 1e-6);
+        assert!((region_sector_fragmentation_ratio(10, 40) - 0.75).abs() < 1e-6);
     }
+}
+
+/// Computes external sector fragmentation ratio in `[0.0, 1.0]` given `allocated_sectors`
+/// and the `contiguous_span_sectors` between the lowest and highest allocated sector.
+#[must_use]
+pub fn region_sector_fragmentation_ratio(
+    allocated_sectors: u32,
+    contiguous_span_sectors: u32,
+) -> f32 {
+    if allocated_sectors == 0 || contiguous_span_sectors <= allocated_sectors {
+        return 0.0;
+    }
+    let hole_sectors = contiguous_span_sectors - allocated_sectors;
+    (hole_sectors as f32 / contiguous_span_sectors as f32).clamp(0.0, 1.0)
 }

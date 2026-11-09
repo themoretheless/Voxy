@@ -1455,5 +1455,75 @@ mod tests {
         assert!(vis.can_see_through(FaceDir::NegY, FaceDir::PosZ));
         assert!(!vis.can_see_through(FaceDir::NegX, FaceDir::PosY));
         assert_eq!(vis.connected_pair_count(), 2);
+
+        let n = [0.577_350_26_f32, -0.577_350_26, 0.577_350_26];
+        let packed_n = pack_octahedral_normal_snorm16(n);
+        let unpacked_n = unpack_octahedral_normal_snorm16(packed_n);
+        let dot = n[0] * unpacked_n[0] + n[1] * unpacked_n[1] + n[2] * unpacked_n[2];
+        assert!(dot > 0.9999);
+        assert!(quad_diagonal_flip_for_ao(1, 3, 1, 3));
+        assert!(!quad_diagonal_flip_for_ao(3, 1, 3, 1));
+    }
+}
+
+/// Packs a 3D unit normal into two 16-bit signed normalized integers (`snorm16`) using
+/// Cigolle-Donow-Evangelakos-Mara-McGuire-Meyer octahedral projection.
+#[must_use]
+pub fn pack_octahedral_normal_snorm16(normal: [f32; 3]) -> [i16; 2] {
+    if !normal.iter().all(|v| v.is_finite()) {
+        return [0, 32_767];
+    }
+    let l1 = normal[0].abs() + normal[1].abs() + normal[2].abs();
+    if l1 <= 1e-8 {
+        return [0, 32_767];
+    }
+    let mut ox = normal[0] / l1;
+    let mut oy = normal[1] / l1;
+    if normal[2] < 0.0 {
+        let sign_x = if ox >= 0.0 { 1.0 } else { -1.0 };
+        let sign_y = if oy >= 0.0 { 1.0 } else { -1.0 };
+        let new_x = (1.0 - oy.abs()) * sign_x;
+        let new_y = (1.0 - ox.abs()) * sign_y;
+        ox = new_x;
+        oy = new_y;
+    }
+    let qx = (ox.clamp(-1.0, 1.0) * 32_767.0).round() as i16;
+    let qy = (oy.clamp(-1.0, 1.0) * 32_767.0).round() as i16;
+    [qx, qy]
+}
+
+/// Unpacks a pair of `snorm16` octahedral coordinates back into a normalized 3D unit normal.
+#[must_use]
+pub fn unpack_octahedral_normal_snorm16(packed: [i16; 2]) -> [f32; 3] {
+    let mut x = (f32::from(packed[0]) / 32_767.0).clamp(-1.0, 1.0);
+    let mut y = (f32::from(packed[1]) / 32_767.0).clamp(-1.0, 1.0);
+    let z = 1.0 - x.abs() - y.abs();
+    if z < 0.0 {
+        let sign_x = if x >= 0.0 { 1.0 } else { -1.0 };
+        let sign_y = if y >= 0.0 { 1.0 } else { -1.0 };
+        x += z * sign_x;
+        y += z * sign_y;
+    }
+    let len = (x * x + y * y + z * z).sqrt();
+    if len > 1e-8 {
+        [x / len, y / len, z / len]
+    } else {
+        [0.0, 0.0, 1.0]
+    }
+}
+
+/// Returns `true` when the quad triangulation diagonal should flip from `(v00-v11)` to `(v10-v01)`
+/// to minimize ambient occlusion interpolation anisotropy across the four quad corners
+/// `(ao00, ao10, ao11, ao01)`.
+#[must_use]
+pub const fn quad_diagonal_flip_for_ao(ao00: u8, ao10: u8, ao11: u8, ao01: u8) -> bool {
+    let main_sum = (ao00 as i16) + (ao11 as i16);
+    let alt_sum = (ao10 as i16) + (ao01 as i16);
+    let main_diff = ((ao00 as i16) - (ao11 as i16)).abs();
+    let alt_diff = ((ao10 as i16) - (ao01 as i16)).abs();
+    if main_diff != alt_diff {
+        alt_diff < main_diff
+    } else {
+        main_sum < alt_sum
     }
 }

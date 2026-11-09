@@ -134,6 +134,63 @@ impl PetState {
     }
 }
 
+/// Computes Craig Reynolds arrival-and-pursuit steering velocity `[vx, vy, vz]` toward a
+/// moving target with lookahead time proportional to distance and linear ramp-down inside `slowing_radius`.
+#[allow(dead_code)]
+pub fn pet_pursuit_steering_velocity(
+    pet_pos: [f32; 3],
+    target_pos: [f32; 3],
+    target_vel: [f32; 3],
+    max_speed: f32,
+    slowing_radius: f32,
+) -> [f32; 3] {
+    if !pet_pos.iter().all(|v| v.is_finite())
+        || !target_pos.iter().all(|v| v.is_finite())
+        || !target_vel.iter().all(|v| v.is_finite())
+        || !max_speed.is_finite()
+        || !slowing_radius.is_finite()
+        || max_speed <= 0.0
+    {
+        return [0.0; 3];
+    }
+    let dx = target_pos[0] - pet_pos[0];
+    let dy = target_pos[1] - pet_pos[1];
+    let dz = target_pos[2] - pet_pos[2];
+    let dist = (dx * dx + dy * dy + dz * dz).sqrt();
+    if dist <= 1e-4 {
+        return [0.0; 3];
+    }
+    let lookahead = (dist / max_speed.max(0.5)).clamp(0.0, 1.5);
+    let future = [
+        target_pos[0] + target_vel[0] * lookahead,
+        target_pos[1] + target_vel[1] * lookahead,
+        target_pos[2] + target_vel[2] * lookahead,
+    ];
+    let to_future = [
+        future[0] - pet_pos[0],
+        future[1] - pet_pos[1],
+        future[2] - pet_pos[2],
+    ];
+    let future_dist =
+        (to_future[0] * to_future[0] + to_future[1] * to_future[1] + to_future[2] * to_future[2])
+            .sqrt();
+    if future_dist <= 1e-4 {
+        return [0.0; 3];
+    }
+    let ramp = if slowing_radius > 1e-4 {
+        (future_dist / slowing_radius).clamp(0.0, 1.0)
+    } else {
+        1.0
+    };
+    let speed = max_speed * ramp;
+    let inv = speed / future_dist;
+    [
+        to_future[0] * inv,
+        to_future[1] * inv,
+        to_future[2] * inv,
+    ]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -170,5 +227,16 @@ mod tests {
         assert!(stormy_day < clear_day);
         pet.act(PetAction::Sleep);
         assert!(pet.weather_comfort_modifier(0.0, 0.0, 2.0) > 1.0);
+    }
+
+    #[test]
+    fn pet_pursuit_steering_leads_moving_target_and_slows_on_arrival() {
+        let far = pet_pursuit_steering_velocity([0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 0.0, 2.0], 4.0, 2.0);
+        let near = pet_pursuit_steering_velocity([0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.0, 0.0], 4.0, 2.0);
+        let far_speed = (far[0] * far[0] + far[1] * far[1] + far[2] * far[2]).sqrt();
+        let near_speed = (near[0] * near[0] + near[1] * near[1] + near[2] * near[2]).sqrt();
+        assert!((far_speed - 4.0).abs() < 1e-4);
+        assert!(far[2] > 0.0, "pursuit should lead target velocity in +Z");
+        assert!(near_speed < far_speed);
     }
 }

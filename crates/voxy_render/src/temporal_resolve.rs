@@ -281,3 +281,46 @@ fn validate_inputs(inputs: TemporalResolveInputs<'_>) -> Result<wgpu::Extent3d, 
     }
     Ok(size)
 }
+
+/// Clips a reprojected `history_ycocg` sample to the Salvi (2016) statistical neighborhood
+/// variance box `[mean - gamma * stddev, mean + gamma * stddev]` in YCoCg space.
+#[must_use]
+pub fn variance_clipping_aabb_ycocg(
+    mean_ycocg: [f32; 3],
+    stddev_ycocg: [f32; 3],
+    history_ycocg: [f32; 3],
+    gamma: f32,
+) -> [f32; 3] {
+    if mean_ycocg
+        .iter()
+        .chain(&stddev_ycocg)
+        .chain(&history_ycocg)
+        .any(|c| !c.is_finite())
+        || !gamma.is_finite()
+    {
+        return mean_ycocg;
+    }
+    let g = gamma.max(0.0);
+    std::array::from_fn(|i| {
+        let half_extent = g * stddev_ycocg[i].abs();
+        history_ycocg[i].clamp(mean_ycocg[i] - half_extent, mean_ycocg[i] + half_extent)
+    })
+}
+
+#[cfg(test)]
+mod variance_clip_tests {
+    use super::*;
+
+    #[test]
+    fn variance_clipping_clamps_outliers_to_gamma_sigma_box() {
+        let clipped = variance_clipping_aabb_ycocg(
+            [0.5, 0.0, 0.0],
+            [0.1, 0.05, 0.05],
+            [2.0, -1.0, 0.02],
+            1.25,
+        );
+        assert!((clipped[0] - 0.625).abs() < 1e-6);
+        assert!((clipped[1] - (-0.0625)).abs() < 1e-6);
+        assert!((clipped[2] - 0.02).abs() < 1e-6);
+    }
+}

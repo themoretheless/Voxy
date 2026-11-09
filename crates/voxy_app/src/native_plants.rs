@@ -426,3 +426,74 @@ pub fn wind_canopy_sway(
         (wind_xz[1] * scale).clamp(-0.6, 0.6),
     ]
 }
+
+/// Computes child branch radii `(r1, r2)` satisfying Leonardo da Vinci's cross-sectional
+/// area preservation rule (`r_parent^exponent = r1^exponent + r2^exponent`).
+#[allow(dead_code)]
+pub fn da_vinci_branch_child_radii(
+    parent_radius: f32,
+    split_fraction: f32,
+    exponent: f32,
+) -> (f32, f32) {
+    if !parent_radius.is_finite()
+        || !split_fraction.is_finite()
+        || !exponent.is_finite()
+        || parent_radius <= 0.0
+    {
+        return (0.0, 0.0);
+    }
+    let alpha = split_fraction.clamp(0.05, 0.95);
+    let n = exponent.clamp(1.5, 3.0);
+    let r1 = parent_radius * alpha.powf(1.0 / n);
+    let r2 = parent_radius * (1.0 - alpha).powf(1.0 / n);
+    (r1, r2)
+}
+
+/// Computes seasonal foliage linear RGB tint from day-of-year (`0..365`) and frost factor (`[0, 1]`),
+/// transitioning from spring green through summer chlorophyll to autumn carotenoid/anthocyanin hues.
+#[allow(dead_code)]
+pub fn seasonal_chlorophyll_carotenoid_tint(day_of_year: f32, frost_factor: f32) -> [f32; 3] {
+    let day = if day_of_year.is_finite() {
+        day_of_year.rem_euclid(365.0)
+    } else {
+        170.0
+    };
+    let frost = if frost_factor.is_finite() {
+        frost_factor.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    // Autumn senescence peaks around day 285 (mid-October).
+    let autumn_wave = ((day - 285.0) / 55.0).powi(2);
+    let senescence = ((-autumn_wave).exp() + frost * 0.55).clamp(0.0, 1.0);
+    let chlorophyll = (1.0 - senescence * 0.85).clamp(0.12, 1.0);
+    let carotenoid = (senescence * 1.15).clamp(0.0, 1.0);
+    let anthocyanin = ((senescence - 0.45).max(0.0) * 1.6 * (0.5 + 0.5 * frost)).clamp(0.0, 1.0);
+
+    let r = (0.14 * chlorophyll + 0.72 * carotenoid + 0.35 * anthocyanin).clamp(0.05, 1.0);
+    let g = (0.56 * chlorophyll + 0.38 * carotenoid - 0.12 * anthocyanin).clamp(0.05, 1.0);
+    let b = (0.10 * chlorophyll + 0.05 * carotenoid + 0.08 * anthocyanin).clamp(0.03, 1.0);
+    [r, g, b]
+}
+
+#[cfg(test)]
+mod plant_allometry_tests {
+    use super::*;
+
+    #[test]
+    fn da_vinci_branch_radii_conserve_pipe_exponent_area() {
+        let (r1, r2) = da_vinci_branch_child_radii(0.4, 0.6, 2.0);
+        let lhs = 0.4_f32.powi(2);
+        let rhs = r1.powi(2) + r2.powi(2);
+        assert!((lhs - rhs).abs() < 1e-5);
+        assert!(r1 > r2 && r2 > 0.0);
+    }
+
+    #[test]
+    fn seasonal_foliage_shifts_from_green_summer_to_warm_autumn() {
+        let summer = seasonal_chlorophyll_carotenoid_tint(172.0, 0.0);
+        let autumn = seasonal_chlorophyll_carotenoid_tint(285.0, 0.6);
+        assert!(summer[1] > summer[0]);
+        assert!(autumn[0] > autumn[1]);
+    }
+}

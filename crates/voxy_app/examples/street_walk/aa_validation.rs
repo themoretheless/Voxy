@@ -82,5 +82,36 @@ mod tests {
         let score = edge_flicker_score(&a, &b).unwrap();
         assert!((score - 0.1).abs() < 1e-6);
         assert_eq!(edge_flicker_score(&a, &[0.1]), None);
+
+        let solid_wire = [0.8_f32, 0.82, 0.79, 0.81, 0.80];
+        let broken_wire = [0.8_f32, 0.0, 0.85, 0.0, 0.8];
+        assert!(subpixel_wire_continuity_score(&solid_wire) > subpixel_wire_continuity_score(&broken_wire));
     }
+}
+
+/// Evaluates a spatial continuity score in `[0.0, 1.0]` along a 1D scanline of a thin subpixel wire
+/// or powerline (`1.0` = uniform unbroken coverage, lower = broken/stippled aliasing gaps).
+#[allow(dead_code)]
+pub fn subpixel_wire_continuity_score(scanline_luma: &[f32]) -> f32 {
+    if scanline_luma.len() < 2 {
+        return 0.0;
+    }
+    let valid: Vec<f32> = scanline_luma
+        .iter()
+        .copied()
+        .filter(|v| v.is_finite() && *v >= 0.0)
+        .collect();
+    if valid.len() < 2 {
+        return 0.0;
+    }
+    let mean = valid.iter().sum::<f32>() / (valid.len() as f32);
+    if mean <= 1e-5 {
+        return 0.0;
+    }
+    let mean_abs_step = valid
+        .windows(2)
+        .map(|w| (w[1] - w[0]).abs())
+        .sum::<f32>()
+        / ((valid.len() - 1) as f32);
+    (1.0 / (1.0 + mean_abs_step / mean)).clamp(0.0, 1.0)
 }

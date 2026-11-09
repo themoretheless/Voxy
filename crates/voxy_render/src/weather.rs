@@ -100,6 +100,41 @@ pub fn twilight_ozone_transmittance_rgb(sun_elevation_deg: f32, turbidity: f32) 
         ((-tau).exp() * night_fade).clamp(0.0, 1.0)
     })
 }
+
+/// Evaluates the spherical-shell Chapman grazing-incidence optical air-mass function `Ch(X, chi)`:
+/// `sqrt(0.5 * pi * X) * exp(0.5 * X * cos^2(chi)) * erfc(sqrt(0.5 * X) * |cos(chi)|)` for `cos_zenith >= 0`,
+/// where `scale_height_ratio = R_planet / H` (`~799.0` for Earth's Rayleigh scale height).
+#[must_use]
+pub fn chapman_optical_air_mass(cos_zenith: f32, scale_height_ratio: f32) -> f32 {
+    if !cos_zenith.is_finite() || !scale_height_ratio.is_finite() || scale_height_ratio <= 1.0 {
+        return 1.0;
+    }
+    let x = scale_height_ratio.clamp(10.0, 10_000.0);
+    let mu = cos_zenith.clamp(-0.2, 1.0);
+    if mu >= 0.0 {
+        let y = (0.5 * x).sqrt() * mu;
+        // Rational approximation to exp(y^2) * erfc(y) * sqrt(pi) (Tichy / Fitzmaurice):
+        let ch = (1.060_696_3 + 0.556_438_3 * y) / (1.061_989_6 + 1.724_560_9 * y + y * y);
+        ((0.5 * std::f32::consts::PI * x).sqrt() * ch).max(1.0)
+    } else {
+        let ch_90 = (0.5 * std::f32::consts::PI * x).sqrt();
+        (ch_90 * (1.0 - 1.5 * mu)).min(60.0)
+    }
+}
+
+/// Evaluates barometric atmospheric density decay `(rho_rayleigh, rho_mie) = (exp(-h / 8000), exp(-h / 1200))`
+/// at `altitude_m` meters above sea level.
+#[must_use]
+pub fn atmosphere_scale_height_density(altitude_m: f32) -> (f32, f32) {
+    if !altitude_m.is_finite() {
+        return (0.0, 0.0);
+    }
+    let h = altitude_m.max(0.0);
+    let rayleigh = (-h / 8000.0).exp().clamp(0.0, 1.0);
+    let mie = (-h / 1200.0).exp().clamp(0.0, 1.0);
+    (rayleigh, mie)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -156,5 +191,15 @@ mod tests {
         let noon = twilight_ozone_transmittance_rgb(60.0, 2.0);
         assert!(noon[0] > civil_twilight[0]);
         assert!(civil_twilight[0] > 0.0 && civil_twilight[2] > 0.0);
+
+        let zenith_am = chapman_optical_air_mass(1.0, 800.0);
+        let horizon_am = chapman_optical_air_mass(0.0, 800.0);
+        assert!((zenith_am - 1.0).abs() < 0.05);
+        assert!(horizon_am > 30.0);
+
+        let (r0, m0) = atmosphere_scale_height_density(0.0);
+        let (r_high, m_high) = atmosphere_scale_height_density(2400.0);
+        assert_eq!((r0, m0), (1.0, 1.0));
+        assert!(r_high > m_high && m_high > 0.0);
     }
 }

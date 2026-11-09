@@ -892,5 +892,51 @@ mod tests {
         assert!(base.sparse_octree_mask().is_empty());
         assert_eq!(filled.column_top_solid_y(4, 8), Some(5));
         assert_eq!(filled.column_top_solid_y(0, 0), None);
+
+        assert!((chunk_shannon_entropy_bits_per_voxel(&[32_768], 32_768) - 0.0).abs() < 1e-6);
+        assert!((chunk_shannon_entropy_bits_per_voxel(&[16_384, 16_384], 32_768) - 1.0).abs() < 1e-5);
+        assert_eq!(optimal_palette_bit_width(1), 0);
+        assert_eq!(optimal_palette_bit_width(2), 1);
+        assert_eq!(optimal_palette_bit_width(17), 8);
+        assert_eq!(optimal_palette_bit_width(300), 16);
+    }
+}
+
+/// Computes the zero-order Shannon entropy $H = -\sum p_i \log_2(p_i)$ in bits per voxel
+/// from palette occurrence counts and total cell count.
+#[must_use]
+pub fn chunk_shannon_entropy_bits_per_voxel(palette_counts: &[u32], total_voxels: u32) -> f32 {
+    if total_voxels == 0 || palette_counts.is_empty() {
+        return 0.0;
+    }
+    let total = total_voxels as f32;
+    let mut entropy = 0.0_f32;
+    for &count in palette_counts {
+        if count > 0 {
+            let p = (count as f32 / total).clamp(0.0, 1.0);
+            if p > 0.0 {
+                entropy -= p * p.log2();
+            }
+        }
+    }
+    entropy.max(0.0)
+}
+
+/// Selects the cache-aligned packed palette bit width (`0, 1, 2, 4, 8, 16`) capable of addressing
+/// `unique_states` distinct block states.
+#[must_use]
+pub const fn optimal_palette_bit_width(unique_states: usize) -> u8 {
+    if unique_states <= 1 {
+        0
+    } else if unique_states <= 2 {
+        1
+    } else if unique_states <= 4 {
+        2
+    } else if unique_states <= 16 {
+        4
+    } else if unique_states <= 256 {
+        8
+    } else {
+        16
     }
 }

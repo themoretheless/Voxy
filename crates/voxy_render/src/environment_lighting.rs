@@ -180,3 +180,30 @@ fn environment_diffuse(n: vec3<f32>, nv: f32, f0: vec3<f32>, base: vec3<f32>, me
     return textureSampleLevel(diffuse_cube,environment_sampler,n,0.).rgb * base * (1.-metallic) * (vec3(1.)-fresnel) * environment_settings.x;
 }
 ";
+
+/// Evaluates Lagarde & de Rousiers / Jimenez GTC cone-intersection specular ambient occlusion:
+/// `clamp((ndotv + ao)^exp2(-16 * roughness - 1) - 1 + ao, 0, 1)`.
+#[must_use]
+pub fn jimenez_gtc_specular_ao(ndotv: f32, ao: f32, roughness: f32) -> f32 {
+    if !ndotv.is_finite() || !ao.is_finite() || !roughness.is_finite() {
+        return 0.0;
+    }
+    let nv = ndotv.clamp(0.0, 1.0);
+    let a = ao.clamp(0.0, 1.0);
+    let r = roughness.clamp(0.0, 1.0);
+    let exponent = (-16.0 * r - 1.0).exp2();
+    ((nv + a).powf(exponent) - 1.0 + a).clamp(0.0, 1.0)
+}
+
+#[cfg(test)]
+mod specular_ao_tests {
+    use super::*;
+
+    #[test]
+    fn jimenez_specular_ao_preserves_zero_and_unit_endpoints() {
+        assert!((jimenez_gtc_specular_ao(0.7, 1.0, 0.3) - 1.0).abs() < 1e-6);
+        assert!((jimenez_gtc_specular_ao(0.0, 0.0, 0.3) - 0.0).abs() < 1e-6);
+        let v = jimenez_gtc_specular_ao(0.5, 0.5, 0.4);
+        assert!(v > 0.0 && v < 1.0);
+    }
+}

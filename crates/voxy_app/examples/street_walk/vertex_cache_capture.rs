@@ -109,3 +109,39 @@ pub(super) fn capture(
     }
     Ok(())
 }
+
+/// Simulates a hardware FIFO post-transform vertex cache of `fifo_cache_size` entries over
+/// `indices` and returns the Average Cache Miss Ratio (ACMR = misses / triangle_count).
+#[allow(dead_code)]
+pub fn acmr_average_cache_miss_ratio(indices: &[u32], fifo_cache_size: usize) -> Option<f32> {
+    if indices.is_empty() || !indices.len().is_multiple_of(3) || fifo_cache_size == 0 {
+        return None;
+    }
+    let mut cache = std::collections::VecDeque::with_capacity(fifo_cache_size);
+    let mut misses = 0_u64;
+    for &idx in indices {
+        if !cache.contains(&idx) {
+            misses += 1;
+            if cache.len() == fifo_cache_size {
+                cache.pop_front();
+            }
+            cache.push_back(idx);
+        }
+    }
+    let triangles = (indices.len() / 3) as f32;
+    Some((misses as f32) / triangles)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn acmr_rewards_shared_triangle_strip_vertex_reuse() {
+        let strip = [0_u32, 1, 2, 2, 1, 3, 2, 3, 4, 4, 3, 5];
+        let acmr = acmr_average_cache_miss_ratio(&strip, 16).unwrap();
+        // 6 unique vertices across 4 triangles => ACMR = 1.5
+        assert!((acmr - 1.5).abs() < 1e-5);
+        assert!(acmr_average_cache_miss_ratio(&[0, 1], 16).is_none());
+    }
+}

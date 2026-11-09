@@ -1791,5 +1791,76 @@ mod sauna_tests {
         let late = sauna_steam_density(240.0, 250.0, 12.0, 90.0);
         assert!(early > 0.2 && early <= 1.0);
         assert!(late < early);
+
+        let floor_t = sauna_vertical_temperature_profile_c(0.1, 2.2, 28.0, 95.0);
+        let top_bench_t = sauna_vertical_temperature_profile_c(1.8, 2.2, 28.0, 95.0);
+        assert!(top_bench_t > floor_t && top_bench_t <= 95.0);
+
+        let (az, shutter) = observatory_dome_azimuth_and_shutter([0.0, 0.8, 0.6], false);
+        assert!(az.is_finite() && shutter == 1.0);
+        assert_eq!(observatory_dome_azimuth_and_shutter([0.0, 0.8, 0.6], true).1, 0.0);
+
+        let cellar_amp = wine_grotto_cellar_stability(15.0, 3.5, 0.08);
+        assert!(cellar_amp < 2.0);
     }
+}
+
+/// Evaluates the stratified vertical air temperature profile in °C inside the Nordic sauna cabin
+/// from `height_m` above the floor (`0..=ceiling_height_m`), `floor_temp_c`, and `ceiling_temp_c`.
+#[allow(dead_code)]
+pub fn sauna_vertical_temperature_profile_c(
+    height_m: f32,
+    ceiling_height_m: f32,
+    floor_temp_c: f32,
+    ceiling_temp_c: f32,
+) -> f32 {
+    if ![height_m, ceiling_height_m, floor_temp_c, ceiling_temp_c]
+        .iter()
+        .all(|v| v.is_finite())
+        || ceiling_height_m <= 0.1
+    {
+        return floor_temp_c;
+    }
+    let h_norm = (height_m / ceiling_height_m).clamp(0.0, 1.0);
+    // Thermal buoyancy stratification curve (concave near ceiling):
+    let s = h_norm.powf(0.75);
+    floor_temp_c + (ceiling_temp_c - floor_temp_c) * s
+}
+
+/// Computes the rooftop observatory dome rotation `(azimuth_rad, shutter_open_01)` tracking
+/// `target_sky_dir` (`[x, y, z]`), automatically closing the slit (`0.0`) during precipitation (`raining`).
+#[allow(dead_code)]
+pub fn observatory_dome_azimuth_and_shutter(
+    target_sky_dir: [f32; 3],
+    raining: bool,
+) -> (f32, f32) {
+    if target_sky_dir.iter().any(|c| !c.is_finite()) {
+        return (0.0, 0.0);
+    }
+    let azimuth = target_sky_dir[0]
+        .atan2(target_sky_dir[2])
+        .rem_euclid(std::f32::consts::TAU);
+    let shutter = if !raining && target_sky_dir[1] > 0.05 {
+        1.0
+    } else {
+        0.0
+    };
+    (azimuth, shutter)
+}
+
+/// Evaluates the damped diurnal/seasonal temperature swing amplitude at underground `depth_m`
+/// inside the limestone wine grotto (`surface_swing_c * exp(-depth_m * sqrt(omega / (2 * thermal_diffusivity)))`).
+#[allow(dead_code)]
+pub fn wine_grotto_cellar_stability(
+    surface_swing_c: f32,
+    depth_m: f32,
+    soil_damping_inv_m: f32,
+) -> f32 {
+    if !surface_swing_c.is_finite() || !depth_m.is_finite() || !soil_damping_inv_m.is_finite() {
+        return 0.0;
+    }
+    let amp = surface_swing_c.max(0.0);
+    let d = depth_m.max(0.0);
+    let k = soil_damping_inv_m.max(0.0);
+    amp * (-d * (1.0 + k * 6.0)).exp()
 }

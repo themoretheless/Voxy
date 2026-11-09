@@ -179,6 +179,43 @@ impl HdrImageAsset {
         &self.rgb
     }
 }
+
+/// Evaluates SMPTE ST 2084 (Perceptual Quantizer / PQ) OETF mapping normalized linear luminance
+/// `Y in [0, 1]` (where `1.0 = 10,000 nits`) to non-linear PQ signal in `[0, 1]`.
+#[must_use]
+pub fn linear_to_pq_st2084(linear_nits_normalized: f32) -> f32 {
+    if !linear_nits_normalized.is_finite() || linear_nits_normalized <= 0.0 {
+        return 0.0;
+    }
+    let y = linear_nits_normalized.clamp(0.0, 1.0);
+    const M1: f32 = 2610.0 / 16384.0;
+    const M2: f32 = 2523.0 / 32.0;
+    const C1: f32 = 3424.0 / 4096.0;
+    const C2: f32 = 2413.0 / 128.0;
+    const C3: f32 = 2392.0 / 128.0;
+    let ym1 = y.powf(M1);
+    ((C1 + C2 * ym1) / (1.0 + C3 * ym1)).powf(M2).clamp(0.0, 1.0)
+}
+
+/// Evaluates SMPTE ST 2084 (Perceptual Quantizer / PQ) EOTF mapping non-linear `pq_signal in [0, 1]`
+/// back to normalized linear luminance `Y in [0, 1]` (`1.0 = 10,000 nits`).
+#[must_use]
+pub fn pq_st2084_to_linear(pq_signal: f32) -> f32 {
+    if !pq_signal.is_finite() || pq_signal <= 0.0 {
+        return 0.0;
+    }
+    let e = pq_signal.clamp(0.0, 1.0);
+    const M1: f32 = 2610.0 / 16384.0;
+    const M2: f32 = 2523.0 / 32.0;
+    const C1: f32 = 3424.0 / 4096.0;
+    const C2: f32 = 2413.0 / 128.0;
+    const C3: f32 = 2392.0 / 128.0;
+    let em = e.powf(1.0 / M2);
+    let num = (em - C1).max(0.0);
+    let den = (C2 - C3 * em).max(1e-6);
+    (num / den).powf(1.0 / M1).clamp(0.0, 1.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -301,5 +338,8 @@ mod tests {
             ));
         }
         assert!(HdrImageAsset::from_rgb(2, 1, vec![0.; 3], ImageLimits::default()).is_err());
+        let pq = linear_to_pq_st2084(0.01); // 100 nits SDR reference white ~ 0.508 PQ
+        assert!((pq - 0.508).abs() < 0.01);
+        assert!((pq_st2084_to_linear(pq) - 0.01).abs() < 1e-4);
     }
 }

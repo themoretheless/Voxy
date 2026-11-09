@@ -665,4 +665,60 @@ mod tests {
             assert!(blended > 1000, "exercise muscle attachment regions");
         }
     }
+
+    #[test]
+    fn fur_shell_gravity_droop_is_zero_at_root_and_quadratically_bends_toward_tangent_gravity() {
+        let root = fur_shell_gravity_droop_offset(0.0, 0.04, 0.5, [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]);
+        let mid = fur_shell_gravity_droop_offset(0.5, 0.04, 0.5, [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]);
+        let tip = fur_shell_gravity_droop_offset(1.0, 0.04, 0.5, [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]);
+        assert_eq!(root, [0.0; 3]);
+        assert!(tip[1] < mid[1] && mid[1] < 0.0);
+        assert!((tip[1] / mid[1] - 4.0).abs() < 1e-4);
+    }
+}
+
+/// Computes quadratic cantilever gravity droop offset `[dx, dy, dz]` for a fur shell at
+/// normalized height `shell_fraction` (`[0, 1]`), projecting gravity onto the tangent plane
+/// so strands bend along the pelt without collapsing back through the skin surface.
+#[allow(dead_code)]
+pub fn fur_shell_gravity_droop_offset(
+    shell_fraction: f32,
+    strand_length_m: f32,
+    stiffness: f32,
+    gravity_dir: [f32; 3],
+    normal: [f32; 3],
+) -> [f32; 3] {
+    if !shell_fraction.is_finite()
+        || !strand_length_m.is_finite()
+        || !stiffness.is_finite()
+        || !gravity_dir.iter().all(|v| v.is_finite())
+        || !normal.iter().all(|v| v.is_finite())
+        || shell_fraction <= 0.0
+        || strand_length_m <= 0.0
+    {
+        return [0.0; 3];
+    }
+    let s = shell_fraction.clamp(0.0, 1.0);
+    let len = strand_length_m.clamp(0.0, 0.25);
+    let compliance = 1.0 - stiffness.clamp(0.0, 0.98);
+    let n_len = (normal[0] * normal[0] + normal[1] * normal[1] + normal[2] * normal[2]).sqrt();
+    let n = if n_len > 1e-5 {
+        [normal[0] / n_len, normal[1] / n_len, normal[2] / n_len]
+    } else {
+        [0.0, 1.0, 0.0]
+    };
+    let g_dot_n = gravity_dir[0] * n[0] + gravity_dir[1] * n[1] + gravity_dir[2] * n[2];
+    // Prevent inward collapse into the skin when gravity points against the surface normal.
+    let clamped_normal_proj = g_dot_n.min(0.0);
+    let bend_dir = [
+        gravity_dir[0] - clamped_normal_proj * n[0],
+        gravity_dir[1] - clamped_normal_proj * n[1],
+        gravity_dir[2] - clamped_normal_proj * n[2],
+    ];
+    let scale = 0.5 * len * compliance * s * s;
+    [
+        bend_dir[0] * scale,
+        bend_dir[1] * scale,
+        bend_dir[2] * scale,
+    ]
 }

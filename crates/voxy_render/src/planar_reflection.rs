@@ -258,6 +258,40 @@ pub fn anisotropic_road_streak_roughness(base_roughness: f32, n_dot_v: f32) -> (
     (along, across)
 }
 
+/// Replaces the third row of a perspective projection matrix `proj` with Lengyel's (2005)
+/// oblique near-plane clipping plane `clip_plane_view` (`(nx, ny, nz, d)` in view space)
+/// so geometry behind a water/mirror reflection plane is hardware-clipped without user clip planes.
+#[must_use]
+pub fn oblique_near_plane_clip_matrix(proj: glam::Mat4, clip_plane_view: glam::Vec4) -> glam::Mat4 {
+    if !proj.is_finite() || !clip_plane_view.is_finite() || clip_plane_view.truncate().length_squared() <= 1e-8 {
+        return proj;
+    }
+    let m00 = proj.x_axis.x;
+    let m11 = proj.y_axis.y;
+    if m00.abs() <= 1e-6 || m11.abs() <= 1e-6 {
+        return proj;
+    }
+    let sign = |v: f32| if v >= 0.0 { 1.0 } else { -1.0 };
+    let q = glam::Vec4::new(
+        (sign(clip_plane_view.x) + proj.z_axis.x) / m00,
+        (sign(clip_plane_view.y) + proj.z_axis.y) / m11,
+        -1.0,
+        (1.0 + proj.z_axis.z) / proj.w_axis.z.min(-1e-6),
+    );
+    let dot = clip_plane_view.dot(q);
+    if dot.abs() <= 1e-6 {
+        return proj;
+    }
+    let c = clip_plane_view * (2.0 / dot);
+    let mut cols = proj.to_cols_array_2d();
+    // Replace row 2 (third row) in column-major layout:
+    cols[0][2] = c.x;
+    cols[1][2] = c.y;
+    cols[2][2] = c.z + 1.0;
+    cols[3][2] = c.w;
+    glam::Mat4::from_cols_array_2d(&cols)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -268,5 +302,9 @@ mod tests {
         let (along_normal, _) = anisotropic_road_streak_roughness(0.15, 0.95);
         assert!(along_grazing > along_normal);
         assert!(along_grazing > across);
+        #[allow(deprecated)]
+        let proj = glam::Mat4::perspective_rh(1.0, 1.5, 0.1, 100.0);
+        let oblique = oblique_near_plane_clip_matrix(proj, glam::Vec4::new(0.0, 1.0, -0.2, -1.5));
+        assert!(oblique.is_finite() && oblique != proj);
     }
 }

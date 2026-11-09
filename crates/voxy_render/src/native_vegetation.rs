@@ -931,6 +931,32 @@ impl NativeVegetation {
 }
 use bytemuck::Zeroable;
 
+/// Evaluates foliage thin-slab translucent backlighting combining Beer-Lambert slab transmittance
+/// `exp(-extinction * thickness)` with the Henyey-Greenstein forward scattering phase function:
+/// `exp(-sigma_t * d) * (1 - g^2) / (4 * pi * (1 + g^2 - 2 * g * cos_theta)^1.5)`.
+#[must_use]
+pub fn foliage_translucent_backlighting(
+    cos_theta: f32,
+    anisotropy_g: f32,
+    thickness: f32,
+    extinction: f32,
+) -> f32 {
+    if !cos_theta.is_finite()
+        || !anisotropy_g.is_finite()
+        || !thickness.is_finite()
+        || !extinction.is_finite()
+    {
+        return 0.0;
+    }
+    let mu = cos_theta.clamp(-1.0, 1.0);
+    let g = anisotropy_g.clamp(-0.99, 0.99);
+    let g2 = g * g;
+    let denom = (1.0 + g2 - 2.0 * g * mu).max(1e-5).powf(1.5);
+    let phase = (1.0 - g2) / (4.0 * std::f32::consts::PI * denom);
+    let optical_depth = (thickness.max(0.0) * extinction.max(0.0)).min(80.0);
+    (phase * (-optical_depth).exp()).max(0.0)
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -948,6 +974,9 @@ mod tests {
                 "{entry}"
             );
         }
+        let fwd = super::foliage_translucent_backlighting(1.0, 0.6, 0.5, 1.2);
+        let back = super::foliage_translucent_backlighting(-1.0, 0.6, 0.5, 1.2);
+        assert!(fwd > back && back > 0.0);
     }
 }
 

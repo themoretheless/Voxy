@@ -13,6 +13,8 @@
 mod cdlod;
 
 use cdlod::{Cdlod, GRID, MAX_NODES, R0};
+#[allow(unused_imports)]
+pub use cdlod::cdlod_morph_factor;
 use std::sync::{
     Arc,
     atomic::{AtomicU8, Ordering},
@@ -1425,6 +1427,27 @@ pub fn water_spectral_transmittance(depth_m: f32, turbidity: f32) -> [f32; 3] {
     k_rgb.map(|k| (-k * d).exp().clamp(0.0, 1.0))
 }
 
+/// Evaluates Tessendorf (2001) horizontal choppiness displacement Jacobian determinant
+/// `J = (1 + ddx_dx) * (1 + ddz_dz) - ddz_dx * ddx_dz` and returns whitecap foam generation
+/// intensity `max(0, threshold - J)` when waves fold (`J < threshold`).
+#[must_use]
+pub fn jacobian_folding_foam_intensity(
+    ddx_dx: f32,
+    ddz_dz: f32,
+    ddz_dx: f32,
+    ddx_dz: f32,
+    threshold: f32,
+) -> f32 {
+    if ![ddx_dx, ddz_dz, ddz_dx, ddx_dz, threshold]
+        .iter()
+        .all(|v| v.is_finite())
+    {
+        return 0.0;
+    }
+    let j = (1.0 + ddx_dx) * (1.0 + ddz_dz) - ddz_dx * ddx_dz;
+    (threshold - j).max(0.0)
+}
+
 #[cfg(test)]
 mod tests {
     use wgpu::naga::{
@@ -1468,5 +1491,7 @@ mod tests {
         }
         let trans = super::water_spectral_transmittance(3.0, 1.0);
         assert!(trans[0] < trans[1] && trans[1] < trans[2]);
+        assert_eq!(super::jacobian_folding_foam_intensity(0.0, 0.0, 0.0, 0.0, 0.5), 0.0);
+        assert!(super::jacobian_folding_foam_intensity(-0.6, -0.6, 0.2, 0.2, 0.4) > 0.2);
     }
 }

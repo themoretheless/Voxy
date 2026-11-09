@@ -125,6 +125,40 @@ pub fn bilateral_upsample_weight(
     (w_depth * w_norm).clamp(0.0, 1.0)
 }
 
+/// Evaluates the Khronos PBR Neutral tone mapper on linear RGB, preserving exact 1:1 base color
+/// reproduction up to `start_compression = 0.76` before smoothly compressing highlights with
+/// controlled desaturation (`d = 0.15`).
+#[must_use]
+pub fn pbr_neutral_tonemap_rgb(linear_rgb: [f32; 3]) -> [f32; 3] {
+    if linear_rgb.iter().any(|c| !c.is_finite()) {
+        return [0.0; 3];
+    }
+    let mut color = linear_rgb.map(|c| c.max(0.0));
+    let start_compression = 0.8 - 0.04;
+    let desaturation = 0.15;
+    let x = color[0].min(color[1]).min(color[2]);
+    let offset = if x < 0.08 {
+        x - 6.25 * x * x
+    } else {
+        0.04
+    };
+    for c in &mut color {
+        *c -= offset;
+    }
+    let peak = color[0].max(color[1]).max(color[2]);
+    if peak < start_compression {
+        return color.map(|c| c.clamp(0.0, 1.0));
+    }
+    let d = 1.0 - start_compression;
+    let new_peak = 1.0 - d * d / (peak + d - start_compression);
+    let scale = new_peak / peak.max(1e-6);
+    for c in &mut color {
+        *c *= scale;
+    }
+    let g = 1.0 - 1.0 / (desaturation * (peak - new_peak) + 1.0);
+    color.map(|c| (c + g * (new_peak - c)).clamp(0.0, 1.0))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -149,5 +183,10 @@ mod tests {
         );
         assert!((same - 1.0).abs() < 1e-6);
         assert!(edge < 1e-4);
+
+        let mid = pbr_neutral_tonemap_rgb([0.5, 0.25, 0.1]);
+        assert!((mid[0] - 0.46).abs() < 1e-5);
+        let hi = pbr_neutral_tonemap_rgb([10.0, 4.0, 1.0]);
+        assert!(hi.iter().all(|&c| c > 0.0 && c <= 1.0));
     }
 }

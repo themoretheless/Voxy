@@ -19,12 +19,12 @@ mod banded_transfer;
 pub use banded_solve::{
     BANDED_SOLVE_SHADER, BandedPackedReference, BandedSolveError, BandedSolveInput, BandedSystem,
 };
-pub use banded_transfer::BandedTransferProgram;
+pub use banded_transfer::{BandedTransferProgram, dual_scattering_hair_attenuation};
 mod blit;
 mod bodycam;
 pub use bodycam::{
     BodycamPostProcess, BodycamPostUniforms, BodycamRig, PhotorealLensProfile, SpringDamper3D,
-    circle_of_confusion_px,
+    brown_conrady_barrel_undistort, circle_of_confusion_px, natural_vignette_cos4_gain,
 };
 mod camera;
 mod planar_capture;
@@ -34,7 +34,7 @@ pub use planar_capture::{
     planar_reflection_pbr_clip_shader,
 };
 mod camera_lod;
-pub use camera_lod::SceneLodBounds;
+pub use camera_lod::{SceneLodBounds, screen_space_geometric_error_px};
 mod certified_lod;
 pub use certified_lod::{
     CertifiedLodCheckpoint, CertifiedLodCheckpointError, CertifiedLodError, CertifiedLodIndexSet,
@@ -50,7 +50,9 @@ mod depth_sample;
 mod direct_lighting;
 mod exposure;
 mod frame_generation;
-pub use exposure::{AutoExposure, AutoExposureFrame, ExposureSettings};
+pub use exposure::{
+    AutoExposure, AutoExposureFrame, ExposureSettings, ev100_from_camera_settings,
+};
 mod hdr_mips;
 mod hdr_resolve;
 pub use hdr_mips::HdrMipPyramid;
@@ -63,22 +65,30 @@ pub use dfg::{
     GgxDfgLut, GgxEnergyPatchData, GgxEnergyPatchError, GgxEnergyRefinementAssessment,
     GgxEnergyRefinementDecision, GgxEnergyRefinementError, GgxEnergyRefinementObservation,
     GgxEnergyRefinementPlan, GgxEnergyRefinementPolicy, GgxEnergyRefinementProbe,
+    kulla_conty_multiscatter_compensation,
 };
 pub use dfg::{
     GgxEnergyAtlasBuild, GgxEnergyAtlasSlot, GgxEnergyBuildBudget, GgxEnergyBuildError,
     GgxEnergyBuildPhase, GgxEnergyBuildProgress, GgxEnergyOracleSample, ReadyGgxEnergyAtlas,
+    approx_ggx_directional_albedo,
 };
 mod environment_diffuse;
 mod environment_lighting;
-pub use environment_diffuse::DiffuseEnvironmentConvolution;
+pub use environment_diffuse::{DiffuseEnvironmentConvolution, sh2_non_negative_irradiance};
+pub use environment_lighting::jimenez_gtc_specular_ao;
 mod environment_ggx;
-pub use environment_ggx::GgxEnvironmentPrefilter;
+pub use environment_ggx::{
+    GgxEnvironmentPrefilter, anisotropic_ggx_ndf, sample_ggx_vndf_isotropic,
+    smith_height_correlated_aniso_g2,
+};
 mod imported_environment;
 pub use imported_environment::{ImportedEnvironment, ImportedEnvironmentError};
 mod hdr_probe;
 pub use hdr_probe::HdrPixelProbe;
 mod hdr_asset;
-pub use hdr_asset::{HdrImageAsset, HdrImageError};
+pub use hdr_asset::{
+    HdrImageAsset, HdrImageError, linear_to_pq_st2084, pq_st2084_to_linear,
+};
 mod image_asset;
 mod lod;
 pub use lod::{LodError, LodIndexSet, LodLevel, LodPolicy};
@@ -105,7 +115,10 @@ pub use lod_subdivision::{
 mod motion;
 mod obj;
 mod ocean;
-pub use ocean::{OceanCamera, OceanRenderer, OceanSettings, water_spectral_transmittance};
+pub use ocean::{
+    OceanCamera, OceanRenderer, OceanSettings, cdlod_morph_factor,
+    jacobian_folding_foam_intensity, water_spectral_transmittance,
+};
 pub use voxy_water;
 pub use voxy_water::WaveSpectrum;
 mod archive_water;
@@ -113,7 +126,9 @@ mod previous_position;
 mod primary_motion;
 mod primary_surface;
 mod radiance;
-pub use hdr_resolve::{HdrHalfResolveJob, HdrHalfResolvePipeline, bilateral_upsample_weight};
+pub use hdr_resolve::{
+    HdrHalfResolveJob, HdrHalfResolvePipeline, bilateral_upsample_weight, pbr_neutral_tonemap_rgb,
+};
 mod fluid_screen;
 mod ray;
 mod world_nearest_bvh;
@@ -149,7 +164,10 @@ mod surface_reflection;
 mod xr;
 
 pub use blit::{ProcessedColorTarget, StorageColorBlit, StorageColorView, TextureBlit};
-pub use material::{MaterialError, MaterialLayer, MaterialPack, MaterialSet};
+pub use material::{
+    MaterialError, MaterialLayer, MaterialPack, MaterialSet, clearcoat_layer_attenuation,
+    conductor_fresnel_complex_rgb, slope_variance_to_roughness,
+};
 pub use renderer::{
     CameraView, GpuQuad, RenderOutcome, Renderer, RendererError, SkinnedMotionOutput, SurfaceState,
 };
@@ -192,18 +210,26 @@ pub use xr::{XrFov, XrMotionHistory, XrView, XrViewError};
 pub use sprite::{Sprite, SpriteBatch, SpriteBatchError};
 
 pub use depth_motion::DepthMotionPass;
-pub use direct_lighting::{DirectLightingJob, PointLightSample, cluster_depth_slice};
+pub use direct_lighting::{
+    DirectLightingJob, PointLightSample, capsule_light_irradiance_factor, cluster_depth_slice,
+    lunar_dust_retroreflection, oren_nayar_diffuse_reflectance,
+    sphere_light_mrt_representative_point,
+};
 pub use previous_position::{
     PreviousDepthPass, PreviousPositionPass, PreviousPositionVertex, RasterMotionPass,
 };
 pub use primary_motion::PrimaryMotionPass;
 pub use primary_surface::{PrimarySurfaceJob, PrimarySurfacePipeline};
-pub use radiance::{HdrCompositionPipeline, RadianceComposition};
+pub use radiance::{
+    HdrCompositionPipeline, RadianceComposition, restir_reservoir_merge_weight,
+};
 pub use ray::{
     RAY_VISIBILITY_SHADER, RayInstanceUpdate, RayScene, RaySceneError, RaySegment,
     RayVisibilityJob, RayVisibilityPipeline, cpu_segment_visibility,
 };
-pub use reconstruction::{RayReconstructionGuides, ReconstructionGuideError};
+pub use reconstruction::{
+    RayReconstructionGuides, ReconstructionGuideError, svgf_atrous_stopping_weight,
+};
 pub use reconstruction_distance::ReconstructionDistancePass;
 pub use reconstruction_material::{
     GgxReflectionSample, ReconstructionMaterial, ReconstructionMaterialError,
@@ -222,7 +248,7 @@ pub use surface_lighting::{
 };
 pub use surface_reflection::{
     GgxReflectionInputs, GgxReflectionPipeline, ReflectionHit, SurfaceReflectionJob,
-    SurfaceReflectionOptions,
+    SurfaceReflectionOptions, horizon_specular_occlusion,
 };
 mod reflection_spatial;
 pub use reflection_spatial::{
@@ -260,19 +286,25 @@ pub use raster_ray_frame::{
 
 mod temporal_history;
 mod temporal_resolve;
-pub use temporal_history::TemporalHistory;
+pub use temporal_history::{TemporalHistory, adaptive_temporal_history_alpha};
 pub use temporal_resolve::{
     TemporalResolve, TemporalResolveFrame, TemporalResolveInputs, TemporalResolveOptions,
+    variance_clipping_aabb_ycocg,
 };
 
 /// Textured GGX point light for the `SceneRenderer` ABI (rigid/uniform-scale world transforms).
 pub const TEXTURED_POINT_LIGHT_SHADER: &str = include_str!("scene_point_light.wgsl");
 
 mod shadow_map;
-pub use shadow_map::{ShadowDraw, ShadowDrawMask, ShadowMap, snap_cascade_ortho_bounds};
+pub use shadow_map::{
+    ShadowDraw, ShadowDrawMask, ShadowMap, contact_hardening_shadow_bias,
+    snap_cascade_ortho_bounds,
+};
 
 mod shadow_visibility;
-pub use shadow_visibility::{ShadowFilter, ShadowSettings, practical_cascade_splits};
+pub use shadow_visibility::{
+    ShadowFilter, ShadowSettings, pcss_penumbra_filter_radius, practical_cascade_splits,
+};
 
 mod reflection_correspondence;
 pub use reflection_correspondence::{
@@ -281,7 +313,7 @@ pub use reflection_correspondence::{
 mod planar_reflection;
 pub use planar_reflection::{
     PlanarReflectionCameras, PlanarReflectionJob, PlanarReflectionPipeline,
-    anisotropic_road_streak_roughness,
+    anisotropic_road_streak_roughness, oblique_near_plane_clip_matrix,
 };
 
 mod planar_temporal;
@@ -289,12 +321,14 @@ pub use planar_temporal::{PlanarTemporalError, PlanarTemporalFrame, PlanarTempor
 
 mod dielectric_boundary;
 pub use dielectric_boundary::{
-    DielectricBoundarySample, cauchy_ior_rgb, dielectric_boundary_sample,
+    DielectricBoundarySample, cauchy_ior_rgb, critical_tir_cos_theta, dielectric_boundary_sample,
+    refraction_solid_angle_jacobian, thin_film_interference_rgb,
 };
 
 mod medium_geometry;
 pub use medium_geometry::{
     MediumBoundaryHit, MediumBoundaryMesh, OpaqueRadianceMesh, OpticalMediumId,
+    froxel_index_from_depth, froxel_slice_depth_from_index,
 };
 
 mod medium_geometry_compute;
@@ -315,12 +349,12 @@ pub use medium_path_compute::{
 };
 
 mod medium_transport;
-pub use medium_transport::OpticalSegment;
+pub use medium_transport::{OpticalSegment, integrate_scattered_luminance_step};
 
 mod droplet_extinction;
 pub use droplet_extinction::{
     DROPLET_EXTINCTION_REFERENCE_SHADER, DROPLET_EXTINCTION_SHADER, DropletExtinctionComputeInput,
-    ExtinctionGridView,
+    ExtinctionGridView, double_henyey_greenstein_phase,
 };
 
 pub use droplet_extinction::{
@@ -334,11 +368,14 @@ pub use droplet_extinction::{
 };
 
 mod surface_light_diffusion;
-pub use surface_light_diffusion::{SurfaceLightDiffusion, SurfaceLightEdge};
+pub use surface_light_diffusion::{
+    SurfaceLightDiffusion, SurfaceLightEdge, burley_normalized_diffusion_profile,
+    sample_burley_diffusion_radius,
+};
 mod surface_light_pcg;
-pub use surface_light_pcg::SurfaceLightPcg;
+pub use surface_light_pcg::{SurfaceLightPcg, owen_scrambled_sobol_2d};
 mod surface_light_geometry;
-pub use surface_light_geometry::SurfaceLightGeometry;
+pub use surface_light_geometry::{SurfaceLightGeometry, rect_light_solid_angle_steradians};
 mod surface_light_admission;
 pub use surface_light_admission::SurfaceLightAdmission;
 
@@ -352,6 +389,7 @@ mod surface_normal_transport;
 mod fiber_surface;
 pub use fiber_surface::{
     FIBER_SURFACE_SHADER, FiberSurfaceFrame, FiberSurfaceInput, FiberSurfaceTransfer,
+    hair_melanin_absorption_sigma_a, marschner_azimuthal_scattering_n,
 };
 
 mod surface_light_transfer;
@@ -463,12 +501,13 @@ mod probe_gi;
 pub use probe_gi::chebyshev_probe_visibility;
 
 mod native_vegetation;
-pub use native_vegetation::NativeVegetation;
+pub use native_vegetation::{NativeVegetation, foliage_translucent_backlighting};
 
 mod archive_hdr_diagnostics;
 mod archive_temporal;
 pub use archive_temporal::{
-    ArchiveAntialiasing, ArchiveCameraLens, halton_jitter, rgb_to_ycocg, ycocg_to_rgb,
+    ArchiveAntialiasing, ArchiveCameraLens, catmull_rom_5tap_weights, halton_jitter, rgb_to_ycocg,
+    ycocg_to_rgb,
 };
 #[cfg(target_os = "macos")]
 mod metalfx;
@@ -477,7 +516,7 @@ pub mod climate;
 pub mod weather;
 
 mod archive_culling;
-pub use archive_culling::ArchiveInstanceCulling;
+pub use archive_culling::{ArchiveInstanceCulling, project_sphere_screen_aabb};
 
 mod archive_frustum;
 

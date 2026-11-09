@@ -80,6 +80,26 @@ pub fn motion_device(args: impl IntoIterator<Item = String>) -> Result<Option<us
     Ok(Some(ordinal))
 }
 
+/// Estimates `(total_active_chunks, total_bytes)` for a cylindrical/square horizontal view distance
+/// `(2 * R + 1)^2 * vertical_chunks` using saturating arithmetic.
+#[allow(dead_code)]
+pub fn estimate_active_chunk_column_budget(
+    view_distance_chunks: u32,
+    vertical_chunks: u32,
+    bytes_per_chunk: u64,
+) -> (u64, u64) {
+    if vertical_chunks == 0 {
+        return (0, 0);
+    }
+    let diameter = u64::from(view_distance_chunks)
+        .saturating_mul(2)
+        .saturating_add(1);
+    let columns = diameter.saturating_mul(diameter);
+    let total_chunks = columns.saturating_mul(u64::from(vertical_chunks));
+    let total_bytes = total_chunks.saturating_mul(bytes_per_chunk);
+    (total_chunks, total_bytes)
+}
+
 #[cfg(test)]
 mod tests {
     use super::TerrainBackend;
@@ -164,5 +184,12 @@ mod tests {
         ] {
             assert!(parse(&args).is_err(), "{args:?}");
         }
+    }
+    #[test]
+    fn active_chunk_column_budget_scales_with_diameter_squared() {
+        let (chunks, bytes) = super::estimate_active_chunk_column_budget(4, 8, 4096);
+        assert_eq!(chunks, 9 * 9 * 8);
+        assert_eq!(bytes, 9 * 9 * 8 * 4096);
+        assert_eq!(super::estimate_active_chunk_column_budget(10, 0, 4096), (0, 0));
     }
 }

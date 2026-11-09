@@ -207,3 +207,31 @@ impl ArchiveDepthBounds {
         }
     }
 }
+
+/// Selects the Hierarchical-Z (Hi-Z) pyramid mip level `ceil(log2(max(screen_width_px, screen_height_px)))`
+/// clamped to `[0, max_mip]` so a projected bounding box is covered by at most a 2x2 texel footprint.
+#[must_use]
+pub fn select_hiz_mip_level(
+    screen_width_px: f32,
+    screen_height_px: f32,
+    max_mip: u32,
+) -> u32 {
+    if !screen_width_px.is_finite() || !screen_height_px.is_finite() {
+        return 0;
+    }
+    let max_dim = screen_width_px.max(screen_height_px).max(1.0);
+    let mip = max_dim.log2().ceil().max(0.0) as u32;
+    mip.min(max_mip)
+}
+
+#[cfg(test)]
+mod hiz_mip_tests {
+    use super::*;
+
+    #[test]
+    fn select_hiz_mip_level_scales_logarithmically_and_clamps_to_max() {
+        assert_eq!(select_hiz_mip_level(1.0, 1.0, 10), 0);
+        assert_eq!(select_hiz_mip_level(12.0, 7.0, 10), 4);
+        assert_eq!(select_hiz_mip_level(2048.0, 1024.0, 8), 8);
+    }
+}

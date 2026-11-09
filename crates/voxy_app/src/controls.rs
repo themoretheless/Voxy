@@ -390,6 +390,52 @@ pub fn lissajous_head_bob_offset(stride_phase_rad: f32, speed_mps: f32, amplitud
     Vec3::new(x, y, z)
 }
 
+/// Computes a smooth banking camera roll angle in radians (`[-max_roll_rad, max_roll_rad]`)
+/// driven by lateral strafe velocity using a cubic Hermite response.
+#[allow(dead_code)]
+pub fn strafe_camera_roll_angle_rad(strafe_velocity: f32, max_speed: f32, max_roll_rad: f32) -> f32 {
+    if !strafe_velocity.is_finite()
+        || !max_speed.is_finite()
+        || !max_roll_rad.is_finite()
+        || max_speed <= 1e-5
+        || max_roll_rad <= 0.0
+    {
+        return 0.0;
+    }
+    let u = (strafe_velocity / max_speed).clamp(-1.0, 1.0);
+    let abs_u = u.abs();
+    let smooth = abs_u * abs_u * (3.0 - 2.0 * abs_u);
+    let limit = max_roll_rad.min(0.35);
+    -u.signum() * smooth * limit
+}
+
+/// Applies radial inner-deadzone remapping and an exponential response curve (`exponent >= 1.0`)
+/// to a raw 2D analog stick input while preserving look direction.
+#[allow(dead_code)]
+pub fn aim_response_sensitivity_curve(
+    raw_stick: [f32; 2],
+    deadzone: f32,
+    exponent: f32,
+) -> [f32; 2] {
+    if !raw_stick[0].is_finite()
+        || !raw_stick[1].is_finite()
+        || !deadzone.is_finite()
+        || !exponent.is_finite()
+    {
+        return [0.0, 0.0];
+    }
+    let dz = deadzone.clamp(0.0, 0.95);
+    let exp = exponent.clamp(1.0, 4.0);
+    let mag = raw_stick[0].hypot(raw_stick[1]);
+    if mag <= dz || mag <= 1e-6 {
+        return [0.0, 0.0];
+    }
+    let normalized = ((mag.min(1.0) - dz) / (1.0 - dz)).clamp(0.0, 1.0);
+    let curved = normalized.powf(exp);
+    let scale = curved / mag;
+    [raw_stick[0] * scale, raw_stick[1] * scale]
+}
+
 #[cfg(test)]
 mod walk_camera_tests {
     use super::*;
@@ -434,5 +480,19 @@ mod walk_camera_tests {
         let b = lissajous_head_bob_offset(0.8 + std::f32::consts::TAU, 3.5, 0.03);
         assert!(a.length() > 0.0);
         assert!(a.distance(b) < 1e-5);
+    }
+
+    #[test]
+    fn strafe_camera_roll_and_aim_response_curve_are_antisymmetric_and_respect_deadzone() {
+        let right = strafe_camera_roll_angle_rad(4.0, 8.0, 0.08);
+        let left = strafe_camera_roll_angle_rad(-4.0, 8.0, 0.08);
+        assert!((right + left).abs() < 1e-6);
+        assert!(right < 0.0 && right >= -0.08);
+
+        assert_eq!(aim_response_sensitivity_curve([0.08, 0.05], 0.15, 2.0), [0.0, 0.0]);
+        let mid = aim_response_sensitivity_curve([0.6, 0.0], 0.1, 2.0);
+        let full = aim_response_sensitivity_curve([1.0, 0.0], 0.1, 2.0);
+        assert!(mid[0] > 0.0 && mid[0] < 0.6);
+        assert!((full[0] - 1.0).abs() < 1e-5);
     }
 }

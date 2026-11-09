@@ -332,3 +332,55 @@ impl SurfaceLightPcg {
         self.bytes
     }
 }
+
+/// Generates a 2D Owen-scrambled Sobol $(0, 2)$-sequence sample in `[0, 1)^2` for sample `index`
+/// and randomization `seed` using Laine & Karras (2011) fast integer hash scrambling.
+#[must_use]
+pub fn owen_scrambled_sobol_2d(index: u32, seed: u32) -> [f32; 2] {
+    fn laine_karras_scramble(mut v: u32, seed: u32) -> u32 {
+        v = v.reverse_bits();
+        v = v.wrapping_add(seed);
+        v ^= v.wrapping_mul(0x6c50_b47c);
+        v ^= v.wrapping_mul(0xb82f_1e52);
+        v ^= v.wrapping_mul(0xc7af_e638);
+        v ^= v.wrapping_mul(0x8d22_f6e6);
+        v.reverse_bits()
+    }
+    let x_raw = index.reverse_bits();
+    // Dimension 2 Sobol generator matrix (1 + x polynomial):
+    let mut y_raw = 0_u32;
+    let mut v = 0x8000_0000_u32;
+    let mut i = index;
+    while i != 0 {
+        if (i & 1) != 0 {
+            y_raw ^= v;
+        }
+        i >>= 1;
+        v ^= v >> 1;
+    }
+    let sx = laine_karras_scramble(x_raw, seed ^ 0x9e37_79b9);
+    let sy = laine_karras_scramble(y_raw, seed.wrapping_mul(0x85eb_ca6b) ^ 0xc2b2_ae35);
+    const INV_2_32: f32 = 1.0 / 4_294_967_296.0;
+    [
+        ((sx as f32) * INV_2_32).clamp(0.0, 0.999_999_94),
+        ((sy as f32) * INV_2_32).clamp(0.0, 0.999_999_94),
+    ]
+}
+
+#[cfg(test)]
+mod sobol_tests {
+    use super::*;
+
+    #[test]
+    fn owen_scrambled_sobol_stratifies_unit_square_quadrants() {
+        let mut quadrants = [0_u32; 4];
+        for i in 0..4 {
+            let p = owen_scrambled_sobol_2d(i, 42);
+            assert!((0.0..1.0).contains(&p[0]) && (0.0..1.0).contains(&p[1]));
+            let q = usize::from(p[0] >= 0.5) + 2 * usize::from(p[1] >= 0.5);
+            quadrants[q] += 1;
+        }
+        // A (0, 2)-net of 4 points puts exactly 1 point in each 2x2 quadrant.
+        assert_eq!(quadrants, [1, 1, 1, 1]);
+    }
+}

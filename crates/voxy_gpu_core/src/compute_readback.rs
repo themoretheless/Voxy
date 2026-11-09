@@ -428,5 +428,19 @@ mod tests {
         );
         drop(lease);
         pool.discard_quarantine().unwrap();
+
+        let bw = estimate_pcie_readback_bandwidth_gbps(16_000_000, 1_000_000).unwrap();
+        assert!((bw - 16.0).abs() < 1e-6);
+        assert_eq!(estimate_pcie_readback_bandwidth_gbps(0, 1_000), None);
     }
+}
+
+/// Estimates effective PCIe/unified-memory readback throughput in decimal GB/s (`bytes / duration_ns`)
+/// from a completed staging transfer, returning `None` if `bytes == 0` or `duration_ns == 0`.
+#[must_use]
+pub fn estimate_pcie_readback_bandwidth_gbps(bytes: u64, duration_ns: u64) -> Option<f64> {
+    if bytes == 0 || duration_ns == 0 {
+        return None;
+    }
+    Some(bytes as f64 / duration_ns as f64)
 }

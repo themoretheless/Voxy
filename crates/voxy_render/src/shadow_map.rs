@@ -267,6 +267,35 @@ pub fn snap_cascade_ortho_bounds(
     Some(([snapped_cx - half, snapped_cy - half], [snapped_cx + half, snapped_cy + half]))
 }
 
+/// Computes normal-offset + slope-scaled shadow receiver bias vector in world space:
+/// `offset = normal * (texel_world_size * normal_scale * (1 - ndotl)) + light_dir * (texel_world_size * constant_scale)`.
+#[must_use]
+pub fn contact_hardening_shadow_bias(
+    normal: [f32; 3],
+    light_dir: [f32; 3],
+    texel_world_size: f32,
+    normal_scale: f32,
+    constant_scale: f32,
+) -> [f32; 3] {
+    if normal.iter().chain(&light_dir).any(|c| !c.is_finite())
+        || !texel_world_size.is_finite()
+        || !normal_scale.is_finite()
+        || !constant_scale.is_finite()
+        || texel_world_size <= 0.0
+    {
+        return [0.0; 3];
+    }
+    let ndotl = (normal[0] * light_dir[0] + normal[1] * light_dir[1] + normal[2] * light_dir[2])
+        .clamp(0.0, 1.0);
+    let n_bias = texel_world_size * normal_scale.max(0.0) * (1.0 - ndotl);
+    let l_bias = texel_world_size * constant_scale.max(0.0);
+    [
+        normal[0] * n_bias + light_dir[0] * l_bias,
+        normal[1] * n_bias + light_dir[1] * l_bias,
+        normal[2] * n_bias + light_dir[2] * l_bias,
+    ]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -281,5 +310,8 @@ mod tests {
         assert!(((max_a[0] - min_a[0]) - 100.0).abs() < 1e-4);
         assert!(((max_b[1] - min_b[1]) - 100.0).abs() < 1e-4);
         assert!(snap_cascade_ortho_bounds([0.0, 0.0], 0.0, 1024).is_none());
+        let grazing = contact_hardening_shadow_bias([0.0, 0.0, 1.0], [1.0, 0.0, 0.0], 0.05, 1.5, 0.2);
+        let perpendicular = contact_hardening_shadow_bias([0.0, 0.0, 1.0], [0.0, 0.0, 1.0], 0.05, 1.5, 0.2);
+        assert!(grazing[2] > perpendicular[2]);
     }
 }

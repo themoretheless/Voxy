@@ -5,7 +5,10 @@ mod chunk;
 mod generator;
 mod terrain;
 mod world;
-pub use terrain::{Biome, ProceduralTerrainGenerator, TerrainColumn, bilinear_climate_blend};
+pub use terrain::{
+    Biome, ProceduralTerrainGenerator, TerrainColumn, bilinear_climate_blend,
+    orographic_precipitation_multiplier, stream_power_fluvial_incision_rate,
+};
 
 pub use block::{
     BlockDef, BlockRegistry, BlockStateId, CollisionShape, InterfaceGroupId, MaterialId, Occlusion,
@@ -13,6 +16,7 @@ pub use block::{
 };
 pub use chunk::{
     ChunkData, ChunkError, ChunkRevision, ChunkSnapshot, PalettedBlocks, SparseChunkOctreeMask,
+    chunk_shannon_entropy_bits_per_voxel, optimal_palette_bit_width,
 };
 pub use generator::{
     ChunkGenerator, GeneratedChunk, GenerationError, GeneratorDescriptor, SimpleTerrainGenerator,
@@ -25,4 +29,6 @@ pub use world::{
 };
 
 mod vegetation;
-pub use vegetation::{VegetationGenerator, VegetationPalette, can_plant_on_slope};
+pub use vegetation::{
+    VegetationGenerator, VegetationPalette, can_plant_on_slope, self_thinning_canopy_competition,
+};

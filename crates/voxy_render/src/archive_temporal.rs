@@ -518,6 +518,63 @@ pub fn ycocg_to_rgb(ycocg: [f32; 3]) -> [f32; 3] {
     [tmp + co, y + cg, tmp - co]
 }
 
+/// Computes Jimenez (2016) 5-tap bicubic Catmull-Rom filter weights and bilinear tap UV offsets
+/// (omitting the 4 corner taps of the 4x4 grid) for sharp temporal history resampling.
+#[must_use]
+pub fn catmull_rom_5tap_weights(frac_uv: [f32; 2]) -> ([f32; 5], [[f32; 2]; 5]) {
+    let f = [
+        if frac_uv[0].is_finite() {
+            frac_uv[0].clamp(0.0, 1.0)
+        } else {
+            0.5
+        },
+        if frac_uv[1].is_finite() {
+            frac_uv[1].clamp(0.0, 1.0)
+        } else {
+            0.5
+        },
+    ];
+    let cr_1d = |t: f32| -> [f32; 4] {
+        let t2 = t * t;
+        let t3 = t2 * t;
+        [
+            -0.5 * t + t2 - 0.5 * t3,
+            1.0 - 2.5 * t2 + 1.5 * t3,
+            0.5 * t + 2.0 * t2 - 1.5 * t3,
+            -0.5 * t2 + 0.5 * t3,
+        ]
+    };
+    let wx = cr_1d(f[0]);
+    let wy = cr_1d(f[1]);
+    let w12_x = (wx[1] + wx[2]).max(1e-6);
+    let w12_y = (wy[1] + wy[2]).max(1e-6);
+    let off12_x = wx[2] / w12_x - f[0];
+    let off12_y = wy[2] / w12_y - f[1];
+    let off0_x = -1.0 - f[0];
+    let off3_x = 2.0 - f[0];
+    let off0_y = -1.0 - f[1];
+    let off3_y = 2.0 - f[1];
+
+    let raw_weights = [
+        w12_x * wy[0],
+        wx[0] * w12_y,
+        w12_x * w12_y,
+        wx[3] * w12_y,
+        w12_x * wy[3],
+    ];
+    let sum: f32 = raw_weights.iter().sum();
+    let inv_sum = if sum.abs() > 1e-6 { 1.0 / sum } else { 1.0 };
+    let weights = raw_weights.map(|w| w * inv_sum);
+    let offsets = [
+        [off12_x, off0_y],
+        [off0_x, off12_y],
+        [off12_x, off12_y],
+        [off3_x, off12_y],
+        [off12_x, off3_y],
+    ];
+    (weights, offsets)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -529,5 +586,9 @@ mod tests {
         for i in 0..3 {
             assert!((rgb[i] - back[i]).abs() < 1e-6);
         }
+        let (weights, _) = catmull_rom_5tap_weights([0.35, 0.65]);
+        let sum: f32 = weights.iter().sum();
+        assert!((sum - 1.0).abs() < 1e-6);
+        assert!(weights[2] > 0.5);
     }
 }

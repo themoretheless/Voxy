@@ -168,6 +168,50 @@ fn solve(hip: Vec3, knee: Vec3, foot: Vec3, target: Vec3) -> (f32, f32) {
         rest2 - (angle - sign * beta),
     )
 }
+
+/// Computes quadruped leg phase offsets `([FL, FR, HL, HR], duty_factor)` across Alexander
+/// Froude number regimes (`Fr = v^2 / (g * h_hip)`), transitioning smoothly from lateral-sequence
+/// walk (`Fr < 0.5`) to diagonal trot (`0.5 <= Fr < 2.2`) to rotary/transverse gallop (`Fr >= 2.2`).
+#[allow(dead_code)]
+pub fn quadruped_gait_phase_offsets(froude_number: f32) -> ([f32; 4], f32) {
+    let fr = if froude_number.is_finite() {
+        froude_number.max(0.0)
+    } else {
+        0.0
+    };
+    let walk = [0.0, 0.50, 0.75, 0.25];
+    let trot = [0.0, 0.50, 0.50, 0.00];
+    let gallop = [0.0, 0.14, 0.52, 0.66];
+
+    if fr < 0.5 {
+        let t = (fr / 0.5).clamp(0.0, 1.0);
+        let duty = 0.70 - 0.12 * t;
+        (walk, duty)
+    } else if fr < 2.2 {
+        let t = ((fr - 0.5) / 1.7).clamp(0.0, 1.0);
+        let smooth = t * t * (3.0 - 2.0 * t);
+        let phases = [
+            walk[0] + (trot[0] - walk[0]) * smooth,
+            walk[1] + (trot[1] - walk[1]) * smooth,
+            walk[2] + (trot[2] - walk[2]) * smooth,
+            walk[3] + (trot[3] - walk[3]) * smooth,
+        ];
+        let duty = 0.58 - 0.14 * smooth;
+        (phases, duty)
+    } else {
+        let t = ((fr - 2.2) / 1.8).clamp(0.0, 1.0);
+        let smooth = t * t * (3.0 - 2.0 * t);
+        let phases = [
+            trot[0] + (gallop[0] - trot[0]) * smooth,
+            trot[1] + (gallop[1] - trot[1]) * smooth,
+            trot[2] + (gallop[2] - trot[2]) * smooth,
+            trot[3] + (gallop[3] - trot[3]) * smooth,
+        ];
+        let duty = (0.44 - 0.12 * smooth).clamp(0.28, 0.44);
+        (phases, duty)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -215,5 +259,16 @@ mod tests {
                 "stance foot must remain planted"
             );
         }
+    }
+
+    #[test]
+    fn quadruped_gait_phase_offsets_decrease_duty_factor_with_froude_number() {
+        let (walk_p, walk_duty) = quadruped_gait_phase_offsets(0.15);
+        let (trot_p, trot_duty) = quadruped_gait_phase_offsets(1.8);
+        let (gallop_p, gallop_duty) = quadruped_gait_phase_offsets(3.8);
+        assert!(walk_duty > trot_duty && trot_duty > gallop_duty);
+        assert_eq!(walk_p, [0.0, 0.5, 0.75, 0.25]);
+        assert!((trot_p[1] - trot_p[2]).abs() < 0.05);
+        assert!((gallop_p[1] - 0.14).abs() < 0.05);
     }
 }

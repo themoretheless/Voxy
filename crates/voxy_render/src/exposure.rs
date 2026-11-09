@@ -346,3 +346,39 @@ impl AutoExposureFrame {
         &self.output
     }
 }
+
+/// Computes ISO 2720 physical camera exposure value `(ev100, saturation_exposure_scale)` from
+/// aperture `N` (`aperture_f_stops`), shutter time `t` (`shutter_seconds`), and `iso`:
+/// `EV100 = log2(N^2 / t * 100 / ISO)` and Sunny-16 saturation-based scale `1 / (1.2 * 2^EV100)`.
+#[must_use]
+pub fn ev100_from_camera_settings(
+    aperture_f_stops: f32,
+    shutter_seconds: f32,
+    iso: f32,
+) -> Option<(f32, f32)> {
+    if !aperture_f_stops.is_finite()
+        || !shutter_seconds.is_finite()
+        || !iso.is_finite()
+        || aperture_f_stops <= 0.0
+        || shutter_seconds <= 0.0
+        || iso <= 0.0
+    {
+        return None;
+    }
+    let ev100 = ((aperture_f_stops * aperture_f_stops) / shutter_seconds * (100.0 / iso)).log2();
+    let scale = 1.0 / (1.2 * ev100.exp2());
+    (ev100.is_finite() && scale.is_finite() && scale > 0.0).then_some((ev100, scale))
+}
+
+#[cfg(test)]
+mod ev100_tests {
+    use super::*;
+
+    #[test]
+    fn sunny_16_rule_produces_ev100_near_15() {
+        let (ev100, scale) = ev100_from_camera_settings(16.0, 1.0 / 125.0, 100.0).unwrap();
+        assert!((ev100 - 15.0).abs() < 0.05);
+        assert!(scale > 0.0 && scale < 1e-4);
+        assert!(ev100_from_camera_settings(0.0, 0.01, 100.0).is_none());
+    }
+}

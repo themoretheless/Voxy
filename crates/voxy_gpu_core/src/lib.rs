@@ -15,7 +15,9 @@ pub use compute::*;
 pub use compute_memory::*;
 pub use compute_readback::*;
 pub use gravity::*;
-pub use shared_upload::{SharedUploadCopy, SharedUploadRing, SharedUploadSnapshot};
+pub use shared_upload::{
+    SharedUploadCopy, SharedUploadRing, SharedUploadSnapshot, ring_buffer_wrap_contiguous_slice,
+};
 
 /// Failure classes of portable compute: capability, budget, validation, lifecycle.
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]

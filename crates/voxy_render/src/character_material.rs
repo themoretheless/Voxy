@@ -62,6 +62,33 @@ pub fn specular_aa_roughness(
     (r * r + kernel_roughness2).sqrt().clamp(0.04, 1.0)
 }
 
+/// Evaluates the Estevez & Kulla (2017) "Charlie" velvet/microfiber sheen normal distribution:
+/// `D(h) = (2 + 1 / alpha) * sin(theta_h)^(1 / alpha) / (2 * pi)`.
+#[must_use]
+pub fn charlie_sheen_ndf(ndoth: f32, roughness: f32) -> f32 {
+    if !ndoth.is_finite() || !roughness.is_finite() {
+        return 0.0;
+    }
+    let alpha = roughness.clamp(0.04, 1.0).powi(2);
+    let inv_alpha = 1.0 / alpha;
+    let cos2 = ndoth.clamp(0.0, 1.0).powi(2);
+    let sin_theta = (1.0 - cos2).max(0.0).sqrt();
+    (2.0 + inv_alpha) * sin_theta.powf(inv_alpha) / (2.0 * std::f32::consts::PI)
+}
+
+/// Evaluates the Neubelt & Pettineo (2013) / Ashikhmin cloth sheen visibility term:
+/// `V(v, l) = 1 / (4 * (ndotl + ndotv - ndotl * ndotv))`.
+#[must_use]
+pub fn ashikhmin_velvet_visibility(ndotv: f32, ndotl: f32) -> f32 {
+    if !ndotv.is_finite() || !ndotl.is_finite() {
+        return 0.0;
+    }
+    let nv = ndotv.clamp(0.0, 1.0);
+    let nl = ndotl.clamp(0.0, 1.0);
+    let denom = 4.0 * (nl + nv - nl * nv).max(1e-4);
+    1.0 / denom
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -91,5 +118,7 @@ mod tests {
         let filtered = specular_aa_roughness(0.1, [0.3, 0.0, 0.0], [0.0, 0.3, 0.0], 0.18);
         assert!((smooth - 0.1).abs() < 1e-6);
         assert!(filtered > smooth);
+        assert!(charlie_sheen_ndf(0.1, 0.5) > charlie_sheen_ndf(0.95, 0.5));
+        assert!((ashikhmin_velvet_visibility(1.0, 1.0) - 0.25).abs() < 1e-5);
     }
 }

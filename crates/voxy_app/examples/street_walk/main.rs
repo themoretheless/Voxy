@@ -106,6 +106,8 @@ struct App {
     daylight_ev: Option<f32>,
     sun_elevation: Option<f32>,
     wetness: Option<f32>,
+    puddle_coverage: f32,
+    fov_degrees: f32,
     pitch: Option<f32>,
     /// `--spawn pool` starts at the garden gate overlooking the villa pool.
     spawn_pool: bool,
@@ -151,12 +153,19 @@ impl App {
         }
     }
     fn cycle_view(&mut self) {
-        self.view = match self.view {
+        let next = match self.view {
             StreetView::FirstPerson => StreetView::ThirdPerson,
             StreetView::ThirdPerson => StreetView::Bodycam,
             StreetView::Bodycam => StreetView::Camcorder,
             StreetView::Camcorder => StreetView::FirstPerson,
         };
+        self.set_view(next);
+    }
+    fn set_view(&mut self, view: StreetView) {
+        if self.view == view {
+            return;
+        }
+        self.view = view;
         self.camera
             .set_distance(if self.view == StreetView::ThirdPerson {
                 3.
@@ -210,6 +219,8 @@ impl App {
             daylight_ev: None,
             sun_elevation: value("--sun-elevation").and_then(|v| v.parse().ok()),
             wetness: value("--wetness").and_then(|v| v.parse().ok()),
+            puddle_coverage: 0.45,
+            fov_degrees: 65.,
             pitch: value("--pitch").and_then(|v| v.parse().ok()),
             spawn_pool: value("--spawn").as_deref() == Some("pool"),
             aa_validation: aa_validation::AaValidation::from_environment(),
@@ -455,7 +466,7 @@ impl App {
             } else {
                 wgpu::Features::empty()
             }
-            | if self.profile.is_some() || std::env::var_os("VOXY_STREET_GPU_TIMING").is_some() {
+            | if std::env::var("VOXY_STREET_GPU_TIMING").as_deref() != Ok("0") {
                 adapter.features() & wgpu::Features::TIMESTAMP_QUERY
             } else {
                 wgpu::Features::empty()
@@ -665,6 +676,7 @@ impl App {
             )?;
         }
         renderer.set_surface_wetness(self.wetness.map(|w| w.clamp(0., 1.)))?;
+        renderer.set_puddle_coverage(self.puddle_coverage.clamp(0., 1.))?;
         renderer.set_display_headroom(headroom.max(1.))?;
         let mode = keep_mode.unwrap_or(self.render.antialiasing);
         renderer.set_antialiasing(mode)?;
@@ -1135,8 +1147,16 @@ impl App {
             post.encode(&mut encoder, target_view);
             gpu.queue.submit([encoder.finish()])
         } else {
+            let fov_deg = if self.offscreen_benchmark
+                || self.aa_validation.is_some()
+                || self.profile.is_some()
+            {
+                65.
+            } else {
+                self.fov_degrees.clamp(40., 105.)
+            };
             gpu.renderer
-                .set_camera_projection(65_f32.to_radians(), Vec3::Y);
+                .set_camera_projection(fov_deg.to_radians(), Vec3::Y);
             gpu.renderer.set_linear_output(false);
             gpu.renderer
                 .draw_supersampled(&gpu.supersample, target_view, eye, direction)?
@@ -1388,6 +1408,13 @@ impl App {
         let mut trigger_splash = false;
         let mut trigger_photo = false;
         let mut teleport_request = None;
+        let mut view_idx = match self.view {
+            StreetView::FirstPerson => 0_u8,
+            StreetView::ThirdPerson => 1_u8,
+            StreetView::Bodycam => 2_u8,
+            StreetView::Camcorder => 3_u8,
+        };
+        let prev_view_idx = view_idx;
         let gpu_hud = gpu.renderer.gpu_times_ms.last().copied().and_then(|tot| {
             let [opq, trn] = *gpu.renderer.gpu_shading_times_ms.last()?;
             Some([tot, opq, trn])
@@ -1403,6 +1430,9 @@ impl App {
                     cycle: &mut self.day_cycle,
                     weather: &mut self.weather,
                     wetness: &mut self.wetness,
+                    puddle_coverage: &mut self.puddle_coverage,
+                    camera_view: &mut view_idx,
+                    fov_degrees: &mut self.fov_degrees,
                     ageing: self.original.then_some(&mut self.ageing),
                     hdri_sky: self.original.then_some(&mut self.hdri_sky),
                     seed_mut: self.original.then_some(&mut self.original_seed),
@@ -1443,6 +1473,34 @@ impl App {
         }
         if let Some(frame) = frame {
             gpu.queue.present(frame);
+        }
+        if view_idx != prev_view_idx {
+            let next_view = match view_idx {
+                1 => StreetView::ThirdPerson,
+                2 => StreetView::Bodycam,
+                3 => StreetView::Camcorder,
+                _ => StreetView::FirstPerson,
+            };
+            self.view = next_view;
+            self.camera
+                .set_distance(if self.view == StreetView::ThirdPerson {
+                    3.
+                } else {
+                    0.
+                });
+            let profile = match self.view {
+                StreetView::Camcorder => voxy_render::PhotorealLensProfile::Camcorder,
+                _ => voxy_render::PhotorealLensProfile::Bodycam,
+            };
+            let look = self.camera.direction();
+            let aim = Vec2::new(look.x.atan2(look.z), look.y.clamp(-1., 1.).asin());
+            self.rig = voxy_render::BodycamRig::default();
+            self.rig.flashlight_enabled = false;
+            self.rig.aim_angles = aim;
+            self.rig.chest_goal_angles = aim;
+            self.rig.torso_spring.position = Vec3::new(aim.x, aim.y, 0.);
+            self.rig.set_lens_profile(profile);
+            gpu.renderer.reset_temporal_history();
         }
         if std::mem::take(&mut self.rebuild_scene) {
             return self.rebuild_original();

@@ -779,3 +779,45 @@ pub struct DirectionalScatteringOptions {
     pub asymmetry: f32,
     pub samples: u32,
 }
+
+/// Evaluates the dual-lobe Henyey-Greenstein volumetric phase function
+/// `w * HG(cos_theta, g_forward) + (1 - w) * HG(cos_theta, g_backward)`
+/// to capture both strong forward silver-lining Mie scattering (`g_forward > 0`)
+/// and glory/fogbow backscattering (`g_backward < 0`) in clouds and mist.
+#[must_use]
+pub fn double_henyey_greenstein_phase(
+    cos_theta: f32,
+    g_forward: f32,
+    g_backward: f32,
+    forward_weight: f32,
+) -> f32 {
+    if !cos_theta.is_finite()
+        || !g_forward.is_finite()
+        || !g_backward.is_finite()
+        || !forward_weight.is_finite()
+    {
+        return 0.0;
+    }
+    let mu = cos_theta.clamp(-1.0, 1.0);
+    let w = forward_weight.clamp(0.0, 1.0);
+    let hg = |g_raw: f32| -> f32 {
+        let g = g_raw.clamp(-0.99, 0.99);
+        let g2 = g * g;
+        let denom = (1.0 + g2 - 2.0 * g * mu).max(1e-5).powf(1.5);
+        (1.0 - g2) / (4.0 * std::f32::consts::PI * denom)
+    };
+    (w * hg(g_forward) + (1.0 - w) * hg(g_backward)).max(0.0)
+}
+
+#[cfg(test)]
+mod double_hg_tests {
+    use super::*;
+
+    #[test]
+    fn double_hg_produces_both_forward_and_backscatter_peaks() {
+        let fwd = double_henyey_greenstein_phase(1.0, 0.75, -0.4, 0.7);
+        let side = double_henyey_greenstein_phase(0.0, 0.75, -0.4, 0.7);
+        let back = double_henyey_greenstein_phase(-1.0, 0.75, -0.4, 0.7);
+        assert!(fwd > side && back > side);
+    }
+}

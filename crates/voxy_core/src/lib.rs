@@ -13,7 +13,8 @@ pub use coordinates::{
     CoordinateOverflow, Direction6, FaceMask, FloatingOrigin, InvalidLocalPos, LocalIndex,
     LocalPos, PADDED_EDGE, PADDED_VOLUME, QuantizedNormal16, RayGridIterator, RayVoxelStep,
     SpiralChunkIterator, SubVoxelCoord, SubVoxelPos, VoxelPos, f16_to_f32, f32_to_f16, join_voxel,
-    linear_to_srgb, split_voxel, srgb_to_linear,
+    linear_to_srgb, morton_decode_3d_u10, morton_encode_3d_u10, split_voxel, srgb_to_linear,
+    voxel_ray_dda_first_step,
 };
 pub use hash::{
     DeterministicRng, FastHashBuilder, FastHasher, SeededFastHashBuilder, crc32c, crc32c_append,

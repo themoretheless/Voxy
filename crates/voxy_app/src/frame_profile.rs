@@ -350,4 +350,29 @@ mod tests {
         );
         std::fs::remove_dir_all(directory).unwrap();
     }
+
+    #[test]
+    fn amdahl_parallel_speedup_respects_serial_bottleneck_and_single_thread_identity() {
+        let (s1, e1) = amdahl_parallel_speedup_efficiency(0.2, 1);
+        assert!((s1 - 1.0).abs() < 1e-9 && (e1 - 1.0).abs() < 1e-9);
+        let (s8, e8) = amdahl_parallel_speedup_efficiency(0.2, 8);
+        assert!(s8 > 3.3 && s8 < 5.0);
+        assert!((e8 - s8 / 8.0).abs() < 1e-9);
+    }
+}
+
+/// Computes Amdahl's Law theoretical `(speedup, parallel_efficiency)` given `serial_fraction`
+/// in `[0, 1]` and `worker_threads >= 1`:
+/// `S(N) = 1 / (s + (1 - s) / N)`, `E(N) = S(N) / N`.
+#[allow(dead_code)]
+pub fn amdahl_parallel_speedup_efficiency(serial_fraction: f64, worker_threads: u32) -> (f64, f64) {
+    if !serial_fraction.is_finite() || worker_threads == 0 {
+        return (1.0, 1.0);
+    }
+    let s = serial_fraction.clamp(0.0, 1.0);
+    let n = f64::from(worker_threads.max(1));
+    let denom = s + (1.0 - s) / n;
+    let speedup = if denom > 1e-12 { 1.0 / denom } else { n };
+    let efficiency = (speedup / n).clamp(0.0, 1.0);
+    (speedup, efficiency)
 }
