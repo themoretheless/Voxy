@@ -468,12 +468,7 @@ struct StaticBox {
     max: [f64; 3],
 }
 #[derive(Debug)]
-struct StaticWorld(
-    Vec<StaticBox>,
-    SceneId,
-    Vec<convex::AffineBox>,
-    bool,
-);
+struct StaticWorld(Vec<StaticBox>, SceneId, Vec<convex::AffineBox>, bool);
 impl CollisionWorld for StaticWorld {
     type Obstacle = NodeId;
     type Error = PhysicsError;
@@ -1010,7 +1005,14 @@ impl CharacterPhysics {
         dt: f64,
     ) -> Result<
         (
-            HashMap<NodeId, (&'a voxy_animation::RootRotationPath, glam::DQuat, glam::DVec3)>,
+            HashMap<
+                NodeId,
+                (
+                    &'a voxy_animation::RootRotationPath,
+                    glam::DQuat,
+                    glam::DVec3,
+                ),
+            >,
             HashMap<NodeId, CharacterRigidTrajectoryMotion<'a>>,
             HashMap<NodeId, &'a CharacterCertifiedFadeMotion<'a>>,
         ),
@@ -1957,8 +1959,13 @@ mod n8_gameplay_ai_tests {
         assert!(low < mid && mid < high);
         assert!((mid - 0.5).abs() < 1e-6);
 
-        let vis_center =
-            perception_cone_visibility([0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, 5.0], 10.0, 0.5);
+        let vis_center = perception_cone_visibility(
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 5.0],
+            10.0,
+            0.5,
+        );
         let vis_behind = perception_cone_visibility(
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 1.0],

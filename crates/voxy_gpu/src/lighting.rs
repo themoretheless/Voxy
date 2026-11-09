@@ -561,7 +561,10 @@ mod tests {
         let neighbor_local = 16 + 32 * (15 + 32 * 15);
         let neighbor_block = result[neighbor_local] & 0x0f;
         assert_eq!(neighbor_block, 13);
-        assert_eq!(estimate_dirty_light_mip_voxels(2), 2 * (32768 + 4096 + 512 + 64 + 8 + 1));
+        assert_eq!(
+            estimate_dirty_light_mip_voxels(2),
+            2 * (32768 + 4096 + 512 + 64 + 8 + 1)
+        );
     }
 }
 

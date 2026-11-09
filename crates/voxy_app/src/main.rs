@@ -1,8 +1,8 @@
 const FIXED_DT: f32 = 1.0 / 60.0;
 const WALK_SPEED: f32 = 5.0;
-mod cpu_replay;
 mod animals;
 mod controls;
+mod cpu_replay;
 mod frame_profile;
 mod graphics_options;
 mod native_plants;
@@ -2664,12 +2664,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let arguments: Vec<_> = std::env::args().skip(1).collect();
     if let Some(index) = arguments.iter().position(|arg| arg == "--cpu-replay") {
-        let path = arguments.get(index + 1).ok_or("--cpu-replay requires a CSV path")?;
-        let scenario = arguments.iter().position(|arg| arg == "--cpu-replay-scenario")
-            .map(|i| arguments.get(i + 1).map(String::as_str).ok_or("missing CPU replay scenario"))
-            .transpose()?.unwrap_or("motion");
-        return cpu_replay::run(std::path::Path::new(path), scenario,
-            arguments.iter().any(|arg| arg == "--cpu-replay-profile-pose"));
+        let path = arguments
+            .get(index + 1)
+            .ok_or("--cpu-replay requires a CSV path")?;
+        let scenario = arguments
+            .iter()
+            .position(|arg| arg == "--cpu-replay-scenario")
+            .map(|i| {
+                arguments
+                    .get(i + 1)
+                    .map(String::as_str)
+                    .ok_or("missing CPU replay scenario")
+            })
+            .transpose()?
+            .unwrap_or("motion");
+        return cpu_replay::run(
+            std::path::Path::new(path),
+            scenario,
+            arguments
+                .iter()
+                .any(|arg| arg == "--cpu-replay-profile-pose"),
+        );
     }
     if arguments.first().is_some_and(|arg| arg == "--vegetation") {
         let kind = match arguments.get(1).map(String::as_str) {

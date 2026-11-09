@@ -253,7 +253,8 @@ pub(crate) fn capture(
     for (name, view) in views {
         let texture = view.texture();
         let depth = texture.format() == wgpu::TextureFormat::Depth32Float;
-        let size = u64::from(texture.width()) * u64::from(texture.height()) * if depth {4} else {16};
+        let size =
+            u64::from(texture.width()) * u64::from(texture.height()) * if depth { 4 } else { 16 };
         if texture.format() != wgpu::TextureFormat::Depth32Float
             && texture.usage().contains(wgpu::TextureUsages::COPY_SRC)
         {
@@ -328,7 +329,7 @@ pub(crate) fn capture(
             .filter(|b| u32::from_le_bytes((*b).try_into().unwrap()) & 0x7f800000 == 0x7f800000)
             .count();
         if raw {
-            let suffix = if depth {"r32.bin"} else {"rgba32.bin"};
+            let suffix = if depth { "r32.bin" } else { "rgba32.bin" };
             std::fs::write(root.join(format!("{name}.{suffix}")), &bytes)?;
         }
         stages.push(serde_json::json!({"stage":name,"source_format":format!("{:?}",texture.format()),"size":[texture.width(),texture.height()],"capture_format":if depth {"R32Float bit words, row-major top-down"} else {"RGBA32Float bit words, row-major top-down"},"captured_channels":if depth {1} else {4},"textureLoad_only":true,"finite_source_channels_preserved_exactly":true,"nonfinite_channels":nonfinite,"bytes":bytes.len(),"blake3":blake3::hash(&bytes).to_hex().to_string(),"raw_saved":raw}));
@@ -352,7 +353,10 @@ pub(crate) fn capture_storage(
     raw: bool,
 ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
     let size = source.size();
-    if size == 0 || !size.is_multiple_of(4) || !source.usage().contains(wgpu::BufferUsages::COPY_SRC) {
+    if size == 0
+        || !size.is_multiple_of(4)
+        || !source.usage().contains(wgpu::BufferUsages::COPY_SRC)
+    {
         return Err("native storage diagnostic requires nonempty aligned COPY_SRC buffer".into());
     }
     let [staging] = ComputeMemoryBudget::for_device(device).allocate_buffers([

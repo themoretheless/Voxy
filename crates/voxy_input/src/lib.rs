@@ -463,7 +463,10 @@ mod tests {
     }
     #[test]
     fn radial_deadzone_and_action_buffer_window() {
-        assert_eq!(apply_radial_deadzone([0.1, 0.1], 0.2, 1.0).unwrap(), [0.0, 0.0]);
+        assert_eq!(
+            apply_radial_deadzone([0.1, 0.1], 0.2, 1.0).unwrap(),
+            [0.0, 0.0]
+        );
         let out = apply_radial_deadzone([0.6, 0.0], 0.2, 2.0).unwrap();
         assert!((out[0] - 0.25).abs() < 1e-6 && out[1].abs() < 1e-6);
         assert_eq!(

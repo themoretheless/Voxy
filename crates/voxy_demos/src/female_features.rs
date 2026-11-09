@@ -1888,7 +1888,11 @@ mod tests {
             ));
             assert_eq!(upper.indices(), lower.indices());
             for mesh in [&upper, &lower] {
-                let sign = if std::ptr::eq(mesh, &raw const upper) { -1. } else { 1. };
+                let sign = if std::ptr::eq(mesh, &raw const upper) {
+                    -1.
+                } else {
+                    1.
+                };
                 let center = mesh
                     .vertices()
                     .iter()

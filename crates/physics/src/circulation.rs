@@ -718,9 +718,8 @@ pub fn fahraeus_lindqvist_microvessel_viscosity_factor(
     {
         return None;
     }
-    let mu_45 = 220.0 * (-1.3 * diameter_um).exp()
-        + 3.2
-        - 2.44 * (-0.06 * diameter_um.powf(0.645)).exp();
+    let mu_45 =
+        220.0 * (-1.3 * diameter_um).exp() + 3.2 - 2.44 * (-0.06 * diameter_um.powf(0.645)).exp();
     let c = (0.8 + (-0.075 * diameter_um).exp())
         * (-1.0 + 1.0 / (1.0 + 1e-11 * diameter_um.powi(12)))
         + 1.0 / (1.0 + 1e-11 * diameter_um.powi(12));

@@ -95,7 +95,10 @@ mod wrinkle_tests {
 
     #[test]
     fn langer_wrinkle_is_zero_below_buckling_threshold_and_grows_above() {
-        assert_eq!(langer_line_wrinkle_amplitude(0.02, 0.05, 0.001).unwrap(), 0.0);
+        assert_eq!(
+            langer_line_wrinkle_amplitude(0.02, 0.05, 0.001).unwrap(),
+            0.0
+        );
         let wrinkled = langer_line_wrinkle_amplitude(0.15, 0.05, 0.001).unwrap();
         assert!(wrinkled > 0.0 && wrinkled < 0.001);
         assert!(langer_line_wrinkle_amplitude(0.1, 0.0, 0.001).is_err());

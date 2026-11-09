@@ -393,7 +393,11 @@ pub fn lissajous_head_bob_offset(stride_phase_rad: f32, speed_mps: f32, amplitud
 /// Computes a smooth banking camera roll angle in radians (`[-max_roll_rad, max_roll_rad]`)
 /// driven by lateral strafe velocity using a cubic Hermite response.
 #[allow(dead_code)]
-pub fn strafe_camera_roll_angle_rad(strafe_velocity: f32, max_speed: f32, max_roll_rad: f32) -> f32 {
+pub fn strafe_camera_roll_angle_rad(
+    strafe_velocity: f32,
+    max_speed: f32,
+    max_roll_rad: f32,
+) -> f32 {
     if !strafe_velocity.is_finite()
         || !max_speed.is_finite()
         || !max_roll_rad.is_finite()
@@ -489,7 +493,10 @@ mod walk_camera_tests {
         assert!((right + left).abs() < 1e-6);
         assert!(right < 0.0 && right >= -0.08);
 
-        assert_eq!(aim_response_sensitivity_curve([0.08, 0.05], 0.15, 2.0), [0.0, 0.0]);
+        assert_eq!(
+            aim_response_sensitivity_curve([0.08, 0.05], 0.15, 2.0),
+            [0.0, 0.0]
+        );
         let mid = aim_response_sensitivity_curve([0.6, 0.0], 0.1, 2.0);
         let full = aim_response_sensitivity_curve([1.0, 0.0], 0.1, 2.0);
         assert!(mid[0] > 0.0 && mid[0] < 0.6);

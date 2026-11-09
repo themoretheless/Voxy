@@ -8,18 +8,12 @@ pub use stream::{PcmStream, StreamRead};
 mod wav;
 pub use wav::decode_wav;
 mod spatial;
-pub use spatial::{
-    sabine_eyring_rt60, spatial_gains, trace_voxel_occlusion_gain,
-};
+pub use spatial::{sabine_eyring_rt60, spatial_gains, trace_voxel_occlusion_gain};
 
 /// Evaluates Woodworth's spherical-head Interaural Time Difference (ITD) in seconds
 /// for horizontal azimuth `azimuth_rad` (`-pi/2..=pi/2`), `head_radius_m`, and `speed_of_sound_m_s`.
 #[must_use]
-pub fn woodworth_itd_seconds(
-    azimuth_rad: f32,
-    head_radius_m: f32,
-    speed_of_sound_m_s: f32,
-) -> f32 {
+pub fn woodworth_itd_seconds(azimuth_rad: f32, head_radius_m: f32, speed_of_sound_m_s: f32) -> f32 {
     if !azimuth_rad.is_finite()
         || !head_radius_m.is_finite()
         || head_radius_m <= 0.0

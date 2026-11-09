@@ -264,7 +264,10 @@ pub fn snap_cascade_ortho_bounds(
     let snapped_cx = (light_space_center_xy[0] / texel_size).floor() * texel_size;
     let snapped_cy = (light_space_center_xy[1] / texel_size).floor() * texel_size;
     let half = 0.5 * world_extent;
-    Some(([snapped_cx - half, snapped_cy - half], [snapped_cx + half, snapped_cy + half]))
+    Some((
+        [snapped_cx - half, snapped_cy - half],
+        [snapped_cx + half, snapped_cy + half],
+    ))
 }
 
 /// Computes normal-offset + slope-scaled shadow receiver bias vector in world space:
@@ -310,8 +313,10 @@ mod tests {
         assert!(((max_a[0] - min_a[0]) - 100.0).abs() < 1e-4);
         assert!(((max_b[1] - min_b[1]) - 100.0).abs() < 1e-4);
         assert!(snap_cascade_ortho_bounds([0.0, 0.0], 0.0, 1024).is_none());
-        let grazing = contact_hardening_shadow_bias([0.0, 0.0, 1.0], [1.0, 0.0, 0.0], 0.05, 1.5, 0.2);
-        let perpendicular = contact_hardening_shadow_bias([0.0, 0.0, 1.0], [0.0, 0.0, 1.0], 0.05, 1.5, 0.2);
+        let grazing =
+            contact_hardening_shadow_bias([0.0, 0.0, 1.0], [1.0, 0.0, 0.0], 0.05, 1.5, 0.2);
+        let perpendicular =
+            contact_hardening_shadow_bias([0.0, 0.0, 1.0], [0.0, 0.0, 1.0], 0.05, 1.5, 0.2);
         assert!(grazing[2] > perpendicular[2]);
     }
 }

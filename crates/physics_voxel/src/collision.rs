@@ -492,9 +492,13 @@ mod tests {
             ),
             Err(SweepError::CandidateBudgetExceeded { .. })
         ));
-        let (toi, normal) =
-            swept_aabb_slab_toi([0.0, 0.5, 0.5], [10.0, 0.0, 0.0], [2.0, 0.0, 0.0], [3.0, 1.0, 1.0])
-                .unwrap();
+        let (toi, normal) = swept_aabb_slab_toi(
+            [0.0, 0.5, 0.5],
+            [10.0, 0.0, 0.0],
+            [2.0, 0.0, 0.0],
+            [3.0, 1.0, 1.0],
+        )
+        .unwrap();
         assert!((toi - 0.2).abs() < 1e-12);
         assert_eq!(normal, [-1, 0, 0]);
     }

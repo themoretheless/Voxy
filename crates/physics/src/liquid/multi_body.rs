@@ -1061,12 +1061,7 @@ fn solve_contact(
             .as_ref()
             .and_then(|r| r.reaction.as_ref())
             .map_or_else(
-                || {
-                    vec![
-                        crate::rotation::TorquePolynomial::constant([0.; 3]);
-                        states.len()
-                    ]
-                },
+                || vec![crate::rotation::TorquePolynomial::constant([0.; 3]); states.len()],
                 |r| {
                     r.wrenches
                         .iter()
@@ -1180,9 +1175,7 @@ fn solve_contact(
                     [
                         MotionLoad {
                             force: external.force,
-                            torque: crate::rotation::TorquePolynomial::constant(
-                                external.torque,
-                            ),
+                            torque: crate::rotation::TorquePolynomial::constant(external.torque),
                             ..MotionLoad::zero()
                         },
                         MotionLoad {

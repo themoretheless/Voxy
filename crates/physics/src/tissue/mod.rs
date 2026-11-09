@@ -753,7 +753,12 @@ mod reaction_friction_tests {
 
     #[test]
     fn ogden_and_fung_hyperelastic_models_vanish_at_rest_and_stiffen_under_tension() {
-        assert!(ogden_1term_uniaxial_cauchy_stress(1.0, 2500.0, 4.0).unwrap().abs() < 1e-12);
+        assert!(
+            ogden_1term_uniaxial_cauchy_stress(1.0, 2500.0, 4.0)
+                .unwrap()
+                .abs()
+                < 1e-12
+        );
         let tens = ogden_1term_uniaxial_cauchy_stress(1.2, 2500.0, 4.0).unwrap();
         let comp = ogden_1term_uniaxial_cauchy_stress(0.85, 2500.0, 4.0).unwrap();
         assert!(tens > 0.0 && comp < 0.0);
@@ -767,11 +772,7 @@ mod reaction_friction_tests {
 /// Evaluates the 1-term incompressible Ogden uniaxial Cauchy stress
 /// $\sigma(\lambda) = \frac{2\mu}{\alpha}\left(\lambda^\alpha - \lambda^{-\alpha/2}\right)$.
 #[must_use]
-pub fn ogden_1term_uniaxial_cauchy_stress(
-    stretch: f64,
-    mu_pa: f64,
-    alpha: f64,
-) -> Option<f64> {
+pub fn ogden_1term_uniaxial_cauchy_stress(stretch: f64, mu_pa: f64, alpha: f64) -> Option<f64> {
     if !stretch.is_finite()
         || !mu_pa.is_finite()
         || !alpha.is_finite()

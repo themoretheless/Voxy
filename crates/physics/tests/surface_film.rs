@@ -883,10 +883,7 @@ fn self_contact_uniform_plate_transfer_is_mesh_invariant() {
         receiver_volumes.push(volume);
         let _ = std::fmt::Write::write_fmt(
             &mut report,
-            format_args!(
-                "{divisions},{},{volume:.15e},{mass_error:.3e}\n",
-                2 * count
-            ),
+            format_args!("{divisions},{},{volume:.15e},{mass_error:.3e}\n", 2 * count),
         );
     }
     for volume in &receiver_volumes {

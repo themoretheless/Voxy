@@ -562,7 +562,12 @@ pub fn horizon_specular_occlusion(
     geom_normal: [f32; 3],
     fade_horizon: f32,
 ) -> f32 {
-    if reflect_dir.iter().chain(&geom_normal).any(|c| !c.is_finite()) || !fade_horizon.is_finite() {
+    if reflect_dir
+        .iter()
+        .chain(&geom_normal)
+        .any(|c| !c.is_finite())
+        || !fade_horizon.is_finite()
+    {
         return 0.0;
     }
     let r_dot_ng = reflect_dir[0] * geom_normal[0]

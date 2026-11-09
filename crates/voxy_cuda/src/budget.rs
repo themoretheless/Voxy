@@ -142,12 +142,10 @@ mod tests {
     }
     #[test]
     fn cuda_sm_occupancy_warps_respects_register_and_shared_memory_caps() {
-        let (warps, occ) =
-            cuda_sm_occupancy_warps(256, 32, 8192, 64, 65536, 65536).unwrap();
+        let (warps, occ) = cuda_sm_occupancy_warps(256, 32, 8192, 64, 65536, 65536).unwrap();
         assert_eq!(warps, 64);
         assert!((occ - 1.0).abs() < 1e-6);
-        let (reg_limited, occ2) =
-            cuda_sm_occupancy_warps(256, 64, 4096, 64, 65536, 65536).unwrap();
+        let (reg_limited, occ2) = cuda_sm_occupancy_warps(256, 64, 4096, 64, 65536, 65536).unwrap();
         assert_eq!(reg_limited, 32);
         assert!((occ2 - 0.5).abs() < 1e-6);
         assert_eq!(cuda_sm_occupancy_warps(0, 32, 0, 64, 65536, 65536), None);
@@ -178,7 +176,9 @@ pub fn cuda_sm_occupancy_warps(
     }
     let mut max_blocks = max_warps_per_sm / warps_per_block;
     if regs_per_thread > 0 {
-        let regs_per_block = warps_per_block.saturating_mul(32).saturating_mul(regs_per_thread);
+        let regs_per_block = warps_per_block
+            .saturating_mul(32)
+            .saturating_mul(regs_per_thread);
         if regs_per_block > max_regs_per_sm {
             return Some((0, 0.0));
         }

@@ -603,7 +603,10 @@ mod availability_tests {
         }
         let dt = courant_friedrichs_lewy_stable_dt(0.5, 9.81, 2.0, 1.5, 0.5).unwrap();
         assert!(dt > 0.0 && dt < 0.1);
-        assert_eq!(courant_friedrichs_lewy_stable_dt(0.0, 9.81, 2.0, 1.0, 0.5), None);
+        assert_eq!(
+            courant_friedrichs_lewy_stable_dt(0.0, 9.81, 2.0, 1.0, 0.5),
+            None
+        );
     }
 }
 

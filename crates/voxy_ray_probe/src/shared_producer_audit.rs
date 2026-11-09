@@ -1436,7 +1436,8 @@ fn exact_image_hit_fixture_impl(
         0,
         16,
         ExactWorldOptions {
-            wide_source_nodes: std::env::var("VOXY_RAY_SHARED_POSITION_WIDE_NODES").as_deref() == Ok("1"),
+            wide_source_nodes: std::env::var("VOXY_RAY_SHARED_POSITION_WIDE_NODES").as_deref()
+                == Ok("1"),
             skip_zero_prefix_multiply: std::env::var(
                 "VOXY_RAY_SHARED_POSITION_SKIP_ZERO_PREFIX_MULTIPLY",
             )
@@ -1481,7 +1482,10 @@ fn exact_image_hit_fixture_impl(
         },
     )?);
     if std::env::var("VOXY_RAY_SHARED_POSITION_WIDE_NODES").as_deref() == Ok("1") {
-        assert!(job.wide_source_nodes_enabled(), "small consumer fixture must actually admit BVH8");
+        assert!(
+            job.wide_source_nodes_enabled(),
+            "small consumer fixture must actually admit BVH8"
+        );
     }
     let mut encoder = device.create_command_encoder(&Default::default());
     job.build_scene(&mut encoder);

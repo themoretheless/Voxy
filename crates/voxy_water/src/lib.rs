@@ -41,9 +41,7 @@ pub use query::{
     gerstner_orbital_particle_velocity,
 };
 pub use river::{River, RiverNode};
-pub use shore::{
-    Bathymetry, FluxLimiter, ShoreField, ShoreWaves, advect_foam_step,
-};
+pub use shore::{Bathymetry, FluxLimiter, ShoreField, ShoreWaves, advect_foam_step};
 pub use spectrum::{
     CASCADES, WaveSpectrum, capillary_gravity_dispersion_omega, hasselmann_directional_spreading,
 };
@@ -81,11 +79,7 @@ pub fn finite_depth_wave_omega(
 /// Evaluates a normalized wave-breaking crest steepness / whitecap foam trigger in `[0.0, 1.0]`
 /// based on the Miche–Michell limiting steepness $H_{\max} / \lambda \approx 0.142 \tanh(k h)$.
 #[must_use]
-pub fn wave_breaking_crest_factor(
-    wave_height_m: f32,
-    wavelength_m: f32,
-    depth_m: f32,
-) -> f32 {
+pub fn wave_breaking_crest_factor(wave_height_m: f32, wavelength_m: f32, depth_m: f32) -> f32 {
     if !wave_height_m.is_finite()
         || !wavelength_m.is_finite()
         || !depth_m.is_finite()

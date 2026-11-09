@@ -320,10 +320,9 @@ mod lugre_tests {
         let mut z_fast = 0.0;
         let mut f_fast = 0.0;
         for _ in 0..100 {
-            (f_fast, z_fast) = lugre_bristle_friction_force(
-                0.5, z_fast, 1e5, 300.0, 0.0, 10.0, 15.0, 0.05, 0.001,
-            )
-            .unwrap();
+            (f_fast, z_fast) =
+                lugre_bristle_friction_force(0.5, z_fast, 1e5, 300.0, 0.0, 10.0, 15.0, 0.05, 0.001)
+                    .unwrap();
         }
         assert!(f_slow > f_fast && f_fast >= 9.9);
     }

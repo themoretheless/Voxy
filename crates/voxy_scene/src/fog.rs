@@ -360,8 +360,9 @@ mod tests {
             .integrated_height_optical_depth(0.0, 20.0, 50.0, 0.1)
             .unwrap();
         assert!(upward > 0.0 && upward < uniform);
-        assert!(fog
-            .integrated_height_optical_depth(0.0, 10.0, -1.0, 0.1)
-            .is_err());
+        assert!(
+            fog.integrated_height_optical_depth(0.0, 10.0, -1.0, 0.1)
+                .is_err()
+        );
     }
 }

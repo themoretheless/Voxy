@@ -1059,7 +1059,9 @@ mod suspension;
 #[path = "liquid/transport.rs"]
 mod transport;
 pub use suspension::SuspensionCellInventory;
-pub use transport::{LiquidField, ThermalFieldCheckpoint, ThermalMaterialCheckpoint, TransportMaterial};
+pub use transport::{
+    LiquidField, ThermalFieldCheckpoint, ThermalMaterialCheckpoint, TransportMaterial,
+};
 
 #[path = "liquid/properties.rs"]
 mod properties;
@@ -1360,7 +1362,8 @@ pub use arrhenius::ArrheniusViscosity;
 #[path = "liquid/emission.rs"]
 mod emission;
 pub use emission::{
-    EmissionPulse, EmissionReaction, PulsedEmitter, PulsedEmitterCheckpoint, SourceAccuracy, ViscosityProfile,
+    EmissionPulse, EmissionReaction, PulsedEmitter, PulsedEmitterCheckpoint, SourceAccuracy,
+    ViscosityProfile,
 };
 
 #[path = "liquid/splitting.rs"]
@@ -1514,9 +1517,14 @@ pub use jet::{
 
 #[path = "liquid/particle_checkpoint.rs"]
 mod particle_checkpoint;
-pub use particle_checkpoint::{LiquidCheckpointLimits, LiquidParticleCheckpoint, ParticleCheckpoint};
+pub use particle_checkpoint::{
+    LiquidCheckpointLimits, LiquidParticleCheckpoint, ParticleCheckpoint,
+};
 
-pub use species::{ReactionAccuracyCheckpoint, ReactionCheckpoint, SpeciesCheckpoint, SpeciesCheckpointLimits, SpeciesPropertiesCheckpoint};
+pub use species::{
+    ReactionAccuracyCheckpoint, ReactionCheckpoint, SpeciesCheckpoint, SpeciesCheckpointLimits,
+    SpeciesPropertiesCheckpoint,
+};
 
 #[path = "liquid/evolution_checkpoint.rs"]
 mod evolution_checkpoint;

@@ -1318,7 +1318,9 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 let tone = (b.aged() * stone_tones.len() as f32) as usize;
                 let wear = if b.aged() < track * 0.9 * damage.min(1.) {
                     2
-                } else { usize::from(b.aged() < 0.45 * damage.min(1.)) };
+                } else {
+                    usize::from(b.aged() < 0.45 * damage.min(1.))
+                };
                 old_stones[tone][wear]
             };
             let disorder = if relaid { 0.3 } else { 0.25 + 0.75 * damage };
@@ -1876,7 +1878,11 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 let dz_dormer = if house % 4 == 0 { -1.35 } else { 1.35 };
                 let dx_dormer = side * 9.05;
                 let dy_dormer = height + 0.72;
-                b.block(trim, [dx_dormer, dy_dormer, z + dz_dormer], [1.15, 0.96, 1.08]);
+                b.block(
+                    trim,
+                    [dx_dormer, dy_dormer, z + dz_dormer],
+                    [1.15, 0.96, 1.08],
+                );
                 b.block(
                     roof,
                     [dx_dormer - side * 0.05, dy_dormer + 0.54, z + dz_dormer],
@@ -1908,7 +1914,11 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                 for chain_x in [6.72f32, 7.08] {
                     b.block(metal, [side * chain_x, 3.24, sign_z], [0.025, 0.18, 0.025]);
                 }
-                b.block(kit.woods[2], [side * 6.90, 2.98, sign_z], [0.46, 0.34, 0.04]);
+                b.block(
+                    kit.woods[2],
+                    [side * 6.90, 2.98, sign_z],
+                    [0.46, 0.34, 0.04],
+                );
                 b.block(trim, [side * 6.90, 2.98, sign_z], [0.38, 0.24, 0.05]);
                 // Sidewalk bistro café tables, chairs, and porcelain cups under the awning.
                 for tz_off in [-1.45f32, 1.45] {
@@ -1918,23 +1928,23 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                     b.block(bin, [tx, 0.40, tz], [0.045, 0.64, 0.045]);
                     b.block(ceramic_cyl, [tx, 0.73, tz], [0.58, 0.035, 0.58]);
                     b.block(bin, [tx, 0.725, tz], [0.60, 0.025, 0.60]);
-                    b.block(ceramic_cyl, [tx - side * 0.10, 0.775, tz - 0.08], [0.09, 0.06, 0.09]);
-                    b.block(ceramic_cyl, [tx + side * 0.08, 0.76, tz + 0.10], [0.12, 0.02, 0.12]);
+                    b.block(
+                        ceramic_cyl,
+                        [tx - side * 0.10, 0.775, tz - 0.08],
+                        [0.09, 0.06, 0.09],
+                    );
+                    b.block(
+                        ceramic_cyl,
+                        [tx + side * 0.08, 0.76, tz + 0.10],
+                        [0.12, 0.02, 0.12],
+                    );
                     for cz_dir in [-1.0f32, 1.0] {
                         let cz = tz + cz_dir * 0.48;
                         b.block(timber, [tx, 0.44, cz], [0.36, 0.035, 0.36]);
-                        b.block(
-                            timber,
-                            [tx, 0.66, cz + cz_dir * 0.16],
-                            [0.36, 0.42, 0.035],
-                        );
+                        b.block(timber, [tx, 0.66, cz + cz_dir * 0.16], [0.36, 0.42, 0.035]);
                         for lx in [-0.15f32, 0.15] {
                             for lz in [-0.15f32, 0.15] {
-                                b.block(
-                                    bin,
-                                    [tx + lx, 0.22, cz + lz],
-                                    [0.025, 0.42, 0.025],
-                                );
+                                b.block(bin, [tx + lx, 0.22, cz + lz], [0.025, 0.42, 0.025]);
                             }
                         }
                     }
@@ -2001,8 +2011,17 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
                     b.block(trim_cyl, [fx, 0.09, fz], [0.42, 0.08, 0.42]);
                     b.block(bin, [fx, 0.56, fz], [0.18, 0.86, 0.18]);
                     b.block(metal_sphere, [fx, 1.02, fz], [0.24, 0.12, 0.24]);
-                    b.put(bulb, Vec3::new(fx, 1.10, fz), Vec3::splat(0.12), Quat::IDENTITY);
-                    b.block(ceramic_sphere, [fx - side * 0.16, 0.62, fz], [0.24, 0.10, 0.26]);
+                    b.put(
+                        bulb,
+                        Vec3::new(fx, 1.10, fz),
+                        Vec3::splat(0.12),
+                        Quat::IDENTITY,
+                    );
+                    b.block(
+                        ceramic_sphere,
+                        [fx - side * 0.16, 0.62, fz],
+                        [0.24, 0.10, 0.26],
+                    );
                     b.block(bin, [fx - side * 0.11, 0.74, fz], [0.12, 0.03, 0.03]);
                 }
             } else if house % 3 != 0 {
@@ -2240,7 +2259,12 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         b.block(bin, [kx, 0.54, kz], [1.34, 0.72, 1.34]);
         b.block(trim_cyl, [kx, 0.92, kz], [1.42, 0.06, 1.42]);
         // Corner cast-iron mullions & glazed display vitrine with warm interior glow
-        for (dx, dz) in [(-0.56f32, -0.56f32), (0.56, -0.56), (-0.56, 0.56), (0.56, 0.56)] {
+        for (dx, dz) in [
+            (-0.56f32, -0.56f32),
+            (0.56, -0.56),
+            (-0.56, 0.56),
+            (0.56, 0.56),
+        ] {
             b.block(bin, [kx + dx, 1.62, kz + dz], [0.07, 1.34, 0.07]);
         }
         b.block(glass, [kx, 1.60, kz], [1.14, 1.26, 1.14]);

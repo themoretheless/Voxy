@@ -154,7 +154,8 @@ impl LocalPos {
                             let x_ok =
                                 (dx == 0) || (dx == -1 && self.x == 0) || (dx == 1 && self.x == 31);
                             if x_ok {
-                                let bit = (dx + 1) as u32 + 3 * ((dz + 1) as u32 + 3 * (dy + 1) as u32);
+                                let bit =
+                                    (dx + 1) as u32 + 3 * ((dz + 1) as u32 + 3 * (dy + 1) as u32);
                                 mask |= 1_u32 << bit;
                             }
                             dx += 1;
@@ -1382,11 +1383,17 @@ mod tests {
 
     #[test]
     fn morton_30bit_and_amanatides_woo_dda_setup_are_exact() {
-        for &[x, y, z] in &[[0_u32, 0, 0], [1, 2, 3], [511, 256, 1023], [1023, 1023, 1023]] {
+        for &[x, y, z] in &[
+            [0_u32, 0, 0],
+            [1, 2, 3],
+            [511, 256, 1023],
+            [1023, 1023, 1023],
+        ] {
             let code = morton_encode_3d_u10(x, y, z);
             assert_eq!(morton_decode_3d_u10(code), [x, y, z]);
         }
-        let (step, t_max, t_delta) = voxel_ray_dda_first_step([0.25, 1.5, -0.5], [1.0, -2.0, 0.0], 1.0);
+        let (step, t_max, t_delta) =
+            voxel_ray_dda_first_step([0.25, 1.5, -0.5], [1.0, -2.0, 0.0], 1.0);
         assert_eq!(step, [1, -1, 0]);
         assert!((t_max[0] - 0.75).abs() < 1e-5);
         assert!((t_max[1] - 0.25).abs() < 1e-5);

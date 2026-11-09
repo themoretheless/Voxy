@@ -374,10 +374,7 @@ impl FiberSurfaceTransfer {
 /// Evaluates Marschner / d'Eon azimuthal scattering distributions `[N_R, N_TT, N_TRT]` for hair and
 /// fur strands as a function of `cos(Delta phi / 2)` and azimuthal roughness `beta_n`.
 #[must_use]
-pub fn marschner_azimuthal_scattering_n(
-    cos_half_dphi: f32,
-    roughness_azimuthal: f32,
-) -> [f32; 3] {
+pub fn marschner_azimuthal_scattering_n(cos_half_dphi: f32, roughness_azimuthal: f32) -> [f32; 3] {
     if !cos_half_dphi.is_finite() || !roughness_azimuthal.is_finite() {
         return [0.0; 3];
     }
@@ -390,8 +387,8 @@ pub fn marschner_azimuthal_scattering_n(
     let n_tt = ((-c * c) / (2.0 * s2)).exp() / (2.0 * std::f32::consts::PI * s2).sqrt();
     // TRT lobe: secondary internal reflection glint peaks near |c| ~ 0.5 (dphi ~ +-120 deg).
     let trt_offset = c.abs() - 0.5;
-    let n_trt = ((-trt_offset * trt_offset) / (2.0 * s2)).exp()
-        / (2.0 * std::f32::consts::PI * s2).sqrt();
+    let n_trt =
+        ((-trt_offset * trt_offset) / (2.0 * s2)).exp() / (2.0 * std::f32::consts::PI * s2).sqrt();
     [n_r, n_tt, n_trt]
 }
 

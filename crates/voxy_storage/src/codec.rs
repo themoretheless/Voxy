@@ -82,9 +82,7 @@ pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec
     writer.write_i64_le(chunk.pos.y);
     writer.write_i64_le(chunk.pos.z);
     writer.write_u64_le(chunk.revision.get());
-    writer.write_u16_le(
-        u16::try_from(palette.len()).map_err(|_| CodecError::PaletteTooLarge)?,
-    );
+    writer.write_u16_le(u16::try_from(palette.len()).map_err(|_| CodecError::PaletteTooLarge)?);
     writer.write_bytes(&[bits, 0]);
     for key in palette {
         let bytes = key.as_str().as_bytes();
@@ -96,9 +94,7 @@ pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec
         );
         writer.write_bytes(bytes);
     }
-    writer.write_u32_le(
-        u32::try_from(packed.len()).map_err(|_| CodecError::RecordTooLarge)?,
-    );
+    writer.write_u32_le(u32::try_from(packed.len()).map_err(|_| CodecError::RecordTooLarge)?);
     writer.write_bytes(&packed);
     writer.write_u16_le(
         u16::try_from(chunk.data.block_data.len())
@@ -164,8 +160,7 @@ pub fn decode_chunk(bytes: &[u8], registry: &BlockRegistry) -> Result<StoredChun
         return Err(CodecError::EmptyPalette);
     }
     let bits = reader.read_u8().map_err(|_| CodecError::Truncated)?;
-    if reader.read_u8().map_err(|_| CodecError::Truncated)? != 0 || bits != bits_for(palette_len)?
-    {
+    if reader.read_u8().map_err(|_| CodecError::Truncated)? != 0 || bits != bits_for(palette_len)? {
         return Err(CodecError::NonCanonicalEncoding);
     }
     let mut palette = Vec::with_capacity(palette_len);

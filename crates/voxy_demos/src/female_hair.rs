@@ -2100,7 +2100,11 @@ pub fn elliptical_fiber_eccentricity_glint(phi_rad: f32, aspect_ratio: f32) -> f
 /// as a function of half-angle $\theta_h$ (radians), cuticle tilt $\alpha$ (radians, e.g. `-0.05`),
 /// and longitudinal roughness $\beta \in [0.02, 0.5]$.
 #[must_use]
-pub fn marschner_longitudinal_lobes(theta_h_rad: f32, cuticle_tilt_rad: f32, beta_rad: f32) -> [f32; 3] {
+pub fn marschner_longitudinal_lobes(
+    theta_h_rad: f32,
+    cuticle_tilt_rad: f32,
+    beta_rad: f32,
+) -> [f32; 3] {
     if !theta_h_rad.is_finite() || !cuticle_tilt_rad.is_finite() || !beta_rad.is_finite() {
         return [0.0; 3];
     }

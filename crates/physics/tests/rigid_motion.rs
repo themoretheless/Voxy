@@ -2151,7 +2151,9 @@ fn multiple_material_load_motion_preserves_com_work_and_impact_force_phase() {
         .unwrap();
     for t in [0.02, 0.06, 0.1] {
         let state = path.sample(t).unwrap();
-        assert!((state.motion.velocity[0] - 3. - f64::midpoint(0.2 * t, 0.05 * t * t)).abs() < 1e-12);
+        assert!(
+            (state.motion.velocity[0] - 3. - f64::midpoint(0.2 * t, 0.05 * t * t)).abs() < 1e-12
+        );
         assert!((state.motion.position[1] - 2. + 9.81 * t * t / 2.).abs() < 1e-12);
         let mut applied_work = 0.;
         for point in points {

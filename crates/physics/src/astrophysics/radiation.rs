@@ -185,12 +185,7 @@ pub fn planck_spectral_radiance_w_sr_m3(wavelength_m: f64, temperature_k: f64) -
 
 /// Computes the classical Eddington luminosity limit $L_{\text{Edd}} = \frac{4 \pi G M c}{\kappa}$
 /// in Watts given stellar `mass_kg` and opacity `opacity_m2_kg` (e.g. Thomson electron-scattering opacity).
-pub fn eddington_luminosity_watts(
-    mass_kg: f64,
-    opacity_m2_kg: f64,
-    g: f64,
-    c: f64,
-) -> Option<f64> {
+pub fn eddington_luminosity_watts(mass_kg: f64, opacity_m2_kg: f64, g: f64, c: f64) -> Option<f64> {
     if !mass_kg.is_finite()
         || !opacity_m2_kg.is_finite()
         || !g.is_finite()

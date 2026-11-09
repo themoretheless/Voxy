@@ -648,7 +648,13 @@ impl ChebyshevPolynomialPreconditioner {
         }
     }
 
-    fn apply(&self, metric: &AssembledMetric, body: &Body, weight: &[f64], r: &[Vec3]) -> Vec<Vec3> {
+    fn apply(
+        &self,
+        metric: &AssembledMetric,
+        body: &Body,
+        weight: &[f64],
+        r: &[Vec3],
+    ) -> Vec<Vec3> {
         let n = r.len();
         let theta = 0.5 * (self.lambda_max + self.lambda_min);
         let delta = 0.5 * (self.lambda_max - self.lambda_min);

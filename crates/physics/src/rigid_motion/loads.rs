@@ -219,9 +219,8 @@ impl MaterialForceMoment {
             let mut basis = [0.; 3];
             basis[j] = 1.;
             let arm = crate::rotation::rotate(orientation, basis);
-            let (zero, first) =
-                crate::rotation::rotating_arm_integrals(arm, omega, duration)
-                    .map_err(|_| Error::NumericalFailure)?;
+            let (zero, first) = crate::rotation::rotating_arm_integrals(arm, omega, duration)
+                .map_err(|_| Error::NumericalFailure)?;
             let constant = crate::rotation::cross(zero, self.columns[j]);
             let changing = crate::rotation::cross(first, self.rate_columns[j]);
             sum.add([constant])?;

@@ -246,10 +246,20 @@ impl WorldRayQueryJob {
         options: ExactWorldOptions,
     ) -> Result<Self, RaySceneError> {
         scene.validate_device(device)?;
-        if options.wide_source_near_first && !options.wide_source_nodes { return Err(RaySceneError::Unsupported); }
-        if options.compare_wide_same_producer && (!options.wide_source_nodes || !options.defer_nearest
-            || options.previous_hit_seed || options.traversal_work_stats || options.history_any_hit
-            || !matches!(options.query_kind, WorldRayQueryKind::Nearest | WorldRayQueryKind::MaterialSurface)) {
+        if options.wide_source_near_first && !options.wide_source_nodes {
+            return Err(RaySceneError::Unsupported);
+        }
+        if options.compare_wide_same_producer
+            && (!options.wide_source_nodes
+                || !options.defer_nearest
+                || options.previous_hit_seed
+                || options.traversal_work_stats
+                || options.history_any_hit
+                || !matches!(
+                    options.query_kind,
+                    WorldRayQueryKind::Nearest | WorldRayQueryKind::MaterialSurface
+                ))
+        {
             return Err(RaySceneError::Unsupported);
         }
         let visibility = options.query_kind == WorldRayQueryKind::OpaqueVisibility;
@@ -476,27 +486,39 @@ impl WorldRayQueryJob {
         // and material table. Only the certificate pipeline receives its base.
         let (wide_base, wide_source_digest) = if options.wide_source_nodes && deferred {
             let offset = hierarchy[2] as usize;
-            let words = (hierarchy[1] as usize).checked_mul(8).ok_or(RaySceneError::Capacity)?;
+            let words = (hierarchy[1] as usize)
+                .checked_mul(8)
+                .ok_or(RaySceneError::Capacity)?;
             let end = offset.checked_add(words).ok_or(RaySceneError::Capacity)?;
-            let source = hierarchy.get(offset..end).ok_or(RaySceneError::InvalidGeometry)?;
-            let wide = crate::world_nearest_bvh::wide::convert(bytemuck::cast_slice(source), hierarchy[3])
-                .map_err(|_| RaySceneError::InvalidGeometry)?;
+            let source = hierarchy
+                .get(offset..end)
+                .ok_or(RaySceneError::InvalidGeometry)?;
+            let wide =
+                crate::world_nearest_bvh::wide::convert(bytemuck::cast_slice(source), hierarchy[3])
+                    .map_err(|_| RaySceneError::InvalidGeometry)?;
             // Optional scheduling must not turn a supported original scene
             // into a capacity error. Preflight before allocating/uploading tail.
-            let final_bytes = wide.packed_word_len().ok()
+            let final_bytes = wide
+                .packed_word_len()
+                .ok()
                 .and_then(|n| hierarchy.len().checked_add(n))
                 .and_then(|n| n.checked_mul(4))
                 .and_then(|n| u64::try_from(n).ok());
-            let fits = final_bytes.is_some_and(|bytes| bytes <= limits.max_storage_buffer_binding_size
-                && bytes <= limits.max_buffer_size);
+            let fits = final_bytes.is_some_and(|bytes| {
+                bytes <= limits.max_storage_buffer_binding_size && bytes <= limits.max_buffer_size
+            });
             if fits && wide.pending_capacity <= 64 && wide.root.is_some() {
                 let base = u32::try_from(hierarchy.len()).map_err(|_| RaySceneError::Capacity)?;
                 let tail = wide.to_words().map_err(|_| RaySceneError::Capacity)?;
                 let digest = *blake3::hash(bytemuck::cast_slice(&tail)).as_bytes();
                 hierarchy.extend(tail);
                 (base, digest)
-            } else { (0, [0; 32]) }
-        } else { (0, [0; 32]) };
+            } else {
+                (0, [0; 32])
+            }
+        } else {
+            (0, [0; 32])
+        };
 
         if hierarchy.len() as u64 * 4 > limits.max_storage_buffer_binding_size {
             return Err(RaySceneError::Capacity);
@@ -772,7 +794,9 @@ impl WorldRayQueryJob {
         } else {
             None
         };
-        if options.compare_wide_same_producer && wide_base == 0 { return Err(RaySceneError::Unsupported); }
+        if options.compare_wide_same_producer && wide_base == 0 {
+            return Err(RaySceneError::Unsupported);
+        }
         let mut original_fast = None;
         let fast = if deferred {
             let source = [
@@ -802,77 +826,86 @@ impl WorldRayQueryJob {
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
             let build = |wide_override: u32| -> Result<_, RaySceneError> {
-            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-                label: Some("certificate-only opaque visibility"),
-                layout: None,
-                module: &shader,
-                entry_point: Some("main_visibility_fast"),
-                compilation_options: wgpu::PipelineCompilationOptions {
-                    constants: &[
-                        (
-                            "WORLD_FAST_DEFER_NONCLEAR",
-                            if options.defer_nearest { 1. } else { 0. },
-                        ),
-                        ("WORLD_HIT_POSITION_BASE", position_base as f64),
-                        ("WORLD_FAST_STRIDE", if options.hit_uv { 7. } else { 5. }),
-                        (
-                            "WORLD_FAST_WORK_STATS",
-                            if options.traversal_work_stats { 1. } else { 0. },
-                        ),
-                        ("WORLD_FAST_CAN_BOUND", if can_bound { 1. } else { 0. }),
-                        ("WORLD_WIDE_BASE", wide_override as f64),
-                        ("WORLD_WIDE_NEAR_FIRST", if options.wide_source_near_first && wide_override != 0 {1.} else {0.}),
-                        (
-                            "WORLD_SOURCE_MATERIAL_SIDES",
-                            if material_surface { 1. } else { 0. },
-                        ),
-                        (
-                            "WORLD_FAST_HISTORY_ANY_HIT",
-                            if history_any_hit { 1. } else { 0. },
-                        ),
-                        (
-                            "WORLD_FAST_NATIVE_WITNESS",
-                            if native_source_witness { 1. } else { 0. },
-                        ),
-                        (
-                            "WORLD_FAST_NODE_RECIPROCAL",
-                            if options.node_reciprocal { 1. } else { 0. },
-                        ),
-                        (
-                            "WORLD_FAST_SEPARATE_SEED",
-                            if options.separate_native_seed { 1. } else { 0. },
-                        ),
-                        (
-                            "WORLD_FAST_PREVIOUS_SEED",
-                            if options.previous_hit_seed || options.separate_native_seed {
-                                1.
-                            } else {
-                                0.
-                            },
-                        ),
-                    ],
-                    ..Default::default()
-                },
-                cache: None,
-            });
-            let group = Self::make_group(
-                device,
-                &scene,
-                &pipeline,
-                &input,
-                &output,
-                &scratch,
-                &counts,
-                &hierarchy,
-                !options.native_seed || options.separate_native_seed,
-                capacity,
-                true,
-                geometry_bounds.as_ref(),
-                vertex_cache.as_ref(),
-            )?;
-            Ok((pipeline, group))
+                let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                    label: Some("certificate-only opaque visibility"),
+                    layout: None,
+                    module: &shader,
+                    entry_point: Some("main_visibility_fast"),
+                    compilation_options: wgpu::PipelineCompilationOptions {
+                        constants: &[
+                            (
+                                "WORLD_FAST_DEFER_NONCLEAR",
+                                if options.defer_nearest { 1. } else { 0. },
+                            ),
+                            ("WORLD_HIT_POSITION_BASE", position_base as f64),
+                            ("WORLD_FAST_STRIDE", if options.hit_uv { 7. } else { 5. }),
+                            (
+                                "WORLD_FAST_WORK_STATS",
+                                if options.traversal_work_stats { 1. } else { 0. },
+                            ),
+                            ("WORLD_FAST_CAN_BOUND", if can_bound { 1. } else { 0. }),
+                            ("WORLD_WIDE_BASE", wide_override as f64),
+                            (
+                                "WORLD_WIDE_NEAR_FIRST",
+                                if options.wide_source_near_first && wide_override != 0 {
+                                    1.
+                                } else {
+                                    0.
+                                },
+                            ),
+                            (
+                                "WORLD_SOURCE_MATERIAL_SIDES",
+                                if material_surface { 1. } else { 0. },
+                            ),
+                            (
+                                "WORLD_FAST_HISTORY_ANY_HIT",
+                                if history_any_hit { 1. } else { 0. },
+                            ),
+                            (
+                                "WORLD_FAST_NATIVE_WITNESS",
+                                if native_source_witness { 1. } else { 0. },
+                            ),
+                            (
+                                "WORLD_FAST_NODE_RECIPROCAL",
+                                if options.node_reciprocal { 1. } else { 0. },
+                            ),
+                            (
+                                "WORLD_FAST_SEPARATE_SEED",
+                                if options.separate_native_seed { 1. } else { 0. },
+                            ),
+                            (
+                                "WORLD_FAST_PREVIOUS_SEED",
+                                if options.previous_hit_seed || options.separate_native_seed {
+                                    1.
+                                } else {
+                                    0.
+                                },
+                            ),
+                        ],
+                        ..Default::default()
+                    },
+                    cache: None,
+                });
+                let group = Self::make_group(
+                    device,
+                    &scene,
+                    &pipeline,
+                    &input,
+                    &output,
+                    &scratch,
+                    &counts,
+                    &hierarchy,
+                    !options.native_seed || options.separate_native_seed,
+                    capacity,
+                    true,
+                    geometry_bounds.as_ref(),
+                    vertex_cache.as_ref(),
+                )?;
+                Ok((pipeline, group))
             };
-            if options.compare_wide_same_producer { original_fast = Some(build(0)?); }
+            if options.compare_wide_same_producer {
+                original_fast = Some(build(0)?);
+            }
             Some(build(wide_base)?)
         } else {
             None
@@ -1017,8 +1050,18 @@ impl WorldRayQueryJob {
         } else {
             None
         };
-        let traversal_pair = original_fast.map(|original| WorldTraversalPair::new(device, &input, &output, output_words,
-            position_offset.map_or(0, |v| v / 4), original)).transpose()?;
+        let traversal_pair = original_fast
+            .map(|original| {
+                WorldTraversalPair::new(
+                    device,
+                    &input,
+                    &output,
+                    output_words,
+                    position_offset.map_or(0, |v| v / 4),
+                    original,
+                )
+            })
+            .transpose()?;
         Ok(Self {
             traversal_pair,
             geometry_bounds,
@@ -1311,9 +1354,15 @@ impl WorldRayQueryJob {
     }
     #[doc(hidden)]
     /// Actual admitted scheduling tail, not merely the requested option.
-    pub const fn wide_source_near_first_enabled(&self) -> bool { self.wide_source_near_first }
-    pub const fn wide_source_nodes_enabled(&self) -> bool { self.wide_source_base != 0 }
-    pub const fn wide_source_digest(&self) -> [u8; 32] { self.wide_source_digest }
+    pub const fn wide_source_near_first_enabled(&self) -> bool {
+        self.wide_source_near_first
+    }
+    pub const fn wide_source_nodes_enabled(&self) -> bool {
+        self.wide_source_base != 0
+    }
+    pub const fn wide_source_digest(&self) -> [u8; 32] {
+        self.wide_source_digest
+    }
     pub const fn skip_zero_prefix_multiply_enabled(&self) -> bool {
         self.skip_zero_prefix_multiply
     }
@@ -1431,7 +1480,10 @@ impl WorldRayQueryJob {
         self.native_hint.is_some()
     }
     pub(crate) fn can_profile_nearest(&self) -> bool {
-        self.traversal_pair.is_none() && self.fast.is_some() && self.winner.is_some() && self.candidates.is_some()
+        self.traversal_pair.is_none()
+            && self.fast.is_some()
+            && self.winner.is_some()
+            && self.candidates.is_some()
     }
     pub(crate) fn encode_profiled(
         &self,
@@ -1440,9 +1492,13 @@ impl WorldRayQueryJob {
         profile: Option<(&wgpu::QuerySet, u32)>,
     ) -> Result<(), RaySceneError> {
         if let Some(pair) = &self.traversal_pair {
-            if profile.is_some() { return Err(RaySceneError::Unsupported); }
+            if profile.is_some() {
+                return Err(RaySceneError::Unsupported);
+            }
             self.encode_once(encoder, count, None, Some(&pair.original_fast))?;
-            if count == 0 { return Ok(()); }
+            if count == 0 {
+                return Ok(());
+            }
             pair.snapshot(encoder, &self.input, &self.output);
             self.encode_once(encoder, count, None, self.fast.as_ref())?;
             pair.compare(&self.device, encoder, &self.input, &self.output, count);
@@ -1453,28 +1509,38 @@ impl WorldRayQueryJob {
     /// Cumulative diagnostic record count and first protected-word failure.
     /// No CPU readback occurs during encoding; the caller must fence before reading.
     pub(crate) fn same_producer_original_buffers(&self) -> Option<(&wgpu::Buffer, &wgpu::Buffer)> {
-        self.traversal_pair.as_ref().map(|pair| pair.original_buffers())
+        self.traversal_pair
+            .as_ref()
+            .map(|pair| pair.original_buffers())
     }
     pub fn same_producer_comparison_buffer(&self) -> Option<&wgpu::Buffer> {
         self.traversal_pair.as_ref().map(|pair| &*pair.stats)
     }
-    pub fn read_same_producer_comparison(&self, queue: &wgpu::Queue) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
-        self.traversal_pair.as_ref().map(|pair| {
-            let mut proof = pair.read_proof(&self.device, queue)?;
-            proof["output_record_words"] = self.output_words.into();
-            proof["explicit_producer_admission_required"] = self.guarded_input.into();
-            proof["world_position_extension_checked"] = self.position_offset.is_some().into();
-            proof["source_geometry_revision"] = self.scene.geometry_revision().into();
-            proof["same_exact_integer_pipeline"] = true.into();
-            proof["expected_query_results_uploaded"] = false.into();
-            proof["exact_integer_module_blake3"] = serde_json::json!(self.exact_integer_digest);
-            proof["wide_source_near_first"] = self.wide_source_near_first.into();
-            proof["wide_source_block_blake3"] = serde_json::json!(self.wide_source_digest);
-            Ok(proof)
-        }).transpose()
+    pub fn read_same_producer_comparison(
+        &self,
+        queue: &wgpu::Queue,
+    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+        self.traversal_pair
+            .as_ref()
+            .map(|pair| {
+                let mut proof = pair.read_proof(&self.device, queue)?;
+                proof["output_record_words"] = self.output_words.into();
+                proof["explicit_producer_admission_required"] = self.guarded_input.into();
+                proof["world_position_extension_checked"] = self.position_offset.is_some().into();
+                proof["source_geometry_revision"] = self.scene.geometry_revision().into();
+                proof["same_exact_integer_pipeline"] = true.into();
+                proof["expected_query_results_uploaded"] = false.into();
+                proof["exact_integer_module_blake3"] = serde_json::json!(self.exact_integer_digest);
+                proof["wide_source_near_first"] = self.wide_source_near_first.into();
+                proof["wide_source_block_blake3"] = serde_json::json!(self.wide_source_digest);
+                Ok(proof)
+            })
+            .transpose()
     }
     fn encode_once(
-        &self, encoder: &mut wgpu::CommandEncoder, count: u32,
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        count: u32,
         profile: Option<(&wgpu::QuerySet, u32)>,
         fast: Option<&(wgpu::ComputePipeline, wgpu::BindGroup)>,
     ) -> Result<(), RaySceneError> {

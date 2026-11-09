@@ -568,12 +568,14 @@ pub fn ricochet_reflection_velocity(
     {
         return None;
     }
-    let speed = (incident_vel[0].powi(2) + incident_vel[1].powi(2) + incident_vel[2].powi(2)).sqrt();
+    let speed =
+        (incident_vel[0].powi(2) + incident_vel[1].powi(2) + incident_vel[2].powi(2)).sqrt();
     let n_len = (normal[0].powi(2) + normal[1].powi(2) + normal[2].powi(2)).sqrt();
     if speed <= 1e-9 || (n_len - 1.0).abs() > 1e-6 {
         return None;
     }
-    let vn = incident_vel[0] * normal[0] + incident_vel[1] * normal[1] + incident_vel[2] * normal[2];
+    let vn =
+        incident_vel[0] * normal[0] + incident_vel[1] * normal[1] + incident_vel[2] * normal[2];
     if vn >= 0.0 || (-vn / speed) > critical_grazing_cos {
         return None;
     }

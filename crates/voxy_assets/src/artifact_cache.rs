@@ -86,8 +86,7 @@ impl ArtifactCache {
             }
             Err(error) => return Err(error.into()),
         }
-        let limit =
-            u64::try_from(self.entry_limit).map_err(|_| ArtifactCacheError::TooLarge)? + 1;
+        let limit = u64::try_from(self.entry_limit).map_err(|_| ArtifactCacheError::TooLarge)? + 1;
         let mut bytes = Vec::with_capacity(self.entry_limit.min(4096));
         file.take(limit).read_to_end(&mut bytes)?;
         if bytes.len() > self.entry_limit {

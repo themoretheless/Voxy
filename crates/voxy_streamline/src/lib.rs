@@ -1575,10 +1575,7 @@ mod camera_tests {
                 height: 1080,
             }
         );
-        assert_eq!(
-            DlssQuality::Dlaa.recommended_render_size(out).unwrap(),
-            out
-        );
+        assert_eq!(DlssQuality::Dlaa.recommended_render_size(out).unwrap(), out);
         assert!(
             DlssQuality::Quality
                 .recommended_render_size(DlssRenderSize {

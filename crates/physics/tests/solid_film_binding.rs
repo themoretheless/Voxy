@@ -75,10 +75,7 @@ fn complete_boundary_maps_to_unique_cells_and_uses_physical_area() {
     assert_eq!(film.triangles().len(), 6);
     let contacts = binding.heat_contacts(&body, &film, &[2.; 6]).unwrap();
     for &(owner, face, g) in &contacts {
-        assert_eq!(
-            owner,
-            usize::from(!film.triangles()[face].contains(&3))
-        );
+        assert_eq!(owner, usize::from(!film.triangles()[face].contains(&3)));
         assert_eq!(g, film.cell_area_m2(face).unwrap() / 2.);
         assert!(!film.triangles()[face].iter().all(|node| *node < 3));
     }
