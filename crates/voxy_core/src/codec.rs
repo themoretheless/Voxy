@@ -127,6 +127,12 @@ impl<'a> ByteReader<'a> {
         Ok(head)
     }
 
+    /// Alias for [`ByteReader::read_slice`].
+    #[inline]
+    pub fn read_bytes(&mut self, len: usize) -> Result<&'a [u8], CodecError> {
+        self.read_slice(len)
+    }
+
     /// Consumes a fixed-size byte array `[u8; N]`.
     ///
     /// # Errors
@@ -217,12 +223,35 @@ impl<'a> ByteWriter<'a> {
     }
 
     #[inline]
+    #[must_use]
+    pub fn len(&self) -> usize {
+        self.buf.len()
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.buf.is_empty()
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn as_slice(&self) -> &[u8] {
+        self.buf.as_slice()
+    }
+
+    #[inline]
     pub fn reserve(&mut self, additional: usize) {
         self.buf.reserve(additional);
     }
 
     #[inline]
     pub fn write_slice(&mut self, bytes: &[u8]) {
+        self.buf.extend_from_slice(bytes);
+    }
+
+    #[inline]
+    pub fn write_bytes(&mut self, bytes: &[u8]) {
         self.buf.extend_from_slice(bytes);
     }
 

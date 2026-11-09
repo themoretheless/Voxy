@@ -3,7 +3,7 @@ use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::Path;
 
-use voxy_core::ChunkPos;
+use voxy_core::{ByteReader, ByteWriter, ChunkPos};
 use voxy_world::BlockRegistry;
 
 use crate::codec::checksum;
@@ -373,14 +373,15 @@ fn recover(
 
 fn encode_header(region: RegionPos) -> Vec<u8> {
     let mut bytes = Vec::with_capacity(HEADER_LEN);
-    bytes.extend_from_slice(FILE_MAGIC);
-    put_u16(&mut bytes, VERSION);
-    put_u16(&mut bytes, 0);
-    put_i64(&mut bytes, region.x);
-    put_i64(&mut bytes, region.y);
-    put_i64(&mut bytes, region.z);
-    let crc = checksum(&bytes);
-    put_u32(&mut bytes, crc);
+    let mut writer = ByteWriter::new(&mut bytes);
+    writer.write_bytes(FILE_MAGIC);
+    writer.write_u16_le(VERSION);
+    writer.write_u16_le(0);
+    writer.write_i64_le(region.x);
+    writer.write_i64_le(region.y);
+    writer.write_i64_le(region.z);
+    let crc = checksum(writer.as_slice());
+    writer.write_u32_le(crc);
     bytes
 }
 
@@ -435,36 +436,35 @@ fn encode_frame(
     through: WalCursor,
     registry: &BlockRegistry,
 ) -> Result<Vec<u8>, RegionError> {
-    let mut payload = Vec::new();
-    put_u16(&mut payload, VERSION);
-    put_u64(&mut payload, through.offset);
-    put_u16(
-        &mut payload,
+    let mut payload_buf = Vec::new();
+    let mut payload = ByteWriter::new(&mut payload_buf);
+    payload.write_u16_le(VERSION);
+    payload.write_u64_le(through.offset);
+    payload.write_u16_le(
         u16::try_from(entries.len()).map_err(|_| RegionError::InvalidChunkCount(entries.len()))?,
     );
     for (slot, chunk, last_commit) in entries {
-        put_u16(&mut payload, *slot);
-        put_u64(&mut payload, *last_commit);
+        payload.write_u16_le(*slot);
+        payload.write_u64_le(*last_commit);
         let chunk = encode_chunk(chunk, registry)?;
-        put_u32(
-            &mut payload,
+        payload.write_u32_le(
             u32::try_from(chunk.len()).map_err(|_| RegionError::FrameTooLarge)?,
         );
-        payload.extend_from_slice(&chunk);
+        payload.write_bytes(&chunk);
     }
     if payload.len() > MAX_FRAME {
         return Err(RegionError::FrameTooLarge);
     }
-    let mut frame = Vec::with_capacity(payload.len() + 12);
-    frame.extend_from_slice(FRAME_MAGIC);
-    put_u32(
-        &mut frame,
+    let mut frame_buf = Vec::with_capacity(payload.len() + 12);
+    let mut frame = ByteWriter::new(&mut frame_buf);
+    frame.write_bytes(FRAME_MAGIC);
+    frame.write_u32_le(
         u32::try_from(payload.len()).map_err(|_| RegionError::FrameTooLarge)?,
     );
-    frame.extend_from_slice(&payload);
-    let crc = checksum(&frame);
-    put_u32(&mut frame, crc);
-    Ok(frame)
+    frame.write_bytes(payload.as_slice());
+    let crc = checksum(frame.as_slice());
+    frame.write_u32_le(crc);
+    Ok(frame_buf)
 }
 
 fn decode_frame(
@@ -472,33 +472,37 @@ fn decode_frame(
     region: RegionPos,
     registry: &BlockRegistry,
 ) -> Result<(WalCursor, Vec<(u16, RegionEntry)>), RegionError> {
-    let mut reader = Reader::new(bytes);
-    if reader.u16()? != VERSION {
+    let mut reader = ByteReader::new(bytes);
+    if reader.read_u16_le().map_err(|_| RegionError::Truncated)? != VERSION {
         return Err(RegionError::UnsupportedVersion);
     }
     let through = WalCursor {
-        offset: reader.u64()?,
+        offset: reader.read_u64_le().map_err(|_| RegionError::Truncated)?,
     };
-    let count = usize::from(reader.u16()?);
+    let count = usize::from(reader.read_u16_le().map_err(|_| RegionError::Truncated)?);
     if count == 0 || count > REGION_SLOTS {
         return Err(RegionError::InvalidChunkCount(count));
     }
     let mut slots = BTreeSet::new();
     let mut entries = Vec::with_capacity(count);
     for _ in 0..count {
-        let slot = reader.u16()?;
+        let slot = reader.read_u16_le().map_err(|_| RegionError::Truncated)?;
         if usize::from(slot) >= REGION_SLOTS {
             return Err(RegionError::InvalidSlot(slot));
         }
         if !slots.insert(slot) {
             return Err(RegionError::DuplicateSlot(slot));
         }
-        let last_commit = reader.u64()?;
-        let length = usize::try_from(reader.u32()?).map_err(|_| RegionError::FrameTooLarge)?;
+        let last_commit = reader.read_u64_le().map_err(|_| RegionError::Truncated)?;
+        let length = usize::try_from(reader.read_u32_le().map_err(|_| RegionError::Truncated)?)
+            .map_err(|_| RegionError::FrameTooLarge)?;
         if length > MAX_FRAME {
             return Err(RegionError::FrameTooLarge);
         }
-        let chunk = decode_chunk(reader.take(length)?, registry)?;
+        let chunk_bytes = reader
+            .read_bytes(length)
+            .map_err(|_| RegionError::Truncated)?;
+        let chunk = decode_chunk(chunk_bytes, registry)?;
         let (actual_region, actual_slot) = split_region(chunk.pos);
         if actual_region != region {
             return Err(RegionError::WrongRegion {
@@ -514,69 +518,24 @@ fn decode_frame(
         }
         entries.push((slot, RegionEntry { chunk, last_commit }));
     }
-    if !reader.done() {
+    if !reader.is_empty() {
         return Err(RegionError::TrailingBytes);
     }
     Ok((through, entries))
 }
 
-fn put_u16(output: &mut Vec<u8>, value: u16) {
-    output.extend_from_slice(&value.to_le_bytes());
-}
-fn put_u32(output: &mut Vec<u8>, value: u32) {
-    output.extend_from_slice(&value.to_le_bytes());
-}
-fn put_u64(output: &mut Vec<u8>, value: u64) {
-    output.extend_from_slice(&value.to_le_bytes());
-}
-fn put_i64(output: &mut Vec<u8>, value: i64) {
-    output.extend_from_slice(&value.to_le_bytes());
-}
-
-struct Reader<'a> {
-    bytes: &'a [u8],
-    offset: usize,
-}
-impl<'a> Reader<'a> {
-    fn new(bytes: &'a [u8]) -> Self {
-        Self { bytes, offset: 0 }
+/// Computes external sector fragmentation ratio in `[0.0, 1.0]` given `allocated_sectors`
+/// and the `contiguous_span_sectors` between the lowest and highest allocated sector.
+#[must_use]
+pub fn region_sector_fragmentation_ratio(
+    allocated_sectors: u32,
+    contiguous_span_sectors: u32,
+) -> f32 {
+    if allocated_sectors == 0 || contiguous_span_sectors <= allocated_sectors {
+        return 0.0;
     }
-    fn take(&mut self, length: usize) -> Result<&'a [u8], RegionError> {
-        let end = self
-            .offset
-            .checked_add(length)
-            .ok_or(RegionError::Truncated)?;
-        let value = self
-            .bytes
-            .get(self.offset..end)
-            .ok_or(RegionError::Truncated)?;
-        self.offset = end;
-        Ok(value)
-    }
-    fn u16(&mut self) -> Result<u16, RegionError> {
-        Ok(u16::from_le_bytes(
-            self.take(2)?
-                .try_into()
-                .map_err(|_| RegionError::Truncated)?,
-        ))
-    }
-    fn u32(&mut self) -> Result<u32, RegionError> {
-        Ok(u32::from_le_bytes(
-            self.take(4)?
-                .try_into()
-                .map_err(|_| RegionError::Truncated)?,
-        ))
-    }
-    fn u64(&mut self) -> Result<u64, RegionError> {
-        Ok(u64::from_le_bytes(
-            self.take(8)?
-                .try_into()
-                .map_err(|_| RegionError::Truncated)?,
-        ))
-    }
-    fn done(&self) -> bool {
-        self.offset == self.bytes.len()
-    }
+    let hole_sectors = contiguous_span_sectors - allocated_sectors;
+    (hole_sectors as f32 / contiguous_span_sectors as f32).clamp(0.0, 1.0)
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -783,18 +742,4 @@ mod tests {
         assert!((region_sector_fragmentation_ratio(10, 10) - 0.0).abs() < 1e-6);
         assert!((region_sector_fragmentation_ratio(10, 40) - 0.75).abs() < 1e-6);
     }
-}
-
-/// Computes external sector fragmentation ratio in `[0.0, 1.0]` given `allocated_sectors`
-/// and the `contiguous_span_sectors` between the lowest and highest allocated sector.
-#[must_use]
-pub fn region_sector_fragmentation_ratio(
-    allocated_sectors: u32,
-    contiguous_span_sectors: u32,
-) -> f32 {
-    if allocated_sectors == 0 || contiguous_span_sectors <= allocated_sectors {
-        return 0.0;
-    }
-    let hole_sectors = contiguous_span_sectors - allocated_sectors;
-    (hole_sectors as f32 / contiguous_span_sectors as f32).clamp(0.0, 1.0)
 }

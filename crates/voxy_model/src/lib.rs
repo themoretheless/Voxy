@@ -208,29 +208,11 @@ impl ModelAsset {
         Ok(model)
     }
 
-    // Node indices are bounded to MAX_JOINTS above.
-    #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
-    fn parse_internal(
-        source: &[u8],
-        buffers: &[&[u8]],
-        limits: ModelLimits,
-        allow_morph: bool,
-    ) -> Result<(Self, morph::MorphImportData), ModelError> {
-        let total = buffers
-            .iter()
-            .try_fold(source.len(), |n, b| n.checked_add(b.len()));
-        if total.is_none_or(|n| n > limits.bytes) {
-            return Err(fail("model byte budget exceeded"));
-        }
-        let gltf = gltf::Gltf::from_slice(source).map_err(|e| fail(e.to_string()))?;
-        if gltf.document.extensions_required().next().is_some() {
-            return Err(fail("required glTF extensions unsupported"));
-        }
-        let nodes: Vec<_> = gltf.nodes().collect();
-        if nodes.is_empty() || nodes.len() > voxy_animation::MAX_JOINTS {
-            return Err(fail("node count outside skeleton budget"));
-        }
-        let mut data = Vec::new();
+    fn validate_gltf_buffers_and_accessors<'a>(
+        gltf: &'a gltf::Gltf,
+        buffers: &'a [&'a [u8]],
+    ) -> Result<Vec<&'a [u8]>, ModelError> {
+        let mut data = Vec::with_capacity(gltf.buffers().len());
         for buffer in gltf.buffers() {
             let bytes = match buffer.source() {
                 gltf::buffer::Source::Bin => gltf.blob.as_deref(),
@@ -242,7 +224,6 @@ impl ModelAsset {
             }
             data.push(&bytes[..buffer.length()]);
         }
-        // Validate all accessor ranges before readers form slices.
         for accessor in gltf.accessors() {
             if accessor.sparse().is_some() {
                 return Err(fail("sparse accessors unsupported"));
@@ -273,6 +254,13 @@ impl ModelAsset {
                 return Err(fail("accessor outside buffer bounds"));
             }
         }
+        Ok(data)
+    }
+
+    fn select_active_mesh_nodes<'a>(
+        gltf: &'a gltf::Gltf,
+        nodes: &'a [gltf::Node<'a>],
+    ) -> Result<Vec<&'a gltf::Node<'a>>, ModelError> {
         // A model loads the explicit default scene (or the sole scene). Do not
         // merge unrelated alternate scenes into one visible model.
         let selected = gltf.default_scene().or_else(|| {
@@ -283,7 +271,7 @@ impl ModelAsset {
         if selected.is_none() && gltf.scenes().count() > 1 {
             return Err(fail("multiple scenes require an explicit default scene"));
         }
-        let mut active = std::collections::HashSet::new();
+        let mut active = std::collections::HashSet::with_capacity(nodes.len());
         if let Some(scene) = selected {
             let mut pending: Vec<_> = scene.nodes().collect();
             while let Some(node) = pending.pop() {
@@ -301,36 +289,27 @@ impl ModelAsset {
         if meshes.is_empty() {
             return Err(fail("selected scene contains no mesh instance"));
         }
-        let mesh_node = meshes[0];
-        let skin = mesh_node.skin();
-        let skin_count = gltf.skins().count();
-        if skin_count > voxy_animation::MAX_JOINTS {
-            return Err(fail("skin count budget exceeded"));
-        }
-        let rigid_morph = allow_morph
-            && meshes.iter().any(|node| {
-                node.skin().is_none()
-                    && node.mesh().is_some_and(|mesh| {
-                        mesh.primitives()
-                            .any(|primitive| primitive.morph_targets().next().is_some())
-                    })
-            });
-        // Rigid morphs use the existing authored mesh node as their complete
-        // influence. Source nodes/animation are retained; no skin is invented.
-        let unified_palette = meshes.len() > 1 || skin_count > 1 || rigid_morph;
+        Ok(meshes)
+    }
+
+    fn topological_node_order(
+        nodes: &[gltf::Node<'_>],
+    ) -> Result<(Vec<Option<usize>>, Vec<usize>, Vec<usize>), ModelError> {
         let mut parents = vec![None; nodes.len()];
-        for node in &nodes {
+        for node in nodes {
             for child in node.children() {
                 if parents[child.index()].replace(node.index()).is_some() {
                     return Err(fail("node has multiple parents"));
                 }
             }
         }
-        let mut order = Vec::new();
+        let mut order = Vec::with_capacity(nodes.len());
+        let mut visited = vec![false; nodes.len()];
         while order.len() < nodes.len() {
             let before = order.len();
             for (index, parent) in parents.iter().enumerate() {
-                if !order.contains(&index) && parent.is_none_or(|p| order.contains(&p)) {
+                if !visited[index] && parent.is_none_or(|p| visited[p]) {
+                    visited[index] = true;
                     order.push(index);
                 }
             }
@@ -342,384 +321,85 @@ impl ModelAsset {
         for (joint, &node) in order.iter().enumerate() {
             mapping[node] = joint;
         }
-        let mut inverse = vec![Mat4::IDENTITY; nodes.len()];
-        let mut skin_data = Vec::new();
-        for source_skin in gltf.skins() {
-            let source_nodes: Vec<_> = source_skin.joints().map(|node| node.index()).collect();
-            let unique: std::collections::HashSet<_> = source_nodes.iter().copied().collect();
-            if unique.len() != source_nodes.len() {
-                return Err(fail("duplicate skin joint"));
-            }
-            let matrices: Vec<_> = source_skin
-                .reader(|buffer| data.get(buffer.index()).copied())
-                .read_inverse_bind_matrices()
-                .map_or_else(
-                    || vec![Mat4::IDENTITY; source_nodes.len()],
-                    |reader| {
-                        reader
-                            .map(|matrix| Mat4::from_cols_array_2d(&matrix))
-                            .collect()
-                    },
-                );
-            if matrices.len() != source_nodes.len() {
-                return Err(fail("inverse bind count mismatch"));
-            }
-            if matrices.iter().any(|matrix| !matrix.is_finite()) {
-                return Err(fail("nonfinite inverse bind matrix"));
-            }
-            if !unified_palette
-                && skin
-                    .as_ref()
-                    .is_some_and(|skin| skin.index() == source_skin.index())
-            {
-                for (&node, &matrix) in source_nodes.iter().zip(&matrices) {
-                    inverse[node] = matrix;
-                }
-            }
-            skin_data.push((source_nodes, matrices));
-        }
-        let mut joints = Vec::new();
-        for &index in &order {
-            let (translation, rotation, scale) = nodes[index].transform().decomposed();
-            let transform = Transform {
-                translation: Vec3::from_array(translation),
-                rotation: Quat::from_array(rotation),
-                scale: Vec3::from_array(scale),
-            };
-            if !transform.matrix().abs_diff_eq(
-                Mat4::from_cols_array_2d(&nodes[index].transform().matrix()),
-                1e-4,
-            ) {
-                return Err(fail("node matrix cannot be represented by TRS"));
-            }
-            joints.push(Joint {
-                name: Arc::from(format!("{}#{index}", nodes[index].name().unwrap_or("node"))),
-                parent: parents[index].map(|p| mapping[p] as u16),
-                bind_local: transform,
-                inverse_bind: inverse[index],
-            });
-        }
-        let mut joint_names: Vec<Option<Arc<str>>> = order
-            .iter()
-            .map(|&index| nodes[index].name().map(Arc::from))
-            .collect();
-        let used_skins: std::collections::HashSet<_> = meshes
-            .iter()
-            .filter_map(|node| node.skin().map(|skin| skin.index()))
-            .collect();
-        let mut skin_bindings = vec![Vec::new(); skin_data.len()];
-        for (skin_index, (source_nodes, matrices)) in skin_data.iter().enumerate() {
-            if !used_skins.contains(&skin_index) {
-                continue;
-            }
-            for (&node, &matrix) in source_nodes.iter().zip(matrices) {
-                if unified_palette {
-                    if joints.len() >= voxy_animation::MAX_JOINTS {
-                        return Err(fail("combined node/skin palette exceeds joint budget"));
-                    }
-                    skin_bindings[skin_index].push(joints.len() as u16);
-                    // A binding is an identity child of the authored joint. This
-                    // preserves distinct inverse-bind matrices for shared nodes
-                    // across skins while retaining one existing GPU palette.
-                    joints.push(Joint {
-                        name: Arc::from(format!("__skin{skin_index}_node{node}#binding")),
-                        parent: Some(mapping[node] as u16),
-                        bind_local: Transform::IDENTITY,
-                        inverse_bind: matrix,
-                    });
-                    joint_names.push(None);
-                } else {
-                    skin_bindings[skin_index].push(mapping[node] as u16);
-                }
-            }
-        }
-        let skeleton = Skeleton::new(joints).map_err(|error| fail(error.to_string()))?;
-        let mut primitives = Vec::new();
-        let mut morph_data = morph::MorphImportData::default();
-        if allow_morph {
-            morph_data.defaults = morph::import_defaults(&nodes)?;
-        }
-        let mut morph_vectors = 0usize;
-        let (mut vertex_count, mut index_count) = (0usize, 0usize);
-        for mesh_node in &meshes {
-            if allow_morph {
-                morph::node_weights(mesh_node)?;
-            }
-            let current_skin = mesh_node.skin();
-            let current_bindings = current_skin
-                .as_ref()
-                .map(|skin| &skin_bindings[skin.index()]);
-            for primitive in mesh_node
-                .mesh()
-                .ok_or_else(|| fail("missing mesh"))?
-                .primitives()
-            {
-                if primitive.mode() != gltf::mesh::Mode::Triangles
-                    || (!allow_morph && primitive.morph_targets().next().is_some())
+        Ok((parents, order, mapping))
+    }
+
+    fn parse_base_color_texture(
+        primitive: &gltf::Primitive<'_>,
+        pbr: &gltf::material::PbrMetallicRoughness<'_>,
+    ) -> Result<Option<ModelTexture>, ModelError> {
+        pbr.base_color_texture()
+            .map(|info| {
+                if info.tex_coord() != 0
+                    || primitive.get(&gltf::Semantic::TexCoords(0)).is_none()
                 {
-                    return Err(fail(
-                        "only triangle primitives without morph targets are supported",
-                    ));
+                    return Err(fail("base color texture requires TEXCOORD_0"));
                 }
-                let material = primitive.material();
-                let pbr = material.pbr_metallic_roughness();
-                if pbr.metallic_roughness_texture().is_some()
-                    || material.normal_texture().is_some()
-                    || material.occlusion_texture().is_some()
-                    || material.emissive_texture().is_some()
-                {
-                    return Err(fail("non-base glTF material maps unsupported"));
-                }
-                if pbr.base_color_texture().is_some()
-                    && material.alpha_mode() != gltf::material::AlphaMode::Opaque
-                {
-                    return Err(fail("textured alpha modes unsupported"));
-                }
-                let base_color_texture = pbr
-                    .base_color_texture()
-                    .map(|info| {
-                        if info.tex_coord() != 0
-                            || primitive.get(&gltf::Semantic::TexCoords(0)).is_none()
+                let sampler = info.texture().sampler();
+                let wrap = |mode| match mode {
+                    gltf::texture::WrappingMode::ClampToEdge => voxy_render::TextureWrap::Clamp,
+                    gltf::texture::WrappingMode::Repeat => voxy_render::TextureWrap::Repeat,
+                    gltf::texture::WrappingMode::MirroredRepeat => voxy_render::TextureWrap::Mirror,
+                };
+                Ok(ModelTexture {
+                    image: info.texture().source().index(),
+                    use_mips: !matches!(
+                        sampler.min_filter(),
+                        Some(
+                            gltf::texture::MinFilter::Nearest | gltf::texture::MinFilter::Linear
+                        )
+                    ),
+                    sampling: voxy_render::TextureSampling {
+                        wrap_u: wrap(sampler.wrap_s()),
+                        wrap_v: wrap(sampler.wrap_t()),
+                        min_filter: if matches!(
+                            sampler.min_filter(),
+                            Some(
+                                gltf::texture::MinFilter::Nearest
+                                    | gltf::texture::MinFilter::NearestMipmapNearest
+                                    | gltf::texture::MinFilter::NearestMipmapLinear
+                            )
+                        ) {
+                            voxy_render::TextureFilter::Nearest
+                        } else {
+                            voxy_render::TextureFilter::Linear
+                        },
+                        mag_filter: if sampler.mag_filter()
+                            == Some(gltf::texture::MagFilter::Nearest)
                         {
-                            return Err(fail("base color texture requires TEXCOORD_0"));
-                        }
-                        let sampler = info.texture().sampler();
-                        let wrap = |mode| match mode {
-                            gltf::texture::WrappingMode::ClampToEdge => {
-                                voxy_render::TextureWrap::Clamp
-                            }
-                            gltf::texture::WrappingMode::Repeat => voxy_render::TextureWrap::Repeat,
-                            gltf::texture::WrappingMode::MirroredRepeat => {
-                                voxy_render::TextureWrap::Mirror
-                            }
-                        };
-                        Ok(ModelTexture {
-                            image: info.texture().source().index(),
-                            use_mips: !matches!(
+                            voxy_render::TextureFilter::Nearest
+                        } else {
+                            voxy_render::TextureFilter::Linear
+                        },
+                        mipmap_filter: Some(
+                            if matches!(
                                 sampler.min_filter(),
                                 Some(
-                                    gltf::texture::MinFilter::Nearest
-                                        | gltf::texture::MinFilter::Linear
+                                    gltf::texture::MinFilter::NearestMipmapNearest
+                                        | gltf::texture::MinFilter::LinearMipmapNearest
                                 )
-                            ),
-                            sampling: voxy_render::TextureSampling {
-                                wrap_u: wrap(sampler.wrap_s()),
-                                wrap_v: wrap(sampler.wrap_t()),
-                                min_filter: if matches!(
-                                    sampler.min_filter(),
-                                    Some(
-                                        gltf::texture::MinFilter::Nearest
-                                            | gltf::texture::MinFilter::NearestMipmapNearest
-                                            | gltf::texture::MinFilter::NearestMipmapLinear
-                                    )
-                                ) {
-                                    voxy_render::TextureFilter::Nearest
-                                } else {
-                                    voxy_render::TextureFilter::Linear
-                                },
-                                mag_filter: if sampler.mag_filter()
-                                    == Some(gltf::texture::MagFilter::Nearest)
-                                {
-                                    voxy_render::TextureFilter::Nearest
-                                } else {
-                                    voxy_render::TextureFilter::Linear
-                                },
-                                mipmap_filter: Some(
-                                    if matches!(
-                                        sampler.min_filter(),
-                                        Some(
-                                            gltf::texture::MinFilter::NearestMipmapNearest
-                                                | gltf::texture::MinFilter::LinearMipmapNearest
-                                        )
-                                    ) {
-                                        voxy_render::TextureFilter::Nearest
-                                    } else {
-                                        voxy_render::TextureFilter::Linear
-                                    },
-                                ),
-                                anisotropy: 1,
+                            ) {
+                                voxy_render::TextureFilter::Nearest
+                            } else {
+                                voxy_render::TextureFilter::Linear
                             },
-                        })
-                    })
-                    .transpose()?;
-                let positions_accessor = primitive
-                    .get(&gltf::Semantic::Positions)
-                    .ok_or_else(|| fail("missing positions"))?;
-                for (semantic, accessor) in primitive.attributes() {
-                    if accessor.count() != positions_accessor.count() {
-                        return Err(fail(format!("attribute count mismatch: {semantic:?}")));
-                    }
-                }
-                vertex_count = vertex_count
-                    .checked_add(positions_accessor.count())
-                    .ok_or_else(|| fail("vertex overflow"))?;
-                let count = primitive
-                    .indices()
-                    .map_or(positions_accessor.count(), |a| a.count());
-                index_count = index_count
-                    .checked_add(count)
-                    .ok_or_else(|| fail("index overflow"))?;
-                if vertex_count > limits.vertices || index_count > limits.indices {
-                    return Err(fail("geometry budget exceeded"));
-                }
-                if allow_morph {
-                    for target in primitive.morph_targets() {
-                        if target.tangents().is_some() {
-                            return Err(fail("morph tangent deltas unsupported"));
-                        }
-                        for accessor in [target.positions(), target.normals()].into_iter().flatten()
-                        {
-                            if accessor.count() != positions_accessor.count() {
-                                return Err(fail("morph delta count mismatch"));
-                            }
-                            morph_vectors = morph_vectors
-                                .checked_add(accessor.count())
-                                .ok_or_else(|| fail("morph delta budget overflow"))?;
-                            if morph_vectors > limits.vertices {
-                                return Err(fail("morph delta budget exceeded"));
-                            }
-                        }
-                    }
-                }
-                let reader = primitive.reader(|b| data.get(b.index()).copied());
-                let positions: Vec<_> = reader
-                    .read_positions()
-                    .ok_or_else(|| fail("invalid positions"))?
-                    .collect();
-                let position_count =
-                    u32::try_from(positions.len()).map_err(|_| fail("too many positions"))?;
-                let indices: Vec<u32> = reader
-                    .read_indices()
-                    .map_or_else(|| (0..position_count).collect(), |r| r.into_u32().collect());
-                let uvs: Vec<_> = reader.read_tex_coords(0).map_or_else(
-                    || vec![[0.; 2]; positions.len()],
-                    |r| r.into_f32().collect(),
-                );
-                if uvs.len() != positions.len() {
-                    return Err(fail("UV count mismatch"));
-                }
-                let color = pbr.base_color_factor();
-                let geometry = if current_skin.is_some() || unified_palette {
-                    let normals: Option<Vec<_>> = reader.read_normals().map(Iterator::collect);
-                    let ids: Vec<_> = if current_skin.is_some() {
-                        reader
-                            .read_joints(0)
-                            .ok_or_else(|| fail("missing JOINTS_0"))?
-                            .into_u16()
-                            .collect()
-                    } else {
-                        vec![[0; 4]; positions.len()]
-                    };
-                    let weights: Vec<_> = if current_skin.is_some() {
-                        reader
-                            .read_weights(0)
-                            .ok_or_else(|| fail("missing WEIGHTS_0"))?
-                            .into_f32()
-                            .collect()
-                    } else {
-                        vec![[1., 0., 0., 0.]; positions.len()]
-                    };
-                    if reader.read_joints(1).is_some() || reader.read_weights(1).is_some() {
-                        return Err(fail("more than four influences unsupported"));
-                    }
-                    if normals
-                        .as_ref()
-                        .is_some_and(|normals| normals.len() != positions.len())
-                        || ids.len() != positions.len()
-                        || weights.len() != positions.len()
-                    {
-                        return Err(fail("skin attribute count mismatch"));
-                    }
-                    let mut vertices = Vec::new();
-                    for i in 0..positions.len() {
-                        let mut joints = [0; 4];
-                        let weights = quantize_weights(weights[i])?;
-                        for k in 0..4 {
-                            if weights[k] > 0 {
-                                joints[k] = if let Some(bindings) = current_bindings {
-                                    *bindings
-                                        .get(usize::from(ids[i][k]))
-                                        .ok_or_else(|| fail("joint index outside skin"))?
-                                } else {
-                                    mapping[mesh_node.index()] as u16
-                                };
-                            }
-                        }
-                        vertices.push(SkinnedVertex {
-                            position: positions[i],
-                            normal: normals.as_ref().map_or([0.; 3], |normals| normals[i]),
-                            uv: uvs[i],
-                            joints,
-                            weights,
-                        });
-                    }
-                    // A zero normal stream marks absent NORMAL. The scene shader
-                    // derives one flat face normal from the current deformed geometry.
-                    ModelGeometry::Skinned(
-                        SkinnedMesh::new(vertices, indices, skeleton.joints().len() as u16)
-                            .map_err(|e| fail(e.to_string()))?,
-                    )
-                } else {
-                    let mesh = SceneMesh::new(
-                        positions
-                            .iter()
-                            .zip(&uvs)
-                            .map(|(&position, &uv)| SceneVertex {
-                                position,
-                                uv,
-                                color,
-                            })
-                            .collect(),
-                        indices,
-                    )
-                    .map_err(|e| fail(e.to_string()))?;
-                    ModelGeometry::Static(if allow_morph {
-                        if let Some(normals) = reader.read_normals() {
-                            mesh.with_normals(normals.collect())
-                                .map_err(|e| fail(e.to_string()))?
-                        } else {
-                            mesh
-                        }
-                    } else {
-                        mesh
-                    })
-                };
-                let imported = ModelPrimitive {
-                    geometry,
-                    color,
-                    base_color_texture,
-                };
-                let binding = if allow_morph && primitive.morph_targets().next().is_some() {
-                    let targets = reader
-                        .read_morph_targets()
-                        .map(|(positions, normals, _)| MorphTarget {
-                            positions: positions.map(Iterator::collect),
-                            normals: normals.map(Iterator::collect),
-                        })
-                        .collect();
-                    let geometry = MorphGeometry::new(imported.clone(), targets, limits.vertices)?;
-                    let defaults = morph::node_weights(mesh_node)?;
-                    if defaults.len() != geometry.targets().len() {
-                        return Err(fail("morph primitive target count mismatch"));
-                    }
-                    Some(morph::MorphBinding {
-                        node: mesh_node.index(),
-                        name: mesh_node.name().map(Arc::from),
-                        geometry,
-                        defaults,
-                    })
-                } else {
-                    None
-                };
-                if allow_morph {
-                    morph_data.primitives.push(binding);
-                }
-                primitives.push(imported);
-            }
-        }
-        if primitives.is_empty() {
-            return Err(fail("empty model"));
-        }
+                        ),
+                        anisotropy: 1,
+                    },
+                })
+            })
+            .transpose()
+    }
+
+    fn import_animations(
+        gltf: &gltf::Gltf,
+        data: &[&[u8]],
+        skeleton: &Skeleton,
+        mapping: &[usize],
+        limits: ModelLimits,
+        allow_morph: bool,
+        morph_data: &mut morph::MorphImportData,
+    ) -> Result<Vec<Arc<AnimationClip>>, ModelError> {
         let mut animations = Vec::new();
         let mut key_count = 0usize;
         for animation in gltf.animations() {
@@ -855,11 +535,377 @@ impl ModelAsset {
                     tracks,
                     modes,
                     tangents,
-                    &skeleton,
+                    skeleton,
                 )
                 .map_err(|e| fail(e.to_string()))?,
             ));
         }
+        Ok(animations)
+    }
+
+    // Node indices are bounded to MAX_JOINTS above.
+    #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
+    fn parse_internal(
+        source: &[u8],
+        buffers: &[&[u8]],
+        limits: ModelLimits,
+        allow_morph: bool,
+    ) -> Result<(Self, morph::MorphImportData), ModelError> {
+        let total = buffers
+            .iter()
+            .try_fold(source.len(), |n, b| n.checked_add(b.len()));
+        if total.is_none_or(|n| n > limits.bytes) {
+            return Err(fail("model byte budget exceeded"));
+        }
+        let gltf = gltf::Gltf::from_slice(source).map_err(|e| fail(e.to_string()))?;
+        if gltf.document.extensions_required().next().is_some() {
+            return Err(fail("required glTF extensions unsupported"));
+        }
+        let nodes: Vec<_> = gltf.nodes().collect();
+        if nodes.is_empty() || nodes.len() > voxy_animation::MAX_JOINTS {
+            return Err(fail("node count outside skeleton budget"));
+        }
+        let data = Self::validate_gltf_buffers_and_accessors(&gltf, buffers)?;
+        let meshes = Self::select_active_mesh_nodes(&gltf, &nodes)?;
+        let mesh_node = meshes[0];
+        let skin = mesh_node.skin();
+        let skin_count = gltf.skins().count();
+        if skin_count > voxy_animation::MAX_JOINTS {
+            return Err(fail("skin count budget exceeded"));
+        }
+        let rigid_morph = allow_morph
+            && meshes.iter().any(|node| {
+                node.skin().is_none()
+                    && node.mesh().is_some_and(|mesh| {
+                        mesh.primitives()
+                            .any(|primitive| primitive.morph_targets().next().is_some())
+                    })
+            });
+        // Rigid morphs use the existing authored mesh node as their complete
+        // influence. Source nodes/animation are retained; no skin is invented.
+        let unified_palette = meshes.len() > 1 || skin_count > 1 || rigid_morph;
+        let (parents, order, mapping) = Self::topological_node_order(&nodes)?;
+        let mut inverse = vec![Mat4::IDENTITY; nodes.len()];
+        let mut skin_data = Vec::new();
+        for source_skin in gltf.skins() {
+            let source_nodes: Vec<_> = source_skin.joints().map(|node| node.index()).collect();
+            let unique: std::collections::HashSet<_> = source_nodes.iter().copied().collect();
+            if unique.len() != source_nodes.len() {
+                return Err(fail("duplicate skin joint"));
+            }
+            let matrices: Vec<_> = source_skin
+                .reader(|buffer| data.get(buffer.index()).copied())
+                .read_inverse_bind_matrices()
+                .map_or_else(
+                    || vec![Mat4::IDENTITY; source_nodes.len()],
+                    |reader| {
+                        reader
+                            .map(|matrix| Mat4::from_cols_array_2d(&matrix))
+                            .collect()
+                    },
+                );
+            if matrices.len() != source_nodes.len() {
+                return Err(fail("inverse bind count mismatch"));
+            }
+            if matrices.iter().any(|matrix| !matrix.is_finite()) {
+                return Err(fail("nonfinite inverse bind matrix"));
+            }
+            if !unified_palette
+                && skin
+                    .as_ref()
+                    .is_some_and(|skin| skin.index() == source_skin.index())
+            {
+                for (&node, &matrix) in source_nodes.iter().zip(&matrices) {
+                    inverse[node] = matrix;
+                }
+            }
+            skin_data.push((source_nodes, matrices));
+        }
+        let mut joints = Vec::with_capacity(order.len());
+        for &index in &order {
+            let (translation, rotation, scale) = nodes[index].transform().decomposed();
+            let transform = Transform {
+                translation: Vec3::from_array(translation),
+                rotation: Quat::from_array(rotation),
+                scale: Vec3::from_array(scale),
+            };
+            if !transform.matrix().abs_diff_eq(
+                Mat4::from_cols_array_2d(&nodes[index].transform().matrix()),
+                1e-4,
+            ) {
+                return Err(fail("node matrix cannot be represented by TRS"));
+            }
+            joints.push(Joint {
+                name: Arc::from(format!("{}#{index}", nodes[index].name().unwrap_or("node"))),
+                parent: parents[index].map(|p| mapping[p] as u16),
+                bind_local: transform,
+                inverse_bind: inverse[index],
+            });
+        }
+        let mut joint_names: Vec<Option<Arc<str>>> = order
+            .iter()
+            .map(|&index| nodes[index].name().map(Arc::from))
+            .collect();
+        let used_skins: std::collections::HashSet<_> = meshes
+            .iter()
+            .filter_map(|node| node.skin().map(|skin| skin.index()))
+            .collect();
+        let mut skin_bindings = vec![Vec::new(); skin_data.len()];
+        for (skin_index, (source_nodes, matrices)) in skin_data.iter().enumerate() {
+            if !used_skins.contains(&skin_index) {
+                continue;
+            }
+            for (&node, &matrix) in source_nodes.iter().zip(matrices) {
+                if unified_palette {
+                    if joints.len() >= voxy_animation::MAX_JOINTS {
+                        return Err(fail("combined node/skin palette exceeds joint budget"));
+                    }
+                    skin_bindings[skin_index].push(joints.len() as u16);
+                    // A binding is an identity child of the authored joint. This
+                    // preserves distinct inverse-bind matrices for shared nodes
+                    // across skins while retaining one existing GPU palette.
+                    joints.push(Joint {
+                        name: Arc::from(format!("__skin{skin_index}_node{node}#binding")),
+                        parent: Some(mapping[node] as u16),
+                        bind_local: Transform::IDENTITY,
+                        inverse_bind: matrix,
+                    });
+                    joint_names.push(None);
+                } else {
+                    skin_bindings[skin_index].push(mapping[node] as u16);
+                }
+            }
+        }
+        let skeleton = Skeleton::new(joints).map_err(|error| fail(error.to_string()))?;
+        let mut primitives = Vec::new();
+        let mut morph_data = morph::MorphImportData::default();
+        if allow_morph {
+            morph_data.defaults = morph::import_defaults(&nodes)?;
+        }
+        let mut morph_vectors = 0usize;
+        let (mut vertex_count, mut index_count) = (0usize, 0usize);
+        for mesh_node in &meshes {
+            if allow_morph {
+                morph::node_weights(mesh_node)?;
+            }
+            let current_skin = mesh_node.skin();
+            let current_bindings = current_skin
+                .as_ref()
+                .map(|skin| &skin_bindings[skin.index()]);
+            for primitive in mesh_node
+                .mesh()
+                .ok_or_else(|| fail("missing mesh"))?
+                .primitives()
+            {
+                if primitive.mode() != gltf::mesh::Mode::Triangles
+                    || (!allow_morph && primitive.morph_targets().next().is_some())
+                {
+                    return Err(fail(
+                        "only triangle primitives without morph targets are supported",
+                    ));
+                }
+                let material = primitive.material();
+                let pbr = material.pbr_metallic_roughness();
+                if pbr.metallic_roughness_texture().is_some()
+                    || material.normal_texture().is_some()
+                    || material.occlusion_texture().is_some()
+                    || material.emissive_texture().is_some()
+                {
+                    return Err(fail("non-base glTF material maps unsupported"));
+                }
+                if pbr.base_color_texture().is_some()
+                    && material.alpha_mode() != gltf::material::AlphaMode::Opaque
+                {
+                    return Err(fail("textured alpha modes unsupported"));
+                }
+                let base_color_texture = Self::parse_base_color_texture(&primitive, &pbr)?;
+                let positions_accessor = primitive
+                    .get(&gltf::Semantic::Positions)
+                    .ok_or_else(|| fail("missing positions"))?;
+                for (semantic, accessor) in primitive.attributes() {
+                    if accessor.count() != positions_accessor.count() {
+                        return Err(fail(format!("attribute count mismatch: {semantic:?}")));
+                    }
+                }
+                vertex_count = vertex_count
+                    .checked_add(positions_accessor.count())
+                    .ok_or_else(|| fail("vertex overflow"))?;
+                let count = primitive
+                    .indices()
+                    .map_or(positions_accessor.count(), |a| a.count());
+                index_count = index_count
+                    .checked_add(count)
+                    .ok_or_else(|| fail("index overflow"))?;
+                if vertex_count > limits.vertices || index_count > limits.indices {
+                    return Err(fail("geometry budget exceeded"));
+                }
+                if allow_morph {
+                    for target in primitive.morph_targets() {
+                        if target.tangents().is_some() {
+                            return Err(fail("morph tangent deltas unsupported"));
+                        }
+                        for accessor in [target.positions(), target.normals()].into_iter().flatten()
+                        {
+                            if accessor.count() != positions_accessor.count() {
+                                return Err(fail("morph delta count mismatch"));
+                            }
+                            morph_vectors = morph_vectors
+                                .checked_add(accessor.count())
+                                .ok_or_else(|| fail("morph delta budget overflow"))?;
+                            if morph_vectors > limits.vertices {
+                                return Err(fail("morph delta budget exceeded"));
+                            }
+                        }
+                    }
+                }
+                let reader = primitive.reader(|b| data.get(b.index()).copied());
+                let positions: Vec<_> = reader
+                    .read_positions()
+                    .ok_or_else(|| fail("invalid positions"))?
+                    .collect();
+                let position_count =
+                    u32::try_from(positions.len()).map_err(|_| fail("too many positions"))?;
+                let indices: Vec<u32> = reader
+                    .read_indices()
+                    .map_or_else(|| (0..position_count).collect(), |r| r.into_u32().collect());
+                let uvs: Vec<_> = reader.read_tex_coords(0).map_or_else(
+                    || vec![[0.; 2]; positions.len()],
+                    |r| r.into_f32().collect(),
+                );
+                if uvs.len() != positions.len() {
+                    return Err(fail("UV count mismatch"));
+                }
+                let color = pbr.base_color_factor();
+                let geometry = if current_skin.is_some() || unified_palette {
+                    let normals: Option<Vec<_>> = reader.read_normals().map(Iterator::collect);
+                    let ids: Vec<_> = if current_skin.is_some() {
+                        reader
+                            .read_joints(0)
+                            .ok_or_else(|| fail("missing JOINTS_0"))?
+                            .into_u16()
+                            .collect()
+                    } else {
+                        vec![[0; 4]; positions.len()]
+                    };
+                    let weights: Vec<_> = if current_skin.is_some() {
+                        reader
+                            .read_weights(0)
+                            .ok_or_else(|| fail("missing WEIGHTS_0"))?
+                            .into_f32()
+                            .collect()
+                    } else {
+                        vec![[1., 0., 0., 0.]; positions.len()]
+                    };
+                    if reader.read_joints(1).is_some() || reader.read_weights(1).is_some() {
+                        return Err(fail("more than four influences unsupported"));
+                    }
+                    if normals
+                        .as_ref()
+                        .is_some_and(|normals| normals.len() != positions.len())
+                        || ids.len() != positions.len()
+                        || weights.len() != positions.len()
+                    {
+                        return Err(fail("skin attribute count mismatch"));
+                    }
+                    let mut vertices = Vec::with_capacity(positions.len());
+                    for i in 0..positions.len() {
+                        let mut joints = [0; 4];
+                        let weights = quantize_weights(weights[i])?;
+                        for k in 0..4 {
+                            if weights[k] > 0 {
+                                joints[k] = if let Some(bindings) = current_bindings {
+                                    *bindings
+                                        .get(usize::from(ids[i][k]))
+                                        .ok_or_else(|| fail("joint index outside skin"))?
+                                } else {
+                                    mapping[mesh_node.index()] as u16
+                                };
+                            }
+                        }
+                        vertices.push(SkinnedVertex {
+                            position: positions[i],
+                            normal: normals.as_ref().map_or([0.; 3], |normals| normals[i]),
+                            uv: uvs[i],
+                            joints,
+                            weights,
+                        });
+                    }
+                    // A zero normal stream marks absent NORMAL. The scene shader
+                    // derives one flat face normal from the current deformed geometry.
+                    ModelGeometry::Skinned(
+                        SkinnedMesh::new(vertices, indices, skeleton.joints().len() as u16)
+                            .map_err(|e| fail(e.to_string()))?,
+                    )
+                } else {
+                    let mesh = SceneMesh::new(
+                        positions
+                            .iter()
+                            .zip(&uvs)
+                            .map(|(&position, &uv)| SceneVertex {
+                                position,
+                                uv,
+                                color,
+                            })
+                            .collect(),
+                        indices,
+                    )
+                    .map_err(|e| fail(e.to_string()))?;
+                    ModelGeometry::Static(if allow_morph {
+                        if let Some(normals) = reader.read_normals() {
+                            mesh.with_normals(normals.collect())
+                                .map_err(|e| fail(e.to_string()))?
+                        } else {
+                            mesh
+                        }
+                    } else {
+                        mesh
+                    })
+                };
+                let imported = ModelPrimitive {
+                    geometry,
+                    color,
+                    base_color_texture,
+                };
+                let binding = if allow_morph && primitive.morph_targets().next().is_some() {
+                    let targets = reader
+                        .read_morph_targets()
+                        .map(|(positions, normals, _)| MorphTarget {
+                            positions: positions.map(Iterator::collect),
+                            normals: normals.map(Iterator::collect),
+                        })
+                        .collect();
+                    let geometry = MorphGeometry::new(imported.clone(), targets, limits.vertices)?;
+                    let defaults = morph::node_weights(mesh_node)?;
+                    if defaults.len() != geometry.targets().len() {
+                        return Err(fail("morph primitive target count mismatch"));
+                    }
+                    Some(morph::MorphBinding {
+                        node: mesh_node.index(),
+                        name: mesh_node.name().map(Arc::from),
+                        geometry,
+                        defaults,
+                    })
+                } else {
+                    None
+                };
+                if allow_morph {
+                    morph_data.primitives.push(binding);
+                }
+                primitives.push(imported);
+            }
+        }
+        if primitives.is_empty() {
+            return Err(fail("empty model"));
+        }
+        let animations = Self::import_animations(
+            &gltf,
+            &data,
+            &skeleton,
+            &mapping,
+            limits,
+            allow_morph,
+            &mut morph_data,
+        )?;
         Ok((
             Self {
                 joint_names,

@@ -626,5 +626,5 @@ pub struct CompleteDryingReport {
     pub dried_to_zero_solvent_cells: usize,
 }
 
-#[path = "surface_film_thermal_vapor.rs"]
+#[path = "thermal_vapor.rs"]
 mod vapor;

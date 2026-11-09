@@ -77,25 +77,28 @@ impl ArtifactCache {
             return Err(ArtifactCacheError::Corrupt);
         }
         // Like FileInputs, this assumes no hostile concurrent directory/symlink swaps.
-        let file = File::open(path)?;
-        let limit = u64::try_from(self.entry_limit).map_err(|_| ArtifactCacheError::TooLarge)?
-            + HEADER as u64
-            + 1;
-        let mut bytes = Vec::new();
-        file.take(limit).read_to_end(&mut bytes)?;
-        if bytes.len() < HEADER {
-            return Err(ArtifactCacheError::Corrupt);
+        let mut file = File::open(path)?;
+        let mut header = [0_u8; HEADER];
+        match file.read_exact(&mut header) {
+            Ok(()) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::UnexpectedEof => {
+                return Err(ArtifactCacheError::Corrupt);
+            }
+            Err(error) => return Err(error.into()),
         }
-        if bytes.len() - HEADER > self.entry_limit {
+        let limit =
+            u64::try_from(self.entry_limit).map_err(|_| ArtifactCacheError::TooLarge)? + 1;
+        let mut bytes = Vec::with_capacity(self.entry_limit.min(4096));
+        file.take(limit).read_to_end(&mut bytes)?;
+        if bytes.len() > self.entry_limit {
             return Err(ArtifactCacheError::TooLarge);
         }
-        if &bytes[..8] != MAGIC
-            || &bytes[8..40] != key
-            || blake3::hash(&bytes[HEADER..]).as_bytes() != &bytes[40..72]
+        if &header[..8] != MAGIC
+            || &header[8..40] != key
+            || blake3::hash(&bytes).as_bytes() != &header[40..72]
         {
             return Err(ArtifactCacheError::Corrupt);
         }
-        bytes.drain(..HEADER);
         Ok(Some(bytes))
     }
     /// Writes/syncs a unique same-directory temporary file, then renames it over

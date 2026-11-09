@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
-use voxy_core::{CHUNK_VOLUME, ChunkPos, LocalIndex};
+use voxy_core::{ByteReader, ByteWriter, CHUNK_VOLUME, ChunkPos, LocalIndex};
 use voxy_world::{BlockRegistry, ChunkData, ChunkRevision, PalettedBlocks, ResourceKey};
 
 const MAGIC: &[u8; 4] = b"VXCH";
@@ -11,6 +11,22 @@ const MAX_KEY: usize = 256;
 const MAX_META_ENTRIES: usize = 4096;
 const MAX_META_VALUE: usize = 64 * 1024;
 const MAX_META_TOTAL: usize = 4 * 1024 * 1024;
+
+const CRC32_IEEE_TABLE: [u32; 256] = {
+    let mut table = [0_u32; 256];
+    let mut i = 0;
+    while i < 256 {
+        let mut crc = i as u32;
+        let mut bit = 0;
+        while bit < 8 {
+            crc = (crc >> 1) ^ (0xedb8_8320 & 0_u32.wrapping_sub(crc & 1));
+            bit += 1;
+        }
+        table[i] = crc;
+        i += 1;
+    }
+    table
+};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StoredChunk {
@@ -26,18 +42,18 @@ pub struct StoredChunk {
 /// Rejects unknown IDs and data outside bounded format limits.
 #[allow(clippy::too_many_lines)]
 pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec<u8>, CodecError> {
-    let dense = chunk.data.blocks.to_dense();
-    let mut keys = BTreeSet::new();
-    for &block in &dense {
-        keys.insert(
-            registry
-                .get(block)
-                .ok_or(CodecError::UnknownBlockId(block.get()))?
-                .key
-                .clone(),
-        );
+    let (src_palette, slots) = chunk.data.blocks.palette_indices();
+    let mut src_keys = Vec::with_capacity(src_palette.len());
+    let mut unique_keys = BTreeSet::new();
+    for &block in &src_palette {
+        let key = &registry
+            .get(block)
+            .ok_or(CodecError::UnknownBlockId(block.get()))?
+            .key;
+        src_keys.push(key);
+        unique_keys.insert(key.clone());
     }
-    let palette: Vec<_> = keys.into_iter().collect();
+    let palette: Vec<_> = unique_keys.into_iter().collect();
     if palette.is_empty() || palette.len() > usize::from(u16::MAX) + 1 {
         return Err(CodecError::PaletteTooLarge);
     }
@@ -46,70 +62,64 @@ pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec
         .enumerate()
         .map(|(index, key)| (key.as_str(), u16::try_from(index).unwrap_or(u16::MAX)))
         .collect();
-    let bits = bits_for(palette.len())?;
-    let indexes = dense
+    let remap: Vec<u16> = src_keys
         .into_iter()
-        .map(|block| {
-            let key = &registry
-                .get(block)
-                .ok_or(CodecError::UnknownBlockId(block.get()))?
-                .key;
-            Ok(lookup[key.as_str()])
-        })
-        .collect::<Result<Vec<_>, CodecError>>()?;
+        .map(|key| lookup[key.as_str()])
+        .collect();
+    let bits = bits_for(palette.len())?;
+    let indexes: Vec<u16> = slots
+        .into_iter()
+        .map(|slot| remap[usize::from(slot)])
+        .collect();
     validate_metadata(&chunk.data.block_data)?;
 
-    let mut out = Vec::new();
-    out.extend_from_slice(MAGIC);
-    put_u16(&mut out, VERSION);
-    put_i64(&mut out, chunk.pos.x);
-    put_i64(&mut out, chunk.pos.y);
-    put_i64(&mut out, chunk.pos.z);
-    put_u64(&mut out, chunk.revision.get());
-    put_u16(
-        &mut out,
+    let packed = pack(&indexes, bits);
+    let mut out = Vec::with_capacity(64 + palette.len() * 16 + packed.len());
+    let mut writer = ByteWriter::new(&mut out);
+    writer.write_bytes(MAGIC);
+    writer.write_u16_le(VERSION);
+    writer.write_i64_le(chunk.pos.x);
+    writer.write_i64_le(chunk.pos.y);
+    writer.write_i64_le(chunk.pos.z);
+    writer.write_u64_le(chunk.revision.get());
+    writer.write_u16_le(
         u16::try_from(palette.len()).map_err(|_| CodecError::PaletteTooLarge)?,
     );
-    out.extend_from_slice(&[bits, 0]);
+    writer.write_bytes(&[bits, 0]);
     for key in palette {
         let bytes = key.as_str().as_bytes();
         if bytes.is_empty() || bytes.len() > MAX_KEY {
             return Err(CodecError::InvalidKeyLength(bytes.len()));
         }
-        put_u16(
-            &mut out,
+        writer.write_u16_le(
             u16::try_from(bytes.len()).map_err(|_| CodecError::InvalidKeyLength(bytes.len()))?,
         );
-        out.extend_from_slice(bytes);
+        writer.write_bytes(bytes);
     }
-    let packed = pack(&indexes, bits);
-    put_u32(
-        &mut out,
+    writer.write_u32_le(
         u32::try_from(packed.len()).map_err(|_| CodecError::RecordTooLarge)?,
     );
-    out.extend_from_slice(&packed);
-    put_u16(
-        &mut out,
+    writer.write_bytes(&packed);
+    writer.write_u16_le(
         u16::try_from(chunk.data.block_data.len())
             .map_err(|_| CodecError::TooManyMetadataEntries)?,
     );
     for (&index, value) in &chunk.data.block_data {
-        put_u16(&mut out, index.get());
-        put_u32(
-            &mut out,
+        writer.write_u16_le(index.get());
+        writer.write_u32_le(
             u32::try_from(value.len()).map_err(|_| CodecError::MetadataValueTooLarge)?,
         );
-        out.extend_from_slice(value);
+        writer.write_bytes(value);
     }
-    if out
+    if writer
         .len()
         .checked_add(4)
         .is_none_or(|length| length > MAX_RECORD)
     {
         return Err(CodecError::RecordTooLarge);
     }
-    let crc = checksum(&out);
-    put_u32(&mut out, crc);
+    let crc = checksum(writer.as_slice());
+    writer.write_u32_le(crc);
     Ok(out)
 }
 
@@ -135,35 +145,40 @@ pub fn decode_chunk(bytes: &[u8], registry: &BlockRegistry) -> Result<StoredChun
     if checksum(&bytes[..payload_len]) != expected {
         return Err(CodecError::ChecksumMismatch);
     }
-    let mut reader = Reader::new(&bytes[..payload_len]);
-    if reader.take(4)? != MAGIC {
+    let mut reader = ByteReader::new(&bytes[..payload_len]);
+    if reader.read_bytes(4).map_err(|_| CodecError::Truncated)? != MAGIC {
         return Err(CodecError::BadMagic);
     }
-    if reader.u16()? != VERSION {
+    if reader.read_u16_le().map_err(|_| CodecError::Truncated)? != VERSION {
         return Err(CodecError::UnsupportedVersion);
     }
     let pos = ChunkPos {
-        x: reader.i64()?,
-        y: reader.i64()?,
-        z: reader.i64()?,
+        x: reader.read_i64_le().map_err(|_| CodecError::Truncated)?,
+        y: reader.read_i64_le().map_err(|_| CodecError::Truncated)?,
+        z: reader.read_i64_le().map_err(|_| CodecError::Truncated)?,
     };
-    let revision = ChunkRevision::from_raw(reader.u64()?);
-    let palette_len = usize::from(reader.u16()?);
+    let revision =
+        ChunkRevision::from_raw(reader.read_u64_le().map_err(|_| CodecError::Truncated)?);
+    let palette_len = usize::from(reader.read_u16_le().map_err(|_| CodecError::Truncated)?);
     if palette_len == 0 {
         return Err(CodecError::EmptyPalette);
     }
-    let bits = reader.u8()?;
-    if reader.u8()? != 0 || bits != bits_for(palette_len)? {
+    let bits = reader.read_u8().map_err(|_| CodecError::Truncated)?;
+    if reader.read_u8().map_err(|_| CodecError::Truncated)? != 0 || bits != bits_for(palette_len)?
+    {
         return Err(CodecError::NonCanonicalEncoding);
     }
     let mut palette = Vec::with_capacity(palette_len);
     let mut previous: Option<ResourceKey> = None;
     for _ in 0..palette_len {
-        let length = usize::from(reader.u16()?);
+        let length = usize::from(reader.read_u16_le().map_err(|_| CodecError::Truncated)?);
         if length == 0 || length > MAX_KEY {
             return Err(CodecError::InvalidKeyLength(length));
         }
-        let text = std::str::from_utf8(reader.take(length)?).map_err(|_| CodecError::InvalidKey)?;
+        let raw = reader
+            .read_bytes(length)
+            .map_err(|_| CodecError::Truncated)?;
+        let text = std::str::from_utf8(raw).map_err(|_| CodecError::InvalidKey)?;
         let key = ResourceKey::parse(text).map_err(|_| CodecError::InvalidKey)?;
         if previous.as_ref().is_some_and(|value| value >= &key) {
             return Err(CodecError::NonCanonicalEncoding);
@@ -174,12 +189,15 @@ pub fn decode_chunk(bytes: &[u8], registry: &BlockRegistry) -> Result<StoredChun
         previous = Some(key);
         palette.push(block);
     }
-    let packed_len = usize::try_from(reader.u32()?).map_err(|_| CodecError::RecordTooLarge)?;
+    let packed_len = usize::try_from(reader.read_u32_le().map_err(|_| CodecError::Truncated)?)
+        .map_err(|_| CodecError::RecordTooLarge)?;
     let canonical_len = (CHUNK_VOLUME * usize::from(bits)).div_ceil(8);
     if packed_len != canonical_len {
         return Err(CodecError::InvalidPackedLength);
     }
-    let packed = reader.take(packed_len)?;
+    let packed = reader
+        .read_bytes(packed_len)
+        .map_err(|_| CodecError::Truncated)?;
     let mut dense = Vec::with_capacity(CHUNK_VOLUME);
     for index in 0..CHUNK_VOLUME {
         dense.push(
@@ -188,16 +206,17 @@ pub fn decode_chunk(bytes: &[u8], registry: &BlockRegistry) -> Result<StoredChun
                 .ok_or(CodecError::InvalidPaletteIndex)?,
         );
     }
-    let count = usize::from(reader.u16()?);
+    let count = usize::from(reader.read_u16_le().map_err(|_| CodecError::Truncated)?);
     if count > MAX_META_ENTRIES {
         return Err(CodecError::TooManyMetadataEntries);
     }
     let mut total = 0_usize;
     let mut block_data = BTreeMap::new();
     for _ in 0..count {
-        let index = LocalIndex::new(reader.u16()?).ok_or(CodecError::InvalidMetadataIndex)?;
-        let length =
-            usize::try_from(reader.u32()?).map_err(|_| CodecError::MetadataValueTooLarge)?;
+        let index = LocalIndex::new(reader.read_u16_le().map_err(|_| CodecError::Truncated)?)
+            .ok_or(CodecError::InvalidMetadataIndex)?;
+        let length = usize::try_from(reader.read_u32_le().map_err(|_| CodecError::Truncated)?)
+            .map_err(|_| CodecError::MetadataValueTooLarge)?;
         if length > MAX_META_VALUE {
             return Err(CodecError::MetadataValueTooLarge);
         }
@@ -207,14 +226,14 @@ pub fn decode_chunk(bytes: &[u8], registry: &BlockRegistry) -> Result<StoredChun
         if total > MAX_META_TOTAL {
             return Err(CodecError::MetadataTooLarge);
         }
-        if block_data
-            .insert(index, Arc::from(reader.take(length)?))
-            .is_some()
-        {
+        let meta_bytes = reader
+            .read_bytes(length)
+            .map_err(|_| CodecError::Truncated)?;
+        if block_data.insert(index, Arc::from(meta_bytes)).is_some() {
             return Err(CodecError::DuplicateMetadataIndex);
         }
     }
-    if !reader.done() {
+    if !reader.is_empty() {
         return Err(CodecError::TrailingBytes);
     }
     Ok(StoredChunk {
@@ -255,109 +274,84 @@ fn bits_for(count: usize) -> Result<u8, CodecError> {
 }
 
 fn pack(indexes: &[u16], bits: u8) -> Vec<u8> {
-    let mut out = vec![0_u8; (indexes.len() * usize::from(bits)).div_ceil(8)];
-    for (index, &value) in indexes.iter().enumerate() {
-        let start = index * usize::from(bits);
-        for offset in 0..bits {
-            if value & (1_u16 << offset) != 0 {
-                let target = start + usize::from(offset);
-                out[target / 8] |= 1_u8 << (target % 8);
-            }
+    let bit_width = usize::from(bits);
+    let mut out = vec![0_u8; (indexes.len() * bit_width).div_ceil(8)];
+    let mask = if bits >= 16 {
+        u32::from(u16::MAX)
+    } else {
+        (1_u32 << bits) - 1
+    };
+    let mut bit_pos = 0_usize;
+    for &value in indexes {
+        let mut val = (u32::from(value) & mask) << (bit_pos & 7);
+        let mut byte_idx = bit_pos >> 3;
+        let mut remaining = (bit_pos & 7) + bit_width;
+        while remaining > 0 {
+            out[byte_idx] |= (val & 0xff) as u8;
+            val >>= 8;
+            byte_idx += 1;
+            remaining = remaining.saturating_sub(8);
         }
+        bit_pos += bit_width;
     }
     out
 }
 
+#[inline]
 fn unpack(bytes: &[u8], index: usize, bits: u8) -> u16 {
-    let start = index * usize::from(bits);
-    let mut value = 0_u16;
-    for offset in 0..bits {
-        let source = start + usize::from(offset);
-        if bytes[source / 8] & (1_u8 << (source % 8)) != 0 {
-            value |= 1_u16 << offset;
-        }
-    }
-    value
+    let bit_width = usize::from(bits);
+    let bit_pos = index * bit_width;
+    let byte_idx = bit_pos >> 3;
+    let bit_offset = bit_pos & 7;
+    let b0 = u32::from(bytes[byte_idx]);
+    let b1 = bytes.get(byte_idx + 1).copied().map_or(0, u32::from);
+    let b2 = bytes.get(byte_idx + 2).copied().map_or(0, u32::from);
+    let combined = b0 | (b1 << 8) | (b2 << 16);
+    let mask = if bits >= 16 {
+        u32::from(u16::MAX)
+    } else {
+        (1_u32 << bits) - 1
+    };
+    ((combined >> bit_offset) & mask) as u16
 }
 
+#[inline]
 pub(crate) fn checksum(bytes: &[u8]) -> u32 {
     let mut crc = u32::MAX;
     for &byte in bytes {
-        crc ^= u32::from(byte);
-        for _ in 0..8 {
-            crc = (crc >> 1) ^ (0xedb8_8320 & 0_u32.wrapping_sub(crc & 1));
-        }
+        let table_idx = ((crc as u8) ^ byte) as usize;
+        crc = (crc >> 8) ^ CRC32_IEEE_TABLE[table_idx];
     }
     !crc
 }
 
-fn put_u16(out: &mut Vec<u8>, value: u16) {
-    out.extend_from_slice(&value.to_le_bytes());
-}
-fn put_u32(out: &mut Vec<u8>, value: u32) {
-    out.extend_from_slice(&value.to_le_bytes());
-}
-fn put_u64(out: &mut Vec<u8>, value: u64) {
-    out.extend_from_slice(&value.to_le_bytes());
-}
-fn put_i64(out: &mut Vec<u8>, value: i64) {
-    out.extend_from_slice(&value.to_le_bytes());
+/// Delta-encodes a slice of `i32` values (using wrapping differences) and maps each signed delta
+/// to an unsigned `u32` via ZigZag encoding `(d << 1) ^ (d >> 31)` so small deltas near zero
+/// become small positive integers ideal for variable-length / bit-packed storage.
+#[must_use]
+pub fn zigzag_delta_encode_i32(values: &[i32]) -> Vec<u32> {
+    let mut out = Vec::with_capacity(values.len());
+    let mut prev = 0_i32;
+    for &v in values {
+        let delta = v.wrapping_sub(prev);
+        prev = v;
+        let zz = ((delta << 1) ^ (delta >> 31)) as u32;
+        out.push(zz);
+    }
+    out
 }
 
-struct Reader<'a> {
-    bytes: &'a [u8],
-    offset: usize,
-}
-impl<'a> Reader<'a> {
-    fn new(bytes: &'a [u8]) -> Self {
-        Self { bytes, offset: 0 }
+/// Decodes a ZigZag delta-encoded `u32` stream back into the original `i32` sequence.
+#[must_use]
+pub fn zigzag_delta_decode_i32(encoded: &[u32]) -> Vec<i32> {
+    let mut out = Vec::with_capacity(encoded.len());
+    let mut acc = 0_i32;
+    for &zz in encoded {
+        let delta = ((zz >> 1) as i32) ^ -((zz & 1) as i32);
+        acc = acc.wrapping_add(delta);
+        out.push(acc);
     }
-    fn take(&mut self, length: usize) -> Result<&'a [u8], CodecError> {
-        let end = self
-            .offset
-            .checked_add(length)
-            .ok_or(CodecError::Truncated)?;
-        let value = self
-            .bytes
-            .get(self.offset..end)
-            .ok_or(CodecError::Truncated)?;
-        self.offset = end;
-        Ok(value)
-    }
-    fn u8(&mut self) -> Result<u8, CodecError> {
-        Ok(self.take(1)?[0])
-    }
-    fn u16(&mut self) -> Result<u16, CodecError> {
-        Ok(u16::from_le_bytes(
-            self.take(2)?
-                .try_into()
-                .map_err(|_| CodecError::Truncated)?,
-        ))
-    }
-    fn u32(&mut self) -> Result<u32, CodecError> {
-        Ok(u32::from_le_bytes(
-            self.take(4)?
-                .try_into()
-                .map_err(|_| CodecError::Truncated)?,
-        ))
-    }
-    fn u64(&mut self) -> Result<u64, CodecError> {
-        Ok(u64::from_le_bytes(
-            self.take(8)?
-                .try_into()
-                .map_err(|_| CodecError::Truncated)?,
-        ))
-    }
-    fn i64(&mut self) -> Result<i64, CodecError> {
-        Ok(i64::from_le_bytes(
-            self.take(8)?
-                .try_into()
-                .map_err(|_| CodecError::Truncated)?,
-        ))
-    }
-    fn done(&self) -> bool {
-        self.offset == self.bytes.len()
-    }
+    out
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
@@ -474,7 +468,7 @@ pub(crate) mod tests {
         let mut payload = bytes[..bytes.len() - 4].to_vec();
         payload.push(0);
         let crc = checksum(&payload);
-        put_u32(&mut payload, crc);
+        payload.extend_from_slice(&crc.to_le_bytes());
         assert_eq!(
             decode_chunk(&payload, &registry),
             Err(CodecError::TrailingBytes)
@@ -483,33 +477,4 @@ pub(crate) mod tests {
         let encoded = zigzag_delta_encode_i32(&original);
         assert_eq!(zigzag_delta_decode_i32(&encoded), original);
     }
-}
-
-/// Delta-encodes a slice of `i32` values (using wrapping differences) and maps each signed delta
-/// to an unsigned `u32` via ZigZag encoding `(d << 1) ^ (d >> 31)` so small deltas near zero
-/// become small positive integers ideal for variable-length / bit-packed storage.
-#[must_use]
-pub fn zigzag_delta_encode_i32(values: &[i32]) -> Vec<u32> {
-    let mut out = Vec::with_capacity(values.len());
-    let mut prev = 0_i32;
-    for &v in values {
-        let delta = v.wrapping_sub(prev);
-        prev = v;
-        let zz = ((delta << 1) ^ (delta >> 31)) as u32;
-        out.push(zz);
-    }
-    out
-}
-
-/// Decodes a ZigZag delta-encoded `u32` stream back into the original `i32` sequence.
-#[must_use]
-pub fn zigzag_delta_decode_i32(encoded: &[u32]) -> Vec<i32> {
-    let mut out = Vec::with_capacity(encoded.len());
-    let mut acc = 0_i32;
-    for &zz in encoded {
-        let delta = ((zz >> 1) as i32) ^ -((zz & 1) as i32);
-        acc = acc.wrapping_add(delta);
-        out.push(acc);
-    }
-    out
 }

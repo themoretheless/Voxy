@@ -99,7 +99,6 @@ impl<'a> SceneQueries<'a> {
                 owner,
                 half_extents: body.half_extents,
                 shape,
-                axis_aligned: crate::aligned_edges(shape.edges),
                 min: (shape.center - extent).to_array(),
                 max: (shape.center + extent).to_array(),
             });

@@ -565,7 +565,7 @@ pub trait LiquidBodyWorld {
 }
 #[derive(Clone, Copy)]
 struct Node {
-    spin: Option<crate::astrophysics_spin::Spin>,
+    spin: Option<crate::rotation::Spin>,
     position: [f64; 3],
     velocity: [f64; 3],
     mass: f64,
@@ -1063,14 +1063,14 @@ fn solve_contact(
             .map_or_else(
                 || {
                     vec![
-                        crate::astrophysics_spin::TorquePolynomial::constant([0.; 3]);
+                        crate::rotation::TorquePolynomial::constant([0.; 3]);
                         states.len()
                     ]
                 },
                 |r| {
                     r.wrenches
                         .iter()
-                        .map(|w| crate::astrophysics_spin::TorquePolynomial::constant(w.torque))
+                        .map(|w| crate::rotation::TorquePolynomial::constant(w.torque))
                         .collect()
                 },
             );
@@ -1108,7 +1108,7 @@ fn solve_contact(
                                 |m| m.jerk[k],
                             ) - final_rates[owner].force[k] / states[owner].motion.mass
                         });
-                        let law = crate::astrophysics_spin::TorquePolynomial::moving_affine_arm(
+                        let law = crate::rotation::TorquePolynomial::moving_affine_arm(
                             arm,
                             velocity,
                             acceleration,
@@ -1180,7 +1180,7 @@ fn solve_contact(
                     [
                         MotionLoad {
                             force: external.force,
-                            torque: crate::astrophysics_spin::TorquePolynomial::constant(
+                            torque: crate::rotation::TorquePolynomial::constant(
                                 external.torque,
                             ),
                             ..MotionLoad::zero()
@@ -1487,7 +1487,7 @@ fn solve_contact(
                     let opposite_rate = support_rate
                         .as_ref()
                         .map_or([0.; 3], |r| r.forces_rate[index].map(|f| -f));
-                    let law = crate::astrophysics_spin::TorquePolynomial::moving_affine_arm(
+                    let law = crate::rotation::TorquePolynomial::moving_affine_arm(
                         std::array::from_fn(|k| point[k] - center[k]),
                         point_motion[index].map_or([0.; 3], |m| {
                             std::array::from_fn(|k| {

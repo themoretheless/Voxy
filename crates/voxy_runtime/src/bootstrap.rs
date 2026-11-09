@@ -175,7 +175,7 @@ fn build_scene_using_generator(
             }
         }
     }
-    let mut chunks = Vec::new();
+    let mut chunks = Vec::with_capacity(((2 * radius + 1) * (2 * radius + 1)) as usize);
     for z in -radius..=radius {
         for x in -radius..=radius {
             let pos = ChunkPos { x, y: 0, z };
@@ -183,83 +183,14 @@ fn build_scene_using_generator(
                 .get(&pos)
                 .cloned()
                 .ok_or(BootstrapError::MissingGeneratedChunk)?;
-            let light_neighbors = [
-                ChunkPos {
-                    x: pos.x - 1,
-                    ..pos
-                },
-                ChunkPos {
-                    x: pos.x + 1,
-                    ..pos
-                },
-                ChunkPos {
-                    y: pos.y - 1,
-                    ..pos
-                },
-                ChunkPos {
-                    y: pos.y + 1,
-                    ..pos
-                },
-                ChunkPos {
-                    z: pos.z - 1,
-                    ..pos
-                },
-                ChunkPos {
-                    z: pos.z + 1,
-                    ..pos
-                },
-            ]
-            .map(|neighbor| snapshots.get(&neighbor).cloned());
-            let light_faces = std::array::from_fn(|index| {
-                light_neighbors[index]
-                    .as_ref()
-                    .map(|snapshot| snapshot.revision)
-            });
-            let light = build_light(
-                &LightingInput {
-                    center: center.clone(),
-                    neighbors: light_neighbors,
-                    registry: Arc::clone(&registry),
-                    sky_from_above: true,
-                    stamp: LightStamp {
-                        center: center.revision,
-                        faces: light_faces,
-                        registry_epoch: 1,
-                        lighting_epoch: 1,
-                    },
-                },
-                LightingBudget::default(),
-                &token,
-            )?;
-            let neighbors = std::array::from_fn(|index| {
-                let offset = HALO_OFFSETS[index];
-                snapshots
-                    .get(&ChunkPos {
-                        x: pos.x + i64::from(offset.dx),
-                        y: pos.y + i64::from(offset.dy),
-                        z: pos.z + i64::from(offset.dz),
-                    })
-                    .cloned()
-            });
-            let halo = std::array::from_fn(|index| {
-                neighbors[index].as_ref().map(|snapshot| snapshot.revision)
-            });
-            let input = MeshingInput {
-                center,
-                neighbors,
-                registry: Arc::clone(&registry),
-                stamp: MeshStamp {
-                    center: ChunkRevision::default(),
-                    halo,
-                    registry_epoch: 1,
-                    mesher_epoch: 1,
-                },
-            };
-            chunks.push(BootstrapChunk {
+            chunks.push(derive_bootstrap_chunk(
                 pos,
-                mesh: build_mesh(&input, &token).map_err(BootstrapError::Mesh)?,
-                light,
-            });
+                center,
+                &registry,
+                1,
+                &token,
+                |neighbor| snapshots.get(&neighbor).cloned(),
+            )?);
         }
     }
     chunks.sort_by_key(|chunk| chunk.pos);
@@ -337,85 +268,101 @@ pub fn rebuild_bootstrap_chunks(
         let center = world
             .chunk(pos)
             .ok_or(BootstrapError::MissingGeneratedChunk)?;
-        let face_positions = [
-            ChunkPos {
-                x: pos.x - 1,
-                ..pos
-            },
-            ChunkPos {
-                x: pos.x + 1,
-                ..pos
-            },
-            ChunkPos {
-                y: pos.y - 1,
-                ..pos
-            },
-            ChunkPos {
-                y: pos.y + 1,
-                ..pos
-            },
-            ChunkPos {
-                z: pos.z - 1,
-                ..pos
-            },
-            ChunkPos {
-                z: pos.z + 1,
-                ..pos
-            },
-        ];
-        let light_neighbors = face_positions.map(|neighbor| world.chunk(neighbor));
-        let light_faces = light_neighbors
-            .each_ref()
-            .map(|snapshot| snapshot.as_ref().map(|snapshot| snapshot.revision));
-        let light = build_light(
-            &LightingInput {
-                center: center.clone(),
-                neighbors: light_neighbors,
-                registry: Arc::clone(&registry),
-                sky_from_above: true,
-                stamp: LightStamp {
-                    center: center.revision,
-                    faces: light_faces,
-                    registry_epoch: 1,
-                    lighting_epoch: derivation_epoch,
-                },
-            },
-            LightingBudget::default(),
+        chunks.push(derive_bootstrap_chunk(
+            pos,
+            center,
+            &registry,
+            derivation_epoch,
             &token,
-        )?;
-        let neighbors = std::array::from_fn(|index| {
-            let offset = HALO_OFFSETS[index];
-            world.chunk(ChunkPos {
-                x: pos.x + i64::from(offset.dx),
-                y: pos.y + i64::from(offset.dy),
-                z: pos.z + i64::from(offset.dz),
-            })
-        });
-        let halo = neighbors
-            .each_ref()
-            .map(|snapshot| snapshot.as_ref().map(|snapshot| snapshot.revision));
-        let mesh = build_mesh(
-            &MeshingInput {
-                center,
-                neighbors,
-                registry: Arc::clone(&registry),
-                stamp: MeshStamp {
-                    center: world
-                        .chunk(pos)
-                        .ok_or(BootstrapError::MissingGeneratedChunk)?
-                        .revision,
-                    halo,
-                    registry_epoch: 1,
-                    mesher_epoch: derivation_epoch,
-                },
-            },
-            &token,
-        )
-        .map_err(BootstrapError::Mesh)?;
-        chunks.push(BootstrapChunk { pos, mesh, light });
+            |neighbor| world.chunk(neighbor),
+        )?);
     }
     chunks.sort_by_key(|chunk| chunk.pos);
     Ok(chunks)
+}
+
+fn derive_bootstrap_chunk(
+    pos: ChunkPos,
+    center: ChunkSnapshot,
+    registry: &Arc<BlockRegistry>,
+    derivation_epoch: u64,
+    token: &CancelToken,
+    mut fetch_chunk: impl FnMut(ChunkPos) -> Option<ChunkSnapshot>,
+) -> Result<BootstrapChunk, BootstrapError> {
+    let center_revision = center.revision;
+    let face_positions = [
+        ChunkPos {
+            x: pos.x - 1,
+            ..pos
+        },
+        ChunkPos {
+            x: pos.x + 1,
+            ..pos
+        },
+        ChunkPos {
+            y: pos.y - 1,
+            ..pos
+        },
+        ChunkPos {
+            y: pos.y + 1,
+            ..pos
+        },
+        ChunkPos {
+            z: pos.z - 1,
+            ..pos
+        },
+        ChunkPos {
+            z: pos.z + 1,
+            ..pos
+        },
+    ];
+    let light_neighbors = face_positions.map(&mut fetch_chunk);
+    let light_faces = light_neighbors
+        .each_ref()
+        .map(|snapshot| snapshot.as_ref().map(|snapshot| snapshot.revision));
+    let light = build_light(
+        &LightingInput {
+            center: center.clone(),
+            neighbors: light_neighbors,
+            registry: Arc::clone(registry),
+            sky_from_above: true,
+            stamp: LightStamp {
+                center: center_revision,
+                faces: light_faces,
+                registry_epoch: 1,
+                lighting_epoch: derivation_epoch,
+            },
+        },
+        LightingBudget::default(),
+        token,
+    )?;
+    let neighbors = std::array::from_fn(|index| {
+        let offset = HALO_OFFSETS[index];
+        fetch_chunk(ChunkPos {
+            x: pos.x + i64::from(offset.dx),
+            y: pos.y + i64::from(offset.dy),
+            z: pos.z + i64::from(offset.dz),
+        })
+    });
+    let halo = neighbors
+        .each_ref()
+        .map(|snapshot| snapshot.as_ref().map(|snapshot| snapshot.revision));
+    let mesh = build_mesh(
+        &MeshingInput {
+            center,
+            neighbors,
+            registry: Arc::clone(registry),
+            stamp: MeshStamp {
+                center: center_revision,
+                halo,
+                registry_epoch: 1,
+                mesher_epoch: derivation_epoch,
+            },
+        },
+        token,
+    )
+    .map_err(BootstrapError::Mesh)?;
+    Ok(BootstrapChunk { pos, mesh, light })
 }
 
 /// Chunks whose derived light or mesh can differ after `receipt` was committed.

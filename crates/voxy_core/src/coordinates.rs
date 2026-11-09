@@ -8,6 +8,13 @@ pub const PADDED_EDGE: usize = 34;
 /// Cell count of a padded chunk volume (`PADDED_EDGE` cubed).
 pub const PADDED_VOLUME: usize = PADDED_EDGE * PADDED_EDGE * PADDED_EDGE;
 
+/// Linear index inside a 1-voxel-padded $34^3$ chunk volume (`x + 34 * (z + 34 * y)`).
+#[inline]
+#[must_use]
+pub const fn padded_index(x: usize, y: usize, z: usize) -> usize {
+    x + PADDED_EDGE * (z + PADDED_EDGE * y)
+}
+
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct VoxelPos {
     pub x: i64,
@@ -35,6 +42,7 @@ impl LocalPos {
     /// # Errors
     ///
     /// Returns [`InvalidLocalPos`] when any component is at least [`CHUNK_EDGE`].
+    #[inline]
     pub const fn new(x: u8, y: u8, z: u8) -> Result<Self, InvalidLocalPos> {
         if (x as i64) < CHUNK_EDGE && (y as i64) < CHUNK_EDGE && (z as i64) < CHUNK_EDGE {
             Ok(Self { x, y, z })
@@ -43,24 +51,28 @@ impl LocalPos {
         }
     }
 
+    #[inline]
     #[must_use]
     pub const fn x(self) -> u8 {
         self.x
     }
 
+    #[inline]
     #[must_use]
     pub const fn y(self) -> u8 {
         self.y
     }
 
+    #[inline]
     #[must_use]
     pub const fn z(self) -> u8 {
         self.z
     }
 
+    #[inline]
     #[must_use]
     pub const fn index(self) -> LocalIndex {
-        let value = (self.x as u16) + 32 * ((self.z as u16) + 32 * (self.y as u16));
+        let value = (self.x as u16) | ((self.z as u16) << 5) | ((self.y as u16) << 10);
         LocalIndex(value)
     }
 
@@ -181,6 +193,7 @@ impl std::error::Error for InvalidLocalPos {}
 pub struct LocalIndex(u16);
 
 impl LocalIndex {
+    #[inline]
     #[must_use]
     pub const fn new(value: u16) -> Option<Self> {
         if (value as usize) < CHUNK_VOLUME {
@@ -190,23 +203,26 @@ impl LocalIndex {
         }
     }
 
+    #[inline]
     #[must_use]
     pub const fn get(self) -> u16 {
         self.0
     }
 
+    #[inline]
     #[must_use]
     pub fn all() -> impl ExactSizeIterator<Item = Self> {
         (0_u16..32_768).map(Self)
     }
 
+    #[inline]
     #[must_use]
     #[allow(clippy::cast_possible_truncation)]
     pub const fn position(self) -> LocalPos {
-        let value = self.0 as usize;
-        let x = (value % 32) as u8;
-        let z = ((value / 32) % 32) as u8;
-        let y = (value / (32 * 32)) as u8;
+        let value = self.0;
+        let x = (value & 31) as u8;
+        let z = ((value >> 5) & 31) as u8;
+        let y = (value >> 10) as u8;
         LocalPos { x, y, z }
     }
 
@@ -237,6 +253,7 @@ impl fmt::Display for CoordinateOverflow {
 
 impl std::error::Error for CoordinateOverflow {}
 
+#[inline]
 #[must_use]
 #[allow(clippy::cast_possible_truncation)]
 pub const fn split_voxel(pos: VoxelPos) -> (ChunkPos, LocalPos) {
@@ -263,6 +280,7 @@ pub const fn split_voxel(pos: VoxelPos) -> (ChunkPos, LocalPos) {
 /// # Errors
 ///
 /// Returns [`CoordinateOverflow`] when any reconstructed component does not fit in `i64`.
+#[inline]
 pub const fn join_voxel(chunk: ChunkPos, local: LocalPos) -> Result<VoxelPos, CoordinateOverflow> {
     const fn component(chunk: i64, local: u8) -> Result<i64, CoordinateOverflow> {
         let Some(base) = chunk.checked_mul(CHUNK_EDGE) else {
@@ -1079,6 +1097,74 @@ pub fn linear_to_srgb(channel: f32) -> f32 {
     }
 }
 
+/// Interleaves three 10-bit unsigned coordinates (`0..=1023`) into a 30-bit 3D Morton (Z-order) code.
+#[inline]
+#[must_use]
+pub const fn morton_encode_3d_u10(x: u32, y: u32, z: u32) -> u32 {
+    const fn part1by2_10(mut n: u32) -> u32 {
+        n &= 0x0000_03ff;
+        n = (n ^ (n << 16)) & 0x0300_00ff;
+        n = (n ^ (n << 8)) & 0x0300_f00f;
+        n = (n ^ (n << 4)) & 0x030c_30c3;
+        (n ^ (n << 2)) & 0x0924_9249
+    }
+    part1by2_10(x) | (part1by2_10(y) << 1) | (part1by2_10(z) << 2)
+}
+
+/// De-interleaves a 30-bit 3D Morton (Z-order) code back into `[x, y, z]` in `0..=1023`.
+#[inline]
+#[must_use]
+pub const fn morton_decode_3d_u10(code: u32) -> [u32; 3] {
+    const fn compact1by2_10(mut n: u32) -> u32 {
+        n &= 0x0924_9249;
+        n = (n ^ (n >> 2)) & 0x030c_30c3;
+        n = (n ^ (n >> 4)) & 0x0300_f00f;
+        n = (n ^ (n >> 8)) & 0x0300_00ff;
+        (n ^ (n >> 16)) & 0x0000_03ff
+    }
+    [
+        compact1by2_10(code),
+        compact1by2_10(code >> 1),
+        compact1by2_10(code >> 2),
+    ]
+}
+
+/// Computes Amanatides-Woo 3D DDA initial parameters `(step_sign, t_max, t_delta)` for a ray
+/// starting at `origin` with `direction` across a uniform cubic grid of edge `voxel_size`.
+#[must_use]
+pub fn voxel_ray_dda_first_step(
+    origin: [f32; 3],
+    direction: [f32; 3],
+    voxel_size: f32,
+) -> ([i32; 3], [f32; 3], [f32; 3]) {
+    if !origin.iter().all(|v| v.is_finite())
+        || !direction.iter().all(|v| v.is_finite())
+        || !voxel_size.is_finite()
+        || voxel_size <= 1e-6
+    {
+        return ([0; 3], [f32::INFINITY; 3], [f32::INFINITY; 3]);
+    }
+    let mut step = [0_i32; 3];
+    let mut t_max = [f32::INFINITY; 3];
+    let mut t_delta = [f32::INFINITY; 3];
+    for i in 0..3 {
+        let d = direction[i];
+        let cell = (origin[i] / voxel_size).floor();
+        if d > 1e-6 {
+            step[i] = 1;
+            let next_boundary = (cell + 1.0) * voxel_size;
+            t_max[i] = ((next_boundary - origin[i]) / d).max(0.0);
+            t_delta[i] = voxel_size / d;
+        } else if d < -1e-6 {
+            step[i] = -1;
+            let next_boundary = cell * voxel_size;
+            t_max[i] = ((next_boundary - origin[i]) / d).max(0.0);
+            t_delta[i] = -voxel_size / d;
+        }
+    }
+    (step, t_max, t_delta)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1308,70 +1394,4 @@ mod tests {
         assert!((t_delta[0] - 1.0).abs() < 1e-5);
         assert!((t_delta[1] - 0.5).abs() < 1e-5);
     }
-}
-
-/// Interleaves three 10-bit unsigned coordinates (`0..=1023`) into a 30-bit 3D Morton (Z-order) code.
-#[must_use]
-pub const fn morton_encode_3d_u10(x: u32, y: u32, z: u32) -> u32 {
-    const fn part1by2_10(mut n: u32) -> u32 {
-        n &= 0x0000_03ff;
-        n = (n ^ (n << 16)) & 0x0300_00ff;
-        n = (n ^ (n << 8)) & 0x0300_f00f;
-        n = (n ^ (n << 4)) & 0x030c_30c3;
-        (n ^ (n << 2)) & 0x0924_9249
-    }
-    part1by2_10(x) | (part1by2_10(y) << 1) | (part1by2_10(z) << 2)
-}
-
-/// De-interleaves a 30-bit 3D Morton (Z-order) code back into `[x, y, z]` in `0..=1023`.
-#[must_use]
-pub const fn morton_decode_3d_u10(code: u32) -> [u32; 3] {
-    const fn compact1by2_10(mut n: u32) -> u32 {
-        n &= 0x0924_9249;
-        n = (n ^ (n >> 2)) & 0x030c_30c3;
-        n = (n ^ (n >> 4)) & 0x0300_f00f;
-        n = (n ^ (n >> 8)) & 0x0300_00ff;
-        (n ^ (n >> 16)) & 0x0000_03ff
-    }
-    [
-        compact1by2_10(code),
-        compact1by2_10(code >> 1),
-        compact1by2_10(code >> 2),
-    ]
-}
-
-/// Computes Amanatides-Woo 3D DDA initial parameters `(step_sign, t_max, t_delta)` for a ray
-/// starting at `origin` with `direction` across a uniform cubic grid of edge `voxel_size`.
-#[must_use]
-pub fn voxel_ray_dda_first_step(
-    origin: [f32; 3],
-    direction: [f32; 3],
-    voxel_size: f32,
-) -> ([i32; 3], [f32; 3], [f32; 3]) {
-    if !origin.iter().all(|v| v.is_finite())
-        || !direction.iter().all(|v| v.is_finite())
-        || !voxel_size.is_finite()
-        || voxel_size <= 1e-6
-    {
-        return ([0; 3], [f32::INFINITY; 3], [f32::INFINITY; 3]);
-    }
-    let mut step = [0_i32; 3];
-    let mut t_max = [f32::INFINITY; 3];
-    let mut t_delta = [f32::INFINITY; 3];
-    for i in 0..3 {
-        let d = direction[i];
-        let cell = (origin[i] / voxel_size).floor();
-        if d > 1e-6 {
-            step[i] = 1;
-            let next_boundary = (cell + 1.0) * voxel_size;
-            t_max[i] = ((next_boundary - origin[i]) / d).max(0.0);
-            t_delta[i] = voxel_size / d;
-        } else if d < -1e-6 {
-            step[i] = -1;
-            let next_boundary = cell * voxel_size;
-            t_max[i] = ((next_boundary - origin[i]) / d).max(0.0);
-            t_delta[i] = -voxel_size / d;
-        }
-    }
-    (step, t_max, t_delta)
 }

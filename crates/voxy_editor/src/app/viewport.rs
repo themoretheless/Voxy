@@ -78,120 +78,7 @@ impl App {
             self.frame_styles = Some(styles);
             Ok::<(), EditorError>(())
         })?;
-        if let Some(window) = &self.window
-            && self.panels.is_some()
-        {
-            let size = window.inner_size().to_logical::<f32>(window.scale_factor());
-            if size.width > 0.0 && size.height > 0.0 {
-                let document = self.panel_document()?;
-                self.reconcile_component_edit(&document)?;
-                self.panels.as_mut().unwrap().preview_phase = self
-                    .authoring
-                    .animation_preview
-                    .as_ref()
-                    .filter(|preview| self.instances.get(self.selected) == Some(&preview.owner))
-                    .map(|preview| preview.phase);
-                self.panels.as_mut().unwrap().retarget_draft = self.retarget_draft.is_some();
-                self.panels.as_mut().unwrap().bone_picker = self
-                    .retarget_picker
-                    .as_ref()
-                    .map(|p| (p.choices.clone(), p.page));
-                let input = PanelInput {
-                    prefab_metadata: self
-                        .authoring
-                        .history
-                        .as_ref()
-                        .map_or(serde_json::Value::Null, |history| {
-                            history.metadata().clone()
-                        }),
-                    focused: self
-                        .panels
-                        .as_ref()
-                        .and_then(|panels| panels.focus.focused()),
-                    document,
-                    selected: self.selected,
-                    size: [size.width, size.height],
-                    playing: self.play.playing.is_some(),
-                    inspector: self.inspector,
-                    resource_notice: self.selected_model_notice(),
-                    texture_label: self
-                        .instances
-                        .get(self.selected)
-                        .and_then(|node| {
-                            let model = self
-                                .scene
-                                .component::<ModelInstance>(*node)
-                                .ok()
-                                .flatten()?;
-                            let asset = self.catalog.snapshot(&model.asset)?;
-                            let part = self.scene.component::<ModelPart>(*node).ok().flatten()?;
-                            asset.value().nodes.get(part.node as usize)?.image
-                        })
-                        .map_or_else(|| "Texture: none".into(), |_| "Texture: PNG/JPEG".into()),
-                    prefab_label: self
-                        .authoring
-                        .prefab_assets
-                        .get(self.authoring.prefab_choice)
-                        .map_or_else(|| "Prefab: none".into(), |id| format!("Prefab: {}", id.0)),
-                    import_config: self.settings_config(),
-                    field: self.field.clone(),
-                    scroll: self.tree_scroll,
-                    parenting: self.parenting.is_some(),
-                    follow_pick: self.follow_pick.as_ref().map(|pick| pick.key),
-                };
-                if self.panel_cache.as_ref() != Some(&input) {
-                    let overrides = self.prefab_overridden_fields(&input.document)?;
-                    let collection_resets = self.prefab_collection_resets(&input.document)?;
-                    let order_resets = self.prefab_collection_order_resets(&input.document)?;
-                    let deleted_items = self.prefab_collection_deleted_items(&input.document)?;
-                    let deleted_resets = deleted_items.keys().copied().collect();
-                    self.panels
-                        .as_mut()
-                        .ok_or("missing panels")?
-                        .collection_deleted_resets = deleted_resets;
-                    self.panels
-                        .as_mut()
-                        .ok_or("missing panels")?
-                        .collection_deleted_items = deleted_items;
-                    self.panels
-                        .as_mut()
-                        .ok_or("missing panels")?
-                        .collection_order_resets = order_resets;
-                    self.panels
-                        .as_mut()
-                        .ok_or("missing panels")?
-                        .collection_resets = collection_resets;
-                    self.panels
-                        .as_mut()
-                        .ok_or("missing panels")?
-                        .overridden_fields = overrides;
-                    self.panels.as_mut().ok_or("missing panels")?.follow_pick = input.follow_pick;
-                    self.panels
-                        .as_mut()
-                        .ok_or("missing panels")?
-                        .resource_notice
-                        .clone_from(&input.resource_notice);
-                    let mesh = self.panels.as_mut().ok_or("missing panels")?.build(
-                        &input.document,
-                        input.selected,
-                        Vec2::from_array(input.size),
-                        input.playing,
-                        input.field.as_ref().map(|(id, text)| (*id, text.as_str())),
-                        input.scroll,
-                        input.parenting,
-                        input.inspector,
-                        &input.texture_label,
-                        &input.prefab_label,
-                        input.import_config,
-                    )?;
-                    if let Some(graphics) = &mut self.graphics {
-                        graphics.panel_geometry =
-                            Some(graphics.renderer.upload_mesh(&graphics.device, &mesh)?);
-                    }
-                    self.panel_cache = Some(input);
-                }
-            }
-        }
+        self.update_editor_panels_for_frame()?;
         let viewport = offscreen.as_ref().map_or_else(
             || {
                 self.window.as_ref().map_or([1, 1], |window| {
@@ -230,58 +117,13 @@ impl App {
             self.poll_restore_barrier(|node| identities.get(&node).cloned())?;
         }
         self.poll_snapshot_save_command();
-        let ring = self
-            .ui_live
-            .focus_snapshot()
-            .and_then(|snapshot| self.game_ui_input.focus_ring(snapshot));
-        if let Some(graphics) = &mut self.graphics {
-            graphics.residency_cache.geometry_live = graphics.geometry_bytes();
-            let deferred = ring.as_ref().is_some_and(|ring| {
-                graphics
-                    .ui_focus_deferred
-                    .as_ref()
-                    .is_some_and(|(prior, state)| {
-                        prior == ring && *state == graphics.residency_cache.state()
-                    })
-            });
-            if graphics.ui_focus_key != ring && !deferred {
-                if let Some(ring) = &ring {
-                    let mesh = ring.mesh()?;
-                    graphics.residency_cache.geometry_live = graphics.geometry_bytes();
-                    match ui_live::upload_on(
-                        &graphics.renderer,
-                        &graphics.device,
-                        &graphics.queue,
-                        &mut graphics.residency_cache,
-                        &[mesh],
-                    ) {
-                        Ok(draws) => {
-                            graphics.ui_focus = draws;
-                            graphics.ui_focus_key = Some(ring.clone());
-                            graphics.ui_focus_deferred = None;
-                        }
-                        Err(error) => {
-                            graphics.ui_focus.clear();
-                            graphics.ui_focus_key = None;
-                            graphics.residency_cache.geometry_live = graphics.geometry_bytes();
-                            graphics.ui_focus_deferred =
-                                Some((ring.clone(), graphics.residency_cache.state()));
-                            eprintln!("GAME UI FOCUS DEFERRED: {error}");
-                        }
-                    }
-                } else {
-                    graphics.ui_focus.clear();
-                    graphics.ui_focus_key = None;
-                    graphics.ui_focus_deferred = None;
-                }
-            }
-        }
+        self.update_ui_focus_ring()?;
         let styles = self
             .frame_styles
             .as_ref()
             .ok_or("missing presentation styles")?;
         let split = self.split_views() && viewport[0] >= 2;
-        let mut views = Vec::new();
+        let mut views = Vec::with_capacity(2);
         for (index, region) in view_layout::regions(viewport, split)
             .into_iter()
             .enumerate()
@@ -300,68 +142,7 @@ impl App {
         if views.is_empty() {
             return Ok(());
         }
-        let animation_requests = {
-            self.extraction
-                .instances()
-                .iter()
-                .filter_map(|instance| {
-                    if styles.parts.contains_key(&instance.owner) {
-                        return None;
-                    }
-                    let published = self
-                        .graphics
-                        .as_ref()?
-                        .models
-                        .get(&instance.component.asset)?;
-                    let model = published.animated_model.as_ref()?.clone();
-                    let settings = self
-                        .scene
-                        .component::<ModelAnimation>(instance.owner)
-                        .ok()
-                        .flatten()
-                        .cloned()
-                        .unwrap_or(ModelAnimation {
-                            clip: (!model.animations.is_empty()).then_some(0),
-                            speed: 1.0,
-                            ..ModelAnimation::default()
-                        });
-                    let frame = if self.play.playing.is_some() || self.standalone {
-                        self.play.animations.frame(instance.owner, &model)
-                    } else if let Some(preview) =
-                        self.preview_animation_frame(instance.owner, &model, &settings)
-                    {
-                        Some(preview)
-                    } else if !settings.morph_weights.is_empty() {
-                        match self.graphics.as_ref()?.animated_models.authoring_frame(
-                            instance.owner,
-                            &model,
-                            &settings,
-                        ) {
-                            Ok(frame) => Some(frame),
-                            Err(error) => {
-                                eprintln!(
-                                    "MODEL AUTHORING retained previous frame for {:?}: {error}",
-                                    instance.owner
-                                );
-                                None
-                            }
-                        }
-                    } else {
-                        return None;
-                    };
-                    Some(animated_models::Request {
-                        publication: published.publication.clone(),
-                        owner: instance.owner,
-                        frame,
-                        model,
-                        settings,
-                        lod: published.animated_lod.clone(),
-                        textures: published.animated_textures.clone(),
-                        texture_storage: published._images.clone(),
-                    })
-                })
-                .collect()
-        };
+        let animation_requests = self.collect_animation_requests(styles);
         let optical_particles = if !self.msaa4 && views.iter().any(|v| v.3.is_some()) {
             self.play
                 .liquid
@@ -474,13 +255,17 @@ impl App {
                     .iter()
                     .find(|instance| instance.owner == *node)
             });
-            graphics.animated_models.retain_lod_views(
-                &views
-                    .iter()
-                    .filter(|view| view.3.is_some())
-                    .map(|view| view.0)
-                    .collect::<Vec<_>>(),
-            );
+            let mut lod_views = [0u8; 2];
+            let mut lod_view_count = 0;
+            for view in &views {
+                if view.3.is_some() && lod_view_count < lod_views.len() {
+                    lod_views[lod_view_count] = view.0;
+                    lod_view_count += 1;
+                }
+            }
+            graphics
+                .animated_models
+                .retain_lod_views(&lod_views[..lod_view_count]);
             let animation_other_live = graphics
                 .geometry_bytes()
                 .saturating_sub(graphics.animated_models.allocation_bytes());
@@ -504,7 +289,8 @@ impl App {
             }
             graphics.animated_models.evict_unused_lod();
             let lod_us = lod_start.map_or(0., |start| start.elapsed().as_secs_f64() * 1e6);
-            let mut requirements = Vec::new();
+            let mut requirements =
+                Vec::with_capacity(views.len() * self.extraction.instances().len());
             for &(view, region, view_projection, lod_camera) in &views {
                 if graphics.liquid_geometry.is_some() {
                     let transform = match graphics.liquid_transforms.entry(view) {
@@ -602,8 +388,8 @@ impl App {
             }
             graphics.lod_pending = pending;
             graphics.residency_cache.geometry_live = live;
-            let mut view_draws = Vec::new();
-            let mut view_casters = Vec::new();
+            let mut view_draws = Vec::with_capacity(views.len());
+            let mut view_casters = Vec::with_capacity(views.len());
             let mut gpu_caster_draws = 0;
             let mut gpu_caster_owners = Vec::new();
             for &(view, region, _, lod_camera) in &views {
@@ -1140,5 +926,230 @@ impl App {
         let cursor = cursor / scale;
         let (left, right) = panels::side_widths(size);
         cursor.x >= left && cursor.x < size.x - right && cursor.y >= 0. && cursor.y < size.y
+    }
+
+    fn update_editor_panels_for_frame(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        let Some(window) = &self.window else {
+            return Ok(());
+        };
+        if self.panels.is_none() {
+            return Ok(());
+        }
+        let size = window.inner_size().to_logical::<f32>(window.scale_factor());
+        if size.width <= 0.0 || size.height <= 0.0 {
+            return Ok(());
+        }
+        let document = self.panel_document()?;
+        self.reconcile_component_edit(&document)?;
+        let preview_phase = self
+            .authoring
+            .animation_preview
+            .as_ref()
+            .filter(|preview| self.instances.get(self.selected) == Some(&preview.owner))
+            .map(|preview| preview.phase);
+        let retarget_draft = self.retarget_draft.is_some();
+        let bone_picker = self
+            .retarget_picker
+            .as_ref()
+            .map(|p| (p.choices.clone(), p.page));
+        if let Some(panels) = &mut self.panels {
+            panels.preview_phase = preview_phase;
+            panels.retarget_draft = retarget_draft;
+            panels.bone_picker = bone_picker;
+        }
+        let input = PanelInput {
+            prefab_metadata: self
+                .authoring
+                .history
+                .as_ref()
+                .map_or(serde_json::Value::Null, |history| {
+                    history.metadata().clone()
+                }),
+            focused: self
+                .panels
+                .as_ref()
+                .and_then(|panels| panels.focus.focused()),
+            document,
+            selected: self.selected,
+            size: [size.width, size.height],
+            playing: self.play.playing.is_some(),
+            inspector: self.inspector,
+            resource_notice: self.selected_model_notice(),
+            texture_label: self
+                .instances
+                .get(self.selected)
+                .and_then(|node| {
+                    let model = self
+                        .scene
+                        .component::<ModelInstance>(*node)
+                        .ok()
+                        .flatten()?;
+                    let asset = self.catalog.snapshot(&model.asset)?;
+                    let part = self.scene.component::<ModelPart>(*node).ok().flatten()?;
+                    asset.value().nodes.get(part.node as usize)?.image
+                })
+                .map_or_else(|| "Texture: none".into(), |_| "Texture: PNG/JPEG".into()),
+            prefab_label: self
+                .authoring
+                .prefab_assets
+                .get(self.authoring.prefab_choice)
+                .map_or_else(|| "Prefab: none".into(), |id| format!("Prefab: {}", id.0)),
+            import_config: self.settings_config(),
+            field: self.field.clone(),
+            scroll: self.tree_scroll,
+            parenting: self.parenting.is_some(),
+            follow_pick: self.follow_pick.as_ref().map(|pick| pick.key),
+        };
+        if self.panel_cache.as_ref() != Some(&input) {
+            let overrides = self.prefab_overridden_fields(&input.document)?;
+            let collection_resets = self.prefab_collection_resets(&input.document)?;
+            let order_resets = self.prefab_collection_order_resets(&input.document)?;
+            let deleted_items = self.prefab_collection_deleted_items(&input.document)?;
+            let deleted_resets = deleted_items.keys().copied().collect();
+            let panels = self.panels.as_mut().ok_or("missing panels")?;
+            panels.collection_deleted_resets = deleted_resets;
+            panels.collection_deleted_items = deleted_items;
+            panels.collection_order_resets = order_resets;
+            panels.collection_resets = collection_resets;
+            panels.overridden_fields = overrides;
+            panels.follow_pick = input.follow_pick;
+            panels.resource_notice.clone_from(&input.resource_notice);
+            let mesh = panels.build(
+                &input.document,
+                input.selected,
+                Vec2::from_array(input.size),
+                input.playing,
+                input.field.as_ref().map(|(id, text)| (*id, text.as_str())),
+                input.scroll,
+                input.parenting,
+                input.inspector,
+                &input.texture_label,
+                &input.prefab_label,
+                input.import_config,
+            )?;
+            if let Some(graphics) = &mut self.graphics {
+                graphics.panel_geometry =
+                    Some(graphics.renderer.upload_mesh(&graphics.device, &mesh)?);
+            }
+            self.panel_cache = Some(input);
+        }
+        Ok(())
+    }
+
+    fn update_ui_focus_ring(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        let ring = self
+            .ui_live
+            .focus_snapshot()
+            .and_then(|snapshot| self.game_ui_input.focus_ring(snapshot));
+        let Some(graphics) = &mut self.graphics else {
+            return Ok(());
+        };
+        graphics.residency_cache.geometry_live = graphics.geometry_bytes();
+        let deferred = ring.as_ref().is_some_and(|ring| {
+            graphics
+                .ui_focus_deferred
+                .as_ref()
+                .is_some_and(|(prior, state)| {
+                    prior == ring && *state == graphics.residency_cache.state()
+                })
+        });
+        if graphics.ui_focus_key != ring && !deferred {
+            if let Some(ring) = &ring {
+                let mesh = ring.mesh()?;
+                graphics.residency_cache.geometry_live = graphics.geometry_bytes();
+                match ui_live::upload_on(
+                    &graphics.renderer,
+                    &graphics.device,
+                    &graphics.queue,
+                    &mut graphics.residency_cache,
+                    &[mesh],
+                ) {
+                    Ok(draws) => {
+                        graphics.ui_focus = draws;
+                        graphics.ui_focus_key = Some(ring.clone());
+                        graphics.ui_focus_deferred = None;
+                    }
+                    Err(error) => {
+                        graphics.ui_focus.clear();
+                        graphics.ui_focus_key = None;
+                        graphics.residency_cache.geometry_live = graphics.geometry_bytes();
+                        graphics.ui_focus_deferred =
+                            Some((ring.clone(), graphics.residency_cache.state()));
+                        eprintln!("GAME UI FOCUS DEFERRED: {error}");
+                    }
+                }
+            } else {
+                graphics.ui_focus.clear();
+                graphics.ui_focus_key = None;
+                graphics.ui_focus_deferred = None;
+            }
+        }
+        Ok(())
+    }
+
+    fn collect_animation_requests(
+        &self,
+        styles: &frame_styles::FrameStyles,
+    ) -> Vec<animated_models::Request> {
+        self.extraction
+            .instances()
+            .iter()
+            .filter_map(|instance| {
+                if styles.parts.contains_key(&instance.owner) {
+                    return None;
+                }
+                let published = self
+                    .graphics
+                    .as_ref()?
+                    .models
+                    .get(&instance.component.asset)?;
+                let model = published.animated_model.as_ref()?.clone();
+                let settings = self
+                    .scene
+                    .component::<ModelAnimation>(instance.owner)
+                    .ok()
+                    .flatten()
+                    .cloned()
+                    .unwrap_or(ModelAnimation {
+                        clip: (!model.animations.is_empty()).then_some(0),
+                        speed: 1.0,
+                        ..ModelAnimation::default()
+                    });
+                let frame = if self.play.playing.is_some() || self.standalone {
+                    self.play.animations.frame(instance.owner, &model)
+                } else if let Some(preview) =
+                    self.preview_animation_frame(instance.owner, &model, &settings)
+                {
+                    Some(preview)
+                } else if !settings.morph_weights.is_empty() {
+                    match self.graphics.as_ref()?.animated_models.authoring_frame(
+                        instance.owner,
+                        &model,
+                        &settings,
+                    ) {
+                        Ok(frame) => Some(frame),
+                        Err(error) => {
+                            eprintln!(
+                                "MODEL AUTHORING retained previous frame for {:?}: {error}",
+                                instance.owner
+                            );
+                            None
+                        }
+                    }
+                } else {
+                    return None;
+                };
+                Some(animated_models::Request {
+                    publication: published.publication.clone(),
+                    owner: instance.owner,
+                    frame,
+                    model,
+                    settings,
+                    lod: published.animated_lod.clone(),
+                    textures: published.animated_textures.clone(),
+                    texture_storage: published._images.clone(),
+                })
+            })
+            .collect()
     }
 }

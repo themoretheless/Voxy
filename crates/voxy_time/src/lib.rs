@@ -187,6 +187,7 @@ impl SimulationClock {
 #[derive(Clone, Debug)]
 pub struct FrameLatencyWindow<const N: usize = 128> {
     samples_us: [u32; N],
+    running_sum_us: u64,
     cursor: usize,
     filled: usize,
     stutters: u64,
@@ -199,11 +200,13 @@ impl<const N: usize> Default for FrameLatencyWindow<N> {
 }
 
 impl<const N: usize> FrameLatencyWindow<N> {
+    #[inline]
     #[must_use]
     pub const fn new() -> Self {
         const { assert!(N > 0, "FrameLatencyWindow capacity must be non-zero") };
         Self {
             samples_us: [0_u32; N],
+            running_sum_us: 0,
             cursor: 0,
             filled: 0,
             stutters: 0,
@@ -211,6 +214,7 @@ impl<const N: usize> FrameLatencyWindow<N> {
     }
 
     /// Records a frame duration in seconds and returns `true` if it exceeded $2\times$ the current rolling mean.
+    #[inline]
     #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     pub fn record_seconds(&mut self, dt_seconds: f64) -> bool {
         if !dt_seconds.is_finite() || dt_seconds < 0.0 {
@@ -221,6 +225,7 @@ impl<const N: usize> FrameLatencyWindow<N> {
     }
 
     /// Records a frame duration in microseconds and returns `true` if it was a stutter ($> 2\times$ mean).
+    #[inline]
     pub fn record_micros(&mut self, duration_us: u32) -> bool {
         let mean = self.mean_micros();
         let is_stutter =
@@ -228,40 +233,45 @@ impl<const N: usize> FrameLatencyWindow<N> {
         if is_stutter {
             self.stutters = self.stutters.saturating_add(1);
         }
-        self.samples_us[self.cursor] = duration_us;
-        self.cursor = (self.cursor + 1) % N;
-        if self.filled < N {
+        if self.filled == N {
+            self.running_sum_us = self
+                .running_sum_us
+                .saturating_sub(u64::from(self.samples_us[self.cursor]));
+        } else {
             self.filled += 1;
         }
+        self.samples_us[self.cursor] = duration_us;
+        self.running_sum_us = self.running_sum_us.saturating_add(u64::from(duration_us));
+        self.cursor = (self.cursor + 1) % N;
         is_stutter
     }
 
+    #[inline]
     #[must_use]
     pub const fn len(&self) -> usize {
         self.filled
     }
 
+    #[inline]
     #[must_use]
     pub const fn is_empty(&self) -> bool {
         self.filled == 0
     }
 
+    #[inline]
     #[must_use]
     pub const fn stutter_count(&self) -> u64 {
         self.stutters
     }
 
+    #[inline]
     #[must_use]
     #[allow(clippy::cast_possible_truncation)]
-    pub fn mean_micros(&self) -> u32 {
+    pub const fn mean_micros(&self) -> u32 {
         if self.filled == 0 {
             return 0;
         }
-        let sum: u64 = self.samples_us[..self.filled]
-            .iter()
-            .map(|&v| u64::from(v))
-            .sum();
-        (sum / (self.filled as u64)) as u32
+        (self.running_sum_us / (self.filled as u64)) as u32
     }
 
     /// Returns `(p50_us, p95_us, p99_us)` over the active window without heap allocations.

@@ -68,15 +68,15 @@ pub fn prepare_ui_text<'a>(
     if text_bytes > 65536 {
         return Err("UI text source budget".into());
     }
-    let mut cache = BTreeMap::new();
-    let mut prepared = Vec::new();
+    let mut cache: BTreeMap<(&str, &str, u32), Arc<TextRun>> = BTreeMap::new();
+    let mut prepared = Vec::with_capacity(snapshot.elements.len());
     let mut total_glyphs = 0_usize;
     let mut atlas_pixels = 0_usize;
     for element in &snapshot.elements {
         let (Some(text), Some(clip)) = (&element.descriptor.text, element.clip) else {
             continue;
         };
-        let key = (text.font.clone(), text.content.clone(), text.size.to_bits());
+        let key = (text.font.as_str(), text.content.as_str(), text.size.to_bits());
         let run = if let Some(run) = cache.get(&key) {
             Arc::clone(run)
         } else {

@@ -125,12 +125,12 @@ impl MaterialForcePair {
             opposite_rate,
         )
         .map_err(|_| Error::NumericalFailure)?;
-        let relative = crate::astrophysics_spin::ArcTorque::polynomial(relative)
+        let relative = crate::rotation::ArcTorque::polynomial(relative)
             .add_polynomial(external[1].torque)
             .map_err(|_| Error::NumericalFailure)?
             .polynomial;
         let initial_arm = first.spin.map_or(local_first, |s| {
-            crate::astrophysics_spin::rotate(s.orientation, local_first)
+            crate::rotation::rotate(s.orientation, local_first)
         });
         let radius = norm(local_first).max(norm(initial_arm));
         let force_integral =

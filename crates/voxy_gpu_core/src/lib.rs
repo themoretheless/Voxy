@@ -4,6 +4,7 @@
 //! so voxy_gpu can depend on it without depending on voxy_render.
 
 mod backend;
+mod builders;
 mod compute;
 mod compute_memory;
 mod compute_readback;
@@ -11,6 +12,7 @@ mod gravity;
 mod shared_upload;
 
 pub use backend::*;
+pub use builders::*;
 pub use compute::*;
 pub use compute_memory::*;
 pub use compute_readback::*;

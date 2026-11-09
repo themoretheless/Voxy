@@ -59,6 +59,7 @@ impl PalettedBlocks {
         })
     }
 
+    #[inline]
     #[must_use]
     pub fn get(&self, index: LocalIndex) -> BlockStateId {
         match self {
@@ -77,6 +78,31 @@ impl PalettedBlocks {
                 palette[palette_index]
             }
             Self::Direct(blocks) => blocks[usize::from(index.get())],
+        }
+    }
+
+    /// Reads a contiguous X-row (`x in 0..32`) at `(y, z)` into `out` without 32 separate match dispatches.
+    #[inline]
+    pub fn get_row_x(&self, y: u8, z: u8, out: &mut [BlockStateId; 32]) {
+        assert!(y < 32 && z < 32);
+        let row_start = 32 * (usize::from(z) + 32 * usize::from(y));
+        match self {
+            Self::Uniform(block) => out.fill(*block),
+            Self::Direct(blocks) => {
+                out.copy_from_slice(&blocks[row_start..row_start + 32]);
+            }
+            Self::Packed {
+                bits_per_index,
+                palette,
+                words,
+            } => {
+                let bits = *bits_per_index;
+                for (dx, slot) in out.iter_mut().enumerate() {
+                    let palette_index =
+                        usize::try_from(read_packed(words, row_start + dx, bits)).unwrap_or(0);
+                    *slot = palette[palette_index];
+                }
+            }
         }
     }
 
@@ -350,6 +376,14 @@ impl PalettedBlocks {
                     }
                 }
             }
+            Self::Packed { palette, .. } if palette.first().copied() != Some(BlockStateId::AIR) => {
+                // `BlockStateId::AIR` is 0 and palettes are sorted; if the first entry is non-air,
+                // the chunk contains zero air cells.
+                SparseChunkOctreeMask {
+                    octants_16: u8::MAX,
+                    sub_octants_8: u64::MAX,
+                }
+            }
             _ => {
                 let dense = self.to_dense();
                 let mut octants_16 = 0_u8;
@@ -516,6 +550,7 @@ fn scan_packed(words: &[u64], bits: u8, mut visit: impl FnMut(usize) -> bool) {
     }
 }
 
+#[inline]
 fn write_packed(words: &mut [u64], index: usize, bits: u8, value: u64) {
     let bit = index * usize::from(bits);
     let word = bit / 64;
@@ -526,6 +561,7 @@ fn write_packed(words: &mut [u64], index: usize, bits: u8, value: u64) {
     }
 }
 
+#[inline]
 fn set_packed(words: &mut [u64], index: usize, bits: u8, value: u64) {
     let bit = index * usize::from(bits);
     let word = bit / 64;
@@ -538,6 +574,7 @@ fn set_packed(words: &mut [u64], index: usize, bits: u8, value: u64) {
     }
 }
 
+#[inline]
 fn read_packed(words: &[u64], index: usize, bits: u8) -> u64 {
     let bit = index * usize::from(bits);
     let word = bit / 64;
@@ -614,6 +651,46 @@ pub struct ChunkSnapshot {
 #[error("invalid chunk: {self:?}")]
 pub enum ChunkError {
     InvalidCellCount(usize),
+}
+
+/// Computes the zero-order Shannon entropy $H = -\sum p_i \log_2(p_i)$ in bits per voxel
+/// from palette occurrence counts and total cell count.
+#[must_use]
+pub fn chunk_shannon_entropy_bits_per_voxel(palette_counts: &[u32], total_voxels: u32) -> f32 {
+    if total_voxels == 0 || palette_counts.is_empty() {
+        return 0.0;
+    }
+    let total = total_voxels as f32;
+    let mut entropy = 0.0_f32;
+    for &count in palette_counts {
+        if count > 0 {
+            let p = (count as f32 / total).clamp(0.0, 1.0);
+            if p > 0.0 {
+                entropy -= p * p.log2();
+            }
+        }
+    }
+    entropy.max(0.0)
+}
+
+/// Selects the cache-aligned packed palette bit width (`0, 1, 2, 4, 8, 16`) capable of addressing
+/// `unique_states` distinct block states.
+#[inline]
+#[must_use]
+pub const fn optimal_palette_bit_width(unique_states: usize) -> u8 {
+    if unique_states <= 1 {
+        0
+    } else if unique_states <= 2 {
+        1
+    } else if unique_states <= 4 {
+        2
+    } else if unique_states <= 16 {
+        4
+    } else if unique_states <= 256 {
+        8
+    } else {
+        16
+    }
 }
 
 #[cfg(test)]
@@ -899,44 +976,5 @@ mod tests {
         assert_eq!(optimal_palette_bit_width(2), 1);
         assert_eq!(optimal_palette_bit_width(17), 8);
         assert_eq!(optimal_palette_bit_width(300), 16);
-    }
-}
-
-/// Computes the zero-order Shannon entropy $H = -\sum p_i \log_2(p_i)$ in bits per voxel
-/// from palette occurrence counts and total cell count.
-#[must_use]
-pub fn chunk_shannon_entropy_bits_per_voxel(palette_counts: &[u32], total_voxels: u32) -> f32 {
-    if total_voxels == 0 || palette_counts.is_empty() {
-        return 0.0;
-    }
-    let total = total_voxels as f32;
-    let mut entropy = 0.0_f32;
-    for &count in palette_counts {
-        if count > 0 {
-            let p = (count as f32 / total).clamp(0.0, 1.0);
-            if p > 0.0 {
-                entropy -= p * p.log2();
-            }
-        }
-    }
-    entropy.max(0.0)
-}
-
-/// Selects the cache-aligned packed palette bit width (`0, 1, 2, 4, 8, 16`) capable of addressing
-/// `unique_states` distinct block states.
-#[must_use]
-pub const fn optimal_palette_bit_width(unique_states: usize) -> u8 {
-    if unique_states <= 1 {
-        0
-    } else if unique_states <= 2 {
-        1
-    } else if unique_states <= 4 {
-        2
-    } else if unique_states <= 16 {
-        4
-    } else if unique_states <= 256 {
-        8
-    } else {
-        16
     }
 }

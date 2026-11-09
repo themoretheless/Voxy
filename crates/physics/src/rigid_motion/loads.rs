@@ -218,12 +218,12 @@ impl MaterialForceMoment {
         for j in 0..3 {
             let mut basis = [0.; 3];
             basis[j] = 1.;
-            let arm = crate::astrophysics_spin::rotate(orientation, basis);
+            let arm = crate::rotation::rotate(orientation, basis);
             let (zero, first) =
-                crate::astrophysics_spin::rotating_arm_integrals(arm, omega, duration)
+                crate::rotation::rotating_arm_integrals(arm, omega, duration)
                     .map_err(|_| Error::NumericalFailure)?;
-            let constant = crate::astrophysics_spin::cross(zero, self.columns[j]);
-            let changing = crate::astrophysics_spin::cross(first, self.rate_columns[j]);
+            let constant = crate::rotation::cross(zero, self.columns[j]);
+            let changing = crate::rotation::cross(first, self.rate_columns[j]);
             sum.add([constant])?;
             sum.add([changing])?;
         }
@@ -246,12 +246,12 @@ impl MaterialForceMoment {
         for j in 0..3 {
             let mut basis = [0.; 3];
             basis[j] = 1.;
-            let arm = crate::astrophysics_spin::rotate(orientation, basis);
-            let moving_arm = crate::astrophysics_spin::cross(omega, arm);
+            let arm = crate::rotation::rotate(orientation, basis);
+            let moving_arm = crate::rotation::cross(omega, arm);
             let force =
                 std::array::from_fn(|k| self.rate_columns[j][k].mul_add(time, self.columns[j][k]));
-            sum.add([crate::astrophysics_spin::cross(moving_arm, force)])?;
-            sum.add([crate::astrophysics_spin::cross(arm, self.rate_columns[j])])?;
+            sum.add([crate::rotation::cross(moving_arm, force)])?;
+            sum.add([crate::rotation::cross(arm, self.rate_columns[j])])?;
         }
         Ok(sum.finish()?[0])
     }
@@ -275,10 +275,10 @@ impl MaterialForceMoment {
         for j in 0..3 {
             let mut basis = [0.; 3];
             basis[j] = 1.;
-            let arm = crate::astrophysics_spin::rotate(orientation, basis);
+            let arm = crate::rotation::rotate(orientation, basis);
             let force =
                 std::array::from_fn(|k| self.rate_columns[j][k].mul_add(time, self.columns[j][k]));
-            let torque = crate::astrophysics_spin::cross(arm, force);
+            let torque = crate::rotation::cross(arm, force);
             if torque.iter().any(|v| !v.is_finite()) {
                 return Err(Error::NumericalFailure);
             }

@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use voxy_core::{ChunkPos, LocalPos, TickId, VoxelPos, WorldEpoch, split_voxel};
@@ -313,18 +313,23 @@ impl World {
             let (chunk, local) = split_voxel(write.pos);
             writes.push((chunk, local, write));
         }
-        writes.sort_by_key(|(chunk, local, _)| (*chunk, local.index()));
+        writes.sort_unstable_by_key(|(chunk, local, _)| (*chunk, local.index()));
         for pair in writes.windows(2) {
             if pair[0].0 == pair[1].0 && pair[0].1 == pair[1].1 {
                 return Err(CommitError::DuplicateWrite(pair[0].2.pos));
             }
         }
 
-        let touched: BTreeSet<_> = writes.iter().map(|(chunk, _, _)| *chunk).collect();
-        if touched.len() > self.limits.max_chunks_per_transaction {
-            return Err(CommitError::TooManyChunks(touched.len()));
-        }
-        for &pos in &touched {
+        // `writes` is sorted by `ChunkPos`, so contiguous runs correspond 1-to-1 with touched chunks.
+        let mut touched_count = 0_usize;
+        for run in writes.chunk_by(|a, b| a.0 == b.0) {
+            touched_count += 1;
+            if touched_count > self.limits.max_chunks_per_transaction {
+                // Report exact total count of distinct chunks in the transaction.
+                let total_chunks = writes.chunk_by(|a, b| a.0 == b.0).count();
+                return Err(CommitError::TooManyChunks(total_chunks));
+            }
+            let pos = run[0].0;
             if !self.chunks.contains_key(&pos) {
                 return Err(CommitError::ChunkNotLoaded(pos));
             }
@@ -335,21 +340,11 @@ impl World {
             .checked_add(1)
             .ok_or(CommitError::CommitIdOverflow)?;
 
-        let mut staged = Vec::with_capacity(touched.len());
+        let mut staged = Vec::with_capacity(touched_count);
         let mut inverse = Vec::with_capacity(writes.len());
-        let mut chunk_writes = Vec::new();
         let mut updates = Vec::new();
-        // Writes are sorted by chunk, so each touched chunk owns one contiguous run.
-        let mut remaining = writes.as_slice();
-        for pos in touched {
-            let run = remaining
-                .iter()
-                .take_while(|(chunk, _, _)| *chunk == pos)
-                .count();
-            let (run_writes, rest) = remaining.split_at(run);
-            remaining = rest;
-            chunk_writes.clear();
-            chunk_writes.extend(run_writes.iter().map(|(_, local, write)| (*local, *write)));
+        for run_writes in writes.chunk_by(|a, b| a.0 == b.0) {
+            let pos = run_writes[0].0;
             let slot = self
                 .chunks
                 .get(&pos)
@@ -359,7 +354,8 @@ impl World {
                 .checked_next()
                 .ok_or(CommitError::RevisionOverflow(pos))?;
             updates.clear();
-            for (local, write) in &chunk_writes {
+            updates.reserve(run_writes.len());
+            for &(_, local, write) in run_writes {
                 inverse.push(VoxelWrite {
                     pos: write.pos,
                     block: slot.data.blocks.get(local.index()),
@@ -381,8 +377,8 @@ impl World {
                 after_revision,
                 before: Arc::clone(&slot.data),
                 after,
-                dirty: dirty_bounds(&chunk_writes),
-                invalidated_neighbor_meshes: invalidated_neighbors(pos, &chunk_writes),
+                dirty: dirty_bounds(run_writes),
+                invalidated_neighbor_meshes: invalidated_neighbors(pos, run_writes),
             });
         }
 
@@ -449,67 +445,57 @@ impl VoxelView for World {
     }
 }
 
-fn dirty_bounds(writes: &[(LocalPos, VoxelWrite)]) -> DirtyBounds {
-    let mut min = writes[0].0;
-    let mut max = min;
-    for &(local, _) in &writes[1..] {
-        min = LocalPos::new(
-            min.x().min(local.x()),
-            min.y().min(local.y()),
-            min.z().min(local.z()),
-        )
-        .expect("minimum remains local");
-        max = LocalPos::new(
-            max.x().max(local.x()),
-            max.y().max(local.y()),
-            max.z().max(local.z()),
-        )
-        .expect("maximum remains local");
+fn dirty_bounds(writes: &[(ChunkPos, LocalPos, VoxelWrite)]) -> DirtyBounds {
+    let mut min_x = writes[0].1.x();
+    let mut min_y = writes[0].1.y();
+    let mut min_z = writes[0].1.z();
+    let mut max_x = min_x;
+    let mut max_y = min_y;
+    let mut max_z = min_z;
+    for &(_, local, _) in &writes[1..] {
+        min_x = min_x.min(local.x());
+        min_y = min_y.min(local.y());
+        min_z = min_z.min(local.z());
+        max_x = max_x.max(local.x());
+        max_y = max_y.max(local.y());
+        max_z = max_z.max(local.z());
     }
     DirtyBounds {
-        min,
-        max_inclusive: max,
+        min: LocalPos::new(min_x, min_y, min_z).expect("minimum remains local"),
+        max_inclusive: LocalPos::new(max_x, max_y, max_z).expect("maximum remains local"),
     }
 }
 
-fn invalidated_neighbors(pos: ChunkPos, writes: &[(LocalPos, VoxelWrite)]) -> Box<[ChunkPos]> {
-    let mut offsets = BTreeSet::new();
-    for &(local, _) in writes {
-        let xs: &[i64] = match local.x() {
-            0 => &[-1, 0],
-            31 => &[0, 1],
-            _ => &[0],
-        };
-        let ys: &[i64] = match local.y() {
-            0 => &[-1, 0],
-            31 => &[0, 1],
-            _ => &[0],
-        };
-        let zs: &[i64] = match local.z() {
-            0 => &[-1, 0],
-            31 => &[0, 1],
-            _ => &[0],
-        };
-        for &x in xs {
-            for &y in ys {
-                for &z in zs {
-                    if (x, y, z) != (0, 0, 0) {
-                        offsets.insert((x, y, z));
-                    }
+fn invalidated_neighbors(
+    pos: ChunkPos,
+    writes: &[(ChunkPos, LocalPos, VoxelWrite)],
+) -> Box<[ChunkPos]> {
+    let mut mask = 0_u32;
+    for &(_, local, _) in writes {
+        mask |= local.affected_neighbor_chunks();
+    }
+    mask &= !(1_u32 << 13);
+    if mask == 0 {
+        return Box::new([]);
+    }
+    let mut out = Vec::with_capacity(mask.count_ones() as usize);
+    for dx in -1_i64..=1 {
+        for dy in -1_i64..=1 {
+            for dz in -1_i64..=1 {
+                let bit = (dx + 1) as u32 + 3 * ((dz + 1) as u32 + 3 * (dy + 1) as u32);
+                if (mask & (1_u32 << bit)) != 0
+                    && let (Some(x), Some(y), Some(z)) = (
+                        pos.x.checked_add(dx),
+                        pos.y.checked_add(dy),
+                        pos.z.checked_add(dz),
+                    )
+                {
+                    out.push(ChunkPos { x, y, z });
                 }
             }
         }
     }
-    offsets
-        .into_iter()
-        .filter_map(|(x, y, z)| {
-            Some(ChunkPos {
-                x: pos.x.checked_add(x)?,
-                y: pos.y.checked_add(y)?,
-                z: pos.z.checked_add(z)?,
-            })
-        })
-        .collect()
+    out.into_boxed_slice()
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]

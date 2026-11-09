@@ -614,13 +614,21 @@ impl<'a> EqualityTask<'a> {
         let coordinates = &mut self.coordinates;
 
         let output = if refinement == 0 {
-            let (state,output)=self.initial.take().unwrap().into_validated(&bytes).map_err(|error| {
-                            let header:Vec<_>=bytes.iter().copied().take(16).collect::<Vec<_>>().chunks_exact(4)
-                                .map(|b|u32::from_le_bytes(b.try_into().unwrap())).collect();
-                            let status=bytes.get(bytes.len().saturating_sub(4)..).filter(|b|b.len()==4)
-                                .map(|b|u32::from_le_bytes(b.try_into().unwrap()));
-                            format!("GPU joint QR/equality publication rejected: {error}; refinement={refinement} header={header:?} equality_status={status:?}")
-                        })?;
+            let (state, output) = self.initial.take().unwrap().into_validated(&bytes).map_err(|error| {
+                let header: Vec<_> = bytes
+                    .get(..16.min(bytes.len()))
+                    .unwrap_or(&[])
+                    .chunks_exact(4)
+                    .map(|b| u32::from_le_bytes(b.try_into().unwrap()))
+                    .collect();
+                let status = bytes
+                    .get(bytes.len().saturating_sub(4)..)
+                    .filter(|b| b.len() == 4)
+                    .map(|b| u32::from_le_bytes(b.try_into().unwrap()));
+                format!(
+                    "GPU joint QR/equality publication rejected: {error}; refinement={refinement} header={header:?} equality_status={status:?}"
+                )
+            })?;
             // Bound retained snapshot payload independently of scene size.
             if options.prefix_reuse {
                 self.prefix = if bytes.len() <= 2 * 1024 * 1024 {

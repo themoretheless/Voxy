@@ -1,7 +1,7 @@
 //! Compliant soft tissues in local metre/kilogram/second coordinates.
 #![allow(clippy::many_single_char_names)]
 use crate::strand::SphereCollider;
-#[path = "tissue_geometry.rs"]
+mod contact;
 mod geometry;
 use crate::math::add;
 use crate::math::cross;
@@ -416,7 +416,7 @@ impl Tissue {
                     }
                 }
             }
-            crate::tissue_contact::project(
+            contact::project(
                 &mut next.positions,
                 &next.weights,
                 &next.surface,
@@ -459,7 +459,7 @@ impl Tissue {
         }
         for (face_index, face) in next.surface.iter().enumerate() {
             for (sphere_index, sphere) in colliders.iter().enumerate() {
-                if let Some((barycentric, normal, _)) = crate::tissue_contact::contact(
+                if let Some((barycentric, normal, _)) = contact::contact(
                     face.map(|i| next.positions[i]),
                     sphere.center,
                     sphere.radius + next.material.particle_radius + 1e-9,
@@ -518,7 +518,7 @@ impl Tissue {
         }
         for face in &next.surface {
             for sphere in colliders {
-                if crate::tissue_contact::contact(
+                if contact::contact(
                     face.map(|i| next.positions[i]),
                     sphere.center,
                     sphere.radius + next.material.particle_radius,

@@ -60,7 +60,7 @@ impl GraspObject {
             });
             welded.push(id);
         }
-        let mut faces = Vec::new();
+        let mut faces = Vec::with_capacity(indices.len() / 3);
         for triangle in indices.chunks_exact(3) {
             let face = [
                 welded[triangle[0] as usize],
@@ -108,22 +108,46 @@ impl GraspObject {
                 incident[vertex].push(id);
             }
         }
+        let mut pending = Vec::new();
         for (vertex, fan) in incident.iter().enumerate() {
             if fan.is_empty() {
                 continue;
             }
-            let mut seen = std::collections::BTreeSet::new();
-            let mut pending = vec![fan[0]];
-            seen.insert(fan[0]);
-            while let Some(id) = pending.pop() {
-                for &neighbor in &adjacency[id] {
-                    if faces[neighbor].contains(&vertex) && seen.insert(neighbor) {
-                        pending.push(neighbor);
+            if fan.len() <= 64 {
+                let mut seen_mask = 1u64;
+                pending.clear();
+                pending.push(fan[0]);
+                while let Some(id) = pending.pop() {
+                    for &neighbor in &adjacency[id] {
+                        if faces[neighbor].contains(&vertex)
+                            && let Some(pos) = fan.iter().position(|&f| f == neighbor)
+                        {
+                            let bit = 1u64 << pos;
+                            if seen_mask & bit == 0 {
+                                seen_mask |= bit;
+                                pending.push(neighbor);
+                            }
+                        }
                     }
                 }
-            }
-            if seen.len() != fan.len() {
-                return Err("nonmanifold grasp mesh vertex");
+                if seen_mask.count_ones() as usize != fan.len() {
+                    return Err("nonmanifold grasp mesh vertex");
+                }
+            } else {
+                let mut seen = std::collections::BTreeSet::new();
+                pending.clear();
+                pending.push(fan[0]);
+                seen.insert(fan[0]);
+                while let Some(id) = pending.pop() {
+                    for &neighbor in &adjacency[id] {
+                        if faces[neighbor].contains(&vertex) && seen.insert(neighbor) {
+                            pending.push(neighbor);
+                        }
+                    }
+                }
+                if seen.len() != fan.len() {
+                    return Err("nonmanifold grasp mesh vertex");
+                }
             }
         }
         let triangles: Vec<_> = faces.iter().map(|f| f.map(|i| points[i])).collect();

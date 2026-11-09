@@ -1,7 +1,7 @@
 //! Conservative finite-volume thin-film prototype on triangle cells, in SI units.
 //! Closed mesh edges retain fluid. No evaporation or two-way tissue coupling.
 use std::collections::BTreeMap;
-#[path = "surface_film_rheology.rs"]
+pub(crate) mod contact;
 mod rheology;
 pub use rheology::{FilmRheology, SlidingFilmBalance};
 #[derive(Clone, Copy, Debug)]
@@ -133,7 +133,7 @@ pub struct SurfaceFilm {
     center: Vec<[f64; 3]>,
     edges: Vec<(usize, usize, f64, f64)>,
     edge_conormals: Vec<[f64; 3]>,
-    self_contact_index: std::sync::OnceLock<crate::surface_film_contact::ProximityIndex>,
+    self_contact_index: std::sync::OnceLock<contact::ProximityIndex>,
     volume: Vec<f64>,
     material: Material,
     wetting_model: Option<Wetting>,
@@ -552,7 +552,7 @@ impl SurfaceFilm {
         if self.material.density != other.material.density {
             return Err("bridge exchange requires matching fluid density");
         }
-        let candidates = crate::surface_film_contact::nearby(
+        let candidates = contact::nearby(
             &self.geometry,
             &other.geometry,
             config.max_gap,
@@ -564,10 +564,9 @@ impl SurfaceFilm {
                 continue;
             }
             let proximity = (1. - gap / config.max_gap).max(0.);
-            let overlap =
-                crate::surface_film_contact::overlap_area(self.geometry[a], other.geometry[b])
-                    .min(self.area[a])
-                    .min(other.area[b]);
+            let overlap = contact::overlap_area(self.geometry[a], other.geometry[b])
+                .min(self.area[a])
+                .min(other.area[b]);
             if overlap <= 1e-14 {
                 continue;
             }
@@ -602,7 +601,7 @@ impl SurfaceFilm {
         let height = self.thickness();
         let index = self
             .self_contact_index
-            .get_or_init(|| crate::surface_film_contact::ProximityIndex::new(&self.geometry));
+            .get_or_init(|| contact::ProximityIndex::new(&self.geometry));
         let candidates = index.nearby_filtered(
             &self.geometry,
             &self.geometry,
@@ -623,10 +622,9 @@ impl SurfaceFilm {
             if gap > height[a] + height[b] {
                 continue;
             }
-            let overlap =
-                crate::surface_film_contact::overlap_area(self.geometry[a], self.geometry[b])
-                    .min(self.area[a])
-                    .min(self.area[b]);
+            let overlap = contact::overlap_area(self.geometry[a], self.geometry[b])
+                .min(self.area[a])
+                .min(self.area[b]);
             if overlap <= 1e-14 {
                 continue;
             }
@@ -1346,35 +1344,27 @@ impl SurfaceFilm {
     }
 }
 
-#[path = "surface_film_body.rs"]
+#[path = "body.rs"]
 mod sliding_body;
 pub use sliding_body::{SlidingAdvanceReport, SlidingBodyReport, SlidingPatch, SlidingPatchReport};
 
-#[path = "surface_film_mixture.rs"]
 mod mixture;
 pub use mixture::{FilmMixture, FilmTransfer, FilmWithdrawal};
 
-#[path = "surface_film_squeeze.rs"]
 mod squeeze;
 pub use squeeze::{SqueezePressureControl, SqueezePressureReport, SqueezeTransportReport};
 
-#[path = "surface_film_squeeze_body.rs"]
 mod squeeze_body;
 pub use squeeze_body::SqueezeBodyReport;
-#[path = "surface_film_smear.rs"]
 mod smear;
 pub use smear::{SmearContact, SmearRegime, SmearReport};
-#[path = "surface_film_sphere.rs"]
 mod sphere;
 pub use sphere::SphereFilmHit;
-#[path = "surface_film_accelerated_sphere.rs"]
 mod accelerated_sphere;
 
-#[path = "surface_film_free_surface.rs"]
 mod free_surface;
 pub use free_surface::FilmFreeSurface;
 
-#[path = "surface_film_thermal.rs"]
 mod thermal;
 use crate::math::dot;
 use crate::math::sub;

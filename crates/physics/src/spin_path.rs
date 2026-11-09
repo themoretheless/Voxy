@@ -2,7 +2,7 @@
 use crate::math::norm;
 use crate::{
     astrophysics::Error,
-    astrophysics_spin::{ArcTorque, RotatingArmForce, Spin, SpinArc, TorquePolynomial, rotate},
+    rotation::{ArcTorque, RotatingArmForce, RotatingMaterialMoment, Spin, SpinArc, TorquePolynomial, rotate},
 };
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Config {
@@ -214,7 +214,7 @@ impl Spin {
             .torque_at(self.orientation, 0.)
             .map_err(|_| PathError::InvalidInput)?;
         torque.validate().map_err(|_| PathError::InvalidInput)?;
-        let material = crate::astrophysics_spin::RotatingMaterialMoment {
+        let material = RotatingMaterialMoment {
             moment,
             orientation: self.orientation,
             omega: [0.; 3],
@@ -248,7 +248,7 @@ impl Spin {
                     ArcTorque {
                         polynomial: torque.shifted(time).map_err(PathError::Integrator)?,
                         rotating: None,
-                        material: Some(crate::astrophysics_spin::RotatingMaterialMoment {
+                        material: Some(RotatingMaterialMoment {
                             moment,
                             ..material
                         }),
