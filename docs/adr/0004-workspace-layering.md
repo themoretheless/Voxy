@@ -15,7 +15,9 @@ had grown to 33 crates. Four edges contradict the documented direction
 
 ## Decision
 
-1. `crates/voxy_depgraph` reads `cargo metadata` and asserts, in CI, that
+1. `crates/voxy_depgraph` reads `cargo metadata` and asserts, in
+   `cargo test -p voxy_depgraph` (part of `tools/check.sh`; the repository has
+   no CI workflow, so the gate is run locally), that
    every edge between workspace crates is on the documented allow-list
    (`tests/depgraph.rs::ALLOWED`), except a composition root (`voxy_app`),
    which may depend on anything.
@@ -30,8 +32,9 @@ had grown to 33 crates. Four edges contradict the documented direction
    or `winit`.
 4. Every crate inherits `[workspace.lints]`; `unsafe_code` is `deny` so that
    the few FFI/GPU-interop sites can opt in locally with `#[allow]`.
-5. Examples use the library API (`use voxy_app::module`), never `#[path]`
-   includes of library sources.
+5. Examples use the library API (`use voxy_shell::module`), never `#[path]`
+   includes of library sources. `voxy_app` has no library target; modules its
+   examples share with the binary live in `voxy_shell`.
 
 ## Status of the graph after the first refactoring batch (2026-10-12)
 

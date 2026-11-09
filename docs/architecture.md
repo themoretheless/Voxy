@@ -209,7 +209,7 @@ flowchart BT
 | `voxy_mesher` | pure neighborhood-to-quads transformation | GPU objects, mutable world, disk |
 | `voxy_runtime` | fixed ticks, authoritative world, streaming coordinator, job dispatch, renderer-neutral mesh publications | `winit`, `wgpu`, surface/swapchain |
 | `voxy_render` | `wgpu` device/queue/surface lifecycle, mesh residency, passes, culling | world mutation, save files |
-| `voxy_shell` | `winit::ApplicationHandler` (`SceneApp`), scene input, touch, rush scene; shared by desktop, mobile and examples | canonical domain logic, voxel terrain game |
+| `voxy_shell` | `winit::ApplicationHandler` (`SceneApp`), scene input, touch, rush scene, keyboard/mouse/touch state with camera rigs (`controls`), frame profile; shared by desktop, mobile and examples | canonical domain logic, voxel terrain game |
 | `voxy_demos` | character/tissue/liquid/material demos, face preview, body/face parameters | window, event loop |
 | `voxy_gpu_core` | compute program, memory budget, readback pool, backend options, indirect mesh handle | scene, passes, world |
 | `voxy_app` | desktop binary: voxel terrain game on the shell, composition root | canonical domain logic |
