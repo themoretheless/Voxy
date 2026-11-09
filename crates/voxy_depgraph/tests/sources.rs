@@ -13,20 +13,10 @@ use voxy_depgraph::source::{
 };
 
 /// Files the compiler never sees, with the plan step that removes them.
-const KNOWN_ORPHANS: &[(&str, &str)] = &[
-    (
-        "crates/voxy_app/src/animals/asset.rs",
-        "PLAN 1.4: superseded by animals/breed_asset.rs",
-    ),
-    (
-        "crates/voxy_render/src/surface_color_transfer_tests.rs",
-        "PLAN 1.2: tests that are never run",
-    ),
-    (
-        "crates/voxy_render/src/surface_light_transfer_tests.rs",
-        "PLAN 1.2: tests that are never run",
-    ),
-];
+const KNOWN_ORPHANS: &[(&str, &str)] = &[(
+    "crates/voxy_app/src/animals/asset.rs",
+    "PLAN 1.4: superseded by animals/breed_asset.rs",
+)];
 
 /// Production lines a source file may have (tests excluded).
 const LINE_BUDGET: usize = 1500;

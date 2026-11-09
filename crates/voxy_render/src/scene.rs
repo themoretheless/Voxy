@@ -3,6 +3,12 @@
 #[cfg(test)]
 #[path = "fiber_surface_draw_tests.rs"]
 mod fiber_surface_draw_tests;
+#[cfg(test)]
+#[path = "surface_color_transfer_tests.rs"]
+mod surface_color_transfer_tests;
+#[cfg(test)]
+#[path = "surface_light_transfer_tests.rs"]
+mod surface_light_transfer_tests;
 
 /// Default shader and the resource/vertex ABI for custom scene shaders.
 pub const DEFAULT_SCENE_SHADER: &str = include_str!("scene.wgsl");
