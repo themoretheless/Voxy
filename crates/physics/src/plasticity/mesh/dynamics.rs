@@ -299,8 +299,8 @@ impl DynamicBody {
     /// numerical endpoint-work defect is not counted as physical dissipation.
     /// # Errors
     /// Rejects invalid inputs, singular tangents, inversion and overflow.
-    #[allow(clippy::too_many_lines)] // Keep all step candidates and the final commit transactional.
-    #[allow(clippy::too_many_arguments)] // Force and energy tolerances use distinct physical units.
+    // Keep all step candidates and the final commit transactional.
+    // Force and energy tolerances use distinct physical units.
     pub fn step(
         &mut self,
         dt: f64,

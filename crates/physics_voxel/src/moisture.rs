@@ -33,7 +33,6 @@ pub struct VoxelMoistureStep {
 /// # Errors
 /// Invalid/missing liquid, inventories, mechanics or world commit; all three
 /// live states remain unchanged. Routing/contact discovery remains caller-owned.
-#[allow(clippy::too_many_arguments)]
 pub fn advance_voxel_moisture(
     world: &mut World,
     registry: &BlockRegistry,
@@ -400,7 +399,6 @@ pub struct LiquidSurplusReturn {
 /// # Errors
 /// Invalid inventory/scale, incompatible or missing voxel, precision loss or
 /// failed world commit. Source inventory only changes after successful commit.
-#[allow(clippy::too_many_arguments)]
 pub fn return_liquid_surplus(
     world: &mut World,
     registry: &BlockRegistry,
@@ -440,9 +438,7 @@ pub fn return_liquid_surplus(
     let mut units = if source.water_kg >= unit_mass * f64::from(slots) {
         slots
     } else {
-        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
-        let units = (source.water_kg / unit_mass).floor() as u8;
-        units
+        (source.water_kg / unit_mass).floor() as u8
     };
     // A rounded quotient must never return more mass than actually held.
     while units > 0 && unit_mass * f64::from(units) > source.water_kg {
@@ -514,7 +510,6 @@ impl VoxelMoistureBank {
     /// Absorb this bank into the solid without another world-liquid withdrawal.
     /// # Errors
     /// Any moisture/mechanical failure preserves bank, network and solid.
-    #[allow(clippy::too_many_arguments)]
     pub fn advance(
         &mut self,
         dt_s: f64,

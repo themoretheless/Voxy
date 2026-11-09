@@ -23,7 +23,6 @@ pub struct LiquidPipelineCandidate {
     pub accumulation: LiquidAccumulationCandidate,
 }
 impl LiquidPipelineInput {
-    #[allow(clippy::too_many_arguments)]
     pub fn new(
         particles: &[LiquidDensityParticle],
         materials: &[u32],
@@ -40,7 +39,6 @@ impl LiquidPipelineInput {
             particles, materials, &topology, h, kernel, support, laws, parameters, gravity,
         )
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn with_topology(
         particles: &[LiquidDensityParticle],
         materials: &[u32],

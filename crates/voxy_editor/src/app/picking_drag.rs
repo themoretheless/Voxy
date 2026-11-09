@@ -210,7 +210,6 @@ impl App {
     }
 
     // Winit coordinates and finite monitor DPI are intentionally represented as f32.
-    #[allow(clippy::cast_possible_truncation)]
     pub(crate) fn pointer_press(
         &mut self,
         cursor: Vec2,

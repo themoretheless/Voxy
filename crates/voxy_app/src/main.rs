@@ -149,7 +149,6 @@ type RebuildResult = (
 );
 
 impl ApplicationHandler for VoxyApp {
-    #[allow(clippy::too_many_lines)]
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         if self.window.is_some() {
             return;
@@ -532,7 +531,6 @@ impl ApplicationHandler for VoxyApp {
                 }
             }
             WindowEvent::Touch(touch) => {
-                #[allow(clippy::cast_precision_loss)]
                 let width = self
                     .window
                     .as_ref()
@@ -540,7 +538,6 @@ impl ApplicationHandler for VoxyApp {
                 self.input.touch(touch, width);
             }
             WindowEvent::MouseWheel { delta, .. } => {
-                #[allow(clippy::cast_possible_truncation)]
                 let lines = match delta {
                     MouseScrollDelta::LineDelta(_, y) => y,
                     MouseScrollDelta::PixelDelta(position) => position.y as f32 / 40.0,
@@ -1789,7 +1786,6 @@ impl VoxyApp {
         self.peak_vehicle_speed = self
             .peak_vehicle_speed
             .max(vehicle.longitudinal_speed.abs());
-        #[allow(clippy::cast_possible_truncation)]
         {
             self.actor_yaw = vehicle.heading as f32;
         }
@@ -2187,7 +2183,6 @@ impl VoxyApp {
     }
 }
 
-#[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
 fn character_position(character: &CharacterState) -> Vec3 {
     Vec3::new(
         character.body.anchor.x as f32
@@ -2198,7 +2193,6 @@ fn character_position(character: &CharacterState) -> Vec3 {
     )
 }
 
-#[allow(clippy::cast_possible_truncation)]
 fn camera_collision(world: &World, target: Vec3, desired_eye: Vec3) -> Vec3 {
     let offset = desired_eye - target;
     let distance = offset.length();
@@ -2234,7 +2228,6 @@ fn camera_collision(world: &World, target: Vec3, desired_eye: Vec3) -> Vec3 {
     }
 }
 
-#[allow(clippy::cast_possible_truncation)]
 fn ray_origin(position: Vec3) -> RayOrigin {
     let floor = position.floor();
     RayOrigin {

@@ -24,7 +24,6 @@ impl AngularMotion {
     }
 }
 impl Behavior for AngularMotion {
-    #[allow(clippy::cast_possible_truncation)]
     fn fixed_update(&mut self, scene: &mut SceneGraph, owner: NodeId, delta: f64) {
         if scene
             .component::<CharacterBody>(owner)
@@ -116,7 +115,6 @@ impl AngularMotionBatch {
     /// # Errors
     /// Rejects foreign scenes, invalid ticks or invalid transform publication.
     /// Deleted owners are skipped; inactive owners retain their captured motion.
-    #[allow(clippy::cast_possible_truncation)]
     pub fn fixed_step(&mut self, scene: &mut SceneGraph, delta: f64) -> Result<(), GameplayError> {
         if scene.identity() != self.scene || !delta.is_finite() || delta <= 0.0 || delta > 0.1 {
             return Err("invalid angular motion scene/tick".into());

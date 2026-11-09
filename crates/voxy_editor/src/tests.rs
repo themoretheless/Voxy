@@ -1586,7 +1586,6 @@ fn native_play_simulation_ticks_and_stop_preserve_authoring() {
 }
 
 #[test]
-#[allow(clippy::float_cmp)]
 fn hierarchy_inspector_and_play_preserve_authoring_history() {
     let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../voxy_render/examples/assets/quad.obj");
@@ -1660,7 +1659,6 @@ fn hierarchy_inspector_and_play_preserve_authoring_history() {
 }
 
 #[test]
-#[allow(clippy::float_cmp)]
 fn multiple_resources_reload_independently_and_round_trip() {
     let directory = std::env::temp_dir().join(format!(
         "voxy-editor-multiple-{}-{}",

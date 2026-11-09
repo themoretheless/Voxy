@@ -743,7 +743,6 @@ impl SceneRenderer {
         Ok(&self.device)
     }
     #[must_use]
-    #[allow(clippy::too_many_lines)]
     pub fn new(device: &wgpu::Device, format: wgpu::TextureFormat) -> Self {
         let transform_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("scene transform"),
@@ -1238,7 +1237,6 @@ impl SceneRenderer {
         self.shader_revision
     }
 
-    #[allow(clippy::too_many_lines)]
     fn create_shader_pipelines(
         device: &wgpu::Device,
         format: wgpu::TextureFormat,
@@ -1266,7 +1264,6 @@ impl SceneRenderer {
         )
     }
 
-    #[allow(clippy::too_many_lines)]
     fn create_shader_pipelines_with_tangents(
         device: &wgpu::Device,
         format: wgpu::TextureFormat,
@@ -1862,7 +1859,6 @@ impl SceneRenderer {
     /// The queue must belong to the renderer's device.
     /// # Errors
     /// Rejects a foreign device, dimensions or byte counts before allocation/writes.
-    #[allow(clippy::too_many_arguments)]
     pub fn upload_texture_with_sampling(
         &self,
         device: &wgpu::Device,
@@ -2158,7 +2154,6 @@ impl SceneRenderer {
     /// `xray_depth` must be a distinct `Depth32Float` target matching the color size.
     /// Opaque X-ray surfaces are order independent. Transparent internals still
     /// require sorting; UI is composed last. World depth remains untouched.
-    #[allow(clippy::too_many_arguments)]
     pub fn encode_with_xray_depth(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -2461,7 +2456,6 @@ impl SceneRenderer {
     /// Timestamp the ordinary single-sample scene pass. Query indices/type and
     /// device must satisfy wgpu validation. Does not measure presentation or
     /// other shadow/composition passes. Rejects unavailable timing before encoding.
-    #[allow(clippy::too_many_arguments)]
     pub fn encode_profiled(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -2534,7 +2528,6 @@ impl SceneRenderer {
     /// # Errors
     /// Rejects missing MSAA pipelines, inconsistent sample counts/target sizes,
     /// or invalid view regions before recording commands.
-    #[allow(clippy::too_many_arguments)]
     pub fn encode_views_msaa4(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -2564,7 +2557,6 @@ impl SceneRenderer {
         )
     }
 
-    #[allow(clippy::too_many_arguments)]
     fn encode_view_pass(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -2626,7 +2618,6 @@ impl SceneRenderer {
     /// the same targets for surface and offscreen callers. No work is submitted.
     /// # Errors
     /// Rejects MSAA, duplicate/mismatched fluid views and invalid native targets.
-    #[allow(clippy::too_many_arguments)]
     pub fn encode_view_frame_with_fluids(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -2676,7 +2667,6 @@ impl SceneRenderer {
     /// not inherit the last scene view's scissor or viewport.
     /// # Errors
     /// Rejects non-overlay global draws and invalid view regions before encoding.
-    #[allow(clippy::too_many_arguments)]
     pub fn encode_view_frame(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -2705,7 +2695,6 @@ impl SceneRenderer {
     /// its own depth attachment and does not read or overwrite world depth.
     /// # Errors
     /// Rejects non-overlay global draws, invalid targets/regions and missing MSAA.
-    #[allow(clippy::too_many_arguments)]
     pub fn encode_view_frame_msaa4(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -2848,7 +2837,6 @@ impl SceneRenderer {
     /// # Errors
     /// Rejects a foreign background, unsupported MSAA, X-ray world geometry,
     /// or overlay layers before recording commands.
-    #[allow(clippy::too_many_arguments)]
     pub fn encode_refractive_layers(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -2911,7 +2899,6 @@ impl SceneRenderer {
     /// Resolves four-sample geometry coverage into a single-sample color target.
     /// # Errors
     /// Rejects renderers created without four-sample pipelines.
-    #[allow(clippy::too_many_arguments)]
     pub fn encode_msaa4(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -2938,7 +2925,6 @@ impl SceneRenderer {
         Ok(())
     }
 
-    #[allow(clippy::too_many_arguments)]
     fn encode_pass(
         &self,
         encoder: &mut wgpu::CommandEncoder,

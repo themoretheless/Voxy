@@ -13,7 +13,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dt = 1.0_f32 / 64.0;
     let mut input = vec![0.0_f32, -9.0, 0.0, dt];
     for i in 0..count {
-        #[allow(clippy::cast_precision_loss)]
         let x = i as f32;
         input.extend_from_slice(&[x, 100.0, -x, 1.0, 2.0, 3.0, -1.0, 0.0]);
     }

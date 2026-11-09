@@ -1,4 +1,3 @@
-#![allow(clippy::float_cmp)]
 use physics::liquid::{
     Config, Error, Formulation, Liquid, LiquidField, Material, Particle, ReflectingBox,
     TransportMaterial,

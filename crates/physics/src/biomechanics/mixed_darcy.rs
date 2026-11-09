@@ -158,7 +158,6 @@ impl MixedDarcy {
     /// Fixed mesh only; cell storage and fluid inventories must describe that mesh.
     /// # Errors
     /// Failure in either solve, depleted fluid or invalid state leaves all inputs unchanged.
-    #[allow(clippy::too_many_arguments)]
     pub fn implicit_reservoir_transport_step(
         &self,
         pressures: &mut [f64],
@@ -578,7 +577,6 @@ impl MixedDarcy {
     /// # Errors
     /// Rejects invalid/degenerate/nonmanifold topology, non-SPD permeability,
     /// duplicate/internal boundary assignments, overflow or resource limits.
-    #[allow(clippy::too_many_lines)]
     pub fn new(
         points: Vec<Vec3>,
         cells: Vec<[usize; 4]>,

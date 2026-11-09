@@ -123,7 +123,6 @@ impl ReconstructionMaterial {
         {
             return Err(ReconstructionMaterialError);
         }
-        #[allow(clippy::cast_possible_truncation)]
         Ok(values.map(|x| x as f32))
     }
 
@@ -182,7 +181,6 @@ impl ReconstructionMaterial {
         let denominator = sine * sine + alpha2 * cosine * cosine;
         let distribution = alpha2 / (std::f64::consts::PI * denominator * denominator);
         let pdf = distribution * cosine / (4.0 * vh);
-        #[allow(clippy::cast_possible_truncation)]
         let direction = light.to_array().map(|x| x as f32);
         // Cancel the shared NDF analytically before evaluation. Dividing an f32
         // BRDF by a huge narrow-lobe PDF loses precision or overflows needlessly.

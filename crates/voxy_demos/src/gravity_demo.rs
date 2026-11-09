@@ -174,7 +174,6 @@ impl GravityDemo {
                 self.proof.inverted |= walker.up[1] < -0.9;
                 self.proof.jumped |= report.jumped;
                 self.proof.landed |= self.proof.jumped && walker.grounded;
-                #[allow(clippy::cast_precision_loss)]
                 let origin = [
                     walker.anchor.x as f64,
                     walker.anchor.y as f64,
@@ -213,7 +212,6 @@ impl GravityDemo {
         )
     }
     pub fn camera_distance(&self, aspect: f32) -> f32 {
-        #[allow(clippy::cast_possible_truncation)]
         let extent = self
             .bodies
             .iter()
@@ -221,7 +219,6 @@ impl GravityDemo {
             .fold(2.0_f64, f64::max) as f32;
         (extent * 1.3 / (27.5_f32.to_radians().tan() * aspect.min(1.0))).max(9.0)
     }
-    #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
     pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();

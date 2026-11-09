@@ -88,7 +88,7 @@ impl PcmStream {
     }
 }
 #[cfg(test)]
-#[allow(clippy::float_cmp)] // FIFO must preserve PCM bits and exact silence.
+// FIFO must preserve PCM bits and exact silence.
 mod tests {
     use super::*;
     #[test]

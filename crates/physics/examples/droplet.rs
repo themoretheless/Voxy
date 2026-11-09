@@ -1,5 +1,4 @@
 // Exact equality intentionally checks unchanged masses and exactly zero states.
-#![allow(clippy::float_cmp)]
 //! A stretched isolated drop with and without surface tension.
 use physics::liquid::{Config, Liquid, Material, Particle};
 fn spread(liquid: &Liquid) -> [f64; 3] {

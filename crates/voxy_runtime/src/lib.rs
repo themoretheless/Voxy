@@ -295,7 +295,6 @@ impl FrameStateDigest {
 /// Computes a predictive chunk-prefetch offset `[dx, dy, dz]` (in 32-voxel chunks)
 /// from player velocity (`m/s`) and `lookahead_s`, clamped to `[-max_chunk_offset, max_chunk_offset]`.
 #[must_use]
-#[allow(clippy::cast_possible_truncation)]
 pub fn velocity_lookahead_chunk_offset(
     velocity_m_s: [f32; 3],
     lookahead_s: f32,

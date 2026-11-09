@@ -361,7 +361,6 @@ impl CellPoreTissue {
     /// Wall overrides apply only to external network spaces, never to FEM cells.
     /// # Errors
     /// Invalid mappings, wall overflow or failed subsolve preserves all state.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_lymphatic_walls(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -386,7 +385,6 @@ impl CellPoreTissue {
     /// Coupled wall pressure includes current pressure of explicitly attached tissue.
     /// # Errors
     /// Invalid/duplicate attachment, overflow or failed solve preserves all state.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_attached_lymphatic_walls(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -413,7 +411,6 @@ impl CellPoreTissue {
     /// Coupled current-volume wall pressures and laminar tube resistances.
     /// # Errors
     /// Invalid attachments, singular radius or failed solve preserves accepted states.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_lymphatic_geometry(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -439,7 +436,6 @@ impl CellPoreTissue {
             walls.is_some(),
         )
     }
-    #[allow(clippy::too_many_arguments)]
     fn step_mixed_darcy_geometry_order(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -601,7 +597,6 @@ impl CellPoreTissue {
     /// Joint backward-Euler inertial lymph, RT0 flow and equilibrated FEM tissue.
     /// # Errors
     /// Invalid mapping, positivity failure or nonconvergence preserves all states.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_inertial_lymphatic_geometry(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -758,7 +753,6 @@ impl CellPoreTissue {
     /// Joint equilibrated FEM/RT0 exchange through fixed-radius radial pipes.
     /// # Errors
     /// Invalid mapping or failed trial preserves tissue, network and radial histories.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_radial_profiles(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -908,7 +902,6 @@ impl CellPoreTissue {
     /// Accepted two half-steps carry their own equilibrated geometry and inventories.
     /// # Errors
     /// Invalid tolerances/mapping, failed FEM or exhausted steps preserve both states.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_lymphatic_walls_adaptive(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -933,7 +926,6 @@ impl CellPoreTissue {
     /// Joint adaptive transport/geometry with interstitial wall-pressure feedback.
     /// # Errors
     /// Invalid mapping/tolerance or failed trial preserves both accepted states.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_attached_lymphatic_walls_adaptive(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -960,7 +952,6 @@ impl CellPoreTissue {
     /// Joint adaptive current-geometry lymphatic pressure/resistance and FEM exchange.
     /// # Errors
     /// Invalid laws/tolerances or failed trial preserve geometry and fluid inventories.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_lymphatic_geometry_adaptive(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -1022,7 +1013,6 @@ impl CellPoreTissue {
     /// First-order step doubling controls joint tissue geometry and inertial history.
     /// # Errors
     /// Invalid tolerances, failed solve or trial exhaustion preserves all three states.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_inertial_lymphatic_geometry_adaptive(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,
@@ -1106,7 +1096,6 @@ impl CellPoreTissue {
     /// Joint local error control of inventories, FEM positions and every radial velocity.
     /// # Errors
     /// Invalid controls, failed solve or exhausted trials preserves all three states.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_mixed_darcy_with_radial_profiles_adaptive(
         &mut self,
         network: &mut crate::lymph::LymphNetwork,

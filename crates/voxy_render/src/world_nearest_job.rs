@@ -1133,7 +1133,6 @@ impl WorldRayQueryJob {
         let (_, _, stats) = self.work_stats.as_ref()?;
         Some(stats)
     }
-    #[allow(clippy::too_many_arguments)]
     fn make_hint_group(
         device: &wgpu::Device,
         scene: &RayScene,
@@ -1197,7 +1196,6 @@ impl WorldRayQueryJob {
             entries: &entries,
         }))
     }
-    #[allow(clippy::too_many_arguments)]
     fn make_group(
         device: &wgpu::Device,
         scene: &RayScene,

@@ -13,7 +13,6 @@ pub trait GravityScalar: Copy + PartialEq + std::fmt::Debug + Into<f64> {
     fn from_f64(value: f64) -> Self;
 }
 impl GravityScalar for f32 {
-    #[allow(clippy::cast_possible_truncation)]
     fn from_f64(value: f64) -> Self {
         value as Self
     }

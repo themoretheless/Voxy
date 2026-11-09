@@ -475,7 +475,6 @@ impl PrefabSceneDocument {
     /// Rejects invalid edited documents, malformed derived IDs and reference
     /// codecs unable to reverse instance links. Final expansion validates topology.
     // Authoring changes are exact; a tolerance would silently discard small edits.
-    #[allow(clippy::float_cmp)]
     pub fn capture_edits(
         &self,
         baseline: &SceneDocument,

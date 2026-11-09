@@ -103,7 +103,6 @@ impl RasterFont {
 /// Quantizes a logical horizontal glyph coordinate into an integer pixel coordinate
 /// and one of 4 quarter-pixel subpixel phases (`0..4`), rounding to nearest quarter-pixel.
 #[must_use]
-#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 pub fn quantize_subpixel_x(x: f32) -> (i32, u8) {
     if !x.is_finite() {
         return (0, 0);

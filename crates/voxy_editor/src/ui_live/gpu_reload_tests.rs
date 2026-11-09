@@ -5,7 +5,6 @@ use voxy_scene::{SceneGraph, Transform};
 
 #[test]
 #[ignore = "requires a real GPU and two local TrueType fonts"]
-#[allow(clippy::too_many_lines)]
 fn gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher() {
     let first = std::fs::read("/System/Library/Fonts/Supplemental/Arial.ttf").unwrap();
     let second = std::fs::read("/System/Library/Fonts/Supplemental/Courier New.ttf").unwrap();

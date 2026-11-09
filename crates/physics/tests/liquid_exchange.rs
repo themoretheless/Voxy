@@ -1,4 +1,4 @@
-#![allow(clippy::float_cmp)] // Exact accounting and unchanged-state assertions.
+// Exact accounting and unchanged-state assertions.
 use physics::liquid::{
     Config, Error, Liquid, LiquidField, Material, Particle, ParticleInput, PhaseChange,
     TransportMaterial,

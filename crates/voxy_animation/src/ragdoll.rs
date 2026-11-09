@@ -742,7 +742,6 @@ pub fn powered_blend(
 /// Integrates one Verlet + radial bone-length constraint step for a secondary spring bone tip
 /// anchored at `parent_pivot` with rest length `bone_len`, pulled toward `rest_target`.
 #[must_use]
-#[allow(clippy::too_many_arguments)]
 pub fn spring_bone_verlet_step(
     prev_tip: [f32; 3],
     curr_tip: [f32; 3],

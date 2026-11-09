@@ -3,7 +3,6 @@ use voxy_render::{
     DepthMotionPass, PreviousPositionVertex, RasterMotionPass, RayReconstructionGuides,
     ReconstructionGuideMesh, ReconstructionGuidePass, ReconstructionGuideVertex,
 };
-#[allow(clippy::too_many_lines)]
 fn probe(
     device: &wgpu::Device,
     adapter: &wgpu::Adapter,

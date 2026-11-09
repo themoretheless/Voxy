@@ -36,7 +36,7 @@ impl ShapeFont {
     /// the shaper returns. Internal shaper allocation/work is not hard-budgeted.
     /// # Errors
     /// Rejects invalid size, byte/glyph caps and missing glyphs.
-    #[allow(clippy::cast_possible_truncation)] // Font-unit positions scaled to f32 pixels.
+    // Font-unit positions scaled to f32 pixels.
     pub fn shape(
         &self,
         text: &str,

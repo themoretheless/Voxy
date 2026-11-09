@@ -27,12 +27,6 @@ impl Liquid {
     /// # Errors
     /// Rejects invalid bounds/threshold, overflowing grid dimensions, exceeded budgets,
     /// invalid property response, or nonfinite field values.
-    #[allow(
-        clippy::too_many_lines,
-        clippy::cast_possible_truncation,
-        clippy::cast_sign_loss,
-        clippy::cast_precision_loss
-    )]
     pub fn surface(&self, config: SurfaceConfig) -> Result<LiquidSurface, Error> {
         self.surface_with_particle_support(
             config,

@@ -1,4 +1,3 @@
-#![allow(clippy::float_cmp)]
 use crate::*;
 fn fixture() -> std::path::PathBuf {
     std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("examples/scene3d")

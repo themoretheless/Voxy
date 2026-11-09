@@ -49,7 +49,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let route = path.as_mut().unwrap();
         position = route.cells[1];
         route.cells.remove(0);
-        #[allow(clippy::cast_precision_loss)]
         scene.set_local(
             agent,
             Transform {

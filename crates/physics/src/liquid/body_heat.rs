@@ -193,7 +193,7 @@ impl Liquid {
 
 // Each sensible/latent region has linear temperature in enthalpy, hence an exact
 // exponential exchange. At most two phase boundaries can be crossed monotonically.
-#[allow(clippy::float_cmp)] // Exactly equal temperatures drive exactly zero heat.
+// Exactly equal temperatures drive exactly zero heat.
 fn phase_pair_transfer(
     energies: [f64; 2],
     capacities: [f64; 2],

@@ -69,7 +69,6 @@ impl InputState {
     }
 
     pub fn mouse_motion(&mut self, delta: (f64, f64)) {
-        #[allow(clippy::cast_possible_truncation)]
         let delta = Vec2::new(delta.0 as f32, delta.1 as f32);
         if delta.is_finite() {
             self.look_delta += delta * LOOK_SENSITIVITY;
@@ -85,7 +84,6 @@ impl InputState {
     }
 
     pub fn touch(&mut self, touch: Touch, width: f32) {
-        #[allow(clippy::cast_possible_truncation)]
         let position = Vec2::new(touch.location.x as f32, touch.location.y as f32);
         self.touch_event(touch.id, touch.phase, position, width);
     }

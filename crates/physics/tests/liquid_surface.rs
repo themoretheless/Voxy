@@ -42,7 +42,6 @@ fn cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
     ]
 }
 #[test]
-#[allow(clippy::cast_possible_truncation)]
 fn isolated_particle_surface_is_closed_outward_and_matches_analytic_volume() {
     let surface = liquid().surface(config()).unwrap();
     assert!(surface.triangles.len() > 100);

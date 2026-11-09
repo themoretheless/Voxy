@@ -743,7 +743,7 @@ impl RayVisibilityJob {
 /// Triangles must be in world coordinates, with three consecutive vertices per face.
 /// # Errors
 /// Rejects malformed geometry and invalid segments before intersection work.
-#[allow(clippy::many_single_char_names)] // Conventional triangle intersection notation.
+// Conventional triangle intersection notation.
 pub fn cpu_segment_visibility(
     vertices: &[[f32; 3]],
     segments: &[RaySegment],

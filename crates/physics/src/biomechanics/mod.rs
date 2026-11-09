@@ -1,6 +1,5 @@
 //! Quasistatic tetrahedral finite elements in metres, newtons and pascals.
 //! Constitutive verification is distinct from anatomical/experimental validation.
-#![allow(clippy::many_single_char_names)]
 mod cell_poroelastic;
 mod implicit_pore;
 mod vascular_pore;
@@ -694,7 +693,7 @@ impl Body {
     /// equilibrium: iteration count is NOT physiological time. Reports residual.
     /// # Errors
     /// Invalid inputs/evaluation errors leave the positions unchanged.
-    #[allow(clippy::too_many_lines)] // Keep bounded line search and transactional commit together.
+    // Keep bounded line search and transactional commit together.
     pub fn equilibrate(
         &mut self,
         max_iterations: usize,

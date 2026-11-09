@@ -306,7 +306,7 @@ impl Sphere {
         fractions.clone_from_slice(&rows);
         Ok(result)
     }
-    #[allow(clippy::too_many_lines, clippy::too_many_arguments)] // Keep the transactional gravity/transport step together.
+    // Keep the transactional gravity/transport step together.
     fn step_composition_impl(
         &mut self,
         dt: f64,
@@ -709,7 +709,6 @@ impl Sphere {
     /// The reference is not updated by burning or transport.
     /// # Errors
     /// Invalid reference/state, burning failure or shared budget exhaustion.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_reactive_balanced(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -721,7 +720,6 @@ impl Sphere {
     ) -> Result<ReactiveExchange, Error> {
         self.step_reactive_impl(fractions, network, dt, budget, exterior, Some(reference))
     }
-    #[allow(clippy::too_many_arguments)]
     fn step_reactive_impl(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -1362,7 +1360,7 @@ impl Sphere {
     /// State and composition roll back together on every failure.
     /// # Errors
     /// Incompatible reference, invalid reconstruction/state or exhausted budget.
-    #[allow(clippy::too_many_lines)] // Atomic reconstruction/transport/energy ledger.
+    // Atomic reconstruction/transport/energy ledger.
     pub fn step_composition_balanced(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -1380,7 +1378,6 @@ impl Sphere {
     /// Balanced open transport with signed gas/gravity and species boundary ledgers.
     /// # Errors
     /// Invalid/mismatched reference, reservoir, reconstruction or work budget.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_composition_balanced_exterior(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -1401,7 +1398,6 @@ impl Sphere {
             Some(exterior),
         )
     }
-    #[allow(clippy::too_many_arguments, clippy::too_many_lines)]
     fn step_composition_balanced_impl(
         &mut self,
         fractions: &mut [Vec<f64>],

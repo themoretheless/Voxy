@@ -98,7 +98,6 @@ impl ProbeProjector {
 
     /// Accumulate one rendered face (90-degree vertical FOV, centred square of
     /// side `height`) into probe `index`. Face 0 resets the slot.
-    #[allow(clippy::too_many_arguments)]
     pub fn project(
         &self,
         device: &wgpu::Device,

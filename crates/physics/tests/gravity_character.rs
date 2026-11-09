@@ -27,7 +27,6 @@ fn source() -> Source {
     }
 }
 fn position(state: &State) -> [f64; 3] {
-    #[allow(clippy::cast_precision_loss)]
     let origin = [
         state.anchor.x as f64,
         state.anchor.y as f64,

@@ -158,7 +158,6 @@ impl RayReconstructionGuides {
 
 /// Evaluates the Schied et al. (2017) SVGF joint bilateral edge-stopping weight for à-trous wavelet
 /// denoising: `max(0, dot(n_p, n_q))^128 * exp(-|z_p - z_q| / sigma_z - |luma_p - luma_q| / sigma_l)`.
-#[allow(clippy::too_many_arguments)]
 #[must_use]
 pub fn svgf_atrous_stopping_weight(
     n_p: [f32; 3],

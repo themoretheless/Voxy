@@ -117,7 +117,7 @@ impl Material {
     /// Numerical return loss and released spring energy are distinct diagnostics.
     /// # Errors
     /// Rejects invalid normals/jumps and overflow without mutating old history.
-    #[allow(clippy::too_many_lines)] // Keep contact history transitions and all energy ledgers together.
+    // Keep contact history transitions and all energy ledgers together.
     pub fn response(
         &self,
         old: &State,
@@ -253,7 +253,6 @@ fn kinematics(jump: Vec3, normal: Vec3) -> Result<(f64, Vec3), &'static str> {
 ///
 /// Returns `(friction_force, next_bristle_z)`.
 #[must_use]
-#[allow(clippy::too_many_arguments)]
 pub fn lugre_bristle_friction_force(
     rel_velocity: f64,
     bristle_z: f64,

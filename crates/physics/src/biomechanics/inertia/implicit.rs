@@ -85,7 +85,6 @@ impl InertialBody {
             },
         )
     }
-    #[allow(clippy::too_many_arguments)]
     fn average_material_path_with_skin_evaluator(
         &self,
         points: &[Vec3],
@@ -1764,7 +1763,6 @@ fn try_coupled_contact_direction_with_material(
         weight, diagonal, blocks, pinned, residual, body, None, operation,
     )
 }
-#[allow(clippy::too_many_arguments)]
 fn try_coupled_contact_direction_with_material_prepared(
     weight: &[f64],
     diagonal: &[Vec3],

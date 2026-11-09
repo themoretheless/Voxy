@@ -228,7 +228,6 @@ fn admit_triangles(
     }
     Ok((triangles, lower, upper))
 }
-#[allow(clippy::too_many_arguments)]
 fn first_triangle_hit(
     triangles: &[Triangle],
     lower: DVec3,

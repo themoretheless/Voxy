@@ -33,7 +33,6 @@ fn shape(
     Ok((w, h))
 }
 impl ArchiveRayStages {
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn new(
         device: &wgpu::Device,
         shader: &wgpu::ShaderModule,

@@ -41,7 +41,6 @@ impl Clip {
         let polyphase_table: Option<Vec<[f64; 65]>> = if num_phases <= 1024 {
             let mut table = Vec::with_capacity(num_phases);
             for p in 0..num_phases {
-                #[allow(clippy::cast_possible_truncation)]
                 let remainder = (p as u32) * g;
                 let fraction = f64::from(remainder) / f64::from(target_rate);
                 table.push(compute_filter_weights(fraction, cutoff));
@@ -93,7 +92,7 @@ impl Clip {
                 (s0, s1)
             };
 
-            #[allow(clippy::cast_possible_truncation)] // Explicit clipping of filter overshoot.
+            // Explicit clipping of filter overshoot.
             frames.push([sum0.clamp(-1.0, 1.0) as f32, sum1.clamp(-1.0, 1.0) as f32]);
         }
         Self::new(target_rate, frames)
@@ -130,11 +129,8 @@ impl Clip {
             let sample = std::array::from_fn(|channel| {
                 let a = f64::from(self.frames[left][channel]);
                 let b = f64::from(self.frames[right][channel]);
-                #[allow(clippy::cast_possible_truncation)]
                 // Convex combination of normalized samples.
-                {
-                    (a + (b - a) * weight) as f32
-                }
+                (a + (b - a) * weight) as f32
             });
             frames.push(sample);
         }
@@ -255,7 +251,7 @@ mod tests {
     #[test]
     fn passband_and_stopband_sines_at_two_to_one_ratio() {
         for (frequency, minimum, maximum) in [(1000.0, 0.69, 0.72), (18000.0, 0.0, 0.001)] {
-            #[allow(clippy::cast_possible_truncation)] // Unit-amplitude reference sine.
+            // Unit-amplitude reference sine.
             let source = Clip::new(
                 48_000,
                 (0..4800)

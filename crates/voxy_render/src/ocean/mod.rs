@@ -904,7 +904,6 @@ impl OceanRenderer {
         }
     }
 
-    #[allow(clippy::too_many_arguments)]
     fn create_screen(
         device: &wgpu::Device,
         queue: &wgpu::Queue,

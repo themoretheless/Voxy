@@ -3,7 +3,7 @@ use super::{Body, Cavity, Fiber, Material};
 /// layer. Two end planes are fixed axially, avoiding arbitrary rigid-body drift.
 /// # Errors
 /// Rejects invalid dimensions/resolution or constitutive parameters.
-#[allow(clippy::cast_precision_loss)] // Mesh dimensions are bounded below 2^14.
+// Mesh dimensions are bounded below 2^14.
 pub fn tube(
     radii: &[f64],
     length: f64,
@@ -27,7 +27,6 @@ pub fn tube(
 /// Pressure acts on a closed triangulated lumen with idealized end caps.
 /// # Errors
 /// Invalid axis scales, dimensions, material or degenerate tetrahedra.
-#[allow(clippy::too_many_arguments, clippy::cast_precision_loss)]
 pub fn elliptical_tube(
     radii: &[f64],
     length: f64,
@@ -52,7 +51,6 @@ pub fn elliptical_tube(
 /// Region IDs are `segment * layer_count + layer`, supporting local activation.
 /// # Errors
 /// Empty/mismatched profiles or invalid geometry/materials.
-#[allow(clippy::too_many_arguments)]
 pub fn elliptical_tube_axial(
     radii: &[f64],
     length: f64,
@@ -79,7 +77,6 @@ pub fn elliptical_tube_axial(
         Some(profiles),
     )
 }
-#[allow(clippy::too_many_arguments, clippy::cast_precision_loss)]
 fn build_elliptical_tube(
     radii: &[f64],
     length: f64,

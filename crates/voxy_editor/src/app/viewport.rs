@@ -14,7 +14,6 @@ impl App {
     /// presentation, UI input ownership, or advance the presented-frame counter.
     /// Offscreen callers advance simulation explicitly; snapshot rendering never
     /// consumes wall-clock time or runs an extra gameplay update.
-    #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
     pub(crate) fn draw_frame(
         &mut self,
         offscreen: Option<voxy_render::SceneViewTargets<'_>>,
@@ -882,7 +881,6 @@ impl App {
         Ok(())
     }
 
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     pub(crate) fn view_pointer(
         &mut self,
         cursor: Vec2,
@@ -915,7 +913,6 @@ impl App {
         }
     }
 
-    #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
     pub(crate) fn cursor_in_viewport(&self, cursor: Vec2) -> bool {
         let Some(window) = &self.window else {
             return false;

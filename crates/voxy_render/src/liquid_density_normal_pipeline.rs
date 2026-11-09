@@ -38,7 +38,6 @@ impl LiquidDensityNormalInput {
         let topology = crate::LiquidPairTopology::new(particles.len(), pairs)?;
         Self::with_topology(particles, materials, &topology, h, kernel, support, None)
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn new_with_pressure(
         particles: &[LiquidDensityParticle],
         materials: &[u32],
@@ -59,7 +58,6 @@ impl LiquidDensityNormalInput {
             Some(laws),
         )
     }
-    #[allow(clippy::too_many_arguments)]
     pub(crate) fn with_topology(
         particles: &[LiquidDensityParticle],
         materials: &[u32],

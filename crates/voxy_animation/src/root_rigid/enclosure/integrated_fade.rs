@@ -139,7 +139,6 @@ impl RootRigidCertifiedFadeInterval {
 
     /// Integrates one continuous key-free interval in an explicitly common
     /// frame. None is the frozen interruption source. No animator is published.
-    #[allow(clippy::too_many_arguments)]
     pub fn integrate(
         source: Option<RootRigidMappedField<'_>>,
         target: RootRigidMappedField<'_>,
@@ -190,7 +189,6 @@ impl RootRigidCertifiedFadeInterval {
     /// Integrates a fade and target-only completion in one canonical trajectory
     /// and error accumulator. Domains must cut exactly at the stored fade end;
     /// continuation mappings must already retain the original target frame.
-    #[allow(clippy::too_many_arguments)]
     pub fn integrate_partitioned_with_completion(
         domains: &[RootRigidFadeDomain<'_>],
         weights: [f64; 2],

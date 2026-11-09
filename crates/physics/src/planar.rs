@@ -142,7 +142,6 @@ pub fn planar_2d_impulse_with_coulomb_friction(
 }
 
 #[cfg(test)]
-#[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
     #[test]

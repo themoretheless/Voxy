@@ -380,7 +380,6 @@ impl Circulation {
     /// Invalid inventories, failed flow or transport preserve circuit and protein.
     /// No protein production, binding, diffusion or red-cell/plasma partition is
     /// inferred; this treats each blood compartment as a homogeneous fluid.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_with_protein(
         &mut self,
         protein_kg: &mut [f64],
@@ -403,7 +402,6 @@ impl Circulation {
     /// this method does not infer concentration from fluid transfer.
     /// # Errors
     /// Invalid/depleting exchange or any flow/transport error preserves all inputs.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_with_protein_exchange(
         &mut self,
         protein_kg: &mut [f64],

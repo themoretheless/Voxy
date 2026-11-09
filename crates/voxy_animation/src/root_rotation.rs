@@ -1161,7 +1161,6 @@ impl RootRotationCurve {
             .sample((time - from.time) / (to.time - from.time))
     }
 
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     fn cycle_phase(&self, time: f64) -> Result<(u64, f64), AnimationError> {
         let proof = crate::enclose_root_cycle_phase(time, self.0.duration as f32, self.0.playback)
             .map_err(|error| {
@@ -1201,7 +1200,6 @@ impl RootRotationCurve {
     /// Bounds output to 1..=4096 spans. Invalid time, a singular quaternion, or
     /// exhausted span/subdivision work rejects the whole request without a prefix.
     // Exact equality assigns STEP boundaries once; epsilon comparisons duplicate events.
-    #[allow(clippy::float_cmp, clippy::too_many_lines)]
     pub fn path(
         &self,
         start: f64,
@@ -1428,14 +1426,12 @@ fn restrict(shape: &Shape, start: f64, end: f64) -> Result<Shape, AnimationError
 fn bezier(c: [DVec4; 4], t: f64) -> DVec4 {
     split(c, t).0[3]
 }
-#[allow(clippy::many_single_char_names)]
 fn bezier_derivative(c: [DVec4; 4], t: f64) -> DVec4 {
     let a = (c[1] - c[0]) * 3.;
     let b = (c[2] - c[1]) * 3.;
     let d = (c[3] - c[2]) * 3.;
     a.lerp(b, t).lerp(b.lerp(d, t), t)
 }
-#[allow(clippy::many_single_char_names)]
 fn split(c: [DVec4; 4], t: f64) -> ([DVec4; 4], [DVec4; 4]) {
     let a = c[0].lerp(c[1], t);
     let b = c[1].lerp(c[2], t);

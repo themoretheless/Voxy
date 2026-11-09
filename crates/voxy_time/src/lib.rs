@@ -215,7 +215,6 @@ impl<const N: usize> FrameLatencyWindow<N> {
 
     /// Records a frame duration in seconds and returns `true` if it exceeded $2\times$ the current rolling mean.
     #[inline]
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     pub fn record_seconds(&mut self, dt_seconds: f64) -> bool {
         if !dt_seconds.is_finite() || dt_seconds < 0.0 {
             return false;
@@ -266,7 +265,6 @@ impl<const N: usize> FrameLatencyWindow<N> {
 
     #[inline]
     #[must_use]
-    #[allow(clippy::cast_possible_truncation)]
     pub const fn mean_micros(&self) -> u32 {
         if self.filled == 0 {
             return 0;
@@ -342,7 +340,6 @@ impl FrameWorkBudget {
 }
 
 #[cfg(test)]
-#[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
     #[test]

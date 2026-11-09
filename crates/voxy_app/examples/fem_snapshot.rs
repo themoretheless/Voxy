@@ -36,7 +36,6 @@ fn coupon() -> Result<QuadraticBody, Box<dyn std::error::Error>> {
 }
 use glam::Vec3;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
-#[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args()
         .nth(1)

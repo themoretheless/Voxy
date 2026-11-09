@@ -16,11 +16,7 @@
 //! Capture deterministic PNG snapshot:
 //!   `cargo run -p voxy_app --example bodycam -- --snapshot /tmp/voxy-bodycam-preview.png`
 
-#![allow(
-    clippy::cast_precision_loss,
-    clippy::cast_possible_truncation,
-    dead_code
-)]
+#![allow(dead_code)]
 
 use std::{path::PathBuf, sync::Arc, time::Instant};
 
@@ -259,7 +255,6 @@ impl Default for BodycamDemo {
     }
 }
 
-#[allow(clippy::too_many_lines)]
 pub(crate) fn build_tactical_compound_chunks() -> Result<Vec<voxy_runtime::BootstrapChunk>, String>
 {
     let scene = build_procedural_scene(0x56_4f_58_59, 1).map_err(|e| e.to_string())?;

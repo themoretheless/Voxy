@@ -1078,7 +1078,6 @@ impl LymphNetwork {
         self.step_with_pressure_and_flux_laws_order(seconds, max_step_seconds, false, law, flux)
     }
     /// Conservative SSPRK2 when selected; caller-owned callback effects require staging.
-    #[allow(clippy::too_many_arguments)]
     pub(crate) fn step_with_pressure_and_flux_laws_order<F, G>(
         &mut self,
         seconds: f64,

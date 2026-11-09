@@ -167,7 +167,6 @@ impl GpuLightingProgram {
     /// Returns 32,768 packed light bytes for the inner 32x32x32 chunk: `(sky << 4) | block`.
     /// # Errors
     /// Returns an error if input arrays have invalid length or execution fails.
-    #[allow(clippy::similar_names)]
     pub fn propagate(
         &self,
         queue: &wgpu::Queue,

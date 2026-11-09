@@ -15,7 +15,6 @@ use winit::{
 };
 
 // Independent probe modes and observed lifecycle conditions.
-#[allow(clippy::struct_excessive_bools)]
 #[derive(Default)]
 struct Demo {
     window: Option<Arc<Window>>,
@@ -196,7 +195,6 @@ fn ray_mesh(surface: &SceneMesh) -> Result<SceneMesh, Box<dyn std::error::Error>
 fn experimental() -> wgpu::ExperimentalFeatures {
     unsafe { wgpu::ExperimentalFeatures::enabled() }
 }
-#[allow(clippy::cast_precision_loss)]
 fn center_depth(
     current_camera: Mat4,
     previous_camera: Mat4,
@@ -386,7 +384,6 @@ impl Demo {
         self.window = Some(window);
         Ok(())
     }
-    #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
     fn draw(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         if self.suspended {
             return Ok(());
@@ -936,7 +933,7 @@ impl ApplicationHandler for Demo {
         self.configured_size = Some([0, 0]);
         event_loop.set_control_flow(ControlFlow::Wait);
     }
-    #[allow(clippy::too_many_lines)] // Window lifecycle and demo controls are dispatched together.
+    // Window lifecycle and demo controls are dispatched together.
     fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         let result = (|| -> Result<(), Box<dyn std::error::Error>> {
             match event {
@@ -1090,7 +1087,7 @@ impl ApplicationHandler for Demo {
         }
     }
 }
-#[allow(clippy::too_many_lines)] // CLI, event-loop completion and profile readback orchestration.
+// CLI, event-loop completion and profile readback orchestration.
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut smoke = false;
     let mut profile = false;
@@ -1203,7 +1200,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let delta = timestamp(end)
                     .checked_sub(timestamp(start))
                     .ok_or("nonmonotonic GPU timestamps")?;
-                #[allow(clippy::cast_precision_loss)]
                 // Timestamp conversion to milliseconds is approximate.
                 let milliseconds = delta as f64 * period;
                 values.push(milliseconds);

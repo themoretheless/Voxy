@@ -59,7 +59,6 @@ fn layout(n: usize, e: usize, limit: usize) -> Result<(usize, usize, usize), Gpu
     Ok((force_base, output_base, total_words))
 }
 
-#[allow(clippy::cast_possible_truncation)]
 fn pack(
     snapshot: &TissueSearchSnapshot,
     direction: &[[f64; 3]],
@@ -233,7 +232,6 @@ impl GpuTissueProgram {
     /// Evaluates the rest-material search action on the GPU.
     /// # Errors
     /// Returns an error if input validation fails, buffers exceed limits, or execution fails.
-    #[allow(clippy::cast_possible_truncation)]
     pub fn tissue_search_action(
         &self,
         queue: &wgpu::Queue,

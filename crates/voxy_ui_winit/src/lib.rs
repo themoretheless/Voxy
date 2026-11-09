@@ -23,7 +23,7 @@ impl Default for UiDispatch {
     }
 }
 #[derive(Debug)]
-#[allow(clippy::struct_excessive_bools)] // Independent native focus/key/modifier states.
+// Independent native focus/key/modifier states.
 pub struct WindowUi {
     pointer: PointerRouter,
     focus: FocusRouter,
@@ -135,7 +135,7 @@ impl WindowUi {
     /// Pixel events are physical pixels; line events use configured logical units.
     /// # Errors
     /// Rejects invalid/nonfinite input or conversion overflow.
-    #[allow(clippy::cast_possible_truncation)] // Converted coordinates validated below.
+    // Converted coordinates validated below.
     pub fn wheel_delta(&self, delta: MouseScrollDelta) -> Result<[f32; 2], UiError> {
         let values = match delta {
             MouseScrollDelta::LineDelta(x, y) => [
@@ -163,7 +163,7 @@ impl WindowUi {
         self.update_cursor();
         Ok(())
     }
-    #[allow(clippy::cast_possible_truncation)] // PointerRouter rejects nonfinite projected coordinates.
+    // PointerRouter rejects nonfinite projected coordinates.
     fn update_cursor(&mut self) -> bool {
         self.pointer.move_to(
             self.physical_cursor

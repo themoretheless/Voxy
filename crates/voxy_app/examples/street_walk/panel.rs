@@ -131,7 +131,6 @@ impl Panel {
     pub fn wants_pointer(&self) -> bool {
         self.visible && (self.ctx.is_pointer_over_egui() || self.ctx.egui_wants_pointer_input())
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn draw(
         &mut self,
         window: &Window,

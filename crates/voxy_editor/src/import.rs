@@ -119,7 +119,6 @@ fn observe(
 /// Bounded import: static material nodes/textures or explicit skeletal/clip data
 /// through the renderer's model parser. Skeletal previews use the bind pose;
 /// unsupported material maps, morphs and interpolation reject in that parser.
-#[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
 pub(crate) fn load(
     source: &SourcePath,
     provider: &FileInputs,

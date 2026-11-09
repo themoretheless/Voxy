@@ -1,5 +1,4 @@
 // Exact comparisons verify unchanged values and invariant particle masses.
-#![allow(clippy::float_cmp)]
 use physics::liquid::{Config, Container, Error, Liquid, Material, Particle, WallAdhesion};
 
 fn fluid(x: f64) -> Liquid {

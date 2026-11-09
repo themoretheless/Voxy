@@ -285,7 +285,6 @@ impl SceneSkinner {
 
     /// Allocate independently weighted morph state with the same geometry/palette
     /// transaction as skeletal instances. Initial preview uses the exact CPU sum.
-    #[allow(clippy::too_many_arguments)]
     pub fn create_morph_instance(
         &self,
         renderer: &SceneRenderer,
@@ -302,7 +301,6 @@ impl SceneSkinner {
         self.create_instance_internal(renderer, source, joints, Some(weights), color, live, budget)
     }
 
-    #[allow(clippy::too_many_arguments)]
     fn create_instance_internal(
         &self,
         renderer: &SceneRenderer,

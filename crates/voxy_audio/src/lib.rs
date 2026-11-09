@@ -324,7 +324,7 @@ impl Mixer {
                     }
                 }
             }
-            #[allow(clippy::cast_possible_truncation)] // Clamped normalized output.
+            // Clamped normalized output.
             for channel in 0..2 {
                 frame[channel] = sum[channel].clamp(-1.0, 1.0) as f32;
             }
@@ -340,7 +340,7 @@ fn valid_gain(gain: f32) -> Result<(), AudioError> {
 }
 
 #[cfg(test)]
-#[allow(clippy::float_cmp)] // Exact PCM copy, zero and saturation are contractual here.
+// Exact PCM copy, zero and saturation are contractual here.
 mod tests {
     use super::*;
     fn clip(frames: Vec<[f32; 2]>) -> Clip {

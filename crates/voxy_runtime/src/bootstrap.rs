@@ -32,7 +32,6 @@ pub struct BootstrapChunk {
 /// # Errors
 ///
 /// Returns registry, generation, or meshing failures without mutating global state.
-#[allow(clippy::too_many_lines)]
 pub fn build_bootstrap_scene(seed: u64, radius: i32) -> Result<BootstrapScene, BootstrapError> {
     build_scene(seed, radius, false)
 }
@@ -85,7 +84,6 @@ fn build_scene(seed: u64, radius: i32, procedural: bool) -> Result<BootstrapScen
     })
 }
 
-#[allow(clippy::too_many_lines)]
 fn build_scene_using_generator(
     seed: u64,
     radius: i32,

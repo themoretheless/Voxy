@@ -157,7 +157,6 @@ impl App {
         }
     }
 
-    #[allow(clippy::too_many_lines)]
     pub(crate) fn edit_key(&mut self, key: KeyCode) -> Result<(), Box<dyn std::error::Error>> {
         if self.retarget_draft.is_some() {
             if key == KeyCode::Escape {
@@ -741,7 +740,6 @@ impl App {
         }
     }
 
-    #[allow(clippy::too_many_lines)]
     pub(crate) fn field_key(
         &mut self,
         key: KeyCode,

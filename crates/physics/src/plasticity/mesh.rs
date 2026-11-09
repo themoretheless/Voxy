@@ -157,7 +157,7 @@ impl Body {
     /// start from the last accepted plastic states, never previous trial states.
     /// # Errors
     /// Rejects invalid inputs, singular supports/tangents, inversion and overflow.
-    #[allow(clippy::too_many_lines)] // Keep trial acceptance and atomic history commit together.
+    // Keep trial acceptance and atomic history commit together.
     pub fn equilibrate(
         &mut self,
         loads: &[Vec3],
@@ -387,7 +387,7 @@ fn reduced(v: &[Vec3], dofs: &[[Option<usize>; 3]], count: usize) -> Vec<f64> {
     }
     result
 }
-#[allow(clippy::float_cmp)] // Exact structural zeros: skipping them preserves Gaussian elimination.
+// Exact structural zeros: skipping them preserves Gaussian elimination.
 fn solve_dense(mut a: Vec<Vec<f64>>, mut b: Vec<f64>) -> Result<Vec<f64>, &'static str> {
     let scale = a.iter().flatten().fold(0_f64, |x, v| x.max(v.abs()));
     for i in 0..b.len() {

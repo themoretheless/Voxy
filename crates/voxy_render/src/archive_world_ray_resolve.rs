@@ -350,7 +350,6 @@ fn original_groups(
 }
 
 impl ArchiveWorldRayRegion {
-    #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         device: &wgpu::Device,
         camera: &crate::ComputeStorage,

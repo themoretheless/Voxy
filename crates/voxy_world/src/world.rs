@@ -275,7 +275,6 @@ impl World {
     ///
     /// The entire transaction is rejected on limits, duplicate targets, missing chunks,
     /// revision conflicts, unknown blocks, or counter overflow.
-    #[allow(clippy::too_many_lines)]
     pub fn commit(&mut self, mut txn: EditTxn) -> Result<CommitReceipt, CommitError> {
         if txn.writes.is_empty() {
             return Err(CommitError::EmptyTransaction);

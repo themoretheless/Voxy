@@ -789,7 +789,6 @@ impl Liquid {
     }
 }
 
-#[allow(clippy::cast_possible_truncation)]
 fn cell(position: [f64; 3], h: f64) -> Result<[i64; 3], Error> {
     let mut result = [0; 3];
     for axis in 0..3 {

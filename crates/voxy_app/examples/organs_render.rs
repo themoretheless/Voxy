@@ -4,7 +4,6 @@ use voxy_model::{ModelAsset, ModelLimits};
 use voxy_render::SceneMesh;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
-#[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root =
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets/anatomy/hra-female");

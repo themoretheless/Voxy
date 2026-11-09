@@ -28,7 +28,6 @@ pub enum StreamlineError {
 
 #[derive(Clone, Copy, Debug, Default)]
 // Independent SDK plugin selections, rather than lifecycle state flags.
-#[allow(clippy::struct_excessive_bools)]
 pub struct StreamlineFeatures {
     pub super_resolution: bool,
     pub frame_generation: bool,
@@ -84,7 +83,6 @@ impl DlssQuality {
     ///
     /// # Errors
     /// Rejects zero or `u32::MAX` output dimensions.
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     pub fn recommended_render_size(
         self,
         output: DlssRenderSize,
@@ -267,7 +265,6 @@ impl CameraConstants {
     /// # Errors
     /// Rejects nonfinite/singular transforms and invalid perspective parameters.
     // Affine view matrices require an exact homogeneous bottom row.
-    #[allow(clippy::float_cmp)]
     pub fn from_perspective(frame: &PerspectiveFrame) -> Result<Self, StreamlineError> {
         if frame.view.x_axis.w != 0.0
             || frame.view.y_axis.w != 0.0
@@ -376,7 +373,7 @@ impl RayReconstructionOptions {
     /// Convert the engine's rigid right-handed view matrix to SDK convention.
     /// # Errors
     /// Rejects SDR, empty output, nonfinite, singular, scaled, mirrored or projective views.
-    #[allow(clippy::float_cmp)] // Exact affine bottom row is required by this camera contract.
+    // Exact affine bottom row is required by this camera contract.
     pub fn from_view(
         quality: DlssQuality,
         output: DlssRenderSize,

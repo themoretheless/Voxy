@@ -73,7 +73,7 @@ impl XrayRegion {
     /// Smoothstep weight; uses f64 distance to avoid f32 subtraction overflow.
     /// # Errors
     /// Rejects nonfinite sample positions.
-    #[allow(clippy::cast_possible_truncation)] // Smoothstep is bounded to [0, 1].
+    // Smoothstep is bounded to [0, 1].
     pub fn weight(&self, position: glam::Vec3) -> Result<f32, XrayError> {
         if !position.is_finite() {
             return Err(XrayError::InvalidPosition);
@@ -266,7 +266,6 @@ impl XrayEffect {
 }
 #[cfg(test)]
 // These tests assert exact boundary weights and unchanged material values.
-#[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
     #[test]

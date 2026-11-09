@@ -540,7 +540,6 @@ impl ModelAsset {
     }
 
     // Node indices are bounded to MAX_JOINTS above.
-    #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
     fn parse_internal(
         source: &[u8],
         buffers: &[&[u8]],
@@ -1191,7 +1190,6 @@ fn animation_values<T: Copy>(
 }
 
 // Values are checked nonnegative and normalized into the u16 range.
-#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 fn quantize_weights(weights: [f32; 4]) -> Result<[u16; 4], ModelError> {
     if weights.iter().any(|w| !w.is_finite() || *w < 0.) {
         return Err(fail("invalid skin weights"));
@@ -2266,7 +2264,6 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::cast_possible_truncation)]
     fn embedded_glb_matches_explicit_buffers() {
         let (json, mut bytes) = fixture();
         let mut json = json.replace("\"uri\":\"model.bin\",", "").into_bytes();

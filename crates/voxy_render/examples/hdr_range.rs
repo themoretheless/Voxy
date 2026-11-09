@@ -1,7 +1,6 @@
 //! Float readback of low-light precision and HDR exposure overflow.
 use voxy_render::TextureBlit;
 
-#[allow(clippy::too_many_lines)]
 fn verify(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -148,7 +147,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     })
 }
 
-#[allow(clippy::too_many_lines)]
 fn resolve_half(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

@@ -69,7 +69,6 @@ impl RootRigidFadePlan {
     /// the supplied compile context reproduces every path/error/field bit first.
     /// # Errors
     /// Rejects missing revisions, mismatched certificates and caller admission limits.
-    #[allow(clippy::too_many_arguments)]
     pub fn checkpoint_original_sources(
         &self,
         motion: &RootRigidCertifiedFadeInterval,

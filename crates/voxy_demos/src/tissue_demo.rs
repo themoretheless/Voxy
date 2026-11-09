@@ -1135,7 +1135,6 @@ impl TissueDemo {
         }
         Ok(())
     }
-    #[allow(clippy::cast_possible_truncation)]
     pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         if let Some(b) = &self.biomechanics {
             return b.mesh();

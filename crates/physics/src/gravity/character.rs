@@ -119,7 +119,6 @@ fn rebase(state: &mut State) -> Result<(), Error> {
         {
             return Err(Error::CoordinateOverflow);
         }
-        #[allow(clippy::cast_possible_truncation)]
         let integer = shift as i64;
         let anchor = match k {
             0 => &mut state.anchor.x,
@@ -271,7 +270,6 @@ pub struct SphereWorld<'a> {
     pub surfaces: &'a [SurfaceSphere],
 }
 impl CollisionWorld for SphereWorld<'_> {
-    #[allow(clippy::cast_precision_loss)]
     fn sweep(
         &self,
         state: &State,

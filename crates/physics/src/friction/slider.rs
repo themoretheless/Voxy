@@ -61,7 +61,6 @@ impl Material {
     /// # Errors
     /// Invalid mass/area/time, non-tangential velocity, inconsistent contact pose,
     /// open contact, overflow, or actual stored momentum/energy balance failure.
-    #[allow(clippy::too_many_arguments)]
     pub fn advance_slider(
         &self,
         old: &State,

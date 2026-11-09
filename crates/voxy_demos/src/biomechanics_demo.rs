@@ -80,7 +80,6 @@ impl BiomechanicsDemo {
             if converged { "equilibrium" } else { "solving" }
         )
     }
-    #[allow(clippy::cast_possible_truncation)]
     pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();

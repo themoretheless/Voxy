@@ -2,7 +2,6 @@
 use glam::{Mat4, Vec2};
 use voxy_render::{SceneDraw, SceneRenderer, Sprite, SpriteBatch};
 use voxy_ui::{Axis, HitRegion, LayoutItem, Length, PointerRouter, WidgetId, layout_linear};
-#[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter =
