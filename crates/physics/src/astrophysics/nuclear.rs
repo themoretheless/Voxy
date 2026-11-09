@@ -441,3 +441,40 @@ impl Network {
         ))
     }
 }
+
+/// Evaluates the non-resonant thermonuclear Gamow-peak reaction rate factor
+/// $\propto T_9^{-2/3} \exp\left(-\tau / T_9^{1/3}\right)$ where $\tau = 4.2487 \left(Z_1^2 Z_2^2 \mu_A\right)^{1/3}$
+/// and $T_9 = T / 10^9\text{ K}$.
+pub fn gamow_peak_reaction_rate_factor(
+    temp_k: f64,
+    z1: u32,
+    z2: u32,
+    reduced_mass_amu: f64,
+) -> Option<f64> {
+    if !temp_k.is_finite()
+        || !reduced_mass_amu.is_finite()
+        || temp_k <= 0.0
+        || z1 == 0
+        || z2 == 0
+        || reduced_mass_amu <= 0.0
+    {
+        return None;
+    }
+    let t9 = temp_k * 1e-9;
+    let z_prod = f64::from(z1) * f64::from(z2);
+    let tau = 4.2487 * (z_prod * z_prod * reduced_mass_amu).cbrt() / t9.cbrt();
+    let factor = t9.powf(-2.0 / 3.0) * (-tau).exp();
+    factor.is_finite().then_some(factor)
+}
+
+#[cfg(test)]
+mod gamow_tests {
+    use super::*;
+
+    #[test]
+    fn gamow_reaction_rate_factor_rises_steeply_with_core_temperature() {
+        let solar = gamow_peak_reaction_rate_factor(1.5e7, 1, 1, 0.5).unwrap();
+        let hotter = gamow_peak_reaction_rate_factor(3.0e7, 1, 1, 0.5).unwrap();
+        assert!(hotter > solar && solar > 0.0);
+    }
+}

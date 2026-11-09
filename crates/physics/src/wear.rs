@@ -203,6 +203,33 @@ pub fn miner_fatigue_damage(
     Ok(damage)
 }
 
+/// Evaluates the local Archard abrasive wear depth increment
+/// $\Delta h = k \frac{P_n v_{\text{slide}} \Delta t}{H}$ in meters (`m`).
+#[must_use]
+pub fn archard_abrasive_wear_depth_m(
+    normal_pressure_pa: f64,
+    sliding_speed_m_s: f64,
+    hardness_pa: f64,
+    wear_coeff_k: f64,
+    dt_s: f64,
+) -> Option<f64> {
+    if !normal_pressure_pa.is_finite()
+        || !sliding_speed_m_s.is_finite()
+        || !hardness_pa.is_finite()
+        || !wear_coeff_k.is_finite()
+        || !dt_s.is_finite()
+        || normal_pressure_pa < 0.0
+        || sliding_speed_m_s < 0.0
+        || hardness_pa <= 0.0
+        || wear_coeff_k < 0.0
+        || dt_s < 0.0
+    {
+        return None;
+    }
+    let dh = wear_coeff_k * (normal_pressure_pa / hardness_pa) * sliding_speed_m_s * dt_s;
+    dh.is_finite().then_some(dh)
+}
+
 #[cfg(test)]
 mod miner_tests {
     use super::*;
@@ -212,5 +239,7 @@ mod miner_tests {
         let d = miner_fatigue_damage(&[500, 250], &[1000, 1000]).unwrap();
         assert!((d - 0.75).abs() < 1e-12);
         assert!(miner_fatigue_damage(&[10], &[0]).is_err());
+        let dh = archard_abrasive_wear_depth_m(1e6, 2.0, 1e9, 1e-4, 0.5).unwrap();
+        assert!((dh - 1e-7).abs() < 1e-16);
     }
 }

@@ -277,4 +277,12 @@ fn player_keeps_phase_across_parameter_change() {
     assert!((player.phase() - 0.75).abs() < 1e-9);
     assert!(player.advance(Vec2::ZERO, -0.1).is_err());
     player.pose(&rig).unwrap();
+    let bary =
+        blend_space_delaunay_barycentrics_2d([0.2, 0.2], [0.0, 0.0], [1.0, 0.0], [0.0, 1.0])
+            .unwrap();
+    assert!((bary[0] - 0.6).abs() < 1e-6);
+    assert!(
+        blend_space_delaunay_barycentrics_2d([2.0, 2.0], [0.0, 0.0], [1.0, 0.0], [0.0, 1.0])
+            .is_none()
+    );
 }

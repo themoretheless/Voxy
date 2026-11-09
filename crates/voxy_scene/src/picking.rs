@@ -18,6 +18,36 @@ impl PickBounds {
         let area = 2.0 * (d.x * d.y + d.y * d.z + d.z * d.x);
         area.is_finite().then_some(area)
     }
+
+    /// Computes a deterministic 30-bit 3D Morton code (10 bits per axis) for the centroid of `self`
+    /// normalized inside `scene_min..=scene_max`, returning `None` if bounds are invalid or degenerate.
+    #[must_use]
+    pub fn centroid_morton_code(self, scene_min: Vec3, scene_max: Vec3) -> Option<u32> {
+        if !self.min.is_finite()
+            || !self.max.is_finite()
+            || self.min.cmpgt(self.max).any()
+            || !scene_min.is_finite()
+            || !scene_max.is_finite()
+            || scene_min.cmpge(scene_max).any()
+        {
+            return None;
+        }
+        let centroid = 0.5 * (self.min + self.max);
+        let extent = scene_max - scene_min;
+        let norm = ((centroid - scene_min) / extent).clamp(Vec3::ZERO, Vec3::ONE);
+        let qx = (norm.x * 1023.0).round() as u32;
+        let qy = (norm.y * 1023.0).round() as u32;
+        let qz = (norm.z * 1023.0).round() as u32;
+        fn expand_bits_10(mut v: u32) -> u32 {
+            v &= 0x0000_03ff;
+            v = (v | (v << 16)) & 0x0300_00ff;
+            v = (v | (v << 8)) & 0x0300_f00f;
+            v = (v | (v << 4)) & 0x030c_30c3;
+            v = (v | (v << 2)) & 0x0924_9249;
+            v
+        }
+        Some(expand_bits_10(qx) | (expand_bits_10(qy) << 1) | (expand_bits_10(qz) << 2))
+    }
 }
 
 /// Evaluates the Surface Area Heuristic (SAH) cost for splitting a parent bounding box into two child partitions.
@@ -425,5 +455,24 @@ mod tests {
         let cost = sah_split_cost(10.0, 4.0, 5, 4.0, 5, 1.0, 2.0).unwrap();
         assert!((cost - 9.0).abs() < 1e-6);
         assert!(sah_split_cost(0.0, 4.0, 5, 4.0, 5, 1.0, 2.0).is_none());
+        assert_eq!(
+            PickBounds {
+                min: Vec3::ZERO,
+                max: Vec3::ZERO,
+                layers: 1
+            }
+            .centroid_morton_code(Vec3::ZERO, Vec3::splat(10.0)),
+            Some(0)
+        );
+        assert_eq!(
+            PickBounds {
+                min: Vec3::splat(10.0),
+                max: Vec3::splat(10.0),
+                layers: 1
+            }
+            .centroid_morton_code(Vec3::ZERO, Vec3::splat(10.0)),
+            Some(0x3fff_ffff)
+        );
+        assert!(unit.centroid_morton_code(Vec3::ONE, Vec3::ZERO).is_none());
     }
 }

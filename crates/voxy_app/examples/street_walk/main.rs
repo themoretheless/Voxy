@@ -108,6 +108,7 @@ struct App {
     wetness: Option<f32>,
     puddle_coverage: f32,
     fov_degrees: f32,
+    exposure_bias_ev: f32,
     pitch: Option<f32>,
     /// `--spawn pool` starts at the garden gate overlooking the villa pool.
     spawn_pool: bool,
@@ -221,6 +222,7 @@ impl App {
             wetness: value("--wetness").and_then(|v| v.parse().ok()),
             puddle_coverage: 0.45,
             fov_degrees: 65.,
+            exposure_bias_ev: 0.,
             pitch: value("--pitch").and_then(|v| v.parse().ok()),
             spawn_pool: value("--spawn").as_deref() == Some("pool"),
             aa_validation: aa_validation::AaValidation::from_environment(),
@@ -677,6 +679,7 @@ impl App {
         }
         renderer.set_surface_wetness(self.wetness.map(|w| w.clamp(0., 1.)))?;
         renderer.set_puddle_coverage(self.puddle_coverage.clamp(0., 1.))?;
+        renderer.set_exposure_bias_ev(self.exposure_bias_ev);
         renderer.set_display_headroom(headroom.max(1.))?;
         let mode = keep_mode.unwrap_or(self.render.antialiasing);
         renderer.set_antialiasing(mode)?;
@@ -1433,6 +1436,8 @@ impl App {
                     puddle_coverage: &mut self.puddle_coverage,
                     camera_view: &mut view_idx,
                     fov_degrees: &mut self.fov_degrees,
+                    exposure_bias_ev: &mut self.exposure_bias_ev,
+                    flashlight: &mut self.rig.flashlight_enabled,
                     ageing: self.original.then_some(&mut self.ageing),
                     hdri_sky: self.original.then_some(&mut self.hdri_sky),
                     seed_mut: self.original.then_some(&mut self.original_seed),

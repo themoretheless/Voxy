@@ -207,6 +207,58 @@ impl NavigationGrid {
             SearchProgress::Unreachable => Err(NavigationError::Unreachable),
         }
     }
+
+    /// Computes a repulsive clearance potential vector `[rx, ry]` pushing away from blocked cells
+    /// within Chebyshev `max_radius` around `cell` using inverse-square distance weighting.
+    #[must_use]
+    pub fn obstacle_clearance_repulsion(&self, cell: Cell, max_radius: usize) -> [f32; 2] {
+        if self.index(cell).is_err() || max_radius == 0 {
+            return [0.0, 0.0];
+        }
+        let r = max_radius.min(16) as isize;
+        let cx = cell.x as isize;
+        let cy = cell.y as isize;
+        let mut rx = 0.0_f32;
+        let mut ry = 0.0_f32;
+        for dy in -r..=r {
+            for dx in -r..=r {
+                if dx == 0 && dy == 0 {
+                    continue;
+                }
+                let nx = cx + dx;
+                let ny = cy + dy;
+                if nx < 0 || ny < 0 || nx >= self.width as isize || ny >= self.height as isize {
+                    continue;
+                }
+                let idx = (ny as usize) * self.width + (nx as usize);
+                if self.blocked[idx] {
+                    let dist_sq = (dx * dx + dy * dy) as f32;
+                    let dist = dist_sq.sqrt();
+                    let weight = 1.0 / (dist_sq * dist);
+                    rx -= (dx as f32) * weight;
+                    ry -= (dy as f32) * weight;
+                }
+            }
+        }
+        [rx, ry]
+    }
+}
+
+/// Evaluates the 8-connected octile distance heuristic $\Delta_{\max} + (\sqrt{2} - 1)\Delta_{\min}$
+/// with a tiny deterministic cross-product tie-breaker relative to `start -> goal`.
+#[must_use]
+pub fn octile_distance_heuristic(current: Cell, goal: Cell, start: Cell) -> f32 {
+    let dx = current.x.abs_diff(goal.x) as f32;
+    let dy = current.y.abs_diff(goal.y) as f32;
+    let d_max = dx.max(dy);
+    let d_min = dx.min(dy);
+    let octile = d_max + (std::f32::consts::SQRT_2 - 1.0) * d_min;
+    let dx1 = current.x as f32 - goal.x as f32;
+    let dy1 = current.y as f32 - goal.y as f32;
+    let dx2 = start.x as f32 - goal.x as f32;
+    let dy2 = start.y as f32 - goal.y as f32;
+    let cross = (dx1 * dy2 - dx2 * dy1).abs();
+    octile + cross * 1e-4
 }
 
 /// Evaluates the Tobler hiking function traversal cost multiplier (`>= 1.0` relative to optimal -5% grade)
@@ -521,5 +573,11 @@ mod tests {
         assert!((flat - 1.0).abs() < 1e-5);
         assert!(gentle_down < flat);
         assert!(steep_up > 3.0);
+        let h_diag = octile_distance_heuristic(cell(0, 0), cell(3, 3), cell(0, 0));
+        assert!((h_diag - 3.0 * std::f32::consts::SQRT_2).abs() < 1e-3);
+        let mut grid = NavigationGrid::new(5, 5, 25).unwrap();
+        grid.set_blocked(cell(1, 2), true).unwrap();
+        let rep = grid.obstacle_clearance_repulsion(cell(2, 2), 2);
+        assert!(rep[0] > 0.5 && rep[1].abs() < 1e-6);
     }
 }

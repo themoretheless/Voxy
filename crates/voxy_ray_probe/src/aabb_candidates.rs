@@ -199,3 +199,86 @@ pub(super) fn probe(
     );
     Ok(())
 }
+
+/// Computes a conservative watertight ray-AABB slab intersection interval `Some((t_near, t_far))`
+/// within `[t_min, t_max]` by inflating the far slab bound by $1 + 2\gamma_3$ machine epsilons
+/// (Ize 2013, "Robust BVH Ray Traversal") to prevent edge/corner crack misses.
+#[allow(dead_code)]
+#[must_use]
+pub fn watertight_aabb_slab_t_interval(
+    b_min: [f32; 3],
+    b_max: [f32; 3],
+    origin: [f32; 3],
+    direction: [f32; 3],
+    t_min: f32,
+    t_max: f32,
+) -> Option<(f32, f32)> {
+    if b_min.iter().any(|v| !v.is_finite())
+        || b_max.iter().any(|v| !v.is_finite())
+        || origin.iter().any(|v| !v.is_finite())
+        || direction.iter().any(|v| !v.is_finite())
+        || !t_min.is_finite()
+        || !t_max.is_finite()
+        || t_min > t_max
+    {
+        return None;
+    }
+    let gamma3 = (3.0 * f32::EPSILON) / (1.0 - 3.0 * f32::EPSILON);
+    let far_pad = 1.0 + 2.0 * gamma3;
+    let mut lo = t_min;
+    let mut hi = t_max;
+    for axis in 0..3 {
+        if b_min[axis] > b_max[axis] {
+            return None;
+        }
+        let d = direction[axis];
+        let o = origin[axis];
+        if d == 0.0 {
+            if o < b_min[axis] || o > b_max[axis] {
+                return None;
+            }
+        } else {
+            let inv_d = 1.0 / d;
+            let t0 = (b_min[axis] - o) * inv_d;
+            let t1 = (b_max[axis] - o) * inv_d;
+            let near = t0.min(t1);
+            let far = t0.max(t1) * far_pad;
+            lo = lo.max(near);
+            hi = hi.min(far);
+            if lo > hi {
+                return None;
+            }
+        }
+    }
+    Some((lo, hi))
+}
+
+#[cfg(test)]
+mod watertight_slab_tests {
+    use super::*;
+
+    #[test]
+    fn watertight_aabb_slab_t_interval_hits_grazing_edge_and_rejects_misses() {
+        let hit = watertight_aabb_slab_t_interval(
+            [-1.0, -1.0, -1.0],
+            [1.0, 1.0, 1.0],
+            [1.0, 1.0, -5.0],
+            [0.0, 0.0, 1.0],
+            0.0,
+            100.0,
+        )
+        .unwrap();
+        assert!((hit.0 - 4.0).abs() < 1e-5 && (hit.1 - 6.0).abs() < 1e-4);
+        assert!(
+            watertight_aabb_slab_t_interval(
+                [-1.0, -1.0, -1.0],
+                [1.0, 1.0, 1.0],
+                [2.0, 0.0, -5.0],
+                [0.0, 0.0, 1.0],
+                0.0,
+                100.0,
+            )
+            .is_none()
+        );
+    }
+}

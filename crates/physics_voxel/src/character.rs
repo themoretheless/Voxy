@@ -544,3 +544,40 @@ pub fn step_character_with_wear(
     };
     Ok(report)
 }
+
+/// Evaluates whether a character whose feet are at `foot_y` can step up onto a ledge at
+/// `obstacle_top_y` within `(0, max_step_height]` when `headroom_clear` is true, returning
+/// the positive vertical step-up clearance height.
+#[must_use]
+pub fn stair_step_up_clearance_height(
+    foot_y: f64,
+    obstacle_top_y: f64,
+    max_step_height: f64,
+    headroom_clear: bool,
+) -> Option<f64> {
+    if !headroom_clear
+        || !foot_y.is_finite()
+        || !obstacle_top_y.is_finite()
+        || !max_step_height.is_finite()
+        || max_step_height <= 0.0
+    {
+        return None;
+    }
+    let delta = obstacle_top_y - foot_y;
+    (delta > 1e-6 && delta <= max_step_height).then_some(delta)
+}
+
+#[cfg(test)]
+mod step_up_tests {
+    use super::*;
+
+    #[test]
+    fn stair_step_up_accepts_ledges_within_max_height_when_headroom_is_clear() {
+        assert_eq!(
+            stair_step_up_clearance_height(10.0, 10.5, 0.6, true),
+            Some(0.5)
+        );
+        assert!(stair_step_up_clearance_height(10.0, 10.8, 0.6, true).is_none());
+        assert!(stair_step_up_clearance_height(10.0, 10.5, 0.6, false).is_none());
+    }
+}

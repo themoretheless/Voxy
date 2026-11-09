@@ -94,6 +94,8 @@ pub struct Settings<'a> {
     pub puddle_coverage: &'a mut f32,
     pub camera_view: &'a mut u8,
     pub fov_degrees: &'a mut f32,
+    pub exposure_bias_ev: &'a mut f32,
+    pub flashlight: &'a mut bool,
     /// Street seed; editing it regenerates the street.
     pub seed_mut: Option<&'a mut u64>,
     /// Fixed sun elevation in degrees, used while the day cycle is off.
@@ -405,6 +407,14 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     });
     if *s.camera_view <= 1 {
         ui.add(egui::Slider::new(s.fov_degrees, 40.0..=105.).text("угол обзора FOV °"));
+    } else {
+        ui.checkbox(s.flashlight, "Фонарик камеры (F)");
+    }
+    if ui
+        .add(egui::Slider::new(s.exposure_bias_ev, -2.0..=2.0).text("компенсация EV"))
+        .changed()
+    {
+        *s.reconfigure = true;
     }
     render(ui, s.render, s.reconfigure, s.rebuild);
     if let Some(seed) = s.seed_mut.as_deref_mut() {

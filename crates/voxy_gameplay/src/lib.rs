@@ -38,11 +38,12 @@ mod support;
 pub use foot_contact::{
     FootContactCandidate, FootContactCheckpoint, FootContactCheckpointError, FootContactInput,
     FootContactSettings, FootContactState, FootContactStatus, FootPivotTransfer,
+    elastic_support_rebound_velocity,
 };
 pub use staged_tick::{AcceptedCharacterPose, CharacterTickError, CharacterTickPreview};
 pub use support::{
     RayHit, RayQuery, SceneQueries, SupportAnchor, SupportAnchorCheckpoint, SupportContact,
-    SupportProbe, SupportQueryBudget, SupportWorld,
+    SupportProbe, SupportQueryBudget, SupportWorld, slope_traction_acceleration_scale,
 };
 mod audio_assets;
 pub use audio_assets::{
@@ -55,6 +56,7 @@ mod audio_scene;
 pub use audio_scene::{
     AudioBus, AudioListener, AudioListenerSnapshot, AudioSource, AudioSourceSnapshot,
     SceneAudioSnapshot, compute_doppler_pitch_shift, extract_scene_audio,
+    inverse_distance_windowed_attenuation,
 };
 mod ui_text;
 pub use ui_text::{PreparedUiText, decode_ui_font_observed, prepare_ui_text};

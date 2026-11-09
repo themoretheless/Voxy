@@ -40,10 +40,10 @@ pub use blend_phase::{
     ClipPhase, FrozenSourceTick, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval,
 };
 
-pub use ik::fabrik::{FabrikResult, FabrikSettings, IkChain};
+pub use ik::fabrik::{FabrikResult, FabrikSettings, IkChain, fabrik_two_bone_chain_reach};
 pub use ik::full_body::{Effector, FullBodyResult, FullBodyRig, FullBodySettings};
-pub use ik::limits::{JointLimit, swing_twist_angles};
-pub use ik::look_at::{LookAtChain, look_at_error};
+pub use ik::limits::{JointLimit, swing_twist_angles, swing_twist_cone_clamp_quat};
+pub use ik::look_at::{LookAtChain, look_at_error, micro_saccade_gaze_jitter_rad};
 pub use ik::{PlantedLegsResult, TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod rigid_fade;
 pub use rigid_fade::{
@@ -93,10 +93,13 @@ pub use property_track::{
 };
 pub use ragdoll::{
     ContactManifold, MotorSettings, PlaneEnvironment, Ragdoll, RagdollBody, RagdollDesc,
-    RagdollEnvironment, RagdollJoint, RagdollState, powered_blend,
+    RagdollEnvironment, RagdollJoint, RagdollState, powered_blend, spring_bone_verlet_step,
 };
 mod state_machine;
-pub use blend_space2d::{BlendSample2D, BlendSpace2D, BlendSpace2DPlayer, BlendWeights2D};
+pub use blend_space2d::{
+    BlendSample2D, BlendSpace2D, BlendSpace2DPlayer, BlendWeights2D,
+    blend_space_delaunay_barycentrics_2d,
+};
 pub use gait::{
     CoupledPelvisThighFrame, FlatGround, GaitController, GaitFeet, GaitFrame, GaitRegime,
     GaitSettings, GaitSpace, GroundProbe, StrideScaleReport, ThighCapsuleState, ankle_positions,
@@ -2121,6 +2124,93 @@ pub fn clamp_swing_twist_angle(angle_rad: f32, max_cone_rad: f32) -> f32 {
     angle_rad.clamp(-limit, limit)
 }
 
+/// Evaluates one step of Géry Casiez's adaptive $1\text{€}$ (One-Euro) low-pass filter
+/// for jitter-free motion-capture / procedural target tracking at low speeds and low latency at high speeds.
+#[must_use]
+pub fn one_euro_filter_step(
+    prev_filtered: f32,
+    prev_raw: f32,
+    current_raw: f32,
+    dt_s: f32,
+    min_cutoff_hz: f32,
+    beta: f32,
+    d_cutoff_hz: f32,
+) -> f32 {
+    if !prev_filtered.is_finite()
+        || !prev_raw.is_finite()
+        || !current_raw.is_finite()
+        || !dt_s.is_finite()
+        || dt_s <= 0.0
+    {
+        return current_raw;
+    }
+    let alpha = |cutoff_hz: f32| -> f32 {
+        let tau = 1.0 / (std::f32::consts::TAU * cutoff_hz.max(1e-4));
+        1.0 / (1.0 + tau / dt_s)
+    };
+    let dx = (current_raw - prev_raw) / dt_s;
+    let a_d = alpha(d_cutoff_hz);
+    let edx = a_d * dx;
+    let cutoff = min_cutoff_hz.max(1e-4) + beta.max(0.0) * edx.abs();
+    let a = alpha(cutoff);
+    prev_filtered + a * (current_raw - prev_filtered)
+}
+
+/// Evaluates the $C^2$ quintic inertialization decay offset polynomial
+/// $x(t) = (x_0 + v_0 t)(1 - s)^3 (1 + 3s + 6s^2) - v_0 t (1 - s)^3 \cdot 6s^2$ where $s = \text{clamp}(t / T, 0, 1)$.
+#[must_use]
+pub fn inertialization_quintic_decay_offset(
+    initial_offset: f32,
+    initial_vel: f32,
+    elapsed_s: f32,
+    blend_duration_s: f32,
+) -> f32 {
+    inertialize_scalar_transition(initial_offset, initial_vel, blend_duration_s, elapsed_s)
+}
+
+/// Evaluates the asymmetric human bilateral eyelid blink curve in `[0, 1]` over normalized phase
+/// `phase_01` $\in [0, 1]$, where fast downward lid closure occupies `close_speed_ratio` (typically $\approx 0.30$)
+/// of the blink cycle and slower exponential-like opening occupies the remainder.
+#[must_use]
+pub fn bilateral_eyelid_blink_curve(phase_01: f32, close_speed_ratio: f32) -> f32 {
+    if !phase_01.is_finite() || !close_speed_ratio.is_finite() || !(0.0..=1.0).contains(&phase_01) {
+        return 0.0;
+    }
+    let split = close_speed_ratio.clamp(0.05, 0.95);
+    if phase_01 <= split {
+        let u = phase_01 / split;
+        u * u * (3.0 - 2.0 * u)
+    } else {
+        let u = (phase_01 - split) / (1.0 - split);
+        let one_minus_u = (1.0 - u).clamp(0.0, 1.0);
+        one_minus_u * one_minus_u
+    }
+}
+
+/// Evaluates asymmetric exponential moving average (EMA) lip-sync viseme coarticulation weights
+/// across 8 facial viseme channels, applying `attack_rate` when a channel opens toward `target_weights[i]`
+/// and `release_rate` when relaxing.
+#[must_use]
+pub fn coarticulation_ema_viseme_weights(
+    current_weights: &[f32; 8],
+    target_weights: &[f32; 8],
+    attack_rate: f32,
+    release_rate: f32,
+    dt_s: f32,
+) -> [f32; 8] {
+    if !dt_s.is_finite() || dt_s <= 0.0 {
+        return *current_weights;
+    }
+    let a_atk = 1.0 - (-attack_rate.max(0.0) * dt_s).exp();
+    let a_rel = 1.0 - (-release_rate.max(0.0) * dt_s).exp();
+    std::array::from_fn(|i| {
+        let cur = current_weights[i].clamp(0.0, 1.0);
+        let tgt = target_weights[i].clamp(0.0, 1.0);
+        let alpha = if tgt >= cur { a_atk } else { a_rel };
+        (cur + alpha * (tgt - cur)).clamp(0.0, 1.0)
+    })
+}
+
 #[cfg(test)]
 mod n8_animation_math_tests {
     use super::*;
@@ -2128,9 +2218,20 @@ mod n8_animation_math_tests {
     #[test]
     fn inertialize_barycentric_and_swing_twist_clamp_behave_smoothly() {
         assert!((inertialize_scalar_transition(2.0, -1.0, 0.5, 0.0) - 2.0).abs() < 1e-6);
-        assert_eq!(inertialize_scalar_transition(2.0, -1.0, 0.5, 0.5), 0.0);
+        assert_eq!(inertialization_quintic_decay_offset(2.0, -1.0, 0.5, 0.5), 0.0);
         let mid = inertialize_scalar_transition(2.0, 0.0, 1.0, 0.5);
         assert!((mid - 1.0).abs() < 1e-5);
+
+        let filtered = one_euro_filter_step(0.0, 0.0, 1.0, 1.0 / 60.0, 1.0, 0.05, 1.0);
+        assert!(filtered > 0.0 && filtered < 1.0);
+
+        let blink_peak = bilateral_eyelid_blink_curve(0.3, 0.3);
+        assert!((blink_peak - 1.0).abs() < 1e-6);
+        assert!(bilateral_eyelid_blink_curve(0.15, 0.3) > 0.0);
+        assert!(bilateral_eyelid_blink_curve(0.7, 0.3) < 1.0);
+
+        let vis = coarticulation_ema_viseme_weights(&[0.0; 8], &[1.0; 8], 20.0, 8.0, 0.05);
+        assert!(vis[0] > 0.5 && vis[0] < 1.0);
 
         let weights =
             barycentric_blend_space_2d([0.25, 0.25], [0.0, 0.0], [1.0, 0.0], [0.0, 1.0]).unwrap();

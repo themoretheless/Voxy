@@ -1419,6 +1419,26 @@ pub fn capillary_bridge_force_n(
     Ok(force)
 }
 
+/// Evaluates the thermocapillary Marangoni tangential shear stress vector
+/// $\boldsymbol{\tau}_s = \frac{\partial \sigma}{\partial T} \nabla_s T$ in Pascals (`Pa`).
+#[must_use]
+pub fn marangoni_tangential_shear_stress_pa(
+    dsigma_dtemp_n_m_k: f64,
+    temp_grad_k_m: [f64; 2],
+) -> Option<[f64; 2]> {
+    if !dsigma_dtemp_n_m_k.is_finite()
+        || !temp_grad_k_m[0].is_finite()
+        || !temp_grad_k_m[1].is_finite()
+    {
+        return None;
+    }
+    let tau = [
+        dsigma_dtemp_n_m_k * temp_grad_k_m[0],
+        dsigma_dtemp_n_m_k * temp_grad_k_m[1],
+    ];
+    (tau[0].is_finite() && tau[1].is_finite()).then_some(tau)
+}
+
 #[cfg(test)]
 mod capillary_bridge_tests {
     use super::*;
@@ -1429,5 +1449,8 @@ mod capillary_bridge_tests {
         let separated = capillary_bridge_force_n(0.01, 0.072, 0.2, 2e-4, 1e-4).unwrap();
         assert!(contact > separated && separated > 0.0);
         assert!((contact / separated - 2.0).abs() < 1e-9);
+        let tau = marangoni_tangential_shear_stress_pa(-1.5e-4, [100.0, -50.0]).unwrap();
+        assert!((tau[0] - (-0.015)).abs() < 1e-12);
+        assert!((tau[1] - 0.0075).abs() < 1e-12);
     }
 }

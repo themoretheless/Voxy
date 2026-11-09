@@ -160,6 +160,49 @@ impl FogVolume {
         }
         Ok(FogBounds { origin, extent })
     }
+
+    /// Evaluates the integrated optical depth along a ray segment of length `distance_m`
+    /// starting at altitude `start_height_m` and ending at `end_height_m` through an
+    /// exponentially stratified fog medium $\sigma_t(h) = \sigma_{t,0} \exp(-h \cdot \text{height\_falloff\_inv\_m})$.
+    ///
+    /// # Errors
+    ///
+    /// Rejects invalid volume calibration, negative `distance_m`, negative `height_falloff_inv_m`, or non-finite heights.
+    pub fn integrated_height_optical_depth(
+        &self,
+        start_height_m: f64,
+        end_height_m: f64,
+        distance_m: f64,
+        height_falloff_inv_m: f64,
+    ) -> Result<f64, FogError> {
+        self.validate()?;
+        if !start_height_m.is_finite()
+            || !end_height_m.is_finite()
+            || !distance_m.is_finite()
+            || distance_m < 0.0
+            || !height_falloff_inv_m.is_finite()
+            || height_falloff_inv_m < 0.0
+        {
+            return Err(FogError::InvalidCalibration);
+        }
+        if !self.enabled || distance_m == 0.0 || self.extinction_m_inverse == 0.0 {
+            return Ok(0.0);
+        }
+        let dh = end_height_m - start_height_m;
+        let k_dh = height_falloff_inv_m * dh;
+        let base_density = (-height_falloff_inv_m * start_height_m).exp();
+        let average_factor = if k_dh.abs() < 1e-6 {
+            base_density * (1.0 - 0.5 * k_dh + k_dh * k_dh / 6.0)
+        } else {
+            base_density * (1.0 - (-k_dh).exp()) / k_dh
+        };
+        let tau = (self.extinction_m_inverse * distance_m * average_factor).max(0.0);
+        if tau.is_finite() {
+            Ok(tau)
+        } else {
+            Err(FogError::InvalidCalibration)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -302,5 +345,23 @@ mod tests {
         assert_eq!(bounds.boundary_weight([5.0, 5.0, 5.0], 2.0), Ok(1.0));
         let half = bounds.boundary_weight([1.0, 5.0, 5.0], 2.0).unwrap();
         assert!((half - 0.5).abs() < 1e-12);
+    }
+    #[test]
+    fn integrated_height_optical_depth_matches_uniform_and_stratified_limits() {
+        let fog = FogVolume {
+            extinction_m_inverse: 0.2,
+            ..Default::default()
+        };
+        let uniform = fog
+            .integrated_height_optical_depth(10.0, 30.0, 50.0, 0.0)
+            .unwrap();
+        assert!((uniform - 10.0).abs() < 1e-9);
+        let upward = fog
+            .integrated_height_optical_depth(0.0, 20.0, 50.0, 0.1)
+            .unwrap();
+        assert!(upward > 0.0 && upward < uniform);
+        assert!(fog
+            .integrated_height_optical_depth(0.0, 10.0, -1.0, 0.1)
+            .is_err());
     }
 }

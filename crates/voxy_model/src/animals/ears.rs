@@ -129,6 +129,54 @@ pub(super) fn append(mesh: &mut AnatomySurface, a: BreedAnatomy) {
     }
 }
 
+/// Integrates one semi-implicit Euler spring-damper step `(displacement, velocity)` for
+/// secondary ear-tip sway driven by linear head acceleration `head_accel_m_s2`.
+#[must_use]
+pub fn ear_tip_spring_damper_step(
+    displacement: [f32; 3],
+    velocity: [f32; 3],
+    head_accel_m_s2: [f32; 3],
+    stiffness: f32,
+    damping: f32,
+    max_deflection_m: f32,
+    dt_s: f32,
+) -> ([f32; 3], [f32; 3]) {
+    let x = Vec3::from_array(displacement);
+    let v = Vec3::from_array(velocity);
+    let a_head = Vec3::from_array(head_accel_m_s2);
+    if !x.is_finite()
+        || !v.is_finite()
+        || !a_head.is_finite()
+        || !stiffness.is_finite()
+        || !damping.is_finite()
+        || !max_deflection_m.is_finite()
+        || !dt_s.is_finite()
+        || dt_s <= 0.0
+    {
+        return (
+            if x.is_finite() {
+                displacement
+            } else {
+                [0.0; 3]
+            },
+            [0.0; 3],
+        );
+    }
+    let dt = dt_s.clamp(1e-5, 0.1);
+    let k = stiffness.max(0.0);
+    let c = damping.max(0.0);
+    let accel = -a_head * 0.05 - k * x - c * v;
+    let v_next = (v + accel * dt) / (1.0 + c * dt);
+    let x_unclamped = x + v_next * dt;
+    let limit = max_deflection_m.max(1e-4);
+    let x_next = if x_unclamped.length() > limit {
+        x_unclamped.normalize_or_zero() * limit
+    } else {
+        x_unclamped
+    };
+    (x_next.to_array(), v_next.to_array())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -173,6 +221,16 @@ mod tests {
             let centre = Vec3::from(mesh.positions[9 * stride + 10]);
             assert!(rim.z - centre.z > height * 0.1);
         }
+        let (disp, vel) = ear_tip_spring_damper_step(
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 5.0, 0.0],
+            80.0,
+            12.0,
+            0.05,
+            1.0 / 60.0,
+        );
+        assert!(disp[1] < 0.0 && vel[1] < 0.0);
     }
     trait Positions {
         fn map_positions(&self, mesh: &AnatomySurface) -> [Vec3; 3];

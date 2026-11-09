@@ -140,6 +140,16 @@ impl SourcePoller {
         changed
     }
 }
+
+/// Computes an adaptive file-watcher polling interval in milliseconds that stays at `min_ms`
+/// right after a detected modification (`idle_polls == 0`) and backs off exponentially up to `max_ms`.
+#[must_use]
+pub fn adaptive_poll_interval_ms(idle_polls: u32, min_ms: u64, max_ms: u64) -> u64 {
+    let lo = min_ms.max(1);
+    let hi = max_ms.max(lo);
+    let shift = idle_polls.min(16);
+    lo.saturating_mul(1_u64 << shift).clamp(lo, hi)
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -237,6 +247,9 @@ mod tests {
         assert_eq!(poller.poll(9, |_, _| Ok(vec![1])), vec![id("c")]);
         poller.reconcile(&SourceDependencies::new(0, 0)).unwrap();
         assert!(poller.poll(1, |_, _| panic!()).is_empty());
+        assert_eq!(adaptive_poll_interval_ms(0, 50, 2000), 50);
+        assert_eq!(adaptive_poll_interval_ms(2, 50, 2000), 200);
+        assert_eq!(adaptive_poll_interval_ms(20, 50, 2000), 2000);
     }
 }
 

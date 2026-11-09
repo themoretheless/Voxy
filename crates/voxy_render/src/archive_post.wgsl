@@ -206,26 +206,34 @@ fn pixel_colour(pixel:vec2<i32>)->vec3<f32> {
         let world_p=hit.xyz/hit.w;
         let delta=world_p-camera.eye.xyz;
         let dist=length(delta);
-        if dist>14. {
+        if dist>2.5 {
             let ray=delta/dist;
-            let water_mist=1.+0.45*exp(-max(world_p.y-0.08,0.)*2.5)*smoothstep(105.,113.,world_p.z)*(1.-smoothstep(127.,135.,world_p.z))*smoothstep(0.,1.,1.-abs(world_p.x)/4.5);
-            let haze_density=0.0011*(1.+2.2*camera.weather.x)*exp(-max(world_p.y,0.)*0.04)*water_mist;
-            let extinction=(dist-14.)*haze_density*vec3<f32>(0.72,0.96,1.34);
-            let transmittance=clamp(exp(-extinction),vec3<f32>(0.66),vec3<f32>(1.));
-            var horizon_sky=vec3<f32>(0.);
-            let sample_dir=normalize(vec3<f32>(ray.x,max(ray.y,0.06),ray.z));
-            if camera.eye.w>0.5 {
-                horizon_sky=textureSampleLevel(environment_specular,environment_sampler,sample_dir,2.5).rgb*environment_intensity.x*camera.viewport.z;
-            } else {
-                horizon_sky=daylight(sample_dir,camera.sun.xyz)*camera.viewport.z;
-            }
+            let vol_vis=volumetric_sun_transmittance(ray,dist,q);
             let cos_sun=clamp(dot(ray,camera.sun.xyz),0.,1.);
             let low_sun=smoothstep(0.55,0.08,camera.sun.y)*smoothstep(-0.04,0.06,camera.sun.y);
-            let vol_vis=volumetric_sun_transmittance(ray,dist,q);
-            let mie_forward=pow(cos_sun,4.)*max(camera.sun.y,0.)*(0.30+0.68*low_sun)*vol_vis;
-            let mie_back=pow(clamp(-dot(ray,camera.sun.xyz),0.,1.),3.)*max(camera.sun.y,0.)*0.06*mix(0.4,1.,vol_vis);
-            horizon_sky*=mix(0.68,1.14,vol_vis)*(1.+vec3<f32>(1.25,1.02,0.78)*mie_forward+vec3<f32>(0.88,0.94,1.08)*mie_back);
-            x=x*transmittance+horizon_sky*(1.-transmittance);
+            if camera.sun.y>0.01 {
+                let shaft_len=clamp((min(dist,28.)-2.5)/25.5,0.,1.);
+                let shaft_phase=0.22+0.78*pow(cos_sun,2.5)+0.55*low_sun*pow(cos_sun,5.);
+                let shaft_radiance=camera.sun_colour.rgb*(camera.sun_colour.a*camera.viewport.z*0.00055);
+                x+=shaft_radiance*(vol_vis*shaft_len*shaft_phase*(1.+0.75*camera.weather.x));
+            }
+            if dist>14. {
+                let water_mist=1.+0.45*exp(-max(world_p.y-0.08,0.)*2.5)*smoothstep(105.,113.,world_p.z)*(1.-smoothstep(127.,135.,world_p.z))*smoothstep(0.,1.,1.-abs(world_p.x)/4.5);
+                let haze_density=0.0011*(1.+2.2*camera.weather.x)*exp(-max(world_p.y,0.)*0.04)*water_mist;
+                let extinction=(dist-14.)*haze_density*vec3<f32>(0.72,0.96,1.34);
+                let transmittance=clamp(exp(-extinction),vec3<f32>(0.66),vec3<f32>(1.));
+                var horizon_sky=vec3<f32>(0.);
+                let sample_dir=normalize(vec3<f32>(ray.x,max(ray.y,0.06),ray.z));
+                if camera.eye.w>0.5 {
+                    horizon_sky=textureSampleLevel(environment_specular,environment_sampler,sample_dir,2.5).rgb*environment_intensity.x*camera.viewport.z;
+                } else {
+                    horizon_sky=daylight(sample_dir,camera.sun.xyz)*camera.viewport.z;
+                }
+                let mie_forward=pow(cos_sun,4.)*max(camera.sun.y,0.)*(0.30+0.68*low_sun)*vol_vis;
+                let mie_back=pow(clamp(-dot(ray,camera.sun.xyz),0.,1.),3.)*max(camera.sun.y,0.)*0.06*mix(0.4,1.,vol_vis);
+                horizon_sky*=mix(0.68,1.14,vol_vis)*(1.+vec3<f32>(1.25,1.02,0.78)*mie_forward+vec3<f32>(0.88,0.94,1.08)*mie_back);
+                x=x*transmittance+horizon_sky*(1.-transmittance);
+            }
         }
     }
     if camera.weather.x>0. {

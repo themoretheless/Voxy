@@ -1,7 +1,7 @@
 #![recursion_limit = "256"]
 //! Engine compute workloads with explicit hardware ownership and validated data.
 mod terrain;
-pub use terrain::GpuTerrainError;
+pub use terrain::{GpuTerrainError, clipmap_toroidal_wrap_coord};
 #[cfg(not(target_arch = "wasm32"))]
 pub use terrain::GpuTerrainGenerator;
 
@@ -23,7 +23,7 @@ pub use gravity_view::GravityView;
 mod water;
 pub use water::{
     CudaWaterTransferProgram, PendingWaterTransfer, WaterComputeError, WaterNode, WaterNodeStatus,
-    WaterTransferProgram, WaterTransferResult,
+    WaterTransferProgram, WaterTransferResult, courant_friedrichs_lewy_stable_dt,
 };
 
 mod water_snapshot;
@@ -38,7 +38,7 @@ mod voxel_snapshot;
 pub use voxel_snapshot::VoxelRegionSnapshot;
 
 mod voxel_sweep;
-pub use voxel_sweep::{GpuSweepError, PendingVoxelSweep};
+pub use voxel_sweep::{GpuSweepError, PendingVoxelSweep, morton_lbvh_common_upper_bits};
 
 #[cfg(not(target_arch = "wasm32"))]
 pub use voxel_sweep::GpuVoxelCollisionWorld;

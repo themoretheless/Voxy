@@ -178,5 +178,57 @@ mod tests {
         let p = Vec2::new(5.0, 9.0);
         assert!((field.sample(p, 0.0).height - field.sample(p, 2.0).height).abs() > 1e-3);
         assert!((field.sample(p, 1.0).height - field.sample(p, 1.0 + LOOP).height).abs() < 1e-3);
+
+        let v_surf = gerstner_orbital_particle_velocity(1.0, 2.0, 0.4, 0.0, 0.0);
+        let v_deep = gerstner_orbital_particle_velocity(1.0, 2.0, 0.4, 5.0, 0.0);
+        assert!((v_surf[0] - 2.0).abs() < 1e-5 && v_deep[0] < v_surf[0]);
+        assert!((breaking_wave_crest_acceleration_ratio(1.0, 2.0, 9.81) - 4.0 / 9.81).abs() < 1e-5);
     }
+}
+
+/// Computes deep-water Gerstner orbital particle velocity `[u_horizontal, w_vertical]` (m/s)
+/// attenuated exponentially with `depth_below_surface_m` by $e^{-k z}$.
+#[must_use]
+pub fn gerstner_orbital_particle_velocity(
+    amplitude_m: f32,
+    omega_rad_s: f32,
+    k_rad_m: f32,
+    depth_below_surface_m: f32,
+    phase_rad: f32,
+) -> [f32; 2] {
+    if !amplitude_m.is_finite()
+        || !omega_rad_s.is_finite()
+        || !k_rad_m.is_finite()
+        || !depth_below_surface_m.is_finite()
+        || !phase_rad.is_finite()
+        || amplitude_m <= 0.0
+        || omega_rad_s <= 0.0
+        || k_rad_m <= 0.0
+    {
+        return [0.0, 0.0];
+    }
+    let decay = (-k_rad_m * depth_below_surface_m.max(0.0)).exp();
+    let speed = amplitude_m * omega_rad_s * decay;
+    let (s, c) = phase_rad.sin_cos();
+    [speed * c, speed * s]
+}
+
+/// Computes the kinematic wave-breaking crest acceleration ratio $a_{\text{crest}} / g = \frac{A \omega^2}{g}$
+/// (Longuet-Higgins criterion: wave crests become dynamically unstable when this ratio exceeds $0.5$).
+#[must_use]
+pub fn breaking_wave_crest_acceleration_ratio(
+    amplitude_m: f32,
+    omega_rad_s: f32,
+    gravity: f32,
+) -> f32 {
+    if !amplitude_m.is_finite()
+        || !omega_rad_s.is_finite()
+        || !gravity.is_finite()
+        || amplitude_m <= 0.0
+        || omega_rad_s <= 0.0
+        || gravity <= 0.0
+    {
+        return 0.0;
+    }
+    (amplitude_m * omega_rad_s * omega_rad_s / gravity).max(0.0)
 }

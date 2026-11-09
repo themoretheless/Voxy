@@ -313,3 +313,52 @@ impl Profile {
         })
     }
 }
+
+/// Evaluates the exact closed-form solutions `(theta(xi), dtheta_dxi(xi))` of the Lane-Emden
+/// equation for polytropic indices $n = 0$ (incompressible), $n = 1$ (linear), and $n = 5$ (Plummer),
+/// or a 6th-order central power series for general $n \in [0, 5]$.
+pub fn lane_emden_polytrope_step(xi: f64, n: f64) -> Option<(f64, f64)> {
+    if !xi.is_finite() || !n.is_finite() || xi < 0.0 || !(0.0..=5.0).contains(&n) {
+        return None;
+    }
+    if xi == 0.0 {
+        return Some((1.0, 0.0));
+    }
+    if n.abs() < 1e-12 {
+        let theta = (1.0 - xi * xi / 6.0).max(0.0);
+        let dtheta = -xi / 3.0;
+        Some((theta, dtheta))
+    } else if (n - 1.0).abs() < 1e-12 {
+        let theta = (xi.sin() / xi).max(0.0);
+        let dtheta = (xi * xi.cos() - xi.sin()) / (xi * xi);
+        Some((theta, dtheta))
+    } else if (n - 5.0).abs() < 1e-12 {
+        let base = 1.0 + xi * xi / 3.0;
+        let theta = base.powf(-0.5);
+        let dtheta = -(xi / 3.0) * base.powf(-1.5);
+        Some((theta, dtheta))
+    } else {
+        let x2 = xi * xi;
+        let x4 = x2 * x2;
+        let x6 = x4 * x2;
+        let c4 = n / 120.0;
+        let c6 = -n * (8.0 * n - 5.0) / 15_120.0;
+        let theta = (1.0 - x2 / 6.0 + c4 * x4 + c6 * x6).max(0.0);
+        let dtheta = -xi / 3.0 + 4.0 * c4 * xi * x2 + 6.0 * c6 * xi * x4;
+        Some((theta, dtheta))
+    }
+}
+
+#[cfg(test)]
+mod analytic_polytrope_tests {
+    use super::*;
+
+    #[test]
+    fn lane_emden_analytic_solutions_match_numeric_profile() {
+        let p1 = lane_emden(1.0, 0.01, 2.0, 500).unwrap();
+        let s = p1.sample(1.0).unwrap();
+        let (theta, dtheta) = lane_emden_polytrope_step(1.0, 1.0).unwrap();
+        assert!((s.theta - theta).abs() < 1e-5);
+        assert!(dtheta < 0.0);
+    }
+}

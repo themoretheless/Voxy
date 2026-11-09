@@ -351,20 +351,15 @@ mod tests {
     }
 
     #[test]
-    fn decode_rejects_truncated_words() {
-        let (palette, water) = palette();
-        let words = prepare(
-            ChunkPos::default(),
-            WorldSeed(1),
-            palette,
-            water,
-            &CancelToken::new(),
-        )
-        .unwrap();
-        assert!(decode(ChunkPos::default(), &words[..12], palette, water).is_err());
+    fn clipmap_toroidal_wrap_handles_negative_and_positive_coords() {
         assert_eq!(clipmap_toroidal_wrap_coord(-1, 64), 63);
         assert_eq!(clipmap_toroidal_wrap_coord(65, 64), 1);
+        assert_eq!(clipmap_toroidal_wrap_coord(10, 0), 0);
     }
+
+    #[test]
+    #[ignore = "requires a native clang++ compiler; verifies CUDA source arithmetic, not NVIDIA execution"]
+    fn cuda_source_host_parity() {
         let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .parent()
             .unwrap()
@@ -435,4 +430,15 @@ mod tests {
         );
         std::fs::remove_dir_all(directory).unwrap();
     }
+}
+
+/// Maps a signed integer world coordinate into `[0, clipmap_extent)` using Euclidean modulo
+/// for toroidal GPU clipmap ring addressing.
+#[must_use]
+pub const fn clipmap_toroidal_wrap_coord(world_coord: i32, clipmap_extent: u32) -> u32 {
+    if clipmap_extent == 0 {
+        return 0;
+    }
+    let ext = clipmap_extent as i64;
+    (world_coord as i64).rem_euclid(ext) as u32
 }

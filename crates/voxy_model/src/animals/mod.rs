@@ -1,6 +1,7 @@
 //! Original breed anatomy studies. Neutral, stationary surfaces before grooming.
 //! This module intentionally does not depend on the rejected companion prototype.
 mod ears;
+pub use ears::ear_tip_spring_damper_step;
 mod glb;
 mod sculpt;
 mod surface;

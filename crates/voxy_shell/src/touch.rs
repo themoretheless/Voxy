@@ -88,6 +88,44 @@ pub fn pinch_zoom_ratio(
     let current_span = current_a.distance(current_b);
     Some((current_span / initial_span).clamp(min_scale, max_scale))
 }
+
+/// Simultaneous two-finger pinch scale ratio and signed rotation angle `(scale_ratio, delta_angle_rad)`
+/// with dead-zones (`scale_deadzone`, `angle_deadzone_rad`) to prevent inadvertent twist during zoom.
+#[must_use]
+pub fn classify_two_finger_pinch_rotate(
+    initial_a: Vec2,
+    initial_b: Vec2,
+    current_a: Vec2,
+    current_b: Vec2,
+    scale_deadzone: f32,
+    angle_deadzone_rad: f32,
+) -> Option<(f32, f32)> {
+    let raw_scale = pinch_zoom_ratio(initial_a, initial_b, current_a, current_b, 0.1, 10.0)?;
+    if !scale_deadzone.is_finite()
+        || scale_deadzone < 0.0
+        || !angle_deadzone_rad.is_finite()
+        || angle_deadzone_rad < 0.0
+    {
+        return None;
+    }
+    let v0 = initial_b - initial_a;
+    let v1 = current_b - current_a;
+    if v1.length_squared() <= 1e-8 {
+        return None;
+    }
+    let scale = if (raw_scale - 1.0).abs() <= scale_deadzone {
+        1.0
+    } else {
+        raw_scale
+    };
+    let raw_angle = (v0.x * v1.y - v0.y * v1.x).atan2(v0.dot(v1));
+    let angle = if raw_angle.abs() <= angle_deadzone_rad {
+        0.0
+    } else {
+        raw_angle - raw_angle.signum() * angle_deadzone_rad
+    };
+    Some((scale, angle))
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -150,5 +188,16 @@ mod tests {
         assert!(
             pinch_zoom_ratio(Vec2::ZERO, Vec2::ZERO, Vec2::ZERO, Vec2::ONE, 0.5, 2.0).is_none()
         );
+        let (scale, angle) = classify_two_finger_pinch_rotate(
+            Vec2::new(0.0, 0.0),
+            Vec2::new(1.0, 0.0),
+            Vec2::new(0.0, 0.0),
+            Vec2::new(0.0, 2.0),
+            0.05,
+            0.05,
+        )
+        .unwrap();
+        assert!((scale - 2.0).abs() < 1e-5);
+        assert!(angle > 1.4);
     }
 }

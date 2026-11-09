@@ -379,3 +379,45 @@ mod cloud;
 pub use cloud::{
     CloudExchange, exchange_drag_cloud, exchange_forced_cloud, exchange_gravity_cloud,
 };
+
+/// Evaluates the Richardson–Zaki hindered sedimentation velocity
+/// $v = v_0 \left(1 - \frac{\phi}{\phi_{\max}}\right)^n$ for concentrated particulate suspensions.
+#[must_use]
+pub fn hindered_richardson_zaki_settling_velocity(
+    stokes_v0: f64,
+    volume_fraction_phi: f64,
+    max_packing_phi: f64,
+    exponent_n: f64,
+) -> Option<f64> {
+    if !stokes_v0.is_finite()
+        || !volume_fraction_phi.is_finite()
+        || !max_packing_phi.is_finite()
+        || !exponent_n.is_finite()
+        || volume_fraction_phi < 0.0
+        || !(0.05..=1.0).contains(&max_packing_phi)
+        || volume_fraction_phi > max_packing_phi
+        || exponent_n <= 0.0
+    {
+        return None;
+    }
+    let factor = (1.0 - volume_fraction_phi / max_packing_phi)
+        .clamp(0.0, 1.0)
+        .powf(exponent_n);
+    let v = stokes_v0 * factor;
+    v.is_finite().then_some(v)
+}
+
+#[cfg(test)]
+mod richardson_zaki_tests {
+    use super::*;
+
+    #[test]
+    fn hindered_settling_monotonically_slows_with_volume_fraction() {
+        let v_dilute = hindered_richardson_zaki_settling_velocity(0.1, 0.0, 0.64, 4.65).unwrap();
+        let v_dense = hindered_richardson_zaki_settling_velocity(0.1, 0.32, 0.64, 4.65).unwrap();
+        let v_jammed = hindered_richardson_zaki_settling_velocity(0.1, 0.64, 0.64, 4.65).unwrap();
+        assert!((v_dilute - 0.1).abs() < 1e-12);
+        assert!(v_dense < v_dilute && v_dense > 0.0);
+        assert!(v_jammed.abs() < 1e-12);
+    }
+}

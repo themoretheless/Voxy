@@ -663,8 +663,8 @@ pub use medium::{
     unpack_medium_result,
 };
 
-#[cfg(any(feature = "cuda", test))]
 mod budget;
+pub use budget::cuda_sm_occupancy_warps;
 
 mod tissue_search;
 pub use tissue_search::is_tissue_search_backend_failure;

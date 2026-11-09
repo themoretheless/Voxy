@@ -3076,3 +3076,84 @@ pub struct HairExpandedCoordinateRequest<'a> {
     pub bounds: &'a [f64],
     pub tolerance: f64,
 }
+
+/// Evaluates the discrete Kirchhoff / Cosserat elastic rod bending and twist strain energy
+/// $E = \frac{1}{2} \ell \left[ B_1 (\kappa_1 - \bar{\kappa}_1)^2 + B_2 (\kappa_2 - \bar{\kappa}_2)^2 + C (\omega - \bar{\omega})^2 \right]$.
+#[must_use]
+pub fn cosserat_rod_bending_twist_energy(
+    curvature_kappa: [f64; 2],
+    rest_kappa: [f64; 2],
+    twist_omega: f64,
+    rest_omega: f64,
+    bend_stiffness: [f64; 2],
+    twist_stiffness: f64,
+    segment_len: f64,
+) -> Option<f64> {
+    if !curvature_kappa[0].is_finite()
+        || !curvature_kappa[1].is_finite()
+        || !rest_kappa[0].is_finite()
+        || !rest_kappa[1].is_finite()
+        || !twist_omega.is_finite()
+        || !rest_omega.is_finite()
+        || !bend_stiffness[0].is_finite()
+        || !bend_stiffness[1].is_finite()
+        || !twist_stiffness.is_finite()
+        || !segment_len.is_finite()
+        || bend_stiffness[0] < 0.0
+        || bend_stiffness[1] < 0.0
+        || twist_stiffness < 0.0
+        || segment_len <= 0.0
+    {
+        return None;
+    }
+    let dk0 = curvature_kappa[0] - rest_kappa[0];
+    let dk1 = curvature_kappa[1] - rest_kappa[1];
+    let dw = twist_omega - rest_omega;
+    let energy = 0.5
+        * segment_len
+        * (bend_stiffness[0] * dk0 * dk0
+            + bend_stiffness[1] * dk1 * dk1
+            + twist_stiffness * dw * dw);
+    energy.is_finite().then_some(energy)
+}
+
+#[cfg(test)]
+mod cosserat_energy_tests {
+    use super::*;
+
+    #[test]
+    fn cosserat_bending_twist_energy_is_zero_at_rest_and_quadratic_in_strain() {
+        let e0 = cosserat_rod_bending_twist_energy(
+            [0.5, -0.2],
+            [0.5, -0.2],
+            0.1,
+            0.1,
+            [1e-6, 1e-6],
+            5e-7,
+            0.01,
+        )
+        .unwrap();
+        assert!(e0.abs() < 1e-18);
+        let e1 = cosserat_rod_bending_twist_energy(
+            [1.5, -0.2],
+            [0.5, -0.2],
+            0.1,
+            0.1,
+            [1e-6, 1e-6],
+            5e-7,
+            0.01,
+        )
+        .unwrap();
+        let e2 = cosserat_rod_bending_twist_energy(
+            [2.5, -0.2],
+            [0.5, -0.2],
+            0.1,
+            0.1,
+            [1e-6, 1e-6],
+            5e-7,
+            0.01,
+        )
+        .unwrap();
+        assert!((e2 / e1 - 4.0).abs() < 1e-12);
+    }
+}

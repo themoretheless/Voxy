@@ -876,7 +876,46 @@ mod tests {
         let base = regional_chromophore_tint(0.1, 0.1);
         let flush = regional_chromophore_tint(0.1, 0.8);
         assert!(flush[0] / flush[1] > base[0] / base[1]);
+        let km = kubelka_munk_two_layer_reflectance(0.2, 1.0, 0.15, 0.6);
+        assert!(km > 0.0 && km < 1.0);
     }
+}
+
+/// Computes the two-layer epidermal-dermal diffuse reflectance in `[0.0, 1.0]` using the
+/// Kubelka-Munk remission and transmission equations for an epidermal layer of thickness `thickness_mm`
+/// with absorption `k_epi` and scattering `s_epi` over a dermal backing of reflectance `r_dermis`.
+#[must_use]
+pub fn kubelka_munk_two_layer_reflectance(
+    k_epi: f32,
+    s_epi: f32,
+    thickness_mm: f32,
+    r_dermis: f32,
+) -> f32 {
+    if !k_epi.is_finite()
+        || !s_epi.is_finite()
+        || !thickness_mm.is_finite()
+        || !r_dermis.is_finite()
+        || k_epi < 0.0
+        || s_epi <= 1e-5
+        || thickness_mm < 0.0
+    {
+        return r_dermis.clamp(0.0, 1.0);
+    }
+    let rg = r_dermis.clamp(0.0, 1.0);
+    if thickness_mm == 0.0 {
+        return rg;
+    }
+    let a = 1.0 + k_epi / s_epi;
+    let b = (a * a - 1.0).max(0.0).sqrt();
+    let b_s_x = (b * s_epi * thickness_mm).clamp(0.0, 20.0);
+    let sinh_val = b_s_x.sinh();
+    let cosh_val = b_s_x.cosh();
+    let denom = (a - rg) * sinh_val + b * cosh_val;
+    if denom.abs() <= 1e-8 {
+        return rg;
+    }
+    let num = (1.0 - a * rg) * sinh_val + b * rg * cosh_val;
+    (num / denom).clamp(0.0, 1.0)
 }
 
 /// Computes linear RGB diffuse reflectance `[r, g, b]` from epidermal melanin volume fraction

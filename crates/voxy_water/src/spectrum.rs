@@ -347,5 +347,65 @@ mod tests {
             storm > ocean && ocean > 1.0 && pool < 0.05,
             "{storm} {ocean} {pool}"
         );
+        let spread_aligned = hasselmann_directional_spreading(0.5, 0.5, 1.0, 1.0);
+        let spread_cross = hasselmann_directional_spreading(2.0, 0.5, 1.0, 1.0);
+        assert!(spread_aligned > spread_cross && spread_cross >= 0.0);
+        let w_cap = capillary_gravity_dispersion_omega(100.0, 9.81, 0.0728, 1000.0);
+        assert!(w_cap > (9.81_f32 * 100.0).sqrt());
     }
+}
+
+/// Evaluates the Hasselmann et al. (1980) `cos^{2s}((theta - wind_dir) / 2)` directional wave
+/// spreading weight with frequency-dependent exponent $s(\omega / \omega_p)$.
+#[must_use]
+pub fn hasselmann_directional_spreading(
+    theta_rad: f32,
+    wind_dir_rad: f32,
+    omega: f32,
+    omega_peak: f32,
+) -> f32 {
+    if !theta_rad.is_finite()
+        || !wind_dir_rad.is_finite()
+        || !omega.is_finite()
+        || !omega_peak.is_finite()
+        || omega <= 0.0
+        || omega_peak <= 0.0
+    {
+        return 0.0;
+    }
+    let ratio = (omega / omega_peak).clamp(0.1, 10.0);
+    let s = if ratio < 1.0 {
+        6.97 * ratio.powf(4.06)
+    } else {
+        9.77 * ratio.powf(-2.33)
+    }
+    .clamp(0.5, 64.0);
+    let delta = wrap_angle(theta_rad - wind_dir_rad);
+    cos_spread(delta, s)
+}
+
+/// Computes the deep-water gravity-capillary dispersion angular frequency
+/// $\omega(k) = \sqrt{g k + \frac{\sigma}{\rho} k^3}$ (`rad/s`).
+#[must_use]
+pub fn capillary_gravity_dispersion_omega(
+    k_rad_m: f32,
+    gravity: f32,
+    surface_tension_n_m: f32,
+    density_kg_m3: f32,
+) -> f32 {
+    if !k_rad_m.is_finite()
+        || !gravity.is_finite()
+        || !surface_tension_n_m.is_finite()
+        || !density_kg_m3.is_finite()
+        || k_rad_m <= 0.0
+        || gravity <= 0.0
+        || surface_tension_n_m < 0.0
+        || density_kg_m3 <= 0.0
+    {
+        return 0.0;
+    }
+    let sigma_over_rho = surface_tension_n_m / density_kg_m3;
+    (gravity * k_rad_m + sigma_over_rho * k_rad_m * k_rad_m * k_rad_m)
+        .max(0.0)
+        .sqrt()
 }

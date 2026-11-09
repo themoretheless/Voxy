@@ -321,5 +321,23 @@ fn delaunay(points: &[DVec2]) -> Vec<[usize; 3]> {
     tris
 }
 
+/// Computes normalized barycentric coordinates `[w_a, w_b, w_c]` for `query` inside
+/// 2D Delaunay triangle `(a, b, c)`, returning `None` if `query` lies strictly outside
+/// the triangle or the triangle is degenerate.
+#[must_use]
+pub fn blend_space_delaunay_barycentrics_2d(
+    query: [f32; 2],
+    a: [f32; 2],
+    b: [f32; 2],
+    c: [f32; 2],
+) -> Option<[f32; 3]> {
+    let q = DVec2::new(f64::from(query[0]), f64::from(query[1]));
+    let pa = DVec2::new(f64::from(a[0]), f64::from(a[1]));
+    let pb = DVec2::new(f64::from(b[0]), f64::from(b[1]));
+    let pc = DVec2::new(f64::from(c[0]), f64::from(c[1]));
+    let (wa, wb, wc) = barycentric(q, pa, pb, pc)?;
+    Some([wa as f32, wb as f32, wc as f32])
+}
+
 #[cfg(test)]
 mod tests;

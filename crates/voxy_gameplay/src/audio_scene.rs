@@ -170,6 +170,37 @@ pub fn compute_doppler_pitch_shift(
     ((speed_of_sound - clamped_vl) / (speed_of_sound - clamped_vs)).clamp(0.25, 4.0)
 }
 
+/// Evaluates inverse-distance spatial audio gain attenuation with a smooth $C^1$ window
+/// that reaches exact `0.0` at `max_distance` and stays `1.0` inside `ref_distance`.
+#[must_use]
+pub fn inverse_distance_windowed_attenuation(
+    distance: f32,
+    ref_distance: f32,
+    max_distance: f32,
+    rolloff_factor: f32,
+) -> f32 {
+    if !distance.is_finite()
+        || !ref_distance.is_finite()
+        || !max_distance.is_finite()
+        || !rolloff_factor.is_finite()
+        || ref_distance <= 0.0
+        || max_distance <= ref_distance
+        || rolloff_factor < 0.0
+    {
+        return 0.0;
+    }
+    if distance <= ref_distance {
+        return 1.0;
+    }
+    if distance >= max_distance {
+        return 0.0;
+    }
+    let inv = ref_distance / (ref_distance + rolloff_factor * (distance - ref_distance));
+    let u = ((distance - ref_distance) / (max_distance - ref_distance)).clamp(0.0, 1.0);
+    let window = (1.0 - u * u).powi(2);
+    (inv * window).clamp(0.0, 1.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -309,5 +340,9 @@ mod tests {
             343.0,
         );
         assert!((supersonic - 4.0).abs() < 1e-6);
+        assert_eq!(inverse_distance_windowed_attenuation(1.0, 2.0, 20.0, 1.0), 1.0);
+        assert_eq!(inverse_distance_windowed_attenuation(20.0, 2.0, 20.0, 1.0), 0.0);
+        let mid = inverse_distance_windowed_attenuation(6.0, 2.0, 20.0, 1.0);
+        assert!(mid > 0.0 && mid < 1.0);
     }
 }

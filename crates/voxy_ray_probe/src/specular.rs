@@ -250,3 +250,30 @@ fn reject_invalid_weights(
 fn mirror_weight(base: [f32; 3]) -> Result<[f32; 4], voxy_render::ReconstructionMaterialError> {
     ReconstructionMaterial::new(base, 1.0, 0.0)?.mirror_throughput([0.0, 0.0, 1.0], [0.0, 0.0, 2.0])
 }
+
+/// Computes the specular ray cone spread angle $\Delta\theta = 2 \arctan\left(\frac{\alpha^2}{1 - \alpha^2 + \epsilon}\right)$
+/// in radians from perceptual surface `roughness` ($r \in [0, 1]$, $\alpha = r^2$) for ray-traced texture mip selection.
+#[allow(dead_code)]
+#[must_use]
+pub fn specular_ray_cone_spread_angle_rad(roughness: f32) -> f32 {
+    if !roughness.is_finite() {
+        return 0.0;
+    }
+    let r = roughness.clamp(0.0, 1.0);
+    let alpha = r * r;
+    let alpha2 = alpha * alpha;
+    2.0 * (alpha2 / (1.0 - alpha2 + 1e-4)).atan()
+}
+
+#[cfg(test)]
+mod cone_spread_tests {
+    use super::*;
+
+    #[test]
+    fn specular_ray_cone_spread_angle_increases_monotonically_with_roughness() {
+        assert_eq!(specular_ray_cone_spread_angle_rad(0.0), 0.0);
+        let smooth = specular_ray_cone_spread_angle_rad(0.2);
+        let rough = specular_ray_cone_spread_angle_rad(0.8);
+        assert!(smooth > 0.0 && rough > smooth);
+    }
+}

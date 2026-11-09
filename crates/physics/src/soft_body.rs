@@ -272,9 +272,46 @@ pub fn dihedral_angle_radians(p0: V, p1: V, p2: V, p3: V) -> f64 {
     sin_theta.atan2(cos_theta)
 }
 
+/// Computes the XPBD tetrahedral volume constraint Lagrange multiplier increment
+/// $\Delta \lambda = \frac{-(V - V_0) - \tilde{\alpha} \lambda}{\sum_i w_i \|\nabla_i C\|^2 + \tilde{\alpha}}$.
+#[must_use]
+pub fn xpbd_volume_constraint_delta_lambda(
+    current_vol: f64,
+    rest_vol: f64,
+    compliance_alpha_tilde: f64,
+    grad_weight_sum: f64,
+    current_lambda: f64,
+) -> Option<f64> {
+    if !current_vol.is_finite()
+        || !rest_vol.is_finite()
+        || !compliance_alpha_tilde.is_finite()
+        || !grad_weight_sum.is_finite()
+        || !current_lambda.is_finite()
+        || rest_vol <= 0.0
+        || compliance_alpha_tilde < 0.0
+        || grad_weight_sum < 0.0
+    {
+        return None;
+    }
+    let denom = grad_weight_sum + compliance_alpha_tilde;
+    if denom <= 1e-18 {
+        return None;
+    }
+    let c = current_vol - rest_vol;
+    let dl = (-c - compliance_alpha_tilde * current_lambda) / denom;
+    dl.is_finite().then_some(dl)
+}
+
 #[cfg(test)]
 mod coloring_and_bending_tests {
     use super::*;
+
+    #[test]
+    fn xpbd_volume_constraint_delta_lambda_restores_compressed_tet() {
+        let dl = xpbd_volume_constraint_delta_lambda(0.8, 1.0, 1e-5, 2.0, 0.0).unwrap();
+        assert!(dl > 0.0);
+        assert!(xpbd_volume_constraint_delta_lambda(1.0, 1.0, 0.0, 0.0, 0.0).is_none());
+    }
 
     #[test]
     fn edge_coloring_produces_disjoint_vertex_batches() {

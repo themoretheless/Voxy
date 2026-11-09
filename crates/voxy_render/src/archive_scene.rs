@@ -357,6 +357,8 @@ pub struct ArchiveSceneRenderer {
     pub gpu_ssr_times_ms: Vec<Option<f64>>,
     ray_queue_frame_count: u64,
     exposure: f32,
+    exposure_bias_ev: f32,
+    adapted_exposure_scale: f32,
     sky_strength: f32,
     _environment: crate::ImportedEnvironment,
     environment_bindings: crate::environment_lighting::EnvironmentBindings,
@@ -1736,6 +1738,8 @@ impl ArchiveSceneRenderer {
                 } else {
                     1. / 1200.
                 }),
+            exposure_bias_ev: 0.,
+            adapted_exposure_scale: 1.,
             sky_strength: 4.,
             _environment: environment,
             environment_bindings,
@@ -1812,6 +1816,13 @@ impl ArchiveSceneRenderer {
             self.adapted_wetness = step_wetness_accumulation(
                 self.adapted_wetness,
                 self.weather.rain,
+                dt,
+            );
+            let target_eye_scale =
+                (1. + 0.14 * self.weather.coverage + 0.18 * self.weather.rain).clamp(0.75, 1.45);
+            self.adapted_exposure_scale = step_eye_adaptation(
+                self.adapted_exposure_scale,
+                target_eye_scale,
                 dt,
             );
         }
@@ -1982,6 +1993,16 @@ impl ArchiveSceneRenderer {
     }
     pub fn exposure_ev100(&self) -> f32 {
         (1. / (1.2 * self.exposure)).log2()
+    }
+    /// Sets additive exposure compensation in stops (`EV`, clamped to `[-4.0, 4.0]`),
+    /// scaling linear exposure by $2^{\text{bias\_ev}}$ without resetting temporal history.
+    pub fn set_exposure_bias_ev(&mut self, bias_ev: f32) {
+        if bias_ev.is_finite() {
+            self.exposure_bias_ev = bias_ev.clamp(-4., 4.);
+        }
+    }
+    pub fn exposure_bias_ev(&self) -> f32 {
+        self.exposure_bias_ev
     }
     /// Thin-lens depth of field and shutter motion blur, applied in the
     /// temporal display pass (Temporal/MetalFx antialiasing only).
@@ -3001,7 +3022,7 @@ impl ArchiveSceneRenderer {
                 viewport: [
                     self.width as f32,
                     self.height as f32,
-                    self.exposure,
+                    self.exposure * self.adapted_exposure_scale * self.exposure_bias_ev.exp2(),
                     self.sky_strength * twilight_sky(self.sun.y),
                 ],
             }),
@@ -3849,6 +3870,31 @@ pub fn step_wetness_accumulation(current_wetness: f32, target_rain: f32, dt: f32
     (cur + (tgt - cur) * alpha).clamp(0.0, 1.0)
 }
 
+/// Physiological temporal eye adaptation over `dt` seconds with asymmetric pupillary/photochemical rates:
+/// dark-to-bright pupillary reflex adapts rapidly (`rate = 2.2 / s`, $\tau \approx 0.45\text{ s}$), while
+/// bright-to-dark adaptation proceeds more gradually (`rate = 0.7 / s`, $\tau \approx 1.4\text{ s}$).
+#[must_use]
+pub fn step_eye_adaptation(current_scale: f32, target_scale: f32, dt: f32) -> f32 {
+    let cur = if current_scale.is_finite() {
+        current_scale.clamp(0.25, 4.0)
+    } else {
+        1.0
+    };
+    let tgt = if target_scale.is_finite() {
+        target_scale.clamp(0.25, 4.0)
+    } else {
+        1.0
+    };
+    if !dt.is_finite() || dt <= 0.0 {
+        return cur;
+    }
+    // Lower exposure scale = stopping down for bright light (fast pupillary constriction);
+    // higher exposure scale = opening up for darker conditions (slower dark adaptation).
+    let rate = if tgt < cur { 2.2 } else { 0.7 };
+    let alpha = 1.0 - (-dt * rate).exp();
+    (cur + (tgt - cur) * alpha).clamp(0.25, 4.0)
+}
+
 /// Selects an adaptive screen-space GI ray-march step budget in `[min_steps, max_steps]`
 /// proportional to the available frame budget ratio `target_frame_ms / measured_frame_ms`.
 #[must_use]
@@ -3893,6 +3939,13 @@ mod n1_archive_scene_tests {
         let dry_loss_after_1s = 1.0 - step_wetness_accumulation(1.0, 0.0, 1.0);
         assert!(wet_after_1s > 0.30, "wet_after_1s={wet_after_1s}");
         assert!(dry_loss_after_1s > 0.05 && dry_loss_after_1s < wet_after_1s);
+    }
+
+    #[test]
+    fn step_eye_adaptation_constricts_faster_than_it_dilates() {
+        let brighten_step = step_eye_adaptation(1.0, 1.5, 0.5) - 1.0;
+        let darken_step = 1.5 - step_eye_adaptation(1.5, 1.0, 0.5);
+        assert!(darken_step > brighten_step && brighten_step > 0.1);
     }
 }
 

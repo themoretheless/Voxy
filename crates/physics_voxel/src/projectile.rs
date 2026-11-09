@@ -524,3 +524,85 @@ pub fn solve_ballistic_elevation_angles(
     let high = ((v2 + root) / gx).atan();
     Some((low.min(high), low.max(high)))
 }
+
+/// Evaluates the aerodynamic Magnus lift acceleration
+/// $\mathbf{a}_M = C_L (\boldsymbol{\omega} \times \mathbf{v}_{\text{rel}})$ on a spinning projectile.
+#[must_use]
+pub fn magnus_lift_acceleration(
+    velocity_rel_air: [f64; 3],
+    spin_rad_s: [f64; 3],
+    spin_lift_coeff: f64,
+) -> [f64; 3] {
+    if !spin_lift_coeff.is_finite()
+        || velocity_rel_air.iter().any(|x| !x.is_finite())
+        || spin_rad_s.iter().any(|x| !x.is_finite())
+    {
+        return [0.0; 3];
+    }
+    let cross = [
+        spin_rad_s[1] * velocity_rel_air[2] - spin_rad_s[2] * velocity_rel_air[1],
+        spin_rad_s[2] * velocity_rel_air[0] - spin_rad_s[0] * velocity_rel_air[2],
+        spin_rad_s[0] * velocity_rel_air[1] - spin_rad_s[1] * velocity_rel_air[0],
+    ];
+    cross.map(|c| c * spin_lift_coeff)
+}
+
+/// Computes the post-impact ricochet velocity vector when a projectile with `incident_vel`
+/// strikes a surface with unit `normal` at a grazing angle whose normal cosine magnitude
+/// $|\hat{\mathbf{v}} \cdot \mathbf{n}| \le \text{critical\_grazing\_cos}$.
+#[must_use]
+pub fn ricochet_reflection_velocity(
+    incident_vel: [f64; 3],
+    normal: [f64; 3],
+    restitution_n: f64,
+    tangential_retention: f64,
+    critical_grazing_cos: f64,
+) -> Option<[f64; 3]> {
+    if incident_vel.iter().chain(&normal).any(|x| !x.is_finite())
+        || !restitution_n.is_finite()
+        || !tangential_retention.is_finite()
+        || !critical_grazing_cos.is_finite()
+        || !(0.0..=1.0).contains(&restitution_n)
+        || !(0.0..=1.0).contains(&tangential_retention)
+        || !(0.0..=1.0).contains(&critical_grazing_cos)
+    {
+        return None;
+    }
+    let speed = (incident_vel[0].powi(2) + incident_vel[1].powi(2) + incident_vel[2].powi(2)).sqrt();
+    let n_len = (normal[0].powi(2) + normal[1].powi(2) + normal[2].powi(2)).sqrt();
+    if speed <= 1e-9 || (n_len - 1.0).abs() > 1e-6 {
+        return None;
+    }
+    let vn = incident_vel[0] * normal[0] + incident_vel[1] * normal[1] + incident_vel[2] * normal[2];
+    if vn >= 0.0 || (-vn / speed) > critical_grazing_cos {
+        return None;
+    }
+    let vt = [
+        incident_vel[0] - vn * normal[0],
+        incident_vel[1] - vn * normal[1],
+        incident_vel[2] - vn * normal[2],
+    ];
+    Some([
+        tangential_retention * vt[0] - restitution_n * vn * normal[0],
+        tangential_retention * vt[1] - restitution_n * vn * normal[1],
+        tangential_retention * vt[2] - restitution_n * vn * normal[2],
+    ])
+}
+
+#[cfg(test)]
+mod magnus_and_ricochet_tests {
+    use super::*;
+
+    #[test]
+    fn magnus_backspin_lifts_upward_and_shallow_grazing_ricochets() {
+        let lift = magnus_lift_acceleration([30.0, 0.0, 0.0], [0.0, 0.0, 100.0], 0.002);
+        assert!(lift[1] > 0.0 && lift[0].abs() < 1e-12);
+        let ric = ricochet_reflection_velocity([20.0, -2.0, 0.0], [0.0, 1.0, 0.0], 0.5, 0.9, 0.3)
+            .unwrap();
+        assert!(ric[1] > 0.0 && ric[0] > 15.0);
+        assert!(
+            ricochet_reflection_velocity([2.0, -20.0, 0.0], [0.0, 1.0, 0.0], 0.5, 0.9, 0.3)
+                .is_none()
+        );
+    }
+}

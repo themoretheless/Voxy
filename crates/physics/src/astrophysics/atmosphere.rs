@@ -113,3 +113,48 @@ impl Atmosphere {
         Ok(cell)
     }
 }
+
+/// Evaluates the Jeans dimensionless thermal escape parameter $\lambda_J = \frac{G M m}{k_B T r}$
+/// at exobase radius `r_exobase` for a molecular species of mass `particle_mass_kg`.
+pub fn jeans_escape_parameter_lambda(
+    planet_mass_kg: f64,
+    exobase_radius_m: f64,
+    particle_mass_kg: f64,
+    exosphere_temp_k: f64,
+    g: f64,
+    k_b: f64,
+) -> Option<f64> {
+    if ![
+        planet_mass_kg,
+        exobase_radius_m,
+        particle_mass_kg,
+        exosphere_temp_k,
+        g,
+        k_b,
+    ]
+    .into_iter()
+    .all(f64::is_finite)
+        || planet_mass_kg <= 0.0
+        || exobase_radius_m <= 0.0
+        || particle_mass_kg <= 0.0
+        || exosphere_temp_k <= 0.0
+        || g <= 0.0
+        || k_b <= 0.0
+    {
+        return None;
+    }
+    let lambda = (g * planet_mass_kg * particle_mass_kg) / (k_b * exosphere_temp_k * exobase_radius_m);
+    lambda.is_finite().then_some(lambda)
+}
+
+#[cfg(test)]
+mod jeans_tests {
+    use super::*;
+
+    #[test]
+    fn jeans_escape_parameter_is_lower_for_hydrogen_than_nitrogen() {
+        let h2 = jeans_escape_parameter_lambda(5.972e24, 6.871e6, 3.34e-27, 1000.0, 6.6743e-11, 1.380_649e-23).unwrap();
+        let n2 = jeans_escape_parameter_lambda(5.972e24, 6.871e6, 4.65e-26, 1000.0, 6.6743e-11, 1.380_649e-23).unwrap();
+        assert!(n2 > h2 && h2 > 0.0);
+    }
+}

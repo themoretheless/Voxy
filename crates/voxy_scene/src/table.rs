@@ -291,6 +291,16 @@ impl<T> ComponentTable<T> {
     pub fn stored_len(&self) -> usize {
         self.values.len()
     }
+
+    /// Returns the ratio of dense live rows to sparse index slots (`[0.0, 1.0]`),
+    /// measuring slot-table occupancy and fragmentation (`1.0` when empty).
+    #[must_use]
+    pub fn occupancy_ratio(&self) -> f32 {
+        if self.sparse.is_empty() {
+            return 1.0;
+        }
+        (self.values.len() as f32 / self.sparse.len() as f32).clamp(0.0, 1.0)
+    }
 }
 
 #[cfg(test)]
@@ -344,5 +354,6 @@ mod tests {
         );
         assert!(table.query_mut(&foreign, true).is_err());
         assert_eq!(table.stored_len(), 1);
+        assert!(table.occupancy_ratio() > 0.0 && table.occupancy_ratio() <= 1.0);
     }
 }

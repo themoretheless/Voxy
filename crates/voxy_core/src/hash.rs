@@ -27,11 +27,13 @@ impl BuildHasher for SeededFastHashBuilder {
 }
 
 impl FastHasher {
+    #[inline]
     #[must_use]
     pub const fn with_seed(seed: u64) -> Self {
         Self(seed)
     }
 
+    #[inline]
     fn mix(&mut self, value: u64) {
         let mut x = (self.0 ^ value).wrapping_mul(0xBF58_476D_1CE4_E5B9);
         x ^= x >> 31;
@@ -40,26 +42,39 @@ impl FastHasher {
 }
 
 impl Hasher for FastHasher {
+    #[inline]
     fn finish(&self) -> u64 {
         let x = self.0.wrapping_mul(0x94D0_49BB_1331_11EB);
         x ^ (x >> 29)
     }
+    #[inline]
     fn write(&mut self, bytes: &[u8]) {
-        for chunk in bytes.chunks(8) {
+        let mut chunks = bytes.chunks_exact(8);
+        for chunk in &mut chunks {
             let mut word = [0_u8; 8];
-            word[..chunk.len()].copy_from_slice(chunk);
+            word.copy_from_slice(chunk);
+            self.mix(u64::from_le_bytes(word));
+        }
+        let rem = chunks.remainder();
+        if !rem.is_empty() {
+            let mut word = [0_u8; 8];
+            word[..rem.len()].copy_from_slice(rem);
             self.mix(u64::from_le_bytes(word));
         }
     }
+    #[inline]
     fn write_u32(&mut self, value: u32) {
         self.mix(u64::from(value));
     }
+    #[inline]
     fn write_u64(&mut self, value: u64) {
         self.mix(value);
     }
+    #[inline]
     fn write_usize(&mut self, value: usize) {
         self.mix(value as u64);
     }
+    #[inline]
     fn write_u128(&mut self, value: u128) {
         let [low, high] = [value & u128::from(u64::MAX), value >> 64]
             .map(|half| u64::try_from(half).unwrap_or(0));
@@ -73,12 +88,14 @@ impl Hasher for FastHasher {
 pub struct DeterministicRng(u64);
 
 impl DeterministicRng {
+    #[inline]
     #[must_use]
     pub const fn new(seed: u64) -> Self {
         Self(seed)
     }
 
     /// Forks a reproducible child generator from a 3D coordinate `(x, y, z)`.
+    #[inline]
     #[must_use]
     #[allow(clippy::cast_sign_loss)]
     pub const fn fork_coord(self, x: i64, y: i64, z: i64) -> Self {
@@ -89,6 +106,7 @@ impl DeterministicRng {
         Self(h ^ (h >> 31))
     }
 
+    #[inline]
     pub const fn next_u64(&mut self) -> u64 {
         self.0 = self.0.wrapping_add(0x9E37_79B9_7F4A_7C15);
         let mut z = self.0;
@@ -97,37 +115,53 @@ impl DeterministicRng {
         z ^ (z >> 31)
     }
 
+    #[inline]
     #[allow(clippy::cast_possible_truncation)]
     pub const fn next_u32(&mut self) -> u32 {
         (self.next_u64() >> 32) as u32
     }
 
     /// Uniform float in $[0.0, 1.0)$ using the top 24 bits of `next_u64`.
+    #[inline]
     #[allow(clippy::cast_precision_loss)]
     pub fn next_f32(&mut self) -> f32 {
         ((self.next_u64() >> 40) as f32) * (1.0 / ((1_u32 << 24) as f32))
     }
 }
 
-/// Castagnoli CRC-32C checksum for verifying region frames and WAL records.
-#[must_use]
-pub const fn crc32c(bytes: &[u8]) -> u32 {
-    crc32c_append(0, bytes)
-}
-
-/// Incrementally updates a Castagnoli CRC-32C checksum over `bytes`.
-#[must_use]
-pub const fn crc32c_append(previous: u32, bytes: &[u8]) -> u32 {
-    let mut crc = !previous;
+const CRC32C_TABLE: [u32; 256] = {
+    let mut table = [0_u32; 256];
     let mut i = 0;
-    while i < bytes.len() {
-        crc ^= bytes[i] as u32;
+    while i < 256 {
+        let mut crc = i as u32;
         let mut bit = 0;
         while bit < 8 {
             let mask = (crc & 1).wrapping_neg();
             crc = (crc >> 1) ^ (0x82F6_3B78 & mask);
             bit += 1;
         }
+        table[i] = crc;
+        i += 1;
+    }
+    table
+};
+
+/// Castagnoli CRC-32C checksum for verifying region frames and WAL records.
+#[inline]
+#[must_use]
+pub const fn crc32c(bytes: &[u8]) -> u32 {
+    crc32c_append(0, bytes)
+}
+
+/// Incrementally updates a Castagnoli CRC-32C checksum over `bytes` using a 256-entry table.
+#[inline]
+#[must_use]
+pub const fn crc32c_append(previous: u32, bytes: &[u8]) -> u32 {
+    let mut crc = !previous;
+    let mut i = 0;
+    while i < bytes.len() {
+        let idx = ((crc ^ (bytes[i] as u32)) & 0xFF) as usize;
+        crc = (crc >> 8) ^ CRC32C_TABLE[idx];
         i += 1;
     }
     !crc

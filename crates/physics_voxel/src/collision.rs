@@ -492,5 +492,62 @@ mod tests {
             ),
             Err(SweepError::CandidateBudgetExceeded { .. })
         ));
+        let (toi, normal) =
+            swept_aabb_slab_toi([0.0, 0.5, 0.5], [10.0, 0.0, 0.0], [2.0, 0.0, 0.0], [3.0, 1.0, 1.0])
+                .unwrap();
+        assert!((toi - 0.2).abs() < 1e-12);
+        assert_eq!(normal, [-1, 0, 0]);
+    }
+}
+
+/// Evaluates the Kay–Kajiya / Woo slab time-of-impact `(toi_01, hit_normal)` for a point at
+/// `rel_origin` displaced by `rel_disp` against the Minkowski-expanded AABB `[expanded_min, expanded_max]`.
+#[must_use]
+pub fn swept_aabb_slab_toi(
+    rel_origin: [f64; 3],
+    rel_disp: [f64; 3],
+    expanded_min: [f64; 3],
+    expanded_max: [f64; 3],
+) -> Option<(f64, [i8; 3])> {
+    if (0..3).any(|i| {
+        !rel_origin[i].is_finite()
+            || !rel_disp[i].is_finite()
+            || !expanded_min[i].is_finite()
+            || !expanded_max[i].is_finite()
+            || expanded_min[i] >= expanded_max[i]
+    }) {
+        return None;
+    }
+    let mut t_enter = f64::NEG_INFINITY;
+    let mut t_exit = f64::INFINITY;
+    let mut normal = [0_i8; 3];
+    for i in 0..3 {
+        let d = rel_disp[i];
+        if d.abs() <= 1e-15 {
+            if rel_origin[i] <= expanded_min[i] || rel_origin[i] >= expanded_max[i] {
+                return None;
+            }
+            continue;
+        }
+        let t1 = (expanded_min[i] - rel_origin[i]) / d;
+        let t2 = (expanded_max[i] - rel_origin[i]) / d;
+        let enter = t1.min(t2);
+        let exit = t1.max(t2);
+        if enter > t_enter {
+            t_enter = enter;
+            normal = [0; 3];
+            normal[i] = if d > 0.0 { -1 } else { 1 };
+        }
+        t_exit = t_exit.min(exit);
+        if t_enter > t_exit {
+            return None;
+        }
+    }
+    if t_exit < 0.0 || t_enter > 1.0 {
+        None
+    } else if t_enter < 0.0 {
+        Some((0.0, [0; 3]))
+    } else {
+        Some((t_enter, normal))
     }
 }

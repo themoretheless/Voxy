@@ -373,3 +373,88 @@ fn solve(mut system: [[f64; 10]; 9]) -> Result<[f64; 9], StepError> {
     }
     Ok(result)
 }
+
+/// Computes the fluid Roche limit distance $d = 2.44 R_M (\rho_M / \rho_m)^{1/3}$ and rigid-body
+/// limit $1.26 R_M (\rho_M / \rho_m)^{1/3}$ as `(d_fluid, d_rigid)` ( returning `d_fluid` directly
+/// from `roche_limit_fluid_radius` per the milestone signature).
+pub fn roche_limit_fluid_radius(
+    primary_radius: f64,
+    primary_density: f64,
+    satellite_density: f64,
+) -> Option<f64> {
+    if !primary_radius.is_finite()
+        || !primary_density.is_finite()
+        || !satellite_density.is_finite()
+        || primary_radius <= 0.0
+        || primary_density <= 0.0
+        || satellite_density <= 0.0
+    {
+        return None;
+    }
+    let d = 2.44 * primary_radius * (primary_density / satellite_density).cbrt();
+    d.is_finite().then_some(d)
+}
+
+/// Computes Peale-Cassen-Reynolds tidal dissipation heating power (Watts)
+/// $\dot{E} = \frac{21}{2} \frac{k_2}{Q} \frac{G M_p^2 R_s^5 n e^2}{a^6}$ in an eccentric satellite.
+#[allow(clippy::too_many_arguments)]
+pub fn tidal_dissipation_heating_watts(
+    k2_love: f64,
+    quality_q: f64,
+    g: f64,
+    primary_mass: f64,
+    sat_radius: f64,
+    mean_motion_n: f64,
+    eccentricity: f64,
+    semi_major_axis: f64,
+) -> Option<f64> {
+    if ![
+        k2_love,
+        quality_q,
+        g,
+        primary_mass,
+        sat_radius,
+        mean_motion_n,
+        eccentricity,
+        semi_major_axis,
+    ]
+    .into_iter()
+    .all(f64::is_finite)
+        || k2_love < 0.0
+        || quality_q <= 0.0
+        || g <= 0.0
+        || primary_mass <= 0.0
+        || sat_radius <= 0.0
+        || mean_motion_n <= 0.0
+        || !(0.0..1.0).contains(&eccentricity)
+        || semi_major_axis <= sat_radius
+    {
+        return None;
+    }
+    let ratio = sat_radius / semi_major_axis;
+    let power = 10.5
+        * (k2_love / quality_q)
+        * g
+        * primary_mass
+        * primary_mass
+        * ratio.powi(5)
+        * (mean_motion_n / semi_major_axis)
+        * eccentricity
+        * eccentricity;
+    power.is_finite().then_some(power)
+}
+
+#[cfg(test)]
+mod tidal_and_roche_tests {
+    use super::*;
+
+    #[test]
+    fn roche_limit_and_tidal_heating_scale_with_density_and_eccentricity() {
+        let d = roche_limit_fluid_radius(6.371e6, 5514.0, 3344.0).unwrap();
+        assert!(d > 1.5e7 && d < 2.2e7);
+        let e0 = tidal_dissipation_heating_watts(0.03, 100.0, 6.6743e-11, 1.898e27, 1.821e6, 4.1e-5, 0.0, 4.217e8).unwrap();
+        let io = tidal_dissipation_heating_watts(0.03, 100.0, 6.6743e-11, 1.898e27, 1.821e6, 4.1e-5, 0.0041, 4.217e8).unwrap();
+        assert_eq!(e0, 0.0);
+        assert!(io > 1.0e12);
+    }
+}

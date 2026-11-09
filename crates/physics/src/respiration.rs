@@ -428,6 +428,44 @@ pub fn hill_oxygen_saturation(
     Ok((ratio / (1.0 + ratio)).clamp(0.0, 1.0))
 }
 
+/// Option-returning convenience wrapper for the Hill oxyhemoglobin dissociation curve
+/// $S_{\text{O}_2} = \frac{P_{\text{O}_2}^n}{P_{\text{O}_2}^n + P_{50}^n} \in [0, 1]$.
+#[must_use]
+pub fn hill_oxygen_hemoglobin_saturation(
+    po2_mmhg: f64,
+    p50_mmhg: f64,
+    hill_n: f64,
+) -> Option<f64> {
+    hill_oxygen_saturation(po2_mmhg, p50_mmhg, hill_n).ok()
+}
+
+/// Evaluates the clinical alveolar gas equation
+/// $P_{A\text{O}_2} = F_{I\text{O}_2}(P_{\text{atm}} - P_{\text{H}_2\text{O}}) - \frac{P_{a\text{CO}_2}}{R}$.
+#[must_use]
+pub fn alveolar_gas_equation_pao2_mmhg(
+    fio2: f64,
+    barometric_mmhg: f64,
+    water_vapor_mmhg: f64,
+    paco2_mmhg: f64,
+    respiratory_quotient: f64,
+) -> Option<f64> {
+    if !fio2.is_finite()
+        || !barometric_mmhg.is_finite()
+        || !water_vapor_mmhg.is_finite()
+        || !paco2_mmhg.is_finite()
+        || !respiratory_quotient.is_finite()
+        || !(0.0..=1.0).contains(&fio2)
+        || barometric_mmhg <= water_vapor_mmhg
+        || water_vapor_mmhg < 0.0
+        || paco2_mmhg < 0.0
+        || respiratory_quotient <= 0.0
+    {
+        return None;
+    }
+    let pao2 = fio2 * (barometric_mmhg - water_vapor_mmhg) - paco2_mmhg / respiratory_quotient;
+    (pao2.is_finite() && pao2 >= 0.0).then_some(pao2)
+}
+
 #[cfg(test)]
 mod hill_tests {
     use super::*;
@@ -435,9 +473,11 @@ mod hill_tests {
     #[test]
     fn hill_oxygen_saturation_is_half_at_p50_and_sigmoidal() {
         assert_eq!(hill_oxygen_saturation(0.0, 26.6, 2.7).unwrap(), 0.0);
-        let half = hill_oxygen_saturation(26.6, 26.6, 2.7).unwrap();
-        let arterial = hill_oxygen_saturation(100.0, 26.6, 2.7).unwrap();
+        let half = hill_oxygen_hemoglobin_saturation(26.6, 26.6, 2.7).unwrap();
+        let arterial = hill_oxygen_hemoglobin_saturation(100.0, 26.6, 2.7).unwrap();
         assert!((half - 0.5).abs() < 1e-12);
         assert!(arterial > 0.96);
+        let pao2 = alveolar_gas_equation_pao2_mmhg(0.21, 760.0, 47.0, 40.0, 0.8).unwrap();
+        assert!((pao2 - 99.73).abs() < 0.05);
     }
 }

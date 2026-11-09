@@ -348,3 +348,45 @@ impl App {
         }
     }
 }
+
+/// Evaluates discrete LOD level selection with symmetric dead-band hysteresis around
+/// sorted distance `thresholds` (`hysteresis_margin >= 0.0`) so small camera oscillations
+/// near a boundary do not flicker between adjacent LODs.
+#[must_use]
+pub fn lod_transition_with_hysteresis(
+    current_lod: usize,
+    distance: f32,
+    thresholds: &[f32],
+    hysteresis_margin: f32,
+) -> usize {
+    if thresholds.is_empty() || !distance.is_finite() {
+        return current_lod.min(thresholds.len());
+    }
+    let margin = if hysteresis_margin.is_finite() && hysteresis_margin > 0.0 {
+        hysteresis_margin
+    } else {
+        0.0
+    };
+    let mut lod = current_lod.min(thresholds.len());
+    while lod < thresholds.len() && distance > thresholds[lod] + margin {
+        lod += 1;
+    }
+    while lod > 0 && distance < thresholds[lod - 1] - margin {
+        lod -= 1;
+    }
+    lod
+}
+
+#[cfg(test)]
+mod hysteresis_tests {
+    use super::*;
+
+    #[test]
+    fn lod_transition_with_hysteresis_suppresses_boundary_chatter() {
+        let thresholds = [10.0, 25.0, 50.0];
+        assert_eq!(lod_transition_with_hysteresis(0, 10.5, &thresholds, 1.0), 0);
+        assert_eq!(lod_transition_with_hysteresis(0, 11.5, &thresholds, 1.0), 1);
+        assert_eq!(lod_transition_with_hysteresis(1, 9.5, &thresholds, 1.0), 1);
+        assert_eq!(lod_transition_with_hysteresis(1, 8.5, &thresholds, 1.0), 0);
+    }
+}

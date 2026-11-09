@@ -589,3 +589,50 @@ use crate::math::cross;
 use crate::math::dot;
 use crate::math::sub;
 pub(crate) use reaction::{resolve_rate_from_baseline, resolve_rate_from_baseline_interval};
+
+/// Evaluates the non-linear Hertz–Mindlin elastic sphere-sphere contact normal force,
+/// normal tangent stiffness, and Mindlin no-slip tangential stiffness `(f_normal, k_normal, k_tangent)`
+/// at normal overlap $\delta \ge 0$:
+/// - $a = \sqrt{R^* \delta}$
+/// - $F_n = \frac{4}{3} E^* \sqrt{R^*} \delta^{3/2}$
+/// - $k_n = \frac{dF_n}{d\delta} = 2 E^* a$
+/// - $k_t = 8 G^* a$.
+#[must_use]
+pub fn hertz_mindlin_contact_stiffness(
+    eff_modulus_e: f64,
+    eff_shear_g: f64,
+    eff_radius_r: f64,
+    overlap_delta: f64,
+) -> Option<(f64, f64, f64)> {
+    if !eff_modulus_e.is_finite()
+        || !eff_shear_g.is_finite()
+        || !eff_radius_r.is_finite()
+        || !overlap_delta.is_finite()
+        || eff_modulus_e <= 0.0
+        || eff_shear_g <= 0.0
+        || eff_radius_r <= 0.0
+        || overlap_delta < 0.0
+    {
+        return None;
+    }
+    let contact_radius_a = (eff_radius_r * overlap_delta).sqrt();
+    let f_normal = (4.0 / 3.0) * eff_modulus_e * contact_radius_a * overlap_delta;
+    let k_normal = 2.0 * eff_modulus_e * contact_radius_a;
+    let k_tangent = 8.0 * eff_shear_g * contact_radius_a;
+    (f_normal.is_finite() && k_normal.is_finite() && k_tangent.is_finite())
+        .then_some((f_normal, k_normal, k_tangent))
+}
+
+#[cfg(test)]
+mod hertz_mindlin_tests {
+    use super::*;
+
+    #[test]
+    fn hertz_mindlin_normal_force_scales_with_three_halves_power_of_overlap() {
+        let (f1, kn1, kt1) = hertz_mindlin_contact_stiffness(1e9, 4e8, 0.05, 1e-4).unwrap();
+        let (f4, kn4, kt4) = hertz_mindlin_contact_stiffness(1e9, 4e8, 0.05, 4e-4).unwrap();
+        assert!((f4 / f1 - 8.0).abs() < 1e-9);
+        assert!((kn4 / kn1 - 2.0).abs() < 1e-9);
+        assert!((kt4 / kt1 - 2.0).abs() < 1e-9);
+    }
+}

@@ -652,6 +652,86 @@ pub fn wall_shear_stress_pa(
     Ok(tau)
 }
 
+/// Integrates one exact exponential step of a 2-element arterial Windkessel model:
+/// $C \frac{dP}{dt} + \frac{P - P_d}{R} = Q_{\text{in}}$.
+#[must_use]
+pub fn windkessel_2element_arterial_pressure_step(
+    p_prev: f64,
+    inflow_m3_s: f64,
+    resistance_pa_s_m3: f64,
+    compliance_m3_pa: f64,
+    diastolic_p: f64,
+    dt_s: f64,
+) -> Option<f64> {
+    if !p_prev.is_finite()
+        || !inflow_m3_s.is_finite()
+        || !resistance_pa_s_m3.is_finite()
+        || !compliance_m3_pa.is_finite()
+        || !diastolic_p.is_finite()
+        || !dt_s.is_finite()
+        || resistance_pa_s_m3 <= 0.0
+        || compliance_m3_pa <= 0.0
+        || dt_s < 0.0
+    {
+        return None;
+    }
+    let tau = resistance_pa_s_m3 * compliance_m3_pa;
+    let p_steady = diastolic_p + inflow_m3_s * resistance_pa_s_m3;
+    let decay = (-dt_s / tau).exp();
+    let p_next = p_steady + (p_prev - p_steady) * decay;
+    p_next.is_finite().then_some(p_next)
+}
+
+/// Evaluates the non-Newtonian Casson apparent blood viscosity
+/// $\mu_{\text{app}}(\dot{\gamma}) = \left(\sqrt{\mu_\infty} + \sqrt{\frac{\tau_y}{\dot{\gamma}}}\right)^2$.
+#[must_use]
+pub fn casson_blood_apparent_viscosity_pa_s(
+    shear_rate_s_inv: f64,
+    yield_stress_pa: f64,
+    inf_viscosity_pa_s: f64,
+) -> Option<f64> {
+    if !shear_rate_s_inv.is_finite()
+        || !yield_stress_pa.is_finite()
+        || !inf_viscosity_pa_s.is_finite()
+        || shear_rate_s_inv <= 0.0
+        || yield_stress_pa < 0.0
+        || inf_viscosity_pa_s <= 0.0
+    {
+        return None;
+    }
+    let root = inf_viscosity_pa_s.sqrt() + (yield_stress_pa / shear_rate_s_inv).sqrt();
+    let mu = root * root;
+    mu.is_finite().then_some(mu)
+}
+
+/// Evaluates the Pries–Secomb–Gaehtgens in-vitro Fåhræus–Lindqvist relative blood viscosity
+/// factor in microvessels of diameter `diameter_um` ($\mu\text{m}$) at discharge hematocrit `hematocrit`.
+#[must_use]
+pub fn fahraeus_lindqvist_microvessel_viscosity_factor(
+    diameter_um: f64,
+    hematocrit: f64,
+) -> Option<f64> {
+    if !diameter_um.is_finite()
+        || !hematocrit.is_finite()
+        || diameter_um < 3.0
+        || !(0.0..=0.85).contains(&hematocrit)
+    {
+        return None;
+    }
+    let mu_45 = 220.0 * (-1.3 * diameter_um).exp()
+        + 3.2
+        - 2.44 * (-0.06 * diameter_um.powf(0.645)).exp();
+    let c = (0.8 + (-0.075 * diameter_um).exp())
+        * (-1.0 + 1.0 / (1.0 + 1e-11 * diameter_um.powi(12)))
+        + 1.0 / (1.0 + 1e-11 * diameter_um.powi(12));
+    let denom = (1.0 - 0.45_f64).powf(c) - 1.0;
+    if denom.abs() <= 1e-12 {
+        return Some(1.0);
+    }
+    let rel = 1.0 + (mu_45 - 1.0) * (((1.0 - hematocrit).powf(c) - 1.0) / denom);
+    rel.is_finite().then_some(rel.max(1.0))
+}
+
 #[cfg(test)]
 mod wss_tests {
     use super::*;
@@ -662,5 +742,19 @@ mod wss_tests {
         let r2 = wall_shear_stress_pa(0.0035, 1e-6, 0.002).unwrap();
         assert!((r1 / r2 - 8.0).abs() < 1e-9);
         assert!(wall_shear_stress_pa(0.0, 1e-6, 0.001).is_err());
+    }
+
+    #[test]
+    fn windkessel_casson_and_fahraeus_lindqvist_models_behave_physiologically() {
+        let p_diastole =
+            windkessel_2element_arterial_pressure_step(16_000.0, 0.0, 1.0e8, 1.5e-8, 10_600.0, 0.5)
+                .unwrap();
+        assert!(p_diastole < 16_000.0 && p_diastole > 10_600.0);
+        let mu_low = casson_blood_apparent_viscosity_pa_s(1.0, 0.005, 0.0035).unwrap();
+        let mu_high = casson_blood_apparent_viscosity_pa_s(200.0, 0.005, 0.0035).unwrap();
+        assert!(mu_low > mu_high && mu_high > 0.0035);
+        let fl_cap = fahraeus_lindqvist_microvessel_viscosity_factor(10.0, 0.45).unwrap();
+        let fl_art = fahraeus_lindqvist_microvessel_viscosity_factor(300.0, 0.45).unwrap();
+        assert!(fl_cap < fl_art);
     }
 }

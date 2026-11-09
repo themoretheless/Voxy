@@ -15,6 +15,30 @@ pub struct PlantOptions {
     pub seed: u64,
     pub height: f32,
 }
+
+/// Computes the 3D unit direction on a phyllotaxis rosette or crown spiral for leaf index `index`
+/// out of `total_count` using Vogel's golden angle $\theta_n = n \cdot 137.507764^\circ$ and
+/// elevation `pitch_radians` above the horizontal plane.
+#[must_use]
+pub fn phyllotaxis_spiral_direction(index: u32, total_count: u32, pitch_radians: f32) -> [f32; 3] {
+    let golden_angle_rad: f32 = 2.399_963_1;
+    let theta = (index as f32) * golden_angle_rad;
+    let pitch = if pitch_radians.is_finite() {
+        pitch_radians.clamp(-std::f32::consts::FRAC_PI_2, std::f32::consts::FRAC_PI_2)
+    } else {
+        0.0
+    };
+    let radial_progress = if total_count > 1 {
+        ((index as f32 + 0.5) / (total_count as f32)).sqrt()
+    } else {
+        1.0
+    };
+    let eff_pitch = pitch * (1.0 - 0.35 * radial_progress);
+    let (sin_p, cos_p) = eff_pitch.sin_cos();
+    let (sin_t, cos_t) = theta.sin_cos();
+    let dir = Vec3::new(cos_t * cos_p, sin_p, sin_t * cos_p).normalize_or(Vec3::Y);
+    dir.to_array()
+}
 impl Default for PlantOptions {
     fn default() -> Self {
         Self {
@@ -1414,5 +1438,9 @@ mod tests {
                 .is_err()
             );
         }
+        let d0 = Vec3::from_array(phyllotaxis_spiral_direction(0, 16, 0.4));
+        let d1 = Vec3::from_array(phyllotaxis_spiral_direction(1, 16, 0.4));
+        assert!((d0.length() - 1.0).abs() < 1e-5);
+        assert!(d0.dot(d1) < 0.5);
     }
 }
