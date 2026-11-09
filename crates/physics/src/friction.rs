@@ -311,7 +311,9 @@ mod lugre_tests {
     fn lugre_bristle_model_exhibits_stribeck_transition_from_stiction_to_coulomb() {
         let mut z_slow = 0.0;
         let mut f_slow = 0.0;
-        for _ in 0..100 {
+        // At 1 mm/s the bristle relaxes with rate |v| / g(v) = 6.7 1/s, so the
+        // stiction plateau needs seconds of sliding: 0.1 s reaches only 7.5 N.
+        for _ in 0..2000 {
             (f_slow, z_slow) = lugre_bristle_friction_force(
                 0.001, z_slow, 1e5, 300.0, 0.4, 10.0, 15.0, 0.05, 0.001,
             )
