@@ -119,6 +119,18 @@ collapsible_if = "allow"
 needless_borrow = "allow"
 implicit_clone = "allow"
 
+# Dev and test builds keep opt-level 0 and full debug assertions for workspace
+# crates, with two measured exceptions (docs/refactor/BASELINE.md):
+# external dependencies are built once and rarely change, and the exact-arithmetic
+# oracles (num-bigint), naga and wgpu dominate debug run time unoptimised;
+# physics is the numeric core whose tests are compute-bound.
+# `cargo test -p physics --lib`: 176 s -> 13 s for +35 s of compile time.
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.dev.package.physics]
+opt-level = 1
+
 [patch.crates-io]
 wgpu = { path = "vendor/wgpu" }
 wgpu-hal = { path = "vendor/wgpu-hal" }
