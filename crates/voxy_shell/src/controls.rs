@@ -1,4 +1,5 @@
-#![allow(dead_code)]
+//! Keyboard, mouse and touch state plus the follow and walk camera rigs of the
+//! native voxel clients.
 use glam::{Vec2, Vec3};
 use winit::event::{ElementState, Touch, TouchPhase};
 use winit::keyboard::KeyCode;

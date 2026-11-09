@@ -1,9 +1,7 @@
 const FIXED_DT: f32 = 1.0 / 60.0;
 const WALK_SPEED: f32 = 5.0;
 mod animals;
-mod controls;
 mod cpu_replay;
-mod frame_profile;
 mod graphics_options;
 mod native_plants;
 mod pet;
@@ -13,7 +11,6 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use controls::{CameraRig, InputState};
 use glam::{Mat4, Quat, Vec3};
 use pet::{PetAction, PetState};
 use physics_voxel::{
@@ -34,6 +31,8 @@ use voxy_runtime::build_procedural_scene;
 use voxy_runtime::{
     BootstrapChunk, BootstrapScene, invalidated_derived_chunks, rebuild_bootstrap_chunks,
 };
+use voxy_shell::controls::{self, CameraRig, InputState};
+use voxy_shell::frame_profile;
 use voxy_world::{ChunkPos, EditSource, ResourceKey, VoxelPos, World};
 use winit::application::ApplicationHandler;
 use winit::event::{
