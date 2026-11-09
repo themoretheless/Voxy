@@ -8,19 +8,15 @@ use physics::secondary_motion::{Config as SecondaryConfig, ContactPlane, Seconda
 mod skin_light_diffusion;
 #[path = "surface_normals.rs"]
 mod surface_normals;
+use crate::model_presentation as presentation_receipts;
+use crate::{tissue_diagnostics, view_settings};
 use physics::skin::{
     Attachment, ContactScene, ContactSphere, Skin, SkinEmbedding, SkinMaterial, SolverConfig,
     SurfaceBinding,
 };
+use presentation_receipts::record as presentation_record;
 use std::collections::HashMap;
 use voxy_render::{ObjAsset, ObjLimits, SceneMesh, SceneVertex};
-#[path = "model_presentation.rs"]
-mod presentation_receipts;
-#[path = "tissue_diagnostics.rs"]
-mod tissue_diagnostics;
-#[path = "view_settings.rs"]
-mod view_settings;
-use presentation_receipts::record as presentation_record;
 const BODY: &str =
     include_str!("../../../assets/characters/blender-female/prepared/body-forehead-refined.obj");
 #[derive(Debug, PartialEq)]
