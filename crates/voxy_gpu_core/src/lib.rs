@@ -87,11 +87,7 @@ impl HiZPyramid {
     /// # Errors
     ///
     /// Returns [`ComputeError::InvalidBuffer`] if dimensions are zero or `depth.len()` does not match.
-    pub fn from_depth_buffer(
-        width: u32,
-        height: u32,
-        depth: &[f32],
-    ) -> Result<Self, ComputeError> {
+    pub fn from_depth_buffer(width: u32, height: u32, depth: &[f32]) -> Result<Self, ComputeError> {
         if width == 0 || height == 0 || depth.len() != (width as usize) * (height as usize) {
             return Err(ComputeError::InvalidBuffer);
         }
@@ -147,8 +143,8 @@ impl HiZPyramid {
         let footprint_x = ((u1 - u0) * self.base_width as f32).max(1.0);
         let footprint_y = ((v1 - v0) * self.base_height as f32).max(1.0);
         let max_footprint = footprint_x.max(footprint_y);
-        let level = (max_footprint.log2().ceil().max(0.0) as usize)
-            .min(self.mips.len().saturating_sub(1));
+        let level =
+            (max_footprint.log2().ceil().max(0.0) as usize).min(self.mips.len().saturating_sub(1));
         let mip_w = (self.base_width >> level).max(1);
         let mip_h = (self.base_height >> level).max(1);
         let x0 = ((u0 * mip_w as f32).floor() as u32).min(mip_w - 1);

@@ -2238,7 +2238,10 @@ mod n8_animation_math_tests {
     #[test]
     fn inertialize_barycentric_and_swing_twist_clamp_behave_smoothly() {
         assert!((inertialize_scalar_transition(2.0, -1.0, 0.5, 0.0) - 2.0).abs() < 1e-6);
-        assert_eq!(inertialization_quintic_decay_offset(2.0, -1.0, 0.5, 0.5), 0.0);
+        assert_eq!(
+            inertialization_quintic_decay_offset(2.0, -1.0, 0.5, 0.5),
+            0.0
+        );
         let mid = inertialize_scalar_transition(2.0, 0.0, 1.0, 0.5);
         assert!((mid - 1.0).abs() < 1e-5);
 
@@ -2258,7 +2261,9 @@ mod n8_animation_math_tests {
         assert!((weights[0] - 0.5).abs() < 1e-6);
         assert!((weights[1] - 0.25).abs() < 1e-6);
         assert!((weights[2] - 0.25).abs() < 1e-6);
-        assert!(barycentric_blend_space_2d([0.0, 0.0], [0.0, 0.0], [1.0, 0.0], [2.0, 0.0]).is_none());
+        assert!(
+            barycentric_blend_space_2d([0.0, 0.0], [0.0, 0.0], [1.0, 0.0], [2.0, 0.0]).is_none()
+        );
 
         assert!((clamp_swing_twist_angle(1.2, 0.5) - 0.5).abs() < 1e-6);
         assert!((clamp_swing_twist_angle(-1.2, 0.5) + 0.5).abs() < 1e-6);

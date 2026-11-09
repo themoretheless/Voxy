@@ -194,7 +194,9 @@ pub fn linear_to_pq_st2084(linear_nits_normalized: f32) -> f32 {
     const C2: f32 = 2413.0 / 128.0;
     const C3: f32 = 2392.0 / 128.0;
     let ym1 = y.powf(M1);
-    ((C1 + C2 * ym1) / (1.0 + C3 * ym1)).powf(M2).clamp(0.0, 1.0)
+    ((C1 + C2 * ym1) / (1.0 + C3 * ym1))
+        .powf(M2)
+        .clamp(0.0, 1.0)
 }
 
 /// Evaluates SMPTE ST 2084 (Perceptual Quantizer / PQ) EOTF mapping non-linear `pq_signal in [0, 1]`

@@ -330,9 +330,7 @@ impl ModelAsset {
     ) -> Result<Option<ModelTexture>, ModelError> {
         pbr.base_color_texture()
             .map(|info| {
-                if info.tex_coord() != 0
-                    || primitive.get(&gltf::Semantic::TexCoords(0)).is_none()
-                {
+                if info.tex_coord() != 0 || primitive.get(&gltf::Semantic::TexCoords(0)).is_none() {
                     return Err(fail("base color texture requires TEXCOORD_0"));
                 }
                 let sampler = info.texture().sampler();
@@ -345,9 +343,7 @@ impl ModelAsset {
                     image: info.texture().source().index(),
                     use_mips: !matches!(
                         sampler.min_filter(),
-                        Some(
-                            gltf::texture::MinFilter::Nearest | gltf::texture::MinFilter::Linear
-                        )
+                        Some(gltf::texture::MinFilter::Nearest | gltf::texture::MinFilter::Linear)
                     ),
                     sampling: voxy_render::TextureSampling {
                         wrap_u: wrap(sampler.wrap_s()),

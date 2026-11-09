@@ -447,9 +447,7 @@ fn encode_frame(
         payload.write_u16_le(*slot);
         payload.write_u64_le(*last_commit);
         let chunk = encode_chunk(chunk, registry)?;
-        payload.write_u32_le(
-            u32::try_from(chunk.len()).map_err(|_| RegionError::FrameTooLarge)?,
-        );
+        payload.write_u32_le(u32::try_from(chunk.len()).map_err(|_| RegionError::FrameTooLarge)?);
         payload.write_bytes(&chunk);
     }
     if payload.len() > MAX_FRAME {
@@ -458,9 +456,7 @@ fn encode_frame(
     let mut frame_buf = Vec::with_capacity(payload.len() + 12);
     let mut frame = ByteWriter::new(&mut frame_buf);
     frame.write_bytes(FRAME_MAGIC);
-    frame.write_u32_le(
-        u32::try_from(payload.len()).map_err(|_| RegionError::FrameTooLarge)?,
-    );
+    frame.write_u32_le(u32::try_from(payload.len()).map_err(|_| RegionError::FrameTooLarge)?);
     frame.write_bytes(payload.as_slice());
     let crc = checksum(frame.as_slice());
     frame.write_u32_le(crc);

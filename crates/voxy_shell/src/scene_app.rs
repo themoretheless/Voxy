@@ -2171,9 +2171,7 @@ impl SceneApp {
                 female.verify()?;
                 if female.film.is_some() {
                     if r.optical_frames != u64::from(self.frames) {
-                        return Err(
-                            "film layers were absent from a presented smoke frame".into()
-                        );
+                        return Err("film layers were absent from a presented smoke frame".into());
                     }
                     if r.film_mass_checks != u64::from(self.frames) {
                         return Err("film mass checks missed a presented smoke frame".into());

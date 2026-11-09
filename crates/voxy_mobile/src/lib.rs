@@ -131,7 +131,10 @@ mod tests {
 
         let state = MobileThermalState::Nominal.step_with_hysteresis(38.5, 1.5);
         assert_eq!(state, MobileThermalState::Fair);
-        assert_eq!(state.step_with_hysteresis(37.2, 1.5), MobileThermalState::Fair);
+        assert_eq!(
+            state.step_with_hysteresis(37.2, 1.5),
+            MobileThermalState::Fair
+        );
         assert_eq!(
             state.step_with_hysteresis(36.0, 1.5),
             MobileThermalState::Nominal

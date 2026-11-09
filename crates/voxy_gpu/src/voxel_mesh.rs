@@ -571,7 +571,9 @@ mod tests {
 
         // A 2x2x2 cube has 6 faces of 2x2 = 24 quads = 144 vertices (interior faces culled!)
         assert_eq!(indirect_args.vertex_count, 144);
-        assert!((result.compression_ratio(indirect_args.vertex_count) - (144.0 / 6144.0)).abs() < 1e-6);
+        assert!(
+            (result.compression_ratio(indirect_args.vertex_count) - (144.0 / 6144.0)).abs() < 1e-6
+        );
         assert_eq!(vertices.len(), 144);
         for v in &vertices {
             assert_eq!(v.material, 7);

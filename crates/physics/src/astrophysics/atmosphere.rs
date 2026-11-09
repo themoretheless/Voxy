@@ -143,7 +143,8 @@ pub fn jeans_escape_parameter_lambda(
     {
         return None;
     }
-    let lambda = (g * planet_mass_kg * particle_mass_kg) / (k_b * exosphere_temp_k * exobase_radius_m);
+    let lambda =
+        (g * planet_mass_kg * particle_mass_kg) / (k_b * exosphere_temp_k * exobase_radius_m);
     lambda.is_finite().then_some(lambda)
 }
 
@@ -153,8 +154,24 @@ mod jeans_tests {
 
     #[test]
     fn jeans_escape_parameter_is_lower_for_hydrogen_than_nitrogen() {
-        let h2 = jeans_escape_parameter_lambda(5.972e24, 6.871e6, 3.34e-27, 1000.0, 6.6743e-11, 1.380_649e-23).unwrap();
-        let n2 = jeans_escape_parameter_lambda(5.972e24, 6.871e6, 4.65e-26, 1000.0, 6.6743e-11, 1.380_649e-23).unwrap();
+        let h2 = jeans_escape_parameter_lambda(
+            5.972e24,
+            6.871e6,
+            3.34e-27,
+            1000.0,
+            6.6743e-11,
+            1.380_649e-23,
+        )
+        .unwrap();
+        let n2 = jeans_escape_parameter_lambda(
+            5.972e24,
+            6.871e6,
+            4.65e-26,
+            1000.0,
+            6.6743e-11,
+            1.380_649e-23,
+        )
+        .unwrap();
         assert!(n2 > h2 && h2 > 0.0);
     }
 }

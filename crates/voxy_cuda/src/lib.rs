@@ -687,14 +687,22 @@ pub const fn optimal_block_threads_1d(
         return None;
     }
     let raw_threads = max_registers_per_block / registers_per_thread;
-    let capped = if raw_threads > 1024 { 1024 } else { raw_threads };
+    let capped = if raw_threads > 1024 {
+        1024
+    } else {
+        raw_threads
+    };
     let warp_aligned = (capped / 32) * 32;
     if warp_aligned < 32 {
         None
     } else {
         // Prefer 256 threads per block when register budget comfortably allows it,
         // avoiding over-large blocks that limit multi-block SM residency.
-        Some(if warp_aligned > 256 { 256 } else { warp_aligned })
+        Some(if warp_aligned > 256 {
+            256
+        } else {
+            warp_aligned
+        })
     }
 }
 

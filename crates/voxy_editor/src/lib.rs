@@ -65,11 +65,11 @@ mod prefab_authoring;
 mod prefab_fields;
 mod scene_revision;
 mod view_layout;
-pub use view_layout::compute_split_pane_rects;
 pub use packaged_game::{
     run_packaged_game, run_packaged_game_with_components, run_packaged_game_with_host,
     run_packaged_game_with_ui_actions,
 };
+pub use view_layout::compute_split_pane_rects;
 mod prefab_smoke;
 pub use camera::ViewportCamera as EditorCamera;
 mod animation_runtime;
@@ -104,8 +104,8 @@ mod panels;
 mod ui_draw;
 mod ui_live;
 mod ui_text;
-use gizmo::DragAxis;
 pub use follow_camera::follow_camera_spring_step;
+use gizmo::DragAxis;
 pub use gizmo::{snap_angle_radians, snap_translation_to_grid, translation_gizmo};
 mod picking;
 mod selection;

@@ -176,11 +176,7 @@ impl SupersampleResolve {
 /// `sharpness` in `[0.0, 1.0]`, attenuating sharpening around high-contrast HDR highlights to
 /// prevent negative ringing halos.
 #[must_use]
-pub fn rcas_sharpening_gain(
-    center_luma: f32,
-    neighbors_luma: [f32; 4],
-    sharpness: f32,
-) -> f32 {
+pub fn rcas_sharpening_gain(center_luma: f32, neighbors_luma: [f32; 4], sharpness: f32) -> f32 {
     if !center_luma.is_finite()
         || neighbors_luma.iter().any(|v| !v.is_finite() || *v < 0.0)
         || !sharpness.is_finite()
@@ -192,10 +188,7 @@ pub fn rcas_sharpening_gain(
     if s <= 1e-6 {
         return 0.0;
     }
-    let min_l = neighbors_luma
-        .iter()
-        .copied()
-        .fold(center_luma, f32::min);
+    let min_l = neighbors_luma.iter().copied().fold(center_luma, f32::min);
     let max_l = neighbors_luma
         .iter()
         .copied()

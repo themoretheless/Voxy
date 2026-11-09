@@ -238,10 +238,7 @@ mod lbvh_tests {
     #[test]
     fn morton_lbvh_common_upper_bits_counts_shared_msb_prefix() {
         assert_eq!(morton_lbvh_common_upper_bits(0xDEAD_BEEF, 0xDEAD_BEEF), 64);
-        assert_eq!(
-            morton_lbvh_common_upper_bits(1_u64 << 63, 0),
-            0
-        );
+        assert_eq!(morton_lbvh_common_upper_bits(1_u64 << 63, 0), 0);
         assert_eq!(
             morton_lbvh_common_upper_bits(0x8000_0000_0000_0000, 0xC000_0000_0000_0000),
             1

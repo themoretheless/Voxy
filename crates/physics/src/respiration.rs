@@ -431,11 +431,7 @@ pub fn hill_oxygen_saturation(
 /// Option-returning convenience wrapper for the Hill oxyhemoglobin dissociation curve
 /// $S_{\text{O}_2} = \frac{P_{\text{O}_2}^n}{P_{\text{O}_2}^n + P_{50}^n} \in [0, 1]$.
 #[must_use]
-pub fn hill_oxygen_hemoglobin_saturation(
-    po2_mmhg: f64,
-    p50_mmhg: f64,
-    hill_n: f64,
-) -> Option<f64> {
+pub fn hill_oxygen_hemoglobin_saturation(po2_mmhg: f64, p50_mmhg: f64, hill_n: f64) -> Option<f64> {
     hill_oxygen_saturation(po2_mmhg, p50_mmhg, hill_n).ok()
 }
 

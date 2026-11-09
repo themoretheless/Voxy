@@ -971,7 +971,9 @@ mod tests {
         assert_eq!(filled.column_top_solid_y(0, 0), None);
 
         assert!((chunk_shannon_entropy_bits_per_voxel(&[32_768], 32_768) - 0.0).abs() < 1e-6);
-        assert!((chunk_shannon_entropy_bits_per_voxel(&[16_384, 16_384], 32_768) - 1.0).abs() < 1e-5);
+        assert!(
+            (chunk_shannon_entropy_bits_per_voxel(&[16_384, 16_384], 32_768) - 1.0).abs() < 1e-5
+        );
         assert_eq!(optimal_palette_bit_width(1), 0);
         assert_eq!(optimal_palette_bit_width(2), 1);
         assert_eq!(optimal_palette_bit_width(17), 8);

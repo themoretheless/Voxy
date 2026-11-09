@@ -51,9 +51,7 @@ pub use muscle_activation::{
     ActivationKinetics, ActiveFiberLengthLaw, MuscleRegionDrive, zajac_pennate_tendon_force,
 };
 mod perfusion;
-pub use perfusion::{
-    PerfusionCellSolute, PerfusionPort, PorePerfusion, diascopy_blanching_factor,
-};
+pub use perfusion::{PerfusionCellSolute, PerfusionPort, PorePerfusion, diascopy_blanching_factor};
 mod contact_mollifier;
 mod lbfgs;
 mod surface_contact;

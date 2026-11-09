@@ -236,13 +236,9 @@ mod tests {
                 .unwrap();
         assert!((clear - 1.0).abs() < 1e-6);
 
-        let wall = trace_voxel_occlusion_gain(
-            [0.5, 0.5, 0.5],
-            [4.5, 0.5, 0.5],
-            6.0,
-            32,
-            |pos| pos[0] == 2,
-        )
+        let wall = trace_voxel_occlusion_gain([0.5, 0.5, 0.5], [4.5, 0.5, 0.5], 6.0, 32, |pos| {
+            pos[0] == 2
+        })
         .unwrap();
         // 1 solid voxel * 6 dB loss => ~0.501187 linear gain
         assert!((wall - 0.501_187).abs() < 1e-3);

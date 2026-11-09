@@ -7,7 +7,7 @@ mod types;
 pub use propagate::build_light;
 pub use types::{
     FaceNeighbor, LightStamp, LightVolume, LightingBudget, LightingError, LightingInput,
-    attenuate_filtered_light, attentuate_tinted_glass_rgb_light, bounce_radiosity_injection_level,
+    attentuate_tinted_glass_rgb_light, attenuate_filtered_light, bounce_radiosity_injection_level,
 };
 
 #[cfg(test)]

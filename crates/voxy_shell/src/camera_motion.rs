@@ -137,6 +137,9 @@ mod tests {
         assert!(p[2] > 0.18 && p[2] < 0.32);
         let v = inertial_orbit_velocity_decay([2.0, 1.0], 5.0, 0.01, 0.1);
         assert!(v[0] > 0.0 && v[0] < 2.0);
-        assert_eq!(inertial_orbit_velocity_decay([0.005, 0.0], 5.0, 0.01, 0.1), [0.0, 0.0]);
+        assert_eq!(
+            inertial_orbit_velocity_decay([0.005, 0.0], 5.0, 0.01, 0.1),
+            [0.0, 0.0]
+        );
     }
 }

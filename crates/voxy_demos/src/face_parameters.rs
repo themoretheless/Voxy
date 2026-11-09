@@ -2859,7 +2859,10 @@ mod tests {
         assert!(v[0].position[0] > original[0].position[0]);
         assert_eq!(v[0].position[1], original[0].position[1]);
         assert_eq!(v[1], original[1]);
-        assert_eq!(clamp_antagonist_facs_weights(0.8, 0.6), (0.571_428_6, 0.428_571_43));
+        assert_eq!(
+            clamp_antagonist_facs_weights(0.8, 0.6),
+            (0.571_428_6, 0.428_571_43)
+        );
         assert_eq!(clamp_antagonist_facs_weights(0.3, 0.4), (0.3, 0.4));
     }
 }

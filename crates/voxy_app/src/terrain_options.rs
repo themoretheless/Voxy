@@ -190,6 +190,9 @@ mod tests {
         let (chunks, bytes) = super::estimate_active_chunk_column_budget(4, 8, 4096);
         assert_eq!(chunks, 9 * 9 * 8);
         assert_eq!(bytes, 9 * 9 * 8 * 4096);
-        assert_eq!(super::estimate_active_chunk_column_budget(10, 0, 4096), (0, 0));
+        assert_eq!(
+            super::estimate_active_chunk_column_budget(10, 0, 4096),
+            (0, 0)
+        );
     }
 }

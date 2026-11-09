@@ -50,9 +50,7 @@ mod depth_sample;
 mod direct_lighting;
 mod exposure;
 mod frame_generation;
-pub use exposure::{
-    AutoExposure, AutoExposureFrame, ExposureSettings, ev100_from_camera_settings,
-};
+pub use exposure::{AutoExposure, AutoExposureFrame, ExposureSettings, ev100_from_camera_settings};
 mod hdr_mips;
 mod hdr_resolve;
 pub use hdr_mips::HdrMipPyramid;
@@ -86,9 +84,7 @@ pub use imported_environment::{ImportedEnvironment, ImportedEnvironmentError};
 mod hdr_probe;
 pub use hdr_probe::HdrPixelProbe;
 mod hdr_asset;
-pub use hdr_asset::{
-    HdrImageAsset, HdrImageError, linear_to_pq_st2084, pq_st2084_to_linear,
-};
+pub use hdr_asset::{HdrImageAsset, HdrImageError, linear_to_pq_st2084, pq_st2084_to_linear};
 mod image_asset;
 mod lod;
 pub use lod::{LodError, LodIndexSet, LodLevel, LodPolicy};
@@ -116,8 +112,8 @@ mod motion;
 mod obj;
 mod ocean;
 pub use ocean::{
-    OceanCamera, OceanRenderer, OceanSettings, cdlod_morph_factor,
-    jacobian_folding_foam_intensity, water_spectral_transmittance,
+    OceanCamera, OceanRenderer, OceanSettings, cdlod_morph_factor, jacobian_folding_foam_intensity,
+    water_spectral_transmittance,
 };
 pub use voxy_water;
 pub use voxy_water::WaveSpectrum;
@@ -220,9 +216,7 @@ pub use previous_position::{
 };
 pub use primary_motion::PrimaryMotionPass;
 pub use primary_surface::{PrimarySurfaceJob, PrimarySurfacePipeline};
-pub use radiance::{
-    HdrCompositionPipeline, RadianceComposition, restir_reservoir_merge_weight,
-};
+pub use radiance::{HdrCompositionPipeline, RadianceComposition, restir_reservoir_merge_weight};
 pub use ray::{
     RAY_VISIBILITY_SHADER, RayInstanceUpdate, RayScene, RaySceneError, RaySegment,
     RayVisibilityJob, RayVisibilityPipeline, cpu_segment_visibility,
@@ -297,8 +291,7 @@ pub const TEXTURED_POINT_LIGHT_SHADER: &str = include_str!("scene_point_light.wg
 
 mod shadow_map;
 pub use shadow_map::{
-    ShadowDraw, ShadowDrawMask, ShadowMap, contact_hardening_shadow_bias,
-    snap_cascade_ortho_bounds,
+    ShadowDraw, ShadowDrawMask, ShadowMap, contact_hardening_shadow_bias, snap_cascade_ortho_bounds,
 };
 
 mod shadow_visibility;

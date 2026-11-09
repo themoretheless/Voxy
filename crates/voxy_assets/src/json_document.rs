@@ -77,10 +77,7 @@ pub trait JsonDocument: Serialize + DeserializeOwned {
     /// # Errors
     ///
     /// Rejects oversized inputs or invalid JSON syntax/schema.
-    fn from_json_bounded(
-        json: &str,
-        max_document_bytes: usize,
-    ) -> Result<Self, JsonDocumentError> {
+    fn from_json_bounded(json: &str, max_document_bytes: usize) -> Result<Self, JsonDocumentError> {
         if json.len() > max_document_bytes {
             return Err(JsonDocumentError::CapacityExceeded);
         }

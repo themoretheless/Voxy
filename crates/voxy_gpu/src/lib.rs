@@ -1,9 +1,9 @@
 #![recursion_limit = "256"]
 //! Engine compute workloads with explicit hardware ownership and validated data.
 mod terrain;
-pub use terrain::{GpuTerrainError, clipmap_toroidal_wrap_coord};
 #[cfg(not(target_arch = "wasm32"))]
 pub use terrain::GpuTerrainGenerator;
+pub use terrain::{GpuTerrainError, clipmap_toroidal_wrap_coord};
 
 mod cuda_terrain;
 pub use cuda_terrain::{CudaTerrainError, CudaTerrainGenerator};

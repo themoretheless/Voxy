@@ -282,9 +282,7 @@ fn encode_commit(commit: &PersistCommit, registry: &BlockRegistry) -> Result<Vec
     );
     for chunk in &commit.chunks {
         let bytes = encode_chunk(chunk, registry)?;
-        payload.write_u32_le(
-            u32::try_from(bytes.len()).map_err(|_| WalError::FrameTooLarge)?,
-        );
+        payload.write_u32_le(u32::try_from(bytes.len()).map_err(|_| WalError::FrameTooLarge)?);
         payload.write_bytes(&bytes);
     }
     if payload.len() > MAX_FRAME {
@@ -293,9 +291,7 @@ fn encode_commit(commit: &PersistCommit, registry: &BlockRegistry) -> Result<Vec
     let mut frame_buf = Vec::with_capacity(payload.len() + 12);
     let mut frame = ByteWriter::new(&mut frame_buf);
     frame.write_bytes(MAGIC);
-    frame.write_u32_le(
-        u32::try_from(payload.len()).map_err(|_| WalError::FrameTooLarge)?,
-    );
+    frame.write_u32_le(u32::try_from(payload.len()).map_err(|_| WalError::FrameTooLarge)?);
     frame.write_bytes(payload.as_slice());
     let crc = checksum(frame.as_slice());
     frame.write_u32_le(crc);

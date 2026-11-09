@@ -215,10 +215,14 @@ pub fn conductor_fresnel_complex_rgb(
         let a2_plus_b2 = (t0 * t0 + 4.0 * eta2 * k2).sqrt();
         let a = (0.5 * (a2_plus_b2 + t0)).max(0.0).sqrt();
         let two_a_c = 2.0 * a * c;
-        let rs = ((a2_plus_b2 + c2 - two_a_c) / (a2_plus_b2 + c2 + two_a_c).max(1e-8)).clamp(0.0, 1.0);
+        let rs =
+            ((a2_plus_b2 + c2 - two_a_c) / (a2_plus_b2 + c2 + two_a_c).max(1e-8)).clamp(0.0, 1.0);
         let two_a_c_sin2 = two_a_c * sin2;
         let sin4 = sin2 * sin2;
-        let rp = (rs * ((c2 * a2_plus_b2 + sin4 - two_a_c_sin2) / (c2 * a2_plus_b2 + sin4 + two_a_c_sin2).max(1e-8))).clamp(0.0, 1.0);
+        let rp = (rs
+            * ((c2 * a2_plus_b2 + sin4 - two_a_c_sin2)
+                / (c2 * a2_plus_b2 + sin4 + two_a_c_sin2).max(1e-8)))
+        .clamp(0.0, 1.0);
         0.5 * (rs + rp)
     })
 }
@@ -232,7 +236,11 @@ pub fn clearcoat_layer_attenuation(
     thickness_mm: f32,
     absorption_rgb: [f32; 3],
 ) -> [f32; 3] {
-    if !cos_theta_i.is_finite() || !coat_ior.is_finite() || !thickness_mm.is_finite() || coat_ior < 1.0 {
+    if !cos_theta_i.is_finite()
+        || !coat_ior.is_finite()
+        || !thickness_mm.is_finite()
+        || coat_ior < 1.0
+    {
         return [0.0; 3];
     }
     let cos_i = cos_theta_i.clamp(0.0, 1.0);
@@ -279,8 +287,10 @@ mod tests {
 
     #[test]
     fn conductor_fresnel_clearcoat_and_slope_variance_behave_physically() {
-        let gold_normal = conductor_fresnel_complex_rgb(1.0, [0.18, 0.42, 1.37], [3.42, 2.35, 1.77]);
-        let gold_grazing = conductor_fresnel_complex_rgb(0.0, [0.18, 0.42, 1.37], [3.42, 2.35, 1.77]);
+        let gold_normal =
+            conductor_fresnel_complex_rgb(1.0, [0.18, 0.42, 1.37], [3.42, 2.35, 1.77]);
+        let gold_grazing =
+            conductor_fresnel_complex_rgb(0.0, [0.18, 0.42, 1.37], [3.42, 2.35, 1.77]);
         assert!(gold_normal[0] > gold_normal[2]);
         assert!((gold_grazing[0] - 1.0).abs() < 1e-5);
 

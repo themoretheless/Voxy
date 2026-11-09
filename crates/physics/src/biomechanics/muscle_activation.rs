@@ -229,15 +229,9 @@ mod tests {
         assert!((force_0 - 1000.0).abs() < 1e-9);
         assert!(alpha_0.abs() < 1e-9);
 
-        let (force_pennate, alpha_p) = zajac_pennate_tendon_force(
-            1.0,
-            1000.0,
-            0.1,
-            0.1,
-            std::f64::consts::FRAC_PI_6,
-            0.0,
-        )
-        .unwrap();
+        let (force_pennate, alpha_p) =
+            zajac_pennate_tendon_force(1.0, 1000.0, 0.1, 0.1, std::f64::consts::FRAC_PI_6, 0.0)
+                .unwrap();
         assert!((alpha_p - std::f64::consts::FRAC_PI_6).abs() < 1e-9);
         assert!((force_pennate - 1000.0 * std::f64::consts::FRAC_PI_6.cos()).abs() < 1e-6);
     }

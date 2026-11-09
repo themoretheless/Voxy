@@ -114,8 +114,16 @@ impl PetState {
     /// pet happiness/energy based on rain, snow, and hour of day (`0..24`).
     #[allow(dead_code)]
     pub fn weather_comfort_modifier(self, rain: f32, snow: f32, hour_of_day: f32) -> f32 {
-        let r = if rain.is_finite() { rain.clamp(0.0, 1.0) } else { 0.0 };
-        let s = if snow.is_finite() { snow.clamp(0.0, 1.0) } else { 0.0 };
+        let r = if rain.is_finite() {
+            rain.clamp(0.0, 1.0)
+        } else {
+            0.0
+        };
+        let s = if snow.is_finite() {
+            snow.clamp(0.0, 1.0)
+        } else {
+            0.0
+        };
         let h = if hour_of_day.is_finite() {
             hour_of_day.rem_euclid(24.0)
         } else {
@@ -184,11 +192,7 @@ pub fn pet_pursuit_steering_velocity(
     };
     let speed = max_speed * ramp;
     let inv = speed / future_dist;
-    [
-        to_future[0] * inv,
-        to_future[1] * inv,
-        to_future[2] * inv,
-    ]
+    [to_future[0] * inv, to_future[1] * inv, to_future[2] * inv]
 }
 
 #[cfg(test)]
@@ -231,8 +235,20 @@ mod tests {
 
     #[test]
     fn pet_pursuit_steering_leads_moving_target_and_slows_on_arrival() {
-        let far = pet_pursuit_steering_velocity([0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 0.0, 2.0], 4.0, 2.0);
-        let near = pet_pursuit_steering_velocity([0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.0, 0.0], 4.0, 2.0);
+        let far = pet_pursuit_steering_velocity(
+            [0.0, 0.0, 0.0],
+            [10.0, 0.0, 0.0],
+            [0.0, 0.0, 2.0],
+            4.0,
+            2.0,
+        );
+        let near = pet_pursuit_steering_velocity(
+            [0.0, 0.0, 0.0],
+            [0.5, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            4.0,
+            2.0,
+        );
         let far_speed = (far[0] * far[0] + far[1] * far[1] + far[2] * far[2]).sqrt();
         let near_speed = (near[0] * near[0] + near[1] * near[1] + near[2] * near[2]).sqrt();
         assert!((far_speed - 4.0).abs() < 1e-4);

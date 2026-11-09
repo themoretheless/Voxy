@@ -83,9 +83,14 @@ pub fn prepare(
             exact_vertex_cache: std::env::var("VOXY_STREET_WORLD_RAY_EXACT_VERTEX_CACHE")
                 .as_deref()
                 == Ok("1"),
-            wide_source_nodes: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref() == Ok("1"),
-            wide_source_near_first: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NEAR_FIRST").as_deref() == Ok("1"),
-            compare_wide_same_producer: std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE").as_deref() == Ok("1"),
+            wide_source_nodes: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref()
+                == Ok("1"),
+            wide_source_near_first: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NEAR_FIRST")
+                .as_deref()
+                == Ok("1"),
+            compare_wide_same_producer: std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE")
+                .as_deref()
+                == Ok("1"),
             skip_zero_prefix_multiply: std::env::var(
                 "VOXY_STREET_WORLD_RAY_SKIP_ZERO_PREFIX_MULTIPLY",
             )
@@ -179,13 +184,16 @@ pub fn prepare(
         job.exact_worker_count(),
         job.exact_workgroup_size()
     );
-    eprintln!("STREET WORLD SCHEDULING {}", serde_json::json!({
-        "kind": format!("{:?}",job.query_kind()),
-        "wide_source_nodes": job.wide_source_nodes_enabled(),
-        "wide_source_near_first": job.wide_source_near_first_enabled(),
-        "wide_source_block_blake3": job.wide_source_digest(),
-        "source_simplified": false
-    }));
+    eprintln!(
+        "STREET WORLD SCHEDULING {}",
+        serde_json::json!({
+            "kind": format!("{:?}",job.query_kind()),
+            "wide_source_nodes": job.wide_source_nodes_enabled(),
+            "wide_source_near_first": job.wide_source_near_first_enabled(),
+            "wide_source_block_blake3": job.wide_source_digest(),
+            "source_simplified": false
+        })
+    );
     if std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_SLOTS").is_some()
         || std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_WORKERS").is_some()
     {

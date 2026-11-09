@@ -155,8 +155,7 @@ impl HaloOffset {
         {
             return None;
         }
-        let raw =
-            (self.dx + 1) as usize + 3 * (self.dz + 1) as usize + 9 * (self.dy + 1) as usize;
+        let raw = (self.dx + 1) as usize + 3 * (self.dz + 1) as usize + 9 * (self.dy + 1) as usize;
         if raw < 13 {
             Some(raw)
         } else if raw == 13 {
@@ -185,7 +184,12 @@ pub struct MeshingInput {
 
 #[inline]
 #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
-pub(crate) fn sample_relative(input: &MeshingInput, x: i16, y: i16, z: i16) -> Sample<BlockStateId> {
+pub(crate) fn sample_relative(
+    input: &MeshingInput,
+    x: i16,
+    y: i16,
+    z: i16,
+) -> Sample<BlockStateId> {
     if (0..32).contains(&x) && (0..32).contains(&y) && (0..32).contains(&z) {
         let local = LocalPos::new(x as u8, y as u8, z as u8).expect("range checked");
         return Sample::Loaded(input.center.data.blocks.get(local.index()));

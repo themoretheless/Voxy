@@ -166,10 +166,7 @@ mod tests {
             (1., 3., 1., [guarded.start, guarded.end])
         );
         for part in intervals.iter().filter(|part| !part.key_uncertainty) {
-            assert_eq!(
-                part.source_span,
-                Some(usize::from(part.end >= 1. / 3.))
-            );
+            assert_eq!(part.source_span, Some(usize::from(part.end >= 1. / 3.)));
             assert_eq!(part.target_span, Some(usize::from(part.end >= 0.5)));
         }
         assert!(source.partition_wall_outward(&target, 1., 1).is_err());

@@ -1400,7 +1400,8 @@ pub fn capillary_bridge_force_n(
     {
         return Err("invalid capillary meniscus bridge parameters");
     }
-    let f_max = 4.0 * std::f64::consts::PI * radius_m * surface_tension_n_m * contact_angle_rad.cos();
+    let f_max =
+        4.0 * std::f64::consts::PI * radius_m * surface_tension_n_m * contact_angle_rad.cos();
     let denom = 1.0 + gap_m / (2.0 * film_thickness_m);
     let force = f_max / denom;
     if !force.is_finite() {

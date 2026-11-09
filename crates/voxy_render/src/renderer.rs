@@ -11,11 +11,11 @@ use voxy_lighting::LightVolume;
 use voxy_mesher::{ChunkMesh, FaceDir, Quad, QuadDiagonal, RenderLayer};
 use wgpu::util::DeviceExt;
 
+#[cfg(test)]
+use crate::MaterialLayer;
 use crate::skinned::{GpuSkinnedMesh, create_skin_layout, create_skinned_pipeline, upload_skinned};
 use crate::{BodycamPostProcess, BodycamRig, MaterialPack, MaterialSet};
 use crate::{SkinnedMesh, SkinnedUploadError};
-#[cfg(test)]
-use crate::MaterialLayer;
 #[cfg(test)]
 use std::sync::Arc;
 #[path = "resident_frame_timing.rs"]
