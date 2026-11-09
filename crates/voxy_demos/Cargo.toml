@@ -17,17 +17,17 @@ voxy_editor = { path = "../voxy_editor" }
 voxy_gameplay = { path = "../voxy_gameplay" }
 voxy_scene = { path = "../voxy_scene" }
 voxy_input = { path = "../voxy_input" }
-blake3 = "1.8"
-serde = { version = "1.0", features = ["derive"] }
+blake3.workspace = true
+serde.workspace = true
 voxy_model = { path = "../voxy_model" }
-thiserror = "2"
-wgpu = { version = "30.0.1", features = ["noop"] }
+thiserror.workspace = true
+wgpu = { workspace = true, features = ["noop"] }
 voxy_core = { path = "../voxy_core" }
-serde_json = { version = "1.0", features = ["float_roundtrip"] }
+serde_json = { workspace = true, features = ["float_roundtrip"] }
 physics = { path = "../physics" }
 physics_voxel = { path = "../physics_voxel" }
-pollster = "1.0.1"
-glam = "0.33.6"
+pollster.workspace = true
+glam.workspace = true
 voxy_animation = { path = "../voxy_animation" }
 voxy_render = { path = "../voxy_render" }
 voxy_gpu = { path = "../voxy_gpu" }

@@ -10,21 +10,21 @@ default = ["face-demo"]
 face-demo = ["dep:voxy_demos"]
 
 [dependencies]
-bytemuck = "1.25.0"
+bytemuck.workspace = true
 voxy_demos = { path = "../voxy_demos", optional = true }
-image = { version = "0.25.10", default-features = false, features = ["png"] }
+image = { workspace = true, features = ["png"] }
 voxy_render = { path = "../voxy_render" }
-wgpu = "30.0.1"
-pollster = "1.0.1"
-glam = "0.33.6"
-half = "2.7.1"
-serde_json = "1.0"
+wgpu.workspace = true
+pollster.workspace = true
+glam.workspace = true
+half.workspace = true
+serde_json.workspace = true
 
 [dev-dependencies]
 voxy_runtime = { path = "../voxy_runtime" }
 voxy_ui = { path = "../voxy_ui" }
 voxy_ui_winit = { path = "../voxy_ui_winit" }
-winit = "0.30.13"
+winit.workspace = true
 
 [lints]
 workspace = true

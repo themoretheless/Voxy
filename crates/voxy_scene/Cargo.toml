@@ -6,12 +6,12 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-thiserror = "2"
+thiserror.workspace = true
 voxy_core = { path = "../voxy_core" }
 voxy_time = { path = "../voxy_time" }
-glam = "0.33.6"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0", features = ["float_roundtrip"] }
+glam.workspace = true
+serde.workspace = true
+serde_json = { workspace = true, features = ["float_roundtrip"] }
 
 [lints]
 workspace = true

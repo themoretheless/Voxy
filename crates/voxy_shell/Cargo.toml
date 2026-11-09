@@ -7,19 +7,19 @@ publish = false
 description = "Native platform shell (winit ApplicationHandler, scene input, touch, rush scene) shared by the desktop binary, mobile entry point and examples"
 
 [dependencies]
-wgpu = { version = "30.0.1", features = ["noop"] }
-thiserror = "2"
+wgpu = { workspace = true, features = ["noop"] }
+thiserror.workspace = true
 voxy_demos = { path = "../voxy_demos" }
 voxy_input = { path = "../voxy_input" }
 physics = { path = "../physics" }
-pollster = "1.0.1"
-glam = "0.33.6"
+pollster.workspace = true
+glam.workspace = true
 voxy_text = { path = "../voxy_text" }
 voxy_rush = { path = "../voxy_rush", features = ["physics-events"] }
 voxy_scene = { path = "../voxy_scene" }
 voxy_render = { path = "../voxy_render" }
 voxy_runtime = { path = "../voxy_runtime" }
-winit = "0.30.13"
+winit.workspace = true
 
 [lints]
 workspace = true

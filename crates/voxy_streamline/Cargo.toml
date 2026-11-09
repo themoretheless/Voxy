@@ -13,16 +13,16 @@ render-policy = ["dep:voxy_render"]
 scene-dx12 = ["wgpu-dx12", "render-policy"]
 
 [dependencies]
-glam = "0.33.6"
+glam.workspace = true
 voxy_render = { path = "../voxy_render", optional = true }
 wgpu = { version = "30.0.1", optional = true, default-features = false, features = ["std", "dx12"] }
 
 [target.'cfg(windows)'.dependencies]
-windows = { version = "0.62", optional = true, features = ["Win32_Graphics_Direct3D12", "Win32_Graphics_Direct3D", "Win32_Graphics_Dxgi", "Win32_Graphics_Dxgi_Common"] }
+windows = { workspace = true, optional = true, features = ["Win32_Graphics_Direct3D12", "Win32_Graphics_Direct3D", "Win32_Graphics_Dxgi", "Win32_Graphics_Dxgi_Common"] }
 
 [dev-dependencies]
-pollster = "1.0.1"
-half = "2.7.1"
+pollster.workspace = true
+half.workspace = true
 
 [build-dependencies]
 cc = "1.4.4"
