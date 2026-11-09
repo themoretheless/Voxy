@@ -1,5 +1,4 @@
 //! Detached complete GPU model batch. The App transaction owns the final swap.
-#![allow(dead_code)]
 use super::*;
 use std::{future::Future, pin::Pin};
 use voxy_assets::{AssetId, ImportedAsset};
