@@ -1,5 +1,4 @@
 //! Imported-node/image participant for the pending EditorAsset graph coordinator.
-#![allow(dead_code)]
 use super::*;
 use serde::{Deserialize, Serialize};
 use voxy_render::{GeometryArchiveLimits, ImageCheckpoint, SceneMeshCheckpoint};

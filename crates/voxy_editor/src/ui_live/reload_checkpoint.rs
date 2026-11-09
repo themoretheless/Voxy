@@ -1,6 +1,5 @@
 //! Nonblocking operational save barrier. Presentation still needs an App frame
 //! boundary; this participant freezes import/watch dispatch, not the swapchain.
-#![allow(dead_code)]
 use super::*;
 use crate::EditorError;
 use serde::{Deserialize, Serialize};

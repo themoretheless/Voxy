@@ -1,6 +1,5 @@
 //! Native scene/history/draft observations for the enclosing restore transaction.
 //! Model clocks/publications have their own observation; UI/audio/host remain separate.
-#![allow(dead_code)]
 use crate::*;
 #[derive(PartialEq, Eq)]
 struct DragGuard {

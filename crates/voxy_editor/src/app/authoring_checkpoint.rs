@@ -1,6 +1,5 @@
 //! Authoring history/order/gesture participant for the enclosing App transaction.
 //! Resource drafts, preview, source revisions and other App owners remain separate.
-#![allow(dead_code)]
 use crate::*;
 pub(crate) mod metadata;
 mod source;

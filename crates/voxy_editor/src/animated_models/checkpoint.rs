@@ -1,5 +1,4 @@
 //! Accepted render frames are independent of the newest simulation frame.
-#![allow(dead_code)]
 use super::*;
 use std::collections::BTreeMap;
 use voxy_scene::{ObjectId, SceneGraph};
