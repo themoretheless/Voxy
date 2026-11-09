@@ -788,5 +788,48 @@ mod generated_tests {
         device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
         assert_eq!(budget.stats().allocated_bytes, before);
         assert!(pollster::block_on(scope.pop()).is_none());
+
+        assert_eq!(
+            ring_buffer_wrap_contiguous_slice(100, 256, 64, 16),
+            Some((112, 176))
+        );
+        assert_eq!(
+            ring_buffer_wrap_contiguous_slice(220, 256, 64, 16),
+            Some((0, 64))
+        );
+        assert_eq!(ring_buffer_wrap_contiguous_slice(0, 64, 128, 16), None);
+    }
+}
+
+/// Computes an aligned contiguous sub-allocation `(aligned_offset, next_write_cursor)` inside a
+/// ring buffer of `capacity` bytes, wrapping to offset `0` when the aligned payload would straddle
+/// the end of the ring.
+#[must_use]
+pub fn ring_buffer_wrap_contiguous_slice(
+    write_cursor: u64,
+    capacity: u64,
+    payload_bytes: u64,
+    alignment: u64,
+) -> Option<(u64, u64)> {
+    if capacity == 0
+        || payload_bytes == 0
+        || payload_bytes > capacity
+        || !alignment.is_power_of_two()
+    {
+        return None;
+    }
+    let mask = alignment - 1;
+    let pos = write_cursor % capacity;
+    let aligned = pos.checked_add(mask)? & !mask;
+    if let Some(end) = aligned.checked_add(payload_bytes)
+        && end <= capacity
+    {
+        return Some((aligned, end % capacity));
+    }
+    // Wrap to the start of the ring buffer so the slice stays contiguous.
+    if payload_bytes <= capacity {
+        Some((0, payload_bytes % capacity))
+    } else {
+        None
     }
 }

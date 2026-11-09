@@ -43,6 +43,26 @@ pub fn parse(args: impl IntoIterator<Item = String>) -> Result<GraphicsOptions, 
     Ok(options)
 }
 
+/// Recommends a default graphics quality tier (`"low"`, `"medium"`, `"high"`, or `"ultra"`)
+/// from adapter VRAM capacity in MiB and whether the adapter is a discrete GPU.
+#[allow(dead_code)]
+pub fn recommend_graphics_tier_for_vram_mb(vram_mb: u64, is_discrete_gpu: bool) -> &'static str {
+    let effective_mb = if is_discrete_gpu {
+        vram_mb
+    } else {
+        vram_mb / 2
+    };
+    if effective_mb >= 10_240 {
+        "ultra"
+    } else if effective_mb >= 5_120 {
+        "high"
+    } else if effective_mb >= 2_560 {
+        "medium"
+    } else {
+        "low"
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -82,5 +102,12 @@ mod tests {
         ] {
             assert!(options(&args).is_err(), "{args:?}");
         }
+    }
+    #[test]
+    fn recommend_graphics_tier_scales_with_vram_and_adapter_class() {
+        assert_eq!(recommend_graphics_tier_for_vram_mb(12_288, true), "ultra");
+        assert_eq!(recommend_graphics_tier_for_vram_mb(8_192, true), "high");
+        assert_eq!(recommend_graphics_tier_for_vram_mb(8_192, false), "medium");
+        assert_eq!(recommend_graphics_tier_for_vram_mb(2_048, false), "low");
     }
 }

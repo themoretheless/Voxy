@@ -552,3 +552,41 @@ fn reflection_camera(
         usage: wgpu::BufferUsages::UNIFORM,
     })
 }
+
+/// Evaluates Marmoset / Filmic horizon specular occlusion to suppress light leaking from
+/// normal-mapped reflection vectors pointing below the geometric surface horizon:
+/// `clamp(1 + fade_horizon * dot(R, N_geom), 0, 1)^2`.
+#[must_use]
+pub fn horizon_specular_occlusion(
+    reflect_dir: [f32; 3],
+    geom_normal: [f32; 3],
+    fade_horizon: f32,
+) -> f32 {
+    if reflect_dir.iter().chain(&geom_normal).any(|c| !c.is_finite()) || !fade_horizon.is_finite() {
+        return 0.0;
+    }
+    let r_dot_ng = reflect_dir[0] * geom_normal[0]
+        + reflect_dir[1] * geom_normal[1]
+        + reflect_dir[2] * geom_normal[2];
+    let h = (1.0 + fade_horizon.max(0.0) * r_dot_ng).clamp(0.0, 1.0);
+    h * h
+}
+
+#[cfg(test)]
+mod horizon_tests {
+    use super::*;
+
+    #[test]
+    fn horizon_specular_occlusion_attenuates_below_geometric_horizon() {
+        assert_eq!(
+            horizon_specular_occlusion([0.0, 0.0, 1.0], [0.0, 0.0, 1.0], 1.3),
+            1.0
+        );
+        assert_eq!(
+            horizon_specular_occlusion([0.0, 0.0, -1.0], [0.0, 0.0, 1.0], 1.3),
+            0.0
+        );
+        let mid = horizon_specular_occlusion([0.9, 0.0, -0.4], [0.0, 0.0, 1.0], 1.2);
+        assert!(mid > 0.0 && mid < 1.0);
+    }
+}

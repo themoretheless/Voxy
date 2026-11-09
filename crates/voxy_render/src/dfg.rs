@@ -4,9 +4,11 @@ use crate::RendererError;
 use wgpu::util::DeviceExt;
 #[path = "dfg_build.rs"]
 mod build;
+#[allow(unused_imports)]
 pub use build::{
     GgxEnergyAtlasBuild, GgxEnergyAtlasSlot, GgxEnergyBuildBudget, GgxEnergyBuildError,
     GgxEnergyBuildPhase, GgxEnergyBuildProgress, GgxEnergyOracleSample, ReadyGgxEnergyAtlas,
+    approx_ggx_directional_albedo,
 };
 #[path = "dfg_gpu.rs"]
 mod gpu;
@@ -350,6 +352,35 @@ impl GgxDfgLut {
             }
             pass.draw(0..3, 0..1);
         }
+    }
+}
+
+/// Evaluates the Kulla-Conty multiple-scattering energy-compensation lobe:
+/// `f_ms(mu_o, mu_i) = (1 - E(mu_o)) * (1 - E(mu_i)) / (pi * (1 - E_avg))`.
+#[must_use]
+pub fn kulla_conty_multiscatter_compensation(e_mu_o: f32, e_mu_i: f32, e_avg: f32) -> f32 {
+    if !e_mu_o.is_finite() || !e_mu_i.is_finite() || !e_avg.is_finite() {
+        return 0.0;
+    }
+    let eo = e_mu_o.clamp(0.0, 1.0);
+    let ei = e_mu_i.clamp(0.0, 1.0);
+    let eavg = e_avg.clamp(0.0, 0.999_999);
+    let denom = std::f32::consts::PI * (1.0 - eavg).max(1e-6);
+    ((1.0 - eo) * (1.0 - ei) / denom).max(0.0)
+}
+
+#[cfg(test)]
+mod kulla_conty_tests {
+    use super::*;
+
+    #[test]
+    fn kulla_conty_vanishes_at_full_albedo_and_matches_reciprocity() {
+        assert_eq!(kulla_conty_multiscatter_compensation(1.0, 0.5, 0.7), 0.0);
+        assert_eq!(kulla_conty_multiscatter_compensation(0.5, 1.0, 0.7), 0.0);
+        let a = kulla_conty_multiscatter_compensation(0.6, 0.8, 0.75);
+        let b = kulla_conty_multiscatter_compensation(0.8, 0.6, 0.75);
+        assert!((a - b).abs() < 1e-6);
+        assert!(a > 0.0);
     }
 }
 

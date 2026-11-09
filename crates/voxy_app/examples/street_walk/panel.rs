@@ -91,6 +91,9 @@ pub struct Settings<'a> {
     pub cycle: &'a mut Option<DayCycle>,
     pub weather: &'a mut Weather,
     pub wetness: &'a mut Option<f32>,
+    pub puddle_coverage: &'a mut f32,
+    pub camera_view: &'a mut u8,
+    pub fov_degrees: &'a mut f32,
     /// Street seed; editing it regenerates the street.
     pub seed_mut: Option<&'a mut u64>,
     /// Fixed sun elevation in degrees, used while the day cycle is off.
@@ -367,6 +370,12 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     if let Some(wet) = s.wetness.as_mut() {
         ui.add(egui::Slider::new(wet, 0.0..=1.).text("влажность"));
     }
+    if ui
+        .add(egui::Slider::new(s.puddle_coverage, 0.0..=1.).text("покрытие луж"))
+        .changed()
+    {
+        *s.reconfigure = true;
+    }
     if s.cycle.is_none() {
         let mut fixed = s.sun_elevation.is_some();
         if ui.checkbox(&mut fixed, "Солнце вручную").changed() {
@@ -381,6 +390,21 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
                 *s.reconfigure = true;
             }
         }
+    }
+    ui.separator();
+    ui.label("Камера и оптика (V)");
+    ui.horizontal_wrapped(|ui| {
+        for (idx, label) in [
+            (0_u8, "1-е лицо"),
+            (1_u8, "3-е лицо"),
+            (2_u8, "Bodycam"),
+            (3_u8, "Camcorder"),
+        ] {
+            ui.selectable_value(s.camera_view, idx, label);
+        }
+    });
+    if *s.camera_view <= 1 {
+        ui.add(egui::Slider::new(s.fov_degrees, 40.0..=105.).text("угол обзора FOV °"));
     }
     render(ui, s.render, s.reconfigure, s.rebuild);
     if let Some(seed) = s.seed_mut.as_deref_mut() {
@@ -660,5 +684,44 @@ mod panel_tests {
         assert!((f1[2] - TOUR_WAYPOINTS[1].1[2]).abs() < 1e-5);
         let len1 = (d1[0] * d1[0] + d1[1] * d1[1] + d1[2] * d1[2]).sqrt();
         assert!((len1 - 1.0).abs() < 1e-4);
+
+        let exact = score_teleport_bookmark_query("Villa Pool", "villa");
+        let subseq = score_teleport_bookmark_query("Villa Pool", "vlp");
+        assert!(exact > subseq && subseq > 0);
+        assert_eq!(score_teleport_bookmark_query("Villa Pool", "xyz"), 0);
     }
+}
+
+/// Computes a fuzzy-search relevance score (`0` = no match, higher = stronger match) for a
+/// teleport bookmark `name` against `query`, rewarding exact prefix, word-boundary, and contiguous
+/// character matches.
+#[allow(dead_code)]
+pub fn score_teleport_bookmark_query(name: &str, query: &str) -> u32 {
+    let q = query.trim().to_lowercase();
+    if q.is_empty() {
+        return 1;
+    }
+    let n = name.to_lowercase();
+    if n == q {
+        return 1000;
+    }
+    if n.starts_with(&q) {
+        return 800;
+    }
+    if n.contains(&q) {
+        return 500;
+    }
+    let mut q_chars = q.chars().peekable();
+    let mut score = 0_u32;
+    let mut streak = 0_u32;
+    for ch in n.chars() {
+        if q_chars.peek() == Some(&ch) {
+            q_chars.next();
+            streak += 1;
+            score += 10 * streak;
+        } else {
+            streak = 0;
+        }
+    }
+    if q_chars.peek().is_none() { score } else { 0 }
 }

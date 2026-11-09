@@ -527,6 +527,16 @@ fn screen_reflection_original(origin:vec3<f32>,direction:vec3<f32>,history:bool,
  }
  return vec4<f32>(0.);
 }
+fn filter_rough_ssr(reflected_scene:vec4<f32>,rough_eff:f32,fallback_radiance:vec3<f32>)->vec4<f32>{
+ if reflected_scene.a<=0. {return vec4<f32>(0.);}
+ let luma=dot(reflected_scene.rgb,vec3<f32>(0.2126,0.7152,0.0722));
+ let cap=max(dot(fallback_radiance,vec3<f32>(0.2126,0.7152,0.0722))*6.,1800.);
+ var rgb=reflected_scene.rgb;
+ if luma>cap {rgb*=cap/max(luma,1e-4);}
+ let rough_cone=smoothstep(0.06,0.48,rough_eff);
+ rgb=mix(rgb,fallback_radiance,rough_cone*0.52);
+ return vec4<f32>(rgb,reflected_scene.a*(1.-rough_cone*0.28));
+}
 // Screen-space one-bounce GI: one cosine-distributed ray per pixel per frame,
 // marched against the depth buffer and shaded from the reprojected previous
 // frame (which already carries earlier bounces). TAA integrates the noise.
@@ -820,8 +830,8 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   var radiance=textureSampleLevel(environment_specular,environment_sampler,reflected,rough_eff*f32(textureNumLevels(environment_specular)-1u)).rgb*environment_intensity.x;
   // Skip tracing where Fresnel makes the scene term invisible (steep dielectric views).
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
-  let mirror=select((1.-smoothstep(0.1,0.4,rough_eff))*smoothstep(0.045,0.07,visible)*(1.-smoothstep(900.,2304.,d2_view)),1.,transmission>0.);
-  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,select(54.,28.,d2_view>576.),select(1.08,1.35,d2_view>576.),select(7u,5u,d2_view>576.),ARCHIVE_RAY_BOUNDS);}radiance=mix(radiance,reflected_scene.rgb,reflected_scene.a*mirror);}
+  let mirror=select((1.-smoothstep(0.12,0.48,rough_eff))*smoothstep(0.045,0.07,visible)*(1.-smoothstep(900.,2304.,d2_view)),1.,transmission>0.);
+  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,select(54.,28.,d2_view>576.),select(1.08,1.35,d2_view>576.),select(7u,5u,d2_view>576.),ARCHIVE_RAY_BOUNDS);}let filtered_ssr=filter_rough_ssr(reflected_scene,rough_eff,radiance);radiance=mix(radiance,filtered_ssr.rgb,filtered_ssr.a*mirror);}
   var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
   let probe=probe_irradiance(f.world,bent_normal);
   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
@@ -838,8 +848,8 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
   let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric))*mix(1.,bent_cone,1.-ao);
   var incoming=daylight(reflected,camera.sun.xyz)*(1.-0.7*rough_eff);
   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
-  let mirror=select((1.-smoothstep(0.1,0.4,rough_eff))*smoothstep(0.045,0.07,visible)*(1.-smoothstep(900.,2304.,d2_view)),1.,transmission>0.);
-  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,select(54.,28.,d2_view>576.),select(1.08,1.35,d2_view>576.),select(7u,5u,d2_view>576.),ARCHIVE_RAY_BOUNDS);}incoming=mix(incoming,reflected_scene.rgb,reflected_scene.a*mirror);}
+  let mirror=select((1.-smoothstep(0.12,0.48,rough_eff))*smoothstep(0.045,0.07,visible)*(1.-smoothstep(900.,2304.,d2_view)),1.,transmission>0.);
+  if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,select(54.,28.,d2_view>576.),select(1.08,1.35,d2_view>576.),select(7u,5u,d2_view>576.),ARCHIVE_RAY_BOUNDS);}let filtered_ssr=filter_rough_ssr(reflected_scene,rough_eff,incoming);incoming=mix(incoming,filtered_ssr.rgb,filtered_ssr.a*mirror);}
   if transmission>0. {
    let glass_tint=mix(vec3<f32>(1.),vec3<f32>(0.90,0.96,0.95),clamp((1.-nv)*0.75,0.,1.));
    incoming*=glass_tint;

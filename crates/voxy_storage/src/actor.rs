@@ -492,5 +492,41 @@ mod tests {
             panic!("expected bounded backpressure");
         };
         assert_eq!(returned.sequence, 1);
+
+        let (admitted, rem) = token_bucket_io_admission(2.0, 10.0, 4.0, 1.0, 5.0);
+        assert!(admitted);
+        assert!((rem - 1.0).abs() < 1e-9);
+        let (denied, rem2) = token_bucket_io_admission(rem, 10.0, 4.0, 0.25, 5.0);
+        assert!(!denied);
+        assert!((rem2 - 2.0).abs() < 1e-9);
+    }
+}
+
+/// Evaluates token-bucket I/O rate-limiting admission `(admitted, remaining_tokens)` after
+/// refilling `available_tokens` over `dt_s` at `refill_rate_per_s` up to `capacity`.
+#[must_use]
+pub fn token_bucket_io_admission(
+    available_tokens: f64,
+    capacity: f64,
+    refill_rate_per_s: f64,
+    dt_s: f64,
+    cost: f64,
+) -> (bool, f64) {
+    if !available_tokens.is_finite()
+        || !capacity.is_finite()
+        || !refill_rate_per_s.is_finite()
+        || !dt_s.is_finite()
+        || !cost.is_finite()
+        || capacity <= 0.0
+        || cost < 0.0
+    {
+        return (false, 0.0);
+    }
+    let refilled = (available_tokens.max(0.0) + refill_rate_per_s.max(0.0) * dt_s.max(0.0))
+        .clamp(0.0, capacity);
+    if refilled >= cost {
+        (true, refilled - cost)
+    } else {
+        (false, refilled)
     }
 }

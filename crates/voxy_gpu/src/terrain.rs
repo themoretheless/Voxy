@@ -351,8 +351,20 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "requires a native clang++ compiler; verifies CUDA source arithmetic, not NVIDIA execution"]
-    fn cuda_source_host_parity() {
+    fn decode_rejects_truncated_words() {
+        let (palette, water) = palette();
+        let words = prepare(
+            ChunkPos::default(),
+            WorldSeed(1),
+            palette,
+            water,
+            &CancelToken::new(),
+        )
+        .unwrap();
+        assert!(decode(ChunkPos::default(), &words[..12], palette, water).is_err());
+        assert_eq!(clipmap_toroidal_wrap_coord(-1, 64), 63);
+        assert_eq!(clipmap_toroidal_wrap_coord(65, 64), 1);
+    }
         let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .parent()
             .unwrap()

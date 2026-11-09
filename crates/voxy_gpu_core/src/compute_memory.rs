@@ -937,5 +937,29 @@ mod tests {
         drop(frame_queue);
         budget.discard_retired().unwrap();
         assert_eq!(budget.stats().allocated_bytes, 0);
+
+        assert_eq!(buddy_allocator_split_order(300, 256, 8), Some((1, 512)));
+        assert_eq!(buddy_allocator_split_order(100, 256, 8), Some((0, 256)));
+        assert_eq!(buddy_allocator_split_order(0, 256, 8), None);
     }
+}
+
+/// Computes the smallest binary buddy-allocator block `(order, block_bytes)` where
+/// `block_bytes = min_block_bytes * 2^order >= request_bytes` and `order <= max_order`.
+#[must_use]
+pub fn buddy_allocator_split_order(
+    request_bytes: u64,
+    min_block_bytes: u64,
+    max_order: u32,
+) -> Option<(u32, u64)> {
+    if request_bytes == 0 || !min_block_bytes.is_power_of_two() || max_order >= 63 {
+        return None;
+    }
+    for order in 0..=max_order {
+        let block = min_block_bytes.checked_shl(order)?;
+        if block >= request_bytes {
+            return Some((order, block));
+        }
+    }
+    None
 }

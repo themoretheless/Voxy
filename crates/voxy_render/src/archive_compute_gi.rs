@@ -647,3 +647,39 @@ impl ArchiveComputeGi {
         }
     }
 }
+
+/// Evaluates the Ouyang et al. (2021) ReSTIR GI solid-angle shift-mapping Jacobian determinant:
+/// `|J| = clamp((|cos_theta_dst| / |cos_theta_src|) * (dist_sq_src / dist_sq_dst), 0, max_clamp)`.
+#[must_use]
+pub fn restir_jacobian_shift_det(
+    cos_theta_dst: f32,
+    cos_theta_src: f32,
+    dist_sq_dst: f32,
+    dist_sq_src: f32,
+    max_clamp: f32,
+) -> f32 {
+    if !cos_theta_dst.is_finite()
+        || !cos_theta_src.is_finite()
+        || !dist_sq_dst.is_finite()
+        || !dist_sq_src.is_finite()
+        || !max_clamp.is_finite()
+        || dist_sq_dst <= 1e-8
+        || dist_sq_src <= 0.0
+        || cos_theta_src.abs() <= 1e-6
+    {
+        return 0.0;
+    }
+    let ratio = (cos_theta_dst.abs() / cos_theta_src.abs()) * (dist_sq_src / dist_sq_dst);
+    ratio.clamp(0.0, max_clamp.max(0.0))
+}
+
+#[cfg(test)]
+mod jacobian_tests {
+    use super::*;
+
+    #[test]
+    fn restir_jacobian_shift_is_unit_for_identical_geometry_and_clamped() {
+        assert!((restir_jacobian_shift_det(0.7, 0.7, 4.0, 4.0, 10.0) - 1.0).abs() < 1e-6);
+        assert_eq!(restir_jacobian_shift_det(0.9, 0.01, 0.1, 100.0, 8.0), 8.0);
+    }
+}

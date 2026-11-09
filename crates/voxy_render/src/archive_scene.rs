@@ -4,6 +4,7 @@ mod refine_crossover;
 pub use refine_crossover::RefineCrossover;
 #[path = "archive_compute_gi.rs"]
 mod compute_gi;
+pub use compute_gi::restir_jacobian_shift_det;
 use crate::{Bc7ImageAsset, ComputeMemoryBudget, ComputeStorage};
 use bytemuck::{Pod, Zeroable};
 use glam::{Mat4, Vec3, Vec4};
@@ -396,6 +397,7 @@ pub struct ArchiveSceneRenderer {
     weather: crate::weather::Weather,
     weather_time: f32,
     surface_wetness: Option<f32>,
+    adapted_wetness: f32,
     puddle_coverage: f32,
     previous_vp: Option<Mat4>,
     shadow_bounds: (Vec3, Vec3),
@@ -1771,6 +1773,7 @@ impl ArchiveSceneRenderer {
             weather: Default::default(),
             weather_time: 0.,
             surface_wetness: None,
+            adapted_wetness: 0.,
             puddle_coverage: 0.45,
             previous_vp: None,
             shadow_bounds: bounds,
@@ -1804,6 +1807,13 @@ impl ArchiveSceneRenderer {
     pub fn advance_water(&mut self, dt: f32) {
         if let Some(water) = &mut self.water {
             water.advance(dt);
+        }
+        if dt.is_finite() && dt > 0. {
+            self.adapted_wetness = step_wetness_accumulation(
+                self.adapted_wetness,
+                self.weather.rain,
+                dt,
+            );
         }
     }
     /// Seconds of water simulation; pass it to `WaterWorld::sample` so gameplay and
@@ -1844,6 +1854,9 @@ impl ArchiveSceneRenderer {
             self.reset_temporal_history();
         }
         self.weather = weather;
+        if self.water_time() == 0. {
+            self.adapted_wetness = weather.rain;
+        }
         Ok(())
     }
     /// Override ground wetness in [0, 1]; `None` follows `Weather::rain`.
@@ -1866,8 +1879,11 @@ impl ArchiveSceneRenderer {
         self.puddle_coverage = coverage;
         Ok(())
     }
+    pub fn puddle_coverage(&self) -> f32 {
+        self.puddle_coverage
+    }
     pub fn surface_wetness(&self) -> f32 {
-        self.surface_wetness.unwrap_or(self.weather.rain)
+        self.surface_wetness.unwrap_or(self.adapted_wetness)
     }
     pub fn set_weather_time(&mut self, seconds: f32) {
         if seconds.is_finite() {
@@ -3811,6 +3827,28 @@ pub fn wet_roughness_remapping(dry_roughness: f32, wetness: f32, porosity: f32) 
     (wet_r, darken.clamp(0.2, 1.0))
 }
 
+/// Advances porous surface wetness accumulation and evaporation over `dt` seconds.
+/// Surfaces wet rapidly during rainfall (`0.45 / s`) and dry gradually after rain stops (`0.12 / s`).
+#[must_use]
+pub fn step_wetness_accumulation(current_wetness: f32, target_rain: f32, dt: f32) -> f32 {
+    let cur = if current_wetness.is_finite() {
+        current_wetness.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    let tgt = if target_rain.is_finite() {
+        target_rain.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    if !dt.is_finite() || dt <= 0.0 {
+        return cur;
+    }
+    let rate = if tgt >= cur { 0.45 } else { 0.12 };
+    let alpha = 1.0 - (-dt * rate).exp();
+    (cur + (tgt - cur) * alpha).clamp(0.0, 1.0)
+}
+
 /// Selects an adaptive screen-space GI ray-march step budget in `[min_steps, max_steps]`
 /// proportional to the available frame budget ratio `target_frame_ms / measured_frame_ms`.
 #[must_use]
@@ -3847,6 +3885,14 @@ mod n1_archive_scene_tests {
         assert!(wet_scale < dry_scale);
         assert_eq!(adaptive_gi_ray_budget(4.0, 8.33, 8, 32), 32);
         assert_eq!(adaptive_gi_ray_budget(20.0, 8.33, 8, 32), 8);
+    }
+
+    #[test]
+    fn step_wetness_accumulation_wets_faster_than_it_evaporates() {
+        let wet_after_1s = step_wetness_accumulation(0.0, 1.0, 1.0);
+        let dry_loss_after_1s = 1.0 - step_wetness_accumulation(1.0, 0.0, 1.0);
+        assert!(wet_after_1s > 0.30, "wet_after_1s={wet_after_1s}");
+        assert!(dry_loss_after_1s > 0.05 && dry_loss_after_1s < wet_after_1s);
     }
 }
 

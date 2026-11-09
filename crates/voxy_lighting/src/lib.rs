@@ -1055,5 +1055,40 @@ mod tests {
         assert_eq!(attenuate_filtered_light(15, 15, 1), 14);
         assert_eq!(attenuate_filtered_light(15, 8, 2), 6);
         assert_eq!(attenuate_filtered_light(15, 0, 1), 0);
+        assert_eq!(
+            attentuate_tinted_glass_rgb_light([15, 15, 15], [15, 8, 0], 1),
+            [14, 7, 0]
+        );
+        assert_eq!(bounce_radiosity_injection_level(15, 0.8), 6);
+        assert_eq!(bounce_radiosity_injection_level(0, 0.8), 0);
     }
+}
+
+/// Propagates 3-channel RGB light (`0..=15` per channel) through stained/tinted glass
+/// with per-channel transmittance `[0..=15]` and Manhattan step decay.
+#[must_use]
+pub fn attentuate_tinted_glass_rgb_light(
+    incoming_rgb: [u8; 3],
+    glass_tint_rgb: [u8; 3],
+    step_decay: u8,
+) -> [u8; 3] {
+    [
+        attenuate_filtered_light(incoming_rgb[0], glass_tint_rgb[0], step_decay),
+        attenuate_filtered_light(incoming_rgb[1], glass_tint_rgb[1], step_decay),
+        attenuate_filtered_light(incoming_rgb[2], glass_tint_rgb[2], step_decay),
+    ]
+}
+
+/// Computes a single-bounce diffuse radiosity block-light injection level (`0..=15`) emitted by
+/// a sunlit voxel face given `direct_sun_level` (`0..=15`) and `surface_albedo_01` (`[0, 1]`).
+#[must_use]
+pub fn bounce_radiosity_injection_level(direct_sun_level: u8, surface_albedo_01: f32) -> u8 {
+    if !surface_albedo_01.is_finite() || direct_sun_level == 0 || surface_albedo_01 <= 0.0 {
+        return 0;
+    }
+    let sun = direct_sun_level.min(MAX_LIGHT) as f32;
+    let albedo = surface_albedo_01.clamp(0.0, 1.0);
+    // One diffuse bounce scales incident skylight by 0.5 * albedo.
+    let bounced = (sun * albedo * 0.5).round() as u8;
+    bounced.min(MAX_LIGHT)
 }

@@ -119,5 +119,33 @@ mod tests {
         assert!(!ok.regressed);
         let bad = compare_cycle_p99_ms(&base, &bad_cand, 0.05).unwrap();
         assert!(bad.regressed);
+
+        assert!((frame_pacing_consistency_index(&base) - 1.0).abs() < 1e-9);
+        let jittery = [0.004, 0.016, 0.004, 0.016, 0.004, 0.016];
+        assert!(frame_pacing_consistency_index(&jittery) < 0.7);
     }
+}
+
+/// Computes a normalized frame-pacing consistency index in `[0.0, 1.0]` (`1.0` = zero frame-to-frame
+/// judder) from consecutive frame-time deltas `1 / (1 + rms_consecutive_delta / mean_frame_time)`.
+#[allow(dead_code)]
+pub fn frame_pacing_consistency_index(frame_times_s: &[f64]) -> f64 {
+    let valid: Vec<f64> = frame_times_s
+        .iter()
+        .copied()
+        .filter(|&t| t.is_finite() && t > 0.0)
+        .collect();
+    if valid.len() < 2 {
+        return 0.0;
+    }
+    let mean = valid.iter().sum::<f64>() / (valid.len() as f64);
+    if mean <= 1e-12 {
+        return 0.0;
+    }
+    let sum_sq_diff: f64 = valid
+        .windows(2)
+        .map(|w| (w[1] - w[0]).powi(2))
+        .sum();
+    let rms_delta = (sum_sq_diff / ((valid.len() - 1) as f64)).sqrt();
+    (1.0 / (1.0 + rms_delta / mean)).clamp(0.0, 1.0)
 }

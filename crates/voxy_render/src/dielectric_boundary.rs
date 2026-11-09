@@ -191,6 +191,76 @@ pub fn cauchy_ior_rgb(n_a: f64, cauchy_b_um2: f64) -> Result<[f64; 3], &'static 
     Ok(iors)
 }
 
+/// Evaluates Airy thin-film interference reflectance modulation per RGB wavelength
+/// `(650 nm, 550 nm, 450 nm)` for a dielectric soap/oil film of `thickness_nm` and `film_ior`:
+/// `delta = (4 * pi * n_film * d * cos(theta_t)) / lambda`.
+#[must_use]
+pub fn thin_film_interference_rgb(
+    cos_theta_i: f64,
+    film_ior: f64,
+    thickness_nm: f64,
+) -> [f64; 3] {
+    if !cos_theta_i.is_finite() || !film_ior.is_finite() || !thickness_nm.is_finite() || film_ior < 1.0 || thickness_nm < 0.0 {
+        return [0.0; 3];
+    }
+    let cos_i = cos_theta_i.clamp(0.0, 1.0);
+    let sin2_i = (1.0 - cos_i * cos_i).max(0.0);
+    let sin2_t = sin2_i / (film_ior * film_ior);
+    if sin2_t >= 1.0 {
+        return [1.0; 3];
+    }
+    let cos_t = (1.0 - sin2_t).sqrt();
+    let f0 = ((film_ior - 1.0) / (film_ior + 1.0)).powi(2);
+    let r = (f0 + (1.0 - f0) * (1.0 - cos_i).powi(5)).clamp(0.0, 0.999_999);
+    let opd_nm = 2.0 * film_ior * thickness_nm * cos_t;
+    const WAVELENGTHS_NM: [f64; 3] = [650.0, 550.0, 450.0];
+    WAVELENGTHS_NM.map(|lambda| {
+        let delta = 2.0 * std::f64::consts::PI * opd_nm / lambda;
+        let num = 2.0 * r * (1.0 - delta.cos());
+        let den = 1.0 + r * r - 2.0 * r * delta.cos();
+        (num / den.max(1e-12)).clamp(0.0, 1.0)
+    })
+}
+
+/// Computes `cos(theta_c) = sqrt(1 - (n_t / n_i)^2)` when `incident_ior > transmitted_ior`,
+/// returning `None` when no total internal reflection is possible (`n_i <= n_t`) or inputs are invalid.
+#[must_use]
+pub fn critical_tir_cos_theta(incident_ior: f64, transmitted_ior: f64) -> Option<f64> {
+    if !incident_ior.is_finite()
+        || !transmitted_ior.is_finite()
+        || incident_ior <= 0.0
+        || transmitted_ior <= 0.0
+        || incident_ior <= transmitted_ior
+    {
+        return None;
+    }
+    let ratio = transmitted_ior / incident_ior;
+    Some((1.0 - ratio * ratio).max(0.0).sqrt())
+}
+
+/// Evaluates the solid-angle compression Jacobian `|d omega_i / d omega_t| = (eta_t^2 * |cos_t|) / (eta_i^2 * |cos_i|)`
+/// for non-symmetric BTDF importance sampling and photon transport across a dielectric interface.
+#[must_use]
+pub fn refraction_solid_angle_jacobian(
+    eta_i: f64,
+    eta_t: f64,
+    cos_i: f64,
+    cos_t: f64,
+) -> Option<f64> {
+    if !eta_i.is_finite()
+        || !eta_t.is_finite()
+        || !cos_i.is_finite()
+        || !cos_t.is_finite()
+        || eta_i <= 0.0
+        || eta_t <= 0.0
+        || cos_i.abs() <= 1e-12
+    {
+        return None;
+    }
+    let j = (eta_t * eta_t * cos_t.abs()) / (eta_i * eta_i * cos_i.abs());
+    j.is_finite().then_some(j)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -339,6 +409,24 @@ mod tests {
             dielectric_boundary_sample(direction(0.5), [0., 0., 1.], 1e300, 1.5e300).unwrap();
         let ordinary = dielectric_boundary_sample(direction(0.5), [0., 0., 1.], 1., 1.5).unwrap();
         assert!((scaled.reflectance - ordinary.reflectance).abs() < 1e-14);
+    }
+
+    #[test]
+    fn thin_film_tir_and_refraction_jacobian_match_optics_identities() {
+        // At zero film thickness, destructive interference from the pi phase shift cancels reflection.
+        let zero_film = thin_film_interference_rgb(1.0, 1.38, 0.0);
+        assert!(zero_film.iter().all(|v| v.abs() < 1e-12));
+        let soap = thin_film_interference_rgb(0.8, 1.33, 320.0);
+        assert!(soap.iter().all(|v| *v >= 0.0 && *v <= 1.0));
+        assert!((soap[0] - soap[2]).abs() > 1e-3);
+
+        assert!(critical_tir_cos_theta(1.0, 1.5).is_none());
+        let cos_c = critical_tir_cos_theta(1.5, 1.0).unwrap();
+        assert!((cos_c * cos_c - (1.0 - 1.0 / 2.25)).abs() < 1e-12);
+
+        let j_fwd = refraction_solid_angle_jacobian(1.0, 1.5, 0.8, 0.6).unwrap();
+        let j_rev = refraction_solid_angle_jacobian(1.5, 1.0, 0.6, 0.8).unwrap();
+        assert!((j_fwd * j_rev - 1.0).abs() < 1e-12);
     }
 }
 

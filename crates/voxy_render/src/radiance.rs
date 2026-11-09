@@ -255,3 +255,26 @@ fn composition_pipeline(
         cache: None,
     })
 }
+
+/// Evaluates the Bitterli et al. (2020) ReSTIR Reservoir Resampling (RIS) merge weight
+/// `w_merge = max(0, target_pdf) * max(0, source_ucw) * max(0, source_m)` when combining a neighbor
+/// or temporal reservoir with unbiased contribution weight `source_ucw` and confidence `source_m`.
+#[must_use]
+pub fn restir_reservoir_merge_weight(target_pdf: f32, source_ucw: f32, source_m: f32) -> f32 {
+    if !target_pdf.is_finite() || !source_ucw.is_finite() || !source_m.is_finite() {
+        return 0.0;
+    }
+    let w = target_pdf.max(0.0) * source_ucw.max(0.0) * source_m.max(0.0);
+    if w.is_finite() { w } else { 0.0 }
+}
+
+#[cfg(test)]
+mod restir_tests {
+    use super::*;
+
+    #[test]
+    fn restir_merge_weight_scales_linearly_and_rejects_negative_inputs() {
+        assert!((restir_reservoir_merge_weight(2.5, 0.4, 8.0) - 8.0).abs() < 1e-6);
+        assert_eq!(restir_reservoir_merge_weight(-1.0, 0.4, 8.0), 0.0);
+    }
+}

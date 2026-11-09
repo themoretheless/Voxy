@@ -421,6 +421,53 @@ impl OpaqueRadianceMesh {
     }
 }
 
+/// Maps a continuous froxel slice index `slice in [0, num_slices]` to exponential view-space depth
+/// `z = z_near * (z_far / z_near)^(slice / num_slices)`.
+#[must_use]
+pub fn froxel_slice_depth_from_index(
+    slice: f32,
+    num_slices: u32,
+    z_near: f32,
+    z_far: f32,
+) -> Option<f32> {
+    if !slice.is_finite()
+        || !z_near.is_finite()
+        || !z_far.is_finite()
+        || num_slices == 0
+        || z_near <= 0.0
+        || z_far <= z_near
+    {
+        return None;
+    }
+    let s = slice.clamp(0.0, num_slices as f32) / (num_slices as f32);
+    let d = z_near * (z_far / z_near).powf(s);
+    d.is_finite().then_some(d)
+}
+
+/// Maps a view-space depth `depth in [z_near, z_far]` to continuous froxel slice coordinate
+/// `slice = num_slices * ln(depth / z_near) / ln(z_far / z_near)`.
+#[must_use]
+pub fn froxel_index_from_depth(
+    depth: f32,
+    num_slices: u32,
+    z_near: f32,
+    z_far: f32,
+) -> Option<f32> {
+    if !depth.is_finite()
+        || !z_near.is_finite()
+        || !z_far.is_finite()
+        || num_slices == 0
+        || z_near <= 0.0
+        || z_far <= z_near
+        || depth <= 0.0
+    {
+        return None;
+    }
+    let d = depth.clamp(z_near, z_far);
+    let idx = (num_slices as f32) * (d / z_near).ln() / (z_far / z_near).ln();
+    idx.is_finite().then_some(idx.clamp(0.0, num_slices as f32))
+}
+
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
@@ -638,5 +685,8 @@ pub(crate) mod tests {
                 .unwrap_err(),
             "ambiguous medium boundary edge crossing"
         );
+        let d = froxel_slice_depth_from_index(32.0, 64, 0.1, 1000.0).unwrap();
+        let idx = froxel_index_from_depth(d, 64, 0.1, 1000.0).unwrap();
+        assert!((idx - 32.0).abs() < 1e-4);
     }
 }

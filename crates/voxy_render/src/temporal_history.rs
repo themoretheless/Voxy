@@ -252,3 +252,46 @@ impl TemporalHistory {
         Ok(true)
     }
 }
+
+/// Computes an adaptive temporal feedback blend factor `alpha` (where `alpha = 1` uses 100% current
+/// frame and `min_alpha` retains maximum history), resetting to `1.0` on disocclusion and ramping
+/// up toward `max_alpha` under rapid luminance gradients.
+#[must_use]
+pub fn adaptive_temporal_history_alpha(
+    disoccluded: bool,
+    luma_gradient: f32,
+    min_alpha: f32,
+    max_alpha: f32,
+) -> f32 {
+    if disoccluded {
+        return 1.0;
+    }
+    let lo = if min_alpha.is_finite() {
+        min_alpha.clamp(0.01, 1.0)
+    } else {
+        0.05
+    };
+    let hi = if max_alpha.is_finite() {
+        max_alpha.clamp(lo, 1.0)
+    } else {
+        1.0
+    };
+    let g = if luma_gradient.is_finite() {
+        luma_gradient.abs().clamp(0.0, 1.0)
+    } else {
+        1.0
+    };
+    (lo + (hi - lo) * g).clamp(lo, hi)
+}
+
+#[cfg(test)]
+mod adaptive_alpha_tests {
+    use super::*;
+
+    #[test]
+    fn disocclusion_forces_full_current_frame_and_gradient_interpolates_bounds() {
+        assert_eq!(adaptive_temporal_history_alpha(true, 0.0, 0.05, 0.25), 1.0);
+        assert!((adaptive_temporal_history_alpha(false, 0.0, 0.05, 0.25) - 0.05).abs() < 1e-6);
+        assert!((adaptive_temporal_history_alpha(false, 1.0, 0.05, 0.25) - 0.25).abs() < 1e-6);
+    }
+}

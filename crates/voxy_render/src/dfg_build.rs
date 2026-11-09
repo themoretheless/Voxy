@@ -445,6 +445,27 @@ impl GgxEnergyAtlasBuild {
         Ok(None)
     }
 }
+
+/// Rational polynomial fit for the directional hemispherical GGX albedo `E(mu, alpha)`
+/// for F0 = 1 (Karis / Lazarov split-sum directional directional-albedo curve).
+#[must_use]
+pub fn approx_ggx_directional_albedo(ndotv: f32, alpha: f32) -> f32 {
+    if !ndotv.is_finite() || !alpha.is_finite() {
+        return 0.0;
+    }
+    let mu = ndotv.clamp(0.0, 1.0);
+    let a = alpha.clamp(0.0, 1.0);
+    // Smooth mirror limit at alpha = 0 has E(mu, 0) = 1.0; energy loss grows with roughness and grazing angle.
+    let c0 = [-1.0_f32, -0.0275, -0.572, 0.022];
+    let c1 = [1.0_f32, 0.0425, 1.04, -0.04];
+    let r0 = a * c0[0] + c0[1];
+    let r1 = a * c1[0] + c1[1];
+    let a004 = r0.min((-9.28 * mu).exp2()) * r0 + c0[3];
+    let scale = (-1.04 * a004 + (a * c0[2] + c1[2]).max(0.0)).clamp(0.0, 1.0);
+    let bias = (a004 + r1 * a * c1[3]).max(0.0);
+    (scale + bias).clamp(0.0, 1.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -610,5 +631,13 @@ mod tests {
         assert_eq!(obsolete.progress().completed_nodes, 0);
         assert_eq!(slot.current().output(), &installed);
         assert_eq!(slot.installed_generation(), 1);
+    }
+
+    #[test]
+    fn directional_albedo_fit_is_bounded_and_unit_at_zero_roughness() {
+        let smooth = approx_ggx_directional_albedo(0.8, 0.0);
+        let rough = approx_ggx_directional_albedo(0.8, 0.9);
+        assert!((smooth - 1.0).abs() < 0.05);
+        assert!(rough > 0.0 && rough <= smooth);
     }
 }

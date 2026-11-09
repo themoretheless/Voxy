@@ -1293,4 +1293,85 @@ mod tests {
             assert!((back - srgb).abs() < 1e-5);
         }
     }
+
+    #[test]
+    fn morton_30bit_and_amanatides_woo_dda_setup_are_exact() {
+        for &[x, y, z] in &[[0_u32, 0, 0], [1, 2, 3], [511, 256, 1023], [1023, 1023, 1023]] {
+            let code = morton_encode_3d_u10(x, y, z);
+            assert_eq!(morton_decode_3d_u10(code), [x, y, z]);
+        }
+        let (step, t_max, t_delta) = voxel_ray_dda_first_step([0.25, 1.5, -0.5], [1.0, -2.0, 0.0], 1.0);
+        assert_eq!(step, [1, -1, 0]);
+        assert!((t_max[0] - 0.75).abs() < 1e-5);
+        assert!((t_max[1] - 0.25).abs() < 1e-5);
+        assert!(t_max[2].is_infinite());
+        assert!((t_delta[0] - 1.0).abs() < 1e-5);
+        assert!((t_delta[1] - 0.5).abs() < 1e-5);
+    }
+}
+
+/// Interleaves three 10-bit unsigned coordinates (`0..=1023`) into a 30-bit 3D Morton (Z-order) code.
+#[must_use]
+pub const fn morton_encode_3d_u10(x: u32, y: u32, z: u32) -> u32 {
+    const fn part1by2_10(mut n: u32) -> u32 {
+        n &= 0x0000_03ff;
+        n = (n ^ (n << 16)) & 0x0300_00ff;
+        n = (n ^ (n << 8)) & 0x0300_f00f;
+        n = (n ^ (n << 4)) & 0x030c_30c3;
+        (n ^ (n << 2)) & 0x0924_9249
+    }
+    part1by2_10(x) | (part1by2_10(y) << 1) | (part1by2_10(z) << 2)
+}
+
+/// De-interleaves a 30-bit 3D Morton (Z-order) code back into `[x, y, z]` in `0..=1023`.
+#[must_use]
+pub const fn morton_decode_3d_u10(code: u32) -> [u32; 3] {
+    const fn compact1by2_10(mut n: u32) -> u32 {
+        n &= 0x0924_9249;
+        n = (n ^ (n >> 2)) & 0x030c_30c3;
+        n = (n ^ (n >> 4)) & 0x0300_f00f;
+        n = (n ^ (n >> 8)) & 0x0300_00ff;
+        (n ^ (n >> 16)) & 0x0000_03ff
+    }
+    [
+        compact1by2_10(code),
+        compact1by2_10(code >> 1),
+        compact1by2_10(code >> 2),
+    ]
+}
+
+/// Computes Amanatides-Woo 3D DDA initial parameters `(step_sign, t_max, t_delta)` for a ray
+/// starting at `origin` with `direction` across a uniform cubic grid of edge `voxel_size`.
+#[must_use]
+pub fn voxel_ray_dda_first_step(
+    origin: [f32; 3],
+    direction: [f32; 3],
+    voxel_size: f32,
+) -> ([i32; 3], [f32; 3], [f32; 3]) {
+    if !origin.iter().all(|v| v.is_finite())
+        || !direction.iter().all(|v| v.is_finite())
+        || !voxel_size.is_finite()
+        || voxel_size <= 1e-6
+    {
+        return ([0; 3], [f32::INFINITY; 3], [f32::INFINITY; 3]);
+    }
+    let mut step = [0_i32; 3];
+    let mut t_max = [f32::INFINITY; 3];
+    let mut t_delta = [f32::INFINITY; 3];
+    for i in 0..3 {
+        let d = direction[i];
+        let cell = (origin[i] / voxel_size).floor();
+        if d > 1e-6 {
+            step[i] = 1;
+            let next_boundary = (cell + 1.0) * voxel_size;
+            t_max[i] = ((next_boundary - origin[i]) / d).max(0.0);
+            t_delta[i] = voxel_size / d;
+        } else if d < -1e-6 {
+            step[i] = -1;
+            let next_boundary = cell * voxel_size;
+            t_max[i] = ((next_boundary - origin[i]) / d).max(0.0);
+            t_delta[i] = -voxel_size / d;
+        }
+    }
+    (step, t_max, t_delta)
 }

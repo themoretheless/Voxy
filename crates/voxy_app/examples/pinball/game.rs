@@ -156,6 +156,30 @@ impl Game {
     }
 }
 
+/// Computes outgoing normal speed of a pinball struck at lever arm `pivot_to_contact_m`
+/// along a rotating flipper with angular velocity `angular_vel_rad_s`, restitution `e`,
+/// and incoming normal speed toward the flipper face.
+#[allow(dead_code)]
+pub fn flipper_tip_impulse_velocity(
+    pivot_to_contact_m: f32,
+    angular_vel_rad_s: f32,
+    restitution: f32,
+    incoming_normal_speed: f32,
+) -> f32 {
+    if !pivot_to_contact_m.is_finite()
+        || !angular_vel_rad_s.is_finite()
+        || !restitution.is_finite()
+        || !incoming_normal_speed.is_finite()
+    {
+        return 0.0;
+    }
+    let r = pivot_to_contact_m.max(0.0);
+    let e = restitution.clamp(0.0, 1.0);
+    let v_flipper = r * angular_vel_rad_s.max(0.0);
+    let v_in = incoming_normal_speed.max(0.0);
+    ((1.0 + e) * v_flipper + e * v_in).clamp(0.0, 45.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -232,5 +256,13 @@ mod tests {
             assert!(game.ball.position.y < 18.0);
         }
         assert!(hits + game.impacts > 0);
+    }
+    #[test]
+    fn flipper_tip_impulse_increases_with_lever_arm_and_caps_at_max_speed() {
+        let base = flipper_tip_impulse_velocity(0.5, 12.0, 0.75, 4.0);
+        let tip = flipper_tip_impulse_velocity(2.1, 12.0, 0.75, 4.0);
+        let capped = flipper_tip_impulse_velocity(2.3, 30.0, 0.9, 20.0);
+        assert!(tip > base && base > 0.0);
+        assert!((capped - 45.0).abs() < 1e-5);
     }
 }

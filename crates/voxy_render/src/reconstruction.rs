@@ -155,3 +155,65 @@ impl RayReconstructionGuides {
         &self.specular_hit_distance
     }
 }
+
+/// Evaluates the Schied et al. (2017) SVGF joint bilateral edge-stopping weight for à-trous wavelet
+/// denoising: `max(0, dot(n_p, n_q))^128 * exp(-|z_p - z_q| / sigma_z - |luma_p - luma_q| / sigma_l)`.
+#[allow(clippy::too_many_arguments)]
+#[must_use]
+pub fn svgf_atrous_stopping_weight(
+    n_p: [f32; 3],
+    n_q: [f32; 3],
+    z_p: f32,
+    z_q: f32,
+    sigma_z: f32,
+    luma_p: f32,
+    luma_q: f32,
+    sigma_l: f32,
+) -> f32 {
+    if n_p.iter().chain(&n_q).any(|c| !c.is_finite())
+        || !z_p.is_finite()
+        || !z_q.is_finite()
+        || !sigma_z.is_finite()
+        || !luma_p.is_finite()
+        || !luma_q.is_finite()
+        || !sigma_l.is_finite()
+    {
+        return 0.0;
+    }
+    let ndot = (n_p[0] * n_q[0] + n_p[1] * n_q[1] + n_p[2] * n_q[2]).clamp(0.0, 1.0);
+    let w_n = ndot.powi(128);
+    let dz = (z_p - z_q).abs() / sigma_z.max(1e-6);
+    let dl = (luma_p - luma_q).abs() / sigma_l.max(1e-6);
+    (w_n * (-(dz + dl)).exp()).clamp(0.0, 1.0)
+}
+
+#[cfg(test)]
+mod svgf_tests {
+    use super::*;
+
+    #[test]
+    fn svgf_stopping_weight_is_unit_for_matching_guides_and_drops_across_edges() {
+        let same = svgf_atrous_stopping_weight(
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            2.0,
+            2.0,
+            0.1,
+            1.5,
+            1.5,
+            0.5,
+        );
+        let edge = svgf_atrous_stopping_weight(
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0],
+            2.0,
+            5.0,
+            0.1,
+            1.5,
+            4.5,
+            0.5,
+        );
+        assert!((same - 1.0).abs() < 1e-6);
+        assert!(edge < 1e-5);
+    }
+}

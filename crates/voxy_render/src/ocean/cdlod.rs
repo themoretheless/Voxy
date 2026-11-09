@@ -118,3 +118,38 @@ impl Cdlod {
         true
     }
 }
+
+/// Computes Strugar (2009) Continuous Distance-Dependent LOD (CDLOD) vertex morph factor in `[0, 1]`
+/// across the transition band `[lod_near + morph_start_ratio * (lod_far - lod_near), lod_far]`.
+#[must_use]
+pub fn cdlod_morph_factor(
+    distance: f32,
+    lod_near: f32,
+    lod_far: f32,
+    morph_start_ratio: f32,
+) -> f32 {
+    if !distance.is_finite()
+        || !lod_near.is_finite()
+        || !lod_far.is_finite()
+        || !morph_start_ratio.is_finite()
+        || lod_far <= lod_near
+    {
+        return 0.0;
+    }
+    let ratio = morph_start_ratio.clamp(0.0, 0.999);
+    let morph_start = lod_near + ratio * (lod_far - lod_near);
+    let span = (lod_far - morph_start).max(1e-6);
+    ((distance - morph_start) / span).clamp(0.0, 1.0)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn cdlod_morph_factor_ramps_smoothly_in_transition_band() {
+        assert_eq!(cdlod_morph_factor(50.0, 0.0, 100.0, 0.7), 0.0);
+        assert!((cdlod_morph_factor(85.0, 0.0, 100.0, 0.7) - 0.5).abs() < 1e-5);
+        assert_eq!(cdlod_morph_factor(100.0, 0.0, 100.0, 0.7), 1.0);
+    }
+}

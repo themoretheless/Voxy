@@ -631,5 +631,35 @@ mod tests {
         let patch = XorDeltaChunkPatch::encode(&prev, &curr).unwrap();
         assert_eq!(patch.runs.len(), 2);
         assert_eq!(patch.apply(&prev).unwrap(), curr);
+
+        assert!((wal_checkpoint_urgency_score(0, 1024, 0, 0.0) - 0.0).abs() < 1e-6);
+        assert!(wal_checkpoint_urgency_score(900, 1000, 128, 30.0) > 0.85);
     }
+}
+
+/// Computes a normalized WAL checkpoint urgency score in `[0.0, 1.0]` combining log size
+/// pressure (`wal_bytes / max_wal_bytes`), dirty-page count pressure, and time elapsed since the
+/// last region checkpoint.
+#[must_use]
+pub fn wal_checkpoint_urgency_score(
+    wal_bytes: u64,
+    max_wal_bytes: u64,
+    dirty_pages: usize,
+    elapsed_since_sync_s: f32,
+) -> f32 {
+    let size_ratio = if max_wal_bytes > 0 {
+        (wal_bytes as f64 / max_wal_bytes as f64).clamp(0.0, 1.0) as f32
+    } else {
+        1.0
+    };
+    let page_ratio = (dirty_pages as f32 / 256.0).clamp(0.0, 1.0);
+    let time_ratio = if elapsed_since_sync_s.is_finite() && elapsed_since_sync_s > 0.0 {
+        (elapsed_since_sync_s / 60.0).clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    if size_ratio >= 0.95 {
+        return 1.0;
+    }
+    (0.55 * size_ratio + 0.30 * page_ratio + 0.15 * time_ratio).clamp(0.0, 1.0)
 }

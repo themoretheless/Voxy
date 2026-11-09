@@ -418,3 +418,59 @@ pub(super) fn validate_surface(
     }
     Ok(delta)
 }
+
+/// Evaluates Christensen-Burley (2015) normalized dipoleless subsurface diffusion profile:
+/// `R(r) = (exp(-r / d) + exp(-r / (3 * d))) / (8 * pi * d * r)`.
+#[must_use]
+pub fn burley_normalized_diffusion_profile(r: f32, d: f32) -> f32 {
+    if !r.is_finite() || !d.is_finite() || r <= 0.0 || d <= 0.0 {
+        return 0.0;
+    }
+    let num = (-r / d).exp() + (-r / (3.0 * d)).exp();
+    let den = 8.0 * std::f32::consts::PI * d * r;
+    if den <= 0.0 || !den.is_finite() {
+        0.0
+    } else {
+        (num / den).max(0.0)
+    }
+}
+
+/// Importance-samples radial distance `r` from the Burley normalized diffusion CDF for uniform
+/// random `u in [0, 1)` and mean free path scale `d > 0` via Halley/Newton-Raphson refinement.
+#[must_use]
+pub fn sample_burley_diffusion_radius(u: f32, d: f32) -> f32 {
+    if !u.is_finite() || !d.is_finite() || d <= 0.0 {
+        return 0.0;
+    }
+    let u_clamped = u.clamp(0.0, 0.999_999);
+    // Analytic initial guess and two Newton steps on 1 - 0.25*exp(-x) - 0.75*exp(-x/3) = u where x = r/d.
+    let one_minus_u = (1.0 - u_clamped).max(1e-6);
+    let mut x = -3.0 * one_minus_u.ln();
+    for _ in 0..4 {
+        let e1 = (-x).exp();
+        let e3 = (-x / 3.0).exp();
+        let cdf = 1.0 - 0.25 * e1 - 0.75 * e3;
+        let pdf = 0.25 * e1 + 0.25 * e3;
+        if pdf <= 1e-8 {
+            break;
+        }
+        x = (x - (cdf - u_clamped) / pdf).max(0.0);
+    }
+    x * d
+}
+
+#[cfg(test)]
+mod burley_tests {
+    use super::*;
+
+    #[test]
+    fn burley_profile_and_inverse_cdf_monotonically_increase_with_u() {
+        let near = burley_normalized_diffusion_profile(0.1, 1.0);
+        let far = burley_normalized_diffusion_profile(1.5, 1.0);
+        assert!(near > far && far > 0.0);
+        assert_eq!( sample_burley_diffusion_radius(0.0, 1.2), 0.0);
+        let r1 = sample_burley_diffusion_radius(0.25, 1.2);
+        let r2 = sample_burley_diffusion_radius(0.75, 1.2);
+        assert!(r2 > r1 && r1 > 0.0);
+    }
+}

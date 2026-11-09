@@ -2886,7 +2886,63 @@ mod tests {
         assert!(f1 > 440.0);
         assert!(f2_stiff > f2_ideal);
         assert_eq!(piano_string_inharmonicity_hz(440.0, 0, 0.0004), 0.0);
+
+        let early = piano_two_stage_decay_envelope(0.05, 0.4, 3.5, 0.3);
+        let late = piano_two_stage_decay_envelope(1.5, 0.4, 3.5, 0.3);
+        assert!(early > late && late > 0.0);
+
+        assert!(
+            sympathetic_pedal_resonance_gain(true, 440.0, 880.0)
+                > sympathetic_pedal_resonance_gain(true, 440.0, 513.0)
+        );
+        assert_eq!(sympathetic_pedal_resonance_gain(false, 440.0, 880.0), 0.0);
     }
+}
+
+/// Evaluates the Weinreich (1977) two-stage coupled-string piano soundboard decay envelope:
+/// `(1 - sustain_mix) * exp(-t / fast_tau) + sustain_mix * exp(-t / slow_tau)`.
+#[allow(dead_code)]
+pub fn piano_two_stage_decay_envelope(
+    t_sec: f32,
+    fast_tau: f32,
+    slow_tau: f32,
+    sustain_mix: f32,
+) -> f32 {
+    if !t_sec.is_finite()
+        || !fast_tau.is_finite()
+        || !slow_tau.is_finite()
+        || !sustain_mix.is_finite()
+        || t_sec < 0.0
+    {
+        return 0.0;
+    }
+    let mix = sustain_mix.clamp(0.0, 1.0);
+    let tf = fast_tau.max(1e-4);
+    let ts = slow_tau.max(tf);
+    ((1.0 - mix) * (-t_sec / tf).exp() + mix * (-t_sec / ts).exp()).clamp(0.0, 1.0)
+}
+
+/// Computes sympathetic sustain-pedal string resonance gain in `[0, 1]` when the damper pedal is
+/// depressed (`pedal_down`) and `resonator_freq_hz` is near an integer harmonic of `struck_freq_hz`.
+#[allow(dead_code)]
+pub fn sympathetic_pedal_resonance_gain(
+    pedal_down: bool,
+    struck_freq_hz: f32,
+    resonator_freq_hz: f32,
+) -> f32 {
+    if !pedal_down
+        || !struck_freq_hz.is_finite()
+        || !resonator_freq_hz.is_finite()
+        || struck_freq_hz <= 10.0
+        || resonator_freq_hz <= 10.0
+    {
+        return 0.0;
+    }
+    let ratio = resonator_freq_hz / struck_freq_hz;
+    let nearest_harmonic = ratio.round().clamp(1.0, 8.0);
+    let detune = (ratio - nearest_harmonic).abs();
+    let harmonic_weight = 1.0 / nearest_harmonic;
+    (harmonic_weight * (-detune * detune / 0.0008).exp()).clamp(0.0, 1.0)
 }
 
 /// Computes the stiff-string partial frequency $f_n = n f_0 \sqrt{1 + B n^2}$ in Hz

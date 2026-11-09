@@ -447,7 +447,99 @@ mod planckian_tests {
         let daylight = planckian_locus_rgb(6500.0);
         let cool = planckian_locus_rgb(10000.0);
         assert!(warm[0] > warm[1] && warm[1] > warm[2]);
-        assert!((daylight[0] - 1.0).abs() < 0.05);
+        assert!((daylight[0] - 1.0).abs() < 1e-5 || (daylight[0] - 1.0).abs() < 0.05);
         assert!(cool[2] > cool[0]);
+
+        let evening_lit = window_interior_schedule_emission(20.5, 17, 0.75);
+        let noon_off = window_interior_schedule_emission(12.0, 17, 0.75);
+        assert!(evening_lit >= noon_off);
+
+        let hit = interior_mapping_room_ray_hit([0.5, 0.5, 0.0], [0.1, -0.2, 1.0], [1.0, 1.0, 1.5]).unwrap();
+        assert!(hit.0 > 0.0);
     }
+}
+
+/// Evaluates deterministic pseudo-random residential window emission intensity in `[0.0, 1.0]`
+/// for apartment `room_hash` at `hour` (`0..24`) and `occupancy_rate` (`0..=1`), peaking during
+/// evening (`18:00..23:30`) and early morning (`06:00..08:00`) hours.
+#[allow(dead_code)]
+pub fn window_interior_schedule_emission(
+    hour: f32,
+    room_hash: u32,
+    occupancy_rate: f32,
+) -> f32 {
+    if !hour.is_finite() || !occupancy_rate.is_finite() {
+        return 0.0;
+    }
+    let h = hour.rem_euclid(24.0);
+    let schedule_activity = if (17.5..=23.0).contains(&h) {
+        1.0
+    } else if (23.0..24.0).contains(&h) || (0.0..=1.5).contains(&h) {
+        0.35
+    } else if (6.0..=8.0).contains(&h) {
+        0.55
+    } else {
+        0.0
+    };
+    if schedule_activity <= 0.0 {
+        return 0.0;
+    }
+    let mut x = room_hash.wrapping_add(((h * 2.0) as u32).wrapping_mul(0x9e37_79b9));
+    x ^= x >> 16;
+    x = x.wrapping_mul(0x7feb_352d);
+    x ^= x >> 15;
+    let rand01 = (x & 0xffff) as f32 / 65535.0;
+    let threshold = (occupancy_rate.clamp(0.0, 1.0) * schedule_activity).clamp(0.0, 1.0);
+    if rand01 < threshold {
+        0.65 + 0.35 * (1.0 - rand01)
+    } else {
+        0.0
+    }
+}
+
+/// Computes the analytical ray-box exit intersection `(t_hit, hit_pos_local, hit_normal_local)`
+/// inside a virtual interior-mapped apartment room box `[0, room_size.x] x [0, room_size.y] x [0, room_size.z]`
+/// (van Dongen 2007 Interior Mapping).
+#[allow(dead_code)]
+pub fn interior_mapping_room_ray_hit(
+    uv_entry: [f32; 3],
+    ray_dir_local: [f32; 3],
+    room_size: [f32; 3],
+) -> Option<(f32, [f32; 3], [f32; 3])> {
+    if uv_entry
+        .iter()
+        .chain(&ray_dir_local)
+        .chain(&room_size)
+        .any(|c| !c.is_finite())
+        || room_size.iter().any(|&s| s <= 1e-4)
+    {
+        return None;
+    }
+    let mut best_t = f32::INFINITY;
+    let mut best_axis = 2usize;
+    let mut best_sign = -1.0_f32;
+    for axis in 0..3 {
+        let d = ray_dir_local[axis];
+        if d.abs() <= 1e-6 {
+            continue;
+        }
+        let target_plane = if d > 0.0 { room_size[axis] } else { 0.0 };
+        let t = (target_plane - uv_entry[axis]) / d;
+        if t > 1e-5 && t < best_t {
+            best_t = t;
+            best_axis = axis;
+            best_sign = if d > 0.0 { -1.0 } else { 1.0 };
+        }
+    }
+    if !best_t.is_finite() {
+        return None;
+    }
+    let pos = [
+        uv_entry[0] + ray_dir_local[0] * best_t,
+        uv_entry[1] + ray_dir_local[1] * best_t,
+        uv_entry[2] + ray_dir_local[2] * best_t,
+    ];
+    let mut normal = [0.0; 3];
+    normal[best_axis] = best_sign;
+    Some((best_t, pos, normal))
 }

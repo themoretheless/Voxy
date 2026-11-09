@@ -163,6 +163,34 @@ pub fn can_plant_on_slope(
         .all(|&h| (h - center_height).saturating_abs() <= max_slope_delta)
 }
 
+/// Computes Yoda's self-thinning canopy survival probability in `[0.0, 1.0]` for a candidate
+/// tree with `crown_radius_m` given horizontal distances to existing neighbor trunks.
+#[must_use]
+pub fn self_thinning_canopy_competition(
+    neighbor_distances_m: &[f32],
+    crown_radius_m: f32,
+) -> f32 {
+    if !crown_radius_m.is_finite() || crown_radius_m <= 0.0 {
+        return 0.0;
+    }
+    let two_r = 2.0 * crown_radius_m;
+    let mut crowding = 0.0_f32;
+    for &d in neighbor_distances_m {
+        if !d.is_finite() {
+            continue;
+        }
+        if d <= 0.0 {
+            return 0.0;
+        }
+        if d < two_r {
+            let overlap = (1.0 - d / two_r).clamp(0.0, 1.0);
+            // -3/2 Yoda power law competition intensity
+            crowding += overlap.powf(1.5) * 1.5;
+        }
+    }
+    (-crowding).exp().clamp(0.0, 1.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -243,5 +271,7 @@ mod tests {
         assert_ne!(g.descriptor(), g.base.descriptor());
         assert!(can_plant_on_slope(10, [10, 11, 9, 10], 1));
         assert!(!can_plant_on_slope(10, [10, 13, 9, 10], 1));
+        assert!((self_thinning_canopy_competition(&[10.0, 12.0], 3.0) - 1.0).abs() < 1e-6);
+        assert!(self_thinning_canopy_competition(&[2.0, 2.5], 3.0) < 0.5);
     }
 }

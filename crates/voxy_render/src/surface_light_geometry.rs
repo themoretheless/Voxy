@@ -323,3 +323,73 @@ impl SurfaceLightGeometry {
         &self.status
     }
 }
+
+/// Evaluates the exact spherical-polygon solid angle `Omega` (in steradians) subtended by a planar
+/// quad emitter `(v0, v1, v2, v3)` at shading point `p` using Van Oosterom & Strackee (1983)
+/// two-triangle spherical excess.
+#[must_use]
+pub fn rect_light_solid_angle_steradians(
+    p: [f32; 3],
+    v0: [f32; 3],
+    v1: [f32; 3],
+    v2: [f32; 3],
+    v3: [f32; 3],
+) -> f32 {
+    if p.iter()
+        .chain(&v0)
+        .chain(&v1)
+        .chain(&v2)
+        .chain(&v3)
+        .any(|c| !c.is_finite())
+    {
+        return 0.0;
+    }
+    let unit_dir = |v: [f32; 3]| -> Option<[f32; 3]> {
+        let d = [v[0] - p[0], v[1] - p[1], v[2] - p[2]];
+        let len = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt();
+        (len > 1e-6).then(|| [d[0] / len, d[1] / len, d[2] / len])
+    };
+    let (Some(r0), Some(r1), Some(r2), Some(r3)) =
+        (unit_dir(v0), unit_dir(v1), unit_dir(v2), unit_dir(v3))
+    else {
+        return 0.0;
+    };
+    let tri_solid_angle = |a: [f32; 3], b: [f32; 3], c: [f32; 3]| -> f32 {
+        let cross_bc = [
+            b[1] * c[2] - b[2] * c[1],
+            b[2] * c[0] - b[0] * c[2],
+            b[0] * c[1] - b[1] * c[0],
+        ];
+        let num = (a[0] * cross_bc[0] + a[1] * cross_bc[1] + a[2] * cross_bc[2]).abs();
+        let dot = |x: [f32; 3], y: [f32; 3]| x[0] * y[0] + x[1] * y[1] + x[2] * y[2];
+        let den = 1.0 + dot(a, b) + dot(b, c) + dot(c, a);
+        2.0 * num.atan2(den)
+    };
+    (tri_solid_angle(r0, r1, r2) + tri_solid_angle(r0, r2, r3)).clamp(0.0, 2.0 * std::f32::consts::PI)
+}
+
+#[cfg(test)]
+mod solid_angle_tests {
+    use super::*;
+
+    #[test]
+    fn unit_square_solid_angle_decreases_with_distance_squared() {
+        let near = rect_light_solid_angle_steradians(
+            [0.0, 0.0, 0.0],
+            [-0.5, -0.5, 1.0],
+            [0.5, -0.5, 1.0],
+            [0.5, 0.5, 1.0],
+            [-0.5, 0.5, 1.0],
+        );
+        let far = rect_light_solid_angle_steradians(
+            [0.0, 0.0, 0.0],
+            [-0.5, -0.5, 10.0],
+            [0.5, -0.5, 10.0],
+            [0.5, 0.5, 10.0],
+            [-0.5, 0.5, 10.0],
+        );
+        assert!(near > far && far > 0.0);
+        // At z=10, 1x1 area subtends ~ 1 / 100 = 0.01 sr.
+        assert!((far - 0.01).abs() < 5e-4);
+    }
+}

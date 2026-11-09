@@ -182,6 +182,58 @@ pub fn bilinear_climate_blend(c00: f32, c10: f32, c01: f32, c11: f32, tx: f32, t
     top + (bot - top) * sz
 }
 
+/// Computes the Whipple-Tucker stream-power fluvial bedrock incision rate
+/// $E = K \cdot A^m \cdot S^n$ (meters per unit geologic time).
+#[must_use]
+pub fn stream_power_fluvial_incision_rate(
+    drainage_area_m2: f32,
+    slope: f32,
+    erodibility_k: f32,
+    area_exp_m: f32,
+    slope_exp_n: f32,
+) -> f32 {
+    if !drainage_area_m2.is_finite()
+        || !slope.is_finite()
+        || !erodibility_k.is_finite()
+        || !area_exp_m.is_finite()
+        || !slope_exp_n.is_finite()
+        || drainage_area_m2 <= 0.0
+        || slope <= 0.0
+        || erodibility_k <= 0.0
+    {
+        return 0.0;
+    }
+    let m = area_exp_m.clamp(0.1, 2.0);
+    let n = slope_exp_n.clamp(0.1, 3.0);
+    (erodibility_k * drainage_area_m2.powf(m) * slope.powf(n)).max(0.0)
+}
+
+/// Computes an orographic precipitation multiplier (`[0.1, 4.0]`) amplifying windward upslope
+/// condensation (`wind_dot_grad > 0`) and suppressing leeward rain-shadow valleys (`wind_dot_grad < 0`).
+#[must_use]
+pub fn orographic_precipitation_multiplier(
+    wind_dot_grad: f32,
+    elevation_m: f32,
+    condensation_scale: f32,
+    rain_shadow_drying: f32,
+) -> f32 {
+    if !wind_dot_grad.is_finite()
+        || !elevation_m.is_finite()
+        || !condensation_scale.is_finite()
+        || !rain_shadow_drying.is_finite()
+    {
+        return 1.0;
+    }
+    let alt_factor = (elevation_m.max(0.0) / 2500.0).clamp(0.0, 1.5);
+    if wind_dot_grad >= 0.0 {
+        let lift = wind_dot_grad * condensation_scale.max(0.0) * (0.5 + 0.5 * alt_factor);
+        (1.0 + lift).clamp(0.1, 4.0)
+    } else {
+        let sink = (-wind_dot_grad) * rain_shadow_drying.max(0.0);
+        (1.0 / (1.0 + sink)).clamp(0.1, 4.0)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -288,5 +340,10 @@ mod tests {
         ));
         assert!((bilinear_climate_blend(0.0, 10.0, 0.0, 10.0, 0.5, 0.5) - 5.0).abs() < 1e-5);
         assert!((bilinear_climate_blend(2.0, 4.0, 6.0, 8.0, 0.0, 1.0) - 6.0).abs() < 1e-5);
+        let incision = stream_power_fluvial_incision_rate(10_000.0, 0.04, 1e-3, 0.5, 1.0);
+        assert!((incision - 0.004).abs() < 1e-6);
+        let windward = orographic_precipitation_multiplier(0.3, 1200.0, 2.5, 2.0);
+        let leeward = orographic_precipitation_multiplier(-0.3, 1200.0, 2.5, 2.0);
+        assert!(windward > 1.0 && leeward < 1.0);
     }
 }

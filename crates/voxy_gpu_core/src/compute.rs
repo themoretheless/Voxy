@@ -928,5 +928,32 @@ mod gather_range_tests {
                 "admitted {ranges:?}"
             );
         }
+        assert_eq!(
+            tile_2d_dispatch_groups(1920, 1080, 8, 8, 65535),
+            Some([240, 135])
+        );
+        assert_eq!(tile_2d_dispatch_groups(1920, 1080, 0, 8, 65535), None);
+    }
+}
+
+/// Computes 2D compute workgroup counts `[groups_x, groups_y]` for a `width x height` target
+/// tiled by `tile_x x tile_y`, validating against `max_per_dim`.
+#[must_use]
+pub const fn tile_2d_dispatch_groups(
+    width: u32,
+    height: u32,
+    tile_x: u32,
+    tile_y: u32,
+    max_per_dim: u32,
+) -> Option<[u32; 2]> {
+    if width == 0 || height == 0 || tile_x == 0 || tile_y == 0 || max_per_dim == 0 {
+        return None;
+    }
+    let gx = width.div_ceil(tile_x);
+    let gy = height.div_ceil(tile_y);
+    if gx > max_per_dim || gy > max_per_dim {
+        None
+    } else {
+        Some([gx, gy])
     }
 }

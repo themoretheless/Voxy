@@ -116,6 +116,36 @@ impl OpticalSegment {
     }
 }
 
+/// Evaluates analytical Frostbite / Hillaire energy-conserving single-step volumetric raymarching
+/// integration, returning `(transmittance_step, integrated_luminance)`:
+/// `T = exp(-sigma_t * ds)` and `L_out = L_in * T + source_inscatter * (1 - T) / max(sigma_t, eps)`.
+#[must_use]
+pub fn integrate_scattered_luminance_step(
+    l_in: f32,
+    source_inscatter: f32,
+    sigma_t: f32,
+    step_len: f32,
+) -> (f32, f32) {
+    if !l_in.is_finite()
+        || !source_inscatter.is_finite()
+        || !sigma_t.is_finite()
+        || !step_len.is_finite()
+        || step_len <= 0.0
+    {
+        return (1.0, l_in.max(0.0));
+    }
+    let st = sigma_t.max(0.0);
+    let tau = (st * step_len).min(80.0);
+    let transmittance = (-tau).exp();
+    let integral = if tau < 1e-4 {
+        step_len * (1.0 - 0.5 * tau)
+    } else {
+        (1.0 - transmittance) / st.max(1e-8)
+    };
+    let l_out = (l_in.max(0.0) * transmittance + source_inscatter.max(0.0) * integral).max(0.0);
+    (transmittance, l_out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -204,6 +234,8 @@ mod tests {
         assert!(large.apply_rgba([f64::NAN; 4]).is_err());
         assert_eq!(saved, large);
         assert!(OpticalSegment::homogeneous_mixture(&[([f64::MAX; 3], [0.; 3]); 2], 1.).is_err());
+        let (t, l) = integrate_scattered_luminance_step(1.0, 2.0, 0.0, 0.5);
+        assert!((t - 1.0).abs() < 1e-6 && (l - 2.0).abs() < 1e-5);
     }
 }
 

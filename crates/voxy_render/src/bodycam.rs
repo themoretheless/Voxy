@@ -1060,7 +1060,35 @@ mod tests {
         let coc = circle_of_confusion_px(0.035, 2.0, 2.0, 10.0, 0.036, 1920);
         assert!(coc > 1.0);
         assert_eq!(circle_of_confusion_px(0.035, 2.0, 2.0, 2.0, 0.036, 1920), 0.0);
+        let warped = brown_conrady_barrel_undistort([0.4, -0.3], 0.15, 0.05);
+        assert!(warped[0] > 0.4 && warped[1] < -0.3);
+        assert_eq!(natural_vignette_cos4_gain(0.0, 24.0), 1.0);
+        assert!(natural_vignette_cos4_gain(18.0, 24.0) < 0.5);
     }
+}
+
+/// Evaluates the radial Brown-Conrady polynomial lens distortion model
+/// `uv_centered * (1 + k1 * r^2 + k2 * r^4)` where `r^2 = u^2 + v^2`.
+#[must_use]
+pub fn brown_conrady_barrel_undistort(uv_centered: [f32; 2], k1: f32, k2: f32) -> [f32; 2] {
+    if uv_centered.iter().any(|c| !c.is_finite()) || !k1.is_finite() || !k2.is_finite() {
+        return [0.0; 2];
+    }
+    let r2 = uv_centered[0] * uv_centered[0] + uv_centered[1] * uv_centered[1];
+    let scale = (1.0 + k1 * r2 + k2 * r2 * r2).max(0.0);
+    [uv_centered[0] * scale, uv_centered[1] * scale]
+}
+
+/// Evaluates the physical optical $\cos^4(\theta)$ natural peripheral illumination falloff
+/// `1 / (1 + (radial_offset_mm / focal_length_mm)^2)^2`.
+#[must_use]
+pub fn natural_vignette_cos4_gain(radial_offset_mm: f32, focal_length_mm: f32) -> f32 {
+    if !radial_offset_mm.is_finite() || !focal_length_mm.is_finite() || focal_length_mm <= 0.0 {
+        return 0.0;
+    }
+    let tan_theta = radial_offset_mm.abs() / focal_length_mm;
+    let sec2 = 1.0 + tan_theta * tan_theta;
+    (1.0 / (sec2 * sec2)).clamp(0.0, 1.0)
 }
 
 /// Computes the physical thin-lens Circle of Confusion (CoC) diameter in pixels for a point at

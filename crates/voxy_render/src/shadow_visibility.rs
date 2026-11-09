@@ -202,6 +202,31 @@ pub fn practical_cascade_splits(z_near: f32, z_far: f32, lambda: f32) -> Option<
     }))
 }
 
+/// Evaluates Fernando (2005) Percentage-Closer Soft Shadows (PCSS) similar-triangles penumbra
+/// filter radius `w_penumbra = light_world_size * (receiver_depth - avg_blocker_depth) / avg_blocker_depth`,
+/// clamped to `[0.0, max_radius]`.
+#[must_use]
+pub fn pcss_penumbra_filter_radius(
+    light_world_size: f32,
+    receiver_depth: f32,
+    avg_blocker_depth: f32,
+    max_radius: f32,
+) -> f32 {
+    if !light_world_size.is_finite()
+        || !receiver_depth.is_finite()
+        || !avg_blocker_depth.is_finite()
+        || !max_radius.is_finite()
+        || light_world_size <= 0.0
+        || avg_blocker_depth <= 1e-6
+        || receiver_depth <= avg_blocker_depth
+        || max_radius <= 0.0
+    {
+        return 0.0;
+    }
+    let w = light_world_size * (receiver_depth - avg_blocker_depth) / avg_blocker_depth;
+    w.clamp(0.0, max_radius)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -212,5 +237,7 @@ mod tests {
         assert!(splits[0] > 0.1 && splits[0] < splits[1]);
         assert!(splits[1] < splits[2] && splits[2] < splits[3]);
         assert!((splits[3] - 200.0).abs() < 1e-4);
+        assert_eq!(pcss_penumbra_filter_radius(2.0, 5.0, 5.0, 16.0), 0.0);
+        assert!((pcss_penumbra_filter_radius(2.0, 10.0, 5.0, 16.0) - 2.0).abs() < 1e-6);
     }
 }

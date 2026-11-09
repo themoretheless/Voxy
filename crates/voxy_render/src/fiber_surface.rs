@@ -370,3 +370,67 @@ impl FiberSurfaceTransfer {
         pass.dispatch_workgroups(self.groups, 1, 1);
     }
 }
+
+/// Evaluates Marschner / d'Eon azimuthal scattering distributions `[N_R, N_TT, N_TRT]` for hair and
+/// fur strands as a function of `cos(Delta phi / 2)` and azimuthal roughness `beta_n`.
+#[must_use]
+pub fn marschner_azimuthal_scattering_n(
+    cos_half_dphi: f32,
+    roughness_azimuthal: f32,
+) -> [f32; 3] {
+    if !cos_half_dphi.is_finite() || !roughness_azimuthal.is_finite() {
+        return [0.0; 3];
+    }
+    let c = cos_half_dphi.clamp(-1.0, 1.0);
+    let beta = roughness_azimuthal.clamp(0.05, 1.0);
+    let s2 = (beta * beta).max(1e-4);
+    // R lobe: reflection peak around dphi = pi (cos(dphi/2) -> 0) and smooth cos(dphi/2) falloff.
+    let n_r = (0.25 * c.abs()).max(0.0);
+    // TT lobe: strong forward transmission peak near dphi = pi (c = 0).
+    let n_tt = ((-c * c) / (2.0 * s2)).exp() / (2.0 * std::f32::consts::PI * s2).sqrt();
+    // TRT lobe: secondary internal reflection glint peaks near |c| ~ 0.5 (dphi ~ +-120 deg).
+    let trt_offset = c.abs() - 0.5;
+    let n_trt = ((-trt_offset * trt_offset) / (2.0 * s2)).exp()
+        / (2.0 * std::f32::consts::PI * s2).sqrt();
+    [n_r, n_tt, n_trt]
+}
+
+/// Evaluates d'Eon et al. (2011) physical hair melanin absorption coefficient `sigma_a` (`[R, G, B]` in `mm^-1`)
+/// from `eumelanin` (brown/black pigment concentration) and `pheomelanin` (red/blonde pigment concentration).
+#[must_use]
+pub fn hair_melanin_absorption_sigma_a(eumelanin: f32, pheomelanin: f32) -> [f32; 3] {
+    let eu = if eumelanin.is_finite() {
+        eumelanin.max(0.0)
+    } else {
+        0.0
+    };
+    let ph = if pheomelanin.is_finite() {
+        pheomelanin.max(0.0)
+    } else {
+        0.0
+    };
+    let sigma_eu = [0.419_f32, 0.697, 1.37];
+    let sigma_ph = [0.187_f32, 0.4, 1.05];
+    [
+        eu * sigma_eu[0] + ph * sigma_ph[0],
+        eu * sigma_eu[1] + ph * sigma_ph[1],
+        eu * sigma_eu[2] + ph * sigma_ph[2],
+    ]
+}
+
+#[cfg(test)]
+mod hair_tests {
+    use super::*;
+
+    #[test]
+    fn marschner_azimuthal_and_melanin_absorption_follow_spectral_order() {
+        let lobes_tx = marschner_azimuthal_scattering_n(0.0, 0.25);
+        let lobes_back = marschner_azimuthal_scattering_n(1.0, 0.25);
+        assert!(lobes_tx[1] > lobes_back[1]);
+        assert!(lobes_back[0] > lobes_tx[0]);
+
+        let sigma = hair_melanin_absorption_sigma_a(1.0, 0.5);
+        // Blue absorbs strongest, Red absorbs weakest -> warm brown/reddish transmittance.
+        assert!(sigma[0] < sigma[1] && sigma[1] < sigma[2]);
+    }
+}

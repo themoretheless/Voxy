@@ -242,3 +242,35 @@ impl DiffuseEnvironmentConvolution {
         }
     }
 }
+
+/// Evaluates Geomerics (Enlighten) non-negative L1 Spherical Harmonics diffuse irradiance
+/// reconstruction to prevent negative ringing artifacts when `|L1|` is large relative to `L0`.
+#[must_use]
+pub fn sh2_non_negative_irradiance(l0: f32, l1: [f32; 3], normal: [f32; 3]) -> f32 {
+    if !l0.is_finite() || l1.iter().chain(&normal).any(|c| !c.is_finite()) || l0 <= 0.0 {
+        return 0.0;
+    }
+    let l1_len = (l1[0] * l1[0] + l1[1] * l1[1] + l1[2] * l1[2]).sqrt();
+    if l1_len <= 1e-6 {
+        return l0;
+    }
+    let dir = [l1[0] / l1_len, l1[1] / l1_len, l1[2] / l1_len];
+    let q = 0.5 * (1.0 + (normal[0] * dir[0] + normal[1] * dir[1] + normal[2] * dir[2]).clamp(-1.0, 1.0));
+    let r = (l1_len / l0).clamp(0.0, 1.0);
+    let p = 1.0 + 2.0 * r;
+    let a = (1.0 - r) / (1.0 + r);
+    l0 * (a + (1.0 - a) * (p + 1.0) * q.powf(p)).max(0.0)
+}
+
+#[cfg(test)]
+mod sh2_tests {
+    use super::*;
+
+    #[test]
+    fn geomerics_sh2_irradiance_never_goes_negative_at_antipode() {
+        let front = sh2_non_negative_irradiance(1.0, [0.0, 0.0, 0.95], [0.0, 0.0, 1.0]);
+        let back = sh2_non_negative_irradiance(1.0, [0.0, 0.0, 0.95], [0.0, 0.0, -1.0]);
+        assert!(front > 1.0);
+        assert!(back >= 0.0 && back < front);
+    }
+}

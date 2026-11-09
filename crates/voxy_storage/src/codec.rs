@@ -479,5 +479,37 @@ pub(crate) mod tests {
             decode_chunk(&payload, &registry),
             Err(CodecError::TrailingBytes)
         );
+        let original = vec![100_i32, 102, 99, 99, -50, 0, i32::MAX, i32::MIN];
+        let encoded = zigzag_delta_encode_i32(&original);
+        assert_eq!(zigzag_delta_decode_i32(&encoded), original);
     }
+}
+
+/// Delta-encodes a slice of `i32` values (using wrapping differences) and maps each signed delta
+/// to an unsigned `u32` via ZigZag encoding `(d << 1) ^ (d >> 31)` so small deltas near zero
+/// become small positive integers ideal for variable-length / bit-packed storage.
+#[must_use]
+pub fn zigzag_delta_encode_i32(values: &[i32]) -> Vec<u32> {
+    let mut out = Vec::with_capacity(values.len());
+    let mut prev = 0_i32;
+    for &v in values {
+        let delta = v.wrapping_sub(prev);
+        prev = v;
+        let zz = ((delta << 1) ^ (delta >> 31)) as u32;
+        out.push(zz);
+    }
+    out
+}
+
+/// Decodes a ZigZag delta-encoded `u32` stream back into the original `i32` sequence.
+#[must_use]
+pub fn zigzag_delta_decode_i32(encoded: &[u32]) -> Vec<i32> {
+    let mut out = Vec::with_capacity(encoded.len());
+    let mut acc = 0_i32;
+    for &zz in encoded {
+        let delta = ((zz >> 1) as i32) ^ -((zz & 1) as i32);
+        acc = acc.wrapping_add(delta);
+        out.push(acc);
+    }
+    out
 }

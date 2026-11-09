@@ -203,3 +203,68 @@ impl ArchiveInstanceCulling {
         &self.arguments
     }
 }
+
+/// Projects a view-space bounding sphere (`center_view` with forward `-Z` or `+Z` distance `|z| > radius + z_near`)
+/// into conservative screen-space UV bounds `[min_u, min_v, max_u, max_v]` in `[0, 1]^4` using Mara & McGuire (2013)
+/// exact perspective sphere-horizon projection for Hi-Z occlusion culling.
+#[must_use]
+pub fn project_sphere_screen_aabb(
+    center_view: [f32; 3],
+    radius: f32,
+    z_near: f32,
+    proj_00: f32,
+    proj_11: f32,
+) -> Option<[f32; 4]> {
+    if center_view.iter().any(|c| !c.is_finite())
+        || !radius.is_finite()
+        || !z_near.is_finite()
+        || !proj_00.is_finite()
+        || !proj_11.is_finite()
+        || radius <= 0.0
+        || z_near <= 0.0
+        || proj_00 <= 0.0
+        || proj_11 <= 0.0
+    {
+        return None;
+    }
+    let cz = center_view[2].abs();
+    if cz <= radius + z_near {
+        return None;
+    }
+    let r2 = radius * radius;
+    let axis_bounds = |c: f32, p_scale: f32| -> Option<(f32, f32)> {
+        let d2 = c * c + cz * cz;
+        if d2 <= r2 {
+            return None;
+        }
+        let a = (d2 - r2).sqrt();
+        let denom_min = cz * a + c * radius;
+        let denom_max = cz * a - c * radius;
+        if denom_min <= 1e-6 || denom_max <= 1e-6 {
+            return None;
+        }
+        let ndc_min = ((c * a - cz * radius) / denom_min) * p_scale;
+        let ndc_max = ((c * a + cz * radius) / denom_max) * p_scale;
+        Some((ndc_min.min(ndc_max), ndc_min.max(ndc_max)))
+    };
+    let (min_x, max_x) = axis_bounds(center_view[0], proj_00)?;
+    let (min_y, max_y) = axis_bounds(center_view[1], proj_11)?;
+    let min_u = (0.5 * min_x + 0.5).clamp(0.0, 1.0);
+    let max_u = (0.5 * max_x + 0.5).clamp(0.0, 1.0);
+    let min_v = (0.5 - 0.5 * max_y).clamp(0.0, 1.0);
+    let max_v = (0.5 - 0.5 * min_y).clamp(0.0, 1.0);
+    Some([min_u, min_v, max_u, max_v])
+}
+
+#[cfg(test)]
+mod sphere_aabb_tests {
+    use super::*;
+
+    #[test]
+    fn mara_mcguire_sphere_projection_brackets_screen_center_and_rejects_near_clip() {
+        let aabb = project_sphere_screen_aabb([0.0, 0.0, -10.0], 1.0, 0.1, 1.0, 1.0).unwrap();
+        assert!(aabb[0] < 0.5 && aabb[2] > 0.5);
+        assert!(aabb[1] < 0.5 && aabb[3] > 0.5);
+        assert!(project_sphere_screen_aabb([0.0, 0.0, -0.5], 0.6, 0.1, 1.0, 1.0).is_none());
+    }
+}

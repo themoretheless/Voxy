@@ -92,6 +92,31 @@ impl SceneCamera {
     }
 }
 
+/// Projects a world-space geometric simplification error `world_error_m` at camera distance
+/// `distance_m` into screen-space pixels:
+/// `px = (world_error_m / distance_m) * (viewport_height_px / (2 * tan(vertical_fov_rad * 0.5)))`.
+#[must_use]
+pub fn screen_space_geometric_error_px(
+    world_error_m: f32,
+    distance_m: f32,
+    vertical_fov_rad: f32,
+    viewport_height_px: f32,
+) -> f32 {
+    if !world_error_m.is_finite()
+        || !distance_m.is_finite()
+        || !vertical_fov_rad.is_finite()
+        || !viewport_height_px.is_finite()
+        || world_error_m <= 0.0
+        || distance_m <= 1e-5
+        || !(1e-3..std::f32::consts::PI).contains(&vertical_fov_rad)
+        || viewport_height_px <= 0.0
+    {
+        return 0.0;
+    }
+    let half_tan = (0.5 * vertical_fov_rad).tan().max(1e-6);
+    ((world_error_m / distance_m) * (0.5 * viewport_height_px / half_tan)).max(0.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -129,5 +154,9 @@ mod tests {
                 )
                 .is_err()
         );
+        let px_near = screen_space_geometric_error_px(0.05, 5.0, std::f32::consts::FRAC_PI_2, 1080.0);
+        let px_far = screen_space_geometric_error_px(0.05, 50.0, std::f32::consts::FRAC_PI_2, 1080.0);
+        assert!((px_near - 5.4).abs() < 1e-4);
+        assert!((px_near - 10.0 * px_far).abs() < 1e-4);
     }
 }
