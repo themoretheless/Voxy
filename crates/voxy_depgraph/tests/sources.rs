@@ -15,34 +15,6 @@ use voxy_depgraph::source::{
 /// Files the compiler never sees, with the plan step that removes them.
 const KNOWN_ORPHANS: &[(&str, &str)] = &[
     (
-        "crates/physics/src/hair/contact/closest.rs",
-        "PLAN 1.1: stale copy left by merge be884bf72",
-    ),
-    (
-        "crates/physics/src/hair/contact/grid.rs",
-        "PLAN 1.1: stale copy left by merge be884bf72",
-    ),
-    (
-        "crates/physics/src/hair/contact/mesh_contacts.rs",
-        "PLAN 1.1: stale copy left by merge be884bf72",
-    ),
-    (
-        "crates/physics/src/hair/contact/query_tests.rs",
-        "PLAN 1.1: stale copy left by merge be884bf72",
-    ),
-    (
-        "crates/physics/src/hair/contact/strand_contacts.rs",
-        "PLAN 1.1: stale copy left by merge be884bf72",
-    ),
-    (
-        "crates/physics/src/hair/contact/strand_responses.rs",
-        "PLAN 1.1: stale copy left by merge be884bf72",
-    ),
-    (
-        "crates/physics/src/hair/contact/surface_tests.rs",
-        "PLAN 1.1: stale copy left by merge be884bf72",
-    ),
-    (
         "crates/voxy_app/src/animals/asset.rs",
         "PLAN 1.4: superseded by animals/breed_asset.rs",
     ),
@@ -73,7 +45,6 @@ const KNOWN_OVERSIZED: &[(&str, usize)] = &[
         1700,
     ),
     ("crates/physics/src/biomechanics/inertia/implicit.rs", 2050),
-    ("crates/physics/src/hair/contact.rs", 2100),
     ("crates/physics/src/liquid.rs", 1550),
     ("crates/physics/src/liquid/multi_body.rs", 2000),
     ("crates/physics/src/lymph.rs", 1550),

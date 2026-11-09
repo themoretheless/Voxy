@@ -4,6 +4,9 @@
 
 use super::*;
 
+// A segment can intersect several faces at numerically zero distance. Choose
+// its first intersection, with a topology key for coincident shared features,
+// rather than allowing roundoff in the distance to select a distant face.
 pub(in crate::hair) fn segment_contact_precedes(
     distance: f64,
     t: f64,
