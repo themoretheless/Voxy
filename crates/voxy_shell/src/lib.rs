@@ -2,6 +2,8 @@
 //! `ApplicationHandler`, scene input, touch and the rush scene. Used by the
 //! desktop binary (`voxy_app`), the mobile entry point and the examples.
 mod camera_motion;
+pub mod controls;
+pub mod frame_profile;
 mod scene_app;
 mod touch;
 pub use camera_motion::inertial_orbit_velocity_decay;

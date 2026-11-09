@@ -13,6 +13,7 @@ voxy_demos = { path = "../voxy_demos" }
 voxy_input = { path = "../voxy_input" }
 physics = { path = "../physics" }
 pollster.workspace = true
+serde_json.workspace = true
 glam.workspace = true
 voxy_text = { path = "../voxy_text" }
 voxy_rush = { path = "../voxy_rush", features = ["physics-events"] }

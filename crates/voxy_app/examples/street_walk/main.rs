@@ -1,21 +1,18 @@
 //! Native street walk: original procedural scene by default, imported Bistro via --bistro.
 mod aa_validation;
 mod benchmark_cycle;
-#[path = "../../src/controls.rs"]
-mod controls;
 mod day_cycle;
-#[path = "../../src/frame_profile.rs"]
-mod frame_profile;
 mod materials;
 mod original;
 mod panel;
 mod ray_geometry_export;
 mod scene;
 mod world_ray_lighting;
-use controls::{InputState, WalkCamera};
 use glam::{DVec3, Vec2, Vec3};
 use std::{path::PathBuf, sync::Arc, time::Instant};
 use voxy_render::archive_scene::ArchiveSceneRenderer;
+use voxy_shell::controls::{InputState, WalkCamera};
+use voxy_shell::frame_profile;
 use winit::{
     application::ApplicationHandler,
     event::{DeviceEvent, ElementState, MouseButton, MouseScrollDelta, WindowEvent},

@@ -3226,6 +3226,7 @@ dependencies = [
  "glam",
  "physics",
  "pollster",
+ "serde_json",
  "thiserror 2.0.20",
  "voxy_demos",
  "voxy_input",
