@@ -118,8 +118,6 @@ used_underscore_binding = "allow"
 collapsible_if = "allow"
 needless_borrow = "allow"
 implicit_clone = "allow"
-# Examples deliberately include app modules through `#[path]`.
-duplicate_mod = "allow"
 
 [patch.crates-io]
 wgpu = { path = "vendor/wgpu" }
