@@ -343,3 +343,144 @@ pub fn propagate(state: OrbitalState, mu: f64, dt: f64) -> Result<OrbitalState, 
     validate(next, mu)?;
     Ok(next)
 }
+
+/// Solves Kepler's equation $M = E - e \sin E$ for eccentric anomaly $E$ (`0 <= e < 1`) or
+/// hyperbolic Kepler's equation $M = e \sinh H - H$ (`e > 1`) via Halley's third-order method.
+pub fn kepler_eccentric_anomaly_halley(mean_anomaly: f64, eccentricity: f64) -> Option<f64> {
+    if !mean_anomaly.is_finite() || !eccentricity.is_finite() || eccentricity < 0.0 || (eccentricity - 1.0).abs() < 1e-12 {
+        return None;
+    }
+    if eccentricity < 1.0 {
+        let m = mean_anomaly.rem_euclid(std::f64::consts::TAU);
+        let mut e_anom = if eccentricity > 0.8 { std::f64::consts::PI } else { m };
+        for _ in 0..32 {
+            let (s, c) = e_anom.sin_cos();
+            let f = e_anom - eccentricity * s - m;
+            if f.abs() <= 1e-14 {
+                return Some(e_anom);
+            }
+            let fp = 1.0 - eccentricity * c;
+            let fpp = eccentricity * s;
+            let step = (2.0 * f * fp) / (2.0 * fp * fp - f * fpp);
+            e_anom -= step;
+            if step.abs() <= 1e-14 {
+                return Some(e_anom);
+            }
+        }
+        Some(e_anom)
+    } else {
+        let mut h = (mean_anomaly / eccentricity).asinh();
+        for _ in 0..32 {
+            let (sh, ch) = (h.sinh(), h.cosh());
+            let f = eccentricity * sh - h - mean_anomaly;
+            if f.abs() <= 1e-14 {
+                return Some(h);
+            }
+            let fp = eccentricity * ch - 1.0;
+            let fpp = eccentricity * sh;
+            let step = (2.0 * f * fp) / (2.0 * fp * fp - f * fpp);
+            h -= step;
+            if step.abs() <= 1e-14 {
+                return Some(h);
+            }
+        }
+        Some(h)
+    }
+}
+
+/// Computes Hohmann coplanar transfer velocity impulses `(dv1, dv2, total_dv)` between circular
+/// orbits of radii `r1` and `r2` around standard gravitational parameter `mu`.
+pub fn hohmann_transfer_delta_v(r1: f64, r2: f64, mu: f64) -> Option<(f64, f64, f64)> {
+    if !r1.is_finite() || !r2.is_finite() || !mu.is_finite() || r1 <= 0.0 || r2 <= 0.0 || mu <= 0.0 {
+        return None;
+    }
+    let v1 = (mu / r1).sqrt();
+    let v2 = (mu / r2).sqrt();
+    let sum_r = r1 + r2;
+    let dv1 = (v1 * ((2.0 * r2 / sum_r).sqrt() - 1.0)).abs();
+    let dv2 = (v2 * (1.0 - (2.0 * r1 / sum_r).sqrt())).abs();
+    let total = dv1 + dv2;
+    if total.is_finite() {
+        Some((dv1, dv2, total))
+    } else {
+        None
+    }
+}
+
+/// Computes the 1st post-Newtonian (1PN) Einstein perihelion precession angle in radians per
+/// orbital revolution: $\Delta \phi = \frac{6 \pi G M}{a (1 - e^2) c^2}$.
+pub fn post_newtonian_1pn_perihelion_precession_rad_per_orbit(
+    semi_major_axis: f64,
+    eccentricity: f64,
+    mu: f64,
+    c: f64,
+) -> Option<f64> {
+    if !semi_major_axis.is_finite()
+        || !eccentricity.is_finite()
+        || !mu.is_finite()
+        || !c.is_finite()
+        || semi_major_axis <= 0.0
+        || !(0.0..1.0).contains(&eccentricity)
+        || mu <= 0.0
+        || c <= 0.0
+    {
+        return None;
+    }
+    let denom = semi_major_axis * (1.0 - eccentricity * eccentricity) * c * c;
+    if denom <= 0.0 || !denom.is_finite() {
+        return None;
+    }
+    let dphi = 6.0 * std::f64::consts::PI * mu / denom;
+    dphi.is_finite().then_some(dphi)
+}
+
+/// Computes the gravitational time-dilation factor $\sqrt{1 - \frac{2 G M}{r c^2}}$ and redshift
+/// $z = (1 - 2 G M / (r c^2))^{-1/2} - 1$ outside the Schwarzschild event horizon $r_s = 2 G M / c^2$.
+pub fn gravitational_time_dilation_factor(r: f64, mass: f64, g: f64, c: f64) -> Option<(f64, f64)> {
+    if !r.is_finite() || !mass.is_finite() || !g.is_finite() || !c.is_finite() || r <= 0.0 || mass < 0.0 || g <= 0.0 || c <= 0.0 {
+        return None;
+    }
+    let rs = 2.0 * g * mass / (c * c);
+    if r <= rs {
+        return None;
+    }
+    let metric_g00 = (1.0 - rs / r).clamp(0.0, 1.0);
+    let dilation = metric_g00.sqrt();
+    if dilation <= 0.0 {
+        return None;
+    }
+    let redshift = 1.0 / dilation - 1.0;
+    Some((dilation, redshift))
+}
+
+#[cfg(test)]
+mod conic_and_relativity_tests {
+    use super::*;
+
+    #[test]
+    fn kepler_halley_hohmann_and_1pn_precession_match_analytic_invariants() {
+        let e_anom = kepler_eccentric_anomaly_halley(0.8, 0.3).unwrap();
+        assert!((e_anom - 0.3 * e_anom.sin() - 0.8).abs() < 1e-13);
+        let h_anom = kepler_eccentric_anomaly_halley(1.2, 1.5).unwrap();
+        assert!((1.5 * h_anom.sinh() - h_anom - 1.2).abs() < 1e-13);
+
+        let (dv1, dv2, total) = hohmann_transfer_delta_v(7.0e6, 4.2e7, 3.986e14).unwrap();
+        assert!(dv1 > 0.0 && dv2 > 0.0 && (dv1 + dv2 - total).abs() < 1e-9);
+
+        let dphi = post_newtonian_1pn_perihelion_precession_rad_per_orbit(
+            5.7909e10,
+            0.2056,
+            1.327_124_4e20,
+            2.997_924_58e8,
+        )
+        .unwrap();
+        // Mercury ~ 5.02e-7 rad/orbit (43 arcsec/century)
+        assert!((dphi - 5.02e-7).abs() < 0.1e-7);
+
+        let (dilation, z) =
+            gravitational_time_dilation_factor(1.0e4, 1.9885e30, 6.6743e-11, 2.997_924_58e8)
+                .unwrap();
+        assert!(dilation < 1.0 && z > 0.0);
+        assert!(gravitational_time_dilation_factor(1000.0, 1.9885e30, 6.6743e-11, 2.997_924_58e8).is_none());
+    }
+}

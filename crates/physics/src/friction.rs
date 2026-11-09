@@ -245,3 +245,86 @@ fn kinematics(jump: Vec3, normal: Vec3) -> Result<(f64, Vec3), &'static str> {
     }
     Ok((gap, tangent))
 }
+
+/// Integrates one step of the LuGre dynamic bristle friction model with Stribeck effect:
+/// - Steady-state deflection envelope: $g(v) = \frac{F_c + (F_s - F_c) e^{-(v/v_s)^2}}{\sigma_0}$
+/// - Bristle state evolution: $\dot{z} = v - \frac{|v|}{g(v)} z$
+/// - Friction force: $F = \sigma_0 z + \sigma_1 \dot{z} + \sigma_2 v$.
+///
+/// Returns `(friction_force, next_bristle_z)`.
+#[must_use]
+#[allow(clippy::too_many_arguments)]
+pub fn lugre_bristle_friction_force(
+    rel_velocity: f64,
+    bristle_z: f64,
+    sigma0: f64,
+    sigma1: f64,
+    sigma2: f64,
+    coulomb_fc: f64,
+    stiction_fs: f64,
+    stribeck_vs: f64,
+    dt: f64,
+) -> Option<(f64, f64)> {
+    if !rel_velocity.is_finite()
+        || !bristle_z.is_finite()
+        || !sigma0.is_finite()
+        || !sigma1.is_finite()
+        || !sigma2.is_finite()
+        || !coulomb_fc.is_finite()
+        || !stiction_fs.is_finite()
+        || !stribeck_vs.is_finite()
+        || !dt.is_finite()
+        || sigma0 <= 0.0
+        || sigma1 < 0.0
+        || sigma2 < 0.0
+        || coulomb_fc <= 0.0
+        || stiction_fs < coulomb_fc
+        || stribeck_vs <= 0.0
+        || dt < 0.0
+    {
+        return None;
+    }
+    let stribeck = (-(rel_velocity / stribeck_vs).powi(2)).exp();
+    let f_env = coulomb_fc + (stiction_fs - coulomb_fc) * stribeck;
+    let g_v = (f_env / sigma0).max(1e-12);
+    let rate = rel_velocity.abs() / g_v;
+    let z_next = if rate * dt > 1e-6 {
+        let z_ss = rel_velocity.signum() * g_v;
+        z_ss + (bristle_z - z_ss) * (-rate * dt).exp()
+    } else {
+        bristle_z + (rel_velocity - rate * bristle_z) * dt
+    };
+    let dz_dt = if dt > 1e-12 {
+        (z_next - bristle_z) / dt
+    } else {
+        rel_velocity - rate * bristle_z
+    };
+    let force = sigma0 * z_next + sigma1 * dz_dt + sigma2 * rel_velocity;
+    (force.is_finite() && z_next.is_finite()).then_some((force, z_next))
+}
+
+#[cfg(test)]
+mod lugre_tests {
+    use super::*;
+
+    #[test]
+    fn lugre_bristle_model_exhibits_stribeck_transition_from_stiction_to_coulomb() {
+        let mut z_slow = 0.0;
+        let mut f_slow = 0.0;
+        for _ in 0..100 {
+            (f_slow, z_slow) = lugre_bristle_friction_force(
+                0.001, z_slow, 1e5, 300.0, 0.4, 10.0, 15.0, 0.05, 0.001,
+            )
+            .unwrap();
+        }
+        let mut z_fast = 0.0;
+        let mut f_fast = 0.0;
+        for _ in 0..100 {
+            (f_fast, z_fast) = lugre_bristle_friction_force(
+                0.5, z_fast, 1e5, 300.0, 0.0, 10.0, 15.0, 0.05, 0.001,
+            )
+            .unwrap();
+        }
+        assert!(f_slow > f_fast && f_fast >= 9.9);
+    }
+}

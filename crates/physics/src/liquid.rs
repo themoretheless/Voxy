@@ -1540,3 +1540,36 @@ pub use checkpoint::{LiquidCheckpoint, LiquidStateCheckpointLimits};
 
 mod checkpoint_wire;
 pub use checkpoint_wire::LiquidWireLimits;
+
+/// Evaluates the Young–Laplace capillary pressure jump across a curved fluid interface
+/// $\Delta P = \sigma \left(\frac{1}{R_1} + \frac{1}{R_2}\right)$ in Pascals (`Pa`).
+#[must_use]
+pub fn young_laplace_capillary_pressure_pa(
+    surface_tension_n_m: f64,
+    r1_m: f64,
+    r2_m: f64,
+) -> Option<f64> {
+    if !surface_tension_n_m.is_finite()
+        || !r1_m.is_finite()
+        || !r2_m.is_finite()
+        || surface_tension_n_m < 0.0
+        || r1_m.abs() <= 1e-12
+        || r2_m.abs() <= 1e-12
+    {
+        return None;
+    }
+    let dp = surface_tension_n_m * (1.0 / r1_m + 1.0 / r2_m);
+    dp.is_finite().then_some(dp)
+}
+
+#[cfg(test)]
+mod young_laplace_tests {
+    use super::*;
+
+    #[test]
+    fn young_laplace_spherical_droplet_equals_two_sigma_over_r() {
+        let dp = young_laplace_capillary_pressure_pa(0.072, 0.001, 0.001).unwrap();
+        assert!((dp - 144.0).abs() < 1e-9);
+        assert!(young_laplace_capillary_pressure_pa(0.072, 0.0, 0.001).is_none());
+    }
+}

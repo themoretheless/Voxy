@@ -157,3 +157,65 @@ pub fn trace_linear_sources(
     }
     Ok(result)
 }
+
+/// Evaluates Planck spectral radiance $B_\lambda(\lambda, T) = \frac{2 h c^2}{\lambda^5 \left(\exp\left(\frac{h c}{\lambda k_B T}\right) - 1\right)}$
+/// in $\text{W}\cdot\text{sr}^{-1}\cdot\text{m}^{-3}$ for wavelength `wavelength_m` and `temperature_k`.
+pub fn planck_spectral_radiance_w_sr_m3(wavelength_m: f64, temperature_k: f64) -> Option<f64> {
+    if !wavelength_m.is_finite()
+        || !temperature_k.is_finite()
+        || wavelength_m <= 0.0
+        || temperature_k <= 0.0
+    {
+        return None;
+    }
+    const H: f64 = 6.626_070_15e-34;
+    const C: f64 = 2.997_924_58e8;
+    const KB: f64 = 1.380_649e-23;
+    let x = (H * C) / (wavelength_m * KB * temperature_k);
+    if x > 700.0 {
+        return Some(0.0);
+    }
+    let denom = wavelength_m.powi(5) * x.exp_m1();
+    if denom <= 0.0 || !denom.is_finite() {
+        return None;
+    }
+    let radiance = (2.0 * H * C * C) / denom;
+    radiance.is_finite().then_some(radiance)
+}
+
+/// Computes the classical Eddington luminosity limit $L_{\text{Edd}} = \frac{4 \pi G M c}{\kappa}$
+/// in Watts given stellar `mass_kg` and opacity `opacity_m2_kg` (e.g. Thomson electron-scattering opacity).
+pub fn eddington_luminosity_watts(
+    mass_kg: f64,
+    opacity_m2_kg: f64,
+    g: f64,
+    c: f64,
+) -> Option<f64> {
+    if !mass_kg.is_finite()
+        || !opacity_m2_kg.is_finite()
+        || !g.is_finite()
+        || !c.is_finite()
+        || mass_kg <= 0.0
+        || opacity_m2_kg <= 0.0
+        || g <= 0.0
+        || c <= 0.0
+    {
+        return None;
+    }
+    let lum = 4.0 * std::f64::consts::PI * g * mass_kg * c / opacity_m2_kg;
+    lum.is_finite().then_some(lum)
+}
+
+#[cfg(test)]
+mod spectral_and_eddington_tests {
+    use super::*;
+
+    #[test]
+    fn planck_radiance_and_eddington_luminosity_are_positive_and_monotonic() {
+        let b_cool = planck_spectral_radiance_w_sr_m3(500e-9, 3000.0).unwrap();
+        let b_hot = planck_spectral_radiance_w_sr_m3(500e-9, 5778.0).unwrap();
+        assert!(b_hot > b_cool && b_cool > 0.0);
+        let ledd = eddington_luminosity_watts(1.9885e30, 0.04, 6.6743e-11, 2.997_924_58e8).unwrap();
+        assert!(ledd > 1.0e31);
+    }
+}

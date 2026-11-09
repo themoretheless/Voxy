@@ -484,8 +484,13 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
     }
   }
   if coverage > 0. {
-    let lit = camera.sun_colour.rgb * camera.sun_colour.a * max(dot(n_up, camera.sun.xyz), 0.) * sun_visible(f.world) / 3.14159265;
-    let foam_colour = vec3<f32>(0.85, 0.88, 0.9) * (lit + ambient * 0.9);
+    let sun_vis = sun_visible(f.world);
+    let sun_irradiance = camera.sun_colour.rgb * camera.sun_colour.a * sun_vis / 3.14159265;
+    let lit = sun_irradiance * max(dot(n_up, camera.sun.xyz), 0.15);
+    let sss_foam = sun_irradiance * pow(clamp(dot(-v, camera.sun.xyz), 0., 1.), 3.) * 0.42;
+    let bubble_micro = 0.88 + 0.16 * water_value_noise(f.world.xz * 24. + vec2<f32>(water.misc.x * 0.7));
+    let foam_albedo = mix(vec3<f32>(0.76, 0.86, 0.89), vec3<f32>(0.90, 0.93, 0.95), clamp(coverage, 0., 1.)) * bubble_micro;
+    let foam_colour = foam_albedo * (lit + sss_foam + ambient * 0.92);
     colour = mix(colour, foam_colour, coverage);
   }
   return vec4<f32>(colour * camera.viewport.z, 1.);

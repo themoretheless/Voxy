@@ -51,6 +51,27 @@ impl ViewportCamera {
             && self.pitch.is_finite()
             && self.pitch.abs() <= 1.5
     }
+
+    /// Computes the exact camera eye-to-center distance $d = \frac{R}{\sin(\text{fov} / 2)}$
+    /// needed to frame a bounding sphere of radius `radius` inside a perspective frustum
+    /// with vertical/effective field of view `fov_radians`.
+    #[must_use]
+    pub fn frame_bounds_distance(radius: f32, fov_radians: f32) -> Option<f32> {
+        if !radius.is_finite()
+            || radius < 0.0
+            || !fov_radians.is_finite()
+            || fov_radians <= 1e-4
+            || fov_radians >= std::f32::consts::PI - 1e-4
+        {
+            return None;
+        }
+        let half_sin = (0.5 * fov_radians).sin();
+        if half_sin <= 1e-6 {
+            return None;
+        }
+        let d = (radius / half_sin).max(0.01);
+        d.is_finite().then_some(d)
+    }
     pub(crate) fn matrix(&self, size: Vec2) -> Result<Mat4, InvalidSceneCamera> {
         if !self.valid() || !size.is_finite() || size.min_element() <= 0. {
             return Err(InvalidSceneCamera);
@@ -405,6 +426,10 @@ mod fit_tests {
             assert!(camera.fit_bounds(min, max, size).is_err());
             assert_eq!(serde_json::to_value(&camera).unwrap(), before);
         }
+        let d = ViewportCamera::frame_bounds_distance(5.0, std::f32::consts::FRAC_PI_3).unwrap();
+        assert!((d - 10.0).abs() < 1e-5);
+        assert!(ViewportCamera::frame_bounds_distance(-1.0, 1.0).is_none());
+        assert!(ViewportCamera::frame_bounds_distance(5.0, 0.0).is_none());
     }
 }
 

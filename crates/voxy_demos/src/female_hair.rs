@@ -2077,7 +2077,23 @@ mod tests {
         voxy_render::SceneMesh::new(vertices, indices).unwrap();
         let lobes = marschner_longitudinal_lobes(0.1, -0.05, 0.12);
         assert!(lobes[0] > 0.0 && lobes[1] > 0.0 && lobes[2] > 0.0);
+        let glint = elliptical_fiber_eccentricity_glint(0.0, 0.85);
+        let round = elliptical_fiber_eccentricity_glint(0.0, 1.0);
+        assert!(glint > round && round >= 1.0);
     }
+}
+
+/// Evaluates the azimuthal caustic glint amplification factor for an elliptical hair fiber
+/// with minor-to-major axis ratio `aspect_ratio` ($b/a \in (0.5, 1.0]$) at azimuthal angle `phi_rad`.
+#[must_use]
+pub fn elliptical_fiber_eccentricity_glint(phi_rad: f32, aspect_ratio: f32) -> f32 {
+    if !phi_rad.is_finite() || !aspect_ratio.is_finite() {
+        return 1.0;
+    }
+    let ratio = aspect_ratio.clamp(0.55, 1.0);
+    let eccentricity = (1.0 - ratio * ratio).max(0.0).sqrt();
+    let modulation = (2.0 * phi_rad).cos().max(0.0);
+    1.0 + 1.8 * eccentricity * modulation * modulation
 }
 
 /// Evaluates the 3 Marschner longitudinal hair scattering Gaussian lobes `[M_R, M_TT, M_TRT]`

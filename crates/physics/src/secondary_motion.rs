@@ -237,3 +237,49 @@ impl SecondaryMotion {
         Ok(())
     }
 }
+
+/// Evaluates the exact closed-form 1D critically damped spring step ($\zeta = 1$)
+/// tracking target state `(target_x, target_v)` with natural angular frequency `omega_n` ($\text{rad/s}$).
+#[must_use]
+pub fn critically_damped_spring_step(
+    x: f64,
+    v: f64,
+    target_x: f64,
+    target_v: f64,
+    omega_n: f64,
+    dt: f64,
+) -> Option<(f64, f64)> {
+    if !x.is_finite()
+        || !v.is_finite()
+        || !target_x.is_finite()
+        || !target_v.is_finite()
+        || !omega_n.is_finite()
+        || !dt.is_finite()
+        || omega_n <= 0.0
+        || dt < 0.0
+    {
+        return None;
+    }
+    let dx0 = x - target_x;
+    let dv0 = v - target_v;
+    let c2 = dv0 + omega_n * dx0;
+    let exp_term = (-omega_n * dt).exp();
+    let x_next = target_x + (dx0 + c2 * dt) * exp_term;
+    let v_next = target_v + (dv0 - c2 * omega_n * dt) * exp_term;
+    (x_next.is_finite() && v_next.is_finite()).then_some((x_next, v_next))
+}
+
+#[cfg(test)]
+mod critically_damped_tests {
+    use super::*;
+
+    #[test]
+    fn critically_damped_spring_converges_without_overshoot() {
+        let (mut x, mut v) = (1.0, 0.0);
+        for _ in 0..60 {
+            (x, v) = critically_damped_spring_step(x, v, 0.0, 0.0, 12.0, 1.0 / 60.0).unwrap();
+            assert!(x >= -1e-12 && x <= 1.0);
+        }
+        assert!(x < 1e-3 && v.abs() < 1e-2);
+    }
+}

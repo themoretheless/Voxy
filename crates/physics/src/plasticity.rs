@@ -246,3 +246,48 @@ fn symmetric(strain: Matrix) -> Result<Matrix, &'static str> {
 }
 
 pub mod mesh;
+
+/// Computes the Drucker–Prager pressure-sensitive deviatoric return-mapping radial scale factor
+/// $\gamma \in [0, 1]$ projecting trial deviatoric stress norm $q = \|\mathbf{s}_{\text{trial}}\|$
+/// onto the yield cone $f(q, p) = q + \alpha p - c \le 0$.
+#[must_use]
+pub fn drucker_prager_return_mapping_scale(
+    dev_stress_norm_q: f64,
+    mean_stress_p: f64,
+    cohesion_c: f64,
+    friction_cone_alpha: f64,
+) -> Option<f64> {
+    if !dev_stress_norm_q.is_finite()
+        || !mean_stress_p.is_finite()
+        || !cohesion_c.is_finite()
+        || !friction_cone_alpha.is_finite()
+        || dev_stress_norm_q < 0.0
+        || cohesion_c < 0.0
+        || friction_cone_alpha < 0.0
+    {
+        return None;
+    }
+    if dev_stress_norm_q <= 1e-15 {
+        return Some(1.0);
+    }
+    let yield_q = (cohesion_c - friction_cone_alpha * mean_stress_p).max(0.0);
+    if dev_stress_norm_q <= yield_q {
+        Some(1.0)
+    } else {
+        Some((yield_q / dev_stress_norm_q).clamp(0.0, 1.0))
+    }
+}
+
+#[cfg(test)]
+mod drucker_prager_tests {
+    use super::*;
+
+    #[test]
+    fn drucker_prager_scale_is_unity_inside_cone_and_strengthens_under_compression() {
+        let elastic = drucker_prager_return_mapping_scale(50.0, -100.0, 40.0, 0.3).unwrap();
+        assert!((elastic - 1.0).abs() < 1e-12);
+        let plastic_low_p = drucker_prager_return_mapping_scale(100.0, -50.0, 40.0, 0.3).unwrap();
+        let plastic_high_p = drucker_prager_return_mapping_scale(100.0, -200.0, 40.0, 0.3).unwrap();
+        assert!(plastic_high_p > plastic_low_p && plastic_low_p > 0.0);
+    }
+}

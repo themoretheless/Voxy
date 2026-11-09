@@ -323,3 +323,41 @@ impl Material {
         Ok((next, work))
     }
 }
+
+/// Evaluates the Park–Paulino–Roesler (PPR) / Rose–Ferrante–Smith universal binding exponential
+/// cohesive normal traction $T_n(\Delta_n) = \sigma_{\max} \frac{\Delta_n}{\delta_n} \exp\!\left(1 - \frac{\Delta_n}{\delta_n}\right)$
+/// for normal separation $\Delta_n \ge 0$.
+#[must_use]
+pub fn park_paulino_roesler_cohesive_traction(
+    delta_n: f64,
+    char_len_dn: f64,
+    peak_strength_sigma_max: f64,
+) -> Option<f64> {
+    if !delta_n.is_finite()
+        || !char_len_dn.is_finite()
+        || !peak_strength_sigma_max.is_finite()
+        || delta_n < 0.0
+        || char_len_dn <= 0.0
+        || peak_strength_sigma_max <= 0.0
+    {
+        return None;
+    }
+    let u = delta_n / char_len_dn;
+    let traction = peak_strength_sigma_max * u * (1.0 - u).exp();
+    traction.is_finite().then_some(traction)
+}
+
+#[cfg(test)]
+mod ppr_cohesive_tests {
+    use super::*;
+
+    #[test]
+    fn ppr_cohesive_traction_peaks_at_characteristic_separation_and_softens() {
+        let t0 = park_paulino_roesler_cohesive_traction(0.0, 1e-4, 5e6).unwrap();
+        let t_peak = park_paulino_roesler_cohesive_traction(1e-4, 1e-4, 5e6).unwrap();
+        let t_tail = park_paulino_roesler_cohesive_traction(4e-4, 1e-4, 5e6).unwrap();
+        assert!(t0.abs() < 1e-12);
+        assert!((t_peak - 5e6).abs() < 1e-6);
+        assert!(t_tail < t_peak && t_tail > 0.0);
+    }
+}

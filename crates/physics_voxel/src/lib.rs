@@ -11,12 +11,12 @@ mod vehicle;
 mod water;
 pub use character::{
     CharacterConfig, CharacterContact, CharacterError, CharacterInput, CharacterState,
-    CharacterStep, VoxelCollisionWorld, step_character, step_character_in_field,
-    step_character_with_motion,
+    CharacterStep, VoxelCollisionWorld, stair_step_up_clearance_height, step_character,
+    step_character_in_field, step_character_with_motion,
 };
 pub use collision::{
     AnchoredAabb, SweepConfig, SweepError, SweepObstacle, SweepResult, sweep_aabb,
-    sweep_candidate_bounds,
+    sweep_candidate_bounds, swept_aabb_slab_toi,
 };
 pub use destruction::{
     DestructionError, DestructionPlan, Explosion, blast_overpressure_impulse, plan_explosion,
@@ -27,18 +27,21 @@ pub use fracture::{
     voxel_cantilever_bending_moment,
 };
 pub use projectile::{
-    ProjectileConfig, ProjectileError, ProjectileOutcome, ProjectileState, plan_impact_explosion,
+    ProjectileConfig, ProjectileError, ProjectileOutcome, ProjectileState,
+    magnus_lift_acceleration, plan_impact_explosion, ricochet_reflection_velocity,
     solve_ballistic_elevation_angles, spawn_projectile, step_projectile, step_projectile_in_field,
     step_projectile_with_motion,
 };
 pub use raycast::{RayOrigin, RaycastConfig, RaycastError, RaycastResult, VoxelHit, raycast};
 pub use vehicle::{
     RaceCheckpoint, RaceError, RaceProgress, RaceTrack, VehicleConfig, VehicleError, VehicleInput,
-    VehicleState, VehicleStep, pacejka_lateral_force, step_vehicle, step_vehicle_with_chassis_step,
-    update_race,
+    VehicleState, VehicleStep, ackermann_inner_outer_steer_angles_rad, anti_roll_bar_axle_torque_nm,
+    pacejka_lateral_force, pacejka_magic_formula_lateral_force, step_vehicle,
+    step_vehicle_with_chassis_step, update_race,
 };
 pub use water::{
     WaterBudget, WaterError, WaterPlan, WaterStates, step_water, submerged_aabb_buoyancy,
+    water_column_hydrostatic_head_pa,
 };
 
 pub use water::{LiquidBudget, LiquidError, LiquidFlow, LiquidPlan, LiquidStates, step_liquid};

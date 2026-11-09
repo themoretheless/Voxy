@@ -739,5 +739,61 @@ pub fn powered_blend(
     Pose::blend_masked(animated, ragdoll, physics_weight)
 }
 
+/// Integrates one Verlet + radial bone-length constraint step for a secondary spring bone tip
+/// anchored at `parent_pivot` with rest length `bone_len`, pulled toward `rest_target`.
+#[must_use]
+#[allow(clippy::too_many_arguments)]
+pub fn spring_bone_verlet_step(
+    prev_tip: [f32; 3],
+    curr_tip: [f32; 3],
+    rest_target: [f32; 3],
+    parent_pivot: [f32; 3],
+    bone_len: f32,
+    stiffness: f32,
+    damping: f32,
+    dt_s: f32,
+) -> [f32; 3] {
+    let prev = Vec3::from_array(prev_tip);
+    let curr = Vec3::from_array(curr_tip);
+    let rest = Vec3::from_array(rest_target);
+    let pivot = Vec3::from_array(parent_pivot);
+    if !prev.is_finite()
+        || !curr.is_finite()
+        || !rest.is_finite()
+        || !pivot.is_finite()
+        || !dt_s.is_finite()
+        || dt_s <= 0.0
+    {
+        return curr_tip;
+    }
+    let vel = (curr - prev) * (1.0 - damping.clamp(0.0, 1.0));
+    let spring_pull = (rest - curr) * stiffness.max(0.0) * (dt_s * dt_s);
+    let candidate = curr + vel + spring_pull;
+    let dir = (candidate - pivot).try_normalize().unwrap_or(Vec3::Y);
+    (pivot + dir * bone_len.max(1e-5)).to_array()
+}
+
+#[cfg(test)]
+mod spring_bone_verlet_tests {
+    use super::*;
+
+    #[test]
+    fn spring_bone_verlet_step_preserves_exact_bone_length_and_pulls_to_rest() {
+        let next = spring_bone_verlet_step(
+            [1.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0],
+            1.0,
+            50.0,
+            0.1,
+            1.0 / 60.0,
+        );
+        let v = Vec3::from_array(next);
+        assert!((v.length() - 1.0).abs() < 1e-5);
+        assert!(v.y > 0.0);
+    }
+}
+
 #[cfg(test)]
 mod tests;

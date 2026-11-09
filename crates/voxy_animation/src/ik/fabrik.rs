@@ -270,3 +270,60 @@ impl Pose {
         ))
     }
 }
+
+/// Performs one full forward-and-backward reaching (FABRIK) pass on a 2-bone chain
+/// `(root, mid, tip)` with segment lengths `len1` and `len2` toward `target`, returning
+/// `(new_mid, new_tip)` with `root` pinned.
+#[must_use]
+pub fn fabrik_two_bone_chain_reach(
+    root: [f32; 3],
+    mid: [f32; 3],
+    tip: [f32; 3],
+    target: [f32; 3],
+    len1: f32,
+    len2: f32,
+) -> ([f32; 3], [f32; 3]) {
+    let r = Vec3::from_array(root);
+    let m = Vec3::from_array(mid);
+    let t = Vec3::from_array(tip);
+    let tgt = Vec3::from_array(target);
+    let l1 = len1.max(1e-5);
+    let l2 = len2.max(1e-5);
+    let to_target = tgt - r;
+    let dist = to_target.length();
+    if dist >= l1 + l2 {
+        let dir = to_target.try_normalize().unwrap_or(Vec3::Y);
+        let m_new = r + dir * l1;
+        let t_new = m_new + dir * l2;
+        return (m_new.to_array(), t_new.to_array());
+    }
+    let _ = t;
+    let dir_back = (m - tgt).try_normalize().unwrap_or(Vec3::Y);
+    let m_fwd = tgt + dir_back * l2;
+    let dir_fwd = (m_fwd - r).try_normalize().unwrap_or(Vec3::Y);
+    let m_new = r + dir_fwd * l1;
+    let dir_tip = (tgt - m_new).try_normalize().unwrap_or(dir_fwd);
+    let t_new = m_new + dir_tip * l2;
+    (m_new.to_array(), t_new.to_array())
+}
+
+#[cfg(test)]
+mod two_bone_fabrik_tests {
+    use super::*;
+
+    #[test]
+    fn fabrik_two_bone_chain_preserves_segment_lengths() {
+        let (m, t) = fabrik_two_bone_chain_reach(
+            [0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 2.0, 0.0],
+            [1.0, 1.0, 0.0],
+            1.0,
+            1.0,
+        );
+        let d1 = Vec3::from_array(m).length();
+        let d2 = (Vec3::from_array(t) - Vec3::from_array(m)).length();
+        assert!((d1 - 1.0).abs() < 1e-5);
+        assert!((d2 - 1.0).abs() < 1e-5);
+    }
+}

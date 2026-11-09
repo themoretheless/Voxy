@@ -110,10 +110,47 @@ pub fn resolve_contact(ball: &mut Ball, obstacle: Capsule, restitution: f64) -> 
     -approach
 }
 
+/// Computes the 2D normal and tangential contact impulse `[j_n, j_t]` for relative contact
+/// velocity `rel_vel_nt = [v_n, v_t]`, effective inverse mass `inv_mass_sum`, restitution $e \in [0, 1]$,
+/// and Coulomb friction cone $|j_t| \le \mu j_n$.
+#[must_use]
+pub fn planar_2d_impulse_with_coulomb_friction(
+    rel_vel_nt: [f64; 2],
+    inv_mass_sum: f64,
+    restitution: f64,
+    mu_friction: f64,
+) -> Option<[f64; 2]> {
+    if !rel_vel_nt[0].is_finite()
+        || !rel_vel_nt[1].is_finite()
+        || !inv_mass_sum.is_finite()
+        || !restitution.is_finite()
+        || !mu_friction.is_finite()
+        || inv_mass_sum <= 0.0
+        || !(0.0..=1.0).contains(&restitution)
+        || mu_friction < 0.0
+    {
+        return None;
+    }
+    if rel_vel_nt[0] >= 0.0 {
+        return Some([0.0, 0.0]);
+    }
+    let j_n = -(1.0 + restitution) * rel_vel_nt[0] / inv_mass_sum;
+    let max_jt = mu_friction * j_n;
+    let j_t_stick = -rel_vel_nt[1] / inv_mass_sum;
+    let j_t = j_t_stick.clamp(-max_jt, max_jt);
+    Some([j_n, j_t])
+}
+
 #[cfg(test)]
 #[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
+    #[test]
+    fn planar_2d_impulse_clamps_tangential_impulse_to_coulomb_cone() {
+        let imp = planar_2d_impulse_with_coulomb_friction([-4.0, 10.0], 0.5, 0.5, 0.25).unwrap();
+        assert!((imp[0] - 12.0).abs() < 1e-12);
+        assert!((imp[1] - (-3.0)).abs() < 1e-12);
+    }
     #[test]
     fn wall_reflects_normal_and_preserves_tangent() {
         let mut ball = Ball {

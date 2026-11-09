@@ -601,5 +601,39 @@ mod availability_tests {
                 Err(WaterComputeError::InvalidOutput)
             ));
         }
+        let dt = courant_friedrichs_lewy_stable_dt(0.5, 9.81, 2.0, 1.5, 0.5).unwrap();
+        assert!(dt > 0.0 && dt < 0.1);
+        assert_eq!(courant_friedrichs_lewy_stable_dt(0.0, 9.81, 2.0, 1.0, 0.5), None);
     }
+}
+
+/// Computes the explicit shallow-water Courant-Friedrichs-Lewy (CFL) maximum stable timestep
+/// $\Delta t = C_{\text{CFL}} \frac{\Delta x}{|u|_{\max} + \sqrt{g h_{\max}}}$ in seconds.
+#[must_use]
+pub fn courant_friedrichs_lewy_stable_dt(
+    cell_size_m: f32,
+    gravity: f32,
+    max_depth_m: f32,
+    max_fluid_speed: f32,
+    safety_cfl: f32,
+) -> Option<f32> {
+    if !cell_size_m.is_finite()
+        || !gravity.is_finite()
+        || !max_depth_m.is_finite()
+        || !max_fluid_speed.is_finite()
+        || !safety_cfl.is_finite()
+        || cell_size_m <= 0.0
+        || gravity <= 0.0
+        || max_depth_m < 0.0
+        || max_fluid_speed < 0.0
+        || !(0.01..=1.0).contains(&safety_cfl)
+    {
+        return None;
+    }
+    let celerity = (gravity * max_depth_m).sqrt();
+    let wave_speed = max_fluid_speed + celerity;
+    if wave_speed <= 1e-6 {
+        return None;
+    }
+    Some(safety_cfl * cell_size_m / wave_speed)
 }

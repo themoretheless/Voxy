@@ -223,3 +223,28 @@ impl<V: VoxelView> VoxelView for CapturedCollisionView<'_, V> {
         self.fallback.chunk(pos)
     }
 }
+
+/// Computes the Karras (2012) LBVH radix-tree common upper prefix length (`0..=64`)
+/// between two 64-bit Morton codes `code_a` and `code_b`.
+#[must_use]
+pub const fn morton_lbvh_common_upper_bits(code_a: u64, code_b: u64) -> u32 {
+    (code_a ^ code_b).leading_zeros()
+}
+
+#[cfg(test)]
+mod lbvh_tests {
+    use super::*;
+
+    #[test]
+    fn morton_lbvh_common_upper_bits_counts_shared_msb_prefix() {
+        assert_eq!(morton_lbvh_common_upper_bits(0xDEAD_BEEF, 0xDEAD_BEEF), 64);
+        assert_eq!(
+            morton_lbvh_common_upper_bits(1_u64 << 63, 0),
+            0
+        );
+        assert_eq!(
+            morton_lbvh_common_upper_bits(0x8000_0000_0000_0000, 0xC000_0000_0000_0000),
+            1
+        );
+    }
+}

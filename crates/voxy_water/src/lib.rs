@@ -29,16 +29,24 @@ pub mod river;
 pub mod shore;
 pub mod spectrum;
 
-pub use bodies::{WaterBody, WaterMaterial, WaterSample, WaterShape, WaterWorld};
+pub use bodies::{
+    WaterBody, WaterMaterial, WaterSample, WaterShape, WaterWorld,
+    archimedes_submerged_sphere_fraction, stokes_second_order_crest_sharpening,
+};
 pub use buoyancy::{BuoyancyForces, Floater, buoyancy};
 pub use gpu::{RippleField, WaveSimulation};
 pub use mesh::{WaterMesh, WaterVertex, surface_mesh};
-pub use query::{SurfaceSample, WaveField};
+pub use query::{
+    SurfaceSample, WaveField, breaking_wave_crest_acceleration_ratio,
+    gerstner_orbital_particle_velocity,
+};
 pub use river::{River, RiverNode};
 pub use shore::{
     Bathymetry, FluxLimiter, ShoreField, ShoreWaves, advect_foam_step,
 };
-pub use spectrum::{CASCADES, WaveSpectrum};
+pub use spectrum::{
+    CASCADES, WaveSpectrum, capillary_gravity_dispersion_omega, hasselmann_directional_spreading,
+};
 
 /// Shared WGSL functions: `shore_wave`, `flow_phases`, `foam_pattern`.
 pub const WATER_COMMON_WGSL: &str = include_str!("shaders/water_common.wgsl");

@@ -1114,7 +1114,34 @@ mod tests {
         assert_eq!(eyelid_blink_curve(0.0), 0.0);
         assert!((eyelid_blink_curve(0.3) - 1.0).abs() < 1e-5);
         assert!(eyelid_blink_curve(0.15) > eyelid_blink_curve(0.75));
+        assert!(tear_meniscus_specular_boost(0.0, 0.35, 1.5) > 1.0);
+        assert_eq!(tear_meniscus_specular_boost(2.0, 0.35, 1.5), 0.0);
     }
+}
+
+/// Computes the caustic/specular highlight intensity boost along the lower-lid tear meniscus
+/// as a function of distance `margin_distance_mm` from the lid margin and `meniscus_radius_mm`.
+#[must_use]
+pub fn tear_meniscus_specular_boost(
+    margin_distance_mm: f32,
+    meniscus_radius_mm: f32,
+    wetness: f32,
+) -> f32 {
+    if !margin_distance_mm.is_finite()
+        || !meniscus_radius_mm.is_finite()
+        || !wetness.is_finite()
+        || margin_distance_mm < 0.0
+        || meniscus_radius_mm <= 1e-4
+        || wetness <= 0.0
+    {
+        return 0.0;
+    }
+    let u = margin_distance_mm / meniscus_radius_mm;
+    if u >= 1.0 {
+        return 0.0;
+    }
+    let profile = (1.0 - u * u).sqrt() * (1.0 - u);
+    (profile * wetness.clamp(0.0, 4.0) * 1.5).clamp(0.0, 6.0)
 }
 
 /// Evaluates an asymmetric human eyelid blink closure curve in `[0.0, 1.0]` for normalized

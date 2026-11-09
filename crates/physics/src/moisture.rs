@@ -332,3 +332,48 @@ pub use cohesive::ThermalCohesiveCalibration;
 pub use temperature::ThermalCalibration;
 
 mod transport;
+
+/// Evaluates the van Genuchten unsaturated porous-media water retention curve
+/// $\theta(\psi) = \theta_r + \frac{\theta_s - \theta_r}{\left[1 + (\alpha |\psi|)^n\right]^{1 - 1/n}}$.
+#[must_use]
+pub fn van_genuchten_soil_water_retention(
+    suction_head_m: f64,
+    theta_r: f64,
+    theta_s: f64,
+    alpha_m_inv: f64,
+    n_exp: f64,
+) -> Option<f64> {
+    if !suction_head_m.is_finite()
+        || !theta_r.is_finite()
+        || !theta_s.is_finite()
+        || !alpha_m_inv.is_finite()
+        || !n_exp.is_finite()
+        || theta_r < 0.0
+        || theta_s <= theta_r
+        || theta_s > 1.0
+        || alpha_m_inv <= 0.0
+        || n_exp <= 1.0
+    {
+        return None;
+    }
+    let psi = suction_head_m.max(0.0);
+    let m = 1.0 - 1.0 / n_exp;
+    let se = (1.0 + (alpha_m_inv * psi).powf(n_exp)).powf(-m);
+    let theta = theta_r + (theta_s - theta_r) * se;
+    theta.is_finite().then_some(theta.clamp(theta_r, theta_s))
+}
+
+#[cfg(test)]
+mod van_genuchten_tests {
+    use super::*;
+
+    #[test]
+    fn van_genuchten_retention_interpolates_saturated_and_residual_water_content() {
+        let sat = van_genuchten_soil_water_retention(0.0, 0.05, 0.45, 2.0, 1.8).unwrap();
+        let mid = van_genuchten_soil_water_retention(1.0, 0.05, 0.45, 2.0, 1.8).unwrap();
+        let dry = van_genuchten_soil_water_retention(1000.0, 0.05, 0.45, 2.0, 1.8).unwrap();
+        assert!((sat - 0.45).abs() < 1e-12);
+        assert!(mid < sat && mid > dry);
+        assert!((dry - 0.05).abs() < 0.01);
+    }
+}

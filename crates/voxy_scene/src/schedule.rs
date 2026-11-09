@@ -395,6 +395,18 @@ impl SchedulePlan {
     pub fn batches(&self) -> &[Vec<String>] {
         &self.batches
     }
+
+    /// Returns the ratio of total scheduled systems to the number of sequential barrier batches
+    /// (`total_systems / batch_count`), or `1.0` when the schedule is empty.
+    #[must_use]
+    pub fn critical_parallelism_ratio(&self) -> f32 {
+        let non_empty_batches = self.batches.iter().filter(|b| !b.is_empty()).count();
+        if non_empty_batches == 0 {
+            return 1.0;
+        }
+        let total_systems: usize = self.batches.iter().map(Vec::len).sum();
+        total_systems as f32 / non_empty_batches as f32
+    }
     /// Runs serially with scene access restricted to each system's declaration.
     /// Other resources and captures remain the caller's responsibility.
     /// # Errors
@@ -800,6 +812,7 @@ mod extended_access_tests {
         // Both phase-0 systems only read `scene` and `commands`, and write disjoint resources,
         // so they share the first batch.
         assert_eq!(plan.batches()[0], vec!["spawn_alpha", "spawn_beta"]);
+        assert!((plan.critical_parallelism_ratio() - 1.5).abs() < 1e-6);
 
         let results = plan
             .run_parallel(4, |name, access| -> Result<String, ResourceAccessDenied> {

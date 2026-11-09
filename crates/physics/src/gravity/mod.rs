@@ -209,3 +209,49 @@ impl Gravity {
         Ok(())
     }
 }
+
+/// Computes the Plummer softened gravitational potential $\Phi(r) = -\frac{G M}{\sqrt{r^2 + \epsilon^2}}$
+/// and radial acceleration magnitude $a(r) = \frac{G M r}{(r^2 + \epsilon^2)^{3/2}}$.
+pub fn plummer_softened_potential_and_accel(
+    r: f64,
+    mass: f64,
+    softening_eps: f64,
+    g: f64,
+) -> Option<(f64, f64)> {
+    if !r.is_finite()
+        || !mass.is_finite()
+        || !softening_eps.is_finite()
+        || !g.is_finite()
+        || r < 0.0
+        || mass < 0.0
+        || softening_eps < 0.0
+        || g < 0.0
+    {
+        return None;
+    }
+    let r2_eps2 = r * r + softening_eps * softening_eps;
+    if r2_eps2 <= 0.0 || !r2_eps2.is_finite() {
+        return None;
+    }
+    let inv_sqrt = 1.0 / r2_eps2.sqrt();
+    let potential = -g * mass * inv_sqrt;
+    let accel = g * mass * r * inv_sqrt / r2_eps2;
+    if potential.is_finite() && accel.is_finite() {
+        Some((potential, accel))
+    } else {
+        None
+    }
+}
+
+#[cfg(test)]
+mod plummer_tests {
+    use super::*;
+
+    #[test]
+    fn plummer_softened_potential_is_finite_at_origin_when_softened() {
+        let (pot, acc) = plummer_softened_potential_and_accel(0.0, 100.0, 2.0, 1.0).unwrap();
+        assert!((pot - (-50.0)).abs() < 1e-12);
+        assert_eq!(acc, 0.0);
+        assert!(plummer_softened_potential_and_accel(0.0, 100.0, 0.0, 1.0).is_none());
+    }
+}

@@ -7,7 +7,7 @@ pub use catalog_checkpoint::{AssetCatalogCheckpoint, CatalogEntryCheckpoint};
 mod atomic_file;
 pub use atomic_file::{AtomicSaveError, save_atomic_file, save_atomic_new_file};
 mod dependencies;
-pub use artifact_cache::{ArtifactCache, ArtifactCacheError};
+pub use artifact_cache::{ArtifactCache, ArtifactCacheError, gdsf_cache_eviction_key};
 mod files;
 mod import_worker;
 mod inputs;
@@ -15,7 +15,10 @@ mod locations;
 mod manifest;
 
 mod streaming;
-pub use streaming::{AsyncAssetStreamer, LodStreamingPolicy, StreamingPriority, StreamingRequest};
+pub use streaming::{
+    AsyncAssetStreamer, LodStreamingPolicy, StreamingPriority, StreamingRequest,
+    streaming_mip_priority_score,
+};
 
 // === OPTIMIZATION #31-40: Asset caching system ===
 use std::collections::HashMap;
@@ -90,7 +93,9 @@ pub use publication::PublicationError;
 pub use sources::{
     ImportOutcome, SourceDependencies, SourceDependenciesCheckpoint, SourceReadsCheckpoint,
 };
-pub use watch::{SourceFingerprint, SourcePoller, SourcePollerCheckpoint};
+pub use watch::{
+    SourceFingerprint, SourcePoller, SourcePollerCheckpoint, adaptive_poll_interval_ms,
+};
 pub use watch_worker::{ObservedSourceScan, PollWorkerError, SourcePollWorker};
 
 use std::{

@@ -194,6 +194,7 @@ impl<T> Default for SlotMap<T> {
 }
 
 impl<T> SlotMap<T> {
+    #[inline]
     #[must_use]
     pub const fn new() -> Self {
         Self {
@@ -203,17 +204,30 @@ impl<T> SlotMap<T> {
         }
     }
 
+    #[inline]
+    #[must_use]
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            slots: Vec::with_capacity(capacity),
+            free_head: None,
+            len: 0,
+        }
+    }
+
+    #[inline]
     #[must_use]
     pub const fn len(&self) -> usize {
         self.len
     }
 
+    #[inline]
     #[must_use]
     pub const fn is_empty(&self) -> bool {
         self.len == 0
     }
 
     /// Inserts a value and returns its unique [`GenerationalId`].
+    #[inline]
     pub fn insert(&mut self, value: T) -> Option<GenerationalId> {
         if let Some(index) = self.free_head {
             let slot = self.slots.get_mut(index as usize)?;
@@ -235,6 +249,7 @@ impl<T> SlotMap<T> {
         }
     }
 
+    #[inline]
     #[must_use]
     pub fn get(&self, id: GenerationalId) -> Option<&T> {
         let slot = self.slots.get(id.index as usize)?;
@@ -247,6 +262,7 @@ impl<T> SlotMap<T> {
         }
     }
 
+    #[inline]
     #[must_use]
     pub fn get_mut(&mut self, id: GenerationalId) -> Option<&mut T> {
         let slot = self.slots.get_mut(id.index as usize)?;
@@ -259,6 +275,7 @@ impl<T> SlotMap<T> {
         }
     }
 
+    #[inline]
     pub fn remove(&mut self, id: GenerationalId) -> Option<T> {
         let slot = self.slots.get_mut(id.index as usize)?;
         if slot.generation != id.generation.get() {

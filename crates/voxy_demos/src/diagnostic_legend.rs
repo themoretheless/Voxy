@@ -110,6 +110,29 @@ pub fn viridis_colormap_rgb(t: f32) -> [f32; 3] {
     [r, g, b]
 }
 
+/// Evaluates Anton Mikhailov's `Turbo` rainbow colormap polynomial approximation in sRGB `[r, g, b]`
+/// for normalized scalar `t` in `[0.0, 1.0]`, providing smooth luminance progression without false bands.
+#[must_use]
+pub fn turbo_colormap_rgb(t: f32) -> [f32; 3] {
+    let x = if t.is_finite() { t.clamp(0.0, 1.0) } else { 0.0 };
+    let r = (0.13572138
+        + x * (4.6153926
+            + x * (-42.660324
+                + x * (132.13109 + x * (-152.94239 + x * 59.28638)))))
+        .clamp(0.0, 1.0);
+    let g = (0.09140261
+        + x * (2.1941884
+            + x * (4.8429665
+                + x * (-14.185033 + x * (4.277299 - x * 2.8295665)))))
+        .clamp(0.0, 1.0);
+    let b = (0.1066733
+        + x * (12.641946
+            + x * (-60.582047
+                + x * (110.36277 + x * (-89.90311 + x * 27.34825)))))
+        .clamp(0.0, 1.0);
+    [r, g, b]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -122,5 +145,9 @@ mod tests {
         assert!(low[2] > low[1]);
         assert!(mid[1] > low[1] && high[1] > mid[1]);
         assert!(high[0] > 0.85 && high[1] > 0.80);
+        let t_low = turbo_colormap_rgb(0.0);
+        let t_mid = turbo_colormap_rgb(0.5);
+        let t_high = turbo_colormap_rgb(1.0);
+        assert!(t_mid[1] > t_low[1] && t_high[0] > t_low[0]);
     }
 }

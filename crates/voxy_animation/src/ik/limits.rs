@@ -148,3 +148,43 @@ pub fn swing_twist_angles(pose: &Pose, joint: usize) -> (f64, f64) {
     };
     (swing_angle, signed_angle(twist, axis))
 }
+
+/// Decomposes quaternion `quat_xyzw` into swing and twist around `twist_axis`, clamps
+/// swing angle to `max_swing_rad` and twist angle to `[min_twist_rad, max_twist_rad]`,
+/// and returns the recomposed unit quaternion `[x, y, z, w]`.
+#[must_use]
+pub fn swing_twist_cone_clamp_quat(
+    quat_xyzw: [f32; 4],
+    twist_axis: [f32; 3],
+    max_swing_rad: f32,
+    min_twist_rad: f32,
+    max_twist_rad: f32,
+) -> [f32; 4] {
+    let q = DQuat::from_array(quat_xyzw.map(f64::from));
+    let axis = DVec3::from_array(twist_axis.map(f64::from));
+    if !q.is_finite() || q.length_squared() <= 1e-18 || !axis.is_finite() || axis.length_squared() <= 1e-18 {
+        return [0.0, 0.0, 0.0, 1.0];
+    }
+    let lo = min_twist_rad.min(max_twist_rad).clamp(-std::f32::consts::PI, std::f32::consts::PI);
+    let hi = max_twist_rad.max(min_twist_rad).clamp(-std::f32::consts::PI, std::f32::consts::PI);
+    let limit = JointLimit {
+        swing: max_swing_rad.clamp(0.0, std::f32::consts::PI),
+        twist: [lo, hi],
+    };
+    let clamped = limit.clamp_delta(q.normalize(), axis.normalize());
+    clamped.to_array().map(|v| v as f32)
+}
+
+#[cfg(test)]
+mod cone_clamp_tests {
+    use super::*;
+
+    #[test]
+    fn swing_twist_cone_clamp_quat_limits_excessive_deflection() {
+        let q = Quat::from_rotation_x(1.2).to_array();
+        let clamped = swing_twist_cone_clamp_quat(q, [0.0, 1.0, 0.0], 0.4, -0.2, 0.2);
+        let q_out = Quat::from_array(clamped);
+        let (_, angle) = q_out.to_axis_angle();
+        assert!((angle - 0.4).abs() < 1e-4);
+    }
+}

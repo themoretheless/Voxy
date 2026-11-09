@@ -2710,6 +2710,25 @@ pub fn is_watertight_manifold_mesh(indices: &[u32]) -> bool {
         .all(|&(u, v)| directed_edges.contains(&(v, u)))
 }
 
+/// Evaluates the Garland-Heckbert fundamental quadric plane error
+/// $(\mathbf{n} \cdot \mathbf{v} + d)^2 = \mathbf{v}^T (\mathbf{n}\mathbf{n}^T) \mathbf{v} + \dots$
+/// for a candidate vertex `point` against a normalized plane `(plane_normal, plane_d)`.
+#[must_use]
+pub fn quadric_plane_point_error(
+    point: [f32; 3],
+    plane_normal: [f32; 3],
+    plane_d: f32,
+) -> Option<f32> {
+    let p = Vec3::from_array(point);
+    let n = Vec3::from_array(plane_normal).try_normalize()?;
+    if !p.is_finite() || !plane_d.is_finite() {
+        return None;
+    }
+    let signed_dist = n.dot(p) + plane_d;
+    let err = signed_dist * signed_dist;
+    err.is_finite().then_some(err)
+}
+
 #[cfg(test)]
 mod n7_mesh_topology_tests {
     use super::*;
@@ -2742,5 +2761,8 @@ mod n7_mesh_topology_tests {
         let tetrahedron = [0, 1, 2, 0, 2, 3, 0, 3, 1, 1, 3, 2];
         assert!(is_watertight_manifold_mesh(&tetrahedron));
         assert!(!is_watertight_manifold_mesh(&[0, 1, 2]));
+        let q_err = quadric_plane_point_error([0.0, 3.0, 0.0], [0.0, 1.0, 0.0], -1.0).unwrap();
+        assert!((q_err - 4.0).abs() < 1e-6);
+        assert!(quadric_plane_point_error([0.0; 3], [0.0; 3], 0.0).is_none());
     }
 }

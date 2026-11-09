@@ -145,6 +145,32 @@ impl Drop for Pending {
     }
 }
 
+/// Evaluates the GreedyDual-Size with Frequency (GDSF) cache eviction key
+/// $H = L + \frac{F \cdot C}{S}$, where $L$ is the aging inflation factor (`clock_age`),
+/// $F$ is access frequency (`hit_count`), $C$ is rebuild cost (`rebuild_cost_ms`), and
+/// $S$ is artifact size in bytes (`size_bytes`). Smaller keys are evicted first.
+#[must_use]
+pub fn gdsf_cache_eviction_key(
+    clock_age: f64,
+    hit_count: u64,
+    rebuild_cost_ms: f64,
+    size_bytes: u64,
+) -> f64 {
+    let age = if clock_age.is_finite() && clock_age >= 0.0 {
+        clock_age
+    } else {
+        0.0
+    };
+    let cost = if rebuild_cost_ms.is_finite() && rebuild_cost_ms > 0.0 {
+        rebuild_cost_ms
+    } else {
+        1.0
+    };
+    let size = (size_bytes.max(1)) as f64;
+    let freq = (hit_count.max(1)) as f64;
+    age + (freq * cost) / size
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -239,5 +265,8 @@ mod tests {
             cache.load(&key),
             Err(ArtifactCacheError::TooLarge)
         ));
+        let k_small = gdsf_cache_eviction_key(10.0, 5, 100.0, 1024);
+        let k_large = gdsf_cache_eviction_key(10.0, 5, 100.0, 1024 * 1024);
+        assert!(k_small > k_large);
     }
 }

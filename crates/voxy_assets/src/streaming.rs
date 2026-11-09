@@ -204,6 +204,24 @@ impl<T: Send + 'static> AsyncAssetStreamer<T> {
     }
 }
 
+/// Computes a non-negative texture mip streaming priority score from screen-space UV coverage
+/// (`screen_texel_density` in texels per pixel) and the deficit between `resident_mip` and `desired_mip`.
+#[must_use]
+pub fn streaming_mip_priority_score(
+    screen_texel_density: f32,
+    resident_mip: u32,
+    desired_mip: u32,
+) -> f32 {
+    if !screen_texel_density.is_finite()
+        || screen_texel_density <= 0.0
+        || resident_mip <= desired_mip
+    {
+        return 0.0;
+    }
+    let mip_deficit = (resident_mip - desired_mip) as f32;
+    (mip_deficit * screen_texel_density.clamp(0.0, 1e6)).clamp(0.0, 1e8)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -256,5 +274,7 @@ mod tests {
         assert_eq!(first.ticket.asset().0, "critical_mesh");
         assert_eq!(second.ticket.asset().0, "near_normal");
         assert_eq!(third.ticket.asset().0, "far_normal");
+        assert!((streaming_mip_priority_score(4.0, 5, 2) - 12.0).abs() < 1e-5);
+        assert_eq!(streaming_mip_priority_score(4.0, 2, 2), 0.0);
     }
 }

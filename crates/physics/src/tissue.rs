@@ -750,4 +750,60 @@ mod reaction_friction_tests {
         assert_eq!(body.positions[1], [0., 0.49, 0.]);
         assert!(dot(body.positions[0], body.positions[0]).sqrt() >= 0.51 - 1e-12);
     }
+
+    #[test]
+    fn ogden_and_fung_hyperelastic_models_vanish_at_rest_and_stiffen_under_tension() {
+        assert!(ogden_1term_uniaxial_cauchy_stress(1.0, 2500.0, 4.0).unwrap().abs() < 1e-12);
+        let tens = ogden_1term_uniaxial_cauchy_stress(1.2, 2500.0, 4.0).unwrap();
+        let comp = ogden_1term_uniaxial_cauchy_stress(0.85, 2500.0, 4.0).unwrap();
+        assert!(tens > 0.0 && comp < 0.0);
+        let (w0, s0) = fung_exponential_strain_energy(0.0, 1000.0, 8.0).unwrap();
+        assert!(w0.abs() < 1e-12 && s0.abs() < 1e-12);
+        let (w1, s1) = fung_exponential_strain_energy(0.15, 1000.0, 8.0).unwrap();
+        assert!(w1 > 0.0 && s1 > 0.0);
+    }
+}
+
+/// Evaluates the 1-term incompressible Ogden uniaxial Cauchy stress
+/// $\sigma(\lambda) = \frac{2\mu}{\alpha}\left(\lambda^\alpha - \lambda^{-\alpha/2}\right)$.
+#[must_use]
+pub fn ogden_1term_uniaxial_cauchy_stress(
+    stretch: f64,
+    mu_pa: f64,
+    alpha: f64,
+) -> Option<f64> {
+    if !stretch.is_finite()
+        || !mu_pa.is_finite()
+        || !alpha.is_finite()
+        || stretch <= 0.0
+        || mu_pa <= 0.0
+        || alpha.abs() <= 1e-9
+    {
+        return None;
+    }
+    let sigma = (2.0 * mu_pa / alpha) * (stretch.powf(alpha) - stretch.powf(-0.5 * alpha));
+    sigma.is_finite().then_some(sigma)
+}
+
+/// Evaluates the 1D Fung exponential strain energy density and second Piola–Kirchhoff stress
+/// $(W, S)$ where $W = \frac{c}{2}\left(e^{b E^2} - 1\right)$ and $S = \frac{dW}{dE} = c b E e^{b E^2}$.
+#[must_use]
+pub fn fung_exponential_strain_energy(
+    green_strain_e: f64,
+    c_pa: f64,
+    b_exp: f64,
+) -> Option<(f64, f64)> {
+    if !green_strain_e.is_finite()
+        || !c_pa.is_finite()
+        || !b_exp.is_finite()
+        || c_pa <= 0.0
+        || b_exp <= 0.0
+    {
+        return None;
+    }
+    let q = (b_exp * green_strain_e * green_strain_e).min(100.0);
+    let exp_q = q.exp();
+    let w = 0.5 * c_pa * (exp_q - 1.0);
+    let s = c_pa * b_exp * green_strain_e * exp_q;
+    (w.is_finite() && s.is_finite()).then_some((w, s))
 }

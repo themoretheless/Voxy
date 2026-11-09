@@ -936,3 +936,41 @@ pub fn submerged_aabb_buoyancy(
     }
     Ok(force)
 }
+
+/// Integrates the cumulative hydrostatic gauge pressure $P = \rho g \Delta y \sum_i f_i$
+/// in Pascals (`Pa`) at the bottom of a vertical voxel water column with fractional fill levels `column_fill_fractions`.
+#[must_use]
+pub fn water_column_hydrostatic_head_pa(
+    column_fill_fractions: &[f32],
+    voxel_size_m: f32,
+    fluid_density: f32,
+    gravity: f32,
+) -> f32 {
+    if !voxel_size_m.is_finite()
+        || !fluid_density.is_finite()
+        || !gravity.is_finite()
+        || voxel_size_m <= 0.0
+        || fluid_density <= 0.0
+        || gravity <= 0.0
+    {
+        return 0.0;
+    }
+    let total_fill: f32 = column_fill_fractions
+        .iter()
+        .copied()
+        .filter(|f| f.is_finite())
+        .map(|f| f.clamp(0.0, 1.0))
+        .sum();
+    fluid_density * gravity * voxel_size_m * total_fill
+}
+
+#[cfg(test)]
+mod hydrostatic_head_tests {
+    use super::*;
+
+    #[test]
+    fn water_column_hydrostatic_head_sums_fractional_voxel_depths() {
+        let p = water_column_hydrostatic_head_pa(&[1.0, 1.0, 0.5], 1.0, 1000.0, 9.81);
+        assert!((p - 2.5 * 9810.0).abs() < 1e-2);
+    }
+}

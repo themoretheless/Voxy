@@ -613,3 +613,94 @@ pub fn pacejka_lateral_force(
     }
     Ok(force)
 }
+
+/// Evaluates the full 4-parameter Pacejka Magic Formula lateral tire force
+/// $F_y = F_z D \sin\!\left(C \arctan\!\left(B\alpha - E(B\alpha - \arctan(B\alpha))\right)\right)$.
+#[must_use]
+pub fn pacejka_magic_formula_lateral_force(
+    slip_angle_rad: f64,
+    normal_load_n: f64,
+    stiffness_b: f64,
+    shape_c: f64,
+    peak_d: f64,
+    curvature_e: f64,
+) -> f64 {
+    if !slip_angle_rad.is_finite()
+        || !normal_load_n.is_finite()
+        || !stiffness_b.is_finite()
+        || !shape_c.is_finite()
+        || !peak_d.is_finite()
+        || !curvature_e.is_finite()
+        || normal_load_n <= 0.0
+    {
+        return 0.0;
+    }
+    let bx = stiffness_b * slip_angle_rad;
+    let inner = bx - curvature_e * (bx - bx.atan());
+    normal_load_n * peak_d * (shape_c * inner.atan()).sin()
+}
+
+/// Computes the exact Ackermann inner and outer front wheel steering angles
+/// `(\delta_inner, \delta_outer)` in radians for centerline steer angle `center_steer_rad`,
+/// `wheelbase_m`, and `track_width_m`.
+#[must_use]
+pub fn ackermann_inner_outer_steer_angles_rad(
+    center_steer_rad: f64,
+    wheelbase_m: f64,
+    track_width_m: f64,
+) -> (f64, f64) {
+    if !center_steer_rad.is_finite()
+        || !wheelbase_m.is_finite()
+        || !track_width_m.is_finite()
+        || wheelbase_m <= 0.0
+        || track_width_m <= 0.0
+        || center_steer_rad.abs() <= 1e-9
+    {
+        return (0.0, 0.0);
+    }
+    let sign = center_steer_rad.signum();
+    let tan_abs = center_steer_rad.abs().tan();
+    let r_turn = wheelbase_m / tan_abs;
+    let half_track = 0.5 * track_width_m;
+    let inner = wheelbase_m.atan2((r_turn - half_track).max(1e-4)) * sign;
+    let outer = wheelbase_m.atan2(r_turn + half_track) * sign;
+    (inner, outer)
+}
+
+/// Computes the anti-roll (sway) bar vertical wheel load transfer `(left_force_n, right_force_n)`
+/// and roll moment for differential suspension travel `left_compression_m - right_compression_m`.
+#[must_use]
+pub fn anti_roll_bar_axle_torque_nm(
+    left_compression_m: f64,
+    right_compression_m: f64,
+    arb_stiffness_n_m: f64,
+    track_width_m: f64,
+) -> (f64, f64) {
+    if !left_compression_m.is_finite()
+        || !right_compression_m.is_finite()
+        || !arb_stiffness_n_m.is_finite()
+        || !track_width_m.is_finite()
+        || arb_stiffness_n_m < 0.0
+        || track_width_m <= 0.0
+    {
+        return (0.0, 0.0);
+    }
+    let delta_f = arb_stiffness_n_m * (left_compression_m - right_compression_m);
+    let roll_torque_nm = delta_f * track_width_m;
+    (delta_f, roll_torque_nm)
+}
+
+#[cfg(test)]
+mod ackermann_and_arb_tests {
+    use super::*;
+
+    #[test]
+    fn ackermann_inner_angle_exceeds_outer_and_arb_resists_body_roll() {
+        let fy = pacejka_magic_formula_lateral_force(0.1, 4000.0, 10.0, 1.9, 1.0, 0.97);
+        assert!(fy > 0.0);
+        let (inner, outer) = ackermann_inner_outer_steer_angles_rad(0.25, 2.7, 1.6);
+        assert!(inner > 0.25 && outer < 0.25 && outer > 0.0);
+        let (df, torque) = anti_roll_bar_axle_torque_nm(0.08, 0.02, 25_000.0, 1.6);
+        assert!(df > 0.0 && torque > 0.0);
+    }
+}

@@ -756,3 +756,37 @@ impl ScriptManager {
         )
     }
 }
+
+/// Allocates a fair per-script VM step budget from `total_frame_budget` proportional to
+/// `script_weight / total_weight`, clamped to `[min_script_steps, total_frame_budget]`.
+#[must_use]
+pub fn allocate_fair_script_step_budget(
+    total_frame_budget: usize,
+    script_weight: u32,
+    total_weight: u32,
+    min_script_steps: usize,
+) -> usize {
+    if total_frame_budget == 0 {
+        return 0;
+    }
+    let min_steps = min_script_steps.min(total_frame_budget);
+    if total_weight == 0 || script_weight == 0 {
+        return min_steps;
+    }
+    let w = u64::from(script_weight.min(total_weight));
+    let total_w = u64::from(total_weight);
+    let share = ((total_frame_budget as u128 * u128::from(w)) / u128::from(total_w)) as usize;
+    share.clamp(min_steps, total_frame_budget)
+}
+
+#[cfg(test)]
+mod budget_tests {
+    use super::*;
+
+    #[test]
+    fn allocate_fair_script_step_budget_distributes_proportionally_and_respects_floor() {
+        assert_eq!(allocate_fair_script_step_budget(10_000, 1, 4, 500), 2_500);
+        assert_eq!(allocate_fair_script_step_budget(10_000, 1, 100, 500), 500);
+        assert_eq!(allocate_fair_script_step_budget(0, 1, 1, 500), 0);
+    }
+}

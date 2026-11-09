@@ -13,6 +13,33 @@ pub(super) fn regions(size: [u32; 2], split: bool) -> Vec<[u32; 4]> {
         vec![[0, 0, width, height]]
     }
 }
+
+/// Computes two non-overlapping horizontal pane rectangles `[x, y, width, height]`
+/// inside `size` using `split_ratio` in `[0.0, 1.0]` while enforcing `min_pane_width`
+/// for both the primary viewport and the inspector/secondary pane when total width permits.
+#[must_use]
+pub fn compute_split_pane_rects(
+    size: [u32; 2],
+    split_ratio: f32,
+    min_pane_width: u32,
+) -> Vec<[u32; 4]> {
+    let [width, height] = size;
+    if width == 0 || height == 0 {
+        return vec![];
+    }
+    let min_w = min_pane_width.max(1);
+    if width < min_w.saturating_mul(2) {
+        return vec![[0, 0, width, height]];
+    }
+    let ratio = if split_ratio.is_finite() {
+        split_ratio.clamp(0.0, 1.0)
+    } else {
+        0.5
+    };
+    let desired_left = ((width as f32) * ratio).round() as u32;
+    let left = desired_left.clamp(min_w, width - min_w);
+    vec![[0, 0, left, height], [left, 0, width - left, height]]
+}
 pub(super) fn hit(regions: &[[u32; 4]], cursor: Vec2) -> Option<(u8, Vec2, Vec2)> {
     if !cursor.is_finite() {
         return None;
@@ -53,5 +80,13 @@ mod tests {
         assert_eq!(hit(&scaled, Vec2::new(1000., 200.)).unwrap().0, 0);
         assert_eq!(regions([1, 700], true), vec![[0, 0, 1, 700]]);
         assert!(regions([0, 700], true).is_empty());
+        assert_eq!(
+            compute_split_pane_rects([1000, 600], 0.1, 240),
+            vec![[0, 0, 240, 600], [240, 0, 760, 600]]
+        );
+        assert_eq!(
+            compute_split_pane_rects([400, 600], 0.5, 240),
+            vec![[0, 0, 400, 600]]
+        );
     }
 }

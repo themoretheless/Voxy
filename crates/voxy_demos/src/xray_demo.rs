@@ -238,6 +238,37 @@ pub fn hounsfield_window_intensity(
     let lo = window_level_hu - 0.5 * window_width_hu;
     Ok(((hu - lo) / window_width_hu).clamp(0.0, 1.0))
 }
+
+/// Evaluates polychromatic X-ray beam-hardening effective optical depth
+/// $\tau_{\text{eff}} = \mu_{\text{soft}} d_{\text{soft}} + \mu_{\text{bone}} d_{\text{bone}} / (1 + \beta d_{\text{bone}})$
+/// where preferential low-energy photon absorption in cortical bone reduces the apparent linear attenuation coefficient with depth.
+#[must_use]
+pub fn beam_hardening_effective_attenuation(
+    soft_thickness_m: f32,
+    bone_thickness_m: f32,
+    mu_soft_inv_m: f32,
+    mu_bone_inv_m: f32,
+    hardening_coeff_inv_m: f32,
+) -> Option<f32> {
+    if !soft_thickness_m.is_finite()
+        || soft_thickness_m < 0.0
+        || !bone_thickness_m.is_finite()
+        || bone_thickness_m < 0.0
+        || !mu_soft_inv_m.is_finite()
+        || mu_soft_inv_m < 0.0
+        || !mu_bone_inv_m.is_finite()
+        || mu_bone_inv_m < 0.0
+        || !hardening_coeff_inv_m.is_finite()
+        || hardening_coeff_inv_m < 0.0
+    {
+        return None;
+    }
+    let tau_soft = mu_soft_inv_m * soft_thickness_m;
+    let tau_bone =
+        (mu_bone_inv_m * bone_thickness_m) / (1.0 + hardening_coeff_inv_m * bone_thickness_m);
+    let total = tau_soft + tau_bone;
+    total.is_finite().then_some(total)
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -310,5 +341,8 @@ mod tests {
         assert_eq!(hounsfield_window_intensity(40.0, 40.0, 400.0), Ok(0.5));
         assert_eq!(hounsfield_window_intensity(1000.0, 40.0, 400.0), Ok(1.0));
         assert!(hounsfield_window_intensity(0.0, 40.0, 0.0).is_err());
+        let mono = beam_hardening_effective_attenuation(0.05, 0.02, 20.0, 120.0, 0.0).unwrap();
+        let poly = beam_hardening_effective_attenuation(0.05, 0.02, 20.0, 120.0, 15.0).unwrap();
+        assert!(poly < mono && poly > 1.0);
     }
 }

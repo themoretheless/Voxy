@@ -321,5 +321,41 @@ impl FootContactState {
         })
     }
 }
+
+/// Computes the vertical rebound velocity $v_{\text{out}} = \min(e \cdot |v_{\text{impact}}| + v_{\text{boost}}, v_{\max})$
+/// when a character lands with downward speed `impact_speed_m_s` onto an elastic/trampoline support
+/// with `restitution` $e \in [0, 2]$ and optional active impulse `boost_m_s`.
+#[must_use]
+pub fn elastic_support_rebound_velocity(
+    impact_speed_m_s: f32,
+    restitution: f32,
+    boost_m_s: f32,
+    max_rebound_m_s: f32,
+) -> f32 {
+    if !impact_speed_m_s.is_finite()
+        || !restitution.is_finite()
+        || !boost_m_s.is_finite()
+        || !max_rebound_m_s.is_finite()
+        || max_rebound_m_s <= 0.0
+    {
+        return 0.0;
+    }
+    let v_in = impact_speed_m_s.abs();
+    let e = restitution.clamp(0.0, 2.0);
+    let boost = boost_m_s.max(0.0);
+    (e * v_in + boost).clamp(0.0, max_rebound_m_s)
+}
+
+#[cfg(test)]
+mod rebound_tests {
+    use super::*;
+
+    #[test]
+    fn elastic_support_rebound_velocity_respects_restitution_and_cap() {
+        assert!((elastic_support_rebound_velocity(-10.0, 0.8, 2.0, 15.0) - 10.0).abs() < 1e-6);
+        assert!((elastic_support_rebound_velocity(-20.0, 0.9, 5.0, 12.0) - 12.0).abs() < 1e-6);
+        assert_eq!(elastic_support_rebound_velocity(f32::NAN, 0.8, 0.0, 10.0), 0.0);
+    }
+}
 #[cfg(test)]
 mod tests;

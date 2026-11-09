@@ -581,4 +581,48 @@ mod box_contact_tests {
             );
         }
     }
+
+    #[test]
+    fn pbd_inextensible_rod_stretch_correction_restores_exact_rest_length() {
+        let (q0, q1) =
+            pbd_inextensible_rod_stretch_correction([0.0, 0.0, 0.0], [3.0, 4.0, 0.0], 0.0, 1.0, 2.5)
+                .unwrap();
+        assert_eq!(q0, [0.0, 0.0, 0.0]);
+        assert!((length(sub(q1, q0)) - 2.5).abs() < 1e-12);
+    }
+}
+
+/// Computes the two-node PBD distance constraint position corrections `(p0_new, p1_new)`
+/// weighted by inverse masses `w0` and `w1` so that $\|p_1' - p_0'\| = L_{\text{rest}}$.
+#[must_use]
+pub fn pbd_inextensible_rod_stretch_correction(
+    p0: [f64; 3],
+    p1: [f64; 3],
+    w0: f64,
+    w1: f64,
+    rest_len: f64,
+) -> Option<([f64; 3], [f64; 3])> {
+    if !finite(p0)
+        || !finite(p1)
+        || !w0.is_finite()
+        || !w1.is_finite()
+        || !rest_len.is_finite()
+        || w0 < 0.0
+        || w1 < 0.0
+        || (w0 + w1) <= 1e-15
+        || rest_len <= 0.0
+    {
+        return None;
+    }
+    let delta = sub(p1, p0);
+    let dist = length(delta);
+    if dist <= 1e-12 {
+        return None;
+    }
+    let err = dist - rest_len;
+    let n = scale(delta, 1.0 / dist);
+    let w_sum = w0 + w1;
+    let p0_new = add(p0, scale(n, (w0 / w_sum) * err));
+    let p1_new = sub(p1, scale(n, (w1 / w_sum) * err));
+    Some((p0_new, p1_new))
 }

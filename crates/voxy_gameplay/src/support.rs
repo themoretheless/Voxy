@@ -300,5 +300,47 @@ impl SupportWorld {
         }))
     }
 }
+
+/// Computes the character acceleration and traction multiplier in `[0.0, 1.0]` on an inclined
+/// or slippery surface from the cosine of the slope angle (`normal_up_dot` = $\mathbf{n} \cdot \mathbf{u}$),
+/// the minimum walkable cosine `min_walkable_up_dot`, and surface `friction_coeff`.
+#[must_use]
+pub fn slope_traction_acceleration_scale(
+    normal_up_dot: f32,
+    min_walkable_up_dot: f32,
+    friction_coeff: f32,
+) -> f32 {
+    if !normal_up_dot.is_finite()
+        || !min_walkable_up_dot.is_finite()
+        || !friction_coeff.is_finite()
+        || friction_coeff <= 0.0
+    {
+        return 0.0;
+    }
+    let min_dot = min_walkable_up_dot.clamp(0.0, 0.9999);
+    let cos_theta = normal_up_dot.clamp(-1.0, 1.0);
+    if cos_theta < min_dot {
+        return 0.0;
+    }
+    let slope_t = ((cos_theta - min_dot) / (1.0 - min_dot)).clamp(0.0, 1.0);
+    let smooth_slope = slope_t * slope_t * (3.0 - 2.0 * slope_t);
+    let mu = friction_coeff.clamp(0.0, 2.0);
+    let grip = (mu / (1.0 + mu)) * 2.0;
+    (smooth_slope * grip.clamp(0.0, 1.0)).clamp(0.0, 1.0)
+}
+
+#[cfg(test)]
+mod traction_tests {
+    use super::*;
+
+    #[test]
+    fn slope_traction_acceleration_scale_drops_on_steep_or_icy_slopes() {
+        assert!((slope_traction_acceleration_scale(1.0, 0.7, 1.0) - 1.0).abs() < 1e-6);
+        assert_eq!(slope_traction_acceleration_scale(0.5, 0.7, 1.0), 0.0);
+        let ice = slope_traction_acceleration_scale(0.9, 0.7, 0.1);
+        let dry = slope_traction_acceleration_scale(0.9, 0.7, 1.0);
+        assert!(ice > 0.0 && ice < dry);
+    }
+}
 #[cfg(test)]
 mod tests;

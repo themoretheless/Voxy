@@ -72,6 +72,16 @@ pub const fn luid_is_valid_non_zero(adapter_luid: &[u8; 8], cuda_luid: &[u8; 8])
     non_zero
 }
 
+/// Alias for [`align_external_allocation_size`] rounding `size_bytes` upward to a power-of-two
+/// external memory alignment (`vkGetBufferMemoryRequirements` / `cudaExternalMemoryRequirements`).
+#[must_use]
+pub const fn align_external_memory_allocation(
+    size_bytes: u64,
+    alignment_power_of_two: u64,
+) -> Option<u64> {
+    align_external_allocation_size(size_bytes, alignment_power_of_two)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -84,6 +94,7 @@ mod tests {
         assert!(!uuids_match_non_zero(&zero, &zero));
         assert!(uuids_match_non_zero(&valid, &valid));
         assert_eq!(align_external_allocation_size(4097, 4096), Some(8192));
+        assert_eq!(align_external_memory_allocation(4097, 4096), Some(8192));
         assert_eq!(align_external_allocation_size(0, 4096), None);
         assert_eq!(align_external_allocation_size(1024, 3000), None);
         assert!(!luid_is_valid_non_zero(&[0_u8; 8], &[0_u8; 8]));

@@ -371,5 +371,68 @@ mod tests {
         assert!(river.velocity.z > 1.0);
         assert!(world.is_submerged(Vec3::new(80., 1.0, 15.), 1.0));
         assert!(!world.is_submerged(Vec3::new(80., 3.0, 15.), 1.0));
+
+        let (crest_y, _) = stokes_second_order_crest_sharpening(1.0, 0.2, 0.0);
+        let (trough_y, _) = stokes_second_order_crest_sharpening(1.0, 0.2, std::f32::consts::PI);
+        assert!(crest_y > 1.0 && trough_y > -1.0);
+        assert!((archimedes_submerged_sphere_fraction(0.0, 1.0, 0.0) - 0.5).abs() < 1e-6);
+        assert!((archimedes_submerged_sphere_fraction(-2.0, 1.0, 0.0) - 1.0).abs() < 1e-6);
+        assert!((archimedes_submerged_sphere_fraction(2.0, 1.0, 0.0) - 0.0).abs() < 1e-6);
     }
+}
+
+/// Computes the 2nd-order Stokes wave surface elevation and slope `(eta_m, d_eta_dx)`
+/// $\eta(\theta) = a \cos\theta + \frac{1}{2} k a^2 \cos(2\theta)$, which sharpens crests and flattens troughs.
+#[must_use]
+pub fn stokes_second_order_crest_sharpening(
+    amplitude_m: f32,
+    k_rad_m: f32,
+    phase_rad: f32,
+) -> (f32, f32) {
+    if !amplitude_m.is_finite()
+        || !k_rad_m.is_finite()
+        || !phase_rad.is_finite()
+        || amplitude_m <= 0.0
+        || k_rad_m <= 0.0
+    {
+        return (0.0, 0.0);
+    }
+    let ka = (k_rad_m * amplitude_m).min(0.44);
+    let a = amplitude_m;
+    let c1 = phase_rad.cos();
+    let s1 = phase_rad.sin();
+    let c2 = (2.0 * phase_rad).cos();
+    let s2 = (2.0 * phase_rad).sin();
+    let eta = a * c1 + 0.5 * a * ka * c2;
+    let slope = -k_rad_m * a * s1 - k_rad_m * a * ka * s2;
+    (eta, slope)
+}
+
+/// Computes the exact submerged volume fraction in `[0.0, 1.0]` of a sphere of `radius_m`
+/// centered at `center_y` beneath a water plane at `water_surface_y` using the spherical cap
+/// volume formula $V_{\text{cap}} / V_{\text{sphere}} = \frac{h^2 (3 R - h)}{4 R^3}$.
+#[must_use]
+pub fn archimedes_submerged_sphere_fraction(
+    center_y: f32,
+    radius_m: f32,
+    water_surface_y: f32,
+) -> f32 {
+    if !center_y.is_finite()
+        || !radius_m.is_finite()
+        || !water_surface_y.is_finite()
+        || radius_m <= 0.0
+    {
+        return 0.0;
+    }
+    let bottom = center_y - radius_m;
+    let top = center_y + radius_m;
+    if water_surface_y <= bottom {
+        return 0.0;
+    }
+    if water_surface_y >= top {
+        return 1.0;
+    }
+    let h = (water_surface_y - bottom).clamp(0.0, 2.0 * radius_m);
+    let r = radius_m;
+    ((h * h * (3.0 * r - h)) / (4.0 * r * r * r)).clamp(0.0, 1.0)
 }

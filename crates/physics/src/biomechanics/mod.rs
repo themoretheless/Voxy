@@ -902,3 +902,80 @@ use crate::math::cross;
 use crate::math::scale;
 use crate::math::sub;
 pub use calibration::{FitError, TensilePoint, fit_tensile, tensile_error, tensile_stress};
+
+/// Evaluates the Hill-type muscle force-velocity relationship for concentric ($v > 0$)
+/// and eccentric ($v < 0$) contractions:
+/// - Concentric ($0 \le v \le v_{\max}$): $f_v = \frac{1 - v / v_{\max}}{1 + v / (a_{\text{rel}} v_{\max})}$
+/// - Eccentric ($v < 0$): smooth transition toward `eccentric_plateau` ($> 1$).
+#[must_use]
+pub fn hill_muscle_force_velocity_factor(
+    shortening_vel_norm: f64,
+    max_shortening_v: f64,
+    a_rel: f64,
+    eccentric_plateau: f64,
+) -> Option<f64> {
+    if !shortening_vel_norm.is_finite()
+        || !max_shortening_v.is_finite()
+        || !a_rel.is_finite()
+        || !eccentric_plateau.is_finite()
+        || max_shortening_v <= 0.0
+        || a_rel <= 0.0
+        || eccentric_plateau <= 1.0
+    {
+        return None;
+    }
+    let u = shortening_vel_norm / max_shortening_v;
+    if u >= 1.0 {
+        return Some(0.0);
+    }
+    if u >= 0.0 {
+        let fv = (1.0 - u) / (1.0 + u / a_rel);
+        Some(fv.clamp(0.0, 1.0))
+    } else {
+        let len_rate = -u;
+        let slope_at_zero = (1.0 + 1.0 / a_rel).max(1e-6);
+        let denom = len_rate + (eccentric_plateau - 1.0) / slope_at_zero;
+        let fv = eccentric_plateau - (eccentric_plateau - 1.0).powi(2) / (slope_at_zero * denom);
+        Some(fv.clamp(1.0, eccentric_plateau))
+    }
+}
+
+/// Evaluates the active sarcomere force-length Gaussian bell curve
+/// $f_l(\lambda) = \exp\!\left(-\left(\frac{\lambda - \lambda_{\text{opt}}}{w}\right)^2\right)$.
+#[must_use]
+pub fn active_sarcomere_force_length_factor(
+    stretch: f64,
+    opt_stretch: f64,
+    width: f64,
+) -> Option<f64> {
+    if !stretch.is_finite()
+        || !opt_stretch.is_finite()
+        || !width.is_finite()
+        || stretch <= 0.0
+        || opt_stretch <= 0.0
+        || width <= 0.0
+    {
+        return None;
+    }
+    let z = (stretch - opt_stretch) / width;
+    Some((-z * z).exp().clamp(0.0, 1.0))
+}
+
+#[cfg(test)]
+mod hill_sarcomere_tests {
+    use super::*;
+
+    #[test]
+    fn hill_force_velocity_and_sarcomere_bell_curve_behave_physiologically() {
+        let iso = hill_muscle_force_velocity_factor(0.0, 10.0, 0.25, 1.5).unwrap();
+        let conc = hill_muscle_force_velocity_factor(5.0, 10.0, 0.25, 1.5).unwrap();
+        let ecc = hill_muscle_force_velocity_factor(-3.0, 10.0, 0.25, 1.5).unwrap();
+        assert!((iso - 1.0).abs() < 1e-12);
+        assert!(conc > 0.0 && conc < 1.0);
+        assert!(ecc > 1.0 && ecc <= 1.5);
+        let fl_opt = active_sarcomere_force_length_factor(1.0, 1.0, 0.45).unwrap();
+        let fl_off = active_sarcomere_force_length_factor(1.3, 1.0, 0.45).unwrap();
+        assert!((fl_opt - 1.0).abs() < 1e-12);
+        assert!(fl_off < fl_opt && fl_off > 0.0);
+    }
+}

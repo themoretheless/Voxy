@@ -54,6 +54,7 @@ mod locomotion;
 mod locomotion_tests;
 pub use locomotion::ModelLocomotion;
 mod lod_smoke;
+pub use lod_smoke::lod_transition_with_hysteresis;
 mod package_models;
 mod packaged_game;
 mod play_session;
@@ -64,6 +65,7 @@ mod prefab_authoring;
 mod prefab_fields;
 mod scene_revision;
 mod view_layout;
+pub use view_layout::compute_split_pane_rects;
 pub use packaged_game::{
     run_packaged_game, run_packaged_game_with_components, run_packaged_game_with_host,
     run_packaged_game_with_ui_actions,

@@ -1506,3 +1506,46 @@ pub(crate) fn adaptive_exchange_order<T: Clone>(
     }
     Ok((next, report))
 }
+
+/// Evaluates the classic Starling–Landis transcapillary fluid filtration flux
+/// $J_v = K_f \left[(P_c - P_i) - \sigma (\pi_c - \pi_i)\right]$.
+#[must_use]
+pub fn starling_transcapillary_filtration_flux(
+    p_cap: f64,
+    p_int: f64,
+    pi_cap: f64,
+    pi_int: f64,
+    kf: f64,
+    sigma: f64,
+) -> Option<f64> {
+    if !p_cap.is_finite()
+        || !p_int.is_finite()
+        || !pi_cap.is_finite()
+        || !pi_int.is_finite()
+        || !kf.is_finite()
+        || !sigma.is_finite()
+        || kf < 0.0
+        || !(0.0..=1.0).contains(&sigma)
+        || pi_cap < 0.0
+        || pi_int < 0.0
+    {
+        return None;
+    }
+    let jv = kf * ((p_cap - p_int) - sigma * (pi_cap - pi_int));
+    jv.is_finite().then_some(jv)
+}
+
+#[cfg(test)]
+mod starling_flux_tests {
+    use super::*;
+
+    #[test]
+    fn starling_filtration_is_outward_at_arteriolar_end_and_inward_at_venular_end() {
+        let j_art =
+            starling_transcapillary_filtration_flux(35.0, -2.0, 28.0, 3.0, 0.01, 0.9).unwrap();
+        let j_ven =
+            starling_transcapillary_filtration_flux(15.0, -2.0, 28.0, 3.0, 0.01, 0.9).unwrap();
+        assert!(j_art > 0.0);
+        assert!(j_ven < 0.0);
+    }
+}

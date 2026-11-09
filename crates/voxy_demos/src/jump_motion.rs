@@ -132,5 +132,37 @@ mod tests {
         for time in [1.8, 4., 5.5] {
             assert_eq!(sample(time).height, 0.);
         }
+        let v_to = countermovement_jump_takeoff_velocity(70.0, 210.0, 25_000.0, 0.03).unwrap();
+        assert!(v_to > 2.5 && v_to < 4.5);
+        assert!(countermovement_jump_takeoff_velocity(0.0, 100.0, 1000.0, 0.01).is_none());
     }
+}
+
+/// Computes vertical takeoff velocity $v_0$ ($\text{m/s}$) from a countermovement jump with net
+/// concentric propulsive impulse `net_impulse_n_s` and elastic Achilles tendon strain energy
+/// $\frac{1}{2} k_{\text{tendon}} (\Delta L)^2$ transferred to `body_mass_kg`.
+#[must_use]
+pub fn countermovement_jump_takeoff_velocity(
+    body_mass_kg: f32,
+    net_impulse_n_s: f32,
+    tendon_stiffness_n_m: f32,
+    tendon_stretch_m: f32,
+) -> Option<f32> {
+    if !body_mass_kg.is_finite()
+        || body_mass_kg <= 1.0
+        || !net_impulse_n_s.is_finite()
+        || net_impulse_n_s < 0.0
+        || !tendon_stiffness_n_s_valid(tendon_stiffness_n_m, tendon_stretch_m)
+    {
+        return None;
+    }
+    let v_impulse = net_impulse_n_s / body_mass_kg;
+    let elastic_energy_j = 0.5 * tendon_stiffness_n_m * tendon_stretch_m * tendon_stretch_m;
+    let ke_total = 0.5 * body_mass_kg * v_impulse * v_impulse + elastic_energy_j;
+    let v_total = (2.0 * ke_total / body_mass_kg).sqrt();
+    v_total.is_finite().then_some(v_total)
+}
+
+fn tendon_stiffness_n_s_valid(k: f32, dl: f32) -> bool {
+    k.is_finite() && k >= 0.0 && dl.is_finite() && dl >= 0.0
 }

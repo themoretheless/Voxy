@@ -201,7 +201,32 @@ mod tests {
         let dark = pupil_diameter_mm(0.01);
         let bright = pupil_diameter_mm(1000.0);
         assert!(dark > bright && bright >= 1.8 && dark <= 8.0);
+        assert!(saccade_peak_angular_velocity_deg_s(15.0) > 300.0);
+        assert!((minimum_jerk_saccade_progress(0.5) - 0.5).abs() < 1e-6);
     }
+}
+
+/// Computes the peak human saccadic angular velocity in degrees/second from saccade
+/// amplitude `amplitude_deg` using Bahill's main-sequence saturating exponential
+/// $\omega_{\max} = V_{\text{sat}} (1 - \exp(-A / A_0))$.
+#[must_use]
+pub fn saccade_peak_angular_velocity_deg_s(amplitude_deg: f32) -> f32 {
+    if !amplitude_deg.is_finite() || amplitude_deg <= 0.0 {
+        return 0.0;
+    }
+    let a = amplitude_deg.clamp(0.0, 90.0);
+    750.0 * (1.0 - (-a / 16.0).exp())
+}
+
+/// Evaluates the normalized minimum-jerk trajectory progress $10 u^3 - 15 u^4 + 6 u^5 \in [0, 1]$
+/// for saccadic eye rotation at normalized phase $u \in [0, 1]$.
+#[must_use]
+pub fn minimum_jerk_saccade_progress(phase: f32) -> f32 {
+    if !phase.is_finite() {
+        return 0.0;
+    }
+    let u = phase.clamp(0.0, 1.0);
+    u * u * u * (10.0 + u * (-15.0 + 6.0 * u))
 }
 
 /// Computes the physiological human pupil diameter in millimeters (`1.8..=8.0 mm`) as a
