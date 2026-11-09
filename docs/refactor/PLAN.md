@@ -14,47 +14,68 @@
 
 ## Находки по дороге
 
-(пополняется во время работы)
+1. **База `cargo fmt --all --check` была красной**: 376 расхождений в 116 файлах. Исправлено отдельным
+   коммитом `b08ec599b` (только форматирование).
+2. **Тест `friction::lugre_tests::lugre_bristle_model_exhibits_stribeck_transition_from_stiction_to_coulomb`
+   падал с момента добавления** (`5fa162fe0`). Ошибка в тесте, не в модели: медленный случай считался 0.1 с
+   при постоянной времени 0.15 с (7.45 Н против 10 Н), на плато сила 15.0 Н. Исправлен тест, `00d5ad74f`.
+3. **Три GPU-теста рендера не запускались** (файлы не были объявлены). Подключены, проходят (`77cfc6364`).
+4. **`voxy_demos` компилировал `model_presentation.rs`, `tissue_diagnostics.rs`, `view_settings.rs` дважды**
+   (и дважды гонял их тесты). Исправлено, `41a15ec52`.
+5. **Осиротевший `crates/voxy_app/src/animals/asset.rs`** (795 строк, первая реализация анатомии животных,
+   заменена `breed_asset.rs` в `48ea94fa0`). Удалён, `6954ef521`; восстановим из истории.
+6. **Ожидаемый выигрыш шага 5.3 мал**: 4 `fs::metadata` это ~10 мкс на шаг физики, длящийся миллисекунды.
+   Делать только после замера.
 
 ## Волны
 
 Порядок внутри волны = порядок выполнения. Размер: S (< 1 ч), M (часы), L (отдельная сессия).
 
 ### Волна 0. База и страховка
-- [ ] **0.1 (S)** Ветка `workspace-refactor-wave-3`. Каталог `docs/refactor/` с `BASELINE.md`, `INVENTORY.md`,
+- [x] **0.1 (S)** Ветка `workspace-refactor-wave-3`. Каталог `docs/refactor/` с `BASELINE.md`, `INVENTORY.md`,
   `ARCHITECTURE.md`, `PLAN.md`; в них переносится приложение "Факты" из этого плана.
-- [ ] **0.2 (S)** `tools/refactor_metrics.py`: сканер, которым собраны цифры аудита (длина и число параметров
+  Статус: ветка создана, `docs/refactor/` заведён (`3ca1fbc1d`).
+- [x] **0.2 (S)** `tools/refactor_metrics.py`: сканер, которым собраны цифры аудита (длина и число параметров
   каждой функции, аллокации в циклах, `unwrap`, осиротевшие файлы, прод-LOC по файлам), вывод в
   `docs/refactor/metrics.json`. Это и есть покрытие "каждый метод": 100% функций получают метрики,
   всё, что выше порогов (> 60 строк, > 7 параметров, аллокация в цикле), попадает в `INVENTORY.md` построчно.
+  Статус: сканер написан на Rust, а не на Python: `crates/voxy_depgraph/src/source.rs` + бинарь `refactor_metrics` (`0b5345dee`), чтобы ratchet-тесты и метрики делили один лексер. Список функций: `docs/refactor/functions.tsv`.
 - [ ] **0.3 (M)** Базовая линия: `cargo fmt --all --check`, `cargo clippy --workspace --all-targets -- -D warnings`,
   `cargo test -p voxy_depgraph`, тесты по крейтам (полный набор в фоне), 6 существующих бенчей по 3 прогона,
   время холодной и инкрементальной сборки. Если база красная: стоп и отчёт до любых правок.
-- [ ] **0.4 (S)** `[workspace.dependencies]` (glam, wgpu, winit, thiserror, serde, serde_json, bytemuck, pollster,
+- [x] **0.4 (S)** `[workspace.dependencies]` (glam, wgpu, winit, thiserror, serde, serde_json, bytemuck, pollster,
   image, gltf, rayon) и `dep.workspace = true` в манифестах. Проверка: `git diff --exit-code Cargo.lock`.
+  Статус: 17 зависимостей, 121 строка в 31 манифесте, `Cargo.lock` не изменился (`cb42f6ce9`).
 - [ ] **0.5 (S, замер)** Профили в корневом `Cargo.toml`: `[profile.release]` `lto = "thin"`, `codegen-units = 1`;
   `[profile.bench]` наследует release; `[profile.dev.package."*"] opt-level = 2` для внешних зависимостей;
   кандидат `[profile.dev.package.physics] opt-level = 1` (тяжёлые тесты в debug идут часами).
   Каждая строка остаётся только если даёт выигрыш в бенчах или времени тестов; цифры в `BASELINE.md`.
-- [ ] **0.6 (S)** Ratchet-тесты в `crates/voxy_depgraph/tests/`: (a) каждый `.rs` под `src/` достижим из дерева `mod`;
+- [x] **0.6 (S)** Ratchet-тесты в `crates/voxy_depgraph/tests/`: (a) каждый `.rs` под `src/` достижим из дерева `mod`;
   (b) бюджет прод-строк на файл со списком известных превышений, который может только сокращаться
   (тот же приём, что `ALLOWED`/`KNOWN_VIOLATIONS`). `tools/check.sh`: fmt + clippy + depgraph одной командой.
+  Статус: `crates/voxy_depgraph/tests/sources.rs`: сироты и бюджет 1500 прод-строк (`0b5345dee`); `tools/check.sh`.
 
 ### Волна 1. Регрессии, мёртвый код, шум
-- [ ] **1.1 (M)** Hair contact: повторить разрез B4 от текущего монолита. Источник истины: тела в
+- [x] **1.1 (M)** Hair contact: повторить разрез B4 от текущего монолита. Источник истины: тела в
   `crates/physics/src/hair/contact.rs`; устаревшие `hair/contact/{closest,grid,mesh_contacts,strand_contacts,
   strand_responses,query_tests,surface_tests}.rs` перезаписываются. Отдельным коммитом соседи `contact_*.rs`,
   подключённые через `#[path]`, переезжают в `hair/contact/`. Проверка: `cargo test -p physics --lib hair`
   и hair/strand/contact integration-тесты, число тестов до == после.
-- [ ] **1.2 (S)** `voxy_render/src/surface_{light,color}_transfer_tests.rs` подключить под `#[cfg(test)]`.
+  Статус: `1642c1ab1`: `contact.rs` 3753 -> 977 строк, 594 теста до и после.
+- [x] **1.2 (S)** `voxy_render/src/surface_{light,color}_transfer_tests.rs` подключить под `#[cfg(test)]`.
   Не компилируются или падают: это найденный баг, отчёт и отдельное решение, не тихое удаление.
-- [ ] **1.3 (S)** Удалить `#[allow]`, дублирующие workspace-allow (physics 94 из 107, render-область ~90, app ~70).
-- [ ] **1.4 (M)** 18 модульных `#![allow(dead_code)]` в `voxy_editor` (checkpoint/restore) и 4 в `voxy_app`:
+  Статус: `77cfc6364`: тесты объявлены из `scene.rs` (нужен приватный `upload_mesh_with_usage`), все 3 проходят.
+- [x] **1.3 (S)** Удалить `#[allow]`, дублирующие workspace-allow (physics 94 из 107, render-область ~90, app ~70).
+  Статус: `1a2fe45a1`: 440 атрибутов в 232 файлах, 60 комментариев-обоснований сохранены.
+- [~] **1.4 (M)** 18 модульных `#![allow(dead_code)]` в `voxy_editor` (checkpoint/restore) и 4 в `voxy_app`:
   снимать по одному, реально мёртвое удалять, живое оставлять без allow.
-- [ ] **1.5 (S)** `voxy_app/src/{controls,frame_profile}.rs` (зависят только от glam/winit/std) перенести в
+  Статус: `6954ef521`: allow снят с 9 модулей editor, где он ничего не скрывал; удалён осиротевший `voxy_app/src/animals/asset.rs`. Остаются 13 модулей с 67 реально неиспользуемыми элементами checkpoint API (prepare / validate_origin / discard / stage_gpu / capture): это недоподключённая функциональность, удалять её без решения владельца нельзя. Следующий шаг: заменить модульный allow на точечные `#[expect(dead_code, reason)]`.
+- [x] **1.5 (S)** `voxy_app/src/{controls,frame_profile}.rs` (зависят только от glam/winit/std) перенести в
   `voxy_shell`, убрать `#[path = "../../src/..."]` из `examples/street_walk/main.rs` (ADR 0004, правило 5).
-- [ ] **1.6 (S)** Документы привести к факту: статус B4 в плане от 2026-10-11, "in CI" в ADR 0004,
+  Статус: `ab3b32232`. Попутно `41a15ec52`: три модуля `voxy_demos` компилировались дважды через `#[path]`; allow `duplicate_mod` убран из workspace.
+- [x] **1.6 (S)** Документы привести к факту: статус B4 в плане от 2026-10-11, "in CI" в ADR 0004,
   устаревший комментарий у `duplicate_mod` в `Cargo.toml`.
+  Статус: `c633302ab`.
 - Кандидаты на удаление, только с вашего согласия (в `PLAN.md`, не трогаю): `voxy_demos::destruction_demo`
   (ссылаются только свои тесты), корневые `_skipped.face`/`_skipped.node`, фичи `experimental-*` без включений.
 
