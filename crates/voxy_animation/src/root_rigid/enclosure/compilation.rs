@@ -567,8 +567,7 @@ mod positive_division_tests {
                                 <= cap
                         );
                         println!(
-                            "positive_division_reference={{\"numerator\":{:?},\"denominator\":{:?},\"actual\":{:?},\"cap\":{:?}}}",
-                            numerator, denominator, actual, cap
+                            "positive_division_reference={{\"numerator\":{numerator:?},\"denominator\":{denominator:?},\"actual\":{actual:?},\"cap\":{cap:?}}}"
                         );
                     }
                 }
@@ -928,8 +927,7 @@ mod neon_sine_tests {
                 };
                 let actual = glam::Vec4::splat(input).sin().x;
                 println!(
-                    "neon_sine_reference={{\"domain\":{:?},\"input\":{:?},\"actual\":{:?},\"cap\":{:?}}}",
-                    domain, input, actual, cap
+                    "neon_sine_reference={{\"domain\":{domain:?},\"input\":{input:?},\"actual\":{actual:?},\"cap\":{cap:?}}}"
                 );
             }
         }
@@ -1103,8 +1101,7 @@ mod slerp_acos_tests {
                 .unwrap();
             assert!(absolute_upper(discrepancy) <= cap);
             println!(
-                "slerp_acos_reference={{\"input\":{:?},\"actual\":{:?},\"ideal\":{:?},\"cap\":{:?}}}",
-                input, actual, ideal, cap
+                "slerp_acos_reference={{\"input\":{input:?},\"actual\":{actual:?},\"ideal\":{ideal:?},\"cap\":{cap:?}}}"
             );
         }
         for input in [-1., 1_f32.next_up(), f32::NAN, f32::INFINITY] {

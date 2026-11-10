@@ -408,9 +408,10 @@ mod tests {
     #[test]
     #[ignore = "requires 1024-lane GPU and seeded shader fixture; coordinate gate only"]
     fn gpu_seeded_resident_candidate_uses_current_columns_and_releases_hints() {
-        let source = std::env::var_os("VOXY_HAIR_RESIDENT_SEEDED_SHADER_FIXTURE")
-            .map(|path| std::fs::read_to_string(path).unwrap())
-            .unwrap_or_else(|| EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER.to_owned());
+        let source = std::env::var_os("VOXY_HAIR_RESIDENT_SEEDED_SHADER_FIXTURE").map_or_else(
+            || EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER.to_owned(),
+            |path| std::fs::read_to_string(path).unwrap(),
+        );
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
         assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);

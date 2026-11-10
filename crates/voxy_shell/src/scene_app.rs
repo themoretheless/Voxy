@@ -1233,7 +1233,7 @@ impl SceneApp {
             .female
             .as_ref()
             .filter(|_| r.gpu_secondary.is_some())
-            .map(|female| female.gpu_jump_palette());
+            .map(voxy_demos::female_demo::FemaleDemo::gpu_jump_palette);
         let update_gpu = gpu_controls
             .as_ref()
             .is_some_and(|controls| controls != &r.gpu_secondary_last_controls)
@@ -1261,21 +1261,18 @@ impl SceneApp {
                         body.encode(encoder)
                             .map_err(voxy_render::RendererError::Scene)?;
                     }
-                    if let Some(hair) = &mut r.gpu_hair {
-                        if hair.dirty {
-                            hair.job
-                                .encode_step(
-                                    encoder,
-                                    [hair.input.vertex_count().div_ceil(64), 1, 1],
+                    if let Some(hair) = &mut r.gpu_hair
+                        && hair.dirty
+                    {
+                        hair.job
+                            .encode_step(encoder, [hair.input.vertex_count().div_ceil(64), 1, 1])
+                            .map_err(|_| {
+                                voxy_render::RendererError::Scene(
+                                    voxy_render::SceneError::InvalidGeometry,
                                 )
-                                .map_err(|_| {
-                                    voxy_render::RendererError::Scene(
-                                        voxy_render::SceneError::InvalidGeometry,
-                                    )
-                                })?;
-                            hair.transfer.encode(encoder);
-                            hair.dirty = false;
-                        }
+                            })?;
+                        hair.transfer.encode(encoder);
+                        hair.dirty = false;
                     }
                     if update_gpu
                         && let (Some(gpu), Some(controls)) = (&r.gpu_secondary, &gpu_controls)
@@ -1289,28 +1286,28 @@ impl SceneApp {
                         gpu.encode(encoder)
                             .map_err(voxy_render::RendererError::Scene)?;
                     }
-                    if let Some(light) = &mut r.gpu_surface_light {
-                        if self.female.as_ref().is_some_and(|f| {
+                    if let Some(light) = &mut r.gpu_surface_light
+                        && self.female.as_ref().is_some_and(|f| {
                             f.can_use_resident_surface_light(light.surface_fraction())
-                        }) {
-                            light
-                                .encode(encoder, 64)
-                                .map_err(voxy_render::RendererError::Scene)?;
-                            if let Some(colors) = &r.gpu_surface_colors {
-                                colors.encode(encoder);
-                            }
-                            if let Some(audit) = &r.gpu_surface_light_audit {
-                                if audit.pending.is_none() {
-                                    encoder.copy_buffer_to_buffer(
-                                        light.admission().header_buffer(),
-                                        0,
-                                        &audit.buffer,
-                                        0,
-                                        32,
-                                    );
-                                    surface_light_audit_encoded = true;
-                                }
-                            }
+                        })
+                    {
+                        light
+                            .encode(encoder, 64)
+                            .map_err(voxy_render::RendererError::Scene)?;
+                        if let Some(colors) = &r.gpu_surface_colors {
+                            colors.encode(encoder);
+                        }
+                        if let Some(audit) = &r.gpu_surface_light_audit
+                            && audit.pending.is_none()
+                        {
+                            encoder.copy_buffer_to_buffer(
+                                light.admission().header_buffer(),
+                                0,
+                                &audit.buffer,
+                                0,
+                                32,
+                            );
+                            surface_light_audit_encoded = true;
                         }
                     }
                     Ok(())
@@ -1348,10 +1345,8 @@ impl SceneApp {
             );
         }
         if outcome == RenderOutcome::Presented {
-            if surface_light_audit_encoded {
-                if let Some(audit) = &mut r.gpu_surface_light_audit {
-                    audit.begin();
-                }
+            if surface_light_audit_encoded && let Some(audit) = &mut r.gpu_surface_light_audit {
+                audit.begin();
             }
             if !refractive_layers.is_empty() || (self.liquid_optics && self.liquids.is_some()) {
                 r.optical_frames += 1;
@@ -1365,10 +1360,8 @@ impl SceneApp {
                 r.film_mass_checks += 1;
             }
             self.recovering_gpu = false;
-            if object_active {
-                if let Some(female) = &mut self.female {
-                    female.record_presentation(u64::from(self.frames), [size.width, size.height]);
-                }
+            if object_active && let Some(female) = &mut self.female {
+                female.record_presentation(u64::from(self.frames), [size.width, size.height]);
             }
             if self.motion_vectors == MotionMode::Enabled {
                 let (target, frame_id) = r

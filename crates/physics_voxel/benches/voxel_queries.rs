@@ -183,7 +183,7 @@ fn plan_checksum(plan: &WaterPlan) -> u64 {
             for write in &edit.writes {
                 checksum = fold(fold_pos(checksum, write.pos), u64::from(write.block.get()));
             }
-            for pos in next_active.iter() {
+            for pos in next_active {
                 checksum = fold_pos(checksum, *pos);
             }
             checksum
@@ -385,7 +385,7 @@ fn raycast_workload(world: &World) {
                     RaycastResult::Miss => checksum = fold(checksum, 11),
                     RaycastResult::StepBudgetExhausted => checksum = fold(checksum, 13),
                     RaycastResult::Unloaded { at, .. } => {
-                        checksum = fold(fold_pos(checksum, at), 17)
+                        checksum = fold(fold_pos(checksum, at), 17);
                     }
                     RaycastResult::Unavailable { at, .. } => {
                         checksum = fold(fold_pos(checksum, at), 19);

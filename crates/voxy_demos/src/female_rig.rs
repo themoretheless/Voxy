@@ -1755,7 +1755,7 @@ mod tests {
                     .collect()
             })
             .collect();
-        let hinges: Vec<_> = rig.thumb_web_hinges.to_vec();
+        let hinges: Vec<_> = rig.thumb_web_hinges.clone();
         let mut adjacent = vec![Vec::new(); rest.len()];
         for (h, (ids, _)) in hinges.iter().enumerate() {
             for &id in ids {
@@ -3345,7 +3345,7 @@ mod thumb_tip_contact_tests {
             eprintln!(
                 "FOOT_REFERENCE_POINTS {}",
                 serde_json::json!({"side":side,
-                "points":points.iter().map(|point|point.to_array()).collect::<Vec<_>>() })
+                "points":points.iter().map(glam::DVec3::to_array).collect::<Vec<_>>() })
             );
             // An inspected lower-surface band, not an automatically admitted pivot.
             let band = minimum.y + 0.005;
@@ -3818,7 +3818,7 @@ mod thumb_tip_contact_tests {
             let error = final_pivot.distance(contact.position);
             assert!(error < 3e-6, "actual foot support error: {error}");
             let palette = solved.skin_matrices(&rig.skeleton).unwrap();
-            assert!(palette.iter().all(|m| m.is_finite()));
+            assert!(palette.iter().all(glam::Mat4::is_finite));
             let mut deformed = body.mesh.vertices().to_vec();
             rig.deform_pose(&mut deformed, 0., &solved);
             let mut movement = 0f64;

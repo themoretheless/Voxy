@@ -341,10 +341,10 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
         w.wind = [a.cos() * speed, a.sin() * speed];
     }
     ui.add(egui::Slider::new(&mut w.wind_gust, 0.0..=1.).text("порывы"));
-    if *s.weather != before {
-        if let Some(cycle) = s.cycle.as_mut() {
-            cycle.auto_weather = false;
-        }
+    if *s.weather != before
+        && let Some(cycle) = s.cycle.as_mut()
+    {
+        cycle.auto_weather = false;
     }
 
     ui.separator();
@@ -368,13 +368,12 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
             *s.sun_elevation = fixed.then_some(35.);
             *s.reconfigure = true;
         }
-        if let Some(elevation) = s.sun_elevation.as_mut() {
-            if ui
+        if let Some(elevation) = s.sun_elevation.as_mut()
+            && ui
                 .add(egui::Slider::new(elevation, -10.0..=90.).text("высота солнца °"))
                 .changed()
-            {
-                *s.reconfigure = true;
-            }
+        {
+            *s.reconfigure = true;
         }
     }
     ui.separator();

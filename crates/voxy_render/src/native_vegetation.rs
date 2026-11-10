@@ -754,7 +754,7 @@ impl NativeVegetation {
         let camera_group = if let Some(ring) = &self.camera_ring {
             let (slot, _) = ring
                 .write_or_stage(encoder, &self.camera, |mut bytes| {
-                    bytes.copy_from_slice(bytemuck::bytes_of(camera))
+                    bytes.copy_from_slice(bytemuck::bytes_of(camera));
                 })
                 .expect("live shared vegetation camera");
             self.camera_groups

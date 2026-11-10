@@ -428,8 +428,8 @@ impl PropertyAssetCheckpoint {
             if clip
                 .tracks
                 .iter()
-                .map(|t| t.name())
-                .ne(tracks.iter().map(|t| t.name()))
+                .map(super::PropertyTrack::name)
+                .ne(tracks.iter().map(super::PropertyTrack::name))
             {
                 return Err(Error::State);
             }

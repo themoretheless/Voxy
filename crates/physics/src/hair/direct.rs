@@ -580,12 +580,9 @@ pub(super) fn apply_correction(
                 );
             }
         }
-        let trial = match energy::implicit(rod, dt) {
-            Ok(value) => value,
-            Err(_) => {
-                scale *= 0.5;
-                continue;
-            }
+        let Ok(trial) = energy::implicit(rod, dt) else {
+            scale *= 0.5;
+            continue;
         };
         let noise = energy::noise_floor(rod, dt)?.max(before_noise);
         let rounding = 8. * f64::EPSILON * (before.abs() + trial.abs())

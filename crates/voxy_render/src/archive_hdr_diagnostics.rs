@@ -318,7 +318,7 @@ pub(crate) fn capture(
         let mut encoder = device.create_command_encoder(&Default::default());
         {
             let mut pass = encoder.begin_compute_pass(&Default::default());
-            pass.set_pipeline(&pipeline);
+            pass.set_pipeline(pipeline);
             pass.set_bind_group(0, &bind, &[]);
             pass.dispatch_workgroups(texture.width().div_ceil(8), texture.height().div_ceil(8), 1);
         }

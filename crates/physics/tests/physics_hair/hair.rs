@@ -545,7 +545,7 @@ impl physics::hair::HairLinearSolver for NativeBatch {
         }
         let mut corrections = systems
             .iter()
-            .map(|s| s.solve_native())
+            .map(physics::hair::HairLinearSystem::solve_native)
             .collect::<Result<Vec<_>, _>>()?;
         match self.corrupt {
             Some(0) => {

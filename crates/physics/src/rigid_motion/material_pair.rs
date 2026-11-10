@@ -178,9 +178,10 @@ impl MaterialForcePair {
                 ..config
             },
         )?;
-        let source_error = a
-            .rotation()
-            .map_or(0., |path| path.model_angular_momentum_error());
+        let source_error = a.rotation().map_or(
+            0.,
+            super::super::spin_path::SpinPath::model_angular_momentum_error,
+        );
         b.rotation = Some(
             b.rotation
                 .take()

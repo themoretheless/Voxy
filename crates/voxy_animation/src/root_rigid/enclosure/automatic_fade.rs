@@ -143,10 +143,10 @@ impl RootRigidCertifiedFadeInterval {
         angular_tolerance: f64,
         max_spans: usize,
     ) -> Result<Self, AnimationError> {
-        if let Some((_, end)) = completion {
-            if !end.is_finite() || end <= duration || weights[1] != 1. {
-                return Err(AnimationError::InvalidAnimationTimeStep);
-            }
+        if let Some((_, end)) = completion
+            && (!end.is_finite() || end <= duration || weights[1] != 1.)
+        {
+            return Err(AnimationError::InvalidAnimationTimeStep);
         }
         let frozen = RootRigidPath::from_twists(&[], 0)?;
         let source_path = source.map_or(&frozen, |source| source.path);

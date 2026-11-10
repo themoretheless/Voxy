@@ -77,7 +77,10 @@ impl Renderer {
                     }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: self.frame_timing.as_ref().and_then(|t| t.writes()),
+                timestamp_writes: self
+                    .frame_timing
+                    .as_ref()
+                    .and_then(super::resident_frame_timing::Timing::writes),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -115,17 +118,17 @@ impl Renderer {
                 pass.set_vertex_buffer(0, indirect.vertex_buffer.slice(..));
                 pass.draw_indirect(&indirect.indirect_buffer, 0);
             }
-            if let Some(skinned) = &self.skinned {
-                if !skinned.fibre_ranges.is_empty() {
-                    pass.set_pipeline(&self.photoreal_fibre_pipeline);
-                    pass.set_bind_group(0, &camera_group, &[]);
-                    pass.set_bind_group(1, &self.material_bind_group, &[]);
-                    pass.set_bind_group(2, &skinned.bind_group, &[]);
-                    pass.set_vertex_buffer(0, skinned.vertex.slice(..));
-                    pass.set_index_buffer(skinned.index.slice(..), wgpu::IndexFormat::Uint32);
-                    for range in &skinned.fibre_ranges {
-                        pass.draw_indexed(range.clone(), 0, 0..1);
-                    }
+            if let Some(skinned) = &self.skinned
+                && !skinned.fibre_ranges.is_empty()
+            {
+                pass.set_pipeline(&self.photoreal_fibre_pipeline);
+                pass.set_bind_group(0, &camera_group, &[]);
+                pass.set_bind_group(1, &self.material_bind_group, &[]);
+                pass.set_bind_group(2, &skinned.bind_group, &[]);
+                pass.set_vertex_buffer(0, skinned.vertex.slice(..));
+                pass.set_index_buffer(skinned.index.slice(..), wgpu::IndexFormat::Uint32);
+                for range in &skinned.fibre_ranges {
+                    pass.draw_indexed(range.clone(), 0, 0..1);
                 }
             }
         }

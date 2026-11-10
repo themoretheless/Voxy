@@ -228,7 +228,7 @@ impl WorldRayQueryJob {
     pub(crate) fn same_producer_original_buffers(&self) -> Option<(&wgpu::Buffer, &wgpu::Buffer)> {
         self.traversal_pair
             .as_ref()
-            .map(|pair| pair.original_buffers())
+            .map(super::traversal_pair::WorldTraversalPair::original_buffers)
     }
     pub fn same_producer_comparison_buffer(&self) -> Option<&wgpu::Buffer> {
         self.traversal_pair.as_ref().map(|pair| &*pair.stats)

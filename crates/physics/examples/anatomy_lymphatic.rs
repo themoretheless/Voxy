@@ -4,14 +4,13 @@ use physics::{biomechanics::*, lymph::*};
 use std::{io::Write, path::PathBuf};
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().skip(1).collect();
-    let path = args
-        .iter()
-        .find(|a| !a.starts_with("--"))
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
+    let path = args.iter().find(|a| !a.starts_with("--")).map_or_else(
+        || {
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                 .join("../../assets/anatomy/hra-female/tetrahedra/left-ovary.vxtet")
-        });
+        },
+        PathBuf::from,
+    );
     let option = |prefix: &str, default: f64| -> Result<f64, Box<dyn std::error::Error>> {
         Ok(args
             .iter()

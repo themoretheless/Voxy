@@ -4,8 +4,8 @@ use std::sync::Arc;
 pub(super) fn validate_street_ray_env_config(
     device: &wgpu::Device,
 ) -> Result<(), crate::ComputeError> {
-    if std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some() {
-        if !device.features().contains(wgpu::Features::SUBGROUP)
+    if std::env::var_os("VOXY_STREET_RAY_PERSISTENT").is_some()
+        && (!device.features().contains(wgpu::Features::SUBGROUP)
             || [
                 "VOXY_STREET_RAY_QUEUE",
                 "VOXY_STREET_RAY_STAGES",
@@ -14,12 +14,11 @@ pub(super) fn validate_street_ray_env_config(
             ]
             .iter()
             .any(|key| std::env::var_os(key).is_none())
-            || std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_some()
-        {
-            return Err(crate::ComputeError::Validation(
+            || std::env::var_os("VOXY_STREET_RAY_HIERARCHY").is_some())
+    {
+        return Err(crate::ComputeError::Validation(
                 "persistent exact DDA requires subgroup support and queued staged paired compute; select either persistent DDA or pixel-stack traversal".into(),
             ));
-        }
     }
     if std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some()
         && std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_none()
@@ -316,7 +315,7 @@ impl ArchiveSceneRenderer {
     pub fn paired_dda_tile_edge_cache_enabled(&self) -> bool {
         self.compute_gi
             .as_ref()
-            .is_some_and(|g| g.tile_edge_cache_enabled())
+            .is_some_and(super::compute_gi::ArchiveComputeGi::tile_edge_cache_enabled)
     }
 
     /// True only when the prepared frame owns the projected-span queue.
@@ -324,14 +323,15 @@ impl ArchiveSceneRenderer {
     pub fn world_ray_consumer_sorted(&self) -> bool {
         self.compute_gi
             .as_ref()
-            .is_some_and(|g| g.world_consumer_sorted())
+            .is_some_and(super::compute_gi::ArchiveComputeGi::world_consumer_sorted)
     }
 
     /// CPU-encoded source-query frames, excluding proved-inactive clears.
     pub fn world_ray_query_encoded_frames(&self) -> u64 {
-        self.compute_gi
-            .as_ref()
-            .map_or(0, |gi| gi.world_query_encoded_frames())
+        self.compute_gi.as_ref().map_or(
+            0,
+            super::compute_gi::ArchiveComputeGi::world_query_encoded_frames,
+        )
     }
 
     /// Optional complete last-source-frame stage snapshot, resolved after its GPU fence.
@@ -362,7 +362,7 @@ impl ArchiveSceneRenderer {
     pub fn world_ray_frame_enabled(&self) -> bool {
         self.compute_gi
             .as_ref()
-            .is_some_and(|gi| gi.world_frame_enabled())
+            .is_some_and(super::compute_gi::ArchiveComputeGi::world_frame_enabled)
     }
 
     /// One complete non-overlapping partition, shared by GI and optional SSR.
@@ -389,19 +389,19 @@ impl ArchiveSceneRenderer {
     pub fn world_ray_region_count(&self) -> usize {
         self.compute_gi
             .as_ref()
-            .map_or(0, |gi| gi.world_region_count())
+            .map_or(0, super::compute_gi::ArchiveComputeGi::world_region_count)
     }
 
     pub fn opaque_ray_persistent_enabled(&self) -> bool {
         self.compute_gi
             .as_ref()
-            .is_some_and(|g| g.ray_persistent_enabled())
+            .is_some_and(super::compute_gi::ArchiveComputeGi::ray_persistent_enabled)
     }
 
     pub fn opaque_ray_capture_enabled(&self) -> bool {
         self.compute_gi
             .as_ref()
-            .is_some_and(|g| g.capture_enabled())
+            .is_some_and(super::compute_gi::ArchiveComputeGi::capture_enabled)
     }
 
     #[doc(hidden)]
@@ -419,14 +419,14 @@ impl ArchiveSceneRenderer {
     pub fn opaque_ray_hierarchy_near_first_enabled(&self) -> bool {
         self.compute_gi
             .as_ref()
-            .is_some_and(|g| g.hierarchy_near_first_enabled())
+            .is_some_and(super::compute_gi::ArchiveComputeGi::hierarchy_near_first_enabled)
     }
 
     #[doc(hidden)]
     pub fn opaque_ray_hierarchy_reciprocal_enabled(&self) -> bool {
         self.compute_gi
             .as_ref()
-            .is_some_and(|g| g.hierarchy_reciprocal_enabled())
+            .is_some_and(super::compute_gi::ArchiveComputeGi::hierarchy_reciprocal_enabled)
     }
 
     #[doc(hidden)]
@@ -450,7 +450,7 @@ impl ArchiveSceneRenderer {
     pub fn opaque_ray_queue_enabled(&self) -> bool {
         self.compute_gi
             .as_ref()
-            .is_some_and(|gi| gi.ray_queue_enabled())
+            .is_some_and(super::compute_gi::ArchiveComputeGi::ray_queue_enabled)
     }
 
     #[doc(hidden)]
@@ -466,7 +466,7 @@ impl ArchiveSceneRenderer {
     pub fn opaque_gi_raster_math_enabled(&self) -> bool {
         self.compute_gi
             .as_ref()
-            .is_some_and(|gi| gi.raster_math_enabled())
+            .is_some_and(super::compute_gi::ArchiveComputeGi::raster_math_enabled)
     }
 
     pub(super) fn compute_gi_active_for_frame(&self) -> bool {

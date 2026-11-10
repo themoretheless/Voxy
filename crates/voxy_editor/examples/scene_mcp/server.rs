@@ -174,10 +174,10 @@ impl Server {
             loaded
                 .graph
                 .world_matrix(loaded.resolve(&o.id).ok_or("missing node")?)?;
-            if let Some(v) = o.components.get("editor.model.v1") {
-                if !v.as_str().is_some_and(|id| self.assets.contains(id)) {
-                    return Err("unknown model asset".into());
-                }
+            if let Some(v) = o.components.get("editor.model.v1")
+                && !v.as_str().is_some_and(|id| self.assets.contains(id))
+            {
+                return Err("unknown model asset".into());
             }
             if let Some(v) = o.components.get("editor.material.v1") {
                 let m: voxy_editor::SceneMaterial = decode(v.clone())?;

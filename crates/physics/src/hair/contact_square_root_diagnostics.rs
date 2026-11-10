@@ -49,15 +49,16 @@ pub(super) fn export_entry_input(
 
     // External profilers must see a complete operator, never a half-written one.
     static ENTRY_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
-    let _entry = ENTRY_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+    let _entry = ENTRY_LOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let mut pending = path.clone();
     pending.push(".pending");
     if export_input_to(
         &pending, requests, columns, bounds, effective, tolerance, refinement, false,
-    ) {
-        if let Err(error) = std::fs::rename(&pending, &path) {
-            eprintln!("HAIR QR ENTRY INPUT PUBLISH ERROR {error}");
-        }
+    ) && let Err(error) = std::fs::rename(&pending, &path)
+    {
+        eprintln!("HAIR QR ENTRY INPUT PUBLISH ERROR {error}");
     }
 }
 
@@ -97,7 +98,9 @@ pub(super) fn export_input_to(
     refinement: usize,
     preserve_existing: bool,
 ) -> bool {
-    let _capture_guard = CAPTURE_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+    let _capture_guard = CAPTURE_LOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let write = || -> std::io::Result<()> {
         let file = if preserve_existing {
             std::fs::OpenOptions::new()
@@ -169,7 +172,9 @@ pub(super) fn export(
     let Some(path) = std::env::var_os("VOXY_HAIR_QR_FAILURE_EXPORT") else {
         return;
     };
-    let _capture_guard = CAPTURE_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+    let _capture_guard = CAPTURE_LOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let write = || -> std::io::Result<()> {
         let mut out = std::io::BufWriter::new(std::fs::File::create(&path)?);
         out.write_all(b"VQI1")?;

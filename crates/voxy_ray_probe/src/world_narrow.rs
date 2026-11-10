@@ -364,32 +364,32 @@ pub(super) fn probe(
                     }
                     reasons[record[7] as usize] += 1;
                 }
-                if let Some(expected) = &expected_states {
-                    if record[0] != expected[batch_id * BATCH + local] {
-                        return Err(format!(
-                            "boundary state mismatch ray={} actual={} expected={}",
-                            batch_id * BATCH + local,
-                            record[0],
-                            expected[batch_id * BATCH + local]
-                        )
-                        .into());
-                    }
+                if let Some(expected) = &expected_states
+                    && record[0] != expected[batch_id * BATCH + local]
+                {
+                    return Err(format!(
+                        "boundary state mismatch ray={} actual={} expected={}",
+                        batch_id * BATCH + local,
+                        record[0],
+                        expected[batch_id * BATCH + local]
+                    )
+                    .into());
                 }
                 let reference = references[batch_id * BATCH + local];
-                if state == 2 {
-                    if let Some(file) = &mut fallback_file {
-                        use std::io::Write;
-                        let mut case = failure_case(
-                            meshes,
-                            &rays[batch_id * BATCH + local],
-                            record,
-                            reference.unwrap_or([0.; 3]),
-                        );
-                        case["global_ray"] = serde_json::json!(batch_id * BATCH + local);
-                        case["f64_reference_defined"] = serde_json::json!(reference.is_some());
-                        serde_json::to_writer(&mut *file, &case)?;
-                        file.write_all(b"\n")?;
-                    }
+                if state == 2
+                    && let Some(file) = &mut fallback_file
+                {
+                    use std::io::Write;
+                    let mut case = failure_case(
+                        meshes,
+                        &rays[batch_id * BATCH + local],
+                        record,
+                        reference.unwrap_or([0.; 3]),
+                    );
+                    case["global_ray"] = serde_json::json!(batch_id * BATCH + local);
+                    case["f64_reference_defined"] = serde_json::json!(reference.is_some());
+                    serde_json::to_writer(&mut *file, &case)?;
+                    file.write_all(b"\n")?;
                 }
 
                 if state == 3 {

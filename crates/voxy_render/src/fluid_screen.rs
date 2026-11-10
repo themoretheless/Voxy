@@ -1066,7 +1066,7 @@ impl ScreenSpaceFluidRenderer {
         if let Some(ring) = &self.camera_ring {
             let (slot, _) = ring
                 .write_or_stage(encoder, &self.camera, |mut bytes| {
-                    bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot))
+                    bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot));
                 })
                 .expect("live shared fluid camera");
             self.shared_groups.get(slot).unwrap_or(&self.groups)
@@ -1386,7 +1386,7 @@ impl ScreenSpaceFluidRenderer {
     ) {
         if let Some(ring) = &self.camera_ring {
             ring.stage_legacy(encoder, &self.camera, |mut bytes| {
-                bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot))
+                bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot));
             })
             .expect("live compute filter camera");
         }

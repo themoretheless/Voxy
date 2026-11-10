@@ -505,7 +505,10 @@ impl ArchiveRayStages {
         encoder: &mut wgpu::CommandEncoder,
         timing: Option<&wgpu::QuerySet>,
     ) {
-        let capture_frame = self.capture.as_ref().is_some_and(|c| c.next_frame());
+        let capture_frame = self
+            .capture
+            .as_ref()
+            .is_some_and(capture::RayCapture::next_frame);
         if self.queue.as_ref().is_some_and(|q| q.1) {
             encoder.clear_buffer(&self._buffers[6], 0, Some(28));
             encoder.clear_buffer(&self._buffers[6], 32, Some(8));
@@ -552,10 +555,10 @@ impl ArchiveRayStages {
                     encoder.clear_buffer(&self._buffers[4], 0, None);
                 }
                 for stage in 0..3 {
-                    if stage == 1 {
-                        if let Some(cursor) = &self.work_cursor {
-                            encoder.clear_buffer(cursor, 0, None);
-                        }
+                    if stage == 1
+                        && let Some(cursor) = &self.work_cursor
+                    {
+                        encoder.clear_buffer(cursor, 0, None);
                     }
                     {
                         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
@@ -630,19 +633,16 @@ impl ArchiveRayStages {
                         }
                     }
                 }
-                if capture_frame {
-                    if let Some(capture) = &self.capture {
-                        if tile == capture.tile {
-                            capture.encode_kind(encoder, kind, &self._buffers);
-                        }
-                    }
+                if capture_frame
+                    && let Some(capture) = &self.capture
+                    && tile == capture.tile
+                {
+                    capture.encode_kind(encoder, kind, &self._buffers);
                 }
             }
         }
-        if capture_frame {
-            if let Some(capture) = &self.capture {
-                capture.finish_encode(encoder, &self._buffers, self.tiles[capture.tile].1);
-            }
+        if capture_frame && let Some(capture) = &self.capture {
+            capture.finish_encode(encoder, &self._buffers, self.tiles[capture.tile].1);
         }
     }
 }

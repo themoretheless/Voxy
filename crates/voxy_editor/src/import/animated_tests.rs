@@ -258,7 +258,7 @@ fn accepted_geometry_and_animation_files_restore_without_sources_and_match_all_c
                         assert_eq!(a.checkpoint(), b.checkpoint(), "frame {frame}");
                     }
                     (ModelGeometry::Static(a), ModelGeometry::Static(b)) => {
-                        assert_eq!(a.checkpoint(), b.checkpoint())
+                        assert_eq!(a.checkpoint(), b.checkpoint());
                     }
                     _ => panic!("primitive kind changed"),
                 }

@@ -56,7 +56,7 @@ fn percentile_99_ms(samples_seconds: &[f64]) -> Option<f64> {
     if valid.is_empty() {
         return None;
     }
-    valid.sort_by(|a, b| a.total_cmp(b));
+    valid.sort_by(f64::total_cmp);
     let idx = ((valid.len() - 1) * 99) / 100;
     Some(valid[idx])
 }

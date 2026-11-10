@@ -265,7 +265,7 @@ impl SharedUploadRing {
     ) -> Result<(usize, wgpu::Buffer), ComputeError> {
         let mut selected = None;
         if self.encode(encoder, &produce, |index, buffer, _| {
-            selected = Some((index, buffer.clone()))
+            selected = Some((index, buffer.clone()));
         })? {
             return Ok(selected.unwrap());
         }

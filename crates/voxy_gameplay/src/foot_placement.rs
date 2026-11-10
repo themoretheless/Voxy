@@ -780,44 +780,47 @@ impl FootRuntime {
             // The first accepted landing must use current geometry too. Waiting
             // until the following frame can plant a neutral pivot through a
             // rolled foot. Reprobe the selected point on the same support.
-            if foot.state.anchor().is_none() && grounded && binding.plant && weight == 1. {
-                if let (Some((geometry, _)), Some(contact)) = (&foot.geometry, candidate.contact) {
-                    budget
-                        .charge_work(geometry.point_count())
+            if foot.state.anchor().is_none()
+                && grounded
+                && binding.plant
+                && weight == 1.
+                && let (Some((geometry, _)), Some(contact)) = (&foot.geometry, candidate.contact)
+            {
+                budget
+                    .charge_work(geometry.point_count())
+                    .map_err(|e| e.to_string())?;
+                let selected = geometry
+                    .support(DMat3::from_mat4(actor * matrix), contact.normal)
+                    .map_err(|e| e.to_string())?;
+                if selected.local != foot.pivot {
+                    let proposed_offset = matrix.transform_vector3(selected.local);
+                    let proposed =
+                        actor.transform_point3(matrix.w_axis.truncate() + proposed_offset);
+                    let replacement = foot
+                        .state
+                        .prepare(
+                            &preview.support,
+                            binding.contact,
+                            FootContactInput {
+                                sole: proposed,
+                                up: DVec3::Y,
+                                grounded,
+                                plant: true,
+                            },
+                            budget,
+                        )
                         .map_err(|e| e.to_string())?;
-                    let selected = geometry
-                        .support(DMat3::from_mat4(actor * matrix), contact.normal)
-                        .map_err(|e| e.to_string())?;
-                    if selected.local != foot.pivot {
-                        let proposed_offset = matrix.transform_vector3(selected.local);
-                        let proposed =
-                            actor.transform_point3(matrix.w_axis.truncate() + proposed_offset);
-                        let replacement = foot
-                            .state
-                            .prepare(
-                                &preview.support,
-                                binding.contact,
-                                FootContactInput {
-                                    sole: proposed,
-                                    up: DVec3::Y,
-                                    grounded,
-                                    plant: true,
-                                },
-                                budget,
-                            )
-                            .map_err(|e| e.to_string())?;
-                        if replacement
-                            .contact
-                            .is_some_and(|c| c.anchor.owner() == contact.anchor.owner())
-                        {
-                            candidate = replacement;
-                            offset = proposed_offset;
-                            acquisition_pivot = Some(selected.local);
-                        } else {
-                            // Do not publish a known obsolete geometric landing.
-                            candidate.contact = None;
-                            candidate.state = foot.state;
-                        }
+                    if replacement
+                        .contact
+                        .is_some_and(|c| c.anchor.owner() == contact.anchor.owner())
+                    {
+                        candidate = replacement;
+                        offset = proposed_offset;
+                        acquisition_pivot = Some(selected.local);
+                    } else {
+                        // Do not publish a known obsolete geometric landing.
+                        candidate.contact = None;
+                        candidate.state = foot.state;
                     }
                 }
             }
@@ -830,21 +833,19 @@ impl FootRuntime {
                 && binding.plant
                 && weight == 1.
                 && blend.is_none_or(|phases| phases.source.is_none())
-            {
-                if let (Some((geometry, limit)), Some(contact)) =
+                && let (Some((geometry, limit)), Some(contact)) =
                     (&foot.geometry, candidate.contact)
-                {
-                    budget
-                        .charge_work(geometry.point_count())
-                        .map_err(|e| e.to_string())?;
-                    let linear = DMat3::from_mat4(actor * matrix);
-                    let selected = geometry
-                        .support(linear, contact.normal)
-                        .map_err(|e| e.to_string())?;
-                    if selected.local != foot.pivot {
-                        foot.pending_pivot = Some((selected.local, *limit));
-                        automatic_request = true;
-                    }
+            {
+                budget
+                    .charge_work(geometry.point_count())
+                    .map_err(|e| e.to_string())?;
+                let linear = DMat3::from_mat4(actor * matrix);
+                let selected = geometry
+                    .support(linear, contact.normal)
+                    .map_err(|e| e.to_string())?;
+                if selected.local != foot.pivot {
+                    foot.pending_pivot = Some((selected.local, *limit));
+                    automatic_request = true;
                 }
             }
             let mut transferring = false;

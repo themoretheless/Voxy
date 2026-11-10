@@ -42,72 +42,69 @@ impl PalettedBlocks {
         };
         if palette.len() == 1 {
             return Ok(Self::Uniform(dense[0]));
+        }
+        let bits = bits_for_palette(palette.len());
+        let words = pack_dense_with_sorted_palette(&dense, &palette, bits);
+        Ok(Self::Packed {
+            bits_per_index: bits,
+            palette: palette.into_boxed_slice(),
+            words: words.into_boxed_slice(),
+        })
     }
-    let bits = bits_for_palette(palette.len());
-    let words = pack_dense_with_sorted_palette(&dense, &palette, bits);
-    Ok(Self::Packed {
-        bits_per_index: bits,
-        palette: palette.into_boxed_slice(),
-        words: words.into_boxed_slice(),
-    })
-}
 
-/// Constructs a canonical [`PalettedBlocks::Packed`] representation directly from a validated
-/// sorted unique palette (`2..=MAX_PALETTE`) and one palette slot (`< palette.len()`) per cell,
-/// returning `None` if any slot is unused so canonicality matches [`Self::from_dense`].
-#[must_use]
-pub fn from_canonical_palette_slots(
-    palette: Vec<BlockStateId>,
-    slots: &[u16],
-) -> Option<Self> {
-    if slots.len() != CHUNK_VOLUME || palette.len() < 2 || palette.len() > MAX_PALETTE {
-        return None;
-    }
-    if palette.windows(2).any(|pair| pair[0] >= pair[1]) {
-        return None;
-    }
-    let palette_len = palette.len();
-    let mut seen = [false; MAX_PALETTE];
-    let mut seen_count = 0_usize;
-    let bits = bits_for_palette(palette_len);
-    let bit_width = u32::from(bits);
-    let mut words = Vec::with_capacity(packed_word_count(bits));
-    let mut acc = 0_u64;
-    let mut acc_bits = 0_u32;
-    for &raw_slot in slots {
-        let slot = usize::from(raw_slot);
-        if slot >= palette_len {
+    /// Constructs a canonical [`PalettedBlocks::Packed`] representation directly from a validated
+    /// sorted unique palette (`2..=MAX_PALETTE`) and one palette slot (`< palette.len()`) per cell,
+    /// returning `None` if any slot is unused so canonicality matches [`Self::from_dense`].
+    #[must_use]
+    pub fn from_canonical_palette_slots(palette: Vec<BlockStateId>, slots: &[u16]) -> Option<Self> {
+        if slots.len() != CHUNK_VOLUME || palette.len() < 2 || palette.len() > MAX_PALETTE {
             return None;
         }
-        if !seen[slot] {
-            seen[slot] = true;
-            seen_count += 1;
+        if palette.windows(2).any(|pair| pair[0] >= pair[1]) {
+            return None;
         }
-        let v = u64::from(raw_slot);
-        acc |= v << acc_bits;
-        acc_bits += bit_width;
-        if acc_bits >= 64 {
+        let palette_len = palette.len();
+        let mut seen = [false; MAX_PALETTE];
+        let mut seen_count = 0_usize;
+        let bits = bits_for_palette(palette_len);
+        let bit_width = u32::from(bits);
+        let mut words = Vec::with_capacity(packed_word_count(bits));
+        let mut acc = 0_u64;
+        let mut acc_bits = 0_u32;
+        for &raw_slot in slots {
+            let slot = usize::from(raw_slot);
+            if slot >= palette_len {
+                return None;
+            }
+            if !seen[slot] {
+                seen[slot] = true;
+                seen_count += 1;
+            }
+            let v = u64::from(raw_slot);
+            acc |= v << acc_bits;
+            acc_bits += bit_width;
+            if acc_bits >= 64 {
+                words.push(acc);
+                acc_bits -= 64;
+                acc = if acc_bits == 0 {
+                    0
+                } else {
+                    v >> (bit_width - acc_bits)
+                };
+            }
+        }
+        if acc_bits > 0 {
             words.push(acc);
-            acc_bits -= 64;
-            acc = if acc_bits == 0 {
-                0
-            } else {
-                v >> (bit_width - acc_bits)
-            };
         }
+        if seen_count != palette_len {
+            return None;
+        }
+        Some(Self::Packed {
+            bits_per_index: bits,
+            palette: palette.into_boxed_slice(),
+            words: words.into_boxed_slice(),
+        })
     }
-    if acc_bits > 0 {
-        words.push(acc);
-    }
-    if seen_count != palette_len {
-        return None;
-    }
-    Some(Self::Packed {
-        bits_per_index: bits,
-        palette: palette.into_boxed_slice(),
-        words: words.into_boxed_slice(),
-    })
-}
 
     #[inline]
     #[must_use]
@@ -643,17 +640,6 @@ fn scan_packed(words: &[u64], bits: u8, mut visit: impl FnMut(usize) -> bool) {
             word += 1;
             current = words.get(word).copied().unwrap_or(0);
         }
-    }
-}
-
-#[inline]
-fn write_packed(words: &mut [u64], index: usize, bits: u8, value: u64) {
-    let bit = index * usize::from(bits);
-    let word = bit / 64;
-    let shift = bit % 64;
-    words[word] |= value << shift;
-    if shift + usize::from(bits) > 64 {
-        words[word + 1] |= value >> (64 - shift);
     }
 }
 

@@ -284,10 +284,13 @@ impl App {
                     }
                 })
                 .unwrap_or(0x564f5859),
-            root: value("--assets").map(PathBuf::from).unwrap_or_else(|| {
-                PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-                    .join("../../assets/environments/bistro/cache")
-            }),
+            root: value("--assets").map_or_else(
+                || {
+                    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                        .join("../../assets/environments/bistro/cache")
+                },
+                PathBuf::from,
+            ),
         };
         if value("--wind-speed").is_some() || value("--wind-direction").is_some() {
             let [x, z] = app.weather.wind;
@@ -305,10 +308,10 @@ impl App {
                 ];
             }
         }
-        if let Some(gust) = value("--wind-gust").and_then(|v| v.parse::<f32>().ok()) {
-            if gust.is_finite() {
-                app.weather.wind_gust = gust.clamp(0., 1.);
-            }
+        if let Some(gust) = value("--wind-gust").and_then(|v| v.parse::<f32>().ok())
+            && gust.is_finite()
+        {
+            app.weather.wind_gust = gust.clamp(0., 1.);
         }
         #[allow(clippy::needless_borrows_for_generic_args)]
         {
@@ -504,7 +507,7 @@ impl App {
                 .formats
                 .iter()
                 .copied()
-                .find(|f| f.is_srgb())
+                .find(wgpu::TextureFormat::is_srgb)
                 .ok_or("sRGB surface unavailable")?;
             config.color_space = wgpu::SurfaceColorSpace::Srgb;
             if wants_hdr {
@@ -785,11 +788,11 @@ impl App {
                     bake.progress().1,
                     bake.elapsed_seconds()
                 );
-                if !self.offscreen_benchmark {
-                    if let Some(window) = &self.window {
-                        window.set_visible(true);
-                        window.focus_window();
-                    }
+                if !self.offscreen_benchmark
+                    && let Some(window) = &self.window
+                {
+                    window.set_visible(true);
+                    window.focus_window();
                 }
             } else {
                 self.probe_bake = Some(bake);
@@ -888,15 +891,15 @@ impl App {
         let target = actor + Vec3::Y * 1.65;
         let mut direction = self.camera.direction();
         let mut eye = target - direction * self.camera.distance;
-        if self.camera.distance > 0. {
-            if let Some(hit) = collision.sweep_capsule(
+        if self.camera.distance > 0.
+            && let Some(hit) = collision.sweep_capsule(
                 target.as_dvec3().to_array(),
                 target.as_dvec3().to_array(),
                 0.12,
                 (eye - target).as_dvec3().to_array(),
-            )? {
-                eye = target + (eye - target) * hit.fraction as f32;
-            }
+            )?
+        {
+            eye = target + (eye - target) * hit.fraction as f32;
         }
         // The rig runs in every view so the gait phase stays continuous when
         // switching cameras.
@@ -973,37 +976,37 @@ impl App {
                 | wgpu::CurrentSurfaceTexture::Suboptimal(f) => f,
                 wgpu::CurrentSurfaceTexture::Outdated | wgpu::CurrentSurfaceTexture::Lost => {
                     gpu.surface.configure(&gpu.device, &gpu.config);
-                    if let Some(profile) = &mut self.profile {
-                        if profile.record(
+                    if let Some(profile) = &mut self.profile
+                        && profile.record(
                             Instant::now(),
                             std::time::Duration::from_secs_f64(physics_time),
                             std::time::Duration::ZERO,
                             std::time::Duration::ZERO,
                             Some(acquire_start.elapsed()),
                             false,
-                        ) {
-                            profile.finish(&format!("{:?}", gpu.adapter.get_info()))?;
-                            self.finished = true;
-                            el.exit();
-                        }
+                        )
+                    {
+                        profile.finish(&format!("{:?}", gpu.adapter.get_info()))?;
+                        self.finished = true;
+                        el.exit();
                     }
                     return Ok(());
                 }
                 wgpu::CurrentSurfaceTexture::Timeout | wgpu::CurrentSurfaceTexture::Occluded => {
                     self.skipped_acquires += 1;
-                    if let Some(profile) = &mut self.profile {
-                        if profile.record(
+                    if let Some(profile) = &mut self.profile
+                        && profile.record(
                             Instant::now(),
                             std::time::Duration::from_secs_f64(physics_time),
                             std::time::Duration::ZERO,
                             std::time::Duration::ZERO,
                             Some(acquire_start.elapsed()),
                             false,
-                        ) {
-                            profile.finish(&format!("{:?}", gpu.adapter.get_info()))?;
-                            self.finished = true;
-                            el.exit();
-                        }
+                        )
+                    {
+                        profile.finish(&format!("{:?}", gpu.adapter.get_info()))?;
+                        self.finished = true;
+                        el.exit();
                     }
                     return Ok(());
                 }
@@ -1258,9 +1261,10 @@ impl App {
             gpu.renderer.collect_completed_gpu_times()?;
             let source_profile = gpu.renderer.world_ray_stage_profile()?;
             if let Some(profile) = &source_profile {
-                let path = std::env::var_os("VOXY_STREET_WORLD_RAY_STAGE_REPORT")
-                    .map(PathBuf::from)
-                    .unwrap_or_else(|| PathBuf::from("/tmp/voxy-street-world-ray-stages.json"));
+                let path = std::env::var_os("VOXY_STREET_WORLD_RAY_STAGE_REPORT").map_or_else(
+                    || PathBuf::from("/tmp/voxy-street-world-ray-stages.json"),
+                    PathBuf::from,
+                );
                 std::fs::write(path, serde_json::to_vec_pretty(profile)?)?;
             }
             if let Some(path) = self.snapshot.take() {
@@ -1312,9 +1316,10 @@ impl App {
             if std::env::var("VOXY_STREET_WORLD_RAY_FLOAT32_HASHES").as_deref() == Ok("1") {
                 report["world_ray_float32_images"] = world_ray_float32_images(gpu)?;
             }
-            let path = std::env::var_os("VOXY_STREET_WORLD_RAY_AUDIT_REPORT")
-                .map(PathBuf::from)
-                .unwrap_or_else(|| PathBuf::from("/tmp/voxy-street-world-ray-audit.json"));
+            let path = std::env::var_os("VOXY_STREET_WORLD_RAY_AUDIT_REPORT").map_or_else(
+                || PathBuf::from("/tmp/voxy-street-world-ray-audit.json"),
+                PathBuf::from,
+            );
             std::fs::write(&path, serde_json::to_vec_pretty(&report)?)?;
             if paired_requested
                 && (report["same_producer_comparison"]["all_protected_words_equal"] != true
@@ -1411,28 +1416,27 @@ impl App {
             }
         }
         // Readbacks contaminate timing; the report makes these runs ineligible.
-        if self.offscreen_benchmark && matches!(self.frames, 120 | 600 | 1200 | 1800 | 2520) {
-            if let Some(root) = &self.hdr_check_dir {
-                std::fs::create_dir_all(root)?;
-                snapshot(
-                    gpu,
-                    output,
-                    &root.join(format!("frame-{}.png", self.frames)),
-                )?;
-                gpu.renderer.capture_hdr_stages(
-                    &gpu.supersample,
-                    output,
-                    &root.join(format!("frame-{}", self.frames)),
-                    true,
-                )?;
-            }
+        if self.offscreen_benchmark
+            && matches!(self.frames, 120 | 600 | 1200 | 1800 | 2520)
+            && let Some(root) = &self.hdr_check_dir
+        {
+            std::fs::create_dir_all(root)?;
+            snapshot(
+                gpu,
+                output,
+                &root.join(format!("frame-{}.png", self.frames)),
+            )?;
+            gpu.renderer.capture_hdr_stages(
+                &gpu.supersample,
+                output,
+                &root.join(format!("frame-{}", self.frames)),
+                true,
+            )?;
         }
         let capture_now = self.frames >= 120 && self.snapshot.is_some();
-        if capture_now {
-            if let Some(path) = self.snapshot.take() {
-                snapshot(gpu, output, &path)?;
-                eprintln!("STREET snapshot {}", path.display());
-            }
+        if capture_now && let Some(path) = self.snapshot.take() {
+            snapshot(gpu, output, &path)?;
+            eprintln!("STREET snapshot {}", path.display());
         }
         let mut trigger_splash = false;
         let mut trigger_photo = false;
@@ -1667,7 +1671,7 @@ impl App {
             report["crossover_measurement_valid"] =
                 (self.offscreen_benchmark && self.render_every_physics_step && crossover.is_some())
                     .into();
-            if crossover.is_some_and(|mode| mode.mixed()) {
+            if crossover.is_some_and(voxy_render::archive_scene::RefineCrossover::mixed) {
                 report["completed_offscreen_measurement_valid"] = false.into();
                 report["window_measurement_valid"] = false.into();
             }
@@ -1715,7 +1719,7 @@ impl App {
                 "gi_precision_reference_active":std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_some(),
                 "gi_raster_math_configured":gpu.renderer.opaque_gi_raster_math_enabled(),
                 "crossover_candidate":gpu.renderer.crossover_candidate(),
-                "refine_crossover_mode":gpu.renderer.refinement_crossover().map(|m|m.key()),
+                "refine_crossover_mode":gpu.renderer.refinement_crossover().map(voxy_render::archive_scene::RefineCrossover::key),
                 "gpu_frame_stamps":gpu.renderer.gpu_frame_stamps,
                 "gpu_completed_samples_ms":gpu.renderer.gpu_times_ms,
                 "measured_frame_ids":(self.frames-n as u64+1..=self.frames).collect::<Vec<_>>(),
@@ -1738,9 +1742,10 @@ impl App {
                 root.extend(settings);
             }
             std::fs::write(
-                std::env::var_os("VOXY_STREET_BENCHMARK_REPORT")
-                    .map(PathBuf::from)
-                    .unwrap_or_else(|| PathBuf::from("/tmp/voxy-street-benchmark.json")),
+                std::env::var_os("VOXY_STREET_BENCHMARK_REPORT").map_or_else(
+                    || PathBuf::from("/tmp/voxy-street-benchmark.json"),
+                    PathBuf::from,
+                ),
                 serde_json::to_vec_pretty(&report)?,
             )?;
             eprintln!("STREET BENCHMARK {report}");
@@ -1804,8 +1809,7 @@ fn consumer_zero_audit(gpu: &Gpu) -> Result<serde_json::Value, Box<dyn std::erro
     let tiles = gpu
         .renderer
         .world_ray_frame_tiles()
-        .map(|v| v.len())
-        .unwrap_or(count);
+        .map_or(count, <[[u32; 4]]>::len);
     let read = gpu.device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("consumer zero audit counters"),
         size: count as u64 * 48,
@@ -2066,12 +2070,12 @@ mod hdr_snapshot_tests {
 
 impl ApplicationHandler for App {
     fn resumed(&mut self, el: &ActiveEventLoop) {
-        if self.window.is_none() {
-            if let Err(e) = self.init(el) {
-                eprintln!("STREET FAILURE phase=initialization error={e}");
-                self.failure = Some(e.to_string());
-                el.exit();
-            }
+        if self.window.is_none()
+            && let Err(e) = self.init(el)
+        {
+            eprintln!("STREET FAILURE phase=initialization error={e}");
+            self.failure = Some(e.to_string());
+            el.exit();
         }
     }
     fn window_event(&mut self, el: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
@@ -2106,28 +2110,27 @@ impl ApplicationHandler for App {
                 _ => {}
             }
         }
-        if let WindowEvent::KeyboardInput { event: key, .. } = &event {
-            if key.physical_key == PhysicalKey::Code(KeyCode::F1)
-                && key.state == ElementState::Pressed
-                && !key.repeat
-            {
-                if let Some(panel) = self.panel.as_mut() {
-                    panel.visible = !panel.visible;
-                }
-                return;
+        if let WindowEvent::KeyboardInput { event: key, .. } = &event
+            && key.physical_key == PhysicalKey::Code(KeyCode::F1)
+            && key.state == ElementState::Pressed
+            && !key.repeat
+        {
+            if let Some(panel) = self.panel.as_mut() {
+                panel.visible = !panel.visible;
             }
+            return;
         }
-        if !self.captured {
-            if let (Some(panel), Some(window)) = (self.panel.as_mut(), self.window.as_ref()) {
-                let consumed = panel.on_event(window, &event);
-                let over = panel.wants_pointer()
-                    && matches!(
-                        event,
-                        WindowEvent::MouseInput { .. } | WindowEvent::MouseWheel { .. }
-                    );
-                if consumed || over {
-                    return;
-                }
+        if !self.captured
+            && let (Some(panel), Some(window)) = (self.panel.as_mut(), self.window.as_ref())
+        {
+            let consumed = panel.on_event(window, &event);
+            let over = panel.wants_pointer()
+                && matches!(
+                    event,
+                    WindowEvent::MouseInput { .. } | WindowEvent::MouseWheel { .. }
+                );
+            if consumed || over {
+                return;
             }
         }
         if self.profile.is_some()
@@ -2183,15 +2186,14 @@ impl ApplicationHandler for App {
                         && event.state == ElementState::Pressed
                         && !event.repeat
                     {
-                        if let Some(gpu) = &self.gpu {
-                            if let Some(clean_tex) =
+                        if let Some(gpu) = &self.gpu
+                            && let Some(clean_tex) =
                                 gpu.scene_target.as_ref().or(gpu.offscreen.as_ref())
-                            {
-                                let photo_path =
-                                    PathBuf::from(format!("voxy-photo-{:05}.png", self.frames));
-                                if snapshot(gpu, clean_tex, &photo_path).is_ok() {
-                                    eprintln!("STREET photo saved {}", photo_path.display());
-                                }
+                        {
+                            let photo_path =
+                                PathBuf::from(format!("voxy-photo-{:05}.png", self.frames));
+                            if snapshot(gpu, clean_tex, &photo_path).is_ok() {
+                                eprintln!("STREET photo saved {}", photo_path.display());
                             }
                         }
                     } else if key == KeyCode::F3
@@ -2270,10 +2272,11 @@ impl ApplicationHandler for App {
         }
     }
     fn device_event(&mut self, _: &ActiveEventLoop, _: winit::event::DeviceId, event: DeviceEvent) {
-        if self.captured && self.benchmark <= 0. {
-            if let DeviceEvent::MouseMotion { delta } = event {
-                self.input.mouse_motion(delta);
-            }
+        if self.captured
+            && self.benchmark <= 0.
+            && let DeviceEvent::MouseMotion { delta } = event
+        {
+            self.input.mouse_motion(delta);
         }
     }
     fn exiting(&mut self, _el: &ActiveEventLoop) {
@@ -2286,8 +2289,10 @@ impl ApplicationHandler for App {
         );
         if !self.benchmark_complete {
             let path = std::env::var_os("VOXY_STREET_BENCHMARK_REPORT")
-                .map(PathBuf::from)
-                .unwrap_or_else(|| PathBuf::from("/tmp/voxy-street-benchmark.json"))
+                .map_or_else(
+                    || PathBuf::from("/tmp/voxy-street-benchmark.json"),
+                    PathBuf::from,
+                )
                 .with_extension("interrupted.json");
             let diagnostic = serde_json::json!({"qualified":false,"benchmark_complete":false,"frames":self.frames,"simulation_steps":self.simulation_steps,"phase":if self.probe_bake.is_some(){"probe_bake"}else if self.frames<=180{"warmup"}else{"measurement"},"failure":self.failure,"minimum_120_presented_fps_passed":false});
             match serde_json::to_vec_pretty(&diagnostic)
@@ -2300,16 +2305,17 @@ impl ApplicationHandler for App {
         }
     }
     fn about_to_wait(&mut self, el: &ActiveEventLoop) {
-        if self.gpu.is_some() && !self.finished {
-            if let Err(e) = self.draw(el) {
-                eprintln!(
-                    "STREET FAILURE phase=draw frames={} simulation_steps={} error={e}",
-                    self.frames, self.simulation_steps
-                );
-                self.failure = Some(e.to_string());
-                self.finished = true;
-                el.exit();
-            }
+        if self.gpu.is_some()
+            && !self.finished
+            && let Err(e) = self.draw(el)
+        {
+            eprintln!(
+                "STREET FAILURE phase=draw frames={} simulation_steps={} error={e}",
+                self.frames, self.simulation_steps
+            );
+            self.failure = Some(e.to_string());
+            self.finished = true;
+            el.exit();
         }
     }
 }

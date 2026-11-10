@@ -372,7 +372,9 @@ impl ArchiveComputeGi {
         self.raster_math
     }
     pub(super) fn world_query_encoded_frames(&self) -> u64 {
-        self.world_frame.as_ref().map_or(0, |f| f.encoded_frames())
+        self.world_frame
+            .as_ref()
+            .map_or(0, world_resolve::ArchiveWorldRayFrame::encoded_frames)
     }
     pub(super) fn world_same_producer_comparison(
         &self,
@@ -411,7 +413,7 @@ impl ArchiveComputeGi {
     pub(super) fn world_consumer_sorted(&self) -> bool {
         self.world_frame
             .as_ref()
-            .is_some_and(|f| f.consumer_sorted())
+            .is_some_and(world_resolve::ArchiveWorldRayFrame::consumer_sorted)
     }
     pub(super) fn set_world_frame(&mut self, frame: ArchiveWorldRayFrame) {
         self.world_regions.clear();
@@ -441,9 +443,10 @@ impl ArchiveComputeGi {
         }
     }
     pub(super) fn world_region_count(&self) -> usize {
-        self.world_frame
-            .as_ref()
-            .map_or(self.world_regions.len(), |f| f.count())
+        self.world_frame.as_ref().map_or(
+            self.world_regions.len(),
+            world_resolve::ArchiveWorldRayFrame::count,
+        )
     }
     pub(super) fn reference_texture(&self) -> Option<&wgpu::Texture> {
         self.reference.as_ref().map(|(image, _)| &***image)
@@ -452,10 +455,16 @@ impl ArchiveComputeGi {
         self.ssr_reference.as_ref().map(|(image, _)| &***image)
     }
     pub(super) fn ray_persistent_enabled(&self) -> bool {
-        self.world_frame.is_none() && self.stages.as_ref().is_some_and(|s| s.persistent_enabled())
+        self.world_frame.is_none()
+            && self
+                .stages
+                .as_ref()
+                .is_some_and(stages::ArchiveRayStages::persistent_enabled)
     }
     pub(super) fn capture_enabled(&self) -> bool {
-        self.stages.as_ref().is_some_and(|s| s.capture_enabled())
+        self.stages
+            .as_ref()
+            .is_some_and(stages::ArchiveRayStages::capture_enabled)
     }
     pub(super) fn export_capture(
         &self,
@@ -471,15 +480,19 @@ impl ArchiveComputeGi {
     pub(super) fn hierarchy_near_first_enabled(&self) -> bool {
         self.stages
             .as_ref()
-            .is_some_and(|s| s.hierarchy_near_first_enabled())
+            .is_some_and(stages::ArchiveRayStages::hierarchy_near_first_enabled)
     }
     pub(super) fn hierarchy_reciprocal_enabled(&self) -> bool {
         self.stages
             .as_ref()
-            .is_some_and(|s| s.hierarchy_reciprocal_enabled())
+            .is_some_and(stages::ArchiveRayStages::hierarchy_reciprocal_enabled)
     }
     pub(super) fn ray_queue_enabled(&self) -> bool {
-        self.world_frame.is_none() && self.stages.as_ref().is_some_and(|s| s.queue_enabled())
+        self.world_frame.is_none()
+            && self
+                .stages
+                .as_ref()
+                .is_some_and(stages::ArchiveRayStages::queue_enabled)
     }
     pub(super) fn ray_queue_proof_buffer(&self) -> Option<&wgpu::Buffer> {
         if self.world_frame.is_some() {
@@ -492,7 +505,9 @@ impl ArchiveComputeGi {
         if self.world_frame.is_some() {
             None
         } else {
-            self.stages.as_ref().map(|s| s.configuration())
+            self.stages
+                .as_ref()
+                .map(stages::ArchiveRayStages::configuration)
         }
     }
     pub(super) fn encode(

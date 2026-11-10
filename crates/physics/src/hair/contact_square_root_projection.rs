@@ -89,10 +89,10 @@ impl<'a> FrozenSystems<'a> {
         self.loads
             .iter()
             .map(|slot| {
-                slot.lock()
-                    .unwrap()
-                    .as_ref()
-                    .map_or(0, |cache| cache.computed_columns())
+                slot.lock().unwrap().as_ref().map_or(
+                    0,
+                    crate::hair::contact_response_system::NativeLoadCache::computed_columns,
+                )
             })
             .sum()
     }
@@ -190,7 +190,7 @@ fn solve_with_workers_prepared(
         .fold(1., f64::max);
     let use_hints = backend
         .as_deref()
-        .is_some_and(|backend| backend.joint_contact_hints_enabled());
+        .is_some_and(crate::hair::HairLinearSolver::joint_contact_hints_enabled);
     let results = if let Some(backend) = backend {
         // Preflight the entire independent batch before any accelerator call.
         // A later invalid island must not consume device work for earlier ones.
@@ -283,10 +283,8 @@ fn solve_with_workers_prepared(
         return Err("native square-root Newton admission failed");
     }
     // Publish hints only after every original global physical check passed.
-    if use_hints {
-        if let Some(prepared) = prepared {
-            prepared.publish_hints(constraints, &staged_reactions);
-        }
+    if use_hints && let Some(prepared) = prepared {
+        prepared.publish_hints(constraints, &staged_reactions);
     }
     for (constraint, reaction) in constraints.iter_mut().zip(staged_reactions) {
         constraint.multiplier = reaction;
@@ -756,7 +754,7 @@ fn solve_prepared_island_increment(
     // The coordinate owner reconstructs its primal from current columns.
     let use_hints = backend
         .as_deref()
-        .is_some_and(|backend| backend.joint_contact_hints_enabled());
+        .is_some_and(crate::hair::HairLinearSolver::joint_contact_hints_enabled);
     let mut coordinate_seeds = if use_hints {
         frozen.map_or_else(Vec::new, |frozen| frozen.hints_for(rows, constraints))
     } else {
@@ -776,10 +774,8 @@ fn solve_prepared_island_increment(
                             &coordinate_seeds,
                         )
                     };
-                    if use_hints {
-                        if let Some((_, reactions)) = &output {
-                            coordinate_seeds.clone_from(reactions);
-                        }
+                    if use_hints && let Some((_, reactions)) = &output {
+                        coordinate_seeds.clone_from(reactions);
                     }
                     output
                 })?;
@@ -838,11 +834,10 @@ fn observe_island_input(
             .unwrap_or(53);
         let minimum = std::env::var("VOXY_HAIR_ISLAND_INPUT_MIN_TOLERANCE")
             .ok()
-            .map(|v| {
+            .map_or(0., |v| {
                 v.parse::<f64>()
                     .expect("invalid observed island minimum tolerance")
-            })
-            .unwrap_or(0.);
+            });
         assert!(
             minimum.is_finite() && minimum >= 0.,
             "invalid observed island minimum tolerance"
@@ -859,11 +854,10 @@ fn observe_island_input(
             let index = counter.fetch_add(1, Ordering::Relaxed);
             let limit = std::env::var("VOXY_HAIR_ISLAND_INPUT_LIMIT")
                 .ok()
-                .map(|v| {
+                .map_or(16, |v| {
                     v.parse::<usize>()
                         .expect("invalid observed island input limit")
-                })
-                .unwrap_or(16);
+                });
             assert!(
                 (1..=1024).contains(&limit),
                 "observed island input limit outside 1..1024"
@@ -873,17 +867,16 @@ fn observe_island_input(
             // remain independent; filenames retain the original call index.
             let skip = std::env::var("VOXY_HAIR_ISLAND_INPUT_SKIP")
                 .ok()
-                .map(|v| {
+                .map_or(0, |v| {
                     v.parse::<usize>()
                         .expect("invalid observed island input skip")
-                })
-                .unwrap_or(0);
+                });
             if index >= skip && index - skip < limit {
                 let directory = std::path::Path::new(&directory);
                 match std::fs::create_dir_all(directory) {
                     Ok(()) => {
                         let path = directory.join(format!("{label}-{index:02}.vqc"));
-                        if prepared.capture_observed_input(&path, &bounds, tolerance) {
+                        if prepared.capture_observed_input(&path, bounds, tolerance) {
                             // Record global rod ordering only after the immutable
                             // input was successfully written. Sidecar failure is
                             // diagnostic and cannot change physical admission.

@@ -1231,8 +1231,7 @@ mod tests {
         .unwrap();
         let index = std::env::var("VOXY_HAIR_REPLAY_ROD")
             .ok()
-            .map(|value| value.parse::<usize>().unwrap())
-            .unwrap_or(121);
+            .map_or(121, |value| value.parse::<usize>().unwrap());
         let path = std::env::var("VOXY_HAIR_REPLAY_REST_FILE")
             .expect("absolute replay metadata output path");
         assert!(std::path::Path::new(&path).is_absolute());
@@ -1251,7 +1250,7 @@ mod tests {
             }).collect::<Vec<_>>()
         }).collect::<Vec<_>>()
         };
-        let output = serde_json::json!({"rod":index,"preserve_follicles":preserve,"rest_positions":rod.rest_positions(),"rest_curves":hair.system.rods().iter().map(|rod|rod.rest_positions()).collect::<Vec<_>>(),"initialized_positions":rod.positions(),"initialized_max_relative_strain":rod.max_relative_stretch(),"all_initialized_max_relative_strains":hair.system.rods().iter().map(HairRod::max_relative_stretch).collect::<Vec<_>>(),"rest_body_intersections":crossings(false),"initialized_body_intersections":crossings(true),"material":"HairMaterial::default()"});
+        let output = serde_json::json!({"rod":index,"preserve_follicles":preserve,"rest_positions":rod.rest_positions(),"rest_curves":hair.system.rods().iter().map(physics::hair::HairRod::rest_positions).collect::<Vec<_>>(),"initialized_positions":rod.positions(),"initialized_max_relative_strain":rod.max_relative_stretch(),"all_initialized_max_relative_strains":hair.system.rods().iter().map(HairRod::max_relative_stretch).collect::<Vec<_>>(),"rest_body_intersections":crossings(false),"initialized_body_intersections":crossings(true),"material":"HairMaterial::default()"});
         std::fs::write(path, serde_json::to_vec_pretty(&output).unwrap()).unwrap();
         if let Ok(path) = std::env::var("VOXY_HAIR_CONTACT_REPLAY_COLLIDER") {
             assert!(std::path::Path::new(&path).is_absolute());
@@ -1388,8 +1387,7 @@ mod tests {
         .unwrap();
         solver.residual_refinements = std::env::var("VOXY_HAIR_RESIDUAL_REFINEMENTS")
             .ok()
-            .map(|v| v.parse::<usize>().unwrap())
-            .unwrap_or(0);
+            .map_or(0, |v| v.parse::<usize>().unwrap());
         assert!(solver.residual_refinements <= 3);
         solver.contact_residual_refinements =
             std::env::var("VOXY_HAIR_CONTACT_RESIDUAL_REFINEMENTS")
@@ -1507,8 +1505,7 @@ mod tests {
         );
         let perturbation = std::env::var("VOXY_HAIR_CPU_SCALE_PERTURBATION")
             .ok()
-            .map(|v| v.parse::<f64>().unwrap())
-            .unwrap_or(0.);
+            .map_or(0., |v| v.parse::<f64>().unwrap());
         assert!(perturbation.is_finite() && perturbation.abs() <= 1e-9);
         let mut control = NativeControl {
             calls: 0,
@@ -1524,8 +1521,7 @@ mod tests {
         let mut first_divergence_reported = false;
         let frames = std::env::var("VOXY_HAIR_QUALIFICATION_FRAMES")
             .ok()
-            .map(|value| value.parse::<usize>().unwrap())
-            .unwrap_or(30);
+            .map_or(30, |value| value.parse::<usize>().unwrap());
         assert!(
             (30..=720).contains(&frames),
             "qualification frames must be in 30..720"
@@ -1542,16 +1538,16 @@ mod tests {
             .map(|value| value.parse::<usize>().expect("invalid phase trace rod"));
         let phase_trace_frame = std::env::var("VOXY_HAIR_PHASE_TRACE_FRAME")
             .ok()
-            .map(|value| value.parse::<usize>().expect("invalid phase trace frame"))
-            .unwrap_or(57);
+            .map_or(57, |value| {
+                value.parse::<usize>().expect("invalid phase trace frame")
+            });
         let phase_trace_end = std::env::var("VOXY_HAIR_PHASE_TRACE_END_FRAME")
             .ok()
-            .map(|value| {
+            .map_or(phase_trace_frame, |value| {
                 value
                     .parse::<usize>()
                     .expect("invalid phase trace end frame")
-            })
-            .unwrap_or(phase_trace_frame);
+            });
         if phase_trace_rod.is_some() {
             assert!(
                 phase_trace_frame >= 1
@@ -1823,97 +1819,92 @@ mod tests {
                 }
             }
             eprintln!(
-                "HYBRID HAIR FRAME frame={} max_position_error_m={} max_quaternion_component_error={}",
-                frame, position_error, rotation_error
+                "HYBRID HAIR FRAME frame={frame} max_position_error_m={position_error} max_quaternion_component_error={rotation_error}"
             );
             // These maxima are cumulative: a later frame cannot repair a
             // failed trajectory comparison. Preserve the diagnostics above
             // and reject immediately using the same final acceptance gates.
-            if position_error >= 1e-6 || rotation_error >= 5e-5 {
-                if let (Some(directory), Some((mut native_start, mut gpu_start))) =
+            if (position_error >= 1e-6 || rotation_error >= 5e-5)
+                && let (Some(directory), Some((mut native_start, mut gpu_start))) =
                     (replay_directory, checkpoints)
-                {
-                    let directory = std::path::PathBuf::from(directory);
-                    assert!(
-                        directory.is_absolute(),
-                        "diagnostic replay directory must be absolute"
-                    );
-                    std::fs::create_dir_all(&directory).unwrap();
-                    // The exchange retains the original failed end states.
-                    // GPU workspaces are deliberately not represented as physical state.
-                    native.exchange_prepared(&mut native_start);
-                    gpu.exchange_prepared(&mut gpu_start);
-                    let replay_rod = if worst.0 >= 1e-6 {
-                        worst.1
+            {
+                let directory = std::path::PathBuf::from(directory);
+                assert!(
+                    directory.is_absolute(),
+                    "diagnostic replay directory must be absolute"
+                );
+                std::fs::create_dir_all(&directory).unwrap();
+                // The exchange retains the original failed end states.
+                // GPU workspaces are deliberately not represented as physical state.
+                native.exchange_prepared(&mut native_start);
+                gpu.exchange_prepared(&mut gpu_start);
+                let replay_rod = if worst.0 >= 1e-6 {
+                    worst.1
+                } else {
+                    worst_rotation.1
+                };
+                native.system.set_trace_rod(Some(replay_rod)).unwrap();
+                gpu.system.set_trace_rod(Some(replay_rod)).unwrap();
+                let a = physics::hair::observe_contact_frame(frame, || {
+                    native.advance(1. / 120., time, head, &posed)
+                });
+                let b = physics::hair::observe_contact_frame(frame, || {
+                    if native_only {
+                        gpu.advance(1. / 120., time, head, &posed)
+                    } else if cpu_control {
+                        gpu.advance_with_solver(1. / 120., time, head, &posed, &mut control)
                     } else {
-                        worst_rotation.1
-                    };
-                    native.system.set_trace_rod(Some(replay_rod)).unwrap();
-                    gpu.system.set_trace_rod(Some(replay_rod)).unwrap();
-                    let a = physics::hair::observe_contact_frame(frame, || {
-                        native.advance(1. / 120., time, head, &posed)
-                    });
-                    let b = physics::hair::observe_contact_frame(frame, || {
-                        if native_only {
-                            gpu.advance(1. / 120., time, head, &posed)
-                        } else if cpu_control {
-                            gpu.advance_with_solver(1. / 120., time, head, &posed, &mut control)
-                        } else {
-                            gpu.advance_with_solver(1. / 120., time, head, &posed, &mut solver)
-                        }
-                    });
-                    let mut log = String::new();
-                    for (label, hair) in [("native", &native), ("external", &gpu)] {
-                        for entry in hair.system.step_trace() {
-                            let _ = std::fmt::Write::write_fmt(
-                                &mut log,
-                                format_args!("HAIR PHASE TRACE frame={frame} {label} {entry:?}\n"),
-                            );
-                        }
-                        for entry in hair.system.contact_projection_trace() {
-                            let _ = std::fmt::Write::write_fmt(
-                                &mut log,
-                                format_args!(
-                                    "HAIR PROJECTION TRACE frame={frame} {label} {entry:?}\n"
-                                ),
-                            );
-                        }
+                        gpu.advance_with_solver(1. / 120., time, head, &posed, &mut solver)
                     }
-                    std::fs::write(directory.join(format!("frame-{frame}-phases.log")), log)
-                        .unwrap();
-                    let same_poses = |hair: &FemaleHair, end: &PreparedHairStep| {
-                        hair.system.rods().len() == end.system.rods().len()
-                            && hair
-                                .system
-                                .rods()
-                                .iter()
-                                .zip(end.system.rods())
-                                .all(|(a, b)| {
-                                    a.positions().len() == b.positions().len()
-                                        && a.orientations().len() == b.orientations().len()
-                                        && a.positions()
-                                            .iter()
-                                            .flatten()
-                                            .zip(b.positions().iter().flatten())
-                                            .all(|(x, y)| x.to_bits() == y.to_bits())
-                                        && a.orientations()
-                                            .iter()
-                                            .flatten()
-                                            .zip(b.orientations().iter().flatten())
-                                            .all(|(x, y)| x.to_bits() == y.to_bits())
-                                })
-                    };
-                    let report = serde_json::json!({"frame":frame,"rod":replay_rod,"native_result":a,"external_result":b,
+                });
+                let mut log = String::new();
+                for (label, hair) in [("native", &native), ("external", &gpu)] {
+                    for entry in hair.system.step_trace() {
+                        let _ = std::fmt::Write::write_fmt(
+                            &mut log,
+                            format_args!("HAIR PHASE TRACE frame={frame} {label} {entry:?}\n"),
+                        );
+                    }
+                    for entry in hair.system.contact_projection_trace() {
+                        let _ = std::fmt::Write::write_fmt(
+                            &mut log,
+                            format_args!("HAIR PROJECTION TRACE frame={frame} {label} {entry:?}\n"),
+                        );
+                    }
+                }
+                std::fs::write(directory.join(format!("frame-{frame}-phases.log")), log).unwrap();
+                let same_poses = |hair: &FemaleHair, end: &PreparedHairStep| {
+                    hair.system.rods().len() == end.system.rods().len()
+                        && hair
+                            .system
+                            .rods()
+                            .iter()
+                            .zip(end.system.rods())
+                            .all(|(a, b)| {
+                                a.positions().len() == b.positions().len()
+                                    && a.orientations().len() == b.orientations().len()
+                                    && a.positions()
+                                        .iter()
+                                        .flatten()
+                                        .zip(b.positions().iter().flatten())
+                                        .all(|(x, y)| x.to_bits() == y.to_bits())
+                                    && a.orientations()
+                                        .iter()
+                                        .flatten()
+                                        .zip(b.orientations().iter().flatten())
+                                        .all(|(x, y)| x.to_bits() == y.to_bits())
+                            })
+                };
+                let report = serde_json::json!({"frame":frame,"rod":replay_rod,"native_result":a,"external_result":b,
                         "native_end_poses_bitwise_equal":same_poses(&native,&native_start),"external_end_poses_bitwise_equal":same_poses(&gpu,&gpu_start),
                         "scope":"opt-in in-process failing-frame diagnostic; all guides and original physical settings retained; GPU workspace reused, not checkpointed; end comparison covers poses only; not trajectory or FPS qualification"});
-                    std::fs::write(
-                        directory.join(format!("frame-{frame}-replay.json")),
-                        serde_json::to_vec_pretty(&report).unwrap(),
-                    )
-                    .unwrap();
-                    native.exchange_prepared(&mut native_start);
-                    gpu.exchange_prepared(&mut gpu_start);
-                }
+                std::fs::write(
+                    directory.join(format!("frame-{frame}-replay.json")),
+                    serde_json::to_vec_pretty(&report).unwrap(),
+                )
+                .unwrap();
+                native.exchange_prepared(&mut native_start);
+                gpu.exchange_prepared(&mut gpu_start);
             }
             assert!(
                 position_error < 1e-6,

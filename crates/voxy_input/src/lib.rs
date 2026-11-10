@@ -399,11 +399,11 @@ impl DoubleTapDetector {
                 self.first_release_s = None;
                 return false;
             }
-            if let Some(prev_release) = self.first_release_s {
-                if self.elapsed_s - prev_release <= self.max_inter_tap_s {
-                    self.first_release_s = None;
-                    return true;
-                }
+            if let Some(prev_release) = self.first_release_s
+                && self.elapsed_s - prev_release <= self.max_inter_tap_s
+            {
+                self.first_release_s = None;
+                return true;
             }
             self.first_release_s = Some(self.elapsed_s);
             false

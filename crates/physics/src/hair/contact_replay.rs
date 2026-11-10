@@ -721,12 +721,11 @@ pub(in crate::hair) mod tests {
         }
         let roots: Vec<_> = rods.iter().map(|rod| rod.x[0]).collect();
         // Test-only experiment: production policy remains independent of env.
-        let first_stage_limit = std::env::var("VOXY_HAIR_REPLAY_FIRST_STAGE_LIMIT")
-            .map(|v| {
+        let first_stage_limit =
+            std::env::var("VOXY_HAIR_REPLAY_FIRST_STAGE_LIMIT").map_or(32, |v| {
                 v.parse::<usize>()
                     .expect("initial work budget must be an integer")
-            })
-            .unwrap_or(32);
+            });
         let result = HairSystem::reconcile_positions_mode_with_first_stage_limit(
             &mut rods,
             &meshes,

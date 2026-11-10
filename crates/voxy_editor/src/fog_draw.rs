@@ -866,7 +866,10 @@ mod shadow_tests {
             })
             .collect();
         let caster_geometries: Vec<_> = if skinned {
-            skin_instances.iter().map(|skin| skin.geometry()).collect()
+            skin_instances
+                .iter()
+                .map(voxy_render::SceneSkinInstance::geometry)
+                .collect()
         } else {
             vec![&half, &half]
         };

@@ -194,15 +194,14 @@ pub fn prepare(
             "source_simplified": false
         })
     );
-    if std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_SLOTS").is_some()
-        || std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_WORKERS").is_some()
+    if (std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_SLOTS").is_some()
+        || std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_WORKERS").is_some())
+        && let Some((slots, workers)) = job.exact_winner_workspace()
     {
-        if let Some((slots, workers)) = job.exact_winner_workspace() {
-            eprintln!(
-                "STREET WORLD winner_slots={slots} winner_worker_cap={workers} full_slots=512 full_workers={}",
-                job.exact_worker_count()
-            );
-        }
+        eprintln!(
+            "STREET WORLD winner_slots={slots} winner_worker_cap={workers} full_slots=512 full_workers={}",
+            job.exact_worker_count()
+        );
     }
     if let Some(buffer) = job.geometry_bounds_buffer() {
         let read = device.create_buffer(&wgpu::BufferDescriptor {

@@ -1059,12 +1059,13 @@ impl RenderDevice {
         self.surface_config.as_ref()
     }
     fn resize(&mut self, width: u32, height: u32) {
-        if width > 0 && height > 0 {
-            if let (Some(surf), Some(cfg)) = (&self.surface, &mut self.surface_config) {
-                cfg.width = width;
-                cfg.height = height;
-                surf.configure(&self.device, cfg);
-            }
+        if width > 0
+            && height > 0
+            && let (Some(surf), Some(cfg)) = (&self.surface, &mut self.surface_config)
+        {
+            cfg.width = width;
+            cfg.height = height;
+            surf.configure(&self.device, cfg);
         }
     }
 }
@@ -1129,8 +1130,7 @@ impl GpuPipeline {
 
         let target_format = render_device
             .surface_config()
-            .map(|c| c.format)
-            .unwrap_or(wgpu::TextureFormat::Rgba8Unorm);
+            .map_or(wgpu::TextureFormat::Rgba8Unorm, |c| c.format);
 
         let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("labia-tube-pipeline"),
@@ -1534,82 +1534,77 @@ impl ApplicationHandler for InteractiveApp {
                             self.cam_pitch,
                             self.cam_zoom,
                         );
-                        if let Some(surface) = gpu.render_device.surface() {
-                            if let wgpu::CurrentSurfaceTexture::Success(frame)
+                        if let Some(surface) = gpu.render_device.surface()
+                            && let wgpu::CurrentSurfaceTexture::Success(frame)
                             | wgpu::CurrentSurfaceTexture::Suboptimal(frame) =
                                 surface.get_current_texture()
-                            {
-                                let view = frame
-                                    .texture
-                                    .create_view(&wgpu::TextureViewDescriptor::default());
-                                let device = gpu.render_device.device();
-                                let depth_tex = device.create_texture(&wgpu::TextureDescriptor {
-                                    label: Some("labia-win-depth"),
-                                    size: wgpu::Extent3d {
-                                        width: size.width,
-                                        height: size.height,
-                                        depth_or_array_layers: 1,
-                                    },
-                                    mip_level_count: 1,
-                                    sample_count: 1,
-                                    dimension: wgpu::TextureDimension::D2,
-                                    format: wgpu::TextureFormat::Depth32Float,
-                                    usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-                                    view_formats: &[],
+                        {
+                            let view = frame
+                                .texture
+                                .create_view(&wgpu::TextureViewDescriptor::default());
+                            let device = gpu.render_device.device();
+                            let depth_tex = device.create_texture(&wgpu::TextureDescriptor {
+                                label: Some("labia-win-depth"),
+                                size: wgpu::Extent3d {
+                                    width: size.width,
+                                    height: size.height,
+                                    depth_or_array_layers: 1,
+                                },
+                                mip_level_count: 1,
+                                sample_count: 1,
+                                dimension: wgpu::TextureDimension::D2,
+                                format: wgpu::TextureFormat::Depth32Float,
+                                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+                                view_formats: &[],
+                            });
+                            let depth_view =
+                                depth_tex.create_view(&wgpu::TextureViewDescriptor::default());
+                            let mut encoder =
+                                device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                                    label: Some("labia-win-enc"),
                                 });
-                                let depth_view =
-                                    depth_tex.create_view(&wgpu::TextureViewDescriptor::default());
-                                let mut encoder = device.create_command_encoder(
-                                    &wgpu::CommandEncoderDescriptor {
-                                        label: Some("labia-win-enc"),
-                                    },
-                                );
-                                {
-                                    let mut pass =
-                                        encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                                            label: Some("labia-win-pass"),
-                                            color_attachments: &[Some(
-                                                wgpu::RenderPassColorAttachment {
-                                                    view: &view,
-                                                    resolve_target: None,
-                                                    ops: wgpu::Operations {
-                                                        load: wgpu::LoadOp::Clear(wgpu::Color {
-                                                            r: 0.16,
-                                                            g: 0.08,
-                                                            b: 0.07,
-                                                            a: 1.0,
-                                                        }),
-                                                        store: wgpu::StoreOp::Store,
-                                                    },
-                                                    depth_slice: None,
-                                                },
-                                            )],
-                                            depth_stencil_attachment: Some(
-                                                wgpu::RenderPassDepthStencilAttachment {
-                                                    view: &depth_view,
-                                                    depth_ops: Some(wgpu::Operations {
-                                                        load: wgpu::LoadOp::Clear(1.0),
-                                                        store: wgpu::StoreOp::Store,
+                            {
+                                let mut pass =
+                                    encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                                        label: Some("labia-win-pass"),
+                                        color_attachments: &[Some(
+                                            wgpu::RenderPassColorAttachment {
+                                                view: &view,
+                                                resolve_target: None,
+                                                ops: wgpu::Operations {
+                                                    load: wgpu::LoadOp::Clear(wgpu::Color {
+                                                        r: 0.16,
+                                                        g: 0.08,
+                                                        b: 0.07,
+                                                        a: 1.0,
                                                     }),
-                                                    stencil_ops: None,
+                                                    store: wgpu::StoreOp::Store,
                                                 },
-                                            ),
-                                            timestamp_writes: None,
-                                            occlusion_query_set: None,
-                                            multiview_mask: None,
-                                        });
-                                    pass.set_pipeline(&gpu.pipeline);
-                                    pass.set_bind_group(0, &gpu.bind_group, &[]);
-                                    pass.set_vertex_buffer(0, vbuf.slice(..));
-                                    pass.set_index_buffer(
-                                        ibuf.slice(..),
-                                        wgpu::IndexFormat::Uint32,
-                                    );
-                                    pass.draw_indexed(0..index_count, 0, 0..1);
-                                }
-                                gpu.render_device.queue().submit(Some(encoder.finish()));
-                                gpu.render_device.queue().present(frame);
+                                                depth_slice: None,
+                                            },
+                                        )],
+                                        depth_stencil_attachment: Some(
+                                            wgpu::RenderPassDepthStencilAttachment {
+                                                view: &depth_view,
+                                                depth_ops: Some(wgpu::Operations {
+                                                    load: wgpu::LoadOp::Clear(1.0),
+                                                    store: wgpu::StoreOp::Store,
+                                                }),
+                                                stencil_ops: None,
+                                            },
+                                        ),
+                                        timestamp_writes: None,
+                                        occlusion_query_set: None,
+                                        multiview_mask: None,
+                                    });
+                                pass.set_pipeline(&gpu.pipeline);
+                                pass.set_bind_group(0, &gpu.bind_group, &[]);
+                                pass.set_vertex_buffer(0, vbuf.slice(..));
+                                pass.set_index_buffer(ibuf.slice(..), wgpu::IndexFormat::Uint32);
+                                pass.draw_indexed(0..index_count, 0, 0..1);
                             }
+                            gpu.render_device.queue().submit(Some(encoder.finish()));
+                            gpu.render_device.queue().present(frame);
                         }
                     }
                     window.request_redraw();

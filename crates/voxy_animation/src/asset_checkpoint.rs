@@ -550,14 +550,13 @@ impl Group {
             }
         }
         for (i, saved) in self.rigid.iter().enumerate() {
-            if let Some(saved) = saved {
-                if clip
+            if let Some(saved) = saved
+                && clip
                     .root_rigid_curve(i as u16)
                     .map(|v| v.asset_checkpoint_words())
                     != *saved
-                {
-                    return Err(Error::CompilerMismatch);
-                }
+            {
+                return Err(Error::CompilerMismatch);
             }
         }
         if clip.motion_cache_keys.load(Ordering::Relaxed) != self.motion_keys

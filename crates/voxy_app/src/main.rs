@@ -206,13 +206,13 @@ impl ApplicationHandler for VoxyApp {
                         return;
                     }
                 };
-                if self.animal_check {
-                    if let Err(error) = animals::prepare_check_scene(&mut scene) {
-                        self.startup_failure =
-                            Some(format!("Animal inspection terrain failed: {error}"));
-                        event_loop.exit();
-                        return;
-                    }
+                if self.animal_check
+                    && let Err(error) = animals::prepare_check_scene(&mut scene)
+                {
+                    self.startup_failure =
+                        Some(format!("Animal inspection terrain failed: {error}"));
+                    event_loop.exit();
+                    return;
                 }
                 let uploads = scene
                     .chunks
@@ -603,12 +603,12 @@ impl ApplicationHandler for VoxyApp {
                                 return;
                             }
                         }
-                        if std::env::args().any(|a| a == "--vegetation-check") {
-                            if let Err(error) = renderer.update_camera(plants.inspection_camera()) {
-                                self.startup_failure = Some(error.to_string());
-                                event_loop.exit();
-                                return;
-                            }
+                        if std::env::args().any(|a| a == "--vegetation-check")
+                            && let Err(error) = renderer.update_camera(plants.inspection_camera())
+                        {
+                            self.startup_failure = Some(error.to_string());
+                            event_loop.exit();
+                            return;
                         }
                     }
                     profile_preparation = preparation_started.elapsed();
@@ -646,11 +646,11 @@ impl ApplicationHandler for VoxyApp {
                                         let plants = self
                                             .native_plants
                                             .as_ref()
-                                            .map_or(0, |p| p.active_count());
-                                        let (trees, shrubs) = self
-                                            .native_plants
-                                            .as_ref()
-                                            .map_or((0, 0), |p| p.kind_counts());
+                                            .map_or(0, native_plants::NativePlants::active_count);
+                                        let (trees, shrubs) = self.native_plants.as_ref().map_or(
+                                            (0, 0),
+                                            native_plants::NativePlants::kind_counts,
+                                        );
                                         let output = if self.bodycam_mode {
                                             "artifacts/vegetation-world/hdr"
                                         } else {

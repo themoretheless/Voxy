@@ -108,9 +108,8 @@ fn gpu_batch_preserves_live_cache_on_budget_and_late_validation_failures() {
             }
         };
     }
-    let rejected = match target!().stage(assets.clone()) {
-        Err(e) => e,
-        Ok(_) => panic!("aggregate peak budget must reject"),
+    let Err(rejected) = target!().stage(assets.clone()) else {
+        panic!("aggregate peak budget must reject");
     };
     assert!(rejected.error.contains("budget"));
     assert!(Arc::ptr_eq(
@@ -120,9 +119,9 @@ fn gpu_batch_preserves_live_cache_on_budget_and_late_validation_failures() {
     assert_eq!(cache.state(), before);
     cache.geometry_budget = old_bytes + candidate_bytes;
     let before = cache.state();
-    let rejected = match target!().stage_with(assets.clone(), || Err("late owner failure".into())) {
-        Err(e) => e,
-        Ok(_) => panic!("late failure must reject"),
+    let Err(rejected) = target!().stage_with(assets.clone(), || Err("late owner failure".into()))
+    else {
+        panic!("late failure must reject");
     };
     assert_eq!(rejected.error, "late owner failure");
     assert_eq!(cache.state(), before);
@@ -137,9 +136,8 @@ fn gpu_batch_preserves_live_cache_on_budget_and_late_validation_failures() {
             Ok(())
         })
         .unwrap_or_else(|e| panic!("{}", e.error));
-    let rejected = match pollster::block_on(pending.validate()) {
-        Err(e) => e,
-        Ok(_) => panic!("device validation must reject"),
+    let Err(rejected) = pollster::block_on(pending.validate()) else {
+        panic!("device validation must reject");
     };
     assert!(!rejected.error.is_empty());
     assert_eq!(cache.state(), before);

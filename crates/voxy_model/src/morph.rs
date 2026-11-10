@@ -739,24 +739,22 @@ impl super::ModelAsset {
             .skin_matrices(&self.skeleton)
             .map_err(|e| fail(e.to_string()))?;
         frame.pose = pose;
-        if self.has_morph() {
-            if let Some(index) = clip {
-                let sampled = self
-                    .property_clip(index)?
-                    .sample_authored_phase(phase)
-                    .map_err(|e| fail(e.to_string()))?;
-                frame.properties = voxy_animation::PropertySet::new(
-                    self.morph
-                        .defaults
-                        .entries()
-                        .iter()
-                        .map(|(name, default)| {
-                            (name.clone(), sampled.get(name).unwrap_or(*default))
-                        })
-                        .collect(),
-                )
+        if self.has_morph()
+            && let Some(index) = clip
+        {
+            let sampled = self
+                .property_clip(index)?
+                .sample_authored_phase(phase)
                 .map_err(|e| fail(e.to_string()))?;
-            }
+            frame.properties = voxy_animation::PropertySet::new(
+                self.morph
+                    .defaults
+                    .entries()
+                    .iter()
+                    .map(|(name, default)| (name.clone(), sampled.get(name).unwrap_or(*default)))
+                    .collect(),
+            )
+            .map_err(|e| fail(e.to_string()))?;
         }
         Ok(frame)
     }

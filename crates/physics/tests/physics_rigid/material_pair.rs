@@ -273,7 +273,9 @@ fn whole_pair_bounds_cover_independent_joint_rk4_with_anisotropic_and_light_rece
         assert_eq!(pair.sample(0.).unwrap(), initial);
         assert_eq!(
             pair.sample(duration).unwrap(),
-            pair.paths().each_ref().map(|p| p.end())
+            pair.paths()
+                .each_ref()
+                .map(physics::rigid_motion::RigidMotion::end)
         );
         let expected = pair.paths().each_ref().map(|p| p.work(duration).unwrap());
         assert_eq!(pair.work(duration).unwrap(), expected);

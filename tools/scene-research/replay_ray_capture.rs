@@ -6,8 +6,7 @@ fn main() {
     let width = args
         .windows(2)
         .find(|a| a[0] == "--workgroup")
-        .map(|a| a[1].parse::<u32>().unwrap())
-        .unwrap_or(64);
+        .map_or(64, |a| a[1].parse::<u32>().unwrap());
     assert!([32, 64, 128, 256].contains(&width));
     const REPEATS: u32 = 9;
     let persistent = args.iter().any(|a| a == "--persistent");
@@ -15,14 +14,12 @@ fn main() {
     let quantum = args
         .windows(2)
         .find(|a| a[0] == "--quantum")
-        .map(|a| a[1].parse::<u32>().unwrap())
-        .unwrap_or(8);
+        .map_or(8, |a| a[1].parse::<u32>().unwrap());
     assert!((1..=64).contains(&quantum));
     let groups = args
         .windows(2)
         .find(|a| a[0] == "--groups")
-        .map(|a| a[1].parse::<u32>().unwrap())
-        .unwrap_or(256);
+        .map_or(256, |a| a[1].parse::<u32>().unwrap());
     assert!((1..=8192).contains(&groups));
     let root = Path::new(args.get(1).expect("capture directory"));
     let meta: serde_json::Value =

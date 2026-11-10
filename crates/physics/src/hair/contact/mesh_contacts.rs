@@ -444,42 +444,41 @@ pub(super) fn gather_mesh_contacts(
             if contact.is_some() {
                 for &id in &candidates {
                     let tri = &mesh.triangles[id];
-                    if dot(sub(b, a), tri.normal).abs() <= CONTACT_TOLERANCE {
-                        if let Some((lo, hi)) = projected_face_interval(a, b, tri) {
-                            for t in [lo.max(free_start), hi] {
-                                if t < free_start || t > hi {
-                                    continue;
-                                }
-                                let position = add(mul(a, 1. - t), mul(b, t));
-                                let q = closest_triangle(position, tri);
-                                let delta = sub(position, q);
-                                let distance = len(delta);
-                                if distance > query_radius {
-                                    continue;
-                                }
-                                let mut nearest = (f64::INFINITY, 0, [0.; 3]);
-                                mesh.nearest(position, 0, &mut nearest);
-                                if nearest.1 != id {
-                                    continue;
-                                }
-                                let pseudo = mesh.contact_normal(id, position);
-                                let signed = if dot(delta, pseudo) < 0. {
-                                    -distance
-                                } else {
-                                    distance
-                                };
-                                let normal = triangle_distance_gradient(
-                                    tri, position, q, signed, pseudo, 1e-12,
-                                );
-                                let index = rod.record_contact(
-                                    i,
-                                    t,
-                                    normal,
-                                    add(position, mul(normal, radius - signed)),
-                                    ContactSource::Mesh(mesh_index),
-                                );
-                                rod.contacts[index].surface_velocity = mesh.surface_velocity(id, q);
+                    if dot(sub(b, a), tri.normal).abs() <= CONTACT_TOLERANCE
+                        && let Some((lo, hi)) = projected_face_interval(a, b, tri)
+                    {
+                        for t in [lo.max(free_start), hi] {
+                            if t < free_start || t > hi {
+                                continue;
                             }
+                            let position = add(mul(a, 1. - t), mul(b, t));
+                            let q = closest_triangle(position, tri);
+                            let delta = sub(position, q);
+                            let distance = len(delta);
+                            if distance > query_radius {
+                                continue;
+                            }
+                            let mut nearest = (f64::INFINITY, 0, [0.; 3]);
+                            mesh.nearest(position, 0, &mut nearest);
+                            if nearest.1 != id {
+                                continue;
+                            }
+                            let pseudo = mesh.contact_normal(id, position);
+                            let signed = if dot(delta, pseudo) < 0. {
+                                -distance
+                            } else {
+                                distance
+                            };
+                            let normal =
+                                triangle_distance_gradient(tri, position, q, signed, pseudo, 1e-12);
+                            let index = rod.record_contact(
+                                i,
+                                t,
+                                normal,
+                                add(position, mul(normal, radius - signed)),
+                                ContactSource::Mesh(mesh_index),
+                            );
+                            rod.contacts[index].surface_velocity = mesh.surface_velocity(id, q);
                         }
                     }
                 }

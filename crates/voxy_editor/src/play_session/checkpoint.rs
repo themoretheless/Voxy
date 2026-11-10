@@ -239,10 +239,10 @@ impl PlaySessionCheckpoint {
             .as_ref()
             .map(|follow| follow.prepare(&scene.graph, resolve))
             .transpose()?;
-        if let Some((_, view)) = &follow {
-            if serde_json::to_vec(view)? != serde_json::to_vec(&self.camera)? {
-                return Err("inconsistent saved follow camera".into());
-            }
+        if let Some((_, view)) = &follow
+            && serde_json::to_vec(view)? != serde_json::to_vec(&self.camera)?
+        {
+            return Err("inconsistent saved follow camera".into());
         }
         let liquid = self
             .liquid

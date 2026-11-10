@@ -43,18 +43,24 @@ impl ArchiveSceneRenderer {
     /// Seconds of water simulation; pass it to `WaterWorld::sample` so gameplay and
     /// buoyancy see the surface that is drawn.
     pub fn water_time(&self) -> f32 {
-        self.water.as_ref().map_or(0., |w| w.time())
+        self.water
+            .as_ref()
+            .map_or(0., super::super::archive_water::ArchiveWater::time)
     }
 
     /// Diagnostic submission counters; these do not certify visible fragments or FPS.
     #[doc(hidden)]
     pub fn water_render_stats(&self) -> Option<serde_json::Value> {
-        self.water.as_ref().map(|w| w.render_stats())
+        self.water
+            .as_ref()
+            .map(super::super::archive_water::ArchiveWater::render_stats)
     }
 
     /// The water the renderer draws, for CPU queries.
     pub fn water(&self) -> Option<&voxy_water::WaterWorld> {
-        self.water.as_ref().map(|w| w.world())
+        self.water
+            .as_ref()
+            .map(super::super::archive_water::ArchiveWater::world)
     }
 
     /// Raises (positive) or depresses the surface around `at` (xz); ripples spread from it.
@@ -322,7 +328,9 @@ impl ArchiveSceneRenderer {
     /// Diagnostic previous-UV minus current-UV camera motion, excluding jitter.
     /// Valid only after drawing a temporal frame; immutable polygon meshes only.
     pub fn temporal_motion_texture(&self) -> Option<&wgpu::Texture> {
-        self.temporal.as_ref().map(|t| t.motion_texture())
+        self.temporal
+            .as_ref()
+            .map(super::super::archive_temporal::ArchiveTemporal::motion_texture)
     }
 
     pub fn antialiasing(&self) -> crate::ArchiveAntialiasing {

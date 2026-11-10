@@ -673,13 +673,13 @@ impl EditorAssetCheckpoint {
                 .model
                 .map(|id| models.get(id).cloned().ok_or_else(bad))
                 .transpose()?;
-            if let Some(model) = &animated {
-                if model.primitives.iter().any(|p| {
+            if let Some(model) = &animated
+                && model.primitives.iter().any(|p| {
                     p.base_color_texture
                         .is_some_and(|t| t.image >= nodes.images.len())
-                }) {
-                    return Err(bad());
-                }
+                })
+            {
+                return Err(bad());
             }
             let skinned_lod = a
                 .skinned

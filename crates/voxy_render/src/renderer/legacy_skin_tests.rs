@@ -336,8 +336,7 @@ fn gpu_legacy_skin_raster_matches_cpu_and_retains_rejected_pose() {
     );
     assert!(old_interpolation_differences > 1000);
     println!(
-        "LEGACY_SMOOTH_NORMALS checked_pixels={} max_srgb_channel_error={} old_unnormalized_differing_pixels={}",
-        checked, max_channel_error, old_interpolation_differences
+        "LEGACY_SMOOTH_NORMALS checked_pixels={checked} max_srgb_channel_error={max_channel_error} old_unnormalized_differing_pixels={old_interpolation_differences}"
     );
     // Absent authored normals must agree with the posed CCW face normal.
     let flat_mesh = |normal: Vec3| {

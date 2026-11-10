@@ -88,12 +88,11 @@ impl SavedLod {
         if !Arc::ptr_eq(source, published) {
             return Err("accepted LOD differs from original publication".into());
         }
-        if let Some(prepared) = &owner.prepared_lod {
-            if !prepared.source().shares_source_with(source)
-                || prepared.joints() != owner.frame.skin_matrices
-            {
-                return Err("accepted LOD certificate differs from frame".into());
-            }
+        if let Some(prepared) = &owner.prepared_lod
+            && (!prepared.source().shares_source_with(source)
+                || prepared.joints() != owner.frame.skin_matrices)
+        {
+            return Err("accepted LOD certificate differs from frame".into());
         }
         let mut history: Vec<_> = owner.lod_history.iter().map(|(v, l)| (*v, *l)).collect();
         history.sort_unstable();

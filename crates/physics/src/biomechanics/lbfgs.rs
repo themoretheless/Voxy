@@ -203,7 +203,7 @@ impl Body {
         mut observe: impl FnMut(usize, f64, f64),
     ) -> Result<Equilibrium, &'static str> {
         self.equilibrate_lbfgs_steps(max_iterations, tolerance_n, |i, e, r, _, _, _| {
-            observe(i, e, r)
+            observe(i, e, r);
         })
     }
 
@@ -217,7 +217,7 @@ impl Body {
         mut observe: impl FnMut(usize, f64, f64, f64, usize, f64),
     ) -> Result<Equilibrium, &'static str> {
         self.equilibrate_lbfgs_states(max_iterations, tolerance_n, |i, e, r, s, n, d, _| {
-            observe(i, e, r, s, n, d)
+            observe(i, e, r, s, n, d);
         })
     }
 
@@ -329,21 +329,21 @@ impl Body {
                     .zip(&direction)
                     .map(|(x, d)| add(*x, scale(*d, step)))
                     .collect();
-                if self.gap_path_is_open(&x, &trial) {
-                    if let Ok((e, g)) = self.evaluate(&trial) {
-                        let g = free_gradient(self, g);
-                        let tiny = direction
-                            .iter()
-                            .all(|d| step * step * dot(*d, *d) <= tiny_squared);
-                        let roundoff = 64. * f64::EPSILON * energy.abs().max(1e-12);
-                        if e <= energy + 1e-4 * step * slope
-                            || (tiny
-                                && (e - energy).abs() <= roundoff
-                                && inner(&g, &g) < squared * (1. - 1e-4))
-                        {
-                            accepted = Some((trial, e, g));
-                            break;
-                        }
+                if self.gap_path_is_open(&x, &trial)
+                    && let Ok((e, g)) = self.evaluate(&trial)
+                {
+                    let g = free_gradient(self, g);
+                    let tiny = direction
+                        .iter()
+                        .all(|d| step * step * dot(*d, *d) <= tiny_squared);
+                    let roundoff = 64. * f64::EPSILON * energy.abs().max(1e-12);
+                    if e <= energy + 1e-4 * step * slope
+                        || (tiny
+                            && (e - energy).abs() <= roundoff
+                            && inner(&g, &g) < squared * (1. - 1e-4))
+                    {
+                        accepted = Some((trial, e, g));
+                        break;
                     }
                 }
                 step *= 0.5;
@@ -500,7 +500,7 @@ mod backend_failure_tests {
             Err("CUDA inverse failure")
         );
         assert_eq!(format!("{history:?}"), before);
-        let native = secant_direction(&history, &[[3., 4., 5.]], |r| r.to_vec());
+        let native = secant_direction(&history, &[[3., 4., 5.]], <[[f64; 3]]>::to_vec);
         let checked =
             try_secant_direction::<&str>(&history, &[[3., 4., 5.]], |r| Ok(r.to_vec())).unwrap();
         assert_eq!(

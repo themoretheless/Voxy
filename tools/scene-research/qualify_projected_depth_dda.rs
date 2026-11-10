@@ -552,7 +552,7 @@ fn hierarchy_candidate_range(tile:vec2<i32>,level:i32)->vec2<f32> {if ARCHIVE_ST
             },
             wgpu::BindGroupEntry {
                 binding: 0,
-                resource: wgpu::BindingResource::TextureView(&view),
+                resource: wgpu::BindingResource::TextureView(view),
             },
             wgpu::BindGroupEntry {
                 binding: 1,

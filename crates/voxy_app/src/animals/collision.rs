@@ -40,14 +40,14 @@ impl physics::CollisionWorld for AnimalWorld<'_> {
                 min[i] = offset as f64 + obstacle.min[i];
                 max[i] = offset as f64 + obstacle.max[i];
             }
-            if let Some((fraction, normal)) = physics::sweep_box(body, displacement, min, max) {
-                if fraction < result.fraction {
-                    result = physics::SweepResult {
-                        fraction,
-                        normal,
-                        obstacle: Some(()),
-                    };
-                }
+            if let Some((fraction, normal)) = physics::sweep_box(body, displacement, min, max)
+                && fraction < result.fraction
+            {
+                result = physics::SweepResult {
+                    fraction,
+                    normal,
+                    obstacle: Some(()),
+                };
             }
         }
         Ok(result)

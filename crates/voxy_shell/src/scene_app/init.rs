@@ -17,7 +17,7 @@ impl SceneApp {
             && self
                 .female
                 .as_ref()
-                .is_some_and(|female| female.can_use_gpu_secondary())
+                .is_some_and(voxy_demos::female_demo::FemaleDemo::can_use_gpu_secondary)
     }
 
     pub(super) fn initialize(
@@ -465,7 +465,11 @@ impl SceneApp {
         if let Some(gravity) = &self.gravity {
             set_title_if_changed(&window, &mut self.last_title, gravity.title());
         }
-        if self.tissues.as_ref().is_some_and(|t| t.is_body()) {
+        if self
+            .tissues
+            .as_ref()
+            .is_some_and(voxy_demos::tissue_demo::TissueDemo::is_body)
+        {
             window.set_title(
                 "Voxy skeleton + soft tissues | front / rear | walk, jump, rest | Space: pause",
             );
@@ -514,7 +518,7 @@ impl SceneApp {
             legend_labels: self
                 .female
                 .as_ref()
-                .map(|f| f.diagnostic_legend_labels())
+                .map(voxy_demos::female_demo::FemaleDemo::diagnostic_legend_labels)
                 .unwrap_or_default(),
             internal,
             texture,

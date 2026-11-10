@@ -240,10 +240,10 @@ impl ImportedNodesCheckpoint {
             }
             if let Some(mesh) = &node.mesh {
                 let key = node.geometry_key.ok_or_else(bad)?;
-                if let Some(previous) = geometry.insert(key, mesh.as_slice()) {
-                    if previous != mesh.as_slice() {
-                        return Err(bad());
-                    }
+                if let Some(previous) = geometry.insert(key, mesh.as_slice())
+                    && previous != mesh.as_slice()
+                {
+                    return Err(bad());
                 }
             }
             decode_transform(node.local)?;

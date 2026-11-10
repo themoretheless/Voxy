@@ -158,7 +158,7 @@ fn paired_shared_upload_relocation() {
                             (
                                 old_control
                                     .write_or_stage(&mut encoder, &new_target, |mut b| {
-                                        b.copy_from_slice(bytes)
+                                        b.copy_from_slice(bytes);
                                     })
                                     .unwrap()
                                     .0,
@@ -167,7 +167,7 @@ fn paired_shared_upload_relocation() {
                         } else if after {
                             (
                                 new.write_or_stage(&mut encoder, &new_target, |mut b| {
-                                    b.copy_from_slice(bytes)
+                                    b.copy_from_slice(bytes);
                                 })
                                 .unwrap()
                                 .0,
@@ -176,7 +176,7 @@ fn paired_shared_upload_relocation() {
                         } else {
                             (
                                 old.write_or_stage(&mut encoder, &old_target, |mut b| {
-                                    b.copy_from_slice(bytes)
+                                    b.copy_from_slice(bytes);
                                 })
                                 .unwrap()
                                 .0,

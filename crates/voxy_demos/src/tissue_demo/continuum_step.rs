@@ -462,102 +462,100 @@ impl TissueDemo {
                                 )
                             );
                         }
-                        if trial.is_ok() {
-                            if let (Some(start), Some(end)) =
+                        if trial.is_ok()
+                            && let (Some(start), Some(end)) =
                                 (body.prescribed_surface(), diagnostic.prescribed_surface())
-                            {
-                                let faces = body.body().surface();
-                                let initial = start.response(body.body().positions(), &faces)?;
-                                let final_response =
-                                    end.response(diagnostic.body().positions(), &faces)?;
-                                let mut integrands = Vec::new();
-                                for sample in 0..=8 {
-                                    let fraction = sample as f64 / 8.;
-                                    let points: Vec<_> = body
-                                        .body()
+                        {
+                            let faces = body.body().surface();
+                            let initial = start.response(body.body().positions(), &faces)?;
+                            let final_response =
+                                end.response(diagnostic.body().positions(), &faces)?;
+                            let mut integrands = Vec::new();
+                            for sample in 0..=8 {
+                                let fraction = sample as f64 / 8.;
+                                let points: Vec<_> = body
+                                    .body()
+                                    .positions()
+                                    .iter()
+                                    .zip(diagnostic.body().positions())
+                                    .map(|(a, b)| {
+                                        std::array::from_fn(|axis| {
+                                            a[axis] + fraction * (b[axis] - a[axis])
+                                        })
+                                    })
+                                    .collect();
+                                let surface = start.with_positions(
+                                    start
                                         .positions()
                                         .iter()
-                                        .zip(diagnostic.body().positions())
+                                        .zip(end.positions())
                                         .map(|(a, b)| {
                                             std::array::from_fn(|axis| {
                                                 a[axis] + fraction * (b[axis] - a[axis])
                                             })
                                         })
-                                        .collect();
-                                    let surface = start.with_positions(
-                                        start
-                                            .positions()
-                                            .iter()
-                                            .zip(end.positions())
-                                            .map(|(a, b)| {
-                                                std::array::from_fn(|axis| {
-                                                    a[axis] + fraction * (b[axis] - a[axis])
-                                                })
-                                            })
-                                            .collect(),
-                                    )?;
-                                    let response = surface.response(&points, &faces)?;
-                                    let mut work = 0.;
-                                    for (node, g) in response.body_gradient_n.iter().enumerate() {
-                                        for axis in 0..3 {
-                                            work += g[axis]
-                                                * (diagnostic.body().positions()[node][axis]
-                                                    - body.body().positions()[node][axis]);
-                                        }
-                                    }
-                                    for (node, g) in response.obstacle_gradient_n.iter().enumerate()
-                                    {
-                                        for axis in 0..3 {
-                                            work += g[axis]
-                                                * (end.positions()[node][axis]
-                                                    - start.positions()[node][axis]);
-                                        }
-                                    }
-                                    integrands.push(work);
-                                }
-                                let simpson = (integrands[0]
-                                    + integrands[8]
-                                    + 4. * (integrands[1]
-                                        + integrands[3]
-                                        + integrands[5]
-                                        + integrands[7])
-                                    + 2. * (integrands[2] + integrands[4] + integrands[6]))
-                                    / 24.;
-                                let delta = final_response.potential_j - initial.potential_j;
-                                let gauss = start.path_response(
-                                    end,
-                                    body.body().positions(),
-                                    diagnostic.body().positions(),
-                                    &faces,
+                                        .collect(),
                                 )?;
-                                let mut gauss_work = 0.;
-                                let mut gauss_obstacle_work = 0.;
-                                for (node, g) in gauss.body_gradient_n.iter().enumerate() {
+                                let response = surface.response(&points, &faces)?;
+                                let mut work = 0.;
+                                for (node, g) in response.body_gradient_n.iter().enumerate() {
                                     for axis in 0..3 {
-                                        gauss_work += g[axis]
+                                        work += g[axis]
                                             * (diagnostic.body().positions()[node][axis]
                                                 - body.body().positions()[node][axis]);
                                     }
                                 }
-                                for (node, g) in gauss.obstacle_gradient_n.iter().enumerate() {
+                                for (node, g) in response.obstacle_gradient_n.iter().enumerate() {
                                     for axis in 0..3 {
-                                        gauss_obstacle_work += g[axis]
+                                        work += g[axis]
                                             * (end.positions()[node][axis]
                                                 - start.positions()[node][axis]);
                                     }
                                 }
-                                gauss_work += gauss_obstacle_work;
-                                eprintln!(
-                                    "CONTACT_GAUSS_WORK work_j={gauss_work:.17e} quadrature_error_j={:.17e} obstacle_work_j={gauss_obstacle_work:.17e}",
-                                    delta - gauss_work
-                                );
-                                eprintln!(
-                                    "CONTACT_PATH_WORK contact_energy_change_j={delta:.17e} midpoint_work_j={:.17e} simpson_work_j={simpson:.17e} midpoint_error_j={:.17e} simpson_error_j={:.17e}",
-                                    integrands[4],
-                                    delta - integrands[4],
-                                    delta - simpson
-                                );
+                                integrands.push(work);
                             }
+                            let simpson = (integrands[0]
+                                + integrands[8]
+                                + 4. * (integrands[1]
+                                    + integrands[3]
+                                    + integrands[5]
+                                    + integrands[7])
+                                + 2. * (integrands[2] + integrands[4] + integrands[6]))
+                                / 24.;
+                            let delta = final_response.potential_j - initial.potential_j;
+                            let gauss = start.path_response(
+                                end,
+                                body.body().positions(),
+                                diagnostic.body().positions(),
+                                &faces,
+                            )?;
+                            let mut gauss_work = 0.;
+                            let mut gauss_obstacle_work = 0.;
+                            for (node, g) in gauss.body_gradient_n.iter().enumerate() {
+                                for axis in 0..3 {
+                                    gauss_work += g[axis]
+                                        * (diagnostic.body().positions()[node][axis]
+                                            - body.body().positions()[node][axis]);
+                                }
+                            }
+                            for (node, g) in gauss.obstacle_gradient_n.iter().enumerate() {
+                                for axis in 0..3 {
+                                    gauss_obstacle_work += g[axis]
+                                        * (end.positions()[node][axis]
+                                            - start.positions()[node][axis]);
+                                }
+                            }
+                            gauss_work += gauss_obstacle_work;
+                            eprintln!(
+                                "CONTACT_GAUSS_WORK work_j={gauss_work:.17e} quadrature_error_j={:.17e} obstacle_work_j={gauss_obstacle_work:.17e}",
+                                delta - gauss_work
+                            );
+                            eprintln!(
+                                "CONTACT_PATH_WORK contact_energy_change_j={delta:.17e} midpoint_work_j={:.17e} simpson_work_j={simpson:.17e} midpoint_error_j={:.17e} simpson_error_j={:.17e}",
+                                integrands[4],
+                                delta - integrands[4],
+                                delta - simpson
+                            );
                         }
                         for count in [2, 4] {
                             let mut proof = body.clone();

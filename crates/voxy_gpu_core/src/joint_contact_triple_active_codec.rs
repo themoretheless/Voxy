@@ -1069,7 +1069,7 @@ mod tests {
             assert_eq!(scalars.len(), rows * width);
             let columns = scalars
                 .chunks_exact(width)
-                .map(|v| v.to_vec())
+                .map(<[f64]>::to_vec)
                 .collect::<Vec<_>>();
             let bounds = m["effective_bounds_bits"]
                 .as_array()

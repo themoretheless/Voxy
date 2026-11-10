@@ -645,9 +645,8 @@ fn exercise_gpu_restore(held_barrier: bool, with_models: bool, with_file: bool) 
         .unwrap();
     let original_geometry_budget = cache.geometry_budget;
     cache.geometry_budget = inventory;
-    let rejected = match permit!().stage(prepared) {
-        Err(rejected) => rejected,
-        Ok(_) => panic!("replacement peak geometry must be admitted"),
+    let Err(rejected) = permit!().stage(prepared) else {
+        panic!("replacement peak geometry must be admitted");
     };
     assert!(rejected.error.contains("geometry peak budget"));
     prepared = *rejected.prepared;
@@ -655,19 +654,18 @@ fn exercise_gpu_restore(held_barrier: bool, with_models: bool, with_file: bool) 
     intact!();
     let original_image_budget = cache.budget;
     cache.budget = before_images;
-    let rejected = match permit!().stage(prepared) {
-        Err(rejected) => rejected,
-        Ok(_) => panic!("replacement peak images must be admitted"),
+    let Err(rejected) = permit!().stage(prepared) else {
+        panic!("replacement peak images must be admitted");
     };
     assert!(rejected.error.contains("image budget"));
     prepared = *rejected.prepared;
     cache.budget = original_image_budget;
     intact!();
-    let rejected =
-        match permit!().stage_with(prepared, || Err("late cross-owner validation".into())) {
-            Err(rejected) => rejected,
-            Ok(_) => panic!("late rejection must fail"),
-        };
+    let Err(rejected) =
+        permit!().stage_with(prepared, || Err("late cross-owner validation".into()))
+    else {
+        panic!("late rejection must fail");
+    };
     assert!(rejected.error.contains("late cross-owner"));
     prepared = *rejected.prepared;
     intact!();
@@ -682,9 +680,8 @@ fn exercise_gpu_restore(held_barrier: bool, with_models: bool, with_file: bool) 
             Ok(())
         })
         .unwrap_or_else(|rejected| panic!("unexpected staging rejection: {}", rejected.error));
-    let rejected = match pollster::block_on(pending.validate()) {
-        Err(rejected) => rejected,
-        Ok(_) => panic!("actual GPU validation must reject"),
+    let Err(rejected) = pollster::block_on(pending.validate()) else {
+        panic!("actual GPU validation must reject");
     };
     assert!(rejected.error.contains("Buffer") || rejected.error.contains("buffer"));
     prepared = *rejected.prepared;
@@ -900,9 +897,9 @@ fn exercise_gpu_restore(held_barrier: bool, with_models: bool, with_file: bool) 
             .prepare(&foreign_view, &project, cache.state(), limits())
             .unwrap();
         let model_stage = models!();
-        let rejected = match shared_permit!().stage_after_models(foreign_ui, &scene, model_stage) {
-            Err(rejected) => rejected,
-            Ok(_) => panic!("foreign target UI must reject before upload"),
+        let Err(rejected) = shared_permit!().stage_after_models(foreign_ui, &scene, model_stage)
+        else {
+            panic!("foreign target UI must reject before upload");
         };
         assert!(rejected.ui.error.contains("target scene"));
         rejected.ui.discard().unwrap().join().unwrap();
@@ -917,9 +914,9 @@ fn exercise_gpu_restore(held_barrier: bool, with_models: bool, with_file: bool) 
         let prepared = saved
             .prepare(&view, &project, cache.state(), limits())
             .unwrap();
-        let rejected = match shared_permit!().stage_after_models(prepared, &scene, model_stage) {
-            Err(rejected) => rejected,
-            Ok(_) => panic!("combined old + models + UI peak must reject"),
+        let Err(rejected) = shared_permit!().stage_after_models(prepared, &scene, model_stage)
+        else {
+            panic!("combined old + models + UI peak must reject");
         };
         assert!(rejected.ui.error.contains("geometry peak budget"));
         rejected.ui.discard().unwrap().join().unwrap();
@@ -937,9 +934,8 @@ fn exercise_gpu_restore(held_barrier: bool, with_models: bool, with_file: bool) 
         let prepared = saved
             .prepare(&view, &project, cache.state(), limits())
             .unwrap();
-        let rejected = match shared_permit!().stage_after_models(prepared, &scene, models) {
-            Err(rejected) => rejected,
-            Ok(_) => panic!("different original cache identity must reject"),
+        let Err(rejected) = shared_permit!().stage_after_models(prepared, &scene, models) else {
+            panic!("different original cache identity must reject");
         };
         assert!(rejected.ui.error.contains("destination changed"));
         cache = original_cache;

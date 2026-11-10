@@ -162,7 +162,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         device.poll(wgpu::PollType::wait_indefinitely())?;
         let bytes = read.try_read()?.ok_or("arithmetic probe pending")?;
         let result: &[f32] = bytemuck::cast_slice(&bytes);
-        println!("COMPENSATED ARITHMETIC PROBE {:?}", result);
+        println!("COMPENSATED ARITHMETIC PROBE {result:?}");
         let product = (1.0001f32 as f64).powi(2);
         let product_error = ((result[2] as f64 + result[3] as f64) - product).abs();
         if result[0] != 100000000. || result[1] != 1. || product_error > 1e-13 {

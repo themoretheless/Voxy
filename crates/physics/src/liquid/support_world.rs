@@ -434,7 +434,7 @@ pub(super) fn material_point_wrenches(
         let orientation = body.spin.map_or([0., 0., 0., 1.], |s| s.orientation);
         let omega = body
             .spin
-            .map_or(Ok([0.; 3]), |s| s.angular_velocity())
+            .map_or(Ok([0.; 3]), super::super::rotation::Spin::angular_velocity)
             .map_err(spin_error)?;
         let total = MotionLoad::aggregate([
             MotionLoad {

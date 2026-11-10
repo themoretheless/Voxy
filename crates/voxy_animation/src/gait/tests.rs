@@ -123,9 +123,7 @@ fn planted_feet_stay_fixed_in_world_while_actor_moves() {
                     Some(previous) => {
                         assert!(
                             (world - previous).length() < 1e-3,
-                            "foot {foot} slid {:?} -> {:?}",
-                            previous,
-                            world
+                            "foot {foot} slid {previous:?} -> {world:?}"
                         );
                         stance_ticks += 1;
                     }

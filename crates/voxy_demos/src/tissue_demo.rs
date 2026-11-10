@@ -338,7 +338,9 @@ impl TissueDemo {
         Ok(demo)
     }
     pub fn biomechanics_title(&self) -> Option<String> {
-        self.biomechanics.as_ref().map(|b| b.title())
+        self.biomechanics
+            .as_ref()
+            .map(super::biomechanics_demo::BiomechanicsDemo::title)
     }
     pub fn body() -> Self {
         Self::body_at_centers(std::array::from_fn(Self::center), [0, 0, 3, 7])
@@ -1209,7 +1211,7 @@ impl TissueDemo {
     ) -> Result<(), &'static str> {
         let workers = if next_surfaces.is_some() {
             std::thread::available_parallelism()
-                .map_or(1, |n| n.get())
+                .map_or(1, std::num::NonZero::get)
                 .min(4)
         } else {
             1

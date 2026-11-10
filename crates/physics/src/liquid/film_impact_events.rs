@@ -498,16 +498,16 @@ impl Liquid {
         let mut pair_checks = 0usize;
         let mut applied_deposits = 0usize;
         loop {
-            if let Some(staged) = &mut staged_geometry_film {
-                if applied_deposits != deposits.len() {
-                    let additions: Vec<_> = deposits[applied_deposits..]
-                        .iter()
-                        .map(|(cell, volume, _)| (*cell, *volume))
-                        .collect();
-                    staged.deposit_batch(&additions)?;
-                    applied_deposits = deposits.len();
-                    free_surface = Some(staged.free_surface(free_surface_side.unwrap())?);
-                }
+            if let Some(staged) = &mut staged_geometry_film
+                && applied_deposits != deposits.len()
+            {
+                let additions: Vec<_> = deposits[applied_deposits..]
+                    .iter()
+                    .map(|(cell, volume, _)| (*cell, *volume))
+                    .collect();
+                staged.deposit_batch(&additions)?;
+                applied_deposits = deposits.len();
+                free_surface = Some(staged.free_surface(free_surface_side.unwrap())?);
             }
             let collision_geometry = free_surface
                 .as_ref()
@@ -571,10 +571,10 @@ impl Liquid {
                     )?
                 };
                 wall_hits.push(wall);
-                if let Some(hit) = wall {
-                    if next.as_ref().is_none_or(|(_, old, _)| hit.time < *old) {
-                        next = Some((i, hit.time, hit));
-                    }
+                if let Some(hit) = wall
+                    && next.as_ref().is_none_or(|(_, old, _)| hit.time < *old)
+                {
+                    next = Some((i, hit.time, hit));
                 }
             }
             let mut pair = None;
@@ -602,10 +602,9 @@ impl Liquid {
                             c.maximum_normal_speed,
                         )
                         .map_err(|_| "invalid lifecycle pair contact")?
+                            && pair.is_none_or(|(_, _, old)| t < old)
                         {
-                            if pair.is_none_or(|(_, _, old)| t < old) {
-                                pair = Some((i, j, t));
-                            }
+                            pair = Some((i, j, t));
                         }
                     }
                 }

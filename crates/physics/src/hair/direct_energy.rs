@@ -159,7 +159,7 @@ fn residuals<const N: usize>(
 pub(super) fn structural(rod: &HairRod, dt: f64) -> Result<f64, &'static str> {
     let mut energy = 0.;
     residuals(rod, [(&rod.x, &rod.q)], dt, |weight, [r]| {
-        energy += weight.apply(dot(r, r))
+        energy += weight.apply(dot(r, r));
     })?;
     if !energy.is_finite() {
         return Err("hair implicit energy overflow");

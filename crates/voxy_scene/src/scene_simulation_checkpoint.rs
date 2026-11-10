@@ -65,14 +65,14 @@ impl SceneSimulation {
             scene: scene.capture(registry)?,
             allocation: scene.allocation_checkpoint(max_bytes)?,
             presentation: self
-                .presentation_checkpoint(&scene.graph, |node| scene.identity(node).cloned())?,
+                .presentation_checkpoint(scene.graph, |node| scene.identity(node).cloned())?,
             behaviors: self.behavior_checkpoint(
-                &scene.graph,
+                scene.graph,
                 |node| scene.identity(node).cloned(),
                 max_bytes,
             )?,
             commands: self.commands.checkpoint(
-                &scene.graph,
+                scene.graph,
                 registry,
                 |node| scene.identity(node).cloned(),
                 max_bytes,

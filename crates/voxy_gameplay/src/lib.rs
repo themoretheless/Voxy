@@ -369,9 +369,8 @@ pub fn perception_cone_visibility(
         return 0.0;
     }
     let eye_v = Vec3::from_array(eye);
-    let fwd_v = match Vec3::from_array(forward).try_normalize() {
-        Some(v) => v,
-        None => return 0.0,
+    let Some(fwd_v) = Vec3::from_array(forward).try_normalize() else {
+        return 0.0;
     };
     let delta = Vec3::from_array(target) - eye_v;
     let dist = delta.length();

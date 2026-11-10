@@ -107,7 +107,7 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
         }
         let expected_edges: Vec<_> = expected_rows
             .into_iter()
-            .flat_map(|row| row.into_iter())
+            .flat_map(std::iter::IntoIterator::into_iter)
             .collect();
         assert_eq!(expected_edges.len() as u64 * 8, edge_bytes);
         queue.write_buffer(&positions, 0, bytemuck::cast_slice(&packed(&points)));

@@ -169,7 +169,7 @@ fn projection_measure(count: usize, scene: &mut SceneGraph) {
             let start = Instant::now();
             if scoped {
                 plan.run_scene(scene, |_, access| {
-                    projection.refresh_scoped_with(access, |scene, owner| scene.world_matrix(owner))
+                    projection.refresh_scoped_with(access, voxy_scene::SceneGraph::world_matrix)
                 })
                 .unwrap();
             } else {

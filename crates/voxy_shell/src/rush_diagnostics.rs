@@ -17,17 +17,17 @@ fn font() -> Result<RasterFont, Box<dyn std::error::Error>> {
         "C:/Windows/Fonts/consola.ttf".into(),
     ]);
     for path in paths {
-        if let Ok(bytes) = std::fs::read(path) {
-            if let Ok(font) = RasterFont::parse(
+        if let Ok(bytes) = std::fs::read(path)
+            && let Ok(font) = RasterFont::parse(
                 &bytes,
                 FontLimits {
                     max_font_bytes: 16 * 1024 * 1024,
                     max_glyph_pixels: 4096,
                     max_size: 32.0,
                 },
-            ) {
-                return Ok(font);
-            }
+            )
+        {
+            return Ok(font);
         }
     }
     Err("No UI font found; set VOXY_UI_FONT to a local TTF font".into())

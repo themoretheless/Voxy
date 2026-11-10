@@ -7,11 +7,14 @@ fn main() {
     let path = std::env::args()
         .skip(1)
         .find(|a| !a.starts_with("--"))
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|| {
-            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-                .join("../../assets/anatomy/hra-female/tetrahedra/right-lung-middle-envelope.vxtet")
-        });
+        .map_or_else(
+            || {
+                std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
+                    "../../assets/anatomy/hra-female/tetrahedra/right-lung-middle-envelope.vxtet",
+                )
+            },
+            std::path::PathBuf::from,
+        );
     let arguments: Vec<_> = std::env::args().skip(1).collect();
     let seconds: f64 = arguments
         .iter()

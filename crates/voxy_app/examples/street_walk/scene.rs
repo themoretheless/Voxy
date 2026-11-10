@@ -185,9 +185,8 @@ pub fn load(root: &Path) -> Result<StreetScene, Box<dyn std::error::Error>> {
     for (mesh, primitives) in archive.meshes.iter().enumerate() {
         for p in primitives {
             let normals = p.normals.as_ref().ok_or("authored normals missing")?;
-            let tangents = match p.tangents.as_ref() {
-                Some(SceneArchiveTangents::Finite(v)) => v,
-                _ => return Err("finite tangents missing".into()),
+            let Some(SceneArchiveTangents::Finite(tangents)) = p.tangents.as_ref() else {
+                return Err("finite tangents missing".into());
             };
             let uv = &p
                 .texcoords

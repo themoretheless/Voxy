@@ -124,8 +124,7 @@ fn bench_animation_soa_vs_aos() {
 
     let speedup = aos_elapsed.as_secs_f64() / soa_elapsed.as_secs_f64().max(1e-9);
     println!(
-        "[#72-75 Animation SoA] AoS: {:?} | SoA (reused buffers): {:?} ({:.2}x) | 64-instance batch queue: {:?}",
-        aos_elapsed, soa_elapsed, speedup, queue_elapsed
+        "[#72-75 Animation SoA] AoS: {aos_elapsed:?} | SoA (reused buffers): {soa_elapsed:?} ({speedup:.2}x) | 64-instance batch queue: {queue_elapsed:?}"
     );
 }
 
@@ -156,8 +155,7 @@ fn bench_asset_streaming_priority_queue() {
     let enqueue_elapsed = start.elapsed();
     assert_eq!(streamer.queued_len(), 512);
     println!(
-        "[#81-85 Asset & LOD Streaming] 512 prioritized LOD requests queued in {:?}",
-        enqueue_elapsed
+        "[#81-85 Asset & LOD Streaming] 512 prioritized LOD requests queued in {enqueue_elapsed:?}"
     );
 }
 
@@ -172,8 +170,7 @@ fn bench_command_partitioning() {
     let elapsed = start.elapsed();
     let _ = SceneSurface::partition_draw_slices;
     println!(
-        "[#76-80 Command Buffer Partitioning] 1,000 x 8-thread partition passes in {:?}",
-        elapsed
+        "[#76-80 Command Buffer Partitioning] 1,000 x 8-thread partition passes in {elapsed:?}"
     );
 }
 

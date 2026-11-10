@@ -71,7 +71,7 @@ impl Liquid {
             return Err("invalid impact spray controls");
         }
         let mut candidate = self.clone();
-        let mut final_radii = radii.map(|r| r.to_vec());
+        let mut final_radii = radii.map(<[f64]>::to_vec);
         let rebound = if let Some(radii) = radii {
             candidate.rebound_spheres_surface_film(
                 previous_positions,

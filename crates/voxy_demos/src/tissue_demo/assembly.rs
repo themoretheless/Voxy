@@ -1288,8 +1288,7 @@ mod contact_tests {
         );
         assert_eq!(saved, format!("{demo:?}"));
         println!(
-            "PHYSICAL_SKIN_CONTROLLER independent_defect_j={independent:.17e} surface_work_j={:.17e}",
-            surface_work_j
+            "PHYSICAL_SKIN_CONTROLLER independent_defect_j={independent:.17e} surface_work_j={surface_work_j:.17e}"
         );
     }
     #[test]

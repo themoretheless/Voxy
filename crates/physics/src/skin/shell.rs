@@ -1123,11 +1123,10 @@ impl Skin {
                             dt,
                             attachments,
                             contacts,
-                        ) {
-                            if candidate <= e.energy + 1e-4 * fraction * slope {
-                                accepted = Some(trial);
-                                break;
-                            }
+                        ) && candidate <= e.energy + 1e-4 * fraction * slope
+                        {
+                            accepted = Some(trial);
+                            break;
                         }
                         fraction *= 0.5;
                     }

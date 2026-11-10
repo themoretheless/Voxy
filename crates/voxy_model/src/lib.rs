@@ -1773,7 +1773,7 @@ mod phase_preview_tests {
                 pose.skin_matrices(&model.skeleton)
                     .unwrap()
                     .iter()
-                    .all(|matrix| matrix.is_finite())
+                    .all(glam::Mat4::is_finite)
             );
             assert_eq!(
                 model.sample_pose_phase(None, phase).unwrap(),
@@ -1903,7 +1903,7 @@ mod cesium_character_tests {
         for phase in [0., 0.125, 0.25, 0.5, 0.75, 1.] {
             let pose = model.sample_pose_phase(Some(0), phase).unwrap();
             let palette = pose.skin_matrices(&model.skeleton).unwrap();
-            assert!(palette.iter().all(|matrix| matrix.is_finite()));
+            assert!(palette.iter().all(glam::Mat4::is_finite));
             let meshes = model.scene_meshes(&pose).unwrap();
             let positions: Vec<_> = meshes
                 .iter()

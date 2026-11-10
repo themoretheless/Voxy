@@ -275,7 +275,7 @@ mod tests {
                 })
                 .collect::<Vec<_>>()
                 .chunks_exact(width)
-                .map(|row| row.to_vec())
+                .map(<[[f64; 2]]>::to_vec)
                 .collect::<Vec<_>>()
         } else {
             vec![vec![[1., 2f64.powi(-100)], [-0.5, -2f64.powi(-105)]]]

@@ -66,11 +66,16 @@ impl ArchiveWorldRayFrame {
         if tiles.is_empty() || !(1..=2).contains(&templates.len()) {
             return Err(RaySceneError::InvalidGeometry);
         }
-        let mode = templates[0].consumer_stages.as_ref().map(|s| s.is_sorted());
-        if templates
-            .iter()
-            .any(|r| r.consumer_stages.as_ref().map(|s| s.is_sorted()) != mode)
-        {
+        let mode = templates[0]
+            .consumer_stages
+            .as_ref()
+            .map(consumer_profile::ConsumerStages::is_sorted);
+        if templates.iter().any(|r| {
+            r.consumer_stages
+                .as_ref()
+                .map(consumer_profile::ConsumerStages::is_sorted)
+                != mode
+        }) {
             return Err(RaySceneError::Unsupported);
         }
         let profile = if std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref() == Ok("1")
@@ -92,7 +97,7 @@ impl ArchiveWorldRayFrame {
                 templates[0]
                     .consumer_stages
                     .as_ref()
-                    .is_some_and(|s| s.is_sorted()),
+                    .is_some_and(consumer_profile::ConsumerStages::is_sorted),
                 tiles.len(),
             )?)
         } else {
@@ -151,10 +156,11 @@ impl ArchiveWorldRayFrame {
         history_available || !all_guides_use_history || self.audit_enabled
     }
     pub(super) fn consumer_sorted(&self) -> bool {
-        self.kinds
-            .iter()
-            .flatten()
-            .all(|r| r.consumer_stages.as_ref().is_some_and(|s| s.is_sorted()))
+        self.kinds.iter().flatten().all(|r| {
+            r.consumer_stages
+                .as_ref()
+                .is_some_and(consumer_profile::ConsumerStages::is_sorted)
+        })
     }
     pub(super) fn encoded_frames(&self) -> u64 {
         self.encoded_frames
@@ -795,17 +801,17 @@ impl ArchiveWorldRayRegion {
         }
         // A pass has only one timestamp pair. Keep the legacy whole-component
         // start in a separate boundary pass only when detailed profiling is on.
-        if profile.is_some() {
-            if let Some(set) = timing.filter(|_| begin.is_some()) {
-                let _boundary = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                    label: Some("world producer profile boundary"),
-                    timestamp_writes: Some(wgpu::ComputePassTimestampWrites {
-                        query_set: set,
-                        beginning_of_pass_write_index: begin,
-                        end_of_pass_write_index: None,
-                    }),
-                });
-            }
+        if profile.is_some()
+            && let Some(set) = timing.filter(|_| begin.is_some())
+        {
+            let _boundary = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("world producer profile boundary"),
+                timestamp_writes: Some(wgpu::ComputePassTimestampWrites {
+                    query_set: set,
+                    beginning_of_pass_write_index: begin,
+                    end_of_pass_write_index: None,
+                }),
+            });
         }
         self.producer.encode_timed(
             encoder,
