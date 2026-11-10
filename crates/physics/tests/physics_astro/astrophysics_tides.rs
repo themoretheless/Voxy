@@ -1,9 +1,9 @@
 use physics::{
     Origin,
     astrophysics::gravity_gradient_torque,
-    astrophysics_spin::Spin,
     gravity::Gravity,
-    gravity_field::{GravityField, NewtonianField, Source},
+    gravity::field::{GravityField, NewtonianField, Source},
+    rotation::Spin,
 };
 fn field(sources: &[Source]) -> NewtonianField<'_> {
     NewtonianField {

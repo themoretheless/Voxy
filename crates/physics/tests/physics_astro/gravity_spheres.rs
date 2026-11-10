@@ -1,5 +1,5 @@
+use physics::gravity::spheres::{Error, Simulation, Sphere};
 use physics::gravity::{Body, Gravity};
-use physics::gravity_spheres::{Error, Simulation, Sphere};
 
 fn sphere(mass: f64, x: f64, vx: f64) -> Sphere {
     Sphere {

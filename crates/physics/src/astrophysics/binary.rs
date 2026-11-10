@@ -6,7 +6,7 @@ use crate::math::dot;
 use crate::math::norm as length;
 use crate::{
     astrophysics::{Error, OrbitalState},
-    astrophysics_spin::Spin,
+    rotation::Spin,
 };
 type Vector = [f64; 3];
 fn matrix_vector(matrix: [[f64; 3]; 3], v: Vector) -> Vector {

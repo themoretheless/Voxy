@@ -1,4 +1,4 @@
-use physics::astrophysics_eos::{Mixture, Species};
+use physics::astrophysics::eos::{Mixture, Species};
 fn hydrogen() -> Mixture {
     Mixture::new(&[Species {
         mass_fraction: 1.0,

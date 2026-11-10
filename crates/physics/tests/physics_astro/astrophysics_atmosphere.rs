@@ -1,6 +1,6 @@
 use physics::{
-    astrophysics_atmosphere::{Atmosphere, Error},
-    astrophysics_eos::{Mixture, Species},
+    astrophysics::atmosphere::{Atmosphere, Error},
+    astrophysics::eos::{Mixture, Species},
 };
 fn atmosphere() -> Atmosphere {
     Atmosphere {

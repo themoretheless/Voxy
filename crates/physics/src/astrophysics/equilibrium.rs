@@ -3,11 +3,11 @@
 //! mass constraint or stability claim. Surface pressure is prescribed; mass is
 //! an output. The gas must initially be stationary.
 use crate::{
-    astrophysics_eos::Mixture,
-    astrophysics_nuclear::Network,
-    astrophysics_opacity::Table,
-    astrophysics_spherical::Sphere,
-    astrophysics_spherical_radiation::{Heating, ReactiveError, ThermalRates},
+    astrophysics::eos::Mixture,
+    astrophysics::nuclear::Network,
+    astrophysics::opacity::Table,
+    astrophysics::spherical::Sphere,
+    astrophysics::spherical_radiation::{Heating, ReactiveError, ThermalRates},
 };
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Search {
@@ -42,12 +42,12 @@ pub enum Error {
     BudgetExceeded,
     NoConvergence,
 }
-fn eos_error(e: crate::astrophysics_eos::Error) -> Error {
+fn eos_error(e: crate::astrophysics::eos::Error) -> Error {
     Error::Physics(ReactiveError::Dynamics(
-        crate::astrophysics_spherical::Error::Eos(e),
+        crate::astrophysics::spherical::Error::Eos(e),
     ))
 }
-fn dynamics_error(e: crate::astrophysics_spherical::Error) -> Error {
+fn dynamics_error(e: crate::astrophysics::spherical::Error) -> Error {
     Error::Physics(ReactiveError::Dynamics(e))
 }
 fn state(template: &Sphere, mixtures: &[Mixture], x: &[f64]) -> Result<(Sphere, Vec<f64>), Error> {
@@ -169,7 +169,7 @@ impl Sphere {
         fractions: &[Vec<f64>],
         network: &Network,
         surface_pressure: f64,
-        spectrum: crate::astrophysics_spherical_radiation::FreeFreeSpectrum,
+        spectrum: crate::astrophysics::spherical_radiation::FreeFreeSpectrum,
         rays_per_annulus: usize,
         max_segments: usize,
         search: Search,
@@ -201,7 +201,7 @@ impl Sphere {
         heating: Heating,
         table: Option<&Table>,
         search: Search,
-        spectrum: Option<crate::astrophysics_spherical_radiation::FreeFreeSpectrum>,
+        spectrum: Option<crate::astrophysics::spherical_radiation::FreeFreeSpectrum>,
     ) -> Result<Equilibrium, Error> {
         let n = self.cells.len();
         if n == 0
@@ -237,7 +237,7 @@ impl Sphere {
             .map(|r| {
                 network
                     .mixture(r)
-                    .map_err(|e| dynamics_error(crate::astrophysics_spherical::Error::Nuclear(e)))
+                    .map_err(|e| dynamics_error(crate::astrophysics::spherical::Error::Nuclear(e)))
             })
             .collect::<Result<Vec<_>, _>>()?;
         let mut x = Vec::with_capacity(2 * n);

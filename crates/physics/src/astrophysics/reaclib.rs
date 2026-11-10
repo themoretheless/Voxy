@@ -1,5 +1,5 @@
 //! Selected-reaction REACLIB text reader; no temperature-domain inference.
-use crate::astrophysics_nuclear::Reaclib;
+use crate::astrophysics::nuclear::Reaclib;
 #[derive(Clone, Debug, PartialEq)]
 pub struct Rate {
     pub reactants: Vec<String>,
@@ -171,11 +171,11 @@ impl Rate {
     /// Invalid/duplicate names, unknown species, invalid stoichiometry or Q.
     pub fn reaction(
         &self,
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         names: &[&str],
         neutrino_fraction: f64,
         q_tolerance_mev: f64,
-    ) -> Result<crate::astrophysics_nuclear::Reaction, Error> {
+    ) -> Result<crate::astrophysics::nuclear::Reaction, Error> {
         if self
             .labels
             .iter()
@@ -206,7 +206,7 @@ impl Rate {
             }
             Ok(counts)
         };
-        let reaction = crate::astrophysics_nuclear::Reaction {
+        let reaction = crate::astrophysics::nuclear::Reaction {
             reactants: counts(&self.reactants)?,
             products: counts(&self.products)?,
             rate: self.fit.clone(),

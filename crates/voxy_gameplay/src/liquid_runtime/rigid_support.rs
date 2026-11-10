@@ -1187,7 +1187,7 @@ mod edge_derivative_tests {
                 velocity: [0.; 3],
                 mass: 2.,
             },
-            spin: Some(physics::astrophysics_spin::Spin {
+            spin: Some(physics::rotation::Spin {
                 orientation: q.to_array(),
                 angular_momentum: momentum,
                 inertia: [1., 2., 3.],
@@ -1264,7 +1264,7 @@ mod projected_rotation_tests {
                 velocity: [0.; 3],
                 mass: 1.,
             },
-            spin: Some(physics::astrophysics_spin::Spin {
+            spin: Some(physics::rotation::Spin {
                 orientation: [0., 0., 0., 1.],
                 angular_momentum: [0.3, 0.7, -0.4],
                 inertia: [1.; 3],
@@ -1693,7 +1693,7 @@ mod point_velocity_tests {
     #[test]
     fn rotating_corner_velocity_matches_independent_finite_difference() {
         let mut first = body(DVec3::Y, DVec3::ZERO);
-        first.spin = Some(physics::astrophysics_spin::Spin {
+        first.spin = Some(physics::rotation::Spin {
             orientation: [0., 0., 0., 1.],
             angular_momentum: [0., 0.3, 0.],
             inertia: [1.; 3],
@@ -1795,7 +1795,7 @@ mod point_velocity_tests {
     #[test]
     fn clipped_acceleration_includes_sliding_on_a_rotating_plane() {
         let mut first = body(DVec3::Y, DVec3::ZERO);
-        first.spin = Some(physics::astrophysics_spin::Spin {
+        first.spin = Some(physics::rotation::Spin {
             orientation: [0., 0., 0., 1.],
             angular_momentum: [0., 0.3, 0.],
             inertia: [1.; 3],
@@ -1882,7 +1882,7 @@ mod point_velocity_tests {
     #[test]
     fn clipped_jerk_matches_independent_plane_intersection() {
         let mut first = body(DVec3::Y, DVec3::ZERO);
-        first.spin = Some(physics::astrophysics_spin::Spin {
+        first.spin = Some(physics::rotation::Spin {
             orientation: [0., 0., 0., 1.],
             angular_momentum: [0., 0.3, 0.],
             inertia: [1.; 3],
@@ -1979,7 +1979,7 @@ mod point_interval_tests {
                 velocity: [0.; 3],
                 mass: 1.,
             },
-            spin: Some(physics::astrophysics_spin::Spin {
+            spin: Some(physics::rotation::Spin {
                 orientation: [0., 0., 0., 1.],
                 angular_momentum: [0., yaw, 0.],
                 inertia: [1.; 3],
@@ -2249,7 +2249,7 @@ mod moving_face_gap_tests {
                 velocity: [-center, 0., 0.],
                 mass: 1.,
             },
-            spin: Some(physics::astrophysics_spin::Spin {
+            spin: Some(physics::rotation::Spin {
                 orientation: [0., 0., 0., 1.],
                 angular_momentum: [0., 0., 1.],
                 inertia: [1.; 3],
@@ -2258,7 +2258,7 @@ mod moving_face_gap_tests {
         .prepare_affine_motion(
             [0., -center, 0.],
             [center, 0., 0.],
-            physics::astrophysics_spin::TorquePolynomial::constant(torque),
+            physics::rotation::TorquePolynomial::constant(torque),
             dt,
             physics::spin_path::Config {
                 max_angular_error_rad: 1e-6,
@@ -2429,7 +2429,7 @@ mod moving_edge_gap_tests {
                 velocity: velocity.to_array(),
                 mass: 1.,
             },
-            spin: Some(physics::astrophysics_spin::Spin {
+            spin: Some(physics::rotation::Spin {
                 orientation: [0., 0., 0., 1.],
                 angular_momentum: momentum.to_array(),
                 inertia: [1.; 3],
@@ -2438,7 +2438,7 @@ mod moving_edge_gap_tests {
         .prepare_affine_motion(
             force.to_array(),
             rate.to_array(),
-            physics::astrophysics_spin::TorquePolynomial::constant(torque.to_array()),
+            physics::rotation::TorquePolynomial::constant(torque.to_array()),
             dt,
             physics::spin_path::Config {
                 max_angular_error_rad: 1e-6,
@@ -2460,7 +2460,7 @@ mod moving_edge_gap_tests {
                 velocity: [0.; 3],
                 mass: 1.,
             },
-            spin: Some(physics::astrophysics_spin::Spin {
+            spin: Some(physics::rotation::Spin {
                 orientation: qa.to_array(),
                 angular_momentum: axis.to_array(),
                 inertia: [1.; 3],
@@ -2469,7 +2469,7 @@ mod moving_edge_gap_tests {
         .prepare_affine_motion(
             [0.; 3],
             [0.; 3],
-            physics::astrophysics_spin::TorquePolynomial::constant([0.; 3]),
+            physics::rotation::TorquePolynomial::constant([0.; 3]),
             dt,
             physics::spin_path::Config {
                 max_angular_error_rad: 1e-6,

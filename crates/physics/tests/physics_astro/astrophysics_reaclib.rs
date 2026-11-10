@@ -1,4 +1,4 @@
-use physics::astrophysics_reaclib::{Error, parse};
+use physics::astrophysics::reaclib::{Error, parse};
 const DATA: &str = include_str!("../data/triple_alpha_fy05.reaclib");
 #[test]
 fn actual_fy05_records_and_additive_rates() {
@@ -55,8 +55,8 @@ fn malformed_mixed_weak_budget_and_domain_are_rejected() {
 #[test]
 fn mapping_species_order_and_binding_are_checked() {
     use physics::{
-        astrophysics_nuclear::{Network, Nucleus},
-        astrophysics_reaclib::MEV_JOULES,
+        astrophysics::nuclear::{Network, Nucleus},
+        astrophysics::reaclib::MEV_JOULES,
     };
     let rate = parse(DATA, 2e8, 2e8, 3).unwrap();
     let mut network = Network {

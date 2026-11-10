@@ -1,7 +1,7 @@
 use physics::{
-    astrophysics_eos::{Mixture, Species},
-    astrophysics_gas::{Boundary, Cell},
-    astrophysics_spherical::Sphere,
+    astrophysics::eos::{Mixture, Species},
+    astrophysics::gas::{Boundary, Cell},
+    astrophysics::spherical::Sphere,
 };
 fn mixture() -> Mixture {
     Mixture::new(&[Species {
@@ -75,7 +75,7 @@ fn radiation_pressure_gradient_evolves_conservatively() {
 
 #[test]
 fn local_composition_eos_matches_uniform_and_drives_stratified_gas() {
-    use physics::astrophysics_nuclear::{Network, Nucleus};
+    use physics::astrophysics::nuclear::{Network, Nucleus};
     let network = Network {
         nuclei: vec![
             Nucleus {
@@ -137,7 +137,7 @@ fn local_composition_eos_matches_uniform_and_drives_stratified_gas() {
 
 #[test]
 fn hydrostatic_residual_matches_uniform_gravity_and_refines_equilibrium() {
-    use physics::astrophysics_nuclear::{Network, Nucleus};
+    use physics::astrophysics::nuclear::{Network, Nucleus};
     let network = Network {
         nuclei: vec![Nucleus {
             mass_number: 1,
@@ -191,7 +191,7 @@ fn hydrostatic_residual_matches_uniform_gravity_and_refines_equilibrium() {
 
 #[test]
 fn static_residual_matches_initial_momentum_derivative() {
-    use physics::astrophysics_nuclear::{Network, Nucleus};
+    use physics::astrophysics::nuclear::{Network, Nucleus};
     let network = Network {
         nuclei: vec![Nucleus {
             mass_number: 1,
@@ -231,7 +231,7 @@ fn static_residual_matches_initial_momentum_derivative() {
 
 #[test]
 fn uniform_hydrostatic_initializer_refines_and_is_atomic() {
-    use physics::astrophysics_nuclear::{Network, Nucleus};
+    use physics::astrophysics::nuclear::{Network, Nucleus};
     let network = Network {
         nuclei: vec![Nucleus {
             mass_number: 1,
@@ -272,7 +272,7 @@ fn uniform_hydrostatic_initializer_refines_and_is_atomic() {
 
 #[test]
 fn atmospheric_exterior_flux_conserves_mass_energy_and_rolls_back() {
-    use physics::{astrophysics_atmosphere::Atmosphere, astrophysics_spherical::Exterior};
+    use physics::{astrophysics::atmosphere::Atmosphere, astrophysics::spherical::Exterior};
     let atmosphere = Atmosphere {
         gravity: 1e5,
         opacity: 0.01,
@@ -323,8 +323,8 @@ fn atmospheric_exterior_flux_conserves_mass_energy_and_rolls_back() {
 #[test]
 fn exterior_inflow_uses_supplied_composition_and_conserves_species() {
     use physics::{
-        astrophysics_nuclear::{Network, Nucleus},
-        astrophysics_spherical::CompositionExterior,
+        astrophysics::nuclear::{Network, Nucleus},
+        astrophysics::spherical::CompositionExterior,
     };
     let network = Network {
         nuclei: vec![
@@ -386,7 +386,7 @@ fn exterior_inflow_uses_supplied_composition_and_conserves_species() {
 
 #[test]
 fn stratified_hydrostatic_initializer_matches_uniform_and_virial() {
-    use physics::astrophysics_nuclear::{Network, Nucleus};
+    use physics::astrophysics::nuclear::{Network, Nucleus};
     let network = Network {
         nuclei: vec![Nucleus {
             mass_number: 1,
@@ -456,7 +456,7 @@ fn stratified_hydrostatic_initializer_matches_uniform_and_virial() {
 
 #[test]
 fn local_composition_hydrostatic_pressure_matches_independent_quadrature() {
-    use physics::astrophysics_nuclear::{Network, Nucleus};
+    use physics::astrophysics::nuclear::{Network, Nucleus};
     let network = Network {
         nuclei: vec![
             Nucleus {
@@ -535,8 +535,8 @@ fn local_composition_hydrostatic_pressure_matches_independent_quadrature() {
 #[test]
 fn polytrope_initializes_local_eos_mass_and_temperature_atomically() {
     use physics::{
-        astrophysics_nuclear::{Network, Nucleus},
-        astrophysics_star::{Scaling, lane_emden},
+        astrophysics::nuclear::{Network, Nucleus},
+        astrophysics::star::{Scaling, lane_emden},
     };
     let network = Network {
         nuclei: vec![Nucleus {
@@ -595,8 +595,8 @@ fn polytrope_initializes_local_eos_mass_and_temperature_atomically() {
 #[test]
 fn exterior_force_residual_matches_pressure_flux_and_initial_derivative() {
     use physics::{
-        astrophysics_nuclear::{Network, Nucleus},
-        astrophysics_spherical::CompositionExterior,
+        astrophysics::nuclear::{Network, Nucleus},
+        astrophysics::spherical::CompositionExterior,
     };
     let network = Network {
         nuclei: vec![Nucleus {
@@ -642,8 +642,8 @@ fn exterior_force_residual_matches_pressure_flux_and_initial_derivative() {
 #[test]
 fn spherical_contact_transport_keeps_static_composition_and_gravity_ledgers() {
     use physics::{
-        astrophysics_nuclear::{Network, Nucleus},
-        astrophysics_spherical::CompositionExterior,
+        astrophysics::nuclear::{Network, Nucleus},
+        astrophysics::spherical::CompositionExterior,
     };
     let network = Network {
         nuclei: vec![
@@ -726,7 +726,7 @@ fn spherical_contact_transport_keeps_static_composition_and_gravity_ledgers() {
 
 #[test]
 fn balanced_sphere_keeps_equilibrium_and_evolves_perturbations_conservatively() {
-    use physics::astrophysics_nuclear::{Network, Nucleus};
+    use physics::astrophysics::nuclear::{Network, Nucleus};
     let network = Network {
         nuclei: vec![
             Nucleus {
@@ -796,8 +796,8 @@ fn balanced_sphere_keeps_equilibrium_and_evolves_perturbations_conservatively() 
 #[test]
 fn balanced_open_sphere_keeps_equilibrium_and_accounts_for_reservoir_inflow() {
     use physics::{
-        astrophysics_nuclear::{Network, Nucleus},
-        astrophysics_spherical::CompositionExterior,
+        astrophysics::nuclear::{Network, Nucleus},
+        astrophysics::spherical::CompositionExterior,
     };
     let network = Network {
         nuclei: vec![

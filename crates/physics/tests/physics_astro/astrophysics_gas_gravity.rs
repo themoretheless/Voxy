@@ -1,6 +1,6 @@
 use physics::{
-    astrophysics_gas::{Boundary, Cell, Gas},
-    astrophysics_gas_gravity::{SelfGravitatingGas, field},
+    astrophysics::gas::{Boundary, Cell, Gas},
+    astrophysics::gas_gravity::{SelfGravitatingGas, field},
 };
 fn system(n: usize) -> SelfGravitatingGas {
     SelfGravitatingGas {

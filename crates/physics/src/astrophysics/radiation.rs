@@ -1,6 +1,6 @@
 //! Static grey LTE absorption/emission along a ray. Intensity is bolometric
 //! W m^-2 sr^-1; opacity is absorption per length (m^-1). No scattering.
-use crate::{astrophysics::Error, astrophysics_thermal::STEFAN_BOLTZMANN};
+use crate::{astrophysics::Error, astrophysics::thermal::STEFAN_BOLTZMANN};
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Layer {
     pub length: f64,

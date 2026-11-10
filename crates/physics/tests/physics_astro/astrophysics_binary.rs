@@ -1,7 +1,7 @@
 use physics::{
     astrophysics::OrbitalState,
-    astrophysics_binary::{Binary, Body, StepError, Tide},
-    astrophysics_spin::Spin,
+    astrophysics::binary::{Binary, Body, StepError, Tide},
+    rotation::Spin,
 };
 fn body(mass: f64, radius: f64) -> Body {
     Body {

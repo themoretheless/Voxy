@@ -1,6 +1,6 @@
 //! Shared rigid-body contact fixture (plan step B3): the same body the
 //! normal-contact and liquid-body-world tests used to define each on their own.
-use physics::{astrophysics_spin::Spin, contact::ContactBody, gravity::Body};
+use physics::{contact::ContactBody, gravity::Body, rotation::Spin};
 
 /// Unit-mass body at `position` with `velocity` and angular momentum `z` about Z.
 pub fn body(position: [f64; 3], velocity: [f64; 3], z: f64) -> ContactBody {

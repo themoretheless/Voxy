@@ -1,6 +1,6 @@
 use physics::{
-    astrophysics_radiation::blackbody,
-    astrophysics_spherical_radiation::{Shell, transfer},
+    astrophysics::radiation::blackbody,
+    astrophysics::spherical_radiation::{Shell, transfer},
 };
 fn shells(n: u32, absorption: f64) -> Vec<Shell> {
     (1..=n)
@@ -59,9 +59,9 @@ fn ray_refinement_and_budgets() {
 #[test]
 fn spherical_heating_preserves_energy_and_budget_is_atomic() {
     use physics::{
-        astrophysics_gas::{Boundary, Cell},
-        astrophysics_spherical::Sphere,
-        astrophysics_spherical_radiation::Heating,
+        astrophysics::gas::{Boundary, Cell},
+        astrophysics::spherical::Sphere,
+        astrophysics::spherical_radiation::Heating,
     };
     let initial = Sphere {
         cells: vec![Cell::from_primitive(1.0, 0.0, 200000.0, 1.4).unwrap(); 20],
@@ -117,10 +117,10 @@ fn spherical_heating_preserves_energy_and_budget_is_atomic() {
 #[test]
 fn different_compositions_at_equal_temperature_remain_in_radiative_equilibrium() {
     use physics::{
-        astrophysics_gas::{Boundary, Cell},
-        astrophysics_nuclear::{Network, Nucleus},
-        astrophysics_spherical::Sphere,
-        astrophysics_spherical_radiation::Heating,
+        astrophysics::gas::{Boundary, Cell},
+        astrophysics::nuclear::{Network, Nucleus},
+        astrophysics::spherical::Sphere,
+        astrophysics::spherical_radiation::Heating,
     };
     let network = Network {
         nuclei: vec![
@@ -166,8 +166,8 @@ fn different_compositions_at_equal_temperature_remain_in_radiative_equilibrium()
         .unwrap()
         .unwrap();
     assert!((radius - (3.0 - 1.0 / 3.0)).abs() < 1e-13);
-    let opacity = physics::astrophysics_opacity::Table::new(
-        physics::astrophysics_opacity::Kind::GreyAbsorption,
+    let opacity = physics::astrophysics::opacity::Table::new(
+        physics::astrophysics::opacity::Kind::GreyAbsorption,
         vec![0.5, 2.0],
         vec![5e5, 2e6],
         vec![2.0; 4],
@@ -219,11 +219,11 @@ fn different_compositions_at_equal_temperature_remain_in_radiative_equilibrium()
 #[test]
 fn tabulated_absorption_matches_constant_and_domain_exit_rolls_back() {
     use physics::{
-        astrophysics_gas::{Boundary, Cell},
-        astrophysics_nuclear::{Network, Nucleus},
-        astrophysics_opacity::{Kind, Table},
-        astrophysics_spherical::Sphere,
-        astrophysics_spherical_radiation::Heating,
+        astrophysics::gas::{Boundary, Cell},
+        astrophysics::nuclear::{Network, Nucleus},
+        astrophysics::opacity::{Kind, Table},
+        astrophysics::spherical::Sphere,
+        astrophysics::spherical_radiation::Heating,
     };
     let network = Network {
         nuclei: vec![Nucleus {
@@ -356,7 +356,7 @@ fn tabulated_absorption_matches_constant_and_domain_exit_rolls_back() {
 
 #[test]
 fn radial_optical_depth_radius_uniform_layered_and_thin() {
-    use physics::astrophysics_spherical_radiation::optical_depth_radius;
+    use physics::astrophysics::spherical_radiation::optical_depth_radius;
     let profile = shells(20, 2.0);
     let radius = optical_depth_radius(&profile, 2.0 / 3.0).unwrap().unwrap();
     assert!((radius - 2.0 / 3.0).abs() < 1e-14);
@@ -384,8 +384,8 @@ fn radial_optical_depth_radius_uniform_layered_and_thin() {
 #[test]
 fn effective_temperature_recovers_blackbody_and_handles_extreme_radius() {
     use physics::{
-        astrophysics_spherical_radiation::effective_temperature,
-        astrophysics_thermal::STEFAN_BOLTZMANN,
+        astrophysics::spherical_radiation::effective_temperature,
+        astrophysics::thermal::STEFAN_BOLTZMANN,
     };
     let radius = 7e8_f64;
     let temperature = 6000_f64;

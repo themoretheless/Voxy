@@ -1,7 +1,7 @@
 use physics::{
-    astrophysics_evolution::{Budget, RadiatingSphere},
-    astrophysics_gas::{Boundary, Cell},
-    astrophysics_spherical::Sphere,
+    astrophysics::evolution::{Budget, RadiatingSphere},
+    astrophysics::gas::{Boundary, Cell},
+    astrophysics::spherical::Sphere,
 };
 fn model() -> RadiatingSphere {
     RadiatingSphere {

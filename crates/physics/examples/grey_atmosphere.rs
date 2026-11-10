@@ -1,7 +1,7 @@
 //! Grey atmosphere algebra demonstration with a fully ionized EOS.
 use physics::{
-    astrophysics_atmosphere::Atmosphere,
-    astrophysics_eos::{Mixture, Species},
+    astrophysics::atmosphere::Atmosphere,
+    astrophysics::eos::{Mixture, Species},
 };
 fn main() -> Result<(), String> {
     let atmosphere = Atmosphere {

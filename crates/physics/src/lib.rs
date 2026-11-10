@@ -22,31 +22,10 @@
 //! Private helpers (`symmetric_eigen`, `triangle_index`, `spatial_bounds`,
 //! `positive_transport`, `heat_exchange`, contact glue) stay crate-internal.
 pub mod astrophysics;
-pub use astrophysics::atmosphere as astrophysics_atmosphere;
-pub use astrophysics::binary as astrophysics_binary;
-pub use astrophysics::column as astrophysics_column;
-pub use astrophysics::eos as astrophysics_eos;
-pub use astrophysics::equilibrium as astrophysics_equilibrium;
-pub use astrophysics::evolution as astrophysics_evolution;
-pub use astrophysics::gas as astrophysics_gas;
-pub use astrophysics::gas_gravity as astrophysics_gas_gravity;
-pub use astrophysics::nuclear as astrophysics_nuclear;
-pub use astrophysics::opacity as astrophysics_opacity;
-pub use astrophysics::radhydro as astrophysics_radhydro;
-pub use astrophysics::radiation as astrophysics_radiation;
-pub use astrophysics::reaclib as astrophysics_reaclib;
-pub use astrophysics::spherical as astrophysics_spherical;
-pub use astrophysics::spherical_radiation as astrophysics_spherical_radiation;
-pub use astrophysics::spin as astrophysics_spin;
-pub use astrophysics::star as astrophysics_star;
-pub use astrophysics::thermal as astrophysics_thermal;
 mod character;
 pub mod contact;
-pub mod gravity;
-pub use gravity::character as gravity_character;
-pub use gravity::field as gravity_field;
-pub use gravity::spheres as gravity_spheres;
 pub mod debris;
+pub mod gravity;
 pub mod mass_properties;
 pub mod medium;
 pub mod moisture;

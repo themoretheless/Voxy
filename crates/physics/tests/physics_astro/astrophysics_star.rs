@@ -1,4 +1,4 @@
-use physics::astrophysics_star::{Scaling, lane_emden};
+use physics::astrophysics::star::{Scaling, lane_emden};
 #[test]
 fn known_surfaces_and_profiles() {
     for n in [0.0, 1.0, 5.0] {

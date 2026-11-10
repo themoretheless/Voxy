@@ -1,8 +1,8 @@
 use physics::{
-    astrophysics_spin::Spin,
     contact::ContactBody,
     gravity::Body,
     rigid_motion::{Error, MaterialForcePair},
+    rotation::Spin,
     spin_path::Config,
 };
 fn config() -> Config {
@@ -76,8 +76,8 @@ fn whole_pair_bounds_cover_independent_joint_rk4_with_anisotropic_and_light_rece
     let rate = [-0.8, 0.4, 0.2];
     let duration = 0.08;
     use physics::{
-        astrophysics_spin::TorquePolynomial,
         rigid_motion::{MaterialPointForce, MotionLoad},
+        rotation::TorquePolynomial,
     };
     for (light, loaded) in [(false, false), (true, false), (false, true), (true, true)] {
         let mut initial = bodies();
@@ -673,8 +673,8 @@ fn loaded_pair_gravity_preserves_relative_rotation_and_world_momentum_balance() 
 #[test]
 fn external_polynomial_torques_integrate_independently_of_mutual_force() {
     use physics::{
-        astrophysics_spin::TorquePolynomial,
         rigid_motion::{MaterialPointForce, MotionLoad},
+        rotation::TorquePolynomial,
     };
     let initial = bodies();
     let mut loads = [MotionLoad::zero(); 2];
@@ -726,8 +726,8 @@ fn external_polynomial_torques_integrate_independently_of_mutual_force() {
 #[test]
 fn loaded_impact_rebases_all_force_and_torque_components_and_closes_ledger() {
     use physics::{
-        astrophysics_spin::TorquePolynomial,
         rigid_motion::{MaterialPointForce, MotionLoad},
+        rotation::TorquePolynomial,
     };
     let mut initial = bodies();
     initial[0].motion.velocity = [2., 0., 0.];
@@ -822,7 +822,7 @@ fn loaded_impact_rebases_all_force_and_torque_components_and_closes_ledger() {
 
 #[test]
 fn aggregated_com_loads_preserve_cancellation_and_all_torque_orders() {
-    use physics::{astrophysics_spin::TorquePolynomial, rigid_motion::MotionLoad};
+    use physics::{rigid_motion::MotionLoad, rotation::TorquePolynomial};
     let make = |x| MotionLoad {
         force: [x; 3],
         force_rate: [x; 3],
@@ -975,8 +975,8 @@ fn multiple_point_arc_impulse_matches_analytic_rotating_affine_force_couple() {
 #[test]
 fn adaptive_multiple_point_feedback_covers_independent_force_couple_motion() {
     use physics::{
-        astrophysics_spin::TorquePolynomial,
         rigid_motion::{MaterialForceMoment, MaterialPointForce},
+        rotation::TorquePolynomial,
     };
     let moment = MaterialForceMoment::aggregate([
         MaterialPointForce {

@@ -1,8 +1,8 @@
 use physics::{
-    astrophysics_spin::Spin,
     contact::{ContactBody, resolve_normal_impact},
     gravity::Body,
     rigid_motion::Error,
+    rotation::Spin,
     spin_path::Config,
 };
 fn config() -> Config {
@@ -471,7 +471,7 @@ fn frozen_reciprocal_arms_expose_sliding_couple_instead_of_hiding_it() {
 
 #[test]
 fn moving_reciprocal_application_preserves_angular_balance_and_uses_same_path_work() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let mut first = body();
     first.motion.position = [0., 1., 0.];
     first.motion.velocity = [2., 0., 0.];
@@ -517,7 +517,7 @@ fn moving_reciprocal_application_preserves_angular_balance_and_uses_same_path_wo
 
 #[test]
 fn impact_remainder_rebases_polynomial_torque_at_actual_event_time() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let mut a = body();
     a.motion.velocity = [3., 0., 0.];
     let mut b = body();
@@ -562,7 +562,7 @@ fn impact_remainder_rebases_polynomial_torque_at_actual_event_time() {
 
 #[test]
 fn affine_force_closes_cubic_com_work_momentum_and_independent_prefix_integrals() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let initial = body();
     let force = [4., -2., 6.];
     let rate = [-3., 5., 2.];
@@ -635,7 +635,7 @@ fn affine_force_closes_cubic_com_work_momentum_and_independent_prefix_integrals(
 
 #[test]
 fn affine_force_impact_remainder_rebases_load_and_preserves_paths_on_failure() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let mut a = body();
     a.motion.velocity = [3., 0., 0.];
     let mut b = body();
@@ -693,7 +693,7 @@ fn affine_force_impact_remainder_rebases_load_and_preserves_paths_on_failure() {
 
 #[test]
 fn affine_force_admission_rejects_nonfinite_laws_and_interior_energy_overflow() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let mut initial = body();
     initial.spin = None;
     let zero = TorquePolynomial::constant([0.; 3]);
@@ -725,7 +725,7 @@ fn body_without_spin() -> ContactBody {
 
 #[test]
 fn cubic_velocity_hull_covers_hidden_speed_peak_and_clipped_intervals() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let mut initial = body();
     initial.spin = None;
     initial.motion.velocity = [0.; 3];
@@ -763,7 +763,7 @@ fn cubic_velocity_hull_covers_hidden_speed_peak_and_clipped_intervals() {
 
 #[test]
 fn material_point_kinematics_follow_cubic_com_and_analytic_spin_without_mutation() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let initial = body();
     let force = [4., -2., 6.];
     let rate = [-3., 5., 2.];
@@ -885,7 +885,7 @@ fn material_point_derivatives_use_nominal_arc_velocity_and_report_knot_sides() {
 
 #[test]
 fn material_point_work_and_moment_match_independent_power_quadrature() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let initial = body();
     let path = initial
         .prepare_affine_motion(
@@ -1008,7 +1008,7 @@ fn material_point_work_splits_changing_spin_arcs_and_keeps_stationary_arm_moment
 
 #[test]
 fn reciprocal_material_point_forces_close_world_moments_on_different_spin_paths() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let a = body()
         .prepare_affine_motion(
             [4., -2., 6.],
@@ -1101,7 +1101,7 @@ fn prescribed_rotating_point_force_drives_analytic_spherical_momentum_and_attitu
         .prepare_affine_motion(
             force,
             rate,
-            physics::astrophysics_spin::TorquePolynomial::constant([0.; 3]),
+            physics::rotation::TorquePolynomial::constant([0.; 3]),
             duration,
             config(),
         )
@@ -1238,7 +1238,7 @@ fn prescribed_rotating_point_force_drives_analytic_spherical_momentum_and_attitu
 
 #[test]
 fn prescribed_material_force_rebases_source_knots_and_closes_independent_moment_and_work() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let source = body()
         .prepare_affine_motion(
             [4., -2., 6.],
@@ -1454,7 +1454,7 @@ fn prescribed_material_force_rebases_source_knots_and_closes_independent_moment_
 
 #[test]
 fn point_impact_continues_prescribed_material_force_phase_and_recomputes_com_arm() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let force = [0., 3., 0.];
     let rate = [0., -2., 0.];
     let local = [0.4, 0., 0.];
@@ -1758,8 +1758,8 @@ fn own_material_force_feedback_matches_independent_scalar_motion_and_work() {
 #[test]
 fn own_material_force_anisotropic_feedback_bound_covers_independent_quaternion_momentum_rk4() {
     use physics::{
-        astrophysics_spin::TorquePolynomial,
         rigid_motion::{MaterialPointForce, MotionLoad},
+        rotation::TorquePolynomial,
     };
     for (multiple, steps) in [(false, 4096), (true, 4096), (true, 8192)] {
         let mut initial = ContactBody {
@@ -2061,7 +2061,7 @@ fn impact_reprepares_own_material_force_with_the_changed_body_rotation() {
 
 #[test]
 fn independent_com_load_recipes_survive_impact_and_reaggregate_with_full_phase() {
-    use physics::{astrophysics_spin::TorquePolynomial, rigid_motion::MotionLoad};
+    use physics::{rigid_motion::MotionLoad, rotation::TorquePolynomial};
     let mut a = body();
     a.motion.velocity = [3., 0., 0.];
     let mut b = body();

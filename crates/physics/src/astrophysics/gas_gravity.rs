@@ -1,7 +1,7 @@
 //! Isolated plane-parallel self-gravity: phi''=4*pi*G*rho.
 //! Infinite horizontal sheets, not spherical gravity or periodic cosmology.
 //! Field and potential integrals are exact for piecewise uniform grid cells.
-use crate::astrophysics_gas::{Boundary, Gas};
+use crate::astrophysics::gas::{Boundary, Gas};
 #[derive(Clone, Debug, PartialEq)]
 pub struct Field {
     pub acceleration: Vec<f64>,
@@ -14,7 +14,7 @@ pub struct Field {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
     InvalidInput,
-    Gas(crate::astrophysics_gas::Error),
+    Gas(crate::astrophysics::gas::Error),
     NumericalOverflow,
     BudgetExceeded,
 }

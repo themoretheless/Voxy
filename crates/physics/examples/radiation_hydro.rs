@@ -1,7 +1,7 @@
 use physics::{
-    astrophysics_gas::{Boundary, Cell, Gas},
-    astrophysics_radhydro::{CoupledBudget, RadiatingGas},
-    astrophysics_radiation::blackbody,
+    astrophysics::gas::{Boundary, Cell, Gas},
+    astrophysics::radhydro::{CoupledBudget, RadiatingGas},
+    astrophysics::radiation::blackbody,
 };
 fn main() -> Result<(), String> {
     let mut gravity = false;

@@ -159,7 +159,7 @@ pub fn step_projectile_in_field(
     state: &mut ProjectileState,
     dt: f64,
     mut config: ProjectileConfig,
-    field: &impl physics::gravity_field::GravityField,
+    field: &impl physics::gravity::field::GravityField,
 ) -> Result<ProjectileOutcome, ProjectileError> {
     config.gravity = field
         .acceleration(
@@ -308,7 +308,7 @@ mod tests {
 
     #[test]
     fn sampled_uniform_field_matches_legacy_and_radial_source_curves_flight() {
-        use physics::gravity_field::{NewtonianField, Source};
+        use physics::gravity::field::{NewtonianField, Source};
         let view = TestView::default();
         let mut legacy = spawn_projectile(origin(), [1.0, 0.0, 0.0], 1.0).unwrap();
         let mut sampled = legacy;

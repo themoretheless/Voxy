@@ -1,5 +1,5 @@
 //! cargo run -p physics --example shock_tube > shock.csv
-use physics::astrophysics_gas::{Boundary, Cell, Gas};
+use physics::astrophysics::gas::{Boundary, Cell, Gas};
 fn main() -> Result<(), String> {
     let mut gas = Gas {
         cells: (0..800)

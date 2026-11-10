@@ -232,7 +232,7 @@ fn disconnected_and_outgoing_supports_do_not_receive_unrelated_loads() {
 
 #[test]
 fn an_eccentric_load_distributes_force_and_torque_between_two_finite_supports() {
-    use physics::astrophysics_spin::Spin;
+    use physics::rotation::Spin;
     let mut beam = body(2., [0., 1., 0.], [0.; 3]);
     let (s, c) = (0.23_f64 / 2.).sin_cos();
     beam.spin = Some(Spin {

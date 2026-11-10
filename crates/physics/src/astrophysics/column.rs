@@ -2,8 +2,8 @@
 //! and weight 2*pi, recovering flux pi*B for isotropic blackbody emission.
 //! Radiation is quasi-static; gas heat capacity/opacity/geometry remain fixed.
 use crate::{
-    astrophysics_radiation::{Layer, trace},
-    astrophysics_thermal::STEFAN_BOLTZMANN,
+    astrophysics::radiation::{Layer, trace},
+    astrophysics::thermal::STEFAN_BOLTZMANN,
 };
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Slab {
