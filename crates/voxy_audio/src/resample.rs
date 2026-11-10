@@ -207,6 +207,25 @@ fn dot_product_stereo_65(window: &[[f32; 2]], kernel: &[f64; 65]) -> (f64, f64) 
     (s0, s1)
 }
 
+/// Evaluates the Lanczos-windowed sinc interpolation kernel
+/// $L_a(x) = \operatorname{sinc}(x) \operatorname{sinc}(x / a)$ for support radius `lobes` ($a \ge 1$).
+#[must_use]
+pub fn lanczos_windowed_sinc_weight(x: f64, lobes: u32) -> f64 {
+    if !x.is_finite() || lobes == 0 {
+        return 0.0;
+    }
+    let a = f64::from(lobes);
+    if x.abs() >= a {
+        return 0.0;
+    }
+    if x.abs() < 1e-12 {
+        return 1.0;
+    }
+    let pi_x = std::f64::consts::PI * x;
+    let pi_x_a = pi_x / a;
+    (pi_x.sin() / pi_x) * (pi_x_a.sin() / pi_x_a)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -312,5 +331,8 @@ mod tests {
                 .flatten()
                 .all(|x| (*x - 0.25).abs() < f32::EPSILON)
         );
+        assert!((lanczos_windowed_sinc_weight(0.0, 3) - 1.0).abs() < 1e-12);
+        assert!(lanczos_windowed_sinc_weight(1.0, 3).abs() < 1e-12);
+        assert_eq!(lanczos_windowed_sinc_weight(3.5, 3), 0.0);
     }
 }

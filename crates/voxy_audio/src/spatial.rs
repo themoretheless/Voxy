@@ -193,6 +193,75 @@ where
     let total_db_loss = f64::from(occluded_voxels) * f64::from(db_loss_per_solid_voxel);
     Ok(10.0_f64.powf(-total_db_loss / 20.0).clamp(0.0, 1.0) as f32)
 }
+
+/// Computes the ISO 9613-1 atmospheric sound absorption coefficient $\alpha$ in $\text{dB/m}$
+/// at 1 atm standard pressure from acoustic `frequency_hz`, ambient `temp_celsius`, and
+/// `relative_humidity_pct` $\in [0, 100]$.
+#[must_use]
+pub fn iso9613_air_absorption_db_per_m(
+    frequency_hz: f32,
+    temp_celsius: f32,
+    relative_humidity_pct: f32,
+) -> Option<f32> {
+    if !frequency_hz.is_finite()
+        || frequency_hz <= 0.0
+        || !temp_celsius.is_finite()
+        || !(-60.0..=80.0).contains(&temp_celsius)
+        || !relative_humidity_pct.is_finite()
+        || !(0.0..=100.0).contains(&relative_humidity_pct)
+    {
+        return None;
+    }
+    let f = f64::from(frequency_hz.clamp(20.0, 100_000.0));
+    let t_k = f64::from(temp_celsius) + 273.15;
+    let t_ref = 293.15_f64;
+    let t_triple = 273.16_f64;
+    let rel_t = t_k / t_ref;
+    let h_rel = f64::from(relative_humidity_pct.clamp(1.0, 100.0));
+    let p_sat_ratio = 10.0_f64.powf(-6.8346 * (t_triple / t_k).powf(1.261) + 4.6151);
+    let h = h_rel * p_sat_ratio;
+    let fr_o = 24.0 + 4.04e4 * h * ((0.02 + h) / (0.391 + h));
+    let fr_n =
+        rel_t.powf(-0.5) * (9.0 + 280.0 * h * (-4.170 * (rel_t.powf(-1.0 / 3.0) - 1.0)).exp());
+    let term_classical = 1.84e-11 * rel_t.sqrt();
+    let term_o = 0.01275 * (-2239.1 / t_k).exp() / (fr_o + (f * f) / fr_o);
+    let term_n = 0.1068 * (-3352.0 / t_k).exp() / (fr_n + (f * f) / fr_n);
+    let alpha_db_m = 8.686 * f * f * (term_classical + rel_t.powf(-2.5) * (term_o + term_n));
+    let out = alpha_db_m.max(0.0) as f32;
+    out.is_finite().then_some(out)
+}
+
+/// Computes normalized 2nd-order Butterworth low-pass biquad filter coefficients
+/// `[b0, b1, b2, a1, a2]` (with $a_0 = 1$) for head-shadow and obstacle diffraction filtering.
+#[must_use]
+pub fn biquad_lowpass_butterworth_coeffs(cutoff_hz: f32, sample_rate_hz: f32) -> Option<[f32; 5]> {
+    if !cutoff_hz.is_finite()
+        || !sample_rate_hz.is_finite()
+        || cutoff_hz <= 0.0
+        || sample_rate_hz <= 2.0 * cutoff_hz
+    {
+        return None;
+    }
+    let omega = 2.0 * std::f64::consts::PI * f64::from(cutoff_hz) / f64::from(sample_rate_hz);
+    let (sin_w, cos_w) = omega.sin_cos();
+    let alpha = sin_w / std::f64::consts::SQRT_2;
+    let a0 = 1.0 + alpha;
+    if a0.abs() <= 1e-12 {
+        return None;
+    }
+    let b1 = 1.0 - cos_w;
+    let b0 = 0.5 * b1;
+    let b2 = b0;
+    let a1 = -2.0 * cos_w;
+    let a2 = 1.0 - alpha;
+    Some([
+        (b0 / a0) as f32,
+        (b1 / a0) as f32,
+        (b2 / a0) as f32,
+        (a1 / a0) as f32,
+        (a2 / a0) as f32,
+    ])
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -240,5 +309,12 @@ mod tests {
         .unwrap();
         // 1 solid voxel * 6 dB loss => ~0.501187 linear gain
         assert!((wall - 0.501_187).abs() < 1e-3);
+        let low_f = iso9613_air_absorption_db_per_m(500.0, 20.0, 50.0).unwrap();
+        let high_f = iso9613_air_absorption_db_per_m(8000.0, 20.0, 50.0).unwrap();
+        assert!(high_f > low_f && low_f > 0.0);
+        let coeffs = biquad_lowpass_butterworth_coeffs(1000.0, 48_000.0).unwrap();
+        let dc_gain = (coeffs[0] + coeffs[1] + coeffs[2]) / (1.0 + coeffs[3] + coeffs[4]);
+        assert!((dc_gain - 1.0).abs() < 1e-5);
+        assert!(biquad_lowpass_butterworth_coeffs(25_000.0, 48_000.0).is_none());
     }
 }

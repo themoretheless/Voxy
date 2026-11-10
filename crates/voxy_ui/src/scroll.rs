@@ -101,6 +101,33 @@ fn validate(viewport: [f32; 2], content: [f32; 2]) -> Result<(), UiError> {
         Err(UiError::InvalidGeometry)
     }
 }
+
+/// Computes the damped rubber-band overscroll visual displacement
+/// $d(x) = \operatorname{sign}(x) \frac{c |x| L}{|x| + c L}$ for raw overscroll `overscroll_px`,
+/// viewport dimension `dimension_px` ($L$), and resistance coefficient `resistance` ($c$, typically `0.55`).
+#[must_use]
+pub fn rubber_band_overscroll_offset(
+    overscroll_px: f32,
+    dimension_px: f32,
+    resistance: f32,
+) -> f32 {
+    if !overscroll_px.is_finite()
+        || !dimension_px.is_finite()
+        || !resistance.is_finite()
+        || dimension_px <= 0.0
+        || resistance <= 0.0
+    {
+        return 0.0;
+    }
+    let x = overscroll_px.abs();
+    let c = resistance.clamp(0.05, 1.0);
+    let l = dimension_px;
+    let denom = x + c * l;
+    if denom <= 1e-6 {
+        return 0.0;
+    }
+    ((c * x * l) / denom).copysign(overscroll_px)
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -142,5 +169,8 @@ mod tests {
         assert!(pointer.press().consumed);
         panel.resize([100.0; 2], [0.0; 2]).unwrap();
         assert!(panel.offset.iter().all(|x| x.abs() < f32::EPSILON));
+        let rb = rubber_band_overscroll_offset(100.0, 400.0, 0.55);
+        assert!(rb > 0.0 && rb < 100.0);
+        assert_eq!(rubber_band_overscroll_offset(0.0, 400.0, 0.55), 0.0);
     }
 }

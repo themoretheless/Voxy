@@ -1583,7 +1583,38 @@ mod camera_tests {
         );
         assert!((DlssQuality::Performance.recommended_mipmap_bias() + 1.0).abs() < 1e-6);
         assert_eq!(DlssQuality::Dlaa.recommended_mipmap_bias(), 0.0);
+        let (j0, len) = halton_jitter_offset_2d(0, 2.0);
+        assert_eq!(len, 32);
+        assert!(j0[0].abs() <= 0.5 && j0[1].abs() <= 0.5);
     }
+}
+
+/// Computes the 2D base-(2, 3) Halton sub-pixel camera jitter offset `[jx, jy]` in `[-0.5, 0.5]^2`
+/// and the recommended DLSS phase cycle length $N = 8 \cdot \lceil \text{upscale\_factor}^2 \rceil$.
+#[must_use]
+pub fn halton_jitter_offset_2d(frame_index: u32, upscale_factor: f32) -> ([f32; 2], u32) {
+    let scale = if upscale_factor.is_finite() && upscale_factor >= 1.0 {
+        upscale_factor.min(8.0)
+    } else {
+        1.0
+    };
+    let cycle_len = (8.0 * (scale * scale).ceil()) as u32;
+    let idx = (frame_index % cycle_len.max(1)).saturating_add(1);
+    fn radical_inverse(mut n: u32, base: u32) -> f32 {
+        let mut val = 0.0_f32;
+        let inv_base = 1.0 / (base as f32);
+        let mut factor = inv_base;
+        while n > 0 {
+            val += (n % base) as f32 * factor;
+            n /= base;
+            factor *= inv_base;
+        }
+        val
+    }
+    (
+        [radical_inverse(idx, 2) - 0.5, radical_inverse(idx, 3) - 0.5],
+        cycle_len.max(8),
+    )
 }
 
 /// Streamline DX12 interface interception strategy, selected before graphics creation.

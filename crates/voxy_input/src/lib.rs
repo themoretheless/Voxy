@@ -32,6 +32,10 @@ impl std::fmt::Display for InputError {
     }
 }
 impl std::error::Error for InputError {}
+/// Dense integer handle for $O(1)$ per-tick action polling without string hashing or tree traversal.
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub struct ActionId(u32);
+
 #[derive(Debug)]
 struct Action {
     bindings: Vec<Binding>,
@@ -43,7 +47,8 @@ struct Action {
 /// Control identifiers are supplied by the adapter, not durable platform key names.
 #[derive(Debug)]
 pub struct InputMap {
-    actions: BTreeMap<String, Action>,
+    action_ids: BTreeMap<String, ActionId>,
+    action_slots: Vec<Action>,
     controls: BTreeMap<Control, f32>,
     max_actions: usize,
     max_bindings: usize,
@@ -53,7 +58,8 @@ impl InputMap {
     #[must_use]
     pub fn new(max_actions: usize, max_bindings: usize) -> Self {
         Self {
-            actions: BTreeMap::new(),
+            action_ids: BTreeMap::new(),
+            action_slots: Vec::new(),
             controls: BTreeMap::new(),
             max_actions,
             max_bindings,
@@ -79,28 +85,34 @@ impl InputMap {
                 return Err(InputError::InvalidBinding);
             }
         }
-        let previous = self.actions.get(name);
-        let total: usize = self.actions.values().map(|a| a.bindings.len()).sum();
+        let existing_id = self.action_ids.get(name).copied();
+        let previous = existing_id.map(|id| &self.action_slots[id.0 as usize]);
+        let total: usize = self.action_slots.iter().map(|a| a.bindings.len()).sum();
         let old_len = previous.map_or(0, |a| a.bindings.len());
-        if (previous.is_none() && self.actions.len() >= self.max_actions)
+        if (previous.is_none() && self.action_slots.len() >= self.max_actions)
+            || (previous.is_none() && u32::try_from(self.action_slots.len()).is_err())
             || total - old_len + bindings.len() > self.max_bindings
         {
             return Err(InputError::Capacity);
         }
         let state = previous.map_or(ActionState::default(), |a| a.state);
         let dead_zone = previous.map_or(0.0, |a| a.dead_zone);
-        self.actions.insert(
-            name.into(),
-            Action {
-                bindings,
-                state,
-                dead_zone,
-            },
-        );
+        let next_action = Action {
+            bindings,
+            state,
+            dead_zone,
+        };
+        if let Some(id) = existing_id {
+            self.action_slots[id.0 as usize] = next_action;
+        } else {
+            let id = ActionId(self.action_slots.len() as u32);
+            self.action_slots.push(next_action);
+            self.action_ids.insert(name.into(), id);
+        }
         // Drop controls no longer referenced by any binding, keeping memory bounded.
         self.controls.retain(|control, _| {
-            self.actions
-                .values()
+            self.action_slots
+                .iter()
                 .any(|a| a.bindings.iter().any(|b| b.control == *control))
         });
         self.recompute();
@@ -114,8 +126,8 @@ impl InputMap {
         }
         if !self.focused
             || !self
-                .actions
-                .values()
+                .action_slots
+                .iter()
                 .any(|a| a.bindings.iter().any(|b| b.control == control))
         {
             return Ok(());
@@ -130,10 +142,12 @@ impl InputMap {
     /// # Errors
     /// Rejects an unknown named action.
     pub fn activate(&mut self, name: &str) -> Result<(), InputError> {
-        let action = self
-            .actions
-            .get_mut(name)
+        let id = self
+            .action_ids
+            .get(name)
+            .copied()
             .ok_or(InputError::UnknownAction)?;
+        let action = &mut self.action_slots[id.0 as usize];
         if self.focused {
             action.state.pressed = true;
             action.state.released |= !action.state.held;
@@ -148,17 +162,18 @@ impl InputMap {
         if !threshold.is_finite() || !(0.0..1.0).contains(&threshold) {
             return Err(InputError::InvalidValue);
         }
-        let action = self
-            .actions
-            .get_mut(name)
+        let id = self
+            .action_ids
+            .get(name)
+            .copied()
             .ok_or(InputError::UnknownAction)?;
-        action.dead_zone = threshold;
+        self.action_slots[id.0 as usize].dead_zone = threshold;
         self.recompute();
         Ok(())
     }
 
     fn recompute(&mut self) {
-        for action in self.actions.values_mut() {
+        for action in &mut self.action_slots {
             let value = action
                 .bindings
                 .iter()
@@ -185,7 +200,7 @@ impl InputMap {
             self.controls.clear();
             self.recompute();
             // Focus loss cancels unconsumed presses; releases remain observable.
-            for action in self.actions.values_mut() {
+            for action in &mut self.action_slots {
                 action.state.pressed = false;
             }
         }
@@ -195,12 +210,25 @@ impl InputMap {
         self.controls.retain(|control, _| control.device != device);
         self.recompute();
     }
+    /// Resolves a bound action name to a dense [`ActionId`] for $O(1)$ polling.
+    #[must_use]
+    pub fn action_id(&self, name: &str) -> Option<ActionId> {
+        self.action_ids.get(name).copied()
+    }
+    /// Reads an action's current state in $O(1)$ by [`ActionId`].
+    #[must_use]
+    #[inline]
+    pub fn state_by_id(&self, id: ActionId) -> Option<ActionState> {
+        self.action_slots.get(id.0 as usize).map(|a| a.state)
+    }
     #[must_use]
     pub fn state(&self, name: &str) -> Option<ActionState> {
-        self.actions.get(name).map(|a| a.state)
+        self.action_ids
+            .get(name)
+            .map(|id| self.action_slots[id.0 as usize].state)
     }
     pub fn finish_frame(&mut self) {
-        for action in self.actions.values_mut() {
+        for action in &mut self.action_slots {
             action.state.pressed = false;
             action.state.released = false;
         }
@@ -323,6 +351,64 @@ pub fn one_euro_smooth(
     let tau = 1.0 / (2.0 * std::f32::consts::PI * cutoff);
     let alpha = (1.0 / (1.0 + tau / dt_s)).clamp(0.0, 1.0);
     prev_value + alpha * (raw_value - prev_value)
+}
+
+/// Stateful double-tap detector with configurable inter-tap window and hold-duration guard.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct DoubleTapDetector {
+    pub max_inter_tap_s: f32,
+    pub max_hold_s: f32,
+    elapsed_s: f32,
+    press_started_s: Option<f32>,
+    first_release_s: Option<f32>,
+}
+
+impl DoubleTapDetector {
+    #[must_use]
+    pub fn new(max_inter_tap_s: f32, max_hold_s: f32) -> Option<Self> {
+        if !max_inter_tap_s.is_finite()
+            || !max_hold_s.is_finite()
+            || max_inter_tap_s <= 0.0
+            || max_hold_s <= 0.0
+        {
+            return None;
+        }
+        Some(Self {
+            max_inter_tap_s,
+            max_hold_s,
+            elapsed_s: 0.0,
+            press_started_s: None,
+            first_release_s: None,
+        })
+    }
+
+    /// Advances the internal clock and processes a press (`true`) or release (`false`) edge,
+    /// returning `true` when a valid second tap completes within `max_inter_tap_s`.
+    pub fn observe_edge(&mut self, dt_s: f32, pressed: bool) -> bool {
+        if dt_s.is_finite() && dt_s > 0.0 {
+            self.elapsed_s += dt_s;
+        }
+        if pressed {
+            self.press_started_s = Some(self.elapsed_s);
+            false
+        } else {
+            let Some(start) = self.press_started_s.take() else {
+                return false;
+            };
+            if self.elapsed_s - start > self.max_hold_s {
+                self.first_release_s = None;
+                return false;
+            }
+            if let Some(prev_release) = self.first_release_s {
+                if self.elapsed_s - prev_release <= self.max_inter_tap_s {
+                    self.first_release_s = None;
+                    return true;
+                }
+            }
+            self.first_release_s = Some(self.elapsed_s);
+            false
+        }
+    }
 }
 
 #[cfg(test)]
@@ -487,5 +573,11 @@ mod tests {
         let slow = one_euro_smooth(0.0, 0.01, 1.0 / 60.0, 1.0, 0.5);
         let fast = one_euro_smooth(0.0, 10.0, 1.0 / 60.0, 1.0, 0.5);
         assert!(slow / 0.01 < fast / 10.0);
+
+        let mut dtap = DoubleTapDetector::new(0.25, 0.15).unwrap();
+        assert!(!dtap.observe_edge(0.0, true));
+        assert!(!dtap.observe_edge(0.05, false));
+        assert!(!dtap.observe_edge(0.10, true));
+        assert!(dtap.observe_edge(0.05, false));
     }
 }

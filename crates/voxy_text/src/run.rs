@@ -315,6 +315,17 @@ impl TextFontCheckpoint {
     }
 }
 
+/// Evaluates the Knuth-Plass line-breaking badness $100 \cdot |r|^3$ from the glue
+/// adjustment ratio $r = \frac{L_{\text{target}} - L_{\text{natural}}}{\text{stretch/shrink}}$,
+/// clamping over-shrunk lines ($r < -1$) to the infinite badness sentinel `10_000.0`.
+#[must_use]
+pub fn knuth_plass_line_badness(adjustment_ratio: f32) -> f32 {
+    if !adjustment_ratio.is_finite() || adjustment_ratio < -1.0 {
+        return 10_000.0;
+    }
+    (100.0 * adjustment_ratio.abs().powi(3)).min(10_000.0)
+}
+
 #[cfg(test)]
 mod checkpoint_tests {
     use super::*;
@@ -400,5 +411,8 @@ mod checkpoint_tests {
                 })
                 .is_err()
         );
+        assert_eq!(knuth_plass_line_badness(0.0), 0.0);
+        assert!((knuth_plass_line_badness(1.0) - 100.0).abs() < 1e-5);
+        assert_eq!(knuth_plass_line_badness(-1.5), 10_000.0);
     }
 }
