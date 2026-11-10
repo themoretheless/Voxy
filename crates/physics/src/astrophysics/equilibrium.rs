@@ -104,34 +104,12 @@ fn scaled_trial(
 }
 /// Dense Gaussian elimination with row pivoting. Matrix is a numerical
 /// Jacobian of dimensionless residuals with respect to logarithmic primitives.
-fn solve(mut matrix: Vec<Vec<f64>>, mut rhs: Vec<f64>) -> Result<Vec<f64>, Error> {
+fn solve(mut matrix: Vec<f64>, mut rhs: Vec<f64>) -> Result<Vec<f64>, Error> {
     let n = rhs.len();
-    for column in 0..n {
-        let pivot = (column..n)
-            .max_by(|&a, &b| matrix[a][column].abs().total_cmp(&matrix[b][column].abs()))
-            .unwrap();
-        if matrix[pivot][column].abs() < 1e-14 {
-            return Err(Error::NoConvergence);
-        }
-        matrix.swap(column, pivot);
-        rhs.swap(column, pivot);
-        for row in column + 1..n {
-            let factor = matrix[row][column] / matrix[column][column];
-            for j in column + 1..n {
-                matrix[row][j] -= factor * matrix[column][j];
-            }
-            rhs[row] -= factor * rhs[column];
-        }
+    if !crate::math::gauss_pivoted_solve_in_place(&mut matrix, &mut rhs, n, 1e-14_f64.next_down()) {
+        return Err(Error::NoConvergence);
     }
-    let mut solution = vec![0.0; n];
-    for i in (0..n).rev() {
-        let sum: f64 = (i + 1..n).map(|j| matrix[i][j] * solution[j]).sum();
-        solution[i] = (rhs[i] - sum) / matrix[i][i];
-        if !solution[i].is_finite() {
-            return Err(Error::NoConvergence);
-        }
-    }
-    Ok(solution)
+    Ok(rhs)
 }
 impl Sphere {
     /// Damped Newton solve of coupled hydrostatic and thermal residuals in log
@@ -354,8 +332,9 @@ impl Sphere {
             if iteration == search.iterations {
                 return Err(Error::NoConvergence);
             }
-            let mut jacobian = vec![vec![0.0; 2 * n]; 2 * n];
-            for j in 0..2 * n {
+            let dim = 2 * n;
+            let mut jacobian = vec![0.0; dim * dim];
+            for j in 0..dim {
                 let delta = if x[j] + 1e-3 <= upper[j] { 1e-3 } else { -1e-3 };
                 if x[j] + delta < lower[j] {
                     return Err(Error::NoConvergence);
@@ -364,8 +343,8 @@ impl Sphere {
                 perturbed[j] += delta;
                 let trial = evaluate(&perturbed)?;
                 let scaled = scaled_trial(&trial.2, &trial.1, &current.1, n, power_floor)?;
-                for (i, row) in jacobian.iter_mut().enumerate() {
-                    row[j] = (scaled[i] - current.2[i]) / delta;
+                for i in 0..dim {
+                    jacobian[i * dim + j] = (scaled[i] - current.2[i]) / delta;
                 }
             }
             // Newton first; regularized least-squares directions provide a
@@ -374,21 +353,24 @@ impl Sphere {
             if let Ok(direction) = solve(jacobian.clone(), current.2.iter().map(|r| -r).collect()) {
                 directions.push(direction);
             }
-            let mut normal = vec![vec![0.0; 2 * n]; 2 * n];
-            let mut gradient = vec![0.0; 2 * n];
-            for i in 0..2 * n {
-                for row in 0..2 * n {
-                    gradient[i] -= jacobian[row][i] * current.2[row];
-                    for j in 0..2 * n {
-                        normal[i][j] += jacobian[row][i] * jacobian[row][j];
+            let mut normal = vec![0.0; dim * dim];
+            let mut gradient = vec![0.0; dim];
+            for i in 0..dim {
+                for row in 0..dim {
+                    let j_ri = jacobian[row * dim + i];
+                    gradient[i] -= j_ri * current.2[row];
+                    for j in 0..dim {
+                        normal[i * dim + j] += j_ri * jacobian[row * dim + j];
                     }
                 }
             }
-            let diagonal = (0..2 * n).map(|i| normal[i][i]).fold(0.0_f64, f64::max);
+            let diagonal = (0..dim)
+                .map(|i| normal[i * dim + i])
+                .fold(0.0_f64, f64::max);
             for regularization in [1e-6, 1e-3, 1.0, 100.0] {
                 let mut damped = normal.clone();
-                for i in 0..2 * n {
-                    damped[i][i] += regularization * diagonal;
+                for i in 0..dim {
+                    damped[i * dim + i] += regularization * diagonal;
                 }
                 if let Ok(direction) = solve(damped, gradient.clone()) {
                     directions.push(direction);

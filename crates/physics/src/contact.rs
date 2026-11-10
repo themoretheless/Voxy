@@ -433,9 +433,10 @@ fn solve_normal_network_constraints_with_bounds(
         }
         Ok(value)
     };
-    let mut cross_mass = vec![vec![0.; points.len()]; points.len()];
-    for i in 0..points.len() {
-        for j in (i + 1)..points.len() {
+    let n_points = points.len();
+    let mut cross_mass = vec![0.; n_points * n_points];
+    for i in 0..n_points {
+        for j in (i + 1)..n_points {
             let participants =
                 |point: NetworkContact| [Some((point.first, 1.)), point.second.map(|j| (j, -1.))];
             let mut value = 0.;
@@ -451,10 +452,10 @@ fn solve_normal_network_constraints_with_bounds(
             if !value.is_finite() {
                 return Err(Error::NumericalFailure);
             }
-            cross_mass[i][j] = value;
+            cross_mass[i * n_points + j] = value;
         }
     }
-    let mut strengths = vec![0.; points.len()];
+    let mut strengths = vec![0.; n_points];
     for sweep in 1..=config.max_sweeps {
         for (index, contact) in points.iter().copied().enumerate() {
             let next = (strengths[index] - speed(&staged, contact, index)? / inverse[index])
@@ -466,11 +467,11 @@ fn solve_normal_network_constraints_with_bounds(
             apply(&mut staged, contact, delta)?;
             strengths[index] = next;
         }
-        for i in 0..points.len() {
-            for j in (i + 1)..points.len() {
+        for i in 0..n_points {
+            for j in (i + 1)..n_points {
                 let si = inverse[i].sqrt();
                 let sj = inverse[j].sqrt();
-                let correlation = (cross_mass[i][j] / si) / sj;
+                let correlation = (cross_mass[i * n_points + j] / si) / sj;
                 if !correlation.is_finite() || correlation.abs() > 1. + 256. * f64::EPSILON {
                     return Err(Error::NumericalFailure);
                 }

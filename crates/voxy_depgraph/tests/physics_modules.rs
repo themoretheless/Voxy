@@ -56,18 +56,7 @@ const LAYERS: &[&[&str]] = &[
 ];
 
 /// Upward edges that still exist: (from, to, plan step that removes it).
-const KNOWN_VIOLATIONS: &[(&str, &str, &str)] = &[
-    (
-        "moisture",
-        "plasticity",
-        "PLAN 2.3: Calibration::new validates through plasticity::Material; needs a design decision",
-    ),
-    (
-        "moisture",
-        "wear",
-        "PLAN 2.3: Calibration::new validates through wear::Material; needs a design decision",
-    ),
-];
+const KNOWN_VIOLATIONS: &[(&str, &str, &str)] = &[];
 
 fn physics_src() -> PathBuf {
     normalize(Path::new(concat!(
