@@ -799,6 +799,34 @@ pub fn cpu_segment_visibility(
 mod cpu_visibility_tests {
     use super::*;
     #[test]
+    fn ray_segment_pod_layout_matches_wgsl_struct_definition() {
+        let module =
+            naga::front::wgsl::parse_str(RAY_VISIBILITY_SHADER).expect("valid ray_visibility.wgsl");
+        let mut validator = naga::valid::Validator::new(
+            naga::valid::ValidationFlags::all(),
+            naga::valid::Capabilities::RAY_QUERY,
+        );
+        validator.validate(&module).expect("naga validation passes");
+        let (_, seg_ty) = module
+            .types
+            .iter()
+            .find(|(_, ty)| ty.name.as_deref() == Some("Segment"))
+            .expect("Segment struct exists in ray_visibility.wgsl");
+        let naga::TypeInner::Struct { members, span } = &seg_ty.inner else {
+            panic!("expected WGSL struct");
+        };
+        assert_eq!(*span as usize, std::mem::size_of::<RaySegment>());
+        assert_eq!(
+            members[0].offset as usize,
+            std::mem::offset_of!(RaySegment, origin_bias)
+        );
+        assert_eq!(
+            members[1].offset as usize,
+            std::mem::offset_of!(RaySegment, target)
+        );
+    }
+
+    #[test]
     fn fallback_is_double_sided_and_bounded_to_light() {
         let vertices = [[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]];
         let segments = [

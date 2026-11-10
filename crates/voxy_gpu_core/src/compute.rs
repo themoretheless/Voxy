@@ -69,10 +69,11 @@ impl ComputeProgram {
         {
             return Err(ComputeError::Unsupported);
         }
+        let expanded = crate::resolve_wgsl_includes(source, &[])?;
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("user compute shader"),
-            source: wgpu::ShaderSource::Wgsl(source.into()),
+            source: wgpu::ShaderSource::Wgsl(expanded),
         });
         if let Some(error) = scope.pop().await {
             return Err(ComputeError::Validation(error.to_string()));
@@ -236,25 +237,15 @@ impl ComputeProgram {
         let storage = self
             .memory_budget
             .allocate_storage("compute job storage", data)?;
-        let mut entries = vec![wgpu::BindGroupEntry {
-            binding: 0,
-            resource: storage.as_entire_binding(),
-        }];
+        let mut group_builder = crate::BindGroupBuilder::with_capacity(
+            Some("compute job"),
+            if scene.is_some() { 3 } else { 1 },
+        )
+        .buffer(0, &storage);
         if let Some((color, depth)) = scene {
-            entries.push(wgpu::BindGroupEntry {
-                binding: 1,
-                resource: wgpu::BindingResource::TextureView(color),
-            });
-            entries.push(wgpu::BindGroupEntry {
-                binding: 2,
-                resource: wgpu::BindingResource::TextureView(depth),
-            });
+            group_builder = group_builder.texture_view(1, color).texture_view(2, depth);
         }
-        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("compute job"),
-            layout: &self.layout,
-            entries: &entries,
-        });
+        let bind_group = group_builder.build(device, &self.layout);
         Ok(ComputeJob {
             device: self.device.clone(),
             readback_pool: self.readback_pool.clone(),
@@ -295,14 +286,10 @@ impl ComputeJob {
         if program.scene_inputs || program.additional_layout.is_some() {
             return Err(ComputeError::InvalidBuffer);
         }
-        let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("resident compute pipeline switch"),
-            layout: &program.layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: self.storage.as_entire_binding(),
-            }],
-        });
+        let bind_group =
+            crate::BindGroupBuilder::with_capacity(Some("resident compute pipeline switch"), 1)
+                .buffer(0, &self.storage)
+                .build(&self.device, &program.layout);
         self.pipeline = program.pipeline.clone();
         self.bind_group = bind_group;
         self.max_workgroups = program.max_workgroups;

@@ -21,20 +21,10 @@ impl BandedTransferProgram {
             label: Some("banded RHS transport"),
             source: wgpu::ShaderSource::Wgsl(include_str!("banded_transfer.wgsl").into()),
         });
-        let entries = std::array::from_fn::<_, 2, _>(|binding| wgpu::BindGroupLayoutEntry {
-            binding: binding as u32,
-            visibility: wgpu::ShaderStages::COMPUTE,
-            ty: wgpu::BindingType::Buffer {
-                ty: wgpu::BufferBindingType::Storage { read_only: false },
-                has_dynamic_offset: false,
-                min_binding_size: None,
-            },
-            count: None,
-        });
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("banded RHS transport"),
-            entries: &entries,
-        });
+        let layout = crate::BindGroupLayoutBuilder::with_capacity(Some("banded RHS transport"), 2)
+            .storage_buffer(0, wgpu::ShaderStages::COMPUTE, false)
+            .storage_buffer(1, wgpu::ShaderStages::COMPUTE, false)
+            .build(device);
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("banded RHS transport"),
             bind_group_layouts: &[Some(&layout)],
@@ -86,59 +76,14 @@ impl BandedTransferProgram {
         if groups == 0 || groups > u64::from(limits.max_compute_workgroups_per_dimension) {
             return Err(ComputeError::InvalidDispatch);
         }
-        let binding = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("banded RHS transport"),
-            layout: &self.layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: resident.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: compact.as_entire_binding(),
-                },
-            ],
-        });
+        let binding = crate::BindGroupBuilder::with_capacity(Some("banded RHS transport"), 2)
+            .buffer(0, resident)
+            .buffer(1, compact)
+            .build(&self.device, &self.layout);
         let mut pass = encoder.begin_compute_pass(&Default::default());
         pass.set_pipeline(if upload { &self.upload } else { &self.gather });
         pass.set_bind_group(0, &binding, &[]);
         pass.dispatch_workgroups(groups as u32, 1, 1);
         Ok(())
-    }
-}
-
-/// Evaluates Zinke et al. (2008) dual-scattering hair global multiple-scattering attenuation
-/// `T_f = (forward_scatter ^ (strand_density * optical_depth)) * exp(-strand_density * optical_depth * (1 - forward_scatter))`.
-#[must_use]
-pub fn dual_scattering_hair_attenuation(
-    forward_scatter: f32,
-    strand_density: f32,
-    optical_depth: f32,
-) -> f32 {
-    if !forward_scatter.is_finite() || !strand_density.is_finite() || !optical_depth.is_finite() {
-        return 0.0;
-    }
-    let a_f = forward_scatter.clamp(0.0, 1.0);
-    let n_b = (strand_density.max(0.0) * optical_depth.max(0.0)).min(60.0);
-    if n_b == 0.0 {
-        return 1.0;
-    }
-    if a_f <= 0.0 {
-        return 0.0;
-    }
-    (a_f.powf(n_b) * (-n_b * (1.0 - a_f)).exp()).clamp(0.0, 1.0)
-}
-
-#[cfg(test)]
-mod dual_scatter_tests {
-    use super::*;
-
-    #[test]
-    fn dual_scattering_attenuation_decays_with_optical_depth() {
-        assert_eq!(dual_scattering_hair_attenuation(0.8, 0.7, 0.0), 1.0);
-        let shallow = dual_scattering_hair_attenuation(0.8, 0.7, 1.0);
-        let deep = dual_scattering_hair_attenuation(0.8, 0.7, 4.0);
-        assert!(shallow > deep && deep > 0.0);
     }
 }

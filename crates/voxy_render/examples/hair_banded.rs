@@ -32,7 +32,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if (single_refinement || double_refinement) && !compensated {
         return Err("refinement options require compensated arithmetic".into());
     }
-    let arithmetic_source = include_str!("../src/hair_banded_compensated.wgsl");
+    let arithmetic_source = voxy_render::BANDED_SOLVE_SHADER;
     let arithmetic_source = if double_refinement {
         arithmetic_source.replace(
             "const division_refinements:u32=1u;",

@@ -78,3 +78,22 @@ pub use medium_solver::{
 
 mod residency;
 pub use residency::{ResidencyEvictionCandidate, body_chunks, select_eviction_victims};
+
+pub use voxy_gpu_core::{
+    BANDED_SOLVE_SHADER, BandedPackedReference, BandedSolveError, BandedSolveInput, BandedSystem,
+    BandedTransferProgram, EXPERIMENTAL_RESIDENT_CONTACT_SHADER,
+    EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER, EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER,
+    ExperimentalExactFiveContactInput, ExperimentalFiveGapDecision, ExperimentalFiveGapInput,
+    ExperimentalFiveQrInput, ExperimentalFiveQrReadback, ExperimentalFiveQrValue,
+    ExperimentalFiveRelease, ExperimentalFiveReleaseInput, ExperimentalFiveSelection,
+    ExperimentalFiveSelectionInput, ExperimentalResidentContactBatch,
+    ExperimentalResidentContactInput, ExperimentalTripleActiveContactBatch,
+    ExperimentalTripleActiveContactInput, ExperimentalTripleActiveFactors,
+    ExperimentalTripleCompletedFactorReadback, ExperimentalTripleContactInput,
+    ExperimentalTripleExpandedCandidate, ExperimentalTripleExpansion, JOINT_CONTACT_DOT_SHADER,
+    JOINT_CONTACT_EQUALITY_SHADER, JOINT_CONTACT_NORMALIZE_SERIAL_SHADER,
+    JOINT_CONTACT_NORMALIZE_SHADER, JOINT_CONTACT_QR_SHADER, JointContactDotInput, JointDotError,
+    ResidentContactEqualityInput, ResidentContactEqualityOutput, ResidentContactQrInput,
+    ResidentContactQrOutput, ResidentContactQrPrefix, ValidatedResidentContactEquality,
+    experimental_seeded_resident_contact_shader,
+};

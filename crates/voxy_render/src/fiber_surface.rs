@@ -415,6 +415,28 @@ pub fn hair_melanin_absorption_sigma_a(eumelanin: f32, pheomelanin: f32) -> [f32
     ]
 }
 
+/// Evaluates Zinke et al. (2008) dual-scattering hair global multiple-scattering attenuation
+/// `T_f = (forward_scatter ^ (strand_density * optical_depth)) * exp(-strand_density * optical_depth * (1 - forward_scatter))`.
+#[must_use]
+pub fn dual_scattering_hair_attenuation(
+    forward_scatter: f32,
+    strand_density: f32,
+    optical_depth: f32,
+) -> f32 {
+    if !forward_scatter.is_finite() || !strand_density.is_finite() || !optical_depth.is_finite() {
+        return 0.0;
+    }
+    let a_f = forward_scatter.clamp(0.0, 1.0);
+    let n_b = (strand_density.max(0.0) * optical_depth.max(0.0)).min(60.0);
+    if n_b == 0.0 {
+        return 1.0;
+    }
+    if a_f <= 0.0 {
+        return 0.0;
+    }
+    (a_f.powf(n_b) * (-n_b * (1.0 - a_f)).exp()).clamp(0.0, 1.0)
+}
+
 #[cfg(test)]
 mod hair_tests {
     use super::*;
@@ -429,5 +451,13 @@ mod hair_tests {
         let sigma = hair_melanin_absorption_sigma_a(1.0, 0.5);
         // Blue absorbs strongest, Red absorbs weakest -> warm brown/reddish transmittance.
         assert!(sigma[0] < sigma[1] && sigma[1] < sigma[2]);
+    }
+
+    #[test]
+    fn dual_scattering_attenuation_decays_with_optical_depth() {
+        assert_eq!(dual_scattering_hair_attenuation(0.8, 0.7, 0.0), 1.0);
+        let shallow = dual_scattering_hair_attenuation(0.8, 0.7, 1.0);
+        let deep = dual_scattering_hair_attenuation(0.8, 0.7, 4.0);
+        assert!(shallow > deep && deep > 0.0);
     }
 }

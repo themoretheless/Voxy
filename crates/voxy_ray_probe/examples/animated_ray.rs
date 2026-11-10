@@ -193,6 +193,8 @@ fn ray_mesh(surface: &SceneMesh) -> Result<SceneMesh, Box<dyn std::error::Error>
 // Experimental ray queries require an explicit opt-in from the executable.
 #[allow(unsafe_code)]
 fn experimental() -> wgpu::ExperimentalFeatures {
+    // SAFETY: this isolated optional probe opts into experimental ray queries
+    // with controlled geometry; backend implementation bugs can cause UB.
     unsafe { wgpu::ExperimentalFeatures::enabled() }
 }
 fn center_depth(

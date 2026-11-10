@@ -55,66 +55,16 @@ impl GpuLightingProgram {
             source: wgpu::ShaderSource::Wgsl(include_str!("lighting.wgsl").into()),
         });
 
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("lighting storage layout"),
-            entries: &[
-                // binding 0: config
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 1: opaque
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 2: light_in
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 3: light_out
-                wgpu::BindGroupLayoutEntry {
-                    binding: 3,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 4: packed_output
-                wgpu::BindGroupLayoutEntry {
-                    binding: 4,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-            ],
-        });
+        let bind_group_layout = voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(
+            Some("lighting storage layout"),
+            5,
+        )
+        .storage_buffer(0, wgpu::ShaderStages::COMPUTE, true)
+        .storage_buffer(1, wgpu::ShaderStages::COMPUTE, true)
+        .storage_buffer(2, wgpu::ShaderStages::COMPUTE, false)
+        .storage_buffer(3, wgpu::ShaderStages::COMPUTE, false)
+        .storage_buffer(4, wgpu::ShaderStages::COMPUTE, false)
+        .build(device);
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("lighting pipeline layout"),
@@ -246,89 +196,18 @@ impl GpuLightingProgram {
             mapped_at_creation: false,
         });
 
-        // Bind group 1: A -> B
-        let bind_group_ab = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("lighting bind group A->B"),
-            layout: &self.bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: config_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: opaque_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: buffer_a.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: buffer_b.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 4,
-                    resource: packed_output_buffer.as_entire_binding(),
-                },
-            ],
-        });
-
-        // Bind group 2: B -> A
-        let bind_group_ba = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("lighting bind group B->A"),
-            layout: &self.bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: config_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: opaque_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: buffer_b.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: buffer_a.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 4,
-                    resource: packed_output_buffer.as_entire_binding(),
-                },
-            ],
-        });
-
-        // Final pack bind group: sky_final in binding 2, block in binding 3
-        let bind_group_pack = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("lighting bind group pack"),
-            layout: &self.bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: config_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: opaque_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: sky_final_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: buffer_a.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 4,
-                    resource: packed_output_buffer.as_entire_binding(),
-                },
-            ],
-        });
+        let make_group = |label, b2: &wgpu::Buffer, b3: &wgpu::Buffer| {
+            voxy_gpu_core::BindGroupBuilder::with_capacity(Some(label), 5)
+                .buffer(0, &config_buffer)
+                .buffer(1, &opaque_buffer)
+                .buffer(2, b2)
+                .buffer(3, b3)
+                .buffer(4, &packed_output_buffer)
+                .build(&self.device, &self.bind_group_layout)
+        };
+        let bind_group_ab = make_group("lighting bind group A->B", &buffer_a, &buffer_b);
+        let bind_group_ba = make_group("lighting bind group B->A", &buffer_b, &buffer_a);
+        let bind_group_pack = make_group("lighting bind group pack", &sky_final_buffer, &buffer_a);
 
         let mut encoder = self
             .device

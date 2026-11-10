@@ -207,55 +207,13 @@ impl GpuVoxelMesher {
             source: wgpu::ShaderSource::Wgsl(include_str!("voxel_mesh.wgsl").into()),
         });
 
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("voxel mesher layout"),
-            entries: &[
-                // binding 0: config
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 1: padded voxels
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 2: indirect draw args
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 3: output vertices
-                wgpu::BindGroupLayoutEntry {
-                    binding: 3,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-            ],
-        });
+        let bind_group_layout =
+            voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(Some("voxel mesher layout"), 4)
+                .storage_buffer(0, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(1, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(2, wgpu::ShaderStages::COMPUTE, false)
+                .storage_buffer(3, wgpu::ShaderStages::COMPUTE, false)
+                .build(device);
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("voxel mesher pipeline layout"),
@@ -362,28 +320,13 @@ impl GpuVoxelMesher {
             mapped_at_creation: false,
         });
 
-        let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("voxel mesh bind group"),
-            layout: &self.bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: slot.config_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: slot.voxels_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: indirect_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: vertex_buffer.as_entire_binding(),
-                },
-            ],
-        });
+        let bind_group =
+            voxy_gpu_core::BindGroupBuilder::with_capacity(Some("voxel mesh bind group"), 4)
+                .buffer(0, &slot.config_buffer)
+                .buffer(1, &slot.voxels_buffer)
+                .buffer(2, &indirect_buffer)
+                .buffer(3, &vertex_buffer)
+                .build(&self.device, &self.bind_group_layout);
 
         let mut encoder = self
             .device

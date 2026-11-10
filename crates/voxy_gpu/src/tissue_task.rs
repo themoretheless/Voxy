@@ -178,19 +178,10 @@ impl GpuTissueProgram {
             source: wgpu::ShaderSource::Wgsl(include_str!("tissue.wgsl").into()),
         });
 
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("tissue storage layout"),
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::COMPUTE,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Storage { read_only: false },
-                    has_dynamic_offset: false,
-                    min_binding_size: None,
-                },
-                count: None,
-            }],
-        });
+        let bind_group_layout =
+            voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(Some("tissue storage layout"), 1)
+                .storage_buffer(0, wgpu::ShaderStages::COMPUTE, false)
+                .build(device);
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("tissue pipeline layout"),
@@ -252,14 +243,10 @@ impl GpuTissueProgram {
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
             });
 
-        let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("tissue compute bind group"),
-            layout: &self.bind_group_layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: storage_buffer.as_entire_binding(),
-            }],
-        });
+        let bind_group =
+            voxy_gpu_core::BindGroupBuilder::with_capacity(Some("tissue compute bind group"), 1)
+                .buffer(0, &storage_buffer)
+                .build(&self.device, &self.bind_group_layout);
 
         let staging_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("tissue readback staging"),

@@ -80,19 +80,9 @@ impl ShadowMap {
             view_formats: &[],
         });
         let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("shadow light transform"),
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::VERTEX,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
-                    has_dynamic_offset: false,
-                    min_binding_size: wgpu::BufferSize::new(64),
-                },
-                count: None,
-            }],
-        });
+        let layout = voxy_gpu_core::BindGroupLayoutBuilder::new(Some("shadow light transform"))
+            .uniform_buffer_sized(0, wgpu::ShaderStages::VERTEX, Some(64))
+            .build(device);
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("shadow depth layout"),
             bind_group_layouts: &[Some(&layout)],
@@ -163,14 +153,9 @@ impl ShadowMap {
                 contents: bytemuck::cast_slice(&clip_from_model.to_cols_array()),
                 usage: wgpu::BufferUsages::UNIFORM,
             });
-        let bindings = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("shadow draw"),
-            layout: &self.layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: uniform.as_entire_binding(),
-            }],
-        });
+        let bindings = voxy_gpu_core::BindGroupBuilder::new(Some("shadow draw"), &self.layout)
+            .buffer(0, &uniform)
+            .build(&self.device);
         let (identity, revision) = geometry.shadow_key();
         Ok(ShadowDraw {
             device: self.device.clone(),
