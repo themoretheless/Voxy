@@ -1,6 +1,5 @@
+use crate::support_fluid;
 use physics::liquid::{Config, Liquid, Material, Particle, VaporCell};
-#[path = "support/fluid.rs"]
-mod support_fluid;
 use support_fluid::fluid;
 fn gas() -> VaporCell {
     VaporCell {

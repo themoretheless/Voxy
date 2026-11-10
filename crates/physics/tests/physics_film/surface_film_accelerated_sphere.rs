@@ -1,6 +1,5 @@
+use crate::support_film;
 use physics::surface_film::{Material, SurfaceFilm};
-#[path = "support/film.rs"]
-mod support_film;
 use support_film::film;
 #[test]
 fn curved_face_impact_is_found_when_endpoint_chord_misses() {

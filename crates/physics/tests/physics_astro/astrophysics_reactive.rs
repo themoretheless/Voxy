@@ -282,7 +282,7 @@ fn imported_reaction_with_tabulated_radiation_has_a_cumulative_energy_ledger() {
     };
     // The narrow bounds below are numerical test bounds, not a fit calibration.
     let rate = parse(
-        include_str!("data/triple_alpha_fy05.reaclib"),
+        include_str!("../data/triple_alpha_fy05.reaclib"),
         1.99e8,
         2.01e8,
         3,

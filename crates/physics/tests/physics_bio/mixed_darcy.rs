@@ -426,7 +426,7 @@ fn mixed_pore_flow_preserves_additional_capillary_exchange_and_conservation() {
     assert!((net.total_volume() - v).abs() < 1e-20 && (net.total_protein() - mass).abs() < 1e-18);
 }
 
-#[path = "../examples/support/darcy_block.rs"]
+#[path = "../../examples/support/darcy_block.rs"]
 mod scale_fixture;
 #[test]
 fn thousands_of_cells_preserve_patch_accuracy_with_linear_operator_storage() {

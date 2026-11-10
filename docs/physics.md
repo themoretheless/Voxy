@@ -285,7 +285,7 @@ is updated in the existing scene renderer. Space pauses; Esc exits. `--smoke` ch
 120 presented frames and surface resize recovery. The demo caps accumulated frame
 time at 100 ms and slows simulation under sustained overload.
 
-`cargo test -p physics --test strands` checks wind deflection and recovery, root
+`cargo test -p physics --test physics_hair strands::` checks wind deflection and recovery, root
 attachment inertia, length error, sphere exclusion over 3000 steps, and invalid-step
 atomicity. This is a small CPU demonstration, not a GPU hair system for large scenes.
 
@@ -404,7 +404,7 @@ These are illustrative constants. The equilibrium tolerance is 5e-6 N; tighter
 The precise cause of this convergence floor has not been isolated. The example fails if equilibrium
 does not meet its stated tolerance.
 
-`cargo test -p physics --test stress` verifies uniaxial, pure shear and
+`cargo test -p physics --test physics_bio stress::` verifies uniaxial, pure shear and
 hydrostatic stress, invariance under rotation, zero stress at rigid rotation,
 Young/Poisson small-strain response, an affine tetrahedral patch, actual loaded
 equilibrium, force balance, inversion rejection and extreme numerical scales.
@@ -1376,7 +1376,7 @@ count for a steep table, and conservation of the resulting thermal energy.
 
 ### Spatial accuracy: unresolved bending stiffness
 
-`cargo test -p physics --test beam_accuracy -- --nocapture` checks a 1 m
+`cargo test -p physics --test physics_solid beam_accuracy:: -- --nocapture` checks a 1 m
 cantilever with a 0.1 m square section, E=10 MPa, nu=0 and 0.01 N transverse
 end-face load. Nodal forces integrate a constant end traction; the reported tip
 displacement is work-conjugate to that traction, and clamp reactions recover
@@ -4422,7 +4422,7 @@ law: it does not calculate changing temperature, sensible heat, pressure,
 supersaturation or flowing gas, and is not yet coupled to the FEM wetting preview.
 The combined network limit is 128 cells, including the vapor cell.
 
-Validation: `cargo test -p physics --test moisture_vapor --test moisture` passes
+Validation: `cargo test -p physics --test physics_solid -- moisture_vapor:: moisture::` passes
 all six tests. New checks cover the analytic two-capacity implicit solution in
 both evaporation and condensation directions, atomic rejection on exhausted
 heat/duplicate links, and 1,000 closed steps approaching activity equilibrium
@@ -4553,7 +4553,7 @@ The gate stages all owners and rejects nonfinite or excessive defects before
 publication. New heat-deposition tests check analytic energy gain and atomic
 rejection of negative, infinite or unrepresentably small positive additions.
 The focused vapor/wet suites including this gate pass all 20 tests.
-Validation command: `cargo test -p physics --test moisture_vapor --test quadratic_wet_update`.
+Validation command: `cargo test -p physics --test physics_solid -- moisture_vapor:: quadratic_wet_update::`.
 Focused rustfmt and `git diff --check` also pass. These checks validate the
 lumped heat/water and finite-elastic bridge; spatial thermomechanics, gas flow,
 condensate droplets and calibrated full-world behavior remain unproven.

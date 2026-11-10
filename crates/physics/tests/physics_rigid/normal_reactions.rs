@@ -1,3 +1,4 @@
+use crate::support_rigid;
 use physics::{
     astrophysics_spin::Spin,
     contact::{
@@ -6,8 +7,6 @@ use physics::{
         resolve_normal_reactions,
     },
 };
-#[path = "support/rigid.rs"]
-mod support_rigid;
 use support_rigid::body;
 fn config() -> ReactionConfig {
     ReactionConfig {

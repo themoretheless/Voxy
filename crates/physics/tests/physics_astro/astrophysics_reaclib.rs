@@ -1,5 +1,5 @@
 use physics::astrophysics_reaclib::{Error, parse};
-const DATA: &str = include_str!("data/triple_alpha_fy05.reaclib");
+const DATA: &str = include_str!("../data/triple_alpha_fy05.reaclib");
 #[test]
 fn actual_fy05_records_and_additive_rates() {
     let rate = parse(DATA, 2e8, 2e8, 3).unwrap();

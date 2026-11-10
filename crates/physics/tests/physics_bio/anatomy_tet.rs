@@ -2,7 +2,7 @@ use physics::biomechanics::*;
 fn asset(name: &str) -> Vec<u8> {
     let source = std::path::PathBuf::from(file!());
     let root = if source.is_absolute() {
-        source.ancestors().nth(4).unwrap().to_path_buf()
+        source.ancestors().nth(5).unwrap().to_path_buf()
     } else {
         std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
     };
