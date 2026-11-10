@@ -55,6 +55,24 @@ impl MobileThermalState {
         }
     }
 
+    /// Combines thermal state with battery charge level `battery_level` $\in [0.0, 1.0]$ and
+    /// `is_charging` status to select a power-saving `(render_resolution_scale, target_fps)` budget.
+    #[must_use]
+    pub fn battery_aware_quality_budget(self, battery_level: f32, is_charging: bool) -> (f32, u32) {
+        let (base_scale, base_fps) = self.quality_budget();
+        if is_charging || !battery_level.is_finite() {
+            return (base_scale, base_fps);
+        }
+        let lvl = battery_level.clamp(0.0, 1.0);
+        if lvl <= 0.15 {
+            ((base_scale * 0.75).max(0.50), base_fps.min(30))
+        } else if lvl <= 0.30 {
+            ((base_scale * 0.88).max(0.50), base_fps.min(45))
+        } else {
+            (base_scale, base_fps)
+        }
+    }
+
     /// Transitions mobile thermal state from `skin_temp_c` (°C) using deadband `hysteresis_c`
     /// around thresholds (`38 °C`, `42 °C`, `46 °C`) to prevent quality-budget oscillation.
     #[must_use]
@@ -139,5 +157,8 @@ mod tests {
             state.step_with_hysteresis(36.0, 1.5),
             MobileThermalState::Nominal
         );
+        let (low_bat_scale, low_bat_fps) =
+            MobileThermalState::Nominal.battery_aware_quality_budget(0.10, false);
+        assert!(low_bat_scale < 1.0 && low_bat_fps == 30);
     }
 }

@@ -68,6 +68,34 @@ pub fn clamp_canvas_backing_size(
     Some((w, h))
 }
 
+/// Clamps a requested WebGPU buffer allocation budget to a safe browser tab limit
+/// (`<= 512 MiB` on 32-bit/WASM32 address spaces and aligned down to 256-byte uniform alignment).
+#[must_use]
+pub fn clamp_webgpu_buffer_allocation_budget(
+    requested_bytes: u64,
+    device_max_buffer_size: u64,
+) -> u64 {
+    const WASM32_TAB_SAFE_CAP: u64 = 512 * 1024 * 1024;
+    let cap = device_max_buffer_size.min(WASM32_TAB_SAFE_CAP);
+    let clamped = requested_bytes.min(cap);
+    clamped & !255_u64
+}
+
+/// Evaluates the Peak Signal-to-Noise Ratio $\text{PSNR} = 10 \log_{10}(\text{peak}^2 / \text{mse})$ in dB,
+/// returning `100.0` dB for identical frames (`mse == 0.0`) and `None` for invalid inputs.
+#[must_use]
+pub fn psnr_db_from_mse(mse: f64, peak_signal: f64) -> Option<f64> {
+    if !mse.is_finite() || mse < 0.0 || !peak_signal.is_finite() || peak_signal <= 0.0 {
+        return None;
+    }
+    if mse <= 1e-20 {
+        return Some(100.0);
+    }
+    let ratio = (peak_signal * peak_signal) / mse;
+    let db = (10.0 * ratio.log10()).min(100.0);
+    db.is_finite().then_some(db)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -84,5 +112,11 @@ mod tests {
             Some((2000, 1000))
         );
         assert!(clamp_canvas_backing_size(0.0, 720.0, 1.0, 2048).is_none());
+        assert_eq!(
+            clamp_webgpu_buffer_allocation_budget(1024 * 1024 * 1024, 2 * 1024 * 1024 * 1024),
+            512 * 1024 * 1024
+        );
+        assert!((psnr_db_from_mse(0.01, 1.0).unwrap() - 20.0).abs() < 1e-9);
+        assert_eq!(psnr_db_from_mse(0.0, 1.0), Some(100.0));
     }
 }

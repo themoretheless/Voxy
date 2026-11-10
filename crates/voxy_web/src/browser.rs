@@ -1439,3 +1439,16 @@ fn encode_scene(
     }
     Ok(())
 }
+
+/// Clamps a requested WebGPU buffer allocation budget to a safe browser tab limit
+/// (`<= 512 MiB` on 32-bit/WASM32 address spaces and aligned down to 256-byte uniform alignment).
+#[must_use]
+pub fn clamp_webgpu_buffer_allocation_budget(
+    requested_bytes: u64,
+    device_max_buffer_size: u64,
+) -> u64 {
+    const WASM32_TAB_SAFE_CAP: u64 = 512 * 1024 * 1024;
+    let cap = device_max_buffer_size.min(WASM32_TAB_SAFE_CAP);
+    let clamped = requested_bytes.min(cap);
+    clamped & !255_u64
+}

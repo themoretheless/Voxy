@@ -2,7 +2,7 @@
 mod run;
 pub use run::{
     PlacedGlyph, PlacedGlyphCheckpoint, RunOptions, TextFont, TextFontCheckpoint, TextRun,
-    TextRunCheckpoint,
+    TextRunCheckpoint, knuth_plass_line_badness,
 };
 mod shape;
 pub use shape::{RunDirection, ShapeFont, ShapedGlyph};
