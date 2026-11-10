@@ -23,6 +23,14 @@ impl Material {
         })
     }
 }
+
+impl crate::moisture::Properties {
+    /// # Errors
+    /// Invalid hardness or empirical wear coefficient.
+    pub fn wear_material(self) -> Result<Material, &'static str> {
+        Material::new(self.hardness_pa, self.wear_coefficient)
+    }
+}
 #[derive(Clone, Debug)]
 pub struct Layer {
     area_m2: f64,

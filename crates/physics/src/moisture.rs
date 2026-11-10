@@ -192,46 +192,20 @@ impl Body {
         })
     }
 }
-fn solve(mut matrix: Vec<Vec<f64>>, mut rhs: Vec<f64>) -> Result<Vec<f64>, &'static str> {
-    let scale = matrix
-        .iter()
-        .flatten()
-        .copied()
-        .fold(0_f64, |a, b| a.max(b.abs()));
-    if !scale.is_finite()
-        || scale <= 0.
-        || matrix.iter().flatten().chain(&rhs).any(|x| !x.is_finite())
-    {
+fn solve(mut matrix: Vec<f64>, mut rhs: Vec<f64>) -> Result<Vec<f64>, &'static str> {
+    let scale = matrix.iter().copied().fold(0_f64, |a, b| a.max(b.abs()));
+    if !scale.is_finite() || scale <= 0. || matrix.iter().chain(&rhs).any(|x| !x.is_finite()) {
         return Err("moisture solve overflow");
     }
-    for row in &mut matrix {
-        for x in row {
-            *x /= scale;
-        }
+    for x in &mut matrix {
+        *x /= scale;
     }
     for x in &mut rhs {
         *x /= scale;
     }
     let n = rhs.len();
-    for i in 0..n {
-        for j in 0..=i {
-            let sum: f64 = (0..j).map(|k| matrix[i][k] * matrix[j][k]).sum();
-            let value = matrix[i][j] - sum;
-            if i == j {
-                if value <= 1e-14 || !value.is_finite() {
-                    return Err("ill-conditioned moisture solve");
-                }
-                matrix[i][j] = value.sqrt();
-            } else {
-                matrix[i][j] = value / matrix[j][j];
-            }
-        }
-    }
-    for i in 0..n {
-        rhs[i] = (rhs[i] - (0..i).map(|j| matrix[i][j] * rhs[j]).sum::<f64>()) / matrix[i][i];
-    }
-    for i in (0..n).rev() {
-        rhs[i] = (rhs[i] - (i + 1..n).map(|j| matrix[j][i] * rhs[j]).sum::<f64>()) / matrix[i][i];
+    if !crate::math::cholesky_solve_in_place(&mut matrix, &mut rhs, n, 1e-14) {
+        return Err("ill-conditioned moisture solve");
     }
     Ok(rhs)
 }

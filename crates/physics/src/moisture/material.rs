@@ -10,20 +10,27 @@ pub struct Properties {
     pub wear_coefficient: f64,
 }
 impl Properties {
-    /// # Errors
-    /// Invalid elastic/plastic parameters or derived moduli.
-    pub fn plastic_material(self) -> Result<crate::plasticity::Material, &'static str> {
-        crate::plasticity::Material::new(
-            self.young_pa,
-            self.poisson,
-            self.yield_pa,
-            self.hardening_pa,
-        )
-    }
-    /// # Errors
-    /// Invalid hardness or empirical wear coefficient.
-    pub fn wear_material(self) -> Result<crate::wear::Material, &'static str> {
-        crate::wear::Material::new(self.hardness_pa, self.wear_coefficient)
+    pub(crate) fn validate_endpoints(self) -> Result<(), &'static str> {
+        let elastic =
+            crate::biomechanics::Material::from_young_poisson(self.young_pa, self.poisson)?;
+        if !self.yield_pa.is_finite()
+            || self.yield_pa <= 0.
+            || !self.hardening_pa.is_finite()
+            || self.hardening_pa < 0.
+        {
+            return Err("invalid plastic material");
+        }
+        if !(3. * elastic.shear_pa + self.hardening_pa).is_finite() {
+            return Err("plastic modulus overflow");
+        }
+        if !self.hardness_pa.is_finite()
+            || self.hardness_pa <= 0.
+            || !self.wear_coefficient.is_finite()
+            || self.wear_coefficient < 0.
+        {
+            return Err("invalid wear material");
+        }
+        Ok(())
     }
 }
 #[derive(Clone, Copy, Debug)]
@@ -39,8 +46,7 @@ impl Calibration {
     /// Invalid endpoint material parameters.
     pub fn new(dry: Properties, saturated: Properties) -> Result<Self, &'static str> {
         for p in [dry, saturated] {
-            p.plastic_material()?;
-            p.wear_material()?;
+            p.validate_endpoints()?;
         }
         Ok(Self { dry, saturated })
     }
@@ -59,8 +65,7 @@ impl Calibration {
             hardness_pa: mix(self.dry.hardness_pa, self.saturated.hardness_pa),
             wear_coefficient: mix(self.dry.wear_coefficient, self.saturated.wear_coefficient),
         };
-        result.plastic_material()?;
-        result.wear_material()?;
+        result.validate_endpoints()?;
         Ok(result)
     }
 }

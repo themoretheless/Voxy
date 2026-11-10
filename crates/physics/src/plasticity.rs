@@ -278,6 +278,19 @@ pub fn drucker_prager_return_mapping_scale(
     }
 }
 
+impl crate::moisture::Properties {
+    /// # Errors
+    /// Invalid elastic/plastic parameters or derived moduli.
+    pub fn plastic_material(self) -> Result<Material, &'static str> {
+        Material::new(
+            self.young_pa,
+            self.poisson,
+            self.yield_pa,
+            self.hardening_pa,
+        )
+    }
+}
+
 #[cfg(test)]
 mod drucker_prager_tests {
     use super::*;

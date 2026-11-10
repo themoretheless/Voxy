@@ -245,7 +245,7 @@ fn dense(
     added: &[f64],
 ) -> Result<Vec<f64>, &'static str> {
     let n = body.cells.len();
-    let mut matrix = vec![vec![0.; n]; n];
+    let mut matrix = vec![0.; n * n];
     let mut rhs: Vec<_> = body
         .cells
         .iter()
@@ -253,19 +253,19 @@ fn dense(
         .map(|(c, a)| c.water_kg + a)
         .collect();
     for (i, c) in body.cells.iter().enumerate() {
-        matrix[i][i] = c.capacity_kg;
+        matrix[i * n + i] = c.capacity_kg;
     }
     for link in &body.links {
         let [a, b] = link.cells;
         let exchange = dt_s * link.conductance_kg_s;
-        matrix[a][a] += exchange;
-        matrix[b][b] += exchange;
-        matrix[a][b] -= exchange;
-        matrix[b][a] -= exchange;
+        matrix[a * n + a] += exchange;
+        matrix[b * n + b] += exchange;
+        matrix[a * n + b] -= exchange;
+        matrix[b * n + a] -= exchange;
     }
     for r in reservoirs {
         let exchange = dt_s * r.conductance_kg_s;
-        matrix[r.cell][r.cell] += exchange;
+        matrix[r.cell * n + r.cell] += exchange;
         rhs[r.cell] += exchange * r.saturation;
     }
     solve(matrix, rhs)
