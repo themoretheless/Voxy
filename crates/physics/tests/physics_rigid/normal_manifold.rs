@@ -1,9 +1,8 @@
+use crate::support_rigid;
 use physics::contact::{
     ContactBody, Error, ManifoldConfig, NormalContact, resolve_normal_impact,
     resolve_normal_manifold,
 };
-#[path = "support/rigid.rs"]
-mod support_rigid;
 use support_rigid::body;
 fn config() -> ManifoldConfig {
     ManifoldConfig {

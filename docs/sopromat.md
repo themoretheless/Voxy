@@ -2,7 +2,7 @@
 
 Status: 2026-10-13, plan step E. `crates/physics/tests/sopromat.rs` checks the
 small-strain solvers against closed-form results. Numbers below are the
-printed values from `cargo test -p physics --test sopromat -- --nocapture`
+printed values from `cargo test -p physics --test physics_solid sopromat:: -- --nocapture`
 (E = 10 MPa, ν = 0.3, bar 1 m × 0.1 m × 0.1 m unless stated).
 
 | Case | Solver | Reference | Coarse error | Fine error | Bound |

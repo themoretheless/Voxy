@@ -283,8 +283,7 @@ fn wet_cohesive_update_breaks_dynamic_fragment_without_resetting_work() {
     {
         use physics::moisture::{ThermalCalibration, ThermalCohesiveCalibration};
         let bulk_law =
-            ThermalCalibration::new(300., 600., crate::calibration(), crate::calibration())
-                .unwrap();
+            ThermalCalibration::new(300., 600., self::calibration(), self::calibration()).unwrap();
         let face_law = ThermalCohesiveCalibration::new(
             300.,
             600.,
@@ -438,7 +437,7 @@ fn wet_cohesive_update_breaks_dynamic_fragment_without_resetting_work() {
             conductance_kg_s: 1.,
         },
     ];
-    let bulk_laws = [crate::calibration(); 2];
+    let bulk_laws = [self::calibration(); 2];
     assert!(
         supplied
             .advance_moisture_supplies_with_cohesion(
@@ -482,7 +481,7 @@ fn wet_cohesive_update_breaks_dynamic_fragment_without_resetting_work() {
         capacity_kg: 0.001,
         water_kg: 0.001,
     }; 2];
-    let bulk_calibration = [crate::calibration(); 2];
+    let bulk_calibration = [self::calibration(); 2];
     let asymmetric = [
         Cell {
             capacity_kg: 1.,

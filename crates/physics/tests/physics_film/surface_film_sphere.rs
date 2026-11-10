@@ -1,6 +1,5 @@
+use crate::support_film;
 use physics::liquid::{Config, FilmRebound, Liquid, Material as LiquidMaterial, Particle};
-#[path = "support/film.rs"]
-mod support_film;
 use physics::surface_film::{Material, SurfaceFilm};
 use support_film::film;
 fn near(a: f64, b: f64) {

@@ -1,6 +1,5 @@
+use crate::support_fluid;
 use physics::liquid::{Config, DropletGas, Liquid, Material, Particle};
-#[path = "support/fluid.rs"]
-mod support_fluid;
 use support_fluid::fluid;
 #[test]
 fn analytical_drag_and_moving_gas_energy_momentum_balance() {

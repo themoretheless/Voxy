@@ -312,7 +312,7 @@ mechanical equilibrium transactionally; a failed step preserves both states.
 
 ```
 cargo run -p physics --example urogenital_perfusion
-cargo test -p physics --test perfusion --test urogenital --test genital_folds
+cargo test -p physics --test physics_bio -- perfusion:: urogenital:: genital_folds::
 ```
 
 The perfusion example uses the five-part spring-coupled clitoral specimen,
@@ -378,7 +378,7 @@ spatial discretization or material/calibration error.
 
 ```
 cargo run --release -p physics --example urogenital_perfusion -- --adaptive
-cargo test --release -p physics --test perfusion
+cargo test --release -p physics --test physics_bio perfusion::
 ```
 
 Seven release tests passed, including adaptive rejection against a 0.025 s fixed
@@ -407,7 +407,7 @@ existing circular construction. Invalid/nonpositive/nonfinite scales are rejecte
 
 ```
 cargo run --release -p physics --example urogenital_oval
-cargo test --release -p physics --test urogenital --test biomechanics
+cargo test --release -p physics --test physics_bio -- urogenital:: biomechanics::
 ```
 
 The example builds uncalibrated urethral and vaginal wall specimens with axis
@@ -440,7 +440,7 @@ layer-only region IDs. No measured axial distribution is supplied by this API.
 
 ```
 cargo run --release -p physics --example urogenital_axial
-cargo test --release -p physics --test urogenital --test biomechanics --test muscle_activation
+cargo test --release -p physics --test physics_bio -- urogenital:: biomechanics:: muscle_activation::
 ```
 
 The synthetic example uses three axial segments and puts an outer circumferential
@@ -494,8 +494,8 @@ they are not reported as continuum element Cauchy stress.
 
 ```
 cargo run --release -p physics --example urogenital_contact
-cargo test --release -p physics --test tissue_gaps --test urogenital --test finite_inertia --test tissue_assembly_history
-cargo test --release -p physics --test muscle_dynamics --test perfusion
+cargo test --release -p physics --test physics_bio -- tissue_gaps:: urogenital:: finite_inertia:: tissue_assembly_history::
+cargo test --release -p physics --test physics_bio -- muscle_dynamics:: perfusion::
 ```
 
 38 distinct release tests passed across those suites. New tests check analytic
@@ -542,7 +542,7 @@ matching residuals do not prove identical loaded trajectories.
 
 ```
 cargo run --release -p physics --example urogenital_contact
-cargo test --release -p physics --test lbfgs --test tissue_gaps --test urogenital
+cargo test --release -p physics --test physics_bio -- lbfgs:: tissue_gaps:: urogenital::
 ```
 
 17 distinct release checks passed: three L-BFGS checks, five gap checks and nine
@@ -633,7 +633,7 @@ contact constitutive fit. Friction and contact regularization remain outstanding
 
 ```
 cargo run --release -p physics --example urogenital_contact -- /tmp/voxy-urogenital-surface-16 16 --surface
-cargo test --release -p physics --test surface_contact --test tissue_gaps --test lbfgs --test finite_inertia --test tissue_assembly_history --test urogenital
+cargo test --release -p physics --test physics_bio -- surface_contact:: tissue_gaps:: lbfgs:: finite_inertia:: tissue_assembly_history:: urogenital::
 ```
 
 29 distinct release tests passed across those suites: vertex/face and edge/edge
@@ -679,7 +679,7 @@ These are numerical checks in the tested domain, not exact-arithmetic proofs.
 ```
 cargo test --release -p physics --lib lower_bound_tests
 cargo test --release -p physics --lib pruning_preserves_unpruned
-cargo test --release -p physics --test surface_contact
+cargo test --release -p physics --test physics_bio surface_contact::
 VOXY_CONTACT_BENCH_OBJ=/tmp/voxy-urogenital-surface-16/vagina-barrier.obj cargo test --release -p physics --lib frozen_wall_pruning_work_and_time -- --ignored --nocapture
 ```
 

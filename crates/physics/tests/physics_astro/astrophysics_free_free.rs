@@ -241,7 +241,7 @@ fn spectral_radiative_evolution_and_real_reaction_close_energy_atomically() {
         astrophysics_spherical_radiation::{Heating, ReactiveSettings},
     };
     let rate = parse(
-        include_str!("data/triple_alpha_fy05.reaclib"),
+        include_str!("../data/triple_alpha_fy05.reaclib"),
         1.9e8,
         2.1e8,
         3,
@@ -550,7 +550,13 @@ fn physical_stellar_profile_satisfies_explicit_absolute_and_relative_balance() {
         astrophysics_reaclib::{MEV_JOULES, parse},
         astrophysics_spherical_radiation::SpectralSurface,
     };
-    let rate = parse(include_str!("data/triple_alpha_fy05.reaclib"), 1e6, 1e9, 3).unwrap();
+    let rate = parse(
+        include_str!("../data/triple_alpha_fy05.reaclib"),
+        1e6,
+        1e9,
+        3,
+    )
+    .unwrap();
     let mut network = Network {
         nuclei: vec![
             Nucleus {
@@ -577,7 +583,7 @@ fn physical_stellar_profile_satisfies_explicit_absolute_and_relative_balance() {
     let surface = outer.gas_pressure + outer.radiation_pressure;
     // A non-equilibrium coarse seed selects the hot branch; split it onto the
     // finer grid without changing mass or internal energy. It is not an oracle.
-    let cells: Vec<Cell> = include_str!("data/helium_structure_seed.csv")
+    let cells: Vec<Cell> = include_str!("../data/helium_structure_seed.csv")
         .lines()
         .skip(1)
         .flat_map(|line| {

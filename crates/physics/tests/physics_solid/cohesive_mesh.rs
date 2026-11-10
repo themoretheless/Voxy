@@ -1,6 +1,5 @@
+use crate::support_cohesive as support;
 use physics::{cohesive, plasticity::mesh::Body};
-#[path = "support/cohesive.rs"]
-mod support;
 fn fixture(n: usize) -> (Body, Vec<[Option<f64>; 3]>, Vec<usize>) {
     support::fixture(n, cohesive::Material::new(1e9, 1e10, 1e5, 10.).unwrap())
 }

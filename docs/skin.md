@@ -36,7 +36,7 @@ There is currently no Coulomb friction, vertex/triangle or edge/edge self-contac
 ## Verification and real mesh
 
 ```sh
-cargo test -p physics --test skin --test skin_embedding --release
+cargo test -p physics --test physics_bio --release -- skin:: skin_embedding::
 cargo test -p voxy_app --lib female_demo
 VOXY_SKIN_ONLY=1 cargo run -p voxy_app --example female --release
 VOXY_SKIN_ONLY=1 cargo run -p voxy_app --example female --release -- --smoke

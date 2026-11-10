@@ -1,3 +1,4 @@
+use crate::support_rigid;
 use physics::{
     astrophysics_spin::Spin,
     contact::ContactBody,
@@ -7,8 +8,6 @@ use physics::{
     },
     spin_path,
 };
-#[path = "support/rigid.rs"]
-mod support_rigid;
 use support_rigid::body;
 fn rotation() -> spin_path::Config {
     spin_path::Config {

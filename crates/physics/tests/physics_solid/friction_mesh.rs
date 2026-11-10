@@ -1,5 +1,4 @@
-#[path = "support/cohesive.rs"]
-mod support;
+use crate::support_cohesive as support;
 use physics::{cohesive, friction::Mode};
 #[test]
 fn fractured_slabs_stick_then_slide_at_mu_pressure_and_keep_history_transactional() {

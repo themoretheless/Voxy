@@ -139,8 +139,7 @@ fn failed_plastic_step_invalid_inputs_and_inversion_preserve_all_state() {
     assert_eq!(inverted.velocities(), initial);
 }
 
-#[path = "support/cohesive.rs"]
-mod support;
+use crate::support_cohesive as support;
 fn fracture_run(dt: f64) -> (f64, f64) {
     let (body, _, _) = support::fixture(
         1,
