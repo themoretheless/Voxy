@@ -100,7 +100,7 @@
   имён тестов (`-- --list`), после каждой группы сверяется: 1594 теста, 4 ignored. Документы
   `docs/{hair,tissues,physics,biomechanics,...}.md`: `--test urogenital` -> `--test physics_bio urogenital::`.
   Статус: `da0ecf2b6`: 7 бинарей, тот же список из 1594 тестов, все зелёные.
-- [ ] **2.3 Ациклический `physics` (13 коммитов).** Фактически это три сильно связные компоненты, а не пары.
+- [~] **2.3 Ациклический `physics` (13 коммитов).** Фактически это три сильно связные компоненты, а не пары.
   1. ratchet-тест `crates/voxy_depgraph/tests/physics_modules.rs` (~100 строк, std) со списком текущих нарушений;
   2. восемь маленьких переносов типов, по коммиту: `Matrix` в `math.rs`; `solve_protein` в `positive_transport.rs`;
      `OsmoticPressureLaw` (`biomechanics/vascular_pore.rs:5-38`) в новый лист `osmotic.rs`;
@@ -114,6 +114,12 @@
   rigid_motion -> liquid, surface_film -> biomechanics/medium/moisture -> plasticity/skin/tissue -> wear -> debris.
   Делить `physics` на крейты сейчас не нужно: середина (~65k строк) плотно связана. Первый кандидат после
   этой волны: `hair` (остров, 19.7k строк, самый высокий churn); решать по `cargo build --timings`.
+  Статус: ratchet `crates/voxy_depgraph/tests/physics_modules.rs` (`aa568b01b`); 8 из 10 восходящих рёбер сняты
+  (`3384b149f`, `b23492cc0`, `eb89d2fdb`): `Matrix` в `math`, `solve_protein` в `positive_transport`, лист `osmotic`,
+  `astrophysics/spin.rs` стал `rotation.rs` вместе с `Error` и `MaterialForceMoment`, turbidity в `liquid`.
+  Осталось: `moisture -> plasticity/wear` (перенос impl-блоков лишь спрятал бы зависимость: `Calibration::new`
+  валидирует через `plasticity::Material` и `wear::Material`, нужно решение по валидации), пара
+  `liquid <-> surface_film` (`film_impact`), удаление 21 плоского псевдонима.
 - [ ] **2.4 Инверсия `voxy_shell -> voxy_demos` (11 коммитов, два из них L).** Демо взаимоисключающие
   (каждый `with_*` сбрасывает остальные, `scene_app.rs:222-360`), значит честная форма: один слот
   `Option<Box<dyn SceneDemo>>`. Trait нельзя объявить в `voxy_shell` при миграции по одному демо (получится
