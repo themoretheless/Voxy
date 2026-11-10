@@ -5,32 +5,26 @@ use voxy_scene::{NodeId, ObjectId, SceneGraph};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct History {
-    contact: voxy_gameplay::FootContactCheckpoint,
+    contact: crate::FootContactCheckpoint,
     pivot: [u64; 3],
     pending: Option<([u64; 3], u64)>,
     geometry: Option<(Vec<[u64; 3]>, u64)>,
     last_weight: Option<u32>,
     frozen: Option<(String, u32)>,
 }
-#[allow(dead_code)]
-pub(crate) enum FootCheckpointRig<'a> {
-    Model(&'a ModelAsset),
-    Skeleton(&'a voxy_animation::Skeleton),
-}
 
-#[allow(dead_code)]
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(crate) struct FootRuntimeCheckpoint {
+pub struct FootRuntimeCheckpoint {
     version: u32,
     settings: ModelFootPlacement,
     feet: Vec<History>,
 }
-#[allow(dead_code)]
+
 impl FootRuntime {
     /// Frozen poses use a shared outer identity table so restored contact history
     /// refers to the SAME Arc as restored Animator/ModelPlayback snapshots.
-    pub(crate) fn checkpoint(
+    pub fn checkpoint(
         &self,
         scene: &SceneGraph,
         identify: impl Fn(NodeId) -> Option<ObjectId>,
@@ -90,9 +84,14 @@ impl FootRuntime {
         Ok(saved)
     }
 }
-#[allow(dead_code)]
+
 impl FootRuntimeCheckpoint {
-    pub(crate) fn to_json(&self, max_bytes: usize) -> Result<String, String> {
+    #[must_use]
+    pub fn settings(&self) -> &ModelFootPlacement {
+        &self.settings
+    }
+
+    pub fn to_json(&self, max_bytes: usize) -> Result<String, String> {
         if self.version != 1 {
             return Err("unsupported foot runtime checkpoint".into());
         }
@@ -102,7 +101,7 @@ impl FootRuntimeCheckpoint {
         }
         Ok(text)
     }
-    pub(crate) fn from_json(text: &str, max_bytes: usize) -> Result<Self, String> {
+    pub fn from_json(text: &str, max_bytes: usize) -> Result<Self, String> {
         if text.len() > max_bytes {
             return Err("foot runtime checkpoint exceeds byte budget".into());
         }
@@ -112,38 +111,51 @@ impl FootRuntimeCheckpoint {
         }
         Ok(saved)
     }
-    pub(crate) fn prepare(
+    pub fn prepare_skeleton(
         &self,
-        rig: FootCheckpointRig<'_>,
+        skeleton: &voxy_animation::Skeleton,
         clips: &[Arc<voxy_animation::AnimationClip>],
         scene: &SceneGraph,
         resolve: impl Fn(&ObjectId) -> Option<NodeId>,
         resolve_pose: impl Fn(&str) -> Option<Arc<voxy_animation::Pose>>,
         max_bytes: usize,
     ) -> Result<FootRuntime, String> {
-        self.prepare_with_source_skeleton(rig, None, clips, scene, resolve, resolve_pose, max_bytes)
+        self.prepare_with_joint_resolver(
+            skeleton,
+            None,
+            clips,
+            |name| {
+                skeleton
+                    .joints()
+                    .iter()
+                    .position(|joint| joint.name.as_ref() == name)
+                    .map(|index| index as u16)
+                    .ok_or_else(|| format!("missing foot joint: {name}"))
+            },
+            scene,
+            resolve,
+            resolve_pose,
+            max_bytes,
+        )
     }
-    pub(crate) fn prepare_with_source_skeleton(
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "checkpoint restoration binds target skeleton, optional retarget source skeleton, clips, scene IDs, and shared pose snapshots"
+    )]
+    pub fn prepare_with_joint_resolver(
         &self,
-        rig: FootCheckpointRig<'_>,
+        skeleton: &voxy_animation::Skeleton,
         source_skeleton: Option<&voxy_animation::Skeleton>,
         clips: &[Arc<voxy_animation::AnimationClip>],
+        resolve_joint: impl Fn(&str) -> Result<u16, String>,
         scene: &SceneGraph,
         resolve: impl Fn(&ObjectId) -> Option<NodeId>,
         resolve_pose: impl Fn(&str) -> Option<Arc<voxy_animation::Pose>>,
         max_bytes: usize,
     ) -> Result<FootRuntime, String> {
         self.to_json(max_bytes)?;
-        let (skeleton, mut candidate) = match rig {
-            FootCheckpointRig::Model(model) => (
-                &model.skeleton,
-                FootRuntime::new_with_clips(model, self.settings.clone(), clips)?,
-            ),
-            FootCheckpointRig::Skeleton(skeleton) => (
-                skeleton,
-                FootRuntime::from_skeleton(skeleton, self.settings.clone(), clips)?,
-            ),
-        };
+        let mut candidate =
+            FootRuntime::new_resolved(skeleton, self.settings.clone(), clips, resolve_joint)?;
         let snapshot_skeleton = source_skeleton.unwrap_or(skeleton);
         if source_skeleton.is_some()
             && clips

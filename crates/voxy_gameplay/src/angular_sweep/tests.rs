@@ -166,20 +166,16 @@ fn rigid_envelope_broadphase_retains_contacts_outside_the_nominal_sweep() {
         1,
     )
     .unwrap();
+    let base_query = SweepQuery {
+        center: DVec3::ZERO,
+        rest_edges: edges,
+        orientation: DQuat::IDENTITY,
+        basis: DQuat::IDENTITY,
+        origin: DVec3::ZERO,
+        scale: 1.,
+    };
     let run = |clearance, queries: &mut usize| {
-        sweep_rigid_path_with_clearance(
-            DVec3::ZERO,
-            edges,
-            DQuat::IDENTITY,
-            &path,
-            DQuat::IDENTITY,
-            DVec3::ZERO,
-            1.,
-            clearance,
-            &[wall],
-            256,
-            queries,
-        )
+        sweep_rigid_path_with_clearance(base_query, &path, clearance, &[wall], 256, queries)
     };
     assert!(run(0., &mut 4096).unwrap().complete);
     let hit = run(0.2, &mut 4096).unwrap();
@@ -189,37 +185,13 @@ fn rigid_envelope_broadphase_retains_contacts_outside_the_nominal_sweep() {
         center: DVec3::X * 10.,
         ..wall
     };
-    let far_hit = sweep_rigid_path_with_clearance(
-        DVec3::ZERO,
-        edges,
-        DQuat::IDENTITY,
-        &path,
-        DQuat::IDENTITY,
-        DVec3::ZERO,
-        1.,
-        0.2,
-        &[far],
-        0,
-        &mut 4096,
-    )
-    .unwrap();
+    let far_hit =
+        sweep_rigid_path_with_clearance(base_query, &path, 0.2, &[far], 0, &mut 4096).unwrap();
     assert!(far_hit.complete);
     // The near wall must survive broadphase even when no advancement work
     // is available: budget failure, rather than a falsely complete path.
     assert!(matches!(
-        sweep_rigid_path_with_clearance(
-            DVec3::ZERO,
-            edges,
-            DQuat::IDENTITY,
-            &path,
-            DQuat::IDENTITY,
-            DVec3::ZERO,
-            1.,
-            0.2,
-            &[wall],
-            0,
-            &mut 4096
-        ),
+        sweep_rigid_path_with_clearance(base_query, &path, 0.2, &[wall], 0, &mut 4096),
         Err(PhysicsError::SweepBudget)
     ));
     assert!((hit.displacement.x - 0.6).abs() < 1e-8);
@@ -238,13 +210,11 @@ fn rigid_envelope_broadphase_retains_contacts_outside_the_nominal_sweep() {
     )
     .unwrap();
     let hit = sweep_rigid_path_with_clearance(
-        DVec3::X * 0.7,
-        edges,
-        DQuat::IDENTITY,
+        SweepQuery {
+            center: DVec3::X * 0.7,
+            ..base_query
+        },
         &stationary,
-        DQuat::IDENTITY,
-        DVec3::ZERO,
-        1.,
         0.2,
         &[wall],
         256,

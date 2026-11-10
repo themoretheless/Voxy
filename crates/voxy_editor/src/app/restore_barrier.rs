@@ -1,6 +1,5 @@
 //! Ordered model/UI drain followed by game freeze and native audio-owner fence.
 //! Presentation/input ownership and native output-device queue transfer are outer gates.
-#![allow(dead_code)]
 use crate::*;
 use crate::{
     audio_session::checkpoint::AudioSessionCheckpoint,
@@ -280,6 +279,7 @@ impl Drop for PreparedCoordinatedPlay {
     }
 }
 impl CoordinatedPlayCheckpoint {
+    #[cfg(test)]
     pub(crate) fn prepare(
         &self,
         options: CoordinatedPrepare<'_>,
@@ -477,6 +477,7 @@ impl CoordinatedOrigin {
     }
 }
 
+#[cfg(test)]
 impl CoordinatedPlayCheckpoint {
     pub(crate) fn prepare_guarded(
         &self,
@@ -551,6 +552,7 @@ impl PendingCoordinatedPlay {
 }
 impl ReadyCoordinatedPlay {
     /// Check all original source owners and destination GPU immediately before commit.
+    #[cfg(test)]
     pub(crate) fn validate_origin(
         &self,
         app: &mut App,
@@ -581,6 +583,13 @@ fn retire_staged_models(
     workers
 }
 impl PendingCoordinatedPlay {
+    #[cfg_attr(
+        not(test),
+        expect(
+            dead_code,
+            reason = "worker teardown path for cancelled coordinated play staging"
+        )
+    )]
     pub(crate) fn discard(self) -> Vec<std::thread::JoinHandle<()>> {
         let mut workers = self.game.discard();
         workers.extend(self.outer.discard());

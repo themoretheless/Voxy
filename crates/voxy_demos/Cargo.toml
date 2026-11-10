@@ -13,7 +13,6 @@ experimental-reusable-query-workers = ["physics/experimental-reusable-query-work
 cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda"]
 
 [dependencies]
-voxy_editor = { path = "../voxy_editor" }
 voxy_gameplay = { path = "../voxy_gameplay" }
 voxy_scene = { path = "../voxy_scene" }
 voxy_input = { path = "../voxy_input" }

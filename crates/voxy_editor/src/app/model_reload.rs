@@ -371,6 +371,31 @@ impl App {
         result: ResultAsset,
         gpu: Option<ReadyModelBatch>,
     ) -> Result<(), Error> {
+        // The worker checked its inputs at decode completion. They may have
+        // changed while the result was queued or GPU admission was pending.
+        let result =
+            result.and_then(|source| {
+                let validated = (|| -> Result<(), Error> {
+                    let provider = self.authoring.authoring_project.input_provider()?;
+                    for (id, observation) in source.inputs().observations() {
+                        let snapshot = observation
+                            .as_ref()
+                            .map_err(|error| format!("{id:?}: {error:?}"))?;
+                        let digest = provider
+                            .fingerprint(id, snapshot.bytes.len())
+                            .map_err(|error| format!("{}: {error}", id.0))?;
+                        if digest != snapshot.digest {
+                            return Err(format!("{}: content changed", id.0).into());
+                        }
+                    }
+                    Ok(())
+                })();
+                match validated {
+                    Ok(()) => Ok(source),
+                    Err(error) => Err(source
+                        .into_failed(format!("model source changed before publication: {error}"))),
+                }
+            });
         let output = ticket.asset();
         let source_watch = self.watcher.as_ref().map(|watcher| SourceWatchAdmission {
             max_sources: watcher.source_capacity(),

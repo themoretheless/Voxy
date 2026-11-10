@@ -1,6 +1,9 @@
 //! Durable controller checkpoint. Scene data and other runtime owners are saved separately.
 use super::*;
-use voxy_scene::ObjectId;
+use glam::Quat;
+use physics::{AnchoredAabb, CharacterState, Origin};
+use std::collections::HashMap;
+use voxy_scene::{NodeId, ObjectId};
 
 /// Versioned accepted controller state, addressed by durable scene identities.
 /// Float bit patterns avoid loss of solver precision through JSON number parsing.
@@ -254,10 +257,12 @@ impl CharacterPhysics {
             }
         }
         self.states = candidate;
+        self.staging_states.clear();
         self.depenetration = saved.depenetration;
         self.angular_iterations = saved.angular_iterations;
         self.trajectory_queries = saved.trajectory_queries;
         self.validated_structure = None;
+        self.cached_static_world = None;
         Ok(())
     }
 }

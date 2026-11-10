@@ -10,7 +10,7 @@ pub struct PhysicalStance {
     scene: voxy_scene::SceneGraph,
     physics: voxy_gameplay::CharacterPhysics,
     input: voxy_input::InputMap,
-    feet: voxy_editor::FootRuntime,
+    feet: voxy_gameplay::FootRuntime,
     owner: voxy_scene::NodeId,
     center: DVec3,
     pub pose: Pose,

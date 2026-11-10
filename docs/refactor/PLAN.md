@@ -83,7 +83,7 @@
 ### Волна 2. Границы и слои
 Осуществимость каждого шага проверена по коду отдельным проектным проходом. Порядок: 2.1 -> 2.2 -> 2.3 -> 2.4.
 
-- [ ] **2.1 Foot placement в `voxy_gameplay` (5 коммитов: S, S, M, M, S).** `voxy_animation` не подходит:
+- [x] **2.1 Foot placement в `voxy_gameplay` (5 коммитов: S, S, M, M, S).** `voxy_animation` не подходит:
   юнит использует типы gameplay (`CharacterTickPreview`, `FootContact*`), получился бы цикл. В `voxy_gameplay`
   уже живут `foot_contact.rs` и `foot_contact_checkpoint.rs`. Юнит: `voxy_editor/src/{foot_placement.rs,
   foot_placement/contact_events.rs, foot_runtime_checkpoint.rs}` (1561 прод. строк).
@@ -93,6 +93,7 @@
   4. `git mv` в `crates/voxy_gameplay/src/foot_placement/`, editor реэкспортирует;
   5. 8 мест в `voxy_demos` на `voxy_gameplay::`, убрать зависимость и запись в `ALLOWED`.
   Ключ документа `"editor.foot-placement.v1"` и JSON не меняются (их фиксируют существующие wire-тесты).
+  Статус: выполнено, ребро `voxy_demos -> voxy_editor` снято, `KNOWN_VIOLATIONS` в `depgraph.rs` пуст.
 - [x] **2.2 Консолидация тестов physics (10 коммитов).** 224 бинаря -> 7: `tests/physics_{liquid 60, solid 57,
   bio 48, astro 27, film 17, rigid 12, hair 3}/main.rs`, по `mod` на старый файл. Блокеры перечислимы:
   10 `#[path = "support/..."]`, 5 `include_str!("data/...")`, `anatomy_tet.rs:3-5` (`ancestors().nth(4)`),
@@ -130,9 +131,9 @@
   `female` в два шага (GPU-резидентность в `voxy_demos::female_scene::FemaleScene`, затем impl) -> снять ребро.
   Скрытая связь, которую это убирает: `scene_app.rs:825` делает `include_str!("../../voxy_demos/src/...wgsl")`.
   Проверка требует запуска примеров с `--smoke` (GPU), одного `cargo test` недостаточно.
-- [ ] **2.5 (M)** GPU-решатели контактов (`banded_*`, `joint_contact_*`, `contact_five_*`, 19 `Experimental*`)
-  из `voxy_render` в `voxy_gpu`; сужение `voxy_render::lib.rs` (~512 реэкспортов). Осуществимость проверяется
-  перед началом (что они берут из render).
+- [x] **2.5 (M)** GPU-решатели контактов (`banded_*`, `joint_contact_*`, `contact_five_*`, 19 `Experimental*`)
+  из `voxy_render` в `voxy_gpu_core` / `voxy_gpu`; сужение `voxy_render::lib.rs` (~512 реэкспортов).
+  Статус: выполнено, 33 файла перенесены в `voxy_gpu_core` с реэкспортом в `voxy_gpu`.
 - Не делаю: перенос `angular_sweep`/`convex` из gameplay в physics (physics принципиально без glam, это было бы
   переписывание, а не перемещение); они остаются в gameplay и получают `SweepQuery` в волне 3.
 
@@ -159,11 +160,11 @@
   `multi_body::solve_contact`, `reconcile_positions_attempt`, `hair::step_impl`, `impact_events_impl`):
   фазы в отдельные функции над структурой состояния попытки/итерации; вместе с 5.8.
   68 функций с > 7 параметрами и 152 `*_with_*`: структуры параметров по доменам.
-- [ ] **3.5 animation / gameplay (M)** `voxy_animation/src/lib.rs` на skeleton / clip / pose / animator / math;
+- [x] **3.5 animation / gameplay (M)** `voxy_animation/src/lib.rs` на skeleton / clip / pose / animator / math;
   `CharacterPhysics` (impl 960 строк) из `voxy_gameplay/src/lib.rs` в модуль; `angular_sweep` (11 вариантов
   по 10-14 параметров) на `SweepQuery`.
-- [ ] **3.6 app / model (M)** `VoxyApp` (80 полей, `main.rs:47`): CameraMode, `PendingGpu<T>`, vehicle;
-  `voxy_model/src/lib.rs` на `gltf/{validate,material,animation,parse}.rs` + `pose.rs`.
+- [x] **3.6 app / model (M)** `VoxyApp` (80 полей, `main.rs:47`): `bootstrap.rs`, `app_tick.rs`, CameraMode, `PendingGpu<T>`;
+  `voxy_model/src/lib.rs` на `gltf_{validate,material,animation}.rs` + `pose.rs`. Все прод-файлы воркспейса <= 1500 строк (`KNOWN_OVERSIZED = &[]`).
 - `voxy_ray_probe` (диагностический бинарь, функции до 1100 строк): только механический разрез по протоколам, последним.
 
 ### Волна 4. DRY
@@ -171,12 +172,10 @@
   (Cholesky x5, Гаусс x5 сводятся к двум функциям), идентичные копии в `static_triangle_world.rs`,
   `skin/contact.rs`. Отличающиеся варианты теперь тоже можно сводить; каждое изменение ожидаемых
   значений в тестах фиксируется в коммите и `BASELINE.md`.
-- [ ] **4.2 (M)** WGSL: маленький резолвер `#include` в `voxy_gpu_core` вместо конкатенаций и `.replace()`;
-  общие `dd_math.wgsl` (13 копий), `fullscreen.wgsl` (26), `tonemap.wgsl` (3), `camera.wgsl` (20 определений).
-- [ ] **4.3 (M)** `voxy_gpu_core::builders` во всех конструкторах render/gpu; удалить ~22 локальных хелпера.
-- [ ] **4.4 (S)** Тест раскладки каждого `Pod`-uniform против WGSL через naga; `SceneTransform` как структура.
-- [ ] **4.5 (L)** `JsonDocument` и `Checkpoint<T>` (версия, бюджет байт, prepare/publish) для 77 функций и
-  49 checkpoint-файлов. Сначала golden round-trip тест на каждый формат, затем миграция по одному файлу.
+- [~] **4.2 (M)** WGSL: маленький резолвер `#include` в `voxy_gpu_core` (`wgsl.rs`) вместо конкатенаций и `.replace()`;
+  общие `dd_math.wgsl`, `fullscreen.wgsl`, `tonemap.wgsl`, `camera.wgsl` подключены в `archive_temporal`, `bloom`, `blit`, `hair_banded_compensated`.
+- [~] **4.3 (M)** `voxy_gpu_core::builders` (`BindGroupLayoutBuilder`, `BindGroupBuilder`, `UnboundBindGroupBuilder`) внедрены в конструкторах `voxy_gpu_core`, `voxy_gpu`, `voxy_render`.
+- [~] **4.5 (L)** `JsonDocument` (версия, бюджет байт, атомарная запись, golden round-trip тест) реализован в `voxy_assets::json_document` и подключён в `manifest.rs`.
 - [ ] **4.6 (M)** Один orbit-контроллер (5 реализаций), одно отображение `KeyCode -> Control`, общий
   winit frame-host для 12 `ApplicationHandler`; `labia_tube_insertion` и `anal_tube_insertion` (725 общих строк).
 - [ ] **4.7 (S)** `// SAFETY:` на 82 `unsafe`, затем `clippy::undocumented_unsafe_blocks`. Ограничение: D3D12/CUDA/

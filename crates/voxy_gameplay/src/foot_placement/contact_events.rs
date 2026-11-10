@@ -1,6 +1,6 @@
 //! Intersections of zero-valued contact windows in common fixed-tick coordinates.
 use super::{FootContactKey, contact_weight};
-use crate::EditorError;
+use crate::SupportQueryBudget;
 use voxy_animation::AnimationPhaseInterval;
 
 #[derive(Clone, Copy)]
@@ -15,7 +15,7 @@ pub(super) enum SourceTravel<'a> {
         active_fraction: f64,
     },
 }
-fn spend(budget: &mut voxy_gameplay::SupportQueryBudget) -> Result<(), EditorError> {
+fn spend(budget: &mut SupportQueryBudget) -> Result<(), String> {
     budget
         .charge_work(1)
         .map_err(|_| "contact event budget exceeded".into())
@@ -24,8 +24,8 @@ fn zero_windows(
     keys: &[FootContactKey],
     phase: AnimationPhaseInterval,
     fraction: f64,
-    budget: &mut voxy_gameplay::SupportQueryBudget,
-) -> Result<Vec<[f64; 2]>, EditorError> {
+    budget: &mut SupportQueryBudget,
+) -> Result<Vec<[f64; 2]>, String> {
     if !phase.start.is_finite()
         || !phase.end.is_finite()
         || !(0. ..=1.).contains(&phase.start)
@@ -93,8 +93,8 @@ pub(super) fn mixed_swing(
     target_phase: AnimationPhaseInterval,
     source: Option<SourceTravel<'_>>,
     source_continues: bool,
-    budget: &mut voxy_gameplay::SupportQueryBudget,
-) -> Result<bool, EditorError> {
+    budget: &mut SupportQueryBudget,
+) -> Result<bool, String> {
     let Some(source) = source else {
         // The ordinary single-clip case needs no loop enumeration.
         budget
@@ -165,8 +165,8 @@ mod tests {
         phase: AnimationPhaseInterval,
         source: Option<SourceTravel<'_>>,
         limit: usize,
-    ) -> Result<bool, EditorError> {
-        let mut budget = voxy_gameplay::SupportQueryBudget::new(limit)?;
+    ) -> Result<bool, String> {
+        let mut budget = SupportQueryBudget::new(limit).map_err(|e| e.to_string())?;
         super::mixed_swing(target, phase, source, false, &mut budget)
     }
 
@@ -308,14 +308,14 @@ mod tests {
             phase: phase(0., 1.),
             active_fraction: 1.,
         };
-        let mut budget = voxy_gameplay::SupportQueryBudget::new(12).unwrap();
+        let mut budget = SupportQueryBudget::new(12).unwrap();
         assert!(
             super::mixed_swing(&keys, phase(0., 1.), Some(source), false, &mut budget).unwrap()
         );
         assert!(
             super::mixed_swing(&keys, phase(0., 1.), Some(source), false, &mut budget).is_err()
         );
-        let mut budget = voxy_gameplay::SupportQueryBudget::new(8).unwrap();
+        let mut budget = SupportQueryBudget::new(8).unwrap();
         budget.charge_work(5).unwrap();
         assert!(super::mixed_swing(&keys, phase(0., 1.), None, false, &mut budget).unwrap());
         assert_eq!(budget.remaining(), 0);
@@ -336,12 +336,12 @@ mod tests {
                 active_fraction: 1.,
             },
         ] {
-            let mut budget = voxy_gameplay::SupportQueryBudget::new(100).unwrap();
+            let mut budget = SupportQueryBudget::new(100).unwrap();
             assert!(
                 !super::mixed_swing(&keys, phase(0., 0.5), Some(source), true, &mut budget)
                     .unwrap()
             );
-            let mut budget = voxy_gameplay::SupportQueryBudget::new(100).unwrap();
+            let mut budget = SupportQueryBudget::new(100).unwrap();
             assert!(
                 super::mixed_swing(&keys, phase(0., 0.5), Some(source), false, &mut budget)
                     .unwrap()

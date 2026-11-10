@@ -1,5 +1,10 @@
 //! Small native editor panels rendered through the existing scene renderer.
 // Glyph metrics are bounded to a 512x128 atlas, UI rows to 128 scene objects.
+
+mod hierarchy;
+mod inspector_components;
+mod inspector_modes;
+
 use crate::InspectorMode;
 use glam::Vec2;
 use std::collections::BTreeMap;
@@ -93,6 +98,7 @@ pub(crate) enum Action {
     AudioSettingsLoad,
     AudioSettingsSave,
 }
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct ResourceNotice {
     pub lines: [String; 3],
@@ -100,6 +106,7 @@ pub(crate) struct ResourceNotice {
     pub relink: bool,
     pub editing: bool,
 }
+
 pub(crate) struct Panels {
     registry: std::sync::Arc<voxy_scene::ComponentRegistry>,
     pub collection_resets: std::collections::BTreeSet<([u8; 32], [u8; 32])>,
@@ -121,6 +128,7 @@ pub(crate) struct Panels {
     pointer: voxy_ui::PointerRouter,
     presented: bool,
 }
+
 impl std::fmt::Debug for Panels {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         formatter
@@ -129,11 +137,13 @@ impl std::fmt::Debug for Panels {
             .finish_non_exhaustive()
     }
 }
+
 impl Panels {
     #[cfg(test)]
     pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
         Self::with_registry(std::sync::Arc::new(crate::model_registry()?))
     }
+
     pub fn with_registry(
         registry: std::sync::Arc<voxy_scene::ComponentRegistry>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
@@ -192,6 +202,7 @@ impl Panels {
             pointer: voxy_ui::PointerRouter::new(256),
         })
     }
+
     pub fn frame_outcome(&mut self, outcome: voxy_render::RenderOutcome) {
         self.presented = outcome == voxy_render::RenderOutcome::Presented;
         if !self.presented {
@@ -199,14 +210,17 @@ impl Panels {
             self.pointer.move_to(None);
         }
     }
+
     pub fn input_ready(&self) -> bool {
         self.presented
     }
+
     pub fn invalidate_presentation(&mut self) {
         self.presented = false;
         self.focus.cancel();
         self.pointer.move_to(None);
     }
+
     pub fn hit(&mut self, point: Vec2) -> Option<Action> {
         if !self.presented {
             return None;
@@ -216,6 +230,26 @@ impl Panels {
             .hovered()
             .and_then(|id| self.focus.action_for(id))
     }
+
+    // Texture white texel is the final unused pixel of the alpha atlas.
+    pub(super) fn solid(
+        batch: &mut SpriteBatch,
+        r: [f32; 4],
+        size: Vec2,
+        color: [f32; 4],
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let mut sprite =
+            Sprite::from_logical_rect(Vec2::new(r[0], r[1]), Vec2::new(r[2], r[3]), size, color)?;
+        sprite.uv_min = Vec2::new(511.0 / 512.0, 127.0 / 128.0);
+        sprite.uv_max = Vec2::ONE;
+        batch.push(sprite)?;
+        Ok(())
+    }
+
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "editor panel layout consumes current authoring selection, scroll, field draft, and mode state"
+    )]
     pub fn build(
         &mut self,
         document: &SceneDocument,
@@ -235,30 +269,16 @@ impl Panels {
         let mut batch = SpriteBatch::new(16000);
         let (left, right) = side_widths(size);
         let rx = size.x - right;
-        // Texture white texel is the final unused pixel of the alpha atlas.
-        let solid = |batch: &mut SpriteBatch,
-                     r: [f32; 4],
-                     color|
-         -> Result<(), Box<dyn std::error::Error>> {
-            let mut sprite = Sprite::from_logical_rect(
-                Vec2::new(r[0], r[1]),
-                Vec2::new(r[2], r[3]),
-                size,
-                color,
-            )?;
-            sprite.uv_min = Vec2::new(511.0 / 512.0, 127.0 / 128.0);
-            sprite.uv_max = Vec2::ONE;
-            batch.push(sprite)?;
-            Ok(())
-        };
-        solid(
+        Self::solid(
             &mut batch,
             [0.0, 0.0, left, size.y],
+            size,
             [0.06, 0.075, 0.1, 1.0],
         )?;
-        solid(
+        Self::solid(
             &mut batch,
             [rx, 0.0, right, size.y],
+            size,
             [0.06, 0.075, 0.1, 1.0],
         )?;
         self.text(
@@ -279,181 +299,19 @@ impl Panels {
             right - 16.0,
             size,
         )?;
-        if let Some(notice) = &self.resource_notice {
-            let width = rx - left - 16.0;
-            if width > 0.0 && size.y >= 80.0 {
-                solid(
-                    &mut batch,
-                    [left + 8.0, 8.0, width, 68.0],
-                    [0.22, 0.12, 0.06, 1.0],
-                )?;
-                for (row, text) in notice.lines.iter().enumerate() {
-                    self.text(
-                        &mut batch,
-                        text,
-                        Vec2::new(left + 16.0, 27.0 + row as f32 * 20.0),
-                        width - 16.0,
-                        size,
-                    )?;
-                }
-                if notice.retry && !notice.editing && size.y >= 108.0 {
-                    let x = left
-                        + 8.0
-                        + if notice.relink {
-                            width.min(240.0) + 8.0
-                        } else {
-                            0.0
-                        };
-                    let remaining = left + 8.0 + width - x;
-                    if remaining >= 120.0 {
-                        let rect = [x, 80.0, remaining.min(200.0), 24.0];
-                        solid(&mut batch, rect, [0.16, 0.28, 0.42, 1.0])?;
-                        self.text(
-                            &mut batch,
-                            "Retry import",
-                            Vec2::new(x + 8.0, 97.0),
-                            rect[2] - 16.0,
-                            size,
-                        )?;
-                        self.regions.push((rect, Action::RetryModel));
-                    }
-                }
-                if notice.relink && size.y >= 108.0 {
-                    let rect = [left + 8.0, 80.0, width.min(240.0), 24.0];
-                    solid(&mut batch, rect, [0.16, 0.28, 0.42, 1.0])?;
-                    self.text(
-                        &mut batch,
-                        if notice.editing {
-                            "Cancel path entry (Esc)"
-                        } else {
-                            "Relink source file"
-                        },
-                        Vec2::new(rect[0] + 8.0, rect[1] + 17.0),
-                        rect[2] - 16.0,
-                        size,
-                    )?;
-                    self.regions.push((
-                        rect,
-                        if notice.editing {
-                            Action::RelinkCancel
-                        } else {
-                            Action::RelinkModel
-                        },
-                    ));
-                }
-            }
-        }
-        let mut order = Vec::with_capacity(document.objects.len());
-        visit(document, None, 0, &mut order);
-        for (row, (index, depth)) in order
-            .into_iter()
-            .skip(scroll)
-            .take(((size.y - 281.0) / 24.0).max(0.0) as usize)
-            .enumerate()
-        {
-            let object = &document.objects[index];
-            let y = 38.0 + row as f32 * 24.0;
-            let x = 8.0 + (f32::from(depth) * 8.0).min(40.0);
-            if index == selected {
-                solid(
-                    &mut batch,
-                    [4.0, y, left - 8.0, 23.0],
-                    [0.16, 0.28, 0.42, 1.0],
-                )?;
-            }
-            self.text(
-                &mut batch,
-                &format!("{}{}", if object.active { "" } else { "- " }, object.name),
-                Vec2::new(x, y + 17.0),
-                left - x - 4.0,
-                size,
-            )?;
-            self.regions.push((
-                [4.0, y, left - 8.0, 23.0],
-                if let Some(request) = self.follow_pick {
-                    Action::FollowTargetChoice(crate::camera_authoring::choice_token(
-                        request, &object.id,
-                    ))
-                } else {
-                    Action::Select(index)
-                },
-            ));
-        }
-        for (row, label, action) in [
-            (
-                0,
-                if document.objects.is_empty() {
-                    "Create object (D)"
-                } else {
-                    "Duplicate"
-                },
-                Action::Duplicate,
-            ),
-            (1, "Delete subtree", Action::Delete),
-            (
-                2,
-                if parenting {
-                    "Choose parent in tree"
-                } else {
-                    "Parent / detach"
-                },
-                Action::Parent,
-            ),
-            (
-                3,
-                if playing { "Stop (F6)" } else { "Play (F6)" },
-                Action::Play,
-            ),
-            (
-                4,
-                if let Some(status) = self.load_status {
-                    status.label
-                } else if inspector == InspectorMode::ImportSettings {
-                    "Save settings (F5)"
-                } else {
-                    "Save (F5)"
-                },
-                Action::Save,
-            ),
-            (
-                5,
-                if self.load_status.is_some_and(|status| status.cancellable) {
-                    "Cancel load (Esc)"
-                } else if self.load_status.is_some() {
-                    "Please wait..."
-                } else if inspector == InspectorMode::ImportSettings {
-                    "Reload settings (F9)"
-                } else {
-                    "Load (F9)"
-                },
-                if self.load_status.is_some() {
-                    Action::CancelLoad
-                } else {
-                    Action::Load
-                },
-            ),
-            (6, "Revert instance", Action::RevertPrefab),
-            (7, prefab_label, Action::PrefabChoice),
-            (8, "Place prefab", Action::PlacePrefab),
-            (9, "Create prefab", Action::CreatePrefab),
-        ] {
-            let y = size.y - 240.0 + row as f32 * 24.0;
-            self.text(
-                &mut batch,
-                label,
-                Vec2::new(10.0, y + 17.0),
-                left - 16.0,
-                size,
-            )?;
-            let enabled = match (row, self.load_status) {
-                (4, Some(_)) => false,
-                (5, Some(status)) => status.cancellable,
-                _ => true,
-            };
-            if enabled {
-                self.regions.push(([4.0, y, left - 8.0, 23.0], action));
-            }
-        }
+        self.build_resource_notice(&mut batch, left, rx, size)?;
+        self.build_hierarchy_and_toolbar(
+            &mut batch,
+            document,
+            selected,
+            left,
+            size,
+            scroll,
+            parenting,
+            playing,
+            inspector,
+            prefab_label,
+        )?;
         if let Some(object) = document.objects.get(selected) {
             self.text(
                 &mut batch,
@@ -509,105 +367,7 @@ impl Panels {
                     Action::Resource
                 },
             ));
-            let (x, y, z) = glam::Quat::from_array(object.rotation).to_euler(glam::EulerRot::XYZ);
-            let transform_values = [
-                object.translation[0],
-                object.translation[1],
-                object.translation[2],
-                x.to_degrees(),
-                y.to_degrees(),
-                z.to_degrees(),
-                object.scale[0],
-                object.scale[1],
-                object.scale[2],
-            ];
-            let transform_labels = [
-                "Pos X", "Pos Y", "Pos Z", "Rot X", "Rot Y", "Rot Z", "Scale X", "Scale Y",
-                "Scale Z",
-            ];
-            let mut values: Vec<(String, f64)> = transform_labels
-                .into_iter()
-                .zip(transform_values)
-                .map(|(label, value)| (label.into(), f64::from(value)))
-                .collect();
-            if inspector == InspectorMode::Physics {
-                values.clear();
-                if let Some(body) = object.components.get("game.character.v1") {
-                    for (index, label) in ["Half X", "Half Y", "Half Z"].into_iter().enumerate() {
-                        values.push((
-                            label.into(),
-                            body["half_extents"][index].as_f64().unwrap_or(0.0),
-                        ));
-                    }
-                    for (field, label) in [
-                        ("speed", "Speed"),
-                        ("gravity", "Gravity"),
-                        ("jump_speed", "Jump speed"),
-                    ] {
-                        values.push((label.into(), body[field].as_f64().unwrap_or(0.0)));
-                    }
-                } else if let Some(collider) = object.components.get("game.box.v1") {
-                    for (index, label) in ["Half X", "Half Y", "Half Z"].into_iter().enumerate() {
-                        values.push((
-                            label.into(),
-                            collider["half_extents"][index].as_f64().unwrap_or(0.0),
-                        ));
-                    }
-                }
-            }
-            if inspector == InspectorMode::ImportSettings {
-                values.clear();
-                if let Some(config) = import_config {
-                    values.extend([
-                        ("Bytes".into(), config.max_input_bytes as f64),
-                        ("Frames".into(), config.max_frames as f64),
-                        ("Filter work".into(), config.max_filter_evaluations as f64),
-                    ]);
-                }
-            }
-            if inspector == InspectorMode::Mixer {
-                values.clear();
-                if let Some(bus) = object.components.get("game.audio-bus.v1") {
-                    for (key, label) in [("bus", "Bus 0..15"), ("gain", "Gain 0..1")] {
-                        values.push((label.into(), bus[key].as_f64().unwrap_or(0.)));
-                    }
-                }
-            }
-            if inspector == InspectorMode::Audio {
-                values.clear();
-                if let Some(source) = object.components.get("game.audio-source.v1") {
-                    for (field, label) in [("gain", "Gain"), ("bus", "Bus")] {
-                        values.push((label.into(), source[field].as_f64().unwrap_or(0.)));
-                    }
-                    for (field, label) in [("looping", "Loop 0/1"), ("spatial", "Spatial 0/1")] {
-                        values.push((
-                            label.into(),
-                            if source[field].as_bool().unwrap_or(false) {
-                                1.
-                            } else {
-                                0.
-                            },
-                        ));
-                    }
-                    for (field, label) in [("near", "Near"), ("far", "Far")] {
-                        values.push((label.into(), source[field].as_f64().unwrap_or(0.)));
-                    }
-                }
-            }
-            if inspector == InspectorMode::Behavior {
-                values.clear();
-                if let Some(motion) = object.components.get("game.angular-motion.v1") {
-                    for (index, label) in ["Axis X", "Axis Y", "Axis Z"].into_iter().enumerate() {
-                        values.push((label.into(), motion["axis"][index].as_f64().unwrap_or(0.)));
-                    }
-                    values.push((
-                        "Radians/sec".into(),
-                        motion["radians_per_second"].as_f64().unwrap_or(0.),
-                    ));
-                }
-            }
             if let Some((choices, page)) = self.bone_picker.clone() {
-                values.clear();
                 for (row, (index, name)) in choices
                     .iter()
                     .enumerate()
@@ -636,617 +396,86 @@ impl Panels {
                     self.text(&mut batch, label, Vec2::new(x + 4., 302.), width - 8., size)?;
                     self.regions.push(([x, 284., width, 25.], action));
                 }
-            }
-            if let InspectorMode::Components(page) = inspector
-                && self.bone_picker.is_none()
-            {
-                values.clear();
-                let fields = crate::component_fields::fields(object)?;
-                let marker_token = crate::component_fields::marker_list_token(object)?;
-                for (row, (index, member)) in
-                    fields.iter().enumerate().skip(page * 6).take(6).enumerate()
-                {
-                    let y = 116.0 + row as f32 * 26.0;
-                    let text = field.filter(|(id, _)| *id == index).map_or_else(
-                        || {
-                            if member.schema == "game.follow-camera.v1" && member.path == "/target"
-                            {
-                                document
-                                    .objects
-                                    .iter()
-                                    .find(|candidate| {
-                                        Some(candidate.id.0.as_str()) == member.value.as_str()
-                                    })
-                                    .map_or_else(
-                                        || member.display(),
-                                        |candidate| candidate.name.clone(),
-                                    )
-                            } else if member.schema == "editor.model-animation.v1"
-                                && member.path == "/events"
-                            {
-                                format!("{} markers", member.value.as_array().map_or(0, Vec::len))
-                            } else {
-                                member.display()
-                            }
-                        },
-                        |(_, text)| text.into(),
-                    );
+                if inspector == InspectorMode::Material {
+                    self.text(
+                        &mut batch,
+                        texture_label,
+                        Vec2::new(rx + 10., 286.),
+                        right - 16.,
+                        size,
+                    )?;
+                }
+            } else if let InspectorMode::Components(page) = inspector {
+                self.build_components_page(
+                    &mut batch, document, object, page, playing, field, rx, right, size,
+                )?;
+            } else if let InspectorMode::Collections(collection, page) = inspector {
+                self.build_collections_page(
+                    &mut batch, object, collection, page, playing, rx, right, size,
+                )?;
+            } else {
+                if inspector == InspectorMode::Material {
+                    self.text(
+                        &mut batch,
+                        texture_label,
+                        Vec2::new(rx + 10., 286.),
+                        right - 16.,
+                        size,
+                    )?;
+                }
+                let values = inspector_modes::collect_mode_values(object, inspector, import_config);
+                for (index, (label, value)) in values.into_iter().enumerate() {
+                    let y = 116.0 + index as f32 * 26.0;
                     let overridden = !playing && self.overridden_fields.contains(&index);
-                    let label_width: f32 = "Reset"
+                    let reset_text_width: f32 = "Reset"
                         .chars()
                         .map(|character| self.glyphs[&character].0.advance)
                         .sum();
-                    let button_width = label_width.ceil() + 12.0;
-                    let bone_choice = self.retarget_draft
-                        && member.schema == "editor.model-retarget.v1"
-                        && member.path.starts_with("/joints/")
-                        && (member.path.ends_with("/source") || member.path.ends_with("/target"));
-                    let delete_pair = (bone_choice && member.path.ends_with("/source"))
-                        .then(|| {
-                            member
-                                .path
-                                .split('/')
-                                .nth(2)
-                                .and_then(|value| value.parse::<usize>().ok())
-                        })
-                        .flatten();
-                    let marker_button = if !playing
-                        && member.schema == "game.follow-camera.v1"
-                        && member.path == "/target"
-                    {
-                        Some((
-                            "Pick",
-                            Action::FollowTarget(crate::camera_authoring::request_token(object)?),
-                        ))
-                    } else if !playing && member.schema == "editor.model-animation.v1" {
-                        let token = marker_token;
-                        if member.path == "/events" {
-                            Some(("Add", Action::MarkerAdd(token)))
-                        } else if member.path.starts_with("/events/")
-                            && member.path.ends_with("/name")
-                        {
-                            member
-                                .path
-                                .split('/')
-                                .nth(2)
-                                .and_then(|index| index.parse().ok())
-                                .map(|index| ("Remove", Action::MarkerDelete(index, token)))
-                        } else if member.path.starts_with("/events/")
-                            && member.path.ends_with("/phase")
-                        {
-                            member
-                                .path
-                                .split('/')
-                                .nth(2)
-                                .and_then(|index| index.parse().ok())
-                                .map(|index| ("Preview", Action::MarkerPreview(index, token)))
-                        } else {
-                            None
-                        }
-                    } else {
-                        None
-                    };
-                    let width = right
-                        - if overridden { button_width + 12.0 } else { 8.0 }
-                        - if bone_choice { 42. } else { 0. }
-                        - if delete_pair.is_some() { 58. } else { 0. }
-                        - if marker_button.is_some() { 72. } else { 0. };
-                    let marker_label = if member.schema == "editor.model-animation.v1"
-                        && member.path.starts_with("/events/")
-                    {
-                        member
-                            .path
-                            .split('/')
-                            .nth(2)
-                            .and_then(|index| index.parse::<usize>().ok())
-                            .map(|index| {
-                                format!(
-                                    "{} {}",
-                                    if member.path.ends_with("/name") {
-                                        "Name"
-                                    } else {
-                                        "Phase"
-                                    },
-                                    index + 1
-                                )
-                            })
-                    } else {
-                        None
-                    };
-                    let foot_label = if member.schema == "editor.model-retarget.v1" {
-                        retarget_field_label(&member.path)
-                    } else {
-                        (member.schema == "editor.foot-placement.v1")
-                            .then(|| foot_field_label(&member.path))
-                            .flatten()
-                    };
-                    let label = if member.schema == "game.follow-camera.v1" {
-                        match member.path.as_str() {
-                            "/target" => "Follow target",
-                            "/half_life" => "Follow half-life (s)",
-                            "/offset/0" => "Follow offset X",
-                            "/offset/1" => "Follow offset Y",
-                            "/offset/2" => "Follow offset Z",
-                            _ => member.path.as_str(),
-                        }
-                    } else if member.schema == "editor.model-animation.v1"
-                        && member.path == "/root_motion_joint"
-                    {
-                        "Motion bone index"
-                    } else if member.schema == "editor.model-animation.v1"
-                        && member.path == "/clip_name"
-                    {
-                        "Clip name"
-                    } else if member.schema == "editor.model-animation.v1"
-                        && member.path == "/transition_seconds"
-                    {
-                        "Clip transition seconds"
-                    } else if member.schema == "editor.model-animation.v1"
-                        && member.path == "/root_motion_bone"
-                    {
-                        "Motion bone name"
-                    } else if member.schema == "editor.model-animation.v1"
-                        && member.path == "/root_motion_axes/0"
-                    {
-                        "Root motion X"
-                    } else if member.schema == "editor.model-animation.v1"
-                        && member.path == "/root_motion_axes/1"
-                    {
-                        "Root motion Y"
-                    } else if member.schema == "editor.model-animation.v1"
-                        && member.path == "/root_motion_axes/2"
-                    {
-                        "Root motion Z"
-                    } else if member.schema == "editor.model-animation.v1"
-                        && member.path == "/root_motion_rotation"
-                    {
-                        "Root motion rotation"
-                    } else if matches!(
-                        member.schema.as_str(),
-                        "editor.foot-placement.v1" | "editor.model-retarget.v1"
-                    ) {
-                        foot_label.as_deref().unwrap_or(member.path.as_str())
-                    } else if let Some(label) = marker_label.as_deref() {
-                        label
-                    } else if member.schema == "editor.model-animation.v1"
-                        && member.path == "/events"
-                    {
-                        ""
-                    } else if member.path.is_empty() {
-                        member.schema.as_str()
-                    } else {
-                        member.path.as_str()
-                    };
+                    let reset_width = reset_text_width.ceil() + 12.0;
+                    let field_width = right - if overridden { reset_width + 12.0 } else { 8.0 };
+                    if field.is_some_and(|(id, _)| id == index) {
+                        Self::solid(
+                            &mut batch,
+                            [rx + 4.0, y, field_width, 25.0],
+                            size,
+                            [0.2, 0.25, 0.32, 1.0],
+                        )?;
+                    }
+                    let value = field.filter(|(id, _)| *id == index).map_or_else(
+                        || {
+                            if inspector == InspectorMode::ImportSettings {
+                                format!("{value:.0}")
+                            } else {
+                                format!("{value:.3}")
+                            }
+                        },
+                        |(_, value)| value.to_owned(),
+                    );
                     self.text(
                         &mut batch,
-                        &format!("{}{text} {label}", if overridden { "* " } else { "" }),
+                        &if overridden {
+                            format!("* {value} {label}")
+                        } else {
+                            format!("{label}: {value}")
+                        },
                         Vec2::new(rx + 10.0, y + 18.0),
-                        width - 8.0,
+                        field_width - 8.0,
                         size,
                     )?;
                     self.regions
-                        .push(([rx + 4.0, y, width, 25.0], Action::Field(index)));
-                    if let Some((label, action)) = marker_button {
-                        let rect = [rx + width + 4., y, 68., 25.];
-                        solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.0])?;
-                        self.text(
-                            &mut batch,
-                            label,
-                            Vec2::new(rect[0] + 3., y + 18.),
-                            62.,
-                            size,
-                        )?;
-                        self.regions.push((rect, action));
-                    }
-                    if bone_choice {
-                        let rect = [rx + width + 4., y, 38., 25.];
-                        self.text(
-                            &mut batch,
-                            "Pick",
-                            Vec2::new(rect[0] + 3., y + 18.),
-                            34.,
-                            size,
-                        )?;
-                        self.regions.push((rect, Action::RetargetBones(index)));
-                    }
-                    if let Some(pair) = delete_pair {
-                        let rect = [rx + width + 46., y, 54., 25.];
-                        self.text(
-                            &mut batch,
-                            "Remove",
-                            Vec2::new(rect[0] + 3., y + 18.),
-                            48.,
-                            size,
-                        )?;
-                        self.regions.push((rect, Action::RetargetDeletePair(pair)));
-                    }
+                        .push(([rx + 4.0, y, field_width, 25.0], Action::Field(index)));
                     if overridden {
-                        let rect = [rx + right - button_width - 4.0, y, button_width, 25.0];
-                        solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.0])?;
+                        let rect = [rx + right - reset_width - 4.0, y, reset_width, 25.0];
+                        Self::solid(&mut batch, rect, size, [0.18, 0.24, 0.3, 1.0])?;
                         self.text(
                             &mut batch,
                             "Reset",
                             Vec2::new(rect[0] + 6.0, y + 18.0),
-                            button_width - 12.0,
+                            reset_width - 12.0,
                             size,
                         )?;
                         self.regions.push((rect, Action::ResetField(index)));
                     }
-                }
-                if let Some(member) = field
-                    .and_then(|(index, _)| fields.get(index))
-                    .or_else(|| fields.get(page * 6))
-                {
-                    self.text(
-                        &mut batch,
-                        if member.schema == "editor.model-animation.v1" {
-                            "Animation"
-                        } else {
-                            &member.schema
-                        },
-                        Vec2::new(rx + 10.0, 284.0),
-                        right - 16.0,
-                        size,
-                    )?;
-                }
-                if !playing
-                    && !self.retarget_draft
-                    && fields
-                        .iter()
-                        .any(|field| field.schema == "editor.model-animation.v1")
-                {
-                    let rect = [rx + 8., 334., right - 16., 24.];
-                    solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.])?;
-                    let phase = self.preview_phase.unwrap_or(0.);
-                    solid(
-                        &mut batch,
-                        [
-                            rect[0] + (rect[2] - 3.) * phase as f32,
-                            rect[1],
-                            3.,
-                            rect[3],
-                        ],
-                        [0.5, 0.8, 1., 1.],
-                    )?;
-                    self.text(
-                        &mut batch,
-                        &format!("Pose phase {phase:.3}"),
-                        Vec2::new(rect[0] + 6., rect[1] + 18.),
-                        rect[2] - 12.,
-                        size,
-                    )?;
-                    self.regions.push((rect, Action::PreviewSeek));
-                    let token = crate::component_fields::morph_edit_token(object);
-                    for (y, label, action) in [
-                        (362., "Import morph defaults", Action::MorphDefaults(token)),
-                        (390., "Resume morph", Action::MorphResume(token)),
-                    ] {
-                        let rect = [rx + 8., y, right - 16., 24.];
-                        solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.])?;
-                        self.text(
-                            &mut batch,
-                            label,
-                            Vec2::new(rect[0] + 6., y + 18.),
-                            rect[2] - 12.,
-                            size,
-                        )?;
-                        self.regions.push((rect, action));
-                    }
-                }
-                for (y, label, forward) in [
-                    (280.0, "Previous fields", false),
-                    (306.0, "Next fields", true),
-                ] {
-                    self.text(
-                        &mut batch,
-                        label,
-                        Vec2::new(rx + 10.0, y + 18.0),
-                        right - 16.0,
-                        size,
-                    )?;
-                    self.regions.push((
-                        [rx + 4.0, y, right - 8.0, 25.0],
-                        Action::ComponentPage(forward),
-                    ));
-                }
-            }
-            if let InspectorMode::Collections(index, page) = inspector {
-                values.clear();
-                let lists = crate::component_collections::collections(object, &self.registry)?;
-                if let Some(list) = lists.get(index % lists.len().max(1)) {
-                    self.text(
-                        &mut batch,
-                        &format!("{} {}", list.schema, list.path),
-                        Vec2::new(rx + 10.0, 134.0),
-                        right - 16.0,
-                        size,
-                    )?;
-                    self.regions.push((
-                        [rx + 4.0, 116.0, right - 8.0, 25.0],
-                        Action::CollectionChoice,
-                    ));
-                    if self
-                        .registry
-                        .new_collection_item(list.schema, list.path, "preview")
-                        .is_ok()
-                    {
-                        self.text(
-                            &mut batch,
-                            "Add item",
-                            Vec2::new(rx + 10.0, 160.0),
-                            right - 16.0,
-                            size,
-                        )?;
-                        self.regions.push((
-                            [rx + 4.0, 142.0, right - 8.0, 25.0],
-                            Action::CollectionAdd(list.key),
-                        ));
-                    } else {
-                        self.text(
-                            &mut batch,
-                            "No item default",
-                            Vec2::new(rx + 10.0, 160.0),
-                            right - 16.0,
-                            size,
-                        )?;
-                    }
-                    let page = page % list.items.len().div_ceil(3).max(1);
-                    for (row, (index, item)) in list
-                        .items
-                        .iter()
-                        .enumerate()
-                        .skip(page * 3)
-                        .take(3)
-                        .enumerate()
-                    {
-                        let id = item[list.identity]
-                            .as_str()
-                            .ok_or("invalid collection ID")?;
-                        let target = crate::component_collections::item_key(id);
-                        let y = 168.0 + row as f32 * 44.0;
-                        let reset =
-                            !playing && self.collection_resets.contains(&(list.key, target));
-                        let reset_width = "Reset"
-                            .chars()
-                            .map(|c| self.glyphs[&c].0.advance)
-                            .sum::<f32>()
-                            .ceil()
-                            + 12.0;
-                        if reset {
-                            let rect = [rx + right - reset_width - 4.0, y, reset_width, 18.0];
-                            solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.0])?;
-                            self.text(
-                                &mut batch,
-                                "Reset",
-                                Vec2::new(rect[0] + 6.0, y + 16.0),
-                                reset_width - 12.0,
-                                size,
-                            )?;
-                            self.regions
-                                .push((rect, Action::CollectionReset(list.key, target)));
-                        }
-                        self.text(
-                            &mut batch,
-                            &item
-                                .get("name")
-                                .and_then(serde_json::Value::as_str)
-                                .map_or_else(|| format!("Item {}", index + 1), str::to_owned),
-                            Vec2::new(rx + 10.0, y + 16.0),
-                            right - 16.0 - if reset { reset_width + 4.0 } else { 0.0 },
-                            size,
-                        )?;
-                        for (column, label, action, enabled) in [
-                            (
-                                0,
-                                "Delete",
-                                Action::CollectionDelete(list.key, target),
-                                true,
-                            ),
-                            (
-                                1,
-                                "Up",
-                                Action::CollectionMove(list.key, target, false),
-                                index > 0,
-                            ),
-                            (
-                                2,
-                                "Down",
-                                Action::CollectionMove(list.key, target, true),
-                                index + 1 < list.items.len(),
-                            ),
-                        ] {
-                            if enabled {
-                                let width = (right - 8.0) / 3.0;
-                                let rect = [
-                                    rx + 4.0 + column as f32 * width,
-                                    y + 18.0,
-                                    width - 2.0,
-                                    24.0,
-                                ];
-                                solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.0])?;
-                                self.text(
-                                    &mut batch,
-                                    label,
-                                    Vec2::new(rect[0] + 4.0, y + 36.0),
-                                    width - 8.0,
-                                    size,
-                                )?;
-                                self.regions.push((rect, action));
-                            }
-                        }
-                    }
-                    if list.items.is_empty() {
-                        self.text(
-                            &mut batch,
-                            "Empty collection",
-                            Vec2::new(rx + 10.0, 190.0),
-                            right - 16.0,
-                            size,
-                        )?;
-                    }
-                    if !playing && self.collection_order_resets.contains(&list.key) {
-                        self.text(
-                            &mut batch,
-                            "Reset order",
-                            Vec2::new(rx + 10.0, 350.0),
-                            right - 16.0,
-                            size,
-                        )?;
-                        self.regions.push((
-                            [rx + 4.0, 332.0, right - 8.0, 24.0],
-                            Action::CollectionResetOrder(list.key),
-                        ));
-                    }
-                    for (column, label, forward) in [(0, "Previous", false), (1, "Next", true)] {
-                        if column == 0
-                            && !playing
-                            && self.collection_deleted_resets.contains(&list.key)
-                        {
-                            self.text(
-                                &mut batch,
-                                "Restore deleted",
-                                Vec2::new(rx + 10.0, 376.0),
-                                right - 16.0,
-                                size,
-                            )?;
-                            self.regions.push((
-                                [rx + 4.0, 358.0, right - 8.0, 24.0],
-                                Action::CollectionRestoreDeleted(list.key),
-                            ));
-                        }
-                        let width = (right - 8.0) / 2.0;
-                        self.text(
-                            &mut batch,
-                            label,
-                            Vec2::new(rx + 8.0 + column as f32 * width, 324.0),
-                            width - 8.0,
-                            size,
-                        )?;
-                        self.regions.push((
-                            [rx + 4.0 + column as f32 * width, 306.0, width - 2.0, 24.0],
-                            Action::CollectionPage(forward),
-                        ));
-                    }
-                    if !playing
-                        && let Some(deleted) = self.collection_deleted_items.get(&list.key).cloned()
-                    {
-                        let pages = deleted.len().div_ceil(3).max(1);
-                        let page = self.deleted_page % pages;
-                        self.text(
-                            &mut batch,
-                            &format!("Deleted {}/{} (next)", page + 1, pages),
-                            Vec2::new(rx + 10.0, 568.0),
-                            right - 16.0,
-                            size,
-                        )?;
-                        self.regions.push((
-                            [rx + 4.0, 550.0, right - 8.0, 24.0],
-                            Action::CollectionDeletedPage,
-                        ));
-                        for (row, (id, label)) in deleted.iter().skip(page * 3).take(3).enumerate()
-                        {
-                            let y = 576.0 + row as f32 * 26.0;
-                            self.text(
-                                &mut batch,
-                                &format!("Restore {label}"),
-                                Vec2::new(rx + 10.0, y + 18.0),
-                                right - 16.0,
-                                size,
-                            )?;
-                            self.regions.push((
-                                [rx + 4.0, y, right - 8.0, 24.0],
-                                Action::CollectionRestoreItem(list.key, *id),
-                            ));
-                        }
-                    }
-                } else {
-                    self.text(
-                        &mut batch,
-                        "No collections",
-                        Vec2::new(rx + 10.0, 134.0),
-                        right - 16.0,
-                        size,
-                    )?;
-                }
-            }
-            if inspector == InspectorMode::Material {
-                values.clear();
-                if let Some(material) = object.components.get("editor.material.v1") {
-                    for (index, label) in ["Tint R", "Tint G", "Tint B", "Tint A"]
-                        .into_iter()
-                        .enumerate()
-                    {
-                        values.push((label.into(), material["tint"][index].as_f64().unwrap_or(1.)));
-                    }
-                    values.push((
-                        "Lit 0/1".into(),
-                        if material["lit"].as_bool().unwrap_or(true) {
-                            1.
-                        } else {
-                            0.
-                        },
-                    ));
-                }
-            }
-            if inspector == InspectorMode::Material {
-                self.text(
-                    &mut batch,
-                    texture_label,
-                    Vec2::new(rx + 10., 286.),
-                    right - 16.,
-                    size,
-                )?;
-            }
-            for (index, (label, value)) in values.into_iter().enumerate() {
-                let y = 116.0 + index as f32 * 26.0;
-                let overridden = !playing && self.overridden_fields.contains(&index);
-                let reset_text_width: f32 = "Reset"
-                    .chars()
-                    .map(|character| self.glyphs[&character].0.advance)
-                    .sum();
-                let reset_width = reset_text_width.ceil() + 12.0;
-                let field_width = right - if overridden { reset_width + 12.0 } else { 8.0 };
-                if field.is_some_and(|(id, _)| id == index) {
-                    solid(
-                        &mut batch,
-                        [rx + 4.0, y, field_width, 25.0],
-                        [0.2, 0.25, 0.32, 1.0],
-                    )?;
-                }
-                let value = field.filter(|(id, _)| *id == index).map_or_else(
-                    || {
-                        if inspector == InspectorMode::ImportSettings {
-                            format!("{value:.0}")
-                        } else {
-                            format!("{value:.3}")
-                        }
-                    },
-                    |(_, value)| value.to_owned(),
-                );
-                self.text(
-                    &mut batch,
-                    &if overridden {
-                        format!("* {value} {label}")
-                    } else {
-                        format!("{label}: {value}")
-                    },
-                    Vec2::new(rx + 10.0, y + 18.0),
-                    field_width - 8.0,
-                    size,
-                )?;
-                self.regions
-                    .push(([rx + 4.0, y, field_width, 25.0], Action::Field(index)));
-                if overridden {
-                    let rect = [rx + right - reset_width - 4.0, y, reset_width, 25.0];
-                    solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.0])?;
-                    self.text(
-                        &mut batch,
-                        "Reset",
-                        Vec2::new(rect[0] + 6.0, y + 18.0),
-                        reset_width - 12.0,
-                        size,
-                    )?;
-                    self.regions.push((rect, Action::ResetField(index)));
                 }
             }
             if audio_mode {
@@ -1279,223 +508,8 @@ impl Panels {
                     size,
                 )?;
             }
-            for (row, label, action) in [
-                (
-                    5,
-                    if object.components.contains_key("game.follow-camera.v1") {
-                        "Remove follow camera"
-                    } else {
-                        "Add follow camera"
-                    },
-                    Action::FollowCamera(crate::camera_authoring::request_token(object)?),
-                ),
-                (
-                    3,
-                    if self.retarget_draft {
-                        "Add bone pair"
-                    } else if matches!(
-                        inspector,
-                        InspectorMode::Audio | InspectorMode::ImportSettings
-                    ) {
-                        "Open/reload import settings"
-                    } else if matches!(inspector, InspectorMode::Components(_)) {
-                        if object.components.contains_key("editor.model-animation.v1") {
-                            "Remove animation"
-                        } else {
-                            "Add animation"
-                        }
-                    } else if object.components.contains_key("game.angular-motion.v1") {
-                        "Remove angular motion"
-                    } else {
-                        "Add angular motion"
-                    },
-                    if matches!(
-                        inspector,
-                        InspectorMode::Audio | InspectorMode::ImportSettings
-                    ) {
-                        Action::AudioSettingsLoad
-                    } else if self.retarget_draft {
-                        Action::RetargetPair(true)
-                    } else if matches!(inspector, InspectorMode::Components(_)) {
-                        Action::Animation
-                    } else {
-                        Action::Motion
-                    },
-                ),
-                (
-                    4,
-                    if self.retarget_draft {
-                        "Remove last bone pair"
-                    } else {
-                        match inspector {
-                            InspectorMode::Behavior | InspectorMode::ImportSettings => {
-                                "Audio fields"
-                            }
-                            InspectorMode::Audio => "Mixer fields",
-                            InspectorMode::Mixer => "Component fields",
-                            InspectorMode::Components(_) => "Collections",
-                            InspectorMode::Collections(_, _) => "Transform fields",
-                            _ => "Behavior fields",
-                        }
-                    },
-                    if self.retarget_draft {
-                        Action::RetargetPair(false)
-                    } else {
-                        Action::Behavior
-                    },
-                ),
-                (
-                    0,
-                    if self.retarget_draft {
-                        "Apply retarget profile"
-                    } else if inspector == InspectorMode::ImportSettings {
-                        "Save import settings"
-                    } else if inspector == InspectorMode::Mixer {
-                        if object.components.contains_key("game.audio-bus.v1") {
-                            "Remove audio bus"
-                        } else {
-                            "Add audio bus"
-                        }
-                    } else if audio_mode {
-                        if object.components.contains_key("game.audio-source.v1") {
-                            "Remove audio source"
-                        } else {
-                            "Add audio source"
-                        }
-                    } else if object.components.contains_key("game.character.v1") {
-                        "Remove character (C)"
-                    } else {
-                        "Add character (C)"
-                    },
-                    if self.retarget_draft {
-                        Action::RetargetApply
-                    } else if inspector == InspectorMode::ImportSettings {
-                        Action::AudioSettingsSave
-                    } else if inspector == InspectorMode::Mixer {
-                        Action::AudioBus
-                    } else if audio_mode {
-                        Action::AudioSource
-                    } else {
-                        Action::Character
-                    },
-                ),
-                (
-                    1,
-                    if self.retarget_draft {
-                        "Cancel profile edit"
-                    } else if matches!(inspector, InspectorMode::Components(_)) {
-                        "Edit retarget profile"
-                    } else if audio_mode {
-                        if object.components.contains_key("game.audio-listener.v1") {
-                            "Remove audio listener"
-                        } else {
-                            "Add audio listener"
-                        }
-                    } else if object.components.contains_key("game.box.v1") {
-                        "Remove collider (B)"
-                    } else {
-                        "Add collider (B)"
-                    },
-                    if self.retarget_draft {
-                        Action::RetargetCancel
-                    } else if matches!(inspector, InspectorMode::Components(_)) {
-                        Action::Retarget
-                    } else if audio_mode {
-                        Action::AudioListener
-                    } else {
-                        Action::Collider
-                    },
-                ),
-                (
-                    2,
-                    if self.retarget_draft {
-                        "Remove retarget profile"
-                    } else if inspector == InspectorMode::Physics {
-                        "Transform fields (I)"
-                    } else {
-                        "Physics fields (I)"
-                    },
-                    if self.retarget_draft {
-                        Action::RetargetRemove
-                    } else {
-                        Action::Physics
-                    },
-                ),
-            ] {
-                if row == 5
-                    && (self.retarget_draft || !matches!(inspector, InspectorMode::Components(_)))
-                {
-                    continue;
-                }
-                let y = 354.0
-                    + if matches!(inspector, InspectorMode::Components(_)) && !self.retarget_draft {
-                        64.0
-                    } else {
-                        0.0
-                    }
-                    + row as f32 * 24.0
-                    + if matches!(inspector, InspectorMode::Collections(_, _)) {
-                        30.0
-                    } else {
-                        0.0
-                    };
-                self.text(
-                    &mut batch,
-                    label,
-                    Vec2::new(rx + 8.0, y + 17.0),
-                    right - 12.0,
-                    size,
-                )?;
-                self.regions
-                    .push(([rx + 4.0, y, right - 8.0, 23.0], action));
-            }
-            self.text(
-                &mut batch,
-                if playing {
-                    "Authoring values"
-                } else if field.is_none() {
-                    "Tab / Shift+Tab focus"
-                } else {
-                    "Type, Enter applies"
-                },
-                Vec2::new(
-                    rx + 8.0,
-                    if matches!(inspector, InspectorMode::Collections(_, _)) {
-                        521.0
-                    } else if matches!(inspector, InspectorMode::Components(_))
-                        && !self.retarget_draft
-                    {
-                        579.0
-                    } else {
-                        491.0
-                    },
-                ),
-                right - 12.0,
-                size,
-            )?;
-            self.text(
-                &mut batch,
-                if playing {
-                    "Stop to edit"
-                } else if field.is_none() {
-                    "Enter / Space activate"
-                } else {
-                    "Escape cancels"
-                },
-                Vec2::new(
-                    rx + 8.0,
-                    if matches!(inspector, InspectorMode::Collections(_, _)) {
-                        544.0
-                    } else if matches!(inspector, InspectorMode::Components(_))
-                        && !self.retarget_draft
-                    {
-                        602.0
-                    } else {
-                        514.0
-                    },
-                ),
-                right - 12.0,
-                size,
+            self.build_inspector_footer(
+                &mut batch, object, inspector, playing, field, rx, right, size,
             )?;
         }
         let actions: Vec<_> = self.regions.iter().map(|(_, action)| *action).collect();
@@ -1522,15 +536,26 @@ impl Panels {
         for &(r, action) in &self.regions {
             if self.focus.is_focused(action) {
                 let color = [0.5, 0.8, 1.0, 1.0];
-                solid(&mut batch, [r[0], r[1], r[2], 2.0], color)?;
-                solid(&mut batch, [r[0], r[1] + r[3] - 2.0, r[2], 2.0], color)?;
-                solid(&mut batch, [r[0], r[1], 2.0, r[3]], color)?;
-                solid(&mut batch, [r[0] + r[2] - 2.0, r[1], 2.0, r[3]], color)?;
+                Self::solid(&mut batch, [r[0], r[1], r[2], 2.0], size, color)?;
+                Self::solid(
+                    &mut batch,
+                    [r[0], r[1] + r[3] - 2.0, r[2], 2.0],
+                    size,
+                    color,
+                )?;
+                Self::solid(&mut batch, [r[0], r[1], 2.0, r[3]], size, color)?;
+                Self::solid(
+                    &mut batch,
+                    [r[0] + r[2] - 2.0, r[1], 2.0, r[3]],
+                    size,
+                    color,
+                )?;
             }
         }
         batch.mesh().map_err(Into::into)
     }
-    fn text(
+
+    pub(super) fn text(
         &self,
         batch: &mut SpriteBatch,
         text: &str,
@@ -1572,89 +597,6 @@ impl Panels {
         }
         Ok(())
     }
-}
-
-fn visit(
-    document: &SceneDocument,
-    parent: Option<&voxy_scene::ObjectId>,
-    depth: u16,
-    order: &mut Vec<(usize, u16)>,
-) {
-    if depth >= 128 {
-        return;
-    }
-    for (index, object) in document
-        .objects
-        .iter()
-        .enumerate()
-        .filter(|(_, object)| object.parent.as_ref() == parent)
-    {
-        order.push((index, depth));
-        visit(document, Some(&object.id), depth + 1, order);
-    }
-}
-
-// Keep foot authoring names readable in the existing component inspector.
-fn foot_field_label(path: &str) -> Option<String> {
-    let mut parts = path.strip_prefix("/feet/")?.split('/');
-    let foot = parts.next()?.parse::<usize>().ok()?;
-    let field = parts.next()?;
-    let member = parts.next();
-    let label = match (field, member) {
-        ("bones", Some("0")) => "Hip bone name",
-        ("bones", Some("1")) => "Knee bone name",
-        ("bones", Some("2")) => "Foot bone name",
-        ("plant", None) => "Enable foot planting",
-        ("weight", None) => "Foot IK weight",
-        ("sole_offset", Some("0")) => "Sole offset X",
-        ("sole_offset", Some("1")) => "Sole offset Y",
-        ("sole_offset", Some("2")) => "Sole offset Z",
-        ("sole_up", Some("0")) => "Sole up X",
-        ("sole_up", Some("1")) => "Sole up Y",
-        ("sole_up", Some("2")) => "Sole up Z",
-        ("pole", Some("0")) => "Knee pole X",
-        ("pole", Some("1")) => "Knee pole Y",
-        ("pole", Some("2")) => "Knee pole Z",
-        ("contact", Some("plant_distance")) => "Plant distance",
-        ("contact", Some("release_distance")) => "Release distance",
-        ("contact", Some("min_up_dot")) => "Minimum ground up dot",
-        _ => return None,
-    };
-    parts
-        .next()
-        .is_none()
-        .then(|| format!("Foot {foot}: {label}"))
-}
-
-fn retarget_field_label(path: &str) -> Option<String> {
-    if path == "/source" {
-        return Some("Animation source asset".into());
-    }
-    let mut parts = path.strip_prefix("/joints/")?.split('/');
-    let pair = parts.next()?.parse::<usize>().ok()? + 1;
-    let member = parts.next()?;
-    let label = match member {
-        "source" => "Source bone".into(),
-        "target" => "Target bone".into(),
-        "translation_scale" => "Translation scale".into(),
-        "rotation_basis" | "translation_basis" => {
-            let axis = parts.next()?.parse::<usize>().ok()?;
-            let component = ["X", "Y", "Z", "W"].get(axis)?;
-            format!(
-                "{} basis {component}",
-                if member == "rotation_basis" {
-                    "Rotation"
-                } else {
-                    "Translation"
-                }
-            )
-        }
-        _ => return None,
-    };
-    parts
-        .next()
-        .is_none()
-        .then(|| format!("Pair {pair}: {label}"))
 }
 
 #[cfg(test)]

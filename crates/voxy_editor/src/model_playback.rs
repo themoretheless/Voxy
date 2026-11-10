@@ -163,12 +163,7 @@ impl ModelAnimation {
     }
 }
 
-#[derive(Clone, Debug)]
-pub(crate) struct SourceContactInterval {
-    pub clip: Arc<voxy_animation::AnimationClip>,
-    pub phase: voxy_animation::AnimationPhaseInterval,
-    pub active_tick_fraction: f64,
-}
+pub(crate) use voxy_gameplay::SourceContactInterval;
 #[derive(Clone, Debug)]
 pub(crate) struct ModelPlayback {
     model: Arc<ModelAsset>,

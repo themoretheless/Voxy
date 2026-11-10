@@ -1,6 +1,5 @@
 //! Portable CPU publication participant. Workers and native presentation fences
 //! belong to the enclosing UiLive save coordinator, not this archive.
-#![allow(dead_code)]
 use super::*;
 use crate::EditorError;
 use serde::{Deserialize, Serialize};
@@ -105,6 +104,7 @@ impl UiLive {
     }
 }
 impl PreparedUiPublications {
+    #[cfg(test)]
     pub(crate) fn checkpoint(
         &self,
         view: &SceneCheckpointView<'_>,

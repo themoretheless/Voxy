@@ -25,7 +25,6 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "voxy_animation",
             "voxy_core",
             "voxy_cuda",
-            "voxy_editor",
             "voxy_gameplay",
             "voxy_gpu",
             "voxy_input",

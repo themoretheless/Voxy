@@ -1,5 +1,4 @@
 //! Detached CPU publication graph; catalog tickets and GPU commit stay with App.
-#![allow(dead_code)]
 use super::{EditorAsset, asset_checkpoint::*};
 use crate::EditorError;
 use serde::{Deserialize, Serialize};
@@ -26,6 +25,7 @@ fn invalid() -> EditorError {
 fn native(error: impl std::fmt::Debug) -> EditorError {
     format!("editor imported publication graph: {error:?}").into()
 }
+#[cfg(test)]
 pub(crate) fn capture(
     publications: &[Arc<ImportedAsset<EditorAsset>>],
     assets: EditorAssetCheckpointLimits,
@@ -34,6 +34,7 @@ pub(crate) fn capture(
 ) -> Result<Vec<u8>, EditorError> {
     capture_with_models(publications, &[], assets, inputs, max_bytes)
 }
+#[cfg(test)]
 pub(crate) fn capture_with_models(
     publications: &[Arc<ImportedAsset<EditorAsset>>],
     models: &[Arc<voxy_model::ModelAsset>],
@@ -97,6 +98,7 @@ pub(crate) fn capture_with_sources(
     bytes.extend_from_slice(&body);
     Ok(bytes)
 }
+#[cfg(test)]
 pub(crate) fn prepare(
     bytes: &[u8],
     assets: EditorAssetCheckpointLimits,

@@ -1,5 +1,4 @@
 //! Authored companion surfaces, native quadruped rigging and inertial fur guides.
-#![allow(dead_code)]
 #[path = "animals/breed_asset.rs"]
 mod asset;
 mod collision;
@@ -161,6 +160,7 @@ impl Companion {
     pub fn fur_particles(&self) -> usize {
         self.coat.strands.len() * 3
     }
+    #[cfg(test)]
     pub fn tick(&mut self, world: &World, target: Vec3, dt: f32) -> Result<(), String> {
         self.tick_with_bodies(world, target, dt, &[])
     }
@@ -315,6 +315,7 @@ impl Companion {
             .append_matrices(&groom, &self.bones(), actor_inverse, out);
         Ok(())
     }
+    #[cfg(test)]
     pub fn palette(&self, actor_inverse: Mat4) -> Result<Vec<Mat4>, String> {
         let groom = fur::groom(self.cat)?;
         Ok(self

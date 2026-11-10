@@ -352,9 +352,6 @@ impl CoatDynamics {
             initialized: false,
         }
     }
-    pub fn step(&mut self, groom: &Groom, pose: &[Mat4; BONES], dt: f32) -> Result<(), String> {
-        self.step_with_boxes(groom, pose, dt, &[])
-    }
     pub fn step_with_boxes(
         &mut self,
         groom: &Groom,
@@ -437,6 +434,7 @@ impl CoatDynamics {
             }
         }
     }
+    #[cfg(test)]
     pub fn matrices(&self, groom: &Groom, pose: &[Mat4; BONES]) -> Vec<Mat4> {
         let mut matrices = pose.to_vec();
         for (index, root) in groom.roots.iter().enumerate() {
