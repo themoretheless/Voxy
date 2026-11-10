@@ -34,16 +34,49 @@ impl<'a> BindGroupLayoutBuilder<'a> {
         self
     }
 
-    /// Appends a uniform buffer binding entry.
+    /// Appends a uniform buffer binding entry with an optional `min_binding_size`.
     #[must_use]
-    pub fn uniform_buffer(mut self, binding: u32, visibility: wgpu::ShaderStages) -> Self {
+    pub fn uniform_buffer_sized(
+        mut self,
+        binding: u32,
+        visibility: wgpu::ShaderStages,
+        min_size: Option<u64>,
+    ) -> Self {
         self.entries.push(wgpu::BindGroupLayoutEntry {
             binding,
             visibility,
             ty: wgpu::BindingType::Buffer {
                 ty: wgpu::BufferBindingType::Uniform,
                 has_dynamic_offset: false,
-                min_binding_size: None,
+                min_binding_size: min_size.and_then(wgpu::BufferSize::new),
+            },
+            count: None,
+        });
+        self
+    }
+
+    /// Appends a uniform buffer binding entry.
+    #[must_use]
+    pub fn uniform_buffer(self, binding: u32, visibility: wgpu::ShaderStages) -> Self {
+        self.uniform_buffer_sized(binding, visibility, None)
+    }
+
+    /// Appends a storage buffer binding entry with an optional `min_binding_size`.
+    #[must_use]
+    pub fn storage_buffer_sized(
+        mut self,
+        binding: u32,
+        visibility: wgpu::ShaderStages,
+        read_only: bool,
+        min_size: Option<u64>,
+    ) -> Self {
+        self.entries.push(wgpu::BindGroupLayoutEntry {
+            binding,
+            visibility,
+            ty: wgpu::BindingType::Buffer {
+                ty: wgpu::BufferBindingType::Storage { read_only },
+                has_dynamic_offset: false,
+                min_binding_size: min_size.and_then(wgpu::BufferSize::new),
             },
             count: None,
         });
@@ -53,22 +86,12 @@ impl<'a> BindGroupLayoutBuilder<'a> {
     /// Appends a storage buffer binding entry (`read_only = true` or `false`).
     #[must_use]
     pub fn storage_buffer(
-        mut self,
+        self,
         binding: u32,
         visibility: wgpu::ShaderStages,
         read_only: bool,
     ) -> Self {
-        self.entries.push(wgpu::BindGroupLayoutEntry {
-            binding,
-            visibility,
-            ty: wgpu::BindingType::Buffer {
-                ty: wgpu::BufferBindingType::Storage { read_only },
-                has_dynamic_offset: false,
-                min_binding_size: None,
-            },
-            count: None,
-        });
-        self
+        self.storage_buffer_sized(binding, visibility, read_only, None)
     }
 
     /// Appends a 2D texture binding entry.
@@ -125,11 +148,18 @@ impl<'a> BindGroupLayoutBuilder<'a> {
     }
 }
 
-/// Declarative builder for a [`wgpu::BindGroup`].
+/// Declarative builder for a [`wgpu::BindGroup`] created with a pre-bound layout ([`BindGroupBuilder::new`]).
 #[derive(Debug)]
 pub struct BindGroupBuilder<'a> {
     label: Option<&'a str>,
     layout: &'a wgpu::BindGroupLayout,
+    entries: Vec<wgpu::BindGroupEntry<'a>>,
+}
+
+/// Declarative builder for a [`wgpu::BindGroup`] where the layout is supplied at [`build`](UnboundBindGroupBuilder::build).
+#[derive(Debug)]
+pub struct UnboundBindGroupBuilder<'a> {
+    label: Option<&'a str>,
     entries: Vec<wgpu::BindGroupEntry<'a>>,
 }
 
@@ -140,6 +170,14 @@ impl<'a> BindGroupBuilder<'a> {
             label,
             layout,
             entries: Vec::new(),
+        }
+    }
+
+    #[must_use]
+    pub fn with_capacity(label: Option<&'a str>, capacity: usize) -> UnboundBindGroupBuilder<'a> {
+        UnboundBindGroupBuilder {
+            label,
+            entries: Vec::with_capacity(capacity),
         }
     }
 
@@ -175,6 +213,44 @@ impl<'a> BindGroupBuilder<'a> {
         device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: self.label,
             layout: self.layout,
+            entries: &self.entries,
+        })
+    }
+}
+
+impl<'a> UnboundBindGroupBuilder<'a> {
+    #[must_use]
+    pub fn buffer(mut self, binding: u32, buffer: &'a wgpu::Buffer) -> Self {
+        self.entries.push(wgpu::BindGroupEntry {
+            binding,
+            resource: buffer.as_entire_binding(),
+        });
+        self
+    }
+
+    #[must_use]
+    pub fn texture_view(mut self, binding: u32, view: &'a wgpu::TextureView) -> Self {
+        self.entries.push(wgpu::BindGroupEntry {
+            binding,
+            resource: wgpu::BindingResource::TextureView(view),
+        });
+        self
+    }
+
+    #[must_use]
+    pub fn sampler(mut self, binding: u32, sampler: &'a wgpu::Sampler) -> Self {
+        self.entries.push(wgpu::BindGroupEntry {
+            binding,
+            resource: wgpu::BindingResource::Sampler(sampler),
+        });
+        self
+    }
+
+    #[must_use]
+    pub fn build(&self, device: &wgpu::Device, layout: &wgpu::BindGroupLayout) -> wgpu::BindGroup {
+        device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: self.label,
+            layout,
             entries: &self.entries,
         })
     }

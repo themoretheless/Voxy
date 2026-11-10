@@ -8,12 +8,14 @@ description = "Device-level GPU utilities shared by the renderer and the compute
 
 [dependencies]
 thiserror.workspace = true
+bytemuck = { workspace = true, features = ["derive"] }
 wgpu = { workspace = true, features = ["noop"] }
 raw-window-handle.workspace = true
 
 [dev-dependencies]
 pollster.workspace = true
-bytemuck = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+naga = { version = "30.0.0", features = ["wgsl-in", "glsl-out"] }
 
 [lints]
 workspace = true

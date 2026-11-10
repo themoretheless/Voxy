@@ -48,37 +48,16 @@ impl GpuPoseEvalProgram {
             label: Some("gpu pose eval shader"),
             source: wgpu::ShaderSource::Wgsl(include_str!("pose_eval.wgsl").into()),
         });
-        let storage = |binding, read_only| wgpu::BindGroupLayoutEntry {
-            binding,
-            visibility: wgpu::ShaderStages::COMPUTE,
-            ty: wgpu::BindingType::Buffer {
-                ty: wgpu::BufferBindingType::Storage { read_only },
-                has_dynamic_offset: false,
-                min_binding_size: None,
-            },
-            count: None,
-        };
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("gpu pose eval layout"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                storage(1, true),
-                storage(2, true),
-                storage(3, true),
-                storage(4, true),
-                storage(5, true),
-                storage(6, false),
-            ],
-        });
+        let bind_group_layout =
+            voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(Some("gpu pose eval layout"), 7)
+                .uniform_buffer(0, wgpu::ShaderStages::COMPUTE)
+                .storage_buffer(1, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(2, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(3, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(4, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(5, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(6, wgpu::ShaderStages::COMPUTE, false)
+                .build(device);
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("gpu pose eval pipeline layout"),
             bind_group_layouts: &[Some(&bind_group_layout)],
@@ -233,40 +212,16 @@ impl GpuPoseEvalProgram {
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
-        let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("pose eval bind group"),
-            layout: &self.bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: uniform.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: clips.headers.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: clips.keys.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: jobs_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 4,
-                    resource: parents.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 5,
-                    resource: inverse_binds.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 6,
-                    resource: palettes.as_entire_binding(),
-                },
-            ],
-        });
+        let bind_group =
+            voxy_gpu_core::BindGroupBuilder::with_capacity(Some("pose eval bind group"), 7)
+                .buffer(0, &uniform)
+                .buffer(1, &clips.headers)
+                .buffer(2, &clips.keys)
+                .buffer(3, &jobs_buffer)
+                .buffer(4, &parents)
+                .buffer(5, &inverse_binds)
+                .buffer(6, &palettes)
+                .build(&self.device, &self.bind_group_layout);
         let mut encoder = self
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {

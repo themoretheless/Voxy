@@ -62,35 +62,14 @@ impl GpuMediumProgram {
             label: Some("gpu medium shader"),
             source: wgpu::ShaderSource::Wgsl(include_str!("medium_solver.wgsl").into()),
         });
-        let storage = |binding, read_only| wgpu::BindGroupLayoutEntry {
-            binding,
-            visibility: wgpu::ShaderStages::COMPUTE,
-            ty: wgpu::BindingType::Buffer {
-                ty: wgpu::BufferBindingType::Storage { read_only },
-                has_dynamic_offset: false,
-                min_binding_size: None,
-            },
-            count: None,
-        };
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("gpu medium layout"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                storage(1, true),
-                storage(2, true),
-                storage(3, false),
-                storage(4, false),
-            ],
-        });
+        let bind_group_layout =
+            voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(Some("gpu medium layout"), 5)
+                .uniform_buffer(0, wgpu::ShaderStages::COMPUTE)
+                .storage_buffer(1, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(2, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(3, wgpu::ShaderStages::COMPUTE, false)
+                .storage_buffer(4, wgpu::ShaderStages::COMPUTE, false)
+                .build(device);
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("gpu medium pipeline layout"),
             bind_group_layouts: &[Some(&bind_group_layout)],
@@ -187,32 +166,13 @@ impl GpuMediumProgram {
         let settled = make("medium settled", &vec![0.; cells]);
         let bind_groups: Vec<wgpu::BindGroup> = (0..2)
             .map(|i| {
-                self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-                    label: Some("medium bind group"),
-                    layout: &self.bind_group_layout,
-                    entries: &[
-                        wgpu::BindGroupEntry {
-                            binding: 0,
-                            resource: uniform.as_entire_binding(),
-                        },
-                        wgpu::BindGroupEntry {
-                            binding: 1,
-                            resource: velocity.as_entire_binding(),
-                        },
-                        wgpu::BindGroupEntry {
-                            binding: 2,
-                            resource: buffers[i].as_entire_binding(),
-                        },
-                        wgpu::BindGroupEntry {
-                            binding: 3,
-                            resource: buffers[1 - i].as_entire_binding(),
-                        },
-                        wgpu::BindGroupEntry {
-                            binding: 4,
-                            resource: settled.as_entire_binding(),
-                        },
-                    ],
-                })
+                voxy_gpu_core::BindGroupBuilder::with_capacity(Some("medium bind group"), 5)
+                    .buffer(0, &uniform)
+                    .buffer(1, &velocity)
+                    .buffer(2, &buffers[i])
+                    .buffer(3, &buffers[1 - i])
+                    .buffer(4, &settled)
+                    .build(&self.device, &self.bind_group_layout)
             })
             .collect();
         let staging_mass = self.device.create_buffer(&wgpu::BufferDescriptor {

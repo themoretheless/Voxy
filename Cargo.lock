@@ -2969,7 +2969,6 @@ dependencies = [
  "voxy_animation",
  "voxy_core",
  "voxy_cuda",
- "voxy_editor",
  "voxy_gameplay",
  "voxy_gpu",
  "voxy_input",
@@ -3061,8 +3060,10 @@ name = "voxy_gpu_core"
 version = "0.1.0"
 dependencies = [
  "bytemuck",
+ "naga",
  "pollster",
  "raw-window-handle",
+ "serde_json",
  "thiserror 2.0.20",
  "wgpu",
 ]

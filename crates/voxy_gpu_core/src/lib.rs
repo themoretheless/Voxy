@@ -4,21 +4,60 @@
 //! so voxy_gpu can depend on it without depending on voxy_render.
 
 mod backend;
+mod banded_solve;
+mod banded_transfer;
 mod builders;
 mod compute;
 mod compute_memory;
 mod compute_readback;
+mod contact_exact_five;
+mod contact_five_gaps;
+#[cfg(test)]
+mod contact_five_product_tests;
+mod contact_five_qr;
+mod contact_five_release;
+mod contact_five_select;
 mod gravity;
+mod joint_contact_dot;
 mod shared_upload;
+mod wgsl;
 
 pub use backend::*;
+pub use banded_solve::{
+    BANDED_SOLVE_SHADER, BandedPackedReference, BandedSolveError, BandedSolveInput, BandedSystem,
+};
+pub use banded_transfer::BandedTransferProgram;
 pub use builders::*;
 pub use compute::*;
 pub use compute_memory::*;
 pub use compute_readback::*;
+pub use contact_exact_five::ExperimentalExactFiveContactInput;
+pub use contact_five_gaps::{ExperimentalFiveGapDecision, ExperimentalFiveGapInput};
+pub use contact_five_qr::{
+    ExperimentalFiveQrInput, ExperimentalFiveQrReadback, ExperimentalFiveQrValue,
+};
+pub use contact_five_release::{ExperimentalFiveRelease, ExperimentalFiveReleaseInput};
+pub use contact_five_select::{ExperimentalFiveSelection, ExperimentalFiveSelectionInput};
 pub use gravity::*;
+pub use joint_contact_dot::{
+    EXPERIMENTAL_RESIDENT_CONTACT_SHADER, EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER,
+    EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER, ExperimentalResidentContactBatch,
+    ExperimentalResidentContactInput, ExperimentalTripleActiveContactBatch,
+    ExperimentalTripleActiveContactInput, ExperimentalTripleActiveFactors,
+    ExperimentalTripleCompletedFactorReadback, ExperimentalTripleContactInput,
+    ExperimentalTripleExpandedCandidate, ExperimentalTripleExpansion, JOINT_CONTACT_DOT_SHADER,
+    JOINT_CONTACT_EQUALITY_SHADER, JOINT_CONTACT_NORMALIZE_SERIAL_SHADER,
+    JOINT_CONTACT_NORMALIZE_SHADER, JOINT_CONTACT_QR_SHADER, JointContactDotInput, JointDotError,
+    ResidentContactEqualityInput, ResidentContactEqualityOutput, ResidentContactQrInput,
+    ResidentContactQrOutput, ResidentContactQrPrefix, ValidatedResidentContactEquality,
+    experimental_seeded_resident_contact_shader,
+};
 pub use shared_upload::{
     SharedUploadCopy, SharedUploadRing, SharedUploadSnapshot, ring_buffer_wrap_contiguous_slice,
+};
+pub use wgsl::{
+    SharedCameraUniformPod, WGSL_CAMERA, WGSL_DD_MATH, WGSL_FULLSCREEN, WGSL_TONEMAP,
+    resolve_wgsl_includes,
 };
 
 /// Failure classes of portable compute: capability, budget, validation, lifecycle.

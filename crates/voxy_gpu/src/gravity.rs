@@ -61,19 +61,10 @@ impl GravityProgram {
             label: Some("resident gravity Verlet"),
             source: wgpu::ShaderSource::Wgsl(include_str!("gravity.wgsl").into()),
         });
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("gravity storage"),
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::COMPUTE,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Storage { read_only: false },
-                    has_dynamic_offset: false,
-                    min_binding_size: None,
-                },
-                count: None,
-            }],
-        });
+        let layout =
+            voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(Some("gravity storage"), 1)
+                .storage_buffer(0, wgpu::ShaderStages::COMPUTE, false)
+                .build(device);
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("gravity layout"),
             bind_group_layouts: &[Some(&layout)],
@@ -178,14 +169,9 @@ impl GravityProgram {
             .memory_budget
             .allocate_storage("resident gravity state", bytemuck::cast_slice(&words))
             .map_err(GravityComputeError::Compute)?;
-        let binding = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("gravity job"),
-            layout: &self.layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: storage.as_entire_binding(),
-            }],
-        });
+        let binding = voxy_gpu_core::BindGroupBuilder::with_capacity(Some("gravity job"), 1)
+            .buffer(0, &storage)
+            .build(device, &self.layout);
         Ok(GravityJob {
             _readback_pool: self.readback_pool.clone(),
             storage,

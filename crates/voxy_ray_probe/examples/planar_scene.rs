@@ -77,6 +77,8 @@ fn mirror(curved: bool) -> Result<SceneMesh, Box<dyn std::error::Error>> {
 }
 #[allow(unsafe_code)]
 fn experimental() -> wgpu::ExperimentalFeatures {
+    // SAFETY: this isolated optional probe opts into experimental ray queries
+    // with controlled geometry; backend implementation bugs can cause UB.
     unsafe { wgpu::ExperimentalFeatures::enabled() }
 }
 fn check_offscreen(

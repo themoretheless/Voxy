@@ -64,46 +64,29 @@ impl Bloom {
         let mut params = vec![uniform((width, height), true)];
         params.extend((1..LEVELS).map(|i| uniform(sizes[i - 1], false)));
         params.extend((0..LEVELS).map(|i| uniform(sizes[(i + 1).min(LEVELS - 1)], false)));
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("bloom"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture {
-                        sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                        view_dimension: wgpu::TextureViewDimension::D2,
-                        multisampled: false,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-            ],
-        });
+        let layout = voxy_gpu_core::BindGroupLayoutBuilder::new(Some("bloom"))
+            .texture_2d(
+                0,
+                wgpu::ShaderStages::FRAGMENT,
+                wgpu::TextureSampleType::Float { filterable: true },
+            )
+            .sampler(
+                1,
+                wgpu::ShaderStages::FRAGMENT,
+                wgpu::SamplerBindingType::Filtering,
+            )
+            .uniform_buffer(2, wgpu::ShaderStages::FRAGMENT)
+            .build(device);
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             label: Some("bloom bilinear"),
             mag_filter: wgpu::FilterMode::Linear,
             min_filter: wgpu::FilterMode::Linear,
             ..Default::default()
         });
+        let expanded = voxy_gpu_core::resolve_wgsl_includes(include_str!("bloom.wgsl"), &[])?;
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("dual Kawase bloom"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("bloom.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(expanded),
         });
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("bloom"),
@@ -116,7 +99,7 @@ impl Bloom {
                 layout: Some(&pipeline_layout),
                 vertex: wgpu::VertexState {
                     module: &shader,
-                    entry_point: Some("vs_main"),
+                    entry_point: Some("vs_fullscreen"),
                     compilation_options: Default::default(),
                     buffers: &[],
                 },
@@ -186,24 +169,11 @@ impl Bloom {
                         input: &wgpu::TextureView,
                         output: &wgpu::TextureView,
                         load: wgpu::LoadOp<wgpu::Color>| {
-            let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: Some("bloom pass"),
-                layout: &self.layout,
-                entries: &[
-                    wgpu::BindGroupEntry {
-                        binding: 0,
-                        resource: wgpu::BindingResource::TextureView(input),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 1,
-                        resource: wgpu::BindingResource::Sampler(&self.sampler),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 2,
-                        resource: self.params[pass_index].as_entire_binding(),
-                    },
-                ],
-            });
+            let bind = voxy_gpu_core::BindGroupBuilder::new(Some("bloom pass"), &self.layout)
+                .texture_view(0, input)
+                .sampler(1, &self.sampler)
+                .buffer(2, &self.params[pass_index])
+                .build(device);
             let mut render = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("bloom"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {

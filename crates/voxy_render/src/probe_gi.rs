@@ -234,6 +234,39 @@ mod tests {
     use glam::Vec3;
 
     #[test]
+    fn bake_pod_layout_matches_wgsl_struct_definition() {
+        let module =
+            naga::front::wgsl::parse_str(include_str!("probe_gi.wgsl")).expect("valid WGSL");
+        let mut validator = naga::valid::Validator::new(
+            naga::valid::ValidationFlags::all(),
+            naga::valid::Capabilities::empty(),
+        );
+        validator.validate(&module).expect("naga validation passes");
+        let (_, bake_ty) = module
+            .types
+            .iter()
+            .find(|(_, ty)| ty.name.as_deref() == Some("Bake"))
+            .expect("Bake struct exists in probe_gi.wgsl");
+        let naga::TypeInner::Struct { members, span } = &bake_ty.inner else {
+            panic!("expected WGSL struct");
+        };
+        assert_eq!(*span as usize, std::mem::size_of::<Bake>());
+        assert_eq!(
+            members[0].offset as usize,
+            std::mem::offset_of!(Bake, forward)
+        );
+        assert_eq!(
+            members[1].offset as usize,
+            std::mem::offset_of!(Bake, right)
+        );
+        assert_eq!(members[2].offset as usize, std::mem::offset_of!(Bake, up));
+        assert_eq!(
+            members[3].offset as usize,
+            std::mem::offset_of!(Bake, square)
+        );
+    }
+
+    #[test]
     fn grid_covers_bounds_with_at_least_two_probes_per_axis() {
         let (g, points) = grid(Vec3::ZERO, Vec3::new(10., 0.5, 30.), 4.).unwrap();
         assert_eq!(g.dims, [4, 2, 9, 0]);

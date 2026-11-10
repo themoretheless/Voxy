@@ -4,11 +4,7 @@ pub fn qualify(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    qualify_source(
-        device,
-        queue,
-        include_str!("../../src/hair_banded_compensated.wgsl"),
-    )
+    qualify_source(device, queue, voxy_render::BANDED_SOLVE_SHADER)
 }
 pub fn qualify_source(
     device: &wgpu::Device,

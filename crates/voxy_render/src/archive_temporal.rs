@@ -135,15 +135,16 @@ impl ArchiveTemporal {
         if mode == ArchiveAntialiasing::MetalFx {
             return Err(ComputeError::Unsupported);
         }
+        let expanded = voxy_gpu_core::resolve_wgsl_includes(
+            include_str!("archive_temporal.wgsl"),
+            &[(
+                "display_transform.wgsl",
+                include_str!("display_transform.wgsl"),
+            )],
+        )?;
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("polygon TAA"),
-            source: wgpu::ShaderSource::Wgsl(
-                concat!(
-                    include_str!("display_transform.wgsl"),
-                    include_str!("archive_temporal.wgsl")
-                )
-                .into(),
-            ),
+            source: wgpu::ShaderSource::Wgsl(expanded),
         });
         let render = |entry: &str, targets: &[Option<wgpu::ColorTargetState>]| {
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -578,6 +579,62 @@ pub fn catmull_rom_5tap_weights(frac_uv: [f32; 2]) -> ([f32; 5], [[f32; 2]; 5]) 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn frame_pod_layout_matches_wgsl_struct_definition() {
+        let expanded = voxy_gpu_core::resolve_wgsl_includes(
+            include_str!("archive_temporal.wgsl"),
+            &[(
+                "display_transform.wgsl",
+                include_str!("display_transform.wgsl"),
+            )],
+        )
+        .expect("display_transform include resolves");
+        let module = naga::front::wgsl::parse_str(&expanded).expect("valid archive_temporal.wgsl");
+        let mut validator = naga::valid::Validator::new(
+            naga::valid::ValidationFlags::all(),
+            naga::valid::Capabilities::empty(),
+        );
+        validator.validate(&module).expect("naga validation passes");
+        let (_, frame_ty) = module
+            .types
+            .iter()
+            .find(|(_, ty)| ty.name.as_deref() == Some("Frame"))
+            .expect("Frame struct exists in archive_temporal.wgsl");
+        let naga::TypeInner::Struct { members, span } = &frame_ty.inner else {
+            panic!("expected WGSL struct");
+        };
+        assert_eq!(*span as usize, std::mem::size_of::<Frame>());
+        assert_eq!(
+            members[0].offset as usize,
+            std::mem::offset_of!(Frame, inverse_vp)
+        );
+        assert_eq!(
+            members[1].offset as usize,
+            std::mem::offset_of!(Frame, previous_vp)
+        );
+        assert_eq!(
+            members[2].offset as usize,
+            std::mem::offset_of!(Frame, current_vp)
+        );
+        assert_eq!(members[3].offset as usize, std::mem::offset_of!(Frame, eye));
+        assert_eq!(
+            members[4].offset as usize,
+            std::mem::offset_of!(Frame, jitter)
+        );
+        assert_eq!(
+            members[5].offset as usize,
+            std::mem::offset_of!(Frame, settings)
+        );
+        assert_eq!(
+            members[6].offset as usize,
+            std::mem::offset_of!(Frame, lens)
+        );
+        assert_eq!(
+            members[7].offset as usize,
+            std::mem::offset_of!(Frame, sensor)
+        );
+    }
 
     #[test]
     fn ycocg_round_trips_linear_rgb() {
