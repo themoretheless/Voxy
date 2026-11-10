@@ -130,26 +130,40 @@ impl PalettedBlocks {
     /// uniform chunks expand in one pass; direct chunks derive the sorted palette first.
     #[must_use]
     pub fn palette_indices(&self) -> (Vec<BlockStateId>, Vec<u16>) {
+        let mut palette = Vec::new();
+        let mut slots = Vec::new();
+        self.palette_indices_into(&mut palette, &mut slots);
+        (palette, slots)
+    }
+
+    /// [`Self::palette_indices`] into caller-owned buffers, which are cleared first.
+    /// Reusing the buffers avoids a 64 KiB allocation per chunk on the meshing and
+    /// lighting paths.
+    pub fn palette_indices_into(&self, palette: &mut Vec<BlockStateId>, slots: &mut Vec<u16>) {
+        palette.clear();
+        slots.clear();
         match self {
-            Self::Uniform(block) => (vec![*block], vec![0; CHUNK_VOLUME]),
+            Self::Uniform(block) => {
+                palette.push(*block);
+                slots.resize(CHUNK_VOLUME, 0);
+            }
             Self::Packed {
                 bits_per_index,
-                palette,
+                palette: packed,
                 words,
-            } => (palette.to_vec(), unpack_indices(words, *bits_per_index)),
+            } => {
+                palette.extend_from_slice(packed);
+                unpack_indices_into(words, *bits_per_index, slots);
+            }
             Self::Direct(blocks) => {
-                let mut palette = blocks.to_vec();
+                palette.extend_from_slice(blocks);
                 palette.sort_unstable();
                 palette.dedup();
-                let indices = blocks
-                    .iter()
-                    .map(|block| {
-                        palette
-                            .binary_search(block)
-                            .map_or(0, |slot| u16::try_from(slot).unwrap_or(0))
-                    })
-                    .collect();
-                (palette, indices)
+                slots.extend(blocks.iter().map(|block| {
+                    palette
+                        .binary_search(block)
+                        .map_or(0, |slot| u16::try_from(slot).unwrap_or(0))
+                }));
             }
         }
     }
@@ -504,10 +518,10 @@ fn for_each_packed(words: &[u64], bits: u8, mut visit: impl FnMut(usize)) {
 ///
 /// Palette slots never exceed `CHUNK_VOLUME`, so they fit `u16`. Widths that divide
 /// a word never straddle two words, which makes the common case a plain shift loop.
-fn unpack_indices(words: &[u64], bits: u8) -> Vec<u16> {
+fn unpack_indices_into(words: &[u64], bits: u8, indices: &mut Vec<u16>) {
     let width = usize::from(bits);
     let mask = (1_u64 << width) - 1;
-    let mut indices = Vec::with_capacity(CHUNK_VOLUME);
+    indices.reserve(CHUNK_VOLUME);
     if width > 0 && 64 % width == 0 {
         let per_word = 64 / width;
         let mut remaining = CHUNK_VOLUME;
@@ -520,10 +534,9 @@ fn unpack_indices(words: &[u64], bits: u8) -> Vec<u16> {
             remaining -= count;
         }
         indices.resize(CHUNK_VOLUME, 0);
-        return indices;
+        return;
     }
     for_each_packed(words, bits, |slot| indices.push(slot as u16));
-    indices
 }
 
 /// Visits palette slots in index order until the visitor returns `false`.
