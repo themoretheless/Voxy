@@ -196,6 +196,7 @@ struct Slot {
 pub struct SceneGraph {
     id: u64,
     slots: Vec<Slot>,
+    component_slots: HashMap<TypeId, Vec<usize>, FastHashBuilder>,
     free: Vec<usize>,
     capacity: usize,
     count: usize,
@@ -267,11 +268,45 @@ impl SceneGraph {
         Self {
             id,
             slots: Vec::new(),
+            component_slots: HashMap::default(),
             free: Vec::new(),
             capacity,
             count: 0,
             structure_revision: 0,
             change_revision: 0,
+        }
+    }
+
+    #[inline]
+    pub(crate) fn index_component_slot(&mut self, type_id: TypeId, slot: usize) {
+        let slots = self.component_slots.entry(type_id).or_default();
+        if let Err(pos) = slots.binary_search(&slot) {
+            slots.insert(pos, slot);
+        }
+    }
+
+    #[inline]
+    pub(crate) fn unindex_component_slot(&mut self, type_id: TypeId, slot: usize) {
+        if let Some(slots) = self.component_slots.get_mut(&type_id)
+            && let Ok(pos) = slots.binary_search(&slot)
+        {
+            slots.remove(pos);
+        }
+    }
+
+    pub(crate) fn rebuild_component_slots(&mut self) {
+        for vec in self.component_slots.values_mut() {
+            vec.clear();
+        }
+        for (slot_idx, entry) in self.slots.iter().enumerate() {
+            if let Some(node) = &entry.node {
+                for &type_id in node.components.keys() {
+                    self.component_slots
+                        .entry(type_id)
+                        .or_default()
+                        .push(slot_idx);
+                }
+            }
         }
     }
 
@@ -428,22 +463,24 @@ impl SceneGraph {
         &self,
     ) -> impl Iterator<Item = (NodeId, &Node, &T)> + '_ {
         let key = TypeId::of::<T>();
-        self.slots
-            .iter()
-            .enumerate()
-            .filter_map(move |(slot, entry)| {
-                let node = entry.node.as_ref()?;
-                let value = node.components.get(&key)?.0.downcast_ref::<T>()?;
-                Some((
-                    NodeId {
-                        scene: self.id,
-                        slot,
-                        generation: entry.generation,
-                    },
-                    node,
-                    value,
-                ))
-            })
+        let indexed = self
+            .component_slots
+            .get(&key)
+            .map_or(&[][..], Vec::as_slice);
+        indexed.iter().filter_map(move |&slot| {
+            let entry = self.slots.get(slot)?;
+            let node = entry.node.as_ref()?;
+            let value = node.components.get(&key)?.0.downcast_ref::<T>()?;
+            Some((
+                NodeId {
+                    scene: self.id,
+                    slot,
+                    generation: entry.generation,
+                },
+                node,
+                value,
+            ))
+        })
     }
 
     /// Visits effectively active owners containing both required component types.
@@ -458,37 +495,48 @@ impl SceneGraph {
     }
 
     /// Active nodes holding both `A` and `B`, with each component's revision, in slot
-    /// order. One slot scan resolves both components from the same node, so callers
-    /// that reuse derived rows by revision need no further lookups per owner.
+    /// order. Iterates the smaller per-`TypeId` dense slot index in ascending slot order,
+    /// resolving both components from the same node in $O(\min(|A|, |B|))$.
     pub fn active_components_with_revisions<A: Any + Send + Sync, B: Any + Send + Sync>(
         &self,
     ) -> impl Iterator<Item = (NodeId, &A, ComponentRevision, &B, ComponentRevision)> + '_ {
         let first_key = TypeId::of::<A>();
         let second_key = TypeId::of::<B>();
-        self.slots
-            .iter()
-            .enumerate()
-            .filter_map(move |(slot, entry)| {
-                let node = entry.node.as_ref()?;
-                if !node.effective_active {
-                    return None;
-                }
-                let first = node.components.get(&first_key)?;
-                let first_value = first.0.downcast_ref::<A>()?;
-                let second = node.components.get(&second_key)?;
-                let second_value = second.0.downcast_ref::<B>()?;
-                Some((
-                    NodeId {
-                        scene: self.id,
-                        slot,
-                        generation: entry.generation,
-                    },
-                    first_value,
-                    first.1,
-                    second_value,
-                    second.1,
-                ))
-            })
+        let first_slots = self
+            .component_slots
+            .get(&first_key)
+            .map_or(&[][..], Vec::as_slice);
+        let second_slots = self
+            .component_slots
+            .get(&second_key)
+            .map_or(&[][..], Vec::as_slice);
+        let candidate_slots = if first_slots.len() <= second_slots.len() {
+            first_slots
+        } else {
+            second_slots
+        };
+        candidate_slots.iter().filter_map(move |&slot| {
+            let entry = self.slots.get(slot)?;
+            let node = entry.node.as_ref()?;
+            if !node.effective_active {
+                return None;
+            }
+            let first = node.components.get(&first_key)?;
+            let first_value = first.0.downcast_ref::<A>()?;
+            let second = node.components.get(&second_key)?;
+            let second_value = second.0.downcast_ref::<B>()?;
+            Some((
+                NodeId {
+                    scene: self.id,
+                    slot,
+                    generation: entry.generation,
+                },
+                first_value,
+                first.1,
+                second_value,
+                second.1,
+            ))
+        })
     }
 
     /// Revisions of `A` and `B` on one node, validating the handle once.
@@ -517,10 +565,14 @@ impl SceneGraph {
         value: T,
     ) -> Result<Option<T>, SceneGraphError> {
         self.bump_structure();
+        let type_id = TypeId::of::<T>();
         let old = self.node_mut(id)?.components.insert(
-            TypeId::of::<T>(),
+            type_id,
             Component(Box::new(value), next_component_revision()),
         );
+        if old.is_none() {
+            self.index_component_slot(type_id, id.slot);
+        }
         Ok(old
             .and_then(|value| value.0.downcast::<T>().ok())
             .map(|value| *value))
@@ -581,10 +633,12 @@ impl SceneGraph {
         id: NodeId,
     ) -> Result<Option<T>, SceneGraphError> {
         self.bump_structure();
-        Ok(self
-            .node_mut(id)?
-            .components
-            .remove(&TypeId::of::<T>())
+        let type_id = TypeId::of::<T>();
+        let removed = self.node_mut(id)?.components.remove(&type_id);
+        if removed.is_some() {
+            self.unindex_component_slot(type_id, id.slot);
+        }
+        Ok(removed
             .and_then(|value| value.0.downcast::<T>().ok())
             .map(|value| *value))
     }
@@ -883,12 +937,15 @@ impl SceneGraph {
                 .node
                 .take()
                 .expect("validated hierarchy contains live children");
-            pending.extend(node.children);
             // Exhausted generations retire the slot permanently.
             if let Some(generation) = slot.generation.checked_add(1) {
                 slot.generation = generation;
                 self.free.push(id.slot);
             }
+            for &type_id in node.components.keys() {
+                self.unindex_component_slot(type_id, id.slot);
+            }
+            pending.extend(node.children);
             removed += 1;
         }
         self.count -= removed;

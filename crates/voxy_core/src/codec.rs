@@ -291,9 +291,181 @@ impl<'a> ByteWriter<'a> {
     }
 }
 
+/// Framed binary checkpoint envelope (`magic: [u8; 4]`, `version: u32`, `payload_len: u32`,
+/// payload bytes, `crc32c: u32`) providing version gating, truncation protection, and `CRC-32C`
+/// integrity verification over [`BinaryCheckpoint`] payloads.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct CheckpointEnvelope {
+    pub magic: [u8; 4],
+    pub version: u32,
+}
+
+impl CheckpointEnvelope {
+    /// Fixed header + footer byte overhead (`4 + 4 + 4 + 4 = 16` bytes).
+    pub const OVERHEAD_BYTES: usize = 16;
+
+    #[inline]
+    #[must_use]
+    pub const fn new(magic: [u8; 4], version: u32) -> Self {
+        Self { magic, version }
+    }
+
+    /// Encodes `payload` into `out` wrapped in this envelope (`magic || version_le || len_le || payload || crc32c_le`).
+    ///
+    /// # Errors
+    ///
+    /// Propagates any error from [`BinaryCheckpoint::encode_into`] or returns [`CodecError::CapacityExceeded`]
+    /// if the payload exceeds `u32::MAX` bytes.
+    pub fn seal_into<T: BinaryCheckpoint>(
+        &self,
+        payload: &T,
+        out: &mut Vec<u8>,
+    ) -> Result<(), CodecError> {
+        let frame_start = out.len();
+        out.reserve(Self::OVERHEAD_BYTES);
+        out.extend_from_slice(&self.magic);
+        out.extend_from_slice(&self.version.to_le_bytes());
+        let len_offset = out.len();
+        out.extend_from_slice(&0_u32.to_le_bytes());
+        let payload_start = out.len();
+        if let Err(err) = payload.encode_into(out) {
+            out.truncate(frame_start);
+            return Err(err);
+        }
+        let payload_len = out.len() - payload_start;
+        let Ok(payload_len_u32) = u32::try_from(payload_len) else {
+            out.truncate(frame_start);
+            return Err(CodecError::CapacityExceeded {
+                count: payload_len,
+                limit: u32::MAX as usize,
+            });
+        };
+        out[len_offset..len_offset + 4].copy_from_slice(&payload_len_u32.to_le_bytes());
+        let checksum = crate::crc32c(&out[frame_start..]);
+        out.extend_from_slice(&checksum.to_le_bytes());
+        Ok(())
+    }
+
+    /// Convenience helper encoding a framed checkpoint into a fresh `Vec<u8>`.
+    ///
+    /// # Errors
+    ///
+    /// Propagates any error from [`CheckpointEnvelope::seal_into`].
+    #[inline]
+    pub fn seal<T: BinaryCheckpoint>(&self, payload: &T) -> Result<Vec<u8>, CodecError> {
+        let mut out = Vec::new();
+        self.seal_into(payload, &mut out)?;
+        Ok(out)
+    }
+
+    /// Validates `magic`, `version`, `max_payload_bytes`, trailing bytes, and `CRC-32C` checksum
+    /// before decoding `T`.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CodecError`] on magic/version/length/checksum mismatch or payload decode failure.
+    pub fn open<T: BinaryCheckpoint>(
+        &self,
+        bytes: &[u8],
+        max_payload_bytes: usize,
+    ) -> Result<T, CodecError> {
+        let mut reader = ByteReader::new(bytes);
+        let magic = reader.read_array::<4>()?;
+        if magic != self.magic {
+            return Err(CodecError::InvalidMagic);
+        }
+        let version = reader.read_u32_le()?;
+        if version != self.version {
+            return Err(CodecError::UnsupportedVersion(version));
+        }
+        let payload_len = reader.read_u32_le()? as usize;
+        if payload_len > max_payload_bytes {
+            return Err(CodecError::CapacityExceeded {
+                count: payload_len,
+                limit: max_payload_bytes,
+            });
+        }
+        let payload_bytes = reader.read_slice(payload_len)?;
+        let expected_crc = reader.read_u32_le()?;
+        reader.finish()?;
+        let body_end = bytes.len() - 4;
+        let actual_crc = crate::crc32c(&bytes[..body_end]);
+        if actual_crc != expected_crc {
+            return Err(CodecError::ChecksumMismatch {
+                expected: expected_crc,
+                actual: actual_crc,
+            });
+        }
+        T::decode_from(payload_bytes)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[derive(Clone, Debug, PartialEq)]
+    struct SampleState {
+        tick: u64,
+        energy: f64,
+    }
+
+    impl BinaryCheckpoint for SampleState {
+        fn encode_into(&self, out: &mut Vec<u8>) -> Result<(), CodecError> {
+            let mut w = ByteWriter::new(out);
+            w.write_u64_le(self.tick);
+            w.write_f64_le(self.energy);
+            Ok(())
+        }
+
+        fn decode_from(bytes: &[u8]) -> Result<Self, CodecError> {
+            let mut r = ByteReader::new(bytes);
+            let tick = r.read_u64_le()?;
+            let energy = r.read_finite_f64_le()?;
+            r.finish()?;
+            Ok(Self { tick, energy })
+        }
+    }
+
+    #[test]
+    fn checkpoint_envelope_golden_round_trip_and_rejects_tampering() {
+        let env = CheckpointEnvelope::new(*b"VXCP", 1);
+        let state = SampleState {
+            tick: 1200,
+            energy: 9.8125,
+        };
+        let mut framed = env.seal(&state).unwrap();
+        assert_eq!(framed.len(), CheckpointEnvelope::OVERHEAD_BYTES + 16);
+        assert_eq!(&framed[0..4], b"VXCP");
+        assert_eq!(env.open::<SampleState>(&framed, 64), Ok(state.clone()));
+
+        // Capacity cap enforced before payload decode:
+        assert_eq!(
+            env.open::<SampleState>(&framed, 8),
+            Err(CodecError::CapacityExceeded {
+                count: 16,
+                limit: 8
+            })
+        );
+
+        // Single-bit payload flip caught by CRC-32C:
+        framed[14] ^= 0x01;
+        assert!(matches!(
+            env.open::<SampleState>(&framed, 64),
+            Err(CodecError::ChecksumMismatch { .. })
+        ));
+        framed[14] ^= 0x01;
+
+        // Wrong version & magic rejected deterministically:
+        assert_eq!(
+            CheckpointEnvelope::new(*b"VXCP", 2).open::<SampleState>(&framed, 64),
+            Err(CodecError::UnsupportedVersion(1))
+        );
+        assert_eq!(
+            CheckpointEnvelope::new(*b"XXXX", 1).open::<SampleState>(&framed, 64),
+            Err(CodecError::InvalidMagic)
+        );
+    }
 
     #[test]
     fn byte_reader_and_writer_round_trip_primitives_and_reject_corrupt_frames() {

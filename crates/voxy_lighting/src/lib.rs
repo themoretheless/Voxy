@@ -4,7 +4,7 @@ mod padded;
 mod propagate;
 mod types;
 
-pub use propagate::build_light;
+pub use propagate::{LightingScratch, build_light, build_light_with_scratch};
 pub use types::{
     FaceNeighbor, LightStamp, LightVolume, LightingBudget, LightingError, LightingInput,
     attentuate_tinted_glass_rgb_light, attenuate_filtered_light, bounce_radiosity_injection_level,
