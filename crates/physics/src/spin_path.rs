@@ -205,7 +205,7 @@ impl Spin {
     /// points, using the same midpoint and adaptive admission owner.
     pub fn prepare_material_moment_path(
         self,
-        moment: crate::rigid_motion::MaterialForceMoment,
+        moment: crate::rotation::MaterialForceMoment,
         torque: TorquePolynomial,
         duration: f64,
         config: Config,
@@ -239,7 +239,7 @@ impl Spin {
             impulse_bound,
             Some(([0.; 3], feedback)),
             |time| {
-                let moment = crate::rigid_motion::MaterialForceMoment {
+                let moment = crate::rotation::MaterialForceMoment {
                     columns: std::array::from_fn(|j| {
                         std::array::from_fn(|k| {
                             moment.rate_columns[j][k].mul_add(time, moment.columns[j][k])

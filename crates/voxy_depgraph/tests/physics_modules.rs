@@ -58,30 +58,14 @@ const LAYERS: &[&[&str]] = &[
 /// Upward edges that still exist: (from, to, plan step that removes it).
 const KNOWN_VIOLATIONS: &[(&str, &str, &str)] = &[
     (
-        "astrophysics",
-        "rigid_motion",
-        "PLAN 2.3: MaterialForceMoment to rotation",
+        "moisture",
+        "plasticity",
+        "PLAN 2.3: Calibration::new validates through plasticity::Material; needs a design decision",
     ),
     (
         "moisture",
-        "plasticity",
-        "PLAN 2.3: material impls move to plasticity",
-    ),
-    ("moisture", "wear", "PLAN 2.3: material impls move to wear"),
-    (
-        "rotation",
-        "astrophysics",
-        "PLAN 2.3: spin code moves to rotation",
-    ),
-    (
-        "spin_path",
-        "rigid_motion",
-        "PLAN 2.3: MaterialForceMoment to rotation",
-    ),
-    (
-        "suspension",
-        "liquid",
-        "PLAN 2.3: suspension/optics.rs to liquid",
+        "wear",
+        "PLAN 2.3: Calibration::new validates through wear::Material; needs a design decision",
     ),
 ];
 
