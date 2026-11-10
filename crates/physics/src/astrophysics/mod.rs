@@ -17,7 +17,7 @@ pub mod radiation;
 pub mod reaclib;
 pub mod spherical;
 pub mod spherical_radiation;
-pub mod spin;
+pub use crate::rotation as spin;
 pub mod star;
 pub mod thermal;
 
@@ -41,13 +41,7 @@ pub struct Orbit {
     pub apoapsis: Option<f64>,
     pub period: Option<f64>,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Error {
-    InvalidInput,
-    DegenerateOrbit,
-    NumericalOverflow,
-    NoConvergence,
-}
+pub use crate::rotation::Error;
 
 /// Leading-order torque from a symmetric gravitational acceleration gradient.
 /// Both the inertia tensor and field tensor must be expressed in the same frame.

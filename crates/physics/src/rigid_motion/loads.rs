@@ -170,16 +170,7 @@ impl MotionLoad {
     }
 }
 
-/// Aggregate affine forces on multiple points of one body. Three world-force
-/// columns encode sum_j (R e_j) cross column_j, without an arbitrary point cap.
-/// This descriptor does not prepare motion or solve contacts.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct MaterialForceMoment {
-    pub force: [f64; 3],
-    pub force_rate: [f64; 3],
-    pub columns: [[f64; 3]; 3],
-    pub rate_columns: [[f64; 3]; 3],
-}
+pub use crate::rotation::MaterialForceMoment;
 impl MaterialForceMoment {
     pub fn aggregate(forces: impl IntoIterator<Item = MaterialPointForce>) -> Result<Self, Error> {
         let mut sum = CoefficientSum::<8>::new();
