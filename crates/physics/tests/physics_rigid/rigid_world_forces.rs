@@ -1,5 +1,4 @@
 use physics::{
-    astrophysics_spin::Spin,
     contact::{ContactBody, ContactWrench},
     gravity::Body,
     liquid::{
@@ -7,6 +6,7 @@ use physics::{
         GeometryHit, Liquid, LiquidBodyWorld, Material, Particle, TranslatingBody,
     },
     rigid_motion::RigidMotion,
+    rotation::Spin,
     spin_path,
 };
 struct World {

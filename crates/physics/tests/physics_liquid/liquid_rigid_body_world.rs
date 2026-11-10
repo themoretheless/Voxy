@@ -1,11 +1,11 @@
 use crate::support_rigid;
 use physics::{
-    astrophysics_spin::Spin,
     contact::ContactBody,
     liquid::{
         BodyGeometryHit, Config, ContactConfig, ContactWitness, DynamicWorldConfig, Error,
         GeometryHit, Liquid, LiquidBodyWorld, Material, Particle, TranslatingBody,
     },
+    rotation::Spin,
     spin_path,
 };
 use support_rigid::body;

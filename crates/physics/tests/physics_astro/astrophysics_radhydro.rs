@@ -1,7 +1,7 @@
 use physics::{
-    astrophysics_gas::{Boundary, Cell, Gas},
-    astrophysics_radhydro::RadiatingGas,
-    astrophysics_radiation::blackbody,
+    astrophysics::gas::{Boundary, Cell, Gas},
+    astrophysics::radhydro::RadiatingGas,
+    astrophysics::radiation::blackbody,
 };
 fn system() -> RadiatingGas {
     RadiatingGas {

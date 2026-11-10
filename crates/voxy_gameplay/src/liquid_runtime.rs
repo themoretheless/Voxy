@@ -2222,12 +2222,12 @@ impl SceneLiquidRuntime {
                 let total = physics::rigid_motion::MotionLoad::aggregate([
                     physics::rigid_motion::MotionLoad {
                         force: old.force,
-                        torque: physics::astrophysics_spin::TorquePolynomial::constant(old.torque),
+                        torque: physics::rotation::TorquePolynomial::constant(old.torque),
                         ..physics::rigid_motion::MotionLoad::zero()
                     },
                     physics::rigid_motion::MotionLoad {
                         force: moment.force,
-                        torque: physics::astrophysics_spin::TorquePolynomial::constant(torque),
+                        torque: physics::rotation::TorquePolynomial::constant(torque),
                         ..physics::rigid_motion::MotionLoad::zero()
                     },
                 ])

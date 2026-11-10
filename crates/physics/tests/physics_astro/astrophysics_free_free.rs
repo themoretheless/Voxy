@@ -1,11 +1,11 @@
 use physics::{
-    astrophysics_eos::Species,
-    astrophysics_gas::{Boundary, Cell},
-    astrophysics_nuclear::{Network, Nucleus},
-    astrophysics_opacity::FreeFree,
-    astrophysics_spherical::Sphere,
-    astrophysics_spherical_radiation::FreeFreeSpectrum,
-    astrophysics_thermal::STEFAN_BOLTZMANN,
+    astrophysics::eos::Species,
+    astrophysics::gas::{Boundary, Cell},
+    astrophysics::nuclear::{Network, Nucleus},
+    astrophysics::opacity::FreeFree,
+    astrophysics::spherical::Sphere,
+    astrophysics::spherical_radiation::FreeFreeSpectrum,
+    astrophysics::thermal::STEFAN_BOLTZMANN,
 };
 fn setup() -> (Sphere, Vec<Vec<f64>>, Network, FreeFreeSpectrum) {
     let network = Network {
@@ -33,7 +33,7 @@ fn setup() -> (Sphere, Vec<Vec<f64>>, Network, FreeFreeSpectrum) {
         outer: Boundary::Reflecting,
     };
     let spectrum = FreeFreeSpectrum {
-        surface: physics::astrophysics_spherical_radiation::SpectralSurface::CellSource,
+        surface: physics::astrophysics::spherical_radiation::SpectralSurface::CellSource,
         absorption: FreeFree {
             gaunt_factor: 1.0,
             min_temperature: 1e5,
@@ -115,8 +115,8 @@ fn spectral_blackbody_irradiation_keeps_lte_balance_and_checks_domain() {
 #[test]
 fn joint_solver_uses_spectral_absorption_and_cumulative_budgets() {
     use physics::{
-        astrophysics_equilibrium::Search,
-        astrophysics_nuclear::{Reaclib, Reaction},
+        astrophysics::equilibrium::Search,
+        astrophysics::nuclear::{Reaclib, Reaction},
     };
     // Deliberately synthetic temperature-independent heating isolates the solver
     // from reaction-fit stiffness; absorption itself is the physical free-free law.
@@ -187,7 +187,7 @@ fn joint_solver_uses_spectral_absorption_and_cumulative_budgets() {
     };
     let initial = sphere.clone();
     let spectrum = FreeFreeSpectrum {
-        surface: physics::astrophysics_spherical_radiation::SpectralSurface::CellSource,
+        surface: physics::astrophysics::spherical_radiation::SpectralSurface::CellSource,
         absorption,
         min_frequency: 1e14,
         max_frequency: 1e21,
@@ -236,9 +236,9 @@ fn joint_solver_uses_spectral_absorption_and_cumulative_budgets() {
 #[test]
 fn spectral_radiative_evolution_and_real_reaction_close_energy_atomically() {
     use physics::{
-        astrophysics_nuclear::Budget,
-        astrophysics_reaclib::{MEV_JOULES, parse},
-        astrophysics_spherical_radiation::{Heating, ReactiveSettings},
+        astrophysics::nuclear::Budget,
+        astrophysics::reaclib::{MEV_JOULES, parse},
+        astrophysics::spherical_radiation::{Heating, ReactiveSettings},
     };
     let rate = parse(
         include_str!("../data/triple_alpha_fy05.reaclib"),
@@ -293,7 +293,7 @@ fn spectral_radiative_evolution_and_real_reaction_close_energy_atomically() {
     let initial_rows = rows.clone();
     let energy = sphere.reactive_energy(&rows, &network).unwrap();
     let spectrum = FreeFreeSpectrum {
-        surface: physics::astrophysics_spherical_radiation::SpectralSurface::CellSource,
+        surface: physics::astrophysics::spherical_radiation::SpectralSurface::CellSource,
         absorption: FreeFree {
             gaunt_factor: 1.0,
             min_temperature: 1.9e8,
@@ -422,7 +422,7 @@ fn spectral_radiative_evolution_and_real_reaction_close_energy_atomically() {
 
 #[test]
 fn zero_duration_spectral_evolution_validates_inputs_without_ray_work() {
-    use physics::astrophysics_spherical_radiation::Heating;
+    use physics::astrophysics::spherical_radiation::Heating;
     let (mut sphere, rows, network, spectrum) = setup();
     let saved = sphere.clone();
     let settings = Heating {
@@ -503,7 +503,7 @@ fn opaque_spectral_core_transport_scales_with_inverse_absorption() {
 
 #[test]
 fn eddington_surface_has_opaque_flux_scaling_and_preserves_irradiated_lte() {
-    use physics::astrophysics_spherical_radiation::SpectralSurface;
+    use physics::astrophysics::spherical_radiation::SpectralSurface;
     let (mut sphere, rows, network, spectrum) = setup();
     sphere.spacing = 1e3;
     let calculate = |gaunt_factor, ambient_temperature| {
@@ -546,9 +546,9 @@ fn eddington_surface_has_opaque_flux_scaling_and_preserves_irradiated_lte() {
 #[test]
 fn physical_stellar_profile_satisfies_explicit_absolute_and_relative_balance() {
     use physics::{
-        astrophysics_equilibrium::Search,
-        astrophysics_reaclib::{MEV_JOULES, parse},
-        astrophysics_spherical_radiation::SpectralSurface,
+        astrophysics::equilibrium::Search,
+        astrophysics::reaclib::{MEV_JOULES, parse},
+        astrophysics::spherical_radiation::SpectralSurface,
     };
     let rate = parse(
         include_str!("../data/triple_alpha_fy05.reaclib"),

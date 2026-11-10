@@ -1,4 +1,4 @@
-use physics::astrophysics_opacity::{Error, Kind, Table};
+use physics::astrophysics::opacity::{Error, Kind, Table};
 #[test]
 fn power_law_values_and_derivatives_are_exact_in_log_space() {
     let rho = vec![0.1_f64, 1.0, 100.0];
@@ -104,8 +104,8 @@ fn csv_unordered_grid_and_invalid_nodes() {
 #[test]
 fn free_free_planck_mean_matches_independent_frequency_integral() {
     use physics::{
-        astrophysics_eos::{BOLTZMANN, Species},
-        astrophysics_opacity::FreeFree,
+        astrophysics::eos::{BOLTZMANN, Species},
+        astrophysics::opacity::FreeFree,
     };
     let model = FreeFree {
         gaunt_factor: 1.2,

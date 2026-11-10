@@ -13,7 +13,7 @@ pub enum Error {
     NonPhysicalState,
     NumericalOverflow,
     BudgetExceeded,
-    Eos(crate::astrophysics_eos::Error),
+    Eos(crate::astrophysics::eos::Error),
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Boundary {
@@ -274,16 +274,16 @@ pub fn contact_flux(left: Cell, right: Cell, gamma: f64) -> Result<[f64; 3], Err
 pub fn contact_flux_ionized(
     left: Cell,
     right: Cell,
-    left_mixture: crate::astrophysics_eos::Mixture,
-    right_mixture: crate::astrophysics_eos::Mixture,
+    left_mixture: crate::astrophysics::eos::Mixture,
+    right_mixture: crate::astrophysics::eos::Mixture,
 ) -> Result<[f64; 3], Error> {
-    let state = |cell: Cell, mixture: crate::astrophysics_eos::Mixture| {
+    let state = |cell: Cell, mixture: crate::astrophysics::eos::Mixture| {
         let internal = cell.pressure(5.0 / 3.0)? / (2.0 / 3.0);
         let temperature = mixture
             .temperature(cell.density, internal)
             .map_err(Error::Eos)?;
         let thermal = mixture.at(cell.density, temperature).map_err(Error::Eos)?;
-        if thermal.sound_speed_squared >= crate::astrophysics_eos::LIGHT_SPEED.powi(2) {
+        if thermal.sound_speed_squared >= crate::astrophysics::eos::LIGHT_SPEED.powi(2) {
             return Err(Error::InvalidInput);
         }
         Ok((

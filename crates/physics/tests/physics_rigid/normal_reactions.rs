@@ -1,11 +1,11 @@
 use crate::support_rigid;
 use physics::{
-    astrophysics_spin::Spin,
     contact::{
         ContactBody, ContactWrench, Error, ManifoldConfig, NormalContact, NormalSupport,
         ReactionConfig, SupportPlane, normal_gap_acceleration, resolve_normal_manifold,
         resolve_normal_reactions,
     },
+    rotation::Spin,
 };
 use support_rigid::body;
 fn config() -> ReactionConfig {

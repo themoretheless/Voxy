@@ -1,5 +1,5 @@
 use physics::{
-    astrophysics_spin::Spin,
+    rotation::Spin,
     spin_path::{Config, PathError},
 };
 fn config(error: f64) -> Config {
@@ -171,7 +171,7 @@ fn long_precession_reserves_future_error_amplification_and_matches_rk4() {
 
 #[test]
 fn polynomial_torque_spherical_prefixes_match_integrated_momentum_and_analytic_attitude() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let law = TorquePolynomial {
         value: [0., 0., 2.],
         rate: [0., 0., -5.],
@@ -210,7 +210,7 @@ fn polynomial_torque_spherical_prefixes_match_integrated_momentum_and_analytic_a
 
 #[test]
 fn polynomial_torque_anisotropic_model_bound_covers_independent_time_dependent_rk4() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let initial = spin([1., 2., 3.], [0.3, 0.5, 0.7]);
     let law = TorquePolynomial {
         value: [0.4, -0.2, 0.3],
@@ -277,7 +277,7 @@ fn polynomial_torque_anisotropic_model_bound_covers_independent_time_dependent_r
 
 #[test]
 fn cubic_arm_affine_force_quartic_torque_matches_direct_product_and_gaussian_impulse() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let arm = [0.3, -0.7, 0.2];
     let v = [0.8, 0.1, -0.4];
     let a = [-0.2, 0.5, 0.6];
@@ -343,7 +343,7 @@ fn cubic_arm_affine_force_quartic_torque_matches_direct_product_and_gaussian_imp
 
 #[test]
 fn every_torque_coefficient_rejects_nonfinite_before_adaptive_preparation() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let initial = spin([1., 2., 3.], [0.3, 0.5, 0.7]);
     let saved = initial;
     for coefficient in 0..5 {
@@ -370,7 +370,7 @@ fn every_torque_coefficient_rejects_nonfinite_before_adaptive_preparation() {
 
 #[test]
 fn higher_order_torque_attitude_bound_covers_independent_spherical_solution() {
-    use physics::astrophysics_spin::TorquePolynomial;
+    use physics::rotation::TorquePolynomial;
     let initial = spin([2.; 3], [0., 0., 0.7]);
     // Collinear spherical motion has a closed-form attitude, obtained by
     // integrating the physical momentum twice, independently of arc sampling.

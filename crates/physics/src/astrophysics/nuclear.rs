@@ -264,19 +264,19 @@ impl Network {
     /// Fully ionized EOS for the current network composition.
     /// # Errors
     /// Invalid composition, or neutral nuclei unsupported by this EOS.
-    pub fn mixture(&self, fractions: &[f64]) -> Result<crate::astrophysics_eos::Mixture, Error> {
+    pub fn mixture(&self, fractions: &[f64]) -> Result<crate::astrophysics::eos::Mixture, Error> {
         self.validate(fractions)?;
         let species: Vec<_> = self
             .nuclei
             .iter()
             .zip(fractions)
-            .map(|(n, x)| crate::astrophysics_eos::Species {
+            .map(|(n, x)| crate::astrophysics::eos::Species {
                 mass_fraction: *x,
                 mass_number: n.mass_number,
                 nuclear_charge: n.charge,
             })
             .collect();
-        crate::astrophysics_eos::Mixture::new(&species).map_err(|_| Error::InvalidInput)
+        crate::astrophysics::eos::Mixture::new(&species).map_err(|_| Error::InvalidInput)
     }
     /// Isochoric one-zone burn with composition-dependent gas+radiation EOS.
     /// Specific internal energy is J/kg. Rates and temperature are refreshed

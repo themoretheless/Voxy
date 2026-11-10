@@ -1,7 +1,7 @@
 use physics::{
-    astrophysics_gas::{Boundary, Cell},
-    astrophysics_nuclear::{Budget, Network, Nucleus, Reaclib, Reaction},
-    astrophysics_spherical::Sphere,
+    astrophysics::gas::{Boundary, Cell},
+    astrophysics::nuclear::{Budget, Network, Nucleus, Reaclib, Reaction},
+    astrophysics::spherical::Sphere,
 };
 fn network() -> Network {
     Network {
@@ -100,7 +100,7 @@ fn burning_sphere_closed_and_open_energy_and_atomicity() {
 
 #[test]
 fn radiating_burning_sphere_energy_and_late_ray_failure() {
-    use physics::astrophysics_spherical_radiation::{Heating, ReactiveSettings};
+    use physics::astrophysics::spherical_radiation::{Heating, ReactiveSettings};
     let network = network();
     let mut rows = vec![vec![1.0, 0.0]; 8];
     let rho = 1000.0;
@@ -180,8 +180,8 @@ fn radiating_burning_sphere_energy_and_late_ray_failure() {
 #[test]
 fn reactive_table_matches_constant_and_post_burn_domain_failure_is_atomic() {
     use physics::{
-        astrophysics_opacity::{Kind, Table},
-        astrophysics_spherical_radiation::{Error, Heating, ReactiveError, ReactiveSettings},
+        astrophysics::opacity::{Kind, Table},
+        astrophysics::spherical_radiation::{Error, Heating, ReactiveError, ReactiveSettings},
     };
     let network = network();
     let initial_rows = vec![vec![1.0, 0.0]; 8];
@@ -266,7 +266,7 @@ fn reactive_table_matches_constant_and_post_burn_domain_failure_is_atomic() {
     assert_eq!(
         failed.step_reactive_tabulated(&mut failed_rows, &network, 0.001, settings, &narrow),
         Err(ReactiveError::Radiation(Error::Opacity(
-            physics::astrophysics_opacity::Error::OutsideDomain
+            physics::astrophysics::opacity::Error::OutsideDomain
         )))
     );
     assert_eq!(failed, original);
@@ -276,9 +276,9 @@ fn reactive_table_matches_constant_and_post_burn_domain_failure_is_atomic() {
 #[test]
 fn imported_reaction_with_tabulated_radiation_has_a_cumulative_energy_ledger() {
     use physics::{
-        astrophysics_opacity::{Kind, Table},
-        astrophysics_reaclib::{MEV_JOULES, parse},
-        astrophysics_spherical_radiation::{Heating, ReactiveSettings},
+        astrophysics::opacity::{Kind, Table},
+        astrophysics::reaclib::{MEV_JOULES, parse},
+        astrophysics::spherical_radiation::{Heating, ReactiveSettings},
     };
     // The narrow bounds below are numerical test bounds, not a fit calibration.
     let rate = parse(
@@ -386,7 +386,7 @@ fn imported_reaction_with_tabulated_radiation_has_a_cumulative_energy_ledger() {
 
 #[test]
 fn reactive_exterior_inflow_closes_nuclear_and_gas_energy_ledgers() {
-    use physics::astrophysics_spherical::{CompositionExterior, ReactiveBudget};
+    use physics::astrophysics::spherical::{CompositionExterior, ReactiveBudget};
     let network = network();
     let mut rows = vec![vec![1.0, 0.0]; 8];
     let energy = network
@@ -466,7 +466,7 @@ fn reactive_exterior_inflow_closes_nuclear_and_gas_energy_ledgers() {
 
 #[test]
 fn radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure() {
-    use physics::astrophysics_spherical::CompositionExterior;
+    use physics::astrophysics::spherical::CompositionExterior;
     let network = network();
     let mut rows = vec![vec![1.0, 0.0]; 8];
     let energy = network
@@ -503,7 +503,7 @@ fn radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure() 
         },
     };
     let initial = s.reactive_energy(&rows, &network).unwrap();
-    use physics::astrophysics_spherical_radiation::{Heating, ReactiveSettings};
+    use physics::astrophysics::spherical_radiation::{Heating, ReactiveSettings};
     let settings = ReactiveSettings {
         hydro_max_step: 1e-7,
         hydro_steps: 100,
@@ -522,7 +522,7 @@ fn radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure() 
             max_steps: 100,
         },
     };
-    use physics::astrophysics_opacity::{Kind, Table};
+    use physics::astrophysics::opacity::{Kind, Table};
     let original = s.clone();
     let original_rows = rows.clone();
     let table = Table::new(
@@ -586,9 +586,9 @@ fn radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure() 
     assert!(matches!(
         failure,
         Err(
-            physics::astrophysics_spherical_radiation::ReactiveError::Radiation(
-                physics::astrophysics_spherical_radiation::Error::Opacity(
-                    physics::astrophysics_opacity::Error::OutsideDomain
+            physics::astrophysics::spherical_radiation::ReactiveError::Radiation(
+                physics::astrophysics::spherical_radiation::Error::Opacity(
+                    physics::astrophysics::opacity::Error::OutsideDomain
                 )
             )
         )
@@ -621,10 +621,10 @@ fn radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure() 
 #[test]
 fn polytrope_exterior_burning_and_tabulated_radiation_share_one_energy_ledger() {
     use physics::{
-        astrophysics_opacity::{Kind, Table},
-        astrophysics_spherical::CompositionExterior,
-        astrophysics_spherical_radiation::{Heating, ReactiveSettings},
-        astrophysics_star::{Scaling, lane_emden},
+        astrophysics::opacity::{Kind, Table},
+        astrophysics::spherical::CompositionExterior,
+        astrophysics::spherical_radiation::{Heating, ReactiveSettings},
+        astrophysics::star::{Scaling, lane_emden},
     };
     let network = network();
     let profile = lane_emden(1.5, 0.001, 5.0, 6000).unwrap();
@@ -755,7 +755,7 @@ fn polytrope_exterior_burning_and_tabulated_radiation_share_one_energy_ledger() 
 
 #[test]
 fn balanced_burning_sphere_closed_and_open_preserves_complete_energy() {
-    use physics::astrophysics_spherical::{CompositionExterior, ReactiveBudget};
+    use physics::astrophysics::spherical::{CompositionExterior, ReactiveBudget};
     let network = network();
     for boundary in [Boundary::Reflecting, Boundary::Outflow] {
         let mut rows = vec![vec![1.0, 0.0]; 8];
@@ -849,9 +849,9 @@ fn balanced_burning_sphere_closed_and_open_preserves_complete_energy() {
 
 #[test]
 fn balanced_radiating_burning_sphere_energy_and_late_failure() {
-    use physics::astrophysics_opacity::{Kind, Table};
-    use physics::astrophysics_spherical::{CompositionExterior, ReactiveBudget};
-    use physics::astrophysics_spherical_radiation::{Heating, ReactiveSettings};
+    use physics::astrophysics::opacity::{Kind, Table};
+    use physics::astrophysics::spherical::{CompositionExterior, ReactiveBudget};
+    use physics::astrophysics::spherical_radiation::{Heating, ReactiveSettings};
     let network = network();
     for boundary in [Boundary::Reflecting, Boundary::Outflow] {
         let mut rows = vec![vec![1.0, 0.0]; 8];
@@ -974,7 +974,7 @@ fn balanced_radiating_burning_sphere_energy_and_late_failure() {
 
 #[test]
 fn instantaneous_thermal_balance_closes_local_and_global_power_without_mutation() {
-    use physics::astrophysics_spherical_radiation::Heating;
+    use physics::astrophysics::spherical_radiation::Heating;
     let network = network();
     let rows = vec![vec![1.0, 0.0]; 8];
     let state = network.mixture(&rows[0]).unwrap().at(1000.0, 2e8).unwrap();
@@ -1021,7 +1021,7 @@ fn instantaneous_thermal_balance_closes_local_and_global_power_without_mutation(
 
 #[test]
 fn thermal_residual_detects_local_imbalance_despite_global_cancellation() {
-    use physics::astrophysics_spherical_radiation::ThermalRates;
+    use physics::astrophysics::spherical_radiation::ThermalRates;
     let mut rates = ThermalRates {
         nuclear: vec![3.0, 1.0],
         radiation: vec![-1.0, -3.0],
@@ -1046,7 +1046,7 @@ fn thermal_residual_detects_local_imbalance_despite_global_cancellation() {
 
 #[test]
 fn thermal_search_balances_burning_shells_and_rolls_back_failed_searches() {
-    use physics::astrophysics_spherical_radiation::{Heating, ThermalSearch, ThermalSearchError};
+    use physics::astrophysics::spherical_radiation::{Heating, ThermalSearch, ThermalSearchError};
     let network = network();
     let rows = vec![vec![1.0, 0.0]; 2];
     let mut sphere = Sphere {
@@ -1105,8 +1105,8 @@ fn thermal_search_balances_burning_shells_and_rolls_back_failed_searches() {
         assert_eq!(old.momentum, new.momentum);
         assert_ne!(old.energy, new.energy);
     }
-    let table = physics::astrophysics_opacity::Table::new(
-        physics::astrophysics_opacity::Kind::GreyAbsorption,
+    let table = physics::astrophysics::opacity::Table::new(
+        physics::astrophysics::opacity::Kind::GreyAbsorption,
         vec![500.0, 2000.0],
         vec![1e8, 1e9],
         vec![heating.opacity; 4],
@@ -1179,8 +1179,8 @@ fn thermal_search_balances_burning_shells_and_rolls_back_failed_searches() {
 
 #[test]
 fn joint_stellar_search_satisfies_hydrostatic_and_thermal_equations() {
-    use physics::astrophysics_equilibrium::Search;
-    use physics::astrophysics_spherical_radiation::Heating;
+    use physics::astrophysics::equilibrium::Search;
+    use physics::astrophysics::spherical_radiation::Heating;
     let network = network();
     let rows = vec![vec![1.0, 0.0]; 2];
     let mut sphere = Sphere {

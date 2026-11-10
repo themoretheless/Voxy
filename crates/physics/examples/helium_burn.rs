@@ -1,8 +1,8 @@
 //! Held-temperature triple-alpha example, using JINA fy05 coefficients distributed
 //! in pynucastro/data/reaclib_default2_20250330. No thermal feedback in this example.
-use physics::astrophysics_nuclear::{Budget, Network, Nucleus};
+use physics::astrophysics::nuclear::{Budget, Network, Nucleus};
 fn main() -> Result<(), String> {
-    let rate = physics::astrophysics_reaclib::parse(
+    let rate = physics::astrophysics::reaclib::parse(
         include_str!("../tests/data/triple_alpha_fy05.reaclib"),
         2e8,
         2e8,

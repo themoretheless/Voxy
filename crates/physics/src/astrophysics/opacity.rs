@@ -225,7 +225,7 @@ impl FreeFree {
         self,
         density: f64,
         temperature: f64,
-        species: &[crate::astrophysics_eos::Species],
+        species: &[crate::astrophysics::eos::Species],
     ) -> Result<(f64, f64), Error> {
         if ![
             density,
@@ -247,7 +247,7 @@ impl FreeFree {
             return Err(Error::OutsideDomain);
         }
         let mixture =
-            crate::astrophysics_eos::Mixture::new(species).map_err(|_| Error::InvalidInput)?;
+            crate::astrophysics::eos::Mixture::new(species).map_err(|_| Error::InvalidInput)?;
         let total: f64 = species.iter().map(|s| s.mass_fraction).sum();
         let ionic_charge: f64 = species
             .iter()
@@ -266,17 +266,17 @@ impl FreeFree {
         density: f64,
         temperature: f64,
         frequency: f64,
-        species: &[crate::astrophysics_eos::Species],
+        species: &[crate::astrophysics::eos::Species],
     ) -> Result<f64, Error> {
         let (electrons, ions) = self.composition(density, temperature, species)?;
         if !frequency.is_finite() || frequency <= 0.0 {
             return Err(Error::InvalidInput);
         }
-        let x = 6.626_070_15e-34 * frequency / (crate::astrophysics_eos::BOLTZMANN * temperature);
+        let x = 6.626_070_15e-34 * frequency / (crate::astrophysics::eos::BOLTZMANN * temperature);
         let stimulated = -(-x).exp_m1();
         // ne and ni in cm^-3, rho in g/cm³, then cm²/g -> m²/kg.
         let log_value = (3.7e8_f64).ln() + density.ln()
-            - 2.0 * crate::astrophysics_eos::ATOMIC_MASS.ln()
+            - 2.0 * crate::astrophysics::eos::ATOMIC_MASS.ln()
             + (1e-10_f64).ln()
             + electrons.ln()
             + ions.ln()
@@ -297,17 +297,17 @@ impl FreeFree {
         self,
         density: f64,
         temperature: f64,
-        species: &[crate::astrophysics_eos::Species],
+        species: &[crate::astrophysics::eos::Species],
     ) -> Result<f64, Error> {
         let (electrons, ions) = self.composition(density, temperature, species)?;
         // cgs C=3.7e8*2*pi*k_B/(c²*sigma); conversion of number densities,
         // mass density and opacity gives the additional 1e-10 factor.
         let coefficient =
-            3.7e8 * 2.0 * std::f64::consts::PI * (crate::astrophysics_eos::BOLTZMANN * 1e7)
-                / (crate::astrophysics_eos::LIGHT_SPEED * 100.0).powi(2)
-                / (crate::astrophysics_thermal::STEFAN_BOLTZMANN * 1e3);
+            3.7e8 * 2.0 * std::f64::consts::PI * (crate::astrophysics::eos::BOLTZMANN * 1e7)
+                / (crate::astrophysics::eos::LIGHT_SPEED * 100.0).powi(2)
+                / (crate::astrophysics::thermal::STEFAN_BOLTZMANN * 1e3);
         let log_value = coefficient.ln() + (1e-10_f64).ln() + density.ln()
-            - 2.0 * crate::astrophysics_eos::ATOMIC_MASS.ln()
+            - 2.0 * crate::astrophysics::eos::ATOMIC_MASS.ln()
             + electrons.ln()
             + ions.ln()
             + self.gaunt_factor.ln()
@@ -324,7 +324,7 @@ impl FreeFree {
         self,
         density: Vec<f64>,
         temperature: Vec<f64>,
-        species: &[crate::astrophysics_eos::Species],
+        species: &[crate::astrophysics::eos::Species],
     ) -> Result<Table, Error> {
         let mut values = Vec::new();
         for rho in &density {

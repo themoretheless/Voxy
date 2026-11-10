@@ -2,7 +2,7 @@
 //! surface normals. Coordinate anchors and query budgets are independent of voxels.
 use crate::math::dot;
 use crate::math::norm;
-use crate::{Origin, gravity, gravity_field::GravityField};
+use crate::{Origin, gravity, gravity::field::GravityField};
 
 type Vector = [f64; 3];
 fn add(a: &mut Vector, b: Vector) {

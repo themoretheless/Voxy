@@ -1,4 +1,4 @@
-use physics::astrophysics_nuclear::{Budget, Network, Nucleus, Reaclib, Reaction};
+use physics::astrophysics::nuclear::{Budget, Network, Nucleus, Reaclib, Reaction};
 fn network() -> Network {
     Network {
         nuclei: vec![
@@ -133,7 +133,7 @@ fn isochoric_feedback_conserves_energy_and_rolls_back() {
     );
     assert_eq!(
         failure,
-        Err(physics::astrophysics_nuclear::Error::BudgetExceeded)
+        Err(physics::astrophysics::nuclear::Error::BudgetExceeded)
     );
     assert_eq!(unchanged, initial_fractions);
     assert_eq!(unchanged_energy, initial_energy);
@@ -188,7 +188,7 @@ fn temperature_dependent_rate_responds_to_heating() {
 
 #[test]
 fn instantaneous_rates_have_analytic_units_budget_and_endothermic_sign() {
-    use physics::astrophysics_nuclear::{AVOGADRO, Error};
+    use physics::astrophysics::nuclear::{AVOGADRO, Error};
     let mut n = network();
     let fractions = [1.0, 0.0];
     let rates = n.rates(&fractions, 1000.0, 1e8, 1).unwrap();

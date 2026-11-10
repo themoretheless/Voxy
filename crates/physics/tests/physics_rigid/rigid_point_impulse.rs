@@ -1,7 +1,7 @@
 use physics::{
-    astrophysics_spin::Spin,
     contact::{ContactBody, resolve_normal_impact},
     gravity::Body,
+    rotation::Spin,
 };
 fn body(position: [f64; 3], velocity: [f64; 3], spin: bool) -> ContactBody {
     ContactBody {

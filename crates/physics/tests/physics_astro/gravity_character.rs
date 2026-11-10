@@ -1,11 +1,11 @@
 use physics::{
     Origin,
     gravity::Gravity,
-    gravity_character::{
+    gravity::character::{
         self as controller, CollisionWorld, Config, Error, Hit, Input, SphereWorld, State,
         SurfaceSphere,
     },
-    gravity_field::{NewtonianField, Source},
+    gravity::field::{NewtonianField, Source},
 };
 
 fn length(v: [f64; 3]) -> f64 {

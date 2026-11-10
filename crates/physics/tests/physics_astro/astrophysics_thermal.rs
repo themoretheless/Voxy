@@ -1,4 +1,4 @@
-use physics::astrophysics_thermal::{STEFAN_BOLTZMANN, ThermalBody};
+use physics::astrophysics::thermal::{STEFAN_BOLTZMANN, ThermalBody};
 fn body() -> ThermalBody {
     ThermalBody {
         heat_capacity: 100.0,

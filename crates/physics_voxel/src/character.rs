@@ -92,7 +92,7 @@ pub fn step_character_in_field(
     input: CharacterInput,
     dt: f64,
     config: CharacterConfig,
-    field: &impl physics::gravity_field::GravityField,
+    field: &impl physics::gravity::field::GravityField,
 ) -> Result<CharacterStep, CharacterError> {
     let anchor = physics::Origin {
         x: state.body.anchor.x,

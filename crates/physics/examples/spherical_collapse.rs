@@ -1,6 +1,6 @@
 use physics::{
-    astrophysics_gas::{Boundary, Cell},
-    astrophysics_spherical::Sphere,
+    astrophysics::gas::{Boundary, Cell},
+    astrophysics::spherical::Sphere,
 };
 fn main() -> Result<(), String> {
     let mut sphere = Sphere {

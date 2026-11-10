@@ -1,4 +1,4 @@
-use physics::astrophysics_eos::{Mixture, Species};
+use physics::astrophysics::eos::{Mixture, Species};
 fn main() -> Result<(), String> {
     let mixture = Mixture::new(&[
         Species {

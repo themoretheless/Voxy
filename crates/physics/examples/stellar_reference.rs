@@ -1,13 +1,13 @@
 //! Physical REACLIB/free-free reference probe; prescribed radius and surface
 //! pressure, fixed He/C composition, no claim of matching an observed star.
 use physics::{
-    astrophysics_equilibrium::Search,
-    astrophysics_gas::{Boundary, Cell},
-    astrophysics_nuclear::{Network, Nucleus},
-    astrophysics_opacity::FreeFree,
-    astrophysics_reaclib::{MEV_JOULES, parse},
-    astrophysics_spherical::Sphere,
-    astrophysics_spherical_radiation::FreeFreeSpectrum,
+    astrophysics::equilibrium::Search,
+    astrophysics::gas::{Boundary, Cell},
+    astrophysics::nuclear::{Network, Nucleus},
+    astrophysics::opacity::FreeFree,
+    astrophysics::reaclib::{MEV_JOULES, parse},
+    astrophysics::spherical::Sphere,
+    astrophysics::spherical_radiation::FreeFreeSpectrum,
 };
 fn main() -> Result<(), String> {
     let args: Vec<_> = std::env::args().skip(1).collect();
@@ -147,7 +147,8 @@ fn main() -> Result<(), String> {
         }
     }
     let spectrum = FreeFreeSpectrum {
-        surface: physics::astrophysics_spherical_radiation::SpectralSurface::EddingtonApproximation,
+        surface:
+            physics::astrophysics::spherical_radiation::SpectralSurface::EddingtonApproximation,
         absorption: FreeFree {
             gaunt_factor: 1.0,
             min_temperature: 1e6,

@@ -1,9 +1,9 @@
 use physics::{
-    astrophysics_eos::{Mixture, Species},
-    astrophysics_evolution::{Budget, RadiatingSphere},
-    astrophysics_gas::{Boundary, Cell},
-    astrophysics_radiation::blackbody,
-    astrophysics_spherical::Sphere,
+    astrophysics::eos::{Mixture, Species},
+    astrophysics::evolution::{Budget, RadiatingSphere},
+    astrophysics::gas::{Boundary, Cell},
+    astrophysics::radiation::blackbody,
+    astrophysics::spherical::Sphere,
 };
 fn mixture() -> Mixture {
     Mixture::new(&[Species {

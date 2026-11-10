@@ -1,4 +1,4 @@
-use physics::astrophysics_gas::{Boundary, Cell, Gas};
+use physics::astrophysics::gas::{Boundary, Cell, Gas};
 fn tube(n: usize, boundary: Boundary) -> Gas {
     Gas {
         cells: (0..n)
@@ -83,7 +83,7 @@ fn reported_fluxes_match_cell_and_boundary_changes() {
 
 #[test]
 fn contact_flux_preserves_stationary_density_jumps_and_supersonic_upwind() {
-    use physics::astrophysics_gas::contact_flux;
+    use physics::astrophysics::gas::contact_flux;
     let gamma = 1.4;
     let state = |rho: f64, p: f64, u: f64| Cell {
         density: rho,
@@ -138,8 +138,8 @@ fn contact_evolution_keeps_static_layers_and_conserves_dynamic_transport() {
 #[test]
 fn ionized_contact_flux_uses_local_composition_and_radiation_pressure() {
     use physics::{
-        astrophysics_eos::{Mixture, Species},
-        astrophysics_gas::{contact_flux, contact_flux_ionized},
+        astrophysics::eos::{Mixture, Species},
+        astrophysics::gas::{contact_flux, contact_flux_ionized},
     };
     let hydrogen = Mixture::new(&[Species {
         mass_fraction: 1.0,

@@ -1,6 +1,6 @@
 //! Radial finite-volume Euler gas with Newtonian spherical self-gravity.
 //! Fixed radial shells; regular centre, reflecting or open outer boundary.
-use crate::astrophysics_gas::{Boundary, Cell, interface};
+use crate::astrophysics::gas::{Boundary, Cell, interface};
 const FOUR_PI: f64 = 4.0 * std::f64::consts::PI;
 #[derive(Clone, Debug, PartialEq)]
 pub struct Sphere {
@@ -20,9 +20,9 @@ pub struct Field {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
     InvalidInput,
-    Gas(crate::astrophysics_gas::Error),
-    Eos(crate::astrophysics_eos::Error),
-    Nuclear(crate::astrophysics_nuclear::Error),
+    Gas(crate::astrophysics::gas::Error),
+    Eos(crate::astrophysics::eos::Error),
+    Nuclear(crate::astrophysics::nuclear::Error),
     Stellar(crate::astrophysics::Error),
     NumericalOverflow,
     BudgetExceeded,
@@ -198,7 +198,7 @@ impl Sphere {
         dt: f64,
         max_step: f64,
         budget: usize,
-        mixture: crate::astrophysics_eos::Mixture,
+        mixture: crate::astrophysics::eos::Mixture,
     ) -> Result<Exchange, Error> {
         self.step_eos(dt, max_step, budget, Some(mixture))
     }
@@ -207,7 +207,7 @@ impl Sphere {
         dt: f64,
         max_step: f64,
         budget: usize,
-        mixture: Option<crate::astrophysics_eos::Mixture>,
+        mixture: Option<crate::astrophysics::eos::Mixture>,
     ) -> Result<Exchange, Error> {
         self.step_composition_impl(dt, max_step, budget, mixture, None, None, None, None, false)
             .map(|r| r.0)
@@ -246,7 +246,7 @@ impl Sphere {
     pub fn step_composition_ionized(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         max_step: f64,
         budget: usize,
@@ -274,7 +274,7 @@ impl Sphere {
     pub fn step_composition_contact(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         max_step: f64,
         budget: usize,
@@ -312,9 +312,9 @@ impl Sphere {
         dt: f64,
         max_step: f64,
         budget: usize,
-        mixture: Option<crate::astrophysics_eos::Mixture>,
+        mixture: Option<crate::astrophysics::eos::Mixture>,
         mut fractions: Option<&mut [Vec<f64>]>,
-        network: Option<&crate::astrophysics_nuclear::Network>,
+        network: Option<&crate::astrophysics::nuclear::Network>,
         exterior: Option<Exterior>,
         exterior_fractions: Option<&[f64]>,
         contact: bool,
@@ -389,7 +389,7 @@ impl Sphere {
             )?;
             if let (Some(exterior), Some(state)) = (exterior, external_thermal) {
                 flux[n] = if contact {
-                    crate::astrophysics_gas::contact_flux_thermal(
+                    crate::astrophysics::gas::contact_flux_thermal(
                         next.cells[n - 1],
                         exterior.cell,
                         thermal[n - 1],
@@ -470,7 +470,7 @@ impl Sphere {
 fn thermodynamics(
     cell: Cell,
     gamma: f64,
-    mixture: Option<crate::astrophysics_eos::Mixture>,
+    mixture: Option<crate::astrophysics::eos::Mixture>,
 ) -> Result<(f64, f64), Error> {
     let internal = cell.pressure(gamma).map_err(Error::Gas)? / (gamma - 1.0);
     if let Some(mixture) = mixture {
@@ -478,7 +478,7 @@ fn thermodynamics(
             .temperature(cell.density, internal)
             .map_err(Error::Eos)?;
         let state = mixture.at(cell.density, temperature).map_err(Error::Eos)?;
-        if state.sound_speed_squared >= crate::astrophysics_eos::LIGHT_SPEED.powi(2) {
+        if state.sound_speed_squared >= crate::astrophysics::eos::LIGHT_SPEED.powi(2) {
             return Err(Error::InvalidInput);
         }
         Ok((
@@ -520,7 +520,7 @@ fn radial_fluxes(
     let mut flux = vec![[0.0; 3]];
     for (i, pair) in cells.windows(2).enumerate() {
         flux.push(if contact {
-            crate::astrophysics_gas::contact_flux_thermal(
+            crate::astrophysics::gas::contact_flux_thermal(
                 pair[0],
                 pair[1],
                 thermal[i],
@@ -544,7 +544,7 @@ fn radial_fluxes(
     };
     let state = thermal[thermal.len() - 1];
     flux.push(if contact {
-        crate::astrophysics_gas::contact_flux_thermal(last, outside, state, state)
+        crate::astrophysics::gas::contact_flux_thermal(last, outside, state, state)
             .map_err(Error::Gas)?
     } else if ionized {
         interface_thermal(last, outside, state, state)
@@ -614,11 +614,11 @@ fn transport_composition(
 }
 
 fn local_mixture(
-    uniform: Option<crate::astrophysics_eos::Mixture>,
-    network: Option<&crate::astrophysics_nuclear::Network>,
+    uniform: Option<crate::astrophysics::eos::Mixture>,
+    network: Option<&crate::astrophysics::nuclear::Network>,
     fractions: Option<&[Vec<f64>]>,
     index: usize,
-) -> Result<Option<crate::astrophysics_eos::Mixture>, Error> {
+) -> Result<Option<crate::astrophysics::eos::Mixture>, Error> {
     if let Some(network) = network {
         let row = fractions
             .and_then(|rows| rows.get(index))
@@ -649,7 +649,7 @@ impl Sphere {
     pub fn reactive_energy(
         &self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
     ) -> Result<f64, Error> {
         if fractions.len() != self.cells.len() {
             return Err(Error::InvalidInput);
@@ -673,11 +673,11 @@ impl Sphere {
     pub fn step_reactive(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         hydro_max_step: f64,
         hydro_budget: usize,
-        burn_budget: crate::astrophysics_nuclear::Budget,
+        burn_budget: crate::astrophysics::nuclear::Budget,
     ) -> Result<ReactiveExchange, Error> {
         self.step_reactive_impl(
             fractions,
@@ -698,7 +698,7 @@ impl Sphere {
     pub fn step_reactive_exterior(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         budget: ReactiveBudget,
         exterior: &CompositionExterior,
@@ -712,7 +712,7 @@ impl Sphere {
     pub fn step_reactive_balanced(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         budget: ReactiveBudget,
         reference: &HydrostaticReference,
@@ -723,7 +723,7 @@ impl Sphere {
     fn step_reactive_impl(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         budget: ReactiveBudget,
         exterior: Option<&CompositionExterior>,
@@ -785,7 +785,7 @@ impl Sphere {
                     cell.density,
                     &mut energy,
                     dt,
-                    crate::astrophysics_nuclear::Budget {
+                    crate::astrophysics::nuclear::Budget {
                         max_step: burn_budget.max_step,
                         steps: burn_budget.steps - result.burn_steps,
                         fit_evaluations: burn_budget.fit_evaluations - result.fit_evaluations,
@@ -807,7 +807,7 @@ impl Sphere {
         }
         for (mass, nucleus) in escaped_species.iter().zip(&network.nuclei) {
             result.escaped_binding -=
-                mass * 1000.0 * crate::astrophysics_nuclear::AVOGADRO * nucleus.binding_energy
+                mass * 1000.0 * crate::astrophysics::nuclear::AVOGADRO * nucleus.binding_energy
                     / f64::from(nucleus.mass_number);
         }
         result.escaped_species = escaped_species;
@@ -840,7 +840,7 @@ impl Sphere {
     pub fn hydrostatic_residual(
         &self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
     ) -> Result<Vec<f64>, Error> {
         self.hydrostatic_residual_impl(fractions, network, None)
     }
@@ -851,7 +851,7 @@ impl Sphere {
     pub fn hydrostatic_residual_exterior(
         &self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         exterior: &CompositionExterior,
     ) -> Result<Vec<f64>, Error> {
         if self.outer != Boundary::Outflow {
@@ -866,7 +866,7 @@ impl Sphere {
     fn hydrostatic_residual_impl(
         &self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         exterior_pressure: Option<f64>,
     ) -> Result<Vec<f64>, Error> {
         if fractions.len() != self.cells.len() {
@@ -929,13 +929,13 @@ impl Sphere {
     pub fn initialize_polytrope(
         &mut self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
-        profile: &crate::astrophysics_star::Profile,
-        scaling: crate::astrophysics_star::Scaling,
+        network: &crate::astrophysics::nuclear::Network,
+        profile: &crate::astrophysics::star::Profile,
+        scaling: crate::astrophysics::star::Scaling,
         intervals: usize,
     ) -> Result<(), Error> {
         self.geometry()?;
-        let expected = crate::astrophysics_star::Scaling::new(
+        let expected = crate::astrophysics::star::Scaling::new(
             profile.index,
             scaling.central_density,
             scaling.central_pressure,
@@ -985,7 +985,7 @@ impl Sphere {
     pub fn initialize_hydrostatic(
         &mut self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         surface_pressure: f64,
     ) -> Result<(), Error> {
         if fractions.len() != self.cells.len() {
@@ -1069,7 +1069,7 @@ impl Sphere {
     pub fn initialize_uniform_hydrostatic(
         &mut self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         surface_pressure: f64,
     ) -> Result<(), Error> {
         self.geometry()?;
@@ -1145,7 +1145,7 @@ impl Sphere {
     pub fn virial(
         &self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         surface_pressure: f64,
     ) -> Result<Virial, Error> {
         if fractions.len() != self.cells.len()
@@ -1188,7 +1188,7 @@ impl Sphere {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Exterior {
     pub cell: Cell,
-    pub mixture: crate::astrophysics_eos::Mixture,
+    pub mixture: crate::astrophysics::eos::Mixture,
 }
 impl Sphere {
     /// Uniform ionized EOS dynamics with a fixed exterior reservoir at the open
@@ -1201,7 +1201,7 @@ impl Sphere {
         dt: f64,
         max_step: f64,
         budget: usize,
-        mixture: crate::astrophysics_eos::Mixture,
+        mixture: crate::astrophysics::eos::Mixture,
         exterior: Exterior,
     ) -> Result<Exchange, Error> {
         self.step_composition_impl(
@@ -1233,7 +1233,7 @@ impl Sphere {
     pub fn step_composition_exterior(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         max_step: f64,
         budget: usize,
@@ -1266,7 +1266,7 @@ impl Sphere {
 pub struct ReactiveBudget {
     pub hydro_max_step: f64,
     pub hydro_steps: usize,
-    pub burn: crate::astrophysics_nuclear::Budget,
+    pub burn: crate::astrophysics::nuclear::Budget,
 }
 
 /// Immutable hydrostatic reference for perturbation reconstruction.
@@ -1275,7 +1275,7 @@ pub struct HydrostaticReference {
     sphere: Sphere,
     pressures: HydrostaticPressures,
     cell_pressures: Vec<f64>,
-    nuclei: Vec<crate::astrophysics_nuclear::Nucleus>,
+    nuclei: Vec<crate::astrophysics::nuclear::Nucleus>,
     exterior_pressure: Option<f64>,
 }
 impl Sphere {
@@ -1286,7 +1286,7 @@ impl Sphere {
     pub fn initialize_balanced(
         &mut self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         surface_pressure: f64,
     ) -> Result<HydrostaticReference, Error> {
         self.initialize_balanced_impl(fractions, network, surface_pressure, None)
@@ -1297,7 +1297,7 @@ impl Sphere {
     pub fn initialize_balanced_exterior(
         &mut self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         surface_pressure: f64,
         exterior: &CompositionExterior,
     ) -> Result<HydrostaticReference, Error> {
@@ -1306,7 +1306,7 @@ impl Sphere {
     fn initialize_balanced_impl(
         &mut self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         surface_pressure: f64,
         exterior: Option<&CompositionExterior>,
     ) -> Result<HydrostaticReference, Error> {
@@ -1364,7 +1364,7 @@ impl Sphere {
     pub fn step_composition_balanced(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         max_step: f64,
         budget: usize,
@@ -1381,7 +1381,7 @@ impl Sphere {
     pub fn step_composition_balanced_exterior(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         max_step: f64,
         budget: usize,
@@ -1401,7 +1401,7 @@ impl Sphere {
     fn step_composition_balanced_impl(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         max_step: f64,
         budget: usize,
@@ -1487,7 +1487,7 @@ impl Sphere {
             }
             let mut flux = vec![[0.0; 3]; n + 1];
             for i in 1..n {
-                flux[i] = crate::astrophysics_gas::contact_flux_thermal(
+                flux[i] = crate::astrophysics::gas::contact_flux_thermal(
                     states[i - 1][1].0,
                     states[i][0].0,
                     states[i - 1][1].1,
@@ -1517,7 +1517,7 @@ impl Sphere {
                 };
                 let sound = thermodynamics(outside, next.gamma, Some(mixture))?.1;
                 speed = speed.max(velocity.abs() + sound);
-                flux[n] = crate::astrophysics_gas::contact_flux_thermal(
+                flux[n] = crate::astrophysics::gas::contact_flux_thermal(
                     last,
                     outside,
                     thermo,
@@ -1530,7 +1530,7 @@ impl Sphere {
                     ..last
                 };
                 flux[n] =
-                    crate::astrophysics_gas::contact_flux_thermal(last, reflected, thermo, thermo)
+                    crate::astrophysics::gas::contact_flux_thermal(last, reflected, thermo, thermo)
                         .map_err(Error::Gas)?;
                 flux[n][0] = 0.0;
                 flux[n][2] = 0.0;

@@ -1,8 +1,8 @@
 use physics::{
-    astrophysics_eos::{Mixture, Species},
-    astrophysics_evolution::{Budget, RadiatingSphere},
-    astrophysics_gas::{Boundary, Cell},
-    astrophysics_spherical::Sphere,
+    astrophysics::eos::{Mixture, Species},
+    astrophysics::evolution::{Budget, RadiatingSphere},
+    astrophysics::gas::{Boundary, Cell},
+    astrophysics::spherical::Sphere,
 };
 fn main() -> Result<(), String> {
     let mut ionized = false;

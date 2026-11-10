@@ -1,6 +1,6 @@
 //! Plane-parallel static Eddington-grey atmosphere; constant g and opacity.
 //! Total pressure includes LTE radiation. No time-dependent boundary coupling.
-use crate::astrophysics_eos::{Mixture, RADIATION_CONSTANT};
+use crate::astrophysics::eos::{Mixture, RADIATION_CONSTANT};
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Atmosphere {
     pub gravity: f64,
@@ -84,7 +84,7 @@ impl Atmosphere {
         self,
         depth: f64,
         velocity: f64,
-    ) -> Result<crate::astrophysics_gas::Cell, Error> {
+    ) -> Result<crate::astrophysics::gas::Cell, Error> {
         if !velocity.is_finite() {
             return Err(Error::InvalidInput);
         }
@@ -96,10 +96,10 @@ impl Atmosphere {
             .mixture
             .at(state.density, state.temperature)
             .map_err(|_| Error::NumericalOverflow)?;
-        if thermal.sound_speed_squared >= crate::astrophysics_eos::LIGHT_SPEED.powi(2) {
+        if thermal.sound_speed_squared >= crate::astrophysics::eos::LIGHT_SPEED.powi(2) {
             return Err(Error::InvalidInput);
         }
-        let cell = crate::astrophysics_gas::Cell {
+        let cell = crate::astrophysics::gas::Cell {
             density: state.density,
             momentum: state.density * velocity,
             energy: thermal.internal_energy_density + 0.5 * state.density * velocity * velocity,

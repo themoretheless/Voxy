@@ -86,7 +86,7 @@ pub fn step_character_in_field<W: CollisionWorld>(
     input: CharacterInput,
     dt: f64,
     config: CharacterConfig,
-    field: &impl crate::gravity_field::GravityField,
+    field: &impl crate::gravity::field::GravityField,
 ) -> Result<CharacterStep<W::Obstacle>, CharacterError<W::Error>> {
     let center = std::array::from_fn(|k| state.body.min[k] * 0.5 + state.body.max[k] * 0.5);
     let acceleration = field

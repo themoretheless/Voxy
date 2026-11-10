@@ -1,8 +1,8 @@
 //! Run with `cargo run -p physics --example tidal_binary`.
 use physics::{
     astrophysics::OrbitalState,
-    astrophysics_binary::{Binary, Body, Tide},
-    astrophysics_spin::Spin,
+    astrophysics::binary::{Binary, Body, Tide},
+    rotation::Spin,
 };
 fn body(mass: f64, radius: f64) -> Body {
     Body {

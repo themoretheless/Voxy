@@ -939,7 +939,7 @@ fn separating_prefix(
 #[cfg(test)]
 mod spin_bridge_tests {
     use super::*;
-    use physics::{astrophysics_spin::Spin, spin_path::Config};
+    use physics::{rotation::Spin, spin_path::Config};
     #[test]
     fn nominal_fixed_axis_gap_covers_small_motion_but_not_a_closing_interval() {
         let config = Config {
@@ -958,7 +958,7 @@ mod spin_bridge_tests {
                 position: [x, 0., 0.],
                 velocity: [velocity, 0., 0.],
             },
-            spin: Some(physics::astrophysics_spin::Spin {
+            spin: Some(physics::rotation::Spin {
                 orientation: [0., 0., 0., 1.],
                 angular_momentum: [0., spin, 0.],
                 inertia: [1.; 3],

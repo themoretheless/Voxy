@@ -1,6 +1,6 @@
 use physics::{
-    astrophysics_column::{Column, Slab},
-    astrophysics_radiation::blackbody,
+    astrophysics::column::{Column, Slab},
+    astrophysics::radiation::blackbody,
 };
 fn column() -> Column {
     Column {

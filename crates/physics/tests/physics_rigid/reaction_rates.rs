@@ -1,11 +1,11 @@
 use physics::{
-    astrophysics_spin::Spin,
     contact::{
         ContactBody, ContactWrench, NetworkSupport, NormalContact, NormalSupport, ReactionConfig,
         ReactionRateConfig, SupportMotion, SupportPlane, normal_gap_acceleration, normal_gap_jerk,
         resolve_normal_reaction_rate_network,
     },
     gravity::Body,
+    rotation::Spin,
 };
 fn body(position: [f64; 3], velocity: [f64; 3], mass: f64) -> ContactBody {
     ContactBody {

@@ -1,6 +1,6 @@
 use physics::{
-    astrophysics_gas::{Boundary, Cell, Gas},
-    astrophysics_gas_gravity::SelfGravitatingGas,
+    astrophysics::gas::{Boundary, Cell, Gas},
+    astrophysics::gas_gravity::SelfGravitatingGas,
 };
 fn main() -> Result<(), String> {
     let mut system = SelfGravitatingGas {

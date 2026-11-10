@@ -938,7 +938,7 @@ mod contact_witness_tests {
                 position: shape.center.to_array(),
                 velocity: [2., 0., 0.],
             },
-            spin: Some(physics::astrophysics_spin::Spin {
+            spin: Some(physics::rotation::Spin {
                 orientation: [0., 0., 0., 1.],
                 angular_momentum: [0., 0., 0.5],
                 inertia: [1.; 3],
@@ -1060,9 +1060,9 @@ mod contact_witness_tests {
     #[test]
     fn geometric_witness_drives_shared_point_impulse_with_off_center_torque() {
         use physics::{
-            astrophysics_spin::Spin,
             contact::{ContactBody, resolve_normal_impact},
             gravity::Body,
+            rotation::Spin,
         };
         let a = box_shape(DVec3::ZERO, DVec3::ONE);
         let b = box_shape(DVec3::new(-3., 0.5, 0.), DVec3::splat(0.5));

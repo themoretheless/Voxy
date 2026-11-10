@@ -1,9 +1,9 @@
 //! Coupled numerical demonstration with synthetic rates, not a calibrated star.
 use physics::{
-    astrophysics_gas::{Boundary, Cell},
-    astrophysics_nuclear::{Budget, Network, Nucleus, Reaclib, Reaction},
-    astrophysics_spherical::{CompositionExterior, Sphere},
-    astrophysics_spherical_radiation::{Heating, ReactiveSettings},
+    astrophysics::gas::{Boundary, Cell},
+    astrophysics::nuclear::{Budget, Network, Nucleus, Reaclib, Reaction},
+    astrophysics::spherical::{CompositionExterior, Sphere},
+    astrophysics::spherical_radiation::{Heating, ReactiveSettings},
 };
 fn main() -> Result<(), String> {
     let mut dt = 0.01_f64;
@@ -203,13 +203,13 @@ fn main() -> Result<(), String> {
         let min = rate_min.ok_or("--rate-file requires --rate-min in kelvin")?;
         let max = rate_max.ok_or("--rate-file requires --rate-max in kelvin")?;
         let text = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
-        let rate = physics::astrophysics_reaclib::parse(&text, min, max, 1000)
+        let rate = physics::astrophysics::reaclib::parse(&text, min, max, 1000)
             .map_err(|e| format!("{e:?}"))?;
         if rate.reactants != ["he4", "he4", "he4"] || rate.products != ["c12"] || rate.q_mev <= 0.0
         {
             return Err("example requires forward triple-alpha capture".into());
         }
-        network.nuclei[1].binding_energy = rate.q_mev * physics::astrophysics_reaclib::MEV_JOULES;
+        network.nuclei[1].binding_energy = rate.q_mev * physics::astrophysics::reaclib::MEV_JOULES;
         network.reactions.clear();
         network.reactions.push(
             rate.reaction(&network, &["he4", "c12"], 0.0, 1e-10)
@@ -275,7 +275,7 @@ fn main() -> Result<(), String> {
     }
     let mut polytrope_exterior = None;
     if let Some(index) = polytrope_index {
-        use physics::astrophysics_star::{Scaling, lane_emden};
+        use physics::astrophysics::star::{Scaling, lane_emden};
         let profile =
             lane_emden(index, 0.001, 20.0, 25000).map_err(|e| format!("polytrope: {e:?}"))?;
         let surface = profile
@@ -418,8 +418,8 @@ fn main() -> Result<(), String> {
     let table = if let Some(path) = opacity_file {
         let text = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
         Some(
-            physics::astrophysics_opacity::Table::from_csv(
-                physics::astrophysics_opacity::Kind::GreyAbsorption,
+            physics::astrophysics::opacity::Table::from_csv(
+                physics::astrophysics::opacity::Kind::GreyAbsorption,
                 &text,
                 1000000,
             )
@@ -437,8 +437,8 @@ fn main() -> Result<(), String> {
             })
             .collect();
         Some(
-            physics::astrophysics_opacity::Table::new(
-                physics::astrophysics_opacity::Kind::GreyAbsorption,
+            physics::astrophysics::opacity::Table::new(
+                physics::astrophysics::opacity::Kind::GreyAbsorption,
                 densities,
                 temperatures,
                 values,
@@ -482,7 +482,7 @@ fn main() -> Result<(), String> {
             .luminosity;
         let effective = radius
             .map(|r| {
-                physics::astrophysics_spherical_radiation::effective_temperature(luminosity, r)
+                physics::astrophysics::spherical_radiation::effective_temperature(luminosity, r)
             })
             .transpose()
             .map_err(|e| format!("{e:?}"))?

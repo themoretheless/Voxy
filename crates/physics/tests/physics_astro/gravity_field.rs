@@ -1,5 +1,5 @@
+use physics::gravity::field::{GravityField, NewtonianField, Source};
 use physics::gravity::{Error, Gravity};
-use physics::gravity_field::{GravityField, NewtonianField, Source};
 use physics::{
     AnchoredAabb, CharacterConfig, CharacterInput, CharacterState, CollisionWorld, Origin,
     SweepResult, step_character, step_character_in_field,

@@ -33,14 +33,14 @@
 без деформации, диссипации или самопроизвольного приливного захвата.
 Источник: [NASA, gravity-gradient torque](https://ntrs.nasa.gov/api/citations/19800005912/downloads/19800005912.pdf).
 
-`astrophysics_spin::Spin` хранит principal moments, инерционный угловой импульс
+`rotation::Spin` хранит principal moments, инерционный угловой импульс
 и quaternion ориентации тела. Метод `step` интегрирует постоянный мировой момент
 на шаге с неявной midpoint-ориентацией; `world_inertia` связывает вращение с
 приливным моментом. В отсутствие момента угловой импульс сохраняется точно;
 энергия для асимметричного тела сохраняется приближённо и проверяется на длинном
 прогоне. При отсутствии сходимости следует уменьшить шаг. Ошибки не меняют состояние.
 
-`astrophysics_binary::Binary` связывает относительную орбиту пары с вращением
+`astrophysics::binary::Binary` связывает относительную орбиту пары с вращением
 обоих тел и их теплом. Постоянная фигура описана потенциалом Маккаллага до
 квадрупольного порядка; сила и моменты берутся из одного потенциала и сохраняют
 суммарный угловой импульс. Love number и постоянная временная задержка задают
@@ -116,7 +116,7 @@ sweep_box принимает проверенные конечные упоря�
 со сглаживанием Пламмера и постоянным внешним полем; вращательная энергия сфер
 не входит в эту диагностику точечных масс.
 
-`physics::gravity_spheres` добавляет конечные однородные сферы: аналитический
+`physics::gravity::spheres` добавляет конечные однородные сферы: аналитический
 поиск первого контакта в линейном drift-подшаге, обмен импульсом с коэффициентом
 упругости, кулоновское трение и угловые скорости с I = 2mr²/5. Гравитационные
 kick-подшаги используют тот же закон притяжения; шаг должен разрешать изменение
@@ -149,7 +149,7 @@ drift-подшага не порождает повторные удары в н
 ходьбу, прыжок и приземление; окно должно
 оставаться видимым. Физика работает с фиксированным шагом 1/240 с, изображение
 интерполируется между состояниями. Это подключение к объектам демонстрационной
-сцены. `physics::gravity_field::NewtonianField` задаёт список точечных или
+сцены. `physics::gravity::field::NewtonianField` задаёт список точечных или
 однородных сферических источников с целочисленным anchor и локальной позицией.
 Внутри несглаженной сферы ускорение линейно зависит от расстояния до центра,
 снаружи действует закон обратных квадратов. Разности anchor вычисляются в i128
@@ -161,11 +161,11 @@ drift-подшага не порождает повторные удары в н
 баллистика сохраняются. Персонаж остаётся кинематическим Y-up контроллером:
 его мотор задаёт X/Z-скорость на каждом шаге; прыжок, ступени и ground detection
 ориентированы по Y. Свободные орбитальные тела следует моделировать через
-`gravity`/`gravity_spheres`, а не контроллер персонажа. Источники внешнего поля
+`gravity`/`gravity::spheres`, а не контроллер персонажа. Источники внешнего поля
 задаются вызывающим кодом и не получают обратную реакцию от тестовых объектов;
 для взаимного движения масс используется N-body симуляция.
 
-`physics::gravity_character` — отдельный контроллер сферического персонажа с
+`physics::gravity::character` — отдельный контроллер сферического персонажа с
 произвольным направлением вверх и непрерывными контактами с вещественными
 нормалями. Поле задаёт вверх как -normalize(acceleration), при нулевой гравитации
 сохраняется предыдущий unit-вектор. Желаемая мировая скорость проектируется на
@@ -174,7 +174,7 @@ drift-подшага не порождает повторные удары в н
 направлению поля после перемещения. Origin ребазируется с проверкой переполнения;
 ошибки поля, коллизий и бюджета не меняют состояние.
 
-`SphereWorld` реализует контракт `gravity_character::CollisionWorld` для статических
+`SphereWorld` реализует контракт `gravity::character::CollisionWorld` для статических
 сферических поверхностей. Другие формы подключаются через этот контракт; он требует
 ближайший контакт, единичную нормаль и явную ошибку при отсутствующей геометрии.
 Начальные пересечения возвращают ошибку, а не неявное выталкивание. Проверки
@@ -468,7 +468,7 @@ require a finite-strain plastic formulation. The cohesive interface extension
 below adds preinserted interfacial fracture and frictionless crack closure.
 The original gameplay blast planner is unchanged.
 
-`astrophysics_thermal::ThermalBody` моделирует однородную температуру тела в SI:
+`astrophysics::thermal::ThermalBody` моделирует однородную температуру тела в SI:
 постоянная полная теплоёмкость J/K, площадь m² и серая излучательная способность.
 `step` принимает выделенное тепло J, температуру изотропного окружения K и время s.
 Неявный шаг решает C(Tnew-Theated) = -dt ε A σ(Tnew⁴-Tbath⁴) бисекцией;
@@ -480,7 +480,7 @@ The original gameplay blast planner is unchanged.
 толщины, фазовых переходов, звёздной структуры и термоядерных реакций.
 Константа и закон излучения: [NIST](https://physics.nist.gov/cgi-bin/cuu/Value?sigma).
 
-`astrophysics_gas::Gas` решает одномерные уравнения Эйлера идеального газа на
+`astrophysics::gas::Gas` решает одномерные уравнения Эйлера идеального газа на
 равномерной сетке: плотность, плотность импульса и полная плотность энергии.
 Давление p=(γ−1)(E−ρu²/2). Консервативный поток Rusanov и адаптивный CFL 0.4
 обрабатывают ударные волны без искусственного обрезания плотности/давления.
@@ -495,7 +495,7 @@ Sod shock tube с сравнением давления, скорости и п�
 
 Internal-organ geometry and orthotropic myocardial FEM: see [organs.md](organs.md).
 
-`astrophysics_star` добавляет ньютоновскую сферическую гидростатическую модель
+`astrophysics::star` добавляет ньютоновскую сферическую гидростатическую модель
 политропы: dP/dr = −GM(r)ρ/r², dM/dr = 4πr²ρ, P ∝ ρ^(1+1/n).
 `lane_emden` решает безразмерные уравнения RK4 с регулярным центральным рядом
 и уточняет первую нулевую температуру бисекцией последнего шага. Поддержаны
@@ -512,7 +512,7 @@ max_xi, а не доказательство бесконечного радиу
 энергии, эволюции состава и релятивистских поправок.
 Вывод уравнений и масштабов: [Princeton, Polytropes](https://www.astro.princeton.edu/~gk/A403/polytrop.pdf).
 
-`astrophysics_radiation` выполняет серый стационарный перенос в LTE вдоль луча:
+`astrophysics::radiation` выполняет серый стационарный перенос в LTE вдоль луча:
 Iout = Iin exp(−τ) + B(T)(1−exp(−τ)), τ=absorption×length, B=σT⁴/π.
 Каждый слой имеет постоянную температуру и коэффициент истинного поглощения.
 Интенсивность интегрирована по частоте (W/m²/sr), length в m, absorption в 1/m.
@@ -527,7 +527,7 @@ Iout = Iin exp(−τ) + B(T)(1−exp(−τ)), τ=absorption×length, B=σT⁴/π
 рассеяние, частотные линии, доплеровские эффекты и нестационарность ещё отсутствуют.
 Источник: [NASA, Notes on Continuum Radiative Transfer](https://hesperia.gsfc.nasa.gov/summerschool/lectures/bastian/Notes_on_Rad_Trans.pdf).
 
-`astrophysics_column::Column` связывает серый LTE-перенос с изменением температуры
+`astrophysics::column::Column` связывает серый LTE-перенос с изменением температуры
 плоского газового столба. Слои заданы снизу вверх, толщиной m, поглощением 1/m,
 температурой K и теплоёмкостью на площадь J/m²/K. Два полусферических потока
 используют μ=1/2, веса 2π: поток изотропного чёрного тела равен πB=σT⁴.
@@ -544,7 +544,7 @@ Iout = Iin exp(−τ) + B(T)(1−exp(−τ)), τ=absorption×length, B=σT⁴/π
 движения. Геометрия, теплоёмкости и коэффициенты поглощения фиксированы.
 Обзор двухпоточных методов: [Heng et al.](https://arxiv.org/abs/1405.0026).
 
-`astrophysics_radhydro::RadiatingGas` соединяет газовую динамику и радиационный
+`astrophysics::radhydro::RadiatingGas` соединяет газовую динамику и радиационный
 нагрев в SI: сначала полшага Эйлера, затем полный тепловой шаг, затем полшага
 Эйлера. Упорядочивание симметричное, но компонентные схемы остаются первого
 порядка; для точности расщепления нужно уменьшать внешний dt. Из плотности
@@ -618,7 +618,7 @@ softening/snap-back needs an appropriate arc-length/dynamic continuation scheme.
 The demonstration uses a stiffness ratio with a stable displacement-controlled
 branch. Arbitrary material/mesh/load combinations are not thereby validated.
 
-`astrophysics_gas_gravity` добавляет самогравитацию плоского газового столба с
+`astrophysics::gas_gravity` добавляет самогравитацию плоского газового столба с
 изолированным полем: φ''=4πGρ. Горизонтальные слои бесконечны; ускорение ячейки
 равно 2πG(масса справа − масса слева) на единицу площади, собственная средняя
 сила равна нулю. `field` за O(N) вычисляет поле и точный интеграл потенциальной
@@ -732,7 +732,7 @@ softening, однородным ускорением и интегратором
 использует дискретный средний потенциал ячейки; это баланс численной модели,
 а не доказательство точности движения вне домена.
 
-`astrophysics_spherical::Sphere` решает радиальные уравнения Эйлера на неподвижных
+`astrophysics::spherical::Sphere` решает радиальные уравнения Эйлера на неподвижных
 сферических оболочках. Объём = 4π(b³−a³)/3, площадь граней = 4πr²; геометрический
 источник импульса p(Aout−Ain)/V точно компенсирует поток постоянного давления.
 Центральная грань имеет нулевую площадь и не переносит массу/энергию; наружная
@@ -813,7 +813,7 @@ force residual and integrated Coulomb bound. These tests do not validate large s
 changing normals, general contact search, dynamic impact, temperature, wear,
 frictional heating or finite-rotation detached-fragment motion. Those requirements remain open.
 
-`astrophysics_spherical_radiation` выполняет серый LTE-перенос по полным хордам
+`astrophysics::spherical_radiation` выполняет серый LTE-перенос по полным хордам
 сферы. Постоянные оболочки задаются наружным радиусом, поглощением и температурой;
 луч проходит дальнюю и ближнюю половины каждой пересечённой оболочки. В каждом
 радиальном кольце диска выбираются midpoint-сэмплы по impact parameter²; поэтому
@@ -835,7 +835,7 @@ frictional heating or finite-rotation detached-fragment motion. Those requiremen
 давления и ядерного горения.
 Геометрия p-rays: [Puls, stellar atmospheres](https://www.usm.uni-muenchen.de/~puls/stellar_at/stellaratm_imprs25_lecture_compressed.pdf).
 
-`astrophysics_evolution::RadiatingSphere` связывает сферическую гидродинамику,
+`astrophysics::evolution::RadiatingSphere` связывает сферическую гидродинамику,
 самогравитацию и лучевой радиационный нагрев: hydro/gravity half-step →
 radiation → hydro/gravity half-step. Температура, плотность и поглощение
 пересчитываются из актуального газа на каждом шаге. Симметричное расщепление
@@ -853,7 +853,7 @@ radiation → hydro/gravity half-step. Температура, плотност�
 но пока без ядерных реакций, изменения химического состава, переноса конвекцией,
 вакуумной поверхности и физически зависимых от состояния опакностей/EOS.
 
-`astrophysics_eos::Mixture` описывает полностью ионизованный невырожденный
+`astrophysics::eos::Mixture` описывает полностью ионизованный невырожденный
 одноатомный газ и захваченное LTE-излучение. Состав — массовые доли отдельных
 ядер с A и Z; inverse μ = sum X(1+Z)/A, inverse μe = sum XZ/A.
 Массы ядер приближены A×atomic mass constant, без массового дефекта и энергии
@@ -1005,7 +1005,7 @@ fragment velocity. Nonlinear plastic/friction/fracture trajectories require
 both timestep and mesh checks; the force/energy guard alone is not a proof of
 physical accuracy. The dense solver currently retains a 512-vertex bound; intrinsic cohesive expansion has its separate 32-cell cap.
 
-`astrophysics_nuclear` добавляет реакционную сеть с REACLIB-параметризацией:
+`astrophysics::nuclear` добавляет реакционную сеть с REACLIB-параметризацией:
 сумма экспонент семи коэффициентов, T9=T/1e9. Для реакции порядка k поток
 пропорционален ρ_cgs^(k−1) × произведение (X/A)^count / произведение count!.
 Публичная плотность в kg/m³ переводится в g/cm³; энергорезультат возвращается
@@ -1193,7 +1193,7 @@ identity including interface compliance. An apex-loaded tetrahedron has
 nonuniform face traction, so a uniform-bar series compliance is not its reference
 solution.
 
-`astrophysics_reaclib::parse` reads a selected reaction in fixed-width REACLIB
+`astrophysics::reaclib::parse` reads a selected reaction in fixed-width REACLIB
 text, including repeated chapter markers and additive coefficient sets. It
 preserves reactant/product names, six-character labels, reverse flag and Q in
 MeV. Coefficients use thirteen-character fields; Fortran D exponents are
@@ -1246,7 +1246,7 @@ and a mixed shell at equal temperature, despite their different internal
 energies. With incident `blackbody(T)` intensity, they remain in radiative
 thermal equilibrium. Invalid local fractions roll back the sphere. The
 `Heating.ambient` parameter is an isotropic intensity in W/m²/sr, not a
-Kelvin temperature; use `astrophysics_radiation::blackbody` to convert one.
+Kelvin temperature; use `astrophysics::radiation::blackbody` to convert one.
 
 ### Finite-deformation elastic inertia
 
@@ -1285,7 +1285,7 @@ parameter work when gravity is removed. Run `cargo run -p physics --example
 finite_fall` for a rotating elastic tetrahedron with simultaneous gravity and
 CSV diagnostics of its center, velocity and energy.
 
-`astrophysics_opacity::Table` stores positive mass-opacity values on a
+`astrophysics::opacity::Table` stores positive mass-opacity values on a
 rectangular density (kg/m³) and temperature (K) grid, with opacity in m²/kg.
 Its immutable validated grid uses log-bilinear interpolation and returns
 opacity plus local logarithmic density and temperature derivatives. Input
@@ -1615,7 +1615,7 @@ mass and momentum flux terms are excluded. The surface-pressure contribution
 and uniform-sphere gravitational term are derived in these
 [Princeton astrophysical fluid dynamics notes](https://www.astro.princeton.edu/~rt3504/ewExternalFiles/course_notes.pdf).
 
-`astrophysics_atmosphere::Atmosphere` provides a static plane-parallel
+`astrophysics::atmosphere::Atmosphere` provides a static plane-parallel
 Eddington-grey model with constant gravity and grey mass opacity. It uses
 T⁴=(3/4)Teff⁴(tau+2/3) and dP_total/dtau=g/kappa, as in the
 [MESA grey atmosphere description](https://docs.mesastar.org/en/latest/atm/t-tau.html).
@@ -1952,7 +1952,7 @@ complete tissue-to-tissue collision system. Both the cage deformation and bounde
 secondary support motion are shown; the expensive full-body shell is a separate
 example mode.
 
-`astrophysics_star::Profile::sample(xi)` interpolates the stored Lane–Emden
+`astrophysics::star::Profile::sample(xi)` interpolates the stored Lane–Emden
 potential and enclosed dimensionless mass at arbitrary radii inside its domain.
 It uses linear interpolation, with exact stored points returned unchanged, and
 never extrapolates beyond the final point. Publicly mutable profiles are checked
@@ -2005,7 +2005,7 @@ constant. Every shell must lie within the source profile; no extrapolation or
 atmospheric density floor is added. The local composition-dependent EOS supplies
 temperature and internal energy, radial momentum is reset, and the entire
 operation commits atomically. Stellar sampling errors are exposed as
-`astrophysics_spherical::Error::Stellar`.
+`astrophysics::spherical::Error::Stellar`.
 
 A scaled `n=1` test verifies outward-decreasing temperature, enclosed mass to
 relative 1e-6, late-composition rollback, and rejection of inconsistent length
@@ -2222,7 +2222,7 @@ does not prove long-term static support. The kinetic regularized dynamic mode re
 
 ### Contact-resolving flux foundation
 
-`astrophysics_gas::contact_flux` provides an ideal-gas HLLC interface flux with
+`astrophysics::gas::contact_flux` provides an ideal-gas HLLC interface flux with
 bounding acoustic wave speeds and a Rusanov fallback for degenerate/nonphysical
 star states. It exactly preserves stationary equal-pressure density contacts
 and selects the upwind flux for supersonic flow. Regression checks include a
@@ -2249,7 +2249,7 @@ mixtures to derive gas plus trapped-radiation pressure and adiabatic sound
 speed from the conserved states. It shares the HLLC construction and thermal
 Rusanov fallback with the ideal-gas flux. Radiation energy is already in the
 cell energy and is not added again; relativistic sound speed is rejected.
-EOS failures are reported as `astrophysics_gas::Error::Eos`.
+EOS failures are reported as `astrophysics::gas::Error::Eos`.
 
 Tests include an equal-total-pressure stationary hydrogen/helium interface with
 substantial radiation pressure, and agreement with gamma=5/3 in the gas-dominated
@@ -2469,7 +2469,7 @@ it is a thermal structure solve, not yet a joint stellar equilibrium initializer
 
 ### Coupled spherical stellar structure
 
-`Sphere::equilibrate_stellar` (`astrophysics_equilibrium`) simultaneously solves
+`Sphere::equilibrate_stellar` (`astrophysics::equilibrium`) simultaneously solves
 for density and temperature in every shell, with local nuclear/radiative balance
 and EOS pressure equal to `hydrostatic_pressures(surface_pressure)`. A damped
 Newton iteration uses a numerical Jacobian in logarithmic primitive variables;
@@ -2484,7 +2484,7 @@ This is still the existing fully ionized grey absorption model, with no convecti
 
 ### Physical free-free absorption
 
-`astrophysics_opacity::FreeFree` supplies spectral mass absorption in SI and an
+`astrophysics::opacity::FreeFree` supplies spectral mass absorption in SI and an
 analytic Planck mean for a fully ionized, nondegenerate, nonrelativistic plasma.
 It sums the electron abundance and each ion's Z²-weighted abundance. The constant
 Gaunt factor and valid temperature interval are explicit caller inputs.
@@ -5012,7 +5012,7 @@ pose remains unchanged. This is finite translation recoil, not angular response.
 ### Shared point-contact angular impulse mechanics (2026-10-06)
 
 `physics::contact` provides contact-time snapshots combining the existing
-`gravity::Body` linear state with optional existing `astrophysics_spin::Spin`.
+`gravity::Body` linear state with optional existing `rotation::Spin`.
 Snapshots do not introduce another world, event loop or owner. A point particle
 has no intrinsic spin; finite rigid inertia is defined by positive physical
 principal moments about the center of mass and a body-to-world orientation.

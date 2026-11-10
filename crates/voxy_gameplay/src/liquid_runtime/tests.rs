@@ -987,8 +987,8 @@ fn supported_motion_keeps_real_tangential_acceleration_and_separates_work() {
 #[test]
 fn cubic_collision_detects_inside_step_motion_and_preserves_world_feature() {
     use physics::{
-        astrophysics_spin::TorquePolynomial,
         liquid::{GeometryHit, LiquidBodyWorld},
+        rotation::TorquePolynomial,
     };
     let mut scene = SceneGraph::new(2);
     let node = scene.spawn(None, Transform::default()).unwrap();
@@ -1094,8 +1094,8 @@ fn cubic_collision_detects_inside_step_motion_and_preserves_world_feature() {
 #[test]
 fn cubic_supported_interval_admits_release_and_rejects_hidden_penetration() {
     use physics::{
-        astrophysics_spin::TorquePolynomial,
         liquid::{GeometryHit, LiquidBodyWorld},
+        rotation::TorquePolynomial,
     };
     let scene = support_floor();
     let world = SceneBodyWorld {
@@ -2115,7 +2115,7 @@ fn rigid_body(position: [f64; 3], velocity: [f64; 3], z: f64) -> physics::contac
             position,
             velocity,
         },
-        spin: Some(physics::astrophysics_spin::Spin {
+        spin: Some(physics::rotation::Spin {
             orientation: [0., 0., 0., 1.],
             angular_momentum: [0., 0., z],
             inertia: [1.; 3],

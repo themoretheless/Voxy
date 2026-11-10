@@ -1,5 +1,5 @@
 //! Grey hot gas observed through a cooler foreground slab, SI units.
-use physics::astrophysics_radiation::{Layer, blackbody, trace};
+use physics::astrophysics::radiation::{Layer, blackbody, trace};
 fn main() -> Result<(), String> {
     let incident = blackbody(6000.0).map_err(|e| format!("{e:?}"))?;
     println!("optical_depth,outgoing_intensity,net_deposited_intensity");
