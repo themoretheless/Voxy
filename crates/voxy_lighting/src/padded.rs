@@ -4,6 +4,7 @@ use voxy_world::{BlockRegistry, BlockStateId, ChunkSnapshot, Occlusion, Paletted
 use crate::types::{EDGE, FaceNeighbor, LightingError};
 
 /// Padded occlusion and emission of the center chunk plus its one-cell face halo.
+#[derive(Debug)]
 pub(crate) struct PaddedCells {
     pub(crate) opaque: Vec<bool>,
     pub(crate) emission: Vec<u8>,
@@ -17,6 +18,13 @@ impl PaddedCells {
             emission: vec![0_u8; PADDED_VOLUME],
             has_emission: false,
         }
+    }
+
+    #[inline]
+    pub(crate) fn reset(&mut self) {
+        self.opaque.fill(true);
+        self.emission.fill(0);
+        self.has_emission = false;
     }
 
     #[inline]
@@ -43,11 +51,12 @@ impl PaddedCells {
         &mut self,
         registry: &BlockRegistry,
         blocks: &PalettedBlocks,
+        palette_buf: &mut Vec<BlockStateId>,
+        slots_buf: &mut Vec<u16>,
+        classes_buf: &mut Vec<(bool, u8)>,
     ) -> Result<(), LightingError> {
-        SCRATCH.with_borrow_mut(|(palette, slots)| {
-            blocks.palette_indices_into(palette, slots);
-            self.fill_center_slots(registry, palette, slots)
-        })
+        blocks.palette_indices_into(palette_buf, slots_buf);
+        self.fill_center_slots(registry, palette_buf, slots_buf, classes_buf)
     }
 
     fn fill_center_slots(
@@ -55,8 +64,10 @@ impl PaddedCells {
         registry: &BlockRegistry,
         palette: &[BlockStateId],
         slots: &[u16],
+        classes: &mut Vec<(bool, u8)>,
     ) -> Result<(), LightingError> {
-        let mut classes = Vec::with_capacity(palette.len());
+        classes.clear();
+        classes.reserve(palette.len());
         let mut any_emission = false;
         for &block in palette {
             let definition = registry
@@ -168,11 +179,4 @@ pub(crate) fn fill_face_halo(
         }
     }
     Ok(())
-}
-
-thread_local! {
-    /// Per-thread palette expansion buffers: lighting runs as pure jobs on worker
-    /// threads, and reusing them avoids a 64 KiB allocation per chunk.
-    static SCRATCH: std::cell::RefCell<(Vec<BlockStateId>, Vec<u16>)> =
-        const { std::cell::RefCell::new((Vec::new(), Vec::new())) };
 }

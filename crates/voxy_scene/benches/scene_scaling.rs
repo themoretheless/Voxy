@@ -2,6 +2,11 @@
 use glam::Vec3;
 use std::{hint::black_box, time::Instant};
 use voxy_scene::{ComponentTable, SceneExtraction, SceneGraph, Transform, extraction_schedule};
+
+#[derive(Clone, Copy, Debug)]
+struct SparseActor(u64);
+#[derive(Clone, Copy, Debug)]
+struct SparseCollider(u64);
 fn measure(mut operation: impl FnMut()) -> (u128, u128, u128) {
     for _ in 0..3 {
         operation();
@@ -121,6 +126,30 @@ fn run_scene(count: usize) {
             }
         }),
     );
+    report(
+        count,
+        "sparse_active_components_16",
+        measure(|| {
+            let mut sum = 0_u64;
+            for (_, actor) in scene.active_components::<SparseActor>() {
+                sum = sum.wrapping_add(actor.0);
+            }
+            black_box(sum);
+        }),
+    );
+    report(
+        count,
+        "sparse_active_pair_16",
+        measure(|| {
+            let mut sum = 0_u64;
+            for (_, actor, collider) in
+                scene.active_components_with::<SparseActor, SparseCollider>()
+            {
+                sum = sum.wrapping_add(actor.0 ^ collider.0);
+            }
+            black_box(sum);
+        }),
+    );
 }
 
 // Alternate first-run order to avoid treating sequential cache/load effects as
@@ -184,6 +213,16 @@ fn build_scene(count: usize) -> (SceneGraph, Vec<voxy_scene::NodeId>, ComponentT
         let node = scene.spawn(parent, Transform::default()).unwrap();
         scene.insert_component(node, 0_u64).unwrap();
         nodes.push(node);
+    }
+    let sparse_step = (count / 16).max(1);
+    for sparse_idx in 0..16.min(count) {
+        let owner = nodes[sparse_idx * sparse_step];
+        scene
+            .insert_component(owner, SparseActor(sparse_idx as u64 + 1))
+            .unwrap();
+        scene
+            .insert_component(owner, SparseCollider(sparse_idx as u64 + 100))
+            .unwrap();
     }
     let mut table = ComponentTable::new(&scene);
     for node in &nodes {

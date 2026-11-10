@@ -1,11 +1,54 @@
+use std::cell::RefCell;
 use std::collections::VecDeque;
 
 use voxy_core::{CHUNK_EDGE, CHUNK_VOLUME, CancelToken, PADDED_EDGE, PADDED_VOLUME};
+use voxy_world::BlockStateId;
 
 use crate::padded::{PaddedCells, fill_face_halo};
 use crate::types::{
     EDGE, FaceNeighbor, LightVolume, LightingBudget, LightingError, LightingInput, MAX_LIGHT,
 };
+
+/// Reusable per-worker scratch buffers for [`build_light_with_scratch`], eliminating
+/// `34^3` padded field (`sky`, `block`, `frontier`, `unlit`), palette, and BFS queue
+/// heap allocations across chunk derivations while preserving exact BFS step budgets.
+#[derive(Debug)]
+pub struct LightingScratch {
+    cells: PaddedCells,
+    sky: Vec<u8>,
+    frontier: Vec<u8>,
+    unlit: Vec<u8>,
+    queue: VecDeque<u16>,
+    palette: Vec<BlockStateId>,
+    slots: Vec<u16>,
+    classes: Vec<(bool, u8)>,
+}
+
+impl Default for LightingScratch {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl LightingScratch {
+    #[must_use]
+    pub fn new() -> Self {
+        Self {
+            cells: PaddedCells::new(),
+            sky: vec![0_u8; PADDED_VOLUME],
+            frontier: vec![0_u8; PADDED_VOLUME],
+            unlit: vec![0_u8; PADDED_VOLUME],
+            queue: VecDeque::with_capacity(4096),
+            palette: Vec::new(),
+            slots: Vec::new(),
+            classes: Vec::new(),
+        }
+    }
+}
+
+thread_local! {
+    static THREAD_LIGHT_SCRATCH: RefCell<LightingScratch> = RefCell::new(LightingScratch::new());
+}
 
 pub(crate) const STRIDE_Z: usize = PADDED_EDGE;
 pub(crate) const STRIDE_Y: usize = PADDED_EDGE * PADDED_EDGE;
@@ -63,32 +106,73 @@ pub fn build_light(
     budget: LightingBudget,
     cancel: &CancelToken,
 ) -> Result<LightVolume, LightingError> {
+    THREAD_LIGHT_SCRATCH
+        .with_borrow_mut(|scratch| build_light_with_scratch(input, budget, cancel, scratch))
+}
+
+/// Builds a center-chunk light volume reusing caller-supplied [`LightingScratch`] buffers.
+///
+/// Produces bit-exact output and step-budget accounting identical to [`build_light`].
+///
+/// # Errors
+///
+/// Returns cancellation, invalid budget, unknown block, inconsistent stamp, or propagation budget
+/// failures without publishing a partial volume.
+pub fn build_light_with_scratch(
+    input: &LightingInput,
+    budget: LightingBudget,
+    cancel: &CancelToken,
+    scratch: &mut LightingScratch,
+) -> Result<LightVolume, LightingError> {
     validate(input, budget)?;
     if cancel.is_cancelled() {
         return Err(LightingError::Cancelled);
     }
-    let mut cells = PaddedCells::new();
+    scratch.cells.reset();
     let registry = &input.registry;
     if let voxy_world::PalettedBlocks::Uniform(block) = &input.center.data.blocks {
-        cells.fill_center_uniform(registry, *block)?;
+        scratch.cells.fill_center_uniform(registry, *block)?;
     } else {
-        cells.fill_center_paletted(registry, &input.center.data.blocks)?;
+        scratch.cells.fill_center_paletted(
+            registry,
+            &input.center.data.blocks,
+            &mut scratch.palette,
+            &mut scratch.slots,
+            &mut scratch.classes,
+        )?;
     }
     for face in FaceNeighbor::ALL {
         let Some(neighbor) = &input.neighbors[face.index()] else {
             continue;
         };
-        fill_face_halo(&mut cells, registry, neighbor, face)?;
+        fill_face_halo(&mut scratch.cells, registry, neighbor, face)?;
     }
 
-    let mut sky = vec![0_u8; PADDED_VOLUME];
+    scratch.sky.fill(0);
     if input.sky_from_above {
-        seed_direct_sky(&cells.opaque, &mut sky);
+        seed_direct_sky(&scratch.cells.opaque, &mut scratch.sky);
     }
-    propagate(&cells.opaque, &mut sky, budget, cancel, true)?;
-    let mut block = cells.emission;
-    if cells.has_emission {
-        propagate(&cells.opaque, &mut block, budget, cancel, false)?;
+    propagate(
+        &scratch.cells.opaque,
+        &mut scratch.sky,
+        &mut scratch.frontier,
+        &mut scratch.unlit,
+        &mut scratch.queue,
+        budget,
+        cancel,
+        true,
+    )?;
+    if scratch.cells.has_emission {
+        propagate(
+            &scratch.cells.opaque,
+            &mut scratch.cells.emission,
+            &mut scratch.frontier,
+            &mut scratch.unlit,
+            &mut scratch.queue,
+            budget,
+            cancel,
+            false,
+        )?;
     }
 
     let mut packed = vec![0_u8; CHUNK_VOLUME];
@@ -97,9 +181,11 @@ pub fn build_light(
         for z in 0..EDGE {
             let base_padded = (py + (z + 1)) * PADDED_EDGE + 1;
             let base_local = EDGE * (z + EDGE * y);
+            let sky_row = &scratch.sky[base_padded..base_padded + EDGE];
+            let block_row = &scratch.cells.emission[base_padded..base_padded + EDGE];
+            let out_row = &mut packed[base_local..base_local + EDGE];
             for x in 0..EDGE {
-                let padded = base_padded + x;
-                packed[base_local + x] = (sky[padded] << 4) | block[padded];
+                out_row[x] = (sky_row[x] << 4) | block_row[x];
             }
         }
     }
@@ -195,6 +281,9 @@ fn can_raise_neighbor(
 fn propagate(
     opaque: &[bool],
     light: &mut [u8],
+    frontier: &mut [u8],
+    unlit: &mut [u8],
+    queue: &mut VecDeque<u16>,
     budget: LightingBudget,
     cancel: &CancelToken,
     preserve_direct_down: bool,
@@ -203,10 +292,10 @@ fn propagate(
     // neighbors are already at least as bright would be popped and discarded, so it
     // is charged to the step budget directly instead; the queue order and therefore
     // the number of effective steps are unchanged.
-    let frontier = frontier_flags(opaque, light, preserve_direct_down);
-    let mut queue: VecDeque<u16> = VecDeque::new();
+    frontier_flags_into(opaque, light, preserve_direct_down, frontier, unlit);
+    queue.clear();
     let mut steps = 0_usize;
-    for (index, (&level, &flag)) in light.iter().zip(&frontier).enumerate() {
+    for (index, (&level, &flag)) in light.iter().zip(frontier.iter()).enumerate() {
         if level <= 1 {
             continue;
         }
@@ -247,17 +336,22 @@ fn propagate(
 }
 
 /// One flag per padded cell: nonzero when the cell can raise a face neighbor now.
-fn frontier_flags(opaque: &[bool], light: &[u8], preserve_direct_down: bool) -> Vec<u8> {
+fn frontier_flags_into(
+    opaque: &[bool],
+    light: &[u8],
+    preserve_direct_down: bool,
+    frontier: &mut [u8],
+    unlit: &mut [u8],
+) {
     if light.iter().all(|&level| level == 0 || level == MAX_LIGHT) {
-        return binary_frontier(opaque, light);
+        binary_frontier_into(opaque, light, frontier, unlit);
+        return;
     }
-    (0..PADDED_VOLUME)
-        .map(|index| {
-            u8::from(
-                light[index] > 1 && can_raise_neighbor(opaque, light, index, preserve_direct_down),
-            )
-        })
-        .collect()
+    for (index, flag) in frontier.iter_mut().enumerate() {
+        *flag = u8::from(
+            light[index] > 1 && can_raise_neighbor(opaque, light, index, preserve_direct_down),
+        );
+    }
 }
 
 /// Frontier flags when every lit cell holds `MAX_LIGHT`, as after direct sky seeding.
@@ -265,14 +359,12 @@ fn frontier_flags(opaque: &[bool], light: &[u8], preserve_direct_down: bool) -> 
 /// Any candidate a lit cell offers exceeds an unlit level, so a lit cell is a frontier
 /// cell exactly when some face neighbor is non-opaque and unlit. The neighbor test is
 /// expressed as shifted slice ORs so it vectorizes instead of decoding coordinates per cell.
-fn binary_frontier(opaque: &[bool], light: &[u8]) -> Vec<u8> {
-    let unlit: Vec<u8> = opaque
-        .iter()
-        .zip(light)
-        .map(|(&blocked, &level)| u8::from(!blocked && level == 0))
-        .collect();
-    let mut reach = vec![0_u8; PADDED_VOLUME];
-    or_shifted(&mut reach, &unlit, STRIDE_Y);
+fn binary_frontier_into(opaque: &[bool], light: &[u8], reach: &mut [u8], unlit: &mut [u8]) {
+    for ((out, &blocked), &level) in unlit.iter_mut().zip(opaque).zip(light) {
+        *out = u8::from(!blocked && level == 0);
+    }
+    reach.fill(0);
+    or_shifted(reach, unlit, STRIDE_Y);
     for slab in 0..PADDED_EDGE {
         let range = slab * STRIDE_Y..(slab + 1) * STRIDE_Y;
         or_shifted(&mut reach[range.clone()], &unlit[range], STRIDE_Z);
@@ -284,7 +376,6 @@ fn binary_frontier(opaque: &[bool], light: &[u8]) -> Vec<u8> {
     for (flag, &level) in reach.iter_mut().zip(light) {
         *flag &= u8::from(level == MAX_LIGHT);
     }
-    reach
 }
 
 /// Marks each cell whose neighbor at `+shift` or `-shift` inside the block is set.

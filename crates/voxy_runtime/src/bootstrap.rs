@@ -3,7 +3,8 @@ use std::sync::Arc;
 
 use voxy_core::{CancelToken, ChunkPos, LocalPos, WorldEpoch};
 use voxy_lighting::{
-    LightStamp, LightVolume, LightingBudget, LightingError, LightingInput, build_light,
+    LightStamp, LightVolume, LightingBudget, LightingError, LightingInput, LightingScratch,
+    build_light_with_scratch,
 };
 use voxy_mesher::{ChunkMesh, HALO_OFFSETS, MeshError, MeshStamp, MeshingInput, build_mesh};
 use voxy_world::{
@@ -174,6 +175,7 @@ fn build_scene_using_generator(
         }
     }
     let mut chunks = Vec::with_capacity(((2 * radius + 1) * (2 * radius + 1)) as usize);
+    let mut light_scratch = LightingScratch::new();
     for z in -radius..=radius {
         for x in -radius..=radius {
             let pos = ChunkPos { x, y: 0, z };
@@ -187,6 +189,7 @@ fn build_scene_using_generator(
                 &registry,
                 1,
                 &token,
+                &mut light_scratch,
                 |neighbor| snapshots.get(&neighbor).cloned(),
             )?);
         }
@@ -262,6 +265,7 @@ pub fn rebuild_bootstrap_chunks(
     let registry = world.registry_handle();
     let token = CancelToken::new();
     let mut chunks = Vec::with_capacity(positions.len());
+    let mut light_scratch = LightingScratch::new();
     for &pos in positions {
         let center = world
             .chunk(pos)
@@ -272,6 +276,7 @@ pub fn rebuild_bootstrap_chunks(
             &registry,
             derivation_epoch,
             &token,
+            &mut light_scratch,
             |neighbor| world.chunk(neighbor),
         )?);
     }
@@ -285,6 +290,7 @@ fn derive_bootstrap_chunk(
     registry: &Arc<BlockRegistry>,
     derivation_epoch: u64,
     token: &CancelToken,
+    light_scratch: &mut LightingScratch,
     mut fetch_chunk: impl FnMut(ChunkPos) -> Option<ChunkSnapshot>,
 ) -> Result<BootstrapChunk, BootstrapError> {
     let center_revision = center.revision;
@@ -318,7 +324,7 @@ fn derive_bootstrap_chunk(
     let light_faces = light_neighbors
         .each_ref()
         .map(|snapshot| snapshot.as_ref().map(|snapshot| snapshot.revision));
-    let light = build_light(
+    let light = build_light_with_scratch(
         &LightingInput {
             center: center.clone(),
             neighbors: light_neighbors,
@@ -333,6 +339,7 @@ fn derive_bootstrap_chunk(
         },
         LightingBudget::default(),
         token,
+        light_scratch,
     )?;
     let neighbors = std::array::from_fn(|index| {
         let offset = HALO_OFFSETS[index];

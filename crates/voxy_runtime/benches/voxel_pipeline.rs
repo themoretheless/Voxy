@@ -6,9 +6,12 @@ use std::collections::BTreeSet;
 use std::{hint::black_box, time::Instant};
 
 use voxy_core::{CancelToken, ChunkPos, LocalPos, VoxelPos};
-use voxy_lighting::{LightStamp, LightingBudget, LightingInput, build_light};
+use voxy_lighting::{
+    LightStamp, LightingBudget, LightingInput, LightingScratch, build_light_with_scratch,
+};
 use voxy_mesher::{HALO_OFFSETS, MeshStamp, MeshingInput, build_mesh};
 use voxy_runtime::{build_procedural_scene, rebuild_bootstrap_chunks};
+use voxy_storage::{StoredChunk, decode_chunk, encode_chunk};
 use voxy_world::{
     BlockStateId, EditSource, EditTxn, PalettedBlocks, ResourceKey, VoxelView, VoxelWrite, World,
 };
@@ -272,11 +275,20 @@ fn derived_workloads(world: &World, positions: &[ChunkPos]) {
             }
         })
         .collect();
+    let mut light_scratch = LightingScratch::new();
     report(
         "light_all_resident",
         measure(|| {
             for input in &light_inputs {
-                black_box(build_light(input, LightingBudget::default(), &token).unwrap());
+                black_box(
+                    build_light_with_scratch(
+                        input,
+                        LightingBudget::default(),
+                        &token,
+                        &mut light_scratch,
+                    )
+                    .unwrap(),
+                );
             }
         }),
     );
@@ -284,6 +296,37 @@ fn derived_workloads(world: &World, positions: &[ChunkPos]) {
         "rebuild_all_resident",
         measure(|| {
             black_box(rebuild_bootstrap_chunks(world, positions, 2).unwrap());
+        }),
+    );
+    let stored_chunks: Vec<StoredChunk> = positions
+        .iter()
+        .map(|&pos| {
+            let snap = world.chunk(pos).unwrap();
+            StoredChunk {
+                pos: snap.pos,
+                revision: snap.revision,
+                data: (*snap.data).clone(),
+            }
+        })
+        .collect();
+    report(
+        "storage_encode_all_resident",
+        measure(|| {
+            for chunk in &stored_chunks {
+                black_box(encode_chunk(chunk, &registry).unwrap());
+            }
+        }),
+    );
+    let encoded_chunks: Vec<Vec<u8>> = stored_chunks
+        .iter()
+        .map(|chunk| encode_chunk(chunk, &registry).unwrap())
+        .collect();
+    report(
+        "storage_decode_all_resident",
+        measure(|| {
+            for bytes in &encoded_chunks {
+                black_box(decode_chunk(bytes, &registry).unwrap());
+            }
         }),
     );
 }

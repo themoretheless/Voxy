@@ -1,8 +1,11 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::cell::RefCell;
+use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use voxy_core::{ByteReader, ByteWriter, CHUNK_VOLUME, ChunkPos, LocalIndex};
-use voxy_world::{BlockRegistry, ChunkData, ChunkRevision, PalettedBlocks, ResourceKey};
+use voxy_world::{
+    BlockRegistry, BlockStateId, ChunkData, ChunkRevision, PalettedBlocks, ResourceKey,
+};
 
 const MAGIC: &[u8; 4] = b"VXCH";
 const VERSION: u16 = 1;
@@ -35,45 +38,103 @@ pub struct StoredChunk {
     pub data: ChunkData,
 }
 
+#[derive(Default)]
+struct EncodeScratch {
+    src_palette: Vec<BlockStateId>,
+    slots: Vec<u16>,
+    remap: Vec<u16>,
+    indexes: Vec<u16>,
+}
+
+thread_local! {
+    static ENCODE_SCRATCH: RefCell<EncodeScratch> = RefCell::new(EncodeScratch::default());
+}
+
 /// Encodes canonical chunk data using stable resource keys instead of session-local block IDs.
 ///
 /// # Errors
 ///
 /// Rejects unknown IDs and data outside bounded format limits.
 pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec<u8>, CodecError> {
-    let (src_palette, slots) = chunk.data.blocks.palette_indices();
-    let mut src_keys = Vec::with_capacity(src_palette.len());
-    let mut unique_keys = BTreeSet::new();
-    for &block in &src_palette {
+    ENCODE_SCRATCH.with_borrow_mut(|scratch| encode_chunk_with_scratch(chunk, registry, scratch))
+}
+
+fn encode_chunk_with_scratch(
+    chunk: &StoredChunk,
+    registry: &BlockRegistry,
+    scratch: &mut EncodeScratch,
+) -> Result<Vec<u8>, CodecError> {
+    validate_metadata(&chunk.data.block_data)?;
+
+    // Fast path for uniform chunks (single block across all 32,768 cells):
+    if let PalettedBlocks::Uniform(block) = &chunk.data.blocks {
         let key = &registry
-            .get(block)
+            .get(*block)
             .ok_or(CodecError::UnknownBlockId(block.get()))?
             .key;
-        src_keys.push(key);
-        unique_keys.insert(key.clone());
+        let key_bytes = key.as_str().as_bytes();
+        if key_bytes.is_empty() || key_bytes.len() > MAX_KEY {
+            return Err(CodecError::InvalidKeyLength(key_bytes.len()));
+        }
+        let packed_len = CHUNK_VOLUME.div_ceil(8); // bits = 1 -> 4,096 zero bytes
+        let mut out = Vec::with_capacity(64 + key_bytes.len() + packed_len);
+        let mut writer = ByteWriter::new(&mut out);
+        writer.write_bytes(MAGIC);
+        writer.write_u16_le(VERSION);
+        writer.write_i64_le(chunk.pos.x);
+        writer.write_i64_le(chunk.pos.y);
+        writer.write_i64_le(chunk.pos.z);
+        writer.write_u64_le(chunk.revision.get());
+        writer.write_u16_le(1);
+        writer.write_bytes(&[1, 0]);
+        writer.write_u16_le(
+            u16::try_from(key_bytes.len())
+                .map_err(|_| CodecError::InvalidKeyLength(key_bytes.len()))?,
+        );
+        writer.write_bytes(key_bytes);
+        writer.write_u32_le(u32::try_from(packed_len).map_err(|_| CodecError::RecordTooLarge)?);
+        let zero_start = out.len();
+        out.resize(zero_start + packed_len, 0);
+        let mut writer = ByteWriter::new(&mut out);
+        return finish_chunk_metadata_and_crc(&mut writer, chunk).map(|()| out);
     }
-    let palette: Vec<_> = unique_keys.into_iter().collect();
+
+    chunk
+        .data
+        .blocks
+        .palette_indices_into(&mut scratch.src_palette, &mut scratch.slots);
+    let mut src_keys: Vec<&str> = Vec::with_capacity(scratch.src_palette.len());
+    for &block in &scratch.src_palette {
+        let key = registry
+            .get(block)
+            .ok_or(CodecError::UnknownBlockId(block.get()))?
+            .key
+            .as_str();
+        src_keys.push(key);
+    }
+    let mut palette: Vec<&str> = src_keys.clone();
+    palette.sort_unstable();
+    palette.dedup();
     if palette.is_empty() || palette.len() > usize::from(u16::MAX) + 1 {
         return Err(CodecError::PaletteTooLarge);
     }
-    let lookup: BTreeMap<_, _> = palette
-        .iter()
-        .enumerate()
-        .map(|(index, key)| (key.as_str(), u16::try_from(index).unwrap_or(u16::MAX)))
-        .collect();
-    let remap: Vec<u16> = src_keys
-        .into_iter()
-        .map(|key| lookup[key.as_str()])
-        .collect();
+    scratch.remap.clear();
+    scratch.remap.reserve(src_keys.len());
+    for &key in &src_keys {
+        let idx = palette
+            .binary_search(&key)
+            .expect("palette contains every source key");
+        scratch.remap.push(u16::try_from(idx).unwrap_or(u16::MAX));
+    }
     let bits = bits_for(palette.len())?;
-    let indexes: Vec<u16> = slots
-        .into_iter()
-        .map(|slot| remap[usize::from(slot)])
-        .collect();
-    validate_metadata(&chunk.data.block_data)?;
+    scratch.indexes.clear();
+    scratch.indexes.reserve(scratch.slots.len());
+    for &slot in &scratch.slots {
+        scratch.indexes.push(scratch.remap[usize::from(slot)]);
+    }
 
-    let packed = pack(&indexes, bits);
-    let mut out = Vec::with_capacity(64 + palette.len() * 16 + packed.len());
+    let packed_len = (scratch.indexes.len() * usize::from(bits)).div_ceil(8);
+    let mut out = Vec::with_capacity(64 + palette.len() * 16 + packed_len);
     let mut writer = ByteWriter::new(&mut out);
     writer.write_bytes(MAGIC);
     writer.write_u16_le(VERSION);
@@ -83,8 +144,8 @@ pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec
     writer.write_u64_le(chunk.revision.get());
     writer.write_u16_le(u16::try_from(palette.len()).map_err(|_| CodecError::PaletteTooLarge)?);
     writer.write_bytes(&[bits, 0]);
-    for key in palette {
-        let bytes = key.as_str().as_bytes();
+    for &key in &palette {
+        let bytes = key.as_bytes();
         if bytes.is_empty() || bytes.len() > MAX_KEY {
             return Err(CodecError::InvalidKeyLength(bytes.len()));
         }
@@ -93,8 +154,19 @@ pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec
         );
         writer.write_bytes(bytes);
     }
-    writer.write_u32_le(u32::try_from(packed.len()).map_err(|_| CodecError::RecordTooLarge)?);
-    writer.write_bytes(&packed);
+    writer.write_u32_le(u32::try_from(packed_len).map_err(|_| CodecError::RecordTooLarge)?);
+    let packed_start = out.len();
+    out.resize(packed_start + packed_len, 0);
+    pack_into(&scratch.indexes, bits, &mut out[packed_start..]);
+    let mut writer = ByteWriter::new(&mut out);
+    finish_chunk_metadata_and_crc(&mut writer, chunk)?;
+    Ok(out)
+}
+
+fn finish_chunk_metadata_and_crc(
+    writer: &mut ByteWriter<'_>,
+    chunk: &StoredChunk,
+) -> Result<(), CodecError> {
     writer.write_u16_le(
         u16::try_from(chunk.data.block_data.len())
             .map_err(|_| CodecError::TooManyMetadataEntries)?,
@@ -115,7 +187,7 @@ pub fn encode_chunk(chunk: &StoredChunk, registry: &BlockRegistry) -> Result<Vec
     }
     let crc = checksum(writer.as_slice());
     writer.write_u32_le(crc);
-    Ok(out)
+    Ok(())
 }
 
 /// Decodes a checksummed chunk after validating every allocation-driving length.
@@ -191,14 +263,7 @@ pub fn decode_chunk(bytes: &[u8], registry: &BlockRegistry) -> Result<StoredChun
     let packed = reader
         .read_bytes(packed_len)
         .map_err(|_| CodecError::Truncated)?;
-    let mut dense = Vec::with_capacity(CHUNK_VOLUME);
-    for index in 0..CHUNK_VOLUME {
-        dense.push(
-            *palette
-                .get(usize::from(unpack(packed, index, bits)))
-                .ok_or(CodecError::InvalidPaletteIndex)?,
-        );
-    }
+    let blocks = decode_paletted_blocks(packed, bits, &palette)?;
     let count = usize::from(reader.read_u16_le().map_err(|_| CodecError::Truncated)?);
     if count > MAX_META_ENTRIES {
         return Err(CodecError::TooManyMetadataEntries);
@@ -232,12 +297,24 @@ pub fn decode_chunk(bytes: &[u8], registry: &BlockRegistry) -> Result<StoredChun
     Ok(StoredChunk {
         pos,
         revision,
-        data: ChunkData {
-            blocks: PalettedBlocks::from_dense(dense)
-                .map_err(|_| CodecError::InvalidPackedLength)?,
-            block_data,
-        },
+        data: ChunkData { blocks, block_data },
     })
+}
+
+fn decode_paletted_blocks(
+    packed: &[u8],
+    bits: u8,
+    palette: &[BlockStateId],
+) -> Result<PalettedBlocks, CodecError> {
+    if palette.len() == 1 {
+        if packed.iter().any(|&b| b != 0) {
+            return Err(CodecError::InvalidPaletteIndex);
+        }
+        return Ok(PalettedBlocks::uniform(palette[0]));
+    }
+    let mut dense = Vec::with_capacity(CHUNK_VOLUME);
+    unpack_palette_into_dense(packed, bits, palette, &mut dense)?;
+    PalettedBlocks::from_dense(dense).map_err(|_| CodecError::InvalidPackedLength)
 }
 
 fn validate_metadata(data: &BTreeMap<LocalIndex, Arc<[u8]>>) -> Result<(), CodecError> {
@@ -266,46 +343,100 @@ fn bits_for(count: usize) -> Result<u8, CodecError> {
     Ok(u8::try_from((usize::BITS - (count - 1).leading_zeros()).max(1)).unwrap_or(16))
 }
 
-fn pack(indexes: &[u16], bits: u8) -> Vec<u8> {
-    let bit_width = usize::from(bits);
-    let mut out = vec![0_u8; (indexes.len() * bit_width).div_ceil(8)];
+/// Word-packed (`u64` little-endian bit accumulator) encoder producing 100% byte-identical
+/// `"VXCH"` v1 streams without per-index byte-slicing loops.
+fn pack_into(indexes: &[u16], bits: u8, out: &mut [u8]) {
+    let bit_width = u32::from(bits);
     let mask = if bits >= 16 {
-        u32::from(u16::MAX)
+        u64::from(u16::MAX)
     } else {
-        (1_u32 << bits) - 1
+        (1_u64 << bit_width) - 1
     };
-    let mut bit_pos = 0_usize;
+    let mut acc = 0_u64;
+    let mut acc_bits = 0_u32;
+    let mut out_offset = 0_usize;
     for &value in indexes {
-        let mut val = (u32::from(value) & mask) << (bit_pos & 7);
-        let mut byte_idx = bit_pos >> 3;
-        let mut remaining = (bit_pos & 7) + bit_width;
-        while remaining > 0 {
-            out[byte_idx] |= (val & 0xff) as u8;
-            val >>= 8;
-            byte_idx += 1;
-            remaining = remaining.saturating_sub(8);
+        let v = u64::from(value) & mask;
+        acc |= v << acc_bits;
+        acc_bits += bit_width;
+        if acc_bits >= 64 {
+            out[out_offset..out_offset + 8].copy_from_slice(&acc.to_le_bytes());
+            out_offset += 8;
+            acc_bits -= 64;
+            acc = if acc_bits == 0 {
+                0
+            } else {
+                v >> (bit_width - acc_bits)
+            };
         }
-        bit_pos += bit_width;
     }
-    out
+    while acc_bits > 0 {
+        out[out_offset] = acc as u8;
+        out_offset += 1;
+        acc >>= 8;
+        acc_bits = acc_bits.saturating_sub(8);
+    }
 }
 
-#[inline]
-fn unpack(bytes: &[u8], index: usize, bits: u8) -> u16 {
-    let bit_width = usize::from(bits);
-    let bit_pos = index * bit_width;
-    let byte_idx = bit_pos >> 3;
-    let bit_offset = bit_pos & 7;
-    let b0 = u32::from(bytes[byte_idx]);
-    let b1 = bytes.get(byte_idx + 1).copied().map_or(0, u32::from);
-    let b2 = bytes.get(byte_idx + 2).copied().map_or(0, u32::from);
-    let combined = b0 | (b1 << 8) | (b2 << 16);
+/// Bulk `u64` word-level bit-stream unpacker resolving `CHUNK_VOLUME` palette slots into `dense`.
+fn unpack_palette_into_dense(
+    bytes: &[u8],
+    bits: u8,
+    palette: &[BlockStateId],
+    dense: &mut Vec<BlockStateId>,
+) -> Result<(), CodecError> {
+    let bit_width = u32::from(bits);
     let mask = if bits >= 16 {
-        u32::from(u16::MAX)
+        u64::from(u16::MAX)
     } else {
-        (1_u32 << bits) - 1
+        (1_u64 << bit_width) - 1
     };
-    ((combined >> bit_offset) & mask) as u16
+    let palette_len = palette.len();
+    let mut byte_cursor = 0_usize;
+    let mut acc = 0_u64;
+    let mut acc_bits = 0_u32;
+    for _ in 0..CHUNK_VOLUME {
+        if acc_bits < bit_width {
+            let rem = bytes.len() - byte_cursor;
+            let next_word = if rem >= 8 {
+                let word = u64::from_le_bytes(
+                    bytes[byte_cursor..byte_cursor + 8]
+                        .try_into()
+                        .expect("8 bytes checked"),
+                );
+                byte_cursor += 8;
+                word
+            } else {
+                let mut tail = [0_u8; 8];
+                tail[..rem].copy_from_slice(&bytes[byte_cursor..]);
+                byte_cursor = bytes.len();
+                u64::from_le_bytes(tail)
+            };
+            if acc_bits == 0 {
+                acc = next_word;
+                acc_bits = 64;
+            } else {
+                let raw = (acc | (next_word << acc_bits)) & mask;
+                let consumed_from_next = bit_width - acc_bits;
+                acc = next_word >> consumed_from_next;
+                acc_bits = 64 - consumed_from_next;
+                let slot = raw as usize;
+                if slot >= palette_len {
+                    return Err(CodecError::InvalidPaletteIndex);
+                }
+                dense.push(palette[slot]);
+                continue;
+            }
+        }
+        let slot = (acc & mask) as usize;
+        acc >>= bit_width;
+        acc_bits -= bit_width;
+        if slot >= palette_len {
+            return Err(CodecError::InvalidPaletteIndex);
+        }
+        dense.push(palette[slot]);
+    }
+    Ok(())
 }
 
 #[inline]
@@ -469,5 +600,99 @@ pub(crate) mod tests {
         let original = vec![100_i32, 102, 99, 99, -50, 0, i32::MAX, i32::MIN];
         let encoded = zigzag_delta_encode_i32(&original);
         assert_eq!(zigzag_delta_decode_i32(&encoded), original);
+    }
+
+    #[test]
+    fn word_packed_codec_matches_reference_byte_layout_across_all_bit_widths() {
+        fn ref_pack(indexes: &[u16], bits: u8) -> Vec<u8> {
+            let bit_width = usize::from(bits);
+            let mut out = vec![0_u8; (indexes.len() * bit_width).div_ceil(8)];
+            let mask = if bits >= 16 {
+                u32::from(u16::MAX)
+            } else {
+                (1_u32 << bits) - 1
+            };
+            let mut bit_pos = 0_usize;
+            for &value in indexes {
+                let mut val = (u32::from(value) & mask) << (bit_pos & 7);
+                let mut byte_idx = bit_pos >> 3;
+                let mut remaining = (bit_pos & 7) + bit_width;
+                while remaining > 0 {
+                    out[byte_idx] |= (val & 0xff) as u8;
+                    val >>= 8;
+                    byte_idx += 1;
+                    remaining = remaining.saturating_sub(8);
+                }
+                bit_pos += bit_width;
+            }
+            out
+        }
+
+        let mut defs = Vec::with_capacity(256);
+        defs.push(definition("air", RenderKind::Invisible, Occlusion::None, 0));
+        for idx in 1..256 {
+            defs.push(definition(
+                &format!("b{idx:03}"),
+                RenderKind::Opaque,
+                Occlusion::FullCube,
+                10,
+            ));
+        }
+        let big_registry = BlockRegistry::new(defs).unwrap();
+        let reg_ids: Vec<BlockStateId> = (0..256)
+            .map(|idx| {
+                let name = if idx == 0 {
+                    "voxy:air".to_owned()
+                } else {
+                    format!("voxy:b{idx:03}")
+                };
+                big_registry
+                    .find(&ResourceKey::parse(name).unwrap())
+                    .unwrap()
+            })
+            .collect();
+
+        for bits in 1_u8..=16 {
+            let modulus = if bits == 16 {
+                usize::from(u16::MAX) + 1
+            } else {
+                1_usize << bits
+            };
+            let indexes: Vec<u16> = (0..CHUNK_VOLUME)
+                .map(|i| ((i * 7919 + 17) % modulus) as u16)
+                .collect();
+            let expected = ref_pack(&indexes, bits);
+            let mut actual = vec![0_u8; expected.len()];
+            pack_into(&indexes, bits, &mut actual);
+            assert_eq!(actual, expected, "pack_into mismatch for bits={bits}");
+
+            if modulus <= reg_ids.len() {
+                let palette = &reg_ids[..modulus];
+                let mut dense = Vec::with_capacity(CHUNK_VOLUME);
+                unpack_palette_into_dense(&actual, bits, palette, &mut dense).unwrap();
+                assert_eq!(dense.len(), CHUNK_VOLUME);
+                for (cell, &state) in dense.iter().enumerate() {
+                    assert_eq!(
+                        state,
+                        palette[usize::from(indexes[cell])],
+                        "unpack mismatch at cell={cell} bits={bits}"
+                    );
+                }
+            } else {
+                // For >256 palette slots (e.g. bits 9..=16), test with a 65536-entry slice mapped cyclically:
+                let palette: Vec<BlockStateId> =
+                    (0..modulus).map(|i| reg_ids[i % reg_ids.len()]).collect();
+                let mut dense = Vec::with_capacity(CHUNK_VOLUME);
+                unpack_palette_into_dense(&actual, bits, &palette, &mut dense).unwrap();
+                assert_eq!(dense.len(), CHUNK_VOLUME);
+                for (cell, &state) in dense.iter().enumerate() {
+                    assert_eq!(
+                        state,
+                        palette[usize::from(indexes[cell])],
+                        "unpack mismatch at cell={cell} bits={bits}"
+                    );
+                }
+            }
+        }
     }
 }

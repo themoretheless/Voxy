@@ -130,3 +130,57 @@ pub trait JsonDocument: Serialize + DeserializeOwned {
 }
 
 impl<T: Serialize + DeserializeOwned> JsonDocument for T {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct SampleDocument {
+        schema: String,
+        version: u32,
+        entries: Vec<String>,
+    }
+
+    #[test]
+    fn json_document_golden_round_trip_and_enforces_byte_caps() {
+        let doc = SampleDocument {
+            schema: "voxy.test.document".into(),
+            version: 1,
+            entries: vec!["alpha".into(), "beta".into()],
+        };
+        let encoded = doc.to_json_bounded(512).expect("within byte cap");
+        let decoded = SampleDocument::from_json_bounded(&encoded, 512).expect("valid JSON");
+        assert_eq!(decoded, doc);
+
+        assert!(matches!(
+            doc.to_json_bounded(16),
+            Err(JsonDocumentError::CapacityExceeded)
+        ));
+        assert!(matches!(
+            SampleDocument::from_json_bounded(&encoded, 16),
+            Err(JsonDocumentError::CapacityExceeded)
+        ));
+
+        let dir = std::env::temp_dir().join(format!(
+            "voxy_json_doc_test_{}_{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&dir).unwrap();
+        let file_path = dir.join("sample.json");
+        doc.save_json_atomic(&file_path, 512).unwrap();
+        let loaded = SampleDocument::load_json_bounded(&file_path, 512).unwrap();
+        assert_eq!(loaded, doc);
+        assert!(matches!(
+            SampleDocument::load_json_bounded(&file_path, 16),
+            Err(JsonDocumentError::CapacityExceeded)
+        ));
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+}
