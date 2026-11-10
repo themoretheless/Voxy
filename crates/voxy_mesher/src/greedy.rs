@@ -1,5 +1,6 @@
 //! Greedy 2D bitmask quad merging and naive oracle mesh builders.
 
+use std::cell::RefCell;
 use std::num::NonZeroU8;
 
 use voxy_core::{CancelToken, ChunkPos, LocalIndex, LocalPos};
@@ -69,12 +70,33 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
     }
 
     // Classify each distinct block once; interior slices then only compare slots.
-    let (palette, slots) = input.center.data.blocks.palette_indices();
+    // Meshing runs as pure jobs on worker threads; each thread keeps its expansion
+    // buffers so a chunk does not allocate 64 KiB of slots per build.
+    SCRATCH.with_borrow_mut(|(palette, slots)| {
+        input
+            .center
+            .data
+            .blocks
+            .palette_indices_into(palette, slots);
+        mesh_from_slots(input, cancel, palette, slots)
+    })
+}
+
+thread_local! {
+    static SCRATCH: RefCell<(Vec<BlockStateId>, Vec<u16>)> = const { RefCell::new((Vec::new(), Vec::new())) };
+}
+
+fn mesh_from_slots(
+    input: &MeshingInput,
+    cancel: &CancelToken,
+    palette: &[BlockStateId],
+    slots: &[u16],
+) -> Result<ChunkMesh, MeshError> {
     let classes: Vec<SlotClass> = palette
         .iter()
         .map(|&block| SlotClass::classify(&input.registry, block))
         .collect();
-    let rows = uniform_rows(&slots);
+    let rows = uniform_rows(slots);
     // One distinct block that never faces itself (occluding, grouped or invisible)
     // cannot produce interior faces at all.
     let skip_interior = palette.len() == 1 && interior_face(&classes, 0, 0, 0).is_none();
@@ -94,9 +116,9 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
                 continue;
             }
             let mask_has_any = if is_boundary {
-                boundary_mask(input, &palette, &classes, &slots, face, slice, &mut mask)
+                boundary_mask(input, palette, &classes, slots, face, slice, &mut mask)
             } else {
-                interior_mask(&classes, &slots, &rows, face, slice, &mut mask)
+                interior_mask(&classes, slots, &rows, face, slice, &mut mask)
             };
             if mask_has_any {
                 merge_mask(&mut mask, face, slice, &mut quads)?;

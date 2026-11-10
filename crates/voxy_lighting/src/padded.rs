@@ -44,10 +44,21 @@ impl PaddedCells {
         registry: &BlockRegistry,
         blocks: &PalettedBlocks,
     ) -> Result<(), LightingError> {
-        let (palette, slots) = blocks.palette_indices();
+        SCRATCH.with_borrow_mut(|(palette, slots)| {
+            blocks.palette_indices_into(palette, slots);
+            self.fill_center_slots(registry, palette, slots)
+        })
+    }
+
+    fn fill_center_slots(
+        &mut self,
+        registry: &BlockRegistry,
+        palette: &[BlockStateId],
+        slots: &[u16],
+    ) -> Result<(), LightingError> {
         let mut classes = Vec::with_capacity(palette.len());
         let mut any_emission = false;
-        for &block in &palette {
+        for &block in palette {
             let definition = registry
                 .get(block)
                 .ok_or(LightingError::UnknownBlock(block.get()))?;
@@ -157,4 +168,11 @@ pub(crate) fn fill_face_halo(
         }
     }
     Ok(())
+}
+
+thread_local! {
+    /// Per-thread palette expansion buffers: lighting runs as pure jobs on worker
+    /// threads, and reusing them avoids a 64 KiB allocation per chunk.
+    static SCRATCH: std::cell::RefCell<(Vec<BlockStateId>, Vec<u16>)> =
+        const { std::cell::RefCell::new((Vec::new(), Vec::new())) };
 }
