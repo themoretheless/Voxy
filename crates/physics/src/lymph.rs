@@ -343,7 +343,7 @@ pub(crate) fn osmotic_exchange_rates(
     proteins: &[f64],
     pressures: &[f64],
     edges: &[Exchange],
-    laws: &[crate::biomechanics::OsmoticPressureLaw],
+    laws: &[crate::osmotic::OsmoticPressureLaw],
 ) -> Result<Vec<(f64, f64)>, &'static str> {
     let n = volumes.len();
     if proteins.len() != n
@@ -479,7 +479,7 @@ impl LymphNetwork {
     pub fn step_with_inertial_walls(
         &mut self,
         seconds: f64,
-        laws: &[crate::biomechanics::OsmoticPressureLaw],
+        laws: &[crate::osmotic::OsmoticPressureLaw],
         walls: &[Option<LymphaticWallLaw>],
         links: &[LymphaticHydraulicAttachment],
         density: f64,
@@ -509,7 +509,7 @@ impl LymphNetwork {
     pub(crate) fn step_with_inertial_callbacks<F, G>(
         &mut self,
         seconds: f64,
-        laws: &[crate::biomechanics::OsmoticPressureLaw],
+        laws: &[crate::osmotic::OsmoticPressureLaw],
         walls: &[Option<LymphaticWallLaw>],
         links: &[LymphaticHydraulicAttachment],
         density: f64,
@@ -648,7 +648,7 @@ impl LymphNetwork {
     pub fn step_with_radial_profiles(
         &mut self,
         seconds: f64,
-        laws: &[crate::biomechanics::OsmoticPressureLaw],
+        laws: &[crate::osmotic::OsmoticPressureLaw],
         profiles: &mut [RadialExchange],
         max_iterations: usize,
         volume_tolerance: f64,
@@ -668,7 +668,7 @@ impl LymphNetwork {
     pub(crate) fn step_with_radial_callbacks<F, G>(
         &mut self,
         seconds: f64,
-        laws: &[crate::biomechanics::OsmoticPressureLaw],
+        laws: &[crate::osmotic::OsmoticPressureLaw],
         profiles: &mut [RadialExchange],
         max_iterations: usize,
         volume_tolerance: f64,
@@ -821,7 +821,7 @@ impl LymphNetwork {
     pub fn step_with_inertial_walls_adaptive(
         &mut self,
         seconds: f64,
-        laws: &[crate::biomechanics::OsmoticPressureLaw],
+        laws: &[crate::osmotic::OsmoticPressureLaw],
         walls: &[Option<LymphaticWallLaw>],
         links: &[LymphaticHydraulicAttachment],
         density: f64,
@@ -936,7 +936,7 @@ impl LymphNetwork {
     /// Rejects invalid law dimensions, coefficients, concentrations or overflow.
     pub fn rates_with_osmotic_laws(
         &self,
-        laws: &[crate::biomechanics::OsmoticPressureLaw],
+        laws: &[crate::osmotic::OsmoticPressureLaw],
     ) -> Result<Vec<(f64, f64)>, &'static str> {
         osmotic_exchange_rates(
             &self.volumes,
@@ -954,7 +954,7 @@ impl LymphNetwork {
         &mut self,
         seconds: f64,
         max_step_seconds: f64,
-        laws: &[crate::biomechanics::OsmoticPressureLaw],
+        laws: &[crate::osmotic::OsmoticPressureLaw],
     ) -> Result<ExchangeReport, &'static str> {
         self.rates_with_osmotic_laws(laws)?;
         self.step_with_pressure_and_flux_laws(
@@ -973,7 +973,7 @@ impl LymphNetwork {
         &mut self,
         seconds: f64,
         max_step_seconds: f64,
-        laws: &[crate::biomechanics::OsmoticPressureLaw],
+        laws: &[crate::osmotic::OsmoticPressureLaw],
         walls: &[Option<LymphaticWallLaw>],
     ) -> Result<ExchangeReport, &'static str> {
         self.rates_with_osmotic_laws(laws)?;
@@ -1002,7 +1002,7 @@ impl LymphNetwork {
     pub fn step_with_wall_and_osmotic_laws_adaptive(
         &mut self,
         seconds: f64,
-        laws: &[crate::biomechanics::OsmoticPressureLaw],
+        laws: &[crate::osmotic::OsmoticPressureLaw],
         walls: &[Option<LymphaticWallLaw>],
         config: AdaptiveExchangeConfig,
     ) -> Result<AdaptiveExchangeReport, &'static str> {

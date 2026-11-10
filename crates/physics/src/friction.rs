@@ -1,6 +1,6 @@
 //! Fixed-normal, small-sliding penalty Coulomb contact with backward-Euler return.
 //! Traction is an energy-gradient sign: force on the plus side is its negative.
-use crate::biomechanics::Matrix;
+use crate::math::Matrix;
 mod slider;
 use crate::math::dot;
 pub use slider::SliderStep;

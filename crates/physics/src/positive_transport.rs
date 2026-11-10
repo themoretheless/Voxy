@@ -58,3 +58,18 @@ pub(crate) fn solve_mass_with_budget(
     }
     Err("implicit positive transport did not converge")
 }
+
+/// Protein transport over the positive mass iteration, with protein-specific
+/// error messages for the Darcy and circulation owners.
+pub(crate) fn solve_protein(
+    rhs_mass: &[f64],
+    diagonal: &[f64],
+    incoming: &[Vec<(usize, f64)>],
+    external_out: &[f64],
+) -> Result<Vec<f64>, &'static str> {
+    solve_mass(rhs_mass, diagonal, incoming, external_out).map_err(|error| match error {
+        "implicit positive transport iteration overflow" => "implicit protein iteration overflow",
+        "implicit positive transport inventory overflow" => "implicit protein inventory overflow",
+        _ => "implicit protein transport did not converge",
+    })
+}

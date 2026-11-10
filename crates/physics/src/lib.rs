@@ -184,6 +184,7 @@ mod heat_exchange;
 
 mod spatial_bounds;
 
+mod osmotic;
 mod positive_transport;
 
 pub mod math;

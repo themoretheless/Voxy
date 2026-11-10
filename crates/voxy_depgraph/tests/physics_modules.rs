@@ -63,18 +63,6 @@ const KNOWN_VIOLATIONS: &[(&str, &str, &str)] = &[
         "PLAN 2.3: MaterialForceMoment to rotation",
     ),
     (
-        "circulation",
-        "biomechanics",
-        "PLAN 2.3: solve_protein to positive_transport",
-    ),
-    ("cohesive", "biomechanics", "PLAN 2.3: Matrix to math"),
-    ("friction", "biomechanics", "PLAN 2.3: Matrix to math"),
-    (
-        "lymph",
-        "biomechanics",
-        "PLAN 2.3: OsmoticPressureLaw to osmotic",
-    ),
-    (
         "moisture",
         "plasticity",
         "PLAN 2.3: material impls move to plasticity",
