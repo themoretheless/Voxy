@@ -452,7 +452,7 @@ fn exact_image_hit_fixture_impl(
     image_dump(
         device,
         queue,
-        &renderer
+        renderer
             .opaque_gi_precision_textures()
             .ok_or("GI precision texture required")?
             .0,
@@ -462,7 +462,7 @@ fn exact_image_hit_fixture_impl(
     image_dump(
         device,
         queue,
-        &renderer
+        renderer
             .opaque_ssr_precision_textures()
             .ok_or("SSR precision texture required")?
             .0,
@@ -528,8 +528,8 @@ fn exact_image_hit_fixture_impl(
         ] {
             let actual = root.join(format!("positive-cache-{kind}-actual.bin"));
             let reference = root.join(format!("positive-cache-{kind}-reference.bin"));
-            image_dump(device, queue, &pair.0, 16, &actual)?;
-            image_dump(device, queue, &pair.1, 16, &reference)?;
+            image_dump(device, queue, pair.0, 16, &actual)?;
+            image_dump(device, queue, pair.1, 16, &reference)?;
             let bytes = std::fs::read(actual)?;
             assert_eq!(
                 bytes,

@@ -629,7 +629,7 @@ impl App {
         self.trace.pending = true;
         retired.extend(
             committed_audio
-                .map(|audio| audio.finish())
+                .map(crate::audio_session::checkpoint::CommittedNativeAudio::finish)
                 .unwrap_or_default(),
         );
         retired.extend(self.audio.take_retired_workers());

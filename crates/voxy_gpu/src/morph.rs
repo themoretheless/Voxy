@@ -249,18 +249,17 @@ mod tests {
     #[test]
     fn gpu_morph_deform_on_device() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(
-            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
-        ) {
-            Ok(adapter) => adapter,
-            Err(_) => return,
+        let Ok(adapter) =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+        else {
+            return;
         };
 
-        let (device, queue) =
-            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-                Ok(pair) => pair,
-                Err(_) => return,
-            };
+        let Ok((device, queue)) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))
+        else {
+            return;
+        };
 
         let morph_program = pollster::block_on(GpuMorphProgram::new(&device))
             .expect("Morph program compilation failed");

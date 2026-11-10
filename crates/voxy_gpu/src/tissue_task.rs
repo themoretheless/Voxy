@@ -445,18 +445,17 @@ mod tests {
     #[test]
     fn gpu_tissue_search_on_device() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(
-            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
-        ) {
-            Ok(adapter) => adapter,
-            Err(_) => return, // Skip test if no GPU adapter is present in test environment
+        let Ok(adapter) =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+        else {
+            return; // Skip test if no GPU adapter is present in test environment
         };
 
-        let (device, queue) =
-            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-                Ok(pair) => pair,
-                Err(_) => return,
-            };
+        let Ok((device, queue)) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))
+        else {
+            return;
+        };
 
         let program = Arc::new(pollster::block_on(GpuTissueProgram::new(&device)).unwrap());
         let queue = Arc::new(queue);
@@ -491,18 +490,17 @@ mod tests {
     #[test]
     fn gpu_tissue_backend_implicit_stepping() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(
-            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
-        ) {
-            Ok(adapter) => adapter,
-            Err(_) => return,
+        let Ok(adapter) =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+        else {
+            return;
         };
 
-        let (device, queue) =
-            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-                Ok(pair) => pair,
-                Err(_) => return,
-            };
+        let Ok((device, queue)) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))
+        else {
+            return;
+        };
 
         let program = Arc::new(pollster::block_on(GpuTissueProgram::new(&device)).unwrap());
         let backend = program.into_backend(Arc::new(queue));

@@ -60,7 +60,7 @@ impl Timing {
         self.readback
             .slice(..)
             .map_async(wgpu::MapMode::Read, move |result| {
-                ready.store(if result.is_ok() { 1 } else { 2 }, Ordering::Release)
+                ready.store(if result.is_ok() { 1 } else { 2 }, Ordering::Release);
             });
     }
     pub fn collect(&mut self, period: f32) -> Option<f64> {

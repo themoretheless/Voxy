@@ -381,10 +381,10 @@ impl UiPublicationsCheckpoint {
             .into_iter()
             .flatten()
         {
-            if let Some(id) = visible.text {
-                if id >= self.archives.len() || (used.insert(id) && id != used.len() - 1) {
-                    return Err("invalid UI bundle publication reference".into());
-                }
+            if let Some(id) = visible.text
+                && (id >= self.archives.len() || (used.insert(id) && id != used.len() - 1))
+            {
+                return Err("invalid UI bundle publication reference".into());
             }
         }
         if used.len() != self.archives.len() {

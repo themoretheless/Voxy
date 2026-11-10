@@ -33,8 +33,8 @@ pub fn qualify_source(
     let shader = format!(
         "{prefix} @compute @workgroup_size(32) fn cs_main(@builtin(global_invocation_id) id:vec3<u32>) {{if id.x>=data[0] {{return;}} let base=4u+id.x*12u; let a=load(base);let b=load(base+2u);save(base+4u,add(a,b));save(base+6u,mul(a,b));save(base+8u,divide(a,b));save(base+10u,root(a));}}"
     );
-    let program = pollster::block_on(ComputeProgram::new(&device, &shader))?;
-    let job = program.create_job(&device, bytemuck::cast_slice(&words))?;
+    let program = pollster::block_on(ComputeProgram::new(device, &shader))?;
+    let job = program.create_job(device, bytemuck::cast_slice(&words))?;
     let mut encoder = device.create_command_encoder(&Default::default());
     let dispatch = job.encode(&mut encoder, [(count as u32).div_ceil(32), 1, 1])?;
     queue.submit([encoder.finish()]);

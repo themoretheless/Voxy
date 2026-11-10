@@ -1635,7 +1635,7 @@ mod tests {
                                 eprintln!("LASH TUBE DETAIL {}",serde_json::json!({
                                     "closure":closure,"strand":index,"row":row,"edge":[a.to_array(),b.to_array()],
                                     "triangle":triangles[triangle].map(|p|p.to_array()),
-                                    "centers":centers.iter().map(|p|p.to_array()).collect::<Vec<_>>(),
+                                    "centers":centers.iter().map(glam::DVec3::to_array).collect::<Vec<_>>(),
                                     "rings":strand.iter().map(|v|v.position).collect::<Vec<_>>()
                                 }));
                             }
@@ -1645,7 +1645,7 @@ mod tests {
                     tube_crossings += usize::from(!tube_hits.is_empty());
                 }
                 curves.push(serde_json::json!({"strand":index,"upper":index%72<48,
-                    "points":centers.iter().map(|p|p.to_array()).collect::<Vec<_>>(),"crossingSpans":hits,"tubeCrossingSpans":tube_hits}));
+                    "points":centers.iter().map(glam::DVec3::to_array).collect::<Vec<_>>(),"crossingSpans":hits,"tubeCrossingSpans":tube_hits}));
             }
             eprintln!(
                 "LASH SKIN closure={closure} root_crossing_strands={root_crossings} distal_crossing_strands={distal_crossings}"

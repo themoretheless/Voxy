@@ -852,7 +852,7 @@ fn finite_temporal_positions(position_max: f32, joints: &[Mat4], model: Mat4) ->
         .fold(1.0, f32::max);
     let joint_max = joints
         .iter()
-        .flat_map(|matrix| matrix.to_cols_array())
+        .flat_map(glam::Mat4::to_cols_array)
         .map(f32::abs)
         .fold(1.0, f32::max);
     let bound = f64::from(model_max) * f64::from(joint_max) * f64::from(position_max);

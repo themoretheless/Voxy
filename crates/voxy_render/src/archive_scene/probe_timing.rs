@@ -122,17 +122,14 @@ impl Timing {
             self.sample_chunks,
             self.skip_inactive_gi && !self.frame_stamp.2,
         );
-        let bytes = match self
+        let Ok(bytes) = self
             .readback
             .slice(..u64::from(count) * 8)
             .get_mapped_range()
-        {
-            Ok(bytes) => bytes,
-            Err(_) => {
-                self.readback.unmap();
-                self.pending = false;
-                return None;
-            }
+        else {
+            self.readback.unmap();
+            self.pending = false;
+            return None;
         };
         let ticks: Vec<u64> = bytes
             .chunks_exact(8)
@@ -531,10 +528,10 @@ impl ArchiveSceneRenderer {
         root: &std::path::Path,
         raw: bool,
     ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
-        let mut views = self
-            .temporal
-            .as_ref()
-            .map_or_else(Vec::new, |t| t.diagnostic_views());
+        let mut views = self.temporal.as_ref().map_or_else(
+            Vec::new,
+            super::super::archive_temporal::ArchiveTemporal::diagnostic_views,
+        );
         views.push((
             "display-before-downsample",
             resolve.color.create_view(&Default::default()),
@@ -565,22 +562,22 @@ impl ArchiveSceneRenderer {
                 }
                 views.push(("reference-gi", reference.create_view(&Default::default())));
             }
-            if !sources {
-                if let Some(gi) = &self.compute_gi {
-                    let [world, normal] = gi.world_ray_guides();
-                    views.push(("actual-world-guide", world.create_view(&Default::default())));
-                    views.push((
-                        "actual-normal-guide",
-                        normal.create_view(&Default::default()),
-                    ));
-                }
+            if !sources && let Some(gi) = &self.compute_gi {
+                let [world, normal] = gi.world_ray_guides();
+                views.push(("actual-world-guide", world.create_view(&Default::default())));
+                views.push((
+                    "actual-normal-guide",
+                    normal.create_view(&Default::default()),
+                ));
             }
         }
         let mut proof = crate::archive_hdr_diagnostics::capture(
             &self.device,
             &self.queue,
             views,
-            self.temporal.as_ref().map(|t| t.diagnostic_uniform()),
+            self.temporal
+                .as_ref()
+                .map(super::super::archive_temporal::ArchiveTemporal::diagnostic_uniform),
             root,
             raw,
         )?;
@@ -639,14 +636,14 @@ impl ArchiveSceneRenderer {
     }
 
     pub(super) fn collect_gpu_time_sample(&mut self) {
-        if let Some(timing) = &mut self.timing {
-            if let Some((ms, gi, ssr)) = timing.collect(&self.device, &self.queue) {
-                self.gpu_frame_stamps.push(timing.frame_stamp);
-                self.gpu_times_ms.push(ms[0]);
-                self.gpu_shading_times_ms.push([ms[1], ms[2]]);
-                self.gpu_gi_times_ms.push(gi);
-                self.gpu_ssr_times_ms.push(ssr);
-            }
+        if let Some(timing) = &mut self.timing
+            && let Some((ms, gi, ssr)) = timing.collect(&self.device, &self.queue)
+        {
+            self.gpu_frame_stamps.push(timing.frame_stamp);
+            self.gpu_times_ms.push(ms[0]);
+            self.gpu_shading_times_ms.push([ms[1], ms[2]]);
+            self.gpu_gi_times_ms.push(gi);
+            self.gpu_ssr_times_ms.push(ssr);
         }
     }
 

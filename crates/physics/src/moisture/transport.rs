@@ -222,15 +222,14 @@ fn sparse(
     {
         return Err("moisture sparse operator overflow");
     }
-    let mass = match crate::positive_transport::solve_mass_with_budget(
+    let Ok(mass) = crate::positive_transport::solve_mass_with_budget(
         &rhs,
         &diagonal,
         &incoming,
         &external_out,
         256,
-    ) {
-        Ok(mass) => mass,
-        Err(_) => return krylov::saturations(body, dt_s, reservoirs, added),
+    ) else {
+        return krylov::saturations(body, dt_s, reservoirs, added);
     };
     Ok(mass
         .iter()

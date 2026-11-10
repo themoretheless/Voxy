@@ -63,7 +63,7 @@ fn actual_body_accepts_quaternius_locomotion_profile_and_keeps_leg_lengths() {
                 assert_eq!(local.scale, rig.skeleton.joints()[joint].bind_local.scale);
             }
             let palette = pose.skin_matrices(&rig.skeleton).unwrap();
-            assert!(palette.iter().all(|matrix| matrix.is_finite()));
+            assert!(palette.iter().all(glam::Mat4::is_finite));
             for (index, local) in pose.local().iter().enumerate().skip(1) {
                 assert_eq!(
                     local.translation,
@@ -180,7 +180,7 @@ fn actual_body_accepts_quaternius_locomotion_profile_and_keeps_leg_lengths() {
             pose.skin_matrices(&rig.skeleton)
                 .unwrap()
                 .iter()
-                .all(|m| m.is_finite())
+                .all(glam::Mat4::is_finite)
         );
     }
     let sole_vertices: Vec<_> = body
@@ -1053,7 +1053,7 @@ fn gait_controller_locks_planted_feet_on_the_real_rig_across_walk_and_jog() {
                 .skin_matrices(&rig.skeleton)
                 .unwrap()
                 .iter()
-                .all(|m| m.is_finite())
+                .all(glam::Mat4::is_finite)
         );
         assert!(
             frame.legs.pelvis_offset.length() <= 0.25 + 1e-6,

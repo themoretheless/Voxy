@@ -465,7 +465,7 @@ impl CellPoreTissue {
             if a.tissue_cell >= self.fluid_nodes.len()
                 || walls
                     .and_then(|w| w.get(a.compartment))
-                    .is_none_or(|w| w.is_none())
+                    .is_none_or(std::option::Option::is_none)
                 || !linked.insert(a.compartment)
             {
                 return Err("invalid lymphatic wall attachment");
@@ -477,7 +477,7 @@ impl CellPoreTissue {
             if self
                 .fluid_nodes
                 .iter()
-                .any(|i| walls.get(*i).is_none_or(|wall| wall.is_some()))
+                .any(|i| walls.get(*i).is_none_or(std::option::Option::is_some))
             {
                 return Err("lymphatic wall cannot override a tissue cell");
             }
@@ -629,7 +629,7 @@ impl CellPoreTissue {
             if a.tissue_cell >= self.fluid_nodes.len()
                 || walls
                     .and_then(|w| w.get(a.compartment))
-                    .is_none_or(|w| w.is_none())
+                    .is_none_or(std::option::Option::is_none)
                 || !linked.insert(a.compartment)
             {
                 return Err("invalid lymphatic wall attachment");
@@ -641,7 +641,7 @@ impl CellPoreTissue {
             if self
                 .fluid_nodes
                 .iter()
-                .any(|i| walls.get(*i).is_none_or(|wall| wall.is_some()))
+                .any(|i| walls.get(*i).is_none_or(std::option::Option::is_some))
             {
                 return Err("lymphatic wall cannot override a tissue cell");
             }
@@ -772,7 +772,7 @@ impl CellPoreTissue {
             if a.tissue_cell >= self.fluid_nodes.len()
                 || walls
                     .and_then(|w| w.get(a.compartment))
-                    .is_none_or(|w| w.is_none())
+                    .is_none_or(std::option::Option::is_none)
                 || !linked.insert(a.compartment)
             {
                 return Err("invalid lymphatic wall attachment");
@@ -784,7 +784,7 @@ impl CellPoreTissue {
             if self
                 .fluid_nodes
                 .iter()
-                .any(|i| walls.get(*i).is_none_or(|wall| wall.is_some()))
+                .any(|i| walls.get(*i).is_none_or(std::option::Option::is_some))
             {
                 return Err("lymphatic wall cannot override a tissue cell");
             }

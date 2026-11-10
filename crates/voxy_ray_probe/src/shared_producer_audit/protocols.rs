@@ -481,7 +481,7 @@ pub(super) fn separate_hint_safety(
             }
         }
         std::fs::write(
-            root.join(format!("hint-safety-{}.bin", mode)),
+            root.join(format!("hint-safety-{mode}.bin")),
             previous.unwrap(),
         )?;
         captures.push(batches);

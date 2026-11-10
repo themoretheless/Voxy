@@ -77,7 +77,11 @@ fn whole_frame_rolls_back_new_and_existing_cloud_after_late_fluid_failure() {
         - energy.emission_kinetic_input_j;
     assert!(balance.abs() < 1e-14);
     assert!(report.energy_defect_j.abs() < 1e-14);
-    let dust: f64 = system.grains().iter().map(|p| p.mass_kg()).sum();
+    let dust: f64 = system
+        .grains()
+        .iter()
+        .map(physics::suspension::Particle::mass_kg)
+        .sum();
     assert!((system.layer().remaining_mass_kg() + dust - initial).abs() < 1e-14);
     let old = system.clone();
     assert!(
@@ -160,7 +164,11 @@ fn moving_carrier_checks_each_momentum_component_over_repeated_emission() {
             assert!((actual - expected).abs() < 1e-21);
             assert!(report.momentum_defect_n_s[axis].abs() < 1e-21);
         }
-        let dust_mass: f64 = system.grains().iter().map(|p| p.mass_kg()).sum();
+        let dust_mass: f64 = system
+            .grains()
+            .iter()
+            .map(physics::suspension::Particle::mass_kg)
+            .sum();
         assert!((system.layer().remaining_mass_kg() + dust_mass - initial_mass).abs() < 1e-14);
         let energy = system.energy();
         assert!(
@@ -221,7 +229,11 @@ fn finite_translating_parent_supplies_grain_mass_momentum_and_energy() {
                 .sum::<f64>();
         assert!((combined - initial_parent_momentum[axis]).abs() < 1e-18);
     }
-    let grains: f64 = system.grains().iter().map(|p| p.mass_kg()).sum();
+    let grains: f64 = system
+        .grains()
+        .iter()
+        .map(physics::suspension::Particle::mass_kg)
+        .sum();
     assert!((system.layer().remaining_mass_kg() + grains - initial_mass).abs() < 1e-14);
     let balance = energy.parent_kinetic_j - initial_energy.parent_kinetic_j + energy.kinetic_j
         - initial_energy.kinetic_j
@@ -305,7 +317,11 @@ fn parent_impulses_change_inherited_motion_and_record_signed_work() {
         - energy.friction_input_j
         - energy.parent_impulse_work_j;
     assert!(balance.abs() < 1e-14);
-    let old_grains: Vec<_> = system.grains().iter().map(|p| p.velocity_m_s()).collect();
+    let old_grains: Vec<_> = system
+        .grains()
+        .iter()
+        .map(physics::suspension::Particle::velocity_m_s)
+        .collect();
     let stop = system.parent_momentum_kg_m_s().unwrap().map(|p| -p);
     let braking = system.apply_parent_impulse(stop).unwrap();
     assert!(braking < 0.);
@@ -315,7 +331,7 @@ fn parent_impulses_change_inherited_motion_and_record_signed_work() {
         system
             .grains()
             .iter()
-            .map(|p| p.velocity_m_s())
+            .map(physics::suspension::Particle::velocity_m_s)
             .collect::<Vec<_>>()
     );
     let old = system.clone();
@@ -451,7 +467,11 @@ fn dynamic_slider_funds_wear_heat_from_body_energy_without_external_work() {
                 .flatten()
                 .sum::<f64>();
         assert!(balance.abs() < 1e-17);
-        let mass: f64 = system.grains().iter().map(|p| p.mass_kg()).sum();
+        let mass: f64 = system
+            .grains()
+            .iter()
+            .map(physics::suspension::Particle::mass_kg)
+            .sum();
         assert!((system.layer().remaining_mass_kg() + mass - initial_mass).abs() < 1e-14);
         let momentum = system.parent_momentum_kg_m_s().unwrap()[1]
             + system.liquid().particles()[0].mass * system.liquid().particles()[0].velocity[1]

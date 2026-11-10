@@ -6,11 +6,14 @@ fn main() {
     let path = std::env::args()
         .skip(1)
         .find(|a| !a.starts_with("--"))
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
-            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-                .join("../../assets/anatomy/hra-female/tetrahedra/right-lung-middle-envelope.vxtet")
-        });
+        .map_or_else(
+            || {
+                PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(
+                    "../../assets/anatomy/hra-female/tetrahedra/right-lung-middle-envelope.vxtet",
+                )
+            },
+            PathBuf::from,
+        );
     let numeric_option = |prefix: &str, default: f64| {
         std::env::args()
             .find_map(|a| {

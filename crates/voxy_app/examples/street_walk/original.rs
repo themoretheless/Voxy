@@ -360,7 +360,7 @@ impl Builder {
         }
     }
     fn block(&mut self, id: usize, p: [f32; 3], s: [f32; 3]) {
-        self.put(id, Vec3::from_array(p), Vec3::from_array(s), Quat::IDENTITY)
+        self.put(id, Vec3::from_array(p), Vec3::from_array(s), Quat::IDENTITY);
     }
     fn beam(&mut self, id: usize, a: Vec3, b: Vec3, r: f32) {
         let delta = b - a;

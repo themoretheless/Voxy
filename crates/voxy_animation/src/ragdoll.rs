@@ -396,7 +396,7 @@ impl Ragdoll {
                     }
                 }
             }
-            for joint in self.desc.joints.iter() {
+            for joint in &self.desc.joints {
                 self.solve_anchor(&mut candidate, joint);
             }
             // Contacts: several passes so rotations from one corner's push-out

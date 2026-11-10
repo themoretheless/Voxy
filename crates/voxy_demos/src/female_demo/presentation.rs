@@ -962,7 +962,7 @@ impl FemaleDemo {
         if std::env::var_os("VOXY_GPU_SURFACE_LIGHT").is_some() || cfg!(test) {
             *self.surface_light_normals.borrow_mut() = normals[..self.body_vertices]
                 .iter()
-                .map(|n| n.to_array())
+                .map(glam::Vec3::to_array)
                 .collect();
         }
         mark("normals");

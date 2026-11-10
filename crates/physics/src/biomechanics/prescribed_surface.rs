@@ -1240,7 +1240,7 @@ impl PrescribedTriangleSurface {
             }
             candidates.sort_unstable();
             for &index in &*candidates {
-                if !self.pair_enabled(&face, index) {
+                if !self.pair_enabled(face, index) {
                     continue;
                 }
                 let obstacle = &self.faces[index];
@@ -1369,7 +1369,7 @@ impl PrescribedTriangleSurface {
             );
             candidates.sort_unstable();
             for &index in &candidates {
-                if !self.pair_enabled(&face, index) {
+                if !self.pair_enabled(face, index) {
                     continue;
                 }
                 let obstacle = &self.faces[index];

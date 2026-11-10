@@ -1168,7 +1168,10 @@ impl Renderer {
                     }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: self.frame_timing.as_ref().and_then(|t| t.writes()),
+                timestamp_writes: self
+                    .frame_timing
+                    .as_ref()
+                    .and_then(resident_frame_timing::Timing::writes),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });

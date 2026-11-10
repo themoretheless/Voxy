@@ -438,9 +438,9 @@ pub(super) fn probe(
             let samples: Vec<f64> = ticks
                 .iter()
                 .map(|t| {
-                    t[1].checked_sub(t[0])
-                        .map(|d| d as f64 * f64::from(queue.get_timestamp_period()) / 1e6)
-                        .unwrap_or(f64::NAN)
+                    t[1].checked_sub(t[0]).map_or(f64::NAN, |d| {
+                        d as f64 * f64::from(queue.get_timestamp_period()) / 1e6
+                    })
                 })
                 .collect();
             if let Some(directory) = std::env::var_os("VOXY_RAY_NARROW_PROFILE_DIR") {

@@ -487,8 +487,7 @@ fn combined_axial_tension_and_bending_obeys_stress_and_deflection_superposition(
     let mean_expected = interior_sum_expected / interior_checked as f64;
     let slope = num / den;
     println!(
-        "combined loading: mean axial {:e} vs {:e}, regression slope {slope:.6}",
-        mean_sigma, mean_expected
+        "combined loading: mean axial {mean_sigma:e} vs {mean_expected:e}, regression slope {slope:.6}"
     );
     assert!(relative_error(mean_sigma, mean_expected) < 0.02);
     assert!((slope - 1.0).abs() < 0.02);

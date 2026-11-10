@@ -127,7 +127,7 @@ fn shot(args: &Args, path: &str) -> Result<(), Box<dyn std::error::Error>> {
     );
     queue.submit([encoder.finish()]);
     readback.map_async(wgpu::MapMode::Read, .., |result| {
-        result.expect("map ocean shot")
+        result.expect("map ocean shot");
     });
     device.poll(wgpu::PollType::wait_indefinitely())?;
     let mapped = readback.get_mapped_range(..)?;

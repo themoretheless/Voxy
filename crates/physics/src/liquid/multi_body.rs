@@ -517,55 +517,53 @@ fn solve_contact(
                         .collect()
                 },
             );
-        if let Some(report) = &support_report {
-            if let Some(reaction) = &report.reaction {
-                for (index, (support, force)) in
-                    report.supports.iter().zip(&reaction.forces).enumerate()
-                {
-                    let force_rate = support_rate
-                        .as_ref()
-                        .map_or([0.; 3], |r| r.forces_rate[index]);
-                    for (owner, sign) in [(Some(support.first), 1.), (support.second, -1.)] {
-                        let Some(owner) = owner else {
-                            continue;
-                        };
-                        let arm = std::array::from_fn(|k| {
-                            support.support.contact.point[k] - states[owner].motion.position[k]
-                        });
-                        let velocity = std::array::from_fn(|k| {
-                            point_motion[index]
-                                .map_or(states[support.first].motion.velocity[k], |m| m.velocity[k])
-                                - states[owner].motion.velocity[k]
-                        });
-                        let acceleration = std::array::from_fn(|k| {
-                            point_motion[index].map_or(
-                                effective[support.first].force[k]
-                                    / states[support.first].motion.mass,
-                                |m| m.acceleration[k],
-                            ) - effective[owner].force[k] / states[owner].motion.mass
-                        });
-                        let jerk = std::array::from_fn(|k| {
-                            point_motion[index].map_or(
-                                final_rates[support.first].force[k]
-                                    / states[support.first].motion.mass,
-                                |m| m.jerk[k],
-                            ) - final_rates[owner].force[k] / states[owner].motion.mass
-                        });
-                        let law = crate::rotation::TorquePolynomial::moving_affine_arm(
-                            arm,
-                            velocity,
-                            acceleration,
-                            jerk,
-                            force.map(|f| sign * f),
-                            force_rate.map(|f| sign * f),
-                        )
-                        .map_err(|_| Error::NumericalFailure)?;
-                        for k in 0..3 {
-                            reaction_torques[owner].rate[k] += law.rate[k];
-                            reaction_torques[owner].acceleration[k] += law.acceleration[k];
-                            reaction_torques[owner].jerk[k] += law.jerk[k];
-                            reaction_torques[owner].snap[k] += law.snap[k];
-                        }
+        if let Some(report) = &support_report
+            && let Some(reaction) = &report.reaction
+        {
+            for (index, (support, force)) in
+                report.supports.iter().zip(&reaction.forces).enumerate()
+            {
+                let force_rate = support_rate
+                    .as_ref()
+                    .map_or([0.; 3], |r| r.forces_rate[index]);
+                for (owner, sign) in [(Some(support.first), 1.), (support.second, -1.)] {
+                    let Some(owner) = owner else {
+                        continue;
+                    };
+                    let arm = std::array::from_fn(|k| {
+                        support.support.contact.point[k] - states[owner].motion.position[k]
+                    });
+                    let velocity = std::array::from_fn(|k| {
+                        point_motion[index]
+                            .map_or(states[support.first].motion.velocity[k], |m| m.velocity[k])
+                            - states[owner].motion.velocity[k]
+                    });
+                    let acceleration = std::array::from_fn(|k| {
+                        point_motion[index].map_or(
+                            effective[support.first].force[k] / states[support.first].motion.mass,
+                            |m| m.acceleration[k],
+                        ) - effective[owner].force[k] / states[owner].motion.mass
+                    });
+                    let jerk = std::array::from_fn(|k| {
+                        point_motion[index].map_or(
+                            final_rates[support.first].force[k] / states[support.first].motion.mass,
+                            |m| m.jerk[k],
+                        ) - final_rates[owner].force[k] / states[owner].motion.mass
+                    });
+                    let law = crate::rotation::TorquePolynomial::moving_affine_arm(
+                        arm,
+                        velocity,
+                        acceleration,
+                        jerk,
+                        force.map(|f| sign * f),
+                        force_rate.map(|f| sign * f),
+                    )
+                    .map_err(|_| Error::NumericalFailure)?;
+                    for k in 0..3 {
+                        reaction_torques[owner].rate[k] += law.rate[k];
+                        reaction_torques[owner].acceleration[k] += law.acceleration[k];
+                        reaction_torques[owner].jerk[k] += law.jerk[k];
+                        reaction_torques[owner].snap[k] += law.snap[k];
                     }
                 }
             }

@@ -335,12 +335,12 @@ impl SurfaceFilm {
             next.add_sources(dt, sources)?
         };
         next.step(dt, gravity)?;
-        if contact.is_some() {
-            if let Some(index) = self.self_contact_index.get() {
-                let mut staged = index.clone();
-                staged.refit(&next.geometry);
-                let _ = next.self_contact_index.set(staged);
-            }
+        if contact.is_some()
+            && let Some(index) = self.self_contact_index.get()
+        {
+            let mut staged = index.clone();
+            staged.refit(&next.geometry);
+            let _ = next.self_contact_index.set(staged);
         }
         let transferred = if let Some(config) = contact {
             next.exchange_self_contact(dt, config)?
@@ -348,11 +348,11 @@ impl SurfaceFilm {
             0.
         };
         let receipt = admit(&next, added, transferred)?;
-        if contact.is_none() {
-            if let Some(mut index) = self.self_contact_index.take() {
-                index.refit(&next.geometry);
-                let _ = next.self_contact_index.set(index);
-            }
+        if contact.is_none()
+            && let Some(mut index) = self.self_contact_index.take()
+        {
+            index.refit(&next.geometry);
+            let _ = next.self_contact_index.set(index);
         }
         *self = next;
         Ok(receipt)
@@ -1095,15 +1095,14 @@ impl SurfaceFilm {
             return Err("composition viscosity requires Newtonian component transport");
         }
         let mut energy = energies.as_deref().cloned();
-        if let Some(values) = &energy {
-            if values.len() != self.volume.len()
+        if let Some(values) = &energy
+            && (values.len() != self.volume.len()
                 || values
                     .iter()
                     .zip(&self.volume)
-                    .any(|(e, v)| !e.is_finite() || *e < 0. || (*v == 0. && *e != 0.))
-            {
-                return Err("invalid film energy inventory");
-            }
+                    .any(|(e, v)| !e.is_finite() || *e < 0. || (*v == 0. && *e != 0.)))
+        {
+            return Err("invalid film energy inventory");
         }
         let mut inventory = components.as_deref().cloned();
         if !max_substep.is_finite() || max_substep <= 0. || max_substep > 0.001 {

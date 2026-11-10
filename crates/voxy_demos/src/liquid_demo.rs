@@ -814,7 +814,7 @@ impl LiquidDemo {
         let materials = self
             .liquids
             .iter()
-            .map(|liquid| liquid.effective_materials())
+            .map(physics::liquid::Liquid::effective_materials)
             .collect::<Result<Vec<_>, _>>()?;
         let count = self
             .liquids

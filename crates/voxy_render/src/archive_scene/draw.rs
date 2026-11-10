@@ -177,19 +177,17 @@ impl ArchiveSceneRenderer {
         if ray_history_available && self.opaque_ray_queue_enabled() {
             self.ray_queue_frame_count += 1;
         }
-        if time_this_frame {
-            if let Some(timing) = &mut self.timing {
-                timing.sample_chunks = if ray_history_available
-                    && !self
-                        .compute_gi
-                        .as_ref()
-                        .is_some_and(|gi| gi.world_frame_enabled())
-                {
-                    timing.phase_chunks
-                } else {
-                    0
-                };
-            }
+        if time_this_frame && let Some(timing) = &mut self.timing {
+            timing.sample_chunks = if ray_history_available
+                && !self
+                    .compute_gi
+                    .as_ref()
+                    .is_some_and(super::compute_gi::ArchiveComputeGi::world_frame_enabled)
+            {
+                timing.phase_chunks
+            } else {
+                0
+            };
         }
         self.previous_vp = Some(jittered_vp);
         let mut encoder = self.device.create_command_encoder(&Default::default());

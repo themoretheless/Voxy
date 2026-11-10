@@ -24,7 +24,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
     let mut args = arguments.iter();
-    let project = if args.next().map(|arg| arg.as_os_str())
+    let project = if args.next().map(std::ffi::OsString::as_os_str)
         == Some(std::ffi::OsStr::new("--review-project"))
     {
         std::path::PathBuf::from(args.next().ok_or("missing review project")?)

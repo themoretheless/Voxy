@@ -10,10 +10,10 @@ fn observe_contact_stage<T>(
     dt: f64,
     result: Result<T, &'static str>,
 ) -> Result<T, &'static str> {
-    if let Err(error) = &result {
-        if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
-            eprintln!("IMPLICIT_STAGE_REJECTION stage={stage:?} dt={dt:.17e} error={error:?}");
-        }
+    if let Err(error) = &result
+        && std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some()
+    {
+        eprintln!("IMPLICIT_STAGE_REJECTION stage={stage:?} dt={dt:.17e} error={error:?}");
     }
     result
 }
@@ -429,7 +429,7 @@ impl InertialBody {
                 contact_origin,
             )
         };
-        let contact_free = !next.may_contact_faces(&faces)
+        let contact_free = !next.may_contact_faces(faces)
             && self
                 .body
                 .stationary_embedded_contact()
@@ -461,7 +461,7 @@ impl InertialBody {
                 && skin_path_open(&endpoint)
                 && self.volume_path_is_open(&endpoint)
                 && prepared_motion
-                    .rejection_time(&self.body.positions, &endpoint, &faces)
+                    .rejection_time(&self.body.positions, &endpoint, faces)
                     .is_ok_and(|t| t.is_none())
         };
 
@@ -471,7 +471,7 @@ impl InertialBody {
                 let path = observe_contact_stage(
                     "local contact quadrature",
                     dt,
-                    local_path.response(&local_start, &endpoint, &faces),
+                    local_path.response(&local_start, &endpoint, faces),
                 )?;
                 let mut evaluation = observe_contact_stage(
                     "world averaged material path",
@@ -579,38 +579,39 @@ impl InertialBody {
                         && skin_path_open(&predicted_end)
                         && self.volume_path_is_open(&predicted_end)
                         && prepared_motion
-                            .rejection_time(&self.body.positions, &predicted_end, &faces)
+                            .rejection_time(&self.body.positions, &predicted_end, faces)
                             .is_ok_and(|time| time.is_none())
+                        && let Ok(value) = path_evaluation(&predictor)
                     {
-                        if let Ok(value) = path_evaluation(&predictor) {
-                            let improves = objective_value(&predictor, value.potential_j)
-                                .is_ok_and(|candidate| match &evaluation {
+                        let improves =
+                            objective_value(&predictor, value.potential_j).is_ok_and(|candidate| {
+                                match &evaluation {
                                     Ok(old) => {
                                         !initial_feasible
                                             || objective_value(&mid, old.potential_j)
                                                 .is_ok_and(|initial| candidate < initial)
                                     }
                                     Err(_) => true,
-                                });
-                            if improves {
-                                if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
-                                    eprintln!("IMPLICIT_FEASIBLE_VELOCITY_PREDICTOR dt={dt:.17e}");
                                 }
-                                initial_feasible = true;
-                                mid = predictor;
-                                evaluation = Ok(value);
+                            });
+                        if improves {
+                            if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
+                                eprintln!("IMPLICIT_FEASIBLE_VELOCITY_PREDICTOR dt={dt:.17e}");
                             }
+                            initial_feasible = true;
+                            mid = predictor;
+                            evaluation = Ok(value);
                         }
                     }
                     if evaluation.is_err()
                         && std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some()
                     {
                         // Read-only observations must not replace the original error.
-                        let nearest = next.nearest_active_contact(&predicted_end, &faces);
+                        let nearest = next.nearest_active_contact(&predicted_end, faces);
                         let ccd = prepared_motion.rejection_time(
                             &self.body.positions,
                             &predicted_end,
-                            &faces,
+                            faces,
                         );
                         let gap_open = skin_path_open(&predicted_end);
                         let volume_open = self.volume_path_is_open(&predicted_end);
@@ -640,46 +641,45 @@ impl InertialBody {
                     .collect();
                 if let Ok(restored) = next.restore_separation_guess(
                     &predicted,
-                    &faces,
+                    faces,
                     &self.body.pinned,
                     &self.masses,
-                ) {
-                    if skin_path_open(&restored)
-                        && self.volume_path_is_open(&restored)
-                        && prepared_motion
-                            .rejection_time(&self.body.positions, &restored, &faces)
-                            .is_ok_and(|t| t.is_none())
-                    {
-                        let guess: Vec<Vec3> = restored
-                            .iter()
-                            .zip(&self.body.positions)
-                            .map(|(p, old)| std::array::from_fn(|axis| 0.5 * (p[axis] - old[axis])))
-                            .collect();
-                        if let Ok(value) = path_evaluation(&guess) {
-                            if !feasible_guess(&guess) {
-                                return Err("implicit initial contact trajectory inadmissible");
-                            }
-                            initial_feasible = true;
-                            if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
-                                eprintln!("IMPLICIT_RESTORED_CONTACT_GUESS dt={dt:.17e}");
-                            }
-                            mid = guess;
-                            evaluation = Ok(value);
+                ) && skin_path_open(&restored)
+                    && self.volume_path_is_open(&restored)
+                    && prepared_motion
+                        .rejection_time(&self.body.positions, &restored, faces)
+                        .is_ok_and(|t| t.is_none())
+                {
+                    let guess: Vec<Vec3> = restored
+                        .iter()
+                        .zip(&self.body.positions)
+                        .map(|(p, old)| std::array::from_fn(|axis| 0.5 * (p[axis] - old[axis])))
+                        .collect();
+                    if let Ok(value) = path_evaluation(&guess) {
+                        if !feasible_guess(&guess) {
+                            return Err("implicit initial contact trajectory inadmissible");
                         }
+                        initial_feasible = true;
+                        if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
+                            eprintln!("IMPLICIT_RESTORED_CONTACT_GUESS dt={dt:.17e}");
+                        }
+                        mid = guess;
+                        evaluation = Ok(value);
                     }
                 }
             }
-            if evaluation.is_err() && std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
-                if let Some((next_skin, _)) = skin_motion {
-                    let endpoint = world_endpoint(&mid);
-                    let current_skin = self.body.stationary_embedded_contact().unwrap();
-                    eprintln!(
-                        "IMPLICIT_SKIN_REJECTED_GUESS dt={dt:.17e} iteration={iteration} initial={:?} fixed_nodes_next_pose={:?} trial_endpoint={:?}",
-                        current_skin.nearest_active_contact(&self.body.positions),
-                        next_skin.nearest_active_contact(&self.body.positions),
-                        next_skin.nearest_active_contact(&endpoint),
-                    );
-                }
+            if evaluation.is_err()
+                && std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some()
+                && let Some((next_skin, _)) = skin_motion
+            {
+                let endpoint = world_endpoint(&mid);
+                let current_skin = self.body.stationary_embedded_contact().unwrap();
+                eprintln!(
+                    "IMPLICIT_SKIN_REJECTED_GUESS dt={dt:.17e} iteration={iteration} initial={:?} fixed_nodes_next_pose={:?} trial_endpoint={:?}",
+                    current_skin.nearest_active_contact(&self.body.positions),
+                    next_skin.nearest_active_contact(&self.body.positions),
+                    next_skin.nearest_active_contact(&endpoint),
+                );
             }
             let evaluation = evaluation?;
             if !initial_feasible {
@@ -751,7 +751,7 @@ impl InertialBody {
             let blocks = observe_contact_stage(
                 "local normal blocks",
                 dt,
-                local_path.normal_stencils(&local_start, &endpoint, &faces),
+                local_path.normal_stencils(&local_start, &endpoint, faces),
             )?;
             for block in &blocks {
                 for corner in 0..3 {
@@ -842,8 +842,8 @@ impl InertialBody {
                     })
                     .fold(0.0_f64, f64::max);
                 match (
-                    prepared_path.response(&self.body.positions, &physical_endpoint, &faces),
-                    local_path.response(&local_start, &relative_endpoint, &faces),
+                    prepared_path.response(&self.body.positions, &physical_endpoint, faces),
+                    local_path.response(&local_start, &relative_endpoint, faces),
                 ) {
                     (Ok(world), Ok(local)) => {
                         let force_roundoff = world
@@ -920,7 +920,7 @@ impl InertialBody {
                     volume_trials += 1;
                 }
                 let rejection_time = if volume_open {
-                    prepared_motion.rejection_time(&self.body.positions, &endpoint, &faces)?
+                    prepared_motion.rejection_time(&self.body.positions, &endpoint, faces)?
                 } else {
                     None
                 };
@@ -953,13 +953,11 @@ impl InertialBody {
                     && objective_noise.is_finite()
                     && trial_objective
                         .is_some_and(|value| (value - initial).abs() <= objective_noise)
+                    && let Some(trial_evaluation) = &trial_evaluation
                 {
-                    if let Some(trial_evaluation) = &trial_evaluation {
-                        let trial_norm = assemble_residual(&trial, &trial_evaluation.gradient).1;
-                        smallest_trial_norm = smallest_trial_norm.min(trial_norm);
-                        admissible =
-                            trial_norm.is_finite() && trial_norm < norm * (1. - 1e-4 * alpha);
-                    }
+                    let trial_norm = assemble_residual(&trial, &trial_evaluation.gradient).1;
+                    smallest_trial_norm = smallest_trial_norm.min(trial_norm);
+                    admissible = trial_norm.is_finite() && trial_norm < norm * (1. - 1e-4 * alpha);
                 }
                 if admissible {
                     if iteration == 95 && std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some()
@@ -988,13 +986,13 @@ impl InertialBody {
                         tolerance_j.min(1e-8) * 1e-4
                     );
                 }
-                if safe_trials == 0 && volume_trials > 0 {
-                    if let Some(refined) =
+                if safe_trials == 0
+                    && volume_trials > 0
+                    && let Some(refined) =
                         last_rejection_time.and_then(|time| prepared_path.refine_near(time))
-                    {
-                        *knots = refined;
-                        return Err("implicit contact path quadrature refinement");
-                    }
+                {
+                    *knots = refined;
+                    return Err("implicit contact path quadrature refinement");
                 }
                 return Err("implicit contact line search failed");
             }
@@ -1004,7 +1002,7 @@ impl InertialBody {
                 || std::env::var_os("VOXY_CONTACT_TERMINAL_TRACE").is_some()
             {
                 let endpoint = world_endpoint(&mid);
-                let nearest = next.nearest_active_contact(&endpoint, &faces);
+                let nearest = next.nearest_active_contact(&endpoint, faces);
                 let obstacle_triangle = nearest.as_ref().ok().and_then(|feature| {
                     feature.as_ref().map(|feature| {
                         next.faces()[feature.obstacle_face_index].map(|i| next.positions()[i])
@@ -1020,7 +1018,7 @@ impl InertialBody {
                         local_next.faces()[f.obstacle_face_index].map(|i| local_next.positions()[i])
                     })
                 });
-                let local_nearest = local_next.nearest_active_contact(&local_body, &faces);
+                let local_nearest = local_next.nearest_active_contact(&local_body, faces);
                 eprintln!(
                     "IMPLICIT_FRAME_GEOMETRY dt={dt:.17e} world_body={endpoint:?} local_body={local_body:?} world_obstacle={obstacle_triangle:?} local_obstacle={local_obstacle:?} nearest_world={nearest:?} nearest_local={local_nearest:?}"
                 );
@@ -1029,7 +1027,7 @@ impl InertialBody {
         }
         if std::env::var_os("VOXY_CONTACT_FRAME_TRACE").is_some() {
             let endpoint = world_endpoint(&mid);
-            let nearest = next.nearest_active_contact(&endpoint, &faces);
+            let nearest = next.nearest_active_contact(&endpoint, faces);
             if let Ok(Some(feature)) = &nearest {
                 let obstacle_triangle =
                     Some(next.faces()[feature.obstacle_face_index].map(|i| next.positions()[i]));
@@ -1038,7 +1036,7 @@ impl InertialBody {
                     local_next.faces()[feature.obstacle_face_index]
                         .map(|i| local_next.positions()[i]),
                 );
-                let local_nearest = local_next.nearest_active_contact(&local_body, &faces);
+                let local_nearest = local_next.nearest_active_contact(&local_body, faces);
                 eprintln!(
                     "IMPLICIT_FRAME_GEOMETRY dt={dt:.17e} world_body={endpoint:?} local_body={local_body:?} world_obstacle={obstacle_triangle:?} local_obstacle={local_obstacle:?} nearest_world={nearest:?} nearest_local={local_nearest:?}"
                 );
@@ -1077,7 +1075,7 @@ impl InertialBody {
         if !skin_path_open(&end)
             || !self.volume_path_is_open(&end)
             || prepared_motion
-                .rejection_time(&self.body.positions, &end, &faces)?
+                .rejection_time(&self.body.positions, &end, faces)?
                 .is_some()
         {
             return Err("implicit contact path crossing");
@@ -1125,7 +1123,7 @@ impl InertialBody {
                     let old = self.evaluate_at_contacts_and_skin(
                         &self.body.positions,
                         self.plane,
-                        Some(&current),
+                        Some(current),
                         self.body.stationary_embedded_contact(),
                     )?;
                     let mut kinetic = 0.;
@@ -1190,7 +1188,7 @@ impl InertialBody {
                         &self.body.pinned,
                         contact_origin,
                     );
-                    let path = local_path.response(&local_start, &relative_end, &faces)?;
+                    let path = local_path.response(&local_start, &relative_end, faces)?;
                     let body_surface_work: f64 = path
                         .body_gradient_n
                         .iter()
@@ -1202,8 +1200,8 @@ impl InertialBody {
                             )
                         })
                         .sum();
-                    let surface = next.response(&end, &faces)?.potential_j
-                        - current.response(&self.body.positions, &faces)?.potential_j
+                    let surface = next.response(&end, faces)?.potential_j
+                        - current.response(&self.body.positions, faces)?.potential_j
                         - body_surface_work
                         - surface_work;
                     let kinematic: f64 = (0..n)
@@ -1302,12 +1300,7 @@ impl InertialBody {
             if let Some(refined) = observe_contact_stage(
                 "world quadrature error estimator",
                 dt,
-                prepared_path.refine_by_work(
-                    &self.body.positions,
-                    &end,
-                    &faces,
-                    tolerance_j * 0.25,
-                ),
+                prepared_path.refine_by_work(&self.body.positions, &end, faces, tolerance_j * 0.25),
             )? {
                 *knots = refined;
                 return Err("implicit contact work defect");
@@ -1403,7 +1396,7 @@ mod tests {
             &[false],
             &[[2., -4., 6.]],
             |v| Ok(v.iter().map(|r| r.map(|x| 2. * x)).collect()),
-            |r| r.to_vec(),
+            <[[f64; 3]]>::to_vec,
         )
         .unwrap();
         assert_eq!(exact.direction, vec![[-1., 2., -3.]]);
@@ -1414,7 +1407,7 @@ mod tests {
             &[false],
             &[[2., -4., 6.]],
             |v| Ok(v.iter().map(|r| r.map(|x| -x)).collect()),
-            |r| r.to_vec(),
+            <[[f64; 3]]>::to_vec,
         )
         .unwrap();
         assert_eq!(bad.stop, SearchDirectionStop::InvalidCurvature);
@@ -1424,7 +1417,7 @@ mod tests {
             &[false],
             &[[0.; 3]],
             |v| Ok(v.to_vec()),
-            |r| r.to_vec(),
+            <[[f64; 3]]>::to_vec,
         )
         .unwrap();
         assert_eq!(zero.stop, SearchDirectionStop::ZeroResidual);
@@ -1439,7 +1432,7 @@ mod tests {
                     .map(|(r, w)| r.map(|x| x * w))
                     .collect())
             },
-            |r| r.to_vec(),
+            <[[f64; 3]]>::to_vec,
         )
         .unwrap();
         assert_eq!(limited.actions, 64);
@@ -1456,18 +1449,19 @@ mod tests {
                 calls.set(calls.get() + 1);
                 Err("CUDA search driver failure")
             },
-            |r| r.to_vec(),
+            <[[f64; 3]]>::to_vec,
         );
         assert_eq!(result, Err("CUDA search driver failure"));
         assert_eq!(calls.get(), 1);
         let residual = [[1., 2., 3.], [2., -1., 4.]];
         let apply = |v: &[Vec3]| vec![v[0].map(|x| 2. * x), v[1].map(|x| 7. * x)];
-        let native = preconditioned_direction(&[false, false], &residual, apply, |r| r.to_vec());
+        let native =
+            preconditioned_direction(&[false, false], &residual, apply, <[[f64; 3]]>::to_vec);
         let checked = try_preconditioned_direction::<&str>(
             &[false, false],
             &residual,
             |v| Ok(apply(v)),
-            |r| r.to_vec(),
+            <[[f64; 3]]>::to_vec,
         )
         .unwrap();
         assert_eq!(
@@ -1494,7 +1488,7 @@ mod tests {
                     Ok(apply(v))
                 }
             },
-            |r| r.to_vec(),
+            <[[f64; 3]]>::to_vec,
         );
         assert_eq!(late, Err("CUDA readback numerical overflow"));
         assert_eq!(calls.get(), 2);

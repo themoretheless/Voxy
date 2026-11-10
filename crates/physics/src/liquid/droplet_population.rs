@@ -22,10 +22,10 @@ impl Liquid {
 
 impl Liquid {
     pub(super) fn retain_carrier_pairs(&self, pairs: &mut Vec<(usize, usize)>) {
-        if self.carrier_droplet_stage {
-            if let Some(flags) = &self.droplet_population {
-                pairs.retain(|(i, j)| !flags[*i] && !flags[*j]);
-            }
+        if self.carrier_droplet_stage
+            && let Some(flags) = &self.droplet_population
+        {
+            pairs.retain(|(i, j)| !flags[*i] && !flags[*j]);
         }
     }
     /// Advances the carrier with SPH, while marked drops receive only gravity and

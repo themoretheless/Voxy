@@ -84,7 +84,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         assert!(defect.abs() < 1e-17);
         assert_eq!(energy.friction_input_j, 0.);
         assert_eq!(energy.parent_impulse_work_j, 0.);
-        let dust_mass: f64 = system.grains().iter().map(|p| p.mass_kg()).sum();
+        let dust_mass: f64 = system
+            .grains()
+            .iter()
+            .map(physics::suspension::Particle::mass_kg)
+            .sum();
         assert!((system.layer().remaining_mass_kg() + dust_mass - initial_mass).abs() < 1e-14);
         for axis in 0..3 {
             let momentum = system.parent_momentum_kg_m_s().unwrap()[axis]

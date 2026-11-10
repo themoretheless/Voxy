@@ -81,9 +81,10 @@ impl AudioPlay {
         Ok(Some(saved))
     }
     pub(crate) fn resume_owner_checkpoint(&mut self) -> Result<bool, EditorError> {
-        self.reload
-            .as_mut()
-            .map_or(Ok(true), |reload| reload.resume_after_checkpoint())
+        self.reload.as_mut().map_or(
+            Ok(true),
+            super::super::audio_reload::AudioReload::resume_after_checkpoint,
+        )
     }
 }
 #[allow(dead_code)]

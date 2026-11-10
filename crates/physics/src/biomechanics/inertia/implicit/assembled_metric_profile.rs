@@ -1088,8 +1088,7 @@ fn full_mesh_assembled_search_metric_profile() {
     );
     let applications: usize = std::env::var("VOXY_ASSEMBLED_METRIC_APPLICATIONS")
         .ok()
-        .map(|v| v.parse().unwrap())
-        .unwrap_or(64);
+        .map_or(64, |v| v.parse().unwrap());
     assert!((1..=4096).contains(&applications));
     for (trial, assembled) in [false, true, true, false, true, false, false, true]
         .into_iter()

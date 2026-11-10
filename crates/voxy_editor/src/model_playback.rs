@@ -891,7 +891,7 @@ mod tests {
         .unwrap();
         let positions = |model: &ModelAsset, frame: &AnimatorFrame| {
             assert_eq!(frame.skin_matrices.len(), model.skeleton.joints().len());
-            assert!(frame.skin_matrices.iter().all(|matrix| matrix.is_finite()));
+            assert!(frame.skin_matrices.iter().all(glam::Mat4::is_finite));
             let meshes = model.scene_meshes(&frame.pose)?;
             let vertices: Vec<_> = meshes
                 .iter()

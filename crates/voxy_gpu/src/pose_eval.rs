@@ -187,7 +187,7 @@ impl GpuPoseEvalProgram {
         let binds: Vec<[[f32; 4]; 4]> = layout
             .inverse_binds
             .iter()
-            .map(|m| m.to_cols_array_2d())
+            .map(glam::Mat4::to_cols_array_2d)
             .collect();
         let inverse_binds = self
             .device

@@ -26,13 +26,13 @@ impl Default for StrandLimitCache {
 #[cfg(any(test, feature = "experimental-strand-fraction-reuse"))]
 impl Drop for StrandLimitCache {
     fn drop(&mut self) {
-        if std::env::var("VOXY_HAIR_STRAND_FRACTION_PROFILE").as_deref() == Ok("1") {
-            if let Some(cache) = &self.fractions {
-                let (hits, misses) = cache.counts();
-                eprintln!(
-                    "STRAND_FRACTION_CACHE hits={hits} misses={misses} scope=one_cache_lifetime_not_admission_or_frame"
-                );
-            }
+        if std::env::var("VOXY_HAIR_STRAND_FRACTION_PROFILE").as_deref() == Ok("1")
+            && let Some(cache) = &self.fractions
+        {
+            let (hits, misses) = cache.counts();
+            eprintln!(
+                "STRAND_FRACTION_CACHE hits={hits} misses={misses} scope=one_cache_lifetime_not_admission_or_frame"
+            );
         }
     }
 }

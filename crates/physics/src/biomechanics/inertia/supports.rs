@@ -307,15 +307,15 @@ impl InertialBody {
         if angular_increment != [0.; 3] {
             self.certify_plane_motion_path(&positions, next_plane.unwrap(), angular_increment)?;
         }
-        if let Some(surface) = &self.prescribed_surface {
-            if !surface.path_is_open(
+        if let Some(surface) = &self.prescribed_surface
+            && !surface.path_is_open(
                 next_surface.unwrap(),
                 &self.body.positions,
                 &positions,
                 self.body.surface_faces(),
-            )? {
-                return Err("inertial prescribed surface path crossing");
-            }
+            )?
+        {
+            return Err("inertial prescribed surface path crossing");
         }
         let skin_work = if let Some(next) = &next_skin_motion {
             let current = self.body.embedded_contact.as_ref().unwrap();

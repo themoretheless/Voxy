@@ -123,10 +123,11 @@ fn crate_heads(code: &str) -> BTreeSet<String> {
                     b',' if depth == 1 => expect = true,
                     byte if byte.is_ascii_whitespace() => {}
                     _ => {
-                        if expect && depth == 1 {
-                            if let Some(head) = identifier_at(bytes, from + offset) {
-                                heads.insert(head.to_owned());
-                            }
+                        if expect
+                            && depth == 1
+                            && let Some(head) = identifier_at(bytes, from + offset)
+                        {
+                            heads.insert(head.to_owned());
                         }
                         expect = false;
                     }

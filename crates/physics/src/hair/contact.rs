@@ -864,8 +864,7 @@ mod terminal_side_replay_tests {
         assert!(continuous);
         let selected = std::env::var("VOXY_HAIR_CONTACT_PROBE_ROD")
             .ok()
-            .map(|v| v.parse::<usize>().unwrap())
-            .unwrap_or(199);
+            .map_or(199, |v| v.parse::<usize>().unwrap());
         let mut rod = rods[selected].clone();
         let overlay = std::env::var_os("VOXY_HAIR_CONTACT_PROBE_POSITIONS");
         if let Some(path) = &overlay {
@@ -879,8 +878,7 @@ mod terminal_side_replay_tests {
         }
         let segment = std::env::var("VOXY_HAIR_CONTACT_PROBE_SEGMENT")
             .ok()
-            .map(|v| v.parse::<usize>().unwrap())
-            .unwrap_or(rod.x.len() - 2);
+            .map_or(rod.x.len() - 2, |v| v.parse::<usize>().unwrap());
         let motion = CapsuleMotion {
             start: [rod.old_x[segment], rod.old_x[segment + 1]],
             end: [rod.x[segment], rod.x[segment + 1]],

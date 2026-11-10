@@ -701,7 +701,10 @@ impl App {
         if self.scan_active
             || self.pending_model.is_some()
             || self.catalog.pending() != 0
-            || self.imports.as_ref().is_some_and(|w| w.is_busy())
+            || self
+                .imports
+                .as_ref()
+                .is_some_and(voxy_assets::AssetImportWorker::is_busy)
         {
             return Ok(false);
         }
@@ -793,7 +796,10 @@ impl App {
         if self.scan_active
             || self.pending_model.is_some()
             || self.catalog.pending() != 0
-            || self.imports.as_ref().is_some_and(|w| w.is_busy())
+            || self
+                .imports
+                .as_ref()
+                .is_some_and(voxy_assets::AssetImportWorker::is_busy)
         {
             return Err("model checkpoint changed after barrier".into());
         }

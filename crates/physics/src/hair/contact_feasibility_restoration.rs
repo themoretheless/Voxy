@@ -131,7 +131,7 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
                 .map(|rod| (rod.x.clone(), rod.q.clone()))
                 .collect::<Vec<_>>()
         },
-        |reference| reference.to_vec(),
+        <[(std::vec::Vec<[f64; 3]>, std::vec::Vec<[f64; 4]>)]>::to_vec,
     );
     let mut start = origin.clone();
     for rod in &mut start {

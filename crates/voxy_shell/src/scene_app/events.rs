@@ -287,11 +287,11 @@ impl ApplicationHandler for SceneApp {
                 self.frame_loop.set_paused(self.paused);
                 self.last = Instant::now();
             }
-            if actions.toggle_world {
-                if let Ok(active) = self.graph.active_self(self.root) {
-                    let _ = self.graph.set_active(self.root, !active);
-                    self.motion.reset();
-                }
+            if actions.toggle_world
+                && let Ok(active) = self.graph.active_self(self.root)
+            {
+                let _ = self.graph.set_active(self.root, !active);
+                self.motion.reset();
             }
         }
         if self.female.is_some()
@@ -424,10 +424,9 @@ impl ApplicationHandler for SceneApp {
                     }
                     PhysicalKey::Code(
                         KeyCode::Digit1 | KeyCode::Digit2 | KeyCode::Digit3 | KeyCode::Digit4,
-                    ) if self
-                        .female
-                        .as_ref()
-                        .is_some_and(|f| f.has_grounded_playback()) =>
+                    ) if self.female.as_ref().is_some_and(
+                        voxy_demos::female_demo::FemaleDemo::has_grounded_playback,
+                    ) =>
                     {
                         use voxy_demos::humanoid_locomotion::LocomotionClip;
                         let clip = match event.physical_key {
@@ -436,10 +435,10 @@ impl ApplicationHandler for SceneApp {
                             PhysicalKey::Code(KeyCode::Digit3) => LocomotionClip::Jog,
                             _ => LocomotionClip::Sprint,
                         };
-                        if let Some(female) = &mut self.female {
-                            if let Err(error) = female.select_grounded_gait(clip) {
-                                eprintln!("Gait selection rejected: {error}");
-                            }
+                        if let Some(female) = &mut self.female
+                            && let Err(error) = female.select_grounded_gait(clip)
+                        {
+                            eprintln!("Gait selection rejected: {error}");
                         }
                     }
                     PhysicalKey::Code(KeyCode::Digit1 | KeyCode::Digit2 | KeyCode::Digit3)
@@ -492,10 +491,10 @@ impl ApplicationHandler for SceneApp {
                             } else {
                                 -0.1
                             };
-                        if let Some(female) = &mut self.female {
-                            if let Err(error) = female.adjust_grasp(delta) {
-                                self.fail(event_loop, &error);
-                            }
+                        if let Some(female) = &mut self.female
+                            && let Err(error) = female.adjust_grasp(delta)
+                        {
+                            self.fail(event_loop, &error);
                         }
                     }
                     PhysicalKey::Code(KeyCode::KeyG)
@@ -526,10 +525,10 @@ impl ApplicationHandler for SceneApp {
                         }
                     }
                     PhysicalKey::Code(KeyCode::ArrowLeft) if self.xray.is_some() => {
-                        self.angle -= 0.15
+                        self.angle -= 0.15;
                     }
                     PhysicalKey::Code(KeyCode::ArrowRight) if self.xray.is_some() => {
-                        self.angle += 0.15
+                        self.angle += 0.15;
                     }
                     PhysicalKey::Code(KeyCode::Digit1) => {
                         if let Some(gravity) = &mut self.gravity {

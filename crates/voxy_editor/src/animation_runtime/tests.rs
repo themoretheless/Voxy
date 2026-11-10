@@ -1092,11 +1092,11 @@ fn accepted_physical_fade_uses_runtime_extraction_before_frame_publication() {
                                 ..voxy_animation::RootRigidTransform::IDENTITY
                             },
                         )
-                        .unwrap()
+                        .unwrap();
                 }
                 _ => {
                     state.root_reference.as_mut().unwrap().scale =
-                        voxy_animation::RootUniformScaleEnclosure::from_scale(2.).unwrap()
+                        voxy_animation::RootUniformScaleEnclosure::from_scale(2.).unwrap();
                 }
             }
             let rejected = physics.fixed_step_with_certified_fade_preparation(
@@ -1796,7 +1796,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
         let blend = runtime.owners[&owner].playback.pose_blend_phases().unwrap();
         match blend.source.unwrap() {
             voxy_animation::PoseBlendSource::Clip(source) => {
-                assert_eq!(source.normalized_phase, before_source_phase)
+                assert_eq!(source.normalized_phase, before_source_phase);
             }
             voxy_animation::PoseBlendSource::FrozenPose(_) => {
                 panic!("first selection must retain the running clip")
@@ -3459,9 +3459,8 @@ fn runtime_only_frame_aliases_survive_checkpoint_without_merging_equal_frames() 
         max,
     )
     .unwrap();
-    let error = match load(&conflicting) {
-        Err(error) => error,
-        Ok(_) => panic!("different runtime frame states were joined"),
+    let Err(error) = load(&conflicting) else {
+        panic!("different runtime frame states were joined");
     };
     assert!(
         error

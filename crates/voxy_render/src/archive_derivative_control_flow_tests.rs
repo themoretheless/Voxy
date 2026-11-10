@@ -26,7 +26,7 @@ fn inspect_mask(
     mask: naga::Handle<naga::Expression>,
 ) -> usize {
     let mut found = 0;
-    for statement in block.iter() {
+    for statement in block {
         match statement {
             naga::Statement::If {
                 condition,
@@ -54,7 +54,7 @@ fn inspect_mask(
                 body, continuing, ..
             } => {
                 found +=
-                    inspect_mask(body, function, mask) + inspect_mask(continuing, function, mask)
+                    inspect_mask(body, function, mask) + inspect_mask(continuing, function, mask);
             }
             _ => {}
         }

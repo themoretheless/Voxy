@@ -8,8 +8,16 @@ fn worn_material_becomes_mass_volume_and_momentum_in_suspended_grains() {
     let emitted = layer
         .advance_dust(material, 100., 0.001, &[[0.; 3]; 16], velocity)
         .unwrap();
-    let mass: f64 = emitted.particles.iter().map(|p| p.mass_kg()).sum();
-    let volume: f64 = emitted.particles.iter().map(|p| p.volume_m3()).sum();
+    let mass: f64 = emitted
+        .particles
+        .iter()
+        .map(physics::suspension::Particle::mass_kg)
+        .sum();
+    let volume: f64 = emitted
+        .particles
+        .iter()
+        .map(physics::suspension::Particle::volume_m3)
+        .sum();
     assert!((mass - emitted.wear.mass_kg).abs() < 1e-20);
     assert!((volume - emitted.wear.volume_m3).abs() < 1e-24);
     assert!((layer.remaining_mass_kg() + mass - initial).abs() < 1e-16);
@@ -104,7 +112,10 @@ fn emitted_wear_grains_feed_back_into_liquid_instead_of_losing_mass() {
     let report = liquid
         .exchange_suspension_cell(0, &mut grains, 1e-6)
         .unwrap();
-    let mass: f64 = grains.iter().map(|p| p.mass_kg()).sum();
+    let mass: f64 = grains
+        .iter()
+        .map(physics::suspension::Particle::mass_kg)
+        .sum();
     assert!((mass - emitted.wear.mass_kg).abs() < 1e-24);
     let momentum = 1e-6 * liquid.particles()[0].velocity[0]
         + grains

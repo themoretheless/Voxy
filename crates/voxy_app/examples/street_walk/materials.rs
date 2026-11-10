@@ -92,12 +92,13 @@ pub(crate) fn pack_set(
     ])
 }
 pub fn apply(scene: &mut StreetScene) -> Result<(), Box<dyn std::error::Error>> {
-    let root = std::env::var_os("VOXY_STREET_MATERIALS")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
+    let root = std::env::var_os("VOXY_STREET_MATERIALS").map_or_else(
+        || {
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                 .join("../../assets/environments/original-street/materials")
-        });
+        },
+        PathBuf::from,
+    );
     let mut sets = Vec::new();
     for asset in ["plastered_stone_wall", "brick_wall_001", "bark_willow"] {
         let colour = load(&root.join(format!("{asset}-Diffuse.png")), true)?;
@@ -270,12 +271,13 @@ mod tests {
 }
 
 pub fn sky() -> Result<voxy_render::HdrImageAsset, Box<dyn std::error::Error>> {
-    let root = std::env::var_os("VOXY_STREET_MATERIALS")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
+    let root = std::env::var_os("VOXY_STREET_MATERIALS").map_or_else(
+        || {
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                 .join("../../assets/environments/original-street/materials")
-        });
+        },
+        PathBuf::from,
+    );
     Ok(voxy_render::HdrImageAsset::decode(
         &std::fs::read(root.join("daylight.hdr"))?,
         voxy_render::ImageLimits {

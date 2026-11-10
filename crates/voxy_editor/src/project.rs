@@ -1056,7 +1056,7 @@ mod tests {
                 }))
                 .unwrap(),
             )
-            .unwrap()
+            .unwrap();
         };
         write("missing/sub/model.obj");
         assert!(open_for_editor(&path, &registry).is_ok());

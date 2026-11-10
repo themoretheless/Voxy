@@ -32,7 +32,7 @@ impl ResidentBody {
             source.color = posed.color;
         }
         let source = SceneMesh::new(vertices, demo.indices.clone())?
-            .with_normals(demo.normals.iter().map(|n| n.to_array()).collect())?;
+            .with_normals(demo.normals.iter().map(glam::Vec3::to_array).collect())?;
         Ok((source, stance.palette.clone(), stance.offset.as_vec3()))
     }
     pub fn new(
@@ -49,7 +49,7 @@ impl ResidentBody {
             device, &source, target, &offsets, &weights, controls,
         )?;
         let bind = SceneMesh::new(demo.vertices.clone(), demo.indices.clone())?
-            .with_normals(demo.normals.iter().map(|n| n.to_array()).collect())?;
+            .with_normals(demo.normals.iter().map(glam::Vec3::to_array).collect())?;
         surface.set_normal_reference(device, &bind)?;
         surface.enable_rigid_skinning(
             device,

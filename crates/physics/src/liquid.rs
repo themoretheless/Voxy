@@ -995,11 +995,12 @@ fn move_with_world(
         let normal_count = hit.normal.iter().filter(|&&n| n != 0).count();
         if normal_count == 0 {
             if hit.obstacle.is_some() {
-                if collision == 0 && contact.overlap_escape > 0.0 {
-                    if let Some(target) = escape_overlap(particle, radius, world, contact)? {
-                        particle.position = target;
-                        continue;
-                    }
+                if collision == 0
+                    && contact.overlap_escape > 0.0
+                    && let Some(target) = escape_overlap(particle, radius, world, contact)?
+                {
+                    particle.position = target;
+                    continue;
                 }
                 return Err(Error::InitialOverlap);
             }

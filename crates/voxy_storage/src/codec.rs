@@ -46,8 +46,15 @@ struct EncodeScratch {
     indexes: Vec<u16>,
 }
 
+#[derive(Default)]
+struct DecodeScratch {
+    slots: Vec<u16>,
+    remapped_slots: Vec<u16>,
+}
+
 thread_local! {
     static ENCODE_SCRATCH: RefCell<EncodeScratch> = RefCell::new(EncodeScratch::default());
+    static DECODE_SCRATCH: RefCell<DecodeScratch> = RefCell::new(DecodeScratch::default());
 }
 
 /// Encodes canonical chunk data using stable resource keys instead of session-local block IDs.
@@ -312,6 +319,40 @@ fn decode_paletted_blocks(
         }
         return Ok(PalettedBlocks::uniform(palette[0]));
     }
+    if palette.len() <= 256 {
+        let fast = DECODE_SCRATCH.with_borrow_mut(|scratch| {
+            unpack_slots_into(packed, bits, palette.len(), &mut scratch.slots)?;
+            // `palette` is sorted by ResourceKey on the wire, whereas `PalettedBlocks`
+            // canonicalizes by `BlockStateId` order. Check if already sorted unique:
+            if palette.windows(2).all(|pair| pair[0] < pair[1]) {
+                return Ok::<Option<PalettedBlocks>, CodecError>(
+                    PalettedBlocks::from_canonical_palette_slots(palette.to_vec(), &scratch.slots),
+                );
+            }
+            let mut order: Vec<usize> = (0..palette.len()).collect();
+            order.sort_unstable_by_key(|&i| palette[i]);
+            let sorted_palette: Vec<BlockStateId> = order.iter().map(|&i| palette[i]).collect();
+            if sorted_palette.windows(2).all(|pair| pair[0] < pair[1]) {
+                let mut inv = [0_u16; 256];
+                for (new_slot, &old_slot) in order.iter().enumerate() {
+                    inv[old_slot] = new_slot as u16;
+                }
+                scratch.remapped_slots.clear();
+                scratch.remapped_slots.reserve(CHUNK_VOLUME);
+                for &old_slot in &scratch.slots {
+                    scratch.remapped_slots.push(inv[usize::from(old_slot)]);
+                }
+                return Ok(PalettedBlocks::from_canonical_palette_slots(
+                    sorted_palette,
+                    &scratch.remapped_slots,
+                ));
+            }
+            Ok(None)
+        })?;
+        if let Some(blocks) = fast {
+            return Ok(blocks);
+        }
+    }
     let mut dense = Vec::with_capacity(CHUNK_VOLUME);
     unpack_palette_into_dense(packed, bits, palette, &mut dense)?;
     PalettedBlocks::from_dense(dense).map_err(|_| CodecError::InvalidPackedLength)
@@ -376,6 +417,68 @@ fn pack_into(indexes: &[u16], bits: u8, out: &mut [u8]) {
         acc >>= 8;
         acc_bits = acc_bits.saturating_sub(8);
     }
+}
+
+/// Bulk `u64` word-level bit-stream unpacker resolving `CHUNK_VOLUME` palette slots into `slots`.
+fn unpack_slots_into(
+    bytes: &[u8],
+    bits: u8,
+    palette_len: usize,
+    slots: &mut Vec<u16>,
+) -> Result<(), CodecError> {
+    slots.clear();
+    slots.reserve(CHUNK_VOLUME);
+    let bit_width = u32::from(bits);
+    let mask = if bits >= 16 {
+        u64::from(u16::MAX)
+    } else {
+        (1_u64 << bit_width) - 1
+    };
+    let mut byte_cursor = 0_usize;
+    let mut acc = 0_u64;
+    let mut acc_bits = 0_u32;
+    for _ in 0..CHUNK_VOLUME {
+        if acc_bits < bit_width {
+            let rem = bytes.len() - byte_cursor;
+            let next_word = if rem >= 8 {
+                let word = u64::from_le_bytes(
+                    bytes[byte_cursor..byte_cursor + 8]
+                        .try_into()
+                        .expect("8 bytes checked"),
+                );
+                byte_cursor += 8;
+                word
+            } else {
+                let mut tail = [0_u8; 8];
+                tail[..rem].copy_from_slice(&bytes[byte_cursor..]);
+                byte_cursor = bytes.len();
+                u64::from_le_bytes(tail)
+            };
+            if acc_bits == 0 {
+                acc = next_word;
+                acc_bits = 64;
+            } else {
+                let raw = (acc | (next_word << acc_bits)) & mask;
+                let consumed_from_next = bit_width - acc_bits;
+                acc = next_word >> consumed_from_next;
+                acc_bits = 64 - consumed_from_next;
+                let slot = raw as usize;
+                if slot >= palette_len {
+                    return Err(CodecError::InvalidPaletteIndex);
+                }
+                slots.push(raw as u16);
+                continue;
+            }
+        }
+        let raw = acc & mask;
+        acc >>= bit_width;
+        acc_bits -= bit_width;
+        if (raw as usize) >= palette_len {
+            return Err(CodecError::InvalidPaletteIndex);
+        }
+        slots.push(raw as u16);
+    }
+    Ok(())
 }
 
 /// Bulk `u64` word-level bit-stream unpacker resolving `CHUNK_VOLUME` palette slots into `dense`.

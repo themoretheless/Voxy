@@ -40,12 +40,12 @@ impl App {
             .then(Instant::now);
         self.tick()?;
         let load_status = self.editor_file_status();
-        if let Some(panels) = &mut self.panels {
-            if panels.load_status != load_status {
-                panels.load_status = load_status;
-                panels.invalidate_presentation();
-                self.panel_cache = None;
-            }
+        if let Some(panels) = &mut self.panels
+            && panels.load_status != load_status
+        {
+            panels.load_status = load_status;
+            panels.invalidate_presentation();
+            self.panel_cache = None;
         }
         if offscreen.is_none() && !self.restore_play_frozen() {
             let elapsed = self.play.simulation_time.elapsed().as_secs_f64();

@@ -770,10 +770,8 @@ fn feature_walk_impl<const RETAIN: bool, const REUSE: bool>(
         // them; every accepted interval still carries a complete exact proof.
         let basic_supported = point.basic_supported();
         let supported = |time: &R, cached: &mut Option<bool>| {
-            if REUSE {
-                if let Some(value) = *cached {
-                    return value;
-                }
+            if REUSE && let Some(value) = *cached {
+                return value;
             }
             let value = basic_point_supported(&prepared, time);
             *cached = Some(value);

@@ -139,7 +139,7 @@ impl RootRigidPath {
         let Some(last) = self.spans.last() else {
             return Ok(RootRigidEnclosure::IDENTITY);
         };
-        if self.spans.iter().any(|span| span.is_step()) {
+        if self.spans.iter().any(super::super::RootRigidSpan::is_step) {
             return Err(AnimationError::RootRotationTransitionUnsupported);
         }
         if self.spans.iter().all(|span| span.screw.is_some()) {

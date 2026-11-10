@@ -44,10 +44,10 @@ impl Options {
                 "--rough-image"
                     if !result.rough_image && !result.face && result.capture.is_none() =>
                 {
-                    result.rough_image = true
+                    result.rough_image = true;
                 }
                 "--face" if !result.face && !result.rough_image && result.capture.is_none() => {
-                    result.face = true
+                    result.face = true;
                 }
                 "--eye-closeup"
                 | "--lid-close-transition"

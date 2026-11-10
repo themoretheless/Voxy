@@ -590,7 +590,7 @@ mod tests {
                         .palette(Mat4::IDENTITY)
                         .unwrap()
                         .iter()
-                        .flat_map(|m| m.to_cols_array())
+                        .flat_map(glam::Mat4::to_cols_array)
                     {
                         checksum = checksum.rotate_left(7) ^ u64::from(value.to_bits());
                     }
@@ -643,7 +643,7 @@ mod tests {
                 .palette(Mat4::IDENTITY)
                 .unwrap()
                 .iter()
-                .flat_map(|m| m.to_cols_array())
+                .flat_map(glam::Mat4::to_cols_array)
             {
                 checksum = checksum.rotate_left(7) ^ u64::from(value.to_bits());
             }

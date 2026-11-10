@@ -1163,7 +1163,7 @@ impl ArchiveSceneRenderer {
         };
         let phase_chunks = compute_gi
             .as_ref()
-            .and_then(|gi| gi.stages_configuration())
+            .and_then(compute_gi::ArchiveComputeGi::stages_configuration)
             .map_or(0, |cfg| cfg[0] as u32);
         let mut timing = Timing::new(device, compute_enabled, ssr_enabled, phase_chunks)?;
         if let Some(timing) = &mut timing {

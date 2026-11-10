@@ -14,14 +14,13 @@ fn export(root: &Path, stage: &str, body: &Body, faces: &[[usize; 3]]) -> std::i
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().collect();
-    let source = args
-        .get(1)
-        .map(String::as_str)
-        .unwrap_or("assets/anatomy/hra-female/tetrahedra/right-ovary.vxtet");
+    let source = args.get(1).map_or(
+        "assets/anatomy/hra-female/tetrahedra/right-ovary.vxtet",
+        String::as_str,
+    );
     let output = args
         .get(2)
-        .map(String::as_str)
-        .unwrap_or("/tmp/voxy-anatomy-hgo-right-ovary");
+        .map_or("/tmp/voxy-anatomy-hgo-right-ovary", String::as_str);
     let root = Path::new(output);
     let progress = args.iter().any(|a| a == "--progress");
     let substeps: usize = args
@@ -170,10 +169,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
     fs::write(
         root.join("force-targets.txt"),
-        format!(
-            "axis={axis}\ntargets={targets:?}\npins={:?}\n",
-            pinned_nodes
-        ),
+        format!("axis={axis}\ntargets={targets:?}\npins={pinned_nodes:?}\n"),
     )?;
     fs::write(root.join("time-substeps.txt"), format!("{substeps}\n"))?;
     export(root, "rest", &body, &faces)?;

@@ -745,7 +745,7 @@ impl RootRigidPath {
                     || {
                         span.rotation
                             .body_angular_displacement()
-                            .map_or(0., |v| v.length())
+                            .map_or(0., glam::DVec3::length)
                     },
                     |speed| speed * (span.end() - span.start()),
                 )

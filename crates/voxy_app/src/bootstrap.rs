@@ -9,9 +9,8 @@ pub(super) fn terrain_spawn(world: &World) -> Result<VoxelPos, String> {
         for z in [15, 16] {
             let mut height = None;
             for y in (-32..=63).rev() {
-                let block = match world.sample(VoxelPos { x, y, z }) {
-                    Sample::Loaded(block) => block,
-                    _ => return Err("spawn column is not fully loaded".into()),
+                let Sample::Loaded(block) = world.sample(VoxelPos { x, y, z }) else {
+                    return Err("spawn column is not fully loaded".into());
                 };
                 let definition = world.registry().get(block).ok_or("unknown spawn block")?;
                 if definition.collision != CollisionShape::Empty {

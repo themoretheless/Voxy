@@ -854,15 +854,13 @@ pub(super) fn run(
                     "small source fixture must actually admit BVH8"
                 );
             }
-            if wide_requested {
-                if let Some(root) = &root {
-                    std::fs::write(
-                        root.join(format!("wide-source-{kind:?}-order-{certify_order}.json")),
-                        serde_json::to_vec_pretty(
-                            &serde_json::json!({"requested":true,"actually_admitted":job.wide_source_nodes_enabled(),"node_reciprocal":job.node_reciprocal_enabled(),"scheduling_block_blake3":job.wide_source_digest(),"original_exact_binary_fallback_retained":true,"performance_qualified":false}),
-                        )?,
-                    )?;
-                }
+            if wide_requested && let Some(root) = &root {
+                std::fs::write(
+                    root.join(format!("wide-source-{kind:?}-order-{certify_order}.json")),
+                    serde_json::to_vec_pretty(
+                        &serde_json::json!({"requested":true,"actually_admitted":job.wide_source_nodes_enabled(),"node_reciprocal":job.node_reciprocal_enabled(),"scheduling_block_blake3":job.wide_source_digest(),"original_exact_binary_fallback_retained":true,"performance_qualified":false}),
+                    )?,
+                )?;
             }
 
             if std::env::var_os("VOXY_RAY_MATERIAL_SIDES_WINNER_SLOTS").is_some()

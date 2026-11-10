@@ -26,12 +26,10 @@ impl GpuHairLinearSolver {
                     && size <= limits.max_storage_buffer_binding_size
                     && (size / 4).div_ceil(64) <= limits.max_compute_workgroups_per_dimension as u64
             });
-        if shader_transport {
-            if self.rhs_transfer_program.is_none() {
-                self.rhs_transfer_program = Some(pollster::block_on(
-                    voxy_render::BandedTransferProgram::new(&self.device),
-                )?);
-            }
+        if shader_transport && self.rhs_transfer_program.is_none() {
+            self.rhs_transfer_program = Some(pollster::block_on(
+                voxy_render::BandedTransferProgram::new(&self.device),
+            )?);
         }
         // Validate immutable matrix/layout equivalence before any queue mutation.
         let updates = inputs
@@ -203,7 +201,7 @@ impl GpuHairLinearSolver {
             self.response_submissions += 1;
             let mut reads = snapshots
                 .into_iter()
-                .map(|snapshot| snapshot.begin_read())
+                .map(voxy_render::ComputeDispatch::begin_read)
                 .collect::<Vec<_>>();
             self.device.poll(wgpu::PollType::Wait {
                 submission_index: Some(submission),
