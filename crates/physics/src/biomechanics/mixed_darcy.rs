@@ -352,7 +352,7 @@ impl MixedDarcy {
             }
             incoming[receiver].push((donor, coefficient));
         }
-        solve_protein(&rhs_mass, &diagonal, &incoming, &external_out)
+        crate::positive_transport::solve_protein(&rhs_mass, &diagonal, &incoming, &external_out)
     }
     /// Conservative protein transport with one finite, mixed external compartment.
     /// All listed external faces exchange with the same reservoir inventory.
@@ -405,7 +405,8 @@ impl MixedDarcy {
             }
             incoming[receiver].push((donor, coefficient));
         }
-        let mut mass = solve_protein(&rhs, &diagonal, &incoming, &vec![0.; n + 1])?;
+        let mut mass =
+            crate::positive_transport::solve_protein(&rhs, &diagonal, &incoming, &vec![0.; n + 1])?;
         let reservoir_mass = mass.pop().ok_or("missing finite reservoir protein")?;
         Ok((mass, reservoir_mass))
     }
@@ -989,21 +990,3 @@ impl MixedDarcy {
 }
 
 // Positive sparse M-matrix solve shared by sealed, prescribed and finite reservoirs.
-pub(crate) fn solve_protein(
-    rhs_mass: &[f64],
-    diagonal: &[f64],
-    incoming: &[Vec<(usize, f64)>],
-    external_out: &[f64],
-) -> Result<Vec<f64>, &'static str> {
-    crate::positive_transport::solve_mass(rhs_mass, diagonal, incoming, external_out).map_err(
-        |error| match error {
-            "implicit positive transport iteration overflow" => {
-                "implicit protein iteration overflow"
-            }
-            "implicit positive transport inventory overflow" => {
-                "implicit protein inventory overflow"
-            }
-            _ => "implicit protein transport did not converge",
-        },
-    )
-}

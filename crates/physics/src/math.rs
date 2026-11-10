@@ -5,6 +5,9 @@
 //! single floating-point result: `dot` accumulates left to right from zero,
 //! `norm` is the nested `hypot`, `cross` keeps the textbook component order.
 
+/// Row-major 3x3 matrix shared by the continuum, friction and cohesive models.
+pub type Matrix = [[f64; 3]; 3];
+
 /// Left-to-right accumulated dot product.
 #[inline]
 #[must_use]

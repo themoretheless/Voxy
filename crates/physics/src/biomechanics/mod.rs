@@ -8,9 +8,8 @@ pub use vascular_pore::{
     OsmoticPressureLaw, VascularPoreConfig, VascularPorePort, VascularPoreReport,
     starling_glycocalyx_filtration,
 };
-mod mixed_darcy;
-pub(crate) use mixed_darcy::solve_protein;
 mod harmonic_reference;
+mod mixed_darcy;
 mod tetra_mesh;
 pub use harmonic_reference::HarmonicReference;
 pub use mixed_darcy::{
@@ -88,7 +87,7 @@ pub use myocardium::{ExponentialTerm, Myocardium, frank_starling_preload_scale};
 pub use specimens::*;
 pub use stress::{ElementStress, Stress};
 pub type Vec3 = [f64; 3];
-pub type Matrix = [[f64; 3]; 3];
+pub use crate::math::Matrix;
 pub const IDENTITY: Matrix = [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
 fn dot(a: Vec3, b: Vec3) -> f64 {
     // === OPTIMIZATION #4-5: Manual SIMD unrolling для dot product ===

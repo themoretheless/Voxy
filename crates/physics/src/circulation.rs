@@ -470,7 +470,7 @@ impl Circulation {
             }
             incoming[receiver].push((donor, coefficient));
         }
-        crate::biomechanics::solve_protein(protein_kg, &diagonal, &incoming, &vec![0.; n])
+        crate::positive_transport::solve_protein(protein_kg, &diagonal, &incoming, &vec![0.; n])
     }
     /// Closed-loop solve with selected chamber laws supplied by a volume/tangent
     /// callback. The callback receives index and trial transmural pressure.
