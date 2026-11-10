@@ -1,6 +1,5 @@
 //! Full native PlaySession and model resources share one original animation runtime.
 //! Authoring history, UI resources, audio and final App publication are outer owners.
-#![allow(dead_code)]
 use super::*;
 use crate::play_session::checkpoint::{
     PlayCheckpointLimits, PlaySessionCheckpoint, PreparedPlaySession,
@@ -523,9 +522,17 @@ pub(crate) struct ReadyPlayResources {
     pub resources: PreparedModelResources,
     pub game: PreparedPlaySession,
     pub gpu: crate::gpu_model::restore::ReadyModels,
+    #[cfg_attr(
+        not(test),
+        expect(
+            dead_code,
+            reason = "validated in standalone play resource restore tests"
+        )
+    )]
     origin: Arc<PlayResourceGuard>,
 }
 impl PreparedPlayResources {
+    #[cfg(test)]
     pub(crate) fn stage_gpu(
         self,
         target: crate::gpu_model::batch::UploadTarget<'_>,
@@ -572,6 +579,7 @@ impl PendingPlayResources {
 impl ReadyPlayResources {
     /// All checks run synchronously immediately before the enclosing exclusive commit.
     /// Outer authoring/UI/audio/host participants still need their own admission.
+    #[cfg(test)]
     pub(crate) fn validate_origin(
         &self,
         app: &App,
@@ -588,6 +596,10 @@ impl ReadyPlayResources {
 }
 
 impl PendingPlayResources {
+    #[cfg_attr(
+        not(test),
+        expect(dead_code, reason = "worker teardown path for cancelled play staging")
+    )]
     pub(crate) fn discard(mut self) -> Vec<std::thread::JoinHandle<()>> {
         let mut workers = Vec::new();
         if let Some(imports) = self.resources.imports.take() {

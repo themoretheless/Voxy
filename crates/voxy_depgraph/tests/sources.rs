@@ -25,41 +25,7 @@ const CEILING_SLACK: usize = 200;
 /// Files over [`LINE_BUDGET`] with the ceiling each must stay under. Splitting
 /// a file lowers its ceiling or removes the entry; nothing is added here
 /// without a reason recorded in `docs/refactor/PLAN.md`.
-const KNOWN_OVERSIZED: &[(&str, usize)] = &[
-    ("crates/physics/src/astrophysics/spherical.rs", 1650),
-    (
-        "crates/physics/src/astrophysics/spherical_radiation.rs",
-        1700,
-    ),
-    ("crates/physics/src/biomechanics/inertia/implicit.rs", 2050),
-    ("crates/physics/src/liquid.rs", 1550),
-    ("crates/physics/src/liquid/multi_body.rs", 2000),
-    ("crates/physics/src/lymph.rs", 1550),
-    ("crates/voxy_animation/src/lib.rs", 2250),
-    ("crates/voxy_animation/src/root_rigid/enclosure.rs", 1900),
-    (
-        "crates/voxy_animation/src/root_rigid/enclosure/compilation.rs",
-        2150,
-    ),
-    ("crates/voxy_animation/src/root_rotation.rs", 1550),
-    ("crates/voxy_app/src/main.rs", 3000),
-    ("crates/voxy_demos/src/face_parameters.rs", 2750),
-    ("crates/voxy_demos/src/female_demo.rs", 2800),
-    ("crates/voxy_demos/src/female_rig.rs", 2550),
-    ("crates/voxy_demos/src/tissue_demo.rs", 2150),
-    ("crates/voxy_editor/src/animation_runtime.rs", 1650),
-    ("crates/voxy_editor/src/lib.rs", 2000),
-    ("crates/voxy_editor/src/panels.rs", 1700),
-    ("crates/voxy_gameplay/src/lib.rs", 1850),
-    ("crates/voxy_gameplay/src/liquid_runtime.rs", 2450),
-    ("crates/voxy_ray_probe/src/shared_producer_audit.rs", 2600),
-    ("crates/voxy_render/src/archive_scene.rs", 3900),
-    ("crates/voxy_render/src/renderer.rs", 2150),
-    ("crates/voxy_render/src/scene.rs", 3150),
-    ("crates/voxy_render/src/surface.rs", 1650),
-    ("crates/voxy_render/src/world_nearest_job.rs", 1850),
-    ("crates/voxy_shell/src/scene_app.rs", 2750),
-];
+const KNOWN_OVERSIZED: &[(&str, usize)] = &[];
 
 fn workspace() -> PathBuf {
     normalize(Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../..")))

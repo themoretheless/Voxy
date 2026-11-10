@@ -93,13 +93,15 @@ fn completion_keeps_floor_contact_and_wall_stops_motion_after_fade() {
     let certificate = tick.coordinate_certificate(1, 4096).unwrap().unwrap();
     let axis_query = |axes| {
         sweep_rigid_approximation_with_axis_errors(
-            DVec3::Y * 0.125,
-            edges,
-            DQuat::IDENTITY,
+            SweepQuery {
+                center: DVec3::Y * 0.125,
+                rest_edges: edges,
+                orientation: DQuat::IDENTITY,
+                basis: DQuat::IDENTITY,
+                origin: DVec3::ZERO,
+                scale: 1.,
+            },
             tick.approximation(),
-            DQuat::IDENTITY,
-            DVec3::ZERO,
-            1.,
             0.002,
             axes,
             &[floor],

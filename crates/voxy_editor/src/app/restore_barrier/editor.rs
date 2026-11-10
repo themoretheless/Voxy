@@ -30,6 +30,7 @@ impl App {
 impl EditorCheckpoint {
     /// Failure of history preparation drops only the detached game candidate and
     /// closes its workers; it never changes the original App/history pair.
+    #[cfg(test)]
     pub(crate) fn prepare(
         &self,
         options: CoordinatedPrepare<'_>,
@@ -167,6 +168,7 @@ impl EditorCheckpoint {
 }
 
 impl EditorCheckpoint {
+    #[cfg(test)]
     pub(crate) fn prepare_guarded(
         &self,
         options: CoordinatedPrepare<'_>,
@@ -189,6 +191,7 @@ impl EditorCheckpoint {
     }
 }
 impl PreparedEditorCheckpoint {
+    #[cfg(test)]
     pub(crate) fn validate_origin(
         &self,
         app: &mut App,
@@ -253,11 +256,13 @@ impl PendingEditorCheckpoint {
             authoring: self.authoring,
         })
     }
+    #[cfg(test)]
     pub(crate) fn discard(self) -> Vec<std::thread::JoinHandle<()>> {
         self.game.discard()
     }
 }
 impl ReadyEditorCheckpoint {
+    #[cfg(test)]
     pub(crate) fn validate_origin(
         &self,
         app: &mut App,
@@ -272,6 +277,7 @@ impl ReadyEditorCheckpoint {
         self.game
             .validate_origin(app, bindings, registry, compatibility, target)
     }
+    #[cfg(test)]
     pub(crate) fn discard(self) -> Vec<std::thread::JoinHandle<()>> {
         self.game.discard()
     }
@@ -301,6 +307,7 @@ impl PendingEditorInstallation {
             publication,
         })
     }
+    #[cfg(test)]
     pub(crate) fn discard(mut self) -> Vec<std::thread::JoinHandle<()>> {
         let mut workers = retire_staged_models(&mut self.state.resources);
         workers.extend(self.publication.discard());
@@ -357,6 +364,7 @@ impl ReadyEditorInstallation {
 impl App {
     /// Convenience for exclusive callers. The event loop can instead retain the
     /// owned pending installation and poll its GPU checks without borrowing App.
+    #[cfg(test)]
     pub(crate) async fn install_editor_checkpoint(
         &mut self,
         candidate: ReadyEditorCheckpoint,
@@ -657,6 +665,7 @@ impl RetiredEditorCheckpoint {
         }
         (self.workers, errors)
     }
+    #[cfg(test)]
     pub(crate) fn finish(self) -> Vec<String> {
         let (workers, mut errors) = self.release();
         for worker in workers {

@@ -374,7 +374,8 @@ impl AnimationRuntimeCheckpoint {
                 .feet
                 .as_ref()
                 .map(|f| {
-                    f.prepare_with_source_skeleton(
+                    crate::foot_placement::checkpoint::prepare_with_rig(
+                        f,
                         FootCheckpointRig::Model(&model),
                         Some(&animation_model.skeleton),
                         &animation_model.animations,

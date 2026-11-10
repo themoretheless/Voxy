@@ -1,5 +1,4 @@
 //! Ordered model import/watch fence; capture stays detached from GPU publication.
-#![allow(dead_code)]
 use crate::*;
 use voxy_assets::{PollWorkerError, SourcePollerCheckpoint};
 #[derive(Debug)]
@@ -81,6 +80,7 @@ pub(crate) struct ModelAnimationCheckpoint {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     accepted_frames: Option<crate::animated_models::checkpoint::AcceptedFrames>,
 }
+#[cfg(test)]
 pub(crate) struct PreparedModelAnimation {
     pub resources: PreparedModelResources,
     pub animations: crate::animation_runtime::AnimationRuntime,
@@ -88,6 +88,7 @@ pub(crate) struct PreparedModelAnimation {
     pub accepted_frames:
         Option<BTreeMap<NodeId, crate::animated_models::checkpoint::PreparedFrame>>,
 }
+#[cfg(test)]
 pub(crate) struct PendingModelAnimation {
     origin: Option<super::restore_guard::SceneAuthoringGuard>,
     model_origin: Option<super::restore_guard::ModelRuntimeGuard>,
@@ -95,6 +96,7 @@ pub(crate) struct PendingModelAnimation {
     animations: crate::animation_runtime::AnimationRuntime,
     gpu: crate::gpu_model::restore::PendingModels,
 }
+#[cfg(test)]
 pub(crate) struct ReadyModelAnimation {
     origin: Option<super::restore_guard::SceneAuthoringGuard>,
     model_origin: Option<super::restore_guard::ModelRuntimeGuard>,
@@ -102,6 +104,7 @@ pub(crate) struct ReadyModelAnimation {
     pub animations: crate::animation_runtime::AnimationRuntime,
     pub gpu: crate::gpu_model::restore::ReadyModels,
 }
+#[cfg(test)]
 impl PreparedModelAnimation {
     pub(crate) fn stage_gpu_for_app(
         self,
@@ -139,6 +142,7 @@ impl PreparedModelAnimation {
         })
     }
 }
+#[cfg(test)]
 impl PendingModelAnimation {
     pub(crate) async fn validate(self) -> Result<ReadyModelAnimation, EditorError> {
         let gpu = self.gpu.validate().await?;
@@ -151,6 +155,7 @@ impl PendingModelAnimation {
         })
     }
 }
+#[cfg(test)]
 impl ReadyModelAnimation {
     /// Recheck native model clock/publication/index/queue/fence observations.
     pub(crate) fn validate_model_origin(&self, app: &App) -> Result<(), EditorError> {
@@ -171,6 +176,7 @@ impl ReadyModelAnimation {
             .validate(app)
     }
 }
+#[cfg(test)]
 impl ModelAnimationCheckpoint {
     pub(crate) fn to_bytes(&self, max_bytes: usize) -> Result<Vec<u8>, EditorError> {
         envelope(self, *b"VOXYMAC1", max_bytes)
@@ -310,6 +316,7 @@ impl ModelResourcesCheckpoint {
     pub(crate) fn to_bytes(&self, max_bytes: usize) -> Result<Vec<u8>, EditorError> {
         envelope(self, *b"VOXYEMR1", max_bytes)
     }
+    #[cfg(test)]
     pub(crate) fn from_bytes(bytes: &[u8], max_bytes: usize) -> Result<Self, EditorError> {
         decode_envelope(bytes, *b"VOXYEMR1", max_bytes)
     }
@@ -720,6 +727,7 @@ impl App {
         });
         Ok(true)
     }
+    #[cfg(test)]
     pub(crate) fn capture_model_resources(
         &self,
         limits: import::catalog_checkpoint::Limits,

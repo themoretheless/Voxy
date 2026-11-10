@@ -1,5 +1,4 @@
 //! Detached resource + accepted-animation GPU restore; App owns final publication.
-#![allow(dead_code)]
 use super::*;
 use crate::{
     animated_models::{AnimatedModels, Request, checkpoint::PreparedFrame},
@@ -236,6 +235,10 @@ pub(crate) struct UiUploadBase<'a> {
     _validated: (),
 }
 pub(crate) struct PublishedModelOwners {
+    #[cfg_attr(
+        not(test),
+        expect(dead_code, reason = "read by GPU model restore unit tests")
+    )]
     pub scene: SceneId,
     pub models: BTreeMap<voxy_assets::AssetId, ModelGraphics>,
     pub animated: AnimatedModels,
