@@ -46,10 +46,11 @@
 - [x] **0.4 (S)** `[workspace.dependencies]` (glam, wgpu, winit, thiserror, serde, serde_json, bytemuck, pollster,
   image, gltf, rayon) и `dep.workspace = true` в манифестах. Проверка: `git diff --exit-code Cargo.lock`.
   Статус: 17 зависимостей, 121 строка в 31 манифесте, `Cargo.lock` не изменился (`cb42f6ce9`).
-- [ ] **0.5 (S, замер)** Профили в корневом `Cargo.toml`: `[profile.release]` `lto = "thin"`, `codegen-units = 1`;
+- [x] **0.5 (S, замер)** Профили в корневом `Cargo.toml`: `[profile.release]` `lto = "thin"`, `codegen-units = 1`;
   `[profile.bench]` наследует release; `[profile.dev.package."*"] opt-level = 2` для внешних зависимостей;
   кандидат `[profile.dev.package.physics] opt-level = 1` (тяжёлые тесты в debug идут часами).
   Каждая строка остаётся только если даёт выигрыш в бенчах или времени тестов; цифры в `BASELINE.md`.
+  Статус: `61c4a10cd`: зависимости opt-level 3, physics opt-level 1; цифры в `BASELINE.md`.
 - [x] **0.6 (S)** Ratchet-тесты в `crates/voxy_depgraph/tests/`: (a) каждый `.rs` под `src/` достижим из дерева `mod`;
   (b) бюджет прод-строк на файл со списком известных превышений, который может только сокращаться
   (тот же приём, что `ALLOWED`/`KNOWN_VIOLATIONS`). `tools/check.sh`: fmt + clippy + depgraph одной командой.
@@ -92,12 +93,13 @@
   4. `git mv` в `crates/voxy_gameplay/src/foot_placement/`, editor реэкспортирует;
   5. 8 мест в `voxy_demos` на `voxy_gameplay::`, убрать зависимость и запись в `ALLOWED`.
   Ключ документа `"editor.foot-placement.v1"` и JSON не меняются (их фиксируют существующие wire-тесты).
-- [ ] **2.2 Консолидация тестов physics (10 коммитов).** 224 бинаря -> 7: `tests/physics_{liquid 60, solid 57,
+- [x] **2.2 Консолидация тестов physics (10 коммитов).** 224 бинаря -> 7: `tests/physics_{liquid 60, solid 57,
   bio 48, astro 27, film 17, rigid 12, hair 3}/main.rs`, по `mod` на старый файл. Блокеры перечислимы:
   10 `#[path = "support/..."]`, 5 `include_str!("data/...")`, `anatomy_tet.rs:3-5` (`ancestors().nth(4)`),
   `quadratic_wet_update.rs` (`crate::calibration`), 6 лишних `#![allow]`. Перед началом снимается список
   имён тестов (`-- --list`), после каждой группы сверяется: 1594 теста, 4 ignored. Документы
   `docs/{hair,tissues,physics,biomechanics,...}.md`: `--test urogenital` -> `--test physics_bio urogenital::`.
+  Статус: `da0ecf2b6`: 7 бинарей, тот же список из 1594 тестов, все зелёные.
 - [ ] **2.3 Ациклический `physics` (13 коммитов).** Фактически это три сильно связные компоненты, а не пары.
   1. ratchet-тест `crates/voxy_depgraph/tests/physics_modules.rs` (~100 строк, std) со списком текущих нарушений;
   2. восемь маленьких переносов типов, по коммиту: `Matrix` в `math.rs`; `solve_protein` в `positive_transport.rs`;
@@ -187,9 +189,10 @@
   персонажа на кадр (`lib.rs:867,1254,1700`).
 - [ ] **5.5 scene** `active_components<T>` (`voxy_scene/src/lib.rs:418-445`) обходит все слоты с хэш-пробой;
   индекс по типу. Бенч `scene_scaling` уже есть.
-- [ ] **5.6 voxel** `palette_indices()` (`voxy_world/src/chunk.rs:132`, 32 768 `u16` на вызов, 3 потребителя):
+- [~] **5.6 voxel** `palette_indices()` (`voxy_world/src/chunk.rs:132`, 32 768 `u16` на вызов, 3 потребителя):
   scratch-API; scratch в `voxy_lighting/src/propagate.rs`; пословная распаковка и табличный CRC32 в
   `voxy_storage/src/codec.rs` (формат тот же). Бенч `voxel_pipeline` расширить на storage.
+  Статус: буферы `palette_indices_into` сделаны (`aab725583`, меш −11%); остались пословный codec и CRC32 в `voxy_storage`.
 - [ ] **5.7 render CPU** кэш покадровых bind group / view / buffer (`archive_temporal.rs:322-456`, `bloom.rs:180-189`,
   `shadow_map.rs:161-166`, `native_vegetation.rs:849`, `blit.rs:500-522`); archive-шейдер 145 KB
   компилировать один раз вместо трёх.
