@@ -1506,6 +1506,8 @@ mod droplet_optics;
 use crate::math::norm;
 use crate::math::sub;
 pub use droplet_optics::{DirectionalScatteringLight, DropletExtinctionGrid};
+mod suspension_optics;
+pub use suspension_optics::{suspension_extinction_grid, turbidity_extinction_m_inverse};
 
 #[path = "liquid/jet.rs"]
 pub mod jet;

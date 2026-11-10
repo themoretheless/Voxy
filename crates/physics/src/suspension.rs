@@ -373,8 +373,6 @@ impl Particle {
     }
 }
 
-mod optics;
-pub use optics::{suspension_extinction_grid, turbidity_extinction_m_inverse};
 mod cloud;
 pub use cloud::{
     CloudExchange, exchange_drag_cloud, exchange_forced_cloud, exchange_gravity_cloud,

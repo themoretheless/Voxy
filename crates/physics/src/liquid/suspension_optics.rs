@@ -2,8 +2,8 @@
 //! over the carrier volume, binned onto a grid the renderer already reads.
 //! `Q` is an explicit dimensionless efficiency; no material calibration is inferred.
 
-use super::Particle;
-use crate::liquid::{DropletExtinctionGrid, Error};
+use super::{DropletExtinctionGrid, Error};
+use crate::suspension::Particle;
 
 /// Mean extinction coefficient (1/m) of grains sharing a carrier volume.
 /// # Errors
