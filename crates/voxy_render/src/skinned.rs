@@ -778,7 +778,13 @@ impl InfluenceGroups {
     /// `true` when every group is certified, so the whole pose is admissible.
     #[cfg(test)]
     fn certify(&self, joints: &[Mat4], model: Mat4, workers: usize) -> bool {
-        self.certify_profiled::<false>(joints, model, workers, &[], &mut RenderPoseProfile::default())
+        self.certify_profiled::<false>(
+            joints,
+            model,
+            workers,
+            &[],
+            &mut RenderPoseProfile::default(),
+        )
     }
 
     fn certify_profiled<const PROFILE: bool>(

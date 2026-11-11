@@ -525,6 +525,7 @@ impl ArchiveComputeGi {
     pub(super) fn encode(
         &self,
         encoder: &mut wgpu::CommandEncoder,
+        submission: (&wgpu::Device, &wgpu::Queue),
         depth: &wgpu::TextureView,
         camera: &wgpu::BindGroup,
         frame: &wgpu::BindGroup,
@@ -597,7 +598,7 @@ impl ArchiveComputeGi {
             .as_ref()
             .filter(|frame| frame.needs_queries(history_available, all_guides_use_history))
         {
-            frame.encode(encoder, timing);
+            frame.encode(encoder, timing, submission);
         } else if let Some(stages) = self
             .stages
             .as_ref()

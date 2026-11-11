@@ -170,9 +170,16 @@ impl ArchiveWorldRayFrame {
         &self,
         encoder: &mut wgpu::CommandEncoder,
         timing: Option<&wgpu::QuerySet>,
+        (device, queue): (&wgpu::Device, &wgpu::Queue),
     ) {
         self.encoded_frames
             .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        // wgpu allocates multiple Metal command buffers per region. Submit
+        // ordered batches so the queue can drain before the frame is fully
+        // encoded. Shared ray scratch remains ordered on the same queue.
+        let batch_metal = device.adapter_info().backend == wgpu::Backend::Metal;
+        const REGIONS_PER_SUBMISSION: usize = 8;
+        let mut encoded_regions = 0;
         for (kind, regions) in self.kinds.iter().enumerate() {
             let base = 8 + kind as u32 * 2;
             for (index, region) in regions.iter().enumerate() {
@@ -193,6 +200,13 @@ impl ArchiveWorldRayFrame {
                         )
                     }),
                 );
+                encoded_regions += 1;
+                if batch_metal && encoded_regions % REGIONS_PER_SUBMISSION == 0 {
+                    let next = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                        label: Some("archive world-ray region batch"),
+                    });
+                    queue.submit([std::mem::replace(encoder, next).finish()]);
+                }
             }
         }
     }

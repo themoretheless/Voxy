@@ -15,7 +15,14 @@ __pycache__/
 /assets/environments/bistro/cache/
 
 # Run outputs, local packages and local tooling state
-/artifacts/
+/artifacts/*
+!/artifacts/character-bind-pose-2026-10-07/
+!/artifacts/character-bind-pose-2026-10-07/**
+!/artifacts/rig-constant-parents-2026-10-03/
+!/artifacts/rig-constant-parents-2026-10-03/**
+/docs/body-film-*-state.json
+/docs/architecture-performance/
+/.research/
 *.vpak
 *.profdata
 /lcov.info

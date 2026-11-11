@@ -12,3 +12,23 @@ STREET WORLD SCHEDULING {"kind":"Nearest","source_simplified":false,"wide_source
 STREET WORLD geometry_bounds_bytes=0 geometry_bounds_check=false
 STREET WORLD FRAME connected=true regions=144 tile=512x256 ray_capacity=131072 shared_query_owner=true original_full_frame_DDA_skipped=true
 STREET antialiasing=Temporal render=3840x2160 output=1920x1080
+STREET probes=372 completed in 274.797 s before measurement
+time: command terminated abnormally
+      645.84 real        23.94 user        17.34 sys
+          5341577216  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             1105577  page reclaims
+                 501  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 150  voluntary context switches
+              321525  involuntary context switches
+        184593743646  instructions retired
+         86453926957  cycles elapsed
+         10266924120  peak memory footprint

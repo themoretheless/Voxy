@@ -179,6 +179,7 @@ pub struct ArchiveProbeBake {
     saved: (crate::ArchiveAntialiasing, bool, f32, Vec3),
     next_probe: usize,
     next_face: usize,
+    pending_face: Option<wgpu::SubmissionIndex>,
     started: std::time::Instant,
     finished: bool,
 }
@@ -267,17 +268,25 @@ impl ArchiveSceneRenderer {
             saved,
             next_probe: 0,
             next_face: 0,
+            pending_face: None,
             started: std::time::Instant::now(),
             finished: false,
         })
     }
 
-    /// Complete one original cube face, then yield to the caller. No spatial,
-    /// radiance or SH sample is dropped; resources and submission order match
-    /// the synchronous bake. The job must be advanced on its owning renderer.
+    /// Advance at most one original cube face with a bounded GPU wait.
+    /// A pending face retains its submission and is counted only after completion.
     pub fn advance_irradiance_probe_bake(
         &mut self,
         bake: &mut ArchiveProbeBake,
+    ) -> Result<bool, crate::ComputeError> {
+        self.advance_probe_face(bake, Some(std::time::Duration::from_millis(2)))
+    }
+
+    fn advance_probe_face(
+        &mut self,
+        bake: &mut ArchiveProbeBake,
+        timeout: Option<std::time::Duration>,
     ) -> Result<bool, crate::ComputeError> {
         if !Arc::ptr_eq(&bake.owner, &self.probe_bake_owner) {
             return Err(crate::ComputeError::DeviceMismatch);
@@ -301,27 +310,36 @@ impl ArchiveSceneRenderer {
             ];
             let (forward, up) = faces[bake.next_face];
             let point = bake.points[bake.next_probe];
-            self.set_camera_projection(90_f32.to_radians(), up);
-            self.previous_vp = None;
-            self.draw(&bake.view, point, forward);
-            let right = forward.cross(up).normalize();
-            let submission = bake.projector.project(
-                &self.device,
-                &self.queue,
-                &bake.view,
-                (self.width, self.height),
-                &self.probe_sh,
-                bake.next_probe,
-                bake.next_face,
-                [forward, right, up],
-                1. / self.exposure,
-            );
-            self.device
-                .poll(wgpu::PollType::Wait {
-                    submission_index: Some(submission),
-                    timeout: None,
-                })
-                .map_err(|e| crate::ComputeError::Validation(format!("probe completion: {e}")))?;
+            if bake.pending_face.is_none() {
+                self.set_camera_projection(90_f32.to_radians(), up);
+                self.previous_vp = None;
+                self.draw(&bake.view, point, forward);
+                let right = forward.cross(up).normalize();
+                bake.pending_face = Some(bake.projector.project(
+                    &self.device,
+                    &self.queue,
+                    &bake.view,
+                    (self.width, self.height),
+                    &self.probe_sh,
+                    bake.next_probe,
+                    bake.next_face,
+                    [forward, right, up],
+                    1. / self.exposure,
+                ));
+            }
+            let submission = bake.pending_face.clone();
+            match self.device.poll(wgpu::PollType::Wait {
+                submission_index: submission,
+                timeout,
+            }) {
+                Ok(_) => bake.pending_face = None,
+                Err(wgpu::PollError::Timeout) => return Ok(false),
+                Err(error) => {
+                    return Err(crate::ComputeError::Validation(format!(
+                        "probe completion: {error}"
+                    )));
+                }
+            }
             if let Some(root) = std::env::var_os("VOXY_STREET_PROBE_FACE_CAPTURE") {
                 let selected = if let Some(indices) =
                     std::env::var_os("VOXY_STREET_PROBE_FACE_CAPTURE_INDICES")
@@ -441,7 +459,7 @@ impl ArchiveSceneRenderer {
         spacing: f32,
     ) -> Result<usize, crate::ComputeError> {
         let mut bake = self.begin_irradiance_probe_bake(min, max, spacing)?;
-        while !self.advance_irradiance_probe_bake(&mut bake)? {}
+        while !self.advance_probe_face(&mut bake, None)? {}
         Ok(bake.points.len())
     }
 
@@ -667,5 +685,77 @@ impl ArchiveSceneRenderer {
         Err(crate::ComputeError::Validation(
             "completed timestamp readback did not finish".into(),
         ))
+    }
+}
+
+#[cfg(all(test, target_os = "macos"))]
+mod bake_tests {
+    use super::*;
+
+    #[test]
+    #[ignore = "requires a physical Metal GPU"]
+    fn bounded_probe_bake_matches_synchronous_coefficients() {
+        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
+            backends: wgpu::Backends::METAL,
+            ..wgpu::InstanceDescriptor::new_without_display_handle()
+        });
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let min = Vec3::ZERO;
+        let max = Vec3::ONE;
+        let renderer = || {
+            ArchiveSceneRenderer::new(
+                &device,
+                &queue,
+                wgpu::TextureFormat::Rgba16Float,
+                16,
+                16,
+                Vec::new(),
+                Vec::new(),
+                Vec::new(),
+                &[],
+                Vec3::Y,
+                [1.; 4],
+                (min, max),
+            )
+            .unwrap()
+        };
+        let read = |renderer: &ArchiveSceneRenderer| {
+            let source = renderer.irradiance_probe_coefficients_buffer();
+            let size = 8 * crate::probe_gi::PROBE_BYTES;
+            let buffer = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size,
+                usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            });
+            let mut encoder = device.create_command_encoder(&Default::default());
+            encoder.copy_buffer_to_buffer(source, 0, &buffer, 0, size);
+            queue.submit([encoder.finish()]);
+            let (sender, receiver) = std::sync::mpsc::channel();
+            let slice = buffer.slice(..);
+            slice.map_async(wgpu::MapMode::Read, move |result| {
+                sender.send(result).unwrap()
+            });
+            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            receiver.recv().unwrap().unwrap();
+            slice.get_mapped_range().unwrap().to_vec()
+        };
+
+        let mut synchronous = renderer();
+        assert_eq!(synchronous.bake_irradiance_probes(min, max, 1.).unwrap(), 8);
+        let expected = read(&synchronous);
+        assert!(expected.iter().any(|&byte| byte != 0));
+
+        let mut bounded = renderer();
+        let mut bake = bounded.begin_irradiance_probe_bake(min, max, 1.).unwrap();
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+        while !bounded.advance_irradiance_probe_bake(&mut bake).unwrap() {
+            assert!(std::time::Instant::now() < deadline);
+        }
+        assert_eq!(bake.progress(), (8, 8));
+        assert!(bake.pending_face.is_none());
+        assert_eq!(read(&bounded), expected);
     }
 }

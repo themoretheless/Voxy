@@ -563,7 +563,11 @@ impl ApplicationHandler for VoxyApp {
                 }
             }
             WindowEvent::RedrawRequested => {
-                if self.profile.as_ref().is_some_and(frame_profile::Profile::is_complete) {
+                if self
+                    .profile
+                    .as_ref()
+                    .is_some_and(frame_profile::Profile::is_complete)
+                {
                     return;
                 }
                 if let Some(message) = self.renderer.as_ref().and_then(Renderer::device_failure) {

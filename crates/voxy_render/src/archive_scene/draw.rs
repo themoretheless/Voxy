@@ -280,6 +280,7 @@ impl ArchiveSceneRenderer {
         if let Some(gi) = self.compute_gi.as_ref().filter(|_| compute_active) {
             gi.encode(
                 &mut encoder,
+                (&self.device, &self.queue),
                 &self.depth_view,
                 &self.camera_bind,
                 &self.frame_bind,

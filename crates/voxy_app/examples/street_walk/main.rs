@@ -37,6 +37,7 @@ struct Gpu {
     scene_target: Option<wgpu::Texture>,
     panel_px: u32,
     bodycam: Option<voxy_render::BodycamPostProcess>,
+    pending_world_frame: Option<wgpu::SubmissionIndex>,
 }
 /// Camera cycled with V: eye, orbit, chest bodycam, hand-held camcorder.
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -651,6 +652,7 @@ impl App {
             scene_target,
             panel_px,
             bodycam: None,
+            pending_world_frame: None,
         });
         self.last = Instant::now();
         if !self.offscreen_benchmark && self.probe_bake.is_none() {
@@ -799,6 +801,20 @@ impl App {
             }
             self.last = Instant::now();
             return Ok(());
+        }
+        // A tiled world-ray frame can occupy many Metal command buffers.
+        // Yield before acquiring the next surface or advancing its simulation.
+        if let Some(gpu) = &mut self.gpu
+            && let Some(submission) = &gpu.pending_world_frame
+        {
+            match gpu.device.poll(wgpu::PollType::Wait {
+                submission_index: Some(submission.clone()),
+                timeout: Some(std::time::Duration::from_millis(2)),
+            }) {
+                Ok(_) => gpu.pending_world_frame = None,
+                Err(wgpu::PollError::Timeout) => return Ok(()),
+                Err(error) => return Err(error.into()),
+            }
         }
         let now = Instant::now();
         let elapsed = now.duration_since(self.last).as_secs_f64();
@@ -1209,9 +1225,22 @@ impl App {
                 submission_index: Some(submission),
                 timeout: None,
             })?;
+        } else if gpu.renderer.world_ray_frame_enabled() {
+            gpu.pending_world_frame = Some(submission);
         }
         let render_time = render_start.elapsed().as_secs_f64();
         self.frames += 1;
+        if self.benchmark > 0.
+            && !self.offscreen_benchmark
+            && (self.frames == 1 || (self.frames <= 180 && self.frames % 30 == 0))
+        {
+            eprintln!(
+                "STREET warmup submitted={}/180 simulation_steps={} render_ms={:.3}",
+                self.frames,
+                self.simulation_steps,
+                render_time * 1000.
+            );
+        }
         if self.offscreen_benchmark && std::env::var_os("VOXY_STREET_BENCHMARK_PROGRESS").is_some()
         {
             eprintln!(

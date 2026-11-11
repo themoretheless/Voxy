@@ -1,11 +1,163 @@
 //! Pipeline, bind group layout, and resource constructors for [`super::Renderer`].
 
+use bytemuck::{Pod, Zeroable};
+use glam::Vec3;
 use std::fmt;
 use std::sync::Arc;
 use voxy_gpu_core::{BindGroupBuilder, BindGroupLayoutBuilder};
+use voxy_mesher::{ChunkMesh, FaceDir, Quad, QuadDiagonal, RenderLayer};
 
-use super::GpuQuad;
 use crate::{MaterialLayer, MaterialPack, MaterialSet, SkinnedUploadError};
+
+#[derive(Clone, Copy, Debug)]
+pub(super) struct ResidentChunkSlot {
+    pub index: usize,
+    pub start: u32,
+    pub end: u32,
+    pub light_word_offset: u32,
+}
+
+impl ResidentChunkSlot {
+    pub(super) fn write_update(
+        self,
+        queue: &wgpu::Queue,
+        quad_buffer: &wgpu::Buffer,
+        light_buffer: &wgpu::Buffer,
+        quads: &[GpuQuad],
+        light: &[u32],
+    ) {
+        if !quads.is_empty() {
+            queue.write_buffer(
+                quad_buffer,
+                u64::from(self.start) * size_of::<GpuQuad>() as u64,
+                bytemuck::cast_slice(quads),
+            );
+        }
+        queue.write_buffer(
+            light_buffer,
+            u64::from(self.light_word_offset) * size_of::<u32>() as u64,
+            bytemuck::cast_slice(light),
+        );
+    }
+
+    pub(super) fn draw_ranges(self, mesh: &ChunkMesh, origin: [i32; 4]) -> Option<ChunkLayerDraws> {
+        if mesh.quad_count() > (self.end - self.start) as usize {
+            return None;
+        }
+        let cutout = self.start + mesh.opaque.len() as u32;
+        let translucent = cutout + mesh.cutout.len() as u32;
+        let end = translucent + mesh.translucent.len() as u32;
+        Some(ChunkLayerDraws {
+            origin,
+            opaque: self.start..cutout,
+            cutout: cutout..translucent,
+            translucent: translucent..end,
+        })
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Pod, Zeroable)]
+pub struct GpuQuad {
+    pub origin: [u8; 4],
+    pub extent_face: [u8; 4],
+    pub material_layer: [u16; 2],
+    pub ao_diagonal: [u8; 4],
+    pub chunk_slot: [u16; 2],
+}
+
+impl From<Quad> for GpuQuad {
+    fn from(quad: Quad) -> Self {
+        Self {
+            origin: [quad.origin[0], quad.origin[1], quad.origin[2], 0],
+            extent_face: [
+                quad.extent_u.get(),
+                quad.extent_v.get(),
+                face_code(quad.face),
+                0,
+            ],
+            material_layer: [quad.material.0, layer_code(quad.layer)],
+            ao_diagonal: [
+                quad.ao[0],
+                quad.ao[1],
+                quad.ao[2],
+                (quad.ao[3] & 0x7f) | (u8::from(quad.diagonal == QuadDiagonal::Vu) << 7),
+            ],
+            chunk_slot: [0, 0],
+        }
+    }
+}
+
+impl GpuQuad {
+    pub(super) fn with_chunk_slot(mut self, chunk_slot: u16) -> Self {
+        self.chunk_slot[0] = chunk_slot;
+        self
+    }
+}
+
+const fn face_code(face: FaceDir) -> u8 {
+    match face {
+        FaceDir::NegX => 0,
+        FaceDir::PosX => 1,
+        FaceDir::NegY => 2,
+        FaceDir::PosY => 3,
+        FaceDir::NegZ => 4,
+        FaceDir::PosZ => 5,
+    }
+}
+
+const fn layer_code(layer: RenderLayer) -> u16 {
+    match layer {
+        RenderLayer::Opaque => 0,
+        RenderLayer::Cutout => 1,
+        RenderLayer::Translucent => 2,
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SurfaceState {
+    Active,
+    Suspended,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum RenderOutcome {
+    Presented,
+    Reconfigured,
+    SkippedTimeout,
+    SkippedOccluded,
+    SkippedValidation,
+    Suspended,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CameraView {
+    pub eye: Vec3,
+    pub target: Vec3,
+    pub up: Vec3,
+    pub vertical_fov_radians: f32,
+    pub near_plane: f32,
+}
+
+impl Default for CameraView {
+    fn default() -> Self {
+        Self {
+            eye: Vec3::new(52.0, 38.0, 52.0),
+            target: Vec3::new(16.0, 5.0, 16.0),
+            up: Vec3::Y,
+            vertical_fov_radians: 55_f32.to_radians(),
+            near_plane: 0.1,
+        }
+    }
+}
+
+/// Partial-scene skeletal motion from one successfully presented resident frame.
+#[derive(Debug)]
+pub struct SkinnedMotionOutput<'a> {
+    pub presentation_id: u64,
+    pub reset_history: bool,
+    pub motion: &'a wgpu::Texture,
+}
 
 #[derive(Debug)]
 pub(super) struct VoxelLayerPipelines {
