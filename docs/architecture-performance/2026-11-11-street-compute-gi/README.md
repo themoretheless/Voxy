@@ -97,3 +97,17 @@ renderer tests, 23 street_walk tests and 28 qualification analyzer tests
 pass (66 renderer and two example tests explicitly ignored). Neither the
 surface guard nor the shared pipeline experiments are enabled by the
 sampling change.
+
+The follow-up combines the guard with one forward shader for both arms and
+does the guarded lookup at the inline ray's original evaluation point. The
+guard checks the bit patterns of the world position and normal. Frame 120
+matches the retained original inline capture before TAA, but 5,903 final
+channels still exceed the bound (max absolute difference 0.00634765625).
+Neither a shared forward shader nor bitwise guard comparisons resolve the
+remaining temporal discrepancy. See `guard-shared-forward.patch` and the
+two `phase-120/guard-shared*.json` comparisons.
+
+The pushed sampling path also completed all three native frame-120 smoke
+runs. The unchanged quality check found 4,616 scene and 49,628
+final channels outside the bound. The change removes the spatial-filter
+confound from the crossover; it does not qualify compute GI.
