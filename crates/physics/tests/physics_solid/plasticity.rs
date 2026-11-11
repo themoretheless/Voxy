@@ -1,4 +1,4 @@
-use physics::biomechanics::Matrix;
+use physics::constitutive::Matrix;
 use physics::plasticity::{Material, State};
 const YOUNG: f64 = 210e9;
 const POISSON: f64 = 0.3;

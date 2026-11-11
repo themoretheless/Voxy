@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
-    binary = ROOT / 'target/debug/voxy_app'
+    binary = ROOT / 'target/debug/voxy_editor'
     with tempfile.TemporaryDirectory(prefix='voxy-game-prefabs-') as directory:
         root = Path(directory)
         model = 'v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n'

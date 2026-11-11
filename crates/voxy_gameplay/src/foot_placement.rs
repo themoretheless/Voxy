@@ -588,13 +588,49 @@ impl FootRuntime {
         source_interval: Option<&SourceContactInterval>,
         frozen_tick: Option<&(Arc<voxy_animation::Pose>, f64)>,
     ) -> Result<AnimatorFrame, String> {
+        self.correct_skeleton_on_support(
+            skeleton,
+            frame,
+            actor,
+            grounded,
+            &preview.support,
+            budget,
+            clip_name,
+            phase,
+            interval,
+            blend,
+            source_interval,
+            frozen_tick,
+        )
+    }
+
+    /// Applies phase-aware IK using the caller's admitted support geometry.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "phase-aware IK receives target and blend intervals"
+    )]
+    pub fn correct_skeleton_on_support(
+        &mut self,
+        skeleton: &voxy_animation::Skeleton,
+        frame: AnimatorFrame,
+        actor: DMat4,
+        grounded: bool,
+        support: &crate::SupportWorld,
+        budget: &mut SupportQueryBudget,
+        clip_name: Option<&str>,
+        phase: Option<f64>,
+        interval: Option<voxy_animation::AnimationPhaseInterval>,
+        blend: Option<voxy_animation::PoseBlendPhases<'_>>,
+        source_interval: Option<&SourceContactInterval>,
+        frozen_tick: Option<&(Arc<voxy_animation::Pose>, f64)>,
+    ) -> Result<AnimatorFrame, String> {
         let mut staged = self.clone();
         let frame = staged.correct_at_phase_inner(
             skeleton,
             frame,
             actor,
             grounded,
-            preview,
+            support,
             budget,
             clip_name,
             phase,
@@ -628,7 +664,18 @@ impl FootRuntime {
         let mut staged = self.clone();
         let skeleton = staged.skeleton.clone();
         let frame = staged.correct_at_phase_inner(
-            &skeleton, frame, actor, grounded, preview, budget, None, None, None, None, None, None,
+            &skeleton,
+            frame,
+            actor,
+            grounded,
+            &preview.support,
+            budget,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
         )?;
         *self = staged;
         Ok(frame)
@@ -643,7 +690,7 @@ impl FootRuntime {
         mut frame: AnimatorFrame,
         actor: DMat4,
         grounded: bool,
-        preview: &CharacterTickPreview,
+        support: &crate::SupportWorld,
         budget: &mut SupportQueryBudget,
         clip_name: Option<&str>,
         phase: Option<f64>,
@@ -762,7 +809,7 @@ impl FootRuntime {
             let mut candidate = foot
                 .state
                 .prepare(
-                    &preview.support,
+                    support,
                     binding.contact,
                     FootContactInput {
                         sole,
@@ -799,7 +846,7 @@ impl FootRuntime {
                     let replacement = foot
                         .state
                         .prepare(
-                            &preview.support,
+                            support,
                             binding.contact,
                             FootContactInput {
                                 sole: proposed,
@@ -862,7 +909,7 @@ impl FootRuntime {
                 if let Some(admitted) = foot
                     .state
                     .prepare_pivot_transfer(
-                        &preview.support,
+                        support,
                         binding.contact,
                         limit,
                         FootContactInput {

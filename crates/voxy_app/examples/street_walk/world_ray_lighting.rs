@@ -8,14 +8,28 @@ pub fn enabled() -> bool {
     std::env::var("VOXY_STREET_WORLD_RAY_FRAME").as_deref() == Ok("1")
 }
 
+pub fn validate_configuration() -> Result<(), &'static str> {
+    if !enabled() {
+        return Ok(());
+    }
+    if !std::env::args().any(|a| a == "--experimental-ray-query") {
+        return Err("world ray frame requires --experimental-ray-query");
+    }
+    if std::env::var_os("VOXY_STREET_COMPUTE_GI").is_none() {
+        return Err("VOXY_STREET_WORLD_RAY_FRAME=1 requires VOXY_STREET_COMPUTE_GI=1");
+    }
+    if std::env::var_os("VOXY_STREET_PAIRED_DDA").is_none() {
+        return Err("VOXY_STREET_WORLD_RAY_FRAME=1 requires VOXY_STREET_PAIRED_DDA=1");
+    }
+    Ok(())
+}
+
 #[allow(unsafe_code)]
 pub fn experimental_features() -> Result<wgpu::ExperimentalFeatures, Box<dyn std::error::Error>> {
     if !enabled() {
         return Ok(wgpu::ExperimentalFeatures::disabled());
     }
-    if !std::env::args().any(|a| a == "--experimental-ray-query") {
-        return Err("world ray frame requires --experimental-ray-query".into());
-    }
+    validate_configuration()?;
     // SAFETY: this explicitly selected experimental ray-query run uses validated
     // archive geometry. The caller opts into wgpu's experimental backend contract.
     Ok(unsafe { wgpu::ExperimentalFeatures::enabled() })

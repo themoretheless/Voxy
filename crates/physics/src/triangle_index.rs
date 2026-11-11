@@ -1,7 +1,8 @@
 //! Shared triangle/swept-triangle broad phase; narrow phase remains caller-owned.
 type V = [f64; 3];
 #[derive(Clone, Copy, Debug)]
-pub(crate) struct TriangleBounds {
+#[doc(hidden)]
+pub struct TriangleBounds {
     lo: V,
     hi: V,
     center: V,
@@ -21,10 +22,12 @@ impl TriangleBounds {
             center: std::array::from_fn(|axis| points.iter().map(|p| p[axis] / N as f64).sum()),
         }
     }
-    pub(crate) fn triangle(points: [V; 3]) -> Self {
+    #[must_use]
+    pub fn triangle(points: [V; 3]) -> Self {
         Self::points(points)
     }
-    pub(crate) fn swept(start: [V; 3], end: [V; 3]) -> Self {
+    #[must_use]
+    pub fn swept(start: [V; 3], end: [V; 3]) -> Self {
         Self::points(std::array::from_fn::<_, 6, _>(|i| {
             if i < 3 { start[i] } else { end[i - 3] }
         }))
@@ -57,13 +60,15 @@ impl NodeBounds {
     }
 }
 #[derive(Clone, Debug)]
-pub(crate) struct TriangleIndex {
+#[doc(hidden)]
+pub struct TriangleIndex {
     topology: std::sync::Arc<[NodeTopology]>,
     ids: std::sync::Arc<[usize]>,
     nodes: Vec<NodeBounds>,
 }
 impl TriangleIndex {
-    pub(crate) fn new(triangles: &[[V; 3]]) -> Self {
+    #[must_use]
+    pub fn new(triangles: &[[V; 3]]) -> Self {
         Self::from_bounds(
             &triangles
                 .iter()
@@ -72,7 +77,8 @@ impl TriangleIndex {
                 .collect::<Vec<_>>(),
         )
     }
-    pub(crate) fn from_bounds(bounds: &[TriangleBounds]) -> Self {
+    #[must_use]
+    pub fn from_bounds(bounds: &[TriangleBounds]) -> Self {
         fn build(
             bounds: &[TriangleBounds],
             mut ids: Vec<usize>,
@@ -128,7 +134,7 @@ impl TriangleIndex {
             nodes,
         }
     }
-    pub(crate) fn refit(&mut self, triangles: &[[V; 3]]) {
+    pub fn refit(&mut self, triangles: &[[V; 3]]) {
         self.refit_bounds(
             &triangles
                 .iter()
@@ -137,7 +143,7 @@ impl TriangleIndex {
                 .collect::<Vec<_>>(),
         );
     }
-    pub(crate) fn refit_bounds(&mut self, bounds: &[TriangleBounds]) {
+    pub fn refit_bounds(&mut self, bounds: &[TriangleBounds]) {
         // Preorder topology guarantees both children follow their parent.
         for i in (0..self.nodes.len()).rev() {
             let (lo, hi) = if let Some((a, b)) = self.topology[i].children {
@@ -192,15 +198,10 @@ impl TriangleIndex {
         }
     }
     // Preserve thin-film traversal semantics; its narrow phase owns precision.
-    pub(crate) fn query(&self, triangle: [V; 3], gap: f64, out: &mut Vec<usize>) {
+    pub fn query(&self, triangle: [V; 3], gap: f64, out: &mut Vec<usize>) {
         self.visit::<false>(0, TriangleBounds::triangle(triangle), gap, 0., out);
     }
-    pub(crate) fn query_conservative(
-        &self,
-        bounds: TriangleBounds,
-        gap: f64,
-        out: &mut Vec<usize>,
-    ) {
+    pub fn query_conservative(&self, bounds: TriangleBounds, gap: f64, out: &mut Vec<usize>) {
         let query_scale = bounds
             .lo
             .iter()

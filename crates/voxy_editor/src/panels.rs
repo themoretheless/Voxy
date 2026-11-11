@@ -70,6 +70,8 @@ pub(crate) enum Action {
     Active,
     Play,
     Save,
+    BuildGame,
+    RunBuiltGame,
     Load,
     CancelLoad,
     RevertPrefab,
@@ -78,6 +80,9 @@ pub(crate) enum Action {
     PrefabChoice,
     Character,
     Collider,
+    Trigger,
+    DynamicBody,
+    KinematicBody,
     Physics,
     Behavior,
     Motion,
@@ -115,6 +120,8 @@ pub(crate) struct Panels {
     pub collection_deleted_items: crate::component_collections::DeletedItems,
     pub deleted_page: usize,
     pub preview_phase: Option<f64>,
+    pub build_label: Option<&'static str>,
+    pub package_run_label: Option<&'static str>,
     pub load_status: Option<crate::app::restore_barrier::load::LoadStatus>,
     pub resource_notice: Option<ResourceNotice>,
     pub retarget_draft: bool,
@@ -174,6 +181,8 @@ impl Panels {
         }
         Ok(Self {
             preview_phase: None,
+            build_label: None,
+            package_run_label: None,
             load_status: None,
             resource_notice: None,
             presented: false,
@@ -424,8 +433,15 @@ impl Panels {
                     )?;
                 }
                 let values = inspector_modes::collect_mode_values(object, inspector, import_config);
+                let row = if inspector == InspectorMode::Physics && values.len() > 11 {
+                    19.0
+                } else if inspector == InspectorMode::Physics && values.len() > 8 {
+                    20.0
+                } else {
+                    26.0
+                };
                 for (index, (label, value)) in values.into_iter().enumerate() {
-                    let y = 116.0 + index as f32 * 26.0;
+                    let y = 116.0 + index as f32 * row;
                     let overridden = !playing && self.overridden_fields.contains(&index);
                     let reset_text_width: f32 = "Reset"
                         .chars()
@@ -436,14 +452,18 @@ impl Panels {
                     if field.is_some_and(|(id, _)| id == index) {
                         Self::solid(
                             &mut batch,
-                            [rx + 4.0, y, field_width, 25.0],
+                            [rx + 4.0, y, field_width, row - 1.0],
                             size,
                             [0.2, 0.25, 0.32, 1.0],
                         )?;
                     }
                     let value = field.filter(|(id, _)| *id == index).map_or_else(
                         || {
-                            if inspector == InspectorMode::ImportSettings {
+                            if inspector == InspectorMode::ImportSettings
+                                || (inspector == InspectorMode::Physics
+                                    && crate::prefab_fields::physics_layer_field(object, index)
+                                        .is_some())
+                            {
                                 format!("{value:.0}")
                             } else {
                                 format!("{value:.3}")
@@ -458,19 +478,19 @@ impl Panels {
                         } else {
                             format!("{label}: {value}")
                         },
-                        Vec2::new(rx + 10.0, y + 18.0),
+                        Vec2::new(rx + 10.0, y + row - 8.0),
                         field_width - 8.0,
                         size,
                     )?;
                     self.regions
-                        .push(([rx + 4.0, y, field_width, 25.0], Action::Field(index)));
+                        .push(([rx + 4.0, y, field_width, row - 1.0], Action::Field(index)));
                     if overridden {
-                        let rect = [rx + right - reset_width - 4.0, y, reset_width, 25.0];
+                        let rect = [rx + right - reset_width - 4.0, y, reset_width, row - 1.0];
                         Self::solid(&mut batch, rect, size, [0.18, 0.24, 0.3, 1.0])?;
                         self.text(
                             &mut batch,
                             "Reset",
-                            Vec2::new(rect[0] + 6.0, y + 18.0),
+                            Vec2::new(rect[0] + 6.0, y + row - 8.0),
                             reset_width - 12.0,
                             size,
                         )?;
@@ -498,15 +518,6 @@ impl Panels {
                 )?;
                 self.regions
                     .push(([rx + 4., 280., right - 8., 24.], Action::Field(7)));
-            }
-            if inspector == InspectorMode::Physics {
-                self.text(
-                    &mut batch,
-                    "Physics: scale 1, rot 0",
-                    Vec2::new(rx + 8.0, 310.0),
-                    right - 12.0,
-                    size,
-                )?;
             }
             self.build_inspector_footer(
                 &mut batch, object, inspector, playing, field, rx, right, size,

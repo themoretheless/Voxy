@@ -1,0 +1,3 @@
+dbe1eee2bf09cf06a9aa87ccde85ba93465f1fa3498486a4a04d7fc635d356db  crates/voxy_render/src/archive_scene.rs
+fa9362914847c76f4297702726b608d1a9a68b0237a23fed8e5429f6543ce1a7  crates/voxy_render/src/archive_scene.wgsl
+17e6e80ff3f55dadff46a510d11f0b385958d6963f537dc0a3857194d7cf7eef  tools/scene-research/qualify_ray_schedule.rs

@@ -61,7 +61,8 @@ pub(crate) fn solve_mass_with_budget(
 
 /// Protein transport over the positive mass iteration, with protein-specific
 /// error messages for the Darcy and circulation owners.
-pub(crate) fn solve_protein(
+#[doc(hidden)]
+pub fn solve_protein(
     rhs_mass: &[f64],
     diagonal: &[f64],
     incoming: &[Vec<(usize, f64)>],

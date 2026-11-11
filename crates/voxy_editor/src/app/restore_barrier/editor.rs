@@ -584,6 +584,7 @@ impl App {
         self.import_recipe = resources.recipe;
         self.available = resources.outputs;
         self.reload = resources.queued;
+        self.gpu_budget_retries.clear();
         self.imports = resources.imports.take();
         self.watcher = resources.watcher.take();
         self.last_scan = restored_scan;
@@ -751,6 +752,7 @@ mod retirement_tests {
             let play = crate::play_session::PlaySession {
                 playing: None,
                 simulation_time: Instant::now(),
+                triggers: None,
                 simulation: Some(simulation),
                 animations: Default::default(),
                 angular_motion: None,

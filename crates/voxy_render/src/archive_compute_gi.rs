@@ -220,13 +220,25 @@ impl ArchiveComputeGi {
         } else {
             None
         };
+        let paired_dda = std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some();
+        let mut gi_constants = constants.clone();
+        gi_constants.push((
+            "WGPU_METAL_PRECISE_MATH",
+            if paired_dda {
+                1.
+            } else if match_raster {
+                -1.
+            } else {
+                0.
+            },
+        ));
         let trace = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("full resolution exact opaque GI"),
             layout: None,
             module: shader,
             entry_point: Some("cs_opaque_gi"),
             compilation_options: wgpu::PipelineCompilationOptions {
-                constants: &constants,
+                constants: &gi_constants,
                 ..Default::default()
             },
             cache: None,

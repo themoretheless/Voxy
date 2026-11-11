@@ -42,6 +42,8 @@ impl Node {
 pub struct RigidWorldReport {
     pub world: DynamicEnvironmentReport,
     pub external_work: f64,
+    /// Work supplied to finite bodies by moving environment impacts.
+    pub boundary_impact_work: f64,
     /// Nominal rotation integration and floating work discrepancy, not heat.
     pub integration_energy_residual: f64,
 }
@@ -85,6 +87,7 @@ type CollisionEvent = (
     [f64; 3],
     Option<ContactWitness>,
     Option<u64>,
+    [f64; 3],
 );
 
 /// Resolve an exactly simultaneous, frictionless inelastic rigid event group.
@@ -93,6 +96,7 @@ fn resolve_rigid_events(
     nodes: &mut [Node],
     particle_count: usize,
     events: &[CollisionEvent],
+    event_time_s: f64,
     world: &impl LiquidBodyWorld,
     config: DynamicWorldConfig,
     ledger: &mut ContactLedger,
@@ -105,11 +109,8 @@ fn resolve_rigid_events(
         return Err(Error::CollisionBudget);
     }
     let mut owners = Vec::new();
-    for &(first, second, _, _, _, _) in events {
+    for &(first, second, ..) in events {
         for index in std::iter::once(first).chain(second) {
-            if index < particle_count {
-                return Err(Error::InvalidCollision);
-            }
             if !owners.contains(&index) {
                 if owners.len() >= 128 {
                     return Err(Error::CollisionBudget);
@@ -120,11 +121,14 @@ fn resolve_rigid_events(
     }
     let mut states: Vec<_> = owners.iter().map(|index| nodes[*index].contact()).collect();
     let mut contacts = Vec::new();
+    let mut boundary_velocities = Vec::new();
     let mut scale = 1_f64;
-    for &(first, second, _, normal, witness, feature) in events {
+    for &(first, second, _, normal, witness, feature, velocity) in events {
         let a = nodes[first].contact();
         let b = second.map(|j| nodes[j].contact());
-        let patch = if a.spin.is_some() || b.is_some_and(|body| body.spin.is_some()) {
+        let patch = if first >= particle_count
+            && (a.spin.is_some() || b.is_some_and(|body| body.spin.is_some()))
+        {
             let witness = witness.ok_or(Error::InvalidCollision)?;
             charge(ledger, config)?;
             if let Some(index) = second {
@@ -139,12 +143,13 @@ fn resolve_rigid_events(
                     config.contact.max_candidates,
                 )?
             } else {
-                world.rigid_environment_patch_for_feature(
+                world.rigid_environment_patch_at(
                     first - particle_count,
                     &a,
                     witness,
                     normal,
                     feature,
+                    event_time_s,
                     config.contact.max_candidates,
                 )?
             }
@@ -175,11 +180,12 @@ fn resolve_rigid_events(
         for contact in patch {
             for velocity in [
                 a.point_velocity(contact.point),
-                b.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point)),
+                b.map_or(Ok(velocity), |body| body.point_velocity(contact.point)),
             ] {
                 let velocity = velocity.map_err(|_| Error::InvalidCollision)?;
                 scale = velocity.iter().map(|v| v.abs()).fold(scale, f64::max);
             }
+            boundary_velocities.push(velocity);
             contacts.push(crate::contact::NetworkContact {
                 first: first_local,
                 second: second_local,
@@ -187,9 +193,10 @@ fn resolve_rigid_events(
             });
         }
     }
-    let report = crate::contact::resolve_normal_contact_network(
+    let report = crate::contact::resolve_normal_contact_network_with_boundary_velocities(
         &mut states,
         &contacts,
+        &boundary_velocities,
         crate::contact::ManifoldConfig {
             max_sweeps: 10000,
             velocity_tolerance: 128. * f64::EPSILON * scale,
@@ -201,7 +208,8 @@ fn resolve_rigid_events(
         crate::contact::Error::NumericalFailure => Error::NumericalFailure,
     })?;
     ledger.contacts = total;
-    ledger.loss += (-report.kinetic_energy_change).max(0.);
+    ledger.loss += (report.boundary_work - report.kinetic_energy_change).max(0.);
+    ledger.boundary_impact_work += report.boundary_work;
     for (contact, impulse) in contacts.iter().zip(report.impulses) {
         if contact.second.is_none() {
             for k in 0..3 {
@@ -209,7 +217,10 @@ fn resolve_rigid_events(
             }
         }
     }
-    if !ledger.loss.is_finite() || !finite(ledger.environment_impulse) {
+    if !ledger.loss.is_finite()
+        || !ledger.boundary_impact_work.is_finite()
+        || !finite(ledger.environment_impulse)
+    {
         return Err(Error::NumericalFailure);
     }
     for (index, state) in owners.into_iter().zip(states) {
@@ -309,6 +320,22 @@ fn solve_contact(
     let mut remaining = dt;
     let mut horizon = supported.map_or(dt, |c| dt.min(c.max_interval_s));
     let require_witness = bodies.iter().any(|body| body.spin.is_some());
+    #[derive(Default)]
+    struct BoundaryStall {
+        time_s: f64,
+        hits: usize,
+        moving: Option<([f64; 3], Option<u64>)>,
+        fixed: Option<[f64; 3]>,
+    }
+    let mut stalls = std::collections::HashMap::<usize, BoundaryStall>::new();
+    struct ParticleContact {
+        event: CollisionEvent,
+        time: f64,
+        particle_position: [f64; 3],
+        body_position: Option<[f64; 3]>,
+    }
+    let mut prior_particle_contacts = std::collections::HashMap::<usize, ParticleContact>::new();
+    let mut moving_boundary_seen = false;
     'intervals: while remaining > 0. {
         let states: Vec<_> = nodes[count..].iter().map(|n| n.contact()).collect();
         let zero_rates = vec![crate::contact::ContactWrench::default(); states.len()];
@@ -349,6 +376,7 @@ fn solve_contact(
                 };
                 let report = super::support_world::assemble_reactions(
                     &states,
+                    &[],
                     world,
                     &external_snapshot,
                     limits,
@@ -646,74 +674,106 @@ fn solve_contact(
             })
             .collect::<Result<_, _>>()?;
         let interval_duration = horizon;
+        let elapsed_s = load_offset + (dt - remaining);
         let mut earliest: Option<CollisionEvent> = None;
         let mut simultaneous = Vec::new();
-        let mut admit = |first: usize,
-                         second: Option<usize>,
-                         event: RigidGeometryHit|
-         -> Result<(), Error> {
-            let hit = event.contact;
-            if event.feature.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
-                return Err(Error::InvalidCollision);
-            }
-            if hit.witness.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
-                return Err(Error::InvalidCollision);
-            }
-            let GeometryHit::Contact { fraction, normal } = hit.geometry else {
-                return if matches!(hit.geometry, GeometryHit::Overlap) {
-                    Err(Error::InitialOverlap)
-                } else {
-                    Ok(())
+        let mut admit =
+            |first: usize, second: Option<usize>, event: RigidGeometryHit| -> Result<(), Error> {
+                let hit = event.contact;
+                if event.feature.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
+                    return Err(Error::InvalidCollision);
+                }
+                if hit.witness.is_some() && !matches!(hit.geometry, GeometryHit::Contact { .. }) {
+                    return Err(Error::InvalidCollision);
+                }
+                let GeometryHit::Contact { fraction, normal } = hit.geometry else {
+                    return if matches!(hit.geometry, GeometryHit::Overlap) {
+                        Err(Error::InitialOverlap)
+                    } else {
+                        Ok(())
+                    };
                 };
-            };
-            if hit.witness.is_some_and(|w| {
-                !finite(w.point) || !w.tolerance_m.is_finite() || w.tolerance_m < 0.
-            }) {
-                return Err(Error::InvalidCollision);
-            }
-            if require_witness && hit.witness.is_none() {
-                return Err(Error::InvalidCollision);
-            }
-            let norm = normal[0].hypot(normal[1]).hypot(normal[2]);
-            if !fraction.is_finite()
-                || !(0. ..=1.).contains(&fraction)
-                || !norm.is_finite()
-                || (norm - 1.).abs() > 5e-11
-            {
-                return Err(Error::InvalidCollision);
-            }
-            let normal = normal.map(|n| n / norm);
-            let time = interval_duration * fraction;
-            let point = hit.witness.map_or(nodes[first].position, |w| w.point);
-            let a = paths[first]
-                .sample(time)
-                .map_err(|_| Error::NumericalFailure)?;
-            let va = a
-                .point_velocity(point)
-                .map_err(|_| Error::NumericalFailure)?;
-            let vb = if let Some(index) = second {
-                paths[index]
+                if hit.witness.is_some_and(|w| {
+                    !finite(w.point) || !w.tolerance_m.is_finite() || w.tolerance_m < 0.
+                }) {
+                    return Err(Error::InvalidCollision);
+                }
+                if require_witness && hit.witness.is_none() {
+                    return Err(Error::InvalidCollision);
+                }
+                let norm = normal[0].hypot(normal[1]).hypot(normal[2]);
+                if !fraction.is_finite()
+                    || !(0. ..=1.).contains(&fraction)
+                    || !norm.is_finite()
+                    || (norm - 1.).abs() > 5e-11
+                {
+                    return Err(Error::InvalidCollision);
+                }
+                let normal = normal.map(|n| n / norm);
+                let time = interval_duration * fraction;
+                let point = hit.witness.map_or(nodes[first].position, |w| w.point);
+                let a = paths[first]
                     .sample(time)
-                    .map_err(|_| Error::NumericalFailure)?
+                    .map_err(|_| Error::NumericalFailure)?;
+                let va = a
                     .point_velocity(point)
-                    .map_err(|_| Error::NumericalFailure)?
-            } else {
-                [0.; 3]
+                    .map_err(|_| Error::NumericalFailure)?;
+                let boundary_velocity = if second.is_some() {
+                    [0.; 3]
+                } else if first >= count {
+                    world.rigid_environment_impact_velocity(
+                        first - count,
+                        event.feature,
+                        elapsed_s + time,
+                    )?
+                } else {
+                    world.particle_environment_impact_velocity(event.feature, elapsed_s + time)?
+                };
+                if !finite(boundary_velocity) {
+                    return Err(Error::InvalidCollision);
+                }
+                if supported.is_some() && boundary_velocity != [0.; 3] {
+                    return Err(Error::CollisionBackend);
+                }
+                let vb = if let Some(index) = second {
+                    paths[index]
+                        .sample(time)
+                        .map_err(|_| Error::NumericalFailure)?
+                        .point_velocity(point)
+                        .map_err(|_| Error::NumericalFailure)?
+                } else {
+                    boundary_velocity
+                };
+                let relative: [f64; 3] = std::array::from_fn(|k| va[k] - vb[k]);
+                let speed: f64 = (0..3).map(|a| relative[a] * normal[a]).sum();
+                if !speed.is_finite() || speed >= 0. {
+                    return Err(Error::InvalidCollision);
+                }
+                if earliest.is_none_or(|(_, _, old, ..)| fraction < old) {
+                    earliest = Some((
+                        first,
+                        second,
+                        fraction,
+                        normal,
+                        hit.witness,
+                        event.feature,
+                        boundary_velocity,
+                    ));
+                    simultaneous.clear();
+                }
+                if earliest.is_some_and(|(_, _, old, ..)| fraction == old) {
+                    simultaneous.push((
+                        first,
+                        second,
+                        fraction,
+                        normal,
+                        hit.witness,
+                        event.feature,
+                        boundary_velocity,
+                    ));
+                }
+                Ok(())
             };
-            let relative: [f64; 3] = std::array::from_fn(|k| va[k] - vb[k]);
-            let speed: f64 = (0..3).map(|a| relative[a] * normal[a]).sum();
-            if !speed.is_finite() || speed >= 0. {
-                return Err(Error::InvalidCollision);
-            }
-            if earliest.is_none_or(|(_, _, old, _, _, _)| fraction < old) {
-                earliest = Some((first, second, fraction, normal, hit.witness, event.feature));
-                simultaneous.clear();
-            }
-            if earliest.is_some_and(|(_, _, old, _, _, _)| fraction == old) {
-                simultaneous.push((first, second, fraction, normal, hit.witness, event.feature));
-            }
-            Ok(())
-        };
         for (index, original) in particles.iter().enumerate() {
             let p = Particle {
                 position: nodes[index].position,
@@ -740,10 +800,11 @@ fn solve_contact(
                 admit(
                     index,
                     None,
-                    world.sweep_particle_motion_environment_event(
+                    world.sweep_particle_motion_environment_event_at(
                         &p,
                         radius,
                         &paths[index],
+                        elapsed_s,
                         config.contact.max_candidates,
                     )?,
                 )?;
@@ -795,9 +856,10 @@ fn solve_contact(
                 admit(count + first, None, {
                     let (supports, point_models) = pair_supports(first, None);
                     if supports.is_empty() {
-                        world.sweep_rigid_environment_event(
+                        world.sweep_rigid_environment_event_at(
                             first,
                             &paths[count + first],
+                            elapsed_s,
                             config.contact.max_candidates,
                         )?
                     } else {
@@ -827,7 +889,7 @@ fn solve_contact(
                 })?;
             }
         }
-        let fraction = earliest.map_or(1., |(_, _, f, _, _, _)| f);
+        let fraction = earliest.map_or(1., |(_, _, f, ..)| f);
         for (index, n) in nodes.iter_mut().enumerate() {
             let time = interval_duration * fraction;
             if index >= count {
@@ -988,9 +1050,119 @@ fn solve_contact(
         }
         remaining = next.max(0.);
         horizon = supported.map_or(remaining, |c| remaining.min(c.max_interval_s));
-        let Some((first, second, _, normal, witness, feature)) = earliest else {
+        let Some((first, second, _, normal, witness, feature, boundary_velocity)) = earliest else {
             continue;
         };
+        moving_boundary_seen |= simultaneous.iter().any(|event| event.6 != [0.; 3]);
+        if moving_boundary_seen
+            && supported.is_none()
+            && config.contact.restitution == 0.
+            && config.contact.friction == 0.
+        {
+            let impact_time = elapsed_s + time;
+            if let Some(other) = second {
+                stalls.remove(&first);
+                stalls.remove(&other);
+            } else {
+                let stall = stalls.entry(first).or_default();
+                if impact_time - stall.time_s > dt * 1e-8 {
+                    *stall = BoundaryStall::default();
+                }
+                stall.time_s = impact_time;
+                stall.hits += 1;
+                if boundary_velocity == [0.; 3] {
+                    stall.fixed = Some(normal);
+                } else if crate::math::dot(normal, boundary_velocity) > 0. {
+                    stall.moving = Some((normal, feature));
+                }
+                if stall.hits >= 8
+                    && let Some(((moving, moving_feature), fixed)) = stall.moving.zip(stall.fixed)
+                    && crate::math::dot(moving, fixed) < -0.99
+                {
+                    return Err(Error::KinematicConstraint {
+                        body: first.checked_sub(count),
+                        feature: moving_feature,
+                    });
+                }
+            }
+            // Opposing prescribed normal velocities leave no solution for
+            // a translating body between a moving face and a fixed face.
+            for &(a, b, _, n, _, moving_feature, moving) in &simultaneous {
+                if nodes[a].spin.is_some() || b.is_some() || crate::math::dot(n, moving) <= 0. {
+                    continue;
+                }
+                if simultaneous
+                    .iter()
+                    .any(|&(other, pair, _, fixed_n, _, _, velocity)| {
+                        other == a
+                            && pair.is_none()
+                            && velocity == [0.; 3]
+                            && fixed_n == n.map(|v| -v)
+                    })
+                {
+                    return Err(Error::KinematicConstraint {
+                        body: a.checked_sub(count),
+                        feature: moving_feature,
+                    });
+                }
+            }
+        }
+        if first < count
+            && moving_boundary_seen
+            && supported.is_none()
+            && config.contact.restitution == 0.
+            && config.contact.friction == 0.
+            && second.is_none_or(|index| nodes[index].spin.is_none())
+        {
+            let impact_time = elapsed_s + time;
+            let current = earliest.expect("selected event");
+            if let Some(prior) = prior_particle_contacts.remove(&first) {
+                let (_, other, _, prior_normal, prior_witness, _, prior_velocity) = prior.event;
+                let linked = (second.is_some() && other.is_none() && prior_velocity != [0.; 3])
+                    || (other.is_some() && second.is_none() && boundary_velocity != [0.; 3]);
+                if linked
+                    && crate::math::dot(normal, prior_normal) < -0.99
+                    && let Some(witness) = prior_witness
+                {
+                    let elapsed = impact_time - prior.time;
+                    let drift = |current: [f64; 3], previous: [f64; 3]| {
+                        (0..3)
+                            .map(|axis| (current[axis] - previous[axis]).abs())
+                            .sum::<f64>()
+                    };
+                    let particle_drift = drift(nodes[first].position, prior.particle_position);
+                    let other_drift = other.zip(prior.body_position).map_or_else(
+                        || elapsed * prior_velocity.iter().map(|v| v.abs()).sum::<f64>(),
+                        |(index, previous)| drift(nodes[index].position, previous),
+                    );
+                    // The previously admitted patch is reusable only while
+                    // both participants remain within its witness tolerance.
+                    if elapsed >= 0. && particle_drift + other_drift <= witness.tolerance_m {
+                        resolve_rigid_events(
+                            &mut nodes,
+                            count,
+                            &[prior.event, current],
+                            impact_time,
+                            world,
+                            config,
+                            ledger,
+                        )?;
+                        continue;
+                    }
+                }
+            }
+            if second.is_some() || boundary_velocity != [0.; 3] {
+                prior_particle_contacts.insert(
+                    first,
+                    ParticleContact {
+                        event: current,
+                        time: impact_time,
+                        particle_position: nodes[first].position,
+                        body_position: second.map(|index| nodes[index].position),
+                    },
+                );
+            }
+        }
         if simultaneous.len() > 1
             && config.contact.restitution == 0.
             && config.contact.friction == 0.
@@ -1001,7 +1173,15 @@ fn solve_contact(
             if ledger.contacts + work.support_points + simultaneous.len() > config.max_contacts {
                 return Err(Error::CollisionBudget);
             }
-            resolve_rigid_events(&mut nodes, count, &simultaneous, world, config, ledger)?;
+            resolve_rigid_events(
+                &mut nodes,
+                count,
+                &simultaneous,
+                elapsed_s + time,
+                world,
+                config,
+                ledger,
+            )?;
             continue;
         }
         if ledger.contacts + work.support_points >= config.max_contacts {
@@ -1009,7 +1189,7 @@ fn solve_contact(
         }
         ledger.contacts += 1;
         let relative: [f64; 3] = std::array::from_fn(|a| {
-            nodes[first].velocity[a] - second.map_or(0., |s| nodes[s].velocity[a])
+            nodes[first].velocity[a] - second.map_or(boundary_velocity[a], |s| nodes[s].velocity[a])
         });
         let reduced = second.map_or(nodes[first].mass, |s| {
             1. / (1. / nodes[first].mass + 1. / nodes[s].mass)
@@ -1027,7 +1207,7 @@ fn solve_contact(
         let angular_patch = first >= count
             && config.contact.restitution == 0.
             && (a.spin.is_some() || b.is_some_and(|body| body.spin.is_some()));
-        let (impulse, loss) = if angular_patch {
+        let (impulse, loss, boundary_work) = if angular_patch {
             let witness = witness.ok_or(Error::InvalidCollision)?;
             charge(ledger, config)?;
             let contacts = if let Some(index) = second {
@@ -1042,12 +1222,13 @@ fn solve_contact(
                     config.contact.max_candidates,
                 )?
             } else {
-                world.rigid_environment_patch_for_feature(
+                world.rigid_environment_patch_at(
                     first - count,
                     &a,
                     witness,
                     normal,
                     feature,
+                    elapsed_s + time,
                     config.contact.max_candidates,
                 )?
             };
@@ -1064,30 +1245,61 @@ fn solve_contact(
                     scale = velocity.iter().map(|v| v.abs()).fold(scale, f64::max);
                 }
             }
-            let report = crate::contact::resolve_normal_manifold(
-                &mut a,
-                b.as_mut(),
-                &contacts,
-                crate::contact::ManifoldConfig {
-                    max_sweeps: 10000,
-                    velocity_tolerance: 128. * f64::EPSILON * scale,
-                },
-            )
+            let manifold = crate::contact::ManifoldConfig {
+                max_sweeps: 10000,
+                velocity_tolerance: 128. * f64::EPSILON * scale,
+            };
+            let report = if boundary_velocity == [0.; 3] {
+                crate::contact::resolve_normal_manifold(&mut a, b.as_mut(), &contacts, manifold)
+            } else {
+                let mut states = [a];
+                let indexed: Vec<_> = contacts
+                    .iter()
+                    .map(|&contact| crate::contact::NetworkContact {
+                        first: 0,
+                        second: None,
+                        contact,
+                    })
+                    .collect();
+                let report =
+                    crate::contact::resolve_normal_contact_network_with_boundary_velocities(
+                        &mut states,
+                        &indexed,
+                        &[boundary_velocity; 128][..indexed.len()],
+                        manifold,
+                    );
+                a = states[0];
+                report
+            }
             .map_err(|e| match e {
                 crate::contact::Error::Budget => Error::CollisionBudget,
                 crate::contact::Error::InvalidInput => Error::InvalidCollision,
                 crate::contact::Error::NumericalFailure => Error::NumericalFailure,
             })?;
             let total = std::array::from_fn(|k| report.impulses.iter().map(|j| j[k]).sum());
-            (total, (-report.kinetic_energy_change).max(0.))
-        } else {
-            let response = crate::contact::normal_impulse(
-                &a,
-                b.as_ref(),
-                point,
-                normal,
-                config.contact.restitution,
+            (
+                total,
+                (report.boundary_work - report.kinetic_energy_change).max(0.),
+                report.boundary_work,
             )
+        } else {
+            let response = if boundary_velocity == [0.; 3] {
+                crate::contact::normal_impulse(
+                    &a,
+                    b.as_ref(),
+                    point,
+                    normal,
+                    config.contact.restitution,
+                )
+            } else {
+                crate::contact::normal_impulse_against_moving_boundary(
+                    &a,
+                    boundary_velocity,
+                    point,
+                    normal,
+                    config.contact.restitution,
+                )
+            }
             .map_err(|_| Error::NumericalFailure)?;
             let loss = response.dissipated_energy
                 + if config.contact.friction == 0. {
@@ -1107,9 +1319,13 @@ fn solve_contact(
                 body.apply_point_impulse(point, impulse.map(|j| -j))
                     .map_err(|_| Error::NumericalFailure)?;
             }
-            (impulse, loss)
+            let work = (0..3)
+                .map(|k| impulse[k] * boundary_velocity[k])
+                .sum::<f64>();
+            (impulse, loss, work)
         };
         ledger.loss += loss;
+        ledger.boundary_impact_work += boundary_work;
         if let Some(total) = ledger.particle_loss.get_mut(first) {
             *total += loss;
         }
@@ -1127,14 +1343,20 @@ fn solve_contact(
                 ledger.environment_impulse[k] -= impulse[k];
             }
         }
-        for k in 0..3 {
-            nodes[first].position[k] += normal[k] * epsilon;
+        // A unilateral position bias can place a particle inside the other
+        // surface when a moving wall is already supporting it. Keep the
+        // sampled contact positions in that event loop.
+        if first >= count || !moving_boundary_seen {
+            for k in 0..3 {
+                nodes[first].position[k] += normal[k] * epsilon;
+            }
         }
         if !nodes
             .iter()
             .all(|n| finite(n.velocity) && finite(n.position))
             || !finite(ledger.environment_impulse)
             || !ledger.loss.is_finite()
+            || !ledger.boundary_impact_work.is_finite()
         {
             return Err(Error::NumericalFailure);
         }
@@ -1430,6 +1652,7 @@ impl Liquid {
             max_support_error_m: work.max_support_error_m,
             rigid: RigidWorldReport {
                 external_work: work.external,
+                boundary_impact_work: ledger.boundary_impact_work,
                 integration_energy_residual: work.residual,
                 world: DynamicEnvironmentReport {
                     dynamics: DynamicWorldReport {

@@ -7,7 +7,8 @@ pub use reaction::{
     ContactWrench, NetworkReaction, NetworkReactionRate, NetworkSupport, NormalReaction,
     NormalSupport, ReactionConfig, ReactionRateConfig, SupportMotion, SupportPlane,
     normal_gap_acceleration, normal_gap_jerk, resolve_normal_reaction_network,
-    resolve_normal_reaction_rate_network, resolve_normal_reactions,
+    resolve_normal_reaction_network_with_particles, resolve_normal_reaction_rate_network,
+    resolve_normal_reaction_rate_network_with_particles, resolve_normal_reactions,
 };
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
@@ -15,6 +16,18 @@ pub enum Error {
     NumericalFailure,
     Budget,
 }
+
+impl core::fmt::Display for Error {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::InvalidInput => f.write_str("invalid contact input"),
+            Self::NumericalFailure => f.write_str("contact solver numerical failure"),
+            Self::Budget => f.write_str("contact solver iteration budget exhausted"),
+        }
+    }
+}
+
+impl std::error::Error for Error {}
 /// A contact-time snapshot. Position is the center of mass, not a scene pivot.
 /// A point particle has no intrinsic spin. Rigid inertia uses the existing Spin.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -133,8 +146,34 @@ pub fn normal_impulse(
     normal: Vector,
     restitution: f64,
 ) -> Result<NormalImpulse, Error> {
+    normal_impulse_with_boundary(first, second, [0.; 3], point, normal, restitution)
+}
+
+/// Frictionless normal impulse against a prescribed boundary point velocity.
+/// The boundary supplies work but has zero inverse mass and inertia.
+/// # Errors
+/// Invalid geometry, velocity or restitution, or an unrepresentable impulse.
+pub fn normal_impulse_against_moving_boundary(
+    first: &ContactBody,
+    boundary_velocity: Vector,
+    point: Vector,
+    normal: Vector,
+    restitution: f64,
+) -> Result<NormalImpulse, Error> {
+    normal_impulse_with_boundary(first, None, boundary_velocity, point, normal, restitution)
+}
+
+fn normal_impulse_with_boundary(
+    first: &ContactBody,
+    second: Option<&ContactBody>,
+    boundary_velocity: Vector,
+    point: Vector,
+    normal: Vector,
+    restitution: f64,
+) -> Result<NormalImpulse, Error> {
     let norm = normal[0].hypot(normal[1]).hypot(normal[2]);
     if !finite(point)
+        || !finite(boundary_velocity)
         || !norm.is_finite()
         || (norm - 1.).abs() > 5e-11
         || !restitution.is_finite()
@@ -144,7 +183,7 @@ pub fn normal_impulse(
     }
     let normal = normal.map(|v| v / norm);
     let velocity = first.point_velocity(point)?;
-    let other = second.map_or(Ok([0.; 3]), |b| b.point_velocity(point))?;
+    let other = second.map_or(Ok(boundary_velocity), |b| b.point_velocity(point))?;
     let speed = dot(sub(velocity, other), normal);
     let inverse = first.inverse_contact_mass(point, normal)?
         + second.map_or(Ok(0.), |b| b.inverse_contact_mass(point, normal))?;
@@ -207,6 +246,8 @@ pub struct ManifoldImpulse {
     pub velocity_residual: f64,
     /// Actual floating kinetic-energy change; no heat deposition is inferred.
     pub kinetic_energy_change: f64,
+    /// Work supplied by prescribed boundary motion at the admitted contacts.
+    pub boundary_work: f64,
 }
 
 /// Frictionless, inelastic normal manifold for two rigid snapshots or a fixed
@@ -256,6 +297,34 @@ pub fn resolve_normal_contact_network(
         &[0.; 128][..contacts.len().min(128)],
         true,
     )
+}
+
+/// Resolve a frictionless inelastic network with prescribed boundary point velocities.
+/// Each entry corresponds to a contact. Finite body pairs require a zero entry.
+/// # Errors
+/// Invalid inputs, exhausted solve budget or failed energy admission preserve all bodies.
+pub fn resolve_normal_contact_network_with_boundary_velocities(
+    bodies: &mut [ContactBody],
+    contacts: &[NetworkContact],
+    boundary_velocities: &[Vector],
+    config: ManifoldConfig,
+) -> Result<ManifoldImpulse, Error> {
+    if contacts.len() > 128 || contacts.len() != boundary_velocities.len() {
+        return Err(Error::InvalidInput);
+    }
+    let mut biases = [0.; 128];
+    for (index, (entry, &velocity)) in contacts.iter().zip(boundary_velocities).enumerate() {
+        if !finite(velocity) || (entry.second.is_some() && velocity != [0.; 3]) {
+            return Err(Error::InvalidInput);
+        }
+        let n = entry.contact.normal;
+        let norm = n[0].hypot(n[1]).hypot(n[2]);
+        if !norm.is_finite() || (norm - 1.).abs() > 5e-11 {
+            return Err(Error::InvalidInput);
+        }
+        biases[index] = -dot(n.map(|value| value / norm), velocity);
+    }
+    solve_normal_network_constraints(bodies, contacts, config, &biases[..contacts.len()], true)
 }
 
 fn solve_normal_constraints(
@@ -556,17 +625,31 @@ fn solve_normal_network_constraints_with_bounds(
         }
         if residual <= config.velocity_tolerance {
             let after = energy(&staged)?;
+            let mut work = Vec::new();
+            if enforce_energy && biases.iter().any(|&bias| bias != 0.) {
+                work.resize(bodies.len(), 0.);
+                for (index, contact) in points.iter().enumerate() {
+                    work[root(&components, contact.first)] -= biases[index] * strengths[index];
+                }
+            }
             let mut change = 0.;
-            for (old, new) in before.iter().zip(after) {
+            for (index, (old, new)) in before.iter().zip(after).enumerate() {
                 let delta = new - old;
+                let boundary_work: f64 = work.get(index).copied().unwrap_or(0.);
+                let relative_change = delta - boundary_work;
+                let guard = 128. * f64::EPSILON;
+                let tolerance = guard * (1. + old) + guard * boundary_work.abs();
                 if !delta.is_finite()
-                    || (enforce_energy && delta > 128. * f64::EPSILON * (1. + old))
+                    || !boundary_work.is_finite()
+                    || (enforce_energy
+                        && (!relative_change.is_finite() || relative_change > tolerance))
                 {
                     return Err(Error::NumericalFailure);
                 }
                 change += delta;
             }
-            if !change.is_finite() {
+            let boundary_work: f64 = work.into_iter().sum();
+            if !change.is_finite() || !boundary_work.is_finite() {
                 return Err(Error::NumericalFailure);
             }
             let report = ManifoldImpulse {
@@ -578,6 +661,7 @@ fn solve_normal_network_constraints_with_bounds(
                 sweeps: sweep,
                 velocity_residual: residual,
                 kinetic_energy_change: change,
+                boundary_work,
             };
             bodies.copy_from_slice(&staged);
             return Ok(report);
@@ -635,5 +719,125 @@ mod hertz_mindlin_tests {
         assert!((f4 / f1 - 8.0).abs() < 1e-9);
         assert!((kn4 / kn1 - 2.0).abs() < 1e-9);
         assert!((kt4 / kt1 - 2.0).abs() < 1e-9);
+    }
+}
+
+#[cfg(test)]
+mod moving_boundary_tests {
+    use super::*;
+
+    #[test]
+    fn moving_boundary_face_and_edge_use_actual_angular_inertia() {
+        let body = ContactBody {
+            motion: Body {
+                mass: 2.,
+                position: [0.; 3],
+                velocity: [0.; 3],
+            },
+            spin: Some(Spin {
+                orientation: [0., 0., 0., 1.],
+                angular_momentum: [0.; 3],
+                inertia: [2.; 3],
+            }),
+        };
+        let velocity = [3., 0., 0.];
+        let contact = |y| NetworkContact {
+            first: 0,
+            second: None,
+            contact: NormalContact {
+                point: [0., y, 0.],
+                normal: [1., 0., 0.],
+            },
+        };
+        let config = ManifoldConfig {
+            max_sweeps: 16,
+            velocity_tolerance: 1e-12,
+        };
+        let mut edge = [body];
+        let report = resolve_normal_contact_network_with_boundary_velocities(
+            &mut edge,
+            &[contact(1.)],
+            &[velocity],
+            config,
+        )
+        .unwrap();
+        assert_eq!(edge[0].spin.unwrap().angular_momentum, [0., 0., -3.]);
+        assert_eq!(edge[0].point_velocity([0., 1., 0.]).unwrap(), velocity);
+        assert_eq!(report.kinetic_energy_change, 4.5);
+        assert_eq!(report.boundary_work, 9.);
+
+        let mut face = [body];
+        let report = resolve_normal_contact_network_with_boundary_velocities(
+            &mut face,
+            &[contact(1.), contact(-1.)],
+            &[velocity; 2],
+            config,
+        )
+        .unwrap();
+        assert_eq!(face[0].motion.velocity, velocity);
+        assert_eq!(face[0].spin.unwrap().angular_momentum, [0.; 3]);
+        assert_eq!(report.boundary_work, 18.);
+    }
+
+    #[test]
+    fn prescribed_boundary_accelerates_finite_body_and_accounts_for_work() {
+        let body = ContactBody {
+            motion: Body {
+                mass: 2.,
+                position: [0.; 3],
+                velocity: [0.; 3],
+            },
+            spin: None,
+        };
+        let point = [0.; 3];
+        let normal = [1., 0., 0.];
+        let velocity = [3., 4., 0.];
+        let impact =
+            normal_impulse_against_moving_boundary(&body, velocity, point, normal, 0.).unwrap();
+        assert_eq!(impact.impulse, [6., 0., 0.]);
+        assert_eq!(impact.relative_normal_speed, -3.);
+        assert_eq!(impact.dissipated_energy, 9.);
+        let bounce =
+            normal_impulse_against_moving_boundary(&body, velocity, point, normal, 1.).unwrap();
+        assert_eq!(bounce.impulse, [12., 0., 0.]);
+        assert_eq!(bounce.dissipated_energy, 0.);
+
+        let mut bodies = [body];
+        let mut contacts = [NetworkContact {
+            first: 0,
+            second: None,
+            contact: NormalContact { point, normal },
+        }];
+        let config = ManifoldConfig {
+            max_sweeps: 16,
+            velocity_tolerance: 1e-12,
+        };
+        let report = resolve_normal_contact_network_with_boundary_velocities(
+            &mut bodies,
+            &contacts,
+            &[velocity],
+            config,
+        )
+        .unwrap();
+        assert_eq!(bodies[0].motion.velocity, [3., 0., 0.]);
+        assert_eq!(report.impulses, [impact.impulse]);
+        assert_eq!(report.kinetic_energy_change, 9.);
+        assert_eq!(report.boundary_work, 18.);
+        assert_eq!(
+            report.boundary_work - report.kinetic_energy_change,
+            impact.dissipated_energy
+        );
+        let before = bodies;
+        contacts[0].second = Some(0);
+        assert_eq!(
+            resolve_normal_contact_network_with_boundary_velocities(
+                &mut bodies,
+                &contacts,
+                &[velocity],
+                config
+            ),
+            Err(Error::InvalidInput),
+        );
+        assert_eq!(bodies, before);
     }
 }

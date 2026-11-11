@@ -6,7 +6,10 @@ use std::{
     io::Read,
     path::{Path, PathBuf},
 };
-use voxy_assets::{AssetId, PackageLimits, ResourcePackage, SourcePath};
+use voxy_assets::{
+    AssetId, PROJECT_LAUNCH_SOURCE, PROJECT_PACKAGE_LIMITS, ProjectPackageLaunch, ResourcePackage,
+    SourcePath,
+};
 
 #[derive(serde::Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -17,16 +20,10 @@ struct LegacyLaunch {
     manifest: Option<String>,
 }
 #[derive(serde::Deserialize)]
-#[serde(deny_unknown_fields)]
-struct ProjectLaunch {
-    version: u32,
-    project: String,
-}
-#[derive(serde::Deserialize)]
 #[serde(untagged)]
 enum Launch {
     Legacy(LegacyLaunch),
-    Project(ProjectLaunch),
+    Project(ProjectPackageLaunch),
 }
 struct Project(PathBuf);
 impl Drop for Project {
@@ -46,9 +43,13 @@ impl Project {
             "voxy-packaged-game-{}-{nonce}-{index}",
             std::process::id()
         ));
-        let mut builder = std::fs::DirBuilder::new();
+        let builder = std::fs::DirBuilder::new();
         #[cfg(unix)]
-        builder.mode(0o700);
+        let builder = {
+            let mut builder = builder;
+            builder.mode(0o700);
+            builder
+        };
         builder.create(&path)?;
         Ok(Self(path))
     }
@@ -186,18 +187,14 @@ pub(super) struct MaterializedPackage {
 }
 impl MaterializedPackage {
     pub(super) fn open(path: &Path) -> Result<Self, Box<dyn std::error::Error>> {
-        let limits = PackageLimits {
-            max_entries: 4096,
-            max_payload_bytes: 64 * 1024 * 1024,
-            max_document_bytes: 256 * 1024 * 1024,
-        };
+        let limits = PROJECT_PACKAGE_LIMITS;
         let mut bytes = Vec::new();
         std::fs::File::open(path)?
             .take(u64::try_from(limits.max_document_bytes)? + 1)
             .read_to_end(&mut bytes)?;
         let package = ResourcePackage::from_bytes(&bytes, limits)?;
         let launch: Launch =
-            serde_json::from_slice(&package.read(&AssetId("__voxy_game.json".into()), 65_536)?)?;
+            serde_json::from_slice(&package.read(&AssetId(PROJECT_LAUNCH_SOURCE.into()), 65_536)?)?;
         let (scene, bootstrap) = match &launch {
             Launch::Legacy(launch) => {
                 if launch.version != 1 {
@@ -213,12 +210,7 @@ impl MaterializedPackage {
                     )?,
                 )
             }
-            Launch::Project(launch) => {
-                if launch.version != 2 {
-                    return Err("unsupported project package launch version".into());
-                }
-                (None, SourcePath::new(launch.project.clone())?)
-            }
+            Launch::Project(launch) => (None, launch.descriptor_path()?),
         };
         // Bootstrap files define the root for the ordinary project/model loader.
         if bootstrap.as_str().contains('/') {
@@ -255,6 +247,7 @@ impl MaterializedPackage {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use voxy_assets::PackageLimits;
     #[test]
     fn launch_rejects_traversal_and_nested_bootstrap_before_running() {
         let project = Project::create().unwrap();

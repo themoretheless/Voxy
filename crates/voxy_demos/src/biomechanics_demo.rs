@@ -1,5 +1,5 @@
 //! Load-controlled quasistatic FEM specimens; solver residual is visible.
-use physics::biomechanics::{Body, Equilibrium, penile_chambers, sphincter_layers};
+use physics_bio::biomechanics::{Body, Equilibrium, penile_chambers, sphincter_layers};
 use std::sync::Arc;
 use voxy_render::{SceneMesh, SceneVertex};
 #[derive(Clone, Debug)]

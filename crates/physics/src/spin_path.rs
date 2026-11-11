@@ -1,11 +1,8 @@
 //! Bounded adaptive paths over the existing Spin midpoint integrator.
 use crate::math::norm;
-use crate::{
-    astrophysics::Error,
-    rotation::{
-        ArcTorque, RotatingArmForce, RotatingMaterialMoment, Spin, SpinArc, TorquePolynomial,
-        rotate,
-    },
+use crate::rotation::{
+    ArcTorque, Error, RotatingArmForce, RotatingMaterialMoment, Spin, SpinArc, TorquePolynomial,
+    rotate,
 };
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Config {
@@ -22,6 +19,26 @@ pub enum PathError {
     Budget,
     Integrator(Error),
     NumericalBound,
+}
+
+impl core::fmt::Display for PathError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::InvalidInput => f.write_str("invalid spin path input"),
+            Self::Budget => f.write_str("spin path subdivision budget exhausted"),
+            Self::Integrator(err) => write!(f, "spin integrator error: {err}"),
+            Self::NumericalBound => f.write_str("spin path numerical error bound exceeded"),
+        }
+    }
+}
+
+impl std::error::Error for PathError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::Integrator(err) => Some(err),
+            _ => None,
+        }
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Segment {

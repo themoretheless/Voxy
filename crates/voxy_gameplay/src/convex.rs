@@ -114,6 +114,12 @@ pub(crate) struct AffineContact {
     pub tolerance: f64,
 }
 
+pub(crate) struct TranslationContact {
+    pub(crate) enter: f64,
+    pub(crate) exit: f64,
+    pub(crate) normal: Option<DVec3>,
+}
+
 impl AffineBox {
     /// Snapshot SAT query for all distinct touching branches. Unlike a sweep,
     /// this includes stationary/outgoing pairs and independent corner normals.
@@ -468,6 +474,12 @@ impl AffineBox {
         self.penetration_affine(center, aligned_edges(half))
     }
     pub fn penetration_affine(&self, center: DVec3, body: [DVec3; 3]) -> Option<DVec3> {
+        self.affine_overlap(center, body)
+            .map(|(normal, depth)| normal * (depth + 1e-7))
+    }
+
+    /// SAT normal and overlap depth before applying any recovery displacement.
+    pub(crate) fn affine_overlap(&self, center: DVec3, body: [DVec3; 3]) -> Option<(DVec3, f64)> {
         let relative = center - self.center;
         let mut minimum = f64::INFINITY;
         let mut normal = DVec3::ZERO;
@@ -486,12 +498,53 @@ impl AffineBox {
                 normal = axis * if distance < 0. { -1. } else { 1. };
             }
         }
-        Some(normal * (minimum + 1e-7))
+        Some((normal, minimum))
     }
     #[cfg(test)]
     pub fn sweep(&self, center: DVec3, half: DVec3, displacement: DVec3) -> Option<(f64, DVec3)> {
         self.sweep_affine(center, aligned_edges(half), displacement)
     }
+    /// Closed SAT interval for a translating box in the stationary box frame.
+    pub(crate) fn translation_interval(
+        &self,
+        other: &Self,
+        displacement: DVec3,
+    ) -> Result<Option<TranslationContact>, super::PhysicsError> {
+        let relative = other.center - self.center;
+        let (mut enter, mut exit) = (0.0_f64, 1.0_f64);
+        let mut normal = None;
+        for axis in self.axes_for(other.edges) {
+            let radius = self.radius(axis) + other.radius(axis);
+            let distance = relative.dot(axis);
+            let speed = displacement.dot(axis);
+            if !radius.is_finite() || !distance.is_finite() || !speed.is_finite() {
+                return Err(super::PhysicsError::InvalidMotion);
+            }
+            if speed == 0. {
+                if distance.abs() > radius {
+                    return Ok(None);
+                }
+                continue;
+            }
+            let a = (-radius - distance) / speed;
+            let b = (radius - distance) / speed;
+            let first = a.min(b);
+            if first > enter || (first == enter && normal.is_none()) {
+                normal = Some(if speed > 0. { -axis } else { axis });
+            }
+            enter = enter.max(first);
+            exit = exit.min(a.max(b));
+            if enter > exit {
+                return Ok(None);
+            }
+        }
+        Ok(Some(TranslationContact {
+            enter,
+            exit,
+            normal,
+        }))
+    }
+
     pub fn sweep_affine(
         &self,
         center: DVec3,
@@ -592,10 +645,23 @@ pub(crate) fn move_body_affine_carrying_velocity(
     velocity: &mut DVec3,
     dt: f64,
     boxes: &[AffineBox],
+    carried: Option<&mut DVec3>,
+) -> bool {
+    move_body_affine_traced(center, body, velocity, dt, boxes, carried, |_, _| {})
+}
+
+pub(crate) fn move_body_affine_traced(
+    center: &mut DVec3,
+    body: [DVec3; 3],
+    velocity: &mut DVec3,
+    dt: f64,
+    boxes: &[AffineBox],
     mut carried: Option<&mut DVec3>,
+    mut record: impl FnMut(DVec3, Option<f64>),
 ) -> bool {
     let mut remaining = *velocity * dt;
     let mut grounded = false;
+    let mut elapsed = 0.;
     for _ in 0..4 {
         if remaining.length_squared() < 1e-20 {
             break;
@@ -606,9 +672,15 @@ pub(crate) fn move_body_affine_carrying_velocity(
             .min_by(|a, b| a.0.total_cmp(&b.0));
         let Some((fraction, normal)) = nearest else {
             *center += remaining;
+            record(remaining, Some(1.));
             break;
         };
-        *center += remaining * fraction;
+        elapsed += (1. - elapsed) * fraction;
+        let accepted = remaining * fraction;
+        *center += accepted;
+        if accepted != DVec3::ZERO {
+            record(accepted, Some(elapsed));
+        }
         remaining *= 1. - fraction;
         let into = remaining.dot(normal);
         if into < 0. {
@@ -634,7 +706,11 @@ pub(crate) fn move_body_affine_carrying_velocity(
             .filter(|(_, normal)| normal.y > 0.5)
             .min_by(|a, b| a.0.total_cmp(&b.0))
         {
-            *center += snap * fraction;
+            let accepted = snap * fraction;
+            *center += accepted;
+            if accepted != DVec3::ZERO {
+                record(accepted, None);
+            }
             velocity.y = 0.;
             if let Some(carried) = carried {
                 carried.y = carried.y.max(0.);
@@ -647,6 +723,25 @@ pub(crate) fn move_body_affine_carrying_velocity(
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn affine_overlap_depth_excludes_recovery_displacement() {
+        let shape = AffineBox {
+            center: DVec3::ZERO,
+            edges: [DVec3::X * 0.125, DVec3::Y * 0.125, DVec3::Z * 0.125],
+        };
+        let depth = 2_f64.powi(-42);
+        let center = DVec3::X * (0.25 - depth);
+        assert_eq!(
+            shape.affine_overlap(center, shape.edges),
+            Some((DVec3::X, depth))
+        );
+        assert_eq!(
+            shape.penetration_affine(center, shape.edges),
+            Some(DVec3::X * (depth + 1e-7))
+        );
+        assert!(shape.affine_overlap(DVec3::X * 0.25, shape.edges).is_none());
+    }
+
     #[test]
     fn explicit_geometry_budget_preserves_near_face_patch_and_rejects_larger_errors() {
         let wall = AffineBox {

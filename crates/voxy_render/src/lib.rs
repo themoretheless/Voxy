@@ -185,7 +185,7 @@ pub use scene::{
     SceneSkinner, SceneTexture, SceneTransform, SceneVertex, SceneView, SceneViewTargets,
 };
 
-pub use camera::{InvalidSceneCamera, SceneCamera, SceneProjection};
+pub use camera::{InvalidSceneCamera, OrbitView, SceneCamera, SceneProjection};
 
 pub use voxy_gpu_core::{
     ComputeDispatch, ComputeError, ComputeJob, ComputeProgram, PendingComputeReadback,

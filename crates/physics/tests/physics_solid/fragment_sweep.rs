@@ -371,7 +371,7 @@ fn automatic_proximity_impact_discovers_pair_and_preserves_momentum_and_energy()
 
 #[test]
 fn finite_automatic_rebound_is_covariant_on_prestrained_rotated_translated_geometry() {
-    use physics::{biomechanics::Material as Elastic, plasticity::mesh::FiniteQuadraticDynamics};
+    use physics::{constitutive::Material as Elastic, plasticity::mesh::FiniteQuadraticDynamics};
     let rotate = |p: [f64; 3]| {
         let (s, c) = 0.63_f64.sin_cos();
         let (u, v) = 0.41_f64.sin_cos();

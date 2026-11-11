@@ -138,6 +138,7 @@ pub(crate) fn sweep_rigid_pair(
         queries,
         None,
         Some(tolerance),
+        None,
     )?;
     let Some(normal) = hit.normal else {
         return Ok(None);
@@ -348,6 +349,7 @@ pub(crate) fn sweep_spin_path_static(
             queries,
             None,
             None,
+            None,
         )?;
         if let Some(normal) = hit.normal {
             return Ok(SpinPathHit {
@@ -466,6 +468,7 @@ pub(crate) fn sweep_rigid_motion_static(
             queries,
             None,
             None,
+            None,
         )?;
         if let Some(normal) = hit.normal {
             return Ok(SpinPathHit {
@@ -506,6 +509,7 @@ pub(crate) fn sweep_rigid_motions(
         queries,
         false,
         0.,
+        0.,
     )
 }
 
@@ -518,6 +522,7 @@ fn sweep_rigid_motions_impl(
     queries: &mut usize,
     nominal_contact: bool,
     from_s: f64,
+    initial_overlap_limit: f64,
 ) -> Result<SpinPathHit, PhysicsError> {
     if first.duration() != second.duration() {
         return Err(PhysicsError::InvalidMotion);
@@ -538,9 +543,14 @@ fn sweep_rigid_motions_impl(
     };
     let ra = radius(first, first_shape)?;
     let rb = radius(second, second_shape)?;
-    if nominal_contact && from_s == 0. {
-        let a = first.initial();
-        let b = second.initial();
+    let mut initial_overlap_depth: f64 = 0.;
+    if nominal_contact && (from_s == 0. || initial_overlap_limit > 0.) {
+        let a = first
+            .sample(from_s)
+            .map_err(|_| PhysicsError::InvalidMotion)?;
+        let b = second
+            .sample(from_s)
+            .map_err(|_| PhysicsError::InvalidMotion)?;
         let qa = a
             .spin
             .map_or(DQuat::IDENTITY, |s| DQuat::from_array(s.orientation));
@@ -552,8 +562,11 @@ fn sweep_rigid_motions_impl(
             * (DVec3::from_array(a.motion.position) - DVec3::from_array(b.motion.position)
                 + qa * first_shape.center);
         let edges = first_shape.edges.map(|e| qb * (qa * e));
-        if second_shape.penetration_affine(center, edges).is_some() {
-            return Err(PhysicsError::InitialOverlap);
+        if let Some((_, depth)) = second_shape.affine_overlap(center, edges) {
+            if depth > initial_overlap_limit {
+                return Err(PhysicsError::InitialOverlap);
+            }
+            initial_overlap_depth = depth;
         }
     }
     let mut knots = vec![0., first.duration()];
@@ -565,11 +578,11 @@ fn sweep_rigid_motions_impl(
     knots.sort_by(f64::total_cmp);
     knots.dedup();
     let angular = |path: &physics::rigid_motion::RigidMotion, start: f64| {
-        path.rotation().map_or((0., 0.), |rotation| {
+        path.rotation().map_or((DVec3::ZERO, 0.), |rotation| {
             let index = rotation.segments().partition_point(|s| s.end_s <= start);
             let segment = rotation.segments()[index];
             (
-                DVec3::from_array(segment.arc.angular_velocity()).length(),
+                DVec3::from_array(segment.arc.angular_velocity()),
                 segment.model_angular_error_rad,
             )
         })
@@ -600,8 +613,10 @@ fn sweep_rigid_motions_impl(
             .zip(&controls_b)
             .map(|(a, b)| (DVec3::from_array(*a) - DVec3::from_array(*b)).length())
             .fold(0., f64::max);
-        let (wa, ea) = angular(first, start);
-        let (wb, eb) = angular(second, start);
+        let (omega_a, ea) = angular(first, start);
+        let (omega_b, eb) = angular(second, start);
+        let wa = omega_a.length();
+        let wb = omega_b.length();
         let separation = relative.length() + linear * dt + ra;
         let speed = (linear + wa * ra + wb * separation) * dt;
         let coordinates = [a, b, ae, be]
@@ -648,8 +663,25 @@ fn sweep_rigid_motions_impl(
             };
             let mut covered = false;
             super::query(queries)?;
-            for axis in [DVec3::X, DVec3::Y, DVec3::Z] {
-                if super::gap::lower(moving.center, moving.edges, &obstacle, axis, dilation)? > 0. {
+            for (coordinate, axis) in [DVec3::X, DVec3::Y, DVec3::Z].into_iter().enumerate() {
+                // A transverse translation cannot change a fixed projection.
+                // Require exact zero coefficients for both bodies independently.
+                let fixed_projection = a.spin.is_none()
+                    && b.spin.is_none()
+                    && [first, second].into_iter().all(|path| {
+                        path.initial().motion.velocity[coordinate] == 0.
+                            && path.acceleration()[coordinate] == 0.
+                            && path.jerk()[coordinate] == 0.
+                    });
+                if super::gap::lower(moving.center, moving.edges, &obstacle, axis, dilation)? > 0.
+                    || fixed_projection
+                        && super::exact_gap::sign(
+                            relative + first_shape.center,
+                            first_shape.edges,
+                            &second_shape,
+                            axis,
+                        )? >= 0
+                {
                     covered = true;
                     break;
                 }
@@ -663,6 +695,85 @@ fn sweep_rigid_motions_impl(
         } else {
             0.
         };
+        // Retain a rounding allowance for differencing the sampled positions.
+        // If it does not fit inside the existing nominal contact tolerance,
+        // use the ordinary advancement path.
+        let reserve =
+            (8. * f64::EPSILON * (coordinates + absolute_motion + separation + rb)).next_up();
+        let acceleration = |time| {
+            let a = first.acceleration_at(time).ok()?;
+            let b = second.acceleration_at(time).ok()?;
+            Some((DVec3::from_array(a) - DVec3::from_array(b)).length())
+        };
+        let acceleration_bound = acceleration(start)
+            .zip(acceleration(end))
+            .map_or(f64::INFINITY, |(a, b)| a.max(b));
+        let derivative_guard = 256. * f64::EPSILON * (1. + linear + wb * separation);
+        let curvature = ((acceleration_bound + 2. * wb * linear + wb * wb * separation)
+            * (1. + 256. * f64::EPSILON)
+            + derivative_guard)
+            .next_up();
+        let vertex_guard = 32. * f64::EPSILON * ra;
+        let rotating_step = |fraction: f64, axis: DVec3, gap: f64| {
+            let time = dt.mul_add(fraction, start).clamp(start, end);
+            let (Ok(a), Ok(b)) = (sample(first, time), sample(second, time)) else {
+                return fraction;
+            };
+            let Some(spin) = b.spin else {
+                return fraction;
+            };
+            let qb = DQuat::from_array(spin.orientation);
+            if (qb.length_squared() - 1.).abs() > 64. * f64::EPSILON {
+                return fraction;
+            }
+            let normal = qb * axis.normalize();
+            let relative =
+                DVec3::from_array(a.motion.position) - DVec3::from_array(b.motion.position);
+            let velocity =
+                DVec3::from_array(a.motion.velocity) - DVec3::from_array(b.motion.velocity);
+            let center_velocity = velocity - omega_b.cross(relative + first_shape.center);
+            let edges = first_shape.edges;
+            let edge_projections = edges.map(|edge| normal.dot(edge));
+            let edge_velocities = edges.map(|edge| -normal.dot(omega_b.cross(edge)));
+
+            // The SAT gap bounds the least separated vertex. Each other
+            // vertex can use its own signed projection slack and derivative.
+            // The relative-frame second derivative is bounded on this arc.
+            let mut prefix = ((1. - fraction) * dt).next_down();
+            for corner in 0..8 {
+                let mut slack = 0.;
+                let mut derivative = normal.dot(center_velocity);
+                for k in 0..3 {
+                    let sign = if corner & (1 << k) == 0 { -1. } else { 1. };
+                    slack += edge_projections[k].abs() + sign * edge_projections[k];
+                    derivative += sign * edge_velocities[k];
+                }
+                let available = (0.8 * (gap + slack - reserve - vertex_guard)).next_down();
+                if !available.is_finite() || available <= 0. {
+                    return fraction;
+                }
+                let closing = (derivative_guard - derivative).max(0.);
+                let denominator = closing + closing.hypot((2. * curvature * available).sqrt());
+                if !denominator.is_finite() || denominator <= 0. {
+                    return fraction;
+                }
+                prefix = prefix.min((2. * available / denominator).next_down());
+            }
+            (fraction + (prefix / dt).next_down())
+                .next_down()
+                .clamp(fraction, 1.)
+        };
+        let projected = (nominal_contact && a.spin.is_none() && reserve < nominal_tolerance)
+            .then_some(super::ProjectedAdvance {
+                first,
+                second,
+                duration: dt,
+                reserve,
+                rotating_step: b
+                    .spin
+                    .is_some()
+                    .then_some(&rotating_step as &dyn Fn(f64, DVec3, f64) -> f64),
+            });
         let hit = advance_with_enclosures(
             &[&second_shape],
             |fraction| {
@@ -700,6 +811,7 @@ fn sweep_rigid_motions_impl(
             } else {
                 None
             },
+            projected,
         )?;
         if let Some(normal) = hit.normal {
             let time = dt.mul_add(hit.fraction, start).clamp(start, end);
@@ -712,7 +824,11 @@ fn sweep_rigid_motions_impl(
                 time_s: time,
                 normal: Some(qb * normal),
                 model_error_m: error,
-                nominal_tolerance_m: nominal_tolerance,
+                nominal_tolerance_m: if time == from_s {
+                    nominal_tolerance.max(initial_overlap_depth)
+                } else {
+                    nominal_tolerance
+                },
             });
         }
     }
@@ -748,7 +864,34 @@ pub(crate) fn sweep_nominal_rigid_contact(
     steps: &mut usize,
     queries: &mut usize,
 ) -> Result<Option<RigidTrajectoryContact>, PhysicsError> {
+    sweep_nominal_rigid_contact_with_overlap_limit(
+        first,
+        first_shape,
+        second,
+        second_shape,
+        steps,
+        queries,
+        0.,
+    )
+}
+
+/// Resume a previously admitted shape pair with a bounded initial overlap.
+/// Recheck the depth after each certified non-worsening prefix. An event
+/// found later by free advancement still uses the ordinary tolerance.
+pub(crate) fn sweep_nominal_rigid_contact_with_overlap_limit(
+    first: &physics::rigid_motion::RigidMotion,
+    first_shape: AffineBox,
+    second: &physics::rigid_motion::RigidMotion,
+    second_shape: AffineBox,
+    steps: &mut usize,
+    queries: &mut usize,
+    initial_overlap_limit: f64,
+) -> Result<Option<RigidTrajectoryContact>, PhysicsError> {
+    if !initial_overlap_limit.is_finite() || initial_overlap_limit < 0. {
+        return Err(PhysicsError::InvalidMotion);
+    }
     let mut from_s = 0.;
+    let mut overlap_limit = initial_overlap_limit;
     loop {
         let hit = sweep_rigid_motions_impl(
             first,
@@ -759,6 +902,7 @@ pub(crate) fn sweep_nominal_rigid_contact(
             queries,
             true,
             from_s,
+            overlap_limit,
         )?;
         let Some(normal) = hit.normal else {
             return Ok(None);
@@ -806,6 +950,9 @@ pub(crate) fn sweep_nominal_rigid_contact(
                 return Ok(None);
             }
             super::query(queries)?;
+            if hit.time_s > from_s {
+                overlap_limit = 0.;
+            }
             from_s = separating_prefix(first, first_shape, second, normal, hit.time_s)?;
             if from_s >= first.duration() {
                 return Ok(None);
@@ -925,10 +1072,40 @@ fn separating_prefix(
         * (1. + velocity_max + wa.length() * radius + wb.length() * (separation + radius));
     let lower = derivative - guard;
     let bound = curvature * (1. + 256. * f64::EPSILON) + guard;
-    if !lower.is_finite() || !bound.is_finite() || lower <= 0. {
+    if !lower.is_finite() || !bound.is_finite() || bound <= 0. {
         return Err(PhysicsError::SweepBudget);
     }
-    let prefix = horizon.min(lower / bound);
+    let prefix = if lower > 0. {
+        horizon.min(lower / bound)
+    } else {
+        let projection = edges.map(|edge| normal.dot(edge));
+        let rates = edges.map(|edge| normal.dot((wa - wb).cross(edge)));
+        let center_rate = normal.dot(velocity - wb.cross(relative) + (wa - wb).cross(center));
+        let mut prefix = horizon;
+        for corner in 0..8 {
+            let mut slack = 0.;
+            let mut rate = center_rate;
+            for k in 0..3 {
+                let sign = if corner & (1 << k) == 0 { -1. } else { 1. };
+                slack += projection[k].abs() + sign * projection[k];
+                rate += sign * rates[k];
+            }
+            let slack = (slack - 64. * f64::EPSILON * radius).max(0.);
+            let rate = rate - guard;
+            let root = rate.hypot((2. * bound * slack).sqrt());
+            // Allow an opening corner to reach its initial gap again. Other
+            // corners may use their initial slack to the supporting plane.
+            let span = if rate > 0. {
+                (rate + root) / bound
+            } else if slack > 0. {
+                2. * slack / (root - rate)
+            } else {
+                0.
+            };
+            prefix = prefix.min((0.8 * span).next_down());
+        }
+        prefix
+    };
     let next = (time + prefix).min(end);
     if next <= time {
         return Err(PhysicsError::SweepBudget);
@@ -940,6 +1117,111 @@ fn separating_prefix(
 mod spin_bridge_tests {
     use super::*;
     use physics::{rotation::Spin, spin_path::Config};
+    #[test]
+    fn initial_overlap_witness_uses_the_pair_allowance() {
+        use physics::{contact::ContactBody, gravity::Body};
+        let config = Config {
+            max_angular_error_rad: 1e-6,
+            min_step_s: 1e-9,
+            max_arcs: 10000,
+            max_trials: 30000,
+        };
+        let first = ContactBody {
+            motion: Body {
+                mass: 1.0,
+                position: [
+                    0.31987325525638133,
+                    -0.002133468879398942,
+                    -6.95069063585106e-9,
+                ],
+                velocity: [
+                    3.736107144558178,
+                    -0.20459388899428854,
+                    -6.948564037258482e-5,
+                ],
+            },
+            spin: None,
+        }
+        .prepare_motion([0., -9.81, 0.], [0.; 3], 1e-4, config)
+        .unwrap();
+        let second = ContactBody {
+            motion: Body {
+                mass: 2.0,
+                position: [
+                    0.4073763821162012,
+                    -0.002133468879398942,
+                    0.025000003847874274,
+                ],
+                velocity: [
+                    3.7569464277209113,
+                    -0.20459388899428851,
+                    3.474282018629241e-5,
+                ],
+            },
+            spin: Some(Spin {
+                orientation: [
+                    -7.954550411720972e-24,
+                    -0.005001449024665575,
+                    2.9313323944114574e-21,
+                    0.9999874926756103,
+                ],
+                angular_momentum: [
+                    -1.950199050585431e-21,
+                    -0.1736067706154807,
+                    2.9975832196336307e-19,
+                ],
+                inertia: [
+                    0.005208333333333335,
+                    0.005208333333333335,
+                    0.005208333333333335,
+                ],
+            }),
+        }
+        .prepare_motion([0., -19.62, 0.], [0.; 3], 1e-4, config)
+        .unwrap();
+        let shape = |half| AffineBox {
+            center: DVec3::ZERO,
+            edges: [DVec3::X * half, DVec3::Y * half, DVec3::Z * half],
+        };
+        let sweep = |allowance| {
+            sweep_nominal_rigid_contact_with_overlap_limit(
+                &first,
+                shape(0.025),
+                &second,
+                shape(0.0625),
+                &mut 4096,
+                &mut 4096,
+                allowance,
+            )
+        };
+        assert_eq!(sweep(0.).unwrap_err(), PhysicsError::InitialOverlap);
+        assert_eq!(sweep(1e-13).unwrap_err(), PhysicsError::InitialOverlap);
+        let normal = DQuat::from_array(second.initial().spin.unwrap().orientation) * -DVec3::X;
+        let prefix = separating_prefix(&first, shape(0.025), &second, normal, 0.).unwrap();
+        assert!(prefix > 0. && prefix < 1e-4);
+        assert_eq!(sweep(8.56e-12).unwrap_err(), PhysicsError::SweepBudget);
+
+        // On the same geometry a genuinely closing initial witness is usable.
+        let mut incoming = first.initial();
+        incoming.motion.velocity[0] += 1.;
+        let incoming = incoming
+            .prepare_motion([0., -9.81, 0.], [0.; 3], 1e-4, config)
+            .unwrap();
+        let hit = sweep_nominal_rigid_contact_with_overlap_limit(
+            &incoming,
+            shape(0.025),
+            &second,
+            shape(0.0625),
+            &mut 4096,
+            &mut 4096,
+            8.56e-12,
+        )
+        .unwrap()
+        .unwrap();
+        assert_eq!(hit.time_s, 0.);
+        assert!(hit.tolerance_m < 8.56e-12);
+        assert!(hit.normal.x < -0.99);
+    }
     #[test]
     fn nominal_fixed_axis_gap_covers_small_motion_but_not_a_closing_interval() {
         let config = Config {
@@ -986,10 +1268,9 @@ mod spin_bridge_tests {
         let closing = approaching
             .prepare_motion([0.; 3], [0.; 3], 0.02, config)
             .unwrap();
-        let hit =
-            sweep_nominal_rigid_contact(&closing, shape, &wall, shape, &mut 10000, &mut 10000)
-                .unwrap()
-                .unwrap();
+        let hit = sweep_nominal_rigid_contact(&closing, shape, &wall, shape, &mut 128, &mut 128)
+            .unwrap()
+            .unwrap();
         assert_eq!(hit.normal, -DVec3::X);
         assert!(hit.time_s < 1e-4);
         // The represented nominal arc is the contract here, not the true
@@ -1043,6 +1324,35 @@ mod spin_bridge_tests {
                 .unwrap()
                 .is_none()
         );
+        let sliding = body((-1.0_f64).next_down(), 0.)
+            .prepare_motion([0., -9.81, 0.], [0.; 3], 1.1, config)
+            .unwrap();
+        assert!(
+            sweep_nominal_rigid_contact(&sliding, shape, &wall, shape, &mut 8, &mut 8)
+                .unwrap()
+                .is_none()
+        );
+        let closing = body(-1.000001, 0.001)
+            .prepare_motion([0., -9.81, 0.], [0.; 3], 1.1, config)
+            .unwrap();
+        let hit = sweep_nominal_rigid_contact(&closing, shape, &wall, shape, &mut 128, &mut 128)
+            .unwrap()
+            .unwrap();
+        assert_eq!(hit.normal, -DVec3::X);
+        assert!((hit.time_s - 0.001).abs() < 1e-9);
+        let moving_wall = body(0., 0.002)
+            .prepare_motion([0.; 3], [0.; 3], 1.1, config)
+            .unwrap();
+        let closing = body(-1.000001, 0.003)
+            .prepare_motion([0., -9.81, 0.], [0.; 3], 1.1, config)
+            .unwrap();
+        let hit =
+            sweep_nominal_rigid_contact(&closing, shape, &moving_wall, shape, &mut 128, &mut 128)
+                .unwrap()
+                .unwrap();
+        assert_eq!(hit.normal, -DVec3::X);
+        assert!((hit.time_s - 0.001).abs() < 1e-9);
+        assert!((hit.point.x - (-0.5 + 0.002 * hit.time_s)).abs() < hit.tolerance_m);
     }
     #[test]
     fn unresolved_rotating_face_touch_is_rejected_instead_of_declared_clear() {

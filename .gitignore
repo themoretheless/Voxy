@@ -14,10 +14,11 @@ __pycache__/
 
 /assets/environments/bistro/cache/
 
-# Run outputs and local tooling state
-/artifacts/*
-!/artifacts/rig-constant-parents-2026-10-03/
-!/artifacts/character-bind-pose-2026-10-07/
+# Run outputs, local packages and local tooling state
+/artifacts/
+*.vpak
+*.profdata
+/lcov.info
 /rag.duckdb
 /rag.pid
 

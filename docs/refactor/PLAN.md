@@ -157,7 +157,7 @@
 
 ### Волна 6. Закрепление
 - [x] **6.1** В корневом `Cargo.toml` включены и вычищены по всему воркспейсу 9 clippy-линтов качества и идиоматики: `needless_borrow`, `collapsible_if`, `implicit_clone`, `explicit_iter_loop`, `uninlined_format_args`, `semicolon_if_nothing_returned`, `manual_let_else`, `redundant_closure_for_method_calls`, `map_unwrap_or`.
-- [-] **6.2** Поэтапное включение `too_many_lines` / `too_many_arguments` оставлено следующим шагом поверх уже зафиксированного `LINE_BUDGET = 1500` (`KNOWN_OVERSIZED = &[]`).
+- [-] **6.2** Поэтапное включение `too_many_lines` / `too_many_arguments` оставлено следующим шагом поверх уже зафиксированного `LINE_BUDGET = 1500` (текущие рабочие расширения `multi_body.rs`, `angular_sweep.rs` и `browser.rs` временно зафиксированы в `KNOWN_OVERSIZED` до их подмодульной нарезки).
 - [-] **6.3** Миграция публичных сигнатур `Result<_, &'static str>` в `physics` отложена во избежание поломки внешних контрактов без отдельного согласования.
 - [x] **6.4** Актуализированы `docs/architecture.md` §4, `docs/refactor/INVENTORY.md`, `docs/refactor/BASELINE.md` (с таблицами до/после), `docs/refactor/functions.tsv` и настоящий `PLAN.md`.
 

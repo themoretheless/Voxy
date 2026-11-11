@@ -1,0 +1,34 @@
++ sudo nerdctl stop -t 2 voxy-x64-runtime-0be42
+voxy-x64-runtime-0be42
++ sudo nerdctl run --rm --name voxy-x64-display-check --platform linux/amd64 --network none -v /home/themoretheless.guest/voxy-x64-output/turntable.zip:/input/turntable.zip:ro voxy-x64-runtime:qualification bash -lc '
+set -ex
+test ! -e /source
+unzip -q /input/turntable.zip -d /tmp/relocated-game
+Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp -ac >/tmp/voxy-xvfb.log 2>&1 &
+display_pid=$!
+trap "kill $display_pid 2>/dev/null || true" EXIT
+for attempt in $(seq 1 50); do
+    if test -S /tmp/.X11-unix/X99; then break; fi
+    sleep 0.1
+done
+test -S /tmp/.X11-unix/X99
+cd /
+timeout 90 env DISPLAY=:99 WGPU_BACKEND=vulkan VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json /tmp/relocated-game/voxy_game --embedded-game-native-smoke
+'
++ test '!' -e /source
++ unzip -q /input/turntable.zip -d /tmp/relocated-game
++ Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp -ac
++ display_pid=10
++ trap 'kill 10 2>/dev/null || true' EXIT
+++ seq 1 50
++ for attempt in $(seq 1 50)
++ test -S /tmp/.X11-unix/X99
++ break
++ test -S /tmp/.X11-unix/X99
++ cd /
++ timeout 90 env DISPLAY=:99 WGPU_BACKEND=vulkan VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json /tmp/relocated-game/voxy_game --embedded-game-native-smoke
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+GAME UI GPU PUBLISHED draws=0
+GAME NATIVE PASS frames=3 ticks=14
+MODEL FAILED frames=3 last_good=true asset=mesh status=Some(Failed("GPU publication cancelled during shutdown"))
++ kill 10

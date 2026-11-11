@@ -22,6 +22,31 @@ use std::sync::Arc;
 use types::{display_mode, fully_covering_transmission};
 use world_rays::validate_street_ray_env_config;
 
+const LIGHT_Z_BIN_COUNT: usize = 256;
+
+fn archive_light_z_masks(lights: &[ArchiveLight]) -> [[u32; 4]; LIGHT_Z_BIN_COUNT] {
+    let mut masks = [[0; 4]; LIGHT_Z_BIN_COUNT];
+    for (index, light) in lights.iter().enumerate() {
+        let [_, _, z, radius] = light.position_kind;
+        let (z, radius) = (f64::from(z), f64::from(radius));
+        // The original shader subtracts the two f32 coordinates. Widen
+        // the interval for that rounding and for classification at a bin edge.
+        let slack = 4. + 8. * f64::from(f32::EPSILON) * (z.abs() + radius.abs() + 512.);
+        for (bin, mask) in masks.iter_mut().enumerate() {
+            let low = (bin as f64 - 128.) * 4.;
+            let high = low + 4.;
+            if !z.is_finite()
+                || !radius.is_finite()
+                || radius <= 0.
+                || (z - radius - slack <= high && z + radius + slack >= low)
+            {
+                mask[index / 32] |= 1 << (index % 32);
+            }
+        }
+    }
+    masks
+}
+
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
 struct Camera {
@@ -702,6 +727,30 @@ impl ArchiveSceneRenderer {
                                 },
                             ),
                             (
+                                "WGPU_METAL_PRECISE_MATH",
+                                if std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some() {
+                                    1.
+                                } else {
+                                    0.
+                                },
+                            ),
+                            (
+                                "ARCHIVE_LIGHT_Z_MASKS",
+                                if std::env::var_os("VOXY_STREET_LIGHT_Z_MASKS").is_some() {
+                                    1.
+                                } else {
+                                    0.
+                                },
+                            ),
+                            (
+                                "ARCHIVE_RAY_DEPTH_REUSE",
+                                if std::env::var_os("VOXY_STREET_RAY_DEPTH_REUSE").is_some() {
+                                    1.
+                                } else {
+                                    0.
+                                },
+                            ),
+                            (
                                 "ARCHIVE_REFINE_CACHE",
                                 if refine_variant.get() { 1. } else { 0. },
                             ),
@@ -938,6 +987,8 @@ impl ArchiveSceneRenderer {
         light_data[..4].copy_from_slice(&(lights.len() as u32).to_le_bytes());
         light_data[16..16 + std::mem::size_of_val(lights)]
             .copy_from_slice(bytemuck::cast_slice(lights));
+        let masks = archive_light_z_masks(lights);
+        light_data.extend_from_slice(bytemuck::cast_slice(&masks));
         let light_buffer = buffer(
             device,
             "unchanged authored punctual light constants",
@@ -1453,8 +1504,3 @@ mod vertex_invariance_tests;
 #[cfg(test)]
 #[path = "archive_derivative_control_flow_tests.rs"]
 mod derivative_control_flow_tests;
-
-// Test the exact backend policy without making the vendored crate a workspace member.
-#[cfg(test)]
-#[path = "../../../vendor/wgpu-hal/src/metal/original_gi_math.rs"]
-mod metal_original_gi_math_policy;

@@ -88,7 +88,7 @@ fn invalid_point_pair_and_same_fragment_restore_velocity_and_loss_inventory() {
 
 #[test]
 fn finite_fragment_impact_preserves_momenta_in_rotated_translated_geometry() {
-    use physics::{biomechanics::Material as Elastic, plasticity::mesh::FiniteQuadraticDynamics};
+    use physics::{constitutive::Material as Elastic, plasticity::mesh::FiniteQuadraticDynamics};
     let q = |p: [f64; 3]| [p[2], p[1], -p[0]];
     let offset = [8., -3., 4.];
     let reference = fixture();

@@ -34,10 +34,12 @@ use resources::{UploadedGeometryBatch, geometry_sizes, managed_scene_indices, sc
 
 #[derive(Debug)]
 struct PreparedScenePipelines {
+    solid_opaque: wgpu::RenderPipeline,
     world: wgpu::RenderPipeline,
     overlay: wgpu::RenderPipeline,
     transparent: wgpu::RenderPipeline,
     msaa: Option<(
+        wgpu::RenderPipeline,
         wgpu::RenderPipeline,
         wgpu::RenderPipeline,
         wgpu::RenderPipeline,
@@ -65,6 +67,8 @@ pub struct SceneRenderer {
     lighting_revision: u64,
     device: wgpu::Device,
     compute_memory_budget: crate::ComputeMemoryBudget,
+    reverse_z: bool,
+    solid_opaque_pipeline: wgpu::RenderPipeline,
     world_pipeline: wgpu::RenderPipeline,
     overlay_pipeline: wgpu::RenderPipeline,
     transparent_pipeline: wgpu::RenderPipeline,
@@ -79,6 +83,7 @@ pub struct SceneRenderer {
         wgpu::RenderPipeline,
         wgpu::RenderPipeline,
         wgpu::RenderPipeline,
+        wgpu::RenderPipeline,
     )>,
 }
 
@@ -87,6 +92,17 @@ impl SceneRenderer {
     #[must_use]
     pub const fn color_format(&self) -> wgpu::TextureFormat {
         self.color_format
+    }
+
+    /// Whether depth comparisons use reversed-Z (`GreaterEqual`, clear `0.0`).
+    #[must_use]
+    pub const fn is_reverse_z(&self) -> bool {
+        self.reverse_z
+    }
+
+    #[inline]
+    pub(super) const fn depth_clear_value(&self) -> f32 {
+        if self.reverse_z { 0.0 } else { 1.0 }
     }
 
     /// Shared device owner retained even when no scene resource is resident.
@@ -104,6 +120,16 @@ impl SceneRenderer {
 
     #[must_use]
     pub fn new(device: &wgpu::Device, format: wgpu::TextureFormat) -> Self {
+        Self::new_with_depth(device, format, false)
+    }
+
+    /// Creates a scene renderer matching reversed-Z depth targets (`GreaterEqual`, clear `0.0`).
+    #[must_use]
+    pub fn new_reverse_z(device: &wgpu::Device, format: wgpu::TextureFormat) -> Self {
+        Self::new_with_depth(device, format, true)
+    }
+
+    fn new_with_depth(device: &wgpu::Device, format: wgpu::TextureFormat, reverse_z: bool) -> Self {
         let transform_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("scene transform"),
             entries: &[wgpu::BindGroupLayoutEntry {
@@ -143,8 +169,14 @@ impl SceneRenderer {
             source: wgpu::ShaderSource::Wgsl(DEFAULT_SCENE_SHADER.into()),
         });
         // Build initial pipelines before constructing the owner.
-        let mut renderer =
-            Self::from_layouts(device, format, transform_layout, texture_layout, &shader);
+        let mut renderer = Self::from_layouts(
+            device,
+            format,
+            transform_layout,
+            texture_layout,
+            &shader,
+            reverse_z,
+        );
         DEFAULT_SCENE_SHADER.clone_into(&mut renderer.shader_source);
         renderer
     }
@@ -167,6 +199,8 @@ impl SceneRenderer {
             4,
             None,
             None,
+            renderer.reverse_z,
+            true,
         ));
         renderer
     }
@@ -204,6 +238,8 @@ impl SceneRenderer {
             self.environment
                 .as_ref()
                 .map(|environment| &environment.layout),
+            self.reverse_z,
+            self.shader_source == DEFAULT_SCENE_SHADER,
         );
         if let Some(error) = scope.pop().await {
             return Err(SceneShaderError(error.to_string()));
@@ -218,8 +254,9 @@ impl SceneRenderer {
         transform_layout: wgpu::BindGroupLayout,
         texture_layout: wgpu::BindGroupLayout,
         shader: &wgpu::ShaderModule,
+        reverse_z: bool,
     ) -> Self {
-        let (world_pipeline, overlay_pipeline, transparent_pipeline) =
+        let (solid_opaque_pipeline, world_pipeline, overlay_pipeline, transparent_pipeline) =
             Self::create_shader_pipelines(
                 device,
                 format,
@@ -229,12 +266,16 @@ impl SceneRenderer {
                 1,
                 None,
                 None,
+                reverse_z,
+                true,
             );
         Self {
             identity: std::sync::Arc::new(()),
             lighting_revision: 0,
             device: device.clone(),
             compute_memory_budget: crate::ComputeMemoryBudget::for_device(device),
+            reverse_z,
+            solid_opaque_pipeline,
             world_pipeline,
             overlay_pipeline,
             transparent_pipeline,
@@ -554,7 +595,8 @@ impl SceneRenderer {
             return Err(SceneShaderError(error.to_string()));
         }
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let (world, overlay, transparent) = Self::create_shader_pipelines(
+        let is_default = source == DEFAULT_SCENE_SHADER;
+        let (solid_opaque, world, overlay, transparent) = Self::create_shader_pipelines(
             device,
             self.color_format,
             &self.transform_layout,
@@ -563,6 +605,8 @@ impl SceneRenderer {
             1,
             shadow_layout,
             environment_layout,
+            self.reverse_z,
+            is_default,
         );
         let msaa = self.msaa_pipelines.as_ref().map(|_| {
             Self::create_shader_pipelines(
@@ -574,12 +618,15 @@ impl SceneRenderer {
                 4,
                 shadow_layout,
                 environment_layout,
+                self.reverse_z,
+                is_default,
             )
         });
         if let Some(error) = scope.pop().await {
             return Err(SceneShaderError(error.to_string()));
         }
         Ok(Some(PreparedScenePipelines {
+            solid_opaque,
             world,
             overlay,
             transparent,
@@ -595,6 +642,7 @@ impl SceneRenderer {
         let Some(p) = pipelines else {
             return false;
         };
+        self.solid_opaque_pipeline = p.solid_opaque;
         self.world_pipeline = p.world;
         self.overlay_pipeline = p.overlay;
         self.transparent_pipeline = p.transparent;
@@ -609,6 +657,7 @@ impl SceneRenderer {
         self.shader_revision
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn create_shader_pipelines(
         device: &wgpu::Device,
         format: wgpu::TextureFormat,
@@ -618,7 +667,10 @@ impl SceneRenderer {
         sample_count: u32,
         shadow_layout: Option<&wgpu::BindGroupLayout>,
         environment_layout: Option<&wgpu::BindGroupLayout>,
+        reverse_z: bool,
+        has_solid_entry: bool,
     ) -> (
+        wgpu::RenderPipeline,
         wgpu::RenderPipeline,
         wgpu::RenderPipeline,
         wgpu::RenderPipeline,
@@ -633,9 +685,12 @@ impl SceneRenderer {
             shadow_layout,
             environment_layout,
             false,
+            reverse_z,
+            has_solid_entry,
         )
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn create_shader_pipelines_with_tangents(
         device: &wgpu::Device,
         format: wgpu::TextureFormat,
@@ -646,7 +701,10 @@ impl SceneRenderer {
         shadow_layout: Option<&wgpu::BindGroupLayout>,
         environment_layout: Option<&wgpu::BindGroupLayout>,
         has_tangents: bool,
+        reverse_z: bool,
+        has_solid_entry: bool,
     ) -> (
+        wgpu::RenderPipeline,
         wgpu::RenderPipeline,
         wgpu::RenderPipeline,
         wgpu::RenderPipeline,
@@ -697,7 +755,12 @@ impl SceneRenderer {
                 attributes: &tangent_attributes,
             }));
         }
-        let pipeline = |overlay: bool, depth_write: bool| {
+        let world_compare = if reverse_z {
+            wgpu::CompareFunction::GreaterEqual
+        } else {
+            wgpu::CompareFunction::LessEqual
+        };
+        let pipeline = |overlay: bool, depth_write: bool, solid: bool| {
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some("scene pipeline"),
                 layout: Some(&layout),
@@ -707,14 +770,17 @@ impl SceneRenderer {
                     compilation_options: wgpu::PipelineCompilationOptions::default(),
                     buffers: &vertex_buffers,
                 },
-                primitive: wgpu::PrimitiveState::default(),
+                primitive: wgpu::PrimitiveState {
+                    cull_mode: if solid { Some(wgpu::Face::Back) } else { None },
+                    ..Default::default()
+                },
                 depth_stencil: Some(wgpu::DepthStencilState {
                     format: wgpu::TextureFormat::Depth32Float,
                     depth_write_enabled: Some(depth_write),
                     depth_compare: Some(if overlay {
                         wgpu::CompareFunction::Always
                     } else {
-                        wgpu::CompareFunction::LessEqual
+                        world_compare
                     }),
                     stencil: wgpu::StencilState::default(),
                     bias: wgpu::DepthBiasState::default(),
@@ -725,11 +791,19 @@ impl SceneRenderer {
                 },
                 fragment: Some(wgpu::FragmentState {
                     module: shader,
-                    entry_point: Some("fs_main"),
+                    entry_point: Some(if solid && has_solid_entry {
+                        "fs_solid_opaque"
+                    } else {
+                        "fs_main"
+                    }),
                     compilation_options: wgpu::PipelineCompilationOptions::default(),
                     targets: &[Some(wgpu::ColorTargetState {
                         format,
-                        blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                        blend: if solid {
+                            None
+                        } else {
+                            Some(wgpu::BlendState::ALPHA_BLENDING)
+                        },
                         write_mask: wgpu::ColorWrites::ALL,
                     })],
                 }),
@@ -738,10 +812,110 @@ impl SceneRenderer {
             })
         };
         (
-            pipeline(false, true),
-            pipeline(true, false),
-            pipeline(false, false),
+            pipeline(false, true, true),
+            pipeline(false, true, false),
+            pipeline(true, false, false),
+            pipeline(false, false, false),
         )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn create_single_opaque_pipeline(
+        device: &wgpu::Device,
+        format: wgpu::TextureFormat,
+        transform_layout: &wgpu::BindGroupLayout,
+        texture_layout: &wgpu::BindGroupLayout,
+        shader: &wgpu::ShaderModule,
+        sample_count: u32,
+        shadow_layout: Option<&wgpu::BindGroupLayout>,
+        environment_layout: Option<&wgpu::BindGroupLayout>,
+        has_tangents: bool,
+        reverse_z: bool,
+    ) -> wgpu::RenderPipeline {
+        let mut layouts = vec![Some(transform_layout), Some(texture_layout)];
+        if shadow_layout.is_some() || environment_layout.is_some() {
+            layouts.push(shadow_layout);
+        }
+        if let Some(environment) = environment_layout {
+            layouts.push(Some(environment));
+        }
+        let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("scene custom opaque layout"),
+            bind_group_layouts: &layouts,
+            immediate_size: 0,
+        });
+        let attributes = wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x2, 2 => Float32x4];
+        let normal_attributes = wgpu::vertex_attr_array![3 => Float32x3];
+        let coordinate_attributes = wgpu::vertex_attr_array![5 => Float32x3];
+        let material_attributes = wgpu::vertex_attr_array![4 => Float32x4];
+        let tangent_attributes = wgpu::vertex_attr_array![6 => Float32x4];
+        let mut vertex_buffers = vec![
+            Some(wgpu::VertexBufferLayout {
+                array_stride: size_of::<SceneVertex>() as u64,
+                step_mode: wgpu::VertexStepMode::Vertex,
+                attributes: &attributes,
+            }),
+            Some(wgpu::VertexBufferLayout {
+                array_stride: 12,
+                step_mode: wgpu::VertexStepMode::Vertex,
+                attributes: &normal_attributes,
+            }),
+            Some(wgpu::VertexBufferLayout {
+                array_stride: 16,
+                step_mode: wgpu::VertexStepMode::Instance,
+                attributes: &material_attributes,
+            }),
+            Some(wgpu::VertexBufferLayout {
+                array_stride: 12,
+                step_mode: wgpu::VertexStepMode::Vertex,
+                attributes: &coordinate_attributes,
+            }),
+        ];
+        if has_tangents {
+            vertex_buffers.push(Some(wgpu::VertexBufferLayout {
+                array_stride: 16,
+                step_mode: wgpu::VertexStepMode::Vertex,
+                attributes: &tangent_attributes,
+            }));
+        }
+        device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("geometry opaque pipeline"),
+            layout: Some(&layout),
+            vertex: wgpu::VertexState {
+                module: shader,
+                entry_point: Some("vs_main"),
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
+                buffers: &vertex_buffers,
+            },
+            primitive: wgpu::PrimitiveState::default(),
+            depth_stencil: Some(wgpu::DepthStencilState {
+                format: wgpu::TextureFormat::Depth32Float,
+                depth_write_enabled: Some(true),
+                depth_compare: Some(if reverse_z {
+                    wgpu::CompareFunction::GreaterEqual
+                } else {
+                    wgpu::CompareFunction::LessEqual
+                }),
+                stencil: wgpu::StencilState::default(),
+                bias: wgpu::DepthBiasState::default(),
+            }),
+            multisample: wgpu::MultisampleState {
+                count: sample_count,
+                ..Default::default()
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: shader,
+                entry_point: Some("fs_main"),
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format,
+                    blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+            }),
+            multiview_mask: None,
+            cache: None,
+        })
     }
 
     /// Logical buffer bytes required by a validated mesh upload. Includes the
@@ -796,7 +970,7 @@ impl SceneRenderer {
             label: Some("geometry opaque shader"),
             source: wgpu::ShaderSource::Wgsl(source.into()),
         });
-        let one = Self::create_shader_pipelines_with_tangents(
+        let one = Self::create_single_opaque_pipeline(
             device,
             self.color_format,
             &self.transform_layout,
@@ -806,8 +980,9 @@ impl SceneRenderer {
             self.shadow.as_ref().map(|s| &s.layout),
             self.environment.as_ref().map(|e| &e.layout),
             geometry.tangents.is_some(),
+            self.reverse_z,
         );
-        let four = Self::create_shader_pipelines_with_tangents(
+        let four = Self::create_single_opaque_pipeline(
             device,
             self.color_format,
             &self.transform_layout,
@@ -817,6 +992,7 @@ impl SceneRenderer {
             self.shadow.as_ref().map(|s| &s.layout),
             self.environment.as_ref().map(|e| &e.layout),
             geometry.tangents.is_some(),
+            self.reverse_z,
         );
         if let Some(error) = scope.pop().await {
             return Err(SceneShaderError(error.to_string()));
@@ -824,8 +1000,8 @@ impl SceneRenderer {
         geometry.opaque_shader = Some((
             self.shader_revision,
             self.transform_layout.clone(),
-            one.0,
-            four.0,
+            one,
+            four,
         ));
         Ok(())
     }

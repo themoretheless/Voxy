@@ -3,6 +3,9 @@
 mod browser;
 
 #[cfg(target_arch = "wasm32")]
+mod project_game;
+
+#[cfg(target_arch = "wasm32")]
 mod gravity_validation;
 
 #[cfg(target_arch = "wasm32")]

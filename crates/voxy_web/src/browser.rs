@@ -42,6 +42,7 @@ impl BrowserGravity {
 #[derive(Debug)]
 pub struct WebEngine {
     canvas: web_sys::HtmlCanvasElement,
+    project_game: Option<super::project_game::ProjectGame>,
     surface: wgpu::Surface<'static>,
     device: wgpu::Device,
     queue: wgpu::Queue,
@@ -207,6 +208,7 @@ impl WebEngine {
             None
         };
         Ok(Self {
+            project_game: None,
             canvas,
             surface,
             device,
@@ -956,7 +958,7 @@ impl WebEngine {
     }
 
     /// Destroys the real device for explicit device-loss acceptance testing.
-    /// Reload the page to recreate resources after this terminal diagnostic.
+    /// The destroyed device cannot be reused.
     pub fn destroy_device_for_validation(&self) {
         self.device.destroy();
     }
@@ -967,6 +969,144 @@ impl WebEngine {
             .lock()
             .ok()
             .and_then(|failure| failure.clone())
+    }
+
+    /// # Errors
+    /// Rejects invalid packages or unsupported project resources and components.
+    pub fn load_project_package(&mut self, bytes: &[u8]) -> Result<(), JsValue> {
+        let candidate =
+            super::project_game::ProjectGame::load(bytes, &self.scene, &self.device, &self.queue)?;
+        self.project_game = Some(candidate);
+        Ok(())
+    }
+
+    /// Moves the running project onto this engine's device after its resources are ready.
+    ///
+    /// # Errors
+    /// Rejects a destination that already has a project, a missing source game or a failed upload.
+    pub async fn recover_project_game_from(
+        &mut self,
+        previous: &mut WebEngine,
+    ) -> Result<(), JsValue> {
+        if self.project_game.is_some() {
+            return Err(error("recovery destination already has a game"));
+        }
+        if let Some(failure) = self.device_failure() {
+            return Err(error(failure));
+        }
+        let game = previous
+            .project_game
+            .as_ref()
+            .ok_or_else(|| error("no project game"))?;
+        let scope = self.device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let graphics = game.rebuild_graphics(&self.scene, &self.device, &self.queue);
+        if let Some(failure) = scope.pop().await {
+            return Err(error(failure));
+        }
+        let graphics = graphics?;
+        if let Some(failure) = self.device_failure() {
+            return Err(error(failure));
+        }
+        let mut game = previous
+            .project_game
+            .take()
+            .ok_or_else(|| error("no project game"))?;
+        game.install_graphics(graphics);
+        self.project_game = Some(game);
+        Ok(())
+    }
+
+    /// Dispatches a physical key edge to the shared project action map.
+    /// Returns whether the key is bound.
+    ///
+    /// # Errors
+    /// Rejects missing games or invalid input events.
+    pub fn project_game_key(&mut self, code: &str, pressed: bool) -> Result<bool, JsValue> {
+        self.project_game
+            .as_mut()
+            .ok_or_else(|| error("no project game"))?
+            .key(code, pressed)
+    }
+
+    /// Samples independent gamepad axes and jump for the running project.
+    /// # Errors
+    /// Rejects missing games and axes outside the finite range [-1, 1].
+    pub fn sample_project_gamepad(&mut self, x: f32, z: f32, jump: bool) -> Result<(), JsValue> {
+        self.project_game
+            .as_mut()
+            .ok_or_else(|| error("no project game"))?
+            .gamepad(x, z, jump)
+    }
+
+    /// Clears held controls and pending presses on loss of game focus.
+    pub fn set_project_game_focus(&mut self, focused: bool) {
+        if let Some(game) = &mut self.project_game {
+            game.focus(focused);
+        }
+    }
+
+    /// # Errors
+    /// Rejects missing games, excessive tick counts and invalid scene updates.
+    pub fn step_project_game(&mut self, ticks: u32) -> Result<(), JsValue> {
+        self.project_game
+            .as_mut()
+            .ok_or_else(|| error("no project game"))?
+            .step(ticks)
+    }
+
+    /// Advances a project presentation frame using the shared fixed-step clock.
+    /// Returns the number of completed simulation ticks.
+    /// # Errors
+    /// Rejects missing games, invalid elapsed time or invalid scene updates.
+    pub fn advance_project_frame(&mut self, elapsed: f64) -> Result<u32, JsValue> {
+        self.project_game
+            .as_mut()
+            .ok_or_else(|| error("no project game"))?
+            .advance(elapsed)
+    }
+
+    /// Transitions an animated project object using an authored playback descriptor.
+    /// # Errors
+    /// Rejects unknown owners, clips and invalid or unsupported settings.
+    pub fn transition_project_animation(
+        &mut self,
+        owner: &str,
+        settings_json: &str,
+    ) -> Result<(), JsValue> {
+        self.project_game
+            .as_mut()
+            .ok_or_else(|| error("no project game"))?
+            .transition_animation(owner, settings_json)
+    }
+
+    /// Drains committed animation events as JSON, or returns no value if empty.
+    /// # Errors
+    /// Rejects missing projects and serialization failures.
+    pub fn take_project_animation_events(&mut self) -> Result<Option<String>, JsValue> {
+        self.project_game
+            .as_mut()
+            .ok_or_else(|| error("no project game"))?
+            .take_animation_events()
+    }
+
+    /// Returns the current project camera target in world coordinates.
+    /// # Errors
+    /// Rejects calls without a loaded project.
+    pub fn project_camera_target(&self) -> Result<Vec<f32>, JsValue> {
+        Ok(self
+            .project_game
+            .as_ref()
+            .ok_or_else(|| error("no project game"))?
+            .camera_target())
+    }
+
+    /// # Errors
+    /// Rejects missing games and scene capture errors.
+    pub fn project_game_state(&self) -> Result<String, JsValue> {
+        self.project_game
+            .as_ref()
+            .ok_or_else(|| error("no project game"))?
+            .state()
     }
 
     /// Draws one animation frame; returns false for a temporary surface event.
@@ -995,7 +1135,9 @@ impl WebEngine {
             self.surface.configure(&self.device, &self.config);
             self.depth = create_depth(&self.device, width, height);
         }
-        self.update_scene_camera(seconds, width, height)?;
+        if self.project_game.is_none() {
+            self.update_scene_camera(seconds, width, height)?;
+        }
         let frame = match self.surface.get_current_texture() {
             wgpu::CurrentSurfaceTexture::Success(frame)
             | wgpu::CurrentSurfaceTexture::Suboptimal(frame) => frame,
@@ -1017,6 +1159,19 @@ impl WebEngine {
         let mut encoder = self
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        if let Some(game) = &mut self.project_game {
+            let draws = game.draws(
+                &self.queue,
+                &mut encoder,
+                glam::Vec2::new(width as f32, height as f32),
+            )?;
+            self.scene
+                .encode(&mut encoder, &view, &self.depth, wgpu::Color::BLACK, &draws);
+            self.queue.submit([encoder.finish()]);
+            game.commit_draws();
+            self.queue.present(frame);
+            return Ok(true);
+        }
         if let Some(gravity) = &mut self.gravity {
             gravity.encode(seconds, &mut encoder, &view)?;
             self.queue.submit([encoder.finish()]);

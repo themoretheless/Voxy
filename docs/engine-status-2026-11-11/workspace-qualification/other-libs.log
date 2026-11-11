@@ -1,0 +1,116 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+error[E0432]: unresolved import `crate::constitutive`
+ --> crates/physics/src/plasticity.rs:4:12
+  |
+4 | use crate::constitutive::Stress;
+  |            ^^^^^^^^^^^^ could not find `constitutive` in the crate root
+
+error[E0432]: unresolved import `crate::constitutive`
+ --> crates/physics/src/plasticity/mesh/quadratic/finite.rs:3:12
+  |
+3 | use crate::constitutive::{Material, Stress};
+  |            ^^^^^^^^^^^^ could not find `constitutive` in the crate root
+
+error[E0433]: cannot find `constitutive` in `crate`
+  --> crates/physics/src/plasticity/mesh/quadratic/dynamics.rs:29:41
+   |
+29 |     finite_materials: Option<Vec<crate::constitutive::Material>>,
+   |                                         ^^^^^^^^^^^^ could not find `constitutive` in the crate root
+
+error[E0433]: cannot find `constitutive` in `crate`
+   --> crates/physics/src/plasticity/mesh/quadratic/dynamics.rs:142:45
+    |
+142 |         finite_materials: Option<Vec<crate::constitutive::Material>>,
+    |                                             ^^^^^^^^^^^^ could not find `constitutive` in the crate root
+
+error[E0433]: cannot find `constitutive` in `crate`
+   --> crates/physics/src/plasticity/mesh/quadratic/dynamics.rs:829:31
+    |
+829 |         materials: Vec<crate::constitutive::Material>,
+    |                               ^^^^^^^^^^^^ could not find `constitutive` in the crate root
+
+error[E0433]: cannot find `constitutive` in `crate`
+   --> crates/physics/src/plasticity/mesh/quadratic/dynamics.rs:884:50
+    |
+884 |     pub fn stresses(&self) -> Result<Vec<[crate::constitutive::Stress; 4]>, &'static str> {
+    |                                                  ^^^^^^^^^^^^ could not find `constitutive` in the crate root
+
+error[E0433]: cannot find `constitutive` in `crate`
+  --> crates/physics/src/moisture/material.rs:15:20
+   |
+15 |             crate::constitutive::Material::from_young_poisson(self.young_pa, self.poisson)?;
+   |                    ^^^^^^^^^^^^ could not find `constitutive` in the crate root
+   |
+help: consider importing one of these structs
+   |
+ 2 + use crate::biomechanics::Material;
+   |
+ 2 + use crate::cohesive::Material;
+   |
+ 2 + use crate::friction::Material;
+   |
+ 2 + use crate::liquid::Material;
+   |
+   = and 4 other candidates
+help: if you import `Material`, refer to it directly
+   |
+15 -             crate::constitutive::Material::from_young_poisson(self.young_pa, self.poisson)?;
+15 +             Material::from_young_poisson(self.young_pa, self.poisson)?;
+   |
+
+error[E0433]: cannot find `constitutive` in `crate`
+   --> crates/physics/src/plasticity.rs:115:30
+    |
+115 |         let elastic = crate::constitutive::Material::from_young_poisson(young_pa, poisson)?;
+    |                              ^^^^^^^^^^^^ could not find `constitutive` in the crate root
+    |
+note: struct `crate::plasticity::mesh::topology::Material` exists but is inaccessible
+   --> crates/physics/src/plasticity.rs:11:1
+    |
+ 11 | pub struct Material {
+    | ^^^^^^^^^^^^^^^^^^^ not accessible
+help: consider importing one of these structs
+    |
+  4 + use crate::biomechanics::Material;
+    |
+  4 + use crate::cohesive::Material;
+    |
+  4 + use crate::friction::Material;
+    |
+  4 + use crate::liquid::Material;
+    |
+    = and 3 other candidates
+help: if you import `Material`, refer to it directly
+    |
+115 -         let elastic = crate::constitutive::Material::from_young_poisson(young_pa, poisson)?;
+115 +         let elastic = Material::from_young_poisson(young_pa, poisson)?;
+    |
+
+error[E0433]: cannot find `constitutive` in `crate`
+  --> crates/physics/src/plasticity/mesh/quadratic/wet_update.rs:63:35
+   |
+63 |             materials.push(crate::constitutive::Material::from_young_poisson(
+   |                                   ^^^^^^^^^^^^ could not find `constitutive` in the crate root
+   |
+help: consider importing one of these structs
+   |
+ 2 + use crate::biomechanics::Material;
+   |
+ 2 + use crate::cohesive::Material;
+   |
+ 2 + use crate::friction::Material;
+   |
+ 2 + use crate::liquid::Material;
+   |
+   = and 4 other candidates
+help: if you import `Material`, refer to it directly
+   |
+63 -             materials.push(crate::constitutive::Material::from_young_poisson(
+63 +             materials.push(Material::from_young_poisson(
+   |
+
+Some errors have detailed explanations: E0432, E0433.
+For more information about an error, try `rustc --explain E0432`.
+error: could not compile `physics` (lib) due to 9 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `physics` (lib test) due to 9 previous errors

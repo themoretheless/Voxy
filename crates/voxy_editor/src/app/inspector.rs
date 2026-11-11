@@ -482,6 +482,14 @@ impl App {
         &mut self,
         action: panels::Action,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        if action == panels::Action::RunBuiltGame {
+            self.run_built_game();
+            return Ok(());
+        }
+        if action == panels::Action::BuildGame {
+            self.start_project_build();
+            return Ok(());
+        }
         if action == panels::Action::CancelLoad {
             self.cancel_editor_file_load();
             self.panel_cache = None;
@@ -597,6 +605,105 @@ impl App {
             }
             panels::Action::Character => self.edit_key(KeyCode::KeyC),
             panels::Action::Collider => self.edit_key(KeyCode::KeyB),
+            panels::Action::KinematicBody => {
+                let node = *self
+                    .instances
+                    .get(self.selected)
+                    .ok_or("missing selected node")?;
+                if self
+                    .scene
+                    .component::<voxy_gameplay::KinematicBody>(node)?
+                    .is_some()
+                {
+                    self.scene
+                        .remove_component::<voxy_gameplay::KinematicBody>(node)?;
+                } else {
+                    if self.scene.parent(node)?.is_some()
+                        || self.scene.component::<CharacterBody>(node)?.is_some()
+                        || self
+                            .scene
+                            .component::<voxy_gameplay::LiquidBody>(node)?
+                            .is_some()
+                        || self
+                            .scene
+                            .component::<voxy_gameplay::AngularMotion>(node)?
+                            .is_some()
+                    {
+                        return Err(
+                            "a kinematic body needs an exclusively owned root transform".into()
+                        );
+                    }
+                    if self.scene.component::<BoxCollider>(node)?.is_none() {
+                        self.scene.insert_component(node, BoxCollider::default())?;
+                    }
+                    self.scene
+                        .insert_component(node, voxy_gameplay::KinematicBody::default())?;
+                }
+                self.commit_authoring()
+            }
+            panels::Action::DynamicBody => {
+                let node = *self
+                    .instances
+                    .get(self.selected)
+                    .ok_or("missing selected node")?;
+                if self
+                    .scene
+                    .component::<voxy_gameplay::LiquidBody>(node)?
+                    .is_some()
+                {
+                    self.scene
+                        .remove_component::<voxy_gameplay::RigidPointLoads>(node)?;
+                    self.scene
+                        .remove_component::<voxy_gameplay::LiquidMassDistribution>(node)?;
+                    self.scene
+                        .remove_component::<voxy_gameplay::LiquidBody>(node)?;
+                } else {
+                    if self.scene.parent(node)?.is_some()
+                        || self.scene.component::<CharacterBody>(node)?.is_some()
+                        || self
+                            .scene
+                            .component::<voxy_gameplay::AngularMotion>(node)?
+                            .is_some()
+                    {
+                        return Err(
+                            "a dynamic body needs an exclusively owned root transform".into()
+                        );
+                    }
+                    if self.scene.component::<BoxCollider>(node)?.is_none() {
+                        self.scene.insert_component(node, BoxCollider::default())?;
+                    }
+                    self.scene.insert_component(
+                        node,
+                        voxy_gameplay::LiquidBody {
+                            mass_kg: 1.,
+                            initial_velocity_m_s: [0.; 3],
+                        },
+                    )?;
+                }
+                self.commit_authoring()
+            }
+            panels::Action::Trigger => {
+                let node = *self
+                    .instances
+                    .get(self.selected)
+                    .ok_or("missing selected node")?;
+                if self
+                    .scene
+                    .component::<voxy_gameplay::BoxTrigger>(node)?
+                    .is_some()
+                {
+                    self.scene
+                        .remove_component::<voxy_gameplay::BoxTrigger>(node)?;
+                } else {
+                    self.scene.insert_component(
+                        node,
+                        voxy_gameplay::BoxTrigger {
+                            half_extents: [0.5; 3],
+                        },
+                    )?;
+                }
+                self.commit_authoring()
+            }
             panels::Action::AudioSource => self.toggle_audio_source(),
             panels::Action::AudioListener => self.toggle_audio_listener(),
             panels::Action::AudioBus => self.toggle_audio_bus(),
@@ -725,7 +832,9 @@ impl App {
             panels::Action::Play => self.edit_key(KeyCode::F6),
             panels::Action::Save => self.edit_key(KeyCode::F5),
             panels::Action::Load => self.edit_key(KeyCode::F9),
-            panels::Action::CancelLoad => unreachable!(),
+            panels::Action::CancelLoad
+            | panels::Action::BuildGame
+            | panels::Action::RunBuiltGame => unreachable!(),
             panels::Action::RevertPrefab => self.revert_prefab(),
             panels::Action::PlacePrefab => self.place_prefab(),
             panels::Action::CreatePrefab => self.create_prefab_from_selection(),
@@ -800,6 +909,92 @@ impl App {
                 let index = *index;
                 let text = value.clone();
                 return self.edit_audio_settings(index, &text);
+            }
+            if self.inspector == InspectorMode::Physics {
+                let node = *self
+                    .instances
+                    .get(self.selected)
+                    .ok_or("missing selected node")?;
+                let character = self.scene.component::<CharacterBody>(node)?.is_some();
+                let collider = self.scene.component::<BoxCollider>(node)?.is_some();
+                let trigger = self
+                    .scene
+                    .component::<voxy_gameplay::BoxTrigger>(node)?
+                    .is_some();
+                if let Some(mut body) = self
+                    .scene
+                    .component::<voxy_gameplay::KinematicBody>(node)?
+                    .copied()
+                    && let Some(axis) = crate::prefab_fields::physics_body_field(
+                        character, collider, trigger, *index,
+                    )
+                    .filter(|axis| *axis < 3)
+                {
+                    let velocity = value.parse::<f64>()?;
+                    if !velocity.is_finite() {
+                        return Err("kinematic velocity must be finite".into());
+                    }
+                    body.velocity_m_s[axis] = velocity;
+                    self.scene.insert_component(node, body)?;
+                    self.commit_authoring()?;
+                    self.field = None;
+                    return Ok(());
+                }
+                if let Some(mut body) = self
+                    .scene
+                    .component::<voxy_gameplay::LiquidBody>(node)?
+                    .copied()
+                    && let Some(field) = crate::prefab_fields::physics_body_field(
+                        character, collider, trigger, *index,
+                    )
+                {
+                    let property = value.parse::<f64>()?;
+                    if !property.is_finite() || field == 0 && property <= 0. {
+                        return Err(
+                            "body properties must be finite and mass must be positive".into()
+                        );
+                    }
+                    if field == 0 {
+                        if self
+                            .scene
+                            .component::<voxy_gameplay::LiquidMassDistribution>(node)?
+                            .is_some()
+                        {
+                            return Err(
+                                "change the explicit mass distribution together with total mass"
+                                    .into(),
+                            );
+                        }
+                        body.mass_kg = property;
+                    } else {
+                        body.initial_velocity_m_s[field - 1] = property;
+                    }
+                    self.scene.insert_component(node, body)?;
+                    self.commit_authoring()?;
+                    self.field = None;
+                    return Ok(());
+                }
+                if let Some(member) = crate::prefab_fields::physics_layer_field_at(
+                    character, collider, trigger, *index,
+                ) {
+                    let value = value
+                        .parse::<u32>()
+                        .map_err(|_| "collision layers require an integer from 0 to 4294967295")?;
+                    let mut layers = self
+                        .scene
+                        .component::<voxy_gameplay::CollisionLayers>(node)?
+                        .copied()
+                        .unwrap_or_default();
+                    if member == "membership" {
+                        layers.membership = value;
+                    } else {
+                        layers.mask = value;
+                    }
+                    self.scene.insert_component(node, layers)?;
+                    self.commit_authoring()?;
+                    self.field = None;
+                    return Ok(());
+                }
             }
             let value: f32 = value.parse()?;
             if !value.is_finite() {
@@ -907,6 +1102,22 @@ impl App {
             }
             if self.inspector == InspectorMode::Physics {
                 let index = *index;
+                let base = crate::prefab_fields::physics_base_fields(
+                    self.scene.component::<CharacterBody>(node)?.is_some(),
+                    self.scene.component::<BoxCollider>(node)?.is_some(),
+                );
+                if let Some(mut trigger) = self
+                    .scene
+                    .component::<voxy_gameplay::BoxTrigger>(node)?
+                    .copied()
+                    && let Some(axis) = index.checked_sub(base).filter(|axis| *axis < 3)
+                {
+                    trigger.half_extents[axis] = value;
+                    self.scene.insert_component(node, trigger)?;
+                    self.commit_authoring()?;
+                    self.field = None;
+                    return Ok(());
+                }
                 if let Some(mut body) = self.scene.component::<CharacterBody>(node)?.copied() {
                     match index {
                         0..=2 => body.half_extents[index] = value,

@@ -2035,6 +2035,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "physics_astro"
+version = "0.1.0"
+dependencies = [
+ "physics",
+]
+
+[[package]]
+name = "physics_bio"
+version = "0.1.0"
+dependencies = [
+ "physics",
+]
+
+[[package]]
 name = "physics_voxel"
 version = "0.1.0"
 dependencies = [
@@ -2887,6 +2901,7 @@ dependencies = [
  "half",
  "image",
  "physics",
+ "physics_bio",
  "physics_voxel",
  "pollster",
  "serde",
@@ -2896,14 +2911,11 @@ dependencies = [
  "voxy_core",
  "voxy_cuda",
  "voxy_demos",
- "voxy_editor",
- "voxy_gameplay",
  "voxy_gpu",
  "voxy_input",
  "voxy_model",
  "voxy_render",
  "voxy_runtime",
- "voxy_rush",
  "voxy_scene",
  "voxy_shell",
  "voxy_text",
@@ -2951,6 +2963,7 @@ dependencies = [
  "ash",
  "cudarc",
  "physics",
+ "physics_bio",
  "voxy_gpu_core",
 ]
 
@@ -2961,6 +2974,7 @@ dependencies = [
  "blake3",
  "glam",
  "physics",
+ "physics_bio",
  "physics_voxel",
  "pollster",
  "serde",
@@ -3043,6 +3057,7 @@ dependencies = [
  "bytemuck",
  "glam",
  "physics",
+ "physics_bio",
  "physics_voxel",
  "pollster",
  "thiserror 2.0.20",
@@ -3114,6 +3129,7 @@ dependencies = [
  "voxy_animation",
  "voxy_gpu_core",
  "voxy_render",
+ "voxy_scene",
  "wgpu",
 ]
 
@@ -3157,6 +3173,7 @@ dependencies = [
  "objc2-metal-fx",
  "openxr",
  "physics",
+ "physics_bio",
  "physics_voxel",
  "pollster",
  "raw-window-handle",
@@ -3318,11 +3335,19 @@ dependencies = [
  "js-sys",
  "physics",
  "physics_voxel",
+ "serde",
+ "serde_json",
+ "voxy_animation",
+ "voxy_assets",
  "voxy_core",
+ "voxy_gameplay",
  "voxy_gpu",
+ "voxy_input",
  "voxy_mesher",
+ "voxy_model",
  "voxy_render",
  "voxy_runtime",
+ "voxy_scene",
  "voxy_world",
  "wasm-bindgen",
  "wasm-bindgen-futures",

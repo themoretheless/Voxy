@@ -5,6 +5,23 @@ use std::{
     sync::{Arc, Weak},
 };
 use voxy_render::{SceneError, SceneGeometry, SceneRenderer, SceneTexture, TextureSampling};
+#[derive(Debug)]
+pub(crate) struct GeometryBudgetExceeded {
+    pub(crate) additional: u64,
+    live: u64,
+    limit: u64,
+}
+impl std::fmt::Display for GeometryBudgetExceeded {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "GPU geometry budget exceeded: live={} additional={} limit={}",
+            self.live, self.additional, self.limit
+        )
+    }
+}
+impl std::error::Error for GeometryBudgetExceeded {}
+
 /// Weak references do not retain images after their last model revision is gone.
 #[derive(Debug)]
 pub(super) struct ResidencyCache {
@@ -554,10 +571,11 @@ impl ModelGraphics {
                 .geometry_budget
                 .saturating_sub(residency_cache.geometry_live)
         {
-            return Err(format!(
-                "GPU geometry budget exceeded: live={} additional={additional} limit={}",
-                residency_cache.geometry_live, residency_cache.geometry_budget
-            )
+            return Err(GeometryBudgetExceeded {
+                live: residency_cache.geometry_live,
+                additional,
+                limit: residency_cache.geometry_budget,
+            }
             .into());
         }
         residency_cache.preflight(asset)?;

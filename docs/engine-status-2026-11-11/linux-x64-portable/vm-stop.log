@@ -1,0 +1,10 @@
+time="2026-11-11T14:49:42+04:00" level=info msg="Sending SIGINT to hostagent process 66477"
+time="2026-11-11T14:49:42+04:00" level=info msg="Waiting for the host agent and the driver processes to shut down"
+time="2026-11-11T14:49:42+04:00" level=info msg="[hostagent] Received SIGINT, shutting down the host agent"
+time="2026-11-11T14:49:42+04:00" level=info msg="[hostagent] Shutting down the host agent"
+time="2026-11-11T14:49:42+04:00" level=info msg="[hostagent] Shutting down VZ"
+time="2026-11-11T14:49:44+04:00" level=info msg="[hostagent] [VZ] - vm state change: stopped"
+time="2026-11-11T14:49:44+04:00" level=error msg="[hostagent] accept tcp 127.0.0.1:60500: use of closed network connection"
+time="2026-11-11T14:49:44+04:00" level=info msg="[hostagent] gvproxy API request" component=services-api endpoint=/services/forwarder/unexpose local="127.0.0.1:60500" method=POST outcome=success protocol=tcp source=
+time="2026-11-11T14:49:44+04:00" level=info msg="Waiting for the instance to shut down"
+time="2026-11-11T14:49:45+04:00" level=info msg="The instance voxy-linux-qualification has shut down"

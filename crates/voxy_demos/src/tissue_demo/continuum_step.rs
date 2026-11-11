@@ -114,7 +114,7 @@ impl TissueDemo {
         targets: &[SupportTarget],
         conductivity_w_m_k: f64,
         next_surface: Option<&Arc<PrescribedTriangleSurface>>,
-        next_skin: Option<&physics::biomechanics::StationaryEmbeddedContact>,
+        next_skin: Option<&physics_bio::biomechanics::StationaryEmbeddedContact>,
     ) -> Result<(), &'static str> {
         let DemoTissue::Continuum {
             dynamics,

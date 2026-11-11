@@ -23,7 +23,7 @@ struct Strand {
 #[derive(Debug)]
 pub struct FaceFeatures {
     strands: Vec<Strand>,
-    lash_motion: Vec<physics::secondary_motion::SecondaryMotion>,
+    lash_motion: Vec<physics_bio::secondary_motion::SecondaryMotion>,
     seams: Vec<([u32; 3], [Vec3; 3])>,
     rims: Vec<Vec<([usize; 3], Vec3)>>,
     lash_skin_vertices: Vec<usize>,
@@ -41,7 +41,7 @@ impl FaceFeatures {
         &self,
         dt: f64,
         acceleration: [f64; 3],
-    ) -> Result<Vec<physics::secondary_motion::SecondaryMotion>, &'static str> {
+    ) -> Result<Vec<physics_bio::secondary_motion::SecondaryMotion>, &'static str> {
         let mut candidate = self.lash_motion.clone();
         for (strand, motion) in self.strands.iter().zip(&mut candidate) {
             if matches!(strand.kind, Kind::Lash | Kind::LowerLash) {
@@ -50,12 +50,15 @@ impl FaceFeatures {
         }
         Ok(candidate)
     }
-    pub fn publish_lashes(&mut self, candidate: Vec<physics::secondary_motion::SecondaryMotion>) {
+    pub fn publish_lashes(
+        &mut self,
+        candidate: Vec<physics_bio::secondary_motion::SecondaryMotion>,
+    ) {
         self.lash_motion = candidate;
     }
     pub fn exchange_lashes(
         &mut self,
-        candidate: &mut Vec<physics::secondary_motion::SecondaryMotion>,
+        candidate: &mut Vec<physics_bio::secondary_motion::SecondaryMotion>,
     ) {
         std::mem::swap(&mut self.lash_motion, candidate);
     }
@@ -258,8 +261,8 @@ impl FaceFeatures {
             lash_motion: strands
                 .iter()
                 .map(|_| {
-                    physics::secondary_motion::SecondaryMotion::new(
-                        physics::secondary_motion::Config {
+                    physics_bio::secondary_motion::SecondaryMotion::new(
+                        physics_bio::secondary_motion::Config {
                             frequency: 24.,
                             damping_ratio: 0.3,
                         },
@@ -2212,8 +2215,8 @@ mod inertial_lash_regression {
         let mut features = FaceFeatures {
             strands: vec![strand],
             lash_motion: vec![
-                physics::secondary_motion::SecondaryMotion::new(
-                    physics::secondary_motion::Config {
+                physics_bio::secondary_motion::SecondaryMotion::new(
+                    physics_bio::secondary_motion::Config {
                         frequency: 24.,
                         damping_ratio: 0.3,
                     },

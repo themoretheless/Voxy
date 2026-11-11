@@ -927,13 +927,14 @@ impl AnimationRuntime {
             let Some(feet) = &mut owner.feet else {
                 continue;
             };
+            let support = preview.support.for_character(accepted.owner, budget)?;
             owner.frame = Arc::new(crate::foot_placement::correct_at_phase(
                 feet,
                 &owner.model,
                 (*owner.frame).clone(),
                 accepted.world_matrix.as_dmat4(),
                 accepted.grounded,
-                preview,
+                &support,
                 budget,
                 owner
                     .playback

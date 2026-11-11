@@ -1,15 +1,15 @@
 //! Abstract tissue samples using the shared CPU solver and scene renderer.
 use glam::{DMat4, DVec3, Mat4, Quat, Vec3};
 #[cfg(test)]
-use physics::biomechanics::Body;
-use physics::biomechanics::{
+use physics_bio::biomechanics::Body;
+use physics_bio::biomechanics::{
     InertialBody, Material, MaxwellBranch, OgdenTerm, PrescribedTriangleSurface, SolidFilmBinding,
     SupportTarget, ViscoelasticOgden,
 };
 #[cfg(test)]
-use physics::tissue::ellipsoid;
-use physics::tissue::{Tissue, TissueKind, sample};
-use physics::tissue_surface::{EmbeddedSurface, TetrahedralEmbedding};
+use physics_bio::tissue::ellipsoid;
+use physics_bio::tissue::{Tissue, TissueKind, sample};
+use physics_bio::tissue_surface::{EmbeddedSurface, TetrahedralEmbedding};
 use std::{collections::BTreeMap, sync::Arc};
 use voxy_animation::{Joint, Skeleton, Transform};
 use voxy_render::{SceneMesh, SceneVertex};
@@ -218,7 +218,7 @@ impl TissueSkinBinding {
 }
 #[derive(Clone, Debug)]
 pub struct TissueRegionSpec {
-    pub mesh: physics::biomechanics::TetraMesh,
+    pub mesh: physics_bio::biomechanics::TetraMesh,
     pub supports: Vec<usize>,
     pub joint: usize,
     pub support_joint_overrides: Vec<(usize, usize)>,
@@ -232,7 +232,7 @@ pub struct TissueRegionSpec {
 }
 impl TissueRegionSpec {
     pub fn illustrative(
-        mesh: physics::biomechanics::TetraMesh,
+        mesh: physics_bio::biomechanics::TetraMesh,
         supports: Vec<usize>,
         joint: usize,
     ) -> Self {
@@ -288,7 +288,7 @@ impl TissueDemo {
     /// Validate all owners before changing any regional configuration.
     pub fn set_tissue_search_backend(
         &mut self,
-        backend: Arc<dyn physics::biomechanics::TissueSearchBackend>,
+        backend: Arc<dyn physics_bio::biomechanics::TissueSearchBackend>,
     ) -> Result<(), &'static str> {
         if self.bodies.is_empty() || self.bodies.iter().any(|b| matches!(b, DemoTissue::Xpbd(_))) {
             return Err("tissue search backend requires continuum owners");
@@ -356,7 +356,7 @@ impl TissueDemo {
         .enumerate()
         .map(|(i, radii)| {
             (
-                physics::biomechanics::TetraMesh::ellipsoid(centers[i], radii, 1)
+                physics_bio::biomechanics::TetraMesh::ellipsoid(centers[i], radii, 1)
                     .expect("valid rounded continuum mesh"),
                 [3, 4, 6],
                 joints[i],
@@ -369,7 +369,7 @@ impl TissueDemo {
     /// the neutral mannequin. Mesh topology and explicit three-node supports are
     /// admitted before publication. Material constants remain illustrative.
     pub fn body_from_regions(
-        regions: Vec<(physics::biomechanics::TetraMesh, [usize; 3], usize)>,
+        regions: Vec<(physics_bio::biomechanics::TetraMesh, [usize; 3], usize)>,
     ) -> Result<Self, &'static str> {
         Self::build_region_specs(
             regions
@@ -406,7 +406,7 @@ impl TissueDemo {
             if point_count > 1_000_000 || cell_count > 250_000 {
                 return Err("tetrahedral resource limit");
             }
-            let mut union = physics::biomechanics::TetraMesh {
+            let mut union = physics_bio::biomechanics::TetraMesh {
                 points: Vec::with_capacity(point_count),
                 cells: Vec::with_capacity(cell_count),
                 boundary: Vec::new(),
@@ -1316,7 +1316,7 @@ mod tests {
 
     #[test]
     fn skin_binding_rejects_overlap_reassigned_joint_and_singular_pose() {
-        let mesh = physics::biomechanics::TetraMesh::ellipsoid([0.; 3], [0.05; 3], 0).unwrap();
+        let mesh = physics_bio::biomechanics::TetraMesh::ellipsoid([0.; 3], [0.05; 3], 0).unwrap();
         let spec = super::TissueRegionSpec::illustrative(mesh, vec![1, 2, 3], 0);
         assert!(super::TissueDemo::body_from_region_specs(vec![spec.clone(), spec]).is_err());
         let mut demo = super::TissueDemo::body();
@@ -2463,11 +2463,12 @@ mod search_backend_selection_tests {
     use super::*;
     #[derive(Debug)]
     struct SelectedBackend;
-    impl physics::biomechanics::TissueSearchBackend for SelectedBackend {
+    impl physics_bio::biomechanics::TissueSearchBackend for SelectedBackend {
         fn prepare(
             &self,
-            _: physics::biomechanics::TissueSearchSnapshot,
-        ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str> {
+            _: physics_bio::biomechanics::TissueSearchSnapshot,
+        ) -> Result<Box<dyn physics_bio::biomechanics::TissueSearchOperation>, &'static str>
+        {
             Err("fixture tissue backend selected")
         }
     }
@@ -2506,11 +2507,11 @@ mod search_backend_selection_tests {
                 f.debug_tuple("FailingCuda").field(&self.1).finish()
             }
         }
-        impl physics::biomechanics::TissueSearchBackend for FailingCuda {
+        impl physics_bio::biomechanics::TissueSearchBackend for FailingCuda {
             fn prepare(
                 &self,
-                _: physics::biomechanics::TissueSearchSnapshot,
-            ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str>
+                _: physics_bio::biomechanics::TissueSearchSnapshot,
+            ) -> Result<Box<dyn physics_bio::biomechanics::TissueSearchOperation>, &'static str>
             {
                 self.0.fetch_add(1, Ordering::SeqCst);
                 Err(self.1)
@@ -2595,11 +2596,11 @@ mod search_backend_selection_tests {
                 f.write_str("Failure")
             }
         }
-        impl physics::biomechanics::TissueSearchBackend for Failure {
+        impl physics_bio::biomechanics::TissueSearchBackend for Failure {
             fn prepare(
                 &self,
-                _: physics::biomechanics::TissueSearchSnapshot,
-            ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str>
+                _: physics_bio::biomechanics::TissueSearchSnapshot,
+            ) -> Result<Box<dyn physics_bio::biomechanics::TissueSearchOperation>, &'static str>
             {
                 self.0.fetch_add(1, Ordering::SeqCst);
                 Err("CUDA tissue search backend failure")

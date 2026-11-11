@@ -3,7 +3,7 @@
 use super::{DynamicWorldConfig, Error, Liquid, LiquidBodyWorld, RigidSupportPoint, finite};
 use crate::contact::{
     ContactBody, ContactWrench, NetworkReaction, NetworkSupport, ReactionConfig,
-    resolve_normal_reaction_network,
+    resolve_normal_reaction_network_with_particles,
 };
 
 #[derive(Clone, Debug, PartialEq)]
@@ -133,13 +133,40 @@ pub fn resolve_rigid_world_reactions(
     limits: DynamicWorldConfig,
     config: ReactionConfig,
 ) -> Result<RigidWorldReactions, Error> {
-    assemble_reactions(bodies, world, external, limits, config, false, 0.)
+    assemble_reactions(bodies, &[], world, external, limits, config, false, 0.)
+}
+
+/// Assemble instantaneous reactions for rigid bodies and particle-to-body pairs.
+/// Each radius corresponds to one leading state. World body indices start
+/// after that prefix. Particle-to-particle and particle-to-world interactions
+/// remain with the liquid step. The result describes only this snapshot.
+pub fn resolve_mixed_world_reactions(
+    states: &[ContactBody],
+    particle_radii: &[f64],
+    world: &impl LiquidBodyWorld,
+    external: &[ContactWrench],
+    limits: DynamicWorldConfig,
+    config: SupportedWorldConfig,
+) -> Result<RigidWorldReactions, Error> {
+    config.validate()?;
+    assemble_reactions(
+        states,
+        particle_radii,
+        world,
+        external,
+        limits,
+        config.reaction,
+        true,
+        config.max_geometry_error_m,
+    )
 }
 
 /// Closing points are left to the existing impact loop. After an impact, fresh
 /// snapshot assembly determines which zero-speed points can carry reactions.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn assemble_reactions(
     bodies: &[ContactBody],
+    particle_radii: &[f64],
     world: &impl LiquidBodyWorld,
     external: &[ContactWrench],
     limits: DynamicWorldConfig,
@@ -148,7 +175,15 @@ pub(super) fn assemble_reactions(
     geometry_error_m: f64,
 ) -> Result<RigidWorldReactions, Error> {
     limits.contact.validate()?;
+    let particle_count = particle_radii.len();
     if bodies.is_empty()
+        || particle_count > bodies.len()
+        || bodies[..particle_count]
+            .iter()
+            .any(|body| body.spin.is_some())
+        || particle_radii
+            .iter()
+            .any(|radius| !radius.is_finite() || *radius <= 0.)
         || bodies.len() > 128
         || bodies.len() != external.len()
         || limits.max_contacts == 0
@@ -171,26 +206,36 @@ pub(super) fn assemble_reactions(
     let mut geometry = Vec::new();
     let mut queries = 0;
     for i in 0..bodies.len() {
-        for second in (i + 1..bodies.len())
+        let radius = particle_radii.get(i).copied();
+        for second in ((i + 1).max(particle_count)..bodies.len())
             .map(Some)
-            .chain(world.has_environment().then_some(None))
+            .chain((radius.is_none() && world.has_environment()).then_some(None))
         {
             if queries >= limits.max_queries {
                 return Err(Error::CollisionBudget);
             }
             queries += 1;
-            let patch = if let Some(j) = second {
-                world.rigid_pair_support_contacts_with_error(
-                    i,
+            let patch = if let (Some(radius), Some(j)) = (radius, second) {
+                world.particle_body_support_contacts_with_error(
                     &bodies[i],
-                    j,
+                    radius,
+                    j - particle_count,
+                    &bodies[j],
+                    limits.contact.max_candidates,
+                    geometry_error_m,
+                )?
+            } else if let Some(j) = second {
+                world.rigid_pair_support_contacts_with_error(
+                    i - particle_count,
+                    &bodies[i],
+                    j - particle_count,
                     &bodies[j],
                     limits.contact.max_candidates,
                     geometry_error_m,
                 )?
             } else {
                 world.rigid_environment_support_contacts_with_error(
-                    i,
+                    i - particle_count,
                     &bodies[i],
                     limits.contact.max_candidates,
                     geometry_error_m,
@@ -257,12 +302,17 @@ pub(super) fn assemble_reactions(
         None
     } else {
         Some(
-            resolve_normal_reaction_network(bodies, &supports, external, config).map_err(|e| {
-                match e {
-                    crate::contact::Error::Budget => Error::CollisionBudget,
-                    crate::contact::Error::NumericalFailure => Error::NumericalFailure,
-                    crate::contact::Error::InvalidInput => Error::InvalidCollision,
-                }
+            resolve_normal_reaction_network_with_particles(
+                bodies,
+                particle_count,
+                &supports,
+                external,
+                config,
+            )
+            .map_err(|e| match e {
+                crate::contact::Error::Budget => Error::CollisionBudget,
+                crate::contact::Error::NumericalFailure => Error::NumericalFailure,
+                crate::contact::Error::InvalidInput => Error::InvalidCollision,
             })?,
         )
     };
@@ -410,7 +460,7 @@ pub(super) fn material_point_wrenches(
         _ => Error::NumericalFailure,
     };
     let spin_error = |error| match error {
-        crate::astrophysics::Error::InvalidInput => Error::InvalidCollision,
+        crate::rotation::Error::InvalidInput => Error::InvalidCollision,
         _ => Error::NumericalFailure,
     };
     if points.len() != bodies.len()

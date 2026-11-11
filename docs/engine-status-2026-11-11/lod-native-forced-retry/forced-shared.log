@@ -1,0 +1,42 @@
+LOD NATIVE SNAPSHOT PASS frames=3 owners=2
+MODEL PUBLISHED frames=3 first_x=0 asset=a
+LOD NATIVE SNAPSHOT PASS frames=4 owners=2
+LOD NATIVE FAR PASS frames=4 levels=[1] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=7 owners=2
+LOD NATIVE NEAR AND LAST GOOD PASS frames=7 levels=[0]
+MODEL PUBLISHED frames=8 first_x=0 asset=b
+LOD NATIVE SNAPSHOT PASS frames=10 owners=2
+LOD NATIVE BUDGET RECOVERY PASS frames=10
+LOD NATIVE PRESENTED AFTER FAILURE PASS frames=10
+LOD NATIVE SNAPSHOT PASS frames=13 owners=2
+LOD NATIVE SPLIT PASS frames=13 phase=3 msaa4=false levels=[[Some(0)], [Some(1)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=16 owners=2
+LOD NATIVE SPLIT PASS frames=16 phase=4 msaa4=true levels=[[Some(0)], [Some(1)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=19 owners=2
+LOD NATIVE SPLIT PASS frames=19 phase=5 msaa4=true levels=[[Some(1)], [Some(0)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=22 owners=2
+LOD NATIVE SINGLE RESTORED PASS frames=22
+LOD NATIVE SNAPSHOT PASS frames=25 owners=2
+LOD NATIVE SNAPSHOT PASS frames=26 owners=2
+LOD NATIVE SNAPSHOT PASS frames=27 owners=2
+LOD NATIVE SNAPSHOT PASS frames=28 owners=2
+MODEL PUBLISHED frames=28 first_x=0 asset=a
+LOD NATIVE SNAPSHOT PASS frames=29 owners=2
+LOD NATIVE SNAPSHOT PASS frames=30 owners=2
+LOD NATIVE SNAPSHOT PASS frames=31 owners=2
+LOD NATIVE SNAPSHOT PASS frames=32 owners=2
+LOD NATIVE SNAPSHOT PASS frames=33 owners=2
+MODEL PUBLISHED frames=33 first_x=0 asset=b
+LOD NATIVE SNAPSHOT PASS frames=34 owners=2
+LOD NATIVE COMPETITION CONTRACT frames=34 mandatory=62816 optional=[3072, 3072] budget=65888
+LOD NATIVE SNAPSHOT PASS frames=37 owners=2
+MODEL FAILED frames=37 last_good=true asset=a status=Some(Failed("GPU import rejected: GPU geometry budget exceeded: live=65888 additional=31004 limit=65888"))
+LOD NATIVE SNAPSHOT PASS frames=38 owners=2
+LOD NATIVE IMPORT DEFERRED PASS frames=38 asset=a
+LOD NATIVE COMPETITION FALLBACK PASS frames=38 live=65888 budget=65888 pending={(AssetId("b"), 1)}
+LOD NATIVE SNAPSHOT PASS frames=41 owners=2
+LOD NATIVE SNAPSHOT PASS frames=42 owners=2
+MODEL PUBLISHED frames=42 first_x=0 asset=a
+LOD NATIVE SNAPSHOT PASS frames=43 owners=2
+LOD NATIVE IMPORT RECOVERED PASS frames=43 asset=a
+LOD NATIVE COMPETITION RECOVERY PASS frames=43 live=68960 budget=268435456

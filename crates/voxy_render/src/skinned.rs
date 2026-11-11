@@ -247,34 +247,35 @@ impl SkinnedMesh {
             profile.workers = workers;
             profile.groups = self.groups.as_ref().map_or(0, |groups| groups.keys.len());
         }
-        // One interval certificate covers every possible normalized blend within
-        // each active joint family. An uncertain family retains the original path.
         if let Some(groups) = &self.groups {
+            // A family certificate covers every group with that set of active joints.
+            // Uncertain families still use the original group and vertex checks.
             let clock = PROFILE.then(Clock::start);
-            let certified = !groups.families.is_empty()
+            let families: Vec<bool> = if !groups.families.is_empty()
                 && !groups.has_bad_normal
                 && finite_temporal_positions(self.max_position_component, joints, model)
-                && groups
+            {
+                groups
                     .families
                     .iter()
-                    .all(|&family| crate::pose_family_bound::certify(family, joints, model));
+                    .map(|&family| crate::pose_family_bound::certify(family, joints, model))
+                    .collect()
+            } else {
+                Vec::new()
+            };
             if let Some(clock) = clock {
                 let (wall, cpu) = clock.elapsed();
                 profile.work(wall, cpu, false);
             }
-            if certified {
+            if !families.is_empty() && families.iter().all(|&certified| certified) {
                 if PROFILE {
                     profile.workers = 0;
                 }
                 return Ok(());
             }
-        }
-        // Certified groups prove the pose admissible without reading vertices; an
-        // uncertified pose takes the exact scan below, which yields the first error.
-        if self.groups.as_ref().is_some_and(|groups| {
-            groups.certify_profiled::<PROFILE>(joints, model, workers, profile)
-        }) {
-            return Ok(());
+            if groups.certify_profiled::<PROFILE>(joints, model, workers, &families, profile) {
+                return Ok(());
+            }
         }
         if PROFILE {
             profile.fallback = true;
@@ -658,6 +659,7 @@ struct InfluenceGroups {
     /// Distinct influence sets in first-occurrence order.
     keys: Vec<([u16; 4], [u16; 4])>,
     families: Vec<[u16; 4]>,
+    group_family: Vec<u16>,
     has_bad_normal: bool,
     /// Largest absolute position component in each group.
     max_position: Vec<f32>,
@@ -695,8 +697,9 @@ impl InfluenceGroups {
                 bad_normal[group] = true;
             }
         }
-        let mut unique = std::collections::HashSet::new();
+        let mut unique = std::collections::HashMap::new();
         let mut families = Vec::new();
+        let mut group_family = Vec::with_capacity(keys.len());
         for &(joints, weights) in &keys {
             let mut family = [u16::MAX; 4];
             for (slot, (joint, _)) in joints
@@ -717,23 +720,26 @@ impl InfluenceGroups {
                     count += 1;
                 }
             }
-            if unique.insert(canonical) {
+            let index = *unique.entry(canonical).or_insert_with(|| {
+                let index = families.len() as u16;
                 families.push(canonical);
-                // Bound immutable metadata and per-pose proof work for diverse
-                // meshes; they keep the original group/vertex admission path.
-                if families.len() > 1024 {
-                    families.clear();
-                    break;
-                }
+                index
+            });
+            group_family.push(index);
+            // Bound immutable metadata and per-pose proof work for diverse meshes.
+            if families.len() > 1024 {
+                break;
             }
         }
-        if families.len().saturating_mul(32) > keys.len() {
-            families.clear();
+        if families.len() > 1024 || families.len().saturating_mul(32) > keys.len() {
+            families = Vec::new();
+            group_family = Vec::new();
         }
         let has_bad_normal = bad_normal.iter().any(|&bad| bad);
         Some(Self {
             keys,
             families,
+            group_family,
             has_bad_normal,
             max_position,
             bad_normal,
@@ -772,7 +778,7 @@ impl InfluenceGroups {
     /// `true` when every group is certified, so the whole pose is admissible.
     #[cfg(test)]
     fn certify(&self, joints: &[Mat4], model: Mat4, workers: usize) -> bool {
-        self.certify_profiled::<false>(joints, model, workers, &mut RenderPoseProfile::default())
+        self.certify_profiled::<false>(joints, model, workers, &[], &mut RenderPoseProfile::default())
     }
 
     fn certify_profiled<const PROFILE: bool>(
@@ -780,12 +786,17 @@ impl InfluenceGroups {
         joints: &[Mat4],
         model: Mat4,
         workers: usize,
+        families: &[bool],
         profile: &mut RenderPoseProfile,
     ) -> bool {
         let groups = self.keys.len();
+        let certified = |group: usize| {
+            (!families.is_empty() && families[usize::from(self.group_family[group])])
+                || self.certified(group, joints, model)
+        };
         if workers <= 1 {
             let clock = PROFILE.then(Clock::start);
-            let result = (0..groups).all(|group| self.certified(group, joints, model));
+            let result = (0..groups).all(certified);
             if let Some(clock) = clock {
                 let (wall, cpu) = clock.elapsed();
                 profile.work(wall, cpu, false);
@@ -803,7 +814,7 @@ impl InfluenceGroups {
                     scope.spawn(move || {
                         let delay = launch.map_or(0., |s| s.elapsed().as_secs_f64() * 1e6);
                         let clock = PROFILE.then(Clock::start);
-                        let result = (start..end).all(|g| self.certified(g, joints, model));
+                        let result = (start..end).all(certified);
                         (result, delay, clock.map_or((0., 0.), Clock::elapsed))
                     })
                 })
@@ -814,7 +825,7 @@ impl InfluenceGroups {
                 profile.spawn_cpu_us += cpu;
             }
             let clock = PROFILE.then(Clock::start);
-            let mut all = (0..chunk.min(groups)).all(|g| self.certified(g, joints, model));
+            let mut all = (0..chunk.min(groups)).all(certified);
             if let Some(clock) = clock {
                 let (wall, cpu) = clock.elapsed();
                 profile.work(wall, cpu, false);

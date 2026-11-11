@@ -44,11 +44,17 @@ pub fn scale(a: [f64; 3], s: f64) -> [f64; 3] {
     a.map(|v| v * s)
 }
 
-/// Overflow-safe Euclidean length as the nested `hypot`.
+/// Overflow-safe Euclidean length: uses a fast direct `sqrt` for normal
+/// magnitudes and falls back to nested `hypot` for extreme or non-finite values.
 #[inline]
 #[must_use]
 pub fn norm(v: [f64; 3]) -> f64 {
-    v[0].hypot(v[1]).hypot(v[2])
+    let max_abs = v[0].abs().max(v[1].abs()).max(v[2].abs());
+    if (1e-150..1e150).contains(&max_abs) {
+        (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
+    } else {
+        v[0].hypot(v[1]).hypot(v[2])
+    }
 }
 
 /// Returns `true` when every component of a 3-vector is finite.
@@ -227,8 +233,12 @@ mod tests {
         assert_eq!(sub(a, b), std::array::from_fn(|k| a[k] - b[k]));
         assert_eq!(add(a, b), std::array::from_fn(|k| a[k] + b[k]));
         assert_eq!(scale(a, 2.5), a.map(|x| x * 2.5));
-        assert_eq!(norm(a), a[0].hypot(a[1]).hypot(a[2]));
+        assert!((norm(a) - a[0].hypot(a[1]).hypot(a[2])).abs() <= 2.0 * f64::EPSILON * norm(a));
+        assert_eq!(norm([0.0, 0.0, 0.0]), 0.0);
         assert_eq!(norm([1e200, 1e200, 0.0]), 1e200 * 2f64.sqrt());
+        assert_eq!(norm([1e-200, 1e-200, 0.0]), 1e-200 * 2f64.sqrt());
+        assert!(norm([f64::NAN, 1.0, 0.0]).is_nan());
+        assert_eq!(norm([f64::INFINITY, f64::NAN, 0.0]), f64::INFINITY);
         assert!(finite3(a));
         assert!(!finite3([1.0, f64::NAN, 0.0]));
         assert!(!finite3([1.0, f64::INFINITY, 0.0]));

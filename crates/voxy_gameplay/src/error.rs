@@ -7,6 +7,12 @@ pub enum GameplayError {
     /// A free-form failure message.
     #[error("{0}")]
     Message(String),
+    /// A kinematic trajectory must be shortened before it can be published.
+    #[error("conflicting contacts for kinematic body {0:?}")]
+    KinematicConstraint(voxy_scene::NodeId),
+    /// Physics rejected a scene or trajectory.
+    #[error(transparent)]
+    Physics(#[from] crate::PhysicsError),
     /// The scene graph rejected a node lookup or edit.
     #[error(transparent)]
     SceneGraph(#[from] voxy_scene::SceneGraphError),

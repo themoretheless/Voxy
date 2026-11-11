@@ -19,7 +19,6 @@ voxy_shell = { path = "../voxy_shell" }
 voxy_demos = { path = "../voxy_demos" }
 wgpu = { workspace = true, features = ["noop"] }
 voxy_core = { path = "../voxy_core" }
-voxy_editor = { path = "../voxy_editor" }
 voxy_assets = { path = "../voxy_assets" }
 voxy_input = { path = "../voxy_input" }
 blake3.workspace = true
@@ -31,9 +30,6 @@ pollster.workspace = true
 glam.workspace = true
 voxy_animation = { path = "../voxy_animation" }
 voxy_text = { path = "../voxy_text" }
-voxy_rush = { path = "../voxy_rush", features = ["physics-events"] }
-voxy_gameplay = { path = "../voxy_gameplay" }
-voxy_scene = { path = "../voxy_scene" }
 voxy_render = { path = "../voxy_render" }
 voxy_gpu = { path = "../voxy_gpu" }
 voxy_cuda = { path = "../voxy_cuda" }
@@ -69,6 +65,8 @@ egui = "0.36.2"
 egui-wgpu = { version = "0.36.2", default-features = false }
 egui-winit = { version = "0.36.2", default-features = false }
 half.workspace = true
+physics_bio = { path = "../physics_bio" }
+voxy_scene = { path = "../voxy_scene" }
 
 [[example]]
 name = "street_walk"

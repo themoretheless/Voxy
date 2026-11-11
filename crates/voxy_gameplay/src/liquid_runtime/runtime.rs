@@ -78,18 +78,36 @@ impl SceneLiquidRuntime {
                 let colliders = body_colliders(scene, *node)?;
                 let world =
                     crate::static_world(scene).map_err(|e| format!("liquid environment: {e:?}"))?;
+                let layers = crate::CollisionLayers::on(scene, *node);
                 for own in world
                     .0
                     .iter()
                     .filter(|b| colliders.iter().any(|c| c.node == b.owner))
                 {
-                    if world.0.iter().any(|b| {
-                        !colliders.iter().any(|c| c.node == b.owner)
-                            && b.shape
+                    for obstacle in &world.0 {
+                        if colliders.iter().any(|c| c.node == obstacle.owner)
+                            || obstacle
+                                .shape
                                 .penetration_affine(own.shape.center, own.shape.edges)
-                                .is_some()
-                    }) {
-                        return Err("liquid body initially overlaps scene geometry".into());
+                                .is_none()
+                        {
+                            continue;
+                        }
+                        let mut root = obstacle.owner;
+                        while let Some(parent) = scene
+                            .parent(root)
+                            .map_err(|e| format!("liquid collider parent: {e:?}"))?
+                        {
+                            root = parent;
+                        }
+                        let obstacle_layers = if owners.iter().any(|(owner, _)| *owner == root) {
+                            crate::CollisionLayers::on(scene, root)
+                        } else {
+                            obstacle.layers
+                        };
+                        if layers.interacts(obstacle_layers) {
+                            return Err("liquid body initially overlaps scene geometry".into());
+                        }
                     }
                 }
                 let published = scene
@@ -462,9 +480,28 @@ impl SceneLiquidRuntime {
             templates.push(shapes);
             states.push(body.state);
         }
+        let body_layers: Vec<_> = active
+            .iter()
+            .map(|&owner| crate::CollisionLayers::on(scene, self.body[owner].node))
+            .collect();
+        let body_environments = body_layers
+            .iter()
+            .map(|&layers| match geometry.0.filtered(layers) {
+                std::borrow::Cow::Borrowed(_) => None,
+                std::borrow::Cow::Owned(world) => Some(SceneGeometry(world)),
+            })
+            .collect();
+        let particle_environment = match geometry.0.filtered(crate::CollisionLayers::default()) {
+            std::borrow::Cow::Borrowed(_) => None,
+            std::borrow::Cow::Owned(world) => Some(SceneGeometry(world)),
+        };
         Ok((
             SceneBodyWorld {
+                boundaries: Vec::new(),
                 environment: geometry,
+                body_environments,
+                particle_environment,
+                body_layers,
                 templates,
             },
             active,
@@ -566,6 +603,104 @@ impl SceneLiquidRuntime {
         )
     }
 
+    /// Whether the shared solver owns finite bodies in this scene.
+    #[must_use]
+    pub fn couples_kinematic_boundaries(&self) -> bool {
+        !self.body.is_empty()
+    }
+
+    /// Simulate against the platform trajectories admitted for this fixed step.
+    /// # Errors
+    /// Rejects stale platform receipts or unresolved continuous contacts.
+    pub fn tick_with_platform_motion(
+        &mut self,
+        scene: &SceneGraph,
+        dt: f64,
+        motion: &crate::PlatformMotion,
+    ) -> Result<SceneLiquidStep, GameplayError> {
+        if motion.boundaries.is_empty() {
+            return self.tick(scene, dt, None);
+        }
+        if motion.step_s != dt || motion.scene_revision != Some(scene.change_token()) {
+            return Err("invalid platform motion receipt".into());
+        }
+        self.tick_impl(
+            scene,
+            dt,
+            None,
+            Default::default(),
+            scene_rotation_config(),
+            None,
+            Some(motion),
+        )
+        .map(|report| report.step)
+    }
+
+    /// Advance coupled bodies and shorten a conflicting platform trajectory.
+    /// Each trial starts from the same poses and a private body candidate.
+    /// # Errors
+    /// A rejected trial leaves the original body state and platform poses intact.
+    pub fn resolve_platform_tick(
+        &mut self,
+        scene: &mut SceneGraph,
+        characters: Option<&crate::CharacterPhysics>,
+        dt: f64,
+        motion: &mut crate::PlatformMotion,
+    ) -> Result<(), GameplayError> {
+        let first = match self.tick_with_platform_motion(scene, dt, motion) {
+            Ok(_) => return Ok(()),
+            Err(error) => {
+                motion.rollback(scene)?;
+                match error {
+                    GameplayError::KinematicConstraint(owner) => owner,
+                    other => return Err(other),
+                }
+            }
+        };
+        let probe = |scene: &mut SceneGraph, limits: &[(NodeId, f64)]| {
+            let trial =
+                crate::kinematic::step_kinematic_with_limits(scene, characters, dt, true, limits)?;
+            let result = self.clone().tick_with_platform_motion(scene, dt, &trial);
+            trial.rollback(scene)?;
+            result.map(|_| ())
+        };
+        // Establish a feasible baseline by pausing only movers reported by the
+        // solver. Other movers keep their original authored velocity.
+        let mut limits = vec![(first, 0.)];
+        loop {
+            match probe(scene, &limits) {
+                Ok(()) => break,
+                Err(GameplayError::KinematicConstraint(owner))
+                    if !limits.iter().any(|&(known, _)| known == owner) =>
+                {
+                    limits.push((owner, 0.));
+                }
+                Err(error) => return Err(error),
+            }
+        }
+        for index in 0..limits.len() {
+            let mut low = 0.;
+            let mut high = 1.;
+            for _ in 0..20 {
+                let fraction = f64::midpoint(low, high);
+                limits[index].1 = fraction;
+                match probe(scene, &limits) {
+                    Ok(()) => low = fraction,
+                    Err(GameplayError::KinematicConstraint(_)) => high = fraction,
+                    Err(error) => return Err(error),
+                }
+            }
+            limits[index].1 = low;
+        }
+        *motion =
+            crate::kinematic::step_kinematic_with_limits(scene, characters, dt, true, &limits)?;
+        if let Err(error) = self.tick_with_platform_motion(scene, dt, motion) {
+            motion.rollback(scene)?;
+            return Err(error);
+        }
+        Ok(())
+    }
+
     /// Simulate using caller-specified mechanical response and angular admission budgets.
     /// # Errors
     /// Same transactional binding, emission and geometry guarantees as tick.
@@ -577,7 +712,7 @@ impl SceneLiquidRuntime {
         dynamics: physics::liquid::DynamicWorldConfig,
         rotation: physics::spin_path::Config,
     ) -> Result<SceneLiquidStep, GameplayError> {
-        self.tick_impl(scene, dt, container, dynamics, rotation, None)
+        self.tick_impl(scene, dt, container, dynamics, rotation, None, None)
             .map(|report| report.step)
     }
 
@@ -599,8 +734,15 @@ impl SceneLiquidRuntime {
             .validate()
             .map_err(|e| format!("supported liquid config: {e:?}"))?;
         let mut candidate = self.clone();
-        let report =
-            candidate.tick_impl(scene, dt, container, dynamics, rotation, Some(supports))?;
+        let report = candidate.tick_impl(
+            scene,
+            dt,
+            container,
+            dynamics,
+            rotation,
+            Some(supports),
+            None,
+        )?;
         candidate.publish_body_pose(scene)?;
         *self = candidate;
         Ok(report)
@@ -614,6 +756,7 @@ impl SceneLiquidRuntime {
         dynamics: physics::liquid::DynamicWorldConfig,
         rotation: physics::spin_path::Config,
         supports: Option<physics::liquid::SupportedWorldConfig>,
+        platform: Option<&crate::PlatformMotion>,
     ) -> Result<SceneSupportedLiquidStep, GameplayError> {
         self.validate_bindings(scene)?;
         if !dt.is_finite() || dt <= 0. {
@@ -643,7 +786,21 @@ impl SceneLiquidRuntime {
                 "authored liquid bodies use scene colliders, not an extra container".into(),
             );
         }
-        let (world, active, mut states) = candidate.mechanical_world(scene)?;
+        let (mut world, active, mut states) = candidate.mechanical_world(scene)?;
+        if let Some(platform) = platform {
+            world
+                .boundaries
+                .extend(
+                    platform
+                        .boundaries
+                        .iter()
+                        .map(|&(owner, displacement)| MovingBoundary {
+                            owner,
+                            displacement,
+                            duration: dt,
+                        }),
+                );
+        }
         let point_loads = active
             .iter()
             .map(|index| {
@@ -659,11 +816,16 @@ impl SceneLiquidRuntime {
             .collect::<Result<Vec<_>, GameplayError>>()?;
         let has_points = point_loads.iter().any(|points| !points.is_empty());
         let mut support_report = None;
-        let (physics, dynamics) = if states.is_empty() {
+        let (physics, dynamics) = if states.is_empty() && world.boundaries.is_empty() {
             (
                 candidate
                     .liquid
-                    .step_with_geometry(dt, container, &world.environment, dynamics.contact)
+                    .step_with_geometry(
+                        dt,
+                        container,
+                        world.particle_environment(),
+                        dynamics.contact,
+                    )
                     .map_err(|e| format!("scene liquid step: {e:?}"))?,
                 None,
             )
@@ -700,13 +862,13 @@ impl SceneLiquidRuntime {
                         &additional,
                         &point_loads,
                     )
-                    .map_err(|e| format!("scene point load step: {e:?}"))?
+                    .map_err(|error| world.impact_error(error, "scene point load step"))?
                     .world
             } else {
                 candidate
                     .liquid
                     .step_with_rigid_body_world(dt, &mut states, &world, dynamics, 128, rotation)
-                    .map_err(|e| format!("scene liquid body step: {e:?}"))?
+                    .map_err(|error| world.impact_error(error, "scene liquid body step"))?
             };
             for (owner, state) in active.into_iter().zip(states) {
                 candidate.body[owner].state = state;

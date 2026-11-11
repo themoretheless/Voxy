@@ -65,45 +65,39 @@ impl ParallelCommandRecorder {
         F: FnOnce(&mut wgpu::CommandEncoder) -> Result<(), E> + Send,
         E: Send,
     {
-        if passes.is_empty() {
-            return Ok(Vec::new());
-        }
-        if passes.len() == 1 || self.max_threads <= 1 {
-            let mut buffers = Vec::with_capacity(passes.len());
-            for (label, record) in passes {
-                let mut encoder = device
-                    .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some(label) });
-                record(&mut encoder)?;
-                buffers.push(encoder.finish());
-            }
-            return Ok(buffers);
+        // Browser WebGPU encoders and devices belong to the calling thread.
+        #[cfg(not(target_arch = "wasm32"))]
+        if passes.len() > 1 && self.max_threads > 1 {
+            return std::thread::scope(|scope| {
+                let mut handles = Vec::with_capacity(passes.len());
+                for (label, record) in passes {
+                    handles.push(scope.spawn(move || {
+                        let mut encoder =
+                            device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                                label: Some(label),
+                            });
+                        record(&mut encoder)?;
+                        Ok(encoder.finish())
+                    }));
+                }
+                let results: Vec<_> = handles
+                    .into_iter()
+                    .map(|handle| {
+                        handle
+                            .join()
+                            .expect("parallel command encoder worker panicked")
+                    })
+                    .collect();
+                results.into_iter().collect()
+            });
         }
 
-        let mut results: Vec<Result<wgpu::CommandBuffer, E>> = Vec::with_capacity(passes.len());
-        std::thread::scope(|scope| {
-            let mut handles = Vec::with_capacity(passes.len());
-            for (label, record) in passes {
-                handles.push(scope.spawn(move || {
-                    let mut encoder =
-                        device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                            label: Some(label),
-                        });
-                    record(&mut encoder)?;
-                    Ok(encoder.finish())
-                }));
-            }
-            for handle in handles {
-                results.push(
-                    handle
-                        .join()
-                        .expect("parallel command encoder worker panicked"),
-                );
-            }
-        });
-
-        let mut buffers = Vec::with_capacity(results.len());
-        for result in results {
-            buffers.push(result?);
+        let mut buffers = Vec::with_capacity(passes.len());
+        for (label, record) in passes {
+            let mut encoder = device
+                .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some(label) });
+            record(&mut encoder)?;
+            buffers.push(encoder.finish());
         }
         Ok(buffers)
     }

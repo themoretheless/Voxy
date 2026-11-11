@@ -1,0 +1,13 @@
+test result: ok. 532 passed; 0 failed; 65 ignored; 0 measured; 0 filtered out; finished in 4.06s
+test result: ok. 51 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 364 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.11s
+test result: ok. 70 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 25 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 30 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time ... FAILED
+test female_demo::film_state_capture_tests::full_skin_solver_film_uses_consumed_time_and_current_surface ... FAILED
+test female_demo::film_state_capture_tests::physical_film_uses_consumed_solver_time_and_current_surface ... FAILED
+test female_demo::tests::film_substrate_matches_rendered_body_without_visual_work ... FAILED
+test female_demo::film_state_capture_tests::moving_body_film_conserves_source_adjusted_mass_over_two_seconds ... FAILED

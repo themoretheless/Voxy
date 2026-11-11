@@ -1046,6 +1046,10 @@ impl PelvicAnatomy {
         }
     }
 
+    pub(crate) fn body_recess_indices(&self) -> impl ExactSizeIterator<Item = usize> + Clone + '_ {
+        self.covered_body_vertices.iter().map(|&(index, _)| index)
+    }
+
     /// Gently recesses the interior base-mesh vertices covered by the pelvic patch
     /// after `finish_surface_vertices` so coarse base-mesh triangles cannot poke
     /// through deep anatomical sulci or lumens.

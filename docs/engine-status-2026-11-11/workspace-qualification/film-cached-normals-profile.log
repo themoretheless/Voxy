@@ -1,0 +1,10 @@
+   Compiling voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 03s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_demos-8e8d7e08c181b399)
+
+running 1 test
+{"bitwise_equal":true,"cached_median_ms":154.731208,"cached_samples_ms":[109.76183300000001,116.553292,119.96825,131.71225,135.440542,154.731208,163.619458,171.14358299999998,240.961292,290.252917],"debug_assertions":true,"scope":"normal transport only, no frame rate claim","selected_median_ms":0.053792,"selected_samples_ms":[0.033334,0.033708,0.033708,0.035959,0.04825,0.053792,0.085542,0.086375,0.088292,30.939],"selected_triangles":27,"selected_vertices":7,"triangles":121728,"uncached_median_ms":214.153666,"uncached_samples_ms":[169.444084,197.762792,204.61712500000002,210.852541,212.972416,214.153666,225.59312500000001,228.34133400000002,251.78158299999998,283.695375],"vertices":60866}
+test female_demo::surface_normals::tests::actual_body_transport_profile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 392 filtered out; finished in 8.23s
+

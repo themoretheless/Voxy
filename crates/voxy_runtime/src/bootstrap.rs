@@ -4,7 +4,7 @@ use std::sync::Arc;
 use voxy_core::{CancelToken, ChunkPos, LocalPos, WorldEpoch};
 use voxy_lighting::{
     LightStamp, LightVolume, LightingBudget, LightingError, LightingInput, LightingScratch,
-    build_light_with_scratch,
+    build_light_with_neighbor_volumes, build_light_with_scratch,
 };
 use voxy_mesher::{ChunkMesh, HALO_OFFSETS, MeshError, MeshStamp, MeshingInput, build_mesh};
 use voxy_world::{
@@ -73,6 +73,108 @@ pub fn build_generated_scene_with_mesh_plants(
     ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
 ) -> Result<BootstrapScene, BootstrapError> {
     build_scene_using_generator(seed, radius, true, true, factory)
+}
+
+/// Builds a multi-layer vertical procedural scene across `y_min..=y_max` with halo chunks
+/// `(y_min - 1)..=(y_max + 1)` and top-down + lateral cross-chunk light propagation.
+///
+/// # Errors
+///
+/// Rejects invalid radii (`!(0..=8)`), inverted or unbounded vertical spans, and generation,
+/// lighting, or meshing failures.
+pub fn build_vertical_procedural_scene(
+    seed: u64,
+    radius: i32,
+    y_min: i32,
+    y_max: i32,
+    mesh_plants: bool,
+) -> Result<BootstrapScene, BootstrapError> {
+    if !(0..=8).contains(&radius) {
+        return Err(BootstrapError::InvalidRadius(radius));
+    }
+    if y_min > y_max || y_max - y_min > 16 {
+        return Err(BootstrapError::InvalidRadius(y_max - y_min));
+    }
+    let registry = Arc::new(registry_with_mesh_plants(mesh_plants)?);
+    let palette = TerrainPalette {
+        air: registry
+            .find(&ResourceKey::parse("voxy:air")?)
+            .ok_or(BootstrapError::MissingBuiltin)?,
+        surface: registry
+            .find(&ResourceKey::parse("voxy:grass")?)
+            .ok_or(BootstrapError::MissingBuiltin)?,
+        soil: registry
+            .find(&ResourceKey::parse("voxy:dirt")?)
+            .ok_or(BootstrapError::MissingBuiltin)?,
+        stone: registry
+            .find(&ResourceKey::parse("voxy:stone")?)
+            .ok_or(BootstrapError::MissingBuiltin)?,
+    };
+    let token = CancelToken::new();
+    let water = registry
+        .find(&ResourceKey::parse("voxy:water_8")?)
+        .ok_or(BootstrapError::MissingBuiltin)?;
+    let generator = voxy_world::VegetationGenerator::new(
+        Box::new(ProceduralTerrainGenerator::new(palette, water)),
+        ProceduralTerrainGenerator::new(palette, water),
+        voxy_world::VegetationPalette {
+            air: palette.air,
+            wood: registry
+                .find(&ResourceKey::parse("voxy:wood")?)
+                .ok_or(BootstrapError::MissingBuiltin)?,
+            leaves: registry
+                .find(&ResourceKey::parse("voxy:leaves")?)
+                .ok_or(BootstrapError::MissingBuiltin)?,
+        },
+    );
+    let radius_i64 = i64::from(radius);
+    let y_lo = i64::from(y_min);
+    let y_hi = i64::from(y_max);
+    let mut snapshots = BTreeMap::new();
+    for y in (y_lo - 1)..=(y_hi + 1) {
+        for z in -(radius_i64 + 1)..=(radius_i64 + 1) {
+            for x in -(radius_i64 + 1)..=(radius_i64 + 1) {
+                let pos = ChunkPos { x, y, z };
+                let generated = generator.generate(pos, WorldSeed(seed), &token)?;
+                snapshots.insert(
+                    pos,
+                    ChunkSnapshot {
+                        pos,
+                        revision: ChunkRevision::default(),
+                        data: Arc::new(ChunkData {
+                            blocks: generated.data.blocks,
+                            block_data: BTreeMap::new(),
+                        }),
+                    },
+                );
+            }
+        }
+    }
+    let mut positions = Vec::new();
+    for y in y_lo..=y_hi {
+        for z in -radius_i64..=radius_i64 {
+            for x in -radius_i64..=radius_i64 {
+                positions.push(ChunkPos { x, y, z });
+            }
+        }
+    }
+    let chunks = rebuild_vertical_chunks_from_snapshots(&registry, &snapshots, &positions, 1)?;
+    let mut world = World::new(
+        WorldEpoch::new(1).ok_or(BootstrapError::InvalidWorldEpoch)?,
+        registry,
+        WorldLimits::default(),
+    );
+    for snapshot in snapshots.values() {
+        world.insert_generated(GeneratedChunk {
+            pos: snapshot.pos,
+            data: (*snapshot.data).clone(),
+        })?;
+    }
+    Ok(BootstrapScene {
+        anchor: ChunkPos { x: 0, y: 0, z: 0 },
+        chunks,
+        world,
+    })
 }
 
 fn build_scene(seed: u64, radius: i32, procedural: bool) -> Result<BootstrapScene, BootstrapError> {
@@ -279,6 +381,207 @@ pub fn rebuild_bootstrap_chunks(
             &mut light_scratch,
             |neighbor| world.chunk(neighbor),
         )?);
+    }
+    chunks.sort_by_key(|chunk| chunk.pos);
+    Ok(chunks)
+}
+
+/// Extracts only `positions` and their 26-neighbor halos (`Arc`-cheap `ChunkSnapshot` clones)
+/// from `world` without cloning the full `World` `BTreeMap`.
+#[must_use]
+pub fn extract_chunk_neighborhood(
+    world: &World,
+    positions: &[ChunkPos],
+) -> BTreeMap<ChunkPos, ChunkSnapshot> {
+    let mut snapshots = BTreeMap::new();
+    for &pos in positions {
+        for dz in -1..=1_i64 {
+            for dy in -1..=1_i64 {
+                for dx in -1..=1_i64 {
+                    let (Some(x), Some(y), Some(z)) = (
+                        pos.x.checked_add(dx),
+                        pos.y.checked_add(dy),
+                        pos.z.checked_add(dz),
+                    ) else {
+                        continue;
+                    };
+                    let target = ChunkPos { x, y, z };
+                    if let std::collections::btree_map::Entry::Vacant(entry) =
+                        snapshots.entry(target)
+                        && let Some(snapshot) = world.chunk(target)
+                    {
+                        entry.insert(snapshot);
+                    }
+                }
+            }
+        }
+    }
+    snapshots
+}
+
+/// Rebuilds renderer-derived light and mesh data from an extracted neighborhood snapshot map.
+///
+/// # Errors
+///
+/// Returns missing chunks, lighting or meshing failures without mutating canonical state.
+pub fn rebuild_chunks_from_snapshots(
+    registry: &Arc<BlockRegistry>,
+    snapshots: &BTreeMap<ChunkPos, ChunkSnapshot>,
+    positions: &[ChunkPos],
+    derivation_epoch: u64,
+) -> Result<Vec<BootstrapChunk>, BootstrapError> {
+    let token = CancelToken::new();
+    let mut chunks = Vec::with_capacity(positions.len());
+    let mut light_scratch = LightingScratch::new();
+    for &pos in positions {
+        let center = snapshots
+            .get(&pos)
+            .cloned()
+            .ok_or(BootstrapError::MissingGeneratedChunk)?;
+        chunks.push(derive_bootstrap_chunk(
+            pos,
+            center,
+            registry,
+            derivation_epoch,
+            &token,
+            &mut light_scratch,
+            |neighbor| snapshots.get(&neighbor).cloned(),
+        )?);
+    }
+    chunks.sort_by_key(|chunk| chunk.pos);
+    Ok(chunks)
+}
+
+/// Rebuilds a multi-layer vertical column/grid of chunks with top-down sky propagation
+/// and cross-seam neighbor `LightVolume` transfer (`build_light_with_neighbor_volumes`).
+///
+/// # Errors
+///
+/// Returns missing chunks, lighting or meshing failures.
+pub fn rebuild_vertical_chunks_from_snapshots(
+    registry: &Arc<BlockRegistry>,
+    snapshots: &BTreeMap<ChunkPos, ChunkSnapshot>,
+    positions: &[ChunkPos],
+    derivation_epoch: u64,
+) -> Result<Vec<BootstrapChunk>, BootstrapError> {
+    let token = CancelToken::new();
+    let mut sorted_top_down: Vec<ChunkPos> = positions.to_vec();
+    sorted_top_down.sort_by(|a, b| {
+        b.y.cmp(&a.y)
+            .then_with(|| a.z.cmp(&b.z))
+            .then_with(|| a.x.cmp(&b.x))
+    });
+    sorted_top_down.dedup();
+    let resident_set: BTreeSet<ChunkPos> = sorted_top_down.iter().copied().collect();
+    let mut light_scratch = LightingScratch::new();
+    let mut solved_lights: BTreeMap<ChunkPos, LightVolume> = BTreeMap::new();
+
+    // Pass 1 (top-down): propagate vertical skylight from highest resident `y` downward,
+    // and Pass 2 (lateral): exchange skylight/blocklight across horizontal chunk seams.
+    for _pass in 0..2 {
+        for &pos in &sorted_top_down {
+            let center = snapshots
+                .get(&pos)
+                .cloned()
+                .ok_or(BootstrapError::MissingGeneratedChunk)?;
+            let face_positions = [
+                ChunkPos {
+                    x: pos.x - 1,
+                    ..pos
+                },
+                ChunkPos {
+                    x: pos.x + 1,
+                    ..pos
+                },
+                ChunkPos {
+                    y: pos.y - 1,
+                    ..pos
+                },
+                ChunkPos {
+                    y: pos.y + 1,
+                    ..pos
+                },
+                ChunkPos {
+                    z: pos.z - 1,
+                    ..pos
+                },
+                ChunkPos {
+                    z: pos.z + 1,
+                    ..pos
+                },
+            ];
+            let light_neighbors = face_positions.map(|neighbor| snapshots.get(&neighbor).cloned());
+            let light_faces = light_neighbors
+                .each_ref()
+                .map(|s| s.as_ref().map(|snap| snap.revision));
+            let neighbor_lights: [Option<&LightVolume>; 6] =
+                face_positions.map(|neighbor| solved_lights.get(&neighbor));
+            let above = ChunkPos {
+                y: pos.y + 1,
+                ..pos
+            };
+            let sky_from_above = !resident_set.contains(&above);
+            let volume = build_light_with_neighbor_volumes(
+                &LightingInput {
+                    center,
+                    neighbors: light_neighbors,
+                    registry: Arc::clone(registry),
+                    sky_from_above,
+                    stamp: LightStamp {
+                        center: snapshots[&pos].revision,
+                        faces: light_faces,
+                        registry_epoch: 1,
+                        lighting_epoch: derivation_epoch,
+                    },
+                },
+                &neighbor_lights,
+                LightingBudget::default(),
+                &token,
+                &mut light_scratch,
+            )?;
+            solved_lights.insert(pos, volume);
+        }
+    }
+
+    let mut chunks = Vec::with_capacity(sorted_top_down.len());
+    for pos in sorted_top_down {
+        let center = snapshots
+            .get(&pos)
+            .cloned()
+            .ok_or(BootstrapError::MissingGeneratedChunk)?;
+        let center_revision = center.revision;
+        let neighbors = std::array::from_fn(|index| {
+            let offset = HALO_OFFSETS[index];
+            snapshots
+                .get(&ChunkPos {
+                    x: pos.x + i64::from(offset.dx),
+                    y: pos.y + i64::from(offset.dy),
+                    z: pos.z + i64::from(offset.dz),
+                })
+                .cloned()
+        });
+        let halo = neighbors
+            .each_ref()
+            .map(|snapshot| snapshot.as_ref().map(|s| s.revision));
+        let mesh = build_mesh(
+            &MeshingInput {
+                center,
+                neighbors,
+                registry: Arc::clone(registry),
+                stamp: MeshStamp {
+                    center: center_revision,
+                    halo,
+                    registry_epoch: 1,
+                    mesher_epoch: derivation_epoch,
+                },
+            },
+            &token,
+        )
+        .map_err(BootstrapError::Mesh)?;
+        let light = solved_lights
+            .remove(&pos)
+            .ok_or(BootstrapError::MissingGeneratedChunk)?;
+        chunks.push(BootstrapChunk { pos, mesh, light });
     }
     chunks.sort_by_key(|chunk| chunk.pos);
     Ok(chunks)

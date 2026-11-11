@@ -236,8 +236,27 @@ impl physics::liquid::LiquidGeometry for SceneGeometry {
     }
 }
 
+#[derive(Clone, Copy)]
+struct MovingBoundary {
+    owner: NodeId,
+    displacement: glam::DVec3,
+    duration: f64,
+}
+impl MovingBoundary {
+    fn velocity(self) -> glam::DVec3 {
+        self.displacement / self.duration
+    }
+    fn center_at(self, end: glam::DVec3, time: f64) -> glam::DVec3 {
+        end - self.displacement * (1. - (time / self.duration).clamp(0., 1.))
+    }
+}
+
 struct SceneBodyWorld {
+    boundaries: Vec<MovingBoundary>,
     environment: SceneGeometry,
+    body_environments: Vec<Option<SceneGeometry>>,
+    particle_environment: Option<SceneGeometry>,
+    body_layers: Vec<crate::CollisionLayers>,
     // Root-relative world-oriented shapes for constrained translation; principal
     // COM-frame shapes when the corresponding trajectory has intrinsic Spin.
     templates: Vec<Vec<crate::convex::AffineBox>>,
@@ -247,13 +266,21 @@ fn sampling_frame(
     position: [f64; 3],
     duration: f64,
 ) -> Result<physics::rigid_motion::RigidMotion, physics::liquid::Error> {
-    // Unit mass is only metadata for this stationary geometry sampling frame.
+    boundary_frame(position, [0.; 3], duration)
+}
+
+fn boundary_frame(
+    position: [f64; 3],
+    velocity: [f64; 3],
+    duration: f64,
+) -> Result<physics::rigid_motion::RigidMotion, physics::liquid::Error> {
+    // Unit mass is metadata for this geometry sampling frame.
     // Environment walls never enter the solver's finite-body participant array.
     physics::contact::ContactBody {
         motion: physics::gravity::Body {
             mass: 1.,
             position,
-            velocity: [0.; 3],
+            velocity,
         },
         spin: None,
     }
@@ -405,6 +432,17 @@ fn trajectory_environment_events(
     environment: &SceneGeometry,
     budget: usize,
 ) -> Result<RigidGeometryHit, physics::liquid::Error> {
+    trajectory_environment_events_at(body, shapes, environment, &[], 0., budget)
+}
+
+fn trajectory_environment_events_at(
+    body: &physics::rigid_motion::RigidMotion,
+    shapes: &[crate::convex::AffineBox],
+    environment: &SceneGeometry,
+    boundaries: &[MovingBoundary],
+    elapsed_s: f64,
+    budget: usize,
+) -> Result<RigidGeometryHit, physics::liquid::Error> {
     if shapes
         .len()
         .checked_mul(environment.0.0.len())
@@ -417,7 +455,17 @@ fn trajectory_environment_events(
         .ok_or(physics::liquid::Error::CollisionBudget)?;
     let mut queries = steps;
     nearest_events(environment.0.0.iter().enumerate().map(|(wall, obstacle)| {
-        let frame = sampling_frame(obstacle.shape.center.to_array(), body.duration())?;
+        let center = obstacle.shape.center;
+        let frame =
+            if let Some(boundary) = boundaries.iter().find(|wall| wall.owner == obstacle.owner) {
+                boundary_frame(
+                    boundary.center_at(center, elapsed_s).to_array(),
+                    boundary.velocity().to_array(),
+                    body.duration(),
+                )?
+            } else {
+                sampling_frame(center.to_array(), body.duration())?
+            };
         let shape = crate::convex::AffineBox {
             center: glam::DVec3::ZERO,
             edges: obstacle.shape.edges,

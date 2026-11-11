@@ -1,8 +1,38 @@
 //! Standalone native authoring entry point.
 use voxy_editor::{ModelSource, ViewportMode, run_model_viewport_with_scene};
+#[cfg(target_os = "macos")]
+mod project_picker;
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut arguments: Vec<_> = std::env::args().skip(1).collect();
     match arguments.as_slice() {
+        [] => {
+            if let Some(package) = embedded_game_package()? {
+                return voxy_editor::run_packaged_game(&package, ViewportMode::Game);
+            }
+            #[cfg(target_os = "macos")]
+            {
+                if let Some(path) = project_picker::choose()? {
+                    return open_project(&path, ViewportMode::Interactive);
+                }
+                return Ok(());
+            }
+        }
+        [flag]
+            if matches!(
+                flag.as_str(),
+                "--embedded-game-check" | "--embedded-game-native-smoke"
+            ) =>
+        {
+            let package = embedded_game_package()?
+                .ok_or("embedded game requires a Voxy game distribution")?;
+            let mode = if flag == "--embedded-game-check" {
+                ViewportMode::GameCheck
+            } else {
+                ViewportMode::GameSmoke
+            };
+            return voxy_editor::run_packaged_game(&package, mode);
+        }
         [flag] if flag == "--help" || flag == "-h" => {
             println!(
                 "Voxy editor\n\
@@ -14,7 +44,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                    --project PROJECT --game-check\n\
                    --package PACKAGE --game-check\n\
                  Native editor/game commands (open windows):\n\
-                   --project PROJECT [--game]\n\
+                   --project PROJECT [--game | --prefab-smoke]\n\
                    MODEL.obj|MODEL.gltf|MODEL.glb [--scene SCENE]\n\
                    --manifest MANIFEST ASSET [--scene SCENE]"
             );
@@ -40,7 +70,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 std::path::Path::new(output),
             );
         }
-        [command, path, mode] if command == "--package" => {
+        [command, path] if command == "--game-package" => {
+            return voxy_editor::run_packaged_game(std::path::Path::new(path), ViewportMode::Game);
+        }
+        [command, path, mode] if matches!(command.as_str(), "--package" | "--game-package") => {
             let mode = match mode.as_str() {
                 "--game" => ViewportMode::Game,
                 "--game-check" => ViewportMode::GameCheck,
@@ -50,15 +83,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             return voxy_editor::run_packaged_game(std::path::Path::new(path), mode);
         }
         [command, path] if command == "--project" => {
-            return voxy_editor::run_project_editor(std::path::Path::new(path));
+            return open_project(std::path::Path::new(path), ViewportMode::Interactive);
         }
         [command, path, mode] if command == "--project" => {
             let mode = match mode.as_str() {
                 "--game" => ViewportMode::Game,
                 "--game-check" => ViewportMode::GameCheck,
                 "--game-native-smoke" => ViewportMode::GameSmoke,
+                "--prefab-smoke" => ViewportMode::PrefabSmoke,
                 _ => return Err("unknown project mode".into()),
             };
+            if mode == ViewportMode::PrefabSmoke {
+                return open_project(std::path::Path::new(path), mode);
+            }
             return voxy_editor::run_project(std::path::Path::new(path), mode);
         }
         [command, path] if command == "--validate-project" => {
@@ -77,6 +114,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         arguments.remove(index);
         if index >= arguments.len() {
             return Err("--scene requires a path".into());
+        }
+        Some(std::path::PathBuf::from(arguments.remove(index)))
+    } else {
+        None
+    };
+    let export_game = if let Some(index) = arguments.iter().position(|arg| arg == "--export-game") {
+        arguments.remove(index);
+        if index >= arguments.len() {
+            return Err("--export-game requires an output path".into());
         }
         Some(std::path::PathBuf::from(arguments.remove(index)))
     } else {
@@ -106,7 +152,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else if let Some(index) = arguments.iter().position(|arg| arg == "--lod-smoke") {
         arguments.remove(index);
         ViewportMode::LodSmoke
-    } else if let Some(index) = arguments.iter().position(|arg| arg == "--animation-smoke") {
+    } else if let Some(index) = arguments.iter().position(|arg| {
+        matches!(
+            arg.as_str(),
+            "--animation-smoke" | "--animation-native-smoke"
+        )
+    }) {
         arguments.remove(index);
         ViewportMode::AnimationSmoke
     } else if let Some(index) = arguments.iter().position(|arg| arg == "--smoke") {
@@ -116,11 +167,50 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ViewportMode::Interactive
     };
     let source = match arguments.as_slice() {
-        [flag, path, asset] if flag == "--manifest" => ModelSource::Manifest {
-            path: path.into(), asset: voxy_assets::AssetId(asset.clone()),
-        },
+        [flag, path, asset] if matches!(flag.as_str(), "--manifest" | "--model-manifest") => {
+            ModelSource::Manifest {
+                path: path.into(),
+                asset: voxy_assets::AssetId(asset.clone()),
+            }
+        }
+        [flag, path] if flag == "--model" => ModelSource::File(path.into()),
         [path] if !path.starts_with("--") => ModelSource::File(path.into()),
-        _ => return Err("usage: voxy_editor --create-project NEW_DIRECTORY NAME | --build-project project.voxy game.vpak | --package game.vpak --game|--game-check | --validate-project project.voxy | --project project.voxy [--game | --game-check | --game-native-smoke] | model.obj|model.gltf|model.glb | --manifest assets.json logical-id [--scene scene.json] [--game | --game-check | --smoke | --game-smoke | --scene3d-smoke | --prefab-smoke | --lod-smoke | --animation-smoke]".into()),
+        _ => return Err("usage: voxy_editor --create-project NEW_DIRECTORY NAME | --build-project project.voxy game.vpak | --package game.vpak --game|--game-check | --validate-project project.voxy | --project project.voxy [--game | --game-check | --game-native-smoke] | [--model] model.obj|model.gltf|model.glb | --manifest|--model-manifest assets.json logical-id [--scene scene.json] [--export-game game.vpak] [--game | --game-check | --smoke | --game-smoke | --scene3d-smoke | --prefab-smoke | --lod-smoke | --animation-smoke]".into()),
     };
+    if let Some(output) = export_game {
+        return voxy_editor::export_game_package(
+            &source,
+            scene.as_deref().ok_or("--export-game requires --scene")?,
+            &output,
+        );
+    }
     run_model_viewport_with_scene(&source, mode, scene.as_deref())
+}
+
+fn open_project(
+    path: &std::path::Path,
+    mode: ViewportMode,
+) -> Result<(), Box<dyn std::error::Error>> {
+    voxy_editor::run_project_with_package_player(path, mode, std::env::current_exe()?)
+}
+
+fn embedded_game_package() -> Result<Option<std::path::PathBuf>, std::io::Error> {
+    use std::ffi::OsStr;
+
+    let executable = std::env::current_exe()?;
+    if executable.file_stem() != Some(OsStr::new("voxy_game")) {
+        return Ok(None);
+    }
+    let Some(directory) = executable.parent() else {
+        return Ok(None);
+    };
+    #[cfg(target_os = "macos")]
+    if directory.file_name() == Some(OsStr::new("MacOS"))
+        && let Some(contents) = directory.parent()
+        && contents.file_name() == Some(OsStr::new("Contents"))
+        && contents.parent().and_then(std::path::Path::extension) == Some(OsStr::new("app"))
+    {
+        return Ok(Some(contents.join("Resources/game.vpak")));
+    }
+    Ok(Some(directory.join("game.vpak")))
 }

@@ -1,0 +1,62 @@
+failures:
+
+---- female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time stdout ----
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+
+thread 'female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time' (17706811) panicked at crates/voxy_demos/src/female_demo.rs:3100:13:
+assertion `left == right` failed
+  left: [-0.0010536909103393555, -0.05079124495387077, -0.03192256763577461]
+ right: [-0.0009959081653505564, -0.04484022036194801, -0.031141245737671852]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- female_demo::film_state_capture_tests::full_skin_solver_film_uses_consumed_time_and_current_surface stdout ----
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+
+thread 'female_demo::film_state_capture_tests::full_skin_solver_film_uses_consumed_time_and_current_surface' (17706812) panicked at crates/voxy_demos/src/female_demo.rs:3046:13:
+assertion `left == right` failed
+  left: [-0.0010536909103393555, -0.05086249113082886, -0.03192256763577461]
+ right: [-0.0009959081653505564, -0.0449114665389061, -0.031141245737671852]
+
+---- female_demo::film_state_capture_tests::physical_film_uses_consumed_solver_time_and_current_surface stdout ----
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+
+thread 'female_demo::film_state_capture_tests::physical_film_uses_consumed_solver_time_and_current_surface' (17706857) panicked at crates/voxy_demos/src/female_demo.rs:3046:13:
+assertion `left == right` failed
+  left: [-0.0010383339831605554, -0.052424635738134384, -0.0318027026951313]
+ right: [-0.000981480348855257, -0.04648084565997124, -0.030968058854341507]
+
+---- female_demo::tests::film_substrate_matches_rendered_body_without_visual_work stdout ----
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+
+thread 'female_demo::tests::film_substrate_matches_rendered_body_without_visual_work' (17741995) panicked at crates/voxy_demos/src/female_demo.rs:2299:21:
+film/render geometry diverged: edited=false secondary=false animation=false rig=false time=0.38
+
+---- female_demo::film_state_capture_tests::moving_body_film_conserves_source_adjusted_mass_over_two_seconds stdout ----
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+Facial render mouth opening: 340 seal triangles
+
+thread 'female_demo::film_state_capture_tests::moving_body_film_conserves_source_adjusted_mass_over_two_seconds' (17706855) panicked at crates/voxy_demos/src/female_demo.rs:2999:13:
+assertion `left == right` failed
+  left: [-0.0010442124912515283, -0.051039181649684906, -0.03199033439159393]
+ right: [-0.0009858687408268452, -0.04508748650550842, -0.03121417760848999]
+
+
+failures:
+    female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time
+    female_demo::film_state_capture_tests::full_skin_solver_film_uses_consumed_time_and_current_surface
+    female_demo::film_state_capture_tests::moving_body_film_conserves_source_adjusted_mass_over_two_seconds
+    female_demo::film_state_capture_tests::physical_film_uses_consumed_solver_time_and_current_surface
+    female_demo::tests::film_substrate_matches_rendered_body_without_visual_work
+
+test result: FAILED. 306 passed; 5 failed; 82 ignored; 0 measured; 0 filtered out; finished in 1883.97s
+
+error: test failed, to rerun pass `-p voxy_demos --lib`

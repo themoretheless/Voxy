@@ -12,6 +12,7 @@ cuda = ["voxy_cuda/cuda"]
 [dependencies]
 thiserror.workspace = true
 physics = { path = "../physics" }
+physics_bio = { path = "../physics_bio" }
 physics_voxel = { path = "../physics_voxel" }
 voxy_cuda = { path = "../voxy_cuda" }
 voxy_core = { path = "../voxy_core" }

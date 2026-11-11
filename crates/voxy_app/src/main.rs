@@ -41,7 +41,8 @@ use voxy_render::{CameraView, RenderOutcome, Renderer, RendererError, SkinnedMes
 #[cfg(test)]
 use voxy_runtime::build_procedural_scene;
 use voxy_runtime::{
-    BootstrapChunk, BootstrapScene, invalidated_derived_chunks, rebuild_bootstrap_chunks,
+    BootstrapChunk, BootstrapScene, JobClass, RebuildWorkerPool, extract_chunk_neighborhood,
+    invalidated_derived_chunks,
 };
 use voxy_shell::controls::{self, CameraRig, InputState};
 use voxy_shell::frame_profile;
@@ -96,7 +97,7 @@ struct VoxyApp {
     dirty_chunks: BTreeSet<ChunkPos>,
     camera_anchor: ChunkPos,
     derivation_epoch: u64,
-    rebuild: Option<std::thread::JoinHandle<RebuildResult>>,
+    rebuild_pool: Option<RebuildWorkerPool>,
     rebuild_pending: Option<u64>,
     cuda_water: Option<voxy_gpu::CudaWaterTransferProgram>,
     cuda_water_ticks: u64,
@@ -152,12 +153,6 @@ struct AnimatedActor {
     skeleton: Skeleton,
     animator: Animator,
 }
-
-type RebuildResult = (
-    u64,
-    std::time::Duration,
-    Result<Vec<voxy_runtime::BootstrapChunk>, voxy_runtime::BootstrapError>,
-);
 
 impl ApplicationHandler for VoxyApp {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
@@ -375,6 +370,7 @@ impl ApplicationHandler for VoxyApp {
                     .into_iter()
                     .map(|chunk| (chunk.pos, chunk))
                     .collect();
+                self.rebuild_pool = Some(RebuildWorkerPool::new(scene.world.epoch(), 2, 8));
                 self.world = Some(scene.world);
                 self.last_update = Some(Instant::now());
                 self.load_time_seconds = loading_started.elapsed().as_secs_f32();
@@ -567,6 +563,9 @@ impl ApplicationHandler for VoxyApp {
                 }
             }
             WindowEvent::RedrawRequested => {
+                if self.profile.as_ref().is_some_and(frame_profile::Profile::is_complete) {
+                    return;
+                }
                 if let Some(message) = self.renderer.as_ref().and_then(Renderer::device_failure) {
                     self.startup_failure = Some(format!("Voxy GPU device lost: {message}"));
                     event_loop.exit();
@@ -782,6 +781,34 @@ impl ApplicationHandler for VoxyApp {
                     profile.cpu_stage(Instant::now(), "water", self.profile_water);
                     profile.cpu_stage(Instant::now(), "actor_animation", self.profile_animation);
                     profile.cpu_stage(Instant::now(), "pose_publication", self.profile_pose);
+                    if let Some((pose, writes)) = self
+                        .renderer
+                        .as_mut()
+                        .and_then(Renderer::take_profile_pose_timing)
+                    {
+                        let now = Instant::now();
+                        let path = if pose.fallback {
+                            "pose_exact_vertex_scan"
+                        } else if pose.workers == 0 {
+                            "pose_family_certificate"
+                        } else {
+                            "pose_group_certificate"
+                        };
+                        let mut stage = |name, micros| {
+                            profile.cpu_stage(now, name, Duration::from_secs_f64(micros * 1e-6));
+                        };
+                        stage("pose_admission", pose.total_wall_us);
+                        stage(path, pose.total_wall_us);
+                        stage("pose_spawn_wall", pose.spawn_wall_us);
+                        stage("pose_worker_launch_max", pose.launch_delay_max_us);
+                        stage("pose_join_wall", pose.join_wall_us);
+                        if pose.cpu_clock_available {
+                            stage("pose_caller_cpu", pose.caller_cpu_us);
+                            stage("pose_worker_cpu_sum", pose.worker_cpu_sum_us);
+                            stage("pose_join_cpu", pose.join_cpu_us);
+                        }
+                        profile.cpu_stage(now, "pose_queue_writes", writes);
+                    }
                     let renderer = self.renderer.as_ref();
                     if let Some(ms) = renderer.and_then(Renderer::profile_gpu_ms) {
                         profile.gpu_sample(Instant::now(), [Some(ms), None, None]);

@@ -21,6 +21,74 @@ fn platform(scene: &mut SceneGraph, transform: Transform, half: [f32; 3]) -> Nod
     owner
 }
 #[test]
+fn character_scope_rejects_an_old_anchor_and_finds_the_next_allowed_surface() {
+    use crate::{CharacterBody, CharacterPhysics, CollisionLayers};
+    let mut scene = SceneGraph::new(3);
+    let owner = scene
+        .spawn(
+            None,
+            Transform {
+                translation: Vec3::Y * 3.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(owner, CharacterBody::default())
+        .unwrap();
+    let upper = platform(&mut scene, Transform::default(), [2., 0.1, 2.]);
+    let lower = platform(
+        &mut scene,
+        Transform {
+            translation: -Vec3::Y,
+            ..Default::default()
+        },
+        [2., 0.1, 2.],
+    );
+    let mut budget = budget();
+    let initial = SupportWorld::from_scene(&scene, 2).unwrap();
+    let anchor = initial
+        .probe(down(DVec3::Y), &mut budget)
+        .unwrap()
+        .unwrap()
+        .anchor;
+    assert_eq!(anchor.owner(), upper);
+    scene
+        .insert_component(
+            upper,
+            CollisionLayers {
+                membership: 2,
+                mask: 2,
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 1, 2);
+    let mut input = crate::player_input().unwrap();
+    physics
+        .fixed_step_with_preparation(
+            &mut scene,
+            &mut input,
+            1. / 60.,
+            &[],
+            &[],
+            |preview, budget| {
+                let support = preview.support.for_character(owner, budget)?;
+                assert!(support.resolve(anchor, budget)?.is_none());
+                assert_eq!(
+                    support
+                        .probe(down(DVec3::Y), budget)?
+                        .unwrap()
+                        .anchor
+                        .owner(),
+                    lower
+                );
+                Ok::<_, PhysicsError>(())
+            },
+        )
+        .unwrap();
+}
+
+#[test]
 fn nearest_contact_and_equal_distance_ties_use_stable_owner_identity() {
     let mut scene = SceneGraph::new(5);
     let first = platform(&mut scene, Default::default(), [2., 0.1, 2.]);

@@ -165,10 +165,31 @@ impl CachedPlayerActions {
     }
 }
 
+/// Accepted constant-basis translations before rotational or curved root motion.
+#[derive(Clone, Debug)]
+pub struct CharacterTranslationTrace {
+    pub owner: NodeId,
+    pub origin: glam::DVec3,
+    pub edges: [glam::DVec3; 3],
+    pub segments: Vec<glam::DVec3>,
+    pub(crate) complete: bool,
+    pub(crate) end_fractions: Vec<f64>,
+    pub(crate) end: glam::DVec3,
+    pub(crate) rotation_arc: Option<AcceptedRotationArc>,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct AcceptedRotationArc {
+    pub(crate) pivot: glam::DVec3,
+    pub(crate) requested: glam::DVec3,
+    pub(crate) stop: f64,
+}
+
 #[derive(Debug)]
 pub struct CharacterPhysics {
     pub(crate) scene: SceneId,
     pub(crate) states: HashMap<NodeId, RuntimeBody>,
+    pub(crate) translation_traces: Vec<CharacterTranslationTrace>,
     pub(crate) staging_states: HashMap<NodeId, RuntimeBody>,
     pub(crate) max_bodies: usize,
     pub(crate) max_colliders: usize,
@@ -180,6 +201,7 @@ pub struct CharacterPhysics {
     /// Cached `StaticWorld` valid when `scene.change_token()` matches.
     pub(crate) cached_static_world: Option<(SceneChangeToken, StaticWorld)>,
     cached_actions: Option<CachedPlayerActions>,
+    platform_motion: crate::PlatformMotion,
 }
 
 impl CharacterPhysics {
@@ -188,6 +210,7 @@ impl CharacterPhysics {
         Self {
             scene: scene.identity(),
             states: HashMap::new(),
+            translation_traces: Vec::new(),
             staging_states: HashMap::new(),
             max_bodies,
             max_colliders,
@@ -197,7 +220,25 @@ impl CharacterPhysics {
             trajectory_queries: 65_536,
             cached_static_world: None,
             cached_actions: None,
+            platform_motion: Default::default(),
         }
+    }
+
+    /// Supplies the displacement admitted by the platform phase to this controller step.
+    pub fn with_platform_motion<T>(
+        &mut self,
+        motion: &mut crate::PlatformMotion,
+        run: impl FnOnce(&mut Self) -> T,
+    ) -> T {
+        std::mem::swap(&mut self.platform_motion, motion);
+        let result = run(self);
+        std::mem::swap(&mut self.platform_motion, motion);
+        result
+    }
+
+    /// Takes the translational paths from the last successfully published tick.
+    pub fn take_translation_traces(&mut self) -> Vec<CharacterTranslationTrace> {
+        std::mem::take(&mut self.translation_traces)
     }
 
     /// Bounds conservative angular advancement work per requested body.
@@ -252,16 +293,17 @@ impl CharacterPhysics {
     }
 
     /// Full validation unless the scene's structure revision is unchanged since
-    /// the last pass, in which case only the transform-dependent checks run.
-    /// Structural checks depend solely on hierarchy and components, which every
-    /// scene mutation of those bumps; transforms are re-checked every call.
+    /// the last pass, in which case only component values and transform-dependent
+    /// checks run (skipping full hierarchy/archetype scans).
     fn validate_cached(&mut self, scene: &SceneGraph) -> Result<(), PhysicsError> {
         let revision = scene.structure_revision();
         if self.validated_structure == Some(revision) {
             self.validate_scene(scene)?;
+            validate_behavior_descriptors(scene).map_err(|_| PhysicsError::InvalidMotion)?;
             let token = scene.change_token();
             if self.cached_static_world.as_ref().map(|(t, _)| *t) == Some(token) {
                 for (owner, body) in scene.components::<CharacterBody>() {
+                    validate_body(*body)?;
                     translation(scene, owner)?;
                     affine_box(scene, owner, body.half_extents)?;
                 }
@@ -276,11 +318,12 @@ impl CharacterPhysics {
 
     fn validate_transforms(&self, scene: &SceneGraph) -> Result<(), PhysicsError> {
         for (owner, body) in scene.components::<CharacterBody>() {
+            validate_body(*body)?;
             translation(scene, owner)?;
             affine_box(scene, owner, body.half_extents)?;
         }
         for (owner, collider) in scene.components::<BoxCollider>() {
-            affine_box(scene, owner, collider.half_extents)?;
+            validate_static_collider(scene, owner, *collider)?;
         }
         Ok(())
     }
@@ -329,7 +372,7 @@ impl CharacterPhysics {
                         affine_box(scene, owner, body.half_extents)?.edges,
                         scene.local(owner)?.rotation,
                     ),
-                    &world,
+                    &world.filtered(crate::CollisionLayers::on(scene, owner)),
                 )
             {
                 return Err(PhysicsError::InitialOverlap);
@@ -817,6 +860,13 @@ impl CharacterPhysics {
         PhysicsError,
     > {
         self.validate_cached(scene)?;
+        if self
+            .platform_motion
+            .scene_revision
+            .is_some_and(|token| token != scene.change_token())
+        {
+            return Err(PhysicsError::InvalidMotion);
+        }
         let (requested_paths, requested_rigid, certified_by_owner) =
             Self::validate_trajectory_requests(paths, rigid_paths, certified, dt)?;
         let mut trajectory_queries = self.trajectory_queries;
@@ -913,6 +963,7 @@ impl CharacterPhysics {
         let max_colliders = self.max_colliders;
         let angular_iterations = self.angular_iterations;
         let mut edits = Vec::with_capacity(active.len());
+        let mut traces = Vec::with_capacity(active.len());
 
         let step_result = (|| -> Result<(), PhysicsError> {
             let world = &self
@@ -920,8 +971,15 @@ impl CharacterPhysics {
                 .as_ref()
                 .expect("cached static world populated")
                 .1;
-            let shapes = &world.2;
+            let authored_layers = scene
+                .components::<crate::CollisionLayers>()
+                .next()
+                .is_some();
             for (owner, descriptor) in scene.active_components::<CharacterBody>() {
+                let filtered = authored_layers
+                    .then(|| world.filtered(crate::CollisionLayers::on(scene, owner)));
+                let world = filtered.as_deref().unwrap_or(world);
+                let shapes = &world.2;
                 let center = translation(scene, owner)?;
                 let edges = affine_box(scene, owner, descriptor.half_extents)?.edges;
                 let authored_rotation = scene.local(owner)?.rotation;
@@ -933,6 +991,16 @@ impl CharacterPhysics {
                     || runtime.published_rotation != authored_rotation
                 {
                     *runtime = fresh(center, *descriptor, edges, authored_rotation);
+                }
+                let platform_delta = self
+                    .platform_motion
+                    .riders
+                    .iter()
+                    .find_map(|&(rider, delta)| (rider == owner).then_some(delta));
+                let origin = precise_center(runtime.state.body);
+                if let Some(delta) = platform_delta {
+                    relocate(runtime, origin + delta, *descriptor);
+                    runtime.state.grounded = true;
                 }
                 if overlaps(runtime, world) {
                     if !depenetration {
@@ -951,6 +1019,17 @@ impl CharacterPhysics {
                     max_slide_iterations: 4,
                     max_candidates_per_sweep: max_colliders.max(1),
                 };
+                let mut trace = CharacterTranslationTrace {
+                    owner,
+                    origin: platform_delta
+                        .map_or_else(|| precise_center(runtime.state.body), |_| origin),
+                    edges: runtime.edges,
+                    segments: platform_delta.into_iter().collect(),
+                    complete: true,
+                    end_fractions: Vec::new(),
+                    end: glam::DVec3::ZERO,
+                    rotation_arc: None,
+                };
                 if !aligned_edges(runtime.edges) || world.3 {
                     step_affine(
                         runtime,
@@ -959,9 +1038,13 @@ impl CharacterPhysics {
                         [dir_x * descriptor.speed, dir_z * descriptor.speed],
                         jump_pressed,
                         dt,
+                        |segment, end| {
+                            trace.segments.push(segment);
+                            trace.end_fractions.extend(end);
+                        },
                     );
                 } else {
-                    physics::step_character(
+                    let (_, segments) = physics::step_character_traced(
                         world,
                         &mut runtime.state,
                         CharacterInput {
@@ -972,20 +1055,33 @@ impl CharacterPhysics {
                         config,
                     )
                     .map_err(|_| PhysicsError::Solver)?;
+                    for segment in segments {
+                        trace
+                            .segments
+                            .push(glam::DVec3::from_array(segment.displacement));
+                        trace.end_fractions.extend(segment.end_fraction);
+                    }
                 }
                 if let Some(request) = requested.get(&owner) {
+                    let timed_segment_count = trace.segments.len();
                     let start = precise_center(runtime.state.body);
                     let mut position = start;
                     let mut motion = request.displacement.as_dvec3();
                     let mut carried_velocity = glam::DVec3::from_array(runtime.state.velocity);
-                    let grounded = convex::move_body_affine_carrying_velocity(
+                    let grounded = convex::move_body_affine_traced(
                         &mut position,
                         runtime.edges,
                         &mut motion,
                         1.0,
                         shapes,
                         Some(&mut carried_velocity),
+                        |segment, _| trace.segments.push(segment),
                     );
+                    if trace.segments.len() != timed_segment_count {
+                        // Root translation has its own phase and no common
+                        // clock with input-driven translation.
+                        trace.end_fractions.clear();
+                    }
                     relocate(runtime, position, *descriptor);
                     runtime.state.velocity = carried_velocity.to_array();
                     runtime.state.grounded = grounded;
@@ -1086,6 +1182,13 @@ impl CharacterPhysics {
                             angular_iterations,
                         )?;
                         angular_fraction = hit.fraction;
+                        if angular_fraction > 0. {
+                            trace.rotation_arc = Some(AcceptedRotationArc {
+                                pivot: position,
+                                requested: world_angular,
+                                stop: angular_fraction,
+                            });
+                        }
                         Some((
                             glam::DQuat::from_scaled_axis(angular * angular_fraction),
                             hit.normal,
@@ -1094,6 +1197,7 @@ impl CharacterPhysics {
                         None
                     };
                     if let Some((rotation, normal)) = angular {
+                        trace.complete = false;
                         runtime.orientation = (runtime.orientation * rotation).normalize();
                         runtime.edges = runtime
                             .rest_edges
@@ -1194,6 +1298,12 @@ impl CharacterPhysics {
                             Some(witness.evaluation_error(published.as_dvec3(), displayed_edges)?);
                     }
                 }
+                if platform_delta.is_some() {
+                    // The carry prefix precedes the timed controller phase.
+                    trace.end_fractions.clear();
+                }
+                trace.end = physical_center;
+                traces.push(trace);
                 edits.push((owner, local));
             }
             if let Some(prepare) = prepare {
@@ -1216,7 +1326,8 @@ impl CharacterPhysics {
                     });
                 }
                 characters.sort_by_key(|character| character.owner);
-                let support = SupportWorld::from_static_world(world)?;
+                let mut support = SupportWorld::from_static_world(world)?;
+                support.bind_character_layers(scene);
                 let preview = CharacterTickPreview {
                     characters,
                     support,
@@ -1241,6 +1352,8 @@ impl CharacterPhysics {
             *cached_token = scene.change_token();
         }
         self.staging_states = std::mem::replace(&mut self.states, next);
+        traces.sort_unstable_by_key(|trace| trace.owner);
+        self.translation_traces = traces;
         input.finish_frame();
         Ok((applied, applied_paths))
     }
@@ -1250,6 +1363,75 @@ impl CharacterPhysics {
 mod cached_validation_tests {
     use super::*;
     use voxy_scene::Transform;
+
+    #[test]
+    fn translation_trace_follows_wall_slide_and_survives_a_rejected_step() {
+        let mut scene = SceneGraph::new(2);
+        let owner = scene.spawn(None, Transform::default()).unwrap();
+        scene
+            .insert_component(
+                owner,
+                CharacterBody {
+                    half_extents: [0.1; 3],
+                    speed: 120.,
+                    gravity: 0.,
+                    jump_speed: 0.,
+                },
+            )
+            .unwrap();
+        let wall = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: Vec3::X,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                wall,
+                BoxCollider {
+                    half_extents: [0.1, 2., 3.],
+                },
+            )
+            .unwrap();
+        let mut physics = CharacterPhysics::new(&scene, 1, 1);
+        let mut input = crate::player_input().unwrap();
+        input.event(crate::RIGHT, 1.).unwrap();
+        input.event(crate::FORWARD, 1.).unwrap();
+        physics
+            .fixed_step(&mut scene, &mut input, 1. / 60.)
+            .unwrap();
+        assert!(
+            physics
+                .fixed_step(&mut scene, &mut input, f64::NAN)
+                .is_err()
+        );
+        let traces = physics.take_translation_traces();
+        let [trace] = traces.as_slice() else {
+            panic!("one accepted trace expected")
+        };
+        assert_eq!(trace.owner, owner);
+        let [contact, end] = trace.end_fractions.as_slice() else {
+            panic!("two normalized times expected");
+        };
+        assert!(*contact > 0. && *contact < 1.);
+        assert_eq!(*end, 1.);
+        let [approach, slide] = trace.segments.as_slice() else {
+            panic!("approach and slide expected")
+        };
+        assert!(approach.x > 0. && approach.z != 0.);
+        assert_eq!(slide.x, 0.);
+        assert!(slide.z != 0.);
+        let end = physics
+            .accepted_pose(&scene, owner)
+            .unwrap()
+            .unwrap()
+            .physical_center;
+        assert!((trace.origin + approach + slide - end).abs().max_element() < 1e-12);
+        assert!(physics.take_translation_traces().is_empty());
+    }
 
     #[test]
     fn structure_revision_invalidates_cached_physics_validation() {

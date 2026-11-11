@@ -1,0 +1,650 @@
+{
+  "settled": {
+    "ticks": 30,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nativeMatches": true
+  },
+  "wall": {
+    "ticks": 75,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.8,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nativeMatches": true
+  },
+  "jump": {
+    "ticks": 86,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.8,
+            0.57033336,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nativeMatches": true
+  },
+  "landed": {
+    "ticks": 126,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.8,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nativeMatches": true
+  },
+  "left": {
+    "ticks": 134,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.53333336,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nativeMatches": true
+  },
+  "stopped": {
+    "ticks": 144,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.53333336,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nativeMatches": true
+  }
+}

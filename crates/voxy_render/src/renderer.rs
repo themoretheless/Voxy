@@ -1,7 +1,6 @@
-use std::fmt;
-
 use bytemuck::{Pod, Zeroable};
 use glam::{Mat4, Vec3};
+use std::collections::BTreeMap;
 use voxy_core::ChunkPos;
 use voxy_lighting::LightVolume;
 use voxy_mesher::{ChunkMesh, FaceDir, Quad, QuadDiagonal, RenderLayer};
@@ -21,11 +20,58 @@ mod resident_frame_timing;
 mod skinned_lod;
 
 #[cfg(test)]
-use camera_math::{CameraUniform, PhotorealCameraUniform};
+use camera_math::{CameraUniform, PhotorealCameraUniform, chunk_intersects_frustum};
 use camera_math::{
     ChunkMeta, SharedCameraBindings, camera_half_extents, camera_uniform, camera_view_projection,
-    chunk_intersects_frustum, pack_light_words, photoreal_camera_uniform, relative_chunk_origin,
+    pack_light_words, photoreal_camera_uniform, relative_chunk_origin,
 };
+
+#[derive(Clone, Copy, Debug)]
+struct ResidentChunkSlot {
+    index: usize,
+    start: u32,
+    end: u32,
+    light_word_offset: u32,
+}
+
+impl ResidentChunkSlot {
+    fn write_update(
+        self,
+        queue: &wgpu::Queue,
+        quad_buffer: &wgpu::Buffer,
+        light_buffer: &wgpu::Buffer,
+        quads: &[GpuQuad],
+        light: &[u32],
+    ) {
+        if !quads.is_empty() {
+            queue.write_buffer(
+                quad_buffer,
+                u64::from(self.start) * size_of::<GpuQuad>() as u64,
+                bytemuck::cast_slice(quads),
+            );
+        }
+        queue.write_buffer(
+            light_buffer,
+            u64::from(self.light_word_offset) * size_of::<u32>() as u64,
+            bytemuck::cast_slice(light),
+        );
+    }
+
+    fn draw_ranges(self, mesh: &ChunkMesh, origin: [i32; 4]) -> Option<pipelines::ChunkLayerDraws> {
+        if mesh.quad_count() > (self.end - self.start) as usize {
+            return None;
+        }
+        let cutout = self.start + mesh.opaque.len() as u32;
+        let translucent = cutout + mesh.cutout.len() as u32;
+        let end = translucent + mesh.translucent.len() as u32;
+        Some(pipelines::ChunkLayerDraws {
+            origin,
+            opaque: self.start..cutout,
+            cutout: cutout..translucent,
+            translucent: translucent..end,
+        })
+    }
+}
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Pod, Zeroable)]
@@ -135,6 +181,8 @@ pub struct SkinnedMotionOutput<'a> {
 #[derive(Debug)]
 pub struct Renderer {
     frame_timing: Option<resident_frame_timing::Timing>,
+    profile_pose: bool,
+    pose_timing: Option<(crate::RenderPoseProfile, std::time::Duration)>,
     profile_acquire: std::time::Duration,
     profile_gpu: Option<f64>,
     surface: wgpu::Surface<'static>,
@@ -147,7 +195,7 @@ pub struct Renderer {
     config: wgpu::SurfaceConfiguration,
     state: SurfaceState,
     clear_color: wgpu::Color,
-    pipeline: wgpu::RenderPipeline,
+    pipeline: pipelines::VoxelLayerPipelines,
     indirect_pipeline: wgpu::RenderPipeline,
     indirect_mesh: Option<GpuIndirectMesh>,
     skinned_pipeline: wgpu::RenderPipeline,
@@ -167,14 +215,19 @@ pub struct Renderer {
     shared_camera: Option<SharedCameraBindings>,
     camera: CameraView,
     chunk_meta_buffer: wgpu::Buffer,
+    chunk_meta_capacity: usize,
     light_buffer: wgpu::Buffer,
+    light_words_capacity: usize,
     material_layout: wgpu::BindGroupLayout,
     material_pack: MaterialPack,
     material_set: MaterialSet,
     material_bind_group: wgpu::BindGroup,
     quad_buffer: wgpu::Buffer,
+    quad_capacity: usize,
     quad_count: u32,
-    chunk_draws: Vec<([i32; 4], std::ops::Range<u32>)>,
+    chunk_upload_bytes: usize,
+    chunk_draws: Vec<pipelines::ChunkLayerDraws>,
+    resident_chunk_slots: BTreeMap<ChunkPos, ResidentChunkSlot>,
     resident_camera_anchor: ChunkPos,
     depth_texture: wgpu::Texture,
     depth_view: wgpu::TextureView,
@@ -189,7 +242,7 @@ pub struct Renderer {
     photoreal_camera_buffer: wgpu::Buffer,
     photoreal_camera_bind_group: wgpu::BindGroup,
     shared_photoreal_camera: Option<SharedCameraBindings>,
-    photoreal_pipeline: wgpu::RenderPipeline,
+    photoreal_pipeline: pipelines::VoxelLayerPipelines,
     photoreal_indirect_pipeline: wgpu::RenderPipeline,
     photoreal_skinned_pipeline: wgpu::RenderPipeline,
     photoreal_fibre_pipeline: wgpu::RenderPipeline,
@@ -370,12 +423,12 @@ impl Renderer {
         let chunk_meta_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Voxy initial chunk metadata"),
             contents: bytemuck::bytes_of(&ChunkMeta::zeroed()),
-            usage: wgpu::BufferUsages::STORAGE,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
         });
         let light_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Voxy initial light data"),
             contents: bytemuck::bytes_of(&u32::from_le_bytes([0xf0; 4])),
-            usage: wgpu::BufferUsages::STORAGE,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
         });
         let camera_bind_group = create_camera_bind_group(
             &device,
@@ -412,7 +465,7 @@ impl Renderer {
         let quad_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Voxy empty quad buffer"),
             contents: bytemuck::bytes_of(&GpuQuad::zeroed()),
-            usage: wgpu::BufferUsages::VERTEX,
+            usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
         });
         let (depth_texture, depth_view) = create_depth(&device, config.width, config.height);
         let validation_error = validation_scope.pop().await;
@@ -426,6 +479,8 @@ impl Renderer {
             .flatten();
         Ok(Self {
             frame_timing,
+            profile_pose: options.profile_timestamps,
+            pose_timing: None,
             profile_acquire: std::time::Duration::ZERO,
             profile_gpu: None,
             surface,
@@ -463,14 +518,19 @@ impl Renderer {
             shared_camera,
             camera,
             chunk_meta_buffer,
+            chunk_meta_capacity: 1,
             light_buffer,
+            light_words_capacity: 1,
             material_layout,
             material_pack,
             material_set,
             material_bind_group,
             quad_buffer,
+            quad_capacity: 1,
             quad_count: 0,
+            chunk_upload_bytes: 0,
             chunk_draws: Vec::new(),
+            resident_chunk_slots: BTreeMap::new(),
             resident_camera_anchor: ChunkPos { x: 0, y: 0, z: 0 },
             depth_texture,
             depth_view,
@@ -579,6 +639,72 @@ impl Renderer {
         self.upload_chunk_data(&chunks, camera_anchor)
     }
 
+    /// Bytes submitted by the last successful chunk upload, including chunk metadata.
+    pub fn chunk_upload_bytes(&self) -> usize {
+        self.chunk_upload_bytes
+    }
+
+    /// Allocated size of the resident quad, light and chunk metadata buffers.
+    pub fn chunk_buffer_bytes(&self) -> u64 {
+        self.quad_buffer.size() + self.light_buffer.size() + self.chunk_meta_buffer.size()
+    }
+
+    /// Updates resident lit chunks when every replacement fits its existing slot.
+    /// Returns false before writing anything when a full layout replacement is needed.
+    ///
+    /// # Errors
+    ///
+    /// Rejects device failure or invalid light data.
+    pub fn try_update_lit_chunks(
+        &mut self,
+        chunks: &[(ChunkPos, &ChunkMesh, &LightVolume)],
+        camera_anchor: ChunkPos,
+    ) -> Result<bool, RendererError> {
+        self.check_device()?;
+        if camera_anchor != self.resident_camera_anchor
+            || self.resident_chunk_slots.len() != self.chunk_draws.len()
+        {
+            return Ok(false);
+        }
+        let mut updates = BTreeMap::new();
+        for &(pos, mesh, light) in chunks {
+            let Some(&slot) = self.resident_chunk_slots.get(&pos) else {
+                return Ok(false);
+            };
+            let Some(draw) = slot.draw_ranges(mesh, self.chunk_draws[slot.index].origin) else {
+                return Ok(false);
+            };
+            let mut light_words = Vec::new();
+            pack_light_words(Some(light.bytes()), &mut light_words)?;
+            let gpu_slot = u16::try_from(slot.index)
+                .map_err(|_| RendererError::TooManyChunks(self.chunk_draws.len()))?;
+            let quads: Vec<_> = mesh
+                .opaque
+                .iter()
+                .chain(&mesh.cutout)
+                .chain(&mesh.translucent)
+                .map(|&quad| GpuQuad::from(quad).with_chunk_slot(gpu_slot))
+                .collect();
+            updates.insert(slot.index, (slot, quads, light_words, draw));
+        }
+        self.chunk_upload_bytes = 0;
+        for (index, (slot, quads, light, draw)) in updates {
+            self.chunk_upload_bytes += size_of_val(quads.as_slice()) + size_of_val(light.as_slice());
+            slot.write_update(
+                &self.queue,
+                &self.quad_buffer,
+                &self.light_buffer,
+                &quads,
+                &light,
+            );
+            self.quad_count = self.quad_count
+                - (self.chunk_draws[index].translucent.end - slot.start)
+                + (draw.translucent.end - slot.start);
+            self.chunk_draws[index] = draw;
+        }
+        Ok(true)
+    }
+
     fn upload_chunk_data(
         &mut self,
         chunks: &[(ChunkPos, &ChunkMesh, Option<&[u8]>)],
@@ -601,12 +727,11 @@ impl Renderer {
         let mut light_words =
             Vec::with_capacity((chunks.len() * voxy_core::CHUNK_VOLUME / 4).max(1));
         let mut chunk_draws = Vec::with_capacity(chunks.len());
+        let mut slots = BTreeMap::new();
         for &(pos, mesh, light) in chunks {
             let relative_origin = relative_chunk_origin(pos, camera_anchor)?;
-            let start = u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
-            let slot = metadata.len();
-            let slot =
-                u16::try_from(slot).map_err(|_| RendererError::TooManyChunks(chunks.len()))?;
+            let slot = u16::try_from(metadata.len())
+                .map_err(|_| RendererError::TooManyChunks(chunks.len()))?;
             let light_word_offset =
                 u32::try_from(light_words.len()).map_err(|_| RendererError::LightDataTooLarge)?;
             pack_light_words(light, &mut light_words)?;
@@ -614,16 +739,46 @@ impl Renderer {
                 relative_origin,
                 light_info: [light_word_offset, 0, 0, 0],
             });
+            let opaque_start =
+                u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
             quads.extend(
                 mesh.opaque
                     .iter()
-                    .chain(mesh.cutout.iter())
-                    .chain(mesh.translucent.iter())
+                    .copied()
+                    .map(|quad| GpuQuad::from(quad).with_chunk_slot(slot)),
+            );
+            let cutout_start =
+                u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
+            quads.extend(
+                mesh.cutout
+                    .iter()
+                    .copied()
+                    .map(|quad| GpuQuad::from(quad).with_chunk_slot(slot)),
+            );
+            let translucent_start =
+                u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
+            quads.extend(
+                mesh.translucent
+                    .iter()
                     .copied()
                     .map(|quad| GpuQuad::from(quad).with_chunk_slot(slot)),
             );
             let end = u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
-            chunk_draws.push((relative_origin, start..end));
+            slots.insert(
+                pos,
+                ResidentChunkSlot {
+                    index: chunk_draws.len(),
+                    start: opaque_start,
+                    end,
+                    light_word_offset,
+                },
+            );
+            chunk_draws.push(pipelines::ChunkLayerDraws {
+                origin: relative_origin,
+                opaque: opaque_start..cutout_start,
+                cutout: cutout_start..translucent_start,
+                translucent: translucent_start..end,
+            });
         }
         let quad_count = u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
         if metadata.is_empty() {
@@ -632,71 +787,71 @@ impl Renderer {
         if light_words.is_empty() {
             light_words.push(u32::from_le_bytes([0xf0; 4]));
         }
-        let metadata_buffer = self
-            .device
-            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("Voxy chunk metadata"),
-                contents: bytemuck::cast_slice(&metadata),
-                usage: wgpu::BufferUsages::STORAGE,
-            });
-        let quad_buffer = if quads.is_empty() {
-            None
-        } else {
-            Some(
-                self.device
-                    .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                        label: Some("Voxy resident chunk quads"),
-                        contents: bytemuck::cast_slice(&quads),
-                        usage: wgpu::BufferUsages::VERTEX,
-                    }),
-            )
-        };
-        let light_buffer = self
-            .device
-            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("Voxy resident packed light"),
-                contents: bytemuck::cast_slice(&light_words),
-                usage: wgpu::BufferUsages::STORAGE,
-            });
-        let camera_bind_group = create_camera_bind_group(
+        let mut camera_bindings_changed = pipelines::write_or_grow_buffer(
             &self.device,
-            &self.camera_layout,
-            &self.camera_buffer,
-            &metadata_buffer,
-            &light_buffer,
+            &self.queue,
+            &mut self.chunk_meta_buffer,
+            &mut self.chunk_meta_capacity,
+            &metadata,
+            wgpu::BufferUsages::STORAGE,
+            "Voxy chunk metadata",
         );
-        let photoreal_camera_bind_group = create_camera_bind_group(
+        camera_bindings_changed |= pipelines::write_or_grow_buffer(
             &self.device,
-            &self.photoreal_camera_layout,
-            &self.photoreal_camera_buffer,
-            &metadata_buffer,
-            &light_buffer,
+            &self.queue,
+            &mut self.light_buffer,
+            &mut self.light_words_capacity,
+            &light_words,
+            wgpu::BufferUsages::STORAGE,
+            "Voxy resident packed light",
         );
-        self.chunk_meta_buffer = metadata_buffer;
-        self.light_buffer = light_buffer;
-        self.camera_bind_group = camera_bind_group;
-        self.photoreal_camera_bind_group = photoreal_camera_bind_group;
-        if let Some(shared) = &mut self.shared_camera {
-            shared.refresh(
+        pipelines::write_or_grow_buffer(
+            &self.device,
+            &self.queue,
+            &mut self.quad_buffer,
+            &mut self.quad_capacity,
+            &quads,
+            wgpu::BufferUsages::VERTEX,
+            "Voxy resident chunk quads",
+        );
+        if camera_bindings_changed {
+            self.camera_bind_group = create_camera_bind_group(
                 &self.device,
                 &self.camera_layout,
+                &self.camera_buffer,
                 &self.chunk_meta_buffer,
                 &self.light_buffer,
             );
-        }
-        if let Some(shared) = &mut self.shared_photoreal_camera {
-            shared.refresh(
+            self.photoreal_camera_bind_group = create_camera_bind_group(
                 &self.device,
                 &self.photoreal_camera_layout,
+                &self.photoreal_camera_buffer,
                 &self.chunk_meta_buffer,
                 &self.light_buffer,
             );
+            if let Some(shared) = &mut self.shared_camera {
+                shared.refresh(
+                    &self.device,
+                    &self.camera_layout,
+                    &self.chunk_meta_buffer,
+                    &self.light_buffer,
+                );
+            }
+            if let Some(shared) = &mut self.shared_photoreal_camera {
+                shared.refresh(
+                    &self.device,
+                    &self.photoreal_camera_layout,
+                    &self.chunk_meta_buffer,
+                    &self.light_buffer,
+                );
+            }
         }
-        if let Some(buffer) = quad_buffer {
-            self.quad_buffer = buffer;
-        }
+        self.chunk_upload_bytes = size_of_val(quads.as_slice())
+            + size_of_val(light_words.as_slice())
+            + size_of_val(metadata.as_slice());
         self.quad_count = quad_count;
         self.chunk_draws = chunk_draws;
+        self.resident_chunk_slots = slots;
         if self.resident_camera_anchor != camera_anchor {
             self.reset_skinned_motion();
             self.resident_camera_anchor = camera_anchor;
@@ -993,8 +1148,14 @@ impl Renderer {
             .skinned_motion
             .as_ref()
             .ok_or(RendererError::NoSkinnedMesh)?;
-        skinned
-            .write_pose(&self.queue, motion.history.mesh(), joints, model)
+        self.pose_timing = skinned
+            .write_pose_timed(
+                &self.queue,
+                motion.history.mesh(),
+                joints,
+                model,
+                self.profile_pose,
+            )
             .map_err(RendererError::Skinned)?;
         if let Some(motion) = &mut self.skinned_motion {
             motion.joints.clone_from_slice(joints);
@@ -1008,6 +1169,13 @@ impl Renderer {
             self.bind_skinned_lod_level(0)?;
         }
         Ok(())
+    }
+
+    /// Take the latest measured pose admission and queue write durations.
+    pub fn take_profile_pose_timing(
+        &mut self,
+    ) -> Option<(crate::RenderPoseProfile, std::time::Duration)> {
+        self.pose_timing.take()
     }
 
     /// Updates the animated object's world transform without rebuilding its mesh.
@@ -1175,18 +1343,20 @@ impl Renderer {
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
+            let view_projection =
+                camera_view_projection(self.config.width, self.config.height, self.camera);
             if self.quad_count != 0 {
-                pass.set_pipeline(&self.pipeline);
-                pass.set_bind_group(0, &camera_group, &[]);
-                pass.set_bind_group(1, &self.material_bind_group, &[]);
-                pass.set_vertex_buffer(0, self.quad_buffer.slice(..));
-                let view_projection =
-                    camera_view_projection(self.config.width, self.config.height, self.camera);
-                for (origin, instances) in &self.chunk_draws {
-                    if chunk_intersects_frustum(view_projection, *origin) {
-                        pass.draw(0..6, instances.clone());
-                    }
-                }
+                pipelines::encode_voxel_layers(
+                    &mut pass,
+                    &self.pipeline,
+                    &camera_group,
+                    &self.material_bind_group,
+                    &self.quad_buffer,
+                    &self.chunk_draws,
+                    view_projection,
+                    self.camera.eye,
+                    false,
+                );
             }
             if let Some(skinned) = &self.skinned {
                 pass.set_pipeline(&self.skinned_pipeline);
@@ -1203,6 +1373,19 @@ impl Renderer {
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_vertex_buffer(0, indirect.vertex_buffer.slice(..));
                 pass.draw_indirect(&indirect.indirect_buffer, 0);
+            }
+            if self.quad_count != 0 {
+                pipelines::encode_voxel_layers(
+                    &mut pass,
+                    &self.pipeline,
+                    &camera_group,
+                    &self.material_bind_group,
+                    &self.quad_buffer,
+                    &self.chunk_draws,
+                    view_projection,
+                    self.camera.eye,
+                    true,
+                );
             }
         }
         if let Some(plants) = &self.native_vegetation {
@@ -1248,7 +1431,7 @@ impl Renderer {
     /// the photorealistic Bodycam / CleanCam / Camcorder pipeline.
     #[must_use]
     pub fn create_hdr_scene_renderer(&self) -> crate::SceneRenderer {
-        crate::SceneRenderer::new(&self.device, wgpu::TextureFormat::Rgba16Float)
+        crate::SceneRenderer::new_reverse_z(&self.device, wgpu::TextureFormat::Rgba16Float)
     }
 
     /// Presents a general scene using this renderer's surface lifecycle.
@@ -1406,65 +1589,12 @@ impl Renderer {
 
 #[path = "renderer/pipelines.rs"]
 mod pipelines;
+pub use pipelines::RendererError;
 use pipelines::{
     create_camera_bind_group, create_camera_layout, create_depth, create_indirect_pipeline,
     create_material_bind_group, create_material_layout, create_photoreal_camera_layout,
-    create_photoreal_pipelines, create_pipeline, default_material_pack,
+    create_photoreal_pipelines, create_pipeline, default_material_pack, encode_motion_layers,
 };
-
-#[derive(Debug)]
-pub enum RendererError {
-    InvalidPrefilterSamples(u32),
-    /// Shader, pipeline, surface configuration or allocation failed before use.
-    Initialization(wgpu::Error),
-    InvalidSurfaceSize {
-        width: u32,
-        height: u32,
-        max_dimension: u32,
-    },
-    CreateSurface(wgpu::CreateSurfaceError),
-    RequestAdapter(wgpu::RequestAdapterError),
-    RequestDevice(wgpu::RequestDeviceError),
-    UnsupportedSurface,
-    FrameIdExhausted,
-    /// A native/temporal consumer failed after scene submission, before present.
-    TemporalConsumer(String),
-    SurfaceLost,
-    DeviceLost(String),
-    MeshTooLarge,
-    TooManyChunks(usize),
-    OriginOutOfRange,
-    InvalidLightVolume(usize),
-    LightDataTooLarge,
-    Skinned(SkinnedUploadError),
-    SkinnedLod(crate::SkinnedLodGpuError),
-    Ray(crate::RaySceneError),
-    NoSkinnedMesh,
-    NoSkinnedLod,
-    InvalidCamera,
-    Scene(crate::SceneError),
-}
-
-impl fmt::Display for RendererError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "renderer error: {self:?}")
-    }
-}
-
-impl std::error::Error for RendererError {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            Self::CreateSurface(error) => Some(error),
-            Self::RequestAdapter(error) => Some(error),
-            Self::RequestDevice(error) => Some(error),
-            Self::Skinned(error) => Some(error),
-            Self::SkinnedLod(error) => Some(error),
-            Self::Ray(error) => Some(error),
-            Self::Scene(error) => Some(error),
-            _ => None,
-        }
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -1494,6 +1624,112 @@ mod tests {
         assert_eq!(gpu.ao_diagonal, [0, 1, 2, 131]);
         assert_eq!(gpu.chunk_slot, [0, 0]);
         assert_eq!(bytemuck::bytes_of(&gpu).len(), 20);
+    }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    #[ignore = "requires a physical Metal GPU"]
+    fn resident_slot_metal_readback_preserves_neighbors_and_unused_tail() {
+        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
+            backends: wgpu::Backends::METAL,
+            ..wgpu::InstanceDescriptor::new_without_display_handle()
+        });
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let info = adapter.get_info();
+        eprintln!("Resident chunk readback on {info:?}");
+        assert_eq!(info.backend, wgpu::Backend::Metal);
+        assert_ne!(info.device_type, wgpu::DeviceType::Cpu);
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let slot = ResidentChunkSlot {
+            index: 1,
+            start: 2,
+            end: 4,
+            light_word_offset: 4,
+        };
+        let replacement = GpuQuad::from(Quad {
+            origin: [7, 8, 9],
+            extent_u: NonZeroU8::MIN,
+            extent_v: NonZeroU8::MIN,
+            face: FaceDir::PosZ,
+            material: MaterialId(9),
+            layer: RenderLayer::Opaque,
+            ao: [0, 1, 2, 3],
+            diagonal: QuadDiagonal::Uv,
+        })
+        .with_chunk_slot(1);
+        let light_words = [0x1234_abcd_u32; 4];
+        let mut expected_quads = [0x5a; 6 * size_of::<GpuQuad>()];
+        let mut expected_light = [0xa5; 12 * size_of::<u32>()];
+        let create = |size: usize, usage| {
+            device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: size as u64,
+                usage,
+                mapped_at_creation: false,
+            })
+        };
+        let copy = wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::COPY_DST;
+        let quads = create(expected_quads.len(), copy | wgpu::BufferUsages::VERTEX);
+        let light = create(expected_light.len(), copy | wgpu::BufferUsages::STORAGE);
+        queue.write_buffer(&quads, 0, &expected_quads);
+        queue.write_buffer(&light, 0, &expected_light);
+        slot.write_update(&queue, &quads, &light, &[replacement], &light_words);
+
+        expected_quads[40..60].copy_from_slice(bytemuck::bytes_of(&replacement));
+        expected_light[16..32].copy_from_slice(bytemuck::cast_slice(&light_words));
+        let readback = create(
+            expected_quads.len() + expected_light.len(),
+            wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+        );
+        let mut encoder = device.create_command_encoder(&Default::default());
+        encoder.copy_buffer_to_buffer(&quads, 0, &readback, 0, quads.size());
+        encoder.copy_buffer_to_buffer(&light, 0, &readback, quads.size(), light.size());
+        queue.submit([encoder.finish()]);
+        let (tx, rx) = std::sync::mpsc::channel();
+        let slice = readback.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |result| tx.send(result).unwrap());
+        device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        rx.recv().unwrap().unwrap();
+        let bytes = slice.get_mapped_range().unwrap();
+        let (actual_quads, actual_light) = bytes.split_at(expected_quads.len());
+        assert_eq!(actual_quads, expected_quads);
+        assert_eq!(actual_light, expected_light);
+    }
+
+    #[test]
+    fn resident_slot_accepts_shrink_and_layer_changes_within_its_range() {
+        let slot = ResidentChunkSlot {
+            index: 3,
+            start: 10,
+            end: 15,
+            light_word_offset: 48,
+        };
+        let quad = Quad {
+            origin: [0; 3],
+            extent_u: NonZeroU8::MIN,
+            extent_v: NonZeroU8::MIN,
+            face: FaceDir::PosZ,
+            material: MaterialId(1),
+            layer: RenderLayer::Opaque,
+            ao: [0; 4],
+            diagonal: QuadDiagonal::Uv,
+        };
+        let mut mesh = ChunkMesh {
+            opaque: vec![quad; 2].into_boxed_slice(),
+            cutout: Box::new([]),
+            translucent: vec![quad].into_boxed_slice(),
+            bounds: voxy_mesher::LocalAabb::EMPTY,
+        };
+        let draw = slot.draw_ranges(&mesh, [-32, 0, 0, 0]).unwrap();
+        assert_eq!(draw.origin, [-32, 0, 0, 0]);
+        assert_eq!(draw.opaque, 10..12);
+        assert_eq!(draw.cutout, 12..12);
+        assert_eq!(draw.translucent, 12..13);
+        mesh.cutout = vec![quad; 2].into_boxed_slice();
+        assert_eq!(slot.draw_ranges(&mesh, [0; 4]).unwrap().translucent, 14..15);
+        mesh.cutout = vec![quad; 3].into_boxed_slice();
+        assert!(slot.draw_ranges(&mesh, [0; 4]).is_none());
     }
 
     #[test]
@@ -1643,10 +1879,14 @@ mod tests {
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
-            pass.set_pipeline(&pipeline);
+            pass.set_pipeline(&pipeline.opaque);
             pass.set_bind_group(0, &camera_bind, &[]);
             pass.set_bind_group(1, &material_bind, &[]);
             pass.set_vertex_buffer(0, quads.slice(..));
+            pass.draw(0..6, 0..1);
+            pass.set_pipeline(&pipeline.cutout);
+            pass.draw(0..6, 0..1);
+            pass.set_pipeline(&pipeline.translucent);
             pass.draw(0..6, 0..1);
             pass.set_pipeline(&skinned_pipeline);
             pass.set_bind_group(0, &camera_bind, &[]);
@@ -1930,10 +2170,14 @@ mod tests {
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
-            pass.set_pipeline(&photoreal_pipeline);
+            pass.set_pipeline(&photoreal_pipeline.opaque);
             pass.set_bind_group(0, &camera_bind, &[]);
             pass.set_bind_group(1, &material_bind, &[]);
             pass.set_vertex_buffer(0, quads.slice(..));
+            pass.draw(0..6, 0..1);
+            pass.set_pipeline(&photoreal_pipeline.cutout);
+            pass.draw(0..6, 0..1);
+            pass.set_pipeline(&photoreal_pipeline.translucent);
             pass.draw(0..6, 0..1);
 
             pass.set_pipeline(&photoreal_indirect);
@@ -1957,20 +2201,6 @@ mod tests {
         let validation_error = pollster::block_on(error_scope.pop());
         assert!(validation_error.is_none(), "{validation_error:?}");
     }
-}
-
-fn encode_motion_layers(
-    encoder: &mut wgpu::CommandEncoder,
-    motion: Option<&crate::RasterMotionPass>,
-    base: Option<&crate::DepthMotionPass>,
-) -> Result<(), RendererError> {
-    if let (Some(motion), Some(base)) = (motion, base) {
-        base.encode(encoder);
-        motion
-            .encode_over(encoder, base.output())
-            .map_err(RendererError::Ray)?;
-    }
-    Ok(())
 }
 
 #[cfg(test)]

@@ -1,0 +1,24 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 39.30s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 1 test
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+---- game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body stdout ----
+
+thread 'game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body' (17530591) panicked at crates/voxy_editor/src/game_host_tests.rs:1855:17:
+ContactBody { motion: Body { mass: 2.0, position: [0.45416666666666944, -0.00545, 0.02500000037252903], velocity: [3.750000000000001, -0.32699999999999996, 0.0] }, spin: Some(Spin { orientation: [3.874309994165254e-41, -3.4272670486721954e-9, 2.893981350856407e-16, 1.0], angular_momentum: [0.0, -2.7939677027217387e-9, 2.3592239273284576e-16], inertia: [0.005208333333333335, 0.005208333333333335, 0.005208333333333335] }) }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 460 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

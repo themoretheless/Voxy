@@ -1,0 +1,43 @@
+   Compiling syn v2.0.119
+    Checking physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Checking core-foundation-sys v0.8.7
+    Checking voxy_mesher v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_mesher)
+    Checking voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Checking voxy_lighting v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_lighting)
+    Checking voxy_storage v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_storage)
+    Checking core-foundation v0.9.4
+    Checking core-graphics-types v0.1.3
+    Checking core-graphics v0.23.2
+    Checking winit v0.30.13
+   Compiling zerocopy-derive v0.8.56
+   Compiling gltf-derive v1.4.1
+    Checking gltf-json v1.4.1
+    Checking physics_bio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_bio)
+    Checking physics_voxel v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_voxel)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Checking voxy_rush v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_rush)
+    Checking zerocopy v0.8.56
+    Checking gltf v1.4.1
+    Checking voxy_runtime v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_runtime)
+    Checking half v2.7.1
+    Checking ahash v0.8.12
+    Checking epaint v0.36.2
+    Checking naga v30.0.1
+    Checking egui v0.36.2
+    Checking egui-winit v0.36.2
+    Checking wgpu-naga-bridge v30.0.1
+    Checking wgpu-hal v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu-hal)
+    Checking wgpu-core-deps-apple v30.0.1
+    Checking wgpu-core v30.0.1
+    Checking wgpu v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu)
+    Checking voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+    Checking voxy_water v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_water)
+    Checking egui-wgpu v0.36.2
+    Checking voxy_cuda v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_cuda)
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Checking voxy_gpu v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu)
+    Checking voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+    Checking voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+    Checking voxy_shell v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_shell)
+    Checking voxy_app v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 49.00s

@@ -1,5 +1,5 @@
 use physics::{
-    biomechanics::{Material as Elastic, Matrix},
+    constitutive::{Material as Elastic, Matrix},
     plasticity::{Material, mesh::QuadraticBody},
 };
 fn body() -> QuadraticBody {

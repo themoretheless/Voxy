@@ -1,0 +1,10 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.14s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 2 tests
+test triggers::tests::failed_sample_preserves_pairs_until_a_complete_sample ... ok
+test triggers::tests::traced_pair_delivers_exit_and_reentry_even_when_both_endpoints_overlap ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 221 filtered out; finished in 0.00s
+

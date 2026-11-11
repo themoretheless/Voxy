@@ -1,0 +1,703 @@
+{
+  "fixture": "root-basis.vpak",
+  "snapshots": {
+    "12": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            2.9802322e-08,
+            0.2,
+            0.49999997
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model-animation.v1": {
+              "clip": null,
+              "clip_name": "move",
+              "events": [
+                {
+                  "name": "plant",
+                  "phase": 0.25
+                }
+              ],
+              "morph_weights": {},
+              "root_motion_axes": [
+                true,
+                false,
+                false
+              ],
+              "root_motion_bone": "root",
+              "root_motion_joint": 0,
+              "root_motion_rotation": false,
+              "speed": 1,
+              "transition_seconds": 0
+            },
+            "editor.model.v1": "rig",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            0,
+            0.4,
+            1.1
+          ],
+          "rotation": [
+            0,
+            -0.70710677,
+            0,
+            0.70710677
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "30": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            4.768372e-08,
+            0.2,
+            0.8
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model-animation.v1": {
+              "clip": null,
+              "clip_name": "move",
+              "events": [
+                {
+                  "name": "plant",
+                  "phase": 0.25
+                }
+              ],
+              "morph_weights": {},
+              "root_motion_axes": [
+                true,
+                false,
+                false
+              ],
+              "root_motion_bone": "root",
+              "root_motion_joint": 0,
+              "root_motion_rotation": false,
+              "speed": 1,
+              "transition_seconds": 0
+            },
+            "editor.model.v1": "rig",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            0,
+            0.4,
+            1.1
+          ],
+          "rotation": [
+            0,
+            -0.70710677,
+            0,
+            0.70710677
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "120": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            4.768372e-08,
+            0.2,
+            0.8
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model-animation.v1": {
+              "clip": null,
+              "clip_name": "move",
+              "events": [
+                {
+                  "name": "plant",
+                  "phase": 0.25
+                }
+              ],
+              "morph_weights": {},
+              "root_motion_axes": [
+                true,
+                false,
+                false
+              ],
+              "root_motion_bone": "root",
+              "root_motion_joint": 0,
+              "root_motion_rotation": false,
+              "speed": 1,
+              "transition_seconds": 0
+            },
+            "editor.model.v1": "rig",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            0,
+            0.4,
+            1.1
+          ],
+          "rotation": [
+            0,
+            -0.70710677,
+            0,
+            0.70710677
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "afterTransition": {
+    "version": 1,
+    "objects": [
+      {
+        "id": "camera",
+        "parent": null,
+        "name": "camera",
+        "active": true,
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "components": {
+          "editor.camera.v1": {
+            "distance": 3.5999999046325684,
+            "legacy": false,
+            "perspective": true,
+            "pitch": 0.3799999952316284,
+            "target": [
+              0,
+              0,
+              0
+            ],
+            "yaw": -0.550000011920929
+          },
+          "game.follow-camera.v1": {
+            "half_life": 0.12,
+            "offset": [
+              0,
+              0.15000000596046448,
+              0
+            ],
+            "target": "player"
+          }
+        }
+      },
+      {
+        "id": "floor",
+        "parent": null,
+        "name": "floor",
+        "active": true,
+        "translation": [
+          0,
+          -0.15,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "components": {
+          "editor.model.v1": "floor",
+          "game.box.v1": {
+            "half_extents": [
+              2,
+              0.15000000596046448,
+              1.5
+            ]
+          }
+        }
+      },
+      {
+        "id": "player",
+        "parent": null,
+        "name": "player",
+        "active": true,
+        "translation": [
+          1.1589829e-09,
+          0.2,
+          0.019444503
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "components": {
+          "editor.model-animation.v1": {
+            "clip": null,
+            "clip_name": "move",
+            "events": [
+              {
+                "name": "plant",
+                "phase": 0.25
+              }
+            ],
+            "morph_weights": {},
+            "root_motion_axes": [
+              true,
+              false,
+              false
+            ],
+            "root_motion_bone": "root",
+            "root_motion_joint": 0,
+            "root_motion_rotation": false,
+            "speed": 1,
+            "transition_seconds": 0
+          },
+          "editor.model.v1": "rig",
+          "game.character.v1": {
+            "gravity": -9.8,
+            "half_extents": [
+              0.20000000298023224,
+              0.20000000298023224,
+              0.20000000298023224
+            ],
+            "jump_speed": 3,
+            "speed": 2
+          }
+        }
+      },
+      {
+        "id": "wall",
+        "parent": null,
+        "name": "wall",
+        "active": true,
+        "translation": [
+          0,
+          0.4,
+          1.1
+        ],
+        "rotation": [
+          0,
+          -0.70710677,
+          0,
+          0.70710677
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "components": {
+          "editor.model.v1": "wall",
+          "game.box.v1": {
+            "half_extents": [
+              0.10000000149011612,
+              0.4000000059604645,
+              1.5
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "recoveredExact": true,
+  "received": [
+    {
+      "owner": "player",
+      "clip": "move",
+      "name": "plant",
+      "phase": 0.25,
+      "tick": 16
+    },
+    {
+      "owner": "player",
+      "clip": "move",
+      "name": "plant",
+      "phase": 0.25,
+      "tick": 75
+    }
+  ],
+  "nativeMatchingSnapshots": 3
+}

@@ -52,7 +52,9 @@ pub use cuda_collision::{CudaCollisionError, CudaVoxelCollisionWorld};
 mod vehicle_task;
 pub use vehicle_task::{ChassisMotion, PendingGpuVehicle, VehicleGpuError};
 
+#[cfg(not(target_arch = "wasm32"))]
 mod tissue_task;
+#[cfg(not(target_arch = "wasm32"))]
 pub use tissue_task::{GpuTissueError, GpuTissueProgram, is_gpu_tissue_search_failure};
 
 mod voxel_mesh;

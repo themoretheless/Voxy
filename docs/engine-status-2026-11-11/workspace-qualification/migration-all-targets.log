@@ -1,0 +1,13 @@
+    Checking voxy_cuda v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_cuda)
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Checking voxy_gpu v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu)
+    Checking voxy_depgraph v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_depgraph)
+    Checking physics_astro v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_astro)
+    Checking physics_bio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_bio)
+    Checking voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+    Checking voxy_shell v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_shell)
+    Checking voxy_ray_probe v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe)
+    Checking voxy_app v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 44.52s

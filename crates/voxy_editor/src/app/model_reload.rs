@@ -9,6 +9,11 @@ use std::{
 use voxy_assets::{AssetTicket, FailedImport};
 type Error = Box<dyn std::error::Error>;
 type ResultAsset = Result<ImportedAsset<import::EditorAsset>, FailedImport<String>>;
+#[derive(Debug)]
+pub(crate) struct BudgetRetry {
+    additional: u64,
+    error: String,
+}
 pub(crate) struct Pending {
     ticket: AssetTicket,
     source: Arc<ImportedAsset<import::EditorAsset>>,
@@ -16,6 +21,7 @@ pub(crate) struct Pending {
     cache: (u64, u64, u64, u64),
     cache_identity: Arc<()>,
     geometry: u64,
+    restaged: bool,
     checks: Pin<Box<dyn Future<Output = Result<ReadyModelBatch, RejectedModelBatch>>>>,
 }
 impl std::fmt::Debug for Pending {
@@ -224,11 +230,44 @@ impl App {
         }
         Ok(())
     }
+    pub(crate) fn queue_gpu_budget_retries(&mut self) {
+        if self.resource_checkpoint.is_some() || self.restore_play_frozen() {
+            return;
+        }
+        let Some(graphics) = &self.graphics else {
+            return;
+        };
+        let available = graphics
+            .residency_cache
+            .geometry_budget
+            .saturating_sub(graphics.geometry_bytes());
+        self.gpu_budget_retries.retain(|id, retry| {
+            if !matches!(self.catalog.status(id), Some(voxy_assets::AssetStatus::Failed(error)) if *error == retry.error) {
+                return false;
+            }
+            if retry.additional <= available {
+                self.reload.insert(id.clone());
+                return false;
+            }
+            true
+        });
+    }
+
     pub(crate) fn stage_or_complete_reload(
         &mut self,
         ticket: AssetTicket,
         result: ResultAsset,
     ) -> Result<(), Error> {
+        self.stage_reload(ticket, result, false)
+    }
+
+    fn stage_reload(
+        &mut self,
+        ticket: AssetTicket,
+        result: ResultAsset,
+        restaged: bool,
+    ) -> Result<(), Error> {
+        self.gpu_budget_retries.remove(ticket.asset());
         let required = result.as_ref().ok().is_some_and(|asset| {
             self.scene
                 .active_components::<ModelInstance>()
@@ -274,6 +313,7 @@ impl App {
                     cache: graphics.residency_cache.state(),
                     cache_identity: graphics.residency_cache.identity(),
                     geometry,
+                    restaged,
                     checks: Box::pin(pending.validate()),
                 });
                 Ok(())
@@ -281,11 +321,15 @@ impl App {
             Err(rejected) => {
                 drop(source);
                 let source = take_source(rejected.assets, ticket.asset())?;
-                self.complete_model_reload(
-                    &ticket,
-                    Err(source.into_failed(format!("GPU import rejected: {}", rejected.error))),
-                    None,
-                )
+                let error = format!("GPU import rejected: {}", rejected.error);
+                self.complete_model_reload(&ticket, Err(source.into_failed(error.clone())), None)?;
+                if let Some(additional) = rejected.geometry_needed
+                    && matches!(self.catalog.status(ticket.asset()), Some(voxy_assets::AssetStatus::Failed(status)) if *status == error)
+                {
+                    self.gpu_budget_retries
+                        .insert(ticket.asset().clone(), BudgetRetry { additional, error });
+                }
+                Ok(())
             }
         }
     }
@@ -328,6 +372,12 @@ impl App {
                         && g.residency_cache.state() == pending.cache
                         && g.geometry_bytes() == pending.geometry
                 });
+                if !stable && !pending.restaged && self.graphics.is_some() {
+                    // The old candidate owns GPU allocations counted in its
+                    // previous admission. Release them before checking the new budget.
+                    drop(ready);
+                    return self.stage_reload(ticket, Ok(source), true);
+                }
                 let failure = if stable {
                     self.validate_reload_candidate(ticket.asset(), source.value())
                         .err()
@@ -441,9 +491,11 @@ impl App {
                     window.set_title("Voxy — import failed; showing previous model");
                 }
                 println!(
-                    "MODEL FAILED frames={} last_good={}",
+                    "MODEL FAILED frames={} last_good={} asset={} status={:?}",
                     self.frames,
-                    self.catalog.snapshot(output).is_some()
+                    self.catalog.snapshot(output).is_some(),
+                    output.0,
+                    self.catalog.status(output),
                 );
                 Ok(())
             }

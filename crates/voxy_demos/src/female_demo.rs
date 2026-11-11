@@ -3,14 +3,14 @@
 pub mod resident_body;
 use crate::DemoError;
 use glam::Vec3;
-use physics::secondary_motion::{Config as SecondaryConfig, ContactPlane, SecondaryMotion};
+use physics_bio::secondary_motion::{Config as SecondaryConfig, ContactPlane, SecondaryMotion};
 #[path = "skin_light_diffusion.rs"]
 mod skin_light_diffusion;
 #[path = "surface_normals.rs"]
 mod surface_normals;
 use crate::model_presentation as presentation_receipts;
 use crate::{tissue_diagnostics, view_settings};
-use physics::skin::{
+use physics_bio::skin::{
     Attachment, ContactScene, ContactSphere, Skin, SkinEmbedding, SkinMaterial, SolverConfig,
     SurfaceBinding,
 };
@@ -60,6 +60,7 @@ pub struct FemaleDemo {
     body_vertices: usize,
     normals: Vec<Vec3>,
     prepared_normals: surface_normals::PreparedNormals,
+    film_normal_selection: surface_normals::NormalSelection,
     embedding: SkinEmbedding,
     skin_rig: crate::female_rig::FemaleRig,
     targets: Vec<[f64; 3]>,
@@ -578,8 +579,11 @@ impl FemaleDemo {
         let lip_triangles = crate::female_features::open_mouth_surface(&vertices, &mut indices);
         eprintln!("Facial render mouth opening: {lip_triangles} seal triangles");
         let prepared_normals = surface_normals::PreparedNormals::new(&vertices, &indices);
+        let film_normal_selection =
+            prepared_normals.prepare_selection(vertices.len(), pelvic.body_recess_indices());
         Ok(Self {
             prepared_normals,
+            film_normal_selection,
             grasp_mesh: None,
             grasp_cache: std::collections::HashMap::new(),
             grasp_normals: Vec::new(),

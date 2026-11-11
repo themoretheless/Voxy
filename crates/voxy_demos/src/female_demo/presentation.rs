@@ -873,11 +873,58 @@ impl FemaleDemo {
             }
         }
     }
+    fn surface_normal_geometry(
+        &self,
+        vertices: &[SceneVertex],
+        displacement: &[[f64; 3]],
+    ) -> Vec<SceneVertex> {
+        let mut normal_geometry = vertices.to_vec();
+        self.render_body_parameters().apply(&mut normal_geometry);
+        for (vertex, delta) in normal_geometry.iter_mut().zip(displacement) {
+            for k in 0..3 {
+                vertex.position[k] += delta[k] as f32;
+            }
+        }
+        if self.secondary_only && !self.rig_pose_only {
+            for region in &self.regions {
+                region.apply(
+                    &self.vertices,
+                    &mut normal_geometry,
+                    self.root_bob(self.time),
+                );
+            }
+        }
+        normal_geometry
+    }
+
     pub(crate) fn film_substrate_vertices(&self) -> Result<Vec<SceneVertex>, &'static str> {
         let mut vertices = self.posed_surface_vertices();
         let displacement = self.surface_displacement()?;
+        let recess = self.pelvic.body_recess_indices();
+        let normals = (recess.len() != 0).then(|| {
+            let geometry = self.surface_normal_geometry(&vertices, &displacement);
+            if std::env::var("VOXY_FACE_DIAGNOSTIC_GEOMETRIC_NORMALS").as_deref() == Ok("1") {
+                self.prepared_normals.geometric(&geometry, &self.normals)
+            } else {
+                let rebuilt;
+                let selection = if self.film_normal_selection.matches(recess.clone()) {
+                    &self.film_normal_selection
+                } else {
+                    rebuilt = self
+                        .prepared_normals
+                        .prepare_selection(geometry.len(), recess);
+                    &rebuilt
+                };
+                self.prepared_normals
+                    .transport_selected(&geometry, &self.normals, selection)
+            }
+        });
         let body_end = vertices.len();
         self.finish_surface_vertices(&mut vertices, &displacement, body_end);
+        if let Some(normals) = normals {
+            self.pelvic
+                .recess_covered_body_vertices(&normals[..self.body_vertices], &mut vertices);
+        }
         vertices.truncate(self.body_vertices);
         Ok(vertices)
     }
@@ -916,22 +963,7 @@ impl FemaleDemo {
         let displacement = self
             .surface_displacement()
             .expect("validated finite shell and binding dimensions");
-        let mut normal_geometry = vertices.clone();
-        self.render_body_parameters().apply(&mut normal_geometry);
-        for (vertex, delta) in normal_geometry.iter_mut().zip(&displacement) {
-            for k in 0..3 {
-                vertex.position[k] += delta[k] as f32;
-            }
-        }
-        if self.secondary_only && !self.rig_pose_only {
-            for region in &self.regions {
-                region.apply(
-                    &self.vertices,
-                    &mut normal_geometry,
-                    self.root_bob(self.time),
-                );
-            }
-        }
+        let normal_geometry = self.surface_normal_geometry(&vertices, &displacement);
         mark("deformation");
         let mut normals = self
             .prepared_normals

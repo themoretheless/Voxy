@@ -1,0 +1,30 @@
+LOD NATIVE SNAPSHOT PASS frames=3 owners=2
+LOD NATIVE SNAPSHOT PASS frames=4 owners=2
+LOD NATIVE SNAPSHOT PASS frames=5 owners=2
+LOD NATIVE SNAPSHOT PASS frames=6 owners=2
+LOD NATIVE SNAPSHOT PASS frames=7 owners=2
+MODEL PUBLISHED frames=7 first_x=0 asset=a
+LOD NATIVE SNAPSHOT PASS frames=8 owners=2
+LOD NATIVE FAR PASS frames=8 levels=[1] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=11 owners=2
+LOD NATIVE NEAR AND LAST GOOD PASS frames=11 levels=[0]
+MODEL PUBLISHED frames=12 first_x=0 asset=b
+LOD NATIVE SNAPSHOT PASS frames=14 owners=2
+LOD NATIVE BUDGET RECOVERY PASS frames=14
+LOD NATIVE PRESENTED AFTER FAILURE PASS frames=14
+LOD NATIVE SNAPSHOT PASS frames=17 owners=2
+LOD NATIVE SPLIT PASS frames=17 phase=3 msaa4=false levels=[[Some(0)], [Some(1)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=20 owners=2
+LOD NATIVE SPLIT PASS frames=20 phase=4 msaa4=true levels=[[Some(0)], [Some(1)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=23 owners=2
+LOD NATIVE SPLIT PASS frames=23 phase=5 msaa4=true levels=[[Some(1)], [Some(0)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=26 owners=2
+LOD NATIVE SINGLE RESTORED PASS frames=26
+LOD NATIVE SNAPSHOT PASS frames=29 owners=2
+LOD NATIVE COMPETITION CONTRACT frames=29 mandatory=62816 optional=[3072, 3072] budget=65888
+MODEL FAILED frames=30 last_good=true asset=a status=Some(Failed("GPU import rejected: GPU geometry budget exceeded: live=65888 additional=31004 limit=65888"))
+LOD NATIVE SNAPSHOT PASS frames=32 owners=2
+LOD NATIVE COMPETITION FALLBACK PASS frames=32 live=65888 budget=65888 pending={(AssetId("b"), 1)}
+LOD NATIVE SNAPSHOT PASS frames=35 owners=2
+LOD NATIVE COMPETITION RECOVERY PASS frames=35 live=68960 budget=268435456
+MODEL PUBLISHED frames=35 first_x=0 asset=b

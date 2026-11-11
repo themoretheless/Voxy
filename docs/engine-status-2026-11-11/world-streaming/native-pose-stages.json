@@ -1,0 +1,62 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "cpu_stages": {
+    "actor_animation": {
+      "p50_ms": 0.316917,
+      "p95_ms": 0.4725,
+      "p99_ms": 2.853709
+    },
+    "pose_admission": {
+      "p50_ms": 3.520833,
+      "p95_ms": 5.13625,
+      "p99_ms": 120.565208
+    },
+    "pose_publication": {
+      "p50_ms": 3.6307090000000004,
+      "p95_ms": 5.293583999999999,
+      "p99_ms": 120.714292
+    },
+    "pose_queue_writes": {
+      "p50_ms": 0.052458,
+      "p95_ms": 0.115125,
+      "p99_ms": 0.164
+    },
+    "water": {
+      "p50_ms": 0.0,
+      "p95_ms": 0.000292,
+      "p99_ms": 0.000584
+    }
+  },
+  "frame_budget_met": false,
+  "frames": 1597,
+  "gpu_ms": null,
+  "gpu_pass_statistics": [
+    {
+      "p50_ms": 0.802792,
+      "p95_ms": 1.482708,
+      "p99_ms": 2.154333
+    },
+    null,
+    null
+  ],
+  "gpu_samples": 245,
+  "gpu_scope": "primary resident voxel pass only",
+  "limitations": [
+    "CPU render includes submission/presentation; not GPU execution time",
+    "presentation completion is not display scanout",
+    "GPU scene span excludes external postprocessing; delayed samples may cross warmup boundary",
+    "upload/memory counters unavailable"
+  ],
+  "max_ms": 264.628083,
+  "measurement_seconds": 20.0,
+  "over_120hz": 762,
+  "over_60hz": 70,
+  "p50_ms": 8.320416,
+  "p95_ms": 10.628416999999999,
+  "p99_ms": 122.154417,
+  "peak_memory_bytes": null,
+  "scenario": "water",
+  "skipped_frames": 0,
+  "upload_bytes": null,
+  "warmup_seconds": 1.0
+}

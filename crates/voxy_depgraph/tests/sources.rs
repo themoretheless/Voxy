@@ -25,7 +25,11 @@ const CEILING_SLACK: usize = 200;
 /// Files over [`LINE_BUDGET`] with the ceiling each must stay under. Splitting
 /// a file lowers its ceiling or removes the entry; nothing is added here
 /// without a reason recorded in `docs/refactor/PLAN.md`.
-const KNOWN_OVERSIZED: &[(&str, usize)] = &[];
+const KNOWN_OVERSIZED: &[(&str, usize)] = &[
+    ("crates/physics/src/liquid/multi_body.rs", 1700),
+    ("crates/voxy_gameplay/src/angular_sweep.rs", 1600),
+    ("crates/voxy_web/src/browser.rs", 1650),
+];
 
 fn workspace() -> PathBuf {
     normalize(Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../..")))

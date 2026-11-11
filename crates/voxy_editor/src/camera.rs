@@ -1,6 +1,6 @@
 //! Editor view state is separate from authoring transforms and simulation poses.
 use glam::{Mat4, Vec2, Vec3};
-use voxy_render::{InvalidSceneCamera, SceneCamera, SceneProjection};
+use voxy_render::InvalidSceneCamera;
 
 // One wheel line is an editor sensitivity unit of 40 logical pixels.
 // PixelDelta arrives in physical pixels; normalize DPI before applying zoom.
@@ -19,39 +19,25 @@ pub(crate) fn wheel_steps(delta: winit::event::MouseScrollDelta, scale: f64) -> 
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ViewportCamera {
-    pub legacy: bool,
-    pub perspective: bool,
-    pub target: Vec3,
-    pub distance: f32,
-    yaw: f32,
-    pitch: f32,
-}
-impl Default for ViewportCamera {
-    fn default() -> Self {
-        Self {
-            legacy: true,
-            perspective: false,
-            target: Vec3::new(0., 0., 0.5),
-            distance: 2.,
-            yaw: 0.,
-            pitch: 0.,
-        }
-    }
-}
-impl ViewportCamera {
-    pub(crate) fn valid(&self) -> bool {
-        self.target.is_finite()
-            && self.target.abs().max_element() <= 1e6
-            && self.distance.is_finite()
-            && (0.01..=10_000.).contains(&self.distance)
-            && self.yaw.is_finite()
-            && self.pitch.is_finite()
-            && self.pitch.abs() <= 1.5
-    }
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[serde(transparent)]
+pub struct ViewportCamera(voxy_render::OrbitView);
 
+impl std::ops::Deref for ViewportCamera {
+    type Target = voxy_render::OrbitView;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for ViewportCamera {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl ViewportCamera {
     /// Computes the exact camera eye-to-center distance $d = \frac{R}{\sin(\text{fov} / 2)}$
     /// needed to frame a bounding sphere of radius `radius` inside a perspective frustum
     /// with vertical/effective field of view `fov_radians`.
@@ -82,46 +68,6 @@ impl ViewportCamera {
         self.scene_camera(size)?
             .ok_or(InvalidSceneCamera)?
             .view_projection()
-    }
-    pub(crate) fn scene_camera(
-        &self,
-        size: Vec2,
-    ) -> Result<Option<SceneCamera>, InvalidSceneCamera> {
-        if !self.valid() || !size.is_finite() || size.min_element() <= 0. {
-            return Err(InvalidSceneCamera);
-        }
-        if self.legacy {
-            return Ok(None);
-        }
-        let direction = Vec3::new(
-            self.yaw.sin() * self.pitch.cos(),
-            self.pitch.sin(),
-            self.yaw.cos() * self.pitch.cos(),
-        );
-        let aspect = size.x / size.y;
-        let half_height = self.distance * 0.5;
-        Ok(Some(SceneCamera {
-            eye: self.target + direction * self.distance,
-            target: self.target,
-            up: Vec3::Y,
-            projection: if self.perspective {
-                SceneProjection::Perspective {
-                    vertical_fov: std::f32::consts::FRAC_PI_3,
-                    aspect,
-                    near: self.distance * 0.001,
-                    far: self.distance * 100.,
-                }
-            } else {
-                SceneProjection::Orthographic {
-                    left: -half_height * aspect,
-                    right: half_height * aspect,
-                    bottom: -half_height,
-                    top: half_height,
-                    near: 0.,
-                    far: self.distance * 100.,
-                }
-            },
-        }))
     }
     /// Fit every corner of finite world bounds while retaining orbit orientation.
     /// Publishes no partial camera change when the bounds exceed camera limits.
@@ -350,10 +296,10 @@ mod tests {
     fn both_projections_round_trip_after_orbit_pan_zoom() {
         let size = Vec2::new(800., 600.);
         for perspective in [false, true] {
-            let mut camera = ViewportCamera {
+            let mut camera = ViewportCamera(voxy_render::OrbitView {
                 perspective,
                 ..Default::default()
-            };
+            });
             camera.orbit(Vec2::new(75., 30.));
             camera.zoom(2.);
             camera.pan(Vec2::new(20., -15.), size).unwrap();
@@ -389,10 +335,10 @@ mod fit_tests {
                     ),
                     (glam::DVec3::splat(3.), glam::DVec3::splat(3.)),
                 ] {
-                    let mut camera = ViewportCamera {
+                    let mut camera = ViewportCamera(voxy_render::OrbitView {
                         perspective,
                         ..Default::default()
-                    };
+                    });
                     camera.orbit(Vec2::new(71., -50.));
                     camera.fit_bounds(min, max, size).unwrap();
                     let matrix = camera.matrix(size).unwrap().as_dmat4();
@@ -447,10 +393,10 @@ mod safe_fit_tests {
                 let size = Vec2::new(800., 600.);
                 let min = glam::DVec3::new(-3., -2., -1.);
                 let max = glam::DVec3::new(3., 2., 1.);
-                let mut camera = ViewportCamera {
+                let mut camera = ViewportCamera(voxy_render::OrbitView {
                     perspective,
                     ..Default::default()
-                };
+                });
                 camera.orbit(Vec2::new(75., -45.));
                 camera.fit_bounds_in_rect(min, max, size, rect).unwrap();
                 let matrix = camera.matrix(size).unwrap().as_dmat4();

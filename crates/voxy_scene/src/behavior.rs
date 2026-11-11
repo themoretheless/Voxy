@@ -28,9 +28,25 @@ pub trait Behavior: Send + std::fmt::Debug {
         _phase: f64,
     ) {
     }
+    /// Receives a sampled trigger transition on either active participant.
+    fn trigger_event(&mut self, _scene: &mut SceneGraph, _owner: NodeId, _event: TriggerEvent) {}
     fn on_disable(&mut self, _scene: &mut SceneGraph, _owner: NodeId) {}
     /// Owner may already be invalid when a subtree has been removed.
     fn on_destroy(&mut self, _scene: &mut SceneGraph, _owner: NodeId) {}
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TriggerPhase {
+    Enter,
+    Exit,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct TriggerEvent {
+    /// Either participant may have been removed before an exit is delivered.
+    pub trigger: NodeId,
+    pub collider: NodeId,
+    pub phase: TriggerPhase,
 }
 
 #[derive(Debug)]
@@ -152,6 +168,26 @@ impl BehaviorRunner {
         if name.is_empty() || !phase.is_finite() || phase < 0. {
             return;
         }
+        self.deliver_to(scene, owner, |behavior, scene| {
+            behavior.animation_event(scene, owner, name, phase);
+        });
+    }
+
+    /// Delivers to the active trigger and collider, in that order.
+    pub fn trigger_event(&mut self, scene: &mut SceneGraph, event: TriggerEvent) {
+        for owner in [event.trigger, event.collider] {
+            self.deliver_to(scene, owner, |behavior, scene| {
+                behavior.trigger_event(scene, owner, event);
+            });
+        }
+    }
+
+    fn deliver_to(
+        &mut self,
+        scene: &mut SceneGraph,
+        owner: NodeId,
+        mut deliver: impl FnMut(&mut dyn Behavior, &mut SceneGraph),
+    ) {
         self.sync(scene);
         for entry in &mut self.entries {
             if entry.owner != owner
@@ -165,7 +201,7 @@ impl BehaviorRunner {
                 entry.behavior.start(scene, owner);
             }
             if scene.active_in_hierarchy(owner) == Ok(true) {
-                entry.behavior.animation_event(scene, owner, name, phase);
+                deliver(entry.behavior.as_mut(), scene);
             }
         }
         self.sync(scene);

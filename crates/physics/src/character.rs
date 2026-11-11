@@ -76,6 +76,38 @@ pub fn step_character<W: CollisionWorld>(
     step_character_with_acceleration(world, state, input, dt, config, [0.0, config.gravity, 0.0])
 }
 
+/// Accepted displacement and its normalized end time, when the solver assigns one.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CharacterTranslationSegment {
+    pub displacement: [f64; 3],
+    pub end_fraction: Option<f64>,
+}
+
+/// Runs the controller and returns the accepted translation segments in order.
+/// A selected stair route replaces the discarded slide route.
+/// # Errors
+/// The same validation and collision failures as [`step_character`].
+pub fn step_character_traced<W: CollisionWorld>(
+    world: &W,
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+) -> Result<(CharacterStep<W::Obstacle>, Vec<CharacterTranslationSegment>), CharacterError<W::Error>>
+{
+    let mut segments = Vec::new();
+    let step = step_character_accelerated(
+        world,
+        state,
+        input,
+        dt,
+        config,
+        [0., config.gravity, 0.],
+        Some(&mut segments),
+    )?;
+    Ok((step, segments))
+}
+
 /// Samples an external field at the character center before the collision step.
 /// The controller remains Y-up: jumping, ground detection and stairs use Y.
 /// # Errors
@@ -106,6 +138,18 @@ pub fn step_character_with_acceleration<W: CollisionWorld>(
     config: CharacterConfig,
     acceleration: [f64; 3],
 ) -> Result<CharacterStep<W::Obstacle>, CharacterError<W::Error>> {
+    step_character_accelerated(world, state, input, dt, config, acceleration, None)
+}
+
+fn step_character_accelerated<W: CollisionWorld>(
+    world: &W,
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+    acceleration: [f64; 3],
+    segments: Option<&mut Vec<CharacterTranslationSegment>>,
+) -> Result<CharacterStep<W::Obstacle>, CharacterError<W::Error>> {
     validate(state, input, dt, config)?;
     if acceleration.iter().any(|v| !v.is_finite()) {
         return Err(CharacterError::NonFiniteState);
@@ -121,7 +165,16 @@ pub fn step_character_with_acceleration<W: CollisionWorld>(
     }
     velocity[1] = velocity[1].max(-config.terminal_fall_speed);
     let displacement = velocity.map(|value| value * dt);
-    step_character_with_motion(world, state, input, dt, config, velocity, displacement)
+    solve_motion(
+        world,
+        state,
+        input,
+        dt,
+        config,
+        velocity,
+        displacement,
+        segments,
+    )
 }
 
 /// Applies externally integrated velocity and displacement through the complete
@@ -139,6 +192,20 @@ pub fn step_character_with_motion<W: CollisionWorld>(
     velocity: [f64; 3],
     requested: [f64; 3],
 ) -> Result<CharacterStep<W::Obstacle>, CharacterError<W::Error>> {
+    solve_motion(world, state, input, dt, config, velocity, requested, None)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn solve_motion<W: CollisionWorld>(
+    world: &W,
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+    velocity: [f64; 3],
+    requested: [f64; 3],
+    mut segments: Option<&mut Vec<CharacterTranslationSegment>>,
+) -> Result<CharacterStep<W::Obstacle>, CharacterError<W::Error>> {
     validate(state, input, dt, config)?;
     if velocity.iter().chain(&requested).any(|v| !v.is_finite()) {
         return Err(CharacterError::NonFiniteState);
@@ -152,6 +219,7 @@ pub fn step_character_with_motion<W: CollisionWorld>(
     let mut applied = [0.0; 3];
     let mut contacts = Vec::new();
     let mut grounded = false;
+    let mut elapsed = 0.;
     for _ in 0..config.max_slide_iterations {
         if squared_length(remaining) <= f64::EPSILON {
             break;
@@ -159,8 +227,17 @@ pub fn step_character_with_motion<W: CollisionWorld>(
         let hit = world
             .sweep_aabb(next.body, remaining, config.max_candidates_per_sweep)
             .map_err(CharacterError::Sweep)?;
+        elapsed += (1. - elapsed) * hit.fraction;
         let movement = remaining.map(|value| value * hit.fraction);
         translate(&mut next.body, movement);
+        if let Some(segments) = segments.as_deref_mut()
+            && movement != [0.; 3]
+        {
+            segments.push(CharacterTranslationSegment {
+                displacement: movement,
+                end_fraction: Some(elapsed),
+            });
+        }
         add_assign(&mut applied, movement);
         let Some(obstacle) = hit.obstacle else {
             break;
@@ -188,6 +265,19 @@ pub fn step_character_with_motion<W: CollisionWorld>(
             + candidate.applied[2] * candidate.applied[2];
         if candidate_horizontal > regular_horizontal {
             next.body = candidate.body;
+            if let Some(segments) = segments {
+                segments.clear();
+                segments.extend(
+                    candidate
+                        .segments
+                        .into_iter()
+                        .filter(|segment| *segment != [0.; 3])
+                        .map(|displacement| CharacterTranslationSegment {
+                            displacement,
+                            end_fraction: None,
+                        }),
+                );
+            }
             applied = candidate.applied;
             contacts = candidate.contacts;
             grounded = true;
@@ -209,6 +299,7 @@ pub fn step_character_with_motion<W: CollisionWorld>(
 
 #[derive(Debug)]
 struct StepCandidate<O> {
+    segments: [[f64; 3]; 3],
     body: AnchoredAabb,
     applied: [f64; 3],
     contacts: Vec<CharacterContact<O>>,
@@ -260,6 +351,7 @@ fn try_step_up<W: CollisionWorld>(
     Ok(Some(StepCandidate {
         body,
         applied: [horizontal[0], vertical, horizontal[2]],
+        segments: [lift, horizontal, [0., drop[1] * drop_result.fraction, 0.]],
         contacts: vec![CharacterContact {
             normal: drop_result.normal,
             obstacle,

@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voxy Game</title>
+<style>
+  body { margin: 0; background: #15171c; color: #f4f6fa; font: 16px system-ui; }
+  header { padding: 1rem; display: flex; flex-wrap: wrap; gap: 1rem; }
+  main { position: relative; }
+  #touch-controls { display: none; }
+  @media (any-pointer: coarse) {
+    #keyboard-help { display: none; }
+    #touch-controls:not([hidden]) {
+      position: absolute;
+      inset: auto 0 max(12px, env(safe-area-inset-bottom));
+      padding: 0 12px;
+      border: 0;
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      pointer-events: none;
+    }
+    #touch-controls button {
+      pointer-events: auto;
+      touch-action: none;
+      user-select: none;
+      min-width: 48px;
+      min-height: 48px;
+      padding: 0 .65rem;
+      border: 1px solid #b3bbca;
+      border-radius: .5rem;
+      background: #242b39ed;
+      color: #fff;
+      font: inherit;
+    }
+    #touch-controls button[data-held] { background: #385d8d; }
+    #touch-controls button:disabled { opacity: .5; }
+    .directions { display: grid; grid-template-columns: repeat(3, auto); gap: 4px; }
+    .directions button:first-child { grid-column: 2; }
+    .directions button:nth-child(2) { grid-column: 1; }
+  }
+  canvas { width: 100%; height: 80vh; display: block; background: #000; }
+</style>
+<header>
+  <label>Game package <input id="package" type="file" accept=".vpak" disabled></label>
+  <button id="recover" hidden>Restore graphics</button>
+  <span id="keyboard-help">WASD to move · Space to jump</span>
+  <output id="status" role="status">Starting Voxy…</output>
+</header>
+<main>
+  <canvas id="game" tabindex="0" aria-label="Voxy game viewport"></canvas>
+  <fieldset id="touch-controls" aria-label="Touch controls" hidden disabled>
+    <div class="directions">
+      <button type="button" data-code="KeyW" aria-label="Move forward">↑</button>
+      <button type="button" data-code="KeyA" aria-label="Move left">←</button>
+      <button type="button" data-code="KeyS" aria-label="Move backward">↓</button>
+      <button type="button" data-code="KeyD" aria-label="Move right">→</button>
+    </div>
+    <button type="button" data-code="Space">Jump</button>
+  </fieldset>
+</main>
+<script type="module">
+  import init, { WebEngine } from "./pkg/voxy_web.js";
+
+  const input = document.querySelector("#package");
+  let canvas = document.querySelector("#game");
+  const touch = document.querySelector("#touch-controls");
+  const retry = document.querySelector("#recover");
+  const status = document.querySelector("#status");
+  const packageLimit = 256 * 1024 * 1024;
+
+  try {
+    await init();
+    let engine = await WebEngine.create(canvas, "auto");
+    let request = 0;
+    let gameName = null;
+    let recovering = false;
+    let frame = 0;
+    let previous = null;
+    let gameFocused = false;
+    let gamepadAvailable = typeof navigator.getGamepads === "function";
+    let selectedPad = null;
+    let padNeedsNeutral = true;
+    let padX = 0;
+    let padZ = 0;
+    let padJump = false;
+    const keys = new Set();
+    const pointers = new Map();
+    const controls = new Map([...touch.querySelectorAll("button")]
+      .map(button => [button.dataset.code, button]));
+
+    function resetInput() {
+      gameFocused = false;
+      selectedPad = null;
+      padNeedsNeutral = true;
+      padX = 0;
+      padZ = 0;
+      padJump = false;
+      engine.set_project_game_focus(false);
+      keys.clear();
+      const captured = [...pointers];
+      pointers.clear();
+      for (const [id, button] of captured) {
+        if (button.hasPointerCapture(id)) button.releasePointerCapture(id);
+      }
+      for (const button of controls.values()) button.removeAttribute("data-held");
+    }
+
+    function publishGamepad(x, z, jump) {
+      if (x === padX && z === padZ && jump === padJump) return;
+      engine.sample_project_gamepad(x, z, jump);
+      padX = x;
+      padZ = z;
+      padJump = jump;
+    }
+
+    function pollGamepad() {
+      if (!gameFocused || !gamepadAvailable) return;
+      let pads;
+      try {
+        pads = navigator.getGamepads();
+      } catch {
+        gamepadAvailable = false;
+        publishGamepad(0, 0, false);
+        return;
+      }
+      let pad = null;
+      for (const candidate of pads) {
+        if (!candidate?.connected || candidate.mapping !== "standard") continue;
+        pad ??= candidate;
+        if (candidate.index === selectedPad) {
+          pad = candidate;
+          break;
+        }
+      }
+      if (selectedPad !== null && pad?.index !== selectedPad) {
+        padNeedsNeutral = true;
+        publishGamepad(0, 0, false);
+      }
+      selectedPad = pad?.index ?? null;
+      if (!pad) return;
+      const axis = value => Number.isFinite(value) ? Math.max(-1, Math.min(1, value)) : 0;
+      const pressed = index => Boolean(pad.buttons[index]?.pressed);
+      const horizontal = Number(pressed(15)) - Number(pressed(14));
+      const vertical = Number(pressed(13)) - Number(pressed(12));
+      const dpad = pressed(12) || pressed(13) || pressed(14) || pressed(15);
+      const x = dpad ? horizontal : axis(pad.axes[0]);
+      const z = dpad ? vertical : axis(pad.axes[1]);
+      const jump = pressed(0);
+      if (padNeedsNeutral) {
+        if (!jump && Math.hypot(x, z) <= 0.1) padNeedsNeutral = false;
+        return;
+      }
+      publishGamepad(x, z, jump);
+    }
+
+    function pointerHeld(code) {
+      return [...pointers.values()].some(button => button.dataset.code === code);
+    }
+
+    function releasePointer(event) {
+      const button = pointers.get(event.pointerId);
+      if (!button) return;
+      pointers.delete(event.pointerId);
+      const code = button.dataset.code;
+      if (!pointerHeld(code)) {
+        button.removeAttribute("data-held");
+        if (!keys.has(code)) engine.project_game_key(code, false);
+      }
+    }
+
+    touch.addEventListener("pointerdown", event => {
+      const button = event.target.closest("button[data-code]");
+      if (!button || event.button !== 0 || gameName === null || recovering || touch.disabled) return;
+      event.preventDefault();
+      canvas.focus({ preventScroll: true });
+      const code = button.dataset.code;
+      const alreadyHeld = keys.has(code) || pointerHeld(code);
+      button.setPointerCapture(event.pointerId);
+      pointers.set(event.pointerId, button);
+      button.setAttribute("data-held", "");
+      if (!alreadyHeld) engine.project_game_key(code, true);
+    });
+    for (const event of ["pointerup", "pointercancel", "lostpointercapture"]) {
+      touch.addEventListener(event, releasePointer);
+    }
+
+    async function restoreGraphics() {
+      if (recovering) return;
+      recovering = true;
+      ++request;
+      input.value = "";
+      input.disabled = true;
+      touch.disabled = true;
+      resetInput();
+      retry.hidden = true;
+      cancelAnimationFrame(frame);
+      previous = null;
+      status.textContent = "Restoring graphics…";
+      const nextCanvas = canvas.cloneNode();
+      let candidate;
+      try {
+        candidate = await WebEngine.create(nextCanvas, "auto");
+        if (gameName !== null) await candidate.recover_project_game_from(engine);
+      } catch (error) {
+        candidate?.free();
+        status.textContent = "Graphics recovery failed. " + String(error);
+        retry.hidden = false;
+        recovering = false;
+        return;
+      }
+
+      canvas.replaceWith(nextCanvas);
+      canvas = nextCanvas;
+      engine.free();
+      engine = candidate;
+      recovering = false;
+      input.disabled = false;
+      touch.disabled = gameName === null;
+      status.textContent = gameName ?? "Choose a .vpak game package";
+      if (gameName !== null) canvas.focus({ preventScroll: true });
+      syncFocus();
+      frame = requestAnimationFrame(draw);
+    }
+
+    retry.addEventListener("click", restoreGraphics);
+    function syncFocus() {
+      if (recovering) return;
+      if (!document.hidden && document.hasFocus() && document.activeElement === canvas) {
+        gameFocused = true;
+        engine.set_project_game_focus(true);
+      } else {
+        resetInput();
+      }
+    }
+
+    function dispatchKey(event) {
+      const code = event.code;
+      if (event.target !== canvas || gameName === null || recovering || !controls.has(code)) return;
+      const pressed = event.type === "keydown";
+      if (pressed && (event.altKey || event.ctrlKey || event.metaKey)) return;
+      event.preventDefault();
+      if (event.repeat) return;
+      if (pressed) keys.add(code);
+      else keys.delete(code);
+      if (!pointerHeld(code)) engine.project_game_key(code, pressed);
+    }
+
+    document.addEventListener("keydown", dispatchKey);
+    document.addEventListener("keyup", dispatchKey);
+    document.addEventListener("focusin", syncFocus);
+    document.addEventListener("focusout", event => {
+      if (event.target === canvas && !recovering) resetInput();
+    });
+    window.addEventListener("blur", () => {
+      if (!recovering) resetInput();
+    });
+    window.addEventListener("focus", syncFocus);
+    document.addEventListener("visibilitychange", () => {
+      previous = null;
+      syncFocus();
+    });
+
+    function draw(now) {
+      if (engine.device_failure()) {
+        void restoreGraphics();
+        return;
+      }
+      if (gameName === null || document.hidden) {
+        frame = requestAnimationFrame(draw);
+        return;
+      }
+      try {
+        const elapsed = previous === null ? 0 : (now - previous) / 1000;
+        previous = now;
+        pollGamepad();
+        engine.advance_project_frame(elapsed);
+        const events = engine.take_project_animation_events();
+        if (events !== undefined) {
+          for (const detail of JSON.parse(events)) {
+            canvas.dispatchEvent(new CustomEvent("voxy-animation-event", { bubbles: true, detail }));
+          }
+        }
+        const scale = window.devicePixelRatio;
+        engine.render(0, Math.round(canvas.clientWidth * scale),
+                         Math.round(canvas.clientHeight * scale));
+        frame = requestAnimationFrame(draw);
+      } catch (error) {
+        if (engine.device_failure()) {
+          void restoreGraphics();
+        } else {
+          status.textContent = String(error);
+        }
+      }
+    }
+
+    input.addEventListener("change", async () => {
+      const id = ++request;
+      const file = input.files[0];
+      if (!file) return;
+      try {
+        if (file.size > packageLimit) throw new Error("Package exceeds 256 MiB");
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        if (id !== request) return;
+        engine.load_project_package(bytes);
+        resetInput();
+        gameName = file.name;
+        touch.hidden = false;
+        touch.disabled = false;
+        canvas.focus({ preventScroll: true });
+        syncFocus();
+        cancelAnimationFrame(frame);
+        previous = null;
+        status.textContent = file.name;
+        frame = requestAnimationFrame(draw);
+      } catch (error) {
+        if (id === request) status.textContent = String(error);
+      } finally {
+        if (id === request) input.value = "";
+      }
+    });
+    input.disabled = false;
+    status.textContent = "Choose a .vpak game package";
+    frame = requestAnimationFrame(draw);
+  } catch (error) {
+    status.textContent = String(error);
+  }
+</script>
+</html>

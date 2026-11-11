@@ -11,7 +11,7 @@ use winit::{event_loop::EventLoop, keyboard::KeyCode};
 
 use crate::{
     App, InputRecipe, ModelSource, ViewportMode, animation_smoke, gameplay_smoke, lod_smoke,
-    prefab_smoke, project_runtime, run_project, scene3d_smoke,
+    project_runtime, run_project, scene3d_smoke,
 };
 
 pub(crate) fn configured_app(
@@ -177,8 +177,7 @@ pub(crate) fn run_model_viewport_configured_registry(
         app.smoke_deadline = Some(Instant::now() + Duration::from_secs(30));
     }
     if mode == ViewportMode::PrefabSmoke {
-        app.prefab_smoke = Some(prefab_smoke::Smoke::default());
-        app.smoke_deadline = Some(Instant::now() + Duration::from_secs(30));
+        app.start_prefab_smoke();
     }
     if mode == ViewportMode::LodSmoke {
         app.lod_smoke = Some(lod_smoke::Smoke::default());

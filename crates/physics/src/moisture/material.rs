@@ -12,7 +12,7 @@ pub struct Properties {
 impl Properties {
     pub(crate) fn validate_endpoints(self) -> Result<(), &'static str> {
         let elastic =
-            crate::biomechanics::Material::from_young_poisson(self.young_pa, self.poisson)?;
+            crate::constitutive::Material::from_young_poisson(self.young_pa, self.poisson)?;
         if !self.yield_pa.is_finite()
             || self.yield_pa <= 0.
             || !self.hardening_pa.is_finite()

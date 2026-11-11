@@ -15,6 +15,7 @@ pub(crate) struct PendingModelBatch {
 pub(crate) struct RejectedModelBatch {
     pub(crate) assets: Assets,
     pub(crate) error: String,
+    pub(crate) geometry_needed: Option<u64>,
 }
 pub(crate) struct UploadTarget<'a> {
     pub(crate) renderer: &'a SceneRenderer,
@@ -37,6 +38,7 @@ impl UploadTarget<'_> {
         let oom = self.device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
         let internal = self.device.push_error_scope(wgpu::ErrorFilter::Internal);
         let validation = self.device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let mut geometry_needed = None;
         let staged = (|| {
             let retained = self
                 .live_geometry
@@ -54,7 +56,12 @@ impl UploadTarget<'_> {
                     asset.value(),
                     &mut cache,
                 )
-                .map_err(|e| e.to_string())?;
+                .map_err(|e| {
+                    geometry_needed = e
+                        .downcast_ref::<super::GeometryBudgetExceeded>()
+                        .and_then(|failure| candidate_bytes.checked_add(failure.additional));
+                    e.to_string()
+                })?;
                 candidate_bytes = candidate_bytes
                     .checked_add(model.geometry_bytes())
                     .ok_or("model geometry inventory overflow")?;
@@ -96,7 +103,11 @@ impl UploadTarget<'_> {
                 },
                 checks,
             }),
-            Err(error) => Err(RejectedModelBatch { assets, error }),
+            Err(error) => Err(RejectedModelBatch {
+                assets,
+                error,
+                geometry_needed,
+            }),
         }
     }
 }
@@ -107,6 +118,7 @@ impl PendingModelBatch {
             Err(error) => Err(RejectedModelBatch {
                 assets: self.candidate.assets,
                 error,
+                geometry_needed: None,
             }),
         }
     }

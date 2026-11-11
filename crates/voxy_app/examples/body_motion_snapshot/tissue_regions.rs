@@ -3,7 +3,7 @@ use super::{
     ModelAsset,
     tissue_demo::{TissueDemo, TissueRegionSpec, TissueSkinBinding},
 };
-use physics::biomechanics::{MaxwellBranch, OgdenTerm, PrescribedTriangleSurface, TetraMesh};
+use physics_bio::biomechanics::{MaxwellBranch, OgdenTerm, PrescribedTriangleSurface, TetraMesh};
 use serde_json::Value;
 use std::{path::Path, sync::Arc};
 use voxy_assets::{AssetId, FileInputs, ImportInputs, ImportedAsset};
@@ -193,7 +193,8 @@ pub(super) fn check_volume_reference(
         let pose = model.sample_pose_phase64(reference.clip(), 0.)?;
         let (skin, _) = super::contact_positions_from_pose64(model, &pose)?;
         report["source_vertices"] = skin.len().into();
-        let search = physics::tissue_surface::TetrahedralEmbedding::new(&mesh.points, &mesh.cells)?;
+        let search =
+            physics_bio::tissue_surface::TetrahedralEmbedding::new(&mesh.points, &mesh.cells)?;
         let contained = search.contains_points(&skin)?;
         let exterior: Vec<_> = contained
             .iter()

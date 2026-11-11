@@ -108,6 +108,18 @@ pub(crate) fn sweep(
     boxes: &[AffineBox],
     iterations: usize,
 ) -> Result<Hit, PhysicsError> {
+    let mut queries = usize::MAX;
+    sweep_with_query_limit(center, edges, angular, boxes, iterations, &mut queries)
+}
+
+pub(crate) fn sweep_with_query_limit(
+    center: DVec3,
+    edges: [DVec3; 3],
+    angular: DVec3,
+    boxes: &[AffineBox],
+    iterations: usize,
+    queries: &mut usize,
+) -> Result<Hit, PhysicsError> {
     let angle = angular.length();
     if angle == 0. || boxes.is_empty() {
         return Ok(Hit {
@@ -143,7 +155,6 @@ pub(crate) fn sweep(
         }
     }
     let mut steps = iterations;
-    let mut queries = usize::MAX;
     advance(
         &candidates,
         |time| {
@@ -154,7 +165,7 @@ pub(crate) fn sweep(
         radius,
         rotation_radius,
         &mut steps,
-        &mut queries,
+        queries,
     )
 }
 
@@ -211,7 +222,16 @@ fn advance_with_clearance(
         queries,
         None,
         None,
+        None,
     )
+}
+
+struct ProjectedAdvance<'a> {
+    first: &'a physics::rigid_motion::RigidMotion,
+    second: &'a physics::rigid_motion::RigidMotion,
+    duration: f64,
+    reserve: f64,
+    rotating_step: Option<&'a dyn Fn(f64, DVec3, f64) -> f64>,
 }
 
 fn advance_with_enclosures(
@@ -226,6 +246,7 @@ fn advance_with_enclosures(
     queries: &mut usize,
     point_sample: Option<&dyn Fn(f64) -> Result<PointBoxes, PhysicsError>>,
     contact_tolerance: Option<f64>,
+    projected: Option<ProjectedAdvance<'_>>,
 ) -> Result<Hit, PhysicsError> {
     if contact_tolerance.is_some_and(|v| !v.is_finite() || v < 0.)
         || !clearance.is_finite()
@@ -243,6 +264,7 @@ fn advance_with_enclosures(
         });
     }
     let mut time = 0.;
+    let mut projected_bounds = Vec::<(DVec3, f64)>::new();
     while *steps > 0 {
         *steps -= 1;
         let (center, current) = sample(time)?;
@@ -251,29 +273,85 @@ fn advance_with_enclosures(
         let mut contact = DVec3::ZERO;
         let mut contact_feature = None;
         let mut tolerance = 0.;
+        let mut directional_next = 1.0_f64;
         for obstacle in candidates {
             query(queries)?;
+            let mut obstacle_next = time;
             let relative = center - obstacle.center;
             let mut separation = f64::NEG_INFINITY;
+            let mut nominal_separation = f64::NEG_INFINITY;
             let mut normal = DVec3::ZERO;
             let mut feature = None;
+            let mut seen_axes = [[0_u64; 3]; 15];
+            let mut seen_count = 0;
             for source in obstacle.support_axes(current) {
                 let axis = source.direction;
+                // Identical projections have the same gap and normal. The
+                // original tie break keeps the first feature of each direction.
+                let bits = axis.to_array().map(f64::to_bits);
+                if seen_axes[..seen_count].contains(&bits) {
+                    continue;
+                }
+                seen_axes[seen_count] = bits;
+                seen_count += 1;
+                let nominal_gap = || {
+                    relative.dot(axis).abs()
+                        - obstacle.radius(axis)
+                        - current.iter().map(|edge| edge.dot(axis).abs()).sum::<f64>()
+                };
                 let gap = if let Some(points) = &enclosed_points {
                     gap::lower_points(points, obstacle, axis, clearance)?
                 } else if clearance > 0. || contact_tolerance.is_some() {
                     gap::lower(center, current, obstacle, axis, clearance)?
                 } else {
-                    relative.dot(axis).abs()
-                        - obstacle.radius(axis)
-                        - current.iter().map(|edge| edge.dot(axis).abs()).sum::<f64>()
+                    nominal_gap()
                 };
-                if gap > separation {
+                if let Some(projection) = &projected
+                    && gap > projection.reserve
+                {
+                    if let Some(step) = projection.rotating_step {
+                        let axis = if relative.dot(axis) < 0. { -axis } else { axis };
+                        obstacle_next = obstacle_next.max(step(time, axis, gap));
+                        // The polynomial projection cache is for translation only.
+                    } else {
+                        let bound = if let Some((_, bound)) =
+                            projected_bounds.iter().find(|(cached, _)| *cached == axis)
+                        {
+                            *bound
+                        } else {
+                            let bound = gap::projected_travel(
+                                projection.first,
+                                projection.second,
+                                axis,
+                                projection.duration,
+                            )
+                            .unwrap_or(f64::INFINITY);
+                            projected_bounds.push((axis, bound));
+                            bound
+                        };
+                        if bound.is_finite() && bound > 0. {
+                            let available = (gap - projection.reserve).next_down().max(0.);
+                            obstacle_next =
+                                obstacle_next.max(gap::advance_time(time, available, bound)?);
+                        }
+                    }
+                }
+                // Directed gaps saturate at zero. At nominal contact, use
+                // the signed SAT gap to distinguish a touching face from
+                // axes whose projections already overlap deeply.
+                let contact_gap = if contact_tolerance.is_some() && gap == 0. {
+                    nominal_gap()
+                } else {
+                    gap
+                };
+                if gap > separation || (gap == separation && contact_gap > nominal_separation) {
                     separation = gap;
+                    nominal_separation = contact_gap;
                     feature = Some(source.feature);
                     normal = axis * if relative.dot(axis) < 0. { -1. } else { 1. };
                 }
             }
+            directional_next = directional_next.min(obstacle_next);
             if separation < distance {
                 distance = separation;
                 contact = normal;
@@ -310,6 +388,7 @@ fn advance_with_enclosures(
         } else {
             (time + 0.8 * (distance - contact_reserve).max(0.) / speed_bound).min(1.)
         };
+        let next = next.max(directional_next);
         if next >= 1. {
             return Ok(Hit {
                 feature: None,
@@ -1250,6 +1329,7 @@ fn sweep_rigid_path_with_bounds(
                 None
             },
             None,
+            None,
         )?;
         if hit.fraction < 1. {
             return Ok(PathHit {
@@ -1415,6 +1495,7 @@ fn sweep_rigid_path_with_bounds(
             } else {
                 None
             },
+            None,
             None,
         )?;
         if hit.fraction < 1. {

@@ -166,7 +166,7 @@ mod tests {
         .unwrap();
         let mut solid = FiniteQuadraticDynamics::new(
             mesh,
-            vec![physics::biomechanics::Material::from_young_poisson(1e5, 0.3).unwrap()],
+            vec![physics::constitutive::Material::from_young_poisson(1e5, 0.3).unwrap()],
             &[6.],
             vec![[0.; 3]; 10],
             &[false; 10],

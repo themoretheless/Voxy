@@ -19,6 +19,7 @@ mod foot_contact;
 pub mod foot_placement;
 mod gameplay_checkpoint;
 mod input_checkpoint;
+mod kinematic;
 mod liquid_body;
 mod liquid_runtime;
 mod liquid_source;
@@ -49,7 +50,7 @@ pub use character_checkpoint::{CharacterCheckpointError, CharacterPhysicsCheckpo
 pub use character_physics::{
     AppliedCharacterMotion, AppliedCharacterTrajectoryMotion, CharacterCertifiedFadeMotion,
     CharacterMotion, CharacterPhysics, CharacterRigidTrajectoryMotion, CharacterTrajectoryMotion,
-    MAX_CHARACTER_TRAJECTORY_SPANS, rigid_source_coordinate_axis,
+    CharacterTranslationTrace, MAX_CHARACTER_TRAJECTORY_SPANS, rigid_source_coordinate_axis,
 };
 pub(crate) use character_world::{
     RuntimeBody, StaticBox, StaticWorld, affine_box, center_of, precise_center, static_world,
@@ -73,6 +74,9 @@ pub use gameplay_checkpoint::{
 pub use input_checkpoint::{
     InputCheckpointCodecError, decode_input_checkpoint, encode_input_checkpoint,
 };
+pub use kinematic::{
+    KinematicBody, PlatformMotion, step_kinematic_bodies, step_kinematic_bodies_with_dynamics,
+};
 pub use liquid_body::{LiquidBody, LiquidMassDistribution, LiquidMassPart};
 pub use liquid_runtime::{
     SceneLiquidCheckpoint, SceneLiquidCheckpointLimits, SceneLiquidRuntime, SceneLiquidStep,
@@ -83,8 +87,13 @@ pub use point_loads::{RigidPointForce, RigidPointLoads};
 pub use rigid_frame::{PreparedRigidPose, RigidBodyFrame, RigidPoseEdit, publish_rigid_poses};
 pub use staged_tick::{AcceptedCharacterPose, CharacterTickError, CharacterTickPreview};
 pub use support::{
-    RayHit, RayQuery, SceneQueries, SupportAnchor, SupportAnchorCheckpoint, SupportContact,
-    SupportProbe, SupportQueryBudget, SupportWorld, slope_traction_acceleration_scale,
+    AngularBoxHit, BoxSweepHit, RayHit, RayQuery, SceneQueries, SupportAnchor,
+    SupportAnchorCheckpoint, SupportContact, SupportProbe, SupportQueryBudget, SupportWorld,
+    slope_traction_acceleration_scale,
+};
+mod triggers;
+pub use triggers::{
+    BoxTrigger, MAX_PAIRS as MAX_TRIGGER_PAIRS, TriggerEvent, TriggerPhase, TriggerTracker,
 };
 pub use ui_actions::{
     UiActionCheckpoint, UiActionCheckpointLimits, UiActionCheckpointRegistry, UiActionHandler,
@@ -98,6 +107,40 @@ use glam::Vec3;
 use serde::{Deserialize, Serialize};
 use voxy_input::{Binding, Control, InputMap};
 use voxy_scene::{ComponentRegistry, DocumentError, SceneGraph, SceneGraphError};
+
+/// Symmetric collision filtering. A pair interacts only when each mask
+/// accepts at least one bit of the other participant's membership.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CollisionLayers {
+    pub membership: u32,
+    pub mask: u32,
+}
+
+impl Default for CollisionLayers {
+    fn default() -> Self {
+        Self {
+            membership: 1,
+            mask: u32::MAX,
+        }
+    }
+}
+
+impl CollisionLayers {
+    #[must_use]
+    pub const fn interacts(self, other: Self) -> bool {
+        self.mask & other.membership != 0 && other.mask & self.membership != 0
+    }
+
+    pub(crate) fn on(scene: &SceneGraph, owner: voxy_scene::NodeId) -> Self {
+        scene
+            .component::<Self>(owner)
+            .ok()
+            .flatten()
+            .copied()
+            .unwrap_or_default()
+    }
+}
 
 /// Validated fixed-tick ownership order shared by the editor and headless game.
 /// Synchronization observes behavior edits before physics owns translation writes.
@@ -215,10 +258,10 @@ impl std::fmt::Display for PhysicsError {
 }
 impl std::error::Error for PhysicsError {}
 
-/// Adds authoring descriptors; controller velocity/grounding use separate runtime checkpoints.
+/// Registers the follow descriptor and remaps prefab-local target identities.
 /// # Errors
-/// Rejects duplicate schema names/types.
-pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
+/// Rejects duplicate schema names or component types.
+pub fn register_follow_camera(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
     registry.register_with_reference_remap::<FollowCamera>(
         "game.follow-camera.v1",
         |camera| vec![camera.target.clone()],
@@ -227,13 +270,23 @@ pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), Docum
                 camera.target = target.clone();
             }
         },
-    )?;
+    )
+}
+
+/// Adds authoring descriptors; controller velocity/grounding use separate runtime checkpoints.
+/// # Errors
+/// Rejects duplicate schema names/types.
+pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
+    register_follow_camera(registry)?;
     registry.register::<RigidPointLoads>("game.rigid-point-loads.v1")?;
     registry.register::<LiquidBody>("game.liquid-body.v1")?;
     registry.register::<LiquidMassDistribution>("game.liquid-mass.v1")?;
     registry.register::<LiquidSource>("game.liquid-source.v1")?;
+    registry.register::<KinematicBody>("game.kinematic-body.v1")?;
     registry.register::<CharacterBody>("game.character.v1")?;
     registry.register::<BoxCollider>("game.box.v1")?;
+    registry.register::<CollisionLayers>("game.collision-layers.v1")?;
+    registry.register::<BoxTrigger>("game.box-trigger.v1")?;
     registry.register::<AudioBus>("game.audio-bus.v1")?;
     registry.register::<AudioListener>("game.audio-listener.v1")?;
     registry.register::<AudioSource>("game.audio-source.v1")?;
@@ -290,6 +343,9 @@ fn validate_common_game_descriptors(
         return Err("invalid game.follow-camera.v1 descriptor".into());
     }
     validate_behavior_descriptors(scene)?;
+    kinematic::validate_kinematic_bodies(scene)?;
+    triggers::validate_triggers(scene, capacity)
+        .map_err(|error| format!("invalid game.box-trigger.v1 descriptor: {error}"))?;
     extract_scene_audio(scene, capacity)?;
     extract_scene_ui(scene, [1.0, 1.0], capacity)?;
     Ok(())
@@ -301,46 +357,69 @@ pub const FORWARD: Control = Control { device: 0, code: 3 };
 pub const BACK: Control = Control { device: 0, code: 4 };
 pub const JUMP: Control = Control { device: 0, code: 5 };
 
+pub const GAMEPAD_X: Control = Control { device: 1, code: 1 };
+pub const GAMEPAD_Z: Control = Control { device: 1, code: 2 };
+pub const GAMEPAD_JUMP: Control = Control { device: 1, code: 3 };
+
 /// Platform adapters translate physical controls into these named actions.
 /// Clear edges with `finish_frame` only after a successful fixed tick, never on a
 /// render-only frame. This retains quick taps and consumes them once in catch-up.
 /// # Errors
 /// Propagates binding admission failures.
 pub fn player_input() -> Result<InputMap, voxy_input::InputError> {
-    let mut input = InputMap::new(131, 5);
-    input.bind(
-        "move_x",
-        vec![
-            Binding {
-                control: LEFT,
-                scale: -1.0,
-            },
-            Binding {
-                control: RIGHT,
-                scale: 1.0,
-            },
-        ],
-    )?;
-    input.bind(
-        "move_z",
-        vec![
-            Binding {
-                control: FORWARD,
-                scale: -1.0,
-            },
-            Binding {
-                control: BACK,
-                scale: 1.0,
-            },
-        ],
-    )?;
-    input.bind(
-        "jump",
-        vec![Binding {
-            control: JUMP,
+    build_player_input(false)
+}
+
+/// Adds independent signed movement axes and a jump button to the standard actions.
+/// # Errors
+/// Propagates binding admission failures.
+pub fn player_input_with_gamepad() -> Result<InputMap, voxy_input::InputError> {
+    build_player_input(true)
+}
+
+fn build_player_input(gamepad: bool) -> Result<InputMap, voxy_input::InputError> {
+    let mut input = InputMap::new(131, if gamepad { 8 } else { 5 });
+    let mut move_x = vec![
+        Binding {
+            control: LEFT,
+            scale: -1.0,
+        },
+        Binding {
+            control: RIGHT,
             scale: 1.0,
-        }],
-    )?;
+        },
+    ];
+    let mut move_z = vec![
+        Binding {
+            control: FORWARD,
+            scale: -1.0,
+        },
+        Binding {
+            control: BACK,
+            scale: 1.0,
+        },
+    ];
+    let mut jump_bindings = vec![Binding {
+        control: JUMP,
+        scale: 1.0,
+    }];
+    if gamepad {
+        move_x.push(Binding {
+            control: GAMEPAD_X,
+            scale: 1.0,
+        });
+        move_z.push(Binding {
+            control: GAMEPAD_Z,
+            scale: 1.0,
+        });
+        jump_bindings.push(Binding {
+            control: GAMEPAD_JUMP,
+            scale: 1.0,
+        });
+    }
+    input.bind("move_x", move_x)?;
+    input.bind("move_z", move_z)?;
+    input.bind("jump", jump_bindings)?;
     Ok(input)
 }
 

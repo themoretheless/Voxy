@@ -103,20 +103,25 @@ impl RenderWorldCache {
         self.worlds.clear();
     }
 }
+fn fill_poses(out: &mut PoseMap, scene: &SceneGraph) {
+    out.clear();
+    out.reserve(scene.len());
+    for (id, local, parent) in scene.nodes() {
+        out.insert(
+            id,
+            Pose {
+                local,
+                parent,
+                active: scene.active_in_hierarchy(id).unwrap_or(false),
+            },
+        );
+    }
+}
+
 fn poses(scene: &SceneGraph) -> PoseMap {
-    scene
-        .nodes()
-        .map(|(id, local, parent)| {
-            (
-                id,
-                Pose {
-                    local,
-                    parent,
-                    active: scene.active_in_hierarchy(id).unwrap_or(false),
-                },
-            )
-        })
-        .collect()
+    let mut out = PoseMap::default();
+    fill_poses(&mut out, scene);
+    out
 }
 impl SceneSimulation {
     /// # Errors
@@ -271,7 +276,7 @@ impl SceneSimulation {
         }
         self.behaviors.animation_event(scene, owner, name, phase);
         // Hooks can change transforms or structure after the frame pose capture.
-        self.current = poses(scene);
+        fill_poses(&mut self.current, scene);
         self.previous
             .retain(|owner, _| self.current.contains_key(owner));
         Ok(())
@@ -310,7 +315,11 @@ impl SceneSimulation {
     ) -> Result<SimulationFrame, SimulationStepError<E>> {
         self.advance_with_delivery(scene, elapsed, |scene, _, dt| fixed(scene, dt))
     }
-    fn advance_with_delivery<E>(
+    /// Runs a fixed-step callback with access to the attached behavior dispatcher.
+    /// Uses the same clock, command barrier and error handling as `advance_with`.
+    /// # Errors
+    /// Returns scene validation or the callback's typed failure.
+    pub fn advance_with_delivery<E>(
         &mut self,
         scene: &mut SceneGraph,
         elapsed: f64,
@@ -328,7 +337,7 @@ impl SceneSimulation {
         let time = self.clock.advance(elapsed, self.step, self.max_steps);
         for completed_steps in 0..time.steps {
             if completed_steps == 0 {
-                self.previous = poses(scene);
+                fill_poses(&mut self.previous, scene);
             } else {
                 // `current` was captured at the end of the previous step and nothing
                 // touched the scene since, so it is exactly this step's start pose.
@@ -336,14 +345,14 @@ impl SceneSimulation {
             }
             self.behaviors.fixed_update(scene, self.step);
             if let Err(error) = fixed(scene, &mut self.behaviors, self.step) {
-                self.current = poses(scene);
+                fill_poses(&mut self.current, scene);
                 self.previous.clone_from(&self.current);
                 return Err(SimulationStepError::System {
                     completed_steps,
                     error,
                 });
             }
-            self.current = poses(scene);
+            fill_poses(&mut self.current, scene);
         }
         {
             self.alpha = time.alpha as f32;
@@ -418,7 +427,7 @@ impl SceneSimulation {
     /// Rejects foreign scenes before replacing history.
     pub fn reset_interpolation(&mut self, scene: &SceneGraph) -> Result<(), SimulationError> {
         self.validate(scene)?;
-        self.current = poses(scene);
+        fill_poses(&mut self.current, scene);
         self.previous.clone_from(&self.current);
         Ok(())
     }

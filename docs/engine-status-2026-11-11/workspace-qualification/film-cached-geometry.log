@@ -1,0 +1,10 @@
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 44.01s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_demos-8e8d7e08c181b399)
+
+running 1 test
+test female_demo::tests::film_substrate_matches_rendered_body_without_visual_work has been running for over 60 seconds
+test female_demo::tests::film_substrate_matches_rendered_body_without_visual_work ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 392 filtered out; finished in 258.91s
+

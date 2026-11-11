@@ -14,6 +14,19 @@ pub enum Error {
     NoConvergence,
 }
 
+impl core::fmt::Display for Error {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::InvalidInput => f.write_str("invalid rotation or orbit input"),
+            Self::DegenerateOrbit => f.write_str("degenerate orbit"),
+            Self::NumericalOverflow => f.write_str("numerical overflow in rotation or orbit"),
+            Self::NoConvergence => f.write_str("rotation or orbit solver did not converge"),
+        }
+    }
+}
+
+impl std::error::Error for Error {}
+
 /// Aggregate affine forces on multiple points of one body. Three world-force
 /// columns encode sum_j (R e_j) cross column_j, without an arbitrary point cap.
 /// This descriptor does not prepare motion or solve contacts.

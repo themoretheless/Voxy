@@ -1,0 +1,16 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.34s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 8 tests
+test triggers::tests::relative_segments_merge_distinct_contact_times_and_rest_after_stop ... ok
+test triggers::tests::traced_pair_delivers_exit_and_reentry_even_when_both_endpoints_overlap ... ok
+test triggers::tests::failed_sample_preserves_pairs_until_a_complete_sample ... ok
+test triggers::tests::moving_trigger_overtakes_a_character_during_the_same_tick ... ok
+test triggers::tests::attached_trigger_crosses_an_offset_static_collider ... ok
+test triggers::tests::two_characters_cross_during_slides_with_different_contact_times ... ok
+test triggers::tests::layers_filter_contacts_queries_and_swept_trigger_events_after_live_edit ... ok
+test triggers::tests::crossing_detected_when_either_character_is_stationary ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 221 filtered out; finished in 0.01s
+

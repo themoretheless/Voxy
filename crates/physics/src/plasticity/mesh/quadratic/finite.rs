@@ -1,6 +1,6 @@
 //! Objective finite-deformation hyperelastic energy/force quadrature.
 use super::{QuadraticBody, State, Vec3, deformation_at, dot};
-use crate::biomechanics::{Material, Stress};
+use crate::constitutive::{Material, Stress};
 #[derive(Clone, Debug)]
 pub struct FiniteElasticEvaluation {
     pub energy_j: f64,

@@ -1,0 +1,16 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.99s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 1 test
+substep 0 supports=10 reaction=Some([ContactWrench { force: [-46.29629758194224, 0.0, -6.687670623751111e-11], torque: [0.0, 0.0, 0.0] }, ContactWrench { force: [46.29629758194224, 0.0, 6.687670623751111e-11], torque: [2.8272774843121063e-27, -1.724253496528266e-8, -1.887379141862766e-15] }])
+substep 0 admission=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 4.174012059696166e-12 })
+substep 1 supports=0 reaction=None
+lost patch feature=Some(3) speed=-9.491649754361786e-8
+lost patch feature=Some(3) speed=-9.491649754361786e-8
+lost patch feature=Some(11) speed=-9.491649754361786e-8
+lost patch feature=Some(11) speed=-9.491649754361786e-8
+test liquid_runtime::tests::off_center_particle_remainder_requires_translation_only_reactions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 248 filtered out; finished in 0.00s
+

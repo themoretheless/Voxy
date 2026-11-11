@@ -16,7 +16,10 @@ pub use json_document::{JsonDocument, JsonDocumentError, serialize_json_bounded}
 mod locations;
 mod manifest;
 mod package;
-pub use package::{PackageLimits, ResourcePackage};
+pub use package::{
+    PROJECT_LAUNCH_SOURCE, PROJECT_PACKAGE_LIMITS, PackageLimits, ProjectDescriptor,
+    ProjectPackageLaunch, ResourcePackage,
+};
 
 mod streaming;
 pub use streaming::{

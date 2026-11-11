@@ -1,0 +1,130 @@
+{
+  "mode": "auto",
+  "before": {
+    "state": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "turntable",
+          "parent": null,
+          "name": "turntable",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0.6568751,
+            0.7539995
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "mesh",
+            "game.angular-motion.v1": {
+              "axis": [
+                0,
+                0,
+                1
+              ],
+              "radians_per_second": 2
+            }
+          }
+        }
+      ]
+    },
+    "ticks": 43,
+    "frames": 45,
+    "backend": "BrowserWebGpu"
+  },
+  "stopped": null,
+  "after": {
+    "state": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "turntable",
+          "parent": null,
+          "name": "turntable",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0.9927131,
+            0.12050253
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "mesh",
+            "game.angular-motion.v1": {
+              "axis": [
+                0,
+                0,
+                1
+              ],
+              "radians_per_second": 2
+            }
+          }
+        }
+      ]
+    },
+    "restored": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "turntable",
+          "parent": null,
+          "name": "turntable",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0.6568751,
+            0.7539995
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "mesh",
+            "game.angular-motion.v1": {
+              "axis": [
+                0,
+                0,
+                1
+              ],
+              "radians_per_second": 2
+            }
+          }
+        }
+      ]
+    },
+    "ticks": 87,
+    "frames": 90,
+    "newCanvas": true,
+    "backend": "BrowserWebGpu"
+  },
+  "matchesUninterrupted": true
+}

@@ -57,6 +57,51 @@ pub(super) fn collect_mode_values(
                     ));
                 }
             }
+            if let Some(trigger) = object.components.get("game.box-trigger.v1") {
+                for (index, label) in ["Trigger half X", "Trigger half Y", "Trigger half Z"]
+                    .into_iter()
+                    .enumerate()
+                {
+                    values.push((
+                        label.into(),
+                        trigger["half_extents"][index].as_f64().unwrap_or(0.),
+                    ));
+                }
+            }
+            let layers = object.components.get("game.collision-layers.v1");
+            let defaults = voxy_gameplay::CollisionLayers::default();
+            for (field, label, default) in [
+                ("membership", "Layer bits", defaults.membership),
+                ("mask", "Mask bits", defaults.mask),
+            ] {
+                let value = layers
+                    .and_then(|layers| layers[field].as_f64())
+                    .unwrap_or(f64::from(default));
+                values.push((label.into(), value));
+            }
+            if let Some(body) = object.components.get("game.liquid-body.v1") {
+                values.push(("Mass (kg)".into(), body["mass_kg"].as_f64().unwrap_or(0.)));
+                for (axis, label) in ["Velocity X", "Velocity Y", "Velocity Z"]
+                    .into_iter()
+                    .enumerate()
+                {
+                    values.push((
+                        label.into(),
+                        body["initial_velocity_m_s"][axis].as_f64().unwrap_or(0.),
+                    ));
+                }
+            }
+            if let Some(body) = object.components.get("game.kinematic-body.v1") {
+                for (axis, label) in ["Velocity X", "Velocity Y", "Velocity Z"]
+                    .into_iter()
+                    .enumerate()
+                {
+                    values.push((
+                        label.into(),
+                        body["velocity_m_s"][axis].as_f64().unwrap_or(0.),
+                    ));
+                }
+            }
         }
         InspectorMode::ImportSettings => {
             values.clear();
@@ -155,17 +200,33 @@ impl Panels {
         for (row, label, action) in [
             (
                 5,
-                if object.components.contains_key("game.follow-camera.v1") {
+                if inspector == InspectorMode::Physics {
+                    if object.components.contains_key("game.box-trigger.v1") {
+                        "Remove box trigger"
+                    } else {
+                        "Add box trigger"
+                    }
+                } else if object.components.contains_key("game.follow-camera.v1") {
                     "Remove follow camera"
                 } else {
                     "Add follow camera"
                 },
-                Action::FollowCamera(crate::camera_authoring::request_token(object)?),
+                if inspector == InspectorMode::Physics {
+                    Action::Trigger
+                } else {
+                    Action::FollowCamera(crate::camera_authoring::request_token(object)?)
+                },
             ),
             (
                 3,
                 if self.retarget_draft {
                     "Add bone pair"
+                } else if inspector == InspectorMode::Physics {
+                    if object.components.contains_key("game.liquid-body.v1") {
+                        "Remove dynamic body"
+                    } else {
+                        "Add dynamic body"
+                    }
                 } else if matches!(
                     inspector,
                     InspectorMode::Audio | InspectorMode::ImportSettings
@@ -189,6 +250,8 @@ impl Panels {
                     Action::AudioSettingsLoad
                 } else if self.retarget_draft {
                     Action::RetargetPair(true)
+                } else if inspector == InspectorMode::Physics {
+                    Action::DynamicBody
                 } else if matches!(inspector, InspectorMode::Components(_)) {
                     Action::Animation
                 } else {
@@ -294,7 +357,11 @@ impl Panels {
             ),
         ] {
             if row == 5
-                && (self.retarget_draft || !matches!(inspector, InspectorMode::Components(_)))
+                && (self.retarget_draft
+                    || !matches!(
+                        inspector,
+                        InspectorMode::Components(_) | InspectorMode::Physics
+                    ))
             {
                 continue;
             }
@@ -320,6 +387,23 @@ impl Panels {
             self.regions
                 .push(([rx + 4.0, y, right - 8.0, 23.0], action));
         }
+        if inspector == InspectorMode::Physics {
+            let label = if object.components.contains_key("game.kinematic-body.v1") {
+                "Remove kinematic body"
+            } else {
+                "Add kinematic body"
+            };
+            let y = 498.0;
+            self.text(
+                batch,
+                label,
+                Vec2::new(rx + 8.0, y + 17.0),
+                right - 12.0,
+                size,
+            )?;
+            self.regions
+                .push(([rx + 4.0, y, right - 8.0, 23.0], Action::KinematicBody));
+        }
         self.text(
             batch,
             if playing {
@@ -336,6 +420,8 @@ impl Panels {
                 } else if matches!(inspector, InspectorMode::Components(_)) && !self.retarget_draft
                 {
                     579.0
+                } else if inspector == InspectorMode::Physics && !self.retarget_draft {
+                    539.0
                 } else {
                     491.0
                 },
@@ -359,6 +445,8 @@ impl Panels {
                 } else if matches!(inspector, InspectorMode::Components(_)) && !self.retarget_draft
                 {
                     602.0
+                } else if inspector == InspectorMode::Physics && !self.retarget_draft {
+                    538.0
                 } else {
                     514.0
                 },

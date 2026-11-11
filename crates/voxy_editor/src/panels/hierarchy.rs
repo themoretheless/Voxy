@@ -122,12 +122,16 @@ impl Panels {
         inspector: InspectorMode,
         prefab_label: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        let build_label = self.build_label.filter(|_| !playing);
+        let run_label = self.package_run_label.filter(|_| !playing);
+        let toolbar_height =
+            240.0 + 24.0 * (u8::from(build_label.is_some()) + u8::from(run_label.is_some())) as f32;
         let mut order = Vec::with_capacity(document.objects.len());
         visit(document, None, 0, &mut order);
         for (row, (index, depth)) in order
             .into_iter()
             .skip(scroll)
-            .take(((size.y - 281.0) / 24.0).max(0.0) as usize)
+            .take(((size.y - toolbar_height - 41.0) / 24.0).max(0.0) as usize)
             .enumerate()
         {
             let object = &document.objects[index];
@@ -217,7 +221,7 @@ impl Panels {
             (8, "Place prefab", Action::PlacePrefab),
             (9, "Create prefab", Action::CreatePrefab),
         ] {
-            let y = size.y - 240.0 + row as f32 * 24.0;
+            let y = size.y - toolbar_height + row as f32 * 24.0;
             self.text(batch, label, Vec2::new(10.0, y + 17.0), left - 16.0, size)?;
             let enabled = match (row, self.load_status) {
                 (4, Some(_)) => false,
@@ -226,6 +230,22 @@ impl Panels {
             };
             if enabled {
                 self.regions.push(([4.0, y, left - 8.0, 23.0], action));
+            }
+        }
+        if let Some(label) = build_label {
+            let y = size.y - if run_label.is_some() { 48.0 } else { 24.0 };
+            self.text(batch, label, Vec2::new(10.0, y + 17.0), left - 16.0, size)?;
+            if label == "Build saved game" && self.load_status.is_none() {
+                self.regions
+                    .push(([4.0, y, left - 8.0, 23.0], Action::BuildGame));
+            }
+        }
+        if let Some(label) = run_label {
+            let y = size.y - 24.0;
+            self.text(batch, label, Vec2::new(10.0, y + 17.0), left - 16.0, size)?;
+            if label == "Run built game" && self.load_status.is_none() {
+                self.regions
+                    .push(([4.0, y, left - 8.0, 23.0], Action::RunBuiltGame));
             }
         }
         Ok(())

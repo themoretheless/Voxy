@@ -19,6 +19,27 @@ pub enum Error {
     Contact(crate::contact::Error),
 }
 
+impl core::fmt::Display for Error {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::InvalidInput => f.write_str("invalid rigid motion input"),
+            Self::NumericalFailure => f.write_str("rigid motion numerical failure"),
+            Self::Rotation(err) => write!(f, "rigid motion rotation error: {err}"),
+            Self::Contact(err) => write!(f, "rigid motion contact error: {err}"),
+        }
+    }
+}
+
+impl std::error::Error for Error {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::Rotation(err) => Some(err),
+            Self::Contact(err) => Some(err),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct RigidMotion {
     initial: ContactBody,

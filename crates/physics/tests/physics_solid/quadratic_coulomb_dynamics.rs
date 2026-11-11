@@ -1,5 +1,5 @@
 use physics::{
-    biomechanics::Material as Elastic,
+    constitutive::Material as Elastic,
     plasticity::{
         Material,
         mesh::{

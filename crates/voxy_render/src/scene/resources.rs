@@ -112,6 +112,8 @@ pub(super) fn managed_scene_indices(
 /// Depth policy for ordinary geometry, ghost shells and revealed internal layers.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum SceneDepthMode {
+    /// Hardware early-Z friendly closed opaque geometry (`Face::Back` culling, no blend/discard).
+    SolidOpaque,
     #[default]
     Opaque,
     /// Tests world depth without writing it. Supply triangles back to front.

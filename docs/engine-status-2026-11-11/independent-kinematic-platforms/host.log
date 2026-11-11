@@ -1,0 +1,12 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 43.70s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 2 tests
+test game_host_tests::kinematic_scene_collider_pushes_dynamic_body_in_play_and_package ... ok
+test game_host_tests::kinematic_scene_collider_stops_when_dynamic_body_is_pinned ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 453 filtered out; finished in 1.77s
+

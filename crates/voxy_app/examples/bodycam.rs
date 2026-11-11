@@ -196,7 +196,7 @@ impl BunkerFemaleScene {
         let model_mat =
             Mat4::from_translation(self.world_pos) * Mat4::from_rotation_y(self.world_yaw);
         let model_inv = model_mat.inverse();
-        let mvp = scene_cam.view_projection()? * model_mat;
+        let mvp = scene_cam.view_projection_reverse_z()? * model_mat;
         let local_eye = model_inv.transform_point3(camera.eye);
 
         self.transform.update(queue, mvp)?;

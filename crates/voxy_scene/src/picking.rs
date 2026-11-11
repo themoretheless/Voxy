@@ -235,14 +235,137 @@ fn intersect(bounds: PickBounds, origin: Vec3, direction: Vec3, max_distance: f3
     }
     Some(near)
 }
+fn world_aabb(bounds: PickBounds, world: Mat4) -> Option<PickBounds> {
+    let center = 0.5 * (bounds.min + bounds.max);
+    let half = 0.5 * (bounds.max - bounds.min);
+    let world_center = world.transform_point3(center);
+    let abs_x = world.x_axis.truncate().abs();
+    let abs_y = world.y_axis.truncate().abs();
+    let abs_z = world.z_axis.truncate().abs();
+    let world_half = abs_x * half.x + abs_y * half.y + abs_z * half.z;
+    let min = world_center - world_half;
+    let max = world_center + world_half;
+    (min.is_finite() && max.is_finite() && !min.cmpgt(max).any()).then_some(PickBounds {
+        min,
+        max,
+        layers: bounds.layers,
+    })
+}
+
+#[derive(Clone, Copy)]
+struct BvhPrimitive {
+    node: NodeId,
+    slot_rank: usize,
+    local_bounds: PickBounds,
+    world_bounds: PickBounds,
+    inverse: Mat4,
+    morton: u32,
+}
+
+enum BvhNode {
+    Leaf {
+        bounds: PickBounds,
+        start: usize,
+        end: usize,
+    },
+    Internal {
+        bounds: PickBounds,
+        left: usize,
+        right: usize,
+    },
+}
+
+impl BvhNode {
+    const fn bounds(&self) -> PickBounds {
+        match *self {
+            Self::Leaf { bounds, .. } | Self::Internal { bounds, .. } => bounds,
+        }
+    }
+}
+
+fn union_bounds(a: PickBounds, b: PickBounds) -> PickBounds {
+    PickBounds {
+        min: a.min.min(b.min),
+        max: a.max.max(b.max),
+        layers: a.layers | b.layers,
+    }
+}
+
+fn build_bvh_recursive(
+    prims: &[BvhPrimitive],
+    start: usize,
+    end: usize,
+    nodes: &mut Vec<BvhNode>,
+) -> usize {
+    let slice = &prims[start..end];
+    let mut bounds = slice[0].world_bounds;
+    for prim in &slice[1..] {
+        bounds = union_bounds(bounds, prim.world_bounds);
+    }
+    let count = end - start;
+    if count <= 4 {
+        let idx = nodes.len();
+        nodes.push(BvhNode::Leaf { bounds, start, end });
+        return idx;
+    }
+
+    let mut suffix_bounds = vec![slice[count - 1].world_bounds; count];
+    for i in (0..count - 1).rev() {
+        suffix_bounds[i] = union_bounds(slice[i].world_bounds, suffix_bounds[i + 1]);
+    }
+    let parent_area = bounds.surface_area().unwrap_or(0.0);
+    let mut best_split = count / 2;
+    if parent_area > 0.0 {
+        let mut best_cost = f32::INFINITY;
+        let mut prefix = slice[0].world_bounds;
+        for split in 1..count {
+            if split > 1 {
+                prefix = union_bounds(prefix, slice[split - 1].world_bounds);
+            }
+            if let (Some(left_area), Some(right_area)) =
+                (prefix.surface_area(), suffix_bounds[split].surface_area())
+                && let Some(cost) = sah_split_cost(
+                    parent_area,
+                    left_area,
+                    split as u32,
+                    right_area,
+                    (count - split) as u32,
+                    1.0,
+                    2.0,
+                )
+                && cost < best_cost
+            {
+                best_cost = cost;
+                best_split = split;
+            }
+        }
+    }
+
+    let mid = start + best_split;
+    let idx = nodes.len();
+    nodes.push(BvhNode::Leaf { bounds, start, end });
+    let left = build_bvh_recursive(prims, start, mid, nodes);
+    let right = build_bvh_recursive(prims, mid, end, nodes);
+    nodes[idx] = BvhNode::Internal {
+        bounds,
+        left,
+        right,
+    };
+    idx
+}
+
 impl SceneGraph {
     /// Selects nearest active bounds matching the mask, with slot-order tie breaking.
-    /// This is bounds picking, not triangle intersection or a spatial acceleration tree.
+    /// Uses a Morton-ordered SAH BVH when `>= 16` valid candidates match `layers`.
     /// # Errors
     /// Rejects invalid matching bounds and cached world-transform overflow.
     pub fn pick(&self, ray: PickRay, layers: u32) -> Result<PickResult, PickError> {
         let mut result = PickResult::default();
-        for (node, bounds) in self.active_components::<PickBounds>() {
+        let mut candidates: Vec<BvhPrimitive> = Vec::new();
+        let mut scene_min = Vec3::splat(f32::INFINITY);
+        let mut scene_max = Vec3::splat(f32::NEG_INFINITY);
+
+        for (slot_rank, (node, bounds)) in self.active_components::<PickBounds>().enumerate() {
             if bounds.layers & layers == 0 {
                 continue;
             }
@@ -264,21 +387,153 @@ impl SceneGraph {
                 result.skipped_singular += 1;
                 continue;
             }
-            // Preserve the transformed vector length: local t remains world distance.
-            let limit = result.hit.map_or(ray.max_distance, |hit| hit.distance);
-            if let Some(distance) = intersect(*bounds, origin, direction, limit)
-                && result.hit.is_none_or(|hit| distance < hit.distance)
-            {
-                let position = ray.origin + ray.direction * distance;
-                if !position.is_finite() {
-                    return Err(PickError::InvalidRay);
-                }
-                result.hit = Some(PickHit {
+            if let Some(wb) = world_aabb(*bounds, world) {
+                let centroid = 0.5 * (wb.min + wb.max);
+                scene_min = scene_min.min(centroid);
+                scene_max = scene_max.max(centroid);
+                candidates.push(BvhPrimitive {
                     node,
-                    distance,
-                    position,
+                    slot_rank,
+                    local_bounds: *bounds,
+                    world_bounds: wb,
+                    inverse,
+                    morton: 0,
                 });
+            } else {
+                // Extreme finite world extents: test local-space ray directly.
+                let limit = result.hit.map_or(ray.max_distance, |hit| hit.distance);
+                if let Some(distance) = intersect(*bounds, origin, direction, limit)
+                    && result.hit.is_none_or(|hit| distance < hit.distance)
+                {
+                    let position = ray.origin + ray.direction * distance;
+                    if !position.is_finite() {
+                        return Err(PickError::InvalidRay);
+                    }
+                    result.hit = Some(PickHit {
+                        node,
+                        distance,
+                        position,
+                    });
+                }
             }
+        }
+
+        if candidates.len() < 16 {
+            for prim in &candidates {
+                let origin = prim.inverse.transform_point3(ray.origin);
+                let direction = prim.inverse.transform_vector3(ray.direction);
+                let limit = result.hit.map_or(ray.max_distance, |hit| hit.distance);
+                if let Some(distance) = intersect(prim.local_bounds, origin, direction, limit)
+                    && result.hit.is_none_or(|hit| distance < hit.distance)
+                {
+                    let position = ray.origin + ray.direction * distance;
+                    if !position.is_finite() {
+                        return Err(PickError::InvalidRay);
+                    }
+                    result.hit = Some(PickHit {
+                        node: prim.node,
+                        distance,
+                        position,
+                    });
+                }
+            }
+            return Ok(result);
+        }
+
+        let padded_max = scene_max.max(scene_min + Vec3::splat(1e-4));
+        for prim in &mut candidates {
+            prim.morton = prim
+                .world_bounds
+                .centroid_morton_code(scene_min, padded_max)
+                .unwrap_or(0);
+        }
+        candidates.sort_by_key(|prim| (prim.morton, prim.slot_rank));
+
+        let mut bvh_nodes = Vec::with_capacity(candidates.len() * 2);
+        let root = build_bvh_recursive(&candidates, 0, candidates.len(), &mut bvh_nodes);
+        let mut best: Option<(f32, usize, PickHit)> = None;
+        let mut stack = Vec::with_capacity(32);
+        if let Some(root_t) = intersect(
+            bvh_nodes[root].bounds(),
+            ray.origin,
+            ray.direction,
+            ray.max_distance,
+        ) {
+            stack.push((root, root_t));
+        }
+        while let Some((idx, node_near)) = stack.pop() {
+            let limit = best.map_or(ray.max_distance, |(dist, _, _)| dist);
+            if node_near > limit {
+                continue;
+            }
+            match bvh_nodes[idx] {
+                BvhNode::Leaf { start, end, .. } => {
+                    for prim in &candidates[start..end] {
+                        let cur_limit = best.map_or(ray.max_distance, |(dist, _, _)| dist);
+                        if intersect(prim.world_bounds, ray.origin, ray.direction, cur_limit)
+                            .is_none()
+                        {
+                            continue;
+                        }
+                        let origin = prim.inverse.transform_point3(ray.origin);
+                        let direction = prim.inverse.transform_vector3(ray.direction);
+                        if let Some(distance) =
+                            intersect(prim.local_bounds, origin, direction, cur_limit)
+                        {
+                            let wins = match best {
+                                None => true,
+                                Some((best_d, best_rank, _)) => {
+                                    distance < best_d
+                                        || (distance == best_d && prim.slot_rank < best_rank)
+                                }
+                            };
+                            if wins {
+                                let position = ray.origin + ray.direction * distance;
+                                if !position.is_finite() {
+                                    return Err(PickError::InvalidRay);
+                                }
+                                best = Some((
+                                    distance,
+                                    prim.slot_rank,
+                                    PickHit {
+                                        node: prim.node,
+                                        distance,
+                                        position,
+                                    },
+                                ));
+                            }
+                        }
+                    }
+                }
+                BvhNode::Internal { left, right, .. } => {
+                    let t_left =
+                        intersect(bvh_nodes[left].bounds(), ray.origin, ray.direction, limit);
+                    let t_right =
+                        intersect(bvh_nodes[right].bounds(), ray.origin, ray.direction, limit);
+                    match (t_left, t_right) {
+                        (Some(tl), Some(tr)) => {
+                            // Push farther child first so nearer child is popped first.
+                            if tl <= tr {
+                                stack.push((right, tr));
+                                stack.push((left, tl));
+                            } else {
+                                stack.push((left, tl));
+                                stack.push((right, tr));
+                            }
+                        }
+                        (Some(tl), None) => stack.push((left, tl)),
+                        (None, Some(tr)) => stack.push((right, tr)),
+                        (None, None) => {}
+                    }
+                }
+            }
+        }
+        if let Some((_, _, bvh_hit)) = best
+            && result
+                .hit
+                .is_none_or(|fallback| bvh_hit.distance < fallback.distance)
+        {
+            result.hit = Some(bvh_hit);
         }
         Ok(result)
     }
@@ -474,5 +729,57 @@ mod tests {
             Some(0x3fff_ffff)
         );
         assert!(unit.centroid_morton_code(Vec3::ONE, Vec3::ZERO).is_none());
+    }
+
+    #[test]
+    fn bvh_pick_matches_nearest_and_slot_order_tie_breaking_over_many_objects() {
+        let mut scene = SceneGraph::new(128);
+        let mut nodes = Vec::new();
+        for i in 0..64 {
+            let z = 10.0 + (i / 4) as f32 * 5.0;
+            let x = ((i % 4) as f32 - 1.5) * 4.0;
+            let node = scene
+                .spawn(
+                    None,
+                    Transform {
+                        translation: Vec3::new(x, 0.0, z),
+                        ..Transform::default()
+                    },
+                )
+                .unwrap();
+            scene.insert_component(node, bounds(1)).unwrap();
+            nodes.push(node);
+        }
+        // Two overlapping identical bounds at z = 4.0: earliest slot must win on tie.
+        let tie_first = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: Vec3::new(-6.0, 0.0, 4.0),
+                    ..Transform::default()
+                },
+            )
+            .unwrap();
+        scene.insert_component(tie_first, bounds(1)).unwrap();
+        let tie_second = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: Vec3::new(-6.0, 0.0, 4.0),
+                    ..Transform::default()
+                },
+            )
+            .unwrap();
+        scene.insert_component(tie_second, bounds(1)).unwrap();
+
+        let ray = PickRay::new(Vec3::new(-6.0, 0.0, 0.0), Vec3::Z, 200.0).unwrap();
+        let hit = scene.pick(ray, 1).unwrap().hit.unwrap();
+        assert_eq!(hit.node, tie_first);
+        assert!((hit.distance - 3.0).abs() < 1e-5);
+
+        let ray_grid = PickRay::new(Vec3::new(2.0, 0.0, 0.0), Vec3::Z, 200.0).unwrap();
+        let hit_grid = scene.pick(ray_grid, 1).unwrap().hit.unwrap();
+        assert_eq!(hit_grid.node, nodes[2]);
+        assert!((hit_grid.distance - 9.0).abs() < 1e-5);
     }
 }

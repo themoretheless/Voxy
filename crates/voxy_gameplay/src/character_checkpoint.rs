@@ -257,6 +257,7 @@ impl CharacterPhysics {
             }
         }
         self.states = candidate;
+        self.translation_traces.clear();
         self.staging_states.clear();
         self.depenetration = saved.depenetration;
         self.angular_iterations = saved.angular_iterations;

@@ -16,7 +16,11 @@ struct VertexOutput {
     return out;
 }
 @fragment fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    let alpha = textureSample(image, image_sampler, in.uv).a * in.color.a;
-    if alpha <= 0.0 { discard; }
-    return textureSample(image, image_sampler, in.uv) * in.color;
+    let sample = textureSample(image, image_sampler, in.uv) * in.color;
+    if sample.a <= 0.0 { discard; }
+    return sample;
+}
+@fragment fn fs_solid_opaque(in: VertexOutput) -> @location(0) vec4<f32> {
+    let sample = textureSample(image, image_sampler, in.uv) * in.color;
+    return vec4<f32>(sample.rgb, 1.0);
 }

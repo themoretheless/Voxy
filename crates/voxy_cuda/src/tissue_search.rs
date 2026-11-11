@@ -1,5 +1,5 @@
 use crate::{CudaCompute, CudaError};
-use physics::biomechanics::TissueSearchSnapshot;
+use physics_bio::biomechanics::TissueSearchSnapshot;
 
 fn layout(n: usize, e: usize, limit: usize) -> Result<(usize, usize), CudaError> {
     let words = n
@@ -191,7 +191,7 @@ impl CudaCompute {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use physics::biomechanics::{Body, Material};
+    use physics_bio::biomechanics::{Body, Material};
     fn specimen(count: usize) -> Body {
         let mut points = Vec::new();
         let mut cells = Vec::new();
@@ -217,13 +217,13 @@ mod tests {
             ));
         }
         let mut body = Body::new(points, pins, cells).unwrap();
-        let law = physics::biomechanics::ViscoelasticOgden::new(
-            vec![physics::biomechanics::OgdenTerm {
+        let law = physics_bio::biomechanics::ViscoelasticOgden::new(
+            vec![physics_bio::biomechanics::OgdenTerm {
                 shear_pa: 100.,
                 exponent: 2.,
             }],
             1000.,
-            vec![physics::biomechanics::MaxwellBranch {
+            vec![physics_bio::biomechanics::MaxwellBranch {
                 shear_pa: 700.,
                 relaxation_seconds: 0.2,
             }],
@@ -362,21 +362,22 @@ mod tests {
     #[cfg(feature = "cuda")]
     #[derive(Debug)]
     struct CountBackend {
-        inner: std::sync::Arc<dyn physics::biomechanics::TissueSearchBackend>,
+        inner: std::sync::Arc<dyn physics_bio::biomechanics::TissueSearchBackend>,
         calls: std::sync::Arc<std::sync::atomic::AtomicUsize>,
     }
     #[cfg(feature = "cuda")]
     #[derive(Debug)]
     struct CountOperation {
-        inner: Box<dyn physics::biomechanics::TissueSearchOperation>,
+        inner: Box<dyn physics_bio::biomechanics::TissueSearchOperation>,
         calls: std::sync::Arc<std::sync::atomic::AtomicUsize>,
     }
     #[cfg(feature = "cuda")]
-    impl physics::biomechanics::TissueSearchBackend for CountBackend {
+    impl physics_bio::biomechanics::TissueSearchBackend for CountBackend {
         fn prepare(
             &self,
             snapshot: TissueSearchSnapshot,
-        ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str> {
+        ) -> Result<Box<dyn physics_bio::biomechanics::TissueSearchOperation>, &'static str>
+        {
             Ok(Box::new(CountOperation {
                 inner: self.inner.prepare(snapshot)?,
                 calls: self.calls.clone(),
@@ -384,7 +385,7 @@ mod tests {
         }
     }
     #[cfg(feature = "cuda")]
-    impl physics::biomechanics::TissueSearchOperation for CountOperation {
+    impl physics_bio::biomechanics::TissueSearchOperation for CountOperation {
         fn apply(&self, v: &[[f64; 3]]) -> Result<Vec<[f64; 3]>, &'static str> {
             self.calls.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
             self.inner.apply(v)
@@ -425,7 +426,7 @@ mod tests {
         );
         assert_eq!(compute.reserved_device_bytes().unwrap(), 0);
     }
-    fn dynamic_specimen() -> physics::biomechanics::InertialBody {
+    fn dynamic_specimen() -> physics_bio::biomechanics::InertialBody {
         let body = Body::new(
             vec![
                 [0.; 3],
@@ -456,9 +457,10 @@ mod tests {
             .iter()
             .map(|&p| if p { [0.; 3] } else { [0.1, -0.2, 0.3] })
             .collect();
-        let mut owner =
-            physics::biomechanics::InertialBody::new_with_fixed_supports(body, &[6.; 2], velocity)
-                .unwrap();
+        let mut owner = physics_bio::biomechanics::InertialBody::new_with_fixed_supports(
+            body, &[6.; 2], velocity,
+        )
+        .unwrap();
         owner.set_uniform_acceleration([0., -2., 0.]).unwrap();
         owner
     }
@@ -619,11 +621,11 @@ fn backend_failure(error: CudaError) -> &'static str {
         _ => "CUDA tissue search backend failure",
     }
 }
-impl physics::biomechanics::TissueSearchBackend for CudaTissueSearchBackend {
+impl physics_bio::biomechanics::TissueSearchBackend for CudaTissueSearchBackend {
     fn prepare(
         &self,
         snapshot: TissueSearchSnapshot,
-    ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str> {
+    ) -> Result<Box<dyn physics_bio::biomechanics::TissueSearchOperation>, &'static str> {
         #[cfg(feature = "cuda")]
         {
             prepare_capacity(
@@ -648,7 +650,7 @@ impl physics::biomechanics::TissueSearchBackend for CudaTissueSearchBackend {
     }
 }
 #[cfg(feature = "cuda")]
-impl physics::biomechanics::TissueSearchOperation for CudaTissueSearchOperation {
+impl physics_bio::biomechanics::TissueSearchOperation for CudaTissueSearchOperation {
     fn apply(&self, direction: &[[f64; 3]]) -> Result<Vec<[f64; 3]>, &'static str> {
         self.compute
             .tissue_search_action(&self.snapshot, direction)
@@ -661,7 +663,7 @@ impl CudaCompute {
     #[must_use]
     pub fn tissue_search_backend(
         self: &std::sync::Arc<Self>,
-    ) -> std::sync::Arc<dyn physics::biomechanics::TissueSearchBackend> {
+    ) -> std::sync::Arc<dyn physics_bio::biomechanics::TissueSearchBackend> {
         std::sync::Arc::new(CudaTissueSearchBackend {
             compute: std::sync::Arc::clone(self),
         })

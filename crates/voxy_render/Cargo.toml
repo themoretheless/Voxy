@@ -17,7 +17,7 @@ blake3.workspace = true
 voxy_gpu_core = { path = "../voxy_gpu_core" }
 half.workspace = true
 bytemuck = { workspace = true, features = ["derive"] }
-glam = { workspace = true, features = ["bytemuck"] }
+glam = { workspace = true, features = ["bytemuck", "serde"] }
 gltf = { workspace = true, features = ["utils", "names"] }
 openxr = { workspace = true, optional = true }
 raw-window-handle.workspace = true
@@ -31,6 +31,7 @@ wgpu = { workspace = true, features = ["noop"] }
 [dev-dependencies]
 naga = { version = "30.0.0", features = ["wgsl-in", "glsl-out"] }
 physics = { path = "../physics" }
+physics_bio = { path = "../physics_bio" }
 physics_voxel = { path = "../physics_voxel" }
 voxy_world = { path = "../voxy_world" }
 voxy_text = { path = "../voxy_text" }

@@ -1,0 +1,99 @@
++ sudo nerdctl run --rm --name voxy-wine-check --platform linux/amd64 --network none -v /home/themoretheless.guest/voxy-x64-output/windows-turntable.zip:/input/turntable.zip:ro voxy-wine-runtime:qualification bash -lc '
+set -ex
+test ! -e /source
+test ! -e /root/.cargo
+unzip -t /input/turntable.zip
+unzip -q /input/turntable.zip -d /tmp/unpacked
+mv /tmp/unpacked /tmp/relocated-game
+Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp -ac >/tmp/voxy-xvfb.log 2>&1 &
+display_pid=$!
+trap "kill $display_pid 2>/dev/null || true" EXIT
+for attempt in $(seq 1 50); do
+    if test -S /tmp/.X11-unix/X99; then break; fi
+    sleep 0.1
+done
+test -S /tmp/.X11-unix/X99
+export DISPLAY=:99 WINEARCH=win64 WINEPREFIX=/tmp/voxy-wine-prefix WINEDLLOVERRIDES=mscoree,mshtml=
+export WGPU_BACKEND=vulkan VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json
+cd /
+timeout --kill-after=5s 90 /usr/lib/wine/wine64 /tmp/relocated-game/voxy_game.exe --embedded-game-check
+timeout --kill-after=5s 90 /usr/lib/wine/wine64 /tmp/relocated-game/voxy_game.exe --embedded-game-native-smoke
+'
++ test '!' -e /source
++ test '!' -e /root/.cargo
++ unzip -t /input/turntable.zip
+Archive:  /input/turntable.zip
+    testing: voxy_game.exe            OK
+    testing: game.vpak                OK
+No errors detected in compressed data of /input/turntable.zip.
++ unzip -q /input/turntable.zip -d /tmp/unpacked
++ mv /tmp/unpacked /tmp/relocated-game
++ Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp -ac
++ display_pid=12
++ trap 'kill 12 2>/dev/null || true' EXIT
+++ seq 1 50
++ for attempt in $(seq 1 50)
++ test -S /tmp/.X11-unix/X99
++ sleep 0.1
++ for attempt in $(seq 1 50)
++ test -S /tmp/.X11-unix/X99
++ break
++ test -S /tmp/.X11-unix/X99
++ export DISPLAY=:99 WINEARCH=win64 WINEPREFIX=/tmp/voxy-wine-prefix WINEDLLOVERRIDES=mscoree,mshtml=
++ DISPLAY=:99
++ WINEARCH=win64
++ WINEPREFIX=/tmp/voxy-wine-prefix
++ WINEDLLOVERRIDES=mscoree,mshtml=
++ export WGPU_BACKEND=vulkan VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json
++ WGPU_BACKEND=vulkan
++ VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json
++ cd /
++ timeout --kill-after=5s 90 /usr/lib/wine/wine64 /tmp/relocated-game/voxy_game.exe --embedded-game-check
+wine: created the configuration directory '/tmp/voxy-wine-prefix'
+002c:fixme:actctx:parse_depend_manifests Could not find dependent assembly L"Microsoft.Windows.Common-Controls" (6.0.0.0)
+004c:fixme:actctx:parse_depend_manifests Could not find dependent assembly L"Microsoft.Windows.Common-Controls" (6.0.0.0)
+0054:fixme:actctx:parse_depend_manifests Could not find dependent assembly L"Microsoft.Windows.Common-Controls" (6.0.0.0)
+0054:err:ole:StdMarshalImpl_MarshalInterface Failed to create ifstub, hr 0x80004002
+0054:err:ole:CoMarshalInterface Failed to marshal the interface {6d5140c1-7436-11ce-8034-00aa006009fa}, hr 0x80004002
+0054:err:ole:apartment_get_local_server_stream Failed: 0x80004002
+0054:err:ole:start_rpcss Failed to open RpcSs service
+004c:err:ole:StdMarshalImpl_MarshalInterface Failed to create ifstub, hr 0x80004002
+004c:err:ole:CoMarshalInterface Failed to marshal the interface {6d5140c1-7436-11ce-8034-00aa006009fa}, hr 0x80004002
+004c:err:ole:apartment_get_local_server_stream Failed: 0x80004002
+wine: failed to open L"C:\\windows\\syswow64\\rundll32.exe": c0000135
+002c:fixme:event:wait_for_withdrawn_state window 0x1005a/c00003 wait timed out
+0100:fixme:hid:handle_IRP_MN_QUERY_ID Unhandled type 00000005
+wine: configuration in L"/tmp/voxy-wine-prefix" has been updated.
+0100:fixme:hid:handle_IRP_MN_QUERY_ID Unhandled type 00000005
+0100:fixme:hid:handle_IRP_MN_QUERY_ID Unhandled type 00000005
+0100:fixme:hid:handle_IRP_MN_QUERY_ID Unhandled type 00000005
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+GAME STATE {"version":1,"objects":[{"id":"turntable","parent":null,"name":"turntable","active":true,"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.90929735,-0.41614708],"scale":[1.0,1.0,1.0],"components":{"editor.model.v1":"mesh","game.angular-motion.v1":{"axis":[0.0,0.0,1.0],"radians_per_second":2.0}}}]}
+GAME CHECK PASS ticks=120 objects=1 prefab_instances=0
++ timeout --kill-after=5s 90 /usr/lib/wine/wine64 /tmp/relocated-game/voxy_game.exe --embedded-game-native-smoke
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+0140:fixme:system:EnableNonClientDpiScaling (00000000000B0074): stub
+0140:fixme:dwmapi:DwmSetWindowAttribute (00000000000B0074, 26, 00007FFFFE2F2C60, 4) stub
+0140:fixme:d3d:wined3d_guess_card No card selector available for card vendor 0000 (using GL_RENDERER "llvmpipe (LLVM 20.1.2, 256 bits)").
+0140:fixme:ntdll:NtQuerySystemInformation info_class SYSTEM_PERFORMANCE_INFORMATION
+0140:fixme:d3d:wined3d_guess_card No card selector available for card vendor 0000 (using GL_RENDERER "llvmpipe (LLVM 20.1.2, 256 bits)").
+0140:fixme:vulkan:wine_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_EXT not supported on this platform.
+vkd3d:0140:fixme:d3d12_device_CheckFeatureSupport Unhandled feature 0x20.
+vkd3d:0140:fixme:d3d12_device_CheckFeatureSupport Unhandled feature 0x2a.
+vkd3d:0140:fixme:d3d12_device_CheckFeatureSupport Unhandled feature 0x30.
+vkd3d:0140:fixme:d3d12_device_CheckFeatureSupport Unhandled format 0x68.
+vkd3d:0140:fixme:d3d12_device_CheckFeatureSupport Unhandled feature 0x25.
+vkd3d:0140:fixme:d3d12_device_CheckFeatureSupport Unhandled feature 0x28.
+vkd3d:0140:fixme:d3d12_device_CheckFeatureSupport Unhandled feature 0x20.
+vkd3d:0140:fixme:d3d12_rtv_desc_create_rtv NULL resource RTV not implemented.
+vkd3d:0140:fixme:d3d12_fence_init Ignoring flags 0x1.
+0140:fixme:d3dcompiler:D3DCompile2 Ignoring flags 0x800.
+vkd3d:0140:fixme:hlsl_compile_shader Unknown compilation target "cs_5_1".
+0140:err:d3dcompiler:D3DCompile2 Failed to compile shader, vkd3d result -5.
+Error: "renderer error: RequestDevice(RequestDeviceError { inner: Core(Device(Lost)) })"
++ kill 12
+X connection to :99 broken (explicit kill or server shutdown).
+X connection to :99 broken (explicit kill or server shutdown).

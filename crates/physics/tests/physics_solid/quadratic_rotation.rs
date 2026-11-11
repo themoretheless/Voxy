@@ -66,7 +66,7 @@ fn nonrigid_motion_retains_its_energy_instead_of_discarding_it() {
 
 #[test]
 fn finite_fragment_spin_is_covariant_and_independent_of_world_origin() {
-    use physics::{biomechanics::Material as Elastic, plasticity::mesh::FiniteQuadraticDynamics};
+    use physics::{constitutive::Material as Elastic, plasticity::mesh::FiniteQuadraticDynamics};
     let q = |p: [f64; 3]| [-p[1], p[0], p[2]];
     let shift = [8., -3., 4.];
     let center: [f64; 3] = std::array::from_fn(|a| q([0.25; 3])[a] + shift[a]);

@@ -1,6 +1,6 @@
 //! GPU snapshot of current layered paired-tissue FEM surfaces, before/after dynamics.
 use glam::Vec3;
-use physics::biomechanics::{InertialBody, Material, TesticularGeometry};
+use physics_bio::biomechanics::{InertialBody, Material, TesticularGeometry};
 use voxy_demos::fem_surface;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 fn main() -> Result<(), Box<dyn std::error::Error>> {

@@ -1,0 +1,30 @@
+LOD NATIVE SNAPSHOT PASS frames=3 owners=2
+MODEL PUBLISHED frames=3 first_x=0 asset=a
+LOD NATIVE SNAPSHOT PASS frames=4 owners=2
+LOD NATIVE FAR PASS frames=4 levels=[1] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=7 owners=2
+LOD NATIVE NEAR AND LAST GOOD PASS frames=7 levels=[0]
+MODEL PUBLISHED frames=8 first_x=0 asset=b
+LOD NATIVE SNAPSHOT PASS frames=10 owners=2
+LOD NATIVE BUDGET RECOVERY PASS frames=10
+LOD NATIVE PRESENTED AFTER FAILURE PASS frames=10
+LOD NATIVE SNAPSHOT PASS frames=13 owners=2
+LOD NATIVE SPLIT PASS frames=13 phase=3 msaa4=false levels=[[Some(0)], [Some(1)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=16 owners=2
+LOD NATIVE SPLIT PASS frames=16 phase=4 msaa4=true levels=[[Some(0)], [Some(1)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=19 owners=2
+LOD NATIVE SPLIT PASS frames=19 phase=5 msaa4=true levels=[[Some(1)], [Some(0)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=22 owners=2
+LOD NATIVE SINGLE RESTORED PASS frames=22
+LOD NATIVE SNAPSHOT PASS frames=25 owners=2
+LOD NATIVE COMPETITION CONTRACT frames=25 mandatory=62816 optional=[3072, 3072] budget=65888
+LOD NATIVE SNAPSHOT PASS frames=28 owners=2
+LOD NATIVE COMPETITION FALLBACK PASS frames=28 live=65888 budget=65888 pending={(AssetId("b"), 1)}
+MODEL PUBLISHED frames=30 first_x=0 asset=a
+LOD NATIVE SNAPSHOT PASS frames=31 owners=2
+LOD NATIVE SNAPSHOT PASS frames=32 owners=2
+LOD NATIVE SNAPSHOT PASS frames=33 owners=2
+LOD NATIVE SNAPSHOT PASS frames=34 owners=2
+MODEL PUBLISHED frames=34 first_x=0 asset=b
+LOD NATIVE SNAPSHOT PASS frames=35 owners=2
+LOD NATIVE COMPETITION RECOVERY PASS frames=35 live=68960 budget=268435456

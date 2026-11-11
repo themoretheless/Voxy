@@ -1,0 +1,11 @@
+{
+  "fixture": "fox.vpak",
+  "ticks": 24,
+  "delta": {
+    "width": 756,
+    "height": 330,
+    "left": 9546,
+    "right": 0
+  },
+  "recoveredExact": true
+}

@@ -206,12 +206,12 @@ fn imported_pose64(
 fn imported_contact_sample64(
     model: &ModelAsset,
     reference: &[DMat4],
-    domains: &[std::sync::Arc<physics::biomechanics::PrescribedTriangleSurface>],
+    domains: &[std::sync::Arc<physics_bio::biomechanics::PrescribedTriangleSurface>],
     phase: f64,
 ) -> Result<
     (
         Vec<DMat4>,
-        Vec<std::sync::Arc<physics::biomechanics::PrescribedTriangleSurface>>,
+        Vec<std::sync::Arc<physics_bio::biomechanics::PrescribedTriangleSurface>>,
     ),
     &'static str,
 > {
@@ -220,13 +220,13 @@ fn imported_contact_sample64(
 fn imported_contact_startup64(
     model: &ModelAsset,
     reference: &[DMat4],
-    domains: &[std::sync::Arc<physics::biomechanics::PrescribedTriangleSurface>],
+    domains: &[std::sync::Arc<physics_bio::biomechanics::PrescribedTriangleSurface>],
     phase: f64,
     startup_seconds: f64,
 ) -> Result<
     (
         Vec<DMat4>,
-        Vec<std::sync::Arc<physics::biomechanics::PrescribedTriangleSurface>>,
+        Vec<std::sync::Arc<physics_bio::biomechanics::PrescribedTriangleSurface>>,
     ),
     &'static str,
 > {
@@ -303,9 +303,10 @@ fn imported_tissues(
     Ok(tissue_demo::TissueDemo::body_at_centers(centers, joints))
 }
 fn attachment_domains(
-    surface: &physics::biomechanics::PrescribedTriangleSurface,
+    surface: &physics_bio::biomechanics::PrescribedTriangleSurface,
     centers: [[f64; 3]; 4],
-) -> Result<Vec<std::sync::Arc<physics::biomechanics::PrescribedTriangleSurface>>, &'static str> {
+) -> Result<Vec<std::sync::Arc<physics_bio::biomechanics::PrescribedTriangleSurface>>, &'static str>
+{
     centers
         .iter()
         .enumerate()
@@ -360,7 +361,7 @@ fn replay_contact_geometry(
     let parameters = &value["contact_parameters"];
     let scalar = |key: &str| parameters[key].as_f64().ok_or("missing contact parameter");
     let enabled: Vec<bool> = serde_json::from_value(value["contact_faces"].clone())?;
-    let start = physics::biomechanics::PrescribedTriangleSurface::new(
+    let start = physics_bio::biomechanics::PrescribedTriangleSurface::new(
         points("surface_start")?,
         surface_faces,
         scalar("minimum_distance_m")?,
@@ -423,7 +424,7 @@ fn contact_precision_report(
         let body: [[f64; 3]; 3] = serde_json::from_value(pose["body_triangle"].clone())?;
         let obstacle: [[f64; 3]; 3] = serde_json::from_value(pose["obstacle_triangle"].clone())?;
         let gap = |body: [[f64; 3]; 3], obstacle: [[f64; 3]; 3]| -> Result<f64, &'static str> {
-            let surface = physics::biomechanics::PrescribedTriangleSurface::new(
+            let surface = physics_bio::biomechanics::PrescribedTriangleSurface::new(
                 obstacle.to_vec(),
                 vec![[0, 1, 2]],
                 minimum,
@@ -812,9 +813,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             positions.len(),
             faces.len()
         );
-        let surface = std::sync::Arc::new(physics::biomechanics::PrescribedTriangleSurface::new(
-            positions, faces, 0.0001, 0.003, 100.,
-        )?);
+        let surface =
+            std::sync::Arc::new(physics_bio::biomechanics::PrescribedTriangleSurface::new(
+                positions, faces, 0.0001, 0.003, 100.,
+            )?);
         let (centers, _) =
             imported_attachments(imported.as_ref().unwrap(), reference.as_ref().unwrap())?;
         let domains = if let Some(authored) = &authored {
@@ -1327,7 +1329,7 @@ mod collision_tests {
         audit_supported_rig_capture(true);
     }
     fn checkpoint_cell_volume_ratios(
-        volume: &physics::biomechanics::TetraMesh,
+        volume: &physics_bio::biomechanics::TetraMesh,
         nodes: &[[[f64; 3]; 2]],
     ) -> Result<(f64, f64), String> {
         if nodes.len() != volume.points.len() {
@@ -1385,7 +1387,7 @@ mod collision_tests {
     }
     #[test]
     fn checkpoint_volume_audit_rejects_inversion_collapse_and_nonfinite_positions() {
-        let volume = physics::biomechanics::TetraMesh::from_tetrahedra(
+        let volume = physics_bio::biomechanics::TetraMesh::from_tetrahedra(
             vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
             vec![[0, 1, 2, 3]],
         )
@@ -1422,7 +1424,7 @@ mod collision_tests {
         let reference_volume = std::env::var("VOXY_RIG_REFERENCE_VOLUME")
             .ok()
             .map(|path| std::fs::read_to_string(path).expect("reference volume file"));
-        let volume = physics::biomechanics::TetraMesh::from_medit_volume(
+        let volume = physics_bio::biomechanics::TetraMesh::from_medit_volume(
             reference_volume.as_deref().unwrap_or(include_str!(
                 "../../../artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh"
             )),
@@ -1624,7 +1626,7 @@ mod collision_tests {
             !std::path::Path::new(&output).exists(),
             "preserve existing candidate"
         );
-        let volume = physics::biomechanics::TetraMesh::from_medit_volume(
+        let volume = physics_bio::biomechanics::TetraMesh::from_medit_volume(
             &std::fs::read_to_string(&mesh_path).unwrap(),
         )
         .unwrap();
@@ -1688,7 +1690,7 @@ mod collision_tests {
             contact_positions_from_pose64(&model, &model.skeleton.bind_pose64()).unwrap();
         let binding = imported.value().bind_skin(&demo, &rest).unwrap();
         let audit_volume = std::env::var("VOXY_RIG_REFERENCE_VOLUME").ok().map(|path| {
-            physics::biomechanics::TetraMesh::from_medit_volume(
+            physics_bio::biomechanics::TetraMesh::from_medit_volume(
                 &std::fs::read_to_string(path).unwrap(),
             )
             .unwrap()
@@ -1718,7 +1720,7 @@ mod collision_tests {
     }
     #[test]
     fn imported_startup_drives_native_tetra_supports_with_independent_energy_balance() {
-        use physics::biomechanics::{PrescribedTriangleSurface, TetraMesh};
+        use physics_bio::biomechanics::{PrescribedTriangleSurface, TetraMesh};
         use std::sync::Arc;
         let model = ModelAsset::parse(
             include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
@@ -1829,7 +1831,7 @@ mod collision_tests {
         let (points, faces) = contact_positions_from_pose64(&model, &bind).unwrap();
         let reference = bind.skin_matrices(&model.skeleton).unwrap();
         let domain = std::sync::Arc::new(
-            physics::biomechanics::PrescribedTriangleSurface::new(
+            physics_bio::biomechanics::PrescribedTriangleSurface::new(
                 points.clone(),
                 faces,
                 0.0001,
@@ -2093,7 +2095,7 @@ mod collision_tests {
             .unwrap();
         let mut demo = imported_tissues(&model, &reference).unwrap();
         let (positions, faces) = contact_positions(&model, 0.).unwrap();
-        let surface = physics::biomechanics::PrescribedTriangleSurface::new(
+        let surface = physics_bio::biomechanics::PrescribedTriangleSurface::new(
             positions, faces, 0.0001, 0.003, 100.,
         )
         .unwrap();
@@ -2153,7 +2155,7 @@ mod collision_tests {
         TissueDemo,
         Vec<(
             Vec<DMat4>,
-            Vec<Arc<physics::biomechanics::PrescribedTriangleSurface>>,
+            Vec<Arc<physics_bio::biomechanics::PrescribedTriangleSurface>>,
         )>,
     ) {
         let model = ModelAsset::parse(
@@ -2175,7 +2177,7 @@ mod collision_tests {
         let mut serial = imported_tissues(&model, &reference32).unwrap();
         let mut parallel = imported_tissues(&model, &reference32).unwrap();
         let (positions, faces) = contact_positions64(&model, 0.).unwrap();
-        let surface = physics::biomechanics::PrescribedTriangleSurface::new(
+        let surface = physics_bio::biomechanics::PrescribedTriangleSurface::new(
             positions, faces, 0.0001, 0.003, 100.,
         )
         .unwrap();
@@ -2267,7 +2269,7 @@ mod collision_tests {
             .unwrap();
         let mut demo = imported_tissues(&model, &reference).unwrap();
         let (positions, faces) = contact_positions64(&model, 0.).unwrap();
-        let surface = physics::biomechanics::PrescribedTriangleSurface::new(
+        let surface = physics_bio::biomechanics::PrescribedTriangleSurface::new(
             positions, faces, 0.0001, 0.003, 100.,
         )
         .unwrap();
@@ -2350,7 +2352,7 @@ mod collision_tests {
             .skin_matrices(&model.skeleton)
             .unwrap();
         let (positions, faces) = contact_positions64(&model, 0.).unwrap();
-        let surface = physics::biomechanics::PrescribedTriangleSurface::new(
+        let surface = physics_bio::biomechanics::PrescribedTriangleSurface::new(
             positions.clone(),
             faces.clone(),
             0.0001,
@@ -2370,7 +2372,7 @@ mod collision_tests {
         let mut changed_faces = faces;
         changed_faces.reverse();
         let foreign = std::sync::Arc::new(
-            physics::biomechanics::PrescribedTriangleSurface::new(
+            physics_bio::biomechanics::PrescribedTriangleSurface::new(
                 positions,
                 changed_faces,
                 0.0001,
@@ -2425,7 +2427,7 @@ mod collision_tests {
         let (initial, faces) = contact_positions(&model, 0.).unwrap();
         assert_eq!(initial.len(), 3273);
         assert_eq!(faces.len(), 4672);
-        let reference = physics::biomechanics::PrescribedTriangleSurface::new(
+        let reference = physics_bio::biomechanics::PrescribedTriangleSurface::new(
             initial.clone(),
             faces.clone(),
             0.0001,

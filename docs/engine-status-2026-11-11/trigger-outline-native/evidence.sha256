@@ -1,0 +1,10 @@
+6d41cdfe31782f86f70eca88a1727fedf7eb563d5bdd2cc46ea9649bca18b0d0  crates/voxy_editor/src/app/viewport.rs
+67ad7dde47899f49dca4444f4da7677ef97b849e20d9033c94d4305b111429a3  crates/voxy_editor/src/gizmo.rs
+cb39ed6194626d975880df351c6ee1854694ec1f0dc8e883aed16f1b2adc518e  crates/voxy_editor/src/lib.rs
+a612d253ef4dc34d99ba34b790d05f1ab7bb13399e2e9691251f9795b6092b59  docs/engine-status-2026-11-11/trigger-outline-native/physics.png
+8411affbc2516581a578e3eedb84c88223ddbbe74ffe5b601bd3e76dd1225261  docs/engine-status-2026-11-11/trigger-outline-native/play.png
+cc8e799a044823c085507c8c11574e0b829d8099fbf8ed164ec1142fd6edca48  docs/engine-status-2026-11-11/trigger-outline-native/transform.png
+1db4374b28c8d141e7aaa5c5ae5f9ef2ced685160ec539f6069be164cb8e0984  docs/engine-status-2026-11-11/trigger-outline-native/fixture/assets.json
+a2440378f46e814d5bce18d31242eca6e4af2077efc425a2d7dadaa1f264c0bd  docs/engine-status-2026-11-11/trigger-outline-native/fixture/main.scene.json
+952775abdbd2d58671d347489b7bf681328183c6f610e672727d9250a9aea990  docs/engine-status-2026-11-11/trigger-outline-native/fixture/project.voxy
+0bd285a58697f993da000e2b1e8b52b44a37432956aaafd59465db08c77f3861  /tmp/voxy-trigger-outline.xoZQeJ/Voxy.app/Contents/MacOS/VoxyTriggerOutlineCheck

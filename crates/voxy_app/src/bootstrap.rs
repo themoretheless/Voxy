@@ -526,102 +526,36 @@ pub(super) fn handle_early_cli_commands(
         }
         std::fs::write(&output, bytes)?;
         println!("Generated plant: {}", output.display());
-        if arguments.iter().any(|a| a == "--export-only") {
-            return Ok(Some(()));
-        }
-        let preview = output.with_extension("preview.glb");
-        std::fs::write(
-            &preview,
-            voxy_model::plants::generate_plant_editor_glb(voxy_model::plants::PlantOptions {
-                kind,
-                seed,
-                height,
-            })?,
-        )?;
-        println!(
-            "Editor opens a simplified material preview; full PBR asset retained at {}",
-            output.display()
-        );
-        voxy_editor::run_model_viewport(
-            &voxy_editor::ModelSource::File(preview),
-            if arguments.iter().any(|a| a == "--smoke") {
-                voxy_editor::ViewportMode::Smoke
-            } else {
-                voxy_editor::ViewportMode::Interactive
-            },
-        )?;
-        return Ok(Some(()));
-    }
-
-    if arguments.first().is_some_and(|arg| arg == "--game-package") {
-        let path = arguments.get(1).ok_or("--game-package requires a path")?;
-        let mode = match arguments.get(2).map(String::as_str) {
-            None | Some("--game") => voxy_editor::ViewportMode::Game,
-            Some("--game-check") => voxy_editor::ViewportMode::GameCheck,
-            Some("--game-native-smoke") => voxy_editor::ViewportMode::GameSmoke,
-            _ => return Err("unsupported packaged game mode".into()),
-        };
-        if arguments.len() > 3 {
-            return Err("unexpected packaged game arguments".into());
-        }
-        voxy_editor::run_packaged_game(std::path::Path::new(path), mode)?;
-        return Ok(Some(()));
-    }
-
-    if let Some(command) = arguments
-        .first()
-        .filter(|arg| matches!(arg.as_str(), "--model" | "--model-manifest"))
-    {
-        let path = arguments.get(1).ok_or("missing model/manifest path")?;
-        let source = if command == "--model-manifest" {
-            voxy_editor::ModelSource::Manifest {
-                path: path.into(),
-                asset: voxy_assets::AssetId(
-                    arguments.get(2).ok_or("missing logical asset ID")?.clone(),
-                ),
-            }
-        } else {
-            voxy_editor::ModelSource::File(path.into())
-        };
-        let scene = arguments
-            .iter()
-            .position(|arg| arg == "--scene")
-            .map(|index| {
-                arguments
-                    .get(index + 1)
-                    .ok_or("--scene requires a path")
-                    .map(std::path::Path::new)
-            })
-            .transpose()?;
-        if let Some(index) = arguments.iter().position(|arg| arg == "--export-game") {
-            let output = arguments
-                .get(index + 1)
-                .ok_or("--export-game requires an output path")?;
-            voxy_editor::export_game_package(
-                &source,
-                scene.ok_or("--export-game requires --scene")?,
-                std::path::Path::new(output),
+        if !arguments.iter().any(|a| a == "--export-only") {
+            let preview = output.with_extension("preview.glb");
+            std::fs::write(
+                &preview,
+                voxy_model::plants::generate_plant_editor_glb(voxy_model::plants::PlantOptions {
+                    kind,
+                    seed,
+                    height,
+                })?,
             )?;
-            return Ok(Some(()));
+            println!(
+                "Simplified preview written to {} (open with `cargo run -p voxy_editor -- {}`)",
+                preview.display(),
+                preview.display()
+            );
         }
-        let mode = if arguments
-            .iter()
-            .any(|arg| arg == "--animation-native-smoke")
-        {
-            voxy_editor::ViewportMode::AnimationSmoke
-        } else if arguments.iter().any(|arg| arg == "--game-native-smoke") {
-            voxy_editor::ViewportMode::GameSmoke
-        } else if arguments.iter().any(|arg| arg == "--game-check") {
-            voxy_editor::ViewportMode::GameCheck
-        } else if arguments.iter().any(|arg| arg == "--game") {
-            voxy_editor::ViewportMode::Game
-        } else if arguments.iter().any(|arg| arg == "--smoke") {
-            voxy_editor::ViewportMode::Smoke
-        } else {
-            voxy_editor::ViewportMode::Interactive
-        };
-        voxy_editor::run_model_viewport_with_scene(&source, mode, scene)?;
         return Ok(Some(()));
+    }
+
+    if let Some(command) = arguments.first().filter(|arg| {
+        matches!(
+            arg.as_str(),
+            "--game-package" | "--model" | "--model-manifest"
+        )
+    }) {
+        return Err(format!(
+            "`{command}` belongs to the standalone scene/editor runtime; run `cargo run -p voxy_editor -- {}` instead",
+            arguments.join(" ")
+        )
+        .into());
     }
     Ok(None)
 }

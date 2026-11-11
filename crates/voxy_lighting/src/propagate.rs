@@ -150,7 +150,8 @@ pub fn build_light_with_scratch(
 
     scratch.sky.fill(0);
     if input.sky_from_above {
-        seed_direct_sky(&scratch.cells.opaque, &mut scratch.sky);
+        let check_top_halo = input.neighbors[FaceNeighbor::PosY.index()].is_some();
+        seed_direct_sky(&scratch.cells.opaque, &mut scratch.sky, check_top_halo);
     }
     propagate(
         &scratch.cells.opaque,
@@ -213,10 +214,14 @@ pub(crate) fn validate(input: &LightingInput, budget: LightingBudget) -> Result<
     Ok(())
 }
 
-pub(crate) fn seed_direct_sky(opaque: &[bool], sky: &mut [u8]) {
+pub(crate) fn seed_direct_sky(opaque: &[bool], sky: &mut [u8], check_top_halo: bool) {
     for z in 0..CHUNK_EDGE {
         for x in 0..CHUNK_EDGE {
-            let mut level = MAX_LIGHT;
+            let mut level = if check_top_halo && opaque[padded_index([x, CHUNK_EDGE, z])] {
+                0
+            } else {
+                MAX_LIGHT
+            };
             for y in (0..CHUNK_EDGE).rev() {
                 let index = padded_index([x, y, z]);
                 if opaque[index] {
@@ -227,6 +232,144 @@ pub(crate) fn seed_direct_sky(opaque: &[bool], sky: &mut [u8]) {
             }
         }
     }
+}
+
+/// Propagates previously solved face-neighbor [`LightVolume`] boundary slices across chunk seams
+/// by seeding the 6 face halos of `scratch` and running bounded BFS relaxation.
+///
+/// Call this after single-chunk [`build_light_with_scratch`] passes when neighbor light volumes
+/// are available (e.g. vertical skylight shafts below `y == 0` or cross-chunk lamps up to 15 voxels
+/// away from a chunk seam).
+///
+/// # Errors
+///
+/// Returns cancellation, invalid budget, unknown block, inconsistent stamp, or propagation budget
+/// failures without publishing a partial volume.
+pub fn build_light_with_neighbor_volumes(
+    input: &LightingInput,
+    neighbor_lights: &[Option<&LightVolume>; 6],
+    budget: LightingBudget,
+    cancel: &CancelToken,
+    scratch: &mut LightingScratch,
+) -> Result<LightVolume, LightingError> {
+    if neighbor_lights.iter().all(Option::is_none) {
+        return build_light_with_scratch(input, budget, cancel, scratch);
+    }
+    validate(input, budget)?;
+    if cancel.is_cancelled() {
+        return Err(LightingError::Cancelled);
+    }
+    scratch.cells.reset();
+    let registry = &input.registry;
+    if let voxy_world::PalettedBlocks::Uniform(block) = &input.center.data.blocks {
+        scratch.cells.fill_center_uniform(registry, *block)?;
+    } else {
+        scratch.cells.fill_center_paletted(
+            registry,
+            &input.center.data.blocks,
+            &mut scratch.palette,
+            &mut scratch.slots,
+            &mut scratch.classes,
+        )?;
+    }
+    for face in FaceNeighbor::ALL {
+        if let Some(neighbor) = &input.neighbors[face.index()] {
+            fill_face_halo(&mut scratch.cells, registry, neighbor, face)?;
+        }
+    }
+
+    scratch.sky.fill(0);
+    if input.sky_from_above {
+        let check_top_halo = input.neighbors[FaceNeighbor::PosY.index()].is_some();
+        seed_direct_sky(&scratch.cells.opaque, &mut scratch.sky, check_top_halo);
+    }
+    let mut has_halo_block_light = false;
+    for face in FaceNeighbor::ALL {
+        let Some(vol) = neighbor_lights[face.index()] else {
+            continue;
+        };
+        let (fixed_local, fixed_padded) = match face {
+            FaceNeighbor::NegX | FaceNeighbor::NegY | FaceNeighbor::NegZ => (EDGE - 1, 0),
+            FaceNeighbor::PosX | FaceNeighbor::PosY | FaceNeighbor::PosZ => (0, PADDED_EDGE - 1),
+        };
+        for a in 0..EDGE {
+            for b in 0..EDGE {
+                let (nx, ny, nz, px, py, pz) = match face {
+                    FaceNeighbor::NegX | FaceNeighbor::PosX => {
+                        (fixed_local, a, b, fixed_padded, a + 1, b + 1)
+                    }
+                    FaceNeighbor::NegY | FaceNeighbor::PosY => {
+                        (b, fixed_local, a, b + 1, fixed_padded, a + 1)
+                    }
+                    FaceNeighbor::NegZ | FaceNeighbor::PosZ => {
+                        (b, a, fixed_local, b + 1, a + 1, fixed_padded)
+                    }
+                };
+                let padded_idx = (py * PADDED_EDGE + pz) * PADDED_EDGE + px;
+                // Even if neighbor wasn't provided in `input.neighbors`, allow light halo if non-opaque:
+                if input.neighbors[face.index()].is_none() {
+                    scratch.cells.opaque[padded_idx] = false;
+                }
+                if scratch.cells.opaque[padded_idx] {
+                    continue;
+                }
+                let local_byte = vol.bytes()[nx + EDGE * (nz + EDGE * ny)];
+                let n_sky = local_byte >> 4;
+                let n_block = local_byte & 0x0f;
+                if n_sky > scratch.sky[padded_idx] {
+                    scratch.sky[padded_idx] = n_sky;
+                }
+                if n_block > scratch.cells.emission[padded_idx] {
+                    scratch.cells.emission[padded_idx] = n_block;
+                    if n_block > 1 {
+                        has_halo_block_light = true;
+                    }
+                }
+            }
+        }
+    }
+
+    propagate(
+        &scratch.cells.opaque,
+        &mut scratch.sky,
+        &mut scratch.frontier,
+        &mut scratch.unlit,
+        &mut scratch.queue,
+        budget,
+        cancel,
+        true,
+    )?;
+    if scratch.cells.has_emission || has_halo_block_light {
+        propagate(
+            &scratch.cells.opaque,
+            &mut scratch.cells.emission,
+            &mut scratch.frontier,
+            &mut scratch.unlit,
+            &mut scratch.queue,
+            budget,
+            cancel,
+            false,
+        )?;
+    }
+
+    let mut packed = vec![0_u8; CHUNK_VOLUME];
+    for y in 0..EDGE {
+        let py = (y + 1) * PADDED_EDGE;
+        for z in 0..EDGE {
+            let base_padded = (py + (z + 1)) * PADDED_EDGE + 1;
+            let base_local = EDGE * (z + EDGE * y);
+            let sky_row = &scratch.sky[base_padded..base_padded + EDGE];
+            let block_row = &scratch.cells.emission[base_padded..base_padded + EDGE];
+            let out_row = &mut packed[base_local..base_local + EDGE];
+            for x in 0..EDGE {
+                out_row[x] = (sky_row[x] << 4) | block_row[x];
+            }
+        }
+    }
+    Ok(LightVolume {
+        packed: packed.into_boxed_slice(),
+        stamp: input.stamp.clone(),
+    })
 }
 
 /// Face neighbors of a padded cell in relaxation order with the light each would receive.

@@ -1,0 +1,35 @@
+STREET RUN pid=93194 benchmark_seconds=20 offscreen=false paired_dda=false tiles=false cell_bounds=false far_bound=false
+ORIGINAL STREET seed=1448040537 source_geometry_assets=0 materials=143 mesh_batches=161 triangles=3634960 instances=120739
+ORIGINAL STREET MATERIALS provider=PolyHaven license=CC0 scans=3 source_maps=9 gpu_textures=6 source_resolution=4k gpu=linear_rgba32float packing=lossless_channels
+DAYLIGHT solar_irradiance=[2169.2283, 2185.722, 1982.8407] source_background_unchanged=true indirect_float32=true
+STREET grounded spawn: authored=DVec3(0.6000000238418579, 0.1299999713897706, -18.0) resolved=DVec3(0.44700391757059055, 0.05477531636347348, -17.86699189712493)
+STREET DISPLAY format=Rgba16Float colour_space=ExtendedSrgbLinear hdr_info=DisplayHdrInfo { luminance: None, headroom: Some(DisplayHeadroom { current: Some(1.0), potential: Some(16.0), reference: None }), chromaticity: None, coarse: Some(DisplayCoarseRange { high_dynamic_range: Some(false), gamut: None }), bits_per_color: None }
+STREET GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }; 1920x1080 Immediate; full scene geometry; original mip chains when images are present
+STREET WORLD SOURCE ready meshes=161 instances=120739 exact_workers=128 source_simplified=false preparation_seconds=121.828
+STREET WORLD consumer_any_hit_admission=false native_source_witness=false node_reciprocal=false
+STREET WORLD exact_position_consumer=false material_surface_policy=false exact_workers=128 exact_group=1
+STREET WORLD SCHEDULING {"kind":"Nearest","source_simplified":false,"wide_source_block_blake3":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"wide_source_near_first":false,"wide_source_nodes":false}
+STREET WORLD geometry_bounds_bytes=0 geometry_bounds_check=false
+STREET FAILURE phase=initialization error=ray scene error: Unsupported
+STREET EXIT benchmark_complete=false frames=0 simulation_steps=0 failure=Some("ray scene error: Unsupported")
+STREET interrupted diagnostic docs/engine-status-2026-11-11/street-world-ray-native/report.interrupted.json
+STREET EVENT LOOP RETURN result=Ok(()) frames=0 simulation_steps=0 benchmark_complete=false
+Error: "ray scene error: Unsupported"
+      129.82 real         5.41 user         0.98 sys
+          5942624256  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              384604  page reclaims
+                 948  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  93  voluntary context switches
+                4679  involuntary context switches
+         86850025212  instructions retired
+         24614984376  cycles elapsed
+          6535697640  peak memory footprint

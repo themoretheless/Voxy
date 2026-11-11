@@ -32,15 +32,18 @@ pub struct SceneViewTargets<'a> {
     pub overlay_depth: &'a wgpu::TextureView,
 }
 
+type ScenePipelines<'a> = (
+    &'a wgpu::RenderPipeline,
+    &'a wgpu::RenderPipeline,
+    &'a wgpu::RenderPipeline,
+    &'a wgpu::RenderPipeline,
+);
+
 struct ViewPass<'a> {
     resolve: Option<&'a wgpu::TextureView>,
     color_load: wgpu::LoadOp<wgpu::Color>,
     depth_load: wgpu::LoadOp<f32>,
-    pipelines: (
-        &'a wgpu::RenderPipeline,
-        &'a wgpu::RenderPipeline,
-        &'a wgpu::RenderPipeline,
-    ),
+    pipelines: ScenePipelines<'a>,
     stages: std::ops::Range<u8>,
     isolated_xray: bool,
 }
@@ -113,7 +116,7 @@ impl SceneRenderer {
                         load: if overlay {
                             wgpu::LoadOp::Load
                         } else {
-                            wgpu::LoadOp::Clear(1.0)
+                            wgpu::LoadOp::Clear(self.depth_clear_value())
                         },
                         store: wgpu::StoreOp::Store,
                     }),
@@ -125,6 +128,7 @@ impl SceneRenderer {
                 &mut pass,
                 draws,
                 (
+                    &self.solid_opaque_pipeline,
                     &self.world_pipeline,
                     &self.overlay_pipeline,
                     &self.transparent_pipeline,
@@ -231,7 +235,7 @@ impl SceneRenderer {
             .msaa_pipelines
             .as_ref()
             .ok_or(SceneError::MultisamplingNotEnabled)?;
-        self.encode_transparent_pass(encoder, target, depth, Some(resolve), draws, &pipelines.2);
+        self.encode_transparent_pass(encoder, target, depth, Some(resolve), draws, &pipelines.3);
         Ok(())
     }
 
@@ -289,6 +293,7 @@ impl SceneRenderer {
             clear,
             draws,
             (
+                &self.solid_opaque_pipeline,
                 &self.world_pipeline,
                 &self.overlay_pipeline,
                 &self.transparent_pipeline,
@@ -297,9 +302,9 @@ impl SceneRenderer {
         );
     }
 
-    /// Records opaque, transparent, X-ray and overlay layers over an existing color attachment
-    /// (such as a pre-rendered HDR voxel pass) without clearing `color`, while clearing `depth`
-    /// to `1.0` so the scene draws have full self-occlusion.
+    /// Records opaque, transparent, X-ray and overlay layers over existing color and depth
+    /// attachments (such as a pre-rendered HDR voxel pass) without clearing either target, so
+    /// foreground voxel geometry properly occludes scene draws when sharing the same depth convention.
     pub fn encode_over(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -308,7 +313,7 @@ impl SceneRenderer {
         draws: &[SceneDraw<'_>],
     ) {
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-            label: Some("scene over existing HDR color"),
+            label: Some("scene over existing HDR color and depth"),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                 view: color,
                 depth_slice: None,
@@ -321,7 +326,7 @@ impl SceneRenderer {
             depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                 view: depth,
                 depth_ops: Some(wgpu::Operations {
-                    load: wgpu::LoadOp::Clear(1.0),
+                    load: wgpu::LoadOp::Load,
                     store: wgpu::StoreOp::Store,
                 }),
                 stencil_ops: None,
@@ -333,6 +338,7 @@ impl SceneRenderer {
             &mut pass,
             draws,
             (
+                &self.solid_opaque_pipeline,
                 &self.world_pipeline,
                 &self.overlay_pipeline,
                 &self.transparent_pipeline,
@@ -367,6 +373,7 @@ impl SceneRenderer {
             clear,
             draws,
             (
+                &self.solid_opaque_pipeline,
                 &self.world_pipeline,
                 &self.overlay_pipeline,
                 &self.transparent_pipeline,
@@ -399,8 +406,9 @@ impl SceneRenderer {
             ViewPass {
                 resolve: None,
                 color_load: wgpu::LoadOp::Clear(clear),
-                depth_load: wgpu::LoadOp::Clear(1.),
+                depth_load: wgpu::LoadOp::Clear(self.depth_clear_value()),
                 pipelines: (
+                    &self.solid_opaque_pipeline,
                     &self.world_pipeline,
                     &self.overlay_pipeline,
                     &self.transparent_pipeline,
@@ -424,7 +432,7 @@ impl SceneRenderer {
         clear: wgpu::Color,
         views: &[SceneView<'_>],
     ) -> Result<(), SceneError> {
-        let (world, overlay, transparent) = self
+        let (solid, world, overlay, transparent) = self
             .msaa_pipelines
             .as_ref()
             .ok_or(SceneError::MultisamplingNotEnabled)?;
@@ -436,8 +444,8 @@ impl SceneRenderer {
             ViewPass {
                 resolve: Some(resolve),
                 color_load: wgpu::LoadOp::Clear(clear),
-                depth_load: wgpu::LoadOp::Clear(1.),
-                pipelines: (world, overlay, transparent),
+                depth_load: wgpu::LoadOp::Clear(self.depth_clear_value()),
+                pipelines: (solid, world, overlay, transparent),
                 stages: 0..4,
                 isolated_xray: false,
             },
@@ -649,18 +657,20 @@ impl SceneRenderer {
         }
         validate_view_regions([size.width, size.height], views)?;
         let pipelines = if samples == 4 {
-            let (world, overlay, transparent) = self
+            let (solid, world, overlay, transparent) = self
                 .msaa_pipelines
                 .as_ref()
                 .ok_or(SceneError::MultisamplingNotEnabled)?;
-            (world, overlay, transparent)
+            (solid, world, overlay, transparent)
         } else {
             (
+                &self.solid_opaque_pipeline,
                 &self.world_pipeline,
                 &self.overlay_pipeline,
                 &self.transparent_pipeline,
             )
         };
+        let depth_clear = self.depth_clear_value();
         self.encode_view_pass(
             encoder,
             targets.color,
@@ -669,7 +679,7 @@ impl SceneRenderer {
             ViewPass {
                 resolve: targets.resolve,
                 color_load: wgpu::LoadOp::Clear(clear),
-                depth_load: wgpu::LoadOp::Clear(1.),
+                depth_load: wgpu::LoadOp::Clear(depth_clear),
                 pipelines,
                 stages: if has_xray { 0..2 } else { 0..4 },
                 isolated_xray: false,
@@ -684,7 +694,7 @@ impl SceneRenderer {
                 ViewPass {
                     resolve: targets.resolve,
                     color_load: wgpu::LoadOp::Load,
-                    depth_load: wgpu::LoadOp::Clear(1.),
+                    depth_load: wgpu::LoadOp::Clear(depth_clear),
                     pipelines,
                     stages: 2..3,
                     isolated_xray: true,
@@ -795,7 +805,7 @@ impl SceneRenderer {
         clear: wgpu::Color,
         draws: &[SceneDraw<'_>],
     ) -> Result<(), SceneError> {
-        let (world, overlay, transparent) = self
+        let (solid, world, overlay, transparent) = self
             .msaa_pipelines
             .as_ref()
             .ok_or(SceneError::MultisamplingNotEnabled)?;
@@ -806,12 +816,13 @@ impl SceneRenderer {
             Some(resolve),
             clear,
             draws,
-            (world, overlay, transparent),
+            (solid, world, overlay, transparent),
             None,
         );
         Ok(())
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn encode_pass(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -820,11 +831,7 @@ impl SceneRenderer {
         resolve: Option<&wgpu::TextureView>,
         clear: wgpu::Color,
         draws: &[SceneDraw<'_>],
-        pipelines: (
-            &wgpu::RenderPipeline,
-            &wgpu::RenderPipeline,
-            &wgpu::RenderPipeline,
-        ),
+        pipelines: ScenePipelines<'_>,
         timestamp_writes: Option<wgpu::RenderPassTimestampWrites<'_>>,
     ) {
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -841,7 +848,7 @@ impl SceneRenderer {
             depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                 view: depth,
                 depth_ops: Some(wgpu::Operations {
-                    load: wgpu::LoadOp::Clear(1.0),
+                    load: wgpu::LoadOp::Clear(self.depth_clear_value()),
                     store: wgpu::StoreOp::Store,
                 }),
                 stencil_ops: None,
@@ -856,11 +863,7 @@ impl SceneRenderer {
         &self,
         pass: &mut wgpu::RenderPass<'_>,
         draws: &[SceneDraw<'_>],
-        pipelines: (
-            &wgpu::RenderPipeline,
-            &wgpu::RenderPipeline,
-            &wgpu::RenderPipeline,
-        ),
+        pipelines: ScenePipelines<'_>,
     ) {
         self.encode_draw_stages(pass, draws, pipelines, 0..4, false);
     }
@@ -869,28 +872,24 @@ impl SceneRenderer {
         &self,
         pass: &mut wgpu::RenderPass<'_>,
         draws: &[SceneDraw<'_>],
-        pipelines: (
-            &wgpu::RenderPipeline,
-            &wgpu::RenderPipeline,
-            &wgpu::RenderPipeline,
-        ),
+        pipelines: ScenePipelines<'_>,
         stages: std::ops::Range<u8>,
         isolated_xray: bool,
     ) {
         // Opaque depth first, then ghost shells, revealed internals, finally UI.
         for stage in stages {
             pass.set_pipeline(match stage {
-                0 => pipelines.0,
-                1 => pipelines.2,
-                2 if isolated_xray => pipelines.0,
-                _ => pipelines.1,
+                0 => pipelines.1,
+                1 => pipelines.3,
+                2 if isolated_xray => pipelines.1,
+                _ => pipelines.2,
             });
             for draw in draws.iter().filter(|draw| {
                 let draw_stage = if draw.overlay {
                     3
                 } else {
                     match draw.geometry.depth_mode {
-                        SceneDepthMode::Opaque => 0,
+                        SceneDepthMode::SolidOpaque | SceneDepthMode::Opaque => 0,
                         SceneDepthMode::Transparent => 1,
                         SceneDepthMode::Xray => 2,
                     }
@@ -901,13 +900,19 @@ impl SceneRenderer {
                     let msaa = self
                         .msaa_pipelines
                         .as_ref()
-                        .is_some_and(|p| std::ptr::eq(pipelines.0, &raw const p.0));
+                        .is_some_and(|p| std::ptr::eq(pipelines.1, &raw const p.1));
+                    let default_opaque = if draw.geometry.depth_mode == SceneDepthMode::SolidOpaque
+                    {
+                        pipelines.0
+                    } else {
+                        pipelines.1
+                    };
                     pass.set_pipeline(
                         draw.geometry
                             .opaque_shader
                             .as_ref()
                             .filter(|p| p.0 == self.shader_revision && p.1 == self.transform_layout)
-                            .map_or(pipelines.0, |p| if msaa { &p.3 } else { &p.2 }),
+                            .map_or(default_opaque, |p| if msaa { &p.3 } else { &p.2 }),
                     );
                 }
                 self.bind_and_draw_geometry(pass, draw);

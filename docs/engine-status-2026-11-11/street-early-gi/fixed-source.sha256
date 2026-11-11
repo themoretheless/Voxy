@@ -1,0 +1,2 @@
+5c30ffe4001e237481631b65a58130b8479b75fabcc956770d82fafd45e4a47a  crates/voxy_render/src/archive_scene.wgsl
+117040174b8e89f22b864fe4cdf58c4b3cb75178db711943b0d49d5513730f30  target/release/examples/qualify_ray_schedule

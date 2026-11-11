@@ -13,14 +13,17 @@ use std::process::Command;
 /// never below world/storage/mesher, composition roots on top, leaf utility
 /// crates at the bottom.
 const ALLOWED: &[(&str, &[&str])] = &[
+    ("physics_astro", &["physics"]),
+    ("physics_bio", &["physics"]),
     ("physics_voxel", &["physics", "voxy_core", "voxy_world"]),
     ("voxy_audio_device", &["voxy_audio"]),
-    ("voxy_cuda", &["physics", "voxy_gpu_core"]),
+    ("voxy_cuda", &["physics", "physics_bio", "voxy_gpu_core"]),
     (
         "voxy_demos",
         &[
             "voxy_model",
             "physics",
+            "physics_bio",
             "physics_voxel",
             "voxy_animation",
             "voxy_core",
@@ -67,6 +70,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "voxy_gpu",
         &[
             "physics",
+            "physics_bio",
             "physics_voxel",
             "voxy_animation",
             "voxy_core",
@@ -92,7 +96,10 @@ const ALLOWED: &[(&str, &[&str])] = &[
     ),
     ("voxy_mesher", &["voxy_core", "voxy_world"]),
     ("voxy_ray_probe", &["voxy_demos", "voxy_render"]),
-    ("voxy_model", &["voxy_animation", "voxy_render"]),
+    (
+        "voxy_model",
+        &["voxy_animation", "voxy_render", "voxy_scene"],
+    ),
     (
         "voxy_render",
         &[
@@ -126,11 +133,17 @@ const ALLOWED: &[(&str, &[&str])] = &[
         &[
             "physics",
             "physics_voxel",
+            "voxy_animation",
+            "voxy_assets",
             "voxy_core",
+            "voxy_gameplay",
             "voxy_gpu",
+            "voxy_input",
             "voxy_mesher",
+            "voxy_model",
             "voxy_render",
             "voxy_runtime",
+            "voxy_scene",
             "voxy_world",
         ],
     ),
@@ -158,6 +171,8 @@ const PLATFORM_FREE: &[&str] = &[
     "voxy_lighting",
     "voxy_runtime",
     "physics",
+    "physics_astro",
+    "physics_bio",
     "physics_voxel",
     "voxy_scene",
     "voxy_animation",

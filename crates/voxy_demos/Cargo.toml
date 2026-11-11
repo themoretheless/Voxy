@@ -24,6 +24,7 @@ wgpu = { workspace = true, features = ["noop"] }
 voxy_core = { path = "../voxy_core" }
 serde_json = { workspace = true, features = ["float_roundtrip"] }
 physics = { path = "../physics" }
+physics_bio = { path = "../physics_bio" }
 physics_voxel = { path = "../physics_voxel" }
 pollster.workspace = true
 glam.workspace = true

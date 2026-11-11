@@ -67,8 +67,11 @@ pub use package_export::{
     export_game_package, export_project_package, export_project_package_with_components,
     export_project_package_with_host,
 };
+mod editor_build;
 mod project_runtime;
-pub use project_runtime::{run_project, run_project_with_components};
+pub use project_runtime::{
+    run_project, run_project_with_components, run_project_with_package_player,
+};
 #[cfg(test)]
 pub(crate) use viewport_runner::configured_app_with_registry;
 pub(crate) use viewport_runner::{configured_app, run_model_viewport_configured_registry};
@@ -230,6 +233,8 @@ struct Graphics {
     liquid_transforms: BTreeMap<u8, SceneTransform>,
     gizmo_geometry: SceneGeometry,
     gizmo_transforms: BTreeMap<u8, SceneTransform>,
+    trigger_outline: Option<SceneGeometry>,
+    trigger_transforms: BTreeMap<u8, SceneTransform>,
     texture: SceneTexture,
     transforms: HashMap<(u8, NodeId), SceneTransform>,
     lod_history: HashMap<(u8, NodeId), voxy_render::SceneLodHistory>,
@@ -277,6 +282,8 @@ impl Graphics {
             liquid_transforms: BTreeMap::new(),
             gizmo_geometry,
             gizmo_transforms: BTreeMap::from([(0, gizmo_transform)]),
+            trigger_outline: None,
+            trigger_transforms: BTreeMap::new(),
             texture,
             transforms: HashMap::new(),
             lod_history: HashMap::new(),
@@ -304,6 +311,10 @@ impl Graphics {
                 .as_ref()
                 .map_or(0, fog_draw::FogDraw::allocation_bytes)
             + self.gizmo_geometry.allocation_bytes()
+            + self
+                .trigger_outline
+                .as_ref()
+                .map_or(0, SceneGeometry::allocation_bytes)
             + self
                 .optical_liquids
                 .values()
@@ -509,6 +520,7 @@ struct App {
     prefab_smoke: Option<prefab_smoke::Smoke>,
     panels: Option<panels::Panels>,
     panel_cache: Option<PanelRevisionKey>,
+    build: editor_build::Build,
     modifiers: winit::keyboard::ModifiersState,
     field: Option<(usize, String)>,
     component_edit: Option<component_fields::BoundComponentField>,
@@ -522,6 +534,7 @@ struct App {
     catalog: AssetCatalog<ImportedAsset<import::EditorAsset>>,
     import_recipe: InputRecipe,
     pending_model: Option<app::model_reload::Pending>,
+    gpu_budget_retries: BTreeMap<AssetId, app::model_reload::BudgetRetry>,
     model_relink: Option<app::model_relink::Pending>,
     model_relink_draft: Option<app::model_relink::Draft>,
     retired_model_relink: Option<std::thread::JoinHandle<()>>,
@@ -659,6 +672,7 @@ impl App {
             play: play_session::PlaySession {
                 playing: None,
                 simulation_time: Instant::now(),
+                triggers: None,
                 simulation: None,
                 angular_motion: None,
                 animations: Default::default(),
@@ -702,6 +716,7 @@ impl App {
             prefab_smoke: None,
             panels: None,
             panel_cache: None,
+            build: Default::default(),
             modifiers: winit::keyboard::ModifiersState::empty(),
             field: None,
             component_edit: None,
@@ -722,6 +737,7 @@ impl App {
             )?),
             import_recipe,
             pending_model: None,
+            gpu_budget_retries: BTreeMap::new(),
             model_relink: None,
             model_relink_draft: None,
             retired_model_relink: None,
@@ -793,6 +809,10 @@ impl App {
             app.stop_workers()?;
             return Err(error);
         }
+        app.build.project = Some((
+            opened.descriptor_path.clone(),
+            opened.root.join(&opened.descriptor.startup_scene),
+        ));
         Ok(app)
     }
 
@@ -904,6 +924,7 @@ impl App {
             self.stage_or_complete_reload(completion.ticket, completion.result)?;
         }
 
+        self.queue_gpu_budget_retries();
         let imports = self
             .imports
             .as_mut()

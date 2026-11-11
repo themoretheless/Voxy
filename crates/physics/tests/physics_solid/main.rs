@@ -53,8 +53,6 @@ mod quadratic_wet_update;
 mod quadratic_work;
 mod soft_body;
 mod solid_dynamics;
-mod solid_film_binding;
-mod solid_heat_conduction;
 mod solid_surface;
 mod sopromat;
 mod wear;

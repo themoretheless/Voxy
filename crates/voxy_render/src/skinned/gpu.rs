@@ -36,17 +36,37 @@ impl GpuSkinnedMesh {
         joints: &[Mat4],
         model: Mat4,
     ) -> Result<(), SkinnedUploadError> {
+        self.write_pose_timed(queue, mesh, joints, model, false)
+            .map(|_| ())
+    }
+
+    pub(crate) fn write_pose_timed(
+        &self,
+        queue: &wgpu::Queue,
+        mesh: &SkinnedMesh,
+        joints: &[Mat4],
+        model: Mat4,
+        timed: bool,
+    ) -> Result<Option<(crate::RenderPoseProfile, std::time::Duration)>, SkinnedUploadError> {
         if joints.len() != self.joint_count {
             return Err(SkinnedUploadError::JointCountMismatch);
         }
-        mesh.validate_render_pose(joints, model)?;
+        let admission = if timed {
+            let (result, profile) = mesh.validate_render_pose_profiled(joints, model);
+            result?;
+            Some(profile)
+        } else {
+            mesh.validate_render_pose(joints, model)?;
+            None
+        };
+        let upload = timed.then(std::time::Instant::now);
         queue.write_buffer(&self.joint_buffer, 0, bytemuck::cast_slice(joints));
         queue.write_buffer(
             &self.object_buffer,
             0,
             bytemuck::bytes_of(&object_uniform(model, self.material_layer)),
         );
-        Ok(())
+        Ok(admission.zip(upload.map(|start| start.elapsed())))
     }
 
     pub fn allocation_bytes(&self) -> u64 {

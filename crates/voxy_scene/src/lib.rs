@@ -62,7 +62,7 @@ pub use behavior_checkpoint::{
     BehaviorRestoreContext, BehaviorState,
 };
 mod behavior;
-pub use behavior::{Behavior, BehaviorRunner};
+pub use behavior::{Behavior, BehaviorRunner, TriggerEvent, TriggerPhase};
 
 mod prefab_document;
 pub use prefab_document::{
@@ -352,7 +352,6 @@ impl SceneGraph {
         parent: Option<NodeId>,
         local: Transform,
     ) -> Result<NodeId, SceneGraphError> {
-        self.bump_structure();
         let local_matrix = local.matrix()?;
         if let Some(parent) = parent {
             self.node(parent)?;
@@ -399,6 +398,7 @@ impl SceneGraph {
             self.node_mut(parent)?.children.push(id);
         }
         self.count += 1;
+        self.bump_structure();
         Ok(id)
     }
 
@@ -433,10 +433,10 @@ impl SceneGraph {
     /// # Errors
     /// Rejects stale or foreign handles.
     pub fn set_active(&mut self, id: NodeId, active: bool) -> Result<(), SceneGraphError> {
-        self.bump_structure();
         if self.node(id)?.active != active {
             self.node_mut(id)?.active = active;
             self.refresh_subtree(id)?;
+            self.bump_structure();
         }
         Ok(())
     }
@@ -564,7 +564,6 @@ impl SceneGraph {
         id: NodeId,
         value: T,
     ) -> Result<Option<T>, SceneGraphError> {
-        self.bump_structure();
         let type_id = TypeId::of::<T>();
         let old = self.node_mut(id)?.components.insert(
             type_id,
@@ -573,6 +572,7 @@ impl SceneGraph {
         if old.is_none() {
             self.index_component_slot(type_id, id.slot);
         }
+        self.bump_structure();
         Ok(old
             .and_then(|value| value.0.downcast::<T>().ok())
             .map(|value| *value))
@@ -607,8 +607,9 @@ impl SceneGraph {
             .map(|value| value.1))
     }
 
-    /// Obtaining mutable access conservatively changes the revision even if the
-    /// caller performs no write. Missing components do not consume a revision.
+    /// Obtaining mutable access conservatively changes the component and change
+    /// revisions without invalidating hierarchy/archetype `structure_revision`.
+    /// Missing components do not consume a revision.
     /// # Panics
     /// Panics if the process exhausts the u64 component revision space.
     /// # Errors
@@ -617,10 +618,15 @@ impl SceneGraph {
         &mut self,
         id: NodeId,
     ) -> Result<Option<&mut T>, SceneGraphError> {
-        self.bump_structure();
-        let Some(value) = self.node_mut(id)?.components.get_mut(&TypeId::of::<T>()) else {
+        if !self.node(id)?.components.contains_key(&TypeId::of::<T>()) {
             return Ok(None);
-        };
+        }
+        self.bump_change();
+        let value = self
+            .node_mut(id)?
+            .components
+            .get_mut(&TypeId::of::<T>())
+            .expect("component verified present");
         value.1 = next_component_revision();
         Ok(value.0.downcast_mut())
     }
@@ -632,11 +638,11 @@ impl SceneGraph {
         &mut self,
         id: NodeId,
     ) -> Result<Option<T>, SceneGraphError> {
-        self.bump_structure();
         let type_id = TypeId::of::<T>();
         let removed = self.node_mut(id)?.components.remove(&type_id);
         if removed.is_some() {
             self.unindex_component_slot(type_id, id.slot);
+            self.bump_structure();
         }
         Ok(removed
             .and_then(|value| value.0.downcast::<T>().ok())
@@ -817,7 +823,6 @@ impl SceneGraph {
     /// # Errors
     /// Rejects stale/foreign handles and cycles without changing the hierarchy.
     pub fn reparent(&mut self, id: NodeId, parent: Option<NodeId>) -> Result<(), SceneGraphError> {
-        self.bump_structure();
         let old_parent = self.node(id)?.parent;
         let mut ancestor = parent;
         while let Some(current) = ancestor {
@@ -837,6 +842,7 @@ impl SceneGraph {
         }
         self.node_mut(id)?.parent = parent;
         self.refresh_subtree(id)?;
+        self.bump_structure();
         Ok(())
     }
 
@@ -924,13 +930,13 @@ impl SceneGraph {
     /// # Errors
     /// Rejects invalid handles before mutation.
     pub fn remove_subtree(&mut self, root: NodeId) -> Result<usize, SceneGraphError> {
-        self.bump_structure();
         let parent = self.node(root)?.parent;
         if let Some(parent) = parent {
             self.node_mut(parent)?.children.retain(|&id| id != root);
         }
         let mut pending = vec![root];
         let mut removed = 0;
+        let mut removed_by_type: HashMap<TypeId, Vec<usize>, FastHashBuilder> = HashMap::default();
         while let Some(id) = pending.pop() {
             let slot = &mut self.slots[id.slot];
             let node = slot
@@ -943,12 +949,21 @@ impl SceneGraph {
                 self.free.push(id.slot);
             }
             for &type_id in node.components.keys() {
-                self.unindex_component_slot(type_id, id.slot);
+                removed_by_type.entry(type_id).or_default().push(id.slot);
             }
             pending.extend(node.children);
             removed += 1;
         }
+        for (type_id, mut dead_slots) in removed_by_type {
+            if dead_slots.len() == 1 {
+                self.unindex_component_slot(type_id, dead_slots[0]);
+            } else if let Some(indexed) = self.component_slots.get_mut(&type_id) {
+                dead_slots.sort_unstable();
+                indexed.retain(|slot| dead_slots.binary_search(slot).is_err());
+            }
+        }
         self.count -= removed;
+        self.bump_structure();
         Ok(removed)
     }
 }

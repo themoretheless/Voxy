@@ -2,12 +2,12 @@
 //! Labia Majora + Labia Minora gait dynamics, inter-labial contact, and dielectric
 //! SurfaceFilm wetting, meniscus pooling, and shear smearing.
 use glam::Vec3;
-use physics::biomechanics::{LabiaMajoraGeometry, Material, PelvisGaitKinematics};
 use physics::friction;
-use physics::skin::{
+use physics::surface_film::{BridgeConfig, Material as FilmMaterial, SmearContact, SurfaceFilm};
+use physics_bio::biomechanics::{LabiaMajoraGeometry, Material, PelvisGaitKinematics};
+use physics_bio::skin::{
     ContactScene, LabiaMinoraGeometry, Layer, Relaxation, SkinMaterial, SolverConfig,
 };
-use physics::surface_film::{BridgeConfig, Material as FilmMaterial, SmearContact, SurfaceFilm};
 use std::sync::Arc;
 use std::time::Instant;
 use voxy_render::{
@@ -459,8 +459,8 @@ impl PreparedAnatomicalSurface {
 
     fn deform_vertices(
         &mut self,
-        majora_sim: &physics::biomechanics::LabiaGaitSimulation,
-        minora_sim: &physics::skin::LabiaMinoraGaitSimulation,
+        majora_sim: &physics_bio::biomechanics::LabiaGaitSimulation,
+        minora_sim: &physics_bio::skin::LabiaMinoraGaitSimulation,
         films: &[SurfaceFilm; 2],
     ) {
         let majora_pos = majora_sim.assembly.body.body().positions();
@@ -543,8 +543,8 @@ impl PreparedAnatomicalSurface {
 
     fn build_full_mesh(
         &mut self,
-        majora_sim: &physics::biomechanics::LabiaGaitSimulation,
-        minora_sim: &physics::skin::LabiaMinoraGaitSimulation,
+        majora_sim: &physics_bio::biomechanics::LabiaGaitSimulation,
+        minora_sim: &physics_bio::skin::LabiaMinoraGaitSimulation,
         films: &[SurfaceFilm; 2],
     ) -> Result<SceneMesh, Box<dyn std::error::Error>> {
         self.deform_vertices(majora_sim, minora_sim, films);
@@ -559,8 +559,8 @@ impl PreparedAnatomicalSurface {
         &mut self,
         queue: &wgpu::Queue,
         geometry: &SceneGeometry,
-        majora_sim: &physics::biomechanics::LabiaGaitSimulation,
-        minora_sim: &physics::skin::LabiaMinoraGaitSimulation,
+        majora_sim: &physics_bio::biomechanics::LabiaGaitSimulation,
+        minora_sim: &physics_bio::skin::LabiaMinoraGaitSimulation,
         films: &[SurfaceFilm; 2],
     ) {
         self.deform_vertices(majora_sim, minora_sim, films);
@@ -904,8 +904,8 @@ fn run_interactive_window(
     adapter: wgpu::Adapter,
     device: wgpu::Device,
     queue: wgpu::Queue,
-    majora_sim: physics::biomechanics::LabiaGaitSimulation,
-    minora_sim: physics::skin::LabiaMinoraGaitSimulation,
+    majora_sim: physics_bio::biomechanics::LabiaGaitSimulation,
+    minora_sim: physics_bio::skin::LabiaMinoraGaitSimulation,
     films: [SurfaceFilm; 2],
     gait: PelvisGaitKinematics,
     pressures: Vec<f64>,
@@ -932,8 +932,8 @@ fn run_interactive_window(
         texture: Option<voxy_render::SceneTexture>,
         transform: Option<voxy_render::SceneTransform>,
         depth: Option<wgpu::Texture>,
-        majora_sim: physics::biomechanics::LabiaGaitSimulation,
-        minora_sim: physics::skin::LabiaMinoraGaitSimulation,
+        majora_sim: physics_bio::biomechanics::LabiaGaitSimulation,
+        minora_sim: physics_bio::skin::LabiaMinoraGaitSimulation,
         films: [SurfaceFilm; 2],
         gait: PelvisGaitKinematics,
         pressures: Vec<f64>,

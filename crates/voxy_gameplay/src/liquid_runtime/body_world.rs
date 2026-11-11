@@ -1,6 +1,76 @@
 use super::*;
 
 impl SceneBodyWorld {
+    fn environment_for(&self, body: usize) -> &SceneGeometry {
+        self.body_environments
+            .get(body)
+            .and_then(Option::as_ref)
+            .unwrap_or(&self.environment)
+    }
+
+    pub(super) fn impact_error(
+        &self,
+        error: physics::liquid::Error,
+        context: &str,
+    ) -> GameplayError {
+        if let physics::liquid::Error::KinematicConstraint {
+            body,
+            feature: Some(feature),
+        } = error
+            && let Ok(key) = FeatureKey::decode(feature)
+            && let Some(environment) = match body {
+                Some(index) if index < self.templates.len() => Some(self.environment_for(index)),
+                None => Some(self.particle_environment()),
+                Some(_) => None,
+            }
+            && let Some(collider) = environment.0.0.get(key.second)
+            && self
+                .boundaries
+                .iter()
+                .any(|boundary| boundary.owner == collider.owner)
+        {
+            return GameplayError::KinematicConstraint(collider.owner);
+        }
+        format!("{context}: {error:?}").into()
+    }
+
+    pub(super) fn particle_environment(&self) -> &SceneGeometry {
+        self.particle_environment
+            .as_ref()
+            .unwrap_or(&self.environment)
+    }
+
+    fn boundary_impact_velocity(
+        &self,
+        environment: &SceneGeometry,
+        feature: Option<u64>,
+    ) -> Result<[f64; 3], physics::liquid::Error> {
+        if self.boundaries.is_empty() {
+            return Ok([0.; 3]);
+        }
+        let key = FeatureKey::decode(feature.ok_or(physics::liquid::Error::InvalidCollision)?)?;
+        let obstacle = environment
+            .0
+            .0
+            .get(key.second)
+            .ok_or(physics::liquid::Error::InvalidCollision)?;
+        Ok(self
+            .boundaries
+            .iter()
+            .find(|entry| entry.owner == obstacle.owner)
+            .map_or([0.; 3], |entry| entry.velocity().to_array()))
+    }
+
+    fn particle_body_allowed(&self, body: usize) -> bool {
+        crate::CollisionLayers::default()
+            .interacts(self.body_layers.get(body).copied().unwrap_or_default())
+    }
+
+    fn pair_allowed(&self, first: usize, second: usize) -> bool {
+        let layers = |index: usize| self.body_layers.get(index).copied().unwrap_or_default();
+        layers(first).interacts(layers(second))
+    }
+
     fn support_point_shapes(
         &self,
         bodies: &[physics::contact::ContactBody],
@@ -35,7 +105,7 @@ impl SceneBodyWorld {
         } else {
             (
                 None,
-                self.environment
+                self.environment_for(support.first)
                     .0
                     .0
                     .get(key.second)
@@ -76,17 +146,6 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         use physics::liquid::Error;
         let (first, shape, second, obstacle) =
             self.support_point_shapes(bodies, support, geometry)?;
-        let p = support.support.contact.point;
-        let tolerance = geometry.tolerance_m + geometry.admission_error_m;
-        let velocity =
-            match rigid_support::point_velocity(first, shape, second, obstacle, p, tolerance) {
-                Ok(velocity) => velocity,
-                // A clipped-vertex kink has no unique derivative. The existing
-                // common-point model is still available, but must independently
-                // prove whole-interval ownership; no arbitrary vertex is chosen.
-                Err(Error::CollisionBackend) => return Ok(None),
-                Err(error) => return Err(error),
-            };
         let pair = |all: &[physics::contact::ContactWrench]| -> Result<_, Error> {
             Ok([
                 *all.get(support.first).ok_or(Error::InvalidCollision)?,
@@ -97,38 +156,92 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
                 },
             ])
         };
-        let acceleration = match rigid_support::point_acceleration(
+        support_point_motion(
             first,
             shape,
             second,
             obstacle,
-            p,
-            tolerance,
-            pair(loads)?,
-        ) {
-            Ok(value) => value,
-            Err(Error::CollisionBackend) => return Ok(None),
-            Err(error) => return Err(error),
-        };
-        let jerk = match rigid_support::point_jerk(
-            first,
-            shape,
-            second,
-            obstacle,
-            p,
-            tolerance,
+            geometry,
             pair(loads)?,
             pair(rates)?,
-        ) {
-            Ok(value) => value,
-            Err(Error::CollisionBackend) => return Ok(None),
-            Err(error) => return Err(error),
+        )
+    }
+
+    fn particle_body_support_point_motion(
+        &self,
+        particle: &physics::contact::ContactBody,
+        radius: f64,
+        index: usize,
+        body: &physics::contact::ContactBody,
+        geometry: physics::liquid::RigidSupportPoint,
+        loads: [physics::contact::ContactWrench; 2],
+        rates: [physics::contact::ContactWrench; 2],
+    ) -> Result<Option<physics::liquid::RigidSupportPointMotion>, physics::liquid::Error> {
+        use physics::liquid::Error;
+        let key = FeatureKey::decode(geometry.feature.ok_or(Error::CollisionBackend)?)?;
+        if particle.spin.is_some()
+            || !radius.is_finite()
+            || radius <= 0.
+            || key.first != 0
+            || !self.particle_body_allowed(index)
+        {
+            return Err(Error::InvalidCollision);
+        }
+        let obstacle = *self
+            .templates
+            .get(index)
+            .and_then(|shapes| shapes.get(key.second))
+            .ok_or(Error::InvalidCollision)?;
+        support_point_motion(
+            *particle,
+            particle_template(radius),
+            Some(*body),
+            obstacle,
+            geometry,
+            loads,
+            rates,
+        )
+    }
+
+    fn particle_body_support_normal_acceleration(
+        &self,
+        particle: &physics::contact::ContactBody,
+        radius: f64,
+        index: usize,
+        body: &physics::contact::ContactBody,
+        geometry: physics::liquid::RigidSupportPoint,
+        loads: [physics::contact::ContactWrench; 2],
+    ) -> Result<Option<[f64; 3]>, physics::liquid::Error> {
+        use physics::liquid::Error;
+        let physics::contact::SupportPlane::Rate { normal_rate } = geometry.support.plane else {
+            return Ok(None);
         };
-        Ok(Some(physics::liquid::RigidSupportPointMotion {
-            velocity,
-            acceleration,
-            jerk,
-        }))
+        let key = FeatureKey::decode(geometry.feature.ok_or(Error::CollisionBackend)?)?;
+        if particle.spin.is_some()
+            || !radius.is_finite()
+            || radius <= 0.
+            || key.first != 0
+            || !self.particle_body_allowed(index)
+        {
+            return Err(Error::InvalidCollision);
+        }
+        let obstacle = *self
+            .templates
+            .get(index)
+            .and_then(|shapes| shapes.get(key.second))
+            .ok_or(Error::InvalidCollision)?;
+        rigid_support::edge_normal_acceleration(
+            *particle,
+            particle_template(radius),
+            Some(*body),
+            obstacle,
+            key.axis,
+            geometry.support.contact.normal,
+            normal_rate,
+            loads[0],
+            loads[1],
+        )
+        .map(Some)
     }
 
     fn rigid_support_normal_acceleration(
@@ -158,7 +271,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
                 .and_then(|shapes| shapes.get(key.second))
                 .ok_or(physics::liquid::Error::InvalidCollision)?
         } else {
-            self.environment
+            self.environment_for(support.first)
                 .0
                 .0
                 .get(key.second)
@@ -205,63 +318,42 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         budget: usize,
         error_m: f64,
     ) -> Result<Vec<physics::liquid::RigidSupportPoint>, physics::liquid::Error> {
+        if !self.pair_allowed(i, j) {
+            return Ok(Vec::new());
+        }
         use physics::liquid::Error;
         let a = self.templates.get(i).ok_or(Error::InvalidCollision)?;
         let b = self.templates.get(j).ok_or(Error::InvalidCollision)?;
-        if i == j || budget == 0 || a.len().checked_mul(b.len()).is_none_or(|n| n > budget) {
+        if i == j {
             return Err(Error::CollisionBudget);
         }
-        let mut supports = Vec::new();
-        for (ia, shape) in a.iter().enumerate() {
-            for (ib, obstacle) in b.iter().enumerate() {
-                for (witness, normal, axis) in rigid_support::snapshot_with_error(
-                    *first,
-                    *shape,
-                    Some(*second),
-                    *obstacle,
-                    error_m,
-                )? {
-                    let token = FeatureKey {
-                        first: ia,
-                        second: ib,
-                        axis,
-                    }
-                    .encode()?;
-                    let contacts = contact_patch_points_with_error(
-                        &[*shape],
-                        first,
-                        &[*obstacle],
-                        second,
-                        witness,
-                        normal,
-                        budget,
-                        error_m,
-                    )?;
-                    let plane = rigid_support::plane(
-                        *first,
-                        *shape,
-                        Some(*second),
-                        *obstacle,
-                        axis,
-                        normal,
-                    )?;
-                    let patch = rigid_support::attach(contacts, plane);
-                    if patch.len() > 128usize.saturating_sub(supports.len()) {
-                        return Err(Error::CollisionBudget);
-                    }
-                    supports.extend(patch.into_iter().map(|support| {
-                        physics::liquid::RigidSupportPoint {
-                            support,
-                            feature: Some(token),
-                            tolerance_m: witness.tolerance_m,
-                            admission_error_m: error_m,
-                            carrying_reaction: false,
-                        }
-                    }));
-                }
-            }
+        pair_support_contacts(first, a, second, b, budget, error_m)
+    }
+    fn particle_body_support_contacts_with_error(
+        &self,
+        particle: &physics::contact::ContactBody,
+        radius: f64,
+        index: usize,
+        body: &physics::contact::ContactBody,
+        budget: usize,
+        error_m: f64,
+    ) -> Result<Vec<physics::liquid::RigidSupportPoint>, physics::liquid::Error> {
+        use physics::liquid::Error;
+        let obstacles = self.templates.get(index).ok_or(Error::InvalidCollision)?;
+        if !self.particle_body_allowed(index) {
+            return Ok(Vec::new());
         }
-        Ok(supports)
+        if particle.spin.is_some() || !radius.is_finite() || radius <= 0. {
+            return Err(Error::InvalidCollision);
+        }
+        pair_support_contacts(
+            particle,
+            &[particle_template(radius)],
+            body,
+            obstacles,
+            budget,
+            error_m,
+        )
     }
     fn rigid_environment_support_contacts_with_error(
         &self,
@@ -272,7 +364,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
     ) -> Result<Vec<physics::liquid::RigidSupportPoint>, physics::liquid::Error> {
         use physics::liquid::Error;
         let shapes = self.templates.get(index).ok_or(Error::InvalidCollision)?;
-        let walls = &self.environment.0.0;
+        let walls = &self.environment_for(index).0.0;
         if budget == 0
             || shapes
                 .len()
@@ -340,6 +432,12 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         supports: &[physics::liquid::RigidSupportPoint],
         budget: usize,
     ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
+        if !self.pair_allowed(i, j) {
+            return Ok(physics::liquid::SupportedGeometryHit {
+                event: BodyGeometryHit::from(physics::liquid::GeometryHit::Clear).into(),
+                support_error_m: 0.,
+            });
+        }
         supported_shape_events(
             first,
             &self.templates[i],
@@ -359,7 +457,13 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         budget: usize,
     ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
         let fixed = sampling_frame([0.; 3], body.duration())?;
-        let walls: Vec<_> = self.environment.0.0.iter().map(|w| w.shape).collect();
+        let walls: Vec<_> = self
+            .environment_for(i)
+            .0
+            .0
+            .iter()
+            .map(|w| w.shape)
+            .collect();
         supported_shape_events(
             body,
             &self.templates[i],
@@ -381,11 +485,48 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         motion: &[Option<physics::liquid::RigidSupportPointMotion>],
         budget: usize,
     ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
+        if !self.pair_allowed(i, j) {
+            return Ok(physics::liquid::SupportedGeometryHit {
+                event: BodyGeometryHit::from(physics::liquid::GeometryHit::Clear).into(),
+                support_error_m: 0.,
+            });
+        }
         supported_shape_events(
             first,
             &self.templates[i],
             second,
             &self.templates[j],
+            supports,
+            Some(motion),
+            budget,
+            false,
+        )
+    }
+    fn sweep_supported_particle_body_point_motion(
+        &self,
+        particle: &physics::rigid_motion::RigidMotion,
+        radius: f64,
+        index: usize,
+        body: &physics::rigid_motion::RigidMotion,
+        supports: &[physics::liquid::RigidSupportPoint],
+        motion: &[Option<physics::liquid::RigidSupportPointMotion>],
+        budget: usize,
+    ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
+        use physics::liquid::Error;
+        let obstacles = self.templates.get(index).ok_or(Error::InvalidCollision)?;
+        if particle.initial().spin.is_some()
+            || !radius.is_finite()
+            || radius <= 0.
+            || particle.duration() != body.duration()
+            || !self.particle_body_allowed(index)
+        {
+            return Err(Error::InvalidCollision);
+        }
+        supported_shape_events(
+            particle,
+            &[particle_template(radius)],
+            body,
+            obstacles,
             supports,
             Some(motion),
             budget,
@@ -401,7 +542,13 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         budget: usize,
     ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
         let fixed = sampling_frame([0.; 3], body.duration())?;
-        let walls: Vec<_> = self.environment.0.0.iter().map(|wall| wall.shape).collect();
+        let walls: Vec<_> = self
+            .environment_for(i)
+            .0
+            .0
+            .iter()
+            .map(|wall| wall.shape)
+            .collect();
         supported_shape_events(
             body,
             &self.templates[i],
@@ -424,6 +571,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         feature: Option<u64>,
         budget: usize,
     ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
+        if !self.pair_allowed(i, j) {
+            return Ok(Vec::new());
+        }
         let Some(token) = feature else {
             return self.rigid_pair_patch(i, first, j, second, witness, normal, budget);
         };
@@ -449,6 +599,19 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         feature: Option<u64>,
         budget: usize,
     ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
+        self.rigid_environment_patch_at(index, body, witness, normal, feature, 0., budget)
+    }
+
+    fn rigid_environment_patch_at(
+        &self,
+        index: usize,
+        body: &physics::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        feature: Option<u64>,
+        elapsed_s: f64,
+        budget: usize,
+    ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
         let Some(token) = feature else {
             return self.rigid_environment_patch(index, body, witness, normal, budget);
         };
@@ -459,11 +622,19 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             .and_then(|s| s.get(key.first))
             .ok_or(physics::liquid::Error::InvalidCollision)?;
         let wall = self
-            .environment
+            .environment_for(index)
             .0
             .0
             .get(key.second)
             .ok_or(physics::liquid::Error::InvalidCollision)?;
+        let mut wall_shape = wall.shape;
+        if let Some(boundary) = self
+            .boundaries
+            .iter()
+            .find(|entry| entry.owner == wall.owner)
+        {
+            wall_shape.center = boundary.center_at(wall_shape.center, elapsed_s);
+        }
         let fixed = physics::contact::ContactBody {
             motion: physics::gravity::Body {
                 mass: 1.,
@@ -475,7 +646,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         contact_patch_points(
             &[*shape],
             body,
-            &[wall.shape],
+            &[wall_shape],
             &fixed,
             witness,
             normal,
@@ -493,6 +664,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         feature: u64,
         budget: usize,
     ) -> Result<Vec<physics::contact::NormalSupport>, physics::liquid::Error> {
+        if !self.pair_allowed(i, j) {
+            return Ok(Vec::new());
+        }
         let key = FeatureKey::decode(feature)?;
         let a = self
             .templates
@@ -533,7 +707,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             .and_then(|s| s.get(key.first))
             .ok_or(physics::liquid::Error::InvalidCollision)?;
         let wall = self
-            .environment
+            .environment_for(index)
             .0
             .0
             .get(key.second)
@@ -560,6 +734,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         normal: [f64; 3],
         budget: usize,
     ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
+        if !self.pair_allowed(i, j) {
+            return Ok(Vec::new());
+        }
         contact_patch_points(
             &self.templates[i],
             first,
@@ -581,12 +758,18 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         if budget == 0
             || self.templates[index]
                 .len()
-                .checked_mul(self.environment.0.0.len())
+                .checked_mul(self.environment_for(index).0.0.len())
                 .is_none_or(|n| n > budget)
         {
             return Err(physics::liquid::Error::CollisionBudget);
         }
-        let obstacles: Vec<_> = self.environment.0.0.iter().map(|b| b.shape).collect();
+        let obstacles: Vec<_> = self
+            .environment_for(index)
+            .0
+            .0
+            .iter()
+            .map(|b| b.shape)
+            .collect();
         let fixed = physics::contact::ContactBody {
             motion: physics::gravity::Body {
                 mass: 1.,
@@ -646,10 +829,16 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         body: &physics::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, physics::liquid::Error> {
+        if !self.particle_body_allowed(index) {
+            return Ok(BodyGeometryHit::from(physics::liquid::GeometryHit::Clear).into());
+        }
         if particle.initial().spin.is_some() || particle.duration() != body.duration() {
             return Err(physics::liquid::Error::InvalidCollision);
         }
-        if body.has_constant_acceleration()
+        // After contact with moving geometry, the next finite-body sweep
+        // must preserve a zero-time closing face inside nominal roundoff.
+        if self.boundaries.is_empty()
+            && body.has_constant_acceleration()
             && particle.has_constant_acceleration()
             && body.initial().spin.is_none()
             && particle.acceleration() == body.acceleration()
@@ -670,14 +859,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             return transport_acceleration(hit, body.acceleration(), body.duration())
                 .map(Into::into);
         }
-        let shape = crate::convex::AffineBox {
-            center: glam::DVec3::ZERO,
-            edges: [
-                glam::DVec3::X * radius,
-                glam::DVec3::Y * radius,
-                glam::DVec3::Z * radius,
-            ],
-        };
+        let shape = particle_template(radius);
         trajectory_events(particle, &[shape], body, &self.templates[index], budget)
     }
     fn sweep_particle_motion_environment_event(
@@ -695,16 +877,41 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
                 .sweep_particle_environment_contact(p, radius, particle.duration(), budget)
                 .map(Into::into);
         }
-        let shape = crate::convex::AffineBox {
-            center: glam::DVec3::ZERO,
-            edges: [
-                glam::DVec3::X * radius,
-                glam::DVec3::Y * radius,
-                glam::DVec3::Z * radius,
-            ],
-        };
-        trajectory_environment_events(particle, &[shape], &self.environment, budget)
+        let shape = particle_template(radius);
+        trajectory_environment_events(particle, &[shape], self.particle_environment(), budget)
     }
+    fn sweep_particle_motion_environment_event_at(
+        &self,
+        particle: &physics::liquid::Particle,
+        radius: f64,
+        path: &physics::rigid_motion::RigidMotion,
+        elapsed_s: f64,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, physics::liquid::Error> {
+        if self.boundaries.is_empty() {
+            return self.sweep_particle_motion_environment_event(particle, radius, path, budget);
+        }
+        if path.initial().spin.is_some() {
+            return Err(physics::liquid::Error::InvalidCollision);
+        }
+        trajectory_environment_events_at(
+            path,
+            &[particle_template(radius)],
+            self.particle_environment(),
+            &self.boundaries,
+            elapsed_s,
+            budget,
+        )
+    }
+
+    fn particle_environment_impact_velocity(
+        &self,
+        feature: Option<u64>,
+        _time_s: f64,
+    ) -> Result<[f64; 3], physics::liquid::Error> {
+        self.boundary_impact_velocity(self.particle_environment(), feature)
+    }
+
     fn sweep_particle_rigid_event(
         &self,
         p: &physics::liquid::Particle,
@@ -713,6 +920,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         body: &physics::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, physics::liquid::Error> {
+        if !self.particle_body_allowed(index) {
+            return Ok(BodyGeometryHit::from(physics::liquid::GeometryHit::Clear).into());
+        }
         if body.has_constant_acceleration()
             && body.initial().spin.is_none()
             && body.acceleration() == [0.; 3]
@@ -753,14 +963,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             },
         )
         .map_err(|_| physics::liquid::Error::CollisionBackend)?;
-        let shape = crate::convex::AffineBox {
-            center: glam::DVec3::ZERO,
-            edges: [
-                glam::DVec3::X * radius,
-                glam::DVec3::Y * radius,
-                glam::DVec3::Z * radius,
-            ],
-        };
+        let shape = particle_template(radius);
         trajectory_events(&particle, &[shape], body, &self.templates[index], budget)
     }
     fn sweep_rigid_pair_event(
@@ -771,6 +974,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         second: &physics::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, physics::liquid::Error> {
+        if !self.pair_allowed(i, j) {
+            return Ok(BodyGeometryHit::from(physics::liquid::GeometryHit::Clear).into());
+        }
         if first.has_constant_acceleration()
             && second.has_constant_acceleration()
             && first.initial().spin.is_none()
@@ -831,7 +1037,41 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
                 )
                 .map(Into::into);
         }
-        trajectory_environment_events(body, &self.templates[index], &self.environment, budget)
+        trajectory_environment_events(
+            body,
+            &self.templates[index],
+            self.environment_for(index),
+            budget,
+        )
+    }
+
+    fn sweep_rigid_environment_event_at(
+        &self,
+        index: usize,
+        body: &physics::rigid_motion::RigidMotion,
+        elapsed_s: f64,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, physics::liquid::Error> {
+        if self.boundaries.is_empty() {
+            return self.sweep_rigid_environment_event(index, body, budget);
+        }
+        trajectory_environment_events_at(
+            body,
+            &self.templates[index],
+            self.environment_for(index),
+            &self.boundaries,
+            elapsed_s,
+            budget,
+        )
+    }
+
+    fn rigid_environment_impact_velocity(
+        &self,
+        index: usize,
+        feature: Option<u64>,
+        _time_s: f64,
+    ) -> Result<[f64; 3], physics::liquid::Error> {
+        self.boundary_impact_velocity(self.environment_for(index), feature)
     }
 
     fn sweep_particle_body(
@@ -888,6 +1128,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         dt: f64,
         budget: usize,
     ) -> Result<BodyGeometryHit, physics::liquid::Error> {
+        if !self.particle_body_allowed(index) {
+            return Ok(physics::liquid::GeometryHit::Clear.into());
+        }
         if self.templates[index].len() > budget {
             return Err(physics::liquid::Error::CollisionBudget);
         }
@@ -916,6 +1159,9 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         dt: f64,
         budget: usize,
     ) -> Result<BodyGeometryHit, physics::liquid::Error> {
+        if !self.pair_allowed(first_index, second_index) {
+            return Ok(physics::liquid::GeometryHit::Clear.into());
+        }
         if self.templates[first_index]
             .len()
             .checked_mul(self.templates[second_index].len())
@@ -948,7 +1194,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         dt: f64,
         budget: usize,
     ) -> Result<BodyGeometryHit, physics::liquid::Error> {
-        self.environment
+        self.particle_environment()
             .sweep_contact(p.position, radius, p.velocity.map(|v| v * dt), budget)
             .map_err(|_| physics::liquid::Error::CollisionBackend)
     }
@@ -961,13 +1207,13 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
     ) -> Result<BodyGeometryHit, physics::liquid::Error> {
         if self.templates[index]
             .len()
-            .checked_mul(self.environment.0.0.len())
+            .checked_mul(self.environment_for(index).0.0.len())
             .is_none_or(|n| n > budget)
         {
             return Err(physics::liquid::Error::CollisionBudget);
         }
         nearest_hits(self.templates[index].iter().flat_map(|template| {
-            self.environment.0.0.iter().map(move |obstacle| {
+            self.environment_for(index).0.0.iter().map(move |obstacle| {
                 affine_hit(
                     obstacle.shape,
                     template.center + glam::DVec3::from_array(body.position),
@@ -979,5 +1225,117 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
     }
     fn has_environment(&self) -> bool {
         !self.environment.0.0.is_empty()
+    }
+}
+
+fn support_point_motion(
+    first: physics::contact::ContactBody,
+    shape: crate::convex::AffineBox,
+    second: Option<physics::contact::ContactBody>,
+    obstacle: crate::convex::AffineBox,
+    geometry: physics::liquid::RigidSupportPoint,
+    loads: [physics::contact::ContactWrench; 2],
+    rates: [physics::contact::ContactWrench; 2],
+) -> Result<Option<physics::liquid::RigidSupportPointMotion>, physics::liquid::Error> {
+    use physics::liquid::Error;
+    let p = geometry.support.contact.point;
+    let tolerance = geometry.tolerance_m + geometry.admission_error_m;
+    let velocity = match rigid_support::point_velocity(first, shape, second, obstacle, p, tolerance)
+    {
+        Ok(velocity) => velocity,
+        // A clipped-vertex kink has no unique derivative. The existing
+        // common-point model is still available, but must independently
+        // prove whole-interval ownership; no arbitrary vertex is chosen.
+        Err(Error::CollisionBackend) => return Ok(None),
+        Err(error) => return Err(error),
+    };
+    let acceleration = match rigid_support::point_acceleration(
+        first, shape, second, obstacle, p, tolerance, loads,
+    ) {
+        Ok(value) => value,
+        Err(Error::CollisionBackend) => return Ok(None),
+        Err(error) => return Err(error),
+    };
+    let jerk =
+        match rigid_support::point_jerk(first, shape, second, obstacle, p, tolerance, loads, rates)
+        {
+            Ok(value) => value,
+            Err(Error::CollisionBackend) => return Ok(None),
+            Err(error) => return Err(error),
+        };
+    Ok(Some(physics::liquid::RigidSupportPointMotion {
+        velocity,
+        acceleration,
+        jerk,
+    }))
+}
+
+fn pair_support_contacts(
+    first: &physics::contact::ContactBody,
+    a: &[crate::convex::AffineBox],
+    second: &physics::contact::ContactBody,
+    b: &[crate::convex::AffineBox],
+    budget: usize,
+    error_m: f64,
+) -> Result<Vec<physics::liquid::RigidSupportPoint>, physics::liquid::Error> {
+    use physics::liquid::Error;
+    if budget == 0 || a.len().checked_mul(b.len()).is_none_or(|n| n > budget) {
+        return Err(Error::CollisionBudget);
+    }
+    let mut supports = Vec::new();
+    for (ia, shape) in a.iter().enumerate() {
+        for (ib, obstacle) in b.iter().enumerate() {
+            for (witness, normal, axis) in rigid_support::snapshot_with_error(
+                *first,
+                *shape,
+                Some(*second),
+                *obstacle,
+                error_m,
+            )? {
+                let token = FeatureKey {
+                    first: ia,
+                    second: ib,
+                    axis,
+                }
+                .encode()?;
+                let contacts = contact_patch_points_with_error(
+                    &[*shape],
+                    first,
+                    &[*obstacle],
+                    second,
+                    witness,
+                    normal,
+                    budget,
+                    error_m,
+                )?;
+                let plane =
+                    rigid_support::plane(*first, *shape, Some(*second), *obstacle, axis, normal)?;
+                let patch = rigid_support::attach(contacts, plane);
+                if patch.len() > 128usize.saturating_sub(supports.len()) {
+                    return Err(Error::CollisionBudget);
+                }
+                supports.extend(patch.into_iter().map(|support| {
+                    physics::liquid::RigidSupportPoint {
+                        support,
+                        feature: Some(token),
+                        tolerance_m: witness.tolerance_m,
+                        admission_error_m: error_m,
+                        carrying_reaction: false,
+                    }
+                }));
+            }
+        }
+    }
+    Ok(supports)
+}
+
+fn particle_template(radius: f64) -> crate::convex::AffineBox {
+    crate::convex::AffineBox {
+        center: glam::DVec3::ZERO,
+        edges: [
+            glam::DVec3::X * radius,
+            glam::DVec3::Y * radius,
+            glam::DVec3::Z * radius,
+        ],
     }
 }

@@ -203,6 +203,10 @@ fn supported_motion_retains_small_spin_and_rejects_unresolved_real_rotation() {
     use physics::contact::ContactWrench;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]],
     };
@@ -258,6 +262,10 @@ fn rotating_edge_normal_advances_a_real_edge_patch_and_closes_internal_moment() 
     use physics::liquid::LiquidBodyWorld;
     let scene = voxy_scene::SceneGraph::new(16);
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]; 2],
     };
@@ -346,6 +354,10 @@ fn material_point_loads_advance_a_rotating_face_pair_without_internal_couple() {
     use physics::liquid::LiquidBodyWorld;
     let scene = voxy_scene::SceneGraph::new(16);
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]; 2],
     };
@@ -463,6 +475,10 @@ fn rotating_face_normal_advances_a_pressed_pair_without_freezing_spin() {
     use physics::liquid::LiquidBodyWorld;
     let scene = voxy_scene::SceneGraph::new(16);
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]; 2],
     };
@@ -544,6 +560,10 @@ fn supported_material_point_yaw_is_sustained_over_one_second() {
     use physics::rigid_motion::MaterialPointForce;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]],
     };
@@ -634,6 +654,10 @@ fn affine_material_point_pressure_releases_at_zero_force() {
     use physics::rigid_motion::MaterialPointForce;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]],
     };
@@ -693,6 +717,10 @@ fn supported_material_point_load_keeps_yaw_and_balances_pressure_work() {
     use physics::rigid_motion::MaterialPointForce;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]],
     };
@@ -782,6 +810,10 @@ fn supported_face_yaw_uses_cubic_corner_motion_without_freezing_spin() {
     use physics::liquid::LiquidBodyWorld;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]],
     };
@@ -861,6 +893,10 @@ fn supported_vertex_spin_keeps_real_yaw_over_one_second() {
     use physics::contact::ContactWrench;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]],
     };
@@ -926,6 +962,10 @@ fn supported_motion_keeps_real_tangential_acceleration_and_separates_work() {
     use physics::contact::ContactWrench;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]],
     };
@@ -1002,6 +1042,10 @@ fn cubic_collision_detects_inside_step_motion_and_preserves_world_feature() {
         .unwrap();
     let shape = support_box([0.125; 3]);
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![shape], vec![shape]],
     };
@@ -1057,6 +1101,10 @@ fn cubic_collision_detects_inside_step_motion_and_preserves_world_feature() {
         assert!((pair_fraction - fraction).abs() < 1e-8);
         assert_eq!(pair_normal, normal);
         let compound = SceneBodyWorld {
+            boundaries: Vec::new(),
+            body_environments: Vec::new(),
+            body_layers: Vec::new(),
+            particle_environment: None,
             environment: SceneGeometry(crate::static_world(&scene).unwrap()),
             templates: vec![
                 vec![shape],
@@ -1099,6 +1147,10 @@ fn cubic_supported_interval_admits_release_and_rejects_hidden_penetration() {
     };
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]],
     };
@@ -1148,6 +1200,10 @@ fn supported_motion_finite_sliding_transmits_moving_arm_torque_without_internal_
     use physics::contact::ContactWrench;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![
             vec![support_box([0.125; 3])],
@@ -1272,6 +1328,10 @@ fn affine_supported_sliding_reassembles_pressure_and_closes_long_interval_moment
     use physics::contact::ContactWrench;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![
             vec![support_box([0.125; 3])],
@@ -1351,6 +1411,10 @@ fn off_center_material_load_transmits_force_and_moment_through_unequal_stack() {
     use physics::rigid_motion::MaterialPointForce;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.03125; 3])]; 3],
     };
@@ -1449,6 +1513,10 @@ fn supported_motion_stack_holds_and_releases_under_changed_load_without_rest_cla
         };
         let scene = support_floor();
         let world = SceneBodyWorld {
+            boundaries: Vec::new(),
+            body_environments: Vec::new(),
+            body_layers: Vec::new(),
+            particle_environment: None,
             environment: SceneGeometry(crate::static_world(&scene).unwrap()),
             templates: vec![vec![support_box([0.03125; 3])]; 3],
         };
@@ -1539,6 +1607,10 @@ fn supported_motion_searches_other_walls_and_rolls_back_late_interval_budget() {
         )
         .unwrap();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]],
     };
@@ -1835,6 +1907,10 @@ fn scene_support_network_discovers_all_stack_patches_and_load_paths() {
     use physics::contact::ContactWrench;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.03125; 3])]; 3],
     };
@@ -1907,6 +1983,10 @@ fn scene_support_network_is_covariant_under_a_proper_world_frame_permutation() {
     pose.rotation = q.as_quat();
     scene.set_local(floor, pose).unwrap();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.03125; 3])]; 3],
     };
@@ -1952,6 +2032,10 @@ fn scene_support_network_transmits_beam_force_and_torque_to_finite_supports() {
     use physics::contact::ContactWrench;
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![
             vec![support_box([1.25, 0.125, 0.25])],
@@ -2027,6 +2111,10 @@ fn scene_support_network_rejects_overlap_and_late_budgets_without_state_writes()
     use physics::liquid::{DynamicWorldConfig, Error};
     let scene = support_floor();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![support_box([0.125; 3])]; 2],
     };
@@ -2168,6 +2256,10 @@ fn scene_geometry_and_shared_core_advance_real_off_center_rigid_collision() {
     let scene = SceneGraph::new(1);
     let shapes = rigid_shapes();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: shapes.map(|s| vec![s]).to_vec(),
     };
@@ -2197,6 +2289,10 @@ fn scene_geometry_and_shared_core_advance_real_off_center_rigid_collision() {
 fn scene_geometry_particle_recoil_rotates_the_body_and_restores_on_budget_failure() {
     let scene = SceneGraph::new(1);
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![rigid_shapes()[1]]],
     };
@@ -2252,6 +2348,10 @@ fn authored_static_wall_reflects_a_spinning_body_with_boundary_impulse_balance()
         )
         .unwrap();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![rigid_shapes()[0]]],
     };
@@ -2282,6 +2382,10 @@ fn moving_body_contact_witness_is_transported_to_contact_time() {
         ],
     };
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![shape], vec![shape]],
     };
@@ -2735,6 +2839,96 @@ fn body_pair_fixture() -> (SceneGraph, Vec<NodeId>, SceneLiquidRuntime) {
 }
 
 #[test]
+fn liquid_particle_skips_excluded_static_wall_and_rigid_body() {
+    use crate::CollisionLayers;
+    use glam::Vec3;
+    for rigid in [false, true] {
+        let mut scene = SceneGraph::new(1);
+        let wall = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: Vec3::X * 0.1,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                wall,
+                crate::BoxCollider {
+                    half_extents: [0.02; 3],
+                },
+            )
+            .unwrap();
+        if rigid {
+            scene
+                .insert_component(
+                    wall,
+                    crate::LiquidBody {
+                        mass_kg: 1.,
+                        initial_velocity_m_s: [0.; 3],
+                    },
+                )
+                .unwrap();
+        }
+        let config = Config {
+            gravity: [0.; 3],
+            ..Default::default()
+        };
+        let mut runtime =
+            SceneLiquidRuntime::new(&scene, vec![("water".into(), Material::WATER)], config, 0)
+                .unwrap();
+        let initial = physics::liquid::Particle {
+            position: [0.; 3],
+            velocity: [3., 0., 0.],
+            mass: 1.,
+            material: 0,
+        };
+        runtime.liquid = rigid_liquid(vec![initial]);
+        let mut control = runtime.clone();
+        control.tick(&scene, 0.1, None).unwrap();
+        assert!(control.liquid.particles()[0].velocity[0] < 3.);
+        scene
+            .insert_component(
+                wall,
+                CollisionLayers {
+                    membership: 2,
+                    mask: 2,
+                },
+            )
+            .unwrap();
+        runtime.tick_and_publish(&mut scene, 0.1, None).unwrap();
+        let particle = runtime.liquid.particles()[0];
+        assert!(particle.position[0] > 0.1);
+        assert_eq!(particle.velocity, initial.velocity);
+        if rigid {
+            assert_eq!(runtime.body_state().unwrap().1.velocity, [0.; 3]);
+        }
+    }
+}
+
+#[test]
+fn liquid_rigid_pair_ignores_contact_if_either_mask_rejects_it() {
+    let (mut scene, nodes, mut runtime) = body_pair_fixture();
+    scene
+        .insert_component(
+            nodes[1],
+            crate::CollisionLayers {
+                membership: 2,
+                mask: 2,
+            },
+        )
+        .unwrap();
+    let report = runtime.tick_and_publish(&mut scene, 0.1, None).unwrap();
+    assert_eq!(report.dynamics.unwrap().dynamics.contacts, 0);
+    let states: Vec<_> = runtime.body_states().collect();
+    assert!((states[0].1.position[0] - 0.1).abs() < 1e-7);
+    assert_eq!(states[0].1.velocity, [3., 0., 0.]);
+    assert_eq!(states[1].1.velocity, [0.; 3]);
+}
+
+#[test]
 fn multiple_scene_bodies_exchange_impulse_publish_and_pause_inactive_owner() {
     let (mut scene, nodes, mut runtime) = body_pair_fixture();
     let paused = scene.local(nodes[2]).unwrap();
@@ -2886,6 +3080,65 @@ fn compound_gap_is_not_filled_by_a_bounding_box() {
     assert!((states[0].1.position[0] - 0.1).abs() < 1e-7);
 }
 #[test]
+fn liquid_rigid_body_crosses_excluded_wall_then_hits_admitted_wall() {
+    use crate::CollisionLayers;
+    use glam::Vec3;
+
+    let (mut scene, nodes, _) = body_pair_fixture();
+    scene.set_active(nodes[1], false).unwrap();
+    scene.set_local(nodes[0], Transform::default()).unwrap();
+    for (x, isolated) in [(0.10, true), (0.25, false)] {
+        let wall = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: Vec3::X * x,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                wall,
+                crate::BoxCollider {
+                    half_extents: [0.02; 3],
+                },
+            )
+            .unwrap();
+        if isolated {
+            scene
+                .insert_component(
+                    wall,
+                    CollisionLayers {
+                        membership: 2,
+                        mask: 2,
+                    },
+                )
+                .unwrap();
+        }
+    }
+    let mut runtime = SceneLiquidRuntime::new(
+        &scene,
+        vec![("unused".into(), Material::WATER)],
+        Config {
+            gravity: [0.; 3],
+            ..Default::default()
+        },
+        0,
+    )
+    .unwrap();
+    let report = runtime.tick_and_publish(&mut scene, 0.1, None).unwrap();
+    let state = runtime
+        .body_states()
+        .find(|(owner, _)| *owner == nodes[0])
+        .unwrap()
+        .1;
+    assert!(state.position[0] > 0.1 && state.position[0] < 0.25);
+    assert_eq!(state.velocity, [0.; 3]);
+    assert_eq!(report.dynamics.unwrap().dynamics.contacts, 1);
+}
+
+#[test]
 fn compound_child_strikes_static_wall_and_balances_external_impulse() {
     let (mut scene, nodes, _) = body_pair_fixture();
     scene.set_active(nodes[1], false).unwrap();
@@ -2995,6 +3248,10 @@ fn compound_candidates_are_bounded_and_invalid_extents_reject() {
     let (mut scene, nodes, runtime) = body_pair_fixture();
     let template = collider_template(&runtime.body[0], &runtime.body[0].colliders[0]).unwrap();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![template; 2], vec![template; 2]],
     };
@@ -3095,6 +3352,10 @@ fn liquid_impulse_recoils_child_only_compound_owner() {
 fn common_gravity_preserves_particle_body_relative_motion_across_sph_substeps() {
     let scene = SceneGraph::new(1);
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![rigid_shapes()[0]]],
     };
@@ -3146,6 +3407,10 @@ fn common_acceleration_event_transports_the_real_world_witness_quadratically() {
     use physics::liquid::{GeometryHit, LiquidBodyWorld};
     let scene = SceneGraph::new(1);
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![rigid_shapes()[1]]],
     };
@@ -3204,6 +3469,10 @@ fn unresolved_resting_gravity_support_preserves_complete_public_state() {
         )
         .unwrap();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![crate::convex::AffineBox {
             center: glam::DVec3::ZERO,
@@ -3259,6 +3528,10 @@ fn accelerated_nonspinning_body_uses_real_parabolic_wall_query_and_remainder() {
         )
         .unwrap();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![rigid_shapes()[0]]],
     };
@@ -3312,6 +3585,10 @@ fn real_simultaneous_rigid_faces_resolve_as_one_network() {
     let scene = SceneGraph::new(1);
     let shape = rigid_shapes()[0];
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![shape]; 3],
     };
@@ -3390,6 +3667,10 @@ fn compound_event_key_preserves_exact_shape_pair_and_support_source() {
         ..shapes[1]
     };
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![first_far, shapes[0]], vec![second_far, shapes[1]]],
     };
@@ -3502,6 +3783,10 @@ fn edge_event_source_rebuilds_normal_rate_from_post_impact_spin() {
     let separation = first_shape.radius(DVec3::X) + second_shape.radius(DVec3::X);
     let scene = SceneGraph::new(1);
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![first_shape], vec![second_shape]],
     };
@@ -3607,6 +3892,10 @@ fn environment_event_keeps_wall_identity_and_world_plane() {
     let mut shape = rigid_shapes()[0];
     shape.edges = shape.edges.map(|e| q * e);
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![shape]],
     };
@@ -3746,6 +4035,10 @@ fn authored_wall_patch_stops_a_rigid_body_and_closes_boundary_ledger() {
         )
         .unwrap();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: vec![vec![rigid_shapes()[0]]],
     };
@@ -3812,6 +4105,10 @@ fn scene_patch_solves_contact_velocities_but_free_rotation_requires_sustained_co
     let scene = SceneGraph::new(1);
     let shapes = rigid_shapes();
     let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
         environment: SceneGeometry(crate::static_world(&scene).unwrap()),
         templates: shapes.map(|s| vec![s]).to_vec(),
     };
@@ -4218,4 +4515,722 @@ fn authored_point_loads_tick_publish_pause_and_rollback_with_original_phase() {
             .contains("rebind")
     );
     assert_eq!(runtime, saved);
+}
+
+#[test]
+fn off_center_particle_remainder_requires_translation_only_reactions() {
+    use physics::contact::{ContactBody, ContactWrench};
+    use physics::gravity::Body;
+    use physics::liquid::LiquidBodyWorld;
+    use physics::rotation::Spin;
+
+    // The post-impact state recorded by the native scene regression.
+    let particle = ContactBody {
+        motion: Body {
+            mass: 1.,
+            position: [
+                0.3187500000001275,
+                -0.0020725138888974793,
+                -3.7968020353361515e-26,
+            ],
+            velocity: [
+                3.750000008276417,
+                -0.20165000000041794,
+                -8.025204627530693e-13,
+            ],
+        },
+        spin: None,
+    };
+    let rotating = ContactBody {
+        motion: Body {
+            mass: 2.,
+            position: [
+                0.4062500000001505,
+                -0.0020725138888974793,
+                0.02500000037252903,
+            ],
+            velocity: [
+                3.7499999958617916,
+                -0.2016500000004179,
+                4.0126023137653463e-13,
+            ],
+        },
+        spin: Some(Spin {
+            orientation: [0., -7.222684073077606e-13, 0., 1.],
+            angular_momentum: [0., -0.17361111352179764, 0.],
+            inertia: [0.005208333333333335; 3],
+        }),
+    };
+    let scene = SceneGraph::new(1);
+    let mut world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
+        environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+        templates: vec![
+            vec![support_box([0.025; 3])],
+            vec![support_box([0.0625; 3])],
+        ],
+    };
+    let external = [particle, rotating].map(|body| ContactWrench {
+        force: [0., -9.81 * body.motion.mass, 0.],
+        torque: [0.; 3],
+    });
+    let patch =
+        world.particle_body_support_contacts_with_error(&particle, 0.025, 1, &rotating, 16, 0.);
+    assert!(patch.unwrap().is_empty());
+
+    let error = 3e-14;
+    let patch = world
+        .particle_body_support_contacts_with_error(&particle, 0.025, 1, &rotating, 16, error)
+        .unwrap();
+    assert!(!patch.is_empty());
+    assert!(patch.iter().all(|point| {
+        point.support.plane == physics::contact::SupportPlane::Second
+            && point.feature.is_some()
+            && point.admission_error_m == error
+    }));
+    assert_eq!(
+        patch,
+        world
+            .rigid_pair_support_contacts_with_error(0, &particle, 1, &rotating, 16, error)
+            .unwrap(),
+    );
+    assert_eq!(
+        world.particle_body_support_contacts_with_error(&particle, 0.025, 1, &rotating, 0, error),
+        Err(physics::liquid::Error::CollisionBudget),
+    );
+    world.body_layers = vec![
+        crate::CollisionLayers::default(),
+        crate::CollisionLayers {
+            membership: 2,
+            mask: 2,
+        },
+    ];
+    assert!(
+        world
+            .particle_body_support_contacts_with_error(&particle, 0.025, 1, &rotating, 16, error)
+            .unwrap()
+            .is_empty(),
+    );
+    world.body_layers.clear();
+    let supports: Vec<_> = patch
+        .iter()
+        .map(|point| physics::contact::NetworkSupport {
+            first: 0,
+            second: Some(1),
+            support: point.support,
+        })
+        .collect();
+    let contacts: Vec<_> = supports.iter().map(|s| s.support.contact).collect();
+    let (mut a, mut b) = (particle, rotating);
+    let impact = physics::contact::resolve_normal_manifold(
+        &mut a,
+        Some(&mut b),
+        &contacts,
+        physics::contact::ManifoldConfig {
+            max_sweeps: 8192,
+            velocity_tolerance: 128. * f64::EPSILON * 4.,
+        },
+    );
+    let impact = impact.unwrap();
+    assert!(impact.velocity_residual < 128. * f64::EPSILON);
+    let bodies = [a, b];
+    let reaction = physics::contact::resolve_normal_reaction_network(
+        &bodies,
+        &supports,
+        &external,
+        support_query_config(),
+    );
+    // The rigid network requires zero intrinsic torque on a no-spin owner.
+    // The clipped patch applies a load off the particle's center.
+    assert_eq!(reaction.unwrap_err(), physics::contact::Error::InvalidInput);
+
+    let reaction = physics::contact::resolve_normal_reaction_network_with_particles(
+        &bodies,
+        1,
+        &supports,
+        &external,
+        support_query_config(),
+    )
+    .unwrap();
+    let [particle_wrench, body_wrench] = reaction.wrenches.as_slice() else {
+        panic!("two participants required")
+    };
+    assert!(particle_wrench.force[0] < 0.);
+    assert_eq!(particle_wrench.torque, [0.; 3]);
+    assert_eq!(particle_wrench.force, body_wrench.force.map(|f| -f));
+    let body_moment = supports.iter().zip(&reaction.forces).fold(
+        glam::DVec3::ZERO,
+        |moment, (support, force)| {
+            let arm = glam::DVec3::from_array(support.support.contact.point)
+                - glam::DVec3::from_array(b.motion.position);
+            moment + arm.cross(-glam::DVec3::from_array(*force))
+        },
+    );
+    assert!(body_moment.length() > 0.);
+    assert!((glam::DVec3::from_array(body_wrench.torque) - body_moment).length() < 1e-12);
+    assert!(reaction.acceleration_residual <= support_query_config().acceleration_tolerance);
+
+    let mut separating = external;
+    separating[0].force[0] = -200.;
+    let release = physics::contact::resolve_normal_reaction_network_with_particles(
+        &bodies,
+        1,
+        &supports,
+        &separating,
+        support_query_config(),
+    )
+    .unwrap();
+    assert!(release.forces.iter().all(|force| *force == [0.; 3]));
+    assert!(release.normal_accelerations.iter().all(|value| *value > 0.));
+
+    let mut liquid = Liquid::new(Vec::new(), vec![Material::WATER], Config::default()).unwrap();
+    let mut staged = bodies;
+    let step = liquid.step_with_supported_rigid_body_forces(
+        9.108908036323693e-4,
+        &mut staged,
+        &world,
+        Default::default(),
+        1,
+        rigid_config(),
+        &external,
+        physics::liquid::SupportedWorldConfig {
+            max_geometry_error_m: error,
+            ..Default::default()
+        },
+    );
+    assert_eq!(step.unwrap_err(), physics::liquid::Error::InvalidCollision);
+    assert_eq!(staged, bodies);
+
+    let mixed_world = SceneBodyWorld {
+        templates: vec![vec![support_box([0.0625; 3])]],
+        ..world
+    };
+    let config = physics::liquid::SupportedWorldConfig {
+        reaction: support_query_config(),
+        max_geometry_error_m: error,
+        ..Default::default()
+    };
+    let mixed = physics::liquid::resolve_mixed_world_reactions(
+        &bodies,
+        &[0.025],
+        &mixed_world,
+        &external,
+        Default::default(),
+        config,
+    )
+    .unwrap();
+    assert_eq!(mixed.supports, supports);
+    assert_eq!(mixed.reaction.unwrap(), reaction);
+    let mixed_release = physics::liquid::resolve_mixed_world_reactions(
+        &bodies,
+        &[0.025],
+        &mixed_world,
+        &separating,
+        Default::default(),
+        config,
+    )
+    .unwrap();
+    assert_eq!(mixed_release.reaction.unwrap(), release);
+
+    let admitted_snapshot = physics::liquid::resolve_mixed_world_reactions(
+        &bodies,
+        &[0.025],
+        &mixed_world,
+        &external,
+        Default::default(),
+        Default::default(),
+    )
+    .unwrap();
+    let reaction = admitted_snapshot.reaction.unwrap();
+    let mut geometry = admitted_snapshot.geometry;
+    for (point, force) in geometry.iter_mut().zip(&reaction.forces) {
+        point.carrying_reaction = *force != [0.; 3];
+    }
+    let loads = std::array::from_fn(|i| physics::contact::ContactWrench {
+        force: std::array::from_fn(|k| external[i].force[k] + reaction.wrenches[i].force[k]),
+        torque: reaction.wrenches[i].torque,
+    });
+    let models: Vec<_> = geometry
+        .iter()
+        .map(|&point| {
+            mixed_world
+                .particle_body_support_point_motion(
+                    &bodies[0],
+                    0.025,
+                    0,
+                    &bodies[1],
+                    point,
+                    loads,
+                    Default::default(),
+                )
+                .unwrap()
+        })
+        .collect();
+    assert!(
+        geometry
+            .iter()
+            .zip(&models)
+            .any(|(point, _)| point.carrying_reaction)
+    );
+    assert!(
+        geometry
+            .iter()
+            .zip(&models)
+            .all(|(point, model)| { !point.carrying_reaction || model.is_some() })
+    );
+    let support_motion: Vec<_> = models
+        .iter()
+        .map(|model| physics::contact::SupportMotion {
+            point_velocity: model.map_or(bodies[0].motion.velocity, |m| m.velocity),
+            normal_acceleration: None,
+        })
+        .collect();
+    let rate = physics::contact::resolve_normal_reaction_rate_network_with_particles(
+        &bodies,
+        1,
+        &admitted_snapshot.supports,
+        &external,
+        &[Default::default(); 2],
+        &support_motion,
+        physics::contact::ReactionRateConfig {
+            reaction: physics::liquid::SupportedWorldConfig::default().reaction,
+            jerk_tolerance: 1e-8,
+        },
+    );
+    let rate = rate.unwrap();
+    assert_eq!(rate.baseline, reaction);
+    assert_eq!(rate.wrenches_rate[0].torque, [0.; 3]);
+    assert_eq!(
+        rate.wrenches_rate[0].force,
+        rate.wrenches_rate[1].force.map(|f| -f)
+    );
+    assert!(rate.wrenches_rate[1].torque[1].abs() > 0.);
+    assert!(rate.jerk_residual <= 1e-8);
+    let rates: [physics::contact::ContactWrench; 2] = rate.wrenches_rate.try_into().unwrap();
+    let moving_models: Vec<_> = geometry
+        .iter()
+        .map(|&point| {
+            mixed_world
+                .particle_body_support_point_motion(
+                    &bodies[0], 0.025, 0, &bodies[1], point, loads, rates,
+                )
+                .unwrap()
+        })
+        .collect();
+    for (dt, should_admit) in [(2e-4, true), (4e-4, false)] {
+        let prepared = std::array::from_fn::<_, 2, _>(|i| {
+            let mut torque = physics::rotation::TorquePolynomial::constant(loads[i].torque);
+            torque.rate = rates[i].torque;
+            bodies[i]
+                .prepare_affine_motion(loads[i].force, rates[i].force, torque, dt, rigid_config())
+                .unwrap()
+        });
+        let hit = mixed_world.sweep_supported_particle_body_point_motion(
+            &prepared[0],
+            0.025,
+            0,
+            &prepared[1],
+            &geometry,
+            &moving_models,
+            16,
+        );
+        let constant = std::array::from_fn::<_, 2, _>(|i| {
+            bodies[i]
+                .prepare_motion(loads[i].force, loads[i].torque, dt, rigid_config())
+                .unwrap()
+        });
+        let baseline = mixed_world.sweep_supported_particle_body_point_motion(
+            &constant[0],
+            0.025,
+            0,
+            &constant[1],
+            &geometry,
+            &models,
+            16,
+        );
+        for result in [hit, baseline] {
+            if should_admit {
+                let result = result.unwrap();
+                assert_eq!(
+                    result.event.contact.geometry,
+                    physics::liquid::GeometryHit::Clear
+                );
+                assert!(
+                    result.support_error_m
+                        <= physics::liquid::SupportedWorldConfig::default().max_geometry_error_m
+                );
+            } else {
+                assert_eq!(result.unwrap_err(), physics::liquid::Error::CollisionBudget);
+            }
+        }
+    }
+    let fallback_models = vec![None; geometry.len()];
+    for (dt, moving_ok, fallback_ok) in [
+        (1e-11, true, true),
+        (1e-6, true, false),
+        (9.108908036323693e-4, false, false),
+    ] {
+        let prepared = std::array::from_fn::<_, 2, _>(|i| {
+            let force =
+                std::array::from_fn(|k| external[i].force[k] + reaction.wrenches[i].force[k]);
+            bodies[i]
+                .prepare_motion(force, reaction.wrenches[i].torque, dt, rigid_config())
+                .unwrap()
+        });
+        let admitted = mixed_world.sweep_supported_particle_body_point_motion(
+            &prepared[0],
+            0.025,
+            0,
+            &prepared[1],
+            &geometry,
+            &models,
+            16,
+        );
+        let fallback = mixed_world.sweep_supported_particle_body_point_motion(
+            &prepared[0],
+            0.025,
+            0,
+            &prepared[1],
+            &geometry,
+            &fallback_models,
+            16,
+        );
+        for (result, should_admit) in [(admitted, moving_ok), (fallback, fallback_ok)] {
+            if should_admit {
+                let hit = result.unwrap();
+                assert_eq!(
+                    hit.event.contact.geometry,
+                    physics::liquid::GeometryHit::Clear
+                );
+                assert!(
+                    hit.support_error_m
+                        <= physics::liquid::SupportedWorldConfig::default().max_geometry_error_m
+                );
+            } else {
+                assert_eq!(result.unwrap_err(), physics::liquid::Error::CollisionBudget);
+            }
+        }
+    }
+    let dt = 9.108908036323693e-4 / 8.;
+    for (force_rates, points, expected_opening) in [
+        (
+            [physics::contact::ContactWrench::default(); 2],
+            &models,
+            false,
+        ),
+        (rates, &moving_models, true),
+    ] {
+        let prepared = std::array::from_fn::<_, 2, _>(|i| {
+            let mut torque = physics::rotation::TorquePolynomial::constant(loads[i].torque);
+            torque.rate = force_rates[i].torque;
+            bodies[i]
+                .prepare_affine_motion(
+                    loads[i].force,
+                    force_rates[i].force,
+                    torque,
+                    dt,
+                    rigid_config(),
+                )
+                .unwrap()
+        });
+        let hit = mixed_world
+            .sweep_supported_particle_body_point_motion(
+                &prepared[0],
+                0.025,
+                0,
+                &prepared[1],
+                &geometry,
+                points,
+                16,
+            )
+            .unwrap();
+        assert_eq!(
+            hit.event.contact.geometry,
+            physics::liquid::GeometryHit::Clear
+        );
+        let endpoint = prepared.map(|path| path.end());
+        let config = physics::liquid::SupportedWorldConfig::default();
+        let patch = mixed_world
+            .particle_body_support_contacts_with_error(
+                &endpoint[0],
+                0.025,
+                0,
+                &endpoint[1],
+                16,
+                config.max_geometry_error_m,
+            )
+            .unwrap();
+        assert!(!patch.is_empty());
+        let mut edge_count = 0;
+        for point in patch {
+            let acceleration = mixed_world
+                .particle_body_support_normal_acceleration(
+                    &endpoint[0],
+                    0.025,
+                    0,
+                    &endpoint[1],
+                    point,
+                    external,
+                )
+                .unwrap();
+            if let physics::contact::SupportPlane::Rate { normal_rate } = point.support.plane {
+                let normal = glam::DVec3::from_array(point.support.contact.normal);
+                let rate = glam::DVec3::from_array(normal_rate);
+                let acceleration = glam::DVec3::from_array(acceleration.unwrap());
+                assert!((normal.dot(acceleration) + rate.length_squared()).abs() < 1e-8);
+                edge_count += 1;
+            } else {
+                assert!(acceleration.is_none());
+            }
+            let contact = point.support.contact;
+            let a = glam::DVec3::from_array(endpoint[0].point_velocity(contact.point).unwrap());
+            let b = glam::DVec3::from_array(endpoint[1].point_velocity(contact.point).unwrap());
+            let speed = (a - b).dot(glam::DVec3::from_array(contact.normal));
+            if expected_opening {
+                assert!(speed > config.reaction.normal_velocity_tolerance);
+            } else {
+                assert!(speed < -config.reaction.normal_velocity_tolerance);
+            }
+        }
+        if expected_opening {
+            assert!(edge_count > 0);
+        }
+        let next = physics::liquid::resolve_mixed_world_reactions(
+            &endpoint,
+            &[0.025],
+            &mixed_world,
+            &external,
+            Default::default(),
+            config,
+        )
+        .unwrap();
+        if expected_opening {
+            assert!(
+                next.reaction
+                    .unwrap()
+                    .forces
+                    .iter()
+                    .all(|force| *force == [0.; 3])
+            );
+            let free = std::array::from_fn::<_, 2, _>(|i| {
+                endpoint[i]
+                    .prepare_motion(external[i].force, external[i].torque, dt, rigid_config())
+                    .unwrap()
+            });
+            let particle = physics::liquid::Particle {
+                position: endpoint[0].motion.position,
+                velocity: endpoint[0].motion.velocity,
+                mass: endpoint[0].motion.mass,
+                material: 0,
+            };
+            let result = mixed_world
+                .sweep_particle_motion_body_event(&particle, 0.025, &free[0], 0, &free[1], 4096);
+            let result = result.unwrap();
+            let physics::liquid::GeometryHit::Contact { fraction, normal } =
+                result.contact.geometry
+            else {
+                panic!("repeat contact required")
+            };
+            assert!((0.0007..0.0009).contains(&fraction));
+            let witness = result.contact.witness.unwrap();
+            let time = dt * fraction;
+            let first = free[0].sample(time).unwrap();
+            let second = free[1].sample(time).unwrap();
+            let relative = glam::DVec3::from_array(first.point_velocity(witness.point).unwrap())
+                - glam::DVec3::from_array(second.point_velocity(witness.point).unwrap());
+            assert!(relative.dot(glam::DVec3::from_array(normal)) < 0.);
+        } else {
+            assert!(next.reaction.is_none());
+            assert!(next.supports.is_empty());
+        }
+    }
+}
+
+#[test]
+fn runtime_particle_impacts_leave_distinct_support_snapshots() {
+    use physics::contact::{ContactBody, ContactWrench};
+    use physics::gravity::Body;
+    use physics::liquid::{LiquidBodyWorld, SupportedWorldConfig};
+    use physics::rotation::Spin;
+
+    let scene = SceneGraph::new(1);
+    let world = SceneBodyWorld {
+        boundaries: Vec::new(),
+        body_environments: Vec::new(),
+        body_layers: Vec::new(),
+        particle_environment: None,
+        environment: SceneGeometry(crate::static_world(&scene).unwrap()),
+        templates: vec![vec![support_box([0.0625; 3])]],
+    };
+    let config = SupportedWorldConfig::default();
+    // Snapshots immediately after the first and fourth impulse in the native replay.
+    for (event, bodies) in [
+        (
+            1,
+            [
+                ContactBody {
+                    motion: Body {
+                        mass: 1.0,
+                        position: [0.31874999999999776, -0.0020725138888887406, 0.0],
+                        velocity: [4.305555570885969, -0.2016499999999928, 0.0],
+                    },
+                    spin: None,
+                },
+                ContactBody {
+                    motion: Body {
+                        mass: 2.0,
+                        position: [0.40625, -0.0020725138888887406, 0.02500000037252903],
+                        velocity: [3.4722222145570156, -0.20164999999999278, 0.0],
+                    },
+                    spin: Some(Spin {
+                        orientation: [0.0, 0.0, 0.0, 1.0],
+                        angular_momentum: [0.0, -0.17361111331485793, 0.0],
+                        inertia: [
+                            0.005208333333333335,
+                            0.005208333333333335,
+                            0.005208333333333335,
+                        ],
+                    }),
+                },
+            ],
+        ),
+        (
+            4,
+            [
+                ContactBody {
+                    motion: Body {
+                        mass: 1.0,
+                        position: [
+                            0.3187500000001602,
+                            -0.0020725138888983458,
+                            -2.127610873974073e-26,
+                        ],
+                        velocity: [
+                            3.750000008276218,
+                            -0.20165000000046007,
+                            -8.820929288718257e-13,
+                        ],
+                    },
+                    spin: None,
+                },
+                ContactBody {
+                    motion: Body {
+                        mass: 2.0,
+                        position: [
+                            0.40625000000016537,
+                            -0.0020725138888983458,
+                            0.02500000037252903,
+                        ],
+                        velocity: [
+                            3.749999995861891,
+                            -0.20165000000046004,
+                            4.4104646443591283e-13,
+                        ],
+                    },
+                    spin: Some(Spin {
+                        orientation: [0.0, -7.93883625905235e-13, 0.0, 1.0],
+                        angular_momentum: [0.0, -0.17361111352179626, 0.0],
+                        inertia: [
+                            0.005208333333333335,
+                            0.005208333333333335,
+                            0.005208333333333335,
+                        ],
+                    }),
+                },
+            ],
+        ),
+    ] {
+        let loads = bodies.map(|body| ContactWrench {
+            force: [0., -9.81 * body.motion.mass, 0.],
+            torque: [0.; 3],
+        });
+        let patch = world
+            .particle_body_support_contacts_with_error(
+                &bodies[0],
+                0.025,
+                0,
+                &bodies[1],
+                16,
+                config.max_geometry_error_m,
+            )
+            .unwrap();
+        let speeds: Vec<_> = patch
+            .iter()
+            .map(|point| {
+                let contact = point.support.contact;
+                let first =
+                    glam::DVec3::from_array(bodies[0].point_velocity(contact.point).unwrap());
+                let second =
+                    glam::DVec3::from_array(bodies[1].point_velocity(contact.point).unwrap());
+                (first - second).dot(glam::DVec3::from_array(contact.normal))
+            })
+            .collect();
+        let report = physics::liquid::resolve_mixed_world_reactions(
+            &bodies,
+            &[0.025],
+            &world,
+            &loads,
+            Default::default(),
+            config,
+        );
+        let report = report.unwrap();
+        let tolerance = config.reaction.normal_velocity_tolerance;
+        assert!(!speeds.is_empty());
+        if event == 1 {
+            assert!(speeds.iter().any(|&speed| speed < -tolerance));
+            assert!(report.supports.is_empty());
+            assert!(report.reaction.is_none());
+            continue;
+        }
+        assert!(speeds.iter().all(|&speed| speed >= -tolerance));
+        let reaction = report.reaction.unwrap();
+        assert!(reaction.wrenches[0].force[0] < -46.);
+        assert_eq!(
+            reaction.wrenches[0].force,
+            reaction.wrenches[1].force.map(|f| -f)
+        );
+        assert!(reaction.acceleration_residual <= config.reaction.acceleration_tolerance);
+
+        let total: [ContactWrench; 2] = std::array::from_fn(|i| ContactWrench {
+            force: std::array::from_fn(|k| loads[i].force[k] + reaction.wrenches[i].force[k]),
+            torque: reaction.wrenches[i].torque,
+        });
+        let paths = std::array::from_fn::<_, 2, _>(|i| {
+            bodies[i]
+                .prepare_motion(total[i].force, total[i].torque, 1e-4, rigid_config())
+                .unwrap()
+        });
+        let mut geometry = report.geometry;
+        let models: Vec<_> = geometry
+            .iter_mut()
+            .zip(&reaction.forces)
+            .map(|(point, force)| {
+                point.carrying_reaction = *force != [0.; 3];
+                world
+                    .particle_body_support_point_motion(
+                        &bodies[0],
+                        0.025,
+                        0,
+                        &bodies[1],
+                        *point,
+                        total,
+                        Default::default(),
+                    )
+                    .unwrap()
+            })
+            .collect();
+        let hit = world
+            .sweep_supported_particle_body_point_motion(
+                &paths[0], 0.025, 0, &paths[1], &geometry, &models, 16,
+            )
+            .unwrap();
+        assert_eq!(
+            hit.event.contact.geometry,
+            physics::liquid::GeometryHit::Clear
+        );
+        assert!(hit.support_error_m <= config.max_geometry_error_m);
+    }
 }

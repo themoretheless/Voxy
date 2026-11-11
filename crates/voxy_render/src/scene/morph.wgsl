@@ -12,7 +12,7 @@ fn morph_accumulate(digits:ptr<function,array<i32,36>>,term:AffineTerm) {
 fn morph_bit(words:ptr<function,array<u32,36>>,index:u32)->u32 {
  return ((*words)[index/16u]>>(index%16u))&1u;
 }
-fn morph_component(vertex:u32,component:u32)->f32 {
+fn morph_component_bits(vertex:u32,component:u32)->u32 {
  var digits:array<i32,36>;
  let base=bitcast<u32>(source[vertex*16u+component]);
  morph_accumulate(&digits,affine_float_term(base,0u));
@@ -31,7 +31,7 @@ fn morph_component(vertex:u32,component:u32)->f32 {
  }
  var length=36u;
  while length>0u {if words[length-1u]!=0u {break;}length-=1u;}
- if length==0u {return 0.;}
+ if length==0u {return 0u;}
  var high=(length-1u)*16u+31u-countLeadingZeros(words[length-1u]);
  let shift=max(149u,u32(max(0i,i32(high)-23i)));
  var significand=0u;
@@ -40,10 +40,15 @@ fn morph_component(vertex:u32,component:u32)->f32 {
  for(var k=0u;k<shift-1u;k++) {if morph_bit(&words,k)!=0u {sticky=true;break;}}
  if guard&&(sticky||(significand&1u)!=0u) {significand+=1u;}
  let sign=select(0u,0x80000000u,negative);
- if high<172u {return bitcast<f32>(sign|significand);}
+ if high<172u {return sign|significand;}
  if significand==0x1000000u {significand>>=1u;high+=1u;}
  let exponent=high-171u;
  // Host preflight rejects overflow before any queue writes.
- if exponent>=255u {return bitcast<f32>(0x7fc00000u);}
- return bitcast<f32>(sign|(exponent<<23u)|(significand&0x7fffffu));
+ if exponent>=255u {return 0x7fc00000u;}
+ return sign|(exponent<<23u)|(significand&0x7fffffu);
+}
+
+// Cast the runtime word; constant evaluation must never materialize a NaN.
+fn morph_component(vertex:u32,component:u32)->f32 {
+ return bitcast<f32>(morph_component_bits(vertex,component));
 }

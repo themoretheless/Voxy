@@ -225,10 +225,12 @@ fn native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work
         cache: cache.state(),
         cache_identity: cache.identity(),
         geometry: new_bytes,
+        restaged: false,
         checks: Box::pin(async move {
             Err(RejectedModelBatch {
                 assets,
                 error: "injected deferred GPU failure".into(),
+                geometry_needed: None,
             })
         }),
     });
@@ -248,6 +250,7 @@ fn native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work
         cache: cache.state(),
         cache_identity: cache.identity(),
         geometry: new_bytes,
+        restaged: false,
         checks: Box::pin(async move {
             let _retained = retained;
             std::future::pending::<Result<ReadyModelBatch, RejectedModelBatch>>().await
@@ -583,9 +586,12 @@ fn rejects_source_changed_after_worker_completion_and_recovers()
 struct ReloadFixture(std::path::PathBuf);
 impl ReloadFixture {
     fn new() -> Result<Self, Error> {
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static NEXT: AtomicU64 = AtomicU64::new(0);
         let directory = std::env::temp_dir().join(format!(
-            "voxy-late-import-{}-{}",
+            "voxy-late-import-{}-{}-{}",
             std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed),
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)?
                 .as_nanos()

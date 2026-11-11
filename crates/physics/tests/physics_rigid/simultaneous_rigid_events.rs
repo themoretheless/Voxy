@@ -223,8 +223,10 @@ fn late_patch_failure_and_complete_group_contact_budget_restore_every_body() {
 }
 /// Fixed world face combined with a finite-body event at the same reported time.
 /// This fixture qualifies mechanics/ledger wiring, not scene geometry clearance.
-struct Wall;
-impl LiquidBodyWorld for Wall {
+struct Wall<'a> {
+    moving_queries: Option<&'a std::cell::RefCell<Vec<f64>>>,
+}
+impl LiquidBodyWorld for Wall<'_> {
     fn sweep_particle_body(
         &self,
         _: &Particle,
@@ -318,6 +320,78 @@ impl LiquidBodyWorld for Wall {
             feature: Some(99),
         })
     }
+    fn sweep_rigid_environment_event_at(
+        &self,
+        i: usize,
+        path: &RigidMotion,
+        elapsed_s: f64,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, Error> {
+        let Some(queries) = self.moving_queries else {
+            return self.sweep_rigid_environment_event(i, path, budget);
+        };
+        queries.borrow_mut().push(elapsed_s);
+        let start = path.initial().motion;
+        let closing_speed = 3. - start.velocity[0];
+        let gap = start.position[0] - 0.05 - 3. * elapsed_s;
+        if closing_speed <= 1e-12 {
+            return Ok(BodyGeometryHit::from(GeometryHit::Clear).into());
+        }
+        let time = gap / closing_speed;
+        if !(0. ..=path.duration()).contains(&time) {
+            return Ok(BodyGeometryHit::from(GeometryHit::Clear).into());
+        }
+        Ok(RigidGeometryHit {
+            contact: BodyGeometryHit {
+                geometry: GeometryHit::Contact {
+                    fraction: time / path.duration(),
+                    normal: [1., 0., 0.],
+                },
+                witness: Some(ContactWitness {
+                    point: [
+                        3. * (elapsed_s + time),
+                        start.position[1],
+                        start.position[2],
+                    ],
+                    tolerance_m: 1e-12,
+                }),
+            },
+            feature: Some(99),
+        })
+    }
+
+    fn rigid_environment_impact_velocity(
+        &self,
+        _: usize,
+        feature: Option<u64>,
+        time_s: f64,
+    ) -> Result<[f64; 3], Error> {
+        if self.moving_queries.is_some() {
+            assert_eq!(feature, Some(99));
+            assert!((time_s - 0.05).abs() < 1e-12);
+            Ok([3., 0., 0.])
+        } else {
+            Ok([0.; 3])
+        }
+    }
+
+    fn rigid_environment_patch_at(
+        &self,
+        index: usize,
+        body: &ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        feature: Option<u64>,
+        time_s: f64,
+        budget: usize,
+    ) -> Result<Vec<NormalContact>, Error> {
+        if self.moving_queries.is_some() {
+            assert!((time_s - 0.05).abs() < 1e-12);
+            assert!((witness.point[0] - 3. * time_s).abs() < 1e-12);
+        }
+        self.rigid_environment_patch_for_feature(index, body, witness, normal, feature, budget)
+    }
+
     fn rigid_environment_patch_for_feature(
         &self,
         _: usize,
@@ -346,7 +420,16 @@ fn simultaneous_body_and_wall_impulses_close_the_boundary_energy_ledger() {
     states[0].motion.velocity[0] = 6.;
     states[1].motion.velocity[0] = 3.;
     let report = liquid
-        .step_with_rigid_body_world(0.02, &mut states, &Wall, Default::default(), 2, rotation())
+        .step_with_rigid_body_world(
+            0.02,
+            &mut states,
+            &Wall {
+                moving_queries: None,
+            },
+            Default::default(),
+            2,
+            rotation(),
+        )
         .unwrap();
     assert_eq!(report.dynamics.contacts, 2);
     assert!((report.environment_impulse[0] - 9.).abs() < 1e-11);
@@ -375,4 +458,78 @@ fn simultaneous_body_and_wall_impulses_close_the_boundary_energy_ledger() {
             assert!(states[1].point_velocity([0.08, y, z]).unwrap()[0].abs() <= tolerance);
         }
     }
+}
+
+#[test]
+fn moving_boundary_impulse_uses_impact_time_and_advances_remaining_interval() {
+    for spin in [None, bodies()[0].spin] {
+        let mut liquid = fluid();
+        let mut states = [ContactBody {
+            motion: Body {
+                mass: 2.,
+                position: [0.2, 0., 0.],
+                velocity: [0.; 3],
+            },
+            spin,
+        }];
+        let queries = std::cell::RefCell::new(Vec::new());
+        let report = liquid
+            .step_with_rigid_body_forces(
+                0.1,
+                &mut states,
+                &Wall {
+                    moving_queries: Some(&queries),
+                },
+                Default::default(),
+                1,
+                rotation(),
+                &[Default::default()],
+            )
+            .unwrap();
+        assert_eq!(report.world.dynamics.contacts, 1);
+        assert!((states[0].motion.position[0] - 0.35).abs() < 1e-11);
+        assert!((states[0].motion.velocity[0] - 3.).abs() < 1e-11);
+        assert!((report.world.environment_impulse[0] + 6.).abs() < 1e-11);
+        assert!((report.boundary_impact_work - 18.).abs() < 1e-11);
+        assert!((report.world.dynamics.dissipated_energy - 9.).abs() < 1e-11);
+        assert_eq!(queries.borrow().len(), 2);
+        assert_eq!(queries.borrow()[0], 0.);
+        assert!((queries.borrow()[1] - 0.05).abs() < 1e-12);
+    }
+}
+
+#[test]
+fn simultaneous_moving_boundary_contacts_account_for_each_body() {
+    let mut liquid = fluid();
+    let mut states = [0., 1.].map(|y| ContactBody {
+        motion: Body {
+            mass: 2.,
+            position: [0.2, y, 0.],
+            velocity: [0.; 3],
+        },
+        spin: None,
+    });
+    let queries = std::cell::RefCell::new(Vec::new());
+    let report = liquid
+        .step_with_rigid_body_forces(
+            0.1,
+            &mut states,
+            &Wall {
+                moving_queries: Some(&queries),
+            },
+            Default::default(),
+            2,
+            rotation(),
+            &[Default::default(); 2],
+        )
+        .unwrap();
+    assert_eq!(report.world.dynamics.contacts, 2);
+    assert!((report.boundary_impact_work - 36.).abs() < 1e-11);
+    assert!((report.world.dynamics.dissipated_energy - 18.).abs() < 1e-11);
+    assert!((report.world.environment_impulse[0] + 12.).abs() < 1e-11);
+    assert!(
+        states
+            .iter()
+            .all(|state| (state.motion.position[0] - 0.35).abs() < 1e-11)
+    );
 }

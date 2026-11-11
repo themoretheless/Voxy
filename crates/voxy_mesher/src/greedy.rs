@@ -3,16 +3,176 @@
 use std::cell::RefCell;
 use std::num::NonZeroU8;
 
-use voxy_core::{CancelToken, ChunkPos, LocalIndex, LocalPos};
-use voxy_world::{BlockStateId, MaterialId, RenderKind, Sample};
+use voxy_core::{CancelToken, ChunkPos, LocalIndex, LocalPos, PADDED_EDGE, PADDED_VOLUME};
+use voxy_world::{BlockStateId, MaterialId, Occlusion, RenderKind, Sample};
 
 use crate::classify::{FaceDecision, SlotClass, classify_directed_face, interior_face};
-use crate::neighborhood::{HaloOffset, MeshingInput, sample_relative};
+use crate::neighborhood::{HALO_OFFSETS, HaloOffset, MeshingInput, sample_relative};
 use crate::types::{
     ChunkMesh, FaceDir, LocalAabb, MAX_DIRECTED_FACES, MeshError, Quad, QuadDiagonal, RenderLayer,
+    quad_diagonal_flip_for_ao,
 };
 
-type FaceMask = [Option<(MaterialId, RenderLayer)>; 1024];
+type FaceMask = [Option<(MaterialId, RenderLayer, [u8; 4])>; 1024];
+
+#[inline]
+const fn vertex_ao_level(side1: bool, side2: bool, corner: bool) -> u8 {
+    if side1 && side2 {
+        0
+    } else {
+        3 - (side1 as u8) - (side2 as u8) - (corner as u8)
+    }
+}
+
+#[inline]
+const fn quad_diagonal_for_ao(ao: [u8; 4]) -> QuadDiagonal {
+    if quad_diagonal_flip_for_ao(ao[0], ao[1], ao[2], ao[3]) {
+        QuadDiagonal::Vu
+    } else {
+        QuadDiagonal::Uv
+    }
+}
+
+#[inline]
+fn sample_occluding(input: &MeshingInput, x: i16, y: i16, z: i16) -> bool {
+    match sample_relative(input, x, y, z) {
+        Sample::Loaded(id) => input
+            .registry
+            .get(id)
+            .is_some_and(|def| def.occlusion == Occlusion::FullCube),
+        Sample::Unloaded { .. } | Sample::Unavailable { .. } => false,
+    }
+}
+
+#[inline]
+fn face_ao_from_input(input: &MeshingInput, local: LocalPos, face: FaceDir) -> [u8; 4] {
+    let (normal_axis, u_axis, v_axis) = face.axes();
+    let mut base = [
+        i16::from(local.x()),
+        i16::from(local.y()),
+        i16::from(local.z()),
+    ];
+    base[normal_axis] += if face.positive() { 1 } else { -1 };
+    let occ = |du: i16, dv: i16| {
+        let mut p = base;
+        p[u_axis] += du;
+        p[v_axis] += dv;
+        sample_occluding(input, p[0], p[1], p[2])
+    };
+    let n_u0 = occ(-1, 0);
+    let n_u1 = occ(1, 0);
+    let n_v0 = occ(0, -1);
+    let n_v1 = occ(0, 1);
+    [
+        vertex_ao_level(n_u0, n_v0, occ(-1, -1)),
+        vertex_ao_level(n_u1, n_v0, occ(1, -1)),
+        vertex_ao_level(n_u1, n_v1, occ(1, 1)),
+        vertex_ao_level(n_u0, n_v1, occ(-1, 1)),
+    ]
+}
+
+fn fill_padded_occluding(
+    input: &MeshingInput,
+    classes: &[SlotClass],
+    slots: &[u16],
+    padded: &mut [u8],
+) {
+    padded.fill(0);
+    for y in 0..32_usize {
+        for z in 0..32_usize {
+            let local_base = 32 * (z + 32 * y);
+            let pad_base = ((y + 1) * PADDED_EDGE + (z + 1)) * PADDED_EDGE + 1;
+            for x in 0..32_usize {
+                padded[pad_base + x] =
+                    u8::from(classes[usize::from(slots[local_base + x])].full_cube);
+            }
+        }
+    }
+    for (halo_idx, offset) in HALO_OFFSETS.iter().enumerate() {
+        let Some(neighbor) = &input.neighbors[halo_idx] else {
+            continue;
+        };
+        let (px_range, lx_base) = match offset.dx {
+            -1 => (0..1_usize, 31_usize),
+            0 => (1..33_usize, 0_usize),
+            _ => (33..34_usize, 0_usize),
+        };
+        let (py_range, ly_base) = match offset.dy {
+            -1 => (0..1_usize, 31_usize),
+            0 => (1..33_usize, 0_usize),
+            _ => (33..34_usize, 0_usize),
+        };
+        let (pz_range, lz_base) = match offset.dz {
+            -1 => (0..1_usize, 31_usize),
+            0 => (1..33_usize, 0_usize),
+            _ => (33..34_usize, 0_usize),
+        };
+        if let voxy_world::PalettedBlocks::Uniform(block) = &neighbor.data.blocks {
+            let occ = u8::from(
+                input
+                    .registry
+                    .get(*block)
+                    .is_some_and(|def| def.occlusion == Occlusion::FullCube),
+            );
+            if occ == 0 {
+                continue;
+            }
+            for py in py_range {
+                for pz in pz_range.clone() {
+                    let row = (py * PADDED_EDGE + pz) * PADDED_EDGE;
+                    padded[row + px_range.start..row + px_range.end].fill(occ);
+                }
+            }
+            continue;
+        }
+        for (iy, py) in py_range.enumerate() {
+            let ly = (ly_base + iy) as u8;
+            for (iz, pz) in pz_range.clone().enumerate() {
+                let lz = (lz_base + iz) as u8;
+                let row = (py * PADDED_EDGE + pz) * PADDED_EDGE;
+                for (ix, px) in px_range.clone().enumerate() {
+                    let lx = (lx_base + ix) as u8;
+                    let local = LocalPos::new(lx, ly, lz).expect("halo local in 0..32");
+                    let id = neighbor.data.blocks.get(local.index());
+                    padded[row + px] = u8::from(
+                        input
+                            .registry
+                            .get(id)
+                            .is_some_and(|def| def.occlusion == Occlusion::FullCube),
+                    );
+                }
+            }
+        }
+    }
+}
+
+#[inline]
+fn face_ao_from_padded(
+    padded: &[u8],
+    face: FaceDir,
+    air_normal_pad: usize,
+    u_pad: usize,
+    v_pad: usize,
+) -> [u8; 4] {
+    let (normal_axis, u_axis, v_axis) = face.axes();
+    let occ = |pu: usize, pv: usize| {
+        let mut p = [0_usize; 3];
+        p[normal_axis] = air_normal_pad;
+        p[u_axis] = pu;
+        p[v_axis] = pv;
+        padded[(p[1] * PADDED_EDGE + p[2]) * PADDED_EDGE + p[0]] != 0
+    };
+    let n_u0 = occ(u_pad - 1, v_pad);
+    let n_u1 = occ(u_pad + 1, v_pad);
+    let n_v0 = occ(u_pad, v_pad - 1);
+    let n_v1 = occ(u_pad, v_pad + 1);
+    [
+        vertex_ao_level(n_u0, n_v0, occ(u_pad - 1, v_pad - 1)),
+        vertex_ao_level(n_u1, n_v0, occ(u_pad + 1, v_pad - 1)),
+        vertex_ao_level(n_u1, n_v1, occ(u_pad + 1, v_pad + 1)),
+        vertex_ao_level(n_u0, n_v1, occ(u_pad - 1, v_pad + 1)),
+    ]
+}
 
 /// Builds an unmerged face mesh used as the correctness oracle.
 ///
@@ -44,7 +204,8 @@ pub fn build_naive_mesh(
                 if quads.len() == MAX_DIRECTED_FACES {
                     return Err(MeshError::OutputLimit);
                 }
-                quads.push(make_quad(local, face, 1, 1, material, layer));
+                let ao = face_ao_from_input(input, local, face);
+                quads.push(make_quad(local, face, 1, 1, material, layer, ao));
             }
         }
     }
@@ -72,18 +233,22 @@ pub fn build_mesh(input: &MeshingInput, cancel: &CancelToken) -> Result<ChunkMes
     // Classify each distinct block once; interior slices then only compare slots.
     // Meshing runs as pure jobs on worker threads; each thread keeps its expansion
     // buffers so a chunk does not allocate 64 KiB of slots per build.
-    SCRATCH.with_borrow_mut(|(palette, slots)| {
+    SCRATCH.with_borrow_mut(|(palette, slots, padded_occ)| {
         input
             .center
             .data
             .blocks
             .palette_indices_into(palette, slots);
-        mesh_from_slots(input, cancel, palette, slots)
+        if padded_occ.len() != PADDED_VOLUME {
+            padded_occ.resize(PADDED_VOLUME, 0);
+        }
+        mesh_from_slots(input, cancel, palette, slots, padded_occ)
     })
 }
 
 thread_local! {
-    static SCRATCH: RefCell<(Vec<BlockStateId>, Vec<u16>)> = const { RefCell::new((Vec::new(), Vec::new())) };
+    static SCRATCH: RefCell<(Vec<BlockStateId>, Vec<u16>, Vec<u8>)> =
+        const { RefCell::new((Vec::new(), Vec::new(), Vec::new())) };
 }
 
 fn mesh_from_slots(
@@ -91,11 +256,13 @@ fn mesh_from_slots(
     cancel: &CancelToken,
     palette: &[BlockStateId],
     slots: &[u16],
+    padded_occ: &mut [u8],
 ) -> Result<ChunkMesh, MeshError> {
     let classes: Vec<SlotClass> = palette
         .iter()
         .map(|&block| SlotClass::classify(&input.registry, block))
         .collect();
+    fill_padded_occluding(input, &classes, slots, padded_occ);
     let rows = uniform_rows(slots);
     // One distinct block that never faces itself (occluding, grouped or invisible)
     // cannot produce interior faces at all.
@@ -116,9 +283,11 @@ fn mesh_from_slots(
                 continue;
             }
             let mask_has_any = if is_boundary {
-                boundary_mask(input, palette, &classes, slots, face, slice, &mut mask)
+                boundary_mask(
+                    input, palette, &classes, slots, padded_occ, face, slice, &mut mask,
+                )
             } else {
-                interior_mask(&classes, slots, &rows, face, slice, &mut mask)
+                interior_mask(&classes, slots, &rows, padded_occ, face, slice, &mut mask)
             };
             if mask_has_any {
                 merge_mask(&mut mask, face, slice, &mut quads)?;
@@ -128,12 +297,30 @@ fn mesh_from_slots(
     Ok(finish_mesh(quads))
 }
 
+fn populate_mask_ao(padded_occ: &[u8], face: FaceDir, slice: u8, mask: &mut FaceMask) {
+    let air_normal_pad = if face.positive() {
+        usize::from(slice) + 2
+    } else {
+        usize::from(slice)
+    };
+    for v in 0..32_usize {
+        let row_base = v * 32;
+        for u in 0..32_usize {
+            if let Some((mat, layer, ao)) = &mut mask[row_base + u] {
+                *ao = face_ao_from_padded(padded_occ, face, air_normal_pad, u + 1, v + 1);
+                let _ = (*mat, *layer);
+            }
+        }
+    }
+}
+
 /// Fills the mask of a chunk-boundary slice by sampling the halo through the oracle classifier.
 fn boundary_mask(
     input: &MeshingInput,
     palette: &[BlockStateId],
     classes: &[SlotClass],
     slots: &[u16],
+    padded_occ: &[u8],
     face: FaceDir,
     slice: u8,
     mask: &mut FaceMask,
@@ -170,10 +357,13 @@ fn boundary_mask(
                 let source_class = &classes[usize::from(slots[cell_index])];
                 if let Some(layer) = source_class.layer {
                     mask[usize::from(v) * 32 + usize::from(u)] =
-                        Some((source_class.materials[mat_idx], layer));
+                        Some((source_class.materials[mat_idx], layer, [3; 4]));
                     mask_has_any = true;
                 }
             }
+        }
+        if mask_has_any {
+            populate_mask_ao(padded_occ, face, slice, mask);
         }
         return mask_has_any;
     }
@@ -210,10 +400,13 @@ fn boundary_mask(
             if let FaceDecision::Emit { material, layer } =
                 classify_directed_face(source, &sample, face, &input.registry)
             {
-                mask[usize::from(v) * 32 + usize::from(u)] = Some((material, layer));
+                mask[usize::from(v) * 32 + usize::from(u)] = Some((material, layer, [3; 4]));
                 mask_has_any = true;
             }
         }
+    }
+    if mask_has_any {
+        populate_mask_ao(padded_occ, face, slice, mask);
     }
     mask_has_any
 }
@@ -240,12 +433,12 @@ fn fill_row(
     mat_idx: usize,
     (row, base): (usize, usize),
     (neighbor_row, neighbor_base): (usize, usize),
-    out: &mut [Option<(MaterialId, RenderLayer)>],
+    out: &mut [Option<(MaterialId, RenderLayer, [u8; 4])>],
 ) -> bool {
     if let (Some(source), Some(neighbor)) = (rows[row], rows[neighbor_row]) {
         return match interior_face(classes, source, neighbor, mat_idx) {
-            Some(entry) => {
-                out.fill(Some(entry));
+            Some((mat, layer)) => {
+                out.fill(Some((mat, layer, [3; 4])));
                 true
             }
             None => false,
@@ -253,10 +446,10 @@ fn fill_row(
     }
     let mut any = false;
     for (u, cell) in out.iter_mut().enumerate() {
-        if let Some(entry) =
+        if let Some((mat, layer)) =
             interior_face(classes, slots[base + u], slots[neighbor_base + u], mat_idx)
         {
-            *cell = Some(entry);
+            *cell = Some((mat, layer, [3; 4]));
             any = true;
         }
     }
@@ -268,16 +461,17 @@ fn interior_mask(
     classes: &[SlotClass],
     slots: &[u16],
     rows: &[Option<u16>; 1024],
+    padded_occ: &[u8],
     face: FaceDir,
     slice: u8,
     mask: &mut FaceMask,
 ) -> bool {
     let mat_idx = face.material_index();
-    let slice = usize::from(slice);
+    let slice_idx = usize::from(slice);
     let neighbor_slice = if face.positive() {
-        slice + 1
+        slice_idx + 1
     } else {
-        slice - 1
+        slice_idx - 1
     };
     let mut mask_has_any = false;
     match face {
@@ -289,13 +483,13 @@ fn interior_mask(
                         Some(slot) => interior_face(classes, slot, slot, mat_idx),
                         None => interior_face(
                             classes,
-                            slots[base + slice],
+                            slots[base + slice_idx],
                             slots[base + neighbor_slice],
                             mat_idx,
                         ),
                     };
-                    if let Some(entry) = decision {
-                        mask[v * 32 + u] = Some(entry);
+                    if let Some((mat, layer)) = decision {
+                        mask[v * 32 + u] = Some((mat, layer, [3; 4]));
                         mask_has_any = true;
                     }
                 }
@@ -308,7 +502,7 @@ fn interior_mask(
                     slots,
                     rows,
                     mat_idx,
-                    (slice * 32 + v, 32 * (v + 32 * slice)),
+                    (slice_idx * 32 + v, 32 * (v + 32 * slice_idx)),
                     (neighbor_slice * 32 + v, 32 * (v + 32 * neighbor_slice)),
                     &mut mask[v * 32..v * 32 + 32],
                 );
@@ -321,12 +515,15 @@ fn interior_mask(
                     slots,
                     rows,
                     mat_idx,
-                    (v * 32 + slice, 32 * (slice + 32 * v)),
+                    (v * 32 + slice_idx, 32 * (slice_idx + 32 * v)),
                     (v * 32 + neighbor_slice, 32 * (neighbor_slice + 32 * v)),
                     &mut mask[v * 32..v * 32 + 32],
                 );
             }
         }
+    }
+    if mask_has_any {
+        populate_mask_ao(padded_occ, face, slice, mask);
     }
     mask_has_any
 }
@@ -402,8 +599,8 @@ fn merge_mask(
                 face,
                 material: key.0,
                 layer: key.1,
-                ao: [3; 4],
-                diagonal: QuadDiagonal::Uv,
+                ao: key.2,
+                diagonal: quad_diagonal_for_ao(key.2),
             });
         }
     }
@@ -418,6 +615,7 @@ fn make_quad(
     extent_v: u8,
     material: MaterialId,
     layer: RenderLayer,
+    ao: [u8; 4],
 ) -> Quad {
     let mut origin = [local.x(), local.y(), local.z()];
     let (normal_axis, _, _) = face.axes();
@@ -429,8 +627,8 @@ fn make_quad(
         face,
         material,
         layer,
-        ao: [3; 4],
-        diagonal: QuadDiagonal::Uv,
+        ao,
+        diagonal: quad_diagonal_for_ao(ao),
     }
 }
 

@@ -90,27 +90,41 @@ impl ModelAsset {
     pub(super) fn topological_node_order(
         nodes: &[gltf::Node<'_>],
     ) -> Result<(Vec<Option<usize>>, Vec<usize>, Vec<usize>), ModelError> {
+        use std::cmp::Reverse;
+        use std::collections::BinaryHeap;
+
         let mut parents = vec![None; nodes.len()];
+        let mut children_list = vec![Vec::new(); nodes.len()];
+        let mut indegree = vec![0_usize; nodes.len()];
         for node in nodes {
+            let parent_idx = node.index();
             for child in node.children() {
-                if parents[child.index()].replace(node.index()).is_some() {
+                let child_idx = child.index();
+                if parents[child_idx].replace(parent_idx).is_some() {
                     return Err(fail("node has multiple parents"));
                 }
+                children_list[parent_idx].push(child_idx);
+                indegree[child_idx] += 1;
+            }
+        }
+        let mut ready = BinaryHeap::with_capacity(nodes.len());
+        for (index, &deg) in indegree.iter().enumerate() {
+            if deg == 0 {
+                ready.push(Reverse(index));
             }
         }
         let mut order = Vec::with_capacity(nodes.len());
-        let mut visited = vec![false; nodes.len()];
-        while order.len() < nodes.len() {
-            let before = order.len();
-            for (index, parent) in parents.iter().enumerate() {
-                if !visited[index] && parent.is_none_or(|p| visited[p]) {
-                    visited[index] = true;
-                    order.push(index);
+        while let Some(Reverse(index)) = ready.pop() {
+            order.push(index);
+            for &child in &children_list[index] {
+                indegree[child] -= 1;
+                if indegree[child] == 0 {
+                    ready.push(Reverse(child));
                 }
             }
-            if before == order.len() {
-                return Err(fail("cyclic node hierarchy"));
-            }
+        }
+        if order.len() != nodes.len() {
+            return Err(fail("cyclic node hierarchy"));
         }
         let mut mapping = vec![0; nodes.len()];
         for (joint, &node) in order.iter().enumerate() {

@@ -63,6 +63,8 @@ V1 хранит `BlockStateId` на ячейку. Это подходит для
 
 ```mermaid
 flowchart BT
+    physics_astro --> physics
+    physics_bio --> physics
     physics_voxel --> physics
     physics_voxel --> voxy_core
     physics_voxel --> voxy_world
@@ -73,21 +75,20 @@ flowchart BT
     voxy_app --> voxy_core
     voxy_app --> voxy_cuda
     voxy_app --> voxy_demos
-    voxy_app --> voxy_editor
     voxy_app --> voxy_gpu
     voxy_app --> voxy_input
     voxy_app --> voxy_model
     voxy_app --> voxy_render
     voxy_app --> voxy_runtime
-    voxy_app --> voxy_rush
-    voxy_app --> voxy_scene
     voxy_app --> voxy_shell
     voxy_app --> voxy_text
     voxy_app --> voxy_world
     voxy_audio_device --> voxy_audio
     voxy_cuda --> physics
+    voxy_cuda --> physics_bio
     voxy_cuda --> voxy_gpu_core
     voxy_demos --> physics
+    voxy_demos --> physics_bio
     voxy_demos --> physics_voxel
     voxy_demos --> voxy_animation
     voxy_demos --> voxy_core
@@ -120,6 +121,7 @@ flowchart BT
     voxy_gameplay --> voxy_text
     voxy_gameplay --> voxy_ui
     voxy_gpu --> physics
+    voxy_gpu --> physics_bio
     voxy_gpu --> physics_voxel
     voxy_gpu --> voxy_animation
     voxy_gpu --> voxy_core
@@ -133,6 +135,7 @@ flowchart BT
     voxy_mobile --> voxy_shell
     voxy_model --> voxy_animation
     voxy_model --> voxy_render
+    voxy_model --> voxy_scene
     voxy_ray_probe --> voxy_demos
     voxy_ray_probe --> voxy_render
     voxy_render --> voxy_core
@@ -167,11 +170,17 @@ flowchart BT
     voxy_vulkan --> voxy_cuda
     voxy_web --> physics
     voxy_web --> physics_voxel
+    voxy_web --> voxy_animation
+    voxy_web --> voxy_assets
     voxy_web --> voxy_core
+    voxy_web --> voxy_gameplay
     voxy_web --> voxy_gpu
+    voxy_web --> voxy_input
     voxy_web --> voxy_mesher
+    voxy_web --> voxy_model
     voxy_web --> voxy_render
     voxy_web --> voxy_runtime
+    voxy_web --> voxy_scene
     voxy_web --> voxy_world
     voxy_world --> voxy_core
     voxy_xr --> voxy_ui
@@ -192,7 +201,10 @@ flowchart BT
 | `voxy_shell` | `winit::ApplicationHandler` (`SceneApp`), scene input, touch, rush scene, keyboard/mouse/touch state with camera rigs (`controls`), frame profile; shared by desktop, mobile and examples | canonical domain logic, voxel terrain game |
 | `voxy_demos` | character/tissue/liquid/material demos, face preview, body/face parameters | window, event loop |
 | `voxy_gpu_core` | compute program, memory budget, readback pool, backend options, indirect mesh handle | scene, passes, world |
-| `voxy_app` | desktop binary: voxel terrain game on the shell, composition root | canonical domain logic |
+| `physics` | geometry-independent rigid/contact, fluid/film, constitutive, plasticity, wear, strand/hair mechanics | GPU, window, voxel world, ECS |
+| `physics_astro` | celestial mechanics, radiation transport, stellar EOS, nuclear networks | GPU, window, voxel world, ECS |
+| `physics_bio` | soft-tissue FEM biomechanics, skin deformation, secondary motion, circulation/lymph/respiration | GPU, window, voxel world, ECS |
+| `voxy_app` | desktop binary: voxel terrain game on the shell, composition root | `voxy_editor`, canonical domain logic |
 
 Правило зависимостей проверяется не интерфейсами ради интерфейсов, а crate graph. Traits вводятся только на настоящих заменяемых границах: generator, storage actor backend, clock/test executor. В hot path используются concrete types и generics, а не повсеместный `dyn Trait`.
 

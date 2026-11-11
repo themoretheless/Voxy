@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.67s
+     Running unittests src/lib.rs (/tmp/voxy-film-isolated-target/debug/deps/voxy_demos-f480e2b58132b5b8)
+
+running 1 test
+test female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time has been running for over 60 seconds
+test female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 392 filtered out; finished in 139.81s
+

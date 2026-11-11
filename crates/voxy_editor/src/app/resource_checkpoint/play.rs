@@ -445,6 +445,7 @@ impl App {
             playing,
             simulation,
             simulation_time: _,
+            triggers: _,
             animations: _,
             angular_motion,
             simulation_ticks,

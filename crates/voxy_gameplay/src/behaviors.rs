@@ -159,24 +159,41 @@ pub fn gameplay_schedule() -> Result<&'static voxy_scene::SchedulePlan, voxy_sce
     PLAN.get_or_init(|| {
         use voxy_scene::{SchedulePlan, SystemAccess, SystemSpec};
         let motion = SchedulePlan::build(
-            &[SystemSpec {
-                name: "angular.step".into(),
-                phase: 0,
-                after: vec![],
-                access: vec![
-                    SystemAccess {
-                        resource: "scene".into(),
-                        write: true,
-                    },
-                    SystemAccess {
-                        resource: "angular.motion".into(),
-                        write: true,
-                    },
-                ],
-            }],
-            1,
+            &[
+                SystemSpec {
+                    name: "angular.step".into(),
+                    phase: 0,
+                    after: vec![],
+                    access: vec![
+                        SystemAccess {
+                            resource: "scene".into(),
+                            write: true,
+                        },
+                        SystemAccess {
+                            resource: "angular.motion".into(),
+                            write: true,
+                        },
+                    ],
+                },
+                SystemSpec {
+                    name: "kinematic.step".into(),
+                    phase: 1,
+                    after: vec!["angular.step".into()],
+                    access: vec![
+                        SystemAccess {
+                            resource: "scene".into(),
+                            write: true,
+                        },
+                        SystemAccess {
+                            resource: "character.physics".into(),
+                            write: false,
+                        },
+                    ],
+                },
+            ],
+            2,
         )?;
-        SchedulePlan::compose(&[&motion, crate::character_schedule()?], 3)
+        SchedulePlan::compose(&[&motion, crate::character_schedule()?], 4)
     })
     .as_ref()
     .map_err(Clone::clone)

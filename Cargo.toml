@@ -20,6 +20,8 @@ members = [
     "crates/voxy_lighting",
     "crates/voxy_animation",
     "crates/physics",
+    "crates/physics_astro",
+    "crates/physics_bio",
     "crates/physics_voxel",
     "crates/voxy_runtime",
     "crates/voxy_time",
@@ -120,6 +122,12 @@ used_underscore_binding = "allow"
 opt-level = 3
 
 [profile.dev.package.physics]
+opt-level = 1
+
+[profile.dev.package.physics_astro]
+opt-level = 1
+
+[profile.dev.package.physics_bio]
 opt-level = 1
 
 [patch.crates-io]

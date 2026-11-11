@@ -1,0 +1,13 @@
+{
+  "removedBorderPixels": 6,
+  "matchingInteriorFrames": {
+    "initial": "0b94eb91ee86cad5b676f88c7eeb995a8c6bd9d255dfff6f6aa9429089a000a1",
+    "posed": "7623e144f2f604fd98c4a9452cc5a8f353341a9e5eff6c7ff380fdd1282ed55d",
+    "recovered": "7623e144f2f604fd98c4a9452cc5a8f353341a9e5eff6c7ff380fdd1282ed55d",
+    "transition-fade-start": "e8716e236e1284ce6ec37ee8a843033fce9842b1ba25ba652461bbbaf2a6ec6c",
+    "transition-fade-middle": "a314a31bf4a3aabde88240cfec1a25f7e9f785473c4ba055d7960688a94c216e",
+    "transition-fade-recovered": "a314a31bf4a3aabde88240cfec1a25f7e9f785473c4ba055d7960688a94c216e",
+    "transition-interrupted-start": "a314a31bf4a3aabde88240cfec1a25f7e9f785473c4ba055d7960688a94c216e",
+    "transition-survey": "d0ecef682879e56208180b22d7e8766d9cdff52f9b219afa1dbffef001e1c2e8"
+  }
+}

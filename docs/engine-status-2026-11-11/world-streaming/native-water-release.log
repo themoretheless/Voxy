@@ -1,0 +1,38 @@
+Voxy profile enabled: Profile { scenario: Water, output: "docs/engine-status-2026-11-11/world-streaming/native-water-release.csv", warmup: 1s, duration: 20s, start: None, previous: None, samples: [], gpu_samples: [], completed: Cell { value: false }, cpu_stages: {} }
+GPU terrain: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+Voxy GPU: Apple M4 Max (Metal), 9 chunks, 2000 greedy quads
+Native vegetation: 13 seeded plants, 4 shared mesh variants
+Voxy water activation: 8217 cells
+Voxy loaded in 6.61 seconds
+Voxy startup frame deferred: SkippedOccluded
+Voxy first voxel frame presented (Presented)
+Voxy background rebuild: 6.64ms (3 changed / 9 resident chunks, full publication, upload_bytes=335460, chunk_buffer_bytes=565760)
+Voxy autopilot destroyed natural water bed at VoxelPos { x: -19, y: 4, z: 20 }
+Voxy background rebuild: 1.56ms (1 changed / 9 resident chunks, full publication, upload_bytes=335640, chunk_buffer_bytes=565760)
+Voxy background rebuild: 4.32ms (1 changed / 9 resident chunks, partial publication, upload_bytes=36088, chunk_buffer_bytes=565760)
+Voxy background rebuild: 4.87ms (1 changed / 9 resident chunks, full publication, upload_bytes=336640, chunk_buffer_bytes=606720)
+Voxy background rebuild: 7.29ms (1 changed / 9 resident chunks, partial publication, upload_bytes=38608, chunk_buffer_bytes=606720)
+Voxy background rebuild: 1.71ms (1 changed / 9 resident chunks, partial publication, upload_bytes=38568, chunk_buffer_bytes=606720)
+Voxy background rebuild: 5.69ms (1 changed / 9 resident chunks, partial publication, upload_bytes=38508, chunk_buffer_bytes=606720)
+Voxy background rebuild: 5.07ms (1 changed / 9 resident chunks, partial publication, upload_bytes=38488, chunk_buffer_bytes=606720)
+Voxy background rebuild: 5.35ms (1 changed / 9 resident chunks, partial publication, upload_bytes=38468, chunk_buffer_bytes=606720)
+Voxy background rebuild: 6.60ms (1 changed / 9 resident chunks, partial publication, upload_bytes=38388, chunk_buffer_bytes=606720)
+FRAME PROFILE {"adapter":"AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }","cpu_stages":{"actor_animation":{"p50_ms":0.0,"p95_ms":0.223083,"p99_ms":0.24745799999999998},"pose_admission":{"p50_ms":0.167667,"p95_ms":1.39425,"p99_ms":2.487292},"pose_caller_cpu":{"p50_ms":0.17108299999999999,"p95_ms":0.605792,"p99_ms":1.0030830000000002},"pose_family_certificate":{"p50_ms":0.154,"p95_ms":0.236958,"p99_ms":0.262291},"pose_group_certificate":{"p50_ms":1.4524169999999998,"p95_ms":3.148666,"p99_ms":4.497916999999999},"pose_join_cpu":{"p50_ms":0.0,"p95_ms":0.116,"p99_ms":0.185917},"pose_join_wall":{"p50_ms":0.0,"p95_ms":0.813875,"p99_ms":1.742041},"pose_publication":{"p50_ms":0.018458,"p95_ms":0.422541,"p99_ms":2.134333},"pose_queue_writes":{"p50_ms":0.093333,"p95_ms":0.14225,"p99_ms":0.18525},"pose_spawn_wall":{"p50_ms":0.0,"p95_ms":0.251,"p99_ms":0.376542},"pose_worker_cpu_sum":{"p50_ms":0.0,"p95_ms":2.3916649999999997,"p99_ms":4.831043},"pose_worker_launch_max":{"p50_ms":0.0,"p95_ms":0.623709,"p99_ms":1.6614170000000001},"water":{"p50_ms":0.0,"p95_ms":0.0005,"p99_ms":0.001}},"frame_budget_met":false,"frames":2400,"gpu_ms":null,"gpu_pass_statistics":[{"p50_ms":0.743375,"p95_ms":1.008,"p99_ms":1.096375},null,null],"gpu_samples":227,"gpu_scope":"primary resident voxel pass only","limitations":["CPU render includes submission/presentation; not GPU execution time","presentation completion is not display scanout","GPU scene span excludes external postprocessing; delayed samples may cross warmup boundary","upload/memory counters unavailable"],"max_ms":18.432125,"measurement_seconds":20.0,"over_120hz":1170,"over_60hz":1,"p50_ms":8.323917,"p95_ms":8.873667,"p99_ms":9.08575,"peak_memory_bytes":null,"scenario":"water","skipped_frames":0,"upload_bytes":null,"warmup_seconds":1.0}
+       28.23 real         8.93 user         3.27 sys
+          1308557312  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              109867  page reclaims
+                  30  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 127  voluntary context switches
+              125843  involuntary context switches
+        102419189711  instructions retired
+         30752051188  cycles elapsed
+          2153858968  peak memory footprint

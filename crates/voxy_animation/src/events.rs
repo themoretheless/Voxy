@@ -141,6 +141,22 @@ impl ClipEvents {
             .map_err(|_| "invalid event tick")?;
         self.collect_interval(interval.start, interval.end, interval.looping, budget)
     }
+    /// Events from an externally owned loop clock. The start is the current
+    /// cycle's normalized phase and the end may extend into subsequent cycles.
+    /// # Errors
+    /// Rejects invalid bounds or an interval exceeding the event budget.
+    pub fn collect_loop_interval(
+        &self,
+        start: f64,
+        end: f64,
+        budget: usize,
+    ) -> Result<Vec<ClipEventOccurrence>, &'static str> {
+        if !start.is_finite() || !(0.0..1.0).contains(&start) || !end.is_finite() || end < start {
+            return Err("invalid animation event interval");
+        }
+        self.collect_interval(start, end, true, budget)
+    }
+
     /// Events in the unwrapped normalized interval `(start, end]`.
     pub(crate) fn collect_interval(
         &self,

@@ -1,0 +1,6 @@
+MODEL PUBLISHED frames=0 first_x=-0.54 asset=mesh
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+GAME STATE {"version":1,"objects":[{"id":"turntable","parent":null,"name":"turntable","active":true,"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.9092974,-0.4161471],"scale":[1.0,1.0,1.0],"components":{"editor.model.v1":"mesh","game.angular-motion.v1":{"axis":[0.0,0.0,1.0],"radians_per_second":2.0}}}]}
+GAME CHECK PASS ticks=120 objects=1 prefab_instances=0

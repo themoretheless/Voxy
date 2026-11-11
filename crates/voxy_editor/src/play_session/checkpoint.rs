@@ -48,6 +48,8 @@ pub(crate) struct PlaySessionCheckpoint {
     optics: Vec<Option<[u32; 4]>>,
     liquid: Option<Vec<u8>>,
     physics: Option<CharacterPhysicsCheckpoint>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    triggers: Vec<[voxy_scene::ObjectId; 2]>,
     input: String,
     ui: Option<UiActionCheckpoint>,
 }
@@ -78,6 +80,7 @@ impl PlaySession {
         let Self {
             playing,
             simulation_time: _,
+            triggers,
             simulation,
             animations,
             angular_motion,
@@ -138,6 +141,11 @@ impl PlaySession {
                 .as_ref()
                 .map(|physics| physics.checkpoint(scene.graph, identify))
                 .transpose()?,
+            triggers: triggers
+                .as_ref()
+                .map(|tracker| tracker.checkpoint(scene))
+                .transpose()?
+                .unwrap_or_default(),
             input: voxy_gameplay::encode_input_checkpoint(
                 &player_input.checkpoint(),
                 limits.core.max_bytes,
@@ -163,6 +171,8 @@ impl PlaySessionCheckpoint {
         if !valid_mode
             || self.compatibility.is_empty()
             || self.compatibility.len() > 1024
+            || (self.scene.is_none() && !self.triggers.is_empty())
+            || self.triggers.len() > voxy_gameplay::MAX_TRIGGER_PAIRS
             || !self.camera.valid()
             || (self.liquid.is_none() && !self.optics.is_empty())
         {
@@ -278,6 +288,14 @@ impl PlaySessionCheckpoint {
                 Ok::<_, voxy_gameplay::PhysicsError>(physics)
             })
             .transpose()?;
+        let triggers = if self.triggers.is_empty() {
+            None
+        } else {
+            Some(voxy_gameplay::TriggerTracker::from_checkpoint(
+                &scene,
+                &self.triggers,
+            )?)
+        };
         let mut player_input = InputMap::new(limits.core.max_actions, limits.core.max_bindings);
         player_input.restore_checkpoint(&voxy_gameplay::decode_input_checkpoint(
             &self.input,
@@ -298,6 +316,7 @@ impl PlaySessionCheckpoint {
                 playing: self.authoring.clone(),
                 simulation_time: Instant::now(),
                 simulation,
+                triggers,
                 animations,
                 angular_motion,
                 simulation_ticks: self.ticks,
@@ -578,6 +597,7 @@ pub(crate) mod tests {
             playing: Some(scene.capture(registry).unwrap()),
             simulation_time: Instant::now(),
             simulation: Some(simulation),
+            triggers: None,
             animations: Default::default(),
             angular_motion: Some(voxy_gameplay::AngularMotionBatch::new(&scene.graph, 8).unwrap()),
             simulation_ticks: 0,
@@ -639,14 +659,7 @@ pub(crate) mod tests {
         model: &Arc<ModelAsset>,
         registry: &ComponentRegistry,
     ) -> PlaySessionCheckpoint {
-        let view = SceneCheckpointView::new(
-            &game.scene.graph,
-            game.scene
-                .graph
-                .nodes()
-                .map(|(node, _, _)| (game.scene.identity(node).unwrap().clone(), node)),
-        )
-        .unwrap();
+        let view = game.scene.checkpoint_view();
         game.play
             .checkpoint(
                 &view,
@@ -720,6 +733,104 @@ pub(crate) mod tests {
                 .to_json(limits().core.max_bytes)
                 .unwrap(),
             json
+        );
+    }
+    #[test]
+    fn play_checkpoint_rebinds_trigger_pairs_without_replaying_enter() {
+        use voxy_gameplay::{BoxCollider, BoxTrigger, TriggerPhase, TriggerTracker};
+
+        let (registry, behaviors, ui) = codecs();
+        let (mut original, model) = fixture(&registry);
+        let a = ObjectId("button".into());
+        let b = ObjectId("animated".into());
+        let trigger = original.scene.resolve(&a).unwrap();
+        let collider = original.scene.resolve(&b).unwrap();
+        let scene = &mut original.scene.graph;
+        scene
+            .set_local(collider, scene.local(trigger).unwrap())
+            .unwrap();
+        scene
+            .insert_component(
+                trigger,
+                BoxTrigger {
+                    half_extents: [0.5; 3],
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                collider,
+                BoxCollider {
+                    half_extents: [0.5; 3],
+                },
+            )
+            .unwrap();
+        let mut tracker = TriggerTracker::new(scene, voxy_gameplay::MAX_TRIGGER_PAIRS).unwrap();
+        assert!(
+            tracker
+                .sample_tick(scene, None)
+                .unwrap()
+                .iter()
+                .any(|event| { event.collider == collider && event.phase == TriggerPhase::Enter })
+        );
+        original.play.triggers = Some(tracker);
+
+        let saved = capture(&original, &model, &registry);
+        original.scene.graph.remove_subtree(collider).unwrap();
+        let retired = capture(&original, &model, &registry);
+        let load = |saved: PlaySessionCheckpoint| {
+            let json = saved.to_json(limits().core.max_bytes).unwrap();
+            let saved = PlaySessionCheckpoint::from_json(&json, limits().core.max_bytes).unwrap();
+            saved
+                .prepare(
+                    "test/project/resources/adapter-v1",
+                    &registry,
+                    &behaviors,
+                    &ui,
+                    |key| (key == "model-v1").then(|| model.clone()),
+                    |_| None,
+                    limits(),
+                )
+                .unwrap()
+        };
+        let mut resumed = load(saved);
+        let trigger = resumed.scene.resolve(&a).unwrap();
+        let collider = resumed.scene.resolve(&b).unwrap();
+        let tracker = resumed.play.triggers.as_mut().unwrap();
+        assert!(tracker.contains(trigger, collider));
+        assert!(
+            tracker
+                .sample_tick(&resumed.scene.graph, None)
+                .unwrap()
+                .is_empty()
+        );
+        resumed.scene.graph.set_active(collider, false).unwrap();
+        assert_eq!(
+            tracker.sample_tick(&resumed.scene.graph, None).unwrap(),
+            [voxy_gameplay::TriggerEvent {
+                trigger,
+                collider,
+                phase: TriggerPhase::Exit
+            }]
+        );
+        let mut resumed = load(retired);
+        let trigger = resumed.scene.resolve(&a).unwrap();
+        let collider = resumed.scene.reserved_node(&b).unwrap();
+        assert!(resumed.scene.resolve(&b).is_none());
+        let tracker = resumed.play.triggers.as_mut().unwrap();
+        assert_eq!(
+            tracker.sample_tick(&resumed.scene.graph, None).unwrap(),
+            [voxy_gameplay::TriggerEvent {
+                trigger,
+                collider,
+                phase: TriggerPhase::Exit
+            }]
+        );
+        assert!(
+            tracker
+                .sample_tick(&resumed.scene.graph, None)
+                .unwrap()
+                .is_empty()
         );
     }
     #[test]

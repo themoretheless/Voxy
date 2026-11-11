@@ -4,7 +4,7 @@ use glam::{Quat, Vec3};
 use physics::{AnchoredAabb, CharacterState, CollisionWorld, Origin, SweepResult};
 use voxy_scene::{NodeId, SceneGraph, SceneId};
 
-use crate::{BoxCollider, CharacterBody, PhysicsError, convex};
+use crate::{BoxCollider, CharacterBody, CollisionLayers, PhysicsError, convex};
 
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct RuntimeBody {
@@ -22,6 +22,7 @@ pub(crate) struct StaticBox {
     pub(crate) half_extents: [f32; 3],
     pub(crate) shape: convex::AffineBox,
     pub(crate) owner: NodeId,
+    pub(crate) layers: CollisionLayers,
     pub(crate) min: [f64; 3],
     pub(crate) max: [f64; 3],
 }
@@ -33,6 +34,27 @@ pub(crate) struct StaticWorld(
     pub(crate) Vec<convex::AffineBox>,
     pub(crate) bool,
 );
+
+impl StaticWorld {
+    pub(crate) fn filtered(&self, layers: CollisionLayers) -> std::borrow::Cow<'_, Self> {
+        if self
+            .0
+            .iter()
+            .all(|obstacle| layers.interacts(obstacle.layers))
+        {
+            return std::borrow::Cow::Borrowed(self);
+        }
+        let boxes: Vec<_> = self
+            .0
+            .iter()
+            .filter(|obstacle| layers.interacts(obstacle.layers))
+            .copied()
+            .collect();
+        let shapes: Vec<_> = boxes.iter().map(|obstacle| obstacle.shape).collect();
+        let non_axis_aligned = shapes.iter().any(|shape| !aligned_edges(shape.edges));
+        std::borrow::Cow::Owned(Self(boxes, self.1, shapes, non_axis_aligned))
+    }
+}
 
 impl CollisionWorld for StaticWorld {
     type Obstacle = NodeId;
@@ -103,6 +125,7 @@ pub(crate) fn step_affine(
     planar: [f64; 2],
     jump_pressed: bool,
     dt: f64,
+    record: impl FnMut(glam::DVec3, Option<f64>),
 ) {
     let mut position = precise_center(runtime.state.body);
     let mut velocity = glam::DVec3::from_array(runtime.state.velocity);
@@ -112,13 +135,14 @@ pub(crate) fn step_affine(
         velocity.y = descriptor.jump_speed;
     }
     velocity.y = (velocity.y + descriptor.gravity * dt).max(-100.);
-    let grounded = convex::move_body_affine_carrying_velocity(
+    let grounded = convex::move_body_affine_traced(
         &mut position,
         runtime.edges,
         &mut velocity,
         dt,
         &world.2,
         None,
+        record,
     );
     relocate(runtime, position, descriptor);
     runtime.state.velocity = velocity.to_array();
@@ -177,6 +201,7 @@ pub(crate) fn static_world(scene: &SceneGraph) -> Result<StaticWorld, PhysicsErr
             half_extents: collider.half_extents,
             shape,
             owner,
+            layers: CollisionLayers::on(scene, owner),
             min,
             max,
         });

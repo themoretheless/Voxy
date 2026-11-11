@@ -1,5 +1,5 @@
 use physics::{
-    biomechanics::Matrix,
+    constitutive::Matrix,
     plasticity::{Material, State},
 };
 fn shear(g: f64) -> Matrix {

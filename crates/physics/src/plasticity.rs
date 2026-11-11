@@ -1,7 +1,8 @@
 //! Rate-independent small-strain J2 plasticity with linear isotropic hardening.
 //! SI units: dimensionless tensorial strain, stress in Pa, energy density in J/m³.
 //! Use a fixed material frame. Finite rotations, fracture and softening are excluded.
-use crate::biomechanics::{Matrix, Stress};
+use crate::constitutive::Stress;
+use crate::math::Matrix;
 mod work;
 pub use work::WorkStep;
 
@@ -111,7 +112,7 @@ impl Material {
         yield_pa: f64,
         hardening_pa: f64,
     ) -> Result<Self, &'static str> {
-        let elastic = crate::biomechanics::Material::from_young_poisson(young_pa, poisson)?;
+        let elastic = crate::constitutive::Material::from_young_poisson(young_pa, poisson)?;
         if !yield_pa.is_finite() || yield_pa <= 0. || !hardening_pa.is_finite() || hardening_pa < 0.
         {
             return Err("invalid plastic material");

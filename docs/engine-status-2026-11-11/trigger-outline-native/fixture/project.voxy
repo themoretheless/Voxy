@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "name": "Voxy Physics Inspector",
+  "asset_manifest": "assets.json",
+  "startup_scene": "main.scene.json"
+}

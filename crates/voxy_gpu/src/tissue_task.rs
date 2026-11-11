@@ -1,7 +1,7 @@
 //! Cross-platform GPU rest-material search backend using WGSL compute shaders.
 //! Physical force/energy admission and nonlinear Newton steps remain native.
 
-use physics::biomechanics::{
+use physics_bio::biomechanics::{
     TissueSearchBackend, TissueSearchOperation, TissueSearchSnapshot, Vec3,
 };
 use std::sync::Arc;
@@ -401,7 +401,7 @@ pub fn is_gpu_tissue_search_failure(error: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use physics::biomechanics::{Body, Material};
+    use physics_bio::biomechanics::{Body, Material};
 
     fn specimen(count: usize) -> Body {
         let mut points = Vec::new();
@@ -537,9 +537,10 @@ mod tests {
             .map(|&p| if p { [0.; 3] } else { [0.1, -0.2, 0.3] })
             .collect();
 
-        let mut gpu_body =
-            physics::biomechanics::InertialBody::new_with_fixed_supports(body, &[6.; 2], velocity)
-                .unwrap();
+        let mut gpu_body = physics_bio::biomechanics::InertialBody::new_with_fixed_supports(
+            body, &[6.; 2], velocity,
+        )
+        .unwrap();
         gpu_body.set_uniform_acceleration([0., -2., 0.]).unwrap();
         gpu_body.set_tissue_search_backend(Some(backend));
 

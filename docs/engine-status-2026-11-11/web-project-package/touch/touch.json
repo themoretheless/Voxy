@@ -1,0 +1,3911 @@
+{
+  "settled": {
+    "ticks": 30,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "wall": {
+    "ticks": 75,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.8,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "jump": {
+    "ticks": 86,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.8,
+            0.57033336,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "landed": {
+    "ticks": 126,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.8,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "left": {
+    "ticks": 130,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.6666667,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "touchOnly": {
+    "ticks": 134,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.53333336,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "cancelled": {
+    "ticks": 144,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.53333336,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "focusHeld": {
+    "ticks": 148,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.6666667,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "stopped": {
+    "ticks": 158,
+    "scene": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "camera",
+          "parent": null,
+          "name": "camera",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.camera.v1": {
+              "distance": 3.5999999046325684,
+              "legacy": false,
+              "perspective": true,
+              "pitch": 0.3799999952316284,
+              "target": [
+                0,
+                0,
+                0
+              ],
+              "yaw": -0.550000011920929
+            },
+            "game.follow-camera.v1": {
+              "half_life": 0.12,
+              "offset": [
+                0,
+                0.15000000596046448,
+                0
+              ],
+              "target": "player"
+            }
+          }
+        },
+        {
+          "id": "floor",
+          "parent": null,
+          "name": "floor",
+          "active": true,
+          "translation": [
+            0,
+            -0.15,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "floor",
+            "game.box.v1": {
+              "half_extents": [
+                2,
+                0.15000000596046448,
+                1.5
+              ]
+            }
+          }
+        },
+        {
+          "id": "player",
+          "parent": null,
+          "name": "player",
+          "active": true,
+          "translation": [
+            0.6666667,
+            0.2,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "player",
+            "game.character.v1": {
+              "gravity": -9.8,
+              "half_extents": [
+                0.20000000298023224,
+                0.20000000298023224,
+                0.20000000298023224
+              ],
+              "jump_speed": 3,
+              "speed": 2
+            }
+          }
+        },
+        {
+          "id": "wall",
+          "parent": null,
+          "name": "wall",
+          "active": true,
+          "translation": [
+            1.1,
+            0.4,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "wall",
+            "game.box.v1": {
+              "half_extents": [
+                0.10000000149011612,
+                0.4000000059604645,
+                1.5
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "camera": {
+    "subTickMoves": 13,
+    "trace": [
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.550000011920929,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.550000011920929,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.550000011920929,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5499677658081055,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.5498730540275574,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5496866106987,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.5493810176849365,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5489295721054077,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.548307478427887,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5474904775619507,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.546455979347229,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5451820492744446,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.5436481237411499,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5418342351913452,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.5397217869758606,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5372925400733948,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.5345297455787659,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5314167737960815,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.5279383659362793,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5240795016288757,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.5198262333869934,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5151649117469788,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.510083019733429,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.5045680999755859,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.49860867857933044,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.49233952164649963,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.48588722944259644,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.4795011878013611,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.4734152555465698,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.4676153361797333,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.4620879888534546,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.45682039856910706,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.4518003761768341,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.44701623916625977,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.4424569606781006,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.43811193108558655,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.433971107006073,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.4300248622894287,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.42626407742500305,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.4226800501346588,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.41926443576812744,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.4160093367099762,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.412907212972641,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.4099508821964264,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.4071334898471832,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.4044484794139862,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.4018896818161011,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.3994511067867279,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.3971271514892578,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.3949124217033386,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.3928017318248749,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.39079028367996216,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.3888733386993408,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.3870464563369751,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.3853054642677307,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.38364627957344055,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.3820650577545166,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.38055816292762756,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.3791220784187317,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.37775349617004395,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0,
+          0.37644919753074646,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0,
+          0.37520623207092285,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          2.937073340092411e-8,
+          0.37402164936065674,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.00039485463639721274,
+          0.3728927671909332,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.00155437842477113,
+          0.3718169033527374,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.003442663699388504,
+          0.37079161405563354,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.006025461945682764,
+          0.36981451511383057,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.009270134381949902,
+          0.368883341550827,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.013145576231181622,
+          0.3679959177970886,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.017622144892811775,
+          0.3671501874923706,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.022671589627861977,
+          0.3663442134857178,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.028266988694667816,
+          0.3655761182308197,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.03438268229365349,
+          0.36484411358833313,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.040994226932525635,
+          0.36414650082588196,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.04807830974459648,
+          0.36348170042037964,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.055612727999687195,
+          0.3628481328487396,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.06357631832361221,
+          0.36224430799484253,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.07194891571998596,
+          0.3616688847541809,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.08071129024028778,
+          0.3611205220222473,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.08984513580799103,
+          0.3605979084968567,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.09933298081159592,
+          0.3600998520851135,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.10915820300579071,
+          0.3596252202987671,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.11930494010448456,
+          0.35917288064956665,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.1297580748796463,
+          0.35874179005622864,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.14050322771072388,
+          0.35833096504211426,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.15152665972709656,
+          0.3579394519329071,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.16281528770923615,
+          0.35756635665893555,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.17435666918754578,
+          0.35721075534820557,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.18613891303539276,
+          0.35687190294265747,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.19815069437026978,
+          0.356548935174942,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.21038123965263367,
+          0.3562411665916443,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.22282026708126068,
+          0.355947881937027,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.23545797169208527,
+          0.3556683659553528,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.24828501045703888,
+          0.3554019629955292,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.2612925171852112,
+          0.3551481068134308,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.2744719684123993,
+          0.3549061715602875,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.28781530261039734,
+          0.3546755909919739,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.3013148307800293,
+          0.3544558584690094,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.3149631917476654,
+          0.35424646735191345,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.32875338196754456,
+          0.35404691100120544,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.3426787853240967,
+          0.3538567125797272,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.3567329943180084,
+          0.3536754846572876,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.37090998888015747,
+          0.3535027503967285,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.3852039575576782,
+          0.3533381223678589,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.3996094763278961,
+          0.35318124294281006,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.41412124037742615,
+          0.3530317544937134,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.42873427271842957,
+          0.3528892695903778,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.44344380497932434,
+          0.35275349020957947,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.45824533700942993,
+          0.3526240885257721,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.47313451766967773,
+          0.3525007665157318,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.48810717463493347,
+          0.35238325595855713,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.5027645826339722,
+          0.35227125883102417,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.5167332291603088,
+          0.35216450691223145,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.5300453901290894,
+          0.35206279158592224,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.5427319407463074,
+          0.35196584463119507,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.5548223257064819,
+          0.3518734574317932,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.5663444399833679,
+          0.35178542137145996,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.577325165271759,
+          0.3517015278339386,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.58778977394104,
+          0.3516215682029724,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.5977626442909241,
+          0.3515453338623047,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6072667837142944,
+          0.35147273540496826,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6163243055343628,
+          0.35140350461006165,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6249561905860901,
+          0.3513375520706177,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6331824064254761,
+          0.351274698972702,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6410220265388489,
+          0.35121479630470276,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.648493230342865,
+          0.35115769505500793,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6556133031845093,
+          0.3511033058166504,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6623987555503845,
+          0.3510514497756958,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6688653826713562,
+          0.351002037525177,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6750280261039734,
+          0.35095494985580444,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6809011101722717,
+          0.3509100675582886,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6864981651306152,
+          0.35086730122566223,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6918322443962097,
+          0.35082653164863586,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6969155669212341,
+          0.3507876992225647,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7017600536346436,
+          0.3507506847381592,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.706376850605011,
+          0.35071539878845215,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.710776686668396,
+          0.35068178176879883,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7149697542190552,
+          0.35064974427223206,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7189657688140869,
+          0.35061919689178467,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7227739691734314,
+          0.3505901098251343,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7264032363891602,
+          0.35056236386299133,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7298619151115417,
+          0.35053595900535583,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7331580519676208,
+          0.35051077604293823,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7362993359565735,
+          0.35048675537109375,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7392929196357727,
+          0.3504638969898224,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7421458959579468,
+          0.3504420816898346,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7448647618293762,
+          0.35042130947113037,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7474558353424072,
+          0.35040152072906494,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7499251365661621,
+          0.35038265585899353,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7522784471511841,
+          0.35036465525627136,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7545211315155029,
+          0.35034751892089844,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7566583752632141,
+          0.35033118724823,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7586952447891235,
+          0.35031571984291077,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7606363892555237,
+          0.3508610129356384,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7624862790107727,
+          0.352491557598114,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7642492055892944,
+          0.35512417554855347,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7659293413162231,
+          0.35868000984191895,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7675305008888245,
+          0.3630834221839905,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7690563797950745,
+          0.3682628870010376,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7705106139183044,
+          0.3741496801376343,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.771896481513977,
+          0.38067880272865295,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7732172012329102,
+          0.38778790831565857,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7744758725166321,
+          0.3954179286956787,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.775675356388092,
+          0.40351220965385437,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7768185138702393,
+          0.4120171368122101,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7779079079627991,
+          0.4208812415599823,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7789461612701416,
+          0.4300558865070343,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7799355983734131,
+          0.439494252204895,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.780878484249115,
+          0.4491522014141083,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7817771434783936,
+          0.45898717641830444,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7826334834098816,
+          0.46895915269851685,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.783449649810791,
+          0.47902941703796387,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7842274308204651,
+          0.4891616702079773,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7849686741828918,
+          0.49932071566581726,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.785675048828125,
+          0.5094735622406006,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.786348283290863,
+          0.5195883512496948,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7869898080825806,
+          0.5296350121498108,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7876012325286865,
+          0.5395846366882324,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7881839275360107,
+          0.5494099259376526,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7887392044067383,
+          0.5590845942497253,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.789268434047699,
+          0.5685839653015137,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7897727489471436,
+          0.5778840184211731,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7902534008026123,
+          0.5869623422622681,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7907114624977112,
+          0.5957972407341003,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7911479473114014,
+          0.6043683886528015,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7915639877319336,
+          0.6126558780670166,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7919604182243347,
+          0.6206413507461548,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7923382520675659,
+          0.6283067464828491,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.792698323726654,
+          0.6356354355812073,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.793041467666626,
+          0.6426109075546265,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7933684587478638,
+          0.6492181420326233,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7936801314353943,
+          0.6554421186447144,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7939771413803101,
+          0.6612691879272461,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7942601442337036,
+          0.6666857600212097,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.794529914855957,
+          0.6716793179512024,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7947869896888733,
+          0.6762375831604004,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7950319647789001,
+          0.6803492307662964,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7952654361724854,
+          0.6840030550956726,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7954879403114319,
+          0.6871888041496277,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7957000136375427,
+          0.689896285533905,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7959020733833313,
+          0.6921162605285645,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7960946559906006,
+          0.6938393115997314,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.796278178691864,
+          0.6950571537017822,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7964531183242798,
+          0.6957612037658691,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7966197729110718,
+          0.6959439516067505,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7967786192893982,
+          0.6955976486206055,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7969300150871277,
+          0.6947154402732849,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7970743179321289,
+          0.6932902336120605,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7972118258476257,
+          0.6913158297538757,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.797342836856842,
+          0.6887857913970947,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7974677085876465,
+          0.6856945157051086,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7975867390632629,
+          0.6820361614227295,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7977001070976257,
+          0.6778056621551514,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7978082299232483,
+          0.6729975938796997,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7979112267494202,
+          0.6676074266433716,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7980093955993652,
+          0.6616302728652954,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7981029152870178,
+          0.6550620198249817,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7981920838356018,
+          0.6478981375694275,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7982770204544067,
+          0.6401349306106567,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7983580231666565,
+          0.6317682862281799,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7984352111816406,
+          0.6227949261665344,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7985087037086487,
+          0.6132110357284546,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7985787987709045,
+          0.6030136942863464,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7986456155776978,
+          0.592353343963623,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7987092733383179,
+          0.5813717246055603,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7987698912620544,
+          0.5704984068870544,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7988277077674866,
+          0.5601360201835632,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.798882782459259,
+          0.5502606630325317,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7989352941513062,
+          0.5408493876457214,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7989853620529175,
+          0.5318803787231445,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7990330457687378,
+          0.5233328938484192,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7990784645080566,
+          0.5151870846748352,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7991217970848083,
+          0.5074241161346436,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7991630434989929,
+          0.5000259280204773,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7992023825645447,
+          0.4929754436016083,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7992398738861084,
+          0.48625630140304565,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7992755770683289,
+          0.47985291481018066,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7993096113204956,
+          0.47375044226646423,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7993420958518982,
+          0.467934787273407,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7993730306625366,
+          0.4623924195766449,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7994024753570557,
+          0.45711052417755127,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7994305491447449,
+          0.45207685232162476,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.799457311630249,
+          0.4472797214984894,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7994828224182129,
+          0.4427080750465393,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7995071411132812,
+          0.43835124373435974,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7995302677154541,
+          0.43419915437698364,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7995523810386658,
+          0.4302422106266022,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7995734214782715,
+          0.42647120356559753,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.799593448638916,
+          0.4228774309158325,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7996125817298889,
+          0.4194525480270386,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7996307611465454,
+          0.41618862748146057,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.799648106098175,
+          0.41307806968688965,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7996646761894226,
+          0.41011372208595276,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7996804118156433,
+          0.40728867053985596,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7996953129768372,
+          0.40459635853767395,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7993146181106567,
+          0.4020306169986725,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7981685996055603,
+          0.39958542585372925,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7962931394577026,
+          0.39725515246391296,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7937225699424744,
+          0.3950343728065491,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7904895544052124,
+          0.3929179906845093,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7866252064704895,
+          0.3909010589122772,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7821592688560486,
+          0.38897889852523804,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7771199345588684,
+          0.38714706897735596,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7715341448783875,
+          0.38540133833885193,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7654275894165039,
+          0.3837376534938812,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7588247656822205,
+          0.38215214014053345,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7517490386962891,
+          0.3806411623954773,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7442225217819214,
+          0.37920117378234863,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7362664937973022,
+          0.3778288662433624,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7279011011123657,
+          0.3765210509300232,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7191457748413086,
+          0.3752746880054474,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.7104134559631348,
+          0.3740868866443634,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.7020915746688843,
+          0.37295493483543396,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6941607594490051,
+          0.37187615036964417,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6866026520729065,
+          0.3708480894565582,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6793997287750244,
+          0.36986833810806274,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6725353002548218,
+          0.36893460154533386,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6659935116767883,
+          0.36804476380348206,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6597591042518616,
+          0.3671967685222626,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6538177132606506,
+          0.36638858914375305,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6481555700302124,
+          0.36561840772628784,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6427594423294067,
+          0.3648844361305237,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6376169919967651,
+          0.3641849160194397,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6327161192893982,
+          0.36351829767227173,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6280456185340881,
+          0.3628830015659332,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6235946416854858,
+          0.3622775673866272,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6193527579307556,
+          0.3617005944252014,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6153103113174438,
+          0.36115071177482605,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6114577651023865,
+          0.3606266975402832,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6077862977981567,
+          0.3601273000240326,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6042875051498413,
+          0.3596513569355011,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6013480424880981,
+          0.35919779539108276,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.5993300080299377,
+          0.35876554250717163,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.5981900095939636,
+          0.3583535850048065,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.597886860370636,
+          0.3579610288143158,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.5983812212944031,
+          0.35758689045906067,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.5996356010437012,
+          0.3572303354740143,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.601614236831665,
+          0.35689055919647217,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6042830944061279,
+          0.35656672716140747,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6072148084640503,
+          0.3562581241130829,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.610008716583252,
+          0.3559640347957611,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6126713752746582,
+          0.35568374395370483,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6152089238166809,
+          0.3554166257381439,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6176271438598633,
+          0.3551620841026306,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6199318170547485,
+          0.3549194931983948,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6221281290054321,
+          0.35468828678131104,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6242212057113647,
+          0.3544679582118988,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.626215934753418,
+          0.3542580008506775,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6281169056892395,
+          0.3540579080581665,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6299285888671875,
+          0.35386720299720764,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6316550970077515,
+          0.3536854684352875,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6333004832267761,
+          0.3535122573375702,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6348685026168823,
+          0.35334721207618713,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6363628506660461,
+          0.3531898856163025,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6377869844436646,
+          0.3530399799346924,
+          0
+        ]
+      },
+      {
+        "ticks": 0,
+        "target": [
+          0.6391441822052002,
+          0.35289713740348816,
+          0
+        ]
+      },
+      {
+        "ticks": 1,
+        "target": [
+          0.6404376029968262,
+          0.3527609705924988,
+          0
+        ]
+      }
+    ]
+  }
+}

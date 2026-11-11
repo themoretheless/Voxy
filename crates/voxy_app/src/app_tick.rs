@@ -853,14 +853,20 @@ impl VoxyApp {
     }
 
     fn start_rebuild(&mut self) {
-        if self.rebuild.is_some() || self.rebuild_pending.is_none() {
+        if self.rebuild_pending.is_none() {
             return;
         }
-        let Some(world) = self.world.clone() else {
+        let Some(world) = &self.world else {
             return;
         };
+        let pool = self
+            .rebuild_pool
+            .get_or_insert_with(|| RebuildWorkerPool::new(world.epoch(), 2, 8));
+        if pool.in_flight() > 0 {
+            return;
+        }
         // Only chunks invalidated by commits since the last rebuild are derived again;
-        // their merged output equals a full resident rebuild.
+        // extract only those chunks + their 26-neighbor halos instead of cloning `World`.
         let positions: Vec<ChunkPos> = self
             .resident_positions
             .iter()
@@ -873,60 +879,122 @@ impl VoxyApp {
         if positions.is_empty() {
             return;
         }
-        self.rebuild = Some(std::thread::spawn(move || {
-            let started = Instant::now();
-            let result = rebuild_bootstrap_chunks(&world, &positions, epoch);
-            (epoch, started.elapsed(), result)
-        }));
+        let snapshots = extract_chunk_neighborhood(world, &positions);
+        let registry = world.registry_handle();
+        let vertical_propagation = positions.iter().any(|pos| pos.y != 0);
+        if pool
+            .try_submit(
+                JobClass::Visible,
+                epoch,
+                vertical_propagation,
+                registry,
+                snapshots,
+                positions.clone(),
+            )
+            .is_err()
+        {
+            self.dirty_chunks.extend(positions);
+            self.rebuild_pending = Some(epoch);
+        }
+    }
+
+    fn accept_rebuild(
+        &mut self,
+        outcome: voxy_runtime::RebuildBatchOutcome,
+    ) -> Result<Option<Vec<ChunkPos>>, voxy_runtime::BootstrapError> {
+        if outcome.derivation_epoch != self.derivation_epoch {
+            self.dirty_chunks.extend(outcome.positions);
+            self.rebuild_pending = Some(self.derivation_epoch);
+            return Ok(None);
+        }
+        let mut positions = Vec::new();
+        for chunk in outcome.result? {
+            if self.derived_chunks.get(&chunk.pos).is_none_or(|old| {
+                old.mesh != chunk.mesh || old.light.bytes() != chunk.light.bytes()
+            }) {
+                positions.push(chunk.pos);
+            }
+            self.derived_chunks.insert(chunk.pos, chunk);
+        }
+        Ok(Some(positions))
     }
 
     pub(super) fn poll_rebuild(&mut self, event_loop: &ActiveEventLoop) {
-        if !self
-            .rebuild
-            .as_ref()
-            .is_some_and(std::thread::JoinHandle::is_finished)
-        {
+        let Some(pool) = &mut self.rebuild_pool else {
+            return;
+        };
+        let ready = pool.drain_ready(4);
+        if ready.is_empty() {
             return;
         }
-        let Some(worker) = self.rebuild.take() else {
-            return;
-        };
-        let Ok((epoch, duration, result)) = worker.join() else {
-            eprintln!("Voxy geometry worker panicked");
-            event_loop.exit();
-            return;
-        };
-        let chunks = match result {
-            Ok(chunks) => chunks,
-            Err(error) => {
-                eprintln!("Voxy post-destruction rebuild failed: {error}");
-                event_loop.exit();
-                return;
+        let mut rebuilt = BTreeSet::new();
+        let mut total_duration = Duration::ZERO;
+        for (_key, outcome) in ready {
+            let duration = outcome.duration;
+            match self.accept_rebuild(outcome) {
+                Ok(Some(positions)) => {
+                    rebuilt.extend(positions);
+                    total_duration += duration;
+                }
+                Ok(None) => {}
+                Err(error) => {
+                    eprintln!("Voxy post-destruction rebuild failed: {error}");
+                    event_loop.exit();
+                    return;
+                }
             }
-        };
-        // Results stay valid for chunks no later commit invalidated; those chunks are
-        // already in `dirty_chunks` and rebuilt below when the epoch moved on.
-        let rebuilt = chunks.len();
-        for chunk in chunks {
-            self.derived_chunks.insert(chunk.pos, chunk);
         }
-        let uploads = self
-            .derived_chunks
-            .values()
-            .map(|chunk| (chunk.pos, &chunk.mesh, &chunk.light))
-            .collect::<Vec<_>>();
-        if let Some(renderer) = &mut self.renderer
-            && let Err(error) = renderer.upload_lit_chunks(&uploads, self.camera_anchor)
-        {
-            eprintln!("Voxy post-destruction upload failed: {error}");
-            event_loop.exit();
+        if rebuilt.is_empty() {
+            self.start_rebuild();
             return;
+        }
+        let mut publication = "headless".to_owned();
+        if let Some(renderer) = &mut self.renderer {
+            let updated = rebuilt
+                .iter()
+                .map(|pos| &self.derived_chunks[pos])
+                .map(|chunk| (chunk.pos, &chunk.mesh, &chunk.light))
+                .collect::<Vec<_>>();
+            let upload = renderer
+                .try_update_lit_chunks(&updated, self.camera_anchor)
+                .and_then(|applied| {
+                    if applied {
+                        return Ok(true);
+                    }
+                    let resident = self
+                        .derived_chunks
+                        .values()
+                        .map(|chunk| (chunk.pos, &chunk.mesh, &chunk.light))
+                        .collect::<Vec<_>>();
+                    renderer
+                        .upload_lit_chunks(&resident, self.camera_anchor)
+                        .map(|()| false)
+                });
+            match upload {
+                Ok(partial) => {
+                    let mode = if partial { "partial" } else { "full" };
+                    publication = format!(
+                        "{mode} publication, upload_bytes={}, chunk_buffer_bytes={}",
+                        renderer.chunk_upload_bytes(),
+                        renderer.chunk_buffer_bytes(),
+                    );
+                }
+                Err(error) => {
+                    let error = format!("Voxy post-destruction upload failed: {error}");
+                    eprintln!("{error}");
+                    self.startup_failure = Some(error);
+                    event_loop.exit();
+                    return;
+                }
+            }
         }
         println!(
-            "Voxy background rebuild: {:.2}ms ({rebuilt} chunks)",
-            duration.as_secs_f64() * 1000.0
+            "Voxy background rebuild: {:.2}ms ({} changed / {} resident chunks, {publication})",
+            total_duration.as_secs_f64() * 1000.0,
+            rebuilt.len(),
+            self.derived_chunks.len()
         );
-        if epoch != self.derivation_epoch {
+        if self.rebuild_pending.is_some() {
             self.start_rebuild();
         }
     }
@@ -1283,5 +1351,151 @@ pub(super) fn apply_autopilot_controls(input: &mut InputState, tick: u64) {
             },
             false,
         );
+    }
+}
+
+#[cfg(test)]
+mod rebuild_publication_tests {
+    use super::*;
+
+    #[test]
+    fn stale_rebuild_requeues_negative_chunks_without_publishing_them() {
+        let scene = build_procedural_scene(19, 1).unwrap();
+        let chunk = scene
+            .chunks
+            .into_iter()
+            .find(|chunk| chunk.pos.x < 0)
+            .unwrap();
+        let position = chunk.pos;
+        let mut app = VoxyApp {
+            derivation_epoch: 2,
+            ..Default::default()
+        };
+        let stale = voxy_runtime::RebuildBatchOutcome {
+            derivation_epoch: 1,
+            positions: vec![position],
+            duration: Duration::ZERO,
+            result: Ok(vec![chunk.clone()]),
+        };
+        assert_eq!(app.accept_rebuild(stale).unwrap(), None);
+        assert!(app.derived_chunks.is_empty());
+        assert!(app.dirty_chunks.contains(&position));
+        assert_eq!(app.rebuild_pending, Some(2));
+
+        let current = voxy_runtime::RebuildBatchOutcome {
+            derivation_epoch: 2,
+            positions: vec![position],
+            duration: Duration::ZERO,
+            result: Ok(vec![chunk.clone()]),
+        };
+        assert_eq!(app.accept_rebuild(current).unwrap(), Some(vec![position]));
+        assert_eq!(app.derived_chunks.get(&position), Some(&chunk));
+        let mut restamped = chunk;
+        restamped.light.stamp.lighting_epoch += 1;
+        let same_data = voxy_runtime::RebuildBatchOutcome {
+            derivation_epoch: 2,
+            positions: vec![position],
+            duration: Duration::ZERO,
+            result: Ok(vec![restamped.clone()]),
+        };
+        assert_eq!(app.accept_rebuild(same_data).unwrap(), Some(Vec::new()));
+        assert_eq!(app.derived_chunks.get(&position), Some(&restamped));
+    }
+
+    #[test]
+    fn edits_across_chunk_boundaries_publish_only_the_latest_worker_meshes() {
+        use voxy_world::{BlockStateId, EditTxn, VoxelWrite};
+
+        let scene = build_procedural_scene(19, 2).unwrap();
+        let stone = scene
+            .world
+            .registry()
+            .find(&ResourceKey::parse("voxy:stone").unwrap())
+            .unwrap();
+        let mut app = VoxyApp {
+            resident_positions: scene.chunks.iter().map(|chunk| chunk.pos).collect(),
+            derived_chunks: scene
+                .chunks
+                .into_iter()
+                .map(|chunk| (chunk.pos, chunk))
+                .collect(),
+            world: Some(scene.world),
+            ..Default::default()
+        };
+        let edit = |app: &mut VoxyApp, xs: [i64; 2], y, block| {
+            let receipt = app
+                .world
+                .as_mut()
+                .unwrap()
+                .commit(EditTxn {
+                    source: EditSource::Simulation,
+                    expected: Vec::new(),
+                    writes: xs
+                        .map(|x| VoxelWrite {
+                            pos: VoxelPos { x, y, z: 0 },
+                            block,
+                        })
+                        .to_vec(),
+                })
+                .unwrap();
+            assert!(
+                receipt
+                    .inverse
+                    .writes
+                    .iter()
+                    .any(|write| write.block != block)
+            );
+            app.dirty_chunks
+                .extend(invalidated_derived_chunks(&receipt));
+            app.derivation_epoch += 1;
+            app.rebuild_pending = Some(app.derivation_epoch);
+        };
+        let next = |app: &mut VoxyApp| {
+            let pool = app.rebuild_pool.as_mut().unwrap();
+            let deadline = Instant::now() + Duration::from_secs(20);
+            loop {
+                if let Some((_, outcome)) = pool.drain_ready(1).pop() {
+                    return outcome;
+                }
+                assert!(
+                    Instant::now() < deadline,
+                    "background rebuild did not complete"
+                );
+                std::thread::sleep(Duration::from_millis(1));
+            }
+        };
+        for (first, second) in [([-33, -32], [-1, 0]), ([-1, 0], [31, 32])] {
+            edit(&mut app, first, 31, stone);
+            app.start_rebuild();
+            assert_eq!(app.rebuild_pool.as_ref().unwrap().in_flight(), 1);
+            edit(&mut app, second, 3, BlockStateId::AIR);
+            let stale = next(&mut app);
+            assert_ne!(stale.derivation_epoch, app.derivation_epoch);
+            let old_positions = stale.positions.clone();
+            assert!(!old_positions.is_empty());
+            let before = app.derived_chunks.clone();
+            assert_eq!(app.accept_rebuild(stale).unwrap(), None);
+            assert_eq!(app.derived_chunks, before);
+            assert!(
+                old_positions
+                    .iter()
+                    .all(|position| app.dirty_chunks.contains(position))
+            );
+            app.start_rebuild();
+            let current = next(&mut app);
+            assert!(!app.accept_rebuild(current).unwrap().unwrap().is_empty());
+
+            let reference = voxy_runtime::rebuild_bootstrap_chunks(
+                app.world.as_ref().unwrap(),
+                &app.resident_positions,
+                app.derivation_epoch,
+            )
+            .unwrap();
+            for chunk in reference {
+                let actual = &app.derived_chunks[&chunk.pos];
+                assert_eq!(actual.mesh, chunk.mesh, "{:?}", chunk.pos);
+                assert_eq!(actual.light.bytes(), chunk.light.bytes(), "{:?}", chunk.pos);
+            }
+        }
     }
 }

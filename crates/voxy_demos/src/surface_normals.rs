@@ -10,6 +10,16 @@ struct Triangle {
     angles: [f32; 3],
 }
 #[derive(Debug)]
+pub(super) struct NormalSelection {
+    vertices: Vec<usize>,
+    triangles: Vec<(usize, [bool; 3])>,
+}
+impl NormalSelection {
+    pub(super) fn matches(&self, indices: impl Iterator<Item = usize>) -> bool {
+        self.vertices.iter().copied().eq(indices)
+    }
+}
+#[derive(Debug)]
 pub(super) struct PreparedNormals {
     triangles: Vec<Triangle>,
 }
@@ -62,26 +72,93 @@ impl PreparedNormals {
     pub(super) fn transport(&self, posed: &[SceneVertex], authored: &[Vec3]) -> Vec<Vec3> {
         let mut result = vec![Vec3::ZERO; posed.len()];
         for triangle in &self.triangles {
-            let ids = triangle.ids;
-            let b = Vec3::from_array(posed[ids[0]].position);
-            let p = Vec3::from_array(posed[ids[1]].position) - b;
-            let q = Vec3::from_array(posed[ids[2]].position) - b;
-            let Some(n1) = p.cross(q).try_normalize() else {
-                continue;
+            Self::accumulate(triangle, [true; 3], posed, authored, &mut result);
+        }
+        result
+            .into_iter()
+            .enumerate()
+            .map(|(i, normal)| normal.try_normalize().unwrap_or(authored[i]))
+            .collect()
+    }
+
+    pub(super) fn prepare_selection(
+        &self,
+        vertex_count: usize,
+        indices: impl Iterator<Item = usize>,
+    ) -> NormalSelection {
+        let vertices: Vec<_> = indices.collect();
+        if vertices.is_empty() {
+            return NormalSelection {
+                vertices,
+                triangles: Vec::new(),
             };
-            let transport =
-                Mat3::from_cols(p, q, n1).inverse().transpose() * triangle.reference_transpose;
-            for corner in 0..3 {
+        }
+        let mut mask = vec![false; vertex_count];
+        for &i in &vertices {
+            mask[i] = true;
+        }
+        let triangles = self
+            .triangles
+            .iter()
+            .enumerate()
+            .filter_map(|(index, triangle)| {
+                let active = triangle.ids.map(|i| mask[i]);
+                active
+                    .into_iter()
+                    .any(|value| value)
+                    .then_some((index, active))
+            })
+            .collect();
+        NormalSelection {
+            vertices,
+            triangles,
+        }
+    }
+
+    /// The selected normals use the original triangle traversal and summation order.
+    /// Entries outside the selection retain their authored values.
+    pub(super) fn transport_selected(
+        &self,
+        posed: &[SceneVertex],
+        authored: &[Vec3],
+        selection: &NormalSelection,
+    ) -> Vec<Vec3> {
+        let mut result = authored[..posed.len()].to_vec();
+        for &index in &selection.vertices {
+            result[index] = Vec3::ZERO;
+        }
+        for &(index, active) in &selection.triangles {
+            Self::accumulate(&self.triangles[index], active, posed, authored, &mut result);
+        }
+        for &index in &selection.vertices {
+            result[index] = result[index].try_normalize().unwrap_or(authored[index]);
+        }
+        result
+    }
+
+    fn accumulate(
+        triangle: &Triangle,
+        active: [bool; 3],
+        posed: &[SceneVertex],
+        authored: &[Vec3],
+        result: &mut [Vec3],
+    ) {
+        let ids = triangle.ids;
+        let b = Vec3::from_array(posed[ids[0]].position);
+        let p = Vec3::from_array(posed[ids[1]].position) - b;
+        let q = Vec3::from_array(posed[ids[2]].position) - b;
+        let Some(n1) = p.cross(q).try_normalize() else {
+            return;
+        };
+        let transport =
+            Mat3::from_cols(p, q, n1).inverse().transpose() * triangle.reference_transpose;
+        for (corner, active) in active.into_iter().enumerate() {
+            if active {
                 let i = ids[corner];
                 let normal = (transport * authored[i]).try_normalize().unwrap_or(n1);
                 result[i] += triangle.angles[corner] * normal;
             }
         }
-        result
-            .into_iter()
-            .enumerate()
-            .map(|(i, n)| n.try_normalize().unwrap_or(authored[i]))
-            .collect()
     }
 }
 
@@ -210,22 +287,27 @@ mod tests {
             .collect();
         let expected = transported(rest, &posed, asset.mesh.indices(), &authored);
         assert_eq!(prepared.transport(&posed, &authored), expected);
+        let subset = (0..posed.len()).step_by(127);
+        let selection = prepared.prepare_selection(posed.len(), subset.clone());
+        let actual = prepared.transport_selected(&posed, &authored, &selection);
+        for i in subset {
+            assert_eq!(
+                actual[i].to_array().map(f32::to_bits),
+                expected[i].to_array().map(f32::to_bits),
+            );
+        }
     }
     #[test]
     #[ignore = "release performance measurement on actual body"]
     fn actual_body_transport_profile() {
-        let asset = voxy_render::ObjAsset::parse(
-            include_str!(
-                "../../../assets/characters/blender-female/prepared/body-nipple-refined.obj"
-            ),
-            voxy_render::ObjLimits::default(),
-        )
-        .unwrap();
+        let asset =
+            voxy_render::ObjAsset::parse(super::super::BODY, voxy_render::ObjLimits::default())
+                .unwrap();
         let rest = asset.mesh.vertices();
         let authored: Vec<_> = asset
             .normals
             .iter()
-            .map(|n| Vec3::from_array(n.unwrap()))
+            .map(|n| Vec3::from_array(n.unwrap_or([0., 1., 0.])))
             .collect();
         let prepared = PreparedNormals::new(rest, asset.mesh.indices());
         let posed: Vec<_> = rest
@@ -238,6 +320,12 @@ mod tests {
                 ])
             })
             .collect();
+        let pelvic = crate::female_pelvic::PelvicAnatomy::new(rest, asset.mesh.indices());
+        let selected: Vec<_> = pelvic.body_recess_indices().collect();
+        assert!(!selected.is_empty());
+        let selection = prepared.prepare_selection(rest.len(), selected.iter().copied());
+        let selected_triangles = selection.triangles.len();
+        let mut selected_samples = Vec::new();
         let mut cached = Vec::new();
         let mut uncached = Vec::new();
         for round in 0..11 {
@@ -248,15 +336,41 @@ mod tests {
             let b =
                 std::hint::black_box(transported(rest, &posed, asset.mesh.indices(), &authored));
             let second = start.elapsed().as_secs_f64() * 1000.;
+            let start = std::time::Instant::now();
+            let subset =
+                std::hint::black_box(prepared.transport_selected(&posed, &authored, &selection));
+            let selected_elapsed = start.elapsed().as_secs_f64() * 1000.;
+            for &index in &selected {
+                assert_eq!(
+                    subset[index].to_array().map(f32::to_bits),
+                    a[index].to_array().map(f32::to_bits)
+                );
+            }
             assert_eq!(a, b);
             if round > 0 {
                 cached.push(first);
+                selected_samples.push(selected_elapsed);
                 uncached.push(second);
             }
         }
         cached.sort_by(f64::total_cmp);
         uncached.sort_by(f64::total_cmp);
-        let report = serde_json::json!({"cached_median_ms":cached[5],"uncached_median_ms":uncached[5],"cached_samples_ms":cached,"uncached_samples_ms":uncached,"vertices":rest.len(),"triangles":asset.mesh.indices().len()/3,"bitwise_equal":true,"scope":"normal transport only, no frame rate claim"});
+        selected_samples.sort_by(f64::total_cmp);
+        let report = serde_json::json!({
+            "cached_median_ms": cached[5],
+            "uncached_median_ms": uncached[5],
+            "selected_median_ms": selected_samples[5],
+            "cached_samples_ms": cached,
+            "uncached_samples_ms": uncached,
+            "selected_samples_ms": selected_samples,
+            "vertices": rest.len(),
+            "triangles": prepared.triangles.len(),
+            "selected_vertices": selected.len(),
+            "selected_triangles": selected_triangles,
+            "bitwise_equal": true,
+            "debug_assertions": cfg!(debug_assertions),
+            "scope": "normal transport only, no frame rate claim",
+        });
         println!("{report}");
         if let Ok(path) = std::env::var("VOXY_NORMAL_TRANSPORT_REPORT") {
             std::fs::write(path, report.to_string()).unwrap();

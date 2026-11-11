@@ -1,0 +1,799 @@
+use physics_bio::biomechanics::{
+    Body, InertialBody, Material, MaxwellBranch, OgdenTerm, SupportTarget, ViscoelasticOgden,
+};
+fn law() -> ViscoelasticOgden {
+    ViscoelasticOgden::new(
+        vec![OgdenTerm {
+            shear_pa: 100.,
+            exponent: 2.,
+        }],
+        1000.,
+        vec![MaxwellBranch {
+            shear_pa: 700.,
+            relaxation_seconds: 0.2,
+        }],
+    )
+    .unwrap()
+}
+#[test]
+fn exact_relaxation_matches_analytic_energy_and_subdivision() {
+    let shear: f64 = 0.2;
+    let f = [[1., shear, 0.], [0., 1., 0.], [0., 0., 1.]];
+    let initial_branch = 700. * (shear.powi(2) / 2. + shear.powi(4) / 6.);
+    let expected_heat = initial_branch * (1. - (-2_f64 * 0.3 / 0.2).exp());
+    let mut full = law();
+    let before = full.response(f, 0.).unwrap().energy_density;
+    assert!((full.maxwell_energy_density(f).unwrap() - initial_branch).abs() < 1e-10);
+    let heat = full.relax_exact(f, 0.3).unwrap();
+    assert!((heat - expected_heat).abs() < 1e-10);
+    assert!((full.maxwell_energy_density(f).unwrap() + heat - initial_branch).abs() < 1e-10);
+    assert!((full.response(f, 0.).unwrap().energy_density + heat - before).abs() < 1e-10);
+    let mut split = law();
+    let sum: f64 = (0..10).map(|_| split.relax_exact(f, 0.03).unwrap()).sum();
+    assert!((sum - heat).abs() < 1e-10);
+    assert!(
+        (split.response(f, 0.).unwrap().energy_density
+            - full.response(f, 0.).unwrap().energy_density)
+            .abs()
+            < 1e-10
+    );
+    let rotated = [[0., -1., 0.], [1., shear, 0.], [0., 0., 1.]];
+    assert!(
+        (full.response(rotated, 0.).unwrap().energy_density
+            - full.response(f, 0.).unwrap().energy_density)
+            .abs()
+            < 1e-10
+    );
+    let snapshot = format!("{full:?}");
+    assert!(full.relax_exact(f, f64::NAN).is_err());
+    assert!(full.relax_exact([[0.; 3]; 3], 0.1).is_err());
+    assert_eq!(snapshot, format!("{full:?}"));
+}
+fn specimen() -> InertialBody {
+    let mut body = Body::new(
+        vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+        vec![true; 4],
+        vec![(
+            [0, 1, 2, 3],
+            Material {
+                shear_pa: 100.,
+                bulk_pa: 1000.,
+                fibers: vec![],
+            },
+        )],
+    )
+    .unwrap();
+    body.set_viscoelastic_ogden(0, law()).unwrap();
+    assert!(InertialBody::new_with_fixed_supports(body.clone(), &[1.], vec![[0.; 3]; 4]).is_err());
+    InertialBody::new_viscoelastic_with_supports(body, &[1.], vec![[0.; 3]; 4]).unwrap()
+}
+#[test]
+fn driven_shear_then_hold_balances_work_heat_and_rollback() {
+    let mut body = specimen();
+    let before = body.diagnostics().unwrap();
+    let mut work = 0.;
+    let mut heat = 0.;
+    for step in 1..=100 {
+        let shear = 0.001 * f64::from(step.min(20));
+        let points = [[0.; 3], [1., 0., 0.], [shear, 1., 0.], [0., 0., 1.]];
+        let targets: Vec<_> = points
+            .into_iter()
+            .enumerate()
+            .map(|(node, position_m)| SupportTarget { node, position_m })
+            .collect();
+        let receipt = body.step_viscoelastic(Some(&targets), 0.01, 1e-6).unwrap();
+        assert!(receipt.viscous_heat_j >= 0.);
+        work += receipt.support.support_work_j;
+        heat += receipt.viscous_heat_j;
+    }
+    let after = body.diagnostics().unwrap();
+    assert!(
+        (after.kinetic_j + after.potential_j - before.kinetic_j - before.potential_j - work + heat)
+            .abs()
+            < 1e-5
+    );
+    assert!(heat > 0.);
+    let snapshot = format!("{body:?}");
+    assert!(body.step(0.01, 1e-6).is_err());
+    assert!(body.step_viscoelastic(Some(&[]), 0.01, 1e-6).is_err());
+    assert_eq!(snapshot, format!("{body:?}"));
+    let energy = body.diagnostics().unwrap().potential_j;
+    let receipt = body.step_viscoelastic(None, 0.1, 1e-8).unwrap();
+    assert!(receipt.viscous_heat_j > 0.);
+    assert!(body.diagnostics().unwrap().potential_j < energy);
+}
+
+#[test]
+fn free_node_moves_and_failed_driving_preserves_material_history() {
+    let mut body = Body::new(
+        vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+        vec![true, true, true, false],
+        vec![(
+            [0, 1, 2, 3],
+            Material {
+                shear_pa: 100.,
+                bulk_pa: 1000.,
+                fibers: vec![],
+            },
+        )],
+    )
+    .unwrap();
+    body.set_viscoelastic_ogden(0, law()).unwrap();
+    let mut body =
+        InertialBody::new_viscoelastic_with_supports(body, &[1.], vec![[0.; 3]; 4]).unwrap();
+    let targets: Vec<_> = body.body().positions()[..3]
+        .iter()
+        .enumerate()
+        .map(|(node, p)| SupportTarget {
+            node,
+            position_m: [p[0] + 0.0001, p[1], p[2]],
+        })
+        .collect();
+    body.step_viscoelastic(Some(&targets), 0.001, 1e-7).unwrap();
+    assert!(body.velocities()[3][0].abs() > 1e-8);
+    let snapshot = format!("{body:?}");
+    assert!(
+        body.step_with_support_targets(&targets, 0.001, 1e-7)
+            .is_err()
+    );
+    assert_eq!(snapshot, format!("{body:?}"));
+    let inverted: Vec<_> = body.body().positions()[..3]
+        .iter()
+        .enumerate()
+        .map(|(node, p)| SupportTarget {
+            node,
+            position_m: [p[0], p[1], 2.],
+        })
+        .collect();
+    assert!(body.step_viscoelastic(Some(&inverted), 0.001, 1.).is_err());
+    assert_eq!(snapshot, format!("{body:?}"));
+}
+
+#[test]
+fn unforced_viscoelastic_motion_converges_under_time_refinement() {
+    let mut endpoints = Vec::new();
+    let mut defects = Vec::new();
+    for steps in [25, 50, 100] {
+        let mut body = Body::new(
+            vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+            vec![true, true, true, false],
+            vec![(
+                [0, 1, 2, 3],
+                Material {
+                    shear_pa: 100.,
+                    bulk_pa: 1000.,
+                    fibers: vec![],
+                },
+            )],
+        )
+        .unwrap();
+        body.set_viscoelastic_ogden(0, law()).unwrap();
+        let mut velocities = vec![[0.; 3]; 4];
+        velocities[3] = [0.01, 0., 0.];
+        let mut body =
+            InertialBody::new_viscoelastic_with_supports(body, &[1.], velocities).unwrap();
+        let initial = body.diagnostics().unwrap();
+        let mut heat = 0.;
+        let mut defect = 0.;
+        for _ in 0..steps {
+            let receipt = body
+                .step_viscoelastic(None, 0.1 / f64::from(steps), 1e-6)
+                .unwrap();
+            heat += receipt.viscous_heat_j;
+            defect += receipt.total_energy_defect_j;
+        }
+        let final_energy = body.diagnostics().unwrap();
+        assert!(heat > 0.);
+        assert!(
+            (final_energy.kinetic_j + final_energy.potential_j
+                - initial.kinetic_j
+                - initial.potential_j
+                + heat
+                - defect)
+                .abs()
+                < 1e-10
+        );
+        endpoints.push((body.body().positions()[3], body.velocities()[3]));
+        defects.push(defect.abs());
+    }
+    let distance = |a: &([f64; 3], [f64; 3]), b: &([f64; 3], [f64; 3])| -> f64 {
+        a.0.iter()
+            .chain(&a.1)
+            .zip(b.0.iter().chain(&b.1))
+            .map(|(x, y)| (x - y).powi(2))
+            .sum::<f64>()
+            .sqrt()
+    };
+    assert!(
+        distance(&endpoints[1], &endpoints[2]) < 0.35 * distance(&endpoints[0], &endpoints[1]),
+        "endpoints={endpoints:?}"
+    );
+    assert!(
+        defects[1] < 0.35 * defects[0] && defects[2] < 0.35 * defects[1],
+        "defects={defects:?}"
+    );
+}
+
+#[test]
+fn hgo_stress_memory_is_not_admitted_as_passive_maxwell_dynamics() {
+    use physics_bio::biomechanics::{HgoMaterial, ViscoelasticHgo};
+    let mut body = Body::new(
+        vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+        vec![true, true, true, false],
+        vec![(
+            [0, 1, 2, 3],
+            Material {
+                shear_pa: 100.,
+                bulk_pa: 1000.,
+                fibers: vec![],
+            },
+        )],
+    )
+    .unwrap();
+    let hgo = ViscoelasticHgo::new(
+        HgoMaterial {
+            shear_pa: 100.,
+            bulk_pa: 1000.,
+            fibers: vec![],
+        },
+        &[(0.2, 0.5)],
+    )
+    .unwrap();
+    body.set_viscoelastic_hgo_batch(&[(0, hgo)]).unwrap();
+    assert!(InertialBody::new_with_fixed_supports(body.clone(), &[1.], vec![[0.; 3]; 4]).is_err());
+    assert!(InertialBody::new_viscoelastic_with_supports(body, &[1.], vec![[0.; 3]; 4]).is_err());
+}
+
+#[test]
+fn unrelated_large_gravity_potential_cannot_hide_or_block_maxwell_heat() {
+    let mut body = specimen();
+    let targets: Vec<_> = body
+        .body()
+        .positions()
+        .iter()
+        .enumerate()
+        .map(|(node, p)| SupportTarget {
+            node,
+            position_m: [p[0] + 0.001 * p[1], p[1], p[2]],
+        })
+        .collect();
+    body.step_viscoelastic(Some(&targets), 0.1, 1e-6).unwrap();
+    body.step_viscoelastic(Some(&targets), 0.01, 1e-8).unwrap();
+    let mut reference = body.clone();
+    body.set_uniform_acceleration([1e16, 0., 0.]).unwrap();
+    let before = body.body().evaluate(body.body().positions()).unwrap().0;
+    let rounded_total_before = body.diagnostics().unwrap().potential_j;
+    let receipt = body.step_viscoelastic(None, 0.01, 1e-10).unwrap();
+    let normal = reference.step_viscoelastic(None, 0.01, 1e-10).unwrap();
+    assert!(receipt.viscous_heat_j > 1e-6);
+    // A guard based on subtracting these rounded global potentials would fail.
+    let rounded_total_after = body.diagnostics().unwrap().potential_j;
+    assert!((rounded_total_after - rounded_total_before + receipt.viscous_heat_j).abs() > 1e-10);
+    assert_eq!(receipt.viscous_heat_j, normal.viscous_heat_j);
+    let after = body.body().evaluate(body.body().positions()).unwrap().0;
+    assert!((after - before + receipt.viscous_heat_j).abs() < 1e-12);
+    assert_eq!(body.body().positions(), reference.body().positions());
+    assert_eq!(body.velocities(), reference.velocities());
+    assert_eq!(
+        after,
+        reference
+            .body()
+            .evaluate(reference.body().positions())
+            .unwrap()
+            .0
+    );
+}
+
+#[test]
+fn maxwell_heat_updates_cell_temperature_and_failures_preserve_both_owners() {
+    let mut body = specimen();
+    let before = format!("{body:?}");
+    for (cp, t) in [
+        (vec![], vec![300.]),
+        (vec![0.], vec![300.]),
+        (vec![2.], vec![f64::NAN]),
+    ] {
+        assert!(body.enable_maxwell_thermal(&cp, &t).is_err());
+        assert_eq!(before, format!("{body:?}"));
+    }
+    body.enable_maxwell_thermal(&[2.], &[300.]).unwrap();
+    let configured = format!("{body:?}");
+    assert!(body.enable_maxwell_thermal(&[2.], &[310.]).is_err());
+    assert_eq!(configured, format!("{body:?}"));
+    let initial = body.diagnostics().unwrap();
+    let mut work = 0.;
+    let mut heat = 0.;
+    let mut defects = 0.;
+    for step in 1..=50 {
+        let shear = 0.001 * f64::from(step.min(20));
+        let points = [[0.; 3], [1., 0., 0.], [shear, 1., 0.], [0., 0., 1.]];
+        let targets: Vec<_> = points
+            .into_iter()
+            .enumerate()
+            .map(|(node, position_m)| SupportTarget { node, position_m })
+            .collect();
+        let receipt = body.step_viscoelastic(Some(&targets), 0.01, 1e-6).unwrap();
+        work += receipt.support.support_work_j;
+        heat += receipt.viscous_heat_j;
+        defects += receipt.total_energy_defect_j;
+    }
+    let stored = body.maxwell_sensible_energy_j().unwrap()[0];
+    let temperature = body.maxwell_temperatures_kelvin().unwrap()[0];
+    assert!(stored > 0. && temperature > 300.);
+    assert!((stored - heat).abs() < 1e-12);
+    // Unit tetra density=1 gives mass 1/6 kg; cp=2 gives capacity 1/3 J/K.
+    assert!((temperature - 300. - stored * 3.).abs() < 1e-12);
+    let final_state = body.diagnostics().unwrap();
+    assert!(
+        (final_state.kinetic_j + final_state.potential_j + stored
+            - initial.kinetic_j
+            - initial.potential_j
+            - work
+            - defects)
+            .abs()
+            < 1e-10
+    );
+    let snapshot = format!("{body:?}");
+    assert!(body.step_viscoelastic(Some(&[]), 0.01, 1e-6).is_err());
+    assert_eq!(snapshot, format!("{body:?}"));
+}
+
+#[test]
+fn late_temperature_overflow_rolls_back_mechanics_memory_and_heat() {
+    let mut body = specimen();
+    body.enable_maxwell_thermal(&[1e-320], &[300.]).unwrap();
+    let snapshot = format!("{body:?}");
+    let targets: Vec<_> = body
+        .body()
+        .positions()
+        .iter()
+        .enumerate()
+        .map(|(node, p)| SupportTarget {
+            node,
+            position_m: [p[0] + 0.001 * p[1], p[1], p[2]],
+        })
+        .collect();
+    assert_eq!(
+        body.step_viscoelastic(Some(&targets), 0.01, 1e-6)
+            .unwrap_err(),
+        "unrepresentable Maxwell thermal inventory"
+    );
+    assert_eq!(snapshot, format!("{body:?}"));
+    assert_eq!(body.maxwell_sensible_energy_j().unwrap(), vec![0.]);
+    assert_eq!(body.maxwell_temperatures_kelvin().unwrap(), vec![300.]);
+}
+
+#[test]
+fn implicit_driven_supports_with_free_node_close_work_heat_and_rollback() {
+    let mut body = Body::new(
+        vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+        vec![true, true, true, false],
+        vec![(
+            [0, 1, 2, 3],
+            Material {
+                shear_pa: 100.,
+                bulk_pa: 1000.,
+                fibers: vec![],
+            },
+        )],
+    )
+    .unwrap();
+    body.set_viscoelastic_ogden(0, law()).unwrap();
+    let mut dynamics =
+        InertialBody::new_viscoelastic_with_supports(body, &[1.], vec![[0.; 3]; 4]).unwrap();
+    let before = dynamics.diagnostics().unwrap();
+    let (mut work, mut heat) = (0., 0.);
+    for step in 1..=20 {
+        let shear = f64::from(step) * 0.0001;
+        let targets = [
+            SupportTarget {
+                node: 0,
+                position_m: [0.; 3],
+            },
+            SupportTarget {
+                node: 1,
+                position_m: [1., 0., 0.],
+            },
+            SupportTarget {
+                node: 2,
+                position_m: [shear, 1., 0.],
+            },
+        ];
+        let receipt = dynamics
+            .step_viscoelastic_implicit_with_supports(Some(&targets), 0.001, 1e-7)
+            .unwrap();
+        work += receipt.support.support_work_j;
+        heat += receipt.viscous_heat_j;
+        assert!(receipt.viscous_heat_j >= 0.);
+    }
+    let after = dynamics.diagnostics().unwrap();
+    assert!(
+        (after.kinetic_j + after.potential_j - before.kinetic_j - before.potential_j - work + heat)
+            .abs()
+            < 2e-6
+    );
+    assert_ne!(dynamics.body().positions()[3], [0., 0., 1.]);
+    let saved = format!("{dynamics:?}");
+    assert!(
+        dynamics
+            .step_viscoelastic_implicit_with_supports(Some(&[]), 0.001, 1e-7)
+            .is_err()
+    );
+    assert_eq!(saved, format!("{dynamics:?}"));
+    let inverted = [
+        SupportTarget {
+            node: 0,
+            position_m: [0.; 3],
+        },
+        SupportTarget {
+            node: 1,
+            position_m: [-1., 0., 0.],
+        },
+        SupportTarget {
+            node: 2,
+            position_m: [0., 1., 0.],
+        },
+    ];
+    assert!(
+        dynamics
+            .step_viscoelastic_implicit_with_supports(Some(&inverted), 0.001, 1e-7)
+            .is_err()
+    );
+    assert_eq!(saved, format!("{dynamics:?}"));
+}
+
+#[test]
+fn implicit_support_free_body_preserves_analytic_ballistics() {
+    let points = vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
+    let body = Body::new(
+        points.clone(),
+        vec![false; 4],
+        vec![(
+            [0, 1, 2, 3],
+            Material {
+                shear_pa: 100.,
+                bulk_pa: 1000.,
+                fibers: vec![],
+            },
+        )],
+    )
+    .unwrap();
+    let mut dynamics = InertialBody::new(body, &[6.], vec![[0.2, 0., 0.]; 4]).unwrap();
+    dynamics.set_uniform_acceleration([0., -2., 0.]).unwrap();
+    let before = dynamics.diagnostics().unwrap();
+    let report = dynamics
+        .step_implicit_with_supports(None, 0.01, 1e-8)
+        .unwrap();
+    for (node, old) in points.iter().enumerate() {
+        let p = dynamics.body().positions()[node];
+        assert!((p[0] - old[0] - 0.002).abs() < 1e-10);
+        assert!((p[1] - old[1] + 0.0001).abs() < 1e-10);
+        assert!((dynamics.velocities()[node][1] + 0.02).abs() < 1e-10);
+    }
+    let after = dynamics.diagnostics().unwrap();
+    assert!(
+        (after.kinetic_j + after.potential_j - before.kinetic_j - before.potential_j).abs() < 1e-8
+    );
+    assert_eq!(report.support_work_j, 0.);
+}
+
+#[test]
+fn implicit_viscoelastic_motion_converges_under_time_refinement() {
+    let mut endpoints = Vec::new();
+    for steps in [25, 50, 100] {
+        let mut body = Body::new(
+            vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+            vec![true, true, true, false],
+            vec![(
+                [0, 1, 2, 3],
+                Material {
+                    shear_pa: 100.,
+                    bulk_pa: 1000.,
+                    fibers: vec![],
+                },
+            )],
+        )
+        .unwrap();
+        body.set_viscoelastic_ogden(0, law()).unwrap();
+        let mut velocities = vec![[0.; 3]; 4];
+        velocities[3] = [0.01, 0., 0.];
+        let mut body =
+            InertialBody::new_viscoelastic_with_supports(body, &[1.], velocities).unwrap();
+        let initial = body.diagnostics().unwrap();
+        let mut heat = 0.;
+        let mut defect = 0.;
+        for _ in 0..steps {
+            let receipt = body
+                .step_viscoelastic_implicit_with_supports(None, 0.1 / f64::from(steps), 1e-6)
+                .unwrap();
+            heat += receipt.viscous_heat_j;
+            defect += receipt.total_energy_defect_j;
+        }
+        let final_energy = body.diagnostics().unwrap();
+        assert!(heat > 0.);
+        assert!(
+            (final_energy.kinetic_j + final_energy.potential_j
+                - initial.kinetic_j
+                - initial.potential_j
+                + heat
+                - defect)
+                .abs()
+                < 1e-10
+        );
+        endpoints.push((body.body().positions()[3], body.velocities()[3]));
+    }
+    let distance = |a: &([f64; 3], [f64; 3]), b: &([f64; 3], [f64; 3])| -> f64 {
+        a.0.iter()
+            .chain(&a.1)
+            .zip(b.0.iter().chain(&b.1))
+            .map(|(x, y)| (x - y).powi(2))
+            .sum::<f64>()
+            .sqrt()
+    };
+    assert!(
+        distance(&endpoints[1], &endpoints[2]) < 0.35 * distance(&endpoints[0], &endpoints[1]),
+        "endpoints={endpoints:?}"
+    );
+}
+
+fn moving_free_node_specimen() -> InertialBody {
+    let mut body = Body::new(
+        vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+        vec![true, true, true, false],
+        vec![(
+            [0, 1, 2, 3],
+            Material {
+                shear_pa: 100.,
+                bulk_pa: 1000.,
+                fibers: vec![],
+            },
+        )],
+    )
+    .unwrap();
+    body.set_viscoelastic_ogden(0, law()).unwrap();
+    let mut velocities = vec![[0.; 3]; 4];
+    velocities[3] = [0.01, 0., 0.];
+    let mut dynamics =
+        InertialBody::new_viscoelastic_with_supports(body, &[1.], velocities).unwrap();
+    dynamics.enable_maxwell_thermal(&[2.], &[300.]).unwrap();
+    dynamics
+}
+#[test]
+fn support_accuracy_refines_motion_against_independent_verlet_reference() {
+    let initial = moving_free_node_specimen();
+    let mut loose = initial.clone();
+    let loose_receipt = loose
+        .step_viscoelastic_implicit_with_support_accuracy(None, 0.01, 1e-6, 1e-2, 1., 2048)
+        .unwrap();
+    let mut tight = initial.clone();
+    let tight_receipt = tight
+        .step_viscoelastic_implicit_with_support_accuracy(None, 0.01, 1e-6, 1e-10, 1e-8, 2048)
+        .unwrap();
+    assert!(tight_receipt.substeps > loose_receipt.substeps);
+    assert!(tight_receipt.trial_steps >= tight_receipt.substeps);
+    let mut reference = initial;
+    for _ in 0..2048 {
+        reference
+            .step_viscoelastic(None, 0.01 / 2048., 1e-8)
+            .unwrap();
+    }
+    let error = |body: &InertialBody| {
+        body.body().positions()[3]
+            .iter()
+            .chain(&body.velocities()[3])
+            .zip(
+                reference.body().positions()[3]
+                    .iter()
+                    .chain(&reference.velocities()[3]),
+            )
+            .map(|(a, b)| (a - b).powi(2))
+            .sum::<f64>()
+            .sqrt()
+    };
+    assert!(
+        error(&tight) < 0.02 * error(&loose),
+        "loose={} tight={}",
+        error(&loose),
+        error(&tight)
+    );
+    assert!(error(&tight) < 1e-7);
+    let before = moving_free_node_specimen().diagnostics().unwrap();
+    let after = tight.diagnostics().unwrap();
+    assert!(
+        (after.kinetic_j + after.potential_j - before.kinetic_j - before.potential_j
+            + tight_receipt.step.viscous_heat_j
+            - tight_receipt.step.support.support_work_j)
+            .abs()
+            < 1e-6
+    );
+}
+#[test]
+fn support_accuracy_exhaustion_and_invalid_inputs_preserve_history_and_heat() {
+    let mut body = moving_free_node_specimen();
+    let saved = format!("{body:?}");
+    assert_eq!(
+        body.step_viscoelastic_implicit_with_support_accuracy(None, 0.01, 1e-6, 1e-30, 1e-30, 2)
+            .unwrap_err(),
+        "implicit support accuracy subdivision limit"
+    );
+    assert_eq!(saved, format!("{body:?}"));
+    for (position, velocity, limit) in [(f64::NAN, 1e-6, 8), (1e-6, 0., 8), (1e-6, 1e-6, 3)] {
+        assert!(
+            body.step_viscoelastic_implicit_with_support_accuracy(
+                None, 0.01, 1e-6, position, velocity, limit
+            )
+            .is_err()
+        );
+        assert_eq!(saved, format!("{body:?}"));
+    }
+    assert!(
+        body.step_viscoelastic_implicit_with_support_accuracy(Some(&[]), 0.01, 1e-6, 1e-6, 1e-6, 8)
+            .is_err()
+    );
+    assert_eq!(saved, format!("{body:?}"));
+}
+
+#[test]
+fn support_accuracy_driven_path_matches_independent_prescribed_verlet() {
+    let initial = moving_free_node_specimen();
+    let endpoints: Vec<_> = initial.body().positions()[..3]
+        .iter()
+        .enumerate()
+        .map(|(node, p)| SupportTarget {
+            node,
+            position_m: [p[0] + 0.001, p[1], p[2]],
+        })
+        .collect();
+    let mut adaptive = initial.clone();
+    let receipt = adaptive
+        .step_viscoelastic_implicit_with_support_accuracy(
+            Some(&endpoints),
+            0.01,
+            1e-6,
+            1e-9,
+            1e-7,
+            2048,
+        )
+        .unwrap();
+    let mut reference = initial.clone();
+    for step in 1..=4096 {
+        let targets: Vec<_> = initial.body().positions()[..3]
+            .iter()
+            .enumerate()
+            .map(|(node, p)| SupportTarget {
+                node,
+                position_m: if step == 4096 {
+                    endpoints[node].position_m
+                } else {
+                    [p[0] + 0.001 * f64::from(step) / 4096., p[1], p[2]]
+                },
+            })
+            .collect();
+        reference
+            .step_viscoelastic(Some(&targets), 0.01 / 4096., 1e-8)
+            .unwrap();
+    }
+    let norm = |a: [f64; 3], b: [f64; 3]| (a[0] - b[0]).hypot(a[1] - b[1]).hypot(a[2] - b[2]);
+    assert!(
+        norm(
+            adaptive.body().positions()[3],
+            reference.body().positions()[3]
+        ) < 1e-8
+    );
+    assert!(norm(adaptive.velocities()[3], reference.velocities()[3]) < 1e-6);
+    for target in &endpoints {
+        assert_eq!(adaptive.body().positions()[target.node], target.position_m);
+    }
+    assert!(receipt.step.support.support_work_j > 0.);
+    assert!(receipt.step.viscous_heat_j >= 0.);
+}
+
+#[test]
+fn support_accuracy_rotating_supports_match_refined_verlet_and_rollback() {
+    let initial = moving_free_node_specimen();
+    let (sin, cos) = 0.005_f64.sin_cos();
+    let endpoints: Vec<_> = initial.body().positions()[..3]
+        .iter()
+        .enumerate()
+        .map(|(node, p)| SupportTarget {
+            node,
+            position_m: [
+                p[0] + 0.0003,
+                cos * p[1] - sin * p[2],
+                sin * p[1] + cos * p[2],
+            ],
+        })
+        .collect();
+    let mut explicit = initial.clone();
+    let explicit_receipt = explicit
+        .step_viscoelastic_with_support_accuracy(Some(&endpoints), 0.01, 1e-6, 1e-10, 1e-8, 4096)
+        .unwrap();
+    assert!(explicit_receipt.position_difference_sum_m <= 1e-10);
+    assert!(explicit_receipt.velocity_difference_sum_m_s <= 1e-8);
+    let mut adaptive = initial.clone();
+    let receipt = adaptive
+        .step_viscoelastic_implicit_with_support_accuracy(
+            Some(&endpoints),
+            0.01,
+            1e-6,
+            1e-10,
+            1e-8,
+            4096,
+        )
+        .unwrap();
+    // The owner receives a linear trajectory between pose endpoints. The
+    // independent integrator uses the identical path, not a different arc.
+    let reference = |steps: u32| {
+        let mut body = initial.clone();
+        for step in 1..=steps {
+            let targets: Vec<_> = initial.body().positions()[..3]
+                .iter()
+                .enumerate()
+                .map(|(node, p)| SupportTarget {
+                    node,
+                    position_m: if step == steps {
+                        endpoints[node].position_m
+                    } else {
+                        std::array::from_fn(|a| {
+                            p[a] + f64::from(step) / f64::from(steps)
+                                * (endpoints[node].position_m[a] - p[a])
+                        })
+                    },
+                })
+                .collect();
+            body.step_viscoelastic(Some(&targets), 0.01 / f64::from(steps), 1e-8)
+                .unwrap();
+        }
+        body
+    };
+    let coarse = reference(2048);
+    let fine = reference(4096);
+    let norm = |a: [f64; 3], b: [f64; 3]| (a[0] - b[0]).hypot(a[1] - b[1]).hypot(a[2] - b[2]);
+    assert!(norm(coarse.body().positions()[3], fine.body().positions()[3]) < 1e-9);
+    assert!(norm(coarse.velocities()[3], fine.velocities()[3]) < 1e-7);
+    assert!(norm(adaptive.body().positions()[3], fine.body().positions()[3]) < 1e-8);
+    assert!(norm(adaptive.velocities()[3], fine.velocities()[3]) < 1e-6);
+    assert!(norm(explicit.body().positions()[3], fine.body().positions()[3]) < 1e-8);
+    assert!(norm(explicit.velocities()[3], fine.velocities()[3]) < 1e-6);
+    for target in &endpoints {
+        assert_eq!(adaptive.body().positions()[target.node], target.position_m);
+    }
+    assert!(receipt.step.viscous_heat_j >= 0.);
+    let before = initial.diagnostics().unwrap();
+    let after = adaptive.diagnostics().unwrap();
+    assert!(
+        (after.kinetic_j + after.potential_j - before.kinetic_j - before.potential_j
+            + receipt.step.viscous_heat_j
+            - receipt.step.support.support_work_j)
+            .abs()
+            < 1e-6
+    );
+    for target in &endpoints {
+        assert_eq!(explicit.body().positions()[target.node], target.position_m);
+    }
+    let mut explicit_failed = initial.clone();
+    let saved_explicit = format!("{explicit_failed:?}");
+    assert_eq!(
+        explicit_failed
+            .step_viscoelastic_with_support_accuracy(Some(&endpoints), 0.01, 1e-6, 1e-30, 1e-30, 2)
+            .unwrap_err(),
+        "explicit support accuracy subdivision limit"
+    );
+    assert_eq!(format!("{explicit_failed:?}"), saved_explicit);
+    let mut failed = initial.clone();
+    let saved = format!("{failed:?}");
+    assert_eq!(
+        failed
+            .step_viscoelastic_implicit_with_support_accuracy(
+                Some(&endpoints),
+                0.01,
+                1e-6,
+                1e-30,
+                1e-30,
+                2
+            )
+            .unwrap_err(),
+        "implicit support accuracy subdivision limit"
+    );
+    assert_eq!(format!("{failed:?}"), saved);
+}

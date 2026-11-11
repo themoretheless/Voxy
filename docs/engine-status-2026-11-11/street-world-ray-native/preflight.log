@@ -1,0 +1,3 @@
+Error: "world ray frame requires --experimental-ray-query"
+Error: "VOXY_STREET_WORLD_RAY_FRAME=1 requires VOXY_STREET_COMPUTE_GI=1"
+Error: "VOXY_STREET_WORLD_RAY_FRAME=1 requires VOXY_STREET_PAIRED_DDA=1"

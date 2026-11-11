@@ -60,7 +60,7 @@ impl FiniteQuadraticDynamics {
             }
             let density = water[index].wet_density_kg_m3(dry_mass_kg[index], cell.volume)?;
             let properties = water[index].properties(calibration[index])?;
-            materials.push(crate::biomechanics::Material::from_young_poisson(
+            materials.push(crate::constitutive::Material::from_young_poisson(
                 properties.young_pa,
                 properties.poisson,
             )?);

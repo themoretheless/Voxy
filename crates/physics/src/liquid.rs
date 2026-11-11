@@ -210,6 +210,10 @@ pub enum Error {
     InvalidCollision,
     InitialOverlap,
     CollisionBudget,
+    KinematicConstraint {
+        body: Option<usize>,
+        feature: Option<u64>,
+    },
 }
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -1323,7 +1327,7 @@ pub use multi_body::{
 mod support_world;
 pub use support_world::{
     RigidWorldReactionRates, RigidWorldReactions, SupportedWorldConfig,
-    resolve_rigid_world_reactions,
+    resolve_mixed_world_reactions, resolve_rigid_world_reactions,
 };
 
 #[path = "liquid/droplet_gas_evaporation.rs"]

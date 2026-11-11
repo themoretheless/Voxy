@@ -273,6 +273,27 @@ pub trait LiquidBodyWorld {
         self.sweep_particle_environment_contact(p, radius, particle.duration(), budget)
             .map(Into::into)
     }
+    /// Particle sweep over a subinterval of the outer fixed step.
+    fn sweep_particle_motion_environment_event_at(
+        &self,
+        particle: &Particle,
+        radius: f64,
+        path: &crate::rigid_motion::RigidMotion,
+        _elapsed_s: f64,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, Error> {
+        self.sweep_particle_motion_environment_event(particle, radius, path, budget)
+    }
+
+    /// Prescribed translational velocity of a particle's impact surface.
+    fn particle_environment_impact_velocity(
+        &self,
+        _feature: Option<u64>,
+        _time_s: f64,
+    ) -> Result<[f64; 3], Error> {
+        Ok([0.; 3])
+    }
+
     fn sweep_particle_rigid_event(
         &self,
         p: &Particle,
@@ -313,6 +334,43 @@ pub trait LiquidBodyWorld {
         self.sweep_rigid_environment_contact(index, path, budget)
             .map(Into::into)
     }
+    /// Sweep over a subinterval of the outer fixed step. Moving geometry
+    /// evaluates its own trajectory at elapsed time, including after impacts.
+    fn sweep_rigid_environment_event_at(
+        &self,
+        index: usize,
+        path: &crate::rigid_motion::RigidMotion,
+        _elapsed_s: f64,
+        budget: usize,
+    ) -> Result<RigidGeometryHit, Error> {
+        self.sweep_rigid_environment_event(index, path, budget)
+    }
+
+    /// Prescribed translational velocity at an admitted environment impact.
+    /// Finite pairs and stationary geometry use the compatibility default.
+    fn rigid_environment_impact_velocity(
+        &self,
+        _index: usize,
+        _feature: Option<u64>,
+        _time_s: f64,
+    ) -> Result<[f64; 3], Error> {
+        Ok([0.; 3])
+    }
+
+    /// Read the admitted patch at the same outer-step time as the sweep.
+    fn rigid_environment_patch_at(
+        &self,
+        index: usize,
+        body: &crate::contact::ContactBody,
+        witness: ContactWitness,
+        normal: [f64; 3],
+        feature: Option<u64>,
+        _time_s: f64,
+        budget: usize,
+    ) -> Result<Vec<crate::contact::NormalContact>, Error> {
+        self.rigid_environment_patch_for_feature(index, body, witness, normal, feature, budget)
+    }
+
     fn rigid_pair_patch_for_feature(
         &self,
         i: usize,
@@ -452,6 +510,20 @@ pub trait LiquidBodyWorld {
             Err(Error::CollisionBackend)
         }
     }
+    /// Snapshot support of a translation-only particle against a finite body.
+    /// The particle geometry must match the one used by its swept event query.
+    fn particle_body_support_contacts_with_error(
+        &self,
+        _particle: &crate::contact::ContactBody,
+        _radius: f64,
+        _index: usize,
+        _body: &crate::contact::ContactBody,
+        _budget: usize,
+        _error_m: f64,
+    ) -> Result<Vec<RigidSupportPoint>, Error> {
+        Err(Error::CollisionBackend)
+    }
+
     fn rigid_environment_support_contacts_with_error(
         &self,
         i: usize,
@@ -507,6 +579,52 @@ pub trait LiquidBodyWorld {
             return Err(Error::CollisionBackend);
         }
         self.sweep_supported_rigid_pair_event(i, first, j, second, supports, budget)
+    }
+    /// Second derivative of the edge normal for a particle/body support.
+    fn particle_body_support_normal_acceleration(
+        &self,
+        _particle: &crate::contact::ContactBody,
+        _radius: f64,
+        _index: usize,
+        _body: &crate::contact::ContactBody,
+        geometry: RigidSupportPoint,
+        _loads: [crate::contact::ContactWrench; 2],
+    ) -> Result<Option<[f64; 3]>, Error> {
+        match geometry.support.plane {
+            crate::contact::SupportPlane::Rate { .. } => Err(Error::CollisionBackend),
+            _ => Ok(None),
+        }
+    }
+
+    /// Motion of the shared clipped point, with loads ordered particle then body.
+    #[allow(clippy::too_many_arguments)]
+    fn particle_body_support_point_motion(
+        &self,
+        _particle: &crate::contact::ContactBody,
+        _radius: f64,
+        _index: usize,
+        _body: &crate::contact::ContactBody,
+        _geometry: RigidSupportPoint,
+        _loads: [crate::contact::ContactWrench; 2],
+        _rates: [crate::contact::ContactWrench; 2],
+    ) -> Result<Option<RigidSupportPointMotion>, Error> {
+        Ok(None)
+    }
+
+    /// Admit particle-to-body support over the complete prepared interval.
+    /// Other shape pairs on the same body still require collision queries.
+    #[allow(clippy::too_many_arguments)]
+    fn sweep_supported_particle_body_point_motion(
+        &self,
+        _particle: &crate::rigid_motion::RigidMotion,
+        _radius: f64,
+        _index: usize,
+        _body: &crate::rigid_motion::RigidMotion,
+        _supports: &[RigidSupportPoint],
+        _motion: &[Option<RigidSupportPointMotion>],
+        _budget: usize,
+    ) -> Result<SupportedGeometryHit, Error> {
+        Err(Error::CollisionBackend)
     }
     fn sweep_supported_rigid_environment_point_motion(
         &self,

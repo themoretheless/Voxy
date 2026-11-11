@@ -20,6 +20,19 @@ impl SourcePath {
     pub fn as_str(&self) -> &str {
         &self.0
     }
+    /// Resolves a portable dependency next to this source.
+    /// # Errors
+    /// Rejects encoded, absolute and traversal paths.
+    pub fn sibling(&self, relative: &str) -> Result<Self, LocationError> {
+        if relative.contains('%') {
+            return Err(LocationError::InvalidPath);
+        }
+        Self::new(relative)?;
+        match self.0.rsplit_once('/') {
+            Some((parent, _)) => Self::new(format!("{parent}/{relative}")),
+            None => Self::new(relative),
+        }
+    }
     /// Bridges source observation APIs that currently use `AssetId` for source keys.
     #[must_use]
     pub fn observation_id(&self) -> AssetId {

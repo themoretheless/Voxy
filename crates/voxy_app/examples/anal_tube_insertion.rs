@@ -23,7 +23,7 @@ use std::time::Instant;
 
 use bytemuck::{Pod, Zeroable};
 use glam::{Mat4, Vec3};
-use physics::skin::{LabiaTubeInsertion, OrificeDilationKernel};
+use physics_bio::skin::{LabiaTubeInsertion, OrificeDilationKernel};
 use voxy_render::GraphicsOptions;
 use wgpu::util::DeviceExt;
 use winit::application::ApplicationHandler;

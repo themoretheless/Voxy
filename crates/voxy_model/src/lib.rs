@@ -1,5 +1,16 @@
 //! Explicit-buffer glTF import into renderer meshes and animation rigs: the one crate that
 //! knows both `voxy_render` and `voxy_animation`. No filesystem or network access is performed.
+mod retarget_profile;
+pub use retarget_profile::{
+    ModelRetarget, RetargetJointProfile, retarget_parent_basis, validate_retarget_motion_parents,
+};
+mod project_animation;
+pub use project_animation::{
+    ModelAnimation, ModelAnimationEvent, constant_parent_basis,
+    constant_parent_similarity_enclosure, static_parent_similarity_enclosure,
+};
+mod project_gltf;
+pub use project_gltf::{ImportedGltf, ImportedNode, import_project_gltf};
 pub mod animals;
 mod checkpoint;
 mod gltf_animation;
@@ -312,18 +323,6 @@ impl ModelAsset {
                 }
                 let material = primitive.material();
                 let pbr = material.pbr_metallic_roughness();
-                if pbr.metallic_roughness_texture().is_some()
-                    || material.normal_texture().is_some()
-                    || material.occlusion_texture().is_some()
-                    || material.emissive_texture().is_some()
-                {
-                    return Err(fail("non-base glTF material maps unsupported"));
-                }
-                if pbr.base_color_texture().is_some()
-                    && material.alpha_mode() != gltf::material::AlphaMode::Opaque
-                {
-                    return Err(fail("textured alpha modes unsupported"));
-                }
                 let base_color_texture = Self::parse_base_color_texture(&primitive, &pbr)?;
                 let positions_accessor = primitive
                     .get(&gltf::Semantic::Positions)
@@ -456,13 +455,9 @@ impl ModelAsset {
                         indices,
                     )
                     .map_err(|e| fail(e.to_string()))?;
-                    ModelGeometry::Static(if allow_morph {
-                        if let Some(normals) = reader.read_normals() {
-                            mesh.with_normals(normals.collect())
-                                .map_err(|e| fail(e.to_string()))?
-                        } else {
-                            mesh
-                        }
+                    ModelGeometry::Static(if let Some(normals) = reader.read_normals() {
+                        mesh.with_normals(normals.collect())
+                            .map_err(|e| fail(e.to_string()))?
                     } else {
                         mesh
                     })

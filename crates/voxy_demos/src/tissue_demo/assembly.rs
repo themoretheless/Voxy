@@ -383,7 +383,7 @@ mod tests {
 #[derive(Clone, Debug)]
 struct SourceReferenceNodes {
     aliases: Vec<Option<Vec<usize>>>,
-    interior: Option<physics::biomechanics::HarmonicReference>,
+    interior: Option<physics_bio::biomechanics::HarmonicReference>,
 }
 
 #[derive(Clone, Debug)]
@@ -501,14 +501,14 @@ impl TissueDemo {
             .map(|&p| aliases.get(&key(p)).cloned())
             .collect();
         let interior = if nodes.iter().any(Option::is_none) {
-            let mesh = physics::biomechanics::TetraMesh::from_tetrahedra(
+            let mesh = physics_bio::biomechanics::TetraMesh::from_tetrahedra(
                 global.rest.clone(),
                 global.cells.clone(),
             )?;
             if mesh.boundary.iter().flatten().any(|&i| nodes[i].is_none()) {
                 return Err("volume reference node missing from source skin");
             }
-            Some(physics::biomechanics::HarmonicReference::new(
+            Some(physics_bio::biomechanics::HarmonicReference::new(
                 &mesh,
                 nodes.iter().map(Option::is_some).collect(),
             )?)
@@ -589,7 +589,7 @@ mod skin_tests {
     }
     #[test]
     fn source_reference_extends_affine_skin_to_free_interior_nodes() {
-        let mesh = physics::biomechanics::TetraMesh::from_tetrahedra(
+        let mesh = physics_bio::biomechanics::TetraMesh::from_tetrahedra(
             vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.], [0.25; 3]],
             vec![[0, 1, 2, 4], [0, 1, 4, 3], [0, 4, 2, 3], [4, 1, 2, 3]],
         )
@@ -624,7 +624,7 @@ mod skin_tests {
     }
     #[test]
     fn source_reference_nodes_transfer_nonrigid_pose_and_reject_alias_separation() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::from_lattice_cells([0., 0.8, 0.], [0.01; 3], &[[0, 0, 0]]).unwrap();
         let mut demo = TissueDemo::body_from_region_specs(vec![TissueRegionSpec::illustrative(
             mesh.clone(),
@@ -688,7 +688,7 @@ mod skin_tests {
     }
     #[test]
     fn strict_energy_budget_bounds_a_moving_source_support_frame() {
-        let mesh = physics::biomechanics::TetraMesh::from_lattice_cells(
+        let mesh = physics_bio::biomechanics::TetraMesh::from_lattice_cells(
             [0., 0.8, 0.],
             [0.01; 3],
             &[[0, 0, 0]],
@@ -758,7 +758,7 @@ mod skin_tests {
     }
     #[test]
     fn source_reference_supports_follow_native_nonrigid_pose_and_book_work() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::from_lattice_cells([0., 0.8, 0.], [0.01; 3], &[[0, 0, 0]]).unwrap();
         let pins: Vec<_> = mesh
             .points
@@ -884,7 +884,7 @@ mod skin_tests {
     }
     #[test]
     fn source_reference_contact_rejects_separated_aliases_before_commit() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::from_lattice_cells([0., 0.8, 0.], [0.01; 3], &[[0, 0, 0]]).unwrap();
         let mut skin = mesh.points.clone();
         skin.push(skin[0]);
@@ -1052,7 +1052,7 @@ impl TissueDemo {
         &mut self,
         binding: &TissueSkinBinding,
     ) -> Result<usize, &'static str> {
-        use physics::biomechanics::{EmbeddedTriangleContact, StationaryEmbeddedContact};
+        use physics_bio::biomechanics::{EmbeddedTriangleContact, StationaryEmbeddedContact};
         use std::collections::{BTreeMap, BTreeSet};
         if self.time != 0.
             || self.accumulator != 0.
@@ -1293,7 +1293,7 @@ mod contact_tests {
     }
     #[test]
     fn authored_convex_volume_uses_complete_physical_skin_and_existing_controller() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let points = vec![
             [-0.01, 0.8, -0.01],
             [0.01, 0.8, -0.01],
@@ -1369,7 +1369,7 @@ mod contact_tests {
     }
     #[test]
     fn authored_material_and_variable_supports_drive_shared_mechanical_thermal_owner() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
         let mut spec = TissueRegionSpec::illustrative(mesh.clone(), vec![1, 2, 3, 4], 0);
         spec.density_kg_m3 = 1200.;
@@ -1462,7 +1462,7 @@ mod contact_tests {
     }
     #[test]
     fn projective_support_palettes_reject_atomically_for_rigid_blended_and_free_volumes() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
         for supports in [vec![], vec![1, 2, 3, 4]] {
             for blended in [false, true] {
@@ -1544,7 +1544,7 @@ mod contact_tests {
     }
     #[test]
     fn arbitrary_volume_offset_diagnostics_use_mass_without_assuming_supports_or_center() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh =
             TetraMesh::from_lattice_cells([0., 1., 0.], [0.01; 3], &[[0; 3], [1, 0, 0], [0, 1, 0]])
                 .unwrap();
@@ -1608,7 +1608,7 @@ mod contact_tests {
     }
     #[test]
     fn blended_support_weights_drive_prescribed_motion_and_keep_energy_and_rollback() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
         let mut spec = TissueRegionSpec::illustrative(mesh.clone(), vec![1, 2, 3, 4], 0);
         spec.support_joint_weights = vec![(4, vec![(1, 0.75), (0, 0.25)])];
@@ -1697,7 +1697,7 @@ mod contact_tests {
     }
     #[test]
     fn multi_bone_supports_drive_one_continuum_and_reject_bad_palettes_atomically() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
         let mut spec = TissueRegionSpec::illustrative(mesh.clone(), vec![1, 2, 3, 4], 0);
         spec.support_joint_overrides = vec![(4, 1)];
@@ -1778,7 +1778,7 @@ mod contact_tests {
     }
     #[test]
     fn nonconvex_lattice_volume_drives_existing_skin_and_energy_owner() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::from_lattice_cells(
             [0., 0.8, 0.],
             [0.01; 3],
@@ -1822,7 +1822,7 @@ mod contact_tests {
     }
     #[test]
     fn authored_region_union_rejects_overlap_without_relying_on_skin_samples() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let first = TissueRegionSpec::illustrative(
             TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap(),
             vec![1, 2, 3],
@@ -1856,7 +1856,7 @@ mod contact_tests {
     }
     #[test]
     fn unsupported_authored_volume_rejects_nonfinite_joint_atomically_in_both_owners() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::ellipsoid([0., 1., 0.], [0.02; 3], 0).unwrap();
         let spec = TissueRegionSpec::illustrative(mesh, vec![], 0);
         for assembled in [false, true] {
@@ -1910,7 +1910,7 @@ mod contact_tests {
     }
     #[test]
     fn nonradial_volume_boundary_normals_ignore_internal_faces_and_cell_order() {
-        use physics::biomechanics::TetraMesh;
+        use physics_bio::biomechanics::TetraMesh;
         let points = vec![
             [0., 0., 0.],
             [1., 0., 0.],

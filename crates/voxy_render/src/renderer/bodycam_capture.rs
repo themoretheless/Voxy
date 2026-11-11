@@ -1,8 +1,6 @@
 use glam::Vec3;
 
-use super::camera_math::{
-    chunk_intersects_frustum, perspective_camera_view_projection, photoreal_camera_uniform,
-};
+use super::camera_math::{perspective_camera_view_projection, photoreal_camera_uniform};
 use super::{RenderOutcome, Renderer, RendererError, SurfaceState};
 use crate::{BodycamRig, SkinnedUploadError};
 
@@ -84,21 +82,23 @@ impl Renderer {
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
+            let view_projection = perspective_camera_view_projection(
+                self.config.width,
+                self.config.height,
+                self.camera,
+            );
             if self.quad_count != 0 {
-                pass.set_pipeline(&self.photoreal_pipeline);
-                pass.set_bind_group(0, &camera_group, &[]);
-                pass.set_bind_group(1, &self.material_bind_group, &[]);
-                pass.set_vertex_buffer(0, self.quad_buffer.slice(..));
-                let view_projection = perspective_camera_view_projection(
-                    self.config.width,
-                    self.config.height,
-                    self.camera,
+                super::pipelines::encode_voxel_layers(
+                    &mut pass,
+                    &self.photoreal_pipeline,
+                    &camera_group,
+                    &self.material_bind_group,
+                    &self.quad_buffer,
+                    &self.chunk_draws,
+                    view_projection,
+                    self.camera.eye,
+                    false,
                 );
-                for (origin, instances) in &self.chunk_draws {
-                    if chunk_intersects_frustum(view_projection, *origin) {
-                        pass.draw(0..6, instances.clone());
-                    }
-                }
             }
             if let Some(skinned) = &self.skinned {
                 pass.set_pipeline(&self.photoreal_skinned_pipeline);
@@ -117,6 +117,19 @@ impl Renderer {
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_vertex_buffer(0, indirect.vertex_buffer.slice(..));
                 pass.draw_indirect(&indirect.indirect_buffer, 0);
+            }
+            if self.quad_count != 0 {
+                super::pipelines::encode_voxel_layers(
+                    &mut pass,
+                    &self.photoreal_pipeline,
+                    &camera_group,
+                    &self.material_bind_group,
+                    &self.quad_buffer,
+                    &self.chunk_draws,
+                    view_projection,
+                    self.camera.eye,
+                    true,
+                );
             }
             if let Some(skinned) = &self.skinned
                 && !skinned.fibre_ranges.is_empty()

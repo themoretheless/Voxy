@@ -131,7 +131,7 @@ fn dynamic_energy_guard_rejects_peak_skipping_fracture_and_rolls_back() {
 }
 
 fn finite_fracture_run(dt: f64, steps: usize) -> f64 {
-    use physics::{biomechanics::Material as Elastic, plasticity::mesh::FiniteQuadraticDynamics};
+    use physics::{constitutive::Material as Elastic, plasticity::mesh::FiniteQuadraticDynamics};
     let (body, upper, _, _) = coupon();
     let count = body.positions().len();
     let velocities = upper

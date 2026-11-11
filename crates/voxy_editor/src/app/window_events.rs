@@ -64,6 +64,25 @@ impl App {
                 window.set_title("Voxy Play — Left/Right move, W/S depth, Space jump; F6 Stop");
                 return;
             }
+            match &self.build.launch {
+                Some(Err(error)) => {
+                    window.set_title(&format!("Voxy — Game launch failed: {error}"));
+                    return;
+                }
+                Some(Ok(status)) if !status.success() => {
+                    window.set_title(&format!("Voxy — Game stopped with {status}"));
+                    return;
+                }
+                _ => {}
+            }
+            if let Some(result) = &self.build.result {
+                let message = match result {
+                    Ok(path) => format!("Game built: {}", path.display()),
+                    Err(error) => format!("Game build failed: {error}"),
+                };
+                window.set_title(&format!("Voxy — {message}"));
+                return;
+            }
             window.set_title(&format!(
                 "Voxy model viewport — instance {}/{} | view {}/{} | F4 split, F10 smoothing, D duplicate, R model, P parent, A active, F6 play/stop, Z undo, Y redo; Ctrl/Cmd+Shift+S/O snapshot save/open",
                 if self.instances.is_empty() { 0 } else { self.selected + 1 },
@@ -75,6 +94,7 @@ impl App {
     }
 
     pub(crate) fn stop_workers(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        self.finish_project_build();
         let mut save_errors = self.finish_editor_file_save();
         save_errors.extend(self.finish_editor_file_load());
         self.restore_barrier = None;

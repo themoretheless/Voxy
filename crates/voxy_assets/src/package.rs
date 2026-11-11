@@ -9,6 +9,42 @@ pub struct PackageLimits {
     pub max_payload_bytes: usize,
     pub max_document_bytes: usize,
 }
+pub const PROJECT_PACKAGE_LIMITS: PackageLimits = PackageLimits {
+    max_entries: 4096,
+    max_payload_bytes: 64 * 1024 * 1024,
+    max_document_bytes: 256 * 1024 * 1024,
+};
+pub const PROJECT_LAUNCH_SOURCE: &str = "__voxy_game.json";
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectDescriptor {
+    pub version: u32,
+    pub name: String,
+    pub asset_manifest: std::path::PathBuf,
+    pub startup_scene: std::path::PathBuf,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectPackageLaunch {
+    pub version: u32,
+    pub project: String,
+}
+impl ProjectPackageLaunch {
+    /// # Errors
+    /// Rejects unsupported versions and non-root project descriptors.
+    pub fn descriptor_path(&self) -> Result<SourcePath, String> {
+        if self.version != 2 {
+            return Err("unsupported project package launch version".into());
+        }
+        let path = SourcePath::new(self.project.clone()).map_err(|error| error.to_string())?;
+        if path.as_str().contains('/') {
+            return Err("package bootstrap must be at its root".into());
+        }
+        Ok(path)
+    }
+}
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Entry {

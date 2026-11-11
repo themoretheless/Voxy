@@ -1,0 +1,16 @@
+warning: function `clamp_webgpu_buffer_allocation_budget` is never used
+    --> crates/voxy_web/src/browser.rs:1601:8
+     |
+1601 | pub fn clamp_webgpu_buffer_allocation_budget(
+     |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `psnr_db_from_mse` is never used
+   --> crates/voxy_web/src/temporal_validation.rs:140:8
+    |
+140 | pub fn psnr_db_from_mse(mse: f64, peak_signal: f64) -> Option<f64> {
+    |        ^^^^^^^^^^^^^^^^
+
+warning: `voxy_web` (lib) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 0.20s

@@ -1,6 +1,6 @@
 //! Diagnostic finite-inventory uptake weakening a preloaded cohesive interface.
 use physics::{
-    biomechanics::Material as Elastic,
+    constitutive::Material as Elastic,
     moisture::{
         Body, Calibration, Cell, CohesiveCalibration, CohesiveProperties, FilmSupply, Properties,
     },

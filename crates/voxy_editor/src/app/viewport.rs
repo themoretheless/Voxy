@@ -39,11 +39,19 @@ impl App {
             .is_some_and(|s| s.profile)
             .then(Instant::now);
         self.tick()?;
+        self.poll_project_build();
+        self.poll_built_game();
+        let build_label = self.build_label();
+        let package_run_label = self.package_run_label();
         let load_status = self.editor_file_status();
         if let Some(panels) = &mut self.panels
-            && panels.load_status != load_status
+            && (panels.load_status != load_status
+                || panels.build_label != build_label
+                || panels.package_run_label != package_run_label)
         {
             panels.load_status = load_status;
+            panels.build_label = build_label;
+            panels.package_run_label = package_run_label;
             panels.invalidate_presentation();
             self.panel_cache = None;
         }
@@ -154,7 +162,42 @@ impl App {
         } else {
             None
         };
+        let selected_trigger = if self.inspector == InspectorMode::Physics
+            && !self.standalone
+            && self.play.playing.is_none()
+            && let Some(&owner) = self.instances.get(self.selected)
+            && self.scene.active_in_hierarchy(owner)?
+            && let Some(trigger) = self.scene.component::<voxy_gameplay::BoxTrigger>(owner)?
+        {
+            Some(
+                self.scene.world_matrix(owner)?
+                    * Mat4::from_scale(Vec3::from_array(trigger.half_extents)),
+            )
+        } else {
+            None
+        };
         if let Some(graphics) = &mut self.graphics {
+            if selected_trigger.is_none()
+                || (graphics.trigger_outline.is_some()
+                    && graphics.geometry_bytes() > graphics.residency_cache.geometry_budget)
+            {
+                graphics.trigger_outline = None;
+                graphics.trigger_transforms.clear();
+            } else {
+                graphics
+                    .trigger_transforms
+                    .retain(|view, _| views.iter().any(|entry| entry.0 == *view));
+                if graphics.trigger_outline.is_none() {
+                    let mesh = gizmo::trigger_outline()?;
+                    let bytes = SceneRenderer::mesh_allocation_bytes(&mesh);
+                    if graphics.geometry_bytes().saturating_add(bytes)
+                        <= graphics.residency_cache.geometry_budget
+                    {
+                        graphics.trigger_outline =
+                            Some(graphics.renderer.upload_mesh(&graphics.device, &mesh)?);
+                    }
+                }
+            }
             let liquid_revision = self
                 .play
                 .liquid
@@ -349,6 +392,19 @@ impl App {
                         });
                     }
                 }
+                if let Some(world) = selected_trigger
+                    && graphics.trigger_outline.is_some()
+                {
+                    let transform = match graphics.trigger_transforms.entry(view) {
+                        std::collections::btree_map::Entry::Occupied(entry) => entry.into_mut(),
+                        std::collections::btree_map::Entry::Vacant(entry) => entry.insert(
+                            graphics
+                                .renderer
+                                .create_transform(&graphics.device, Mat4::IDENTITY)?,
+                        ),
+                    };
+                    transform.update(&graphics.queue, view_projection * world)?;
+                }
                 if let Some(instance) = selected {
                     let transform = match graphics.gizmo_transforms.entry(view) {
                         std::collections::btree_map::Entry::Occupied(entry) => entry.into_mut(),
@@ -519,6 +575,16 @@ impl App {
                 {
                     draws.push(SceneDraw {
                         geometry: &graphics.gizmo_geometry,
+                        texture: &graphics.texture,
+                        transform,
+                        overlay: true,
+                    });
+                }
+                if let Some(geometry) = &graphics.trigger_outline
+                    && let Some(transform) = graphics.trigger_transforms.get(&view)
+                {
+                    draws.push(SceneDraw {
+                        geometry,
                         texture: &graphics.texture,
                         transform,
                         overlay: true,

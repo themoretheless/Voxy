@@ -1,7 +1,7 @@
 //! Small CPU tetrahedral FEM with stateful plasticity and cohesive interfaces.
 //! Dense solves are bounded to 512 vertices; optional dynamics use lumped mass.
 use super::{Material, Response, State};
-use crate::biomechanics::Matrix;
+use crate::math::Matrix;
 mod dynamics;
 mod interfaces;
 mod quadratic;

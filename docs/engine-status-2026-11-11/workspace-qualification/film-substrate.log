@@ -1,0 +1,19 @@
+
+running 1 test
+BODY MODEL: 60866 vertices, 121728 triangles; actual surface skin: 636 vertices, 1268 triangles; 60866 render bindings
+HAIR: 469 Cosserat guides, 20 segments each; E=4 GPa, fiber diameter=80 um; animated triangle contacts + guide self-contact
+test female_demo::tests::film_substrate_matches_rendered_body_without_visual_work has been running for over 60 seconds
+Facial render mouth opening: 340 seal triangles
+
+thread 'female_demo::tests::film_substrate_matches_rendered_body_without_visual_work' (17764850) panicked at crates/voxy_demos/src/female_demo.rs:2299:21:
+film/render geometry diverged: edited=false secondary=false animation=false rig=false time=0.38
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test female_demo::tests::film_substrate_matches_rendered_body_without_visual_work ... FAILED
+
+failures:
+
+failures:
+    female_demo::tests::film_substrate_matches_rendered_body_without_visual_work
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 392 filtered out; finished in 178.17s
+

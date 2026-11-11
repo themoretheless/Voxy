@@ -83,8 +83,7 @@ fn encode_chunk_with_scratch(
         if key_bytes.is_empty() || key_bytes.len() > MAX_KEY {
             return Err(CodecError::InvalidKeyLength(key_bytes.len()));
         }
-        let packed_len = CHUNK_VOLUME.div_ceil(8); // bits = 1 -> 4,096 zero bytes
-        let mut out = Vec::with_capacity(64 + key_bytes.len() + packed_len);
+        let mut out = Vec::with_capacity(64 + key_bytes.len());
         let mut writer = ByteWriter::new(&mut out);
         writer.write_bytes(MAGIC);
         writer.write_u16_le(VERSION);
@@ -93,16 +92,13 @@ fn encode_chunk_with_scratch(
         writer.write_i64_le(chunk.pos.z);
         writer.write_u64_le(chunk.revision.get());
         writer.write_u16_le(1);
-        writer.write_bytes(&[1, 0]);
+        writer.write_bytes(&[0, 0]);
         writer.write_u16_le(
             u16::try_from(key_bytes.len())
                 .map_err(|_| CodecError::InvalidKeyLength(key_bytes.len()))?,
         );
         writer.write_bytes(key_bytes);
-        writer.write_u32_le(u32::try_from(packed_len).map_err(|_| CodecError::RecordTooLarge)?);
-        let zero_start = out.len();
-        out.resize(zero_start + packed_len, 0);
-        let mut writer = ByteWriter::new(&mut out);
+        writer.write_u32_le(0);
         return finish_chunk_metadata_and_crc(&mut writer, chunk).map(|()| out);
     }
 
@@ -381,7 +377,10 @@ fn bits_for(count: usize) -> Result<u8, CodecError> {
     if count == 0 || count > usize::from(u16::MAX) + 1 {
         return Err(CodecError::PaletteTooLarge);
     }
-    Ok(u8::try_from((usize::BITS - (count - 1).leading_zeros()).max(1)).unwrap_or(16))
+    if count == 1 {
+        return Ok(0);
+    }
+    Ok(u8::try_from(usize::BITS - (count - 1).leading_zeros()).unwrap_or(16))
 }
 
 /// Word-packed (`u64` little-endian bit accumulator) encoder producing 100% byte-identical
@@ -671,6 +670,29 @@ pub(crate) mod tests {
         let bytes = encode_chunk(&chunk, &registry).unwrap();
         assert_eq!(decode_chunk(&bytes, &registry).unwrap(), chunk);
         assert_eq!(encode_chunk(&chunk, &registry).unwrap(), bytes);
+
+        let air = registry
+            .find(&ResourceKey::parse("voxy:air").unwrap())
+            .unwrap();
+        let uniform_chunk = StoredChunk {
+            pos: ChunkPos { x: 0, y: 1, z: -2 },
+            revision: ChunkRevision::from_raw(7),
+            data: ChunkData {
+                blocks: PalettedBlocks::uniform(air),
+                block_data: BTreeMap::new(),
+            },
+        };
+        let uniform_bytes = encode_chunk(&uniform_chunk, &registry).unwrap();
+        // Uniform single-palette chunks write 0 packed index bytes (~60 bytes total, not 4 KiB!)
+        assert!(
+            uniform_bytes.len() < 80,
+            "uniform len = {}",
+            uniform_bytes.len()
+        );
+        assert_eq!(
+            decode_chunk(&uniform_bytes, &registry).unwrap(),
+            uniform_chunk
+        );
     }
 
     #[test]

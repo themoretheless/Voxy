@@ -145,8 +145,10 @@ use glam::DVec3;
 use std::sync::Arc;
 use voxy_animation::AnimatorFrame;
 #[cfg(test)]
+use voxy_gameplay::CharacterTickPreview;
+use voxy_gameplay::SupportQueryBudget;
+#[cfg(test)]
 use voxy_gameplay::foot_placement::{ContactBlendState, contact_weight, crossed_swing};
-use voxy_gameplay::{CharacterTickPreview, SupportQueryBudget};
 pub use voxy_gameplay::{
     FootBinding, FootContactKey, FootOrientation, FootPivotKey, FootRuntime, FootSupportGeometry,
     ModelFootPlacement,
@@ -175,7 +177,7 @@ pub(crate) fn correct_at_phase(
     frame: AnimatorFrame,
     actor: DMat4,
     grounded: bool,
-    preview: &CharacterTickPreview,
+    support: &voxy_gameplay::SupportWorld,
     budget: &mut SupportQueryBudget,
     clip_name: Option<&str>,
     phase: Option<f64>,
@@ -184,12 +186,12 @@ pub(crate) fn correct_at_phase(
     source_interval: Option<&crate::model_playback::SourceContactInterval>,
     frozen_tick: Option<&(Arc<voxy_animation::Pose>, f64)>,
 ) -> Result<AnimatorFrame, String> {
-    feet.correct_skeleton_at_phase(
+    feet.correct_skeleton_on_support(
         &model.skeleton,
         frame,
         actor,
         grounded,
-        preview,
+        support,
         budget,
         clip_name,
         phase,
@@ -293,7 +295,18 @@ impl FootRuntimeModelTestExt for FootRuntime {
         budget: &mut SupportQueryBudget,
     ) -> Result<AnimatorFrame, String> {
         super::foot_placement::correct_at_phase(
-            self, model, frame, actor, grounded, preview, budget, None, None, None, None, None,
+            self,
+            model,
+            frame,
+            actor,
+            grounded,
+            &preview.support,
+            budget,
+            None,
+            None,
+            None,
+            None,
+            None,
             None,
         )
     }
@@ -318,7 +331,7 @@ impl FootRuntimeModelTestExt for FootRuntime {
             frame,
             actor,
             grounded,
-            preview,
+            &preview.support,
             budget,
             clip_name,
             phase,

@@ -2329,6 +2329,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ray_geometry_export::write(std::path::Path::new(&directory), &scene, app.original_seed)?;
         return Ok(());
     }
+    world_ray_lighting::validate_configuration()?;
     let profile = frame_profile::Profile::parse(std::env::args().skip(1), true)
         .map_err(std::io::Error::other)?;
     let mut event_builder = EventLoop::builder();

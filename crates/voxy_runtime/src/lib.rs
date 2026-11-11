@@ -5,6 +5,11 @@ mod frame_loop;
 pub use frame_loop::{
     AdaptiveQualityPidController, FrameLoop, FrameWork, snap_frame_delta_to_refresh_rate,
 };
+mod streaming;
+pub use streaming::{
+    PersistenceError, RebuildBatchOutcome, RebuildSubmitError, RebuildWorkerPool, WorldPersistence,
+    apply_wal_recovery,
+};
 mod time;
 pub use time::{SimulationClock, TimeDrop, TimeFrame};
 
@@ -14,8 +19,9 @@ use voxy_core::{ChunkPos, TickId, WorldEpoch};
 
 pub use bootstrap::{
     BootstrapChunk, BootstrapError, BootstrapScene, build_bootstrap_mesh, build_bootstrap_scene,
-    build_generated_scene, build_procedural_scene, invalidated_derived_chunks,
-    rebuild_bootstrap_chunks,
+    build_generated_scene, build_procedural_scene, build_vertical_procedural_scene,
+    extract_chunk_neighborhood, invalidated_derived_chunks, rebuild_bootstrap_chunks,
+    rebuild_chunks_from_snapshots, rebuild_vertical_chunks_from_snapshots,
 };
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]

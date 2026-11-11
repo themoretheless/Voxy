@@ -1,0 +1,151 @@
+{
+  "unsupported": "Invalid(\"unknown collection schema\")",
+  "retainedAfterUnsupported": true,
+  "prefab": {
+    "version": 1,
+    "objects": [
+      {
+        "id": "5:first13:4:leaf5:rotor",
+        "parent": null,
+        "name": "rotor",
+        "active": true,
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0.9092974,
+          -0.4161471
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "components": {
+          "game.angular-motion.v1": {
+            "axis": [
+              0,
+              0,
+              1
+            ],
+            "radians_per_second": 2
+          }
+        }
+      },
+      {
+        "id": "6:second13:4:leaf5:rotor",
+        "parent": null,
+        "name": "rotor",
+        "active": true,
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0.9092974,
+          -0.4161471
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "components": {
+          "game.angular-motion.v1": {
+            "axis": [
+              0,
+              0,
+              1
+            ],
+            "radians_per_second": 2
+          }
+        }
+      }
+    ]
+  },
+  "initial": {
+    "version": 1,
+    "objects": [
+      {
+        "id": "turntable",
+        "parent": null,
+        "name": "turntable",
+        "active": true,
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "components": {
+          "editor.model.v1": "mesh",
+          "game.angular-motion.v1": {
+            "axis": [
+              0,
+              0,
+              1
+            ],
+            "radians_per_second": 2
+          }
+        }
+      }
+    ]
+  },
+  "final": {
+    "version": 1,
+    "objects": [
+      {
+        "id": "turntable",
+        "parent": null,
+        "name": "turntable",
+        "active": true,
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0.9092974,
+          -0.4161471
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "components": {
+          "editor.model.v1": "mesh",
+          "game.angular-motion.v1": {
+            "axis": [
+              0,
+              0,
+              1
+            ],
+            "radians_per_second": 2
+          }
+        }
+      }
+    ]
+  },
+  "rejected": true,
+  "retained": true
+}

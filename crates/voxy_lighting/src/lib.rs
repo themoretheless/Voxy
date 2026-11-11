@@ -4,7 +4,9 @@ mod padded;
 mod propagate;
 mod types;
 
-pub use propagate::{LightingScratch, build_light, build_light_with_scratch};
+pub use propagate::{
+    LightingScratch, build_light, build_light_with_neighbor_volumes, build_light_with_scratch,
+};
 pub use types::{
     FaceNeighbor, LightStamp, LightVolume, LightingBudget, LightingError, LightingInput,
     attentuate_tinted_glass_rgb_light, attenuate_filtered_light, bounce_radiosity_injection_level,
@@ -190,7 +192,11 @@ mod tests {
             }
             let mut sky = vec![0_u8; PADDED_VOLUME];
             if input.sky_from_above {
-                seed_direct_sky(&opaque, &mut sky);
+                seed_direct_sky(
+                    &opaque,
+                    &mut sky,
+                    input.neighbors[FaceNeighbor::PosY.index()].is_some(),
+                );
             }
             propagate(&opaque, &mut sky, budget, cancel, true)?;
             let mut block = emission;
@@ -512,5 +518,91 @@ mod tests {
         );
         assert_eq!(bounce_radiosity_injection_level(15, 0.8), 6);
         assert_eq!(bounce_radiosity_injection_level(0, 0.8), 0);
+    }
+
+    #[test]
+    fn top_halo_solid_ceiling_blocks_direct_sky_and_neighbor_volumes_propagate_across_seams() {
+        let reg = registry_with_glass();
+        let stone = reg
+            .find(&ResourceKey::parse("voxy:stone").unwrap())
+            .unwrap();
+        let lamp = reg.find(&ResourceKey::parse("voxy:lamp").unwrap()).unwrap();
+        let cancel = CancelToken::new();
+
+        // 1. Solid ceiling at y=0 of PosY neighbor must block direct sky into center chunk:
+        let mut inp = input(PalettedBlocks::uniform(BlockStateId::AIR));
+        inp.registry = Arc::clone(&reg);
+        let top_snap = snapshot(
+            ChunkPos { x: 0, y: 1, z: 0 },
+            PalettedBlocks::uniform(stone),
+        );
+        inp.neighbors[FaceNeighbor::PosY.index()] = Some(top_snap.clone());
+        inp.stamp.faces[FaceNeighbor::PosY.index()] = Some(top_snap.revision);
+        let under_ceiling = build_light(&inp, LightingBudget::default(), &cancel).unwrap();
+        assert!(under_ceiling.is_all_dark());
+
+        // 2. Lamp at x=30 in NegX neighbor (2 voxels from seam) propagates across chunk boundary:
+        let lamp_local = LocalPos::new(30, 16, 16).unwrap().index();
+        let left_blocks = PalettedBlocks::uniform(BlockStateId::AIR)
+            .with_updates(&[(lamp_local, lamp)])
+            .unwrap();
+        let left_snap = snapshot(ChunkPos { x: -1, y: 0, z: 0 }, left_blocks);
+        let left_inp = LightingInput {
+            center: left_snap.clone(),
+            neighbors: std::array::from_fn(|_| None),
+            registry: Arc::clone(&reg),
+            sky_from_above: false,
+            stamp: LightStamp {
+                center: left_snap.revision,
+                faces: [None; 6],
+                registry_epoch: 1,
+                lighting_epoch: 1,
+            },
+        };
+        let left_vol = build_light(&left_inp, LightingBudget::default(), &cancel).unwrap();
+        assert_eq!(
+            left_vol.block(LocalPos::new(31, 16, 16).unwrap().index()),
+            14
+        );
+
+        let right_snap = snapshot(
+            ChunkPos { x: 0, y: 0, z: 0 },
+            PalettedBlocks::uniform(BlockStateId::AIR),
+        );
+        let mut neighbors: [Option<ChunkSnapshot>; 6] = std::array::from_fn(|_| None);
+        neighbors[FaceNeighbor::NegX.index()] = Some(left_snap.clone());
+        let mut faces = [None; 6];
+        faces[FaceNeighbor::NegX.index()] = Some(left_snap.revision);
+        let right_inp = LightingInput {
+            center: right_snap.clone(),
+            neighbors,
+            registry: Arc::clone(&reg),
+            sky_from_above: false,
+            stamp: LightStamp {
+                center: right_snap.revision,
+                faces,
+                registry_epoch: 1,
+                lighting_epoch: 1,
+            },
+        };
+        let mut scratch = LightingScratch::new();
+        let mut neighbor_vols: [Option<&LightVolume>; 6] = [None; 6];
+        neighbor_vols[FaceNeighbor::NegX.index()] = Some(&left_vol);
+        let right_vol = build_light_with_neighbor_volumes(
+            &right_inp,
+            &neighbor_vols,
+            LightingBudget::default(),
+            &cancel,
+            &mut scratch,
+        )
+        .unwrap();
+        assert_eq!(
+            right_vol.block(LocalPos::new(0, 16, 16).unwrap().index()),
+            13
+        );
+        assert_eq!(
+            right_vol.block(LocalPos::new(1, 16, 16).unwrap().index()),
+            12
+        );
     }
 }

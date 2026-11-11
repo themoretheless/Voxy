@@ -1,0 +1,5 @@
+GPU_RAY_NEAR_FIRST enabled=false
+GPU_RAY_HIERARCHY enabled=false reciprocal_cache=false owned_bounds_bytes=0
+GPU_RAY_STAGES configuration=None forced_fallback=false
+GPU_RAY_PERSISTENT enabled=false quantum=16 group_cap=256
+GPU_RAY_SCHEDULE frames=24 materials=12 hdr=true maps=true native_rgba16f_bytes=1179648 paired_dda=false early_gi=false finite=true moving_camera=true wet_and_dry=true temporal_history=true intermediate_float32_proof=false fps_proof=false

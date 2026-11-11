@@ -1,0 +1,30 @@
+   Compiling voxy_runtime v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.09s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_runtime-368824ae2137f3c8)
+
+running 22 tests
+test frame_loop::tests::pause_and_platform_reset_discard_partial_ticks ... ok
+test n8_runtime_tests::frame_state_digest_and_velocity_lookahead_offset_are_deterministic ... ok
+test bootstrap::tests::rejects_unbounded_bootstrap_radius ... ok
+test tests::count_budget_leaves_remainder_for_next_barrier ... ok
+test tests::exhausted_epoch_preserves_pending_results ... ok
+test frame_loop::tests::invalid_elapsed_does_not_poison_next_frame ... ok
+test frame_loop::tests::refresh_rate_snapping_locks_near_standard_periods ... ok
+test frame_loop::tests::repeated_running_state_preserves_partial_tick ... ok
+test frame_loop::tests::stall_is_bounded_and_backlog_is_reported ... ok
+test tests::barrier_order_is_independent_of_arrival_order ... ok
+test tests::stale_epoch_and_duplicate_are_rejected ... ok
+test tests::rejected_results_preserve_the_first_accepted_value ... ok
+test tests::world_transition_discards_pending_and_rejects_late_jobs ... ok
+test streaming::tests::unpublished_rebuilds_apply_backpressure_until_drained_or_invalidated ... ok
+test bootstrap::tests::bootstrap_scene_is_deterministic_and_nonempty ... ok
+test streaming::tests::vertical_scene_meshes_multiple_y_layers_and_propagates_sky_downward ... ok
+test streaming::tests::world_persistence_journals_and_recovers_commits_across_restart ... ok
+test streaming::tests::worker_pool_rebuilds_extracted_neighborhood_through_barrier_queue ... ok
+test bootstrap::tests::multi_chunk_scene_is_sorted_halo_correct_and_deterministic ... ok
+test bootstrap::tests::procedural_scene_is_deterministic_and_meshes_natural_water ... ok
+test bootstrap::tests::mesh_plants_keep_authoritative_blocks_without_duplicate_voxel_surfaces ... ok
+test bootstrap::tests::invalidated_chunks_rebuild_equals_full_rebuild ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.21s
+

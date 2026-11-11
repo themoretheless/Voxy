@@ -1,0 +1,52 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "cpu_stages": {
+    "actor_animation": {
+      "p50_ms": 0.343875,
+      "p95_ms": 0.5293329999999999,
+      "p99_ms": 3.119581
+    },
+    "pose_publication": {
+      "p50_ms": 3.9268330000000002,
+      "p95_ms": 6.07975,
+      "p99_ms": 121.67245799999999
+    },
+    "water": {
+      "p50_ms": 0.000041,
+      "p95_ms": 0.00033299999999999996,
+      "p99_ms": 0.000792
+    }
+  },
+  "frame_budget_met": false,
+  "frames": 1846,
+  "gpu_ms": null,
+  "gpu_pass_statistics": [
+    {
+      "p50_ms": 0.775375,
+      "p95_ms": 1.078209,
+      "p99_ms": 1.5605
+    },
+    null,
+    null
+  ],
+  "gpu_samples": 479,
+  "gpu_scope": "primary resident voxel pass only",
+  "limitations": [
+    "CPU render includes submission/presentation; not GPU execution time",
+    "presentation completion is not display scanout",
+    "GPU scene span excludes external postprocessing; delayed samples may cross warmup boundary",
+    "upload/memory counters unavailable"
+  ],
+  "max_ms": 163.079333,
+  "measurement_seconds": 20.0,
+  "over_120hz": 960,
+  "over_60hz": 46,
+  "p50_ms": 8.350583,
+  "p95_ms": 9.024667,
+  "p99_ms": 123.406667,
+  "peak_memory_bytes": null,
+  "scenario": "water",
+  "skipped_frames": 0,
+  "upload_bytes": null,
+  "warmup_seconds": 1.0
+}

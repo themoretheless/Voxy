@@ -493,6 +493,7 @@ pub(super) struct ContactLedger {
     pub loss: f64,
     pub particle_loss: Vec<f64>,
     pub(super) environment_impulse: [f64; 3],
+    pub(super) boundary_impact_work: f64,
 }
 pub(super) fn sweep_particles(
     particles: &mut [Particle],

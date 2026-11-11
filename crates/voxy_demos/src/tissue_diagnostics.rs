@@ -1,5 +1,5 @@
 //! Shell measurements relative to the current stress-free reference mesh.
-use physics::skin::Skin;
+use physics_bio::skin::Skin;
 use serde_json::{Value, json};
 
 pub fn measurements(skin: &Skin, solver_active: bool) -> Value {
@@ -29,7 +29,7 @@ pub fn measurements(skin: &Skin, solver_active: bool) -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use physics::skin::{SkinMaterial, patch};
+    use physics_bio::skin::{SkinMaterial, patch};
     #[test]
     fn affine_surface_measures_and_invalid_geometry_are_reported() {
         let mut skin = patch(3, 3, 0.01, SkinMaterial::default()).unwrap();

@@ -849,6 +849,43 @@ fn face_gap_range(
         let acc = DVec3::from_array(first.acceleration())
             - DVec3::from_array(second.acceleration())
             + j * start;
+        let (stationary_q, stationary_w, stationary, sign, rotating) = match feature {
+            AxisFeature::BodyFace(_) => (qb, wb, obstacle, -1., shape),
+            _ => (qa, wa, shape, 1., obstacle),
+        };
+        if stationary_w == DVec3::ZERO {
+            // The emitting box has constant support in its own normal.
+            // Combine the other box's vertex and COM before bounding their
+            // projection so opposite first derivatives can cancel.
+            let offset = local.dot(rotating.center) * sign + rotating.radius(local);
+            let center = rotate_vector(stationary_q, stationary.center) * sign;
+            let edges = stationary.edges.map(|e| rotate_vector(stationary_q, e));
+            let guard = 1024.
+                * f64::EPSILON
+                * (r.length()
+                    + center.length()
+                    + edges.iter().map(|e| e.length()).sum::<f64>()
+                    + rotating.center.length()
+                    + rotating.edges.iter().map(|e| e.length()).sum::<f64>());
+            let mut arc_lower = f64::INFINITY;
+            let mut arc_upper = f64::INFINITY;
+            for corner in 0..8 {
+                let vertex = edges.iter().enumerate().fold(center, |vertex, (k, edge)| {
+                    vertex
+                        + if corner & (1 << k) == 0 {
+                            -*edge
+                        } else {
+                            *edge
+                        }
+                });
+                let (lo, hi) = rotating_cubic_dot_range(n, wn, r + vertex, v, acc, j, h)?;
+                arc_lower = arc_lower.min(lo - offset - guard);
+                arc_upper = arc_upper.min(hi - offset + guard);
+            }
+            lower = lower.min(arc_lower);
+            upper = upper.max(arc_upper);
+            continue;
+        }
         let (mut lo, mut hi) = rotating_cubic_dot_range(n, wn, r, v, acc, j, h)?;
         let (cl, ch) = rotating_pair_dot_range(n, wn, rotate_vector(qa, shape.center), wa, h)?;
         lo += cl;
@@ -963,6 +1000,27 @@ pub(super) fn admit_point_motion(
         )?;
         if expected != point.support.plane {
             return Err(Error::InvalidCollision);
+        }
+        // This call covers exactly one shape pair. Its loaded face bounds
+        // overlap for the entire pair even when another SAT projection overlaps.
+        if !point.carrying_reaction
+            && points.iter().any(|other| {
+                other.carrying_reaction
+                    && other.admission_error_m <= point.admission_error_m
+                    && other
+                        .feature
+                        .and_then(|feature| FeatureKey::decode(feature).ok())
+                        .is_some_and(|loaded| {
+                            loaded.first == token.first
+                                && loaded.second == token.second
+                                && matches!(
+                                    loaded.axis,
+                                    AxisFeature::BodyFace(_) | AxisFeature::ObstacleFace(_)
+                                )
+                        })
+            })
+        {
+            continue;
         }
         let tolerance = point.admission_error_m
             + 256.
@@ -2286,6 +2344,51 @@ mod moving_face_gap_tests {
             }
         }
     }
+    #[test]
+    fn rotating_face_preserves_tangency_of_a_translating_box_vertex() {
+        let duration = 1e-4;
+        let rotating = path(0., duration, [0.; 3]);
+        let translating = ContactBody {
+            motion: physics::gravity::Body {
+                position: [0.25, 0.125, 0.],
+                velocity: [0.; 3],
+                mass: 1.,
+            },
+            spin: None,
+        }
+        .prepare_motion(
+            [0.; 3],
+            [0.; 3],
+            duration,
+            physics::spin_path::Config {
+                max_angular_error_rad: 1e-6,
+                min_step_s: 1e-9,
+                max_arcs: 10000,
+                max_trials: 30000,
+            },
+        )
+        .unwrap();
+        for (first, second, feature, normal) in [
+            (
+                &translating,
+                &rotating,
+                AxisFeature::ObstacleFace(0),
+                DVec3::X,
+            ),
+            (&rotating, &translating, AxisFeature::BodyFace(0), -DVec3::X),
+        ] {
+            let (lo, hi) = face_gap_range(first, cube(), second, cube(), feature, normal)
+                .unwrap()
+                .unwrap();
+            assert!(lo > -1e-9 && hi < 1e-11, "{lo:e} .. {hi:e}");
+            for i in 0..=128 {
+                let t = duration * f64::from(i) / 128.;
+                let exact = 0.125 * (t.cos() - 1.);
+                assert!((lo..=hi).contains(&exact));
+            }
+        }
+    }
+
     #[test]
     fn moving_face_admits_corotation_that_a_frozen_axis_would_reject() {
         let duration = 0.004;

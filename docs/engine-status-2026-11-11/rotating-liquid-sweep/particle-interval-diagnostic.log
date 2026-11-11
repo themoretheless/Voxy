@@ -1,0 +1,14 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.15s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 1 test
+support dt=1e-13: Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 2.1870699695725193e-12 })
+support dt=1e-12: Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 6.317279614457611e-12 })
+support dt=1e-11: Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 6.256728050382055e-11 })
+support dt=1e-9: Err(CollisionBudget)
+support dt=9.108908036323693e-4: Err(CollisionBudget)
+test liquid_runtime::tests::off_center_particle_remainder_requires_translation_only_reactions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 247 filtered out; finished in 0.00s
+

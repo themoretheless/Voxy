@@ -10,6 +10,10 @@ pub(super) struct Smoke {
     phase: u8,
     since: u64,
     restore_budget: Option<u64>,
+    import_under_pressure: Option<(
+        voxy_assets::AssetId,
+        std::sync::Arc<voxy_assets::ImportedAsset<crate::import::EditorAsset>>,
+    )>,
 }
 
 impl App {
@@ -303,6 +307,23 @@ impl App {
                     if resident_assets != 2 || !graphics.lod_pending.is_empty() {
                         return Err("both coarse levels must load before contraction".into());
                     }
+                    if self.pending_model.is_some()
+                        || required.iter().any(|asset| {
+                            self.reload.contains(asset)
+                                || self.catalog.status(asset)
+                                    != Some(&voxy_assets::AssetStatus::Ready)
+                        })
+                    {
+                        return Ok(false);
+                    }
+                    let retry_asset = required.first().ok_or("missing competing asset")?.clone();
+                    let prior = self
+                        .catalog
+                        .snapshot(&retry_asset)
+                        .ok_or("missing accepted model")?;
+                    self.reload.insert(retry_asset.clone());
+                    let smoke = self.lod_smoke.as_mut().ok_or("missing smoke")?;
+                    smoke.import_under_pressure = Some((retry_asset, prior));
                     let mandatory = live - optional_costs.iter().sum::<u64>();
                     let one_level = *optional_costs.iter().max().ok_or("missing optional cost")?;
                     self.lod_smoke
@@ -321,6 +342,38 @@ impl App {
                     if resident_assets != 1 || graphics.lod_pending.len() != 1 {
                         return Err("contracted budget did not defer exactly one asset".into());
                     }
+                    let (asset, prior) = self
+                        .lod_smoke
+                        .as_ref()
+                        .and_then(|smoke| smoke.import_under_pressure.as_ref())
+                        .ok_or("missing import under pressure")?;
+                    let cpu_retained = self
+                        .catalog
+                        .snapshot(asset)
+                        .is_some_and(|accepted| std::sync::Arc::ptr_eq(&accepted, prior));
+                    let gpu_retained = graphics
+                        .models
+                        .get(asset)
+                        .and_then(|model| model.publication.as_ref())
+                        .is_some_and(|accepted| std::sync::Arc::ptr_eq(accepted, prior));
+                    if !cpu_retained || !gpu_retained {
+                        return Err("pressure import changed the accepted model".into());
+                    }
+                    if !self.gpu_budget_retries.contains_key(asset) {
+                        if let Some(voxy_assets::AssetStatus::Failed(error)) =
+                            self.catalog.status(asset)
+                        {
+                            return Err(format!(
+                                "pressure import failed for an unexpected reason: {error}"
+                            )
+                            .into());
+                        }
+                        return Ok(false);
+                    }
+                    println!(
+                        "LOD NATIVE IMPORT DEFERRED PASS frames={} asset={}",
+                        self.frames, asset.0
+                    );
                     println!(
                         "LOD NATIVE COMPETITION FALLBACK PASS frames={} live={live} budget={budget} pending={:?}",
                         self.frames, graphics.lod_pending
@@ -336,6 +389,45 @@ impl App {
                     if resident_assets != 2 || !graphics.lod_pending.is_empty() {
                         return Err("competing LOD did not recover after budget restoration".into());
                     }
+                    for asset in &required {
+                        match self.catalog.status(asset) {
+                            Some(voxy_assets::AssetStatus::Ready) => {}
+                            Some(voxy_assets::AssetStatus::Failed(error))
+                                if !self.gpu_budget_retries.contains_key(asset)
+                                    && !self.reload.contains(asset) =>
+                            {
+                                return Err(format!(
+                                    "LOD import did not recover for {}: {error}",
+                                    asset.0
+                                )
+                                .into());
+                            }
+                            _ => return Ok(false),
+                        }
+                    }
+                    let (asset, prior) = self
+                        .lod_smoke
+                        .as_ref()
+                        .and_then(|smoke| smoke.import_under_pressure.as_ref())
+                        .ok_or("missing import under pressure")?;
+                    let accepted = self
+                        .catalog
+                        .snapshot(asset)
+                        .ok_or("missing recovered CPU model")?;
+                    let accepted_gpu = graphics
+                        .models
+                        .get(asset)
+                        .and_then(|model| model.publication.as_ref())
+                        .ok_or("missing recovered GPU model")?;
+                    if std::sync::Arc::ptr_eq(&accepted, prior)
+                        || !std::sync::Arc::ptr_eq(&accepted, accepted_gpu)
+                    {
+                        return Err("pressure import did not republish CPU and GPU together".into());
+                    }
+                    println!(
+                        "LOD NATIVE IMPORT RECOVERED PASS frames={} asset={}",
+                        self.frames, asset.0
+                    );
                     println!(
                         "LOD NATIVE COMPETITION RECOVERY PASS frames={} live={live} budget={budget}",
                         self.frames

@@ -8,6 +8,10 @@ mod support_rigid;
 
 mod boxes;
 mod contact_network;
+mod gravity;
+mod gravity_character;
+mod gravity_field;
+mod gravity_spheres;
 mod mass_properties;
 mod material_pair;
 mod normal_manifold;
