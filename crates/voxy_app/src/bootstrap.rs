@@ -402,6 +402,7 @@ pub(super) fn loading_title(percent: u8, stage: &str) -> String {
 
 pub(super) fn build_startup_scene(
     graphics: voxy_render::GraphicsOptions,
+    radius: i32,
 ) -> Result<BootstrapScene, voxy_runtime::BootstrapError> {
     let backend =
         terrain_options::TerrainBackend::parse(std::env::args().skip(1)).map_err(|error| {
@@ -436,9 +437,9 @@ pub(super) fn build_startup_scene(
         }
     };
     if std::env::args().any(|arg| arg == "--voxel-plants") {
-        voxy_runtime::build_generated_scene(0x56_4f_58_59, 1, factory)
+        voxy_runtime::build_generated_scene(0x56_4f_58_59, radius, factory)
     } else {
-        voxy_runtime::build_generated_scene_with_mesh_plants(0x56_4f_58_59, 1, factory)
+        voxy_runtime::build_generated_scene_with_mesh_plants(0x56_4f_58_59, radius, factory)
     }
 }
 

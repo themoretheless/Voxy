@@ -75,6 +75,8 @@ pub fn prepare(
         .ok()
         .map(|s| s.parse::<NonZeroU32>())
         .transpose()?;
+    let single_ray_queue_claim =
+        std::env::var("VOXY_STREET_WORLD_RAY_SINGLE_CLAIM").as_deref() == Ok("1");
     let started = std::time::Instant::now();
     let scene = Arc::new(
         if std::env::var("VOXY_STREET_WORLD_RAY_PRIMITIVE_GROUPS").as_deref() == Ok("1") {
@@ -168,6 +170,7 @@ pub fn prepare(
             defer_nearest: true,
             exact_worker_limit: Some(exact_workers),
             exact_group_size: exact_group,
+            single_ray_queue_claim,
             ..Default::default()
         },
     )?);
@@ -202,6 +205,7 @@ pub fn prepare(
         "STREET WORLD SCHEDULING {}",
         serde_json::json!({
             "kind": format!("{:?}",job.query_kind()),
+            "nearest_queue_claim_width": if single_ray_queue_claim { 1 } else { 4 },
             "wide_source_nodes": job.wide_source_nodes_enabled(),
             "wide_source_near_first": job.wide_source_near_first_enabled(),
             "wide_source_block_blake3": job.wide_source_digest(),

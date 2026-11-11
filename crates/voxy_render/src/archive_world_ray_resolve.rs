@@ -806,11 +806,14 @@ impl ArchiveWorldRayRegion {
         profile: Option<(&wgpu::QuerySet, u32, u32, Option<u32>)>,
     ) {
         if self.cache_check {
-            // Error count is sticky for this owner, including earlier frames.
-            // Fresh managed buffers are zero-initialized by the device contract.
+            // Keep the mismatch count across frames for this owner.
             encoder.clear_buffer(&self.audit, 0, Some(40));
             encoder.clear_buffer(&self.audit, 44, Some(4));
-        } else {
+        } else if self.audit_enabled
+            || self.cache.is_some()
+            || self.consumer_audit.is_some()
+            || self.consumer_stages.is_some()
+        {
             encoder.clear_buffer(&self.audit, 0, None);
         }
         // A pass has only one timestamp pair. Keep the legacy whole-component

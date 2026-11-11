@@ -38,6 +38,7 @@ struct Gpu {
     panel_px: u32,
     bodycam: Option<voxy_render::BodycamPostProcess>,
     pending_world_frame: Option<wgpu::SubmissionIndex>,
+    warmup_submission_time: Option<Instant>,
 }
 /// Camera cycled with V: eye, orbit, chest bodycam, hand-held camcorder.
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -653,6 +654,7 @@ impl App {
             panel_px,
             bodycam: None,
             pending_world_frame: None,
+            warmup_submission_time: None,
         });
         self.last = Instant::now();
         if !self.offscreen_benchmark && self.probe_bake.is_none() {
@@ -778,6 +780,7 @@ impl App {
             return Ok(());
         }
         if let Some(mut bake) = self.probe_bake.take() {
+            let previous = bake.progress().0;
             let ready = self
                 .gpu
                 .as_mut()
@@ -797,6 +800,15 @@ impl App {
                     window.focus_window();
                 }
             } else {
+                let (completed, total) = bake.progress();
+                if self.benchmark > 0.
+                    && (previous == 0 && completed > 0 || previous / 32 != completed / 32)
+                {
+                    eprintln!(
+                        "STREET probes={completed}/{total} elapsed_seconds={:.3}",
+                        bake.elapsed_seconds()
+                    );
+                }
                 self.probe_bake = Some(bake);
             }
             self.last = Instant::now();
@@ -811,7 +823,17 @@ impl App {
                 submission_index: Some(submission.clone()),
                 timeout: Some(std::time::Duration::from_millis(2)),
             }) {
-                Ok(_) => gpu.pending_world_frame = None,
+                Ok(_) => {
+                    gpu.pending_world_frame = None;
+                    if let Some(submitted) = gpu.warmup_submission_time.take() {
+                        eprintln!(
+                            "STREET warmup completed={}/180 world_query_frames={} submit_to_observed_completion_ms={:.3}",
+                            self.frames,
+                            gpu.renderer.world_ray_query_encoded_frames(),
+                            submitted.elapsed().as_secs_f64() * 1000.,
+                        );
+                    }
+                }
                 Err(wgpu::PollError::Timeout) => return Ok(()),
                 Err(error) => return Err(error.into()),
             }
@@ -1232,14 +1254,18 @@ impl App {
         self.frames += 1;
         if self.benchmark > 0.
             && !self.offscreen_benchmark
-            && (self.frames == 1 || (self.frames <= 180 && self.frames % 30 == 0))
+            && (self.frames <= 3 || (self.frames <= 180 && self.frames % 30 == 0))
         {
             eprintln!(
-                "STREET warmup submitted={}/180 simulation_steps={} render_ms={:.3}",
+                "STREET warmup submitted={}/180 simulation_steps={} world_query_frames={} render_ms={:.3}",
                 self.frames,
                 self.simulation_steps,
+                gpu.renderer.world_ray_query_encoded_frames(),
                 render_time * 1000.
             );
+            if gpu.pending_world_frame.is_some() {
+                gpu.warmup_submission_time = Some(Instant::now());
+            }
         }
         if self.offscreen_benchmark && std::env::var_os("VOXY_STREET_BENCHMARK_PROGRESS").is_some()
         {

@@ -186,13 +186,75 @@ fn exact_morph_words(
     Some((words, negative))
 }
 
+#[inline]
+fn fast_neumaier_morph_sum64(base: f32, terms: &[(f32, f32)]) -> Option<Result<f64, ()>> {
+    if !base.is_finite() || terms.len() > MAX_MORPH_TARGETS {
+        return None;
+    }
+    let mut sum = f64::from(base);
+    let mut comp = 0.0_f64;
+    let mut max_abs = sum.abs();
+    for &(a, b) in terms {
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
+        // Every binary32 * binary32 product is 100% exact in binary64 (48-bit mantissa <= 53-bit).
+        let prod = f64::from(a) * f64::from(b);
+        if prod == 0.0 {
+            continue;
+        }
+        max_abs = max_abs.max(prod.abs());
+        let t = sum + prod;
+        if sum.abs() >= prod.abs() {
+            comp += (sum - t) + prod;
+        } else {
+            comp += (prod - t) + sum;
+        }
+        sum = t;
+    }
+    let total = sum + comp;
+    if total == 0.0 && max_abs == 0.0 {
+        return Some(Ok(0.0));
+    }
+    // If catastrophic cancellation does not wipe out more than 20 bits of the binary64 sum,
+    // the compensated binary64 sum has >=33 exact bits of precision.
+    if total.abs() >= max_abs * (1.0 / (1u64 << 20) as f64) {
+        Some(Ok(total))
+    } else {
+        Some(Err(()))
+    }
+}
+
 /// Exact source sum rounded once to binary32, including subnormal/tie handling.
+/// Uses a fast register-only binary64 Neumaier compensated sum when outside
+/// catastrophic-cancellation / tie boundary regimes, falling back to the
+/// multi-word oracle only for exact tie or extreme cancellation cases.
 /// Returns None for nonfinite inputs, more than 256 terms or f32 overflow.
 pub fn exact_morph_component(
     base: f32,
     terms: impl IntoIterator<Item = (f32, f32)>,
 ) -> Option<f32> {
-    let (words, negative) = exact_morph_words(base, terms)?;
+    let collected: Vec<(f32, f32)> = terms.into_iter().collect();
+    if let Some(Ok(res)) = fast_neumaier_morph_sum64(base, &collected) {
+        if res == 0.0 {
+            return Some(0.0);
+        }
+        let abs = res.abs();
+        // Normal f32 range away from exact half-way rounding boundaries (24th..29th mantissa bits not near 0x1000_0000)
+        if abs >= f64::from(f32::MIN_POSITIVE) && abs <= f64::from(f32::MAX) {
+            let tail = res.to_bits() & 0x1fff_ffff;
+            if tail > 0x0000_0100
+                && tail < 0x1fff_ff00
+                && !(0x0fff_ff00..=0x1000_0100).contains(&tail)
+            {
+                let cand = res as f32;
+                if cand.is_finite() {
+                    return Some(if cand == 0.0 { 0.0 } else { cand });
+                }
+            }
+        }
+    }
+    let (words, negative) = exact_morph_words(base, collected)?;
     let Some(top) = words.iter().rposition(|v| *v != 0) else {
         return Some(0.);
     };
@@ -232,7 +294,17 @@ pub fn exact_morph_component64(
     base: f32,
     terms: impl IntoIterator<Item = (f32, f32)>,
 ) -> Option<f64> {
-    let (words, negative) = exact_morph_words(base, terms)?;
+    let collected: Vec<(f32, f32)> = terms.into_iter().collect();
+    if collected.len() <= 1
+        && let Some(Ok(res)) = fast_neumaier_morph_sum64(base, &collected)
+        && res != 0.0
+    {
+        // A single binary32 * binary32 product with zero base is 100% exact in binary64.
+        if base == 0.0 {
+            return Some(res);
+        }
+    }
+    let (words, negative) = exact_morph_words(base, collected)?;
     let Some(top) = words.iter().rposition(|v| *v != 0) else {
         return Some(0.);
     };

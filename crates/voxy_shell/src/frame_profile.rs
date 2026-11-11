@@ -24,6 +24,17 @@ impl Scenario {
         }
     }
 }
+/// Voxel scenario counters accumulated before and during the measured interval.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct VoxelWorkload {
+    pub simulation_ticks: u64,
+    pub destruction_commits: u64,
+    pub water_commits: u64,
+    pub resident_chunks: usize,
+    pub partial_publications: u64,
+    pub full_publications: u64,
+}
+
 #[derive(Debug)]
 pub struct Profile {
     pub scenario: Scenario,
@@ -34,6 +45,7 @@ pub struct Profile {
     previous: Option<Instant>,
     samples: Vec<Sample>,
     gpu_samples: Vec<[Option<f64>; 3]>,
+    vegetation_gpu_samples: Vec<[Option<f64>; 3]>,
     completed: std::cell::Cell<bool>,
     cpu_stages: std::collections::BTreeMap<&'static str, Vec<f64>>,
 }
@@ -130,6 +142,7 @@ impl Profile {
             previous: None,
             samples: Vec::new(),
             gpu_samples: Vec::new(),
+            vegetation_gpu_samples: Vec::new(),
             completed: std::cell::Cell::new(false),
             cpu_stages: std::collections::BTreeMap::new(),
         }))
@@ -169,6 +182,16 @@ impl Profile {
             self.gpu_samples.push(sample);
         }
     }
+    pub fn vegetation_gpu_sample(&mut self, now: Instant, sample: [Option<f64>; 3]) {
+        if self
+            .start
+            .is_some_and(|start| now.duration_since(start) >= self.warmup)
+            && sample.iter().any(Option::is_some)
+            && sample.iter().flatten().all(|v| v.is_finite() && *v >= 0.0)
+        {
+            self.vegetation_gpu_samples.push(sample);
+        }
+    }
     pub fn cpu_stage(&mut self, now: Instant, name: &'static str, duration: Duration) {
         if self
             .start
@@ -184,6 +207,14 @@ impl Profile {
         self.completed.get()
     }
     pub fn finish(&self, adapter: &str) -> io::Result<()> {
+        self.finish_report(adapter, None)
+    }
+
+    pub fn finish_voxel(&self, adapter: &str, workload: VoxelWorkload) -> io::Result<()> {
+        self.finish_report(adapter, Some(workload))
+    }
+
+    fn finish_report(&self, adapter: &str, workload: Option<VoxelWorkload>) -> io::Result<()> {
         if self.samples.is_empty() {
             return Err(io::Error::other("profile has no measured frames"));
         }
@@ -210,7 +241,17 @@ impl Profile {
         csv.flush()?;
         let mut times: Vec<_> = self.samples.iter().map(|s| s.frame_ms).collect();
         times.sort_by(f64::total_cmp);
-        let p99 = percentile(&times, 0.99);
+        let elapsed_ms: f64 = times.iter().sum();
+        let presented = self
+            .samples
+            .iter()
+            .filter(|sample| sample.presented)
+            .count();
+        let skipped = times.len() - presented;
+        let mut intervals = presented_intervals(&self.samples);
+        intervals.sort_by(f64::total_cmp);
+        let quantile = |fraction| (!intervals.is_empty()).then(|| percentile(&intervals, fraction));
+        let p99 = quantile(0.99);
         let mut gpu_csv = io::BufWriter::new(File::create(self.output.with_extension("gpu.csv"))?);
         writeln!(
             gpu_csv,
@@ -232,7 +273,83 @@ impl Profile {
             values.sort_by(f64::total_cmp);
             (*name, serde_json::json!({"p50_ms":percentile(&values,0.5),"p95_ms":percentile(&values,0.95),"p99_ms":percentile(&values,0.99)}))
         }).collect();
-        let report = serde_json::json!({"scenario":self.scenario.name(), "adapter":adapter,"frames":times.len(),"warmup_seconds":self.warmup.as_secs_f64(),"measurement_seconds":self.duration.as_secs_f64(),"p50_ms":percentile(&times,0.5),"p95_ms":percentile(&times,0.95),"p99_ms":p99,"max_ms":times.last(),"over_120hz":times.iter().filter(|t|**t>1000.0/120.0).count(),"over_60hz":times.iter().filter(|t|**t>1000.0/60.0).count(),"skipped_frames":self.samples.iter().filter(|s|!s.presented).count(),"frame_budget_met":p99<=1000.0/120.0 && self.samples.iter().all(|s|s.presented),"gpu_scope":if self.scenario == Scenario::Street {"archive scene span and opaque/transparent passes"} else {"primary resident voxel pass only"},"cpu_stages":cpu_stats,"gpu_samples":self.gpu_samples.len(),"gpu_pass_statistics":gpu_stats,"gpu_ms":null,"upload_bytes":null,"peak_memory_bytes":null,"limitations":["CPU render includes submission/presentation; not GPU execution time","presentation completion is not display scanout","GPU scene span excludes external postprocessing; delayed samples may cross warmup boundary","upload/memory counters unavailable"]});
+        let mut report = serde_json::json!({
+            "scenario": self.scenario.name(),
+            "adapter": adapter,
+            "frames": times.len(),
+            "presented_frames": presented,
+            "skipped_frames": skipped,
+            "presented_intervals": intervals.len(),
+            "warmup_seconds": self.warmup.as_secs_f64(),
+            "measurement_seconds": self.duration.as_secs_f64(),
+            "sampled_seconds": elapsed_ms / 1000.0,
+            "mean_presented_fps": (elapsed_ms > 0.).then(|| presented as f64 * 1000.0 / elapsed_ms),
+            "p50_ms": quantile(0.50),
+            "p95_ms": quantile(0.95),
+            "p99_ms": p99,
+            "max_ms": intervals.last(),
+            "attempt_p99_ms": percentile(&times, 0.99),
+            "over_120hz": intervals.iter().filter(|t| **t > 1000.0 / 120.0).count(),
+            "over_60hz": intervals.iter().filter(|t| **t > 1000.0 / 60.0).count(),
+            "frame_budget_met": skipped == 0 && p99.is_some_and(|p99| p99 <= 1000.0 / 120.0),
+            "gpu_scope": if self.scenario == Scenario::Street {
+                "archive scene span and opaque/transparent passes"
+            } else {
+                "primary resident voxel pass only"
+            },
+            "cpu_stages": cpu_stats,
+            "gpu_samples": self.gpu_samples.len(),
+            "gpu_pass_statistics": gpu_stats,
+            "gpu_ms": null,
+            "upload_bytes": null,
+            "peak_memory_bytes": null,
+            "limitations": [
+                "Frame intervals use successful application presents and include intervening skips",
+                "CPU render includes submission/presentation; not GPU execution time",
+                "Presentation completion is not display scanout",
+                "GPU scene span excludes external postprocessing; delayed samples may cross warmup boundary",
+                "Upload/memory counters unavailable"
+            ]
+        });
+        if !self.vegetation_gpu_samples.is_empty() {
+            let stages = ["shadow_casters", "shadow_receivers", "plant_surfaces"];
+            report["vegetation_gpu_stages"] = serde_json::Value::Object(
+                stages
+                    .into_iter()
+                    .enumerate()
+                    .map(|(index, name)| {
+                        let mut values: Vec<_> = self
+                            .vegetation_gpu_samples
+                            .iter()
+                            .filter_map(|sample| sample[index])
+                            .collect();
+                        values.sort_by(f64::total_cmp);
+                        let stats = if values.is_empty() {
+                            serde_json::Value::Null
+                        } else {
+                            serde_json::json!({
+                                "samples": values.len(),
+                                "p50_ms": percentile(&values, 0.5),
+                                "p95_ms": percentile(&values, 0.95),
+                                "p99_ms": percentile(&values, 0.99),
+                            })
+                        };
+                        (name.into(), stats)
+                    })
+                    .collect(),
+            );
+        }
+        if let Some(workload) = workload {
+            report["voxel_workload"] = serde_json::json!({
+                "includes_warmup": true,
+                "simulation_ticks": workload.simulation_ticks,
+                "destruction_commits": workload.destruction_commits,
+                "water_commits": workload.water_commits,
+                "resident_chunks": workload.resident_chunks,
+                "partial_publications": workload.partial_publications,
+                "full_publications": workload.full_publications,
+            });
+        }
         std::fs::write(
             self.output.with_extension("json"),
             serde_json::to_vec_pretty(&report)?,
@@ -242,6 +359,23 @@ impl Profile {
         Ok(())
     }
 }
+fn presented_intervals(samples: &[Sample]) -> Vec<f64> {
+    let mut previous_present = false;
+    let mut elapsed = 0.;
+    let mut intervals = Vec::new();
+    for sample in samples {
+        elapsed += sample.frame_ms;
+        if sample.presented {
+            if previous_present {
+                intervals.push(elapsed);
+            }
+            previous_present = true;
+            elapsed = 0.;
+        }
+    }
+    intervals
+}
+
 fn percentile(sorted: &[f64], fraction: f64) -> f64 {
     sorted[((sorted.len() as f64 * fraction).ceil() as usize)
         .saturating_sub(1)
@@ -253,6 +387,30 @@ mod tests {
     fn parse(args: &[&str]) -> Result<Option<Profile>, String> {
         Profile::parse(args.iter().map(ToString::to_string), false)
     }
+    #[test]
+    fn present_intervals_include_all_skips_between_successes() {
+        let sample = |frame_ms, presented| Sample {
+            frame_ms,
+            simulation_ms: 0.,
+            preparation_ms: 0.,
+            render_ms: 0.,
+            acquire_ms: None,
+            presented,
+        };
+        assert_eq!(
+            presented_intervals(&[
+                sample(7., false),
+                sample(1., true),
+                sample(8., false),
+                sample(2., false),
+                sample(4., true),
+                sample(3., true),
+                sample(15., false),
+            ]),
+            [14., 3.]
+        );
+    }
+
     #[test]
     fn rejects_invalid_config() {
         for args in [
@@ -333,11 +491,30 @@ mod tests {
             );
         }
         p.gpu_sample(start + Duration::from_secs(2), [Some(1.0), None, None]);
-        p.finish("test").unwrap();
+        p.finish_voxel(
+            "test",
+            VoxelWorkload {
+                simulation_ticks: 720,
+                destruction_commits: 1,
+                water_commits: 2,
+                resident_chunks: 289,
+                partial_publications: 2,
+                full_publications: 1,
+            },
+        )
+        .unwrap();
         assert!(p.is_complete());
         let report: serde_json::Value =
             serde_json::from_slice(&std::fs::read(output.with_extension("json")).unwrap()).unwrap();
         assert_eq!(report["skipped_frames"], 2);
+        assert_eq!(report["presented_frames"], 0);
+        assert!(report["p99_ms"].is_null());
+        assert!(report["attempt_p99_ms"].is_number());
+        assert_eq!(report["voxel_workload"]["simulation_ticks"], 720);
+        assert_eq!(report["voxel_workload"]["destruction_commits"], 1);
+        assert_eq!(report["voxel_workload"]["resident_chunks"], 289);
+        assert_eq!(report["voxel_workload"]["partial_publications"], 2);
+        assert_eq!(report["voxel_workload"]["includes_warmup"], true);
         assert!(report["gpu_ms"].is_null());
         assert!(report["gpu_pass_statistics"][1].is_null());
         assert_eq!(report["frame_budget_met"], false);

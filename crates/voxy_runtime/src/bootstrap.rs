@@ -14,6 +14,9 @@ use voxy_world::{
     SimpleTerrainGenerator, TerrainPalette, VoxelView, World, WorldLimits, WorldSeed,
 };
 
+/// Largest supported horizontal radius for generated startup scenes.
+pub const MAX_BOOTSTRAP_RADIUS: i32 = 8;
+
 #[derive(Debug)]
 pub struct BootstrapScene {
     pub anchor: ChunkPos,
@@ -89,7 +92,7 @@ pub fn build_vertical_procedural_scene(
     y_max: i32,
     mesh_plants: bool,
 ) -> Result<BootstrapScene, BootstrapError> {
-    if !(0..=8).contains(&radius) {
+    if !(0..=MAX_BOOTSTRAP_RADIUS).contains(&radius) {
         return Err(BootstrapError::InvalidRadius(radius));
     }
     if y_min > y_max || y_max - y_min > 16 {
@@ -197,7 +200,7 @@ fn build_scene_using_generator(
         BlockStateId,
     ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
 ) -> Result<BootstrapScene, BootstrapError> {
-    if !(0..=8).contains(&radius) {
+    if !(0..=MAX_BOOTSTRAP_RADIUS).contains(&radius) {
         return Err(BootstrapError::InvalidRadius(radius));
     }
     let registry = Arc::new(registry_with_mesh_plants(mesh_plants)?);

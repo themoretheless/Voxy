@@ -6,6 +6,10 @@ use crate::{ComputeError, ComputeMemoryBudget, ComputeStorage};
 use glam::camera::rh::{proj::directx::orthographic, view::look_at_mat4};
 use glam::{Mat4, Vec3};
 use std::sync::Arc;
+mod culling;
+mod shadow_wind;
+use culling::{ClipVolume, PlantBounds, wind_bounds};
+use shadow_wind::{ShadowWind, WindBuffer};
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
 struct Camera {
@@ -59,12 +63,16 @@ struct Mesh {
     instance_ring: Option<crate::SharedUploadRing>,
     snapshot: Vec<ArchiveInstance>,
     generated: Option<crate::SharedUploadSnapshot>,
+    local_bounds: Option<(glam::DVec3, glam::DVec3)>,
+    instance_bounds: Vec<Option<PlantBounds>>,
+    shadow_wind: Option<WindBuffer>,
     count: u32,
     instance_count: u32,
     capacity: usize,
     material: usize,
 }
 struct Material {
+    alpha_cutoff: f32,
     bind: wgpu::BindGroup,
     _uniform: ComputeStorage,
 }
@@ -88,9 +96,16 @@ pub struct NativeVegetation {
     pipeline: wgpu::RenderPipeline,
     hdr_pipeline: wgpu::RenderPipeline,
     shadow_pipeline: wgpu::RenderPipeline,
+    opaque_shadow_pipeline: wgpu::RenderPipeline,
+    opaque_shadow_fast: bool,
+    shadow_wind: Option<(ShadowWind, wgpu::RenderPipeline)>,
+    shadow_wind_enabled: bool,
     receiver: wgpu::RenderPipeline,
     hdr_receiver: wgpu::RenderPipeline,
     shadow_vp: Mat4,
+    cull_instances: bool,
+    cull_shadow_receivers: bool,
+    shadow_capture_override: Option<(bool, f32)>,
 }
 impl std::fmt::Debug for NativeVegetation {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -210,9 +225,21 @@ impl NativeVegetation {
                 canopy_metadata(&geometry, leaf)
             })
             .collect();
+        let shadow_wind_enabled =
+            std::env::var("VOXY_VEGETATION_SHADOW_WIND").as_deref() == Ok("1");
+        let prepare_shadow_wind = shadow_wind_enabled || cfg!(test);
+        let instance_usage = wgpu::BufferUsages::VERTEX
+            | if prepare_shadow_wind {
+                wgpu::BufferUsages::STORAGE
+            } else {
+                wgpu::BufferUsages::empty()
+            };
         let camera_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("native vegetation camera"),
-            entries: &[uniform(0, wgpu::ShaderStages::VERTEX_FRAGMENT)],
+            entries: &[uniform(
+                0,
+                wgpu::ShaderStages::VERTEX_FRAGMENT | wgpu::ShaderStages::COMPUTE,
+            )],
         });
         let material_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("native vegetation materials"),
@@ -278,7 +305,12 @@ impl NativeVegetation {
                 dimension: wgpu::TextureDimension::D2,
                 format: wgpu::TextureFormat::Depth32Float,
                 usage: wgpu::TextureUsages::RENDER_ATTACHMENT
-                    | wgpu::TextureUsages::TEXTURE_BINDING,
+                    | wgpu::TextureUsages::TEXTURE_BINDING
+                    | if cfg!(test) {
+                        wgpu::TextureUsages::COPY_SRC
+                    } else {
+                        wgpu::TextureUsages::empty()
+                    },
                 view_formats: &[],
             })?;
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
@@ -391,6 +423,7 @@ impl NativeVegetation {
                 ],
             });
             materials.push(Material {
+                alpha_cutoff: parameters.base.surface[3],
                 bind,
                 _uniform: data,
             });
@@ -429,16 +462,29 @@ impl NativeVegetation {
             let instance_ring = crate::SharedUploadRing::new(
                 device,
                 (mesh.instances.len() * size_of::<ArchiveInstance>()) as u64,
-                wgpu::BufferUsages::VERTEX,
+                instance_usage,
             );
             let snapshot = if instance_ring.is_some() {
                 mesh.instances.clone()
             } else {
                 Vec::new()
             };
+            let local_bounds = wind_bounds(
+                mesh.vertices
+                    .iter()
+                    .map(|vertex| Vec3::from_array(vertex.position)),
+            );
+            let instance_bounds = mesh
+                .instances
+                .iter()
+                .map(|instance| PlantBounds::transformed(local_bounds, instance))
+                .collect();
             meshes.push(Mesh {
                 instance_ring,
                 generated: None,
+                local_bounds,
+                instance_bounds,
+                shadow_wind: None,
                 snapshot,
                 vertices: buffer(
                     device,
@@ -456,7 +502,7 @@ impl NativeVegetation {
                     device,
                     "native plant instances",
                     bytemuck::cast_slice(&mesh.instances),
-                    wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+                    instance_usage | wgpu::BufferUsages::COPY_DST,
                 )?,
                 count: mesh.indices.len() as u32,
                 instance_count: mesh.instances.len() as u32,
@@ -507,7 +553,37 @@ impl NativeVegetation {
             },
         ];
         let buffers = buffers.map(Some);
-        let make = |format, depth_only: bool| {
+        let shadow_vertex_attrs = [vertex_attrs[0], vertex_attrs[3]];
+        let shadow_buffers = [
+            Some(wgpu::VertexBufferLayout {
+                attributes: &shadow_vertex_attrs,
+                ..buffers[0].clone().unwrap()
+            }),
+            Some(wgpu::VertexBufferLayout {
+                attributes: &instance_attrs[..4],
+                ..buffers[1].clone().unwrap()
+            }),
+        ];
+        let opaque_shadow_buffers = [
+            Some(wgpu::VertexBufferLayout {
+                attributes: &shadow_vertex_attrs[..1],
+                ..shadow_buffers[0].clone().unwrap()
+            }),
+            shadow_buffers[1].clone(),
+        ];
+        let wind = prepare_shadow_wind.then(|| ShadowWind::new(device, &camera_layout, &shader));
+        let wind_layout = wind.as_ref().map(|wind| {
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("prepared wind shadow layout"),
+                bind_group_layouts: &[
+                    Some(&camera_layout),
+                    Some(&material_layout),
+                    Some(&wind.vertex_layout),
+                ],
+                immediate_size: 0,
+            })
+        });
+        let make = |format, depth_only: bool, opaque_shadow: bool, prepared: bool| {
             let targets = [Some(wgpu::ColorTargetState {
                 format,
                 blend: None,
@@ -515,14 +591,36 @@ impl NativeVegetation {
             })];
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some("native vegetation surface"),
-                layout: Some(if depth_only { &depth_layout } else { &layout }),
+                layout: Some(if prepared {
+                    wind_layout.as_ref().unwrap()
+                } else if depth_only {
+                    &depth_layout
+                } else {
+                    &layout
+                }),
                 vertex: wgpu::VertexState {
                     module: &shader,
-                    entry_point: Some(if depth_only { "vs_shadow" } else { "vs_main" }),
+                    entry_point: Some(if prepared {
+                        "vs_shadow_prepared"
+                    } else if opaque_shadow {
+                        "vs_shadow_opaque"
+                    } else if depth_only {
+                        "vs_shadow"
+                    } else {
+                        "vs_main"
+                    }),
                     compilation_options: Default::default(),
-                    buffers: &buffers,
+                    buffers: if opaque_shadow {
+                        &opaque_shadow_buffers
+                    } else if depth_only {
+                        &shadow_buffers
+                    } else {
+                        &buffers
+                    },
                 },
-                fragment: if depth_only {
+                fragment: if opaque_shadow {
+                    None
+                } else if depth_only {
                     Some(wgpu::FragmentState {
                         module: &shader,
                         entry_point: Some("fs_shadow"),
@@ -557,9 +655,19 @@ impl NativeVegetation {
                 cache: None,
             })
         };
-        let pipeline = make(format, false);
-        let hdr_pipeline = make(wgpu::TextureFormat::Rgba16Float, false);
-        let shadow_pipeline = make(format, true);
+        let pipeline = make(format, false, false, false);
+        let hdr_pipeline = make(wgpu::TextureFormat::Rgba16Float, false, false, false);
+        let shadow_pipeline = make(format, true, false, false);
+        let opaque_shadow_pipeline = make(format, true, true, false);
+        let shadow_wind = if let Some(wind) = wind {
+            let pipeline = make(format, true, false, true);
+            for mesh in &mut meshes {
+                mesh.shadow_wind = Some(wind.allocate(device, mesh.capacity)?);
+            }
+            Some((wind, pipeline))
+        } else {
+            None
+        };
         let receiver_make = |format| {
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some("native plant shadow receiver"),
@@ -622,12 +730,22 @@ impl NativeVegetation {
             pipeline,
             hdr_pipeline,
             shadow_pipeline,
+            opaque_shadow_pipeline,
+            shadow_wind,
+            shadow_wind_enabled,
+            opaque_shadow_fast: std::env::var("VOXY_VEGETATION_OPAQUE_SHADOW").as_deref()
+                == Ok("1"),
             started: std::time::Instant::now(),
             #[cfg(test)]
             frozen_benchmark_time: None,
             receiver,
             hdr_receiver,
             shadow_vp,
+            shadow_capture_override: None,
+            cull_shadow_receivers: std::env::var("VOXY_VEGETATION_CULL_SHADOW_RECEIVERS")
+                .as_deref()
+                != Ok("0"),
+            cull_instances: std::env::var_os("VOXY_VEGETATION_FULL_DRAWS").is_none(),
         })
     }
     /// Atomically validate all instance lists before uploading changed plant visibility.
@@ -660,6 +778,10 @@ impl NativeVegetation {
             } else if !values.is_empty() {
                 queue.write_buffer(&mesh.instances, 0, bytemuck::cast_slice(values));
             }
+            mesh.instance_bounds = values
+                .iter()
+                .map(|value| PlantBounds::transformed(mesh.local_bounds, value))
+                .collect();
             mesh.generated = None;
             mesh.instance_count = values.len() as u32;
         }
@@ -686,7 +808,8 @@ impl NativeVegetation {
             if count > mesh.capacity {
                 return Err(ComputeError::Validation("botanical capacity".into()));
             }
-            let validate = |value: ArchiveInstance| {
+            let mut bounds = Vec::with_capacity(count);
+            let mut validate = |value: ArchiveInstance| {
                 // Validate complete SIMD rows while they are in registers. The
                 // scalar flattened iterator prevents vectorization when interleaved
                 // with direct write-only stores for each generated instance.
@@ -699,6 +822,7 @@ impl NativeVegetation {
                         "invalid botanical transform".into(),
                     ))
                 } else {
+                    bounds.push(PlantBounds::transformed(mesh.local_bounds, &value));
                     Ok(value)
                 }
             };
@@ -733,13 +857,14 @@ impl NativeVegetation {
             if generated.is_none() && legacy.len() != count {
                 return Err(ComputeError::InvalidBuffer);
             }
-            pending.push((count, generated, legacy));
+            pending.push((count, generated, legacy, bounds));
         }
-        for (mesh, (count, generated, legacy)) in self.meshes.iter_mut().zip(pending) {
+        for (mesh, (count, generated, legacy, bounds)) in self.meshes.iter_mut().zip(pending) {
             if generated.is_none() && !legacy.is_empty() {
                 queue.write_buffer(&mesh.instances, 0, bytemuck::cast_slice(&legacy));
             }
             mesh.generated = generated;
+            mesh.instance_bounds = bounds;
             mesh.snapshot = Vec::new();
             mesh.instance_count = count as u32;
         }
@@ -792,6 +917,26 @@ impl NativeVegetation {
             })
             .collect()
     }
+    pub(crate) fn shadow_capture_caster_counts(&self, vp: Mat4) -> Option<[u32; 2]> {
+        let receivers = ClipVolume::shadow_receivers(vp, self.shadow_vp, self.shadow.width())?;
+        if !self.cull_instances {
+            return None;
+        }
+        let light = ClipVolume::new(self.shadow_vp);
+        let count = |additional| {
+            self.meshes
+                .iter()
+                .flat_map(|mesh| light.visible_ranges_with(&mesh.instance_bounds, additional))
+                .map(|range| range.end - range.start)
+                .sum()
+        };
+        Some([count(None), count(Some(&receivers))])
+    }
+
+    pub(crate) fn set_shadow_capture_override(&mut self, capture: Option<(bool, f32)>) {
+        self.shadow_capture_override = capture;
+    }
+
     pub(crate) fn encode(
         &self,
         device: &wgpu::Device,
@@ -802,8 +947,13 @@ impl NativeVegetation {
         vp: Mat4,
         eye: Vec3,
         hdr: bool,
+        [shadow_timing, receiver_timing, surface_timing]: [Option<wgpu::RenderPassTimestampWrites<'_>>;
+            3],
     ) {
-        let wind_time = self.started.elapsed().as_secs_f32() % 3600.;
+        let wind_time = self.shadow_capture_override.map_or_else(
+            || self.started.elapsed().as_secs_f32() % 3600.,
+            |(_, wind_time)| wind_time,
+        );
         #[cfg(test)]
         let wind_time = self.frozen_benchmark_time.unwrap_or(wind_time);
         let camera = Camera {
@@ -818,10 +968,43 @@ impl NativeVegetation {
             flags: [f32::from(hdr), wind_time, 0., 0.],
         };
         let (camera_group, instances) = self.input_buffers(encoder, queue, &camera);
+        let prepared = self
+            .shadow_wind
+            .as_ref()
+            .filter(|_| self.shadow_wind_enabled);
+        if let Some((wind, _)) = prepared {
+            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("prepare plant shadow wind"),
+                timestamp_writes: None,
+            });
+            for (mesh, instances) in self.meshes.iter().zip(&instances) {
+                if mesh.instance_count != 0 {
+                    wind.encode(
+                        device,
+                        &mut pass,
+                        &camera_group,
+                        instances,
+                        mesh.shadow_wind.as_ref().expect("prepared wind buffer"),
+                        mesh.instance_count,
+                    );
+                }
+            }
+        }
         let shadow_view = self.shadow.create_view(&Default::default());
+        let shadow_clip = ClipVolume::new(self.shadow_vp);
+        let cull_shadow_receivers = self
+            .shadow_capture_override
+            .map_or(self.cull_shadow_receivers, |(enabled, _)| enabled);
+        let shadow_receivers = if cull_shadow_receivers {
+            ClipVolume::shadow_receivers(vp, self.shadow_vp, self.shadow.width())
+        } else {
+            None
+        };
+        let camera_clip = ClipVolume::new(vp);
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("native plant shadow casters"),
+                timestamp_writes: shadow_timing,
                 color_attachments: &[],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                     view: &shadow_view,
@@ -833,17 +1016,35 @@ impl NativeVegetation {
                 }),
                 ..Default::default()
             });
-            pass.set_pipeline(&self.shadow_pipeline);
             pass.set_bind_group(0, &camera_group, &[]);
             for (mesh, instances) in self.meshes.iter().zip(&instances) {
                 if mesh.instance_count == 0 {
                     continue;
                 }
-                pass.set_bind_group(1, &self.materials[mesh.material].bind, &[]);
+                let material = &self.materials[mesh.material];
+                pass.set_pipeline(if let Some((_, pipeline)) = prepared {
+                    pipeline
+                } else if self.opaque_shadow_fast && material.alpha_cutoff < 0. {
+                    &self.opaque_shadow_pipeline
+                } else {
+                    &self.shadow_pipeline
+                });
+                pass.set_bind_group(1, &material.bind, &[]);
+                if prepared.is_some() {
+                    pass.set_bind_group(2, &mesh.shadow_wind.as_ref().unwrap().vertex_bind, &[]);
+                }
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
                 pass.set_vertex_buffer(1, instances.slice(..));
                 pass.set_index_buffer(mesh.indices.slice(..), wgpu::IndexFormat::Uint32);
-                pass.draw_indexed(0..mesh.count, 0, 0..mesh.instance_count);
+                if self.cull_instances {
+                    for range in shadow_clip
+                        .visible_ranges_with(&mesh.instance_bounds, shadow_receivers.as_ref())
+                    {
+                        pass.draw_indexed(0..mesh.count, 0, range);
+                    }
+                } else {
+                    pass.draw_indexed(0..mesh.count, 0, 0..mesh.instance_count);
+                }
             }
         }
         let receiver_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -867,6 +1068,7 @@ impl NativeVegetation {
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("native plant ground/actor shadows"),
+                timestamp_writes: receiver_timing,
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: colour,
                     depth_slice: None,
@@ -890,6 +1092,7 @@ impl NativeVegetation {
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("native plant world surfaces"),
+                timestamp_writes: surface_timing,
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: colour,
                     depth_slice: None,
@@ -924,7 +1127,13 @@ impl NativeVegetation {
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
                 pass.set_vertex_buffer(1, instances.slice(..));
                 pass.set_index_buffer(mesh.indices.slice(..), wgpu::IndexFormat::Uint32);
-                pass.draw_indexed(0..mesh.count, 0, 0..mesh.instance_count);
+                if self.cull_instances {
+                    for range in camera_clip.visible_ranges(&mesh.instance_bounds) {
+                        pass.draw_indexed(0..mesh.count, 0, range);
+                    }
+                } else {
+                    pass.draw_indexed(0..mesh.count, 0, 0..mesh.instance_count);
+                }
             }
         }
     }

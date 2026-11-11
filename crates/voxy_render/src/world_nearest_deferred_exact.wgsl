@@ -1,4 +1,14 @@
 override WORLD_EXACT_GROUP:u32=1u;
+// The fast pass has finished appending. Each worker reserves a disjoint
+// range and continues to use its own exact arithmetic arena.
+override NEAREST_QUEUE_BATCH:u32=4u;
+fn nearest_queue_count()->u32 {
+ let count=atomicLoad(&deferred_rays[0].count);
+ return select(count,0u,count>arrayLength(&deferred_rays));
+}
+fn nearest_claim_batch()->u32 {
+ return atomicAdd(&deferred_rays[0].cursor,NEAREST_QUEUE_BATCH);
+}
 // Two entry-point families isolate strict primitive work from the complete
 // hierarchy/tie/coplanar predicate. Both reuse the same bounded integer arenas.
 fn nearest_winner_process(index:u32,stride:u32,worker:u32) {
@@ -23,28 +33,56 @@ fn nearest_winner_process(index:u32,stride:u32,worker:u32) {
 @compute @workgroup_size(WORLD_EXACT_GROUP)
 fn main_nearest_winner(@builtin(global_invocation_id) id:vec3<u32>) {
  if id.x>=arrayLength(&exact_scratch)/EX_ARENA_WORDS {return;}
- loop {let index=deferred_take();if index==0xffffffffu {return;}
+ let count=nearest_queue_count();
+ var position=0u;var end=0u;
+ loop {
+  if position==end {
+   position=nearest_claim_batch();if position>=count {return;}
+   end=position+min(NEAREST_QUEUE_BATCH,count-position);
+  }
+  let index=deferred_rays[position].queued_ray;position++;
   if exact_output[index*5u].x==5u {nearest_winner_process(index,5u,id.x);}
  }
 }
 @compute @workgroup_size(WORLD_EXACT_GROUP)
 fn main_nearest_uv_winner(@builtin(global_invocation_id) id:vec3<u32>) {
  if id.x>=arrayLength(&exact_scratch)/EX_ARENA_WORDS {return;}
- loop {let index=deferred_take();if index==0xffffffffu {return;}
+ let count=nearest_queue_count();
+ var position=0u;var end=0u;
+ loop {
+  if position==end {
+   position=nearest_claim_batch();if position>=count {return;}
+   end=position+min(NEAREST_QUEUE_BATCH,count-position);
+  }
+  let index=deferred_rays[position].queued_ray;position++;
   if exact_output[index*7u].x==5u {nearest_winner_process(index,7u,id.x);}
  }
 }
 @compute @workgroup_size(WORLD_EXACT_GROUP)
 fn main_nearest_deferred(@builtin(global_invocation_id) id:vec3<u32>) {
  if id.x>=arrayLength(&exact_scratch)/EX_ARENA_WORDS {return;}
- loop {let index=deferred_take();if index==0xffffffffu {return;}
+ let count=nearest_queue_count();
+ var position=0u;var end=0u;
+ loop {
+  if position==end {
+   position=nearest_claim_batch();if position>=count {return;}
+   end=position+min(NEAREST_QUEUE_BATCH,count-position);
+  }
+  let index=deferred_rays[position].queued_ray;position++;
   if exact_output[index*5u].x==4u {nearest_process_worker(index,5u,id.x);}
  }
 }
 @compute @workgroup_size(WORLD_EXACT_GROUP)
 fn main_nearest_uv_deferred(@builtin(global_invocation_id) id:vec3<u32>) {
  if id.x>=arrayLength(&exact_scratch)/EX_ARENA_WORDS {return;}
- loop {let index=deferred_take();if index==0xffffffffu {return;}
+ let count=nearest_queue_count();
+ var position=0u;var end=0u;
+ loop {
+  if position==end {
+   position=nearest_claim_batch();if position>=count {return;}
+   end=position+min(NEAREST_QUEUE_BATCH,count-position);
+  }
+  let index=deferred_rays[position].queued_ray;position++;
   if exact_output[index*7u].x==4u {nearest_process_worker(index,7u,id.x);}
  }
 }
@@ -73,14 +111,28 @@ fn nearest_candidates_process(index:u32,stride:u32,worker:u32) {
 @compute @workgroup_size(WORLD_EXACT_GROUP)
 fn main_nearest_candidates(@builtin(global_invocation_id) id:vec3<u32>) {
  if id.x>=arrayLength(&exact_scratch)/EX_ARENA_WORDS {return;}
- loop {let index=deferred_take();if index==0xffffffffu {return;}
+ let count=nearest_queue_count();
+ var position=0u;var end=0u;
+ loop {
+  if position==end {
+   position=nearest_claim_batch();if position>=count {return;}
+   end=position+min(NEAREST_QUEUE_BATCH,count-position);
+  }
+  let index=deferred_rays[position].queued_ray;position++;
   if exact_output[index*5u].x==6u {nearest_candidates_process(index,5u,id.x);}
  }
 }
 @compute @workgroup_size(WORLD_EXACT_GROUP)
 fn main_nearest_uv_candidates(@builtin(global_invocation_id) id:vec3<u32>) {
  if id.x>=arrayLength(&exact_scratch)/EX_ARENA_WORDS {return;}
- loop {let index=deferred_take();if index==0xffffffffu {return;}
+ let count=nearest_queue_count();
+ var position=0u;var end=0u;
+ loop {
+  if position==end {
+   position=nearest_claim_batch();if position>=count {return;}
+   end=position+min(NEAREST_QUEUE_BATCH,count-position);
+  }
+  let index=deferred_rays[position].queued_ray;position++;
   if exact_output[index*7u].x==6u {nearest_candidates_process(index,7u,id.x);}
  }
 }

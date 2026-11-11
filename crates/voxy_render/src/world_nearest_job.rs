@@ -83,6 +83,8 @@ pub struct ExactWorldOptions {
     pub exact_worker_limit: Option<std::num::NonZeroU32>,
     /// Queued exact workgroup width; absent preserves width 1.
     pub exact_group_size: Option<std::num::NonZeroU32>,
+    /// Reference scheduling for deferred nearest queue comparisons.
+    pub single_ray_queue_claim: bool,
     /// Diagnostic software certificate counts, excludes first ray per encode.
     pub traversal_work_stats: bool,
     /// Immutable original-source interval edges and normals, prepared on GPU.
@@ -194,6 +196,7 @@ pub struct WorldRayQueryJob {
     _counts: crate::ComputeStorage,
     _hierarchy: crate::ComputeStorage,
     capacity: u32,
+    partial_groups: std::sync::Mutex<Vec<(wgpu::ComputePipeline, u32, wgpu::BindGroup)>>,
     guarded_input: bool,
     output_words: u32,
     position_offset: Option<u64>,
@@ -675,6 +678,9 @@ impl WorldRayQueryJob {
         }
         if options.defer_nearest {
             exact_constants.push(("WORLD_EXACT_GROUP", f64::from(exact_group_size)));
+            if options.single_ray_queue_claim {
+                exact_constants.push(("NEAREST_QUEUE_BATCH", 1.));
+            }
         }
         if material_surface {
             exact_constants.push(("WORLD_EXACT_MATERIAL_SIDES", 1.));
@@ -1084,6 +1090,7 @@ impl WorldRayQueryJob {
             _counts: counts,
             _hierarchy: hierarchy,
             capacity,
+            partial_groups: Default::default(),
             guarded_input: options.guarded_input,
             output_words,
             position_offset,

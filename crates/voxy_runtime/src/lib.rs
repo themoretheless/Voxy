@@ -18,10 +18,11 @@ use std::collections::BTreeMap;
 use voxy_core::{ChunkPos, TickId, WorldEpoch};
 
 pub use bootstrap::{
-    BootstrapChunk, BootstrapError, BootstrapScene, build_bootstrap_mesh, build_bootstrap_scene,
-    build_generated_scene, build_procedural_scene, build_vertical_procedural_scene,
-    extract_chunk_neighborhood, invalidated_derived_chunks, rebuild_bootstrap_chunks,
-    rebuild_chunks_from_snapshots, rebuild_vertical_chunks_from_snapshots,
+    BootstrapChunk, BootstrapError, BootstrapScene, MAX_BOOTSTRAP_RADIUS, build_bootstrap_mesh,
+    build_bootstrap_scene, build_generated_scene, build_procedural_scene,
+    build_vertical_procedural_scene, extract_chunk_neighborhood, invalidated_derived_chunks,
+    rebuild_bootstrap_chunks, rebuild_chunks_from_snapshots,
+    rebuild_vertical_chunks_from_snapshots,
 };
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]

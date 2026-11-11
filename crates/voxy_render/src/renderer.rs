@@ -37,7 +37,7 @@ pub struct Renderer {
     profile_pose: bool,
     pose_timing: Option<(crate::RenderPoseProfile, std::time::Duration)>,
     profile_acquire: std::time::Duration,
-    profile_gpu: Option<f64>,
+    profile_gpu: [Option<f64>; 4],
     surface: wgpu::Surface<'static>,
     adapter: wgpu::Adapter,
     readback_pool: crate::ComputeReadbackPool,
@@ -335,7 +335,7 @@ impl Renderer {
             profile_pose: options.profile_timestamps,
             pose_timing: None,
             profile_acquire: std::time::Duration::ZERO,
-            profile_gpu: None,
+            profile_gpu: [None; 4],
             surface,
             adapter,
             readback_pool: crate::ComputeReadbackPool::for_device(&device),
@@ -568,15 +568,32 @@ impl Renderer {
         if chunks.len() > 1024 {
             return Err(RendererError::TooManyChunks(chunks.len()));
         }
-        // Sizes are known up front: one light word per four packed light bytes and
-        // the summed quad counts, so neither vector regrows during the upload.
-        let mut quads = Vec::with_capacity(
-            chunks
-                .iter()
-                .map(|(_, mesh, _)| mesh.quad_count())
-                .sum::<usize>()
-                .max(1),
-        );
+        let quad_count: usize = chunks.iter().map(|(_, mesh, _)| mesh.quad_count()).sum();
+        let quad_count = u32::try_from(quad_count).map_err(|_| RendererError::MeshTooLarge)?;
+        let reserve = |mesh: &ChunkMesh, light: Option<&[u8]>| {
+            if light.is_some() {
+                (mesh.quad_count() / 4).clamp(16, 64)
+            } else {
+                0
+            }
+        };
+        let extra: usize = chunks
+            .iter()
+            .map(|(_, mesh, light)| reserve(mesh, *light))
+            .sum();
+        let packed_count = quad_count as usize;
+        // Give editable chunks room to grow only within an allocation size
+        // that the packed mesh already requires (or has already allocated).
+        let allocation = self
+            .quad_capacity
+            .max(packed_count.max(1).next_power_of_two());
+        let padded =
+            packed_count + extra <= allocation && u32::try_from(packed_count + extra).is_ok();
+        let mut quads = Vec::with_capacity(if padded {
+            packed_count + extra
+        } else {
+            packed_count
+        });
         let mut metadata = Vec::with_capacity(chunks.len().max(1));
         let mut light_words =
             Vec::with_capacity((chunks.len() * voxy_core::CHUNK_VOLUME / 4).max(1));
@@ -618,12 +635,16 @@ impl Renderer {
                     .map(|quad| GpuQuad::from(quad).with_chunk_slot(slot)),
             );
             let end = u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
+            if padded {
+                quads.resize(quads.len() + reserve(mesh, light), GpuQuad::zeroed());
+            }
+            let slot_end = u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
             slots.insert(
                 pos,
                 ResidentChunkSlot {
                     index: chunk_draws.len(),
                     start: opaque_start,
-                    end,
+                    end: slot_end,
                     light_word_offset,
                 },
             );
@@ -634,7 +655,6 @@ impl Renderer {
                 translucent: translucent_start..end,
             });
         }
-        let quad_count = u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
         if metadata.is_empty() {
             metadata.push(ChunkMeta::zeroed());
         }
@@ -1083,7 +1103,7 @@ impl Renderer {
     pub fn render(&mut self) -> Result<RenderOutcome, RendererError> {
         self.check_device()?;
         self.profile_acquire = std::time::Duration::ZERO;
-        self.profile_gpu = None;
+        self.profile_gpu = [None; 4];
         if let Some(timing) = &mut self.frame_timing {
             let _ = self.device.poll(wgpu::PollType::Poll);
             self.profile_gpu = timing.collect(self.queue.get_timestamp_period());
@@ -1133,12 +1153,17 @@ impl Renderer {
             self.encode_resident_voxels(&mut encoder, &view);
         }
         encode_motion_layers(&mut encoder, motion_pass.as_ref(), base_motion.as_ref())?;
+        let timed_passes = if self.native_vegetation.is_some() {
+            4
+        } else {
+            1
+        };
         if let Some(timing) = &self.frame_timing {
-            timing.resolve(&mut encoder);
+            timing.resolve(&mut encoder, timed_passes);
         }
         self.queue.submit([encoder.finish()]);
         if let Some(timing) = &mut self.frame_timing {
-            timing.map();
+            timing.map(timed_passes);
         }
         self.queue.present(frame);
         self.resident_presented_frames = frame_id;
@@ -1154,7 +1179,21 @@ impl Renderer {
         }
     }
 
-    fn encode_resident_voxels(&self, encoder: &mut wgpu::CommandEncoder, view: &wgpu::TextureView) {
+    pub(crate) fn encode_resident_voxels(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        view: &wgpu::TextureView,
+    ) {
+        self.encode_resident_voxels_to_targets(encoder, view, &self.depth_view, true);
+    }
+
+    pub(crate) fn encode_resident_voxels_to_targets(
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        view: &wgpu::TextureView,
+        depth_view: &wgpu::TextureView,
+        clear: bool,
+    ) {
         let camera_group = self.shared_camera.as_ref().map_or_else(
             || self.camera_bind_group.clone(),
             |shared| {
@@ -1178,14 +1217,22 @@ impl Renderer {
                     depth_slice: None,
                     resolve_target: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(self.clear_color),
+                        load: if clear {
+                            wgpu::LoadOp::Clear(self.clear_color)
+                        } else {
+                            wgpu::LoadOp::Load
+                        },
                         store: wgpu::StoreOp::Store,
                     },
                 })],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-                    view: &self.depth_view,
+                    view: depth_view,
                     depth_ops: Some(wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(0.0),
+                        load: if clear {
+                            wgpu::LoadOp::Clear(0.0)
+                        } else {
+                            wgpu::LoadOp::Load
+                        },
                         store: wgpu::StoreOp::Store,
                     }),
                     stencil_ops: None,
@@ -1193,7 +1240,7 @@ impl Renderer {
                 timestamp_writes: self
                     .frame_timing
                     .as_ref()
-                    .and_then(resident_frame_timing::Timing::writes),
+                    .and_then(|timing| timing.writes(0)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1248,12 +1295,21 @@ impl Renderer {
                 &self.queue,
                 encoder,
                 view,
-                &self.depth_view,
+                depth_view,
                 camera_view_projection(self.config.width, self.config.height, self.camera),
                 self.camera.eye,
                 false,
+                self.vegetation_timestamps(),
             );
         }
+    }
+
+    pub(super) fn vegetation_timestamps(&self) -> [Option<wgpu::RenderPassTimestampWrites<'_>>; 3] {
+        [1, 2, 3].map(|pass| {
+            self.frame_timing
+                .as_ref()
+                .and_then(|timing| timing.writes(pass))
+        })
     }
 
     fn commit_skinned_temporal_history(&mut self) {
@@ -1273,171 +1329,6 @@ impl Renderer {
         {
             self.reset_skinned_motion();
         }
-    }
-
-    /// Creates the general scene pipelines for this surface's color format.
-    #[must_use]
-    pub fn create_scene_renderer(&self) -> crate::SceneRenderer {
-        crate::SceneRenderer::new(&self.device, self.config.format)
-    }
-
-    /// Creates a `SceneRenderer` targeting the linear `Rgba16Float` HDR buffer used by
-    /// the photorealistic Bodycam / CleanCam / Camcorder pipeline.
-    #[must_use]
-    pub fn create_hdr_scene_renderer(&self) -> crate::SceneRenderer {
-        crate::SceneRenderer::new_reverse_z(&self.device, wgpu::TextureFormat::Rgba16Float)
-    }
-
-    /// Presents a general scene using this renderer's surface lifecycle.
-    /// Scene resources must have been created on this device.
-    ///
-    /// # Errors
-    /// Returns surface/device-loss errors requiring the platform shell to recreate graphics.
-    pub fn render_scene(
-        &mut self,
-        scene: &crate::SceneRenderer,
-        draws: &[crate::SceneDraw<'_>],
-    ) -> Result<RenderOutcome, RendererError> {
-        self.check_device()?;
-        self.reset_skinned_motion();
-        if self.state == SurfaceState::Suspended {
-            return Ok(RenderOutcome::Suspended);
-        }
-        let (frame, suboptimal) = match self.surface.get_current_texture() {
-            wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
-            wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
-            wgpu::CurrentSurfaceTexture::Outdated => {
-                self.surface.configure(&self.device, &self.config);
-                return Ok(RenderOutcome::Reconfigured);
-            }
-            wgpu::CurrentSurfaceTexture::Lost => return Err(RendererError::SurfaceLost),
-            wgpu::CurrentSurfaceTexture::Timeout => return Ok(RenderOutcome::SkippedTimeout),
-            wgpu::CurrentSurfaceTexture::Occluded => return Ok(RenderOutcome::SkippedOccluded),
-            wgpu::CurrentSurfaceTexture::Validation => {
-                return Ok(RenderOutcome::SkippedValidation);
-            }
-        };
-        let view = frame
-            .texture
-            .create_view(&wgpu::TextureViewDescriptor::default());
-        let mut encoder = self
-            .device
-            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                label: Some("Voxy frame encoder"),
-            });
-        scene.encode(
-            &mut encoder,
-            &view,
-            &self.depth_view,
-            self.clear_color,
-            draws,
-        );
-        self.queue.submit([encoder.finish()]);
-        self.queue.present(frame);
-        if suboptimal {
-            self.surface.configure(&self.device, &self.config);
-            Ok(RenderOutcome::Reconfigured)
-        } else {
-            Ok(RenderOutcome::Presented)
-        }
-    }
-
-    #[must_use]
-    pub const fn surface_state(&self) -> SurfaceState {
-        self.state
-    }
-
-    pub fn set_native_vegetation(&mut self, plants: Option<crate::NativeVegetation>) {
-        self.native_vegetation = plants;
-    }
-    /// # Errors
-    /// Rejects changed instance counts beyond the initially reserved world capacity.
-    pub fn update_native_vegetation_instances(
-        &mut self,
-        instances: &[Vec<crate::archive_scene::ArchiveInstance>],
-    ) -> Result<(), crate::ComputeError> {
-        if let Some(plants) = &mut self.native_vegetation {
-            plants.update_instances(&self.queue, instances)?;
-        }
-        Ok(())
-    }
-    /// Generated instance upload with a portable fallback.
-    pub fn update_native_vegetation_instances_generated<I, J>(
-        &mut self,
-        groups: I,
-    ) -> Result<(), crate::ComputeError>
-    where
-        I: ExactSizeIterator<Item = (usize, J)>,
-        J: Iterator<Item = crate::archive_scene::ArchiveInstance>,
-    {
-        if let Some(plants) = &mut self.native_vegetation {
-            plants.update_instances_generated(&self.queue, groups)?;
-        }
-        Ok(())
-    }
-    #[must_use]
-    pub fn profile_acquire_time(&self) -> std::time::Duration {
-        self.profile_acquire
-    }
-    /// Most recently collected primary voxel pass; asynchronous, not the current CPU frame.
-    #[must_use]
-    pub fn profile_gpu_ms(&self) -> Option<f64> {
-        self.profile_gpu
-    }
-    /// Count successful submissions followed by presentation, including suboptimal surfaces.
-    #[must_use]
-    pub fn profile_presented_frames(&self) -> u64 {
-        self.resident_presented_frames
-    }
-
-    #[must_use]
-    pub fn adapter_info(&self) -> wgpu::AdapterInfo {
-        self.adapter.get_info()
-    }
-
-    /// Shared managed compute-storage budget retained by this device owner.
-    #[must_use]
-    pub fn compute_memory_budget(&self) -> &crate::ComputeMemoryBudget {
-        &self.compute_memory_budget
-    }
-
-    /// Shared staging pool retained for the lifetime of this renderer.
-    #[must_use]
-    pub fn readback_pool(&self) -> &crate::ComputeReadbackPool {
-        &self.readback_pool
-    }
-
-    #[must_use]
-    pub fn device(&self) -> &wgpu::Device {
-        &self.device
-    }
-
-    #[must_use]
-    pub fn queue(&self) -> &wgpu::Queue {
-        &self.queue
-    }
-
-    #[must_use]
-    pub fn has_ray_query(&self) -> bool {
-        self.device
-            .features()
-            .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
-    }
-
-    #[must_use]
-    pub fn has_mappable_primary_buffers(&self) -> bool {
-        self.device
-            .features()
-            .contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS)
-    }
-
-    pub fn set_indirect_mesh(&mut self, mesh: Option<GpuIndirectMesh>) {
-        self.indirect_mesh = mesh;
-    }
-
-    #[must_use]
-    pub fn indirect_mesh(&self) -> Option<&GpuIndirectMesh> {
-        self.indirect_mesh.as_ref()
     }
 }
 

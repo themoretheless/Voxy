@@ -278,6 +278,9 @@ impl VoxyApp {
                 self.profile_animation += started.elapsed();
             }
             self.accumulator -= FIXED_DT;
+            if self.profile.is_some() {
+                self.profile_completed_ticks += 1;
+            }
         }
         let pose_started = self.profile.as_ref().map(|_| Instant::now());
         if let (Some(renderer), Some((palette, model))) =
@@ -972,6 +975,13 @@ impl VoxyApp {
                 });
             match upload {
                 Ok(partial) => {
+                    if self.profile.is_some() {
+                        if partial {
+                            self.profile_partial_publications += 1;
+                        } else {
+                            self.profile_full_publications += 1;
+                        }
+                    }
                     let mode = if partial { "partial" } else { "full" };
                     publication = format!(
                         "{mode} publication, upload_bytes={}, chunk_buffer_bytes={}",

@@ -19,33 +19,8 @@ use bytemuck::{Pod, Zeroable};
 use glam::{Mat4, Vec3};
 use probe_timing::Timing;
 use std::sync::Arc;
-use types::{display_mode, fully_covering_transmission};
+use types::{LIGHT_Z_BIN_COUNT, archive_light_z_masks, display_mode, fully_covering_transmission};
 use world_rays::validate_street_ray_env_config;
-
-const LIGHT_Z_BIN_COUNT: usize = 256;
-
-fn archive_light_z_masks(lights: &[ArchiveLight]) -> [[u32; 4]; LIGHT_Z_BIN_COUNT] {
-    let mut masks = [[0; 4]; LIGHT_Z_BIN_COUNT];
-    for (index, light) in lights.iter().enumerate() {
-        let [_, _, z, radius] = light.position_kind;
-        let (z, radius) = (f64::from(z), f64::from(radius));
-        // The original shader subtracts the two f32 coordinates. Widen
-        // the interval for that rounding and for classification at a bin edge.
-        let slack = 4. + 8. * f64::from(f32::EPSILON) * (z.abs() + radius.abs() + 512.);
-        for (bin, mask) in masks.iter_mut().enumerate() {
-            let low = (bin as f64 - 128.) * 4.;
-            let high = low + 4.;
-            if !z.is_finite()
-                || !radius.is_finite()
-                || radius <= 0.
-                || (z - radius - slack <= high && z + radius + slack >= low)
-            {
-                mask[index / 32] |= 1 << (index % 32);
-            }
-        }
-    }
-    masks
-}
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]

@@ -56,6 +56,27 @@ impl TerrainBackend {
     }
 }
 
+pub fn startup_radius(args: impl IntoIterator<Item = String>) -> Result<i32, String> {
+    let mut args = args.into_iter();
+    let mut radius = None;
+    while let Some(arg) = args.next() {
+        if arg != "--terrain-radius" {
+            continue;
+        }
+        if radius.is_some() {
+            return Err("--terrain-radius must be specified once".into());
+        }
+        let max = voxy_runtime::MAX_BOOTSTRAP_RADIUS;
+        let value = args
+            .next()
+            .and_then(|value| value.parse::<i32>().ok())
+            .filter(|value| (0..=max).contains(value))
+            .ok_or_else(|| format!("--terrain-radius expects an integer from 0 to {max}"))?;
+        radius = Some(value);
+    }
+    Ok(radius.unwrap_or(1))
+}
+
 /// Shares the selected ordinal with terrain without requiring CUDA terrain.
 pub fn motion_device(args: impl IntoIterator<Item = String>) -> Result<Option<usize>, String> {
     let args: Vec<_> = args.into_iter().collect();
@@ -106,6 +127,22 @@ mod tests {
     fn parse(args: &[&str]) -> Result<TerrainBackend, String> {
         TerrainBackend::parse(args.iter().map(ToString::to_string))
     }
+    #[test]
+    fn startup_radius_keeps_default_and_checks_generator_limit() {
+        let radius = |args: &[&str]| super::startup_radius(args.iter().map(ToString::to_string));
+        assert_eq!(radius(&[]), Ok(1));
+        assert_eq!(radius(&["--gpu-terrain", "--terrain-radius", "8"]), Ok(8));
+        assert_eq!(radius(&["--terrain-radius", "0"]), Ok(0));
+        for args in [
+            vec!["--terrain-radius"],
+            vec!["--terrain-radius", "9"],
+            vec!["--terrain-radius", "-1"],
+            vec!["--terrain-radius", "2", "--terrain-radius", "3"],
+        ] {
+            assert!(radius(&args).is_err(), "{args:?}");
+        }
+    }
+
     #[test]
     fn explicit_device_and_existing_flags() {
         assert_eq!(parse(&[]), Ok(TerrainBackend::Cpu));

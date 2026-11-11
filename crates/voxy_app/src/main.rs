@@ -59,10 +59,17 @@ use winit::window::{CursorGrabMode, Window, WindowId};
 struct VoxyApp {
     profile: Option<frame_profile::Profile>,
     profile_tick: u64,
+    profile_completed_ticks: u64,
+    shadow_audit: bool,
+    shadow_audit_samples: u64,
+    shadow_audit_last_tick: u64,
+    profile_partial_publications: u64,
+    profile_full_publications: u64,
     profile_water: Duration,
     profile_animation: Duration,
     profile_pose: Duration,
     graphics: voxy_render::GraphicsOptions,
+    terrain_radius: i32,
     motion_compute: Option<Arc<voxy_cuda::CudaCompute>>,
     cuda_projectiles: bool,
     cuda_character_motion: bool,
@@ -75,6 +82,7 @@ struct VoxyApp {
     presented_once: bool,
     presented_frames: u64,
     last_startup_outcome: Option<RenderOutcome>,
+    surface_retry_at: Option<Instant>,
     actor: Option<AnimatedActor>,
     pending_actor_pose: Option<(Vec<Mat4>, Mat4)>,
     actor_palette_scratch: Vec<Mat4>,
@@ -190,7 +198,7 @@ impl ApplicationHandler for VoxyApp {
         )) {
             Ok(mut renderer) => {
                 window.set_title(&loading_title(35, "WORLD"));
-                let scene_result = build_startup_scene(self.graphics);
+                let scene_result = build_startup_scene(self.graphics, self.terrain_radius);
                 let mut scene = match scene_result {
                     Ok(scene) => scene,
                     Err(error) => {
@@ -562,6 +570,12 @@ impl ApplicationHandler for VoxyApp {
                     renderer.resize(size.width, size.height);
                 }
             }
+            WindowEvent::Occluded(false) => {
+                self.surface_retry_at = None;
+                if let Some(window) = &self.window {
+                    window.request_redraw();
+                }
+            }
             WindowEvent::RedrawRequested => {
                 if self
                     .profile
@@ -614,9 +628,66 @@ impl ApplicationHandler for VoxyApp {
                             return;
                         }
                     }
+                    if self.shadow_audit
+                        && self.profile_completed_ticks > self.shadow_audit_last_tick
+                    {
+                        let tick = self.profile_completed_ticks;
+                        let result = renderer
+                            .capture_shadow_receiver_comparison(tick, tick as f32 * FIXED_DT);
+                        match result {
+                            Ok(([control, candidate], [before, after]))
+                                if control == candidate && after < before =>
+                            {
+                                self.shadow_audit_samples += 1;
+                                self.shadow_audit_last_tick = tick;
+                                println!(
+                                    "SHADOW PARITY tick={tick} width={} height={} casters_before={before} casters_after={after} blake3={}",
+                                    control.0,
+                                    control.1,
+                                    blake3::hash(&control.2),
+                                );
+                                if tick >= 1200 {
+                                    println!(
+                                        "SHADOW PARITY PASS samples={} last_tick={tick} resident_chunks={} destruction_commits={} partial_publications={} full_publications={}",
+                                        self.shadow_audit_samples,
+                                        self.derived_chunks.len(),
+                                        self.explosion_commits,
+                                        self.profile_partial_publications,
+                                        self.profile_full_publications,
+                                    );
+                                    event_loop.exit();
+                                    return;
+                                }
+                            }
+                            Ok(([control, candidate], [before, after])) => {
+                                let changed = control
+                                    .2
+                                    .chunks_exact(4)
+                                    .zip(candidate.2.chunks_exact(4))
+                                    .filter(|(a, b)| a != b)
+                                    .count();
+                                self.startup_failure = Some(format!(
+                                    "Shadow receiver parity mismatch at tick {tick}: changed_pixels={changed} casters_before={before} casters_after={after}",
+                                ));
+                                event_loop.exit();
+                                return;
+                            }
+                            Err(error) => {
+                                self.startup_failure = Some(error.to_string());
+                                event_loop.exit();
+                                return;
+                            }
+                        }
+                    }
                     profile_preparation = preparation_started.elapsed();
                     let render_started = Instant::now();
-                    match renderer.render() {
+                    let rendered = renderer.render();
+                    self.surface_retry_at = matches!(
+                        rendered,
+                        Ok(RenderOutcome::SkippedOccluded | RenderOutcome::SkippedTimeout)
+                    )
+                    .then(|| Instant::now() + Duration::from_millis(50));
+                    match rendered {
                         Ok(outcome)
                             if outcome == RenderOutcome::Presented
                                 || (outcome == RenderOutcome::SkippedOccluded
@@ -781,7 +852,9 @@ impl ApplicationHandler for VoxyApp {
                 if vegetation_edited {
                     self.refresh_world_geometry(event_loop);
                 }
-                if let Some(profile) = &mut self.profile {
+                if !self.shadow_audit
+                    && let Some(profile) = &mut self.profile
+                {
                     profile.cpu_stage(Instant::now(), "water", self.profile_water);
                     profile.cpu_stage(Instant::now(), "actor_animation", self.profile_animation);
                     profile.cpu_stage(Instant::now(), "pose_publication", self.profile_pose);
@@ -817,6 +890,12 @@ impl ApplicationHandler for VoxyApp {
                     if let Some(ms) = renderer.and_then(Renderer::profile_gpu_ms) {
                         profile.gpu_sample(Instant::now(), [Some(ms), None, None]);
                     }
+                    if let Some(renderer) = renderer {
+                        profile.vegetation_gpu_sample(
+                            Instant::now(),
+                            renderer.profile_vegetation_gpu_ms(),
+                        );
+                    }
                     if profile.record(
                         Instant::now(),
                         simulation_time,
@@ -830,7 +909,21 @@ impl ApplicationHandler for VoxyApp {
                             .as_ref()
                             .map(|r| format!("{:?}", r.adapter_info()))
                             .unwrap_or_default();
-                        if let Err(error) = profile.finish(&adapter) {
+                        match renderer.and_then(Renderer::profile_gpu_timestamp_status) {
+                            Some([scheduled, valid, rejected, map_failures, pending]) => eprintln!(
+                                "Voxy GPU timestamp readbacks scheduled={scheduled} valid={valid} rejected={rejected} map_failures={map_failures} pending={pending}"
+                            ),
+                            None => eprintln!("Voxy GPU timestamp queries unavailable"),
+                        }
+                        let workload = frame_profile::VoxelWorkload {
+                            simulation_ticks: self.profile_completed_ticks,
+                            destruction_commits: self.explosion_commits,
+                            water_commits: self.water_commits,
+                            resident_chunks: self.derived_chunks.len(),
+                            partial_publications: self.profile_partial_publications,
+                            full_publications: self.profile_full_publications,
+                        };
+                        if let Err(error) = profile.finish_voxel(&adapter, workload) {
                             self.startup_failure = Some(error.to_string());
                         }
                         event_loop.exit();
@@ -854,7 +947,15 @@ impl ApplicationHandler for VoxyApp {
         }
     }
 
-    fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
+    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        if let Some(deadline) = self
+            .surface_retry_at
+            .filter(|deadline| *deadline > Instant::now())
+        {
+            event_loop.set_control_flow(ControlFlow::WaitUntil(deadline));
+            return;
+        }
+        event_loop.set_control_flow(ControlFlow::Wait);
         if let Some(window) = &self.window {
             window.request_redraw();
         }
@@ -1043,6 +1144,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let graphics =
         graphics_options::parse(std::env::args().skip(1)).map_err(std::io::Error::other)?;
+    let terrain_radius =
+        terrain_options::startup_radius(std::env::args().skip(1)).map_err(std::io::Error::other)?;
     let autopilot_requested = std::env::args().any(|arg| arg == "--autopilot")
         || std::env::var("VOXY_AUTOPILOT").is_ok_and(|value| value == "1");
     let motion_compute = terrain_options::motion_device(std::env::args().skip(1))
@@ -1085,10 +1188,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if profile.is_some() && autopilot_requested {
         return Err("--profile and --autopilot are mutually exclusive".into());
     }
+    let shadow_audit = std::env::var("VOXY_VEGETATION_SHADOW_ROUTE_AUDIT").as_deref() == Ok("1");
+    if shadow_audit
+        && (bodycam_mode
+            || !profile
+                .as_ref()
+                .is_some_and(|profile| profile.scenario == frame_profile::Scenario::Water))
+    {
+        return Err("shadow route audit requires the orthographic water profile".into());
+    }
     let mut app = VoxyApp {
         profile,
+        shadow_audit,
         animal_check: animals::check_requested(),
         graphics,
+        terrain_radius,
         motion_compute,
         cuda_water,
         cuda_projectiles: std::env::args().any(|arg| arg == "--cuda-projectiles"),
@@ -1104,7 +1218,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(error) = app.startup_failure {
         return Err(std::io::Error::other(error).into());
     }
-    if app.profile.as_ref().is_some_and(|p| !p.is_complete()) {
+    if app.shadow_audit && app.shadow_audit_last_tick < 1200 {
+        return Err("shadow route audit interrupted before tick 1200".into());
+    }
+    if !app.shadow_audit && app.profile.as_ref().is_some_and(|p| !p.is_complete()) {
         return Err("frame profile interrupted before report completion".into());
     }
     if autopilot_requested && app.autopilot_result.is_none() {

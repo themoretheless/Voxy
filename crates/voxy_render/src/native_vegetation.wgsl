@@ -13,30 +13,58 @@ struct Fragment { @builtin(position) clip:vec4<f32>, @location(0) world:vec3<f32
 // Hierarchical wind (after Sousa, GPU Gems 3 ch.16): whole-plant bend grows with
 // height squared, limbs sway with distance from the stem, leaf blades flutter.
 // Each instance gets its own phase from its world origin so a stand never moves in lockstep.
-fn wind(local:vec3<f32>,origin:vec3<f32>)->vec3<f32> {
+fn wind_terms(origin:vec3<f32>)->vec4<f32> {
+ let time=camera.flags.y;let phase=dot(origin,vec3<f32>(0.37,0.,0.61));
+ let gust=0.6+0.4*sin(time*0.31+phase*0.2)*sin(time*0.83+phase*0.07);
+ return vec4<f32>(gust,0.035*gust+0.012*sin(time*1.1+phase),time*2.3+phase,0.);
+}
+fn wind_from_terms(local:vec3<f32>,terms:vec4<f32>)->vec3<f32> {
  let time=camera.flags.y;let wind_dir=normalize(vec3<f32>(1.,0.,0.35));
  let top=max(material.canopy.y+material.extent_density.y,0.5);
- let phase=dot(origin,vec3<f32>(0.37,0.,0.61));
- let gust=0.6+0.4*sin(time*0.31+phase*0.2)*sin(time*0.83+phase*0.07);
  let h=max(local.y,0.)/top;
- let bend=h*h*(0.035*gust+0.012*sin(time*1.1+phase));
- let reach=length(local.xz);let limb=reach*h*0.025*sin(time*2.3+phase+local.y*1.7+reach*2.1);
+ let bend=h*h*terms.y;
+ let reach=length(local.xz);let limb=reach*h*0.025*sin(terms.z+local.y*1.7+reach*2.1);
  var offset=wind_dir*bend*top+vec3<f32>(0.,limb,0.);
  if material.workflow.w>0. {
-  let flutter=sin(time*9.+dot(local,vec3<f32>(37.,23.,41.)))*0.012*gust*min(reach+h,1.);
+  let flutter=sin(time*9.+dot(local,vec3<f32>(37.,23.,41.)))*0.012*terms.x*min(reach+h,1.);
   offset+=vec3<f32>(flutter*0.5,flutter,flutter*0.5);
  }
  // Keep stems rooted: no motion at the ground.
  return offset*smoothstep(0.,0.4,local.y);
+}
+fn wind(local:vec3<f32>,origin:vec3<f32>)->vec3<f32> {
+ return wind_from_terms(local,wind_terms(origin));
+}
+struct WindInstance { world:mat4x4<f32>, n0:vec4<f32>, n1:vec4<f32>, n2:vec4<f32> }
+@group(2) @binding(2) var<storage,read> prepared_wind:array<vec4<f32>>;
+@group(2) @binding(3) var<storage,read> wind_instances:array<WindInstance>;
+@group(2) @binding(4) var<storage,read_write> wind_output:array<vec4<f32>>;
+@compute @workgroup_size(64) fn cs_shadow_wind(@builtin(global_invocation_id) id:vec3<u32>) {
+ if id.x<arrayLength(&wind_instances) {wind_output[id.x]=wind_terms(wind_instances[id.x].world[3].xyz);}
 }
 @vertex fn vs_main(v:Vertex)->Fragment {
  let world=mat4x4<f32>(v.w0,v.w1,v.w2,v.w3);let p=world*vec4<f32>(v.position+wind(v.position,v.w3.xyz),1.);var f:Fragment;
  f.local=v.position;f.world=p.xyz;f.clip=camera.vp*p;f.normal=normalize(mat3x3<f32>(v.n0.xyz,v.n1.xyz,v.n2.xyz)*v.normal);
  f.tangent=vec4<f32>(normalize((world*vec4<f32>(v.tangent.xyz,0.)).xyz),v.tangent.w);f.uv=v.uv;f.shadow=camera.shadow*p;return f;
 }
+struct ShadowVertex {
+ @location(0) position:vec3<f32>,
+ @location(4) w0:vec4<f32>, @location(5) w1:vec4<f32>,
+ @location(6) w2:vec4<f32>, @location(7) w3:vec4<f32>,
+}
+fn shadow_clip(v:ShadowVertex)->vec4<f32> {
+ return camera.shadow*mat4x4<f32>(v.w0,v.w1,v.w2,v.w3)*vec4<f32>(v.position+wind(v.position,v.w3.xyz),1.);
+}
 struct ShadowFragment { @builtin(position) clip:vec4<f32>, @location(0) uv:vec2<f32> }
-@vertex fn vs_shadow(v:Vertex)->ShadowFragment {
- var f:ShadowFragment;f.clip=camera.shadow*mat4x4<f32>(v.w0,v.w1,v.w2,v.w3)*vec4<f32>(v.position+wind(v.position,v.w3.xyz),1.);f.uv=v.uv;return f;
+@vertex fn vs_shadow(v:ShadowVertex,@location(3) uv:vec2<f32>)->ShadowFragment {
+ return ShadowFragment(shadow_clip(v),uv);
+}
+@vertex fn vs_shadow_opaque(v:ShadowVertex)->@builtin(position) vec4<f32> {
+ return shadow_clip(v);
+}
+@vertex fn vs_shadow_prepared(v:ShadowVertex,@location(3) uv:vec2<f32>,@builtin(instance_index) index:u32)->ShadowFragment {
+ let p=camera.shadow*mat4x4<f32>(v.w0,v.w1,v.w2,v.w3)*vec4<f32>(v.position+wind_from_terms(v.position,prepared_wind[index]),1.);
+ return ShadowFragment(p,uv);
 }
 // Leaf cards cast their blade silhouette, not their quad.
 @fragment fn fs_shadow(f:ShadowFragment) {

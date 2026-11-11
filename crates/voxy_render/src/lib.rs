@@ -129,12 +129,14 @@ mod reconstruction_distance;
 mod reconstruction_material;
 mod reconstruction_pass;
 mod reflection;
+mod render_graph;
 mod renderer;
 mod scene;
 pub use fluid_screen::{
     FluidDepthFilter, FluidDiagnostic, FluidRenderFilmTriangle, FluidRenderParticle,
     ScreenSpaceFluidRenderer,
 };
+pub use render_graph::{RenderGraph, RenderGraphNode};
 mod geometry_checkpoint;
 mod skinned;
 pub use geometry_checkpoint::{
@@ -180,9 +182,10 @@ pub use skinned_motion::{PreparedSkinnedFrame, SkinnedMotionFrame, SkinnedMotion
 
 pub use scene::{
     DEFAULT_SCENE_SHADER, PreparedSceneEnvironment, SceneDepthMode, SceneDraw, SceneError,
-    SceneGeometry, SceneLodGeometry, SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError,
-    SceneSkinError, SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource,
-    SceneSkinner, SceneTexture, SceneTransform, SceneVertex, SceneView, SceneViewTargets,
+    SceneGeometry, SceneInstanceBatch, SceneInstanceData, SceneInstancedDraw, SceneInstancer,
+    SceneLodGeometry, SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError, SceneSkinError,
+    SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource, SceneSkinner,
+    SceneTexture, SceneTransform, SceneVertex, SceneView, SceneViewTargets,
 };
 
 pub use camera::{InvalidSceneCamera, OrbitView, SceneCamera, SceneProjection};

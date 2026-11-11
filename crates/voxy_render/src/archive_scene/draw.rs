@@ -3,6 +3,31 @@ use super::{ArchiveSceneRenderer, Camera};
 use glam::{Mat4, Vec3, Vec4};
 
 impl ArchiveSceneRenderer {
+    #[must_use]
+    pub const fn device(&self) -> &wgpu::Device {
+        &self.device
+    }
+
+    #[must_use]
+    pub const fn queue(&self) -> &wgpu::Queue {
+        &self.queue
+    }
+
+    #[must_use]
+    pub const fn hdr_view(&self) -> &wgpu::TextureView {
+        &self.hdr_view
+    }
+
+    #[must_use]
+    pub const fn depth_view(&self) -> &wgpu::TextureView {
+        &self.depth_view
+    }
+
+    #[must_use]
+    pub const fn dimensions(&self) -> (u32, u32) {
+        (self.width, self.height)
+    }
+
     /// Spatially supersampled temporal AA. The renderer dimensions must match
     /// the resolve's render size. Invalid targets leave scene/history untouched.
     pub fn draw_supersampled(

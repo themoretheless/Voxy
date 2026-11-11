@@ -17,6 +17,7 @@ use glam::Mat4;
 
 mod encode;
 mod geometry;
+mod instancing;
 mod resources;
 
 #[cfg(test)]
@@ -25,6 +26,7 @@ pub use encode::{SceneDraw, SceneView, SceneViewTargets};
 #[doc(hidden)]
 pub use geometry::{NormalCache, smooth_normals};
 pub use geometry::{SceneError, SceneMesh, SceneVertex};
+pub use instancing::{SceneInstanceBatch, SceneInstanceData, SceneInstancedDraw, SceneInstancer};
 pub(crate) use resources::next_geometry_identity;
 pub use resources::{
     SceneDepthMode, SceneGeometry, SceneShaderError, SceneTexture, SceneTransform, TextureFilter,

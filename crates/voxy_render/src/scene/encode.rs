@@ -48,25 +48,47 @@ struct ViewPass<'a> {
     isolated_xray: bool,
 }
 
+#[derive(Default)]
+struct BoundSceneState {
+    lighting_bound: bool,
+    geometry_key: Option<(u64, u64)>,
+    texture_ptr: usize,
+    pipeline_ptr: usize,
+}
+
 impl SceneRenderer {
     #[inline]
-    fn bind_and_draw_geometry(&self, pass: &mut wgpu::RenderPass<'_>, draw: &SceneDraw<'_>) {
+    pub(crate) fn bind_lighting_groups(&self, pass: &mut wgpu::RenderPass<'_>) {
         if let Some(shadow) = &self.shadow {
             pass.set_bind_group(2, &shadow.group, &[]);
         }
         if let Some(environment) = &self.environment {
             pass.set_bind_group(3, &environment.group, &[]);
         }
-        pass.set_bind_group(0, &draw.transform.bind_group, &[]);
-        pass.set_bind_group(1, &draw.texture.bind_group, &[]);
-        pass.set_vertex_buffer(0, draw.geometry.vertices.slice(..));
-        pass.set_vertex_buffer(1, draw.geometry.normals.slice(..));
-        pass.set_vertex_buffer(2, draw.geometry.material_parameters.slice(..));
-        pass.set_vertex_buffer(3, draw.geometry.material_coordinates.slice(..));
-        if let Some(tangents) = &draw.geometry.tangents {
-            pass.set_vertex_buffer(4, tangents.slice(..));
+    }
+
+    #[inline]
+    fn bind_and_draw_geometry_stateful(
+        &self,
+        pass: &mut wgpu::RenderPass<'_>,
+        draw: &SceneDraw<'_>,
+        state: &mut BoundSceneState,
+    ) {
+        if !state.lighting_bound {
+            self.bind_lighting_groups(pass);
+            state.lighting_bound = true;
         }
-        pass.set_index_buffer(draw.geometry.indices.slice(..), wgpu::IndexFormat::Uint32);
+        pass.set_bind_group(0, &draw.transform.bind_group, &[]);
+        let tex_ptr = std::ptr::from_ref(draw.texture) as usize;
+        if state.texture_ptr != tex_ptr {
+            pass.set_bind_group(1, &draw.texture.bind_group, &[]);
+            state.texture_ptr = tex_ptr;
+        }
+        let geom_key = draw.geometry.shadow_key();
+        if state.geometry_key != Some(geom_key) {
+            draw.geometry.bind_vertex_and_index_streams(pass);
+            state.geometry_key = Some(geom_key);
+        }
         pass.draw_indexed(0..draw.geometry.index_count, 0, 0..1);
     }
 
@@ -197,8 +219,9 @@ impl SceneRenderer {
             pass.set_scissor_rect(x, y, w, h);
         }
         pass.set_pipeline(&self.overlay_pipeline);
+        let mut state = BoundSceneState::default();
         for draw in draws.iter().filter(|draw| draw.overlay) {
-            self.bind_and_draw_geometry(&mut pass, draw);
+            self.bind_and_draw_geometry_stateful(&mut pass, draw, &mut state);
         }
     }
 
@@ -270,8 +293,9 @@ impl SceneRenderer {
             ..Default::default()
         });
         pass.set_pipeline(pipeline);
+        let mut state = BoundSceneState::default();
         for draw in draws.iter().filter(|draw| !draw.overlay) {
-            self.bind_and_draw_geometry(&mut pass, draw);
+            self.bind_and_draw_geometry_stateful(&mut pass, draw, &mut state);
         }
     }
 
@@ -876,14 +900,20 @@ impl SceneRenderer {
         stages: std::ops::Range<u8>,
         isolated_xray: bool,
     ) {
+        let mut state = BoundSceneState::default();
         // Opaque depth first, then ghost shells, revealed internals, finally UI.
         for stage in stages {
-            pass.set_pipeline(match stage {
+            let stage_pipeline = match stage {
                 0 => pipelines.1,
                 1 => pipelines.3,
                 2 if isolated_xray => pipelines.1,
                 _ => pipelines.2,
-            });
+            };
+            let stage_ptr = std::ptr::from_ref(stage_pipeline) as usize;
+            if state.pipeline_ptr != stage_ptr {
+                pass.set_pipeline(stage_pipeline);
+                state.pipeline_ptr = stage_ptr;
+            }
             for draw in draws.iter().filter(|draw| {
                 let draw_stage = if draw.overlay {
                     3
@@ -907,15 +937,19 @@ impl SceneRenderer {
                     } else {
                         pipelines.1
                     };
-                    pass.set_pipeline(
-                        draw.geometry
-                            .opaque_shader
-                            .as_ref()
-                            .filter(|p| p.0 == self.shader_revision && p.1 == self.transform_layout)
-                            .map_or(default_opaque, |p| if msaa { &p.3 } else { &p.2 }),
-                    );
+                    let target_pipeline = draw
+                        .geometry
+                        .opaque_shader
+                        .as_ref()
+                        .filter(|p| p.0 == self.shader_revision && p.1 == self.transform_layout)
+                        .map_or(default_opaque, |p| if msaa { &p.3 } else { &p.2 });
+                    let target_ptr = std::ptr::from_ref(target_pipeline) as usize;
+                    if state.pipeline_ptr != target_ptr {
+                        pass.set_pipeline(target_pipeline);
+                        state.pipeline_ptr = target_ptr;
+                    }
                 }
-                self.bind_and_draw_geometry(pass, draw);
+                self.bind_and_draw_geometry_stateful(pass, draw, &mut state);
             }
         }
     }

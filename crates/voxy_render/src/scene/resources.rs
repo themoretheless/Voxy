@@ -189,6 +189,32 @@ impl SceneGeometry {
         pass.draw_indexed(0..self.index_count, 0, 0..1);
     }
 
+    /// Binds all vertex streams and the index buffer for this geometry in a single fused call.
+    #[inline]
+    pub(crate) fn bind_vertex_and_index_streams(&self, pass: &mut wgpu::RenderPass<'_>) {
+        pass.set_vertex_buffer(0, self.vertices.slice(..));
+        pass.set_vertex_buffer(1, self.normals.slice(..));
+        pass.set_vertex_buffer(2, self.material_parameters.slice(..));
+        pass.set_vertex_buffer(3, self.material_coordinates.slice(..));
+        if let Some(tangents) = &self.tangents {
+            pass.set_vertex_buffer(4, tangents.slice(..));
+        }
+        pass.set_index_buffer(self.indices.slice(..), wgpu::IndexFormat::Uint32);
+    }
+
+    /// Binds per-vertex streams (`0`, `1`, `3`, and optional `4`) and the index buffer for
+    /// multi-instance rendering (`0..instance_count`).
+    #[inline]
+    pub(crate) fn bind_instanced_streams(&self, pass: &mut wgpu::RenderPass<'_>) {
+        pass.set_vertex_buffer(0, self.vertices.slice(..));
+        pass.set_vertex_buffer(1, self.normals.slice(..));
+        pass.set_vertex_buffer(3, self.material_coordinates.slice(..));
+        if let Some(tangents) = &self.tangents {
+            pass.set_vertex_buffer(4, tangents.slice(..));
+        }
+        pass.set_index_buffer(self.indices.slice(..), wgpu::IndexFormat::Uint32);
+    }
+
     /// Identity and revision of the geometry's current GPU contents. Two equal keys
     /// mean the same allocation with no vertex/index writes in between.
     #[must_use]

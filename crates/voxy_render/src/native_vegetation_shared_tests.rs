@@ -528,7 +528,131 @@ fn paired_full_frame_instances() {
                 full::camera().view_projection().unwrap(),
                 full::camera().eye,
                 false,
+                [None, None, None],
             );
         },
     );
+}
+
+#[test]
+#[ignore = "requires physical Metal"]
+fn clipped_vegetation_matches_full_draw_pixels() {
+    let (_, device, queue) = support::device();
+    let mut vegetation = fixture(&device, &queue, 5);
+    vegetation.shadow_vp = Mat4::from_scale(Vec3::new(0.5, 1., 1.));
+    let instances = [-5., -0.6, 1.15, 0.6, 1.8]
+        .map(|x| ArchiveInstance::new(Mat4::from_translation(Vec3::new(x, -0.2, 0.5))));
+    vegetation
+        .update_instances(&queue, &[instances.to_vec()])
+        .unwrap();
+    let target = support::output(&device);
+    let view = target.create_view(&Default::default());
+    let depth = device
+        .create_texture(&wgpu::TextureDescriptor {
+            label: None,
+            size: target.size(),
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Depth32Float,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        })
+        .create_view(&Default::default());
+    const PIXELS: u64 = 64 * 16 * 4;
+    let readback = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 3 * PIXELS,
+        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+        mapped_at_creation: false,
+    });
+    let shadow_size = vegetation.shadow.size();
+    let shadow_row = shadow_size.width * 4;
+    let shadow_bytes = u64::from(shadow_row) * u64::from(shadow_size.height);
+    let shadow_readback = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 2 * shadow_bytes,
+        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+        mapped_at_creation: false,
+    });
+    for (time, vp) in [
+        (0., Mat4::IDENTITY),
+        (2.25, Mat4::from_translation(Vec3::X * -0.2)),
+    ] {
+        vegetation.frozen_benchmark_time = Some(time);
+        let mut encoder = device.create_command_encoder(&Default::default());
+        for index in 0..3 {
+            vegetation.cull_instances = index != 0;
+            vegetation.opaque_shadow_fast = false;
+            vegetation.shadow_wind_enabled = index == 1;
+            vegetation.cull_shadow_receivers = index == 2;
+            drop(encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &view,
+                    depth_slice: None,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &depth,
+                    depth_ops: Some(wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(0.),
+                        store: wgpu::StoreOp::Store,
+                    }),
+                    stencil_ops: None,
+                }),
+                ..Default::default()
+            }));
+            vegetation.encode(
+                &device,
+                &queue,
+                &mut encoder,
+                &view,
+                &depth,
+                vp,
+                Vec3::Z,
+                false,
+                [None, None, None],
+            );
+            support::capture(&mut encoder, &target, &readback, index as u64 * PIXELS);
+            if index < 2 {
+                encoder.copy_texture_to_buffer(
+                    wgpu::TexelCopyTextureInfo {
+                        texture: &vegetation.shadow,
+                        mip_level: 0,
+                        origin: wgpu::Origin3d::ZERO,
+                        aspect: wgpu::TextureAspect::DepthOnly,
+                    },
+                    wgpu::TexelCopyBufferInfo {
+                        buffer: &shadow_readback,
+                        layout: wgpu::TexelCopyBufferLayout {
+                            offset: index as u64 * shadow_bytes,
+                            bytes_per_row: Some(shadow_row),
+                            rows_per_image: Some(shadow_size.height),
+                        },
+                    },
+                    shadow_size,
+                );
+            }
+        }
+        queue.submit([encoder.finish()]);
+        let pixels = support::read(&device, &readback);
+        let mut variants = pixels.chunks_exact(PIXELS as usize);
+        let full = variants.next().unwrap();
+        assert!(full.chunks_exact(4).any(|pixel| pixel[..3] != [0, 0, 0]));
+        for variant in variants {
+            assert_eq!(full, variant);
+        }
+        let depths = support::read(&device, &shadow_readback);
+        let (full_depth, fast_depth) = depths.split_at(shadow_bytes as usize);
+        assert!(
+            full_depth
+                .chunks_exact(4)
+                .any(|value| value != 1_f32.to_le_bytes())
+        );
+        assert!(full_depth == fast_depth, "shadow depth bytes changed");
+    }
 }

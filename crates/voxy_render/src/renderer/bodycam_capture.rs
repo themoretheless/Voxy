@@ -78,7 +78,7 @@ impl Renderer {
                 timestamp_writes: self
                     .frame_timing
                     .as_ref()
-                    .and_then(super::resident_frame_timing::Timing::writes),
+                    .and_then(|timing| timing.writes(0)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -159,6 +159,7 @@ impl Renderer {
                 ),
                 self.camera.eye,
                 true,
+                self.vegetation_timestamps(),
             );
         }
         if let Some((scene, draws)) = scene_overlay {
@@ -286,6 +287,37 @@ impl Renderer {
         frame_id: u64,
     ) -> Result<(u32, u32, Vec<u8>), RendererError> {
         self.capture_world_snapshot(frame_id, None, self.bodycam_enabled)
+    }
+
+    /// Capture the same scene and wind phase with and without receiver culling.
+    #[doc(hidden)]
+    pub fn capture_shadow_receiver_comparison(
+        &mut self,
+        frame_id: u64,
+        wind_time: f32,
+    ) -> Result<([(u32, u32, Vec<u8>); 2], [u32; 2]), RendererError> {
+        let vp = super::camera_math::camera_view_projection(
+            self.config.width,
+            self.config.height,
+            self.camera,
+        );
+        let counts = self
+            .native_vegetation
+            .as_ref()
+            .filter(|_| !self.bodycam_enabled)
+            .and_then(|plants| plants.shadow_capture_caster_counts(vp))
+            .ok_or(RendererError::InvalidCamera)?;
+        let mut capture = |culling| {
+            if let Some(plants) = &mut self.native_vegetation {
+                plants.set_shadow_capture_override(Some((culling, wind_time)));
+            }
+            let result = self.capture_world_rgba8(frame_id);
+            if let Some(plants) = &mut self.native_vegetation {
+                plants.set_shadow_capture_override(None);
+            }
+            result
+        };
+        Ok(([capture(false)?, capture(true)?], counts))
     }
 
     /// Validation capture with the same world/camera and the native vegetation layer temporarily omitted.
@@ -446,5 +478,280 @@ impl Renderer {
         } else {
             Ok(RenderOutcome::Presented)
         }
+    }
+
+    /// Executes a unified frame combining `Renderer` (resident voxels, skinned meshes, indirect
+    /// draws, native vegetation), `SceneRenderer` (3D meshes + overlays), and optional
+    /// `SceneInstancer` batches into the active window surface in a single command submission.
+    ///
+    /// When `bodycam_enabled()` is active, all passes render into the shared `Rgba16Float` HDR
+    /// target and Reversed-Z depth attachment before resolving through `BodycamPostProcess`.
+    ///
+    /// # Errors
+    /// Returns surface or device-loss errors if presentation fails.
+    pub fn render_unified_frame(
+        &mut self,
+        scene: Option<(&crate::SceneRenderer, &[crate::SceneDraw<'_>])>,
+        instanced: Option<(&crate::SceneInstancer, &[crate::SceneInstancedDraw<'_>])>,
+    ) -> Result<RenderOutcome, RendererError> {
+        self.check_device()?;
+        if self.state == SurfaceState::Suspended {
+            return Ok(RenderOutcome::Suspended);
+        }
+        let frame_id = self
+            .resident_presented_frames
+            .checked_add(1)
+            .ok_or(RendererError::FrameIdExhausted)?;
+        let (frame, suboptimal) = match self.surface.get_current_texture() {
+            wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
+            wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
+            wgpu::CurrentSurfaceTexture::Outdated => {
+                self.surface.configure(&self.device, &self.config);
+                return Ok(RenderOutcome::Reconfigured);
+            }
+            wgpu::CurrentSurfaceTexture::Lost => return Err(RendererError::SurfaceLost),
+            wgpu::CurrentSurfaceTexture::Timeout => return Ok(RenderOutcome::SkippedTimeout),
+            wgpu::CurrentSurfaceTexture::Occluded => return Ok(RenderOutcome::SkippedOccluded),
+            wgpu::CurrentSurfaceTexture::Validation => {
+                return Ok(RenderOutcome::SkippedValidation);
+            }
+        };
+        let output_view = frame
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Voxy unified render graph encoder"),
+            });
+        if self.bodycam_enabled {
+            self.encode_bodycam_passes_with_scene(&mut encoder, &output_view, frame_id, scene);
+            if let Some((instancer, draws)) = instanced {
+                instancer.encode_over(
+                    &mut encoder,
+                    self.bodycam_post.hdr_view(),
+                    &self.depth_view,
+                    draws,
+                );
+                self.bodycam_post.encode(&mut encoder, &output_view);
+            }
+        } else {
+            let mut graph = crate::RenderGraph::new();
+            graph.add_voxel_world(self, true);
+            if let Some((scene_renderer, draws)) = scene {
+                graph.add_scene(scene_renderer, draws, None);
+            }
+            if let Some((instancer, draws)) = instanced {
+                graph.add_instanced_scene(instancer, draws, None);
+            }
+            let _ = graph.encode(&mut encoder, &output_view, &self.depth_view);
+        }
+        self.queue.submit([encoder.finish()]);
+        self.queue.present(frame);
+        self.resident_presented_frames = frame_id;
+        if suboptimal {
+            self.surface.configure(&self.device, &self.config);
+            Ok(RenderOutcome::Reconfigured)
+        } else {
+            Ok(RenderOutcome::Presented)
+        }
+    }
+
+    /// Creates the general scene pipelines for this surface's color format.
+    #[must_use]
+    pub fn create_scene_renderer(&self) -> crate::SceneRenderer {
+        crate::SceneRenderer::new(&self.device, self.config.format)
+    }
+
+    /// Creates a `SceneRenderer` targeting the linear `Rgba16Float` HDR buffer used by
+    /// the photorealistic Bodycam / CleanCam / Camcorder pipeline.
+    #[must_use]
+    pub fn create_hdr_scene_renderer(&self) -> crate::SceneRenderer {
+        crate::SceneRenderer::new_reverse_z(&self.device, wgpu::TextureFormat::Rgba16Float)
+    }
+
+    /// Presents a general scene using this renderer's surface lifecycle.
+    /// Scene resources must have been created on this device.
+    ///
+    /// # Errors
+    /// Returns surface/device-loss errors requiring the platform shell to recreate graphics.
+    pub fn render_scene(
+        &mut self,
+        scene: &crate::SceneRenderer,
+        draws: &[crate::SceneDraw<'_>],
+    ) -> Result<RenderOutcome, RendererError> {
+        self.check_device()?;
+        self.reset_skinned_motion();
+        if self.state == SurfaceState::Suspended {
+            return Ok(RenderOutcome::Suspended);
+        }
+        let (frame, suboptimal) = match self.surface.get_current_texture() {
+            wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
+            wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
+            wgpu::CurrentSurfaceTexture::Outdated => {
+                self.surface.configure(&self.device, &self.config);
+                return Ok(RenderOutcome::Reconfigured);
+            }
+            wgpu::CurrentSurfaceTexture::Lost => return Err(RendererError::SurfaceLost),
+            wgpu::CurrentSurfaceTexture::Timeout => return Ok(RenderOutcome::SkippedTimeout),
+            wgpu::CurrentSurfaceTexture::Occluded => return Ok(RenderOutcome::SkippedOccluded),
+            wgpu::CurrentSurfaceTexture::Validation => {
+                return Ok(RenderOutcome::SkippedValidation);
+            }
+        };
+        let view = frame
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Voxy frame encoder"),
+            });
+        scene.encode(
+            &mut encoder,
+            &view,
+            &self.depth_view,
+            self.clear_color,
+            draws,
+        );
+        self.queue.submit([encoder.finish()]);
+        self.queue.present(frame);
+        if suboptimal {
+            self.surface.configure(&self.device, &self.config);
+            Ok(RenderOutcome::Reconfigured)
+        } else {
+            Ok(RenderOutcome::Presented)
+        }
+    }
+
+    #[must_use]
+    pub const fn surface_state(&self) -> SurfaceState {
+        self.state
+    }
+
+    pub fn set_native_vegetation(&mut self, plants: Option<crate::NativeVegetation>) {
+        self.native_vegetation = plants;
+    }
+
+    /// # Errors
+    /// Rejects changed instance counts beyond the initially reserved world capacity.
+    pub fn update_native_vegetation_instances(
+        &mut self,
+        instances: &[Vec<crate::archive_scene::ArchiveInstance>],
+    ) -> Result<(), crate::ComputeError> {
+        if let Some(plants) = &mut self.native_vegetation {
+            plants.update_instances(&self.queue, instances)?;
+        }
+        Ok(())
+    }
+
+    /// Generated instance upload with a portable fallback.
+    pub fn update_native_vegetation_instances_generated<I, J>(
+        &mut self,
+        groups: I,
+    ) -> Result<(), crate::ComputeError>
+    where
+        I: ExactSizeIterator<Item = (usize, J)>,
+        J: Iterator<Item = crate::archive_scene::ArchiveInstance>,
+    {
+        if let Some(plants) = &mut self.native_vegetation {
+            plants.update_instances_generated(&self.queue, groups)?;
+        }
+        Ok(())
+    }
+
+    #[must_use]
+    pub fn profile_acquire_time(&self) -> std::time::Duration {
+        self.profile_acquire
+    }
+
+    /// Counts scheduled, valid, rejected, failed and pending timestamp readbacks.
+    #[must_use]
+    pub fn profile_gpu_timestamp_status(&self) -> Option<[u64; 5]> {
+        self.frame_timing
+            .as_ref()
+            .map(super::resident_frame_timing::Timing::status)
+    }
+
+    /// Most recently collected primary voxel pass; asynchronous, not the current CPU frame.
+    #[must_use]
+    pub fn profile_gpu_ms(&self) -> Option<f64> {
+        self.profile_gpu[0]
+    }
+
+    /// GPU intervals for vegetation shadow, receiver and surface passes.
+    #[must_use]
+    pub fn profile_vegetation_gpu_ms(&self) -> [Option<f64>; 3] {
+        [
+            self.profile_gpu[1],
+            self.profile_gpu[2],
+            self.profile_gpu[3],
+        ]
+    }
+
+    /// Count successful submissions followed by presentation, including suboptimal surfaces.
+    #[must_use]
+    pub fn profile_presented_frames(&self) -> u64 {
+        self.resident_presented_frames
+    }
+
+    #[must_use]
+    pub fn adapter_info(&self) -> wgpu::AdapterInfo {
+        self.adapter.get_info()
+    }
+
+    /// Shared managed compute-storage budget retained by this device owner.
+    #[must_use]
+    pub fn compute_memory_budget(&self) -> &crate::ComputeMemoryBudget {
+        &self.compute_memory_budget
+    }
+
+    /// Shared staging pool retained for the lifetime of this renderer.
+    #[must_use]
+    pub fn readback_pool(&self) -> &crate::ComputeReadbackPool {
+        &self.readback_pool
+    }
+
+    #[must_use]
+    pub fn device(&self) -> &wgpu::Device {
+        &self.device
+    }
+
+    #[must_use]
+    pub fn queue(&self) -> &wgpu::Queue {
+        &self.queue
+    }
+
+    #[must_use]
+    pub fn depth_view(&self) -> &wgpu::TextureView {
+        &self.depth_view
+    }
+
+    #[must_use]
+    pub const fn clear_color(&self) -> wgpu::Color {
+        self.clear_color
+    }
+
+    #[must_use]
+    pub fn has_ray_query(&self) -> bool {
+        self.device
+            .features()
+            .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
+    }
+
+    #[must_use]
+    pub fn has_mappable_primary_buffers(&self) -> bool {
+        self.device
+            .features()
+            .contains(wgpu::Features::MAPPABLE_PRIMARY_BUFFERS)
+    }
+
+    pub fn set_indirect_mesh(&mut self, mesh: Option<super::GpuIndirectMesh>) {
+        self.indirect_mesh = mesh;
+    }
+
+    #[must_use]
+    pub fn indirect_mesh(&self) -> Option<&super::GpuIndirectMesh> {
+        self.indirect_mesh.as_ref()
     }
 }

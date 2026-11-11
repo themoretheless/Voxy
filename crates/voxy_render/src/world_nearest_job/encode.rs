@@ -254,6 +254,35 @@ impl WorldRayQueryJob {
             })
             .transpose()
     }
+    /// Number of distinct restricted input bindings retained by this query.
+    #[doc(hidden)]
+    pub fn cached_partial_bind_group_count(&self) -> usize {
+        self.partial_groups.lock().unwrap().len()
+    }
+
+    fn partial_group(
+        &self,
+        pipeline: &wgpu::ComputePipeline,
+        count: u32,
+        create: impl FnOnce() -> Result<wgpu::BindGroup, RaySceneError>,
+    ) -> Result<wgpu::BindGroup, RaySceneError> {
+        // The job owns immutable resources. Each pipeline and record count
+        // determines one restricted view, including the comparison pipeline.
+        const MAX_CACHED_GROUPS: usize = 32;
+        let mut groups = self.partial_groups.lock().unwrap();
+        if let Some((_, _, group)) = groups
+            .iter()
+            .find(|(owner, size, _)| owner == pipeline && *size == count)
+        {
+            return Ok(group.clone());
+        }
+        let group = create()?;
+        if groups.len() < MAX_CACHED_GROUPS {
+            groups.push((pipeline.clone(), count, group.clone()));
+        }
+        Ok(group)
+    }
+
     fn encode_once(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -283,55 +312,59 @@ impl WorldRayQueryJob {
             || self.fast.is_some())
             && count != self.capacity
         {
-            Some(Self::make_group(
-                &self.device,
-                &self.scene,
-                &self.pipeline,
-                &self.input,
-                &self.output,
-                &self._scratch,
-                &self._counts,
-                &self._hierarchy,
-                self.query_kind == WorldRayQueryKind::OpaqueVisibility,
-                count,
-                false,
-                None,
-                self.vertex_cache.as_ref(),
-            )?)
+            Some(self.partial_group(&self.pipeline, count, || {
+                Self::make_group(
+                    &self.device,
+                    &self.scene,
+                    &self.pipeline,
+                    &self.input,
+                    &self.output,
+                    &self._scratch,
+                    &self._counts,
+                    &self._hierarchy,
+                    self.query_kind == WorldRayQueryKind::OpaqueVisibility,
+                    count,
+                    false,
+                    None,
+                    self.vertex_cache.as_ref(),
+                )
+            })?)
         } else {
             None
         };
         let native_stage = u32::from(self.native_hint.is_some());
         if let Some((pipeline, group)) = &self.native_hint {
             let partial = if count != self.capacity {
-                Some(if self.native_source_witness {
-                    Self::make_group(
-                        &self.device,
-                        &self.scene,
-                        pipeline,
-                        &self.input,
-                        &self.output,
-                        &self._scratch,
-                        &self._counts,
-                        &self._hierarchy,
-                        false,
-                        count,
-                        true,
-                        None,
-                        self.vertex_cache.as_ref(),
-                    )?
-                } else {
-                    Self::make_hint_group(
-                        &self.device,
-                        &self.scene,
-                        pipeline,
-                        &self.input,
-                        &self.output,
-                        &self._counts,
-                        count,
-                        self.native_triangle_hint,
-                    )?
-                })
+                Some(self.partial_group(pipeline, count, || {
+                    if self.native_source_witness {
+                        Self::make_group(
+                            &self.device,
+                            &self.scene,
+                            pipeline,
+                            &self.input,
+                            &self.output,
+                            &self._scratch,
+                            &self._counts,
+                            &self._hierarchy,
+                            false,
+                            count,
+                            true,
+                            None,
+                            self.vertex_cache.as_ref(),
+                        )
+                    } else {
+                        Self::make_hint_group(
+                            &self.device,
+                            &self.scene,
+                            pipeline,
+                            &self.input,
+                            &self.output,
+                            &self._counts,
+                            count,
+                            self.native_triangle_hint,
+                        )
+                    }
+                })?)
             } else {
                 None
             };
@@ -348,21 +381,23 @@ impl WorldRayQueryJob {
             encoder.clear_buffer(&self.input, 28, Some(4));
             encoder.clear_buffer(&self.input, 44, Some(4));
             let partial = if count != self.capacity {
-                Some(Self::make_group(
-                    &self.device,
-                    &self.scene,
-                    pipeline,
-                    &self.input,
-                    &self.output,
-                    &self._scratch,
-                    &self._counts,
-                    &self._hierarchy,
-                    !self.native_seed,
-                    count,
-                    true,
-                    self.geometry_bounds.as_ref(),
-                    self.vertex_cache.as_ref(),
-                )?)
+                Some(self.partial_group(pipeline, count, || {
+                    Self::make_group(
+                        &self.device,
+                        &self.scene,
+                        pipeline,
+                        &self.input,
+                        &self.output,
+                        &self._scratch,
+                        &self._counts,
+                        &self._hierarchy,
+                        !self.native_seed,
+                        count,
+                        true,
+                        self.geometry_bounds.as_ref(),
+                        self.vertex_cache.as_ref(),
+                    )
+                })?)
             } else {
                 None
             };
@@ -379,21 +414,23 @@ impl WorldRayQueryJob {
             // No coefficient, admission, source identity or unrequested tail changes.
             encoder.clear_buffer(&self.input, 28, Some(4));
             let partial = if count != self.capacity {
-                Some(Self::make_group(
-                    &self.device,
-                    &self.scene,
-                    pipeline,
-                    &self.input,
-                    &self.output,
-                    &self._scratch,
-                    &self._counts,
-                    &self._hierarchy,
-                    true,
-                    count,
-                    true,
-                    None,
-                    self.vertex_cache.as_ref(),
-                )?)
+                Some(self.partial_group(pipeline, count, || {
+                    Self::make_group(
+                        &self.device,
+                        &self.scene,
+                        pipeline,
+                        &self.input,
+                        &self.output,
+                        &self._scratch,
+                        &self._counts,
+                        &self._hierarchy,
+                        true,
+                        count,
+                        true,
+                        None,
+                        self.vertex_cache.as_ref(),
+                    )
+                })?)
             } else {
                 None
             };
@@ -415,21 +452,23 @@ impl WorldRayQueryJob {
         {
             if let Some((pipeline, group)) = stage {
                 let partial = if count != self.capacity {
-                    Some(Self::make_group(
-                        &self.device,
-                        &self.scene,
-                        pipeline,
-                        &self.input,
-                        &self.output,
-                        &self._scratch,
-                        &self._counts,
-                        &self._hierarchy,
-                        true,
-                        count,
-                        false,
-                        None,
-                        self.vertex_cache.as_ref(),
-                    )?)
+                    Some(self.partial_group(pipeline, count, || {
+                        Self::make_group(
+                            &self.device,
+                            &self.scene,
+                            pipeline,
+                            &self.input,
+                            &self.output,
+                            &self._scratch,
+                            &self._counts,
+                            &self._hierarchy,
+                            true,
+                            count,
+                            false,
+                            None,
+                            self.vertex_cache.as_ref(),
+                        )
+                    })?)
                 } else {
                     None
                 };
@@ -477,13 +516,15 @@ impl WorldRayQueryJob {
         drop(pass);
         if let Some((pipeline, group, stats)) = &self.work_stats {
             let partial = if count != self.capacity {
-                Some(Self::make_work_stats_group(
-                    &self.device,
-                    pipeline,
-                    &self.input,
-                    stats,
-                    count,
-                ))
+                Some(self.partial_group(pipeline, count, || {
+                    Ok(Self::make_work_stats_group(
+                        &self.device,
+                        pipeline,
+                        &self.input,
+                        stats,
+                        count,
+                    ))
+                })?)
             } else {
                 None
             };
