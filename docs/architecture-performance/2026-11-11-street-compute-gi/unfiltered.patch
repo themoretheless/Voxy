@@ -1,0 +1,31 @@
+diff --git a/crates/voxy_render/src/archive_scene.wgsl b/crates/voxy_render/src/archive_scene.wgsl
+index b37b28250..aa3a551e6 100644
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -567,7 +567,7 @@ fn load_computed_gi_filtered(pixel:vec2<i32>,center_z:f32)->vec4<f32>{
+ }
+ fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
+  if fx_off(1u) {return vec4<f32>(0.);}
+- if !ARCHIVE_COMPUTE_GI&&!ARCHIVE_PAIRED_DDA {
++ if !ARCHIVE_PAIRED_DDA {
+   let d2=dot(p-camera.eye.xyz,p-camera.eye.xyz);
+   if d2>2704. {return vec4<f32>(0.);}
+   let direction=archive_gi_direction(pixel,n);
+@@ -780,7 +780,16 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+  let f0=surface.f0;let roughness=surface.roughness;let diffuse=surface.diffuse;
+  let normal=surface.normal;let view=surface.view;let geometric=surface.geometric;let splash=surface.splash;
+  var early_bounce=vec4<f32>(0.);
+- if ARCHIVE_COMPUTE_GI {early_bounce=load_computed_gi_filtered(vec2<i32>(f.clip.xy),f.clip.z);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
++ if ARCHIVE_COMPUTE_GI {
++  let pixel=vec2<i32>(f.clip.xy);
++  if ARCHIVE_PAIRED_DDA {
++   early_bounce=load_computed_gi_filtered(pixel,f.clip.z);
++  }else{
++   // Stage crossover changes where GI runs, not the radiance or coverage
++   // consumed by the original forward shader.
++   early_bounce=textureLoad(computed_gi,pixel,0);
++  }
++ }else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
+  let z=material.workflow.z;
+  let nl_sun=dot(normal,camera.sun.xyz);
+  let translucent_sun=z>5.5&&((z>5.5&&z<6.5)||(z>9.5&&z<11.5)||z>14.5);

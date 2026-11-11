@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "scope": "native stages from original inline GI, no dropped samples or reduced precision inputs",
+  "frames": [120, 600, 1200, 1800, 2520],
+  "scene_before_taa_max_excess_over_pixelwise_aa_envelope_source_half_ulps": 1,
+  "postprocess_max_excess_over_pixelwise_aa_envelope_source_half_ulps": 2,
+  "max_scene_aa_changed_channel_fraction": 0.001,
+  "noncolour_channels": "A/B values must lie within the exact A/A envelope",
+  "finite_required": true,
+  "temporal_uniforms_identical_required": true,
+  "performance_readbacks_forbidden": true,
+  "strict_bit_parity_reported_separately": true
+}

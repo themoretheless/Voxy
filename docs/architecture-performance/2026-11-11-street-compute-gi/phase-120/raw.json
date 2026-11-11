@@ -1,0 +1,11 @@
+{
+  "frame": 120,
+  "words": 8294400,
+  "different_words": 0,
+  "max_absolute_error": 0.0,
+  "finite": true,
+  "reference_positive_coverage_pixels": 294637,
+  "actual_sha256": "5ad8bdcec5757324215f047f2ec89c2b134fc0b43e4f2125e65311c43702b9df",
+  "reference_sha256": "5ad8bdcec5757324215f047f2ec89c2b134fc0b43e4f2125e65311c43702b9df",
+  "binary_sha256": "1fa8bb636b6eef062265e70116a72d3207bce42fd9e9ee0270e2969eb71867bc"
+}

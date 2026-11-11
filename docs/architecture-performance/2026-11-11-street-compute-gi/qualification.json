@@ -1,0 +1,216 @@
+{
+  "qualified_120_fps": false,
+  "candidate_promotion_passed": false,
+  "errors": [],
+  "aa_passed": true,
+  "native_quality_bound_passed": false,
+  "strict_bit_parity_passed": false,
+  "raw_gi_bit_parity_passed": true,
+  "absolute_p99_passed": false,
+  "relative_p99_nonregression_passed": false,
+  "controls": [
+    {
+      "run": "aa-start",
+      "ratios": {
+        "service_p50": 1.0002165312183233,
+        "service_p99": 1.0067614538599734,
+        "host_completion_p99": 1.0067638212730208,
+        "gpu_mean": 1.0021361217759521
+      },
+      "passed": true
+    },
+    {
+      "run": "aa-end",
+      "ratios": {
+        "service_p50": 1.0072881275077785,
+        "service_p99": 0.987657555349942,
+        "host_completion_p99": 0.9844787462867524,
+        "gpu_mean": 1.002770043999741
+      },
+      "passed": true
+    }
+  ],
+  "contrasts": [
+    {
+      "run": "ab-0",
+      "service_p50": 1.1109765742805564,
+      "service_p99": 1.1175164729560445,
+      "host_completion_p99": 1.1046284071447712,
+      "gpu_mean": 1.1275349934937107
+    },
+    {
+      "run": "ba-0",
+      "service_p50": 1.1305950250831631,
+      "service_p99": 1.1465929815933678,
+      "host_completion_p99": 1.142267319946457,
+      "gpu_mean": 1.1455683007315314
+    },
+    {
+      "run": "ab-1",
+      "service_p50": 1.1182866937302665,
+      "service_p99": 1.1041049007826986,
+      "host_completion_p99": 1.103519590177783,
+      "gpu_mean": 1.1450076897755537
+    },
+    {
+      "run": "ba-1",
+      "service_p50": 1.1431930369268062,
+      "service_p99": 1.15930314384326,
+      "host_completion_p99": 1.150471758507393,
+      "gpu_mean": 1.1497501890629214
+    }
+  ],
+  "ci95": {
+    "service_p99": [
+      1.110790445807023,
+      1.152930547895149
+    ],
+    "host_completion_p99": [
+      1.1040738594637296,
+      1.1463621994222974
+    ],
+    "gpu_mean": [
+      1.1320165307393468,
+      1.1485627258876139
+    ]
+  },
+  "arms": {
+    "aa-start": {
+      "false": {
+        "service_p50": 22.708042000000003,
+        "service_p99": 28.088042,
+        "host_completion_p99": 28.269375,
+        "gpu_mean": 18.232368010000002,
+        "frames": 1200,
+        "gpu_samples": 600
+      },
+      "true": {
+        "service_p50": 22.712959,
+        "service_p99": 28.277957999999998,
+        "host_completion_p99": 28.460584,
+        "gpu_mean": 18.271314568333334,
+        "frames": 1200,
+        "gpu_samples": 600
+      }
+    },
+    "ab-0": {
+      "false": {
+        "service_p50": 23.5425,
+        "service_p99": 27.681583,
+        "host_completion_p99": 28.242416,
+        "gpu_mean": 19.328468164999997,
+        "frames": 1200,
+        "gpu_samples": 600
+      },
+      "true": {
+        "service_p50": 26.155166,
+        "service_p99": 30.934625,
+        "host_completion_p99": 31.197375,
+        "gpu_mean": 21.793524226666666,
+        "frames": 1200,
+        "gpu_samples": 600
+      }
+    },
+    "ba-0": {
+      "false": {
+        "service_p50": 21.977292,
+        "service_p99": 28.468,
+        "host_completion_p99": 28.994417000000002,
+        "gpu_mean": 17.209647446666665,
+        "frames": 1200,
+        "gpu_samples": 600
+      },
+      "true": {
+        "service_p50": 24.847417,
+        "service_p99": 32.641208999999996,
+        "host_completion_p99": 33.119375,
+        "gpu_mean": 19.714826581666667,
+        "frames": 1200,
+        "gpu_samples": 600
+      }
+    },
+    "ab-1": {
+      "false": {
+        "service_p50": 22.169999999999998,
+        "service_p99": 27.860917,
+        "host_completion_p99": 28.120290999999998,
+        "gpu_mean": 17.102519106666666,
+        "frames": 1200,
+        "gpu_samples": 600
+      },
+      "true": {
+        "service_p50": 24.792416000000003,
+        "service_p99": 30.761375,
+        "host_completion_p99": 31.031291999999997,
+        "gpu_mean": 19.582515891666667,
+        "frames": 1200,
+        "gpu_samples": 600
+      }
+    },
+    "ba-1": {
+      "false": {
+        "service_p50": 23.655417,
+        "service_p99": 29.680042,
+        "host_completion_p99": 30.124417,
+        "gpu_mean": 18.936530783333332,
+        "frames": 1200,
+        "gpu_samples": 600
+      },
+      "true": {
+        "service_p50": 27.042707999999998,
+        "service_p99": 34.408165999999994,
+        "host_completion_p99": 34.657291,
+        "gpu_mean": 21.77227984833333,
+        "frames": 1200,
+        "gpu_samples": 600
+      }
+    },
+    "bb-0": {
+      "false": {},
+      "true": {
+        "service_p50": 31.613000000000003,
+        "service_p99": 35.665375,
+        "host_completion_p99": 35.888834,
+        "gpu_mean": 27.562044604999997,
+        "frames": 2400,
+        "gpu_samples": 1200
+      }
+    },
+    "bb-1": {
+      "false": {},
+      "true": {
+        "service_p50": 28.063834,
+        "service_p99": 35.391875000000006,
+        "host_completion_p99": 35.599708,
+        "gpu_mean": 23.230767656666668,
+        "frames": 2400,
+        "gpu_samples": 1200
+      }
+    },
+    "aa-end": {
+      "false": {
+        "service_p50": 23.582875,
+        "service_p99": 29.150708,
+        "host_completion_p99": 29.534792,
+        "gpu_mean": 20.79080874,
+        "frames": 1200,
+        "gpu_samples": 600
+      },
+      "true": {
+        "service_p50": 23.75475,
+        "service_p99": 28.790917,
+        "host_completion_p99": 29.076375000000002,
+        "gpu_mean": 20.848400194999996,
+        "frames": 1200,
+        "gpu_samples": 600
+      }
+    }
+  },
+  "external_start_end_drift": {
+    "service_p50": 1.038525250217522,
+    "service_p99": 1.0378333954356804,
+    "host_completion_p99": 1.0447628219583913,
+    "gpu_mean": 1.140324105382074
+  },
+  "scope": "counterbalanced full-frame contrasts; absolute gate uses separate single-pipeline BB routes; not scanout"
+}

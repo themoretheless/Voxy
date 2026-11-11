@@ -5,6 +5,7 @@ override ARCHIVE_RAY_FORCE_FALLBACK:bool=false;
 override ARCHIVE_COMPUTE_SSR:bool=false;
 override ARCHIVE_TRACE_SSR:bool=false;
 override ARCHIVE_COMPUTE_GI:bool=false;
+override ARCHIVE_COMPUTE_GI_EXACT_SAMPLE:bool=false;
 // Scheduling-only candidate; the query and colour expressions are unchanged.
 override ARCHIVE_EARLY_GI:bool=false;
 // Opt-in until full-scene correctness and paired performance are qualified.
@@ -780,7 +781,16 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  let f0=surface.f0;let roughness=surface.roughness;let diffuse=surface.diffuse;
  let normal=surface.normal;let view=surface.view;let geometric=surface.geometric;let splash=surface.splash;
  var early_bounce=vec4<f32>(0.);
- if ARCHIVE_COMPUTE_GI {early_bounce=load_computed_gi_filtered(vec2<i32>(f.clip.xy),f.clip.z);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
+ if ARCHIVE_COMPUTE_GI {
+  let pixel=vec2<i32>(f.clip.xy);
+  if ARCHIVE_COMPUTE_GI_EXACT_SAMPLE {
+   // The original inline ray supplies one pixel's radiance and coverage.
+   // A stage crossover must not also introduce a different image filter.
+   early_bounce=textureLoad(computed_gi,pixel,0);
+  }else{
+   early_bounce=load_computed_gi_filtered(pixel,f.clip.z);
+  }
+ }else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
  let z=material.workflow.z;
  let nl_sun=dot(normal,camera.sun.xyz);
  let translucent_sun=z>5.5&&((z>5.5&&z<6.5)||(z>9.5&&z<11.5)||z>14.5);

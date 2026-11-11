@@ -1,0 +1,121 @@
+diff --git a/crates/voxy_render/src/archive_scene.rs b/crates/voxy_render/src/archive_scene.rs
+index f02d8fa55..6314db673 100644
+--- a/crates/voxy_render/src/archive_scene.rs
++++ b/crates/voxy_render/src/archive_scene.rs
+@@ -503,7 +503,6 @@ impl ArchiveSceneRenderer {
+                 "crossover requires the original GI algorithm without other ray experiments".into(),
+             ));
+         }
+-        let compute_variant = std::cell::Cell::new(compute_requested && !gi_stage_crossover);
+         let refine_variant = std::cell::Cell::new(refine_cache_base);
+         let pipeline = |blend: bool,
+                         double: bool,
+@@ -621,7 +620,7 @@ impl ArchiveSceneRenderer {
+                             ),
+                             (
+                                 "ARCHIVE_COMPUTE_GI",
+-                                if !blend && !shadow && !predepth && compute_variant.get() {
++                                if !blend && !shadow && !predepth && compute_requested {
+                                     1.
+                                 } else {
+                                     0.
+@@ -735,11 +734,6 @@ impl ArchiveSceneRenderer {
+ 
+         let refine_alternates = refine_crossover.map(|mode| {
+             refine_variant.set(mode.cache_b() && !gi_stage_crossover);
+-            compute_variant.set(if gi_stage_crossover {
+-                mode.cache_b()
+-            } else {
+-                compute_requested
+-            });
+             let result = [
+                 pipeline(false, false, false, false, false, false),
+                 pipeline(false, false, false, false, true, false),
+@@ -751,7 +745,6 @@ impl ArchiveSceneRenderer {
+                 pipeline(true, true, false, false, false, true),
+             ];
+             refine_variant.set(refine_cache_base);
+-            compute_variant.set(compute_requested && !gi_stage_crossover);
+             result
+         });
+         let post_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+diff --git a/crates/voxy_render/src/archive_scene.wgsl b/crates/voxy_render/src/archive_scene.wgsl
+index b37b28250..ded49b3e6 100644
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -567,7 +567,7 @@ fn load_computed_gi_filtered(pixel:vec2<i32>,center_z:f32)->vec4<f32>{
+ }
+ fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
+  if fx_off(1u) {return vec4<f32>(0.);}
+- if !ARCHIVE_COMPUTE_GI&&!ARCHIVE_PAIRED_DDA {
++ if !ARCHIVE_PAIRED_DDA {
+   let d2=dot(p-camera.eye.xyz,p-camera.eye.xyz);
+   if d2>2704. {return vec4<f32>(0.);}
+   let direction=archive_gi_direction(pixel,n);
+@@ -779,8 +779,18 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+  let base=surface.base;let opacity=surface.opacity;let uv=surface.uv;let spec=surface.spec;
+  let f0=surface.f0;let roughness=surface.roughness;let diffuse=surface.diffuse;
+  let normal=surface.normal;let view=surface.view;let geometric=surface.geometric;let splash=surface.splash;
++ let use_computed_gi=ARCHIVE_COMPUTE_GI&&camera.atmosphere.w>0.5;
+  var early_bounce=vec4<f32>(0.);
+- if ARCHIVE_COMPUTE_GI {early_bounce=load_computed_gi_filtered(vec2<i32>(f.clip.xy),f.clip.z);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
++ if use_computed_gi {
++  let pixel=vec2<i32>(f.clip.xy);
++  if ARCHIVE_PAIRED_DDA {
++   early_bounce=load_computed_gi_filtered(pixel,f.clip.z);
++  }else{
++   // Stage crossover changes where GI runs, not the radiance or coverage
++   // consumed by the original forward shader.
++   early_bounce=textureLoad(computed_gi,pixel,0);
++  }
++ }else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
+  let z=material.workflow.z;
+  let nl_sun=dot(normal,camera.sun.xyz);
+  let translucent_sun=z>5.5&&((z>5.5&&z<6.5)||(z>9.5&&z<11.5)||z>14.5);
+@@ -832,7 +842,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+   let visible=max(max(f0.r,f0.g),f0.b)+fifth(1.-nv);
+   let mirror=select((1.-smoothstep(0.12,0.48,rough_eff))*smoothstep(0.045,0.07,visible)*(1.-smoothstep(900.,2304.,d2_view)),1.,transmission>0.);
+   if mirror>0.&&!fx_off(2u) {var reflected_scene=vec4<f32>(0.);if ARCHIVE_COMPUTE_SSR {reflected_scene=textureLoad(computed_ssr,vec2<i32>(f.clip.xy),0);}else{reflected_scene=screen_reflection(f.world+normal*0.03,reflected,transmission==0.,select(54.,28.,d2_view>576.),select(1.08,1.35,d2_view>576.),select(7u,5u,d2_view>576.),ARCHIVE_RAY_BOUNDS);}let filtered_ssr=filter_rough_ssr(reflected_scene,rough_eff,radiance);radiance=mix(radiance,filtered_ssr.rgb,filtered_ssr.a*mirror);}
+-  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
++  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!use_computed_gi&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
+   let probe=probe_irradiance(f.world,bent_normal);
+   let indirect=mix(mix(irradiance,probe.rgb,probe.a),bounce.rgb,bounce.a);
+   if transmission>0. {
+@@ -842,7 +852,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+   colour+=diffuse_eff*(1.-transmission)*indirect*multibounce_ao(ao,diffuse_eff)+multiscatter_specular_ibl(f0,dfg,radiance,irradiance)*specular_occlusion(nv,ao,rough_eff)*horizon;
+  } else {
+   let sky=mix(vec3<f32>(110.,95.,75.),vec3<f32>(170.,230.,330.),clamp(bent_normal.y*0.5+0.5,0.,1.))*camera.viewport.w/3.14159265;
+-  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!ARCHIVE_COMPUTE_GI&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
++  var bounce=early_bounce;if !ARCHIVE_EARLY_GI&&!use_computed_gi&&transmission<0.9 {bounce=screen_gi(f.clip.xy,f.world,normal);}
+   let probe=probe_irradiance(f.world,bent_normal);
+   let indirect=mix(mix(sky,probe.rgb,probe.a),bounce.rgb,bounce.a);
+   let horizon=smoothstep(-0.15,0.05,dot(reflected,geometric))*mix(1.,bent_cone,1.-ao);
+diff --git a/crates/voxy_render/src/archive_scene/draw.rs b/crates/voxy_render/src/archive_scene/draw.rs
+index c3a552d5b..fed2ca09a 100644
+--- a/crates/voxy_render/src/archive_scene/draw.rs
++++ b/crates/voxy_render/src/archive_scene/draw.rs
+@@ -119,6 +119,7 @@ impl ArchiveSceneRenderer {
+                 self.display_headroom,
+             );
+         }
++        let compute_active = self.compute_gi_active_for_frame();
+         self.queue.write_buffer(
+             &self.camera,
+             0,
+@@ -143,7 +144,7 @@ impl ArchiveSceneRenderer {
+                     self.weather_time,
+                     self.weather.cloud_base,
+                     self.weather.cloud_thickness,
+-                    0.,
++                    f32::from(compute_active),
+                 ],
+                 wind: [
+                     self.weather.wind[0],
+@@ -276,7 +277,6 @@ impl ArchiveSceneRenderer {
+         if let Some(bounds) = &self.pixel_depth_bounds {
+             bounds.encode(&mut encoder);
+         }
+-        let compute_active = self.compute_gi_active_for_frame();
+         if let Some(gi) = self.compute_gi.as_ref().filter(|_| compute_active) {
+             gi.encode(
+                 &mut encoder,

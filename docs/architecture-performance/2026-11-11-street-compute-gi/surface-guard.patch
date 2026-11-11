@@ -1,0 +1,112 @@
+diff --git a/crates/voxy_render/src/archive_scene.rs b/crates/voxy_render/src/archive_scene.rs
+index f02d8fa55..0b2f0a350 100644
+--- a/crates/voxy_render/src/archive_scene.rs
++++ b/crates/voxy_render/src/archive_scene.rs
+@@ -413,11 +413,13 @@ impl ArchiveSceneRenderer {
+             .build(device);
+         let frame_layout = voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(
+             Some("opaque transmission and sun shadows"),
+-            10,
++            12,
+         )
+         .texture_2d(0, frag, filterable_float)
+         .texture_2d(9, frag, unfilterable_float)
+         .texture_2d(8, frag, unfilterable_float)
++        .texture_2d(11, frag, unfilterable_float)
++        .texture_2d(12, frag, unfilterable_float)
+         .texture_2d(1, frag, depth_sample)
+         .texture_2d(3, frag, depth_sample)
+         .texture_2d(4, frag, depth_sample)
+@@ -627,6 +629,10 @@ impl ArchiveSceneRenderer {
+                                     0.
+                                 },
+                             ),
++                            (
++                                "ARCHIVE_GI_SURFACE_GUARD",
++                                f64::from(u8::from(gi_stage_crossover)),
++                            ),
+                             (
+                                 "ARCHIVE_EARLY_GI",
+                                 if std::env::var_os("VOXY_STREET_EARLY_GI").is_some() {
+@@ -1169,6 +1175,10 @@ impl ArchiveSceneRenderer {
+         if let Some(timing) = &mut timing {
+             timing.skip_inactive_gi = gi_stage_crossover;
+         }
++        let [gi_world, gi_normal] = compute_gi.as_ref().map_or_else(
++            || [gi_output.clone(), gi_output.clone()],
++            compute_gi::ArchiveComputeGi::world_ray_guides,
++        );
+         let frame_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+             label: None,
+             layout: &frame_layout,
+@@ -1223,6 +1233,18 @@ impl ArchiveSceneRenderer {
+                         &ssr_output.create_view(&Default::default()),
+                     ),
+                 },
++                wgpu::BindGroupEntry {
++                    binding: 11,
++                    resource: wgpu::BindingResource::TextureView(
++                        &gi_world.create_view(&Default::default()),
++                    ),
++                },
++                wgpu::BindGroupEntry {
++                    binding: 12,
++                    resource: wgpu::BindingResource::TextureView(
++                        &gi_normal.create_view(&Default::default()),
++                    ),
++                },
+             ],
+         });
+         let hdr_output = format == wgpu::TextureFormat::Rgba16Float;
+diff --git a/crates/voxy_render/src/archive_scene.wgsl b/crates/voxy_render/src/archive_scene.wgsl
+index b37b28250..bbe82166d 100644
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -5,6 +5,7 @@ override ARCHIVE_RAY_FORCE_FALLBACK:bool=false;
+ override ARCHIVE_COMPUTE_SSR:bool=false;
+ override ARCHIVE_TRACE_SSR:bool=false;
+ override ARCHIVE_COMPUTE_GI:bool=false;
++override ARCHIVE_GI_SURFACE_GUARD:bool=false;
+ // Scheduling-only candidate; the query and colour expressions are unchanged.
+ override ARCHIVE_EARLY_GI:bool=false;
+ // Opt-in until full-scene correctness and paired performance are qualified.
+@@ -33,6 +34,8 @@ struct Lights { count:vec4<u32>, values:array<Light,128> }
+ @group(2) @binding(10) var ray_pixel_depth_bounds:texture_2d<f32>;
+ @group(2) @binding(8) var computed_gi:texture_2d<f32>;
+ @group(2) @binding(9) var computed_ssr:texture_2d<f32>;
++@group(2) @binding(11) var computed_gi_world:texture_2d<f32>;
++@group(2) @binding(12) var computed_gi_normal:texture_2d<f32>;
+ @group(1) @binding(6) var gi_world:texture_2d<f32>;
+ @group(1) @binding(7) var gi_normal:texture_2d<f32>;
+ @group(1) @binding(8) var gi_output:texture_storage_2d<rgba32float,write>;
+@@ -567,7 +570,7 @@ fn load_computed_gi_filtered(pixel:vec2<i32>,center_z:f32)->vec4<f32>{
+ }
+ fn screen_gi(pixel:vec2<f32>,p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
+  if fx_off(1u) {return vec4<f32>(0.);}
+- if !ARCHIVE_COMPUTE_GI&&!ARCHIVE_PAIRED_DDA {
++ if !ARCHIVE_PAIRED_DDA {
+   let d2=dot(p-camera.eye.xyz,p-camera.eye.xyz);
+   if d2>2704. {return vec4<f32>(0.);}
+   let direction=archive_gi_direction(pixel,n);
+@@ -780,7 +783,20 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+  let f0=surface.f0;let roughness=surface.roughness;let diffuse=surface.diffuse;
+  let normal=surface.normal;let view=surface.view;let geometric=surface.geometric;let splash=surface.splash;
+  var early_bounce=vec4<f32>(0.);
+- if ARCHIVE_COMPUTE_GI {early_bounce=load_computed_gi_filtered(vec2<i32>(f.clip.xy),f.clip.z);}else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
++ if ARCHIVE_COMPUTE_GI {
++  let pixel=vec2<i32>(f.clip.xy);
++  if ARCHIVE_GI_SURFACE_GUARD {
++   let guide_world=textureLoad(computed_gi_world,pixel,0);
++   let guide_normal=textureLoad(computed_gi_normal,pixel,0);
++   if guide_normal.w!=0. && all(guide_world.xyz==f.world) && all(guide_normal.xyz==normal) {
++    early_bounce=textureLoad(computed_gi,pixel,0);
++   }else{
++    early_bounce=screen_gi(f.clip.xy,f.world,normal);
++   }
++  }else{
++   early_bounce=load_computed_gi_filtered(pixel,f.clip.z);
++  }
++ }else if ARCHIVE_EARLY_GI {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
+  let z=material.workflow.z;
+  let nl_sun=dot(normal,camera.sun.xyz);
+  let translucent_sun=z>5.5&&((z>5.5&&z<6.5)||(z>9.5&&z<11.5)||z>14.5);

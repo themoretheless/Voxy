@@ -628,6 +628,10 @@ impl ArchiveSceneRenderer {
                                 },
                             ),
                             (
+                                "ARCHIVE_COMPUTE_GI_EXACT_SAMPLE",
+                                f64::from(u8::from(gi_stage_crossover)),
+                            ),
+                            (
                                 "ARCHIVE_EARLY_GI",
                                 if std::env::var_os("VOXY_STREET_EARLY_GI").is_some() {
                                     1.
