@@ -164,7 +164,7 @@ impl UiReloadCheckpoint {
     ) -> Result<PreparedUiReload, EditorError> {
         self.prepare_using(restored_cache, |saved| {
             Ok(voxy_assets::SourcePollWorker::new_with_checkpoint(
-                project.source_provider(),
+                project.input_provider()?,
                 saved,
                 32,
                 16 * 1024 * 1024,

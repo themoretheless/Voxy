@@ -1,9 +1,0 @@
-
-running 3 tests
-test renderer::skinned_lod::tests::gpu_skeletal_lod_pose_switches_indices_and_preserves_shared_streams ... ok
-test scene::lod_geometry::tests::gpu_lod_upload_shares_streams_and_counts_all_index_buffers ... ok
-test scene::memory_tests::gpu_shared_mesh_budget_preserves_replacement_and_lod_owners ... mesh budget adapter: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
-ok
-
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 431 filtered out; finished in 0.25s
-

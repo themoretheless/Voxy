@@ -8,7 +8,6 @@ mod graphics_options;
 mod native_plants;
 mod pet;
 mod terrain_options;
-mod terrain_window;
 
 #[cfg(test)]
 use app_tick::apply_autopilot_controls;
@@ -66,17 +65,11 @@ struct VoxyApp {
     shadow_audit_last_tick: u64,
     profile_partial_publications: u64,
     profile_full_publications: u64,
-    profile_terrain_transitions: u64,
     profile_water: Duration,
     profile_animation: Duration,
     profile_pose: Duration,
     graphics: voxy_render::GraphicsOptions,
     terrain_radius: i32,
-    terrain_source: Option<Arc<voxy_runtime::BootstrapTerrainSource>>,
-    pending_terrain: Option<terrain_window::PendingTerrain>,
-    terrain_center: ChunkPos,
-    terrain_archive: Option<Arc<voxy_runtime::TerrainArchive>>,
-    archived_terrain: usize,
     motion_compute: Option<Arc<voxy_cuda::CudaCompute>>,
     cuda_projectiles: bool,
     cuda_character_motion: bool,
@@ -210,7 +203,7 @@ impl ApplicationHandler for VoxyApp {
             Ok(mut renderer) => {
                 window.set_title(&loading_title(35, "WORLD"));
                 let scene_result = build_startup_scene(self.graphics, self.terrain_radius);
-                let (mut scene, terrain_source) = match scene_result {
+                let mut scene = match scene_result {
                     Ok(scene) => scene,
                     Err(error) => {
                         eprintln!("Voxy world bootstrap failed: {error}");
@@ -390,10 +383,6 @@ impl ApplicationHandler for VoxyApp {
                     .map(|chunk| (chunk.pos, chunk))
                     .collect();
                 self.rebuild_pool = Some(RebuildWorkerPool::new(scene.world.epoch(), 2, 8));
-                if std::env::args().any(|arg| arg == "--stream-terrain") {
-                    self.terrain_center = scene.anchor;
-                    self.terrain_source = Some(Arc::new(terrain_source));
-                }
                 self.world = Some(scene.world);
                 self.last_update = Some(Instant::now());
                 self.load_time_seconds = loading_started.elapsed().as_secs_f32();
@@ -620,15 +609,6 @@ impl ApplicationHandler for VoxyApp {
                 let simulation_time = profile_started.elapsed();
                 let preparation_started = Instant::now();
                 self.poll_rebuild(event_loop);
-                if let Err(error) = self.follow_terrain_window() {
-                    eprintln!("Voxy terrain window rejected: {error}");
-                    if self.profile.is_some() {
-                        self.startup_failure = Some(error);
-                        event_loop.exit();
-                        return;
-                    }
-                    self.terrain_source = None;
-                }
                 let mut profile_preparation = Duration::ZERO;
                 let mut profile_render = Duration::ZERO;
                 let mut vegetation_edited = false;
@@ -950,17 +930,9 @@ impl ApplicationHandler for VoxyApp {
                             resident_chunks: self.derived_chunks.len(),
                             partial_publications: self.profile_partial_publications,
                             full_publications: self.profile_full_publications,
-                            terrain_transitions: self.profile_terrain_transitions,
                         };
                         if let Err(error) = profile.finish_voxel(&adapter, workload) {
                             self.startup_failure = Some(error.to_string());
-                        } else if profile.scenario == frame_profile::Scenario::Terrain
-                            && workload.terrain_transitions < 2
-                        {
-                            self.startup_failure = Some(format!(
-                                "terrain profile expected two published windows, observed {}",
-                                workload.terrain_transitions
-                            ));
                         }
                         event_loop.exit();
                     }
@@ -1101,12 +1073,11 @@ impl VoxyApp {
         self.camera_anchor = scene.anchor;
         let states = bootstrap_water_states(&scene.world)?;
         self.water_active = terrain_water_cells(scene, states)?;
-        if self.profile.as_ref().is_some_and(|p| {
-            matches!(
-                p.scenario,
-                frame_profile::Scenario::Water | frame_profile::Scenario::Terrain
-            )
-        }) || std::env::args().any(|argument| argument == "--autopilot")
+        if self
+            .profile
+            .as_ref()
+            .is_some_and(|p| p.scenario == frame_profile::Scenario::Water)
+            || std::env::args().any(|argument| argument == "--autopilot")
             || std::env::var("VOXY_AUTOPILOT").is_ok_and(|value| value == "1")
         {
             self.autopilot_water_bed = natural_water_bed(&scene.world, states, &self.water_active);
@@ -1228,13 +1199,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     if profile.is_some() && autopilot_requested {
         return Err("--profile and --autopilot are mutually exclusive".into());
-    }
-    if profile
-        .as_ref()
-        .is_some_and(|p| p.scenario == frame_profile::Scenario::Terrain)
-        && !std::env::args().any(|arg| arg == "--stream-terrain")
-    {
-        return Err("terrain profile requires --stream-terrain".into());
     }
     let shadow_audit = std::env::var("VOXY_VEGETATION_SHADOW_ROUTE_AUDIT").as_deref() == Ok("1");
     if shadow_audit

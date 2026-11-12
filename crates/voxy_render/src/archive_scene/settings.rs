@@ -351,12 +351,7 @@ impl ArchiveSceneRenderer {
             0,
             bytemuck::cast_slice(&[
                 self.output_mode(),
-                // Linear output bypasses display mapping, including EDR headroom.
-                if self.linear_output {
-                    1.
-                } else {
-                    self.display_headroom
-                },
+                self.display_headroom,
                 f32::from(self.spatial_antialiasing),
                 f32::from(self.temporal.is_some()),
             ]),

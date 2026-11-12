@@ -107,48 +107,6 @@ pub struct NativeVegetation {
     cull_shadow_receivers: bool,
     shadow_capture_override: Option<(bool, f32)>,
 }
-#[derive(Debug)]
-pub struct NativeVegetationWindow {
-    pub instances: Vec<Vec<ArchiveInstance>>,
-    pub bounds: (Vec3, Vec3),
-}
-
-struct PreparedPlantInstances {
-    buffer: ComputeStorage,
-    ring: Option<crate::SharedUploadRing>,
-    values: Vec<ArchiveInstance>,
-    bounds: Vec<Option<PlantBounds>>,
-    wind: Option<WindBuffer>,
-}
-
-pub(crate) struct PreparedVegetationWindow {
-    meshes: Vec<PreparedPlantInstances>,
-    shadow_vp: Mat4,
-}
-
-fn vegetation_shadow_matrix(bounds: (Vec3, Vec3)) -> Result<Mat4, ComputeError> {
-    if !bounds.0.is_finite() || !bounds.1.is_finite() || !bounds.0.cmple(bounds.1).all() {
-        return Err(ComputeError::Validation("invalid vegetation bounds".into()));
-    }
-    let centre = (bounds.0 + bounds.1) * 0.5;
-    let extent = (bounds.1 - bounds.0).length().max(1.);
-    let sun = Vec3::new(0.42, 0.82, 0.38).normalize();
-    let matrix = orthographic(
-        -extent * 0.5,
-        extent * 0.5,
-        -extent * 0.5,
-        extent * 0.5,
-        0.1,
-        extent * 3.,
-    ) * look_at_mat4(centre + sun * extent, centre, Vec3::Y);
-    if !matrix.is_finite() {
-        return Err(ComputeError::Validation(
-            "invalid vegetation shadow matrix".into(),
-        ));
-    }
-    Ok(matrix)
-}
-
 impl std::fmt::Debug for NativeVegetation {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("NativeVegetation")
@@ -236,7 +194,9 @@ impl NativeVegetation {
         geometry: Vec<ArchiveMeshSource>,
         bounds: (Vec3, Vec3),
     ) -> Result<Self, ComputeError> {
-        let shadow_vp = vegetation_shadow_matrix(bounds)?;
+        if !bounds.0.is_finite() || !bounds.1.is_finite() || !bounds.0.cmple(bounds.1).all() {
+            return Err(ComputeError::Validation("invalid vegetation bounds".into()));
+        }
         for mesh in &geometry {
             if mesh.material >= sources.len()
                 || mesh.indices.len() % 3 != 0
@@ -748,6 +708,17 @@ impl NativeVegetation {
         };
         let receiver = receiver_make(format);
         let hdr_receiver = receiver_make(wgpu::TextureFormat::Rgba16Float);
+        let centre = (bounds.0 + bounds.1) * 0.5;
+        let extent = (bounds.1 - bounds.0).length().max(1.);
+        let sun = Vec3::new(0.42, 0.82, 0.38).normalize();
+        let shadow_vp = orthographic(
+            -extent * 0.5,
+            extent * 0.5,
+            -extent * 0.5,
+            extent * 0.5,
+            0.1,
+            extent * 3.,
+        ) * look_at_mat4(centre + sun * extent, centre, Vec3::Y);
         Ok(Self {
             meshes,
             materials,
@@ -781,77 +752,6 @@ impl NativeVegetation {
             cull_instances: std::env::var_os("VOXY_VEGETATION_FULL_DRAWS").is_none(),
         })
     }
-    pub(crate) fn prepare_window(
-        &self,
-        device: &wgpu::Device,
-        window: NativeVegetationWindow,
-    ) -> Result<PreparedVegetationWindow, ComputeError> {
-        let shadow_vp = vegetation_shadow_matrix(window.bounds)?;
-        if window.instances.len() != self.meshes.len() {
-            return Err(ComputeError::Validation(
-                "invalid botanical group count".into(),
-            ));
-        }
-        let mut meshes = Vec::with_capacity(self.meshes.len());
-        for (mesh, values) in self.meshes.iter().zip(window.instances) {
-            if u32::try_from(values.len()).is_err()
-                || values.iter().any(|i| {
-                    i.world
-                        .iter()
-                        .flatten()
-                        .chain(i.normal.iter().flatten())
-                        .any(|v| !v.is_finite())
-                })
-            {
-                return Err(ComputeError::Validation(
-                    "invalid botanical instances".into(),
-                ));
-            }
-            let usage = mesh.instances.usage();
-            let data = bytemuck::cast_slice(&values);
-            let ring = crate::SharedUploadRing::new(
-                device,
-                data.len() as u64,
-                usage - wgpu::BufferUsages::COPY_DST,
-            );
-            let bounds = values
-                .iter()
-                .map(|value| PlantBounds::transformed(mesh.local_bounds, value))
-                .collect();
-            let wind = self
-                .shadow_wind
-                .as_ref()
-                .map(|(wind, _)| wind.allocate(device, values.len()))
-                .transpose()?;
-            meshes.push(PreparedPlantInstances {
-                buffer: buffer(device, "native plant instances", data, usage)?,
-                ring,
-                values,
-                bounds,
-                wind,
-            });
-        }
-        Ok(PreparedVegetationWindow { meshes, shadow_vp })
-    }
-
-    pub(crate) fn publish_window(&mut self, prepared: PreparedVegetationWindow) {
-        for (mesh, next) in self.meshes.iter_mut().zip(prepared.meshes) {
-            mesh.capacity = next.values.len();
-            mesh.instance_count = next.values.len() as u32;
-            mesh.instances = next.buffer;
-            mesh.snapshot = if next.ring.is_some() {
-                next.values
-            } else {
-                Vec::new()
-            };
-            mesh.instance_ring = next.ring;
-            mesh.instance_bounds = next.bounds;
-            mesh.shadow_wind = next.wind;
-            mesh.generated = None;
-        }
-        self.shadow_vp = prepared.shadow_vp;
-    }
-
     /// Atomically validate all instance lists before uploading changed plant visibility.
     /// # Errors
     /// Rejects expanded lists or invalid transforms.

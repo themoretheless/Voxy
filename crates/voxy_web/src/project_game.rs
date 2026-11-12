@@ -2,7 +2,10 @@
 use crate::browser::error;
 use glam::{Mat4, Vec2, Vec3};
 use std::{collections::BTreeMap, sync::Arc};
-use voxy_assets::{AssetId, AssetLocations, PROJECT_PACKAGE_LIMITS, ResourcePackage};
+use voxy_assets::{
+    AssetId, AssetLocations, PROJECT_LAUNCH_SOURCE, PROJECT_PACKAGE_LIMITS, ProjectDescriptor,
+    ProjectPackageLaunch, ResourcePackage, SourcePath,
+};
 use voxy_gameplay::{
     AngularMotionBatch, BACK, BoxCollider, CharacterBody, CharacterPhysics, CollisionLayers,
     FORWARD, FollowCamera, FollowSmoother, GAMEPAD_JUMP, GAMEPAD_X, GAMEPAD_Z, JUMP, LEFT, RIGHT,
@@ -14,8 +17,8 @@ use voxy_render::{
     SceneSkinInstance, SceneSkinSource, SceneSkinner, SceneTexture, SceneTransform,
 };
 use voxy_scene::{
-    ComponentRegistry, DocumentError, LoadedScene, NodeId, RenderWorldCache, SceneSimulation,
-    SimulationLimits,
+    ComponentRegistry, DocumentError, LoadedScene, NodeId, PrefabLimits, PrefabSceneDocument,
+    RenderWorldCache, SceneSimulation, SimulationLimits,
 };
 use wasm_bindgen::JsValue;
 mod clip_transition;
@@ -372,13 +375,52 @@ impl ProjectGame {
         queue: &wgpu::Queue,
     ) -> Result<Self, JsValue> {
         let package = ResourcePackage::from_bytes(bytes, PROJECT_PACKAGE_LIMITS).map_err(error)?;
-        let (_, descriptor, assets) = voxy_player::read_packaged_project_manifest(
-            &package,
-            PROJECT_PACKAGE_LIMITS.max_entries,
-            DOCUMENT_BYTES,
-            PROJECT_PACKAGE_LIMITS.max_payload_bytes,
+        let launch: ProjectPackageLaunch = serde_json::from_slice(
+            &package
+                .read(&AssetId(PROJECT_LAUNCH_SOURCE.into()), 65_536)
+                .map_err(error)?,
         )
         .map_err(error)?;
+        let descriptor: ProjectDescriptor = serde_json::from_slice(
+            &package
+                .read(
+                    &launch.descriptor_path().map_err(error)?.observation_id(),
+                    DOCUMENT_BYTES,
+                )
+                .map_err(error)?,
+        )
+        .map_err(error)?;
+        if descriptor.version != 1 || descriptor.name.trim().is_empty() {
+            return Err(error("invalid project descriptor"));
+        }
+        let path = |path: &std::path::Path| {
+            SourcePath::new(
+                path.to_str()
+                    .ok_or_else(|| error("invalid project path"))?
+                    .to_owned(),
+            )
+            .map_err(error)
+        };
+        let manifest = package
+            .read(
+                &path(&descriptor.asset_manifest)?.observation_id(),
+                DOCUMENT_BYTES,
+            )
+            .map_err(error)?;
+        let assets = AssetLocations::from_json(
+            std::str::from_utf8(&manifest).map_err(error)?,
+            PROJECT_PACKAGE_LIMITS.max_entries,
+            PROJECT_PACKAGE_LIMITS.max_payload_bytes,
+            DOCUMENT_BYTES,
+        )
+        .map_err(error)?;
+        let startup = package
+            .read(
+                &path(&descriptor.startup_scene)?.observation_id(),
+                DOCUMENT_BYTES,
+            )
+            .map_err(error)?;
+        let scene: PrefabSceneDocument = serde_json::from_slice(&startup).map_err(error)?;
         // Only register codecs with a corresponding browser runtime owner.
         let mut registry = ComponentRegistry::default();
         registry
@@ -406,9 +448,25 @@ impl ProjectGame {
         registry
             .register::<ModelRetarget>("editor.model-retarget.v1")
             .map_err(document_error)?;
-        let loaded =
-            voxy_player::read_packaged_project_scene(&package, &descriptor, &assets, &registry)
-                .map_err(error)?;
+        let loaded = scene
+            .load(
+                &registry,
+                PrefabLimits {
+                    max_objects: OBJECTS,
+                    max_instances: 128,
+                    max_depth: 16,
+                },
+                |id| {
+                    let source = assets
+                        .source(&AssetId(id.into()))
+                        .ok_or_else(|| DocumentError::Invalid(format!("missing prefab {id}")))?;
+                    let bytes = package
+                        .read(&source.observation_id(), DOCUMENT_BYTES)
+                        .map_err(DocumentError::Invalid)?;
+                    Ok(serde_json::from_slice(&bytes)?)
+                },
+            )
+            .map_err(document_error)?;
         let angular = AngularMotionBatch::new(&loaded.graph, OBJECTS).map_err(error)?;
         let graph = &loaded.graph;
         let physics = if graph.components::<CharacterBody>().next().is_some()

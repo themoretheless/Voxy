@@ -227,10 +227,6 @@ pub(super) fn pack_light_words(
             output.len() + voxy_core::CHUNK_VOLUME / 4,
             u32::from_le_bytes([0xf0; 4]),
         );
-    } else if cfg!(target_endian = "little")
-        && let Ok(words) = bytemuck::try_cast_slice::<u8, u32>(bytes)
-    {
-        output.extend_from_slice(words);
     } else {
         output.extend(
             bytes
@@ -239,26 +235,4 @@ pub(super) fn pack_light_words(
         );
     }
     Ok(())
-}
-
-#[cfg(test)]
-mod light_upload_tests {
-    use super::*;
-
-    #[test]
-    fn packs_aligned_and_unaligned_light_without_changing_bytes() {
-        let words = vec![0x89ab_cdef_u32; voxy_core::CHUNK_VOLUME / 4 + 1];
-        let bytes = bytemuck::cast_slice::<u32, u8>(&words);
-        for offset in 0..4 {
-            let input = &bytes[offset..offset + voxy_core::CHUNK_VOLUME];
-            let expected = input
-                .chunks_exact(4)
-                .map(|bytes| u32::from_le_bytes(bytes.try_into().unwrap()))
-                .collect::<Vec<_>>();
-            let mut actual = vec![42];
-            pack_light_words(Some(input), &mut actual).unwrap();
-            assert_eq!(actual[0], 42);
-            assert_eq!(actual[1..], expected);
-        }
-    }
 }

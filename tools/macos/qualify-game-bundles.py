@@ -3,9 +3,7 @@
 import argparse
 import hashlib
 import json
-import os
 import plistlib
-import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -14,8 +12,8 @@ import tempfile
 PACKAGER = Path(__file__).with_name("package-game.sh").resolve()
 
 
-def run(*args, success=True, timeout=60, env=None):
-    result = subprocess.run(args, cwd="/", text=True, capture_output=True, timeout=timeout, env=env)
+def run(*args, success=True, timeout=60):
+    result = subprocess.run(args, cwd="/", text=True, capture_output=True, timeout=timeout)
     if (result.returncode == 0) != success:
         raise RuntimeError(f"{args[0]} exited with {result.returncode}\n{result.stdout}{result.stderr}")
     return result.stdout + result.stderr
@@ -53,9 +51,8 @@ def configure(root, kind):
     write_json(root / "main.scene.json", scene)
 
 
-def qualify(binary, player):
+def qualify(binary):
     digest = hashlib.sha256(binary.read_bytes()).hexdigest()
-    player_digest = hashlib.sha256(player.read_bytes()).hexdigest()
     results = {}
     with tempfile.TemporaryDirectory(prefix="voxy-game-bundle-") as folder:
         temporary = Path(folder)
@@ -74,7 +71,7 @@ def qualify(binary, player):
             configure(source, kind)
             project_check = run(binary, "--project", project, "--game-check")
             run(binary, "--build-project", project, package)
-            build_args = (PACKAGER, player, package, bundle, "--direct", "--sign", "-",
+            build_args = (PACKAGER, binary, package, bundle, "--direct", "--sign", "-",
                           "--name", name, "--bundle-id", identifier)
             run(*build_args)
             run(*build_args, success=False)
@@ -91,13 +88,8 @@ def qualify(binary, player):
             run("/usr/bin/codesign", "--verify", "--strict", app)
             signature = run("/usr/bin/codesign", "-dv", "--verbose=4", app)
             assert "Signature=adhoc" in signature and "(adhoc,runtime)" in signature
-            unavailable_temp = temporary / "unavailable-temp"
-            check = run(app / "Contents/MacOS/voxy_game", "--embedded-game-check",
-                        env=os.environ | {"TMPDIR": str(unavailable_temp)})
-            assert not unavailable_temp.exists()
-            strip_timing = lambda log: re.sub(r" publication_us=\d+", "", log)
-            assert strip_timing(project_check) == strip_timing(check), (project_check, check)
-            assert "GAME CHECK PASS ticks=120 " in check
+            check = run(app / "Contents/MacOS/voxy_game", "--embedded-game-check")
+            assert project_check == check and "GAME CHECK PASS ticks=120 " in check
             run("/usr/bin/open", "-W", "-n", app, "--stdout", log_path, "--stderr", error_path,
                 "--args", "--embedded-game-native-smoke")
             log = log_path.read_text() + error_path.read_text()
@@ -110,15 +102,10 @@ def qualify(binary, player):
                                  game_check=check, native_log=log, signature=signature,
                                  changed_resource_rejected=True)
     assert hashlib.sha256(binary.read_bytes()).hexdigest() == digest
-    assert hashlib.sha256(player.read_bytes()).hexdigest() == player_digest
-    return dict(binary_sha256=digest, player_sha256=player_digest, bundles=results)
+    return dict(binary_sha256=digest, bundles=results)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", required=True, type=Path)
-    parser.add_argument("--player", type=Path)
-    args = parser.parse_args()
-    binary = args.binary.resolve(strict=True)
-    player = (args.player or binary).resolve(strict=True)
-    print(json.dumps(qualify(binary, player), indent=2))
+    print(json.dumps(qualify(parser.parse_args().binary.resolve(strict=True)), indent=2))

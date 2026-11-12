@@ -329,10 +329,6 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         }
         pair_support_contacts(first, a, second, b, budget, error_m)
     }
-    fn supports_particle_body_reactions(&self) -> bool {
-        true
-    }
-
     fn particle_body_support_contacts_with_error(
         &self,
         particle: &physics::contact::ContactBody,
@@ -450,7 +446,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             supports,
             None,
             budget,
-            rigid_support::SupportPair::Rigid,
+            false,
         )
     }
     fn sweep_supported_rigid_environment_event(
@@ -476,7 +472,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             supports,
             None,
             budget,
-            rigid_support::SupportPair::Environment,
+            true,
         )
     }
     fn sweep_supported_rigid_pair_point_motion(
@@ -503,7 +499,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             supports,
             Some(motion),
             budget,
-            rigid_support::SupportPair::Rigid,
+            false,
         )
     }
     fn sweep_supported_particle_body_point_motion(
@@ -534,7 +530,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             supports,
             Some(motion),
             budget,
-            rigid_support::SupportPair::Particle,
+            false,
         )
     }
     fn sweep_supported_rigid_environment_point_motion(
@@ -561,7 +557,7 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             supports,
             Some(motion),
             budget,
-            rigid_support::SupportPair::Environment,
+            true,
         )
     }
     fn rigid_pair_patch_for_feature(
@@ -594,45 +590,6 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
             .ok_or(physics::liquid::Error::InvalidCollision)?;
         contact_patch_points(&[*a], first, &[*b], second, witness, normal, budget)
     }
-    fn particle_body_impact_patch(
-        &self,
-        radius: f64,
-        particle: &physics::contact::ContactBody,
-        index: usize,
-        body: &physics::contact::ContactBody,
-        witness: ContactWitness,
-        normal: [f64; 3],
-        feature: Option<u64>,
-        budget: usize,
-    ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
-        use physics::liquid::Error;
-        if !self.particle_body_allowed(index)
-            || particle.spin.is_some()
-            || !radius.is_finite()
-            || radius <= 0.
-        {
-            return Err(Error::InvalidCollision);
-        }
-        let key = FeatureKey::decode(feature.ok_or(Error::CollisionBackend)?)?;
-        if key.first != 0 {
-            return Err(Error::InvalidCollision);
-        }
-        let obstacle = self
-            .templates
-            .get(index)
-            .and_then(|shapes| shapes.get(key.second))
-            .ok_or(Error::InvalidCollision)?;
-        contact_patch_points(
-            &[particle_template(radius)],
-            particle,
-            &[*obstacle],
-            body,
-            witness,
-            normal,
-            budget,
-        )
-    }
-
     fn rigid_environment_patch_for_feature(
         &self,
         index: usize,
@@ -905,56 +862,6 @@ impl physics::liquid::LiquidBodyWorld for SceneBodyWorld {
         let shape = particle_template(radius);
         trajectory_events(particle, &[shape], body, &self.templates[index], budget)
     }
-    fn sweep_particle_body_after_support(
-        &self,
-        p: &physics::liquid::Particle,
-        radius: f64,
-        particle: &physics::rigid_motion::RigidMotion,
-        index: usize,
-        body: &physics::rigid_motion::RigidMotion,
-        previous: &[physics::liquid::RigidSupportPoint],
-        overlap_limit_m: f64,
-        budget: usize,
-    ) -> Result<RigidGeometryHit, physics::liquid::Error> {
-        use physics::liquid::Error;
-        if overlap_limit_m == 0. {
-            return self.sweep_particle_motion_body_event(p, radius, particle, index, body, budget);
-        }
-        if !overlap_limit_m.is_finite()
-            || overlap_limit_m < 0.
-            || !radius.is_finite()
-            || radius <= 0.
-            || particle.initial().spin.is_some()
-            || particle.duration() != body.duration()
-            || !self.particle_body_allowed(index)
-        {
-            return Err(Error::InvalidCollision);
-        }
-        let obstacles = self.templates.get(index).ok_or(Error::InvalidCollision)?;
-        let initial_overlap = previous
-            .iter()
-            .map(|point| {
-                let key = FeatureKey::decode(point.feature.ok_or(Error::CollisionBackend)?)?;
-                if key.first != 0 || key.second >= obstacles.len() {
-                    return Err(Error::InvalidCollision);
-                }
-                Ok((key, overlap_limit_m.min(point.admission_error_m)))
-            })
-            .collect::<Result<Vec<_>, Error>>()?;
-        let mut steps = budget.checked_mul(64).ok_or(Error::CollisionBudget)?;
-        let mut queries = steps;
-        trajectory_events_counted(
-            particle,
-            &[particle_template(radius)],
-            body,
-            obstacles,
-            budget,
-            &mut steps,
-            &mut queries,
-            &initial_overlap,
-        )
-    }
-
     fn sweep_particle_motion_environment_event(
         &self,
         p: &physics::liquid::Particle,

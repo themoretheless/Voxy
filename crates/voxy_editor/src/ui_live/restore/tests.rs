@@ -492,7 +492,6 @@ fn exercise_gpu_restore(held_barrier: bool, with_models: bool, with_file: bool) 
                 behaviors: &behaviors,
                 ui_actions: &actions,
                 root: &target,
-                package: None,
                 resources: crate::play_session::checkpoint::tests::resource_restore_limits(),
                 play: crate::play_session::checkpoint::tests::limits(),
                 ui: limits(),

@@ -706,22 +706,7 @@ impl WorldRayQueryJob {
             exact_constants.push(("WORLD_EXACT_MATERIAL_SIDES", 1.));
             exact_constants.push(("WORLD_SOURCE_MATERIAL_SIDES", 1.));
         }
-        let trace_pipelines = std::env::var_os("VOXY_WORLD_RAY_PIPELINE_TIMING").is_some();
-        let build_pipeline = |descriptor: &wgpu::ComputePipelineDescriptor<'_>| {
-            if !trace_pipelines {
-                return device.create_compute_pipeline(descriptor);
-            }
-            let entry = descriptor.entry_point.unwrap_or("<inferred>");
-            let started = std::time::Instant::now();
-            eprintln!("WORLD RAY PIPELINE begin entry={entry} exact_group={exact_group_size}");
-            let pipeline = device.create_compute_pipeline(descriptor);
-            eprintln!(
-                "WORLD RAY PIPELINE end entry={entry} elapsed_ms={:.3}",
-                started.elapsed().as_secs_f64() * 1000.
-            );
-            pipeline
-        };
-        let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
+        let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("world ray query GPU job"),
             layout: None,
             module: &shader,
@@ -768,7 +753,7 @@ impl WorldRayQueryJob {
             })
         });
         let winner = if options.defer_nearest {
-            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("one certified primitive exact query"),
                 layout: None,
                 module: winner_shader.as_ref().unwrap_or(&shader),
@@ -803,7 +788,7 @@ impl WorldRayQueryJob {
             None
         };
         let candidates = if options.defer_nearest {
-            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("bounded exact nearest candidates"),
                 layout: None,
                 module: &shader,
@@ -869,7 +854,7 @@ impl WorldRayQueryJob {
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
             let build = |wide_override: u32| -> Result<_, RaySceneError> {
-                let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
+                let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                     label: Some("certificate-only opaque visibility"),
                     layout: None,
                     module: &shader,
@@ -968,7 +953,7 @@ impl WorldRayQueryJob {
                 label: Some("source-history admission and queue compaction"),
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
-            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("render-only source admission"),
                 layout: None,
                 module: &shader,
@@ -1017,7 +1002,7 @@ impl WorldRayQueryJob {
                 label: Some("isolated hardware primitive hint"),
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
-            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("isolated hardware primitive hint"),
                 layout: None,
                 module: &shader,
@@ -1080,7 +1065,7 @@ impl WorldRayQueryJob {
                 label: Some("source work count reduction"),
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
-            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("diagnostic source work counts"),
                 layout: None,
                 module: &shader,

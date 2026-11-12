@@ -27,7 +27,7 @@ pub struct SceneObject {
     pub components: BTreeMap<String, Value>,
 }
 impl SceneObject {
-    pub(crate) fn transform(&self) -> Transform {
+    fn transform(&self) -> Transform {
         Transform {
             translation: Vec3::from_array(self.translation),
             rotation: Quat::from_array(self.rotation),

@@ -59,12 +59,11 @@ fn gpu_disjoint_views_preserve_both_regions_and_clear_gap() {
         overlay: true,
     }];
     // A color permutation makes using a stale/default shader observable in pixels.
-    let texture_color = "let sample = textureSample(image, image_sampler, in.uv) * in.color;";
-    assert_eq!(DEFAULT_SCENE_SHADER.matches(texture_color).count(), 2);
     let custom = DEFAULT_SCENE_SHADER.replace(
-        texture_color,
-        "let sample = (textureSample(image, image_sampler, in.uv) * in.color).bgra;",
+        "return textureSample(image, image_sampler, in.uv) * in.color;",
+        "let color = textureSample(image, image_sampler, in.uv) * in.color; return color.bgra;",
     );
+    assert_ne!(custom, DEFAULT_SCENE_SHADER);
     assert!(pollster::block_on(renderer.reload_shader(&device, &custom)).unwrap());
     let revision = renderer.shader_revision();
     let (foreign, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());

@@ -1,7 +1,0 @@
-
-running 1 test
-test contact_exact_five::tests::gpu_exact_five_roundtrip_preserves_all_words ... EXACT FIVE GPU TRANSFER rows=100 width=882 coefficients=88200 column_scale=0.00000000011641532182693481 all_words_preserved=true scope=transport_only_not_arithmetic_or_physical_admission
-ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 119 filtered out; finished in 0.25s
-

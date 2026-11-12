@@ -471,28 +471,16 @@ pub(super) fn unilateral_with_proposals(
 }
 // Cooperative rounds retain each immutable operator and its original active-set
 // arithmetic. A backend can encode every ready request under one device owner.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn unilateral_batch_with_proposals(
     requests: &[super::HairContactCoordinateRequest<'_>],
     equality: &mut dyn FnMut(
         &[super::HairContactEqualityRequest<'_>],
     ) -> Option<Vec<Option<HairContactEqualityProposal>>>,
 ) -> Option<Vec<(Vec<f64>, Vec<f64>)>> {
-    unilateral_batch_candidates(requests, equality, false)?
-        .into_iter()
-        .collect()
-}
-
-#[expect(
-    clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
-)]
-pub(super) fn unilateral_batch_candidates(
-    requests: &[super::HairContactCoordinateRequest<'_>],
-    equality: &mut dyn FnMut(
-        &[super::HairContactEqualityRequest<'_>],
-    ) -> Option<Vec<Option<HairContactEqualityProposal>>>,
-    keep_siblings: bool,
-) -> Option<Vec<Option<(Vec<f64>, Vec<f64>)>>> {
     let mut hinted = Vec::with_capacity(requests.len());
     let mut owners = Vec::with_capacity(requests.len());
     for request in requests {
@@ -529,15 +517,11 @@ pub(super) fn unilateral_batch_candidates(
             )?,
         });
     }
-    let mut rejected = vec![false; requests.len()];
     loop {
         let mut ready = Vec::new();
         for (index, owner) in owners.iter_mut().enumerate() {
-            if rejected[index] {
-                continue;
-            }
             let status = match owner.poll() {
-                Some(status) => Some(status),
+                Some(status) => status,
                 None if hinted[index] => {
                     let r = &requests[index];
                     *owner = UnilateralContinuation::new(
@@ -551,16 +535,9 @@ pub(super) fn unilateral_batch_candidates(
                         true,
                     )?;
                     hinted[index] = false;
-                    owner.poll()
+                    owner.poll()?
                 }
-                None => None,
-            };
-            let Some(status) = status else {
-                if !keep_siblings {
-                    return None;
-                }
-                rejected[index] = true;
-                continue;
+                None => return None,
             };
             if status {
                 ready.push(index);
@@ -570,8 +547,7 @@ pub(super) fn unilateral_batch_candidates(
             return Some(
                 owners
                     .into_iter()
-                    .zip(rejected)
-                    .map(|(o, rejected)| (!rejected).then_some((o.state, o.multipliers)))
+                    .map(|o| (o.state, o.multipliers))
                     .collect(),
             );
         }
@@ -594,11 +570,7 @@ pub(super) fn unilateral_batch_candidates(
         for (index, proposal) in ready.into_iter().zip(proposals) {
             if proposal.and_then(|p| owners[index].resume(p)).is_none() {
                 if !hinted[index] {
-                    if !keep_siblings {
-                        return None;
-                    }
-                    rejected[index] = true;
-                    continue;
+                    return None;
                 }
                 let r = &requests[index];
                 owners[index] = UnilateralContinuation::new(
@@ -2307,29 +2279,6 @@ mod continuation_tests {
         .unwrap();
         assert!(rejected);
         assert_eq!(retried, expected);
-        let partial = unilateral_batch_candidates(
-            &requests,
-            &mut |batch| {
-                Some(
-                    batch
-                        .iter()
-                        .map(|r| {
-                            if r.operator_index == 1 {
-                                None
-                            } else {
-                                proposal(r.columns, r.bounds, r.tolerance)
-                            }
-                        })
-                        .collect(),
-                )
-            },
-            true,
-        )
-        .unwrap();
-        assert_eq!(
-            partial,
-            vec![Some(expected[0].clone()), None, Some(expected[2].clone())]
-        );
         // A cold rejection cannot be converted into partial success.
         assert!(
             unilateral_batch_with_proposals(&requests, &mut |batch| Some(

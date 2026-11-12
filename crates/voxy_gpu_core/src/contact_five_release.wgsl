@@ -26,13 +26,8 @@ fn release_compare(a:u32,b:u32,count:u32)->FiveRounded{
  let den_b=five_subtract(old_b,next_b);
  return five_subtract(five_multiply(old_a,den_b),five_multiply(old_b,den_a));
 }
-var<workgroup> release_fraction:FiveRounded;
-var<workgroup> release_best:u32;
-var<workgroup> release_ready:u32;
-var<workgroup> release_valid:array<u32,64>;
-
-fn release_choose(){
-
+@compute @workgroup_size(1)
+fn cs_main(){
  if release_words[0]!=0x31523556u || release_words[1]!=2u || release_words[3]!=8u || release_words[6]!=arrayLength(&release_words){return;}
  let count=release_words[2];let output=release_words[5];release_words[output]=3u;release_words[output+1u]=0xffffffffu;
  var best=0xffffffffu;
@@ -62,33 +57,12 @@ fn release_choose(){
   if !release_nonnegative(updated){return;}
   release_write(output+10u+8u*row,updated);
  }
- release_fraction=fraction;
- release_best=best;
- release_ready=1u;
-}
-
-@compute @workgroup_size(64)
-fn cs_main(@builtin(local_invocation_index) lane:u32){
- if lane==0u {release_choose();}
- workgroupBarrier();
- let count=release_words[2];
- let output=release_words[5];
- let width=release_words[7];
- let state=8u+16u*count;
- var valid=1u;
- if release_ready==1u {
-  for(var coordinate=lane;coordinate<width;coordinate+=64u){
-   let current=release_read(state+8u*coordinate);
-   let candidate=release_read(state+8u*(width+coordinate));
-   let updated=five_add(current,five_multiply(release_fraction,five_subtract(candidate,current)));
-   if updated.valid!=1u {valid=0u;}else{release_write(output+10u+8u*(count+coordinate),updated);}
-  }
+ let width=release_words[7];let state=8u+16u*count;
+ for(var coordinate=0u;coordinate<width;coordinate++){
+  let current=release_read(state+8u*coordinate);let candidate=release_read(state+8u*(width+coordinate));
+  let updated=five_add(current,five_multiply(fraction,five_subtract(candidate,current)));
+  if updated.valid!=1u{return;}
+  release_write(output+10u+8u*(count+coordinate),updated);
  }
- release_valid[lane]=valid;
- workgroupBarrier();
- if lane==0u && release_ready==1u {
-  for(var i=0u;i<64u;i++){if release_valid[i]==0u{return;}}
-  release_words[output]=1u;
-  release_words[output+1u]=release_best;
- }
+ release_words[output]=1u;release_words[output+1u]=best;
 }

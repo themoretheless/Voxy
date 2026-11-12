@@ -615,86 +615,6 @@ fn cross_attached_dot_range(
     Ok(if sign > 0. { (lo, hi) } else { (-hi, -lo) })
 }
 
-/// Bound the edge-axis numerator over all corners that can attain its minimum.
-/// The two crossed edges are orthogonal to the axis for the complete arc.
-fn correlated_edge_gap(
-    c: [DVec3; 5],
-    relative: [DVec3; 4],
-    first: (DQuat, DVec3, AffineBox, usize),
-    second: (DQuat, DVec3, AffineBox, usize),
-    h: f64,
-) -> Result<(f64, f64), Error> {
-    let corners = |(rotation, omega, template, cross_edge): (DQuat, DVec3, AffineBox, usize)| {
-        let mut edges = template
-            .edges
-            .iter()
-            .enumerate()
-            .filter(|(index, _)| *index != cross_edge)
-            .map(|(_, &edge)| rotate_vector(rotation, edge));
-        let x = edges.next().expect("first transverse edge");
-        let y = edges.next().expect("second transverse edge");
-        let center = rotate_vector(rotation, template.center);
-        [
-            center - x - y,
-            center - x + y,
-            center + x - y,
-            center + x + y,
-        ]
-        .map(|point| {
-            let v = omega.cross(point);
-            let a = omega.cross(v);
-            [point, v, a, omega.cross(a)]
-        })
-    };
-    let (first_corners, second_corners) = (corners(first), corners(second));
-    let radius = |template: AffineBox| {
-        template.center.length() + template.edges.iter().map(|edge| edge.length()).sum::<f64>()
-    };
-    let wa = first.1.length();
-    let wb = second.1.length();
-    let ra = radius(first.2);
-    let rb = radius(second.2);
-    let [r, v, a, j] = relative.map(DVec3::length);
-    let displacement = r + v * h + a * h.powi(2) / 2. + j * h.powi(3) / 6.;
-    let derivatives = [
-        displacement + ra + rb,
-        v + a * h + j * h.powi(2) / 2. + wa * ra + wb * rb,
-        a + j * h + wa.powi(2) * ra + wb.powi(2) * rb,
-        j + wa.powi(3) * ra + wb.powi(3) * rb,
-        wa.powi(4) * ra + wb.powi(4) * rb,
-    ];
-    // Both crossed edges are unit directions. Leibniz bounds the fourth
-    // derivative using the full arc radii and translation derivative bounds.
-    let remainder = (0..=4)
-        .map(|k| BINOMIAL[4][k] * (wa + wb).powi(k as i32) * derivatives[4 - k])
-        .sum::<f64>()
-        * h.powi(4)
-        / 24.;
-    let guard = 4096.
-        * f64::EPSILON
-        * (1.
-            + derivatives[0]
-            + derivatives[1] * h
-            + derivatives[2] * h.powi(2)
-            + derivatives[3] * h.powi(3));
-    let mut lower = f64::INFINITY;
-    let mut upper = f64::INFINITY;
-    for left in first_corners {
-        for right in second_corners {
-            let d: [DVec3; 4] = std::array::from_fn(|k| relative[k] + left[k] - right[k]);
-            let terms: [f64; 4] =
-                std::array::from_fn(|k| (0..=k).map(|i| BINOMIAL[k][i] * c[i].dot(d[k - i])).sum());
-            let (lo, hi) = polynomial_range(terms[1], terms[2], terms[3], h)?;
-            lower = lower.min(terms[0] + lo - remainder - guard);
-            upper = upper.min(terms[0] + hi + remainder + guard);
-        }
-    }
-    if !lower.is_finite() || !upper.is_finite() {
-        return Err(Error::NumericalFailure);
-    }
-    Ok((lower, upper))
-}
-
 #[expect(
     clippy::too_many_lines,
     reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
@@ -793,22 +713,10 @@ fn edge_gap_range(
         let values = [lo / mag_lo, lo / mag_hi, hi / mag_lo, hi / mag_hi];
         let mut interval_lo = values.iter().copied().fold(f64::INFINITY, f64::min);
         let mut interval_hi = values.iter().copied().fold(f64::NEG_INFINITY, f64::max);
-        let c = cross_derivatives(a, wa, b, wb).map(|value| value * sign);
-        if (wa == DVec3::ZERO) != (wb == DVec3::ZERO) {
-            let (lo, hi) = correlated_edge_gap(
-                c,
-                [r, v, acc, jerk],
-                (qa, wa, shape, i as usize),
-                (qb, wb, obstacle, j as usize),
-                h,
-            )?;
-            let normalized = [lo / mag_lo, lo / mag_hi, hi / mag_lo, hi / mag_hi];
-            interval_lo = interval_lo.max(normalized.into_iter().fold(f64::INFINITY, f64::min));
-            interval_hi = interval_hi.min(normalized.into_iter().fold(f64::NEG_INFINITY, f64::max));
-        }
         // A second enclosure preserves cancellation when the cross magnitude
         // changes but its direction barely moves. Bound the perpendicular
         // component before normalization, never declare a small spin zero.
+        let c = cross_derivatives(a, wa, b, wb).map(|c| c * sign);
         let perpendicular = |c: DVec3| normal.cross(c);
         let remainder =
             (wa.length() + wb.length()).powi(4) * a.length() * b.length() * h.powi(4) / 24.;
@@ -1030,7 +938,7 @@ fn face_gap_range(
 /// Changing material points still require a different reaction point model.
 /// Acceptance uses the emitting geometry witness plus floating pose evaluation
 /// allowance, never a user-chosen rest speed, position snap or force clamp.
-#[cfg(test)]
+#[allow(dead_code)]
 pub(super) fn admit_motion(
     first: &physics::rigid_motion::RigidMotion,
     first_shape: AffineBox,
@@ -1050,14 +958,10 @@ pub(super) fn admit_motion(
     )
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub(super) enum SupportPair {
-    Rigid,
-    Environment,
-    Particle,
-}
-
-#[cfg(test)]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn admit_point_motion(
     first: &physics::rigid_motion::RigidMotion,
     first_shape: AffineBox,
@@ -1067,36 +971,6 @@ pub(super) fn admit_point_motion(
     points: &[physics::liquid::RigidSupportPoint],
     motion: &[Option<physics::liquid::RigidSupportPointMotion>],
 ) -> Result<f64, Error> {
-    let pair = if fixed {
-        SupportPair::Environment
-    } else {
-        SupportPair::Rigid
-    };
-    admit_pair_motion(
-        first,
-        first_shape,
-        second,
-        second_shape,
-        pair,
-        points,
-        motion,
-    )
-}
-
-#[expect(
-    clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
-)]
-pub(super) fn admit_pair_motion(
-    first: &physics::rigid_motion::RigidMotion,
-    first_shape: AffineBox,
-    second: &physics::rigid_motion::RigidMotion,
-    second_shape: AffineBox,
-    pair: SupportPair,
-    points: &[physics::liquid::RigidSupportPoint],
-    motion: &[Option<physics::liquid::RigidSupportPointMotion>],
-) -> Result<f64, Error> {
-    let fixed = pair == SupportPair::Environment;
     if points.len() != motion.len() {
         return Err(Error::InvalidCollision);
     }
@@ -1256,34 +1130,6 @@ pub(super) fn admit_pair_motion(
                     if excursion > point.admission_error_m {
                         return Err(Error::CollisionBudget);
                     }
-                }
-            }
-            continue;
-        }
-        if pair == SupportPair::Particle && point.admission_error_m > 0. {
-            // Use the same first-COM path as the force application model.
-            // Project it jointly with the rotating slab so relative motion
-            // cancels before the interval bound is taken.
-            let com_motion = physics::liquid::RigidSupportPointMotion {
-                velocity: first.initial().motion.velocity,
-                acceleration: first.acceleration(),
-                jerk: first.jerk(),
-            };
-            for (path, template) in [(first, first_shape), (second, second_shape)] {
-                let inverse =
-                    glam::DMat3::from_cols(template.edges[0], template.edges[1], template.edges[2])
-                        .inverse();
-                if !inverse.is_finite() {
-                    return Err(Error::InvalidCollision);
-                }
-                for axis in 0..3 {
-                    let extent = 1. / inverse.transpose().col(axis).length();
-                    let (lo, hi) = slab_range(path, template, axis, p, com_motion)?;
-                    let ownership_error = (-extent - lo).max(hi - extent).max(0.);
-                    if ownership_error > point.admission_error_m {
-                        return Err(Error::CollisionBudget);
-                    }
-                    max_error = max_error.max(ownership_error);
                 }
             }
             continue;
@@ -2163,47 +2009,6 @@ mod moving_edge_gap_tests {
             },
         )
         .unwrap()
-    }
-    #[test]
-    fn moving_edge_gap_preserves_translation_and_support_radius_cancellation() {
-        let dt = 1e-4;
-        let shape = cube();
-        let first = path(
-            DVec3::X * 0.25,
-            DVec3::X * 0.125,
-            DVec3::X * 0.125,
-            DVec3::X * 0.25,
-            DVec3::ZERO,
-            DVec3::ZERO,
-            dt,
-        );
-        let second = path(
-            DVec3::ZERO,
-            DVec3::ZERO,
-            DVec3::ZERO,
-            DVec3::ZERO,
-            DVec3::Y,
-            DVec3::ZERO,
-            dt,
-        );
-        let (lo, hi) = edge_gap_range(
-            &first,
-            shape,
-            &second,
-            shape,
-            AxisFeature::Edges(1, 2),
-            DVec3::X,
-        )
-        .unwrap()
-        .unwrap();
-        assert!(lo.abs().max(hi.abs()) < 1e-10, "{lo}..{hi}");
-        for i in 0..=128 {
-            let t = dt * f64::from(i) / 128.;
-            let (sin, cos) = t.sin_cos();
-            let x = 0.25 + 0.125 * t + 0.0625 * t * t + t.powi(3) / 24.;
-            let exact_gap = cos * x - 0.125 * (cos + sin) - 0.125;
-            assert!((lo..=hi).contains(&exact_gap));
-        }
     }
     #[test]
     fn almost_stationary_edge_direction_keeps_gap_cancellation() {

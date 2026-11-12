@@ -11,43 +11,21 @@ fn dispatch(input: &ExperimentalFiveQrInput) -> Vec<u8> {
         &ExperimentalFiveQrInput::shader_source(),
     ))
     .unwrap();
-    let run = |data: &[u8], steps: usize, repeated| {
-        let job = program.create_job(&device, data).unwrap();
-        let mut encoder = device.create_command_encoder(&Default::default());
-        if repeated {
-            job.encode_repeated_steps(&mut encoder, [1, 1, 1], steps.try_into().unwrap())
-                .unwrap();
-        } else {
-            for _ in 0..steps {
-                job.encode_step(&mut encoder, [1, 1, 1]).unwrap();
-            }
-        }
-        let snapshot = job.encode_snapshot(&mut encoder).unwrap();
-        let submission = queue.submit([encoder.finish()]);
-        let mut read = snapshot.begin_read();
-        device
-            .poll(wgpu::PollType::Wait {
-                submission_index: Some(submission),
-                timeout: None,
-            })
-            .unwrap();
-        read.try_read().unwrap().unwrap()
-    };
-    let bytes = run(input.bytes(), input.steps(), true);
-    assert_eq!(
-        bytes,
-        run(input.bytes(), input.steps(), false),
-        "single-pass QR changed the complete readback"
-    );
-    input.candidate(&bytes).unwrap();
-    let factorized = input
-        .factorized_bytes(&bytes[input.factor_range()])
+    let job = program.create_job(&device, input.bytes()).unwrap();
+    let mut encoder = device.create_command_encoder(&Default::default());
+    for _ in 0..input.steps() {
+        job.encode_step(&mut encoder, [1, 1, 1]).unwrap();
+    }
+    let snapshot = job.encode_snapshot(&mut encoder).unwrap();
+    let submission = queue.submit([encoder.finish()]);
+    let mut read = snapshot.begin_read();
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: None,
+        })
         .unwrap();
-    assert_eq!(
-        bytes,
-        run(&factorized, 1, true),
-        "reused factors changed the QR readback"
-    );
+    let bytes = read.try_read().unwrap().unwrap();
     if let Some(path) = std::env::var_os("VOXY_FIVE_QR_READBACK") {
         use std::io::Write;
         std::fs::OpenOptions::new()
@@ -77,40 +55,6 @@ fn native(value: &ExperimentalFiveQrValue, scale: f64) -> physics::hair::HairRes
 fn json_values(values: &[ExperimentalFiveQrValue]) -> Vec<serde_json::Value> {
     values.iter().map(|v|serde_json::json!({"words":v.words,"exponent":v.exponent,"error_bound_word":v.error_bound.to_bits()})).collect()
 }
-#[test]
-#[ignore = "requires real GPU; checks QR rejection across hardware subgroups"]
-fn gpu_five_qr_rejects_invalid_input_from_another_lane() {
-    let input = ExperimentalFiveQrInput::new(&[vec![[1., 0.]; 64]], &[1.], 1e-14).unwrap();
-    let mut corrupt = input.bytes().to_vec();
-    let offset = (32 + 63 * 5) * 4;
-    corrupt[offset..offset + 4].copy_from_slice(&f32::INFINITY.to_bits().to_le_bytes());
-    let instance = crate::GraphicsOptions::default().create_instance();
-    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
-    assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
-    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
-    let program = pollster::block_on(crate::ComputeProgram::new(
-        &device,
-        &ExperimentalFiveQrInput::shader_source(),
-    ))
-    .unwrap();
-    let job = program.create_job(&device, &corrupt).unwrap();
-    let mut encoder = device.create_command_encoder(&Default::default());
-    job.encode_repeated_steps(&mut encoder, [1, 1, 1], input.steps().try_into().unwrap())
-        .unwrap();
-    let snapshot = job.encode_snapshot(&mut encoder).unwrap();
-    let submission = queue.submit([encoder.finish()]);
-    let mut read = snapshot.begin_read();
-    device
-        .poll(wgpu::PollType::Wait {
-            submission_index: Some(submission),
-            timeout: None,
-        })
-        .unwrap();
-    let bytes = read.try_read().unwrap().unwrap();
-    assert_eq!(u32::from_le_bytes(bytes[24..28].try_into().unwrap()), 2);
-    assert_eq!(u32::from_le_bytes(bytes[28..32].try_into().unwrap()), 0);
-}
-
 #[test]
 #[ignore = "requires physical GPU; exact low-part equality coordinates"]
 fn gpu_five_qr_diagonal_low_parts() {

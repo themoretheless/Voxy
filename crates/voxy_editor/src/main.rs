@@ -195,13 +195,7 @@ fn open_project(
     path: &std::path::Path,
     mode: ViewportMode,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let editor = std::env::current_exe()?;
-    let player = editor.with_file_name(format!("voxy_game{}", std::env::consts::EXE_SUFFIX));
-    voxy_editor::run_project_with_package_player(
-        path,
-        mode,
-        if player.is_file() { player } else { editor },
-    )
+    voxy_editor::run_project_with_package_player(path, mode, std::env::current_exe()?)
 }
 
 fn embedded_game_package() -> Result<Option<std::path::PathBuf>, std::io::Error> {
@@ -211,5 +205,16 @@ fn embedded_game_package() -> Result<Option<std::path::PathBuf>, std::io::Error>
     if executable.file_stem() != Some(OsStr::new("voxy_game")) {
         return Ok(None);
     }
-    voxy_editor::bundled_game_package(&executable).map(Some)
+    let Some(directory) = executable.parent() else {
+        return Ok(None);
+    };
+    #[cfg(target_os = "macos")]
+    if directory.file_name() == Some(OsStr::new("MacOS"))
+        && let Some(contents) = directory.parent()
+        && contents.file_name() == Some(OsStr::new("Contents"))
+        && contents.parent().and_then(std::path::Path::extension) == Some(OsStr::new("app"))
+    {
+        return Ok(Some(contents.join("Resources/game.vpak")));
+    }
+    Ok(Some(directory.join("game.vpak")))
 }

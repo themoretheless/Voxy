@@ -1647,7 +1647,6 @@ fn qualify_editor_file_install(running: bool, with_text: bool, audio_mode: Edito
         behaviors: &behaviors,
         ui_actions: &ui_actions,
         root: &target_root,
-        package: None,
         resources,
         play,
         ui,
@@ -1996,12 +1995,6 @@ fn qualify_editor_file_install(running: bool, with_text: bool, audio_mode: Edito
                         .unwrap()
                         .poll_reload(&app.scene)
                         .unwrap();
-                }
-                // Both watchers must finish observing the deleted source before
-                // comparing catalog revisions. GPU readback gives the app watcher
-                // more wall time than the independently advanced reference.
-                for audio in [&mut app.audio, &mut reference_audio] {
-                    await_missing_audio_source(audio, &app.scene);
                 }
                 assert_eq!(
                     capture_offline_audio_playback(&mut app.audio, &fresh_bindings),
@@ -2438,30 +2431,6 @@ fn qualify_editor_file_install(running: bool, with_text: bool, audio_mode: Edito
     assert!(pollster::block_on(scope.pop()).is_none());
 }
 
-fn await_missing_audio_source(
-    audio: &mut crate::audio_session::AudioSession,
-    scene: &voxy_scene::SceneGraph,
-) {
-    let deadline = Instant::now() + Duration::from_secs(15);
-    let asset = AssetId("tone.wav".into());
-    let play = audio.play_mut().unwrap();
-    loop {
-        play.poll_reload(scene).unwrap();
-        if matches!(
-            play.catalog.status(&asset),
-            Some(voxy_assets::AssetStatus::Failed(_))
-        ) {
-            assert!(play.catalog.snapshot(&asset).is_some());
-            return;
-        }
-        assert!(
-            Instant::now() < deadline,
-            "audio watcher did not report the deleted source"
-        );
-        std::thread::sleep(Duration::from_millis(1));
-    }
-}
-
 fn capture_offline_audio_playback(
     audio: &mut crate::audio_session::AudioSession,
     bindings: &[(voxy_scene::ObjectId, voxy_scene::NodeId)],
@@ -2511,72 +2480,6 @@ fn offscreen_native_playback_loads_idle_scene_and_retires_output_atomically() {
 #[ignore = "real GPU and default native audio output; exact offline queue continuation, zero gain, no window"]
 fn offscreen_native_archive_preserves_pcm_when_loading_offline_and_back() {
     qualify_native_editor_file_transition(true, true);
-}
-
-fn restore_editor_file_during_audio_reconnect(
-    app: &mut App,
-    file: &std::path::Path,
-    target: &std::path::Path,
-    policy: &crate::app::restore_barrier::save::EditorSavePolicy,
-    saved_ticks: u64,
-    saved_frames: u64,
-) {
-    use crate::app::restore_barrier::load::PendingEditorLoad;
-    let old_output = app
-        .audio
-        .play()
-        .unwrap()
-        .output_connection()
-        .unwrap()
-        .clone();
-    app.audio.inject_stream_failure();
-    await_state(app, |app| app.audio.reconnecting_offline());
-    let deadline = Instant::now() + Duration::from_secs(30);
-    app.audio.set_reconnect_deadline(deadline);
-    let source = app.scene.identity();
-    let source_ticks = app.play.simulation_ticks;
-    let source_frames = app.audio.play().unwrap().frames;
-
-    for cancel in [true, false] {
-        let mut cancel_requested = false;
-        app.request_editor_file_load(file.to_path_buf(), target.to_path_buf(), policy.clone())
-            .unwrap();
-        while app.editor_load.is_some() {
-            let _ = scene_pixels(app);
-            assert!(Instant::now() < deadline);
-            assert!(app.snapshot_error.is_none(), "{:?}", app.snapshot_error);
-            assert!(app.audio.reconnecting_offline());
-            assert!(!matches!(
-                app.editor_load,
-                Some(PendingEditorLoad::Device { .. })
-            ));
-            if cancel
-                && !cancel_requested
-                && matches!(app.editor_load, Some(PendingEditorLoad::Preparing { .. }))
-            {
-                assert!(app.cancel_editor_file_load());
-                cancel_requested = true;
-            }
-        }
-        assert!(app.restore_barrier.is_none() && app.resource_checkpoint.is_none());
-        if cancel {
-            assert!(cancel_requested);
-            assert_eq!(app.scene.identity(), source);
-            assert_eq!(app.play.simulation_ticks, source_ticks);
-            assert_eq!(app.audio.play().unwrap().frames, source_frames);
-        } else {
-            assert_ne!(app.scene.identity(), source);
-            assert_eq!(app.play.simulation_ticks, saved_ticks);
-            assert_eq!(app.audio.play().unwrap().frames, saved_frames);
-        }
-    }
-    app.audio.set_reconnect_deadline(Instant::now());
-    await_state(app, |app| !app.audio.reconnecting_offline());
-    let output = app.audio.play().unwrap().output_connection().unwrap();
-    assert!(!output.shares_output(&old_output));
-    assert_eq!(output.sample_rate(), old_output.sample_rate());
-    assert_eq!(app.audio.play().unwrap().frames, saved_frames);
-    println!("NATIVE EDITOR RECONNECT load and cancel preserved world and PCM clock");
 }
 
 #[expect(
@@ -2847,11 +2750,6 @@ fn qualify_native_editor_file_transition(active_to_idle: bool, native_to_offline
         }
         assert_eq!(app.play.simulation_ticks, ticks + 120);
         assert!(app.audio.play().unwrap().frames > frames);
-    }
-    if !active_to_idle {
-        restore_editor_file_during_audio_reconnect(
-            &mut app, &file, &target, &policy, ticks, frames,
-        );
     }
     if let Some(idle_file) = before_play_idle {
         // The source is still playing on the actual native output. Preparation

@@ -460,4 +460,4 @@ pub use rate::{
 };
 
 use crate::math::add;
-pub(crate) use rate::{resolve_rate_from_baseline, resolve_rate_from_baseline_mixed_interval};
+pub(crate) use rate::{resolve_rate_from_baseline, resolve_rate_from_baseline_interval};

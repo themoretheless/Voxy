@@ -6,7 +6,6 @@ use voxy_render::archive_scene::*;
 #[path = "villa.rs"]
 mod villa;
 struct Builder {
-    images: Vec<ArchiveImageSource>,
     materials: Vec<ArchiveMaterialSource>,
     meshes: Vec<ArchiveMeshSource>,
     triangles: Vec<[[f64; 3]; 3]>,
@@ -1101,36 +1100,6 @@ impl Default for Ageing {
         }
     }
 }
-fn add_street_tree(
-    builder: &mut Builder,
-    seed: u64,
-) -> Result<std::ops::Range<usize>, Box<dyn std::error::Error>> {
-    use voxy_model::plants::{PlantKind, PlantOptions, generate_world_plant_asset};
-    let asset = generate_world_plant_asset(PlantOptions {
-        kind: PlantKind::Tree,
-        seed,
-        height: 5.,
-    })?;
-    let image_offset = builder.images.len();
-    let material_offset = builder.materials.len();
-    let first_mesh = builder.meshes.len();
-    builder
-        .images
-        .extend(asset.images.into_iter().map(ArchiveImageSource::Rgba));
-    for mut material in asset.materials {
-        for image in material.images.iter_mut().flatten() {
-            *image += image_offset;
-        }
-        builder.materials.push(material);
-    }
-    for mut mesh in asset.geometry {
-        mesh.instances.clear();
-        mesh.material += material_offset;
-        builder.meshes.push(mesh);
-    }
-    Ok(first_mesh..builder.meshes.len())
-}
-
 pub fn generate(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error::Error>> {
     let mut scene = geometry(seed, ageing)?;
     super::materials::apply(&mut scene)?;
@@ -1148,7 +1117,6 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         dirt,
     } = ageing;
     let mut b = Builder {
-        images: Vec::new(),
         materials: Vec::new(),
         meshes: Vec::new(),
         triangles: Vec::new(),
@@ -1156,9 +1124,6 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         age_rng: seed ^ 0x4147_4549_4e47_5f31,
         lights: Vec::new(),
     };
-    let street_trees = (0..4)
-        .map(|variant| add_street_tree(&mut b, seed.wrapping_add(variant)))
-        .collect::<Result<Vec<_>, _>>()?;
     let curb_m = b.material([0.34, 0.33, 0.30], 0.76, 0., 1., 0., 0.);
     let dark_m = b.material([0.035, 0.045, 0.052], 0.35, 0.85, 5., 0., 0.);
     let wood_m = b.material([0.19, 0.075, 0.025], 0.65, 0., 4., 0., 0.);
@@ -2165,21 +2130,81 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             let tz = z + 4. + b.random() * 2.;
             let tree_height = 4.5 + b.random() * 2.3;
             let crown_radius = 1.05 + b.random() * 0.65;
-            let tree_seed = b.rng;
-            // Keep subsequent street placements on the original random stream.
-            const OLD_TREE_DRAWS: usize = 2 + 9 * (3 + 8 * (1 + 45 * 8));
-            for _ in 0..OLD_TREE_DRAWS {
-                b.random();
-            }
+            let geometry_rng = b.rng;
+            b.rng ^= 0x4352_4f57_4e53_5459;
+            let crown_orientation = b.random() * std::f32::consts::TAU;
+            let crown_aspect = 0.65 + b.random() * 0.7;
+            let crown_lean = Vec3::new((b.random() - 0.5) * 0.65, 0., (b.random() - 0.5) * 0.65);
+            b.rng = geometry_rng;
+            let crown_rotation = Quat::from_rotation_y(crown_orientation);
+            let crown_direction = |angle: f32| {
+                crown_rotation
+                    * Vec3::new(angle.cos() * crown_aspect, 0., angle.sin() / crown_aspect)
+            };
             b.block(timber, [tx, 0.2, tz], [0.9, 0.4, 0.9]);
-            let variant = (tree_seed >> 32) as usize % street_trees.len();
-            let rotation = Quat::from_rotation_y(
-                ((tree_seed >> 40) as f32 / 16_777_216.) * std::f32::consts::TAU,
+            let root = Vec3::new(tx, 0.2, tz);
+            let fork = Vec3::new(
+                tx + b.random() * 0.20,
+                tree_height * 0.48,
+                tz + b.random() * 0.15,
             );
-            let width = crown_radius / 1.4;
-            let scale = Vec3::new(width, tree_height / 5., width);
-            for mesh in street_trees[variant].clone() {
-                b.put(mesh, Vec3::new(tx, 0.4, tz), scale, rotation);
+            b.beam(trunk, root, fork, 0.24);
+            // Hierarchical, tapered branches: each primary has secondary limbs,
+            // and leaves occupy their length as well as the tips.
+            for branch in 0..9 {
+                let a = branch as f32 * 2.399963 + b.random() * 0.8;
+                let elevation = b.random();
+                let radial = crown_radius * (0.65 + b.random() * 0.35);
+                let direction = crown_direction(a);
+                let origin = fork + Vec3::Y * (elevation - 0.3) * 0.8;
+                let elbow = origin
+                    + Vec3::new(
+                        direction.x * radial * 0.50,
+                        0.45 + elevation * 0.6,
+                        direction.z * radial * 0.50,
+                    );
+                let tip = Vec3::new(
+                    tx + direction.x * radial + crown_lean.x,
+                    tree_height * (0.72 + 0.25 * elevation),
+                    tz + direction.z * radial + crown_lean.z,
+                );
+                b.beam(trunk, origin, elbow, 0.085);
+                b.beam(trunk, elbow, tip, 0.050);
+                for twig in 0..8 {
+                    let theta = a + twig as f32 * 2.399963;
+                    let t = 0.20 + twig as f32 * 0.10;
+                    let twig_direction = crown_direction(theta);
+                    let start = elbow.lerp(tip, t);
+                    let end = start
+                        + Vec3::new(
+                            twig_direction.x * 0.55,
+                            0.12 + b.random() * 0.38,
+                            twig_direction.z * 0.55,
+                        );
+                    b.beam(trunk, start, end, 0.018);
+                    for _ in 0..45 {
+                        let along = b.random();
+                        let d =
+                            Vec3::new(b.random() - 0.5, (b.random() - 0.5) * 0.7, b.random() - 0.5)
+                                * 0.78;
+                        let size = 0.050 + b.random() * 0.035;
+                        let tilt = Quat::from_euler(
+                            glam::EulerRot::YXZ,
+                            #[allow(clippy::approx_constant)]
+                            {
+                                b.random() * 6.283185
+                            },
+                            b.random() * 2.4 - 1.2,
+                            b.random() * 2.4 - 1.2,
+                        );
+                        b.put(
+                            leaf,
+                            start.lerp(end, along) + d,
+                            Vec3::new(size * 1.2, size, size * 2.0),
+                            tilt,
+                        );
+                    }
+                }
             }
         }
     }
@@ -2448,7 +2473,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     );
     Ok(StreetScene {
         archive: None,
-        images: b.images,
+        images: Vec::new(),
         materials: b.materials,
         geometry: b.meshes,
         lights: b.lights,
@@ -2483,7 +2508,6 @@ mod tests {
         .enumerate()
         {
             let mut b = Builder {
-                images: Vec::new(),
                 materials: Vec::new(),
                 meshes: Vec::new(),
                 triangles: Vec::new(),
@@ -2547,7 +2571,6 @@ mod tests {
     #[test]
     fn house_stairs_climb_to_the_landing() {
         let mut b = Builder {
-            images: Vec::new(),
             materials: Vec::new(),
             meshes: Vec::new(),
             triangles: Vec::new(),
@@ -2603,8 +2626,7 @@ mod tests {
     #[test]
     fn original_street_is_independent_and_walkable() {
         let scene = geometry(0x564f5859, Ageing::default()).unwrap();
-        assert!(scene.archive.is_none());
-        assert_eq!(scene.images.len(), 24);
+        assert!(scene.archive.is_none() && scene.images.is_empty());
         assert!(scene.materials.len() >= 34 && scene.lights.len() == 26);
         let rendered_triangles: usize = scene
             .geometry

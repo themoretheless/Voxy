@@ -5,7 +5,6 @@ mod day_cycle;
 mod materials;
 mod original;
 mod panel;
-mod probe_cache;
 mod ray_geometry_export;
 mod scene;
 mod world_ray_lighting;
@@ -54,7 +53,6 @@ struct App {
     window: Option<Arc<Window>>,
     gpu: Option<Gpu>,
     probe_bake: Option<voxy_render::archive_scene::ArchiveProbeBake>,
-    probe_cache_path: Option<PathBuf>,
     collision: Option<physics::static_triangle_world::StaticTriangleWorld>,
     input: InputState,
     camera: WalkCamera,
@@ -87,7 +85,6 @@ struct App {
     benchmark_complete: bool,
     world_ray_audit_frames: u64,
     world_ray_audit_complete: bool,
-    audit_gpu_timeout: Option<std::time::Duration>,
     offscreen_benchmark: bool,
     render_every_physics_step: bool,
     failure: Option<String>,
@@ -239,7 +236,6 @@ impl App {
             window: None,
             gpu: None,
             probe_bake: None,
-            probe_cache_path: None,
             collision: None,
             input: InputState::default(),
             camera: WalkCamera::new(Vec3::NEG_Z),
@@ -275,7 +271,6 @@ impl App {
                 .and_then(|s| s.parse().ok())
                 .unwrap_or(0),
             world_ray_audit_complete: false,
-            audit_gpu_timeout: None,
             benchmark: value("--benchmark")
                 .and_then(|s| s.parse().ok())
                 .unwrap_or(0.),
@@ -451,6 +446,7 @@ impl App {
             validation.eye = self.feet.as_vec3() + Vec3::Y * 1.65;
             validation.direction = scene.direction;
         }
+        self.collision = Some(scene.collision);
         let instance = voxy_render::GraphicsOptions {
             backend: voxy_render::GraphicsBackend::Metal,
             ..Default::default()
@@ -572,18 +568,6 @@ impl App {
             config.format,
         )?;
         let (render_width, render_height) = supersample.render_size();
-        let validation_headroom = self.aa_validation.as_ref().map(|_| 2.);
-        let headroom = validation_headroom.unwrap_or(hdr_headroom.unwrap_or(1.));
-        let probe_cache_path = self.street_probe_cache_path(
-            &scene,
-            environment.as_ref(),
-            (
-                (render_width, render_height),
-                config.format,
-                adapter.get_info(),
-            ),
-        )?;
-        self.collision = Some(scene.collision);
         let world_job = world_ray_lighting::prepare(
             &device,
             &queue,
@@ -607,18 +591,17 @@ impl App {
             environment,
         )?;
         world_ray_lighting::connect(&mut renderer, world_job)?;
-        let mode = self.configure_renderer(&mut renderer, headroom, None)?;
+        let validation_headroom = self.aa_validation.as_ref().map(|_| 2.);
+        let mode = self.configure_renderer(
+            &mut renderer,
+            validation_headroom.unwrap_or(hdr_headroom.unwrap_or(1.)),
+            None,
+        )?;
         self.probe_bake = if self.original {
-            begin_street_probe_bake(
-                &mut renderer,
-                scene.bounds,
-                self.render.probe_spacing,
-                probe_cache_path.as_deref(),
-            )?
+            begin_street_probe_bake(&mut renderer, scene.bounds, self.render.probe_spacing)?
         } else {
             None
         };
-        self.probe_cache_path = probe_cache_path;
         renderer.set_water(&voxy_render::voxy_water::WaterWorld::new(
             scene.water.clone(),
             voxy_render::WaveSpectrum::pool(),
@@ -728,28 +711,6 @@ impl App {
         renderer.set_tone_mapper(self.render.tone_mapper);
         Ok(mode)
     }
-    fn street_probe_cache_path(
-        &self,
-        scene: &scene::StreetScene,
-        environment: Option<&voxy_render::archive_scene::ArchiveEnvironmentSource>,
-        target: ((u32, u32), wgpu::TextureFormat, wgpu::AdapterInfo),
-    ) -> std::io::Result<Option<PathBuf>> {
-        if !self.original || self.render.probe_spacing.is_none() {
-            return Ok(None);
-        }
-        probe_cache::path(
-            scene,
-            environment,
-            &(
-                target,
-                self.render,
-                self.sun_elevation,
-                self.wetness,
-                self.puddle_coverage,
-                self.exposure_bias_ev,
-            ),
-        )
-    }
     /// Regenerates the original street with the current ageing settings and swaps
     /// in a fresh renderer and collision world.
     fn rebuild_original(&mut self) -> Result<(), Box<dyn std::error::Error>> {
@@ -761,14 +722,6 @@ impl App {
         let environment = self.hdri_sky.then_some(environment);
         let gpu = self.gpu.as_ref().ok_or("missing gpu")?;
         let (width, height) = gpu.supersample.render_size();
-        let headroom = gpu
-            .validation_headroom
-            .unwrap_or(gpu.hdr_headroom.unwrap_or(1.));
-        let probe_cache_path = self.street_probe_cache_path(
-            &scene,
-            environment.as_ref(),
-            ((width, height), gpu.config.format, gpu.adapter.get_info()),
-        )?;
         let world_job = world_ray_lighting::prepare(
             &gpu.device,
             &gpu.queue,
@@ -792,18 +745,15 @@ impl App {
             environment,
         )?;
         world_ray_lighting::connect(&mut renderer, world_job)?;
+        let headroom = gpu
+            .validation_headroom
+            .unwrap_or(gpu.hdr_headroom.unwrap_or(1.));
         self.configure_renderer(&mut renderer, headroom, None)?;
         self.probe_bake = if self.original {
-            begin_street_probe_bake(
-                &mut renderer,
-                scene.bounds,
-                self.render.probe_spacing,
-                probe_cache_path.as_deref(),
-            )?
+            begin_street_probe_bake(&mut renderer, scene.bounds, self.render.probe_spacing)?
         } else {
             None
         };
-        self.probe_cache_path = probe_cache_path;
         renderer.set_water(&voxy_render::voxy_water::WaterWorld::new(
             scene.water.clone(),
             voxy_render::WaveSpectrum::pool(),
@@ -858,16 +808,12 @@ impl App {
                     bake.progress().1,
                     bake.elapsed_seconds()
                 );
-                if let Some(path) = &self.probe_cache_path {
+                if let Some(path) = street_probe_cache_path() {
                     let renderer = &self.gpu.as_ref().ok_or("missing probe renderer")?.renderer;
-                    let cache = renderer.read_irradiance_probe_cache(&bake)?;
-                    match cache.save_to_path(path) {
-                        Ok(()) => eprintln!("STREET probes saved to {}", path.display()),
-                        Err(error) => eprintln!(
-                            "STREET probes ready; cache write to {} failed: {error}",
-                            path.display()
-                        ),
-                    }
+                    renderer
+                        .read_irradiance_probe_cache(&bake)?
+                        .save_to_path(&path)?;
+                    eprintln!("STREET probes saved to {}", path.display());
                 }
                 if !self.offscreen_benchmark
                     && let Some(window) = &self.window
@@ -1323,39 +1269,13 @@ impl App {
             let trace_batches = gpu.renderer.world_ray_frame_enabled()
                 && gpu.renderer.world_ray_query_encoded_frames() <= 3
                 && std::env::var_os("VOXY_STREET_WORLD_RAY_BATCH_TRACE").is_some();
-            let wait_started = Instant::now();
             loop {
-                let remaining = self
-                    .audit_gpu_timeout
-                    .map(|budget| budget.saturating_sub(wait_started.elapsed()));
-                let timeout = if trace_batches {
-                    let interval = std::time::Duration::from_millis(50);
-                    Some(remaining.map_or(interval, |remaining| remaining.min(interval)))
-                } else {
-                    remaining
-                };
                 match gpu.device.poll(wgpu::PollType::Wait {
                     submission_index: Some(submission.clone()),
-                    timeout,
+                    timeout: trace_batches.then(|| std::time::Duration::from_millis(50)),
                 }) {
                     Ok(_) => break,
-                    Err(wgpu::PollError::Timeout) => {
-                        if let Some(budget) = self.audit_gpu_timeout
-                            && wait_started.elapsed() >= budget
-                        {
-                            return Err(format!(
-                                "world ray audit GPU wait timed out: frame={} completed_frames={} encoded_query_frames={} budget_ms={}",
-                                self.frames + 1,
-                                self.frames,
-                                gpu.renderer.world_ray_query_encoded_frames(),
-                                budget.as_millis()
-                            )
-                            .into());
-                        }
-                        if !trace_batches {
-                            return Err(wgpu::PollError::Timeout.into());
-                        }
-                    }
+                    Err(wgpu::PollError::Timeout) if trace_batches => {}
                     Err(error) => return Err(error.into()),
                 }
             }
@@ -2541,16 +2461,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let el = event_builder.build()?;
     el.set_control_flow(ControlFlow::Poll);
     let mut app = App::new();
-    if let Some(timeout) = std::env::var_os("VOXY_STREET_WORLD_RAY_GPU_TIMEOUT_MS") {
-        if app.world_ray_audit_frames == 0 {
-            return Err("GPU wait timeout requires --world-ray-audit-frames".into());
-        }
-        let milliseconds = timeout
-            .to_str()
-            .ok_or("GPU wait timeout must be a positive integer in milliseconds")?
-            .parse::<std::num::NonZeroU64>()?;
-        app.audit_gpu_timeout = Some(std::time::Duration::from_millis(milliseconds.get()));
-    }
     if profile.is_some()
         && (app.benchmark > 0.
             || app.offscreen_benchmark
@@ -2622,15 +2532,16 @@ fn begin_street_probe_bake(
     renderer: &mut ArchiveSceneRenderer,
     bounds: (Vec3, Vec3),
     spacing: Option<f32>,
-    cache_path: Option<&std::path::Path>,
 ) -> Result<Option<voxy_render::archive_scene::ArchiveProbeBake>, Box<dyn std::error::Error>> {
     let Some(spacing) = spacing else {
         return Ok(None);
     };
     let min = Vec3::new(-7., 0.6, bounds.0.z + 4.);
     let max = Vec3::new(7., 12., bounds.1.z - 4.);
-    if let Some(path) = cache_path {
-        match voxy_render::BakedProbeCache::load_from_path(path) {
+    // Opt-in: the cache is keyed by the probe grid only, so delete the file after changing the
+    // scene, lighting or materials.
+    if let Some(path) = street_probe_cache_path() {
+        match voxy_render::BakedProbeCache::load_from_path(&path) {
             Ok(cache) if renderer.restore_irradiance_probe_cache(min, max, spacing, &cache)? => {
                 eprintln!(
                     "STREET probes={} restored from {}",
@@ -2653,4 +2564,9 @@ fn begin_street_probe_bake(
     Ok(Some(
         renderer.begin_irradiance_probe_bake(min, max, spacing)?,
     ))
+}
+
+/// `VOXY_STREET_PROBE_CACHE=<file.vprobes>` reuses a completed probe bake across launches.
+fn street_probe_cache_path() -> Option<std::path::PathBuf> {
+    std::env::var_os("VOXY_STREET_PROBE_CACHE").map(std::path::PathBuf::from)
 }

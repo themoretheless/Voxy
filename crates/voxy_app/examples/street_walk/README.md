@@ -7,8 +7,8 @@ from Poly Haven in `assets/environments/original-street/materials/provenance.jso
 `daylight-provenance.json`; these are external material data, not generated artwork.
 
 The current quality pass varies building frontage widths, setbacks, floor and opening
-counts, plaster/brick colours, balconies, shutters and shop entrances. Sidewalk trees use four seeded variants from the same native plant generator as the voxel world,
-with hierarchical branches, geometric leaves and generated bark and leaf materials. Every rendered triangle
+counts, plaster/brick colours, balconies, shutters and shop entrances. Trees have
+hierarchical tapered branches and individual geometric leaves. Every rendered triangle
 is retained in the f64 collision world. Full 4K source maps retain their 8/16-bit precision
 in linear RGBA32F GPU textures with complete mip chains and 16x anisotropic sampling.
 There is no reduced rendering resolution, geometry decimation or distance LOD.

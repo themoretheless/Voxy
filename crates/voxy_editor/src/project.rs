@@ -766,17 +766,14 @@ mod tests {
         assert!(package.paths().any(|path| path == "deferred.bin"));
         fs::remove_dir_all(&root)?;
         let materialized = crate::packaged_game::MaterializedPackage::open(&output)?;
-        let descriptor = materialized.project_path()?;
-        // Leave the descriptor and manifest for the current desktop bootstrap,
-        // but prove neither decoding nor publication uses the extracted buffer.
-        fs::remove_file(descriptor.parent().unwrap().join("deferred.bin"))?;
-        let mut model = crate::App::from_project_with_model_package(
-            &descriptor,
-            crate::editor_component_registry()?,
-            Some(materialized.archive.clone()),
-        )?;
+        let manifest = materialized
+            .project_path()?
+            .parent()
+            .unwrap()
+            .join("assets.json");
+        let mut model =
+            crate::App::from_manifest(&manifest, voxy_assets::AssetId("deferred".into()), false)?;
         let id = voxy_assets::AssetId("deferred".into());
-        model.reload.insert(id.clone());
         let until = std::time::Instant::now() + std::time::Duration::from_secs(10);
         while model.catalog.snapshot(&id).is_none() {
             model.tick()?;

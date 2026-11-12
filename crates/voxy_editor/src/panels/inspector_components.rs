@@ -211,9 +211,7 @@ impl Panels {
                     .then(|| foot_field_label(&member.path))
                     .flatten()
             };
-            let label = if member.schema == crate::navigation_authoring::SCHEMA {
-                crate::navigation_authoring::field_label(&member.path)
-            } else if member.schema == "game.follow-camera.v1" {
+            let label = if member.schema == "game.follow-camera.v1" {
                 match member.path.as_str() {
                     "/target" => "Follow target",
                     "/half_life" => "Follow half-life (s)",

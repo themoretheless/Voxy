@@ -479,12 +479,6 @@ impl App {
         let restored_scan = Instant::now()
             .checked_sub(Duration::from_millis(200).saturating_sub(game.resources.delay))
             .ok_or("model poll delay cannot be restored")?;
-        let package_imports = self
-            .model_package
-            .as_ref()
-            .filter(|_| game.resources.imports.is_some())
-            .map(|package| game.resources.recipe.spawn_package_worker(package.clone()))
-            .transpose()?;
         let graphics = self
             .graphics
             .as_mut()
@@ -555,16 +549,6 @@ impl App {
             retired.push(worker.close());
         }
         let mut resources = game.resources;
-        if let Some(worker) = package_imports
-            && let Some(replaced) = resources.imports.replace(worker)
-        {
-            retired.push(replaced.close());
-        }
-        if self.model_package.is_some()
-            && let Some(watcher) = resources.watcher.take()
-        {
-            retired.push(watcher.close());
-        }
         let crate::app::authoring_checkpoint::PreparedAuthoringHistory {
             scene_id: _,
             metadata,
@@ -647,6 +631,7 @@ impl App {
         self.model_relink_error = None;
         self.error = None;
         self.resource_checkpoint = None;
+        self.restore_barrier = None;
         if let Some(panels) = &mut self.panels {
             panels.invalidate_presentation();
         }
@@ -657,7 +642,6 @@ impl App {
                 .unwrap_or_default(),
         );
         retired.extend(self.audio.take_retired_workers());
-        self.finish_restore_barrier();
         Ok(RetiredEditorCheckpoint {
             scene: old_scene,
             play: old_play,

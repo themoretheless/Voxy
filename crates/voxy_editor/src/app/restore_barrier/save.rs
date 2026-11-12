@@ -342,7 +342,6 @@ pub(super) mod tests {
                     behaviors: &app.behavior_checkpoints,
                     ui_actions: &app.ui_action_checkpoints,
                     root: &target,
-                    package: None,
                     resources: policy.resources,
                     play: policy.play,
                     ui: policy.file.game.ui,

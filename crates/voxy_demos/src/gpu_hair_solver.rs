@@ -62,7 +62,6 @@ pub struct GpuHairLinearSolver {
     resident: Option<ComputeJob>,
     pub joint_contact_qr: bool,
     pub joint_coordinate_batches: bool,
-    joint_five_fallback: bool,
     pub joint_support_compaction: bool,
     #[cfg(test)]
     pub(super) joint_full_refinement_readback: bool,
@@ -266,11 +265,6 @@ impl GpuHairLinearSolver {
     ) -> Result<Self, voxy_render::ComputeError> {
         Self::new_with_extra_division_refinement(device, queue, false).await
     }
-    #[cfg(test)]
-    pub(crate) fn set_five_fallback_for_qualification(&mut self, enabled: bool) {
-        self.joint_five_fallback = enabled;
-    }
-
     /// Coupled full-model backend. Original f64 residual admission still owns
     /// acceptance; refinement reuses the same immutable physical factors.
     pub async fn new_coupled(
@@ -415,7 +409,6 @@ impl GpuHairLinearSolver {
             joint_expanded_factor_reuses: 0,
             joint_contact_qr: false,
             joint_coordinate_batches: false,
-            joint_five_fallback: std::env::var("VOXY_HAIR_FIVE_FALLBACK").as_deref() == Ok("1"),
             joint_support_compaction: true,
             #[cfg(test)]
             joint_full_refinement_readback: true,
@@ -1004,10 +997,6 @@ impl HairLinearSolver for GpuHairLinearSolver {
             && (std::env::var("VOXY_HAIR_EXPANDED_CONTACT").as_deref() == Ok("1")
                 || std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref() == Ok("1"))
     }
-    fn joint_contact_expanded_fallback_enabled(&self) -> bool {
-        self.joint_contact_qr && self.joint_five_fallback
-    }
-
     fn solve_joint_expanded_batch(
         &mut self,
         requests: &[physics::hair::HairExpandedCoordinateRequest<'_>],
@@ -1035,9 +1024,7 @@ impl HairLinearSolver for GpuHairLinearSolver {
         requests: &[physics::hair::HairExpandedCoordinateRequest<'_>],
     ) -> Option<Vec<Option<(Vec<physics::hair::HairResponseCoefficient>, Vec<f64>)>>> {
         self.joint_coordinate_calls += requests.len();
-        if std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref() == Ok("1")
-            || self.joint_contact_expanded_fallback_enabled()
-        {
+        if std::env::var("VOXY_HAIR_FIVE_CONTACT").as_deref() == Ok("1") {
             if self.joint_five_programs.is_none() {
                 match pollster::block_on(five::FivePrograms::new(&self.device)) {
                     Ok(programs) => self.joint_five_programs = Some(programs),
@@ -1140,22 +1127,6 @@ impl HairLinearSolver for GpuHairLinearSolver {
                 if result.is_some() {
                     self.last_error = None;
                 }
-                result
-            }
-            Err(error) => {
-                self.last_error = Some(error.to_string());
-                None
-            }
-        }
-    }
-    fn solve_joint_coordinate_candidates(
-        &mut self,
-        requests: &[physics::hair::HairContactCoordinateRequest<'_>],
-    ) -> Option<Vec<Option<(Vec<f64>, Vec<f64>)>>> {
-        self.joint_coordinate_calls += requests.len();
-        match self.solve_joint_candidates_checked(requests, true) {
-            Ok(result) => {
-                self.last_error = None;
                 result
             }
             Err(error) => {

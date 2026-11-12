@@ -8,10 +8,7 @@ use std::{
     io::Write,
     path::{Path, PathBuf},
 };
-use voxy_assets::{
-    AssetId, AssetLocations, AssetSourceProvider, FileInputs, ImportInputs, ImportedAsset,
-    SourcePath,
-};
+use voxy_assets::{AssetId, AssetLocations, FileInputs, ImportInputs, ImportedAsset, SourcePath};
 #[cfg(test)]
 use voxy_scene::PrefabLimits;
 use voxy_scene::{DocumentError, PrefabSceneDocument, SceneDocument};
@@ -20,7 +17,7 @@ pub(super) struct AuthoringProject {
     identity: std::sync::Arc<()>,
     pub(super) registry: std::sync::Arc<voxy_scene::ComponentRegistry>,
     root: PathBuf,
-    provider: AssetSourceProvider,
+    provider: FileInputs,
     manifest: Option<AssetId>,
 }
 impl std::fmt::Debug for AuthoringProject {
@@ -32,7 +29,12 @@ impl std::fmt::Debug for AuthoringProject {
             .finish_non_exhaustive()
     }
 }
-pub(super) use voxy_player::AuthoredScene;
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub(super) struct AuthoredScene {
+    pub(super) source: PrefabSceneDocument,
+    pub(super) expanded: SceneDocument,
+    pub(super) dependencies: std::collections::BTreeMap<String, PrefabSceneDocument>,
+}
 pub(super) struct PreparedLiquidMaterials {
     materials: Vec<(String, physics::liquid::Material)>,
     optics: Vec<Option<[f32; 4]>>,
@@ -57,30 +59,16 @@ impl AuthoringProject {
     ) -> Result<Self, Box<dyn std::error::Error>> {
         Self::with_registry(root, recipe, std::sync::Arc::new(model_registry()?))
     }
-    #[cfg(test)]
     pub(super) fn with_registry(
         root: &Path,
         recipe: &InputRecipe,
         registry: std::sync::Arc<voxy_scene::ComponentRegistry>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
-        Self::with_package(root, recipe, registry, None)
-    }
-
-    pub(super) fn with_package(
-        root: &Path,
-        recipe: &InputRecipe,
-        registry: std::sync::Arc<voxy_scene::ComponentRegistry>,
-        package: Option<std::sync::Arc<voxy_assets::ResourcePackage>>,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
-        let provider = match package {
-            Some(package) => AssetSourceProvider::from_package(package),
-            None => FileInputs::new(root)?.into(),
-        };
         Ok(Self {
             identity: std::sync::Arc::new(()),
             registry,
             root: root.canonicalize()?,
-            provider,
+            provider: FileInputs::new(root)?,
             manifest: match recipe {
                 InputRecipe::Manifest(id) => Some(id.clone()),
                 InputRecipe::Direct => None,
@@ -208,17 +196,10 @@ impl AuthoringProject {
             identity: self.identity.clone(),
             registry: self.registry.clone(),
             root: self.root.clone(),
-            provider: match &self.provider {
-                AssetSourceProvider::Directory(_) => FileInputs::new(&self.root)?.into(),
-                AssetSourceProvider::Package(_) => self.source_provider(),
-            },
+            provider: FileInputs::new(&self.root)?,
             manifest: self.manifest.clone(),
         })
     }
-    pub(super) fn source_provider(&self) -> AssetSourceProvider {
-        self.provider.clone()
-    }
-
     pub(super) fn input_provider(&self) -> Result<FileInputs, EditorError> {
         FileInputs::new(&self.root).map_err(EditorError::from)
     }
@@ -280,7 +261,7 @@ impl AuthoringProject {
         saved: &voxy_assets::SourcePollerCheckpoint,
     ) -> Result<voxy_assets::SourcePollWorker, EditorError> {
         Ok(voxy_assets::SourcePollWorker::new_with_checkpoint(
-            self.source_provider(),
+            FileInputs::new(&self.root)?,
             saved,
             768,
             8 * 1024 * 1024,
@@ -296,7 +277,7 @@ impl AuthoringProject {
         max_bytes: usize,
     ) -> Result<voxy_assets::SourcePollWorker, EditorError> {
         voxy_assets::SourcePollWorker::new_with_observations(
-            self.source_provider(),
+            FileInputs::new(&self.root)?,
             capacity,
             max_bytes,
             observations,
@@ -309,8 +290,8 @@ impl AuthoringProject {
         recipes: std::collections::BTreeMap<AssetId, Option<String>>,
     ) -> Result<voxy_assets::AssetImportWorker<voxy_audio::Clip>, EditorError> {
         let project = self.worker_project()?;
-        voxy_assets::AssetImportWorker::new_with_source_provider(
-            self.source_provider(),
+        voxy_assets::AssetImportWorker::new(
+            FileInputs::new(&self.root)?,
             3,
             8 * 1024 * 1024,
             move |id, _, inputs| {
@@ -466,10 +447,7 @@ impl AuthoringProject {
         &self,
         path: &Path,
     ) -> Result<ImportedAsset<AuthoredScene>, Box<dyn std::error::Error>> {
-        let absolute = match &self.provider {
-            AssetSourceProvider::Directory(_) => path.canonicalize()?,
-            AssetSourceProvider::Package(_) => path.to_owned(),
-        };
+        let absolute = path.canonicalize()?;
         // Legacy standalone scene paths remain valid; a composed scene must be
         // project scoped because its dependency observations use project IDs.
         let relative = absolute.strip_prefix(&self.root)?;

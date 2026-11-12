@@ -49,7 +49,6 @@ pub fn run_project_with_package_player(
         mode,
         crate::GameHost::new(crate::editor_component_registry()?),
         Some(player),
-        None,
     )
 }
 
@@ -58,16 +57,7 @@ pub(super) fn run_project_host(
     mode: ViewportMode,
     host: crate::GameHost,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    run_project_host_with_player(path, mode, host, None, None)
-}
-
-pub(super) fn run_packaged_project_host(
-    path: &Path,
-    mode: ViewportMode,
-    host: crate::GameHost,
-    archive: std::sync::Arc<voxy_assets::ResourcePackage>,
-) -> Result<(), Box<dyn std::error::Error>> {
-    run_project_host_with_player(path, mode, host, None, Some(archive))
+    run_project_host_with_player(path, mode, host, None)
 }
 
 fn run_project_host_with_player(
@@ -75,7 +65,6 @@ fn run_project_host_with_player(
     mode: ViewportMode,
     host: crate::GameHost,
     player: Option<std::path::PathBuf>,
-    model_package: Option<std::sync::Arc<voxy_assets::ResourcePackage>>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if !matches!(
         mode,
@@ -87,10 +76,7 @@ fn run_project_host_with_player(
     ) {
         return Err("project entry requires editor or game mode".into());
     }
-    let mut app = match model_package {
-        Some(archive) => App::from_packaged_project(path, host.components, archive)?,
-        None => App::from_project_with_model_package(path, host.components, None)?,
-    };
+    let mut app = App::from_project_with_registry(path, host.components)?;
     app.build.player = player;
     app.ui_action_setup = host.ui_actions;
     app.behavior_setup = host.behaviors;

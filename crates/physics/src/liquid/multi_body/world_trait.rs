@@ -257,22 +257,6 @@ pub trait LiquidBodyWorld {
         }
         self.sweep_particle_rigid_event(p, radius, index, body, budget)
     }
-    /// The previous admitted segment bounds overlap only for its own shape pairs.
-    #[allow(clippy::too_many_arguments)]
-    fn sweep_particle_body_after_support(
-        &self,
-        p: &Particle,
-        radius: f64,
-        particle: &crate::rigid_motion::RigidMotion,
-        index: usize,
-        body: &crate::rigid_motion::RigidMotion,
-        _previous: &[RigidSupportPoint],
-        _overlap_limit_m: f64,
-        budget: usize,
-    ) -> Result<RigidGeometryHit, Error> {
-        self.sweep_particle_motion_body_event(p, radius, particle, index, body, budget)
-    }
-
     fn sweep_particle_motion_environment_event(
         &self,
         p: &Particle,
@@ -408,25 +392,6 @@ pub trait LiquidBodyWorld {
     ) -> Result<Vec<crate::contact::NormalContact>, Error> {
         self.rigid_pair_patch(i, first, j, second, witness, normal, budget)
     }
-    /// Clipped impact patch for the emitting particle/body shape pair.
-    #[allow(clippy::too_many_arguments)]
-    fn particle_body_impact_patch(
-        &self,
-        _radius: f64,
-        _particle: &crate::contact::ContactBody,
-        _index: usize,
-        _body: &crate::contact::ContactBody,
-        witness: ContactWitness,
-        normal: [f64; 3],
-        _feature: Option<u64>,
-        _budget: usize,
-    ) -> Result<Vec<crate::contact::NormalContact>, Error> {
-        Ok(vec![crate::contact::NormalContact {
-            point: witness.point,
-            normal,
-        }])
-    }
-
     fn rigid_environment_patch_for_feature(
         &self,
         index: usize,
@@ -557,11 +522,6 @@ pub trait LiquidBodyWorld {
             Err(Error::CollisionBackend)
         }
     }
-    /// The backend implements mixed support snapshots and interval admission.
-    fn supports_particle_body_reactions(&self) -> bool {
-        false
-    }
-
     /// Snapshot support of a translation-only particle against a finite body.
     /// The particle geometry must match the one used by its swept event query.
     fn particle_body_support_contacts_with_error(

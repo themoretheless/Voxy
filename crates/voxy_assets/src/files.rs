@@ -15,12 +15,6 @@ pub enum AssetSourceProvider {
     Package(Arc<ResourcePackage>),
 }
 
-impl From<FileInputs> for AssetSourceProvider {
-    fn from(files: FileInputs) -> Self {
-        Self::from_files(files)
-    }
-}
-
 impl AssetSourceProvider {
     #[must_use]
     pub const fn from_files(files: FileInputs) -> Self {

@@ -420,14 +420,6 @@ impl App {
                     setup.configure(&mut self.scene, simulation)?;
                     simulation.reset_interpolation(&self.scene)?;
                 }
-                let routes = voxy_gameplay::prepare_npc_routes(
-                    &self.scene,
-                    128,
-                    &mut voxy_gameplay::SupportQueryBudget::new(65_536)?,
-                )?;
-                for (owner, route) in routes {
-                    self.scene.insert_component(owner, route)?;
-                }
                 let has_characters = self.scene.components::<CharacterBody>().next().is_some()
                     || self.scene.components::<BoxCollider>().next().is_some();
                 if has_characters {

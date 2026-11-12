@@ -1,8 +1,10 @@
 //! Native plant assets are shared by seeded world instances. Gameplay blocks remain authoritative.
 use glam::{Mat4, Quat, Vec3};
 use voxy_render::archive_scene::*;
-use voxy_world::{BlockStateId, CollisionShape, ResourceKey, Sample, VoxelPos, VoxelView, World};
-#[derive(Clone, Debug)]
+use voxy_world::{
+    BlockStateId, CollisionShape, LocalPos, ResourceKey, Sample, VoxelPos, VoxelView, World,
+};
+#[derive(Debug)]
 struct Placement {
     root: VoxelPos,
     variant: usize,
@@ -10,20 +12,12 @@ struct Placement {
     active: bool,
     trunk_height: i64,
 }
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct NativePlants {
     placements: Vec<Placement>,
     by_variant: [Vec<usize>; 4],
     wood: BlockStateId,
     groups: usize,
-    seed: u64,
-    mesh_bounds: Vec<(Vec3, Vec3)>,
-}
-#[derive(Debug)]
-struct PlantAssets {
-    images: Vec<ArchiveImageSource>,
-    materials: Vec<ArchiveMaterialSource>,
-    geometry: Vec<ArchiveMeshSource>,
 }
 fn hash(mut x: u64) -> u64 {
     x = (x ^ (x >> 30)).wrapping_mul(0xbf58476d1ce4e5b9);
@@ -37,56 +31,8 @@ impl NativePlants {
         chunks: &[voxy_runtime::BootstrapChunk],
         seed: u64,
     ) -> Result<(Self, voxy_render::NativeVegetation), Box<dyn std::error::Error>> {
-        let PlantAssets {
-            images,
-            materials,
-            mut geometry,
-        } = Self::generate_assets(seed)?;
-        let (mut plants, bounds) = Self::placements(world, chunks, seed)?;
-        plants.mesh_bounds = geometry
-            .iter()
-            .map(|mesh| {
-                mesh.vertices.iter().fold(
-                    (Vec3::splat(f32::INFINITY), Vec3::splat(f32::NEG_INFINITY)),
-                    |(low, high), vertex| {
-                        let point = Vec3::from_array(vertex.position);
-                        (low.min(point), high.max(point))
-                    },
-                )
-            })
-            .collect();
-        let window = plants.vegetation_window(bounds)?;
-        for (mesh, instances) in geometry.iter_mut().zip(window.instances) {
-            mesh.instances = instances;
-        }
-        let gpu = voxy_render::NativeVegetation::new(
-            renderer.device(),
-            renderer.queue(),
-            renderer.surface_format(),
-            images,
-            materials,
-            geometry,
-            window.bounds,
-        )?;
-        println!(
-            "Native vegetation: {} seeded plants, 4 shared mesh variants",
-            plants.placements.len()
-        );
-        Ok((plants, gpu))
-    }
-
-    pub fn prepare_window(
-        &self,
-        world: &World,
-        chunks: &[voxy_runtime::BootstrapChunk],
-    ) -> Result<(Self, voxy_render::NativeVegetationWindow), Box<dyn std::error::Error>> {
-        let (mut plants, bounds) = Self::placements(world, chunks, self.seed)?;
-        plants.mesh_bounds.clone_from(&self.mesh_bounds);
-        let window = plants.vegetation_window(bounds)?;
-        Ok((plants, window))
-    }
-
-    fn generate_assets(seed: u64) -> Result<PlantAssets, Box<dyn std::error::Error>> {
+        let (plants, (low, high)) = Self::placements(world, chunks, seed)?;
+        let instances = plants.instances();
         let mut images = Vec::new();
         let mut materials = Vec::new();
         let mut geometry = Vec::new();
@@ -111,29 +57,29 @@ impl NativePlants {
                 }
                 materials.push(material);
             }
-            for mut mesh in asset.geometry {
-                mesh.instances.clear();
+            for (id, mut mesh) in asset.geometry.into_iter().enumerate() {
+                mesh.instances.clone_from(&instances[variant * 3 + id]);
                 mesh.material += material_offset;
                 geometry.push(mesh);
             }
         }
-        Ok(PlantAssets {
-            images,
-            materials,
-            geometry,
-        })
-    }
-
-    fn vegetation_window(
-        &self,
-        (mut low, mut high): (Vec3, Vec3),
-    ) -> Result<voxy_render::NativeVegetationWindow, Box<dyn std::error::Error>> {
-        let instances = self.instances();
-        if self.mesh_bounds.len() != instances.len() {
-            return Err("native vegetation group count changed".into());
-        }
-        for (&(min, max), group) in self.mesh_bounds.iter().zip(&instances) {
-            for instance in group {
+        // Derive shadow bounds from actual generated crowns, including transformed corners.
+        let mut low = low;
+        let mut high = high;
+        for mesh in &geometry {
+            let min = mesh
+                .vertices
+                .iter()
+                .fold(Vec3::splat(f32::INFINITY), |a, v| {
+                    a.min(Vec3::from_array(v.position))
+                });
+            let max = mesh
+                .vertices
+                .iter()
+                .fold(Vec3::splat(f32::NEG_INFINITY), |a, v| {
+                    a.max(Vec3::from_array(v.position))
+                });
+            for instance in &mesh.instances {
                 let world = Mat4::from_cols_array_2d(&instance.world);
                 for x in [min.x, max.x] {
                     for y in [min.y, max.y] {
@@ -146,10 +92,20 @@ impl NativePlants {
                 }
             }
         }
-        Ok(voxy_render::NativeVegetationWindow {
-            instances,
-            bounds: (low, high),
-        })
+        let gpu = voxy_render::NativeVegetation::new(
+            renderer.device(),
+            renderer.queue(),
+            renderer.surface_format(),
+            images,
+            materials,
+            geometry,
+            (low, high),
+        )?;
+        println!(
+            "Native vegetation: {} seeded plants, 4 shared mesh variants",
+            plants.placements.len()
+        );
+        Ok((plants, gpu))
     }
     fn placements(
         world: &World,
@@ -165,65 +121,65 @@ impl NativePlants {
         let mut high = Vec3::splat(f32::NEG_INFINITY);
         for chunk in chunks {
             let snapshot = world.chunk(chunk.pos).ok_or("missing native plant chunk")?;
-            let mut markers = Vec::new();
-            snapshot.data.blocks.visit_matching(&[wood], |index| {
-                let local = index.position();
-                if local.y() != 0 {
-                    markers.push(local);
+            for x in 0..32 {
+                for z in 0..32 {
+                    for y in 1..32 {
+                        let local = LocalPos::new(x, y, z)?;
+                        if snapshot.data.blocks.get(local.index()) != wood {
+                            continue;
+                        }
+                        let root = voxy_core::join_voxel(chunk.pos, local)?;
+                        let below = VoxelPos {
+                            y: root.y - 1,
+                            ..root
+                        };
+                        let Sample::Loaded(below) = world.sample(below) else {
+                            continue;
+                        };
+                        if below == wood
+                            || world
+                                .registry()
+                                .get(below)
+                                .is_none_or(|b| b.collision == CollisionShape::Empty)
+                        {
+                            continue;
+                        }
+                        let mut height = 0;
+                        while matches!(world.sample(VoxelPos{y:root.y+height,..root}),Sample::Loaded(b) if b==wood)
+                        {
+                            height += 1;
+                        }
+                        let tree = height >= 3;
+                        let h = hash(seed ^ hash(root.x as u64) ^ hash(root.z as u64));
+                        let variant = usize::from(!tree) * 2 + (h % 2) as usize;
+                        let size = if tree {
+                            height as f32 / 5.
+                        } else {
+                            0.7 + ((h >> 16) % 100) as f32 / 200.
+                        };
+                        let position = Vec3::new(
+                            root.x as f32 + 0.5,
+                            root.y as f32 - 0.03,
+                            root.z as f32 + 0.5,
+                        );
+                        let world = Mat4::from_scale_rotation_translation(
+                            Vec3::splat(size),
+                            Quat::from_rotation_y(
+                                (h >> 32) as f32 / u32::MAX as f32 * std::f32::consts::TAU,
+                            ),
+                            position,
+                        );
+                        low = low.min(position - Vec3::new(4., 0., 4.));
+                        high = high.max(position + Vec3::new(4., 9., 4.));
+                        placements.push(Placement {
+                            root,
+                            variant,
+                            transform: ArchiveInstance::new(world),
+                            active: true,
+                            trunk_height: height,
+                        });
+                    }
                 }
-            });
-            markers.sort_unstable_by_key(|local| (local.x(), local.z(), local.y()));
-            for local in markers {
-                let root = voxy_core::join_voxel(chunk.pos, local)?;
-                let below = VoxelPos {
-                    y: root.y - 1,
-                    ..root
-                };
-                let Sample::Loaded(below) = world.sample(below) else {
-                    continue;
-                };
-                if below == wood
-                    || world
-                        .registry()
-                        .get(below)
-                        .is_none_or(|b| b.collision == CollisionShape::Empty)
-                {
-                    continue;
-                }
-                let mut height = 0;
-                while matches!(world.sample(VoxelPos{y:root.y+height,..root}),Sample::Loaded(b) if b==wood)
-                {
-                    height += 1;
-                }
-                let tree = height >= 3;
-                let h = hash(seed ^ hash(root.x as u64) ^ hash(root.z as u64));
-                let variant = usize::from(!tree) * 2 + (h % 2) as usize;
-                let size = if tree {
-                    height as f32 / 5.
-                } else {
-                    0.7 + ((h >> 16) % 100) as f32 / 200.
-                };
-                let position = Vec3::new(
-                    root.x as f32 + 0.5,
-                    root.y as f32 - 0.03,
-                    root.z as f32 + 0.5,
-                );
-                let world = Mat4::from_scale_rotation_translation(
-                    Vec3::splat(size),
-                    Quat::from_rotation_y(
-                        (h >> 32) as f32 / u32::MAX as f32 * std::f32::consts::TAU,
-                    ),
-                    position,
-                );
-                low = low.min(position - Vec3::new(4., 0., 4.));
-                high = high.max(position + Vec3::new(4., 9., 4.));
-                placements.push(Placement {
-                    root,
-                    variant,
-                    transform: ArchiveInstance::new(world),
-                    active: true,
-                    trunk_height: height,
-                });
             }
         }
         if placements.is_empty() {
@@ -239,8 +195,6 @@ impl NativePlants {
             by_variant,
             wood,
             groups: 4,
-            seed,
-            mesh_bounds: Vec::new(),
         };
         Ok((plants, (low, high)))
     }

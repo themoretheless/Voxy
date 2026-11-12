@@ -24,279 +24,11 @@ pub struct BootstrapScene {
     pub world: World,
 }
 
-/// Generates additional chunks with the same backend, seed and vegetation
-/// rules used to initialize the world.
-pub struct BootstrapTerrainSource {
-    generator: Box<dyn ChunkGenerator>,
-    seed: WorldSeed,
-}
-
-impl std::fmt::Debug for BootstrapTerrainSource {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("BootstrapTerrainSource")
-            .field("generator", &self.generator.descriptor())
-            .field("seed", &self.seed)
-            .finish()
-    }
-}
-
-impl BootstrapTerrainSource {
-    /// Generate a chunk at its absolute world position.
-    ///
-    /// # Errors
-    /// Propagates cancellation and generation errors from the original backend.
-    pub fn generate(
-        &self,
-        pos: ChunkPos,
-        cancel: &CancelToken,
-    ) -> Result<GeneratedChunk, GenerationError> {
-        self.generator.generate(pos, self.seed, cancel)
-    }
-
-    /// Prepare a terrain window and its halo without changing the published world.
-    ///
-    /// # Errors
-    /// Returns invalid radius, coordinate, snapshot, generation or derivation failures.
-    pub fn prepare_window(
-        &self,
-        world: &World,
-        retained: &BTreeMap<ChunkPos, ChunkSnapshot>,
-        center: ChunkPos,
-        radius: i32,
-        derivation_epoch: u64,
-        cancel: &CancelToken,
-    ) -> Result<PreparedTerrainWindow, BootstrapError> {
-        self.generate_window(world, retained, center, radius, cancel)?
-            .derive_cancellable(world, retained, derivation_epoch, cancel)
-    }
-
-    /// Generate only chunks absent from both the world and retained snapshots.
-    ///
-    /// # Errors
-    /// Reports invalid coordinates, radius, cancellation, or backend failures.
-    pub fn generate_window(
-        &self,
-        world: &World,
-        retained: &BTreeMap<ChunkPos, ChunkSnapshot>,
-        center: ChunkPos,
-        radius: i32,
-        cancel: &CancelToken,
-    ) -> Result<GeneratedTerrainWindow, BootstrapError> {
-        let (visible, halo) = terrain_window_positions(center, radius)?;
-        let mut generated = BTreeMap::new();
-        for &pos in &halo {
-            if world.chunk(pos).is_none() && !retained.contains_key(&pos) {
-                let chunk = self.generate(pos, cancel)?;
-                if chunk.pos != pos {
-                    return Err(GenerationError::InvalidGeneratedChunk.into());
-                }
-                generated.insert(pos, chunk);
-            }
-        }
-        Ok(GeneratedTerrainWindow {
-            visible,
-            halo,
-            generated,
-        })
-    }
-}
-
-pub(crate) fn terrain_window_positions(
-    center: ChunkPos,
-    radius: i32,
-) -> Result<(Vec<ChunkPos>, BTreeSet<ChunkPos>), BootstrapError> {
-    if !(0..=MAX_BOOTSTRAP_RADIUS).contains(&radius) {
-        return Err(BootstrapError::InvalidRadius(radius));
-    }
-    let radius = i64::from(radius);
-    let mut visible = Vec::new();
-    let mut halo = std::collections::BTreeSet::new();
-    for dy in -1..=1 {
-        for dz in -(radius + 1)..=radius + 1 {
-            for dx in -(radius + 1)..=radius + 1 {
-                let pos = ChunkPos {
-                    x: center
-                        .x
-                        .checked_add(dx)
-                        .ok_or(GenerationError::CoordinateOverflow)?,
-                    y: center
-                        .y
-                        .checked_add(dy)
-                        .ok_or(GenerationError::CoordinateOverflow)?,
-                    z: center
-                        .z
-                        .checked_add(dz)
-                        .ok_or(GenerationError::CoordinateOverflow)?,
-                };
-                halo.insert(pos);
-                if dy == 0 && dx.abs() <= radius && dz.abs() <= radius {
-                    visible.push(pos);
-                }
-            }
-        }
-    }
-    Ok((visible, halo))
-}
-
-#[derive(Debug)]
-pub struct GeneratedTerrainWindow {
-    visible: Vec<ChunkPos>,
-    halo: std::collections::BTreeSet<ChunkPos>,
-    generated: BTreeMap<ChunkPos, GeneratedChunk>,
-}
-
-impl GeneratedTerrainWindow {
-    /// Combine generated chunks with current resident data and retained edits.
-    ///
-    /// # Errors
-    /// Rejects missing or invalid snapshots and failures during derivation.
-    pub fn derive(
-        &self,
-        world: &World,
-        retained: &BTreeMap<ChunkPos, ChunkSnapshot>,
-        derivation_epoch: u64,
-    ) -> Result<PreparedTerrainWindow, BootstrapError> {
-        self.derive_reusing(world, retained, derivation_epoch, &BTreeMap::new())
-    }
-
-    /// Derive terrain geometry and lighting with cancellation.
-    ///
-    /// # Errors
-    /// Rejects cancellation, invalid snapshots or failed derivation.
-    pub fn derive_cancellable(
-        &self,
-        world: &World,
-        retained: &BTreeMap<ChunkPos, ChunkSnapshot>,
-        derivation_epoch: u64,
-        cancel: &CancelToken,
-    ) -> Result<PreparedTerrainWindow, BootstrapError> {
-        self.derive_reusing_cancellable(world, retained, derivation_epoch, &BTreeMap::new(), cancel)
-    }
-
-    /// Reuse local meshes and lighting when the center and entire halo have the same revisions.
-    /// `existing` must contain results from the same world and registry.
-    ///
-    /// # Errors
-    /// Rejects missing or invalid snapshots and failures during derivation.
-    pub fn derive_reusing(
-        &self,
-        world: &World,
-        retained: &BTreeMap<ChunkPos, ChunkSnapshot>,
-        derivation_epoch: u64,
-        existing: &BTreeMap<ChunkPos, BootstrapChunk>,
-    ) -> Result<PreparedTerrainWindow, BootstrapError> {
-        self.derive_reusing_cancellable(
-            world,
-            retained,
-            derivation_epoch,
-            existing,
-            &CancelToken::new(),
-        )
-    }
-
-    /// Reuse matching geometry while allowing cancellation during derivation.
-    ///
-    /// # Errors
-    /// Rejects cancellation, invalid snapshots or failed derivation.
-    pub fn derive_reusing_cancellable(
-        &self,
-        world: &World,
-        retained: &BTreeMap<ChunkPos, ChunkSnapshot>,
-        derivation_epoch: u64,
-        existing: &BTreeMap<ChunkPos, BootstrapChunk>,
-        token: &CancelToken,
-    ) -> Result<PreparedTerrainWindow, BootstrapError> {
-        if token.is_cancelled() {
-            return Err(GenerationError::Cancelled.into());
-        }
-        let evict = world
-            .resident_chunk_positions()
-            .filter(|pos| !self.halo.contains(pos))
-            .collect::<Vec<_>>();
-        let mut restore = Vec::new();
-        let mut generate = Vec::new();
-        for &pos in &self.halo {
-            if world.chunk(pos).is_some() {
-                continue;
-            }
-            if let Some(snapshot) = retained.get(&pos) {
-                if snapshot.pos != pos {
-                    return Err(BootstrapError::MissingGeneratedChunk);
-                }
-                restore.push(snapshot.clone());
-            } else {
-                generate.push(
-                    self.generated
-                        .get(&pos)
-                        .cloned()
-                        .ok_or(BootstrapError::MissingGeneratedChunk)?,
-                );
-            }
-        }
-        let mut world = world.clone();
-        let evicted = world.replace_resident_generated_chunks(&evict, &restore, generate)?;
-        let registry = world.registry_handle();
-        let mut scratch = LightingScratch::new();
-        let mut chunks = Vec::with_capacity(self.visible.len());
-        let mut reused_chunks = 0;
-        for &pos in &self.visible {
-            if token.is_cancelled() {
-                return Err(GenerationError::Cancelled.into());
-            }
-            let center = world
-                .chunk(pos)
-                .ok_or(BootstrapError::MissingGeneratedChunk)?;
-            let mut fetch = |neighbor| world.chunk(neighbor);
-            let stamp = local_mesh_stamp(pos, center.revision, derivation_epoch, &mut fetch);
-            if let Some(chunk) = existing.get(&pos)
-                && let Some(previous) = &chunk.local_mesh_stamp
-                && previous.center == stamp.center
-                && previous.halo == stamp.halo
-                && previous.registry_epoch == stamp.registry_epoch
-            {
-                let mut chunk = chunk.clone();
-                chunk.local_mesh_stamp = Some(stamp);
-                chunk.light.stamp.lighting_epoch = derivation_epoch;
-                chunks.push(chunk);
-                reused_chunks += 1;
-            } else {
-                chunks.push(derive_bootstrap_chunk(
-                    pos,
-                    center,
-                    &registry,
-                    derivation_epoch,
-                    token,
-                    &mut scratch,
-                    fetch,
-                )?);
-            }
-        }
-        chunks.sort_by_key(|chunk| chunk.pos);
-        Ok(PreparedTerrainWindow {
-            world,
-            chunks,
-            reused_chunks,
-            evicted,
-            restored: restore.into_iter().map(|chunk| chunk.pos).collect(),
-        })
-    }
-}
-
-#[derive(Debug)]
-pub struct PreparedTerrainWindow {
-    pub world: World,
-    pub chunks: Vec<BootstrapChunk>,
-    pub reused_chunks: usize,
-    pub evicted: Vec<ChunkSnapshot>,
-    pub restored: Vec<ChunkPos>,
-}
-
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BootstrapChunk {
     pub pos: ChunkPos,
     pub mesh: ChunkMesh,
     pub light: LightVolume,
-    local_mesh_stamp: Option<MeshStamp>,
 }
 
 /// Builds a renderer-neutral, halo-correct square of generated chunks.
@@ -329,7 +61,7 @@ pub fn build_generated_scene(
         BlockStateId,
     ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
 ) -> Result<BootstrapScene, BootstrapError> {
-    build_streamable_generated_scene(seed, radius, false, factory).map(|(scene, _)| scene)
+    build_scene_using_generator(seed, radius, true, false, factory)
 }
 
 /// Keeps seeded plant blocks as gameplay markers while rendering them through native meshes.
@@ -343,23 +75,7 @@ pub fn build_generated_scene_with_mesh_plants(
         BlockStateId,
     ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
 ) -> Result<BootstrapScene, BootstrapError> {
-    build_streamable_generated_scene(seed, radius, true, factory).map(|(scene, _)| scene)
-}
-
-/// Builds procedural terrain and retains its exact generator for later residency changes.
-///
-/// # Errors
-/// Returns the same bounded failures as `build_generated_scene`.
-pub fn build_streamable_generated_scene(
-    seed: u64,
-    radius: i32,
-    mesh_plants: bool,
-    factory: impl FnOnce(
-        TerrainPalette,
-        BlockStateId,
-    ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
-) -> Result<(BootstrapScene, BootstrapTerrainSource), BootstrapError> {
-    build_scene_using_generator(seed, radius, true, mesh_plants, factory)
+    build_scene_using_generator(seed, radius, true, true, factory)
 }
 
 /// Builds a multi-layer vertical procedural scene across `y_min..=y_max` with halo chunks
@@ -472,7 +188,6 @@ fn build_scene(seed: u64, radius: i32, procedural: bool) -> Result<BootstrapScen
             Box::new(SimpleTerrainGenerator::new(palette, 7, 8)) as Box<dyn ChunkGenerator>
         })
     })
-    .map(|(scene, _)| scene)
 }
 
 #[expect(
@@ -488,7 +203,7 @@ fn build_scene_using_generator(
         TerrainPalette,
         BlockStateId,
     ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
-) -> Result<(BootstrapScene, BootstrapTerrainSource), BootstrapError> {
+) -> Result<BootstrapScene, BootstrapError> {
     if !(0..=MAX_BOOTSTRAP_RADIUS).contains(&radius) {
         return Err(BootstrapError::InvalidRadius(radius));
     }
@@ -529,10 +244,6 @@ fn build_scene_using_generator(
     } else {
         base
     };
-    let source = BootstrapTerrainSource {
-        generator,
-        seed: WorldSeed(seed),
-    };
     let grass = registry
         .find(&ResourceKey::parse("voxy:grass")?)
         .ok_or(BootstrapError::MissingBuiltin)?;
@@ -545,7 +256,7 @@ fn build_scene_using_generator(
         for z in -(radius + 1)..=(radius + 1) {
             for x in -(radius + 1)..=(radius + 1) {
                 let pos = ChunkPos { x, y, z };
-                let mut generated = source.generate(pos, &token)?;
+                let mut generated = generator.generate(pos, WorldSeed(seed), &token)?;
                 if !procedural && pos == ChunkPos::default() {
                     let mut updates = Vec::new();
                     for x in 12..=20 {
@@ -563,7 +274,10 @@ fn build_scene_using_generator(
                     ChunkSnapshot {
                         pos,
                         revision: ChunkRevision::default(),
-                        data: Arc::new(generated.data),
+                        data: Arc::new(ChunkData {
+                            blocks: generated.data.blocks,
+                            block_data: BTreeMap::new(),
+                        }),
                     },
                 );
             }
@@ -601,14 +315,11 @@ fn build_scene_using_generator(
             data: (*snapshot.data).clone(),
         })?;
     }
-    Ok((
-        BootstrapScene {
-            anchor: ChunkPos { x: 0, y: 0, z: 0 },
-            chunks,
-            world,
-        },
-        source,
-    ))
+    Ok(BootstrapScene {
+        anchor: ChunkPos { x: 0, y: 0, z: 0 },
+        chunks,
+        world,
+    })
 }
 
 fn add_lcd_tree(
@@ -881,40 +592,10 @@ pub fn rebuild_vertical_chunks_from_snapshots(
         let light = solved_lights
             .remove(&pos)
             .ok_or(BootstrapError::MissingGeneratedChunk)?;
-        chunks.push(BootstrapChunk {
-            pos,
-            mesh,
-            light,
-            local_mesh_stamp: None,
-        });
+        chunks.push(BootstrapChunk { pos, mesh, light });
     }
     chunks.sort_by_key(|chunk| chunk.pos);
     Ok(chunks)
-}
-
-fn halo_position(pos: ChunkPos, index: usize) -> ChunkPos {
-    let offset = HALO_OFFSETS[index];
-    ChunkPos {
-        x: pos.x + i64::from(offset.dx),
-        y: pos.y + i64::from(offset.dy),
-        z: pos.z + i64::from(offset.dz),
-    }
-}
-
-fn local_mesh_stamp(
-    pos: ChunkPos,
-    center: ChunkRevision,
-    epoch: u64,
-    fetch: &mut impl FnMut(ChunkPos) -> Option<ChunkSnapshot>,
-) -> MeshStamp {
-    MeshStamp {
-        center,
-        halo: std::array::from_fn(|index| {
-            fetch(halo_position(pos, index)).map(|chunk| chunk.revision)
-        }),
-        registry_epoch: 1,
-        mesher_epoch: epoch,
-    }
 }
 
 fn derive_bootstrap_chunk(
@@ -974,31 +655,33 @@ fn derive_bootstrap_chunk(
         token,
         light_scratch,
     )?;
-    let neighbors = std::array::from_fn(|index| fetch_chunk(halo_position(pos, index)));
-    let stamp = MeshStamp {
-        center: center_revision,
-        halo: neighbors
-            .each_ref()
-            .map(|snapshot| snapshot.as_ref().map(|snapshot| snapshot.revision)),
-        registry_epoch: 1,
-        mesher_epoch: derivation_epoch,
-    };
+    let neighbors = std::array::from_fn(|index| {
+        let offset = HALO_OFFSETS[index];
+        fetch_chunk(ChunkPos {
+            x: pos.x + i64::from(offset.dx),
+            y: pos.y + i64::from(offset.dy),
+            z: pos.z + i64::from(offset.dz),
+        })
+    });
+    let halo = neighbors
+        .each_ref()
+        .map(|snapshot| snapshot.as_ref().map(|snapshot| snapshot.revision));
     let mesh = build_mesh(
         &MeshingInput {
             center,
             neighbors,
             registry: Arc::clone(registry),
-            stamp: stamp.clone(),
+            stamp: MeshStamp {
+                center: center_revision,
+                halo,
+                registry_epoch: 1,
+                mesher_epoch: derivation_epoch,
+            },
         },
         token,
     )
     .map_err(BootstrapError::Mesh)?;
-    Ok(BootstrapChunk {
-        pos,
-        mesh,
-        light,
-        local_mesh_stamp: Some(stamp),
-    })
+    Ok(BootstrapChunk { pos, mesh, light })
 }
 
 /// Chunks whose derived light or mesh can differ after `receipt` was committed.
@@ -1184,135 +867,6 @@ impl From<voxy_core::InvalidLocalPos> for BootstrapError {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn shifted_window_reuses_only_unchanged_halos() {
-        let (mut scene, source) =
-            build_streamable_generated_scene(19, 1, true, |palette, water| {
-                Ok(Box::new(ProceduralTerrainGenerator::new(palette, water)))
-            })
-            .unwrap();
-        let existing = scene
-            .chunks
-            .into_iter()
-            .map(|chunk| (chunk.pos, chunk))
-            .collect();
-        let center = ChunkPos {
-            x: 1,
-            ..scene.anchor
-        };
-        let retained = BTreeMap::new();
-        let cancel = CancelToken::new();
-        let shifted = |world: &World| {
-            source
-                .generate_window(world, &retained, center, 1, &cancel)
-                .unwrap()
-                .derive_reusing(world, &retained, 2, &existing)
-                .unwrap()
-        };
-        let unchanged = shifted(&scene.world);
-        assert_eq!(unchanged.reused_chunks, 6);
-        let stone = scene
-            .world
-            .registry()
-            .find(&ResourceKey::parse("voxy:stone").unwrap())
-            .unwrap();
-        scene
-            .world
-            .commit(voxy_world::EditTxn {
-                source: voxy_world::EditSource::Editor,
-                expected: vec![],
-                writes: vec![voxy_world::VoxelWrite {
-                    pos: voxy_core::VoxelPos { x: 0, y: 31, z: 0 },
-                    block: stone,
-                }],
-            })
-            .unwrap();
-        let edited = shifted(&scene.world);
-        assert!(edited.reused_chunks < unchanged.reused_chunks);
-        let cold = source
-            .prepare_window(&scene.world, &retained, center, 1, 2, &cancel)
-            .unwrap();
-        assert_eq!(edited.chunks, cold.chunks);
-    }
-
-    #[test]
-    fn retained_terrain_source_reproduces_bootstrap_chunks() {
-        let (mut scene, source) =
-            build_streamable_generated_scene(19, 0, true, |palette, water| {
-                Ok(Box::new(ProceduralTerrainGenerator::new(palette, water)))
-            })
-            .unwrap();
-        let cancel = CancelToken::new();
-        for pos in [
-            scene.anchor,
-            ChunkPos {
-                x: -1,
-                ..scene.anchor
-            },
-        ] {
-            let generated = source.generate(pos, &cancel).unwrap();
-            assert_eq!(generated.pos, pos);
-            assert_eq!(
-                generated.data.blocks,
-                scene.world.chunk(pos).unwrap().data.blocks
-            );
-        }
-        let center = ChunkPos {
-            x: 3,
-            ..scene.anchor
-        };
-        let generated = source
-            .generate_window(&scene.world, &BTreeMap::new(), center, 0, &cancel)
-            .unwrap();
-        let stone = scene
-            .world
-            .registry()
-            .find(&ResourceKey::parse("voxy:stone").unwrap())
-            .unwrap();
-        scene
-            .world
-            .commit(voxy_world::EditTxn {
-                source: voxy_world::EditSource::Editor,
-                expected: vec![],
-                writes: vec![voxy_world::VoxelWrite {
-                    pos: voxy_core::VoxelPos { x: 0, y: 31, z: 0 },
-                    block: stone,
-                }],
-            })
-            .unwrap();
-        let cancelled = CancelToken::new();
-        cancelled.cancel();
-        assert!(matches!(
-            generated.derive_cancellable(&scene.world, &BTreeMap::new(), 2, &cancelled),
-            Err(BootstrapError::Generation(GenerationError::Cancelled))
-        ));
-        let shifted = generated.derive(&scene.world, &BTreeMap::new(), 2).unwrap();
-        assert_eq!(shifted.world.resident_chunk_positions().count(), 27);
-        assert_eq!(shifted.chunks[0].pos, center);
-        assert!(shifted.world.chunk(scene.anchor).is_none());
-        let original = scene.world.chunk(scene.anchor).unwrap();
-        let archive = crate::TerrainArchive::new().unwrap();
-        assert!(
-            archive
-                .load_window(&shifted.world, scene.anchor, 0)
-                .is_err()
-        );
-        archive
-            .save_evictions(&shifted.world, &shifted.evicted)
-            .unwrap();
-        let retained = archive
-            .load_window(&shifted.world, scene.anchor, 0)
-            .unwrap();
-        assert_eq!(retained.len(), 1);
-        let returned = source
-            .prepare_window(&shifted.world, &retained, scene.anchor, 0, 3, &cancel)
-            .unwrap();
-        let restored = returned.world.chunk(scene.anchor).unwrap();
-        assert_eq!(restored.data.blocks, original.data.blocks);
-        assert!(restored.revision > original.revision);
-        assert!(returned.restored.contains(&scene.anchor));
-    }
 
     #[test]
     fn bootstrap_scene_is_deterministic_and_nonempty() {

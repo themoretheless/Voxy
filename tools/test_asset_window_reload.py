@@ -13,8 +13,6 @@ def main():
     repo = pathlib.Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=pathlib.Path, default=repo / "target/debug/examples/asset_window")
-    parser.add_argument("--fixture", type=pathlib.Path, default=repo / "crates/voxy_render/examples/assets/quad.obj",
-                        help="OBJ fixture with first vertex x=-0.5 for reload assertions")
     parser.add_argument("--manifest", action="store_true", help="Verify stable logical identity across source rename")
     parser.add_argument("--app", action="store_true", help="Exercise the standalone voxy_editor model modes (--model / --model-manifest)")
     parser.add_argument("--editor-checks", action="store_true", help="Require native authoring deletion and instance acceptance checks")
@@ -22,7 +20,7 @@ def main():
     args = parser.parse_args()
     if args.app and args.binary == repo / "target/debug/examples/asset_window":
         args.binary = repo / "target/debug/voxy_editor"
-    original = args.fixture.read_text()
+    original = (repo / "crates/voxy_render/examples/assets/quad.obj").read_text()
     with tempfile.TemporaryDirectory(prefix="voxy-window-reload-") as directory:
         model = pathlib.Path(directory) / "quad.obj"
         model.write_text(original)

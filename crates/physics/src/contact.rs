@@ -677,7 +677,7 @@ fn solve_normal_network_constraints_with_bounds(
 use crate::math::cross;
 use crate::math::dot;
 use crate::math::sub;
-pub(crate) use reaction::{resolve_rate_from_baseline, resolve_rate_from_baseline_mixed_interval};
+pub(crate) use reaction::{resolve_rate_from_baseline, resolve_rate_from_baseline_interval};
 
 /// Evaluates the non-linear Hertz–Mindlin elastic sphere-sphere contact normal force,
 /// normal tangent stiffness, and Mindlin no-slip tangential stiffness `(f_normal, k_normal, k_tangent)`

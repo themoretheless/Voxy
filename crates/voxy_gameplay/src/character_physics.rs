@@ -329,19 +329,6 @@ impl CharacterPhysics {
     }
 
     fn validate_descriptors(&self, scene: &SceneGraph) -> Result<(), PhysicsError> {
-        for (owner, destination) in scene.components::<crate::NpcDestination>() {
-            if scene.component::<CharacterBody>(owner)?.is_none() {
-                return Err(PhysicsError::InvalidMotion);
-            }
-            destination.validate()?;
-        }
-
-        for (owner, _) in scene.components::<crate::NpcRoute>() {
-            if scene.component::<CharacterBody>(owner)?.is_none() {
-                return Err(PhysicsError::InvalidMotion);
-            }
-        }
-
         if scene.components::<CharacterBody>().count() > self.max_bodies
             || scene.components::<BoxCollider>().count() > self.max_colliders
         {
@@ -507,23 +494,6 @@ impl CharacterPhysics {
             velocity: glam::DVec3::from_array(runtime.state.velocity),
             grounded: runtime.state.grounded,
         }))
-    }
-
-    /// Whether the accepted controller state has reached the current route's final waypoint.
-    /// # Errors
-    /// Rejects a foreign scene or stale owner.
-    pub fn npc_route_completed(
-        &self,
-        scene: &SceneGraph,
-        owner: NodeId,
-    ) -> Result<bool, PhysicsError> {
-        let Some(route) = scene.component::<crate::NpcRoute>(owner)? else {
-            return Ok(false);
-        };
-        Ok(self.accepted_pose(scene, owner)?.is_some()
-            && self.states[&owner]
-                .navigation
-                .is_some_and(|cursor| route.completed(cursor)))
     }
 
     /// Advances all active bodies using named input. All bodies and scene edits
@@ -983,7 +953,7 @@ impl CharacterPhysics {
             .map(|(owner, _)| owner)
             .collect();
 
-        let ([dir_x, dir_z], player_jump) = self.read_player_input(input);
+        let ([dir_x, dir_z], jump_pressed) = self.read_player_input(input);
         let token = scene.change_token();
         if self.cached_static_world.as_ref().map(|(t, _)| *t) != Some(token) {
             self.cached_static_world = Some((token, static_world(scene)?));
@@ -1044,23 +1014,6 @@ impl CharacterPhysics {
                     convex::recover_affine(&mut recovered, runtime.edges, shapes)?;
                     relocate(runtime, recovered, *descriptor);
                 }
-                let route = scene.component::<crate::NpcRoute>(owner)?;
-                let (planar_velocity, jump_pressed) = if let Some(route) = route {
-                    let (cursor, velocity) = route.steering(
-                        runtime.navigation,
-                        precise_center(runtime.state.body),
-                        descriptor.speed,
-                        dt,
-                    )?;
-                    runtime.navigation = Some(cursor);
-                    (velocity, false)
-                } else {
-                    runtime.navigation = None;
-                    (
-                        [dir_x * descriptor.speed, dir_z * descriptor.speed],
-                        player_jump,
-                    )
-                };
                 let config = CharacterConfig {
                     gravity: descriptor.gravity,
                     jump_speed: descriptor.jump_speed,
@@ -1086,7 +1039,7 @@ impl CharacterPhysics {
                         runtime,
                         *descriptor,
                         world,
-                        planar_velocity,
+                        [dir_x * descriptor.speed, dir_z * descriptor.speed],
                         jump_pressed,
                         dt,
                         |segment, end| {
@@ -1099,7 +1052,7 @@ impl CharacterPhysics {
                         world,
                         &mut runtime.state,
                         CharacterInput {
-                            planar_velocity,
+                            planar_velocity: [dir_x * descriptor.speed, dir_z * descriptor.speed],
                             jump_pressed,
                         },
                         dt,
@@ -1290,9 +1243,6 @@ impl CharacterPhysics {
                     });
                 }
                 let physical_center = precise_center(runtime.state.body);
-                if let (Some(route), Some(cursor)) = (route, &mut runtime.navigation) {
-                    route.advance(cursor, physical_center);
-                }
                 let extent = runtime
                     .edges
                     .iter()

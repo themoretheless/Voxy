@@ -109,8 +109,8 @@ impl UiTextPlan {
         project: &AuthoringProject,
     ) -> Result<voxy_assets::AssetImportWorker<UiTextPreparation>, EditorError> {
         let decoder_project = project.worker_project()?;
-        voxy_assets::AssetImportWorker::new_with_source_provider(
-            project.source_provider(),
+        voxy_assets::AssetImportWorker::new(
+            project.input_provider()?,
             9,
             16 * 1024 * 1024,
             move |_, _, inputs| {

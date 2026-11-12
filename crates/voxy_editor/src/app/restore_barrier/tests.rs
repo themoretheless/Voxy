@@ -69,30 +69,6 @@ fn coordinated_barrier_freezes_game_draw_and_retains_input_until_resume() {
     app.stop_workers().unwrap();
 }
 #[test]
-fn focus_loss_and_regain_during_restore_release_controls_after_the_barrier() {
-    let mut app = app();
-    app.toggle_play().unwrap();
-    app.play
-        .player_input
-        .event(voxy_gameplay::JUMP, 1.)
-        .unwrap();
-    let held = app.play.player_input.state("jump").unwrap();
-    assert!(held.held && held.pressed);
-
-    app.begin_restore_barrier(8 * 1024 * 1024).unwrap();
-    ready(&mut app);
-    app.set_game_focus(false);
-    app.set_game_focus(true);
-    assert_eq!(app.play.player_input.state("jump").unwrap(), held);
-    release(&mut app);
-
-    let released = app.play.player_input.state("jump").unwrap();
-    assert!(!released.held && !released.pressed && released.released);
-    assert!(app.play.player_input.checkpoint().focused);
-    app.stop_workers().unwrap();
-}
-
-#[test]
 fn acquisition_rejection_preserves_existing_fences_and_native_audio_mode() {
     let mut app = app();
     app.begin_model_checkpoint().unwrap();

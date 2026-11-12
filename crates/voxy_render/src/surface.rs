@@ -47,7 +47,6 @@ pub struct SceneSurface {
     state: SurfaceState,
     motion: Option<MotionTarget>,
     presented_frames: u64,
-    acquire_duration: Option<std::time::Duration>,
     pixel_probe: Option<(crate::HdrPixelProbe, [u32; 2], Option<u64>)>,
 }
 impl SceneSurface {
@@ -317,27 +316,9 @@ impl SceneSurface {
             state,
             motion: None,
             presented_frames: 0,
-            acquire_duration: None,
             pixel_probe: None,
         })
     }
-    /// Enables host timing of surface texture acquisition.
-    pub fn measure_surface_acquire(&mut self) {
-        self.acquire_duration = Some(std::time::Duration::ZERO);
-    }
-
-    /// Host time spent acquiring the last surface texture, when enabled.
-    pub fn surface_acquire_duration(&self) -> Option<std::time::Duration> {
-        self.acquire_duration
-    }
-
-    fn acquire_surface_texture(&mut self) -> wgpu::CurrentSurfaceTexture {
-        let started = self.acquire_duration.map(|_| std::time::Instant::now());
-        let acquired = self.surface.get_current_texture();
-        self.acquire_duration = started.map(|start| start.elapsed());
-        acquired
-    }
-
     /// Request one asynchronous pixel from the next successfully submitted frame.
     /// Opt-in diagnostics only; coordinates address physical surface pixels.
     /// Resize cancels pending probes. sRGB results are normalized storage values.
@@ -815,7 +796,7 @@ impl SceneSurface {
             .presented_frames
             .checked_add(1)
             .ok_or_else(|| E::from(RendererError::FrameIdExhausted))?;
-        let (frame, suboptimal) = match self.acquire_surface_texture() {
+        let (frame, suboptimal) = match self.surface.get_current_texture() {
             wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
             wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
             wgpu::CurrentSurfaceTexture::Lost => {

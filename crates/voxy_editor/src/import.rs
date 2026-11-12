@@ -1,9 +1,7 @@
 //! Project-scoped model import; external reads enter dependency observations.
 use crate::EditorError;
 use glam::{Mat4, Vec3};
-#[cfg(test)]
-use voxy_assets::FileInputs;
-use voxy_assets::{AssetId, ImportInputs, SourcePath};
+use voxy_assets::{AssetId, FileInputs, ImportInputs, SourcePath};
 use voxy_render::{
     ImageAsset, ObjAsset, ObjLimits, SceneMesh, TextureFilter, TextureSampling, TextureWrap,
 };
@@ -69,7 +67,7 @@ pub(crate) struct EditorAsset {
 impl From<ObjAsset> for EditorAsset {
     fn from(value: ObjAsset) -> Self {
         Self {
-            mesh: value.mesh.with_prepared_upload_streams(),
+            mesh: value.mesh,
             lod: None,
             animated: None,
             skinned_lod: None,
@@ -90,12 +88,12 @@ fn external(source: &SourcePath, uri: &str) -> Result<AssetId, EditorError> {
     Ok(source.sibling(uri)?.observation_id())
 }
 fn observe(
-    read: &impl Fn(&AssetId, usize) -> Result<Vec<u8>, String>,
+    provider: &FileInputs,
     inputs: &mut ImportInputs,
     id: AssetId,
 ) -> Result<Vec<u8>, EditorError> {
     inputs
-        .read(id, |id, limit| read(id, limit.min(SOURCE_BYTES)))
+        .read(id, |id, limit| provider.read(id, limit.min(SOURCE_BYTES)))
         .map(|snapshot| snapshot.bytes.to_vec())
         .map_err(|e| format!("{e:?}"))
         .map_err(Into::into)
@@ -103,21 +101,12 @@ fn observe(
 /// Bounded import: static material nodes/textures or explicit skeletal/clip data
 /// through the renderer's model parser. Skeletal previews use the bind pose;
 /// unsupported material maps, morphs and interpolation reject in that parser.
-#[cfg(test)]
 pub(crate) fn load(
     source: &SourcePath,
     provider: &FileInputs,
     inputs: &mut ImportInputs,
 ) -> Result<EditorAsset, EditorError> {
-    load_from(source, &|id, limit| provider.read(id, limit), inputs)
-}
-
-pub(crate) fn load_from(
-    source: &SourcePath,
-    read: &impl Fn(&AssetId, usize) -> Result<Vec<u8>, String>,
-    inputs: &mut ImportInputs,
-) -> Result<EditorAsset, EditorError> {
-    let bytes = observe(read, inputs, source.observation_id())?;
+    let bytes = observe(provider, inputs, source.observation_id())?;
     let id = source.observation_id();
     let extension = std::path::Path::new(&id.0)
         .extension()
@@ -125,7 +114,7 @@ pub(crate) fn load_from(
         .unwrap_or("")
         .to_ascii_lowercase();
     if extension == "vmodel" {
-        return load_lod_model(source, read, inputs, &bytes);
+        return load_lod_model(source, provider, inputs, &bytes);
     }
     if extension == "obj" {
         return ObjAsset::parse(
@@ -144,7 +133,7 @@ pub(crate) fn load_from(
         return Err("expected OBJ, glTF, GLB or VMODEL".into());
     }
     match voxy_model::import_project_gltf(&bytes, |uri| {
-        observe(read, inputs, external(source, uri)?)
+        observe(provider, inputs, external(source, uri)?)
     })? {
         voxy_model::ImportedGltf::Static {
             mesh,
@@ -218,7 +207,7 @@ struct LodModelRecipe {
 }
 fn load_lod_model(
     source: &SourcePath,
-    read: &impl Fn(&AssetId, usize) -> Result<Vec<u8>, String>,
+    provider: &FileInputs,
     inputs: &mut ImportInputs,
     bytes: &[u8],
 ) -> Result<EditorAsset, EditorError> {
@@ -239,8 +228,8 @@ fn load_lod_model(
         return Err("LOD model base must be OBJ, glTF or GLB".into());
     }
     let base_source = SourcePath::new(base_id.0)?;
-    let mut asset = load_from(&base_source, read, inputs)?;
-    let certificate = observe(read, inputs, external(source, &recipe.certificate)?)?;
+    let mut asset = load(&base_source, provider, inputs)?;
+    let certificate = observe(provider, inputs, external(source, &recipe.certificate)?)?;
     let limits = voxy_render::LodArchiveLimits {
         bytes: 16 * 1024 * 1024,
         positions: 65_536,

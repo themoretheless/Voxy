@@ -23,7 +23,6 @@ voxy_animation = { path = "../voxy_animation" }
 voxy_model = { path = "../voxy_model" }
 voxy_input = { path = "../voxy_input" }
 voxy_gameplay = { path = "../voxy_gameplay" }
-voxy_player = { path = "../voxy_player" }
 serde.workspace = true
 serde_json.workspace = true
 js-sys = "0.3.104"

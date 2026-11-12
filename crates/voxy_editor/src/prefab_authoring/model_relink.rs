@@ -48,11 +48,7 @@ impl AuthoringProject {
         // Admit serialized limits before decoding, so a candidate can be published
         // with the original manifest encoder without dropping unrelated entries.
         locations.to_json(65536)?;
-        let model = crate::import::load_from(
-            source,
-            &|id, limit| self.provider.read(id, limit),
-            &mut inputs,
-        )?;
+        let model = crate::import::load(source, &self.provider, &mut inputs)?;
         let candidate = inputs
             .finish(model, |id, limit| self.provider.read(id, limit))
             .map_err(|e| format!("relink source changed: {e:?}"))?;

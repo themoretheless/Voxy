@@ -44,7 +44,6 @@ pub(crate) enum Action {
     Joint([u8; 32]),
     JointTarget([u8; 32]),
     JointKind([u8; 32]),
-    NpcDestination([u8; 32]),
     Field(usize),
     ResetField(usize),
     PreviewSeek,

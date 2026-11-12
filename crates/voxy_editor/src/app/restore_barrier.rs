@@ -17,8 +17,6 @@ pub(crate) struct RestoreBarrier {
     epoch: Arc<()>,
     phase: Phase,
     frozen: bool,
-    pending_focus: Option<bool>,
-    lost_focus: bool,
     models: bool,
     ui: bool,
     audio: bool,
@@ -35,33 +33,6 @@ impl App {
     pub(crate) fn restore_play_frozen(&self) -> bool {
         self.restore_barrier.as_ref().is_some_and(|b| b.frozen)
     }
-    pub(crate) fn set_game_focus(&mut self, focused: bool) {
-        if let Some(barrier) = self
-            .restore_barrier
-            .as_mut()
-            .filter(|barrier| barrier.frozen)
-        {
-            barrier.pending_focus = Some(focused);
-            barrier.lost_focus |= !focused;
-            return;
-        }
-        self.play.player_input.set_focused(focused);
-        if !focused {
-            self.game_ui_input.cancel();
-        }
-    }
-
-    fn finish_restore_barrier(&mut self) {
-        if let Some(barrier) = self.restore_barrier.take() {
-            if barrier.lost_focus {
-                self.set_game_focus(false);
-            }
-            if barrier.pending_focus == Some(true) {
-                self.set_game_focus(true);
-            }
-        }
-    }
-
     pub(crate) fn begin_restore_barrier(
         &mut self,
         max_audio_bytes: usize,
@@ -83,8 +54,6 @@ impl App {
             epoch: Arc::new(()),
             phase: Phase::Draining,
             frozen: false,
-            pending_focus: None,
-            lost_focus: false,
             models: true,
             ui: true,
             audio: false,
@@ -199,7 +168,7 @@ impl App {
             return Ok(false);
         }
         let frozen = state.frozen;
-        self.finish_restore_barrier();
+        self.restore_barrier = None;
         // Paused wall time must not turn into catch-up ticks on cancellation.
         if frozen {
             self.play.simulation_time = Instant::now();
@@ -252,7 +221,6 @@ pub(crate) struct CoordinatedPrepare<'a> {
     pub behaviors: &'a voxy_scene::BehaviorCheckpointRegistry,
     pub ui_actions: &'a voxy_gameplay::UiActionCheckpointRegistry,
     pub root: &'a std::path::Path,
-    pub package: Option<Arc<voxy_assets::ResourcePackage>>,
     pub resources: crate::app::resource_checkpoint::RestoreLimits,
     pub play: crate::play_session::checkpoint::PlayCheckpointLimits,
     pub ui: crate::ui_live::checkpoint::UiLiveCheckpointLimits,
@@ -348,11 +316,10 @@ impl CoordinatedPlayCheckpoint {
         };
         let game = candidate.game.as_ref().unwrap();
         candidate.project = Some(
-            prefab_authoring::AuthoringProject::with_package(
+            prefab_authoring::AuthoringProject::with_registry(
                 options.root,
                 &game.resources.recipe,
                 options.registry.clone(),
-                options.package,
             )
             .map_err(|e| e.to_string())?,
         );

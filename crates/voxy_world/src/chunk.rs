@@ -298,45 +298,6 @@ impl PalettedBlocks {
         }
     }
 
-    /// Visits matching cells in ascending local-index order.
-    pub fn visit_matching(&self, blocks: &[BlockStateId], mut visit: impl FnMut(LocalIndex)) {
-        match self {
-            Self::Uniform(block) => {
-                if blocks.contains(block) {
-                    LocalIndex::all().for_each(visit);
-                }
-            }
-            Self::Packed {
-                bits_per_index,
-                palette,
-                words,
-            } => {
-                let mut matching = [false; MAX_PALETTE];
-                let mut found = false;
-                for (slot, block) in palette.iter().enumerate() {
-                    matching[slot] = blocks.contains(block);
-                    found |= matching[slot];
-                }
-                if found {
-                    let mut indices = LocalIndex::all();
-                    for_each_packed(words, *bits_per_index, |slot| {
-                        let index = indices.next().expect("packed cell count");
-                        if matching[slot] {
-                            visit(index);
-                        }
-                    });
-                }
-            }
-            Self::Direct(cells) => {
-                for (index, block) in LocalIndex::all().zip(cells.iter()) {
-                    if blocks.contains(block) {
-                        visit(index);
-                    }
-                }
-            }
-        }
-    }
-
     /// Counts occurrences of `block` across all `32³` cells without allocating a dense copy.
     #[must_use]
     pub fn count_block(&self, block: BlockStateId) -> usize {
@@ -1055,25 +1016,6 @@ mod tests {
                 );
                 assert_eq!(*seen, expected, "bits {bits} cell {cell}");
             }
-        }
-    }
-
-    #[test]
-    fn matching_cells_preserve_dense_order_for_every_encoding() {
-        for states in [1, 5, 257] {
-            let dense = (0..CHUNK_VOLUME)
-                .map(|index| id((index % states) as u32))
-                .collect::<Vec<_>>();
-            let blocks = PalettedBlocks::from_dense(dense.clone()).unwrap();
-            let targets = [id(0), id(3), id(256)];
-            let expected = LocalIndex::all()
-                .zip(dense.iter())
-                .filter_map(|(index, block)| targets.contains(block).then_some(index))
-                .collect::<Vec<_>>();
-            let mut actual = Vec::new();
-            blocks.visit_matching(&targets, |index| actual.push(index));
-            assert_eq!(actual, expected);
-            blocks.visit_matching(&[id(300)], |_| panic!("absent block matched"));
         }
     }
 

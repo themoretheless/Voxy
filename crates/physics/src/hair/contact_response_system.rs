@@ -56,41 +56,13 @@ mod tests {
                 panic!("unexpected structural backend")
             }
             fn joint_contact_expanded_enabled(&self) -> bool {
-                self.mode != 4
-            }
-            fn joint_contact_expanded_fallback_enabled(&self) -> bool {
-                self.mode == 4
-            }
-            fn solve_joint_coordinate_candidates(
-                &mut self,
-                requests: &[crate::hair::HairContactCoordinateRequest<'_>],
-            ) -> Option<Vec<Option<(Vec<f64>, Vec<f64>)>>> {
-                assert_eq!(self.mode, 4);
-                assert_eq!(requests.len(), 3);
-                Some(
-                    requests
-                        .iter()
-                        .enumerate()
-                        .map(|(i, r)| {
-                            (i != self.rejected).then(|| {
-                                let mut coordinates = vec![0.; 18];
-                                coordinates[6] = r.bounds[0];
-                                (coordinates, vec![r.bounds[0]])
-                            })
-                        })
-                        .collect(),
-                )
+                true
             }
             fn solve_joint_expanded_candidates(
                 &mut self,
                 requests: &[HairExpandedCoordinateRequest<'_>],
             ) -> Option<Vec<Option<(Vec<C>, Vec<f64>)>>> {
-                if self.mode == 4 {
-                    assert_eq!(requests.len(), 1);
-                    assert_eq!(requests[0].bounds, [self.rejected as f64 + 1.]);
-                } else {
-                    assert_eq!(requests.len(), 3);
-                }
+                assert_eq!(requests.len(), 3);
                 if self.mode == 3 {
                     return Some(Vec::new());
                 }
@@ -133,7 +105,7 @@ mod tests {
         let refs = joints.iter().collect::<Vec<_>>();
         let loads = bounds.iter().map(<[f64; 1]>::as_slice).collect::<Vec<_>>();
         for rejected in 0..3 {
-            for mode in [0, 1, 2, 4] {
+            for mode in 0..3 {
                 let mut backend = Backend { rejected, mode };
                 let mut seeds = vec![vec![]; 3];
                 let result = PreparedNativeJoint::solve_accelerated_batch(
@@ -147,7 +119,7 @@ mod tests {
                 for (i, (response, reactions, accelerated)) in result.iter().enumerate() {
                     assert_eq!(
                         *accelerated,
-                        mode == 4 || i != rejected,
+                        i != rejected,
                         "operator={i} rejected={rejected} mode={mode}"
                     );
                     HairResponseSystem::validate_joint_solution(
@@ -881,17 +853,6 @@ impl HairResponseSystem {
     ) -> Option<Vec<(Vec<f64>, Vec<f64>)>> {
         square_root_qr::unilateral_batch_with_proposals(requests, &mut equality)
     }
-    /// Preserve independently successful candidates when a sibling fails a cold solve.
-    /// Invalid input or an invalid backend batch still rejects the whole call.
-    pub fn solve_contact_coordinate_candidates_with_proposals(
-        requests: &[HairContactCoordinateRequest<'_>],
-        mut equality: impl FnMut(
-            &[HairContactEqualityRequest<'_>],
-        ) -> Option<Vec<Option<HairContactEqualityProposal>>>,
-    ) -> Option<Vec<Option<(Vec<f64>, Vec<f64>)>>> {
-        square_root_qr::unilateral_batch_candidates(requests, &mut equality, true)
-    }
-
     /// Try an accelerator in whitened coordinates through the original physical
     /// owner, including defect correction. Any rejected candidate falls back to
     /// the canonical native solver from the unchanged operator and bounds.
@@ -912,9 +873,7 @@ impl HairResponseSystem {
         tolerance: f64,
         backend: &mut dyn super::HairLinearSolver,
     ) -> Result<(Vec<Vec<f64>>, Vec<f64>, bool), &'static str> {
-        if !backend.joint_contact_expanded_enabled()
-            && !backend.joint_contact_expanded_fallback_enabled()
-        {
+        if !backend.joint_contact_expanded_enabled() {
             return Err("expanded contact backend disabled");
         }
         let prepared = PreparedNativeJoint::new(requests, bounds, tolerance)?;
@@ -1441,23 +1400,6 @@ impl HairResponseSystem {
 
 // Borrowing requests keeps matrices, DOF ownership and exact original loads
 // immutable for every reuse. Each solve still admits fresh original bounds.
-fn expanded_trial(
-    (coordinates, reactions): (Vec<super::HairResponseCoefficient>, Vec<f64>),
-) -> (
-    Vec<f64>,
-    Vec<f64>,
-    Option<Vec<super::HairResponseCoefficient>>,
-) {
-    let preview = coordinates
-        .iter()
-        .map(|v| {
-            let [hi, lo] = v.parts();
-            hi + lo
-        })
-        .collect();
-    (preview, reactions, Some(coordinates))
-}
-
 pub(super) struct PreparedNativeJoint<'a> {
     requests: &'a [HairResponseSystem],
     factors: Vec<Vec<f64>>,
@@ -1609,21 +1551,29 @@ impl<'a> PreparedNativeJoint<'a> {
             return Err("invalid joint square-root coordinate map");
         }
         let expanded_columns = if backend.joint_contact_expanded_enabled() {
-            Some(
-                joints
-                    .iter()
-                    .map(|joint| joint.expanded_operator_columns())
-                    .collect::<Result<Vec<_>, _>>()?,
-            )
+            let mut owners = Vec::with_capacity(joints.len());
+            for joint in joints {
+                let mut columns = vec![Vec::new(); joint.columns.len()];
+                for (request, factor) in joint.requests.iter().zip(&joint.factors) {
+                    for (row, load) in request.loads.iter().enumerate() {
+                        let mut values = load
+                            .iter()
+                            .map(|&v| super::HairResponseCoefficient::from_f64(v))
+                            .collect::<Result<Vec<_>, _>>()?;
+                        super::contact_expanded::lower(
+                            factor,
+                            &mut values,
+                            request.system.active.clone(),
+                        )?;
+                        columns[row].extend(values);
+                    }
+                }
+                owners.push(columns);
+            }
+            Some(owners)
         } else {
             None
         };
-        let mut fallback_columns = Vec::new();
-        let use_expanded_fallback =
-            expanded_columns.is_none() && backend.joint_contact_expanded_fallback_enabled();
-        if use_expanded_fallback {
-            fallback_columns.resize_with(joints.len(), || None);
-        }
         let mut effective: Vec<_> = bounds.iter().map(|b| b.to_vec()).collect();
         let mut defect_history: Vec<_> =
             if std::env::var("VOXY_HAIR_SAFEGUARDED_PHYSICAL_DEFECT").as_deref() == Ok("1") {
@@ -1688,54 +1638,20 @@ impl<'a> PreparedNativeJoint<'a> {
                     .map(|proposals| {
                         proposals
                             .into_iter()
-                            .map(|candidate| candidate.map(expanded_trial))
+                            .map(|candidate| {
+                                candidate.map(|(coordinates, reactions)| {
+                                    let preview = coordinates
+                                        .iter()
+                                        .map(|v| {
+                                            let [hi, lo] = v.parts();
+                                            hi + lo
+                                        })
+                                        .collect();
+                                    (preview, reactions, Some(coordinates))
+                                })
+                            })
                             .collect::<Vec<_>>()
                     })
-            } else if use_expanded_fallback {
-                let mut proposals = backend
-                    .solve_joint_coordinate_candidates(&requests)
-                    .unwrap_or_else(|| vec![None; ready.len()])
-                    .into_iter()
-                    .map(|candidate| candidate.map(|(c, r)| (c, r, None)))
-                    .collect::<Vec<_>>();
-                if proposals.len() != ready.len() {
-                    return Err("joint coordinate batch result count mismatch");
-                }
-                let rejected = proposals
-                    .iter()
-                    .enumerate()
-                    .filter_map(|(index, value)| value.is_none().then_some(index))
-                    .collect::<Vec<_>>();
-                for &index in &rejected {
-                    let joint = ready[index];
-                    if fallback_columns[joint].is_none() {
-                        fallback_columns[joint] = Some(joints[joint].expanded_operator_columns()?);
-                    }
-                }
-                if !rejected.is_empty() {
-                    let retry = rejected
-                        .iter()
-                        .map(|&index| {
-                            let joint = ready[index];
-                            super::HairExpandedCoordinateRequest {
-                                columns: fallback_columns[joint]
-                                    .as_deref()
-                                    .expect("prepared fallback columns"),
-                                bounds: &effective[joint],
-                                tolerance,
-                            }
-                        })
-                        .collect::<Vec<_>>();
-                    if let Some(expanded) = backend.solve_joint_expanded_candidates(&retry) {
-                        if expanded.len() != rejected.len() {
-                            return Err("expanded coordinate batch result count mismatch");
-                        }
-                        for (index, candidate) in rejected.into_iter().zip(expanded) {
-                            proposals[index] = candidate.map(expanded_trial);
-                        }
-                    }
-                }
-                Some(proposals)
             } else {
                 backend.solve_joint_coordinates_batch(&requests).map(|p| {
                     p.into_iter()
@@ -1840,23 +1756,6 @@ impl<'a> PreparedNativeJoint<'a> {
             .map(|r| r.ok_or("joint square-root inequality residual failed"))
             .collect()
     }
-    fn expanded_operator_columns(
-        &self,
-    ) -> Result<Vec<Vec<super::HairResponseCoefficient>>, &'static str> {
-        let mut columns = vec![Vec::new(); self.columns.len()];
-        for (request, factor) in self.requests.iter().zip(&self.factors) {
-            for (column, load) in columns.iter_mut().zip(&request.loads) {
-                let mut values = load
-                    .iter()
-                    .map(|&value| super::HairResponseCoefficient::from_f64(value))
-                    .collect::<Result<Vec<_>, _>>()?;
-                super::contact_expanded::lower(factor, &mut values, request.system.active.clone())?;
-                column.extend(values);
-            }
-        }
-        Ok(columns)
-    }
-
     fn recover_accelerated(
         &self,
         bounds: &[f64],

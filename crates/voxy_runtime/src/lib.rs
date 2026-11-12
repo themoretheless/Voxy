@@ -6,12 +6,10 @@ pub use frame_loop::{
     AdaptiveQualityPidController, FrameLoop, FrameWork, snap_frame_delta_to_refresh_rate,
 };
 mod streaming;
-mod terrain_archive;
 pub use streaming::{
     PersistenceError, RebuildBatchOutcome, RebuildSubmitError, RebuildWorkerPool, WorldPersistence,
     apply_wal_recovery,
 };
-pub use terrain_archive::{TerrainArchive, TerrainArchiveError};
 mod time;
 pub use time::{SimulationClock, TimeDrop, TimeFrame};
 
@@ -20,9 +18,8 @@ use std::collections::BTreeMap;
 use voxy_core::{ChunkPos, TickId, WorldEpoch};
 
 pub use bootstrap::{
-    BootstrapChunk, BootstrapError, BootstrapScene, BootstrapTerrainSource, GeneratedTerrainWindow,
-    MAX_BOOTSTRAP_RADIUS, PreparedTerrainWindow, build_bootstrap_mesh, build_bootstrap_scene,
-    build_generated_scene, build_procedural_scene, build_streamable_generated_scene,
+    BootstrapChunk, BootstrapError, BootstrapScene, MAX_BOOTSTRAP_RADIUS, build_bootstrap_mesh,
+    build_bootstrap_scene, build_generated_scene, build_procedural_scene,
     build_vertical_procedural_scene, extract_chunk_neighborhood, invalidated_derived_chunks,
     rebuild_bootstrap_chunks, rebuild_chunks_from_snapshots,
     rebuild_vertical_chunks_from_snapshots,

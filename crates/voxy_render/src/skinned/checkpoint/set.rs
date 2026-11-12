@@ -5,9 +5,7 @@ fn group_receipt(group: &InfluenceGroups) -> [u8; 32] {
     let InfluenceGroups {
         keys,
         families,
-        weights: _,
-        position_factor: _,
-        groups_by_family: _,
+        group_family: _, // Derived from the hashed keys and families on restore.
         has_bad_normal,
         max_position,
         bad_normal,

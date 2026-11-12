@@ -12,7 +12,6 @@ pub enum Scenario {
     Idle,
     Motion,
     Water,
-    Terrain,
     Street,
 }
 impl Scenario {
@@ -21,7 +20,6 @@ impl Scenario {
             Self::Idle => "idle",
             Self::Motion => "motion",
             Self::Water => "water",
-            Self::Terrain => "terrain",
             Self::Street => "street",
         }
     }
@@ -35,7 +33,6 @@ pub struct VoxelWorkload {
     pub resident_chunks: usize,
     pub partial_publications: u64,
     pub full_publications: u64,
-    pub terrain_transitions: u64,
 }
 
 #[derive(Debug)]
@@ -92,12 +89,10 @@ impl Profile {
                         Some("idle") => Scenario::Idle,
                         Some("motion") => Scenario::Motion,
                         Some("water") => Scenario::Water,
-                        Some("terrain") => Scenario::Terrain,
                         Some("street") => Scenario::Street,
                         _ => {
                             return Err(
-                                "--profile-scenario expects idle|motion|water|terrain|street"
-                                    .into(),
+                                "--profile-scenario expects idle|motion|water|street".into()
                             );
                         }
                     };
@@ -357,7 +352,6 @@ impl Profile {
                 "resident_chunks": workload.resident_chunks,
                 "partial_publications": workload.partial_publications,
                 "full_publications": workload.full_publications,
-                "terrain_transitions": workload.terrain_transitions,
             });
         }
         std::fs::write(
@@ -510,7 +504,6 @@ mod tests {
                 resident_chunks: 289,
                 partial_publications: 2,
                 full_publications: 1,
-                terrain_transitions: 2,
             },
         )
         .unwrap();
@@ -525,7 +518,6 @@ mod tests {
         assert_eq!(report["voxel_workload"]["destruction_commits"], 1);
         assert_eq!(report["voxel_workload"]["resident_chunks"], 289);
         assert_eq!(report["voxel_workload"]["partial_publications"], 2);
-        assert_eq!(report["voxel_workload"]["terrain_transitions"], 2);
         assert_eq!(report["voxel_workload"]["includes_warmup"], true);
         assert!(report["gpu_ms"].is_null());
         assert!(report["gpu_pass_statistics"][1].is_null());

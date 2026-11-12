@@ -21,8 +21,6 @@ impl BakedProbeCache {
     pub const ENVELOPE: voxy_core::CheckpointEnvelope =
         voxy_core::CheckpointEnvelope::new(*b"VPRB", 1);
     pub const MAX_PAYLOAD_BYTES: usize = 64 + MAX_PROBES * 64;
-    // The envelope header and checksum fit within this extra space.
-    const MAX_FILE_BYTES: usize = Self::MAX_PAYLOAD_BYTES + 64;
 
     /// Constructs a validated baked probe cache.
     /// # Errors
@@ -33,20 +31,9 @@ impl BakedProbeCache {
         dims: [u32; 4],
         probes: Vec<[f32; 16]>,
     ) -> Result<Self, voxy_core::CodecError> {
-        let cache = Self {
-            origin,
-            spacing,
-            dims,
-            probes,
-        };
-        cache.validate()?;
-        Ok(cache)
-    }
-
-    pub(crate) fn validate(&self) -> Result<(), voxy_core::CodecError> {
-        let count = (self.dims[0] as usize)
-            .checked_mul(self.dims[1] as usize)
-            .and_then(|xy| xy.checked_mul(self.dims[2] as usize))
+        let count = (dims[0] as usize)
+            .checked_mul(dims[1] as usize)
+            .and_then(|xy| xy.checked_mul(dims[2] as usize))
             .ok_or(voxy_core::CodecError::InvalidValue("probe grid overflow"))?;
         if count == 0 || count > MAX_PROBES {
             return Err(voxy_core::CodecError::CapacityExceeded {
@@ -54,24 +41,25 @@ impl BakedProbeCache {
                 limit: MAX_PROBES,
             });
         }
-        if self.probes.len() != count {
+        if probes.len() != count {
             return Err(voxy_core::CodecError::InvalidValue(
                 "probe count does not match grid dims",
             ));
         }
-        if self
-            .origin
-            .iter()
-            .chain(self.spacing.iter())
-            .any(|v| !v.is_finite())
-            || self.spacing[..3].iter().any(|s| *s <= 0.0)
-            || self.probes.iter().flatten().any(|c| !c.is_finite())
+        if origin.iter().chain(spacing.iter()).any(|v| !v.is_finite())
+            || spacing[..3].iter().any(|s| *s <= 0.0)
+            || probes.iter().flatten().any(|c| !c.is_finite())
         {
             return Err(voxy_core::CodecError::InvalidValue(
                 "non-finite or non-positive probe cache values",
             ));
         }
-        Ok(())
+        Ok(Self {
+            origin,
+            spacing,
+            dims,
+            probes,
+        })
     }
 
     /// Encodes the probe cache into a `VPRB` v1 `CheckpointEnvelope` byte vector.
@@ -96,23 +84,13 @@ impl BakedProbeCache {
         let bytes = self
             .to_bytes()
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, format!("{e:?}")))?;
-        use std::{
-            io::Write,
-            sync::atomic::{AtomicU64, Ordering},
-        };
-        static NEXT_SAVE: AtomicU64 = AtomicU64::new(0);
-        let serial = NEXT_SAVE.fetch_add(1, Ordering::Relaxed);
         let mut temporary = path.as_os_str().to_owned();
-        temporary.push(format!(".{}-{serial}.tmp", std::process::id()));
+        temporary.push(".tmp");
         let temporary = std::path::PathBuf::from(temporary);
-        let mut file = std::fs::File::create_new(&temporary)?;
-        let result = file.write_all(&bytes).and_then(|()| file.sync_all());
-        drop(file);
-        result
-            .and_then(|()| std::fs::rename(&temporary, path))
-            .inspect_err(|_| {
-                let _ = std::fs::remove_file(&temporary);
-            })
+        std::fs::write(&temporary, bytes)?;
+        std::fs::rename(&temporary, path).inspect_err(|_| {
+            let _ = std::fs::remove_file(&temporary);
+        })
     }
 
     /// Reads and validates a cache written by [`Self::save_to_path`].
@@ -120,18 +98,15 @@ impl BakedProbeCache {
     /// Returns any I/O error; a file larger than the envelope limit or failing validation is
     /// reported as [`std::io::ErrorKind::InvalidData`].
     pub fn load_from_path(path: &std::path::Path) -> std::io::Result<Self> {
-        use std::io::Read;
-        let mut bytes = Vec::new();
-        std::fs::File::open(path)?
-            .take(Self::MAX_FILE_BYTES as u64 + 1)
-            .read_to_end(&mut bytes)?;
-        if bytes.len() > Self::MAX_FILE_BYTES {
+        // Header and checksum overhead of the envelope is far below this slack.
+        let limit = Self::MAX_PAYLOAD_BYTES as u64 + 64;
+        if std::fs::metadata(path)?.len() > limit {
             return Err(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
                 "probe cache file exceeds the envelope limit",
             ));
         }
-        Self::from_bytes(&bytes)
+        Self::from_bytes(&std::fs::read(path)?)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, format!("{e:?}")))
     }
 
@@ -143,12 +118,17 @@ impl BakedProbeCache {
 
 impl voxy_core::BinaryCheckpoint for BakedProbeCache {
     fn encode_into(&self, out: &mut Vec<u8>) -> Result<(), voxy_core::CodecError> {
-        self.validate()?;
         let mut writer = voxy_core::ByteWriter::new(out);
         for v in self.origin {
+            if !v.is_finite() {
+                return Err(voxy_core::CodecError::InvalidValue("non-finite origin"));
+            }
             writer.write_f32_le(v);
         }
         for v in self.spacing {
+            if !v.is_finite() {
+                return Err(voxy_core::CodecError::InvalidValue("non-finite spacing"));
+            }
             writer.write_f32_le(v);
         }
         for d in self.dims {
@@ -157,6 +137,9 @@ impl voxy_core::BinaryCheckpoint for BakedProbeCache {
         writer.write_u32_le(self.probes.len() as u32);
         for probe in &self.probes {
             for coeff in *probe {
+                if !coeff.is_finite() {
+                    return Err(voxy_core::CodecError::InvalidValue("non-finite SH coeff"));
+                }
                 writer.write_f32_le(coeff);
             }
         }
@@ -511,37 +494,7 @@ mod tests {
         let path = dir.join("scene.vprobes");
         cache.save_to_path(&path).unwrap();
         assert_eq!(BakedProbeCache::load_from_path(&path).unwrap(), cache);
-        let mut invalid = cache.clone();
-        invalid.dims[0] = 1;
-        assert!(invalid.save_to_path(&path).is_err());
-        assert_eq!(BakedProbeCache::load_from_path(&path).unwrap(), cache);
-        invalid.dims = cache.dims;
-        invalid.spacing[1] = 0.;
-        assert!(invalid.to_bytes().is_err());
-
-        let mut alternate = cache.clone();
-        alternate.probes[0][0] = 0.5;
-        let start = std::sync::Barrier::new(2);
-        std::thread::scope(|scope| {
-            for candidate in [&cache, &alternate] {
-                let (start, path) = (&start, &path);
-                scope.spawn(move || {
-                    start.wait();
-                    candidate.save_to_path(path).unwrap();
-                });
-            }
-        });
-        let saved = BakedProbeCache::load_from_path(&path).unwrap();
-        assert!(saved == cache || saved == alternate);
-        assert_eq!(std::fs::read_dir(&dir).unwrap().count(), 1);
-        std::fs::File::create(&path)
-            .unwrap()
-            .set_len(BakedProbeCache::MAX_FILE_BYTES as u64 + 1)
-            .unwrap();
-        assert_eq!(
-            BakedProbeCache::load_from_path(&path).unwrap_err().kind(),
-            std::io::ErrorKind::InvalidData
-        );
+        assert!(!dir.join("scene.vprobes.tmp").exists());
         std::fs::write(&path, &encoded).unwrap();
         assert_eq!(
             BakedProbeCache::load_from_path(&path).unwrap_err().kind(),

@@ -24,7 +24,6 @@ mod kinematic;
 mod liquid_body;
 mod liquid_runtime;
 mod liquid_source;
-mod navigation;
 mod point_loads;
 mod rigid_frame;
 mod staged_tick;
@@ -89,10 +88,6 @@ pub use liquid_runtime::{
     SceneLiquidWireLimits, SceneSupportReactions, SceneSupportedLiquidStep,
 };
 pub use liquid_source::{LiquidPulse, LiquidSource};
-pub use navigation::{
-    NavigationFollower, NpcDestination, NpcRoute, SceneNavigationError, SceneNavigationGrid,
-    SceneNavigationSettings, prepare_npc_routes, step_navigation_followers,
-};
 pub use point_loads::{RigidPointForce, RigidPointLoads};
 pub use rigid_frame::{PreparedRigidPose, RigidBodyFrame, RigidPoseEdit, publish_rigid_poses};
 pub use staged_tick::{AcceptedCharacterPose, CharacterTickError, CharacterTickPreview};
@@ -310,8 +305,6 @@ pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), Docum
     registry.register::<LiquidSource>("game.liquid-source.v1")?;
     registry.register::<KinematicBody>("game.kinematic-body.v1")?;
     registry.register::<CharacterBody>("game.character.v1")?;
-    registry.register::<NpcRoute>("game.npc-route.v1")?;
-    registry.register::<NpcDestination>("game.npc-destination.v1")?;
     registry.register::<BoxCollider>("game.box.v1")?;
     registry.register::<CollisionLayers>("game.collision-layers.v1")?;
     registry.register::<BoxTrigger>("game.box-trigger.v1")?;

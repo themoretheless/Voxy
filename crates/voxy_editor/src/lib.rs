@@ -39,7 +39,6 @@ mod camera_authoring_tests;
 mod joint_authoring;
 #[cfg(test)]
 mod joint_authoring_tests;
-mod navigation_authoring;
 use camera_authoring::PickPurpose;
 mod component_collections;
 mod component_fields;
@@ -52,7 +51,7 @@ mod frame_styles;
 mod game_host;
 mod headless_game;
 mod ui_action_codecs;
-pub use headless_game::{AnimationSnapshot, CharacterReplicationSnapshot, HeadlessGame};
+pub use headless_game::{AnimationSnapshot, HeadlessGame};
 #[cfg(test)]
 mod game_host_tests;
 mod liquid_draw;
@@ -89,8 +88,8 @@ mod prefab_fields;
 mod scene_revision;
 mod view_layout;
 pub use packaged_game::{
-    bundled_game_package, run_packaged_game, run_packaged_game_with_components,
-    run_packaged_game_with_host, run_packaged_game_with_ui_actions,
+    run_packaged_game, run_packaged_game_with_components, run_packaged_game_with_host,
+    run_packaged_game_with_ui_actions,
 };
 pub use view_layout::compute_split_pane_rects;
 mod prefab_smoke;
@@ -405,34 +404,10 @@ impl InputRecipe {
             move |asset, provider, inputs| recipe.load(asset, provider, inputs),
         )
     }
-    fn spawn_package_worker(
-        &self,
-        package: Arc<voxy_assets::ResourcePackage>,
-    ) -> std::io::Result<AssetImportWorker<import::EditorAsset>> {
-        let recipe = self.clone();
-        AssetImportWorker::new_with_source_provider(
-            voxy_assets::AssetSourceProvider::from_package(package),
-            import::MODEL_INPUTS,
-            import::MODEL_INPUT_BYTES,
-            move |asset, provider, inputs| {
-                recipe.load_from(asset, &|id, limit| provider.read(id, limit), inputs)
-            },
-        )
-    }
-
     fn load(
         &self,
         asset: &AssetId,
         provider: &FileInputs,
-        inputs: &mut voxy_assets::ImportInputs,
-    ) -> Result<import::EditorAsset, String> {
-        self.load_from(asset, &|id, limit| provider.read(id, limit), inputs)
-    }
-
-    fn load_from(
-        &self,
-        asset: &AssetId,
-        read: &impl Fn(&AssetId, usize) -> Result<Vec<u8>, String>,
         inputs: &mut voxy_assets::ImportInputs,
     ) -> Result<import::EditorAsset, String> {
         let source_path = match self {
@@ -440,7 +415,7 @@ impl InputRecipe {
             InputRecipe::Manifest(manifest) => {
                 let snapshot = inputs
                     .read(manifest.clone(), |id, limit| {
-                        read(id, limit.min(import::MANIFEST_BYTES))
+                        provider.read(id, limit.min(import::MANIFEST_BYTES))
                     })
                     .map_err(|e| format!("{e:?}"))?;
                 let locations =
@@ -451,7 +426,7 @@ impl InputRecipe {
                     .ok_or("logical resource not found in manifest")?
             }
         };
-        import::load_from(&source_path, read, inputs).map_err(|e| e.to_string())
+        import::load(&source_path, provider, inputs).map_err(|e| e.to_string())
     }
 }
 #[derive(Debug)]
@@ -562,7 +537,6 @@ struct App {
     id: Option<AssetId>,
     catalog: AssetCatalog<ImportedAsset<import::EditorAsset>>,
     import_recipe: InputRecipe,
-    model_package: Option<Arc<voxy_assets::ResourcePackage>>,
     pending_model: Option<app::model_reload::Pending>,
     gpu_budget_retries: BTreeMap<AssetId, app::model_reload::BudgetRetry>,
     model_relink: Option<app::model_relink::Pending>,
@@ -575,8 +549,6 @@ struct App {
     editor_load: Option<app::restore_barrier::load::PendingEditorLoad>,
     snapshot_draft: Option<app::snapshot_commands::SnapshotDraft>,
     snapshot_error: Option<String>,
-    standalone_snapshot_identity: Option<String>,
-    standalone_snapshot_smoke: Option<(voxy_scene::SceneId, bool)>,
     sources: SourceDependencies,
     imports: Option<AssetImportWorker<import::EditorAsset>>,
     watcher: Option<SourcePollWorker>,
@@ -589,7 +561,6 @@ struct App {
     scan_active: bool,
     last_scan: Instant,
     last_publication: Option<Instant>,
-    reload_frame_sample: Option<Instant>,
     frames: u64,
     trace: InputTrace,
     failed_at: Option<u64>,
@@ -647,7 +618,7 @@ impl App {
         smoke: bool,
         registry: Arc<ComponentRegistry>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
-        Self::create_session(root, Some(id), recipe, smoke, registry, None)
+        Self::create_session(root, Some(id), recipe, smoke, registry)
     }
 
     #[expect(
@@ -660,42 +631,22 @@ impl App {
         recipe: InputRecipe,
         smoke: bool,
         registry: Arc<ComponentRegistry>,
-        model_package: Option<Arc<voxy_assets::ResourcePackage>>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let available: std::collections::BTreeSet<AssetId> = match &recipe {
             InputRecipe::Direct => id.iter().cloned().collect(),
             InputRecipe::Manifest(manifest) => {
-                let bytes = if let Some(package) = &model_package {
-                    package.read(manifest, import::MANIFEST_BYTES)?
-                } else {
-                    FileInputs::new(root)?.read(manifest, import::MANIFEST_BYTES)?
-                };
+                let bytes = FileInputs::new(root)?.read(manifest, import::MANIFEST_BYTES)?;
                 import::model_inventory(&bytes)?
             }
         };
         if id.as_ref().is_some_and(|id| !available.contains(id)) {
             return Err("unknown initial model resource".into());
         }
-        let authoring_project = prefab_authoring::AuthoringProject::with_package(
-            root,
-            &recipe,
-            registry,
-            model_package.clone(),
-        )?;
+        let authoring_project =
+            prefab_authoring::AuthoringProject::with_registry(root, &recipe, registry)?;
         let reload = id.iter().cloned().collect();
         let import_recipe = recipe.clone();
-        let (imports, watcher) = if let Some(package) = &model_package {
-            (recipe.spawn_package_worker(package.clone())?, None)
-        } else {
-            (
-                recipe.spawn_worker(root)?,
-                Some(SourcePollWorker::new(
-                    FileInputs::new(root)?,
-                    257,
-                    import::SOURCE_BYTES,
-                )?),
-            )
-        };
+        let imports = recipe.spawn_worker(root)?;
         let mut scene = SceneGraph::new(scene_limits::OBJECTS);
         let mut instances = Vec::new();
         let mut object_ids = Vec::new();
@@ -787,9 +738,12 @@ impl App {
             catalog: AssetCatalog::new(128, 1)?,
             sources: SourceDependencies::new(128, 512),
             imports: Some(imports),
-            watcher,
+            watcher: Some(SourcePollWorker::new(
+                FileInputs::new(root)?,
+                257,
+                import::SOURCE_BYTES,
+            )?),
             import_recipe,
-            model_package,
             pending_model: None,
             gpu_budget_retries: BTreeMap::new(),
             model_relink: None,
@@ -802,8 +756,6 @@ impl App {
             editor_load: None,
             snapshot_draft: None,
             snapshot_error: None,
-            standalone_snapshot_identity: None,
-            standalone_snapshot_smoke: None,
             window: None,
             window_occluded: false,
             presentation: frame_pacing::Presentation::from_environment()?,
@@ -813,8 +765,6 @@ impl App {
             scan_active: false,
             last_scan: Instant::now(),
             last_publication: None,
-            reload_frame_sample: std::env::var_os("VOXY_EDITOR_TRACE_RELOAD_FRAMES")
-                .map(|_| Instant::now()),
             frames: 0,
             trace: InputTrace {
                 enabled: std::env::var_os("VOXY_EDITOR_TRACE_INPUT").is_some(),
@@ -841,35 +791,18 @@ impl App {
         Self::from_project_with_registry(path, model_registry()?)
     }
 
-    #[cfg(test)]
     fn from_project_with_registry(
         path: &std::path::Path,
         registry: ComponentRegistry,
     ) -> Result<Self, Box<dyn std::error::Error>> {
-        Self::from_project_with_model_package(path, registry, None)
-    }
-
-    fn from_project_with_model_package(
-        path: &std::path::Path,
-        registry: ComponentRegistry,
-        model_package: Option<Arc<voxy_assets::ResourcePackage>>,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
         let registry = Arc::new(registry);
         let opened = project::open_for_editor(path, &registry)?;
-        Self::from_open_project_with_model_package(&opened, registry, model_package)
+        Self::from_open_project(&opened, registry)
     }
 
     fn from_open_project(
         opened: &project::OpenProject,
         registry: Arc<ComponentRegistry>,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
-        Self::from_open_project_with_model_package(opened, registry, None)
-    }
-
-    fn from_open_project_with_model_package(
-        opened: &project::OpenProject,
-        registry: Arc<ComponentRegistry>,
-        model_package: Option<Arc<voxy_assets::ResourcePackage>>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let manifest = opened
             .descriptor
@@ -877,95 +810,18 @@ impl App {
             .to_str()
             .ok_or("manifest path must be UTF-8")?;
         let recipe = InputRecipe::Manifest(SourcePath::new(manifest)?.observation_id());
-        let mut app =
-            Self::create_session(&opened.root, None, recipe, false, registry, model_package)?;
+        let mut app = Self::create_session(&opened.root, None, recipe, false, registry)?;
         if let Err(error) =
             app.configure_scene_for_editor(&opened.root.join(&opened.descriptor.startup_scene))
         {
             app.stop_workers()?;
             return Err(error);
         }
-        if std::env::var_os("VOXY_GAME_SAVE_FILE").is_some() {
-            let identity = (|| -> Result<String, Box<dyn std::error::Error>> {
-                let manifest = voxy_assets::FileInputs::new(&opened.root)?
-                    .fingerprint(&voxy_assets::AssetId(manifest.into()), import::SOURCE_BYTES)?;
-                app.project_snapshot_identity(&opened.descriptor, manifest)
-            })();
-            match identity {
-                Ok(identity) => app.standalone_snapshot_identity = Some(identity),
-                Err(error) => {
-                    app.stop_workers()?;
-                    return Err(error);
-                }
-            }
-        }
         app.build.project = Some((
             opened.descriptor_path.clone(),
             opened.root.join(&opened.descriptor.startup_scene),
         ));
         Ok(app)
-    }
-
-    fn from_packaged_project(
-        path: &std::path::Path,
-        registry: ComponentRegistry,
-        archive: Arc<voxy_assets::ResourcePackage>,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
-        let path = path.canonicalize()?;
-        let root = path.parent().ok_or("package parent missing")?;
-        let registry = Arc::new(registry);
-        let project = voxy_player::InMemoryPackagedProject::from_package_with_scene_limit(
-            archive,
-            &registry,
-            scene_limits::DOCUMENT_BYTES,
-            true,
-        )?;
-        let manifest = SourcePath::new(
-            project
-                .descriptor
-                .asset_manifest
-                .to_str()
-                .ok_or("manifest path must be UTF-8")?,
-        )?
-        .observation_id();
-        let recipe = InputRecipe::Manifest(manifest.clone());
-        let mut app =
-            Self::create_session(root, None, recipe, false, registry, Some(project.package))?;
-        let setup = (|| -> Result<(), Box<dyn std::error::Error>> {
-            app.install_authored_scene(
-                project.document,
-                Some(project.authoring),
-                None,
-                Some(project.loaded),
-                true,
-            )?;
-            app.reset_authoring_history()?;
-            if std::env::var_os("VOXY_GAME_SAVE_FILE").is_some() {
-                let digest = project
-                    .provider
-                    .fingerprint(&manifest, import::SOURCE_BYTES)?;
-                app.standalone_snapshot_identity =
-                    Some(app.project_snapshot_identity(&project.descriptor, digest)?);
-            }
-            Ok(())
-        })();
-        if let Err(error) = setup {
-            app.stop_workers()?;
-            return Err(error);
-        }
-        Ok(app)
-    }
-
-    fn project_snapshot_identity(
-        &self,
-        descriptor: &voxy_assets::ProjectDescriptor,
-        manifest: [u8; 32],
-    ) -> Result<String, Box<dyn std::error::Error>> {
-        let bytes = serde_json::to_vec(&(descriptor, manifest, self.authoring_document()?))?;
-        Ok(format!(
-            "voxy-standalone-v1-{}",
-            blake3::hash(&bytes).to_hex()
-        ))
     }
 
     fn initialize(&mut self, events: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
@@ -976,15 +832,6 @@ impl App {
             events.create_window(
                 Window::default_attributes()
                     .with_visible(false)
-                    .with_window_level(
-                        if self.smoke_deadline.is_some()
-                            && std::env::var_os("VOXY_GAME_SMOKE_KEEP_VISIBLE").is_some()
-                        {
-                            winit::window::WindowLevel::AlwaysOnTop
-                        } else {
-                            winit::window::WindowLevel::Normal
-                        },
-                    )
                     .with_title(if self.standalone {
                         "Voxy Game"
                     } else {

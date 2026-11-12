@@ -498,36 +498,6 @@ impl Renderer {
         self.upload_chunk_data(&chunks, camera_anchor)
     }
 
-    /// Upload a terrain window and publish its prepared vegetation placements together.
-    ///
-    /// # Errors
-    /// Returns allocation, validation, or terrain upload errors before replacing the placements.
-    pub fn upload_lit_window(
-        &mut self,
-        chunks: &[(ChunkPos, &ChunkMesh, &LightVolume)],
-        camera_anchor: ChunkPos,
-        vegetation: Option<crate::NativeVegetationWindow>,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        let prepared = vegetation
-            .map(|window| {
-                self.native_vegetation
-                    .as_ref()
-                    .ok_or_else(|| {
-                        crate::ComputeError::Validation("native vegetation unavailable".into())
-                    })?
-                    .prepare_window(&self.device, window)
-            })
-            .transpose()?;
-        self.upload_lit_chunks(chunks, camera_anchor)?;
-        if let Some(prepared) = prepared {
-            self.native_vegetation
-                .as_mut()
-                .expect("prepared native vegetation")
-                .publish_window(prepared);
-        }
-        Ok(())
-    }
-
     /// Bytes submitted by the last successful chunk upload, including chunk metadata.
     pub fn chunk_upload_bytes(&self) -> usize {
         self.chunk_upload_bytes

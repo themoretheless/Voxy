@@ -482,14 +482,6 @@ impl HeightfieldNavGrid {
         Ok(())
     }
 
-    /// Returns the floor elevation of a standable cell.
-    /// # Errors
-    /// Rejects cells outside the grid.
-    pub fn walkable_elevation(&self, cell: Cell) -> Result<Option<f32>, NavigationError> {
-        let index = self.index(cell)?;
-        Ok(self.is_standable(index).then_some(self.elevations[index]))
-    }
-
     fn is_standable(&self, idx: usize) -> bool {
         !self.blocked[idx] && self.ceiling_clearances[idx] >= self.min_clearance
     }

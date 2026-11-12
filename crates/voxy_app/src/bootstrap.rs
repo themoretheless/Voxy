@@ -55,14 +55,21 @@ pub(super) fn terrain_water_cells(
             .z
             .checked_mul(32)
             .ok_or("water coordinate overflow")?;
-        snapshot.data.blocks.visit_matching(&states.0, |index| {
-            let local = index.position();
-            cells.push(VoxelPos {
-                x: base_x + i64::from(local.x()),
-                y: base_y + i64::from(local.y()),
-                z: base_z + i64::from(local.z()),
-            });
-        });
+        for y in 0..32_u8 {
+            for z in 0..32_u8 {
+                for x in 0..32_u8 {
+                    let local =
+                        voxy_world::LocalPos::new(x, y, z).map_err(|error| error.to_string())?;
+                    if states.0.contains(&snapshot.data.blocks.get(local.index())) {
+                        cells.push(VoxelPos {
+                            x: base_x + i64::from(x),
+                            y: base_y + i64::from(y),
+                            z: base_z + i64::from(z),
+                        });
+                    }
+                }
+            }
+        }
     }
     Ok(cells)
 }
@@ -396,7 +403,7 @@ pub(super) fn loading_title(percent: u8, stage: &str) -> String {
 pub(super) fn build_startup_scene(
     graphics: voxy_render::GraphicsOptions,
     radius: i32,
-) -> Result<(BootstrapScene, voxy_runtime::BootstrapTerrainSource), voxy_runtime::BootstrapError> {
+) -> Result<BootstrapScene, voxy_runtime::BootstrapError> {
     let backend =
         terrain_options::TerrainBackend::parse(std::env::args().skip(1)).map_err(|error| {
             eprintln!("Terrain selection failed: {error}");
@@ -429,12 +436,11 @@ pub(super) fn build_startup_scene(
             Ok(Box::new(generator))
         }
     };
-    voxy_runtime::build_streamable_generated_scene(
-        0x56_4f_58_59,
-        radius,
-        !std::env::args().any(|arg| arg == "--voxel-plants"),
-        factory,
-    )
+    if std::env::args().any(|arg| arg == "--voxel-plants") {
+        voxy_runtime::build_generated_scene(0x56_4f_58_59, radius, factory)
+    } else {
+        voxy_runtime::build_generated_scene_with_mesh_plants(0x56_4f_58_59, radius, factory)
+    }
 }
 
 #[expect(

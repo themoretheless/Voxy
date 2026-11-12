@@ -1,4 +1,4 @@
-//! Project archives launch from memory. Legacy model archives use private materialization.
+//! Package materialization uses a private, owned project and the ordinary loader.
 use crate::{ModelSource, ViewportMode};
 #[cfg(unix)]
 use std::os::unix::fs::DirBuilderExt;
@@ -54,25 +54,7 @@ impl Project {
         Ok(Self(path))
     }
 }
-/// Resolve the package next to a portable executable or inside its macOS bundle.
-/// # Errors
-/// Returns an error when the executable path has no parent.
-pub fn bundled_game_package(executable: &Path) -> std::io::Result<PathBuf> {
-    let directory = executable
-        .parent()
-        .ok_or_else(|| std::io::Error::other("game executable parent missing"))?;
-    #[cfg(target_os = "macos")]
-    if directory.file_name() == Some(std::ffi::OsStr::new("MacOS"))
-        && let Some(contents) = directory.parent()
-        && contents.file_name() == Some(std::ffi::OsStr::new("Contents"))
-        && contents.parent().and_then(Path::extension) == Some(std::ffi::OsStr::new("app"))
-    {
-        return Ok(contents.join("Resources/game.vpak"));
-    }
-    Ok(directory.join("game.vpak"))
-}
-
-/// Runs a verified package without requiring its original project sources.
+/// Runs a verified package in an isolated temporary project, without source fallback.
 /// # Errors
 /// Rejects damaged packages, invalid launch paths, IO, imports and runtime failures.
 pub fn run_packaged_game(
@@ -135,10 +117,16 @@ fn run_packaged_configured(
     ) {
         return Err("packaged game requires a game mode".into());
     }
-    let (archive, launch) = read_archive(path)?;
-    if let Launch::Project(_) = launch {
-        return crate::project_runtime::run_packaged_project_host(
-            path,
+    let materialized = MaterializedPackage::open(path)?;
+    let MaterializedPackage {
+        project,
+        launch,
+        scene,
+        bootstrap,
+    } = materialized;
+    match launch {
+        Launch::Project(_) => crate::project_runtime::run_project_host(
+            &project.0.join(bootstrap.as_str()),
             mode,
             crate::GameHost {
                 components: match registry {
@@ -151,99 +139,62 @@ fn run_packaged_configured(
                 ui_action_checkpoints: ui_action_checkpoints
                     .unwrap_or_else(|| std::sync::Arc::new(crate::ui_action_codecs::registry())),
             },
-            archive,
-        );
-    }
-    let MaterializedPackage {
-        project,
-        launch,
-        scene,
-        bootstrap,
-        ..
-    } = MaterializedPackage::from_archive(archive, launch)?;
-    let Launch::Legacy(launch) = launch else {
-        unreachable!("project archives are launched directly");
-    };
-    if behaviors.is_some() {
-        return Err("behavior host requires a project package".into());
-    }
-    if behavior_checkpoints
-        .as_ref()
-        .is_some_and(|registry| !registry.is_empty())
-    {
-        return Err("behavior checkpoint codecs require a project package".into());
-    }
-    if ui_action_checkpoints
-        .as_ref()
-        .is_some_and(|registry| registry.schemas().any(|schema| schema != "voxy.ui.hide.v1"))
-    {
-        return Err("UI callback checkpoint codecs require a project package".into());
-    }
-    let source = if launch.manifest.is_some() {
-        ModelSource::Manifest {
-            path: project.0.join(bootstrap.as_str()),
-            asset: AssetId(launch.model),
-        }
-    } else {
-        ModelSource::File(project.0.join(bootstrap.as_str()))
-    };
-    crate::run_model_viewport_configured_registry(
-        &source,
-        mode,
-        Some(
-            &project
-                .0
-                .join(scene.ok_or("legacy scene missing")?.as_str()),
         ),
-        setup,
-        registry,
-    )
-}
-
-fn read_archive(
-    path: &Path,
-) -> Result<(std::sync::Arc<ResourcePackage>, Launch), Box<dyn std::error::Error>> {
-    let limits = PROJECT_PACKAGE_LIMITS;
-    let mut bytes = Vec::new();
-    std::fs::File::open(path)?
-        .take(u64::try_from(limits.max_document_bytes)? + 1)
-        .read_to_end(&mut bytes)?;
-    let package = ResourcePackage::from_bytes(&bytes, limits)?;
-    let launch =
-        serde_json::from_slice(&package.read(&AssetId(PROJECT_LAUNCH_SOURCE.into()), 65_536)?)?;
-    Ok((std::sync::Arc::new(package), launch))
-}
-
-pub(super) fn read_project_archive(
-    path: &Path,
-) -> Result<std::sync::Arc<ResourcePackage>, Box<dyn std::error::Error>> {
-    let (archive, launch) = read_archive(path)?;
-    if !matches!(launch, Launch::Project(_)) {
-        return Err("headless sessions require a project package".into());
+        Launch::Legacy(launch) => {
+            if behaviors.is_some() {
+                return Err("behavior host requires a project package".into());
+            }
+            if behavior_checkpoints
+                .as_ref()
+                .is_some_and(|registry| !registry.is_empty())
+            {
+                return Err("behavior checkpoint codecs require a project package".into());
+            }
+            if ui_action_checkpoints.as_ref().is_some_and(|registry| {
+                registry.schemas().any(|schema| schema != "voxy.ui.hide.v1")
+            }) {
+                return Err("UI callback checkpoint codecs require a project package".into());
+            }
+            let source = if launch.manifest.is_some() {
+                ModelSource::Manifest {
+                    path: project.0.join(bootstrap.as_str()),
+                    asset: AssetId(launch.model),
+                }
+            } else {
+                ModelSource::File(project.0.join(bootstrap.as_str()))
+            };
+            crate::run_model_viewport_configured_registry(
+                &source,
+                mode,
+                Some(
+                    &project
+                        .0
+                        .join(scene.ok_or("legacy scene missing")?.as_str()),
+                ),
+                setup,
+                registry,
+            )
+        }
     }
-    Ok(archive)
 }
+
 /// Owns extracted sources until the last game/import worker has stopped.
 pub(super) struct MaterializedPackage {
     project: Project,
     launch: Launch,
     scene: Option<SourcePath>,
     bootstrap: SourcePath,
-    #[cfg(test)]
-    pub(super) archive: std::sync::Arc<ResourcePackage>,
 }
 impl MaterializedPackage {
-    #[cfg(test)]
     pub(super) fn open(path: &Path) -> Result<Self, Box<dyn std::error::Error>> {
-        let (archive, launch) = read_archive(path)?;
-        Self::from_archive(archive, launch)
-    }
-
-    fn from_archive(
-        package: std::sync::Arc<ResourcePackage>,
-        launch: Launch,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
         let limits = PROJECT_PACKAGE_LIMITS;
+        let mut bytes = Vec::new();
+        std::fs::File::open(path)?
+            .take(u64::try_from(limits.max_document_bytes)? + 1)
+            .read_to_end(&mut bytes)?;
+        let package = ResourcePackage::from_bytes(&bytes, limits)?;
+        let launch: Launch =
+            serde_json::from_slice(&package.read(&AssetId(PROJECT_LAUNCH_SOURCE.into()), 65_536)?)?;
         let (scene, bootstrap) = match &launch {
             Launch::Legacy(launch) => {
                 if launch.version != 1 {
@@ -283,11 +234,8 @@ impl MaterializedPackage {
             launch,
             scene,
             bootstrap,
-            #[cfg(test)]
-            archive: package,
         })
     }
-    #[cfg(test)]
     pub(super) fn project_path(&self) -> Result<PathBuf, Box<dyn std::error::Error>> {
         if !matches!(self.launch, Launch::Project(_)) {
             return Err("headless sessions require a project package".into());

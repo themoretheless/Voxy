@@ -13,7 +13,6 @@ voxy_assets = { path = "../voxy_assets" }
 voxy_audio = { path = "../voxy_audio" }
 voxy_scene = { path = "../voxy_scene" }
 voxy_input = { path = "../voxy_input" }
-voxy_navigation = { path = "../voxy_navigation" }
 voxy_ui = { path = "../voxy_ui" }
 voxy_text = { path = "../voxy_text" }
 physics = { path = "../physics" }

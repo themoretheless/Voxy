@@ -1,6 +1,5 @@
 [package]
 name = "voxy_editor"
-default-run = "voxy_editor"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

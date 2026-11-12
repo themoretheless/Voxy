@@ -296,13 +296,11 @@ pub const JOINT_CONTACT_QR_SHADER: &str = include_str!("joint_contact_qr.wgsl");
 pub const JOINT_CONTACT_EQUALITY_SHADER: &str = include_str!("joint_contact_equality.wgsl");
 #[derive(Debug)]
 pub struct ResidentContactEqualityInput {
-    qr: ResidentContactQrLayout,
+    qr: ResidentContactQrInput,
     words: Vec<u32>,
     scale: f64,
     rhs: usize,
     output: usize,
-    normalized_bounds: Vec<f64>,
-    packed_bounds: Vec<u32>,
 }
 #[derive(Debug)]
 pub struct ResidentContactEqualityOutput {
@@ -327,39 +325,23 @@ pub struct ResidentContactQrPrefix {
     count: usize,
     input_end: usize,
 }
-// Aligned little-endian readbacks can be decoded in place. The callers
-// validate the exact byte count before borrowing or copying the words.
-fn readback_words(bytes: &[u8]) -> std::borrow::Cow<'_, [u32]> {
-    if cfg!(target_endian = "little")
-        && let Ok(words) = bytemuck::try_cast_slice::<u8, u32>(bytes)
-    {
-        return std::borrow::Cow::Borrowed(words);
-    }
-    std::borrow::Cow::Owned(
-        bytes
-            .chunks_exact(4)
-            .map(|word| u32::from_le_bytes(word.try_into().unwrap()))
-            .collect(),
-    )
-}
 impl ValidatedResidentContactEquality {
-    /// Original coordinate indices retained by exact structural compaction.
-    #[must_use]
-    pub fn original_coordinate_indices(&self) -> &[usize] {
-        &self.input.qr.ids
-    }
-
     /// Validate the complete immutable QR snapshot before retaining a prefix.
     pub fn qr_prefix(&self, bytes: &[u8]) -> Result<ResidentContactQrPrefix, JointDotError> {
         if bytes.len() != self.input.words.len() * 4 {
             return Err(JointDotError::Output);
         }
         let qr = &self.input.qr;
-        let words = qr.checked_words(
-            &bytes[..self.input.rhs * 4],
-            &self.input.words[..self.input.rhs],
-        )?;
-        Ok(qr.retain_prefix(words))
+        let words = qr.checked_words(&bytes[..self.input.rhs * 4])?;
+        Ok(ResidentContactQrPrefix {
+            words,
+            scales: qr.scales.clone(),
+            ids: qr.ids.clone(),
+            width: qr.width,
+            original_width: qr.original_width,
+            count: qr.count,
+            input_end: qr.input_end,
+        })
     }
     pub fn update_bounds(&mut self, bounds: &[f64]) -> Result<(), JointDotError> {
         self.input.update_bounds(bounds)
@@ -375,31 +357,13 @@ impl ValidatedResidentContactEquality {
         if bytes.len() != (self.input.words.len() - self.input.rhs) * 4 {
             return Err(JointDotError::Output);
         }
-        self.input.decode_tail_words(&readback_words(bytes))
+        let words: Vec<_> = bytes
+            .chunks_exact(4)
+            .map(|b| u32::from_le_bytes(b.try_into().unwrap()))
+            .collect();
+        self.input.decode_tail_words(&words)
     }
 }
-fn normalize_equality_bounds(
-    bounds: &[f64],
-    column_scales: &[f64],
-    normalized: &mut Vec<f64>,
-) -> Result<f64, JointDotError> {
-    if bounds.len() != column_scales.len() || bounds.iter().any(|v| !v.is_finite()) {
-        return Err(JointDotError::Shape);
-    }
-    normalized.clear();
-    normalized.reserve(bounds.len());
-    let mut scale = f64::MIN_POSITIVE;
-    for (&bound, &column_scale) in bounds.iter().zip(column_scales) {
-        let value = bound / column_scale;
-        if !value.is_finite() || !column_scale.recip().is_finite() || (bound != 0. && value == 0.) {
-            return Err(JointDotError::NumericRange);
-        }
-        scale = scale.max(value.abs());
-        normalized.push(value);
-    }
-    Ok(scale)
-}
-
 impl ResidentContactEqualityInput {
     pub fn new(columns: &[Vec<f64>], bounds: &[f64]) -> Result<Self, JointDotError> {
         Self::new_with_support_compaction(columns, bounds, true)
@@ -410,22 +374,44 @@ impl ResidentContactEqualityInput {
         bounds: &[f64],
         compact: bool,
     ) -> Result<Self, JointDotError> {
-        let (
-            ResidentContactQrInput {
-                layout: qr,
-                mut words,
-            },
-            total,
-        ) = ResidentContactQrInput::build(columns, compact, true)?;
-        let mut normalized_bounds = Vec::new();
-        let scale = normalize_equality_bounds(bounds, &qr.scales, &mut normalized_bounds)?;
-        let rhs = words.len();
-        for &v in &normalized_bounds {
+        let qr = ResidentContactQrInput::new_with_support_compaction(columns, compact)?;
+        if bounds.len() != qr.count || bounds.iter().any(|v| !v.is_finite()) {
+            return Err(JointDotError::Shape);
+        }
+        let mut normalized = Vec::with_capacity(qr.count);
+        for (&b, &s) in bounds.iter().zip(&qr.scales) {
+            let v = b / s;
+            if !v.is_finite() || !s.recip().is_finite() || (b != 0. && v == 0.) {
+                return Err(JointDotError::NumericRange);
+            }
+            normalized.push(v);
+        }
+        let scale = normalized
+            .iter()
+            .map(|v| v.abs())
+            .fold(0., f64::max)
+            .max(f64::MIN_POSITIVE);
+        let rhs = qr.words.len();
+        let additional = qr
+            .count
+            .checked_mul(6)
+            .and_then(|n| qr.width.checked_mul(2).and_then(|m| n.checked_add(m)))
+            .and_then(|n| n.checked_add(1))
+            .ok_or(JointDotError::Capacity)?;
+        let total = rhs
+            .checked_add(additional)
+            .filter(|&n| u32::try_from(n).is_ok())
+            .ok_or(JointDotError::Capacity)?;
+        let mut words = qr.words.clone();
+        words
+            .try_reserve_exact(additional)
+            .map_err(|_| JointDotError::Capacity)?;
+        for v in normalized {
             let n = v / scale;
             if v != 0. && n == 0. {
                 return Err(JointDotError::NumericRange);
             }
-            words.extend_from_slice(&pack(n)?);
+            words.extend(pack(n)?);
         }
         let output = rhs + qr.count * 6;
         words.resize(total, 0);
@@ -436,8 +422,6 @@ impl ResidentContactEqualityInput {
             scale,
             rhs,
             output,
-            normalized_bounds,
-            packed_bounds: Vec::new(),
         })
     }
     #[must_use]
@@ -488,20 +472,32 @@ impl ResidentContactEqualityInput {
     /// Change only equality RHS/scratch for this immutable resident QR.
     /// Validation is transactional; rejected bounds leave the input untouched.
     pub fn update_bounds(&mut self, bounds: &[f64]) -> Result<(), JointDotError> {
-        let scale =
-            normalize_equality_bounds(bounds, &self.qr.scales, &mut self.normalized_bounds)?;
-        self.packed_bounds.clear();
-        self.packed_bounds.reserve(bounds.len() * 2);
-        for &v in &self.normalized_bounds {
+        if bounds.len() != self.qr.count || bounds.iter().any(|v| !v.is_finite()) {
+            return Err(JointDotError::Shape);
+        }
+        let mut normalized = Vec::with_capacity(bounds.len());
+        for (&b, &s) in bounds.iter().zip(&self.qr.scales) {
+            let v = b / s;
+            if !v.is_finite() || !s.recip().is_finite() || (b != 0. && v == 0.) {
+                return Err(JointDotError::NumericRange);
+            }
+            normalized.push(v);
+        }
+        let scale = normalized
+            .iter()
+            .map(|v| v.abs())
+            .fold(0., f64::max)
+            .max(f64::MIN_POSITIVE);
+        let mut packed = Vec::with_capacity(bounds.len() * 2);
+        for v in normalized {
             let n = v / scale;
             if v != 0. && n == 0. {
                 return Err(JointDotError::NumericRange);
             }
-            self.packed_bounds.extend_from_slice(&pack(n)?);
+            packed.extend(pack(n)?);
         }
         self.words[self.rhs..].fill(0);
-        self.words[self.rhs..self.rhs + self.packed_bounds.len()]
-            .copy_from_slice(&self.packed_bounds);
+        self.words[self.rhs..self.rhs + packed.len()].copy_from_slice(&packed);
         *self.words.last_mut().unwrap() = u32::MAX;
         self.scale = scale;
         Ok(())
@@ -515,19 +511,19 @@ impl ResidentContactEqualityInput {
         )
     }
     pub fn decode(&self, bytes: &[u8]) -> Result<ResidentContactEqualityOutput, JointDotError> {
-        self.decode_snapshot(bytes).map(|(_, output)| output)
-    }
-
-    fn decode_snapshot<'a>(
-        &self,
-        bytes: &'a [u8],
-    ) -> Result<(std::borrow::Cow<'a, [u32]>, ResidentContactEqualityOutput), JointDotError> {
         if bytes.len() != self.words.len() * 4 {
             return Err(JointDotError::Output);
         }
-        let (qr, tail) = bytes.split_at(self.rhs * 4);
-        let qr = self.qr.checked_words(qr, &self.words[..self.rhs])?;
-        Ok((qr, self.decode_tail_words(&readback_words(tail))?))
+        // Equality admission needs the QR validity gates, not a second host
+        // copy of every expanded basis vector and triangular column.
+        self.qr.checked_words(&bytes[..self.rhs * 4])?;
+        // QR prefix has already passed every publication gate. Decode only
+        // the equality tail rather than copying the complete workspace again.
+        let words: Vec<_> = bytes[self.rhs * 4..]
+            .chunks_exact(4)
+            .map(|b| u32::from_le_bytes(b.try_into().unwrap()))
+            .collect();
+        self.decode_tail_words(&words)
     }
     pub fn into_validated(
         self,
@@ -542,28 +538,6 @@ impl ResidentContactEqualityInput {
         let output = self.decode(bytes)?;
         Ok((ValidatedResidentContactEquality { input: self }, output))
     }
-    /// Admit the equality output and optionally retain the QR words validated in the same pass.
-    pub fn into_validated_with_prefix(
-        self,
-        bytes: &[u8],
-        retain_prefix: bool,
-    ) -> Result<
-        (
-            ValidatedResidentContactEquality,
-            ResidentContactEqualityOutput,
-            Option<ResidentContactQrPrefix>,
-        ),
-        JointDotError,
-    > {
-        let (words, output) = self.decode_snapshot(bytes)?;
-        let prefix = retain_prefix.then(|| self.qr.retain_prefix(words));
-        Ok((
-            ValidatedResidentContactEquality { input: self },
-            output,
-            prefix,
-        ))
-    }
-
     fn decode_tail_words(
         &self,
         words: &[u32],
@@ -614,10 +588,6 @@ impl ResidentContactEqualityInput {
 #[derive(Debug)]
 pub struct ResidentContactQrInput {
     words: Vec<u32>,
-    layout: ResidentContactQrLayout,
-}
-#[derive(Debug)]
-struct ResidentContactQrLayout {
     scales: Vec<f64>,
     width: usize,
     original_width: usize,
@@ -661,33 +631,17 @@ impl ResidentContactQrInput {
         columns: &[Vec<f64>],
         compact: bool,
     ) -> Result<Self, JointDotError> {
-        Self::build(columns, compact, false).map(|(input, _)| input)
-    }
-
-    fn build(
-        columns: &[Vec<f64>],
-        compact: bool,
-        reserve_equality_tail: bool,
-    ) -> Result<(Self, usize), JointDotError> {
         let count = columns.len();
         let original_width = columns.first().map_or(0, Vec::len);
         let width = original_width;
-        if count == 0 || width == 0 || count > width {
+        if count == 0
+            || width == 0
+            || count > width
+            || columns
+                .iter()
+                .any(|c| c.len() != width || c.iter().any(|v| !v.is_finite()))
+        {
             return Err(JointDotError::Shape);
-        }
-        let mut scales = Vec::with_capacity(count);
-        for column in columns {
-            if column.len() != width {
-                return Err(JointDotError::Shape);
-            }
-            let mut scale = 0.0_f64;
-            for &value in column {
-                if !value.is_finite() {
-                    return Err(JointDotError::Shape);
-                }
-                scale = scale.max(value.abs());
-            }
-            scales.push(scale);
         }
         // Exact structural support only: never use a magnitude threshold.
         let ids = exact_coordinate_support(columns, width, compact);
@@ -706,57 +660,38 @@ impl ResidentContactQrInput {
             .and_then(|n| n.checked_add(4))
             .filter(|&n| u32::try_from(n).is_ok())
             .ok_or(JointDotError::Capacity)?;
-        let capacity = if reserve_equality_tail {
-            count
-                .checked_mul(6)
-                .and_then(|n| width.checked_mul(2).and_then(|m| n.checked_add(m)))
-                .and_then(|n| n.checked_add(1))
-                .and_then(|n| total.checked_add(n))
-                .filter(|&n| u32::try_from(n).is_ok())
-                .ok_or(JointDotError::Capacity)?
-        } else {
-            total
-        };
         let mut words = Vec::new();
         words
-            .try_reserve_exact(capacity)
+            .try_reserve_exact(total)
             .map_err(|_| JointDotError::Capacity)?;
         words.extend([width as u32, count as u32, 0, 0]);
-        for (c, &scale) in columns.iter().zip(&scales) {
+        let mut scales = Vec::with_capacity(count);
+        for c in columns {
+            let scale = c.iter().map(|v| v.abs()).fold(0., f64::max);
             if scale == 0. {
                 return Err(JointDotError::NumericRange);
             }
+            scales.push(scale);
             for &i in &ids {
                 let v = c[i];
-                if v == 0. {
-                    // A positive scale preserves the sign of the high zero.
-                    // Subtracting that high limb leaves a positive low zero.
-                    words.extend_from_slice(&[(v as f32).to_bits(), 0]);
-                    continue;
-                }
                 let normalized = v / scale;
-                if normalized == 0. {
+                if v != 0. && normalized == 0. {
                     return Err(JointDotError::NumericRange);
                 }
-                words.extend_from_slice(&pack(normalized)?);
+                words.extend(pack(normalized)?);
             }
         }
         let input_end = words.len();
         words.resize(total, 0);
-        Ok((
-            Self {
-                words,
-                layout: ResidentContactQrLayout {
-                    scales,
-                    width,
-                    original_width,
-                    ids,
-                    count,
-                    input_end,
-                },
-            },
-            capacity,
-        ))
+        Ok(Self {
+            words,
+            scales,
+            width,
+            original_width,
+            ids,
+            count,
+            input_end,
+        })
     }
     #[must_use]
     pub fn bytes(&self) -> &[u8] {
@@ -764,41 +699,20 @@ impl ResidentContactQrInput {
     }
     #[must_use]
     pub fn columns(&self) -> usize {
-        self.layout.count
+        self.count
     }
-    fn checked_words<'a>(
-        &self,
-        bytes: &'a [u8],
-    ) -> Result<std::borrow::Cow<'a, [u32]>, JointDotError> {
-        self.layout.checked_words(bytes, &self.words)
-    }
-}
-impl ResidentContactQrLayout {
-    fn retain_prefix(&self, words: std::borrow::Cow<'_, [u32]>) -> ResidentContactQrPrefix {
-        ResidentContactQrPrefix {
-            words: words.into_owned(),
-            scales: self.scales.clone(),
-            ids: self.ids.clone(),
-            width: self.width,
-            original_width: self.original_width,
-            count: self.count,
-            input_end: self.input_end,
-        }
-    }
-
-    fn checked_words<'a>(
-        &self,
-        bytes: &'a [u8],
-        expected: &[u32],
-    ) -> Result<std::borrow::Cow<'a, [u32]>, JointDotError> {
-        if bytes.len() != expected.len() * 4 {
+    fn checked_words(&self, bytes: &[u8]) -> Result<Vec<u32>, JointDotError> {
+        if bytes.len() != self.words.len() * 4 {
             return Err(JointDotError::Output);
         }
-        let words = readback_words(bytes);
-        if words[..2] != expected[..2]
+        let words: Vec<_> = bytes
+            .chunks_exact(4)
+            .map(|b| u32::from_le_bytes(b.try_into().unwrap()))
+            .collect();
+        if words[..2] != self.words[..2]
             || words[2] != self.count as u32
             || words[3] != 0
-            || words[4..self.input_end] != expected[4..self.input_end]
+            || words[4..self.input_end] != self.words[4..self.input_end]
         {
             return Err(JointDotError::Output);
         }
@@ -811,14 +725,10 @@ impl ResidentContactQrLayout {
             Ok(hi + lo)
         };
         let r = self.input_end + self.count * self.width * 2;
-        // Q is retained as packed factors. Its publication only requires finite limbs.
-        if words[self.input_end..r]
-            .iter()
-            .any(|&word| !f32::from_bits(word).is_finite())
-        {
-            return Err(JointDotError::Output);
-        }
         for j in 0..self.count {
+            for i in 0..self.width {
+                pair(self.input_end + (j * self.width + i) * 2)?;
+            }
             for i in 0..=j {
                 let v = rescale(pair(r + (j * self.count + i) * 2)?, self.scales[j], 1.);
                 if !v.is_finite() || (i == j && v <= 0.) {
@@ -828,24 +738,21 @@ impl ResidentContactQrLayout {
         }
         Ok(words)
     }
-}
-impl ResidentContactQrInput {
     pub fn decode(&self, bytes: &[u8]) -> Result<ResidentContactQrOutput, JointDotError> {
         let words = self.checked_words(bytes)?;
-        let layout = &self.layout;
         let pair = |offset: usize| {
             f64::from(f32::from_bits(words[offset])) + f64::from(f32::from_bits(words[offset + 1]))
         };
-        let mut basis = Vec::with_capacity(layout.count);
-        let mut triangular_columns = Vec::with_capacity(layout.count);
-        let r = layout.input_end + layout.count * layout.width * 2;
-        for j in 0..layout.count {
-            let mut q = vec![0.; layout.original_width];
-            for (i, &original) in layout.ids.iter().enumerate() {
-                q[original] = pair(layout.input_end + (j * layout.width + i) * 2);
+        let mut basis = Vec::with_capacity(self.count);
+        let mut triangular_columns = Vec::with_capacity(self.count);
+        let r = self.input_end + self.count * self.width * 2;
+        for j in 0..self.count {
+            let mut q = vec![0.; self.original_width];
+            for (i, &original) in self.ids.iter().enumerate() {
+                q[original] = pair(self.input_end + (j * self.width + i) * 2);
             }
             let column = (0..=j)
-                .map(|i| rescale(pair(r + (j * layout.count + i) * 2), layout.scales[j], 1.))
+                .map(|i| rescale(pair(r + (j * self.count + i) * 2), self.scales[j], 1.))
                 .collect::<Vec<_>>();
             basis.push(q);
             triangular_columns.push(column);
@@ -859,26 +766,6 @@ impl ResidentContactQrInput {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn resident_qr_packs_structural_zeros_with_original_limb_bits() {
-        let columns = vec![vec![-0., 3., 0.], vec![2., 0., -0.]];
-        for compact in [false, true] {
-            let input =
-                ResidentContactQrInput::new_with_support_compaction(&columns, compact).unwrap();
-            let expected: Vec<_> = columns
-                .iter()
-                .zip([3., 2.])
-                .flat_map(|(column, scale)| {
-                    input
-                        .layout
-                        .ids
-                        .iter()
-                        .flat_map(move |&i| pack(column[i] / scale).unwrap())
-                })
-                .collect();
-            assert_eq!(&input.words[4..input.layout.input_end], expected);
-        }
-    }
     #[test]
     fn streamed_support_preserves_zero_sign_tiny_terms_and_coordinate_order() {
         let columns = vec![
@@ -1206,10 +1093,8 @@ mod tests {
                 })
                 .unwrap();
             let bytes = read.try_read().unwrap().unwrap();
-            let (state, _, prefix) = input.into_validated_with_prefix(&bytes, true).unwrap();
-            let prefix = prefix.unwrap();
-            assert_eq!(prefix.words, state.qr_prefix(&bytes).unwrap().words);
-            (prefix, bytes, reused)
+            let (state, _) = input.into_validated(&bytes).unwrap();
+            (state.qr_prefix(&bytes).unwrap(), bytes, reused)
         };
         let columns = vec![
             vec![1., 0.25, 0., 0.],
@@ -1328,44 +1213,15 @@ mod tests {
         assert!(ResidentContactQrInput::new(&[vec![1.], vec![1.]]).is_err());
     }
     #[test]
-    fn resident_qr_readback_alignment_preserves_words_and_admission() {
-        let input = ResidentContactQrInput::new(&[vec![1.]]).unwrap();
-        let mut snapshot = input.words.clone();
-        snapshot[2] = 1;
-        snapshot[3] = 0;
-        snapshot[input.layout.input_end] = 1f32.to_bits();
-        snapshot[input.layout.input_end + 2] = 1f32.to_bits();
-        let encoded: Vec<_> = snapshot.iter().copied().map(u32::to_le).collect();
-        let bytes = bytemuck::cast_slice::<u32, u8>(&encoded);
-        let mut padding = vec![0u32; encoded.len() + 1];
-        let unaligned = &mut bytemuck::cast_slice_mut::<u32, u8>(&mut padding)[1..=bytes.len()];
-        unaligned.copy_from_slice(bytes);
-
-        let aligned_words = input.checked_words(bytes).unwrap();
-        let unaligned_words = input.checked_words(unaligned).unwrap();
-        assert_eq!(aligned_words.as_ref(), snapshot);
-        assert_eq!(unaligned_words.as_ref(), snapshot);
-        assert!(matches!(unaligned_words, std::borrow::Cow::Owned(_)));
-        if cfg!(target_endian = "little") {
-            assert!(matches!(aligned_words, std::borrow::Cow::Borrowed(_)));
-        }
-        unaligned[12] = 1;
-        assert!(matches!(
-            input.checked_words(unaligned),
-            Err(JointDotError::Output)
-        ));
-    }
-
-    #[test]
     fn resident_qr_compacts_only_exact_zero_axes() {
         let input = ResidentContactQrInput::new(&[
             vec![0., 1., -0., 1e-30, 1e-30],
             vec![0., 0., 0., 1., 0.],
         ])
         .unwrap();
-        assert_eq!(input.layout.ids, vec![1, 3, 4]);
-        assert_eq!(input.layout.width, 3);
-        assert_eq!(input.layout.original_width, 5);
+        assert_eq!(input.ids, vec![1, 3, 4]);
+        assert_eq!(input.width, 3);
+        assert_eq!(input.original_width, 5);
         assert!(ResidentContactQrInput::new(&[vec![0., 1., f64::NAN]]).is_err());
         let input = ResidentContactEqualityInput::new(&[vec![0., 2., 0.]], &[6.]).unwrap();
         let mut words = input.words.clone();

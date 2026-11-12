@@ -325,7 +325,6 @@ pub(crate) struct PlayResourceGuard {
     models: crate::app::restore_guard::ModelRuntimeGuard,
     frame_epoch: Instant,
     digest: blake3::Hash,
-    observed_fields: Option<BTreeMap<String, blake3::Hash>>,
     running: bool,
     resources: RestoreLimits,
     play: PlayCheckpointLimits,
@@ -341,10 +340,6 @@ impl App {
     ) -> Result<(PlayResourcesCheckpoint, PlayResourceGuard), EditorError> {
         let saved = self.capture_play_resources(view, registry, compatibility, resources, play)?;
         let digest = blake3::hash(&saved.to_bytes(resources.max_bytes)?);
-        let observed_fields = std::env::var_os("VOXY_EDITOR_TRACE_RESTORE_GUARD")
-            .is_some()
-            .then(|| checkpoint_field_hashes(&saved))
-            .transpose()?;
         Ok((
             saved,
             PlayResourceGuard {
@@ -352,7 +347,6 @@ impl App {
                 models: crate::app::restore_guard::ModelRuntimeGuard::capture(self)?,
                 frame_epoch: self.play.simulation_time,
                 digest,
-                observed_fields,
                 running: true,
                 resources,
                 play,
@@ -382,18 +376,7 @@ impl PlayResourceGuard {
                 self.resources,
                 self.play,
             )?;
-            let digest = blake3::hash(&current.to_bytes(self.resources.max_bytes)?);
-            if digest != self.digest
-                && let Some(before) = &self.observed_fields
-            {
-                let after = checkpoint_field_hashes(&current)?;
-                let changed: Vec<_> = before
-                    .keys()
-                    .filter(|name| before.get(*name) != after.get(*name))
-                    .collect();
-                eprintln!("EDITOR RESTORE GUARD changed Play fields={changed:?}");
-            }
-            digest
+            blake3::hash(&current.to_bytes(self.resources.max_bytes)?)
         } else {
             app.idle_play_fingerprint(view, registry, compatibility, self.resources, self.play)?
         };
@@ -402,26 +385,6 @@ impl PlayResourceGuard {
         }
         Ok(())
     }
-}
-
-fn checkpoint_field_hashes(
-    checkpoint: &PlayResourcesCheckpoint,
-) -> Result<BTreeMap<String, blake3::Hash>, EditorError> {
-    let value = serde_json::to_value(checkpoint)?;
-    let mut hashes = BTreeMap::new();
-    for (owner, fields) in value.as_object().ok_or("invalid Play checkpoint shape")? {
-        if let Some(fields) = fields.as_object() {
-            for (field, value) in fields {
-                hashes.insert(
-                    format!("{owner}.{field}"),
-                    blake3::hash(&serde_json::to_vec(value)?),
-                );
-            }
-        } else {
-            hashes.insert(owner.clone(), blake3::hash(&serde_json::to_vec(fields)?));
-        }
-    }
-    Ok(hashes)
 }
 
 // Observation only: this is not another durable game/runtime representation.
@@ -461,7 +424,6 @@ impl App {
             models: crate::app::restore_guard::ModelRuntimeGuard::capture(self)?,
             frame_epoch: self.play.simulation_time,
             digest,
-            observed_fields: None,
             running: false,
             resources,
             play,

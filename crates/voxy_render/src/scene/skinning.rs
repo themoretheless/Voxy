@@ -686,13 +686,6 @@ impl SceneSkinInstance {
     }
 }
 
-fn exact_morph_shader_source() -> String {
-    let (terms, _) = include_str!("../world_exact_fused_affine.wgsl")
-        .split_once("fn affine_fused_axis")
-        .expect("source term helpers");
-    format!("{terms}\n{}", include_str!("morph.wgsl"))
-}
-
 fn morph_shader_source() -> String {
     let skin = include_str!("skinning.wgsl")
         .replace(
@@ -703,7 +696,7 @@ fn morph_shader_source() -> String {
             "vec3<f32>(source[s+3u], source[s+4u], source[s+5u])",
             "vec3<f32>(morph_component(i,3u), morph_component(i,4u), morph_component(i,5u))",
         );
-    format!("{}\n{skin}", exact_morph_shader_source())
+    format!("{}\n{skin}", include_str!("morph.wgsl"))
 }
 
 #[cfg(test)]

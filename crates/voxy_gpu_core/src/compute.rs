@@ -597,17 +597,6 @@ impl PendingComputeReadback {
     /// # Errors
     /// Returns mapping errors or `Consumed` when the result was already taken.
     pub fn try_read(&mut self) -> Result<Option<Vec<u8>>, ComputeError> {
-        self.try_read_with(<[u8]>::to_vec)
-    }
-
-    /// Decode the completed mapping before returning its storage to the pool.
-    ///
-    /// # Errors
-    /// Returns mapping errors or `Consumed` when the result was already taken.
-    pub fn try_read_with<T>(
-        &mut self,
-        decode: impl FnOnce(&[u8]) -> T,
-    ) -> Result<Option<T>, ComputeError> {
         if self.consumed {
             return Err(ComputeError::Consumed);
         }
@@ -621,7 +610,7 @@ impl PendingComputeReadback {
             self.buffer.take();
             return Err(ComputeError::Mapping(error));
         }
-        let lease = self.buffer.take().ok_or(ComputeError::Consumed)?;
+        let lease = self.buffer.as_ref().ok_or(ComputeError::Consumed)?;
         let view = lease
             .buffer()
             .slice(..)
@@ -630,10 +619,11 @@ impl PendingComputeReadback {
                 lease.failed();
                 ComputeError::Mapping(error.to_string())
             })?;
-        let data = decode(&view);
+        let data = view.to_vec();
         drop(view);
         lease.buffer().unmap();
         lease.unmapped();
+        self.buffer.take();
         Ok(Some(data))
     }
 }
@@ -869,11 +859,8 @@ mod gather_range_tests {
                 timeout: None,
             })
             .unwrap();
-        let matched = read
-            .try_read_with(|bytes| bytes == bytemuck::cast_slice::<u32, u8>(&[22, 33, 77]))
-            .unwrap();
-        assert_eq!(matched, Some(true));
-        assert_eq!(read.try_read(), Err(ComputeError::Consumed));
+        let bytes = read.try_read().unwrap().unwrap();
+        assert_eq!(bytes, bytemuck::cast_slice::<u32, u8>(&[22, 33, 77]));
         assert_eq!(pool.stats().allocated_buffers, 1);
         assert_eq!(pool.stats().quarantined_buffers, 0);
         assert_eq!(pool.available_capacity(), pool.limits());

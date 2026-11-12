@@ -3408,52 +3408,19 @@ mod authored_jump_integration_tests {
     #[test]
     #[ignore = "real GPU and original full-density coupled authored jump with continuous contacts"]
     fn coupled_authored_jump_real_gpu_hair_first_frame() {
-        qualify_coupled_gpu_frames(true, 1, true, None);
+        qualify_coupled_gpu_frames(true, 1);
     }
     #[test]
     #[ignore = "real GPU and original full-density coupled authored jump in default runtime contact mode"]
     fn coupled_authored_jump_real_gpu_hair_default_first_frame() {
-        qualify_coupled_gpu_frames(false, 1, true, None);
+        qualify_coupled_gpu_frames(false, 1);
     }
     #[test]
     #[ignore = "real GPU, full-density continuous-contact authored jump including the difficult second frame"]
     fn coupled_authored_jump_real_gpu_hair_two_frames() {
-        qualify_coupled_gpu_frames(true, 2, true, None);
+        qualify_coupled_gpu_frames(true, 2);
     }
-    #[test]
-    #[ignore = "requires real GPU; paired first frame of the full-density continuous-contact jump"]
-    fn coupled_authored_jump_real_gpu_refinement_readback_parity() {
-        let full = qualify_coupled_gpu_frames(true, 1, true, None);
-        let tail = qualify_coupled_gpu_frames(true, 1, false, None);
-        assert!(
-            full == tail,
-            "readback changed the published pose or GPU work"
-        );
-    }
-    #[test]
-    #[ignore = "requires real GPU; paired full-density first frame with selective precision fallback"]
-    fn coupled_authored_jump_real_gpu_five_fallback_parity() {
-        let ordinary = qualify_coupled_gpu_frames(true, 1, true, Some(false));
-        let selective = qualify_coupled_gpu_frames(true, 1, true, Some(true));
-        assert!(
-            ordinary == selective,
-            "selective fallback changed the pose or GPU work"
-        );
-    }
-
-    #[derive(PartialEq)]
-    struct CoupledFrameResult {
-        skin_bits: Vec<u64>,
-        hair_bits: Vec<u32>,
-        contact_submissions: usize,
-        native_fallbacks: usize,
-    }
-    fn qualify_coupled_gpu_frames(
-        continuous: bool,
-        frames: usize,
-        full_readback: bool,
-        five_fallback: Option<bool>,
-    ) -> CoupledFrameResult {
+    fn qualify_coupled_gpu_frames(continuous: bool, frames: usize) {
         assert!((1..=2).contains(&frames));
         let instance = voxy_render::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -3468,10 +3435,6 @@ mod authored_jump_integration_tests {
             crate::gpu_hair_solver::GpuHairLinearSolver::new_coupled(&device, &queue),
         )
         .unwrap();
-        solver.joint_full_refinement_readback = full_readback;
-        if let Some(enabled) = five_fallback {
-            solver.set_five_fallback_for_qualification(enabled);
-        }
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
         demo.simulate_hair = true;
@@ -3512,7 +3475,7 @@ mod authored_jump_integration_tests {
                     .all(|v| v.is_finite())
             );
             eprintln!(
-                "COUPLED HAIR GPU passed_frames={frame} bounded_frames={frames} required_full_cycle=720 continuous_contacts={continuous} full_refinement_readback={full_readback} elapsed_s={} structural_calls={} refinement_dispatches={} joint_coordinate_calls={} joint_equality_dispatches={} joint_equality_submissions={} coordinate_batches={} reused_qr_columns={} dual_hint_attempts={} early_release_directions={} admitted={} native_fallbacks={} scope=bounded_frames_only_no_full_cycle_or_FPS_claim",
+                "COUPLED HAIR GPU passed_frames={frame} bounded_frames={frames} required_full_cycle=720 continuous_contacts={continuous} elapsed_s={} structural_calls={} refinement_dispatches={} joint_coordinate_calls={} joint_equality_dispatches={} joint_equality_submissions={} coordinate_batches={} reused_qr_columns={} dual_hint_attempts={} early_release_directions={} admitted={} native_fallbacks={} scope=bounded_frames_only_no_full_cycle_or_FPS_claim",
                 began.elapsed().as_secs_f64(),
                 solver.calls,
                 solver.refinement_dispatches,
@@ -3526,28 +3489,6 @@ mod authored_jump_integration_tests {
                 solver.joint_admitted,
                 solver.joint_native_fallbacks
             );
-        }
-        CoupledFrameResult {
-            skin_bits: demo
-                .skin
-                .positions()
-                .iter()
-                .flatten()
-                .map(|v| v.to_bits())
-                .collect(),
-            hair_bits: demo
-                .hair
-                .gpu_surface_frames()
-                .into_iter()
-                .flat_map(|frame| {
-                    [frame.position_arc, frame.u_red, frame.v_green, frame.w_blue]
-                        .into_iter()
-                        .flatten()
-                        .map(f32::to_bits)
-                })
-                .collect(),
-            contact_submissions: solver.joint_equality_submissions,
-            native_fallbacks: solver.joint_native_fallbacks,
         }
     }
     #[test]
