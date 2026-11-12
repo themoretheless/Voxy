@@ -308,6 +308,10 @@ impl InertialBody {
         }
         Err("implicit contact quadrature nonconvergence")
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn advance_implicit_surface_quadrature(
         &mut self,
         targets: Option<&[SupportTarget]>,
@@ -1895,6 +1899,10 @@ mod tests {
         }
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn moving_skin_shared_quadrature_matches_derivative_and_independent_work() {
         use super::super::super::{
             Body, EmbeddedTriangleContact, Material, StationaryEmbeddedContact,

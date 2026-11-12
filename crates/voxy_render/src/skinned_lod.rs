@@ -457,6 +457,10 @@ pub(crate) mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn skeletal_gpu_lod_budget_shared_streams_and_topology_history() {
         use crate::SkinnedLodGpuError;
         use crate::skinned_lod_gpu::GpuSkinnedLod;

@@ -383,6 +383,10 @@ impl SurfaceFilm {
         Ok(())
     }
     /// Updates metrics of a moving mesh while retaining each cell's liquid volume.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn update_geometry(&mut self, points: &[[f64; 3]]) -> Result<(), &'static str> {
         if points.iter().flatten().any(|p| !p.is_finite()) {
             return Err("nonfinite surface");
@@ -1067,6 +1071,11 @@ impl SurfaceFilm {
         )
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn step_driven_components(
         &mut self,
         dt: f64,

@@ -38,6 +38,10 @@ fn animation_values<T: Copy>(
 }
 
 impl ModelAsset {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn import_animations(
         gltf: &gltf::Gltf,
         data: &[&[u8]],

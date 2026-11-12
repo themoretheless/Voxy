@@ -38,6 +38,10 @@ impl Body {
     /// # Errors
     /// Invalid input, failed subsolves, depletion or unconverged coupling preserves
     /// tissue, circulation and both caller protein inventories.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn implicit_vascular_pore_step(
         &mut self,
         tissue_protein_kg: &mut [f64],
@@ -72,6 +76,10 @@ impl Body {
     /// staged states; its own side effects are outside the state transaction.
     /// # Errors
     /// The same input, solve and conservation errors as the unobserved method.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn implicit_vascular_pore_step_with_observer<F>(
         &mut self,
         tissue_protein_kg: &mut [f64],
@@ -116,6 +124,10 @@ impl Body {
     /// protein transfer is credited to the compartment owning that exact port.
     /// # Errors
     /// Invalid mappings, duplicate ports or failed solves preserve all states.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn implicit_vascular_pore_ports_step_with_observer<F>(
         &mut self,
         tissue_protein_kg: &mut [f64],
@@ -152,6 +164,10 @@ impl Body {
     /// Resistances add R*q pressure drop without altering donor protein rules.
     /// # Errors
     /// Bad resistance mappings or any failed solve preserve all accepted states.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn implicit_vascular_pore_ports_step_with_resistances_and_observer<F>(
         &mut self,
         tissue_protein_kg: &mut [f64],
@@ -190,6 +206,10 @@ impl Body {
     /// Membrane entries are (triangle, reflection fraction, conductance m³/s).
     /// # Errors
     /// Bad mappings or any failed subsolve preserve all physical states.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn implicit_vascular_pore_ports_step_with_membranes_and_observer<F>(
         &mut self,
         tissue_protein_kg: &mut [f64],
@@ -232,6 +252,10 @@ impl Body {
     /// Accepted local tissue concentration and vascular state converge together.
     /// # Errors
     /// Invalid slope, overflow or any failed solve preserves all accepted states.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn implicit_vascular_pore_ports_step_with_osmosis_and_observer<F>(
         &mut self,
         tissue_protein_kg: &mut [f64],
@@ -276,6 +300,11 @@ impl Body {
     /// Simultaneous exchange with an explicit nonlinear osmotic pressure law.
     /// # Errors
     /// Invalid law, overflow or failed convergence preserves every accepted state.
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn implicit_vascular_pore_ports_step_with_osmotic_law_and_observer<F>(
         &mut self,
         tissue_protein_kg: &mut [f64],

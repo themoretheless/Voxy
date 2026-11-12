@@ -203,6 +203,10 @@ impl Liquid {
         }
         self.split_droplet_impl(index, model, Some(fractions))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn split_droplet_impl(
         &mut self,
         index: usize,

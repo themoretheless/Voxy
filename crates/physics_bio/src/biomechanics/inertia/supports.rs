@@ -190,6 +190,10 @@ impl InertialBody {
         )
         .map(|(report, _)| report)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn advance_supports_with_contact_motion(
         &mut self,
         dt: f64,

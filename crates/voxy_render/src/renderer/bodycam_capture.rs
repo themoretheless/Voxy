@@ -14,6 +14,10 @@ impl Renderer {
         self.encode_bodycam_passes_with_scene(encoder, output_view, frame_id, None);
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn encode_bodycam_passes_with_scene(
         &mut self,
         encoder: &mut wgpu::CommandEncoder,

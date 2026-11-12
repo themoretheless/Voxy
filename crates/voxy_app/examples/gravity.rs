@@ -15,11 +15,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
     }
-    let app = voxy_shell::SceneApp::new(smoke)?;
-    let app = if planet {
-        app.with_gravity_planet()
+    use voxy_demos::scenes::GravityScene;
+    let demo = if planet {
+        GravityScene::planet()
     } else {
-        app.with_gravity(collision)
+        GravityScene::new(collision)
     };
+    let app = voxy_shell::SceneApp::new(smoke)?.with_demo(Box::new(demo));
     app.run(winit::event_loop::EventLoop::new()?)
 }

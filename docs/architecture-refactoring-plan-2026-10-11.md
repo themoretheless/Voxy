@@ -1,7 +1,13 @@
 # План оптимизации структуры и архитектуры Voxy
 
-Дата: 2026-10-11, обновлено 2026-10-12. Статус: выполняется на ветке
-`claude/practical-cori-0uhz8k`.
+Дата: 2026-10-11, обновлено 2026-10-12.
+
+**Статус на 2026-11-12: исторический документ, заменён [`refactor/PLAN.md`](refactor/PLAN.md).** План выполнен и
+влит в `main`; ветки `claude/practical-cori-0uhz8k` больше нет, а хеши `8f4759a5`, `be884bf72`, `1642c1ab1` после
+переписывания истории в репозитории не находятся. Разделы §0 (факты обзора) и §2-§5 описывают состояние и
+намерения на октябрь и не обновляются. Два незакрытых пункта перенесены: C5 (orbit-контроллеры, отображение
+`KeyCode`) в `refactor/PLAN.md` п. 4.6, E (документация) закрыт п. 6.4 там же. Позже `physics` был разделён на
+крейты `physics`, `physics_bio`, `physics_astro` (`4f18c0c3`), так что пути B1-B4 относятся к прежней раскладке.
 
 | Шаг | Статус | Commit / результат |
 |---|---|---|
@@ -13,8 +19,8 @@
 | C1 `#[path]` в examples | сделано | 0 includes; 24 модуля `pub mod`, 247 `pub(crate)`→`pub` |
 | D1 render: CPU-геометрия отдельно | сделано | `scene/geometry.rs` (390 строк, без wgpu), `scene.rs` 3004→2620 |
 | D2 dev-цикл render↔editor | сделано | `asset_window` переехал в `voxy_editor/examples`; список dev-циклов пуст |
-| C5 общие утилиты | частично | orbit-константы общие (`camera_motion::{ORBIT_PITCH_LIMIT, ORBIT_MAX_DISTANCE, zoom_range}`); `ui_text` в editor уже строится на gameplay (не дубль); KeyCode-маппинги семантически разные (не дубль); JSON-helpers остаются на C3 |
-| E документация | частично | §4 перегенерирован из `cargo metadata`, ADR 0004 |
+| C5 общие утилиты | частично | orbit-константы общие (`camera_motion::{ORBIT_PITCH_LIMIT, ORBIT_MAX_DISTANCE, zoom_range}`); `ui_text` в editor уже строится на gameplay (не дубль); KeyCode-маппинги семантически разные (не дубль); JSON-helpers остаются на C3. Остаток перенесён в `refactor/PLAN.md` п. 4.6 (JSON закрыт п. 4.5) |
+| E документация | закрыто в `refactor/PLAN.md` п. 6.4 | §4 перегенерирован из `cargo metadata`, ADR 0004 |
 | C2 `voxy_demos` | сделано | 34 демо-модуля (≈45k строк) в `crates/voxy_demos`; `voxy_app` = shell (`scene_app`, `scene_rush`, controls, `main.rs`); `voxy_ray_probe` зависит от `voxy_demos`; шаг C2b: shell (`SceneApp`, scene input, touch, rush) вынесен в `voxy_shell`; `voxy_mobile` и examples зависят от него, `voxy_app` — только бинарь; нарушение `voxy_mobile -> voxy_app` снято |
 | D3 `voxy_gpu_core` | сделано | `ComputeError`, `ComputeProgram`, memory budget, readback pool, `GraphicsOptions`, `GpuIndirectMesh` живут ниже render; `voxy_gpu` больше не зависит от `voxy_render` (ratchet: нарушение снято) |
 | D5 render↔animation | сделано | glTF-импорт (`model.rs`, 1619 строк) вынесен в crate `voxy_model` над `voxy_render` и `voxy_animation`; `voxy_render` больше не зависит от `voxy_animation` (0 ссылок), бюджет суставов — `voxy_render::MAX_SKIN_JOINTS`, равенство с `voxy_animation::MAX_JOINTS` проверяет тест в `voxy_model`; white-box тесты скиннинга и GPU-нормалей переехали в `voxy_model/tests` и ходят к внутренностям render через `#[doc(hidden)] pub` (`voxy_render::test_support`, 12 полей/методов); потребители (editor, app, demos) импортируют `Model*` из `voxy_model`; `KNOWN_VIOLATIONS` ratchet-списка пуст |
@@ -149,7 +155,7 @@ Oracle: существующие тесты lighting/mesher/scene + unit-тес�
 старой и новой реализации на 10⁶ случайных ключей (хэш участвует в
 детерминизме порядка обхода).
 
-**A4. `thiserror`.** Отклонено после осмотра: в voxel-слое (`voxy_core`,
+**A4. `thiserror`.** (Решение позже пересмотрено: A4 сделан, `thiserror` подключён в девяти крейтах из таблицы статуса; `voxy_core` остался без зависимостей.) Исходная запись: отклонено после осмотра: в voxel-слое (`voxy_core`,
 `voxy_world`, `voxy_lighting`, `voxy_mesher`, `voxy_runtime`) каждый error-enum
 имеет ровно один двухстрочный `Display` вида `"invalid chunk: {self:?}"` —
 это сознательный стиль, derive его не сокращает, а `voxy_core` и `voxy_world`
@@ -311,7 +317,7 @@ editor даже в dev.
 cargo fmt --all --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test -p <затронутые crates>
-cargo test -p voxy_core --test depgraph          # после A1
+cargo test -p voxy_depgraph --test depgraph          # после A1
 python3 scratchpad/paired_run.py ...             # если тронут hot path
 ```
 

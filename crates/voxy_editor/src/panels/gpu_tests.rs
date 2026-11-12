@@ -25,13 +25,49 @@ fn load_progress_and_cancel_render_readable_glyphs() {
 fn snapshot_failure_notice_renders_diagnostic_and_retry_hint_without_overlap() {
     render_controls(Controls::SnapshotError);
 }
+#[test]
+#[ignore = "requires a real GPU and local TrueType font"]
+fn joint_kind_row_and_toggle_render_readable_glyphs_without_hit_overlap() {
+    render_controls(Controls::JointKind);
+}
+#[test]
+#[ignore = "requires a real GPU and local TrueType font"]
+fn joint_target_row_and_toggle_render_readable_glyphs_without_hit_overlap() {
+    render_controls(Controls::JointTarget);
+}
+/// Two objects; the selected rig is welded to the anchor by a distance spring.
+fn joint_document() -> SceneDocument {
+    let mut document = SceneDocument::from_json(r#"{"version":1,"objects":[{"id":"rig","parent":null,"name":"Jointed rig","active":true,"translation":[0,-2,0],"rotation":[0,0,0,1],"scale":[1,1,1],"components":{}},{"id":"anchor","parent":null,"name":"Ceiling anchor","active":true,"translation":[0,0,0],"rotation":[0,0,0,1],"scale":[1,1,1],"components":{}}]}"#).unwrap();
+    document.objects[0].components.insert(
+        crate::joint_authoring::SCHEMA.into(),
+        serde_json::to_value(voxy_gameplay::PhysicsJoint {
+            target: voxy_scene::ObjectId("anchor".into()),
+            target_anchor: [0.; 3],
+            local_anchor: [0., 0.25, 0.],
+            kind: voxy_gameplay::PhysicsJointKind::DistanceSpring {
+                rest_length: 0.5,
+                stiffness: 50.,
+                damping: 2.,
+            },
+        })
+        .unwrap(),
+    );
+    document
+}
+#[derive(Clone, Copy, PartialEq)]
 enum Controls {
+    JointKind,
+    JointTarget,
     Markers,
     Missing,
     Relink,
     Loading,
     SnapshotError,
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn render_controls(scenario: Controls) {
     let with_notice = matches!(scenario, Controls::Missing | Controls::Relink);
     let editing = matches!(scenario, Controls::Relink);
@@ -55,6 +91,10 @@ fn render_controls(scenario: Controls) {
         })
         .unwrap(),
     );
+    let joint = matches!(scenario, Controls::JointKind | Controls::JointTarget);
+    if joint {
+        document = joint_document();
+    }
     let mut panels = Panels::new().unwrap();
     if with_notice {
         document.objects[0]
@@ -102,7 +142,7 @@ fn render_controls(scenario: Controls) {
             None,
             0,
             false,
-            InspectorMode::Components(0),
+            InspectorMode::Components(usize::from(scenario == Controls::JointTarget)),
             "Texture: none",
             "Animation markers",
             None,
@@ -120,11 +160,30 @@ fn render_controls(scenario: Controls) {
                     | Action::PreviewSeek
                     | Action::MorphDefaults(_)
                     | Action::MorphResume(_)
-            )
+                    | Action::Joint(_)
+                    | Action::JointKind(_)
+                    | Action::JointTarget(_)
+            ) || (joint && matches!(action, Action::Field(_)))
         })
         .copied()
         .collect();
-    assert_eq!(controls.len(), 7);
+    // Animation page: seven marker/morph controls and the joint toggle. Joint pages: every
+    // member row, its Change or Pick button and the toggle.
+    assert_eq!(
+        controls.len(),
+        if scenario == Controls::JointTarget {
+            7
+        } else {
+            8
+        }
+    );
+    assert_eq!(
+        controls
+            .iter()
+            .filter(|(_, action)| matches!(action, Action::JointKind(_) | Action::JointTarget(_)))
+            .count(),
+        usize::from(joint)
+    );
     for (rect, _) in &controls {
         for (other, action) in &panels.regions {
             if other != rect {

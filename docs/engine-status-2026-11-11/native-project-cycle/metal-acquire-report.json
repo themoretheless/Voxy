@@ -1,0 +1,98 @@
+{
+  "editor_sha256": "6821f95cd1d5990b8d27fc395841d75fe77cfa90eef8162b5885e7fb1a62cb76",
+  "saved_authoring": {
+    "version": 1,
+    "objects": [],
+    "instances": [
+      {
+        "id": "first",
+        "asset": "nested",
+        "parent": null,
+        "overrides": {
+          "5:child4:root": {
+            "deleted": false,
+            "parent": null,
+            "name": null,
+            "active": null,
+            "translation": [
+              0.05,
+              0.0,
+              0.5
+            ],
+            "rotation": null,
+            "scale": null,
+            "components": {}
+          }
+        }
+      },
+      {
+        "id": "second",
+        "asset": "nested",
+        "parent": null,
+        "overrides": {}
+      }
+    ]
+  },
+  "reopened_and_packaged_state": {
+    "version": 1,
+    "objects": [
+      {
+        "id": "5:first13:5:child4:root",
+        "parent": null,
+        "name": "Prefab model",
+        "active": true,
+        "translation": [
+          0.05,
+          0.0,
+          0.5
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": {
+          "editor.model.v1": "mesh"
+        }
+      },
+      {
+        "id": "6:second13:5:child4:root",
+        "parent": null,
+        "name": "Prefab model",
+        "active": true,
+        "translation": [
+          0.0,
+          0.0,
+          0.5
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": {
+          "editor.model.v1": "mesh"
+        }
+      }
+    ]
+  },
+  "calls": {
+    "create": "Created /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-qlue6edq/project/project.voxy",
+    "authoring": "EDITOR PRESENT frames=0 draws=1 outcome=SkippedOccluded positions=[(NodeId { scene: 7, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0)), (NodeId { scene: 7, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]\nEDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)\nEDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)\nEDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)\nEDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)\nEDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)\nEDITOR PRESENT frames=0 draws=1 outcome=Presented positions=[(NodeId { scene: 7, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0)), (NodeId { scene: 7, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]\nMODEL PUBLISHED frames=14 first_x=-0.5 asset=mesh\nPREFAB NATIVE PANEL PLACE SAVE UNDO REDO PASS frames=15\nPREFAB NATIVE PANEL CREATE PLACE SAVE UNDO PASS frames=15\nEDITOR KEY frames=15 key=ArrowRight\nPREFAB NATIVE PANEL REVERT UNDO REDO PASS frames=15\nEDITOR KEY frames=15 key=Delete\nPREFAB NATIVE STRUCTURAL SAVE UNDO PASS frames=15\nPREFAB NATIVE SAVE UNDO AND LAST GOOD PASS frames=15\nEDITOR PRESENT frames=15 draws=5 outcome=Presented positions=[(NodeId { scene: 103, slot: 0, generation: 0 }, Vec4(0.05, 0.0, 0.5, 1.0)), (NodeId { scene: 103, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]\nPREFAB NATIVE PRESENTED AFTER FAILURE PASS frames=18\nGAME UI GPU PUBLISHED draws=0\nMODEL PUBLISHED frames=23 first_x=-0.5 asset=mesh\nPREFAB NATIVE PLAY STOP PASS frames=24 ticks=1\nMODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nGAME PACKAGE PASS sources=7 bytes=6700\nEDITOR GAME BUILT /private/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-qlue6edq/project/game-2.vpak\nPREFAB NATIVE BUILD PASS /private/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-qlue6edq/project/game-2.vpak\nMODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nEDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)\nEDITOR PRESENT frames=0 draws=2 outcome=SkippedOccluded positions=[(NodeId { scene: 10, slot: 0, generation: 0 }, Vec4(0.05, 0.0, 0.5, 1.0)), (NodeId { scene: 10, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]\nEDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)\nEDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)\nEDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)\nGAME UI GPU PUBLISHED draws=0\nEDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)\nEDITOR PRESENT frames=0 draws=2 outcome=Presented positions=[(NodeId { scene: 10, slot: 0, generation: 0 }, Vec4(0.05, 0.0, 0.5, 1.0)), (NodeId { scene: 10, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]\nMODEL PUBLISHED frames=1 first_x=-0.5 asset=mesh\nGAME NATIVE PASS frames=3 ticks=15\nGAME NATIVE PASS frames=3 ticks=15\nEDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)\nPREFAB NATIVE RUN BUILT GAME PASS\nMETAL WINDOW number=16272 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class=\"NSKVONotifying_WinitWindow\"\nMETAL WINDOW number=16272 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class=\"NSKVONotifying_WinitWindow\"\nMETAL WINDOW number=16272 occlusion=8194 visible=true miniaturized=false key=false active_space=true main_thread=true class=\"NSKVONotifying_WinitWindow\"\nMETAL WINDOW number=16280 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class=\"NSKVONotifying_WinitWindow\"\nMETAL WINDOW number=16280 occlusion=8192 visible=true miniaturized=false key=true active_space=true main_thread=true class=\"NSKVONotifying_WinitWindow\"\nMETAL WINDOW number=16272 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class=\"NSKVONotifying_WinitWindow\"",
+    "reopened": "MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nGAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"5:first13:5:child4:root\",\"parent\":null,\"name\":\"Prefab model\",\"active\":true,\"translation\":[0.05,0.0,0.5],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\"}},{\"id\":\"6:second13:5:child4:root\",\"parent\":null,\"name\":\"Prefab model\",\"active\":true,\"translation\":[0.0,0.0,0.5],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\"}}]}\nGAME CHECK PASS ticks=120 objects=2 prefab_instances=2",
+    "package_state": "MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nGAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"5:first13:5:child4:root\",\"parent\":null,\"name\":\"Prefab model\",\"active\":true,\"translation\":[0.05,0.0,0.5],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\"}},{\"id\":\"6:second13:5:child4:root\",\"parent\":null,\"name\":\"Prefab model\",\"active\":true,\"translation\":[0.0,0.0,0.5],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\"}}]}\nGAME CHECK PASS ticks=120 objects=2 prefab_instances=2",
+    "package_native": "MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nEDITOR PRESENT frames=0 draws=2 outcome=SkippedOccluded positions=[(NodeId { scene: 10, slot: 0, generation: 0 }, Vec4(0.05, 0.0, 0.5, 1.0)), (NodeId { scene: 10, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]\nEDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)\nEDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)\nEDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)\nEDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)\nGAME UI GPU PUBLISHED draws=0\nEDITOR PRESENT frames=0 draws=2 outcome=Presented positions=[(NodeId { scene: 10, slot: 0, generation: 0 }, Vec4(0.05, 0.0, 0.5, 1.0)), (NodeId { scene: 10, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]\nMODEL PUBLISHED frames=2 first_x=-0.5 asset=mesh\nGAME NATIVE PASS frames=3 ticks=12\nGAME NATIVE PASS frames=3 ticks=12\nMETAL WINDOW number=16289 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class=\"NSKVONotifying_WinitWindow\"\nMETAL WINDOW number=16289 occlusion=8192 visible=true miniaturized=false key=true active_space=true main_thread=true class=\"NSKVONotifying_WinitWindow\""
+  }
+}

@@ -5,6 +5,10 @@ use voxy_render::{
     SceneProjection, SceneRenderer, TextureFilter, TextureSampling,
 };
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn render(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -470,6 +474,10 @@ fn position_key(position: [f32; 3]) -> Result<[u32; 3], &'static str> {
     Ok(rounded.map(|value| if value == 0.0 { 0 } else { value.to_bits() }))
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn ray_shade(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

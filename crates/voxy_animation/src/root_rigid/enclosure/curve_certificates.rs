@@ -425,6 +425,10 @@ impl RootRigidCurve {
     /// Uniform source-to-published point discrepancy for an explicit loop cell.
     /// Matches sample point evaluation, then actual_scale*(actual_frame.rotation*p)
     /// +actual_frame.translation, then direct f32 cast. Fixed source frames only.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn cycle_world_point_evaluation_error_bounds(
         &self,
         cycles: u64,
@@ -471,6 +475,10 @@ impl RootRigidCurve {
     /// Uniform sample/map/f32 error on an absolute wall-clock interval.
     /// Splits channel keys/loops and refines unresolved normalization domains.
     /// Seam endpoints also certify the actual next-cycle sampling branch.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn world_point_evaluation_error_bounds(
         &self,
         times: [f64; 2],

@@ -80,6 +80,10 @@ impl Liquid {
 mod tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn sub_ulp_inventory_and_population_survive_restore_and_later_heat_deposit() {
         for mask in [None, Some(vec![true, false]), Some(vec![false, false])] {
             let config = Config {

@@ -1,6 +1,10 @@
 //! Float readback of low-light precision and HDR exposure overflow.
 use voxy_render::TextureBlit;
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn verify(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -147,6 +151,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     })
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn resolve_half(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

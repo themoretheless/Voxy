@@ -11,6 +11,10 @@ pub(crate) struct PreparedEditorCheckpoint {
     pub authoring: PreparedAuthoringHistory,
 }
 impl App {
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn editor_checkpoint(
         &self,
         view: &SceneCheckpointView<'_>,
@@ -439,6 +443,10 @@ impl App {
             publication,
         })
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn publish_editor_checkpoint_install(
         &mut self,
         ready: ReadyEditorInstallation,

@@ -85,6 +85,10 @@ fn normal_motion(
 /// Directional derivative of normal_gap_acceleration along physical body rates
 /// and the supplied geometry point/normal motion. Wrench rates are world COM
 /// derivatives, not force derivatives at a frozen material point.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn normal_gap_jerk(
     first: &ContactBody,
     second: Option<&ContactBody>,
@@ -278,6 +282,10 @@ pub(crate) fn resolve_rate_from_baseline(
     )
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(crate) fn resolve_rate_from_baseline_interval(
     bodies: &[ContactBody],
     contacts: &[NetworkSupport],
@@ -302,6 +310,10 @@ pub(crate) fn resolve_rate_from_baseline_interval(
 }
 
 #[allow(clippy::too_many_arguments)]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn resolve_rate_from_baseline_mixed_interval(
     bodies: &[ContactBody],
     particle_count: usize,

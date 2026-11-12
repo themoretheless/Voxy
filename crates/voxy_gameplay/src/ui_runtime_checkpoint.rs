@@ -133,6 +133,10 @@ impl SceneUiCheckpoint {
             true,
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn prepare_inner(
         &self,
         scene: &SceneGraph,

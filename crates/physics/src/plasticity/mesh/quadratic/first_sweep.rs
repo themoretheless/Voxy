@@ -15,6 +15,10 @@ impl QuadraticFace {
     /// None means the whole trajectory was separated. Search uncertainty is
     /// retained, never treated as absence of contact. Floating-point geometric
     /// bounds have the same limitations as swept_point_clearance_at.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn first_point_clearance_at(
         &self,
         start: &[Vec3],

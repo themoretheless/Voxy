@@ -245,6 +245,10 @@ fn extinction_grid_sums_species_and_mist_matches_droplet_cross_sections() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn film_drying_moves_solvent_mass_into_the_containing_gas_cell() {
     use crate::liquid::{
         SaturationCurve, SolutionVaporInterface, VaporExchangeAccuracy, VaporInterface,
@@ -355,6 +359,10 @@ fn film_drying_moves_solvent_mass_into_the_containing_gas_cell() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn multi_liquid_jets_splash_into_mist_wet_smear_and_dry_conserving_mass() {
     use crate::friction;
     use crate::liquid::{

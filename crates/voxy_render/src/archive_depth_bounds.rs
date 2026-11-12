@@ -40,6 +40,10 @@ impl ArchiveDepthBounds {
     ) -> Result<Self, ComputeError> {
         Self::create(device, depth, width, height, true, true)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn create(
         device: &wgpu::Device,
         depth: &wgpu::Texture,

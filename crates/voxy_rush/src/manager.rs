@@ -117,6 +117,10 @@ fn vector(value: &Value<'_>, n: usize) -> Result<Vec<f32>, String> {
         })
         .collect()
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn registrations(context: &Rc<RefCell<Context>>) -> Vec<HostRegistration> {
     let object = ValueType::HostObject("VoxyObject");
     let list = ValueType::List(Box::new(ValueType::Number));

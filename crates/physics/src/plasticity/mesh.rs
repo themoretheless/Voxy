@@ -158,6 +158,10 @@ impl Body {
     /// # Errors
     /// Rejects invalid inputs, singular supports/tangents, inversion and overflow.
     // Keep trial acceptance and atomic history commit together.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn equilibrate(
         &mut self,
         loads: &[Vec3],

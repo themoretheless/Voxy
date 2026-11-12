@@ -22,6 +22,10 @@ fn candidate() -> ImportedAsset<import::EditorAsset> {
 }
 #[test]
 #[ignore = "requires real GPU; native reload transaction without a window"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

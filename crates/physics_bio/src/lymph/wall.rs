@@ -79,6 +79,10 @@ impl LymphaticHydraulicAttachment {
     /// inertia decays. This response alone does not advance compartment inventory.
     /// # Errors
     /// Rejects invalid coefficients, geometry, time step or previous valve flow.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn momentum_response(
         self,
         wall: LymphaticWallLaw,

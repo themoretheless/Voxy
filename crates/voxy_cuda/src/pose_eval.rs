@@ -260,6 +260,10 @@ impl CudaCompute {
     }
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn validate(words: &[u32], max_bytes: usize) -> Result<(), CudaError> {
     if words.len() < POSE_EVAL_HEADER_WORDS {
         return Err(CudaError::InvalidPoseEvalInput);

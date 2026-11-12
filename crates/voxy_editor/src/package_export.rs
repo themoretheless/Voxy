@@ -94,6 +94,10 @@ pub fn export_project_package_with_host(
     export_app_package(app, launch, extra, output)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn export_app_package(
     mut app: App,
     launch: serde_json::Value,

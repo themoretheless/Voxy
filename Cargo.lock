@@ -2919,6 +2919,7 @@ dependencies = [
  "voxy_scene",
  "voxy_shell",
  "voxy_text",
+ "voxy_ui_winit",
  "voxy_world",
  "wgpu",
  "winit",
@@ -2989,6 +2990,7 @@ dependencies = [
  "voxy_model",
  "voxy_render",
  "voxy_scene",
+ "voxy_scene_host",
  "voxy_world",
  "wgpu",
 ]
@@ -3022,6 +3024,7 @@ dependencies = [
  "voxy_gameplay",
  "voxy_input",
  "voxy_model",
+ "voxy_player",
  "voxy_render",
  "voxy_scene",
  "voxy_text",
@@ -3138,6 +3141,16 @@ name = "voxy_navigation"
 version = "0.1.0"
 
 [[package]]
+name = "voxy_player"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "voxy_assets",
+ "voxy_gameplay",
+ "voxy_scene",
+]
+
+[[package]]
 name = "voxy_ray_probe"
 version = "0.1.0"
 dependencies = [
@@ -3238,6 +3251,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "voxy_scene_host"
+version = "0.1.0"
+dependencies = [
+ "glam",
+ "voxy_render",
+ "wgpu",
+]
+
+[[package]]
 name = "voxy_shell"
 version = "0.1.0"
 dependencies = [
@@ -3246,14 +3268,13 @@ dependencies = [
  "pollster",
  "serde_json",
  "thiserror 2.0.20",
- "voxy_demos",
  "voxy_input",
  "voxy_render",
  "voxy_runtime",
  "voxy_rush",
  "voxy_scene",
+ "voxy_scene_host",
  "voxy_text",
- "wgpu",
  "winit",
 ]
 

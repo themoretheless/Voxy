@@ -142,6 +142,10 @@ impl Sphere {
     /// Joint stellar solve using frequency-dependent physical free-free transfer.
     /// The explicit frequency band, quadrature and all work budgets apply to
     /// every trial state. The same mass/radius and stability limits apply.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn equilibrate_stellar_free_free(
         &mut self,
         fractions: &[Vec<f64>],
@@ -171,6 +175,11 @@ impl Sphere {
             Some(spectrum),
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn equilibrate_stellar_impl(
         &mut self,
         fractions: &[Vec<f64>],

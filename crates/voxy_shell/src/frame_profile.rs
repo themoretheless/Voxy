@@ -214,6 +214,10 @@ impl Profile {
         self.finish_report(adapter, Some(workload))
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn finish_report(&self, adapter: &str, workload: Option<VoxelWorkload>) -> io::Result<()> {
         if self.samples.is_empty() {
             return Err(io::Error::other("profile has no measured frames"));

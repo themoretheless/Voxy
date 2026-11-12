@@ -1004,6 +1004,10 @@ pub(crate) mod tests {
     }
     #[test]
     #[ignore = "physical default audio output; gain zero, no window"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn physical_native_session_save_cancel_resume_and_closed_load_admission() {
         use std::time::{Duration, Instant};
         let temp = crate::project_prefab_tests::Temp::new();
@@ -1818,6 +1822,10 @@ pub(crate) mod tests {
     fn frozen_audio_publication_retains_owner_on_discard_and_releases_old_fence_on_commit() {
         exercise_session_load(true);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn exercise_session_load(at_barrier: bool) {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
         let path = std::env::temp_dir().join(format!(

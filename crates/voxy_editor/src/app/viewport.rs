@@ -24,6 +24,10 @@ impl App {
         self.poll_snapshot_load_command();
         Ok(())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn draw_frame_inner(
         &mut self,
         offscreen: Option<voxy_render::SceneViewTargets<'_>>,
@@ -991,6 +995,10 @@ impl App {
         cursor.x >= left && cursor.x < size.x - right && cursor.y >= 0. && cursor.y < size.y
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn update_editor_panels_for_frame(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let Some(window) = &self.window else {
             return Ok(());
@@ -1098,6 +1106,9 @@ impl App {
             panels.collection_resets = collection_resets;
             panels.overridden_fields = overrides;
             panels.follow_pick = key.follow_pick;
+            if let Some(pick) = &self.follow_pick {
+                panels.pick_title = pick.purpose.title();
+            }
             panels.resource_notice.clone_from(&key.resource_notice);
             let mesh = panels.build(
                 &document,

@@ -171,6 +171,10 @@ impl PelvicAnatomy {
     /// and anal sphincter/prolapse manifold for the adult female body mesh.
     /// Returns an inert empty instance if `rest_vertices` is not the adult female mesh.
     #[must_use]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(rest_vertices: &[SceneVertex], body_indices: &[u32]) -> Self {
         if rest_vertices.len() != FEMALE_BODY_VERTICES {
             return Self {
@@ -748,6 +752,10 @@ impl PelvicAnatomy {
 
     /// Appends the deformed 3D pelvic/vulvar/anal manifold vertices, triangle indices,
     /// and optionally smooth grid-evaluated surface normals onto the character render streams.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn append_with_normals(
         &self,
         deformed_vertices: &[SceneVertex],

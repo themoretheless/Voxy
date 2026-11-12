@@ -6,6 +6,10 @@ use voxy_render::{
 
 #[test]
 #[ignore = "requires real GPU; native material sampler cache and rendered pixels"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_material_sampler_views_share_storage_and_render_distinct_filter_and_wrap_modes() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

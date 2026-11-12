@@ -150,6 +150,10 @@ fn morph_source_instance_admission_and_preflight_preserve_existing_owners() {
 
 #[test]
 #[ignore = "requires physical GPU; exact morph output readback, not a benchmark"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_exact_morph_precedes_skinning_and_preserves_independent_instance_weights() {
     let graphics = crate::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(graphics.request_adapter(&Default::default())).unwrap();
@@ -259,6 +263,10 @@ fn gpu_exact_morph_precedes_skinning_and_preserves_independent_instance_weights(
 
 #[test]
 #[ignore = "requires physical GPU; exact morph integer arithmetic readback and rational oracle payload"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_exact_morph_component_edges_and_full_target_budget() {
     use wgpu::util::DeviceExt;
     let graphics = crate::GraphicsOptions::default().create_instance();

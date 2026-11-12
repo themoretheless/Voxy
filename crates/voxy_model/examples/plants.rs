@@ -2,6 +2,10 @@
 use glam::{Mat4, Vec3};
 use voxy_model::plants::{PlantKind, PlantOptions, generate_plant_glb, generate_world_plant_asset};
 use voxy_render::archive_scene::*;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::env::args()
         .nth(1)

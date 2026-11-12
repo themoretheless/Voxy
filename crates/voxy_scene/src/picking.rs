@@ -359,6 +359,10 @@ impl SceneGraph {
     /// Uses a Morton-ordered SAH BVH when `>= 16` valid candidates match `layers`.
     /// # Errors
     /// Rejects invalid matching bounds and cached world-transform overflow.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn pick(&self, ray: PickRay, layers: u32) -> Result<PickResult, PickError> {
         let mut result = PickResult::default();
         let mut candidates: Vec<BvhPrimitive> = Vec::new();

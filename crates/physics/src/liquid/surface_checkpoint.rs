@@ -88,6 +88,10 @@ impl Liquid {
 mod tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn all_surface_response_fields_restore_and_continue_with_container_walls() {
         let config = Config {
             gravity: [0.; 3],

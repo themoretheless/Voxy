@@ -5,6 +5,187 @@ pub(crate) const MAX_PROBES: usize = 4096;
 /// Bytes per probe: four RGB(A) SH coefficients.
 pub(crate) const PROBE_BYTES: u64 = 4 * 16;
 
+/// Versioned, CRC-32C-checked binary cache (`.vprobes`) of baked order-1 SH irradiance probes
+/// (`ProbeGrid` + 64-byte per-probe `[f32; 16]` coefficients). Eliminates multi-minute cold
+/// startup baking on scenes such as `street_walk` when the grid and probe count match.
+#[derive(Clone, Debug, PartialEq)]
+pub struct BakedProbeCache {
+    pub origin: [f32; 4],
+    pub spacing: [f32; 4],
+    pub dims: [u32; 4],
+    /// Each probe holds 4 `vec4<f32>` order-1 SH coefficients (`[f32; 16]`, 64 bytes).
+    pub probes: Vec<[f32; 16]>,
+}
+
+impl BakedProbeCache {
+    pub const ENVELOPE: voxy_core::CheckpointEnvelope =
+        voxy_core::CheckpointEnvelope::new(*b"VPRB", 1);
+    pub const MAX_PAYLOAD_BYTES: usize = 64 + MAX_PROBES * 64;
+
+    /// Constructs a validated baked probe cache.
+    /// # Errors
+    /// Rejects non-finite origin/spacing/coefficients, zero dimensions, or probe count mismatch.
+    pub fn new(
+        origin: [f32; 4],
+        spacing: [f32; 4],
+        dims: [u32; 4],
+        probes: Vec<[f32; 16]>,
+    ) -> Result<Self, voxy_core::CodecError> {
+        let count = (dims[0] as usize)
+            .checked_mul(dims[1] as usize)
+            .and_then(|xy| xy.checked_mul(dims[2] as usize))
+            .ok_or(voxy_core::CodecError::InvalidValue("probe grid overflow"))?;
+        if count == 0 || count > MAX_PROBES {
+            return Err(voxy_core::CodecError::CapacityExceeded {
+                count,
+                limit: MAX_PROBES,
+            });
+        }
+        if probes.len() != count {
+            return Err(voxy_core::CodecError::InvalidValue(
+                "probe count does not match grid dims",
+            ));
+        }
+        if origin.iter().chain(spacing.iter()).any(|v| !v.is_finite())
+            || spacing[..3].iter().any(|s| *s <= 0.0)
+            || probes.iter().flatten().any(|c| !c.is_finite())
+        {
+            return Err(voxy_core::CodecError::InvalidValue(
+                "non-finite or non-positive probe cache values",
+            ));
+        }
+        Ok(Self {
+            origin,
+            spacing,
+            dims,
+            probes,
+        })
+    }
+
+    /// Encodes the probe cache into a `VPRB` v1 `CheckpointEnvelope` byte vector.
+    /// # Errors
+    /// Propagates any [`voxy_core::CodecError`].
+    pub fn to_bytes(&self) -> Result<Vec<u8>, voxy_core::CodecError> {
+        Self::ENVELOPE.seal(self)
+    }
+
+    /// Decodes and validates a `VPRB` v1 `CheckpointEnvelope` byte slice.
+    /// # Errors
+    /// Rejects corrupt magic/version/checksum, non-finite values, or mismatched dimensions.
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, voxy_core::CodecError> {
+        Self::ENVELOPE.open(bytes, Self::MAX_PAYLOAD_BYTES)
+    }
+
+    /// Writes the encoded cache to `path` through a sibling temporary file and a rename, so a
+    /// crash never leaves a truncated `.vprobes` in place.
+    /// # Errors
+    /// Returns encoding failures as [`std::io::ErrorKind::InvalidData`] and any I/O error.
+    pub fn save_to_path(&self, path: &std::path::Path) -> std::io::Result<()> {
+        let bytes = self
+            .to_bytes()
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, format!("{e:?}")))?;
+        let mut temporary = path.as_os_str().to_owned();
+        temporary.push(".tmp");
+        let temporary = std::path::PathBuf::from(temporary);
+        std::fs::write(&temporary, bytes)?;
+        std::fs::rename(&temporary, path).inspect_err(|_| {
+            let _ = std::fs::remove_file(&temporary);
+        })
+    }
+
+    /// Reads and validates a cache written by [`Self::save_to_path`].
+    /// # Errors
+    /// Returns any I/O error; a file larger than the envelope limit or failing validation is
+    /// reported as [`std::io::ErrorKind::InvalidData`].
+    pub fn load_from_path(path: &std::path::Path) -> std::io::Result<Self> {
+        // Header and checksum overhead of the envelope is far below this slack.
+        let limit = Self::MAX_PAYLOAD_BYTES as u64 + 64;
+        if std::fs::metadata(path)?.len() > limit {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "probe cache file exceeds the envelope limit",
+            ));
+        }
+        Self::from_bytes(&std::fs::read(path)?)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, format!("{e:?}")))
+    }
+
+    /// Uploads the cached SH coefficients directly into the GPU probe storage buffer.
+    pub fn upload_to_buffer(&self, queue: &wgpu::Queue, buffer: &wgpu::Buffer) {
+        queue.write_buffer(buffer, 0, bytemuck::cast_slice(&self.probes));
+    }
+}
+
+impl voxy_core::BinaryCheckpoint for BakedProbeCache {
+    fn encode_into(&self, out: &mut Vec<u8>) -> Result<(), voxy_core::CodecError> {
+        let mut writer = voxy_core::ByteWriter::new(out);
+        for v in self.origin {
+            if !v.is_finite() {
+                return Err(voxy_core::CodecError::InvalidValue("non-finite origin"));
+            }
+            writer.write_f32_le(v);
+        }
+        for v in self.spacing {
+            if !v.is_finite() {
+                return Err(voxy_core::CodecError::InvalidValue("non-finite spacing"));
+            }
+            writer.write_f32_le(v);
+        }
+        for d in self.dims {
+            writer.write_u32_le(d);
+        }
+        writer.write_u32_le(self.probes.len() as u32);
+        for probe in &self.probes {
+            for coeff in *probe {
+                if !coeff.is_finite() {
+                    return Err(voxy_core::CodecError::InvalidValue("non-finite SH coeff"));
+                }
+                writer.write_f32_le(coeff);
+            }
+        }
+        Ok(())
+    }
+
+    fn decode_from(bytes: &[u8]) -> Result<Self, voxy_core::CodecError> {
+        let mut reader = voxy_core::ByteReader::new(bytes);
+        let origin = [
+            reader.read_finite_f32_le()?,
+            reader.read_finite_f32_le()?,
+            reader.read_finite_f32_le()?,
+            reader.read_finite_f32_le()?,
+        ];
+        let spacing = [
+            reader.read_finite_f32_le()?,
+            reader.read_finite_f32_le()?,
+            reader.read_finite_f32_le()?,
+            reader.read_finite_f32_le()?,
+        ];
+        let dims = [
+            reader.read_u32_le()?,
+            reader.read_u32_le()?,
+            reader.read_u32_le()?,
+            reader.read_u32_le()?,
+        ];
+        let count = reader.read_u32_le()? as usize;
+        if count > MAX_PROBES {
+            return Err(voxy_core::CodecError::CapacityExceeded {
+                count,
+                limit: MAX_PROBES,
+            });
+        }
+        let mut probes = Vec::with_capacity(count);
+        for _ in 0..count {
+            let mut probe = [0.0_f32; 16];
+            for coeff in &mut probe {
+                *coeff = reader.read_finite_f32_le()?;
+            }
+            probes.push(probe);
+        }
+        reader.finish()?;
+        Self::new(origin, spacing, dims, probes)
+    }
+}
+
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
 struct Bake {
@@ -98,10 +279,15 @@ impl ProbeProjector {
 
     /// Accumulate one rendered face (90-degree vertical FOV, centred square of
     /// side `height`) into probe `index`. Face 0 resets the slot.
-    pub fn project(
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
+    pub fn encode_projection(
         &self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
+        encoder: &mut wgpu::CommandEncoder,
         face_view: &wgpu::TextureView,
         (width, height): (u32, u32),
         probes: &wgpu::Buffer,
@@ -109,7 +295,7 @@ impl ProbeProjector {
         face: usize,
         basis: [glam::Vec3; 3],
         inverse_exposure: f32,
-    ) -> wgpu::SubmissionIndex {
+    ) {
         let [forward, right, up] = basis;
         let size = height.min(width) as f32;
         let bake = Bake {
@@ -153,14 +339,10 @@ impl ProbeProjector {
             layout: &self.pipeline.get_bind_group_layout(0),
             entries: &entries[..if self.trace.is_some() { 4 } else { 3 }],
         });
-        let mut encoder = device.create_command_encoder(&Default::default());
-        {
-            let mut pass = encoder.begin_compute_pass(&Default::default());
-            pass.set_pipeline(&self.pipeline);
-            pass.set_bind_group(0, &bind, &[]);
-            pass.dispatch_workgroups(1, 1, 1);
-        }
-        queue.submit([encoder.finish()])
+        let mut pass = encoder.begin_compute_pass(&Default::default());
+        pass.set_pipeline(&self.pipeline);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups(1, 1, 1);
     }
 }
 
@@ -282,6 +464,54 @@ mod tests {
         assert!(grid(Vec3::ZERO, Vec3::splat(1000.), 1.).is_none());
         assert_eq!(chebyshev_probe_visibility(1.5, 2.0, 4.1, 1e-3), 1.0);
         assert!(chebyshev_probe_visibility(4.0, 1.5, 2.3, 1e-3) < 0.02);
+    }
+
+    #[test]
+    fn baked_probe_cache_roundtrips_and_rejects_corrupted_or_mismatched_grids() {
+        let probes = vec![[0.25_f32; 16]; 8];
+        let cache = BakedProbeCache::new(
+            [0.0, 1.0, 2.0, 1.0],
+            [4.0, 4.0, 4.0, 0.0],
+            [2, 2, 2, 0],
+            probes,
+        )
+        .unwrap();
+        let mut encoded = cache.to_bytes().unwrap();
+        assert_eq!(&encoded[0..4], b"VPRB");
+        let decoded = BakedProbeCache::from_bytes(&encoded).unwrap();
+        assert_eq!(decoded, cache);
+
+        // Flipping a payload byte triggers CRC-32C rejection:
+        encoded[24] ^= 0x01;
+        assert!(matches!(
+            BakedProbeCache::from_bytes(&encoded),
+            Err(voxy_core::CodecError::ChecksumMismatch { .. })
+        ));
+
+        // File round trip leaves no temporary behind and rejects a corrupted file:
+        let dir = std::env::temp_dir().join(format!("voxy-vprobes-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("scene.vprobes");
+        cache.save_to_path(&path).unwrap();
+        assert_eq!(BakedProbeCache::load_from_path(&path).unwrap(), cache);
+        assert!(!dir.join("scene.vprobes.tmp").exists());
+        std::fs::write(&path, &encoded).unwrap();
+        assert_eq!(
+            BakedProbeCache::load_from_path(&path).unwrap_err().kind(),
+            std::io::ErrorKind::InvalidData
+        );
+        std::fs::remove_dir_all(&dir).unwrap();
+
+        // Mismatched probe count vs dims is rejected:
+        assert!(
+            BakedProbeCache::new(
+                [0.0, 0.0, 0.0, 1.0],
+                [1.0, 1.0, 1.0, 0.0],
+                [2, 2, 2, 0],
+                vec![[0.0; 16]; 4]
+            )
+            .is_err()
+        );
     }
 }
 

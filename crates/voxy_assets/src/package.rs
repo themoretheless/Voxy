@@ -185,6 +185,38 @@ impl ResourcePackage {
         }
         Ok(entry.bytes.clone())
     }
+    /// Returns the pre-verified BLAKE3 digest for a packaged source after enforcing
+    /// path normalization and byte budget, without re-hashing the payload.
+    /// # Errors
+    /// Rejects invalid/missing source IDs and per-read quotas.
+    pub fn fingerprint(&self, id: &AssetId, max_bytes: usize) -> Result<[u8; 32], String> {
+        SourcePath::new(id.0.clone()).map_err(|error| error.to_string())?;
+        let entry = self
+            .entries
+            .get(&id.0)
+            .ok_or_else(|| format!("missing packaged source {}", id.0))?;
+        if entry.bytes.len() > max_bytes {
+            return Err("package read budget exceeded".into());
+        }
+        Ok(entry.digest)
+    }
+    /// Resolves and parses the root project bootstrap (`__voxy_game.json` -> `ProjectDescriptor`)
+    /// directly from memory without extracting files to the filesystem.
+    /// # Errors
+    /// Rejects missing/malformed launch or descriptor payloads, non-root bootstrap paths, and quotas.
+    pub fn open_project_descriptor(&self) -> Result<(SourcePath, ProjectDescriptor), String> {
+        let launch_bytes = self.read(&AssetId(PROJECT_LAUNCH_SOURCE.into()), 65_536)?;
+        let launch: ProjectPackageLaunch =
+            serde_json::from_slice(&launch_bytes).map_err(|error| error.to_string())?;
+        let bootstrap = launch.descriptor_path()?;
+        let descriptor_bytes = self.read(&bootstrap.observation_id(), 8 * 1024 * 1024)?;
+        let descriptor: ProjectDescriptor =
+            serde_json::from_slice(&descriptor_bytes).map_err(|error| error.to_string())?;
+        if descriptor.version != 1 || descriptor.name.trim().is_empty() {
+            return Err("unsupported version or empty name".into());
+        }
+        Ok((bootstrap, descriptor))
+    }
 }
 #[cfg(test)]
 mod tests {

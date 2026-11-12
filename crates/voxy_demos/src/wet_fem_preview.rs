@@ -519,6 +519,10 @@ mod tests {
     fn partial_drying_motion_time_scaled_convergence() {
         run_partial_drying_motion_convergence(true);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn run_partial_drying_motion_convergence(time_scaled: bool) {
         println!(
             "PARTIAL_DRYING_ENERGY_POLICY time_scaled={time_scaled} reference_rate_j_s=0.001 base_step_budget_j=0.00000001"

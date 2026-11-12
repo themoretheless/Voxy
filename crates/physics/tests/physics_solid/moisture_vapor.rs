@@ -433,6 +433,10 @@ fn heat_deposition_is_bounded_atomic_and_energy_accounted() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn adaptive_thermal_drying_converges_to_independent_closed_reservoir_ode_and_rolls_back() {
     use physics::{
         liquid::SaturationCurve,
@@ -638,6 +642,10 @@ fn adaptive_receipt_reports_complete_time_and_temperature_floor_rejects_atomical
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn prepared_multicell_thermal_network_matches_independent_ode_with_opposing_fluxes() {
     use physics::{
         liquid::SaturationCurve,

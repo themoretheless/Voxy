@@ -17,6 +17,10 @@ pub fn probe(
     probe_case(device, adapter, queue, true)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn probe_case(
     device: &wgpu::Device,
     adapter: &wgpu::Adapter,
@@ -724,6 +728,10 @@ fn encode_raster_motion(
     Ok(())
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn rough_gpu(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -992,6 +1000,10 @@ fn rough_gpu(
 
     Ok(readback)
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn verify_rough_gpu(
     device: &wgpu::Device,
     buffer: &wgpu::Buffer,
@@ -1274,6 +1286,10 @@ fn rough_reference(
 }
 
 /// Render a static accumulated GGX reflection image using GPU primary surfaces.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn render_rough_image(
     device: &wgpu::Device,
     adapter: &wgpu::Adapter,

@@ -1,98 +1,79 @@
 //! Opt-in ray queries on a window presentation device.
 use std::sync::Arc;
 use voxy_render::{SceneMesh, SceneSurface, SurfaceOutput};
+use voxy_ui_winit::{FrameResult, WindowFrame, run_window_frame};
 use winit::{
-    application::ApplicationHandler,
     event::WindowEvent,
-    event_loop::{ActiveEventLoop, EventLoop},
-    window::{Window, WindowId},
+    event_loop::ActiveEventLoop,
+    window::{Window, WindowAttributes},
 };
 #[derive(Default)]
 struct Probe {
     done: bool,
     host: Option<SceneSurface>,
-    window: Option<Arc<Window>>,
     attempts: u32,
-    failure: Option<String>,
 }
-impl ApplicationHandler for Probe {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        let result = (|| -> Result<(), String> {
-            let window = Arc::new(
-                event_loop
-                    .create_window(
-                        Window::default_attributes().with_title("Voxy surface ray probe"),
-                    )
-                    .map_err(|e| e.to_string())?,
-            );
-            let instance = voxy_render::GraphicsOptions {
-                backend: voxy_render::GraphicsBackend::Metal,
-                ..Default::default()
-            }
-            .create_instance_with_display(event_loop.owned_display_handle());
-            let surface = instance
-                .create_surface(window.clone())
-                .map_err(|e| e.to_string())?;
-            let adapter =
-                pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
-                    compatible_surface: Some(&surface),
-                    ..Default::default()
-                }))
-                .map_err(|e| e.to_string())?;
-            drop(surface);
-            let host = pollster::block_on(SceneSurface::new_with_adapter_and_output_experimental(
-                window.clone(),
-                320,
-                240,
-                &instance,
-                adapter,
-                wgpu::Features::EXPERIMENTAL_RAY_QUERY,
-                SurfaceOutput::Sdr,
-                experimental_features(),
-            ))
-            .map_err(|e| e.to_string())?;
-            self.host = Some(host);
-            window.request_redraw();
-            self.window = Some(window);
-            Ok(())
-        })();
-        if let Err(error) = result {
-            self.failure = Some(error);
-            event_loop.exit();
-        }
+impl WindowFrame for Probe {
+    fn window_attributes(&self) -> WindowAttributes {
+        Window::default_attributes().with_title("Voxy surface ray probe")
     }
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+    fn start(&mut self, event_loop: &ActiveEventLoop, window: &Arc<Window>) -> FrameResult {
+        let instance = voxy_render::GraphicsOptions {
+            backend: voxy_render::GraphicsBackend::Metal,
+            ..Default::default()
+        }
+        .create_instance_with_display(event_loop.owned_display_handle());
+        let surface = instance.create_surface(window.clone())?;
+        let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+            compatible_surface: Some(&surface),
+            ..Default::default()
+        }))?;
+        drop(surface);
+        let host = pollster::block_on(SceneSurface::new_with_adapter_and_output_experimental(
+            window.clone(),
+            320,
+            240,
+            &instance,
+            adapter,
+            wgpu::Features::EXPERIMENTAL_RAY_QUERY,
+            SurfaceOutput::Sdr,
+            experimental_features(),
+        ))?;
+        self.host = Some(host);
+        window.request_redraw();
+        Ok(())
+    }
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        window: &Arc<Window>,
+        event: WindowEvent,
+    ) -> FrameResult {
         if event == WindowEvent::RedrawRequested
             && let Some(host) = self.host.as_mut()
         {
-            let result = (0..3).try_fold(true, |ready, version| {
+            let ready = (0..3).try_fold(true, |ready, version| {
                 if ready {
                     verify_raster_frame(host, version)
                 } else {
                     Ok(false)
                 }
-            });
+            })?;
             self.attempts += 1;
-            match result {
-                Ok(true) => {
-                    self.done = true;
-                    event_loop.exit();
-                }
-                Ok(false) if self.attempts < 120 => {
-                    if let Some(window) = &self.window {
-                        window.request_redraw();
-                    }
-                }
-                Ok(false) => {
-                    self.failure = Some("surface remained unavailable for 120 redraws".into());
-                    event_loop.exit();
-                }
-                Err(error) => {
-                    self.failure = Some(error);
-                    event_loop.exit();
-                }
+            if ready {
+                self.done = true;
+                event_loop.exit();
+            } else if self.attempts < 120 {
+                window.request_redraw();
+            } else {
+                return Err("surface remained unavailable for 120 redraws".into());
             }
         }
+        Ok(())
+    }
+    fn about_to_wait(&mut self, _: &ActiveEventLoop, _: &Arc<Window>) -> FrameResult {
+        // Redraws are requested from the frame itself.
+        Ok(())
     }
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -100,10 +81,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err("pass --experimental to acknowledge experimental ray queries".into());
     }
     let mut probe = Probe::default();
-    EventLoop::new()?.run_app(&mut probe)?;
-    if let Some(error) = probe.failure {
-        return Err(error.into());
-    }
+    run_window_frame(&mut probe, None)?;
     if !probe.done {
         return Err("surface probe did not run".into());
     }
@@ -116,6 +94,10 @@ fn experimental_features() -> wgpu::ExperimentalFeatures {
     unsafe { wgpu::ExperimentalFeatures::enabled() }
 }
 // One complete GPU submission and its verification.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn verify_surface_ray(host: &mut SceneSurface) -> Result<bool, String> {
     let ray = voxy_render::RayScene::from_scene_mesh(host.device(), &SceneMesh::quad([1.0; 4]), 1)
         .map_err(|error| error.to_string())?;
@@ -394,6 +376,10 @@ fn verify_surface_ray(host: &mut SceneSurface) -> Result<bool, String> {
 }
 
 // Complete raster-to-ray presentation verification.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn verify_raster_frame(host: &mut SceneSurface, version: u32) -> Result<bool, String> {
     use voxy_render::{
         ReconstructionGuideMesh, ReconstructionGuidePass, ReconstructionMaterial,

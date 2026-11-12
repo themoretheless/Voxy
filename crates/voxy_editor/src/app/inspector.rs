@@ -11,6 +11,10 @@ impl App {
         self.authoring.preview_seek = None;
         if let Some(panels) = &mut self.panels {
             panels.focus.cancel();
+            if panels.hierarchy_search.take().is_some() {
+                self.tree_scroll = 0;
+                self.panel_cache = None;
+            }
         }
         self.field = None;
         self.model_relink_draft = None;
@@ -77,6 +81,10 @@ impl App {
             || self.play.playing.is_some()
             || self.field.is_some()
             || self.model_relink_draft.is_some()
+            || self
+                .panels
+                .as_ref()
+                .is_some_and(|panels| panels.hierarchy_search.is_some())
             || !matches!(key, KeyCode::Tab | KeyCode::Enter | KeyCode::Space)
             || self.panels.is_none()
         {
@@ -147,6 +155,30 @@ impl App {
             }
             return Ok(());
         }
+        if let Some(panels) = &mut self.panels
+            && let Some(query) = &mut panels.hierarchy_search
+        {
+            match key {
+                KeyCode::Escape | KeyCode::Enter | KeyCode::NumpadEnter => {
+                    panels.hierarchy_search = None;
+                }
+                KeyCode::Backspace => {
+                    query.pop();
+                }
+                _ => {
+                    if let Some(text) = text {
+                        query.extend(
+                            text.chars()
+                                .filter(|ch| !ch.is_control())
+                                .take(128usize.saturating_sub(query.chars().count())),
+                        );
+                    }
+                }
+            }
+            self.tree_scroll = 0;
+            self.panel_cache = None;
+            return Ok(());
+        }
         if self.model_relink_draft.is_some() {
             self.model_relink_key(key, text);
             Ok(())
@@ -157,6 +189,10 @@ impl App {
         }
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn edit_key(&mut self, key: KeyCode) -> Result<(), Box<dyn std::error::Error>> {
         if self.retarget_draft.is_some() {
             if key == KeyCode::Escape {
@@ -478,6 +514,10 @@ impl App {
         Ok(())
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn panel_action(
         &mut self,
         action: panels::Action,
@@ -532,15 +572,41 @@ impl App {
             panels::Action::FollowTarget(_)
                 | panels::Action::FollowCamera(_)
                 | panels::Action::FollowTargetChoice(_)
+                | panels::Action::Joint(_)
+                | panels::Action::JointTarget(_)
         ) {
             self.follow_pick = None;
         }
         if self.play.playing.is_some() && action != panels::Action::Play {
             return Ok(());
         }
+        if let Some(panels) = &mut self.panels {
+            if action == panels::Action::SearchHierarchy {
+                panels.hierarchy_search.get_or_insert_with(String::new);
+                self.tree_scroll = 0;
+                self.panel_cache = None;
+                return Ok(());
+            }
+            if panels.hierarchy_search.take().is_some() {
+                self.tree_scroll = 0;
+                self.panel_cache = None;
+            }
+        }
         match action {
-            panels::Action::FollowCamera(token) => self.begin_follow_pick(token, true),
-            panels::Action::FollowTarget(token) => self.begin_follow_pick(token, false),
+            panels::Action::SearchHierarchy => Ok(()),
+            panels::Action::FollowCamera(token) => {
+                self.begin_target_pick(PickPurpose::FollowCamera, token, true)
+            }
+            panels::Action::FollowTarget(token) => {
+                self.begin_target_pick(PickPurpose::FollowCamera, token, false)
+            }
+            panels::Action::Joint(token) => {
+                self.begin_target_pick(PickPurpose::PhysicsJoint, token, true)
+            }
+            panels::Action::JointTarget(token) => {
+                self.begin_target_pick(PickPurpose::PhysicsJoint, token, false)
+            }
+            panels::Action::JointKind(token) => self.cycle_joint_kind(token),
             panels::Action::FollowTargetChoice(token) => self.choose_follow_target(token),
             panels::Action::Select(index) => {
                 if index < self.instances.len() {
@@ -849,6 +915,10 @@ impl App {
         }
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn field_key(
         &mut self,
         key: KeyCode,

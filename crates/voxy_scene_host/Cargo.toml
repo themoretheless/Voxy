@@ -1,0 +1,16 @@
+[package]
+name = "voxy_scene_host"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+description = "Contract between the windowed scene shell and the demos it presents: the SceneDemo trait and its frame-phase types, without winit"
+
+[dependencies]
+glam.workspace = true
+voxy_render = { path = "../voxy_render" }
+wgpu = { workspace = true, features = ["noop"] }
+
+[lints]
+workspace = true

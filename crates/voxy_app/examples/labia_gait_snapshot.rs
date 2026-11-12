@@ -229,6 +229,10 @@ struct PreparedAnatomicalSurface {
 }
 
 impl PreparedAnatomicalSurface {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn new(display_scale: f64) -> Self {
         let nu = 128usize;
         let nv = 144usize;
@@ -568,6 +572,10 @@ impl PreparedAnatomicalSurface {
     }
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let window_mode = std::env::args().any(|a| a == "--window");
     let max_window_frames: Option<u64> =
@@ -899,6 +907,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn run_interactive_window(
     instance: wgpu::Instance,
     adapter: wgpu::Adapter,
@@ -1041,6 +1054,10 @@ fn run_interactive_window(
             self.depth = Some(depth);
         }
 
+        #[expect(
+            clippy::too_many_lines,
+            reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        )]
         fn window_event(
             &mut self,
             event_loop: &ActiveEventLoop,

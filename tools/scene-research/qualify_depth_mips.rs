@@ -9,6 +9,10 @@ pub(super) fn run(
 ) {
     run_with_leaf_extent(device, queue, texture, depth, width, height, 8);
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn run_with_leaf_extent(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

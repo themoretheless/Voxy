@@ -7,6 +7,10 @@ use voxy_text::{FontLimits, TextFont};
 
 #[test]
 #[ignore = "requires a real GPU adapter and local TrueType font"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_overlay_preserves_glyph_alpha_and_clip() {
     let instance = GraphicsOptions::default().create_instance();
     let adapter =

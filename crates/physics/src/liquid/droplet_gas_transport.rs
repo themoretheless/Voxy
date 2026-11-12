@@ -91,6 +91,10 @@ impl FiniteDropletGasGrid {
     /// first-order Rusanov fluxes on all three axes. Periodic faces conserve total
     /// momentum; stationary reflecting walls return their reaction impulse.
     /// No viscosity, conduction, gravity or external heat is applied. Atomic.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance_euler(
         &mut self,
         dt: f64,

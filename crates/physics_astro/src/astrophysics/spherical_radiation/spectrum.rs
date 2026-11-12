@@ -67,6 +67,10 @@ impl crate::astrophysics::spherical::Sphere {
     /// Returns finite-band heating and luminosity in W. Frequency/angular
     /// convergence and adequacy of the chosen band are caller responsibilities.
     /// Work budget includes every frequency bin, shell chord and angular sample.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn free_free_radiation_rates(
         &self,
         fractions: &[Vec<f64>],
@@ -205,6 +209,10 @@ impl crate::astrophysics::spherical::Sphere {
     /// and temperature changes; callers must verify timestep convergence.
     /// # Errors
     /// Invalid inputs, opacity/EOS domain, exhausted budget or overflow. Atomic.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn radiate_free_free(
         &mut self,
         dt: f64,
@@ -334,6 +342,10 @@ impl crate::astrophysics::spherical::Sphere {
     /// Optional hydrostatic reference and matter reservoir use the same transport
     /// paths as the grey solver. Composition refreshes after burning/advection.
     /// Both thermal halves share budgets; all phases commit together.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_reactive_free_free(
         &mut self,
         fractions: &mut [Vec<f64>],

@@ -132,6 +132,10 @@ fn half_texture(
 }
 
 impl ArchiveWater {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn new(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -476,6 +480,10 @@ impl ArchiveWater {
 
     /// Encodes the wave and ripple updates, the water surfaces and, with the eye under a
     /// surface, the underwater view. `frame.hdr` holds the opaque radiance on entry.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn encode(
         &mut self,
         queue: &wgpu::Queue,

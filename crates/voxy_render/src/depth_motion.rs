@@ -29,6 +29,10 @@ impl DepthMotionPass {
     /// needs an object/deformation overwrite at the same primary coverage.
     /// # Errors
     /// Rejects invalid depth or camera matrices and the same resources as `new`.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn with_jittered_depth(
         device: &wgpu::Device,
         depth: &wgpu::Texture,

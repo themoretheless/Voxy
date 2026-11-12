@@ -92,6 +92,10 @@ impl ConsumerStages {
     pub(super) fn is_sorted(&self) -> bool {
         self.workspace.is_sorted()
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn group(
         device: &wgpu::Device,
         layout: &wgpu::BindGroupLayout,
@@ -143,6 +147,11 @@ impl ConsumerStages {
             entries: &entries,
         })
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn new(
         device: &wgpu::Device,
         shader: &wgpu::ShaderModule,

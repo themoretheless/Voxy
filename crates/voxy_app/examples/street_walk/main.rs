@@ -75,6 +75,7 @@ struct App {
     completion_intervals: Vec<f64>,
     last_completion: Option<Instant>,
     skipped_acquires: u64,
+    surface_reconfigures: u64,
     physics_seconds: Vec<f64>,
     render_seconds: Vec<f64>,
     acquire_seconds: Vec<f64>,
@@ -196,6 +197,10 @@ impl App {
             }
         );
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn new() -> Self {
         let args: Vec<String> = std::env::args().collect();
         let value = |name: &str| {
@@ -253,6 +258,7 @@ impl App {
             completion_intervals: Vec::new(),
             last_completion: None,
             skipped_acquires: 0,
+            surface_reconfigures: 0,
             physics_seconds: Vec::new(),
             render_seconds: Vec::new(),
             acquire_seconds: Vec::new(),
@@ -325,6 +331,10 @@ impl App {
         }
         app
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn init(&mut self, el: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
         if self.benchmark > 0. || std::env::var_os("VOXY_STREET_BENCHMARK_PROGRESS").is_some() {
             eprintln!(
@@ -338,8 +348,9 @@ impl App {
                 std::env::var_os("VOXY_STREET_DDA_FAR_BOUND").is_some()
             );
         }
-        let interactive = (std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() == Ok("1")
-            || self.benchmark == 0. && self.profile.is_none())
+        let interactive = !self.offscreen_benchmark
+            && (std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() == Ok("1")
+                || self.benchmark == 0. && self.profile.is_none())
             && self.snapshot.is_none()
             && self.aa_validation.is_none();
         let scale = el.primary_monitor().map_or(1., |m| m.scale_factor());
@@ -775,6 +786,10 @@ impl App {
             }
         }
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn draw(&mut self, el: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
         if self.finished {
             return Ok(());
@@ -793,6 +808,13 @@ impl App {
                     bake.progress().1,
                     bake.elapsed_seconds()
                 );
+                if let Some(path) = street_probe_cache_path() {
+                    let renderer = &self.gpu.as_ref().ok_or("missing probe renderer")?.renderer;
+                    renderer
+                        .read_irradiance_probe_cache(&bake)?
+                        .save_to_path(&path)?;
+                    eprintln!("STREET probes saved to {}", path.display());
+                }
                 if !self.offscreen_benchmark
                     && let Some(window) = &self.window
                 {
@@ -1013,6 +1035,7 @@ impl App {
                 wgpu::CurrentSurfaceTexture::Success(f)
                 | wgpu::CurrentSurfaceTexture::Suboptimal(f) => f,
                 wgpu::CurrentSurfaceTexture::Outdated | wgpu::CurrentSurfaceTexture::Lost => {
+                    self.surface_reconfigures += 1;
                     gpu.surface.configure(&gpu.device, &gpu.config);
                     if let Some(profile) = &mut self.profile
                         && profile.record(
@@ -1243,10 +1266,19 @@ impl App {
             submission
         };
         if self.offscreen_benchmark {
-            gpu.device.poll(wgpu::PollType::Wait {
-                submission_index: Some(submission),
-                timeout: None,
-            })?;
+            let trace_batches = gpu.renderer.world_ray_frame_enabled()
+                && gpu.renderer.world_ray_query_encoded_frames() <= 3
+                && std::env::var_os("VOXY_STREET_WORLD_RAY_BATCH_TRACE").is_some();
+            loop {
+                match gpu.device.poll(wgpu::PollType::Wait {
+                    submission_index: Some(submission.clone()),
+                    timeout: trace_batches.then(|| std::time::Duration::from_millis(50)),
+                }) {
+                    Ok(_) => break,
+                    Err(wgpu::PollError::Timeout) if trace_batches => {}
+                    Err(error) => return Err(error.into()),
+                }
+            }
         } else if gpu.renderer.world_ray_frame_enabled() {
             gpu.pending_world_frame = Some(submission);
         }
@@ -1254,7 +1286,7 @@ impl App {
         self.frames += 1;
         if self.benchmark > 0.
             && !self.offscreen_benchmark
-            && (self.frames <= 3 || (self.frames <= 180 && self.frames % 30 == 0))
+            && (self.frames <= 3 || (self.frames <= 180 && self.frames.is_multiple_of(30)))
         {
             eprintln!(
                 "STREET warmup submitted={}/180 simulation_steps={} world_query_frames={} render_ms={:.3}",
@@ -1312,6 +1344,15 @@ impl App {
                         && std::env::var("VOXY_STREET_HDR_STAGE_RAW_FIRST").as_deref() == Ok("1")),
             )?;
         }
+        if self.world_ray_audit_frames > 0 {
+            self.render_seconds.push(render_time);
+            if gpu.renderer.world_ray_query_encoded_frames() == 1
+                && let Some(path) = std::env::var_os("VOXY_STREET_WORLD_RAY_FIRST_STAGE_REPORT")
+                && let Some(profile) = gpu.renderer.world_ray_stage_profile()?
+            {
+                std::fs::write(path, serde_json::to_vec_pretty(&profile)?)?;
+            }
+        }
         if self.world_ray_audit_frames > 0 && self.frames == self.world_ray_audit_frames {
             gpu.renderer.collect_completed_gpu_times()?;
             let source_profile = gpu.renderer.world_ray_stage_profile()?;
@@ -1326,6 +1367,12 @@ impl App {
                 snapshot(gpu, output, &path)?;
             }
             let mut report = serde_json::json!({"qualification":"integration_audit_only","simulation_clock":"fixed_30_step_batch","simulation_steps":self.simulation_steps,"rendered_state_blake3":self.replay_state.finalize().to_hex().to_string(),"world_frame_enabled":gpu.renderer.world_ray_frame_enabled(),"world_query_encoded_frames":gpu.renderer.world_ray_query_encoded_frames(),"frames":self.frames,"last_completed_render_ms":render_time*1000.,"source_simplified":false,"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"output_resolution":[gpu.config.width,gpu.config.height],"full_collision_triangles":collision.triangle_count(),"world_regions":gpu.renderer.world_ray_region_count(),"gpu_samples_drained":true,"gpu_gi_samples":gpu.renderer.gpu_gi_times_ms,"gpu_ssr_samples":gpu.renderer.gpu_ssr_times_ms,"complete_motion_cycles":0,"minimum_120_presented_fps_passed":false});
+            report["completed_render_ms"] = self
+                .render_seconds
+                .iter()
+                .map(|seconds| seconds * 1000.)
+                .collect::<Vec<_>>()
+                .into();
             report["water_render_stats"] = gpu
                 .renderer
                 .water_render_stats()
@@ -1560,9 +1607,10 @@ impl App {
             );
             gpu.renderer.reset_temporal_history();
         }
-        if let Some(frame) = frame {
+        let presented_at = frame.map(|frame| {
             gpu.queue.present(frame);
-        }
+            Instant::now()
+        });
         if view_idx != prev_view_idx {
             let next_view = match view_idx {
                 1 => StreetView::ThirdPerson,
@@ -1645,8 +1693,9 @@ impl App {
         if self.frames == 180 {
             self.measure_water_start = gpu.renderer.water_render_stats();
             self.skipped_acquires = 0;
-            let completion = Instant::now();
-            self.last_completion = self.offscreen_benchmark.then_some(completion);
+            self.surface_reconfigures = 0;
+            let completion = presented_at.unwrap_or_else(Instant::now);
+            self.last_completion = Some(completion);
             self.measure_start = Some(completion);
             if self.benchmark > 0. {
                 self.measure_start_unix_seconds = std::time::SystemTime::now()
@@ -1657,21 +1706,18 @@ impl App {
             self.measure_simulation_steps = self.simulation_steps;
             self.durations.clear();
         } else if self.frames > 180 {
-            if self.offscreen_benchmark {
-                let completion = Instant::now();
-                if let Some(previous) = self.last_completion.replace(completion) {
-                    self.completion_intervals
-                        .push(completion.duration_since(previous).as_secs_f64());
+            let completion = presented_at.unwrap_or_else(Instant::now);
+            if let Some(previous) = self.last_completion.replace(completion) {
+                let interval = completion.duration_since(previous).as_secs_f64();
+                if self.offscreen_benchmark {
+                    self.completion_intervals.push(interval);
+                    // Offscreen draw waited for this frame's GPU submission.
+                    self.durations.push(now.elapsed().as_secs_f64());
+                } else {
+                    // Measure successive host present calls, including event-loop gaps.
+                    self.durations.push(interval);
                 }
             }
-            // Offscreen draw waited for THIS GPU submission. A start-to-start
-            // delta would instead attribute frame 180 to sample 181 and omit
-            // the final measured frame. Window sampling keeps its old clock.
-            self.durations.push(if self.offscreen_benchmark {
-                now.elapsed().as_secs_f64()
-            } else {
-                elapsed
-            });
             self.physics_seconds.push(physics_time);
             self.render_seconds.push(render_time);
             self.acquire_seconds.push(acquire_time);
@@ -1721,19 +1767,30 @@ impl App {
                 .duration_since(std::time::UNIX_EPOCH)
                 .ok()
                 .map(|d| d.as_secs_f64());
-            let mut report = serde_json::json!({"measurement_start_unix_seconds":self.measure_start_unix_seconds,"measurement_end_unix_seconds":measure_end_unix_seconds,"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"measured_physics_steps":self.simulation_steps-self.measure_simulation_steps,"measured_simulation_seconds":(self.simulation_steps-self.measure_simulation_steps) as f64*DT,"complete_motion_cycles":(self.simulation_steps-self.measure_simulation_steps)/2400,"occluded_or_timed_out_acquires":self.skipped_acquires,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":!self.offscreen_benchmark&&self.skipped_acquires==0&&!gpu.renderer.opaque_ray_capture_enabled(),"completed_offscreen_measurement_valid":self.offscreen_benchmark&&!gpu.renderer.opaque_ray_capture_enabled(),"frames":n,"seconds":measure_seconds,"mean_fps":n as f64/measure_seconds,"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"max_frame_ms":times[n-1]*1000.,"minimum_sampled_fps":1./times[n-1],"minimum_120_presented_fps_passed":!self.offscreen_benchmark&&!gpu.renderer.opaque_ray_capture_enabled()&&self.skipped_acquires==0&&(self.simulation_steps-self.measure_simulation_steps)>=2400&&times[n-1]<=1./120.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_shading_mean_ms":if gpu.renderer.gpu_shading_times_ms.is_empty(){None}else{Some([0usize,1].map(|i|gpu.renderer.gpu_shading_times_ms.iter().map(|v|v[i]).sum::<f64>()/gpu.renderer.gpu_shading_times_ms.len() as f64))},"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
             let crossover = gpu.renderer.refinement_crossover();
+            let correctness_capture_active = gpu.renderer.opaque_ray_capture_enabled()
+                || std::env::var_os("VOXY_STREET_HDR_STAGE_CAPTURE").is_some()
+                || std::env::var_os("VOXY_STREET_GI_RAW_CAPTURE").is_some()
+                || std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_some()
+                || (self.offscreen_benchmark && self.hdr_check_dir.is_some());
+            let world_ray_diagnostics_active = gpu.renderer.world_ray_work_stats_buffer().is_some()
+                || (gpu.renderer.world_ray_frame_enabled()
+                    && std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref() == Ok("1"));
+            let timing_valid = !correctness_capture_active
+                && !world_ray_diagnostics_active
+                && !crossover.is_some_and(voxy_render::archive_scene::RefineCrossover::mixed);
+            let window_measurement_valid = timing_valid
+                && !self.offscreen_benchmark
+                && self.skipped_acquires == 0
+                && self.surface_reconfigures == 0;
+            let mut report = serde_json::json!({"measurement_start_unix_seconds":self.measure_start_unix_seconds,"measurement_end_unix_seconds":measure_end_unix_seconds,"antialiasing":format!("{:?}",gpu.renderer.antialiasing()),"scene":if self.original{"Voxy Original Street"}else{"Bistro"},"measurement":if self.offscreen_benchmark{"completed_full_resolution_offscreen_frames"}else{"presented_window_frames"},"resolution":[gpu.config.width,gpu.config.height],"internal_resolution":[gpu.supersample.render_size().0,gpu.supersample.render_size().1],"present_mode":format!("{:?}",gpu.config.present_mode),"source_simplified":false,"camera_controlled":true,"motion_period_seconds":20,"measured_physics_steps":self.simulation_steps-self.measure_simulation_steps,"measured_simulation_seconds":(self.simulation_steps-self.measure_simulation_steps) as f64*DT,"complete_motion_cycles":(self.simulation_steps-self.measure_simulation_steps)/2400,"occluded_or_timed_out_acquires":self.skipped_acquires,"surface_reconfigures":self.surface_reconfigures,"sampled_frame_seconds":self.durations.iter().sum::<f64>(),"sampled_mean_fps":n as f64/self.durations.iter().sum::<f64>(),"window_measurement_valid":window_measurement_valid,"completed_offscreen_measurement_valid":self.offscreen_benchmark&&timing_valid,"frames":n,"seconds":measure_seconds,"mean_fps":n as f64/measure_seconds,"p50_ms":times[n/2]*1000.,"p95_ms":times[n*95/100]*1000.,"p99_ms":times[n*99/100]*1000.,"max_frame_ms":times[n-1]*1000.,"minimum_sampled_fps":1./times[n-1],"minimum_120_presented_fps_passed":window_measurement_valid&&(self.simulation_steps-self.measure_simulation_steps)>=2400&&times[n-1]<=1./120.,"full_collision_triangles":collision.triangle_count(),"feet":self.feet.to_array(),"grounded":self.grounded,"cpu_physics_mean_ms":self.physics_seconds.iter().sum::<f64>()/n as f64*1000.,"cpu_render_mean_ms":self.render_seconds.iter().sum::<f64>()/n as f64*1000.,"surface_acquire_mean_ms":self.acquire_seconds.iter().sum::<f64>()/n as f64*1000.,"gpu_samples":gpu.renderer.gpu_times_ms.len(),"gpu_shading_mean_ms":if gpu.renderer.gpu_shading_times_ms.is_empty(){None}else{Some([0usize,1].map(|i|gpu.renderer.gpu_shading_times_ms.iter().map(|v|v[i]).sum::<f64>()/gpu.renderer.gpu_shading_times_ms.len() as f64))},"gpu_mean_ms":if gpu.renderer.gpu_times_ms.is_empty(){None}else{Some(gpu.renderer.gpu_times_ms.iter().sum::<f64>()/gpu.renderer.gpu_times_ms.len() as f64)}});
             report["crossover_measurement_valid"] =
                 (self.offscreen_benchmark && self.render_every_physics_step && crossover.is_some())
                     .into();
-            if crossover.is_some_and(voxy_render::archive_scene::RefineCrossover::mixed) {
-                report["completed_offscreen_measurement_valid"] = false.into();
-                report["window_measurement_valid"] = false.into();
-            }
             let rendered_cycle = benchmark_cycle::audit(
                 self.offscreen_benchmark,
                 self.render_every_physics_step,
-                gpu.renderer.opaque_ray_capture_enabled(),
+                !timing_valid,
                 self.simulation_steps - self.measure_simulation_steps,
                 &self.durations,
             );
@@ -1767,8 +1824,9 @@ impl App {
                 "metal_compute_max_threads_requested":0u32,
                 "metal_compute_audit_requested":std::env::var("WGPU_METAL_COMPUTE_AUDIT").as_deref()==Ok("1"),
                 "measurement_duration_clock":"single_monotonic_elapsed",
-                "frame_sample_clock":if self.offscreen_benchmark {"current_completed_frame"}else{"start_to_start"},
-                "correctness_capture_active":self.hdr_check_dir.is_some(),
+                "frame_sample_clock":if self.offscreen_benchmark {"current_completed_frame"}else{"host_present_call_to_call"},
+                "correctness_capture_active":correctness_capture_active,
+                "world_ray_diagnostics_active":world_ray_diagnostics_active,
                 "gi_raster_math_requested":std::env::var_os("VOXY_STREET_GI_RASTER_MATH").is_some(),
                 "gi_raw_capture_active":std::env::var_os("VOXY_STREET_GI_RAW_CAPTURE").is_some(),
                 "gi_precision_reference_active":std::env::var_os("VOXY_STREET_GI_PRECISION_PROOF").is_some(),
@@ -1825,12 +1883,12 @@ fn software_traversal_work(gpu: &Gpu) -> Result<serde_json::Value, Box<dyn std::
     };
     let read = gpu.device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("software traversal count snapshot"),
-        size: 48,
+        size: 56,
         usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
         mapped_at_creation: false,
     });
     let mut encoder = gpu.device.create_command_encoder(&Default::default());
-    encoder.copy_buffer_to_buffer(buffer, 0, &read, 0, 48);
+    encoder.copy_buffer_to_buffer(buffer, 0, &read, 0, 56);
     gpu.queue.submit([encoder.finish()]);
     let (send, receive) = std::sync::mpsc::channel();
     read.slice(..).map_async(wgpu::MapMode::Read, move |r| {
@@ -1850,7 +1908,7 @@ fn software_traversal_work(gpu: &Gpu) -> Result<serde_json::Value, Box<dyn std::
     if words[10] == u32::MAX || words[11] == u32::MAX {
         return Err("diagnostic per-ray work counter saturated".into());
     }
-    let result = serde_json::json!({"scope":"combined GI/SSR, cumulative job lifetime, software certificate only","diagnostic_only":true,"excluded":"first ray in each encode; all hardware and exact-fallback work","sampled_records":pair(0),"visited_nodes":pair(2),"triangle_tests":pair(4),"records_with_nodes":pair(6),"records_with_triangles":pair(8),"maximum_nodes":words[10],"maximum_triangles":words[11],"raw_words":words,"timing_includes_diagnostic_overhead":true,"fps_qualified":false});
+    let result = serde_json::json!({"scope":"combined GI/SSR, cumulative job lifetime, software certificate only","diagnostic_only":true,"excluded":"certificate counters omit the first ray in each encode and all hardware work; fallback counter measures queued rays only","sampled_records":pair(0),"visited_nodes":pair(2),"triangle_tests":pair(4),"records_with_nodes":pair(6),"records_with_triangles":pair(8),"maximum_nodes":words[10],"maximum_triangles":words[11],"exact_fallback_queued_records":pair(12),"raw_words":words,"timing_includes_diagnostic_overhead":true,"fps_qualified":false});
     drop(bytes);
     read.unmap();
     Ok(result)
@@ -2133,6 +2191,10 @@ impl ApplicationHandler for App {
             el.exit();
         }
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn window_event(&mut self, el: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         if self.offscreen_benchmark
             && matches!(
@@ -2476,7 +2538,35 @@ fn begin_street_probe_bake(
     };
     let min = Vec3::new(-7., 0.6, bounds.0.z + 4.);
     let max = Vec3::new(7., 12., bounds.1.z - 4.);
+    // Opt-in: the cache is keyed by the probe grid only, so delete the file after changing the
+    // scene, lighting or materials.
+    if let Some(path) = street_probe_cache_path() {
+        match voxy_render::BakedProbeCache::load_from_path(&path) {
+            Ok(cache) if renderer.restore_irradiance_probe_cache(min, max, spacing, &cache)? => {
+                eprintln!(
+                    "STREET probes={} restored from {}",
+                    cache.probes.len(),
+                    path.display()
+                );
+                return Ok(None);
+            }
+            Ok(_) => eprintln!(
+                "STREET probe cache {} is for another grid, rebaking",
+                path.display()
+            ),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => eprintln!(
+                "STREET probe cache {} rejected ({error}), rebaking",
+                path.display()
+            ),
+        }
+    }
     Ok(Some(
         renderer.begin_irradiance_probe_bake(min, max, spacing)?,
     ))
+}
+
+/// `VOXY_STREET_PROBE_CACHE=<file.vprobes>` reuses a completed probe bake across launches.
+fn street_probe_cache_path() -> Option<std::path::PathBuf> {
+    std::env::var_os("VOXY_STREET_PROBE_CACHE").map(std::path::PathBuf::from)
 }

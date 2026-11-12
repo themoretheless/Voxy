@@ -53,7 +53,8 @@ fn source_triangle_certificate(slot:u32,first:u32,ray:u32,order:bool)->SourceTri
  // Strict same-side separation also proves parallel misses. Zero-area and
  // endpoint-touch cases remain inconclusive and retain exact fallback.
  if (wi_positive(start)&&wi_positive(finish))||(wi_negative(start)&&wi_negative(finish)) {return SourceTriangleCertificate(WorldTriangleCertificate(0u,0u,0u),wi_bad());}
- let certificate=world_triangle_certificate(direction,edge1,edge2,relative,wi_scalar(0.),wi_scalar(1.));
+ let proof=world_triangle_interval_proof(direction,edge1,edge2,relative,wi_scalar(0.),wi_scalar(1.));
+ let certificate=proof.certificate;
  if WORLD_SOURCE_MATERIAL_SIDES&&certificate.state!=0u {
   let sides=source_material_sides(info.w);
   if sides==0u {return SourceTriangleCertificate(WorldTriangleCertificate(2u,16u,certificate.reverse),wi_bad());}
@@ -66,10 +67,7 @@ fn source_triangle_certificate(slot:u32,first:u32,ray:u32,order:bool)->SourceTri
 
  var t=wi_bad();
  if order&&certificate.state==1u {
-  var denominator=wi3_dot(edge1,wi3_cross(direction,edge2));
-  var numerator=wi3_dot(edge2,wi3_cross(relative,edge1));
-  if wi_negative(denominator) {denominator=wi_neg(denominator);numerator=wi_neg(numerator);}
-  if wi_positive(denominator) {t=nearest_div_interval(numerator,denominator);}
+  t=nearest_div_interval(proof.numerator,proof.denominator);
  }
  return SourceTriangleCertificate(certificate,t);
 }

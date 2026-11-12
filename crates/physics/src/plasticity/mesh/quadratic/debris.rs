@@ -131,6 +131,10 @@ impl QuadraticBody {
 /// triangles. Coplanar or degenerate inputs are rejected.
 /// # Errors
 /// Fewer than four non-coplanar points or nonfinite coordinates.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn convex_hull(points: &[Vec3]) -> Result<(Vec<Vec3>, Vec<[usize; 3]>), &'static str> {
     if points.len() < 4 || points.iter().flatten().any(|v| !v.is_finite()) {
         return Err("convex hull needs at least four finite points");

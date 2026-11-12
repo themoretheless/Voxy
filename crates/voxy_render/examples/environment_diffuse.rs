@@ -1,5 +1,9 @@
 //! HDR diffuse cube acceptance: constant-radiance conservation and six-face response.
 use voxy_render::DiffuseEnvironmentConvolution;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     pollster::block_on(async {
         let instance =

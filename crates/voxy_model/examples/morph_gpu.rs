@@ -2,6 +2,10 @@
 use std::sync::Arc;
 use voxy_model::{ModelLimits, MorphModelAsset};
 use voxy_render::{SceneRenderer, SceneSkinner};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args()
         .nth(1)

@@ -34,6 +34,10 @@ fn main() {
         hierarchy_probe(count, true);
     }
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn run_scene(count: usize) {
     let (mut scene, nodes, mut table) = build_scene(count);
     report(

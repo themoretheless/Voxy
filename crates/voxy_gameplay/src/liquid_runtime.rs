@@ -489,6 +489,10 @@ fn trajectory_environment_events_at(
 }
 
 /// Search every shape pair, admitting only explicit active support branches.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn supported_shape_events(
     first: &physics::rigid_motion::RigidMotion,
     shapes: &[crate::convex::AffineBox],
@@ -656,6 +660,10 @@ fn contact_patch_points(
 ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
     contact_patch_points_with_error(first, a, second, b, witness, normal, budget, 0.)
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn contact_patch_points_with_error(
     first: &[crate::convex::AffineBox],
     a: &physics::contact::ContactBody,

@@ -50,6 +50,10 @@ pub fn transfer(
         SpectralSurface::CellSource,
     )
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn transfer_sources(
     shells: &[Shell],
     sources: &[f64],
@@ -285,6 +289,10 @@ impl crate::astrophysics::spherical::Sphere {
         )
     }
     // Shared transfer controls plus local/uniform EOS.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn radiation_rates_eos(
         &self,
         specific_heat: f64,
@@ -411,6 +419,10 @@ impl crate::astrophysics::spherical::Sphere {
         self.radiate_local(dt, settings, None, Some(&local), Some(table))
     }
     // Keep thermal budget and transactional update together.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn radiate_local(
         &mut self,
         dt: f64,
@@ -645,6 +657,10 @@ impl crate::astrophysics::spherical::Sphere {
     /// Radiation and burning around equilibrium-preserving spherical transport.
     /// # Errors
     /// Any local physical/domain error or shared work-budget failure.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_reactive_radiating_balanced(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -665,6 +681,10 @@ impl crate::astrophysics::spherical::Sphere {
             Some(reference),
         )
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn step_reactive_radiating_impl(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -679,6 +699,10 @@ impl crate::astrophysics::spherical::Sphere {
             fractions, network, dt, settings, table, exterior, reference, None,
         )
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn step_reactive_radiating_spectrum_impl(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -1152,6 +1176,10 @@ impl crate::astrophysics::spherical::Sphere {
     /// roots must be bracketed within the caller's temperature interval.
     /// Radiation segment and reaction-fit budgets apply to the whole search.
     /// The sphere is committed only after the complete profile meets tolerance.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn equilibrate_thermal(
         &mut self,
         settings: Heating,

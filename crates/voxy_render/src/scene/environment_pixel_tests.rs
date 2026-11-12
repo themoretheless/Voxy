@@ -2,6 +2,10 @@ use super::*;
 include!("environment_pixel_fixture.rs");
 #[test]
 #[ignore = "requires physical GPU; real SceneRenderer HDR pixels and material routing"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn real_hdr_scene_matches_ibl_oracle_after_atlas_install() {
     use crate::{
         GgxEnergyAtlasBuild, GgxEnergyAtlasSlot, GgxEnergyBuildBudget, GgxEnergyGpuPrecompute,

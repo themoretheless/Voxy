@@ -204,6 +204,10 @@ impl ParticipatingMedium {
     /// Advances species transport and, optionally, the gas by `dt`. Atomic.
     /// # Errors
     /// Invalid step, substep budget, or gas solver failure.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance(
         &mut self,
         dt: f64,
@@ -435,6 +439,10 @@ impl ParticipatingMedium {
     /// grid (`Ok(None)`); on any error the film, velocity and gas are unchanged.
     /// # Errors
     /// Nonfinite point, or the film vapor solver's own failures.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn exchange_film_vapor(
         &mut self,
         film: &mut crate::surface_film::ThermalFilmMixture,

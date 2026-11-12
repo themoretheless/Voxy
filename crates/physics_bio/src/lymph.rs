@@ -213,6 +213,10 @@ impl LymphNetwork {
     /// This wall-network step does not equilibrate an attached FEM tissue.
     /// # Errors
     /// Invalid inputs, nonpositive trial inventory or failed fixed-point solve.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_with_inertial_walls(
         &mut self,
         seconds: f64,
@@ -243,6 +247,11 @@ impl LymphNetwork {
             |_, _, _, _, rates| Ok(rates.to_vec()),
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn step_with_inertial_callbacks<F, G>(
         &mut self,
         seconds: f64,
@@ -402,6 +411,11 @@ impl LymphNetwork {
             |_, _, _, _, rates| Ok(rates.to_vec()),
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn step_with_radial_callbacks<F, G>(
         &mut self,
         seconds: f64,
@@ -555,6 +569,10 @@ impl LymphNetwork {
     /// Both network and flow history roll back on whole-call failure.
     /// # Errors
     /// Invalid tolerance, failed nonlinear solve or exhausted time-step budget.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_with_inertial_walls_adaptive(
         &mut self,
         seconds: f64,
@@ -815,6 +833,10 @@ impl LymphNetwork {
         self.step_with_pressure_and_flux_laws_order(seconds, max_step_seconds, false, law, flux)
     }
     /// Conservative SSPRK2 when selected; caller-owned callback effects require staging.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn step_with_pressure_and_flux_laws_order<F, G>(
         &mut self,
         seconds: f64,
@@ -1054,6 +1076,10 @@ pub(crate) fn adaptive_exchange<T: Clone>(
     adaptive_exchange_order(initial, seconds, config, 2, advance, network, extra_error)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(crate) fn adaptive_exchange_order<T: Clone>(
     initial: &T,
     seconds: f64,

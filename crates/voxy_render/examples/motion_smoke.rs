@@ -2,6 +2,10 @@
 use glam::{Mat4, Vec3};
 use voxy_render::{GraphicsOptions, MotionMatrices, SceneDraw, SceneMesh, SceneRenderer};
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let backend = match std::env::var("VOXY_MOTION_BACKEND").as_deref() {
         Err(std::env::VarError::NotPresent) | Ok("auto") => voxy_render::GraphicsBackend::Auto,

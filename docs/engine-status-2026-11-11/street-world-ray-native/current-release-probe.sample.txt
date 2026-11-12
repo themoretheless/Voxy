@@ -1,0 +1,4 @@
+Analysis of sampling street_walk (pid 67471) every 10 milliseconds
+    +                                 !               74 _RNvMCsfoLLEO7WtMo_11street_walkNtB2_3App4draw  (in street_walk) + 196  [0x100c7d13c]
+    +                                 !                 : 64 _RNvMNtNtCs8OHBxdcj3UW_4wgpu3api6deviceNtB2_6Device4poll  (in street_walk) + 76  [0x101100aec]
+                                  2 -[_MTLCommandQueue commandBufferDidComplete:startTime:completionTime:error:]  (in Metal) + 108  [0x19afd3f94]

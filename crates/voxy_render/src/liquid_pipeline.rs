@@ -23,6 +23,10 @@ pub struct LiquidPipelineCandidate {
     pub accumulation: LiquidAccumulationCandidate,
 }
 impl LiquidPipelineInput {
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         particles: &[LiquidDensityParticle],
         materials: &[u32],
@@ -39,6 +43,10 @@ impl LiquidPipelineInput {
             particles, materials, &topology, h, kernel, support, laws, parameters, gravity,
         )
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn with_topology(
         particles: &[LiquidDensityParticle],
         materials: &[u32],
@@ -396,6 +404,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires actual GPU; complete arithmetic chain, original physical owners"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_liquid_chain_admits_real_density_pressure_force_and_accumulation() {
         use physics::liquid::{
             Formulation, LiquidAccumulationOperator, LiquidAccumulationResult,
@@ -684,6 +696,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires actual GPU; complete chain through transactional liquid stepping"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_complete_chain_steps_walls_reflections_and_gas_without_stage_fallback() {
         use physics::liquid::{
             BoundarySample, Config, Formulation, IdealGas, Liquid, LiquidAccumulationResult,
@@ -710,6 +726,10 @@ mod tests {
             fn supports_pipeline(&self) -> bool {
                 true
             }
+            #[expect(
+                clippy::too_many_lines,
+                reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+            )]
             fn pipeline_candidate(
                 &mut self,
                 owner: &LiquidPipelineOperator<'_>,

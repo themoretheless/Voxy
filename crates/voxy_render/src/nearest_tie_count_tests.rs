@@ -3,6 +3,10 @@
 #[test]
 #[ignore = "exclusive Metal GPU; fresh VOXY_NEAREST_TIE_PROOF required"]
 #[cfg(target_os = "macos")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn superseded_ties_do_not_depend_on_visit_order() -> Result<(), Box<dyn std::error::Error>> {
     use wgpu::util::DeviceExt;
     let root = std::path::PathBuf::from(

@@ -1,0 +1,3 @@
+Analysis of sampling voxy_ray_probe (pid 98993) every 10 milliseconds
+    +                 87 _RNvNtCs3eUW3YQiKNZ_14voxy_ray_probe20material_sides_audit3run  (in voxy_ray_probe) + 40976  [0x1022aa2a0]  material_sides_audit.rs:768
+    +                                 87 -[AGXG16XFamilyDevice newComputePipelineStateWithDescriptor:options:reflection:error:]  (in AGXMetalG16X) + 76  [0x1142bf7ec]

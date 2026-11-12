@@ -56,6 +56,10 @@ impl SurfaceLightDiffusion {
     ) -> Result<Self, crate::SceneError> {
         Self::new_internal(device, mass, offsets, edges, radii, true)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn new_internal(
         device: &wgpu::Device,
         mass: &[f32],

@@ -1144,6 +1144,10 @@ fn dynamic_body_authored_in_physics_inspector_hits_wall_in_play_and_source_free_
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn kinematic_body_sweeps_to_wall_and_matches_source_free_package()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -1445,6 +1449,10 @@ fn kinematic_scene_collider_pushes_dynamic_body_in_play_and_package()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn kinematic_scene_collider_stops_when_dynamic_body_is_pinned()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -1610,6 +1618,10 @@ enum LiquidPlatformCase {
     RotatingRelay,
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn check_scene_platform_liquid(case: LiquidPlatformCase) -> Result<(), Box<dyn std::error::Error>> {
     let pinned = case == LiquidPlatformCase::Pinned;
     let rotating = case == LiquidPlatformCase::RotatingRelay;

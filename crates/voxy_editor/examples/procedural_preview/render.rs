@@ -2,6 +2,10 @@ use glam::Vec3;
 use std::{error::Error, path::Path};
 use voxy_render::{SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn render(
     path: &Path,
     scene_override: Option<&voxy_scene::SceneDocument>,

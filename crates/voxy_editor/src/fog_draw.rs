@@ -163,6 +163,10 @@ impl FogDraw {
     ) -> Result<(), Box<dyn std::error::Error>> {
         self.prepare_targets_with_shadow(device, window, views, None, 0, max_bytes)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn prepare_targets_with_shadow(
         &mut self,
         device: &wgpu::Device,
@@ -324,6 +328,11 @@ impl FogDraw {
         }
         Ok(())
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn encode(
         &mut self,
         device: &wgpu::Device,
@@ -464,6 +473,10 @@ mod tests {
     use super::*;
     #[test]
     #[ignore = "requires a physical GPU adapter"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn hdr_fog_views_preserve_local_and_global_editor_overlays() {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
         let adapter =
@@ -794,6 +807,10 @@ mod shadow_tests {
     fn skeletal_shadow_views_consume_independently_deformed_gpu_streams() {
         verify_caster_views(true);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn verify_caster_views(skinned: bool) {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

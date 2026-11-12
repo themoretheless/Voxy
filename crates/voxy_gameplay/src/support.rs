@@ -202,6 +202,10 @@ impl SupportWorld {
     /// # Errors
     /// Rejects invalid probes, exhausted aggregate budgets or unstable arithmetic.
     /// Budget failure never returns a previously found partial hit.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn probe(
         &self,
         probe: SupportProbe,

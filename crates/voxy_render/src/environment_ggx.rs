@@ -31,6 +31,10 @@ impl GgxEnvironmentPrefilter {
         Self::with_samples_format(device, size, samples, wgpu::TextureFormat::Rgba16Float)
     }
     /// Internal full-precision import path; caller validates format/filter support.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn with_samples_format(
         device: &wgpu::Device,
         size: u32,

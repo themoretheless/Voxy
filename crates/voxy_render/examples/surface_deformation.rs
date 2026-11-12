@@ -1,7 +1,15 @@
 //! Actual prepared-body skin binding parity; not a full-game FPS benchmark.
+#[expect(
+    dead_code,
+    reason = "module is shared with voxy_demos; this example only builds PreparedNormals"
+)]
 #[path = "../../voxy_demos/src/surface_normals.rs"]
 mod surface_normals;
 use voxy_render::{SceneRenderer, SurfaceDeformationWeight};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     pollster::block_on(async {
         let asset = voxy_render::ObjAsset::parse(

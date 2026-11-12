@@ -322,6 +322,10 @@ impl ModelResourcesCheckpoint {
     }
     /// Validate every detached participant before creating idle workers. This never
     /// rereads a manifest or model; later scans/imports observe the current filesystem.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn prepare(
         &self,
         root: &std::path::Path,

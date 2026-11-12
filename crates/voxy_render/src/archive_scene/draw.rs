@@ -69,6 +69,20 @@ impl ArchiveSceneRenderer {
         eye: Vec3,
         direction: Vec3,
     ) -> wgpu::SubmissionIndex {
+        self.draw_with_tail(output, eye, direction, |_, _| {})
+    }
+
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
+    pub(super) fn draw_with_tail(
+        &mut self,
+        output: &wgpu::TextureView,
+        eye: Vec3,
+        direction: Vec3,
+        encode_tail: impl FnOnce(&Self, &mut wgpu::CommandEncoder),
+    ) -> wgpu::SubmissionIndex {
         self.collect_gpu_time_sample();
         let time_this_frame = self.timing.as_ref().is_some_and(|t| !t.pending);
         #[allow(deprecated)]
@@ -639,6 +653,7 @@ impl ArchiveSceneRenderer {
                 depth_or_array_layers: 1,
             },
         );
+        encode_tail(self, &mut encoder);
         preceding_commands.push(encoder.finish());
         let submission = self.queue.submit(preceding_commands);
         if time_this_frame {

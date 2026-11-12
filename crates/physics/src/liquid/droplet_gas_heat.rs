@@ -36,6 +36,10 @@ impl FiniteDropletGasGrid {
     /// half steps. Temperatures remain within the original range; full conduction
     /// accuracy still requires time and mesh refinement. Mass, velocity and cv
     /// stay fixed. No boundary heat is supplied. Atomic over every gas cell.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn conduct_heat(
         &mut self,
         dt: f64,

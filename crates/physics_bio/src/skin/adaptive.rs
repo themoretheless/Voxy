@@ -29,6 +29,10 @@ impl Skin {
     /// Atomically advance with moving analytic contacts. Every retry shifts the
     /// original obstacle and attachment trajectories to its own start time.
     /// Failed intervals never publish a partially integrated skin state.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_adaptive_with_contacts(
         &mut self,
         dt: f64,
@@ -52,6 +56,10 @@ impl Skin {
         Ok(report)
     }
     /// Return an admitted candidate without changing this skin.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn prepare_adaptive_with_contacts(
         &self,
         dt: f64,
@@ -81,6 +89,10 @@ impl Skin {
     }
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn advance(
     skin: &mut Skin,
     dt: f64,

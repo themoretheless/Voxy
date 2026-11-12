@@ -31,6 +31,10 @@ impl SurfaceLightAdmission {
     /// Consumers must check header.has_accepted before using the retained stream.
     /// # Errors
     /// Rejects invalid tolerances, buffer contracts and unsupported device limits.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         geometry: &SurfaceLightGeometry,

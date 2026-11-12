@@ -10,6 +10,10 @@ impl RootRotationCurve {
     /// Bounds output to 1..=4096 spans. Invalid time, a singular quaternion, or
     /// exhausted span/subdivision work rejects the whole request without a prefix.
     // Exact equality assigns STEP boundaries once; epsilon comparisons duplicate events.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn path(
         &self,
         start: f64,

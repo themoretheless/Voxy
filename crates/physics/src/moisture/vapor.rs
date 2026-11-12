@@ -339,6 +339,10 @@ impl Body {
     /// Activity transport freezes gas capacity for this first-order split step.
     /// Spatial temperatures, distinct phase heat capacities and droplets remain
     /// outside this model. Invalid post-transfer capacity/domain rolls back all.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance_enthalpy_vapor(
         &mut self,
         dt_s: f64,

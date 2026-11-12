@@ -58,6 +58,10 @@ impl Breed {
         }
     }
     #[must_use]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn anatomy(self) -> BreedAnatomy {
         // Metres. Dog shoulder targets lie within the cited adult male FCI
         // intervals. Other dimensions are authored study targets, not standards.

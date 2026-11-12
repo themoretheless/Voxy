@@ -22,6 +22,10 @@ pub(super) fn prepare_with_free(
     prepare_impl(constraints, rods, dt, solver, Some(free))
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn prepare_impl(
     constraints: &mut [Constraint],
     rods: &[HairRod],

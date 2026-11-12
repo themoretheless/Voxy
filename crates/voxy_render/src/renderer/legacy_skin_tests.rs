@@ -2,6 +2,10 @@ use super::*;
 
 #[test]
 #[ignore = "requires GPU; full production legacy skin raster and rejected-pose retention"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_legacy_skin_raster_matches_cpu_and_retains_rejected_pose() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

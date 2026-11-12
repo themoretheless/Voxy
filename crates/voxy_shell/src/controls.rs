@@ -1,6 +1,7 @@
 //! Keyboard, mouse and touch state plus the follow and walk camera rigs of the
 //! native voxel clients.
 use glam::{Vec2, Vec3};
+use voxy_scene_host::{OrbitController, OrbitLimits};
 use winit::event::{ElementState, Touch, TouchPhase};
 use winit::keyboard::KeyCode;
 
@@ -172,27 +173,43 @@ impl InputState {
     }
 }
 
+/// Third-person follow rig: the angles are the view direction, so the eye sits
+/// behind the actor at `target - direction * distance`.
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct CameraRig {
-    pub yaw: f32,
-    pub pitch: f32,
-    pub distance: f32,
-}
+pub struct CameraRig(OrbitController);
+
+/// Pitch stays below the horizon and away from the pole; the wheel covers 4 to 36 m.
+const FOLLOW_LIMITS: OrbitLimits = OrbitLimits {
+    pitch: (-75_f32.to_radians(), -5_f32.to_radians()),
+    distance: (4.0, 36.0),
+};
 
 impl Default for CameraRig {
     fn default() -> Self {
-        Self {
-            yaw: -135_f32.to_radians(),
-            pitch: -28_f32.to_radians(),
-            distance: 13.0,
-        }
+        Self(OrbitController::new(
+            -135_f32.to_radians(),
+            -28_f32.to_radians(),
+            13.0,
+        ))
+    }
+}
+
+impl std::ops::Deref for CameraRig {
+    type Target = OrbitController;
+    fn deref(&self) -> &OrbitController {
+        &self.0
+    }
+}
+
+impl std::ops::DerefMut for CameraRig {
+    fn deref_mut(&mut self) -> &mut OrbitController {
+        &mut self.0
     }
 }
 
 impl CameraRig {
     pub fn apply_look(&mut self, delta: Vec2) {
-        self.yaw -= delta.x;
-        self.pitch = (self.pitch - delta.y).clamp(-75_f32.to_radians(), -5_f32.to_radians());
+        self.0.drag(-delta.x, -delta.y, &FOLLOW_LIMITS);
     }
 
     pub fn planar_basis(self) -> (Vec3, Vec3) {
@@ -203,18 +220,13 @@ impl CameraRig {
 
     pub fn zoom(&mut self, lines: f32) {
         if lines.is_finite() {
-            self.distance = (self.distance - lines * 2.0).clamp(4.0, 36.0);
+            self.0.zoom(-(lines * 2.0), &FOLLOW_LIMITS);
         }
     }
 
     pub fn eye_and_target(self, actor: Vec3) -> (Vec3, Vec3) {
         let target = actor + Vec3::Y * 1.6;
-        let direction = Vec3::new(
-            self.yaw.sin() * self.pitch.cos(),
-            self.pitch.sin(),
-            self.yaw.cos() * self.pitch.cos(),
-        );
-        (target - direction * self.distance, target)
+        (target - self.direction() * self.distance, target)
     }
 }
 
@@ -281,6 +293,31 @@ mod tests {
     }
 
     #[test]
+    fn follow_rig_reproduces_the_previous_look_zoom_and_eye_numbers() {
+        let mut camera = CameraRig::default();
+        camera.apply_look(Vec2::new(0.3125, 0.071));
+        camera.zoom(1.5);
+        let yaw = -135_f32.to_radians() - 0.3125;
+        let pitch = (-28_f32.to_radians() - 0.071).clamp(-75_f32.to_radians(), -5_f32.to_radians());
+        let distance = (13.0_f32 - 1.5 * 2.0).clamp(4.0, 36.0);
+        assert_eq!(
+            (camera.yaw, camera.pitch, camera.distance),
+            (yaw, pitch, distance)
+        );
+        let actor = Vec3::new(3.0, 1.0, -2.0);
+        let target = actor + Vec3::Y * 1.6;
+        let direction = Vec3::new(
+            yaw.sin() * pitch.cos(),
+            pitch.sin(),
+            yaw.cos() * pitch.cos(),
+        );
+        assert_eq!(
+            camera.eye_and_target(actor),
+            (target - direction * distance, target)
+        );
+    }
+
+    #[test]
     fn wheel_zoom_is_visible_and_bounded() {
         let mut camera = CameraRig::default();
         camera.zoom(2.0);
@@ -308,61 +345,64 @@ mod tests {
 
 /// Mouse targets are in radians, independent of render rate. Simulation positions
 /// are interpolated by the caller; this rig smooths view angles without changing input.
+/// Dereferences to the smoothed view; input moves the goal.
 #[derive(Clone, Copy, Debug)]
 pub struct WalkCamera {
-    pub yaw: f32,
-    pub pitch: f32,
-    target_yaw: f32,
-    target_pitch: f32,
-    pub distance: f32,
-    target_distance: f32,
+    view: OrbitController,
+    goal: OrbitController,
 }
+
+/// Free look up to the poles; distance 0 is first person, 8 m the farthest follow.
+const WALK_LIMITS: OrbitLimits = OrbitLimits::symmetric(1.50, 0., 8.);
+
+impl std::ops::Deref for WalkCamera {
+    type Target = OrbitController;
+    fn deref(&self) -> &OrbitController {
+        &self.view
+    }
+}
+
+impl std::ops::DerefMut for WalkCamera {
+    fn deref_mut(&mut self) -> &mut OrbitController {
+        &mut self.view
+    }
+}
+
 impl WalkCamera {
     pub fn new(direction: Vec3) -> Self {
         let yaw = direction.x.atan2(direction.z);
         let pitch = direction.y.clamp(-1., 1.).asin();
-        Self {
-            yaw,
-            pitch,
-            target_yaw: yaw,
-            target_pitch: pitch,
-            distance: 0.,
-            target_distance: 0.,
-        }
+        let view = OrbitController::new(yaw, pitch, 0.);
+        Self { view, goal: view }
     }
     pub fn desired_distance(self) -> f32 {
-        self.target_distance
+        self.goal.distance
     }
     pub fn set_distance(&mut self, distance: f32) {
         if distance.is_finite() {
-            self.target_distance = distance.clamp(0., 8.);
+            self.goal.distance = WALK_LIMITS.clamp_distance(distance);
         }
     }
     pub fn zoom(&mut self, lines: f32) {
         if lines.is_finite() {
-            self.set_distance(self.target_distance - lines * 0.25);
+            self.set_distance(self.goal.distance - lines * 0.25);
         }
     }
     pub fn apply_look(&mut self, delta: Vec2) {
         if delta.is_finite() {
-            self.target_yaw -= delta.x;
-            self.target_pitch = (self.target_pitch - delta.y).clamp(-1.50, 1.50);
+            self.goal.drag(-delta.x, -delta.y, &WALK_LIMITS);
         }
     }
     pub fn step(&mut self, dt: f32) {
         if dt.is_finite() && dt > 0. {
             let alpha = -(-40. * dt).exp_m1();
-            self.yaw += (self.target_yaw - self.yaw) * alpha;
-            self.pitch += (self.target_pitch - self.pitch) * alpha;
-            self.distance += (self.target_distance - self.distance) * alpha;
+            self.view.yaw += (self.goal.yaw - self.view.yaw) * alpha;
+            self.view.pitch += (self.goal.pitch - self.view.pitch) * alpha;
+            self.view.distance += (self.goal.distance - self.view.distance) * alpha;
         }
     }
     pub fn direction(self) -> Vec3 {
-        Vec3::new(
-            self.yaw.sin() * self.pitch.cos(),
-            self.pitch.sin(),
-            self.yaw.cos() * self.pitch.cos(),
-        )
+        self.view.direction()
     }
     pub fn planar_basis(self) -> (Vec3, Vec3) {
         let forward = Vec3::new(self.yaw.sin(), 0., self.yaw.cos());
@@ -452,6 +492,25 @@ mod walk_camera_tests {
             b.step(0.005);
         }
         assert!(a.direction().distance(b.direction()) < 1e-6);
+    }
+    #[test]
+    fn look_and_wheel_move_the_goal_by_the_previous_numbers() {
+        let mut camera = WalkCamera::new(Vec3::new(0.6, 0.0, -0.8));
+        let (yaw, pitch) = (camera.yaw, camera.pitch);
+        camera.apply_look(Vec2::new(0.3125, -0.071));
+        camera.zoom(-3.0);
+        assert_eq!(camera.goal.yaw, yaw - 0.3125);
+        assert_eq!(camera.goal.pitch, (pitch + 0.071).clamp(-1.50, 1.50));
+        assert_eq!(
+            camera.desired_distance(),
+            (0.0_f32 + 3.0 * 0.25).clamp(0., 8.)
+        );
+        assert_eq!(
+            (camera.yaw, camera.pitch, camera.distance),
+            (yaw, pitch, 0.)
+        );
+        camera.apply_look(Vec2::new(0.0, 100.0));
+        assert_eq!(camera.goal.pitch, -1.50);
     }
     #[test]
     fn zoom_is_smooth_bounded_and_independent_of_frame_rate() {

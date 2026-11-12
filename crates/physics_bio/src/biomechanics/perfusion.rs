@@ -33,6 +33,10 @@ impl PorePerfusion {
     /// # Errors
     /// Missing cell stores, viscoelastic cells, invalid permeability/ports/reservoirs
     /// or solver controls. Reservoir indices refer to the supplied reservoir array.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         body: Body,
         permeability: Vec<Matrix>,

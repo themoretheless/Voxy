@@ -97,6 +97,10 @@ pub fn character_motion(
 /// Executes the shared controller with CUDA broadphase and f64 contact kernels.
 /// # Errors
 /// CUDA/controller failures leave the original state unchanged; no CPU fallback.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn step_character_collision(
     compute: &CudaCompute,
     view: &impl VoxelView,

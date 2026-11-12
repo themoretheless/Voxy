@@ -3,6 +3,10 @@
 use physics_bio::biomechanics::*;
 use physics_bio::circulation::{Circulation, Compartment, Vessel};
 use std::io::Write;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() {
     let path = std::env::args()
         .skip(1)

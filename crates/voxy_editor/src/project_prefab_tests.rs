@@ -40,6 +40,10 @@ impl Drop for Temp {
     }
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn project_nested_prefabs_preserve_overrides_recover_and_package_after_relocation()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -425,6 +429,10 @@ fn deferred_prefab_retarget_requires_resolvable_animated_rigs_and_valid_mapping(
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn deferred_prefab_model_parts_check_imported_nodes_after_nested_overrides()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -533,6 +541,10 @@ fn deferred_prefab_model_parts_check_imported_nodes_after_nested_overrides()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn deferred_prefab_animation_selection_uses_native_playback_and_retarget_source()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -845,6 +857,10 @@ fn deferred_prefab_morph_weights_validate_target_and_survive_package()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn deferred_prefab_liquid_material_is_admitted_before_package_publication()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();

@@ -118,6 +118,10 @@ impl Material {
     /// # Errors
     /// Rejects invalid normals/jumps and overflow without mutating old history.
     // Keep contact history transitions and all energy ledgers together.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn response(
         &self,
         old: &State,
@@ -253,6 +257,10 @@ fn kinematics(jump: Vec3, normal: Vec3) -> Result<(f64, Vec3), &'static str> {
 ///
 /// Returns `(friction_force, next_bristle_z)`.
 #[must_use]
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn lugre_bristle_friction_force(
     rel_velocity: f64,
     bristle_z: f64,

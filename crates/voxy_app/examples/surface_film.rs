@@ -14,12 +14,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             _ => return Err("usage: surface_film [BODY.json] [--smoke] [--motion]".into()),
         }
     }
-    let mut app = voxy_shell::SceneApp::new(smoke)?
-        .with_motion_vectors(motion)
-        .with_female_secondary()?
-        .with_surface_film([0., 0.20, 0.13], 0.04, 5e-8)?;
+    let app = voxy_shell::SceneApp::new(smoke)?.with_motion_vectors(motion);
+    let mut demo = voxy_demos::female_scene::FemaleScene::secondary()?.with_surface_film(
+        [0., 0.20, 0.13],
+        0.04,
+        5e-8,
+    )?;
     if let Some(path) = parameters {
-        app = app.with_body_parameter_file(path)?;
+        demo = demo.with_body_parameter_file(path)?;
     }
-    app.run(winit::event_loop::EventLoop::new()?)
+    app.with_demo(Box::new(demo))
+        .run(winit::event_loop::EventLoop::new()?)
 }

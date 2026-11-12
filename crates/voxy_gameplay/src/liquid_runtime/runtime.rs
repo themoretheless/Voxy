@@ -14,6 +14,10 @@ impl SceneLiquidRuntime {
     /// Resolve durable material names once and admit every source, including inactive ones.
     /// # Errors
     /// Duplicate/empty material names, invalid physics/source settings or source budget.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         scene: &SceneGraph,
         materials: Vec<(String, Material)>,
@@ -748,6 +752,11 @@ impl SceneLiquidRuntime {
         Ok(report)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn tick_impl(
         &mut self,
         scene: &SceneGraph,

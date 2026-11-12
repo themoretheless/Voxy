@@ -29,6 +29,10 @@ fn angular(l: &Liquid) -> [f64; 3] {
     })
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn heterogeneous_merge_preserves_composition_enthalpy_momentum_and_angular_ledger() {
     let mut particles = vec![
         particle(-0.01, 2.0, 0.001),

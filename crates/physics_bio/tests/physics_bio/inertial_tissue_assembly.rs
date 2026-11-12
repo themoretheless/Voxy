@@ -276,6 +276,10 @@ fn assembly_does_not_silently_drop_installed_embedded_contact() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn inertial_assembly_remaps_distinct_regional_contact_masks_without_face_loss() {
     use std::sync::Arc;
     let source = PrescribedTriangleSurface::new(

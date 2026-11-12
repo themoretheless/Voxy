@@ -156,6 +156,10 @@ impl TriggerTracker {
         self.sample_with_traces(queries, budget, &[])
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn sample_with_traces(
         &mut self,
         queries: &SceneQueries<'_>,

@@ -50,6 +50,10 @@ fn facial_region(a: voxy_model::animals::BreedAnatomy, p: Vec3) -> bool {
     p.z > a.head_origin().z - skull * 0.1 && p.y > a.head_origin().y - skull * 0.65
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn build(cat: bool) -> Result<Groom, String> {
     let surface = asset::surface(cat)?;
     let anatomy = asset::profile(cat);

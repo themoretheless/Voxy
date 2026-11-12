@@ -565,6 +565,10 @@ pub struct CoupledPelvisThighFrame {
 /// # Errors
 /// Rejects out-of-range `pelvis_joint`, nonfinite/nonpositive `dt_s` or `thigh_radius_m`,
 /// nonfinite `previous_pelvis_velocity_m_s`, or invalid pose evaluation.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn extract_pelvis_thigh_frame(
     skeleton: &Skeleton,
     feet: &GaitFeet,

@@ -117,6 +117,10 @@ impl ThermalFilmMixture {
     /// Uses the shared adaptive solution solver, including latent heat and donor
     /// momentum. Nonvolatile species remain. Complete solvent exhaustion and
     /// nucleation on a dry cell are not supported by this integrator yet.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn exchange_solution_vapor(
         &mut self,
         cell: usize,

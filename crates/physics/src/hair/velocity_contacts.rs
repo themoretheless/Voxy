@@ -340,6 +340,10 @@ fn prepare_implicit_response_with_solver(
     }
     Ok(())
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn accelerate_active_set<S: ProjectionVector + ?Sized>(
     constraints: &mut [Constraint],
     rods: &mut S,
@@ -1671,6 +1675,10 @@ mod tests {
         assert_eq!(coupled.angular, free.angular);
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn coupled_newton_motion_stops_closing_contact_and_preserves_free_guide() {
         let radius = 40e-6;
         let mut rods = vec![rod(0.), rod(2. * radius), rod(0.01)];

@@ -283,6 +283,10 @@ impl ArchiveSceneRenderer {
         self.advance_probe_face(bake, Some(std::time::Duration::from_millis(2)))
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn advance_probe_face(
         &mut self,
         bake: &mut ArchiveProbeBake,
@@ -313,19 +317,24 @@ impl ArchiveSceneRenderer {
             if bake.pending_face.is_none() {
                 self.set_camera_projection(90_f32.to_radians(), up);
                 self.previous_vp = None;
-                self.draw(&bake.view, point, forward);
                 let right = forward.cross(up).normalize();
-                bake.pending_face = Some(bake.projector.project(
-                    &self.device,
-                    &self.queue,
-                    &bake.view,
-                    (self.width, self.height),
-                    &self.probe_sh,
-                    bake.next_probe,
-                    bake.next_face,
-                    [forward, right, up],
-                    1. / self.exposure,
-                ));
+                bake.pending_face =
+                    Some(
+                        self.draw_with_tail(&bake.view, point, forward, |renderer, encoder| {
+                            bake.projector.encode_projection(
+                                &renderer.device,
+                                &renderer.queue,
+                                encoder,
+                                &bake.view,
+                                (renderer.width, renderer.height),
+                                &renderer.probe_sh,
+                                bake.next_probe,
+                                bake.next_face,
+                                [forward, right, up],
+                                1. / renderer.exposure,
+                            );
+                        }),
+                    );
             }
             let submission = bake.pending_face.clone();
             match self.device.poll(wgpu::PollType::Wait {
@@ -461,6 +470,91 @@ impl ArchiveSceneRenderer {
         let mut bake = self.begin_irradiance_probe_bake(min, max, spacing)?;
         while !self.advance_probe_face(&mut bake, None)? {}
         Ok(bake.points.len())
+    }
+
+    /// Reads the coefficients of a completed bake back from the GPU as a `.vprobes` cache.
+    /// Blocks until the copy is mapped; call it once, right after the bake reports completion.
+    /// # Errors
+    /// Rejects a bake owned by another renderer or one that has not finished, and reports
+    /// device-loss or mapping failures.
+    pub fn read_irradiance_probe_cache(
+        &self,
+        bake: &ArchiveProbeBake,
+    ) -> Result<crate::probe_gi::BakedProbeCache, crate::ComputeError> {
+        if !Arc::ptr_eq(&bake.owner, &self.probe_bake_owner) {
+            return Err(crate::ComputeError::DeviceMismatch);
+        }
+        if !bake.finished {
+            return Err(crate::ComputeError::Validation(
+                "probe bake is not complete".into(),
+            ));
+        }
+        let size = bake.points.len() as u64 * crate::probe_gi::PROBE_BYTES;
+        let staging = self.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("irradiance probe cache readback"),
+            size,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let mut encoder = self.device.create_command_encoder(&Default::default());
+        encoder.copy_buffer_to_buffer(&self.probe_sh, 0, &staging, 0, size);
+        self.queue.submit([encoder.finish()]);
+        let (sender, receiver) = std::sync::mpsc::channel();
+        let slice = staging.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |result| {
+            let _ = sender.send(result);
+        });
+        let failed = |reason: String| {
+            crate::ComputeError::Validation(format!("probe cache readback: {reason}"))
+        };
+        self.device
+            .poll(wgpu::PollType::wait_indefinitely())
+            .map_err(|e| failed(e.to_string()))?;
+        receiver
+            .recv()
+            .map_err(|e| failed(e.to_string()))?
+            .map_err(|e| failed(e.to_string()))?;
+        let probes: Vec<[f32; 16]> = bytemuck::pod_collect_to_vec(
+            &slice
+                .get_mapped_range()
+                .map_err(|e| failed(e.to_string()))?,
+        );
+        crate::probe_gi::BakedProbeCache::new(
+            bake.grid.origin,
+            bake.grid.spacing,
+            bake.grid.dims,
+            probes,
+        )
+        .map_err(|e| failed(e.to_string()))
+    }
+
+    /// Uploads a cached bake instead of rendering probe faces. Returns `false`, changing nothing,
+    /// when the cache was baked for a different grid than `min`/`max`/`spacing` produce here.
+    /// The cache does not know the scene it was baked from: the caller decides when it is stale.
+    /// # Errors
+    /// Rejects an invalid probe grid request.
+    pub fn restore_irradiance_probe_cache(
+        &mut self,
+        min: Vec3,
+        max: Vec3,
+        spacing: f32,
+        cache: &crate::probe_gi::BakedProbeCache,
+    ) -> Result<bool, crate::ComputeError> {
+        let (grid, points) = crate::probe_gi::grid(min, max, spacing)
+            .ok_or_else(|| crate::ComputeError::Validation("invalid probe grid".into()))?;
+        if cache.origin != grid.origin
+            || cache.spacing != grid.spacing
+            || cache.dims != grid.dims
+            || cache.probes.len() != points.len()
+        {
+            return Ok(false);
+        }
+        cache.upload_to_buffer(&self.queue, &self.probe_sh);
+        self.queue
+            .write_buffer(&self.probe_grid, 0, bytemuck::bytes_of(&grid));
+        self.previous_vp = None;
+        self.reset_temporal_history();
+        Ok(true)
     }
 
     /// Full-precision coefficients for cache/diagnostic readback; ownership
@@ -694,7 +788,11 @@ mod bake_tests {
 
     #[test]
     #[ignore = "requires a physical Metal GPU"]
-    fn bounded_probe_bake_matches_synchronous_coefficients() {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
+    fn single_submission_probe_bake_matches_separate_submissions() {
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
             backends: wgpu::Backends::METAL,
             ..wgpu::InstanceDescriptor::new_without_display_handle()
@@ -736,26 +834,81 @@ mod bake_tests {
             let (sender, receiver) = std::sync::mpsc::channel();
             let slice = buffer.slice(..);
             slice.map_async(wgpu::MapMode::Read, move |result| {
-                sender.send(result).unwrap()
+                sender.send(result).unwrap();
             });
             device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
             receiver.recv().unwrap().unwrap();
             slice.get_mapped_range().unwrap().to_vec()
         };
 
-        let mut synchronous = renderer();
-        assert_eq!(synchronous.bake_irradiance_probes(min, max, 1.).unwrap(), 8);
-        let expected = read(&synchronous);
+        let mut reference = renderer();
+        let mut reference_bake = reference.begin_irradiance_probe_bake(min, max, 1.).unwrap();
+        let faces = [
+            (Vec3::X, Vec3::Y),
+            (Vec3::NEG_X, Vec3::Y),
+            (Vec3::Z, Vec3::Y),
+            (Vec3::NEG_Z, Vec3::Y),
+            (Vec3::Y, Vec3::NEG_Z),
+            (Vec3::NEG_Y, Vec3::Z),
+        ];
+        loop {
+            let (forward, up) = faces[reference_bake.next_face];
+            let point = reference_bake.points[reference_bake.next_probe];
+            reference.set_camera_projection(90_f32.to_radians(), up);
+            reference.previous_vp = None;
+            reference.draw(&reference_bake.view, point, forward);
+
+            let mut encoder = device.create_command_encoder(&Default::default());
+            reference_bake.projector.encode_projection(
+                &device,
+                &queue,
+                &mut encoder,
+                &reference_bake.view,
+                (reference.width, reference.height),
+                &reference.probe_sh,
+                reference_bake.next_probe,
+                reference_bake.next_face,
+                [forward, forward.cross(up).normalize(), up],
+                1. / reference.exposure,
+            );
+            reference_bake.pending_face = Some(queue.submit([encoder.finish()]));
+            if reference
+                .advance_probe_face(&mut reference_bake, None)
+                .unwrap()
+            {
+                break;
+            }
+        }
+        assert_eq!(reference_bake.progress(), (8, 8));
+        let expected = read(&reference);
         assert!(expected.iter().any(|&byte| byte != 0));
 
         let mut bounded = renderer();
         let mut bake = bounded.begin_irradiance_probe_bake(min, max, 1.).unwrap();
-        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+        let deadline = std::time::Instant::now() + std::time::Duration::from_mins(1);
         while !bounded.advance_irradiance_probe_bake(&mut bake).unwrap() {
             assert!(std::time::Instant::now() < deadline);
         }
         assert_eq!(bake.progress(), (8, 8));
         assert!(bake.pending_face.is_none());
         assert_eq!(read(&bounded), expected);
+
+        // A cache read back from the bake restores identical coefficients without rendering.
+        let cache = bounded.read_irradiance_probe_cache(&bake).unwrap();
+        let cache =
+            crate::probe_gi::BakedProbeCache::from_bytes(&cache.to_bytes().unwrap()).unwrap();
+        let mut restored = renderer();
+        assert!(
+            !restored
+                .restore_irradiance_probe_cache(min, max, 0.5, &cache)
+                .unwrap()
+        );
+        assert!(read(&restored).iter().all(|&byte| byte == 0));
+        assert!(
+            restored
+                .restore_irradiance_probe_cache(min, max, 1., &cache)
+                .unwrap()
+        );
+        assert_eq!(read(&restored), expected);
     }
 }

@@ -1,0 +1,530 @@
+ORIGINAL STREET seed=1448040537 source_geometry_assets=0 materials=143 mesh_batches=161 triangles=3634960 instances=120739
+ORIGINAL STREET MATERIALS provider=PolyHaven license=CC0 scans=3 source_maps=9 gpu_textures=6 source_resolution=4k gpu=linear_rgba32float packing=lossless_channels
+DAYLIGHT solar_irradiance=[2169.2283, 2185.722, 1982.8407] source_background_unchanged=true indirect_float32=true
+STREET grounded spawn: authored=DVec3(0.6000000238418579, 0.1299999713897706, -18.0) resolved=DVec3(0.44700391757059055, 0.05477531636347348, -17.86699189712493)
+STREET DISPLAY format=Rgba16Float colour_space=ExtendedSrgbLinear hdr_info=DisplayHdrInfo { luminance: None, headroom: Some(DisplayHeadroom { current: Some(6.1538463), potential: Some(16.0), reference: None }), chromaticity: None, coarse: Some(DisplayCoarseRange { high_dynamic_range: Some(true), gamut: None }), bits_per_color: None }
+STREET GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }; 1920x1080 Immediate; full scene geometry; original mip chains when images are present
+STREET WORLD SOURCE ready meshes=161 instances=120739 exact_workers=128 source_simplified=false preparation_seconds=0.080
+STREET WORLD consumer_any_hit_admission=false native_source_witness=false node_reciprocal=false
+STREET WORLD exact_position_consumer=false material_surface_policy=false exact_workers=128 exact_group=1
+STREET WORLD SCHEDULING {"kind":"Nearest","nearest_queue_claim_width":4,"source_simplified":false,"wide_source_block_blake3":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"wide_source_near_first":false,"wide_source_nodes":false}
+STREET WORLD geometry_bounds_bytes=0 geometry_bounds_check=false
+ARCHIVE INIT stage=environment_begin elapsed_ms=0.001
+ARCHIVE INIT stage=environment_resources_ready elapsed_ms=242.199
+ARCHIVE INIT stage=scene_shader_begin elapsed_ms=252.436
+ARCHIVE INIT stage=scene_shader_ready elapsed_ms=262.899
+ARCHIVE INIT pipeline_begin blend=false double=false shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=false double=false shadow=false predepth=false masked=false milliseconds=6.306
+ARCHIVE INIT pipeline_begin blend=false double=true shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=false double=true shadow=false predepth=false masked=false milliseconds=5.461
+ARCHIVE INIT pipeline_begin blend=false double=false shadow=false predepth=false masked=true
+ARCHIVE INIT pipeline_ready blend=false double=false shadow=false predepth=false masked=true milliseconds=6.373
+ARCHIVE INIT pipeline_begin blend=false double=true shadow=false predepth=false masked=true
+ARCHIVE INIT pipeline_ready blend=false double=true shadow=false predepth=false masked=true milliseconds=5.059
+ARCHIVE INIT pipeline_begin blend=true double=false shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=true double=false shadow=false predepth=false masked=false milliseconds=5.744
+ARCHIVE INIT pipeline_begin blend=true double=true shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=true double=true shadow=false predepth=false masked=false milliseconds=5.193
+ARCHIVE INIT pipeline_begin blend=true double=false shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=true double=false shadow=false predepth=false masked=false milliseconds=5.070
+ARCHIVE INIT pipeline_begin blend=true double=true shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=true double=true shadow=false predepth=false masked=false milliseconds=5.216
+ARCHIVE INIT pipeline_begin blend=false double=true shadow=true predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=false double=true shadow=true predepth=false masked=false milliseconds=1.501
+ARCHIVE INIT pipeline_begin blend=false double=false shadow=false predepth=true masked=false
+ARCHIVE INIT pipeline_ready blend=false double=false shadow=false predepth=true masked=false milliseconds=0.949
+ARCHIVE INIT pipeline_begin blend=false double=true shadow=false predepth=true masked=false
+ARCHIVE INIT pipeline_ready blend=false double=true shadow=false predepth=true masked=false milliseconds=0.980
+ARCHIVE INIT stage=material_upload_begin elapsed_ms=314.977
+ARCHIVE INIT stage=material_upload_next elapsed_ms=452.393
+ARCHIVE INIT stage=material_upload_next elapsed_ms=590.957
+ARCHIVE INIT stage=material_upload_next elapsed_ms=723.159
+ARCHIVE INIT stage=material_upload_next elapsed_ms=860.893
+ARCHIVE INIT stage=material_upload_next elapsed_ms=988.089
+ARCHIVE INIT stage=material_upload_next elapsed_ms=1128.868
+ARCHIVE INIT stage=material_upload_ready elapsed_ms=1128.896
+STREET WORLD FRAME connected=true regions=144 tile=512x256 ray_capacity=131072 shared_query_owner=true original_full_frame_DDA_skipped=true
+ARCHIVE PROBE begin probes=372 faces=2232 resolution=3840x2160
+STREET antialiasing=Temporal render=3840x2160 output=1920x1080
+ARCHIVE PROBE completed=1/372 elapsed_seconds=0.663
+ARCHIVE PROBE completed=2/372 elapsed_seconds=1.127
+ARCHIVE PROBE completed=3/372 elapsed_seconds=1.763
+ARCHIVE PROBE completed=4/372 elapsed_seconds=2.442
+ARCHIVE PROBE completed=5/372 elapsed_seconds=2.951
+ARCHIVE PROBE completed=6/372 elapsed_seconds=3.678
+ARCHIVE PROBE completed=7/372 elapsed_seconds=4.047
+ARCHIVE PROBE completed=8/372 elapsed_seconds=4.505
+ARCHIVE PROBE completed=9/372 elapsed_seconds=4.823
+ARCHIVE PROBE completed=10/372 elapsed_seconds=5.481
+ARCHIVE PROBE completed=11/372 elapsed_seconds=5.790
+ARCHIVE PROBE completed=12/372 elapsed_seconds=6.009
+ARCHIVE PROBE completed=13/372 elapsed_seconds=6.591
+ARCHIVE PROBE completed=14/372 elapsed_seconds=7.574
+ARCHIVE PROBE completed=15/372 elapsed_seconds=8.193
+ARCHIVE PROBE completed=16/372 elapsed_seconds=8.986
+ARCHIVE PROBE completed=17/372 elapsed_seconds=10.146
+ARCHIVE PROBE completed=18/372 elapsed_seconds=10.741
+ARCHIVE PROBE completed=19/372 elapsed_seconds=11.299
+ARCHIVE PROBE completed=20/372 elapsed_seconds=12.363
+ARCHIVE PROBE completed=21/372 elapsed_seconds=12.798
+ARCHIVE PROBE completed=22/372 elapsed_seconds=13.303
+ARCHIVE PROBE completed=23/372 elapsed_seconds=14.080
+ARCHIVE PROBE completed=24/372 elapsed_seconds=14.354
+ARCHIVE PROBE completed=25/372 elapsed_seconds=15.161
+ARCHIVE PROBE completed=26/372 elapsed_seconds=16.130
+ARCHIVE PROBE completed=27/372 elapsed_seconds=16.956
+ARCHIVE PROBE completed=28/372 elapsed_seconds=17.838
+ARCHIVE PROBE completed=29/372 elapsed_seconds=19.163
+ARCHIVE PROBE completed=30/372 elapsed_seconds=19.887
+ARCHIVE PROBE completed=31/372 elapsed_seconds=21.018
+ARCHIVE PROBE completed=32/372 elapsed_seconds=21.948
+ARCHIVE PROBE completed=33/372 elapsed_seconds=22.514
+ARCHIVE PROBE completed=34/372 elapsed_seconds=23.142
+ARCHIVE PROBE completed=35/372 elapsed_seconds=24.125
+ARCHIVE PROBE completed=36/372 elapsed_seconds=24.571
+ARCHIVE PROBE completed=37/372 elapsed_seconds=25.210
+ARCHIVE PROBE completed=38/372 elapsed_seconds=26.167
+ARCHIVE PROBE completed=39/372 elapsed_seconds=27.206
+ARCHIVE PROBE completed=40/372 elapsed_seconds=28.184
+ARCHIVE PROBE completed=41/372 elapsed_seconds=29.220
+ARCHIVE PROBE completed=42/372 elapsed_seconds=30.383
+ARCHIVE PROBE completed=43/372 elapsed_seconds=31.215
+ARCHIVE PROBE completed=44/372 elapsed_seconds=32.479
+ARCHIVE PROBE completed=45/372 elapsed_seconds=33.525
+ARCHIVE PROBE completed=46/372 elapsed_seconds=34.292
+ARCHIVE PROBE completed=47/372 elapsed_seconds=35.304
+ARCHIVE PROBE completed=48/372 elapsed_seconds=35.933
+ARCHIVE PROBE completed=49/372 elapsed_seconds=36.819
+ARCHIVE PROBE completed=50/372 elapsed_seconds=37.835
+ARCHIVE PROBE completed=51/372 elapsed_seconds=38.774
+ARCHIVE PROBE completed=52/372 elapsed_seconds=39.363
+ARCHIVE PROBE completed=53/372 elapsed_seconds=40.522
+ARCHIVE PROBE completed=54/372 elapsed_seconds=41.564
+ARCHIVE PROBE completed=55/372 elapsed_seconds=42.623
+ARCHIVE PROBE completed=56/372 elapsed_seconds=43.676
+ARCHIVE PROBE completed=57/372 elapsed_seconds=44.651
+ARCHIVE PROBE completed=58/372 elapsed_seconds=45.566
+ARCHIVE PROBE completed=59/372 elapsed_seconds=46.437
+ARCHIVE PROBE completed=60/372 elapsed_seconds=47.348
+ARCHIVE PROBE completed=61/372 elapsed_seconds=48.139
+ARCHIVE PROBE completed=62/372 elapsed_seconds=48.861
+ARCHIVE PROBE completed=63/372 elapsed_seconds=49.742
+ARCHIVE PROBE completed=64/372 elapsed_seconds=50.735
+ARCHIVE PROBE completed=65/372 elapsed_seconds=51.720
+ARCHIVE PROBE completed=66/372 elapsed_seconds=52.402
+ARCHIVE PROBE completed=67/372 elapsed_seconds=53.309
+ARCHIVE PROBE completed=68/372 elapsed_seconds=54.448
+ARCHIVE PROBE completed=69/372 elapsed_seconds=54.964
+ARCHIVE PROBE completed=70/372 elapsed_seconds=55.603
+ARCHIVE PROBE completed=71/372 elapsed_seconds=56.323
+ARCHIVE PROBE completed=72/372 elapsed_seconds=56.820
+ARCHIVE PROBE completed=73/372 elapsed_seconds=57.700
+ARCHIVE PROBE completed=74/372 elapsed_seconds=58.512
+ARCHIVE PROBE completed=75/372 elapsed_seconds=59.377
+ARCHIVE PROBE completed=76/372 elapsed_seconds=60.042
+ARCHIVE PROBE completed=77/372 elapsed_seconds=60.909
+ARCHIVE PROBE completed=78/372 elapsed_seconds=61.733
+ARCHIVE PROBE completed=79/372 elapsed_seconds=62.658
+ARCHIVE PROBE completed=80/372 elapsed_seconds=63.653
+ARCHIVE PROBE completed=81/372 elapsed_seconds=64.114
+ARCHIVE PROBE completed=82/372 elapsed_seconds=64.769
+ARCHIVE PROBE completed=83/372 elapsed_seconds=65.460
+ARCHIVE PROBE completed=84/372 elapsed_seconds=65.884
+ARCHIVE PROBE completed=85/372 elapsed_seconds=66.633
+ARCHIVE PROBE completed=86/372 elapsed_seconds=67.426
+ARCHIVE PROBE completed=87/372 elapsed_seconds=68.135
+ARCHIVE PROBE completed=88/372 elapsed_seconds=68.784
+ARCHIVE PROBE completed=89/372 elapsed_seconds=69.775
+ARCHIVE PROBE completed=90/372 elapsed_seconds=70.585
+ARCHIVE PROBE completed=91/372 elapsed_seconds=71.361
+ARCHIVE PROBE completed=92/372 elapsed_seconds=72.614
+ARCHIVE PROBE completed=93/372 elapsed_seconds=73.049
+ARCHIVE PROBE completed=94/372 elapsed_seconds=73.627
+ARCHIVE PROBE completed=95/372 elapsed_seconds=74.370
+ARCHIVE PROBE completed=96/372 elapsed_seconds=74.895
+ARCHIVE PROBE completed=97/372 elapsed_seconds=75.643
+ARCHIVE PROBE completed=98/372 elapsed_seconds=76.806
+ARCHIVE PROBE completed=99/372 elapsed_seconds=78.012
+ARCHIVE PROBE completed=100/372 elapsed_seconds=78.652
+ARCHIVE PROBE completed=101/372 elapsed_seconds=79.596
+ARCHIVE PROBE completed=102/372 elapsed_seconds=80.668
+ARCHIVE PROBE completed=103/372 elapsed_seconds=81.452
+ARCHIVE PROBE completed=104/372 elapsed_seconds=82.722
+ARCHIVE PROBE completed=105/372 elapsed_seconds=83.092
+ARCHIVE PROBE completed=106/372 elapsed_seconds=83.649
+ARCHIVE PROBE completed=107/372 elapsed_seconds=84.404
+ARCHIVE PROBE completed=108/372 elapsed_seconds=85.031
+ARCHIVE PROBE completed=109/372 elapsed_seconds=85.817
+ARCHIVE PROBE completed=110/372 elapsed_seconds=86.584
+ARCHIVE PROBE completed=111/372 elapsed_seconds=87.388
+ARCHIVE PROBE completed=112/372 elapsed_seconds=88.076
+ARCHIVE PROBE completed=113/372 elapsed_seconds=89.463
+ARCHIVE PROBE completed=114/372 elapsed_seconds=90.212
+ARCHIVE PROBE completed=115/372 elapsed_seconds=90.889
+ARCHIVE PROBE completed=116/372 elapsed_seconds=92.160
+ARCHIVE PROBE completed=117/372 elapsed_seconds=92.529
+ARCHIVE PROBE completed=118/372 elapsed_seconds=93.145
+ARCHIVE PROBE completed=119/372 elapsed_seconds=93.760
+ARCHIVE PROBE completed=120/372 elapsed_seconds=94.174
+ARCHIVE PROBE completed=121/372 elapsed_seconds=94.897
+ARCHIVE PROBE completed=122/372 elapsed_seconds=95.601
+ARCHIVE PROBE completed=123/372 elapsed_seconds=96.362
+ARCHIVE PROBE completed=124/372 elapsed_seconds=97.228
+ARCHIVE PROBE completed=125/372 elapsed_seconds=98.538
+ARCHIVE PROBE completed=126/372 elapsed_seconds=99.317
+ARCHIVE PROBE completed=127/372 elapsed_seconds=100.066
+ARCHIVE PROBE completed=128/372 elapsed_seconds=100.972
+ARCHIVE PROBE completed=129/372 elapsed_seconds=101.432
+ARCHIVE PROBE completed=130/372 elapsed_seconds=102.462
+ARCHIVE PROBE completed=131/372 elapsed_seconds=103.095
+ARCHIVE PROBE completed=132/372 elapsed_seconds=103.487
+ARCHIVE PROBE completed=133/372 elapsed_seconds=104.340
+ARCHIVE PROBE completed=134/372 elapsed_seconds=105.301
+ARCHIVE PROBE completed=135/372 elapsed_seconds=106.036
+ARCHIVE PROBE completed=136/372 elapsed_seconds=107.216
+ARCHIVE PROBE completed=137/372 elapsed_seconds=108.519
+ARCHIVE PROBE completed=138/372 elapsed_seconds=109.780
+ARCHIVE PROBE completed=139/372 elapsed_seconds=110.507
+ARCHIVE PROBE completed=140/372 elapsed_seconds=111.395
+ARCHIVE PROBE completed=141/372 elapsed_seconds=111.989
+ARCHIVE PROBE completed=142/372 elapsed_seconds=112.762
+ARCHIVE PROBE completed=143/372 elapsed_seconds=113.435
+ARCHIVE PROBE completed=144/372 elapsed_seconds=114.250
+ARCHIVE PROBE completed=145/372 elapsed_seconds=114.911
+ARCHIVE PROBE completed=146/372 elapsed_seconds=116.118
+ARCHIVE PROBE completed=147/372 elapsed_seconds=116.909
+ARCHIVE PROBE completed=148/372 elapsed_seconds=117.640
+ARCHIVE PROBE completed=149/372 elapsed_seconds=118.887
+ARCHIVE PROBE completed=150/372 elapsed_seconds=119.713
+ARCHIVE PROBE completed=151/372 elapsed_seconds=120.556
+ARCHIVE PROBE completed=152/372 elapsed_seconds=121.701
+ARCHIVE PROBE completed=153/372 elapsed_seconds=122.191
+ARCHIVE PROBE completed=154/372 elapsed_seconds=123.427
+ARCHIVE PROBE completed=155/372 elapsed_seconds=124.151
+ARCHIVE PROBE completed=156/372 elapsed_seconds=125.004
+ARCHIVE PROBE completed=157/372 elapsed_seconds=126.041
+ARCHIVE PROBE completed=158/372 elapsed_seconds=127.343
+ARCHIVE PROBE completed=159/372 elapsed_seconds=128.143
+ARCHIVE PROBE completed=160/372 elapsed_seconds=128.915
+ARCHIVE PROBE completed=161/372 elapsed_seconds=130.643
+ARCHIVE PROBE completed=162/372 elapsed_seconds=131.496
+ARCHIVE PROBE completed=163/372 elapsed_seconds=132.250
+ARCHIVE PROBE completed=164/372 elapsed_seconds=133.069
+ARCHIVE PROBE completed=165/372 elapsed_seconds=133.593
+ARCHIVE PROBE completed=166/372 elapsed_seconds=134.332
+ARCHIVE PROBE completed=167/372 elapsed_seconds=134.979
+ARCHIVE PROBE completed=168/372 elapsed_seconds=135.364
+ARCHIVE PROBE completed=169/372 elapsed_seconds=136.801
+ARCHIVE PROBE completed=170/372 elapsed_seconds=137.506
+ARCHIVE PROBE completed=171/372 elapsed_seconds=138.253
+ARCHIVE PROBE completed=172/372 elapsed_seconds=139.797
+ARCHIVE PROBE completed=173/372 elapsed_seconds=140.762
+ARCHIVE PROBE completed=174/372 elapsed_seconds=141.485
+ARCHIVE PROBE completed=175/372 elapsed_seconds=142.658
+ARCHIVE PROBE completed=176/372 elapsed_seconds=143.654
+ARCHIVE PROBE completed=177/372 elapsed_seconds=144.217
+ARCHIVE PROBE completed=178/372 elapsed_seconds=145.061
+ARCHIVE PROBE completed=179/372 elapsed_seconds=145.718
+ARCHIVE PROBE completed=180/372 elapsed_seconds=146.566
+ARCHIVE PROBE completed=181/372 elapsed_seconds=147.238
+ARCHIVE PROBE completed=182/372 elapsed_seconds=148.030
+ARCHIVE PROBE completed=183/372 elapsed_seconds=149.204
+ARCHIVE PROBE completed=184/372 elapsed_seconds=149.921
+ARCHIVE PROBE completed=185/372 elapsed_seconds=150.897
+ARCHIVE PROBE completed=186/372 elapsed_seconds=152.147
+ARCHIVE PROBE completed=187/372 elapsed_seconds=152.852
+ARCHIVE PROBE completed=188/372 elapsed_seconds=153.798
+ARCHIVE PROBE completed=189/372 elapsed_seconds=154.557
+ARCHIVE PROBE completed=190/372 elapsed_seconds=155.667
+ARCHIVE PROBE completed=191/372 elapsed_seconds=156.287
+ARCHIVE PROBE completed=192/372 elapsed_seconds=156.791
+ARCHIVE PROBE completed=193/372 elapsed_seconds=157.317
+ARCHIVE PROBE completed=194/372 elapsed_seconds=158.001
+ARCHIVE PROBE completed=195/372 elapsed_seconds=159.063
+ARCHIVE PROBE completed=196/372 elapsed_seconds=159.652
+ARCHIVE PROBE completed=197/372 elapsed_seconds=160.497
+ARCHIVE PROBE completed=198/372 elapsed_seconds=161.246
+ARCHIVE PROBE completed=199/372 elapsed_seconds=162.319
+ARCHIVE PROBE completed=200/372 elapsed_seconds=163.205
+ARCHIVE PROBE completed=201/372 elapsed_seconds=163.749
+ARCHIVE PROBE completed=202/372 elapsed_seconds=164.324
+ARCHIVE PROBE completed=203/372 elapsed_seconds=165.208
+ARCHIVE PROBE completed=204/372 elapsed_seconds=165.534
+ARCHIVE PROBE completed=205/372 elapsed_seconds=166.257
+ARCHIVE PROBE completed=206/372 elapsed_seconds=167.016
+ARCHIVE PROBE completed=207/372 elapsed_seconds=167.639
+ARCHIVE PROBE completed=208/372 elapsed_seconds=168.067
+ARCHIVE PROBE completed=209/372 elapsed_seconds=169.453
+ARCHIVE PROBE completed=210/372 elapsed_seconds=170.003
+ARCHIVE PROBE completed=211/372 elapsed_seconds=170.549
+ARCHIVE PROBE completed=212/372 elapsed_seconds=171.317
+ARCHIVE PROBE completed=213/372 elapsed_seconds=171.578
+ARCHIVE PROBE completed=214/372 elapsed_seconds=172.004
+ARCHIVE PROBE completed=215/372 elapsed_seconds=172.410
+ARCHIVE PROBE completed=216/372 elapsed_seconds=172.691
+ARCHIVE PROBE completed=217/372 elapsed_seconds=173.668
+ARCHIVE PROBE completed=218/372 elapsed_seconds=174.382
+ARCHIVE PROBE completed=219/372 elapsed_seconds=175.217
+ARCHIVE PROBE completed=220/372 elapsed_seconds=175.927
+ARCHIVE PROBE completed=221/372 elapsed_seconds=176.289
+ARCHIVE PROBE completed=222/372 elapsed_seconds=176.732
+ARCHIVE PROBE completed=223/372 elapsed_seconds=177.331
+ARCHIVE PROBE completed=224/372 elapsed_seconds=177.572
+ARCHIVE PROBE completed=225/372 elapsed_seconds=177.780
+ARCHIVE PROBE completed=226/372 elapsed_seconds=178.043
+ARCHIVE PROBE completed=227/372 elapsed_seconds=178.322
+ARCHIVE PROBE completed=228/372 elapsed_seconds=178.888
+ARCHIVE PROBE completed=229/372 elapsed_seconds=179.132
+ARCHIVE PROBE completed=230/372 elapsed_seconds=179.392
+ARCHIVE PROBE completed=231/372 elapsed_seconds=179.671
+ARCHIVE PROBE completed=232/372 elapsed_seconds=179.947
+ARCHIVE PROBE completed=233/372 elapsed_seconds=180.138
+ARCHIVE PROBE completed=234/372 elapsed_seconds=180.355
+ARCHIVE PROBE completed=235/372 elapsed_seconds=180.616
+ARCHIVE PROBE completed=236/372 elapsed_seconds=181.157
+ARCHIVE PROBE completed=237/372 elapsed_seconds=181.310
+ARCHIVE PROBE completed=238/372 elapsed_seconds=181.480
+ARCHIVE PROBE completed=239/372 elapsed_seconds=181.699
+ARCHIVE PROBE completed=240/372 elapsed_seconds=181.903
+ARCHIVE PROBE completed=241/372 elapsed_seconds=182.068
+ARCHIVE PROBE completed=242/372 elapsed_seconds=182.300
+ARCHIVE PROBE completed=243/372 elapsed_seconds=182.529
+ARCHIVE PROBE completed=244/372 elapsed_seconds=182.683
+ARCHIVE PROBE completed=245/372 elapsed_seconds=183.034
+ARCHIVE PROBE completed=246/372 elapsed_seconds=183.205
+ARCHIVE PROBE completed=247/372 elapsed_seconds=183.393
+ARCHIVE PROBE completed=248/372 elapsed_seconds=183.571
+ARCHIVE PROBE completed=249/372 elapsed_seconds=183.715
+ARCHIVE PROBE completed=250/372 elapsed_seconds=183.864
+ARCHIVE PROBE completed=251/372 elapsed_seconds=184.030
+ARCHIVE PROBE completed=252/372 elapsed_seconds=184.482
+ARCHIVE PROBE completed=253/372 elapsed_seconds=184.777
+ARCHIVE PROBE completed=254/372 elapsed_seconds=184.978
+ARCHIVE PROBE completed=255/372 elapsed_seconds=185.160
+ARCHIVE PROBE completed=256/372 elapsed_seconds=185.344
+ARCHIVE PROBE completed=257/372 elapsed_seconds=185.642
+ARCHIVE PROBE completed=258/372 elapsed_seconds=185.864
+ARCHIVE PROBE completed=259/372 elapsed_seconds=186.368
+ARCHIVE PROBE completed=260/372 elapsed_seconds=186.534
+ARCHIVE PROBE completed=261/372 elapsed_seconds=186.693
+ARCHIVE PROBE completed=262/372 elapsed_seconds=186.856
+ARCHIVE PROBE completed=263/372 elapsed_seconds=187.020
+ARCHIVE PROBE completed=264/372 elapsed_seconds=187.172
+ARCHIVE PROBE completed=265/372 elapsed_seconds=187.480
+ARCHIVE PROBE completed=266/372 elapsed_seconds=187.934
+ARCHIVE PROBE completed=267/372 elapsed_seconds=188.079
+ARCHIVE PROBE completed=268/372 elapsed_seconds=188.244
+ARCHIVE PROBE completed=269/372 elapsed_seconds=188.556
+ARCHIVE PROBE completed=270/372 elapsed_seconds=188.792
+ARCHIVE PROBE completed=271/372 elapsed_seconds=188.974
+ARCHIVE PROBE completed=272/372 elapsed_seconds=189.453
+ARCHIVE PROBE completed=273/372 elapsed_seconds=189.620
+ARCHIVE PROBE completed=274/372 elapsed_seconds=189.798
+ARCHIVE PROBE completed=275/372 elapsed_seconds=189.982
+ARCHIVE PROBE completed=276/372 elapsed_seconds=190.125
+ARCHIVE PROBE completed=277/372 elapsed_seconds=190.299
+ARCHIVE PROBE completed=278/372 elapsed_seconds=190.508
+ARCHIVE PROBE completed=279/372 elapsed_seconds=190.714
+ARCHIVE PROBE completed=280/372 elapsed_seconds=191.277
+ARCHIVE PROBE completed=281/372 elapsed_seconds=191.515
+ARCHIVE PROBE completed=282/372 elapsed_seconds=191.734
+ARCHIVE PROBE completed=283/372 elapsed_seconds=191.977
+ARCHIVE PROBE completed=284/372 elapsed_seconds=192.263
+ARCHIVE PROBE completed=285/372 elapsed_seconds=192.482
+ARCHIVE PROBE completed=286/372 elapsed_seconds=192.909
+ARCHIVE PROBE completed=287/372 elapsed_seconds=193.102
+ARCHIVE PROBE completed=288/372 elapsed_seconds=193.262
+ARCHIVE PROBE completed=289/372 elapsed_seconds=193.560
+ARCHIVE PROBE completed=290/372 elapsed_seconds=193.867
+ARCHIVE PROBE completed=291/372 elapsed_seconds=194.475
+ARCHIVE PROBE completed=292/372 elapsed_seconds=194.775
+ARCHIVE PROBE completed=293/372 elapsed_seconds=195.042
+ARCHIVE PROBE completed=294/372 elapsed_seconds=195.314
+ARCHIVE PROBE completed=295/372 elapsed_seconds=195.565
+ARCHIVE PROBE completed=296/372 elapsed_seconds=195.980
+ARCHIVE PROBE completed=297/372 elapsed_seconds=196.320
+ARCHIVE PROBE completed=298/372 elapsed_seconds=196.531
+ARCHIVE PROBE completed=299/372 elapsed_seconds=196.743
+ARCHIVE PROBE completed=300/372 elapsed_seconds=196.936
+ARCHIVE PROBE completed=301/372 elapsed_seconds=197.599
+ARCHIVE PROBE completed=302/372 elapsed_seconds=198.085
+ARCHIVE PROBE completed=303/372 elapsed_seconds=198.554
+ARCHIVE PROBE completed=304/372 elapsed_seconds=199.245
+ARCHIVE PROBE completed=305/372 elapsed_seconds=199.620
+ARCHIVE PROBE completed=306/372 elapsed_seconds=199.989
+ARCHIVE PROBE completed=307/372 elapsed_seconds=200.690
+ARCHIVE PROBE completed=308/372 elapsed_seconds=201.184
+ARCHIVE PROBE completed=309/372 elapsed_seconds=201.404
+ARCHIVE PROBE completed=310/372 elapsed_seconds=201.682
+ARCHIVE PROBE completed=311/372 elapsed_seconds=202.174
+ARCHIVE PROBE completed=312/372 elapsed_seconds=202.391
+ARCHIVE PROBE completed=313/372 elapsed_seconds=202.793
+ARCHIVE PROBE completed=314/372 elapsed_seconds=203.715
+ARCHIVE PROBE completed=315/372 elapsed_seconds=204.491
+ARCHIVE PROBE completed=316/372 elapsed_seconds=205.545
+ARCHIVE PROBE completed=317/372 elapsed_seconds=206.079
+ARCHIVE PROBE completed=318/372 elapsed_seconds=207.074
+ARCHIVE PROBE completed=319/372 elapsed_seconds=207.813
+ARCHIVE PROBE completed=320/372 elapsed_seconds=208.690
+ARCHIVE PROBE completed=321/372 elapsed_seconds=208.874
+ARCHIVE PROBE completed=322/372 elapsed_seconds=209.112
+ARCHIVE PROBE completed=323/372 elapsed_seconds=209.355
+ARCHIVE PROBE completed=324/372 elapsed_seconds=209.708
+ARCHIVE PROBE completed=325/372 elapsed_seconds=210.694
+ARCHIVE PROBE completed=326/372 elapsed_seconds=212.369
+ARCHIVE PROBE completed=327/372 elapsed_seconds=213.956
+ARCHIVE PROBE completed=328/372 elapsed_seconds=215.767
+ARCHIVE PROBE completed=329/372 elapsed_seconds=216.677
+ARCHIVE PROBE completed=330/372 elapsed_seconds=217.534
+ARCHIVE PROBE completed=331/372 elapsed_seconds=218.474
+ARCHIVE PROBE completed=332/372 elapsed_seconds=219.375
+ARCHIVE PROBE completed=333/372 elapsed_seconds=219.516
+ARCHIVE PROBE completed=334/372 elapsed_seconds=219.651
+ARCHIVE PROBE completed=335/372 elapsed_seconds=219.800
+ARCHIVE PROBE completed=336/372 elapsed_seconds=219.910
+ARCHIVE PROBE completed=337/372 elapsed_seconds=220.435
+ARCHIVE PROBE completed=338/372 elapsed_seconds=221.253
+ARCHIVE PROBE completed=339/372 elapsed_seconds=221.893
+ARCHIVE PROBE completed=340/372 elapsed_seconds=222.554
+ARCHIVE PROBE completed=341/372 elapsed_seconds=222.941
+ARCHIVE PROBE completed=342/372 elapsed_seconds=223.466
+ARCHIVE PROBE completed=343/372 elapsed_seconds=223.979
+ARCHIVE PROBE completed=344/372 elapsed_seconds=224.442
+ARCHIVE PROBE completed=345/372 elapsed_seconds=224.562
+ARCHIVE PROBE completed=346/372 elapsed_seconds=224.751
+ARCHIVE PROBE completed=347/372 elapsed_seconds=224.902
+ARCHIVE PROBE completed=348/372 elapsed_seconds=224.981
+ARCHIVE PROBE completed=349/372 elapsed_seconds=225.354
+ARCHIVE PROBE completed=350/372 elapsed_seconds=225.644
+ARCHIVE PROBE completed=351/372 elapsed_seconds=225.964
+ARCHIVE PROBE completed=352/372 elapsed_seconds=226.214
+ARCHIVE PROBE completed=353/372 elapsed_seconds=226.482
+ARCHIVE PROBE completed=354/372 elapsed_seconds=226.715
+ARCHIVE PROBE completed=355/372 elapsed_seconds=226.975
+ARCHIVE PROBE completed=356/372 elapsed_seconds=227.274
+ARCHIVE PROBE completed=357/372 elapsed_seconds=227.414
+ARCHIVE PROBE completed=358/372 elapsed_seconds=227.565
+ARCHIVE PROBE completed=359/372 elapsed_seconds=227.665
+ARCHIVE PROBE completed=360/372 elapsed_seconds=227.735
+ARCHIVE PROBE completed=361/372 elapsed_seconds=227.889
+ARCHIVE PROBE completed=362/372 elapsed_seconds=228.044
+ARCHIVE PROBE completed=363/372 elapsed_seconds=228.252
+ARCHIVE PROBE completed=364/372 elapsed_seconds=228.444
+ARCHIVE PROBE completed=365/372 elapsed_seconds=228.597
+ARCHIVE PROBE completed=366/372 elapsed_seconds=228.701
+ARCHIVE PROBE completed=367/372 elapsed_seconds=228.785
+ARCHIVE PROBE completed=368/372 elapsed_seconds=228.867
+ARCHIVE PROBE completed=369/372 elapsed_seconds=228.977
+ARCHIVE PROBE completed=370/372 elapsed_seconds=229.094
+ARCHIVE PROBE completed=371/372 elapsed_seconds=229.219
+ARCHIVE PROBE completed=372/372 elapsed_seconds=229.300
+STREET probes=372 completed in 229.304 s before measurement
+STREET WORLD frame=1 submitted_regions=8
+STREET WORLD frame=1 submitted_regions=16
+STREET WORLD frame=1 submitted_regions=24
+STREET WORLD frame=1 submitted_regions=32
+STREET WORLD frame=1 submitted_regions=40
+STREET WORLD frame=1 submitted_regions=48
+STREET WORLD frame=1 submitted_regions=56
+STREET WORLD frame=1 submitted_regions=64
+STREET WORLD frame=1 submitted_regions=72
+STREET WORLD frame=1 submitted_regions=80
+STREET WORLD frame=1 submitted_regions=88
+STREET WORLD frame=1 submitted_regions=96
+STREET WORLD frame=1 submitted_regions=104
+STREET WORLD frame=1 submitted_regions=112
+STREET WORLD frame=1 submitted_regions=120
+STREET WORLD frame=1 submitted_regions=128
+STREET WORLD frame=1 submitted_regions=136
+STREET WORLD frame=1 submitted_regions=144
+STREET WORLD frame=1 completed_regions=8 observed_ms=8407.085
+STREET WORLD frame=1 completed_regions=16 observed_ms=21225.450
+STREET WORLD frame=1 completed_regions=24 observed_ms=34815.546
+STREET WORLD frame=1 completed_regions=32 observed_ms=54855.846
+STREET WORLD frame=1 completed_regions=40 observed_ms=76408.084
+STREET WORLD frame=1 completed_regions=48 observed_ms=92432.650
+STREET WORLD frame=1 completed_regions=56 observed_ms=105333.022
+STREET WORLD frame=1 completed_regions=64 observed_ms=116913.815
+STREET WORLD frame=1 completed_regions=72 observed_ms=122462.353
+STREET WORLD frame=1 completed_regions=80 observed_ms=122807.252
+STREET WORLD frame=1 completed_regions=88 observed_ms=126866.004
+STREET WORLD frame=1 completed_regions=96 observed_ms=128246.091
+STREET WORLD frame=1 completed_regions=104 observed_ms=131936.905
+STREET WORLD frame=1 completed_regions=112 observed_ms=136571.249
+STREET WORLD frame=1 completed_regions=120 observed_ms=140322.864
+STREET WORLD frame=1 completed_regions=128 observed_ms=140359.242
+STREET WORLD frame=1 completed_regions=136 observed_ms=140446.585
+STREET WORLD frame=1 completed_regions=144 observed_ms=140430.402
+STREET WORLD frame=2 submitted_regions=8
+STREET WORLD frame=2 submitted_regions=16
+STREET WORLD frame=2 submitted_regions=24
+STREET WORLD frame=2 submitted_regions=32
+STREET WORLD frame=2 submitted_regions=40
+STREET WORLD frame=2 submitted_regions=48
+STREET WORLD frame=2 submitted_regions=56
+STREET WORLD frame=2 submitted_regions=64
+STREET WORLD frame=2 submitted_regions=72
+STREET WORLD frame=2 submitted_regions=80
+STREET WORLD frame=2 submitted_regions=88
+STREET WORLD frame=2 submitted_regions=96
+STREET WORLD frame=2 submitted_regions=104
+STREET WORLD frame=2 submitted_regions=112
+STREET WORLD frame=2 submitted_regions=120
+STREET WORLD frame=2 submitted_regions=128
+STREET WORLD frame=2 submitted_regions=136
+STREET WORLD frame=2 submitted_regions=144
+STREET WORLD frame=2 completed_regions=8 observed_ms=8888.558
+STREET WORLD frame=2 completed_regions=16 observed_ms=22057.663
+STREET WORLD frame=2 completed_regions=24 observed_ms=37655.762
+STREET WORLD frame=2 completed_regions=32 observed_ms=59117.190
+STREET WORLD frame=2 completed_regions=40 observed_ms=79588.694
+STREET WORLD frame=2 completed_regions=48 observed_ms=94510.763
+STREET WORLD frame=2 completed_regions=56 observed_ms=105566.589
+STREET WORLD frame=2 completed_regions=64 observed_ms=115823.875
+STREET WORLD frame=2 completed_regions=72 observed_ms=120825.011
+STREET WORLD frame=2 completed_regions=80 observed_ms=121123.111
+STREET WORLD frame=2 completed_regions=88 observed_ms=124935.008
+STREET WORLD frame=2 completed_regions=96 observed_ms=126218.505
+STREET WORLD frame=2 completed_regions=104 observed_ms=129982.518
+STREET WORLD frame=2 completed_regions=112 observed_ms=133684.053
+STREET WORLD frame=2 completed_regions=120 observed_ms=137436.237
+STREET WORLD frame=2 completed_regions=128 observed_ms=137477.602
+STREET WORLD frame=2 completed_regions=136 observed_ms=137518.057
+STREET WORLD frame=2 completed_regions=144 observed_ms=137507.402
+STREET WORLD frame=3 submitted_regions=8
+STREET WORLD frame=3 submitted_regions=16
+STREET WORLD frame=3 submitted_regions=24
+STREET WORLD frame=3 submitted_regions=32
+STREET WORLD frame=3 submitted_regions=40
+STREET WORLD frame=3 submitted_regions=48
+STREET WORLD frame=3 submitted_regions=56
+STREET WORLD frame=3 submitted_regions=64
+STREET WORLD frame=3 submitted_regions=72
+STREET WORLD frame=3 submitted_regions=80
+STREET WORLD frame=3 submitted_regions=88
+STREET WORLD frame=3 submitted_regions=96
+STREET WORLD frame=3 submitted_regions=104
+STREET WORLD frame=3 submitted_regions=112
+STREET WORLD frame=3 submitted_regions=120
+STREET WORLD frame=3 submitted_regions=128
+STREET WORLD frame=3 submitted_regions=136
+STREET WORLD frame=3 submitted_regions=144
+STREET WORLD frame=3 completed_regions=8 observed_ms=8547.496
+STREET WORLD frame=3 completed_regions=16 observed_ms=20814.768
+STREET WORLD frame=3 completed_regions=24 observed_ms=33994.963
+STREET WORLD frame=3 completed_regions=32 observed_ms=54772.727
+STREET WORLD frame=3 completed_regions=40 observed_ms=75255.536
+STREET WORLD frame=3 completed_regions=48 observed_ms=91959.508
+STREET WORLD frame=3 completed_regions=56 observed_ms=103282.439
+STREET WORLD frame=3 completed_regions=64 observed_ms=113590.153
+STREET WORLD frame=3 completed_regions=72 observed_ms=118686.558
+STREET WORLD frame=3 completed_regions=80 observed_ms=119033.493
+STREET WORLD frame=3 completed_regions=88 observed_ms=122835.086
+STREET WORLD frame=3 completed_regions=96 observed_ms=124321.333
+STREET WORLD frame=3 completed_regions=104 observed_ms=128128.155
+STREET WORLD frame=3 completed_regions=112 observed_ms=132501.340
+STREET WORLD frame=3 completed_regions=120 observed_ms=135838.488
+STREET WORLD frame=3 completed_regions=128 observed_ms=135878.771
+STREET WORLD frame=3 completed_regions=136 observed_ms=135919.291
+STREET WORLD frame=3 completed_regions=144 observed_ms=135908.127
+STREET WORLD AUDIT COMPLETE {"complete_motion_cycles":0,"frames":4,"full_collision_triangles":3634960,"gpu_gi_samples":[[2.259959,0.8208329999999999],[3.8325829999999996,0.595625],[0.9447089999999999,0.370417],[2.072292,0.511292],[5.093,0.752833],[0.849916,0.362625],[1.980292,0.593209],[4.2855419999999995,0.533125],[0.7845409999999999,0.356375],[131.014792,5.047],[5.01575,0.769833],[0.940583,0.350416],[1.538417,0.508375],[4.432542,0.709792],[0.893042,0.659916],[1.782,0.5560419999999999],[3.3286249999999997,0.8208329999999999],[32.971624999999996,25.023083],[1.251,0.7443329999999999],[4.667041,0.56775],[0.670708,0.629334],[1.26,0.510041],[5.779125,0.6008749999999999],[1.582875,0.549333],[1.664,0.392042],[3.526958,0.8797499999999999],[0.47808399999999995,0.280959],[1.192917,0.503917],[2.6952499999999997,0.809125],[0.651292,0.396708],[0.9492079999999999,0.438416],[3.905,0.6796249999999999],[0.44949999999999996,0.33975],[1.3219589999999999,0.61225],[2.877167,0.543708],[0.43775,0.40349999999999997],[2.297708,0.6285],[3.7384999999999997,0.806709],[1.9722499999999998,0.468209],[2.095208,0.754667],[23.008,3.8902919999999996],[1.981333,0.608042],[2.324875,0.610209],[6.327334,1.234209],[1.5655,0.540291],[2.5706249999999997,0.633042],[6.0337499999999995,0.989875],[2.054167,0.538167],[1.588458,0.449916],[5.2420409999999995,0.75025],[1.164625,0.415],[2.160875,0.500417],[4.650333,1.2665],[0.80025,0.345167],[2.19875,0.602125],[5.138833,0.7062499999999999],[0.461208,0.5399579999999999],[2.20625,0.671916],[3.9216249999999997,0.7010419999999999],[1.6776659999999999,0.421875],[1.5855409999999999,0.540625],[3.628708,0.46045899999999995],[0.6902079999999999,0.710916],[1.898375,0.471833],[3.854125,0.60525],[0.567292,0.320667],[1.275333,0.516209],[3.744583,0.6347499999999999],[45.963833,19.008084],[1.207833,0.773041],[2.8943749999999997,0.547459],[1.02125,0.3175],[2.4005,0.76825],[5.475334,0.805041],[2.373958,0.541667],[2.91175,0.6914589999999999],[57.795708,26.948916999999998],[2.1039589999999997,0.538125],[2.9997089999999997,0.8505419999999999],[6.402042,0.760292],[1.5064579999999999,0.5686249999999999],[2.581541,0.601542],[7.000709,0.724542],[1.747542,0.721208],[2.5019579999999997,0.457458],[3.899542,0.73425],[56.759333,31.005708],[2.191,0.643458],[4.01525,0.7655409999999999],[0.7431669999999999,0.336833],[2.4314169999999997,0.756833],[17.719625,0.8102499999999999],[1.123958,0.644459],[2.492416,0.6453749999999999],[3.516291,0.5884579999999999],[2.043333,0.458333],[75.851084,22.99925],[2.935292,0.560542],[0.5455829999999999,0.5575],[1.674375,0.519041],[4.325832999999999,0.725459],[0.48129099999999997,0.423959],[1.510333,0.527708],[3.6524579999999998,0.79225],[0.41320799999999996,0.306209],[1.4338339999999998,0.664875],[3.182625,0.497666],[0.540042,0.310875],[3.001042,0.586417],[4.563625,0.882084],[2.088,0.5611659999999999],[2.379167,0.571917],[4.81675,0.6084999999999999],[1.6617499999999998,1.1144589999999999],[3.048167,0.589],[3.3612499999999996,0.6998749999999999],[1.876083,0.7085],[2.700209,0.724084],[5.0010829999999995,0.657167],[2.1999999999999997,0.655625],[103.96925,15.494207999999999],[3.396709,0.586125],[1.9255,0.892208],[2.478875,0.83075],[4.9948749999999995,0.5233329999999999],[0.816,0.49358399999999997],[2.6007499999999997,1.010084],[3.5589999999999997,0.8334999999999999],[0.859,0.5644589999999999],[1.850666,1.3025419999999999],[3.099334,0.9284169999999999],[2.096291,0.482209],[1.5863749999999999,0.5343749999999999],[2.893709,0.728958],[2.2011659999999997,0.469417],[1.731334,0.574875],[3.543958,0.806167],[1.236333,0.308042],[1.6298329999999999,1.3539999999999999],[3.7135,0.8155],[0.727625,0.370375],[1.9706249999999998,0.645083],[4.527334,0.608708],[1.6470829999999999,0.495417],[3.566667,0.823584],[3.7082089999999996,0.7765],[1.9382499999999998,0.762417],[101.985541,2.0009159999999997],[5.945125,0.927875],[3.18675,0.845584],[2.935917,0.668708],[4.16,1.3775],[2.224625,0.5301669999999999],[4.4843329999999995,0.951916],[5.719958,0.603792],[2.897167,0.636458],[3.958417,0.578333],[4.027458,0.7847919999999999],[1.394583,0.5303749999999999],[2.133375,0.694584],[2.95025,1.6817499999999999],[1.0503339999999999,0.49641599999999997],[2.4317089999999997,0.608417],[94.983542,1.136542],[0.943167,0.5055419999999999],[2.40225,0.7672089999999999],[91.05366699999999,5.480957999999999],[1.508084,0.48841599999999996],[1.5835,1.087125],[89.907584,4.95175],[1.060125,0.519708],[1.4027079999999998,0.726583],[85.02425,2.0393749999999997],[0.455792,0.47004199999999996],[2.2508749999999997,0.765042],[3.5789579999999996,0.857416],[0.428459,0.299917],[1.896583,0.6044579999999999],[2.918958,0.754042],[1.545791,0.428292],[4.653125,0.636625],[4.9405,0.724792],[2.0797499999999998,0.471833],[4.061375,0.8437089999999999],[7.224417,0.756083],[1.306166,0.5605],[2.605167,0.662959],[5.002375,0.8188749999999999],[2.538,0.563666],[2.9230829999999997,0.7767499999999999],[3.155875,0.783875],[1.6571669999999998,0.509375],[3.116625,0.581083],[4.011583,0.7886249999999999],[1.6577499999999998,0.581125],[2.138584,0.712],[3.3686249999999998,0.801333],[0.6775829999999999,0.457208],[2.4616659999999997,0.898083],[3.8819999999999997,0.781959],[0.8731669999999999,0.438459],[3.5629169999999997,0.757875],[4.643333,0.595333],[1.4061249999999998,1.381792],[3.45375,0.5822919999999999],[2.877792,1.4048749999999999],[0.519,0.339042],[1.3972909999999998,1.271167],[6.073583999999999,0.772459],[0.649083,0.686375],[2.260541,0.589166],[2.575417,0.526208],[0.48224999999999996,0.38837499999999997],[2.679792,0.720667],[3.779292,0.641125],[1.383959,0.42258399999999996],[3.399667,0.8859579999999999],[4.495042,0.66725],[2.335083,0.832208],[3.45675,0.5908749999999999],[4.925,0.7551249999999999],[1.6731669999999998,0.471166],[2.535208,1.375],[4.997291,0.813542],[1.62975,0.716125],[2.7275,0.6765829999999999],[3.3053749999999997,0.8055829999999999],[2.9829999999999997,0.594208],[2.2843329999999997,0.5898329999999999],[4.36775,0.6825],[2.738334,0.586666],[3.0808329999999997,1.342291],[4.052125,0.713792],[0.537791,0.31945799999999996],[2.2355419999999997,0.763459],[30.408417,4.559875],[0.682291,0.33775],[2.728958,0.5676669999999999],[4.082125,0.781167],[1.615375,0.402416],[6.7909999999999995,0.809875],[2.757667,0.7493329999999999],[0.5051669999999999,0.40612499999999996],[1.548166,0.662125],[3.55225,0.638],[0.501792,0.410375],[27.017833,2.0349999999999997],[2.5614589999999997,0.68375],[0.646833,0.398416],[1.992209,0.570875],[2.298791,0.620292],[0.46954199999999996,0.475],[8.986208,1.24125],[5.4959999999999996,0.615458],[2.154833,0.65775],[2.62975,0.884084],[4.0504999999999995,1.399125],[1.3015409999999998,1.448459],[2.33275,0.581417],[11.830375,10.967958999999999],[2.145292,0.7401249999999999],[2.995708,0.6365],[4.465167,0.7908339999999999],[1.3003339999999999,0.485792],[2.222667,1.107208],[3.440416,0.874583],[1.297334,0.6865],[2.797125,0.548167],[3.7471669999999997,0.619292],[0.6794169999999999,0.30524999999999997],[2.9132499999999997,0.635833],[4.839583,0.867],[0.552541,0.325042],[2.813625,0.749458],[3.110875,0.5151249999999999],[1.71325,0.678792],[2.534375,0.573792],[2.9010409999999998,0.44325],[0.564709,0.313208],[1.548708,0.632083],[2.6352919999999997,0.550084],[1.139125,0.39325],[1.6539579999999998,1.484],[3.139833,0.485458],[0.898042,1.360917],[3.015958,0.544833],[4.22975,0.46312499999999995],[1.208334,0.75825],[3.60825,0.627625],[5.706834,0.835291],[3.081042,0.78125],[4.31525,0.6149169999999999],[4.113417,1.5091249999999998],[12.018958999999999,0.6425],[114.98941699999999,72.001584],[4.857791,0.6714169999999999],[1.6776659999999999,0.670333],[3.451791,0.678333],[4.647959,0.621792],[1.9467079999999999,1.4040839999999999],[2.599958,1.3141669999999999],[4.247958,0.734375],[1.381959,0.398209],[50.670291,34.975834],[4.027625,0.531959],[0.4775,0.294666],[3.400209,0.736791],[3.444042,0.652917],[0.625416,0.34512499999999996],[2.608292,0.5425],[6.0064589999999995,1.001291],[2.1174999999999997,0.5205],[2.392333,0.601208],[3.5585419999999996,0.548333],[0.6491669999999999,0.437959],[1.6495419999999998,1.205875],[2.846292,0.648042],[0.5451659999999999,0.5702499999999999],[1.383875,0.757417],[2.251333,0.704375],[0.48574999999999996,0.39475],[107.98120899999999,20.983583],[2.7275419999999997,0.535791],[0.44983399999999996,0.41420799999999997],[3.1979159999999998,0.844333],[4.904,0.814792],[1.555542,1.259833],[3.679042,0.553875],[4.780875,0.771417],[1.38775,0.600208],[2.827792,0.825125],[4.234125,0.760875],[1.48525,0.47179099999999996],[2.361291,0.677792],[3.9612499999999997,0.8823749999999999],[1.742125,0.6575409999999999],[2.264917,0.7102499999999999],[23.268957999999998,1.079375],[0.967625,0.455667],[3.035625,0.630292],[3.1160419999999998,0.5734159999999999],[0.44775,0.36633299999999996],[2.186959,1.349834],[3.4274999999999998,0.6519159999999999],[0.579542,0.395333],[3.0755839999999997,0.7774169999999999],[3.341625,0.6902499999999999],[28.037416,5.864458],[2.275458,0.786708],[2.170875,0.44554099999999996],[1.1933749999999999,0.411458],[2.399625,0.5305],[2.4507499999999998,0.518583],[1.2265409999999999,0.28362499999999996],[1.5731249999999999,0.674041],[2.633083,0.784666],[0.518583,0.30374999999999996],[1.395584,0.9352499999999999],[4.39525,0.810541],[0.600625,0.415917],[2.860208,0.814709],[3.4103749999999997,0.8117909999999999],[1.712375,1.377],[4.583875,0.8284579999999999],[5.349709,0.631625],[1.982292,0.666667],[2.366291,1.042416],[8.08375,1.841542],[1.607125,0.541083],[2.532333,1.041958],[24.841832999999998,3.066583],[2.65075,0.6012919999999999],[2.492375,0.582375],[3.733209,0.828417],[1.498542,0.436959],[2.199583,0.708333],[3.7802919999999998,0.7374999999999999],[0.6625,0.415334],[2.8569999999999998,0.746],[3.461833,0.588083],[0.660208,0.460125],[3.5982499999999997,0.638292],[4.327667,0.6523749999999999],[1.945166,0.570958],[2.599917,0.813458],[2.3965419999999997,0.677542],[1.327834,0.40375],[2.4579169999999997,0.7583329999999999],[3.076041,0.442417],[0.49629199999999996,0.381333],[1.5994169999999999,0.594417],[2.791166,0.554125],[0.7330409999999999,0.525917],[2.4961249999999997,0.629834],[3.5760829999999997,0.709541],[0.832208,0.45649999999999996],[3.385083,0.667667],[5.255999999999999,0.57],[2.099125,0.739792],[3.9206659999999998,0.734625],[3.6687089999999998,0.852375],[1.4648329999999998,0.446042],[3.2447909999999998,0.564375],[3.452041,0.712584],[1.5794169999999998,0.710958],[2.512416,0.528959],[3.1664999999999996,0.907125],[1.709542,0.592208],[2.3994999999999997,0.581167],[3.256375,0.59625],[1.3011249999999999,0.6219169999999999],[2.409417,0.894208],[4.082625,0.629833],[0.7004589999999999,0.35345899999999997],[2.711792,0.639667],[2.796667,0.6141249999999999],[0.9782909999999999,0.378417],[2.160417,0.56125],[3.271667,0.748042],[1.414958,0.475833],[1.79225,0.625791],[2.607542,0.91625],[0.943542,0.390291],[1.298292,0.73975],[2.841833,0.9384579999999999],[0.5807089999999999,0.318625],[1.600666,0.6497919999999999],[2.756291,0.578916],[0.562334,0.297625],[1.982584,1.202833],[35.617584,108.862083],[0.9680829999999999,0.44641699999999995],[3.025458,0.909708],[4.367875,0.669875],[2.780916,0.68475],[2.771209,0.570958],[3.55775,0.628917],[2.455584,1.0338749999999999],[2.9212499999999997,0.760417],[3.516459,0.6794169999999999],[2.709708,0.45408299999999996],[2.760792,0.767125],[3.4557919999999998,0.763583],[1.851125,0.73875],[2.850333,0.844958],[5.054041,0.806375],[56.022875,15.001583],[2.56,0.8927499999999999],[4.065334,0.754375],[0.9532919999999999,1.35075],[2.813583,0.772417],[3.5473339999999998,0.742958],[0.917291,0.455959],[2.79025,0.768667],[4.441916,0.6781659999999999],[1.396584,0.461875],[2.5429589999999997,0.82375],[3.2807079999999997,0.689125],[0.345416,0.313542],[1.5111249999999998,0.531666],[1.825666,0.586625],[45.056792,5.850416],[1.7005839999999999,0.821083],[2.643834,0.667334],[0.9057919999999999,0.306583],[2.318459,0.602541],[2.565209,0.785125],[1.1584999999999999,1.1695419999999999],[3.9387499999999998,0.6808339999999999],[4.694,0.59175],[2.8764589999999997,0.752875],[129.079667,60.903791],[10.191749999999999,0.88025],[1.692791,0.621],[2.8165,0.7301249999999999],[3.369583,0.854833],[1.79775,1.582125],[2.249708,1.703333],[3.725542,0.7269169999999999],[1.917333,0.690875],[2.3169999999999997,0.48874999999999996],[2.5963339999999997,0.6473329999999999],[97.939,32.037667],[12.0465,3.9314579999999997],[4.356333,0.872042],[1.236459,0.376084],[2.099291,0.9115],[3.0625839999999998,0.5021249999999999],[0.824666,1.158333],[1.780416,1.26925],[3.098,0.725792],[1.426166,0.3765],[1.723833,0.649],[2.3376669999999997,0.700708],[1.084459,0.315833],[1.967709,0.455541],[1.841167,0.44345799999999996],[0.477083,0.3215],[1.3966669999999999,0.567541],[2.035958,0.811167],[0.56325,0.285292],[1.4255,0.45825],[2.1105,0.7491249999999999],[0.486,0.292167],[3.919583,0.529666],[69.09970799999999,5.884583999999999],[1.6314579999999999,0.44595799999999997],[2.465916,0.548875],[3.325125,0.585333],[1.465333,0.745375],[2.6624589999999997,0.5522079999999999],[4.496792,0.531667],[1.478958,0.7354999999999999],[2.6891249999999998,0.5461659999999999],[2.740291,0.603208],[1.4582499999999998,0.535833],[2.180208,0.5247919999999999],[3.384,0.7475419999999999],[1.2328329999999998,0.6874159999999999],[2.4295,0.8160419999999999],[2.824375,0.895292],[0.7284999999999999,0.355333],[2.06175,0.529334],[2.54975,0.515583],[0.763334,0.47345899999999996],[2.394917,0.54775],[2.852208,0.860792],[1.431125,0.7087089999999999],[1.845958,0.713042],[2.535292,0.47570799999999996],[0.40666599999999997,0.29983299999999996],[1.6184159999999999,0.557458],[2.4063749999999997,0.550667],[0.407167,0.289875],[1.322875,0.70175],[2.393917,0.71675],[0.400584,0.31895799999999996],[1.648542,0.6139169999999999],[8.418167,1.0077909999999999],[0.628833,0.33758299999999997],[2.406875,0.578708],[2.836875,0.5777909999999999],[1.869292,0.45616599999999996],[2.696709,0.799209],[2.856375,0.81175],[1.8364589999999998,0.797416],[2.721041,0.733584],[104.99995799999999,51.977875],[1.5223339999999999,0.711209],[2.6582909999999997,0.553292],[3.353958,0.7862089999999999],[1.9528329999999998,0.49074999999999996],[2.1305,0.764875],[3.306834,0.833459],[1.872666,0.425334],[1.9869169999999998,0.501541],[2.5825839999999998,0.725125],[103.959791,3.0669999999999997],[1.920167,0.6950419999999999],[2.604125,0.80875],[0.724542,0.638458],[1.9462499999999998,0.5870839999999999],[3.2429159999999997,0.7212919999999999],[1.1417089999999999,0.643709],[1.521209,0.44125],[2.222083,0.7537079999999999],[0.958042,0.685083],[1.425042,0.425583],[21.944958,1.034333],[0.512625,0.371834],[1.722292,0.46491699999999997],[1.641667,0.46745899999999996],[0.512042,0.32625],[1.3277079999999999,0.44487499999999996],[1.9505839999999999,0.73725],[0.44787499999999997,0.29729099999999997],[2.639709,0.733],[2.924959,0.879583],[1.763334,0.6836249999999999],[2.8682909999999997,0.62925],[4.46675,0.746417],[1.358833,0.43229199999999995],[2.51275,0.604625],[2.426333,0.6397499999999999],[56.00275,17.975082999999998],[2.946625,0.890416],[2.4967919999999997,0.838583],[2.368125,0.927125],[2.455084,0.726291],[2.473791,0.492334],[1.4143329999999998,0.43395799999999995],[2.3271669999999998,0.6716249999999999],[2.1957079999999998,0.7809159999999999],[0.675917,0.343875],[1.917667,0.7609159999999999],[187.96641699999998,22.97975],[0.690375,0.317834],[2.013959,0.754833],[2.8914169999999997,0.808291],[1.366375,0.663083],[1.520333,0.5122909999999999],[1.494333,0.40804199999999996],[1.067042,0.512042],[1.411375,0.418209],[1.6603329999999998,0.398041],[0.4135,0.28625],[1.018209,0.794875],[1.5841669999999999,0.3815],[36.012083,10.13175],[1.0935,0.39925],[1.682583,0.39458299999999996],[0.40216599999999997,0.358834],[2.194625,0.654084],[2.3689169999999997,0.9365],[1.981917,0.898666],[2.54825,0.594958],[3.433041,0.795458],[1.658666,0.528042],[9.265208,0.919416],[2.9499589999999998,0.6847909999999999],[1.471708,0.426458],[2.107917,0.47774999999999995],[2.071875,0.48458399999999996],[2.12275,0.40466599999999997],[2.277583,0.47983299999999995],[82.037125,52.020083],[1.189458,0.504084],[2.1799999999999997,0.63125],[1.9566249999999998,0.528833],[0.553875,0.306125],[1.932292,0.7444999999999999],[2.068791,0.702083],[0.484792,0.29062499999999997],[2.768583,0.904708],[69.999333,32.043625],[0.877833,0.430334],[1.4004999999999999,0.599667],[1.57775,0.392125],[0.483917,0.3455],[1.231542,0.506667],[1.359542,0.6184999999999999],[0.380208,0.287],[1.292125,0.37416699999999997],[1.423042,0.38487499999999997],[0.556875,0.307875],[0.8378329999999999,0.723084],[1.67875,0.6896249999999999],[0.472792,0.30458399999999997],[2.376125,0.510375],[2.374916,0.546833],[82.907291,43.988917],[2.298834,0.784959],[3.327667,0.834834],[0.794875,0.652083],[2.171208,0.600417],[3.194833,0.820917],[0.648583,0.43395799999999995],[109.075667,4.764167],[2.636333,0.7182499999999999],[0.9446669999999999,0.604417],[1.919292,0.596084],[3.397084,0.41933299999999996],[1.4737909999999999,0.443834],[2.458833,0.46170799999999995],[2.19,0.520291],[0.4275,0.325333],[55.999708,44.969125],[1.682791,0.792083],[0.4095,0.288],[1.17125,0.688875],[1.8594579999999998,0.751292],[0.443333,0.282042],[1.652834,0.49508399999999997],[1.3952499999999999,0.38279199999999997],[0.911291,0.282],[1.319208,0.391708],[1.304792,0.386125],[0.5445,0.38287499999999997],[0.9275,0.49274999999999997],[1.3148339999999998,0.38916599999999996],[0.37695799999999996,0.408541],[0.5925,0.595291],[1.647958,0.370208],[0.422375,0.281875],[2.915375,0.507583],[3.4876669999999996,0.7334999999999999],[1.199125,0.77225],[2.2784999999999997,0.511541],[2.641167,0.53175],[1.225209,0.41612499999999997],[2.147375,0.570166],[3.5996249999999996,0.8428749999999999],[0.9672499999999999,0.681917],[1.900958,0.6675],[2.788541,0.601625],[1.193084,0.468667],[1.8203749999999999,0.4435],[2.2311669999999997,0.49920899999999996],[0.46575,0.29170799999999997],[1.7725419999999998,0.524458],[1.973917,0.606916],[0.358,0.30933299999999997],[1.592792,0.41204199999999996],[2.131583,0.42124999999999996],[0.55025,0.33575],[6.354875,22.926875],[1.6392499999999999,0.7],[0.545667,0.28854199999999997],[1.372375,0.528291],[1.296875,0.399667],[0.5409999999999999,0.412416],[1.188291,0.37875],[1.5585,0.44825],[0.460208,0.297459],[0.7909579999999999,0.34912499999999996],[1.312917,0.441042],[0.5872919999999999,0.321166],[0.844542,0.295209],[1.276667,0.522292],[0.540041,0.299375],[2.25825,0.6872079999999999],[1.959708,0.7970419999999999],[0.901542,0.364208],[2.22825,0.510084],[2.4093329999999997,0.793083],[1.021917,0.383],[3.2175409999999998,0.733208],[2.169084,0.508166],[0.9772919999999999,0.36566699999999996],[1.8523749999999999,0.752041],[1.8934579999999999,0.8287089999999999],[0.8148329999999999,0.350667],[1.6912079999999998,0.422917],[38.130916,0.652],[0.45275,0.285666],[1.256542,0.43179199999999995],[1.709625,0.438625],[0.457041,0.28195899999999996],[1.4974589999999999,0.455125],[1.760875,0.5123329999999999],[0.47862499999999997,0.442125],[1.130417,0.398959],[3.269666,0.624166],[0.429458,0.394792],[2.465875,0.782708],[1.2654159999999999,0.363208],[0.648208,0.659208],[1.110333,0.384042],[1.424167,0.38937499999999997],[0.40520799999999996,0.284458],[0.8064589999999999,0.32849999999999996],[2.171958,0.504167],[0.450625,0.28108299999999997],[0.431125,0.291084],[1.68125,0.484875],[0.42070799999999997,0.374583],[14.806541999999999,1.942],[2.225875,0.665917],[0.7657079999999999,0.34258299999999997],[2.176709,0.551875],[2.466834,0.561209],[1.252916,0.742084],[2.310708,0.500375],[2.261792,0.568917],[0.817125,0.344167],[2.793875,0.866625],[3.20275,0.7068749999999999],[0.7565419999999999,0.476334],[1.919959,0.877625],[2.082417,0.472917],[0.43733299999999997,0.286209],[2.2405,0.488458],[1.7305,0.43329199999999995],[0.39375,0.40575],[1.772583,0.49820899999999996],[14.124832999999999,19.061042],[0.420334,0.283833],[1.1408749999999999,0.410292],[3.093333,0.5265],[0.47254199999999996,0.276625],[1.6188749999999998,0.408666],[1.4375,0.895125],[0.42054199999999997,0.28354199999999996],[1.225458,0.9104169999999999],[1.641417,0.376416],[0.361375,0.278292],[0.834959,0.8336669999999999],[1.487917,0.4105],[0.43679199999999996,0.284416],[0.32537499999999997,0.286667],[1.413791,0.909542],[0.42062499999999997,0.573917],[2.7511669999999997,0.6407079999999999],[2.845875,0.515],[1.235125,0.46808299999999997],[2.3173749999999997,0.498125],[1.9137499999999998,0.543625],[15.755332999999998,21.3205],[3.020583,0.530875],[2.55225,0.841166],[1.092916,0.401833],[2.0364169999999997,0.5740839999999999],[2.182792,0.6648339999999999],[1.2993329999999998,0.5055],[1.801292,0.552084],[2.929334,0.8277909999999999],[0.401708,0.2815],[1.774292,0.43454099999999996],[2.427,0.43829199999999996],[0.373791,0.418375],[1.742333,0.5546249999999999],[1.8919579999999998,0.421541],[0.423958,0.402541],[1.025542,0.37483299999999997],[1.6833749999999998,0.49774999999999997],[0.547958,0.280625],[1.312166,0.565458],[1.124083,0.37829199999999996],[0.395416,0.2865],[1.149417,0.767],[1.2622499999999999,0.452084],[0.434417,0.293292],[0.8715419999999999,0.35454199999999997],[1.698458,0.374917],[1.197667,0.297375],[0.632375,0.28579099999999996],[1.8318329999999998,0.7905829999999999],[0.994292,0.286958],[2.406708,0.48166699999999996],[2.595209,0.47795899999999997],[0.930709,0.338875],[2.2860419999999997,0.5111249999999999],[2.4787079999999997,0.460042],[0.583209,0.350416],[1.8992909999999998,0.4905],[2.12425,0.5756249999999999],[0.49245799999999995,0.29675],[1.645209,0.54425],[13.431083,1.5212919999999999],[1.2986659999999999,0.34058299999999997],[1.696458,0.457792],[1.665875,0.8305],[0.8366669999999999,0.594542],[1.7110409999999998,0.43995799999999996],[1.734958,0.438],[0.500417,0.28754199999999996],[1.5871659999999999,0.713625],[2.0953749999999998,0.756041],[0.455208,0.28670799999999996],[1.218709,0.501875],[1.801917,0.8081659999999999],[0.38120899999999996,0.282834],[1.387041,0.406958],[1.083125,0.38454099999999997],[0.424,0.276708],[48.001083,22.009458],[1.610958,0.385417],[0.42308399999999996,0.34375],[1.301042,0.6479579999999999],[1.459292,0.40554199999999996],[0.472458,0.28575],[0.813209,0.705666],[1.6168749999999998,0.379333],[0.45199999999999996,0.28312499999999996],[3.220875,0.808875],[2.359416,0.593167],[0.511458,0.281875],[1.828959,0.848667],[2.729834,0.594834],[0.54775,0.30233299999999996],[2.978042,0.835333],[1.864458,0.6617919999999999],[0.782292,0.3095],[2.0317089999999998,0.511042],[2.532167,0.496917],[0.6599579999999999,0.6101249999999999],[1.6837499999999999,0.452625],[1.602792,0.597542],[0.461375,0.596417],[2.210292,0.42054199999999997],[2.215208,0.430625],[0.590792,0.757792],[1.513542,0.42558399999999996],[2.792458,0.7947919999999999],[0.46749999999999997,0.31066699999999997],[1.211083,0.391125],[1.503542,0.534916],[0.394625,0.369625],[1.4199579999999998,0.751042],[1.798042,0.735],[0.6112909999999999,0.285083],[1.131916,0.488291],[1.2881669999999998,0.39616599999999996],[0.47162499999999996,0.285209],[0.9055,0.47745899999999997],[1.481083,0.530834],[0.99225,0.6787909999999999],[0.8142499999999999,0.343917],[1.5394999999999999,0.659084],[0.438667,0.2815],[3.5088749999999997,0.728084],[3.927291,0.814916],[0.711625,0.7782089999999999],[1.631125,0.929916],[2.665,0.763208],[0.853583,0.31995799999999996],[2.576167,0.512042],[2.1781669999999997,0.481958],[0.8733339999999999,0.305917],[1.372083,0.556167],[3.503625,0.6090829999999999],[0.8334159999999999,0.422541],[2.191167,0.5313329999999999],[2.2912079999999997,0.44337499999999996],[0.48162499999999997,0.27908299999999997],[2.237125,0.422708],[2.1422499999999998,0.727916],[0.944666,0.288792],[1.2123329999999999,0.423042],[1.479666,0.446791],[0.608375,0.3085],[1.041791,0.391542],[2.3095,0.481292],[0.849209,0.591958],[1.91025,0.406875],[1.100042,0.5798329999999999],[0.817958,0.300208],[1.129375,0.39049999999999996],[1.2496669999999999,0.70875],[0.391625,0.28525],[0.866417,0.346417],[1.474167,0.364875],[0.48908399999999996,0.5872499999999999],[0.335292,0.29029099999999997],[0.9145,0.381208],[0.443833,0.726625],[3.297625,0.5595],[3.014375,0.703625],[0.938125,0.34204199999999996],[2.337084,0.6084579999999999],[3.4201249999999996,20.633958],[1.040667,0.37424999999999997],[3.1155,0.721375],[3.88325,0.682917],[1.479708,0.5586249999999999],[1.9045409999999998,0.8205],[3.29475,0.9629169999999999],[0.773458,0.676792],[1.872917,0.8424159999999999],[1.7273749999999999,0.42733299999999996],[0.39758299999999996,0.320667],[1.840125,0.663333],[1.695042,0.6511669999999999],[0.437625,0.540334],[1.318208,0.431459],[1.9063329999999998,0.6882499999999999],[0.628292,0.29212499999999997],[1.9059169999999999,0.61175],[3.6155,0.448167],[0.528667,0.307959],[1.283917,0.47908399999999995],[0.799125,0.385416],[0.5107499999999999,0.28662499999999996],[1.179875,0.708917],[0.9612499999999999,1.1885],[0.43666699999999997,0.314542],[0.832417,0.473166],[1.0832089999999999,0.40375],[0.43554099999999996,0.28829099999999996],[0.67475,0.291416],[0.791667,0.45775],[0.50525,0.28920799999999997],[3.1789579999999997,0.7362909999999999],[2.42,0.8200419999999999],[1.5151249999999998,0.5425],[3.1905419999999998,0.495042],[25.266833,1.7791249999999998],[2.24875,0.8713329999999999],[9.842417,0.882917],[28.936041999999997,1.1542919999999999],[2.044209,0.793666],[2.088125,0.512],[2.616917,0.6577919999999999],[1.6735829999999998,0.5345409999999999],[2.544917,0.505041],[2.870167,0.593542],[12.425958,1.461625],[2.415292,0.627709],[2.3064999999999998,0.66225],[1.855542,0.645709],[2.082083,0.642042],[1.976167,0.762833],[1.74875,0.5534169999999999],[2.313084,0.473041],[2.3442089999999998,0.67825],[2.3125,0.852958],[1.538333,0.6379159999999999],[0.728,0.35991599999999996],[0.73325,0.302125],[1.0129169999999998,0.396958],[0.7961659999999999,0.477792],[1.089,0.764208],[1.250292,0.35470799999999997],[0.817542,0.397792],[0.43683299999999997,0.28262499999999996],[0.467458,0.297625],[0.7104159999999999,0.862375],[1.0819999999999999,0.408792],[2.0869999999999997,0.600541],[2.101542,0.754375],[1.915292,0.602333],[2.35125,0.558958],[2.019875,0.807875],[2.0235,0.543625],[2.385625,0.8344579999999999],[2.453125,0.536917],[2.043833,0.6195419999999999],[2.413875,0.854084],[1.962292,0.582166],[2.556542,0.633833],[2.015208,0.533458],[2.353084,0.910709],[1.952542,0.80125],[2.198625,0.553542],[1.8741249999999998,0.5560419999999999],[2.622417,0.7034579999999999],[1.726167,0.60375],[2.465125,0.712042],[2.075792,0.571],[1.606917,0.605916],[2.2384999999999997,0.970834],[2.5099169999999997,0.517625],[1.217042,0.38729199999999997],[0.731,0.326291],[0.801959,0.286292],[1.2133749999999999,0.387208],[8.827582999999999,2.929667],[0.400125,0.29212499999999997],[0.771625,0.385708],[0.636208,0.348792],[0.774625,0.286958],[0.43324999999999997,0.290333],[1.03325,0.479334],[0.45591699999999996,0.29025],[13.863375,3.9372089999999997],[1.5319589999999998,0.5596249999999999],[1.734292,1.050667],[1.690084,1.0955409999999999],[1.546584,0.559375],[4.0392079999999995,0.888875],[1.662833,1.038791],[2.0444169999999997,1.096625],[2.413459,0.604541],[1.600166,0.5569999999999999],[1.8523749999999999,1.100125],[2.171083,0.568958],[1.9219579999999998,0.5692499999999999],[1.6571669999999998,0.546917],[1.874541,1.358333],[1.694416,0.557667],[1.7971249999999999,0.558375],[2.1393329999999997,0.8334999999999999],[1.8692499999999999,0.5525],[1.9907089999999998,0.563833],[1.79375,0.9113749999999999],[1.7163329999999999,0.6269589999999999],[2.609584,0.689041],[2.9711659999999998,1.148917],[0.976208,0.38999999999999996],[1.259959,0.290458],[0.699958,0.625416],[0.9979169999999999,0.406334],[0.425625,0.292333],[0.453208,0.28775],[1.2905,0.355375],[1.136917,0.7314999999999999],[0.414875,0.2955],[1.103375,0.409833],[0.486959,0.28825],[0.403916,0.29045899999999997],[2.208208,0.676667],[2.4819999999999998,0.6206659999999999],[0.668959,0.47774999999999995],[2.256,0.9592919999999999],[2.593333,0.533709],[1.097791,0.422917],[2.053709,0.550542],[2.345334,0.613333],[0.8981669999999999,0.433791],[16.1415,5.831792],[2.538334,0.8740829999999999],[0.7855829999999999,0.482458],[1.055292,0.37787499999999996],[0.439334,0.28295899999999996],[0.42079099999999997,0.29254199999999997],[1.072208,0.5107079999999999],[0.48379099999999997,0.288834],[0.49724999999999997,0.288166],[0.9668749999999999,0.392209],[0.42162499999999997,0.287583],[0.442708,0.2845],[0.8298749999999999,0.71075],[0.36624999999999996,0.28370799999999996],[0.44675,0.28712499999999996],[0.756792,0.350875],[0.449333,0.288917],[8.981791,4.263917],[0.749833,0.40604199999999996],[0.4855,0.379834],[0.44425,0.290375],[0.96675,0.31166699999999997],[0.5377919999999999,0.300375],[0.5642079999999999,0.329791],[0.557292,0.281667],[0.4735,0.287584],[0.609625,0.289417],[4.8695829999999996,1.078417],[4.012708,120869.09012499999]],"gpu_samples_drained":true,"gpu_ssr_samples":[0.7675,0.597208,0.665084,0.93375,0.808125,0.383959,0.546792,0.955584,0.38195799999999996,6.364959,0.741541,0.38275,0.5093329999999999,0.735375,0.576,0.59825,0.7455419999999999,16.963959,0.769583,0.536416,0.317334,0.445625,0.661666,0.428834,0.40133399999999997,0.479583,0.44895799999999997,0.398041,0.766875,0.34091699999999997,0.916416,0.734875,0.407167,0.40404199999999996,0.529292,0.38037499999999996,0.657334,0.711375,0.6349589999999999,0.7933749999999999,0.714584,0.522833,0.601125,0.834417,0.54075,0.7829999999999999,0.699333,0.471167,0.48166699999999996,0.64525,0.432459,0.46591699999999997,0.8072079999999999,0.515542,1.1007909999999999,0.5990829999999999,0.625042,0.723834,0.6711659999999999,0.486625,0.470083,0.527709,0.54825,0.49637499999999996,0.553875,0.393541,0.427459,0.70575,26.970958999999997,0.717583,0.535167,0.8305,0.781042,0.867625,0.616417,0.56375,24.011665999999998,0.45325,0.78475,0.678958,1.053542,0.5379579999999999,0.791125,0.537458,0.47862499999999997,0.767083,23.970291,0.746375,0.84825,0.378834,0.647833,0.689792,0.455333,0.8933329999999999,0.574291,0.496417,23.9605,0.562959,0.658875,0.5205,0.75225,0.725125,0.789667,0.742208,0.390292,0.536625,0.624458,0.464667,0.53325,0.837708,0.5556249999999999,0.631292,0.624792,0.554375,0.573792,0.654125,0.661458,0.5680419999999999,0.676959,0.475416,7.493917,0.693583,0.770166,0.51,0.6149169999999999,0.39808299999999996,0.7886249999999999,0.7373339999999999,0.46791699999999997,0.611583,0.738375,0.5339579999999999,0.545917,0.775083,0.543458,0.559333,0.684917,0.428125,0.621791,0.585208,0.605125,0.554917,0.655042,0.40329099999999996,0.7349169999999999,0.706459,0.63725,3.893,0.8843329999999999,0.623292,0.5978749999999999,0.629416,0.551833,1.589125,0.6976669999999999,0.697417,0.6897909999999999,0.7174999999999999,0.441917,0.774458,0.7957919999999999,1.2698749999999999,0.754792,0.984,0.422583,0.669584,2.547208,0.695375,0.5217499999999999,0.747625,0.46462499999999995,1.272417,0.852583,0.349917,0.5646669999999999,0.684792,0.40075,0.91175,0.7984169999999999,0.548875,0.5828329999999999,0.9534579999999999,0.532416,0.7331249999999999,0.8080839999999999,0.535708,0.620709,0.836542,0.707,0.6628339999999999,0.833708,1.313416,0.5895,0.8743329999999999,0.43066699999999997,0.757792,0.851167,0.41329099999999996,0.667584,0.884833,0.47779099999999997,0.848667,0.6315,0.509417,0.581083,0.457042,0.47745899999999997,0.560875,0.8639589999999999,0.376667,0.7517499999999999,0.535875,0.340416,0.6253329999999999,0.7631249999999999,0.508625,0.8034169999999999,0.704625,0.862667,0.632417,0.7224579999999999,1.322917,0.611958,0.826417,0.8266249999999999,0.617042,0.698458,0.6213339999999999,0.5895,0.849541,0.660292,0.744709,0.685709,1.131875,0.711959,7.949916,0.338792,0.551291,0.832083,0.411583,2.273125,0.5625,0.353541,0.673709,0.559375,0.398625,1.883417,0.655917,0.41454199999999997,0.6563329999999999,0.697708,0.383125,0.609875,0.552792,0.58,0.710209,0.5575829999999999,0.7371249999999999,0.638417,3.039208,0.703708,0.632375,0.730375,0.49,0.5432089999999999,0.8541249999999999,0.40495899999999996,0.710417,0.506667,0.485083,0.725541,0.87625,0.571875,0.594667,0.596958,0.714042,0.534292,0.6714589999999999,0.6887909999999999,0.533584,0.567125,0.559667,0.5413749999999999,0.492834,0.461041,0.618958,0.4835,0.45849999999999996,0.627583,0.746041,0.556833,0.718583,0.5795,2.292375,46.957916999999995,0.91025,0.487125,0.603417,0.58975,0.501083,0.6121249999999999,0.817916,0.593125,47.948667,0.574959,0.329125,0.724958,0.59575,0.470458,0.613958,0.650625,0.535458,0.599333,0.6230829999999999,0.321,0.6345419999999999,0.7299169999999999,0.575916,0.850375,0.6122909999999999,0.40404199999999996,4.944833,0.529292,0.34675,1.55125,0.7910419999999999,0.535625,0.5672499999999999,0.739417,0.502833,0.885875,31.452834,0.6271669999999999,0.657917,0.7609579999999999,0.731958,0.7703329999999999,0.776542,0.586042,0.7160409999999999,0.676083,0.6029169999999999,0.594042,0.774959,0.355834,0.863583,0.596125,2.065416,0.7146669999999999,0.458375,0.566875,0.5375,0.631417,0.325459,0.5358339999999999,0.634208,0.325,0.726291,0.672708,0.370125,0.726209,0.593792,0.548042,0.929209,0.739625,0.5559999999999999,0.6994579999999999,0.68475,0.617792,0.872375,2.90325,0.526459,0.596583,0.8357089999999999,0.59275,0.690083,0.8009999999999999,0.434166,0.903833,0.703916,0.512208,0.763042,0.846792,0.610042,0.645292,0.7389169999999999,0.318,0.6665,0.520208,0.334792,0.513334,0.532542,0.413875,0.649042,0.804167,0.427083,0.8006249999999999,0.5682079999999999,0.7391249999999999,0.6835829999999999,0.8065829999999999,0.457292,0.5727909999999999,0.884208,0.541959,0.540291,0.723708,0.66175,1.255042,0.796542,0.444667,0.8294159999999999,0.597125,0.376417,0.709125,0.589208,0.378,0.594375,0.9613339999999999,1.37875,0.498625,0.718042,0.453167,0.8893329999999999,0.862,0.45258299999999996,0.5515829999999999,0.5397919999999999,0.34920799999999996,0.687542,16.010082999999998,1.32175,0.712708,0.569792,0.839959,0.626,0.662625,0.692,0.6545409999999999,0.915916,0.511917,0.662625,0.730042,0.6068749999999999,0.685709,0.744084,15.965917,0.597416,0.597916,0.42883299999999996,0.8665419999999999,0.604416,0.453875,0.668333,0.733584,0.564083,0.6189589999999999,0.678667,0.35320799999999997,0.465333,0.8562909999999999,6.13925,0.665458,0.542959,0.360209,0.895833,0.661791,0.385583,0.67025,0.6277499999999999,0.56375,32.978792,1.489792,0.479709,0.58675,0.751459,0.5111249999999999,0.793667,0.578292,0.799375,0.4995,0.637209,24.993375,2.027417,1.033,0.37704099999999996,0.822166,0.598333,0.443333,0.536334,0.8076249999999999,0.41512499999999997,0.663125,0.602541,0.352292,0.5285,0.46008299999999996,0.33525,0.6189169999999999,0.78375,0.317834,0.48012499999999997,0.796666,0.330625,0.510083,8.961708,0.491042,0.6231249999999999,0.5928329999999999,0.712125,0.571875,0.6160829999999999,0.675416,0.550083,0.590166,0.8684999999999999,0.512084,0.6998749999999999,0.502916,0.697167,0.777625,0.372083,0.614,0.525458,0.370541,0.662292,0.6819999999999999,0.692375,0.649833,0.486791,0.39249999999999996,0.818125,0.49437499999999995,0.427834,0.874709,0.473583,0.32975,0.456042,0.84375,0.321625,0.5027079999999999,0.5826669999999999,0.469167,0.9755419999999999,0.722208,0.593333,0.7727919999999999,62.961208,0.9185409999999999,0.5475,0.919959,0.490625,0.84725,0.60775,0.484292,0.504709,0.7140839999999999,5.925542,0.668292,0.597416,0.578625,0.5595829999999999,0.6859999999999999,0.513209,0.449791,0.868084,0.631875,0.5017079999999999,3.8648339999999997,0.3705,0.44699999999999995,0.7022919999999999,0.424,0.46333399999999997,0.639,0.343041,0.755,0.6904589999999999,0.551542,0.7752089999999999,0.861792,0.44429199999999996,0.5385,0.830625,22.935667,0.534291,0.8383339999999999,0.675792,1.017333,0.546542,0.645084,0.863834,0.6377499999999999,0.364625,0.566458,5.007207999999999,0.339167,0.777917,0.803292,0.6910419999999999,0.462084,0.41974999999999996,0.439084,0.577209,0.519209,0.327459,0.6655829999999999,0.396959,12.977749999999999,0.43287499999999995,0.407541,0.336667,0.8172499999999999,0.73875,0.727833,0.569958,0.608375,0.435583,1.469125,0.867208,0.519125,0.48716699999999996,0.582542,0.597625,0.477,47.932458999999994,0.40458299999999997,0.6587919999999999,1.004334,0.339916,0.496,0.603792,0.335459,0.695041,31.955292,0.356083,0.443708,0.40654199999999996,0.322791,0.42133299999999996,0.43591599999999997,0.32825,0.400042,0.40675,0.327625,0.563916,0.697875,0.455208,0.508625,0.577417,47.93425,0.513,0.564375,0.595542,0.576792,0.8048339999999999,0.40283399999999997,3.141667,0.6829999999999999,0.8673339999999999,0.530708,0.533625,0.516125,0.520708,0.45791699999999996,0.328875,32.024791,0.651959,0.490417,0.64725,0.601333,0.43324999999999997,0.43724999999999997,0.388959,0.32337499999999997,0.406458,0.38975,0.332584,0.393292,0.384042,0.370292,0.62325,0.381166,0.32095799999999997,0.6287079999999999,0.746459,0.5808329999999999,0.494583,0.5135839999999999,0.48566699999999996,0.504792,0.563833,0.6054999999999999,0.74825,0.702583,0.501042,0.44529199999999997,0.494625,0.33175,0.694542,0.43579199999999996,0.374917,0.43266699999999997,0.4245,0.337291,14.044792,0.429791,0.31975,0.51825,0.386,0.315542,0.396333,0.4425,0.341833,0.361541,0.394292,0.47075,0.32858299999999996,0.38545799999999997,0.35858399999999996,0.5089159999999999,0.6437919999999999,0.37825,0.5135,0.6934159999999999,0.440917,0.751875,0.8630829999999999,0.392375,0.771125,0.526,0.37437499999999996,0.44054099999999996,0.751083,0.313125,0.43474999999999997,0.426792,0.32525,0.8039999999999999,0.44125,0.6179169999999999,0.396042,0.425083,0.315125,0.580958,0.380083,0.5287919999999999,0.399792,0.390833,0.327166,0.35612499999999997,0.395084,0.324833,0.47425,0.390584,0.33933399999999997,4.909041,0.653459,0.36674999999999996,0.48362499999999997,0.48408399999999996,0.356792,0.503833,0.551542,0.363791,0.50525,0.5868329999999999,0.35762499999999997,0.44295799999999996,0.4455,0.480834,0.440667,0.439625,0.34204199999999996,0.426208,14.952375,0.318583,0.40199999999999997,0.4245,0.315083,0.41824999999999996,0.456709,0.32579199999999997,0.47724999999999995,0.386333,0.323125,0.546459,0.39091699999999996,0.32479199999999997,0.325834,0.564125,1.1945839999999999,0.498,0.579959,0.9519169999999999,0.5706669999999999,0.512042,0.708708,0.523208,0.78225,0.41512499999999997,0.5722499999999999,0.61225,0.440333,0.70875,0.7224999999999999,0.389208,0.44170899999999996,0.43825,0.328416,0.481209,0.43495799999999996,0.6039169999999999,0.39299999999999996,0.492625,0.319042,0.603417,0.38529199999999997,0.333458,0.402916,0.39075,0.743166,0.36074999999999996,0.38725,0.319834,0.31795799999999996,0.562708,0.31174999999999997,0.461292,0.462667,0.362834,0.475958,0.462333,0.35520799999999997,0.48583299999999996,0.526041,0.341167,0.485,1.493958,0.37979199999999996,0.440417,0.42116699999999996,0.309042,0.438,0.871667,0.321625,0.622833,0.723667,0.32075,0.401708,0.42083299999999996,0.38725,0.40762499999999996,0.38733399999999996,0.311542,33.029875,0.384166,0.31725,0.3865,0.40308299999999997,0.33158299999999996,0.40466599999999997,0.38699999999999996,0.31887499999999996,0.7030409999999999,0.5692499999999999,0.32029199999999997,1.1340409999999999,0.5501659999999999,0.330042,0.744667,0.6399159999999999,0.325125,0.47904199999999997,0.477583,0.664084,0.4365,0.460833,0.5095419999999999,0.42633299999999996,0.441125,0.521583,0.502791,0.687417,0.330791,0.406375,0.584792,0.40249999999999997,0.7331249999999999,0.435042,0.38987499999999997,0.381667,0.391542,0.321625,0.37629199999999996,0.643291,0.313708,0.33841699999999997,0.41579099999999997,0.321625,0.625208,0.549666,0.440917,0.565709,0.7551249999999999,0.339042,0.499542,0.48933299999999996,0.32791699999999996,0.742209,0.48212499999999997,0.45899999999999996,0.69575,0.5027079999999999,0.316583,0.43204099999999995,0.675833,0.3195,0.429083,0.431541,0.326833,0.4745,0.434125,0.463875,0.41695899999999997,0.627458,0.494083,0.410166,0.542333,0.33175,0.375708,0.38320899999999997,0.5802919999999999,0.337125,0.393541,0.29412499999999997,0.47858399999999995,0.6531669999999999,0.37124999999999997,0.512166,14.958791,0.356958,0.905833,0.9339999999999999,0.372083,0.668084,0.6275419999999999,0.6329589999999999,0.707125,0.47920799999999997,0.32966599999999996,0.719667,0.932083,0.605583,0.511666,0.47679099999999996,0.338333,0.411917,0.466792,0.644125,0.417958,0.39325,0.330625,0.600708,0.66875,0.339458,0.406958,0.423083,0.339333,0.342667,0.553958,0.34904199999999996,0.722208,0.7691669999999999,0.630209,0.798916,1.830125,0.538625,0.6746249999999999,0.745833,0.750667,0.5031249999999999,0.7671669999999999,0.46858299999999997,0.500792,0.5885,0.6671659999999999,0.651458,0.656833,0.572666,0.668625,0.634625,0.5465829999999999,0.538916,0.602209,0.7481249999999999,0.511458,0.385083,0.330667,0.409334,0.406541,0.550084,0.379167,0.39841699999999997,0.34495899999999996,1.058458,0.38075,0.321042,0.583666,0.583042,0.645625,0.5610419999999999,0.830166,0.522083,0.718791,0.522875,0.940958,0.8192499999999999,0.9632499999999999,0.589042,0.5235409999999999,0.60075,0.759833,0.6653749999999999,0.611041,0.7906249999999999,0.5253749999999999,0.7917919999999999,0.6347499999999999,0.56425,0.692041,0.56375,0.482834,0.369125,0.338208,0.4075,1.950875,0.334333,0.38775,0.54375,2.456041,0.332667,0.43324999999999997,0.610166,7.969417,0.537917,0.7809999999999999,0.652417,0.553125,0.6924159999999999,0.668833,0.723,0.599667,0.5365829999999999,0.6705829999999999,1.089375,0.549959,0.599625,0.496208,0.5385829999999999,0.546459,0.532,0.538542,0.667916,0.747459,0.525875,0.6305,0.726625,0.40525,0.34041699999999997,0.33816599999999997,0.5245,0.35312499999999997,0.338375,0.48691599999999996,0.391667,0.653292,0.407,0.335167,0.3455,0.6275419999999999,0.540458,0.412458,0.925792,0.54125,0.388208,0.638625,0.534334,0.45899999999999996,5.995417,0.741667,0.376333,0.399416,0.418875,0.39775,0.40954199999999996,0.33925,0.334375,0.40362499999999996,0.32845799999999997,0.33283399999999996,0.803209,0.327792,0.359375,0.38525,0.332084,0.704208,0.882292,0.368,0.329416,0.353375,0.33099999999999996,0.346667,0.32629199999999997,0.340333,0.33899999999999997,0.713042,16808.835959],"internal_resolution":[3840,2160],"last_completed_render_ms":136336.793875,"metal_compute_max_threads_requested":0,"minimum_120_presented_fps_passed":false,"output_resolution":[1920,1080],"paired_dda_lazy_cell_bounds":false,"paired_dda_tile_edge_cache":false,"paired_dda_touch_guard":false,"qualification":"integration_audit_only","rendered_state_blake3":"74a7311d95dd4e80221b61e9966af4fdf071ef5bf09a6b2f1e834bcfed1eae15","replay_state_schema":"camera-weather-water-v2","simulation_clock":"fixed_30_step_batch","simulation_steps":120,"software_traversal_work":null,"source_simplified":false,"spawn_pool":false,"water_render_stats":{"body_draws":530,"drawn_frames":530,"last_drawn_bodies":1,"last_submitted_time_bits":1065353216,"registered_bodies":1,"ripple_encoded_seconds":1.0,"ripple_encoded_ticks":240,"ripple_pending_seconds":0.0,"ripple_requested_seconds":1.0,"ripple_tick_rate":240,"simulation_seconds":1.0,"simulation_time_bits":1065353216,"wave_seed":1},"world_frame_enabled":true,"world_query_encoded_frames":3,"world_ray_consumer_sorted":false,"world_regions":144}

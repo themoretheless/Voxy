@@ -1,0 +1,24 @@
+   Compiling wgpu-hal v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu-hal)
+   Compiling wgpu v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+   Compiling voxy_water v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_water)
+   Compiling voxy_cuda v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_cuda)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_gpu v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+   Compiling voxy_shell v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_shell)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 23.65s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_shell-b2eb763d523a16f6)
+
+running 4 tests
+test frame_profile::tests::amdahl_parallel_speedup_respects_serial_bottleneck_and_single_thread_identity ... ok
+test frame_profile::tests::excludes_warmup_and_counts_skips ... ok
+test frame_profile::tests::rejects_invalid_config ... ok
+test frame_profile::tests::report_preserves_missing_metrics_and_incomplete_state ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 22 filtered out; finished in 0.00s
+

@@ -107,6 +107,10 @@ impl RootRigidCertifiedFadeInterval {
     /// Finish a fade inside the wall interval, then continue the original
     /// target field. Both clip clocks still map over the full wall duration;
     /// only the blend weight uses fade_duration. The endpoint weight must be 1.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn integrate_sources_with_completion(
         source: Option<RootRigidSourceField<'_>>,
         target: RootRigidSourceField<'_>,

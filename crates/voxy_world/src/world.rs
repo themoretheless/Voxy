@@ -314,6 +314,10 @@ impl World {
     ///
     /// The entire transaction is rejected on limits, duplicate targets, missing chunks,
     /// revision conflicts, unknown blocks, or counter overflow.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn commit(&mut self, mut txn: EditTxn) -> Result<CommitReceipt, CommitError> {
         if txn.writes.is_empty() {
             return Err(CommitError::EmptyTransaction);

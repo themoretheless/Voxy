@@ -291,6 +291,10 @@ impl AnimatorCheckpoint {
     /// Restore frozen sources through the enclosing transaction's shared archive.
     /// # Errors
     /// Rejects missing/foreign snapshots, conflicting inline state and all ordinary preparation errors.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn prepare_with_snapshots(
         &self,
         skeleton: &Skeleton,

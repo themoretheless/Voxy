@@ -246,6 +246,10 @@ impl EditorAssetCheckpoint {
     ) -> Result<Self, EditorError> {
         Self::capture_with_sources(assets, external_models, &[], &[], limits)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn capture_with_sources(
         assets: &[Arc<EditorAsset>],
         external_models: &[Arc<ModelAsset>],
@@ -590,6 +594,10 @@ impl EditorAssetCheckpoint {
         }
         Ok(prepared.assets)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn prepare_with_models(
         &self,
         limits: EditorAssetCheckpointLimits,

@@ -182,6 +182,11 @@ impl PulsedEmitter {
         )
     }
     /// Same transaction with explicit absolute conservation tolerances.
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance_from_translating_source_with_accuracy(
         &mut self,
         liquid: &mut Liquid,

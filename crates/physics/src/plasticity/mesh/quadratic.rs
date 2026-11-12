@@ -459,6 +459,10 @@ impl QuadraticBody {
     /// # Errors
     /// Invalid input, singular support/tangent, inversion or assembly overflow.
     // Newton candidates and all quadrature histories commit together.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn equilibrate(
         &mut self,
         loads: &[Vec3],

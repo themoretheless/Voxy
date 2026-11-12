@@ -60,6 +60,10 @@ fn set_hull_pressure(
     }
     Ok(())
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn assign_viscous_layers(
     body: &mut Body,
     rings: usize,
@@ -144,6 +148,10 @@ fn refine_schedule(stages: Vec<(String, f64)>, substeps: usize) -> Vec<(String, 
         })
         .collect()
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::env::args()
         .nth(1)

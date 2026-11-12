@@ -4,6 +4,10 @@ use voxy_model::{ModelAsset, ModelLimits};
 use voxy_render::SceneMesh;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root =
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets/anatomy/hra-female");

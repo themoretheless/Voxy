@@ -707,6 +707,10 @@ mod tests {
         assert!(sweep_capsules(a, a, Default::default()).is_err());
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn captured_structural_transition_is_limited_before_deep_overlap() {
         let cases = [
             (
@@ -931,6 +935,10 @@ mod hierarchy_tests {
     use super::*;
     #[test]
     #[ignore = "paired broad-phase benchmark requires a captured VJR1 motion"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn captured_full_groom_hierarchy_matches_original_sweep() {
         let data =
             std::fs::read(std::env::var("VOXY_HAIR_ROOT_MOTION_FAILURE_FIXTURE").unwrap()).unwrap();

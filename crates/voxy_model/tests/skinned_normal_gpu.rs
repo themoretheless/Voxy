@@ -5,6 +5,10 @@ use wgpu::util::DeviceExt;
 
 #[test]
 #[ignore = "requires GPU; production vertex-shader normal transport readback"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_legacy_normal_transport_matches_inverse_transpose() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

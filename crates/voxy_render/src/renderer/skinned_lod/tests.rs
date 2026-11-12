@@ -11,6 +11,10 @@ use wgpu::util::DeviceExt;
 
 #[test]
 #[ignore = "requires real GPU; explicit skeletal LOD color/depth acceptance"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_skeletal_lod_pose_switches_indices_and_preserves_shared_streams() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter =

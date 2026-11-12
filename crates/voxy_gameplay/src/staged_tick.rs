@@ -75,6 +75,10 @@ impl CharacterPhysics {
 
     /// Combines ordinary root translations/rigid paths and certified fades in
     /// the same admission, query budget and scene/body/input transaction.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn fixed_step_with_mixed_certified_fade_preparation<T, E>(
         &mut self,
         scene: &mut SceneGraph,
@@ -102,6 +106,10 @@ impl CharacterPhysics {
         self.fixed_step_preparing(scene, input, dt, translations, &paths, fades, prepare)
     }
 
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn fixed_step_preparing<T, E>(
         &mut self,
         scene: &mut SceneGraph,

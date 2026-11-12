@@ -16,6 +16,10 @@ fn words(values: &[Vec<f32>]) -> Vec<Vec<u32>> {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn standalone_playback_sources_share_model_rigs_clips_and_property_tracks_for_120_phases() {
     let model = Arc::new(imported());
     let independent = Arc::new(imported());
@@ -152,6 +156,10 @@ fn standalone_playback_sources_share_model_rigs_clips_and_property_tracks_for_12
     assert_eq!(only.properties.len(), 2);
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn complete_model_file_preserves_outer_morph_skin_rig_clip_and_name_aliases_for_120_frames() {
     let limits = ModelAssetCheckpointLimits::default();
     let mut model = imported();

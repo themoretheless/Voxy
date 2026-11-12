@@ -4,6 +4,10 @@ use voxy_demos::female_complexion;
 use voxy_demos::female_demo;
 use voxy_demos::female_eyes;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut model = female_demo::FemaleDemo::new()?;
     model.animation_only = true;

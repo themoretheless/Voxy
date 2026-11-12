@@ -89,6 +89,10 @@ impl GpuLiquidBackend {
     pub fn clear_workspace(&mut self) {
         self.workspace = Default::default();
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn compute(
         &mut self,
         owner: &LiquidPipelineOperator<'_>,
@@ -289,6 +293,10 @@ mod tests {
     use super::*;
     #[test]
     #[ignore = "requires actual GPU; application adapter and deliberate memory-budget rejection"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_application_liquid_backend_steps_and_recovers_from_budget_rejection() {
         use physics::liquid::{Config, Liquid, Material, Particle};
         let instance = voxy_render::GraphicsOptions::default().create_instance();

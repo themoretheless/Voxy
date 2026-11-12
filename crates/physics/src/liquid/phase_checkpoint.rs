@@ -83,6 +83,10 @@ impl Liquid {
     ) -> Result<(), Error> {
         self.restore_phase_checkpoint_inner(saved, max_particles, max_materials, false)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn restore_phase_checkpoint_inner(
         &mut self,
         saved: &PhaseCheckpoint,
@@ -263,6 +267,10 @@ mod tests {
     use super::*;
     use crate::liquid::{Config, LiquidCheckpointLimits, LiquidField, Particle, TransportMaterial};
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn fixed_and_pressure_phase_history_rebuild_without_enthalpy_remap() {
         for saturated in [false, true] {
             let config = Config {

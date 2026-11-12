@@ -52,6 +52,11 @@ fn encode_skin(
     pass.dispatch_workgroups(count.div_ceil(64), 1, 1);
 }
 impl SurfaceRigidSkinning {
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         rest: &wgpu::Buffer,

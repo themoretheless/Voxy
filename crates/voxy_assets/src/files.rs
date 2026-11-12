@@ -1,10 +1,51 @@
-//! Root-scoped file input provider for trusted project directories.
-use crate::AssetId;
+//! Root-scoped file input provider for trusted project directories and zero-extract packages.
+use crate::{AssetId, ResourcePackage};
 use std::{
     fs::File,
     io::Read,
     path::{Component, Path, PathBuf},
+    sync::Arc,
 };
+
+/// Unified source byte/fingerprint provider supporting both root-scoped project
+/// directories (`FileInputs`) and zero-extract in-memory `.vpak` archives (`ResourcePackage`).
+#[derive(Clone, Debug)]
+pub enum AssetSourceProvider {
+    Directory(FileInputs),
+    Package(Arc<ResourcePackage>),
+}
+
+impl AssetSourceProvider {
+    #[must_use]
+    pub const fn from_files(files: FileInputs) -> Self {
+        Self::Directory(files)
+    }
+
+    #[must_use]
+    pub const fn from_package(package: Arc<ResourcePackage>) -> Self {
+        Self::Package(package)
+    }
+
+    /// Reads a validated root-relative source within `limit` bytes.
+    /// # Errors
+    /// Propagates the underlying `FileInputs::read` or `ResourcePackage::read` error.
+    pub fn read(&self, id: &AssetId, limit: usize) -> Result<Vec<u8>, String> {
+        match self {
+            Self::Directory(files) => files.read(id, limit),
+            Self::Package(package) => package.read(id, limit),
+        }
+    }
+
+    /// Computes or returns the validated BLAKE3 digest of `id` within `limit` bytes.
+    /// # Errors
+    /// Propagates the underlying `FileInputs::fingerprint` or `ResourcePackage::fingerprint` error.
+    pub fn fingerprint(&self, id: &AssetId, limit: usize) -> Result<[u8; 32], String> {
+        match self {
+            Self::Directory(files) => files.fingerprint(id, limit),
+            Self::Package(package) => package.fingerprint(id, limit),
+        }
+    }
+}
 
 #[derive(Clone, Debug)]
 pub struct FileInputs {

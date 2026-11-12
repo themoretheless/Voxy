@@ -50,6 +50,10 @@ impl SurfaceFilm {
     /// motion is applied. Couette transport, cavitation and elastic load are absent.
     /// The two-point normal-distance flux requires orthogonal duals for consistency;
     /// skew-mesh cross-diffusion reconstruction is not included.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn solve_squeeze_pressure(
         &self,
         gaps: &[f64],
@@ -280,6 +284,10 @@ impl SurfaceFilm {
     ) -> Result<SqueezeTransportReport, &'static str> {
         self.step_squeeze_components(dt, closing_speed, control, max_substep, None, None)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn step_squeeze_components(
         &mut self,
         dt: f64,

@@ -12,6 +12,10 @@ fn export(root: &Path, stage: &str, body: &Body, faces: &[[usize; 3]]) -> std::i
     }
     Ok(())
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().collect();
     let source = args.get(1).map_or(

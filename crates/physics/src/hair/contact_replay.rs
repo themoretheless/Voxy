@@ -47,6 +47,10 @@ fn vectors<const N: usize>(w: &mut impl Write, x: &[[f64; N]]) -> io::Result<()>
     }
     Ok(())
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn save(
     path: &std::path::Path,
     rods: &[HairRod],
@@ -507,6 +511,10 @@ pub(in crate::hair) mod tests {
     }
     #[test]
     #[ignore = "requires rejected complete-step admission capture"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn captured_elastic_contact_preserves_strain_admission() {
         let (dt, radius, expected, self_collision, mut rods, mut meshes, continuous_mesh) =
             load_replay_with_mode();

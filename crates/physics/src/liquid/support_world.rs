@@ -164,6 +164,10 @@ pub fn resolve_mixed_world_reactions(
 /// Closing points are left to the existing impact loop. After an impact, fresh
 /// snapshot assembly determines which zero-speed points can carry reactions.
 #[allow(clippy::too_many_arguments)]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn assemble_reactions(
     bodies: &[ContactBody],
     particle_radii: &[f64],
@@ -350,6 +354,10 @@ impl Liquid {
     /// Read-only coupled reactions and rates for body-local material-point
     /// forces at the supplied snapshot. Recipes have this snapshot as time zero.
     /// This does not certify their finite supported trajectory.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn rigid_world_point_reaction_rates(
         &self,
         bodies: &[ContactBody],

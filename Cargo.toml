@@ -28,9 +28,11 @@ members = [
     "crates/voxy_render",
     "crates/voxy_water",
     "crates/voxy_model",
+    "crates/voxy_player",
     "crates/voxy_web",
     "crates/voxy_ray_probe",
     "crates/voxy_app",
+    "crates/voxy_scene_host",
     "crates/voxy_shell",
     "crates/voxy_demos",
     "crates/voxy_editor",
@@ -85,7 +87,6 @@ cast_lossless = "allow"
 cast_sign_loss = "allow"
 cast_possible_wrap = "allow"
 float_cmp = "allow"
-too_many_lines = "allow"
 unreadable_literal = "allow"
 needless_range_loop = "allow"
 default_trait_access = "allow"
@@ -97,7 +98,6 @@ items_after_statements = "allow"
 missing_errors_doc = "allow"
 missing_panics_doc = "allow"
 type_complexity = "allow"
-too_many_arguments = "allow"
 doc_markdown = "allow"
 struct_excessive_bools = "allow"
 manual_range_contains = "allow"

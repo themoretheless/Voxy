@@ -53,22 +53,26 @@ fn wi3_dot(a:WorldInterval3,b:WorldInterval3)->WorldInterval {return wi_add(wi_a
 fn wi_positive(a:WorldInterval)->bool {return a.valid!=0u&&a.lo>0.;}
 fn wi_negative(a:WorldInterval)->bool {return a.valid!=0u&&a.hi<0.;}
 struct WorldTriangleCertificate {state:u32,reason:u32,reverse:u32}
+struct WorldTriangleIntervalProof {certificate:WorldTriangleCertificate,denominator:WorldInterval,numerator:WorldInterval}
 // Shared interval certificate: state 0 alone proves a closed-primitive miss.
-fn world_triangle_certificate(direction:WorldInterval3,ie1:WorldInterval3,ie2:WorldInterval3,idelta:WorldInterval3,near_t:WorldInterval,far_t:WorldInterval)->WorldTriangleCertificate {
+fn world_triangle_interval_proof(direction:WorldInterval3,ie1:WorldInterval3,ie2:WorldInterval3,idelta:WorldInterval3,near_t:WorldInterval,far_t:WorldInterval)->WorldTriangleIntervalProof {
  var reverse=0u;
  let ip=wi3_cross(direction,ie2);let iq=wi3_cross(idelta,ie1);
  var di=wi3_dot(ie1,ip);var ui=wi3_dot(idelta,ip);var vi=wi3_dot(direction,iq);var ti=wi3_dot(ie2,iq);
  if wi_negative(di) {di=wi_neg(di);ui=wi_neg(ui);vi=wi_neg(vi);ti=wi_neg(ti);reverse=1u;}
- if !wi_positive(di) {return WorldTriangleCertificate(2u,1u|select(0u,8u,di.valid==0u),reverse);}
+ if !wi_positive(di) {return WorldTriangleIntervalProof(WorldTriangleCertificate(2u,1u|select(0u,8u,di.valid==0u),reverse),di,ti);}
  let remaining=wi_sub(wi_sub(di,ui),vi);
  let front=wi_sub(ti,wi_mul(di,near_t));let back=wi_sub(wi_mul(di,far_t),ti);
- if wi_negative(ui)||wi_negative(vi)||wi_negative(remaining)||wi_negative(front)||wi_negative(back) {return WorldTriangleCertificate(0u,0u,reverse);}
+ if wi_negative(ui)||wi_negative(vi)||wi_negative(remaining)||wi_negative(front)||wi_negative(back) {return WorldTriangleIntervalProof(WorldTriangleCertificate(0u,0u,reverse),di,ti);}
  var reason=0u;
  if !wi_positive(ui)||!wi_positive(vi)||!wi_positive(remaining) {reason|=2u;}
  if !wi_positive(front)||!wi_positive(back) {reason|=4u;}
  if ui.valid==0u||vi.valid==0u||remaining.valid==0u||front.valid==0u||back.valid==0u {reason|=8u;}
- if reason!=0u {return WorldTriangleCertificate(2u,reason,reverse);}
- return WorldTriangleCertificate(1u,0u,reverse);
+ if reason!=0u {return WorldTriangleIntervalProof(WorldTriangleCertificate(2u,reason,reverse),di,ti);}
+ return WorldTriangleIntervalProof(WorldTriangleCertificate(1u,0u,reverse),di,ti);
+}
+fn world_triangle_certificate(direction:WorldInterval3,ie1:WorldInterval3,ie2:WorldInterval3,idelta:WorldInterval3,near_t:WorldInterval,far_t:WorldInterval)->WorldTriangleCertificate {
+ return world_triangle_interval_proof(direction,ie1,ie2,idelta,near_t,far_t).certificate;
 }
 // Interval edge1/edge2/delta must enclose exact source differences in one frame.
 // Pair vertices may share a common translation applied before compression.

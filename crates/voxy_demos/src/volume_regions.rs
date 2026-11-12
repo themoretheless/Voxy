@@ -40,6 +40,10 @@ impl Region {
     pub fn build(mesh: &[SceneVertex]) -> Result<Vec<Self>, &'static str> {
         Self::build_parameterized(mesh, crate::body_parameters::BodyParameters::default())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn build_parameterized(
         mesh: &[SceneVertex],
         parameters: crate::body_parameters::BodyParameters,

@@ -1,4 +1,7 @@
 //! Opt-in CUDA ownership boundary. No implicit wgpu buffer sharing.
+// The function-size ratchet (docs/refactor/PLAN.md 6.2) is recorded from macOS lint runs, which do not
+// compile this crate's Windows-only code, so existing oversized functions there cannot be listed.
+#![allow(clippy::too_many_lines, clippy::too_many_arguments)]
 #[derive(Debug)]
 pub enum CudaError {
     Disabled,

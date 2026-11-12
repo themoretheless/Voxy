@@ -114,6 +114,10 @@ impl AnimationRuntime {
         }
         models
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn checkpoint(
         &self,
         scene: &SceneGraph,
@@ -257,6 +261,10 @@ impl AnimationRuntimeCheckpoint {
         }
         Ok(saved)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn prepare(
         &self,
         scene: &SceneGraph,

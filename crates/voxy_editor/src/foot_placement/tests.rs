@@ -60,6 +60,10 @@ fn sole(model: &ModelAsset, frame: &AnimatorFrame, actor: Mat4) -> Vec3 {
     actor.transform_point3(globals[2].transform_point3(Vec3::new(0., -0.1, 0.)))
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn fixed_play_candidates_keep_sole_on_anchor_and_failures_preserve_frame_and_clock() {
     let model = model();
     let mut scene = SceneGraph::new(8);
@@ -339,6 +343,10 @@ fn slope_normal_and_nonuniform_reflected_tip_keep_the_authored_sole_on_surface()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn ordinary_app_play_applies_foot_ik_and_stop_restores_authored_settings() {
     let unique = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -647,6 +655,10 @@ fn clip_phase_uses_playback_clock_speed_pause_loops_and_failed_publication() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn skipped_swing_rearms_at_new_sole_and_failed_tick_preserves_clip_phase_and_contacts() {
     use voxy_animation::{AnimationClip, JointTrack, Playback};
     let mut model = (*model()).clone();
@@ -885,6 +897,10 @@ fn named_clip_contacts_select_distinct_curves_and_reject_unmapped_clips() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn authoring_clip_switch_requires_contact_mapping_and_preserves_history_on_rejection() {
     let original = gltf::binary::Glb::from_slice(include_bytes!(
         "../../../voxy_render/examples/assets/foot-contact.glb"
@@ -1102,6 +1118,10 @@ fn contact_blending_keeps_displayed_weight_across_repeated_interruptions_and_sta
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn physical_clip_fades_retain_the_planted_anchor_and_retry_frozen_completion_atomically() {
     let mut asset = (*model()).clone();
     for name in ["walk", "run"] {
@@ -1251,6 +1271,10 @@ fn physical_clip_fades_retain_the_planted_anchor_and_retry_frozen_completion_ato
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn physical_mixed_contact_windows_release_only_when_both_clips_are_in_swing() {
     for shared_swing in [false, true] {
         let mut asset = (*model()).clone();
@@ -1376,6 +1400,10 @@ fn physical_mixed_contact_windows_release_only_when_both_clips_are_in_swing() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn interrupted_variable_contact_fade_retains_anchor_and_accepted_snapshot_on_retry() {
     let mut asset = (*model()).clone();
     for name in ["stance", "air", "step", "void"] {
@@ -1601,6 +1629,10 @@ fn interrupted_variable_contact_fade_retains_anchor_and_accepted_snapshot_on_ret
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them() {
     let mut asset = (*model()).clone();
     for name in ["walk", "run"] {
@@ -1926,6 +1958,10 @@ fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them(
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry() {
     let target = model();
     let original = model_bytes();
@@ -2148,6 +2184,10 @@ fn retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn authored_ankle_roll_keeps_the_support_pivot_and_legacy_alignment_is_default() {
     let model = model();
     let mut scene = SceneGraph::new(2);
@@ -2259,6 +2299,10 @@ fn authored_ankle_roll_keeps_the_support_pivot_and_legacy_alignment_is_default()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn authored_ankle_roll_publishes_with_the_physical_tick_and_retries_rejected_preparation() {
     use voxy_animation::{AnimationClip, JointTrack, Playback, QuatKey};
     let mut model = (*model()).clone();
@@ -2464,6 +2508,10 @@ fn generated_quaternius_contact_candidates_bind_to_real_clips_and_preserve_loop_
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn queued_pivot_transfer_publishes_after_ik_and_persists_across_frames() {
     let model = model();
     let mut scene = SceneGraph::new(2);
@@ -2714,6 +2762,10 @@ fn pending_pivot_is_canceled_by_airborne_and_cannot_cross_landing() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn pivot_and_contact_rollback_when_skipped_swing_exhausts_query_budget() {
     let model = model();
     let mut scene = SceneGraph::new(2);
@@ -2886,6 +2938,10 @@ fn authored_pivot_keys_round_trip_validate_and_reject_unknown_clips() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn clip_phase_drives_pivot_and_live_fade_holds_accepted_point() {
     use voxy_animation::{
         AnimationClip, ClipPhase, JointTrack, Playback, PoseBlendPhases, PoseBlendSource,
@@ -3042,6 +3098,10 @@ fn clip_phase_drives_pivot_and_live_fade_holds_accepted_point() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn installed_geometry_selects_and_physically_admits_pivot_automatically() {
     let model = model();
     let mut scene = SceneGraph::new(2);
@@ -3229,6 +3289,10 @@ fn support_geometry_schema_preserves_legacy_and_rejects_invalid_assets() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn foot_history_checkpoint_retains_pending_pivot_geometry_and_shared_frozen_pose() {
     use voxy_scene::{ComponentRegistry, ObjectId, SceneDocument};
     let model = model();
@@ -3441,6 +3505,10 @@ fn native_foot_history_checkpoint_uses_skeleton_names_and_rejects_corrupt_histor
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn shared_snapshot_archive_preserves_playback_and_foot_contact_identity_after_json_load() {
     use crate::model_playback::{ModelPlayback, checkpoint::ModelPlaybackCheckpoint};
     use voxy_animation::{PoseBlendSource, PoseSnapshotArchive, PoseSnapshotBuilder};
@@ -3723,6 +3791,10 @@ fn retargeted_foot_snapshot_restores_against_source_rig_and_keeps_identity() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn scene_physics_input_and_animation_checkpoint_continue_solved_foot_together() {
     use voxy_gameplay::{GameplayCheckpoint, GameplayCheckpointLimits, PreparedGameplayCheckpoint};
     use voxy_scene::{LoadedScene, ObjectId, SceneDocument, SceneSimulation, SimulationLimits};

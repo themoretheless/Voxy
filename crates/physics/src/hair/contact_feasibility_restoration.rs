@@ -112,6 +112,10 @@ fn restore_candidate_mode(
         energy_reference,
     )
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn restore_candidate_mode_impl<const REUSE: bool>(
     rods: &mut [HairRod],
     meshes: &[TriangleMesh],

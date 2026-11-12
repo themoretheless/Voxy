@@ -114,6 +114,10 @@ impl Sphere {
     /// Balanced open transport with signed gas/gravity and species boundary ledgers.
     /// # Errors
     /// Invalid/mismatched reference, reservoir, reconstruction or work budget.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_composition_balanced_exterior(
         &mut self,
         fractions: &mut [Vec<f64>],
@@ -134,6 +138,11 @@ impl Sphere {
             Some(exterior),
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn step_composition_balanced_impl(
         &mut self,
         fractions: &mut [Vec<f64>],

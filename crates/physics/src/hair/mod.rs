@@ -714,6 +714,10 @@ impl HairSystem {
     /// Apply application-specific admission before publishing a solved state.
     /// Rejection preserves poses, velocities, contact history and diagnostics.
     /// Accelerator side effects are external and cannot be rolled back.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_validated(
         &mut self,
         dt: f64,
@@ -730,6 +734,10 @@ impl HairSystem {
     }
     /// Prepare an admitted state without publishing it, for coupled transactions.
     /// Accelerator observations remain external to the transaction.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn prepare_validated(
         &self,
         dt: f64,

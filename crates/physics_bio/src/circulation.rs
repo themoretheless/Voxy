@@ -402,6 +402,10 @@ impl Circulation {
     /// this method does not infer concentration from fluid transfer.
     /// # Errors
     /// Invalid/depleting exchange or any flow/transport error preserves all inputs.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_with_protein_exchange(
         &mut self,
         protein_kg: &mut [f64],

@@ -5,6 +5,10 @@ use super::*;
 #[test]
 #[ignore = "exclusive Metal GPU; requires VOXY_PROBE_REPLAY_INPUT and new VOXY_PROBE_REPLAY_OUTPUT"]
 #[cfg(target_os = "macos")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn captured_faces_replay_through_original_projector() -> Result<(), Box<dyn std::error::Error>> {
     let input = std::path::PathBuf::from(
         std::env::var_os("VOXY_PROBE_REPLAY_INPUT").ok_or("input required")?,
@@ -119,9 +123,11 @@ fn captured_faces_replay_through_original_projector() -> Result<(), Box<dyn std:
         queue.write_buffer(&probes, 0, &vec![0u8; MAX_PROBES * PROBE_BYTES as usize]);
         for (face, (texture, uniform, words, expected)) in faces.iter().enumerate() {
             let basis = [0, 4, 8].map(|i| glam::Vec3::new(words[i], words[i + 1], words[i + 2]));
-            let submission = projector.project(
+            let mut encoder = device.create_command_encoder(&Default::default());
+            projector.encode_projection(
                 &device,
                 &queue,
+                &mut encoder,
                 &texture.create_view(&Default::default()),
                 (texture.width(), texture.height()),
                 &probes,
@@ -130,6 +136,7 @@ fn captured_faces_replay_through_original_projector() -> Result<(), Box<dyn std:
                 basis,
                 words[11],
             );
+            let submission = queue.submit([encoder.finish()]);
             device.poll(wgpu::PollType::Wait {
                 submission_index: Some(submission),
                 timeout: None,

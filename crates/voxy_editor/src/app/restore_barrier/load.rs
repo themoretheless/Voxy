@@ -192,6 +192,10 @@ impl App {
     }
     /// Call after source-frame resource adoption/presentation, not before it.
     /// GPU polling is nonblocking; only already-finished threads are joined.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn poll_editor_file_load(&mut self) -> Result<Option<PathBuf>, EditorError> {
         let Some(mut pending) = self.editor_load.take() else {
             return Ok(None);

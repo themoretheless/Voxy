@@ -305,6 +305,10 @@ impl InertialBody {
             max_substeps,
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn step_viscoelastic_support_accuracy<const IMPLICIT: bool>(
         &mut self,
         targets: Option<&[SupportTarget]>,
@@ -524,6 +528,10 @@ impl InertialBody {
     /// Only the complete interval commits. This does not fix single-step feature kinks.
     /// # Errors
     /// Invalid owners/controls, crossing or exhausted subdivision preserves all state.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
         &mut self,
         targets: Option<&[SupportTarget]>,
@@ -735,6 +743,10 @@ impl InertialBody {
             None,
         )
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn step_viscoelastic_contacts_controlled<
         const IMPLICIT: bool,
         const TEMPORAL_REFINEMENT: bool,

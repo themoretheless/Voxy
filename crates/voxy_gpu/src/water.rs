@@ -119,6 +119,10 @@ impl WaterTransferProgram {
     /// Supports at most 131072 graph nodes and 16384 active nodes per tick.
     /// # Errors
     /// Rejects malformed graphs, missing required neighbors and read/write budgets.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step(
         &self,
         queue: &wgpu::Queue,
@@ -146,6 +150,10 @@ impl WaterTransferProgram {
     /// revision checks. No transaction is published by this graph API.
     /// # Errors
     /// Returns the same validation/compute/budget errors as `step`.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_detailed(
         &self,
         queue: &wgpu::Queue,
@@ -174,6 +182,10 @@ impl WaterTransferProgram {
     /// must be `None` and cannot be changed or treated as registered solids.
     /// # Errors
     /// Returns graph, availability-shape, compute and lazy-read errors.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_detailed_available(
         &self,
         queue: &wgpu::Queue,
@@ -211,6 +223,10 @@ impl WaterTransferProgram {
     /// # Errors
     /// Reports `UnknownNode` with the graph index of the first unknown read,
     /// after checking its sample budget; rejects malformed status masks.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_detailed_status(
         &self,
         queue: &wgpu::Queue,
@@ -234,6 +250,10 @@ impl WaterTransferProgram {
         )
     }
 
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn step_available(
         &self,
         queue: &wgpu::Queue,
@@ -272,6 +292,10 @@ impl WaterTransferProgram {
     /// # Errors
     /// Rejects invalid graph/status/budget inputs before command submission.
     /// Solver and mapping errors are returned later by `try_result`.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn begin_step_detailed_status(
         &self,
         queue: &wgpu::Queue,
@@ -295,6 +319,10 @@ impl WaterTransferProgram {
         )
     }
 
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn begin_available(
         &self,
         queue: &wgpu::Queue,
@@ -419,6 +447,10 @@ impl CudaWaterTransferProgram {
     /// as a successful `WaterTransferResult`.
     /// # Errors
     /// Returns graph, solver, CUDA driver or output validation failures.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_detailed_status(
         &self,
         nodes: &[WaterNode],

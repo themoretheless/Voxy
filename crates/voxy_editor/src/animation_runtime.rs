@@ -328,6 +328,10 @@ impl AnimationRuntime {
     }
 
     /// Captures an explicit signed parent similarity at the published solver pose.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn capture_owner_reference_with_scale(
         &self,
         scene: &SceneGraph,
@@ -349,6 +353,10 @@ impl AnimationRuntime {
         )
     }
 
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn capture_owner_reference_with_similarity(
         &self,
         scene: &SceneGraph,
@@ -406,6 +414,10 @@ impl AnimationRuntime {
 
     /// Stages from the owner-held authored frame; never substitutes a clip's
     /// current phase for the reference retained after physical acceptance.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn prepare_owner_fade(
         &self,
         scene: &SceneGraph,
@@ -677,6 +689,10 @@ impl AnimationRuntime {
 
     /// Complete scene-driven selection, plan admission and physical publication
     /// through the same mixed-tick transaction used by explicitly prepared fades.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn fixed_step_scene_fades(
         &self,
         scene: &mut SceneGraph,
@@ -1098,6 +1114,10 @@ impl AnimationRuntime {
         self.prepare_deferred(scene, models, dt, &HashSet::new())
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn prepare_deferred(
         &self,
         scene: &SceneGraph,

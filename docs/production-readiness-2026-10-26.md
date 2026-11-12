@@ -88,6 +88,10 @@ exist. Existing model/manifest editor commands remain available.
 
 ## Next implementation, in dependency order
 
+Status on 2026-11-12: items 1 and 2 are closed (native project cycle and nested prefab editing, see
+[engine-status-2026-11-11](engine-status-2026-11-11/README.md)); items 3 and 4 remain open and are tracked as
+ENG-07 and ENG-10 in the roadmap. This list is kept as written on 26 October.
+
 1. Validate native-window rendering and controls for `--project` with the empty
    starter. The constructor and actual authoring-owner roundtrip are tested; no
    visible editor window was launched in this qualification.

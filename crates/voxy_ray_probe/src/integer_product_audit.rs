@@ -1,5 +1,13 @@
 //! Isolated arithmetic audit; operands only are uploaded, never CPU outcomes.
+use std::borrow::Cow;
 use wgpu::util::DeviceExt;
+
+#[path = "../../voxy_render/src/world_exact_zero_prefix.rs"]
+mod zero_prefix;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn run(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -30,12 +38,19 @@ pub(super) fn run(
     {
         return Err("select one arithmetic audit mode".into());
     }
+    let original = include_str!("../../voxy_render/src/world_exact_integer.wgsl");
+    let integer_source = if std::env::var("VOXY_RAY_INTEGER_SKIP_ZERO_PREFIX").as_deref() == Ok("1")
+    {
+        Cow::Owned(zero_prefix::source(original))
+    } else {
+        Cow::Borrowed(original)
+    };
     let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("full width integer product audit"),
         source: wgpu::ShaderSource::Wgsl(
             format!(
                 "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
-                include_str!("../../voxy_render/src/world_exact_integer.wgsl"),
+                integer_source,
                 if ratio_audit || ratio_seed {
                     include_str!("../../voxy_render/src/world_exact_ratio.wgsl")
                 } else {

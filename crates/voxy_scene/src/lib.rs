@@ -74,6 +74,9 @@ pub use prefab_document::{
 mod prefab;
 pub use prefab::{Prefab, PrefabError, PrefabNode};
 
+mod replication;
+pub use replication::{SceneSnapshotDelta, SnapshotRollbackBuffer, TickSnapshot};
+
 use glam::{Mat4, Quat, Vec3};
 use std::any::{Any, TypeId};
 use std::collections::HashMap;

@@ -163,6 +163,10 @@ mod tests {
     use super::*;
     use crate::liquid::{Config, LiquidCheckpointLimits, LiquidField, TransportMaterial};
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn coupled_field_responses_restore_without_invalid_intermediate_configuration() {
         for activated in [false, true] {
             let config = Config {

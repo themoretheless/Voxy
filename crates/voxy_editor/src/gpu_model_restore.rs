@@ -36,6 +36,10 @@ impl batch::UploadTarget<'_> {
     ) -> Result<PendingModels, String> {
         self.stage_restore_with(scene, bindings, frames, || Ok(()))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn stage_restore_with(
         self,
         scene: &SceneGraph,

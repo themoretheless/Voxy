@@ -42,6 +42,10 @@ impl FrameFixture {
             clocks: HashMap::new(),
         })
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn synchronize_fixture(
         &mut self,
         renderer: &SceneRenderer,
@@ -145,6 +149,10 @@ fn request(owner: NodeId, model: &Arc<ModelAsset>, speed: f32) -> Request {
 
 #[test]
 #[ignore = "requires real GPU; retained CPU texture publication and pixel readback"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn retained_texture_publications_survive_reload_pose_failure_and_source_deletion() {
     use voxy_assets::{
         AssetCatalog, AssetId, FileInputs, ImportInputs, SourceDependencies, SourcePath,
@@ -642,6 +650,10 @@ fn pixels_with_texture(
 }
 #[test]
 #[ignore = "requires real GPU; editor owner playback and scene draw"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
@@ -950,6 +962,10 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
 
 #[test]
 #[ignore = "requires GPU; animated editor LOD camera and budget publication"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn animated_lod_views_budget_and_cpu_fallback() {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
@@ -1646,6 +1662,10 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
 
 #[test]
 #[ignore = "requires real GPU; fixed-tick hierarchy owners at runtime capacity"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn fixed_tick_hierarchy_owners_share_gpu_source_at_capacity() {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
@@ -1778,6 +1798,10 @@ fn curved_root_rotation_collision_renders_once_with_in_place_gpu_palette() {
 fn composed_root_motion_collision_renders_once_with_in_place_gpu_palette() {
     rig_trajectory_gpu(true);
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn rig_trajectory_gpu(composed: bool) {
     use glam::{Mat4, Quat, Vec3};
     use voxy_gameplay::{BoxCollider, CharacterBody, CharacterPhysics};
@@ -1972,6 +1996,10 @@ fn retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources(
 fn authored_roll_foot_gpu_matches_independent_pivot_geometry_and_clears_resources() {
     planted_foot_gpu_acceptance(false, true);
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn planted_foot_gpu_acceptance(retarget: bool, roll: bool) {
     use glam::{Mat4, Vec3};
     use voxy_gameplay::{BoxCollider, CharacterBody, CharacterPhysics};
@@ -2281,6 +2309,10 @@ fn gpu_rigid_morph_without_source_skin_uses_common_owner() -> Result<(), Box<dyn
     morph_weight_only_owner_acceptance(true)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn morph_weight_only_owner_acceptance(rigid: bool) -> Result<(), Box<dyn std::error::Error>> {
     let temp = crate::locomotion_tests::Temp::new();
     let (_, source) = if rigid {
@@ -2426,6 +2458,10 @@ fn morph_weight_only_owner_acceptance(rigid: bool) -> Result<(), Box<dyn std::er
 
 #[test]
 #[ignore = "requires physical GPU and VOXY_MORPH_UPSTREAM_GLB; ordinary imported owner with all original primitives"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_original_morph_owner_updates_all_primitives() -> Result<(), Box<dyn std::error::Error>> {
     let source_path = std::env::var_os("VOXY_MORPH_UPSTREAM_GLB")
         .ok_or("set VOXY_MORPH_UPSTREAM_GLB to the pinned original asset")?;

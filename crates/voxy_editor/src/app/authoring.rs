@@ -299,6 +299,10 @@ impl App {
     ) -> Result<u64, Box<dyn std::error::Error>> {
         self.validate_authoring_document_policy(document, false)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn validate_authoring_document_policy(
         &self,
         document: &SceneDocument,
@@ -321,6 +325,7 @@ impl App {
         } else {
             voxy_gameplay::validate_game_descriptors(&loaded.graph, 128)?;
         }
+        voxy_gameplay::validate_physics_joints(&loaded.graph, |id| loaded.resolve(id))?;
         for object in &document.objects {
             loaded
                 .graph

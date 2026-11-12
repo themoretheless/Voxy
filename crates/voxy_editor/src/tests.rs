@@ -698,6 +698,10 @@ fn behavior_inspector_edits_undoes_and_rejects_conflicting_writers() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn multiple_authored_bodies_collide_in_play_and_restart_from_document() {
     let root =
         std::env::temp_dir().join(format!("voxy-multiple-bodies-play-{}", std::process::id()));
@@ -1924,6 +1928,42 @@ fn drag_is_one_undo_step_and_cancel_preserves_redo() {
     app.preview_drag(Vec2::splat(60.0)).unwrap();
     app.finish_drag(false).unwrap();
     assert_eq!(app.authoring_document().unwrap(), moved);
+    app.stop_workers().unwrap();
+}
+
+#[test]
+fn axis_drag_snaps_world_displacement_with_shift_and_undoes_once() {
+    let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../voxy_render/examples/assets/quad.obj");
+    let mut app = App::new(&fixture, false).unwrap();
+    let before = app.authoring_document().unwrap();
+    let viewport = Vec2::splat(600.0);
+    let cursor = viewport * 0.5;
+    app.begin_drag(cursor, viewport).unwrap();
+    let drag = app.drag.as_mut().unwrap();
+    drag.axis = DragAxis::X;
+    let vp = app.camera.matrix(viewport).unwrap();
+    let project = |point| {
+        let point = vp.project_point3(point);
+        Vec2::new(point.x + 1., 1. - point.y) * viewport * 0.5
+    };
+    let screen_axis = project(drag.world_origin + Vec3::X * 0.25) - project(drag.world_origin);
+    assert!(screen_axis.length_squared() >= 1.0);
+    let destination = cursor + screen_axis * 1.6;
+    app.preview_drag(destination).unwrap();
+    let unsnapped = app.authoring_document().unwrap().objects[0].translation[0]
+        - before.objects[0].translation[0];
+    assert!((unsnapped - 0.4).abs() < 1e-4);
+    app.modifiers = winit::keyboard::ModifiersState::SHIFT;
+    app.preview_drag(destination).unwrap();
+    app.finish_drag(true).unwrap();
+    let after = app.authoring_document().unwrap();
+    assert_eq!(
+        after.objects[0].translation[0] - before.objects[0].translation[0],
+        0.5
+    );
+    app.edit_key(KeyCode::KeyZ).unwrap();
+    assert_eq!(app.authoring_document().unwrap(), before);
     app.stop_workers().unwrap();
 }
 

@@ -1,6 +1,10 @@
 //! Verify asynchronous diagnostic readback against a nonuniform HDR texture.
 use voxy_render::HdrPixelProbe;
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     pollster::block_on(async {
         let instance =

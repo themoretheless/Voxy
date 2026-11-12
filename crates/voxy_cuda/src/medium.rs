@@ -13,6 +13,10 @@ pub const MEDIUM_MAX_CELLS: usize = 1_000_000;
 /// # Errors
 /// Rejects empty or oversized grids, mismatched arrays, nonfinite or
 /// nonpositive parameters.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn pack_medium_job(
     shape: [usize; 3],
     spacing: [f32; 3],

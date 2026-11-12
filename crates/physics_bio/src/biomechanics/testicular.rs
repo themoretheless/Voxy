@@ -659,6 +659,10 @@ impl TesticularGaitSimulation {
     /// Advances the paired suspended testicular solids under a full 6-DOF skeletal
     /// pelvis transform, thermomechanical cremaster/dartos cord elevation, and
     /// dynamic medial thigh capsule barrier + lubricated contact.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_coupled_skeletal_frame(
         &mut self,
         frame: &CoupledSkeletalGaitFrame,

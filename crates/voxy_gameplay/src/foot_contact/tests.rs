@@ -257,6 +257,10 @@ fn pivot_transfer_admits_same_support_and_preserves_old_state_on_rejection() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn admitted_heel_to_toe_transfer_rolls_about_physical_surface_and_moves_with_platform() {
     use glam::DQuat;
     use voxy_animation::{FootPlant, RootRigidTransform};
@@ -458,6 +462,10 @@ fn admitted_pivot_target_includes_projection_and_converts_actor_frame() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn admitted_pivot_pose_stages_contact_only_for_reachable_ik() {
     use glam::{DQuat, Mat4};
     use std::sync::Arc;

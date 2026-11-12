@@ -3,6 +3,10 @@ use super::WorldTraversalPair;
 #[test]
 #[ignore = "exclusive Metal GPU; requires fresh VOXY_TRAVERSAL_PAIR_COMPARATOR_PROOF"]
 #[cfg(target_os = "macos")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn comparator_detects_protected_low_bits_and_ignores_only_metadata()
 -> Result<(), Box<dyn std::error::Error>> {
     use wgpu::util::DeviceExt;

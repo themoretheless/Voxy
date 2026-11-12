@@ -5,6 +5,10 @@ use voxy_render::{
 };
 
 // Partial coverage exercises the reserved background ID and invalid primary pixels.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn probe(
     device: &wgpu::Device,
     adapter: &wgpu::Adapter,

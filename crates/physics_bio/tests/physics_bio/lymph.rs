@@ -184,6 +184,10 @@ fn nonlinear_space_specific_osmosis_drives_conservative_valved_loop() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn active_lymphatic_wall_pumps_without_edge_pressure_head() {
     use physics_bio::biomechanics::OsmoticPressureLaw;
     use physics_bio::lymph::LymphaticWallLaw;
@@ -319,6 +323,10 @@ fn active_lymphatic_wall_pumps_without_edge_pressure_head() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn active_wall_cycle_refines_toward_independent_runge_kutta_reference() {
     use physics_bio::biomechanics::OsmoticPressureLaw;
     use physics_bio::lymph::LymphaticWallLaw;
@@ -814,6 +822,10 @@ fn inertial_wall_network_joint_inventory_momentum_and_rollback() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn inertial_nonlinear_network_converges_to_independent_rk4() {
     use physics_bio::biomechanics::OsmoticPressureLaw;
     use physics_bio::lymph::{LymphaticHydraulicAttachment, LymphaticWallLaw};
@@ -977,6 +989,10 @@ fn inertial_nonlinear_network_converges_to_independent_rk4() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn adaptive_inertial_retries_nonlinear_failure_and_preserves_atomicity() {
     use physics_bio::biomechanics::OsmoticPressureLaw;
     use physics_bio::lymph::{LymphaticHydraulicAttachment, LymphaticWallLaw};

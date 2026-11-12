@@ -10,31 +10,73 @@ env:
 
 jobs:
   check:
-    name: Format, Depgraph & Tests
-    runs-on: macos-latest
+    name: Format, Depgraph & Tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libx11-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev libwayland-dev libxkbcommon-dev libvulkan-dev libasound2-dev
+
+      - name: Install pinned Rust toolchain from rust-toolchain.toml
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: nightly-2026-05-27
           components: rustfmt, clippy
 
       - name: Cache Cargo registry and build artifacts
         uses: Swatinem/rust-cache@v2
 
       - name: Check formatting
+        if: matrix.os == 'macos-latest'
         run: cargo fmt --all -- --check
 
       - name: Check engine dependency boundaries
+        if: matrix.os == 'macos-latest'
         run: python3 tools/check_engine_boundaries.py
 
       - name: Run architectural and source-tree ratchets
         run: cargo test -p voxy_depgraph
 
-      - name: Lint workspace libraries
-        run: cargo clippy --workspace --lib -- -D warnings
+      - name: Lint workspace all targets
+        run: cargo clippy --workspace --all-targets -- -D warnings
 
       - name: Run workspace unit tests
         run: cargo test --workspace --lib
+
+  cross-targets:
+    name: Cross Targets (WASM / Mobile)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pinned Rust toolchain and cross targets
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-05-27
+          targets: wasm32-unknown-unknown,aarch64-apple-ios,aarch64-linux-android
+
+      - name: Cache Cargo registry and build artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check Web runtime for wasm32-unknown-unknown
+        run: cargo check -p voxy_web --target wasm32-unknown-unknown
+
+      - name: Check Mobile runtime for iOS and Android targets
+        run: |
+          cargo check -p voxy_mobile --target aarch64-apple-ios
+          # blake3 compiles C for NEON, so cc-rs needs the NDK clang for the Android target.
+          ndk_bin="$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/darwin-x86_64/bin"
+          export CC_aarch64_linux_android="$ndk_bin/aarch64-linux-android24-clang"
+          export AR_aarch64_linux_android="$ndk_bin/llvm-ar"
+          cargo check -p voxy_mobile --target aarch64-linux-android
+

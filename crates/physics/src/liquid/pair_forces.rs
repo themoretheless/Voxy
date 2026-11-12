@@ -7,6 +7,11 @@ use super::{
 };
 
 impl Liquid {
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn particle_pair_forces(
         &self,
         particles: &[Particle],
@@ -304,6 +309,10 @@ impl LiquidPairForceInput {
     }
 }
 impl Liquid {
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn particle_pair_force_input(
         &self,
         a: Particle,

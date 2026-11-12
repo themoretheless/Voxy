@@ -2,6 +2,10 @@
 use std::{error::Error, fs, io::Write, path::PathBuf, sync::Arc};
 use voxy_model::{ModelAsset, ModelAssetCheckpoint, ModelAssetCheckpointLimits, ModelLimits};
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn Error>> {
     let mut args = std::env::args_os().skip(1);
     let source_path = PathBuf::from(

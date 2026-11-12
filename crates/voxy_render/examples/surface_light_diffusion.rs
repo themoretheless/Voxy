@@ -35,6 +35,10 @@ impl Solver {
     }
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(path) = std::env::args().nth(1) {
         return pollster::block_on(body_gate(&path));
@@ -163,6 +167,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     })
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 async fn body_gate(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let input: serde_json::Value = serde_json::from_slice(&std::fs::read(path)?)?;
     let mass: Vec<f64> = serde_json::from_value(input["mass"].clone())?;

@@ -17,6 +17,10 @@ impl InertialBody {
     ) -> Result<super::DrivenSupportStep, &'static str> {
         self.step_implicit_supports_controlled(targets, dt, tolerance_j, None)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(in crate::biomechanics::inertia) fn step_implicit_supports_controlled(
         &mut self,
         targets: Option<&[SupportTarget]>,
@@ -390,6 +394,10 @@ pub(super) fn try_coupled_contact_direction_with_material(
         weight, diagonal, blocks, pinned, residual, body, None, operation,
     )
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn try_coupled_contact_direction_with_material_prepared(
     weight: &[f64],
     diagonal: &[Vec3],

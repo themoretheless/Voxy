@@ -452,6 +452,10 @@ impl MixedDarcy {
             Some((reservoir_pressure_pa, reservoir_compliance_m3_per_pa)),
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn storage_step(
         &self,
         pressures: &[f64],
@@ -578,6 +582,10 @@ impl MixedDarcy {
     /// # Errors
     /// Rejects invalid/degenerate/nonmanifold topology, non-SPD permeability,
     /// duplicate/internal boundary assignments, overflow or resource limits.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         points: Vec<Vec3>,
         cells: Vec<[usize; 4]>,

@@ -4,6 +4,10 @@ use crate::*;
 // Use the same recipe, decoder, input quotas and final source validation as the
 // background import worker. Decoded models are dropped one at a time; package
 // publication revalidates every captured byte through its existing extra inputs.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn declared_sources(
     app: &App,
 ) -> Result<Vec<(SourcePath, Option<Vec<u8>>)>, Box<dyn std::error::Error>> {

@@ -9,12 +9,11 @@ use voxy_text::{FontLimits, RunDirection, RunOptions, TextFont, TextRun};
 use voxy_ui::{
     Axis, KeyAction, LayoutItem, Length, PointerAction, ScrollPanel, WidgetId, layout_linear,
 };
-use voxy_ui_winit::WindowUi;
+use voxy_ui_winit::{FrameResult, WindowFrame, WindowUi, run_window_frame};
 use winit::{
-    application::ApplicationHandler,
     event::WindowEvent,
-    event_loop::{ActiveEventLoop, EventLoop},
-    window::{Window, WindowId},
+    event_loop::ActiveEventLoop,
+    window::{Window, WindowAttributes},
 };
 #[derive(Debug)]
 struct Resources {
@@ -122,29 +121,20 @@ impl Label {
 }
 #[derive(Debug)]
 struct App {
-    window: Option<Arc<Window>>,
     resources: Option<Resources>,
     ui: WindowUi,
     toggles: [bool; 3],
     frames: u32,
     smoke: bool,
-    error: Option<String>,
     font: Option<TextFont>,
     panel: Option<ScrollPanel>,
 }
 impl App {
-    fn initialize(&mut self, events: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
-        let window = Arc::new(
-            events.create_window(
-                Window::default_attributes()
-                    .with_title("Voxy UI — mouse, Tab, Enter/Space")
-                    .with_inner_size(winit::dpi::LogicalSize::new(640.0, 320.0)),
-            )?,
-        );
+    fn initialize(&mut self, window: &Arc<Window>) -> FrameResult {
         self.ui.set_scale(window.scale_factor())?;
         let size = window.inner_size();
         let host = pollster::block_on(SceneSurface::new(
-            Arc::clone(&window),
+            Arc::clone(window),
             size.width,
             size.height,
         ))?;
@@ -167,7 +157,6 @@ impl App {
             transform,
             labels,
         });
-        self.window = Some(window);
         Ok(())
     }
     fn project_regions(
@@ -191,10 +180,7 @@ impl App {
         }
         Ok(projected)
     }
-    fn draw(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        let Some(window) = &self.window else {
-            return Ok(());
-        };
+    fn draw(&mut self, window: &Window) -> FrameResult {
         let size = window.inner_size();
         if size.width == 0 || size.height == 0 {
             return Ok(());
@@ -295,27 +281,25 @@ impl App {
         Ok(())
     }
 }
-impl ApplicationHandler for App {
-    fn resumed(&mut self, events: &ActiveEventLoop) {
-        if let Err(error) = self.initialize(events) {
-            self.error = Some(error.to_string());
-            events.exit();
-        }
+impl WindowFrame for App {
+    fn window_attributes(&self) -> WindowAttributes {
+        Window::default_attributes()
+            .with_title("Voxy UI — mouse, Tab, Enter/Space")
+            .with_inner_size(winit::dpi::LogicalSize::new(640.0, 320.0))
     }
-    fn window_event(&mut self, events: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+    fn start(&mut self, _: &ActiveEventLoop, window: &Arc<Window>) -> FrameResult {
+        self.initialize(window)
+    }
+    fn window_event(
+        &mut self,
+        events: &ActiveEventLoop,
+        window: &Arc<Window>,
+        event: WindowEvent,
+    ) -> FrameResult {
         let dispatch = self.ui.event(&event);
         if let (Some(delta), Some(panel)) = (dispatch.scroll, &mut self.panel) {
-            match panel.scroll(delta) {
-                Ok(_) => {
-                    if let Some(window) = &self.window {
-                        window.set_title(&format!("Voxy UI scroll: {:?}", panel.offset()));
-                    }
-                }
-                Err(error) => {
-                    self.error = Some(error.to_string());
-                    events.exit();
-                }
-            }
+            panel.scroll(delta)?;
+            window.set_title(&format!("Voxy UI scroll: {:?}", panel.offset()));
         }
         let clicked = match (dispatch.pointer, dispatch.keyboard) {
             (PointerAction::Release { id, clicked: true }, _)
@@ -329,28 +313,19 @@ impl ApplicationHandler for App {
             if let Some(toggle) = self.toggles.get_mut(id) {
                 *toggle = !*toggle;
             }
-            if let Some(window) = &self.window {
-                window.set_title(&format!("Voxy UI toggles: {:?}", self.toggles));
-            }
+            window.set_title(&format!("Voxy UI toggles: {:?}", self.toggles));
         }
         match event {
             WindowEvent::CloseRequested => events.exit(),
             WindowEvent::RedrawRequested => {
-                if let Err(error) = self.draw() {
-                    self.error = Some(error.to_string());
-                    events.exit();
-                }
+                self.draw(window)?;
                 if self.smoke && self.frames >= 60 {
                     events.exit();
                 }
             }
             _ => {}
         }
-    }
-    fn about_to_wait(&mut self, _: &ActiveEventLoop) {
-        if let Some(window) = &self.window {
-            window.request_redraw();
-        }
+        Ok(())
     }
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -371,13 +346,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         })
         .transpose()?;
     let mut app = App {
-        window: None,
         resources: None,
         ui: WindowUi::new(3),
         toggles: [false; 3],
         frames: 0,
         smoke,
-        error: None,
         font,
         panel: if scroll {
             Some(ScrollPanel::new([640.0, 320.0], [640.0, 600.0])?)
@@ -385,10 +358,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             None
         },
     };
-    EventLoop::new()?.run_app(&mut app)?;
-    if let Some(error) = app.error {
-        return Err(error.into());
-    }
+    run_window_frame(&mut app, None)?;
     if smoke {
         assert!(app.frames >= 60);
         println!("UI WINDOW PASS: {} presented native frames", app.frames);

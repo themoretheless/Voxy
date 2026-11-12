@@ -152,6 +152,10 @@ impl SceneLiquidRuntime {
 impl SceneLiquidCheckpoint {
     /// Rebinds a complete independent owner into an already restored scene.
     /// Source and body order are retained even when fresh handles sort differently.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn prepare(
         &self,
         scene: &SceneGraph,
@@ -452,6 +456,10 @@ mod tests {
             .map(|(key, _)| key.clone())
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn complete_scene_owner_rebinds_reversed_handles_and_continues_120_steps() {
         let (mut original_scene, original_ids) = scene(
             false,

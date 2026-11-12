@@ -203,6 +203,10 @@ impl CollectionOverride {
         }
         Ok(result)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn apply(&self, value: &mut Value, key: &str) -> Result<(), DocumentError> {
         if self
             .added
@@ -370,6 +374,10 @@ mod tests {
     use serde_json::json;
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn defaults_create_empty_collection_items_with_unique_caller_ids_and_validation() {
         #[derive(Serialize, Deserialize)]
         struct Item {
@@ -486,6 +494,10 @@ mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn collection_authoring_operations_use_ids_validate_and_preserve_history() {
         #[derive(Serialize, Deserialize)]
         struct Item {

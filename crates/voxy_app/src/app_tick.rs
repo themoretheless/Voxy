@@ -2,6 +2,10 @@
 use super::*;
 
 impl VoxyApp {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn advance_animation(&mut self, event_loop: &ActiveEventLoop) {
         const SPRINT_SPEED: f32 = 8.5;
         let now = Instant::now();
@@ -440,6 +444,10 @@ impl VoxyApp {
         Ok(())
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn advance_actor_animation(
         &mut self,
         moving: bool,
@@ -554,6 +562,10 @@ impl VoxyApp {
         true
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn advance_projectiles(&mut self, dt: f32, event_loop: &ActiveEventLoop) {
         let motions = if let Some(compute) = self
             .motion_compute
@@ -674,6 +686,10 @@ impl VoxyApp {
         }
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn advance_vehicle(
         &mut self,
         intent: controls::MoveIntent,

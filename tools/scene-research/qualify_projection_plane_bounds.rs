@@ -6,6 +6,10 @@ struct Case {
     matrix: [f32; 16],
     point: [f32; 4],
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() {
     let root = std::path::PathBuf::from(std::env::args().nth(1).expect("output directory"));
     std::fs::create_dir_all(&root).unwrap();

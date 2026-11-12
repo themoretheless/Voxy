@@ -190,6 +190,10 @@ fn build_scene(seed: u64, radius: i32, procedural: bool) -> Result<BootstrapScen
     })
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn build_scene_using_generator(
     seed: u64,
     radius: i32,
@@ -461,6 +465,10 @@ pub fn rebuild_chunks_from_snapshots(
 /// # Errors
 ///
 /// Returns missing chunks, lighting or meshing failures.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn rebuild_vertical_chunks_from_snapshots(
     registry: &Arc<BlockRegistry>,
     snapshots: &BTreeMap<ChunkPos, ChunkSnapshot>,

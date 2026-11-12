@@ -457,6 +457,10 @@ fn walk<const RETAIN: bool, const EXACT: bool>(
 }
 #[test]
 #[ignore = "requires original VRC1 geometry; constructs axes natively without serialized witnesses"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn captured_native_exact_axis_discovery_certifies_and_rejects_penetration() {
     let data =
         std::fs::read_to_string(std::env::var("VOXY_HAIR_EXACT_AXIS_FIXTURE").unwrap()).unwrap();

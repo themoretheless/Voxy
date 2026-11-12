@@ -3,6 +3,10 @@ use glam::{Mat4, Vec3};
 use voxy_model::{ModelAsset, ModelLimits};
 use voxy_render::{GraphicsOptions, SceneDraw, SceneRenderer};
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let asset = ModelAsset::parse(
         include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb"),

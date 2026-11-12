@@ -9,6 +9,10 @@ use physics_astro::{
     astrophysics::spherical::Sphere,
     astrophysics::spherical_radiation::FreeFreeSpectrum,
 };
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), String> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     let number = |i: usize, fallback: f64| {

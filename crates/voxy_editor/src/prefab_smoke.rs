@@ -12,8 +12,90 @@ pub(super) struct Smoke {
 }
 impl App {
     pub(crate) fn start_prefab_smoke(&mut self) {
-        self.prefab_smoke = Some(Smoke::default());
+        self.prefab_smoke = Some(Smoke {
+            phase: if std::env::var_os("VOXY_PREFAB_SMOKE_JOINT").is_some() {
+                8
+            } else {
+                Self::prefab_smoke_entry_phase()
+            },
+            ..Smoke::default()
+        });
         self.smoke_deadline = Some(std::time::Instant::now() + std::time::Duration::from_secs(30));
+    }
+
+    fn prefab_smoke_entry_phase() -> u8 {
+        if std::env::var_os("VOXY_PREFAB_SMOKE_HIERARCHY_SEARCH").is_some() {
+            6
+        } else {
+            0
+        }
+    }
+
+    /// Clicks the presented joint controls of the first object: add with a hierarchy target
+    /// pick, switch the kind, remove. The authoring document ends as it started.
+    fn joint_smoke_phase(&mut self, phase: u8) -> Result<(), Box<dyn std::error::Error>> {
+        use crate::{InspectorMode, joint_authoring::SCHEMA, panels::Action};
+        let document = self.authoring_document()?;
+        let owner = document.objects.first().ok_or("missing joint owner")?;
+        let token = crate::joint_authoring::request_token(owner)?;
+        let kind = owner
+            .components
+            .get(SCHEMA)
+            .map(|joint| &joint["kind"]["type"]);
+        let clicked = match phase {
+            8 => {
+                self.selected = 0;
+                self.inspector = InspectorMode::Components(0);
+                true
+            }
+            9 | 12 => self.invoke_presented_action(Action::Joint(token))?,
+            10 => {
+                let target = &document.objects.get(1).ok_or("missing joint target")?.id;
+                let pick = self
+                    .follow_pick
+                    .as_ref()
+                    .ok_or("joint pick did not start")?;
+                let choice = crate::camera_authoring::choice_token(pick.key, target);
+                self.invoke_presented_action(Action::FollowTargetChoice(choice))?
+            }
+            _ => {
+                if kind.and_then(|kind| kind.as_str()) != Some("fixed") {
+                    return Err("picked joint is not a weld".into());
+                }
+                let row = crate::component_fields::fields(owner)?
+                    .iter()
+                    .position(|field| field.schema == SCHEMA && field.path == "/kind/type")
+                    .ok_or("picked joint has no kind row")?;
+                if self.inspector == InspectorMode::Components(row / 6) {
+                    self.invoke_presented_action(Action::JointKind(token))?
+                } else {
+                    self.inspector = InspectorMode::Components(row / 6);
+                    false
+                }
+            }
+        };
+        if !clicked {
+            return Ok(());
+        }
+        let mut next = phase + 1;
+        if phase == 12 {
+            if kind.and_then(|kind| kind.as_str()) != Some("hinge")
+                || self.authoring_document()?.objects[0]
+                    .components
+                    .contains_key(SCHEMA)
+            {
+                return Err("joint kind switch or removal was not applied".into());
+            }
+            println!(
+                "PREFAB NATIVE JOINT PICK KIND REMOVE PASS frames={}",
+                self.frames
+            );
+            next = Self::prefab_smoke_entry_phase();
+        }
+        let smoke = self.prefab_smoke.as_mut().ok_or("missing acceptance")?;
+        smoke.phase = next;
+        smoke.frame = self.frames;
+        Ok(())
     }
 
     fn verify_prefab_creation(
@@ -225,14 +307,11 @@ impl App {
         );
         Ok(())
     }
-    fn invoke_package_toolbar(
+    fn invoke_presented_action(
         &mut self,
         expected: crate::panels::Action,
     ) -> Result<bool, Box<dyn std::error::Error>> {
-        let panels = self
-            .panels
-            .as_mut()
-            .ok_or("missing project package toolbar")?;
+        let panels = self.panels.as_mut().ok_or("missing rendered panels")?;
         let Some(&(rect, _)) = panels
             .regions
             .iter()
@@ -245,14 +324,18 @@ impl App {
                 rect[0] + rect[2] * 0.5,
                 rect[1] + rect[3] * 0.5,
             ))
-            .ok_or("package action is not hit-testable")?;
+            .ok_or("panel action is not hit-testable")?;
         if action != expected {
-            return Err("package action overlaps another region".into());
+            return Err("panel action overlaps another region".into());
         }
         self.panel_action(action)?;
         Ok(true)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn prefab_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         let Some(smoke) = self.prefab_smoke.as_ref() else {
             return Ok(false);
@@ -269,6 +352,49 @@ impl App {
             return Ok(false);
         }
         match phase {
+            8..=12 => self.joint_smoke_phase(phase)?,
+            6 => {
+                let document = self.panel_document()?;
+                let query = &document
+                    .objects
+                    .first()
+                    .ok_or("missing search fixture")?
+                    .id
+                    .0;
+                if !self.invoke_presented_action(crate::panels::Action::SearchHierarchy)? {
+                    return Ok(false);
+                }
+                self.authoring_input_key(KeyCode::KeyA, Some(query))?;
+                let smoke = self.prefab_smoke.as_mut().ok_or("missing acceptance")?;
+                smoke.phase = 7;
+                smoke.frame = self.frames;
+            }
+            7 => {
+                let panels = self
+                    .panels
+                    .as_ref()
+                    .ok_or("missing rendered search results")?;
+                let mut matches = panels
+                    .regions
+                    .iter()
+                    .filter_map(|(_, action)| match action {
+                        crate::panels::Action::Select(index) => Some(*index),
+                        _ => None,
+                    });
+                if matches.next() != Some(0) || matches.next().is_some() {
+                    return Err("hierarchy search did not isolate the fixture object".into());
+                }
+                if !self.invoke_presented_action(crate::panels::Action::Select(0))? {
+                    return Ok(false);
+                }
+                if self.selected != 0 {
+                    return Err("hierarchy search result selected the wrong object".into());
+                }
+                println!("PREFAB NATIVE HIERARCHY SEARCH PASS frames={}", self.frames);
+                let smoke = self.prefab_smoke.as_mut().ok_or("missing acceptance")?;
+                smoke.phase = 0;
+                smoke.frame = self.frames;
+            }
             0 => {
                 let original = self.authoring_document()?;
                 self.verify_prefab_placement(&original)?;
@@ -356,7 +482,7 @@ impl App {
                     self.prefab_smoke = None;
                     return Ok(true);
                 }
-                if !self.invoke_package_toolbar(crate::panels::Action::BuildGame)? {
+                if !self.invoke_presented_action(crate::panels::Action::BuildGame)? {
                     return Ok(false);
                 }
                 let smoke = self.prefab_smoke.as_mut().ok_or("missing acceptance")?;
@@ -370,7 +496,7 @@ impl App {
                         self.prefab_smoke = None;
                         return Ok(true);
                     }
-                    if !self.invoke_package_toolbar(crate::panels::Action::RunBuiltGame)? {
+                    if !self.invoke_presented_action(crate::panels::Action::RunBuiltGame)? {
                         return Ok(false);
                     }
                     println!("PREFAB NATIVE BUILD PASS {}", path.display());

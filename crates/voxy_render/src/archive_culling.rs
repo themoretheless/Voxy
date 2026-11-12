@@ -18,6 +18,10 @@ pub struct ArchiveInstanceCulling {
 impl ArchiveInstanceCulling {
     /// Input/output buffers must retain STORAGE and VERTEX usage and outlive this
     /// producer. No geometry, material data or instance payload is approximated.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         input: &wgpu::Buffer,

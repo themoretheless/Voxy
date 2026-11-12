@@ -427,6 +427,10 @@ fn morph_locomotion_uses_shared_import_player_and_source_free_package()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn morph_only_reload_fades_old_revision_and_rejects_invalid_defaults()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -799,6 +803,10 @@ fn morph_without_skins_or_clips_keeps_defaults_through_project_and_package()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn authored_morph_overrides_survive_locomotion_and_source_free_package()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -923,6 +931,10 @@ fn authored_morph_overrides_survive_locomotion_and_source_free_package()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn model_picking_uses_morphed_triangles_outside_imported_geometry()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();

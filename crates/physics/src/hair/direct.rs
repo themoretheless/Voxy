@@ -369,6 +369,10 @@ pub(super) fn solve_upper_factored(
         ) / matrix[i * BAND];
     }
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn assemble(rod: &mut HairRod, dt: f64) -> Result<(Vec<f64>, Vec<f64>), &'static str> {
     let n = rod.x.len() * 6;
     let mut matrix = std::mem::take(&mut rod.solve_matrix);

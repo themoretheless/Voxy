@@ -74,6 +74,10 @@ impl Panels {
         clippy::too_many_arguments,
         reason = "component inspector page renders within the caller's sprite batch and column bounds"
     )]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn build_components_page(
         &mut self,
         batch: &mut SpriteBatch,
@@ -92,7 +96,13 @@ impl Panels {
             let y = 116.0 + row as f32 * 26.0;
             let text = field.filter(|(id, _)| *id == index).map_or_else(
                 || {
-                    if member.schema == "game.follow-camera.v1" && member.path == "/target" {
+                    if let Some(text) = crate::joint_authoring::value_text(member) {
+                        text
+                    } else if matches!(
+                        member.schema.as_str(),
+                        "game.follow-camera.v1" | crate::joint_authoring::SCHEMA
+                    ) && member.path == "/target"
+                    {
                         document
                             .objects
                             .iter()
@@ -137,6 +147,10 @@ impl Panels {
                     "Pick",
                     Action::FollowTarget(crate::camera_authoring::request_token(object)?),
                 ))
+            } else if !playing
+                && let Some(button) = crate::joint_authoring::row_button(object, member)?
+            {
+                Some(button)
             } else if !playing && member.schema == "editor.model-animation.v1" {
                 let token = marker_token;
                 if member.path == "/events" {
@@ -190,6 +204,8 @@ impl Panels {
             };
             let foot_label = if member.schema == "editor.model-retarget.v1" {
                 retarget_field_label(&member.path)
+            } else if member.schema == crate::joint_authoring::SCHEMA {
+                crate::joint_authoring::field_label(&member.path)
             } else {
                 (member.schema == "editor.foot-placement.v1")
                     .then(|| foot_field_label(&member.path))
@@ -219,7 +235,9 @@ impl Panels {
                 }
             } else if matches!(
                 member.schema.as_str(),
-                "editor.foot-placement.v1" | "editor.model-retarget.v1"
+                "editor.foot-placement.v1"
+                    | "editor.model-retarget.v1"
+                    | crate::joint_authoring::SCHEMA
             ) {
                 foot_label.as_deref().unwrap_or(member.path.as_str())
             } else if let Some(label) = marker_label.as_deref() {
@@ -350,6 +368,10 @@ impl Panels {
     #[expect(
         clippy::too_many_arguments,
         reason = "collections inspector renders paginated items and deleted-item recovery in one column"
+    )]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
     )]
     pub(super) fn build_collections_page(
         &mut self,

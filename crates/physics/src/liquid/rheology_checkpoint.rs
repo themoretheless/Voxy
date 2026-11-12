@@ -177,6 +177,10 @@ mod tests {
     use super::*;
     use crate::liquid::{Config, LiquidCheckpointLimits};
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn structural_viscosity_history_rebuilds_and_continues_without_reset() {
         let config = Config {
             gravity: [0.; 3],

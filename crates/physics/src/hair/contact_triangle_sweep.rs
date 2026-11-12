@@ -760,6 +760,10 @@ mod tests {
         );
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn moving_mesh_bvh_matches_exhaustive_face_queries() {
         let mut vertices = Vec::new();
         let mut previous = Vec::new();

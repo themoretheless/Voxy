@@ -93,6 +93,10 @@ impl PlanarReflectionPipeline {
     /// This reflection history must be separate from primary/direct lighting.
     /// # Errors
     /// Rejects sizes/usages, invalid cameras/nonunit planes and dispatch limits.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn prepare(
         &self,
         hits: &wgpu::Buffer,

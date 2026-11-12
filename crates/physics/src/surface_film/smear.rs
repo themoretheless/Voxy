@@ -46,6 +46,10 @@ impl SurfaceFilm {
     /// # Errors
     /// Invalid controls, mismatched lengths, invalid friction state, or a film
     /// transport failure (the film and states are then unchanged).
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance_smear(
         &mut self,
         dt: f64,
@@ -72,6 +76,10 @@ impl SurfaceFilm {
     /// sliding body for `dt`. When `yield_stress_pa > 0` (e.g. mud, paint, blood, gel),
     /// only the plastic excess shear $(\tau - \tau_0)_+$ drives film transport while sub-yield
     /// cells remain pinned in [`SmearRegime::ViscoplasticYield`].
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance_viscoplastic_smear(
         &mut self,
         dt: f64,

@@ -42,6 +42,10 @@ pub struct FracturePlan {
 /// # Errors
 /// Invalid frame, coordinate overflow, unavailable chunks, unknown blocks,
 /// an inconsistent view, or a write budget overflow.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn plan_fracture(
     view: &impl VoxelView,
     registry: &voxy_world::BlockRegistry,

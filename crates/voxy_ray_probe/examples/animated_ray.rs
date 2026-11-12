@@ -251,6 +251,10 @@ impl Demo {
         self.retry_at = None;
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn initialize(
         &mut self,
         event_loop: &ActiveEventLoop,
@@ -386,6 +390,10 @@ impl Demo {
         self.window = Some(window);
         Ok(())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn draw(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         if self.suspended {
             return Ok(());
@@ -936,6 +944,10 @@ impl ApplicationHandler for Demo {
         event_loop.set_control_flow(ControlFlow::Wait);
     }
     // Window lifecycle and demo controls are dispatched together.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         let result = (|| -> Result<(), Box<dyn std::error::Error>> {
             match event {
@@ -1090,6 +1102,10 @@ impl ApplicationHandler for Demo {
     }
 }
 // CLI, event-loop completion and profile readback orchestration.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut smoke = false;
     let mut profile = false;

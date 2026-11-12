@@ -291,6 +291,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires actual GPU; supported density and normal chain"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_density_normal_chain_preserves_support_and_native_step() {
         use physics::liquid::{
             BoundarySample, Config, Formulation, Liquid, LiquidComputeBackend,

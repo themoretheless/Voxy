@@ -4,6 +4,10 @@ use super::*;
 // A real small receiver sits on a reflected live ray at exactly t=1/64.
 // Its affine source transform represents origin + direction*(60/64) exactly;
 // it does not cover that ray's primary raster pixel. No hit record is injected.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn exact_image_hit_fixture(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -19,6 +23,11 @@ pub(super) fn exact_image_hit_fixture(
     )
 }
 #[allow(clippy::fn_params_excessive_bools)]
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn exact_image_hit_fixture_impl(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

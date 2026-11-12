@@ -5,6 +5,10 @@ use std::{collections::BTreeMap, sync::Arc};
 use voxy_core::{ChunkPos, VoxelPos, WorldEpoch};
 use voxy_render::{SceneDraw, SceneMesh, SceneRenderer, SceneVertex};
 use voxy_world::*;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let registry = Arc::new(BlockRegistry::new(vec![
         BlockDef {

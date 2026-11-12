@@ -75,6 +75,35 @@ impl PlatformMotion {
         scene.set_locals(&self.originals)?;
         Ok(())
     }
+
+    /// Keeps this phase admissible after a later system of the same tick (`joint.step`) moved
+    /// the `moved` nodes. The recorded platform displacements still describe the scene when it
+    /// was unchanged between this phase and `before` and no moved node is a platform, a carried
+    /// rider or one of their ancestors; the phase then adopts the current scene revision.
+    /// Otherwise the stale revision stays and the character phase rejects the tick.
+    /// # Errors
+    /// Reports stale platform or rider handles.
+    pub fn adopt_unrelated_moves(
+        &mut self,
+        scene: &SceneGraph,
+        before: voxy_scene::SceneChangeToken,
+        moved: &[NodeId],
+    ) -> Result<(), GameplayError> {
+        if self.scene_revision != Some(before) {
+            return Ok(());
+        }
+        for &(node, _) in self.riders.iter().chain(&self.boundaries) {
+            let mut current = Some(node);
+            while let Some(owner) = current {
+                if moved.contains(&owner) {
+                    return Ok(());
+                }
+                current = scene.parent(owner)?;
+            }
+        }
+        self.scene_revision = Some(scene.change_token());
+        Ok(())
+    }
 }
 
 /// Advance authored movers in node order before dynamic bodies and characters.
@@ -101,6 +130,10 @@ pub fn step_kinematic_bodies_with_dynamics(
     step_kinematic_with_limits(scene, characters, dt, couple_dynamic, &[])
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(crate) fn step_kinematic_with_limits(
     scene: &mut SceneGraph,
     characters: Option<&CharacterPhysics>,

@@ -98,6 +98,10 @@ impl FemaleDemo {
     pub fn set_grasp_target(&mut self, shape: &str) -> Result<(), Box<dyn std::error::Error>> {
         self.set_grasp_target_with_offset(shape, Vec3::ZERO)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn set_grasp_target_with_offset(
         &mut self,
         shape: &str,
@@ -444,24 +448,29 @@ impl FemaleDemo {
             Vec3::ZERO
         }
     }
+    /// The viewer's orbit about the current focus point.
+    pub fn orbit_view(&self) -> crate::orbit::OrbitController {
+        crate::orbit::OrbitController {
+            yaw: self.yaw,
+            pitch: self.pitch,
+            distance: self.distance,
+            target: self.focus(),
+        }
+    }
     pub fn eye(&self) -> Vec3 {
-        let focus = self.focus();
-        focus
-            + Vec3::new(
-                self.yaw.sin() * self.pitch.cos() * self.distance,
-                self.pitch.sin() * self.distance,
-                self.yaw.cos() * self.pitch.cos() * self.distance,
-            )
+        self.orbit_view().eye()
     }
     pub fn orbit(&mut self, x: f32, y: f32) {
-        use crate::orbit::ORBIT_PITCH_LIMIT;
-        self.yaw += x;
-        self.pitch = (self.pitch + y).clamp(-ORBIT_PITCH_LIMIT, ORBIT_PITCH_LIMIT);
+        let (limits, _) = crate::orbit::viewer(self.hand_focus);
+        let mut view = crate::orbit::OrbitController::new(self.yaw, self.pitch, self.distance);
+        view.drag(x, y, &limits);
+        (self.yaw, self.pitch) = (view.yaw, view.pitch);
     }
     pub fn zoom(&mut self, amount: f32) {
-        let (minimum, step) = crate::orbit::zoom_range(self.hand_focus);
-        self.distance =
-            (self.distance + amount * step).clamp(minimum, crate::orbit::ORBIT_MAX_DISTANCE);
+        let (limits, step) = crate::orbit::viewer(self.hand_focus);
+        let mut view = crate::orbit::OrbitController::new(self.yaw, self.pitch, self.distance);
+        view.zoom(amount * step, &limits);
+        self.distance = view.distance;
     }
     pub(crate) fn support_offset(&self, rest: [f64; 3], time: f64) -> f64 {
         self.support_offset_with_secondary(rest, time, &self.secondary)
@@ -942,6 +951,10 @@ impl FemaleDemo {
         let mesh = self.mesh_with_hair_and_bindings(include_hair, Some(&mut bindings))?;
         Ok((mesh, bindings))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn mesh_with_hair_and_bindings(
         &self,
         include_hair: bool,

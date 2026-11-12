@@ -174,6 +174,10 @@ pub(super) struct ChunkLayerDraws {
     pub translucent: std::ops::Range<u32>,
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn encode_voxel_layers<'a>(
     pass: &mut wgpu::RenderPass<'a>,
     pipelines: &'a VoxelLayerPipelines,
@@ -270,6 +274,10 @@ fn create_camera_layout_for_stages(
         .build(device)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn create_photoreal_pipelines(
     device: &wgpu::Device,
     hdr_format: wgpu::TextureFormat,

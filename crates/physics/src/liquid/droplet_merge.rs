@@ -22,6 +22,10 @@ impl Liquid {
     /// energy ledgers; temperature is not heated a second time. No contact or
     /// coalescence criterion is inferred. Same material, no phase model or gas.
     /// Rejects constitutive changes that violate additive volume. Atomic.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn merge_droplets(
         &mut self,
         indices: &[usize],

@@ -24,6 +24,10 @@ impl SurfaceNormalTransport {
     ) -> Result<Self, SceneError> {
         Self::new_with_limit(device, mesh, geometry, mesh.vertices().len())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn new_with_limit(
         device: &wgpu::Device,
         mesh: &SceneMesh,

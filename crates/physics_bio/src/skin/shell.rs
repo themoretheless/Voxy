@@ -323,6 +323,10 @@ impl Skin {
         Ok(())
     }
     /// invalid materials, indices, pins and fiber directions.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         rest: Vec<Point>,
         triangles: Vec<[usize; 3]>,
@@ -652,6 +656,10 @@ impl Skin {
         }
         Ok(w * (f.area * f.stiffness_scale))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn evaluate(
         &self,
         p: &[Point],
@@ -979,6 +987,10 @@ impl Skin {
     /// Implicit step with strictly positive-gap barrier contact.
     /// # Errors
     /// Rejects initial overlap, invalid contact data and nonconverged solves atomically.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_with_contacts(
         &mut self,
         dt: f64,

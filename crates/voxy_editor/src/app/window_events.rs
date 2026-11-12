@@ -229,6 +229,10 @@ impl ApplicationHandler for App {
         }
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn window_event(&mut self, events: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         if self.trace.enabled
             && matches!(
@@ -412,8 +416,19 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::ModifiersChanged(modifiers) => {
+                let was_snapping = self.modifiers.shift_key();
                 self.modifiers = modifiers.state();
-                Ok(())
+                if was_snapping != self.modifiers.shift_key()
+                    && self
+                        .drag
+                        .as_ref()
+                        .is_some_and(|drag| !matches!(drag.axis, DragAxis::Plane))
+                    && let Some(cursor) = self.cursor
+                {
+                    self.preview_drag(cursor)
+                } else {
+                    Ok(())
+                }
             }
             WindowEvent::Focused(focused) => {
                 self.play.player_input.set_focused(focused);

@@ -95,6 +95,10 @@ impl Liquid {
     /// Different material IDs do not merge. Same-material incompatible thermal or
     /// constitutive state rejects the entire operation. Forces remain frozen;
     /// substrate contacts, gas/phase models and collision breakup are not handled.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn coalesce_swept_droplets(
         &mut self,
         previous: &[[f64; 3]],

@@ -191,6 +191,10 @@ mod tests {
         (world, wear, stone)
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn coupled_wear_updates_geometry_cloud_and_heat_with_atomic_failure() {
         use physics::liquid::{
             Config, Liquid, LiquidField, Material as FluidMaterial, Particle, TransportMaterial,

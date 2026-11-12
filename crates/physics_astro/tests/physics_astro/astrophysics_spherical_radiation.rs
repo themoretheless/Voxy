@@ -217,6 +217,10 @@ fn different_compositions_at_equal_temperature_remain_in_radiative_equilibrium()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn tabulated_absorption_matches_constant_and_domain_exit_rolls_back() {
     use physics_astro::{
         astrophysics::gas::{Boundary, Cell},

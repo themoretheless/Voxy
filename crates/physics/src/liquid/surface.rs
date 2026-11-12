@@ -37,6 +37,10 @@ impl Liquid {
     /// Samples the same poly6 volume field with an explicit support radius for
     /// every particle. This permits small resolved drops without erasing them
     /// through the carrier's larger support. Only local grid nodes are visited.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn surface_with_particle_support(
         &self,
         config: SurfaceConfig,

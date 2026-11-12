@@ -61,6 +61,10 @@ fn exact_upper_retains_a_coordinate_tail_lost_before_backtransform() {
 
 #[test]
 #[ignore = "exact rational oracle requires VQC1 physical input and VXE1 captured expansions"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn captured_expanded_coordinates_audit_original_physical_gate() {
     let original = std::env::var_os("VOXY_EXPANDED_PHYSICAL_INPUT").expect("VQC1 input");
     let directory = std::env::var_os("VOXY_EXPANDED_FIXTURES").expect("VXE1 directory");

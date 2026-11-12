@@ -7,8 +7,9 @@
 use glam::Vec3;
 
 use crate::{
-    BodycamPostProcess, Renderer, SceneDraw, SceneError, SceneInstancedDraw, SceneInstancer,
-    SceneRenderer, archive_scene::ArchiveSceneRenderer,
+    BodycamPostProcess, OceanCamera, OceanRenderer, Renderer, SceneDraw, SceneError,
+    SceneInstancedDraw, SceneInstancer, SceneRenderer, ScreenSpaceFluidRenderer,
+    archive_scene::ArchiveSceneRenderer,
 };
 
 /// Declarative pass node in a [`RenderGraph`].
@@ -55,6 +56,22 @@ pub enum RenderGraphNode<'a> {
     BodycamPost {
         post: &'a BodycamPostProcess,
         output_view: &'a wgpu::TextureView,
+    },
+    /// Advances and encodes the Tessendorf FFT `OceanRenderer` into the active color target.
+    Ocean {
+        ocean: &'a mut OceanRenderer,
+        queue: &'a wgpu::Queue,
+        camera: OceanCamera,
+        dt: f32,
+    },
+    /// Encodes `ScreenSpaceFluidRenderer` (opaque scene background, sphere/film depth, ray
+    /// thickness, bilateral smoothing, and dielectric refraction/Beer-Lambert composite) into
+    /// the active color target.
+    ScreenSpaceFluid {
+        fluid: &'a ScreenSpaceFluidRenderer,
+        scene: &'a SceneRenderer,
+        clear: wgpu::Color,
+        draws: &'a [SceneDraw<'a>],
     },
 }
 
@@ -160,6 +177,38 @@ impl<'a> RenderGraph<'a> {
         self.push(RenderGraphNode::BodycamPost { post, output_view })
     }
 
+    /// Schedules an `OceanRenderer` FFT simulation and surface/atmosphere/bloom composite pass.
+    pub fn add_ocean(
+        &mut self,
+        ocean: &'a mut OceanRenderer,
+        queue: &'a wgpu::Queue,
+        camera: OceanCamera,
+        dt: f32,
+    ) -> &mut Self {
+        self.push(RenderGraphNode::Ocean {
+            ocean,
+            queue,
+            camera,
+            dt,
+        })
+    }
+
+    /// Schedules a `ScreenSpaceFluidRenderer` pass over the active color target.
+    pub fn add_screen_space_fluid(
+        &mut self,
+        fluid: &'a ScreenSpaceFluidRenderer,
+        scene: &'a SceneRenderer,
+        clear: wgpu::Color,
+        draws: &'a [SceneDraw<'a>],
+    ) -> &mut Self {
+        self.push(RenderGraphNode::ScreenSpaceFluid {
+            fluid,
+            scene,
+            clear,
+            draws,
+        })
+    }
+
     /// Encodes all scheduled passes in order into `encoder`, targeting `color` and `depth`
     /// (`Depth32Float`, Reversed-Z clear `0.0`).
     ///
@@ -234,6 +283,22 @@ impl<'a> RenderGraph<'a> {
                 }
                 RenderGraphNode::BodycamPost { post, output_view } => {
                     post.encode(encoder, output_view);
+                }
+                RenderGraphNode::Ocean {
+                    ocean,
+                    queue,
+                    camera,
+                    dt,
+                } => {
+                    ocean.encode(queue, encoder, color, camera, *dt);
+                }
+                RenderGraphNode::ScreenSpaceFluid {
+                    fluid,
+                    scene,
+                    clear,
+                    draws,
+                } => {
+                    fluid.encode(scene, encoder, color, *clear, draws);
                 }
             }
         }

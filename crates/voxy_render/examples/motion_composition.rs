@@ -3,6 +3,10 @@ use voxy_render::{
     DepthMotionPass, PreviousPositionVertex, RasterMotionPass, RayReconstructionGuides,
     ReconstructionGuideMesh, ReconstructionGuidePass, ReconstructionGuideVertex,
 };
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn probe(
     device: &wgpu::Device,
     adapter: &wgpu::Adapter,

@@ -6,17 +6,16 @@ use glam::{Mat4, Vec3};
 use std::{sync::Arc, time::Instant};
 use voxy_render::{CameraView, RenderOutcome, Renderer};
 use voxy_runtime::SimulationClock;
+use voxy_ui_winit::{FrameResult, FrameStage, WindowFrame, run_window_frame};
 use winit::{
-    application::ApplicationHandler,
     event::{ElementState, WindowEvent},
-    event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
+    event_loop::{ActiveEventLoop, ControlFlow},
     keyboard::{KeyCode, PhysicalKey},
-    window::{Window, WindowId},
+    window::{Window, WindowAttributes},
 };
 
 #[derive(Default)]
 struct App {
-    window: Option<Arc<Window>>,
     renderer: Option<Renderer>,
     game: Game,
     input: Input,
@@ -29,10 +28,9 @@ struct App {
     smoke: bool,
     ticks: u64,
     frames: u64,
-    failure: Option<String>,
 }
 impl App {
-    fn draw(&mut self, event_loop: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
+    fn draw(&mut self, event_loop: &ActiveEventLoop, window: &Window) -> FrameResult {
         let now = Instant::now();
         let dt = self
             .last
@@ -99,11 +97,9 @@ impl App {
         if matches!(outcome, RenderOutcome::Presented) {
             self.frames += 1;
         }
-        if let Some(window) = &self.window {
-            window.set_title(&format!("Voxy Pinball | {:07} | Balls {} | Charge {:.0}% | Time {:.2}x → {:.2}x{} | S: slow | 1/2/4: speed | P: pause | N: step | R: reset | A/L: flippers | Space: launch",
-                self.game.score, self.game.lives, self.game.charge * 100.0, self.clock.scale(), self.clock.target_scale(),
-                if frame.overloaded { " (overloaded)" } else { "" }));
-        }
+        window.set_title(&format!("Voxy Pinball | {:07} | Balls {} | Charge {:.0}% | Time {:.2}x → {:.2}x{} | S: slow | 1/2/4: speed | P: pause | N: step | R: reset | A/L: flippers | Space: launch",
+            self.game.score, self.game.lives, self.game.charge * 100.0, self.clock.scale(), self.clock.target_scale(),
+            if frame.overloaded { " (overloaded)" } else { "" }));
         if self.smoke && self.ticks >= 2400 {
             assert!(self.frames > 0, "no presented frames");
             assert!(self.game.impacts > 0, "no bumper contacts in smoke run");
@@ -116,52 +112,44 @@ impl App {
         Ok(())
     }
 }
-impl ApplicationHandler for App {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        if self.window.is_some() {
-            return;
-        }
-        let result = (|| -> Result<(), Box<dyn std::error::Error>> {
-            let window = Arc::new(
-                event_loop.create_window(
-                    Window::default_attributes()
-                        .with_title("Voxy Pinball — loading")
-                        .with_visible(false)
-                        .with_inner_size(winit::dpi::LogicalSize::new(760, 1000)),
-                )?,
-            );
-            let size = window.inner_size();
-            let mut renderer =
-                pollster::block_on(Renderer::new(Arc::clone(&window), size.width, size.height))?;
-            renderer.set_material_pack(visual::materials());
-            renderer.update_camera(CameraView {
-                eye: Vec3::new(0.0, 32.0, 5.0),
-                target: Vec3::new(0.0, 0.0, -10.0),
-                up: Vec3::Y,
-                vertical_fov_radians: 42_f32.to_radians(),
-                near_plane: 0.1,
-            })?;
-            renderer.upload_skinned_mesh(
-                &visual::mesh(&self.game, false),
-                &visual::matrices(&self.game),
-                Mat4::IDENTITY,
-                0,
-            )?;
-            println!("Pinball GPU ready: {}", renderer.adapter_info().name);
-            self.renderer = Some(renderer);
-            self.last = Some(Instant::now());
-            window.set_visible(true);
-            window.focus_window();
-            self.window = Some(window);
-            Ok(())
-        })();
-        if let Err(error) = result {
-            eprintln!("Pinball startup failed: {error}");
-            self.failure = Some(error.to_string());
-            event_loop.exit();
-        }
+impl WindowFrame for App {
+    fn window_attributes(&self) -> WindowAttributes {
+        Window::default_attributes()
+            .with_title("Voxy Pinball — loading")
+            .with_visible(false)
+            .with_inner_size(winit::dpi::LogicalSize::new(760, 1000))
     }
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+    fn start(&mut self, _: &ActiveEventLoop, window: &Arc<Window>) -> FrameResult {
+        let size = window.inner_size();
+        let mut renderer =
+            pollster::block_on(Renderer::new(Arc::clone(window), size.width, size.height))?;
+        renderer.set_material_pack(visual::materials());
+        renderer.update_camera(CameraView {
+            eye: Vec3::new(0.0, 32.0, 5.0),
+            target: Vec3::new(0.0, 0.0, -10.0),
+            up: Vec3::Y,
+            vertical_fov_radians: 42_f32.to_radians(),
+            near_plane: 0.1,
+        })?;
+        renderer.upload_skinned_mesh(
+            &visual::mesh(&self.game, false),
+            &visual::matrices(&self.game),
+            Mat4::IDENTITY,
+            0,
+        )?;
+        println!("Pinball GPU ready: {}", renderer.adapter_info().name);
+        self.renderer = Some(renderer);
+        self.last = Some(Instant::now());
+        window.set_visible(true);
+        window.focus_window();
+        Ok(())
+    }
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        window: &Arc<Window>,
+        event: WindowEvent,
+    ) -> FrameResult {
         match event {
             WindowEvent::CloseRequested => event_loop.exit(),
             WindowEvent::Resized(size) => {
@@ -217,34 +205,25 @@ impl ApplicationHandler for App {
                     }
                 }
             }
-            WindowEvent::RedrawRequested => {
-                if let Err(error) = self.draw(event_loop) {
-                    eprintln!("Pinball rendering failed: {error}");
-                    self.failure = Some(error.to_string());
-                    event_loop.exit();
-                }
-            }
+            WindowEvent::RedrawRequested => self.draw(event_loop, window)?,
             _ => {}
         }
+        Ok(())
     }
-    fn about_to_wait(&mut self, _: &ActiveEventLoop) {
-        if let Some(window) = &self.window {
-            window.request_redraw();
+    fn report(&self, stage: FrameStage, error: &str) {
+        match stage {
+            FrameStage::Start => eprintln!("Pinball startup failed: {error}"),
+            FrameStage::Event => eprintln!("Pinball rendering failed: {error}"),
         }
     }
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let event_loop = EventLoop::new()?;
-    event_loop.set_control_flow(ControlFlow::Poll);
     let mut app = App {
         speed: 1.0,
         smoke: std::env::args().any(|arg| arg == "--smoke"),
         ..App::default()
     };
-    event_loop.run_app(&mut app)?;
-    if let Some(error) = app.failure {
-        return Err(error.into());
-    }
+    run_window_frame(&mut app, Some(ControlFlow::Poll))?;
     if app.smoke && app.ticks < 2400 {
         return Err("smoke run closed before completion".into());
     }

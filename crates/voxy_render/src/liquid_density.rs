@@ -48,6 +48,10 @@ mod tests {
 
     #[test]
     #[ignore = "requires actual GPU; density candidate only, not a complete fluid step"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_density_preserves_three_current_physical_formulations() {
         use physics::liquid::{Formulation, LiquidDensityOperator, Material, Particle};
         let instance = crate::GraphicsOptions::default().create_instance();

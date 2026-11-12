@@ -245,6 +245,10 @@ pub(crate) fn seed_direct_sky(opaque: &[bool], sky: &mut [u8], check_top_halo: b
 ///
 /// Returns cancellation, invalid budget, unknown block, inconsistent stamp, or propagation budget
 /// failures without publishing a partial volume.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn build_light_with_neighbor_volumes(
     input: &LightingInput,
     neighbor_lights: &[Option<&LightVolume>; 6],
@@ -421,6 +425,10 @@ fn can_raise_neighbor(
         })
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn propagate(
     opaque: &[bool],
     light: &mut [u8],

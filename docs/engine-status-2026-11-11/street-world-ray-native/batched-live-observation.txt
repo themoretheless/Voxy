@@ -1,0 +1,8 @@
+Execution session 55232, PID 10526
+ARCHIVE PROBE completed=372/372 elapsed_seconds=247.734
+STREET probes=372 completed in 247.756 s before measurement
+STREET warmup submitted=1/180 simulation_steps=6 render_ms=6.787
+The session captured these lines after tee's output inode diverged from the worktree copy of batched-run.log.
+Later output from session 55232:
+STREET live HDR headroom=Some(6.1538463)
+This update is emitted after the prior submission fence and before acquiring the next surface.
