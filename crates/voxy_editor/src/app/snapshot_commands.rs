@@ -41,14 +41,28 @@ impl App {
     }
     pub(crate) fn poll_snapshot_load_command(&mut self) {
         match self.poll_editor_file_load() {
-            Ok(Some(path)) => println!("EDITOR SNAPSHOT LOADED {}", path.display()),
+            Ok(Some(path)) => {
+                println!("EDITOR SNAPSHOT LOADED {}", path.display());
+                if self.standalone
+                    && let Some(window) = &self.window
+                {
+                    window.set_title("Voxy Game — Save opened");
+                }
+            }
             Ok(None) => {}
             Err(error) => self.report_snapshot_error(error),
         }
     }
     pub(crate) fn poll_snapshot_save_command(&mut self) {
         match self.poll_editor_file_save() {
-            Ok(Some(path)) => println!("EDITOR SNAPSHOT SAVED {}", path.display()),
+            Ok(Some(path)) => {
+                println!("EDITOR SNAPSHOT SAVED {}", path.display());
+                if self.standalone
+                    && let Some(window) = &self.window
+                {
+                    window.set_title("Voxy Game — Game saved");
+                }
+            }
             Ok(None) => {}
             Err(error) => self.report_snapshot_error(error),
         }
@@ -103,8 +117,7 @@ impl App {
         Ok(())
     }
     pub(crate) fn snapshot_shortcut(&mut self, key: KeyCode) -> Result<bool, EditorError> {
-        if self.standalone
-            || !self.modifiers.shift_key()
+        if !self.modifiers.shift_key()
             || !(self.modifiers.super_key() || self.modifiers.control_key())
         {
             return Ok(false);
@@ -114,8 +127,43 @@ impl App {
             KeyCode::KeyO => SnapshotCommand::Open,
             _ => return Ok(false),
         };
-        self.begin_snapshot_path(command)?;
+        if self.standalone {
+            self.request_standalone_snapshot(command)?;
+        } else {
+            self.begin_snapshot_path(command)?;
+        }
         Ok(true)
+    }
+
+    pub(crate) fn request_standalone_snapshot(
+        &mut self,
+        command: SnapshotCommand,
+    ) -> Result<(), EditorError> {
+        let path = std::env::var_os("VOXY_GAME_SAVE_FILE")
+            .map(std::path::PathBuf::from)
+            .ok_or("set VOXY_GAME_SAVE_FILE to an absolute .voxyedr path")?;
+        if !path.is_absolute()
+            || path
+                .extension()
+                .is_none_or(|extension| extension != "voxyedr")
+        {
+            return Err("VOXY_GAME_SAVE_FILE requires an absolute .voxyedr path".into());
+        }
+        let mut policy = app::restore_barrier::save::EditorSavePolicy::desktop();
+        policy.compatibility = self
+            .standalone_snapshot_identity
+            .clone()
+            .ok_or("standalone saves require a Voxy project or project package")?;
+        if !self.standalone || self.play.playing.is_none() {
+            return Err("standalone game is not running".into());
+        }
+        match command {
+            SnapshotCommand::Save => self.request_editor_file_save(path, policy),
+            SnapshotCommand::Open => {
+                let root = self.authoring.authoring_project.root().to_owned();
+                self.request_editor_file_load(path, root, policy)
+            }
+        }
     }
     pub(crate) fn snapshot_path_key(
         &mut self,

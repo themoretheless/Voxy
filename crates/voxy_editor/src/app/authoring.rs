@@ -100,10 +100,23 @@ impl App {
             .as_ref()
             .ok_or("missing history")?
             .current();
-        let mut loaded = document.load(
+        let loaded = document.load(
             &self.authoring.authoring_project.registry,
             scene_limits::OBJECTS,
         )?;
+        self.install_loaded_authoring(loaded)
+    }
+
+    fn install_loaded_authoring(
+        &mut self,
+        mut loaded: voxy_scene::LoadedScene,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let document = self
+            .authoring
+            .history
+            .as_ref()
+            .ok_or("missing history")?
+            .current();
         let mut instances = Vec::with_capacity(document.objects.len());
         for object in &document.objects {
             let node = loaded.resolve(&object.id).ok_or("missing restored node")?;
@@ -559,14 +572,26 @@ impl App {
             .ok_or("start editor with --scene PATH to load")?;
         let (document, imported, revision) = match self.authoring.authoring_project.load(path) {
             Ok(imported) => (imported.value().expanded.clone(), Some(imported), None),
-            Err(error) => {
+            Err(error) if self.model_package.is_none() => {
                 // Existing standalone flat scene paths can be outside the model
                 // project. Composed scenes require observed project dependencies.
                 let (document, revision) =
                     scene_revision::SceneRevision::read(path).map_err(|_| error)?;
                 (document, None, Some(revision))
             }
+            Err(error) => return Err(error),
         };
+        self.install_authored_scene(document, imported, revision, None, allow_unresolved_models)
+    }
+
+    pub(crate) fn install_authored_scene(
+        &mut self,
+        document: SceneDocument,
+        imported: Option<voxy_assets::ImportedAsset<crate::prefab_authoring::AuthoredScene>>,
+        revision: Option<scene_revision::SceneRevision>,
+        loaded: Option<voxy_scene::LoadedScene>,
+        allow_unresolved_models: bool,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         let next = self.validate_authoring_document_policy(&document, allow_unresolved_models)?;
 
         self.authoring
@@ -583,7 +608,11 @@ impl App {
                     .unwrap_or(serde_json::Value::Null),
                 &self.authoring.authoring_project.registry,
             )?;
-        self.restore_authoring()?;
+        if let Some(loaded) = loaded {
+            self.install_loaded_authoring(loaded)?;
+        } else {
+            self.restore_authoring()?;
+        }
         self.authoring.next_object_id = next;
         self.authoring.authoring_source = imported;
         self.authoring.scene_revision = revision;
@@ -635,24 +664,29 @@ impl App {
         allow_unresolved_models: bool,
     ) -> Result<(), Box<dyn std::error::Error>> {
         self.authoring.scene_path = Some(path.into());
-        if path.try_exists()? {
+        if self.model_package.is_some() || path.try_exists()? {
             self.load_authoring_policy(allow_unresolved_models)?;
-            let metadata = self
-                .authoring
-                .history
-                .as_ref()
-                .ok_or("missing history")?
-                .metadata()
-                .clone();
-            self.authoring.history = Some(SceneHistory::new_with_metadata(
-                self.authoring_document()?,
-                metadata,
-                &self.authoring.authoring_project.registry,
-                scene_limits::OBJECTS,
-                64,
-                scene_limits::HISTORY_BYTES,
-            )?);
+            self.reset_authoring_history()?;
         }
+        Ok(())
+    }
+
+    pub(crate) fn reset_authoring_history(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        let metadata = self
+            .authoring
+            .history
+            .as_ref()
+            .ok_or("missing history")?
+            .metadata()
+            .clone();
+        self.authoring.history = Some(SceneHistory::new_with_metadata(
+            self.authoring_document()?,
+            metadata,
+            &self.authoring.authoring_project.registry,
+            scene_limits::OBJECTS,
+            64,
+            scene_limits::HISTORY_BYTES,
+        )?);
         Ok(())
     }
 

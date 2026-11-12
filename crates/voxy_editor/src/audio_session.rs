@@ -21,6 +21,8 @@ pub(super) struct AudioSession {
     checkpoint_requested: bool,
     native_checkpoint: Option<checkpoint::NativeCheckpoint>,
     checkpoint_startup: Option<AudioOutputMode>,
+    failed_output: Option<voxy_audio_device::FrozenOutputQueue>,
+    reconnect_after: Option<Instant>,
 }
 impl Default for AudioSession {
     fn default() -> Self {
@@ -36,6 +38,8 @@ impl Default for AudioSession {
             checkpoint_requested: false,
             native_checkpoint: None,
             checkpoint_startup: None,
+            failed_output: None,
+            reconnect_after: None,
         }
     }
 }
@@ -71,6 +75,7 @@ impl AudioSession {
                     if worker.is_finished() {
                         worker.join()?;
                         self.device = None;
+                        self.failed_output = None;
                         return Ok(DevicePoll::Stopped);
                     }
                 }
@@ -84,6 +89,14 @@ impl AudioSession {
     }
 
     pub(super) fn close_play_audio(&mut self) {
+        self.reconnect_after = None;
+        if self
+            .play
+            .as_ref()
+            .is_some_and(|play| play.output_connection().is_some())
+        {
+            self.failed_output = None;
+        }
         self.checkpoint_requested = false;
         self.native_checkpoint = None;
         self.checkpoint_startup = None;
@@ -104,6 +117,90 @@ impl AudioSession {
             worker.close();
         }
     }
+    fn poll_failed_output(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        if self.checkpoint_requested {
+            return Ok(());
+        }
+        let Some(play) = &mut self.play else {
+            return Ok(());
+        };
+        let Some(connection) = play.output_connection() else {
+            return Ok(());
+        };
+        if self.failed_output.is_none() && connection.stats().errors != 0 {
+            self.failed_output = Some(connection.sender().freeze_queue()?);
+        }
+        let Some(frozen) = &mut self.failed_output else {
+            return Ok(());
+        };
+        if play.poll_offline_transition(frozen)? {
+            self.output_mode = AudioOutputMode::Offline;
+            // Keep the old queue frozen until its stream worker has stopped.
+            self.close_audio_device();
+            self.reconnect_after = Some(Instant::now());
+            eprintln!("GAME AUDIO: native stream failed; mixer continued offline");
+        }
+        Ok(())
+    }
+
+    fn defer_reconnect(&mut self, error: impl std::fmt::Display) {
+        self.close_audio_device();
+        self.reconnect_after = Some(Instant::now() + std::time::Duration::from_secs(2));
+        eprintln!("GAME AUDIO: reconnect deferred: {error}");
+    }
+
+    fn poll_reconnect(&mut self) {
+        let Some(after) = self.reconnect_after else {
+            return;
+        };
+        if self.checkpoint_requested || self.pending_play.is_some() {
+            return;
+        }
+        if let Err(error) = self.poll_device() {
+            self.defer_reconnect(error);
+            return;
+        }
+        if Instant::now() < after {
+            return;
+        }
+        if self.device.is_none() {
+            match voxy_audio_device::OutputDeviceWorker::spawn(4096) {
+                Ok(worker) => self.device = Some(worker),
+                Err(error) => self.defer_reconnect(error),
+            }
+            return;
+        }
+        let (Some(connection), Some(play)) = (&self.connection, &mut self.play) else {
+            return;
+        };
+        let owned = self
+            .device
+            .as_ref()
+            .is_some_and(|worker| worker.owns_connection(connection));
+        let errors = connection.stats().errors;
+        if !owned || connection.sample_rate() != play.sample_rate() || errors != 0 {
+            let message = format!(
+                "replacement stream at {} Hz cannot continue {} Hz playback (active={owned}, errors={errors})",
+                connection.sample_rate(),
+                play.sample_rate()
+            );
+            self.defer_reconnect(message);
+            return;
+        }
+        match play.poll_native_transition(connection) {
+            Ok(true) => {
+                self.output_mode = AudioOutputMode::Native;
+                self.reconnect_after = None;
+                eprintln!(
+                    "GAME AUDIO: native output reconnected at {} Hz",
+                    connection.sample_rate()
+                );
+            }
+            Ok(false) => {}
+            Err(error) => self.defer_reconnect(error),
+        }
+    }
+
     fn poll_preparation(
         &mut self,
         scene: &voxy_scene::SceneGraph,
@@ -158,6 +255,28 @@ impl AudioSession {
     pub(super) fn set_play(&mut self, play: Option<audio_play::AudioPlay>) {
         self.play = play;
     }
+    #[cfg(test)]
+    pub(crate) fn inject_stream_failure(&mut self) {
+        let connection = self.play.as_ref().unwrap().output_connection().unwrap();
+        self.failed_output = Some(connection.sender().freeze_queue().unwrap());
+    }
+
+    #[cfg(test)]
+    pub(crate) fn set_reconnect_deadline(&mut self, deadline: Instant) {
+        assert!(self.reconnecting_offline());
+        self.reconnect_after = Some(deadline);
+    }
+
+    pub(crate) fn reconnecting_offline(&self) -> bool {
+        self.reconnect_after.is_some()
+            && self.output_mode == AudioOutputMode::Offline
+            && self.native_checkpoint.is_none()
+            && self.checkpoint_startup.is_none()
+            && self
+                .play
+                .as_ref()
+                .is_some_and(|play| play.output_connection().is_none())
+    }
     pub(crate) fn output_mode(&self) -> AudioOutputMode {
         self.output_mode
     }
@@ -181,6 +300,11 @@ impl AudioSession {
         {
             self.close_audio_device();
             return Err("audio preparation timed out".into());
+        }
+        self.poll_failed_output()?;
+        if self.reconnect_after.is_some() {
+            self.poll_reconnect();
+            return Ok(AudioPoll::Pending);
         }
         if self.poll_device()? == DevicePoll::Stopped && self.pending_play.take().is_some() {
             return Ok(AudioPoll::RetryPlay);

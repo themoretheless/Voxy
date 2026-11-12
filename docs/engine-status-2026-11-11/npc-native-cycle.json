@@ -1,0 +1,88 @@
+{
+  "editor_sha256": "a4d3abab38738afa6dced763cb4a2c37f931249aabf81cbb18359ae530440171",
+  "package_sha256": "4b9b6c4c53b87caa773c9c305e7a4b97c0ce819eb10b4e33acf89bb5a39a6e5e",
+  "source_deleted_before_package_launch": true,
+  "waypoints": [
+    [
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.25,
+      0.0,
+      0.0
+    ],
+    [
+      0.25,
+      0.0,
+      -0.25
+    ],
+    [
+      0.25,
+      0.0,
+      -0.5
+    ],
+    [
+      0.25,
+      0.0,
+      -0.75
+    ],
+    [
+      0.5,
+      0.0,
+      -0.75
+    ],
+    [
+      0.75,
+      0.0,
+      -0.75
+    ],
+    [
+      1.0,
+      0.0,
+      -0.75
+    ],
+    [
+      1.0,
+      0.0,
+      -0.5
+    ],
+    [
+      1.0,
+      0.0,
+      -0.25
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "editor_native": {
+    "frames": 119,
+    "fixed_ticks": 50,
+    "saved_goal": [
+      1.0,
+      0.0
+    ]
+  },
+  "native_runs": {
+    "project": {
+      "frames": 82,
+      "fixed_ticks": 50,
+      "position_xz": [
+        1.0,
+        0.0
+      ]
+    },
+    "package": {
+      "frames": 85,
+      "fixed_ticks": 50,
+      "position_xz": [
+        1.0,
+        0.0
+      ]
+    }
+  }
+}

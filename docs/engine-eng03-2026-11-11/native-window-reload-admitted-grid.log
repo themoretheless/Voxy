@@ -1,0 +1,9 @@
+MODEL FAILED frames=19 last_good=false asset=logical-quad status=Some(Failed("OBJ line 65537: attribute budget exceeded")) publication_us=22
+MODEL FAILED frames=39 last_good=false asset=logical-quad status=Some(Failed("OBJ line 65537: attribute budget exceeded")) publication_us=24
+Error: "native acceptance timed out: presented=1765, last_surface=Some(Presented)"
+Traceback (most recent call last):
+  File "/Users/themoretheless/Documents/Sources/voxy/tools/test_asset_window_reload.py", line 110, in <module>
+    main()
+  File "/Users/themoretheless/Documents/Sources/voxy/tools/test_asset_window_reload.py", line 87, in main
+    assert process.returncode == 0, f"native process exited {process.returncode}"
+AssertionError: native process exited 1

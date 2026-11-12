@@ -1,17 +1,12 @@
 //! Automatic five-component GPU active-set qualification on an ORIGINAL operator.
 //! Device arithmetic owns QR, gaps, entering selection, release and interpolation.
-mod joint_contact_dot{pub use voxy_render::JointDotError;}
-#[path="../../crates/voxy_render/src/contact_exact_five.rs"]mod contact_exact_five;
-pub use contact_exact_five::ExperimentalExactFiveContactInput;
-#[path="../../crates/voxy_render/src/contact_five_qr.rs"]mod contact_five_qr;
-pub use contact_five_qr::{ExperimentalFiveQrInput,ExperimentalFiveQrValue};
-#[path="../../crates/voxy_render/src/contact_five_gaps.rs"]mod contact_five_gaps;
-#[path="../../crates/voxy_render/src/contact_five_select.rs"]mod contact_five_select;
-#[path="../../crates/voxy_render/src/contact_five_release.rs"]mod contact_five_release;
-#[path="contact_fixture.rs"]mod fixture;
-use contact_five_gaps::ExperimentalFiveGapInput as Gaps;
-use contact_five_select::{ExperimentalFiveSelectionInput as Select,ExperimentalFiveSelection};
-use contact_five_release::{ExperimentalFiveReleaseInput as Release,ExperimentalFiveRelease};
+#[path = "contact_fixture.rs"]
+mod fixture;
+use voxy_render::{
+    ExperimentalFiveGapInput as Gaps, ExperimentalFiveQrInput, ExperimentalFiveQrValue,
+    ExperimentalFiveRelease, ExperimentalFiveReleaseInput as Release, ExperimentalFiveSelection,
+    ExperimentalFiveSelectionInput as Select,
+};
 fn zero()->ExperimentalFiveQrValue{ExperimentalFiveQrValue{words:[0;5],exponent:0,error_bound:0.}}
 fn scale(values:&mut[ExperimentalFiveQrValue],scale:f64){assert!(scale.is_normal()&&scale>0.&&scale.to_bits()&0x000f_ffff_ffff_ffff==0);let shift=((scale.to_bits()>>52)&2047)as i32-1023;for v in values{v.exponent+=shift;}}
 fn native(v:&ExperimentalFiveQrValue)->physics::hair::HairResponseCoefficient{assert!((-1022..=1023).contains(&v.exponent));physics::hair::HairResponseCoefficient::from_expansion_terms(v.words.map(|w|f64::from(f32::from_bits(w))),[1.,2f64.powi(v.exponent)]).unwrap()}

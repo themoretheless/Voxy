@@ -1,0 +1,42 @@
+{
+  "binary_sha256": "12a52d013bc4e0e94f8b9ba393d370abfd4584b291a544023921c373d338ae9f",
+  "git_head": "d6e93e1b8c2d58fd34d120312e2c6aee3febc331",
+  "scope": "Native HDR startup and default probe cache, not exact world-ray or frame-budget qualification",
+  "arguments": [
+    "--benchmark",
+    "1"
+  ],
+  "output_resolution": [
+    1920,
+    1080
+  ],
+  "internal_resolution": [
+    3840,
+    2160
+  ],
+  "probe_spacing_m": 6,
+  "runs": {
+    "cold": {
+      "wall_seconds": 44.72,
+      "exit_code": 0,
+      "evidence": [
+        "STREET DISPLAY format=Rgba16Float colour_space=ExtendedSrgbLinear hdr_info=DisplayHdrInfo { luminance: None, headroom: Some(DisplayHeadroom { current: Some(1.0), potential: Some(16.0), reference: None }), chromaticity: None, coarse: Some(DisplayCoarseRange { high_dynamic_range: Some(false), gamut: None }), bits_per_color: None }",
+        "STREET GPU AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }; 1920x1080 Immediate; full scene geometry; original mip chains when images are present",
+        "STREET probes=372 completed in 27.486 s before measurement",
+        "STREET probes saved to street.586dc98d1e8e2f9c40e27d3120b93dd6d5cedab2478331d88db49559cde536a8.vprobes",
+        "STREET EVENT LOOP RETURN result=Ok(()) frames=204 simulation_steps=1013 benchmark_complete=true"
+      ]
+    },
+    "warm": {
+      "wall_seconds": 14.881,
+      "exit_code": 0,
+      "evidence": [
+        "STREET DISPLAY format=Rgba16Float colour_space=ExtendedSrgbLinear hdr_info=DisplayHdrInfo { luminance: None, headroom: Some(DisplayHeadroom { current: Some(6.1538463), potential: Some(16.0), reference: None }), chromaticity: None, coarse: Some(DisplayCoarseRange { high_dynamic_range: Some(true), gamut: None }), bits_per_color: None }",
+        "STREET GPU AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }; 1920x1080 Immediate; full scene geometry; original mip chains when images are present",
+        "STREET probes=372 restored from street.586dc98d1e8e2f9c40e27d3120b93dd6d5cedab2478331d88db49559cde536a8.vprobes",
+        "STREET EVENT LOOP RETURN result=Ok(()) frames=206 simulation_steps=983 benchmark_complete=true"
+      ]
+    }
+  },
+  "cache_sha256": "954f98caa4175aebf87510df6d99616f6a74b6f3c058e01c047485c164427ebf"
+}

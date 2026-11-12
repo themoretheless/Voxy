@@ -12,11 +12,147 @@ pub struct AnimationSnapshot {
     pub skin_matrices: Vec<[f32; 16]>,
     pub morph_weights: Vec<Vec<f32>>,
 }
+/// Scene and character controller state captured at the same fixed tick.
+#[derive(Clone, Debug)]
+pub struct CharacterReplicationSnapshot {
+    pub scene: voxy_scene::TickSnapshot,
+    pub physics: Option<voxy_gameplay::CharacterPhysicsCheckpoint>,
+    pub input: voxy_input::InputCheckpoint,
+}
+
+impl CharacterReplicationSnapshot {
+    pub const HEADER: [u8; 5] = *b"VXSC\x01";
+
+    /// Writes the scene frame followed by a bounded controller/input payload.
+    ///
+    /// # Errors
+    /// Reports invalid state, payload budget or stream failures.
+    pub fn write_frame(
+        &self,
+        writer: &mut impl std::io::Write,
+        max_bytes: usize,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let physics = self
+            .physics
+            .as_ref()
+            .map(|value| value.to_json(max_bytes))
+            .transpose()?;
+        let input = voxy_gameplay::encode_input_checkpoint(&self.input, max_bytes, 32, 64)?;
+        let payload = serde_json::to_vec(&(physics, input))?;
+        if payload.len() > max_bytes {
+            return Err("character replication payload exceeds byte budget".into());
+        }
+        let length = u32::try_from(payload.len())?;
+        self.scene.write_frame(writer, max_bytes)?;
+        writer.write_all(&length.to_be_bytes())?;
+        writer.write_all(&payload)?;
+        Ok(())
+    }
+
+    /// Reads and validates both frames into a detached snapshot.
+    ///
+    /// # Errors
+    /// Rejects incomplete or invalid state and oversized payloads.
+    pub fn read_frame(
+        reader: &mut impl std::io::Read,
+        max_bytes: usize,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let scene = voxy_scene::TickSnapshot::read_frame(reader, max_bytes)?;
+        let mut length = [0; 4];
+        reader.read_exact(&mut length)?;
+        let length = u32::from_be_bytes(length) as usize;
+        if length == 0 || length > max_bytes {
+            return Err("invalid character replication payload length".into());
+        }
+        let mut payload = Vec::new();
+        payload.try_reserve_exact(length)?;
+        payload.resize(length, 0);
+        reader.read_exact(&mut payload)?;
+        let (physics, input): (Option<String>, String) = serde_json::from_slice(&payload)?;
+        let physics = physics
+            .as_deref()
+            .map(|text| voxy_gameplay::CharacterPhysicsCheckpoint::from_json(text, max_bytes, 128))
+            .transpose()?;
+        let input = voxy_gameplay::decode_input_checkpoint(&input, max_bytes, 32, 64)?;
+        Ok(Self {
+            scene,
+            physics,
+            input,
+        })
+    }
+
+    /// Requests the local server's controller snapshot and its applied input acknowledgement.
+    ///
+    /// # Errors
+    /// Rejects malformed acknowledgements and snapshot or stream failures.
+    pub fn request(
+        stream: &mut (impl std::io::Read + std::io::Write),
+        max_bytes: usize,
+    ) -> Result<(u64, u64, Self), Box<dyn std::error::Error>> {
+        stream.write_all(&Self::HEADER)?;
+        stream.flush()?;
+        let mut header = [0; 5];
+        stream.read_exact(&mut header)?;
+        if header != Self::HEADER {
+            return Err("unknown character replication reply".into());
+        }
+        let mut sequence = [0; 8];
+        let mut tick = [0; 8];
+        stream.read_exact(&mut sequence)?;
+        stream.read_exact(&mut tick)?;
+        let sequence = u64::from_be_bytes(sequence);
+        let tick = u64::from_be_bytes(tick);
+        let snapshot = Self::read_frame(stream, max_bytes)?;
+        if tick > snapshot.scene.tick || (sequence == 0) != (tick == 0) {
+            return Err("invalid character input acknowledgement".into());
+        }
+        Ok((sequence, tick, snapshot))
+    }
+
+    /// Replays one local-server input pulse or idle step per entry on a detached
+    /// scene, using the saved character controller and the static collision world.
+    ///
+    /// # Errors
+    /// Reports invalid scene/controller/input state, unsupported keys and budget failures.
+    pub fn replay_character_inputs(
+        &self,
+        registry: &voxy_scene::ComponentRegistry,
+        capacity: usize,
+        steps: &[Option<KeyCode>],
+        max_steps: usize,
+    ) -> Result<voxy_scene::LoadedScene, Box<dyn std::error::Error>> {
+        if steps.len() > max_steps {
+            return Err("character replay exceeds step budget".into());
+        }
+        let mut scene = self.scene.document.load(registry, capacity)?;
+        let checkpoint = self.physics.as_ref().ok_or("missing character state")?;
+        let mut physics = voxy_gameplay::CharacterPhysics::new(&scene.graph, 128, 128);
+        physics.restore_checkpoint(&scene.graph, checkpoint, |id| scene.resolve(id))?;
+        let mut input = voxy_gameplay::player_input()?;
+        input.restore_checkpoint(&self.input)?;
+        for &step in steps {
+            let control = match step {
+                None => None,
+                Some(key @ (KeyCode::ArrowLeft | KeyCode::ArrowRight | KeyCode::Space)) => {
+                    crate::game_control(key)
+                }
+                Some(_) => return Err("unsupported character replay input".into()),
+            };
+            if let Some(control) = control {
+                input.event(control, 1.0)?;
+            }
+            physics.fixed_step(&mut scene.graph, &mut input, 1.0 / 60.0)?;
+            if let Some(control) = control {
+                input.event(control, 0.0)?;
+            }
+        }
+        Ok(scene)
+    }
+}
+
 /// Window-free simulation with offline PCM mixing. This does not measure render FPS.
-/// The package storage stays alive until the app's workers have stopped.
 pub struct HeadlessGame {
     app: App,
-    _package: Option<crate::packaged_game::MaterializedPackage>,
 }
 impl std::fmt::Debug for HeadlessGame {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -30,26 +166,32 @@ impl HeadlessGame {
     /// # Errors
     /// Reports invalid projects, missing components/assets and host setup failures.
     pub fn open_project(path: &Path, host: GameHost) -> Result<Self, Box<dyn std::error::Error>> {
-        let mut app = App::from_project_with_registry(path, host.components)?;
+        Self::open(path, host, None)
+    }
+
+    fn open(
+        path: &Path,
+        host: GameHost,
+        model_package: Option<std::sync::Arc<voxy_assets::ResourcePackage>>,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let mut app = match model_package {
+            Some(archive) => App::from_packaged_project(path, host.components, archive)?,
+            None => App::from_project_with_model_package(path, host.components, None)?,
+        };
         app.behavior_setup = host.behaviors;
         app.behavior_checkpoints = host.behavior_checkpoints;
         app.ui_action_checkpoints = host.ui_action_checkpoints;
         app.ui_action_setup = host.ui_actions;
         app.audio.set_output_mode(AudioOutputMode::Offline);
         app.start_standalone()?;
-        Ok(Self {
-            app,
-            _package: None,
-        })
+        Ok(Self { app })
     }
     /// Start a verified project package without access to its original source tree.
     /// # Errors
     /// Reports package corruption, incompatible launch data and game setup errors.
     pub fn open_package(path: &Path, host: GameHost) -> Result<Self, Box<dyn std::error::Error>> {
-        let package = crate::packaged_game::MaterializedPackage::open(path)?;
-        let mut session = Self::open_project(&package.project_path()?, host)?;
-        session._package = Some(package);
-        Ok(session)
+        let archive = crate::packaged_game::read_project_archive(path)?;
+        Self::open(path, host, Some(archive))
     }
     /// Capture opted-in Rust behaviors using this session's durable object IDs.
     /// This does not capture scene/clock/physics or other participants.
@@ -218,10 +360,7 @@ impl HeadlessGame {
     }
     /// Losing focus releases gameplay input and cancels incomplete UI activation.
     pub fn set_focused(&mut self, focused: bool) {
-        self.app.play.player_input.set_focused(focused);
-        if !focused {
-            self.app.game_ui_input.cancel();
-        }
+        self.app.set_game_focus(focused);
     }
     /// Advance through the existing bounded fixed-step and animation schedule.
     /// # Errors
@@ -235,6 +374,48 @@ impl HeadlessGame {
     pub fn snapshot(&self) -> Result<voxy_scene::SceneDocument, Box<dyn std::error::Error>> {
         Ok(self.app.authoring_document()?)
     }
+
+    /// Captures the authoritative scene at the last completed fixed tick.
+    ///
+    /// # Errors
+    /// Reports component serialization, invalid transforms or invalid scene references.
+    pub fn replication_snapshot(
+        &self,
+    ) -> Result<voxy_scene::TickSnapshot, Box<dyn std::error::Error>> {
+        Ok(voxy_scene::TickSnapshot::from_document(
+            self.fixed_ticks(),
+            self.snapshot()?,
+        )?)
+    }
+    /// Captures the character controller and input alongside the accepted scene.
+    ///
+    /// # Errors
+    /// Reports invalid scene data or a character without a durable object ID.
+    pub fn character_replication_snapshot(
+        &self,
+    ) -> Result<CharacterReplicationSnapshot, Box<dyn std::error::Error>> {
+        let physics = self
+            .app
+            .play
+            .physics
+            .as_ref()
+            .map(|physics| {
+                physics.checkpoint(&self.app.scene, |node| {
+                    self.app
+                        .instances
+                        .iter()
+                        .position(|candidate| *candidate == node)
+                        .map(|index| self.app.object_ids[index].clone())
+                })
+            })
+            .transpose()?;
+        Ok(CharacterReplicationSnapshot {
+            scene: self.replication_snapshot()?,
+            physics,
+            input: self.input_checkpoint(),
+        })
+    }
+
     /// Inspect an accepted skeletal frame by durable scene object ID.
     /// # Errors
     /// Reports unknown owners, invalid scene handles or unavailable model imports.

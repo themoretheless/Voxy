@@ -1,0 +1,12 @@
+
+running 1 test
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene supported liquid body step: CollisionBackend") } }
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 480 filtered out; finished in 0.04s
+

@@ -1,0 +1,70 @@
+
+running 56 tests
+test animated_models::tests::animated_lod_views_budget_and_cpu_fallback ... ok
+test animated_models::tests::authored_roll_foot_gpu_matches_independent_pivot_geometry_and_clears_resources ... ok
+test animated_models::tests::composed_root_motion_collision_renders_once_with_in_place_gpu_palette ... ok
+test animated_models::tests::cpu_fallback_supports_mixed_primitives_and_removal ... ok
+test animated_models::tests::curved_root_rotation_collision_renders_once_with_in_place_gpu_palette ... ok
+test animated_models::tests::fixed_tick_hierarchy_owners_share_gpu_source_at_capacity ... ok
+test animated_models::tests::gpu_material_revision_failure_preserves_texture_storage ... ok
+test animated_models::tests::gpu_morph_weight_only_updates_and_failed_replacement_retains_last_good ... ok
+test animated_models::tests::gpu_original_morph_owner_updates_all_primitives ... ok
+test animated_models::tests::gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision ... ok
+test animated_models::tests::gpu_rigid_morph_without_source_skin_uses_common_owner ... ok
+test animated_models::tests::planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources ... ok
+test animated_models::tests::retained_texture_publications_survive_reload_pose_failure_and_source_deletion ... ok
+test animated_models::tests::retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources ... ok
+test app::model_reload::gpu_app_tests::offscreen_app_sampler_reload_keeps_cpu_gpu_atomic_and_recovers_failed_source ... ok
+test app::model_reload::gpu_app_tests::offscreen_editor_file_keeps_history_preview_and_gpu_in_one_scene ... ok
+test app::model_reload::gpu_app_tests::offscreen_native_archive_preserves_pcm_when_loading_offline_and_back ... ok
+test app::model_reload::gpu_app_tests::offscreen_native_editor_file_commits_scene_ui_input_and_audio_together ... ok
+test app::model_reload::gpu_app_tests::offscreen_native_idle_editor_file_keeps_policy_and_restores_models_history ... ok
+test app::model_reload::gpu_app_tests::offscreen_native_playback_loads_idle_scene_and_retires_output_atomically ... ok
+test app::model_reload::gpu_app_tests::offscreen_nested_locomotion_cycle_matches_packaged_gpu_frames ... ok
+test app::model_reload::gpu_app_tests::offscreen_offline_playback_archive_restores_native_output_without_sources ... ok
+test app::model_reload::gpu_app_tests::offscreen_optical_liquid_uses_native_runtime_and_matches_packaged_frame ... ok
+test app::model_reload::gpu_app_tests::offscreen_preview_snapshot_restores_exact_phase_frame_and_gpu_identity ... ok
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_text_font_and_continues_game ... ok
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_ui_audio_and_continues_game ... ok
+test app::model_reload::tests::native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work ... ok
+test app::resource_checkpoint::tests::combined_bundle_stages_original_cpu_resources_runtime_and_gpu_together ... ok
+test audio_play::tests::failed_native_output_retains_pcm_prefix_and_reconnects_at_same_rate ... ok
+test audio_session::checkpoint::tests::native_session_automatically_reconnects_after_injected_failure ... ok
+test audio_session::checkpoint::tests::physical_native_session_save_cancel_resume_and_closed_load_admission ... ok
+test fog_draw::shadow_tests::opaque_shadow_views_use_current_geometry_and_preserve_pending_maps ... ok
+test fog_draw::shadow_tests::skeletal_shadow_views_consume_independently_deformed_gpu_streams ... ok
+test fog_draw::tests::hdr_fog_views_preserve_local_and_global_editor_overlays ... ok
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+test gpu_model::batch::tests::gpu_batch_preserves_live_cache_on_budget_and_late_validation_failures ... ok
+test gpu_model::restore::tests::late_gpu_rejection_and_cancellation_preserve_live_cache_and_scope_stack ... ok
+test gpu_model::sampler_tests::gpu_material_sampler_views_share_storage_and_render_distinct_filter_and_wrap_modes ... ok
+test liquid_draw::gpu_tests::accepted_liquid_mesh_is_visible_on_gpu_and_empty_state_clears ... ok
+test panels::gpu_tests::joint_kind_row_and_toggle_render_readable_glyphs_without_hit_overlap ... ok
+test panels::gpu_tests::joint_target_row_and_toggle_render_readable_glyphs_without_hit_overlap ... ok
+test panels::gpu_tests::load_progress_and_cancel_render_readable_glyphs ... ok
+test panels::gpu_tests::marker_controls_render_readable_glyphs_without_hit_overlap ... ok
+test panels::gpu_tests::missing_model_notice_renders_three_readable_lines_without_control_overlap ... ok
+test panels::gpu_tests::npc_goal_and_joint_controls_render_without_hit_overlap ... ok
+test panels::gpu_tests::relink_path_entry_renders_readable_path_and_cancel_target ... ok
+test panels::gpu_tests::snapshot_failure_notice_renders_diagnostic_and_retry_hint_without_overlap ... ok
+test play_session::checkpoint::tests::full_play_resources_gpu_keeps_equal_independent_frames_distinct ... ok
+test play_session::checkpoint::tests::full_play_resources_gpu_restores_shared_runtime_frame_identity ... ok
+test play_session::checkpoint::tests::full_play_resources_gpu_stages_one_runtime_and_original_accepted_frame ... ok
+test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip ... ok
+test ui_live::gpu_reload_tests::gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher ... ok
+test ui_live::restore::tests::coordinated_file_restores_real_text_and_audio_without_source_inputs ... ok
+test ui_live::restore::tests::gpu_model_and_ui_restore_share_cache_and_admit_combined_peak ... ok
+test ui_live::restore::tests::gpu_restore_at_completed_barrier_preserves_fence_on_fault_and_discard ... ok
+test ui_live::restore::tests::gpu_restore_rolls_back_late_failures_and_publishes_exact_pixels_only_after_validation ... ok
+
+failures:
+
+---- game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body stdout ----
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene liquid body step: CollisionBudget") } }
+
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 55 passed; 1 failed; 0 ignored; 0 measured; 425 filtered out; finished in 116.04s
+

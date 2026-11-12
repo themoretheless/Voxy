@@ -76,6 +76,8 @@ impl CharacterPhysicsCheckpoint {
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 struct BodyWire {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    navigation: Option<crate::navigation::RouteCursor>,
     anchor: [i64; 3],
     min: [u64; 3],
     max: [u64; 3],
@@ -94,6 +96,7 @@ struct BodyWire {
 impl From<RuntimeBody> for BodyWire {
     fn from(body: RuntimeBody) -> Self {
         Self {
+            navigation: body.navigation,
             anchor: [
                 body.state.body.anchor.x,
                 body.state.body.anchor.y,
@@ -172,6 +175,12 @@ impl BodyWire {
             min,
             max,
         };
+        if self
+            .navigation
+            .is_some_and(|cursor| cursor.next > crate::NpcRoute::MAX_WAYPOINTS)
+        {
+            return Err(PhysicsError::InvalidMotion);
+        }
         center_of(body)?;
         let half = edges.iter().map(|v| v.abs()).sum::<glam::DVec3>();
         for i in 0..3 {
@@ -182,6 +191,7 @@ impl BodyWire {
             }
         }
         Ok(RuntimeBody {
+            navigation: self.navigation,
             state: CharacterState {
                 body,
                 velocity,
@@ -282,6 +292,60 @@ mod tests {
         let scene = document.load(&registry, 8).unwrap();
         (registry, scene)
     }
+    #[test]
+    fn npc_route_checkpoint_continues_from_accepted_waypoint() {
+        let (registry, mut original) = fixture();
+        let id = ObjectId("body".into());
+        let owner = original.resolve(&id).unwrap();
+        original
+            .graph
+            .insert_component(
+                owner,
+                NpcRoute::new(vec![[0., 0., 0.], [0.25, 0., 0.], [0.25, 0., 0.75]]).unwrap(),
+            )
+            .unwrap();
+        let mut physics = CharacterPhysics::new(&original.graph, 4, 4);
+        let mut input = player_input().unwrap();
+        for _ in 0..30 {
+            physics
+                .fixed_step(&mut original.graph, &mut input, 1. / 60.)
+                .unwrap();
+        }
+        assert_eq!(physics.states[&owner].navigation.unwrap().next, 2);
+        let checkpoint = physics
+            .checkpoint(&original.graph, |node| original.identity(node).cloned())
+            .unwrap();
+        let text = checkpoint.to_json(65536).unwrap();
+        let decoded = CharacterPhysicsCheckpoint::from_json(&text, 65536, 4).unwrap();
+        let mut resumed = original
+            .capture(&registry)
+            .unwrap()
+            .load(&registry, 8)
+            .unwrap();
+        let mut restored = CharacterPhysics::new(&resumed.graph, 4, 4);
+        restored
+            .restore_checkpoint(&resumed.graph, &decoded, |id| resumed.resolve(id))
+            .unwrap();
+        let mut resumed_input = player_input().unwrap();
+        for _ in 0..60 {
+            physics
+                .fixed_step(&mut original.graph, &mut input, 1. / 60.)
+                .unwrap();
+            restored
+                .fixed_step(&mut resumed.graph, &mut resumed_input, 1. / 60.)
+                .unwrap();
+            assert_eq!(
+                physics
+                    .checkpoint(&original.graph, |node| original.identity(node).cloned())
+                    .unwrap(),
+                restored
+                    .checkpoint(&resumed.graph, |node| resumed.identity(node).cloned())
+                    .unwrap(),
+            );
+        }
+        assert_eq!(physics.states[&owner].navigation.unwrap().next, 3);
+    }
+
     #[test]
     fn controller_checkpoint_json_rebinds_new_scene_and_matches_full_fall_cycle() {
         let (registry, mut original) = fixture();

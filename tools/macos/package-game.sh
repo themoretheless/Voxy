@@ -28,7 +28,7 @@ while [ "$#" -gt 0 ]; do
 done
 if [ "$direct" = true ] && [ "$mode" != --game ]; then usage; fi
 if [ -n "$sign_identity" ] && [ "$direct" != true ]; then
-    echo 'Signing requires --direct and a compatible Voxy editor binary' >&2
+    echo 'Signing requires --direct and a compatible Voxy game binary' >&2
     exit 1
 fi
 case "$bundle_id" in

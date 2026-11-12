@@ -209,6 +209,6 @@ mod tests {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, target_os = "macos"))]
 #[path = "world_traversal_pair_tests.rs"]
 mod metal_tests;

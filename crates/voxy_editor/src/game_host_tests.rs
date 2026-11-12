@@ -1926,3 +1926,203 @@ fn check_scene_platform_liquid(case: LiquidPlatformCase) -> Result<(), Box<dyn s
     replay(&package.project_path()?)?;
     Ok(())
 }
+
+#[test]
+fn authored_npc_route_runs_in_play_standalone_and_source_free_package()
+-> Result<(), Box<dyn std::error::Error>> {
+    npc_navigation_replay(false)
+}
+
+#[test]
+fn authored_npc_destination_plans_and_replays_after_packaging()
+-> Result<(), Box<dyn std::error::Error>> {
+    npc_navigation_replay(true)
+}
+
+fn configure_npc_navigation_scene(
+    editor: &mut App,
+    plan_destination: bool,
+) -> Result<(), Box<dyn std::error::Error>> {
+    for _ in 0..3 {
+        editor.edit_key(KeyCode::KeyD)?;
+    }
+    let [npc, floor, wall] = editor.instances[..] else {
+        return Err("unexpected test scene".into());
+    };
+    for (node, translation) in [
+        (npc, glam::Vec3::new(0., 0.1, 0.)),
+        (floor, glam::Vec3::new(0.5, -0.2, 0.5)),
+        (wall, glam::Vec3::new(0.5, 0.4, 0.)),
+    ] {
+        editor.scene.set_local(
+            node,
+            Transform {
+                translation,
+                ..Default::default()
+            },
+        )?;
+    }
+    editor.scene.insert_component(
+        floor,
+        BoxCollider {
+            half_extents: [2., 0.2, 2.],
+        },
+    )?;
+    editor.scene.insert_component(
+        wall,
+        BoxCollider {
+            half_extents: [0.1, 0.4, 0.55],
+        },
+    )?;
+    editor.scene.insert_component(
+        npc,
+        CharacterBody {
+            half_extents: [0.1; 3],
+            speed: 3.,
+            ..Default::default()
+        },
+    )?;
+    if plan_destination {
+        editor.scene.insert_component(
+            npc,
+            voxy_gameplay::NpcDestination {
+                origin: [-0.25; 2],
+                cells: [3; 2],
+                cell_size: 0.5,
+                floor_y: [-0.1, 0.15],
+                max_step_height: 0.02,
+                max_slope_tan: 0.6,
+                min_clearance: 0.2,
+                goal: [0.5, 0.],
+            },
+        )?;
+    } else {
+        editor.scene.insert_component(
+            npc,
+            voxy_gameplay::NpcRoute::new(vec![
+                [0., 0., 0.],
+                [0., 0., 1.],
+                [1., 0., 1.],
+                [1., 0., 0.],
+            ])?,
+        )?;
+    }
+    Ok(())
+}
+
+fn npc_navigation_replay(plan_destination: bool) -> Result<(), Box<dyn std::error::Error>> {
+    let temp = Temp::new();
+    let path = project::create(&temp.0.join("source"), "NPC route")?;
+    let host = || Ok::<_, Box<dyn std::error::Error>>(GameHost::new(editor_component_registry()?));
+    let mut editor = app(&path, host()?)?;
+    configure_npc_navigation_scene(&mut editor, plan_destination)?;
+    if plan_destination {
+        editor.commit_authoring()?;
+        let blocked = editor.authoring_document()?;
+        let error = editor
+            .toggle_play()
+            .expect_err("blocked NPC goal must reject Play");
+        assert!(error.to_string().contains("BlockedEndpoint"), "{error}");
+        assert_eq!(editor.authoring_document()?, blocked);
+        assert!(editor.play.playing.is_none());
+        let npc = editor.instances[0];
+        editor
+            .scene
+            .component_mut::<voxy_gameplay::NpcDestination>(npc)?
+            .expect("NPC destination restored")
+            .goal = [1., 0.];
+    }
+    editor.commit_authoring()?;
+    editor.save_authoring()?;
+    let authored = editor.authoring_document()?;
+    editor.toggle_play()?;
+    let mut trace = Vec::new();
+    for _ in 0..90 {
+        editor.advance_game(1. / 60.)?;
+        trace.push(editor.authoring_document()?);
+    }
+    let npc_id = &authored.objects[0].id;
+    let position = |document: &voxy_scene::SceneDocument| {
+        document
+            .objects
+            .iter()
+            .find(|object| &object.id == npc_id)
+            .unwrap()
+            .translation
+    };
+    assert!(position(&trace[19])[2] > 0.9);
+    let end = position(trace.last().unwrap());
+    assert!((end[0] - 1.).abs() < 1e-4 && end[2].abs() < 1e-4, "{end:?}");
+    editor.toggle_play()?;
+    assert_eq!(editor.authoring_document()?, authored);
+    editor.stop_workers()?;
+
+    let package = temp.0.join("navigation.vpak");
+    export_project_package_with_host(&path, &package, host()?)?;
+    let replay = |mut game: HeadlessGame| -> Result<(), Box<dyn std::error::Error>> {
+        for expected in &trace {
+            game.advance(1. / 60.)?;
+            assert_eq!(&game.snapshot()?, expected);
+        }
+        game.stop()
+    };
+    replay(HeadlessGame::open_project(&path, host()?)?)?;
+    std::fs::remove_dir_all(path.parent().unwrap())?;
+    replay(HeadlessGame::open_package(&package, host()?)?)
+}
+
+#[test]
+fn npc_goal_inspector_edit_save_and_undo() -> Result<(), Box<dyn std::error::Error>> {
+    use crate::{component_fields, navigation_authoring::SCHEMA};
+    let temp = Temp::new();
+    let path = project::create(&temp.0.join("source"), "NPC goal inspector")?;
+    let mut editor = App::from_project(&path)?;
+    editor.edit_key(KeyCode::KeyD)?;
+    editor.edit_key(KeyCode::KeyC)?;
+    let before = editor.authoring_document()?;
+    let token = component_fields::morph_edit_token(&before.objects[0]);
+    editor.panel_action(panels::Action::NpcDestination(token))?;
+    let added = editor.authoring_document()?;
+    assert!(added.objects[0].components.contains_key(SCHEMA));
+    assert!(
+        editor
+            .panel_action(panels::Action::NpcDestination(token))
+            .is_err()
+    );
+
+    let edit = |app: &mut App, path, value| -> Result<(), Box<dyn std::error::Error>> {
+        let document = app.authoring_document()?;
+        let index = component_fields::fields(&document.objects[app.selected])?
+            .iter()
+            .position(|field| field.schema == SCHEMA && field.path == path)
+            .ok_or("missing NPC destination field")?;
+        app.inspector = InspectorMode::Components(index / 6);
+        app.panel_action(panels::Action::Field(index))?;
+        app.field_key(KeyCode::Digit0, Some(value))?;
+        app.field_key(KeyCode::Enter, None)
+    };
+    edit(&mut editor, "/goal/0", "0.5")?;
+    let edited = editor.authoring_document()?;
+    assert_eq!(edited.objects[0].components[SCHEMA]["goal"][0], 0.5);
+    assert!(edit(&mut editor, "/cell_size", "0").is_err());
+    assert_eq!(editor.authoring_document()?, edited);
+    editor.edit_key(KeyCode::Escape)?;
+    editor.edit_key(KeyCode::KeyZ)?;
+    assert_eq!(editor.authoring_document()?, added);
+    editor.edit_key(KeyCode::KeyY)?;
+    assert_eq!(editor.authoring_document()?, edited);
+    editor.save_authoring()?;
+    editor.stop_workers()?;
+
+    let mut reopened = App::from_project(&path)?;
+    assert_eq!(reopened.authoring_document()?, edited);
+    reopened.edit_key(KeyCode::KeyC)?;
+    assert!(
+        !reopened.authoring_document()?.objects[0]
+            .components
+            .contains_key(SCHEMA)
+    );
+    reopened.edit_key(KeyCode::KeyZ)?;
+    assert_eq!(reopened.authoring_document()?, edited);
+    reopened.stop_workers()
+}

@@ -204,6 +204,9 @@ impl AudioPublicationPermit<'_> {
     pub(crate) fn publish(self, mut prepared: PreparedAudioSession) {
         let old = std::mem::replace(&mut self.session.play, prepared.play.take());
         self.session.checkpoint_requested = false;
+        if self.session.play.is_none() && self.session.reconnect_after.take().is_some() {
+            self.session.close_audio_device();
+        }
         if let Some(old) = old {
             self.session.retired.extend(old.close());
         }
@@ -349,6 +352,9 @@ impl AudioSessionCheckpoint {
 #[allow(dead_code)]
 impl AudioSession {
     fn checkpoint_boundary(&self) -> Result<(), EditorError> {
+        if self.reconnecting_offline() {
+            return self.logical_checkpoint_boundary();
+        }
         if self.device.is_some()
             || self.connection.is_some()
             || self.native_checkpoint.is_some()
@@ -360,6 +366,9 @@ impl AudioSession {
         {
             return Err("native audio checkpoint needs a device queue barrier".into());
         }
+        self.logical_checkpoint_boundary()
+    }
+    fn logical_checkpoint_boundary(&self) -> Result<(), EditorError> {
         if self.pending_play.is_some()
             || self.preparation.is_some()
             || self.prepared.is_some()
@@ -421,6 +430,11 @@ impl AudioSession {
                 return Ok(false); // The original logical playback owner is unchanged.
             }
         }
+        if self.reconnecting_offline() {
+            // Reconnect cannot publish while the checkpoint holds playback.
+            self.checkpoint_boundary()?;
+            return Ok(false);
+        }
         if self.device.is_none()
             && self.connection.is_none()
             && self
@@ -476,7 +490,10 @@ impl AudioSession {
         has_window: bool,
     ) -> Result<(), EditorError> {
         self.checkpoint_boundary()?;
-        if !self.checkpoint_requested || self.checkpoint_startup.is_some() {
+        if !self.checkpoint_requested
+            || self.checkpoint_startup.is_some()
+            || self.reconnecting_offline()
+        {
             return Err("native restoration startup requires a logical owned checkpoint".into());
         }
         if self.output_mode != AudioOutputMode::Native && !has_window {
@@ -989,6 +1006,9 @@ pub(crate) mod tests {
     }
     fn capture(session: &mut AudioSession) -> AudioSessionCheckpoint {
         session.request_checkpoint().unwrap();
+        capture_requested(session)
+    }
+    fn capture_requested(session: &mut AudioSession) -> AudioSessionCheckpoint {
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
         loop {
             if let Some(saved) = session
@@ -1002,14 +1022,12 @@ pub(crate) mod tests {
             std::thread::yield_now();
         }
     }
-    #[test]
-    #[ignore = "physical default audio output; gain zero, no window"]
-    #[expect(
-        clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
-    )]
-    fn physical_native_session_save_cancel_resume_and_closed_load_admission() {
-        use std::time::{Duration, Instant};
+    fn native_audio_fixture() -> (
+        crate::project_prefab_tests::Temp,
+        AuthoringProject,
+        SceneGraph,
+        voxy_scene::NodeId,
+    ) {
         let temp = crate::project_prefab_tests::Temp::new();
         std::fs::write(temp.0.join("tone.wav"), wav()).unwrap();
         let project = AuthoringProject::new(&temp.0, &InputRecipe::Direct).unwrap();
@@ -1030,6 +1048,108 @@ pub(crate) mod tests {
                 },
             )
             .unwrap();
+        (temp, project, scene, node)
+    }
+
+    #[test]
+    #[ignore = "requires physical native output; injects stream failure with a frozen queue"]
+    fn native_session_automatically_reconnects_after_injected_failure() {
+        use std::time::{Duration, Instant};
+        let (_temp, project, scene, node) = native_audio_fixture();
+        let deadline = Instant::now() + Duration::from_secs(20);
+        let mut device = voxy_audio_device::OutputDeviceWorker::spawn(4096).unwrap();
+        let old = loop {
+            if let Some(connection) = device.poll().unwrap() {
+                break connection;
+            }
+            assert!(Instant::now() < deadline);
+            std::thread::sleep(Duration::from_millis(2));
+        };
+        let mut session = AudioSession {
+            play: audio_play::AudioPlay::prepare(&scene, &project, Some(old.clone())).unwrap(),
+            output_mode: AudioOutputMode::Native,
+            device: Some(device),
+            connection: Some(old.clone()),
+            ..AudioSession::default()
+        };
+        session.play_mut().unwrap().advance(&scene, 1).unwrap();
+        let frames = session.play().unwrap().frames;
+        session.inject_stream_failure();
+        while session.output_mode() != AudioOutputMode::Offline {
+            session.poll(&scene, &project).unwrap();
+            assert!(Instant::now() < deadline);
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        assert!(session.device.is_some());
+        session.checkpoint_admission().unwrap();
+        session.request_checkpoint().unwrap();
+        session.poll(&scene, &project).unwrap();
+        assert_eq!(session.output_mode(), AudioOutputMode::Offline);
+        assert!(session.checkpoint_output_connection().unwrap().is_none());
+        let saved = capture_requested(&mut session);
+        assert_eq!(saved.native_output_rate(), Some(old.sample_rate()));
+        assert_eq!(saved.playback_rate(), Some(old.sample_rate()));
+        assert_eq!(session.play().unwrap().frames, frames);
+        session.play_mut().unwrap().advance(&scene, 3).unwrap();
+        let advanced = session.play().unwrap().frames;
+        assert!(advanced > frames);
+        let candidate = saved
+            .prepare(&scene, &project, |_| Some(node), 2_000_000)
+            .unwrap();
+        session.request_checkpoint().unwrap();
+        let deadline_checkpoint = Instant::now() + Duration::from_secs(5);
+        let identify = |_| Some(ObjectId("sound".into()));
+        while session
+            .poll_checkpoint(identify, 2_000_000)
+            .unwrap()
+            .is_none()
+        {
+            assert!(Instant::now() < deadline_checkpoint);
+            std::thread::yield_now();
+        }
+        {
+            let _cancelled = session
+                .checkpoint_publication_at_barrier(identify, 2_000_000)
+                .unwrap();
+        }
+        assert_eq!(session.play().unwrap().frames, advanced);
+        assert!(session.checkpoint_requested);
+        session
+            .checkpoint_publication_at_barrier(identify, 2_000_000)
+            .unwrap()
+            .publish(candidate);
+        assert!(session.reconnecting_offline());
+        assert_eq!(session.play().unwrap().frames, frames);
+        while session.output_mode() != AudioOutputMode::Native {
+            session.poll(&scene, &project).unwrap();
+            assert!(Instant::now() < deadline);
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        let play = session.play().unwrap();
+        let replacement = play.output_connection().unwrap();
+        assert!(!replacement.shares_output(&old));
+        assert_eq!(replacement.sample_rate(), old.sample_rate());
+        assert_eq!(play.frames, frames);
+        assert!(
+            session
+                .device
+                .as_ref()
+                .unwrap()
+                .owns_connection(replacement)
+        );
+        session.play_mut().unwrap().advance(&scene, 1).unwrap();
+        assert!(session.play().unwrap().frames > frames);
+    }
+
+    #[test]
+    #[ignore = "physical default audio output; gain zero, no window"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
+    fn physical_native_session_save_cancel_resume_and_closed_load_admission() {
+        use std::time::{Duration, Instant};
+        let (temp, project, mut scene, node) = native_audio_fixture();
         let mut device = voxy_audio_device::OutputDeviceWorker::spawn(4096).unwrap();
         let deadline = Instant::now() + Duration::from_secs(20);
         let connection = loop {

@@ -21,12 +21,8 @@ fn original_products(pairs: impl Iterator<Item = (f64, f64)>) -> f64 {
     }
     sum + correction
 }
-fn original_support(column: &[f64]) -> Vec<usize> {
-    column
-        .iter()
-        .enumerate()
-        .filter_map(|(i, &v)| (v != 0.).then_some(i))
-        .collect()
+fn original_support(column: &[f64], indices: impl Iterator<Item = usize>) -> Vec<usize> {
+    indices.filter(|&index| column[index] != 0.).collect()
 }
 // One exact-input GPU result, bounded independently of scene size. Physical
 // ownership still validates the returned candidate against original loads.
@@ -510,7 +506,7 @@ impl<'a> EqualityTask<'a> {
             columns,
             bounds,
             tolerance,
-            rhs: bounds.to_vec(),
+            rhs: Vec::new(),
             reactions: vec![0.; bounds.len()],
             coordinates: Vec::new(),
             supports: None,
@@ -622,7 +618,10 @@ impl<'a> EqualityTask<'a> {
         let coordinates = &mut self.coordinates;
 
         let output = if refinement == 0 {
-            let (state, output) = self.initial.take().unwrap().into_validated(bytes).map_err(|error| {
+            // Bound retained snapshot payload independently of scene size.
+            let retain_prefix = options.prefix_reuse && bytes.len() <= 2 * 1024 * 1024;
+            let (state, output, prefix) = self.initial.take().unwrap()
+                .into_validated_with_prefix(bytes, retain_prefix).map_err(|error| {
                 let header: Vec<_> = bytes
                     .get(..16.min(bytes.len()))
                     .unwrap_or(&[])
@@ -637,13 +636,8 @@ impl<'a> EqualityTask<'a> {
                     "GPU joint QR/equality publication rejected: {error}; refinement={refinement} header={header:?} equality_status={status:?}"
                 )
             })?;
-            // Bound retained snapshot payload independently of scene size.
             if options.prefix_reuse {
-                self.prefix = if bytes.len() <= 2 * 1024 * 1024 {
-                    Some(state.qr_prefix(bytes)?)
-                } else {
-                    None
-                };
+                self.prefix = prefix;
             }
             self.validated = Some(state);
             output
@@ -689,17 +683,31 @@ impl<'a> EqualityTask<'a> {
         // Early-release proposals need no original-column dot
         // products. Build exact support only for admitted-coordinate
         // refinement, retaining it across that task's iterations.
-        let supports = self
-            .supports
-            .get_or_insert_with(|| columns.iter().map(|c| original_support(c)).collect());
-        let rhs: Vec<f64> = columns
-            .iter()
-            .zip(supports.iter())
-            .zip(bounds)
-            .map(|((column, ids), &bound)| {
-                bound - original_products(ids.iter().map(|&i| (column[i], coordinates[i])))
-            })
-            .collect();
+        let supports = self.supports.get_or_insert_with(|| {
+            let indices = self
+                .validated
+                .as_ref()
+                .unwrap()
+                .original_coordinate_indices();
+            columns
+                .iter()
+                .map(|column| original_support(column, indices.iter().copied()))
+                .collect()
+        });
+        self.rhs.clear();
+        self.rhs
+            .extend(columns.iter().zip(supports.iter()).zip(bounds).map(
+                |((column, ids), &bound)| {
+                    // Keep the bound inside the compensated sum so the
+                    // correction retains residuals below the dot's ULP.
+                    -original_products(
+                        ids.iter()
+                            .map(|&i| (column[i], coordinates[i]))
+                            .chain(std::iter::once((-bound, 1.))),
+                    )
+                },
+            ));
+        let rhs = &self.rhs;
         if rhs.iter().any(|v| !v.is_finite()) {
             return Err("original GPU equality refinement overflow".into());
         }
@@ -711,7 +719,7 @@ impl<'a> EqualityTask<'a> {
             .iter()
             .zip(supports.iter())
             .zip(bounds)
-            .zip(&rhs)
+            .zip(rhs)
             .all(|(((column, ids), &bound), &defect)| {
                 let magnitude = bound.abs()
                     + original_products(
@@ -741,7 +749,6 @@ impl<'a> EqualityTask<'a> {
                 std::mem::take(reactions),
             )));
         }
-        self.rhs = rhs;
         if self.refinement >= options.refinement_limit {
             if options.release
                 && reactions.iter().all(|v| v.is_finite())
@@ -912,28 +919,30 @@ fn run_equality_tasks(
             });
             profile.wait_wall_ms += EqualityStageProfile::elapsed(wait_started);
             let decode_started = EqualityStageProfile::start(options.stage_profile);
-            let bytes = if let Err(error) = &polled {
+            let decoded = if let Err(error) = &polled {
                 Err(error.to_string())
             } else {
-                read.try_read()
-                    .map_err(|error| error.to_string())
-                    .and_then(|bytes| {
-                        bytes.ok_or_else(|| "pending GPU joint contact readback".to_owned())
-                    })
+                read.try_read_with(|bytes| {
+                    for &(i, _, target, size) in &dispatches {
+                        match tasks[i].as_mut().unwrap().consume(
+                            &bytes[target as usize..(target + size) as usize],
+                            options,
+                            stats,
+                        ) {
+                            Ok(None) => {}
+                            Ok(Some(proposal)) => results[i] = Some(Ok(proposal)),
+                            Err(error) => results[i] = Some(Err(error)),
+                        }
+                    }
+                })
+                .map_err(|error| error.to_string())
+                .and_then(|decoded| {
+                    decoded.ok_or_else(|| "pending GPU joint contact readback".to_owned())
+                })
             };
-            for (i, _, target, size) in dispatches {
-                let result = match &bytes {
-                    Ok(bytes) => tasks[i].as_mut().unwrap().consume(
-                        &bytes[target as usize..(target + size) as usize],
-                        options,
-                        stats,
-                    ),
-                    Err(error) => Err(error.clone().into()),
-                };
-                match result {
-                    Ok(None) => {}
-                    Ok(Some(proposal)) => results[i] = Some(Ok(proposal)),
-                    Err(error) => results[i] = Some(Err(error)),
+            for (i, _, _, _) in dispatches {
+                if let Err(error) = &decoded {
+                    results[i] = Some(Err(error.clone().into()));
                 }
                 if results[i].is_some() {
                     let task = tasks[i].take().unwrap();
@@ -1868,24 +1877,38 @@ impl GpuHairLinearSolver {
     }
     /// Cooperative GPU coordinate solving. Original physical island admission
     /// remains the caller's responsibility; no partial batch is published.
-    #[expect(
-        clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
-    )]
     pub(super) fn solve_joint_batch_checked(
         &mut self,
         requests: &[physics::hair::HairContactCoordinateRequest<'_>],
     ) -> Result<Option<Vec<(Vec<f64>, Vec<f64>)>>, Box<dyn std::error::Error>> {
+        Ok(self
+            .solve_joint_candidates_checked(requests, false)?
+            .and_then(|values| values.into_iter().collect()))
+    }
+
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
+    pub(super) fn solve_joint_candidates_checked(
+        &mut self,
+        requests: &[physics::hair::HairContactCoordinateRequest<'_>],
+        keep_siblings: bool,
+    ) -> Result<Option<Vec<Option<(Vec<f64>, Vec<f64>)>>>, Box<dyn std::error::Error>> {
         if !self.joint_contact_qr {
             return Ok(None);
         }
         #[cfg(test)]
         if self.joint_triple_active_program.is_some() {
-            return self.solve_triple_active_batch(requests).map(Some);
+            return self
+                .solve_triple_active_batch(requests)
+                .map(|values| Some(values.into_iter().map(Some).collect()));
         }
         #[cfg(test)]
         if self.joint_resident_active_program.is_some() {
-            return self.solve_resident_active_batch(requests).map(Some);
+            return self
+                .solve_resident_active_batch(requests)
+                .map(|values| Some(values.into_iter().map(Some).collect()));
         }
 
         if self.joint_programs.is_none() {
@@ -1947,47 +1970,58 @@ impl GpuHairLinearSolver {
         let mut prefixes: Vec<_> = (0..requests.len()).map(|_| None).collect();
         let mut error = None;
         let mut workspaces = std::mem::take(&mut self.joint_workspaces);
-        let output =
-            HairResponseSystem::solve_contact_coordinate_batch_with_proposals(&requests, |ready| {
-                let mut selected: Vec<_> = ready
-                    .iter()
-                    .map(|r| prefixes[r.operator_index].take())
-                    .collect();
-                let mut stats = EqualityStats::default();
-                let results = run_equality_tasks(
-                    &self.device,
-                    &self.queue,
-                    qr,
-                    solve,
-                    ready,
-                    &mut selected,
-                    &mut workspaces,
-                    options,
-                    &mut stats,
-                );
-                for (r, prefix) in ready.iter().zip(selected) {
-                    prefixes[r.operator_index] = prefix;
-                }
-                self.joint_workspace_creations += stats.workspace_creations;
-                self.joint_workspace_reuses += stats.workspace_reuses;
-                self.joint_equality_dispatches += stats.dispatches;
-                self.joint_equality_submissions += stats.submissions;
-                self.joint_qr_columns_reused += stats.reused;
-                self.joint_release_direction_calls += stats.release;
-                self.joint_early_release_direction_calls += stats.early_release;
-                Some(
-                    results
-                        .into_iter()
-                        .map(|r| match r {
-                            Ok(p) => Some(p),
-                            Err(e) => {
-                                error = Some(e);
-                                None
-                            }
-                        })
-                        .collect(),
-                )
-            });
+        let mut propose = |ready: &[physics::hair::HairContactEqualityRequest<'_>]| {
+            let mut selected: Vec<_> = ready
+                .iter()
+                .map(|r| prefixes[r.operator_index].take())
+                .collect();
+            let mut stats = EqualityStats::default();
+            let results = run_equality_tasks(
+                &self.device,
+                &self.queue,
+                qr,
+                solve,
+                ready,
+                &mut selected,
+                &mut workspaces,
+                options,
+                &mut stats,
+            );
+            for (r, prefix) in ready.iter().zip(selected) {
+                prefixes[r.operator_index] = prefix;
+            }
+            self.joint_workspace_creations += stats.workspace_creations;
+            self.joint_workspace_reuses += stats.workspace_reuses;
+            self.joint_equality_dispatches += stats.dispatches;
+            self.joint_equality_submissions += stats.submissions;
+            self.joint_qr_columns_reused += stats.reused;
+            self.joint_release_direction_calls += stats.release;
+            self.joint_early_release_direction_calls += stats.early_release;
+            Some(
+                results
+                    .into_iter()
+                    .map(|r| match r {
+                        Ok(p) => Some(p),
+                        Err(e) => {
+                            error = Some(e);
+                            None
+                        }
+                    })
+                    .collect(),
+            )
+        };
+        let output = if keep_siblings {
+            HairResponseSystem::solve_contact_coordinate_candidates_with_proposals(
+                &requests,
+                &mut propose,
+            )
+        } else {
+            HairResponseSystem::solve_contact_coordinate_batch_with_proposals(
+                &requests,
+                &mut propose,
+            )
+            .map(|values| values.into_iter().map(Some).collect())
+        };
         self.joint_workspaces = workspaces;
         if output.is_none()
             && let Some(error) = error
@@ -3082,6 +3116,72 @@ mod tests {
         }
     }
     #[test]
+    #[ignore = "requires real GPU to compare full and tail-only equality refinement readbacks"]
+    fn gpu_equality_refinement_tail_matches_full_snapshot() {
+        let instance = voxy_render::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let qr = pollster::block_on(ComputeProgram::new(&device, JOINT_CONTACT_QR_SHADER)).unwrap();
+        let solve = pollster::block_on(ComputeProgram::new(&device, JOINT_CONTACT_EQUALITY_SHADER))
+            .unwrap();
+        let columns = [vec![1.3, 0.7, 0.2], vec![0.2, 1.1, 0.8]];
+        let request = physics::hair::HairContactEqualityRequest {
+            operator_index: 0,
+            columns: &columns,
+            bounds: &[1.7, 2.4],
+            tolerance: 1e-14,
+        };
+        let run = |full_refinement_readback| {
+            let mut stats = EqualityStats::default();
+            let result = run_equality_tasks(
+                &device,
+                &queue,
+                &qr,
+                &solve,
+                std::slice::from_ref(&request),
+                &mut [None],
+                &mut EqualityWorkspacePool::default(),
+                EqualityOptions {
+                    resident_columns: false,
+                    compact: true,
+                    prefix_reuse: true,
+                    release: false,
+                    early_release: false,
+                    full_refinement_readback,
+                    separate_qr_passes: false,
+                    refinement_limit: 8,
+                    refinement_trace: false,
+                    stage_profile: false,
+                },
+                &mut stats,
+            )
+            .pop()
+            .unwrap()
+            .unwrap();
+            let physics::hair::HairContactEqualityProposal::Solution(coordinates, reactions) =
+                result
+            else {
+                panic!("expected equality solution");
+            };
+            assert!(
+                stats.submissions > 1,
+                "fixture must refine after initial readback"
+            );
+            (
+                coordinates
+                    .into_iter()
+                    .map(f64::to_bits)
+                    .collect::<Vec<_>>(),
+                reactions.into_iter().map(f64::to_bits).collect::<Vec<_>>(),
+                stats.submissions,
+            )
+        };
+        assert_eq!(run(true), run(false));
+    }
+
+    #[test]
     #[ignore = "requires actual GPU; bounded staging across many independent owners"]
     #[expect(
         clippy::too_many_lines,
@@ -3512,7 +3612,11 @@ mod tests {
     fn original_support_products_match_dense_cancellation_and_tiny_terms() {
         let column = [0., 1e16, -0., 1., -1e16, f64::from_bits(1), 1e-300];
         let values = [1., 1., -1., 1., 1., 1e300, 1e200];
-        let ids = original_support(&column);
+        let ids = original_support(&column, 0..column.len());
+        assert_eq!(
+            original_support(&column, [1, 2, 3, 4, 5, 6].into_iter()),
+            ids,
+        );
         assert_eq!(ids, vec![1, 3, 4, 5, 6]);
         assert_eq!(
             original_products(column.iter().copied().zip(values)).to_bits(),
@@ -3542,7 +3646,7 @@ mod tests {
                     });
                 }
             }
-            let ids = original_support(&column);
+            let ids = original_support(&column, 0..column.len());
             for absolute in [false, true] {
                 let product = |a: f64, b: f64| if absolute { (a.abs(), b.abs()) } else { (a, b) };
                 let dense =
@@ -4571,6 +4675,81 @@ mod tests {
             "max_response_difference":max_response_difference,"max_reaction_difference":max_reaction_difference,
             "scope":"bounded changing-bound sequence on fixed original matrices/loads; both paths independently pass unchanged native gates; not bit identity, full jump, timing benchmark or FPS"})
         );
+    }
+
+    #[test]
+    #[ignore = "requires real GPU and VOXY_HAIR_QR_INPUT_FIXTURE with original VQC1 inputs"]
+    fn gpu_coupled_batch_admits_captured_original_physics() {
+        let (requests, bounds, tolerance, rows, width, _) = captured_original_physical_fixture();
+        let instance = voxy_render::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+        let (device, queue) = pollster::block_on(
+            adapter.request_device(&super::super::qualification_device_descriptor(&adapter)),
+        )
+        .unwrap();
+        let mut gpu =
+            pollster::block_on(GpuHairLinearSolver::new_coupled(&device, &queue)).unwrap();
+        gpu.joint_full_refinement_readback =
+            std::env::var("VOXY_HAIR_JOINT_TAIL_READBACK").as_deref() != Ok("1");
+        assert!(gpu.joint_contact_coordinate_batches_enabled());
+        let (responses, reactions, accelerated) =
+            HairResponseSystem::solve_joint_load_inequalities_accelerated(
+                &requests,
+                &bounds,
+                tolerance,
+                |columns, bounds, tolerance| {
+                    gpu.solve_joint_coordinates_batch(&[
+                        physics::hair::HairContactCoordinateRequest {
+                            columns,
+                            bounds,
+                            tolerance,
+                            seeds: &[],
+                        },
+                    ])?
+                    .pop()
+                },
+            )
+            .unwrap();
+        assert!(
+            accelerated,
+            "coupled GPU batch rejected {rows}×{width}: {:?}",
+            gpu.last_error
+        );
+        HairResponseSystem::validate_joint_solution(
+            &requests, &bounds, &responses, &reactions, tolerance,
+        )
+        .unwrap();
+        assert!(gpu.joint_equality_submissions > 0);
+    }
+
+    #[test]
+    #[ignore = "requires real GPU, original VQC1 and selective five-component fallback"]
+    fn gpu_five_fallback_admits_original_physical_operator() {
+        let (requests, bounds, tolerance, _, _, _) = captured_original_physical_fixture();
+        let instance = voxy_render::GraphicsOptions::default().create_instance();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+        let (device, queue) = pollster::block_on(
+            adapter.request_device(&super::super::qualification_device_descriptor(&adapter)),
+        )
+        .unwrap();
+        let mut gpu =
+            pollster::block_on(GpuHairLinearSolver::new_coupled(&device, &queue)).unwrap();
+        assert!(!gpu.joint_contact_expanded_enabled());
+        assert!(gpu.joint_contact_expanded_fallback_enabled());
+        let (responses, reactions, used) =
+            HairResponseSystem::solve_joint_load_inequalities_expanded(
+                &requests, &bounds, tolerance, &mut gpu,
+            )
+            .unwrap();
+        assert!(used);
+        assert!(gpu.joint_programs.is_some());
+        assert!(gpu.joint_five_programs.is_some());
+        HairResponseSystem::validate_joint_solution(
+            &requests, &bounds, &responses, &reactions, tolerance,
+        )
+        .unwrap();
     }
 
     #[test]

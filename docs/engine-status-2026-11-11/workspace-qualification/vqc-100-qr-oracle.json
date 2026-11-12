@@ -1,0 +1,28 @@
+{
+  "scope": "Exact rational residual enclosure on the supplied active-set GPU QR artifact; not active-set selection or full trajectory",
+  "active_rows": 6,
+  "width": 882,
+  "checks": {
+    "rectangular_reconstruction": {
+      "checked": 5292,
+      "outside_certificate": 0,
+      "worst_absolute_residual": 1.2384073743064101e-26
+    },
+    "orthogonality": {
+      "checked": 36,
+      "outside_certificate": 0,
+      "worst_absolute_residual": 8.118567035437079e-34
+    },
+    "active_equalities": {
+      "checked": 6,
+      "outside_certificate": 0,
+      "worst_absolute_residual": 2.3661456758810389e-35
+    },
+    "coordinate_equilibrium": {
+      "checked": 882,
+      "outside_certificate": 0,
+      "worst_absolute_residual": 3.2068941241949405e-34
+    }
+  },
+  "status": "passed"
+}

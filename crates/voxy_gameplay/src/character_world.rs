@@ -9,6 +9,7 @@ use crate::{BoxCollider, CharacterBody, CollisionLayers, PhysicsError, convex};
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct RuntimeBody {
     pub(crate) state: CharacterState,
+    pub(crate) navigation: Option<crate::navigation::RouteCursor>,
     pub(crate) published: Vec3,
     pub(crate) descriptor: CharacterBody,
     pub(crate) edges: [glam::DVec3; 3],
@@ -339,6 +340,7 @@ pub(crate) fn fresh(
     let min = (center.as_dvec3() - half).to_array();
     let max = (center.as_dvec3() + half).to_array();
     RuntimeBody {
+        navigation: None,
         state: CharacterState {
             body: AnchoredAabb {
                 anchor: Origin::default(),

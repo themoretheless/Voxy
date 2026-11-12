@@ -35,6 +35,11 @@ fn joint_kind_row_and_toggle_render_readable_glyphs_without_hit_overlap() {
 fn joint_target_row_and_toggle_render_readable_glyphs_without_hit_overlap() {
     render_controls(Controls::JointTarget);
 }
+#[test]
+#[ignore = "requires a real GPU and local TrueType font"]
+fn npc_goal_and_joint_controls_render_without_hit_overlap() {
+    render_controls(Controls::NpcGoal);
+}
 /// Two objects; the selected rig is welded to the anchor by a distance spring.
 fn joint_document() -> SceneDocument {
     let mut document = SceneDocument::from_json(r#"{"version":1,"objects":[{"id":"rig","parent":null,"name":"Jointed rig","active":true,"translation":[0,-2,0],"rotation":[0,0,0,1],"scale":[1,1,1],"components":{}},{"id":"anchor","parent":null,"name":"Ceiling anchor","active":true,"translation":[0,0,0],"rotation":[0,0,0,1],"scale":[1,1,1],"components":{}}]}"#).unwrap();
@@ -58,6 +63,7 @@ fn joint_document() -> SceneDocument {
 enum Controls {
     JointKind,
     JointTarget,
+    NpcGoal,
     Markers,
     Missing,
     Relink,
@@ -94,6 +100,12 @@ fn render_controls(scenario: Controls) {
     let joint = matches!(scenario, Controls::JointKind | Controls::JointTarget);
     if joint {
         document = joint_document();
+    }
+    if scenario == Controls::NpcGoal {
+        document.objects[0].components.insert(
+            "game.character.v1".into(),
+            serde_json::to_value(voxy_gameplay::CharacterBody::default()).unwrap(),
+        );
     }
     let mut panels = Panels::new().unwrap();
     if with_notice {
@@ -163,6 +175,7 @@ fn render_controls(scenario: Controls) {
                     | Action::Joint(_)
                     | Action::JointKind(_)
                     | Action::JointTarget(_)
+                    | Action::NpcDestination(_)
             ) || (joint && matches!(action, Action::Field(_)))
         })
         .copied()
@@ -171,10 +184,10 @@ fn render_controls(scenario: Controls) {
     // member row, its Change or Pick button and the toggle.
     assert_eq!(
         controls.len(),
-        if scenario == Controls::JointTarget {
-            7
-        } else {
-            8
+        match scenario {
+            Controls::JointTarget => 7,
+            Controls::NpcGoal => 9,
+            _ => 8,
         }
     );
     assert_eq!(

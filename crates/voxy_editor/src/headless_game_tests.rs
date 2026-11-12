@@ -97,10 +97,7 @@ fn project_play_standalone_and_source_free_package_share_interactive_replay()
     editor.ui_action_setup = config.ui_actions;
     let authored = editor.authoring_document()?;
     editor.toggle_play()?;
-    let mut play = HeadlessGame {
-        app: editor,
-        _package: None,
-    };
+    let mut play = HeadlessGame { app: editor };
     let expected = replay(&mut play)?;
     play.app.toggle_play()?;
     assert_eq!(play.snapshot()?, authored);
@@ -113,23 +110,169 @@ fn project_play_standalone_and_source_free_package_share_interactive_replay()
     export_project_package_with_host(&path, &output, host()?)?;
     std::fs::remove_dir_all(path.parent().unwrap())?;
     let mut packaged = HeadlessGame::open_package(&output, host()?)?;
-    let extracted = packaged
-        ._package
-        .as_ref()
-        .unwrap()
-        .project_path()?
-        .parent()
-        .unwrap()
-        .to_path_buf();
-    assert!(extracted.exists());
+    assert_eq!(
+        packaged.app.authoring.authoring_project.root(),
+        output.parent().unwrap().canonicalize()?
+    );
+    assert!(packaged.app.authoring.scene_path.is_none());
     assert_eq!(replay(&mut packaged)?, expected);
     packaged.stop()?;
-    assert!(
-        !extracted.exists(),
-        "package extraction outlived game shutdown"
-    );
     Ok(())
 }
+#[test]
+fn character_replication_checkpoint_continues_an_airborne_player()
+-> Result<(), Box<dyn std::error::Error>> {
+    let temp = Temp::new();
+    let project = temp.project();
+    let mut game = HeadlessGame::open_project(&project, host()?)?;
+    for _ in 0..5 {
+        game.advance(1.0 / 60.0)?;
+    }
+    game.key(KeyCode::ArrowRight, true)?;
+    game.key(KeyCode::Space, true)?;
+    game.advance(1.0 / 60.0)?;
+    game.key(KeyCode::Space, false)?;
+    for _ in 0..4 {
+        game.advance(1.0 / 60.0)?;
+    }
+    let saved = game.character_replication_snapshot()?;
+    let mut encoded = Vec::new();
+    saved.write_frame(&mut encoded, 64 * 1024)?;
+    let saved = CharacterReplicationSnapshot::read_frame(&mut encoded.as_slice(), 64 * 1024)?;
+    assert_eq!(saved.scene.tick, 10);
+    assert!(object(&saved.scene.document, "player").translation[1] > 0.1);
+    let registry = editor_component_registry()?;
+    let mut scene = saved.scene.document.load(&registry, 64)?;
+    let mut physics = voxy_gameplay::CharacterPhysics::new(&scene.graph, 128, 128);
+    let encoded = saved
+        .physics
+        .ok_or("missing character state")?
+        .to_json(64 * 1024)?;
+    let checkpoint =
+        voxy_gameplay::CharacterPhysicsCheckpoint::from_json(&encoded, 64 * 1024, 128)?;
+    physics.restore_checkpoint(&scene.graph, &checkpoint, |id| scene.resolve(id))?;
+    let mut input = voxy_gameplay::player_input()?;
+    input.restore_checkpoint(&saved.input)?;
+    let player = scene
+        .resolve(&voxy_scene::ObjectId("player".into()))
+        .unwrap();
+    for _ in 0..24 {
+        game.advance(1.0 / 60.0)?;
+        physics.fixed_step(&mut scene.graph, &mut input, 1.0 / 60.0)?;
+        let expected = game.character_replication_snapshot()?;
+        assert_eq!(
+            scene.graph.local(player)?.translation.to_array(),
+            object(&expected.scene.document, "player").translation
+        );
+        assert_eq!(
+            Some(physics.checkpoint(&scene.graph, |node| scene.identity(node).cloned())?),
+            expected.physics
+        );
+    }
+    game.key(KeyCode::ArrowRight, false)?;
+    let snapshot = game.character_replication_snapshot()?;
+    let steps = [
+        Some(KeyCode::ArrowLeft),
+        None,
+        Some(KeyCode::ArrowRight),
+        None,
+        None,
+    ];
+    assert!(
+        snapshot
+            .replay_character_inputs(&registry, 64, &steps, 4)
+            .is_err()
+    );
+    let predicted = snapshot.replay_character_inputs(&registry, 64, &steps, 5)?;
+    for key in steps {
+        if let Some(key) = key {
+            game.key(key, true)?;
+        }
+        game.advance(1.0 / 60.0)?;
+        if let Some(key) = key {
+            game.key(key, false)?;
+        }
+    }
+    let player = predicted
+        .resolve(&voxy_scene::ObjectId("player".into()))
+        .unwrap();
+    assert_eq!(
+        predicted.graph.local(player)?.translation.to_array(),
+        object(&game.snapshot()?, "player").translation
+    );
+    game.stop()?;
+    Ok(())
+}
+
+#[test]
+fn packaged_game_replicates_authoritative_fixed_ticks_over_tcp()
+-> Result<(), Box<dyn std::error::Error>> {
+    use std::net::{TcpListener, TcpStream};
+    use std::time::Duration;
+    use voxy_scene::{SnapshotBaseline, SnapshotRollbackBuffer, SnapshotUpdate};
+
+    const MAX_BYTES: usize = 64 * 1024;
+    let temp = Temp::new();
+    let project = temp.project();
+    let package = temp.0.join("replication.vpak");
+    export_project_package_with_host(&project, &package, host()?)?;
+    std::fs::remove_dir_all(project.parent().unwrap())?;
+    let mut game = HeadlessGame::open_package(&package, host()?)?;
+    let mut history = SnapshotRollbackBuffer::new(2);
+    history.push(game.replication_snapshot()?)?;
+
+    let listener = TcpListener::bind(("127.0.0.1", 0))?;
+    let mut client = TcpStream::connect(listener.local_addr()?)?;
+    let (mut server, _) = listener.accept()?;
+    let timeout = Some(Duration::from_secs(2));
+    client.set_read_timeout(timeout)?;
+    client.set_write_timeout(timeout)?;
+    server.set_read_timeout(timeout)?;
+    server.set_write_timeout(timeout)?;
+    SnapshotBaseline::Full.write_request(&mut client)?;
+    history.serve_update(&mut server, MAX_BYTES)?;
+    let SnapshotUpdate::Full(initial) = SnapshotUpdate::read_frame(&mut client, MAX_BYTES)? else {
+        panic!("new client must receive a full scene");
+    };
+    assert_eq!(initial.tick, 0);
+
+    game.key(KeyCode::ArrowRight, true)?;
+    for _ in 0..10 {
+        game.advance(1.0 / 60.0)?;
+    }
+    let target = game.replication_snapshot()?;
+    assert_eq!(target.tick, 10);
+    assert!(
+        object(&target.document, "player").translation[0]
+            > object(&initial.document, "player").translation[0]
+    );
+    history.push(target.clone())?;
+    SnapshotBaseline::Confirmed {
+        tick: initial.tick,
+        state_crc32c: initial.state_crc32c,
+    }
+    .write_request(&mut client)?;
+    history.serve_update(&mut server, MAX_BYTES)?;
+    let reply = SnapshotUpdate::read_frame(&mut client, MAX_BYTES)?;
+    assert!(matches!(&reply, SnapshotUpdate::Delta(_)));
+    let mut prediction = SnapshotRollbackBuffer::new(2);
+    prediction.push(initial.into_owned())?;
+    let registry = editor_component_registry()?;
+    let loaded = prediction
+        .apply_authoritative_update(&registry, 64, reply)?
+        .unwrap();
+    assert_eq!(prediction.get(10), Some(&target));
+    let player = loaded
+        .resolve(&voxy_scene::ObjectId("player".into()))
+        .unwrap();
+    assert_eq!(
+        loaded.graph.local(player)?.translation.x,
+        object(&target.document, "player").translation[0]
+    );
+    game.stop()?;
+    Ok(())
+}
+
 #[test]
 fn headless_focus_loss_cancels_input_and_ui_capture_and_invalid_events_do_not_advance()
 -> Result<(), Box<dyn std::error::Error>> {

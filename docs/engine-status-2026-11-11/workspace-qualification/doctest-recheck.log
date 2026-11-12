@@ -1,0 +1,50 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_scene_host v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene_host)
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_voxel)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling physics_bio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_bio)
+   Compiling voxy_rush v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_rush)
+   Compiling voxy_runtime v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_runtime)
+   Compiling voxy_shell v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_shell)
+   Compiling voxy_player v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_player)
+   Compiling voxy_cuda v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_cuda)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+   Compiling voxy_gpu v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu)
+   Compiling voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.22s
+   Doc-tests voxy_cuda
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests voxy_demos
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests voxy_editor
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests voxy_gpu
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests voxy_player
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests voxy_shell
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

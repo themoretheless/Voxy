@@ -286,7 +286,7 @@ pub(crate) fn resolve_rate_from_baseline(
     clippy::too_many_arguments,
     reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
 )]
-pub(crate) fn resolve_rate_from_baseline_interval(
+fn resolve_rate_from_baseline_interval(
     bodies: &[ContactBody],
     contacts: &[NetworkSupport],
     external: &[ContactWrench],
@@ -314,7 +314,7 @@ pub(crate) fn resolve_rate_from_baseline_interval(
     clippy::too_many_lines,
     reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
 )]
-fn resolve_rate_from_baseline_mixed_interval(
+pub(crate) fn resolve_rate_from_baseline_mixed_interval(
     bodies: &[ContactBody],
     particle_count: usize,
     contacts: &[NetworkSupport],

@@ -1,7 +1,7 @@
 //! A single bounded file-poll worker; the owner decides when to submit scans.
-use crate::{
-    AssetId, DependencyError, FileInputs, SourceDependencies, SourcePoller, SourcePollerCheckpoint,
-};
+#[cfg(test)]
+use crate::FileInputs;
+use crate::{AssetId, DependencyError, SourceDependencies, SourcePoller, SourcePollerCheckpoint};
 use std::{
     sync::mpsc::{self, Receiver, SyncSender, TryRecvError},
     thread::JoinHandle,
@@ -66,12 +66,12 @@ impl SourcePollWorker {
     /// # Errors
     /// Returns OS thread creation errors.
     pub fn new(
-        provider: FileInputs,
+        provider: impl Into<crate::AssetSourceProvider>,
         max_sources: usize,
         max_file_bytes: usize,
     ) -> std::io::Result<Self> {
         Self::spawn(
-            provider,
+            provider.into(),
             SourcePoller::new(max_sources, max_file_bytes),
             max_sources,
         )
@@ -81,7 +81,7 @@ impl SourcePollWorker {
     /// # Errors
     /// Rejects observed input bounds and returns OS thread creation errors.
     pub fn new_with_observations(
-        provider: FileInputs,
+        provider: impl Into<crate::AssetSourceProvider>,
         max_sources: usize,
         max_file_bytes: usize,
         observations: &std::collections::BTreeMap<
@@ -91,10 +91,10 @@ impl SourcePollWorker {
     ) -> std::io::Result<Self> {
         let poller = SourcePoller::with_observations(max_sources, max_file_bytes, observations)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidInput, e.to_string()))?;
-        Self::spawn(provider, poller, max_sources)
+        Self::spawn(provider.into(), poller, max_sources)
     }
     fn spawn(
-        provider: FileInputs,
+        provider: crate::AssetSourceProvider,
         mut poller: SourcePoller,
         max_sources: usize,
     ) -> std::io::Result<Self> {
@@ -271,7 +271,7 @@ impl SourcePollWorker {
     /// # Errors
     /// Rejects invalid checkpoint/policy and thread creation failure.
     pub fn new_with_checkpoint(
-        provider: FileInputs,
+        provider: impl Into<crate::AssetSourceProvider>,
         saved: &SourcePollerCheckpoint,
         max_sources: usize,
         max_file_bytes: usize,
@@ -279,7 +279,7 @@ impl SourcePollWorker {
         let poller = saved
             .prepare(max_sources, max_file_bytes)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidInput, e.to_string()))?;
-        Self::spawn(provider, poller, saved.max_sources)
+        Self::spawn(provider.into(), poller, saved.max_sources)
     }
     /// Closes both queues without blocking. Joining waits for any active file IO.
     #[must_use]

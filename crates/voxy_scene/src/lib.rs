@@ -75,7 +75,10 @@ mod prefab;
 pub use prefab::{Prefab, PrefabError, PrefabNode};
 
 mod replication;
-pub use replication::{SceneSnapshotDelta, SnapshotRollbackBuffer, TickSnapshot};
+pub use replication::{
+    PredictionClient, PredictionUpdate, SceneDeltaStreamError, SceneSnapshotDelta,
+    SnapshotBaseline, SnapshotRollbackBuffer, SnapshotUpdate, TickSnapshot,
+};
 
 use glam::{Mat4, Quat, Vec3};
 use std::any::{Any, TypeId};

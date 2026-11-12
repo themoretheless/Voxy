@@ -1,0 +1,40 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.91s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-7cc93979801cd70b)
+
+running 1 test
+RELEASE interval=1 contacts=4 remaining=9.96667097951994081e-4 duration=1.24583387243999260e-4 error=1.00559667052663408e-11
+RELEASE interval=2 contacts=4 remaining=8.72083710707994794e-4 duration=8.51644248738276166e-7 error=2.59899895869726867e-11
+RELEASE interval=3 contacts=1746 remaining=8.71232066459256497e-4 duration=2.59647389191167503e-11 error=5.43196650549413880e-11
+RELEASE interval=4 contacts=1746 remaining=8.71232040494517566e-4 duration=2.59647381453072299e-11 error=5.43196356873533835e-11
+RELEASE interval=5 contacts=1746 remaining=8.71232014529779394e-4 duration=2.59647373714977322e-11 error=5.43196063197654437e-11
+RELEASE interval=6 contacts=1746 remaining=8.71231988565041981e-4 duration=2.59647365976882571e-11 error=5.43196047077531388e-11
+RELEASE interval=7 contacts=1746 remaining=8.71231962600305435e-4 duration=2.59647358238788079e-11 error=5.43195753401652959e-11
+RELEASE interval=8 contacts=1746 remaining=8.71231936635569648e-4 duration=2.59647350500693812e-11 error=5.43196014837287682e-11
+RELEASE interval=9 contacts=1746 remaining=8.71231910670834621e-4 duration=2.59647342762599772e-11 error=5.43196415050801065e-11
+RELEASE interval=10 contacts=1746 remaining=8.71231884706100352e-4 duration=2.59647335024505958e-11 error=5.43196121374923928e-11
+RELEASE interval=11 contacts=1746 remaining=8.71231858741366842e-4 duration=2.59647327286412371e-11 error=5.43195966476925451e-11
+RELEASE interval=12 contacts=1746 remaining=8.71231832776634091e-4 duration=2.59647319548319009e-11 error=5.43195672801049284e-11
+RELEASE interval=13 contacts=1746 remaining=8.71231806811902099e-4 duration=2.59647311810225874e-11 error=5.43196073014564541e-11
+RELEASE interval=14 contacts=1746 remaining=8.71231780847170866e-4 duration=2.59647304072132965e-11 error=5.43195918116567356e-11
+RELEASE interval=15 contacts=1746 remaining=8.71231754882440500e-4 duration=2.59647296334040314e-11 error=5.43196179552205569e-11
+RELEASE interval=16 contacts=1746 remaining=8.71231728917710893e-4 duration=2.59647288595947889e-11 error=5.43196024654209419e-11
+RELEASE interval=32 contacts=1746 remaining=8.71231313482142026e-4 duration=2.59647164786500343e-11 error=5.43195766732388953e-11
+RELEASE interval=64 contacts=1746 remaining=8.71230482611598436e-4 duration=2.59646917167782317e-11 error=5.43195389666994841e-11
+RELEASE interval=128 contacts=1746 remaining=8.71228820872888584e-4 duration=2.59646421931054734e-11 error=5.43194357981927689e-11
+RELEASE interval=256 contacts=1746 remaining=8.71225497404977335e-4 duration=2.59645431460433404e-11 error=5.43192155839822476e-11
+RELEASE interval=512 contacts=1746 remaining=8.71218850507188758e-4 duration=2.59643450530525672e-11 error=5.43188029134988089e-11
+RELEASE interval=1024 contacts=1746 remaining=8.71205556863746309e-4 duration=2.59639488716049882e-11 error=5.43180053375553391e-11
+RELEASE interval=2048 contacts=1746 remaining=8.71178970185388095e-4 duration=2.59631565268453388e-11 error=5.43164241012478731e-11
+RELEASE interval=4096 contacts=1746 remaining=8.71125799262692535e-4 duration=2.59615719098655145e-11 error=5.43131923908545026e-11
+RELEASE cap intervals=4096 contacts=1746 remaining=8.71125773301120667e-4 horizon=8.71125773301120667e-4
+RELEASE budget at crates/physics/src/liquid/multi_body.rs:443:24
+RELEASE terminal Err(CollisionBudget)
+MIXED REACTION RATE interval_s=1e-4 geometry_error_m=4.35774703137772164e-12 jerk_residual=0.00000000000000000e0 pressure_limit_s=6.88738362812819453e13
+MIXED REACTION RELEASE next_impact_s=6.85790619440957541e-8 normal_speed_m_s=-4.75120890525582845e-6
+MIXED REACTION REENTRY supports=4 particle_force_n=[-46.29604002701453, -9.882179915946999e-21, -0.154426432215236]
+test liquid_runtime::tests::runtime_particle_impacts_leave_distinct_support_snapshots ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 260 filtered out; finished in 16.37s
+

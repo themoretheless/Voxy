@@ -584,7 +584,7 @@ impl SceneSurface {
             .presented_frames
             .checked_add(1)
             .ok_or(RendererError::FrameIdExhausted)?;
-        let (frame, suboptimal) = match self.surface.get_current_texture() {
+        let (frame, suboptimal) = match self.acquire_surface_texture() {
             wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
             wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
             wgpu::CurrentSurfaceTexture::Lost => {

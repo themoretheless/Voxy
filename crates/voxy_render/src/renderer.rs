@@ -21,8 +21,10 @@ mod camera_math;
 mod resident_frame_timing;
 mod skinned_lod;
 
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+use camera_math::PhotorealCameraUniform;
 #[cfg(test)]
-use camera_math::{CameraUniform, PhotorealCameraUniform, chunk_intersects_frustum};
+use camera_math::{CameraUniform, chunk_intersects_frustum};
 use camera_math::{
     ChunkMeta, SharedCameraBindings, camera_half_extents, camera_uniform, camera_view_projection,
     pack_light_words, photoreal_camera_uniform, relative_chunk_origin,
@@ -494,6 +496,36 @@ impl Renderer {
             .map(|&(pos, mesh, light)| (pos, mesh, Some(light.bytes())))
             .collect::<Vec<_>>();
         self.upload_chunk_data(&chunks, camera_anchor)
+    }
+
+    /// Upload a terrain window and publish its prepared vegetation placements together.
+    ///
+    /// # Errors
+    /// Returns allocation, validation, or terrain upload errors before replacing the placements.
+    pub fn upload_lit_window(
+        &mut self,
+        chunks: &[(ChunkPos, &ChunkMesh, &LightVolume)],
+        camera_anchor: ChunkPos,
+        vegetation: Option<crate::NativeVegetationWindow>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let prepared = vegetation
+            .map(|window| {
+                self.native_vegetation
+                    .as_ref()
+                    .ok_or_else(|| {
+                        crate::ComputeError::Validation("native vegetation unavailable".into())
+                    })?
+                    .prepare_window(&self.device, window)
+            })
+            .transpose()?;
+        self.upload_lit_chunks(chunks, camera_anchor)?;
+        if let Some(prepared) = prepared {
+            self.native_vegetation
+                .as_mut()
+                .expect("prepared native vegetation")
+                .publish_window(prepared);
+        }
+        Ok(())
     }
 
     /// Bytes submitted by the last successful chunk upload, including chunk metadata.

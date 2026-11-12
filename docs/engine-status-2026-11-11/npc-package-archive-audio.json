@@ -1,0 +1,101 @@
+{
+  "editor_sha256": "be598f9a2e69297b24fe286643551a3508949049545c80d04f074ed3888cc2e8",
+  "package_sha256": "1aead0b7b2c5f833404839c5dc0b84489785233499b5331e978c7826083b2906",
+  "source_deleted_before_package_launch": true,
+  "waypoints": [
+    [
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.25,
+      0.0,
+      0.0
+    ],
+    [
+      0.25,
+      0.0,
+      -0.25
+    ],
+    [
+      0.25,
+      0.0,
+      -0.5
+    ],
+    [
+      0.25,
+      0.0,
+      -0.75
+    ],
+    [
+      0.5,
+      0.0,
+      -0.75
+    ],
+    [
+      0.75,
+      0.0,
+      -0.75
+    ],
+    [
+      1.0,
+      0.0,
+      -0.75
+    ],
+    [
+      1.0,
+      0.0,
+      -0.5
+    ],
+    [
+      1.0,
+      0.0,
+      -0.25
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "editor_native": {
+    "frames": 262,
+    "fixed_ticks": 50,
+    "saved_goal": [
+      1.0,
+      0.0
+    ]
+  },
+  "native_runs": {
+    "project": {
+      "frames": 101,
+      "fixed_ticks": 50,
+      "position_xz": [
+        1.0,
+        0.0
+      ]
+    },
+    "package": {
+      "frames": 102,
+      "fixed_ticks": 50,
+      "position_xz": [
+        1.0,
+        0.0
+      ]
+    }
+  },
+  "checkpoint": {
+    "tick": 7,
+    "audio_frames": 5632,
+    "peak": 0.15251863,
+    "sha256": "4eef969f34ad85dd8afcfa76bf29ad2137ea91c56c3558bb0fee61f8242080f1"
+  },
+  "standalone_checkpoint": {
+    "restarted_from_package": true,
+    "tick": 3,
+    "audio_frames": 2560,
+    "peak": 0.15251863,
+    "sha256": "ae8b75c99b05d34684edc883e0a8c3f5f0b7d1ff0f142a4d2f583044f5b809eb"
+  }
+}

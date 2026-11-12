@@ -69,7 +69,7 @@ impl ArchiveSceneRenderer {
         eye: Vec3,
         direction: Vec3,
     ) -> wgpu::SubmissionIndex {
-        self.draw_with_tail(output, eye, direction, |_, _| {})
+        self.draw_with_tail(output, eye, direction, None, |_, _| {})
     }
 
     #[expect(
@@ -81,6 +81,7 @@ impl ArchiveSceneRenderer {
         output: &wgpu::TextureView,
         eye: Vec3,
         direction: Vec3,
+        opaque_capture: Option<&wgpu::Texture>,
         encode_tail: impl FnOnce(&Self, &mut wgpu::CommandEncoder),
     ) -> wgpu::SubmissionIndex {
         self.collect_gpu_time_sample();
@@ -395,6 +396,13 @@ impl ArchiveSceneRenderer {
         }
         for transparent in [false, true] {
             if transparent {
+                if let Some(capture) = opaque_capture {
+                    encoder.copy_texture_to_texture(
+                        self.hdr.as_image_copy(),
+                        capture.as_image_copy(),
+                        self.hdr.size(),
+                    );
+                }
                 if let Some(water) = &mut self.water {
                     water.encode(
                         &self.queue,

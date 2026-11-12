@@ -180,8 +180,65 @@ pub struct ArchiveProbeBake {
     next_probe: usize,
     next_face: usize,
     pending_face: Option<wgpu::SubmissionIndex>,
+    face_coefficients: Option<(std::path::PathBuf, ComputeStorage)>,
+    face_capture: Option<ProbeFaceCapture>,
     started: std::time::Instant,
     finished: bool,
+}
+
+#[derive(Debug)]
+struct ProbeFaceCapture {
+    root: std::path::PathBuf,
+    indices: Vec<usize>,
+    opaque: Arc<voxy_gpu_core::ManagedTexture>,
+}
+
+impl ProbeFaceCapture {
+    fn from_environment(
+        renderer: &ArchiveSceneRenderer,
+        probe_count: usize,
+    ) -> Result<Option<Self>, crate::ComputeError> {
+        let Some(root) = std::env::var_os("VOXY_STREET_PROBE_FACE_CAPTURE") else {
+            return Ok(None);
+        };
+        let indices = match std::env::var("VOXY_STREET_PROBE_FACE_CAPTURE_INDICES") {
+            Ok(indices) => indices
+                .split(',')
+                .map(|index| index.trim().parse::<usize>())
+                .collect::<Result<Vec<_>, _>>()
+                .map_err(|error| {
+                    crate::ComputeError::Validation(format!("probe trace index: {error}"))
+                })?,
+            Err(std::env::VarError::NotPresent) => vec![0],
+            Err(std::env::VarError::NotUnicode(_)) => {
+                return Err(crate::ComputeError::Validation(
+                    "probe trace indices must be UTF-8".into(),
+                ));
+            }
+        };
+        if indices.iter().any(|&index| index >= probe_count) {
+            return Err(crate::ComputeError::Validation(
+                "probe trace index outside baked grid".into(),
+            ));
+        }
+        let opaque = ComputeMemoryBudget::for_device(&renderer.device).allocate_texture(
+            &wgpu::TextureDescriptor {
+                label: Some("opaque colour before water"),
+                size: renderer.hdr.size(),
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: renderer.hdr.format(),
+                usage: wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::COPY_SRC,
+                view_formats: &[],
+            },
+        )?;
+        Ok(Some(Self {
+            root: root.into(),
+            indices,
+            opaque,
+        }))
+    }
 }
 
 impl ArchiveProbeBake {
@@ -196,6 +253,8 @@ impl ArchiveProbeBake {
 impl ArchiveSceneRenderer {
     /// Begin a full-resolution bake owned by this renderer. Advance between
     /// application events so startup can continue servicing the window system.
+    /// `VOXY_STREET_PROBE_FACE_COEFFICIENTS` writes 64 native bytes per face in
+    /// probe order after a completed bake. A restored cache does not run a bake.
     pub fn begin_irradiance_probe_bake(
         &mut self,
         min: Vec3,
@@ -235,6 +294,21 @@ impl ArchiveSceneRenderer {
                 })?;
             projector.enable_trace(&self.device, points.len(), index)?;
         }
+        let face_coefficients =
+            if let Some(path) = std::env::var_os("VOXY_STREET_PROBE_FACE_COEFFICIENTS") {
+                let [buffer] = ComputeMemoryBudget::for_device(&self.device).allocate_buffers([
+                    voxy_gpu_core::ManagedBufferDescriptor {
+                        label: "probe coefficients after each face",
+                        size: points.len() as u64 * 6 * crate::probe_gi::PROBE_BYTES,
+                        contents: None,
+                        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
+                    },
+                ])?;
+                Some((std::path::PathBuf::from(path), buffer))
+            } else {
+                None
+            };
+        let face_capture = ProbeFaceCapture::from_environment(self, points.len())?;
         let saved = (
             self.antialiasing,
             self.linear_output,
@@ -269,6 +343,8 @@ impl ArchiveSceneRenderer {
             next_probe: 0,
             next_face: 0,
             pending_face: None,
+            face_coefficients,
+            face_capture,
             started: std::time::Instant::now(),
             finished: false,
         })
@@ -314,27 +390,44 @@ impl ArchiveSceneRenderer {
             ];
             let (forward, up) = faces[bake.next_face];
             let point = bake.points[bake.next_probe];
+            let face_capture = bake
+                .face_capture
+                .as_ref()
+                .filter(|capture| capture.indices.contains(&bake.next_probe));
             if bake.pending_face.is_none() {
                 self.set_camera_projection(90_f32.to_radians(), up);
                 self.previous_vp = None;
                 let right = forward.cross(up).normalize();
-                bake.pending_face =
-                    Some(
-                        self.draw_with_tail(&bake.view, point, forward, |renderer, encoder| {
-                            bake.projector.encode_projection(
-                                &renderer.device,
-                                &renderer.queue,
-                                encoder,
-                                &bake.view,
-                                (renderer.width, renderer.height),
+                bake.pending_face = Some(self.draw_with_tail(
+                    &bake.view,
+                    point,
+                    forward,
+                    face_capture.map(|capture| &**capture.opaque),
+                    |renderer, encoder| {
+                        bake.projector.encode_projection(
+                            &renderer.device,
+                            &renderer.queue,
+                            encoder,
+                            &bake.view,
+                            (renderer.width, renderer.height),
+                            &renderer.probe_sh,
+                            bake.next_probe,
+                            bake.next_face,
+                            [forward, right, up],
+                            1. / renderer.exposure,
+                        );
+                        if let Some((_, trace)) = &bake.face_coefficients {
+                            let size = crate::probe_gi::PROBE_BYTES;
+                            encoder.copy_buffer_to_buffer(
                                 &renderer.probe_sh,
-                                bake.next_probe,
-                                bake.next_face,
-                                [forward, right, up],
-                                1. / renderer.exposure,
+                                bake.next_probe as u64 * size,
+                                trace,
+                                (bake.next_probe * 6 + bake.next_face) as u64 * size,
+                                size,
                             );
-                        }),
-                    );
+                        }
+                    },
+                ));
             }
             let submission = bake.pending_face.clone();
             match self.device.poll(wgpu::PollType::Wait {
@@ -349,82 +442,64 @@ impl ArchiveSceneRenderer {
                     )));
                 }
             }
-            if let Some(root) = std::env::var_os("VOXY_STREET_PROBE_FACE_CAPTURE") {
-                let selected = if let Some(indices) =
-                    std::env::var_os("VOXY_STREET_PROBE_FACE_CAPTURE_INDICES")
-                {
-                    let indices = indices.to_str().ok_or_else(|| {
-                        crate::ComputeError::Validation("probe trace indices must be UTF-8".into())
-                    })?;
-                    let indices = indices
-                        .split(',')
-                        .map(|v| v.trim().parse::<usize>())
-                        .collect::<Result<Vec<_>, _>>()
-                        .map_err(|e| {
-                            crate::ComputeError::Validation(format!("probe trace index: {e}"))
-                        })?;
-                    if indices.iter().any(|&v| v >= bake.points.len()) {
-                        return Err(crate::ComputeError::Validation(
-                            "probe trace index outside baked grid".into(),
-                        ));
-                    }
-                    indices.contains(&bake.next_probe)
-                } else {
-                    bake.next_probe == 0
-                };
-                if selected {
-                    let root = std::path::PathBuf::from(root);
-                    std::fs::create_dir_all(&root).map_err(|e| {
-                        crate::ComputeError::Validation(format!("probe trace directory: {e}"))
-                    })?;
-                    let mut raster_inputs = vec![
-                        (
-                            "probe-frame-background",
-                            self.background.create_view(&Default::default()),
-                        ),
-                        (
-                            "probe-shadow-depth",
-                            self.shadow.create_view(&Default::default()),
-                        ),
-                    ];
-                    if let Some(gi) = &self.compute_gi {
-                        let [world, normal] = gi.world_ray_guides();
-                        raster_inputs
-                            .push(("probe-world-guide", world.create_view(&Default::default())));
-                        raster_inputs.push((
-                            "probe-normal-guide",
-                            normal.create_view(&Default::default()),
-                        ));
-                    }
-                    if let Some((gi, ssr)) = self.opaque_lighting_outputs() {
-                        raster_inputs
-                            .push(("probe-actual-gi", gi.create_view(&Default::default())));
-                        raster_inputs
-                            .push(("probe-actual-ssr", ssr.create_view(&Default::default())));
-                    }
-                    crate::archive_hdr_diagnostics::capture_probe_face(
-                        &self.device,
-                        &self.queue,
-                        crate::archive_hdr_diagnostics::ProbeFaceSources {
-                            uniform_inputs: self.diagnostic_lighting_material_uniforms(),
-                            raster_inputs,
-                            face_view: &bake.view,
-                            projection: bake.projector.diagnostic_uniform(),
-                            camera: &self.camera,
-                            coefficients: &self.probe_sh,
-                            point_bits: point.to_array().map(f32::to_bits),
-                            probe_index: bake.next_probe,
-                            face_index: bake.next_face,
-                        },
-                        &root.join(format!(
-                            "probe-{:04}-face-{}",
-                            bake.next_probe, bake.next_face
-                        )),
-                    )
-                    .map_err(|e| {
-                        crate::ComputeError::Validation(format!("original probe face trace: {e}"))
-                    })?;
+            if let Some(capture) = face_capture {
+                let root = &capture.root;
+                std::fs::create_dir_all(root).map_err(|e| {
+                    crate::ComputeError::Validation(format!("probe trace directory: {e}"))
+                })?;
+                let mut raster_inputs = vec![
+                    (
+                        "probe-opaque-before-water",
+                        capture.opaque.create_view(&Default::default()),
+                    ),
+                    (
+                        "probe-frame-background",
+                        self.background.create_view(&Default::default()),
+                    ),
+                    (
+                        "probe-scene-depth",
+                        self.depth.create_view(&Default::default()),
+                    ),
+                    (
+                        "probe-shadow-depth",
+                        self.shadow.create_view(&Default::default()),
+                    ),
+                ];
+                if let Some(gi) = &self.compute_gi {
+                    let [world, normal] = gi.world_ray_guides();
+                    raster_inputs
+                        .push(("probe-world-guide", world.create_view(&Default::default())));
+                    raster_inputs.push((
+                        "probe-normal-guide",
+                        normal.create_view(&Default::default()),
+                    ));
                 }
+                if let Some((gi, ssr)) = self.opaque_lighting_outputs() {
+                    raster_inputs.push(("probe-actual-gi", gi.create_view(&Default::default())));
+                    raster_inputs.push(("probe-actual-ssr", ssr.create_view(&Default::default())));
+                }
+                crate::archive_hdr_diagnostics::capture_probe_face(
+                    &self.device,
+                    &self.queue,
+                    crate::archive_hdr_diagnostics::ProbeFaceSources {
+                        uniform_inputs: self.diagnostic_lighting_material_uniforms(),
+                        raster_inputs,
+                        face_view: &bake.view,
+                        projection: bake.projector.diagnostic_uniform(),
+                        camera: &self.camera,
+                        coefficients: &self.probe_sh,
+                        point_bits: point.to_array().map(f32::to_bits),
+                        probe_index: bake.next_probe,
+                        face_index: bake.next_face,
+                    },
+                    &root.join(format!(
+                        "probe-{:04}-face-{}",
+                        bake.next_probe, bake.next_face
+                    )),
+                )
+                .map_err(|e| {
+                    crate::ComputeError::Validation(format!("original probe face trace: {e}"))
+                })?;
             }
             bake.next_face += 1;
             if bake.next_face == 6 {
@@ -456,6 +531,18 @@ impl ArchiveSceneRenderer {
             self.capture_texture_sources(&std::path::PathBuf::from(root))?;
         }
         bake.projector.save_trace(&self.device, &self.queue)?;
+        if let Some((path, trace)) = &bake.face_coefficients {
+            crate::archive_hdr_diagnostics::capture_storage(
+                &self.device,
+                &self.queue,
+                trace,
+                path,
+                true,
+            )
+            .map_err(|error| {
+                crate::ComputeError::Validation(format!("probe face coefficients: {error}"))
+            })?;
+        }
         bake.finished = true;
         Ok(true)
     }
@@ -532,7 +619,7 @@ impl ArchiveSceneRenderer {
     /// when the cache was baked for a different grid than `min`/`max`/`spacing` produce here.
     /// The cache does not know the scene it was baked from: the caller decides when it is stale.
     /// # Errors
-    /// Rejects an invalid probe grid request.
+    /// Rejects an invalid probe grid request or malformed cache coefficients.
     pub fn restore_irradiance_probe_cache(
         &mut self,
         min: Vec3,
@@ -549,6 +636,9 @@ impl ArchiveSceneRenderer {
         {
             return Ok(false);
         }
+        cache
+            .validate()
+            .map_err(|error| crate::ComputeError::Validation(format!("probe cache: {error}")))?;
         cache.upload_to_buffer(&self.queue, &self.probe_sh);
         self.queue
             .write_buffer(&self.probe_grid, 0, bytemuck::bytes_of(&grid));
@@ -884,6 +974,7 @@ mod bake_tests {
         assert!(expected.iter().any(|&byte| byte != 0));
 
         let mut bounded = renderer();
+        bounded.set_display_headroom(6.).unwrap();
         let mut bake = bounded.begin_irradiance_probe_bake(min, max, 1.).unwrap();
         let deadline = std::time::Instant::now() + std::time::Duration::from_mins(1);
         while !bounded.advance_irradiance_probe_bake(&mut bake).unwrap() {
@@ -908,6 +999,14 @@ mod bake_tests {
             restored
                 .restore_irradiance_probe_cache(min, max, 1., &cache)
                 .unwrap()
+        );
+        assert_eq!(read(&restored), expected);
+        let mut malformed = cache;
+        malformed.probes[0][0] = f32::NAN;
+        assert!(
+            restored
+                .restore_irradiance_probe_cache(min, max, 1., &malformed)
+                .is_err()
         );
         assert_eq!(read(&restored), expected);
     }

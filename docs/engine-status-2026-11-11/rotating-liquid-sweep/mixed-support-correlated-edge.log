@@ -1,0 +1,15 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.68s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-7cc93979801cd70b)
+
+running 1 test
+CORRELATED OVERLAP elapsed=1.25435031540353358e-4 horizon=8.71232066459256497e-4 first=0 second=Some(1) active=false slots=1 first_state=ContactBody { motion: Body { mass: 1.0, position: [0.31922001717432197, -0.0020978850380095615, -5.075403728834733e-10], velocity: [3.744232258706605, -0.20288051765940368, -1.197609735985213e-5] }, spin: None } second_state=Some(ContactBody { motion: Body { mass: 2.0, position: [0.40672056346522395, -0.0020978850380095615, 0.02500000062629922], velocity: [3.7528838706466976, -0.20288051765940365, 5.988048679926065e-6] }, spin: Some(Spin { orientation: [-1.6707749036322733e-25, -0.0020905800659907162, 1.676867804591041e-22, 0.9999978147351062], angular_momentum: [-5.516934939338587e-23, -0.17361036501576366, 2.7663069000484253e-20], inertia: [0.005208333333333335, 0.005208333333333335, 0.005208333333333335] }) })
+CORRELATED EDGE FULL Err(InitialOverlap)
+MIXED REACTION RATE interval_s=1e-4 geometry_error_m=4.35774703137772164e-12 jerk_residual=0.00000000000000000e0 pressure_limit_s=6.88738362812819453e13
+MIXED REACTION RELEASE next_impact_s=6.85790619440957541e-8 normal_speed_m_s=-4.75120890525582845e-6
+MIXED REACTION REENTRY supports=4 particle_force_n=[-46.29604002701453, -9.882179915946999e-21, -0.154426432215236]
+test liquid_runtime::tests::runtime_particle_impacts_leave_distinct_support_snapshots ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 259 filtered out; finished in 0.01s
+

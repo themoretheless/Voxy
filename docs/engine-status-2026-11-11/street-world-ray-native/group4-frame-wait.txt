@@ -1,0 +1,10 @@
+    +                                                   48 _RNvMCsi6XkviXpnrA_11street_walkNtB2_3App4draw  (in street_walk) + 9352  [0x1009b3d18]
+    +                                                     48 _RNvMNtNtCs8OHBxdcj3UW_4wgpu3api6deviceNtB2_6Device4poll  (in street_walk) + 76  [0x100e4100c]
+    +                                                       48 _RNvMNtNtCsbjUAMBRpCYw_9wgpu_core6device6globalNtNtB6_6global6Global11device_poll  (in street_walk) + 212  [0x100f75b88]
+    +                                                         48 _RNvMs2_NtNtCsbjUAMBRpCYw_9wgpu_core6device8resourceNtB5_6Device24poll_and_return_closures  (in street_walk) + 132  [0x100e87f90]
+    +                                                           48 _RNvMs2_NtNtCsbjUAMBRpCYw_9wgpu_core6device8resourceNtB5_6Device8maintain  (in street_walk) + 372  [0x100e8f960]
+    +                                                             48 _RNvXs_NtNtCsaIthzUBoJH8_8wgpu_hal5metal6deviceNtB6_6DeviceNtB8_6Device4wait  (in street_walk) + 516  [0x100f99dc8]
+    +                                                               48 _RNvMs_NtCs5b7nur0TKZQ_11parking_lot7condvarNtB4_7Condvar19wait_until_internal  (in street_walk) + 740  [0x1010b2d94]
+    +                                                                 48 _pthread_cond_wait  (in libsystem_pthread.dylib) + 980  [0x18328d128]
+    +                                                                   48 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x18324c50c]
+    48 Thread_7757670: com.apple.NSEventThread

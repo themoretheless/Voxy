@@ -391,6 +391,11 @@ pub trait HairLinearSolver {
     fn joint_contact_expanded_enabled(&self) -> bool {
         false
     }
+    /// Permit a precision-preserving retry after an ordinary GPU rejection.
+    fn joint_contact_expanded_fallback_enabled(&self) -> bool {
+        false
+    }
+
     fn solve_joint_expanded_batch(
         &mut self,
         _requests: &[HairExpandedCoordinateRequest<'_>],
@@ -434,6 +439,14 @@ pub trait HairLinearSolver {
             .iter()
             .map(|r| self.solve_joint_coordinates_seeded(r.columns, r.bounds, r.tolerance, r.seeds))
             .collect()
+    }
+    /// Preserve ordinary coordinate candidates independently when supported.
+    fn solve_joint_coordinate_candidates(
+        &mut self,
+        requests: &[HairContactCoordinateRequest<'_>],
+    ) -> Option<Vec<Option<(Vec<f64>, Vec<f64>)>>> {
+        self.solve_joint_coordinates_batch(requests)
+            .map(|values| values.into_iter().map(Some).collect())
     }
     /// Physical owner reports whether the candidate survived original admission.
     fn joint_contact_result(&mut self, _accelerated: bool) {}

@@ -1,0 +1,21 @@
+
+running 2 tests
+test app::model_reload::gpu_app_tests::offscreen_offline_playback_archive_restores_native_output_without_sources ... ok
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_ui_audio_and_continues_game ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 479 filtered out; finished in 5.22s
+
+
+running 2 tests
+test app::model_reload::gpu_app_tests::offscreen_offline_playback_archive_restores_native_output_without_sources ... ok
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_ui_audio_and_continues_game ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 479 filtered out; finished in 5.01s
+
+
+running 2 tests
+test app::model_reload::gpu_app_tests::offscreen_offline_playback_archive_restores_native_output_without_sources ... ok
+test app::model_reload::gpu_app_tests::offscreen_running_editor_file_installs_ui_audio_and_continues_game ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 479 filtered out; finished in 4.92s
+

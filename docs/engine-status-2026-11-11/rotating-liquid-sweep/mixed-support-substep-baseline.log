@@ -1,0 +1,21 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.57s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-7cc93979801cd70b)
+
+running 1 test
+MIXED SUPPORT LOOP substeps=1 intervals=19 contacts=38832 geometry_error_m=9.71000036232920440e-11
+
+thread 'liquid_runtime::tests::runtime_particle_impacts_leave_distinct_support_snapshots' (9734073) panicked at crates/voxy_gameplay/src/liquid_runtime/tests.rs:5261:33:
+called `Result::unwrap()` on an `Err` value: InitialOverlap
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test liquid_runtime::tests::runtime_particle_impacts_leave_distinct_support_snapshots ... FAILED
+
+failures:
+
+failures:
+    liquid_runtime::tests::runtime_particle_impacts_leave_distinct_support_snapshots
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 260 filtered out; finished in 12.22s
+
+error: test failed, to rerun pass `-p voxy_gameplay --lib`

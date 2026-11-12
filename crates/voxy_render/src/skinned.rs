@@ -658,10 +658,12 @@ const CERTIFIED_NORMAL_DETERMINANT: f32 = 1.0 / 1024.0;
 struct InfluenceGroups {
     /// Distinct influence sets in first-occurrence order.
     keys: Vec<([u16; 4], [u16; 4])>,
+    weights: Vec<[f32; 4]>,
     families: Vec<[u16; 4]>,
-    group_family: Vec<u16>,
+    groups_by_family: Vec<Vec<usize>>,
     has_bad_normal: bool,
-    /// Largest absolute position component in each group.
+    /// Per-group multiplier for the conservative world-space position bound.
+    position_factor: Vec<f64>,
     max_position: Vec<f32>,
     /// Whether any nonzero authored normal of the group has an inadmissible magnitude.
     bad_normal: Vec<bool>,
@@ -736,11 +738,23 @@ impl InfluenceGroups {
             group_family = Vec::new();
         }
         let has_bad_normal = bad_normal.iter().any(|&bad| bad);
+        let mut groups_by_family = vec![Vec::new(); families.len()];
+        for (group, &family) in group_family.iter().enumerate() {
+            groups_by_family[usize::from(family)].push(group);
+        }
         Some(Self {
+            weights: keys
+                .iter()
+                .map(|(_, weights)| weights.map(|weight| f32::from(weight) / 65535.0))
+                .collect(),
             keys,
             families,
-            group_family,
+            groups_by_family,
             has_bad_normal,
+            position_factor: max_position
+                .iter()
+                .map(|&value| 3.0 * f64::from(value) + 1.0)
+                .collect(),
             max_position,
             bad_normal,
         })
@@ -751,10 +765,11 @@ impl InfluenceGroups {
         if self.bad_normal[group] {
             return false;
         }
-        let (group_joints, weights) = self.keys[group];
+        let (group_joints, _) = self.keys[group];
+        let weights = self.weights[group];
         let mut skin = Mat4::ZERO;
         for (joint, weight) in group_joints.into_iter().zip(weights) {
-            skin += joints[usize::from(joint)] * (f32::from(weight) / 65535.0);
+            skin += joints[usize::from(joint)] * weight;
         }
         let world = model * skin;
         // `f32::max` ignores NaN, so finiteness is checked explicitly first.
@@ -763,16 +778,18 @@ impl InfluenceGroups {
         }
         // |(world * p)_i| <= W (3P + 1); a margin of 4 absorbs every rounding step.
         let entries = world
-            .to_cols_array()
-            .into_iter()
-            .map(f32::abs)
-            .fold(0.0, f32::max);
-        let bound = f64::from(entries) * (3.0 * f64::from(self.max_position[group]) + 1.0);
+            .x_axis
+            .abs()
+            .max(world.y_axis.abs())
+            .max(world.z_axis.abs())
+            .max(world.w_axis.abs())
+            .max_element();
+        let bound = f64::from(entries) * self.position_factor[group];
         if !entries.is_finite() || bound > f64::from(f32::MAX) * 0.25 {
             return false;
         }
-        NormalTransform::new(world)
-            .is_ok_and(|normal| normal.determinant >= CERTIFIED_NORMAL_DETERMINANT)
+        checked_normal_basis(world)
+            .is_ok_and(|(_, determinant)| determinant.abs() >= CERTIFIED_NORMAL_DETERMINANT)
     }
 
     /// `true` when every group is certified, so the whole pose is admissible.
@@ -795,14 +812,45 @@ impl InfluenceGroups {
         families: &[bool],
         profile: &mut RenderPoseProfile,
     ) -> bool {
-        let groups = self.keys.len();
-        let certified = |group: usize| {
-            (!families.is_empty() && families[usize::from(self.group_family[group])])
-                || self.certified(group, joints, model)
+        let scheduling = PROFILE.then(Clock::start);
+        let unresolved = (!families.is_empty()).then(|| {
+            self.groups_by_family
+                .iter()
+                .zip(families)
+                .filter(|(_, covered)| !**covered)
+                .map(|(groups, _)| groups.as_slice())
+                .collect::<Vec<_>>()
+        });
+        let groups = unresolved.as_ref().map_or(self.keys.len(), |families| {
+            families.iter().map(|groups| groups.len()).sum()
+        });
+        let workers = workers.min(groups).max(1);
+        let certify_range = |start: usize, end: usize| {
+            let certified = |group| self.certified(group, joints, model);
+            let Some(families) = &unresolved else {
+                return (start..end).all(certified);
+            };
+            let mut offset = 0;
+            for family in families {
+                let from = start.saturating_sub(offset).min(family.len());
+                let to = end.saturating_sub(offset).min(family.len());
+                if !family[from..to].iter().copied().all(certified) {
+                    return false;
+                }
+                offset += family.len();
+                if offset >= end {
+                    break;
+                }
+            }
+            true
         };
+        if let Some(clock) = scheduling {
+            let (wall, cpu) = clock.elapsed();
+            profile.work(wall, cpu, false);
+        }
         if workers <= 1 {
             let clock = PROFILE.then(Clock::start);
-            let result = (0..groups).all(certified);
+            let result = certify_range(0, groups);
             if let Some(clock) = clock {
                 let (wall, cpu) = clock.elapsed();
                 profile.work(wall, cpu, false);
@@ -820,7 +868,7 @@ impl InfluenceGroups {
                     scope.spawn(move || {
                         let delay = launch.map_or(0., |s| s.elapsed().as_secs_f64() * 1e6);
                         let clock = PROFILE.then(Clock::start);
-                        let result = (start..end).all(certified);
+                        let result = certify_range(start, end);
                         (result, delay, clock.map_or((0., 0.), Clock::elapsed))
                     })
                 })
@@ -831,7 +879,7 @@ impl InfluenceGroups {
                 profile.spawn_cpu_us += cpu;
             }
             let clock = PROFILE.then(Clock::start);
-            let mut all = (0..chunk.min(groups)).all(certified);
+            let mut all = certify_range(0, chunk.min(groups));
             if let Some(clock) = clock {
                 let (wall, cpu) = clock.elapsed();
                 profile.work(wall, cpu, false);
@@ -1060,34 +1108,39 @@ fn skinned_normal_in(vertex: &SkinnedVertex, world: Mat4) -> Result<[f32; 3], Sk
 struct NormalTransform {
     cofactor: glam::Mat3,
     sign: f32,
-    /// Absolute determinant of the scaled linear part (entries at most 1).
+    #[cfg(test)]
     determinant: f32,
+}
+// Shared determinant admission for both the certificate and exact transform.
+fn checked_normal_basis(world: Mat4) -> Result<(glam::Mat3, f32), SkinnedUploadError> {
+    let mut linear = glam::Mat3::from_mat4(world);
+    let scale = linear
+        .to_cols_array()
+        .into_iter()
+        .map(f32::abs)
+        .fold(0.0, f32::max);
+    if !scale.is_finite() || scale <= f32::MIN_POSITIVE || scale >= 1.0 / f32::MIN_POSITIVE {
+        return Err(SkinnedUploadError::SingularNormalMatrix);
+    }
+    linear *= 1.0 / scale;
+    let determinant = linear.determinant();
+    let a = linear.x_axis.abs();
+    let b = linear.y_axis.abs();
+    let c = linear.z_axis.abs();
+    let terms = a.x * (b.y * c.z + b.z * c.y)
+        + a.y * (b.z * c.x + b.x * c.z)
+        + a.z * (b.x * c.y + b.y * c.x);
+    // Reject an uncertain determinant sign, rather than imposing a fixed
+    // minimum scale ratio on otherwise stable anisotropic transforms.
+    let uncertainty = (16.0 * f32::EPSILON * terms).max(f32::MIN_POSITIVE);
+    if !determinant.is_finite() || determinant.abs() <= uncertainty {
+        return Err(SkinnedUploadError::SingularNormalMatrix);
+    }
+    Ok((linear, determinant))
 }
 impl NormalTransform {
     fn new(world: Mat4) -> Result<Self, SkinnedUploadError> {
-        let mut linear = glam::Mat3::from_mat4(world);
-        let scale = linear
-            .to_cols_array()
-            .into_iter()
-            .map(f32::abs)
-            .fold(0.0, f32::max);
-        if !scale.is_finite() || scale <= f32::MIN_POSITIVE || scale >= 1.0 / f32::MIN_POSITIVE {
-            return Err(SkinnedUploadError::SingularNormalMatrix);
-        }
-        linear *= 1.0 / scale;
-        let determinant = linear.determinant();
-        let a = linear.x_axis.abs();
-        let b = linear.y_axis.abs();
-        let c = linear.z_axis.abs();
-        let terms = a.x * (b.y * c.z + b.z * c.y)
-            + a.y * (b.z * c.x + b.x * c.z)
-            + a.z * (b.x * c.y + b.y * c.x);
-        // Reject an uncertain determinant sign, rather than imposing a fixed
-        // minimum scale ratio on otherwise stable anisotropic transforms.
-        let uncertainty = (16.0 * f32::EPSILON * terms).max(f32::MIN_POSITIVE);
-        if !determinant.is_finite() || determinant.abs() <= uncertainty {
-            return Err(SkinnedUploadError::SingularNormalMatrix);
-        }
+        let (linear, determinant) = checked_normal_basis(world)?;
         let cofactor = glam::Mat3::from_cols(
             linear.y_axis.cross(linear.z_axis),
             linear.z_axis.cross(linear.x_axis),
@@ -1096,6 +1149,7 @@ impl NormalTransform {
         Ok(Self {
             cofactor,
             sign: determinant.signum(),
+            #[cfg(test)]
             determinant: determinant.abs(),
         })
     }
@@ -1787,6 +1841,56 @@ mod family_bound_tests {
                         assert_eq!(result, expected);
                         assert!(profile.total_wall_us >= 0. && profile.caller_cpu_us >= 0.);
                     }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn parallel_group_ranges_check_every_uncovered_family() {
+        let vertices = (0..PARALLEL_ADMISSION_MIN_VERTICES)
+            .map(|i| {
+                let joint = (i % 3 * 2) as u16;
+                let weight = 32_000 + (i / 3 % 1024) as u16;
+                SkinnedVertex {
+                    position: [0.25, -0.5, 0.75],
+                    normal: [0., 1., 0.],
+                    uv: [0.; 2],
+                    joints: [joint, joint + 1, 0, 0],
+                    weights: [weight, u16::MAX - weight, 0, 0],
+                }
+            })
+            .collect::<Vec<_>>();
+        let groups = InfluenceGroups::build(&vertices).unwrap();
+        assert_eq!(groups.groups_by_family.len(), 3);
+        for failed in 0..3 {
+            let mut joints = [Mat4::IDENTITY; 6];
+            joints[failed * 2 + 1] = Mat4::from_rotation_y(std::f32::consts::PI);
+            for mask in 0..8 {
+                let covered = std::array::from_fn::<_, 3, _>(|family| mask & (1 << family) != 0);
+                let expected =
+                    groups
+                        .groups_by_family
+                        .iter()
+                        .zip(covered)
+                        .all(|(indices, covered)| {
+                            covered
+                                || indices
+                                    .iter()
+                                    .all(|&group| groups.certified(group, &joints, Mat4::IDENTITY))
+                        });
+                assert_eq!(expected, covered[failed]);
+                for workers in [1, 2, 5] {
+                    assert_eq!(
+                        groups.certify_profiled::<false>(
+                            &joints,
+                            Mat4::IDENTITY,
+                            workers,
+                            &covered,
+                            &mut RenderPoseProfile::default()
+                        ),
+                        expected
+                    );
                 }
             }
         }

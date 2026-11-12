@@ -1,0 +1,7 @@
+
+running 1 test
+test contact_five_qr_tests::gpu_five_qr_original_physical_active_columns ... FIVE QR ORIGINAL PHYSICS rows=100 active=6 width=882 original_physical_admission=true scope=fixed_admitted_active_set_not_automatic_selection_or_trajectory
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 433 filtered out; finished in 34.13s
+

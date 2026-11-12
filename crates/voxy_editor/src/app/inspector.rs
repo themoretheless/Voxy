@@ -367,6 +367,10 @@ impl App {
             KeyCode::KeyC => {
                 let node = node.ok_or("missing selected node")?;
                 if self.scene.component::<CharacterBody>(node)?.is_some() {
+                    self.scene
+                        .remove_component::<voxy_gameplay::NpcDestination>(node)?;
+                    self.scene
+                        .remove_component::<voxy_gameplay::NpcRoute>(node)?;
                     self.scene.remove_component::<CharacterBody>(node)?;
                 } else {
                     self.scene.remove_component::<BoxCollider>(node)?;
@@ -379,6 +383,10 @@ impl App {
                 if self.scene.component::<BoxCollider>(node)?.is_some() {
                     self.scene.remove_component::<BoxCollider>(node)?;
                 } else {
+                    self.scene
+                        .remove_component::<voxy_gameplay::NpcDestination>(node)?;
+                    self.scene
+                        .remove_component::<voxy_gameplay::NpcRoute>(node)?;
                     self.scene.remove_component::<CharacterBody>(node)?;
                     self.scene.insert_component(node, BoxCollider::default())?;
                 }
@@ -607,6 +615,7 @@ impl App {
                 self.begin_target_pick(PickPurpose::PhysicsJoint, token, false)
             }
             panels::Action::JointKind(token) => self.cycle_joint_kind(token),
+            panels::Action::NpcDestination(token) => self.toggle_npc_destination(token),
             panels::Action::FollowTargetChoice(token) => self.choose_follow_target(token),
             panels::Action::Select(index) => {
                 if index < self.instances.len() {
