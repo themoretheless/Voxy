@@ -818,6 +818,7 @@ fn full_rig_and_shell_gpu_composition_matches_cpu_pose() {
 }
 
 #[test]
+#[ignore = "requires a GPU adapter"]
 fn gpu_rigid_blend_equal_weights_matches_cpu_hemisphere_anchor() {
     pollster::block_on(async {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
