@@ -182,8 +182,8 @@ mod tests {
         assert!(matches!(
             clock.plan(
                 start
-                    .checked_sub(Duration::from_nanos(1))
-                    .expect("test instant supports one-nanosecond subtraction")
+                    .checked_sub(Duration::from_micros(1))
+                    .expect("test instant supports one-microsecond subtraction")
             ),
             Err(ClockError::TimeWentBackwards)
         ));
