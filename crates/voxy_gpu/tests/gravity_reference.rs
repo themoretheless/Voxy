@@ -23,6 +23,7 @@ fn bodies() -> Vec<GravityBody> {
 }
 
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
 fn wgpu_gravity_matches_the_cpu_oracle_through_the_shared_contract() {
     let instance = wgpu::Instance::default();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default()))
