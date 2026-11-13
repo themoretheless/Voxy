@@ -364,6 +364,10 @@ impl GpuHairLinearSolver {
         Self::new_with_refinements(device, queue, extra, false).await
     }
     /// Independent precision experiments preserve physical matrices and gates.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub async fn new_with_refinements(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -475,6 +479,10 @@ impl GpuHairLinearSolver {
             last_error: None,
         })
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn solve_checked(
         &mut self,
         systems: &[HairLinearSystem],
@@ -623,6 +631,10 @@ impl GpuHairLinearSolver {
         }
         Ok(corrections)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn dispatch_input(
         &mut self,
         input: &BandedSolveInput,
@@ -800,6 +812,10 @@ impl GpuHairLinearSolver {
         }
         Ok(corrections)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn solve_responses_checked(
         &mut self,
         requests: &[HairResponseSystem],
@@ -1550,6 +1566,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires a real GPU for ragged compliance batch qualification"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_shared_response_batches_preserve_mixed_shapes_and_load_order() {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

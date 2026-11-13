@@ -1,6 +1,10 @@
 //! Numeric planar capture proof; no ray-query feature is required.
 use glam::{Mat4, Vec3};
 use voxy_render::{PlanarReflectionCapture, SceneCamera, SceneDraw, SceneMesh, SceneProjection};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     pollster::block_on(async {
         let instance =

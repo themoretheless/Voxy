@@ -308,6 +308,10 @@ impl ScreenSpaceFluidRenderer {
     /// `other_live_bytes` must include any renderer retained during replacement.
     /// # Errors
     /// Budget overflow, unsupported adapter formats or device limits.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new_with_adapter_budget(
         device: &wgpu::Device,
         adapter: &wgpu::Adapter,
@@ -379,6 +383,10 @@ impl ScreenSpaceFluidRenderer {
         Self::new_with_shared_budget(device, format, width, height, capacity, u64::MAX)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn new_with_shared_budget(
         device: &wgpu::Device,
         format: wgpu::TextureFormat,
@@ -949,6 +957,10 @@ impl ScreenSpaceFluidRenderer {
 
     /// Generate final particle structs directly into shared memory. The producer
     /// runs once; a rejected particle/camera/film leaves the previous frame intact.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn update_generated_with_film<I>(
         &mut self,
         queue: &wgpu::Queue,
@@ -1034,6 +1046,10 @@ impl ScreenSpaceFluidRenderer {
     /// Local overlays use the caller's full-window depth attachment.
     /// # Errors
     /// Empty/overflowing/out-of-bounds regions or size mismatch; rejected before encoding.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn encode_viewport(
         &self,
         renderer: &crate::SceneRenderer,
@@ -1119,6 +1135,10 @@ impl ScreenSpaceFluidRenderer {
         (particles, films)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn encode_region(
         &self,
         renderer: &crate::SceneRenderer,
@@ -1527,6 +1547,10 @@ mod film_gpu_tests {
 
     #[test]
     #[ignore = "requires a physical GPU adapter"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn refraction_pixel_scale_matches_projected_displacement() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -1671,6 +1695,10 @@ mod film_gpu_tests {
 
     #[test]
     #[ignore = "requires a physical GPU adapter"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn film_gpu_integrates_prism_thickness_and_near_clipping() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter =

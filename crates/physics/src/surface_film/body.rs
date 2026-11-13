@@ -226,6 +226,10 @@ impl super::SurfaceFilm {
     ) -> Result<(SlidingPatchReport, Vec<[f64; 3]>), &'static str> {
         self.sliding_patch_exchange_viscosities(dt, patch, body, None)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn sliding_patch_exchange_viscosities(
         &self,
         dt: f64,

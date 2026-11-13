@@ -1,6 +1,10 @@
 //! Symmetric capacity/activity solve after positive transport fails to converge.
 //! PCG follows the SPD formulation in https://www.netlib.org/templates/templates.html.
 use super::*;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn saturations(
     body: &Body,
     dt: f64,

@@ -323,6 +323,10 @@ impl RootRigidPath {
     /// Derivative callbacks receive [start,start]; WholeField callbacks receive
     /// [start,end] and must enclose all field values there, not just its start.
     /// No derivative is assumed for WholeField, including velocity key jumps.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn integrate_spatial_outward_domains(
         intervals: &[(f64, RootRigidIntegrationDomain)],
         origin_tolerance: f64,

@@ -269,6 +269,10 @@ fn consume(
         .map(|v| u32::from_le_bytes(v.try_into().unwrap()))
         .collect())
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn run(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

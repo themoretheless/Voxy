@@ -470,6 +470,10 @@ mod collection_reset_tests {
         app.panel_action(action).unwrap();
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn collection_member_reset_preserves_topology_other_members_and_source_inheritance() {
         let root = std::env::temp_dir().join(format!("voxy-item-reset-{}", std::process::id()));
         std::fs::create_dir_all(&root).unwrap();

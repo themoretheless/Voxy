@@ -263,6 +263,10 @@ impl AnimGraph {
     /// # Errors
     /// Rejects a missing root, dangling node/param ids, a non-float input,
     /// clips/spaces/masks/poses for another rig, invalid machines, or a cycle.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn compile(desc: GraphDesc, skeleton: &Skeleton) -> Result<Self, AnimationError> {
         let root = desc
             .root
@@ -893,6 +897,10 @@ impl GraphPlayer {
         Ok(())
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn evaluate_plain(
         &self,
         node: &GraphNode,

@@ -111,7 +111,9 @@ impl BoundComponentField {
             };
             field.path = format!("{path}/{index}{member}");
         }
-        field.replace(object, text)
+        field.replace(object, text)?;
+        crate::joint_authoring::renormalize(object, &field.schema, &field.path);
+        Ok(())
     }
 }
 
@@ -396,6 +398,10 @@ mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn animation_marker_list_is_editable_empty_and_undoable_through_panel() {
         let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../voxy_render/examples/assets/animated-triangle.glb");
@@ -588,6 +594,10 @@ mod tests {
         app.stop_workers().unwrap();
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn animation_inspector_rejects_invalid_values_and_round_trips_bind_pose_history() {
         let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../voxy_render/examples/assets/animated-triangle.glb");

@@ -201,6 +201,10 @@ pub(in crate::hair) fn reference_strand_refresh(
 ) -> Vec<StrandResponse> {
     gather_strand_contacts_impl(rods, radius, false, false)
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn gather_strand_contacts_impl(
     rods: &mut [HairRod],
     radius: f64,

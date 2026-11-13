@@ -1,0 +1,10 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 10s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_render-5964849c32dd4096)
+
+running 2 tests
+test renderer::tests::resident_slot_metal_readback_preserves_neighbors_and_unused_tail ... ignored, requires a physical Metal GPU
+test renderer::tests::resident_slot_accepts_shrink_and_layer_changes_within_its_range ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 431 filtered out; finished in 0.00s
+

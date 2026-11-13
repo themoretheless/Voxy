@@ -21,16 +21,15 @@ use std::{path::PathBuf, sync::Arc, time::Instant};
 use glam::{Vec2, Vec3};
 use voxy_core::ChunkPos;
 use voxy_render::{PhotorealLensProfile, RenderOutcome, Renderer};
+use voxy_ui_winit::{FrameResult, FrameStage, WindowFrame, run_window_frame};
 use winit::{
-    application::ApplicationHandler,
     event::{ElementState, WindowEvent},
-    event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
+    event_loop::{ActiveEventLoop, ControlFlow},
     keyboard::{KeyCode, PhysicalKey},
-    window::{Window, WindowId},
+    window::{Window, WindowAttributes},
 };
 
 struct CleanCamDemo {
-    window: Option<Arc<Window>>,
     renderer: Option<Renderer>,
     female_scene: Option<bodycam_scene::BunkerFemaleScene>,
     snapshot_path: Option<PathBuf>,
@@ -40,14 +39,12 @@ struct CleanCamDemo {
     frames: u64,
     flashlight_on: bool,
     wetness: f32,
-    failure: Option<String>,
 }
 
 impl Default for CleanCamDemo {
     fn default() -> Self {
         let now = Instant::now();
         Self {
-            window: None,
             renderer: None,
             female_scene: None,
             snapshot_path: None,
@@ -57,16 +54,16 @@ impl Default for CleanCamDemo {
             frames: 0,
             flashlight_on: true,
             wetness: 0.72,
-            failure: None,
         }
     }
 }
 
 impl CleanCamDemo {
-    fn update_and_draw(
-        &mut self,
-        event_loop: &ActiveEventLoop,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn headless(&self) -> bool {
+        self.snapshot_path.is_some() || self.smoke
+    }
+
+    fn update_and_draw(&mut self, event_loop: &ActiveEventLoop, window: &Window) -> FrameResult {
         let now = Instant::now();
         let dt = now
             .duration_since(self.last_tick)
@@ -101,10 +98,8 @@ impl CleanCamDemo {
         renderer.update_camera(camera)?;
         renderer.set_bodycam_flashlight_and_wetness(flash_pos, flash_dir, self.wetness);
 
-        let size = self.window.as_ref().map_or((1280, 720), |w| {
-            let s = w.inner_size();
-            (s.width.max(1280), s.height.max(720))
-        });
+        let size = window.inner_size();
+        let size = (size.width.max(1280), size.height.max(720));
         if let Some(female_scene) = &mut self.female_scene {
             female_scene.update_for_camera(
                 renderer.queue(),
@@ -160,64 +155,56 @@ impl CleanCamDemo {
     }
 }
 
-impl ApplicationHandler for CleanCamDemo {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        if self.window.is_some() {
-            return;
-        }
-        let result = (|| -> Result<(), Box<dyn std::error::Error>> {
-            let headless = self.snapshot_path.is_some() || self.smoke;
-            let window = Arc::new(
-                event_loop.create_window(
-                    Window::default_attributes()
-                        .with_title("Voxy Photorealistic Camera Showcase — Female Character in Tactical Bunker")
-                        .with_visible(!headless)
-                        .with_inner_size(winit::dpi::LogicalSize::new(1280, 720)),
-                )?,
-            );
-            let size = window.inner_size();
-            let mut renderer = pollster::block_on(Renderer::new(
-                Arc::clone(&window),
-                size.width.max(1280),
-                size.height.max(720),
-            ))?;
-            renderer.set_bodycam_enabled(true);
-            {
-                let rig = renderer.bodycam_rig_mut();
-                rig.set_lens_profile(PhotorealLensProfile::CleanCam);
-                rig.aim_angles = Vec2::new(0.04, -0.05);
-                rig.chest_goal_angles = Vec2::new(0.04, -0.05);
-                for _ in 0..24 {
-                    rig.step(1.0 / 60.0, 0.25, true, false, 0.34);
-                }
-            }
-            let chunks = bodycam_scene::build_tactical_compound_chunks()?;
-            let uploads: Vec<_> = chunks.iter().map(|c| (c.pos, &c.mesh, &c.light)).collect();
-            renderer.upload_lit_chunks(&uploads, ChunkPos::default())?;
-            let female_scene = bodycam_scene::BunkerFemaleScene::new(&renderer)?;
-            println!(
-                "Voxy Clean Cam GPU ready: {} ({} chunks + CC0 female character uploaded)",
-                renderer.adapter_info().name,
-                uploads.len()
-            );
-            self.female_scene = Some(female_scene);
-            self.renderer = Some(renderer);
-            self.start = Instant::now();
-            self.last_tick = self.start;
-            self.window = Some(window);
-            if headless {
-                self.update_and_draw(event_loop)?;
-            }
-            Ok(())
-        })();
-        if let Err(error) = result {
-            eprintln!("Clean Cam showcase startup failed: {error}");
-            self.failure = Some(error.to_string());
-            event_loop.exit();
-        }
+impl WindowFrame for CleanCamDemo {
+    fn window_attributes(&self) -> WindowAttributes {
+        Window::default_attributes()
+            .with_title("Voxy Photorealistic Camera Showcase — Female Character in Tactical Bunker")
+            .with_visible(!self.headless())
+            .with_inner_size(winit::dpi::LogicalSize::new(1280, 720))
     }
 
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+    fn start(&mut self, event_loop: &ActiveEventLoop, window: &Arc<Window>) -> FrameResult {
+        let size = window.inner_size();
+        let mut renderer = pollster::block_on(Renderer::new(
+            Arc::clone(window),
+            size.width.max(1280),
+            size.height.max(720),
+        ))?;
+        renderer.set_bodycam_enabled(true);
+        {
+            let rig = renderer.bodycam_rig_mut();
+            rig.set_lens_profile(PhotorealLensProfile::CleanCam);
+            rig.aim_angles = Vec2::new(0.04, -0.05);
+            rig.chest_goal_angles = Vec2::new(0.04, -0.05);
+            for _ in 0..24 {
+                rig.step(1.0 / 60.0, 0.25, true, false, 0.34);
+            }
+        }
+        let chunks = bodycam_scene::build_tactical_compound_chunks()?;
+        let uploads: Vec<_> = chunks.iter().map(|c| (c.pos, &c.mesh, &c.light)).collect();
+        renderer.upload_lit_chunks(&uploads, ChunkPos::default())?;
+        let female_scene = bodycam_scene::BunkerFemaleScene::new(&renderer)?;
+        println!(
+            "Voxy Clean Cam GPU ready: {} ({} chunks + CC0 female character uploaded)",
+            renderer.adapter_info().name,
+            uploads.len()
+        );
+        self.female_scene = Some(female_scene);
+        self.renderer = Some(renderer);
+        self.start = Instant::now();
+        self.last_tick = self.start;
+        if self.headless() {
+            self.update_and_draw(event_loop, window)?;
+        }
+        Ok(())
+    }
+
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        window: &Arc<Window>,
+        event: WindowEvent,
+    ) -> FrameResult {
         match event {
             WindowEvent::CloseRequested => event_loop.exit(),
             WindowEvent::Resized(size) => {
@@ -274,20 +261,16 @@ impl ApplicationHandler for CleanCamDemo {
                     renderer.bodycam_rig_mut().apply_servo_zoom(lines);
                 }
             }
-            WindowEvent::RedrawRequested => {
-                if let Err(error) = self.update_and_draw(event_loop) {
-                    eprintln!("Clean Cam showcase draw failed: {error}");
-                    self.failure = Some(error.to_string());
-                    event_loop.exit();
-                }
-            }
+            WindowEvent::RedrawRequested => self.update_and_draw(event_loop, window)?,
             _ => {}
         }
+        Ok(())
     }
 
-    fn about_to_wait(&mut self, _: &ActiveEventLoop) {
-        if let Some(window) = &self.window {
-            window.request_redraw();
+    fn report(&self, stage: FrameStage, error: &str) {
+        match stage {
+            FrameStage::Start => eprintln!("Clean Cam showcase startup failed: {error}"),
+            FrameStage::Event => eprintln!("Clean Cam showcase draw failed: {error}"),
         }
     }
 }
@@ -308,16 +291,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             other => return Err(format!("unknown argument: {other}").into()),
         }
     }
-    let event_loop = EventLoop::new()?;
-    event_loop.set_control_flow(ControlFlow::Poll);
     let mut app = CleanCamDemo {
         snapshot_path,
         smoke,
         ..CleanCamDemo::default()
     };
-    event_loop.run_app(&mut app)?;
-    if let Some(error) = app.failure {
-        return Err(error.into());
-    }
-    Ok(())
+    run_window_frame(&mut app, Some(ControlFlow::Poll))
 }

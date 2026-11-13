@@ -22,6 +22,10 @@ pub struct ArchiveWorldRayProducer {
     count: u32,
 }
 impl ArchiveWorldRayProducer {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn new(
         device: &wgpu::Device,
         camera: Arc<ComputeStorage>,

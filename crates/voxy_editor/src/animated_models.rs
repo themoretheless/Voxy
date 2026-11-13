@@ -438,6 +438,10 @@ impl AnimatedModels {
         released
     }
     /// Selection/admission succeeds before publishing per-view history.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn select_lod(
         &mut self,
         renderer: &SceneRenderer,
@@ -501,6 +505,10 @@ impl AnimatedModels {
     }
     /// Publish immutable fixed-tick frames to all views. No clock advances here.
     /// GPU admission failures retain the previously rendered frame.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn synchronize(
         &mut self,
         renderer: &SceneRenderer,
@@ -546,6 +554,11 @@ impl AnimatedModels {
         }
         errors
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn update(
         &mut self,
         renderer: &SceneRenderer,

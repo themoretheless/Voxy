@@ -5,6 +5,10 @@ use voxy_render::*;
 
 #[test]
 #[ignore = "requires GPU; scene ABI deformation readback"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_scene_skinning_independent_instances_and_last_good_pose() {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter =
@@ -260,6 +264,10 @@ fn gpu_scene_skinning_independent_instances_and_last_good_pose() {
 
 #[test]
 #[ignore = "requires GPU; skeletal LOD shared deformation streams"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission() {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
@@ -586,6 +594,10 @@ fn step_glb(original: &[u8]) -> Vec<u8> {
     glb
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn reference_rig_gpu_acceptance(
     bytes: &[u8],
     label: &str,
@@ -1016,6 +1028,10 @@ fn reference_rig_gpu_acceptance(
 
 #[test]
 #[ignore = "requires GPU; affine skin normal tangency and rejected collapsed pose"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_skin_normals_follow_inverse_transpose_and_keep_last_good() {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
@@ -1190,6 +1206,10 @@ fn authored_normal_changes_invalidate_upload_cache_without_geometry_changes() {
     );
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn lit_normal_comparison(
     renderer: &SceneRenderer,
     device: &wgpu::Device,
@@ -1355,6 +1375,10 @@ fn lit_normal_comparison(
 
 #[test]
 #[ignore = "requires physical GPU; atomic shared skeletal memory admission"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_skeletal_device_budget_admits_whole_instances_and_retains_source() {
     let gpu = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();

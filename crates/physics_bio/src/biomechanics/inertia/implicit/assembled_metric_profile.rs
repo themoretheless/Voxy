@@ -11,6 +11,10 @@ impl RigidCoarse {
     fn partitioned(body: &Body, weight: &[f64], spatial: bool) -> Self {
         Self::partitioned_modes(body, weight, spatial, false)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn partitioned_modes(
         body: &Body,
         weight: &[f64],
@@ -502,6 +506,10 @@ impl BlockSymmetricGaussSeidel {
     }
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn block_sgs_is_symmetric_positive_definite_holds_pins_and_accelerates_pcg() {
     let cells: Vec<_> = (0..2)
         .flat_map(|x| (0..2).flat_map(move |y| (0..2).map(move |z| [x, y, z])))
@@ -843,6 +851,10 @@ fn full_mesh_incomplete_factor_search_diagnosis() {
 }
 #[test]
 #[ignore = "manual block-Jacobi rest-search residual qualification on imported mesh"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn full_mesh_block_jacobi_search_diagnosis() {
     let path = std::env::var("VOXY_ASSEMBLED_METRIC_MESH").unwrap();
     let mesh = TetraMesh::from_medit_volume(&std::fs::read_to_string(path).unwrap()).unwrap();
@@ -959,6 +971,10 @@ fn full_mesh_block_jacobi_search_diagnosis() {
 }
 #[test]
 #[ignore = "manual assembled search metric parity and assembly-amortized timing"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn full_mesh_assembled_search_metric_profile() {
     let path = std::env::var("VOXY_ASSEMBLED_METRIC_MESH").unwrap();
     let mesh = TetraMesh::from_medit_volume(&std::fs::read_to_string(path).unwrap()).unwrap();

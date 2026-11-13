@@ -419,6 +419,10 @@ impl Liquid {
         *self = candidate;
         Ok(stats)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn advance_with_mover_inner(
         &mut self,
         dt: f64,
@@ -638,6 +642,10 @@ impl Liquid {
         self.forces_with_density(particles, pairs, properties, None, None)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn forces_with_density(
         &self,
         particles: &[Particle],

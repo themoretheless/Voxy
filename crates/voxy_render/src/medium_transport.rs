@@ -245,6 +245,10 @@ mod gpu_tests {
     use wgpu::util::DeviceExt;
     #[test]
     #[ignore = "requires physical GPU; optical transfer CPU parity"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn medium_gpu_transfer_matches_cpu_reference() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

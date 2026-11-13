@@ -800,6 +800,10 @@ mod tests {
         assert_eq!(binding.apply_frame(&frame).unwrap().root_motion, Vec3::ZERO);
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn held_original_rotation_sample_error_feeds_retarget_with_source_identity() {
         let rig = |name: &str, rotation| {
             Skeleton::new(vec![Joint {
@@ -962,6 +966,10 @@ mod tests {
         }
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn original_linear_translation_sample_errors_feed_retarget_caps() {
         let rig = |name: &str, translation| {
             Skeleton::new(vec![Joint {
@@ -1181,6 +1189,10 @@ mod tests {
         }
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn uniform_translation_rounding_caps_exclude_motion_width_and_include_source_error() {
         let rig = |name: &str, translation| {
             Skeleton::new(vec![Joint {
@@ -1289,6 +1301,10 @@ mod tests {
         }
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn original_clip_interval_retains_nonbind_origin_and_initial_rotation() {
         let source = Skeleton::new(vec![Joint {
             name: "s".into(),
@@ -1465,6 +1481,10 @@ mod tests {
         assert!(saw_actual_outside_ideal_field);
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn continuous_source_interval_transports_independent_retarget_channels() {
         let source = Skeleton::new(vec![Joint {
             name: "s".into(),
@@ -1891,6 +1911,10 @@ mod tests {
         assert!(mapping.source_root_motion_axes(0, [true; 3]).is_err());
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn partial_masks_route_between_axes_and_match_independently_authored_target_curves() {
         let rig = |name: &str, translation: Vec3| {
             Skeleton::new(vec![Joint {

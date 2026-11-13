@@ -210,6 +210,10 @@ impl Liquid {
     ) -> Result<f64, Error> {
         self.exchange_vapor_impl(index, vapor, model.interface, dt, accuracy, Some(model))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn exchange_vapor_impl(
         &mut self,
         index: usize,

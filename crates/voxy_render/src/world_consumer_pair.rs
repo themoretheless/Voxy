@@ -9,6 +9,10 @@ pub(super) struct ConsumerPair {
     regions: Vec<(wgpu::BindGroup, ComputeStorage, [u32; 4])>,
 }
 impl ConsumerPair {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         size: [u32; 2],
@@ -293,6 +297,10 @@ mod metal_tests {
     use super::*;
     #[test]
     #[ignore = "exclusive Metal GPU, fresh VOXY_CONSUMER_PAIR_PROOF required"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn raw_hdr_comparison_detects_low_bits_and_nonfinite() -> Result<(), Box<dyn std::error::Error>>
     {
         use wgpu::util::DeviceExt;

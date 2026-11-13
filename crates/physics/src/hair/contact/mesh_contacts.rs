@@ -159,6 +159,10 @@ pub(super) fn deepest_interval_witness(
 // At a medial minimum of signed distance along a segment, combine the
 // two observed one-sided metric gradients so their segment derivative is zero.
 // Return unit force direction AND its original gradient magnitude separately.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn interior_envelope_gradient(
     mesh: &TriangleMesh,
     a: V,
@@ -222,6 +226,10 @@ pub(in crate::hair) fn refresh_mesh_constraints(
 ) {
     gather_mesh_contacts(rod, meshes, radius, false);
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn gather_mesh_contacts(
     rod: &mut HairRod,
     meshes: &[TriangleMesh],

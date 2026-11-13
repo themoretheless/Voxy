@@ -2,6 +2,10 @@ use super::*;
 use crate::LiquidPulse;
 use voxy_scene::Transform;
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn authored_supported_point_load_advances_phase_and_rolls_back_publication() {
     let mut scene = support_floor();
     let node = scene
@@ -349,6 +353,10 @@ fn rotating_edge_normal_advances_a_real_edge_patch_and_closes_internal_moment() 
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn material_point_loads_advance_a_rotating_face_pair_without_internal_couple() {
     use physics::contact::ContactWrench;
     use physics::liquid::LiquidBodyWorld;
@@ -1025,6 +1033,10 @@ fn supported_motion_keeps_real_tangential_acceleration_and_separates_work() {
     assert!(report.max_support_error_m < 1e-11);
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn cubic_collision_detects_inside_step_motion_and_preserves_world_feature() {
     use physics::{
         liquid::{GeometryHit, LiquidBodyWorld},
@@ -1196,6 +1208,10 @@ fn cubic_supported_interval_admits_release_and_rejects_hidden_penetration() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn supported_motion_finite_sliding_transmits_moving_arm_torque_without_internal_couple() {
     use physics::contact::ContactWrench;
     let scene = support_floor();
@@ -1708,6 +1724,10 @@ fn support_floor() -> SceneGraph {
     scene
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn scene_support_query_uses_authored_owners_gravity_and_all_corner_branches_read_only() {
     use physics::contact::ContactWrench;
     let mut scene = SceneGraph::new(8);
@@ -3758,6 +3778,10 @@ fn compound_event_key_preserves_exact_shape_pair_and_support_source() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn edge_event_source_rebuilds_normal_rate_from_post_impact_spin() {
     use glam::{DQuat, DVec3};
     use physics::liquid::LiquidBodyWorld;
@@ -3865,6 +3889,10 @@ fn edge_event_source_rebuilds_normal_rate_from_post_impact_spin() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn environment_event_keeps_wall_identity_and_world_plane() {
     use glam::{DQuat, DVec3};
     use physics::liquid::LiquidBodyWorld;
@@ -4188,6 +4216,10 @@ fn scene_patch_solves_contact_velocities_but_free_rotation_requires_sustained_co
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn authored_rigid_owners_rotate_publish_persist_pause_and_rollback() {
     let mut scene = SceneGraph::new(8);
     let mut nodes = Vec::new();
@@ -4402,6 +4434,10 @@ fn explicit_mass_distribution_admits_scaled_tensor_and_edits_rollback() {
     assert!(error.to_string().contains("requires a liquid body owner"));
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn authored_point_loads_tick_publish_pause_and_rollback_with_original_phase() {
     use voxy_scene::Transform;
     let mut scene = SceneGraph::new(4);
@@ -4518,6 +4554,10 @@ fn authored_point_loads_tick_publish_pause_and_rollback_with_original_phase() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn off_center_particle_remainder_requires_translation_only_reactions() {
     use physics::contact::{ContactBody, ContactWrench};
     use physics::gravity::Body;
@@ -5050,6 +5090,10 @@ fn off_center_particle_remainder_requires_translation_only_reactions() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn runtime_particle_impacts_leave_distinct_support_snapshots() {
     use physics::contact::{ContactBody, ContactWrench};
     use physics::gravity::Body;

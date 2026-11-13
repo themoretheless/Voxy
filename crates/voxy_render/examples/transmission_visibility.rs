@@ -5,6 +5,10 @@ use voxy_render::archive_scene::{
     ArchiveInstance, ArchiveMaterial, ArchiveMaterialSource, ArchiveMeshSource,
     ArchiveSceneRenderer, ArchiveVertex,
 };
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn render(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

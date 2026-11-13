@@ -17,6 +17,10 @@ pub struct SupersampleResolve {
 impl SupersampleResolve {
     /// Scale is per dimension: 2 renders four spatial samples per output pixel.
     /// The scene renderer must use `render_size()` and output linear HDR.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         width: u32,
@@ -219,6 +223,10 @@ mod rcas_tests {
 mod tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn metal_resolve_preserves_diagonal_coverage_and_linear_hdr() {
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
             backends: wgpu::Backends::METAL,

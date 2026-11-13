@@ -842,6 +842,10 @@ impl CharacterPhysics {
         clippy::too_many_arguments,
         reason = "atomic character tick stages translations, rotation paths, rigid paths, certified fades, and optional preview"
     )]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn fixed_step_with_paths(
         &mut self,
         scene: &mut SceneGraph,

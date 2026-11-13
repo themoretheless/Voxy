@@ -172,8 +172,12 @@ impl ArchiveWorldRayFrame {
         timing: Option<&wgpu::QuerySet>,
         (device, queue): (&wgpu::Device, &wgpu::Queue),
     ) {
-        self.encoded_frames
-            .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let frame = self
+            .encoded_frames
+            .fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+            + 1;
+        let trace_batches =
+            frame <= 3 && std::env::var_os("VOXY_STREET_WORLD_RAY_BATCH_TRACE").is_some();
         // wgpu allocates multiple Metal command buffers per region. Submit
         // ordered batches so the queue can drain before the frame is fully
         // encoded. Shared ray scratch remains ordered on the same queue.
@@ -206,6 +210,17 @@ impl ArchiveWorldRayFrame {
                         label: Some("archive world-ray region batch"),
                     });
                     queue.submit([std::mem::replace(encoder, next).finish()]);
+                    if trace_batches {
+                        let submitted = std::time::Instant::now();
+                        let regions = encoded_regions;
+                        eprintln!("STREET WORLD frame={frame} submitted_regions={regions}");
+                        queue.on_submitted_work_done(move || {
+                            eprintln!(
+                                "STREET WORLD frame={frame} completed_regions={regions} observed_ms={:.3}",
+                                submitted.elapsed().as_secs_f64() * 1000.,
+                            );
+                        });
+                    }
                 }
             }
         }
@@ -370,6 +385,11 @@ fn original_groups(
 }
 
 impl ArchiveWorldRayRegion {
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn new(
         device: &wgpu::Device,
         camera: &crate::ComputeStorage,
@@ -660,6 +680,10 @@ impl ArchiveWorldRayRegion {
             consumer_stages,
         })
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn for_region(
         &self,
         device: &wgpu::Device,
@@ -796,6 +820,10 @@ impl ArchiveWorldRayRegion {
     ) {
         self.encode_profiled(encoder, timing, begin, end, None, None);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn encode_profiled(
         &self,
         encoder: &mut wgpu::CommandEncoder,

@@ -40,6 +40,10 @@ impl App {
         models
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn advance_game(&mut self, elapsed: f64) -> Result<(), Box<dyn std::error::Error>> {
         if !elapsed.is_finite() || elapsed < 0. {
             return Err("invalid game elapsed time".into());
@@ -89,6 +93,21 @@ impl App {
                                 self.play.physics.as_ref(),
                                 dt,
                                 couple_dynamic,
+                            )
+                            .map_err(motion_error)?;
+                        } else if system == "joint.step" {
+                            let motion_error =
+                                |error: String| voxy_gameplay::GameplayFixedError::Motion(error);
+                            let scene = access.write().map_err(|e| motion_error(e.to_string()))?;
+                            voxy_gameplay::step_scene_physics_joints(
+                                scene,
+                                |id| {
+                                    self.object_ids.iter().zip(&self.instances).find_map(
+                                        |(candidate, node)| (candidate == id).then_some(*node),
+                                    )
+                                },
+                                dt as f32,
+                                &mut platform_motion,
                             )
                             .map_err(motion_error)?;
                         } else if system == "character.step" {
@@ -291,6 +310,10 @@ impl App {
         Ok(())
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn toggle_play(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         if self.model_relink.is_some() || self.model_relink_draft.is_some() {
             return Err("finish model relink before changing Play mode".into());
@@ -357,6 +380,7 @@ impl App {
             } else {
                 voxy_gameplay::validate_game_descriptors(&self.scene, 128)?;
             }
+            self.validate_live_joints()?;
             let audio = match self.audio.prepare_start(
                 &self.scene,
                 &self.authoring.authoring_project,

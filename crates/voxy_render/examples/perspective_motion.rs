@@ -2,6 +2,10 @@
 use glam::{Mat4, Vec3};
 use voxy_render::{PrimaryMotionPass, PrimarySurfaceJob};
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance =
         wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle_from_env());

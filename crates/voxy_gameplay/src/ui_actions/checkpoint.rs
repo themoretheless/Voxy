@@ -561,6 +561,10 @@ mod tests {
         assert_eq!(count.load(std::sync::atomic::Ordering::Relaxed), 1);
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn malformed_codecs_limits_and_failed_preparation_preserve_live_owner() {
         let (scene, ids) = fixture(false);
         let mut actions = UiActionHandlers::new(&scene, 8, 4, 4);

@@ -46,6 +46,7 @@ fn clip(rig: &Skeleton, seed: f32, duration: f32) -> AnimationClip {
 }
 
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
 fn wgpu_pose_eval_matches_the_cpu_reference_for_a_crowd() {
     let instance = wgpu::Instance::default();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default()))

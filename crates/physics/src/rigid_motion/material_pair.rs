@@ -56,6 +56,10 @@ impl MaterialForcePair {
             config,
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn prepare_loaded(
         first: ContactBody,
         second: ContactBody,

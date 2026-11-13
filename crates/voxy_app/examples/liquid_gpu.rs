@@ -1,5 +1,9 @@
 //! Standalone application path for admitted GPU liquid stepping, without a window.
 use physics::liquid::{Config, Liquid, Material, Particle};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn run() -> Result<(), String> {
     let mut count = 8usize;
     let mut steps = 30usize;

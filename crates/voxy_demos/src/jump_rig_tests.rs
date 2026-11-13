@@ -99,6 +99,10 @@ fn gpu_jump_matches_actual_body_and_rigid_trailing_hair() {
 fn gpu_physical_stance_matches_accepted_cpu_body() {
     gpu_body_skinning_parity(true);
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_body_skinning_parity(physical: bool) {
     let asset = voxy_render::ObjAsset::parse(
         include_str!(

@@ -453,6 +453,10 @@ fn groups_for(n: u32) -> u32 {
 impl OceanRenderer {
     /// Builds every pipeline and simulation resource; `output_format` is the final view
     /// format passed to [`Self::encode`].
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -904,6 +908,11 @@ impl OceanRenderer {
         }
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn create_screen(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -1205,6 +1214,10 @@ impl OceanRenderer {
     /// Advances the simulation by `dt` seconds and encodes the whole frame, ending with
     /// the tonemapped composite into `output` (the format given to [`Self::new`]).
     /// Call `device.poll` now and then (e.g. once per frame) so the height probe resolves.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn encode(
         &mut self,
         queue: &wgpu::Queue,

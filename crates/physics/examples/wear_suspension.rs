@@ -18,6 +18,10 @@ fn kinetic(liquid: &Liquid, grains: &[Grain]) -> f64 {
             .map(|p| 0.5 * p.mass_kg() * p.velocity_m_s().iter().map(|v| v * v).sum::<f64>())
             .sum::<f64>()
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let material = Material {
         rest_density: 1000.,

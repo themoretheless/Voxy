@@ -342,6 +342,10 @@ fn cs_main(@builtin(global_invocation_id) id:vec3<u32>) {
     }
     #[test]
     #[ignore = "requires actual GPU; experimental triple arithmetic only"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_triple_arithmetic_retains_cancellation_and_product_tail() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

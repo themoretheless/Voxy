@@ -27,6 +27,10 @@ struct ResultRow {
     parameter: [f32; 4],
     reprojected: [f32; 4],
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let far = args.iter().any(|a| a == "--far-bound");

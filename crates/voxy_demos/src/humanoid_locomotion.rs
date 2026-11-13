@@ -44,6 +44,10 @@ impl VoxyHumanoidLocomotion {
     /// # Errors
     /// Requires all authored source/target bones, identity target bind rotations,
     /// positive leg lengths and the preset's unit-scale source hip ancestors.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         source: Arc<ModelAsset>,
         target: &Skeleton,

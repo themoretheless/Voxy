@@ -755,6 +755,10 @@ mod extended_access_tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn parallel_batches_enforce_grants_and_commit_commands_deterministically() {
         let plan = SchedulePlan::build(
             &[

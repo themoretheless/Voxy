@@ -443,6 +443,10 @@ pub(super) fn build_startup_scene(
     }
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn handle_early_cli_commands(
     arguments: &[String],
 ) -> Result<Option<()>, Box<dyn std::error::Error>> {

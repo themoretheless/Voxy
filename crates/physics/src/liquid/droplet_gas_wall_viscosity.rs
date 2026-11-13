@@ -111,6 +111,10 @@ impl FiniteDropletGasGrid {
     /// Total gas energy changes by reported wall work; gas plus wall impulse
     /// is conserved. Mass, geometry and cv are fixed. Whole-grid atomic.
     /// Use with the interior stress operator; this does not move walls or cells.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn relax_wall_viscosity(
         &mut self,
         dt: f64,

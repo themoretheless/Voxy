@@ -256,6 +256,10 @@ mod tests {
         assert_eq!(first.materials[&model].tint, [0.2, 0.3, 0.4, 1.]);
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn fog_snapshots_follow_hierarchy_and_preserve_prior_values() {
         use voxy_scene::FogVolume;
         let mut scene = SceneGraph::new(3);

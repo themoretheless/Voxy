@@ -169,6 +169,10 @@ impl SceneInstancer {
     /// Creates an instanced rendering pipeline set sharing the `SceneRenderer`'s device,
     /// attachment format, and Reversed-Z depth convention.
     #[must_use]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(scene: &SceneRenderer) -> Self {
         let device = &scene.device;
         let instance_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {

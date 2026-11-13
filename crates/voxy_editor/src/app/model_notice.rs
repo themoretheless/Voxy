@@ -1,6 +1,10 @@
 //! Resource diagnostics derive from the existing catalog and manifest inventory.
 use crate::*;
 impl App {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn selected_model_notice(&self) -> Option<panels::ResourceNotice> {
         if let Some(notice) = self.snapshot_path_notice() {
             return Some(notice);

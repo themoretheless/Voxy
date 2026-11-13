@@ -97,6 +97,10 @@ impl FootPivotTransfer {
     /// A clamped target returns `None` without consuming or modifying the source.
     /// # Errors
     /// Rejects invalid targets, foreign skeletons and IK/palette failures.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn solve_frame(
         &self,
         source: &voxy_animation::AnimatorFrame,

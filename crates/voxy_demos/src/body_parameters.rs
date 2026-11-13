@@ -202,6 +202,10 @@ impl Default for BodyParameters {
     }
 }
 impl BodyParameters {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn validate(&self) -> Result<(), &'static str> {
         if !self.height_cm.is_finite()
             || !(130. ..=210.).contains(&self.height_cm)
@@ -485,6 +489,10 @@ impl BodyParameters {
         }
         Self::from_json(&merged.to_string())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn transform(&self, [x, y, z]: [f32; 3]) -> [f32; 3] {
         fn band(y: f32, center: f32, radius: f32) -> f32 {
             let t = ((y - center) / radius).abs().min(1.);

@@ -371,6 +371,10 @@ fn phyllotaxis(dir: Vec3, previous: Vec3, model: &GrowthModel, rng: &mut Random)
     (dir * angle.cos() + rotated * angle.sin()).normalize()
 }
 /// Grow a skeleton by competition for space inside `envelope` (centre, radii).
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn grow_skeleton(
     model: &GrowthModel,
     stems: &[(Vec3, Vec3)],
@@ -1013,6 +1017,10 @@ pub fn generate_world_plant_glb(
 ) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     generate(options, true, true)
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn grow(options: PlantOptions, world_detail: bool) -> Result<Growth, Box<dyn std::error::Error>> {
     if !options.height.is_finite() || !(0.25..=30.).contains(&options.height) {
         return Err("plant height must be 0.25..=30 metres".into());
@@ -1138,6 +1146,10 @@ fn grow(options: PlantOptions, world_detail: bool) -> Result<Growth, Box<dyn std
     }
     Ok(g)
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn generate(
     options: PlantOptions,
     full_material: bool,

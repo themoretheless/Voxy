@@ -1,6 +1,10 @@
 //! Neutral mechanical fold specimens with synthetic material data, SI units.
 use physics_bio::skin::*;
 use std::io::Write;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::env::args()
         .nth(1)

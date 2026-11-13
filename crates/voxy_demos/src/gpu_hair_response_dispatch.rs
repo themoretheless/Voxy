@@ -2,6 +2,10 @@
 use super::*;
 use wgpu::util::DeviceExt;
 impl GpuHairLinearSolver {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn dispatch_response_waves(
         &mut self,
         inputs: &[BandedSolveInput],
@@ -230,6 +234,10 @@ mod tests {
     use super::*;
     #[test]
     #[ignore = "requires real GPU; response waves with constrained shared staging"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_response_waves_respect_small_readback_budgets_and_reuse_factors() {
         for compact in [false, true] {
             for byte_limited in [false, true] {

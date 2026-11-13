@@ -85,6 +85,10 @@ fn scene_vertex_position_invariance_survives_metal_translation() {
 #[cfg(target_os = "macos")]
 #[test]
 #[ignore = "actual Metal GPU regression; run alone with VOXY_VERTEX_INVARIANCE_CAPTURE"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn metal_gpu_position_invariance() -> Result<(), Box<dyn std::error::Error>> {
     use wgpu::util::DeviceExt;
     let root = std::path::PathBuf::from(

@@ -320,6 +320,10 @@ impl PropertyAssetCheckpoint {
     ) -> Result<PreparedPropertyAssets, Error> {
         self.prepare_inner(limits, Some(names))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn prepare_inner(
         &self,
         limits: PropertyAssetLimits,

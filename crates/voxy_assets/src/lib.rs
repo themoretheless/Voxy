@@ -91,7 +91,7 @@ mod sources;
 mod watch;
 mod watch_worker;
 pub use dependencies::{AssetDependencies, DependencyError};
-pub use files::FileInputs;
+pub use files::{AssetSourceProvider, FileInputs};
 pub use inputs::{
     FailedImport, ImportInputs, ImportedArchiveLimits, ImportedAsset, InputError, InputSnapshot,
     RejectedImport,

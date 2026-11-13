@@ -4,6 +4,10 @@ use voxy_render::{
     CertifiedLodCheckpoint, CertifiedLodIndexSet, CertifiedLodSubdivisionVariant,
     CertifiedLodVariant, LodArchiveLimits, LodPolicy, LodSurface,
 };
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn Error>> {
     let path = PathBuf::from(
         std::env::args_os()

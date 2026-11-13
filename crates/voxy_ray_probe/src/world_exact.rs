@@ -1,6 +1,10 @@
 //! Source-query diagnostics, including certificate/exact split passes. Gold never enters GPU inputs.
 use std::path::Path;
 use voxy_render::archive_scene::ArchiveMeshSource;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn probe(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

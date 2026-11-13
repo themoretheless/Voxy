@@ -297,6 +297,10 @@ impl LabiaMinoraGaitSimulation {
     /// Advances both left and right labia minora folds by `dt_s` under axial insertion/withdrawal
     /// of a rounded-tip cylindrical tube [`LabiaTubeInsertion`], combining positive-gap sphere-chain
     /// [`super::ContactScene`] barriers with radial parting and axial mucosal drag forces.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_tube_insertion(
         &mut self,
         tube: &LabiaTubeInsertion,

@@ -24,6 +24,10 @@ impl App {
         }
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn lod_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         let Some((phase, since)) = self
             .lod_smoke

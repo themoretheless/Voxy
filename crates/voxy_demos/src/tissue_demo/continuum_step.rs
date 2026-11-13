@@ -109,6 +109,10 @@ impl TissueDemo {
             None,
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn step_continuum_targets_with_skin(
         body: &mut DemoTissue,
         targets: &[SupportTarget],
@@ -340,6 +344,10 @@ impl TissueDemo {
     ) -> Result<EnergyLedger, &'static str> {
         Self::advance_continuum_contact_budget(body, targets, next_surface, dt, depth, 240. * 1e-5)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn advance_continuum_contact_budget(
         body: &mut InertialBody,
         targets: &[SupportTarget],
@@ -769,6 +777,10 @@ impl TissueDemo {
             .map(|matrix| Mat4::from_translation(Vec3::Y * Self::lift(time) as f32) * matrix)
             .collect()
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn body_mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();

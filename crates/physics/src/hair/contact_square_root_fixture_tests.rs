@@ -112,6 +112,10 @@ fn captured_full_joint_operator_preserves_physical_admission() {
 
 #[test]
 #[ignore = "requires an exact captured VQI1 joint response fixture"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn captured_original_load_defect_is_corrected_without_relaxing_admission() {
     let path = std::env::var("VOXY_HAIR_QR_FAILURE_FIXTURE").expect("joint QR fixture");
     let mut input = std::io::Cursor::new(std::fs::read(path).unwrap());

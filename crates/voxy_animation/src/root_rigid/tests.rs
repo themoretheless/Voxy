@@ -181,6 +181,10 @@ fn masks_match_in_place_bone_position_without_rotating_initial_authored_offset()
     );
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn closed_cubic_moving_pivot_preserves_excursion_projection_hulls_and_speed() {
     let p0 = Vec3::X * 0.6;
     let tangent = Vec3::new(0., 3., 1.);
@@ -320,6 +324,10 @@ fn closed_cubic_moving_pivot_preserves_excursion_projection_hulls_and_speed() {
     }
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn step_events_merge_simultaneous_channels_and_boundaries_are_consumed_once() {
     for time in [0.25, 0.5] {
         let p0 = Vec3::X * 0.6;
@@ -642,6 +650,10 @@ fn primary_translation_compilation_is_bounded_and_concurrent_rigid_selection_sha
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn coordinate_transport_preserves_ordered_curves_bounds_and_step_events() {
     let basis = DQuat::from_rotation_z(0.7) * DQuat::from_rotation_x(-0.4);
     let offset = DVec3::new(3., -2., 0.5);
@@ -1084,6 +1096,10 @@ fn ordered_twist_path_retains_noncommuting_rotations_and_encloses_collision_poin
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn varying_spatial_velocity_refines_with_bounds_against_independent_ramp_integrals() {
     let sample = |time| {
         Ok(RootRigidTwist {
@@ -1959,6 +1975,10 @@ fn screw_field_enclosure_rejects_polynomial_motion_without_a_certificate() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn imported_cubic_angular_derivative_has_outward_rational_bounds() {
     let p0 = Vec3::X * 0.6;
     let (_, clip) = clip(
@@ -2064,6 +2084,10 @@ fn imported_cubic_angular_derivative_has_outward_rational_bounds() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn cubic_spatial_velocity_encloses_moving_pivot_for_all_extraction_axes() {
     let p0 = Vec3::X * 0.6;
     let (_, clip) = clip(
@@ -2416,6 +2440,10 @@ fn outward_bound_transport_covers_reflected_frames_and_weight_derivatives() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn outward_integrator_preserves_clocks_and_refines_large_screw_angles() {
     let twist = RootRigidTwist {
         linear: DVec3::new(0.4, -0.2, 0.3),
@@ -2954,6 +2982,10 @@ fn prepared_coordinate_ranges_cover_late_reversal_and_empty_paths() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn whole_cubic_planar_field_preserves_normal_coordinate_velocity() {
     let p0 = Vec3::X * 0.6;
     let (_, clip) = clip(
@@ -4475,6 +4507,10 @@ fn source_point_speed_accounts_for_bind_pivot_and_extraction_masks() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn source_loop_enclosure_covers_exact_linear_motion_with_cubic_identity_rotation() {
     let (_, clip) = clip(
         Vec3::X * 2.,
@@ -4806,6 +4842,10 @@ fn source_loop_enclosure_covers_exact_linear_motion_with_cubic_identity_rotation
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn source_turning_cycles_cover_analytic_half_turn_and_pivot() {
     let (_, clip) = clip(
         Vec3::X * 2.,
@@ -5203,6 +5243,10 @@ fn source_turning_cycles_cover_analytic_half_turn_and_pivot() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn source_partition_unions_distinct_channel_keys_and_rejects_lost_boundaries() {
     let (_, clip) = clip(
         Vec3::ZERO,
@@ -5700,6 +5744,10 @@ fn uniform_screw_point_box_error_covers_all_times_signed_world_mapping_and_publi
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn path_checkpoint_replays_fresh_cubic_and_step_curves_with_exact_cut_metadata() {
     for mode in [Interpolation::CubicSpline, Interpolation::Step] {
         let make = || {

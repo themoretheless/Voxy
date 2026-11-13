@@ -1093,6 +1093,10 @@ fn reciprocal_material_point_forces_close_world_moments_on_different_spin_paths(
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn prescribed_rotating_point_force_drives_analytic_spherical_momentum_and_attitude() {
     let force = [0., 3., 0.];
     let rate = [0., -2., 0.];
@@ -1237,6 +1241,10 @@ fn prescribed_rotating_point_force_drives_analytic_spherical_momentum_and_attitu
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn prescribed_material_force_rebases_source_knots_and_closes_independent_moment_and_work() {
     use physics::rotation::TorquePolynomial;
     let source = body()
@@ -1453,6 +1461,10 @@ fn prescribed_material_force_rebases_source_knots_and_closes_independent_moment_
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn point_impact_continues_prescribed_material_force_phase_and_recomputes_com_arm() {
     use physics::rotation::TorquePolynomial;
     let force = [0., 3., 0.];
@@ -1614,6 +1626,10 @@ fn point_impact_continues_prescribed_material_force_phase_and_recomputes_com_arm
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn own_material_force_feedback_matches_independent_scalar_motion_and_work() {
     let angle: f64 = 0.2;
     let initial = ContactBody {
@@ -1756,6 +1772,10 @@ fn own_material_force_feedback_matches_independent_scalar_motion_and_work() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn own_material_force_anisotropic_feedback_bound_covers_independent_quaternion_momentum_rk4() {
     use physics::{
         rigid_motion::{MaterialPointForce, MotionLoad},

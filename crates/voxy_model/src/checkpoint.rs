@@ -311,6 +311,10 @@ impl ModelAssetCheckpoint {
     }
     /// Captures standalone playback sources in the same rig, clip, property and
     /// name graph as model-owned sources. No content-based deduplication occurs.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn capture_with_sources(
         models: &[Arc<ModelAsset>],
         clips: &[Arc<voxy_animation::AnimationClip>],
@@ -778,6 +782,10 @@ impl ModelAssetCheckpoint {
     ) -> Result<PreparedModelSources, ModelError> {
         self.prepare_inner(limits, Some(skins))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn prepare_inner(
         &self,
         limits: ModelAssetCheckpointLimits,

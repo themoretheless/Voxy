@@ -181,6 +181,10 @@ fn sampler(binding: u32, comparison: bool) -> wgpu::BindGroupLayoutEntry {
 impl NativeVegetation {
     /// # Errors
     /// Rejects invalid source references, invalid bounds, or exhausted GPU memory.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -937,6 +941,11 @@ impl NativeVegetation {
         self.shadow_capture_override = capture;
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn encode(
         &self,
         device: &wgpu::Device,

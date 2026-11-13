@@ -38,6 +38,10 @@ impl HairSystem {
         Ok(())
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn step_impl(
         &mut self,
         dt: f64,

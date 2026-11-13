@@ -39,6 +39,10 @@ impl FemaleHair {
     }
     /// Candidate authoring retains both follicle coordinates. Native contact
     /// qualification is required before selecting it in the normal demo.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new_parameterized_with_groom(
         body: &[SceneVertex],
         indices: &[u32],
@@ -1283,6 +1287,10 @@ mod tests {
     }
     #[test]
     #[ignore = "native GPU full-model dynamics qualification"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_linear_solver_tracks_full_model_jump_with_contacts() {
         let body = voxy_render::ObjAsset::parse(
             include_str!(

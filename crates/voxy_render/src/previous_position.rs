@@ -69,6 +69,10 @@ impl PreviousPositionPass {
     pub const fn position_origin(&self) -> [f32; 3] {
         self.position_origin
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn create(
         device: &wgpu::Device,
         depth: &wgpu::Texture,

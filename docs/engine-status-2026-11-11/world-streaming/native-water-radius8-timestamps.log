@@ -1,0 +1,31 @@
+Voxy profile enabled: Profile { scenario: Water, output: "docs/engine-status-2026-11-11/world-streaming/native-water-radius8-timestamps.csv", warmup: 1s, duration: 20s, start: None, previous: None, samples: [], gpu_samples: [], completed: Cell { value: false }, cpu_stages: {} }
+Voxy GPU: Apple M4 Max (Metal), 289 chunks, 87505 greedy quads
+Native vegetation: 6115 seeded plants, 4 shared mesh variants
+Voxy water activation: 98173 cells
+Voxy loaded in 5.11 seconds
+Voxy startup frame deferred: SkippedOccluded
+Voxy first voxel frame presented (Presented)
+Voxy background rebuild: 2.18ms (3 changed / 289 resident chunks, full publication, upload_bytes=11229560, chunk_buffer_bytes=19415040)
+Voxy autopilot destroyed natural water bed at VoxelPos { x: -256, y: 2, z: -232 }
+Voxy background rebuild: 1.42ms (1 changed / 289 resident chunks, full publication, upload_bytes=11229700, chunk_buffer_bytes=19415040)
+Voxy background rebuild: 1.29ms (1 changed / 289 resident chunks, partial publication, upload_bytes=50008, chunk_buffer_bytes=19415040)
+Voxy GPU timestamp readbacks scheduled=17 valid=2 rejected=14 map_failures=0 pending=1
+FRAME PROFILE {"adapter":"AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }","cpu_stages":{"actor_animation":{"p50_ms":0.602,"p95_ms":0.6364609999999999,"p99_ms":0.650874},"pose_admission":{"p50_ms":0.041291,"p95_ms":0.379833,"p99_ms":0.46987500000000004},"pose_caller_cpu":{"p50_ms":0.044291,"p95_ms":0.285916,"p99_ms":0.386583},"pose_family_certificate":{"p50_ms":0.040583,"p95_ms":0.047,"p99_ms":0.053541},"pose_group_certificate":{"p50_ms":0.33725,"p95_ms":0.46987500000000004,"p99_ms":0.46987500000000004},"pose_join_cpu":{"p50_ms":0.0,"p95_ms":0.049291,"p99_ms":0.055417},"pose_join_wall":{"p50_ms":0.0,"p95_ms":0.142417,"p99_ms":0.19158399999999998},"pose_publication":{"p50_ms":0.08433299999999999,"p95_ms":0.449,"p99_ms":0.527292},"pose_queue_writes":{"p50_ms":0.037208,"p95_ms":0.07775,"p99_ms":0.126167},"pose_spawn_wall":{"p50_ms":0.0,"p95_ms":0.16612500000000002,"p99_ms":0.205167},"pose_worker_cpu_sum":{"p50_ms":0.0,"p95_ms":0.848043,"p99_ms":1.29046},"pose_worker_launch_max":{"p50_ms":0.0,"p95_ms":0.094041,"p99_ms":0.15754100000000001},"water":{"p50_ms":0.000585,"p95_ms":2.1684170000000003,"p99_ms":2.321958}},"frame_budget_met":false,"frames":78,"gpu_ms":null,"gpu_pass_statistics":[{"p50_ms":0.986958,"p95_ms":2.683541,"p99_ms":2.683541},null,null],"gpu_samples":2,"gpu_scope":"primary resident voxel pass only","limitations":["CPU render includes submission/presentation; not GPU execution time","presentation completion is not display scanout","GPU scene span excludes external postprocessing; delayed samples may cross warmup boundary","upload/memory counters unavailable"],"max_ms":266.8375,"measurement_seconds":20.0,"over_120hz":78,"over_60hz":78,"p50_ms":258.270167,"p95_ms":266.661541,"p99_ms":266.8375,"peak_memory_bytes":null,"scenario":"water","skipped_frames":0,"upload_bytes":null,"voxel_workload":{"destruction_commits":2,"full_publications":2,"includes_warmup":true,"partial_publications":1,"resident_chunks":289,"simulation_ticks":1177,"water_commits":6},"warmup_seconds":1.0}
+       27.82 real         5.20 user         0.43 sys
+          1305968640  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              109927  page reclaims
+                  75  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 232  voluntary context switches
+                7595  involuntary context switches
+         98237060303  instructions retired
+         21891108125  cycles elapsed
+          3028076464  peak memory footprint

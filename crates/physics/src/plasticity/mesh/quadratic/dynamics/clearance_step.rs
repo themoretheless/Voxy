@@ -17,6 +17,10 @@ impl QuadraticDynamics {
     /// committed; the caller must handle remaining time and collision response.
     /// No state changes on failure or minimum-step exhaustion. New crack surfaces
     /// born during this step and edge-edge crossings are not covered.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_loaded_before_fragment_clearance(
         &mut self,
         requested_dt_s: f64,
@@ -92,6 +96,10 @@ impl QuadraticDynamics {
     }
 }
 impl super::FiniteQuadraticDynamics {
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_loaded_before_fragment_clearance(
         &mut self,
         requested_dt_s: f64,
@@ -132,6 +140,10 @@ impl QuadraticDynamics {
     /// Consume separated prefixes until completion or a bounded guard stop.
     /// Guard exhaustion returns an explicit partial-progress report. All other
     /// failures roll back the whole interval, including earlier valid prefixes.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance_loaded_until_fragment_clearance(
         &mut self,
         interval_s: f64,

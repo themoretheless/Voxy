@@ -360,6 +360,10 @@ struct CachedTexture {
     mips: bool,
     texture: Arc<SceneTexture>,
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn model_texture(
     renderer: &SceneRenderer,
     device: &wgpu::Device,
@@ -870,6 +874,10 @@ mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn global_lod_admission_retains_all_requests_and_recovers_after_eviction() {
         use super::*;
         use std::collections::BTreeSet;

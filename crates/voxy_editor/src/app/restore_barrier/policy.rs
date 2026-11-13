@@ -4,6 +4,10 @@ use crate::{app::resource_checkpoint::RestoreLimits, scene_limits};
 const MIB: usize = 1024 * 1024;
 impl EditorSavePolicy {
     /// Desktop editor profile. Budgets reject oversized state; they never trim it.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn desktop() -> Self {
         let liquid = physics::liquid::Config::default();
         let resources = RestoreLimits {

@@ -271,6 +271,10 @@ fn load_lod_model(
 mod lod_model_tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn model_certificate_identity_and_dependency_publication() {
         let root = std::env::temp_dir().join(format!("voxy-lod-model-{}", std::process::id()));
         std::fs::create_dir_all(&root).unwrap();

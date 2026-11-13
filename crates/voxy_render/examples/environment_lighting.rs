@@ -35,6 +35,10 @@ fn capture(texture: &wgpu::Texture, encoder: &mut wgpu::CommandEncoder, buffer: 
         },
     );
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     pollster::block_on(async {
         let instance =

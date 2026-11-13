@@ -88,6 +88,10 @@ impl crate::App {
         self.reset_prefab_collection_topology(key, true, Some(item))
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn reset_prefab_collection_topology(
         &mut self,
         key: [u8; 32],
@@ -536,6 +540,10 @@ mod tests {
             .collect()
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn collection_buttons_edit_empty_lists_follow_ids_and_round_trip_history() {
         let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../voxy_render/examples/assets/quad.obj");

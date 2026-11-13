@@ -4,6 +4,11 @@
 без сборки; точность счётчиков ±5%. Метрики по каждой функции воспроизводятся командой
 `cargo run -p voxy_depgraph --bin refactor_metrics` (см. `BASELINE.md`).
 
+**Состояние на 2026-11-12.** Срез `fc07bb3ff` после переписывания истории в репозитории не находится. Числа таблицы §1
+пересчитаны 2026-11-12 сканером на рабочем дереве (с незакоммиченными правками), после разделения `physics`;
+строки новых крейтов стоят в конце таблицы, колонка «итоги волны 3» не переписывалась. §2 и §3 это снимок **до** рефакторинга
+(исходные наблюдения), сохранённый как есть; текущее состояние по каждому пункту ведёт `PLAN.md`.
+
 Статусы: `todo`, `wip`, `done`, `отложено` (с причиной). Приоритет: P1 (высокий churn и сложность),
 P2 (ядро), P3 (периферия).
 
@@ -13,52 +18,61 @@ P2 (ядро), P3 (периферия).
 
 | Крейт | Прод. строк | Функций | > 60 | > 100 | > 200 | Главные запахи / итоги волны 3 | Приоритет | Статус |
 |---|---:|---:|---:|---:|---:|---|---|---|
-| physics | 108 135 | 3034 | 368 | 140 | 29 | 9-слойный ациклический DAG (`KNOWN_VIOLATIONS = &[]`), единый `physics::math`, все файлы <= 1500 строк | P1 | done |
-| voxy_render | 59 200 | 1960 | 180 | 71 | 15 | декомпозированы `ArchiveSceneRenderer`, `SceneRenderer`, `Renderer`, `skinned`; вынесены 34 контактных GPU-решателя | P1 | done |
-| voxy_editor | 37 626 | 1019 | 123 | 51 | 22 | вынесен `foot_placement`, сняты модульные `allow(dead_code)`, `PanelCache` по ревизии, все файлы <= 1500 строк | P1 | done |
-| voxy_animation | 28 235 | 1086 | 63 | 23 | 0 | разделён `lib.rs` (skeleton/clip/pose/animator/math), zero-alloc `*_into` + keyframe cursor | P1 | done |
-| voxy_demos | 26 765 | 666 | 95 | 57 | 15 | снято ребро `voxy_demos -> voxy_editor`, троттлинг `fs::metadata`, декомпозированы крупные модули | P2 | done |
-| voxy_gameplay | 16 320 | 480 | 56 | 21 | 4 | перенесён `foot_placement`, выделен `character_physics.rs`, кеш `StaticWorld` по ревизии, `ActionId` | P1 | done |
-| voxy_ray_probe | 11 595 | 94 | 45 | 31 | 13 | диагностический бинарь разделён по протоколам (<= 1500 строк), документированы `SAFETY` | P3 | done |
+| physics | 75 497 | 2101 | 262 | 98 | 21 | 9-слойный ациклический DAG (`KNOWN_VIOLATIONS = &[]`), единый `physics::math`, все файлы <= 1500 строк | P1 | done |
+| voxy_render | 62 371 | 2051 | 188 | 73 | 15 | декомпозированы `ArchiveSceneRenderer`, `SceneRenderer`, `Renderer`, `skinned`; вынесены 34 контактных GPU-решателя | P1 | done |
+| voxy_editor | 38 344 | 1022 | 125 | 50 | 23 | вынесен `foot_placement`, сняты модульные `allow(dead_code)`, `PanelCache` по ревизии, все файлы <= 1500 строк | P1 | done |
+| voxy_animation | 28 436 | 1090 | 63 | 23 | 0 | разделён `lib.rs` (skeleton/clip/pose/animator/math), zero-alloc `*_into` + keyframe cursor | P1 | done |
+| voxy_demos | 29 222 | 812 | 97 | 57 | 15 | снято ребро `voxy_demos -> voxy_editor`, троттлинг `fs::metadata`, декомпозированы крупные модули | P2 | done |
+| voxy_gameplay | 19 520 | 570 | 62 | 24 | 7 | перенесён `foot_placement`, выделен `character_physics.rs`, кеш `StaticWorld` по ревизии, `ActionId` | P1 | done |
+| voxy_ray_probe | 11 792 | 94 | 45 | 31 | 13 | диагностический бинарь разделён по протоколам (<= 1500 строк), документированы `SAFETY` | P3 | done |
 | voxy_scene | 7 935 | 345 | 13 | 3 | 1 | плотный индекс `component_slots` по `TypeId` ($O(|T|)$, ускорение до 4 324x на 100k узлах) | P2 | done |
-| voxy_model | 7 141 | 204 | 24 | 13 | 6 | разделён на `gltf_{validate,material,animation}.rs` + `pose.rs`, топосорт $O(N^2)$ | P2 | done |
-| voxy_gpu_core | 6 744 | 303 | 12 | 2 | 0 | приняты GPU контактные решатели, `wgsl.rs` (`#include`), `BindGroup*Builder` | P2 | done |
-| voxy_app | 6 413 | 146 | 27 | 12 | 5 | разделён на `bootstrap.rs` и `app_tick.rs`, вынесены `controls`/`frame_profile`, сняты `allow(dead_code)` | P2 | done |
-| voxy_gpu | 5 643 | 156 | 20 | 6 | 1 | все дескрипторы на `BindGroup*Builder`, реэкспорт GPU-решателей | P2 | done |
-| voxy_web | 4 895 | 148 | 20 | 6 | 1 | вычищены clippy-линты, файлы <= 1500 строк | P3 | done |
-| voxy_shell | 4 168 | 119 | 7 | 4 | 3 | приняты `controls` и `frame_profile`, `SceneApp` разделён на `init.rs` и `events.rs` | P1 | done |
-| voxy_assets | 3 929 | 183 | 5 | 0 | 0 | `JsonDocument` подключён к `Manifest` + golden round-trip тесты | P2 | done |
-| physics_voxel | 3 701 | 107 | 10 | 5 | 0 | чисто | P3 | done |
-| voxy_cuda | 3 372 | 96 | 11 | 2 | 0 | 28 `unsafe`, Windows-only части непроверяемы на macOS | P3 | отложено: нет Windows |
-| voxy_streamline | 3 165 | 135 | 2 | 0 | 0 | 127 `unsafe`, Windows-only DX12 FFI | P3 | отложено: нет Windows |
+| voxy_model | 8 105 | 220 | 27 | 14 | 7 | разделён на `gltf_{validate,material,animation}.rs` + `pose.rs`, топосорт $O(N^2)$ | P2 | done |
+| voxy_gpu_core | 6 753 | 304 | 12 | 2 | 0 | приняты GPU контактные решатели, `wgsl.rs` (`#include`), `BindGroup*Builder` | P2 | done |
+| voxy_app | 6 644 | 148 | 28 | 13 | 5 | разделён на `bootstrap.rs` и `app_tick.rs`, вынесены `controls`/`frame_profile`, сняты `allow(dead_code)` | P2 | done |
+| voxy_gpu | 5 748 | 156 | 20 | 7 | 0 | все дескрипторы на `BindGroup*Builder`, реэкспорт GPU-решателей | P2 | done |
+| voxy_web | 7 137 | 204 | 29 | 12 | 1 | вычищены clippy-линты, файлы <= 1500 строк | P3 | done |
+| voxy_shell | 2 749 | 95 | 6 | 4 | 1 | приняты `controls` и `frame_profile`, `SceneApp` разделён на `init.rs` и `events.rs` | P1 | done |
+| voxy_assets | 4 054 | 191 | 5 | 0 | 0 | `JsonDocument` подключён к `Manifest` + golden round-trip тесты | P2 | done |
+| physics_voxel | 3 729 | 107 | 10 | 5 | 0 | чисто | P3 | done |
+| voxy_cuda | 3 383 | 96 | 11 | 2 | 0 | 28 `unsafe`, Windows-only части непроверяемы на macOS | P3 | отложено: нет Windows |
+| voxy_streamline | 3 168 | 135 | 2 | 0 | 0 | 127 `unsafe`, Windows-only DX12 FFI | P3 | отложено: нет Windows |
 | voxy_water | 2 372 | 99 | 6 | 0 | 0 | чисто | P3 | done |
 | voxy_core | 2 264 | 172 | 1 | 0 | 0 | `ByteReader`/`ByteWriter`, табличный CRC32C, `CheckpointEnvelope`, 8-байтовый `FastHasher` | P3 | done |
-| voxy_world | 2 120 | 84 | 2 | 1 | 0 | `palette_indices_into`, пословная упаковка и `from_canonical_palette_slots` | P2 | done |
+| voxy_world | 2 163 | 85 | 2 | 1 | 0 | `palette_indices_into`, пословная упаковка и `from_canonical_palette_slots` | P2 | done |
 | voxy_xr | 2 052 | 84 | 3 | 0 | 0 | все `unsafe` снабжены `// SAFETY:` | P3 | done |
-| voxy_storage | 2 040 | 58 | 5 | 2 | 0 | табличный CRC32, `u64` bit-codec + fast-path `Uniform` + zero-dense распаковка | P2 | done |
+| voxy_storage | 2 043 | 58 | 5 | 1 | 0 | табличный CRC32, `u64` bit-codec + fast-path `Uniform` + zero-dense распаковка | P2 | done |
 | voxy_audio | 1 449 | 54 | 4 | 1 | 0 | чисто | P3 | done |
 | voxy_audio_device | 1 369 | 77 | 1 | 0 | 0 | чисто | P3 | done |
-| voxy_mesher | 1 243 | 36 | 3 | 0 | 0 | стековые маски граней, модульная структура | P3 | done |
-| voxy_vulkan | 1 034 | 37 | 3 | 1 | 0 | 68 `unsafe`, Windows-only D3D12 interop | P3 | отложено: нет Windows |
-| voxy_rush | 959 | 40 | 1 | 1 | 0 | чисто | P3 | done |
-| voxy_runtime | 899 | 42 | 3 | 1 | 0 | переиспользование `LightingScratch` при пересборке чанков | P3 | done |
-| voxy_depgraph | 816 | 38 | 0 | 0 | 0 | крейт-страж (`depgraph`, `sources`, `physics_modules`, `refactor_metrics`): 17 ratchet-тестов | P1 | done |
-| voxy_lighting | 800 | 32 | 1 | 0 | 0 | `LightingScratch` + `build_light_with_scratch` + табличный BFS | P2 | done |
+| voxy_mesher | 1 445 | 43 | 4 | 0 | 0 | стековые маски граней, модульная структура | P3 | done |
+| voxy_vulkan | 1 037 | 37 | 3 | 1 | 0 | 68 `unsafe`, Windows-only D3D12 interop | P3 | отложено: нет Windows |
+| voxy_rush | 963 | 40 | 1 | 1 | 0 | чисто | P3 | done |
+| voxy_runtime | 1 567 | 59 | 6 | 2 | 0 | переиспользование `LightingScratch` при пересборке чанков | P3 | done |
+| voxy_depgraph | 816 | 38 | 0 | 0 | 0 | крейт-страж (`depgraph`, `sources`, `physics_modules`, `refactor_metrics`): 12 ratchet-тестов в `tests/` и 12 модульных в `src/source.rs` | P1 | done |
+| voxy_lighting | 953 | 33 | 2 | 1 | 0 | `LightingScratch` + `build_light_with_scratch` + табличный BFS | P2 | done |
 | voxy_text | 737 | 29 | 0 | 0 | 0 | чисто | P3 | done |
 | voxy_ui | 733 | 40 | 1 | 0 | 0 | чисто | P3 | done |
 | voxy_input | 559 | 23 | 1 | 0 | 0 | целочисленные `ActionId` для безаллокационного опроса на тике | P2 | done |
-| voxy_navigation | 431 | 15 | 0 | 0 | 0 | чисто | P3 | done |
+| voxy_navigation | 595 | 22 | 0 | 0 | 0 | чисто | P3 | done |
 | voxy_time | 364 | 24 | 0 | 0 | 0 | $O(1)$ окно задержек `FrameLatencyWindow` | P3 | done |
 | voxy_ui_winit | 341 | 17 | 1 | 0 | 0 | чисто | P3 | done |
 | voxy_mobile | 136 | 6 | 0 | 0 | 0 | чисто | P3 | done |
-| **Итого** | **367 700** | **11 288** | **1117** | **454** | **115** | **0 сирот, 0 файлов > 1500 прод-строк, 0 нарушений DAG** | | |
+| physics_bio | 26 381 | 770 | 83 | 33 | 6 | вынесен из `physics` в `4f18c0c3`: biomechanics, skin, tissue, lymph, osmotic, circulation, respiration | P2 | done |
+| voxy_scene | 8 481 | 363 | 15 | 4 | 1 |  | P2 | done |
+| physics_astro | 7 920 | 195 | 23 | 9 | 2 | вынесен из `physics` в `4f18c0c3`: astrophysics | P2 | done |
+| voxy_player | 261 | 10 | 1 | 0 | 0 | новый (2026-11-12, не закоммичен): `GameHost`, `InMemoryPackagedProject`; только библиотека | P2 | done |
+| voxy_scene_host | 345 | 19 | 0 | 0 | 0 | новый (2026-11-12): трейт `SceneDemo` между оболочкой и демо | P2 | done |
+| **Итого** | **383 998** | **11 793** | **1155** | **469** | **117** | **0 сирот, 0 файлов > 1500 прод-строк, 0 нарушений DAG** | | |
 
-## 2. Workspace
+## 2. Workspace (снимок до рефакторинга)
+
+Исправлено волной 3: профили и `[workspace.dependencies]` есть, CI есть (`.github/workflows/ci.yml`), fmt чистый,
+сирот нет, `voxy_demos -> voxy_editor` снято, `_skipped.*` удалены. `voxy_shell -> voxy_demos` снято шагом 2.4
+(`voxy_scene_host`). Не исправлено: нет `clippy.toml` / `deny.toml`.
 
 - `Cargo.toml`: нет `[profile.*]`; нет `[workspace.dependencies]` (glam x16, thiserror x14, wgpu x13,
-  pollster x12, serde_json x12, winit x9, serde x9, bytemuck x7); 46 clippy-линтов в `allow`.
+  pollster x12, serde_json x12, winit x9, serde x9, bytemuck x7); 41 clippy-линт в `allow` (сейчас 32).
 - Нет CI (`.github` пуст), нет `clippy.toml` / `rustfmt.toml` / `deny.toml`.
-- `cargo fmt --all --check` на срезе красный: 376 расхождений в ~75 файлах (последние коммиты не форматировались).
+- `cargo fmt --all --check` на срезе красный: 376 расхождений в 116 файлах (последние коммиты не форматировались).
 - Осиротевшие файлы (не входят ни в одно дерево `mod`, компилятор их не видит):
   `crates/physics/src/hair/contact/{closest,grid,mesh_contacts,strand_contacts,strand_responses}.rs` (1378 строк кода),
   `crates/physics/src/hair/contact/{query_tests,surface_tests}.rs` (1395 строк тестов),
@@ -67,7 +81,7 @@ P2 (ядро), P3 (периферия).
   (19 демо-модулей по имени + `include_str!` в чужой крейт, `scene_app.rs:825`), `voxy_gpu -> voxy_animation` (1 функция).
 - Корневые `_skipped.face` / `_skipped.node` (TetGen, 227 KB) отслеживаются git, ссылок на них нет.
 
-## 3. physics
+## 3. physics (снимок до рефакторинга и до разделения на крейты)
 
 ### 3.1 Карта модулей (прод. строк)
 liquid 24 755 · hair 23 215 · biomechanics 18 914 · plasticity 10 143 · astrophysics 8 657 · surface_film 5 615 ·

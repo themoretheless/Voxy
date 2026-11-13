@@ -247,6 +247,10 @@ fn diffuse_measured_initial(
 ) -> Result<(Vec<[f64; 3]>, Timings), &'static str> {
     diffuse_measured_initial_operator(points, triangles, source, radii_m, parallel, initial, false)
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn diffuse_measured_initial_operator(
     points: &[[f32; 3]],
     triangles: &[[usize; 3]],

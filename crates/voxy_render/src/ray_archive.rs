@@ -112,6 +112,10 @@ impl RayScene {
     ) -> Result<Self, RaySceneError> {
         Self::from_archive_candidates_impl(device, meshes, padding, true)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn from_archive_candidates_impl(
         device: &wgpu::Device,
         meshes: &[ArchiveMeshSource],

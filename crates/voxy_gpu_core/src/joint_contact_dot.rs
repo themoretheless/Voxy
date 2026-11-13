@@ -925,6 +925,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires an actual GPU with optional pass-boundary timestamp support"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_repeated_qr_pass_timestamps_preserve_factors() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

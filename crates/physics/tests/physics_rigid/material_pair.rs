@@ -70,6 +70,10 @@ fn momentum(bodies: [ContactBody; 2]) -> ([f64; 3], [f64; 3]) {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn whole_pair_bounds_cover_independent_joint_rk4_with_anisotropic_and_light_receivers() {
     let local = [1., -0.5, 1.5];
     let force = [0.2, 0.6, -0.4];
@@ -283,6 +287,10 @@ fn whole_pair_bounds_cover_independent_joint_rk4_with_anisotropic_and_light_rece
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn pair_impact_rebuilds_both_forces_from_the_new_common_material_point() {
     let mut initial = bodies();
     initial[0].spin = Some(Spin {

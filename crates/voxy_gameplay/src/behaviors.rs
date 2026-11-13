@@ -190,10 +190,19 @@ pub fn gameplay_schedule() -> Result<&'static voxy_scene::SchedulePlan, voxy_sce
                         },
                     ],
                 },
+                SystemSpec {
+                    name: "joint.step".into(),
+                    phase: 2,
+                    after: vec!["kinematic.step".into()],
+                    access: vec![SystemAccess {
+                        resource: "scene".into(),
+                        write: true,
+                    }],
+                },
             ],
-            2,
+            3,
         )?;
-        SchedulePlan::compose(&[&motion, crate::character_schedule()?], 4)
+        SchedulePlan::compose(&[&motion, crate::character_schedule()?], 5)
     })
     .as_ref()
     .map_err(Clone::clone)

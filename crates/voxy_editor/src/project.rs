@@ -134,6 +134,10 @@ fn open_observed_policy(
     Ok((project, descriptor_text))
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn load_descriptor(
     path: &Path,
     descriptor_text: &str,

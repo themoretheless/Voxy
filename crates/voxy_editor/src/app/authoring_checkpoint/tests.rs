@@ -293,6 +293,10 @@ fn cancelling_restored_drag_keeps_history_and_late_bad_gesture_does_not_consume_
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn coordinated_play_and_history_prepare_share_scene_and_preserve_redo() {
     let temp = Temp::new();
     let project = project::create(&temp.0.join("source"), "Coordinated history").unwrap();
@@ -632,6 +636,10 @@ fn metadata_roundtrip_rebinds_seek_and_retains_original_file_receipt_without_io(
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn imported_authoring_source_archive_restores_nested_dependencies_without_files() {
     let temp = Temp::new();
     let project_path = project::create(&temp.0.join("project"), "Source archive").unwrap();
@@ -761,6 +769,10 @@ fn idle_editor_file_retains_preview_after_source_deletion() {
     qualify_idle_editor_file(true);
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn qualify_idle_editor_file(with_preview: bool) {
     let temp = Temp::new();
     let project = project::create(&temp.0.join("source"), "Coordinated history").unwrap();

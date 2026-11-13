@@ -689,6 +689,10 @@ fn support_accuracy_driven_path_matches_independent_prescribed_verlet() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn support_accuracy_rotating_supports_match_refined_verlet_and_rollback() {
     let initial = moving_free_node_specimen();
     let (sin, cos) = 0.005_f64.sin_cos();

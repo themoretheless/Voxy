@@ -242,6 +242,10 @@ impl WorldRayQueryJob {
     }
     /// Prepare with explicit conservative order-certificate selection.
     /// The certificate changes work only; uncertain/tied cases stay exact.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn with_options(
         device: &wgpu::Device,
         scene: Arc<RayScene>,
@@ -628,6 +632,22 @@ impl WorldRayQueryJob {
         } else {
             include_str!("world_exact_integer.wgsl").to_owned()
         };
+        let nearest = include_str!("world_nearest.wgsl");
+        let nearest = if options.node_reciprocal {
+            let init = "fn nearest_make_box(ray:u32,d:ExVec)->bool {";
+            let miss = "nearest_node_miss(base,ray)";
+            assert_eq!(nearest.matches(init).count(), 1);
+            assert_eq!(nearest.matches(miss).count(), 1);
+            let (before, rest) = nearest.split_once(init).unwrap();
+            let (body, after) = rest.split_once("\n return true;\n}").unwrap();
+            std::borrow::Cow::Owned(format!(
+                "{}\n{before}{init}{body}\n if (nearest_counts.values[4095u].w&2u)!=0u {{nearest_prepare_reciprocal();}}\n return true;\n}}{}",
+                include_str!("world_node_reciprocal.wgsl"),
+                after.replace(miss, "nearest_node_miss_cached(base,ray,1.)"),
+            ))
+        } else {
+            std::borrow::Cow::Borrowed(nearest)
+        };
         let source = [
             "enable wgpu_ray_query;",
             if deferred {
@@ -645,7 +665,7 @@ impl WorldRayQueryJob {
             include_str!("world_ray_bvh_interval.wgsl"),
             include_str!("world_source_certificate.wgsl"),
             include_str!("world_visibility_common.wgsl"),
-            include_str!("world_nearest.wgsl"),
+            nearest.as_ref(),
             include_str!("world_visibility.wgsl"),
             if options.defer_nearest {
                 include_str!("world_nearest_deferred_exact.wgsl")
@@ -1028,8 +1048,8 @@ impl WorldRayQueryJob {
         let work_stats = if options.traversal_work_stats {
             let [stats] = crate::ComputeMemoryBudget::for_device(device)
                 .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
-                    label: "source certificate work counts",
-                    size: 48,
+                    label: "source ray work counts",
+                    size: 56,
                     contents: None,
                     usage: wgpu::BufferUsages::STORAGE
                         | wgpu::BufferUsages::COPY_SRC
@@ -1053,7 +1073,8 @@ impl WorldRayQueryJob {
                 compilation_options: Default::default(),
                 cache: None,
             });
-            let group = Self::make_work_stats_group(device, &pipeline, &input, &stats, capacity);
+            let group =
+                Self::make_work_stats_group(device, &pipeline, &input, &output, &stats, capacity);
             Some((pipeline, group, stats))
         } else {
             None
@@ -1115,6 +1136,7 @@ impl WorldRayQueryJob {
         device: &wgpu::Device,
         pipeline: &wgpu::ComputePipeline,
         input: &wgpu::Buffer,
+        output: &wgpu::Buffer,
         stats: &crate::ComputeStorage,
         count: u32,
     ) -> wgpu::BindGroup {
@@ -1134,6 +1156,10 @@ impl WorldRayQueryJob {
                     binding: 1,
                     resource: stats.as_entire_binding(),
                 },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: output.as_entire_binding(),
+                },
             ],
         })
     }
@@ -1142,6 +1168,10 @@ impl WorldRayQueryJob {
         let (_, _, stats) = self.work_stats.as_ref()?;
         Some(stats)
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn make_hint_group(
         device: &wgpu::Device,
         scene: &RayScene,
@@ -1205,6 +1235,10 @@ impl WorldRayQueryJob {
             entries: &entries,
         }))
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn make_group(
         device: &wgpu::Device,
         scene: &RayScene,

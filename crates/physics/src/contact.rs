@@ -376,6 +376,10 @@ fn solve_normal_network_constraints(
 /// Same indexed mass/inertia operator for nonnegative reactions and their
 /// signed tangent rates. A finite lower bound marks a unilateral rate branch;
 /// negative infinity marks an already loaded branch with a signed derivative.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn solve_normal_network_constraints_with_bounds(
     bodies: &mut [ContactBody],
     contacts: &[NetworkContact],

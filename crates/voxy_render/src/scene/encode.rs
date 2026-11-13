@@ -614,6 +614,10 @@ impl SceneRenderer {
     /// its own depth attachment and does not read or overwrite world depth.
     /// # Errors
     /// Rejects non-overlay global draws, invalid targets/regions and missing MSAA.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn encode_view_frame_msaa4(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -758,6 +762,10 @@ impl SceneRenderer {
     /// # Errors
     /// Rejects a foreign background, unsupported MSAA, X-ray world geometry,
     /// or overlay layers before recording commands.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn encode_refractive_layers(
         &self,
         encoder: &mut wgpu::CommandEncoder,

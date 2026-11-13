@@ -118,6 +118,10 @@ fn cancel_consumes_issued_watcher_fence_without_pausing_unfrozen_time() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn offline_audio_owner_freezes_with_game_and_keeps_exact_snapshot_during_draw() {
     let path = std::env::temp_dir().join(format!("voxy-barrier-audio-{}", std::process::id()));
     std::fs::create_dir(&path).unwrap();

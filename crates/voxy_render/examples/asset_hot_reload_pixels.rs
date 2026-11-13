@@ -171,6 +171,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some(&imported_images()?),
     )
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn render_frames(
     meshes: &[SceneMesh],
     images: Option<&[voxy_render::ImageAsset]>,

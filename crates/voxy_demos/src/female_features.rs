@@ -62,6 +62,10 @@ impl FaceFeatures {
     ) {
         std::mem::swap(&mut self.lash_motion, candidate);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Self {
         let face: Vec<[usize; 3]> = indices
             .chunks_exact(3)
@@ -298,6 +302,10 @@ impl FaceFeatures {
             &crate::face_parameters::FaceParameters::default(),
         );
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn append_configured(
         &self,
         body: &[SceneVertex],
@@ -312,6 +320,11 @@ impl FaceFeatures {
             body, normals, vertices, indices, head, pose, parameters, None,
         );
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn append_configured_with_bindings(
         &self,
         body: &[SceneVertex],
@@ -515,6 +528,10 @@ impl FaceFeatures {
     ) {
         self.append_lips_with_bindings(body, vertices, indices, head, pose, None);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn append_lips_with_bindings(
         &self,
         body: &[SceneVertex],
@@ -818,6 +835,11 @@ fn skin_frame(triangle: [Vec3; 3]) -> Option<Quat> {
     Some(Quat::from_mat3(&Mat3::from_cols(tangent, bitangent, normal)).normalize())
 }
 /// Eight spans and a stable cross-section frame resolve the curled silhouette.
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn curved_lash(
     vertices: &mut Vec<SceneVertex>,
     indices: &mut Vec<u32>,
@@ -1000,6 +1022,10 @@ fn append_oral_anatomy(
         },
     );
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn append_oral_anatomy_pose(
     vertices: &mut Vec<SceneVertex>,
     indices: &mut Vec<u32>,
@@ -1415,6 +1441,10 @@ fn ellipsoid(
         false,
     );
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn ellipsoid_sampled(
     vertices: &mut Vec<SceneVertex>,
     indices: &mut Vec<u32>,

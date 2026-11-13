@@ -191,6 +191,10 @@ fn commit_workloads(world: &mut World, target: ChunkPos) {
     );
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn derived_workloads(world: &World, positions: &[ChunkPos]) {
     let registry = world.registry_handle();
     let token = CancelToken::new();

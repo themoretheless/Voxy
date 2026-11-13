@@ -34,6 +34,10 @@ fn intersects(b: [f32; 6], origin: [f32; 3], direction: [f32; 3]) -> bool {
     }
     lo <= hi
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn probe(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

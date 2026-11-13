@@ -378,6 +378,10 @@ fn dyadic_operations_and_bernstein_signs_match_rational_oracle() {
 }
 #[test]
 #[ignore = "requires captured exact axis fixture"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn captured_dyadic_verifier_matches_rational_and_rejects_larger_radius() {
     let data =
         std::fs::read_to_string(std::env::var("VOXY_HAIR_EXACT_AXIS_FIXTURE").unwrap()).unwrap();

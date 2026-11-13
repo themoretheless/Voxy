@@ -11,6 +11,10 @@ use voxy_demos::full_model_worker;
 use voxy_demos::surface_film_preview;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let arguments: Vec<_> = std::env::args().collect();
     let option_path = |name: &str| -> Result<Option<&str>, Box<dyn std::error::Error>> {

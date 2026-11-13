@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/Users/themoretheless/Documents/Sources/voxy/tools/test_native_prefab_editor.py", line 106, in <module>
+    main()
+  File "/Users/themoretheless/Documents/Sources/voxy/tools/test_native_prefab_editor.py", line 53, in main
+    log = run('authoring', '--project', path, '--prefab-smoke')
+  File "/Users/themoretheless/Documents/Sources/voxy/tools/test_native_prefab_editor.py", line 33, in run
+    raise RuntimeError(f'{label} exited with {result.returncode}\n{log}')
+RuntimeError: authoring exited with 1
+MODEL PUBLISHED frames=5 first_x=-0.5 asset=mesh
+PREFAB NATIVE PANEL PLACE SAVE UNDO REDO PASS frames=6
+PREFAB NATIVE PANEL CREATE PLACE SAVE UNDO PASS frames=6
+PREFAB NATIVE PANEL REVERT UNDO REDO PASS frames=6
+PREFAB NATIVE STRUCTURAL SAVE UNDO PASS frames=6
+PREFAB NATIVE SAVE UNDO AND LAST GOOD PASS frames=6
+PREFAB NATIVE PRESENTED AFTER FAILURE PASS frames=9
+GAME UI GPU PUBLISHED draws=0
+MODEL FAILED frames=11 last_good=true asset=mesh status=Some(Failed("GPU destination changed during model preparation"))
+PREFAB NATIVE PLAY STOP PASS frames=15 ticks=1
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh
+GAME PACKAGE PASS sources=7 bytes=6700
+EDITOR GAME BUILT /private/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-kz93tzlv/project/game-2.vpak
+PREFAB NATIVE BUILD PASS /private/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-kz93tzlv/project/game-2.vpak
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh
+Error: "native acceptance timed out: presented=789, last_surface=Some(Presented)"
+Error: "native acceptance timed out: presented=0, last_surface=Some(SkippedOccluded)"
+

@@ -88,6 +88,10 @@ pub(super) fn export_profile_input(
     );
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn export_input_to(
     path: &std::ffi::OsStr,
     requests: &[HairResponseSystem],
@@ -159,6 +163,10 @@ pub(super) fn export_input_to(
     }
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn export(
     requests: &[HairResponseSystem],
     columns: &[Vec<f64>],

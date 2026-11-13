@@ -250,6 +250,10 @@ impl FiberSurfaceTransfer {
     ) -> Result<Self, crate::ComputeError> {
         Self::create(device, geometry, source, input, vertex_base, true).await
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     async fn create(
         device: &wgpu::Device,
         geometry: &crate::SceneGeometry,

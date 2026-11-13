@@ -216,6 +216,10 @@ impl Liquid {
     /// Chronological impacts with caller-supplied fragment mass fractions.
     /// Every generation inherits the same distribution; each child retains its
     /// parent's local composition. An optional dry-wall onset gate may be supplied.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn depositing_impact_spheres_surface_mixture_events_with_mass_fractions(
         &mut self,
         previous: &[[f64; 3]],
@@ -360,6 +364,11 @@ impl Liquid {
             lifecycle.capture_film_immersion,
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn impact_events_impl(
         &mut self,
         previous: &[[f64; 3]],

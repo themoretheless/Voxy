@@ -146,6 +146,10 @@ impl Liquid {
     /// unchanged. No gas flow between cells, face interpolation or sphere-volume
     /// overlap is inferred. Positions and both masses remain fixed. Atomic over
     /// the complete liquid and every gas cell, including late heating failures.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn exchange_marked_droplet_drag_grid(
         &mut self,
         dt: f64,

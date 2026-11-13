@@ -269,6 +269,10 @@ impl<'a> CpuMediumTransportScene<'a> {
     /// Invalid ray/occupancy, ambiguous geometry, arithmetic overflow or budget
     /// exhausted before the requested unresolved-radiance bound is achieved.
     /// No partial estimate is returned as an accepted result on budget failure.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn estimate(
         &self,
         origin: [f64; 3],

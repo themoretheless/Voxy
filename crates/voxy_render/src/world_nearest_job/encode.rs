@@ -283,6 +283,10 @@ impl WorldRayQueryJob {
         Ok(group)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn encode_once(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -494,6 +498,29 @@ impl WorldRayQueryJob {
                 encoder.clear_buffer(&self.input, 44, Some(4));
             }
         }
+        if let Some((pipeline, group, stats)) = &self.work_stats {
+            let partial = if count != self.capacity {
+                Some(self.partial_group(pipeline, count, || {
+                    Ok(Self::make_work_stats_group(
+                        &self.device,
+                        pipeline,
+                        &self.input,
+                        &self.output,
+                        stats,
+                        count,
+                    ))
+                })?)
+            } else {
+                None
+            };
+            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("diagnostic software traversal work"),
+                ..Default::default()
+            });
+            pass.set_pipeline(pipeline);
+            pass.set_bind_group(0, partial.as_ref().unwrap_or(group), &[]);
+            pass.dispatch_workgroups(count.div_ceil(64), 1, 1);
+        }
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("exact source ray traversal"),
             timestamp_writes: timestamps(3 + admission_stage),
@@ -514,28 +541,6 @@ impl WorldRayQueryJob {
             1,
         );
         drop(pass);
-        if let Some((pipeline, group, stats)) = &self.work_stats {
-            let partial = if count != self.capacity {
-                Some(self.partial_group(pipeline, count, || {
-                    Ok(Self::make_work_stats_group(
-                        &self.device,
-                        pipeline,
-                        &self.input,
-                        stats,
-                        count,
-                    ))
-                })?)
-            } else {
-                None
-            };
-            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                label: Some("diagnostic software traversal work"),
-                ..Default::default()
-            });
-            pass.set_pipeline(pipeline);
-            pass.set_bind_group(0, partial.as_ref().unwrap_or(group), &[]);
-            pass.dispatch_workgroups(count.div_ceil(64), 1, 1);
-        }
         Ok(())
     }
 }

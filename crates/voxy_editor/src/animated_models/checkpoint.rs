@@ -154,6 +154,10 @@ pub(crate) struct PreparedFrame {
     pub lod: Option<PreparedLod>,
 }
 impl AnimatedModels {
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn restore_accepted_owner(
         &mut self,
         renderer: &SceneRenderer,
@@ -404,6 +408,10 @@ impl AcceptedFrames {
 mod tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn accepted_frame_joins_original_publication_and_rejects_invalid_bindings() {
         let provider = voxy_assets::FileInputs::new(
             std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../voxy_render/examples/assets"),

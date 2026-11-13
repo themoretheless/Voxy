@@ -76,6 +76,10 @@ fn mesh(
         center: Vec3::ZERO,
     }
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn run(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -754,6 +758,9 @@ pub(super) fn run(
             Err(RaySceneError::Unsupported)
         ));
     }
+    let fallback_work_audit = deferred
+        && !hit_uv
+        && std::env::var("VOXY_RAY_MATERIAL_SIDES_FALLBACK_WORK").as_deref() == Ok("1");
     let mut reports = Vec::new();
     let mut native_used = 0u32;
     let mut previous_used = 0u32;
@@ -834,6 +841,7 @@ pub(super) fn run(
                     certify_order,
                     certify_visibility: deferred,
                     defer_nearest: deferred,
+                    traversal_work_stats: fallback_work_audit,
                     native_seed: native,
                     separate_native_seed: separate,
                     native_triangle_hint: std::env::var(
@@ -954,6 +962,7 @@ pub(super) fn run(
             )?;
             let primary_bytes = cases.len() as u64 * record_bytes;
             assert_eq!(u64::from(job.output_record_words()) * 4, record_bytes);
+            let mut fallback_total = 0;
             for replay in 0..if previous { 2 } else { 1 } {
                 let mut current_source = source.clone();
                 if previous && replay == 1 {
@@ -961,15 +970,16 @@ pub(super) fn run(
                 }
                 let current_bytes = bytemuck::cast_slice::<u32, u8>(&current_source);
                 queue.write_buffer(job.input(), 0, current_bytes);
+                let work_offset = primary_bytes
+                    + bytes
+                    + if hit_position {
+                        cases.len() as u64 * 32
+                    } else {
+                        0
+                    };
                 let read = device.create_buffer(&wgpu::BufferDescriptor {
                     label: Some("material surface exact/deferred input/output readback"),
-                    size: primary_bytes
-                        + bytes
-                        + if hit_position {
-                            cases.len() as u64 * 32
-                        } else {
-                            0
-                        },
+                    size: work_offset + if fallback_work_audit { 8 } else { 0 },
                     usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
                     mapped_at_creation: false,
                 });
@@ -989,6 +999,9 @@ pub(super) fn run(
                         primary_bytes + bytes,
                         cases.len() as u64 * 32,
                     );
+                }
+                if let Some(stats) = job.traversal_work_stats_buffer() {
+                    encoder.copy_buffer_to_buffer(stats, 48, &read, work_offset, 8);
                 }
                 let submission = queue.submit([encoder.finish()]);
                 let (tx, rx) = std::sync::mpsc::channel();
@@ -1106,6 +1119,24 @@ pub(super) fn run(
                         "no optimized exact dispatch exercised"
                     );
                 }
+                if fallback_work_audit {
+                    let total = u64::from_le_bytes(mapped[work_offset as usize..][..8].try_into()?);
+                    let queued = total
+                        .checked_sub(fallback_total)
+                        .ok_or("fallback counter decreased")?;
+                    fallback_total = total;
+                    assert!(
+                        queued > 0,
+                        "fixture overflow must queue a full exact traversal"
+                    );
+                    assert!(
+                        queued + u64::from(routes[0] + routes[1] + routes[2]) <= cases.len() as u64,
+                        "full exact fallback must exclude certified and candidate routes"
+                    );
+                    println!(
+                        "EXACT FALLBACK WORK policy={kind:?} order={certify_order} queued={queued}"
+                    );
+                }
                 let policy = if kind == WorldRayQueryKind::Nearest {
                     "geometric"
                 } else {
@@ -1117,7 +1148,7 @@ pub(super) fn run(
                             root.join(format!(
                                 "{policy}-order{certify_order}-replay{replay}-position.bin"
                             )),
-                            &mapped[(primary_bytes + bytes) as usize..],
+                            &mapped[(primary_bytes + bytes) as usize..work_offset as usize],
                         )?;
                     }
                     std::fs::write(
@@ -1185,7 +1216,7 @@ pub(super) fn run(
                     );
                     assert_eq!(
                         &result[primary_bytes as usize + 32..],
-                        &mapped[(primary_bytes + bytes) as usize + 32..],
+                        &mapped[(primary_bytes + bytes) as usize + 32..work_offset as usize],
                         "short encode changed unrequested position records"
                     );
                     if let Some(root) = &root {

@@ -149,6 +149,10 @@ impl AnimationClip {
     /// # Errors
     /// Rejects missing, non-finite, unused or incorrectly sized derivative streams,
     /// or cubic channels with fewer than two keys, in addition to `new` validation.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new_with_tangents(
         name: impl Into<Arc<str>>,
         duration: f32,

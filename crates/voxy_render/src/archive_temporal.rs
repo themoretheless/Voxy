@@ -118,6 +118,10 @@ impl ArchiveTemporal {
     pub(crate) fn diagnostic_uniform(&self) -> &wgpu::Buffer {
         &self.uniform
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         w: u32,
@@ -243,6 +247,10 @@ impl ArchiveTemporal {
     pub fn jitter(&self) -> Vec2 {
         halton_jitter(self.frames)
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn prepare(
         &mut self,
         queue: &wgpu::Queue,

@@ -1,6 +1,10 @@
 //! Finite-reservoir transport in a coupled clitoral Biot-FEM specimen.
 //! No vascular flow or measured physiological constants are assumed.
 use physics_bio::biomechanics::*;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let material = Material::from_young_poisson(3000., 0.4)?;
     let mut complex = ClitoralGeometry {

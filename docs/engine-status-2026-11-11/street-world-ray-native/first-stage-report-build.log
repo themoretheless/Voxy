@@ -1,0 +1,11 @@
+warning: unused import: `LIGHT_Z_BIN_COUNT`
+  --> crates/voxy_render/src/archive_scene.rs:22:13
+   |
+22 | use types::{LIGHT_Z_BIN_COUNT, archive_light_z_masks, display_mode, fully_covering_transmission};
+   |             ^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_render` (lib) generated 1 warning (run `cargo fix --lib -p voxy_render` to apply 1 suggestion)
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_app)
+    Finished `release` profile [optimized] target(s) in 3.15s

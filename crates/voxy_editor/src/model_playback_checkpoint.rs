@@ -231,6 +231,10 @@ impl ModelPlaybackCheckpoint {
     ) -> Result<ModelPlayback, EditorError> {
         self.prepare_with_snapshots(model, resolve, |_| None, max_bytes)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn prepare_with_snapshots(
         &self,
         model: Arc<ModelAsset>,

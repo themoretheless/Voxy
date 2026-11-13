@@ -99,6 +99,7 @@ flowchart BT
     voxy_demos --> voxy_model
     voxy_demos --> voxy_render
     voxy_demos --> voxy_scene
+    voxy_demos --> voxy_scene_host
     voxy_demos --> voxy_world
     voxy_editor --> physics
     voxy_editor --> voxy_animation
@@ -108,6 +109,7 @@ flowchart BT
     voxy_editor --> voxy_gameplay
     voxy_editor --> voxy_input
     voxy_editor --> voxy_model
+    voxy_editor --> voxy_player
     voxy_editor --> voxy_render
     voxy_editor --> voxy_scene
     voxy_editor --> voxy_text
@@ -136,6 +138,9 @@ flowchart BT
     voxy_model --> voxy_animation
     voxy_model --> voxy_render
     voxy_model --> voxy_scene
+    voxy_player --> voxy_assets
+    voxy_player --> voxy_gameplay
+    voxy_player --> voxy_scene
     voxy_ray_probe --> voxy_demos
     voxy_ray_probe --> voxy_render
     voxy_render --> voxy_core
@@ -155,13 +160,14 @@ flowchart BT
     voxy_rush --> voxy_scene
     voxy_scene --> voxy_core
     voxy_scene --> voxy_time
+    voxy_scene_host --> voxy_render
     voxy_shell --> physics
-    voxy_shell --> voxy_demos
     voxy_shell --> voxy_input
     voxy_shell --> voxy_render
     voxy_shell --> voxy_runtime
     voxy_shell --> voxy_rush
     voxy_shell --> voxy_scene
+    voxy_shell --> voxy_scene_host
     voxy_shell --> voxy_text
     voxy_storage --> voxy_core
     voxy_storage --> voxy_world
@@ -198,12 +204,15 @@ flowchart BT
 | `voxy_mesher` | pure neighborhood-to-quads transformation | GPU objects, mutable world, disk |
 | `voxy_runtime` | fixed ticks, authoritative world, streaming coordinator, job dispatch, renderer-neutral mesh publications | `winit`, `wgpu`, surface/swapchain |
 | `voxy_render` | `wgpu` device/queue/surface lifecycle, mesh residency, passes, culling | world mutation, save files |
-| `voxy_shell` | `winit::ApplicationHandler` (`SceneApp`), scene input, touch, rush scene, keyboard/mouse/touch state with camera rigs (`controls`), frame profile; shared by desktop, mobile and examples | canonical domain logic, voxel terrain game |
-| `voxy_demos` | character/tissue/liquid/material demos, face preview, body/face parameters | window, event loop |
+| `voxy_shell` | `winit::ApplicationHandler` (`SceneApp`) presenting one `Box<dyn SceneDemo>`, scene input, touch, rush scene, keyboard/mouse/touch state with camera rigs (`controls`), frame profile; shared by desktop, mobile and examples | canonical domain logic, voxel terrain game, concrete demos (`voxy_demos`) |
+| `voxy_scene_host` | contract between the scene shell and a demo: `SceneDemo` trait, frame-phase types (`DemoGpu`, `DemoFrame`, `FrameParts`), windowing-free input (`DemoInput`, `DemoKey`), the shared orbit camera state (`orbit::OrbitController`, `OrbitLimits`) | `winit`, the shell, concrete demos, scene graph |
+| `voxy_demos` | character/tissue/liquid/material demos, face preview, body/face parameters; `SceneDemo` adapters (`scenes`, `female_scene`) constructed by the composition root | window, event loop, `voxy_shell` |
 | `voxy_gpu_core` | compute program, memory budget, readback pool, backend options, indirect mesh handle | scene, passes, world |
 | `physics` | geometry-independent rigid/contact, fluid/film, constitutive, plasticity, wear, strand/hair mechanics | GPU, window, voxel world, ECS |
 | `physics_astro` | celestial mechanics, radiation transport, stellar EOS, nuclear networks | GPU, window, voxel world, ECS |
 | `physics_bio` | soft-tissue FEM biomechanics, skin deformation, secondary motion, circulation/lymph/respiration | GPU, window, voxel world, ECS |
+| `voxy_navigation` | grid and heightfield (2.5D) A* path search, steering agents; no workspace dependencies, not yet consumed by a runtime crate | scene, physics, GPU, window |
+| `voxy_player` | platform-independent game host (`GameHost`), UI action codecs, zero-extract in-memory `.vpak` project loader (`InMemoryPackagedProject`) | `winit`, `wgpu`, editor UI panels |
 | `voxy_app` | desktop binary: voxel terrain game on the shell, composition root | `voxy_editor`, canonical domain logic |
 
 Правило зависимостей проверяется не интерфейсами ради интерфейсов, а crate graph. Traits вводятся только на настоящих заменяемых границах: generator, storage actor backend, clock/test executor. В hot path используются concrete types и generics, а не повсеместный `dyn Trait`.

@@ -11,12 +11,12 @@ use std::{collections::HashSet, sync::Arc, time::Instant};
 use voxy_render::{
     GraphicsOptions, OceanCamera, OceanRenderer, OceanSettings, RendererError, SceneSurface,
 };
+use voxy_ui_winit::{FrameResult, WindowFrame, run_window_frame};
 use winit::{
-    application::ApplicationHandler,
     event::{DeviceEvent, ElementState, MouseButton, MouseScrollDelta, WindowEvent},
-    event_loop::{ActiveEventLoop, EventLoop},
+    event_loop::ActiveEventLoop,
     keyboard::{KeyCode, PhysicalKey},
-    window::{CursorGrabMode, Window, WindowId},
+    window::{CursorGrabMode, Window, WindowAttributes},
 };
 
 struct Args {
@@ -147,7 +147,6 @@ fn shot(args: &Args, path: &str) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 struct App {
-    window: Option<Arc<Window>>,
     host: Option<SceneSurface>,
     ocean: Option<OceanRenderer>,
     camera: OceanCamera,
@@ -159,13 +158,11 @@ struct App {
     last: Instant,
     fps_time: f32,
     fps_frames: u32,
-    failure: Option<String>,
 }
 
 impl App {
     fn new(camera: OceanCamera) -> Self {
         Self {
-            window: None,
             host: None,
             ocean: None,
             camera,
@@ -177,12 +174,10 @@ impl App {
             last: Instant::now(),
             fps_time: 0.0,
             fps_frames: 0,
-            failure: None,
         }
     }
 
-    fn set_capture(&mut self, captured: bool) {
-        let Some(window) = &self.window else { return };
+    fn set_capture(&mut self, window: &Window, captured: bool) {
         self.captured = captured;
         if captured {
             let _ = window
@@ -244,14 +239,12 @@ impl App {
         }
     }
 
-    fn draw(&mut self) -> Result<(), RendererError> {
+    fn draw(&mut self, window: &Window) -> Result<(), RendererError> {
         let now = Instant::now();
         let dt = (now - self.last).as_secs_f32().min(0.1);
         self.last = now;
         self.update_camera(dt);
-        let (Some(host), Some(ocean), Some(window)) =
-            (&mut self.host, &mut self.ocean, &self.window)
-        else {
+        let (Some(host), Some(ocean)) = (&mut self.host, &mut self.ocean) else {
             return Ok(());
         };
         ocean.set_settings(self.settings);
@@ -285,65 +278,58 @@ impl App {
     }
 }
 
-impl ApplicationHandler for App {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        if self.window.is_some() {
-            return;
-        }
-        let result = (|| -> Result<(), Box<dyn std::error::Error>> {
-            let window = Arc::new(
-                event_loop.create_window(
-                    Window::default_attributes()
-                        .with_title("Voxy ocean")
-                        .with_inner_size(winit::dpi::PhysicalSize::new(1600, 900)),
-                )?,
-            );
-            let size = window.inner_size();
-            let options = GraphicsOptions::default();
-            let instance = options.create_instance_with_display(event_loop.owned_display_handle());
-            let host = pollster::block_on(SceneSurface::new_with_instance(
-                Arc::clone(&window),
-                size.width,
-                size.height,
-                options,
-                instance,
-            ))?;
-            self.ocean = Some(OceanRenderer::new(
-                host.device(),
-                host.queue(),
-                host.color_format(),
-                size.width,
-                size.height,
-            ));
-            self.host = Some(host);
-            window.request_redraw();
-            self.window = Some(window);
-            self.last = Instant::now();
-            Ok(())
-        })();
-        if let Err(error) = result {
-            self.failure = Some(error.to_string());
-            event_loop.exit();
-        }
+impl WindowFrame for App {
+    fn window_attributes(&self) -> WindowAttributes {
+        Window::default_attributes()
+            .with_title("Voxy ocean")
+            .with_inner_size(winit::dpi::PhysicalSize::new(1600, 900))
     }
 
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+    fn start(&mut self, event_loop: &ActiveEventLoop, window: &Arc<Window>) -> FrameResult {
+        let size = window.inner_size();
+        let options = GraphicsOptions::default();
+        let instance = options.create_instance_with_display(event_loop.owned_display_handle());
+        let host = pollster::block_on(SceneSurface::new_with_instance(
+            Arc::clone(window),
+            size.width,
+            size.height,
+            options,
+            instance,
+        ))?;
+        self.ocean = Some(OceanRenderer::new(
+            host.device(),
+            host.queue(),
+            host.color_format(),
+            size.width,
+            size.height,
+        ));
+        self.host = Some(host);
+        window.request_redraw();
+        self.last = Instant::now();
+        Ok(())
+    }
+
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        window: &Arc<Window>,
+        event: WindowEvent,
+    ) -> FrameResult {
         match event {
             WindowEvent::CloseRequested => event_loop.exit(),
             WindowEvent::Resized(size) => {
-                if let Some(host) = &mut self.host
-                    && let Err(error) = host.resize(size.width, size.height)
-                {
-                    self.failure = Some(error.to_string());
-                    event_loop.exit();
+                if let Some(host) = &mut self.host {
+                    host.resize(size.width, size.height)?;
                 }
             }
             WindowEvent::Focused(false) => {
                 self.keys.clear();
-                self.set_capture(false);
+                self.set_capture(window, false);
             }
             WindowEvent::MouseInput { state, button, .. } => match button {
-                MouseButton::Left if state == ElementState::Pressed => self.set_capture(true),
+                MouseButton::Left if state == ElementState::Pressed => {
+                    self.set_capture(window, true);
+                }
                 MouseButton::Right => self.looking = state == ElementState::Pressed,
                 _ => {}
             },
@@ -356,16 +342,16 @@ impl ApplicationHandler for App {
             }
             WindowEvent::KeyboardInput { event, .. } => {
                 let PhysicalKey::Code(key) = event.physical_key else {
-                    return;
+                    return Ok(());
                 };
                 if event.state == ElementState::Pressed {
                     if key == KeyCode::Escape {
                         if self.captured {
-                            self.set_capture(false);
+                            self.set_capture(window, false);
                         } else {
                             event_loop.exit();
                         }
-                        return;
+                        return Ok(());
                     }
                     self.keys.insert(key);
                     self.adjust(key);
@@ -374,20 +360,20 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::RedrawRequested => {
-                if let Err(error) = self.draw() {
-                    self.failure = Some(error.to_string());
-                    event_loop.exit();
-                    return;
-                }
-                if let Some(window) = &self.window {
-                    window.request_redraw();
-                }
+                self.draw(window)?;
+                window.request_redraw();
             }
             _ => {}
         }
+        Ok(())
     }
 
-    fn device_event(&mut self, _: &ActiveEventLoop, _: winit::event::DeviceId, event: DeviceEvent) {
+    fn device_event(
+        &mut self,
+        _: &ActiveEventLoop,
+        _: &Arc<Window>,
+        event: DeviceEvent,
+    ) -> FrameResult {
         if let DeviceEvent::MouseMotion { delta } = event
             && (self.captured || self.looking)
         {
@@ -395,6 +381,12 @@ impl ApplicationHandler for App {
             c.yaw += delta.0 as f32 * 0.0022;
             c.pitch = (c.pitch - delta.1 as f32 * 0.0022).clamp(-1.5, 1.5);
         }
+        Ok(())
+    }
+
+    fn about_to_wait(&mut self, _: &ActiveEventLoop, _: &Arc<Window>) -> FrameResult {
+        // Redraws are requested from the frame itself.
+        Ok(())
     }
 }
 
@@ -404,9 +396,5 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return shot(&args, path);
     }
     let mut app = App::new(args.camera);
-    EventLoop::new()?.run_app(&mut app)?;
-    match app.failure {
-        Some(error) => Err(error.into()),
-        None => Ok(()),
-    }
+    run_window_frame(&mut app, None)
 }

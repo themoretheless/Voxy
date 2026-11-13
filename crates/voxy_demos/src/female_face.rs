@@ -289,6 +289,10 @@ pub fn deform_with_contour(
 ) {
     deform_with_contour_impl(vertices, body_vertices, pose, contour, true);
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn deform_with_contour_impl(
     vertices: &mut [SceneVertex],
     body_vertices: usize,
@@ -627,6 +631,10 @@ pub mod tests {
     /// Orthographic bind-space visibility diagnostic, not a closure gate.
     #[test]
     #[ignore = "writes sampled actual-globe/skin depth visibility"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn audit_lid_globe_coverage() {
         fn front_depth(point: glam::Vec2, triangles: &[[Vec3; 3]]) -> Option<f32> {
             let mut depth: Option<f32> = None;

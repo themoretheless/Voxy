@@ -2,6 +2,10 @@
 use super::captured_aabbs::{i32_at, load, u32_at};
 use std::path::Path;
 use wgpu::util::DeviceExt;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn probe(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

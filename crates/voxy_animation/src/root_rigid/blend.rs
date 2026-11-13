@@ -206,6 +206,10 @@ impl RootRigidPath {
     /// STEP paths require a discrete-event policy and are rejected here.
     /// Returned errors cover real-arithmetic discretization, not roundoff or
     /// physical collision acceptance. Neither input is mutated on failure.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn blend_spatial(
         &self,
         target: &Self,

@@ -25,6 +25,10 @@ impl FivePrograms {
             qr_dispatches: 0,
         })
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn solve(
         &mut self,
         device: &wgpu::Device,

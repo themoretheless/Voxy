@@ -18,6 +18,10 @@ pub(super) struct WorldExactVertexCache {
     workers: u32,
 }
 impl WorldExactVertexCache {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         scene: &Arc<RayScene>,

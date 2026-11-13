@@ -165,6 +165,10 @@ fn freckles(p: Vec2) -> f32 {
 fn tint(surface: &mut Surface, color: Vec3, amount: f32) {
     surface.tint = surface.tint.lerp(color, amount.clamp(0., 1.));
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn sample(p: Vec2, layers: SkinLayers) -> Surface {
     let mut out = Surface {
         tint: Vec3::ONE,
@@ -427,6 +431,10 @@ fn build_atlas_with_workers(layers: SkinLayers, workers: usize) -> Vec<u8> {
     pixels
 }
 /// Adds parameterized crease microheight while retaining the cached pigmentation.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn atlas_for_parameters(parameters: &crate::face_parameters::FaceParameters) -> Vec<u8> {
     let layers = SkinLayers {
         pores: parameters.value("skin_pores").unwrap_or(1.),

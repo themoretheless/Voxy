@@ -2,6 +2,8 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let object = std::env::args().nth(1).unwrap_or_else(|| "cylinder".into());
     voxy_shell::SceneApp::new(false)?
-        .with_female_grasp(&object)?
+        .with_demo(Box::new(voxy_demos::female_scene::FemaleScene::grasp(
+            &object,
+        )?))
         .run(winit::event_loop::EventLoop::new()?)
 }

@@ -272,6 +272,10 @@ mod tests {
     use super::*;
     use voxy_scene::Transform;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn json_audio_owner_continues_and_does_not_restart_completed_one_shot() {
         let mut source_scene = SceneGraph::new(2);
         let looping = source_scene.spawn(None, Transform::default()).unwrap();
@@ -421,6 +425,10 @@ mod archive_integration_tests {
     };
     use voxy_scene::Transform;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn archived_publication_catalog_and_audio_continue_after_failed_reload() {
         let mut scene = SceneGraph::new(1);
         let node = scene.spawn(None, Transform::default()).unwrap();

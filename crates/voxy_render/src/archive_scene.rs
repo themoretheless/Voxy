@@ -19,7 +19,7 @@ use bytemuck::{Pod, Zeroable};
 use glam::{Mat4, Vec3};
 use probe_timing::Timing;
 use std::sync::Arc;
-use types::{LIGHT_Z_BIN_COUNT, archive_light_z_masks, display_mode, fully_covering_transmission};
+use types::{archive_light_z_masks, display_mode, fully_covering_transmission};
 use world_rays::validate_street_ray_env_config;
 
 #[repr(C)]
@@ -234,6 +234,10 @@ fn depth(device: &wgpu::Device, w: u32, h: u32) -> wgpu::Texture {
 }
 
 impl ArchiveSceneRenderer {
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -265,6 +269,10 @@ impl ArchiveSceneRenderer {
     }
 
     /// Render imported or generated RGBA images with the same material/shadow pipeline.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new_with_images(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -285,6 +293,11 @@ impl ArchiveSceneRenderer {
         )
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new_with_environment(
         device: &wgpu::Device,
         queue: &wgpu::Queue,

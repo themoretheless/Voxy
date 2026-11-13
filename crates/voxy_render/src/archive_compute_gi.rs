@@ -60,6 +60,11 @@ impl ArchiveComputeGi {
     pub(super) fn world_ray_guides(&self) -> [Arc<voxy_gpu_core::ManagedTexture>; 2] {
         [self.world.clone(), self.normal.clone()]
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn new(
         device: &wgpu::Device,
         shader: &wgpu::ShaderModule,
@@ -522,6 +527,11 @@ impl ArchiveComputeGi {
                 .map(stages::ArchiveRayStages::configuration)
         }
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn encode(
         &self,
         encoder: &mut wgpu::CommandEncoder,

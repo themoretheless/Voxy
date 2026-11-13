@@ -1041,6 +1041,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires VOXY_TRIPLE_DECODE_AUDIT_FIXTURES with eight opaque GPU captures"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn triple_expanded_candidate_replays_opaque_gpu_captures() {
         let directory = std::path::PathBuf::from(
             std::env::var_os("VOXY_TRIPLE_DECODE_AUDIT_FIXTURES").unwrap(),
@@ -1198,6 +1202,10 @@ mod tests {
         );
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn triple_batch_checks_metadata_and_withholds_valid_prefix_on_late_failure() {
         let inputs = (1..=2)
             .map(|n| {
@@ -1312,6 +1320,10 @@ mod tests {
         assert!(ExperimentalTripleActiveContactBatch::new(vec![]).is_err());
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn triple_completed_basis_requires_checked_unique_final_order_and_atomic_match() {
         let columns = vec![vec![1., 0.], vec![0., 1.]];
         let input = ExperimentalTripleActiveContactInput::new(&columns, &[1., 2.], 1e-14).unwrap();

@@ -10,6 +10,10 @@ impl RootRigidFieldInterval {
     /// Whole original-clock source domain, including keys, loop prefixes and
     /// clamp tails. Uses one fixed reference and one common frame throughout.
     /// Hull aggregation encloses key timing even when retimed cuts round.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn from_source_domain(
         source: &RootRigidCurve,
         reference: f64,

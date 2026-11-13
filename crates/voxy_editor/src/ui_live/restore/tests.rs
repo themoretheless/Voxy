@@ -182,6 +182,10 @@ fn gpu_model_and_ui_restore_share_cache_and_admit_combined_peak() {
 fn coordinated_file_restores_real_text_and_audio_without_source_inputs() {
     exercise_gpu_restore(true, true, true);
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn exercise_gpu_restore(held_barrier: bool, with_models: bool, with_file: bool) {
     let root = std::env::temp_dir().join(format!(
         "voxy-ui-restore-{}-{}",

@@ -229,6 +229,10 @@ fn orient_closed_surface(mesh: &mut AnatomySurface) -> Result<(), String> {
     }
     Ok(())
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn build(a: BreedAnatomy) -> Result<AnatomySurface, String> {
     let source = surface::build(a)?;
     let mut min = Vec3::splat(f32::INFINITY);

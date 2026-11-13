@@ -193,6 +193,10 @@ fn same_draws(
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn file_bundle_preserves_two_versions_shared_runs_and_retired_owners_for_120_draw_cycles() {
     let mut fixture = Fixture::new();
     let ui = fixture.ui(fixture.variant(true));

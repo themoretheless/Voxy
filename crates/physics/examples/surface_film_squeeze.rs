@@ -1,6 +1,10 @@
 //! Vented squeeze pressure on an equilateral triangular fully filled gap.
 //! Prescribed closing speed only; body motion and volume extrusion are not applied.
 use physics::surface_film::{Material, SqueezePressureControl, SurfaceFilm};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let n = std::env::args()
         .nth(1)

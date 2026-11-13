@@ -278,6 +278,10 @@ fn fragment_connectivity_and_consistent_mass_diagnostics_survive_fracture_and_cl
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn automatic_quadratic_interfaces_preserve_source_loads_and_fracture_topology() {
     let material = Material::new(1e7, 0.3, 1e9, 0.).unwrap();
     let corners = [[0, 1, 2, 3], [0, 2, 1, 4]];

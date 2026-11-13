@@ -24,6 +24,7 @@ pollster.workspace = true
 voxy_text = { path = "../voxy_text" }
 voxy_ui = { path = "../voxy_ui" }
 voxy_assets = { path = "../voxy_assets" }
+voxy_player = { path = "../voxy_player" }
 voxy_scene = { path = "../voxy_scene" }
 voxy_render = { path = "../voxy_render" }
 winit.workspace = true

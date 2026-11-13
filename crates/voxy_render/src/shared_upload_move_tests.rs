@@ -37,6 +37,10 @@ fn consume(
 }
 #[test]
 #[ignore = "physical Metal; alternating pre-move versus core implementation, not legacy staging"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn paired_shared_upload_relocation() {
     let (_, device, queue) = support::device();
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);

@@ -108,6 +108,10 @@ impl Liquid {
 mod tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gas_and_liquid_energy_policies_continue_for_all_viscous_integrators() {
         for gas in [false, true] {
             for integrator in [

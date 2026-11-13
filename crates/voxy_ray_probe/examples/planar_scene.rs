@@ -81,6 +81,11 @@ fn experimental() -> wgpu::ExperimentalFeatures {
     // with controlled geometry; backend implementation bugs can cause UB.
     unsafe { wgpu::ExperimentalFeatures::enabled() }
 }
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn check_offscreen(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -367,6 +372,10 @@ impl App {
         self.window = Some(window);
         Ok(())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn draw(&mut self, event_loop: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
         if (self.smoke || self.offscreen_check)
             && self.deadline.is_some_and(|t| Instant::now() >= t)
@@ -694,6 +703,10 @@ impl ApplicationHandler for App {
         }
         event_loop.set_control_flow(ControlFlow::Wait);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn window_event(&mut self, event_loop: &ActiveEventLoop, id: WindowId, event: WindowEvent) {
         if self.window.as_ref().is_none_or(|w| w.id() != id) {
             return;

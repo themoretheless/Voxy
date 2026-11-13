@@ -263,6 +263,10 @@ pub fn resolve_normal_reaction_network(
 /// Resolve reactions with a leading range of translation-only particles.
 /// The contact point remains shared. Particles receive generalized linear
 /// forces, while rigid participants receive the full wrench about their COM.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn resolve_normal_reaction_network_with_particles(
     bodies: &[ContactBody],
     particle_count: usize,

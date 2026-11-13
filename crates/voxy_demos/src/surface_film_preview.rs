@@ -343,6 +343,10 @@ impl FilmPreview {
     /// Restore into the same canonical body chart. The body pose/solver is separate.
     /// All validation precedes replacement, so a malformed checkpoint is atomic.
     #[allow(dead_code)]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn restore_snapshot(&mut self, snapshot: &serde_json::Value) -> Result<(), &'static str> {
         use physics::surface_film::{SurfaceFilmState, Wetting};
         if snapshot["format"] != "voxy.surface-film-state.v1" || snapshot["units"] != "SI" {
@@ -835,6 +839,10 @@ mod tests {
 
     #[test]
     #[ignore = "expensive full-body spatial refinement study"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn body_gravity_transport_spatial_refinement() {
         let (vertices, indices) = body_fixture();
         let preview = FilmPreview::new(&vertices, &indices, [0., 0.2, 0.13], 0.04, 0.).unwrap();

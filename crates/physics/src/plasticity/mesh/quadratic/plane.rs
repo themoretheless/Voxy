@@ -250,6 +250,10 @@ fn shape_at(l: Vec3) -> [f64; 6] {
 fn midpoint(a: Vec3, b: Vec3) -> Vec3 {
     std::array::from_fn(|i| 0.5 * a[i] + 0.5 * b[i])
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn integrate_triangle(
     result: &mut QuadraticContactEvaluation,
     face: &QuadraticFace,

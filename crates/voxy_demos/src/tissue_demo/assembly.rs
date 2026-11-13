@@ -757,6 +757,10 @@ mod skin_tests {
         );
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn source_reference_supports_follow_native_nonrigid_pose_and_book_work() {
         use physics_bio::biomechanics::TetraMesh;
         let mesh = TetraMesh::from_lattice_cells([0., 0.8, 0.], [0.01; 3], &[[0, 0, 0]]).unwrap();
@@ -1048,6 +1052,10 @@ impl TissueDemo {
     /// Choose imported skin as the physical boundary; disable the native FEM
     /// envelope so the same body is not charged a second contact potential.
     #[allow(dead_code)]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn bind_skin_contact(
         &mut self,
         binding: &TissueSkinBinding,
@@ -1181,6 +1189,10 @@ impl TissueDemo {
 mod contact_tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn physical_render_skin_contact_drives_fem_and_books_obstacle_work_once() {
         let mut demo = TissueDemo::body();
         let DemoTissue::Continuum { dynamics, .. } = &demo.bodies[0] else {

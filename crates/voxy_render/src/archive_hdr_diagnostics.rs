@@ -220,6 +220,10 @@ pub(crate) fn capture_texture_chain(
     Ok(proof)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(crate) fn capture(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

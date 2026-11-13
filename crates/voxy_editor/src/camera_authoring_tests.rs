@@ -135,6 +135,10 @@ fn add_follow_camera_pick_edit_undo_remove_and_reopen_use_existing_authoring_own
     reopened.stop_workers()
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn nested_target_picker_uses_stable_ids_and_saves_member_overrides()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();

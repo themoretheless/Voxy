@@ -1192,6 +1192,10 @@ mod physical_fade_receipt_tests {
     fn collision_limited_fade_emits_only_markers_in_accepted_prefix() {
         exercise_physical_fade_receipt(true, true);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn exercise_physical_fade_receipt(original_sources: bool, collision: bool) {
         use voxy_animation::RootRigidTransform;
         use voxy_gameplay::{CharacterBody, CharacterPhysics, CharacterTickError, player_input};

@@ -24,6 +24,10 @@ impl GraspObject {
     /// Validates surface topology after welding OBJ position seams.
     /// Shells must be closed and manifold, with normals pointing out of material.
     /// Nested void walls have the opposite orientation from outer shells.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn from_mesh(vertices: &[SceneVertex], indices: &[u32]) -> Result<Self, &'static str> {
         if vertices.is_empty()
             || indices.is_empty()
@@ -386,6 +390,10 @@ pub(super) fn finger_clearance(
 ) -> f32 {
     finger_clearance_from(chain, rotations, object, 0)
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn finger_clearance_from(
     chain: [[f32; 3]; 4],
     rotations: [Quat; 3],
@@ -541,6 +549,10 @@ pub(super) fn prepare_finger_grasp(
         .collect()
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn fit_finger(
     chain: [[f32; 3]; 4],
     open: [Quat; 3],

@@ -34,6 +34,10 @@ pub enum ImportedGltf {
 ///
 /// # Errors
 /// Rejects malformed glTF, unsupported features, and inputs exceeding import budgets.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn import_project_gltf<E>(
     bytes: &[u8],
     mut read_uri: impl FnMut(&str) -> Result<Vec<u8>, E>,

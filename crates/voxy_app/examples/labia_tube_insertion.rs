@@ -387,6 +387,10 @@ impl VulvaSimulation {
         indices
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn build_vertices(&mut self, time_s: f32) -> (Vec<SkinVertex>, Kinematics) {
         let kin = sample_kinematics(time_s);
         let pen = ((2.2 - kin.tip_z_mm) / 9.8).clamp(0.0, 1.0);
@@ -1079,6 +1083,10 @@ struct GpuPipeline {
 }
 
 impl GpuPipeline {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn new(window: Option<Arc<Window>>) -> Result<Self, Box<dyn Error>> {
         let render_device = pollster::block_on(RenderDevice::new(window))?;
         println!(
@@ -1260,6 +1268,10 @@ impl GpuPipeline {
         (vbuf, ibuf, indices.len() as u32, kin)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn render_offscreen_frame(
         &self,
         sim: &mut VulvaSimulation,
@@ -1446,6 +1458,10 @@ impl ApplicationHandler for InteractiveApp {
         self.last_tick = Instant::now();
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn window_event(
         &mut self,
         event_loop: &ActiveEventLoop,

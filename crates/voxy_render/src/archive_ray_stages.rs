@@ -33,6 +33,11 @@ fn shape(
     Ok((w, h))
 }
 impl ArchiveRayStages {
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn new(
         device: &wgpu::Device,
         shader: &wgpu::ShaderModule,
@@ -500,6 +505,10 @@ impl ArchiveRayStages {
             None
         }
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn encode(
         &self,
         encoder: &mut wgpu::CommandEncoder,

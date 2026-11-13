@@ -475,6 +475,10 @@ impl PrefabSceneDocument {
     /// Rejects invalid edited documents, malformed derived IDs and reference
     /// codecs unable to reverse instance links. Final expansion validates topology.
     // Authoring changes are exact; a tolerance would silently discard small edits.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn capture_edits(
         &self,
         baseline: &SceneDocument,

@@ -104,6 +104,10 @@ fn front_at(vertices: &[SceneVertex], indices: &[u32], x: f32, y: f32) -> Option
 }
 impl LidSurface {
     /// Research replacement of the bind-space skin region, before rig integration.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn mesh_with_body(&self, body: &SceneMesh, closure: f32) -> Result<SceneMesh, SceneError> {
         let lids = self.mesh_with_canthi(closure)?;
         let mut vertices = body.vertices().to_vec();

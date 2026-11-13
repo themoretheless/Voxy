@@ -90,6 +90,10 @@ mod tests {
     use glam::{Mat4, Quat, Vec3};
     use std::sync::Arc;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn closing_linear_loop_preserves_original_samples_and_owned_keys() {
         let rig = Skeleton::new(vec![Joint {
             name: Arc::from("root"),

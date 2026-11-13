@@ -3,6 +3,10 @@ use voxy_render::{ComputeMemoryBudget, ComputeStorage};
 use wgpu::util::DeviceExt;
 #[path = "../src/archive_hdr_diagnostics.rs"]
 mod diagnostics;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root = std::path::PathBuf::from(std::env::args().nth(1).expect("new output directory"));
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {

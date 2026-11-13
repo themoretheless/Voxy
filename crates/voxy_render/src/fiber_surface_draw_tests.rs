@@ -5,6 +5,11 @@ use crate::{
 };
 
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn fibre_scatter_preserves_draw_streams_and_neighbouring_geometry() {
     let instance = GraphicsOptions::default().create_instance();
     let adapter =
@@ -118,6 +123,7 @@ fn fibre_scatter_preserves_draw_streams_and_neighbouring_geometry() {
 }
 
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
 fn fibre_director_scatter_tracks_pose_and_preserves_neighbours() {
     pollster::block_on(async {
         let instance = GraphicsOptions::default().create_instance();

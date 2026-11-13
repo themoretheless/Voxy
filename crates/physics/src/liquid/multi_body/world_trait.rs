@@ -358,6 +358,10 @@ pub trait LiquidBodyWorld {
     }
 
     /// Read the admitted patch at the same outer-step time as the sweep.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn rigid_environment_patch_at(
         &self,
         index: usize,
@@ -371,6 +375,10 @@ pub trait LiquidBodyWorld {
         self.rigid_environment_patch_for_feature(index, body, witness, normal, feature, budget)
     }
 
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn rigid_pair_patch_for_feature(
         &self,
         i: usize,
@@ -447,6 +455,10 @@ pub trait LiquidBodyWorld {
 
     /// Supporting branches require explicit geometry provenance; legacy callbacks
     /// cannot infer a rotating normal owner from a world normal alone.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn rigid_pair_supports(
         &self,
         _i: usize,
@@ -562,6 +574,10 @@ pub trait LiquidBodyWorld {
     }
     /// Admit the exact common-point polynomial used by reaction mechanics.
     /// Legacy admission is valid only when every model is None.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn sweep_supported_rigid_pair_point_motion(
         &self,
         i: usize,
@@ -644,6 +660,10 @@ pub trait LiquidBodyWorld {
     }
     /// Contact-time geometry-owned normal patch for an inelastic rigid pair.
     /// Defaults preserve point-only backends; geometry can return up to 128 points.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn rigid_pair_patch(
         &self,
         _first_index: usize,

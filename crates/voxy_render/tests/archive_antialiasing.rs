@@ -69,6 +69,10 @@ fn archive_antialiasing_compiles_on_metal_sdr_and_hdr() {
 
 #[cfg(target_os = "macos")]
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn archive_antialiasing_filters_silhouettes_on_metal() {
     use glam::{Mat4, Vec3};
     use voxy_render::archive_scene::*;

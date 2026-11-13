@@ -1201,6 +1201,10 @@ mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn accepted_solver_precision_survives_controller_checkpoint_and_external_teleport() {
         let mut scene = SceneGraph::new(2);
         let owner = scene
@@ -1397,7 +1401,7 @@ mod tests {
             .spawn(
                 None,
                 Transform {
-                    translation: Vec3::X * 100_000.03125,
+                    translation: Vec3::X * 100_000.031_25,
                     ..Default::default()
                 },
             )

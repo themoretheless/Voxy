@@ -105,6 +105,10 @@ impl Liquid {
     ) -> Result<(), Error> {
         self.restore_species_checkpoint_inner(saved, limits, false)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn restore_species_checkpoint_inner(
         &mut self,
         saved: &SpeciesCheckpoint,
@@ -283,6 +287,10 @@ mod tests {
     use super::*;
     use crate::liquid::{Config, LiquidCheckpointLimits, LiquidField, Particle, TransportMaterial};
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn composition_chemistry_and_mixture_heat_restore_without_remapping_temperature() {
         for thermal_kinetics in [false, true] {
             let config = Config {

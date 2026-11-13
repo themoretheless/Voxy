@@ -51,6 +51,10 @@ impl HairSystem {
         )
     }
 
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn reconcile_positions_with_solver(
         rods: &mut [HairRod],
         meshes: &[TriangleMesh],
@@ -89,6 +93,10 @@ impl HairSystem {
         Ok(())
     }
 
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn reconcile_positions_mode(
         rods: &mut [HairRod],
         meshes: &[TriangleMesh],
@@ -114,6 +122,11 @@ impl HairSystem {
         )
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn reconcile_positions_mode_with_first_stage_limit(
         rods: &mut [HairRod],
         meshes: &[TriangleMesh],
@@ -309,6 +322,11 @@ impl HairSystem {
         unreachable!("bounded native contact attempts return inside loop")
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn reconcile_positions_attempt(
         rods: &mut [HairRod],
         meshes: &[TriangleMesh],

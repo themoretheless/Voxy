@@ -618,6 +618,10 @@ pub struct BodycamPostProcess {
 
 impl BodycamPostProcess {
     #[must_use]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         target_format: wgpu::TextureFormat,

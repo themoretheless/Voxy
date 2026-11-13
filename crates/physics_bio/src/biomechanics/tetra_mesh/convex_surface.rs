@@ -38,6 +38,10 @@ impl TetraMesh {
     ) -> Result<Self, &'static str> {
         Self::from_radial_surface(points, boundary, interior, false)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn from_radial_surface(
         mut points: Vec<Vec3>,
         boundary: Vec<[usize; 3]>,

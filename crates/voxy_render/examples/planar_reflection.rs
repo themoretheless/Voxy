@@ -3,6 +3,10 @@ use wgpu::util::DeviceExt;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     pollster::block_on(run())
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let backend = match std::env::args().skip(1).collect::<Vec<_>>().as_slice() {
         [] => voxy_render::GraphicsBackend::Auto,

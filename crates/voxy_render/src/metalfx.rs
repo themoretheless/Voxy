@@ -46,6 +46,10 @@ impl MetalFxTemporal {
             Ok(Self { scaler })
         })
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn encode(
         &mut self,
         encoder: &mut wgpu::CommandEncoder,

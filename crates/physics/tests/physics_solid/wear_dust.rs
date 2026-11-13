@@ -306,6 +306,10 @@ fn coulomb_contact_physical_dissipation_funds_dust_and_commits_history_atomicall
     assert_eq!(layer.remaining_mass_kg(), old_mass);
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn contact_dust_heat_reaches_latent_enthalpy_with_three_state_rollback() {
     use physics::friction::{Material as Contact, State};
     use physics::liquid::{

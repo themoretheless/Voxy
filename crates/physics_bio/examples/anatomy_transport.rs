@@ -2,6 +2,10 @@
 //! Synthetic coefficients and a numerical clamp; not calibrated lung physiology.
 use physics_bio::{biomechanics::*, lymph::*};
 use std::path::PathBuf;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() {
     let path = std::env::args()
         .skip(1)

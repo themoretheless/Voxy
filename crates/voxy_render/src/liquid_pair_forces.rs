@@ -465,6 +465,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires actual GPU; resident particle-to-pair preparation and force law"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_particle_fields_prepare_pair_forces_without_host_read() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -623,6 +627,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires actual GPU; pair force arithmetic, not a resident fluid simulation"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_pair_forces_admit_original_model_branches() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

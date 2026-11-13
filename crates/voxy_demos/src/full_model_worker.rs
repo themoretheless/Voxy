@@ -77,6 +77,10 @@ pub struct FullModelWorker {
     pub failure: Option<String>,
 }
 impl FullModelWorker {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         mut simulation: FemaleDemo,
         controls: Controls,

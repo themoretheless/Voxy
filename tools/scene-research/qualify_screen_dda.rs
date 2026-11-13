@@ -75,6 +75,10 @@ fn rays(width: u32, height: u32) -> Vec<Ray> {
     }
     out
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -304,6 +308,10 @@ struct Ray {begin:vec4<f32>,end:vec4<f32>}
     qualify_predicate(&device, &queue, &shader, &layout, &pipeline_layout, &view);
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn qualify_predicate(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

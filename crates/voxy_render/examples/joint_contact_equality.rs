@@ -20,6 +20,10 @@ fn dot(a: &[f64], b: &[f64]) -> f64 {
     }
     sum + correction
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance = GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default()))?;

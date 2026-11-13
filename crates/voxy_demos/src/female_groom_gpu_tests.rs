@@ -5,6 +5,10 @@ use voxy_render::{SceneDraw, SceneRenderer, SceneView};
 
 #[test]
 #[ignore = "full-density actual groom GPU material pixel qualification"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn resident_groom_draw_matches_cpu_on_two_poses() {
     pollster::block_on(async {
         let mut demo = FemaleDemo::new().unwrap();
@@ -274,6 +278,10 @@ fn resident_groom_draw_matches_cpu_on_two_poses() {
 /// rendering, CPU simulation, upload, and readback. This is not an FPS benchmark.
 #[test]
 #[ignore = "actual groom GPU extraction timestamp profile"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn resident_groom_extraction_gpu_timestamp_cost() {
     pollster::block_on(async {
         let mut demo = FemaleDemo::new().unwrap();
@@ -390,6 +398,10 @@ fn resident_groom_extraction_gpu_timestamp_cost() {
 
 #[test]
 #[ignore = "actual prepared body sparse physical shell GPU transfer qualification"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn full_body_gpu_shell_transfer_matches_cpu_and_clears_previous_deformation() {
     pollster::block_on(async {
         let mut demo = FemaleDemo::new().unwrap();
@@ -501,6 +513,10 @@ fn full_body_gpu_shell_transfer_matches_cpu_and_clears_previous_deformation() {
 
 #[test]
 #[ignore = "actual full CPU rig plus physical shell versus composed GPU stages"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn full_rig_and_shell_gpu_composition_matches_cpu_pose() {
     pollster::block_on(async {
         let mut demo = FemaleDemo::new().unwrap();
@@ -802,6 +818,7 @@ fn full_rig_and_shell_gpu_composition_matches_cpu_pose() {
 }
 
 #[test]
+#[ignore = "requires a GPU adapter"]
 fn gpu_rigid_blend_equal_weights_matches_cpu_hemisphere_anchor() {
     pollster::block_on(async {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
@@ -875,6 +892,10 @@ fn gpu_rigid_blend_equal_weights_matches_cpu_hemisphere_anchor() {
 
 /// Render the full base surface through the selected scene material. Geometry
 /// and normal transport must both reach the draw buffers before comparison.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn compare_body_pixels(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -1045,6 +1066,10 @@ fn compare_body_pixels(
 
 #[test]
 #[ignore = "full facial detail and resident body GPU composition"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn resident_body_preserves_actual_facial_details_on_two_poses() {
     pollster::block_on(async {
         let mut demo = FemaleDemo::new().unwrap();

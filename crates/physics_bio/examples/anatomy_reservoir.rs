@@ -1,6 +1,10 @@
 //! Synthetic pressure reservoir on one actual lung boundary triangle.
 //! The chosen triangle is a numerical port, not an identified vessel opening.
 use physics_bio::biomechanics::*;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() {
     let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../assets/anatomy/hra-female/tetrahedra/right-lung-middle-envelope.vxtet");

@@ -5,6 +5,10 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut arguments: Vec<_> = std::env::args_os().skip(1).collect();
     // LaunchServices bundles cannot supply command-line arguments. Their

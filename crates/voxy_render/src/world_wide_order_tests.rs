@@ -46,6 +46,10 @@ fn actual_scheduling_block_validates() {
 #[test]
 #[ignore = "exclusive Metal GPU; fresh VOXY_WIDE_ORDER_PROOF required"]
 #[cfg(target_os = "macos")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn actual_sort_preserves_frontier_and_prior_stack() -> Result<(), Box<dyn std::error::Error>> {
     use wgpu::util::DeviceExt;
     let root = std::path::PathBuf::from(

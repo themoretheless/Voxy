@@ -237,6 +237,10 @@ impl MediumPathComputeInput {
     /// frontier has a fixed 64-branch capacity; its logical use is admitted here.
     /// # Errors
     /// Work/storage budget, invalid ray/medium, or unrepresentable f32 profile.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(
         scene: &CpuMediumTransportScene<'_>,
         rays: &[MediumTransportCameraRay],
@@ -778,6 +782,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires physical GPU; all-branch medium transport parity"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn gpu_all_branches_match_cpu_with_opacity_and_budget_rejection() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

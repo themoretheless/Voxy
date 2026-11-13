@@ -116,6 +116,10 @@ impl AnatomySurface {
             .collect();
     }
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn build(a: BreedAnatomy) -> Result<AnatomySurface, String> {
     let mut mesh = AnatomySurface::default();
     let h = a.shoulder_height;

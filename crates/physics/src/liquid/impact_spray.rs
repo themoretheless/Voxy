@@ -52,6 +52,10 @@ impl Liquid {
         }
         self.impact_spray_geometry(previous_positions, film, model, Some(radii))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn impact_spray_geometry(
         &mut self,
         previous_positions: &[[f64; 3]],

@@ -44,6 +44,10 @@ pub(super) fn trajectory_contact_oriented(
 
 // The batch query has already validated this exact motion and evaluated its
 // sweep. Never use this entry point for a broad-phase overlap alone.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn trajectory_contact_after_nonclear_sweep(
     capsule: CapsuleMotion,
     triangle: TriangleMotion,
@@ -551,6 +555,10 @@ mod tests {
         }
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn captured_time_contact_has_correct_jacobian_and_native_reaction() {
         let capsule = CapsuleMotion {
             start: [

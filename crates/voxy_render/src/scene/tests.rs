@@ -1,4 +1,8 @@
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn disjoint_views_validate_regions_and_record_shared_geometry() {
     let empty = [];
     let regions = |rects: &[[u32; 4]]| {
@@ -330,6 +334,10 @@ fn alpha_sort_tracks_camera_and_rejects_bad_transforms_atomically() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn resource_validation_precedes_gpu_upload() {
     let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);

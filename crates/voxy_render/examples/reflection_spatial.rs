@@ -1,6 +1,10 @@
 //! GPU numerical acceptance for rough-reflection spatial filtering.
 use voxy_render::{ReflectionHit, ReflectionSpatialOptions, ReflectionSpatialPipeline};
 use wgpu::util::DeviceExt;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default()))?;

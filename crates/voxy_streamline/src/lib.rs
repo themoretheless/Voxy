@@ -1,4 +1,7 @@
 //! Optional Windows Streamline runtime ownership. Renderer integration is pending.
+// The function-size ratchet (docs/refactor/PLAN.md 6.2) is recorded from macOS lint runs, which do not
+// compile this crate's Windows-only code, so existing oversized functions there cannot be listed.
+#![allow(clippy::too_many_lines, clippy::too_many_arguments)]
 pub mod neural_rendering;
 #[cfg(feature = "render-policy")]
 pub mod render_policy;

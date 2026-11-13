@@ -34,6 +34,10 @@ fn consumer_resolve_offset(
 }
 impl WorldRayProfile {
     #[allow(clippy::fn_params_excessive_bools)]
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn new(
         device: &wgpu::Device,
         regions: usize,
@@ -147,6 +151,10 @@ impl WorldRayProfile {
             region as u32,
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn snapshot(
         &self,
         device: &wgpu::Device,

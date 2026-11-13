@@ -41,6 +41,10 @@ fn cs_main(@builtin(global_invocation_id) id: vec3<u32>) {
     let hit = rayQueryGetCommittedIntersection(&query);
     result[id.x] = vec4<f32>(f32(hit.kind), hit.t, hit.barycentrics);
 }";
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let options = options::Options::parse(std::env::args().skip(1))?;
     #[cfg(not(feature = "face-demo"))]
@@ -458,6 +462,10 @@ fn visibility_probe(
     Ok(())
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn shadow_image(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

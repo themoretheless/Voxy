@@ -282,6 +282,10 @@ fn empty_sets_and_empty_clip_track_allocations_keep_identity() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn enclosing_names_link_skeleton_clips_properties_and_metadata_without_merging_equal_names() {
     use crate::{
         AnimationAssetCheckpoint, AnimationAssetLimits, AnimationClip, Joint, JointTrack, Skeleton,

@@ -186,6 +186,10 @@ impl Pose {
         self.solve_two_bone_impl(chain, target, f64::from(soften))
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn solve_two_bone_impl(
         &self,
         chain: &TwoBoneChain,

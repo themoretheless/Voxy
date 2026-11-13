@@ -139,6 +139,10 @@ fn invalid(message: &str) -> InputError {
     InputError::Read(message.into())
 }
 #[allow(dead_code)]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(crate) fn encode(
     publication: &ImportedAsset<UiTextPreparation>,
     identify: impl Fn(NodeId) -> Option<ObjectId>,
@@ -339,6 +343,10 @@ pub(crate) fn decode_historical_interned(
     Ok(publication)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn decode_inner_with_runs(
     bytes: &[u8],
     scene: &SceneGraph,
@@ -608,6 +616,10 @@ mod tests {
             .collect()
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn real_file_restores_original_font_observations_arc_sharing_and_120_draws_without_sources() {
         let (temp, scene, nodes, original) = fixture();
         assert!(Arc::ptr_eq(

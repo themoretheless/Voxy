@@ -19,6 +19,10 @@ impl QuadraticDynamics {
     /// consistent mass; this does not replace their motion by a rigid-body fit.
     /// Explicit interface endpoint-error budget is separate from the actual
     /// integration energy guard. A failure in either audit rolls back all state.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step_loaded_with_fracture_work(
         &mut self,
         dt_s: f64,
@@ -166,6 +170,10 @@ impl QuadraticDynamics {
     /// Atomic adaptive interval with independent mechanical-energy and interface
     /// endpoint-error budgets. Rejected trials supply no heat or crack events.
     /// Retains bounded substep summaries, not every material-point trial report.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance_loaded_with_fracture_work(
         &mut self,
         interval_s: f64,

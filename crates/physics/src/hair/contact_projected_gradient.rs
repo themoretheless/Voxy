@@ -88,6 +88,10 @@ fn matrix_free_bound(constraints: &[Constraint], scales: &[f64], scratch: &mut [
         .fold(0., f64::max)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn solve<S: ProjectionVector + ?Sized>(
     constraints: &mut [Constraint],
     state: &mut S,

@@ -33,6 +33,10 @@ pub struct VoxelMoistureStep {
 /// # Errors
 /// Invalid/missing liquid, inventories, mechanics or world commit; all three
 /// live states remain unchanged. Routing/contact discovery remains caller-owned.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn advance_voxel_moisture(
     world: &mut World,
     registry: &BlockRegistry,
@@ -121,6 +125,10 @@ mod tests {
     use voxy_core::{ChunkPos, WorldEpoch};
     use voxy_world::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn world_liquid_wet_mass_and_surplus_conserve_inventory_with_rollback() {
         let base = crate::test_support::test_registry();
         let mut definitions = vec![base.get(BlockStateId::AIR).unwrap().clone()];
@@ -510,6 +518,10 @@ impl VoxelMoistureBank {
     /// Absorb this bank into the solid without another world-liquid withdrawal.
     /// # Errors
     /// Any moisture/mechanical failure preserves bank, network and solid.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance(
         &mut self,
         dt_s: f64,

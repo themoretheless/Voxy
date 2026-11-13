@@ -133,6 +133,10 @@ impl GpuPoseEvalProgram {
     ///
     /// # Errors
     /// Rejects mismatched layouts, out-of-range jobs, or GPU failures.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn evaluate(
         &self,
         queue: &wgpu::Queue,

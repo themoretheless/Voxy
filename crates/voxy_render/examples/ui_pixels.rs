@@ -2,6 +2,10 @@
 use glam::{Mat4, Vec2};
 use voxy_render::{SceneDraw, SceneRenderer, Sprite, SpriteBatch};
 use voxy_ui::{Axis, HitRegion, LayoutItem, Length, PointerRouter, WidgetId, layout_linear};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter =

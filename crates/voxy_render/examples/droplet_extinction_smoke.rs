@@ -4,6 +4,10 @@ use voxy_render::{
     ComputeProgram, DROPLET_EXTINCTION_SHADER, DropletExtinctionComputeInput, ExtinctionGridView,
     GraphicsOptions,
 };
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut liquid = Liquid::new(
         vec![
@@ -259,6 +263,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn verify_rendered_scene(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -735,6 +743,10 @@ fn verify_rendered_scene(
 
 // Synthetic storage fixture independently verifies HDR/alpha, row order and
 // a non-square extent. This input upload is not used by scene composition.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn verify_hdr_storage_presentation(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -967,6 +979,10 @@ fn verify_hdr_storage_presentation(
     Ok(())
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn verify_single_scattering(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -1188,6 +1204,10 @@ fn verify_single_scattering(
 }
 
 #[allow(deprecated)]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn verify_solid_shadow_scattering(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -1492,6 +1512,11 @@ fn verify_solid_shadow_scattering(
 }
 
 #[allow(deprecated)]
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn verify_shadow_setting_updates(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

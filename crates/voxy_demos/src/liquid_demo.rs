@@ -319,6 +319,10 @@ impl LiquidDemo {
         Ok(())
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn advance_candidate(&mut self, dt: f64) -> Result<(), physics::liquid::Error> {
         self.accumulator += dt.min(0.1);
         while self.accumulator >= 1.0 / 120.0 {
@@ -593,6 +597,10 @@ impl LiquidDemo {
                 - self.emitted_source_momentum[index][axis]
         }))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn verify(&self) -> Result<(), &'static str> {
         if self.steps < 120 {
             return Err("liquid smoke did not advance enough fixed steps");
@@ -897,6 +905,10 @@ impl LiquidDemo {
         Ok(result)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();

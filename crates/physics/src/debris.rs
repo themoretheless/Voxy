@@ -205,6 +205,10 @@ pub fn step_debris(
 ///
 /// # Errors
 /// Nonfinite or negative `dt`, invalid ground/obstacle bounds, or numerical overflow.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn step_debris_with_obstacles(
     bodies: &mut [DebrisBody],
     dt: f64,
@@ -414,6 +418,10 @@ pub fn step_debris_with_obstacles(
 ///
 /// # Errors
 /// Rejects invalid [`CrumbleSettings`] or nonfinite `impact_energy_j`.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn crumble_debris_on_impact(
     bodies: &mut Vec<DebrisBody>,
     impact_energy_j: f64,
@@ -566,6 +574,10 @@ pub fn crumble_debris_on_impact(
 ///
 /// # Errors
 /// Rejects invalid [`CrumbleSettings`] or nonfinite `impact_energy_j`.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn crumble_debris_multi_fragment(
     bodies: &mut Vec<DebrisBody>,
     impact_energy_j: f64,
@@ -820,6 +832,10 @@ pub struct DebrisAbrasionReport {
 ///
 /// # Errors
 /// Rejects invalid settings, negative load/sliding distance, or degenerate hull geometry.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn abrade_debris_hull(
     bodies: &mut [DebrisBody],
     ground: &DebrisGround,
@@ -985,6 +1001,10 @@ impl Default for DebrisWorldContact {
 /// Units follow the collision world (voxel units for `physics_voxel`).
 /// # Errors
 /// Invalid step, a body initially overlapping the world, or backend failures.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn step_debris_in_world(
     bodies: &mut [DebrisBody],
     dt: f64,

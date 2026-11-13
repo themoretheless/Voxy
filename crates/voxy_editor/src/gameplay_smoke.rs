@@ -45,6 +45,10 @@ impl Smoke {
     }
 }
 impl App {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn gameplay_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         let mut smoke = self.gameplay_smoke.take().ok_or("missing game smoke")?;
         let mut done = false;

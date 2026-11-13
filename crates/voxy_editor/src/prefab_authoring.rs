@@ -1253,6 +1253,10 @@ mod tests {
         std::fs::remove_dir_all(root).unwrap();
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn editor_saves_member_override_and_inherits_other_motion_fields_on_reload() {
         let root = std::env::temp_dir().join(format!("voxy-member-save-{}", std::process::id()));
         std::fs::create_dir_all(&root).unwrap();
@@ -1448,6 +1452,10 @@ mod tests {
 
     // One causal file/history/reload sequence verifies publication across boundaries.
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn editor_nested_prefab_edits_save_undo_and_dependency_failure_retain_scene() {
         let root = std::env::temp_dir().join(format!("voxy-editor-prefabs-{}", std::process::id()));
         std::fs::create_dir_all(&root).unwrap();

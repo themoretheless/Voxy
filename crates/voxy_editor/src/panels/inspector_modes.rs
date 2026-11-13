@@ -7,6 +7,10 @@ use voxy_scene::SceneObject;
 use super::{Action, Panels};
 use crate::InspectorMode;
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn collect_mode_values(
     object: &SceneObject,
     inspector: InspectorMode,
@@ -181,9 +185,45 @@ pub(super) fn collect_mode_values(
 }
 
 impl Panels {
+    /// Component-page toggle below the keyboard hints; adding starts the hierarchy target pick.
+    fn build_joint_button(
+        &mut self,
+        batch: &mut SpriteBatch,
+        object: &SceneObject,
+        rx: f32,
+        right: f32,
+        size: Vec2,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let label = if object
+            .components
+            .contains_key(crate::joint_authoring::SCHEMA)
+        {
+            "Remove physics joint"
+        } else {
+            "Add physics joint"
+        };
+        let y = 610.0;
+        self.text(
+            batch,
+            label,
+            Vec2::new(rx + 8.0, y + 17.0),
+            right - 12.0,
+            size,
+        )?;
+        self.regions.push((
+            [rx + 4.0, y, right - 8.0, 23.0],
+            Action::Joint(crate::joint_authoring::request_token(object)?),
+        ));
+        Ok(())
+    }
+
     #[expect(
         clippy::too_many_arguments,
         reason = "inspector footer buttons depend on current inspector mode, playing state, and column layout"
+    )]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
     )]
     pub(super) fn build_inspector_footer(
         &mut self,
@@ -403,6 +443,9 @@ impl Panels {
             )?;
             self.regions
                 .push(([rx + 4.0, y, right - 8.0, 23.0], Action::KinematicBody));
+        }
+        if matches!(inspector, InspectorMode::Components(_)) && !self.retarget_draft {
+            self.build_joint_button(batch, object, rx, right, size)?;
         }
         self.text(
             batch,

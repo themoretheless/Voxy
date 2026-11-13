@@ -16,6 +16,10 @@ pub(crate) struct Bloom {
 }
 
 impl Bloom {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn new(device: &wgpu::Device, width: u32, height: u32) -> Result<Self, ComputeError> {
         let mut sizes = Vec::new();
         let (mut w, mut h) = (width, height);

@@ -373,6 +373,10 @@ pub(crate) fn sweep_spin_path_static(
 /// Sweep the admitted cubic COM path and `SpinPath` together. A returned normal
 /// still means possible contact under a floating model envelope, not an impact.
 #[allow(dead_code)]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(crate) fn sweep_rigid_motion_static(
     path: &physics::rigid_motion::RigidMotion,
     shape: AffineBox,
@@ -513,6 +517,11 @@ pub(crate) fn sweep_rigid_motions(
     )
 }
 
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn sweep_rigid_motions_impl(
     first: &physics::rigid_motion::RigidMotion,
     first_shape: AffineBox,
@@ -975,6 +984,10 @@ pub(crate) fn sweep_nominal_rigid_contact_with_overlap_limit(
 /// Monotone gap prefix along the second body's rotating supporting plane.
 /// Uses a floating derivative/curvature bound on nominal constant-axis arcs.
 /// Unresolved resting/edge cases fail explicitly instead of inventing clearance.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn separating_prefix(
     first: &physics::rigid_motion::RigidMotion,
     shape: AffineBox,

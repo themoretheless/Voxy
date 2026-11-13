@@ -1,0 +1,51 @@
+Traceback (most recent call last):
+  File "/Users/themoretheless/Documents/Sources/voxy/tools/test_native_prefab_editor.py", line 106, in <module>
+    main()
+  File "/Users/themoretheless/Documents/Sources/voxy/tools/test_native_prefab_editor.py", line 53, in main
+    log = run('authoring', '--project', path, '--prefab-smoke')
+  File "/Users/themoretheless/Documents/Sources/voxy/tools/test_native_prefab_editor.py", line 33, in run
+    raise RuntimeError(f'{label} exited with {result.returncode}\n{log}')
+RuntimeError: authoring exited with 1
+EDITOR PRESENT frames=0 draws=1 outcome=SkippedOccluded positions=[(NodeId { scene: 7, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0)), (NodeId { scene: 7, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+EDITOR PRESENT frames=0 draws=1 outcome=Presented positions=[(NodeId { scene: 7, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0)), (NodeId { scene: 7, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+MODEL PUBLISHED frames=6 first_x=-0.5 asset=mesh
+PREFAB NATIVE PANEL PLACE SAVE UNDO REDO PASS frames=7
+PREFAB NATIVE PANEL CREATE PLACE SAVE UNDO PASS frames=7
+EDITOR KEY frames=7 key=ArrowRight
+PREFAB NATIVE PANEL REVERT UNDO REDO PASS frames=7
+EDITOR KEY frames=7 key=Delete
+PREFAB NATIVE STRUCTURAL SAVE UNDO PASS frames=7
+PREFAB NATIVE SAVE UNDO AND LAST GOOD PASS frames=7
+EDITOR PRESENT frames=7 draws=5 outcome=Presented positions=[(NodeId { scene: 103, slot: 0, generation: 0 }, Vec4(0.05, 0.0, 0.5, 1.0)), (NodeId { scene: 103, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+PREFAB NATIVE PRESENTED AFTER FAILURE PASS frames=10
+GAME UI GPU PUBLISHED draws=0
+PREFAB NATIVE PLAY STOP PASS frames=16 ticks=1
+MODEL PUBLISHED frames=16 first_x=-0.5 asset=mesh
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh
+GAME PACKAGE PASS sources=7 bytes=6700
+EDITOR GAME BUILT /private/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-94blp572/project/game-2.vpak
+PREFAB NATIVE BUILD PASS /private/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-94blp572/project/game-2.vpak
+EDITOR WINDOW event=Focused(false) visible=Some(false) focused=Some(false)
+EDITOR WINDOW event=Occluded(true) visible=Some(false) focused=Some(false)
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh
+EDITOR PRESENT frames=0 draws=2 outcome=SkippedOccluded positions=[(NodeId { scene: 10, slot: 0, generation: 0 }, Vec4(0.05, 0.0, 0.5, 1.0)), (NodeId { scene: 10, slot: 1, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 960 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+GAME UI GPU PUBLISHED draws=0
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh
+METAL WINDOW number=16253 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+METAL WINDOW number=16253 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+METAL WINDOW number=16253 occlusion=8194 visible=false miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+METAL WINDOW number=16253 occlusion=8192 visible=false miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+METAL WINDOW number=16261 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+METAL WINDOW number=16261 occlusion=8192 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+Error: "native acceptance timed out: presented=54, last_surface=Some(SkippedOccluded)"
+Error: "native acceptance timed out: presented=0, last_surface=Some(SkippedOccluded)"
+

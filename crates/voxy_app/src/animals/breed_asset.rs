@@ -300,6 +300,10 @@ fn claw(out: &mut Surface, root: Vec3, paw: f32) {
         }
     }
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn eye(out: &mut Surface, center: Vec3, side: f32, r: f32, cat: bool) {
     let n = profile(cat).eye_normal(side);
     let center = center - n * r * 0.22;
@@ -474,6 +478,10 @@ fn nasal_planum(out: &mut Surface, center: Vec3, r: Vec3, cat: bool) {
         }
     }
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn build(cat: bool) -> Result<Surface, String> {
     let a = profile(cat);
     let mesh = voxy_model::animals::build_sculpt(a)?;

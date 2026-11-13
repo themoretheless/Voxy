@@ -545,6 +545,10 @@ impl Animator {
         Ok(out)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn advance_candidate_wall_into(
         &mut self,
         skeleton: &Skeleton,

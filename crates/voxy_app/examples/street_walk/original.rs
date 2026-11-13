@@ -459,6 +459,10 @@ struct Plan {
 const RISE: f32 = 2.65 / 16.;
 const TREAD: f32 = 1.9 / 7.;
 const STOREY: f32 = 2.45;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn interior(b: &mut Builder, k: &Kit, p: &Plan) {
     let s = -3.75 + p.spacing * (p.windows / 2) as f32;
     let side = p.side;
@@ -865,6 +869,10 @@ enum Kind {
 /// doorway (a > w - 0.5, d 2.6..3.5) and the cross-wall doorways
 /// (a > w - 2.0, d > 3.3) clear. Back rooms keep their doorway
 /// (a w - 0.95..w - 0.15 at d = 0) clear.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn furnish(b: &mut Builder, k: &Kit, zn: &Zone, kind: Kind, w: f32, door: Option<(f32, f32)>) {
     let r = zn.r;
     let lamp = |b: &mut Builder, a: f32, y: f32, d: f32| {
@@ -1097,6 +1105,10 @@ pub fn generate(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::e
     super::materials::apply(&mut scene)?;
     Ok(scene)
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error::Error>> {
     let Ageing {
         damage,
@@ -2683,6 +2695,10 @@ mod tests {
     /// (PNG) from `VOXY_VILLA_VIEW=x,y,z,dx,dy,dz` or the pool view; run with `--ignored`.
     #[test]
     #[ignore = "manual villa preview render via VOXY_VILLA_PREVIEW"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn render_villa_preview() {
         let Ok(path) = std::env::var("VOXY_VILLA_PREVIEW") else {
             return;

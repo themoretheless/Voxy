@@ -168,6 +168,10 @@ fn joint_step_conserves_protein_and_rolls_back_after_transport_failure() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn deforming_finite_reservoir_joint_step_conserves_and_rolls_back() {
     let mut body = specimen();
     let mut protein: Vec<_> = body
@@ -367,6 +371,10 @@ fn prescribed_exterior_pressure_drives_deformation_and_conservative_protein() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn simultaneous_vascular_tissue_step_matches_pressure_and_conserves_both_inventories() {
     use physics_bio::circulation::{Circulation, Compartment, Vessel};
     let mut body = specimen();
@@ -503,6 +511,10 @@ fn simultaneous_vascular_tissue_step_matches_pressure_and_conserves_both_invento
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn simultaneous_fixed_tissue_matches_independent_three_storage_linear_system() {
     use physics_bio::circulation::{Circulation, Compartment, Vessel};
     let mut body = Body::new(
@@ -697,6 +709,10 @@ fn distinct_exterior_ports_use_their_own_inflow_and_accepted_outflow_concentrati
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn independent_vascular_ports_preserve_local_and_joint_water_protein_ledgers() {
     use physics_bio::circulation::{Circulation, Compartment, Vessel};
     let mut body = specimen();
@@ -884,6 +900,10 @@ fn independent_vascular_ports_preserve_local_and_joint_water_protein_ledgers() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn hydraulic_interfaces_limit_deforming_vascular_exchange_and_preserve_balances() {
     use physics_bio::circulation::{Circulation, Compartment, Vessel};
     let mut body = specimen();
@@ -1050,6 +1070,10 @@ fn hydraulic_interfaces_limit_deforming_vascular_exchange_and_preserve_balances(
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn selective_vascular_membranes_retain_or_diffuse_protein_with_joint_conservation() {
     use physics_bio::circulation::{Circulation, Compartment, Vessel};
     let mut body = specimen();
@@ -1210,6 +1234,10 @@ fn selective_vascular_membranes_retain_or_diffuse_protein_with_joint_conservatio
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn osmotic_vascular_exchange_matches_accepted_pressure_law_and_conserves() {
     use physics_bio::circulation::{Circulation, Compartment, Vessel};
     // Hydro-osmotic equilibrium, then either sign of an isolated protein gradient.

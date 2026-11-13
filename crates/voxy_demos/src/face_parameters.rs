@@ -186,6 +186,10 @@ impl FaceParameters {
 
         signature
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn apply_filtered(&self, vertices: &mut [SceneVertex], head: Mat4, wrinkles: Option<bool>) {
         struct ActiveControl<'a> {
             control: &'a Control,

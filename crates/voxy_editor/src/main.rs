@@ -3,6 +3,10 @@ use voxy_editor::{ModelSource, ViewportMode, run_model_viewport_with_scene};
 #[cfg(target_os = "macos")]
 mod project_picker;
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut arguments: Vec<_> = std::env::args().skip(1).collect();
     match arguments.as_slice() {

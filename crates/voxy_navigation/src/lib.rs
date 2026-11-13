@@ -387,6 +387,170 @@ pub struct CrowdAgent2D {
     pub max_speed: f32,
 }
 
+/// 2.5D/3D heightfield navigation grid supporting step-height climbing, maximum walkable slope,
+/// and overhead clearance checks on multi-elevation terrain.
+#[derive(Debug)]
+pub struct HeightfieldNavGrid {
+    width: usize,
+    height: usize,
+    cell_size: f32,
+    max_step_height: f32,
+    max_slope_tan: f32,
+    min_clearance: f32,
+    elevations: Vec<f32>,
+    ceiling_clearances: Vec<f32>,
+    blocked: Vec<bool>,
+}
+
+impl HeightfieldNavGrid {
+    /// Creates a flat heightfield navigation grid with uniform `cell_size`, `max_step_height`,
+    /// `max_slope_tan` ($\tan\theta_{\max}$), and `min_clearance`.
+    /// # Errors
+    /// Rejects zero/overflowing dimensions, capacity overflow, or non-positive/non-finite parameters.
+    pub fn new(
+        width: usize,
+        height: usize,
+        max_cells: usize,
+        cell_size: f32,
+        max_step_height: f32,
+        max_slope_tan: f32,
+        min_clearance: f32,
+    ) -> Result<Self, NavigationError> {
+        if width == 0
+            || height == 0
+            || !cell_size.is_finite()
+            || cell_size <= 0.0
+            || !max_step_height.is_finite()
+            || max_step_height < 0.0
+            || !max_slope_tan.is_finite()
+            || max_slope_tan <= 0.0
+            || !min_clearance.is_finite()
+            || min_clearance <= 0.0
+        {
+            return Err(NavigationError::Dimensions);
+        }
+        let count = width
+            .checked_mul(height)
+            .ok_or(NavigationError::Dimensions)?;
+        if count > max_cells {
+            return Err(NavigationError::Capacity);
+        }
+        Ok(Self {
+            width,
+            height,
+            cell_size,
+            max_step_height,
+            max_slope_tan,
+            min_clearance,
+            elevations: vec![0.0; count],
+            ceiling_clearances: vec![f32::INFINITY; count],
+            blocked: vec![false; count],
+        })
+    }
+
+    fn index(&self, cell: Cell) -> Result<usize, NavigationError> {
+        if cell.x >= self.width || cell.y >= self.height {
+            return Err(NavigationError::InvalidCell);
+        }
+        Ok(cell.y * self.width + cell.x)
+    }
+
+    fn cell(&self, index: usize) -> Cell {
+        Cell {
+            x: index % self.width,
+            y: index / self.width,
+        }
+    }
+
+    /// Sets the floor elevation, overhead clearance, and explicit blocked state for `cell`.
+    /// # Errors
+    /// Rejects out-of-bounds cells or non-finite floor elevation.
+    pub fn set_span(
+        &mut self,
+        cell: Cell,
+        elevation: f32,
+        clearance: f32,
+        blocked: bool,
+    ) -> Result<(), NavigationError> {
+        if !elevation.is_finite() || clearance.is_nan() || clearance < 0.0 {
+            return Err(NavigationError::InvalidCell);
+        }
+        let idx = self.index(cell)?;
+        self.elevations[idx] = elevation;
+        self.ceiling_clearances[idx] = clearance;
+        self.blocked[idx] = blocked;
+        Ok(())
+    }
+
+    fn is_standable(&self, idx: usize) -> bool {
+        !self.blocked[idx] && self.ceiling_clearances[idx] >= self.min_clearance
+    }
+
+    fn can_step(&self, from: usize, to: usize) -> bool {
+        if !self.is_standable(from) || !self.is_standable(to) {
+            return false;
+        }
+        let dh = (self.elevations[to] - self.elevations[from]).abs();
+        let slope = dh / self.cell_size;
+        dh <= self.max_step_height && slope <= self.max_slope_tan
+    }
+
+    /// Finds a 4-connected path from `start` to `goal` respecting step height, slope, and headroom.
+    /// # Errors
+    /// Rejects invalid/blocked endpoints, budget exhaustion, or unreachable goals.
+    pub fn find_path_3d(
+        &self,
+        start: Cell,
+        goal: Cell,
+        max_expanded: usize,
+    ) -> Result<GridPath, NavigationError> {
+        let start_idx = self.index(start)?;
+        let goal_idx = self.index(goal)?;
+        if !self.is_standable(start_idx) || !self.is_standable(goal_idx) {
+            return Err(NavigationError::BlockedEndpoint);
+        }
+        let mut parents = vec![usize::MAX; self.blocked.len()];
+        parents[start_idx] = start_idx;
+        let mut queue = VecDeque::from([start_idx]);
+        let mut expanded = 0_usize;
+        while let Some(&current) = queue.front() {
+            if current == goal_idx {
+                let mut cells = vec![self.cell(goal_idx)];
+                let mut trace = goal_idx;
+                while trace != start_idx {
+                    trace = parents[trace];
+                    cells.push(self.cell(trace));
+                }
+                cells.reverse();
+                return Ok(GridPath {
+                    cells,
+                    revision: 0,
+                    expanded,
+                });
+            }
+            if expanded >= max_expanded {
+                return Err(NavigationError::BudgetExceeded);
+            }
+            queue.pop_front();
+            expanded += 1;
+            let c = self.cell(current);
+            let neighbors = [
+                (c.x > 0).then(|| current - 1),
+                (c.x + 1 < self.width).then(|| current + 1),
+                (c.y > 0).then(|| current - self.width),
+                (c.y + 1 < self.height).then(|| current + self.width),
+            ];
+            for next in neighbors.into_iter().flatten() {
+                if parents[next] == usize::MAX && self.can_step(current, next) {
+                    parents[next] = current;
+                    queue.push_back(next);
+                }
+            }
+        }
+        Err(NavigationError::Unreachable)
+    }
+}
+
 /// Computes a collision-free 2D velocity for `agent` against `neighbors` over `time_horizon`
 /// using reciprocal velocity-obstacle half-plane projection.
 #[must_use]
@@ -572,5 +736,23 @@ mod tests {
         grid.set_blocked(cell(1, 2), true).unwrap();
         let rep = grid.obstacle_clearance_repulsion(cell(2, 2), 2);
         assert!(rep[0] > 0.5 && rep[1].abs() < 1e-6);
+    }
+
+    #[test]
+    fn heightfield_3d_grid_climbs_stairs_and_routes_around_cliffs_and_low_ceilings() {
+        // 4x3 grid: direct middle row (y = 1) has a 2.0m cliff at (1, 1);
+        // top row (y = 0) has gentle 0.3m steps up to 0.9m.
+        let mut hf = HeightfieldNavGrid::new(4, 3, 16, 1.0, 0.45, 0.6, 1.8).unwrap();
+        hf.set_span(cell(1, 1), 2.0, 3.0, false).unwrap(); // cliff in direct row
+        hf.set_span(cell(1, 2), 0.0, 1.2, false).unwrap(); // low ceiling in bottom row
+        hf.set_span(cell(1, 0), 0.3, 3.0, false).unwrap();
+        hf.set_span(cell(2, 0), 0.6, 3.0, false).unwrap();
+        hf.set_span(cell(3, 0), 0.6, 3.0, false).unwrap();
+        hf.set_span(cell(3, 1), 0.3, 3.0, false).unwrap();
+
+        let path = hf.find_path_3d(cell(0, 1), cell(3, 1), 16).unwrap();
+        assert!(path.cells.contains(&cell(1, 0)));
+        assert!(!path.cells.contains(&cell(1, 1)));
+        assert!(!path.cells.contains(&cell(1, 2)));
     }
 }

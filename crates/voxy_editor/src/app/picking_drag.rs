@@ -332,6 +332,13 @@ impl App {
                     drag.viewport,
                 ),
             };
+            let world_delta = if self.modifiers.shift_key() && !matches!(drag.axis, DragAxis::Plane)
+            {
+                const TRANSLATION_STEP: f32 = 0.25;
+                (world_delta / TRANSLATION_STEP).round() * TRANSLATION_STEP
+            } else {
+                world_delta
+            };
             let delta = if let Some(parent) = self.scene.parent(drag.node)? {
                 let inverse = self.scene.world_matrix(parent)?.inverse();
                 if !inverse.is_finite() {

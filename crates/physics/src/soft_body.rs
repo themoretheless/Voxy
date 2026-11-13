@@ -134,6 +134,10 @@ impl SoftBody {
         batches
     }
     /// Compliance in solver units; fixed steps <= 1/120 s. Entire step is atomic.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step(
         &mut self,
         dt: f64,

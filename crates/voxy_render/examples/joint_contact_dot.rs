@@ -2,6 +2,10 @@
 use voxy_render::{
     ComputeProgram, GraphicsOptions, JOINT_CONTACT_DOT_SHADER, JointContactDotInput,
 };
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut cases = vec![(
         "tail_and_mixed_sign".to_owned(),

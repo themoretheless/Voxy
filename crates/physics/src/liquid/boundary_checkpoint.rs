@@ -94,6 +94,10 @@ impl Liquid {
 mod tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn sampled_and_reflecting_boundaries_rebuild_grid_and_continue_exactly() {
         for mode in 0..4 {
             let sampled = mode < 2;

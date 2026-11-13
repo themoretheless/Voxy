@@ -120,6 +120,10 @@ mod tests {
     use super::*;
     use crate::liquid::{Config, LiquidCheckpointLimits, Material, Particle};
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn transported_heat_and_solute_continue_from_exact_restored_fields() {
         let config = Config {
             gravity: [0.; 3],

@@ -6,6 +6,7 @@ use voxy_render::{
 /// Full authored groom dimensions, including terminal frames and all followers.
 /// This qualifies geometry extraction, not simulation throughput or rendered FPS.
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
 fn full_density_gpu_fibres_preserve_rotated_local_frames() {
     let instance = GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default()))

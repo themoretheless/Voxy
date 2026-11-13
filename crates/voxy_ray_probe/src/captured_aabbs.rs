@@ -43,6 +43,10 @@ pub(super) struct Snapshot {
     pub(super) envelope_hits: u64,
     pub(super) meta: serde_json::Value,
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn load(
     device: &wgpu::Device,
     root: &Path,
@@ -214,6 +218,10 @@ pub(super) fn load(
         meta,
     })
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(super) fn probe(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

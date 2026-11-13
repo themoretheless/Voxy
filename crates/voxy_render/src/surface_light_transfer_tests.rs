@@ -6,6 +6,11 @@ use crate::{
     ComputeDispatch, GraphicsOptions, SceneMesh, SceneRenderer, SceneVertex, SurfaceLightGeometry,
 };
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn gpu_material_transfer_preserves_geometry_and_rejected_light() {
     pollster::block_on(async {
         let instance = GraphicsOptions::default().create_instance();
@@ -163,6 +168,11 @@ fn gpu_material_transfer_preserves_geometry_and_rejected_light() {
 }
 
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn resident_normal_lighting_updates_and_rejects_invalid_normals() {
     pollster::block_on(async {
         use crate::{SurfaceLightFrame, SurfaceLightFrameSettings};

@@ -237,6 +237,10 @@ impl Body {
     /// diagonal at every accepted state. Changes numerical directions only;
     /// retains actual residual, energy, Armijo search and geometric path guard.
     /// Contact curvature requires the experimental primitive contact law.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn equilibrate_lbfgs_preconditioned_states(
         &mut self,
         max_iterations: usize,

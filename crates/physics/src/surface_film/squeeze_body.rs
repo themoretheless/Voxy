@@ -23,6 +23,11 @@ impl SurfaceFilm {
     ) -> Result<SqueezeBodyReport, &'static str> {
         self.advance_squeeze_body_components(dt, normal, body, control, max_substep, None, None)
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn advance_squeeze_body_components(
         &mut self,
         dt: f64,

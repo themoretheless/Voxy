@@ -41,6 +41,10 @@ mod tests {
         HairResponseSystem { system, loads }
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn expanded_partial_candidates_preserve_sibling_physical_admission() {
         use crate::hair::{HairExpandedCoordinateRequest, HairResponseCoefficient as C};
         struct Backend {
@@ -198,6 +202,10 @@ mod tests {
         std::fs::remove_file(report_path).unwrap();
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn cooperative_whitening_refinement_keeps_original_bounds_and_drops_finished_owners() {
         fn candidate(columns: &[Vec<f64>], bounds: &[f64]) -> (Vec<f64>, Vec<f64>) {
             let c = columns[0][6];
@@ -1093,6 +1101,11 @@ impl HairResponseSystem {
             Vec::new()
         }
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn admit_prepared_joint_trial(
         requests: &[Self],
         bounds: &[f64],
@@ -1498,6 +1511,10 @@ impl<'a> PreparedNativeJoint<'a> {
     }
     // Cooperative original-load refinement. Only unfinished physical owners
     // request another coordinate solve; matrices and original bounds never move.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(super) fn solve_accelerated_batch(
         joints: &[&Self],
         bounds: &[&[f64]],

@@ -280,6 +280,10 @@ fn rounded_rotate(
     ])
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(in crate::root_rigid) fn root_phase_point_error(
     position: [[f64; 2]; 3],
     position_error: [f64; 3],
@@ -670,6 +674,10 @@ fn physical_rotation_runtime_errors(
     Ok((reframed, normalization_uniform_error(raw)?))
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(in crate::root_rigid) fn physical_body_runtime_error(
     source: &RootRigidEnclosure,
     translation_error: [f64; 3],
@@ -695,6 +703,10 @@ pub(in crate::root_rigid) fn physical_body_runtime_error(
     .0)
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub(in crate::root_rigid) fn physical_body_runtime_domains(
     source: &RootRigidEnclosure,
     translation_error: [f64; 3],

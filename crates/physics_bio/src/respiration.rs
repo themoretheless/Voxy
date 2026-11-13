@@ -245,6 +245,10 @@ impl RespiratoryNetwork {
     /// prescribed for this step. No state is committed on failure.
     /// # Errors
     /// Rejects invalid options, inadmissible volumes, factorization failure and nonconvergence.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn step(
         &mut self,
         dt: f64,

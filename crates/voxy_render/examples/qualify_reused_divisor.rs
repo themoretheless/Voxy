@@ -1,5 +1,9 @@
 //! GPU differential and exact-oracle payloads for repeated-divisor arithmetic.
 use wgpu::util::DeviceExt;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root = std::path::PathBuf::from(std::env::args().nth(1).expect("new output directory"));
     std::fs::create_dir(&root)?;

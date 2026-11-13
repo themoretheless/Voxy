@@ -2,19 +2,17 @@
 use glam::{Mat4, Vec3};
 use std::sync::Arc;
 use voxy_render::{RenderOutcome, Renderer, SkinnedMesh, SkinnedVertex};
+use voxy_ui_winit::{FrameResult, WindowFrame, run_window_frame};
 use winit::{
-    application::ApplicationHandler,
     event::WindowEvent,
-    event_loop::{ActiveEventLoop, EventLoop},
-    window::{Window, WindowId},
+    event_loop::ActiveEventLoop,
+    window::{Window, WindowAttributes},
 };
 #[derive(Default)]
 struct Smoke {
-    window: Option<Arc<Window>>,
     renderer: Option<Renderer>,
     phase: u32,
     retries: u32,
-    failure: Option<String>,
     options: voxy_render::GraphicsOptions,
 }
 impl Smoke {
@@ -101,88 +99,80 @@ impl Smoke {
         Ok(self.phase == 8)
     }
 }
-impl ApplicationHandler for Smoke {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        let result = (|| -> Result<(), Box<dyn std::error::Error>> {
-            let window = Arc::new(
-                event_loop.create_window(
-                    Window::default_attributes()
-                        .with_title("Voxy skeletal presentation history")
-                        .with_inner_size(winit::dpi::PhysicalSize::new(320, 240)),
-                )?,
+impl WindowFrame for Smoke {
+    fn window_attributes(&self) -> WindowAttributes {
+        Window::default_attributes()
+            .with_title("Voxy skeletal presentation history")
+            .with_inner_size(winit::dpi::PhysicalSize::new(320, 240))
+    }
+    fn start(&mut self, event_loop: &ActiveEventLoop, window: &Arc<Window>) -> FrameResult {
+        let instance = self
+            .options
+            .create_instance_with_display(event_loop.owned_display_handle());
+        let mut host = pollster::block_on(Renderer::new_with_instance(
+            window.clone(),
+            320,
+            240,
+            self.options,
+            instance,
+        ))?;
+        let vertices =
+            [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]].map(|position| SkinnedVertex {
+                position,
+                normal: [0.0, 0.0, 1.0],
+                uv: [0.0; 2],
+                joints: [0, 1, 0, 0],
+                weights: if position[0] > 0.0 {
+                    [32768, 32767, 0, 0]
+                } else if position[1] > 0.0 {
+                    [16384, 49151, 0, 0]
+                } else {
+                    [65535, 0, 0, 0]
+                },
+            });
+        let mesh = SkinnedMesh::new(vertices.to_vec(), vec![0, 1, 2], 2)?;
+        host.upload_skinned_mesh(
+            &mesh,
+            &[Mat4::IDENTITY; 2],
+            Mat4::from_translation(Vec3::new(-0.4, 0.0, 0.0)),
+            0,
+        )?;
+        host.upload_mesh(&voxel_mesh())?;
+        host.update_camera(voxy_render::CameraView {
+            eye: Vec3::new(0.0, 0.0, 3.0),
+            target: Vec3::ZERO,
+            ..Default::default()
+        })?;
+        println!("Motion window GPU: {:?}", host.adapter_info());
+        host.set_skinned_motion_enabled(true);
+        self.renderer = Some(host);
+        window.focus_window();
+        window.request_redraw();
+        Ok(())
+    }
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        window: &Arc<Window>,
+        event: WindowEvent,
+    ) -> FrameResult {
+        if event != WindowEvent::RedrawRequested {
+            return Ok(());
+        }
+        if self.draw()? {
+            println!(
+                "SKINNED PRESENTATION PASS: commit, skipped pose, resize and suspension reset"
             );
-            let instance = self
-                .options
-                .create_instance_with_display(event_loop.owned_display_handle());
-            let mut host = pollster::block_on(Renderer::new_with_instance(
-                window.clone(),
-                320,
-                240,
-                self.options,
-                instance,
-            ))?;
-            let vertices =
-                [[0.0, 0.0, 0.0], [0.5, 0.0, 0.0], [0.0, 0.5, 0.0]].map(|position| SkinnedVertex {
-                    position,
-                    normal: [0.0, 0.0, 1.0],
-                    uv: [0.0; 2],
-                    joints: [0, 1, 0, 0],
-                    weights: if position[0] > 0.0 {
-                        [32768, 32767, 0, 0]
-                    } else if position[1] > 0.0 {
-                        [16384, 49151, 0, 0]
-                    } else {
-                        [65535, 0, 0, 0]
-                    },
-                });
-            let mesh = SkinnedMesh::new(vertices.to_vec(), vec![0, 1, 2], 2)?;
-            host.upload_skinned_mesh(
-                &mesh,
-                &[Mat4::IDENTITY; 2],
-                Mat4::from_translation(Vec3::new(-0.4, 0.0, 0.0)),
-                0,
-            )?;
-            host.upload_mesh(&voxel_mesh())?;
-            host.update_camera(voxy_render::CameraView {
-                eye: Vec3::new(0.0, 0.0, 3.0),
-                target: Vec3::ZERO,
-                ..Default::default()
-            })?;
-            println!("Motion window GPU: {:?}", host.adapter_info());
-            host.set_skinned_motion_enabled(true);
-            self.renderer = Some(host);
+            event_loop.exit();
+        } else {
             window.focus_window();
             window.request_redraw();
-            self.window = Some(window);
-            Ok(())
-        })();
-        if let Err(error) = result {
-            self.failure = Some(error.to_string());
-            event_loop.exit();
         }
+        Ok(())
     }
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
-        if event != WindowEvent::RedrawRequested || self.failure.is_some() {
-            return;
-        }
-        match self.draw() {
-            Ok(true) => {
-                println!(
-                    "SKINNED PRESENTATION PASS: commit, skipped pose, resize and suspension reset"
-                );
-                event_loop.exit();
-            }
-            Ok(false) => {
-                if let Some(window) = &self.window {
-                    window.focus_window();
-                    window.request_redraw();
-                }
-            }
-            Err(error) => {
-                self.failure = Some(error.to_string());
-                event_loop.exit();
-            }
-        }
+    fn about_to_wait(&mut self, _: &ActiveEventLoop, _: &Arc<Window>) -> FrameResult {
+        // Redraws are requested from the frame itself.
+        Ok(())
     }
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -201,10 +191,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
         ..Default::default()
     };
-    EventLoop::new()?.run_app(&mut smoke)?;
-    if let Some(error) = smoke.failure {
-        return Err(error.into());
-    }
+    run_window_frame(&mut smoke, None)?;
     if smoke.phase != 8 {
         return Err("presentation proof incomplete".into());
     }

@@ -290,6 +290,10 @@ impl AffineBox {
         self.contact_patch_and_center_relative_with_error(other, normal, error_m)
             .map(|(_, points, tolerance)| (points, tolerance))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn contact_patch_and_center_relative_with_error(
         &self,
         other: &AffineBox,

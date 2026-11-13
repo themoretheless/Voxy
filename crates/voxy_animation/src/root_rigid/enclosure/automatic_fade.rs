@@ -133,6 +133,11 @@ impl RootRigidCertifiedFadeInterval {
     /// Tail domains use complete original fields and share the fade integrator's
     /// canonical prefix and global error accumulator. The endpoint is a stored
     /// whole-tick wall time; its difference from fade end is enclosed directly.
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn integrate_paths_with_completion(
         source: Option<RootRigidMappedPath<'_>>,
         target: RootRigidMappedPath<'_>,

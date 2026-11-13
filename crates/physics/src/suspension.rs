@@ -89,6 +89,10 @@ impl Particle {
     /// Re must be <=0.1; outside this conservative creeping-flow regime reject.
     /// # Errors
     /// Invalid medium/time/gravity, regime violation or overflow; state is atomic.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn advance(
         &mut self,
         dt_s: f64,

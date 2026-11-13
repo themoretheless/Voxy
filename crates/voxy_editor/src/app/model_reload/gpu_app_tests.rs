@@ -3,6 +3,10 @@ use super::*;
 use voxy_render::{SceneMesh, SceneVertex};
 #[test]
 #[ignore = "requires real GPU; full App model watcher/reload without presentation"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn offscreen_app_sampler_reload_keeps_cpu_gpu_atomic_and_recovers_failed_source() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -623,6 +627,10 @@ fn scene_pixels(app: &mut App) -> Vec<u8> {
 
 #[test]
 #[ignore = "requires real GPU; native optical liquid viewport and source-free package"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn offscreen_optical_liquid_uses_native_runtime_and_matches_packaged_frame() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -782,6 +790,10 @@ fn offscreen_optical_liquid_uses_native_runtime_and_matches_packaged_frame() {
 
 #[test]
 #[ignore = "requires real GPU; 720 native animated scene frames and source-free replay"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn offscreen_nested_locomotion_cycle_matches_packaged_gpu_frames() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -991,6 +1003,10 @@ fn offscreen_nested_locomotion_cycle_matches_packaged_gpu_frames() {
 
 #[test]
 #[ignore = "requires real GPU; source-free preview frame/phase restore and GPU Arc sharing"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn offscreen_preview_snapshot_restores_exact_phase_frame_and_gpu_identity() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -1314,6 +1330,10 @@ enum EditorFileAudio {
     ConvertNative,
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn qualify_editor_file_install(running: bool, with_text: bool, audio_mode: EditorFileAudio) {
     let (native_idle, convert_native) = match audio_mode {
         EditorFileAudio::Offline => (false, false),
@@ -2462,6 +2482,10 @@ fn offscreen_native_archive_preserves_pcm_when_loading_offline_and_back() {
     qualify_native_editor_file_transition(true, true);
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn qualify_native_editor_file_transition(active_to_idle: bool, native_to_offline: bool) {
     use crate::app::restore_barrier::{
         editor::EditorCheckpoint, load::PendingEditorLoad, save::EditorSavePolicy,

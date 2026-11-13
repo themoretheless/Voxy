@@ -4,6 +4,10 @@ use physics::liquid::{
     Config, DropletGas, FilmRebound, ImpactSpray, Liquid, Material, Particle, VaporCell,
 };
 use physics::surface_film::{Material as FilmMaterial, SurfaceFilm};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let finite_gas = match std::env::args().nth(1).as_deref() {
         None | Some("prescribed") => false,

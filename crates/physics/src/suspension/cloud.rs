@@ -34,6 +34,10 @@ pub fn exchange_drag_cloud(
 /// Forces perform work at endpoint velocities, consistent with backward Euler.
 /// # Errors
 /// Invalid accelerations, drag regime, budgets or balance; atomic for both phases.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 pub fn exchange_forced_cloud(
     particles: &mut [Particle],
     carrier: &mut FiniteCarrier,

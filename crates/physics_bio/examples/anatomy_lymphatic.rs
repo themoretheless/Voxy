@@ -2,6 +2,10 @@
 //! and material/network parameters, not anatomically registered lymph vessels.
 use physics_bio::{biomechanics::*, lymph::*};
 use std::{io::Write, path::PathBuf};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().skip(1).collect();
     let path = args.iter().find(|a| !a.starts_with("--")).map_or_else(

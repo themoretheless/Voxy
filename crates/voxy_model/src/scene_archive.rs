@@ -81,6 +81,10 @@ fn numbers<const N: usize>(
 impl SceneArchive {
     /// Buffers are supplied by the asset owner; this parser performs no file/network IO.
     /// Extension payloads remain authored data, never silently replaced by defaults.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn decode(
         source: &[u8],
         buffers: Vec<Arc<[u8]>>,

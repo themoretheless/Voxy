@@ -395,6 +395,10 @@ impl FemaleDemo {
         model.simulate_hair = false;
         Ok(model)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn from_assets(
         body_source: &str,
         eyes: [&str; 2],
@@ -664,6 +668,10 @@ impl FemaleDemo {
             max_displacement: 0.0,
         })
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub fn set_body_parameters(
         &mut self,
         parameters: crate::body_parameters::BodyParameters,
@@ -1026,6 +1034,10 @@ impl FemaleDemo {
     ) -> Result<(), &'static str> {
         self.advance_impl(dt, Some(solver))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn advance_impl(
         &mut self,
         dt: f64,
@@ -1522,6 +1534,10 @@ impl FemaleDemo {
 mod tests {
     #[test]
     #[ignore = "exports actual lash centerlines and strict skin crossings"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn audit_lash_skin_crossings() {
         let mut demo = super::FemaleDemo::new().unwrap();
         if let Ok(path) = std::env::var("VOXY_FACE_DIAGNOSTIC_PRESET") {
@@ -3547,6 +3563,10 @@ mod authored_jump_integration_tests {
     }
     #[test]
     #[ignore = "full 720-frame authored jump with original skin and 469-guide groom"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn authored_jump_full_coupled_cycle_qualification() {
         let directory = std::path::PathBuf::from(
             std::env::var("VOXY_AUTHORED_JUMP_QUALIFICATION_DIR")
@@ -3875,6 +3895,10 @@ mod authored_jump_integration_tests {
     #[allow(
         clippy::await_holding_refcell_ref,
         reason = "single-threaded test: the input is only borrowed immutably while the GPU work awaits"
+    )]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
     )]
     fn physical_stance_gpu_incident_matches_cpu_equation() {
         pollster::block_on(async {

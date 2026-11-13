@@ -36,6 +36,10 @@ mod camera;
 mod camera_authoring;
 #[cfg(test)]
 mod camera_authoring_tests;
+mod joint_authoring;
+#[cfg(test)]
+mod joint_authoring_tests;
+use camera_authoring::PickPurpose;
 mod component_collections;
 mod component_fields;
 mod fog_draw;
@@ -617,6 +621,10 @@ impl App {
         Self::create_session(root, Some(id), recipe, smoke, registry)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn create_session(
         root: &std::path::Path,
         id: Option<AssetId>,

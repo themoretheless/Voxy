@@ -33,6 +33,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "voxy_input",
             "voxy_render",
             "voxy_scene",
+            "voxy_scene_host",
             "voxy_world",
         ],
     ),
@@ -47,6 +48,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "voxy_audio_device",
             "voxy_gameplay",
             "voxy_input",
+            "voxy_player",
             "voxy_render",
             "voxy_scene",
             "voxy_text",
@@ -85,12 +87,12 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "voxy_shell",
         &[
             "physics",
-            "voxy_demos",
             "voxy_input",
             "voxy_render",
             "voxy_runtime",
             "voxy_rush",
             "voxy_scene",
+            "voxy_scene_host",
             "voxy_text",
         ],
     ),
@@ -99,6 +101,10 @@ const ALLOWED: &[(&str, &[&str])] = &[
     (
         "voxy_model",
         &["voxy_animation", "voxy_render", "voxy_scene"],
+    ),
+    (
+        "voxy_player",
+        &["voxy_assets", "voxy_gameplay", "voxy_scene"],
     ),
     (
         "voxy_render",
@@ -124,6 +130,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
     ),
     ("voxy_rush", &["physics", "voxy_input", "voxy_scene"]),
     ("voxy_scene", &["voxy_core", "voxy_time"]),
+    ("voxy_scene_host", &["voxy_render"]),
     ("voxy_storage", &["voxy_core", "voxy_world"]),
     ("voxy_streamline", &["voxy_render"]),
     ("voxy_ui_winit", &["voxy_ui"]),

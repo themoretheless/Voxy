@@ -271,6 +271,10 @@ fn malformed_restore_rejects_and_stopped_workers_stay_stopped() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn inactive_runtime_retains_old_model_after_catalog_replacement_and_resumes_120_frames() {
     let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../voxy_render/examples/assets/animated-triangle.glb");
@@ -406,6 +410,10 @@ fn inactive_runtime_retains_old_model_after_catalog_replacement_and_resumes_120_
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn reloaded_clip_fade_restores_from_resource_file_with_native_source_resolver() {
     let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../voxy_render/examples/assets/animated-triangle.glb");
@@ -693,6 +701,10 @@ fn combined_bundle_resolves_gpu_material_roles_and_rejects_missing_role_metadata
 fn combined_bundle_stages_original_cpu_resources_runtime_and_gpu_together() {
     exercise_combined_bundle(true);
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn exercise_combined_bundle(with_gpu: bool) {
     let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../voxy_render/examples/assets/animated-triangle.glb");
@@ -1190,6 +1202,10 @@ fn empty_manifest_restore_reserves_watcher_slot_without_model_publications() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn preview_models_join_original_resource_graph_without_source_reimport() {
     let temp = crate::project_prefab_tests::Temp::new();
     let source = temp.0.join("source");
@@ -1362,6 +1378,10 @@ fn preview_models_join_original_resource_graph_without_source_reimport() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+)]
 fn preview_runtime_aliases_restore_without_gpu_and_keep_equal_frames_independent() {
     for shared in [true, false] {
         let temp = crate::project_prefab_tests::Temp::new();

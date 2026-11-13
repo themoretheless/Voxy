@@ -21,8 +21,10 @@ mod camera_math;
 mod resident_frame_timing;
 mod skinned_lod;
 
+#[cfg(all(test, target_os = "macos", target_arch = "aarch64"))]
+use camera_math::PhotorealCameraUniform;
 #[cfg(test)]
-use camera_math::{CameraUniform, PhotorealCameraUniform, chunk_intersects_frustum};
+use camera_math::{CameraUniform, chunk_intersects_frustum};
 use camera_math::{
     ChunkMeta, SharedCameraBindings, camera_half_extents, camera_uniform, camera_view_projection,
     pack_light_words, photoreal_camera_uniform, relative_chunk_origin,
@@ -147,6 +149,10 @@ impl Renderer {
     /// Instance backend policy must match `options`; its display must match target.
     /// # Errors
     /// Reports unavailable surfaces, adapters, devices and renderer capabilities.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub async fn new_with_instance<T>(
         target: T,
         width: u32,
@@ -559,6 +565,10 @@ impl Renderer {
         Ok(true)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn upload_chunk_data(
         &mut self,
         chunks: &[(ChunkPos, &ChunkMesh, Option<&[u8]>)],
@@ -1187,6 +1197,10 @@ impl Renderer {
         self.encode_resident_voxels_to_targets(encoder, view, &self.depth_view, true);
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     pub(crate) fn encode_resident_voxels_to_targets(
         &self,
         encoder: &mut wgpu::CommandEncoder,
@@ -1485,6 +1499,10 @@ mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn noop_backend_validates_voxel_pipeline_and_draw() {
         let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor {
             label: Some("Voxy validation device"),
@@ -1647,6 +1665,10 @@ mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn noop_backend_validates_indirect_voxel_pipeline_and_draw() {
         let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor {
             label: Some("Voxy validation device indirect"),
@@ -1761,6 +1783,10 @@ mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    )]
     fn noop_backend_validates_photoreal_bodycam_pipelines_and_draw() {
         let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor {
             label: Some("Voxy validation device photoreal"),

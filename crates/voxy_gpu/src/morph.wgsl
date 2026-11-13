@@ -106,7 +106,11 @@ fn cs_morph(@builtin(global_invocation_id) global_id: vec3<u32>) {
         }
 
         let total_weight = weight * side_weight * feature_weight;
-        delta[ctrl.axis] = delta[ctrl.axis] + change * total_weight;
+        // A dynamic component write does not compile under FXC, so the axis is
+        // selected with a mask instead.
+        let axis = min(ctrl.axis, 2u);
+        let axis_mask = vec3<f32>(vec3<u32>(axis, axis, axis) == vec3<u32>(0u, 1u, 2u));
+        delta = delta + axis_mask * (change * total_weight);
     }
 
     let displaced_local = point + delta;
