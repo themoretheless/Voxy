@@ -3,6 +3,8 @@ mod benchmark_cycle;
 mod aa_validation;
 #[path = "../../src/controls.rs"]
 mod controls;
+#[path = "../../src/graphics_options.rs"]
+mod graphics_options;
 mod day_cycle;
 #[path = "../../src/frame_profile.rs"]
 mod frame_profile;
@@ -435,11 +437,7 @@ impl App {
             validation.direction = scene.direction;
         }
         self.collision = Some(scene.collision);
-        let instance = voxy_render::GraphicsOptions {
-            backend: voxy_render::GraphicsBackend::Metal,
-            ..Default::default()
-        }
-        .create_instance();
+        let instance = graphics_options::parse(std::env::args())?.create_instance();
         let surface = instance.create_surface(window.clone())?;
         let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
             compatible_surface: Some(&surface),
