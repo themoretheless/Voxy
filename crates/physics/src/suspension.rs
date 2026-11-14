@@ -91,7 +91,7 @@ impl Particle {
     /// Invalid medium/time/gravity, regime violation or overflow; state is atomic.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance(
         &mut self,

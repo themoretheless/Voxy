@@ -695,7 +695,7 @@ impl SceneRenderer {
     #[allow(clippy::too_many_arguments)]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn create_shader_pipelines_with_tangents(
         device: &wgpu::Device,

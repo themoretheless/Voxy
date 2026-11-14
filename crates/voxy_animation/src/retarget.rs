@@ -802,7 +802,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn held_original_rotation_sample_error_feeds_retarget_with_source_identity() {
         let rig = |name: &str, rotation| {
@@ -968,7 +968,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn original_linear_translation_sample_errors_feed_retarget_caps() {
         let rig = |name: &str, translation| {
@@ -1191,7 +1191,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn uniform_translation_rounding_caps_exclude_motion_width_and_include_source_error() {
         let rig = |name: &str, translation| {
@@ -1303,7 +1303,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn original_clip_interval_retains_nonbind_origin_and_initial_rotation() {
         let source = Skeleton::new(vec![Joint {
@@ -1483,7 +1483,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn continuous_source_interval_transports_independent_retarget_channels() {
         let source = Skeleton::new(vec![Joint {
@@ -1913,7 +1913,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn partial_masks_route_between_axes_and_match_independently_authored_target_curves() {
         let rig = |name: &str, translation: Vec3| {

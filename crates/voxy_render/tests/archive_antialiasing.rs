@@ -71,7 +71,7 @@ fn archive_antialiasing_compiles_on_metal_sdr_and_hdr() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn archive_antialiasing_filters_silhouettes_on_metal() {
     use glam::{Mat4, Vec3};

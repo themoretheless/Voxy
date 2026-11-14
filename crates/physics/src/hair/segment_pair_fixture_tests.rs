@@ -3,7 +3,7 @@ use super::*;
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn captured_near_parallel_pairs_match_high_precision_geometry() {
     let cases = [

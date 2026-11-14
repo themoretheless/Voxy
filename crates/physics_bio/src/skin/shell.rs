@@ -325,7 +325,7 @@ impl Skin {
     /// invalid materials, indices, pins and fiber directions.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new(
         rest: Vec<Point>,
@@ -658,7 +658,7 @@ impl Skin {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn evaluate(
         &self,
@@ -989,7 +989,7 @@ impl Skin {
     /// Rejects initial overlap, invalid contact data and nonconverged solves atomically.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_with_contacts(
         &mut self,

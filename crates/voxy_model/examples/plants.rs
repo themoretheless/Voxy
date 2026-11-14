@@ -4,7 +4,7 @@ use voxy_model::plants::{PlantKind, PlantOptions, generate_plant_glb, generate_w
 use voxy_render::archive_scene::*;
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::env::args()

@@ -6,7 +6,7 @@ use voxy_animation::{
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn completion_keeps_floor_contact_and_wall_stops_motion_after_fade() {
     let edges = [DVec3::X * 0.125, DVec3::Y * 0.125, DVec3::Z * 0.125];

@@ -26,7 +26,7 @@ impl App {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn draw_frame_inner(
         &mut self,
@@ -997,7 +997,7 @@ impl App {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn update_editor_panels_for_frame(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let Some(window) = &self.window else {

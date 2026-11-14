@@ -3,7 +3,7 @@ use super::*;
 #[ignore = "requires physical GPU; shared colour mip/HDR admission and lifetime"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_image_hdr_budget_shares_views_and_preserves_uploaded_mips() {
     let gpu = crate::GraphicsOptions::default().create_instance();

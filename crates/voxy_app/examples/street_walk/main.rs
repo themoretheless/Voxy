@@ -199,7 +199,7 @@ impl App {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn new() -> Self {
         let args: Vec<String> = std::env::args().collect();
@@ -333,7 +333,7 @@ impl App {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn init(&mut self, el: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
         if self.benchmark > 0. || std::env::var_os("VOXY_STREET_BENCHMARK_PROGRESS").is_some() {
@@ -788,7 +788,7 @@ impl App {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn draw(&mut self, el: &ActiveEventLoop) -> Result<(), Box<dyn std::error::Error>> {
         if self.finished {
@@ -2193,7 +2193,7 @@ impl ApplicationHandler for App {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn window_event(&mut self, el: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         if self.offscreen_benchmark

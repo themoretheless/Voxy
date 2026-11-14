@@ -247,7 +247,7 @@ pub(crate) fn seed_direct_sky(opaque: &[bool], sky: &mut [u8], check_top_halo: b
 /// failures without publishing a partial volume.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn build_light_with_neighbor_volumes(
     input: &LightingInput,
@@ -427,7 +427,7 @@ fn can_raise_neighbor(
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn propagate(
     opaque: &[bool],

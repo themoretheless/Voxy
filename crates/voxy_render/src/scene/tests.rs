@@ -1,7 +1,7 @@
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn disjoint_views_validate_regions_and_record_shared_geometry() {
     let empty = [];
@@ -336,7 +336,7 @@ fn alpha_sort_tracks_camera_and_rejects_bad_transforms_atomically() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn resource_validation_precedes_gpu_upload() {
     let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());

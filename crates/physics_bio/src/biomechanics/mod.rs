@@ -582,7 +582,7 @@ impl Body {
     // Keep bounded line search and transactional commit together.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn equilibrate(
         &mut self,

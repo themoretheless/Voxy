@@ -123,7 +123,7 @@ impl WaterTransferProgram {
     /// reads and transaction failures are returned later by `try_plan`.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn begin_plan_world(
         &self,
@@ -177,7 +177,7 @@ impl WaterTransferProgram {
     /// The queue must belong to this program's device. No world mutation occurs.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn plan_world(
         &self,
@@ -647,7 +647,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn captured_revision_rejects_stale_gpu_transaction_atomically() {
         let mut scene = voxy_runtime::build_bootstrap_scene(42, 0).unwrap();

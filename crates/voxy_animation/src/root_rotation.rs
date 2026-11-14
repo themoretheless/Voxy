@@ -536,7 +536,7 @@ impl RootRotationPath {
 impl RootRotationCurve {
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn new(
         keys: &[QuatKey],
@@ -1817,7 +1817,7 @@ mod cubic_compilation_proof_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn cubic_controls_cover_duration_tangent_rounding_and_preserve_zero_axes() {
         let keys = [

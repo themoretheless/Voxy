@@ -4,7 +4,7 @@ include!("environment_pixel_fixture.rs");
 #[ignore = "requires physical GPU; real SceneRenderer HDR pixels and material routing"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn real_hdr_scene_matches_ibl_oracle_after_atlas_install() {
     use crate::{

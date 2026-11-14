@@ -362,7 +362,7 @@ struct CachedTexture {
 }
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn model_texture(
     renderer: &SceneRenderer,
@@ -876,7 +876,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn global_lod_admission_retains_all_requests_and_recovers_after_eviction() {
         use super::*;

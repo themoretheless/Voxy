@@ -176,7 +176,7 @@ pub(super) struct ChunkLayerDraws {
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn encode_voxel_layers<'a>(
     pass: &mut wgpu::RenderPass<'a>,
@@ -276,7 +276,7 @@ fn create_camera_layout_for_stages(
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn create_photoreal_pipelines(
     device: &wgpu::Device,

@@ -276,7 +276,7 @@ fn reactive_table_matches_constant_and_post_burn_domain_failure_is_atomic() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn imported_reaction_with_tabulated_radiation_has_a_cumulative_energy_ledger() {
     use physics_astro::{
@@ -471,7 +471,7 @@ fn reactive_exterior_inflow_closes_nuclear_and_gas_energy_ledgers() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure() {
     use physics_astro::astrophysics::spherical::CompositionExterior;
@@ -629,7 +629,7 @@ fn radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure() 
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn polytrope_exterior_burning_and_tabulated_radiation_share_one_energy_ledger() {
     use physics_astro::{
@@ -862,7 +862,7 @@ fn balanced_burning_sphere_closed_and_open_preserves_complete_energy() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn balanced_radiating_burning_sphere_energy_and_late_failure() {
     use physics_astro::astrophysics::opacity::{Kind, Table};
@@ -1063,7 +1063,7 @@ fn thermal_residual_detects_local_imbalance_despite_global_cancellation() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn thermal_search_balances_burning_shells_and_rolls_back_failed_searches() {
     use physics_astro::astrophysics::spherical_radiation::{
@@ -1202,7 +1202,7 @@ fn thermal_search_balances_burning_shells_and_rolls_back_failed_searches() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn joint_stellar_search_satisfies_hydrostatic_and_thermal_equations() {
     use physics_astro::astrophysics::equilibrium::Search;

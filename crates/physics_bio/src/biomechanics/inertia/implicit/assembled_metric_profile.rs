@@ -13,7 +13,7 @@ impl RigidCoarse {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn partitioned_modes(
         body: &Body,
@@ -508,7 +508,7 @@ impl BlockSymmetricGaussSeidel {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn block_sgs_is_symmetric_positive_definite_holds_pins_and_accelerates_pcg() {
     let cells: Vec<_> = (0..2)
@@ -853,7 +853,7 @@ fn full_mesh_incomplete_factor_search_diagnosis() {
 #[ignore = "manual block-Jacobi rest-search residual qualification on imported mesh"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn full_mesh_block_jacobi_search_diagnosis() {
     let path = std::env::var("VOXY_ASSEMBLED_METRIC_MESH").unwrap();
@@ -973,7 +973,7 @@ fn full_mesh_block_jacobi_search_diagnosis() {
 #[ignore = "manual assembled search metric parity and assembly-amortized timing"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn full_mesh_assembled_search_metric_profile() {
     let path = std::env::var("VOXY_ASSEMBLED_METRIC_MESH").unwrap();

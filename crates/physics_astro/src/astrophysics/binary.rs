@@ -399,7 +399,7 @@ pub fn roche_limit_fluid_radius(
 /// $\dot{E} = \frac{21}{2} \frac{k_2}{Q} \frac{G M_p^2 R_s^5 n e^2}{a^6}$ in an eccentric satellite.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn tidal_dissipation_heating_watts(
     k2_love: f64,

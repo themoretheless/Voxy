@@ -3,7 +3,7 @@ use super::*;
 #[ignore = "requires real GPU; composed restore late validation and cancellation"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn late_gpu_rejection_and_cancellation_preserve_live_cache_and_scope_stack() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();

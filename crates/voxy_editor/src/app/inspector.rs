@@ -191,7 +191,7 @@ impl App {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn edit_key(&mut self, key: KeyCode) -> Result<(), Box<dyn std::error::Error>> {
         if self.retarget_draft.is_some() {
@@ -516,7 +516,7 @@ impl App {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn panel_action(
         &mut self,
@@ -917,7 +917,7 @@ impl App {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn field_key(
         &mut self,

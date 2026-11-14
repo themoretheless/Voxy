@@ -999,7 +999,7 @@ fn selective_membrane_advection_and_diffusion_match_discrete_mass_ledger() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn nonlinear_capillary_and_lymph_loop_couples_to_deforming_rt0_tissue() {
     use physics_bio::lymph::*;
@@ -1215,7 +1215,7 @@ fn nonlinear_exchange_fixture() -> (
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn adaptive_deforming_tissue_lymph_controls_geometry_and_rolls_back() {
     use physics_bio::lymph::*;
@@ -1383,7 +1383,7 @@ fn adaptive_deforming_tissue_lymph_controls_geometry_and_rolls_back() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn attached_lymphatic_wall_uses_current_interstitial_pressure_and_rejects_bad_links() {
     use physics_bio::lymph::*;
@@ -1710,7 +1710,7 @@ fn inertial_lymph_rt0_fem_commits_matching_pressure_geometry_and_momentum() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn adaptive_inertial_tissue_preserves_joint_state_and_rolls_back_budget_failure() {
     use physics_bio::lymph::*;
@@ -1844,7 +1844,7 @@ fn adaptive_inertial_tissue_preserves_joint_state_and_rolls_back_budget_failure(
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn radial_profiles_couple_to_actual_fem_pressure_and_preserve_atomic_state() {
     use physics_bio::lymph::{LymphaticWallLaw, RadialExchange, profile::RadialPipe};
@@ -1989,7 +1989,7 @@ fn radial_profiles_couple_to_actual_fem_pressure_and_preserve_atomic_state() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn adaptive_radial_tissue_controls_full_profiles_and_rolls_back() {
     use physics_bio::lymph::{

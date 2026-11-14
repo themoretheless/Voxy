@@ -204,7 +204,7 @@ impl Default for BodyParameters {
 impl BodyParameters {
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn validate(&self) -> Result<(), &'static str> {
         if !self.height_cm.is_finite()
@@ -491,7 +491,7 @@ impl BodyParameters {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn transform(&self, [x, y, z]: [f32; 3]) -> [f32; 3] {
         fn band(y: f32, center: f32, radius: f32) -> f32 {

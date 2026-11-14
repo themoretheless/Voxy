@@ -1619,6 +1619,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_lash_curls_never_reverse_the_open_lid_root_tangent() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1653,6 +1654,7 @@ mod tests {
         assert_eq!(checked, 144);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_closed_lash_contact_does_not_form_sharp_segment_reversals() {
         let mut preview = crate::face_preview::FacePreview::new().unwrap();
         for closure in [0., 0.5, 1.] {
@@ -1687,6 +1689,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_upper_lash_tips_point_down_at_full_closure() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1765,6 +1768,7 @@ mod tests {
     use super::*;
     use voxy_render::{ObjAsset, ObjLimits, SceneMesh};
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn rendered_follicle_follows_animated_triangle_without_vertex_snapping() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1819,6 +1823,7 @@ mod tests {
         assert!(closest_triangle_weights(Vec3::Z, [Vec3::ZERO; 3]).is_finite());
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_follicles_have_distributed_surface_anchors() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2102,6 +2107,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn neutral_lip_split_preserves_original_surface_area() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2155,6 +2161,7 @@ mod tests {
         assert_eq!(open_mouth_surface(asset.mesh.vertices(), &mut indices), 0);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn attachments_follow_surface_and_topology_is_stable() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),

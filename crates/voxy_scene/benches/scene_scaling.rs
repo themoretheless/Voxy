@@ -36,7 +36,7 @@ fn main() {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn run_scene(count: usize) {
     let (mut scene, nodes, mut table) = build_scene(count);

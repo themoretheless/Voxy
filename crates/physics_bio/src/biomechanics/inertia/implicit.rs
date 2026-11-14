@@ -310,7 +310,7 @@ impl InertialBody {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn advance_implicit_surface_quadrature(
         &mut self,
@@ -1901,7 +1901,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn moving_skin_shared_quadrature_matches_derivative_and_independent_work() {
         use super::super::super::{

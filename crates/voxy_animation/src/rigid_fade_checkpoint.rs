@@ -71,7 +71,7 @@ impl RootRigidFadePlan {
     /// Rejects missing revisions, mismatched certificates and caller admission limits.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn checkpoint_original_sources(
         &self,

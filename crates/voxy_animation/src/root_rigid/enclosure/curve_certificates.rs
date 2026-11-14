@@ -427,7 +427,7 @@ impl RootRigidCurve {
     /// +actual_frame.translation, then direct f32 cast. Fixed source frames only.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn cycle_world_point_evaluation_error_bounds(
         &self,
@@ -477,7 +477,7 @@ impl RootRigidCurve {
     /// Seam endpoints also certify the actual next-cycle sampling branch.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn world_point_evaluation_error_bounds(
         &self,

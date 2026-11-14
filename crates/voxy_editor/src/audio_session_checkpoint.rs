@@ -1006,7 +1006,7 @@ pub(crate) mod tests {
     #[ignore = "physical default audio output; gain zero, no window"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn physical_native_session_save_cancel_resume_and_closed_load_admission() {
         use std::time::{Duration, Instant};
@@ -1824,7 +1824,7 @@ pub(crate) mod tests {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn exercise_session_load(at_barrier: bool) {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);

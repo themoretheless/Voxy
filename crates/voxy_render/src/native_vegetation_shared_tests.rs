@@ -253,7 +253,7 @@ fn paired_frame_vegetation_benchmark() {
 #[ignore = "physical Apple Metal; cameras and instance fetch parity"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_generated_vegetation_matches_snapshot_and_overflow() {
     let (_, device, queue) = support::device();
@@ -542,7 +542,7 @@ fn paired_full_frame_instances() {
 #[ignore = "requires physical Metal"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn clipped_vegetation_matches_full_draw_pixels() {
     let (_, device, queue) = support::device();

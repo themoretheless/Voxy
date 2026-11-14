@@ -156,7 +156,7 @@ pub(crate) struct PreparedFrame {
 impl AnimatedModels {
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn restore_accepted_owner(
         &mut self,
@@ -410,7 +410,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn accepted_frame_joins_original_publication_and_rejects_invalid_bindings() {
         let provider = voxy_assets::FileInputs::new(

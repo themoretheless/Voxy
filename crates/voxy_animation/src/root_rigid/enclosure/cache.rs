@@ -756,7 +756,7 @@ impl RootScrewEnclosurePath<'_> {
     /// runtime phase arithmetic or composed f32 scene publication.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn physical_post_snap_selection_error_bounds(
         &self,

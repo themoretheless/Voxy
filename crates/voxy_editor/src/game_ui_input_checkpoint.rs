@@ -198,7 +198,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn native_adapter_rebinds_both_activation_keys_pointer_and_admitted_layout_for_120_cycles() {
         for held_pointer in [false, true] {
@@ -491,7 +491,7 @@ mod historical_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn deleted_pressed_owner_keeps_history_but_cannot_activate_a_recycled_slot() {
         let mut registry = voxy_scene::ComponentRegistry::default();

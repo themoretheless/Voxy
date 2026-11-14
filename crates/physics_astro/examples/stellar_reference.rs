@@ -11,7 +11,7 @@ use physics_astro::{
 };
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn main() -> Result<(), String> {
     let args: Vec<_> = std::env::args().skip(1).collect();

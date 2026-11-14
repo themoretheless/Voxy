@@ -274,7 +274,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn json_audio_owner_continues_and_does_not_restart_completed_one_shot() {
         let mut source_scene = SceneGraph::new(2);
@@ -427,7 +427,7 @@ mod archive_integration_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn archived_publication_catalog_and_audio_continue_after_failed_reload() {
         let mut scene = SceneGraph::new(1);

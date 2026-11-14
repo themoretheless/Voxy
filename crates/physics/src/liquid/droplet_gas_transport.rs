@@ -93,7 +93,7 @@ impl FiniteDropletGasGrid {
     /// No viscosity, conduction, gravity or external heat is applied. Atomic.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_euler(
         &mut self,

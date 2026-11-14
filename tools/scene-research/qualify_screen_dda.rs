@@ -77,7 +77,7 @@ fn rays(width: u32, height: u32) -> Vec<Ray> {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn main() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
@@ -310,7 +310,7 @@ struct Ray {begin:vec4<f32>,end:vec4<f32>}
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn qualify_predicate(
     device: &wgpu::Device,

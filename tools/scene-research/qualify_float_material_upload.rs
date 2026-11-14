@@ -10,7 +10,7 @@ use wgpu::util::DeviceExt;
 // Actual GPU readback of low bits and HDR values in scanned-material transport.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn main() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
@@ -189,7 +189,7 @@ fn main() {
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn qualify_packed_sampling(device: &wgpu::Device, queue: &wgpu::Queue) {
     use voxy_render::archive_scene::ArchiveImageSource;
@@ -567,7 +567,7 @@ fn qualify_history_rejection(device: &wgpu::Device, queue: &wgpu::Queue) {
 // extents and a one-ULP foreground depth in the final border texel.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn qualify_depth_hierarchy(device: &wgpu::Device, queue: &wgpu::Queue) {
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -755,7 +755,7 @@ fn qualify_depth_hierarchy(device: &wgpu::Device, queue: &wgpu::Queue) {
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn qualify_exact_ray_bounds(device: &wgpu::Device, queue: &wgpu::Queue) {
     let (w, h) = (33u32, 19u32);
@@ -1242,7 +1242,7 @@ override REFINE_BENCH_NEW:bool=false;
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn benchmark_refine_cache(
     device: &wgpu::Device,

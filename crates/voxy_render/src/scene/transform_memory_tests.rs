@@ -42,7 +42,7 @@ fn transform_admission_rejects_before_charging_and_retains_retired_uniforms() {
 #[ignore = "requires physical GPU; transform uniform ownership and shared admission"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_transform_budget_preserves_independent_uniforms_after_exhaustion() {
     let instance = crate::GraphicsOptions::default().create_instance();

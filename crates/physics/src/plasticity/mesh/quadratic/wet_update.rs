@@ -367,7 +367,7 @@ impl FiniteQuadraticDynamics {
     /// source inventories, material water and entire dynamic body.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_moisture_supplies_with_cohesion(
         &mut self,
@@ -424,7 +424,7 @@ impl FiniteQuadraticDynamics {
     /// sources, water, mechanics and accepted positions for the whole interval.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_wet_loaded(
         &mut self,
@@ -474,7 +474,7 @@ impl FiniteQuadraticDynamics {
     /// vapor reservoir stores water/latent heat, not gas momentum or sensible heat.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_moisture_vapor_with_cohesion(
         &mut self,
@@ -535,7 +535,7 @@ impl FiniteQuadraticDynamics {
     /// Any motion failure restores solid, material water and vapor inventories.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_vapor_loaded(
         &mut self,
@@ -589,7 +589,7 @@ impl FiniteQuadraticDynamics {
     /// dissipation remain report terms. This entry point uses temperature-independent laws.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_heated_vapor_loaded(
         &mut self,
@@ -642,7 +642,7 @@ impl FiniteQuadraticDynamics {
     /// Parameter work remains explicit; this is not a monolithic thermal solve.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_heated_vapor_loaded_calibrated(
         &mut self,
@@ -691,7 +691,7 @@ impl FiniteQuadraticDynamics {
 
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn advance_heated_vapor_loaded_impl(
         &mut self,
@@ -872,7 +872,7 @@ impl FiniteQuadraticDynamics {
     /// Invalid fields/laws or healing migration leaves the entire solid unchanged.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn apply_thermal_moisture_with_cohesion(
         &mut self,

@@ -40,7 +40,7 @@ impl Body {
     /// tissue, circulation and both caller protein inventories.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_vascular_pore_step(
         &mut self,
@@ -78,7 +78,7 @@ impl Body {
     /// The same input, solve and conservation errors as the unobserved method.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_vascular_pore_step_with_observer<F>(
         &mut self,
@@ -126,7 +126,7 @@ impl Body {
     /// Invalid mappings, duplicate ports or failed solves preserve all states.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_vascular_pore_ports_step_with_observer<F>(
         &mut self,
@@ -166,7 +166,7 @@ impl Body {
     /// Bad resistance mappings or any failed solve preserve all accepted states.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_vascular_pore_ports_step_with_resistances_and_observer<F>(
         &mut self,
@@ -208,7 +208,7 @@ impl Body {
     /// Bad mappings or any failed subsolve preserve all physical states.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_vascular_pore_ports_step_with_membranes_and_observer<F>(
         &mut self,
@@ -254,7 +254,7 @@ impl Body {
     /// Invalid slope, overflow or any failed solve preserves all accepted states.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_vascular_pore_ports_step_with_osmosis_and_observer<F>(
         &mut self,
@@ -303,7 +303,7 @@ impl Body {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_vascular_pore_ports_step_with_osmotic_law_and_observer<F>(
         &mut self,

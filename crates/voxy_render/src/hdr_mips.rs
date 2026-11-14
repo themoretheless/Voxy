@@ -13,7 +13,7 @@ impl HdrMipPyramid {
     /// Rejects zero dimensions and dimensions exceeding device texture limits.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new(device: &wgpu::Device, width: u32, height: u32) -> Result<Self, RendererError> {
         let max_dimension = device.limits().max_texture_dimension_2d;

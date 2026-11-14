@@ -48,7 +48,7 @@ fn read_centre(device: &wgpu::Device, queue: &wgpu::Queue, texture: &wgpu::Textu
 #[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn sphere_path_scale_additivity_and_opaque_occlusion() {
     let instance = GraphicsOptions::default().create_instance();

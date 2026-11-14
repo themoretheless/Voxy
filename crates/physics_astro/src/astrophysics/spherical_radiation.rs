@@ -52,7 +52,7 @@ pub fn transfer(
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn transfer_sources(
     shells: &[Shell],
@@ -291,7 +291,7 @@ impl crate::astrophysics::spherical::Sphere {
     // Shared transfer controls plus local/uniform EOS.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn radiation_rates_eos(
         &self,
@@ -421,7 +421,7 @@ impl crate::astrophysics::spherical::Sphere {
     // Keep thermal budget and transactional update together.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn radiate_local(
         &mut self,
@@ -659,7 +659,7 @@ impl crate::astrophysics::spherical::Sphere {
     /// Any local physical/domain error or shared work-budget failure.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_reactive_radiating_balanced(
         &mut self,
@@ -683,7 +683,7 @@ impl crate::astrophysics::spherical::Sphere {
     }
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn step_reactive_radiating_impl(
         &mut self,
@@ -701,7 +701,7 @@ impl crate::astrophysics::spherical::Sphere {
     }
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn step_reactive_radiating_spectrum_impl(
         &mut self,
@@ -1178,7 +1178,7 @@ impl crate::astrophysics::spherical::Sphere {
     /// The sphere is committed only after the complete profile meets tolerance.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn equilibrate_thermal(
         &mut self,

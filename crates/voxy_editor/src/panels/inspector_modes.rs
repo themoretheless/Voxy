@@ -9,7 +9,7 @@ use crate::InspectorMode;
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn collect_mode_values(
     object: &SceneObject,
@@ -223,7 +223,7 @@ impl Panels {
     )]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn build_inspector_footer(
         &mut self,

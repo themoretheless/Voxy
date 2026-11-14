@@ -113,7 +113,7 @@ impl FiniteDropletGasGrid {
     /// Use with the interior stress operator; this does not move walls or cells.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn relax_wall_viscosity(
         &mut self,

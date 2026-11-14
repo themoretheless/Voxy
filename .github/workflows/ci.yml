@@ -52,6 +52,30 @@ jobs:
       - name: Run workspace unit tests
         run: cargo test --workspace --lib
 
+  demos-slow:
+    name: Slow demo tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Linux system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libx11-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev libwayland-dev libxkbcommon-dev libvulkan-dev libasound2-dev
+
+      - name: Install pinned Rust toolchain from rust-toolchain.toml
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-05-27
+
+      - name: Cache Cargo registry and build artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run voxy_demos tests longer than 20 s
+        run: cargo test -p voxy_demos --lib --features slow-tests
+
   cross-targets:
     name: Cross Targets (WASM / Mobile)
     runs-on: macos-latest

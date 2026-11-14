@@ -244,7 +244,7 @@ impl WorldRayQueryJob {
     /// The certificate changes work only; uncertain/tied cases stay exact.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn with_options(
         device: &wgpu::Device,
@@ -1170,7 +1170,7 @@ impl WorldRayQueryJob {
     }
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn make_hint_group(
         device: &wgpu::Device,
@@ -1237,7 +1237,7 @@ impl WorldRayQueryJob {
     }
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn make_group(
         device: &wgpu::Device,

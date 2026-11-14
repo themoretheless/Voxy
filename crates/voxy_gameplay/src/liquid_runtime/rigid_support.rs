@@ -543,7 +543,7 @@ fn cross_magnitude_range(
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn cross_cubic_dot_range(
     a: DVec3,
@@ -595,7 +595,7 @@ fn cross_cubic_dot_range(
 /// edges follow one of the two owners. This retains rigid-frame cancellation.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn cross_attached_dot_range(
     a: DVec3,
@@ -617,7 +617,7 @@ fn cross_attached_dot_range(
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn edge_gap_range(
     first: &physics::rigid_motion::RigidMotion,
@@ -800,7 +800,7 @@ fn edge_gap_range(
 /// with both spin-arc timelines merged.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn face_gap_range(
     first: &physics::rigid_motion::RigidMotion,
@@ -960,7 +960,7 @@ pub(super) fn admit_motion(
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn admit_point_motion(
     first: &physics::rigid_motion::RigidMotion,
@@ -1203,7 +1203,7 @@ mod cubic_range_tests {
 /// Differentiate the selected edge cross product twice in world coordinates.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn edge_normal_acceleration(
     first: ContactBody,
@@ -1341,7 +1341,7 @@ mod projected_rotation_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn projected_gap_and_arm_bounds_cover_all_nominal_prefixes() {
         let body = ContactBody {

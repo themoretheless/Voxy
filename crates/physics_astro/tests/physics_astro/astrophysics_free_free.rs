@@ -115,7 +115,7 @@ fn spectral_blackbody_irradiation_keeps_lte_balance_and_checks_domain() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn joint_solver_uses_spectral_absorption_and_cumulative_budgets() {
     use physics_astro::{
@@ -240,7 +240,7 @@ fn joint_solver_uses_spectral_absorption_and_cumulative_budgets() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn spectral_radiative_evolution_and_real_reaction_close_energy_atomically() {
     use physics_astro::{
@@ -554,7 +554,7 @@ fn eddington_surface_has_opaque_flux_scaling_and_preserves_irradiated_lte() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn physical_stellar_profile_satisfies_explicit_absolute_and_relative_balance() {
     use physics_astro::{

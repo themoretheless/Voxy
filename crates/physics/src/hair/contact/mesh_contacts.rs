@@ -161,7 +161,7 @@ pub(super) fn deepest_interval_witness(
 // Return unit force direction AND its original gradient magnitude separately.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn interior_envelope_gradient(
     mesh: &TriangleMesh,
@@ -228,7 +228,7 @@ pub(in crate::hair) fn refresh_mesh_constraints(
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn gather_mesh_contacts(
     rod: &mut HairRod,

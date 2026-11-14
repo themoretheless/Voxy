@@ -2,7 +2,7 @@
 use physics::liquid::{Config, Liquid, Material, Particle};
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn run() -> Result<(), String> {
     let mut count = 8usize;

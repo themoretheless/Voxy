@@ -148,7 +148,7 @@ impl SurfaceFilm {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn accelerated_sphere_hit(
         &self,

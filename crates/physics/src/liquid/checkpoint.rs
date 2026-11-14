@@ -212,7 +212,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn complete_owner_continues_combined_transport_chemistry_rheology_and_boundaries() {
         for density_change in [false, true] {
@@ -372,7 +372,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn complete_owner_covers_phase_gas_reflections_and_nonthermal_population() {
         for mode in 0..3 {

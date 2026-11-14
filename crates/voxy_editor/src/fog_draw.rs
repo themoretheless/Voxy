@@ -165,7 +165,7 @@ impl FogDraw {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn prepare_targets_with_shadow(
         &mut self,
@@ -331,7 +331,7 @@ impl FogDraw {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn encode(
         &mut self,
@@ -475,7 +475,7 @@ mod tests {
     #[ignore = "requires a physical GPU adapter"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn hdr_fog_views_preserve_local_and_global_editor_overlays() {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
@@ -809,7 +809,7 @@ mod shadow_tests {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn verify_caster_views(skinned: bool) {
         let instance = voxy_render::GraphicsOptions::default().create_instance();

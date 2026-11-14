@@ -383,7 +383,7 @@ impl AnalSimulation {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn build_vertices(&mut self, time_s: f32) -> (Vec<SkinVertex>, Kinematics) {
         let kin = sample_kinematics(time_s);
@@ -883,7 +883,7 @@ struct GpuPipeline {
 impl GpuPipeline {
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn new(window: Option<Arc<Window>>) -> Result<Self, Box<dyn Error>> {
         let render_device = pollster::block_on(RenderDevice::new(window))?;
@@ -1067,7 +1067,7 @@ impl GpuPipeline {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn render_offscreen_frame(
         &self,
@@ -1257,7 +1257,7 @@ impl ApplicationHandler for InteractiveApp {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn window_event(
         &mut self,

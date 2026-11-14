@@ -1026,7 +1026,7 @@ fn material_point_reaction_rates_include_rotating_arm_and_preserve_snapshot() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn supported_point_load_overflow_is_distinct_from_invalid_input_and_rolls_back() {
     use physics::{

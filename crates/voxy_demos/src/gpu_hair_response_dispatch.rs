@@ -4,7 +4,7 @@ use wgpu::util::DeviceExt;
 impl GpuHairLinearSolver {
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn dispatch_response_waves(
         &mut self,
@@ -236,7 +236,7 @@ mod tests {
     #[ignore = "requires real GPU; response waves with constrained shared staging"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_response_waves_respect_small_readback_budgets_and_reuse_factors() {
         for compact in [false, true] {

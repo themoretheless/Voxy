@@ -96,7 +96,7 @@ pub fn export_project_package_with_host(
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn export_app_package(
     mut app: App,

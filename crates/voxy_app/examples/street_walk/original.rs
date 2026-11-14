@@ -461,7 +461,7 @@ const TREAD: f32 = 1.9 / 7.;
 const STOREY: f32 = 2.45;
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn interior(b: &mut Builder, k: &Kit, p: &Plan) {
     let s = -3.75 + p.spacing * (p.windows / 2) as f32;
@@ -871,7 +871,7 @@ enum Kind {
 /// (a w - 0.95..w - 0.15 at d = 0) clear.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn furnish(b: &mut Builder, k: &Kit, zn: &Zone, kind: Kind, w: f32, door: Option<(f32, f32)>) {
     let r = zn.r;
@@ -1107,7 +1107,7 @@ pub fn generate(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::e
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error::Error>> {
     let Ageing {
@@ -2697,7 +2697,7 @@ mod tests {
     #[ignore = "manual villa preview render via VOXY_VILLA_PREVIEW"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn render_villa_preview() {
         let Ok(path) = std::env::var("VOXY_VILLA_PREVIEW") else {

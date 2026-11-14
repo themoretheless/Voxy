@@ -4,7 +4,7 @@ use std::sync::Arc;
 use voxy_render::{ExactWorldNearest, RayScene, archive_scene::*};
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn audit_one(
     device: &wgpu::Device,
@@ -219,7 +219,7 @@ fn audit(
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn run(
     device: &wgpu::Device,

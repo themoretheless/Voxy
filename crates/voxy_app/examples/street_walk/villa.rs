@@ -130,7 +130,7 @@ fn rect_perimeter_walls(b: &mut Builder, id: usize, lo: [f32; 3], hi: [f32; 3], 
 /// Places a ceramic planter pot with a slightly wider clipped foliage crown on top.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn planter_box(
     b: &mut Builder,
@@ -234,7 +234,7 @@ fn lounger(b: &mut Builder, p: &Parts, x0: f32, x1: f32, z: f32, cushion: usize)
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn build(b: &mut Builder, p: &Parts) -> Villa {
     let slab_m = b.material([0.47, 0.45, 0.41], 0.8, 0., 1., 0., 0.);

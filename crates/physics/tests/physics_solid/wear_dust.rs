@@ -308,7 +308,7 @@ fn coulomb_contact_physical_dissipation_funds_dust_and_commits_history_atomicall
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn contact_dust_heat_reaches_latent_enthalpy_with_three_state_rollback() {
     use physics::friction::{Material as Contact, State};

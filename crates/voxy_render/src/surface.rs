@@ -204,7 +204,7 @@ impl SceneSurface {
     /// Reports unsupported surface/output/features or device creation failures.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub async fn new_with_adapter_and_output_experimental<T>(
         target: T,

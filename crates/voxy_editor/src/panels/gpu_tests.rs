@@ -66,7 +66,7 @@ enum Controls {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn render_controls(scenario: Controls) {
     let with_notice = matches!(scenario, Controls::Missing | Controls::Relink);

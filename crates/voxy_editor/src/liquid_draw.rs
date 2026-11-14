@@ -143,7 +143,7 @@ mod gpu_tests {
     #[ignore = "requires a physical GPU adapter"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn accepted_liquid_mesh_is_visible_on_gpu_and_empty_state_clears() {
         let instance = voxy_render::GraphicsOptions::default().create_instance();

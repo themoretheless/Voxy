@@ -569,7 +569,7 @@ mod completion_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn fade_completion_uses_one_clock_prefix_and_global_error_budget() {
         let target = RootRigidPath::from_twists(

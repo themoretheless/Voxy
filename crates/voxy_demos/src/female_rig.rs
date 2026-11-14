@@ -1522,6 +1522,7 @@ mod tests {
         GraspObject::from_mesh(&vertices, asset.mesh.indices()).unwrap()
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grasp_fingertip_surface_follows_distal_bones() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1622,6 +1623,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grasp_distal_fingers_do_not_cross() {
         fn segment_distance(a: Vec3, b: Vec3, c: Vec3, d: Vec3) -> f32 {
             let u = b - a;
@@ -2407,6 +2409,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn object_contact_limits_each_finger_without_penetration() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2512,6 +2515,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grasp_skin_surface_stays_outside_object() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2606,6 +2610,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn prepared_grasp_interpolation_preserves_contact() {
         for object in [
             GraspObject::Sphere {
@@ -2840,6 +2845,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn thumb_web_does_not_form_a_sharp_new_crease() {
         measure_thumb_web_crease(3);
     }
@@ -2938,6 +2944,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn isolated_grasp_keeps_wrists_fixed_while_fingers_close() {
         let mut rig = FemaleRig::new(&[]).unwrap();
         rig.set_grasp_object(Some(std::sync::Arc::new(GraspObject::Cylinder {
@@ -3224,6 +3231,7 @@ mod tests {
 mod thumb_tip_contact_tests {
     use super::*;
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn closed_thumb_tip_contacts_cylinder_and_sphere() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),

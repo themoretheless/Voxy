@@ -325,7 +325,7 @@ impl RootRigidPath {
     /// No derivative is assumed for WholeField, including velocity key jumps.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn integrate_spatial_outward_domains(
         intervals: &[(f64, RootRigidIntegrationDomain)],

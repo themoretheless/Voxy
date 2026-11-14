@@ -4,7 +4,7 @@
 #[cfg(target_os = "macos")]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn original_probe_interpolation_words_are_preserved() -> Result<(), Box<dyn std::error::Error>> {
     use wgpu::util::DeviceExt;

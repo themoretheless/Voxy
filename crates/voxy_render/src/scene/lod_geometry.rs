@@ -386,7 +386,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn streamed_indices_obey_budget_share_streams_and_recover_after_eviction() {
         let (device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());

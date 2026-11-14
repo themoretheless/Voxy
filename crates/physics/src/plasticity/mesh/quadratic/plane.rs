@@ -252,7 +252,7 @@ fn midpoint(a: Vec3, b: Vec3) -> Vec3 {
 }
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn integrate_triangle(
     result: &mut QuadraticContactEvaluation,

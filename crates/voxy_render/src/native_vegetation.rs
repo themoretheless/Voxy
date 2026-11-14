@@ -183,7 +183,7 @@ impl NativeVegetation {
     /// Rejects invalid source references, invalid bounds, or exhausted GPU memory.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new(
         device: &wgpu::Device,
@@ -944,7 +944,7 @@ impl NativeVegetation {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn encode(
         &self,

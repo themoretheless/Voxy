@@ -9,7 +9,7 @@ use crate::{
 #[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_material_transfer_preserves_geometry_and_rejected_light() {
     pollster::block_on(async {
@@ -171,7 +171,7 @@ fn gpu_material_transfer_preserves_geometry_and_rejected_light() {
 #[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn resident_normal_lighting_updates_and_rejects_invalid_normals() {
     pollster::block_on(async {

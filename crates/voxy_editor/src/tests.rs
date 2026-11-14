@@ -700,7 +700,7 @@ fn behavior_inspector_edits_undoes_and_rejects_conflicting_writers() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn multiple_authored_bodies_collide_in_play_and_restart_from_document() {
     let root =

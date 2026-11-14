@@ -200,7 +200,7 @@ fn finish_chunk_metadata_and_crc(
 /// Rejects corruption, truncation, unknown content and non-canonical encoding.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn decode_chunk(bytes: &[u8], registry: &BlockRegistry) -> Result<StoredChunk, CodecError> {
     if bytes.len() < 4 {

@@ -5,7 +5,7 @@
 #[cfg(target_os = "macos")]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn superseded_ties_do_not_depend_on_visit_order() -> Result<(), Box<dyn std::error::Error>> {
     use wgpu::util::DeviceExt;

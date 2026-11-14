@@ -218,7 +218,7 @@ impl Liquid {
     /// parent's local composition. An optional dry-wall onset gate may be supplied.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn depositing_impact_spheres_surface_mixture_events_with_mass_fractions(
         &mut self,
@@ -367,7 +367,7 @@ impl Liquid {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn impact_events_impl(
         &mut self,

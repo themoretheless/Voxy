@@ -3,7 +3,7 @@ use glam::{Mat4, Vec3};
 use voxy_render::{PlanarReflectionCapture, SceneCamera, SceneDraw, SceneMesh, SceneProjection};
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     pollster::block_on(async {

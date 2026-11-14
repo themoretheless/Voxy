@@ -90,7 +90,7 @@ pub(super) fn restoration_model(
 /// line search, then reproject the unchanged free load with retained cuts.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn project_guarded_restoration_direction(
     rows: &mut Vec<Constraint>,
@@ -579,7 +579,7 @@ fn component_scales(
 // must join the restricted component before another candidate is constructed.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn checked_component_backtrack(
     rods: &[HairRod],
@@ -641,7 +641,7 @@ fn checked_component_backtrack(
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn component_scales_from(
     rods: &[HairRod],
@@ -831,7 +831,7 @@ fn motion_failure_bytes(
 // rod state alongside it so elastic and angular admission can be replayed.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn save_swept_failure_state(
     directory: &std::path::Path,
@@ -887,7 +887,7 @@ fn save_swept_failure_state(
 }
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn export_swept_failure_state(
     rods: &[HairRod],
@@ -1238,7 +1238,7 @@ pub(in crate::hair) fn advance_contacts_with_pairs(
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn advance_mode(
     rods: &mut [HairRod],
@@ -1789,7 +1789,7 @@ mod tests {
     #[ignore = "requires a captured joint-root motion fixture"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn captured_witness_sampling_matches_before_change_reference() {
         use std::io::Read;
@@ -1981,7 +1981,7 @@ mod tests {
     #[ignore = "requires a captured joint-root motion fixture"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn captured_joint_root_motion_admission() {
         use std::io::Read;

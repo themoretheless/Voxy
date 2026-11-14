@@ -330,7 +330,7 @@ impl AnimationRuntime {
     /// Captures an explicit signed parent similarity at the published solver pose.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn capture_owner_reference_with_scale(
         &self,
@@ -355,7 +355,7 @@ impl AnimationRuntime {
 
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn capture_owner_reference_with_similarity(
         &self,
@@ -416,7 +416,7 @@ impl AnimationRuntime {
     /// current phase for the reference retained after physical acceptance.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn prepare_owner_fade(
         &self,
@@ -691,7 +691,7 @@ impl AnimationRuntime {
     /// through the same mixed-tick transaction used by explicitly prepared fades.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn fixed_step_scene_fades(
         &self,
@@ -1116,7 +1116,7 @@ impl AnimationRuntime {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn prepare_deferred(
         &self,

@@ -39,7 +39,7 @@ fn consume(
 #[ignore = "physical Metal; alternating pre-move versus core implementation, not legacy staging"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn paired_shared_upload_relocation() {
     let (_, device, queue) = support::device();

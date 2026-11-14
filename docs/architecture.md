@@ -193,7 +193,7 @@ flowchart BT
 ```
 
 Все известные нарушения слоёв (`KNOWN_VIOLATIONS`) из
-`docs/architecture-refactoring-plan-2026-10-11.md` и волны 3 устранены (`KNOWN_VIOLATIONS = &[]`);
+плана рефакторинга от 2026-10-11 и волны 3 устранены (`KNOWN_VIOLATIONS = &[]`);
 граф проверяется тестом `cargo test -p voxy_depgraph` (ADR 0004).
 
 | Crate | Ответственность | Не должен знать |

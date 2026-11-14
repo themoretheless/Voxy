@@ -759,7 +759,7 @@ mod skin_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn source_reference_supports_follow_native_nonrigid_pose_and_book_work() {
         use physics_bio::biomechanics::TetraMesh;
@@ -1054,7 +1054,7 @@ impl TissueDemo {
     #[allow(dead_code)]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn bind_skin_contact(
         &mut self,
@@ -1191,7 +1191,7 @@ mod contact_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn physical_render_skin_contact_drives_fem_and_books_obstacle_work_once() {
         let mut demo = TissueDemo::body();

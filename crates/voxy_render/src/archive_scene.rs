@@ -236,7 +236,7 @@ fn depth(device: &wgpu::Device, w: u32, h: u32) -> wgpu::Texture {
 impl ArchiveSceneRenderer {
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new(
         device: &wgpu::Device,
@@ -271,7 +271,7 @@ impl ArchiveSceneRenderer {
     /// Render imported or generated RGBA images with the same material/shadow pipeline.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new_with_images(
         device: &wgpu::Device,
@@ -296,7 +296,7 @@ impl ArchiveSceneRenderer {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new_with_environment(
         device: &wgpu::Device,

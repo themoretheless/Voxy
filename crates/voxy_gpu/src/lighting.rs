@@ -70,7 +70,7 @@ impl GpuLightingProgram {
     /// Returns an error if WGSL compilation or pipeline creation fails.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub async fn new(device: &wgpu::Device) -> Result<Self, GpuLightingError> {
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
@@ -263,7 +263,7 @@ impl GpuLightingProgram {
     /// Returns an error if input arrays have invalid length or execution fails.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn propagate(
         &self,

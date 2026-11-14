@@ -313,7 +313,7 @@ impl ModelAssetCheckpoint {
     /// name graph as model-owned sources. No content-based deduplication occurs.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn capture_with_sources(
         models: &[Arc<ModelAsset>],
@@ -784,7 +784,7 @@ impl ModelAssetCheckpoint {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn prepare_inner(
         &self,

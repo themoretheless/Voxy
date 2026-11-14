@@ -96,7 +96,7 @@ fn experimental_features() -> wgpu::ExperimentalFeatures {
 // One complete GPU submission and its verification.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn verify_surface_ray(host: &mut SceneSurface) -> Result<bool, String> {
     let ray = voxy_render::RayScene::from_scene_mesh(host.device(), &SceneMesh::quad([1.0; 4]), 1)
@@ -378,7 +378,7 @@ fn verify_surface_ray(host: &mut SceneSurface) -> Result<bool, String> {
 // Complete raster-to-ray presentation verification.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn verify_raster_frame(host: &mut SceneSurface, version: u32) -> Result<bool, String> {
     use voxy_render::{

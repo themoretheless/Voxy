@@ -190,7 +190,7 @@ fn real_file_roundtrip_preserves_cancellation_and_negative_weight_accuracy() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn imported_gltf_morph_sources_rebuild_after_original_buffers_are_dropped() {
     let (document, buffer) = crate::tests::morph_import_fixture();

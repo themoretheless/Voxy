@@ -92,7 +92,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn closing_linear_loop_preserves_original_samples_and_owned_keys() {
         let rig = Skeleton::new(vec![Joint {

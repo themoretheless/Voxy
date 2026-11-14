@@ -36,7 +36,7 @@ pub fn exchange_drag_cloud(
 /// Invalid accelerations, drag regime, budgets or balance; atomic for both phases.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn exchange_forced_cloud(
     particles: &mut [Particle],

@@ -302,7 +302,7 @@ fn claw(out: &mut Surface, root: Vec3, paw: f32) {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn eye(out: &mut Surface, center: Vec3, side: f32, r: f32, cat: bool) {
     let n = profile(cat).eye_normal(side);
@@ -480,7 +480,7 @@ fn nasal_planum(out: &mut Surface, center: Vec3, r: Vec3, cat: bool) {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn build(cat: bool) -> Result<Surface, String> {
     let a = profile(cat);

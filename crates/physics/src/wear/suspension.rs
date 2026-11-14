@@ -310,7 +310,7 @@ impl WearSuspension {
     /// thermal failure. Every owned state rolls back, including emitted particles.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_contact(
         &mut self,

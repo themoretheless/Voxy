@@ -478,7 +478,7 @@ struct EqualityTask<'a> {
 impl<'a> EqualityTask<'a> {
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn new(
         device: &wgpu::Device,
@@ -603,7 +603,7 @@ impl<'a> EqualityTask<'a> {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn consume(
         &mut self,
@@ -764,7 +764,7 @@ impl<'a> EqualityTask<'a> {
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn run_equality_tasks(
     device: &wgpu::Device,
@@ -1001,7 +1001,7 @@ impl GpuHairLinearSolver {
     #[cfg(test)]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn solve_resident_active_batch_with_seeds(
         &mut self,
@@ -1230,7 +1230,7 @@ impl GpuHairLinearSolver {
     #[cfg(test)]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn solve_triple_active_batch_attempt(
         &mut self,
@@ -1870,7 +1870,7 @@ impl GpuHairLinearSolver {
     /// remains the caller's responsibility; no partial batch is published.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn solve_joint_batch_checked(
         &mut self,
@@ -1998,7 +1998,7 @@ impl GpuHairLinearSolver {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn solve_joint_seeded_checked(
         &mut self,
@@ -2537,7 +2537,7 @@ mod tests {
     #[ignore = "requires GPU; strict storage budget, oversized backing and explicit retirement"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_workspace_reuses_larger_storage_and_preserves_budget_after_rejection() {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
@@ -2659,7 +2659,7 @@ mod tests {
     #[ignore = "requires GPU; reused equality storage must reset the full operator"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_equality_workspace_resets_changed_columns_bounds_and_rejected_input() {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
@@ -2802,7 +2802,7 @@ mod tests {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn profile_captured_equality_passes(
         device: &wgpu::Device,
@@ -3085,7 +3085,7 @@ mod tests {
     #[ignore = "requires actual GPU; bounded staging across many independent owners"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_equality_batch_splits_readback_capacity_without_changing_results() {
         let columns = vec![vec![1., 0.], vec![0., 1.]];
@@ -3206,7 +3206,7 @@ mod tests {
     #[ignore = "requires actual GPU physical island batching"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_independent_physical_islands_batch_without_state_drift() {
         use physics::hair::{HairMaterial, HairRod, HairSystem, RootPose, TriangleMesh};
@@ -3712,7 +3712,7 @@ mod tests {
     #[ignore = "requires actual GPU and original VQC1 systems; triple candidate original physical admission"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_triple_active_admits_captured_original_physics() {
         let (requests, bounds, tolerance, rows, width, systems) =
@@ -3972,7 +3972,7 @@ mod tests {
     #[ignore = "requires actual GPU; triple batch complete preflight and atomic decode"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_triple_batch_preflight_and_complete_decode() {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
@@ -4389,7 +4389,7 @@ mod tests {
     #[ignore = "requires GPU, original VQC1 fixture and completed/warm/parallel factor flags"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_triple_completed_cache_original_physical_sequence() {
         for flag in [
@@ -4987,7 +4987,7 @@ mod tests {
     #[ignore = "requires GPU; exact duplicate operators share one workgroup"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_resident_batch_deduplicates_exact_inputs_and_preserves_warm_hints() {
         let instance = voxy_render::GraphicsOptions::default().create_instance();
@@ -5226,7 +5226,7 @@ mod tests {
     #[ignore = "requires GPU and full original VQC1 fixture; experimental resident candidate"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_resident_active_set_admits_original_physical_operator() {
         let (requests, bounds, tolerance, rows, width, systems) =
@@ -5766,7 +5766,7 @@ mod tests {
     #[ignore = "requires Metal/Vulkan hardware and original VQC1 physical contact fixture"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_joint_backend_admits_captured_original_physics() {
         let (requests, bounds, tolerance, rows, width, systems) =
@@ -6683,7 +6683,7 @@ impl GpuHairLinearSolver {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn solve_joint_expanded_attempt(
         &mut self,

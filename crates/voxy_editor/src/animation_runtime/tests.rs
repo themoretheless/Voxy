@@ -84,7 +84,7 @@ fn fixed_frames_wait_for_assets_pause_resume_and_never_advance_on_read() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors() {
     let (mut scene, owner, _, _) = fixture();
@@ -201,7 +201,7 @@ fn motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn editor_play_drives_root_motion_through_wall_and_preserves_failed_tick() {
     let source = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -447,7 +447,7 @@ fn hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn editor_expanded_rig_scene_survives_history_save_load_play_and_stop() {
     let directory = std::env::temp_dir().join(format!(
@@ -629,7 +629,7 @@ fn editor_expanded_rig_scene_survives_history_save_load_play_and_stop() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks() {
     let (mut scene, owner, source, _) = fixture();
@@ -863,7 +863,7 @@ fn retarget_source_clock_produces_target_palette_and_failure_keeps_accepted_fram
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomically() {
     let glb = gltf::binary::Glb::from_slice(include_bytes!(
@@ -995,7 +995,7 @@ fn partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomi
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn accepted_physical_fade_uses_runtime_extraction_before_frame_publication() {
     use voxy_gameplay::{CharacterBody, CharacterPhysics, player_input};
@@ -1418,7 +1418,7 @@ fn root_reference_lifetime_tracks_asset_and_extraction_identity() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn owner_fade_operation_admits_all_owners_before_any_publication() {
     let (mut scene, first, model, models) = fixture();
@@ -1623,7 +1623,7 @@ fn owner_fade_operation_admits_all_owners_before_any_publication() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
     use crate::foot_placement::{FootBinding, ModelFootPlacement};
@@ -2054,7 +2054,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn signed_reference_scale_survives_body_transport_and_next_fade() {
     for scale in [0.5, -2.] {
@@ -2264,7 +2264,7 @@ fn root_parent_capture_encloses_nested_reflections_and_rejects_moving_frames() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back() {
     let (mut scene, owner, source, _) = fixture();
@@ -2538,7 +2538,7 @@ fn first_accepted_pose_bootstraps_root_reference_atomically_without_feet() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn scene_fade_batch_stages_selection_without_advancing_and_rejects_late_owner() {
     let (mut scene, first, original, _) = fixture();
@@ -2808,7 +2808,7 @@ fn imported_model_retains_translation_and_rotation_compilation_proofs() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn production_play_dispatches_moving_fade_and_preserves_late_failure() {
     let directory = std::env::temp_dir().join(format!(
@@ -3150,7 +3150,7 @@ fn authored_events_round_trip_rebind_and_remove_without_replaying() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn complete_animation_owner_checkpoint_restores_mixed_queues_retarget_and_inactive_frames() {
     use voxy_scene::ObjectId;
@@ -3375,7 +3375,7 @@ fn observation_tokens_detect_clock_adoption_event_mutation_and_clear_without_sce
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn runtime_only_frame_aliases_survive_checkpoint_without_merging_equal_frames() {
     use voxy_scene::ObjectId;

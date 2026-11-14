@@ -1203,7 +1203,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn accepted_solver_precision_survives_controller_checkpoint_and_external_teleport() {
         let mut scene = SceneGraph::new(2);

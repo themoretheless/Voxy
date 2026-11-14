@@ -229,7 +229,7 @@ fn finite_supply_water_and_mechanics_commit_together_or_roll_back() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn wet_cohesive_update_breaks_dynamic_fragment_without_resetting_work() {
     use physics::moisture::{CohesiveCalibration, CohesiveProperties};
@@ -968,7 +968,7 @@ fn temperature_changes_elastic_response_with_explicit_parameter_work() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn conducted_temperature_updates_loaded_solid_or_restores_all_owners() {
     use physics::{
@@ -1095,7 +1095,7 @@ fn conducted_temperature_updates_loaded_solid_or_restores_all_owners() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn mixing_heat_outside_calibration_domain_restores_all_owners() {
     use physics::{

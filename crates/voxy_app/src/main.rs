@@ -165,7 +165,7 @@ struct AnimatedActor {
 impl ApplicationHandler for VoxyApp {
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         if self.window.is_some() {
@@ -404,7 +404,7 @@ impl ApplicationHandler for VoxyApp {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn window_event(
         &mut self,
@@ -1131,7 +1131,7 @@ impl VoxyApp {
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     if animals::check_requested() {

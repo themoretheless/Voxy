@@ -215,7 +215,7 @@ impl LymphNetwork {
     /// Invalid inputs, nonpositive trial inventory or failed fixed-point solve.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_with_inertial_walls(
         &mut self,
@@ -250,7 +250,7 @@ impl LymphNetwork {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn step_with_inertial_callbacks<F, G>(
         &mut self,
@@ -414,7 +414,7 @@ impl LymphNetwork {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn step_with_radial_callbacks<F, G>(
         &mut self,
@@ -571,7 +571,7 @@ impl LymphNetwork {
     /// Invalid tolerance, failed nonlinear solve or exhausted time-step budget.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_with_inertial_walls_adaptive(
         &mut self,
@@ -835,7 +835,7 @@ impl LymphNetwork {
     /// Conservative SSPRK2 when selected; caller-owned callback effects require staging.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn step_with_pressure_and_flux_laws_order<F, G>(
         &mut self,
@@ -1078,7 +1078,7 @@ pub(crate) fn adaptive_exchange<T: Clone>(
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(crate) fn adaptive_exchange_order<T: Clone>(
     initial: &T,

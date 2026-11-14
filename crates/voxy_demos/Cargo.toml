@@ -11,6 +11,10 @@ default = []
 experimental-strand-fraction-reuse = ["physics/experimental-strand-fraction-reuse"]
 experimental-reusable-query-workers = ["physics/experimental-reusable-query-workers"]
 cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda"]
+# Runs the library tests that take longer than 20 s each (character, grasp,
+# film and hair scenes). They are ignored by default and run by the separate
+# "Slow demo tests" CI job: `cargo test -p voxy_demos --lib --features slow-tests`.
+slow-tests = []
 
 [dependencies]
 voxy_gameplay = { path = "../voxy_gameplay" }

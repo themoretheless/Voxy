@@ -164,7 +164,7 @@ impl ModelAsset {
     // Node indices are bounded to MAX_JOINTS above.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn parse_internal(
         source: &[u8],
@@ -941,7 +941,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn morph_import_decodes_defaults_channels_and_deforms_before_skeleton() {
         let (doc, bytes) = morph_import_fixture();

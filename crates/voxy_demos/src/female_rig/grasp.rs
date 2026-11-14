@@ -26,7 +26,7 @@ impl GraspObject {
     /// Nested void walls have the opposite orientation from outer shells.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn from_mesh(vertices: &[SceneVertex], indices: &[u32]) -> Result<Self, &'static str> {
         if vertices.is_empty()
@@ -392,7 +392,7 @@ pub(super) fn finger_clearance(
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn finger_clearance_from(
     chain: [[f32; 3]; 4],
@@ -551,7 +551,7 @@ pub(super) fn prepare_finger_grasp(
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn fit_finger(
     chain: [[f32; 3]; 4],

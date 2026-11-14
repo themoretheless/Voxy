@@ -45,7 +45,7 @@ pub(super) fn exact_stationary_physical_projection(
 // Pure candidate rounding may use the derived exact projection-frame policy.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn invariant_projection_separates(
     center: DVec3,
@@ -113,7 +113,7 @@ fn invariant_projection_separates(
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn sweep_rigid_path_with_bounds(
     sweep: SweepQuery,

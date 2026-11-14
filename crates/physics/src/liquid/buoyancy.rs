@@ -53,7 +53,7 @@ impl Liquid {
     /// exhausted sampling budget, or numerical overflow leave both liquid and body unchanged.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn couple_floating_body(
         &mut self,

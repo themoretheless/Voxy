@@ -66,7 +66,7 @@ fn compensated_dot(a: &[f64], b: &[f64]) -> f64 {
 #[ignore = "requires actual GPU and original rejected operator JSON; experimental QR only"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_triple_qr_original_active_operator() {
     let fixture: serde_json::Value = serde_json::from_slice(
@@ -369,7 +369,7 @@ fn gpu_triple_automatic_original_operator() {
 #[ignore = "requires actual GPU; automatic solver rejection and release paths"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_triple_automatic_rejections_and_release() {
     let cases = [
@@ -511,7 +511,7 @@ fn triple_parallel_shader_validates() {
 #[ignore = "requires actual GPU and original operator JSON; warm hints remain candidates"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_triple_seeded_original_operator() {
     let fixture: serde_json::Value = serde_json::from_slice(
@@ -844,7 +844,7 @@ fn triple_batched_shader_validates() {
 #[ignore = "requires actual GPU; independent triple operators in one dispatch"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_triple_batched_independent_operators() {
     let instance = crate::GraphicsOptions::default().create_instance();

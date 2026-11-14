@@ -1255,7 +1255,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn editor_saves_member_override_and_inherits_other_motion_fields_on_reload() {
         let root = std::env::temp_dir().join(format!("voxy-member-save-{}", std::process::id()));
@@ -1454,7 +1454,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn editor_nested_prefab_edits_save_undo_and_dependency_failure_retain_scene() {
         let root = std::env::temp_dir().join(format!("voxy-editor-prefabs-{}", std::process::id()));

@@ -380,7 +380,7 @@ fn dyadic_operations_and_bernstein_signs_match_rational_oracle() {
 #[ignore = "requires captured exact axis fixture"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn captured_dyadic_verifier_matches_rational_and_rejects_larger_radius() {
     let data =

@@ -291,7 +291,7 @@ pub fn deform_with_contour(
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn deform_with_contour_impl(
     vertices: &mut [SceneVertex],
@@ -633,7 +633,7 @@ pub mod tests {
     #[ignore = "writes sampled actual-globe/skin depth visibility"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn audit_lid_globe_coverage() {
         fn front_depth(point: glam::Vec2, triangles: &[[Vec3; 3]]) -> Option<f32> {

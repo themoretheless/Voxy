@@ -1,8 +1,10 @@
+> Архив. Документ не обновляется; действующий план: [`../PLAN.md`](../PLAN.md).
+
 # Voxy: план реализации полноценного 3D-движка
 
 ## Актуальный checkpoint: 11 ноября 2026
 
-[Сверка всех ENG-00–13 и свежие проверки](engine-status-2026-11-11/README.md).
+[Сверка всех ENG-00–13 и свежие проверки](../engine-status-2026-11-11/README.md).
 ENG-00 завершён как аудит 22 областей. ENG-01–03 прошли основные
 проектные сценарии в CLI и отдельные проверки в редакторе macOS, включая
 Play/Stop, запуск пакета без исходников, публикацию модели и повтор загрузки LOD
@@ -17,7 +19,7 @@ Windows и подписанная дистрибуция остаются отк
 между скелетами и смешивание поворотного root motion у стены на одном
 скелете. Поворотное root motion между скелетами и перенос morph targets
 остаются открытыми. Свежий CPU-набор редактора дал 410 успешных тестов
-и 51 пропуск по `ignore`. Все 247 тестов gameplay прошли. [Журнал](engine-status-2026-11-11/rotating-liquid-sweep/suites.log).
+и 51 пропуск по `ignore`. Все 247 тестов gameplay прошли. [Журнал](../engine-status-2026-11-11/rotating-liquid-sweep/suites.log).
 
 У Original Street пройдены два полных оконных цикла HDR. В этих прогонах
 получено 15,42–16,24 FPS при выводе 1080p и внутреннем 4K. Цели 120/160 FPS,
@@ -33,7 +35,7 @@ Windows и подписанная дистрибуция остаются отк
 кинематического бокса подтверждена в сцене без жидкости. В сухом
 сценарии зажатия конфликтующая платформа останавливается, вторая сохраняет ход.
 Контакт поступательной платформы с жидкостью проверен в пакете на одной частице и при зажатии четырёх взаимодействующих частиц.
-Одна платформа передаёт импульс частице и динамическому телу в одном шаге. Передача импульса через частицу динамическому телу проверена на последовательных шагах и при зажатии за один шаг. Открыты плотные потоки и вращательная кинематика. Повторный тест удара частицы вне центра массы завершился с `CollisionBudget` до первого принятого шага. [Журнал](engine-status-2026-11-11/rotating-liquid-sweep/repro.log). В ENG-05 открыт единый
+Одна платформа передаёт импульс частице и динамическому телу в одном шаге. Передача импульса через частицу динамическому телу проверена на последовательных шагах и при зажатии за один шаг. Открыты плотные потоки и вращательная кинематика. Повторный тест удара частицы вне центра массы завершился с `CollisionBudget` до первого принятого шага. [Журнал](../engine-status-2026-11-11/rotating-liquid-sweep/repro.log). В ENG-05 открыт единый
 графический сценарий с измерением полного кадра. ENG-11 требует расширения покрытия ресурсов,
 проверки ввода и восстановления GPU на целевых браузерах и устройствах.
 
@@ -49,14 +51,14 @@ Windows и подписанная дистрибуция остаются отк
 Ранее на отдельных снимках прошли 2626 библиотечных тестов вне пакета демо
 и 311 тестов пакета демо после исправления плёнки. В этих прогонах
 212 и 82 теста соответственно помечены `ignore`.
-[Журналы](engine-status-2026-11-11/README.md#сборка-и-тесты-рабочего-пространства).
+[Журналы](../engine-status-2026-11-11/README.md#сборка-и-тесты-рабочего-пространства).
 
 ENG-09 получил проверку двух циклов правок на границе чанков. Меши и
 освещение совпали с полной перестройкой. На Apple M4 Max / Metal чтение
 буферов подтвердило точную частичную запись геометрии и освещения и
 сохранение соседних диапазонов. Открыт оконный стресс большого мира
 с замерами кадра и пиковой памяти.
-[Доказательства](engine-status-2026-11-11/README.md#лимит-непубликованных-перестроений-чанков).
+[Доказательства](../engine-status-2026-11-11/README.md#лимит-непубликованных-перестроений-чанков).
 
 Приоритет приёмки — воспроизвести `CollisionBudget` в игровом цикле
 редактора, получить полный оконный профиль улицы с обходом лучей и
@@ -75,8 +77,8 @@ Web, Android/iOS, XR, сеть и дополнительный scripting ост�
 направлениями программы, но не блокируют первый настольный вертикальный срез.
 Сроки назначать после декомпозиции и оценки первого среза, не по числу crate/API.
 
-Архитектурная основа — [ADR 0002](adr/0002-general-engine-architecture.md)
-и [ADR 0004](adr/0004-workspace-layering.md). Существующие рабочие реализации
+Архитектурная основа — [ADR 0002](../adr/0002-general-engine-architecture.md)
+и [ADR 0004](../adr/0004-workspace-layering.md). Существующие рабочие реализации
 сохраняются; новый общий слой вводится только вместе с реальным потребителем.
 
 ## Что подтверждено текущим чтением кода
@@ -102,7 +104,7 @@ Web, Android/iOS, XR, сеть и дополнительный scripting ост�
 Каждая задача получает ID, зависимости, владельца данных, публичный контракт,
 критерий проверки и ссылку на результат с ревизией. Статусы: запланировано,
 реализовано, проверено, частично, заблокировано. Текущий статус каждого этапа стоит в колонке «Статус на
-2026-11-12» таблицы ниже; подробности и доказательства ведёт [сверка от 11 ноября](engine-status-2026-11-11/README.md).
+2026-11-12» таблицы ниже; подробности и доказательства ведёт [сверка от 11 ноября](../engine-status-2026-11-11/README.md).
 Отдельно фиксировать: core API, runtime, редактор, сохранение, standalone и
 платформенную проверку. Один успешный столбец не закрывает остальные.
 
@@ -753,7 +755,7 @@ GPU refusal coverage retains original CPU/GPU publication and cache ownership.
 
 Validation: assets 67 passed; editor 349 passed, 32 ignored; one explicit M4 Max /
 Metal GPU transaction test passed; strict all-target Clippy and scoped format/diff
-checks passed. Evidence: [qualification and preserved logs](production-readiness-evidence-2026-10-27/restored-watcher-policy-admission/qualification.json).
+checks passed. Evidence: [qualification and preserved logs](../production-readiness-evidence-2026-10-27/restored-watcher-policy-admission/qualification.json).
 This does not qualify rendered-image parity, frame rate, complete App session
 installation, or native audio devices. ENG-03 through ENG-13 remain open.
 
@@ -772,7 +774,7 @@ input observations and authoring document. Native M4 Max/Metal panel rendering
 checks retry glyphs and presented-frame hit acknowledgement. Editor suite: 350
 passed, 32 ignored; explicit GPU test: 1 passed; strict all-target Clippy and scoped
 format/diff pass. The initial help-text regression and corrected run are retained.
-Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/explicit-model-import-retry/qualification.json).
+Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/explicit-model-import-retry/qualification.json).
 No native window interaction, physical frame-rate or complete engine qualification
 follows; ENG-03 through ENG-13 remain open.
 
@@ -788,7 +790,7 @@ The regression first fails on the previous behavior, then confirms path text,
 source change token, accepted model Arc, authoring document and manifest bytes
 remain intact on rejection. The original path entry subsequently completes normal
 background relink and publication. Editor suite: 351 passed, 32 ignored; strict
-all-target Clippy and scoped format/diff pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/retry-action-preflight/qualification.json).
+all-target Clippy and scoped format/diff pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/retry-action-preflight/qualification.json).
 No new GPU/window/frame-rate or native-device-audio qualification is claimed.
 ENG-03 through ENG-13 remain open.
 
@@ -808,7 +810,7 @@ The regression rejects missing and truncated deferred BIN inputs without output,
 then builds after repair. After deleting the entire original project it imports
 the declared animated model through the normal manifest worker from a materialized
 package and completes source-free GameCheck. Editor suite: 352 passed, 32 ignored;
-strict all-target Clippy and scoped format/diff pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/declared-model-package-closure/qualification.json).
+strict all-target Clippy and scoped format/diff pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/declared-model-package-closure/qualification.json).
 The fixture proves deferred external BIN closure; native renderer/FPS, arbitrary
 uninstanced prefab dependency graphs and new importer types are not qualified.
 ENG-03 through ENG-13 remain open.
@@ -829,7 +831,7 @@ content. After deletion of the source project, the materialized package retains
 an empty startup scene and successfully loads the declared nested prefab with
 manifest/leaf observations and original model component. Source-free GameCheck
 also passes. Editor: 353 passed, 32 ignored; strict all-target Clippy and scoped
-format/diff pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/deferred-prefab-package-validation/qualification.json).
+format/diff pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/deferred-prefab-package-validation/qualification.json).
 This validates native prefab composition/source closure, not arbitrary future
 gameplay composition, runtime spawning API, native device audio or frame rate.
 ENG-03 through ENG-13 remain open.
@@ -847,7 +849,7 @@ prefab import quotas and final package revalidation remain unchanged.
 Two regressions check exact-boundary admission, shared-source deduplication/Arc
 retention and atomic refusal for count, byte, conflict and read-failure cases.
 Editor suite: 355 passed, 32 ignored; strict all-target Clippy and scoped format
-pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/package-retained-source-budget/qualification.json).
+pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/package-retained-source-budget/qualification.json).
 This bounds retained deferred source payloads, not total exporter heap/RSS, decoded
 model output, physical GPU memory or frame rate. ENG-03 through ENG-13 remain open.
 
@@ -865,7 +867,7 @@ The regression accepts exactly 128 bindings and 65536 bytes in project/editor
 opening, rejects count+1 and byte+1, preserves descriptor bytes on failed saves,
 and reopens after manifest repair. Editor: 356 passed, 32 ignored; final strict
 all-target Clippy and scoped format/diff pass. Initial Clippy unused-import failure
-and cleanup are retained. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/project-manifest-policy/qualification.json).
+and cleanup are retained. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/project-manifest-policy/qualification.json).
 Scalable configurable resource policies, full native lifecycle, device audio and
 frame-rate qualification remain open, along with ENG-03 through ENG-13.
 
@@ -882,7 +884,7 @@ Source-free GameCheck completes 120 ticks. No production sampler change was need
 
 Editor suite: 357 passed, 32 ignored; strict all-target Clippy and scoped format/diff
 pass. Initial test dependency compilation failure is retained; direct f32 word
-comparison fixed the test without adding dependencies. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/sampler-reload-source-free-package/qualification.json).
+comparison fixed the test without adding dependencies. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/sampler-reload-source-free-package/qualification.json).
 GPU rendered sampler parity and physical frame-rate qualification remain separate.
 ENG-03 through ENG-13 remain open.
 
@@ -900,7 +902,7 @@ validation error scope is clean. No production cache behavior change was needed.
 
 Explicit GPU test: 1 passed; strict all-target Clippy and scoped format/diff pass.
 The existing full CPU suite was not repeated for this test-only module addition.
-Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/gpu-material-sampler-views/qualification.json).
+Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/gpu-material-sampler-views/qualification.json).
 This is separate from the CPU watcher/reload/source-free-package regression and
 does not establish one complete installed App GPU reload, native presentation
 pacing, physical memory or FPS. ENG-03 through ENG-13 remain open.
@@ -918,7 +920,7 @@ offscreen GPU qualification. No second device or alternate publication path exis
 
 Editor CPU suite: 357 passed, 33 ignored. Explicit M4 Max/Metal native model reload
 transaction and sampler rendering tests: 2 passed. Strict all-target Clippy and
-scoped format/diff pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/editor-gpu-device-access/qualification.json).
+scoped format/diff pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/editor-gpu-device-access/qualification.json).
 This is preparation for optional presentation ownership. Graphics construction
 still requires SceneSurface; full-App offscreen sampler reload, native presentation
 pacing, physical memory/FPS and full ENG-03 through ENG-13 remain open.
@@ -941,7 +943,7 @@ repair automatically reloads and reproduces accepted pixels exactly. Authoring
 document remains unchanged, workers stop, and GPU validation scope is clean.
 
 Editor suite: 357 passed, 34 ignored. Explicit native App GPU test: 1 passed;
-strict all-target Clippy and scoped format/diff pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/offscreen-native-app-reload/qualification.json).
+strict all-target Clippy and scoped format/diff pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/offscreen-native-app-reload/qualification.json).
 This closes the direct-model offscreen App reload integration gap. Complete
 viewport-scene rendering, OS presentation/input, native device audio, full editor
 session installation, combined package/GPU lifecycle and physical frame-rate
@@ -962,7 +964,7 @@ publication path; CPU/GPU share the new accepted Arc and expected original pixel
 match exactly. Authoring document is unchanged and GPU error scope is clean.
 Explicit M4 Max/Metal App GPU test: 1 passed; strict all-target Clippy and scoped
 format pass. Production code already supported the behavior; this extends combined
-qualification rather than adding fallback or lowering quality. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/offscreen-app-gpu-budget-retry/qualification.json).
+qualification rather than adding fallback or lowering quality. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/offscreen-app-gpu-budget-retry/qualification.json).
 No budget editor UI, complete viewport image, native presentation/audio-device or
 physical frame-rate qualification follows. ENG-03 through ENG-13 remain open.
 
@@ -981,7 +983,7 @@ allocation on the same device. Captured manifest/GLB observations match accepted
 source inputs; native model-material readback matches original pixels exactly and
 the saved scene edit remains. Source-free GameCheck completes 120 ticks and the
 GPU validation scope is clean. Explicit joined project GPU test: 1 passed; strict
-all-target Clippy and scoped format pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/project-gpu-source-free-package/qualification.json).
+all-target Clippy and scoped format pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/project-gpu-source-free-package/qualification.json).
 This joins previous separate package/GPU checks for this model-material fixture.
 It does not qualify a separate process/device, complete viewport rendering, native
 presentation/input/audio devices, physical memory or FPS. ENG-03 through ENG-13
@@ -1006,7 +1008,7 @@ The frame is nonempty, native presentation counters/flags remain unchanged,
 source-free GameCheck completes 120 ticks with four objects and the GPU scope is
 clean. Editor: 357 passed, 34 ignored; explicit M4 Max/Metal project GPU test:
 1 passed; strict all-target Clippy and scoped format/diff pass. Evidence:
-[qualification and logs](production-readiness-evidence-2026-10-27/native-scene-frame-source-free/qualification.json).
+[qualification and logs](../production-readiness-evidence-2026-10-27/native-scene-frame-source-free/qualification.json).
 
 This qualifies this static hierarchical viewport fixture, not all rendering
 features, photorealistic street quality, OS input/presentation, device audio,
@@ -1028,7 +1030,7 @@ deletion and a fresh package App reproduce the same fogged scene RGBA bytes.
 Source-free GameCheck completes 120 ticks with five objects. The initial legacy
 camera correctly rejected and is retained as evidence. Editor: 357 passed,
 34 ignored; explicit M4 Max/Metal joined App GPU test: 1 passed; strict all-target
-Clippy and scoped format/diff pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/offscreen-fog-native-app/qualification.json).
+Clippy and scoped format/diff pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/offscreen-fog-native-app/qualification.json).
 
 This supersedes the blanket offscreen-fog rejection for this supported fixture.
 Overlapping fog/MSAA/merged fog-liquid restrictions, optical-fluid adapter/output
@@ -1049,7 +1051,7 @@ Light/shadow/caster/camera/fog data survive project build and deletion of every
 source file; a fresh package App renders identical RGBA bytes and source-free
 GameCheck completes 120 ticks with five objects. Explicit M4 Max/Metal joined GPU
 test: 1 passed; strict all-target Clippy and scoped format pass. Evidence:
-[qualification and logs](production-readiness-evidence-2026-10-27/native-fog-shadow-package/qualification.json).
+[qualification and logs](../production-readiness-evidence-2026-10-27/native-fog-shadow-package/qualification.json).
 This qualifies static opaque shadow influence on native fog transport, not all
 surface receivers, animated/deformed casters, cascades, transparency, native OS
 input/presentation/audio, physical memory or FPS. ENG-03 through ENG-13 remain open.
@@ -1071,7 +1073,7 @@ and matches that frame exactly, ruling out reuse of the earlier shadow map. Nati
 fog/shadow/caster controls and prior reload/refusal/Retry/package assertions remain.
 Editor: 357 passed, 34 ignored; explicit M4 Max/Metal joined GPU test: 1 passed;
 strict all-target Clippy and scoped format/diff pass. Evidence:
-[qualification and logs](production-readiness-evidence-2026-10-27/offscreen-clock-dynamic-shadow/qualification.json).
+[qualification and logs](../production-readiness-evidence-2026-10-27/offscreen-clock-dynamic-shadow/qualification.json).
 This covers rigid object motion, not full skeletal/morph cycles, OS presentation
 or audio devices, physical memory or FPS. ENG-03 through ENG-13 remain open.
 
@@ -1093,7 +1095,7 @@ exactly. Source-free GameCheck completes 120 ticks with two objects; GPU scope i
 clean. The joined moving fog/shadow project regression also still passes.
 Editor: 357 passed, 35 ignored; renderer: 374 passed, 86 ignored; two explicit
 M4 Max/Metal GPU tests passed; strict renderer-lib/editor-all-target Clippy and
-scoped format/diff passed. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/offscreen-optical-fluid-native-app/qualification.json).
+scoped format/diff passed. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/offscreen-optical-fluid-native-app/qualification.json).
 
 This supersedes blanket offscreen optical-fluid rejection for the supported
 single-sample fixture. Merged fog/fluid optical depth, full dynamics/performance
@@ -1115,7 +1117,7 @@ as changed liquid.json input without creating output. Restoring original content
 allows normal export and source-free GameCheck after deleting the entire project.
 Editor: 358 passed, 35 ignored; explicit native optical-liquid M4 Max/Metal App
 GPU/source-free test: 1 passed; strict all-target Clippy and scoped format/diff
-pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/liquid-material-build-observation/qualification.json).
+pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/liquid-material-build-observation/qualification.json).
 This is build provenance, not a filesystem lock, new live material watcher or new
 session/checkpoint participant. Native coefficients, solver, optical precision
 and import quotas remain unchanged. ENG-03 through ENG-13 remain open.
@@ -1135,7 +1137,7 @@ of the source project still permits native prefab placement from the materialize
 package, standalone model import and one fixed AngularMotion step changing world
 transform. The original empty-startup package separately passes 120 GameCheck
 ticks. Editor: 359 passed, 35 ignored; final focused regression, strict all-target
-Clippy and scoped format/diff pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/deferred-prefab-model-bindings/qualification.json).
+Clippy and scoped format/diff pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/deferred-prefab-model-bindings/qualification.json).
 Retarget sources, clip/part/profile semantics, other deferred asset links, native
 runtime prefab spawn API and complete ENG-03 through ENG-13 remain open. No new
 GPU/native-device/FPS qualification follows.
@@ -1156,7 +1158,7 @@ calibration, static target and missing source hidden by nested override. Correct
 hip mapping builds and, after deletion of the source project, native prefab
 placement from the materialized package starts standalone with animated rig and
 one game tick. Editor: 360 passed, 35 ignored; strict all-target Clippy and scoped
-format/diff pass. Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/deferred-prefab-retarget-admission/qualification.json).
+format/diff pass. Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/deferred-prefab-retarget-admission/qualification.json).
 Clip/part/locomotion and morph-shape semantics, persistent import caching, full
 GPU deformation/animation-cycle coverage, native devices and FPS remain open.
 ENG-03 through ENG-13 remain incomplete.
@@ -1175,7 +1177,7 @@ and invalid nested override. Positive group/container cases build. A valid textu
 part also builds; after full source deletion native prefab placement and standalone
 startup load a drawable mesh_for(part) and complete one game tick. Editor:
 361 passed, 35 ignored; strict all-target Clippy and scoped format/diff pass.
-Evidence: [qualification and logs](production-readiness-evidence-2026-10-27/deferred-model-part-admission/qualification.json).
+Evidence: [qualification and logs](../production-readiness-evidence-2026-10-27/deferred-model-part-admission/qualification.json).
 Same-count hierarchy semantic changes still need stable part identity; clip and
 locomotion admission, full GPU/deformation/native devices and FPS remain open.
 ENG-03 through ENG-13 remain incomplete.
@@ -1191,7 +1193,7 @@ ModelPlayback: неизвестные имена и индексы клипов,
 пакета. Именованный клип сохраняет приоритет над устаревшим индексом.
 
 Свежие проверки: 362 editor lib tests passed, 35 ignored; strict Clippy всех
-targets прошёл. [Логи, хеши и границы](production-readiness-evidence-2026-10-27/deferred-prefab-animation-admission/qualification.json).
+targets прошёл. [Логи, хеши и границы](../production-readiness-evidence-2026-10-27/deferred-prefab-animation-admission/qualification.json).
 Это приёмка build/runtime, без GPU/full-cycle/FPS квалификации; ENG-03, ENG-06
 и общая программа ENG-00–13 остаются открыты.
 
@@ -1207,7 +1209,7 @@ validate_morph_frame; retarget source используется отдельно 
 положительный сценарий этой фикстурой не квалифицирован.
 
 Проверки: 6 focused passed; 363 editor tests passed, 35 ignored; strict
-all-target Clippy прошёл. [Доказательства и ограничения](production-readiness-evidence-2026-10-27/deferred-prefab-morph-admission/qualification.json).
+all-target Clippy прошёл. [Доказательства и ограничения](../production-readiness-evidence-2026-10-27/deferred-prefab-morph-admission/qualification.json).
 GPU, полный цикл и FPS этим шагом не проверяются. ENG-03/06 и общая цель
 движка остаются открыты.
 
@@ -1223,7 +1225,7 @@ a package after deletion of the original project. The positive fixture uses the
 same source clip for all states and does not qualify a full locomotion cycle.
 
 Fresh checks: 363 editor tests passed, 35 ignored; strict all-target Clippy passed.
-[Logs and hashes](production-readiness-evidence-2026-10-27/deferred-prefab-locomotion-admission/qualification.json).
+[Logs and hashes](../production-readiness-evidence-2026-10-27/deferred-prefab-locomotion-admission/qualification.json).
 Deferred prefab character ancestry and ModelPart admission remain open, along
 with native GPU/FPS qualification, ENG-03/06 and the full engine roadmap.
 
@@ -1239,7 +1241,7 @@ AnimationSnapshot and the final serialized scene match exactly between runs.
 Morph weights vary and retain negative values without clamping.
 
 Fresh full editor suite: 364 passed, 35 ignored; strict all-target Clippy passed.
-[Evidence and source hashes](production-readiness-evidence-2026-10-27/nested-prefab-locomotion-cycle/qualification.json).
+[Evidence and source hashes](../production-readiness-evidence-2026-10-27/nested-prefab-locomotion-cycle/qualification.json).
 This is a small-fixture CPU integration proof, not a production character visual
 qualification, GPU cycle, native presentation or FPS result. ENG-03/06 and the
 full engine roadmap remain open.
@@ -1262,7 +1264,7 @@ failures from missing sources and unsettled publications are preserved.
 
 Current checks: three native GPU App tests passed (reload, optical liquid,
 locomotion); 364 editor tests passed, 36 ignored; strict all-target Clippy passed.
-[Logs, hashes and limitations](production-readiness-evidence-2026-10-27/native-gpu-locomotion-cycle/qualification.json).
+[Logs, hashes and limitations](../production-readiness-evidence-2026-10-27/native-gpu-locomotion-cycle/qualification.json).
 This small-fixture offscreen test does not qualify realistic character quality,
 independent CPU pixel correctness, arbitrary concurrent reloads, native window
 presentation, 1080p frame pacing or 120/160 FPS. ENG-03/05/06 and full parity stay open.
@@ -1283,7 +1285,7 @@ pixels, demonstrating visible deformation rather than just body translation.
 Offscreen oracle draws preserve simulation and presentation counters. GPU
 validation scope is clean. Focused hardware test, strict all-target Clippy, scoped
 rustfmt and diff checks pass. Full editor suite was not rerun for test-only edits.
-[Logs, hashes and limits](production-readiness-evidence-2026-10-27/native-animation-cpu-pixel-oracle/qualification.json).
+[Logs, hashes and limits](../production-readiness-evidence-2026-10-27/native-animation-cpu-pixel-oracle/qualification.json).
 This establishes deformation pixel parity for the small 128x128 fixture only;
 shared rasterizer/material correctness, all production rigs, native presentation
 and 120/160 FPS are not qualified. Full ENG-05/06 and engine readiness stay open.
@@ -1306,7 +1308,7 @@ particle after original project deletion.
 
 Fresh checks: 365 editor tests passed, 36 ignored; three native GPU App tests
 passed; strict all-target Clippy and scoped diff check passed.
-[Evidence and hashes](production-readiness-evidence-2026-10-27/deferred-prefab-liquid-material/qualification.json).
+[Evidence and hashes](../production-readiness-evidence-2026-10-27/deferred-prefab-liquid-material/qualification.json).
 This does not qualify deferred material hot reload, all audio/font dependencies,
 PlaySession liquid watcher ownership, production physical accuracy or target FPS.
 ENG-03 and the complete engine roadmap remain open.
@@ -1327,7 +1329,7 @@ repaired source-free package restores the nested prefab and mixes nonzero PCM.
 
 Fresh checks: 366 editor tests passed, 36 ignored; strict all-target Clippy,
 scoped rustfmt and diff check passed.
-[Evidence and source hashes](production-readiness-evidence-2026-10-27/deferred-prefab-audio-admission/qualification.json).
+[Evidence and source hashes](../production-readiness-evidence-2026-10-27/deferred-prefab-audio-admission/qualification.json).
 Native audio devices, other sample rates, complete voice/bus/listener admission
 and all remaining dependency classes are unqualified; ENG-03/07 and the full
 engine roadmap remain open.
@@ -1349,7 +1351,7 @@ font catalog was introduced.
 
 Fresh checks: 367 editor tests passed, 36 ignored; strict all-target Clippy,
 scoped rustfmt and diff checks passed.
-[Evidence and source hashes](production-readiness-evidence-2026-10-27/deferred-prefab-ui-font-admission/qualification.json).
+[Evidence and source hashes](../production-readiness-evidence-2026-10-27/deferred-prefab-ui-font-admission/qualification.json).
 This test uses a local system Unicode font. It does not qualify all scripts, GPU
 text pixels, native focus/input, interactive authoring, release build throughput
 or FPS. Full ENG-03/07/08 and the complete engine roadmap remain open.
@@ -1371,7 +1373,7 @@ owner incompatibility only.
 
 Fresh checks: 367 editor tests passed, 36 ignored; strict all-target Clippy,
 scoped rustfmt and diff checks passed.
-[Evidence and hashes](production-readiness-evidence-2026-10-27/deferred-locomotion-logical-owner/qualification.json).
+[Evidence and hashes](../production-readiness-evidence-2026-10-27/deferred-locomotion-logical-owner/qualification.json).
 Full semantic component admission, ENG-03/06, GPU/FPS and engine readiness remain open.
 
 
@@ -1389,7 +1391,7 @@ and source/target aliasing, rejects both malformed candidates, and verifies capt
 also refuses invalid native participants. Existing retarget/model-graph tests pass.
 Fresh checks: four preview tests passed; 368 editor tests passed, 36 ignored;
 strict all-target Clippy, scoped rustfmt and diff checks passed.
-[Evidence and source hashes](production-readiness-evidence-2026-10-27/preview-restore-native-admission/qualification.json).
+[Evidence and source hashes](../production-readiness-evidence-2026-10-27/preview-restore-native-admission/qualification.json).
 Preview still needs the outer model-root union and shared frame pool; this does
 not complete atomic whole-App publication, native save/load menus, GPU preview
 restore or ENG-07/08. The full engine roadmap remains open.
@@ -1409,7 +1411,7 @@ only for original shared roles, and keeps equal independent frames separate.
 Fresh checks: two checkpoint tests passed; 369 editor tests passed, 36 ignored;
 strict all-target Clippy, scoped rustfmt and diff checks passed. Existing native
 GPU restore late-rejection/cancellation test passed on Apple M4 Max/Metal.
-[Evidence and hashes](production-readiness-evidence-2026-10-27/accepted-frame-target-morph-admission/qualification.json).
+[Evidence and hashes](../production-readiness-evidence-2026-10-27/accepted-frame-target-morph-admission/qualification.json).
 The GPU frame pool is still separate from runtime/preview frame ownership; the
 whole-editor root/frame graph and atomic App publication remain unfinished.
 No whole-App GPU restore, production rig or FPS qualification follows.
@@ -1437,7 +1439,7 @@ restored and all three variants rerun successfully.
 
 Fresh checks: 369 editor tests passed, 38 ignored; strict all-target Clippy, scoped
 rustfmt and diff checks passed.
-[Logs, hashes and negative control](production-readiness-evidence-2026-10-27/shared-runtime-gpu-frame-roles/qualification.json).
+[Logs, hashes and negative control](../production-readiness-evidence-2026-10-27/shared-runtime-gpu-frame-roles/qualification.json).
 Preview and runtime-only frame classes without GPU roles still require outer graph
 composition. Whole-App atomic publication, native save/load UI/input handoff,
 production character quality and target FPS remain open with the full roadmap.
@@ -1462,7 +1464,7 @@ owners together; no partial class is mutated on admission failure.
 Fresh checks: 370 editor tests passed, 38 ignored; all three native full-session
 GPU variants passed on M4 Max/Metal after source deletion; strict all-target
 Clippy, scoped rustfmt and diff checks passed.
-[Evidence, both baselines and hashes](production-readiness-evidence-2026-10-27/runtime-only-frame-aliases/qualification.json).
+[Evidence, both baselines and hashes](../production-readiness-evidence-2026-10-27/runtime-only-frame-aliases/qualification.json).
 Preview/outer model-root composition, whole-App atomic publication, native
 save/load UI/input handoff, physical memory and target FPS remain open.
 
@@ -1484,7 +1486,7 @@ both catalog aliases through the resource graph against an empty provider root.
 
 Fresh checks: 371 editor tests passed, 38 ignored; three native full-session GPU
 variants passed; strict all-target Clippy, scoped rustfmt and diff checks passed.
-[Evidence and source hashes](production-readiness-evidence-2026-10-27/preview-resource-model-root-union/qualification.json).
+[Evidence and source hashes](../production-readiness-evidence-2026-10-27/preview-resource-model-root-union/qualification.json).
 This is preview model-root ownership, not yet accepted preview frame/phase
 composition in the editor file. Preview/runtime/GPU frame joining, whole-App
 atomic publication, native save/load UI and target FPS remain open.
@@ -1513,7 +1515,7 @@ intended identity assertion; final source was restored byte-for-byte and reteste
 Fresh checks: 371 editor tests passed, 39 ignored; four native GPU App tests and
 three full-session GPU tests passed; strict all-target Clippy, scoped rustfmt and
 diff checks passed.
-[Evidence, hashes and negative control](production-readiness-evidence-2026-10-27/preview-state-resource-file/qualification.json).
+[Evidence, hashes and negative control](../production-readiness-evidence-2026-10-27/preview-state-resource-file/qualification.json).
 Direct preview/runtime sharing without a GPU bridge, idle whole-editor lifecycle,
 remaining authoring/Graphics ownership, whole-App atomic publication and native
 save/load UI/first-presented-frame handoff remain open. Geometry pixel parity on
@@ -1541,7 +1543,7 @@ Existing active-clip GPU-only shared/independent variants also pass.
 Checks: 372 editor tests passed, 39 ignored; four GPU App and three full-session
 GPU tests passed; strict all-target Clippy, scoped rustfmt and diff checks passed.
 The preview GPU test was rerun after lint-only Copy callback argument cleanup.
-[Evidence and source hashes](production-readiness-evidence-2026-10-27/preview-runtime-frame-joins/qualification.json).
+[Evidence and source hashes](../production-readiness-evidence-2026-10-27/preview-runtime-frame-joins/qualification.json).
 Whole-App atomic publication, idle whole-editor lifecycle, native save/load menus
 and first-presented-frame handoff remain open. New three-way identity proof uses
 bind pose and does not qualify all animation modes, production rigs or target FPS.
@@ -1570,7 +1572,7 @@ Checks: 374 editor library tests passed, 39 ignored. No GPU/window/FPS or native
 audio-device qualification was performed. Whole-App atomic publication, native
 save/load menus, preview-bearing idle editor integration and first-presented-frame
 handoff remain open; ENG-03 through ENG-13 are not complete.
-[Evidence](production-readiness-evidence-2026-10-27/idle-editor-checkpoint/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/idle-editor-checkpoint/qualification.json).
 
 
 ## 27 October: preview-bearing idle editor file after source deletion
@@ -1594,7 +1596,7 @@ no production codec or import behavior was changed to bypass admission.
 This is a full-file detached prepare proof, not whole-App installation or native
 presentation. Guarded atomic publication, menus, first-presented-frame handoff,
 production assets and FPS remain open, along with ENG-03 through ENG-13.
-[Evidence](production-readiness-evidence-2026-10-27/idle-editor-preview-file/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/idle-editor-preview-file/qualification.json).
 
 Checks for idle preview file qualification: 375 editor library tests passed, 39
 ignored; strict all-target Clippy, scoped rustfmt and diff checks passed.
@@ -1625,7 +1627,7 @@ This joins the detached GPU and outer-owner preparation paths. It does not insta
 them into App, transfer native presentation/audio output devices, or close the
 remaining authoring-history publication, menus or first-presented-frame gates.
 ENG-03 through ENG-13, production content and FPS remain open.
-[Evidence](production-readiness-evidence-2026-10-27/coordinated-gpu-staging/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/coordinated-gpu-staging/qualification.json).
 
 Coordinated staging checks: three physical GPU variants passed, including direct
 new-candidate pixel/Arc assertions; 375 editor library tests passed, 39 ignored
@@ -1658,7 +1660,7 @@ ready discard leave the live destination cache unchanged. This is detached
 candidate preparation and admission, not atomic App installation, native menus,
 first-presented-frame handoff, production-rig or FPS qualification. Full ENG-03
 through ENG-13 remain open.
-[Evidence](production-readiness-evidence-2026-10-27/editor-history-gpu-staging/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/editor-history-gpu-staging/qualification.json).
 
 Editor history staging checks: five GPU App tests and 375 editor library tests
 passed (40 ignored). Strict Clippy required boxing the 27 KiB inner GPU future;
@@ -1701,7 +1703,7 @@ Qualification remains bounded: idle App installation and native offscreen output
 full running-session App installation, nonempty UI/audio installation integration,
 native output-device transfer, native surface presentation, menus, project Save As,
 production assets and FPS are still open. This does not close ENG-03 through ENG-13.
-[Evidence](production-readiness-evidence-2026-10-27/editor-app-installation/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/editor-app-installation/qualification.json).
 
 App installation checks: 376 editor library tests passed, 40 ignored; five physical
 GPU App tests passed; strict all-target Clippy, scoped rustfmt and diff checks passed.
@@ -1740,7 +1742,7 @@ App installation scenario. It does not qualify all gameplay systems/content,
 text-bearing App installations, native surface/input presentation, native audio
 output queues, menu commands, Save As, production scenes or target FPS. ENG-03
 through ENG-13 and the complete engine goal remain open.
-[Evidence](production-readiness-evidence-2026-10-27/running-editor-ui-audio-installation/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/running-editor-ui-audio-installation/qualification.json).
 
 Running UI/audio installation checks: 376 editor library tests passed, 41 ignored;
 six physical GPU App tests passed; strict all-target Clippy, scoped rustfmt and
@@ -1776,7 +1778,7 @@ This is source-free text-bearing App installation and offscreen GPU parity. Nati
 surface/input presentation, real output-device queues, menu integration, Save As,
 all languages/fonts, production content and 120/160 FPS remain open, along with
 full ENG-03 through ENG-13 and the complete engine objective.
-[Evidence](production-readiness-evidence-2026-10-27/text-font-app-installation/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/text-font-app-installation/qualification.json).
 
 Text/font installation checks: 376 editor library tests passed, 42 ignored; seven
 physical GPU App tests passed; strict all-target Clippy, scoped rustfmt and diff
@@ -1815,7 +1817,7 @@ Buttons/keybindings, file selection/default policies, the nonblocking load comma
 native output-device barriers and native surface presentation remain open. Snapshot
 capture itself is synchronous under the source fence; these tests do not establish
 capture latency, frame pacing or 120/160 FPS. Full ENG-03 through ENG-13 remain open.
-[Evidence](production-readiness-evidence-2026-10-27/background-editor-save/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/background-editor-save/qualification.json).
 
 Background-save checks: 380 editor library tests passed, 42 ignored; 99 scene tests
 and seven physical GPU App tests passed; strict all-target Clippy for both crates,
@@ -1859,7 +1861,7 @@ wired or qualified by this milestone. Source observation must be scheduled after
 the source frame's accepted publication work; later source/GPU changes correctly
 reject rather than publish a mixed version. Frame pacing and FPS remain open,
 as do full ENG-03 through ENG-13 and the complete engine goal.
-[Evidence](production-readiness-evidence-2026-10-27/owned-ui-installation-phases/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/owned-ui-installation-phases/qualification.json).
 
 Owned installation checks: 381 editor library tests passed, 42 ignored; seven
 physical GPU App tests passed; strict all-target Clippy, scoped rustfmt and diff
@@ -1913,7 +1915,7 @@ and offscreen GPU path. User actions/default policies/file selection, interactiv
 cancel, failing-source-frame recovery, native audio output queues, real window/input
 presentation, physical memory, load/capture latency and target FPS remain open.
 Full ENG-03 through ENG-13 and the complete engine goal are not closed.
-[Evidence](production-readiness-evidence-2026-10-27/frame-polled-editor-load/qualification.json).
+[Evidence](../production-readiness-evidence-2026-10-27/frame-polled-editor-load/qualification.json).
 
 Frame-polled load checks: 384 editor library tests passed, 42 ignored; seven
 physical GPU App tests passed; strict all-target Clippy, scoped rustfmt and diff
@@ -1936,7 +1938,7 @@ scoped rustfmt и diff check. Три настоящих GPU file-install сце�
 отменой в Models и Ui с проверкой сохранения исходной сцены, затем обычной
 успешной загрузкой. Native window/audio-device lifecycle и FPS не проверялись.
 Кнопка/команда UI для отмены ещё не подключена; ENG-03–13 остаются открытыми.
-[Логи, границы проверки и хеши исходников](production-readiness-evidence-2026-10-27/cancellable-editor-load/qualification.json).
+[Логи, границы проверки и хеши исходников](../production-readiness-evidence-2026-10-27/cancellable-editor-load/qualification.json).
 
 
 ## Дополнение: прогресс загрузки и отмена в панели, 27 октября 2026
@@ -1956,7 +1958,7 @@ scoped rustfmt и diff check. Три настоящих GPU file-install сце�
 Окно не запускалось. Подключение команд открытия/сохранения полного checkpoint,
 выбора пути и production-политики бюджетов остаётся следующим шагом; прежние
 Save/Load авторской сцены сохраняют свой формат и поведение.
-[Доказательства и хеши](production-readiness-evidence-2026-10-27/editor-load-progress-controls/qualification.json).
+[Доказательства и хеши](../production-readiness-evidence-2026-10-27/editor-load-progress-controls/qualification.json).
 
 
 ## Дополнение: команды полного снимка и desktop-профиль, 27 октября 2026
@@ -1987,7 +1989,7 @@ pixels, ticks и audio frames совпали. Финальные проверк�
 43 ignored; 7 GPU App tests passed на M4 Max/Metal; strict all-target Clippy и
 scoped format/diff checks прошли. Native window и audio-device lifecycle остаются
 неподтверждёнными; окно не открывалось. ENG-03–13 не закрыты.
-[Логи, ревизия и хеши](production-readiness-evidence-2026-10-27/desktop-snapshot-commands/qualification.json).
+[Логи, ревизия и хеши](../production-readiness-evidence-2026-10-27/desktop-snapshot-commands/qualification.json).
 
 
 ## Дополнение: восстановимые ошибки снимков, 27 октября 2026
@@ -2012,7 +2014,7 @@ panel-тест использует реальное App-сообщение и �
 Проверки: 389 editor tests passed, 44 ignored; 7 GPU App и 5 GPU panel tests passed
 на M4 Max/Metal; strict all-target Clippy, scoped rustfmt и diff check прошли.
 Native window и audio-device lifecycle, FPS и весь ENG-03–13 остаются открытыми.
-[Доказательства, логи и хеши](production-readiness-evidence-2026-10-27/recoverable-snapshot-errors/qualification.json).
+[Доказательства, логи и хеши](../production-readiness-evidence-2026-10-27/recoverable-snapshot-errors/qualification.json).
 
 
 ## Дополнение: кадровый цикл активного окна, 27 октября 2026
@@ -2038,7 +2040,7 @@ Clippy, scoped rustfmt и diff check прошли. GPU regressions провер�
 ни 120/160 FPS, ни native frame pacing/latency/power этим этапом не подтверждены.
 Требуется контролируемый оконный before/after на заданных сцене, качестве,
 разрешении, presentation mode и устройстве. Полный ENG-03–13 остаётся открытым.
-[Границы проверки, логи и хеши](production-readiness-evidence-2026-10-27/native-frame-cadence/qualification.json).
+[Границы проверки, логи и хеши](../production-readiness-evidence-2026-10-27/native-frame-cadence/qualification.json).
 
 
 ## Дополнение: асинхронное управление native audio, 27 октября 2026
@@ -2066,7 +2068,7 @@ Offline после этого работает. Queue PCM и позиция hard
 Следующий необходимый шаг — точный захват/восстановление исходной device queue,
 композиция с PcmPump suffix и clock/rate, rollback/cancel через исходный owner и
 затем реальная hardware qualification. ENG-03–13 и общий выпуск остаются открытыми.
-[Логи, границы проверки и хеши](production-readiness-evidence-2026-10-27/async-native-audio-control/qualification.json).
+[Логи, границы проверки и хеши](../production-readiness-evidence-2026-10-27/async-native-audio-control/qualification.json).
 
 
 ## Дополнение: точная очередь PCM и пакетный PcmPump, 27 октября 2026
@@ -2103,7 +2105,7 @@ host clock/rate, затем квалифицировать на реальном
 изолированного freeze callback выдаёт намеренную тишину, поэтому один token не
 заменяет pause и не доказывает audible continuity. Окно/устройство не открывались.
 ENG-03–13 и весь выпуск остаются открытыми.
-[Логи, CPU-пары, ограничения и хеши](production-readiness-evidence-2026-10-27/checkpointable-pcm-queue/qualification.json).
+[Логи, CPU-пары, ограничения и хеши](../production-readiness-evidence-2026-10-27/checkpointable-pcm-queue/qualification.json).
 
 
 ## Дополнение: бинарный output participant в playback archive, 27 октября 2026
@@ -2136,7 +2138,7 @@ Native AudioOwner/AudioSession guards сохранены: нужна компо�
 ack, original reload barriers и native publication, затем hardware qualification.
 Host buffers/playback position этим record не сохраняются. FPS и весь ENG-03–13
 остаются открытыми.
-[Доказательства, логи и хеши](production-readiness-evidence-2026-10-27/pcm-output-archive/qualification.json).
+[Доказательства, логи и хеши](../production-readiness-evidence-2026-10-27/pcm-output-archive/qualification.json).
 
 
 ## Дополнение: audio resume после остальных владельцев, 27 октября 2026
@@ -2161,7 +2163,7 @@ scoped format/diff checks прошли.
 AudioSession barrier. Native admission guards сохранены; реальное устройство,
 окно и timing resume не проверялись. Составление pause ack + queue token +
 AudioOwner reload/архив остаётся следующим шагом. ENG-03–13 не закрыты.
-[Доказательства, negative control и хеши](production-readiness-evidence-2026-10-27/audio-resumes-after-resource-fences/qualification.json).
+[Доказательства, negative control и хеши](../production-readiness-evidence-2026-10-27/audio-resumes-after-resource-fences/qualification.json).
 
 
 ## Дополнение: native source capture в AudioSession, 27 октября 2026
@@ -2196,7 +2198,7 @@ Session проверяет раннюю отмену до capture, два ста
 M4 Max/Metal прошли; strict all-target Clippy обоих crates и scoped format/diff
 checks прошли. Native окно, полный editor file workflow, native target publication,
 reconnect/host-failure recovery и FPS остаются открытыми; ENG-03–13 не закрыты.
-[Логи native device/session, границы проверки и хеши](production-readiness-evidence-2026-10-27/native-audio-session-capture/qualification.json).
+[Логи native device/session, границы проверки и хеши](../production-readiness-evidence-2026-10-27/native-audio-session-capture/qualification.json).
 
 
 ## Дополнение: подготовленный native AudioSession, 27 октября 2026
@@ -2228,7 +2230,7 @@ consumed output, сохраняя текущую очередь.
 остаётся закрытой: нужны owned readiness/commit, согласование queue gate с
 остальными App owners и реальная проверка восстановления. Native окно, слышимая
 непрерывность и FPS не квалифицированы; ENG-03–13 остаются открытыми.
-[Логи, границы проверки и хеши](production-readiness-evidence-2026-10-27/prepared-native-audio-session/qualification.json).
+[Логи, границы проверки и хеши](../production-readiness-evidence-2026-10-27/prepared-native-audio-session/qualification.json).
 
 
 ## Дополнение: owned native audio publication, 27 октября 2026
@@ -2259,7 +2261,7 @@ readiness/commit и окончательное release queue с общей scene
 транзакцией. Ошибки остальных владельцев должны проверяться до audio commit;
 общего rollback уже committed audio здесь нет. Native окно, слышимая непрерывность,
 host playback position, reconnect и FPS не квалифицированы. ENG-03–13 открыты.
-[Логи, сценарии и хеши](production-readiness-evidence-2026-10-27/native-audio-owned-publication/qualification.json).
+[Логи, сценарии и хеши](../production-readiness-evidence-2026-10-27/native-audio-owned-publication/qualification.json).
 
 
 ## Дополнение: финальный native audio permit, 27 октября 2026
@@ -2293,7 +2295,7 @@ finish очистил source checkpoint/gate без backend resume; retirement j
 Это готовый commit/release механизм, но полный App native scene/GPU/UI/input load
 ещё не подключён, обычный native load gate сохранён. Native окно, слышимая
 непрерывность, reconnect, FPS/latency/power и весь ENG-03–13 остаются открытыми.
-[Логи, границы проверки и хеши](production-readiness-evidence-2026-10-27/native-audio-commit-permit/qualification.json).
+[Логи, границы проверки и хеши](../production-readiness-evidence-2026-10-27/native-audio-commit-permit/qualification.json).
 
 
 ## Сохранение: возобновление игры до завершения записи файла
@@ -2316,7 +2318,7 @@ all-target editor Clippy и scoped rustfmt прошли. В первом вар�
 desktop policy, исходный отказ сохранён в evidence. Это проверка save workflow,
 без native window/FPS или нового native audio device прогона. Полный native
 scene/GPU/UI/input load и ENG-03–13 остаются открытыми.
-[Проверки, логи и исходный хеш](production-readiness-evidence-2026-10-27/save-resumes-before-file-write/qualification.json).
+[Проверки, логи и исходный хеш](../production-readiness-evidence-2026-10-27/save-resumes-before-file-write/qualification.json).
 
 
 ## Native-аудио подключено к общей загрузке App
@@ -2348,7 +2350,7 @@ Missing-source watcher diagnostics ожидаемы: valid prior model/UI/audio 
 format/diff checks прошли. Это квалификация активного native output при совпадающих
 rate/capacity. Native idle, cross-mode loads, reconnect, настоящее окно, слышимая
 непрерывность, FPS/latency/power и весь ENG-03–13 остаются открытыми.
-[Evidence, логи и исходные хеши](production-readiness-evidence-2026-10-27/native-audio-app-load/qualification.json).
+[Evidence, логи и исходные хеши](../production-readiness-evidence-2026-10-27/native-audio-app-load/qualification.json).
 
 
 ## Native idle и UI lifecycle после Stop
@@ -2376,7 +2378,7 @@ Stop, асинхронным завершением output owner и послед
 all-target Clippy и scoped format/diff прошли. Исходный Stop/UI отказ сохранён.
 Незавершённый device Stop требует обычного polling до admission; reconnect,
 cross-mode playback, окно, слышимая непрерывность, FPS и ENG-03–13 не закрыты.
-[Логи, ограничения и хеши](production-readiness-evidence-2026-10-27/native-idle-and-stop-ui/qualification.json).
+[Логи, ограничения и хеши](../production-readiness-evidence-2026-10-27/native-idle-and-stop-ui/qualification.json).
 
 
 ## 28 октября: активный native output → сцена без воспроизведения
@@ -2403,7 +2405,7 @@ connection до finish, закрытие/завершение worker и native p
 format/diff прошли. Уже переданные host/analog buffers не отменяются задним числом.
 Idle→native startup/load, остальные cross-mode переходы, reconnect, окно, FPS
 и весь ENG-03–13 остаются открытыми.
-[Evidence и исходные хеши](production-readiness-evidence-2026-10-28/native-active-to-idle/qualification.json).
+[Evidence и исходные хеши](../production-readiness-evidence-2026-10-28/native-active-to-idle/qualification.json).
 
 
 ## 28 октября: idle → native archive через общий restore
@@ -2433,7 +2435,7 @@ Cancel/timeout cleanup остаётся асинхронным до оконча
 zero-filled callbacks возможны до pause; слышимая/аналоговая непрерывность
 не проверена. Nonempty offline/native conversion, active offline→native,
 reconnect/rate changes, настоящее окно, FPS и весь ENG-03–13 остаются открытыми.
-[Логи, ограничения и хеши](production-readiness-evidence-2026-10-28/idle-to-native-restore/qualification.json).
+[Логи, ограничения и хеши](../production-readiness-evidence-2026-10-28/idle-to-native-restore/qualification.json).
 
 
 ## 28 октября: offline archive → native output
@@ -2463,7 +2465,7 @@ runtime/clock/raw PCM/imported data и empty queue/pump до release, а так�
 native Session test passed; strict all-target Clippy и scoped format/diff прошли.
 Native→offline outstanding PCM, reconnect/rate changes, настоящее окно,
 слышимая непрерывность, FPS и ENG-03–13 остаются открытыми.
-[Логи, границы и исходные хеши](production-readiness-evidence-2026-10-28/offline-to-native-restore/qualification.json).
+[Логи, границы и исходные хеши](../production-readiness-evidence-2026-10-28/offline-to-native-restore/qualification.json).
 
 
 ## 28 октября: native → offline с сохранением ожидающего PCM
@@ -2496,4 +2498,4 @@ positive проверкой новой функции, corrupt-output rejection 
 all-target Clippy двух crates и scoped format/diff прошли. Host/analog buffers
 и слышимая непрерывность не квалифицированы; reconnect/rate changes, окно,
 FPS и весь ENG-03–13 остаются открытыми.
-[Evidence, логи и хеши](production-readiness-evidence-2026-10-28/native-to-offline-prefix/qualification.json).
+[Evidence, логи и хеши](../production-readiness-evidence-2026-10-28/native-to-offline-prefix/qualification.json).

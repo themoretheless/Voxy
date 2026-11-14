@@ -121,7 +121,7 @@ impl WaterTransferProgram {
     /// Rejects malformed graphs, missing required neighbors and read/write budgets.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step(
         &self,
@@ -152,7 +152,7 @@ impl WaterTransferProgram {
     /// Returns the same validation/compute/budget errors as `step`.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_detailed(
         &self,
@@ -184,7 +184,7 @@ impl WaterTransferProgram {
     /// Returns graph, availability-shape, compute and lazy-read errors.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_detailed_available(
         &self,
@@ -225,7 +225,7 @@ impl WaterTransferProgram {
     /// after checking its sample budget; rejects malformed status masks.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_detailed_status(
         &self,
@@ -252,7 +252,7 @@ impl WaterTransferProgram {
 
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn step_available(
         &self,
@@ -294,7 +294,7 @@ impl WaterTransferProgram {
     /// Solver and mapping errors are returned later by `try_result`.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn begin_step_detailed_status(
         &self,
@@ -321,7 +321,7 @@ impl WaterTransferProgram {
 
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn begin_available(
         &self,
@@ -449,7 +449,7 @@ impl CudaWaterTransferProgram {
     /// Returns graph, solver, CUDA driver or output validation failures.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_detailed_status(
         &self,

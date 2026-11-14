@@ -241,7 +241,7 @@ fn force_accumulation_preserves_existing_loads_and_is_atomic_on_late_overflow() 
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn moving_skin_reference_work_closes_independent_spring_energy_and_moment() {
     let skin = [[0.25; 3], [0.1, 0.2, 0.3]];

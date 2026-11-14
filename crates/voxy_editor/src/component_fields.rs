@@ -400,7 +400,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn animation_marker_list_is_editable_empty_and_undoable_through_panel() {
         let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -596,7 +596,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn animation_inspector_rejects_invalid_values_and_round_trips_bind_pose_history() {
         let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))

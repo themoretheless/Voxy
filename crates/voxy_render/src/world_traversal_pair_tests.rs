@@ -5,7 +5,7 @@ use super::WorldTraversalPair;
 #[cfg(target_os = "macos")]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn comparator_detects_protected_low_bits_and_ignores_only_metadata()
 -> Result<(), Box<dyn std::error::Error>> {

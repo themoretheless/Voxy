@@ -112,7 +112,7 @@ fn static_asset() -> EditorAsset {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn entire_file_preserves_asset_model_lod_source_mesh_and_independent_equal_ownership() {
     let limits = EditorAssetCheckpointLimits::default();

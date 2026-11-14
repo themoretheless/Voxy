@@ -1990,6 +1990,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn imported_rig_support_motion_refines_without_weakening_admission() {
         let model = voxy_model::ModelAsset::parse(
             include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
@@ -2400,6 +2401,7 @@ mod tests {
         assert_eq!(before, format!("{:?}", fast.bodies));
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn body_walk_jump_and_settle() {
         let mut d = TissueDemo::body();
         let n = d.mesh().unwrap().vertices().len();

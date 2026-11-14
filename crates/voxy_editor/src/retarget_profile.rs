@@ -106,7 +106,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn source_only_rig_imports_and_survives_package_without_project_files() {
         use voxy_assets::{AssetId, PackageLimits, ResourcePackage};

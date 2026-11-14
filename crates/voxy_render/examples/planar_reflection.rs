@@ -5,7 +5,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let backend = match std::env::args().skip(1).collect::<Vec<_>>().as_slice() {

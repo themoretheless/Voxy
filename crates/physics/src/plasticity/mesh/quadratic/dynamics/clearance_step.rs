@@ -19,7 +19,7 @@ impl QuadraticDynamics {
     /// born during this step and edge-edge crossings are not covered.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_loaded_before_fragment_clearance(
         &mut self,
@@ -98,7 +98,7 @@ impl QuadraticDynamics {
 impl super::FiniteQuadraticDynamics {
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_loaded_before_fragment_clearance(
         &mut self,
@@ -142,7 +142,7 @@ impl QuadraticDynamics {
     /// failures roll back the whole interval, including earlier valid prefixes.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_loaded_until_fragment_clearance(
         &mut self,

@@ -151,7 +151,7 @@ impl Renderer {
     /// Reports unavailable surfaces, adapters, devices and renderer capabilities.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub async fn new_with_instance<T>(
         target: T,
@@ -567,7 +567,7 @@ impl Renderer {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn upload_chunk_data(
         &mut self,
@@ -1199,7 +1199,7 @@ impl Renderer {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn encode_resident_voxels_to_targets(
         &self,
@@ -1501,7 +1501,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn noop_backend_validates_voxel_pipeline_and_draw() {
         let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor {
@@ -1667,7 +1667,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn noop_backend_validates_indirect_voxel_pipeline_and_draw() {
         let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor {
@@ -1785,7 +1785,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn noop_backend_validates_photoreal_bodycam_pipelines_and_draw() {
         let (device, queue) = wgpu::Device::noop(&wgpu::DeviceDescriptor {

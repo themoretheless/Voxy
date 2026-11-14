@@ -79,7 +79,7 @@ impl App {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn animation_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         if std::env::var_os("VOXY_RETARGET_ROTATION_SMOKE").is_some() {
@@ -538,7 +538,7 @@ impl App {
 impl App {
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn retarget_rotation_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         use glam::{Quat, Vec3};
@@ -870,7 +870,7 @@ impl App {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn foot_contact_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         use glam::{Mat4, Vec3};

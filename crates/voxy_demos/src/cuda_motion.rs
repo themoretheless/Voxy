@@ -99,7 +99,7 @@ pub fn character_motion(
 /// CUDA/controller failures leave the original state unchanged; no CPU fallback.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn step_character_collision(
     compute: &CudaCompute,

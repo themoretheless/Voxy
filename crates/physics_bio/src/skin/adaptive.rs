@@ -31,7 +31,7 @@ impl Skin {
     /// Failed intervals never publish a partially integrated skin state.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_adaptive_with_contacts(
         &mut self,
@@ -58,7 +58,7 @@ impl Skin {
     /// Return an admitted candidate without changing this skin.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn prepare_adaptive_with_contacts(
         &self,
@@ -91,7 +91,7 @@ impl Skin {
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn advance(
     skin: &mut Skin,

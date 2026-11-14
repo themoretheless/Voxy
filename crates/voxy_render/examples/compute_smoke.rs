@@ -15,7 +15,7 @@ fn cs_main(@builtin(global_invocation_id) id: vec3<u32>) {
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let backend = match std::env::var("VOXY_COMPUTE_BACKEND").as_deref() {

@@ -66,7 +66,7 @@ pub(crate) struct PreparedPlaySession {
 impl PlaySession {
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn checkpoint(
         &self,
@@ -204,7 +204,7 @@ impl PlaySessionCheckpoint {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn prepare(
         &self,
@@ -457,7 +457,7 @@ pub(crate) mod tests {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn fixture(registry: &ComponentRegistry) -> (PreparedPlaySession, Arc<ModelAsset>) {
         let mut scene = SceneDocument {
@@ -849,7 +849,7 @@ pub(crate) mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn full_play_record_rebuilds_scene_and_continues_120_frames_with_late_failure_atomicity() {
         let (registry, behaviors, ui) = codecs();
@@ -1042,7 +1042,7 @@ pub(crate) mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn idle_play_origin_tracks_input_preview_state_and_mode_without_starting_a_game() {
         let (registry, _, _) = codecs();
@@ -1164,7 +1164,7 @@ pub(crate) mod tests {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn exercise_full_play_resources(with_gpu: bool, frame_mode: AcceptedFrameMode) {
         let shared_frame = matches!(frame_mode, AcceptedFrameMode::Shared);

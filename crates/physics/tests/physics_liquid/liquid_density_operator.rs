@@ -512,7 +512,7 @@ fn joint_force_pipeline_never_publishes_partially_admitted_state() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn supported_density_normal_pipeline_preserves_wall_images_and_atomic_failure() {
     use physics::liquid::{
@@ -733,7 +733,7 @@ fn original_pressure_laws_cover_compression_gas_and_current_density_admission() 
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn complete_pipeline_whole_rejection_and_late_failure_preserve_native_state() {
     use physics::liquid::{

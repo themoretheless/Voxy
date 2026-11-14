@@ -69,7 +69,7 @@ impl crate::astrophysics::spherical::Sphere {
     /// Work budget includes every frequency bin, shell chord and angular sample.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn free_free_radiation_rates(
         &self,
@@ -211,7 +211,7 @@ impl crate::astrophysics::spherical::Sphere {
     /// Invalid inputs, opacity/EOS domain, exhausted budget or overflow. Atomic.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn radiate_free_free(
         &mut self,
@@ -344,7 +344,7 @@ impl crate::astrophysics::spherical::Sphere {
     /// Both thermal halves share budgets; all phases commit together.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_reactive_free_free(
         &mut self,

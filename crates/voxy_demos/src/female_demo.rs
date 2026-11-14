@@ -1683,6 +1683,7 @@ mod tests {
         .unwrap();
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn surface_light_control_changes_irradiance_without_rebuilding_diffusion_or_geometry() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -1720,6 +1721,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn forehead_wrinkle_relief_follows_brow_pose_without_reapplying_mask() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -1769,6 +1771,7 @@ mod tests {
         assert_eq!(raised.indices(), raised_creased.indices());
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn camera_gaze_converges_from_both_eye_centers() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.preview_expression = Some(Default::default());
@@ -1784,6 +1787,7 @@ mod tests {
     }
     use super::*;
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grasp_preset_switch_preserves_pose_and_failed_load_keeps_target() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -1870,6 +1874,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn full_character_follows_elapsed_frame_time() {
         for frames in [180, 120] {
             let mut demo = FemaleDemo::new().unwrap();
@@ -1905,6 +1910,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn physical_skin_preserves_forearm_surface() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -1957,6 +1963,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn probe_contacts_actual_surface_and_retracts() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -1993,6 +2000,7 @@ mod tests {
         println!("SKIN PROBE: peak axial reaction {maximum_force:.6} N; retracts without overlap");
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn complexion_follows_face_animation_and_leaves_eyes_untinted() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2050,6 +2058,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn animation_preview_uses_elapsed_time_without_skin_solver() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2061,6 +2070,7 @@ mod tests {
         assert_eq!(demo.skin.positions(), demo.skin.rest_positions());
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn ordinary_gesture_keeps_rendered_feet_at_their_support_height() {
         let mut demo = FemaleDemo::new().unwrap();
         let rest = demo.mesh().unwrap();
@@ -2085,6 +2095,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn secondary_face_and_hair_colliders_share_the_rendered_head_pose() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2120,6 +2131,7 @@ mod tests {
         ));
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn jump_excitation_matches_visible_root_and_stops_during_settling() {
         let mut demo = FemaleDemo::new().unwrap();
         // A stationary root must not receive an invisible jump force.
@@ -2164,6 +2176,7 @@ mod tests {
         std::fs::write(path, serde_json::to_vec(&rows).unwrap()).unwrap();
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn delayed_full_model_frame_matches_six_fixed_physics_steps() {
         let mut delayed = FemaleDemo::new().unwrap();
         let mut fixed = FemaleDemo::new().unwrap();
@@ -2215,6 +2228,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn gpu_body_stream_preserves_every_non_hair_vertex() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2244,6 +2258,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn parallel_full_secondary_preserves_skin_and_hair_contacts() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2279,6 +2294,7 @@ mod tests {
         assert_eq!(demo.steps, 8);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn film_substrate_matches_rendered_body_without_visual_work() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -2348,6 +2364,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn rejected_skin_step_preserves_secondary_regions_and_attachment_state() {
         let snapshot = |demo: &FemaleDemo| {
             format!(
@@ -2382,6 +2399,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn full_secondary_demo_advances_skin_and_all_volume_regions() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2431,6 +2449,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn preview_has_visible_soft_region_motion_and_settles() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2478,6 +2497,7 @@ mod tests {
         assert!(demo.secondary.iter().all(|s| s.velocity()[1].abs() < 0.003));
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn secondary_motion_changes_actual_model_vertices() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -2504,6 +2524,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn real_mesh_loads_and_skin_deforms_rendered_surface() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -2564,6 +2585,7 @@ mod tests {
 #[cfg(test)]
 mod morphology_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn face_live_reload_keeps_last_valid_preset() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2582,6 +2604,7 @@ mod morphology_tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn face_constructor_preserves_animated_topology_and_attachment_density() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2612,6 +2635,7 @@ mod morphology_tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn parameters_preserve_real_model_topology_and_motion() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2654,6 +2678,7 @@ mod morphology_tests {
 #[cfg(test)]
 mod parameter_reload_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn watched_file_updates_and_invalid_json_keeps_last_body() {
         let path = std::env::temp_dir().join(format!("voxy-reload-{}.json", std::process::id()));
         std::fs::write(&path, "{\"height_cm\":182,\"breast_size\":1.3}").unwrap();
@@ -2675,6 +2700,7 @@ mod parameter_reload_tests {
 #[cfg(test)]
 mod film_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_model_accepts_film_and_advances_a_frame() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2694,6 +2720,7 @@ mod film_tests {
 #[cfg(test)]
 mod parameter_skin_rebase_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn pupil_parameter_changes_only_eye_metadata_not_geometry_or_skin() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2732,6 +2759,7 @@ mod parameter_skin_rebase_tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn skin_material_coordinates_stay_attached_across_morph_and_animation() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2777,6 +2805,7 @@ mod parameter_skin_rebase_tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn parameter_edit_rebases_shell_without_accumulating_morphs() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2828,6 +2857,7 @@ mod parameter_skin_rebase_tests {
 #[cfg(test)]
 mod parameterized_hair_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn edited_groom_and_collider_advance_in_the_same_space() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2859,6 +2889,7 @@ mod parameterized_hair_tests {
 #[cfg(test)]
 mod nipple_refinement_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn response_advances_with_animation_time_and_survives_target_changes() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2906,6 +2937,7 @@ mod nipple_refinement_tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn response_uses_integrated_solver_time_instead_of_unconsumed_frame_time() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2927,6 +2959,7 @@ mod nipple_refinement_tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn refined_landmarks_have_complete_bindings_and_visible_cold_deformation() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.surface_diffusion_enabled = false;
@@ -2979,6 +3012,7 @@ mod nipple_refinement_tests {
 #[cfg(test)]
 mod film_state_capture_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn moving_body_film_conserves_source_adjusted_mass_over_two_seconds() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -3076,14 +3110,17 @@ mod film_state_capture_tests {
         assert!((actual - initial - demo.time * 1e-9 * density).abs() < initial * 1e-12);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn physical_film_uses_consumed_solver_time_and_current_surface() {
         check_physical_film_clock(true);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn full_skin_solver_film_uses_consumed_time_and_current_surface() {
         check_physical_film_clock(false);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn animated_film_uses_current_pose_and_rejects_truncated_time() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -3138,6 +3175,7 @@ mod film_state_capture_tests {
         assert_eq!(demo.film.as_ref().unwrap().state_snapshot(), state);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn viewer_callback_exports_actual_film_once_for_the_requested_frame() {
         let directory = std::env::temp_dir().join(format!(
             "voxy-viewer-film-{}-{}",
@@ -3184,6 +3222,7 @@ mod film_state_capture_tests {
 #[cfg(test)]
 mod male_asset_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn male_source_has_complete_bindings_and_advances() {
         let mut male = super::FemaleDemo::new_male().unwrap();
         assert_eq!(male.body_vertices, 44_880);
@@ -3207,6 +3246,7 @@ mod male_asset_tests {
 #[cfg(test)]
 mod model_selection_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn source_switch_rebuilds_bindings_and_preserves_view_controls() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.show_strain = true;
@@ -3236,6 +3276,7 @@ mod model_selection_tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn source_switch_transfers_existing_fluid_without_mass_loss() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.enable_film([0., 0.20, 0.13], 0.04, 5e-8).unwrap();
@@ -3273,6 +3314,7 @@ mod model_selection_tests {
 #[cfg(test)]
 mod source_switch_geometry_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn switched_film_uses_morphed_geometry_in_the_first_frame() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.animation_only = true;
@@ -3308,6 +3350,7 @@ mod source_switch_geometry_tests {
 #[cfg(test)]
 mod same_source_film_morph_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn morphed_film_updates_immediately_without_resetting_time_or_mass() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.animation_only = true;
@@ -3352,6 +3395,7 @@ mod same_source_film_morph_tests {
         assert!((reset["massKg"].as_f64().unwrap() - mass).abs() / mass < 1e-12);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn appearance_only_edit_preserves_live_physics_and_film() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.animation_only = true;
@@ -3492,6 +3536,7 @@ mod authored_jump_integration_tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn coupled_hair_backend_preserves_publication_and_native_retry() {
         struct Backend {
             calls: usize,
@@ -3693,6 +3738,7 @@ mod authored_jump_integration_tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn authored_jump_initialization_preserves_rest_and_advances_coupled_skin_hair() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -3761,6 +3807,7 @@ mod authored_jump_integration_tests {
         ));
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grounded_preview_keeps_shared_source_when_replacing_the_body() {
         use crate::humanoid_locomotion::LocomotionClip;
         let mut demo = FemaleDemo::new().unwrap();
@@ -4165,6 +4212,7 @@ mod authored_jump_integration_tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn physical_stance_preview_renders_the_accepted_pose() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.enable_physical_stance().unwrap();

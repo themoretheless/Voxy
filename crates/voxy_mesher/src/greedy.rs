@@ -317,7 +317,7 @@ fn populate_mask_ao(padded_occ: &[u8], face: FaceDir, slice: u8, mask: &mut Face
 /// Fills the mask of a chunk-boundary slice by sampling the halo through the oracle classifier.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn boundary_mask(
     input: &MeshingInput,

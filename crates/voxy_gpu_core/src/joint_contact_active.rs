@@ -724,7 +724,7 @@ mod tests {
     #[ignore = "requires an actual GPU; experimental complete resident active-set candidate"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_resident_active_set_candidate_preserves_original_coordinate_kkt() {
         let instance = crate::GraphicsOptions::default().create_instance();

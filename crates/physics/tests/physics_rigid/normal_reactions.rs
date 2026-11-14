@@ -308,7 +308,7 @@ fn late_budget_invalid_geometry_and_bad_settings_preserve_inputs() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn supporting_plane_owner_and_reciprocal_swap_are_explicit() {
     let mut a = body([-0.04, 1., 0.], [3., 0., 0.], 0.);

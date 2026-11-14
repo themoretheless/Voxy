@@ -120,7 +120,7 @@ impl GgxDfgLut {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn build(
         device: &wgpu::Device,
@@ -394,7 +394,7 @@ mod energy_tests {
     #[ignore = "requires physical GPU; precise DFG scene and planar binding qualification"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn energy_moment_owner_attaches_without_float32_filtering() {
         let instance = crate::GraphicsOptions::default().create_instance();

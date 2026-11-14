@@ -42,7 +42,7 @@ impl App {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn advance_game(&mut self, elapsed: f64) -> Result<(), Box<dyn std::error::Error>> {
         if !elapsed.is_finite() || elapsed < 0. {
@@ -312,7 +312,7 @@ impl App {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn toggle_play(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         if self.model_relink.is_some() || self.model_relink_draft.is_some() {

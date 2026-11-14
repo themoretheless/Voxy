@@ -161,7 +161,7 @@ impl RayReconstructionGuides {
 #[must_use]
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn svgf_atrous_stopping_weight(
     n_p: [f32; 3],

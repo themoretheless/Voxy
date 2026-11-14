@@ -1,13 +1,15 @@
+> Архив. Документ не обновляется; действующий план: [`../PLAN.md`](../PLAN.md).
+
 # Отчёт о шести инфраструктурных шагах (2026-11-12)
 
 Документ фиксирует, что именно добавлено в рабочее дерево 2026-11-12 по шести шагам, и что из этого
 **не** следует. Исходного «6-фазного плана» в репозитории нет: порядок и критерии этапов задаёт
 [`engine-roadmap-2026-10-25.md`](engine-roadmap-2026-10-25.md) (ENG-00…ENG-13), статус ведёт
-[`engine-status-2026-11-11/README.md`](engine-status-2026-11-11/README.md).
+[`engine-status-2026-11-11/README.md`](../engine-status-2026-11-11/README.md).
 
 **Статус: движок не production-ready.** Ни один критерий выхода ENG-этапа этими шагами не закрыт.
 Шаги 2-6 добавляют библиотечные примитивы с модульными тестами. К продукту подключены два из них: суставы
-(тик Play в редакторе) и кэш проб (`street_walk`); остальные пока не вызываются редактором, игрой или рендерером. Сверка с кодом и замечания: [`plans-review-2026-11-12.md`](plans-review-2026-11-12.md).
+(тик Play в редакторе) и кэш проб (`street_walk`); остальные пока не вызываются редактором, игрой или рендерером. Сверка с кодом и замечания: [`../PLAN.md`](../PLAN.md).
 
 Состояние git на момент отчёта: всё перечисленное не закоммичено. Не отслеживаются
 `crates/voxy_player/`, `crates/voxy_gameplay/src/joints.rs`, `crates/voxy_scene/src/replication.rs`,
@@ -21,7 +23,7 @@
 
 ### Шаг 1. Бюджет размера файлов, патчи wgpu, CI (ENG-00)
 
-- **Список исключений `KNOWN_OVERSIZED` пуст** ([`crates/voxy_depgraph/tests/sources.rs`](../crates/voxy_depgraph/tests/sources.rs)).
+- **Список исключений `KNOWN_OVERSIZED` пуст** ([`crates/voxy_depgraph/tests/sources.rs`](../../crates/voxy_depgraph/tests/sources.rs)).
   Бюджет `LINE_BUDGET = 1500` считает только прод-строки достижимых из дерева `mod` файлов, без
   `#[cfg(test)]`-участков. Файлов длиннее 1500 строк по `wc -l` в воркспейсе много (в основном тесты,
   самый большой `crates/voxy_demos/src/gpu_hair_joint.rs`, 6806 строк), и это бюджету не противоречит.
@@ -29,16 +31,16 @@
 
   | Файл | Было (HEAD) | Стало | Вынесено |
   |---|---|---|---|
-  | [`physics/src/liquid/multi_body.rs`](../crates/physics/src/liquid/multi_body.rs) | 1669 | 1382 | [`multi_body/step_entry.rs`](../crates/physics/src/liquid/multi_body/step_entry.rs), 296 строк (новый) |
-  | [`voxy_gameplay/src/angular_sweep.rs`](../crates/voxy_gameplay/src/angular_sweep.rs) | 1575 | 1143 | [`angular_sweep/path_bounds.rs`](../crates/voxy_gameplay/src/angular_sweep/path_bounds.rs), 444 строки (новый) |
-  | [`voxy_web/src/browser.rs`](../crates/voxy_web/src/browser.rs) | 1609 | 1434 | в существовавший [`voxel_terrain.rs`](../crates/voxy_web/src/voxel_terrain.rs): 119 -> 324 строки |
+  | [`physics/src/liquid/multi_body.rs`](../../crates/physics/src/liquid/multi_body.rs) | 1669 | 1382 | [`multi_body/step_entry.rs`](../../crates/physics/src/liquid/multi_body/step_entry.rs), 296 строк (новый) |
+  | [`voxy_gameplay/src/angular_sweep.rs`](../../crates/voxy_gameplay/src/angular_sweep.rs) | 1575 | 1143 | [`angular_sweep/path_bounds.rs`](../../crates/voxy_gameplay/src/angular_sweep/path_bounds.rs), 444 строки (новый) |
+  | [`voxy_web/src/browser.rs`](../../crates/voxy_web/src/browser.rs) | 1609 | 1434 | в существовавший [`voxel_terrain.rs`](../../crates/voxy_web/src/voxel_terrain.rs): 119 -> 324 строки |
 
 - **Регрессионный тест патчей `vendor/wgpu`**: `vendored_wgpu_patches_preserve_core_device_identity_and_metal_surface_autorelease`
   в том же файле проверяет, что в `vendor/wgpu/src/backend/wgpu_core.rs` остались `CoreDevice::identity()` с
   указателем на `Global` и `impl_eq_ord_hash_proxy!(CoreDevice => .identity())`, а в
   `vendor/wgpu-hal/src/metal/surface.rs` осталась защита `autoreleasepool`.
 - **`.gitignore`**: `*.vprobes.tmp`, `*_skipped.face`, `*_skipped.node`.
-- **CI** ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)): тулчейн `nightly-2026-05-27` (тот же, что в
+- **CI** ([`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)): тулчейн `nightly-2026-05-27` (тот же, что в
   `rust-toolchain.toml`), `cargo clippy --workspace --all-targets -- -D warnings`, матрица
   `macos-latest` / `ubuntu-latest` / `windows-latest`, job `cross-targets`: `cargo check -p voxy_web` для
   `wasm32-unknown-unknown` и `cargo check -p voxy_mobile` для `aarch64-apple-ios` и `aarch64-linux-android`.
@@ -50,32 +52,32 @@
 
 ### Шаг 2. Чтение ассетов из `.vpak` в памяти и крейт `voxy_player` (к ENG-03 / ENG-10)
 
-- [`voxy_assets/src/files.rs`](../crates/voxy_assets/src/files.rs): `AssetSourceProvider`
+- [`voxy_assets/src/files.rs`](../../crates/voxy_assets/src/files.rs): `AssetSourceProvider`
   (`Directory(FileInputs)` | `Package(Arc<ResourcePackage>)`) с методами `read` и `fingerprint`.
-- [`voxy_assets/src/package.rs`](../crates/voxy_assets/src/package.rs): `ResourcePackage::fingerprint` и
+- [`voxy_assets/src/package.rs`](../../crates/voxy_assets/src/package.rs): `ResourcePackage::fingerprint` и
   `ResourcePackage::open_project_descriptor` (пакет из байтов открывает существовавший `ResourcePackage::from_bytes`).
-- Новый крейт [`voxy_player`](../crates/voxy_player/src/lib.rs) (только библиотека, 324 строки, без бинаря,
+- Новый крейт [`voxy_player`](../../crates/voxy_player/src/lib.rs) (только библиотека, 324 строки, без бинаря,
   окна и цикла кадра): `GameHost`, `BehaviorSetup`, `register_builtin_ui_handlers`,
   `builtin_ui_action_checkpoint_registry` и `InMemoryPackagedProject` (`from_vpak_bytes`, `from_package`).
   `InMemoryPackagedProject` проверяет манифест, сцену, раскрытие префабов, отпечатки привязок манифеста и
   разрешимость ссылок `editor.model.v1`. Меши, материалы, шрифты и аудио он не декодирует.
-- [`voxy_editor/src/game_host.rs`](../crates/voxy_editor/src/game_host.rs) и
-  [`ui_action_codecs.rs`](../crates/voxy_editor/src/ui_action_codecs.rs) реэкспортируют из `voxy_player`.
-  Рёбра графа внесены в [`depgraph.rs`](../crates/voxy_depgraph/tests/depgraph.rs),
-  [`tools/check_engine_boundaries.py`](../tools/check_engine_boundaries.py) и [`architecture.md`](architecture.md) §4.
+- [`voxy_editor/src/game_host.rs`](../../crates/voxy_editor/src/game_host.rs) и
+  [`ui_action_codecs.rs`](../../crates/voxy_editor/src/ui_action_codecs.rs) реэкспортируют из `voxy_player`.
+  Рёбра графа внесены в [`depgraph.rs`](../../crates/voxy_depgraph/tests/depgraph.rs),
+  [`tools/check_engine_boundaries.py`](../../tools/check_engine_boundaries.py) и [`architecture.md`](../architecture.md) §4.
 - **Подключено к:** только к собственному тесту. Автономного запускаемого плеера нет; `InMemoryPackagedProject`
   не использует ни один раннер.
 
 ### Шаг 3. Кэш запечённых проб и узлы `RenderGraph` (к ENG-05)
 
-- [`voxy_render/src/probe_gi.rs`](../crates/voxy_render/src/probe_gi.rs): `BakedProbeCache`, конверт
+- [`voxy_render/src/probe_gi.rs`](../../crates/voxy_render/src/probe_gi.rs): `BakedProbeCache`, конверт
   `voxy_core::CheckpointEnvelope` с магией `VPRB`, версией 1 и CRC-32C. Методы: `new`, `to_bytes`, `from_bytes`,
   `save_to_path` (запись через временный файл и `rename`), `load_from_path`, `upload_to_buffer`.
-- [`archive_scene/probe_timing.rs`](../crates/voxy_render/src/archive_scene/probe_timing.rs):
+- [`archive_scene/probe_timing.rs`](../../crates/voxy_render/src/archive_scene/probe_timing.rs):
   `ArchiveSceneRenderer::read_irradiance_probe_cache(&bake)` считывает коэффициенты завершённого запекания с GPU,
   `restore_irradiance_probe_cache(min, max, spacing, &cache)` загружает их вместо запекания и возвращает `false`,
   если кэш снят для другой сетки.
-- [`voxy_render/src/render_graph.rs`](../crates/voxy_render/src/render_graph.rs): `RenderGraphNode::Ocean`
+- [`voxy_render/src/render_graph.rs`](../../crates/voxy_render/src/render_graph.rs): `RenderGraphNode::Ocean`
   (`add_ocean`) и `RenderGraphNode::ScreenSpaceFluid` (`add_screen_space_fluid`), вызывающие
   `OceanRenderer::encode` и `ScreenSpaceFluidRenderer::encode`.
 - **Подключено к:** кэш подключён к примеру `street_walk` через переменную `VOXY_STREET_PROBE_CACHE=<файл.vprobes>`:
@@ -90,7 +92,7 @@
 
 ### Шаг 4. Компонент `PhysicsJoint` (к ENG-04)
 
-- [`voxy_gameplay/src/joints.rs`](../crates/voxy_gameplay/src/joints.rs): сериализуемый компонент
+- [`voxy_gameplay/src/joints.rs`](../../crates/voxy_gameplay/src/joints.rs): сериализуемый компонент
   `game.physics-joint.v1` с видами `Fixed`, `Hinge`, `DistanceSpring`, валидацией параметров, переназначением
   `target` при инстанцировании префабов, функциями `solve_distance_spring_position`, `collect_physics_joints`,
   `step_physics_joints`, `validate_physics_joints` и `step_scene_physics_joints` (тело системы `joint.step`).
@@ -99,9 +101,9 @@
   цель могут иметь разных родителей. Пять тестов: пружина, `Fixed` и `Hinge` под разными родителями, сбор привязок,
   проверка перед стартом, совместимость с фазой движущихся платформ.
 - **Подключено к:** система `joint.step` добавлена в `voxy_gameplay::gameplay_schedule` (после `kinematic.step`,
-  до персонажей) и исполняется в Play редактора ([`app/play_mode.rs`](../crates/voxy_editor/src/app/play_mode.rs)).
+  до персонажей) и исполняется в Play редактора ([`app/play_mode.rs`](../../crates/voxy_editor/src/app/play_mode.rs)).
   Standalone и пакет идут через тот же `App::advance_game` (`HeadlessGame`), отдельной проводки не потребовалось.
-- **Правка в редакторе** ([`joint_authoring.rs`](../crates/voxy_editor/src/joint_authoring.rs)): на странице
+- **Правка в редакторе** ([`joint_authoring.rs`](../../crates/voxy_editor/src/joint_authoring.rs)): на странице
   компонентов инспектора сустав добавляется и удаляется кнопкой, цель выбирается в иерархии тем же механизмом, что у
   следящей камеры; «Pick» меняет цель, «Change» переключает вид, параметры и якоря правятся как поля компонента.
   Новый сустав `Fixed` удерживает авторскую относительную позу. Недопустимые значения (`PhysicsJoint::valid`), цель
@@ -119,7 +121,7 @@
 
 ### Шаг 5. Навигация по карте высот (к ENG-07)
 
-- [`voxy_navigation/src/lib.rs`](../crates/voxy_navigation/src/lib.rs): `HeightfieldNavGrid`. Это 2.5D: одна высота
+- [`voxy_navigation/src/lib.rs`](../../crates/voxy_navigation/src/lib.rs): `HeightfieldNavGrid`. Это 2.5D: одна высота
   и один вертикальный габарит на ячейку, многоуровневых поверхностей (мост над дорогой) он не описывает.
   Лимиты `max_step_height`, `max_slope_tan`, `min_clearance` задаются в `HeightfieldNavGrid::new`; поиск:
   `find_path_3d(&self, start, goal, max_expanded)`, детерминированный 8-связный A* с запретом срезания углов.
@@ -127,7 +129,7 @@
 
 ### Шаг 6. Снимки и дельты сцены в памяти (к ENG-12)
 
-- [`voxy_scene/src/replication.rs`](../crates/voxy_scene/src/replication.rs):
+- [`voxy_scene/src/replication.rs`](../../crates/voxy_scene/src/replication.rs):
   - `TickSnapshot`: канонический `SceneDocument` с номером тика и CRC-32C состояния;
   - `SceneSnapshotDelta`: изменённые объекты целиком плюс удалённые `ObjectId`; `diff(&base, &target)` и
     `apply(&TickSnapshot)` с проверкой `base_tick` и контрольной суммы результата;

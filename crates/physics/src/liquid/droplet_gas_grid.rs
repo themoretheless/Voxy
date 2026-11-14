@@ -148,7 +148,7 @@ impl Liquid {
     /// the complete liquid and every gas cell, including late heating failures.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn exchange_marked_droplet_drag_grid(
         &mut self,

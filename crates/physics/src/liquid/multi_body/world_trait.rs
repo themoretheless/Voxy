@@ -360,7 +360,7 @@ pub trait LiquidBodyWorld {
     /// Read the admitted patch at the same outer-step time as the sweep.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn rigid_environment_patch_at(
         &self,
@@ -377,7 +377,7 @@ pub trait LiquidBodyWorld {
 
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn rigid_pair_patch_for_feature(
         &self,
@@ -457,7 +457,7 @@ pub trait LiquidBodyWorld {
     /// cannot infer a rotating normal owner from a world normal alone.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn rigid_pair_supports(
         &self,
@@ -576,7 +576,7 @@ pub trait LiquidBodyWorld {
     /// Legacy admission is valid only when every model is None.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn sweep_supported_rigid_pair_point_motion(
         &self,
@@ -662,7 +662,7 @@ pub trait LiquidBodyWorld {
     /// Defaults preserve point-only backends; geometry can return up to 128 points.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn rigid_pair_patch(
         &self,

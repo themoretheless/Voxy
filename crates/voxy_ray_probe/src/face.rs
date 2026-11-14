@@ -7,7 +7,7 @@ use voxy_render::{
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn render(
     device: &wgpu::Device,
@@ -476,7 +476,7 @@ fn position_key(position: [f32; 3]) -> Result<[u32; 3], &'static str> {
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn ray_shade(
     device: &wgpu::Device,

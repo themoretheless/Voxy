@@ -7,7 +7,7 @@ use voxy_scene::{SceneGraph, Transform};
 #[ignore = "requires a real GPU and two local TrueType fonts"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher() {
     let first = std::fs::read("/System/Library/Fonts/Supplemental/Arial.ttf").unwrap();

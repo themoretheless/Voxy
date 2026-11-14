@@ -110,7 +110,7 @@ fn snapshot(input: &mut Cursor<Vec<u8>>) -> Snapshot {
 #[ignore = "requires an actual captured contact component binary"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn captured_contact_component_replays_without_full_model_warmup() {
     let path = std::env::var("VOXY_HAIR_CONTACT_COMPONENT_FIXTURE")

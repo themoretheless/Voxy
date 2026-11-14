@@ -7,7 +7,7 @@ use voxy_render::{SceneDraw, SceneRenderer, SceneView};
 #[ignore = "full-density actual groom GPU material pixel qualification"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn resident_groom_draw_matches_cpu_on_two_poses() {
     pollster::block_on(async {
@@ -280,7 +280,7 @@ fn resident_groom_draw_matches_cpu_on_two_poses() {
 #[ignore = "actual groom GPU extraction timestamp profile"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn resident_groom_extraction_gpu_timestamp_cost() {
     pollster::block_on(async {
@@ -400,7 +400,7 @@ fn resident_groom_extraction_gpu_timestamp_cost() {
 #[ignore = "actual prepared body sparse physical shell GPU transfer qualification"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn full_body_gpu_shell_transfer_matches_cpu_and_clears_previous_deformation() {
     pollster::block_on(async {
@@ -515,7 +515,7 @@ fn full_body_gpu_shell_transfer_matches_cpu_and_clears_previous_deformation() {
 #[ignore = "actual full CPU rig plus physical shell versus composed GPU stages"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn full_rig_and_shell_gpu_composition_matches_cpu_pose() {
     pollster::block_on(async {
@@ -894,7 +894,7 @@ fn gpu_rigid_blend_equal_weights_matches_cpu_hemisphere_anchor() {
 /// and normal transport must both reach the draw buffers before comparison.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn compare_body_pixels(
     device: &wgpu::Device,
@@ -1068,7 +1068,7 @@ fn compare_body_pixels(
 #[ignore = "full facial detail and resident body GPU composition"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn resident_body_preserves_actual_facial_details_on_two_poses() {
     pollster::block_on(async {

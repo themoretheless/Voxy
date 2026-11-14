@@ -616,7 +616,7 @@ impl SceneRenderer {
     /// Rejects non-overlay global draws, invalid targets/regions and missing MSAA.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn encode_view_frame_msaa4(
         &self,
@@ -764,7 +764,7 @@ impl SceneRenderer {
     /// or overlay layers before recording commands.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn encode_refractive_layers(
         &self,

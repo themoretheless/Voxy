@@ -285,7 +285,7 @@ impl ArchiveSceneRenderer {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn advance_probe_face(
         &mut self,
@@ -790,7 +790,7 @@ mod bake_tests {
     #[ignore = "requires a physical Metal GPU"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn single_submission_probe_bake_matches_separate_submissions() {
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {

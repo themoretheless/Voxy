@@ -33,7 +33,7 @@ impl GgxEnvironmentPrefilter {
     /// Internal full-precision import path; caller validates format/filter support.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn with_samples_format(
         device: &wgpu::Device,

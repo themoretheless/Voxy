@@ -363,7 +363,7 @@ impl CellPoreTissue {
     /// Invalid mappings, wall overflow or failed subsolve preserves all state.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_lymphatic_walls(
         &mut self,
@@ -391,7 +391,7 @@ impl CellPoreTissue {
     /// Invalid/duplicate attachment, overflow or failed solve preserves all state.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_attached_lymphatic_walls(
         &mut self,
@@ -421,7 +421,7 @@ impl CellPoreTissue {
     /// Invalid attachments, singular radius or failed solve preserves accepted states.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_lymphatic_geometry(
         &mut self,
@@ -451,7 +451,7 @@ impl CellPoreTissue {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn step_mixed_darcy_geometry_order(
         &mut self,
@@ -617,7 +617,7 @@ impl CellPoreTissue {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_inertial_lymphatic_geometry(
         &mut self,
@@ -778,7 +778,7 @@ impl CellPoreTissue {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_radial_profiles(
         &mut self,
@@ -931,7 +931,7 @@ impl CellPoreTissue {
     /// Invalid tolerances/mapping, failed FEM or exhausted steps preserve both states.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_lymphatic_walls_adaptive(
         &mut self,
@@ -959,7 +959,7 @@ impl CellPoreTissue {
     /// Invalid mapping/tolerance or failed trial preserves both accepted states.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_attached_lymphatic_walls_adaptive(
         &mut self,
@@ -989,7 +989,7 @@ impl CellPoreTissue {
     /// Invalid laws/tolerances or failed trial preserve geometry and fluid inventories.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_lymphatic_geometry_adaptive(
         &mut self,
@@ -1054,7 +1054,7 @@ impl CellPoreTissue {
     /// Invalid tolerances, failed solve or trial exhaustion preserves all three states.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_inertial_lymphatic_geometry_adaptive(
         &mut self,
@@ -1141,7 +1141,7 @@ impl CellPoreTissue {
     /// Invalid controls, failed solve or exhausted trials preserves all three states.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_mixed_darcy_with_radial_profiles_adaptive(
         &mut self,

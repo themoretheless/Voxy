@@ -265,7 +265,7 @@ impl AnimGraph {
     /// clips/spaces/masks/poses for another rig, invalid machines, or a cycle.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn compile(desc: GraphDesc, skeleton: &Skeleton) -> Result<Self, AnimationError> {
         let root = desc
@@ -899,7 +899,7 @@ impl GraphPlayer {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn evaluate_plain(
         &self,

@@ -52,7 +52,7 @@ impl SurfaceFilm {
     /// skew-mesh cross-diffusion reconstruction is not included.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn solve_squeeze_pressure(
         &self,
@@ -286,7 +286,7 @@ impl SurfaceFilm {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(super) fn step_squeeze_components(
         &mut self,

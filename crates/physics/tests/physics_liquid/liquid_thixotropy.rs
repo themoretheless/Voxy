@@ -347,7 +347,7 @@ fn coupled_structure_and_viscosity_refine_toward_the_same_solution() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn advecting_pressurized_structured_flow_refines_in_all_evolved_variables() {
     use physics::liquid::ViscousIntegrator;

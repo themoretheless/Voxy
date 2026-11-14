@@ -6,7 +6,7 @@ use super::*;
 // it does not cover that ray's primary raster pixel. No hit record is injected.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn exact_image_hit_fixture(
     device: &wgpu::Device,
@@ -26,7 +26,7 @@ pub(super) fn exact_image_hit_fixture(
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn exact_image_hit_fixture_impl(
     device: &wgpu::Device,

@@ -85,7 +85,7 @@ impl Liquid {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn restore_phase_checkpoint_inner(
         &mut self,
@@ -269,7 +269,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn fixed_and_pressure_phase_history_rebuild_without_enthalpy_remap() {
         for saturated in [false, true] {

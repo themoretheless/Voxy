@@ -459,7 +459,7 @@ fn walk<const RETAIN: bool, const EXACT: bool>(
 #[ignore = "requires original VRC1 geometry; constructs axes natively without serialized witnesses"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn captured_native_exact_axis_discovery_certifies_and_rejects_penetration() {
     let data =

@@ -6,7 +6,7 @@ use voxy_render::{
 };
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut liquid = Liquid::new(
@@ -265,7 +265,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn verify_rendered_scene(
     device: &wgpu::Device,
@@ -745,7 +745,7 @@ fn verify_rendered_scene(
 // a non-square extent. This input upload is not used by scene composition.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn verify_hdr_storage_presentation(
     device: &wgpu::Device,
@@ -981,7 +981,7 @@ fn verify_hdr_storage_presentation(
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn verify_single_scattering(
     device: &wgpu::Device,
@@ -1206,7 +1206,7 @@ fn verify_single_scattering(
 #[allow(deprecated)]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn verify_solid_shadow_scattering(
     device: &wgpu::Device,
@@ -1515,7 +1515,7 @@ fn verify_solid_shadow_scattering(
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn verify_shadow_setting_updates(
     device: &wgpu::Device,

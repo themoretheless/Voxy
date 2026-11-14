@@ -205,7 +205,7 @@ impl CollectionOverride {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn apply(&self, value: &mut Value, key: &str) -> Result<(), DocumentError> {
         if self
@@ -376,7 +376,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn defaults_create_empty_collection_items_with_unique_caller_ids_and_validation() {
         #[derive(Serialize, Deserialize)]
@@ -496,7 +496,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn collection_authoring_operations_use_ids_validate_and_preserve_history() {
         #[derive(Serialize, Deserialize)]

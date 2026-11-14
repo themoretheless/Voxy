@@ -152,7 +152,7 @@ fn textured_static_import_rejects_truncation_and_observes_external_dependencies(
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn external_texture_watcher_failure_and_recovery_preserve_authored_scene() {
     let directory = std::env::temp_dir().join(format!(
@@ -382,7 +382,7 @@ pub(crate) fn write_glb(path: &std::path::Path, spec: &serde_json::Value, binary
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn multi_material_nodes_preserve_parent_transforms_and_all_six_min_filters() {
     let bytes = std::fs::read(fixture().join("assembly.glb")).unwrap();
@@ -787,7 +787,7 @@ fn watcher_reloads_valid_model_sources_larger_than_manifest_budget() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn manifest_retarget_replaces_watched_dependencies_after_failure_without_scene_edits() {
     let directory = std::env::temp_dir().join(format!(
@@ -1027,7 +1027,7 @@ fn empty_project_manifest_inventory_updates_without_model_import_and_respects_ba
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn sampler_only_reload_preserves_geometry_and_survives_source_free_project_package() {
     let temp = crate::project_prefab_tests::Temp::new();

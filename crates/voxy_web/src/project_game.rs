@@ -50,6 +50,8 @@ pub(crate) struct ProjectGame {
     render_worlds: RenderWorldCache,
     registry: ComponentRegistry,
     angular: AngularMotionBatch,
+    /// Durable joint targets resolved once at load; the scene graph is borrowed during the tick.
+    joint_targets: Vec<(voxy_scene::ObjectId, NodeId)>,
     physics: Option<CharacterPhysics>,
     input: InputMap,
     package: ResourcePackage,
@@ -442,6 +444,7 @@ impl ProjectGame {
             .register::<OrbitView>("editor.camera.v1")
             .map_err(document_error)?;
         voxy_gameplay::register_follow_camera(&mut registry).map_err(document_error)?;
+        voxy_gameplay::register_physics_joint(&mut registry).map_err(document_error)?;
         registry
             .register::<ModelAnimation>("editor.model-animation.v1")
             .map_err(document_error)?;
@@ -468,6 +471,13 @@ impl ProjectGame {
             )
             .map_err(document_error)?;
         let angular = AngularMotionBatch::new(&loaded.graph, OBJECTS).map_err(error)?;
+        voxy_gameplay::validate_physics_joints(&loaded.graph, |id| loaded.resolve(id))
+            .map_err(error)?;
+        let joint_targets = loaded
+            .graph
+            .components::<voxy_gameplay::PhysicsJoint>()
+            .filter_map(|(_, joint)| Some((joint.target.clone(), loaded.resolve(&joint.target)?)))
+            .collect();
         let graph = &loaded.graph;
         let physics = if graph.components::<CharacterBody>().next().is_some()
             || graph.components::<BoxCollider>().next().is_some()
@@ -510,6 +520,7 @@ impl ProjectGame {
             render_worlds: RenderWorldCache::default(),
             registry,
             angular,
+            joint_targets,
             physics,
             input: voxy_gameplay::player_input_with_gamepad().map_err(error)?,
             package,
@@ -615,6 +626,15 @@ impl ProjectGame {
                 self.angular
                     .fixed_step(scene, dt)
                     .map_err(|failure| failure.to_string())?;
+                // Same order as the native `joint.step`: after kinematic motion, before characters.
+                let joints = voxy_gameplay::collect_physics_joints(scene, |id| {
+                    self.joint_targets
+                        .iter()
+                        .find_map(|(target, node)| (target == id).then_some(*node))
+                })?;
+                if !joints.is_empty() {
+                    voxy_gameplay::step_physics_joints(scene, &joints, dt as f32)?;
+                }
                 if let Some(physics) = &mut self.physics {
                     root_motion::apply_character_motion(
                         physics,

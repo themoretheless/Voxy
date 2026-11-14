@@ -299,7 +299,7 @@ impl Tissue {
     /// Invalid input, numerical overflow, or inverted cells leave state unchanged.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_with_contact(
         &mut self,
@@ -540,7 +540,7 @@ impl Tissue {
 /// Rejects invalid centers through the validated solver constructor.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn sample(kind: TissueKind, center: V) -> Result<Tissue, &'static str> {
     let (points, weights, edges, tets) = match kind {

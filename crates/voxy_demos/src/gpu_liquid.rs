@@ -91,7 +91,7 @@ impl GpuLiquidBackend {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn compute(
         &mut self,
@@ -295,7 +295,7 @@ mod tests {
     #[ignore = "requires actual GPU; application adapter and deliberate memory-budget rejection"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_application_liquid_backend_steps_and_recovers_from_budget_rejection() {
         use physics::liquid::{Config, Liquid, Material, Particle};

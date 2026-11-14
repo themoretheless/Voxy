@@ -342,7 +342,7 @@ fn prepare_implicit_response_with_solver(
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn accelerate_active_set<S: ProjectionVector + ?Sized>(
     constraints: &mut [Constraint],
@@ -1677,7 +1677,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn coupled_newton_motion_stops_closing_contact_and_preserves_free_guide() {
         let radius = 40e-6;

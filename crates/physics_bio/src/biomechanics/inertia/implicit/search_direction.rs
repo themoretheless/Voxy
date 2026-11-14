@@ -19,7 +19,7 @@ impl InertialBody {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(in crate::biomechanics::inertia) fn step_implicit_supports_controlled(
         &mut self,
@@ -396,7 +396,7 @@ pub(super) fn try_coupled_contact_direction_with_material(
 }
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn try_coupled_contact_direction_with_material_prepared(
     weight: &[f64],

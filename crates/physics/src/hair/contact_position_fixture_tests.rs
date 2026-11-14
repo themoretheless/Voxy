@@ -4,7 +4,7 @@ use super::*;
 use crate::hair::{HairLinearSolver, HairLinearSystem, HairResponseSystem, RodContact};
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn fixture(index: usize) -> HairRod {
     let mut rod = HairRod::new(
@@ -1232,7 +1232,7 @@ fn fixture(index: usize) -> HairRod {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn captured_body_contact_tangent_replay_preserves_roots_and_admits_both_planes() {
     struct Capture {

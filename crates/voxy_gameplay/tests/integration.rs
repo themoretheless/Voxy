@@ -2645,7 +2645,7 @@ fn ordered_screw_trajectory_hits_wall_after_translation_and_budget_failure_is_at
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn rigid_preparation_stops_before_rounded_contact_and_preserves_callback_rollback() {
     use voxy_animation::{RootRigidPath, RootRigidTwist};
@@ -2756,7 +2756,7 @@ fn rigid_preparation_stops_before_rounded_contact_and_preserves_callback_rollbac
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_preparation() {
     use voxy_animation::{
@@ -2932,7 +2932,7 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn mixed_certified_fade_tick_rolls_back_and_retries_all_motion_kinds() {
     use voxy_animation::{

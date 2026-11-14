@@ -860,7 +860,7 @@ mod terminal_side_replay_tests {
     #[ignore = "requires failed rod199 full nonlinear contact replay"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn captured_terminal_trajectory_side_probe() {
         let (_, radius, _, _, rods, meshes, continuous) =

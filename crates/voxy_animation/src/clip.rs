@@ -151,7 +151,7 @@ impl AnimationClip {
     /// or cubic channels with fewer than two keys, in addition to `new` validation.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new_with_tangents(
         name: impl Into<Arc<str>>,

@@ -99,7 +99,7 @@ impl FootPivotTransfer {
     /// Rejects invalid targets, foreign skeletons and IK/palette failures.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn solve_frame(
         &self,

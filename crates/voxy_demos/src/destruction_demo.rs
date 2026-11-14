@@ -46,7 +46,7 @@ impl DestructionDemo {
     /// Any physics or world failure; nothing is partially applied to the world.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
         let registry = Arc::new(BlockRegistry::new(vec![

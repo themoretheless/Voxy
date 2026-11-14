@@ -691,7 +691,7 @@ fn support_accuracy_driven_path_matches_independent_prescribed_verlet() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn support_accuracy_rotating_supports_match_refined_verlet_and_rollback() {
     let initial = moving_free_node_specimen();

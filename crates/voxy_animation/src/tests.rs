@@ -65,7 +65,7 @@ fn local_f64_time_narrowing_preserves_same_time_translation_error_and_key_bounda
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn local_translation_sample_error_partition_and_held_channel_contract() {
     let rig = skeleton();
@@ -907,7 +907,7 @@ fn mirrored_bind_transforms_keep_signed_scale_through_hierarchy_and_palette() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn signed_scale_channels_and_blends_reject_only_singular_samples() {
     let skeleton = skeleton();
@@ -1036,7 +1036,7 @@ fn hierarchy_and_inverse_bind_produce_skin_matrices() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn cubic_derivatives_use_segment_seconds_and_normalize_rotation() {
     let skeleton = skeleton();
@@ -1174,7 +1174,7 @@ fn cubic_derivatives_use_segment_seconds_and_normalize_rotation() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn invalid_cubic_pose_keeps_animator_clock_and_transition() {
     let skeleton = skeleton();
@@ -1347,7 +1347,7 @@ fn cubic_scale_overshoot_is_sampled_and_invalid_zero_scale_is_rejected() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn step_channels_hold_values_at_boundaries_without_changing_linear_channels() {
     let skeleton = skeleton();

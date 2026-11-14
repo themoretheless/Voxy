@@ -116,7 +116,7 @@ impl Sphere {
     /// Invalid/mismatched reference, reservoir, reconstruction or work budget.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_composition_balanced_exterior(
         &mut self,
@@ -141,7 +141,7 @@ impl Sphere {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn step_composition_balanced_impl(
         &mut self,

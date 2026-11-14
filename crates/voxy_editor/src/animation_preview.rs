@@ -327,7 +327,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn prepared_source_guard_observes_preview_frame_identity_and_exact_phase() {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -459,7 +459,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn retarget_preview_uses_source_phase_target_bind_and_in_place_axes() {
         let directory = std::env::temp_dir().join(format!(
@@ -740,7 +740,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn marker_preview_is_authoring_only_toggleable_and_rejects_stale_configuration() {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))

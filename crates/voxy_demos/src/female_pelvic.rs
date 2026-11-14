@@ -1082,6 +1082,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn pelvic_anatomy_binds_and_sculpts_clitoris_sphincters_and_prolapse_on_female_model() {
         let demo = crate::female_demo::FemaleDemo::new().expect("load female demo");
         assert!(

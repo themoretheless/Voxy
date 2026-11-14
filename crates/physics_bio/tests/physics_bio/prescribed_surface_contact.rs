@@ -1601,7 +1601,7 @@ fn nonlinear_uniaxial_support_work_refines_without_temporal_subdivision() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn regional_body_domains_match_separate_contact_laws_and_path_work() {
     let source = obstacle();

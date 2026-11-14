@@ -44,7 +44,7 @@ impl FrameFixture {
     }
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn synchronize_fixture(
         &mut self,
@@ -151,7 +151,7 @@ fn request(owner: NodeId, model: &Arc<ModelAsset>, speed: f32) -> Request {
 #[ignore = "requires real GPU; retained CPU texture publication and pixel readback"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn retained_texture_publications_survive_reload_pose_failure_and_source_deletion() {
     use voxy_assets::{
@@ -652,7 +652,7 @@ fn pixels_with_texture(
 #[ignore = "requires real GPU; editor owner playback and scene draw"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
@@ -964,7 +964,7 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
 #[ignore = "requires GPU; animated editor LOD camera and budget publication"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn animated_lod_views_budget_and_cpu_fallback() {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
@@ -1664,7 +1664,7 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
 #[ignore = "requires real GPU; fixed-tick hierarchy owners at runtime capacity"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn fixed_tick_hierarchy_owners_share_gpu_source_at_capacity() {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
@@ -1800,7 +1800,7 @@ fn composed_root_motion_collision_renders_once_with_in_place_gpu_palette() {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn rig_trajectory_gpu(composed: bool) {
     use glam::{Mat4, Quat, Vec3};
@@ -1998,7 +1998,7 @@ fn authored_roll_foot_gpu_matches_independent_pivot_geometry_and_clears_resource
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn planted_foot_gpu_acceptance(retarget: bool, roll: bool) {
     use glam::{Mat4, Vec3};
@@ -2311,7 +2311,7 @@ fn gpu_rigid_morph_without_source_skin_uses_common_owner() -> Result<(), Box<dyn
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn morph_weight_only_owner_acceptance(rigid: bool) -> Result<(), Box<dyn std::error::Error>> {
     let temp = crate::locomotion_tests::Temp::new();
@@ -2460,7 +2460,7 @@ fn morph_weight_only_owner_acceptance(rigid: bool) -> Result<(), Box<dyn std::er
 #[ignore = "requires physical GPU and VOXY_MORPH_UPSTREAM_GLB; ordinary imported owner with all original primitives"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_original_morph_owner_updates_all_primitives() -> Result<(), Box<dyn std::error::Error>> {
     let source_path = std::env::var_os("VOXY_MORPH_UPSTREAM_GLB")

@@ -254,7 +254,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn glyph_geometry_clips_uvs_and_rejects_stale_owner_publications() {
         let bytes = [

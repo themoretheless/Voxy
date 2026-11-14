@@ -68,7 +68,7 @@ impl Liquid {
     /// by the backend; linear-only defaults reject rather than sweep a chord.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_with_rigid_body_forces(
         &mut self,
@@ -91,7 +91,7 @@ impl Liquid {
     /// are sampled from their real net-wrench paths, never clamped to rest.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_with_supported_rigid_body_forces(
         &mut self,
@@ -123,7 +123,7 @@ impl Liquid {
     /// interval and impact. Unresolved contact evolution rolls back the whole tick.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_with_supported_rigid_body_point_forces(
         &mut self,
@@ -156,7 +156,7 @@ impl Liquid {
     /// is not included by this entry point.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_with_rigid_body_point_forces(
         &mut self,
@@ -186,7 +186,7 @@ impl Liquid {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn step_rigid_forces(
         &mut self,

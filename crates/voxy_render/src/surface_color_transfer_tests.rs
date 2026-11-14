@@ -6,7 +6,7 @@ use crate::{
 #[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn inherited_colors_follow_current_sources_without_touching_geometry() {
     pollster::block_on(async {

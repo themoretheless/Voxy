@@ -149,7 +149,7 @@ fn step_character_acceleration(
 /// Invalid state/motion or world query errors preserve the original character.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn step_character_with_motion(
     view: &impl VoxelView,

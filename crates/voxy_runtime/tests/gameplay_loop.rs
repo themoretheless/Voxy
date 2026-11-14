@@ -13,7 +13,7 @@ const DT: f64 = 1.0 / 60.0;
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn canonical_gameplay_loop_composes_character_water_projectile_explosion_and_vehicle() {
     let scene = build_bootstrap_scene(0x56_4f_58_59, 1).unwrap();

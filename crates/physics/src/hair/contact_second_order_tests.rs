@@ -102,7 +102,7 @@ fn save_local_terminal(
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn local_restoration(
     rods: &mut Vec<HairRod>,
@@ -534,7 +534,7 @@ fn assert_recovery_geometry(
 #[ignore = "requires actual nonlinear failure VHR; reports candidate gates, not qualification"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn captured_second_order_feasibility_candidate() {
     let (dt, radius, _, collision, mut rods, meshes, continuous) =
@@ -1035,7 +1035,7 @@ fn captured_terminal_feasibility_repair() {
 #[ignore = "requires VHR material/predictions and VDP1 complete rejected direction"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn captured_direction_energy_curve() {
     use std::io::Read;

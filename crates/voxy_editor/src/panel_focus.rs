@@ -411,7 +411,7 @@ mod integration_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn unpresented_panels_block_hits_and_cancel_held_activation_until_represented() {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -532,7 +532,7 @@ mod integration_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn real_panels_and_native_key_adapter_share_focus_and_authoring_actions() {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))

@@ -231,7 +231,7 @@ mod tests {
     #[ignore = "requires actual GPU; force and accumulation chain with one final readback"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_force_chain_preserves_physical_owners_and_resource_lifetime() {
         use physics::liquid::{

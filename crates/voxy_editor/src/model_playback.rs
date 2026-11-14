@@ -1194,7 +1194,7 @@ mod physical_fade_receipt_tests {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn exercise_physical_fade_receipt(original_sources: bool, collision: bool) {
         use voxy_animation::RootRigidTransform;

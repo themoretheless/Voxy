@@ -5,7 +5,7 @@ use voxy_render::{LodArchiveLimits, LodSurface};
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn accepted_geometry_and_animation_files_restore_without_sources_and_match_all_clips() {
     use voxy_render::{GeometryArchiveLimits, ImageCheckpoint, SceneMeshCheckpoint};
@@ -274,7 +274,7 @@ fn accepted_geometry_and_animation_files_restore_without_sources_and_match_all_c
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
     let stamp = std::time::SystemTime::now()

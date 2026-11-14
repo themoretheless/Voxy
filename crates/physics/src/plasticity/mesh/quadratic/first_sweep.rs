@@ -17,7 +17,7 @@ impl QuadraticFace {
     /// bounds have the same limitations as swept_point_clearance_at.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn first_point_clearance_at(
         &self,

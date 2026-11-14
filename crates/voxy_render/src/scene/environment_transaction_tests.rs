@@ -96,7 +96,7 @@ fn foreign_scene_and_changed_msaa_reject_before_mutation() {
 #[ignore = "requires physical GPU; joint scene/reflection atlas transaction"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn scene_and_reflection_commit_together_and_stale_capture_rolls_back_all() {
     use crate::{

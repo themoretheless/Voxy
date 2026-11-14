@@ -88,7 +88,7 @@ impl<'a> EqualityQr<'a> {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn solve(
         &mut self,
@@ -473,7 +473,7 @@ pub(super) fn unilateral_with_proposals(
 // arithmetic. A backend can encode every ready request under one device owner.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn unilateral_batch_with_proposals(
     requests: &[super::HairContactCoordinateRequest<'_>],
@@ -591,7 +591,7 @@ pub(super) fn unilateral_batch_with_proposals(
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn unilateral_with_equality_backend(
     columns: &[Vec<f64>],
@@ -660,7 +660,7 @@ impl<'a> UnilateralContinuation<'a> {
     #[allow(clippy::fn_params_excessive_bools)]
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn new(
         columns: &'a [Vec<f64>],
@@ -1389,7 +1389,7 @@ mod tests {
     #[ignore = "requires a captured VQC1 operator and original physical loads"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn captured_guarded_append_order_retains_original_physical_admission() {
         let data = std::fs::read(std::env::var("VOXY_HAIR_QR_INPUT_FIXTURE").unwrap()).unwrap();
@@ -1584,7 +1584,7 @@ mod tests {
     #[ignore = "paired timing requires a captured VQC1 physical contact input"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn captured_prefix_reuse_matches_reference_and_reports_paired_time() {
         let data = std::fs::read(std::env::var("VOXY_HAIR_QR_INPUT_FIXTURE").unwrap()).unwrap();
@@ -1850,7 +1850,7 @@ mod tests {
     #[ignore = "requires a captured VQC1 contact input"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn captured_active_contacts_retain_original_clearance() {
         use std::io::Read;
@@ -2203,7 +2203,7 @@ mod continuation_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn cooperative_rounds_match_serial_with_release_retry_and_early_completion() {
         let columns = [
@@ -2322,7 +2322,7 @@ mod continuation_tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn paused_coordinate_owners_interleave_without_crossing_state() {
         let columns = [

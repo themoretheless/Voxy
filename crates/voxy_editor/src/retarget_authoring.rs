@@ -358,7 +358,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn source_and_pairs_apply_once_invalid_drafts_cancel_and_history_are_atomic() {
         let nonce = std::time::SystemTime::now()

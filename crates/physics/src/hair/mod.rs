@@ -716,7 +716,7 @@ impl HairSystem {
     /// Accelerator side effects are external and cannot be rolled back.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_validated(
         &mut self,
@@ -736,7 +736,7 @@ impl HairSystem {
     /// Accelerator observations remain external to the transaction.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn prepare_validated(
         &self,

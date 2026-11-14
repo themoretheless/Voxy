@@ -80,7 +80,7 @@ impl Body {
     /// Any solve/validation failure preserves body, cell protein and reservoir.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_cell_pore_reservoir_step(
         &mut self,
@@ -137,7 +137,7 @@ impl Body {
     /// Failure preserves geometry, fluid inventories and caller protein.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_cell_pore_boundary_protein_step(
         &mut self,
@@ -166,7 +166,7 @@ impl Body {
     /// Invalid port/concentration assignments or any failed solve preserve state.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_cell_pore_boundary_protein_step_with_concentrations(
         &mut self,
@@ -195,7 +195,7 @@ impl Body {
     /// Invalid assignments or any failed subsolve preserve tissue and protein.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_cell_pore_boundary_protein_step_with_resistances(
         &mut self,
@@ -232,7 +232,7 @@ impl Body {
     /// Invalid membrane assignments or failed mechanics/transport preserve all state.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn implicit_cell_pore_boundary_protein_step_with_membranes(
         &mut self,
@@ -301,7 +301,7 @@ impl Body {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn implicit_pore_core(
         &mut self,

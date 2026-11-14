@@ -24,7 +24,7 @@ const CEILING_SLACK: usize = 200;
 
 /// Files over [`LINE_BUDGET`] with the ceiling each must stay under. Splitting
 /// a file lowers its ceiling or removes the entry; nothing is added here
-/// without a reason recorded in `docs/refactor/PLAN.md`.
+/// without a reason recorded in `docs/PLAN.md`.
 const KNOWN_OVERSIZED: &[(&str, usize)] = &[];
 
 fn workspace() -> PathBuf {
@@ -105,7 +105,7 @@ fn production_files_stay_within_their_line_budget() {
     assert!(
         over.is_empty(),
         "production files over the {LINE_BUDGET}-line budget or over their recorded ceiling; \
-         split them (see docs/refactor/PLAN.md) instead of raising the ceiling:\n{}",
+         split them (see docs/PLAN.md) instead of raising the ceiling:\n{}",
         over.join("\n")
     );
 }

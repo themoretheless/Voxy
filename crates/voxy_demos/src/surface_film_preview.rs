@@ -1366,6 +1366,7 @@ mod body_remap_tests {
         SurfaceFilm::new(&points, triangles, Material::default()).unwrap()
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_body_correspondence_preserves_mass_in_both_directions() {
         let female = include_str!(
             "../../../assets/characters/blender-female/prepared/body-nipple-refined.obj"
@@ -1416,6 +1417,7 @@ mod body_remap_tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn repaired_body_correspondence_runs_in_actual_solver() {
         let original = include_str!("../../../assets/characters/blender-male/body-refined.obj");
         let repaired = include_str!(
@@ -1493,6 +1495,7 @@ mod body_remap_tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn repaired_preview_transfer_preserves_running_source_counters() {
         let original = include_str!("../../../assets/characters/blender-male/body-refined.obj");
         let repaired = include_str!(
@@ -1688,6 +1691,7 @@ mod unsupported_body_remap_tests {
 #[cfg(test)]
 mod invalid_advance_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn rejected_film_substep_restores_body_hair_and_retry_matches_fresh_step() {
         let settings = crate::film_settings::FilmSettings::default();
         for secondary_only in [false, true] {

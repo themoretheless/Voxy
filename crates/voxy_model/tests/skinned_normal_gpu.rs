@@ -7,7 +7,7 @@ use wgpu::util::DeviceExt;
 #[ignore = "requires GPU; production vertex-shader normal transport readback"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_legacy_normal_transport_matches_inverse_transpose() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());

@@ -19,7 +19,7 @@ fn five_product_shader_validates() {
 #[ignore = "requires physical GPU and real five-component coefficient artifact; inner multiplication only"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_five_product_normalization_matches_exact_oracle_input() {
     let bytes = std::fs::read(std::env::var_os("VOXY_FIVE_PRODUCT_INPUT").unwrap()).unwrap();

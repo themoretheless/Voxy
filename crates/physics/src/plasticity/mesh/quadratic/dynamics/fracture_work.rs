@@ -21,7 +21,7 @@ impl QuadraticDynamics {
     /// integration energy guard. A failure in either audit rolls back all state.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_loaded_with_fracture_work(
         &mut self,
@@ -172,7 +172,7 @@ impl QuadraticDynamics {
     /// Retains bounded substep summaries, not every material-point trial report.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_loaded_with_fracture_work(
         &mut self,

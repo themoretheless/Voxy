@@ -175,7 +175,7 @@ fn solve_with_workers(
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn solve_with_workers_prepared(
     constraints: &mut [Constraint],
@@ -440,7 +440,7 @@ fn export_capacity_failure(
 type IslandSolution = (Vec<Vec<f64>>, Vec<f64>);
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn solve_independent_islands(
     groups: &[(Vec<usize>, Vec<usize>)],
@@ -634,7 +634,7 @@ fn prepare_joint<'a>(
 // load inequality is insufficient when adding its response rounds again.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn solve_island_increment(
     requests: &[crate::hair::HairResponseSystem],
@@ -739,7 +739,7 @@ fn export_failed_island_context(
 }
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn solve_prepared_island_increment(
     prepared: &crate::hair::contact_response_system::PreparedNativeJoint<'_>,
@@ -931,7 +931,7 @@ fn observe_island_input(
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn admit_island_response(
     requests: &[crate::hair::HairResponseSystem],
@@ -1079,7 +1079,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn independent_physical_islands_batch_initial_trials_and_preserve_admission() {
         struct Backend {
@@ -1237,7 +1237,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn frozen_dual_hints_follow_exact_rows_and_only_opt_in_backends() {
         struct Backend {
@@ -1363,7 +1363,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn cooperative_newton_rounds_retry_only_unfinished_original_rows() {
         struct Backend {

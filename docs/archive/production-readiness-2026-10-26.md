@@ -1,3 +1,5 @@
+> Архив. Документ не обновляется; действующий план: [`../PLAN.md`](../PLAN.md).
+
 # Production readiness: current evidence and first implementation
 
 Date: 2026-10-26. The engine is not production ready. This register implements
@@ -89,7 +91,7 @@ exist. Existing model/manifest editor commands remain available.
 ## Next implementation, in dependency order
 
 Status on 2026-11-12: items 1 and 2 are closed (native project cycle and nested prefab editing, see
-[engine-status-2026-11-11](engine-status-2026-11-11/README.md)); items 3 and 4 remain open and are tracked as
+[engine-status-2026-11-11](../engine-status-2026-11-11/README.md)); items 3 and 4 remain open and are tracked as
 ENG-07 and ENG-10 in the roadmap. This list is kept as written on 26 October.
 
 1. Validate native-window rendering and controls for `--project` with the empty
@@ -103,12 +105,12 @@ ENG-07 and ENG-10 in the roadmap. This list is kept as written on 26 October.
 4. Deliver a small interactive packaged game and verify it without its source assets.
    Only then close the first vertical slice and extend the remaining domain gates.
 
-The generated [starter descriptor](../examples/empty-project/project.voxy) was
+The generated [starter descriptor](../../examples/empty-project/project.voxy) was
 created and validated by the actual final CLI from cwd `/`. Logs, CLI outcomes
 and source/binary SHA-256 identities are retained in
 `production-readiness-evidence-2026-10-26/`. It is an empty authoring project,
 openable through `--project`; visible rendering is unverified and it is not yet
-a useful interactive game. The [motion example](../examples/project-motion/project.voxy)
+a useful interactive game. The [motion example](../../examples/project-motion/project.voxy)
 and `artifacts/project-runtime-2026-10-26/motion.vpak` retain the CLI-verified
 rotating-model sample and its exact package; `--project ... --game` and
 `--package ... --game` select native launch (not visually verified here).

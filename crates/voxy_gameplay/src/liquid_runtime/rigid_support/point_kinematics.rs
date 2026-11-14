@@ -108,7 +108,7 @@ pub(in crate::liquid_runtime) fn point_acceleration(
 /// common-point trajectories; not a certificate of finite branch persistence.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(in crate::liquid_runtime) fn point_jerk(
     first: ContactBody,
@@ -201,7 +201,7 @@ pub(in crate::liquid_runtime) fn point_jerk(
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn solve_point_constraints(
     first: ContactBody,

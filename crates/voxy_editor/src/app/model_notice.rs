@@ -3,7 +3,7 @@ use crate::*;
 impl App {
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn selected_model_notice(&self) -> Option<panels::ResourceNotice> {
         if let Some(notice) = self.snapshot_path_notice() {

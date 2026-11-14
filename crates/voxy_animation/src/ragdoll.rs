@@ -288,7 +288,7 @@ impl Ragdoll {
     /// Rejects invalid steps, mismatched state sizes and foreign target rigs.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step(
         &self,
@@ -748,7 +748,7 @@ pub fn powered_blend(
 #[must_use]
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn spring_bone_verlet_step(
     prev_tip: [f32; 3],

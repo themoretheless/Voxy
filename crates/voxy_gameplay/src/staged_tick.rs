@@ -77,7 +77,7 @@ impl CharacterPhysics {
     /// the same admission, query budget and scene/body/input transaction.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn fixed_step_with_mixed_certified_fade_preparation<T, E>(
         &mut self,
@@ -108,7 +108,7 @@ impl CharacterPhysics {
 
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn fixed_step_preparing<T, E>(
         &mut self,

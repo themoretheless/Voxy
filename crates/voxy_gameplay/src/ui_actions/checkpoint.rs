@@ -563,7 +563,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn malformed_codecs_limits_and_failed_preparation_preserve_live_owner() {
         let (scene, ids) = fixture(false);

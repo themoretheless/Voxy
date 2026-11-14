@@ -77,7 +77,7 @@ pub(super) fn scene_fixture() -> (
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn prepared_rotation_and_translation_only_owners_publish_one_atomic_tick() {
     let (mut scene, owner, model, mut models) = scene_fixture();
@@ -221,7 +221,7 @@ fn ordinary_play_composes_moving_root_and_stop_restores_authoring() {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn ordinary_play(composed: bool) {
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(if composed {
@@ -370,7 +370,7 @@ fn old_authored_settings_default_rotation_off() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn signed_uniform_parent_converts_composed_motion_and_unproved_ancestors_reject() {
     use voxy_animation::{
@@ -580,7 +580,7 @@ fn signed_uniform_parent_converts_composed_motion_and_unproved_ancestors_reject(
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn retargeted_pivot_turn_uses_target_origin_and_collision_acceptance() {
     let (mut scene, owner, source, _) = scene_fixture();

@@ -30,7 +30,7 @@ fn particles(count: usize, frame: u32) -> Vec<FluidRenderParticle> {
 #[ignore = "physical Apple Silicon Metal; fluid pixel and snapshot parity"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_frame_fluid_snapshots_match_legacy_including_overflow() {
     let (adapter, device, queue) = support::device();
@@ -264,7 +264,7 @@ fn paired_frame_fluid_benchmark() {
 #[ignore = "physical Apple Silicon Metal; fluid pixel and snapshot parity"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_generated_fluid_matches_snapshot_and_overflow() {
     let (adapter, device, queue) = support::device();
@@ -494,7 +494,7 @@ fn paired_generated_input_particles() {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn run_generated_particles(input_only: bool) {
     let (adapter, device, queue) = support::device();

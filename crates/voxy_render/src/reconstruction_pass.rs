@@ -354,7 +354,7 @@ impl ReconstructionGuidePass {
     }
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn material_inputs(
         &self,

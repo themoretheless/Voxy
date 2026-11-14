@@ -1076,7 +1076,7 @@ fn implicit_maxwell_parallel_native_feature_quadrature_closes_full_step() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn parallel_native_terminal_feature_kink_has_distinct_one_sided_derivatives() {
     let start = [[0., 0., 0.], [1., 0., 0.], [0.1, 1., 0.], [0., 0., 1.]];
@@ -1307,7 +1307,7 @@ fn same_pose_native_branch_bundles_preserve_selected_response_and_force_balance(
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn adaptive_implicit_maxwell_admits_full_parallel_contact_interval_and_rolls_back_limit() {
     use std::sync::Arc;
@@ -1431,7 +1431,7 @@ fn parallel_contact_trajectory(intervals: usize, adaptive: bool) -> (Vec<[f64; 3
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn parallel_contact_trajectory_with_budget(
     intervals: usize,
@@ -1787,7 +1787,7 @@ fn mixed_skin_uses_existing_implicit_motion_work_and_atomic_rollback() {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn shared_skin_triangle_couples_two_dynamic_fem_regions_in_existing_solver() {
     use physics_bio::biomechanics::{Body, InertialBody, Material, StationaryEmbeddedContact};

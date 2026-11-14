@@ -4,7 +4,7 @@ use super::*;
 #[ignore = "requires a real GPU adapter; run explicitly for multi-view acceptance"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_disjoint_views_preserve_both_regions_and_clear_gap() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
@@ -309,7 +309,7 @@ fn gpu_disjoint_views_preserve_both_regions_and_clear_gap() {
 #[ignore = "requires a real GPU adapter; run explicitly for multi-view X-ray acceptance"]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gpu_disjoint_views_xray_keeps_nearest_internals_and_world_depth() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());

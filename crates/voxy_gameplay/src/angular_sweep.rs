@@ -202,7 +202,7 @@ fn advance(
 // error certificate; callers must prove the envelope before physical admission.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn advance_with_clearance(
     candidates: &[&AffineBox],
@@ -241,7 +241,7 @@ struct ProjectedAdvance<'a> {
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn advance_with_enclosures(
     candidates: &[&AffineBox],
@@ -455,7 +455,7 @@ fn corners(edges: [DVec3; 3]) -> [DVec3; 8] {
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(crate) fn sweep_path(
     center: DVec3,
@@ -647,7 +647,7 @@ struct SweepEnclosureBounds<'a> {
 /// The source frame is conjugated as A M A^-1, including its translated origin.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(crate) fn sweep_rigid_path(
     center: DVec3,
@@ -807,7 +807,7 @@ fn rigid_body_clearance(
 #[cfg_attr(not(test), allow(dead_code))]
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(crate) fn sweep_rigid_approximation(
     center: DVec3,
@@ -843,7 +843,7 @@ pub(crate) fn sweep_rigid_approximation(
 #[cfg_attr(not(test), allow(dead_code))]
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(crate) fn sweep_certified_rigid_fade(
     center: DVec3,
@@ -878,7 +878,7 @@ pub(crate) fn sweep_certified_rigid_fade(
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(crate) fn sweep_certified_rigid_fade_with_axis_errors(
     center: DVec3,
@@ -921,7 +921,7 @@ pub(crate) fn sweep_certified_rigid_fade_with_axis_errors(
 #[cfg_attr(not(test), allow(dead_code))]
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(crate) fn sweep_rigid_approximation_with_coordinate_certificate(
     center: DVec3,
@@ -962,7 +962,7 @@ pub(crate) fn sweep_rigid_approximation_with_coordinate_certificate(
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn sweep_rigid_approximation_with_axis_errors(
     sweep: SweepQuery,

@@ -166,7 +166,7 @@ pub fn resolve_mixed_world_reactions(
 #[allow(clippy::too_many_arguments)]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn assemble_reactions(
     bodies: &[ContactBody],
@@ -356,7 +356,7 @@ impl Liquid {
     /// This does not certify their finite supported trajectory.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn rigid_world_point_reaction_rates(
         &self,

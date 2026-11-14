@@ -87,7 +87,7 @@ fn normal_motion(
 /// derivatives, not force derivatives at a frozen material point.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn normal_gap_jerk(
     first: &ContactBody,
@@ -284,7 +284,7 @@ pub(crate) fn resolve_rate_from_baseline(
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(crate) fn resolve_rate_from_baseline_interval(
     bodies: &[ContactBody],
@@ -312,7 +312,7 @@ pub(crate) fn resolve_rate_from_baseline_interval(
 #[allow(clippy::too_many_arguments)]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn resolve_rate_from_baseline_mixed_interval(
     bodies: &[ContactBody],

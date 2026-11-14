@@ -44,7 +44,7 @@ fn host() -> Result<GameHost, Box<dyn std::error::Error>> {
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn nested_follow_camera_uses_interpolated_poses_and_matches_source_free_package()
 -> Result<(), Box<dyn std::error::Error>> {

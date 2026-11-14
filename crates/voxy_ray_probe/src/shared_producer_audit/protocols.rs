@@ -4,7 +4,7 @@ use wgpu::util::DeviceExt;
 
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn reciprocal_node_audit(
     device: &wgpu::Device,
@@ -334,7 +334,7 @@ pub(super) fn scale(
 // Deliberately misleading hardware rays must never replace the paired source ray.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn separate_hint_safety(
     device: &wgpu::Device,
@@ -533,7 +533,7 @@ pub(super) fn separate_hint_safety(
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn deferred_queue_protocol(
     device: &wgpu::Device,
@@ -687,7 +687,7 @@ pub(super) fn deferred_queue_protocol(
 // root-box miss. Ray zero is deliberately excluded from diagnostic sampling.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn traversal_work_protocol(
     device: &wgpu::Device,
@@ -899,7 +899,7 @@ pub(super) fn guard_protocol(
 // Exercise workspace reuse, partial binding views, and successive batch lengths.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn bounded_visibility_protocol(
     device: &wgpu::Device,

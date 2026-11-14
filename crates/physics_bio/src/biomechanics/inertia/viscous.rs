@@ -307,7 +307,7 @@ impl InertialBody {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn step_viscoelastic_support_accuracy<const IMPLICIT: bool>(
         &mut self,
@@ -530,7 +530,7 @@ impl InertialBody {
     /// Invalid owners/controls, crossing or exhausted subdivision preserves all state.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
         &mut self,
@@ -745,7 +745,7 @@ impl InertialBody {
     }
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn step_viscoelastic_contacts_controlled<
         const IMPLICIT: bool,

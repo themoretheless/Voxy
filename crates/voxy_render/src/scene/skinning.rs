@@ -287,7 +287,7 @@ impl SceneSkinner {
     /// transaction as skeletal instances. Initial preview uses the exact CPU sum.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn create_morph_instance(
         &self,
@@ -308,7 +308,7 @@ impl SceneSkinner {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn create_instance_internal(
         &self,

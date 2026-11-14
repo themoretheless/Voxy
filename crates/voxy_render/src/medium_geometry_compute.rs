@@ -428,7 +428,7 @@ mod tests {
     #[ignore = "requires physical GPU; actual metric geometry CPU parity"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_geometry_queries_match_cpu_and_reject_ambiguous_hits() {
         let instance = crate::GraphicsOptions::default().create_instance();

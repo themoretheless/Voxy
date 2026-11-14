@@ -491,7 +491,7 @@ fn trajectory_environment_events_at(
 /// Search every shape pair, admitting only explicit active support branches.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn supported_shape_events(
     first: &physics::rigid_motion::RigidMotion,
@@ -662,7 +662,7 @@ fn contact_patch_points(
 }
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn contact_patch_points_with_error(
     first: &[crate::convex::AffineBox],

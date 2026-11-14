@@ -206,7 +206,7 @@ impl ParticipatingMedium {
     /// Invalid step, substep budget, or gas solver failure.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance(
         &mut self,
@@ -441,7 +441,7 @@ impl ParticipatingMedium {
     /// Nonfinite point, or the film vapor solver's own failures.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn exchange_film_vapor(
         &mut self,

@@ -1,3 +1,5 @@
+> Архив. Документ не обновляется; действующий план: [`../PLAN.md`](../PLAN.md).
+
 # Voxy: nine-direction delivery goal
 
 Status: active. No category is complete merely because a crate/API/example exists.

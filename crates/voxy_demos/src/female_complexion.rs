@@ -167,7 +167,7 @@ fn tint(surface: &mut Surface, color: Vec3, amount: f32) {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn sample(p: Vec2, layers: SkinLayers) -> Surface {
     let mut out = Surface {
@@ -433,7 +433,7 @@ fn build_atlas_with_workers(layers: SkinLayers, workers: usize) -> Vec<u8> {
 /// Adds parameterized crease microheight while retaining the cached pigmentation.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn atlas_for_parameters(parameters: &crate::face_parameters::FaceParameters) -> Vec<u8> {
     let layers = SkinLayers {

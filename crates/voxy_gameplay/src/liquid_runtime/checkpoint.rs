@@ -154,7 +154,7 @@ impl SceneLiquidCheckpoint {
     /// Source and body order are retained even when fresh handles sort differently.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn prepare(
         &self,
@@ -458,7 +458,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn complete_scene_owner_rebinds_reversed_handles_and_continues_120_steps() {
         let (mut original_scene, original_ids) = scene(

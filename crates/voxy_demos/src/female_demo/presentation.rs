@@ -100,7 +100,7 @@ impl FemaleDemo {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn set_grasp_target_with_offset(
         &mut self,
@@ -953,7 +953,7 @@ impl FemaleDemo {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub(crate) fn mesh_with_hair_and_bindings(
         &self,

@@ -50,7 +50,7 @@ impl Body {
     /// transfer-only API. No receipt is published for an incomplete trajectory.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_thermal_vapor_adaptive_with_receipt(
         &mut self,

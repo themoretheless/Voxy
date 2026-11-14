@@ -90,7 +90,7 @@ impl crate::App {
 
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn reset_prefab_collection_topology(
         &mut self,
@@ -542,7 +542,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn collection_buttons_edit_empty_lists_follow_ids_and_round_trip_history() {
         let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))

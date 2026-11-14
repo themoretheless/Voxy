@@ -48,7 +48,7 @@ fn actual_scheduling_block_validates() {
 #[cfg(target_os = "macos")]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn actual_sort_preserves_frontier_and_prior_stack() -> Result<(), Box<dyn std::error::Error>> {
     use wgpu::util::DeviceExt;

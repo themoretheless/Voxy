@@ -94,7 +94,7 @@ type CollisionEvent = (
 /// Tokens and witnesses retain each emitting backend query's shape provenance.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn resolve_rigid_events(
     nodes: &mut [Node],
@@ -289,7 +289,7 @@ pub(super) fn solve(
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn solve_contact(
     particles: &mut [Particle],

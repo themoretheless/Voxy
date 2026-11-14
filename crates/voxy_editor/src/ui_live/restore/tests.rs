@@ -184,7 +184,7 @@ fn coordinated_file_restores_real_text_and_audio_without_source_inputs() {
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn exercise_gpu_restore(held_barrier: bool, with_models: bool, with_file: bool) {
     let root = std::env::temp_dir().join(format!(

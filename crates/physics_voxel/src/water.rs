@@ -143,7 +143,7 @@ pub fn step_water(
 /// Returns the same errors as `step_water`, plus `InvalidFlow` for limits outside 1..=8.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn step_liquid(
     view: &impl VoxelView,
@@ -770,7 +770,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn density_layers_preserve_partial_volumes_and_stay_stable() {
         use crate::{LiquidMaterial, step_liquid_layers};

@@ -35,7 +35,7 @@ pub struct VoxelMoistureStep {
 /// live states remain unchanged. Routing/contact discovery remains caller-owned.
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn advance_voxel_moisture(
     world: &mut World,
@@ -127,7 +127,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn world_liquid_wet_mass_and_surplus_conserve_inventory_with_rollback() {
         let base = crate::test_support::test_registry();
@@ -520,7 +520,7 @@ impl VoxelMoistureBank {
     /// Any moisture/mechanical failure preserves bank, network and solid.
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance(
         &mut self,

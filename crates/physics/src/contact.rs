@@ -378,7 +378,7 @@ fn solve_normal_network_constraints(
 /// negative infinity marks an already loaded branch with a signed derivative.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn solve_normal_network_constraints_with_bounds(
     bodies: &mut [ContactBody],

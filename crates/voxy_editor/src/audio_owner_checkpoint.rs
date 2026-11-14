@@ -229,7 +229,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn whole_offline_audio_record_restores_playback_and_queued_reload_from_json() {
         let path = std::env::temp_dir().join(format!(

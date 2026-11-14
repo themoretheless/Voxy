@@ -447,7 +447,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn playback_archive_preserves_old_voice_new_publication_and_failed_reload_together() {
         let mut scene = SceneGraph::new(1);

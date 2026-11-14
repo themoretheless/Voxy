@@ -207,7 +207,7 @@ pub fn step_debris(
 /// Nonfinite or negative `dt`, invalid ground/obstacle bounds, or numerical overflow.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn step_debris_with_obstacles(
     bodies: &mut [DebrisBody],
@@ -420,7 +420,7 @@ pub fn step_debris_with_obstacles(
 /// Rejects invalid [`CrumbleSettings`] or nonfinite `impact_energy_j`.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn crumble_debris_on_impact(
     bodies: &mut Vec<DebrisBody>,
@@ -576,7 +576,7 @@ pub fn crumble_debris_on_impact(
 /// Rejects invalid [`CrumbleSettings`] or nonfinite `impact_energy_j`.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn crumble_debris_multi_fragment(
     bodies: &mut Vec<DebrisBody>,
@@ -834,7 +834,7 @@ pub struct DebrisAbrasionReport {
 /// Rejects invalid settings, negative load/sliding distance, or degenerate hull geometry.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn abrade_debris_hull(
     bodies: &mut [DebrisBody],
@@ -1003,7 +1003,7 @@ impl Default for DebrisWorldContact {
 /// Invalid step, a body initially overlapping the world, or backend failures.
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub fn step_debris_in_world(
     bodies: &mut [DebrisBody],

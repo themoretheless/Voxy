@@ -239,7 +239,7 @@ impl MediumPathComputeInput {
     /// Work/storage budget, invalid ray/medium, or unrepresentable f32 profile.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new(
         scene: &CpuMediumTransportScene<'_>,
@@ -784,7 +784,7 @@ mod tests {
     #[ignore = "requires physical GPU; all-branch medium transport parity"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn gpu_all_branches_match_cpu_with_opacity_and_budget_rejection() {
         let instance = crate::GraphicsOptions::default().create_instance();

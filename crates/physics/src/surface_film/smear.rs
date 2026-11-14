@@ -48,7 +48,7 @@ impl SurfaceFilm {
     /// transport failure (the film and states are then unchanged).
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_smear(
         &mut self,
@@ -78,7 +78,7 @@ impl SurfaceFilm {
     /// cells remain pinned in [`SmearRegime::ViscoplasticYield`].
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn advance_viscoplastic_smear(
         &mut self,

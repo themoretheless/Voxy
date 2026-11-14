@@ -211,7 +211,7 @@ fn retain_cut(cuts: &mut Vec<Cut>, pair: StrandResponse, time: f64, scales: [f64
 )]
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn activate(
     constraints: &mut Vec<Constraint>,
@@ -242,7 +242,7 @@ pub(super) fn activate(
 )]
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn activate_with_workers(
     constraints: &mut Vec<Constraint>,
@@ -360,7 +360,7 @@ pub(in crate::hair) fn with_current_native_normals<T>(enabled: bool, run: impl F
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn activate_from_origin(
     constraints: &mut Vec<Constraint>,
@@ -395,7 +395,7 @@ pub(super) fn activate_from_origin(
 
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn activate_current_normals(
     constraints: &mut Vec<Constraint>,
@@ -425,7 +425,7 @@ pub(super) fn activate_current_normals(
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn activate_with_normal_mode(
     constraints: &mut Vec<Constraint>,
@@ -985,7 +985,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn captured_blocking_pair_locator_retains_short_intersection() {
         let a = CapsuleMotion {
@@ -1526,7 +1526,7 @@ mod tests {
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn activate_reference(
     constraints: &mut Vec<Constraint>,
