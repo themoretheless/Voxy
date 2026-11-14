@@ -1,5 +1,4 @@
 //! Quiescent model catalog and original dependency observations, staged off-line.
-#![allow(dead_code)]
 use super::{EditorAsset, asset_checkpoint::EditorAssetCheckpointLimits, publication_checkpoint};
 use crate::{EditorError, asset_checkpoint_wire as wire};
 use serde::{Deserialize, Serialize};
@@ -47,6 +46,7 @@ fn bad() -> EditorError {
 fn native(e: impl std::fmt::Debug) -> EditorError {
     format!("model catalog checkpoint: {e:?}").into()
 }
+#[cfg(test)]
 pub(crate) fn capture(
     catalog: &AssetCatalog<ImportedAsset<EditorAsset>>,
     sources: &SourceDependencies,
@@ -54,6 +54,7 @@ pub(crate) fn capture(
 ) -> Result<Vec<u8>, EditorError> {
     capture_with_models(catalog, sources, &[], limits)
 }
+#[cfg(test)]
 pub(crate) fn capture_with_models(
     catalog: &AssetCatalog<ImportedAsset<EditorAsset>>,
     sources: &SourceDependencies,
@@ -62,6 +63,7 @@ pub(crate) fn capture_with_models(
 ) -> Result<Vec<u8>, EditorError> {
     capture_with_sources(catalog, sources, models, &[], &[], limits)
 }
+#[cfg(test)]
 pub(crate) fn capture_with_sources(
     catalog: &AssetCatalog<ImportedAsset<EditorAsset>>,
     sources: &SourceDependencies,

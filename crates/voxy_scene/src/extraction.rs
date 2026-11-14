@@ -214,7 +214,7 @@ mod tests {
             .unwrap()
             .run_scene(&mut scene, |_, mut access| {
                 assert!(access.write().is_err());
-                projection.refresh_scoped_with(access, |scene, owner| scene.world_matrix(owner))
+                projection.refresh_scoped_with(access, super::super::SceneGraph::world_matrix)
             })
             .unwrap();
         assert_eq!(projection.instances()[0].component, Model(2));

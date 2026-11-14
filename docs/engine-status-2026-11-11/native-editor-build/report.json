@@ -1,0 +1,98 @@
+{
+  "editor_sha256": "918dc52242c6ad62816fce5db9c9474914c3ce6967392aa75c90991dc5751374",
+  "saved_authoring": {
+    "version": 1,
+    "objects": [],
+    "instances": [
+      {
+        "id": "first",
+        "asset": "nested",
+        "parent": null,
+        "overrides": {
+          "5:child4:root": {
+            "deleted": false,
+            "parent": null,
+            "name": null,
+            "active": null,
+            "translation": [
+              0.05,
+              0.0,
+              0.5
+            ],
+            "rotation": null,
+            "scale": null,
+            "components": {}
+          }
+        }
+      },
+      {
+        "id": "second",
+        "asset": "nested",
+        "parent": null,
+        "overrides": {}
+      }
+    ]
+  },
+  "reopened_and_packaged_state": {
+    "version": 1,
+    "objects": [
+      {
+        "id": "5:first13:5:child4:root",
+        "parent": null,
+        "name": "Prefab model",
+        "active": true,
+        "translation": [
+          0.05,
+          0.0,
+          0.5
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": {
+          "editor.model.v1": "mesh"
+        }
+      },
+      {
+        "id": "6:second13:5:child4:root",
+        "parent": null,
+        "name": "Prefab model",
+        "active": true,
+        "translation": [
+          0.0,
+          0.0,
+          0.5
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": {
+          "editor.model.v1": "mesh"
+        }
+      }
+    ]
+  },
+  "calls": {
+    "create": "Created /var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-o9oq1t37/project/project.voxy",
+    "authoring": "MODEL PUBLISHED frames=3 first_x=-0.5 asset=mesh\nPREFAB NATIVE PANEL PLACE SAVE UNDO REDO PASS frames=4\nPREFAB NATIVE PANEL CREATE PLACE SAVE UNDO PASS frames=4\nPREFAB NATIVE PANEL REVERT UNDO REDO PASS frames=4\nPREFAB NATIVE STRUCTURAL SAVE UNDO PASS frames=4\nPREFAB NATIVE SAVE UNDO AND LAST GOOD PASS frames=4\nPREFAB NATIVE PRESENTED AFTER FAILURE PASS frames=7\nMODEL PUBLISHED frames=7 first_x=-0.5 asset=mesh\nGAME UI GPU PUBLISHED draws=0\nPREFAB NATIVE PLAY STOP PASS frames=14 ticks=1\nMODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nGAME PACKAGE PASS sources=7 bytes=6700\nEDITOR GAME BUILT /private/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-o9oq1t37/project/game-2.vpak\nPREFAB NATIVE BUILD PASS /private/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-prefab-o9oq1t37/project/game-2.vpak",
+    "reopened": "MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nGAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"5:first13:5:child4:root\",\"parent\":null,\"name\":\"Prefab model\",\"active\":true,\"translation\":[0.05,0.0,0.5],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\"}},{\"id\":\"6:second13:5:child4:root\",\"parent\":null,\"name\":\"Prefab model\",\"active\":true,\"translation\":[0.0,0.0,0.5],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\"}}]}\nGAME CHECK PASS ticks=120 objects=2 prefab_instances=2",
+    "package_state": "MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nGAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"5:first13:5:child4:root\",\"parent\":null,\"name\":\"Prefab model\",\"active\":true,\"translation\":[0.05,0.0,0.5],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\"}},{\"id\":\"6:second13:5:child4:root\",\"parent\":null,\"name\":\"Prefab model\",\"active\":true,\"translation\":[0.0,0.0,0.5],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\"}}]}\nGAME CHECK PASS ticks=120 objects=2 prefab_instances=2",
+    "package_native": "MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nGAME UI GPU PUBLISHED draws=0\nMODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nGAME NATIVE PASS frames=3 ticks=10\nGAME NATIVE PASS frames=3 ticks=10"
+  }
+}

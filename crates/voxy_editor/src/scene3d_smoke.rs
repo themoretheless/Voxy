@@ -9,7 +9,6 @@ pub(super) struct Smoke {
     ticks: u64,
 }
 impl App {
-    #[allow(clippy::cast_precision_loss, clippy::too_many_lines)]
     pub(super) fn scene3d_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         let Some(mut smoke) = self.scene3d_smoke.take() else {
             return Ok(false);

@@ -72,7 +72,6 @@ impl SurfaceFilm {
     /// sliding body for `dt`. When `yield_stress_pa > 0` (e.g. mud, paint, blood, gel),
     /// only the plastic excess shear $(\tau - \tau_0)_+$ drives film transport while sub-yield
     /// cells remain pinned in [`SmearRegime::ViscoplasticYield`].
-    #[allow(clippy::too_many_arguments)]
     pub fn advance_viscoplastic_smear(
         &mut self,
         dt: f64,

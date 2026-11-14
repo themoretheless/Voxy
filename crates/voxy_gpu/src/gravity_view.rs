@@ -49,27 +49,12 @@ impl GravityView {
             label: Some("resident gravity drawing"),
             source: wgpu::ShaderSource::Wgsl(include_str!("gravity_view.wgsl").into()),
         });
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: None,
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::VERTEX,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Storage { read_only: true },
-                    has_dynamic_offset: false,
-                    min_binding_size: std::num::NonZeroU64::new(bytes),
-                },
-                count: None,
-            }],
-        });
-        let binding = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: None,
-            layout: &layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: buffer.as_entire_binding(),
-            }],
-        });
+        let layout = voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(None, 1)
+            .storage_buffer_sized(0, wgpu::ShaderStages::VERTEX, true, Some(bytes))
+            .build(device);
+        let binding = voxy_gpu_core::BindGroupBuilder::with_capacity(None, 1)
+            .buffer(0, buffer)
+            .build(device, &layout);
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
             bind_group_layouts: &[Some(&layout)],

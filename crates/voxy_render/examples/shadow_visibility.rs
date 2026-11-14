@@ -257,7 +257,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         }
                     }
                     let width = 2 * radius + 1;
-                    #[allow(clippy::cast_precision_loss)]
                     let visibility = lit as f32 / (width * width) as f32;
                     for channel in 0..3 {
                         let offset =

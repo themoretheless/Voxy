@@ -41,7 +41,6 @@ fn cs_main(@builtin(global_invocation_id) id: vec3<u32>) {
     let hit = rayQueryGetCommittedIntersection(&query);
     result[id.x] = vec4<f32>(f32(hit.kind), hit.t, hit.barycentrics);
 }";
-#[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let options = options::Options::parse(std::env::args().skip(1))?;
     #[cfg(not(feature = "face-demo"))]
@@ -395,7 +394,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[allow(clippy::too_many_lines)]
 fn visibility_probe(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -460,12 +458,6 @@ fn visibility_probe(
     Ok(())
 }
 
-#[allow(
-    clippy::too_many_lines,
-    clippy::cast_precision_loss,
-    clippy::cast_possible_truncation,
-    clippy::cast_sign_loss
-)]
 fn shadow_image(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

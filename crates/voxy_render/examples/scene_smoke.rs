@@ -7,7 +7,6 @@ use voxy_render::{
 use voxy_render::{Sprite, SpriteBatch};
 use voxy_scene::{SceneGraph, Transform};
 
-#[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let backend = match std::env::var("VOXY_SCENE_BACKEND").as_deref() {
         Err(std::env::VarError::NotPresent) | Ok("auto") => voxy_render::GraphicsBackend::Auto,

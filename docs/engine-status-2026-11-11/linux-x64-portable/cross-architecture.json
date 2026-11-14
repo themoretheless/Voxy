@@ -1,0 +1,20 @@
+{
+  "package_hashes": {
+    "voxy-turntable-windows-x64.zip": "17572cf2c3703cdd67471a68566b49e247399b6a2aadb70aa7bf337451ede16d",
+    "voxy-turntable-linux-arm64.zip": "17572cf2c3703cdd67471a68566b49e247399b6a2aadb70aa7bf337451ede16d",
+    "voxy-turntable-linux-x64.zip": "17572cf2c3703cdd67471a68566b49e247399b6a2aadb70aa7bf337451ede16d"
+  },
+  "arm64_rotation": [
+    0.0,
+    0.0,
+    0.9092974,
+    -0.4161471
+  ],
+  "x64_rotation": [
+    0.0,
+    0.0,
+    0.90929735,
+    -0.41614708
+  ],
+  "max_abs_rotation_component_delta": 5.000000002919336e-08
+}

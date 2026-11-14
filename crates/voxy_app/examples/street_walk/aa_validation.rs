@@ -85,7 +85,10 @@ mod tests {
 
         let solid_wire = [0.8_f32, 0.82, 0.79, 0.81, 0.80];
         let broken_wire = [0.8_f32, 0.0, 0.85, 0.0, 0.8];
-        assert!(subpixel_wire_continuity_score(&solid_wire) > subpixel_wire_continuity_score(&broken_wire));
+        assert!(
+            subpixel_wire_continuity_score(&solid_wire)
+                > subpixel_wire_continuity_score(&broken_wire)
+        );
     }
 }
 
@@ -108,10 +111,7 @@ pub fn subpixel_wire_continuity_score(scanline_luma: &[f32]) -> f32 {
     if mean <= 1e-5 {
         return 0.0;
     }
-    let mean_abs_step = valid
-        .windows(2)
-        .map(|w| (w[1] - w[0]).abs())
-        .sum::<f32>()
-        / ((valid.len() - 1) as f32);
+    let mean_abs_step =
+        valid.windows(2).map(|w| (w[1] - w[0]).abs()).sum::<f32>() / ((valid.len() - 1) as f32);
     (1.0 / (1.0 + mean_abs_step / mean)).clamp(0.0, 1.0)
 }

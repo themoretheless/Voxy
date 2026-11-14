@@ -1,0 +1,2886 @@
+//! Externally prescribed triangle surfaces reuse the internal contact geometry/law.
+use super::surface_contact::{barrier_curvature, barrier_response_gap};
+#[cfg(test)]
+use super::surface_distance::triangle_pair_path_is_open;
+use super::surface_distance::{
+    PreparedTriangle, trajectory_point, triangle_distance, triangle_pair_path_rejection_time,
+};
+use super::{Vec3, add, cross, dot, scale, sub};
+use crate::triangle_index::{TriangleBounds, TriangleIndex};
+use std::collections::BTreeMap;
+use std::sync::Arc;
+
+#[derive(Debug)]
+struct BodyContactDomain {
+    enabled: Arc<[bool]>,
+    has_enabled: bool,
+}
+
+#[derive(Clone, Debug)]
+pub struct PrescribedTriangleSurface {
+    positions: Arc<[Vec3]>,
+    faces: Arc<[[usize; 3]]>,
+    contact_faces: Arc<[bool]>,
+    body_contact_domains: Arc<BTreeMap<[usize; 3], Arc<BodyContactDomain>>>,
+    minimum: f64,
+    activation: f64,
+    stiffness: f64,
+    index: Arc<TriangleIndex>,
+    prepared: Arc<[PreparedTriangle]>,
+    swept_from: Option<(Arc<[Vec3]>, Arc<TriangleIndex>)>,
+}
+/// Positive normal-barrier block for a frozen closest feature. This is a
+/// preconditioner, not the full Hessian of deforming triangle distance.
+#[derive(Clone, Debug)]
+pub struct PrescribedContactStencil {
+    pub body_face: [usize; 3],
+    pub obstacle_face: [usize; 3],
+    pub obstacle_face_index: usize,
+    pub body_weights: [f64; 3],
+    pub obstacle_weights: [f64; 3],
+    pub normal: Vec3,
+    pub normal_curvature_n_m: f64,
+}
+impl PrescribedContactStencil {
+    /// Apply the PSD normal block to simultaneous body/obstacle displacement.
+    /// Translating both features equally gives zero action.
+    #[must_use]
+    pub fn apply(
+        &self,
+        body_displacement: [Vec3; 3],
+        obstacle_displacement: [Vec3; 3],
+    ) -> ([Vec3; 3], [Vec3; 3]) {
+        let mut relative = [0.; 3];
+        for i in 0..3 {
+            relative = add(
+                relative,
+                sub(
+                    scale(body_displacement[i], self.body_weights[i]),
+                    scale(obstacle_displacement[i], self.obstacle_weights[i]),
+                ),
+            );
+        }
+        let value = scale(
+            self.normal,
+            self.normal_curvature_n_m * dot(self.normal, relative),
+        );
+        (
+            self.body_weights.map(|weight| scale(value, weight)),
+            self.obstacle_weights.map(|weight| scale(value, -weight)),
+        )
+    }
+}
+/// One nearest branch at the supplied pose. Bundles retain only bit-identical
+/// evaluated distance and compensated gap, never a geometric proximity tolerance.
+/// Floating-point equality is not a certificate of exact real-arithmetic activity.
+#[derive(Clone, Debug)]
+pub struct PrescribedContactBranch {
+    pub stencil: PrescribedContactStencil,
+    pub potential_j: f64,
+    pub gap_m: f64,
+    pub normal_derivative_n: f64,
+}
+impl PrescribedContactBranch {
+    /// Local potential derivatives, preserving matching body/obstacle coefficients.
+    #[must_use]
+    pub fn gradients(&self) -> ([Vec3; 3], [Vec3; 3]) {
+        let g = scale(self.stencil.normal, self.normal_derivative_n);
+        (
+            self.stencil.body_weights.map(|w| scale(g, w)),
+            self.stencil.obstacle_weights.map(|w| scale(g, -w)),
+        )
+    }
+}
+/// Five-point Gauss averages along simultaneous linear feature trajectories.
+#[derive(Clone, Debug)]
+pub struct PrescribedContactPathResponse {
+    pub body_gradient_n: Vec<Vec3>,
+    pub obstacle_gradient_n: Vec<Vec3>,
+    /// Contact contribution to the midpoint unknown's line-search objective.
+    /// Its gradient is the averaged body gradient; not stored physical energy.
+    pub midpoint_objective_j: f64,
+}
+/// Nearest active geometric pair, retaining original source-face identities.
+#[derive(Clone, Debug)]
+pub struct PrescribedContactFeature {
+    pub distance_m: f64,
+    pub gap_m: f64,
+    pub body_face: [usize; 3],
+    pub obstacle_face_index: usize,
+    pub body_weights: [f64; 3],
+    pub obstacle_weights: [f64; 3],
+}
+#[derive(Clone, Debug)]
+pub struct PrescribedSurfaceResponse {
+    pub potential_j: f64,
+    /// Potential derivatives, not physical forces; force is minus gradient.
+    pub body_gradient_n: Vec<Vec3>,
+    /// Opposite feature forces distributed to the obstacle's vertices.
+    pub obstacle_gradient_n: Vec<Vec3>,
+}
+pub(super) struct PreparedPrescribedMotion<'a> {
+    start: &'a PrescribedTriangleSurface,
+    end: &'a PrescribedTriangleSurface,
+    index: Arc<TriangleIndex>,
+}
+impl PreparedPrescribedMotion<'_> {
+    pub(super) fn rejection_time(
+        &self,
+        body_start: &[Vec3],
+        body_end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Option<f64>, &'static str> {
+        self.start
+            .path_rejection_time_indexed(self.end, body_start, body_end, faces, &self.index)
+    }
+}
+pub(super) struct PreparedPrescribedContactPath {
+    samples: Vec<(f64, f64, PrescribedTriangleSurface)>,
+    boundaries: Vec<(f64, PrescribedTriangleSurface)>,
+}
+impl PreparedPrescribedContactPath {
+    fn coordinates<'a>(
+        &'a self,
+        start: &'a [Vec3],
+        end: &'a [Vec3],
+        time: f64,
+    ) -> Option<super::contact_precision::PathCoordinates<'a>> {
+        Some(super::contact_precision::PathCoordinates {
+            body_start: start,
+            body_end: end,
+            obstacle_start: self.boundaries[0].1.positions(),
+            obstacle_end: self.boundaries.last().unwrap().1.positions(),
+            time,
+        })
+    }
+
+    /// Frozen integration nodes shared by force components in the same solve.
+    pub(super) fn quadrature_nodes(&self) -> impl Iterator<Item = (f64, f64)> + '_ {
+        self.samples
+            .iter()
+            .map(|(time, weight, _)| (*time, *weight))
+    }
+    // Endpoint energy differences are an independent quadrature error
+    // estimator only. They never replace force-integrated actuator work.
+    pub(super) fn refine_by_work(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+        tolerance: f64,
+    ) -> Result<Option<Vec<f64>>, &'static str> {
+        if start.len() != end.len() {
+            return Err("body contact vertex count changed");
+        }
+        let mut body = vec![[0.0; 3]; start.len()];
+        let fill_body_pose = |time: f64, dst: &mut [Vec3]| {
+            if time == 0. {
+                dst.copy_from_slice(start);
+            } else if time == 1. {
+                dst.copy_from_slice(end);
+            } else {
+                for ((out, a), b) in dst.iter_mut().zip(start).zip(end) {
+                    *out = trajectory_point(*a, *b, time);
+                }
+            }
+        };
+        let mut energies = Vec::with_capacity(self.boundaries.len());
+        for (time, surface) in &self.boundaries {
+            fill_body_pose(*time, &mut body);
+            energies.push(
+                surface
+                    .response_with_coordinates::<true>(
+                        &body,
+                        faces,
+                        self.coordinates(start, end, *time),
+                    )?
+                    .potential_j,
+            );
+        }
+        let obstacle_start = self.boundaries[0].1.positions();
+        let obstacle_end = self.boundaries.last().unwrap().1.positions();
+        let mut defects = Vec::with_capacity(self.samples.len() / 5);
+        for (panel, samples) in self.samples.chunks_exact(5).enumerate() {
+            let mut work = 0.;
+            for (time, weight, surface) in samples {
+                fill_body_pose(*time, &mut body);
+                let response = surface.response_with_coordinates::<true>(
+                    &body,
+                    faces,
+                    self.coordinates(start, end, *time),
+                )?;
+                work += weight
+                    * (response
+                        .body_gradient_n
+                        .iter()
+                        .zip(start.iter().zip(end))
+                        .map(|(g, (a, b))| dot(*g, sub(*b, *a)))
+                        .sum::<f64>()
+                        + response
+                            .obstacle_gradient_n
+                            .iter()
+                            .zip(obstacle_start.iter().zip(obstacle_end))
+                            .map(|(g, (a, b))| dot(*g, sub(*b, *a)))
+                            .sum::<f64>());
+            }
+            defects.push((energies[panel + 1] - energies[panel] - work).abs());
+        }
+        self.refine_work_defects(&defects, tolerance)
+    }
+    /// Endpoint potential differences estimate integration error only. The
+    /// dynamics still obtains forces and support work from sampled gradients.
+    pub(super) fn refine_potential_by_work(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        evaluate: impl Fn(&[Vec3]) -> Result<(f64, Vec<Vec3>), &'static str>,
+        tolerance: f64,
+    ) -> Result<Option<Vec<f64>>, &'static str> {
+        if start.len() != end.len() {
+            return Err("body contact vertex count changed");
+        }
+        let mut body = vec![[0.0; 3]; start.len()];
+        let fill_pose = |time: f64, dst: &mut [Vec3]| {
+            for ((out, a), b) in dst.iter_mut().zip(start).zip(end) {
+                *out = trajectory_point(*a, *b, time);
+            }
+        };
+        let mut energies = Vec::with_capacity(self.boundaries.len());
+        for (time, _) in &self.boundaries {
+            fill_pose(*time, &mut body);
+            energies.push(evaluate(&body)?.0);
+        }
+        let mut defects = Vec::with_capacity(self.samples.len() / 5);
+        for (panel, samples) in self.samples.chunks_exact(5).enumerate() {
+            let mut work = 0.;
+            for (time, weight, _) in samples {
+                fill_pose(*time, &mut body);
+                let (_, gradient) = evaluate(&body)?;
+                if gradient.len() != start.len() {
+                    return Err("potential gradient vertex count changed");
+                }
+                work += weight
+                    * gradient
+                        .iter()
+                        .zip(start.iter().zip(end))
+                        .map(|(g, (a, b))| dot(*g, sub(*b, *a)))
+                        .sum::<f64>();
+            }
+            defects.push((energies[panel + 1] - energies[panel] - work).abs());
+        }
+        self.refine_work_defects(&defects, tolerance)
+    }
+    fn refine_work_defects(
+        &self,
+        defects: &[f64],
+        tolerance: f64,
+    ) -> Result<Option<Vec<f64>>, &'static str> {
+        if defects.iter().any(|v| !v.is_finite()) {
+            return Err("contact quadrature error overflow");
+        }
+        if defects.iter().sum::<f64>() <= tolerance || self.boundaries.len() >= 129 {
+            return Ok(None);
+        }
+        let worst = defects
+            .iter()
+            .enumerate()
+            .max_by(|(_, a), (_, b)| a.total_cmp(b))
+            .unwrap()
+            .0;
+        let left = self.boundaries[worst].0;
+        let right = self.boundaries[worst + 1].0;
+        let fractions: &[f64] = if 129 - self.boundaries.len() >= 3 {
+            &[0.25, 0.5, 0.75]
+        } else {
+            &[0.5]
+        };
+        let mut inserted = Vec::new();
+        for &fraction in fractions {
+            let point = left + fraction * (right - left);
+            if point > left && point < right && inserted.last().is_none_or(|&old| point > old) {
+                inserted.push(point);
+            }
+        }
+        if inserted.is_empty() {
+            return Ok(None);
+        }
+        let mut knots: Vec<_> = self.boundaries.iter().map(|b| b.0).collect();
+        #[allow(clippy::range_plus_one)]
+        knots.splice(worst + 1..worst + 1, inserted);
+        Ok(Some(knots))
+    }
+    pub(super) fn refine_near(&self, time: f64) -> Option<Vec<f64>> {
+        if !time.is_finite() || !(0. ..=1.).contains(&time) || self.boundaries.len() >= 129 {
+            return None;
+        }
+        let panel = self
+            .boundaries
+            .windows(2)
+            .position(|b| b[0].0 <= time && time <= b[1].0)?;
+        let left = self.boundaries[panel].0;
+        let right = self.boundaries[panel + 1].0;
+        let middle = left + 0.5 * (right - left);
+        if middle <= left || middle >= right {
+            return None;
+        }
+        let mut knots: Vec<_> = self.boundaries.iter().map(|b| b.0).collect();
+        knots.insert(panel + 1, middle);
+        Some(knots)
+    }
+    pub(super) fn normal_stencils(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        self.normal_stencils_with_admitted_faces::<true>(start, end, faces)
+    }
+    fn normal_stencils_with_admitted_faces<const ADMITTED: bool>(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        self.normal_stencils_with_inactive_path::<ADMITTED, true>(start, end, faces)
+    }
+    fn normal_stencils_with_inactive_path<const ADMITTED: bool, const SKIP_INACTIVE: bool>(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        if start.len() != end.len() {
+            return Err("body contact vertex count changed");
+        }
+        validate_faces(start, faces)?;
+        if ADMITTED {
+            // Same vertex count and immutable face indices: topology was admitted
+            // at start. End coordinates and triangle areas still require checking.
+            validate_admitted_face_geometry(end, faces)?;
+        } else {
+            validate_faces(end, faces)?;
+        }
+        let inactive = SKIP_INACTIVE && ADMITTED && !self.samples[0].2.may_contact_faces(faces);
+        let mut result = Vec::new();
+        let mut body = vec![[0.0; 3]; start.len()];
+        for &(time, weight, ref surface) in &self.samples {
+            for ((out, a), b) in body.iter_mut().zip(start).zip(end) {
+                *out = trajectory_point(*a, *b, time);
+            }
+            let blocks = if ADMITTED {
+                validate_admitted_face_geometry(&body, faces)?;
+                if inactive {
+                    continue;
+                }
+                surface.normal_stencils_for_validated_geometry::<true>(
+                    &body,
+                    faces,
+                    self.coordinates(start, end, time),
+                )?
+            } else {
+                surface.normal_stencils_with_coordinates::<true>(
+                    &body,
+                    faces,
+                    self.coordinates(start, end, time),
+                )?
+            };
+            for mut block in blocks {
+                // Endpoint = 2*midpoint-start; sampled positions have derivative
+                // 2*time with respect to the midpoint unknown.
+                block.normal_curvature_n_m *= 2. * time * weight;
+                result.push(block);
+            }
+        }
+        Ok(result)
+    }
+    pub(super) fn response(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedContactPathResponse, &'static str> {
+        self.response_with_admitted_faces::<true>(start, end, faces)
+    }
+    fn response_with_admitted_faces<const ADMITTED: bool>(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedContactPathResponse, &'static str> {
+        self.response_with_inactive_path::<ADMITTED, true>(start, end, faces)
+    }
+    fn response_with_inactive_path<const ADMITTED: bool, const SKIP_INACTIVE: bool>(
+        &self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedContactPathResponse, &'static str> {
+        if start.len() != end.len() {
+            return Err("body contact vertex count changed");
+        }
+        validate_faces(start, faces)?;
+        if ADMITTED {
+            // Same vertex count and immutable face indices: topology was admitted
+            // at start. End coordinates and triangle areas still require checking.
+            validate_admitted_face_geometry(end, faces)?;
+        } else {
+            validate_faces(end, faces)?;
+        }
+        let inactive = SKIP_INACTIVE && ADMITTED && !self.samples[0].2.may_contact_faces(faces);
+        let mut result = PrescribedContactPathResponse {
+            body_gradient_n: vec![[0.; 3]; start.len()],
+            obstacle_gradient_n: vec![[0.; 3]; self.samples[0].2.positions.len()],
+            midpoint_objective_j: 0.,
+        };
+        let mut body = vec![[0.0; 3]; start.len()];
+        for &(time, weight, ref surface) in &self.samples {
+            for ((out, a), b) in body.iter_mut().zip(start).zip(end) {
+                *out = trajectory_point(*a, *b, time);
+            }
+            // Both endpoints already admitted this immutable face slice above.
+            // Sample coordinates/areas still need admission on every call.
+            let response = if ADMITTED {
+                validate_admitted_face_geometry(&body, faces)?;
+                if inactive {
+                    // Preserve the legacy overflow admission for a malformed
+                    // quadrature scale even when the contact potential is zero.
+                    result.midpoint_objective_j += 0.5 * weight / time * 0.;
+                    continue;
+                }
+                surface.response_for_validated_geometry::<true>(
+                    &body,
+                    faces,
+                    self.coordinates(start, end, time),
+                )?
+            } else {
+                // Legacy full validation retained only as a native test oracle.
+                surface.response_with_coordinates::<true>(
+                    &body,
+                    faces,
+                    self.coordinates(start, end, time),
+                )?
+            };
+            result.midpoint_objective_j += 0.5 * weight / time * response.potential_j;
+            for (sum, gradient) in result
+                .body_gradient_n
+                .iter_mut()
+                .zip(response.body_gradient_n)
+            {
+                *sum = add(*sum, scale(gradient, weight));
+            }
+            for (sum, gradient) in result
+                .obstacle_gradient_n
+                .iter_mut()
+                .zip(response.obstacle_gradient_n)
+            {
+                *sum = add(*sum, scale(gradient, weight));
+            }
+        }
+        if !result.midpoint_objective_j.is_finite()
+            || result
+                .body_gradient_n
+                .iter()
+                .chain(&result.obstacle_gradient_n)
+                .flatten()
+                .any(|v| !v.is_finite())
+        {
+            return Err("prescribed path response overflow");
+        }
+        Ok(result)
+    }
+}
+
+pub(super) fn validate_faces(positions: &[Vec3], faces: &[[usize; 3]]) -> Result<(), &'static str> {
+    if positions.is_empty()
+        || positions.len() > 65536
+        || faces.is_empty()
+        || faces.len() > 131072
+        || positions.iter().flatten().any(|value| !value.is_finite())
+    {
+        return Err("invalid prescribed surface geometry budget");
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for face in faces {
+        let mut key = *face;
+        key.sort_unstable();
+        if key[2] >= positions.len() || key.windows(2).any(|p| p[0] == p[1]) || !seen.insert(key) {
+            return Err("invalid or duplicate prescribed surface triangle");
+        }
+        let [a, b, c] = face.map(|node| positions[node]);
+        let normal = cross(sub(b, a), sub(c, a));
+        let area = dot(normal, normal);
+        if !area.is_finite() || area <= 1e-30 {
+            return Err("degenerate contact triangle");
+        }
+    }
+    Ok(())
+}
+// For immutable faces already admitted by validate_faces. Vertex counts are
+// checked by the owning surface; index checks remain defensive here.
+pub(super) fn validate_admitted_face_geometry(
+    positions: &[Vec3],
+    faces: &[[usize; 3]],
+) -> Result<(), &'static str> {
+    if positions.is_empty()
+        || positions.len() > 65536
+        || faces.is_empty()
+        || faces.len() > 131072
+        || positions.iter().flatten().any(|v| !v.is_finite())
+    {
+        return Err("invalid prescribed surface geometry budget");
+    }
+    for face in faces {
+        let [Some(a), Some(b), Some(c)] = face.map(|node| positions.get(node).copied()) else {
+            return Err("invalid or duplicate prescribed surface triangle");
+        };
+        let normal = cross(sub(b, a), sub(c, a));
+        let area = dot(normal, normal);
+        if !area.is_finite() || area <= 1e-30 {
+            return Err("degenerate contact triangle");
+        }
+    }
+    Ok(())
+}
+
+impl PrescribedTriangleSurface {
+    fn evaluated_gap(
+        &self,
+        a: [Vec3; 3],
+        b: [Vec3; 3],
+        closest: super::surface_distance::Closest,
+    ) -> Result<f64, &'static str> {
+        if closest.distance > 0. {
+            super::contact_precision::feature_gap(
+                a,
+                b,
+                closest.a,
+                closest.b,
+                self.minimum,
+                closest.distance,
+            )
+        } else {
+            Ok(closest.distance - self.minimum)
+        }
+    }
+
+    /// Immutable surface geometry and discrete per-triangle-pair barrier controls.
+    /// No mesh-independent material calibration is implied by the coefficient.
+    /// # Errors
+    /// Nonfinite/invalid controls, budgets, indices, duplicate or degenerate faces.
+    pub fn new(
+        positions: Vec<Vec3>,
+        faces: Vec<[usize; 3]>,
+        minimum_distance_m: f64,
+        activation_gap_m: f64,
+        pair_stiffness_n_m: f64,
+    ) -> Result<Self, &'static str> {
+        if [minimum_distance_m, activation_gap_m, pair_stiffness_n_m]
+            .iter()
+            .any(|v| !v.is_finite() || *v <= 0.)
+            || !(minimum_distance_m + activation_gap_m).is_finite()
+        {
+            return Err("invalid prescribed surface contact controls");
+        }
+        validate_faces(&positions, &faces)?;
+        let triangles: Vec<_> = faces
+            .iter()
+            .map(|face| face.map(|node| positions[node]))
+            .collect();
+        let index = Arc::new(TriangleIndex::new(&triangles));
+        let prepared = triangles
+            .into_iter()
+            .map(PreparedTriangle::new)
+            .collect::<Vec<_>>()
+            .into();
+        Ok(Self {
+            index,
+            prepared,
+            swept_from: None,
+            positions: positions.into(),
+            contact_faces: vec![true; faces.len()].into(),
+            body_contact_domains: Arc::new(BTreeMap::new()),
+            faces: faces.into(),
+            minimum: minimum_distance_m,
+            activation: activation_gap_m,
+            stiffness: pair_stiffness_n_m,
+        })
+    }
+    /// Stages the next pose without mutating the admitted surface or its identity.
+    /// # Errors
+    /// Changed vertex count or invalid/degenerate next geometry.
+    pub fn with_positions(&self, positions: Vec<Vec3>) -> Result<Self, &'static str> {
+        self.stage_positions::<true>(positions)
+    }
+    // Quadrature samples are immutable instantaneous poses. Their callers do
+    // not query motion from the source pose, so avoid the unused swept BVH.
+    fn stage_positions<const SWEPT: bool>(
+        &self,
+        positions: Vec<Vec3>,
+    ) -> Result<Self, &'static str> {
+        if positions.len() != self.positions.len() {
+            return Err("prescribed surface vertex count changed");
+        }
+        validate_admitted_face_geometry(&positions, &self.faces)?;
+        let triangles: Vec<_> = self
+            .faces
+            .iter()
+            .map(|face| face.map(|node| positions[node]))
+            .collect();
+        let mut index = (*self.index).clone();
+        index.refit(&triangles);
+        let swept_from = if SWEPT {
+            let mut swept = (*self.index).clone();
+            swept.refit_bounds(
+                &self
+                    .faces
+                    .iter()
+                    .map(|face| {
+                        TriangleBounds::swept(
+                            face.map(|node| self.positions[node]),
+                            face.map(|node| positions[node]),
+                        )
+                    })
+                    .collect::<Vec<_>>(),
+            );
+            Some((self.positions.clone(), Arc::new(swept)))
+        } else {
+            None
+        };
+        let prepared = triangles
+            .into_iter()
+            .map(PreparedTriangle::new)
+            .collect::<Vec<_>>()
+            .into();
+        Ok(Self {
+            index: Arc::new(index),
+            prepared,
+            swept_from,
+            positions: positions.into(),
+            ..self.clone()
+        })
+    }
+    #[must_use]
+    pub fn positions(&self) -> &[Vec3] {
+        &self.positions
+    }
+    #[must_use]
+    pub fn faces(&self) -> &[[usize; 3]] {
+        &self.faces
+    }
+    /// Author an immutable contact domain using original triangle indices.
+    /// False faces remain in geometry but do not exert contact or constrain CCD.
+    /// This creates a new contact owner; bind it explicitly before animation.
+    /// # Errors
+    /// Wrong mask length or empty contact domain.
+    pub fn with_contact_faces(&self, enabled: Vec<bool>) -> Result<Self, &'static str> {
+        if enabled.len() != self.faces.len() || !enabled.iter().any(|&v| v) {
+            return Err("invalid prescribed surface contact domain");
+        }
+        Ok(Self {
+            contact_faces: enabled.into(),
+            ..self.clone()
+        })
+    }
+    #[must_use]
+    pub fn contact_faces(&self) -> &[bool] {
+        &self.contact_faces
+    }
+    /// Author fixed obstacle-face masks for groups of body triangles. This maps
+    /// regional exclusions into a global body node space without removing source
+    /// geometry or duplicating the contact law. Body triangle vertex order may
+    /// rotate/reverse; canonical node identities determine membership.
+    /// Unlisted body triangles retain the global obstacle mask. Listed triangles
+    /// require both their domain mask and the global mask to enable a pair.
+    /// This creates a new contact owner; pose staging retains that owner exactly.
+    /// # Errors
+    /// Wrong mask size, empty group, invalid/duplicate body triangle identities,
+    /// or more than the existing 131072 body-face/65536 node geometry budget.
+    pub fn with_body_contact_domains(
+        &self,
+        domains: Vec<(Vec<[usize; 3]>, Vec<bool>)>,
+    ) -> Result<Self, &'static str> {
+        let mut rows = BTreeMap::new();
+        for (faces, enabled) in domains {
+            if faces.is_empty() || enabled.len() != self.faces.len() {
+                return Err("invalid prescribed body contact domain");
+            }
+            let mask = Arc::new(BodyContactDomain {
+                has_enabled: enabled.iter().any(|&v| v),
+                enabled: enabled.into(),
+            });
+            for mut face in faces {
+                face.sort_unstable();
+                if face[2] >= 65536
+                    || face.windows(2).any(|p| p[0] == p[1])
+                    || rows.insert(face, mask.clone()).is_some()
+                    || rows.len() > 131072
+                {
+                    return Err("invalid or duplicate prescribed body domain triangle");
+                }
+            }
+        }
+        Ok(Self {
+            body_contact_domains: Arc::new(rows),
+            ..self.clone()
+        })
+    }
+    #[must_use]
+    pub fn body_contact_faces(&self, mut face: [usize; 3]) -> Option<&[bool]> {
+        face.sort_unstable();
+        self.body_contact_domains
+            .get(&face)
+            .map(|domain| domain.enabled.as_ref())
+    }
+    // The cached predicate is conservative: a nonempty mask still uses ordinary
+    // global/domain pair admission. An empty mask cannot enable any pair.
+    // Conservative domain-only eligibility; this does not admit geometry or
+    // certify separation. Unlisted triangles remain potential contacts.
+    pub(super) fn may_contact_faces(&self, faces: &[[usize; 3]]) -> bool {
+        faces.iter().any(|&face| self.body_face_may_contact(face))
+    }
+    fn body_face_may_contact(&self, mut face: [usize; 3]) -> bool {
+        face.sort_unstable();
+        self.body_contact_domains
+            .get(&face)
+            .is_none_or(|domain| domain.has_enabled)
+    }
+    fn pair_enabled(&self, face: &[usize; 3], obstacle: usize) -> bool {
+        self.contact_faces[obstacle]
+            && (self.body_contact_domains.is_empty()
+                || self
+                    .body_contact_faces(*face)
+                    .is_none_or(|mask| mask[obstacle]))
+    }
+    pub(super) fn has_body_contact_domains(&self) -> bool {
+        !self.body_contact_domains.is_empty()
+    }
+    pub fn minimum_distance_m(&self) -> f64 {
+        self.minimum
+    }
+    pub fn activation_gap_m(&self) -> f64 {
+        self.activation
+    }
+    pub fn pair_stiffness_n_m(&self) -> f64 {
+        self.stiffness
+    }
+    /// Whether a staged pose retains this exact geometry, law and domain owner.
+    /// Geometry positions may differ; no force evaluation or mutation is performed.
+    #[must_use]
+    pub fn same_contact_owner(&self, other: &Self) -> bool {
+        self.same_owner(other).is_ok()
+    }
+    pub(super) fn same_owner(&self, other: &Self) -> Result<(), &'static str> {
+        self.same_geometry_owner(other)?;
+        if !Arc::ptr_eq(&self.contact_faces, &other.contact_faces)
+            || !Arc::ptr_eq(&self.body_contact_domains, &other.body_contact_domains)
+        {
+            return Err("prescribed surface identity or contact law changed");
+        }
+        Ok(())
+    }
+    pub(super) fn same_geometry_owner(&self, other: &Self) -> Result<(), &'static str> {
+        if !Arc::ptr_eq(&self.faces, &other.faces)
+            || self.minimum != other.minimum
+            || self.activation != other.activation
+            || self.stiffness != other.stiffness
+        {
+            return Err("prescribed surface identity or contact law changed");
+        }
+        Ok(())
+    }
+    /// Average contact gradients over a linear body/obstacle path.
+    /// Quadrature never infers work from endpoint energy. CCD is caller-owned.
+    /// # Errors
+    /// Changed owner, invalid geometry, closed sampled gap or overflow.
+    pub fn path_response(
+        &self,
+        next: &Self,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedContactPathResponse, &'static str> {
+        self.prepare_path(next)?.response(start, end, faces)
+    }
+    pub(super) fn prepare_path(
+        &self,
+        next: &Self,
+    ) -> Result<PreparedPrescribedContactPath, &'static str> {
+        self.prepare_path_panels(next, 1)
+    }
+    pub(super) fn prepare_path_panels(
+        &self,
+        next: &Self,
+        panels: usize,
+    ) -> Result<PreparedPrescribedContactPath, &'static str> {
+        if ![1, 2, 4, 8, 16].contains(&panels) {
+            return Err("invalid contact quadrature panels");
+        }
+        let knots: Vec<_> = (0..=panels).map(|i| i as f64 / panels as f64).collect();
+        self.prepare_path_partition(next, &knots)
+    }
+    pub(super) fn prepare_path_partition(
+        &self,
+        next: &Self,
+        knots: &[f64],
+    ) -> Result<PreparedPrescribedContactPath, &'static str> {
+        self.same_owner(next)?;
+        if knots.len() < 2
+            || knots.len() > 129
+            || knots[0] != 0.
+            || knots[knots.len() - 1] != 1.
+            || knots.windows(2).any(|p| !p[0].is_finite() || p[0] >= p[1])
+        {
+            return Err("invalid contact quadrature partition");
+        }
+        let pose = |time: f64| {
+            if time == 0. {
+                return Ok(self.clone());
+            }
+            if time == 1. {
+                return Ok(next.clone());
+            }
+            self.stage_positions::<false>(
+                self.positions
+                    .iter()
+                    .zip(next.positions.iter())
+                    .map(|(a, b)| trajectory_point(*a, *b, time))
+                    .collect(),
+            )
+        };
+        let mut samples = Vec::new();
+        for interval in knots.windows(2) {
+            let width = interval[1] - interval[0];
+            for (local_time, local_weight) in [
+                (0.046910077030668, 0.11846344252809454),
+                (0.23076534494715845, 0.23931433524968325),
+                (0.5, 0.28444444444444444),
+                (0.7692346550528415, 0.23931433524968325),
+                (0.953089922969332, 0.11846344252809454),
+            ] {
+                let time = interval[0] + width * local_time;
+                samples.push((time, width * local_weight, pose(time)?));
+            }
+        }
+        let boundaries = knots
+            .iter()
+            .map(|&time| Ok((time, pose(time)?)))
+            .collect::<Result<Vec<_>, &'static str>>()?;
+        Ok(PreparedPrescribedContactPath {
+            samples,
+            boundaries,
+        })
+    }
+    /// Normal barrier blocks for a contact-aware nonlinear preconditioner.
+    /// Closest-feature and normal derivatives are intentionally not included.
+    /// # Errors
+    /// Invalid geometry, closed separation or overflowing curvature.
+    pub fn normal_stencils(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        self.normal_stencils_impl::<true>(body, faces)
+    }
+    fn normal_stencils_impl<const PRUNED: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        self.normal_stencils_with_coordinates::<PRUNED>(body, faces, None)
+    }
+    fn normal_stencils_with_coordinates<const PRUNED: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        validate_faces(body, faces)?;
+        self.normal_stencils_for_validated_geometry::<PRUNED>(body, faces, coordinates)
+    }
+    fn normal_stencils_for_validated_geometry<const PRUNED: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        self.normal_stencils_with_query_scratch::<PRUNED, true>(body, faces, coordinates)
+    }
+    fn normal_stencils_with_query_scratch<const PRUNED: bool, const REUSE: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<Vec<PrescribedContactStencil>, &'static str> {
+        let mut stencils = Vec::new();
+        let mut candidates = Vec::new();
+        for &face in faces {
+            if !self.body_face_may_contact(face) {
+                continue;
+            }
+            let triangle = face.map(|node| body[node]);
+            let prepared = PreparedTriangle::new(triangle);
+            let mut fresh = Vec::new();
+            let candidates = if REUSE { &mut candidates } else { &mut fresh };
+            candidates.clear();
+            self.index.query_conservative(
+                TriangleBounds::triangle(triangle),
+                self.minimum + self.activation,
+                &mut *candidates,
+            );
+            candidates.sort_unstable();
+            for &index in &*candidates {
+                if !self.pair_enabled(&face, index) {
+                    continue;
+                }
+                // Same conservative lower bound as force evaluation. Only
+                // inactive barriers are skipped; exact active feature order and
+                // errors still come from the original distance/law evaluation.
+                if PRUNED
+                    && prepared.separation_lower_bound(&self.prepared[index])
+                        >= self.minimum + self.activation
+                {
+                    continue;
+                }
+                let obstacle_face = self.faces[index];
+                let closest =
+                    triangle_distance(triangle, obstacle_face.map(|node| self.positions[node]))?;
+                let gap = if let Some(coordinates) = coordinates {
+                    coordinates.gap(face, obstacle_face, closest, self.minimum)?
+                } else {
+                    self.evaluated_gap(
+                        triangle,
+                        obstacle_face.map(|node| self.positions[node]),
+                        closest,
+                    )?
+                };
+                let (_, derivative) = barrier_response_gap(gap, self.activation, self.stiffness)?;
+                if derivative == 0. {
+                    continue;
+                }
+                let curvature = barrier_curvature(gap, self.activation, self.stiffness);
+                if !curvature.is_finite() || curvature < 0. {
+                    return Err("prescribed contact curvature overflow");
+                }
+                stencils.push(PrescribedContactStencil {
+                    body_face: face,
+                    obstacle_face,
+                    obstacle_face_index: index,
+                    body_weights: closest.a,
+                    obstacle_weights: closest.b,
+                    normal: scale(closest.delta, 1. / closest.distance),
+                    normal_curvature_n_m: curvature,
+                });
+            }
+        }
+        Ok(stencils)
+    }
+    /// Enumerate nearest feature branches at one pose, grouped by source face pair.
+    /// The selected production branch is first. Additional branches must match
+    /// its evaluated distance and compensated gap exactly and have distinct weights.
+    /// This read-only diagnostic does not alter the potential or choose a mixture.
+    /// # Errors
+    /// Invalid triangles, closed gaps, barrier or geometry overflow.
+    pub fn contact_branch_bundles(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Vec<Vec<PrescribedContactBranch>>, &'static str> {
+        validate_faces(body, faces)?;
+        let mut bundles = Vec::new();
+        let mut indices = Vec::new();
+        for &face in faces {
+            if !self.body_face_may_contact(face) {
+                continue;
+            }
+            let triangle = face.map(|i| body[i]);
+            indices.clear();
+            self.index.query_conservative(
+                TriangleBounds::triangle(triangle),
+                self.minimum + self.activation,
+                &mut indices,
+            );
+            indices.sort_unstable();
+            for &index in &indices {
+                if !self.pair_enabled(&face, index) {
+                    continue;
+                }
+                let obstacle = self.faces[index].map(|i| self.positions[i]);
+                let selected = triangle_distance(triangle, obstacle)?;
+                let gap = self.evaluated_gap(triangle, obstacle, selected)?;
+                let (potential, derivative) =
+                    barrier_response_gap(gap, self.activation, self.stiffness)?;
+                if derivative == 0. {
+                    continue;
+                }
+                let curvature = barrier_curvature(gap, self.activation, self.stiffness);
+                if !curvature.is_finite() || curvature < 0. {
+                    return Err("invalid coincident contact curvature");
+                }
+                let mut candidates = vec![selected];
+                candidates.extend(super::surface_distance::triangle_primitive_distances(
+                    triangle, obstacle,
+                )?);
+                let mut retained = Vec::new();
+                let mut weights = Vec::new();
+                for closest in candidates {
+                    if closest.distance.to_bits() != selected.distance.to_bits()
+                        || self.evaluated_gap(triangle, obstacle, closest)?.to_bits()
+                            != gap.to_bits()
+                        || weights.contains(&(closest.a, closest.b))
+                    {
+                        continue;
+                    }
+                    weights.push((closest.a, closest.b));
+                    retained.push(PrescribedContactBranch {
+                        stencil: PrescribedContactStencil {
+                            body_face: face,
+                            obstacle_face: self.faces[index],
+                            obstacle_face_index: index,
+                            body_weights: closest.a,
+                            obstacle_weights: closest.b,
+                            normal: scale(closest.delta, 1. / closest.distance),
+                            normal_curvature_n_m: curvature,
+                        },
+                        potential_j: potential,
+                        gap_m: gap,
+                        normal_derivative_n: derivative,
+                    });
+                }
+                bundles.push(retained);
+            }
+        }
+        Ok(bundles)
+    }
+    /// Inspect the nearest enabled pair inside the barrier activation range.
+    /// This read-only query also reports closed gaps without modifying geometry.
+    /// # Errors
+    /// Invalid body triangles or closest-feature geometry.
+    pub fn nearest_active_contact(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Option<PrescribedContactFeature>, &'static str> {
+        validate_faces(body, faces)?;
+        let mut nearest: Option<PrescribedContactFeature> = None;
+        let mut candidates = Vec::new();
+        for &face in faces {
+            if !self.body_face_may_contact(face) {
+                continue;
+            }
+            let triangle = face.map(|node| body[node]);
+            candidates.clear();
+            self.index.query_conservative(
+                TriangleBounds::triangle(triangle),
+                self.minimum + self.activation,
+                &mut candidates,
+            );
+            candidates.sort_unstable();
+            for &index in &candidates {
+                if !self.pair_enabled(&face, index) {
+                    continue;
+                }
+                let closest = triangle_distance(
+                    triangle,
+                    self.faces[index].map(|node| self.positions[node]),
+                )?;
+                if closest.distance >= self.minimum + self.activation
+                    || nearest
+                        .as_ref()
+                        .is_some_and(|old| old.distance_m <= closest.distance)
+                {
+                    continue;
+                }
+                nearest = Some(PrescribedContactFeature {
+                    distance_m: closest.distance,
+                    gap_m: self.evaluated_gap(
+                        triangle,
+                        self.faces[index].map(|node| self.positions[node]),
+                        closest,
+                    )?,
+                    body_face: face,
+                    obstacle_face_index: index,
+                    body_weights: closest.a,
+                    obstacle_weights: closest.b,
+                });
+            }
+        }
+        Ok(nearest)
+    }
+    /// Build an uncommitted, mass-weighted normal separation guess.
+    /// The caller must still certify its complete motion and solve equilibrium.
+    pub(super) fn restore_separation_guess(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        pinned: &[bool],
+        masses: &[f64],
+    ) -> Result<Vec<Vec3>, &'static str> {
+        if body.len() != pinned.len()
+            || body.len() != masses.len()
+            || masses.iter().any(|m| !m.is_finite() || *m <= 0.)
+        {
+            return Err("invalid contact guess masses");
+        }
+        let mut guess = body.to_vec();
+        let target_gap = self.activation * 0.001;
+        for _ in 0..32 {
+            let Some(feature) = self.nearest_active_contact(&guess, faces)? else {
+                return Ok(guess);
+            };
+            if feature.gap_m >= target_gap * 0.5 {
+                return Ok(guess);
+            }
+            let closest = triangle_distance(
+                feature.body_face.map(|i| guess[i]),
+                self.faces[feature.obstacle_face_index].map(|i| self.positions[i]),
+            )?;
+            if closest.distance <= 0. {
+                return Err("intersecting contact guess has no normal");
+            }
+            let normal = scale(closest.delta, 1. / closest.distance);
+            let denominator: f64 = feature
+                .body_face
+                .iter()
+                .zip(feature.body_weights)
+                .filter(|(node, _)| !pinned[**node])
+                .map(|(&node, w)| w * w / masses[node])
+                .sum();
+            if !denominator.is_finite() || denominator <= 0. {
+                return Err("contact guess has no free feature");
+            }
+            let multiplier = (target_gap - feature.gap_m) / denominator;
+            for (node, weight) in feature.body_face.into_iter().zip(feature.body_weights) {
+                if !pinned[node] {
+                    guess[node] = add(
+                        guess[node],
+                        scale(normal, multiplier * weight / masses[node]),
+                    );
+                }
+            }
+            if guess.iter().flatten().any(|v| !v.is_finite()) {
+                return Err("contact guess overflow");
+            }
+        }
+        Err("contact guess restoration nonconvergence")
+    }
+    /// Cross-surface triangle-minimum barrier, with both feature gradients.
+    /// Uses the same closest features and barrier as Body's surface contact.
+    /// # Errors
+    /// Invalid body triangles, closed separation gap or nonfinite responses.
+    pub fn response(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedSurfaceResponse, &'static str> {
+        self.response_impl::<true>(body, faces)
+    }
+    fn response_impl<const INDEXED: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedSurfaceResponse, &'static str> {
+        self.response_with_coordinates::<INDEXED>(body, faces, None)
+    }
+    fn response_with_coordinates<const INDEXED: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<PrescribedSurfaceResponse, &'static str> {
+        validate_faces(body, faces)?;
+        self.response_for_validated_geometry::<INDEXED>(body, faces, coordinates)
+    }
+    // Only immutable faces admitted by their embedded-skin owner may use this
+    // path. Coordinates and triangle areas are still checked on every response.
+    pub(super) fn response_admitted_skin(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<PrescribedSurfaceResponse, &'static str> {
+        validate_admitted_face_geometry(body, faces)?;
+        self.response_for_validated_geometry::<true>(body, faces, None)
+    }
+    fn response_for_validated_geometry<const INDEXED: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<PrescribedSurfaceResponse, &'static str> {
+        self.response_with_query_scratch::<INDEXED, true>(body, faces, coordinates)
+    }
+    fn response_with_query_scratch<const INDEXED: bool, const REUSE: bool>(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+        coordinates: Option<super::contact_precision::PathCoordinates<'_>>,
+    ) -> Result<PrescribedSurfaceResponse, &'static str> {
+        let mut response = PrescribedSurfaceResponse {
+            potential_j: 0.,
+            body_gradient_n: vec![[0.; 3]; body.len()],
+            obstacle_gradient_n: vec![[0.; 3]; self.positions.len()],
+        };
+        let mut candidates = Vec::new();
+        for face in faces {
+            if !self.body_face_may_contact(*face) {
+                continue;
+            }
+            let triangle = face.map(|node| body[node]);
+            let prepared = PreparedTriangle::new(triangle);
+            let mut fresh = Vec::new();
+            let candidates = if REUSE { &mut candidates } else { &mut fresh };
+            candidates.clear();
+            if INDEXED {
+                self.index.query_conservative(
+                    TriangleBounds::triangle(triangle),
+                    self.minimum + self.activation,
+                    &mut *candidates,
+                );
+            } else {
+                candidates.extend(0..self.faces.len());
+            }
+            candidates.sort_unstable();
+            for &index in &*candidates {
+                if !self.pair_enabled(face, index) {
+                    continue;
+                }
+                let obstacle = &self.faces[index];
+                if prepared.separation_lower_bound(&self.prepared[index])
+                    >= self.minimum + self.activation
+                {
+                    continue;
+                }
+                let closest =
+                    triangle_distance(triangle, obstacle.map(|node| self.positions[node]))?;
+                let gap = if let Some(coordinates) = coordinates {
+                    coordinates.gap(*face, *obstacle, closest, self.minimum)?
+                } else {
+                    self.evaluated_gap(
+                        triangle,
+                        obstacle.map(|node| self.positions[node]),
+                        closest,
+                    )?
+                };
+                let (energy, derivative) =
+                    barrier_response_gap(gap, self.activation, self.stiffness)?;
+                response.potential_j += energy;
+                if derivative == 0. {
+                    continue;
+                }
+                let gradient = scale(closest.delta, derivative / closest.distance);
+                for corner in 0..3 {
+                    let node = face[corner];
+                    response.body_gradient_n[node] = add(
+                        response.body_gradient_n[node],
+                        scale(gradient, closest.a[corner]),
+                    );
+                    let node = obstacle[corner];
+                    response.obstacle_gradient_n[node] = sub(
+                        response.obstacle_gradient_n[node],
+                        scale(gradient, closest.b[corner]),
+                    );
+                }
+            }
+        }
+        if !response.potential_j.is_finite()
+            || response
+                .body_gradient_n
+                .iter()
+                .chain(&response.obstacle_gradient_n)
+                .flatten()
+                .any(|v| !v.is_finite())
+        {
+            return Err("prescribed surface contact response overflow");
+        }
+        Ok(response)
+    }
+    /// Certify minimum separation during simultaneous linear vertex motion.
+    /// Unknown conservative-advancement intervals return false for subdivision.
+    /// # Errors
+    /// Changed obstacle identity/law or invalid endpoint geometry.
+    pub fn path_is_open(
+        &self,
+        next: &Self,
+        body_start: &[Vec3],
+        body_end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<bool, &'static str> {
+        self.path_rejection_time(next, body_start, body_end, faces)
+            .map(|time| time.is_none())
+    }
+    pub(super) fn path_rejection_time(
+        &self,
+        next: &Self,
+        body_start: &[Vec3],
+        body_end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Option<f64>, &'static str> {
+        self.prepare_motion(next)?
+            .rejection_time(body_start, body_end, faces)
+    }
+    pub(super) fn prepare_motion<'a>(
+        &'a self,
+        next: &'a Self,
+    ) -> Result<PreparedPrescribedMotion<'a>, &'static str> {
+        self.same_owner(next)?;
+        let index = if Arc::ptr_eq(&self.positions, &next.positions) {
+            self.index.clone()
+        } else if let Some((source, index)) = &next.swept_from {
+            if Arc::ptr_eq(source, &self.positions) {
+                index.clone()
+            } else {
+                self.swept_index(next)
+            }
+        } else {
+            self.swept_index(next)
+        };
+        Ok(PreparedPrescribedMotion {
+            start: self,
+            end: next,
+            index,
+        })
+    }
+    fn path_rejection_time_indexed(
+        &self,
+        next: &Self,
+        body_start: &[Vec3],
+        body_end: &[Vec3],
+        faces: &[[usize; 3]],
+        index: &TriangleIndex,
+    ) -> Result<Option<f64>, &'static str> {
+        if body_start.len() != body_end.len() {
+            return Err("body contact vertex count changed");
+        }
+        validate_faces(body_start, faces)?;
+        // Vertex counts match and the same face slice is used at both endpoints.
+        validate_admitted_face_geometry(body_end, faces)?;
+        let mut candidates = Vec::new();
+        for face in faces {
+            if !self.body_face_may_contact(*face) {
+                continue;
+            }
+            candidates.clear();
+            index.query_conservative(
+                TriangleBounds::swept(
+                    face.map(|node| body_start[node]),
+                    face.map(|node| body_end[node]),
+                ),
+                self.minimum,
+                &mut candidates,
+            );
+            candidates.sort_unstable();
+            for &index in &candidates {
+                if !self.pair_enabled(face, index) {
+                    continue;
+                }
+                let obstacle = &self.faces[index];
+                if let Some(time) = triangle_pair_path_rejection_time::<true>(
+                    face.map(|node| body_start[node]),
+                    face.map(|node| body_end[node]),
+                    obstacle.map(|node| self.positions[node]),
+                    obstacle.map(|node| next.positions[node]),
+                    self.minimum,
+                ) {
+                    if std::env::var_os("VOXY_CCD_REJECTION_TRACE").is_some() {
+                        eprintln!(
+                            "PRESCRIBED_CCD_REJECTION body_face={face:?} obstacle_face_index={index}"
+                        );
+                    }
+                    return Ok(Some(time));
+                }
+            }
+        }
+        Ok(None)
+    }
+    fn swept_index(&self, next: &Self) -> Arc<TriangleIndex> {
+        let mut index = (*self.index).clone();
+        index.refit_bounds(
+            &self
+                .faces
+                .iter()
+                .map(|face| {
+                    TriangleBounds::swept(
+                        face.map(|node| self.positions[node]),
+                        face.map(|node| next.positions[node]),
+                    )
+                })
+                .collect::<Vec<_>>(),
+        );
+        Arc::new(index)
+    }
+    /// Independent trapezoidal actuator work from obstacle vertex gradients.
+    /// # Errors
+    /// Changed identity/law, incomplete/nonfinite gradients or overflowing work.
+    pub fn motion_work(
+        &self,
+        next: &Self,
+        before: &[Vec3],
+        after: &[Vec3],
+    ) -> Result<f64, &'static str> {
+        self.same_owner(next)?;
+        if before.len() != self.positions.len()
+            || after.len() != self.positions.len()
+            || before.iter().chain(after).flatten().any(|v| !v.is_finite())
+        {
+            return Err("invalid prescribed surface work gradients");
+        }
+        let mut work = 0.;
+        for node in 0..self.positions.len() {
+            let average =
+                std::array::from_fn(|axis| 0.5 * before[node][axis] + 0.5 * after[node][axis]);
+            work += dot(average, sub(next.positions[node], self.positions[node]));
+        }
+        if !work.is_finite() {
+            return Err("prescribed surface actuator work overflow");
+        }
+        Ok(work)
+    }
+}
+
+#[cfg(test)]
+mod index_tests {
+    use super::*;
+    #[test]
+    fn prepared_motion_keeps_the_actual_source_when_cached_source_differs() {
+        let source = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 1.], [1., -1., 1.], [0., 1., 1.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap();
+        let actual = source
+            .with_positions(
+                source
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], -0.001])
+                    .collect(),
+            )
+            .unwrap();
+        let next = source
+            .with_positions(
+                source
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], 0.001])
+                    .collect(),
+            )
+            .unwrap();
+        let prepared = actual.prepare_motion(&next).unwrap();
+        let saved_index = prepared.index.clone();
+        for height in [-0.005, 0., 0.005] {
+            let body = [[0.1, 0.1, height], [0.15, 0.1, height], [0.1, 0.15, height]];
+            let result = prepared.rejection_time(&body, &body, &[[0, 1, 2]]).unwrap();
+            assert_eq!(
+                result,
+                actual
+                    .path_rejection_time(&next, &body, &body, &[[0, 1, 2]])
+                    .unwrap()
+            );
+            assert_eq!(result.is_some(), height == 0.);
+            assert!(Arc::ptr_eq(&prepared.index, &saved_index));
+        }
+        assert!(
+            source
+                .prepare_motion(
+                    &PrescribedTriangleSurface::new(
+                        source.positions().to_vec(),
+                        source.faces().to_vec(),
+                        0.0001,
+                        0.003,
+                        100.
+                    )
+                    .unwrap()
+                )
+                .is_err()
+        );
+    }
+    #[test]
+    fn rejection_location_refines_only_its_interval() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap();
+        let path = surface
+            .prepare_path_partition(&surface, &[0., 0.5, 0.75, 1.])
+            .unwrap();
+        assert_eq!(
+            path.refine_near(0.99).unwrap(),
+            vec![0., 0.5, 0.75, 0.875, 1.]
+        );
+        assert_eq!(
+            path.refine_near(0.625).unwrap(),
+            vec![0., 0.5, 0.625, 0.75, 1.]
+        );
+        assert!(path.refine_near(f64::NAN).is_none());
+        assert!(path.refine_near(-0.1).is_none());
+        assert!(path.refine_near(1.1).is_none());
+        let body = [[0.1, 0.1, 0.001], [0.15, 0.1, 0.025], [0.1, 0.15, 0.025]];
+        assert!(
+            surface
+                .path_rejection_time(&surface, &body, &body, &[[0, 1, 2]])
+                .unwrap()
+                .is_none()
+        );
+        let crossing = surface
+            .with_positions(
+                surface
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], 0.002])
+                    .collect(),
+            )
+            .unwrap();
+        let time = surface
+            .path_rejection_time(&crossing, &body, &body, &[[0, 1, 2]])
+            .unwrap()
+            .unwrap();
+        assert!((time - 0.45).abs() < 1e-7, "rejection time {time}");
+        assert!(
+            !surface
+                .path_is_open(&crossing, &body, &body, &[[0, 1, 2]])
+                .unwrap()
+        );
+    }
+    #[test]
+    fn compensated_trajectory_resolves_machine_scale_barrier_force_work() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap();
+        let start = [
+            [0.1, 0.1, 0.00010005],
+            [0.15, 0.1, 0.025],
+            [0.1, 0.15, 0.025],
+        ];
+        let mut end = start;
+        end[0][2] = 0.0001 + 4e-18;
+        let faces = [[0, 1, 2]];
+        let mut knots = vec![0.];
+        for level in 1..=80 {
+            knots.push(1. - 2_f64.powf(-(level as f64) / 2.));
+        }
+        knots.push(1.);
+        let path = surface.prepare_path_partition(&surface, &knots).unwrap();
+        let mut precise_work = 0.;
+        let mut rounded_work = 0.;
+        for &(time, weight, ref pose) in &path.samples {
+            let body: Vec<_> = start
+                .iter()
+                .zip(end)
+                .map(|(a, b)| trajectory_point(*a, b, time))
+                .collect();
+            let coordinates = super::super::contact_precision::PathCoordinates {
+                body_start: &start,
+                body_end: &end,
+                obstacle_start: surface.positions(),
+                obstacle_end: surface.positions(),
+                time,
+            };
+            let precise = pose
+                .response_with_coordinates::<true>(&body, &faces, Some(coordinates))
+                .unwrap();
+            let rounded = pose
+                .response_with_coordinates::<true>(&body, &faces, None)
+                .unwrap();
+            let work = |response: PrescribedSurfaceResponse| {
+                response
+                    .body_gradient_n
+                    .iter()
+                    .zip(start.iter().zip(end))
+                    .map(|(g, (a, b))| dot(*g, sub(b, *a)))
+                    .sum::<f64>()
+            };
+            precise_work += weight * work(precise);
+            rounded_work += weight * work(rounded);
+        }
+        // Independent scalar law at authored endpoints, used only as an oracle.
+        let potential = |z: f64| {
+            let g = z - 0.0001;
+            -100. * (g - 0.003).powi(2) * (g / 0.003).ln()
+        };
+        let change = potential(end[0][2]) - potential(start[0][2]);
+        eprintln!(
+            "TRAJECTORY_FORCE_WORK precise_defect_j={:.17e} rounded_defect_j={:.17e}",
+            change - precise_work,
+            change - rounded_work
+        );
+        assert!((change - precise_work).abs() < 1e-10);
+        assert!((change - rounded_work).abs() > 1e-9);
+    }
+    #[test]
+    fn compensated_moving_obstacle_force_work_matches_scalar_endpoint_oracle() {
+        let obstacle = vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]];
+        let surface =
+            PrescribedTriangleSurface::new(obstacle.clone(), vec![[0, 1, 2]], 0.0001, 0.003, 100.)
+                .unwrap();
+        let body = [
+            [0.1, 0.1, 0.00010005],
+            [0.15, 0.1, 0.025],
+            [0.1, 0.15, 0.025],
+        ];
+        let start_gap = body[0][2] - 0.0001;
+        let movement = start_gap - 4e-18;
+        let end_obstacle: Vec<_> = obstacle.iter().map(|p| [p[0], p[1], movement]).collect();
+        let next = surface.with_positions(end_obstacle.clone()).unwrap();
+        let mut knots = vec![0.];
+        for level in 1..=80 {
+            knots.push(1. - 2_f64.powf(-(level as f64) / 2.));
+        }
+        knots.push(1.);
+        let path = surface.prepare_path_partition(&next, &knots).unwrap();
+        let mut work = 0.;
+        for &(time, weight, ref pose) in &path.samples {
+            let coordinates = super::super::contact_precision::PathCoordinates {
+                body_start: &body,
+                body_end: &body,
+                obstacle_start: &obstacle,
+                obstacle_end: &end_obstacle,
+                time,
+            };
+            let response = pose
+                .response_with_coordinates::<true>(&body, &[[0, 1, 2]], Some(coordinates))
+                .unwrap();
+            work += weight
+                * response
+                    .obstacle_gradient_n
+                    .iter()
+                    .map(|g| g[2] * movement)
+                    .sum::<f64>();
+            let body_force: f64 = response.body_gradient_n.iter().map(|g| g[2]).sum();
+            let obstacle_force: f64 = response.obstacle_gradient_n.iter().map(|g| g[2]).sum();
+            assert!((body_force + obstacle_force).abs() < 1e-12 * body_force.abs().max(1.));
+        }
+        let potential = |g: f64| -100. * (g - 0.003).powi(2) * (g / 0.003).ln();
+        let endpoint_gap = start_gap - movement;
+        let defect = potential(endpoint_gap) - potential(start_gap) - work;
+        eprintln!(
+            "MOVING_OBSTACLE_FORCE_WORK actual_gap={endpoint_gap:.17e} defect_j={defect:.17e}"
+        );
+        assert!(defect.abs() < 1e-10);
+    }
+    #[test]
+    fn compensated_path_objective_gradient_matches_moving_oblique_surface_force() {
+        for origin in [0., 1e6] {
+            let shift = |p: Vec3| p.map(|x| x + origin);
+            let obstacle = [[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]];
+            let surface = PrescribedTriangleSurface::new(
+                obstacle.iter().map(|p| shift(*p)).collect(),
+                vec![[0, 1, 2]],
+                0.0001,
+                0.003,
+                100.,
+            )
+            .unwrap();
+            let next = surface
+                .with_positions(vec![
+                    shift([-1., -1., 0.0001]),
+                    shift([1., -1., 0.0002]),
+                    shift([0., 1., 0.0003]),
+                ])
+                .unwrap();
+            let start = [[0.1, 0.2, 0.001], [0.2, 0.2, 0.03], [0.1, 0.3, 0.03]].map(shift);
+            let mut end = start;
+            end[0] = shift([0.12, 0.21, 0.0011]);
+            let path = surface.prepare_path(&next).unwrap();
+            let response = path.response(&start, &end, &[[0, 1, 2]]).unwrap();
+            for node in 0..3 {
+                for axis in 0..3 {
+                    let mut plus = end;
+                    let mut minus = end;
+                    plus[node][axis] += 1e-6;
+                    minus[node][axis] -= 1e-6;
+                    let up = path
+                        .response(&start, &plus, &[[0, 1, 2]])
+                        .unwrap()
+                        .midpoint_objective_j;
+                    let down = path
+                        .response(&start, &minus, &[[0, 1, 2]])
+                        .unwrap()
+                        .midpoint_objective_j;
+                    let fd = (up - down) / (plus[node][axis] - minus[node][axis]);
+                    // Endpoint = 2*midpoint-start: objective endpoint derivative
+                    // is half the independently evaluated averaged body force.
+                    let expected = 0.5 * response.body_gradient_n[node][axis];
+                    assert!(
+                        (fd - expected).abs() < 2e-5 * (1. + expected.abs()),
+                        "origin={origin} node={node} axis={axis} finite_difference={fd} expected={expected}"
+                    );
+                }
+            }
+        }
+    }
+    #[test]
+    fn contact_partition_refinement_preserves_capacity_order_and_source() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap();
+        let before = format!("{surface:?}");
+        for panels in [1, 126, 127, 128] {
+            let knots: Vec<_> = (0..=panels).map(|i| i as f64 / panels as f64).collect();
+            let path = surface.prepare_path_partition(&surface, &knots).unwrap();
+            let mut defects = vec![0.; panels];
+            defects[panels - 1] = 1.;
+            let refined = path.refine_work_defects(&defects, 1e-10).unwrap();
+            if panels == 128 {
+                assert!(refined.is_none());
+                continue;
+            }
+            let refined = refined.unwrap();
+            assert!(refined.len() > knots.len() && refined.len() <= 129);
+            assert_eq!(refined.first(), Some(&0.));
+            assert_eq!(refined.last(), Some(&1.));
+            assert!(refined.windows(2).all(|p| p[0] < p[1]));
+            assert!(knots.iter().all(|k| refined.contains(k)));
+            if panels == 1 {
+                assert_eq!(refined, vec![0., 0.25, 0.5, 0.75, 1.]);
+            }
+        }
+        assert_eq!(format!("{surface:?}"), before);
+    }
+    #[test]
+    #[ignore = "diagnostic extreme endpoint gaps; reports actual refinement admission"]
+    fn near_machine_precision_barrier_partition_diagnostic() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap();
+        let start = [
+            [0.1, 0.1, 0.00010005],
+            [0.15, 0.1, 0.025],
+            [0.1, 0.15, 0.025],
+        ];
+        for requested_gap in [4e-12, 4e-15, 4e-18] {
+            let mut end = start;
+            end[0][2] = 0.0001 + requested_gap;
+            let endpoint_gap = end[0][2] - 0.0001;
+            let change = surface.response(&end, &[[0, 1, 2]]).unwrap().potential_j
+                - surface.response(&start, &[[0, 1, 2]]).unwrap().potential_j;
+            let mut knots = vec![0., 1.];
+            let mut admitted = false;
+            let mut defect = f64::NAN;
+            let mut evaluated_panels = 0;
+            let mut best_defect = f64::INFINITY;
+            for iteration in 0..32 {
+                evaluated_panels = knots.len() - 1;
+                let path = surface.prepare_path_partition(&surface, &knots).unwrap();
+                let response = path.response(&start, &end, &[[0, 1, 2]]).unwrap();
+                let work: f64 = response
+                    .body_gradient_n
+                    .iter()
+                    .zip(start.iter().zip(end))
+                    .map(|(g, (a, b))| dot(*g, sub(b, *a)))
+                    .sum();
+                defect = change - work;
+                best_defect = best_defect.min(defect.abs());
+                if iteration == 31 {
+                    eprintln!(
+                        "ENDPOINT_QUADRATURE_32 actual_gap={endpoint_gap:.17e} evaluated_panels={evaluated_panels} work_defect_j={defect:.17e}"
+                    );
+                }
+                if defect.abs() < 1e-10 {
+                    admitted = true;
+                    break;
+                }
+                match path
+                    .refine_by_work(&start, &end, &[[0, 1, 2]], 2.5e-11)
+                    .unwrap()
+                {
+                    Some(next) => knots = next,
+                    None => break,
+                }
+            }
+            eprintln!(
+                "ENDPOINT_QUADRATURE requested_gap={requested_gap:.17e} actual_gap={endpoint_gap:.17e} evaluated_panels={evaluated_panels} admitted={admitted} work_defect_j={defect:.17e} best_defect_j={best_defect:.17e}"
+            );
+            assert!(defect.is_finite());
+            {
+                assert!(
+                    admitted,
+                    "quarter refinement did not meet work tolerance within 32 evaluations"
+                );
+                assert!(evaluated_panels <= 128);
+            }
+        }
+    }
+    #[test]
+    fn adaptive_partition_resolves_endpoint_barrier_without_redefining_work() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap();
+        let movement = 41.958e-9;
+        let next = surface
+            .with_positions(
+                surface
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], movement])
+                    .collect(),
+            )
+            .unwrap();
+        let body = [
+            [0.1, 0.1, 0.000100042],
+            [0.15, 0.1, 0.025],
+            [0.1, 0.15, 0.025],
+        ];
+        let faces = [[0, 1, 2]];
+        let delta = next.response(&body, &faces).unwrap().potential_j
+            - surface.response(&body, &faces).unwrap().potential_j;
+        let mut knots = vec![0., 1.];
+        let mut admitted = false;
+        for _ in 0..32 {
+            let path = surface.prepare_path_partition(&next, &knots).unwrap();
+            let response = path.response(&body, &body, &faces).unwrap();
+            let work: f64 = response
+                .obstacle_gradient_n
+                .iter()
+                .map(|g| g[2] * movement)
+                .sum();
+            if (delta - work).abs() < 1e-10 {
+                admitted = true;
+                break;
+            }
+            knots = path
+                .refine_by_work(&body, &body, &faces, 2.5e-11)
+                .unwrap()
+                .unwrap();
+        }
+        assert!(
+            admitted,
+            "unresolved endpoint barrier with {} panels",
+            knots.len() - 1
+        );
+        assert!(knots.len() > 2 && knots.len() < 33);
+        assert!(knots.windows(2).any(|p| p[1] - p[0] < 1e-3));
+        for invalid in [
+            vec![],
+            vec![0., 0., 1.],
+            vec![0., f64::NAN, 1.],
+            vec![0., 0.5],
+        ] {
+            assert!(surface.prepare_path_partition(&next, &invalid).is_err());
+        }
+        let held = surface.prepare_path_partition(&surface, &[0., 1.]).unwrap();
+        assert!(
+            held.refine_by_work(&body, &body, &faces, 1e-12)
+                .unwrap()
+                .is_none()
+        );
+    }
+    #[test]
+    fn path_normal_blocks_match_midpoint_force_derivative_in_narrow_gap() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap();
+        let next = surface
+            .with_positions(
+                surface
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], 0.000000138])
+                    .collect(),
+            )
+            .unwrap();
+        let path = surface.prepare_path(&next).unwrap();
+        let body = [
+            [0.1, 0.1, 0.000100435],
+            [0.15, 0.1, 0.025],
+            [0.1, 0.15, 0.025],
+        ];
+        let blocks = path.normal_stencils(&body, &body, &[[0, 1, 2]]).unwrap();
+        assert_eq!(blocks.len(), 5);
+        let action: f64 = blocks
+            .iter()
+            .map(|block| {
+                block
+                    .apply([[0., 0., 1.]; 3], [[0.; 3]; 3])
+                    .0
+                    .iter()
+                    .map(|g| g[2])
+                    .sum::<f64>()
+            })
+            .sum();
+        let h = 1e-11;
+        let plus = body.map(|p| [p[0], p[1], p[2] + h]);
+        let minus = body.map(|p| [p[0], p[1], p[2] - h]);
+        let derivative = (path
+            .response(&body, &plus, &[[0, 1, 2]])
+            .unwrap()
+            .body_gradient_n
+            .iter()
+            .map(|g| g[2])
+            .sum::<f64>()
+            - path
+                .response(&body, &minus, &[[0, 1, 2]])
+                .unwrap()
+                .body_gradient_n
+                .iter()
+                .map(|g| g[2])
+                .sum::<f64>())
+            / (2. * h);
+        assert!((action / (2. * derivative) - 1.).abs() < 1e-6);
+        assert!(blocks.iter().all(|block| block.normal_curvature_n_m > 0.));
+        assert!(
+            path.normal_stencils(&body, &plus[..2], &[[0, 1, 2]])
+                .is_err()
+        );
+    }
+    #[test]
+    fn prepared_quadrature_poses_remain_bound_to_their_original_motion() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.001,
+            0.03,
+            100.,
+        )
+        .unwrap();
+        let next = surface
+            .with_positions(
+                surface
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], 0.001])
+                    .collect(),
+            )
+            .unwrap();
+        let prepared = surface.prepare_path(&next).unwrap();
+        let different = next
+            .with_positions(
+                next.positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], 0.002])
+                    .collect(),
+            )
+            .unwrap();
+        let start = [[0.1, 0.1, 0.015], [0.15, 0.1, 0.04], [0.1, 0.15, 0.04]];
+        for i in 0..32 {
+            let end = start.map(|p| [p[0] + i as f64 * 0.001, p[1], p[2] + 0.0001]);
+            let cached = prepared.response(&start, &end, &[[0, 1, 2]]).unwrap();
+            let fresh = surface
+                .path_response(&next, &start, &end, &[[0, 1, 2]])
+                .unwrap();
+            assert_eq!(cached.body_gradient_n, fresh.body_gradient_n);
+            assert_eq!(cached.obstacle_gradient_n, fresh.obstacle_gradient_n);
+            assert_eq!(cached.midpoint_objective_j, fresh.midpoint_objective_j);
+            assert_ne!(
+                cached.midpoint_objective_j,
+                surface
+                    .path_response(&different, &start, &end, &[[0, 1, 2]])
+                    .unwrap()
+                    .midpoint_objective_j
+            );
+        }
+    }
+    #[test]
+    fn motion_cache_from_different_source_cannot_hide_crossing() {
+        let triangle = |z| vec![[0., 0., z], [1., 0., z], [0., 1., z]];
+        let start =
+            PrescribedTriangleSurface::new(triangle(-1.), vec![[0, 1, 2]], 0.001, 0.1, 3.).unwrap();
+        let unrelated_source = start.with_positions(triangle(2.)).unwrap();
+        let end = unrelated_source.with_positions(triangle(3.)).unwrap();
+        let body = triangle(0.);
+        assert!(
+            !start
+                .path_is_open(&end, &body, &body, &[[0, 1, 2]])
+                .unwrap()
+        );
+        assert!(
+            unrelated_source
+                .path_is_open(&end, &body, &body, &[[0, 1, 2]])
+                .unwrap()
+        );
+    }
+    #[test]
+    fn indexed_motion_admission_matches_all_pairs_for_endpoint_trajectories() {
+        let mut points = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..64 {
+            let x = i as f64 * 2.;
+            let n = points.len();
+            points.extend([[x, 0., 0.], [x + 0.8, 0., 0.], [x, 0.8, 0.]]);
+            faces.push([n, n + 1, n + 2]);
+        }
+        let start = PrescribedTriangleSurface::new(points, faces, 0.001, 0.1, 3.).unwrap();
+        let next = start
+            .with_positions(
+                start
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0] + 0.2, p[1], p[2] + 0.1])
+                    .collect(),
+            )
+            .unwrap();
+        for i in 0..1000 {
+            let x = (i % 80) as f64 * 1.7;
+            let z = if i % 2 == 0 { -0.2 } else { 0.3 };
+            let body = [[x, 0.1, z], [x + 0.3, 0.1, z], [x, 0.4, z]];
+            let end = body.map(|p| [p[0] + 0.05, p[1], 0.4]);
+            let full = start.faces.iter().all(|face| {
+                triangle_pair_path_is_open::<true>(
+                    body,
+                    end,
+                    face.map(|n| start.positions[n]),
+                    face.map(|n| next.positions[n]),
+                    start.minimum,
+                )
+            });
+            assert_eq!(
+                start
+                    .path_is_open(&next, &body, &end, &[[0, 1, 2]])
+                    .unwrap(),
+                full,
+                "trajectory {i}"
+            );
+        }
+    }
+    #[test]
+    fn indexed_energy_and_both_gradients_match_full_scan_after_refit() {
+        let mut points = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..128 {
+            let x = i as f64 * 0.4;
+            let n = points.len();
+            points.extend([[x, 0., 0.], [x + 0.2, 0., 0.], [x, 0.2, 0.]]);
+            faces.push([n, n + 1, n + 2]);
+        }
+        let surface = PrescribedTriangleSurface::new(points, faces, 0.001, 0.1, 3.).unwrap();
+        let next = surface
+            .with_positions(
+                surface
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0] + 0.01, p[1], p[2] + 0.005])
+                    .collect(),
+            )
+            .unwrap();
+        for obstacle in [&surface, &next] {
+            for i in 0..128 {
+                let x = i as f64 * 0.4;
+                let body = [
+                    [x + 0.02, 0.02, 0.03],
+                    [x + 0.12, 0.02, 0.04],
+                    [x + 0.02, 0.12, 0.05],
+                ];
+                let indexed = obstacle.response_impl::<true>(&body, &[[0, 1, 2]]).unwrap();
+                let full = obstacle
+                    .response_impl::<false>(&body, &[[0, 1, 2]])
+                    .unwrap();
+                assert_eq!(indexed.potential_j, full.potential_j);
+                assert_eq!(indexed.body_gradient_n, full.body_gradient_n);
+                assert_eq!(indexed.obstacle_gradient_n, full.obstacle_gradient_n);
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod local_displacement_precision_tests {
+    use super::*;
+    #[test]
+    fn local_path_retains_contact_change_below_world_coordinate_resolution() {
+        let world_start = vec![
+            [0., 0., 1.0001000000001],
+            [0.02, 0., 1.05],
+            [0., 0.02, 1.05],
+        ];
+        let origin = world_start[0];
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 1.], [1., -1., 1.], [0., 1., 1.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap();
+        let shifted = surface
+            .with_positions(
+                surface
+                    .positions()
+                    .iter()
+                    .map(|&p| sub(p, origin))
+                    .collect(),
+            )
+            .unwrap();
+        let local_start: Vec<_> = world_start.iter().map(|&p| sub(p, origin)).collect();
+        let mut local_end = local_start.clone();
+        local_end[0][2] += 2e-18;
+        let mut world_end = world_start.clone();
+        world_end[0][2] += 2e-18;
+        assert_eq!(world_end, world_start);
+        let path = shifted.prepare_path_partition(&shifted, &[0., 1.]).unwrap();
+        let before = path
+            .response(&local_start, &local_start, &[[0, 1, 2]])
+            .unwrap();
+        let after = path
+            .response(&local_start, &local_end, &[[0, 1, 2]])
+            .unwrap();
+        assert!(after.body_gradient_n[0][2].abs() < before.body_gradient_n[0][2].abs());
+        assert!(after.midpoint_objective_j < before.midpoint_objective_j);
+        assert!(
+            after
+                .body_gradient_n
+                .iter()
+                .flatten()
+                .all(|v| v.is_finite())
+        );
+    }
+}
+
+#[cfg(test)]
+mod restored_guess_tests {
+    use super::*;
+    fn surface() -> PrescribedTriangleSurface {
+        PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap()
+    }
+    #[test]
+    fn shallow_closed_guess_restores_separation_without_moving_pins_or_source() {
+        let surface = surface();
+        let body = vec![
+            [-0.1, -0.1, 0.00009995],
+            [0.1, -0.1, 0.00009995],
+            [0., 0.1, 0.00009995],
+            [2., 2., 2.],
+        ];
+        let saved = body.clone();
+        let source = surface.positions().to_vec();
+        assert!(surface.response(&body, &[[0, 1, 2]]).is_err());
+        let restored = surface
+            .restore_separation_guess(
+                &body,
+                &[[0, 1, 2]],
+                &[false, false, false, true],
+                &[1., 2., 3., 4.],
+            )
+            .unwrap();
+        assert!(surface.response(&restored, &[[0, 1, 2]]).is_ok());
+        assert!(
+            surface
+                .nearest_active_contact(&restored, &[[0, 1, 2]])
+                .unwrap()
+                .unwrap()
+                .gap_m
+                >= 1.5e-6
+        );
+        assert_eq!(restored[3], body[3]);
+        assert_eq!(body, saved);
+        assert_eq!(surface.positions(), source);
+    }
+    #[test]
+    fn closed_fully_pinned_feature_cannot_be_restored() {
+        let surface = surface();
+        let body = vec![
+            [-0.1, -0.1, 0.00009995],
+            [0.1, -0.1, 0.00009995],
+            [0., 0.1, 0.00009995],
+        ];
+        assert_eq!(
+            surface
+                .restore_separation_guess(&body, &[[0, 1, 2]], &[true; 3], &[1.; 3])
+                .unwrap_err(),
+            "contact guess has no free feature"
+        );
+    }
+}
+
+#[cfg(test)]
+mod normal_pruning_tests {
+    use super::*;
+    fn fixture(offset: f64) -> (PrescribedTriangleSurface, Vec<Vec3>) {
+        let triangle = [[-1., -1., -2.], [1., -1., 0.], [0., 1., 1.]];
+        let n = scale([1., 1., -1.], 1. / 3_f64.sqrt());
+        let shift = [offset, -offset, offset];
+        let body: Vec<_> = triangle.map(|p| add(p, shift)).to_vec();
+        let mut positions = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..256 {
+            let gap = if i == 0 {
+                0.001
+            } else {
+                0.01 + i as f64 * 0.0001
+            };
+            let base = positions.len();
+            positions.extend(triangle.map(|p| add(add(p, shift), scale(n, gap))));
+            faces.push([base, base + 1, base + 2]);
+        }
+        (
+            PrescribedTriangleSurface::new(positions, faces, 0.0001, 0.003, 100.).unwrap(),
+            body,
+        )
+    }
+    #[test]
+    fn conservative_normal_pruning_matches_unpruned_features_and_errors() {
+        for offset in [0., 1e6] {
+            let (surface, body) = fixture(offset);
+            for gap in [
+                -0.0021000001,
+                -0.0021,
+                -0.0020999999,
+                0.0040999999,
+                0.0041,
+                0.0041000001,
+                0.,
+                0.0000999999,
+                0.0001,
+                0.001,
+                0.0030999999,
+                0.0031,
+                0.0031000001,
+                0.1,
+            ] {
+                let moved: Vec<_> = body
+                    .iter()
+                    .map(|p| add(*p, scale([1., 1., -1.], gap / 3_f64.sqrt())))
+                    .collect();
+                let a = surface.normal_stencils_impl::<true>(&moved, &[[0, 1, 2]]);
+                let b = surface.normal_stencils_impl::<false>(&moved, &[[0, 1, 2]]);
+                match (a, b) {
+                    (Ok(a), Ok(b)) => {
+                        assert_eq!(a.len(), b.len());
+                        for (a, b) in a.iter().zip(b) {
+                            assert_eq!(a.body_face, b.body_face);
+                            assert_eq!(a.obstacle_face, b.obstacle_face);
+                            assert_eq!(a.obstacle_face_index, b.obstacle_face_index);
+                            assert_eq!(
+                                a.body_weights.map(f64::to_bits),
+                                b.body_weights.map(f64::to_bits)
+                            );
+                            assert_eq!(
+                                a.obstacle_weights.map(f64::to_bits),
+                                b.obstacle_weights.map(f64::to_bits)
+                            );
+                            assert_eq!(a.normal.map(f64::to_bits), b.normal.map(f64::to_bits));
+                            assert_eq!(
+                                a.normal_curvature_n_m.to_bits(),
+                                b.normal_curvature_n_m.to_bits()
+                            );
+                        }
+                    }
+                    (Err(a), Err(b)) => assert_eq!(a, b),
+                    other => panic!("pruning changed contact admission: {other:?}"),
+                }
+            }
+        }
+    }
+    #[test]
+    #[ignore = "manual normal-pruning microbenchmark"]
+    fn normal_pruning_microbenchmark() {
+        use std::{hint::black_box, time::Instant};
+        let (surface, body) = fixture(0.);
+        for _ in 0..5 {
+            let start = Instant::now();
+            for _ in 0..500 {
+                black_box(
+                    surface
+                        .normal_stencils_impl::<false>(&body, &[[0, 1, 2]])
+                        .unwrap(),
+                );
+            }
+            let exhaustive = start.elapsed();
+            let start = Instant::now();
+            for _ in 0..500 {
+                black_box(surface.normal_stencils(&body, &[[0, 1, 2]]).unwrap());
+            }
+            eprintln!(
+                "NORMAL_PRUNING_BENCH unpruned_ns={} pruned_ns={}",
+                exhaustive.as_nanos(),
+                start.elapsed().as_nanos()
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod instantaneous_pose_tests {
+    use super::*;
+    #[test]
+    #[ignore = "manual instantaneous-pose preparation benchmark"]
+    fn instantaneous_pose_microbenchmark() {
+        use std::{hint::black_box, time::Instant};
+        let mut positions = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..4096 {
+            let x = (i % 64) as f64 * 0.01;
+            let y = (i / 64) as f64 * 0.01;
+            let base = positions.len();
+            positions.extend([[x, y, 0.], [x + 0.005, y, 0.], [x, y + 0.005, 0.]]);
+            faces.push([base, base + 1, base + 2]);
+        }
+        let source = PrescribedTriangleSurface::new(positions, faces, 0.0001, 0.003, 100.).unwrap();
+        let positions: Vec<_> = source
+            .positions()
+            .iter()
+            .map(|p| [p[0], p[1], 0.001])
+            .collect();
+        for _ in 0..5 {
+            let start = Instant::now();
+            for _ in 0..25 {
+                black_box(source.with_positions(positions.clone()).unwrap());
+            }
+            let swept = start.elapsed();
+            let start = Instant::now();
+            for _ in 0..25 {
+                black_box(source.stage_positions::<false>(positions.clone()).unwrap());
+            }
+            eprintln!(
+                "INSTANT_POSE_BENCH swept_ns={} instant_ns={}",
+                swept.as_nanos(),
+                start.elapsed().as_nanos()
+            );
+        }
+    }
+    #[test]
+    fn instantaneous_samples_preserve_force_normal_and_motion_admission() {
+        let source = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.0001,
+            0.003,
+            100.,
+        )
+        .unwrap();
+        let source = source.with_positions(source.positions().to_vec()).unwrap();
+        assert!(source.swept_from.is_some());
+        let body = [[0.1, 0.1, 0.001], [0.15, 0.1, 0.002], [0.1, 0.15, 0.002]];
+        let faces = [[0, 1, 2]];
+        for z in [-0.005, 0., 0.0002, 0.002, 0.005] {
+            let positions: Vec<_> = source.positions().iter().map(|p| [p[0], p[1], z]).collect();
+            let public = source.with_positions(positions.clone()).unwrap();
+            let sample = source.stage_positions::<false>(positions).unwrap();
+            assert!(public.swept_from.is_some());
+            assert!(sample.swept_from.is_none());
+            source.same_owner(&sample).unwrap();
+            assert_eq!(public.positions(), sample.positions());
+            assert_eq!(
+                format!("{:?}", public.response(&body, &faces)),
+                format!("{:?}", sample.response(&body, &faces))
+            );
+            assert_eq!(
+                format!("{:?}", public.normal_stencils(&body, &faces)),
+                format!("{:?}", sample.normal_stencils(&body, &faces))
+            );
+            assert_eq!(
+                source.path_rejection_time(&public, &body, &body, &faces),
+                source.path_rejection_time(&sample, &body, &body, &faces)
+            );
+        }
+        let mut invalid = source.positions().to_vec();
+        invalid[1] = invalid[0];
+        assert_eq!(
+            source.with_positions(invalid.clone()).unwrap_err(),
+            source.stage_positions::<false>(invalid).unwrap_err()
+        );
+    }
+}
+
+#[cfg(test)]
+mod inactive_domain_tests {
+    use super::*;
+    fn fixture(count: usize) -> (PrescribedTriangleSurface, Vec<Vec3>, Vec<[usize; 3]>) {
+        let mut points = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..count {
+            let x = (i % 32) as f64 * 0.002;
+            let y = (i / 32) as f64 * 0.002;
+            let base = points.len();
+            points.extend([[x, y, 0.], [x + 0.001, y, 0.], [x, y + 0.001, 0.]]);
+            faces.push([base, base + 1, base + 2]);
+        }
+        let body = points.iter().map(|p| [p[0], p[1], 0.015]).collect();
+        let surface = PrescribedTriangleSurface::new(points, faces.clone(), 0.001, 0.03, 100.)
+            .unwrap()
+            .with_body_contact_domains(vec![(faces.clone(), vec![false; count])])
+            .unwrap();
+        (surface, body, faces)
+    }
+    #[test]
+    fn inactive_masks_preserve_geometry_admission_and_unlisted_face_contacts() {
+        let (surface, mut body, faces) = fixture(2);
+        assert!(!surface.may_contact_faces(&faces));
+        let zero = surface.response(&body, &faces).unwrap();
+        assert_eq!(zero.potential_j, 0.);
+        assert!(
+            zero.body_gradient_n
+                .iter()
+                .chain(&zero.obstacle_gradient_n)
+                .flatten()
+                .all(|&x| x == 0.)
+        );
+        assert!(surface.normal_stencils(&body, &faces).unwrap().is_empty());
+        assert!(
+            surface
+                .nearest_active_contact(&body, &faces)
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            surface
+                .path_is_open(&surface, &body, &body, &faces)
+                .unwrap()
+        );
+        assert!(surface.response(&body, &[[0, 0, 1]]).is_err());
+        body[0][0] = f64::NAN;
+        assert!(surface.response(&body, &faces).is_err());
+        let (surface, body, faces) = fixture(2);
+        let mixed = surface
+            .with_body_contact_domains(vec![(vec![faces[0]], vec![false; 2])])
+            .unwrap();
+        assert!(!mixed.may_contact_faces(&faces[..1]));
+        assert!(mixed.may_contact_faces(&faces[1..]));
+        assert!(mixed.may_contact_faces(&faces));
+        assert_eq!(mixed.response(&body, &faces[..1]).unwrap().potential_j, 0.);
+        assert!(mixed.response(&body, &faces[1..]).unwrap().potential_j > 0.);
+        let enabled = surface
+            .with_body_contact_domains(vec![(faces.clone(), vec![true; 2])])
+            .unwrap();
+        assert!(enabled.may_contact_faces(&faces));
+        assert!(enabled.response(&body, &faces).unwrap().potential_j > 0.);
+        assert!(surface.same_owner(&enabled).is_err());
+        let moved = surface
+            .with_positions(
+                surface
+                    .positions()
+                    .iter()
+                    .map(|p| [p[0], p[1], p[2] + 0.001])
+                    .collect(),
+            )
+            .unwrap();
+        surface.same_owner(&moved).unwrap();
+        assert_eq!(moved.response(&body, &faces).unwrap().potential_j, 0.);
+    }
+    #[test]
+    #[ignore = "manual inactive-domain comparison; no timing threshold"]
+    fn inactive_domain_benchmark() {
+        let (surface, body, faces) = fixture(512);
+        let start = std::time::Instant::now();
+        let mut potential = 0.;
+        for _ in 0..200 {
+            let r = surface
+                .response(std::hint::black_box(&body), &faces)
+                .unwrap();
+            assert!(
+                r.body_gradient_n
+                    .iter()
+                    .chain(&r.obstacle_gradient_n)
+                    .flatten()
+                    .all(|&x| x == 0.)
+            );
+            potential += r.potential_j;
+            std::hint::black_box(r);
+        }
+        assert_eq!(potential, 0.);
+        println!(
+            "INACTIVE_DOMAIN_BENCH elapsed_s={:.17e} steps=200 faces=512 potential_j={potential:.17e}",
+            start.elapsed().as_secs_f64()
+        );
+    }
+}
+
+#[cfg(test)]
+mod path_topology_admission_tests {
+    use super::*;
+    fn check(
+        path: &PreparedPrescribedContactPath,
+        start: &[Vec3],
+        end: &[Vec3],
+        faces: &[[usize; 3]],
+    ) {
+        let admitted_stencils = path.normal_stencils(start, end, faces);
+        let legacy_stencils = path.normal_stencils_with_admitted_faces::<false>(start, end, faces);
+        assert_eq!(
+            format!("{admitted_stencils:?}"),
+            format!("{legacy_stencils:?}")
+        );
+        let admitted = path.response(start, end, faces);
+        let legacy = path.response_with_admitted_faces::<false>(start, end, faces);
+        match (admitted, legacy) {
+            (Ok(a), Ok(b)) => {
+                assert_eq!(a.midpoint_objective_j, b.midpoint_objective_j);
+                assert_eq!(a.body_gradient_n, b.body_gradient_n);
+                assert_eq!(a.obstacle_gradient_n, b.obstacle_gradient_n);
+            }
+            (Err(a), Err(b)) => assert_eq!(a, b),
+            (a, b) => panic!("admission mismatch {a:?} {b:?}"),
+        }
+    }
+    #[test]
+    fn immutable_path_topology_matches_legacy_and_rechecks_sample_geometry() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-2., -2., 0.], [2., -2., 0.], [0., 2., 0.]],
+            vec![[0, 1, 2]],
+            0.001,
+            0.03,
+            100.,
+        )
+        .unwrap();
+        let start = [[0., 0., 0.015], [0.125, 0., 0.015], [0., 0.125, 0.015]];
+        let end = start.map(|p| [p[0] + 0.0001, p[1], p[2] + 0.0002]);
+        for panels in [1, 2, 4, 8, 16] {
+            let path = surface.prepare_path_panels(&surface, panels).unwrap();
+            check(&path, &start, &end, &[[0, 1, 2]]);
+            assert!(
+                path.response(&start, &end, &[[0, 1, 2]])
+                    .unwrap()
+                    .midpoint_objective_j
+                    > 0.
+            );
+            check(&path, &start, &end, &[[0, 1, 2], [2, 1, 0]]);
+            assert!(
+                path.response(&start, &end, &[[0, 1, 2], [2, 1, 0]])
+                    .is_err()
+            );
+            check(&path, &start, &end, &[[0, 1, 3]]);
+            check(&path, &start, &end[..2], &[[0, 1, 2]]);
+            let mut bad = end;
+            bad[0][2] = f64::NAN;
+            check(&path, &start, &bad, &[[0, 1, 2]]);
+        }
+        let inactive = surface
+            .with_body_contact_domains(vec![(vec![[0, 1, 2]], vec![false])])
+            .unwrap();
+        let path = inactive.prepare_path(&inactive).unwrap();
+        let folded = [[0., 0., 0.015], [-0.125, 0., 0.015], [0., 0.125, 0.015]];
+        check(&path, &start, &folded, &[[0, 1, 2]]);
+        assert_eq!(
+            path.response(&start, &folded, &[[0, 1, 2]]).unwrap_err(),
+            "degenerate contact triangle"
+        );
+        assert_eq!(
+            path.response(&start, &end, &[[0, 1, 2]])
+                .unwrap()
+                .midpoint_objective_j,
+            0.
+        );
+    }
+
+    #[test]
+    #[ignore = "native bounded topology validation benchmark; not full-rig speed qualification"]
+    fn benchmark_admitted_path_topology_against_legacy() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-2., -2., 0.], [2., -2., 0.], [0., 2., 0.]],
+            vec![[0, 1, 2]],
+            0.001,
+            0.03,
+            100.,
+        )
+        .unwrap();
+        let mut body = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..1024 {
+            let x = i as f64 * 0.5;
+            body.extend([[x, 0., 1.], [x + 0.125, 0., 1.], [x, 0.125, 1.]]);
+            faces.push([3 * i, 3 * i + 1, 3 * i + 2]);
+        }
+        let inactive = surface
+            .with_body_contact_domains(vec![(faces.clone(), vec![false])])
+            .unwrap();
+        let path = inactive.prepare_path_panels(&inactive, 16).unwrap();
+        let end: Vec<_> = body.iter().map(|p| [p[0], p[1], p[2] + 0.001]).collect();
+        check(&path, &body, &end, &faces);
+        for (trial, admitted) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let now = std::time::Instant::now();
+            for _ in 0..10 {
+                let value = if admitted {
+                    path.response(&body, &end, &faces)
+                } else {
+                    path.response_with_admitted_faces::<false>(&body, &end, &faces)
+                }
+                .unwrap();
+                assert_eq!(value.midpoint_objective_j, 0.);
+                let stencils = if admitted {
+                    path.normal_stencils(&body, &end, &faces)
+                } else {
+                    path.normal_stencils_with_admitted_faces::<false>(&body, &end, &faces)
+                }
+                .unwrap();
+                assert!(stencils.is_empty());
+                std::hint::black_box(stencils);
+                std::hint::black_box(value);
+            }
+            eprintln!(
+                "PATH_TOPOLOGY_BENCH trial={trial} admitted={admitted} iterations=10 faces=1024 panels=16 elapsed_s={:.9}",
+                now.elapsed().as_secs_f64()
+            );
+        }
+    }
+
+    #[test]
+    #[ignore = "isolated endpoint admission benchmark; not full-rig throughput"]
+    fn benchmark_second_endpoint_admission() {
+        let mut body = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..1024 {
+            let x = i as f64 * 0.5;
+            body.extend([[x, 0., 1.], [x + 0.125, 0., 1.], [x, 0.125, 1.]]);
+            faces.push([3 * i, 3 * i + 1, 3 * i + 2]);
+        }
+        validate_faces(&body, &faces).unwrap();
+        for (trial, admitted) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let now = std::time::Instant::now();
+            for _ in 0..1000 {
+                let result = if admitted {
+                    validate_admitted_face_geometry(std::hint::black_box(&body), &faces)
+                } else {
+                    validate_faces(std::hint::black_box(&body), &faces)
+                };
+                std::hint::black_box(result).unwrap();
+            }
+            eprintln!(
+                "ENDPOINT_ADMISSION_BENCH trial={trial} admitted={admitted} faces=1024 iterations=1000 elapsed_s={:.9}",
+                now.elapsed().as_secs_f64()
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod query_scratch_profile {
+    use super::*;
+    #[test]
+    #[ignore = "manual active-contact scratch paired timing; not full-rig speed"]
+    fn active_contact_query_scratch_profile() {
+        let mut points = Vec::new();
+        let mut faces = Vec::new();
+        for i in 0..1024 {
+            let x = i as f64;
+            let n = points.len();
+            points.extend([[x, 0., 0.], [x + 0.2, 0., 0.], [x, 0.2, 0.]]);
+            faces.push([n, n + 1, n + 2]);
+        }
+        let body: Vec<_> = points.iter().map(|p| [p[0], p[1], 0.015]).collect();
+        let surface =
+            PrescribedTriangleSurface::new(points, faces.clone(), 0.001, 0.03, 100.).unwrap();
+        let baseline = surface
+            .response_with_query_scratch::<true, false>(&body, &faces, None)
+            .unwrap();
+        let reused = surface
+            .response_with_query_scratch::<true, true>(&body, &faces, None)
+            .unwrap();
+        assert_eq!(baseline.potential_j.to_bits(), reused.potential_j.to_bits());
+        for (a, b) in baseline
+            .body_gradient_n
+            .iter()
+            .chain(&baseline.obstacle_gradient_n)
+            .flatten()
+            .zip(
+                reused
+                    .body_gradient_n
+                    .iter()
+                    .chain(&reused.obstacle_gradient_n)
+                    .flatten(),
+            )
+        {
+            assert_eq!(a.to_bits(), b.to_bits());
+        }
+        let baseline = surface
+            .normal_stencils_with_query_scratch::<true, false>(&body, &faces, None)
+            .unwrap();
+        let reused = surface
+            .normal_stencils_with_query_scratch::<true, true>(&body, &faces, None)
+            .unwrap();
+        assert_eq!(baseline.len(), 1024);
+        assert_eq!(format!("{baseline:?}"), format!("{reused:?}"));
+        for (trial, reuse) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let start = std::time::Instant::now();
+            for _ in 0..200 {
+                let body = std::hint::black_box(&body);
+                let (r, n) = if reuse {
+                    (
+                        surface
+                            .response_with_query_scratch::<true, true>(body, &faces, None)
+                            .unwrap(),
+                        surface
+                            .normal_stencils_with_query_scratch::<true, true>(body, &faces, None)
+                            .unwrap(),
+                    )
+                } else {
+                    (
+                        surface
+                            .response_with_query_scratch::<true, false>(body, &faces, None)
+                            .unwrap(),
+                        surface
+                            .normal_stencils_with_query_scratch::<true, false>(body, &faces, None)
+                            .unwrap(),
+                    )
+                };
+                std::hint::black_box((r, n));
+            }
+            eprintln!(
+                "CONTACT_SCRATCH_PROFILE trial={trial} reuse={reuse} elapsed_s={:.9} faces=1024 iterations=200 exact_energy_gradient_bits=true stencils_equal=true",
+                start.elapsed().as_secs_f64()
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod inactive_path_tests {
+    use super::*;
+    #[test]
+    fn inactive_path_keeps_midpoint_geometry_errors_and_unlisted_contacts() {
+        let surface = PrescribedTriangleSurface::new(
+            vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            vec![[0, 1, 2]],
+            0.001,
+            0.03,
+            100.,
+        )
+        .unwrap()
+        .with_body_contact_domains(vec![(vec![[0, 1, 2]], vec![false])])
+        .unwrap();
+        let start = [[-1., -1., 0.015], [1., -1., 0.015], [0., 1., 0.015]];
+        let path = surface.prepare_path(&surface).unwrap();
+        let faces = [[0, 1, 2]];
+        let new = path
+            .response_with_inactive_path::<true, true>(&start, &start, &faces)
+            .unwrap();
+        let old = path
+            .response_with_inactive_path::<true, false>(&start, &start, &faces)
+            .unwrap();
+        assert_eq!(format!("{new:?}"), format!("{old:?}"));
+        assert!(
+            path.normal_stencils(&start, &start, &faces)
+                .unwrap()
+                .is_empty()
+        );
+        let mut collapsed = start;
+        collapsed.swap(0, 1);
+        assert_eq!(
+            path.response_with_inactive_path::<true, true>(&start, &collapsed, &faces)
+                .unwrap_err(),
+            path.response_with_inactive_path::<true, false>(&start, &collapsed, &faces)
+                .unwrap_err()
+        );
+        assert_eq!(
+            path.normal_stencils_with_inactive_path::<true, true>(&start, &collapsed, &faces)
+                .unwrap_err(),
+            path.normal_stencils_with_inactive_path::<true, false>(&start, &collapsed, &faces)
+                .unwrap_err()
+        );
+        let mut malformed = surface.prepare_path(&surface).unwrap();
+        malformed.samples[0].0 = 0.;
+        assert_eq!(
+            malformed
+                .response_with_inactive_path::<true, true>(&start, &start, &faces)
+                .unwrap_err(),
+            malformed
+                .response_with_inactive_path::<true, false>(&start, &start, &faces)
+                .unwrap_err()
+        );
+        let points: Vec<_> = start
+            .into_iter()
+            .chain(start.map(|p| [p[0] * 0.5, p[1] * 0.5, p[2]]))
+            .collect();
+        let faces = [[0, 1, 2], [3, 4, 5]];
+        let new = path
+            .response_with_inactive_path::<true, true>(&points, &points, &faces)
+            .unwrap();
+        let old = path
+            .response_with_inactive_path::<true, false>(&points, &points, &faces)
+            .unwrap();
+        assert!(new.midpoint_objective_j > 0.);
+        assert_eq!(format!("{new:?}"), format!("{old:?}"));
+    }
+    #[test]
+    #[ignore = "manual full-mesh disabled-domain path paired timing"]
+    fn full_mesh_inactive_path_profile() {
+        let mesh = super::super::TetraMesh::from_medit_volume(include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../artifacts/character-bind-pose-2026-10-07/tetgen-volume.mesh"
+        )))
+        .unwrap();
+        let surface = PrescribedTriangleSurface::new(
+            mesh.points.clone(),
+            mesh.boundary.clone(),
+            0.001,
+            0.03,
+            100.,
+        )
+        .unwrap()
+        .with_body_contact_domains(vec![(
+            mesh.boundary.clone(),
+            vec![false; mesh.boundary.len()],
+        )])
+        .unwrap();
+        let path = surface.prepare_path(&surface).unwrap();
+        let old = path
+            .response_with_inactive_path::<true, false>(&mesh.points, &mesh.points, &mesh.boundary)
+            .unwrap();
+        let new = path
+            .response_with_inactive_path::<true, true>(&mesh.points, &mesh.points, &mesh.boundary)
+            .unwrap();
+        assert_eq!(format!("{old:?}"), format!("{new:?}"));
+        for (trial, skip) in [false, true, true, false, true, false, false, true]
+            .into_iter()
+            .enumerate()
+        {
+            let start = std::time::Instant::now();
+            for _ in 0..100 {
+                std::hint::black_box(if skip {
+                    path.response_with_inactive_path::<true, true>(
+                        &mesh.points,
+                        &mesh.points,
+                        &mesh.boundary,
+                    )
+                } else {
+                    path.response_with_inactive_path::<true, false>(
+                        &mesh.points,
+                        &mesh.points,
+                        &mesh.boundary,
+                    )
+                })
+                .unwrap();
+            }
+            eprintln!(
+                "INACTIVE_PATH_PROFILE trial={trial} skip={skip} elapsed_s={:.9} nodes={} faces={} iterations=100 geometry_admission_preserved=true response_equal=true",
+                start.elapsed().as_secs_f64(),
+                mesh.points.len(),
+                mesh.boundary.len()
+            );
+        }
+    }
+}

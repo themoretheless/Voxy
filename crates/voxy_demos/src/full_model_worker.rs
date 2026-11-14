@@ -233,7 +233,7 @@ struct PartitionCache {
 }
 
 impl PartitionCache {
-    #[allow(clippy::float_cmp)] // The hair tag is an exact sentinel value, as in `partition_hair`.
+    // The hair tag is an exact sentinel value, as in `partition_hair`.
     fn partition(&mut self, mesh: &SceneMesh) -> Result<(Vec<u32>, Vec<u32>), DemoError> {
         let tags: Vec<bool> = mesh.vertices().iter().map(|v| v.uv[0] == -7.).collect();
         if self.indices != mesh.indices() || self.hair_tags != tags {

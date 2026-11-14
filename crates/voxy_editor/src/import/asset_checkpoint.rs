@@ -1,6 +1,5 @@
 //! Complete CPU EditorAsset graph. Import observations/catalog generations and
 //! native CPU/GPU publication belong to the enclosing App transaction.
-#![allow(dead_code)]
 use super::node_checkpoint::{ImportedNodesCheckpoint, NodeCheckpointLimits};
 use super::*;
 use serde::{Deserialize, Serialize};
@@ -232,12 +231,14 @@ fn metadata(m: &Manifest, max: usize) -> Result<Vec<u8>, EditorError> {
     Ok(w.bytes)
 }
 impl EditorAssetCheckpoint {
+    #[cfg(test)]
     pub fn capture(
         assets: &[Arc<EditorAsset>],
         limits: EditorAssetCheckpointLimits,
     ) -> Result<Self, EditorError> {
         Self::capture_with_models(assets, &[], limits)
     }
+    #[cfg(test)]
     pub fn capture_with_models(
         assets: &[Arc<EditorAsset>],
         external_models: &[Arc<ModelAsset>],
@@ -575,6 +576,7 @@ impl EditorAssetCheckpoint {
         result.admit(limits)?;
         Ok(result)
     }
+    #[cfg(test)]
     pub fn prepare(
         &self,
         limits: EditorAssetCheckpointLimits,
@@ -671,13 +673,13 @@ impl EditorAssetCheckpoint {
                 .model
                 .map(|id| models.get(id).cloned().ok_or_else(bad))
                 .transpose()?;
-            if let Some(model) = &animated {
-                if model.primitives.iter().any(|p| {
+            if let Some(model) = &animated
+                && model.primitives.iter().any(|p| {
                     p.base_color_texture
                         .is_some_and(|t| t.image >= nodes.images.len())
-                }) {
-                    return Err(bad());
-                }
+                })
+            {
+                return Err(bad());
             }
             let skinned_lod = a
                 .skinned

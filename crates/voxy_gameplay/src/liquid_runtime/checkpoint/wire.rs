@@ -6,8 +6,8 @@ use crate::{
     RigidPointLoads,
 };
 use physics::{
-    astrophysics_spin::Spin, contact::ContactBody, gravity::Body, liquid::PulsedEmitterCheckpoint,
-    mass_properties::MassProperties,
+    contact::ContactBody, gravity::Body, liquid::PulsedEmitterCheckpoint,
+    mass_properties::MassProperties, rotation::Spin,
 };
 use voxy_scene::Transform;
 type Error = GameplayError;
@@ -317,7 +317,7 @@ record!(AffineBox {
     center: glam::DVec3,
     edges: [glam::DVec3; 3]
 });
-record!(ContactBody {motion:physics::gravity::Body,spin:Option<physics::astrophysics_spin::Spin>});
+record!(ContactBody {motion:physics::gravity::Body,spin:Option<physics::rotation::Spin>});
 record!(Body {
     mass: f64,
     position: [f64; 3],

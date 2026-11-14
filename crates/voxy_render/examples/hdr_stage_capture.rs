@@ -350,7 +350,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         assert_eq!(native_depth.len(), 67 * 5 * 4);
         assert_eq!(observed.len(), 67 * 5 * 4);
-        assert_eq!(observed, native_depth, "compact observer must preserve every original depth word");
+        assert_eq!(
+            observed, native_depth,
+            "compact observer must preserve every original depth word"
+        );
     }
     let mut chain_subresources = 0usize;
     let mut chain_words = 0usize;

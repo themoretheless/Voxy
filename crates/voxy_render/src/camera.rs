@@ -1,6 +1,6 @@
 //! Right-handed cameras with WebGPU/DirectX depth range 0..1.
 use glam::camera::rh::{proj::directx, view::look_at_mat4};
-use glam::{Mat4, Vec3};
+use glam::{Mat4, Vec2, Vec3};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SceneProjection {
@@ -31,6 +31,82 @@ pub struct SceneCamera {
 #[derive(Clone, Copy, Debug, Eq, PartialEq, thiserror::Error)]
 #[error("invalid camera: expected a finite view and non-degenerate projection")]
 pub struct InvalidSceneCamera;
+
+/// Serializable orbit view shared by the editor and packaged runtime.
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OrbitView {
+    pub legacy: bool,
+    pub perspective: bool,
+    pub target: Vec3,
+    pub distance: f32,
+    pub yaw: f32,
+    pub pitch: f32,
+}
+impl Default for OrbitView {
+    fn default() -> Self {
+        Self {
+            legacy: true,
+            perspective: false,
+            target: Vec3::new(0., 0., 0.5),
+            distance: 2.,
+            yaw: 0.,
+            pitch: 0.,
+        }
+    }
+}
+impl OrbitView {
+    pub fn valid(&self) -> bool {
+        self.target.is_finite()
+            && self.target.abs().max_element() <= 1e6
+            && self.distance.is_finite()
+            && (0.01..=10_000.).contains(&self.distance)
+            && self.yaw.is_finite()
+            && self.pitch.is_finite()
+            && self.pitch.abs() <= 1.5
+    }
+
+    /// Resolves the authored orbit view for the given viewport size.
+    /// # Errors
+    /// Rejects invalid view settings and viewport dimensions.
+    pub fn scene_camera(&self, size: Vec2) -> Result<Option<SceneCamera>, InvalidSceneCamera> {
+        if !self.valid() || !size.is_finite() || size.min_element() <= 0. {
+            return Err(InvalidSceneCamera);
+        }
+        if self.legacy {
+            return Ok(None);
+        }
+        let direction = Vec3::new(
+            self.yaw.sin() * self.pitch.cos(),
+            self.pitch.sin(),
+            self.yaw.cos() * self.pitch.cos(),
+        );
+        let aspect = size.x / size.y;
+        let half_height = self.distance * 0.5;
+        Ok(Some(SceneCamera {
+            eye: self.target + direction * self.distance,
+            target: self.target,
+            up: Vec3::Y,
+            projection: if self.perspective {
+                SceneProjection::Perspective {
+                    vertical_fov: std::f32::consts::FRAC_PI_3,
+                    aspect,
+                    near: self.distance * 0.001,
+                    far: self.distance * 100.,
+                }
+            } else {
+                SceneProjection::Orthographic {
+                    left: -half_height * aspect,
+                    right: half_height * aspect,
+                    bottom: -half_height,
+                    top: half_height,
+                    near: 0.,
+                    far: self.distance * 100.,
+                }
+            },
+        }))
+    }
+}
 
 impl SceneCamera {
     /// World-space origin and unit direction through a pixel center. Pixels use
@@ -179,6 +255,18 @@ impl SceneCamera {
     /// # Errors
     /// Rejects non-finite or degenerate views and invalid frusta.
     pub fn view_projection(self) -> Result<Mat4, InvalidSceneCamera> {
+        self.view_projection_with_depth(false)
+    }
+
+    /// Reversed-Z view-projection (`near -> 1.0`, `far -> 0.0`), matching the primary
+    /// voxel renderer's `Depth32Float` + `GreaterEqual` depth buffer convention.
+    /// # Errors
+    /// Rejects non-finite or degenerate views and invalid frusta.
+    pub fn view_projection_reverse_z(self) -> Result<Mat4, InvalidSceneCamera> {
+        self.view_projection_with_depth(true)
+    }
+
+    fn view_projection_with_depth(self, reverse_z: bool) -> Result<Mat4, InvalidSceneCamera> {
         let direction = self.target - self.eye;
         if !self.eye.is_finite()
             || !self.target.is_finite()
@@ -206,7 +294,11 @@ impl SceneCamera {
                 {
                     return Err(InvalidSceneCamera);
                 }
-                directx::perspective(vertical_fov, aspect, near, far)
+                if reverse_z {
+                    directx::perspective(vertical_fov, aspect, far, near)
+                } else {
+                    directx::perspective(vertical_fov, aspect, near, far)
+                }
             }
             SceneProjection::Orthographic {
                 left,
@@ -226,7 +318,11 @@ impl SceneCamera {
                 {
                     return Err(InvalidSceneCamera);
                 }
-                directx::orthographic(left, right, bottom, top, near, far)
+                if reverse_z {
+                    directx::orthographic(left, right, bottom, top, far, near)
+                } else {
+                    directx::orthographic(left, right, bottom, top, near, far)
+                }
             }
         };
         let result = projection * look_at_mat4(self.eye, self.target, self.up);
@@ -340,6 +436,17 @@ mod tests {
         let close = vp.project_point3(Vec3::new(1.0, 0.0, -2.0));
         let far = vp.project_point3(Vec3::new(1.0, 0.0, -4.0));
         assert!((close.x - far.x * 2.0).abs() < 1e-5);
+
+        let rev = camera(SceneProjection::Perspective {
+            vertical_fov: std::f32::consts::FRAC_PI_2,
+            aspect: 1.0,
+            near: 1.0,
+            far: 10.0,
+        })
+        .view_projection_reverse_z()
+        .unwrap();
+        assert!((rev.project_point3(Vec3::new(0.0, 0.0, -1.0)).z - 1.0).abs() < 1e-5);
+        assert!(rev.project_point3(Vec3::new(0.0, 0.0, -10.0)).z.abs() < 1e-5);
     }
 
     #[test]

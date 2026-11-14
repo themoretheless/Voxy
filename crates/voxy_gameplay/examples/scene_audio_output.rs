@@ -34,7 +34,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
     let frames = (0..count)
         .map(|index| {
-            #[allow(clippy::cast_precision_loss, clippy::cast_possible_truncation)]
             let sample =
                 (index as f64 * 440. * std::f64::consts::TAU / f64::from(rate)).sin() as f32;
             [sample; 2]

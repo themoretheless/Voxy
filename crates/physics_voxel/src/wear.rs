@@ -263,7 +263,7 @@ mod tests {
             .suspension()
             .grains()
             .iter()
-            .map(|p| p.mass_kg())
+            .map(physics::suspension::Particle::mass_kg)
             .sum();
         assert!((emitted_mass - result.physics.wear.mass_kg).abs() < 1e-20);
         let (_, max) = coupled.binding().collision_bounds();

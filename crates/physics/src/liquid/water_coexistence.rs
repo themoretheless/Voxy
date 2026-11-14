@@ -105,17 +105,16 @@ pub(in crate::liquid) fn solve_coexistence(
             ];
             if next.iter().all(|r| r.is_finite() && *r > 0.)
                 && next[0].ln() - next[1].ln() >= minimum_separation
+                && let Ok((trial, residual)) = evaluate(t, next)
             {
-                if let Ok((trial, residual)) = evaluate(t, next) {
-                    let trial_pressure_bound =
-                        1e-6 + 1e-12 * trial[0].state.pressure_pa.max(trial[1].state.pressure_pa);
-                    let next_norm = (residual[0] / trial_pressure_bound)
-                        .abs()
-                        .max((residual[1] / (1e-12 * chemical_scale)).abs());
-                    if next_norm < norm {
-                        admitted = Some(next);
-                        break;
-                    }
+                let trial_pressure_bound =
+                    1e-6 + 1e-12 * trial[0].state.pressure_pa.max(trial[1].state.pressure_pa);
+                let next_norm = (residual[0] / trial_pressure_bound)
+                    .abs()
+                    .max((residual[1] / (1e-12 * chemical_scale)).abs());
+                if next_norm < norm {
+                    admitted = Some(next);
+                    break;
                 }
             }
             scale *= 0.5;

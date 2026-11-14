@@ -1,0 +1,6 @@
++ repo=/Users/themoretheless/Documents/Sources/voxy
++ mountpoint -q /Users/themoretheless/Documents/Sources/voxy
++ xvfb-run -a env WGPU_BACKEND=vulkan VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json /home/themoretheless.guest/voxy-portable-relocated/voxy_game --embedded-game-native-smoke
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+GAME UI GPU PUBLISHED draws=0
+GAME NATIVE PASS frames=3 ticks=7

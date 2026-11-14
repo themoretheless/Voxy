@@ -26,6 +26,7 @@ impl SceneGraph {
             structure_revision: self.structure_revision,
             change_revision: self.change_revision,
             free: self.free.clone(),
+            component_slots: std::collections::HashMap::default(),
             slots: self
                 .slots
                 .iter()

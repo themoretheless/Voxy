@@ -20,7 +20,6 @@ fn eyes(separation: f32) -> [XrView; 2] {
     })
 }
 
-#[allow(clippy::too_many_lines)]
 fn verify_eye(
     device: &wgpu::Device,
     adapter: &wgpu::Adapter,

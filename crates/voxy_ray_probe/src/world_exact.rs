@@ -881,7 +881,7 @@ pub(super) fn probe(
             .create_new(true)
             .write(true)
             .open(path)?;
-        file.write_all(&data)?;
+        file.write_all(data)?;
         file.sync_all()?;
     }
     for (index, (id, record)) in ids

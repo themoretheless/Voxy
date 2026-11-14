@@ -302,12 +302,10 @@ pub fn pairs(
     let timestamp_us = f64::from(queue.get_timestamp_period()) / 1000.;
     let blocks = std::env::var("VOXY_FULL_BLOCKS")
         .ok()
-        .map(|v| v.parse::<u32>().unwrap())
-        .unwrap_or(4);
+        .map_or(4, |v| v.parse::<u32>().unwrap());
     let pair_count = std::env::var("VOXY_FULL_PAIRS")
         .ok()
-        .map(|v| v.parse::<u32>().unwrap())
-        .unwrap_or(9);
+        .map_or(9, |v| v.parse::<u32>().unwrap());
     println!(
         "FULL_HEADER,path,phase,protocol,pair,block,mode,frame,cpu_us,gpu_us,completion_us,start_us,submit_us,callback_us,gpu_start_tick,gpu_end_tick,start_gap_us,gpu_gap_us,backpressure_us,deadline_miss"
     );

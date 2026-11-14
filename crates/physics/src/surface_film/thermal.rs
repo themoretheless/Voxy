@@ -325,7 +325,8 @@ impl ThermalFilmMixture {
 
     /// Used only on an outer transaction's private candidate. Checks this cell
     /// before mutation; batch and cross-owner callers retain publication control.
-    pub(crate) fn add_heat_staged_cell(
+    #[doc(hidden)]
+    pub fn add_heat_staged_cell(
         &mut self,
         cell: usize,
         increment: f64,

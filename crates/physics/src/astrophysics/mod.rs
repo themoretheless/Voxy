@@ -17,7 +17,11 @@ pub mod radiation;
 pub mod reaclib;
 pub mod spherical;
 pub mod spherical_radiation;
+<<<<<<<< HEAD:crates/physics/src/astrophysics/mod.rs
 pub mod spin;
+========
+pub use crate::rotation as spin;
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/mod.rs
 pub mod star;
 pub mod thermal;
 
@@ -41,13 +45,7 @@ pub struct Orbit {
     pub apoapsis: Option<f64>,
     pub period: Option<f64>,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Error {
-    InvalidInput,
-    DegenerateOrbit,
-    NumericalOverflow,
-    NoConvergence,
-}
+pub use crate::rotation::Error;
 
 /// Leading-order torque from a symmetric gravitational acceleration gradient.
 /// Both the inertia tensor and field tensor must be expressed in the same frame.
@@ -347,12 +345,28 @@ pub fn propagate(state: OrbitalState, mu: f64, dt: f64) -> Result<OrbitalState, 
 /// Solves Kepler's equation $M = E - e \sin E$ for eccentric anomaly $E$ (`0 <= e < 1`) or
 /// hyperbolic Kepler's equation $M = e \sinh H - H$ (`e > 1`) via Halley's third-order method.
 pub fn kepler_eccentric_anomaly_halley(mean_anomaly: f64, eccentricity: f64) -> Option<f64> {
+<<<<<<<< HEAD:crates/physics/src/astrophysics/mod.rs
     if !mean_anomaly.is_finite() || !eccentricity.is_finite() || eccentricity < 0.0 || (eccentricity - 1.0).abs() < 1e-12 {
+========
+    if !mean_anomaly.is_finite()
+        || !eccentricity.is_finite()
+        || eccentricity < 0.0
+        || (eccentricity - 1.0).abs() < 1e-12
+    {
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/mod.rs
         return None;
     }
     if eccentricity < 1.0 {
         let m = mean_anomaly.rem_euclid(std::f64::consts::TAU);
+<<<<<<<< HEAD:crates/physics/src/astrophysics/mod.rs
         let mut e_anom = if eccentricity > 0.8 { std::f64::consts::PI } else { m };
+========
+        let mut e_anom = if eccentricity > 0.8 {
+            std::f64::consts::PI
+        } else {
+            m
+        };
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/mod.rs
         for _ in 0..32 {
             let (s, c) = e_anom.sin_cos();
             let f = e_anom - eccentricity * s - m;
@@ -391,7 +405,12 @@ pub fn kepler_eccentric_anomaly_halley(mean_anomaly: f64, eccentricity: f64) -> 
 /// Computes Hohmann coplanar transfer velocity impulses `(dv1, dv2, total_dv)` between circular
 /// orbits of radii `r1` and `r2` around standard gravitational parameter `mu`.
 pub fn hohmann_transfer_delta_v(r1: f64, r2: f64, mu: f64) -> Option<(f64, f64, f64)> {
+<<<<<<<< HEAD:crates/physics/src/astrophysics/mod.rs
     if !r1.is_finite() || !r2.is_finite() || !mu.is_finite() || r1 <= 0.0 || r2 <= 0.0 || mu <= 0.0 {
+========
+    if !r1.is_finite() || !r2.is_finite() || !mu.is_finite() || r1 <= 0.0 || r2 <= 0.0 || mu <= 0.0
+    {
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/mod.rs
         return None;
     }
     let v1 = (mu / r1).sqrt();
@@ -437,7 +456,19 @@ pub fn post_newtonian_1pn_perihelion_precession_rad_per_orbit(
 /// Computes the gravitational time-dilation factor $\sqrt{1 - \frac{2 G M}{r c^2}}$ and redshift
 /// $z = (1 - 2 G M / (r c^2))^{-1/2} - 1$ outside the Schwarzschild event horizon $r_s = 2 G M / c^2$.
 pub fn gravitational_time_dilation_factor(r: f64, mass: f64, g: f64, c: f64) -> Option<(f64, f64)> {
+<<<<<<<< HEAD:crates/physics/src/astrophysics/mod.rs
     if !r.is_finite() || !mass.is_finite() || !g.is_finite() || !c.is_finite() || r <= 0.0 || mass < 0.0 || g <= 0.0 || c <= 0.0 {
+========
+    if !r.is_finite()
+        || !mass.is_finite()
+        || !g.is_finite()
+        || !c.is_finite()
+        || r <= 0.0
+        || mass < 0.0
+        || g <= 0.0
+        || c <= 0.0
+    {
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/mod.rs
         return None;
     }
     let rs = 2.0 * g * mass / (c * c);
@@ -481,6 +512,13 @@ mod conic_and_relativity_tests {
             gravitational_time_dilation_factor(1.0e4, 1.9885e30, 6.6743e-11, 2.997_924_58e8)
                 .unwrap();
         assert!(dilation < 1.0 && z > 0.0);
+<<<<<<<< HEAD:crates/physics/src/astrophysics/mod.rs
         assert!(gravitational_time_dilation_factor(1000.0, 1.9885e30, 6.6743e-11, 2.997_924_58e8).is_none());
+========
+        assert!(
+            gravitational_time_dilation_factor(1000.0, 1.9885e30, 6.6743e-11, 2.997_924_58e8)
+                .is_none()
+        );
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/mod.rs
     }
 }

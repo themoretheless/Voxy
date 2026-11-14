@@ -232,6 +232,58 @@ pub fn soft_clip_tanh_stereo(left: f32, right: f32, drive: f32) -> [f32; 2] {
     [sat(left), sat(right)]
 }
 
+/// Asymmetric attack/release peak envelope follower for sidechain voice ducking.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct EnvelopeFollower {
+    attack_coeff: f32,
+    release_coeff: f32,
+    envelope: f32,
+}
+
+impl EnvelopeFollower {
+    /// Creates an envelope follower from `attack_ms`, `release_ms`, and `sample_rate_hz`.
+    #[must_use]
+    pub fn new(attack_ms: f32, release_ms: f32, sample_rate_hz: f32) -> Option<Self> {
+        if !attack_ms.is_finite()
+            || !release_ms.is_finite()
+            || !sample_rate_hz.is_finite()
+            || attack_ms <= 0.0
+            || release_ms <= 0.0
+            || sample_rate_hz <= 0.0
+        {
+            return None;
+        }
+        let att_samples = (attack_ms * 0.001 * sample_rate_hz).max(1.0);
+        let rel_samples = (release_ms * 0.001 * sample_rate_hz).max(1.0);
+        Some(Self {
+            attack_coeff: (-1.0 / att_samples).exp(),
+            release_coeff: (-1.0 / rel_samples).exp(),
+            envelope: 0.0,
+        })
+    }
+
+    #[must_use]
+    pub const fn envelope(&self) -> f32 {
+        self.envelope
+    }
+
+    /// Advances the envelope by one input sample and returns the updated envelope level in `[0.0, 1.0]`.
+    pub fn step_sample(&mut self, sample: f32) -> f32 {
+        let level = if sample.is_finite() {
+            sample.abs().clamp(0.0, 1.0)
+        } else {
+            0.0
+        };
+        let coeff = if level > self.envelope {
+            self.attack_coeff
+        } else {
+            self.release_coeff
+        };
+        self.envelope = (coeff * self.envelope + (1.0 - coeff) * level).clamp(0.0, 1.0);
+        self.envelope
+    }
+}
+
 #[cfg(test)]
 mod limiter_tests {
     use super::*;
@@ -242,5 +294,9 @@ mod limiter_tests {
         assert!(out[0] > 0.99 && out[0] <= 1.0);
         assert!(out[1] < -0.99 && out[1] >= -1.0);
         assert_eq!(soft_clip_tanh_stereo(f32::NAN, 0.0, 1.0), [0.0, 0.0]);
+        let mut env = EnvelopeFollower::new(2.0, 50.0, 48_000.0).unwrap();
+        let risen = env.step_sample(0.8);
+        let decayed = env.step_sample(0.0);
+        assert!(risen > 0.0 && decayed < risen);
     }
 }

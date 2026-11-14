@@ -1,0 +1,4 @@
+8a87b215367c4a78904ef9aea1784bf89db8bc1856775567752867713ff30a77  crates/voxy_assets/src/locations.rs
+9929046f915b0cf5ca2d1f8db61d27559cf65785f98229eb66e32e3dfbd54013  crates/voxy_editor/src/import.rs
+94d39f6395e1016305e710d2992fc15b94b64a284625a418a62378e5bfdd782f  crates/voxy_model/src/project_gltf.rs
+46a025352bc421d2ebf1ed9dfbb628c64eb92c285c186ee468a09409047c61b9  crates/voxy_web/src/project_game.rs

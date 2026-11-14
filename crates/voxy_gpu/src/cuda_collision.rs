@@ -140,7 +140,6 @@ fn cuda_contacts(
                     },
                 };
                 // These are bounded local offsets, never absolute world anchors.
-                #[allow(clippy::cast_precision_loss)]
                 let base = [x as f64, y as f64, z as f64];
                 inputs.push(voxy_cuda::CudaBoxSweep {
                     min: aabb.min,

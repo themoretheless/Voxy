@@ -1,7 +1,7 @@
 //! Pressure-balanced contact fixture: hold below mu*N, slide above it, unload.
 //! cargo run -p physics --example quadratic_stick_slip > stick-slip.csv
 use physics::{
-    biomechanics::Material as Elastic,
+    constitutive::Material as Elastic,
     plasticity::{
         Material,
         mesh::{

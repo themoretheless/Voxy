@@ -108,6 +108,81 @@ fn interval_motion_aligns_previous_vertices_duration_and_velocity() {
     assert_eq!(format!("{source:?}"), before);
 }
 #[test]
+fn reused_motion_intervals_match_fresh_feature_colliders_exactly() {
+    let points = [[0., 0., 0.], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
+    let faces = [[0, 2, 1], [0, 1, 3], [0, 3, 2], [1, 2, 3]];
+    let mut source = TriangleMesh::new(&points, &faces).unwrap();
+    source.enable_closed_feature_normals().unwrap();
+    let mut sample = source.clone();
+    let triangle_storage = sample.triangles.as_ptr();
+    let node_storage = sample.nodes.as_ptr();
+    let mut vertices = Vec::new();
+    let mut vertex_storage = None;
+    for frame in 1..=16 {
+        let t = frame as f64 / 16.;
+        source
+            .refit_with_timestep(
+                &points.map(|p| {
+                    [
+                        p[0] * (1. + 0.1 * t) + 0.2 * t,
+                        p[1] * (1. - 0.05 * t) - 0.3 * t,
+                        p[2] + 0.4 * t,
+                    ]
+                }),
+                1. / 120.,
+            )
+            .unwrap();
+        let original = format!("{source:?}");
+        for step in 0..8 {
+            let start = step as f64 / 8.;
+            let end = (step + 1) as f64 / 8.;
+            let fresh = source.motion_interval(start, end).unwrap();
+            sample
+                .sample_motion_interval(&source, start, end, &mut vertices)
+                .unwrap();
+            assert_eq!(
+                format!("{sample:?}"),
+                format!("{fresh:?}"),
+                "frame={frame} interval={step}"
+            );
+            assert_eq!(sample.triangles.as_ptr(), triangle_storage);
+            assert_eq!(sample.nodes.as_ptr(), node_storage);
+            assert_eq!(
+                vertices.as_ptr(),
+                *vertex_storage.get_or_insert(vertices.as_ptr())
+            );
+        }
+        assert_eq!(format!("{source:?}"), original);
+    }
+}
+#[test]
+fn reused_motion_interval_rejection_preserves_workspace() {
+    let points = [[0., 0., 0.], [1., 0., 0.], [0., 1., 0.]];
+    let mut source = TriangleMesh::new(&points, &[[0, 1, 2]]).unwrap();
+    source
+        .refit_with_timestep(&[[0., 0., 0.], [-1., 0., 0.], [0., -1., 0.]], 0.5)
+        .unwrap();
+    let mut sample = source.clone();
+    let mut vertices = Vec::new();
+    let original = format!("{sample:?}");
+    for (start, end) in [(0.5, 0.75), (0.25, 0.5), (0.5, 0.5), (f64::NAN, 1.)] {
+        assert!(
+            sample
+                .sample_motion_interval(&source, start, end, &mut vertices)
+                .is_err()
+        );
+        assert_eq!(format!("{sample:?}"), original);
+    }
+    let stationary = TriangleMesh::new(&points, &[[0, 1, 2]]).unwrap();
+    sample
+        .sample_motion_interval(&stationary, 0., 1., &mut vertices)
+        .unwrap();
+    assert_eq!(
+        format!("{sample:?}"),
+        format!("{:?}", stationary.motion_interval(0., 1.).unwrap())
+    );
+}
+#[test]
 fn untimed_refit_is_stationary_in_continuous_queries() {
     let points = [[0., 0., 0.], [1., 0., 0.], [0., 1., 0.]];
     let mut source = TriangleMesh::new(&points, &[[0, 1, 2]]).unwrap();

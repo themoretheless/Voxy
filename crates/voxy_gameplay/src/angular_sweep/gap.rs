@@ -158,6 +158,44 @@ pub(super) fn lower(
     }
     Ok(result.max(0.))
 }
+/// Upper bound on normalized-interval travel along a fixed separating axis.
+pub(super) fn projected_travel(
+    first: &physics::rigid_motion::RigidMotion,
+    second: &physics::rigid_motion::RigidMotion,
+    axis: DVec3,
+    duration: f64,
+) -> Result<f64, PhysicsError> {
+    let mut squared = Interval(0., 0.);
+    for v in axis.to_array() {
+        squared = squared.add(Interval(v, v).mul(Interval(v, v))?)?;
+    }
+    let norm = squared.0.sqrt().next_down();
+    if !norm.is_finite() || norm <= 0. {
+        return Err(PhysicsError::InvalidMotion);
+    }
+    let project = |a: [f64; 3], b: [f64; 3]| {
+        let mut relative = [Interval(0., 0.); 3];
+        for i in 0..3 {
+            relative[i] = Interval(a[i], a[i]).sub(Interval(b[i], b[i]))?;
+        }
+        Ok::<_, PhysicsError>(dot(relative, axis)?.absolute())
+    };
+    let v = project(
+        first.initial().motion.velocity,
+        second.initial().motion.velocity,
+    )?;
+    let a = project(first.acceleration(), second.acceleration())?;
+    let j = project(first.jerk(), second.jerk())?;
+    // Use the full trajectory horizon for the velocity polynomial. Duration
+    // here is only the time represented by one unit of advancement.
+    let horizon = Interval(first.duration(), first.duration());
+    let half = Interval(0.5, 0.5);
+    let speed = v
+        .add(a.mul(horizon)?)?
+        .add(j.mul(horizon)?.mul(horizon)?.mul(half)?)?;
+    Ok((speed.mul(Interval(duration, duration))?.1 / norm).next_up())
+}
+
 /// Directed advancement within a normalized unit interval. The supplied gap
 /// must be a lower separation bound and speed an upper point-speed bound.
 pub(super) fn advance_time(time: f64, gap: f64, speed: f64) -> Result<f64, PhysicsError> {

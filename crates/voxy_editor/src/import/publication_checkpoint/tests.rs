@@ -1,5 +1,5 @@
 use super::*;
-use crate::import::{load, FileInputs, ImportInputs, SourcePath};
+use crate::import::{FileInputs, ImportInputs, SourcePath, load};
 
 #[test]
 fn original_observations_and_shared_models_survive_source_removal() {

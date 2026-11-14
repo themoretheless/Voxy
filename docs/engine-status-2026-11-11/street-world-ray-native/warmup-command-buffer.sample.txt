@@ -1,0 +1,11 @@
+    +                                                   93 _RNvMCsfoLLEO7WtMo_11street_walkNtB2_3App4draw  (in street_walk) + 7952  [0x100cfb050]
+    +                                                     93 _RNvMNtNtCsfXgK35aVhHD_11voxy_render13archive_scene4drawNtB4_20ArchiveSceneRenderer17draw_supersampled  (in street_walk) + 444  [0x1010b3e48]
+    +                                                         93 _RNvMNtNtCs8OHBxdcj3UW_4wgpu3api15command_encoderNtB2_14CommandEncoder6finish  (in street_walk) + 40  [0x101183b9c]
+    +                                                               73 _RNvMs9_NtCsbjUAMBRpCYw_9wgpu_core7commandNtB5_14CommandEncoder6finish  (in street_walk) + 2244  [0x101261840]
+    +                                                               ! 73 _RNvNtNtCsbjUAMBRpCYw_9wgpu_core7command7compute19encode_compute_pass  (in street_walk) + 168  [0x101275978]
+    +                                                               !     73 -[AGXG16XFamilyCommandQueue commandBuffer]  (in AGXMetalG16X) + 44  [0x11f1c297c]
+    +                                                               !                 73 semaphore_wait_trap  (in libsystem_kernel.dylib) + 8  [0x18e8ecbb0]
+    +                                                               20 _RNvMs9_NtCsbjUAMBRpCYw_9wgpu_core7commandNtB5_14CommandEncoder6finish  (in street_walk) + 2600  [0x1012619a4]
+    +                                                                   20 -[AGXG16XFamilyCommandQueue commandBuffer]  (in AGXMetalG16X) + 44  [0x11f1c297c]
+    +                                                                               20 semaphore_wait_trap  (in libsystem_kernel.dylib) + 8  [0x18e8ecbb0]
+        semaphore_wait_trap  (in libsystem_kernel.dylib)        93

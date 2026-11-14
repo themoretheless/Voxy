@@ -195,12 +195,13 @@ pub fn cauchy_ior_rgb(n_a: f64, cauchy_b_um2: f64) -> Result<[f64; 3], &'static 
 /// `(650 nm, 550 nm, 450 nm)` for a dielectric soap/oil film of `thickness_nm` and `film_ior`:
 /// `delta = (4 * pi * n_film * d * cos(theta_t)) / lambda`.
 #[must_use]
-pub fn thin_film_interference_rgb(
-    cos_theta_i: f64,
-    film_ior: f64,
-    thickness_nm: f64,
-) -> [f64; 3] {
-    if !cos_theta_i.is_finite() || !film_ior.is_finite() || !thickness_nm.is_finite() || film_ior < 1.0 || thickness_nm < 0.0 {
+pub fn thin_film_interference_rgb(cos_theta_i: f64, film_ior: f64, thickness_nm: f64) -> [f64; 3] {
+    if !cos_theta_i.is_finite()
+        || !film_ior.is_finite()
+        || !thickness_nm.is_finite()
+        || film_ior < 1.0
+        || thickness_nm < 0.0
+    {
         return [0.0; 3];
     }
     let cos_i = cos_theta_i.clamp(0.0, 1.0);

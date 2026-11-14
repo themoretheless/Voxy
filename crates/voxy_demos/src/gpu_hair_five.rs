@@ -57,8 +57,8 @@ impl FivePrograms {
                 self.qr_submissions += 1;
                 self.qr_dispatches += input.steps();
                 let mut candidate = input.candidate(&dispatch(
-                    &device,
-                    &queue,
+                    device,
+                    queue,
                     &self.qr,
                     input.bytes(),
                     input.steps(),
@@ -77,8 +77,8 @@ impl FivePrograms {
                     &candidate.coordinates,
                 )?;
                 match step.result(&dispatch(
-                    &device,
-                    &queue,
+                    device,
+                    queue,
                     &self.release,
                     step.bytes(),
                     1,
@@ -115,10 +115,10 @@ impl FivePrograms {
                     }
                 }
             }
-            let input = Gaps::new_with_runtime_state(&columns, &state, 1., &bounds, tolerance)?;
+            let input = Gaps::new_with_runtime_state(&columns, &state, 1., bounds, tolerance)?;
             let bytes = dispatch(
-                &device,
-                &queue,
+                device,
+                queue,
                 &self.gaps,
                 input.bytes(),
                 1,
@@ -142,8 +142,8 @@ impl FivePrograms {
             }
             let input = Select::new(&residuals, &decisions, &flags)?;
             match input.selection(&dispatch(
-                &device,
-                &queue,
+                device,
+                queue,
                 &self.select,
                 input.bytes(),
                 1,

@@ -100,7 +100,6 @@ impl StrandsDemo {
         }
         Ok(())
     }
-    #[allow(clippy::cast_possible_truncation)]
     pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();

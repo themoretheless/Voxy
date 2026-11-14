@@ -468,7 +468,7 @@ mod burley_tests {
         let near = burley_normalized_diffusion_profile(0.1, 1.0);
         let far = burley_normalized_diffusion_profile(1.5, 1.0);
         assert!(near > far && far > 0.0);
-        assert_eq!( sample_burley_diffusion_radius(0.0, 1.2), 0.0);
+        assert_eq!(sample_burley_diffusion_radius(0.0, 1.2), 0.0);
         let r1 = sample_burley_diffusion_radius(0.25, 1.2);
         let r2 = sample_burley_diffusion_radius(0.75, 1.2);
         assert!(r2 > r1 && r1 > 0.0);

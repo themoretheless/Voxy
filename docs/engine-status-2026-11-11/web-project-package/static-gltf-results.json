@@ -1,0 +1,90 @@
+{
+  "gltf": {
+    "ticks": 120,
+    "native_matches_browser": true,
+    "source_tree_removed": true,
+    "package_sha256": "425b96ea7460cd7a51997cfe20bba8d714093a86ff8411d9e8e38c451f1454cf",
+    "state": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "turntable",
+          "parent": null,
+          "name": "turntable",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0.9092974,
+            -0.4161471
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "mesh",
+            "game.angular-motion.v1": {
+              "axis": [
+                0,
+                0,
+                1
+              ],
+              "radians_per_second": 2
+            }
+          }
+        }
+      ]
+    }
+  },
+  "glb": {
+    "ticks": 120,
+    "native_matches_browser": true,
+    "source_tree_removed": true,
+    "package_sha256": "d5b96ab70a4cec1664a3846b950e26abf6e05d279dffcd49246e9a2977610ce0",
+    "state": {
+      "version": 1,
+      "objects": [
+        {
+          "id": "turntable",
+          "parent": null,
+          "name": "turntable",
+          "active": true,
+          "translation": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0.9092974,
+            -0.4161471
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "components": {
+            "editor.model.v1": "mesh",
+            "game.angular-motion.v1": {
+              "axis": [
+                0,
+                0,
+                1
+              ],
+              "radians_per_second": 2
+            }
+          }
+        }
+      ]
+    }
+  }
+}

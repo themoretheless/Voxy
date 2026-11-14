@@ -166,10 +166,7 @@ pub fn can_plant_on_slope(
 /// Computes Yoda's self-thinning canopy survival probability in `[0.0, 1.0]` for a candidate
 /// tree with `crown_radius_m` given horizontal distances to existing neighbor trunks.
 #[must_use]
-pub fn self_thinning_canopy_competition(
-    neighbor_distances_m: &[f32],
-    crown_radius_m: f32,
-) -> f32 {
+pub fn self_thinning_canopy_competition(neighbor_distances_m: &[f32], crown_radius_m: f32) -> f32 {
     if !crown_radius_m.is_finite() || crown_radius_m <= 0.0 {
         return 0.0;
     }

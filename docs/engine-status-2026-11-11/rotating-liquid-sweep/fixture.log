@@ -1,0 +1,20 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.13s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 1 test
+rigid sweep error=SweepBudget start=0.00000000000000000e0 end=9.10890803632369338e-4 from=0.00000000000000000e0 reserve=1.16465571790552189e-15 tolerance=8.82889011245392831e-15 a=ContactBody { motion: Body { mass: 1.0, position: [0.3187500000001275, -0.0020725138888974793, -3.7968020353361515e-26], velocity: [3.750000008276417, -0.20165000000041794, -8.025204627530693e-13] }, spin: None } b=ContactBody { motion: Body { mass: 2.0, position: [0.4062500000001505, -0.0020725138888974793, 0.02500000037252903], velocity: [3.7499999958617916, -0.2016500000004179, 4.0126023137653463e-13] }, spin: Some(Spin { orientation: [0.0, -7.222684073077606e-13, 0.0, 1.0], angular_momentum: [0.0, -0.17361111352179764, 0.0], inertia: [0.005208333333333335, 0.005208333333333335, 0.005208333333333335] }) } controls_a=[[3.750000008276417, -0.20165000000041794, -8.025204627530693e-13], [3.750000008276417, -0.2061179193922347, -8.025204627530693e-13], [3.750000008276417, -0.2105858387840515, -8.025204627530693e-13]] controls_b=[[3.7499999958617916, -0.2016500000004179, 4.0126023137653463e-13], [3.7499999958617916, -0.20611791939223467, 4.0126023137653463e-13], [3.7499999958617916, -0.21058583878405146, 4.0126023137653463e-13]] first_shape=AffineBox { center: DVec3(0.0, 0.0, 0.0), edges: [DVec3(0.025, 0.0, 0.0), DVec3(0.0, 0.025, 0.0), DVec3(0.0, 0.0, 0.025)] } second_shape=AffineBox { center: DVec3(0.0, 0.0, 0.0), edges: [DVec3(0.0625, 0.0, 0.0), DVec3(0.0, 0.0625, 0.0), DVec3(0.0, 0.0, 0.0625)] }
+axis=ObstacleFace(0) direction=DVec3(1.0, 0.0, 0.0) gap=Ok(2.282896094385475e-14)
+axis=Edges(1, 2) direction=DVec3(1.0, 0.0, 0.0) gap=Ok(2.282896094385475e-14)
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene liquid body step: CollisionBudget") } }
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 460 filtered out; finished in 20.56s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

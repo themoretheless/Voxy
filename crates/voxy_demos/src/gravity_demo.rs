@@ -1,7 +1,7 @@
 //! Native showcase using the same finite-body simulation as physics clients.
 use crate::DemoError;
+use physics::gravity::spheres::{Simulation, Sphere};
 use physics::gravity::{Body, Gravity};
-use physics::gravity_spheres::{Simulation, Sphere};
 use voxy_render::{SceneMesh, SceneVertex};
 
 #[derive(Debug, Default)]
@@ -21,7 +21,7 @@ pub struct GravityDemo {
     pub contacts: usize,
     pub steps: usize,
     collision: bool,
-    walker: Option<physics::gravity_character::State>,
+    walker: Option<physics::gravity::character::State>,
     jump_pending: bool,
     pub planet_steps: usize,
     proof: PlanetProof,
@@ -94,7 +94,7 @@ impl GravityDemo {
         }
     }
     pub fn planet(&mut self) {
-        use physics::gravity_character::State;
+        use physics::gravity::character::State;
         self.reset(false);
         self.bodies[0].body = Body {
             mass: 50.0,
@@ -135,10 +135,10 @@ impl GravityDemo {
                 *p = b.body.position;
             }
             if let Some(walker) = &mut self.walker {
-                use physics::gravity_character::{
+                use physics::gravity::character::{
                     self as controller, Config, Input, SphereWorld, SurfaceSphere,
                 };
-                use physics::gravity_field::{NewtonianField, Source};
+                use physics::gravity::field::{NewtonianField, Source};
                 let surfaces = [SurfaceSphere {
                     anchor: physics::Origin::default(),
                     center: [0.0; 3],
@@ -174,7 +174,6 @@ impl GravityDemo {
                 self.proof.inverted |= walker.up[1] < -0.9;
                 self.proof.jumped |= report.jumped;
                 self.proof.landed |= self.proof.jumped && walker.grounded;
-                #[allow(clippy::cast_precision_loss)]
                 let origin = [
                     walker.anchor.x as f64,
                     walker.anchor.y as f64,
@@ -213,7 +212,6 @@ impl GravityDemo {
         )
     }
     pub fn camera_distance(&self, aspect: f32) -> f32 {
-        #[allow(clippy::cast_possible_truncation)]
         let extent = self
             .bodies
             .iter()
@@ -221,7 +219,6 @@ impl GravityDemo {
             .fold(2.0_f64, f64::max) as f32;
         (extent * 1.3 / (27.5_f32.to_radians().tan() * aspect.min(1.0))).max(9.0)
     }
-    #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
     pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();

@@ -9,7 +9,6 @@ struct MeshReference(u32);
 #[derive(Debug)]
 struct Motion;
 impl Behavior for Motion {
-    #[allow(clippy::cast_possible_truncation)]
     fn fixed_update(&mut self, scene: &mut SceneGraph, owner: NodeId, delta: f64) {
         let mut local = scene.local(owner).expect("live owner");
         local.translation.x += 0.5 * delta as f32;

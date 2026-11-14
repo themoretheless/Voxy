@@ -1,5 +1,5 @@
 //! Load-controlled quasistatic FEM specimens; solver residual is visible.
-use physics::biomechanics::{Body, Equilibrium, penile_chambers, sphincter_layers};
+use physics_bio::biomechanics::{Body, Equilibrium, penile_chambers, sphincter_layers};
 use std::sync::Arc;
 use voxy_render::{SceneMesh, SceneVertex};
 #[derive(Clone, Debug)]
@@ -80,7 +80,6 @@ impl BiomechanicsDemo {
             if converged { "equilibrium" } else { "solving" }
         )
     }
-    #[allow(clippy::cast_possible_truncation)]
     pub fn mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();

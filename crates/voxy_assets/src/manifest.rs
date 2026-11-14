@@ -1,14 +1,17 @@
 //! Versioned project identity manifest. File IO belongs outside the frame loop.
-use crate::{AssetId, AssetLocations, LocationError, SourcePath, serialize_json_bounded};
+use crate::{
+    AssetId, AssetLocations, JsonDocument, JsonDocumentError, LocationError, SourcePath,
+    serialize_json_bounded,
+};
 use serde::{Deserialize, Serialize};
-use std::{io::Read, path::Path};
-#[derive(Deserialize)]
+use std::path::Path;
+#[derive(Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Manifest {
     version: u32,
     assets: Vec<Binding>,
 }
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Binding {
     asset: String,
@@ -62,11 +65,19 @@ impl AssetLocations {
         max_bytes: usize,
         max_document_bytes: usize,
     ) -> Result<Self, LocationError> {
-        if json.len() > max_document_bytes {
-            return Err(LocationError::Capacity);
-        }
-        let manifest: Manifest =
-            serde_json::from_str(json).map_err(|_| LocationError::InvalidManifest)?;
+        let manifest =
+            Manifest::from_json_bounded(json, max_document_bytes).map_err(|err| match err {
+                JsonDocumentError::CapacityExceeded => LocationError::Capacity,
+                _ => LocationError::InvalidManifest,
+            })?;
+        Self::from_manifest(manifest, max_assets, max_bytes)
+    }
+
+    fn from_manifest(
+        manifest: Manifest,
+        max_assets: usize,
+        max_bytes: usize,
+    ) -> Result<Self, LocationError> {
         if manifest.version != 1 {
             return Err(LocationError::InvalidManifest);
         }
@@ -92,22 +103,20 @@ impl AssetLocations {
         max_bytes: usize,
         max_document_bytes: usize,
     ) -> Result<Self, ManifestError> {
-        let limit = u64::try_from(max_document_bytes)
-            .ok()
-            .and_then(|n| n.checked_add(1))
-            .ok_or(ManifestError::Location(LocationError::Capacity))?;
-        let file = std::fs::File::open(path).map_err(ManifestError::Io)?;
-        let mut bytes = Vec::new();
-        file.take(limit)
-            .read_to_end(&mut bytes)
-            .map_err(ManifestError::Io)?;
-        if bytes.len() > max_document_bytes {
-            return Err(ManifestError::Location(LocationError::Capacity));
-        }
-        let text = std::str::from_utf8(&bytes)
-            .map_err(|_| ManifestError::Location(LocationError::InvalidManifest))?;
-        Self::from_json(text, max_assets, max_bytes, max_document_bytes)
-            .map_err(ManifestError::Location)
+        let manifest =
+            Manifest::load_json_bounded(path, max_document_bytes).map_err(|err| match err {
+                JsonDocumentError::CapacityExceeded => {
+                    ManifestError::Location(LocationError::Capacity)
+                }
+                JsonDocumentError::InvalidPath => {
+                    ManifestError::Location(LocationError::InvalidPath)
+                }
+                JsonDocumentError::Io(io) => ManifestError::Io(io),
+                JsonDocumentError::Parse(_) => {
+                    ManifestError::Location(LocationError::InvalidManifest)
+                }
+            })?;
+        Self::from_manifest(manifest, max_assets, max_bytes).map_err(ManifestError::Location)
     }
     /// Writes a new temporary file in the destination directory, syncs it, then renames.
     /// Pre-rename failure preserves the target and removes our temporary file.

@@ -4,6 +4,8 @@
 
 use super::*;
 
+// An injective 96-bit cell key retains signed coordinates while avoiding
+// the array hash's length prefix in the self-contact broad phase.
 pub(in crate::hair) fn cell_key(cell: [i32; 3]) -> (u64, u32) {
     (
         (u64::from(cell[0] as u32) << 32) | u64::from(cell[1] as u32),

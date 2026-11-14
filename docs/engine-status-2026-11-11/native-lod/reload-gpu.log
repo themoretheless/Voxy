@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-4cad393ae28acb4f)
+
+running 1 test
+test app::model_reload::tests::native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 449 filtered out; finished in 0.05s
+

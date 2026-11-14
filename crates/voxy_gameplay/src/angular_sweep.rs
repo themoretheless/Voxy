@@ -108,6 +108,18 @@ pub(crate) fn sweep(
     boxes: &[AffineBox],
     iterations: usize,
 ) -> Result<Hit, PhysicsError> {
+    let mut queries = usize::MAX;
+    sweep_with_query_limit(center, edges, angular, boxes, iterations, &mut queries)
+}
+
+pub(crate) fn sweep_with_query_limit(
+    center: DVec3,
+    edges: [DVec3; 3],
+    angular: DVec3,
+    boxes: &[AffineBox],
+    iterations: usize,
+    queries: &mut usize,
+) -> Result<Hit, PhysicsError> {
     let angle = angular.length();
     if angle == 0. || boxes.is_empty() {
         return Ok(Hit {
@@ -143,7 +155,6 @@ pub(crate) fn sweep(
         }
     }
     let mut steps = iterations;
-    let mut queries = usize::MAX;
     advance(
         &candidates,
         |time| {
@@ -154,7 +165,7 @@ pub(crate) fn sweep(
         radius,
         rotation_radius,
         &mut steps,
-        &mut queries,
+        queries,
     )
 }
 
@@ -164,7 +175,6 @@ fn query(remaining: &mut usize) -> Result<(), PhysicsError> {
 }
 
 // One advancement kernel serves constant-axis arcs and complete cubic spans.
-#[allow(clippy::too_many_arguments)]
 fn advance(
     candidates: &[&AffineBox],
     sample: impl Fn(f64) -> Result<(DVec3, [DVec3; 3]), PhysicsError>,
@@ -190,7 +200,6 @@ fn advance(
 // Advancing by the nominal speed is sufficient: the fixed envelope's boundary
 // moves with that speed too. This is not a true-contact witness or an evaluation
 // error certificate; callers must prove the envelope before physical admission.
-#[allow(clippy::too_many_arguments)]
 fn advance_with_clearance(
     candidates: &[&AffineBox],
     sample: impl Fn(f64) -> Result<(DVec3, [DVec3; 3]), PhysicsError>,
@@ -213,10 +222,18 @@ fn advance_with_clearance(
         queries,
         None,
         None,
+        None,
     )
 }
 
-#[allow(clippy::too_many_arguments)]
+struct ProjectedAdvance<'a> {
+    first: &'a physics::rigid_motion::RigidMotion,
+    second: &'a physics::rigid_motion::RigidMotion,
+    duration: f64,
+    reserve: f64,
+    rotating_step: Option<&'a dyn Fn(f64, DVec3, f64) -> f64>,
+}
+
 fn advance_with_enclosures(
     candidates: &[&AffineBox],
     sample: impl Fn(f64) -> Result<(DVec3, [DVec3; 3]), PhysicsError>,
@@ -229,6 +246,7 @@ fn advance_with_enclosures(
     queries: &mut usize,
     point_sample: Option<&dyn Fn(f64) -> Result<PointBoxes, PhysicsError>>,
     contact_tolerance: Option<f64>,
+    projected: Option<ProjectedAdvance<'_>>,
 ) -> Result<Hit, PhysicsError> {
     if contact_tolerance.is_some_and(|v| !v.is_finite() || v < 0.)
         || !clearance.is_finite()
@@ -246,6 +264,7 @@ fn advance_with_enclosures(
         });
     }
     let mut time = 0.;
+    let mut projected_bounds = Vec::<(DVec3, f64)>::new();
     while *steps > 0 {
         *steps -= 1;
         let (center, current) = sample(time)?;
@@ -254,29 +273,85 @@ fn advance_with_enclosures(
         let mut contact = DVec3::ZERO;
         let mut contact_feature = None;
         let mut tolerance = 0.;
+        let mut directional_next = 1.0_f64;
         for obstacle in candidates {
             query(queries)?;
+            let mut obstacle_next = time;
             let relative = center - obstacle.center;
             let mut separation = f64::NEG_INFINITY;
+            let mut nominal_separation = f64::NEG_INFINITY;
             let mut normal = DVec3::ZERO;
             let mut feature = None;
+            let mut seen_axes = [[0_u64; 3]; 15];
+            let mut seen_count = 0;
             for source in obstacle.support_axes(current) {
                 let axis = source.direction;
+                // Identical projections have the same gap and normal. The
+                // original tie break keeps the first feature of each direction.
+                let bits = axis.to_array().map(f64::to_bits);
+                if seen_axes[..seen_count].contains(&bits) {
+                    continue;
+                }
+                seen_axes[seen_count] = bits;
+                seen_count += 1;
+                let nominal_gap = || {
+                    relative.dot(axis).abs()
+                        - obstacle.radius(axis)
+                        - current.iter().map(|edge| edge.dot(axis).abs()).sum::<f64>()
+                };
                 let gap = if let Some(points) = &enclosed_points {
                     gap::lower_points(points, obstacle, axis, clearance)?
                 } else if clearance > 0. || contact_tolerance.is_some() {
                     gap::lower(center, current, obstacle, axis, clearance)?
                 } else {
-                    relative.dot(axis).abs()
-                        - obstacle.radius(axis)
-                        - current.iter().map(|edge| edge.dot(axis).abs()).sum::<f64>()
+                    nominal_gap()
                 };
-                if gap > separation {
+                if let Some(projection) = &projected
+                    && gap > projection.reserve
+                {
+                    if let Some(step) = projection.rotating_step {
+                        let axis = if relative.dot(axis) < 0. { -axis } else { axis };
+                        obstacle_next = obstacle_next.max(step(time, axis, gap));
+                        // The polynomial projection cache is for translation only.
+                    } else {
+                        let bound = if let Some((_, bound)) =
+                            projected_bounds.iter().find(|(cached, _)| *cached == axis)
+                        {
+                            *bound
+                        } else {
+                            let bound = gap::projected_travel(
+                                projection.first,
+                                projection.second,
+                                axis,
+                                projection.duration,
+                            )
+                            .unwrap_or(f64::INFINITY);
+                            projected_bounds.push((axis, bound));
+                            bound
+                        };
+                        if bound.is_finite() && bound > 0. {
+                            let available = (gap - projection.reserve).next_down().max(0.);
+                            obstacle_next =
+                                obstacle_next.max(gap::advance_time(time, available, bound)?);
+                        }
+                    }
+                }
+                // Directed gaps saturate at zero. At nominal contact, use
+                // the signed SAT gap to distinguish a touching face from
+                // axes whose projections already overlap deeply.
+                let contact_gap = if contact_tolerance.is_some() && gap == 0. {
+                    nominal_gap()
+                } else {
+                    gap
+                };
+                if gap > separation || (gap == separation && contact_gap > nominal_separation) {
                     separation = gap;
+                    nominal_separation = contact_gap;
                     feature = Some(source.feature);
                     normal = axis * if relative.dot(axis) < 0. { -1. } else { 1. };
                 }
             }
+            directional_next = directional_next.min(obstacle_next);
             if separation < distance {
                 distance = separation;
                 contact = normal;
@@ -313,6 +388,7 @@ fn advance_with_enclosures(
         } else {
             (time + 0.8 * (distance - contact_reserve).max(0.) / speed_bound).min(1.)
         };
+        let next = next.max(directional_next);
         if next >= 1. {
             return Ok(Hit {
                 feature: None,
@@ -367,7 +443,6 @@ fn corners(edges: [DVec3; 3]) -> [DVec3; 8] {
 }
 
 /// Steps and queries are shared over all spans, never reset at a key boundary.
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_path(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -533,9 +608,29 @@ pub(crate) fn sweep_path(
     })
 }
 
+#[derive(Clone, Copy, Debug)]
+struct SweepQuery {
+    center: DVec3,
+    rest_edges: [DVec3; 3],
+    orientation: DQuat,
+    basis: DQuat,
+    origin: DVec3,
+    scale: f64,
+}
+
+#[derive(Clone, Copy)]
+struct SweepEnclosureBounds<'a> {
+    enclosed_speeds: Option<&'a [f64]>,
+    enclosed_path: Option<&'a voxy_animation::RootScrewEnclosurePath<'a>>,
+    coordinate_certificate: Option<(
+        &'a voxy_animation::RootRigidCoordinateCertificate<'a>,
+        [f64; 3],
+    )>,
+    exact_projection_axes: [bool; 3],
+}
+
 /// Collision admission for simultaneous authored translation and rotation.
 /// The source frame is conjugated as A M A^-1, including its translated origin.
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_rigid_path(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -548,19 +643,15 @@ pub(crate) fn sweep_rigid_path(
     iterations: usize,
     queries: &mut usize,
 ) -> Result<PathHit, PhysicsError> {
-    sweep_rigid_path_with_clearance(
+    let query = SweepQuery {
         center,
         rest_edges,
         orientation,
-        path,
         basis,
         origin,
         scale,
-        0.,
-        boxes,
-        iterations,
-        queries,
-    )
+    };
+    sweep_rigid_path_with_clearance(query, path, 0., boxes, iterations, queries)
 }
 
 fn rigid_vertices(
@@ -696,7 +787,6 @@ fn rigid_body_clearance(
 /// Source-field approximation error is carried separately by the approximation;
 /// grounding and final scene publication are checked at the transaction boundary.
 #[cfg_attr(not(test), allow(dead_code))]
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_rigid_approximation(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -729,7 +819,6 @@ pub(crate) fn sweep_rigid_approximation(
 /// Read-only acceptance query for one immutable assembled fade. The directional
 /// proof is constructed from the same owned source domains as the trajectory.
 #[cfg_attr(not(test), allow(dead_code))]
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_certified_rigid_fade(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -761,7 +850,6 @@ pub(crate) fn sweep_certified_rigid_fade(
     )
 }
 
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_certified_rigid_fade_with_axis_errors(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -780,14 +868,17 @@ pub(crate) fn sweep_certified_rigid_fade_with_axis_errors(
     let certificate = fade
         .coordinate_certificate(coordinate_axis, 4096)
         .map_err(|_| PhysicsError::InvalidMotion)?;
-    sweep_rigid_approximation_with_axis_errors(
+    let query = SweepQuery {
         center,
         rest_edges,
         orientation,
-        fade.approximation(),
         basis,
         origin,
         scale,
+    };
+    sweep_rigid_approximation_with_axis_errors(
+        query,
+        fade.approximation(),
         evaluation_radius,
         evaluation_axes.unwrap_or([evaluation_radius; 3]),
         boxes,
@@ -798,7 +889,6 @@ pub(crate) fn sweep_certified_rigid_fade_with_axis_errors(
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_rigid_approximation_with_coordinate_certificate(
     center: DVec3,
     rest_edges: [DVec3; 3],
@@ -813,14 +903,17 @@ pub(crate) fn sweep_rigid_approximation_with_coordinate_certificate(
     queries: &mut usize,
     coordinate_certificate: Option<&voxy_animation::RootRigidCoordinateCertificate<'_>>,
 ) -> Result<PathHit, PhysicsError> {
-    sweep_rigid_approximation_with_axis_errors(
+    let query = SweepQuery {
         center,
         rest_edges,
         orientation,
-        approximation,
         basis,
         origin,
         scale,
+    };
+    sweep_rigid_approximation_with_axis_errors(
+        query,
+        approximation,
         evaluation_radius,
         [evaluation_radius; 3],
         boxes,
@@ -832,15 +925,9 @@ pub(crate) fn sweep_rigid_approximation_with_coordinate_certificate(
 
 /// Both the whole-body radius and world-axis bounds are caller proof obligations.
 /// Axis bounds apply in world coordinates, after actor and authored-frame mapping.
-#[allow(clippy::too_many_arguments)]
 fn sweep_rigid_approximation_with_axis_errors(
-    center: DVec3,
-    rest_edges: [DVec3; 3],
-    orientation: DQuat,
+    sweep: SweepQuery,
     approximation: &voxy_animation::RootRigidApproximation,
-    basis: DQuat,
-    origin: DVec3,
-    scale: f64,
     evaluation_radius: f64,
     evaluation_axes: [f64; 3],
     boxes: &[AffineBox],
@@ -848,6 +935,14 @@ fn sweep_rigid_approximation_with_axis_errors(
     queries: &mut usize,
     coordinate_certificate: Option<&voxy_animation::RootRigidCoordinateCertificate<'_>>,
 ) -> Result<PathHit, PhysicsError> {
+    let SweepQuery {
+        center,
+        rest_edges,
+        orientation,
+        basis,
+        origin,
+        scale,
+    } = sweep;
     if !evaluation_radius.is_finite()
         || evaluation_radius < 0.
         || evaluation_axes
@@ -915,21 +1010,18 @@ fn sweep_rigid_approximation_with_axis_errors(
         .point_speed_bounds(&vertices, scale)
         .map_err(|_| PhysicsError::InvalidMotion)?;
     let mut hit = sweep_rigid_path_with_bounds(
-        center,
-        rest_edges,
-        orientation,
+        sweep,
         &approximation.path,
-        basis,
-        origin,
-        scale,
         clearance,
         boxes,
         iterations,
         queries,
-        Some(&speeds),
-        Some(&enclosed_path),
-        coordinate_certificate,
-        exact_projection_axes,
+        SweepEnclosureBounds {
+            enclosed_speeds: Some(&speeds),
+            enclosed_path: Some(&enclosed_path),
+            coordinate_certificate,
+            exact_projection_axes,
+        },
     )?;
     // Mirror the physical controller's proposed orientation/edge update. This
     // checks the rounded proposal itself, not merely the canonical field pose.
@@ -970,36 +1062,27 @@ fn sweep_rigid_approximation_with_axis_errors(
     Ok(hit)
 }
 
-#[allow(clippy::too_many_arguments)]
 fn sweep_rigid_path_with_clearance(
-    center: DVec3,
-    rest_edges: [DVec3; 3],
-    orientation: DQuat,
+    sweep: SweepQuery,
     path: &voxy_animation::RootRigidPath,
-    basis: DQuat,
-    origin: DVec3,
-    scale: f64,
     clearance: f64,
     boxes: &[AffineBox],
     iterations: usize,
     queries: &mut usize,
 ) -> Result<PathHit, PhysicsError> {
     sweep_rigid_path_with_bounds(
-        center,
-        rest_edges,
-        orientation,
+        sweep,
         path,
-        basis,
-        origin,
-        scale,
         clearance,
         boxes,
         iterations,
         queries,
-        None,
-        None,
-        None,
-        [false; 3],
+        SweepEnclosureBounds {
+            enclosed_speeds: None,
+            enclosed_path: None,
+            coordinate_certificate: None,
+            exact_projection_axes: [false; 3],
+        },
     )
 }
 
@@ -1122,27 +1205,29 @@ fn invariant_projection_separates(
     Ok(separated)
 }
 
-#[allow(clippy::too_many_arguments)]
 fn sweep_rigid_path_with_bounds(
-    center: DVec3,
-    rest_edges: [DVec3; 3],
-    orientation: DQuat,
+    sweep: SweepQuery,
     path: &voxy_animation::RootRigidPath,
-    basis: DQuat,
-    origin: DVec3,
-    scale: f64,
     clearance: f64,
     boxes: &[AffineBox],
     iterations: usize,
     queries: &mut usize,
-    enclosed_speeds: Option<&[f64]>,
-    enclosed_path: Option<&voxy_animation::RootScrewEnclosurePath<'_>>,
-    coordinate_certificate: Option<(
-        &voxy_animation::RootRigidCoordinateCertificate<'_>,
-        [f64; 3],
-    )>,
-    exact_projection_axes: [bool; 3],
+    bounds: SweepEnclosureBounds<'_>,
 ) -> Result<PathHit, PhysicsError> {
+    let SweepQuery {
+        center,
+        rest_edges,
+        orientation,
+        basis,
+        origin,
+        scale,
+    } = sweep;
+    let SweepEnclosureBounds {
+        enclosed_speeds,
+        enclosed_path,
+        coordinate_certificate,
+        exact_projection_axes,
+    } = bounds;
     if !clearance.is_finite()
         || clearance < 0.
         || !center.is_finite()
@@ -1243,6 +1328,7 @@ fn sweep_rigid_path_with_bounds(
             } else {
                 None
             },
+            None,
             None,
         )?;
         if hit.fraction < 1. {
@@ -1409,6 +1495,7 @@ fn sweep_rigid_path_with_bounds(
             } else {
                 None
             },
+            None,
             None,
         )?;
         if hit.fraction < 1. {

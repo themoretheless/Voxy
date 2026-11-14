@@ -1,0 +1,26 @@
+{
+  "binary_sha256": "2282209d650829fa05968ce89c08de0b0d04d7f467d444a38cf2e2efd3246859",
+  "bundles": {
+    "turntable": {
+      "bundle_id": "io.voxy.qualification.turntable",
+      "name": "Voxy & turntable",
+      "package_sha256": "e92894620101ed304868ea1be2382e3b3d505a3c0460e77bc74c7abc3ef8e853",
+      "game_check": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nGAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"turntable\",\"parent\":null,\"name\":\"turntable\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.9092974,-0.4161471],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":2.0}}}]}\nGAME CHECK PASS ticks=120 objects=1 prefab_instances=0\n",
+      "native_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nGAME UI GPU PUBLISHED draws=0\nMODEL PUBLISHED frames=0 first_x=0 asset=mesh\nGAME NATIVE PASS frames=3 ticks=8\nGAME NATIVE PASS frames=3 ticks=8\n"
+    },
+    "character": {
+      "bundle_id": "io.voxy.qualification.character",
+      "name": "Voxy & character",
+      "package_sha256": "b78b76a28102188003e02d54a4dc105da96edb979369169be83154b83ddbb275",
+      "game_check": "GAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"player\",\"parent\":null,\"name\":\"player\",\"active\":true,\"translation\":[0.0,0.2,0.0],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"game.character.v1\":{\"gravity\":-9.8,\"half_extents\":[0.20000000298023224,0.20000000298023224,0.20000000298023224],\"jump_speed\":3.0,\"speed\":2.0}}},{\"id\":\"floor\",\"parent\":null,\"name\":\"floor\",\"active\":true,\"translation\":[0.0,-0.25,0.0],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"game.box.v1\":{\"half_extents\":[5.0,0.25,5.0]}}}]}\nGAME CHECK PASS ticks=120 objects=2 prefab_instances=0\n",
+      "native_log": "GAME UI GPU PUBLISHED draws=0\nGAME NATIVE PASS frames=3 ticks=9\nGAME NATIVE PASS frames=3 ticks=9\n"
+    },
+    "prefab": {
+      "bundle_id": "io.voxy.qualification.prefab",
+      "name": "Voxy & prefab",
+      "package_sha256": "450dcd69b7939335139b5eaebfc0183521247827eeec8d3d5dd5446a935922ef",
+      "game_check": "GAME UI MESH draws=0 glyph_quads=0\nGAME UI TEXT fonts=0 runs=0 glyphs=0\nGAME UI LAYOUT elements=0 buttons=0\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"5:first13:4:leaf5:rotor\",\"parent\":null,\"name\":\"rotor\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.9092974,-0.4161471],\"scale\":[1.0,1.0,1.0],\"components\":{\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":2.0}}},{\"id\":\"6:second13:4:leaf5:rotor\",\"parent\":null,\"name\":\"rotor\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.9092974,-0.4161471],\"scale\":[1.0,1.0,1.0],\"components\":{\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":2.0}}}]}\nGAME CHECK PASS ticks=120 objects=2 prefab_instances=2\n",
+      "native_log": "GAME UI GPU PUBLISHED draws=0\nGAME NATIVE PASS frames=3 ticks=8\nGAME NATIVE PASS frames=3 ticks=8\nGAME NATIVE PASS frames=4 ticks=9\n"
+    }
+  }
+}

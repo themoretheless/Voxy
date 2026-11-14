@@ -60,7 +60,6 @@ impl ArchiveComputeGi {
     pub(super) fn world_ray_guides(&self) -> [Arc<voxy_gpu_core::ManagedTexture>; 2] {
         [self.world.clone(), self.normal.clone()]
     }
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn new(
         device: &wgpu::Device,
         shader: &wgpu::ShaderModule,
@@ -148,12 +147,15 @@ impl ArchiveComputeGi {
             },
         ));
         constants.push(("ARCHIVE_COMPUTE_SSR", if ssr_enabled { 1. } else { 0. }));
-        let info=device.adapter_info();
-        let match_raster=std::env::var_os("VOXY_STREET_GI_RASTER_MATH").is_some()
-            && cfg!(all(target_os="macos",target_arch="aarch64"))
-            && info.backend==wgpu::Backend::Metal
-            && info.device_type==wgpu::DeviceType::IntegratedGpu;
-        constants.push(("ARCHIVE_ORIGINAL_GI_RASTER_MATH",if match_raster {1.}else{0.}));
+        let info = device.adapter_info();
+        let match_raster = std::env::var_os("VOXY_STREET_GI_RASTER_MATH").is_some()
+            && cfg!(all(target_os = "macos", target_arch = "aarch64"))
+            && info.backend == wgpu::Backend::Metal
+            && info.device_type == wgpu::DeviceType::IntegratedGpu;
+        constants.push((
+            "ARCHIVE_ORIGINAL_GI_RASTER_MATH",
+            if match_raster { 1. } else { 0. },
+        ));
         let raster = |entry: &str,
                       pipeline_layout: &wgpu::PipelineLayout,
                       targets: &[Option<wgpu::ColorTargetState>]| {
@@ -218,13 +220,25 @@ impl ArchiveComputeGi {
         } else {
             None
         };
+        let paired_dda = std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some();
+        let mut gi_constants = constants.clone();
+        gi_constants.push((
+            "WGPU_METAL_PRECISE_MATH",
+            if paired_dda {
+                1.
+            } else if match_raster {
+                -1.
+            } else {
+                0.
+            },
+        ));
         let trace = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("full resolution exact opaque GI"),
             layout: None,
             module: shader,
             entry_point: Some("cs_opaque_gi"),
             compilation_options: wgpu::PipelineCompilationOptions {
-                constants: &constants,
+                constants: &gi_constants,
                 ..Default::default()
             },
             cache: None,
@@ -345,7 +359,8 @@ impl ArchiveComputeGi {
         } else {
             None
         };
-        let raster_math=match_raster && stages.is_none()
+        let raster_math = match_raster
+            && stages.is_none()
             && std::env::var_os("VOXY_STREET_PAIRED_DDA").is_none();
         Ok(Self {
             raster_math,
@@ -365,12 +380,22 @@ impl ArchiveComputeGi {
             height,
         })
     }
-    pub(super) fn raster_math_enabled(&self)->bool {self.raster_math}
-    pub(super) fn world_query_encoded_frames(&self) -> u64 {
-        self.world_frame.as_ref().map_or(0, |f| f.encoded_frames())
+    pub(super) fn raster_math_enabled(&self) -> bool {
+        self.raster_math
     }
-    pub(super) fn world_same_producer_comparison(&self, queue: &wgpu::Queue) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
-        match &self.world_frame { Some(frame) => frame.same_producer_comparison(queue), None => Ok(None) }
+    pub(super) fn world_query_encoded_frames(&self) -> u64 {
+        self.world_frame
+            .as_ref()
+            .map_or(0, world_resolve::ArchiveWorldRayFrame::encoded_frames)
+    }
+    pub(super) fn world_same_producer_comparison(
+        &self,
+        queue: &wgpu::Queue,
+    ) -> Result<Option<serde_json::Value>, Box<dyn std::error::Error>> {
+        match &self.world_frame {
+            Some(frame) => frame.same_producer_comparison(queue),
+            None => Ok(None),
+        }
     }
     pub(super) fn world_work_stats_buffer(&self) -> Option<&wgpu::Buffer> {
         self.world_frame.as_ref()?.work_stats_buffer()
@@ -400,7 +425,7 @@ impl ArchiveComputeGi {
     pub(super) fn world_consumer_sorted(&self) -> bool {
         self.world_frame
             .as_ref()
-            .is_some_and(|f| f.consumer_sorted())
+            .is_some_and(world_resolve::ArchiveWorldRayFrame::consumer_sorted)
     }
     pub(super) fn set_world_frame(&mut self, frame: ArchiveWorldRayFrame) {
         self.world_regions.clear();
@@ -430,9 +455,10 @@ impl ArchiveComputeGi {
         }
     }
     pub(super) fn world_region_count(&self) -> usize {
-        self.world_frame
-            .as_ref()
-            .map_or(self.world_regions.len(), |f| f.count())
+        self.world_frame.as_ref().map_or(
+            self.world_regions.len(),
+            world_resolve::ArchiveWorldRayFrame::count,
+        )
     }
     pub(super) fn reference_texture(&self) -> Option<&wgpu::Texture> {
         self.reference.as_ref().map(|(image, _)| &***image)
@@ -441,10 +467,16 @@ impl ArchiveComputeGi {
         self.ssr_reference.as_ref().map(|(image, _)| &***image)
     }
     pub(super) fn ray_persistent_enabled(&self) -> bool {
-        self.world_frame.is_none() && self.stages.as_ref().is_some_and(|s| s.persistent_enabled())
+        self.world_frame.is_none()
+            && self
+                .stages
+                .as_ref()
+                .is_some_and(stages::ArchiveRayStages::persistent_enabled)
     }
     pub(super) fn capture_enabled(&self) -> bool {
-        self.stages.as_ref().is_some_and(|s| s.capture_enabled())
+        self.stages
+            .as_ref()
+            .is_some_and(stages::ArchiveRayStages::capture_enabled)
     }
     pub(super) fn export_capture(
         &self,
@@ -460,15 +492,19 @@ impl ArchiveComputeGi {
     pub(super) fn hierarchy_near_first_enabled(&self) -> bool {
         self.stages
             .as_ref()
-            .is_some_and(|s| s.hierarchy_near_first_enabled())
+            .is_some_and(stages::ArchiveRayStages::hierarchy_near_first_enabled)
     }
     pub(super) fn hierarchy_reciprocal_enabled(&self) -> bool {
         self.stages
             .as_ref()
-            .is_some_and(|s| s.hierarchy_reciprocal_enabled())
+            .is_some_and(stages::ArchiveRayStages::hierarchy_reciprocal_enabled)
     }
     pub(super) fn ray_queue_enabled(&self) -> bool {
-        self.world_frame.is_none() && self.stages.as_ref().is_some_and(|s| s.queue_enabled())
+        self.world_frame.is_none()
+            && self
+                .stages
+                .as_ref()
+                .is_some_and(stages::ArchiveRayStages::queue_enabled)
     }
     pub(super) fn ray_queue_proof_buffer(&self) -> Option<&wgpu::Buffer> {
         if self.world_frame.is_some() {
@@ -481,12 +517,15 @@ impl ArchiveComputeGi {
         if self.world_frame.is_some() {
             None
         } else {
-            self.stages.as_ref().map(|s| s.configuration())
+            self.stages
+                .as_ref()
+                .map(stages::ArchiveRayStages::configuration)
         }
     }
     pub(super) fn encode(
         &self,
         encoder: &mut wgpu::CommandEncoder,
+        submission: (&wgpu::Device, &wgpu::Queue),
         depth: &wgpu::TextureView,
         camera: &wgpu::BindGroup,
         frame: &wgpu::BindGroup,
@@ -559,7 +598,7 @@ impl ArchiveComputeGi {
             .as_ref()
             .filter(|frame| frame.needs_queries(history_available, all_guides_use_history))
         {
-            frame.encode(encoder, timing);
+            frame.encode(encoder, timing, submission);
         } else if let Some(stages) = self
             .stages
             .as_ref()

@@ -6,7 +6,6 @@
 use crate::*;
 
 impl App {
-    #[allow(clippy::too_many_lines)]
     pub(crate) fn authoring_document(&self) -> Result<SceneDocument, voxy_scene::SceneGraphError> {
         CharacterPhysics::new(&self.scene, 128, 128)
             .validate(&self.scene)
@@ -145,6 +144,7 @@ impl App {
         self.scene = loaded.graph;
         self.instances = instances;
         self.selected = self.selected.min(self.instances.len().saturating_sub(1));
+        self.panel_cache = None;
         if let Some(graphics) = &mut self.graphics {
             graphics.transforms.clear();
         }
@@ -245,6 +245,7 @@ impl App {
                 )?;
             self.authoring.authoring_source = Some(imported);
         }
+        self.panel_cache = None;
         if let Some(window) = &self.window {
             window.set_title("Voxy — scene saved");
         }
@@ -504,7 +505,7 @@ impl App {
                 let Some(animation_model) = animation_model else {
                     continue;
                 };
-                foot_placement::FootRuntime::new_with_clips(
+                foot_placement::new_with_clips(
                     model,
                     settings.clone(),
                     &animation_model.animations,

@@ -1,0 +1,26 @@
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 40.58s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 1 test
+mixed stage remaining=9.108908036280725e-4 horizon=1e-4 force=[-46.29629758193624, 0.0, -7.35077451806706e-11]
+mixed admission error=4.371957886092927e-12
+mixed stage remaining=8.108193285145327e-4 horizon=1e-4 force=[-46.29604001207524, -9.882751518166708e-21, -0.1544309013934641]
+mixed admission error=5.6622314057806194e-12
+mixed stage remaining=7.108001824427045e-4 horizon=1e-4 force=[-46.29526781251754, -7.898460653245231e-20, -0.30877847293624583]
+mixed admission error=8.56318888604407e-12
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene liquid body step: InitialOverlap") } }
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 460 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

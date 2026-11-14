@@ -1,2 +1,0 @@
-# Preserve verbatim test-tool output.
-*.log -whitespace

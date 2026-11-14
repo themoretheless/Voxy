@@ -408,7 +408,7 @@ fn interrupted_fade_preserves_rotated_scaled_hierarchical_palette() {
         assert!(a.abs_diff_eq(*b, 2e-6));
     }
     let frame = animator.advance(&rig, 0.4).unwrap();
-    assert!(frame.skin_matrices.iter().all(|m| m.is_finite()));
+    assert!(frame.skin_matrices.iter().all(glam::Mat4::is_finite));
     assert!(animator.transition.is_none());
 }
 

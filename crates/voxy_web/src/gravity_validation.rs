@@ -9,13 +9,11 @@ pub(crate) async fn validate(device: &wgpu::Device, queue: &wgpu::Queue) -> Resu
         .map_err(error)?;
     let bodies: Vec<_> = (0..257_u32)
         .map(|index| {
-            #[allow(clippy::cast_precision_loss)]
             let position = [
                 (index % 17) as f32 * 0.5,
                 (index / 17) as f32 * 0.5,
                 (index % 3) as f32 * 0.25,
             ];
-            #[allow(clippy::cast_precision_loss)]
             let mass = 1.0 + (index % 7) as f32 * 0.25;
             GravityBody {
                 mass,

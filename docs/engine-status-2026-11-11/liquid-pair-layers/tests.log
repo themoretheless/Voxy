@@ -1,0 +1,10 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.96s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 2 tests
+test liquid_runtime::tests::liquid_rigid_body_crosses_excluded_wall_then_hits_admitted_wall ... ok
+test liquid_runtime::tests::liquid_rigid_pair_ignores_contact_if_either_mask_rejects_it ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 230 filtered out; finished in 0.00s
+

@@ -31,7 +31,6 @@ impl PreviousPositionPass {
     /// OpenGL rejects previous coordinates outside the finite half-float range.
     /// # Errors
     /// Rejects invalid vertices, matrices, depth resources or capacity.
-    #[allow(clippy::too_many_lines)]
     pub fn new(
         device: &wgpu::Device,
         depth: &wgpu::Texture,
@@ -70,7 +69,6 @@ impl PreviousPositionPass {
     pub const fn position_origin(&self) -> [f32; 3] {
         self.position_origin
     }
-    #[allow(clippy::too_many_lines)]
     fn create(
         device: &wgpu::Device,
         depth: &wgpu::Texture,

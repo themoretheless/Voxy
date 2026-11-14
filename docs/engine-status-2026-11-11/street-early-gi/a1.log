@@ -1,0 +1,402 @@
+STREET RUN pid=55258 benchmark_seconds=20 offscreen=true paired_dda=false tiles=false cell_bounds=false far_bound=false
+ORIGINAL STREET seed=1448040537 source_geometry_assets=0 materials=143 mesh_batches=161 triangles=3634960 instances=120739
+ORIGINAL STREET MATERIALS provider=PolyHaven license=CC0 scans=3 source_maps=9 gpu_textures=6 source_resolution=4k gpu=linear_rgba32float packing=lossless_channels
+DAYLIGHT solar_irradiance=[2169.2283, 2185.722, 1982.8407] source_background_unchanged=true indirect_float32=true
+STREET grounded spawn: authored=DVec3(0.6000000238418579, 0.1299999713897706, -18.0) resolved=DVec3(0.44700391757059055, 0.05477531636347348, -17.86699189712493)
+STREET DISPLAY format=Rgba16Float colour_space=ExtendedSrgbLinear hdr_info=DisplayHdrInfo { luminance: None, headroom: Some(DisplayHeadroom { current: Some(1.0), potential: Some(16.0), reference: None }), chromaticity: None, coarse: Some(DisplayCoarseRange { high_dynamic_range: Some(false), gamut: None }), bits_per_color: None }
+STREET GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }; 1920x1080 Immediate; full scene geometry; original mip chains when images are present
+STREET antialiasing=Temporal render=3840x2160 output=1920x1080
+STREET probes=372 completed in 37.879 s before measurement
+STREET completed_frame=1 render_ms=41.678 physics_steps=30 paired_dda=false
+STREET GPU collected_at_frame=1 total_ms=1.371 opaque_ms=0.458 transparent_ms=0.495
+STREET completed_frame=2 render_ms=75.757 physics_steps=60 paired_dda=false
+STREET completed_frame=3 render_ms=75.668 physics_steps=90 paired_dda=false
+STREET GPU collected_at_frame=3 total_ms=28.182 opaque_ms=20.552 transparent_ms=21.808
+STREET completed_frame=4 render_ms=74.239 physics_steps=120 paired_dda=false
+STREET completed_frame=5 render_ms=69.994 physics_steps=150 paired_dda=false
+STREET GPU collected_at_frame=5 total_ms=72.189 opaque_ms=62.275 transparent_ms=57.543
+STREET completed_frame=6 render_ms=74.403 physics_steps=180 paired_dda=false
+STREET completed_frame=7 render_ms=74.270 physics_steps=210 paired_dda=false
+STREET GPU collected_at_frame=7 total_ms=66.485 opaque_ms=56.283 transparent_ms=57.159
+STREET completed_frame=8 render_ms=71.786 physics_steps=240 paired_dda=false
+STREET completed_frame=9 render_ms=71.862 physics_steps=270 paired_dda=false
+STREET GPU collected_at_frame=9 total_ms=71.184 opaque_ms=61.051 transparent_ms=60.635
+STREET completed_frame=10 render_ms=72.504 physics_steps=300 paired_dda=false
+STREET completed_frame=11 render_ms=78.194 physics_steps=330 paired_dda=false
+STREET GPU collected_at_frame=11 total_ms=67.103 opaque_ms=57.054 transparent_ms=57.818
+STREET completed_frame=12 render_ms=79.794 physics_steps=360 paired_dda=false
+STREET completed_frame=13 render_ms=78.013 physics_steps=390 paired_dda=false
+STREET GPU collected_at_frame=13 total_ms=73.975 opaque_ms=63.827 transparent_ms=60.647
+STREET completed_frame=14 render_ms=77.514 physics_steps=420 paired_dda=false
+STREET completed_frame=15 render_ms=78.280 physics_steps=450 paired_dda=false
+STREET GPU collected_at_frame=15 total_ms=73.435 opaque_ms=63.619 transparent_ms=64.129
+STREET completed_frame=16 render_ms=74.191 physics_steps=480 paired_dda=false
+STREET completed_frame=17 render_ms=77.077 physics_steps=510 paired_dda=false
+STREET GPU collected_at_frame=17 total_ms=74.053 opaque_ms=63.670 transparent_ms=64.705
+STREET completed_frame=18 render_ms=80.075 physics_steps=540 paired_dda=false
+STREET completed_frame=19 render_ms=78.580 physics_steps=570 paired_dda=false
+STREET GPU collected_at_frame=19 total_ms=72.309 opaque_ms=62.258 transparent_ms=63.320
+STREET completed_frame=20 render_ms=73.821 physics_steps=600 paired_dda=false
+STREET completed_frame=21 render_ms=72.280 physics_steps=630 paired_dda=false
+STREET GPU collected_at_frame=21 total_ms=74.242 opaque_ms=64.516 transparent_ms=64.694
+STREET completed_frame=22 render_ms=77.204 physics_steps=660 paired_dda=false
+STREET completed_frame=23 render_ms=76.394 physics_steps=690 paired_dda=false
+STREET GPU collected_at_frame=23 total_ms=67.508 opaque_ms=57.807 transparent_ms=58.137
+STREET completed_frame=24 render_ms=77.673 physics_steps=720 paired_dda=false
+STREET completed_frame=25 render_ms=78.042 physics_steps=750 paired_dda=false
+STREET GPU collected_at_frame=25 total_ms=72.068 opaque_ms=61.669 transparent_ms=62.841
+STREET completed_frame=26 render_ms=73.078 physics_steps=780 paired_dda=false
+STREET completed_frame=27 render_ms=80.238 physics_steps=810 paired_dda=false
+STREET GPU collected_at_frame=27 total_ms=73.595 opaque_ms=63.331 transparent_ms=64.333
+STREET completed_frame=28 render_ms=75.084 physics_steps=840 paired_dda=false
+STREET completed_frame=29 render_ms=71.082 physics_steps=870 paired_dda=false
+STREET GPU collected_at_frame=29 total_ms=75.971 opaque_ms=65.488 transparent_ms=66.396
+STREET completed_frame=30 render_ms=70.822 physics_steps=900 paired_dda=false
+STREET completed_frame=31 render_ms=71.862 physics_steps=930 paired_dda=false
+STREET GPU collected_at_frame=31 total_ms=68.240 opaque_ms=57.272 transparent_ms=58.185
+STREET completed_frame=32 render_ms=69.349 physics_steps=960 paired_dda=false
+STREET completed_frame=33 render_ms=74.735 physics_steps=990 paired_dda=false
+STREET GPU collected_at_frame=33 total_ms=68.817 opaque_ms=59.596 transparent_ms=59.877
+STREET completed_frame=34 render_ms=68.083 physics_steps=1020 paired_dda=false
+STREET completed_frame=35 render_ms=71.180 physics_steps=1050 paired_dda=false
+STREET GPU collected_at_frame=35 total_ms=70.909 opaque_ms=61.056 transparent_ms=55.683
+STREET completed_frame=36 render_ms=78.405 physics_steps=1080 paired_dda=false
+STREET completed_frame=37 render_ms=79.629 physics_steps=1110 paired_dda=false
+STREET GPU collected_at_frame=37 total_ms=67.506 opaque_ms=57.956 transparent_ms=58.212
+STREET completed_frame=38 render_ms=78.830 physics_steps=1140 paired_dda=false
+STREET completed_frame=39 render_ms=78.154 physics_steps=1170 paired_dda=false
+STREET GPU collected_at_frame=39 total_ms=75.615 opaque_ms=66.116 transparent_ms=61.517
+STREET completed_frame=40 render_ms=80.674 physics_steps=1200 paired_dda=false
+STREET completed_frame=41 render_ms=79.423 physics_steps=1230 paired_dda=false
+STREET GPU collected_at_frame=41 total_ms=73.707 opaque_ms=63.551 transparent_ms=64.421
+STREET completed_frame=42 render_ms=78.193 physics_steps=1260 paired_dda=false
+STREET completed_frame=43 render_ms=76.345 physics_steps=1290 paired_dda=false
+STREET GPU collected_at_frame=43 total_ms=75.326 opaque_ms=65.711 transparent_ms=66.126
+STREET completed_frame=44 render_ms=78.208 physics_steps=1320 paired_dda=false
+STREET completed_frame=45 render_ms=74.804 physics_steps=1350 paired_dda=false
+STREET GPU collected_at_frame=45 total_ms=71.958 opaque_ms=62.304 transparent_ms=63.605
+STREET completed_frame=46 render_ms=75.401 physics_steps=1380 paired_dda=false
+STREET completed_frame=47 render_ms=75.885 physics_steps=1410 paired_dda=false
+STREET GPU collected_at_frame=47 total_ms=70.374 opaque_ms=61.347 transparent_ms=61.487
+STREET completed_frame=48 render_ms=80.225 physics_steps=1440 paired_dda=false
+STREET completed_frame=49 render_ms=74.602 physics_steps=1470 paired_dda=false
+STREET GPU collected_at_frame=49 total_ms=71.704 opaque_ms=62.014 transparent_ms=62.751
+STREET completed_frame=50 render_ms=78.650 physics_steps=1500 paired_dda=false
+STREET completed_frame=51 render_ms=74.532 physics_steps=1530 paired_dda=false
+STREET GPU collected_at_frame=51 total_ms=71.581 opaque_ms=61.710 transparent_ms=62.644
+STREET completed_frame=52 render_ms=75.775 physics_steps=1560 paired_dda=false
+STREET completed_frame=53 render_ms=71.117 physics_steps=1590 paired_dda=false
+STREET GPU collected_at_frame=53 total_ms=71.501 opaque_ms=61.237 transparent_ms=62.469
+STREET completed_frame=54 render_ms=76.398 physics_steps=1620 paired_dda=false
+STREET completed_frame=55 render_ms=73.164 physics_steps=1650 paired_dda=false
+STREET GPU collected_at_frame=55 total_ms=68.177 opaque_ms=57.736 transparent_ms=57.947
+STREET completed_frame=56 render_ms=72.552 physics_steps=1680 paired_dda=false
+STREET completed_frame=57 render_ms=73.248 physics_steps=1710 paired_dda=false
+STREET GPU collected_at_frame=57 total_ms=68.478 opaque_ms=59.913 transparent_ms=60.665
+STREET completed_frame=58 render_ms=79.288 physics_steps=1740 paired_dda=false
+STREET completed_frame=59 render_ms=76.981 physics_steps=1770 paired_dda=false
+STREET GPU collected_at_frame=59 total_ms=68.510 opaque_ms=58.190 transparent_ms=59.483
+STREET completed_frame=60 render_ms=74.755 physics_steps=1800 paired_dda=false
+STREET completed_frame=61 render_ms=78.727 physics_steps=1830 paired_dda=false
+STREET GPU collected_at_frame=61 total_ms=72.951 opaque_ms=63.509 transparent_ms=59.333
+STREET completed_frame=62 render_ms=77.822 physics_steps=1860 paired_dda=false
+STREET completed_frame=63 render_ms=76.059 physics_steps=1890 paired_dda=false
+STREET GPU collected_at_frame=63 total_ms=73.851 opaque_ms=64.796 transparent_ms=56.640
+STREET completed_frame=64 render_ms=73.348 physics_steps=1920 paired_dda=false
+STREET completed_frame=65 render_ms=75.340 physics_steps=1950 paired_dda=false
+STREET GPU collected_at_frame=65 total_ms=71.796 opaque_ms=62.391 transparent_ms=57.603
+STREET completed_frame=66 render_ms=75.865 physics_steps=1980 paired_dda=false
+STREET completed_frame=67 render_ms=81.966 physics_steps=2010 paired_dda=false
+STREET GPU collected_at_frame=67 total_ms=70.707 opaque_ms=61.237 transparent_ms=62.017
+STREET completed_frame=68 render_ms=77.740 physics_steps=2040 paired_dda=false
+STREET completed_frame=69 render_ms=79.303 physics_steps=2070 paired_dda=false
+STREET GPU collected_at_frame=69 total_ms=77.302 opaque_ms=66.633 transparent_ms=64.065
+STREET completed_frame=70 render_ms=78.972 physics_steps=2100 paired_dda=false
+STREET completed_frame=71 render_ms=81.833 physics_steps=2130 paired_dda=false
+STREET GPU collected_at_frame=71 total_ms=74.644 opaque_ms=65.378 transparent_ms=61.392
+STREET completed_frame=72 render_ms=80.264 physics_steps=2160 paired_dda=false
+STREET completed_frame=73 render_ms=76.928 physics_steps=2190 paired_dda=false
+STREET GPU collected_at_frame=73 total_ms=77.586 opaque_ms=68.434 transparent_ms=67.870
+STREET completed_frame=74 render_ms=78.381 physics_steps=2220 paired_dda=false
+STREET completed_frame=75 render_ms=77.695 physics_steps=2250 paired_dda=false
+STREET GPU collected_at_frame=75 total_ms=73.743 opaque_ms=63.807 transparent_ms=60.500
+STREET completed_frame=76 render_ms=76.638 physics_steps=2280 paired_dda=false
+STREET completed_frame=77 render_ms=72.236 physics_steps=2310 paired_dda=false
+STREET GPU collected_at_frame=77 total_ms=74.317 opaque_ms=64.407 transparent_ms=64.267
+STREET completed_frame=78 render_ms=80.602 physics_steps=2340 paired_dda=false
+STREET completed_frame=79 render_ms=78.082 physics_steps=2370 paired_dda=false
+STREET GPU collected_at_frame=79 total_ms=68.726 opaque_ms=58.097 transparent_ms=57.841
+STREET completed_frame=80 render_ms=79.936 physics_steps=2400 paired_dda=false
+STREET completed_frame=81 render_ms=79.916 physics_steps=2430 paired_dda=false
+STREET GPU collected_at_frame=81 total_ms=74.575 opaque_ms=64.350 transparent_ms=64.933
+STREET completed_frame=82 render_ms=78.171 physics_steps=2460 paired_dda=false
+STREET completed_frame=83 render_ms=81.127 physics_steps=2490 paired_dda=false
+STREET GPU collected_at_frame=83 total_ms=76.127 opaque_ms=65.856 transparent_ms=66.245
+STREET completed_frame=84 render_ms=84.644 physics_steps=2520 paired_dda=false
+STREET completed_frame=85 render_ms=84.403 physics_steps=2550 paired_dda=false
+STREET GPU collected_at_frame=85 total_ms=76.606 opaque_ms=65.647 transparent_ms=66.118
+STREET completed_frame=86 render_ms=80.283 physics_steps=2580 paired_dda=false
+STREET completed_frame=87 render_ms=82.891 physics_steps=2610 paired_dda=false
+STREET GPU collected_at_frame=87 total_ms=79.755 opaque_ms=68.330 transparent_ms=65.265
+STREET completed_frame=88 render_ms=82.552 physics_steps=2640 paired_dda=false
+STREET completed_frame=89 render_ms=88.933 physics_steps=2670 paired_dda=false
+STREET GPU collected_at_frame=89 total_ms=78.195 opaque_ms=67.919 transparent_ms=68.009
+STREET completed_frame=90 render_ms=88.662 physics_steps=2700 paired_dda=false
+STREET completed_frame=91 render_ms=90.113 physics_steps=2730 paired_dda=false
+STREET GPU collected_at_frame=91 total_ms=81.781 opaque_ms=69.447 transparent_ms=71.438
+STREET completed_frame=92 render_ms=93.479 physics_steps=2760 paired_dda=false
+STREET completed_frame=93 render_ms=87.529 physics_steps=2790 paired_dda=false
+STREET GPU collected_at_frame=93 total_ms=82.869 opaque_ms=71.753 transparent_ms=72.418
+STREET completed_frame=94 render_ms=85.817 physics_steps=2820 paired_dda=false
+STREET completed_frame=95 render_ms=84.836 physics_steps=2850 paired_dda=false
+STREET GPU collected_at_frame=95 total_ms=80.244 opaque_ms=68.958 transparent_ms=70.234
+STREET completed_frame=96 render_ms=90.940 physics_steps=2880 paired_dda=false
+STREET completed_frame=97 render_ms=84.013 physics_steps=2910 paired_dda=false
+STREET GPU collected_at_frame=97 total_ms=77.713 opaque_ms=65.908 transparent_ms=67.218
+STREET completed_frame=98 render_ms=77.702 physics_steps=2940 paired_dda=false
+STREET completed_frame=99 render_ms=76.179 physics_steps=2970 paired_dda=false
+STREET GPU collected_at_frame=99 total_ms=77.180 opaque_ms=66.153 transparent_ms=67.259
+STREET completed_frame=100 render_ms=78.930 physics_steps=3000 paired_dda=false
+STREET completed_frame=101 render_ms=83.474 physics_steps=3030 paired_dda=false
+STREET GPU collected_at_frame=101 total_ms=69.549 opaque_ms=59.800 transparent_ms=59.902
+STREET completed_frame=102 render_ms=80.593 physics_steps=3060 paired_dda=false
+STREET completed_frame=103 render_ms=82.738 physics_steps=3090 paired_dda=false
+STREET GPU collected_at_frame=103 total_ms=76.251 opaque_ms=66.246 transparent_ms=62.842
+STREET completed_frame=104 render_ms=76.038 physics_steps=3120 paired_dda=false
+STREET completed_frame=105 render_ms=75.885 physics_steps=3150 paired_dda=false
+STREET GPU collected_at_frame=105 total_ms=76.035 opaque_ms=63.479 transparent_ms=64.754
+STREET completed_frame=106 render_ms=81.613 physics_steps=3180 paired_dda=false
+STREET completed_frame=107 render_ms=80.852 physics_steps=3210 paired_dda=false
+STREET GPU collected_at_frame=107 total_ms=69.461 opaque_ms=59.144 transparent_ms=59.205
+STREET completed_frame=108 render_ms=79.624 physics_steps=3240 paired_dda=false
+STREET completed_frame=109 render_ms=85.412 physics_steps=3270 paired_dda=false
+STREET GPU collected_at_frame=109 total_ms=74.189 opaque_ms=64.240 transparent_ms=64.640
+STREET completed_frame=110 render_ms=77.534 physics_steps=3300 paired_dda=false
+STREET completed_frame=111 render_ms=72.127 physics_steps=3330 paired_dda=false
+STREET GPU collected_at_frame=111 total_ms=81.217 opaque_ms=71.520 transparent_ms=67.663
+STREET completed_frame=112 render_ms=77.134 physics_steps=3360 paired_dda=false
+STREET completed_frame=113 render_ms=78.986 physics_steps=3390 paired_dda=false
+STREET GPU collected_at_frame=113 total_ms=67.404 opaque_ms=56.585 transparent_ms=49.170
+STREET completed_frame=114 render_ms=82.325 physics_steps=3420 paired_dda=false
+STREET completed_frame=115 render_ms=76.114 physics_steps=3450 paired_dda=false
+STREET GPU collected_at_frame=115 total_ms=74.483 opaque_ms=64.933 transparent_ms=52.457
+STREET completed_frame=116 render_ms=83.980 physics_steps=3480 paired_dda=false
+STREET completed_frame=117 render_ms=80.398 physics_steps=3510 paired_dda=false
+STREET GPU collected_at_frame=117 total_ms=69.648 opaque_ms=59.769 transparent_ms=60.054
+STREET completed_frame=118 render_ms=78.780 physics_steps=3540 paired_dda=false
+STREET completed_frame=119 render_ms=78.641 physics_steps=3570 paired_dda=false
+STREET GPU collected_at_frame=119 total_ms=73.494 opaque_ms=62.994 transparent_ms=64.622
+STREET completed_frame=120 render_ms=76.368 physics_steps=3600 paired_dda=false
+STREET completed_frame=121 render_ms=79.806 physics_steps=3630 paired_dda=false
+STREET GPU collected_at_frame=121 total_ms=71.709 opaque_ms=63.173 transparent_ms=63.399
+STREET completed_frame=122 render_ms=79.941 physics_steps=3660 paired_dda=false
+STREET completed_frame=123 render_ms=83.151 physics_steps=3690 paired_dda=false
+STREET GPU collected_at_frame=123 total_ms=73.100 opaque_ms=64.130 transparent_ms=65.148
+STREET completed_frame=124 render_ms=80.470 physics_steps=3720 paired_dda=false
+STREET completed_frame=125 render_ms=78.911 physics_steps=3750 paired_dda=false
+STREET GPU collected_at_frame=125 total_ms=76.416 opaque_ms=67.336 transparent_ms=67.634
+STREET completed_frame=126 render_ms=71.953 physics_steps=3780 paired_dda=false
+STREET completed_frame=127 render_ms=71.417 physics_steps=3810 paired_dda=false
+STREET GPU collected_at_frame=127 total_ms=72.975 opaque_ms=63.736 transparent_ms=59.744
+STREET completed_frame=128 render_ms=77.121 physics_steps=3840 paired_dda=false
+STREET completed_frame=129 render_ms=77.928 physics_steps=3870 paired_dda=false
+STREET GPU collected_at_frame=129 total_ms=65.180 opaque_ms=55.285 transparent_ms=56.190
+STREET completed_frame=130 render_ms=77.082 physics_steps=3900 paired_dda=false
+STREET completed_frame=131 render_ms=71.639 physics_steps=3930 paired_dda=false
+STREET GPU collected_at_frame=131 total_ms=73.336 opaque_ms=64.041 transparent_ms=58.998
+STREET completed_frame=132 render_ms=71.724 physics_steps=3960 paired_dda=false
+STREET completed_frame=133 render_ms=72.751 physics_steps=3990 paired_dda=false
+STREET GPU collected_at_frame=133 total_ms=67.357 opaque_ms=58.304 transparent_ms=58.349
+STREET completed_frame=134 render_ms=75.402 physics_steps=4020 paired_dda=false
+STREET completed_frame=135 render_ms=77.772 physics_steps=4050 paired_dda=false
+STREET GPU collected_at_frame=135 total_ms=68.025 opaque_ms=58.535 transparent_ms=58.836
+STREET completed_frame=136 render_ms=80.660 physics_steps=4080 paired_dda=false
+STREET completed_frame=137 render_ms=81.056 physics_steps=4110 paired_dda=false
+STREET GPU collected_at_frame=137 total_ms=71.402 opaque_ms=60.973 transparent_ms=58.162
+STREET completed_frame=138 render_ms=77.915 physics_steps=4140 paired_dda=false
+STREET completed_frame=139 render_ms=77.968 physics_steps=4170 paired_dda=false
+STREET GPU collected_at_frame=139 total_ms=74.413 opaque_ms=64.407 transparent_ms=60.684
+STREET completed_frame=140 render_ms=78.426 physics_steps=4200 paired_dda=false
+STREET completed_frame=141 render_ms=79.186 physics_steps=4230 paired_dda=false
+STREET GPU collected_at_frame=141 total_ms=71.215 opaque_ms=61.445 transparent_ms=55.066
+STREET completed_frame=142 render_ms=79.414 physics_steps=4260 paired_dda=false
+STREET completed_frame=143 render_ms=72.503 physics_steps=4290 paired_dda=false
+STREET GPU collected_at_frame=143 total_ms=72.898 opaque_ms=62.468 transparent_ms=63.739
+STREET completed_frame=144 render_ms=75.219 physics_steps=4320 paired_dda=false
+STREET completed_frame=145 render_ms=73.457 physics_steps=4350 paired_dda=false
+STREET GPU collected_at_frame=145 total_ms=66.435 opaque_ms=56.108 transparent_ms=57.471
+STREET completed_frame=146 render_ms=74.357 physics_steps=4380 paired_dda=false
+STREET completed_frame=147 render_ms=73.322 physics_steps=4410 paired_dda=false
+STREET GPU collected_at_frame=147 total_ms=67.996 opaque_ms=58.905 transparent_ms=59.084
+STREET completed_frame=148 render_ms=70.564 physics_steps=4440 paired_dda=false
+STREET completed_frame=149 render_ms=71.367 physics_steps=4470 paired_dda=false
+STREET GPU collected_at_frame=149 total_ms=68.172 opaque_ms=59.306 transparent_ms=57.261
+STREET completed_frame=150 render_ms=69.803 physics_steps=4500 paired_dda=false
+STREET completed_frame=151 render_ms=73.632 physics_steps=4530 paired_dda=false
+STREET GPU collected_at_frame=151 total_ms=66.696 opaque_ms=57.960 transparent_ms=58.033
+STREET completed_frame=152 render_ms=75.423 physics_steps=4560 paired_dda=false
+STREET completed_frame=153 render_ms=64.197 physics_steps=4590 paired_dda=false
+STREET GPU collected_at_frame=153 total_ms=69.324 opaque_ms=59.360 transparent_ms=56.891
+STREET completed_frame=154 render_ms=71.316 physics_steps=4620 paired_dda=false
+STREET completed_frame=155 render_ms=68.475 physics_steps=4650 paired_dda=false
+STREET GPU collected_at_frame=155 total_ms=60.987 opaque_ms=51.752 transparent_ms=51.862
+STREET completed_frame=156 render_ms=69.422 physics_steps=4680 paired_dda=false
+STREET completed_frame=157 render_ms=70.787 physics_steps=4710 paired_dda=false
+STREET GPU collected_at_frame=157 total_ms=65.371 opaque_ms=56.616 transparent_ms=50.303
+STREET completed_frame=158 render_ms=66.900 physics_steps=4740 paired_dda=false
+STREET completed_frame=159 render_ms=69.153 physics_steps=4770 paired_dda=false
+STREET GPU collected_at_frame=159 total_ms=67.651 opaque_ms=59.181 transparent_ms=55.613
+STREET completed_frame=160 render_ms=67.787 physics_steps=4800 paired_dda=false
+STREET completed_frame=161 render_ms=70.565 physics_steps=4830 paired_dda=false
+STREET GPU collected_at_frame=161 total_ms=66.168 opaque_ms=57.237 transparent_ms=53.960
+STREET completed_frame=162 render_ms=65.824 physics_steps=4860 paired_dda=false
+STREET completed_frame=163 render_ms=66.295 physics_steps=4890 paired_dda=false
+STREET GPU collected_at_frame=163 total_ms=67.373 opaque_ms=58.065 transparent_ms=58.505
+STREET completed_frame=164 render_ms=68.830 physics_steps=4920 paired_dda=false
+STREET completed_frame=165 render_ms=73.217 physics_steps=4950 paired_dda=false
+STREET GPU collected_at_frame=165 total_ms=63.033 opaque_ms=53.970 transparent_ms=54.960
+STREET completed_frame=166 render_ms=70.388 physics_steps=4980 paired_dda=false
+STREET completed_frame=167 render_ms=70.286 physics_steps=5010 paired_dda=false
+STREET GPU collected_at_frame=167 total_ms=69.994 opaque_ms=59.759 transparent_ms=57.250
+STREET completed_frame=168 render_ms=67.686 physics_steps=5040 paired_dda=false
+STREET completed_frame=169 render_ms=71.099 physics_steps=5070 paired_dda=false
+STREET GPU collected_at_frame=169 total_ms=67.246 opaque_ms=58.108 transparent_ms=58.220
+STREET completed_frame=170 render_ms=72.316 physics_steps=5100 paired_dda=false
+STREET completed_frame=171 render_ms=71.556 physics_steps=5130 paired_dda=false
+STREET GPU collected_at_frame=171 total_ms=66.602 opaque_ms=57.238 transparent_ms=47.194
+STREET completed_frame=172 render_ms=72.024 physics_steps=5160 paired_dda=false
+STREET completed_frame=173 render_ms=73.207 physics_steps=5190 paired_dda=false
+STREET GPU collected_at_frame=173 total_ms=67.717 opaque_ms=58.111 transparent_ms=59.086
+STREET completed_frame=174 render_ms=73.665 physics_steps=5220 paired_dda=false
+STREET completed_frame=175 render_ms=71.634 physics_steps=5250 paired_dda=false
+STREET GPU collected_at_frame=175 total_ms=69.367 opaque_ms=59.569 transparent_ms=55.782
+STREET completed_frame=176 render_ms=70.959 physics_steps=5280 paired_dda=false
+STREET completed_frame=177 render_ms=69.745 physics_steps=5310 paired_dda=false
+STREET GPU collected_at_frame=177 total_ms=67.635 opaque_ms=58.577 transparent_ms=56.161
+STREET completed_frame=178 render_ms=74.311 physics_steps=5340 paired_dda=false
+STREET completed_frame=179 render_ms=75.061 physics_steps=5370 paired_dda=false
+STREET GPU collected_at_frame=179 total_ms=65.259 opaque_ms=55.020 transparent_ms=56.759
+STREET completed_frame=180 render_ms=72.631 physics_steps=5400 paired_dda=false
+STREET completed_frame=181 render_ms=74.637 physics_steps=5430 paired_dda=false
+STREET completed_frame=182 render_ms=68.957 physics_steps=5460 paired_dda=false
+STREET completed_frame=183 render_ms=71.222 physics_steps=5490 paired_dda=false
+STREET GPU collected_at_frame=183 total_ms=70.758 opaque_ms=60.650 transparent_ms=57.729
+STREET completed_frame=184 render_ms=73.571 physics_steps=5520 paired_dda=false
+STREET completed_frame=185 render_ms=69.650 physics_steps=5550 paired_dda=false
+STREET GPU collected_at_frame=185 total_ms=67.043 opaque_ms=57.832 transparent_ms=58.274
+STREET completed_frame=186 render_ms=77.701 physics_steps=5580 paired_dda=false
+STREET completed_frame=187 render_ms=76.266 physics_steps=5610 paired_dda=false
+STREET GPU collected_at_frame=187 total_ms=65.513 opaque_ms=55.901 transparent_ms=56.845
+STREET completed_frame=188 render_ms=71.940 physics_steps=5640 paired_dda=false
+STREET completed_frame=189 render_ms=71.780 physics_steps=5670 paired_dda=false
+STREET GPU collected_at_frame=189 total_ms=72.182 opaque_ms=61.823 transparent_ms=62.968
+STREET completed_frame=190 render_ms=70.026 physics_steps=5700 paired_dda=false
+STREET completed_frame=191 render_ms=76.113 physics_steps=5730 paired_dda=false
+STREET GPU collected_at_frame=191 total_ms=68.970 opaque_ms=59.467 transparent_ms=59.738
+STREET completed_frame=192 render_ms=71.888 physics_steps=5760 paired_dda=false
+STREET completed_frame=193 render_ms=73.554 physics_steps=5790 paired_dda=false
+STREET GPU collected_at_frame=193 total_ms=73.327 opaque_ms=63.616 transparent_ms=56.892
+STREET completed_frame=194 render_ms=78.136 physics_steps=5820 paired_dda=false
+STREET completed_frame=195 render_ms=76.973 physics_steps=5850 paired_dda=false
+STREET GPU collected_at_frame=195 total_ms=70.677 opaque_ms=61.072 transparent_ms=61.475
+STREET completed_frame=196 render_ms=74.231 physics_steps=5880 paired_dda=false
+STREET completed_frame=197 render_ms=74.088 physics_steps=5910 paired_dda=false
+STREET GPU collected_at_frame=197 total_ms=72.933 opaque_ms=63.113 transparent_ms=55.992
+STREET completed_frame=198 render_ms=75.836 physics_steps=5940 paired_dda=false
+STREET completed_frame=199 render_ms=75.388 physics_steps=5970 paired_dda=false
+STREET GPU collected_at_frame=199 total_ms=70.154 opaque_ms=60.880 transparent_ms=62.076
+STREET completed_frame=200 render_ms=72.293 physics_steps=6000 paired_dda=false
+STREET completed_frame=201 render_ms=73.297 physics_steps=6030 paired_dda=false
+STREET GPU collected_at_frame=201 total_ms=71.201 opaque_ms=61.618 transparent_ms=54.192
+STREET completed_frame=202 render_ms=72.594 physics_steps=6060 paired_dda=false
+STREET completed_frame=203 render_ms=76.903 physics_steps=6090 paired_dda=false
+STREET GPU collected_at_frame=203 total_ms=68.999 opaque_ms=59.842 transparent_ms=60.303
+STREET completed_frame=204 render_ms=80.527 physics_steps=6120 paired_dda=false
+STREET completed_frame=205 render_ms=76.003 physics_steps=6150 paired_dda=false
+STREET GPU collected_at_frame=205 total_ms=72.659 opaque_ms=63.322 transparent_ms=64.343
+STREET completed_frame=206 render_ms=76.954 physics_steps=6180 paired_dda=false
+STREET completed_frame=207 render_ms=72.898 physics_steps=6210 paired_dda=false
+STREET GPU collected_at_frame=207 total_ms=71.777 opaque_ms=61.872 transparent_ms=62.931
+STREET completed_frame=208 render_ms=69.747 physics_steps=6240 paired_dda=false
+STREET completed_frame=209 render_ms=77.121 physics_steps=6270 paired_dda=false
+STREET GPU collected_at_frame=209 total_ms=68.448 opaque_ms=59.587 transparent_ms=59.825
+STREET completed_frame=210 render_ms=73.010 physics_steps=6300 paired_dda=false
+STREET completed_frame=211 render_ms=72.248 physics_steps=6330 paired_dda=false
+STREET GPU collected_at_frame=211 total_ms=74.092 opaque_ms=65.157 transparent_ms=62.673
+STREET completed_frame=212 render_ms=73.456 physics_steps=6360 paired_dda=false
+STREET completed_frame=213 render_ms=70.711 physics_steps=6390 paired_dda=false
+STREET GPU collected_at_frame=213 total_ms=69.284 opaque_ms=60.166 transparent_ms=60.321
+STREET completed_frame=214 render_ms=72.891 physics_steps=6420 paired_dda=false
+STREET completed_frame=215 render_ms=73.774 physics_steps=6450 paired_dda=false
+STREET GPU collected_at_frame=215 total_ms=67.509 opaque_ms=57.477 transparent_ms=58.495
+STREET completed_frame=216 render_ms=75.993 physics_steps=6480 paired_dda=false
+STREET completed_frame=217 render_ms=75.748 physics_steps=6510 paired_dda=false
+STREET GPU collected_at_frame=217 total_ms=69.407 opaque_ms=59.427 transparent_ms=38.739
+STREET completed_frame=218 render_ms=74.685 physics_steps=6540 paired_dda=false
+STREET completed_frame=219 render_ms=80.950 physics_steps=6570 paired_dda=false
+STREET GPU collected_at_frame=219 total_ms=70.665 opaque_ms=60.645 transparent_ms=62.064
+STREET completed_frame=220 render_ms=78.603 physics_steps=6600 paired_dda=false
+STREET completed_frame=221 render_ms=71.198 physics_steps=6630 paired_dda=false
+STREET GPU collected_at_frame=221 total_ms=75.724 opaque_ms=65.629 transparent_ms=66.772
+STREET completed_frame=222 render_ms=72.226 physics_steps=6660 paired_dda=false
+STREET completed_frame=223 render_ms=70.288 physics_steps=6690 paired_dda=false
+STREET GPU collected_at_frame=223 total_ms=66.283 opaque_ms=57.862 transparent_ms=57.363
+STREET completed_frame=224 render_ms=67.748 physics_steps=6720 paired_dda=false
+STREET completed_frame=225 render_ms=67.585 physics_steps=6750 paired_dda=false
+STREET GPU collected_at_frame=225 total_ms=65.263 opaque_ms=56.559 transparent_ms=56.582
+STREET completed_frame=226 render_ms=70.953 physics_steps=6780 paired_dda=false
+STREET completed_frame=227 render_ms=74.767 physics_steps=6810 paired_dda=false
+STREET GPU collected_at_frame=227 total_ms=62.614 opaque_ms=52.679 transparent_ms=48.910
+STREET completed_frame=228 render_ms=68.093 physics_steps=6840 paired_dda=false
+STREET completed_frame=229 render_ms=68.419 physics_steps=6870 paired_dda=false
+STREET GPU collected_at_frame=229 total_ms=69.852 opaque_ms=59.145 transparent_ms=50.696
+STREET completed_frame=230 render_ms=71.333 physics_steps=6900 paired_dda=false
+STREET completed_frame=231 render_ms=58.796 physics_steps=6930 paired_dda=false
+STREET GPU collected_at_frame=231 total_ms=62.901 opaque_ms=53.644 transparent_ms=54.274
+STREET completed_frame=232 render_ms=57.556 physics_steps=6960 paired_dda=false
+STREET completed_frame=233 render_ms=62.747 physics_steps=6990 paired_dda=false
+STREET GPU collected_at_frame=233 total_ms=53.887 opaque_ms=42.312 transparent_ms=43.503
+STREET completed_frame=234 render_ms=72.577 physics_steps=7020 paired_dda=false
+STREET completed_frame=235 render_ms=69.606 physics_steps=7050 paired_dda=false
+STREET GPU collected_at_frame=235 total_ms=59.255 opaque_ms=47.757 transparent_ms=49.707
+STREET completed_frame=236 render_ms=71.986 physics_steps=7080 paired_dda=false
+STREET completed_frame=237 render_ms=60.739 physics_steps=7110 paired_dda=false
+STREET GPU collected_at_frame=237 total_ms=66.098 opaque_ms=56.040 transparent_ms=46.492
+STREET completed_frame=238 render_ms=70.790 physics_steps=7140 paired_dda=false
+STREET completed_frame=239 render_ms=69.510 physics_steps=7170 paired_dda=false
+STREET GPU collected_at_frame=239 total_ms=57.136 opaque_ms=46.372 transparent_ms=47.259
+STREET completed_frame=240 render_ms=72.915 physics_steps=7200 paired_dda=false
+STREET frames=240 fps=13.51 feet=DVec3(0.4418053375170189, 0.0526466804878869, -17.900547823228546) grounded=true
+STREET completed_frame=241 render_ms=72.376 physics_steps=7230 paired_dda=false
+STREET GPU collected_at_frame=241 total_ms=65.675 opaque_ms=56.029 transparent_ms=56.938
+STREET completed_frame=242 render_ms=69.448 physics_steps=7260 paired_dda=false
+STREET completed_frame=243 render_ms=70.278 physics_steps=7290 paired_dda=false
+STREET GPU collected_at_frame=243 total_ms=68.966 opaque_ms=58.225 transparent_ms=56.108
+STREET completed_frame=244 render_ms=70.189 physics_steps=7320 paired_dda=false
+STREET completed_frame=245 render_ms=65.060 physics_steps=7350 paired_dda=false
+STREET GPU collected_at_frame=245 total_ms=66.839 opaque_ms=57.771 transparent_ms=50.011
+STREET completed_frame=246 render_ms=74.016 physics_steps=7380 paired_dda=false
+STREET completed_frame=247 render_ms=73.094 physics_steps=7410 paired_dda=false
+STREET GPU collected_at_frame=247 total_ms=61.483 opaque_ms=51.355 transparent_ms=52.112
+STREET completed_frame=248 render_ms=70.702 physics_steps=7440 paired_dda=false
+STREET completed_frame=249 render_ms=67.916 physics_steps=7470 paired_dda=false
+STREET GPU collected_at_frame=249 total_ms=69.783 opaque_ms=60.819 transparent_ms=60.827
+STREET completed_frame=250 render_ms=72.906 physics_steps=7500 paired_dda=false
+STREET completed_frame=251 render_ms=71.753 physics_steps=7530 paired_dda=false
+STREET GPU collected_at_frame=251 total_ms=62.956 opaque_ms=53.972 transparent_ms=54.164
+STREET completed_frame=252 render_ms=69.636 physics_steps=7560 paired_dda=false
+STREET completed_frame=253 render_ms=68.550 physics_steps=7590 paired_dda=false
+STREET GPU collected_at_frame=253 total_ms=66.781 opaque_ms=57.696 transparent_ms=57.915
+STREET completed_frame=254 render_ms=72.995 physics_steps=7620 paired_dda=false
+STREET completed_frame=255 render_ms=71.132 physics_steps=7650 paired_dda=false
+STREET GPU collected_at_frame=255 total_ms=63.947 opaque_ms=54.801 transparent_ms=55.278
+STREET completed_frame=256 render_ms=66.020 physics_steps=7680 paired_dda=false
+STREET completed_frame=257 render_ms=69.763 physics_steps=7710 paired_dda=false
+STREET GPU collected_at_frame=257 total_ms=66.429 opaque_ms=57.261 transparent_ms=57.570
+STREET completed_frame=258 render_ms=68.449 physics_steps=7740 paired_dda=false
+STREET completed_frame=259 render_ms=69.616 physics_steps=7770 paired_dda=false
+STREET GPU collected_at_frame=259 total_ms=65.109 opaque_ms=55.533 transparent_ms=56.145
+STREET completed_frame=260 render_ms=70.766 physics_steps=7800 paired_dda=false
+STREET BENCHMARK {"antialiasing":"Temporal","benchmark_stop_policy":"fixed_simulation_duration","camera_controlled":true,"complete_120Hz_rendered_motion_cycles":0,"complete_motion_cycles":1,"completed_frame_samples_seconds":[0.075750083,0.069924958,0.07254,0.075224334,0.071515083,0.078733167,0.077494458,0.073248125,0.073308833,0.071298625,0.0777885,0.073001084,0.0752605,0.079665458,0.078587625,0.075818625,0.075523833,0.077230916,0.07693225,0.074309417,0.075222708,0.074285333,0.078298333,0.081999416,0.077647208,0.078496208,0.074613917,0.071242666,0.078490875,0.074564625,0.07402475,0.075140167,0.072221667,0.074423667,0.0752145,0.078173292,0.077622583,0.076412541,0.082390083,0.080209,0.073449042,0.07489725,0.07164575,0.06979075,0.0693455,0.072639541,0.076871416,0.0701485,0.070567583,0.072815959,0.060380541,0.059504583,0.065029666,0.074782167,0.071123291,0.073767166,0.062582833,0.072874375,0.071565791,0.074510333,0.073959541,0.071636375,0.072228,0.071781,0.066791625,0.0753695,0.075081833,0.072918208,0.069670584,0.074242583,0.073751209,0.071276209,0.070901292,0.074743834,0.072473125,0.067626417,0.071611,0.069845625,0.071707625,0.072887833],"completed_offscreen_measurement_valid":true,"compute_gi":false,"compute_ssr":false,"correctness_capture_active":false,"cpu_physics_mean_ms":1.6101145125000005,"cpu_render_mean_ms":71.83576149999999,"crossover_candidate":null,"crossover_measurement_valid":false,"current_render_samples_seconds":[0.07463675,0.068957,0.071222375,0.073571292,0.069650209,0.077700708,0.076265541,0.071940334,0.071779792,0.070026208,0.07611325,0.071888166,0.073554167,0.078135625,0.076972958,0.074231459,0.07408775,0.075836375,0.075388167,0.0722935,0.073297333,0.072594167,0.076902709,0.08052675,0.076003167,0.076954042,0.072898042,0.06974675,0.077121292,0.073010208,0.0722475,0.073455708,0.070710541,0.072891333,0.073773667,0.075993333,0.075747958,0.074684833,0.080950375,0.0786025,0.0711985,0.07222575,0.070287667,0.067747958,0.067585417,0.070952584,0.074767417,0.068093375,0.068418834,0.071333167,0.058796292,0.057556417,0.062746709,0.072577375,0.069605958,0.071985542,0.060739292,0.070789583,0.069510292,0.072914959,0.072375709,0.0694485,0.07027775,0.070188708,0.065060041,0.074015625,0.073094125,0.070701708,0.067915875,0.072906042,0.071752708,0.069635958,0.068549792,0.072994625,0.071132167,0.066020375,0.069763041,0.068449,0.069616041,0.070766208],"early_gi":false,"feet":[-0.6442059372754722,0.04917593978863891,-7.00327546181538],"frame_sample_clock":"current_completed_frame","frames":80,"full_collision_triangles":3634960,"fx_off":null,"gi_precision_reference_active":false,"gi_raster_math_configured":false,"gi_raster_math_requested":false,"gi_raw_capture_active":false,"gpu_completed_samples_ms":[70.757791,67.043041,65.513042,72.18216699999999,68.969833,73.327125,70.67741699999999,72.932875,70.1545,71.20141699999999,68.99862499999999,72.659125,71.777041,68.447583,74.09195799999999,69.28370799999999,67.508625,69.4075,70.665125,75.723708,66.283125,65.262916,62.614332999999995,69.852375,62.90125,53.887167,59.255291,66.098209,57.135709,65.67483299999999,68.966167,66.839292,61.482665999999995,69.782917,62.955833,66.78075,63.9465,66.429375,65.109084,65.06462499999999],"gpu_frame_stamps":[[181,false,false],[183,false,false],[185,false,false],[187,false,false],[189,false,false],[191,false,false],[193,false,false],[195,false,false],[197,false,false],[199,false,false],[201,false,false],[203,false,false],[205,false,false],[207,false,false],[209,false,false],[211,false,false],[213,false,false],[215,false,false],[217,false,false],[219,false,false],[221,false,false],[223,false,false],[225,false,false],[227,false,false],[229,false,false],[231,false,false],[233,false,false],[235,false,false],[237,false,false],[239,false,false],[241,false,false],[243,false,false],[245,false,false],[247,false,false],[249,false,false],[251,false,false],[253,false,false],[255,false,false],[257,false,false],[259,false,false]],"gpu_gi_mean_ms":null,"gpu_gi_samples":0,"gpu_mean_ms":67.441115575,"gpu_samples":40,"gpu_shading_mean_ms":[57.77627285,56.27074270000001],"gpu_ssr_mean_ms":null,"gpu_ssr_samples":0,"grounded":true,"host_completion_interval_scope":"successive host observations after exact GPU submission completion; includes event-loop gaps; not scanout","host_completion_intervals_seconds":[0.076007958,0.070193667,0.072800458,0.07549075,0.071785542,0.078993375,0.077775041,0.073542,0.073600917,0.071577417,0.078057666,0.073309917,0.0755515,0.07996225,0.07890625,0.076148917,0.075843916,0.077551209,0.077266958,0.074641917,0.075535875,0.074604375,0.078607041,0.0823255,0.077991875,0.078820542,0.074938417,0.071558083,0.078793042,0.074891666,0.074360084,0.075477583,0.072561625,0.074766875,0.075565292,0.078514958,0.077977833,0.076766,0.082774667,0.080614292,0.073846,0.075265333,0.072015167,0.070147875,0.069696541,0.072989709,0.077234291,0.0704965,0.070913584,0.073166208,0.060745708,0.059808709,0.0653345,0.075103166,0.071492,0.074117834,0.062954708,0.073192667,0.071928166,0.074867875,0.07513875,0.072007209,0.073739375,0.072494166,0.067152209,0.07567975,0.075426541,0.073300875,0.069998209,0.074561916,0.074123875,0.071614959,0.071222458,0.075072,0.072810875,0.06795625,0.071926333,0.070169125,0.072026792,0.073215417],"internal_resolution":[3840,2160],"max_frame_ms":82.390083,"mean_fps":13.533139805498227,"measured_frame_ids":[181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260],"measured_physics_steps":2400,"measured_simulation_seconds":20.0,"measurement":"completed_full_resolution_offscreen_frames","measurement_duration_clock":"single_monotonic_elapsed","measurement_end_unix_seconds":1794387480.983639,"measurement_start_simulation_steps":5400,"measurement_start_unix_seconds":1794387475.072128,"metal_compute_audit_requested":false,"metal_compute_max_threads_requested":0,"minimum_120_completed_frame_fps_passed":false,"minimum_120_presented_fps_passed":false,"minimum_sampled_fps":12.137383087719428,"motion_period_seconds":20,"occluded_or_timed_out_acquires":0,"p50_ms":73.959541,"p95_ms":79.665458,"p99_ms":82.390083,"paired_dda_cell_bounds":false,"paired_dda_edge_cache":false,"paired_dda_far_bound":false,"paired_dda_hierarchy":false,"paired_dda_interval_cache":false,"paired_dda_lazy_cell_bounds":false,"paired_dda_plane_cache":false,"paired_dda_point_cache":false,"paired_dda_tile_edge_cache":false,"paired_dda_tiles":false,"paired_dda_touch_guard":false,"paired_depth_dda":false,"present_mode":"Immediate","ray_capture_enabled":false,"ray_coherent":false,"ray_force_fallback":false,"ray_hierarchy":false,"ray_hierarchy_bounds_bytes":0,"ray_hierarchy_near_first":false,"ray_hierarchy_reciprocal_cache":false,"ray_persistent":false,"ray_queue":false,"ray_queue_total_encoded_frames":0,"ray_spatial_key":false,"ray_stages":false,"refine_crossover_mode":null,"refinement_cache":false,"rendered_every_physics_step":false,"replay_render_frames":260,"replay_state_blake3":"8ad1aa4bc04c3e7a743b7eb7cbc14d44099f9abfb03237cf52ad9005b1b1e715","replay_state_schema":"camera-weather-water-v2","resolution":[1920,1080],"sampled_frame_seconds":5.882644867999998,"sampled_mean_fps":13.59932509867771,"scene":"Voxy Original Street","seconds":5.911414583,"simulation_clock":"fixed_30_step_batch","source_simplified":false,"spawn_pool":false,"surface_acquire_mean_ms":0.006289037500000001,"transmission_depth":false,"water_scope":{"end":{"body_draws":786,"drawn_frames":786,"last_drawn_bodies":1,"last_submitted_time_bits":1115815936,"registered_bodies":1,"ripple_encoded_seconds":65.0,"ripple_encoded_ticks":15600,"ripple_pending_seconds":0.0,"ripple_requested_seconds":65.0,"ripple_tick_rate":240,"simulation_seconds":65.0,"simulation_time_bits":1115815936,"wave_seed":1},"start":{"body_draws":706,"drawn_frames":706,"last_drawn_bodies":1,"last_submitted_time_bits":1110704128,"registered_bodies":1,"ripple_encoded_seconds":45.0,"ripple_encoded_ticks":10800,"ripple_pending_seconds":0.0,"ripple_requested_seconds":45.0,"ripple_tick_rate":240,"simulation_seconds":45.0,"simulation_time_bits":1110704128,"wave_seed":1}},"window_measurement_valid":false,"world_query_encoded_frames":0,"world_ray_consumer_cache":false,"world_ray_consumer_cache_check":false,"world_ray_consumer_profile":false,"world_ray_consumer_sorted":false,"world_ray_frame":false,"world_ray_regions":0}
+STREET EXIT benchmark_complete=true frames=260 simulation_steps=7800 failure=None
+STREET EVENT LOOP RETURN result=Ok(()) frames=260 simulation_steps=7800 benchmark_complete=true

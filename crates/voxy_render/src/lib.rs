@@ -2,24 +2,14 @@
 
 mod accumulation;
 pub use accumulation::{RadianceAccumulationFrame, RadianceAccumulator};
-mod joint_contact_dot;
-pub use joint_contact_dot::{
-    JOINT_CONTACT_DOT_SHADER, JOINT_CONTACT_NORMALIZE_SERIAL_SHADER,
-    JOINT_CONTACT_NORMALIZE_SHADER, JointContactDotInput, JointDotError,
-};
-pub use joint_contact_dot::{
-    JOINT_CONTACT_EQUALITY_SHADER, ResidentContactEqualityInput, ResidentContactEqualityOutput,
+pub use voxy_gpu_core::{
+    BANDED_SOLVE_SHADER, BandedPackedReference, BandedSolveError, BandedSolveInput, BandedSystem,
+    BandedTransferProgram, JOINT_CONTACT_DOT_SHADER, JOINT_CONTACT_EQUALITY_SHADER,
+    JOINT_CONTACT_NORMALIZE_SERIAL_SHADER, JOINT_CONTACT_NORMALIZE_SHADER, JOINT_CONTACT_QR_SHADER,
+    JointContactDotInput, JointDotError, ResidentContactEqualityInput,
+    ResidentContactEqualityOutput, ResidentContactQrInput, ResidentContactQrOutput,
     ResidentContactQrPrefix, ValidatedResidentContactEquality,
 };
-pub use joint_contact_dot::{
-    JOINT_CONTACT_QR_SHADER, ResidentContactQrInput, ResidentContactQrOutput,
-};
-mod banded_solve;
-mod banded_transfer;
-pub use banded_solve::{
-    BANDED_SOLVE_SHADER, BandedPackedReference, BandedSolveError, BandedSolveInput, BandedSystem,
-};
-pub use banded_transfer::{BandedTransferProgram, dual_scattering_hair_attenuation};
 mod blit;
 mod bodycam;
 pub use bodycam::{
@@ -50,9 +40,7 @@ mod depth_sample;
 mod direct_lighting;
 mod exposure;
 mod frame_generation;
-pub use exposure::{
-    AutoExposure, AutoExposureFrame, ExposureSettings, ev100_from_camera_settings,
-};
+pub use exposure::{AutoExposure, AutoExposureFrame, ExposureSettings, ev100_from_camera_settings};
 mod hdr_mips;
 mod hdr_resolve;
 pub use hdr_mips::HdrMipPyramid;
@@ -86,9 +74,7 @@ pub use imported_environment::{ImportedEnvironment, ImportedEnvironmentError};
 mod hdr_probe;
 pub use hdr_probe::HdrPixelProbe;
 mod hdr_asset;
-pub use hdr_asset::{
-    HdrImageAsset, HdrImageError, linear_to_pq_st2084, pq_st2084_to_linear,
-};
+pub use hdr_asset::{HdrImageAsset, HdrImageError, linear_to_pq_st2084, pq_st2084_to_linear};
 mod image_asset;
 mod lod;
 pub use lod::{LodError, LodIndexSet, LodLevel, LodPolicy};
@@ -116,8 +102,8 @@ mod motion;
 mod obj;
 mod ocean;
 pub use ocean::{
-    OceanCamera, OceanRenderer, OceanSettings, cdlod_morph_factor,
-    jacobian_folding_foam_intensity, water_spectral_transmittance,
+    OceanCamera, OceanRenderer, OceanSettings, cdlod_morph_factor, jacobian_folding_foam_intensity,
+    water_spectral_transmittance,
 };
 pub use voxy_water;
 pub use voxy_water::WaveSpectrum;
@@ -143,12 +129,14 @@ mod reconstruction_distance;
 mod reconstruction_material;
 mod reconstruction_pass;
 mod reflection;
+mod render_graph;
 mod renderer;
 mod scene;
 pub use fluid_screen::{
     FluidDepthFilter, FluidDiagnostic, FluidRenderFilmTriangle, FluidRenderParticle,
     ScreenSpaceFluidRenderer,
 };
+pub use render_graph::{RenderGraph, RenderGraphNode};
 mod geometry_checkpoint;
 mod skinned;
 pub use geometry_checkpoint::{
@@ -194,12 +182,13 @@ pub use skinned_motion::{PreparedSkinnedFrame, SkinnedMotionFrame, SkinnedMotion
 
 pub use scene::{
     DEFAULT_SCENE_SHADER, PreparedSceneEnvironment, SceneDepthMode, SceneDraw, SceneError,
-    SceneGeometry, SceneLodGeometry, SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError,
-    SceneSkinError, SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource,
-    SceneSkinner, SceneTexture, SceneTransform, SceneVertex, SceneView, SceneViewTargets,
+    SceneGeometry, SceneInstanceBatch, SceneInstanceData, SceneInstancedDraw, SceneInstancer,
+    SceneLodGeometry, SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError, SceneSkinError,
+    SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource, SceneSkinner,
+    SceneTexture, SceneTransform, SceneVertex, SceneView, SceneViewTargets,
 };
 
-pub use camera::{InvalidSceneCamera, SceneCamera, SceneProjection};
+pub use camera::{InvalidSceneCamera, OrbitView, SceneCamera, SceneProjection};
 
 pub use voxy_gpu_core::{
     ComputeDispatch, ComputeError, ComputeJob, ComputeProgram, PendingComputeReadback,
@@ -220,9 +209,7 @@ pub use previous_position::{
 };
 pub use primary_motion::PrimaryMotionPass;
 pub use primary_surface::{PrimarySurfaceJob, PrimarySurfacePipeline};
-pub use radiance::{
-    HdrCompositionPipeline, RadianceComposition, restir_reservoir_merge_weight,
-};
+pub use radiance::{HdrCompositionPipeline, RadianceComposition, restir_reservoir_merge_weight};
 pub use ray::{
     RAY_VISIBILITY_SHADER, RayInstanceUpdate, RayScene, RaySceneError, RaySegment,
     RayVisibilityJob, RayVisibilityPipeline, cpu_segment_visibility,
@@ -297,8 +284,7 @@ pub const TEXTURED_POINT_LIGHT_SHADER: &str = include_str!("scene_point_light.wg
 
 mod shadow_map;
 pub use shadow_map::{
-    ShadowDraw, ShadowDrawMask, ShadowMap, contact_hardening_shadow_bias,
-    snap_cascade_ortho_bounds,
+    ShadowDraw, ShadowDrawMask, ShadowMap, contact_hardening_shadow_bias, snap_cascade_ortho_bounds,
 };
 
 mod shadow_visibility;
@@ -389,7 +375,8 @@ mod surface_normal_transport;
 mod fiber_surface;
 pub use fiber_surface::{
     FIBER_SURFACE_SHADER, FiberSurfaceFrame, FiberSurfaceInput, FiberSurfaceTransfer,
-    hair_melanin_absorption_sigma_a, marschner_azimuthal_scattering_n,
+    dual_scattering_hair_attenuation, hair_melanin_absorption_sigma_a,
+    marschner_azimuthal_scattering_n,
 };
 
 mod surface_light_transfer;
@@ -400,7 +387,7 @@ pub use surface_light_frame::{SurfaceLightFrame, SurfaceLightFrameSettings};
 mod surface_color_transfer;
 pub use surface_color_transfer::{SurfaceColorBinding, SurfaceColorTransfer};
 
-pub use joint_contact_dot::{
+pub use voxy_gpu_core::{
     EXPERIMENTAL_RESIDENT_CONTACT_SHADER, EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER,
     EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER, ExperimentalResidentContactBatch,
     ExperimentalResidentContactInput, experimental_seeded_resident_contact_shader,
@@ -450,11 +437,14 @@ pub use liquid_pipeline::{
 mod liquid_topology;
 pub use liquid_topology::LiquidPairTopology;
 
-pub use joint_contact_dot::{
-    ExperimentalTripleActiveContactBatch, ExperimentalTripleActiveContactInput,
-    ExperimentalTripleActiveFactors, ExperimentalTripleCompletedFactorReadback,
-    ExperimentalTripleContactInput, ExperimentalTripleExpandedCandidate,
-    ExperimentalTripleExpansion,
+pub use voxy_gpu_core::{
+    ExperimentalExactFiveContactInput, ExperimentalFiveGapDecision, ExperimentalFiveGapInput,
+    ExperimentalFiveQrInput, ExperimentalFiveQrReadback, ExperimentalFiveQrValue,
+    ExperimentalFiveRelease, ExperimentalFiveReleaseInput, ExperimentalFiveSelection,
+    ExperimentalFiveSelectionInput, ExperimentalTripleActiveContactBatch,
+    ExperimentalTripleActiveContactInput, ExperimentalTripleActiveFactors,
+    ExperimentalTripleCompletedFactorReadback, ExperimentalTripleContactInput,
+    ExperimentalTripleExpandedCandidate, ExperimentalTripleExpansion,
 };
 
 pub use skinned::MAX_SKIN_JOINTS;
@@ -467,28 +457,8 @@ pub mod test_support {
     pub use crate::skinned_lod::test_source as skinned_lod_source;
 }
 
-mod contact_exact_five;
-pub use contact_exact_five::ExperimentalExactFiveContactInput;
-
-#[cfg(test)]
-mod contact_five_product_tests;
-
-mod contact_five_qr;
-pub use contact_five_qr::{
-    ExperimentalFiveQrInput, ExperimentalFiveQrReadback, ExperimentalFiveQrValue,
-};
-
 #[cfg(test)]
 mod contact_five_qr_tests;
-
-mod contact_five_gaps;
-pub use contact_five_gaps::{ExperimentalFiveGapDecision, ExperimentalFiveGapInput};
-
-mod contact_five_select;
-pub use contact_five_select::{ExperimentalFiveSelection, ExperimentalFiveSelectionInput};
-
-mod contact_five_release;
-pub use contact_five_release::{ExperimentalFiveRelease, ExperimentalFiveReleaseInput};
 
 mod compressed_image;
 pub use compressed_image::Bc7ImageAsset;

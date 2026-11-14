@@ -15,7 +15,6 @@ impl DepthMotionPass {
     /// must overwrite these vectors using matching object/deformation correspondence.
     /// # Errors
     /// Rejects invalid cameras, clear depth or incompatible primary depth resources.
-    #[allow(clippy::too_many_lines)]
     pub fn new(
         device: &wgpu::Device,
         depth: &wgpu::Texture,
@@ -30,7 +29,6 @@ impl DepthMotionPass {
     /// needs an object/deformation overwrite at the same primary coverage.
     /// # Errors
     /// Rejects invalid depth or camera matrices and the same resources as `new`.
-    #[allow(clippy::too_many_lines)]
     pub fn with_jittered_depth(
         device: &wgpu::Device,
         depth: &wgpu::Texture,

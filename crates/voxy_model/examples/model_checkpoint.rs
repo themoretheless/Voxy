@@ -73,8 +73,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 let a = source.scene_meshes_frame(&a)?;
                 let b = restored.scene_meshes_frame(&b)?;
                 if a.iter()
-                    .map(|m| m.checkpoint())
-                    .ne(b.iter().map(|m| m.checkpoint()))
+                    .map(voxy_render::SceneMesh::checkpoint)
+                    .ne(b.iter().map(voxy_render::SceneMesh::checkpoint))
                 {
                     return Err("posed mesh words differ".into());
                 }

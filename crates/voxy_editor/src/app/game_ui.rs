@@ -124,7 +124,6 @@ impl App {
     }
 
     // Native viewport coordinates use the same bounded f32 layout as rendering.
-    #[allow(clippy::cast_precision_loss)]
     pub(crate) fn game_ui_key(
         &mut self,
         key: KeyCode,

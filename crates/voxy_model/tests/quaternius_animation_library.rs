@@ -41,7 +41,7 @@ fn real_library_imports_and_samples_every_clip_with_native_skinning() {
             let pose = asset.sample_pose_phase(Some(index), phase).unwrap();
             let palette = asset.skin_matrices(&pose).unwrap();
             assert!(
-                palette.iter().all(|matrix| matrix.is_finite()),
+                palette.iter().all(glam::Mat4::is_finite),
                 "{} at {phase}",
                 clip.name()
             );

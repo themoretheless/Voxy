@@ -2,7 +2,7 @@
 //! surface normals. Coordinate anchors and query budgets are independent of voxels.
 use crate::math::dot;
 use crate::math::norm;
-use crate::{Origin, gravity, gravity_field::GravityField};
+use crate::{Origin, gravity, gravity::field::GravityField};
 
 type Vector = [f64; 3];
 fn add(a: &mut Vector, b: Vector) {
@@ -119,7 +119,6 @@ fn rebase(state: &mut State) -> Result<(), Error> {
         {
             return Err(Error::CoordinateOverflow);
         }
-        #[allow(clippy::cast_possible_truncation)]
         let integer = shift as i64;
         let anchor = match k {
             0 => &mut state.anchor.x,
@@ -271,7 +270,6 @@ pub struct SphereWorld<'a> {
     pub surfaces: &'a [SurfaceSphere],
 }
 impl CollisionWorld for SphereWorld<'_> {
-    #[allow(clippy::cast_precision_loss)]
     fn sweep(
         &self,
         state: &State,

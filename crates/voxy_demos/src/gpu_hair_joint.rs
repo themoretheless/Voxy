@@ -141,7 +141,7 @@ impl ResidentCandidateCache {
             + 8 * (e.bounds.capacity()
                 + e.output.0.capacity()
                 + e.output.1.capacity()
-                + e.columns.iter().map(|c| c.capacity()).sum::<usize>())
+                + e.columns.iter().map(std::vec::Vec::capacity).sum::<usize>())
     }
     fn insert(
         &mut self,
@@ -614,7 +614,7 @@ impl<'a> EqualityTask<'a> {
         let coordinates = &mut self.coordinates;
 
         let output = if refinement == 0 {
-            let (state, output) = self.initial.take().unwrap().into_validated(&bytes).map_err(|error| {
+            let (state, output) = self.initial.take().unwrap().into_validated(bytes).map_err(|error| {
                 let header: Vec<_> = bytes
                     .get(..16.min(bytes.len()))
                     .unwrap_or(&[])
@@ -632,7 +632,7 @@ impl<'a> EqualityTask<'a> {
             // Bound retained snapshot payload independently of scene size.
             if options.prefix_reuse {
                 self.prefix = if bytes.len() <= 2 * 1024 * 1024 {
-                    Some(state.qr_prefix(&bytes)?)
+                    Some(state.qr_prefix(bytes)?)
                 } else {
                     None
                 };
@@ -647,7 +647,7 @@ impl<'a> EqualityTask<'a> {
                     .get(offset as usize..offset as usize + expected.len())
                     .ok_or("truncated full equality snapshot")?
             } else {
-                &bytes
+                bytes
             };
             input.decode_tail(tail)?
         };
@@ -836,10 +836,10 @@ fn run_equality_tasks(
                 cursor += 1;
             }
             for i in 0..tasks.len() {
-                if results[i].is_some() {
-                    if let Some(task) = tasks[i].take() {
-                        prefixes[i] = task.prefix;
-                    }
+                if results[i].is_some()
+                    && let Some(task) = tasks[i].take()
+                {
+                    prefixes[i] = task.prefix;
                 }
             }
             if dispatches.is_empty() {
@@ -1015,16 +1015,15 @@ impl GpuHairLinearSolver {
         let mut aliases = Vec::new();
         let mut packed_keys = std::collections::HashMap::<u64, Vec<usize>>::new();
         for (i, r) in requests.iter().enumerate() {
-            if self.joint_resident_operator_reuse {
-                if let Some(output) =
+            if self.joint_resident_operator_reuse
+                && let Some(output) =
                     self.joint_resident_candidates
                         .get(r.columns, r.bounds, r.tolerance)
-                {
-                    outputs[i] = Some(output);
-                    self.joint_result_cache_hits += 1;
-                    profile.cached += 1;
-                    continue;
-                }
+            {
+                outputs[i] = Some(output);
+                self.joint_result_cache_hits += 1;
+                profile.cached += 1;
+                continue;
             }
             let input = if warm {
                 voxy_render::ExperimentalResidentContactInput::new_seeded(
@@ -1224,7 +1223,7 @@ impl GpuHairLinearSolver {
         profile.factor_cache_bytes = self
             .joint_triple_factors
             .iter()
-            .map(|f| f.retained_bytes())
+            .map(voxy_render::ExperimentalTripleActiveFactors::retained_bytes)
             .sum();
         if requests.is_empty() {
             return Err("empty triple contact batch".into());
@@ -1289,8 +1288,8 @@ impl GpuHairLinearSolver {
                 else {profile.cached_active_hint_owners+=1;}
                 voxy_render::ExperimentalTripleActiveContactInput::new_seeded(r.columns,r.bounds,r.tolerance,hint(i))
             } else {voxy_render::ExperimentalTripleActiveContactInput::new(r.columns,r.bounds,r.tolerance)};
-            if let Err(error)=&packed {
-                if let Some(directory)=std::env::var_os("VOXY_HAIR_TRIPLE_PACKING_FAILURE_DIR") {
+            if let Err(error)=&packed
+                && let Some(directory)=std::env::var_os("VOXY_HAIR_TRIPLE_PACKING_FAILURE_DIR") {
                     // Coordinate-only evidence: original physical loads remain native-owned.
                     // Unique create_new captures preserve earlier failures across retries.
                     static SEQUENCE:std::sync::atomic::AtomicU64=std::sync::atomic::AtomicU64::new(0);
@@ -1307,7 +1306,6 @@ impl GpuHairLinearSolver {
                     };
                     if let Err(error)=write() {eprintln!("TRIPLE PACKING FAILURE CAPTURE ERROR {error}");}
                 }
-            }
             packed
         }).collect::<Result<Vec<_>,_>>()?;
         let mut output = vec![None; requests.len()];
@@ -1317,17 +1315,17 @@ impl GpuHairLinearSolver {
         let mut keys = std::collections::HashMap::<u64, Vec<usize>>::new();
         for (index, mut input) in inputs.into_iter().enumerate() {
             let request = &requests[index];
-            if self.joint_resident_operator_reuse {
-                if let Some(candidate) = self.joint_resident_candidates.get(
+            if self.joint_resident_operator_reuse
+                && let Some(candidate) = self.joint_resident_candidates.get(
                     request.columns,
                     request.bounds,
                     request.tolerance,
-                ) {
-                    output[index] = Some(candidate);
-                    self.joint_result_cache_hits += 1;
-                    profile.cached += 1;
-                    continue;
-                }
+                )
+            {
+                output[index] = Some(candidate);
+                self.joint_result_cache_hits += 1;
+                profile.cached += 1;
+                continue;
             }
             // Canonicalize retained scratch before full-payload deduplication;
             // otherwise a cached first request cannot match an identical alias.
@@ -1418,7 +1416,10 @@ impl GpuHairLinearSolver {
         let payloads = if let Some(batch) = &batch {
             vec![batch.bytes()]
         } else {
-            inputs.iter().map(|input| input.bytes()).collect()
+            inputs
+                .iter()
+                .map(voxy_render::ExperimentalTripleActiveContactInput::bytes)
+                .collect()
         };
         profile.complete_workspace_payload_bytes = payloads.iter().map(|p| p.len() as u64).sum();
         let timestamp_enabled =
@@ -1466,7 +1467,10 @@ impl GpuHairLinearSolver {
         let mut snapshots = Vec::new();
         let mut readback_bytes = 0;
         for (i, job) in jobs.iter().enumerate() {
-            let workgroups = batch.as_ref().map_or([1, 1, 1], |b| b.workgroups());
+            let workgroups = batch.as_ref().map_or(
+                [1, 1, 1],
+                voxy_render::ExperimentalTripleActiveContactBatch::workgroups,
+            );
             if let Some(queries) = &timestamp_queries {
                 job.encode_step_with_timestamps(
                     &mut encoder,
@@ -1520,7 +1524,7 @@ impl GpuHairLinearSolver {
         let submission = self.queue.submit([encoder.finish()]);
         let mut reads = snapshots
             .into_iter()
-            .map(|snapshot| snapshot.begin_read())
+            .map(voxy_render::ComputeDispatch::begin_read)
             .collect::<Vec<_>>();
         self.joint_equality_dispatches += jobs.len();
         self.joint_equality_submissions += 1;
@@ -1542,7 +1546,7 @@ impl GpuHairLinearSolver {
         let operator_bytes = if let Some(batch) = &batch {
             batch.operator_readbacks(&readbacks[0], compact_readback)?
         } else {
-            readbacks.iter().map(|b| b.as_slice()).collect()
+            readbacks.iter().map(std::vec::Vec::as_slice).collect()
         };
         let mut decoded = Vec::new();
         let mut factors_to_commit = Vec::new();
@@ -1551,9 +1555,9 @@ impl GpuHairLinearSolver {
             missing.iter().zip(operator_bytes).enumerate()
         {
             let decoded_candidate = if compact_readback {
-                input.candidate_from_compact_readback(&bytes)
+                input.candidate_from_compact_readback(bytes)
             } else {
-                input.candidate(&bytes)
+                input.candidate(bytes)
             };
             let candidate = match decoded_candidate {
                 Ok(candidate) => candidate,
@@ -1650,18 +1654,18 @@ impl GpuHairLinearSolver {
             }
             if factor_reuse {
                 if completed_factors && compact_readback {
-                    if let Ok(factors) = input.parallel_factors_from_compact_readback(&bytes) {
+                    if let Ok(factors) = input.parallel_factors_from_compact_readback(bytes) {
                         factors_to_commit.push(factors);
-                    } else if let Ok(plan) = input.completed_factor_readback_plan(&bytes) {
+                    } else if let Ok(plan) = input.completed_factor_readback_plan(bytes) {
                         factor_plans.push((operator_index, plan));
                     }
                 } else {
                     let factors = if completed_factors {
-                        input.completed_parallel_factors(&bytes)
+                        input.completed_parallel_factors(bytes)
                     } else if compact_readback {
-                        input.parallel_factors_from_compact_readback(&bytes)
+                        input.parallel_factors_from_compact_readback(bytes)
                     } else {
-                        input.parallel_factors(&bytes)
+                        input.parallel_factors(bytes)
                     };
                     if let Ok(factors) = factors {
                         factors_to_commit.push(factors);
@@ -1717,7 +1721,7 @@ impl GpuHairLinearSolver {
             profile.factor_readback_submissions = 1;
             let mut reads = snapshots
                 .into_iter()
-                .map(|s| s.begin_read())
+                .map(voxy_render::ComputeDispatch::begin_read)
                 .collect::<Vec<_>>();
             self.device.poll(wgpu::PollType::Wait {
                 submission_index: Some(submission),
@@ -1806,7 +1810,7 @@ impl GpuHairLinearSolver {
                 || self
                     .joint_triple_factors
                     .iter()
-                    .map(|f| f.retained_bytes())
+                    .map(voxy_render::ExperimentalTripleActiveFactors::retained_bytes)
                     .sum::<usize>()
                     + size
                     > 16 * 1024 * 1024
@@ -1819,7 +1823,7 @@ impl GpuHairLinearSolver {
         profile.factor_cache_bytes = self
             .joint_triple_factors
             .iter()
-            .map(|f| f.retained_bytes())
+            .map(voxy_render::ExperimentalTripleActiveFactors::retained_bytes)
             .sum();
         // Publish cache entries only after the complete missing batch decodes.
         for (index, candidate) in decoded {
@@ -1880,8 +1884,7 @@ impl GpuHairLinearSolver {
         #[cfg(test)]
         let refinement_limit = std::env::var("VOXY_HAIR_JOINT_REFINEMENT_LIMIT")
             .ok()
-            .map(|v| v.parse::<usize>().unwrap())
-            .unwrap_or(8);
+            .map_or(8, |v| v.parse::<usize>().unwrap());
         #[cfg(not(test))]
         let refinement_limit = 8;
         assert!((1..=256).contains(&refinement_limit));
@@ -1961,10 +1964,10 @@ impl GpuHairLinearSolver {
                 )
             });
         self.joint_workspaces = workspaces;
-        if output.is_none() {
-            if let Some(error) = error {
-                return Err(error);
-            }
+        if output.is_none()
+            && let Some(error) = error
+        {
+            return Err(error);
         }
         Ok(output)
     }
@@ -2006,11 +2009,11 @@ impl GpuHairLinearSolver {
         if !self.joint_result_reuse {
             self.joint_result_cache = None;
         }
-        if let Some(cached) = &self.joint_result_cache {
-            if cached.matches(columns, bounds, tolerance, self.joint_support_compaction) {
-                self.joint_result_cache_hits += 1;
-                return Ok(Some(cached.output.clone()));
-            }
+        if let Some(cached) = &self.joint_result_cache
+            && cached.matches(columns, bounds, tolerance, self.joint_support_compaction)
+        {
+            self.joint_result_cache_hits += 1;
+            return Ok(Some(cached.output.clone()));
         }
         if self.joint_programs.is_none() {
             let qr =
@@ -2046,8 +2049,7 @@ impl GpuHairLinearSolver {
         #[cfg(test)]
         let refinement_limit = std::env::var("VOXY_HAIR_JOINT_REFINEMENT_LIMIT")
             .ok()
-            .map(|v| v.parse::<usize>().unwrap())
-            .unwrap_or(8);
+            .map_or(8, |v| v.parse::<usize>().unwrap());
         #[cfg(not(test))]
         let refinement_limit = 8;
         assert!((1..=256).contains(&refinement_limit));
@@ -2161,7 +2163,7 @@ impl GpuHairLinearSolver {
                         "bounds_bits":bounds.iter().map(|v|v.to_bits()).collect::<Vec<_>>(),
                         "seeds_bits":seeds.iter().map(|v|v.to_bits()).collect::<Vec<_>>(),
                         "tolerance_bits":tolerance.to_bits(),"support_compaction":self.joint_support_compaction,
-                        "qr_prefix_reuse":self.joint_qr_prefix_reuse,"release_directions":self.joint_release_directions,"early_release_directions":self.joint_early_release_directions,"reason":error.as_ref().map(|e|e.to_string())});
+                        "qr_prefix_reuse":self.joint_qr_prefix_reuse,"release_directions":self.joint_release_directions,"early_release_directions":self.joint_early_release_directions,"reason":error.as_ref().map(std::string::ToString::to_string)});
                     let _ = serde_json::to_writer(std::io::BufWriter::new(file), &report);
                 }
             }
@@ -4343,8 +4345,7 @@ mod tests {
         }
         let steps = std::env::var("VOXY_HAIR_TRIPLE_SEQUENCE_STEPS")
             .ok()
-            .map(|s| s.parse::<usize>().unwrap())
-            .unwrap_or(32);
+            .map_or(32, |s| s.parse::<usize>().unwrap());
         assert!((16..=256).contains(&steps));
         let (requests, bounds, tolerance, rows, width, systems) =
             captured_original_physical_fixture();
@@ -6790,7 +6791,7 @@ impl GpuHairLinearSolver {
                 || self
                     .joint_expanded_factors
                     .iter()
-                    .map(|f| f.retained_bytes())
+                    .map(voxy_render::ExperimentalTripleActiveFactors::retained_bytes)
                     .sum::<usize>()
                     > 16 * 1024 * 1024
             {

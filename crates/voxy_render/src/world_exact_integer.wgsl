@@ -35,14 +35,24 @@ fn ex_cmp_abs(a:ExInt,b:ExInt)->i32 {
 }
 fn ex_cmp(a:ExInt,b:ExInt)->i32 {if a.negative!=b.negative {return select(1,-1,a.negative!=0u);}let c=ex_cmp_abs(a,b);return select(c,-c,a.negative!=0u);}
 fn ex_add_abs(a:ExInt,b:ExInt)->ExInt {
- var r=ex_zero();if r.valid==0u {return r;}r.length=max(a.length,b.length);var carry=0u;
- for(var k=0u;k<r.length;k+=1u) {let sum=ex_word(a,k)+ex_word(b,k)+carry;exact_scratch[r.offset+(k)]=sum&65535u;carry=sum>>16u;}
+ var r=ex_zero();if r.valid==0u {return r;}
+ if a.length==0u&&b.length==0u {return r;}
+ let low=min(ex_low_word(a),ex_low_word(b));
+ r.length=max(a.length,b.length);
+ for(var z=0u;z<min(low,r.length);z+=1u) {exact_scratch[r.offset+z]=0u;}
+ var carry=0u;
+ for(var k=low;k<r.length;k+=1u) {let sum=ex_word(a,k)+ex_word(b,k)+carry;exact_scratch[r.offset+(k)]=sum&65535u;carry=sum>>16u;}
  if carry!=0u {if r.length==EX_WORDS {return ex_bad();}exact_scratch[r.offset+(r.length)]=carry;r.length+=1u;}return r;
 }
 // Preconditions: |a|>=|b| and valid inputs.
 fn ex_sub_abs(a:ExInt,b:ExInt)->ExInt {
- var r=ex_zero();if r.valid==0u {return r;}r.length=a.length;var borrow=0u;
- for(var k=0u;k<a.length;k+=1u) {let rhs=ex_word(b,k)+borrow;let lhs=ex_word(a,k);exact_scratch[r.offset+(k)]=(lhs-rhs)&65535u;borrow=select(0u,1u,lhs<rhs);}
+ var r=ex_zero();if r.valid==0u {return r;}
+ if a.length==0u {return r;}
+ let low=min(ex_low_word(a),ex_low_word(b));
+ r.length=a.length;
+ for(var z=0u;z<min(low,a.length);z+=1u) {exact_scratch[r.offset+z]=0u;}
+ var borrow=0u;
+ for(var k=low;k<a.length;k+=1u) {let rhs=ex_word(b,k)+borrow;let lhs=ex_word(a,k);exact_scratch[r.offset+(k)]=(lhs-rhs)&65535u;borrow=select(0u,1u,lhs<rhs);}
  if borrow!=0u {return ex_bad();}return ex_trim(r);
 }
 fn ex_add(a:ExInt,b:ExInt)->ExInt {
@@ -226,11 +236,77 @@ fn ex_cert_low(a:ExInt)->u32 {if a.length==0u {return EX_WORDS;}return ex_low_wo
 fn ex_cert_vec_low(v:ExVec)->u32 {return min(ex_cert_low(v.x),min(ex_cert_low(v.y),ex_cert_low(v.z)));}
 fn ex_cert_view(a:ExInt,digits:u32)->ExInt {var r=a;if r.length!=0u {r.offset+=digits;r.length-=digits;}return r;}
 fn ex_cert_vec_view(v:ExVec,digits:u32)->ExVec {return ExVec(ex_cert_view(v.x,digits),ex_cert_view(v.y,digits),ex_cert_view(v.z,digits));}
+
+// Reconstructs a scaled f32 from the top 3 words of `x` in registers without allocating scratch.
+fn ex_approx_f32(x:ExInt,ref_len:u32)->f32 {
+ if x.length==0u||ref_len==0u {return 0.0;}
+ let shift=i32(ref_len)-i32(x.length);
+ if shift>3 {return 0.0;}
+ let top=x.length-1u;
+ var mag=f32(ex_raw(x,top));
+ if top>=1u {mag=mag+f32(ex_raw(x,top-1u))*(1.0/65536.0);}
+ if top>=2u {mag=mag+f32(ex_raw(x,top-2u))*(1.0/4294967296.0);}
+ var scale=1.0;
+ if shift==1 {scale=1.0/65536.0;}
+ else if shift==2 {scale=1.0/4294967296.0;}
+ else if shift==3 {scale=1.0/281474976710656.0;}
+ return select(mag*scale,-mag*scale,x.negative!=0u);
+}
+
+fn ex_approx_vec3(v:ExVec,ref_len:u32)->vec3<f32> {
+ return vec3<f32>(ex_approx_f32(v.x,ref_len),ex_approx_f32(v.y,ref_len),ex_approx_f32(v.z,ref_len));
+}
+
+// Register-only f32 Möller–Trumbore conservative interval reject filter.
+// Rejects non-intersecting triangles in registers with 0 `exact_scratch` allocations;
+// returns `ex_unresolved()` whenever the ray is near the triangle or determinant is small.
+fn ex_fast_triangle_reject(a:ExVec,b:ExVec,c:ExVec,d:ExVec)->ExDecision {
+ let pos_len=max(max(a.x.length,max(a.y.length,a.z.length)),max(max(b.x.length,max(b.y.length,b.z.length)),max(c.x.length,max(c.y.length,c.z.length))));
+ let dir_len=max(d.x.length,max(d.y.length,d.z.length));
+ if pos_len==0u||dir_len==0u {return ex_unresolved();}
+ let af=ex_approx_vec3(a,pos_len);
+ let bf=ex_approx_vec3(b,pos_len);
+ let cf=ex_approx_vec3(c,pos_len);
+ let df=ex_approx_vec3(d,dir_len);
+ let e1=bf-af;
+ let e2=cf-af;
+ let p=cross(df,e2);
+ let det=dot(e1,p);
+ let max_pos=max(max(length(af),length(bf)),length(cf));
+ let max_dir=length(df);
+ let bound=max_pos*max_pos*max_dir;
+ let eps=bound*1e-4+1e-5;
+ let abs_det=abs(det);
+ if !(abs_det>eps) {return ex_unresolved();}
+ let s=select(1.0,-1.0,det<0.0);
+ let delta=-af;
+ let u=dot(delta,p)*s;
+ if u < -eps || u > abs_det+eps {
+  ex_triangle_facing=select(1u,2u,det<0.0);
+  return ex_truth(false);
+ }
+ let q=cross(delta,e1);
+ let v=dot(df,q)*s;
+ if v < -eps || v > abs_det+eps || (u+v) > abs_det+2.0*eps {
+  ex_triangle_facing=select(1u,2u,det<0.0);
+  return ex_truth(false);
+ }
+ let t_num=dot(e2,q)*s;
+ let t_eps=max_pos*max_pos*max_pos*1e-4+1e-5;
+ if t_num < -t_eps {
+  ex_triangle_facing=select(1u,2u,det<0.0);
+  return ex_truth(false);
+ }
+ return ex_unresolved();
+}
+
 // This path still checks the original integer predicate. A zero determinant
 // invalidates the strict source certificate and requests complete fallback.
 fn ex_triangle_certified(a:ExVec,b:ExVec,c:ExVec,d:ExVec)->ExDecision {
  ex_triangle_facing=0u;
  if (ex_vec_valid(a)&ex_vec_valid(b)&ex_vec_valid(c)&ex_vec_valid(d))==0u {return ex_unresolved();}
+ let fast=ex_fast_triangle_reject(a,b,c,d);
+ if fast.state==0u {return fast;}
  var av=a;var bv=b;var cv=c;var dv=d;var scale_delta=0;
  if EX_NORMALIZE_CERTIFIED {
   var positions=min(ex_cert_vec_low(a),min(ex_cert_vec_low(b),ex_cert_vec_low(c)));
@@ -247,11 +323,18 @@ fn ex_triangle_certified(a:ExVec,b:ExVec,c:ExVec,d:ExVec)->ExDecision {
 fn ex_triangle(a:ExVec,b:ExVec,c:ExVec,d:ExVec)->ExDecision {
  ex_triangle_facing=0u;
  if (ex_vec_valid(a)&ex_vec_valid(b)&ex_vec_valid(c)&ex_vec_valid(d))==0u {return ex_unresolved();}
- let e1=ex_vsub(b,a);let e2=ex_vsub(c,a);let p=ex_cross(d,e2);var det=ex_dot(e1,p);
+ let fast=ex_fast_triangle_reject(a,b,c,d);
+ if fast.state==0u {return fast;}
+ var positions=min(ex_cert_vec_low(a),min(ex_cert_vec_low(b),ex_cert_vec_low(c)));
+ var direction=ex_cert_vec_low(d);
+ if positions==EX_WORDS {positions=0u;}if direction==EX_WORDS {direction=0u;}
+ let av=ex_cert_vec_view(a,positions);let bv=ex_cert_vec_view(b,positions);let cv=ex_cert_vec_view(c,positions);let dv=ex_cert_vec_view(d,direction);
+ let scale_delta=16*(i32(positions)-i32(direction));
+ let e1=ex_vsub(bv,av);let e2=ex_vsub(cv,av);let p=ex_cross(dv,e2);var det=ex_dot(e1,p);
  if det.valid==0u {return ex_unresolved();}
  if det.length!=0u {
   ex_triangle_facing=select(1u,2u,det.negative!=0u);
-  return ex_triangle_regular(a,d,e1,e2,p,det);
+  return ex_triangle_regular_scaled(av,dv,e1,e2,p,det,scale_delta);
  }
  let normal=ex_cross(e1,e2);if ex_vec_valid(normal)==0u {return ex_unresolved();}
  if ex_vec_zero(normal) {return ex_edges(a,b,c,d);}

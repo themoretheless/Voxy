@@ -76,7 +76,11 @@ fn bake_contacts(
 ) -> Result<(), Box<dyn std::error::Error>> {
     use std::{collections::BTreeMap, sync::Arc};
     use voxy_animation::{ContactBakeSettings, bake_periodic_foot_contacts};
-    use voxy_editor::FootContactKey;
+    #[derive(serde::Serialize)]
+    struct FootContactKey {
+        phase: f32,
+        weight: f32,
+    }
     let recipe: serde_json::Value = serde_json::from_str(include_str!(
         "../../../assets/animation/quaternius-universal/GAIT_PREPARATION.json"
     ))?;

@@ -1,8 +1,8 @@
 //! Bounded adaptive paths over the existing Spin midpoint integrator.
 use crate::math::norm;
-use crate::{
-    astrophysics::Error,
-    rotation::{ArcTorque, RotatingArmForce, RotatingMaterialMoment, Spin, SpinArc, TorquePolynomial, rotate},
+use crate::rotation::{
+    ArcTorque, Error, RotatingArmForce, RotatingMaterialMoment, Spin, SpinArc, TorquePolynomial,
+    rotate,
 };
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Config {
@@ -19,6 +19,26 @@ pub enum PathError {
     Budget,
     Integrator(Error),
     NumericalBound,
+}
+
+impl core::fmt::Display for PathError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::InvalidInput => f.write_str("invalid spin path input"),
+            Self::Budget => f.write_str("spin path subdivision budget exhausted"),
+            Self::Integrator(err) => write!(f, "spin integrator error: {err}"),
+            Self::NumericalBound => f.write_str("spin path numerical error bound exceeded"),
+        }
+    }
+}
+
+impl std::error::Error for PathError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::Integrator(err) => Some(err),
+            _ => None,
+        }
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Segment {
@@ -202,7 +222,7 @@ impl Spin {
     /// points, using the same midpoint and adaptive admission owner.
     pub fn prepare_material_moment_path(
         self,
-        moment: crate::rigid_motion::MaterialForceMoment,
+        moment: crate::rotation::MaterialForceMoment,
         torque: TorquePolynomial,
         duration: f64,
         config: Config,
@@ -236,7 +256,7 @@ impl Spin {
             impulse_bound,
             Some(([0.; 3], feedback)),
             |time| {
-                let moment = crate::rigid_motion::MaterialForceMoment {
+                let moment = crate::rotation::MaterialForceMoment {
                     columns: std::array::from_fn(|j| {
                         std::array::from_fn(|k| {
                             moment.rate_columns[j][k].mul_add(time, moment.columns[j][k])
@@ -248,10 +268,7 @@ impl Spin {
                     ArcTorque {
                         polynomial: torque.shifted(time).map_err(PathError::Integrator)?,
                         rotating: None,
-                        material: Some(RotatingMaterialMoment {
-                            moment,
-                            ..material
-                        }),
+                        material: Some(RotatingMaterialMoment { moment, ..material }),
                     },
                     duration,
                 ))

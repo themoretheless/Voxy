@@ -9,7 +9,7 @@ description = "Workspace crate-graph ratchet: the dependency direction of docs/a
 [dependencies]
 
 [dev-dependencies]
-serde_json = "1"
+serde_json.workspace = true
 
 [lints]
 workspace = true

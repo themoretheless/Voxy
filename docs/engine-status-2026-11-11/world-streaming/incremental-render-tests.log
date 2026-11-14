@@ -1,0 +1,14 @@
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.87s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_render-5964849c32dd4096)
+
+running 6 tests
+test renderer::tests::gpu_quad_has_stable_pod_layout ... ok
+test renderer::tests::resident_slot_accepts_shrink_and_layer_changes_within_its_range ... ok
+test renderer::tests::clip_space_aabb_culling_rejects_fully_outside_chunks ... ok
+test renderer::tests::noop_backend_validates_indirect_voxel_pipeline_and_draw ... ok
+test renderer::tests::noop_backend_validates_voxel_pipeline_and_draw ... ok
+test renderer::tests::noop_backend_validates_photoreal_bodycam_pipelines_and_draw ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 420 filtered out; finished in 0.01s
+

@@ -241,7 +241,7 @@ fn closest_pair_points(p: RV, q: RV, a: RV, b: RV, c: RV) -> (RV, RV) {
     let n = &face.normal;
     let den = dot(&sub(&q, &p), n);
     if den != zero_r() {
-        let u = dot(&sub(&a, &p), &n) / den;
+        let u = dot(&sub(&a, &p), n) / den;
         let point = add(&p, &scale(&sub(&q, &p), &u));
         if u >= zero_r() && u <= one() && face.inside(&point) {
             return (point.clone(), point);
@@ -365,8 +365,8 @@ pub(in crate::hair::contact::triangle_sweep) fn certifies(
     // clearance proof early solely when exact interpolated feature distances
     // at that dyadic time violate the original radius minus tolerance.
     // An unconfirmed hint leaves every existing proof path intact.
-    if motion.radius > zero_r() {
-        if let Ok(Some(witness)) = super::super::trajectory::trajectory_contact_after_nonclear_sweep(
+    if motion.radius > zero_r()
+        && let Ok(Some(witness)) = super::super::trajectory::trajectory_contact_after_nonclear_sweep(
             capsule,
             triangle,
             CapsuleSweepOptions {
@@ -374,11 +374,10 @@ pub(in crate::hair::contact::triangle_sweep) fn certifies(
                 max_iterations: budget,
             },
             false,
-        ) {
-            if RelativeGeometry::new(&motion).penetrates_at(&real(witness.time)) {
-                return false;
-            }
-        }
+        )
+        && RelativeGeometry::new(&motion).penetrates_at(&real(witness.time))
+    {
+        return false;
     }
     // Each exact certificate family has the original bounded proof budget.
     // Unknown feature-axis proofs retain the unchanged general discovery path.

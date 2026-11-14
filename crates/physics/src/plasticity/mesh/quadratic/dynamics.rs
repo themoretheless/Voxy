@@ -26,7 +26,7 @@ pub struct QuadraticDynamics {
     inertia: ConsistentInertia,
     velocities: Vec<Vec3>,
     free_nodes: Vec<usize>,
-    finite_materials: Option<Vec<crate::biomechanics::Material>>,
+    finite_materials: Option<Vec<crate::constitutive::Material>>,
     contact: Option<super::QuadraticPlaneContact>,
     surface_contact: Option<dynamic_contact::SurfaceContact>,
     friction: Option<super::QuadraticPlaneFriction>,
@@ -139,7 +139,7 @@ impl QuadraticDynamics {
         densities: &[f64],
         velocities: Vec<Vec3>,
         pinned: &[bool],
-        finite_materials: Option<Vec<crate::biomechanics::Material>>,
+        finite_materials: Option<Vec<crate::constitutive::Material>>,
     ) -> Result<Self, &'static str> {
         if velocities.len() != body.rest.len()
             || pinned.len() != body.rest.len()
@@ -826,7 +826,7 @@ impl FiniteQuadraticDynamics {
     /// Invalid material/geometry/history, velocity/supports or mass factor.
     pub fn new(
         mesh: QuadraticBody,
-        materials: Vec<crate::biomechanics::Material>,
+        materials: Vec<crate::constitutive::Material>,
         densities: &[f64],
         velocities: Vec<Vec3>,
         pinned: &[bool],
@@ -881,7 +881,7 @@ impl FiniteQuadraticDynamics {
     /// actual finite-elastic law, rather than the mesh's J2 construction material.
     /// # Errors
     /// Constitutive/geometry errors.
-    pub fn stresses(&self) -> Result<Vec<[crate::biomechanics::Stress; 4]>, &'static str> {
+    pub fn stresses(&self) -> Result<Vec<[crate::constitutive::Stress; 4]>, &'static str> {
         let materials = self
             .inner
             .finite_materials

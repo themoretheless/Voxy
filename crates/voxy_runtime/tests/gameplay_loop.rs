@@ -11,7 +11,6 @@ use voxy_world::{EditSource, ResourceKey, VoxelPos};
 const DT: f64 = 1.0 / 60.0;
 
 #[test]
-#[allow(clippy::too_many_lines)]
 fn canonical_gameplay_loop_composes_character_water_projectile_explosion_and_vehicle() {
     let scene = build_bootstrap_scene(0x56_4f_58_59, 1).unwrap();
     let mut world = scene.world;

@@ -66,11 +66,16 @@ impl ArchiveWorldRayFrame {
         if tiles.is_empty() || !(1..=2).contains(&templates.len()) {
             return Err(RaySceneError::InvalidGeometry);
         }
-        let mode = templates[0].consumer_stages.as_ref().map(|s| s.is_sorted());
-        if templates
-            .iter()
-            .any(|r| r.consumer_stages.as_ref().map(|s| s.is_sorted()) != mode)
-        {
+        let mode = templates[0]
+            .consumer_stages
+            .as_ref()
+            .map(consumer_profile::ConsumerStages::is_sorted);
+        if templates.iter().any(|r| {
+            r.consumer_stages
+                .as_ref()
+                .map(consumer_profile::ConsumerStages::is_sorted)
+                != mode
+        }) {
             return Err(RaySceneError::Unsupported);
         }
         let profile = if std::env::var("VOXY_STREET_WORLD_RAY_STAGE_PROFILE").as_deref() == Ok("1")
@@ -92,7 +97,7 @@ impl ArchiveWorldRayFrame {
                 templates[0]
                     .consumer_stages
                     .as_ref()
-                    .is_some_and(|s| s.is_sorted()),
+                    .is_some_and(consumer_profile::ConsumerStages::is_sorted),
                 tiles.len(),
             )?)
         } else {
@@ -151,10 +156,11 @@ impl ArchiveWorldRayFrame {
         history_available || !all_guides_use_history || self.audit_enabled
     }
     pub(super) fn consumer_sorted(&self) -> bool {
-        self.kinds
-            .iter()
-            .flatten()
-            .all(|r| r.consumer_stages.as_ref().is_some_and(|s| s.is_sorted()))
+        self.kinds.iter().flatten().all(|r| {
+            r.consumer_stages
+                .as_ref()
+                .is_some_and(consumer_profile::ConsumerStages::is_sorted)
+        })
     }
     pub(super) fn encoded_frames(&self) -> u64 {
         self.encoded_frames
@@ -164,9 +170,16 @@ impl ArchiveWorldRayFrame {
         &self,
         encoder: &mut wgpu::CommandEncoder,
         timing: Option<&wgpu::QuerySet>,
+        (device, queue): (&wgpu::Device, &wgpu::Queue),
     ) {
         self.encoded_frames
             .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        // wgpu allocates multiple Metal command buffers per region. Submit
+        // ordered batches so the queue can drain before the frame is fully
+        // encoded. Shared ray scratch remains ordered on the same queue.
+        let batch_metal = device.adapter_info().backend == wgpu::Backend::Metal;
+        const REGIONS_PER_SUBMISSION: usize = 8;
+        let mut encoded_regions = 0;
         for (kind, regions) in self.kinds.iter().enumerate() {
             let base = 8 + kind as u32 * 2;
             for (index, region) in regions.iter().enumerate() {
@@ -187,6 +200,13 @@ impl ArchiveWorldRayFrame {
                         )
                     }),
                 );
+                encoded_regions += 1;
+                if batch_metal && encoded_regions % REGIONS_PER_SUBMISSION == 0 {
+                    let next = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                        label: Some("archive world-ray region batch"),
+                    });
+                    queue.submit([std::mem::replace(encoder, next).finish()]);
+                }
             }
         }
     }
@@ -350,7 +370,6 @@ fn original_groups(
 }
 
 impl ArchiveWorldRayRegion {
-    #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         device: &wgpu::Device,
         camera: &crate::ComputeStorage,
@@ -787,26 +806,29 @@ impl ArchiveWorldRayRegion {
         profile: Option<(&wgpu::QuerySet, u32, u32, Option<u32>)>,
     ) {
         if self.cache_check {
-            // Error count is sticky for this owner, including earlier frames.
-            // Fresh managed buffers are zero-initialized by the device contract.
+            // Keep the mismatch count across frames for this owner.
             encoder.clear_buffer(&self.audit, 0, Some(40));
             encoder.clear_buffer(&self.audit, 44, Some(4));
-        } else {
+        } else if self.audit_enabled
+            || self.cache.is_some()
+            || self.consumer_audit.is_some()
+            || self.consumer_stages.is_some()
+        {
             encoder.clear_buffer(&self.audit, 0, None);
         }
         // A pass has only one timestamp pair. Keep the legacy whole-component
         // start in a separate boundary pass only when detailed profiling is on.
-        if profile.is_some() {
-            if let Some(set) = timing.filter(|_| begin.is_some()) {
-                let _boundary = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                    label: Some("world producer profile boundary"),
-                    timestamp_writes: Some(wgpu::ComputePassTimestampWrites {
-                        query_set: set,
-                        beginning_of_pass_write_index: begin,
-                        end_of_pass_write_index: None,
-                    }),
-                });
-            }
+        if profile.is_some()
+            && let Some(set) = timing.filter(|_| begin.is_some())
+        {
+            let _boundary = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("world producer profile boundary"),
+                timestamp_writes: Some(wgpu::ComputePassTimestampWrites {
+                    query_set: set,
+                    beginning_of_pass_write_index: begin,
+                    end_of_pass_write_index: None,
+                }),
+            });
         }
         self.producer.encode_timed(
             encoder,

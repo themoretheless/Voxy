@@ -20,6 +20,8 @@ members = [
     "crates/voxy_lighting",
     "crates/voxy_animation",
     "crates/physics",
+    "crates/physics_astro",
+    "crates/physics_bio",
     "crates/physics_voxel",
     "crates/voxy_runtime",
     "crates/voxy_time",
@@ -48,6 +50,25 @@ license = "MIT OR Apache-2.0"
 rust-version = "1.98"
 version = "0.1.0"
 
+[workspace.dependencies]
+ash = "0.38.0"
+blake3 = "1.8"
+bytemuck = "1.25.2"
+glam = "0.33.6"
+gltf = { version = "1.4.1", default-features = false }
+half = "2.7.1"
+image = { version = "0.25.10", default-features = false }
+num-bigint = "0.4"
+openxr = { version = "0.22.0", default-features = false }
+pollster = "1.0.1"
+raw-window-handle = "0.6.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2"
+wgpu = "30.0.1"
+windows = "0.62"
+winit = "0.30.13"
+
 [workspace.lints.rust]
 unsafe_code = "deny"
 missing_debug_implementations = "warn"
@@ -70,37 +91,44 @@ needless_range_loop = "allow"
 default_trait_access = "allow"
 many_single_char_names = "allow"
 wildcard_imports = "allow"
-redundant_closure_for_method_calls = "allow"
 similar_names = "allow"
 needless_pass_by_value = "allow"
 items_after_statements = "allow"
 missing_errors_doc = "allow"
 missing_panics_doc = "allow"
 type_complexity = "allow"
-map_unwrap_or = "allow"
 too_many_arguments = "allow"
 doc_markdown = "allow"
 struct_excessive_bools = "allow"
-uninlined_format_args = "allow"
-semicolon_if_nothing_returned = "allow"
 manual_range_contains = "allow"
 items_after_test_module = "allow"
 must_use_candidate = "allow"
 single_match_else = "allow"
 unnecessary_wraps = "allow"
 large_types_passed_by_value = "allow"
-manual_let_else = "allow"
 unused_self = "allow"
 if_not_else = "allow"
 match_same_arms = "allow"
-explicit_iter_loop = "allow"
 excessive_precision = "allow"
 used_underscore_binding = "allow"
-collapsible_if = "allow"
-needless_borrow = "allow"
-implicit_clone = "allow"
-# Examples deliberately include app modules through `#[path]`.
-duplicate_mod = "allow"
+
+# Dev and test builds keep opt-level 0 and full debug assertions for workspace
+# crates, with two measured exceptions (docs/refactor/BASELINE.md):
+# external dependencies are built once and rarely change, and the exact-arithmetic
+# oracles (num-bigint), naga and wgpu dominate debug run time unoptimised;
+# physics is the numeric core whose tests are compute-bound.
+# `cargo test -p physics --lib`: 176 s -> 13 s for +35 s of compile time.
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.dev.package.physics]
+opt-level = 1
+
+[profile.dev.package.physics_astro]
+opt-level = 1
+
+[profile.dev.package.physics_bio]
+opt-level = 1
 
 [patch.crates-io]
 wgpu = { path = "vendor/wgpu" }

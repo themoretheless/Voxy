@@ -888,10 +888,7 @@ mod tests {
                 maximum_depth = maximum_depth.max(depth);
                 let _ = std::fmt::Write::write_fmt(
                     &mut report,
-                    format_args!(
-                        "{part},{column},{},{maximum:.9},{depth:.9}\n",
-                        nodes.len()
-                    ),
+                    format_args!("{part},{column},{},{maximum:.9},{depth:.9}\n", nodes.len()),
                 );
             }
         }

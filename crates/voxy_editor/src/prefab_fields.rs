@@ -11,6 +11,47 @@ enum Target {
     Member(&'static str, &'static str),
 }
 
+pub(crate) fn physics_layer_field(object: &SceneObject, index: usize) -> Option<&'static str> {
+    physics_layer_field_at(
+        object.components.contains_key("game.character.v1"),
+        object.components.contains_key("game.box.v1"),
+        object.components.contains_key("game.box-trigger.v1"),
+        index,
+    )
+}
+
+pub(crate) fn physics_base_fields(character: bool, collider: bool) -> usize {
+    if character {
+        6
+    } else if collider {
+        3
+    } else {
+        0
+    }
+}
+
+pub(crate) fn physics_layer_field_at(
+    character: bool,
+    collider: bool,
+    trigger: bool,
+    index: usize,
+) -> Option<&'static str> {
+    let prefix = physics_base_fields(character, collider) + if trigger { 3 } else { 0 };
+    ["membership", "mask"]
+        .get(index.checked_sub(prefix)?)
+        .copied()
+}
+
+pub(crate) fn physics_body_field(
+    character: bool,
+    collider: bool,
+    trigger: bool,
+    index: usize,
+) -> Option<usize> {
+    let prefix = physics_base_fields(character, collider) + if trigger { 3 } else { 0 };
+    index.checked_sub(prefix + 2).filter(|field| *field < 4)
+}
+
 fn target(mode: InspectorMode, index: usize, object: &SceneObject) -> Option<Target> {
     use Target::{Member, Rotation, Scale, Translation};
     let member = match mode {
@@ -39,6 +80,32 @@ fn target(mode: InspectorMode, index: usize, object: &SceneObject) -> Option<Tar
             },
         ),
         InspectorMode::Physics => {
+            if let Some(member) = physics_layer_field(object, index) {
+                return Some(Member("game.collision-layers.v1", member));
+            }
+            let character = object.components.contains_key("game.character.v1");
+            let collider = object.components.contains_key("game.box.v1");
+            let base = physics_base_fields(character, collider);
+            let has_trigger = object.components.contains_key("game.box-trigger.v1");
+            let body_field = physics_body_field(character, collider, has_trigger, index);
+            if object.components.contains_key("game.liquid-body.v1")
+                && let Some(field) = body_field
+            {
+                let member = if field == 0 {
+                    "mass_kg"
+                } else {
+                    "initial_velocity_m_s"
+                };
+                return Some(Member("game.liquid-body.v1", member));
+            }
+            if object.components.contains_key("game.kinematic-body.v1")
+                && body_field.is_some_and(|axis| axis < 3)
+            {
+                return Some(Member("game.kinematic-body.v1", "velocity_m_s"));
+            }
+            if has_trigger && (base..base + 3).contains(&index) {
+                return Some(Member("game.box-trigger.v1", "half_extents"));
+            }
             if object.components.contains_key("game.character.v1") {
                 (
                     "game.character.v1",

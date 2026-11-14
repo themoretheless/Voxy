@@ -97,7 +97,6 @@ impl DeterministicRng {
     /// Forks a reproducible child generator from a 3D coordinate `(x, y, z)`.
     #[inline]
     #[must_use]
-    #[allow(clippy::cast_sign_loss)]
     pub const fn fork_coord(self, x: i64, y: i64, z: i64) -> Self {
         let mut h = self.0;
         h = (h ^ (x as u64)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
@@ -116,14 +115,12 @@ impl DeterministicRng {
     }
 
     #[inline]
-    #[allow(clippy::cast_possible_truncation)]
     pub const fn next_u32(&mut self) -> u32 {
         (self.next_u64() >> 32) as u32
     }
 
     /// Uniform float in $[0.0, 1.0)$ using the top 24 bits of `next_u64`.
     #[inline]
-    #[allow(clippy::cast_precision_loss)]
     pub fn next_f32(&mut self) -> f32 {
         ((self.next_u64() >> 40) as f32) * (1.0 / ((1_u32 << 24) as f32))
     }

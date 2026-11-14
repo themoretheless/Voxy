@@ -85,12 +85,11 @@ impl FilmMixture {
     /// Every component viscosity is positive, finite and in Pa s. None restores
     /// the original uniform film viscosity. Configuration changes no inventories.
     pub fn configure_viscosities(&mut self, values: Option<Vec<f64>>) -> Result<(), &'static str> {
-        if let Some(values) = &values {
-            if values.len() != self.names.len()
-                || values.iter().any(|v| !v.is_finite() || *v <= 0.0)
-            {
-                return Err("invalid film component viscosities");
-            }
+        if let Some(values) = &values
+            && (values.len() != self.names.len()
+                || values.iter().any(|v| !v.is_finite() || *v <= 0.0))
+        {
+            return Err("invalid film component viscosities");
         }
         self.component_viscosities = values;
         Ok(())
@@ -590,14 +589,13 @@ impl FilmMixture {
                 pairs.push((a, b, va, vb, capacity * -(-exponent).exp_m1()));
             }
             let mut energy = thermal.as_ref().map(|(e, _)| (**e).clone());
-            if let Some((values, capacities)) = &thermal {
-                if values.len() != staged.component_mass.len()
+            if let Some((values, capacities)) = &thermal
+                && (values.len() != staged.component_mass.len()
                     || capacities.len() != staged.names.len()
                     || capacities.iter().any(|c| !c.is_finite() || *c <= 0.)
-                    || values.iter().any(|e| !e.is_finite() || *e < 0.)
-                {
-                    return Err("invalid film diffusion thermal inventory");
-                }
+                    || values.iter().any(|e| !e.is_finite() || *e < 0.))
+            {
+                return Err("invalid film diffusion thermal inventory");
             }
             let mut next = staged.component_mass.clone();
             for _ in 0..count {

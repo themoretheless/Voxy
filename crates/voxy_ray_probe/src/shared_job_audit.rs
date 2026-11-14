@@ -9,7 +9,8 @@ fn audit_one(
     materials: &[ArchiveMaterialSource],
     expected: &[(u32, u32, u32, u32, u32, u32)],
     certify_order: bool,
-) -> Result<(), Box<dyn std::error::Error>> {
+    single_ray_queue_claim: bool,
+) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let image_count = materials
         .iter()
         .flat_map(|m| m.images.iter().flatten())
@@ -24,6 +25,7 @@ fn audit_one(
         8,
         voxy_render::ExactWorldOptions {
             certify_order,
+            single_ray_queue_claim,
             certify_visibility: defer_nearest,
             defer_nearest,
             exact_worker_limit: std::env::var("VOXY_RAY_SHARED_WORKERS")
@@ -100,29 +102,41 @@ fn audit_one(
             },
         ],
     });
+    let result_bytes = u64::from(count) * 80;
     let read = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
-        size: u64::from(count) * 80,
+        size: 2 * result_bytes,
         usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
         mapped_at_creation: false,
     });
     let mut encoder = device.create_command_encoder(&Default::default());
     scene.build(&mut encoder);
-    {
-        let mut pass = encoder.begin_compute_pass(&Default::default());
-        pass.set_pipeline(&pp);
-        pass.set_bind_group(0, &pg, &[]);
-        pass.dispatch_workgroups(count, 1, 1);
-    }
     assert!(job.encode(&mut encoder, 9).is_err());
-    job.encode(&mut encoder, count)?;
-    {
-        let mut pass = encoder.begin_compute_pass(&Default::default());
-        pass.set_pipeline(&cp);
-        pass.set_bind_group(0, &cg, &[]);
-        pass.dispatch_workgroups(count, 1, 1);
+    let mut cached_bindings = 0;
+    for offset in [0, result_bytes] {
+        {
+            let mut pass = encoder.begin_compute_pass(&Default::default());
+            pass.set_pipeline(&pp);
+            pass.set_bind_group(0, &pg, &[]);
+            pass.dispatch_workgroups(count, 1, 1);
+        }
+        job.encode(&mut encoder, count)?;
+        if offset == 0 {
+            cached_bindings = job.cached_partial_bind_group_count();
+            if defer_nearest && count < job.capacity() {
+                assert!(cached_bindings > 0);
+            }
+        } else {
+            assert_eq!(job.cached_partial_bind_group_count(), cached_bindings);
+        }
+        {
+            let mut pass = encoder.begin_compute_pass(&Default::default());
+            pass.set_pipeline(&cp);
+            pass.set_bind_group(0, &cg, &[]);
+            pass.dispatch_workgroups(count, 1, 1);
+        }
+        encoder.copy_buffer_to_buffer(&consumed, 0, &read, offset, result_bytes);
     }
-    encoder.copy_buffer_to_buffer(&consumed, 0, &read, 0, u64::from(count) * 80);
     let submission = queue.submit([encoder.finish()]);
     let (tx, rx) = std::sync::mpsc::channel();
     read.slice(..).map_async(wgpu::MapMode::Read, move |r| {
@@ -134,8 +148,10 @@ fn audit_one(
     })?;
     rx.recv()??;
     let mapped = read.slice(..).get_mapped_range()?;
+    let (first, repeated) = mapped.split_at(result_bytes as usize);
+    assert_eq!(first, repeated, "reused restricted bindings changed output");
     for (index, (row, &(state, slot, t, u, v, kind))) in
-        mapped.chunks_exact(80).zip(expected).enumerate()
+        first.chunks_exact(80).zip(expected).enumerate()
     {
         let w: Vec<u32> = row
             .chunks_exact(4)
@@ -160,9 +176,10 @@ fn audit_one(
             assert_eq!((w[18] >> 2) & 3, kind);
         }
     }
+    let result = first.to_vec();
     drop(mapped);
     read.unmap();
-    Ok(())
+    Ok(result)
 }
 fn audit(
     device: &wgpu::Device,
@@ -172,7 +189,27 @@ fn audit(
     expected: &[(u32, u32, u32, u32, u32, u32)],
 ) -> Result<(), Box<dyn std::error::Error>> {
     for certify_order in [false, true] {
-        audit_one(device, queue, scene, materials, expected, certify_order)?;
+        let batched = audit_one(
+            device,
+            queue,
+            scene,
+            materials,
+            expected,
+            certify_order,
+            false,
+        )?;
+        if std::env::var("VOXY_RAY_SHARED_JOB_DEFERRED").as_deref() == Ok("1") {
+            let single = audit_one(
+                device,
+                queue,
+                scene,
+                materials,
+                expected,
+                certify_order,
+                true,
+            )?;
+            assert_eq!(single, batched, "deferred queue claim size changed output");
+        }
     }
     Ok(())
 }
@@ -296,7 +333,8 @@ pub(super) fn run(
         &[(1, 2, 1_f32.to_bits(), quarter, quarter, 0)],
     )?;
     println!(
-        "SHARED EXACT JOB PASS GPU_producer_consumer=true same_submission=true low_origin_bits=true closed_endpoints=true removed_instance=true exact_pairs=true source_owner=true material_source_bits=true unresolved_alpha=true cutoff_one_ulp=true order_certificate_off_on=true fps_qualified=false"
+        "SHARED EXACT JOB PASS GPU_producer_consumer=true same_submission=true low_origin_bits=true closed_endpoints=true removed_instance=true exact_pairs=true source_owner=true material_source_bits=true unresolved_alpha=true cutoff_one_ulp=true order_certificate_off_on=true repeated_partial_cache=true queue_claim_reference_checked={} fps_qualified=false",
+        std::env::var("VOXY_RAY_SHARED_JOB_DEFERRED").as_deref() == Ok("1")
     );
     Ok(())
 }

@@ -172,10 +172,19 @@ fn offscreen_app_sampler_reload_keeps_cpu_gpu_atomic_and_recovers_failed_source(
         serde_json::json!({"minFilter":9728,"magFilter":9728,"wrapS":33071,"wrapT":33071});
     crate::scene3d_tests::write_glb(&source, &spec, binary);
     let mut observed_pending = false;
+    let mut observed_restaged = false;
     let until = Instant::now() + Duration::from_secs(10);
     while Arc::ptr_eq(&before, &app.catalog.snapshot(&id).unwrap()) {
         app.tick().unwrap();
-        if app.pending_model.is_some() {
+        if let Some(pending) = &app.pending_model {
+            observed_restaged |= pending.restaged;
+            if !observed_pending {
+                app.graphics
+                    .as_mut()
+                    .unwrap()
+                    .residency_cache
+                    .geometry_budget += 1;
+            }
             observed_pending = true;
             assert!(Arc::ptr_eq(&before, &app.catalog.snapshot(&id).unwrap()));
             assert!(Arc::ptr_eq(
@@ -189,7 +198,7 @@ fn offscreen_app_sampler_reload_keeps_cpu_gpu_atomic_and_recovers_failed_source(
         assert!(Instant::now() < until);
         std::thread::sleep(Duration::from_millis(5));
     }
-    assert!(observed_pending);
+    assert!(observed_pending && observed_restaged);
     let accepted = app.catalog.snapshot(&id).unwrap();
     assert!(Arc::ptr_eq(
         &accepted,
@@ -300,7 +309,6 @@ fn offscreen_app_sampler_reload_keeps_cpu_gpu_atomic_and_recovers_failed_source(
         .residency_cache
         .geometry_budget = geometry_limit;
     assert!(app.can_retry_selected_model());
-    app.panel_action(panels::Action::RetryModel).unwrap();
     await_state(&mut app, |app| {
         !Arc::ptr_eq(&recovered, &app.catalog.snapshot(&id).unwrap())
     });

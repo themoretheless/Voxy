@@ -1,0 +1,22 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.17s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 14 tests
+test support::queries::tests::relative_sweep_covers_independent_motion_and_rejects_invalid_target_motion ... ok
+test support::queries::tests::sweep_normal_distinguishes_entry_from_initial_overlap_and_separation ... ok
+test support::queries::tests::interior_solid_hollow_boundary_and_finite_segment_semantics ... ok
+test support::queries::tests::invalid_queries_and_late_budget_failures_never_return_partial_hits ... ok
+test support::queries::tests::sweep_normal_is_world_space_for_a_rotated_reflected_target ... ok
+test support::queries::tests::affine_shear_and_reflection_return_world_point_and_outward_normal ... ok
+test support::queries::tests::box_overlap_distinguishes_affine_separation_and_has_atomic_limits ... ok
+test support::queries::tests::sweep_preserves_touching_interval_and_rejects_positive_gap ... ok
+test support::queries::tests::box_overlap_reports_exact_touching_but_not_a_positive_gap ... ok
+test support::queries::tests::nearest_all_hits_filters_and_stable_ties_include_characters ... ok
+test support::queries::tests::nearest_box_cast_matches_all_hits_and_rejects_late_failure ... ok
+test support::queries::tests::angular_box_cast_detects_contact_between_clear_endpoints_and_charges_advancement ... ok
+test support::queries::tests::attached_trigger_preserves_sub_ulp_offset_at_the_accepted_character_pose ... ok
+test support::queries::tests::accepted_solver_precision_survives_controller_checkpoint_and_external_teleport ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 225 filtered out; finished in 0.00s
+

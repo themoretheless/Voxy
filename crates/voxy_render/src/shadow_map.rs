@@ -80,19 +80,9 @@ impl ShadowMap {
             view_formats: &[],
         });
         let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("shadow light transform"),
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::VERTEX,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
-                    has_dynamic_offset: false,
-                    min_binding_size: wgpu::BufferSize::new(64),
-                },
-                count: None,
-            }],
-        });
+        let layout = voxy_gpu_core::BindGroupLayoutBuilder::new(Some("shadow light transform"))
+            .uniform_buffer_sized(0, wgpu::ShaderStages::VERTEX, Some(64))
+            .build(device);
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("shadow depth layout"),
             bind_group_layouts: &[Some(&layout)],
@@ -163,14 +153,9 @@ impl ShadowMap {
                 contents: bytemuck::cast_slice(&clip_from_model.to_cols_array()),
                 usage: wgpu::BufferUsages::UNIFORM,
             });
-        let bindings = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("shadow draw"),
-            layout: &self.layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: uniform.as_entire_binding(),
-            }],
-        });
+        let bindings = voxy_gpu_core::BindGroupBuilder::new(Some("shadow draw"), &self.layout)
+            .buffer(0, &uniform)
+            .build(&self.device);
         let (identity, revision) = geometry.shadow_key();
         Ok(ShadowDraw {
             device: self.device.clone(),
@@ -264,7 +249,10 @@ pub fn snap_cascade_ortho_bounds(
     let snapped_cx = (light_space_center_xy[0] / texel_size).floor() * texel_size;
     let snapped_cy = (light_space_center_xy[1] / texel_size).floor() * texel_size;
     let half = 0.5 * world_extent;
-    Some(([snapped_cx - half, snapped_cy - half], [snapped_cx + half, snapped_cy + half]))
+    Some((
+        [snapped_cx - half, snapped_cy - half],
+        [snapped_cx + half, snapped_cy + half],
+    ))
 }
 
 /// Computes normal-offset + slope-scaled shadow receiver bias vector in world space:
@@ -310,8 +298,10 @@ mod tests {
         assert!(((max_a[0] - min_a[0]) - 100.0).abs() < 1e-4);
         assert!(((max_b[1] - min_b[1]) - 100.0).abs() < 1e-4);
         assert!(snap_cascade_ortho_bounds([0.0, 0.0], 0.0, 1024).is_none());
-        let grazing = contact_hardening_shadow_bias([0.0, 0.0, 1.0], [1.0, 0.0, 0.0], 0.05, 1.5, 0.2);
-        let perpendicular = contact_hardening_shadow_bias([0.0, 0.0, 1.0], [0.0, 0.0, 1.0], 0.05, 1.5, 0.2);
+        let grazing =
+            contact_hardening_shadow_bias([0.0, 0.0, 1.0], [1.0, 0.0, 0.0], 0.05, 1.5, 0.2);
+        let perpendicular =
+            contact_hardening_shadow_bias([0.0, 0.0, 1.0], [0.0, 0.0, 1.0], 0.05, 1.5, 0.2);
         assert!(grazing[2] > perpendicular[2]);
     }
 }

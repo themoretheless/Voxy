@@ -11,7 +11,8 @@ pub(super) fn plan(
     capacity: u32,
 ) -> Option<Plan> {
     let slots = slots.unwrap_or(512);
-    if slots < 16 || slots > 512 || !slots.is_multiple_of(16) || full_workers == 0 || capacity == 0 {
+    if slots < 16 || slots > 512 || !slots.is_multiple_of(16) || full_workers == 0 || capacity == 0
+    {
         return None;
     }
     let available = u64::from(full_workers) * 512 / u64::from(slots);

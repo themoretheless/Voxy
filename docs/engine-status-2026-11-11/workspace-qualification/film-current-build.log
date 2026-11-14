@@ -1,0 +1,57 @@
+   Compiling serde_derive v1.0.229
+   Compiling bytemuck v1.25.2
+   Compiling voxy_world v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_world)
+   Compiling naga v30.0.1
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling wgpu-types v30.0.1
+   Compiling glam v0.33.6
+   Compiling image v0.25.10
+   Compiling rustybuzz v0.20.1
+   Compiling voxy_lighting v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_lighting)
+   Compiling voxy_mesher v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_mesher)
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_text)
+   Compiling serde v1.0.229
+   Compiling gltf-json v1.4.1
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling gltf v1.4.1
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling wgpu-hal v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu-hal)
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_voxel)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling wgpu v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu)
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+   Compiling voxy_water v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_water)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_cuda v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_cuda)
+error[E0432]: unresolved import `physics::biomechanics`
+ --> crates/voxy_cuda/src/tissue_search.rs:2:14
+  |
+2 | use physics::biomechanics::TissueSearchSnapshot;
+  |              ^^^^^^^^^^^^ could not find `biomechanics` in `physics`
+
+error[E0433]: cannot find `biomechanics` in `physics`
+   --> crates/voxy_cuda/src/tissue_search.rs:622:15
+    |
+622 | impl physics::biomechanics::TissueSearchBackend for CudaTissueSearchBackend {
+    |               ^^^^^^^^^^^^ could not find `biomechanics` in `physics`
+
+error[E0433]: cannot find `biomechanics` in `physics`
+   --> crates/voxy_cuda/src/tissue_search.rs:626:34
+    |
+626 |     ) -> Result<Box<dyn physics::biomechanics::TissueSearchOperation>, &'static str> {
+    |                                  ^^^^^^^^^^^^ could not find `biomechanics` in `physics`
+
+error[E0433]: cannot find `biomechanics` in `physics`
+   --> crates/voxy_cuda/src/tissue_search.rs:664:38
+    |
+664 |     ) -> std::sync::Arc<dyn physics::biomechanics::TissueSearchBackend> {
+    |                                      ^^^^^^^^^^^^ could not find `biomechanics` in `physics`
+
+Some errors have detailed explanations: E0432, E0433.
+For more information about an error, try `rustc --explain E0432`.
+error: could not compile `voxy_cuda` (lib) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...

@@ -207,7 +207,6 @@ fn render_and_check(
 fn verify_pixels(bytes: &[u8], flipped: bool) {
     for y in 0..8_usize {
         for x in 0..8_usize {
-            #[allow(clippy::cast_precision_loss)]
             let (u, v) = ((x as f64 + 0.5) / 8.0, 1.0 - (y as f64 + 0.5) / 8.0);
             let expected = if flipped {
                 (u + v).min(2.0 - u - v)

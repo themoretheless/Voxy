@@ -3,7 +3,7 @@
 use crate::PhysicsError;
 use glam::{DMat3, DQuat, DVec3, Vec3};
 use physics::{
-    astrophysics_spin::Spin, contact::ContactBody, gravity::Body, mass_properties::MassProperties,
+    contact::ContactBody, gravity::Body, mass_properties::MassProperties, rotation::Spin,
 };
 use voxy_scene::{NodeId, SceneGraph, Transform};
 #[derive(Clone, Copy, Debug, PartialEq)]

@@ -1,0 +1,3 @@
+9c6ca32096b9f775c6b2a941f80eeaa63375210384e22b73bdcebee05326b472  crates/voxy_editor/src/main.rs
+dbb79b3e2320de929076eed381fcf408ba068fc432e012ced7718b13531c0dfe  tools/macos/package-game.sh
+fca3e31675797e69c1437e7a71485abc9802992102d361e70193a9440744175f  tools/macos/qualify-game-bundles.py

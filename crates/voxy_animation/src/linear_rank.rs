@@ -23,20 +23,69 @@ fn add_word(sum: &mut [u64; 100], mut index: usize, mut value: u64) {
     }
 }
 
+fn ldexp_f64(value: f64, mut exp: i32) -> f64 {
+    if value == 0.0 || exp == 0 {
+        return value;
+    }
+    let mut out = value;
+    while exp > 0 {
+        let step = exp.min(1023);
+        let factor = f64::from_bits(((1023 + step) as u64) << 52);
+        out *= factor;
+        exp -= step;
+    }
+    while exp < 0 {
+        let step = exp.max(-1022);
+        let factor = f64::from_bits(((1023 + step) as u64) << 52);
+        out *= factor;
+        exp -= step;
+    }
+    out
+}
+
+fn normalize_column_pow2(col: [f64; 3]) -> Option<[f64; 3]> {
+    let max_abs = col[0].abs().max(col[1].abs()).max(col[2].abs());
+    if max_abs == 0.0 {
+        return None;
+    }
+    let (_, m, e) = parts(max_abs);
+    if m == 0 {
+        return None;
+    }
+    let top_bit = 63 - m.leading_zeros() as i32;
+    let shift = -(e + top_bit);
+    let scaled = col.map(|v| ldexp_f64(v, shift));
+    if scaled
+        .iter()
+        .zip(col)
+        .all(|(&s, orig)| s.is_finite() && ((orig == 0.0) == (s == 0.0)))
+    {
+        Some(scaled)
+    } else {
+        Some(col)
+    }
+}
+
 pub(super) fn usable(matrix: DMat4) -> bool {
     if !matrix.is_finite() {
         return false;
     }
-    let a = matrix.x_axis;
-    let b = matrix.y_axis;
-    let c = matrix.z_axis;
+    let Some(a) = normalize_column_pow2([matrix.x_axis.x, matrix.x_axis.y, matrix.x_axis.z]) else {
+        return false;
+    };
+    let Some(b) = normalize_column_pow2([matrix.y_axis.x, matrix.y_axis.y, matrix.y_axis.z]) else {
+        return false;
+    };
+    let Some(c) = normalize_column_pow2([matrix.z_axis.x, matrix.z_axis.y, matrix.z_axis.z]) else {
+        return false;
+    };
     let terms = [
-        [a.x, b.y, c.z],
-        [b.x, c.y, a.z],
-        [c.x, a.y, b.z],
-        [a.z, b.y, c.x],
-        [b.z, c.y, a.x],
-        [c.z, a.y, b.x],
+        [a[0], b[1], c[2]],
+        [b[0], c[1], a[2]],
+        [c[0], a[1], b[2]],
+        [a[2], b[1], c[0]],
+        [b[2], c[1], a[0]],
+        [c[2], a[1], b[0]],
     ];
     let mut determinant = 0.;
     let mut magnitude = 0.;
@@ -57,11 +106,23 @@ pub(super) fn usable(matrix: DMat4) -> bool {
     if filtered && magnitude.is_finite() && determinant.abs() > 16. * f64::EPSILON * magnitude {
         return true;
     }
+    // Exact fallback on original matrix entries when Sarrus filter is near-singular or underflowed.
+    let oa = matrix.x_axis;
+    let ob = matrix.y_axis;
+    let oc = matrix.z_axis;
+    let exact_terms = [
+        [oa.x, ob.y, oc.z],
+        [ob.x, oc.y, oa.z],
+        [oc.x, oa.y, ob.z],
+        [oa.z, ob.y, oc.x],
+        [ob.z, oc.y, oa.x],
+        [oc.z, oa.y, ob.x],
+    ];
     // Smallest possible triple exponent is -3222. Largest product plus six
     // additions uses fewer than 6300 bits, so 100 u64 limbs cover every f64.
     let mut positive = [0_u64; 100];
     let mut negative = [0_u64; 100];
-    for (i, term) in terms.into_iter().enumerate() {
+    for (i, term) in exact_terms.into_iter().enumerate() {
         let [(s0, m0, e0), (s1, m1, e1), (s2, m2, e2)] = term.map(parts);
         if m0 == 0 || m1 == 0 || m2 == 0 {
             continue;

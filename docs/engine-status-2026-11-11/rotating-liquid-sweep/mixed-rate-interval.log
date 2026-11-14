@@ -1,0 +1,16 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.53s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 1 test
+dt=1e-6 affine=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 3.4606715419718514e-13 }) constant=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 3.4606715419718514e-13 })
+dt=1e-5 affine=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 3.4645573225580394e-13 }) constant=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 3.4628919880211017e-13 })
+dt=5e-5 affine=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 5.975743026382065e-13 }) constant=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 4.868573115074628e-13 })
+dt=1e-4 affine=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 4.3755661109229594e-12 }) constant=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 2.6008746060596467e-12 })
+dt=2e-4 affine=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 6.498969094141662e-11 }) constant=Ok(SupportedGeometryHit { event: RigidGeometryHit { contact: BodyGeometryHit { geometry: Clear, witness: None }, feature: None }, support_error_m: 3.782065308859108e-11 })
+dt=4e-4 affine=Err(CollisionBudget) constant=Err(CollisionBudget)
+dt=9.108908036323693e-4 affine=Err(CollisionBudget) constant=Err(CollisionBudget)
+test liquid_runtime::tests::off_center_particle_remainder_requires_translation_only_reactions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 248 filtered out; finished in 0.00s
+

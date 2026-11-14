@@ -16,11 +16,7 @@
 //! Capture deterministic PNG snapshot:
 //!   `cargo run -p voxy_app --example bodycam -- --snapshot /tmp/voxy-bodycam-preview.png`
 
-#![allow(
-    clippy::cast_precision_loss,
-    clippy::cast_possible_truncation,
-    dead_code
-)]
+#![allow(dead_code)]
 
 use std::{path::PathBuf, sync::Arc, time::Instant};
 
@@ -200,7 +196,7 @@ impl BunkerFemaleScene {
         let model_mat =
             Mat4::from_translation(self.world_pos) * Mat4::from_rotation_y(self.world_yaw);
         let model_inv = model_mat.inverse();
-        let mvp = scene_cam.view_projection()? * model_mat;
+        let mvp = scene_cam.view_projection_reverse_z()? * model_mat;
         let local_eye = model_inv.transform_point3(camera.eye);
 
         self.transform.update(queue, mvp)?;
@@ -259,7 +255,6 @@ impl Default for BodycamDemo {
     }
 }
 
-#[allow(clippy::too_many_lines)]
 pub(crate) fn build_tactical_compound_chunks() -> Result<Vec<voxy_runtime::BootstrapChunk>, String>
 {
     let scene = build_procedural_scene(0x56_4f_58_59, 1).map_err(|e| e.to_string())?;

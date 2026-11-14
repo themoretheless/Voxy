@@ -1,0 +1,27 @@
+{
+  "rejected": "fixed system failed after 0 ticks: animation event budget",
+  "queued": 4096,
+  "first": {
+    "owner": "owner-0",
+    "clip": "move",
+    "name": "pulse",
+    "phase": 0.25,
+    "tick": 15
+  },
+  "last": {
+    "owner": "owner-0",
+    "clip": "move",
+    "name": "pulse",
+    "phase": 0.25,
+    "tick": 15
+  },
+  "retry": [
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "retry",
+      "phase": 0.5,
+      "tick": 30
+    }
+  ]
+}

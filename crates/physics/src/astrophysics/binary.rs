@@ -6,7 +6,7 @@ use crate::math::dot;
 use crate::math::norm as length;
 use crate::{
     astrophysics::{Error, OrbitalState},
-    astrophysics_spin::Spin,
+    rotation::Spin,
 };
 type Vector = [f64; 3];
 fn matrix_vector(matrix: [[f64; 3]; 3], v: Vector) -> Vector {
@@ -397,7 +397,10 @@ pub fn roche_limit_fluid_radius(
 
 /// Computes Peale-Cassen-Reynolds tidal dissipation heating power (Watts)
 /// $\dot{E} = \frac{21}{2} \frac{k_2}{Q} \frac{G M_p^2 R_s^5 n e^2}{a^6}$ in an eccentric satellite.
+<<<<<<<< HEAD:crates/physics/src/astrophysics/binary.rs
 #[allow(clippy::too_many_arguments)]
+========
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/binary.rs
 pub fn tidal_dissipation_heating_watts(
     k2_love: f64,
     quality_q: f64,
@@ -452,8 +455,19 @@ mod tidal_and_roche_tests {
     fn roche_limit_and_tidal_heating_scale_with_density_and_eccentricity() {
         let d = roche_limit_fluid_radius(6.371e6, 5514.0, 3344.0).unwrap();
         assert!(d > 1.5e7 && d < 2.2e7);
+<<<<<<<< HEAD:crates/physics/src/astrophysics/binary.rs
         let e0 = tidal_dissipation_heating_watts(0.03, 100.0, 6.6743e-11, 1.898e27, 1.821e6, 4.1e-5, 0.0, 4.217e8).unwrap();
         let io = tidal_dissipation_heating_watts(0.03, 100.0, 6.6743e-11, 1.898e27, 1.821e6, 4.1e-5, 0.0041, 4.217e8).unwrap();
+========
+        let e0 = tidal_dissipation_heating_watts(
+            0.03, 100.0, 6.6743e-11, 1.898e27, 1.821e6, 4.1e-5, 0.0, 4.217e8,
+        )
+        .unwrap();
+        let io = tidal_dissipation_heating_watts(
+            0.03, 100.0, 6.6743e-11, 1.898e27, 1.821e6, 4.1e-5, 0.0041, 4.217e8,
+        )
+        .unwrap();
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/binary.rs
         assert_eq!(e0, 0.0);
         assert!(io > 1.0e12);
     }

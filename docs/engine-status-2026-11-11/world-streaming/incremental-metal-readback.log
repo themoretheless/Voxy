@@ -1,0 +1,10 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.87s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_render-5964849c32dd4096)
+
+running 1 test
+Resident chunk readback on AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+test renderer::tests::resident_slot_metal_readback_preserves_neighbors_and_unused_tail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 426 filtered out; finished in 0.09s
+

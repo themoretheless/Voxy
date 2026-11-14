@@ -1,4 +1,3 @@
-#![allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
 use super::game::{
     BALL_RADIUS, BUMPER_RADIUS, BUMPERS, FLIPPER_LENGTH, FLIPPER_RADIUS, Game, PIVOTS, WALLS,
 };

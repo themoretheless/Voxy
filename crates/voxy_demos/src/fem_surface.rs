@@ -45,7 +45,7 @@ pub fn fem_surface_scene_mesh(
 /// The display transform never mutates solver coordinates or velocities.
 #[allow(dead_code)]
 pub fn tissue_surface_scene_mesh(
-    body: &physics::biomechanics::Body,
+    body: &physics_bio::biomechanics::Body,
     origin_m: [f64; 3],
     display_scale: f64,
     color: [f32; 4],
@@ -87,7 +87,7 @@ pub fn tissue_surface_scene_mesh(
 #[cfg(test)]
 mod tissue_surface_tests {
     use super::*;
-    use physics::biomechanics::{InertialBody, Material, TesticularGeometry};
+    use physics_bio::biomechanics::{InertialBody, Material, TesticularGeometry};
     #[test]
     fn current_layered_tissue_surface_tracks_solver_pose_without_mutating_it() {
         let geometry = TesticularGeometry {

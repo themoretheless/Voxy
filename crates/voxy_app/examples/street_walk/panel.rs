@@ -22,11 +22,7 @@ pub const TOUR_WAYPOINTS: [(&str, [f64; 3], [f32; 3]); 9] = [
     ("Улица", [0.6, 0.13, -18.0], [-0.10, 0.025, 1.0]),
     ("Площадь и метро", [0.0, 0.13, 66.0], [0.0, 0.02, 1.0]),
     ("Бассейн и вилла", [-6.2, 0.05, 110.5], [0.27, -0.05, 0.96]),
-    (
-        "Сауна и оранжерея",
-        [8.5, 0.05, 121.5],
-        [0.45, -0.02, 0.89],
-    ),
+    ("Сауна и оранжерея", [8.5, 0.05, 121.5], [0.45, -0.02, 0.89]),
     (
         "Дзен-сад и бочче",
         [-8.5, 0.05, 121.5],
@@ -37,21 +33,9 @@ pub const TOUR_WAYPOINTS: [(&str, [f64; 3], [f32; 3]); 9] = [
         [-2.0, 6.95, 134.5],
         [0.18, -0.10, -0.98],
     ),
-    (
-        "Обсерватория",
-        [-3.2, 10.15, 136.5],
-        [-0.85, 0.12, -0.51],
-    ),
-    (
-        "Винный грот",
-        [6.2, 0.05, 101.0],
-        [0.92, 0.05, 0.38],
-    ),
-    (
-        "Ателье художника",
-        [-6.2, 0.05, 101.0],
-        [-0.92, 0.05, 0.38],
-    ),
+    ("Обсерватория", [-3.2, 10.15, 136.5], [-0.85, 0.12, -0.51]),
+    ("Винный грот", [6.2, 0.05, 101.0], [0.92, 0.05, 0.38]),
+    ("Ателье художника", [-6.2, 0.05, 101.0], [-0.92, 0.05, 0.38]),
 ];
 
 /// Advances a 64-bit LCG seed to produce the next deterministic street seed.
@@ -147,7 +131,6 @@ impl Panel {
     pub fn wants_pointer(&self) -> bool {
         self.visible && (self.ctx.is_pointer_over_egui() || self.ctx.egui_wants_pointer_input())
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn draw(
         &mut self,
         window: &Window,
@@ -334,7 +317,8 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
             ("Снег", Weather::SNOW),
         ] {
             if ui.button(name).clicked() {
-                *s.weather = crate::day_cycle::apply_weather_preset_preserving_wind(*s.weather, preset);
+                *s.weather =
+                    crate::day_cycle::apply_weather_preset_preserving_wind(*s.weather, preset);
             }
         }
     });
@@ -357,10 +341,10 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
         w.wind = [a.cos() * speed, a.sin() * speed];
     }
     ui.add(egui::Slider::new(&mut w.wind_gust, 0.0..=1.).text("порывы"));
-    if *s.weather != before {
-        if let Some(cycle) = s.cycle.as_mut() {
-            cycle.auto_weather = false;
-        }
+    if *s.weather != before
+        && let Some(cycle) = s.cycle.as_mut()
+    {
+        cycle.auto_weather = false;
     }
 
     ui.separator();
@@ -384,13 +368,12 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
             *s.sun_elevation = fixed.then_some(35.);
             *s.reconfigure = true;
         }
-        if let Some(elevation) = s.sun_elevation.as_mut() {
-            if ui
+        if let Some(elevation) = s.sun_elevation.as_mut()
+            && ui
                 .add(egui::Slider::new(elevation, -10.0..=90.).text("высота солнца °"))
                 .changed()
-            {
-                *s.reconfigure = true;
-            }
+        {
+            *s.reconfigure = true;
         }
     }
     ui.separator();

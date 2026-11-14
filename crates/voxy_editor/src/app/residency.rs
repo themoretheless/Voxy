@@ -49,7 +49,12 @@ impl App {
             let watcher = self.watcher.as_mut().ok_or("source watcher disappeared")?;
             match &self.import_recipe {
                 InputRecipe::Manifest(manifest) => {
-                    watcher.request_with_observation(&self.sources, manifest.clone(), 65536, 129)?
+                    watcher.request_with_observation(
+                        &self.sources,
+                        manifest.clone(),
+                        65536,
+                        129,
+                    )?;
                 }
                 InputRecipe::Direct => watcher.request(&self.sources, 129)?,
             }

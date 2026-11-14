@@ -78,6 +78,15 @@ impl PresentPreference {
 }
 
 impl GraphicsOptions {
+    fn instance_backends(self) -> wgpu::Backends {
+        let backends = self.backend.backends();
+        if self.backend == GraphicsBackend::Auto {
+            backends.with_env()
+        } else {
+            backends
+        }
+    }
+
     #[must_use]
     pub fn create_instance_with_display(
         self,
@@ -85,14 +94,14 @@ impl GraphicsOptions {
     ) -> wgpu::Instance {
         let mut descriptor = wgpu::InstanceDescriptor::new_without_display_handle();
         descriptor.display = Some(Box::new(display));
-        descriptor.backends = self.backend.backends();
+        descriptor.backends = self.instance_backends();
         wgpu::Instance::new(descriptor)
     }
 
     #[must_use]
     pub fn create_instance(self) -> wgpu::Instance {
         let mut descriptor = wgpu::InstanceDescriptor::new_without_display_handle();
-        descriptor.backends = self.backend.backends();
+        descriptor.backends = self.instance_backends();
         wgpu::Instance::new(descriptor)
     }
 }

@@ -14,8 +14,6 @@
 //! Capture deterministic PNG snapshot:
 //!   `cargo run -p voxy_app --example camcorder -- --snapshot /tmp/voxy-camcorder-preview.png`
 
-#![allow(clippy::cast_precision_loss, clippy::cast_possible_truncation)]
-
 #[path = "bodycam.rs"]
 mod bodycam_scene;
 

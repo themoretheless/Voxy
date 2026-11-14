@@ -13,14 +13,14 @@ fn run() -> Result<(), String> {
                     .next()
                     .ok_or("missing particle count")?
                     .parse()
-                    .map_err(|_| "invalid particle count")?
+                    .map_err(|_| "invalid particle count")?;
             }
             "--steps" => {
                 steps = args
                     .next()
                     .ok_or("missing step count")?
                     .parse()
-                    .map_err(|_| "invalid step count")?
+                    .map_err(|_| "invalid step count")?;
             }
             _ => return Err(format!("unknown option: {arg}")),
         }

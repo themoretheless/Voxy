@@ -1,6 +1,6 @@
 //! Coupled radial self-gravitating radiation gas. This is dynamical thermal
 //! evolution, not a calibrated nuclear stellar-evolution/composition model.
-use crate::{astrophysics_spherical::Sphere, astrophysics_spherical_radiation::Heating};
+use crate::{astrophysics::spherical::Sphere, astrophysics::spherical_radiation::Heating};
 #[derive(Clone, Debug, PartialEq)]
 pub struct RadiatingSphere {
     pub sphere: Sphere,
@@ -35,8 +35,8 @@ pub enum Error {
     InvalidInput,
     BudgetExceeded,
     NumericalOverflow,
-    Hydro(crate::astrophysics_spherical::Error),
-    Radiation(crate::astrophysics_spherical_radiation::Error),
+    Hydro(crate::astrophysics::spherical::Error),
+    Radiation(crate::astrophysics::spherical_radiation::Error),
 }
 impl RadiatingSphere {
     fn validate(&self) -> Result<(), Error> {
@@ -90,7 +90,7 @@ impl RadiatingSphere {
         &mut self,
         dt: f64,
         budget: Budget,
-        mixture: crate::astrophysics_eos::Mixture,
+        mixture: crate::astrophysics::eos::Mixture,
     ) -> Result<Work, Error> {
         self.step_eos(dt, budget, Some(mixture))
     }
@@ -98,7 +98,7 @@ impl RadiatingSphere {
         &mut self,
         dt: f64,
         budget: Budget,
-        mixture: Option<crate::astrophysics_eos::Mixture>,
+        mixture: Option<crate::astrophysics::eos::Mixture>,
     ) -> Result<Work, Error> {
         self.validate()?;
         if !dt.is_finite()

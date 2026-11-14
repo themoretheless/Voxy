@@ -1,0 +1,48 @@
+   Compiling log v0.4.34
+   Compiling smallvec v1.16.0
+   Compiling syn v2.0.119
+   Compiling wgpu-hal v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu-hal)
+   Compiling voxy_world v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_world)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling core-foundation-sys v0.8.7
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling core-foundation v0.9.4
+   Compiling wgpu-types v30.0.1
+   Compiling parking_lot_core v0.9.12
+   Compiling rustybuzz v0.20.1
+   Compiling core-graphics-types v0.1.3
+   Compiling parking_lot v0.12.5
+   Compiling voxy_lighting v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_lighting)
+   Compiling voxy_mesher v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_mesher)
+   Compiling voxy_storage v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_storage)
+   Compiling core-graphics v0.23.2
+   Compiling winit v0.30.13
+   Compiling zerocopy-derive v0.8.56
+   Compiling gltf-derive v1.4.1
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_text)
+   Compiling gltf-json v1.4.1
+   Compiling zerocopy v0.8.56
+   Compiling gltf v1.4.1
+   Compiling half v2.7.1
+   Compiling naga v30.0.1
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_voxel)
+   Compiling physics_bio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_bio)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_rush v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_rush)
+   Compiling voxy_runtime v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_runtime)
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling wgpu v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu)
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+   Compiling voxy_water v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_water)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_cuda v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_cuda)
+   Compiling voxy_gpu v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+   Compiling voxy_shell v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_shell)
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_app)
+    Finished `release` profile [optimized] target(s) in 1m 16s

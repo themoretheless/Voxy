@@ -745,7 +745,7 @@ impl RootRigidPath {
                     || {
                         span.rotation
                             .body_angular_displacement()
-                            .map_or(0., |v| v.length())
+                            .map_or(0., glam::DVec3::length)
                     },
                     |speed| speed * (span.end() - span.start()),
                 )
@@ -1002,7 +1002,6 @@ impl RootRigidCurve {
     /// # Errors
     /// Invalid time, singular rotations, collapsed key times or span/loop work
     /// exhaustion reject the whole path without an accepted prefix.
-    #[allow(clippy::too_many_lines)]
     pub fn path(
         &self,
         start: f64,

@@ -159,7 +159,7 @@ pub fn step_projectile_in_field(
     state: &mut ProjectileState,
     dt: f64,
     mut config: ProjectileConfig,
-    field: &impl physics::gravity_field::GravityField,
+    field: &impl physics::gravity::field::GravityField,
 ) -> Result<ProjectileOutcome, ProjectileError> {
     config.gravity = field
         .acceleration(
@@ -196,12 +196,10 @@ fn translated(origin: RayOrigin, displacement: [f64; 3]) -> Result<RayOrigin, Pr
     let mut offset = origin.offset;
     for axis in 0..3 {
         let value = offset[axis] + displacement[axis];
-        #[allow(clippy::cast_possible_truncation)]
         let shift = value.floor() as i64;
         voxel[axis] = voxel[axis]
             .checked_add(shift)
             .ok_or(ProjectileError::CoordinateOverflow)?;
-        #[allow(clippy::cast_precision_loss)]
         let shift = shift as f64;
         offset[axis] = value - shift;
     }
@@ -310,7 +308,7 @@ mod tests {
 
     #[test]
     fn sampled_uniform_field_matches_legacy_and_radial_source_curves_flight() {
-        use physics::gravity_field::{NewtonianField, Source};
+        use physics::gravity::field::{NewtonianField, Source};
         let view = TestView::default();
         let mut legacy = spawn_projectile(origin(), [1.0, 0.0, 0.0], 1.0).unwrap();
         let mut sampled = legacy;
@@ -568,12 +566,14 @@ pub fn ricochet_reflection_velocity(
     {
         return None;
     }
-    let speed = (incident_vel[0].powi(2) + incident_vel[1].powi(2) + incident_vel[2].powi(2)).sqrt();
+    let speed =
+        (incident_vel[0].powi(2) + incident_vel[1].powi(2) + incident_vel[2].powi(2)).sqrt();
     let n_len = (normal[0].powi(2) + normal[1].powi(2) + normal[2].powi(2)).sqrt();
     if speed <= 1e-9 || (n_len - 1.0).abs() > 1e-6 {
         return None;
     }
-    let vn = incident_vel[0] * normal[0] + incident_vel[1] * normal[1] + incident_vel[2] * normal[2];
+    let vn =
+        incident_vel[0] * normal[0] + incident_vel[1] * normal[1] + incident_vel[2] * normal[2];
     if vn >= 0.0 || (-vn / speed) > critical_grazing_cos {
         return None;
     }

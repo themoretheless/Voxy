@@ -93,7 +93,6 @@ impl Layer {
     /// # Errors
     /// Invalid heat weights, missing transport, rejected thermal properties,
     /// unrepresentable heat transfer, or any contact/dust validation failure.
-    #[allow(clippy::too_many_arguments)]
     pub fn advance_contact_dust_heated(
         &mut self,
         contact_material: crate::friction::Material,

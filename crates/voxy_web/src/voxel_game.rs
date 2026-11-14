@@ -148,7 +148,6 @@ impl VoxelGame {
         if xyz.iter().any(|v| v.unsigned_abs() > 2_097_152) {
             return Err(error("browser actor exceeds local render range"));
         }
-        #[allow(clippy::cast_precision_loss, clippy::cast_possible_truncation)]
         let position: [f32; 3] = std::array::from_fn(|a| {
             ((xyz[a] as f64 + body.min[a] + (body.max[a] - body.min[a]) * 0.5
                 - [16.0, 10.0, 16.0][a])

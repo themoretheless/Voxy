@@ -75,7 +75,7 @@ alone does not provide the curves needed to identify this specimen's parameters.
 Penile calibration against measured forces and boundary deformation is described
 by [Fereidoonnezhad et al., 2024](https://pubmed.ncbi.nlm.nih.gov/38945188/).
 
-`cargo test -p physics --test biomechanics` checks constitutive energy derivatives,
+`cargo test -p physics --test physics_bio biomechanics::` checks constitutive energy derivatives,
 frame indifference, zero passive stress at rest, shear modulus, fiber anisotropy,
 nodal force derivatives under pressure, translation/force balance, equilibrium
 expansion and contraction, invalid-input preservation, exact affine patch energy,

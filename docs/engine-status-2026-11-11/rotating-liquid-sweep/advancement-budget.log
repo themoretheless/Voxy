@@ -1,0 +1,24 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.06s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 1 test
+sweep progress time=1.83340257516873605e-8 next=1.83385043952466600e-8 gap=2.28289609438547498e-14 tolerance=8.82889011245392831e-15 speed=4.07783484290600434e-3 used_steps=4096 projected=false
+sweep progress time=3.66725437598218098e-8 next=3.66770196808014352e-8 gap=2.28150831560469354e-14 tolerance=8.82889011245392831e-15 speed=4.07783484290600434e-3 used_steps=8192 projected=false
+sweep progress time=7.33487793376381155e-8 next=7.33532552586177343e-8 gap=2.28150831560469354e-14 tolerance=8.82889011245392831e-15 speed=4.07783484290600434e-3 used_steps=16384 projected=false
+sweep progress time=1.46703194414930262e-7 next=1.46707675781069202e-7 gap=2.28428387316625643e-14 tolerance=8.82889011245392831e-15 speed=4.07783484290600434e-3 used_steps=32768 projected=false
+sweep progress time=2.93444875215315102e-7 next=2.93449353858874368e-7 gap=2.28289609438547498e-14 tolerance=8.82889011245392831e-15 speed=4.07783484290600434e-3 used_steps=65536 projected=false
+sweep progress time=5.86889105175817907e-7 next=5.86893570206478697e-7 gap=2.27595720048156775e-14 tolerance=8.82889011245392831e-15 speed=4.07783484290600434e-3 used_steps=131072 projected=false
+sweep query budget time=1.17314547465082352e-6 used_steps=262144 speed=4.07783484290600434e-3 tolerance=Some(8.828890112453928e-15) projected=false
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene liquid body step: CollisionBudget") } }
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 460 filtered out; finished in 26.79s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

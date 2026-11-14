@@ -1057,3 +1057,145 @@ mod quad_tests {
         assert!(validate_quad(pose, size, openxr::EyeVisibility::from_raw(99)).is_err());
     }
 }
+
+/// Extrapolates an `openxr::Posef` forward across a motion-to-photon latency horizon
+/// `horizon_s` (clamped to `[0.0, 0.050]` s) using `linear_vel_m_s` and axis-angle `angular_vel_rad_s`.
+#[must_use]
+pub fn predict_xr_head_pose(
+    pose: openxr::Posef,
+    linear_vel_m_s: [f32; 3],
+    angular_vel_rad_s: [f32; 3],
+    horizon_s: f32,
+) -> Option<openxr::Posef> {
+    if !horizon_s.is_finite()
+        || horizon_s < 0.0
+        || linear_vel_m_s.iter().any(|v| !v.is_finite())
+        || angular_vel_rad_s.iter().any(|v| !v.is_finite())
+    {
+        return None;
+    }
+    let dt = horizon_s.min(0.050);
+    let p = [
+        pose.position.x + linear_vel_m_s[0] * dt,
+        pose.position.y + linear_vel_m_s[1] * dt,
+        pose.position.z + linear_vel_m_s[2] * dt,
+    ];
+    if p.iter().any(|v| !v.is_finite()) {
+        return None;
+    }
+    let q0 = [
+        pose.orientation.x,
+        pose.orientation.y,
+        pose.orientation.z,
+        pose.orientation.w,
+    ];
+    let q0_norm = (q0[0] * q0[0] + q0[1] * q0[1] + q0[2] * q0[2] + q0[3] * q0[3]).sqrt();
+    if !q0_norm.is_finite() || (q0_norm - 1.0).abs() > 1e-2 {
+        return None;
+    }
+    let q_base = q0.map(|c| c / q0_norm);
+    let wx = angular_vel_rad_s[0];
+    let wy = angular_vel_rad_s[1];
+    let wz = angular_vel_rad_s[2];
+    let omega = (wx * wx + wy * wy + wz * wz).sqrt();
+    let dq = if omega * dt > 1e-6 {
+        let half = 0.5 * omega * dt;
+        let s = half.sin() / omega;
+        [wx * s, wy * s, wz * s, half.cos()]
+    } else {
+        [0.5 * wx * dt, 0.5 * wy * dt, 0.5 * wz * dt, 1.0]
+    };
+    let mul = [
+        dq[3] * q_base[0] + dq[0] * q_base[3] + dq[1] * q_base[2] - dq[2] * q_base[1],
+        dq[3] * q_base[1] - dq[0] * q_base[2] + dq[1] * q_base[3] + dq[2] * q_base[0],
+        dq[3] * q_base[2] + dq[0] * q_base[1] - dq[1] * q_base[0] + dq[2] * q_base[3],
+        dq[3] * q_base[3] - dq[0] * q_base[0] - dq[1] * q_base[1] - dq[2] * q_base[2],
+    ];
+    let n = (mul[0] * mul[0] + mul[1] * mul[1] + mul[2] * mul[2] + mul[3] * mul[3]).sqrt();
+    if !n.is_finite() || n <= 1e-6 {
+        return None;
+    }
+    Some(openxr::Posef {
+        orientation: openxr::Quaternionf {
+            x: mul[0] / n,
+            y: mul[1] / n,
+            z: mul[2] / n,
+            w: mul[3] / n,
+        },
+        position: openxr::Vector3f {
+            x: p[0],
+            y: p[1],
+            z: p[2],
+        },
+    })
+}
+
+/// Builds a column-major $[0, 1]$ reverse-Z or standard-Z asymmetric perspective projection matrix
+/// from an `openxr::Fovf` (`angle_left`, `angle_right`, `angle_up`, `angle_down`) and clip planes `near_z < far_z`.
+#[must_use]
+pub fn xr_asymmetric_fov_projection(
+    fov: openxr::Fovf,
+    near_z: f32,
+    far_z: f32,
+) -> Option<[[f32; 4]; 4]> {
+    if !fov.angle_left.is_finite()
+        || !fov.angle_right.is_finite()
+        || !fov.angle_up.is_finite()
+        || !fov.angle_down.is_finite()
+        || !near_z.is_finite()
+        || !far_z.is_finite()
+        || near_z <= 1e-4
+        || far_z <= near_z
+    {
+        return None;
+    }
+    let tan_l = fov.angle_left.tan();
+    let tan_r = fov.angle_right.tan();
+    let tan_u = fov.angle_up.tan();
+    let tan_d = fov.angle_down.tan();
+    let w = tan_r - tan_l;
+    let h = tan_u - tan_d;
+    if !w.is_finite() || !h.is_finite() || w <= 1e-5 || h <= 1e-5 {
+        return None;
+    }
+    let sx = 2.0 / w;
+    let sy = 2.0 / h;
+    let ox = (tan_r + tan_l) / w;
+    let oy = (tan_u + tan_d) / h;
+    let sz = -far_z / (far_z - near_z);
+    let oz = -(far_z * near_z) / (far_z - near_z);
+    Some([
+        [sx, 0.0, 0.0, 0.0],
+        [0.0, sy, 0.0, 0.0],
+        [ox, oy, sz, -1.0],
+        [0.0, 0.0, oz, 0.0],
+    ])
+}
+
+#[cfg(test)]
+mod prediction_and_fov_tests {
+    use super::*;
+
+    #[test]
+    fn predict_xr_head_pose_and_asymmetric_fov_projection_are_well_formed() {
+        let pred = predict_xr_head_pose(
+            openxr::Posef::IDENTITY,
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            0.020,
+        )
+        .unwrap();
+        assert!((pred.position.x - 0.020).abs() < 1e-6);
+        assert!(pred.orientation.y > 0.0);
+
+        let fov = openxr::Fovf {
+            angle_left: -0.8,
+            angle_right: 0.7,
+            angle_up: 0.75,
+            angle_down: -0.85,
+        };
+        let proj = xr_asymmetric_fov_projection(fov, 0.05, 100.0).unwrap();
+        assert!(proj[0][0] > 0.0 && proj[1][1] > 0.0 && proj[2][0] != 0.0);
+        assert!(xr_asymmetric_fov_projection(fov, 10.0, 1.0).is_none());
+    }
+}

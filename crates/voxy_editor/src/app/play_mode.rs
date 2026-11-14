@@ -60,117 +60,171 @@ impl App {
             if let Some(physics) = &mut self.play.physics {
                 physics.synchronize(&self.scene)?;
             }
-            let frame_result = simulation.advance_scoped_with_animation_events(
+            let schedule = animation_runtime::schedule()?;
+            let frame_result = simulation.advance_with_delivery(
                 &mut self.scene,
                 elapsed,
-                animation_runtime::schedule()?,
-                |system, mut access, dt| {
-                    if system == "angular.step" {
-                        if let Some(motion) = &mut self.play.angular_motion {
-                            motion.fixed_scoped(access, dt).map_err(|e| {
+                |scene, behaviors, dt| {
+                    let mut animation_events = Vec::new();
+                    let mut platform_motion = voxy_gameplay::PlatformMotion::default();
+                    let result = schedule.run_scene(scene, |system, mut access| {
+                        if system == "angular.step" {
+                            if let Some(motion) = &mut self.play.angular_motion {
+                                motion.fixed_scoped(access, dt).map_err(|e| {
+                                    voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                })?;
+                            }
+                        } else if system == "kinematic.step" {
+                            let motion_error = |e: voxy_gameplay::GameplayError| {
+                                voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                            };
+                            access
+                                .require_read("character.physics")
+                                .map_err(|e| motion_error(e.into()))?;
+                            let couple_dynamic = self.play.liquid.as_ref().is_some_and(
+                                voxy_gameplay::SceneLiquidRuntime::couples_kinematic_boundaries,
+                            );
+                            platform_motion = voxy_gameplay::step_kinematic_bodies_with_dynamics(
+                                access.write().map_err(|e| motion_error(e.into()))?,
+                                self.play.physics.as_ref(),
+                                dt,
+                                couple_dynamic,
+                            )
+                            .map_err(motion_error)?;
+                        } else if system == "character.step" {
+                            access.require_write("liquid.world").map_err(|e| {
                                 voxy_gameplay::GameplayFixedError::Motion(e.to_string())
                             })?;
-                        }
-                    } else if system == "character.step" {
-                        access.require_write("liquid.world").map_err(|e| {
-                            voxy_gameplay::GameplayFixedError::Motion(e.to_string())
-                        })?;
-                        let mut liquid = self.play.liquid.clone();
-                        if let Some(runtime) = &mut liquid {
-                            runtime
-                                .tick(
-                                    access.read().map_err(|e| {
-                                        voxy_gameplay::GameplayFixedError::Motion(e.to_string())
-                                    })?,
-                                    dt,
-                                    None,
-                                )
-                                .map_err(|e| {
-                                    voxy_gameplay::GameplayFixedError::Motion(e.to_string())
-                                })?;
-                        }
-                        access
-                            .require_write("animation.playback")
-                            .map_err(|error| {
-                                voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                            })?;
-                        let candidate = if let Some(physics) = &mut self.play.physics {
-                            access.require_write("character.physics").map_err(|error| {
-                                voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                            })?;
-                            access.require_write("player.input").map_err(|error| {
-                                voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                            })?;
-                            locomotion::fixed_step(
-                                &self.play.animations,
-                                access.write().map_err(|error| {
+                            let mut liquid = self.play.liquid.clone();
+                            if let Some(runtime) = &mut liquid {
+                                let motion_error = |error: voxy_gameplay::GameplayError| {
                                     voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                                })?,
-                                &models,
-                                physics,
-                                &mut self.play.player_input,
-                                dt,
-                            )
-                            .map_err(|error| match error {
-                                voxy_gameplay::CharacterTickError::Physics(error) => {
-                                    voxy_gameplay::GameplayFixedError::Physics(error)
-                                }
-                                voxy_gameplay::CharacterTickError::Preparation(error) => {
-                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                                }
-                            })?
-                        } else {
-                            let candidate = self
-                                .play
-                                .animations
-                                .prepare_wall(
-                                    access.read().map_err(|error| {
-                                        voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                                    })?,
-                                    &models,
-                                    dt,
-                                )
-                                .map_err(|e| {
-                                    voxy_gameplay::GameplayFixedError::Motion(e.to_string())
-                                })?;
-                            if candidate.requires_pose_preparation()
-                                || !candidate.motions().is_empty()
-                                || !candidate.trajectories().is_empty()
-                            {
-                                return Err(voxy_gameplay::GameplayFixedError::Motion(
-                                    "root motion requires a physics runtime".into(),
-                                ));
+                                };
+                                let scene = access.write().map_err(|e| motion_error(e.into()))?;
+                                runtime
+                                    .resolve_platform_tick(
+                                        scene,
+                                        self.play.physics.as_ref(),
+                                        dt,
+                                        &mut platform_motion,
+                                    )
+                                    .map_err(motion_error)?;
                             }
-                            access.require_write("player.input").map_err(|error| {
-                                voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                            })?;
-                            self.play.player_input.finish_frame();
-                            candidate
-                        };
-                        if let Some(runtime) = &mut liquid {
-                            runtime
-                                .publish_body_pose(access.write().map_err(|e| {
-                                    voxy_gameplay::GameplayFixedError::Motion(e.to_string())
-                                })?)
-                                .map_err(|e| {
-                                    voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                            access
+                                .require_write("animation.playback")
+                                .map_err(|error| {
+                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
                                 })?;
+                            let candidate = if let Some(physics) = &mut self.play.physics {
+                                access.require_write("character.physics").map_err(|error| {
+                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                })?;
+                                access.require_write("player.input").map_err(|error| {
+                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                })?;
+                                let scene = access.write().map_err(|error| {
+                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                })?;
+                                let result =
+                                    physics.with_platform_motion(&mut platform_motion, |physics| {
+                                        locomotion::fixed_step(
+                                            &self.play.animations,
+                                            scene,
+                                            &models,
+                                            physics,
+                                            &mut self.play.player_input,
+                                            dt,
+                                        )
+                                    });
+                                if result.is_err() {
+                                    platform_motion.rollback(scene).map_err(|error| {
+                                        voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                    })?;
+                                }
+                                result.map_err(|error| match error {
+                                    voxy_gameplay::CharacterTickError::Physics(error) => {
+                                        voxy_gameplay::GameplayFixedError::Physics(error)
+                                    }
+                                    voxy_gameplay::CharacterTickError::Preparation(error) => {
+                                        voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                    }
+                                })?
+                            } else {
+                                let candidate = self
+                                    .play
+                                    .animations
+                                    .prepare_wall(
+                                        access.read().map_err(|error| {
+                                            voxy_gameplay::GameplayFixedError::Motion(
+                                                error.to_string(),
+                                            )
+                                        })?,
+                                        &models,
+                                        dt,
+                                    )
+                                    .map_err(|e| {
+                                        voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                    })?;
+                                if candidate.requires_pose_preparation()
+                                    || !candidate.motions().is_empty()
+                                    || !candidate.trajectories().is_empty()
+                                {
+                                    return Err(voxy_gameplay::GameplayFixedError::Motion(
+                                        "root motion requires a physics runtime".into(),
+                                    ));
+                                }
+                                access.require_write("player.input").map_err(|error| {
+                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                })?;
+                                self.play.player_input.finish_frame();
+                                candidate
+                            };
+                            if let Some(runtime) = &mut liquid {
+                                runtime
+                                    .publish_body_pose(access.write().map_err(|e| {
+                                        voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                    })?)
+                                    .map_err(|e| {
+                                        voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                    })?;
+                            }
+                            self.play.animations = candidate;
+                            self.play.liquid = liquid;
+                        } else if let Some(physics) = &mut self.play.physics {
+                            physics
+                                .run_scoped_system(system, access, &mut self.play.player_input, dt)
+                                .map_err(voxy_gameplay::GameplayFixedError::Physics)?;
                         }
-                        self.play.animations = candidate;
-                        self.play.liquid = liquid;
-                    } else if let Some(physics) = &mut self.play.physics {
-                        physics
-                            .run_scoped_system(system, access, &mut self.play.player_input, dt)
-                            .map_err(voxy_gameplay::GameplayFixedError::Physics)?;
+                        animation_events.extend(self.play.animations.take_events());
+                        Ok::<_, voxy_gameplay::GameplayFixedError>(())
+                    });
+                    let triggers = result.and_then(|()| {
+                        let mut sample = || {
+                            if self.play.triggers.is_none() {
+                                self.play.triggers = Some(voxy_gameplay::TriggerTracker::new(
+                                    scene,
+                                    voxy_gameplay::MAX_TRIGGER_PAIRS,
+                                )?);
+                            }
+                            let tracker = self.play.triggers.as_mut().expect("initialized tracker");
+                            if let Some(physics) = &mut self.play.physics {
+                                tracker.sample_character_tick(scene, physics)
+                            } else {
+                                tracker.sample_tick(scene, None)
+                            }
+                        };
+                        sample().map_err(|error| voxy_scene::SystemFailure {
+                            system: "trigger.sample".into(),
+                            error: voxy_gameplay::GameplayFixedError::Physics(error),
+                        })
+                    });
+                    for (owner, event) in animation_events {
+                        behaviors.animation_event(scene, owner, &event.name, event.phase);
                     }
-                    Ok::<_, voxy_gameplay::GameplayFixedError>(
-                        self.play
-                            .animations
-                            .take_events()
-                            .into_iter()
-                            .map(|(owner, event)| (owner, event.name, event.phase))
-                            .collect(),
-                    )
+                    for event in triggers? {
+                        behaviors.trigger_event(scene, event);
+                    }
+                    Ok::<_, voxy_scene::SystemFailure<voxy_gameplay::GameplayFixedError>>(())
                 },
             );
             if let Err(voxy_scene::SimulationStepError::System {

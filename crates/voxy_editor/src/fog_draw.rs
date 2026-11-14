@@ -163,7 +163,6 @@ impl FogDraw {
     ) -> Result<(), Box<dyn std::error::Error>> {
         self.prepare_targets_with_shadow(device, window, views, None, 0, max_bytes)
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn prepare_targets_with_shadow(
         &mut self,
         device: &wgpu::Device,
@@ -325,7 +324,6 @@ impl FogDraw {
         }
         Ok(())
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn encode(
         &mut self,
         device: &wgpu::Device,
@@ -868,7 +866,10 @@ mod shadow_tests {
             })
             .collect();
         let caster_geometries: Vec<_> = if skinned {
-            skin_instances.iter().map(|skin| skin.geometry()).collect()
+            skin_instances
+                .iter()
+                .map(voxy_render::SceneSkinInstance::geometry)
+                .collect()
         } else {
             vec![&half, &half]
         };

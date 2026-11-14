@@ -1,5 +1,6 @@
 //! Shared closed finite-capacity heat transfer, positive from a to b.
-pub(crate) fn finite_pair_transfer(
+#[doc(hidden)]
+pub fn finite_pair_transfer(
     ta: f64,
     ca: f64,
     tb: f64,

@@ -191,6 +191,7 @@ impl LoadedScene {
             });
         }
         self.graph.slots = slots;
+        self.graph.rebuild_component_slots();
         self.graph.free.clone_from(&saved.free);
         self.graph.structure_revision = saved.structure_revision;
         self.ids = new_ids;

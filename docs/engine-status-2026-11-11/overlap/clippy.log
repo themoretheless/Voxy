@@ -1,0 +1,14 @@
+    Blocking waiting for file lock on build directory
+    Checking voxy_time v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_time)
+    Checking voxy_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_core)
+    Checking serde_json v1.0.151
+    Checking voxy_audio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio)
+    Checking voxy_input v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_input)
+    Checking voxy_ui v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_ui)
+    Checking voxy_text v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_text)
+    Checking physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Checking voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+    Checking voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+    Checking voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 20.85s

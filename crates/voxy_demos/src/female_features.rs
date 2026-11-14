@@ -1,5 +1,5 @@
 //! Surface-attached brow/lash/fuzz strands and animated oral geometry.
-#![allow(clippy::cast_precision_loss)] // Small fixed tessellation counts fit f32 exactly.
+// Small fixed tessellation counts fit f32 exactly.
 use glam::{Mat3, Mat4, Quat, Vec3};
 use voxy_render::SceneVertex;
 
@@ -23,7 +23,7 @@ struct Strand {
 #[derive(Debug)]
 pub struct FaceFeatures {
     strands: Vec<Strand>,
-    lash_motion: Vec<physics::secondary_motion::SecondaryMotion>,
+    lash_motion: Vec<physics_bio::secondary_motion::SecondaryMotion>,
     seams: Vec<([u32; 3], [Vec3; 3])>,
     rims: Vec<Vec<([usize; 3], Vec3)>>,
     lash_skin_vertices: Vec<usize>,
@@ -41,7 +41,7 @@ impl FaceFeatures {
         &self,
         dt: f64,
         acceleration: [f64; 3],
-    ) -> Result<Vec<physics::secondary_motion::SecondaryMotion>, &'static str> {
+    ) -> Result<Vec<physics_bio::secondary_motion::SecondaryMotion>, &'static str> {
         let mut candidate = self.lash_motion.clone();
         for (strand, motion) in self.strands.iter().zip(&mut candidate) {
             if matches!(strand.kind, Kind::Lash | Kind::LowerLash) {
@@ -50,12 +50,15 @@ impl FaceFeatures {
         }
         Ok(candidate)
     }
-    pub fn publish_lashes(&mut self, candidate: Vec<physics::secondary_motion::SecondaryMotion>) {
+    pub fn publish_lashes(
+        &mut self,
+        candidate: Vec<physics_bio::secondary_motion::SecondaryMotion>,
+    ) {
         self.lash_motion = candidate;
     }
     pub fn exchange_lashes(
         &mut self,
-        candidate: &mut Vec<physics::secondary_motion::SecondaryMotion>,
+        candidate: &mut Vec<physics_bio::secondary_motion::SecondaryMotion>,
     ) {
         std::mem::swap(&mut self.lash_motion, candidate);
     }
@@ -258,8 +261,8 @@ impl FaceFeatures {
             lash_motion: strands
                 .iter()
                 .map(|_| {
-                    physics::secondary_motion::SecondaryMotion::new(
-                        physics::secondary_motion::Config {
+                    physics_bio::secondary_motion::SecondaryMotion::new(
+                        physics_bio::secondary_motion::Config {
                             frequency: 24.,
                             damping_ratio: 0.3,
                         },
@@ -275,7 +278,7 @@ impl FaceFeatures {
             lash_contact_cache: Default::default(),
         }
     }
-    #[allow(clippy::too_many_arguments)] // Surface attachment inputs and existing render buffers.
+    // Surface attachment inputs and existing render buffers.
     pub fn append(
         &self,
         body: &[SceneVertex],
@@ -295,7 +298,6 @@ impl FaceFeatures {
             &crate::face_parameters::FaceParameters::default(),
         );
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn append_configured(
         &self,
         body: &[SceneVertex],
@@ -310,7 +312,6 @@ impl FaceFeatures {
             body, normals, vertices, indices, head, pose, parameters, None,
         );
     }
-    #[allow(clippy::too_many_arguments)]
     pub fn append_configured_with_bindings(
         &self,
         body: &[SceneVertex],
@@ -770,7 +771,7 @@ pub fn open_mouth_surface(vertices: &[SceneVertex], indices: &mut Vec<u32>) -> u
     *indices = kept;
     (before - indices.len()) / 3
 }
-#[allow(clippy::many_single_char_names)] // Local tube basis and endpoint notation.
+// Local tube basis and endpoint notation.
 fn groom_noise(seed: usize) -> f32 {
     let mut bits = (seed as u32).wrapping_add(0x9e37_79b9);
     bits = (bits ^ (bits >> 16)).wrapping_mul(0x85eb_ca6b);
@@ -1414,7 +1415,6 @@ fn ellipsoid(
         false,
     );
 }
-#[allow(clippy::too_many_arguments)]
 fn ellipsoid_sampled(
     vertices: &mut Vec<SceneVertex>,
     indices: &mut Vec<u32>,
@@ -1888,7 +1888,11 @@ mod tests {
             ));
             assert_eq!(upper.indices(), lower.indices());
             for mesh in [&upper, &lower] {
-                let sign = if std::ptr::eq(mesh, &raw const upper) { -1. } else { 1. };
+                let sign = if std::ptr::eq(mesh, &raw const upper) {
+                    -1.
+                } else {
+                    1.
+                };
                 let center = mesh
                     .vertices()
                     .iter()
@@ -2211,8 +2215,8 @@ mod inertial_lash_regression {
         let mut features = FaceFeatures {
             strands: vec![strand],
             lash_motion: vec![
-                physics::secondary_motion::SecondaryMotion::new(
-                    physics::secondary_motion::Config {
+                physics_bio::secondary_motion::SecondaryMotion::new(
+                    physics_bio::secondary_motion::Config {
                         frequency: 24.,
                         damping_ratio: 0.3,
                     },

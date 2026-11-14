@@ -1,6 +1,6 @@
 //! Fully ionized, nondegenerate monatomic gas plus trapped LTE radiation in SI.
 //! Nuclear masses are approximated by `A*m_u`; no ionization, degeneracy or pairs.
-use crate::astrophysics_thermal::STEFAN_BOLTZMANN;
+use crate::astrophysics::thermal::STEFAN_BOLTZMANN;
 pub const BOLTZMANN: f64 = 1.380_649e-23;
 pub const ATOMIC_MASS: f64 = 1.660_539_068_92e-27;
 pub const LIGHT_SPEED: f64 = 299_792_458.0;

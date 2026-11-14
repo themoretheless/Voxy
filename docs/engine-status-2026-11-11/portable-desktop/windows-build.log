@@ -1,0 +1,160 @@
+   Compiling libm v0.2.16
+   Compiling cfg-if v1.0.4
+   Compiling windows-link v0.2.1
+   Compiling cfg_aliases v0.2.2
+   Compiling equivalent v1.0.2
+   Compiling bitflags v2.13.1
+   Compiling foldhash v0.2.0
+   Compiling log v0.4.34
+   Compiling serde_core v1.0.229
+   Compiling allocator-api2 v0.2.21
+   Compiling khronos_api v3.1.0
+   Compiling num-traits v0.2.19
+   Compiling thiserror v2.0.20
+   Compiling arrayvec v0.7.8
+   Compiling smallvec v1.16.0
+   Compiling syn v2.0.119
+   Compiling bytemuck_derive v1.12.0
+   Compiling windows-result v0.4.1
+   Compiling windows-strings v0.5.1
+   Compiling zerocopy v0.8.56
+   Compiling hashbrown v0.17.1
+   Compiling rustc-hash v1.1.0
+   Compiling xml-rs v0.8.29
+   Compiling naga v30.0.1
+   Compiling libloading v0.8.9
+   Compiling windows-threading v0.2.1
+   Compiling zmij v1.0.23
+   Compiling libc v0.2.189
+   Compiling bit-vec v0.9.1
+   Compiling unicode-width v0.2.2
+   Compiling raw-window-handle v0.6.2
+   Compiling parking_lot_core v0.9.12
+   Compiling ash v0.38.0+1.3.281
+   Compiling codespan-reporting v0.13.1
+   Compiling bit-set v0.10.0
+   Compiling spirv v0.4.0+sdk-1.4.341.0
+   Compiling indexmap v2.14.1
+   Compiling once_cell v1.21.4
+   Compiling gl_generator v0.14.0
+   Compiling bytemuck v1.25.2
+   Compiling scopeguard v1.2.0
+   Compiling unicode-ident v1.0.24
+   Compiling naga-types v30.0.1
+   Compiling serde v1.0.229
+   Compiling glutin_wgl_sys v0.6.1
+   Compiling windows_x86_64_gnu v0.52.6
+   Compiling static_assertions v1.1.0
+   Compiling khronos-egl v6.0.0
+   Compiling serde_json v1.0.151
+   Compiling lock_api v0.4.14
+   Compiling hashbrown v0.16.1
+   Compiling wgpu-hal v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu-hal)
+   Compiling serde_derive v1.0.229
+   Compiling presser v0.3.1
+   Compiling find-msvc-tools v0.1.11
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling shlex v2.0.1
+   Compiling ordered-float v5.5.0
+   Compiling windows-interface v0.59.3
+   Compiling windows-implement v0.60.2
+   Compiling zerocopy-derive v0.8.56
+   Compiling cc v1.4.4
+   Compiling glow v0.17.0
+   Compiling wgpu-types v30.0.1
+   Compiling parking_lot v0.12.5
+   Compiling simd-adler32 v0.3.10
+   Compiling windows-core v0.62.2
+   Compiling profiling v1.0.18
+   Compiling renderdoc-sys v1.1.0
+   Compiling range-alloc v0.1.5
+   Compiling wgpu-core v30.0.1
+   Compiling crc32fast v1.5.2
+   Compiling voxy_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_core)
+   Compiling windows-targets v0.52.6
+   Compiling adler2 v2.0.1
+   Compiling blake3 v1.8.7
+   Compiling litrs v1.0.0
+   Compiling glam v0.33.6
+   Compiling num-integer v0.1.47
+   Compiling wgpu v30.0.1 (/Users/themoretheless/Documents/Sources/voxy/vendor/wgpu)
+   Compiling document-features v0.2.12
+   Compiling cpufeatures v0.3.1
+   Compiling constant_time_eq v0.4.2
+   Compiling num-bigint v0.4.8
+   Compiling miniz_oxide v0.9.1
+   Compiling core_maths v0.1.1
+   Compiling inflections v1.1.1
+   Compiling ttf-parser v0.25.1
+   Compiling miniz_oxide v0.8.9
+   Compiling gltf-derive v1.4.1
+   Compiling voxy_world v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_world)
+   Compiling flate2 v1.1.10
+   Compiling windows-result v0.1.2
+   Compiling fdeflate v0.3.7
+   Compiling crossbeam-utils v0.8.22
+   Compiling zune-core v0.5.3
+   Compiling foldhash v0.1.5
+   Compiling pxfm v0.1.30
+   Compiling hashbrown v0.15.5
+   Compiling gltf-json v1.4.1
+   Compiling zune-jpeg v0.5.15
+   Compiling windows-future v0.3.2
+   Compiling windows-numerics v0.3.1
+   Compiling windows-collections v0.3.2
+   Compiling png v0.18.1
+   Compiling windows v0.62.2
+   Compiling windows-core v0.54.0
+   Compiling unicode-ccc v0.4.0
+   Compiling byteorder-lite v0.1.0
+   Compiling unicode-properties v0.1.4
+   Compiling unicode-script v0.5.8
+   Compiling byteorder v1.5.0
+   Compiling lazy_static v1.5.0
+   Compiling cpal v0.15.3
+   Compiling unicode-bidi-mirroring v0.4.0
+   Compiling rustybuzz v0.20.1
+   Compiling fontdue v0.9.4
+   Compiling voxy_mesher v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_mesher)
+   Compiling windows v0.54.0
+   Compiling voxy_lighting v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_lighting)
+   Compiling num-rational v0.4.2
+   Compiling half v2.7.1
+   Compiling winit v0.30.13
+   Compiling dasp_sample v0.11.0
+   Compiling voxy_time v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_time)
+   Compiling voxy_audio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio)
+   Compiling tracing-core v0.1.36
+   Compiling moxcms v0.8.1
+   Compiling gltf v1.4.1
+   Compiling getrandom v0.3.4
+   Compiling pin-project-lite v0.2.17
+   Compiling tracing v0.1.44
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling crossbeam-queue v0.3.14
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_text)
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling windows-sys v0.52.0
+   Compiling voxy_ui v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_ui)
+   Compiling cursor-icon v1.2.0
+   Compiling bevy_mikktspace v1.0.0 (/Users/themoretheless/Documents/Sources/voxy/vendor/bevy_mikktspace)
+   Compiling unicode-segmentation v1.13.3
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+   Compiling voxy_input v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_input)
+   Compiling dpi v0.1.2
+   Compiling smol_str v0.2.2
+   Compiling pollster v1.0.1
+   Compiling image v0.25.10
+   Compiling gpu-allocator v0.28.0
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio_device)
+   Compiling wgpu-core-deps-windows-linux-android v30.0.1
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+   Compiling voxy_water v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_water)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `release` profile [optimized] target(s) in 1m 59s

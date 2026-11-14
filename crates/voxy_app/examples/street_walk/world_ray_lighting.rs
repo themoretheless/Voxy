@@ -8,14 +8,28 @@ pub fn enabled() -> bool {
     std::env::var("VOXY_STREET_WORLD_RAY_FRAME").as_deref() == Ok("1")
 }
 
+pub fn validate_configuration() -> Result<(), &'static str> {
+    if !enabled() {
+        return Ok(());
+    }
+    if !std::env::args().any(|a| a == "--experimental-ray-query") {
+        return Err("world ray frame requires --experimental-ray-query");
+    }
+    if std::env::var_os("VOXY_STREET_COMPUTE_GI").is_none() {
+        return Err("VOXY_STREET_WORLD_RAY_FRAME=1 requires VOXY_STREET_COMPUTE_GI=1");
+    }
+    if std::env::var_os("VOXY_STREET_PAIRED_DDA").is_none() {
+        return Err("VOXY_STREET_WORLD_RAY_FRAME=1 requires VOXY_STREET_PAIRED_DDA=1");
+    }
+    Ok(())
+}
+
 #[allow(unsafe_code)]
 pub fn experimental_features() -> Result<wgpu::ExperimentalFeatures, Box<dyn std::error::Error>> {
     if !enabled() {
         return Ok(wgpu::ExperimentalFeatures::disabled());
     }
-    if !std::env::args().any(|a| a == "--experimental-ray-query") {
-        return Err("world ray frame requires --experimental-ray-query".into());
-    }
+    validate_configuration()?;
     // SAFETY: this explicitly selected experimental ray-query run uses validated
     // archive geometry. The caller opts into wgpu's experimental backend contract.
     Ok(unsafe { wgpu::ExperimentalFeatures::enabled() })
@@ -61,6 +75,8 @@ pub fn prepare(
         .ok()
         .map(|s| s.parse::<NonZeroU32>())
         .transpose()?;
+    let single_ray_queue_claim =
+        std::env::var("VOXY_STREET_WORLD_RAY_SINGLE_CLAIM").as_deref() == Ok("1");
     let started = std::time::Instant::now();
     let scene = Arc::new(
         if std::env::var("VOXY_STREET_WORLD_RAY_PRIMITIVE_GROUPS").as_deref() == Ok("1") {
@@ -83,9 +99,14 @@ pub fn prepare(
             exact_vertex_cache: std::env::var("VOXY_STREET_WORLD_RAY_EXACT_VERTEX_CACHE")
                 .as_deref()
                 == Ok("1"),
-            wide_source_nodes: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref() == Ok("1"),
-            wide_source_near_first: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NEAR_FIRST").as_deref() == Ok("1"),
-            compare_wide_same_producer: std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE").as_deref() == Ok("1"),
+            wide_source_nodes: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NODES").as_deref()
+                == Ok("1"),
+            wide_source_near_first: std::env::var("VOXY_STREET_WORLD_RAY_WIDE_NEAR_FIRST")
+                .as_deref()
+                == Ok("1"),
+            compare_wide_same_producer: std::env::var("VOXY_STREET_WORLD_RAY_COMPARE_WIDE")
+                .as_deref()
+                == Ok("1"),
             skip_zero_prefix_multiply: std::env::var(
                 "VOXY_STREET_WORLD_RAY_SKIP_ZERO_PREFIX_MULTIPLY",
             )
@@ -149,6 +170,7 @@ pub fn prepare(
             defer_nearest: true,
             exact_worker_limit: Some(exact_workers),
             exact_group_size: exact_group,
+            single_ray_queue_claim,
             ..Default::default()
         },
     )?);
@@ -179,22 +201,25 @@ pub fn prepare(
         job.exact_worker_count(),
         job.exact_workgroup_size()
     );
-    eprintln!("STREET WORLD SCHEDULING {}", serde_json::json!({
-        "kind": format!("{:?}",job.query_kind()),
-        "wide_source_nodes": job.wide_source_nodes_enabled(),
-        "wide_source_near_first": job.wide_source_near_first_enabled(),
-        "wide_source_block_blake3": job.wide_source_digest(),
-        "source_simplified": false
-    }));
-    if std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_SLOTS").is_some()
-        || std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_WORKERS").is_some()
+    eprintln!(
+        "STREET WORLD SCHEDULING {}",
+        serde_json::json!({
+            "kind": format!("{:?}",job.query_kind()),
+            "nearest_queue_claim_width": if single_ray_queue_claim { 1 } else { 4 },
+            "wide_source_nodes": job.wide_source_nodes_enabled(),
+            "wide_source_near_first": job.wide_source_near_first_enabled(),
+            "wide_source_block_blake3": job.wide_source_digest(),
+            "source_simplified": false
+        })
+    );
+    if (std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_SLOTS").is_some()
+        || std::env::var_os("VOXY_STREET_WORLD_RAY_WINNER_WORKERS").is_some())
+        && let Some((slots, workers)) = job.exact_winner_workspace()
     {
-        if let Some((slots, workers)) = job.exact_winner_workspace() {
-            eprintln!(
-                "STREET WORLD winner_slots={slots} winner_worker_cap={workers} full_slots=512 full_workers={}",
-                job.exact_worker_count()
-            );
-        }
+        eprintln!(
+            "STREET WORLD winner_slots={slots} winner_worker_cap={workers} full_slots=512 full_workers={}",
+            job.exact_worker_count()
+        );
     }
     if let Some(buffer) = job.geometry_bounds_buffer() {
         let read = device.create_buffer(&wgpu::BufferDescriptor {

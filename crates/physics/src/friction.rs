@@ -1,6 +1,6 @@
 //! Fixed-normal, small-sliding penalty Coulomb contact with backward-Euler return.
 //! Traction is an energy-gradient sign: force on the plus side is its negative.
-use crate::biomechanics::Matrix;
+use crate::math::Matrix;
 mod slider;
 use crate::math::dot;
 pub use slider::SliderStep;
@@ -117,7 +117,7 @@ impl Material {
     /// Numerical return loss and released spring energy are distinct diagnostics.
     /// # Errors
     /// Rejects invalid normals/jumps and overflow without mutating old history.
-    #[allow(clippy::too_many_lines)] // Keep contact history transitions and all energy ledgers together.
+    // Keep contact history transitions and all energy ledgers together.
     pub fn response(
         &self,
         old: &State,
@@ -253,7 +253,6 @@ fn kinematics(jump: Vec3, normal: Vec3) -> Result<(f64, Vec3), &'static str> {
 ///
 /// Returns `(friction_force, next_bristle_z)`.
 #[must_use]
-#[allow(clippy::too_many_arguments)]
 pub fn lugre_bristle_friction_force(
     rel_velocity: f64,
     bristle_z: f64,
@@ -311,7 +310,9 @@ mod lugre_tests {
     fn lugre_bristle_model_exhibits_stribeck_transition_from_stiction_to_coulomb() {
         let mut z_slow = 0.0;
         let mut f_slow = 0.0;
-        for _ in 0..100 {
+        // At 1 mm/s the bristle relaxes with rate |v| / g(v) = 6.7 1/s, so the
+        // stiction plateau needs seconds of sliding: 0.1 s reaches only 7.5 N.
+        for _ in 0..2000 {
             (f_slow, z_slow) = lugre_bristle_friction_force(
                 0.001, z_slow, 1e5, 300.0, 0.4, 10.0, 15.0, 0.05, 0.001,
             )
@@ -320,10 +321,9 @@ mod lugre_tests {
         let mut z_fast = 0.0;
         let mut f_fast = 0.0;
         for _ in 0..100 {
-            (f_fast, z_fast) = lugre_bristle_friction_force(
-                0.5, z_fast, 1e5, 300.0, 0.0, 10.0, 15.0, 0.05, 0.001,
-            )
-            .unwrap();
+            (f_fast, z_fast) =
+                lugre_bristle_friction_force(0.5, z_fast, 1e5, 300.0, 0.0, 10.0, 15.0, 0.05, 0.001)
+                    .unwrap();
         }
         assert!(f_slow > f_fast && f_fast >= 9.9);
     }

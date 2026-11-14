@@ -255,7 +255,8 @@ pub fn sh2_non_negative_irradiance(l0: f32, l1: [f32; 3], normal: [f32; 3]) -> f
         return l0;
     }
     let dir = [l1[0] / l1_len, l1[1] / l1_len, l1[2] / l1_len];
-    let q = 0.5 * (1.0 + (normal[0] * dir[0] + normal[1] * dir[1] + normal[2] * dir[2]).clamp(-1.0, 1.0));
+    let q = 0.5
+        * (1.0 + (normal[0] * dir[0] + normal[1] * dir[1] + normal[2] * dir[2]).clamp(-1.0, 1.0));
     let r = (l1_len / l0).clamp(0.0, 1.0);
     let p = 1.0 + 2.0 * r;
     let a = (1.0 - r) / (1.0 + r);

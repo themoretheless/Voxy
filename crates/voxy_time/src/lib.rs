@@ -215,7 +215,6 @@ impl<const N: usize> FrameLatencyWindow<N> {
 
     /// Records a frame duration in seconds and returns `true` if it exceeded $2\times$ the current rolling mean.
     #[inline]
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     pub fn record_seconds(&mut self, dt_seconds: f64) -> bool {
         if !dt_seconds.is_finite() || dt_seconds < 0.0 {
             return false;
@@ -266,7 +265,6 @@ impl<const N: usize> FrameLatencyWindow<N> {
 
     #[inline]
     #[must_use]
-    #[allow(clippy::cast_possible_truncation)]
     pub const fn mean_micros(&self) -> u32 {
         if self.filled == 0 {
             return 0;
@@ -342,7 +340,6 @@ impl FrameWorkBudget {
 }
 
 #[cfg(test)]
-#[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
     #[test]
@@ -438,7 +435,32 @@ mod tests {
         assert!(!budget.try_consume(700));
         assert!(budget.try_consume(600));
         assert_eq!(budget.remaining_micros(), 0);
+        assert_eq!(snap_to_vrr_refresh_divisor_us(8_400, 120), 8_333);
+        assert_eq!(snap_to_vrr_refresh_divisor_us(16_500, 120), 16_667);
+        assert_eq!(snap_to_vrr_refresh_divisor_us(24_900, 120), 25_000);
     }
+}
+
+/// Quantizes a target frame interval `measured_us` (microseconds) to the nearest integer refresh
+/// divisor (`1x`, `2x`, `3x`, `4x` of `max_refresh_hz`, e.g. 120, 60, 40, 30 Hz on ProMotion/VRR displays)
+/// to eliminate non-integer VSync judder.
+#[must_use]
+pub fn snap_to_vrr_refresh_divisor_us(measured_us: u32, max_refresh_hz: u32) -> u32 {
+    if max_refresh_hz == 0 || measured_us == 0 {
+        return measured_us;
+    }
+    let base_period_us = 1_000_000.0 / f64::from(max_refresh_hz);
+    let mut best_us = measured_us;
+    let mut best_diff = u32::MAX;
+    for divisor in 1..=4_u32 {
+        let candidate = (base_period_us * f64::from(divisor)).round() as u32;
+        let diff = measured_us.abs_diff(candidate);
+        if diff < best_diff {
+            best_diff = diff;
+            best_us = candidate;
+        }
+    }
+    best_us
 }
 
 #[cfg(test)]

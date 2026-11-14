@@ -1,0 +1,148 @@
+STREET RUN pid=10526 benchmark_seconds=20 offscreen=false paired_dda=true tiles=false cell_bounds=false far_bound=false
+ORIGINAL STREET seed=1448040537 source_geometry_assets=0 materials=143 mesh_batches=161 triangles=3634960 instances=120739
+ORIGINAL STREET MATERIALS provider=PolyHaven license=CC0 scans=3 source_maps=9 gpu_textures=6 source_resolution=4k gpu=linear_rgba32float packing=lossless_channels
+DAYLIGHT solar_irradiance=[2169.2283, 2185.722, 1982.8407] source_background_unchanged=true indirect_float32=true
+STREET grounded spawn: authored=DVec3(0.6000000238418579, 0.1299999713897706, -18.0) resolved=DVec3(0.44700391757059055, 0.05477531636347348, -17.86699189712493)
+STREET DISPLAY format=Rgba16Float colour_space=ExtendedSrgbLinear hdr_info=DisplayHdrInfo { luminance: None, headroom: Some(DisplayHeadroom { current: Some(4.4643993), potential: Some(16.0), reference: None }), chromaticity: None, coarse: Some(DisplayCoarseRange { high_dynamic_range: Some(true), gamut: None }), bits_per_color: None }
+STREET GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }; 1920x1080 Immediate; full scene geometry; original mip chains when images are present
+STREET WORLD SOURCE ready meshes=161 instances=120739 exact_workers=128 source_simplified=false preparation_seconds=0.096
+STREET WORLD consumer_any_hit_admission=false native_source_witness=false node_reciprocal=false
+STREET WORLD exact_position_consumer=false material_surface_policy=false exact_workers=128 exact_group=1
+STREET WORLD SCHEDULING {"kind":"Nearest","source_simplified":false,"wide_source_block_blake3":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"wide_source_near_first":false,"wide_source_nodes":false}
+STREET WORLD geometry_bounds_bytes=0 geometry_bounds_check=false
+ARCHIVE INIT stage=environment_begin elapsed_ms=0.010
+ARCHIVE INIT stage=environment_resources_ready elapsed_ms=271.470
+ARCHIVE INIT stage=scene_shader_begin elapsed_ms=283.329
+ARCHIVE INIT stage=scene_shader_ready elapsed_ms=293.789
+ARCHIVE INIT pipeline_begin blend=false double=false shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=false double=false shadow=false predepth=false masked=false milliseconds=8.640
+ARCHIVE INIT pipeline_begin blend=false double=true shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=false double=true shadow=false predepth=false masked=false milliseconds=6.288
+ARCHIVE INIT pipeline_begin blend=false double=false shadow=false predepth=false masked=true
+ARCHIVE INIT pipeline_ready blend=false double=false shadow=false predepth=false masked=true milliseconds=7.366
+ARCHIVE INIT pipeline_begin blend=false double=true shadow=false predepth=false masked=true
+ARCHIVE INIT pipeline_ready blend=false double=true shadow=false predepth=false masked=true milliseconds=5.506
+ARCHIVE INIT pipeline_begin blend=true double=false shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=true double=false shadow=false predepth=false masked=false milliseconds=7.586
+ARCHIVE INIT pipeline_begin blend=true double=true shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=true double=true shadow=false predepth=false masked=false milliseconds=5.529
+ARCHIVE INIT pipeline_begin blend=true double=false shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=true double=false shadow=false predepth=false masked=false milliseconds=5.573
+ARCHIVE INIT pipeline_begin blend=true double=true shadow=false predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=true double=true shadow=false predepth=false masked=false milliseconds=5.465
+ARCHIVE INIT pipeline_begin blend=false double=true shadow=true predepth=false masked=false
+ARCHIVE INIT pipeline_ready blend=false double=true shadow=true predepth=false masked=false milliseconds=1.659
+ARCHIVE INIT pipeline_begin blend=false double=false shadow=false predepth=true masked=false
+ARCHIVE INIT pipeline_ready blend=false double=false shadow=false predepth=true masked=false milliseconds=1.629
+ARCHIVE INIT pipeline_begin blend=false double=true shadow=false predepth=true masked=false
+ARCHIVE INIT pipeline_ready blend=false double=true shadow=false predepth=true masked=false milliseconds=1.447
+ARCHIVE INIT stage=material_upload_begin elapsed_ms=357.100
+ARCHIVE INIT stage=material_upload_next elapsed_ms=505.744
+ARCHIVE INIT stage=material_upload_next elapsed_ms=661.431
+ARCHIVE INIT stage=material_upload_next elapsed_ms=815.993
+ARCHIVE INIT stage=material_upload_next elapsed_ms=969.231
+ARCHIVE INIT stage=material_upload_next elapsed_ms=1125.133
+ARCHIVE INIT stage=material_upload_next elapsed_ms=1287.022
+ARCHIVE INIT stage=material_upload_ready elapsed_ms=1287.032
+STREET WORLD FRAME connected=true regions=144 tile=512x256 ray_capacity=131072 shared_query_owner=true original_full_frame_DDA_skipped=true
+ARCHIVE PROBE begin probes=372 faces=2232 resolution=3840x2160
+STREET antialiasing=Temporal render=3840x2160 output=1920x1080
+ARCHIVE PROBE completed=1/372 elapsed_seconds=0.813
+ARCHIVE PROBE completed=2/372 elapsed_seconds=1.269
+ARCHIVE PROBE completed=3/372 elapsed_seconds=1.691
+ARCHIVE PROBE completed=4/372 elapsed_seconds=2.251
+ARCHIVE PROBE completed=5/372 elapsed_seconds=2.834
+ARCHIVE PROBE completed=6/372 elapsed_seconds=3.334
+ARCHIVE PROBE completed=7/372 elapsed_seconds=3.771
+ARCHIVE PROBE completed=8/372 elapsed_seconds=4.346
+ARCHIVE PROBE completed=9/372 elapsed_seconds=4.734
+ARCHIVE PROBE completed=10/372 elapsed_seconds=5.157
+ARCHIVE PROBE completed=11/372 elapsed_seconds=5.537
+ARCHIVE PROBE completed=12/372 elapsed_seconds=5.771
+ARCHIVE PROBE completed=13/372 elapsed_seconds=6.451
+ARCHIVE PROBE completed=14/372 elapsed_seconds=7.173
+ARCHIVE PROBE completed=15/372 elapsed_seconds=7.865
+ARCHIVE PROBE completed=16/372 elapsed_seconds=8.778
+ARCHIVE PROBE completed=17/372 elapsed_seconds=9.699
+ARCHIVE PROBE completed=18/372 elapsed_seconds=10.347
+ARCHIVE PROBE completed=19/372 elapsed_seconds=11.041
+ARCHIVE PROBE completed=20/372 elapsed_seconds=12.148
+ARCHIVE PROBE completed=21/372 elapsed_seconds=12.629
+ARCHIVE PROBE completed=22/372 elapsed_seconds=13.169
+ARCHIVE PROBE completed=23/372 elapsed_seconds=13.692
+ARCHIVE PROBE completed=24/372 elapsed_seconds=13.992
+ARCHIVE PROBE completed=25/372 elapsed_seconds=14.909
+ARCHIVE PROBE completed=26/372 elapsed_seconds=15.799
+ARCHIVE PROBE completed=27/372 elapsed_seconds=16.726
+ARCHIVE PROBE completed=28/372 elapsed_seconds=17.477
+ARCHIVE PROBE completed=29/372 elapsed_seconds=18.607
+ARCHIVE PROBE completed=30/372 elapsed_seconds=19.408
+ARCHIVE PROBE completed=31/372 elapsed_seconds=20.392
+ARCHIVE PROBE completed=32/372 elapsed_seconds=21.516
+ARCHIVE PROBE completed=33/372 elapsed_seconds=21.862
+ARCHIVE PROBE completed=34/372 elapsed_seconds=22.578
+ARCHIVE PROBE completed=35/372 elapsed_seconds=23.369
+ARCHIVE PROBE completed=36/372 elapsed_seconds=23.888
+ARCHIVE PROBE completed=37/372 elapsed_seconds=24.589
+ARCHIVE PROBE completed=38/372 elapsed_seconds=25.521
+ARCHIVE PROBE completed=39/372 elapsed_seconds=26.371
+ARCHIVE PROBE completed=40/372 elapsed_seconds=27.274
+ARCHIVE PROBE completed=41/372 elapsed_seconds=28.410
+ARCHIVE PROBE completed=42/372 elapsed_seconds=29.427
+ARCHIVE PROBE completed=43/372 elapsed_seconds=30.340
+ARCHIVE PROBE completed=44/372 elapsed_seconds=31.536
+ARCHIVE PROBE completed=45/372 elapsed_seconds=32.384
+ARCHIVE PROBE completed=46/372 elapsed_seconds=33.219
+ARCHIVE PROBE completed=47/372 elapsed_seconds=33.947
+ARCHIVE PROBE completed=48/372 elapsed_seconds=34.655
+ARCHIVE PROBE completed=49/372 elapsed_seconds=35.252
+ARCHIVE PROBE completed=50/372 elapsed_seconds=36.184
+ARCHIVE PROBE completed=51/372 elapsed_seconds=37.076
+ARCHIVE PROBE completed=52/372 elapsed_seconds=37.794
+ARCHIVE PROBE completed=53/372 elapsed_seconds=38.961
+ARCHIVE PROBE completed=54/372 elapsed_seconds=39.908
+ARCHIVE PROBE completed=55/372 elapsed_seconds=40.912
+ARCHIVE PROBE completed=56/372 elapsed_seconds=41.888
+ARCHIVE PROBE completed=57/372 elapsed_seconds=42.812
+ARCHIVE PROBE completed=58/372 elapsed_seconds=43.647
+ARCHIVE PROBE completed=59/372 elapsed_seconds=44.415
+ARCHIVE PROBE completed=60/372 elapsed_seconds=45.230
+ARCHIVE PROBE completed=61/372 elapsed_seconds=46.150
+ARCHIVE PROBE completed=62/372 elapsed_seconds=46.911
+ARCHIVE PROBE completed=63/372 elapsed_seconds=47.789
+ARCHIVE PROBE completed=64/372 elapsed_seconds=48.861
+ARCHIVE PROBE completed=65/372 elapsed_seconds=49.881
+ARCHIVE PROBE completed=66/372 elapsed_seconds=54.531
+ARCHIVE PROBE completed=67/372 elapsed_seconds=62.995
+ARCHIVE PROBE completed=68/372 elapsed_seconds=64.896
+ARCHIVE PROBE completed=69/372 elapsed_seconds=65.516
+ARCHIVE PROBE completed=70/372 elapsed_seconds=66.473
+ARCHIVE PROBE completed=71/372 elapsed_seconds=67.473
+ARCHIVE PROBE completed=72/372 elapsed_seconds=68.209
+ARCHIVE PROBE completed=73/372 elapsed_seconds=68.959
+ARCHIVE PROBE completed=74/372 elapsed_seconds=69.904
+ARCHIVE PROBE completed=75/372 elapsed_seconds=70.886
+ARCHIVE PROBE completed=76/372 elapsed_seconds=71.636
+ARCHIVE PROBE completed=77/372 elapsed_seconds=72.671
+ARCHIVE PROBE completed=78/372 elapsed_seconds=73.642
+ARCHIVE PROBE completed=79/372 elapsed_seconds=74.643
+ARCHIVE PROBE completed=80/372 elapsed_seconds=75.689
+ARCHIVE PROBE completed=81/372 elapsed_seconds=76.225
+ARCHIVE PROBE completed=82/372 elapsed_seconds=77.003
+ARCHIVE PROBE completed=83/372 elapsed_seconds=77.759
+ARCHIVE PROBE completed=84/372 elapsed_seconds=78.268
+ARCHIVE PROBE completed=85/372 elapsed_seconds=79.208
+ARCHIVE PROBE completed=86/372 elapsed_seconds=80.232
+ARCHIVE PROBE completed=87/372 elapsed_seconds=81.061
+ARCHIVE PROBE completed=88/372 elapsed_seconds=81.883
+ARCHIVE PROBE completed=89/372 elapsed_seconds=83.092
+ARCHIVE PROBE completed=90/372 elapsed_seconds=83.997
+ARCHIVE PROBE completed=91/372 elapsed_seconds=84.812
+ARCHIVE PROBE completed=92/372 elapsed_seconds=86.060
+ARCHIVE PROBE completed=93/372 elapsed_seconds=86.719
+ARCHIVE PROBE completed=94/372 elapsed_seconds=87.433
+ARCHIVE PROBE completed=95/372 elapsed_seconds=88.183
+ARCHIVE PROBE completed=96/372 elapsed_seconds=88.710
+ARCHIVE PROBE completed=97/372 elapsed_seconds=89.408
+ARCHIVE PROBE completed=98/372 elapsed_seconds=90.316
+ARCHIVE PROBE completed=99/372 elapsed_seconds=91.188

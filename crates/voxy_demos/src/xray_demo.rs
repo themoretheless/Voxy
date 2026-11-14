@@ -1,6 +1,6 @@
 //! Procedural shell and a solver-driven muscle ring; illustrative, not anatomy.
 use glam::Vec3;
-use physics::tissue::{Tissue, TissueKind, sample};
+use physics_bio::tissue::{Tissue, TissueKind, sample};
 use voxy_render::{SceneError, SceneMesh, SceneVertex};
 
 #[derive(Debug)]

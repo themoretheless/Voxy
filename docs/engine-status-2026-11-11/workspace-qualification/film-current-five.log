@@ -1,0 +1,27 @@
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+   Compiling voxy_mesher v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_mesher)
+   Compiling voxy_lighting v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_lighting)
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_voxel)
+   Compiling voxy_cuda v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_cuda)
+   Compiling voxy_gpu v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.09s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_demos-8e8d7e08c181b399)
+
+running 5 tests
+test female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time has been running for over 60 seconds
+test female_demo::film_state_capture_tests::full_skin_solver_film_uses_consumed_time_and_current_surface has been running for over 60 seconds
+test female_demo::film_state_capture_tests::moving_body_film_conserves_source_adjusted_mass_over_two_seconds has been running for over 60 seconds
+test female_demo::film_state_capture_tests::physical_film_uses_consumed_solver_time_and_current_surface has been running for over 60 seconds
+test female_demo::tests::film_substrate_matches_rendered_body_without_visual_work has been running for over 60 seconds
+test female_demo::film_state_capture_tests::animated_film_uses_current_pose_and_rejects_truncated_time ... ok
+test female_demo::film_state_capture_tests::full_skin_solver_film_uses_consumed_time_and_current_surface ... ok
+test female_demo::film_state_capture_tests::physical_film_uses_consumed_solver_time_and_current_surface ... ok
+test female_demo::tests::film_substrate_matches_rendered_body_without_visual_work ... ok
+test female_demo::film_state_capture_tests::moving_body_film_conserves_source_adjusted_mass_over_two_seconds ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 388 filtered out; finished in 258.02s
+

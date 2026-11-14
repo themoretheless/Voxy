@@ -225,10 +225,12 @@ fn native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work
         cache: cache.state(),
         cache_identity: cache.identity(),
         geometry: new_bytes,
+        restaged: false,
         checks: Box::pin(async move {
             Err(RejectedModelBatch {
                 assets,
                 error: "injected deferred GPU failure".into(),
+                geometry_needed: None,
             })
         }),
     });
@@ -248,6 +250,7 @@ fn native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work
         cache: cache.state(),
         cache_identity: cache.identity(),
         geometry: new_bytes,
+        restaged: false,
         checks: Box::pin(async move {
             let _retained = retained;
             std::future::pending::<Result<ReadyModelBatch, RejectedModelBatch>>().await
@@ -261,13 +264,15 @@ fn native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work
 
 #[test]
 fn model_completions_cannot_override_watcher_owned_manifest_inventory() {
-    let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../voxy_render/examples/assets/quad.obj");
+    let temp = ReloadFixture::new().unwrap();
+    let fixture = temp.0.join("mesh.obj");
+    std::fs::write(&fixture, "v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n").unwrap();
     let mut app = App::new(&fixture, false).unwrap();
     let id = app.id.clone().unwrap();
     let original_inventory = app.available.clone();
     app.import_recipe = InputRecipe::Manifest(AssetId("assets.json".into()));
     let manifest = br#"{"version":1,"assets":[{"asset":"new-model","source":"new.obj"}]}"#;
+    std::fs::write(temp.0.join("assets.json"), manifest).unwrap();
     let observed = || {
         let mut inputs = voxy_assets::ImportInputs::new(1, 65536);
         inputs
@@ -523,4 +528,80 @@ fn explicit_panel_retry_recovers_unchanged_source_and_respects_checkpoint_fence(
     assert!(!app.can_retry_selected_model());
     assert_eq!(app.catalog.pending(), 0);
     app.stop_workers().unwrap();
+}
+
+#[test]
+fn rejects_source_changed_after_worker_completion_and_recovers()
+-> Result<(), Box<dyn std::error::Error>> {
+    let fixture = ReloadFixture::new()?;
+    let directory = &fixture.0;
+    let path = directory.join("mesh.obj");
+    let mesh = |x| format!("v {x} 0 0\nv 5 0 0\nv 0 1 0\nf 1 2 3\n");
+    std::fs::write(&path, mesh(1))?;
+    let mut app = App::new(&path, false)?;
+    let id = app.id.clone().unwrap();
+    let mut worker = app.import_recipe.spawn_worker(directory)?;
+    let mut decode = |ticket: &AssetTicket| -> Result<ResultAsset, Error> {
+        worker.submit(ticket)?;
+        let deadline = Instant::now() + Duration::from_secs(5);
+        loop {
+            if let Some(result) = worker.try_result()? {
+                return Ok(result.result);
+            }
+            if Instant::now() >= deadline {
+                return Err("model worker timed out".into());
+            }
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    };
+    let ticket = app.catalog.request(id.clone())?;
+    app.complete_model_reload(&ticket, decode(&ticket)?, None)?;
+    let old = app.catalog.snapshot(&id).unwrap();
+    let document = app.authoring_document()?;
+
+    std::fs::write(&path, mesh(2))?;
+    let ticket = app.catalog.request(id.clone())?;
+    let queued = decode(&ticket)?;
+    assert!(queued.is_ok());
+    std::fs::write(&path, mesh(3))?;
+    app.complete_model_reload(&ticket, queued, None)?;
+    assert!(
+        matches!(app.catalog.status(&id), Some(voxy_assets::AssetStatus::Failed(error)) if error.contains("changed before publication"))
+    );
+    assert_eq!(app.catalog.pending(), 0);
+    assert!(Arc::ptr_eq(&old, &app.catalog.snapshot(&id).unwrap()));
+    assert_eq!(app.authoring_document()?, document);
+
+    let ticket = app.catalog.request(id.clone())?;
+    app.complete_model_reload(&ticket, decode(&ticket)?, None)?;
+    let updated = app.catalog.snapshot(&id).unwrap();
+    assert!(!Arc::ptr_eq(&old, &updated));
+    assert!((updated.value().mesh.vertices()[0].position[0] - 3.).abs() < f32::EPSILON);
+    assert_eq!(app.authoring_document()?, document);
+    worker.close().join().map_err(|_| "model worker panicked")?;
+    app.stop_workers()?;
+    Ok(())
+}
+
+struct ReloadFixture(std::path::PathBuf);
+impl ReloadFixture {
+    fn new() -> Result<Self, Error> {
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static NEXT: AtomicU64 = AtomicU64::new(0);
+        let directory = std::env::temp_dir().join(format!(
+            "voxy-late-import-{}-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)?
+                .as_nanos()
+        ));
+        std::fs::create_dir(&directory)?;
+        Ok(Self(directory))
+    }
+}
+impl Drop for ReloadFixture {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
 }

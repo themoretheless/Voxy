@@ -7,7 +7,7 @@ Run the native abstract specimen demonstration:
 ```sh
 cargo run -p voxy_app --example tissues
 cargo run -p voxy_app --example tissues -- --smoke
-cargo test -p physics --test tissues
+cargo test -p physics --test physics_bio tissues::
 ```
 
 Left to right: skin, buttock tissue, breast tissue, lip tissue, sphincter ring, penis shaft. Space pauses; Esc exits. Skeleton attachments oscillate, and muscle activation cycles automatically. These are abstract material specimens, not anatomical meshes. The render mesh uses colored edge ribbons to expose the constraints.
@@ -113,7 +113,7 @@ masses, pins and compliant constraints. The same mesh can feed the existing
 FEM owner with `mesh.into_body(pins, &material)` and its inertial owner with
 per-cell densities. This does not create a second rounded geometry algorithm.
 
-`cargo test -p physics --test tissue_continuum_geometry` checks the neo-Hookean
+`cargo test -p physics --test physics_bio tissue_continuum_geometry::` checks the neo-Hookean
 FEM on the rounded meshes at three resolutions. Homogeneous simple shear has
 J=1 and energy W=mu*gamma²/2. Tests compare total FEM energy against the analytic
 density times volume, with volume evaluated independently from the outward
@@ -304,7 +304,7 @@ without changing the numerical conduction law. No throughput claim is made.
 
 This API prescribes an external obstacle: it does not represent a finite-mass obstacle or update its momentum. Contact is a nodal boundary penalty and allows stiffness-dependent penetration. Rotation, triangle-mesh contact, friction and character-surface coupling are not implemented by this API. Contact activation can invalidate a coarse trapezoidal-work trial; callers must refine the time segment rather than replace actuator work with observed energy change.
 
-Qualification: `cargo test --release -p physics --test moving_plane_contact`. The tests cover analytic stationary-node work, co-moving pins/plane, Galilean-equivalent impact, independent work/momentum closure, time refinement and atomic history/heat/plane rollback.
+Qualification: `cargo test --release -p physics --test physics_bio moving_plane_contact::`. The tests cover analytic stationary-node work, co-moving pins/plane, Galilean-equivalent impact, independent work/momentum closure, time refinement and atomic history/heat/plane rollback.
 
 
 ## Prescribed plane rotation

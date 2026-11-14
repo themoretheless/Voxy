@@ -1,0 +1,4 @@
+indexed_triangles=768 output_cells=3072 triangle_tests=19936 node_visits=49490
+cache_hit=false
+archive_bytes=139436 
+base_triangles=512 variant_triangles=256 geometric_bound=0.047309662758212655 logical_index_bytes=9216

@@ -502,6 +502,17 @@ impl RetargetBinding {
             transition_weight: frame.transition_weight,
         })
     }
+    /// Resolves the target of a mapped source motion joint.
+    /// # Errors
+    /// Rejects joints absent from the compiled mapping.
+    pub fn target_motion_joint(&self, source: u16) -> Result<u16, AnimationError> {
+        self.joints
+            .iter()
+            .find(|joint| joint.source == usize::from(source))
+            .map(|joint| joint.target as u16)
+            .ok_or(AnimationError::InvalidRetargetBinding)
+    }
+
     /// Transfers pose and extracted parent-local root displacement as one candidate.
     /// No root motion is inferred from the difference between bind translations.
     /// # Errors

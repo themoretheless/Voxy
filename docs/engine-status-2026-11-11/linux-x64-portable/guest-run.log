@@ -1,0 +1,41 @@
++ sudo nerdctl run --rm --platform linux/amd64 --network none -v /home/themoretheless.guest/voxy-x64-output/turntable.zip:/input/turntable.zip:ro voxy-x64-runtime:qualification bash -lc '
+set -ex
+test ! -e /source
+test ! -x /usr/bin/gcc
+test ! -e /root/.cargo
+dpkg --print-architecture
+unzip -t /input/turntable.zip
+unzip -q /input/turntable.zip -d /tmp/unpacked
+mv /tmp/unpacked /tmp/relocated-game
+ldd /tmp/relocated-game/voxy_game
+cd /
+/tmp/relocated-game/voxy_game --embedded-game-check
+xvfb-run -a env WGPU_BACKEND=vulkan VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json /tmp/relocated-game/voxy_game --embedded-game-native-smoke
+'
++ test '!' -e /source
++ test '!' -x /usr/bin/gcc
++ test '!' -e /root/.cargo
++ dpkg --print-architecture
+amd64
++ unzip -t /input/turntable.zip
+Archive:  /input/turntable.zip
+    testing: voxy_game                OK
+    testing: game.vpak                OK
+No errors detected in compressed data of /input/turntable.zip.
++ unzip -q /input/turntable.zip -d /tmp/unpacked
++ mv /tmp/unpacked /tmp/relocated-game
++ ldd /tmp/relocated-game/voxy_game
+	libasound.so.2 => /lib/x86_64-linux-gnu/libasound.so.2 (0x00007ffffe073000)
+	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007ffffe045000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007ffffdf5c000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007ffffdd49000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007ffffffc6000)
++ cd /
++ /tmp/relocated-game/voxy_game --embedded-game-check
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+GAME STATE {"version":1,"objects":[{"id":"turntable","parent":null,"name":"turntable","active":true,"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.90929735,-0.41614708],"scale":[1.0,1.0,1.0],"components":{"editor.model.v1":"mesh","game.angular-motion.v1":{"axis":[0.0,0.0,1.0],"radians_per_second":2.0}}}]}
+GAME CHECK PASS ticks=120 objects=1 prefab_instances=0
++ xvfb-run -a env WGPU_BACKEND=vulkan VK_DRIVER_FILES=/usr/share/vulkan/icd.d/lvp_icd.json /tmp/relocated-game/voxy_game --embedded-game-native-smoke

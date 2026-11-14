@@ -269,6 +269,25 @@ fn main() {
         .unwrap(),
         intensity: 2.,
     });
+    let mut lights = vec![ArchiveLight {
+        position_kind: [1., 1., -1., 8.],
+        colour_intensity: [0.8, 0.3, 1., 300.],
+    }];
+    if args.iter().any(|a| a == "--many-lights") {
+        lights.extend((1..=96).map(|index| ArchiveLight {
+            position_kind: [
+                1.,
+                2.,
+                if index % 7 == 0 {
+                    0.
+                } else {
+                    (index as f32 - 48.) * 9.
+                },
+                if index == 64 { 0. } else { 5. },
+            ],
+            colour_intensity: [1., 0.6, 0.2, 10.],
+        }));
+    }
     let mut renderer = ArchiveSceneRenderer::new_with_environment(
         &device,
         &queue,
@@ -278,10 +297,7 @@ fn main() {
         images,
         materials,
         geometry,
-        &[ArchiveLight {
-            position_kind: [1., 1., -1., 8.],
-            colour_intensity: [0.8, 0.3, 1., 300.],
-        }],
+        &lights,
         Vec3::new(-0.5, 1., 0.3).normalize(),
         [1., 0.9, 0.8, 100000.],
         (Vec3::splat(-8.), Vec3::splat(8.)),

@@ -1,7 +1,7 @@
 //! Cross-platform GPU rest-material search backend using WGSL compute shaders.
 //! Physical force/energy admission and nonlinear Newton steps remain native.
 
-use physics::biomechanics::{
+use physics_bio::biomechanics::{
     TissueSearchBackend, TissueSearchOperation, TissueSearchSnapshot, Vec3,
 };
 use std::sync::Arc;
@@ -59,7 +59,6 @@ fn layout(n: usize, e: usize, limit: usize) -> Result<(usize, usize, usize), Gpu
     Ok((force_base, output_base, total_words))
 }
 
-#[allow(clippy::cast_possible_truncation)]
 fn pack(
     snapshot: &TissueSearchSnapshot,
     direction: &[[f64; 3]],
@@ -179,19 +178,10 @@ impl GpuTissueProgram {
             source: wgpu::ShaderSource::Wgsl(include_str!("tissue.wgsl").into()),
         });
 
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("tissue storage layout"),
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::COMPUTE,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Storage { read_only: false },
-                    has_dynamic_offset: false,
-                    min_binding_size: None,
-                },
-                count: None,
-            }],
-        });
+        let bind_group_layout =
+            voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(Some("tissue storage layout"), 1)
+                .storage_buffer(0, wgpu::ShaderStages::COMPUTE, false)
+                .build(device);
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("tissue pipeline layout"),
@@ -233,7 +223,6 @@ impl GpuTissueProgram {
     /// Evaluates the rest-material search action on the GPU.
     /// # Errors
     /// Returns an error if input validation fails, buffers exceed limits, or execution fails.
-    #[allow(clippy::cast_possible_truncation)]
     pub fn tissue_search_action(
         &self,
         queue: &wgpu::Queue,
@@ -254,14 +243,10 @@ impl GpuTissueProgram {
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
             });
 
-        let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("tissue compute bind group"),
-            layout: &self.bind_group_layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: storage_buffer.as_entire_binding(),
-            }],
-        });
+        let bind_group =
+            voxy_gpu_core::BindGroupBuilder::with_capacity(Some("tissue compute bind group"), 1)
+                .buffer(0, &storage_buffer)
+                .build(&self.device, &self.bind_group_layout);
 
         let staging_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("tissue readback staging"),
@@ -416,7 +401,7 @@ pub fn is_gpu_tissue_search_failure(error: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use physics::biomechanics::{Body, Material};
+    use physics_bio::biomechanics::{Body, Material};
 
     fn specimen(count: usize) -> Body {
         let mut points = Vec::new();
@@ -460,18 +445,17 @@ mod tests {
     #[test]
     fn gpu_tissue_search_on_device() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(
-            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
-        ) {
-            Ok(adapter) => adapter,
-            Err(_) => return, // Skip test if no GPU adapter is present in test environment
+        let Ok(adapter) =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+        else {
+            return; // Skip test if no GPU adapter is present in test environment
         };
 
-        let (device, queue) =
-            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-                Ok(pair) => pair,
-                Err(_) => return,
-            };
+        let Ok((device, queue)) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))
+        else {
+            return;
+        };
 
         let program = Arc::new(pollster::block_on(GpuTissueProgram::new(&device)).unwrap());
         let queue = Arc::new(queue);
@@ -506,18 +490,17 @@ mod tests {
     #[test]
     fn gpu_tissue_backend_implicit_stepping() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(
-            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
-        ) {
-            Ok(adapter) => adapter,
-            Err(_) => return,
+        let Ok(adapter) =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+        else {
+            return;
         };
 
-        let (device, queue) =
-            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-                Ok(pair) => pair,
-                Err(_) => return,
-            };
+        let Ok((device, queue)) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))
+        else {
+            return;
+        };
 
         let program = Arc::new(pollster::block_on(GpuTissueProgram::new(&device)).unwrap());
         let backend = program.into_backend(Arc::new(queue));
@@ -554,9 +537,10 @@ mod tests {
             .map(|&p| if p { [0.; 3] } else { [0.1, -0.2, 0.3] })
             .collect();
 
-        let mut gpu_body =
-            physics::biomechanics::InertialBody::new_with_fixed_supports(body, &[6.; 2], velocity)
-                .unwrap();
+        let mut gpu_body = physics_bio::biomechanics::InertialBody::new_with_fixed_supports(
+            body, &[6.; 2], velocity,
+        )
+        .unwrap();
         gpu_body.set_uniform_acceleration([0., -2., 0.]).unwrap();
         gpu_body.set_tissue_search_backend(Some(backend));
 

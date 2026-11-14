@@ -12,9 +12,9 @@
 
 mod cdlod;
 
-use cdlod::{Cdlod, GRID, MAX_NODES, R0};
 #[allow(unused_imports)]
 pub use cdlod::cdlod_morph_factor;
+use cdlod::{Cdlod, GRID, MAX_NODES, R0};
 use std::sync::{
     Arc,
     atomic::{AtomicU8, Ordering},
@@ -904,7 +904,6 @@ impl OceanRenderer {
         }
     }
 
-    #[allow(clippy::too_many_arguments)]
     fn create_screen(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -1419,11 +1418,7 @@ pub fn water_spectral_transmittance(depth_m: f32, turbidity: f32) -> [f32; 3] {
     let d = depth_m.max(0.0);
     let t = turbidity.clamp(0.0, 10.0);
     // Clear Jerlov Type I attenuation + CDOM/sediment turbidity contribution:
-    let k_rgb = [
-        0.35 + 0.08 * t,
-        0.065 + 0.05 * t,
-        0.018 + 0.09 * t,
-    ];
+    let k_rgb = [0.35 + 0.08 * t, 0.065 + 0.05 * t, 0.018 + 0.09 * t];
     k_rgb.map(|k| (-k * d).exp().clamp(0.0, 1.0))
 }
 
@@ -1491,7 +1486,10 @@ mod tests {
         }
         let trans = super::water_spectral_transmittance(3.0, 1.0);
         assert!(trans[0] < trans[1] && trans[1] < trans[2]);
-        assert_eq!(super::jacobian_folding_foam_intensity(0.0, 0.0, 0.0, 0.0, 0.5), 0.0);
+        assert_eq!(
+            super::jacobian_folding_foam_intensity(0.0, 0.0, 0.0, 0.0, 0.5),
+            0.0
+        );
         assert!(super::jacobian_folding_foam_intensity(-0.6, -0.6, 0.2, 0.2, 0.4) > 0.2);
     }
 }

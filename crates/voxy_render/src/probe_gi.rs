@@ -98,7 +98,6 @@ impl ProbeProjector {
 
     /// Accumulate one rendered face (90-degree vertical FOV, centred square of
     /// side `height`) into probe `index`. Face 0 resets the slot.
-    #[allow(clippy::too_many_arguments)]
     pub fn project(
         &self,
         device: &wgpu::Device,
@@ -233,6 +232,39 @@ pub fn chebyshev_probe_visibility(
 mod tests {
     use super::*;
     use glam::Vec3;
+
+    #[test]
+    fn bake_pod_layout_matches_wgsl_struct_definition() {
+        let module =
+            naga::front::wgsl::parse_str(include_str!("probe_gi.wgsl")).expect("valid WGSL");
+        let mut validator = naga::valid::Validator::new(
+            naga::valid::ValidationFlags::all(),
+            naga::valid::Capabilities::empty(),
+        );
+        validator.validate(&module).expect("naga validation passes");
+        let (_, bake_ty) = module
+            .types
+            .iter()
+            .find(|(_, ty)| ty.name.as_deref() == Some("Bake"))
+            .expect("Bake struct exists in probe_gi.wgsl");
+        let naga::TypeInner::Struct { members, span } = &bake_ty.inner else {
+            panic!("expected WGSL struct");
+        };
+        assert_eq!(*span as usize, std::mem::size_of::<Bake>());
+        assert_eq!(
+            members[0].offset as usize,
+            std::mem::offset_of!(Bake, forward)
+        );
+        assert_eq!(
+            members[1].offset as usize,
+            std::mem::offset_of!(Bake, right)
+        );
+        assert_eq!(members[2].offset as usize, std::mem::offset_of!(Bake, up));
+        assert_eq!(
+            members[3].offset as usize,
+            std::mem::offset_of!(Bake, square)
+        );
+    }
 
     #[test]
     fn grid_covers_bounds_with_at_least_two_probes_per_axis() {

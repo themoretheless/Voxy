@@ -74,11 +74,7 @@ impl DayWeatherPreset {
                     ..Weather::STORM
                 },
             ),
-            Self::WinterBlizzard => (
-                Season::Winter.middle_day(),
-                15.0,
-                Weather::SNOW,
-            ),
+            Self::WinterBlizzard => (Season::Winter.middle_day(), 15.0, Weather::SNOW),
             Self::AuroraNight => (
                 Season::Winter.middle_day(),
                 23.0,
@@ -343,18 +339,17 @@ mod tests {
         let (elev_midnight, _) = solar_elevation_azimuth_rad(172.0, 0.0, 45.0_f64.to_radians());
         assert!(elev_noon > 0.5 && elev_midnight < 0.0);
 
-        assert!(lunar_phase_illuminance_lux(0.0, 1.0) > lunar_phase_illuminance_lux(std::f32::consts::FRAC_PI_2, 1.0));
+        assert!(
+            lunar_phase_illuminance_lux(0.0, 1.0)
+                > lunar_phase_illuminance_lux(std::f32::consts::FRAC_PI_2, 1.0)
+        );
         assert!((magnus_dew_point_celsius(20.0, 1.0) - 20.0).abs() < 1e-4);
     }
 }
 
 /// Computes Spencer (1971) / NOAA topocentric `(elevation_rad, azimuth_rad)` of the sun for
 /// `day_of_year` (`0..365`), solar `hour` (`0..24`), and observer `latitude_rad`.
-pub fn solar_elevation_azimuth_rad(
-    day_of_year: f64,
-    hour: f64,
-    latitude_rad: f64,
-) -> (f64, f64) {
+pub fn solar_elevation_azimuth_rad(day_of_year: f64, hour: f64, latitude_rad: f64) -> (f64, f64) {
     if !day_of_year.is_finite() || !hour.is_finite() || !latitude_rad.is_finite() {
         return (0.0, 0.0);
     }
@@ -365,7 +360,8 @@ pub fn solar_elevation_azimuth_rad(
         + 0.000_907 * (2.0 * gamma).sin();
     let hour_angle = ((hour.rem_euclid(24.0) - 12.0) * 15.0).to_radians();
     let lat = latitude_rad.clamp(-1.55, 1.55);
-    let sin_el = (lat.sin() * decl.sin() + lat.cos() * decl.cos() * hour_angle.cos()).clamp(-1.0, 1.0);
+    let sin_el =
+        (lat.sin() * decl.sin() + lat.cos() * decl.cos() * hour_angle.cos()).clamp(-1.0, 1.0);
     let elevation = sin_el.asin();
     let y = -hour_angle.sin() * decl.cos();
     let x = decl.sin() * lat.cos() - decl.cos() * lat.sin() * hour_angle.cos();
@@ -375,11 +371,9 @@ pub fn solar_elevation_azimuth_rad(
 
 /// Evaluates night-sky lunar illuminance in lux (`0..=0.32 lx`) using the Hapke lunar phase curve
 /// (`phase_angle_rad = 0` at full moon, `pi` at new moon) and `sin(moon_elevation)`.
-pub fn lunar_phase_illuminance_lux(
-    phase_angle_rad: f32,
-    sin_moon_elevation: f32,
-) -> f32 {
-    if !phase_angle_rad.is_finite() || !sin_moon_elevation.is_finite() || sin_moon_elevation <= 0.0 {
+pub fn lunar_phase_illuminance_lux(phase_angle_rad: f32, sin_moon_elevation: f32) -> f32 {
+    if !phase_angle_rad.is_finite() || !sin_moon_elevation.is_finite() || sin_moon_elevation <= 0.0
+    {
         return 0.0;
     }
     let alpha = phase_angle_rad.abs().clamp(0.0, std::f32::consts::PI);

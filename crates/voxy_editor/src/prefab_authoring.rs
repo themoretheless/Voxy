@@ -1448,7 +1448,6 @@ mod tests {
 
     // One causal file/history/reload sequence verifies publication across boundaries.
     #[test]
-    #[allow(clippy::too_many_lines)]
     fn editor_nested_prefab_edits_save_undo_and_dependency_failure_retain_scene() {
         let root = std::env::temp_dir().join(format!("voxy-editor-prefabs-{}", std::process::id()));
         std::fs::create_dir_all(&root).unwrap();

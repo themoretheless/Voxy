@@ -133,3 +133,18 @@ pub(crate) async fn validate(device: &wgpu::Device, queue: &wgpu::Queue) -> Resu
     }
     Ok(checked)
 }
+
+/// Evaluates the Peak Signal-to-Noise Ratio $\text{PSNR} = 10 \log_{10}(\text{peak}^2 / \text{mse})$ in dB,
+/// returning `100.0` dB for identical frames (`mse == 0.0`) and `None` for invalid inputs.
+#[must_use]
+pub fn psnr_db_from_mse(mse: f64, peak_signal: f64) -> Option<f64> {
+    if !mse.is_finite() || mse < 0.0 || !peak_signal.is_finite() || peak_signal <= 0.0 {
+        return None;
+    }
+    if mse <= 1e-20 {
+        return Some(100.0);
+    }
+    let ratio = (peak_signal * peak_signal) / mse;
+    let db = (10.0 * ratio.log10()).min(100.0);
+    db.is_finite().then_some(db)
+}

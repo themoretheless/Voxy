@@ -170,12 +170,7 @@ impl DirectLightingJob {
 ///
 /// Returns `None` if `z_near <= 0.0`, `z_far <= z_near`, `num_slices == 0`, or inputs are non-finite.
 #[must_use]
-pub fn cluster_depth_slice(
-    view_z: f32,
-    z_near: f32,
-    z_far: f32,
-    num_slices: u32,
-) -> Option<u32> {
+pub fn cluster_depth_slice(view_z: f32, z_near: f32, z_far: f32, num_slices: u32) -> Option<u32> {
     if !view_z.is_finite()
         || !z_near.is_finite()
         || !z_far.is_finite()
@@ -219,11 +214,7 @@ pub fn oren_nayar_diffuse_reflectance(
     let b = 0.45 * (sigma2 / (sigma2 + 0.09));
     let lv = dot(l, v);
     let s = lv - nl * nv;
-    let t = if s > 0.0 {
-        nl.max(nv).max(1e-5)
-    } else {
-        1.0
-    };
+    let t = if s > 0.0 { nl.max(nv).max(1e-5) } else { 1.0 };
     let rho = albedo.clamp(0.0, 1.0);
     (rho * std::f32::consts::FRAC_1_PI * (a + b * s.max(0.0) / t)).max(0.0)
 }
@@ -269,12 +260,16 @@ pub fn sphere_light_mrt_representative_point(
     to_light_center: [f32; 3],
     sphere_radius: f32,
 ) -> [f32; 3] {
-    if reflection_dir.iter().chain(&to_light_center).any(|c| !c.is_finite())
+    if reflection_dir
+        .iter()
+        .chain(&to_light_center)
+        .any(|c| !c.is_finite())
         || !sphere_radius.is_finite()
     {
         return [0.0, 0.0, 1.0];
     }
-    let r_len = (reflection_dir[0].powi(2) + reflection_dir[1].powi(2) + reflection_dir[2].powi(2)).sqrt();
+    let r_len =
+        (reflection_dir[0].powi(2) + reflection_dir[1].powi(2) + reflection_dir[2].powi(2)).sqrt();
     if r_len <= 1e-6 {
         return to_light_center;
     }
@@ -290,7 +285,8 @@ pub fn sphere_light_mrt_representative_point(
         l_dot_r * r[1] - l[1],
         l_dot_r * r[2] - l[2],
     ];
-    let dist_to_ray = (center_to_ray[0].powi(2) + center_to_ray[1].powi(2) + center_to_ray[2].powi(2)).sqrt();
+    let dist_to_ray =
+        (center_to_ray[0].powi(2) + center_to_ray[1].powi(2) + center_to_ray[2].powi(2)).sqrt();
     let rad = sphere_radius.max(0.0);
     if dist_to_ray <= 1e-6 || rad <= 0.0 {
         return l;
@@ -351,11 +347,7 @@ pub fn capsule_light_irradiance_factor(
     let cos_gamma = (dot(l0, l1) / (d0 * d1)).clamp(-0.999_99, 0.999_99);
     let gamma = cos_gamma.acos();
     let sin_gamma = (1.0 - cos_gamma * cos_gamma).max(1e-6).sqrt();
-    let weight = if gamma < 1e-3 {
-        1.0
-    } else {
-        gamma / sin_gamma
-    };
+    let weight = if gamma < 1e-3 { 1.0 } else { gamma / sin_gamma };
     ((h0 / d0 + h1 / d1) * weight / (2.0 * std::f32::consts::PI * d0 * d1)).max(0.0)
 }
 
@@ -441,7 +433,13 @@ mod tests {
     }
     #[test]
     fn oren_nayar_lunar_sphere_and_capsule_lights_match_analytic_properties() {
-        let lambert = oren_nayar_diffuse_reflectance([0.0, 0.0, 1.0], [0.0, 0.0, 1.0], [0.0, 0.0, 1.0], 1.0, 0.0);
+        let lambert = oren_nayar_diffuse_reflectance(
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            1.0,
+            0.0,
+        );
         assert!((lambert - std::f32::consts::FRAC_1_PI).abs() < 1e-5);
         let rough_retro = oren_nayar_diffuse_reflectance(
             [0.0, 0.0, 1.0],

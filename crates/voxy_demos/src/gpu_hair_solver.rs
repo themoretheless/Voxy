@@ -735,7 +735,7 @@ impl GpuHairLinearSolver {
         };
         let submission = self.queue.submit([encoder.finish()]);
         let mut read = dispatch.begin_read();
-        let mut full_read = full_snapshot.map(|snapshot| snapshot.begin_read());
+        let mut full_read = full_snapshot.map(voxy_render::ComputeDispatch::begin_read);
         self.device.poll(wgpu::PollType::Wait {
             submission_index: Some(submission),
             timeout: None,
@@ -746,42 +746,39 @@ impl GpuHairLinearSolver {
         let corrections = match input.decode_compact_checked(&bytes, 1e-8) {
             Ok(corrections) => corrections,
             Err(error) => {
-                if let Some(path) = std::env::var_os("VOXY_HAIR_BANDED_DECODE_FAILURE_EXPORT") {
-                    if let Ok(file) = std::fs::OpenOptions::new()
+                if let Some(path) = std::env::var_os("VOXY_HAIR_BANDED_DECODE_FAILURE_EXPORT")
+                    && let Ok(file) = std::fs::OpenOptions::new()
                         .write(true)
                         .create_new(true)
                         .open(path)
-                    {
-                        let words = |bytes: &[u8]| {
-                            bytes
-                                .chunks_exact(4)
-                                .map(|w| u32::from_ne_bytes(w.try_into().unwrap()))
+                {
+                    let words = |bytes: &[u8]| {
+                        bytes
+                            .chunks_exact(4)
+                            .map(|w| u32::from_ne_bytes(w.try_into().unwrap()))
+                            .collect::<Vec<_>>()
+                    };
+                    let input_words = words(input.bytes());
+                    let scales: Vec<_> = (0..input_words[0] as usize)
+                        .map(|i| {
+                            input
+                                .packed_reference(i)
+                                .unwrap()
+                                .scales
+                                .iter()
+                                .map(|x| x.to_bits())
                                 .collect::<Vec<_>>()
-                        };
-                        let input_words = words(input.bytes());
-                        let scales: Vec<_> = (0..input_words[0] as usize)
-                            .map(|i| {
-                                input
-                                    .packed_reference(i)
-                                    .unwrap()
-                                    .scales
-                                    .iter()
-                                    .map(|x| x.to_bits())
-                                    .collect::<Vec<_>>()
-                            })
-                            .collect();
-                        let report = serde_json::json!({"schema":"voxy-banded-decode-failure-v1","error":error.to_string(),
+                        })
+                        .collect();
+                    let report = serde_json::json!({"schema":"voxy-banded-decode-failure-v1","error":error.to_string(),
                             "tolerance":1e-8,"input_words":input_words,"compact_output_words":words(&bytes),"scales_bits":scales,
                             "scope":"exact rejected normalized GPU solve; not an admitted physical correction"});
-                        let mut out = std::io::BufWriter::new(file);
-                        if let Err(error) =
-                            serde_json::to_writer(&mut out, &report).and_then(|()| {
-                                use std::io::Write;
-                                out.flush().map_err(serde_json::Error::io)
-                            })
-                        {
-                            eprintln!("HAIR BANDED DECODE FAILURE EXPORT ERROR {error}");
-                        }
+                    let mut out = std::io::BufWriter::new(file);
+                    if let Err(error) = serde_json::to_writer(&mut out, &report).and_then(|()| {
+                        use std::io::Write;
+                        out.flush().map_err(serde_json::Error::io)
+                    }) {
+                        eprintln!("HAIR BANDED DECODE FAILURE EXPORT ERROR {error}");
                     }
                 }
                 return Err(error.into());
@@ -840,8 +837,7 @@ impl GpuHairLinearSolver {
                                 requests[i]
                                     .loads
                                     .get(wave)
-                                    .map(Vec::as_slice)
-                                    .unwrap_or(&requests[i].system.rhs)
+                                    .map_or(requests[i].system.rhs.as_slice(), Vec::as_slice)
                             })
                             .collect()
                     })
@@ -913,8 +909,7 @@ impl GpuHairLinearSolver {
                         requests[i]
                             .loads
                             .get(wave)
-                            .map(Vec::as_slice)
-                            .unwrap_or(&requests[i].system.rhs)
+                            .map_or(requests[i].system.rhs.as_slice(), Vec::as_slice)
                     })
                     .collect();
                 let rows: Vec<_> = indices
@@ -1818,8 +1813,7 @@ mod tests {
         let dt = 1. / 240.;
         let count = std::env::var("VOXY_HAIR_FACTOR_REUSE_SYSTEMS")
             .ok()
-            .map(|v| v.parse::<usize>().unwrap())
-            .unwrap_or(3);
+            .map_or(3, |v| v.parse::<usize>().unwrap());
         assert!((1..=1024).contains(&count));
         let mut systems: Vec<_> = (0..count)
             .map(|rod| {

@@ -1,0 +1,24 @@
+{
+  "fixture": "retarget.vpak",
+  "ticks": 40,
+  "fadeStartExact": true,
+  "recoveredExact": true,
+  "rejectedExact": true,
+  "interruptionStartExact": true,
+  "received": [
+    {
+      "owner": "owner-0",
+      "clip": "Run",
+      "name": "run-mark",
+      "phase": 0.05,
+      "tick": 15
+    },
+    {
+      "owner": "owner-0",
+      "clip": "Survey",
+      "name": "survey-mark",
+      "phase": 0.01,
+      "tick": 25
+    }
+  ]
+}

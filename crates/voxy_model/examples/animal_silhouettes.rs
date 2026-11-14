@@ -7,8 +7,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().collect();
     let output = args
         .get(1)
-        .map(String::as_str)
-        .unwrap_or("artifacts/animal-silhouettes");
+        .map_or("artifacts/animal-silhouettes", String::as_str);
     std::fs::create_dir_all(output)?;
     let breeds = if let Some(id) = args.get(2) {
         vec![Breed::parse(id)?]

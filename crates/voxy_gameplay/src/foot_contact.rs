@@ -354,7 +354,10 @@ mod rebound_tests {
     fn elastic_support_rebound_velocity_respects_restitution_and_cap() {
         assert!((elastic_support_rebound_velocity(-10.0, 0.8, 2.0, 15.0) - 10.0).abs() < 1e-6);
         assert!((elastic_support_rebound_velocity(-20.0, 0.9, 5.0, 12.0) - 12.0).abs() < 1e-6);
-        assert_eq!(elastic_support_rebound_velocity(f32::NAN, 0.8, 0.0, 10.0), 0.0);
+        assert_eq!(
+            elastic_support_rebound_velocity(f32::NAN, 0.8, 0.0, 10.0),
+            0.0
+        );
     }
 }
 #[cfg(test)]

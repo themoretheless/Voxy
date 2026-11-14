@@ -322,8 +322,10 @@ mod tests {
         }
     }
 
-    /// Every unit face with its material and layer, independent of quad merging.
-    fn covered_cells(mesh: &ChunkMesh) -> BTreeMap<([u8; 3], FaceDir), (MaterialId, RenderLayer)> {
+    /// Every unit face with its material, layer, AO, and diagonal, independent of quad merging.
+    fn covered_cells(
+        mesh: &ChunkMesh,
+    ) -> BTreeMap<([u8; 3], FaceDir), (MaterialId, RenderLayer, [u8; 4], QuadDiagonal)> {
         let mut cells = BTreeMap::new();
         for quad in mesh
             .opaque
@@ -337,12 +339,43 @@ mod tests {
                     let mut cell = quad.origin;
                     cell[u_axis] += du;
                     cell[v_axis] += dv;
-                    let previous = cells.insert((cell, quad.face), (quad.material, quad.layer));
+                    let previous = cells.insert(
+                        (cell, quad.face),
+                        (quad.material, quad.layer, quad.ao, quad.diagonal),
+                    );
                     assert!(previous.is_none(), "overlapping quads at {cell:?}");
                 }
             }
         }
         cells
+    }
+
+    #[test]
+    fn concave_voxel_corner_computes_ambient_occlusion_and_anisotropy_free_diagonal() {
+        let registry = registry();
+        let stone = state(&registry, "stone");
+        let mut dense = vec![BlockStateId::AIR; CHUNK_VOLUME];
+        // Floor slab at y=4 around (8, 8) plus two L-wall blocks at (7, 5, 8) and (8, 5, 7)
+        for z in 7..=9 {
+            for x in 7..=9 {
+                dense[usize::from(LocalPos::new(x, 4, z).unwrap().index().get())] = stone;
+            }
+        }
+        dense[usize::from(LocalPos::new(7, 5, 8).unwrap().index().get())] = stone;
+        dense[usize::from(LocalPos::new(8, 5, 7).unwrap().index().get())] = stone;
+        let inp = input(
+            Arc::clone(&registry),
+            PalettedBlocks::from_dense(dense).unwrap(),
+        );
+        let greedy = build_mesh(&inp, &CancelToken::new()).unwrap();
+        let center_top = greedy
+            .opaque
+            .iter()
+            .find(|q| q.face == FaceDir::PosY && q.origin == [8, 5, 8])
+            .expect("center floor PosY face emitted");
+        // Corner (-u, -v) is occluded on both sides -> ao[0] == 0; adjacent corners see 1 side -> 2; (+u, +v) -> 3
+        assert_eq!(center_top.ao, [0, 2, 3, 2]);
+        assert_eq!(center_top.diagonal, QuadDiagonal::Vu);
     }
 
     #[test]

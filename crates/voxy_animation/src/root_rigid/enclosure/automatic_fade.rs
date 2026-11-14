@@ -109,7 +109,6 @@ impl RootRigidCertifiedFadeInterval {
     /// Assembles both original key streams on one stored global wall clock.
     /// Source/target mappings must target a shared fixed frame. None is frozen.
     /// Pose STEP events reject; no Animator clock or pose is published here.
-    #[allow(clippy::too_many_arguments)]
     pub fn integrate_paths(
         source: Option<RootRigidMappedPath<'_>>,
         target: RootRigidMappedPath<'_>,
@@ -134,7 +133,6 @@ impl RootRigidCertifiedFadeInterval {
     /// Tail domains use complete original fields and share the fade integrator's
     /// canonical prefix and global error accumulator. The endpoint is a stored
     /// whole-tick wall time; its difference from fade end is enclosed directly.
-    #[allow(clippy::too_many_arguments)]
     pub fn integrate_paths_with_completion(
         source: Option<RootRigidMappedPath<'_>>,
         target: RootRigidMappedPath<'_>,
@@ -145,10 +143,10 @@ impl RootRigidCertifiedFadeInterval {
         angular_tolerance: f64,
         max_spans: usize,
     ) -> Result<Self, AnimationError> {
-        if let Some((_, end)) = completion {
-            if !end.is_finite() || end <= duration || weights[1] != 1. {
-                return Err(AnimationError::InvalidAnimationTimeStep);
-            }
+        if let Some((_, end)) = completion
+            && (!end.is_finite() || end <= duration || weights[1] != 1.)
+        {
+            return Err(AnimationError::InvalidAnimationTimeStep);
         }
         let frozen = RootRigidPath::from_twists(&[], 0)?;
         let source_path = source.map_or(&frozen, |source| source.path);

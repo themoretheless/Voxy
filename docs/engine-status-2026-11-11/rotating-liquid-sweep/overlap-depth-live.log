@@ -1,0 +1,27 @@
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 41.38s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 1 test
+mixed stage remaining=9.108908036280725e-4 horizon=1e-4 force=[-46.29629758193624, 0.0, -7.35077451806706e-11]
+mixed admission error=4.371957886092927e-12
+mixed stage remaining=8.108193285145327e-4 horizon=1e-4 force=[-46.29604001207524, -9.882751518166708e-21, -0.1544309013934641]
+mixed admission error=5.6622314057806194e-12
+mixed stage remaining=7.108001824427045e-4 horizon=1e-4 force=[-46.29526781251754, -7.898460653245231e-20, -0.30877847293624583]
+mixed admission error=8.56318888604407e-12
+initial overlap depth=1.00000141456291121e-7 correction=DVec3(-1.0000014145629112e-7, -0.0, -0.0) first=ContactBody { motion: Body { mass: 1.0, position: [0.31987325525638133, -0.002133468879398942, -6.95069063585106e-9], velocity: [3.736107144558178, -0.20459388899428854, -6.948564037258482e-5] }, spin: None } second=ContactBody { motion: Body { mass: 2.0, position: [0.4073763821162012, -0.002133468879398942, 0.025000003847874274], velocity: [3.7569464277209113, -0.20459388899428851, 3.474282018629241e-5] }, spin: Some(Spin { orientation: [-7.954550411720972e-24, -0.005001449024665575, 2.9313323944114574e-21, 0.9999874926756103], angular_momentum: [-1.950199050585431e-21, -0.1736067706154807, 2.9975832196336307e-19], inertia: [0.005208333333333335, 0.005208333333333335, 0.005208333333333335] }) } first_shape=AffineBox { center: DVec3(0.0, 0.0, 0.0), edges: [DVec3(0.025, 0.0, 0.0), DVec3(0.0, 0.025, 0.0), DVec3(0.0, 0.0, 0.025)] } second_shape=AffineBox { center: DVec3(0.0, 0.0, 0.0), edges: [DVec3(0.0625, 0.0, 0.0), DVec3(0.0, 0.0625, 0.0), DVec3(0.0, 0.0, 0.0625)] }
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene liquid body step: InitialOverlap") } }
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 460 filtered out; finished in 0.05s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

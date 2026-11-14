@@ -28,7 +28,6 @@ pub enum StreamlineError {
 
 #[derive(Clone, Copy, Debug, Default)]
 // Independent SDK plugin selections, rather than lifecycle state flags.
-#[allow(clippy::struct_excessive_bools)]
 pub struct StreamlineFeatures {
     pub super_resolution: bool,
     pub frame_generation: bool,
@@ -84,7 +83,6 @@ impl DlssQuality {
     ///
     /// # Errors
     /// Rejects zero or `u32::MAX` output dimensions.
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     pub fn recommended_render_size(
         self,
         output: DlssRenderSize,
@@ -267,7 +265,6 @@ impl CameraConstants {
     /// # Errors
     /// Rejects nonfinite/singular transforms and invalid perspective parameters.
     // Affine view matrices require an exact homogeneous bottom row.
-    #[allow(clippy::float_cmp)]
     pub fn from_perspective(frame: &PerspectiveFrame) -> Result<Self, StreamlineError> {
         if frame.view.x_axis.w != 0.0
             || frame.view.y_axis.w != 0.0
@@ -376,7 +373,7 @@ impl RayReconstructionOptions {
     /// Convert the engine's rigid right-handed view matrix to SDK convention.
     /// # Errors
     /// Rejects SDR, empty output, nonfinite, singular, scaled, mirrored or projective views.
-    #[allow(clippy::float_cmp)] // Exact affine bottom row is required by this camera contract.
+    // Exact affine bottom row is required by this camera contract.
     pub fn from_view(
         quality: DlssQuality,
         output: DlssRenderSize,
@@ -1575,10 +1572,7 @@ mod camera_tests {
                 height: 1080,
             }
         );
-        assert_eq!(
-            DlssQuality::Dlaa.recommended_render_size(out).unwrap(),
-            out
-        );
+        assert_eq!(DlssQuality::Dlaa.recommended_render_size(out).unwrap(), out);
         assert!(
             DlssQuality::Quality
                 .recommended_render_size(DlssRenderSize {
@@ -1589,7 +1583,38 @@ mod camera_tests {
         );
         assert!((DlssQuality::Performance.recommended_mipmap_bias() + 1.0).abs() < 1e-6);
         assert_eq!(DlssQuality::Dlaa.recommended_mipmap_bias(), 0.0);
+        let (j0, len) = halton_jitter_offset_2d(0, 2.0);
+        assert_eq!(len, 32);
+        assert!(j0[0].abs() <= 0.5 && j0[1].abs() <= 0.5);
     }
+}
+
+/// Computes the 2D base-(2, 3) Halton sub-pixel camera jitter offset `[jx, jy]` in `[-0.5, 0.5]^2`
+/// and the recommended DLSS phase cycle length $N = 8 \cdot \lceil \text{upscale\_factor}^2 \rceil$.
+#[must_use]
+pub fn halton_jitter_offset_2d(frame_index: u32, upscale_factor: f32) -> ([f32; 2], u32) {
+    let scale = if upscale_factor.is_finite() && upscale_factor >= 1.0 {
+        upscale_factor.min(8.0)
+    } else {
+        1.0
+    };
+    let cycle_len = (8.0 * (scale * scale).ceil()) as u32;
+    let idx = (frame_index % cycle_len.max(1)).saturating_add(1);
+    fn radical_inverse(mut n: u32, base: u32) -> f32 {
+        let mut val = 0.0_f32;
+        let inv_base = 1.0 / (base as f32);
+        let mut factor = inv_base;
+        while n > 0 {
+            val += (n % base) as f32 * factor;
+            n /= base;
+            factor *= inv_base;
+        }
+        val
+    }
+    (
+        [radical_inverse(idx, 2) - 0.5, radical_inverse(idx, 3) - 0.5],
+        cycle_len.max(8),
+    )
 }
 
 /// Streamline DX12 interface interception strategy, selected before graphics creation.

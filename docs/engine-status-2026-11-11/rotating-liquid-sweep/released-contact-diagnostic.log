@@ -1,0 +1,10 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.03s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 1 test
+released sweep Ok(RigidGeometryHit { contact: BodyGeometryHit { geometry: Contact { fraction: 0.0007989952591990087, normal: [-0.9999927860590421, 2.35275249365443e-21, -0.0037983983302282073] }, witness: Some(ContactWitness { point: [0.34417702063873495, -0.0020955560673350877, 0.02499999961942294], tolerance_m: 7.044779453476054e-14 }) }, feature: Some(3) })
+test liquid_runtime::tests::off_center_particle_remainder_requires_translation_only_reactions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 248 filtered out; finished in 0.01s
+

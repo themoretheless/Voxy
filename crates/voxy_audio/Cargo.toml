@@ -10,4 +10,4 @@ workspace = true
 [dev-dependencies]
 voxy_assets = { path = "../voxy_assets" }
 voxy_scene = { path = "../voxy_scene" }
-glam = "0.33.6"
+glam.workspace = true

@@ -31,7 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let vertex = b["vertex"].as_u64().unwrap() as usize;
             let triangle = b["triangle"].as_u64().unwrap() as usize;
             let weights: [f64; 3] = serde_json::from_value(b["weights"].clone())?;
-            bindings.push(physics::skin::SurfaceBinding {
+            bindings.push(physics_bio::skin::SurfaceBinding {
                 vertex,
                 triangle,
                 weights,
@@ -43,7 +43,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 });
             }
         }
-        let embedding = physics::skin::SkinEmbedding::new(
+        let embedding = physics_bio::skin::SkinEmbedding::new(
             mesh.vertices().len(),
             nodes.len(),
             triangles,

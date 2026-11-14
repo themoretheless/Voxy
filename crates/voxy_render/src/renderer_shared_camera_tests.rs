@@ -249,7 +249,7 @@ fn paired_frame_renderer_cameras_benchmark() {
                     group.clone()
                 };
                 dispatch(&probe, &group, encoder);
-            })
+            });
         });
     }
     assert!(pollster::block_on(scope.pop()).is_none());

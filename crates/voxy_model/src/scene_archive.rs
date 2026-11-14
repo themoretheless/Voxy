@@ -217,10 +217,10 @@ impl SceneArchive {
                 if positions.iter().flatten().any(|v| !v.is_finite()) {
                     return Err(fail("nonfinite scene position"));
                 }
-                let indices = reader
-                    .read_indices()
-                    .map(|v| v.into_u32().collect::<Vec<_>>())
-                    .unwrap_or_else(|| (0..positions.len() as u32).collect());
+                let indices = reader.read_indices().map_or_else(
+                    || (0..positions.len() as u32).collect(),
+                    |v| v.into_u32().collect::<Vec<_>>(),
+                );
                 index_count = index_count
                     .checked_add(indices.len())
                     .ok_or_else(|| fail("scene index count overflow"))?;
@@ -230,8 +230,12 @@ impl SceneArchive {
                 {
                     return Err(fail("invalid scene indices or limit"));
                 }
-                let normals = reader.read_normals().map(|v| v.collect::<Vec<_>>());
-                let tangents = reader.read_tangents().map(|v| v.collect::<Vec<_>>());
+                let normals = reader
+                    .read_normals()
+                    .map(std::iter::Iterator::collect::<Vec<_>>);
+                let tangents = reader
+                    .read_tangents()
+                    .map(std::iter::Iterator::collect::<Vec<_>>);
                 if normals.as_ref().is_some_and(|v| {
                     v.len() != positions.len() || v.iter().flatten().any(|x| !x.is_finite())
                 }) || tangents

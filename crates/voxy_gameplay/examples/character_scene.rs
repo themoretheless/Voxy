@@ -86,7 +86,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     simulation.stop(&mut loaded.graph)?;
     voxy_scene::extraction_schedule()?.run_scene(&mut loaded.graph, |_, access| {
-        rendering.refresh_scoped_with(access, |scene, owner| scene.world_matrix(owner))
+        rendering.refresh_scoped_with(access, voxy_scene::SceneGraph::world_matrix)
     })?;
     assert_eq!(rendering.instances().len(), 2);
     println!(

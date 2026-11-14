@@ -137,11 +137,7 @@ pub fn pbr_neutral_tonemap_rgb(linear_rgb: [f32; 3]) -> [f32; 3] {
     let start_compression = 0.8 - 0.04;
     let desaturation = 0.15;
     let x = color[0].min(color[1]).min(color[2]);
-    let offset = if x < 0.08 {
-        x - 6.25 * x * x
-    } else {
-        0.04
-    };
+    let offset = if x < 0.08 { x - 6.25 * x * x } else { 0.04 };
     for c in &mut color {
         *c -= offset;
     }
@@ -165,22 +161,10 @@ mod tests {
 
     #[test]
     fn bilateral_upsample_weight_rejects_discontinuous_depth_and_normal_edges() {
-        let same = bilateral_upsample_weight(
-            5.0,
-            5.0,
-            [0.0, 1.0, 0.0],
-            [0.0, 1.0, 0.0],
-            0.05,
-            16.0,
-        );
-        let edge = bilateral_upsample_weight(
-            5.0,
-            12.0,
-            [0.0, 1.0, 0.0],
-            [1.0, 0.0, 0.0],
-            0.05,
-            16.0,
-        );
+        let same =
+            bilateral_upsample_weight(5.0, 5.0, [0.0, 1.0, 0.0], [0.0, 1.0, 0.0], 0.05, 16.0);
+        let edge =
+            bilateral_upsample_weight(5.0, 12.0, [0.0, 1.0, 0.0], [1.0, 0.0, 0.0], 0.05, 16.0);
         assert!((same - 1.0).abs() < 1e-6);
         assert!(edge < 1e-4);
 

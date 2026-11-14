@@ -51,7 +51,6 @@ impl Liquid {
     /// # Errors
     /// Invalid input, intersecting layers, no particle carrier for a submerged layer,
     /// exhausted sampling budget, or numerical overflow leave both liquid and body unchanged.
-    #[allow(clippy::too_many_lines)]
     pub fn couple_floating_body(
         &mut self,
         body: &mut FloatingBody,

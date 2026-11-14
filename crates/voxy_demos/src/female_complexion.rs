@@ -91,7 +91,7 @@ fn ellipse(p: Vec2, center: Vec2, radius: Vec2) -> f32 {
         .max(0.)
         .powi(2)
 }
-#[allow(clippy::cast_precision_loss)] // Hash output has only 24 significant bits.
+// Hash output has only 24 significant bits.
 fn random(x: i32, y: i32, seed: u32) -> f32 {
     let mut h = x.cast_unsigned().wrapping_mul(0x8da6_b343)
         ^ y.cast_unsigned().wrapping_mul(0xd816_3841)
@@ -100,7 +100,6 @@ fn random(x: i32, y: i32, seed: u32) -> f32 {
     h = (h ^ (h >> 15)).wrapping_mul(0x846c_a68b);
     ((h ^ (h >> 16)) >> 8) as f32 / 16_777_215.
 }
-#[allow(clippy::cast_possible_truncation)]
 fn pigment_noise(p: Vec2, spacing: f32, seed: u32) -> f32 {
     let grid = p / spacing;
     let cell = grid.floor();
@@ -113,7 +112,6 @@ fn pigment_noise(p: Vec2, spacing: f32, seed: u32) -> f32 {
     a * (1. - f.y) + b * f.y
 }
 /// Full-cell pore jitter with neighboring support preserves continuous borders.
-#[allow(clippy::cast_possible_truncation)]
 fn spot(p: Vec2, spacing: f32, radius: f32, seed: u32, density: f32) -> f32 {
     let cell = (p / spacing).floor();
     let mut coverage: f32 = 0.;
@@ -135,7 +133,6 @@ fn spot(p: Vec2, spacing: f32, radius: f32, seed: u32, density: f32) -> f32 {
     coverage
 }
 /// Neighbor search allows full-cell jitter without clipping spots at grid edges.
-#[allow(clippy::cast_possible_truncation)]
 fn freckles(p: Vec2) -> f32 {
     let spacing = 0.0045;
     let cell = (p / spacing).floor();
@@ -364,11 +361,7 @@ pub fn apply(vertices: &mut [voxy_render::SceneVertex], normals: &[Vec3]) {
     }
 }
 /// White border keeps eyes, hair, body and diagnostic overlays untinted.
-#[allow(
-    clippy::cast_precision_loss,
-    clippy::cast_possible_truncation,
-    clippy::cast_sign_loss
-)] // 2048-pixel coordinates and clamped byte colors.
+// 2048-pixel coordinates and clamped byte colors.
 pub fn atlas() -> &'static [u8] {
     static ATLAS: OnceLock<Vec<u8>> = OnceLock::new();
     ATLAS.get_or_init(|| build_atlas(SkinLayers::default()))

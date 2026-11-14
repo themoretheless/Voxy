@@ -400,18 +400,17 @@ pub(super) fn sweep_capsules_selective(
         gap_m,
         iterations: 16,
     } = prefix
+        && options.max_iterations > 16
     {
-        if options.max_iterations > 16 {
-            let certified = certificate();
-            if certified {
-                return Ok((CapsuleSweep::Clear, Some(true)));
-            }
-            let outcome =
-                continue_advance(speed, roundoff, options, fraction, gap_m, 16, |fraction| {
-                    gap(&a, &b, fraction)
-                })?;
-            return Ok((outcome, Some(false)));
+        let certified = certificate();
+        if certified {
+            return Ok((CapsuleSweep::Clear, Some(true)));
         }
+        let outcome =
+            continue_advance(speed, roundoff, options, fraction, gap_m, 16, |fraction| {
+                gap(&a, &b, fraction)
+            })?;
+        return Ok((outcome, Some(false)));
     }
     Ok((prefix, None))
 }

@@ -92,12 +92,13 @@ pub(crate) fn pack_set(
     ])
 }
 pub fn apply(scene: &mut StreetScene) -> Result<(), Box<dyn std::error::Error>> {
-    let root = std::env::var_os("VOXY_STREET_MATERIALS")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
+    let root = std::env::var_os("VOXY_STREET_MATERIALS").map_or_else(
+        || {
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                 .join("../../assets/environments/original-street/materials")
-        });
+        },
+        PathBuf::from,
+    );
     let mut sets = Vec::new();
     for asset in ["plastered_stone_wall", "brick_wall_001", "bark_willow"] {
         let colour = load(&root.join(format!("{asset}-Diffuse.png")), true)?;
@@ -270,12 +271,13 @@ mod tests {
 }
 
 pub fn sky() -> Result<voxy_render::HdrImageAsset, Box<dyn std::error::Error>> {
-    let root = std::env::var_os("VOXY_STREET_MATERIALS")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
+    let root = std::env::var_os("VOXY_STREET_MATERIALS").map_or_else(
+        || {
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                 .join("../../assets/environments/original-street/materials")
-        });
+        },
+        PathBuf::from,
+    );
     Ok(voxy_render::HdrImageAsset::decode(
         &std::fs::read(root.join("daylight.hdr"))?,
         voxy_render::ImageLimits {
@@ -430,11 +432,7 @@ pub fn planckian_locus_rgb(kelvin: f32) -> [f32; 3] {
     } else {
         (0.543_206_8 * (t - 10.0).ln() - 1.196_254_1).clamp(0.0, 1.0)
     };
-    [
-        srgb_to_linear(r),
-        srgb_to_linear(g),
-        srgb_to_linear(b),
-    ]
+    [srgb_to_linear(r), srgb_to_linear(g), srgb_to_linear(b)]
 }
 
 #[cfg(test)]
@@ -454,7 +452,8 @@ mod planckian_tests {
         let noon_off = window_interior_schedule_emission(12.0, 17, 0.75);
         assert!(evening_lit >= noon_off);
 
-        let hit = interior_mapping_room_ray_hit([0.5, 0.5, 0.0], [0.1, -0.2, 1.0], [1.0, 1.0, 1.5]).unwrap();
+        let hit = interior_mapping_room_ray_hit([0.5, 0.5, 0.0], [0.1, -0.2, 1.0], [1.0, 1.0, 1.5])
+            .unwrap();
         assert!(hit.0 > 0.0);
     }
 }
@@ -463,11 +462,7 @@ mod planckian_tests {
 /// for apartment `room_hash` at `hour` (`0..24`) and `occupancy_rate` (`0..=1`), peaking during
 /// evening (`18:00..23:30`) and early morning (`06:00..08:00`) hours.
 #[allow(dead_code)]
-pub fn window_interior_schedule_emission(
-    hour: f32,
-    room_hash: u32,
-    occupancy_rate: f32,
-) -> f32 {
+pub fn window_interior_schedule_emission(hour: f32, room_hash: u32, occupancy_rate: f32) -> f32 {
     if !hour.is_finite() || !occupancy_rate.is_finite() {
         return 0.0;
     }

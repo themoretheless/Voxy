@@ -69,7 +69,6 @@ impl ObjAsset {
     /// # Errors
     /// Rejects exceeded budgets, invalid indices/attributes, non-triangle faces and
     /// unsupported geometry directives. Materials are not loaded implicitly.
-    #[allow(clippy::too_many_lines)]
     pub fn parse(source: &str, limits: ObjLimits) -> Result<Self, ObjError> {
         if source.len() > limits.source_bytes {
             return Err(error(0, "source budget exceeded"));
@@ -152,7 +151,7 @@ impl ObjAsset {
     }
 }
 #[cfg(test)]
-#[allow(clippy::float_cmp)] // Exact parsed integer-valued attributes, no arithmetic.
+// Exact parsed integer-valued attributes, no arithmetic.
 mod tests {
     use super::*;
     const TRIANGLE: &str =

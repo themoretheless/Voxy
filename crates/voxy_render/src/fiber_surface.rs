@@ -374,10 +374,7 @@ impl FiberSurfaceTransfer {
 /// Evaluates Marschner / d'Eon azimuthal scattering distributions `[N_R, N_TT, N_TRT]` for hair and
 /// fur strands as a function of `cos(Delta phi / 2)` and azimuthal roughness `beta_n`.
 #[must_use]
-pub fn marschner_azimuthal_scattering_n(
-    cos_half_dphi: f32,
-    roughness_azimuthal: f32,
-) -> [f32; 3] {
+pub fn marschner_azimuthal_scattering_n(cos_half_dphi: f32, roughness_azimuthal: f32) -> [f32; 3] {
     if !cos_half_dphi.is_finite() || !roughness_azimuthal.is_finite() {
         return [0.0; 3];
     }
@@ -390,8 +387,8 @@ pub fn marschner_azimuthal_scattering_n(
     let n_tt = ((-c * c) / (2.0 * s2)).exp() / (2.0 * std::f32::consts::PI * s2).sqrt();
     // TRT lobe: secondary internal reflection glint peaks near |c| ~ 0.5 (dphi ~ +-120 deg).
     let trt_offset = c.abs() - 0.5;
-    let n_trt = ((-trt_offset * trt_offset) / (2.0 * s2)).exp()
-        / (2.0 * std::f32::consts::PI * s2).sqrt();
+    let n_trt =
+        ((-trt_offset * trt_offset) / (2.0 * s2)).exp() / (2.0 * std::f32::consts::PI * s2).sqrt();
     [n_r, n_tt, n_trt]
 }
 
@@ -418,6 +415,28 @@ pub fn hair_melanin_absorption_sigma_a(eumelanin: f32, pheomelanin: f32) -> [f32
     ]
 }
 
+/// Evaluates Zinke et al. (2008) dual-scattering hair global multiple-scattering attenuation
+/// `T_f = (forward_scatter ^ (strand_density * optical_depth)) * exp(-strand_density * optical_depth * (1 - forward_scatter))`.
+#[must_use]
+pub fn dual_scattering_hair_attenuation(
+    forward_scatter: f32,
+    strand_density: f32,
+    optical_depth: f32,
+) -> f32 {
+    if !forward_scatter.is_finite() || !strand_density.is_finite() || !optical_depth.is_finite() {
+        return 0.0;
+    }
+    let a_f = forward_scatter.clamp(0.0, 1.0);
+    let n_b = (strand_density.max(0.0) * optical_depth.max(0.0)).min(60.0);
+    if n_b == 0.0 {
+        return 1.0;
+    }
+    if a_f <= 0.0 {
+        return 0.0;
+    }
+    (a_f.powf(n_b) * (-n_b * (1.0 - a_f)).exp()).clamp(0.0, 1.0)
+}
+
 #[cfg(test)]
 mod hair_tests {
     use super::*;
@@ -432,5 +451,13 @@ mod hair_tests {
         let sigma = hair_melanin_absorption_sigma_a(1.0, 0.5);
         // Blue absorbs strongest, Red absorbs weakest -> warm brown/reddish transmittance.
         assert!(sigma[0] < sigma[1] && sigma[1] < sigma[2]);
+    }
+
+    #[test]
+    fn dual_scattering_attenuation_decays_with_optical_depth() {
+        assert_eq!(dual_scattering_hair_attenuation(0.8, 0.7, 0.0), 1.0);
+        let shallow = dual_scattering_hair_attenuation(0.8, 0.7, 1.0);
+        let deep = dual_scattering_hair_attenuation(0.8, 0.7, 4.0);
+        assert!(shallow > deep && deep > 0.0);
     }
 }

@@ -67,7 +67,6 @@ impl BrowserVehicle {
             started: None,
         }
     }
-    #[allow(clippy::cast_possible_truncation)]
     pub fn heading(&self) -> f32 {
         self.state.heading as f32
     }

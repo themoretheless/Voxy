@@ -1,6 +1,6 @@
 //! Bilinear energy-regularized cohesive interface with optional Coulomb crack closure.
 //! Fixed unit normal, small sliding. Equal mode-I/II stiffness and fracture energy.
-use crate::biomechanics::Matrix;
+use crate::math::Matrix;
 use crate::math::dot;
 pub type Vec3 = [f64; 3];
 #[derive(Clone, Copy, Debug)]
@@ -122,7 +122,7 @@ impl Material {
     /// Commit history only after a global step has converged. No healing.
     /// # Errors
     /// Rejects invalid normal, nonfinite jumps and unrepresentable responses.
-    #[allow(clippy::too_many_lines)] // Validate the joint cohesive/contact candidate before publication.
+    // Validate the joint cohesive/contact candidate before publication.
     pub fn response(
         &self,
         old: &State,

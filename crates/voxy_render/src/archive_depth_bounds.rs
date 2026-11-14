@@ -211,11 +211,7 @@ impl ArchiveDepthBounds {
 /// Selects the Hierarchical-Z (Hi-Z) pyramid mip level `ceil(log2(max(screen_width_px, screen_height_px)))`
 /// clamped to `[0, max_mip]` so a projected bounding box is covered by at most a 2x2 texel footprint.
 #[must_use]
-pub fn select_hiz_mip_level(
-    screen_width_px: f32,
-    screen_height_px: f32,
-    max_mip: u32,
-) -> u32 {
+pub fn select_hiz_mip_level(screen_width_px: f32, screen_height_px: f32, max_mip: u32) -> u32 {
     if !screen_width_px.is_finite() || !screen_height_px.is_finite() {
         return 0;
     }

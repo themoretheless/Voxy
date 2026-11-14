@@ -1,5 +1,6 @@
 //! One bounded transport for the original participant codecs, not a second runtime.
 use super::*;
+#[cfg(test)]
 use std::io::Read;
 const MAGIC: &[u8; 8] = b"VOXYCGR1";
 const HEADER: usize = 72;
@@ -122,6 +123,7 @@ impl CoordinatedPlayCheckpoint {
         })
     }
     /// Blocking trusted-path IO; validation/encoding completes before replacement.
+    #[cfg(test)]
     pub(crate) fn save_file(
         &self,
         path: &std::path::Path,
@@ -131,6 +133,7 @@ impl CoordinatedPlayCheckpoint {
         voxy_assets::save_atomic_file(path, &bytes, limits.max_bytes).map_err(|e| e.to_string())?;
         Ok(())
     }
+    #[cfg(test)]
     pub(crate) fn read_file(
         path: &std::path::Path,
         limits: CoordinatedFileLimits,

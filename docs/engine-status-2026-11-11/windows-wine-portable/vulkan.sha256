@@ -1,0 +1,3 @@
+2ab2ec6c5474a13831fa8af9f0c34e95162df522e68877fc7abd0d554ace741a  artifacts/voxy-turntable-windows-x64-backend-selection.zip
+17572cf2c3703cdd67471a68566b49e247399b6a2aadb70aa7bf337451ede16d  /tmp/voxy-windows-vulkan.N2gtZl/game.vpak
+06f49fc1567d351a961a63f6257b88e7d5a016de9023685732c144b7b24bfc8f  crates/voxy_gpu_core/src/backend.rs

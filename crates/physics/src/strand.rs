@@ -584,9 +584,14 @@ mod box_contact_tests {
 
     #[test]
     fn pbd_inextensible_rod_stretch_correction_restores_exact_rest_length() {
-        let (q0, q1) =
-            pbd_inextensible_rod_stretch_correction([0.0, 0.0, 0.0], [3.0, 4.0, 0.0], 0.0, 1.0, 2.5)
-                .unwrap();
+        let (q0, q1) = pbd_inextensible_rod_stretch_correction(
+            [0.0, 0.0, 0.0],
+            [3.0, 4.0, 0.0],
+            0.0,
+            1.0,
+            2.5,
+        )
+        .unwrap();
         assert_eq!(q0, [0.0, 0.0, 0.0]);
         assert!((length(sub(q1, q0)) - 2.5).abs() < 1e-12);
     }

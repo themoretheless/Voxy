@@ -115,7 +115,7 @@ fn experimental_features() -> wgpu::ExperimentalFeatures {
     // with controlled geometry; backend implementation bugs can cause UB.
     unsafe { wgpu::ExperimentalFeatures::enabled() }
 }
-#[allow(clippy::too_many_lines)] // One complete GPU submission and its verification.
+// One complete GPU submission and its verification.
 fn verify_surface_ray(host: &mut SceneSurface) -> Result<bool, String> {
     let ray = voxy_render::RayScene::from_scene_mesh(host.device(), &SceneMesh::quad([1.0; 4]), 1)
         .map_err(|error| error.to_string())?;
@@ -393,7 +393,7 @@ fn verify_surface_ray(host: &mut SceneSurface) -> Result<bool, String> {
     Ok(true)
 }
 
-#[allow(clippy::too_many_lines)] // Complete raster-to-ray presentation verification.
+// Complete raster-to-ray presentation verification.
 fn verify_raster_frame(host: &mut SceneSurface, version: u32) -> Result<bool, String> {
     use voxy_render::{
         ReconstructionGuideMesh, ReconstructionGuidePass, ReconstructionMaterial,

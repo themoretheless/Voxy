@@ -45,7 +45,6 @@ impl Smoke {
     }
 }
 impl App {
-    #[allow(clippy::too_many_lines)]
     pub(super) fn gameplay_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         let mut smoke = self.gameplay_smoke.take().ok_or("missing game smoke")?;
         let mut done = false;

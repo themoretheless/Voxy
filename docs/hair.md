@@ -81,7 +81,7 @@ but does not reproduce that paper's XPBD solver.
 ## Validation and inspection
 
 ```sh
-cargo test --release -p physics --test hair -- --nocapture
+cargo test --release -p physics --test physics_hair hair:: -- --nocapture
 cargo test --release -p voxy_app --lib female_hair -- --nocapture
 cargo run --release -p voxy_app --example female_animation
 cargo run --release -p voxy_app --example hair_render

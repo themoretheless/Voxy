@@ -1,5 +1,4 @@
 //! CPU overlay geometry; device upload/publication stays with the graphics owner.
-#![allow(clippy::cast_precision_loss)]
 use crate::EditorError;
 use glam::Vec2;
 use std::{collections::HashMap, sync::Arc};
@@ -253,7 +252,6 @@ mod tests {
         }
     }
     #[test]
-    #[allow(clippy::too_many_lines)]
     fn glyph_geometry_clips_uvs_and_rejects_stale_owner_publications() {
         let bytes = [
             "/System/Library/Fonts/Supplemental/Arial.ttf",

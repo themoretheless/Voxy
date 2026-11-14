@@ -2,8 +2,8 @@
 //! Euler half-step, quasi-static radiative heating, Euler half-step. Radiation
 //! momentum and finite light travel time are neglected; nonrelativistic gas only.
 use crate::{
-    astrophysics_column::{Column, Slab},
-    astrophysics_gas::Gas,
+    astrophysics::column::{Column, Slab},
+    astrophysics::gas::Gas,
 };
 #[derive(Clone, Debug, PartialEq)]
 pub struct RadiatingGas {
@@ -18,10 +18,10 @@ pub struct RadiatingGas {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
     InvalidInput,
-    Gas(crate::astrophysics_gas::Error),
-    Radiation(crate::astrophysics_column::Error),
+    Gas(crate::astrophysics::gas::Error),
+    Radiation(crate::astrophysics::column::Error),
     NumericalOverflow,
-    Gravity(crate::astrophysics_gas_gravity::Error),
+    Gravity(crate::astrophysics::gas_gravity::Error),
     BudgetExceeded,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -93,7 +93,7 @@ impl RadiatingGas {
         dt: f64,
         hydro_budget: usize,
         thermal_budget: usize,
-    ) -> Result<(Work, crate::astrophysics_gas::Transport), Error> {
+    ) -> Result<(Work, crate::astrophysics::gas::Transport), Error> {
         self.column()?;
         if !dt.is_finite() || dt < 0.0 {
             return Err(Error::InvalidInput);
@@ -132,7 +132,7 @@ impl RadiatingGas {
                 hydro_steps: steps,
                 thermal_steps,
             },
-            crate::astrophysics_gas::Transport {
+            crate::astrophysics::gas::Transport {
                 steps,
                 mass,
                 boundary,
@@ -166,7 +166,7 @@ impl RadiatingGas {
     /// Invalid state, boundary geometry or overflow.
     pub fn total_energy_with_gravity(&self, g: f64) -> Result<f64, Error> {
         self.column()?;
-        let potential = crate::astrophysics_gas_gravity::field(&self.gas, g)
+        let potential = crate::astrophysics::gas_gravity::field(&self.gas, g)
             .map_err(Error::Gravity)?
             .potential_energy;
         let energy = self.gas.totals().map_err(Error::Gas)?[2] + potential + self.escaped_energy;
@@ -217,7 +217,7 @@ impl RadiatingGas {
                 return Err(Error::NumericalOverflow);
             }
             let before = next.gas.clone();
-            let first = crate::astrophysics_gas_gravity::kick(&mut next.gas, g, h / 2.0)
+            let first = crate::astrophysics::gas_gravity::kick(&mut next.gas, g, h / 2.0)
                 .map_err(Error::Gravity)?;
             let (subwork, flux) = next.step_transport(
                 bottom,
@@ -228,11 +228,11 @@ impl RadiatingGas {
             )?;
             work.hydro_steps += subwork.hydro_steps;
             work.thermal_steps += subwork.thermal_steps;
-            let second = crate::astrophysics_gas_gravity::kick(&mut next.gas, g, h / 2.0)
+            let second = crate::astrophysics::gas_gravity::kick(&mut next.gas, g, h / 2.0)
                 .map_err(Error::Gravity)?;
             work.escaped_mass += flux.boundary[0];
             work.escaped_gas_energy += flux.boundary[2]
-                + crate::astrophysics_gas_gravity::transport_work_flux(
+                + crate::astrophysics::gas_gravity::transport_work_flux(
                     &before,
                     &mut next.gas,
                     g,

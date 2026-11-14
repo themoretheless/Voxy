@@ -340,8 +340,14 @@ mod tests {
             343.0,
         );
         assert!((supersonic - 4.0).abs() < 1e-6);
-        assert_eq!(inverse_distance_windowed_attenuation(1.0, 2.0, 20.0, 1.0), 1.0);
-        assert_eq!(inverse_distance_windowed_attenuation(20.0, 2.0, 20.0, 1.0), 0.0);
+        assert_eq!(
+            inverse_distance_windowed_attenuation(1.0, 2.0, 20.0, 1.0),
+            1.0
+        );
+        assert_eq!(
+            inverse_distance_windowed_attenuation(20.0, 2.0, 20.0, 1.0),
+            0.0
+        );
         let mid = inverse_distance_windowed_attenuation(6.0, 2.0, 20.0, 1.0);
         assert!(mid > 0.0 && mid < 1.0);
     }

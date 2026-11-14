@@ -365,7 +365,8 @@ pub fn rect_light_solid_angle_steradians(
         let den = 1.0 + dot(a, b) + dot(b, c) + dot(c, a);
         2.0 * num.atan2(den)
     };
-    (tri_solid_angle(r0, r1, r2) + tri_solid_angle(r0, r2, r3)).clamp(0.0, 2.0 * std::f32::consts::PI)
+    (tri_solid_angle(r0, r1, r2) + tri_solid_angle(r0, r2, r3))
+        .clamp(0.0, 2.0 * std::f32::consts::PI)
 }
 
 #[cfg(test)]

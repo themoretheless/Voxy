@@ -21,7 +21,7 @@ pub struct LayoutItem {
 /// container. No implicit shrinking, scrolling or clipping occurs.
 /// # Errors
 /// Rejects invalid geometry/weights, duplicate IDs, item cap and insufficient space.
-#[allow(clippy::cast_possible_truncation)] // Final f32 geometry is validated before returning.
+// Final f32 geometry is validated before returning.
 pub fn layout_linear(
     origin: [f32; 2],
     size: [f32; 2],

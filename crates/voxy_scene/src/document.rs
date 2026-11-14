@@ -174,7 +174,16 @@ impl ComponentRegistry {
             })
             .collect::<Result<Vec<_>, _>>()?;
         scene.bump_structure();
-        scene.node_mut(destination)?.components.extend(decoded);
+        let dest_node = scene.node_mut(destination)?;
+        let mut added_types = Vec::with_capacity(decoded.len());
+        for (type_id, component) in decoded {
+            if dest_node.components.insert(type_id, component).is_none() {
+                added_types.push(type_id);
+            }
+        }
+        for type_id in added_types {
+            scene.index_component_slot(type_id, destination.slot);
+        }
         Ok(())
     }
 
@@ -696,10 +705,14 @@ impl SceneDocument {
                 if !codec.collections.is_empty() {
                     registry.validate_collections(name, &(codec.encode)(&component)?)?;
                 }
-                graph
+                if graph
                     .node_mut(id)?
                     .components
-                    .insert(codec.type_id, component);
+                    .insert(codec.type_id, component)
+                    .is_none()
+                {
+                    graph.index_component_slot(codec.type_id, id.slot);
+                }
             }
             ids.insert(object.id.clone(), id);
         }

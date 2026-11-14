@@ -90,7 +90,6 @@ impl LocalPos {
 
     /// De-interleaves a 15-bit 3D Morton code into a [`LocalPos`], or `None` if `morton >= 32768`.
     #[must_use]
-    #[allow(clippy::cast_possible_truncation)]
     pub const fn from_morton(morton: u16) -> Option<Self> {
         const fn compact1by2(mut n: u16) -> u8 {
             n &= 0x1249;
@@ -154,7 +153,8 @@ impl LocalPos {
                             let x_ok =
                                 (dx == 0) || (dx == -1 && self.x == 0) || (dx == 1 && self.x == 31);
                             if x_ok {
-                                let bit = (dx + 1) as u32 + 3 * ((dz + 1) as u32 + 3 * (dy + 1) as u32);
+                                let bit =
+                                    (dx + 1) as u32 + 3 * ((dz + 1) as u32 + 3 * (dy + 1) as u32);
                                 mask |= 1_u32 << bit;
                             }
                             dx += 1;
@@ -217,7 +217,6 @@ impl LocalIndex {
 
     #[inline]
     #[must_use]
-    #[allow(clippy::cast_possible_truncation)]
     pub const fn position(self) -> LocalPos {
         let value = self.0;
         let x = (value & 31) as u8;
@@ -255,7 +254,6 @@ impl std::error::Error for CoordinateOverflow {}
 
 #[inline]
 #[must_use]
-#[allow(clippy::cast_possible_truncation)]
 pub const fn split_voxel(pos: VoxelPos) -> (ChunkPos, LocalPos) {
     // CHUNK_EDGE is a power of two, so the Euclidean quotient is an arithmetic shift
     // and the Euclidean remainder a mask, for negative coordinates too.
@@ -525,7 +523,6 @@ impl SubVoxelCoord {
 
     /// Converts to a local `f32` offset relative to `origin_voxel` without catastrophic cancellation.
     #[must_use]
-    #[allow(clippy::cast_precision_loss)]
     pub fn relative_f32(self, origin_voxel: i64) -> Option<f32> {
         let delta = self.voxel.checked_sub(origin_voxel)?;
         Some((delta as f32) + f32::from(self.frac) * (1.0 / 65_536.0))
@@ -1382,11 +1379,17 @@ mod tests {
 
     #[test]
     fn morton_30bit_and_amanatides_woo_dda_setup_are_exact() {
-        for &[x, y, z] in &[[0_u32, 0, 0], [1, 2, 3], [511, 256, 1023], [1023, 1023, 1023]] {
+        for &[x, y, z] in &[
+            [0_u32, 0, 0],
+            [1, 2, 3],
+            [511, 256, 1023],
+            [1023, 1023, 1023],
+        ] {
             let code = morton_encode_3d_u10(x, y, z);
             assert_eq!(morton_decode_3d_u10(code), [x, y, z]);
         }
-        let (step, t_max, t_delta) = voxel_ray_dda_first_step([0.25, 1.5, -0.5], [1.0, -2.0, 0.0], 1.0);
+        let (step, t_max, t_delta) =
+            voxel_ray_dda_first_step([0.25, 1.5, -0.5], [1.0, -2.0, 0.0], 1.0);
         assert_eq!(step, [1, -1, 0]);
         assert!((t_max[0] - 0.75).abs() < 1e-5);
         assert!((t_max[1] - 0.25).abs() < 1e-5);

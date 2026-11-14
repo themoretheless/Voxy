@@ -14,11 +14,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=pathlib.Path, default=repo / "target/debug/examples/asset_window")
     parser.add_argument("--manifest", action="store_true", help="Verify stable logical identity across source rename")
-    parser.add_argument("--app", action="store_true", help="Exercise the main voxy_app model modes")
+    parser.add_argument("--app", action="store_true", help="Exercise the standalone voxy_editor model modes (--model / --model-manifest)")
     parser.add_argument("--editor-checks", action="store_true", help="Require native authoring deletion and instance acceptance checks")
     parser.add_argument("--scene-test", action="store_true", help="Verify standalone editor scene file round trip")
     args = parser.parse_args()
-    assert not (args.scene_test and args.app), "scene-test uses the standalone editor"
+    if args.app and args.binary == repo / "target/debug/examples/asset_window":
+        args.binary = repo / "target/debug/voxy_editor"
     original = (repo / "crates/voxy_render/examples/assets/quad.obj").read_text()
     with tempfile.TemporaryDirectory(prefix="voxy-window-reload-") as directory:
         model = pathlib.Path(directory) / "quad.obj"

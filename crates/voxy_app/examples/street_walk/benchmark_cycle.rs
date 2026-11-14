@@ -56,7 +56,7 @@ fn percentile_99_ms(samples_seconds: &[f64]) -> Option<f64> {
     if valid.is_empty() {
         return None;
     }
-    valid.sort_by(|a, b| a.total_cmp(b));
+    valid.sort_by(f64::total_cmp);
     let idx = ((valid.len() - 1) * 99) / 100;
     Some(valid[idx])
 }
@@ -142,10 +142,7 @@ pub fn frame_pacing_consistency_index(frame_times_s: &[f64]) -> f64 {
     if mean <= 1e-12 {
         return 0.0;
     }
-    let sum_sq_diff: f64 = valid
-        .windows(2)
-        .map(|w| (w[1] - w[0]).powi(2))
-        .sum();
+    let sum_sq_diff: f64 = valid.windows(2).map(|w| (w[1] - w[0]).powi(2)).sum();
     let rms_delta = (sum_sq_diff / ((valid.len() - 1) as f64)).sqrt();
     (1.0 / (1.0 + rms_delta / mean)).clamp(0.0, 1.0)
 }

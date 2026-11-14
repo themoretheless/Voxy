@@ -8,7 +8,10 @@ mod ui;
 pub use actions::{ControllerProfile, Hand, HandInput, HapticPulse, XrActions};
 pub use history::XrHistoryReset;
 pub use panel::{QuadHit, hit_test_quad};
-pub use session::{QuadSubmission, StereoSubmission, XrSession, XrSessionEvent};
+pub use session::{
+    QuadSubmission, StereoSubmission, XrSession, XrSessionEvent, predict_xr_head_pose,
+    xr_asymmetric_fov_projection,
+};
 pub use swapchain::{ImageOwnership, XrSwapchain};
 pub use ui::XrPanelPointer;
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

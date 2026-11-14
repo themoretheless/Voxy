@@ -5,6 +5,11 @@ mod frame_loop;
 pub use frame_loop::{
     AdaptiveQualityPidController, FrameLoop, FrameWork, snap_frame_delta_to_refresh_rate,
 };
+mod streaming;
+pub use streaming::{
+    PersistenceError, RebuildBatchOutcome, RebuildSubmitError, RebuildWorkerPool, WorldPersistence,
+    apply_wal_recovery,
+};
 mod time;
 pub use time::{SimulationClock, TimeDrop, TimeFrame};
 
@@ -13,9 +18,11 @@ use std::collections::BTreeMap;
 use voxy_core::{ChunkPos, TickId, WorldEpoch};
 
 pub use bootstrap::{
-    BootstrapChunk, BootstrapError, BootstrapScene, build_bootstrap_mesh, build_bootstrap_scene,
-    build_generated_scene, build_procedural_scene, invalidated_derived_chunks,
-    rebuild_bootstrap_chunks,
+    BootstrapChunk, BootstrapError, BootstrapScene, MAX_BOOTSTRAP_RADIUS, build_bootstrap_mesh,
+    build_bootstrap_scene, build_generated_scene, build_procedural_scene,
+    build_vertical_procedural_scene, extract_chunk_neighborhood, invalidated_derived_chunks,
+    rebuild_bootstrap_chunks, rebuild_chunks_from_snapshots,
+    rebuild_vertical_chunks_from_snapshots,
 };
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -295,7 +302,6 @@ impl FrameStateDigest {
 /// Computes a predictive chunk-prefetch offset `[dx, dy, dz]` (in 32-voxel chunks)
 /// from player velocity (`m/s`) and `lookahead_s`, clamped to `[-max_chunk_offset, max_chunk_offset]`.
 #[must_use]
-#[allow(clippy::cast_possible_truncation)]
 pub fn velocity_lookahead_chunk_offset(
     velocity_m_s: [f32; 3],
     lookahead_s: f32,

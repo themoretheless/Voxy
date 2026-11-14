@@ -198,29 +198,28 @@ impl App {
         };
         // Release only this operation's source fence, even if another operation
         // has acquired a new one while cancelled work was still settling.
-        if let Some(request) = pending.request_mut() {
-            if request.cancelled {
-                if let Some(fence) = &request.fence {
-                    if self
-                        .restore_barrier
-                        .as_ref()
-                        .is_some_and(|barrier| Arc::ptr_eq(&barrier.epoch, fence))
-                    {
-                        match self.resume_restore_barrier() {
-                            Ok(true) => request.fence = None,
-                            Ok(false) => {
-                                self.editor_load = Some(pending);
-                                return Ok(None);
-                            }
-                            Err(error) => {
-                                self.editor_load = Some(pending);
-                                return Err(error);
-                            }
-                        }
-                    } else {
-                        request.fence = None;
+        if let Some(request) = pending.request_mut()
+            && request.cancelled
+            && let Some(fence) = &request.fence
+        {
+            if self
+                .restore_barrier
+                .as_ref()
+                .is_some_and(|barrier| Arc::ptr_eq(&barrier.epoch, fence))
+            {
+                match self.resume_restore_barrier() {
+                    Ok(true) => request.fence = None,
+                    Ok(false) => {
+                        self.editor_load = Some(pending);
+                        return Ok(None);
+                    }
+                    Err(error) => {
+                        self.editor_load = Some(pending);
+                        return Err(error);
                     }
                 }
+            } else {
+                request.fence = None;
             }
         }
         let mut pending = match pending {
@@ -235,7 +234,7 @@ impl App {
                 match self.resume_restore_barrier() {
                     Ok(true) => return Err(error.into()),
                     Ok(false) => {
-                        self.editor_load = Some(PendingEditorLoad::Resuming { error, fence })
+                        self.editor_load = Some(PendingEditorLoad::Resuming { error, fence });
                     }
                     Err(release) => {
                         self.editor_load = Some(PendingEditorLoad::Resuming { error, fence });
@@ -560,7 +559,7 @@ impl App {
                                 return Ok(PendingEditorLoad::Cancelling {
                                     workers: candidate.map_or_else(
                                         |_| Vec::new(),
-                                        |candidate| candidate.discard(),
+                                        super::editor::ReadyEditorInstallation::discard,
                                     ),
                                     errors: Vec::new(),
                                 });
@@ -617,7 +616,7 @@ impl App {
                 self.editor_load = Some(PendingEditorLoad::Resuming {
                     error: error.to_string(),
                     fence: fence.unwrap(),
-                })
+                });
             }
             Err(error) => return Err(error),
         }

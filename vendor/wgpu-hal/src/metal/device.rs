@@ -280,11 +280,9 @@ impl super::Device {
                 // opts its render pipeline into this existing precise policy.
                 // Unrelated render pipelines retain their configured behaviour.
                 #[cfg(feature = "metal-safe-compute")]
-                let precise_math = original_gi_math::original_gi_precise_math(
+                let precise_math = original_gi_math::metal_precise_math(
                     stage_bit == wgt::ShaderStages::COMPUTE,
-                    stage.entry_point,
-                    stage.constants.get("ARCHIVE_PAIRED_DDA").is_some_and(|v| *v != 0.0),
-                    stage.constants.get("ARCHIVE_ORIGINAL_GI_RASTER_MATH").is_some_and(|v| *v != 0.0),
+                    stage.constants.get("WGPU_METAL_PRECISE_MATH").copied(),
                 );
                 #[cfg(feature = "metal-safe-compute")]
                 if precise_math {

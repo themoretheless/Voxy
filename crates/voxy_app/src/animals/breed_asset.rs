@@ -196,6 +196,7 @@ fn vertex(out: &mut Surface, p: Vec3, n: Vec3, color: Vec3, rough: f32, cat: boo
     });
     out.fur.push(furry);
 }
+#[cfg(test)]
 fn ellipsoid(out: &mut Surface, p: Vec3, r: Vec3, color: Vec3, rough: f32, cat: bool) {
     let start = out.vertices.len() as u32;
     for y in 0..=12 {

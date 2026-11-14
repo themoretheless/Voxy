@@ -280,8 +280,7 @@ fn build(cat: bool) -> Result<Groom, String> {
                     vertex.joints = skin_joints;
                     vertex.weights = skin_weights;
                 } else if let Some(guide) = guide {
-                    let influence = ((root.length / result.roots[guide].length).min(1.0)
-                        * 65535.0)
+                    let influence = ((root.length / result.roots[guide].length).min(1.0) * 65535.0)
                         .round() as u16;
                     let tip = (influence as f32 * (t * 2. - 1.).max(0.)).round() as u16;
                     let mid = if t >= 0.5 {
@@ -352,9 +351,6 @@ impl CoatDynamics {
             strands: Vec::new(),
             initialized: false,
         }
-    }
-    pub fn step(&mut self, groom: &Groom, pose: &[Mat4; BONES], dt: f32) -> Result<(), String> {
-        self.step_with_boxes(groom, pose, dt, &[])
     }
     pub fn step_with_boxes(
         &mut self,
@@ -438,6 +434,7 @@ impl CoatDynamics {
             }
         }
     }
+    #[cfg(test)]
     pub fn matrices(&self, groom: &Groom, pose: &[Mat4; BONES]) -> Vec<Mat4> {
         let mut matrices = pose.to_vec();
         for (index, root) in groom.roots.iter().enumerate() {
@@ -668,7 +665,8 @@ mod tests {
 
     #[test]
     fn fur_shell_gravity_droop_is_zero_at_root_and_quadratically_bends_toward_tangent_gravity() {
-        let root = fur_shell_gravity_droop_offset(0.0, 0.04, 0.5, [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]);
+        let root =
+            fur_shell_gravity_droop_offset(0.0, 0.04, 0.5, [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]);
         let mid = fur_shell_gravity_droop_offset(0.5, 0.04, 0.5, [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]);
         let tip = fur_shell_gravity_droop_offset(1.0, 0.04, 0.5, [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]);
         assert_eq!(root, [0.0; 3]);

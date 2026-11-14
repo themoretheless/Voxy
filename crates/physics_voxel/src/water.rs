@@ -116,7 +116,6 @@ impl LiquidFlow {
 ///
 /// Rejects invalid states/budgets, excessive active work, coordinate overflow, missing chunks,
 /// unavailable data, unknown blocks, sample overflow, or write-budget overflow.
-#[allow(clippy::too_many_lines)]
 pub fn step_water(
     view: &impl VoxelView,
     registry: &BlockRegistry,
@@ -142,7 +141,6 @@ pub fn step_water(
 ///
 /// # Errors
 /// Returns the same errors as `step_water`, plus `InvalidFlow` for limits outside 1..=8.
-#[allow(clippy::too_many_lines, clippy::too_many_arguments)]
 pub fn step_liquid(
     view: &impl VoxelView,
     registry: &BlockRegistry,

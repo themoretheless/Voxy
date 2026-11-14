@@ -32,14 +32,44 @@ pub(super) fn run_project_configured(
     run_project_host(path, mode, host)
 }
 
+/// Opens a project from a standalone editor binary that can also run packages.
+///
+/// # Errors
+/// Reports an invalid mode, project, or native editor failure.
+pub fn run_project_with_package_player(
+    path: &Path,
+    mode: ViewportMode,
+    player: std::path::PathBuf,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if !matches!(mode, ViewportMode::Interactive | ViewportMode::PrefabSmoke) {
+        return Err("package player requires editor mode".into());
+    }
+    run_project_host_with_player(
+        path,
+        mode,
+        crate::GameHost::new(crate::editor_component_registry()?),
+        Some(player),
+    )
+}
+
 pub(super) fn run_project_host(
     path: &Path,
     mode: ViewportMode,
     host: crate::GameHost,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    run_project_host_with_player(path, mode, host, None)
+}
+
+fn run_project_host_with_player(
+    path: &Path,
+    mode: ViewportMode,
+    host: crate::GameHost,
+    player: Option<std::path::PathBuf>,
+) -> Result<(), Box<dyn std::error::Error>> {
     if !matches!(
         mode,
         ViewportMode::Interactive
+            | ViewportMode::PrefabSmoke
             | ViewportMode::Game
             | ViewportMode::GameCheck
             | ViewportMode::GameSmoke
@@ -47,10 +77,14 @@ pub(super) fn run_project_host(
         return Err("project entry requires editor or game mode".into());
     }
     let mut app = App::from_project_with_registry(path, host.components)?;
+    app.build.player = player;
     app.ui_action_setup = host.ui_actions;
     app.behavior_setup = host.behaviors;
     app.behavior_checkpoints = host.behavior_checkpoints;
     app.ui_action_checkpoints = host.ui_action_checkpoints;
+    if mode == ViewportMode::PrefabSmoke {
+        app.start_prefab_smoke();
+    }
     let result: Result<(), Box<dyn std::error::Error>> = (|| {
         if !prepare_game(&mut app, mode)? {
             EventLoop::new()?.run_app(&mut app)?;

@@ -76,7 +76,11 @@ pub fn prepare_ui_text<'a>(
         let (Some(text), Some(clip)) = (&element.descriptor.text, element.clip) else {
             continue;
         };
-        let key = (text.font.as_str(), text.content.as_str(), text.size.to_bits());
+        let key = (
+            text.font.as_str(),
+            text.content.as_str(),
+            text.size.to_bits(),
+        );
         let run = if let Some(run) = cache.get(&key) {
             Arc::clone(run)
         } else {

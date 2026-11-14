@@ -1,0 +1,4 @@
+7adfe8b333fbe50dc63056ede93788a1e2e22042e8ed40930c707a6f65ed21ad  crates/voxy_web/src/project_game.rs
+8b4433e5c4c33ffde8e4200e33d26b24f1d1f495486fe97e22e7f2509f570bc2  crates/voxy_web/src/project_game/root_motion.rs
+b89053c705debfab7dcb56690b9e067f9dd0dcf76d9ac6d5a27d397da77b7453  crates/voxy_web/src/project_game/clip_transition.rs
+766786299fa5fe7010b6d08678ee2f7591efcd4cc87a40bc76cafaa6c4e2bd3c  web/tests/project-animation.mjs

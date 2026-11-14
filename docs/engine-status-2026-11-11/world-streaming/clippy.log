@@ -1,0 +1,10 @@
+    Checking voxy_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_core)
+    Checking voxy_time v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_time)
+    Checking physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Checking voxy_world v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_world)
+    Checking voxy_mesher v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_mesher)
+    Checking voxy_lighting v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_lighting)
+    Checking voxy_storage v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_storage)
+    Checking physics_voxel v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_voxel)
+    Checking voxy_runtime v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_runtime)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 22.17s

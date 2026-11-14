@@ -89,7 +89,6 @@ impl<'s> PositionScript<'s> {
         let [Value::Number(x), Value::Number(y), Value::Number(z)] = values.as_slice() else {
             return Err(ScriptError::InvalidPosition);
         };
-        #[allow(clippy::cast_possible_truncation)]
         let position = Vec3::new(*x as f32, *y as f32, *z as f32);
         if !position.is_finite() {
             return Err(ScriptError::InvalidPosition);

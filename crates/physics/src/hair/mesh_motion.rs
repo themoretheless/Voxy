@@ -78,22 +78,22 @@ pub(super) fn admit(
     for (mesh_index, mesh) in meshes.iter().enumerate() {
         let contacts = mesh.swept_capsule_contacts(&motions, Default::default())?;
         if let Some((i, face, query)) = contacts.first() {
-            if let Some(path) = std::env::var_os("VOXY_HAIR_MESH_SWEEP_REJECT_EXPORT") {
-                if let Some(triangle) = mesh.face_motion(*face) {
-                    let motion = motions[*i];
-                    let payload = format!(
-                        "{{\"rod\":{},\"segment\":{},\"radius\":{:?},\"capsule_start\":{:?},\"capsule_end\":{:?},\"triangle_start\":{:?},\"triangle_end\":{:?}}}",
-                        ids[*i].0,
-                        ids[*i].1,
-                        motion.radius,
-                        motion.start,
-                        motion.end,
-                        triangle.start,
-                        triangle.end
-                    );
-                    if let Err(error) = std::fs::write(path, payload) {
-                        eprintln!("HAIR MESH SWEEP EXPORT ERROR: {error}");
-                    }
+            if let Some(path) = std::env::var_os("VOXY_HAIR_MESH_SWEEP_REJECT_EXPORT")
+                && let Some(triangle) = mesh.face_motion(*face)
+            {
+                let motion = motions[*i];
+                let payload = format!(
+                    "{{\"rod\":{},\"segment\":{},\"radius\":{:?},\"capsule_start\":{:?},\"capsule_end\":{:?},\"triangle_start\":{:?},\"triangle_end\":{:?}}}",
+                    ids[*i].0,
+                    ids[*i].1,
+                    motion.radius,
+                    motion.start,
+                    motion.end,
+                    triangle.start,
+                    triangle.end
+                );
+                if let Err(error) = std::fs::write(path, payload) {
+                    eprintln!("HAIR MESH SWEEP EXPORT ERROR: {error}");
                 }
             }
             if std::env::var_os("VOXY_HAIR_MESH_SWEEP_TRACE").is_some() {

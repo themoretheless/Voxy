@@ -3,23 +3,21 @@ mod checkpoint;
 mod pcm_archive;
 pub use checkpoint::{GainCheckpoint, MixerCheckpoint, VoiceCheckpoint};
 mod resample;
+pub use resample::lanczos_windowed_sinc_weight;
 mod stream;
 pub use stream::{PcmStream, StreamRead};
 mod wav;
 pub use wav::decode_wav;
 mod spatial;
 pub use spatial::{
-    sabine_eyring_rt60, spatial_gains, trace_voxel_occlusion_gain,
+    biquad_lowpass_butterworth_coeffs, iso9613_air_absorption_db_per_m, sabine_eyring_rt60,
+    spatial_gains, trace_voxel_occlusion_gain,
 };
 
 /// Evaluates Woodworth's spherical-head Interaural Time Difference (ITD) in seconds
 /// for horizontal azimuth `azimuth_rad` (`-pi/2..=pi/2`), `head_radius_m`, and `speed_of_sound_m_s`.
 #[must_use]
-pub fn woodworth_itd_seconds(
-    azimuth_rad: f32,
-    head_radius_m: f32,
-    speed_of_sound_m_s: f32,
-) -> f32 {
+pub fn woodworth_itd_seconds(azimuth_rad: f32, head_radius_m: f32, speed_of_sound_m_s: f32) -> f32 {
     if !azimuth_rad.is_finite()
         || !head_radius_m.is_finite()
         || head_radius_m <= 0.0
@@ -330,7 +328,7 @@ impl Mixer {
                     }
                 }
             }
-            #[allow(clippy::cast_possible_truncation)] // Clamped normalized output.
+            // Clamped normalized output.
             for channel in 0..2 {
                 frame[channel] = sum[channel].clamp(-1.0, 1.0) as f32;
             }
@@ -346,7 +344,7 @@ fn valid_gain(gain: f32) -> Result<(), AudioError> {
 }
 
 #[cfg(test)]
-#[allow(clippy::float_cmp)] // Exact PCM copy, zero and saturation are contractual here.
+// Exact PCM copy, zero and saturation are contractual here.
 mod tests {
     use super::*;
     fn clip(frames: Vec<[f32; 2]>) -> Clip {

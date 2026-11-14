@@ -314,7 +314,7 @@ mod tests {
                 assert!((projected.z - depths[i]).abs() < 1e-5);
                 match projection {
                     crate::SceneProjection::Perspective { .. } => {
-                        assert_eq!(start, camera.eye.to_array().map(f64::from))
+                        assert_eq!(start, camera.eye.to_array().map(f64::from));
                     }
                     crate::SceneProjection::Orthographic { .. } => {
                         let projected =

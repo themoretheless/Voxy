@@ -34,20 +34,23 @@ impl InputMap {
                 .map(|(&control, &value)| (control, value.to_bits()))
                 .collect(),
             actions: self
-                .actions
+                .action_ids
                 .iter()
-                .map(|(name, action)| ActionCheckpoint {
-                    name: name.clone(),
-                    bindings: action
-                        .bindings
-                        .iter()
-                        .map(|b| (b.control, b.scale.to_bits()))
-                        .collect(),
-                    dead_zone_bits: action.dead_zone.to_bits(),
-                    value_bits: action.state.value.to_bits(),
-                    held: action.state.held,
-                    pressed: action.state.pressed,
-                    released: action.state.released,
+                .map(|(name, id)| {
+                    let action = &self.action_slots[id.0 as usize];
+                    ActionCheckpoint {
+                        name: name.clone(),
+                        bindings: action
+                            .bindings
+                            .iter()
+                            .map(|b| (b.control, b.scale.to_bits()))
+                            .collect(),
+                        dead_zone_bits: action.dead_zone.to_bits(),
+                        value_bits: action.state.value.to_bits(),
+                        held: action.state.held,
+                        pressed: action.state.pressed,
+                        released: action.state.released,
+                    }
                 })
                 .collect(),
         }
@@ -75,7 +78,7 @@ impl InputMap {
         }
         let mut candidate = Self::new(self.max_actions, self.max_bindings);
         for action in &saved.actions {
-            if candidate.actions.contains_key(&action.name) {
+            if candidate.action_ids.contains_key(&action.name) {
                 return Err(InputError::InvalidBinding);
             }
             candidate.bind(
@@ -97,8 +100,8 @@ impl InputMap {
                 || value.abs() > 1.
                 || !saved.focused
                 || !candidate
-                    .actions
-                    .values()
+                    .action_slots
+                    .iter()
                     .any(|a| a.bindings.iter().any(|b| b.control == control))
                 || candidate.controls.insert(control, value).is_some()
             {
@@ -111,11 +114,12 @@ impl InputMap {
             if !value.is_finite() || value.abs() > 1. || (!saved.focused && action.pressed) {
                 return Err(InputError::InvalidValue);
             }
-            candidate
-                .actions
-                .get_mut(&action.name)
-                .ok_or(InputError::UnknownAction)?
-                .state = ActionState {
+            let id = candidate
+                .action_ids
+                .get(&action.name)
+                .copied()
+                .ok_or(InputError::UnknownAction)?;
+            candidate.action_slots[id.0 as usize].state = ActionState {
                 value,
                 held: action.held,
                 pressed: action.pressed,

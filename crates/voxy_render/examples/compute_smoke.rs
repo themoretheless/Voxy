@@ -13,7 +13,6 @@ fn cs_main(@builtin(global_invocation_id) id: vec3<u32>) {
     }
 }";
 
-#[allow(clippy::too_many_lines)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let backend = match std::env::var("VOXY_COMPUTE_BACKEND").as_deref() {
         Err(std::env::VarError::NotPresent) | Ok("auto") => voxy_render::GraphicsBackend::Auto,

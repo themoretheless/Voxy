@@ -24,7 +24,6 @@ impl AngularMotion {
     }
 }
 impl Behavior for AngularMotion {
-    #[allow(clippy::cast_possible_truncation)]
     fn fixed_update(&mut self, scene: &mut SceneGraph, owner: NodeId, delta: f64) {
         if scene
             .component::<CharacterBody>(owner)
@@ -116,7 +115,6 @@ impl AngularMotionBatch {
     /// # Errors
     /// Rejects foreign scenes, invalid ticks or invalid transform publication.
     /// Deleted owners are skipped; inactive owners retain their captured motion.
-    #[allow(clippy::cast_possible_truncation)]
     pub fn fixed_step(&mut self, scene: &mut SceneGraph, delta: f64) -> Result<(), GameplayError> {
         if scene.identity() != self.scene || !delta.is_finite() || delta <= 0.0 || delta > 0.1 {
             return Err("invalid angular motion scene/tick".into());
@@ -161,24 +159,41 @@ pub fn gameplay_schedule() -> Result<&'static voxy_scene::SchedulePlan, voxy_sce
     PLAN.get_or_init(|| {
         use voxy_scene::{SchedulePlan, SystemAccess, SystemSpec};
         let motion = SchedulePlan::build(
-            &[SystemSpec {
-                name: "angular.step".into(),
-                phase: 0,
-                after: vec![],
-                access: vec![
-                    SystemAccess {
-                        resource: "scene".into(),
-                        write: true,
-                    },
-                    SystemAccess {
-                        resource: "angular.motion".into(),
-                        write: true,
-                    },
-                ],
-            }],
-            1,
+            &[
+                SystemSpec {
+                    name: "angular.step".into(),
+                    phase: 0,
+                    after: vec![],
+                    access: vec![
+                        SystemAccess {
+                            resource: "scene".into(),
+                            write: true,
+                        },
+                        SystemAccess {
+                            resource: "angular.motion".into(),
+                            write: true,
+                        },
+                    ],
+                },
+                SystemSpec {
+                    name: "kinematic.step".into(),
+                    phase: 1,
+                    after: vec!["angular.step".into()],
+                    access: vec![
+                        SystemAccess {
+                            resource: "scene".into(),
+                            write: true,
+                        },
+                        SystemAccess {
+                            resource: "character.physics".into(),
+                            write: false,
+                        },
+                    ],
+                },
+            ],
+            2,
         )?;
-        SchedulePlan::compose(&[&motion, crate::character_schedule()?], 3)
+        SchedulePlan::compose(&[&motion, crate::character_schedule()?], 4)
     })
     .as_ref()
     .map_err(Clone::clone)

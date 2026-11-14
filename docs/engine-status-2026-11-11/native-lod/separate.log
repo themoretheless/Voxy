@@ -1,0 +1,27 @@
+LOD NATIVE SNAPSHOT PASS frames=3 owners=2
+LOD NATIVE SNAPSHOT PASS frames=4 owners=2
+MODEL PUBLISHED frames=4 first_x=0 asset=a
+LOD NATIVE SNAPSHOT PASS frames=5 owners=2
+LOD NATIVE FAR PASS frames=5 levels=[1] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=8 owners=2
+LOD NATIVE NEAR AND LAST GOOD PASS frames=8 levels=[0]
+MODEL PUBLISHED frames=9 first_x=0 asset=b
+LOD NATIVE SNAPSHOT PASS frames=11 owners=2
+LOD NATIVE BUDGET RECOVERY PASS frames=11
+LOD NATIVE PRESENTED AFTER FAILURE PASS frames=11
+LOD NATIVE SNAPSHOT PASS frames=14 owners=2
+LOD NATIVE SPLIT PASS frames=14 phase=3 msaa4=false levels=[[Some(0)], [Some(1)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=17 owners=2
+LOD NATIVE SPLIT PASS frames=17 phase=4 msaa4=true levels=[[Some(0)], [Some(1)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=20 owners=2
+LOD NATIVE SPLIT PASS frames=20 phase=5 msaa4=true levels=[[Some(1)], [Some(0)]] bytes=34076
+LOD NATIVE SNAPSHOT PASS frames=23 owners=2
+LOD NATIVE SINGLE RESTORED PASS frames=23
+LOD NATIVE SNAPSHOT PASS frames=26 owners=2
+LOD NATIVE COMPETITION CONTRACT frames=26 mandatory=62816 optional=[3072, 3072] budget=65888
+MODEL FAILED frames=26 last_good=true asset=a status=Some(Failed("GPU destination changed during model preparation"))
+LOD NATIVE SNAPSHOT PASS frames=29 owners=2
+LOD NATIVE COMPETITION FALLBACK PASS frames=29 live=65888 budget=65888 pending={(AssetId("b"), 1)}
+LOD NATIVE SNAPSHOT PASS frames=32 owners=2
+LOD NATIVE COMPETITION RECOVERY PASS frames=32 live=68960 budget=268435456
+MODEL FAILED frames=32 last_good=true asset=b status=Some(Failed("GPU publication cancelled during shutdown"))

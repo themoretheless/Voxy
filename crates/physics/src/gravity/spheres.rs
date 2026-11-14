@@ -218,7 +218,7 @@ impl Simulation {
         Ok(())
     }
 
-    #[allow(clippy::many_single_char_names)] // Standard quadratic time-of-impact coefficients.
+    // Standard quadratic time-of-impact coefficients.
     fn drift(
         self,
         spheres: &mut [Sphere],

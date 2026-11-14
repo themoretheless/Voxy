@@ -8,54 +8,31 @@
 //! - **Rigid bodies and contact**: [`contact`], [`rigid_motion`], [`spin_path`],
 //!   [`mass_properties`], [`friction`], [`cohesive`], [`planar`], the character
 //!   controller re-exported at the root, and the [`CollisionWorld`] port.
-//! - **Gravity and astrophysics**: [`gravity`] (field, spheres, character) and
-//!   [`astrophysics`] (binary, spin, equation of state, nuclear, radiation,
-//!   spherical models); the flat `astrophysics_*`/`gravity_*` names are kept as
-//!   re-exports.
-//! - **Deformable tissue and biomechanics**: [`tissue`], [`tissue_surface`],
-//!   [`soft_body`], [`biomechanics`], [`plasticity`], [`skin`], [`strand`],
-//!   [`hair`], [`secondary_motion`].
+//! - **Gravity**: [`gravity`] (field, spheres, character).
+//! - **Deformable solids and strands**: [`constitutive`], [`soft_body`],
+//!   [`plasticity`], [`strand`], [`hair`].
 //! - **Fluids and films**: [`liquid`], [`surface_film`], [`suspension`],
-//!   [`moisture`], [`wear`].
-//! - **Physiology**: [`respiration`], [`circulation`], [`lymph`].
-//!
-//! Private helpers (`symmetric_eigen`, `triangle_index`, `spatial_bounds`,
-//! `positive_transport`, `heat_exchange`, contact glue) stay crate-internal.
-pub mod astrophysics;
-pub use astrophysics::atmosphere as astrophysics_atmosphere;
-pub use astrophysics::binary as astrophysics_binary;
-pub use astrophysics::column as astrophysics_column;
-pub use astrophysics::eos as astrophysics_eos;
-pub use astrophysics::equilibrium as astrophysics_equilibrium;
-pub use astrophysics::evolution as astrophysics_evolution;
-pub use astrophysics::gas as astrophysics_gas;
-pub use astrophysics::gas_gravity as astrophysics_gas_gravity;
-pub use astrophysics::nuclear as astrophysics_nuclear;
-pub use astrophysics::opacity as astrophysics_opacity;
-pub use astrophysics::radhydro as astrophysics_radhydro;
-pub use astrophysics::radiation as astrophysics_radiation;
-pub use astrophysics::reaclib as astrophysics_reaclib;
-pub use astrophysics::spherical as astrophysics_spherical;
-pub use astrophysics::spherical_radiation as astrophysics_spherical_radiation;
-pub use astrophysics::spin as astrophysics_spin;
-pub use astrophysics::star as astrophysics_star;
-pub use astrophysics::thermal as astrophysics_thermal;
+//!   [`moisture`], [`wear`], [`debris`].
 mod character;
+pub mod constitutive;
 pub mod contact;
-pub mod gravity;
-pub use gravity::character as gravity_character;
-pub use gravity::field as gravity_field;
-pub use gravity::spheres as gravity_spheres;
 pub mod debris;
+pub mod gravity;
+#[doc(hidden)]
+pub mod heat_exchange;
 pub mod mass_properties;
 pub mod medium;
 pub mod moisture;
 pub mod planar;
+#[doc(hidden)]
+pub mod positive_transport;
 pub mod rigid_motion;
 pub mod rotation;
 pub mod spin_path;
 pub mod strand;
 mod symmetric_eigen;
+#[doc(hidden)]
+pub mod triangle_index;
 pub mod wear;
 pub use character::*;
 
@@ -149,42 +126,15 @@ pub mod liquid;
 
 pub mod soft_body;
 
-pub mod tissue;
-
-pub mod skin;
-
-pub mod biomechanics;
-
 pub mod cohesive;
 pub mod friction;
 pub mod plasticity;
 
-pub mod tissue_surface;
-
 pub mod hair;
-
-/// Airway volume-flow and compliant lung-unit mechanics in SI units.
-pub mod respiration;
-
-pub mod secondary_motion;
-
-/// Closed-loop blood-volume, chamber and valve mechanics in SI units.
-pub mod circulation;
-
-/// Conservative plasma/interstitial/lymph fluid and protein exchange.
-pub mod lymph;
 
 pub mod surface_film;
 
-mod triangle_index;
-
 pub mod suspension;
-
-mod heat_exchange;
-
-mod spatial_bounds;
-
-mod positive_transport;
 
 pub mod math;
 

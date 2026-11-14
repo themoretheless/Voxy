@@ -114,33 +114,30 @@ fn cs_step_light(@builtin(global_invocation_id) global_id: vec3<u32>) {
     light_out[idx] = max_val;
 }
 
-@compute @workgroup_size(4, 4, 4)
+@compute @workgroup_size(2, 4, 4)
 fn cs_pack(@builtin(global_invocation_id) global_id: vec3<u32>) {
-    let lx = global_id.x;
+    let word_x = global_id.x;
     let ly = global_id.y;
     let lz = global_id.z;
-    if (lx >= 32u || ly >= 32u || lz >= 32u) {
+    if (word_x >= 8u || ly >= 32u || lz >= 32u) {
         return;
     }
 
-    let local_raw = lx + 32u * (lz + 32u * ly);
-    let px = lx + 1u;
+    let base_lx = word_x * 4u;
     let py = ly + 1u;
     let pz = lz + 1u;
-    let p_idx = padded_index(px, py, pz);
+    var packed_word = 0u;
 
-    // light_in contains sky, light_out contains block light
-    let sky = light_in[p_idx] & 0x0fu;
-    let blk = light_out[p_idx] & 0x0fu;
-    let byte_val = (sky << 4u) | blk;
+    for (var k = 0u; k < 4u; k += 1u) {
+        let px = base_lx + k + 1u;
+        let p_idx = padded_index(px, py, pz);
+        // light_in contains sky, light_out contains block light
+        let sky = light_in[p_idx] & 0x0fu;
+        let blk = light_out[p_idx] & 0x0fu;
+        let byte_val = (sky << 4u) | blk;
+        packed_word |= byte_val << (k * 8u);
+    }
 
-    // Packed output packs 4 voxels per u32 word
-    let word_idx = local_raw >> 2u;
-    let byte_offset = (local_raw & 3u) * 8u;
-
-    // atomic or direct write: word index is partitioned by local_raw % 4
-    // We can write to a byte array directly or bytecast
-    let mask = 0xffu << byte_offset;
-    // We write into byte buffer
-    packed_output[local_raw] = byte_val;
+    let word_idx = word_x + 8u * (lz + 32u * ly);
+    packed_output[word_idx] = packed_word;
 }

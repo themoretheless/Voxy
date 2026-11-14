@@ -1,0 +1,13 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.41s
+     Running tests/physics_rigid/main.rs (target/wave3/debug/deps/physics_rigid-928bc76400370180)
+
+running 5 tests
+test boxes::overflow_does_not_publish_partial_state ... ok
+test boxes::query_error_does_not_publish_partial_state ... ok
+test boxes::lands_jumps_and_lands_on_non_grid_floor ... ok
+test boxes::slides_against_arbitrary_box ... ok
+test boxes::invalid_bounds_rejected_even_with_empty_backend ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 100 filtered out; finished in 0.00s
+

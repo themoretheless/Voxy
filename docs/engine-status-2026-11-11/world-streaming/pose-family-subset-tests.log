@@ -1,0 +1,30 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.74s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_render-5964849c32dd4096)
+
+running 22 tests
+test skinned::coherent_pose_tests::paired_cache_policy_cpu_bench ... ignored, manual paired CPU kernel benchmark
+test skinned::temporal_admission_tests::paired_temporal_cpu_bench ... ignored, manual CPU changing-pose paired benchmark
+test skinned::correspondence_tests::weighted_poses_models_indices_and_invalid_palettes ... ok
+test skinned::checkpoint::set::tests::corrupted_tables_derived_claims_and_rechecksummed_counts_reject_atomically ... ok
+test skinned::checkpoint::set::tests::repeated_instances_share_native_work_budget_but_distinct_rigs_are_counted ... ok
+test skinned::tests::animal_fibre_ranges_preserve_all_opaque_triangles_and_original_order ... ok
+test skinned::tests::mesh_rejects_bad_weights_joints_and_indices ... ok
+test skinned::tests::posed_scene_matches_correspondence_and_preserves_indexing ... ok
+test skinned::temporal_admission_tests::blended_weight_changes_and_cancellation_keep_temporal_contract ... ok
+test skinned::tests::unused_joint_indices_are_safe_for_shader_reads ... ok
+test skinned::checkpoint::set::tests::exact_small_posed_geometry_and_empty_set_round_trip ... ok
+test skinned::coherent_pose_tests::cached_admission_matches_original_loop_and_normal_bits ... ok
+test skinned::family_bound_tests::four_influence_extreme_scales_and_cancellation_never_false_certify ... ok
+test skinned::temporal_admission_tests::temporal_cache_matches_original_positions_and_errors ... ok
+test skinned::temporal_bound_exponent_tests::bounds_match_exact_scan_across_scale_exponents_and_blends ... ok
+test skinned::disabled_family_bound_tests::diverse_joint_sets_disable_bound_without_vacuous_admission ... ok
+test skinned::family_bound_tests::interval_family_implies_existing_group_certificate_for_all_unorm16_pairs ... ok
+test skinned::checkpoint::set::tests::real_file_preserves_dense_groups_buffer_aliases_and_120_native_admissions ... ok
+test skinned::coherent_pose_tests::parallel_admission_matches_sequential_first_error ... ok
+test skinned::family_bound_tests::family_fast_path_and_uncertain_fallback_preserve_exact_errors_and_pose_changes ... ok
+test skinned::temporal_bound_regressions::conservative_temporal_bounds_preserve_position_only_oracle_and_reset_inputs ... ok
+test skinned::coherent_pose_tests::grouped_admission_matches_per_vertex_scan ... ok
+
+test result: ok. 20 passed; 0 failed; 2 ignored; 0 measured; 405 filtered out; finished in 7.35s
+

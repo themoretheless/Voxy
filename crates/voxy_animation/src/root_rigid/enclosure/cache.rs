@@ -139,7 +139,7 @@ impl RootRigidPath {
         let Some(last) = self.spans.last() else {
             return Ok(RootRigidEnclosure::IDENTITY);
         };
-        if self.spans.iter().any(|span| span.is_step()) {
+        if self.spans.iter().any(super::super::RootRigidSpan::is_step) {
             return Err(AnimationError::RootRotationTransitionUnsupported);
         }
         if self.spans.iter().all(|span| span.screw.is_some()) {
@@ -754,7 +754,6 @@ impl RootScrewEnclosurePath<'_> {
     /// translated by that exact stored snap fraction; the physical snap itself
     /// is not counted as numerical error. Does not qualify fraction selection,
     /// runtime phase arithmetic or composed f32 scene publication.
-    #[allow(clippy::too_many_arguments)]
     pub fn physical_post_snap_selection_error_bounds(
         &self,
         center: DVec3,

@@ -1,6 +1,10 @@
 //! Grey LTE spherical transfer using straight chords and projected annulus
 //! quadrature. Static absorption/emission; isotropic ambient intensity, no scattering.
+<<<<<<<< HEAD:crates/physics/src/astrophysics/spherical_radiation.rs
 use crate::astrophysics_radiation::{LinearSourceLayer, trace_linear_sources};
+========
+use crate::astrophysics::radiation::{LinearSourceLayer, trace_linear_sources};
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/spherical_radiation.rs
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Shell {
     pub outer_radius: f64,
@@ -20,7 +24,7 @@ pub enum Error {
     InvalidInput,
     NumericalOverflow,
     BudgetExceeded,
-    Opacity(crate::astrophysics_opacity::Error),
+    Opacity(crate::astrophysics::opacity::Error),
 }
 /// Integrate full chords from the far exterior to the near exterior. Every
 /// radial annulus gets samples, including the innermost core. Cost O(N² Q),
@@ -36,7 +40,8 @@ pub fn transfer(
     let sources = shells
         .iter()
         .map(|s| {
-            crate::astrophysics_radiation::blackbody(s.temperature).map_err(|_| Error::InvalidInput)
+            crate::astrophysics::radiation::blackbody(s.temperature)
+                .map_err(|_| Error::InvalidInput)
         })
         .collect::<Result<Vec<_>, _>>()?;
     transfer_sources(
@@ -49,7 +54,7 @@ pub fn transfer(
         SpectralSurface::CellSource,
     )
 }
-fn transfer_sources(
+pub(super) fn transfer_sources(
     shells: &[Shell],
     sources: &[f64],
     ambient: f64,
@@ -239,7 +244,7 @@ fn transfer_sources(
     }
     Ok(result)
 }
-impl crate::astrophysics_spherical::Sphere {
+impl crate::astrophysics::spherical::Sphere {
     /// Derive shells from Euler density/internal energy and return spherical
     /// radiative power. SI: cv in J/kg/K, opacity in m²/kg, ambient W/m²/sr.
     /// # Errors
@@ -267,7 +272,7 @@ impl crate::astrophysics_spherical::Sphere {
     /// Invalid EOS/gas state, transfer parameters, overflow or work budget.
     pub fn radiation_rates_ionized(
         &self,
-        mixture: crate::astrophysics_eos::Mixture,
+        mixture: crate::astrophysics::eos::Mixture,
         opacity: f64,
         ambient: f64,
         rays_per_annulus: usize,
@@ -283,7 +288,7 @@ impl crate::astrophysics_spherical::Sphere {
             None,
         )
     }
-    #[allow(clippy::too_many_arguments)] // Shared transfer controls plus local/uniform EOS.
+    // Shared transfer controls plus local/uniform EOS.
     fn radiation_rates_eos(
         &self,
         specific_heat: f64,
@@ -291,8 +296,8 @@ impl crate::astrophysics_spherical::Sphere {
         ambient: f64,
         rays_per_annulus: usize,
         max_segments: usize,
-        mixture: Option<crate::astrophysics_eos::Mixture>,
-        local: Option<&[crate::astrophysics_eos::Mixture]>,
+        mixture: Option<crate::astrophysics::eos::Mixture>,
+        local: Option<&[crate::astrophysics::eos::Mixture]>,
     ) -> Result<Rates, Error> {
         self.totals().map_err(|_| Error::InvalidInput)?;
         if !specific_heat.is_finite()
@@ -336,7 +341,7 @@ pub struct Exchange {
     pub segments: usize,
     pub escaped_energy: f64,
 }
-impl crate::astrophysics_spherical::Sphere {
+impl crate::astrophysics::spherical::Sphere {
     /// Heat/cool fixed-density spherical gas from the full-chord radiation field.
     /// Momentum is unchanged. Adaptive explicit update, no temperature floors.
     /// Full failure rolls back state; escaped energy is signed and measured in J.
@@ -354,7 +359,7 @@ impl crate::astrophysics_spherical::Sphere {
         &mut self,
         dt: f64,
         mut settings: Heating,
-        mixture: crate::astrophysics_eos::Mixture,
+        mixture: crate::astrophysics::eos::Mixture,
     ) -> Result<Exchange, Error> {
         settings.specific_heat = 1.5 * mixture.specific_gas_constant();
         self.radiate_eos(dt, settings, Some(mixture))
@@ -363,7 +368,7 @@ impl crate::astrophysics_spherical::Sphere {
         &mut self,
         dt: f64,
         settings: Heating,
-        mixture: Option<crate::astrophysics_eos::Mixture>,
+        mixture: Option<crate::astrophysics::eos::Mixture>,
     ) -> Result<Exchange, Error> {
         self.radiate_local(dt, settings, mixture, None, None)
     }
@@ -375,7 +380,7 @@ impl crate::astrophysics_spherical::Sphere {
         dt: f64,
         settings: Heating,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
     ) -> Result<Exchange, Error> {
         if fractions.len() != self.cells.len() {
             return Err(Error::InvalidInput);
@@ -395,10 +400,10 @@ impl crate::astrophysics_spherical::Sphere {
         dt: f64,
         settings: Heating,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
-        table: &crate::astrophysics_opacity::Table,
+        network: &crate::astrophysics::nuclear::Network,
+        table: &crate::astrophysics::opacity::Table,
     ) -> Result<Exchange, Error> {
-        if table.kind != crate::astrophysics_opacity::Kind::GreyAbsorption
+        if table.kind != crate::astrophysics::opacity::Kind::GreyAbsorption
             || fractions.len() != self.cells.len()
         {
             return Err(Error::InvalidInput);
@@ -409,14 +414,14 @@ impl crate::astrophysics_spherical::Sphere {
             .collect::<Result<Vec<_>, _>>()?;
         self.radiate_local(dt, settings, None, Some(&local), Some(table))
     }
-    #[allow(clippy::too_many_lines)] // Keep thermal budget and transactional update together.
+    // Keep thermal budget and transactional update together.
     fn radiate_local(
         &mut self,
         dt: f64,
         mut settings: Heating,
-        mixture: Option<crate::astrophysics_eos::Mixture>,
-        local: Option<&[crate::astrophysics_eos::Mixture]>,
-        table: Option<&crate::astrophysics_opacity::Table>,
+        mixture: Option<crate::astrophysics::eos::Mixture>,
+        local: Option<&[crate::astrophysics::eos::Mixture]>,
+        table: Option<&crate::astrophysics::opacity::Table>,
     ) -> Result<Exchange, Error> {
         if let Some(mixture) = mixture {
             settings.specific_heat = 1.5 * mixture.specific_gas_constant();
@@ -525,7 +530,7 @@ impl crate::astrophysics_spherical::Sphere {
                 h = h.min(
                     0.05 * settings.specific_heat
                         / (16.0
-                            * crate::astrophysics_thermal::STEFAN_BOLTZMANN
+                            * crate::astrophysics::thermal::STEFAN_BOLTZMANN
                             * settings.opacity
                             * hottest.powi(3)),
                 );
@@ -556,10 +561,10 @@ impl crate::astrophysics_spherical::Sphere {
 }
 
 fn temperature_eos(
-    cell: crate::astrophysics_gas::Cell,
+    cell: crate::astrophysics::gas::Cell,
     gamma: f64,
     specific_heat: f64,
-    mixture: Option<crate::astrophysics_eos::Mixture>,
+    mixture: Option<crate::astrophysics::eos::Mixture>,
 ) -> Result<f64, Error> {
     let internal = cell.pressure(gamma).map_err(|_| Error::InvalidInput)? / (gamma - 1.0);
     if let Some(mixture) = mixture {
@@ -575,20 +580,20 @@ fn temperature_eos(
 pub struct ReactiveSettings {
     pub hydro_max_step: f64,
     pub hydro_steps: usize,
-    pub burn: crate::astrophysics_nuclear::Budget,
+    pub burn: crate::astrophysics::nuclear::Budget,
     pub radiation: Heating,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ReactiveError {
-    Dynamics(crate::astrophysics_spherical::Error),
+    Dynamics(crate::astrophysics::spherical::Error),
     Radiation(Error),
 }
 #[derive(Clone, Debug, PartialEq)]
 pub struct ReactiveExchange {
-    pub dynamics: crate::astrophysics_spherical::ReactiveExchange,
+    pub dynamics: crate::astrophysics::spherical::ReactiveExchange,
     pub radiation: Exchange,
 }
-impl crate::astrophysics_spherical::Sphere {
+impl crate::astrophysics::spherical::Sphere {
     /// Half radiative thermal step, reactive dynamics, half radiative step.
     /// Uses the local composition before and after burning. All state commits
     /// atomically; both radiation halves share step and ray budgets.
@@ -597,7 +602,7 @@ impl crate::astrophysics_spherical::Sphere {
     pub fn step_reactive_radiating(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         settings: ReactiveSettings,
     ) -> Result<ReactiveExchange, ReactiveError> {
@@ -611,10 +616,10 @@ impl crate::astrophysics_spherical::Sphere {
     pub fn step_reactive_tabulated(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         settings: ReactiveSettings,
-        table: &crate::astrophysics_opacity::Table,
+        table: &crate::astrophysics::opacity::Table,
     ) -> Result<ReactiveExchange, ReactiveError> {
         self.step_reactive_radiating_impl(fractions, network, dt, settings, Some(table), None, None)
     }
@@ -625,11 +630,11 @@ impl crate::astrophysics_spherical::Sphere {
     pub fn step_reactive_radiating_exterior(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         settings: ReactiveSettings,
-        exterior: &crate::astrophysics_spherical::CompositionExterior,
-        table: Option<&crate::astrophysics_opacity::Table>,
+        exterior: &crate::astrophysics::spherical::CompositionExterior,
+        table: Option<&crate::astrophysics::opacity::Table>,
     ) -> Result<ReactiveExchange, ReactiveError> {
         self.step_reactive_radiating_impl(
             fractions,
@@ -644,16 +649,15 @@ impl crate::astrophysics_spherical::Sphere {
     /// Radiation and burning around equilibrium-preserving spherical transport.
     /// # Errors
     /// Any local physical/domain error or shared work-budget failure.
-    #[allow(clippy::too_many_arguments)]
     pub fn step_reactive_radiating_balanced(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         settings: ReactiveSettings,
-        reference: &crate::astrophysics_spherical::HydrostaticReference,
-        exterior: Option<&crate::astrophysics_spherical::CompositionExterior>,
-        table: Option<&crate::astrophysics_opacity::Table>,
+        reference: &crate::astrophysics::spherical::HydrostaticReference,
+        exterior: Option<&crate::astrophysics::spherical::CompositionExterior>,
+        table: Option<&crate::astrophysics::opacity::Table>,
     ) -> Result<ReactiveExchange, ReactiveError> {
         self.step_reactive_radiating_impl(
             fractions,
@@ -665,31 +669,29 @@ impl crate::astrophysics_spherical::Sphere {
             Some(reference),
         )
     }
-    #[allow(clippy::too_many_arguments)]
     fn step_reactive_radiating_impl(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         settings: ReactiveSettings,
-        table: Option<&crate::astrophysics_opacity::Table>,
-        exterior: Option<&crate::astrophysics_spherical::CompositionExterior>,
-        reference: Option<&crate::astrophysics_spherical::HydrostaticReference>,
+        table: Option<&crate::astrophysics::opacity::Table>,
+        exterior: Option<&crate::astrophysics::spherical::CompositionExterior>,
+        reference: Option<&crate::astrophysics::spherical::HydrostaticReference>,
     ) -> Result<ReactiveExchange, ReactiveError> {
         self.step_reactive_radiating_spectrum_impl(
             fractions, network, dt, settings, table, exterior, reference, None,
         )
     }
-    #[allow(clippy::too_many_arguments)]
-    fn step_reactive_radiating_spectrum_impl(
+    pub(super) fn step_reactive_radiating_spectrum_impl(
         &mut self,
         fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         dt: f64,
         settings: ReactiveSettings,
-        table: Option<&crate::astrophysics_opacity::Table>,
-        exterior: Option<&crate::astrophysics_spherical::CompositionExterior>,
-        reference: Option<&crate::astrophysics_spherical::HydrostaticReference>,
+        table: Option<&crate::astrophysics::opacity::Table>,
+        exterior: Option<&crate::astrophysics::spherical::CompositionExterior>,
+        reference: Option<&crate::astrophysics::spherical::HydrostaticReference>,
         spectrum: Option<FreeFreeSpectrum>,
     ) -> Result<ReactiveExchange, ReactiveError> {
         let thermal = |sphere: &mut Self, dt, settings, rows: &[Vec<f64>]| {
@@ -710,7 +712,7 @@ impl crate::astrophysics_spherical::Sphere {
                 &mut rows,
                 network,
                 dt,
-                crate::astrophysics_spherical::ReactiveBudget {
+                crate::astrophysics::spherical::ReactiveBudget {
                     hydro_max_step: settings.hydro_max_step,
                     hydro_steps: settings.hydro_steps,
                     burn: settings.burn,
@@ -723,7 +725,7 @@ impl crate::astrophysics_spherical::Sphere {
                 &mut rows,
                 network,
                 dt,
-                crate::astrophysics_spherical::ReactiveBudget {
+                crate::astrophysics::spherical::ReactiveBudget {
                     hydro_max_step: settings.hydro_max_step,
                     hydro_steps: settings.hydro_steps,
                     burn: settings.burn,
@@ -769,13 +771,13 @@ impl crate::astrophysics_spherical::Sphere {
     }
 }
 
-impl crate::astrophysics_spherical::Sphere {
+impl crate::astrophysics::spherical::Sphere {
     fn table_shells(
         &self,
         cv: f64,
-        mixture: Option<crate::astrophysics_eos::Mixture>,
-        local: Option<&[crate::astrophysics_eos::Mixture]>,
-        table: &crate::astrophysics_opacity::Table,
+        mixture: Option<crate::astrophysics::eos::Mixture>,
+        local: Option<&[crate::astrophysics::eos::Mixture]>,
+        table: &crate::astrophysics::opacity::Table,
     ) -> Result<Vec<Shell>, Error> {
         self.totals().map_err(|_| Error::InvalidInput)?;
         let mut radius = 0.0;
@@ -803,18 +805,18 @@ impl crate::astrophysics_spherical::Sphere {
     fn validate_table_states(
         &self,
         cv: f64,
-        mixture: Option<crate::astrophysics_eos::Mixture>,
-        local: Option<&[crate::astrophysics_eos::Mixture]>,
-        table: &crate::astrophysics_opacity::Table,
+        mixture: Option<crate::astrophysics::eos::Mixture>,
+        local: Option<&[crate::astrophysics::eos::Mixture]>,
+        table: &crate::astrophysics::opacity::Table,
     ) -> Result<(), Error> {
         self.table_shells(cv, mixture, local, table).map(|_| ())
     }
     fn table_rates(
         &self,
         settings: Heating,
-        mixture: Option<crate::astrophysics_eos::Mixture>,
-        local: Option<&[crate::astrophysics_eos::Mixture]>,
-        table: &crate::astrophysics_opacity::Table,
+        mixture: Option<crate::astrophysics::eos::Mixture>,
+        local: Option<&[crate::astrophysics::eos::Mixture]>,
+        table: &crate::astrophysics::opacity::Table,
     ) -> Result<Rates, Error> {
         transfer(
             &self.table_shells(settings.specific_heat, mixture, local, table)?,
@@ -870,7 +872,7 @@ pub fn optical_depth_radius(shells: &[Shell], target_depth: f64) -> Result<Optio
     Ok(radius)
 }
 
-impl crate::astrophysics_spherical::Sphere {
+impl crate::astrophysics::spherical::Sphere {
     /// Radial optical-depth diagnostic using current local EOS temperatures.
     /// A supplied grey absorption table overrides scalar opacity (m²/kg).
     /// The table represents a fixed composition approximation; the EOS uses
@@ -880,9 +882,9 @@ impl crate::astrophysics_spherical::Sphere {
     pub fn composition_optical_depth_radius(
         &self,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         opacity: f64,
-        table: Option<&crate::astrophysics_opacity::Table>,
+        table: Option<&crate::astrophysics::opacity::Table>,
         target_depth: f64,
     ) -> Result<Option<f64>, Error> {
         if fractions.len() != self.cells.len() {
@@ -893,7 +895,7 @@ impl crate::astrophysics_spherical::Sphere {
             .map(|row| network.mixture(row).map_err(|_| Error::InvalidInput))
             .collect::<Result<Vec<_>, _>>()?;
         let shells = if let Some(table) = table {
-            if table.kind != crate::astrophysics_opacity::Kind::GreyAbsorption {
+            if table.kind != crate::astrophysics::opacity::Kind::GreyAbsorption {
                 return Err(Error::InvalidInput);
             }
             self.table_shells(1.0, None, Some(&local), table)?
@@ -935,7 +937,7 @@ pub fn effective_temperature(luminosity: f64, radius: f64) -> Result<f64, Error>
     let temperature = ((luminosity.ln()
         - (4.0 * std::f64::consts::PI).ln()
         - 2.0 * radius.ln()
-        - crate::astrophysics_thermal::STEFAN_BOLTZMANN.ln())
+        - crate::astrophysics::thermal::STEFAN_BOLTZMANN.ln())
         / 4.0)
         .exp();
     if !temperature.is_finite() || temperature <= 0.0 {
@@ -943,7 +945,7 @@ pub fn effective_temperature(luminosity: f64, radius: f64) -> Result<f64, Error>
     }
     Ok(temperature)
 }
-impl crate::astrophysics_spherical::Sphere {
+impl crate::astrophysics::spherical::Sphere {
     /// Instantaneous signed net luminosity and shell heating using local EOS.
     /// Ray segments are reported explicitly; no gas state or time is advanced.
     /// A grey absorption table overrides scalar opacity. Ambient is intensity.
@@ -953,8 +955,8 @@ impl crate::astrophysics_spherical::Sphere {
         &self,
         settings: Heating,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
-        table: Option<&crate::astrophysics_opacity::Table>,
+        network: &crate::astrophysics::nuclear::Network,
+        table: Option<&crate::astrophysics::opacity::Table>,
     ) -> Result<Rates, Error> {
         if fractions.len() != self.cells.len() {
             return Err(Error::InvalidInput);
@@ -964,7 +966,7 @@ impl crate::astrophysics_spherical::Sphere {
             .map(|row| network.mixture(row).map_err(|_| Error::InvalidInput))
             .collect::<Result<Vec<_>, _>>()?;
         if let Some(table) = table {
-            if table.kind != crate::astrophysics_opacity::Kind::GreyAbsorption {
+            if table.kind != crate::astrophysics::opacity::Kind::GreyAbsorption {
                 return Err(Error::InvalidInput);
             }
             self.table_rates(settings, None, Some(&local), table)
@@ -1034,7 +1036,7 @@ impl ThermalRates {
         Ok(maximum)
     }
 }
-impl crate::astrophysics_spherical::Sphere {
+impl crate::astrophysics::spherical::Sphere {
     /// Read-only local nuclear/radiative thermal balance with explicit budgets.
     /// This excludes compression, advection and mechanical gravity work.
     /// # Errors
@@ -1043,8 +1045,8 @@ impl crate::astrophysics_spherical::Sphere {
         &self,
         settings: Heating,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
-        table: Option<&crate::astrophysics_opacity::Table>,
+        network: &crate::astrophysics::nuclear::Network,
+        table: Option<&crate::astrophysics::opacity::Table>,
         fit_budget: usize,
     ) -> Result<ThermalRates, ReactiveError> {
         let radiation = self
@@ -1052,11 +1054,11 @@ impl crate::astrophysics_spherical::Sphere {
             .map_err(ReactiveError::Radiation)?;
         self.thermal_rates_from_radiation(radiation, fractions, network, fit_budget)
     }
-    fn thermal_rates_from_radiation(
+    pub(super) fn thermal_rates_from_radiation(
         &self,
         radiation: Rates,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
+        network: &crate::astrophysics::nuclear::Network,
         fit_budget: usize,
     ) -> Result<ThermalRates, ReactiveError> {
         let mut result = ThermalRates {
@@ -1071,11 +1073,11 @@ impl crate::astrophysics_spherical::Sphere {
         let mut inner = 0.0_f64;
         for (i, (cell, row)) in self.cells.iter().zip(fractions).enumerate() {
             let mixture = network.mixture(row).map_err(|e| {
-                ReactiveError::Dynamics(crate::astrophysics_spherical::Error::Nuclear(e))
+                ReactiveError::Dynamics(crate::astrophysics::spherical::Error::Nuclear(e))
             })?;
             let internal = cell.energy - 0.5 * cell.momentum.powi(2) / cell.density;
             let temperature = mixture.temperature(cell.density, internal).map_err(|e| {
-                ReactiveError::Dynamics(crate::astrophysics_spherical::Error::Eos(e))
+                ReactiveError::Dynamics(crate::astrophysics::spherical::Error::Eos(e))
             })?;
             let rates = network
                 .rates(
@@ -1085,7 +1087,7 @@ impl crate::astrophysics_spherical::Sphere {
                     fit_budget - result.fit_evaluations,
                 )
                 .map_err(|e| {
-                    ReactiveError::Dynamics(crate::astrophysics_spherical::Error::Nuclear(e))
+                    ReactiveError::Dynamics(crate::astrophysics::spherical::Error::Nuclear(e))
                 })?;
             let outer = inner + self.spacing;
             let mass = cell.density * 4.0 * std::f64::consts::PI / 3.0
@@ -1146,7 +1148,7 @@ fn thermal_shell_residual(rates: &ThermalRates, shell: usize) -> f64 {
             / (rates.nuclear[shell].abs() / scale + rates.radiation[shell].abs() / scale)
     }
 }
-impl crate::astrophysics_spherical::Sphere {
+impl crate::astrophysics::spherical::Sphere {
     /// Find local nuclear/radiative balance using sequential bracketed shell
     /// solves in log temperature. Density, momentum and composition stay fixed.
     /// This changes pressure and does not enforce hydrostatic equilibrium or
@@ -1158,8 +1160,8 @@ impl crate::astrophysics_spherical::Sphere {
         &mut self,
         settings: Heating,
         fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
-        table: Option<&crate::astrophysics_opacity::Table>,
+        network: &crate::astrophysics::nuclear::Network,
+        table: Option<&crate::astrophysics::opacity::Table>,
         search: ThermalSearch,
     ) -> Result<ThermalEquilibrium, ThermalSearchError> {
         use ThermalSearchError as E;
@@ -1210,7 +1212,7 @@ impl crate::astrophysics_spherical::Sphere {
         for (cell, row) in candidate.cells.iter().zip(fractions) {
             let mixture = network.mixture(row).map_err(|e| {
                 E::Physics(ReactiveError::Dynamics(
-                    crate::astrophysics_spherical::Error::Nuclear(e),
+                    crate::astrophysics::spherical::Error::Nuclear(e),
                 ))
             })?;
             let temperature = mixture
@@ -1220,7 +1222,7 @@ impl crate::astrophysics_spherical::Sphere {
                 )
                 .map_err(|e| {
                     E::Physics(ReactiveError::Dynamics(
-                        crate::astrophysics_spherical::Error::Eos(e),
+                        crate::astrophysics::spherical::Error::Eos(e),
                     ))
                 })?;
             if temperature < search.min_temperature || temperature > search.max_temperature {
@@ -1233,7 +1235,7 @@ impl crate::astrophysics_spherical::Sphere {
                 let cell = &mut sphere.cells[shell];
                 let state = mixtures[shell].at(cell.density, temperature).map_err(|e| {
                     E::Physics(ReactiveError::Dynamics(
-                        crate::astrophysics_spherical::Error::Eos(e),
+                        crate::astrophysics::spherical::Error::Eos(e),
                     ))
                 })?;
                 cell.energy =
@@ -1301,355 +1303,6 @@ impl crate::astrophysics_spherical::Sphere {
     }
 }
 
-/// Explicit finite frequency band and logarithmic midpoint quadrature for
-/// physical free-free transfer. No frequency-tail extrapolation or scattering.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SpectralSurface {
-    /// Surface source equals the outermost cell source.
-    CellSource,
-    /// Per-bin extension of the grey Eddington surface closure for unresolved
-    /// optically thick surface cells. Requires convergence checks; not a non-grey
-    /// atmosphere model or an observed-star calibration.
-    EddingtonApproximation,
-}
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct FreeFreeSpectrum {
-    pub surface: SpectralSurface,
-    pub absorption: crate::astrophysics_opacity::FreeFree,
-    pub min_frequency: f64,
-    pub max_frequency: f64,
-    pub bins: usize,
-    /// Blackbody exterior irradiation temperature, K; zero means no irradiation.
-    pub ambient_temperature: f64,
-}
-impl FreeFreeSpectrum {
-    fn validate(self) -> Result<(), Error> {
-        if ![
-            self.min_frequency,
-            self.max_frequency,
-            self.ambient_temperature,
-        ]
-        .into_iter()
-        .all(f64::is_finite)
-            || self.min_frequency <= 0.0
-            || self.max_frequency <= self.min_frequency
-            || self.ambient_temperature < 0.0
-            || self.bins == 0
-            || u32::try_from(self.bins).is_err()
-        {
-            return Err(Error::InvalidInput);
-        }
-        Ok(())
-    }
-}
-fn planck_bin(temperature: f64, frequency: f64, width: f64) -> Result<f64, Error> {
-    if temperature == 0.0 {
-        return Ok(0.0);
-    }
-    let x = 6.626_070_15e-34 * frequency / (crate::astrophysics_eos::BOLTZMANN * temperature);
-    if x > 700.0 {
-        return Ok(0.0);
-    }
-    let value = 2.0 * 6.626_070_15e-34 * frequency.powi(3) * width
-        / crate::astrophysics_eos::LIGHT_SPEED.powi(2)
-        / x.exp_m1();
-    if value.is_finite() && value >= 0.0 {
-        Ok(value)
-    } else {
-        Err(Error::NumericalOverflow)
-    }
-}
-impl crate::astrophysics_spherical::Sphere {
-    /// Frequency-dependent free-free chord transport with local composition.
-    /// Returns finite-band heating and luminosity in W. Frequency/angular
-    /// convergence and adequacy of the chosen band are caller responsibilities.
-    /// Work budget includes every frequency bin, shell chord and angular sample.
-    pub fn free_free_radiation_rates(
-        &self,
-        fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
-        spectrum: FreeFreeSpectrum,
-        rays_per_annulus: usize,
-        max_segments: usize,
-    ) -> Result<Rates, Error> {
-        if fractions.len() != self.cells.len()
-            || self.cells.is_empty()
-            || ![
-                spectrum.min_frequency,
-                spectrum.max_frequency,
-                spectrum.ambient_temperature,
-            ]
-            .into_iter()
-            .all(f64::is_finite)
-            || spectrum.min_frequency <= 0.0
-            || spectrum.max_frequency <= spectrum.min_frequency
-            || spectrum.ambient_temperature < 0.0
-            || spectrum.bins == 0
-            || rays_per_annulus == 0
-        {
-            return Err(Error::InvalidInput);
-        }
-        self.totals().map_err(|_| Error::InvalidInput)?;
-        let n = self.cells.len();
-        let required = n
-            .checked_mul(n + 1)
-            .and_then(|v| v.checked_mul(rays_per_annulus))
-            .and_then(|v| v.checked_mul(spectrum.bins))
-            .ok_or(Error::BudgetExceeded)?;
-        if required > max_segments {
-            return Err(Error::BudgetExceeded);
-        }
-        let bins = u32::try_from(spectrum.bins).map_err(|_| Error::InvalidInput)?;
-        let mut temperatures = Vec::with_capacity(n);
-        let mut species = Vec::with_capacity(n);
-        for (cell, row) in self.cells.iter().zip(fractions) {
-            let mixture = network.mixture(row).map_err(|_| Error::InvalidInput)?;
-            temperatures.push(
-                mixture
-                    .temperature(
-                        cell.density,
-                        cell.energy - 0.5 * cell.momentum.powi(2) / cell.density,
-                    )
-                    .map_err(|_| Error::InvalidInput)?,
-            );
-            species.push(
-                row.iter()
-                    .zip(&network.nuclei)
-                    .map(|(x, nucleus)| crate::astrophysics_eos::Species {
-                        mass_fraction: *x,
-                        mass_number: nucleus.mass_number,
-                        nuclear_charge: nucleus.charge,
-                    })
-                    .collect::<Vec<_>>(),
-            );
-        }
-        let log_min = spectrum.min_frequency.ln();
-        let delta = (spectrum.max_frequency.ln() - log_min) / f64::from(bins);
-        let mut result = Rates {
-            heating: vec![0.0; n],
-            luminosity: 0.0,
-            segments: 0,
-        };
-        for bin in 0..bins {
-            let lo = (log_min + f64::from(bin) * delta).exp();
-            let hi = (log_min + f64::from(bin + 1) * delta).exp();
-            let frequency = (log_min + (f64::from(bin) + 0.5) * delta).exp();
-            let width = hi - lo;
-            let mut radius = 0.0;
-            let mut shells = Vec::with_capacity(n);
-            let mut sources = Vec::with_capacity(n);
-            for i in 0..n {
-                radius += self.spacing;
-                let opacity = spectrum
-                    .absorption
-                    .spectral(
-                        self.cells[i].density,
-                        temperatures[i],
-                        frequency,
-                        &species[i],
-                    )
-                    .map_err(Error::Opacity)?;
-                shells.push(Shell {
-                    outer_radius: radius,
-                    absorption: opacity * self.cells[i].density,
-                    temperature: temperatures[i],
-                });
-                sources.push(planck_bin(temperatures[i], frequency, width)?);
-            }
-            let ambient = planck_bin(spectrum.ambient_temperature, frequency, width)?;
-            let rates = transfer_sources(
-                &shells,
-                &sources,
-                ambient,
-                rays_per_annulus,
-                max_segments - result.segments,
-                true,
-                spectrum.surface,
-            )?;
-            result.luminosity += rates.luminosity;
-            result.segments += rates.segments;
-            for (sum, power) in result.heating.iter_mut().zip(rates.heating) {
-                *sum += power;
-            }
-        }
-        if !result.luminosity.is_finite() || result.heating.iter().any(|v| !v.is_finite()) {
-            return Err(Error::NumericalOverflow);
-        }
-        Ok(result)
-    }
-    /// Nuclear and frequency-dependent free-free radiative thermal powers.
-    pub fn thermal_rates_free_free(
-        &self,
-        fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
-        spectrum: FreeFreeSpectrum,
-        rays_per_annulus: usize,
-        max_segments: usize,
-        fit_budget: usize,
-    ) -> Result<ThermalRates, ReactiveError> {
-        let radiation = self
-            .free_free_radiation_rates(fractions, network, spectrum, rays_per_annulus, max_segments)
-            .map_err(ReactiveError::Radiation)?;
-        self.thermal_rates_from_radiation(radiation, fractions, network, fit_budget)
-    }
-}
-
-impl crate::astrophysics_spherical::Sphere {
-    /// Evolve internal energy with finite-band physical free-free transfer.
-    /// Density, momentum and composition are fixed. Only ray count, cumulative
-    /// segment/step budgets and max_step are used from Heating; spectrum supplies
-    /// absorption and blackbody irradiation. Explicit updates limit both energy
-    /// and temperature changes; callers must verify timestep convergence.
-    /// # Errors
-    /// Invalid inputs, opacity/EOS domain, exhausted budget or overflow. Atomic.
-    pub fn radiate_free_free(
-        &mut self,
-        dt: f64,
-        settings: Heating,
-        fractions: &[Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
-        spectrum: FreeFreeSpectrum,
-    ) -> Result<Exchange, Error> {
-        if !dt.is_finite()
-            || dt < 0.0
-            || !settings.max_step.is_finite()
-            || settings.max_step <= 0.0
-            || settings.rays_per_annulus == 0
-            || fractions.len() != self.cells.len()
-        {
-            return Err(Error::InvalidInput);
-        }
-        spectrum.validate()?;
-        self.totals().map_err(|_| Error::InvalidInput)?;
-        let mixtures = fractions
-            .iter()
-            .map(|row| network.mixture(row).map_err(|_| Error::InvalidInput))
-            .collect::<Result<Vec<_>, _>>()?;
-        let species = fractions
-            .iter()
-            .map(|row| {
-                row.iter()
-                    .zip(&network.nuclei)
-                    .map(|(x, nucleus)| crate::astrophysics_eos::Species {
-                        mass_fraction: *x,
-                        mass_number: nucleus.mass_number,
-                        nuclear_charge: nucleus.charge,
-                    })
-                    .collect::<Vec<_>>()
-            })
-            .collect::<Vec<_>>();
-        let mut volumes = Vec::with_capacity(self.cells.len());
-        let mut inner = 0.0;
-        for _ in &self.cells {
-            let outer = inner + self.spacing;
-            volumes.push(
-                4.0 * std::f64::consts::PI / 3.0
-                    * self.spacing
-                    * (inner * inner + inner * outer + outer * outer),
-            );
-            inner = outer;
-        }
-        let validate = |sphere: &Self| -> Result<(), Error> {
-            for (i, cell) in sphere.cells.iter().enumerate() {
-                let temperature = mixtures[i]
-                    .temperature(
-                        cell.density,
-                        cell.energy - 0.5 * cell.momentum.powi(2) / cell.density,
-                    )
-                    .map_err(|_| Error::InvalidInput)?;
-                spectrum
-                    .absorption
-                    .planck(cell.density, temperature, &species[i])
-                    .map_err(Error::Opacity)?;
-                let eos = mixtures[i]
-                    .at(cell.density, temperature)
-                    .map_err(|_| Error::InvalidInput)?;
-                if eos.sound_speed_squared >= crate::astrophysics_eos::LIGHT_SPEED.powi(2) {
-                    return Err(Error::InvalidInput);
-                }
-            }
-            Ok(())
-        };
-        let mut next = self.clone();
-        validate(&next)?;
-        let mut remaining = dt;
-        let mut exchange = Exchange {
-            steps: 0,
-            segments: 0,
-            escaped_energy: 0.0,
-        };
-        while remaining > 0.0 {
-            if exchange.steps >= settings.max_steps {
-                return Err(Error::BudgetExceeded);
-            }
-            let rates = next.free_free_radiation_rates(
-                fractions,
-                network,
-                spectrum,
-                settings.rays_per_annulus,
-                settings.max_segments - exchange.segments,
-            )?;
-            let mut h = remaining.min(settings.max_step);
-            for (i, cell) in next.cells.iter().enumerate() {
-                let internal = cell.energy - 0.5 * cell.momentum.powi(2) / cell.density;
-                let temperature = mixtures[i]
-                    .temperature(cell.density, internal)
-                    .map_err(|_| Error::InvalidInput)?;
-                let eos = mixtures[i]
-                    .at(cell.density, temperature)
-                    .map_err(|_| Error::InvalidInput)?;
-                let power = rates.heating[i].abs();
-                if power > 0.0 {
-                    h = h.min(0.01 * internal * volumes[i] / power);
-                    // Free-free mean varies as T^-3.5; keep primitive changes small.
-                    h = h.min(
-                        0.01 * temperature * cell.density * eos.specific_heat_cv * volumes[i]
-                            / power
-                            / 4.5,
-                    );
-                }
-            }
-            if !h.is_finite() || h <= 0.0 || remaining - h == remaining {
-                return Err(Error::NumericalOverflow);
-            }
-            for (i, cell) in next.cells.iter_mut().enumerate() {
-                cell.energy += h * rates.heating[i] / volumes[i];
-            }
-            validate(&next)?;
-            exchange.steps += 1;
-            exchange.segments += rates.segments;
-            exchange.escaped_energy += h * rates.luminosity;
-            if !exchange.escaped_energy.is_finite() {
-                return Err(Error::NumericalOverflow);
-            }
-            remaining = (remaining - h).max(0.0);
-        }
-        *self = next;
-        Ok(exchange)
-    }
-    /// Frequency-dependent free-free thermal steps around reactive dynamics.
-    /// Optional hydrostatic reference and matter reservoir use the same transport
-    /// paths as the grey solver. Composition refreshes after burning/advection.
-    /// Both thermal halves share budgets; all phases commit together.
-    pub fn step_reactive_free_free(
-        &mut self,
-        fractions: &mut [Vec<f64>],
-        network: &crate::astrophysics_nuclear::Network,
-        dt: f64,
-        settings: ReactiveSettings,
-        spectrum: FreeFreeSpectrum,
-        reference: Option<&crate::astrophysics_spherical::HydrostaticReference>,
-        exterior: Option<&crate::astrophysics_spherical::CompositionExterior>,
-    ) -> Result<ReactiveExchange, ReactiveError> {
-        self.step_reactive_radiating_spectrum_impl(
-            fractions,
-            network,
-            dt,
-            settings,
-            None,
-            exterior,
-            reference,
-            Some(spectrum),
-        )
-    }
-}
+#[path = "spherical_radiation/spectrum.rs"]
+mod spectrum;
+pub use spectrum::{FreeFreeSpectrum, SpectralSurface};

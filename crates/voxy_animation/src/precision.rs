@@ -625,7 +625,7 @@ mod tests {
                 pose.skin_matrices(&rig)
                     .unwrap()
                     .iter()
-                    .all(|m| m.is_finite())
+                    .all(glam::DMat4::is_finite)
             );
         }
     }

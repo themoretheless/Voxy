@@ -17,7 +17,7 @@ experimental-strand-fraction-reuse = []
 experimental-reusable-query-workers = ["dep:rayon"]
 
 [dependencies]
-num-bigint = "0.4"
+num-bigint.workspace = true
 num-rational = "0.4"
 num-traits = "0.2"
 

@@ -1,0 +1,18 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.53s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 10 tests
+test angular_sweep::rigid_pair::spin_bridge_tests::unresolved_rotating_face_touch_is_rejected_instead_of_declared_clear ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::nominal_fixed_axis_gap_covers_small_motion_but_not_a_closing_interval ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::trajectory_point_witness_drives_off_center_reciprocal_impulse ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::reciprocal_accelerating_bodies_find_analytic_contact_and_reverse_normal ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::separating_touch_is_not_an_impact_and_does_not_hide_accelerated_return ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::accelerating_com_reversal_finds_contact_with_identical_clear_endpoints ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::initial_overlap_witness_uses_the_pair_allowance ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::accelerated_rotating_shape_matches_independent_spherical_pose_scan ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::two_torque_paths_merge_distinct_knots_and_keep_world_normal_reciprocal ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::admitted_precessing_path_is_swept_with_model_envelope_not_fake_impact ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 242 filtered out; finished in 0.49s
+

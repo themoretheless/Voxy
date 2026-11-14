@@ -23,7 +23,6 @@ pub struct LiquidMaterial {
 /// # Errors
 /// Rejects zero densities, overlapping or invalid state sets, invalid/exceeded budgets,
 /// coordinate overflow, unknown blocks, unavailable chunks, and inconsistent views.
-#[allow(clippy::too_many_lines)]
 pub fn step_liquid_layers(
     view: &impl VoxelView,
     registry: &BlockRegistry,

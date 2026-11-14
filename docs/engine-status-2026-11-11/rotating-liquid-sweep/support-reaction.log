@@ -1,0 +1,11 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 28.25s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 1 test
+reaction torque on no-spin owner force=[-23.148148790971085, 0.0, -3.34383531187555e-11] torque=[8.359588279688875e-13, -0.5787037197734411, -0.5787037197742771]
+test liquid_runtime::tests::off_center_particle_remainder_requires_translation_only_reactions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 247 filtered out; finished in 0.00s
+

@@ -1,6 +1,6 @@
 //! Plane-parallel static Eddington-grey atmosphere; constant g and opacity.
 //! Total pressure includes LTE radiation. No time-dependent boundary coupling.
-use crate::astrophysics_eos::{Mixture, RADIATION_CONSTANT};
+use crate::astrophysics::eos::{Mixture, RADIATION_CONSTANT};
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Atmosphere {
     pub gravity: f64,
@@ -84,7 +84,7 @@ impl Atmosphere {
         self,
         depth: f64,
         velocity: f64,
-    ) -> Result<crate::astrophysics_gas::Cell, Error> {
+    ) -> Result<crate::astrophysics::gas::Cell, Error> {
         if !velocity.is_finite() {
             return Err(Error::InvalidInput);
         }
@@ -96,10 +96,10 @@ impl Atmosphere {
             .mixture
             .at(state.density, state.temperature)
             .map_err(|_| Error::NumericalOverflow)?;
-        if thermal.sound_speed_squared >= crate::astrophysics_eos::LIGHT_SPEED.powi(2) {
+        if thermal.sound_speed_squared >= crate::astrophysics::eos::LIGHT_SPEED.powi(2) {
             return Err(Error::InvalidInput);
         }
-        let cell = crate::astrophysics_gas::Cell {
+        let cell = crate::astrophysics::gas::Cell {
             density: state.density,
             momentum: state.density * velocity,
             energy: thermal.internal_energy_density + 0.5 * state.density * velocity * velocity,
@@ -143,7 +143,12 @@ pub fn jeans_escape_parameter_lambda(
     {
         return None;
     }
+<<<<<<<< HEAD:crates/physics/src/astrophysics/atmosphere.rs
     let lambda = (g * planet_mass_kg * particle_mass_kg) / (k_b * exosphere_temp_k * exobase_radius_m);
+========
+    let lambda =
+        (g * planet_mass_kg * particle_mass_kg) / (k_b * exosphere_temp_k * exobase_radius_m);
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/atmosphere.rs
     lambda.is_finite().then_some(lambda)
 }
 
@@ -153,8 +158,29 @@ mod jeans_tests {
 
     #[test]
     fn jeans_escape_parameter_is_lower_for_hydrogen_than_nitrogen() {
+<<<<<<<< HEAD:crates/physics/src/astrophysics/atmosphere.rs
         let h2 = jeans_escape_parameter_lambda(5.972e24, 6.871e6, 3.34e-27, 1000.0, 6.6743e-11, 1.380_649e-23).unwrap();
         let n2 = jeans_escape_parameter_lambda(5.972e24, 6.871e6, 4.65e-26, 1000.0, 6.6743e-11, 1.380_649e-23).unwrap();
+========
+        let h2 = jeans_escape_parameter_lambda(
+            5.972e24,
+            6.871e6,
+            3.34e-27,
+            1000.0,
+            6.6743e-11,
+            1.380_649e-23,
+        )
+        .unwrap();
+        let n2 = jeans_escape_parameter_lambda(
+            5.972e24,
+            6.871e6,
+            4.65e-26,
+            1000.0,
+            6.6743e-11,
+            1.380_649e-23,
+        )
+        .unwrap();
+>>>>>>>> 5f92682e3ec08cc33156ab69f190620165e7b30d:crates/physics_astro/src/astrophysics/atmosphere.rs
         assert!(n2 > h2 && h2 > 0.0);
     }
 }

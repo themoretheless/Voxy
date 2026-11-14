@@ -1161,7 +1161,7 @@ override REFINE_BENCH_NEW:bool=false;
         let mut encoder = device.create_command_encoder(&Default::default());
         {
             let mut pass = encoder.begin_compute_pass(&Default::default());
-            pass.set_pipeline(&paired);
+            pass.set_pipeline(paired);
             pass.set_bind_group(0, &p0, &[]);
             pass.set_bind_group(1, &p1, &[]);
             pass.set_bind_group(2, &p2, &[]);

@@ -1,11 +1,11 @@
 //! Platform-neutral pointer routing over painter-ordered logical hit regions.
 //! Layout, rendering and native event adapters remain separate owners.
 mod scroll;
-pub use scroll::ScrollPanel;
+pub use scroll::{ScrollPanel, rubber_band_overscroll_offset};
 mod layout;
 pub use layout::{Axis, LayoutItem, Length, layout_linear};
 mod focus;
-pub use focus::{FocusCheckpoint, FocusRouter, KeyAction};
+pub use focus::{FocusCheckpoint, FocusRouter, KeyAction, spatial_focus_navigation_score};
 use std::collections::BTreeSet;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct WidgetId(pub u64);

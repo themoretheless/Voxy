@@ -11,7 +11,6 @@ use voxy_demos::full_model_worker;
 use voxy_demos::surface_film_preview;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
 
-#[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let arguments: Vec<_> = std::env::args().collect();
     let option_path = |name: &str| -> Result<Option<&str>, Box<dyn std::error::Error>> {

@@ -99,7 +99,7 @@ mod tests {
             .map(|b| PreparedNativeJoint::new(&requests, b, 1e-14).unwrap())
             .collect::<Vec<_>>();
         let refs = joints.iter().collect::<Vec<_>>();
-        let loads = bounds.iter().map(|b| b.as_slice()).collect::<Vec<_>>();
+        let loads = bounds.iter().map(<[f64; 1]>::as_slice).collect::<Vec<_>>();
         for rejected in 0..3 {
             for mode in 0..3 {
                 let mut backend = Backend { rejected, mode };
@@ -955,6 +955,7 @@ impl HairResponseSystem {
             bounds,
             absolute_tolerance,
             true,
+            #[allow(clippy::redundant_closure_for_method_calls)]
             |prepared, bounds, tolerance| prepared.solve_appended(bounds, tolerance),
         )
     }
@@ -1020,7 +1021,7 @@ impl HairResponseSystem {
                     if milliseconds >= 10. {
                         square_root_diagnostics::export_profile_input(
                             requests,
-                            &columns,
+                            columns,
                             bounds,
                             &effective_bounds,
                             absolute_tolerance,
@@ -1041,7 +1042,7 @@ impl HairResponseSystem {
                     None => {
                         square_root_diagnostics::export_input(
                             requests,
-                            &columns,
+                            columns,
                             bounds,
                             &effective_bounds,
                             absolute_tolerance,
@@ -1067,7 +1068,7 @@ impl HairResponseSystem {
                 if refinement == 7 || effective_bounds.iter().any(|v| !v.is_finite()) {
                     square_root_diagnostics::export(
                         requests,
-                        &columns,
+                        columns,
                         bounds,
                         &coordinates,
                         &reactions,
@@ -1174,21 +1175,22 @@ impl HairResponseSystem {
             // Opt-in proposal safeguard for alternating physical residuals.
             // Keep the same original gate and eight-trial budget; a midpoint
             // is not proof of convergence and must pass the next full trial.
-            if safeguarded && reaction > 0. && gap.is_finite() && gap.abs() > absolute_tolerance {
-                if let Some((prior_bound, prior_gap)) = defect_history[i] {
-                    if prior_gap.is_finite()
-                        && prior_gap.abs() > absolute_tolerance
-                        && (prior_gap > 0.) != (gap > 0.)
-                    {
-                        let midpoint = square_root_qr::accurate_products(
-                            [(previous_effective, 0.5), (prior_bound, 0.5)].into_iter(),
-                        );
-                        if midpoint > previous_effective.min(prior_bound)
-                            && midpoint < previous_effective.max(prior_bound)
-                        {
-                            effective_bounds[i] = midpoint;
-                        }
-                    }
+            if safeguarded
+                && reaction > 0.
+                && gap.is_finite()
+                && gap.abs() > absolute_tolerance
+                && let Some((prior_bound, prior_gap)) = defect_history[i]
+                && prior_gap.is_finite()
+                && prior_gap.abs() > absolute_tolerance
+                && (prior_gap > 0.) != (gap > 0.)
+            {
+                let midpoint = square_root_qr::accurate_products(
+                    [(previous_effective, 0.5), (prior_bound, 0.5)].into_iter(),
+                );
+                if midpoint > previous_effective.min(prior_bound)
+                    && midpoint < previous_effective.max(prior_bound)
+                {
+                    effective_bounds[i] = midpoint;
                 }
             }
             if safeguarded {
@@ -1591,20 +1593,19 @@ impl<'a> PreparedNativeJoint<'a> {
             // Capture the largest original physical operator in this batch,
             // not a packed coordinate-only surrogate. Existing opt-in capture
             // publishes atomically and leaves loads/bounds unchanged.
-            if std::env::var_os("VOXY_HAIR_QR_ENTRY_INPUT_EXPORT").is_some() {
-                if let Some(&i) = ready
+            if std::env::var_os("VOXY_HAIR_QR_ENTRY_INPUT_EXPORT").is_some()
+                && let Some(&i) = ready
                     .iter()
                     .max_by_key(|&&i| joints[i].columns.len().saturating_mul(widths[i]))
-                {
-                    square_root_diagnostics::export_entry_input(
-                        joints[i].requests,
-                        &joints[i].columns,
-                        bounds[i],
-                        &effective[i],
-                        tolerance,
-                        refinement,
-                    );
-                }
+            {
+                square_root_diagnostics::export_entry_input(
+                    joints[i].requests,
+                    &joints[i].columns,
+                    bounds[i],
+                    &effective[i],
+                    tolerance,
+                    refinement,
+                );
             }
             let proposals = if let Some(columns) = &expanded_columns {
                 let expanded_requests = ready
@@ -1728,7 +1729,7 @@ impl<'a> PreparedNativeJoint<'a> {
                         }
                     }
                     Err(_) => {
-                        finished[i] = Some(joints[i].recover_accelerated(bounds[i], tolerance)?)
+                        finished[i] = Some(joints[i].recover_accelerated(bounds[i], tolerance)?);
                     }
                 }
             }

@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "object-1",
+      "parent": null,
+      "name": "Trigger volume",
+      "active": true,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0.24740395925452294,
+        0,
+        0.9689124217106447
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {
+        "game.box-trigger.v1": {
+          "half_extents": [
+            0.45,
+            0.28,
+            0.35
+          ]
+        },
+        "game.collision-layers.v1": {
+          "mask": 4,
+          "membership": 1
+        }
+      }
+    }
+  ]
+}

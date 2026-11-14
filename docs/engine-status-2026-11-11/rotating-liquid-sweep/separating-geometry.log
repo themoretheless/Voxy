@@ -1,0 +1,12 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.80s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 1 test
+overlap witness time=0e0 axis=Some(ObstacleFace(0)) normal=DVec3(-0.9999499710153074, -5.8626710311294094e-21, -0.010002772939840409) centroid=1.1492014225650271e-8 patch=[1.1256348315252795e-8, 1.1256348315252795e-8, 1.1727680136047747e-8, 1.1727680136047747e-8]
+prefix derivative=-1.6670860173593316e-2 guard=3.725659838208543e-13 curvature=1.8583167535909394e2 time=0e0
+overlap witness time=0e0 axis=Some(ObstacleFace(0)) normal=DVec3(-0.9999499710153074, -5.8626710311294094e-21, -0.010002772939840409) centroid=-9.999499595232927e-1 patch=[-0.9999499597589586, -0.9999499597589586, -0.9999499592876268, -0.9999499592876268]
+test angular_sweep::rigid_pair::spin_bridge_tests::initial_overlap_witness_uses_the_pair_allowance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 251 filtered out; finished in 0.01s
+

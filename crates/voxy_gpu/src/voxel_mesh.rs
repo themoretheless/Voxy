@@ -207,55 +207,13 @@ impl GpuVoxelMesher {
             source: wgpu::ShaderSource::Wgsl(include_str!("voxel_mesh.wgsl").into()),
         });
 
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("voxel mesher layout"),
-            entries: &[
-                // binding 0: config
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 1: padded voxels
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 2: indirect draw args
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                // binding 3: output vertices
-                wgpu::BindGroupLayoutEntry {
-                    binding: 3,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-            ],
-        });
+        let bind_group_layout =
+            voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(Some("voxel mesher layout"), 4)
+                .storage_buffer(0, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(1, wgpu::ShaderStages::COMPUTE, true)
+                .storage_buffer(2, wgpu::ShaderStages::COMPUTE, false)
+                .storage_buffer(3, wgpu::ShaderStages::COMPUTE, false)
+                .build(device);
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("voxel mesher pipeline layout"),
@@ -362,28 +320,13 @@ impl GpuVoxelMesher {
             mapped_at_creation: false,
         });
 
-        let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("voxel mesh bind group"),
-            layout: &self.bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: slot.config_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: slot.voxels_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: indirect_buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: vertex_buffer.as_entire_binding(),
-                },
-            ],
-        });
+        let bind_group =
+            voxy_gpu_core::BindGroupBuilder::with_capacity(Some("voxel mesh bind group"), 4)
+                .buffer(0, &slot.config_buffer)
+                .buffer(1, &slot.voxels_buffer)
+                .buffer(2, &indirect_buffer)
+                .buffer(3, &vertex_buffer)
+                .build(&self.device, &self.bind_group_layout);
 
         let mut encoder = self
             .device
@@ -504,18 +447,17 @@ mod tests {
     #[test]
     fn gpu_voxel_mesh_single_voxel() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(
-            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
-        ) {
-            Ok(adapter) => adapter,
-            Err(_) => return,
+        let Ok(adapter) =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+        else {
+            return;
         };
 
-        let (device, queue) =
-            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-                Ok(pair) => pair,
-                Err(_) => return,
-            };
+        let Ok((device, queue)) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))
+        else {
+            return;
+        };
 
         let mesher = pollster::block_on(GpuVoxelMesher::new(&device)).unwrap();
 
@@ -541,18 +483,17 @@ mod tests {
     #[test]
     fn gpu_voxel_mesh_solid_cube() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(
-            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
-        ) {
-            Ok(adapter) => adapter,
-            Err(_) => return,
+        let Ok(adapter) =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+        else {
+            return;
         };
 
-        let (device, queue) =
-            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-                Ok(pair) => pair,
-                Err(_) => return,
-            };
+        let Ok((device, queue)) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))
+        else {
+            return;
+        };
 
         let mesher = pollster::block_on(GpuVoxelMesher::new(&device)).unwrap();
 
@@ -571,7 +512,9 @@ mod tests {
 
         // A 2x2x2 cube has 6 faces of 2x2 = 24 quads = 144 vertices (interior faces culled!)
         assert_eq!(indirect_args.vertex_count, 144);
-        assert!((result.compression_ratio(indirect_args.vertex_count) - (144.0 / 6144.0)).abs() < 1e-6);
+        assert!(
+            (result.compression_ratio(indirect_args.vertex_count) - (144.0 / 6144.0)).abs() < 1e-6
+        );
         assert_eq!(vertices.len(), 144);
         for v in &vertices {
             assert_eq!(v.material, 7);
@@ -581,18 +524,17 @@ mod tests {
     #[test]
     fn gpu_voxel_pipeline_end_to_end() {
         let instance = wgpu::Instance::default();
-        let adapter = match pollster::block_on(
-            instance.request_adapter(&wgpu::RequestAdapterOptions::default()),
-        ) {
-            Ok(adapter) => adapter,
-            Err(_) => return,
+        let Ok(adapter) =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+        else {
+            return;
         };
 
-        let (device, queue) =
-            match pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())) {
-                Ok(pair) => pair,
-                Err(_) => return,
-            };
+        let Ok((device, queue)) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))
+        else {
+            return;
+        };
 
         let pipeline = pollster::block_on(GpuVoxelPipeline::new(&device)).unwrap();
         let mut voxels = vec![0u32; PADDED_CHUNK_VOLUME];

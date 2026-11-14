@@ -336,69 +336,41 @@ impl TextureBlit {
                 ..Default::default()
             })
         });
-        let mut entries = vec![wgpu::BindGroupLayoutEntry {
-            binding: 0,
-            visibility: wgpu::ShaderStages::FRAGMENT,
-            ty: wgpu::BindingType::Texture {
-                sample_type,
-                view_dimension: wgpu::TextureViewDimension::D2,
-                multisampled: false,
-            },
-            count: None,
-        }];
+        let mut builder = voxy_gpu_core::BindGroupLayoutBuilder::new(Some("processed color blit"))
+            .texture_2d(0, wgpu::ShaderStages::FRAGMENT, sample_type);
         if sampler.is_some() {
-            entries.push(wgpu::BindGroupLayoutEntry {
-                binding: 1,
-                visibility: wgpu::ShaderStages::FRAGMENT,
-                ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Comparison),
-                count: None,
-            });
+            builder = builder.sampler(
+                1,
+                wgpu::ShaderStages::FRAGMENT,
+                wgpu::SamplerBindingType::Comparison,
+            );
         }
         let parameter = parameter_value.map(|(_, value)| display_parameter_buffer(device, value));
         if parameter.is_some() {
-            entries.push(wgpu::BindGroupLayoutEntry {
-                binding: 1,
-                visibility: wgpu::ShaderStages::FRAGMENT,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
-                    has_dynamic_offset: false,
-                    min_binding_size: wgpu::BufferSize::new(16),
-                },
-                count: None,
-            });
+            builder = builder.uniform_buffer_sized(1, wgpu::ShaderStages::FRAGMENT, Some(16));
         }
         let auto_exposure = parameter_value.map(|_| display_parameter_buffer(device, 1.0));
         if auto_exposure.is_some() {
-            entries.push(wgpu::BindGroupLayoutEntry {
-                binding: 2,
-                visibility: wgpu::ShaderStages::FRAGMENT,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
-                    has_dynamic_offset: false,
-                    min_binding_size: wgpu::BufferSize::new(16),
-                },
-                count: None,
-            });
+            builder = builder.uniform_buffer_sized(2, wgpu::ShaderStages::FRAGMENT, Some(16));
         }
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("processed color blit"),
-            entries: &entries,
-        });
+        let layout = builder.build(device);
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("processed color blit"),
             bind_group_layouts: &[Some(&layout)],
             immediate_size: 0,
         });
+        let expanded = voxy_gpu_core::resolve_wgsl_includes(source, &[])
+            .expect("built-in blit WGSL includes must resolve");
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("processed color blit"),
-            source: wgpu::ShaderSource::Wgsl(source.into()),
+            source: wgpu::ShaderSource::Wgsl(expanded),
         });
         let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("processed color blit"),
             layout: Some(&pipeline_layout),
             vertex: wgpu::VertexState {
                 module: &shader,
-                entry_point: Some("vs_main"),
+                entry_point: Some("vs_fullscreen"),
                 compilation_options: wgpu::PipelineCompilationOptions::default(),
                 buffers: &[],
             },
@@ -497,33 +469,19 @@ impl TextureBlit {
         if &self.device != device {
             return Err(crate::SceneError::DeviceMismatch);
         }
-        let mut entries = vec![wgpu::BindGroupEntry {
-            binding: 0,
-            resource: wgpu::BindingResource::TextureView(source),
-        }];
+        let mut group_builder =
+            voxy_gpu_core::BindGroupBuilder::new(Some("processed color blit"), &self.layout)
+                .texture_view(0, source);
         if let Some(sampler) = &self.sampler {
-            entries.push(wgpu::BindGroupEntry {
-                binding: 1,
-                resource: wgpu::BindingResource::Sampler(sampler),
-            });
+            group_builder = group_builder.sampler(1, sampler);
         }
         if let Some(parameter) = &self.parameter {
-            entries.push(wgpu::BindGroupEntry {
-                binding: 1,
-                resource: parameter.as_entire_binding(),
-            });
+            group_builder = group_builder.buffer(1, parameter);
         }
         if let Some(exposure) = &self.auto_exposure {
-            entries.push(wgpu::BindGroupEntry {
-                binding: 2,
-                resource: exposure.as_entire_binding(),
-            });
+            group_builder = group_builder.buffer(2, exposure);
         }
-        let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("processed color blit"),
-            layout: &self.layout,
-            entries: &entries,
-        });
+        let group = group_builder.build(device);
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("processed color composition"),
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -597,31 +555,13 @@ impl StorageColorBlit {
             return Err(crate::ComputeError::Unsupported);
         }
         let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("resident color composition"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: wgpu::BufferSize::new(16),
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: wgpu::BufferSize::new(16),
-                    },
-                    count: None,
-                },
-            ],
-        });
+        let layout = voxy_gpu_core::BindGroupLayoutBuilder::with_capacity(
+            Some("resident color composition"),
+            2,
+        )
+        .storage_buffer_sized(0, wgpu::ShaderStages::FRAGMENT, true, Some(16))
+        .uniform_buffer_sized(1, wgpu::ShaderStages::FRAGMENT, Some(16))
+        .build(device);
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("resident color composition"),
             source: wgpu::ShaderSource::Wgsl(include_str!("storage_color_blit.wgsl").into()),
@@ -713,20 +653,11 @@ impl StorageColorBlit {
             ]),
             usage: wgpu::BufferUsages::UNIFORM,
         });
-        let group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("resident color composition"),
-            layout: &self.layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: source.buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: parameters.as_entire_binding(),
-                },
-            ],
-        });
+        let group =
+            voxy_gpu_core::BindGroupBuilder::with_capacity(Some("resident color composition"), 2)
+                .buffer(0, source.buffer)
+                .buffer(1, &parameters)
+                .build(device, &self.layout);
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("resident color composition"),

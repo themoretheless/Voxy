@@ -1,6 +1,5 @@
 //! Exclusive native UI publication. GPU error scopes settle before the final
 //! infallible owner/cache swap; the enclosing App still coordinates other owners.
-#![allow(dead_code)]
 use super::*;
 use crate::{EditorError, gpu_model::ResidencyCache};
 use checkpoint::PreparedUiLive;
@@ -26,9 +25,14 @@ pub(crate) struct UiPublicationPermit<'a> {
 #[derive(Debug)]
 pub(crate) struct RejectedUiPublication {
     pub(crate) error: String,
+    #[cfg_attr(
+        not(test),
+        expect(dead_code, reason = "retained for rejected UI teardown in tests")
+    )]
     pub(crate) prepared: Box<PreparedUiLive>,
 }
 impl RejectedUiPublication {
+    #[cfg(test)]
     pub(crate) fn discard(self) -> Option<std::thread::JoinHandle<()>> {
         self.prepared.close()
     }
@@ -49,14 +53,6 @@ pub(crate) struct ReadyUiPublication<'a> {
     gpu: Candidate,
 }
 impl UiLive {
-    /// Borrow native destinations until the candidate is accepted or discarded.
-    /// Call outside frame encoding, at the enclosing App's load boundary.
-    pub(crate) fn checkpoint_publication<'a>(
-        &'a mut self,
-        graphics: &'a mut Graphics,
-    ) -> Result<UiPublicationPermit<'a>, EditorError> {
-        self.publication_graphics(graphics, false)
-    }
     /// Coordinated restore retains the completed source fence through staging.
     /// Exclusive borrowing prevents owner-side polling until publish or discard.
     pub(crate) fn checkpoint_publication_at_barrier<'a>(
@@ -88,6 +84,7 @@ impl UiLive {
             held_barrier,
         )
     }
+    #[cfg(test)]
     pub(super) fn publication_on<'a>(
         &'a mut self,
         target: UiGraphicsTarget<'a>,
@@ -129,12 +126,14 @@ impl UiLive {
     }
 }
 impl<'a> UiPublicationPermit<'a> {
+    #[cfg(test)]
     pub(crate) fn stage(
         self,
         prepared: PreparedUiLive,
     ) -> Result<PendingUiPublication<'a>, RejectedUiPublication> {
         self.stage_with(prepared, || Ok(()))
     }
+    #[cfg(test)]
     fn stage_with(
         self,
         prepared: PreparedUiLive,
@@ -215,10 +214,12 @@ impl<'a> UiPublicationPermit<'a> {
         }
     }
 }
+#[cfg(test)]
 impl<'a> PendingUiPublication<'a> {
     /// Does not block the calling thread. Host/device polling follows the normal
     /// wgpu event loop. Cancellation drops staged resources without changing live
     /// owners; explicit discard retains the idle watcher's teardown handle.
+    #[cfg(test)]
     pub(crate) async fn validate(self) -> Result<ReadyUiPublication<'a>, RejectedUiPublication> {
         let Self {
             permit,
@@ -238,6 +239,7 @@ impl<'a> PendingUiPublication<'a> {
             }),
         }
     }
+    #[cfg(test)]
     pub(crate) fn discard(self) -> Option<std::thread::JoinHandle<()>> {
         self.prepared.close()
     }
@@ -295,6 +297,7 @@ impl ReadyUiPublication<'_> {
         *permit.target.cache = gpu.cache;
         old.close()
     }
+    #[cfg(test)]
     pub(crate) fn discard(self) -> Option<std::thread::JoinHandle<()>> {
         self.prepared.close()
     }
@@ -305,6 +308,10 @@ pub(super) mod tests;
 
 pub(crate) struct RejectedModelsUi {
     pub ui: RejectedUiPublication,
+    #[cfg_attr(
+        not(test),
+        expect(dead_code, reason = "returned with rejected UI+model staging in tests")
+    )]
     pub models: Box<crate::gpu_model::restore::ReadyModels>,
 }
 pub(crate) struct PendingModelsUi<'a> {
@@ -359,7 +366,9 @@ impl<'a> UiPublicationPermit<'a> {
         }
     }
 }
+#[cfg(test)]
 impl<'a> PendingModelsUi<'a> {
+    #[cfg(test)]
     pub(crate) async fn validate(self) -> Result<ReadyModelsUi<'a>, RejectedModelsUi> {
         match self.ui.validate().await {
             Ok(ui) => Ok(ReadyModelsUi {
@@ -371,9 +380,6 @@ impl<'a> PendingModelsUi<'a> {
                 models: Box::new(self.models),
             }),
         }
-    }
-    pub(crate) fn discard(self) -> Option<std::thread::JoinHandle<()>> {
-        self.ui.discard()
     }
 }
 impl ReadyModelsUi<'_> {
@@ -388,6 +394,7 @@ impl ReadyModelsUi<'_> {
         let owners = self.models.into_owners();
         (owners, self.ui.publish())
     }
+    #[cfg(test)]
     pub(crate) fn discard(self) -> Option<std::thread::JoinHandle<()>> {
         self.ui.discard()
     }
@@ -489,6 +496,13 @@ impl PendingDetachedModelsUi {
             }),
         }
     }
+    #[cfg_attr(
+        not(test),
+        expect(
+            dead_code,
+            reason = "staged worker teardown hook for cancelled detached UI installs"
+        )
+    )]
     pub(crate) fn discard(self) -> Option<std::thread::JoinHandle<()>> {
         self.prepared.close()
     }

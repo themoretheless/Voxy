@@ -1,0 +1,141 @@
+{
+  "fixture": "events.vpak",
+  "ticks": 120,
+  "afterRecovery": [
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-before",
+      "phase": 0.48,
+      "tick": 15
+    },
+    {
+      "owner": "owner-0",
+      "clip": "move",
+      "name": "quarter",
+      "phase": 0.25,
+      "tick": 15
+    },
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-mid",
+      "phase": 0.5,
+      "tick": 15
+    }
+  ],
+  "received": [
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-before",
+      "phase": 0.48,
+      "tick": 15
+    },
+    {
+      "owner": "owner-0",
+      "clip": "move",
+      "name": "quarter",
+      "phase": 0.25,
+      "tick": 15
+    },
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-mid",
+      "phase": 0.5,
+      "tick": 15
+    },
+    {
+      "owner": "owner-0",
+      "clip": "move",
+      "name": "mid",
+      "phase": 0.5,
+      "tick": 30
+    },
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-before",
+      "phase": 0.48,
+      "tick": 45
+    },
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-mid",
+      "phase": 0.5,
+      "tick": 45
+    },
+    {
+      "owner": "owner-0",
+      "clip": "move",
+      "name": "end",
+      "phase": 1,
+      "tick": 60
+    },
+    {
+      "owner": "owner-0",
+      "clip": "move",
+      "name": "start",
+      "phase": 1,
+      "tick": 60
+    },
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-before",
+      "phase": 0.48,
+      "tick": 75
+    },
+    {
+      "owner": "owner-0",
+      "clip": "move",
+      "name": "quarter",
+      "phase": 0.25,
+      "tick": 75
+    },
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-mid",
+      "phase": 0.5,
+      "tick": 75
+    },
+    {
+      "owner": "owner-0",
+      "clip": "move",
+      "name": "mid",
+      "phase": 0.5,
+      "tick": 90
+    },
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-before",
+      "phase": 0.48,
+      "tick": 105
+    },
+    {
+      "owner": "owner-2",
+      "clip": "move",
+      "name": "fast-mid",
+      "phase": 0.5,
+      "tick": 105
+    },
+    {
+      "owner": "owner-0",
+      "clip": "move",
+      "name": "end",
+      "phase": 1,
+      "tick": 120
+    },
+    {
+      "owner": "owner-0",
+      "clip": "move",
+      "name": "start",
+      "phase": 1,
+      "tick": 120
+    }
+  ]
+}

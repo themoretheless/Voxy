@@ -1,0 +1,24 @@
+   Compiling voxy_audio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio)
+   Compiling voxy_time v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_time)
+   Compiling voxy_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_core)
+   Compiling voxy_input v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_input)
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_ui v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_ui)
+   Compiling voxy_text v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_text)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_audio_device)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 29.44s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 5 tests
+test support::queries::tests::interior_solid_hollow_boundary_and_finite_segment_semantics ... ok
+test support::queries::tests::nearest_all_hits_filters_and_stable_ties_include_characters ... ok
+test support::queries::tests::invalid_queries_and_late_budget_failures_never_return_partial_hits ... ok
+test support::queries::tests::affine_shear_and_reflection_return_world_point_and_outward_normal ... ok
+test support::queries::tests::accepted_solver_precision_survives_controller_checkpoint_and_external_teleport ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 211 filtered out; finished in 0.01s
+

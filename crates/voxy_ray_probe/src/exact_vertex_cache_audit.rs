@@ -56,10 +56,8 @@ pub(super) fn capture(
     if job.geometry_bounds_buffer().is_none() || geometry_unready {
         job.build_scene(&mut encoder);
     }
-    if geometry_unready {
-        if let Some(bounds) = job.geometry_bounds_buffer() {
-            encoder.clear_buffer(bounds, 0, Some(4));
-        }
+    if geometry_unready && let Some(bounds) = job.geometry_bounds_buffer() {
+        encoder.clear_buffer(bounds, 0, Some(4));
     }
     if not_ready {
         encoder.clear_buffer(buffer, u64::from(header) * 4, Some(4));

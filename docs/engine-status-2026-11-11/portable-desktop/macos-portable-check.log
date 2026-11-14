@@ -1,0 +1,5 @@
+GAME UI MESH draws=0 glyph_quads=0
+GAME UI TEXT fonts=0 runs=0 glyphs=0
+GAME UI LAYOUT elements=0 buttons=0
+GAME STATE {"version":1,"objects":[]}
+GAME CHECK PASS ticks=120 objects=0 prefab_instances=0

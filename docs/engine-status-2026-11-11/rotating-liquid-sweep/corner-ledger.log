@@ -1,0 +1,37 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 42.33s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 1 test
+liquid event contacts=1 queries=18 elapsed=1.24694932258720744e-2 time=1.97495121857183421e-3 remaining=5.09851019226618529e-4 pair=0,None normal=[1.0, 0.0, 0.0]
+liquid event contacts=1 queries=9 elapsed=3.19986611242734087e-3 time=6.89022776460812493e-4 remaining=9.10890803675705441e-4 pair=0,Some(1) normal=[-1.0, 0.0, 0.0]
+liquid event contacts=2 queries=12 elapsed=3.88888888888815325e-3 time=1.45077048656404464e-14 remaining=9.10890803661197732e-4 pair=0,Some(1) normal=[-1.0, 0.0, -4.835901683265059e-13]
+liquid event contacts=4 queries=18 elapsed=3.88888888891918052e-3 time=1.69457545967540177e-14 remaining=9.10890803627732531e-4 pair=0,Some(1) normal=[-1.0, 0.0, -1.599096301068683e-12]
+liquid event contacts=8 queries=30 elapsed=3.88894756922393992e-3 time=2.01848876862690441e-8 remaining=9.10811938452232568e-4 pair=0,Some(1) normal=[-0.9999999999965447, 0.0, -2.6288408189270485e-6]
+liquid event contacts=16 queries=54 elapsed=3.88910932091604761e-3 time=2.02270195430880343e-8 remaining=9.10650144628268065e-4 pair=0,Some(1) normal=[-0.9999999999678241, 0.0, -8.021968359178088e-6]
+liquid event contacts=32 queries=102 elapsed=3.88943295626842768e-3 time=2.02432689067789165e-8 remaining=9.10326493026524484e-4 pair=0,Some(1) normal=[-0.9999999998230854, 0.0, -1.881035523222637e-5]
+liquid event contacts=64 queries=198 elapsed=3.89008040199261907e-3 time=2.02560429235729550e-8 remaining=9.09679034528316230e-4 pair=0,Some(1) normal=[-0.999999999184231, 0.0, -4.039230545735345e-5]
+liquid event contacts=128 queries=390 elapsed=3.89137510779739891e-3 time=2.02198097833019505e-8 remaining=9.08384364956676461e-4 pair=0,Some(1) normal=[-0.9999999965098695, 0.0, -8.35479583152765e-5]
+liquid event contacts=256 queries=774 elapsed=3.89396500967771403e-3 time=2.02153622318364735e-8 remaining=9.05794467523913052e-4 pair=0,Some(1) normal=[-0.9999999855707541, 0.0, -0.00016987787285970053]
+liquid event contacts=512 queries=1542 elapsed=3.89914375442274811e-3 time=2.02171547170830362e-8 remaining=9.00615720986393427e-4 pair=0,Some(1) normal=[-0.9999999413459312, 0.0, -0.00034250275102181506]
+liquid event contacts=1024 queries=3078 elapsed=3.90950177845082909e-3 time=2.02642782708270435e-8 remaining=8.90257649834758471e-4 pair=0,Some(1) normal=[-0.9999997634850006, 0.0, -0.0006877717229148327]
+liquid event contacts=2048 queries=6150 elapsed=3.93021752248240517e-3 time=2.02281804501810827e-8 remaining=8.69541941901003090e-4 pair=0,Some(1) normal=[-0.9999990501513304, 0.0, -0.0013782947570452045]
+liquid event contacts=4096 queries=12294 elapsed=3.97164866698030035e-3 time=2.02537130325991003e-8 remaining=8.28110771870526003e-4 pair=0,Some(1) normal=[-0.9999961930439932, 0.0, -0.002759329179497601]
+liquid event contacts=8192 queries=24582 elapsed=4.05451290580918257e-3 time=2.02315732813279892e-8 remaining=7.45246555181394970e-4 pair=0,Some(1) normal=[-0.999984756772945, 0.0, -0.005521432943901328]
+liquid event contacts=16384 queries=49158 elapsed=4.22024276548870793e-3 time=2.02200545365014564e-8 remaining=5.79516707020613902e-4 pair=0,Some(1) normal=[-0.9999389969746638, 0.0, -0.01104546645928786]
+liquid event contacts=32768 queries=98310 elapsed=4.55169629275876259e-3 time=2.02301528594426602e-8 remaining=2.48063169652236514e-4 pair=0,Some(1) normal=[-0.9997559517380766, 0.0, -0.022091558665986027]
+liquid event contacts=65536 queries=196617 elapsed=5.21460943821307546e-3 time=2.02310428633458666e-8 remaining=1.69362589784267719e-3 pair=0,Some(1) normal=[-0.9990240384438765, 0.0, -0.04416979297311662]
+liquid budget line=1187
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene liquid body step: CollisionBudget") } }
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 460 filtered out; finished in 29.05s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

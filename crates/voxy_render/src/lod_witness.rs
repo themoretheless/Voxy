@@ -111,7 +111,7 @@ fn squared_distance(a: Point, b: Point) -> f64 {
     dot(d, d)
 }
 
-#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)] // Deliberate floor after [0, 2^24] clamping.
+// Deliberate floor after [0, 2^24] clamping.
 fn quantize(weights: [f64; 3]) -> [u32; 3] {
     let denominator = LOD_BARYCENTRIC_DENOMINATOR;
     let a = (weights[0].clamp(0.0, 1.0) * f64::from(denominator)).floor() as u32;

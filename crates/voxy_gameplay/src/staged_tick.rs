@@ -102,7 +102,6 @@ impl CharacterPhysics {
         self.fixed_step_preparing(scene, input, dt, translations, &paths, fades, prepare)
     }
 
-    #[allow(clippy::too_many_arguments)]
     fn fixed_step_preparing<T, E>(
         &mut self,
         scene: &mut SceneGraph,

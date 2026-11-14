@@ -5,7 +5,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (device, sender) = OutputDevice::open(512)?;
     let samples: Vec<_> = (0..4800)
         .map(|i| {
-            #[allow(clippy::cast_possible_truncation)] // Normalized quiet waveform.
+            // Normalized quiet waveform.
             let value =
                 (0.01 * (f64::from(i) * 440.0 * std::f64::consts::TAU / 48_000.0).sin()) as f32;
             [value; 2]

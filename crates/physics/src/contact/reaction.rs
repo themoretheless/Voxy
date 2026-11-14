@@ -164,12 +164,15 @@ fn accumulate(
     body: ContactBody,
     point: Vector,
     force: Vector,
+    translation_only: bool,
 ) -> Result<(), Error> {
     wrench.force = add(wrench.force, force);
-    wrench.torque = add(
-        wrench.torque,
-        cross(sub(point, body.motion.position), force),
-    );
+    if !translation_only {
+        wrench.torque = add(
+            wrench.torque,
+            cross(sub(point, body.motion.position), force),
+        );
+    }
     if !finite(wrench.force) || !finite(wrench.torque) {
         return Err(Error::NumericalFailure);
     }
@@ -254,7 +257,24 @@ pub fn resolve_normal_reaction_network(
     external: &[ContactWrench],
     config: ReactionConfig,
 ) -> Result<NetworkReaction, Error> {
+    resolve_normal_reaction_network_with_particles(bodies, 0, contacts, external, config)
+}
+
+/// Resolve reactions with a leading range of translation-only particles.
+/// The contact point remains shared. Particles receive generalized linear
+/// forces, while rigid participants receive the full wrench about their COM.
+pub fn resolve_normal_reaction_network_with_particles(
+    bodies: &[ContactBody],
+    particle_count: usize,
+    contacts: &[NetworkSupport],
+    external: &[ContactWrench],
+    config: ReactionConfig,
+) -> Result<NetworkReaction, Error> {
     if bodies.is_empty()
+        || particle_count > bodies.len()
+        || bodies[..particle_count]
+            .iter()
+            .any(|body| body.spin.is_some())
         || bodies.len() > 128
         || external.len() != bodies.len()
         || contacts.is_empty()
@@ -365,6 +385,7 @@ pub fn resolve_normal_reaction_network(
             bodies[entry.first],
             contact.point,
             *force,
+            entry.first < particle_count,
         )?;
         if let Some(j) = entry.second {
             accumulate(
@@ -372,6 +393,7 @@ pub fn resolve_normal_reaction_network(
                 bodies[j],
                 contact.point,
                 force.map(|f| -f),
+                j < particle_count,
             )?;
         }
         let relative = sub(
@@ -430,7 +452,7 @@ fn add_wrench(a: ContactWrench, b: ContactWrench) -> ContactWrench {
 mod rate;
 pub use rate::{
     NetworkReactionRate, ReactionRateConfig, SupportMotion, normal_gap_jerk,
-    resolve_normal_reaction_rate_network,
+    resolve_normal_reaction_rate_network, resolve_normal_reaction_rate_network_with_particles,
 };
 
 use crate::math::add;

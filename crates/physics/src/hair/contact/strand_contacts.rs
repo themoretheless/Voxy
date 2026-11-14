@@ -97,32 +97,31 @@ pub(super) fn feature_strand_normal(
     let tb = normalized_contact_direction(sub(b.x[ib + 1], b.x[ib]));
     let interior_a = s > 0. && s < 1.;
     let interior_b = t > 0. && t < 1.;
-    if interior_a && interior_b {
-        if let (Some(ta), Some(tb)) = (ta, tb) {
-            let perpendicular = cross(ta, tb);
-            if len(perpendicular) > 64. * f64::EPSILON {
-                // Interior closest-point separation is perpendicular to both
-                // segments. Subtracting rounded projected points can corrupt
-                // its direction at tiny gaps or large world offsets; use their original tangents.
-                let normal = unit(perpendicular);
-                let side = normalized_contact_direction(delta)
-                    .map_or(0., |direction| dot(direction, normal));
-                if side > 0. {
-                    return normal;
-                }
-                if side < 0. {
-                    return mul(normal, -1.);
-                }
-                return coincident_strand_normal(a, ia, s, b, ib, t);
+    if interior_a
+        && interior_b
+        && let (Some(ta), Some(tb)) = (ta, tb)
+    {
+        let perpendicular = cross(ta, tb);
+        if len(perpendicular) > 64. * f64::EPSILON {
+            // Interior closest-point separation is perpendicular to both
+            // segments. Subtracting rounded projected points can corrupt
+            // its direction at tiny gaps or large world offsets; use their original tangents.
+            let normal = unit(perpendicular);
+            let side =
+                normalized_contact_direction(delta).map_or(0., |direction| dot(direction, normal));
+            if side > 0. {
+                return normal;
             }
+            if side < 0. {
+                return mul(normal, -1.);
+            }
+            return coincident_strand_normal(a, ia, s, b, ib, t);
         }
     }
     let mut direction = delta;
     for (interior, tangent) in [(interior_a, ta), (interior_b, tb)] {
-        if interior {
-            if let Some(tangent) = tangent {
-                direction = cross(tangent, cross(direction, tangent));
-            }
+        if interior && let Some(tangent) = tangent {
+            direction = cross(tangent, cross(direction, tangent));
         }
     }
     normalized_contact_direction(direction)
@@ -164,18 +163,18 @@ pub(super) fn coincident_strand_normal(
     };
     if let Some(history) = history {
         let direction = transverse(history);
-        if len(direction) > 64. * f64::EPSILON {
-            if let Some(normal) = normalized_contact_direction(direction) {
-                return normal;
-            }
+        if len(direction) > 64. * f64::EPSILON
+            && let Some(normal) = normalized_contact_direction(direction)
+        {
+            return normal;
         }
     }
     for basis in [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]] {
         let direction = transverse(rotate(a.q[ia], basis));
-        if len(direction) > 64. * f64::EPSILON {
-            if let Some(normal) = normalized_contact_direction(direction) {
-                return normal;
-            }
+        if len(direction) > 64. * f64::EPSILON
+            && let Some(normal) = normalized_contact_direction(direction)
+        {
+            return normal;
         }
     }
     // Invalid/collapsed states have no reliable material direction. Keep a

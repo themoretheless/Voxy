@@ -1,6 +1,5 @@
 //! Composed portable UiLive participant. Native GPU staging/installation and the
 //! enclosing App commit still require their own validated frame-boundary permit.
-#![allow(dead_code)]
 use super::{publications::*, reload_checkpoint::*, *};
 use crate::EditorError;
 use voxy_scene::SceneCheckpointView;

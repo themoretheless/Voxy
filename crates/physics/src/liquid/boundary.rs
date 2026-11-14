@@ -216,11 +216,6 @@ impl BoundarySample {
     /// Fills a solid box with midpoint volume samples; edge cells use their actual clipped volume.
     /// # Errors
     /// Invalid bounds/spacing, sample-budget excess or unrepresentable cell coordinates/volumes.
-    #[allow(
-        clippy::cast_possible_truncation,
-        clippy::cast_sign_loss,
-        clippy::cast_precision_loss
-    )]
     pub fn box_grid(
         min: [f64; 3],
         max: [f64; 3],

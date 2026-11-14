@@ -192,7 +192,7 @@ fn add_constraint(
         let norm = entries
             .iter()
             .flat_map(|e| e.gradient.map(|g| e.mobility.sqrt() * g))
-            .fold(0f64, |norm, value| norm.hypot(value));
+            .fold(0f64, f64::hypot);
         diagonal = norm * norm;
     }
     if !diagonal.is_finite() || !bound.is_finite() {
@@ -726,7 +726,7 @@ fn position_constraints_on_clock(
         }
     }
     let mut pair_constraints = Vec::with_capacity(responses.len());
-    for response in responses.iter() {
+    for response in responses {
         let (ra, ia, s) = response.a;
         let (rb, ib, t) = response.b;
         let pa = add(mul(rods[ra].x[ia], 1. - s), mul(rods[ra].x[ia + 1], s));

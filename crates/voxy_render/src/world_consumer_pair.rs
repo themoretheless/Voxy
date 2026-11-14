@@ -383,7 +383,7 @@ mod metal_tests {
                         aspect: wgpu::TextureAspect::All,
                     },
                     texture.size(),
-                )
+                );
             };
             copy(&mut encoder, &a);
             pair.original(&mut encoder, &texture, 0);

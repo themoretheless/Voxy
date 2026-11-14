@@ -14,13 +14,12 @@ impl Liquid {
     ) -> Result<(), Error> {
         let fields = self.transport.as_ref().ok_or(Error::InvalidTransport)?;
         let species = fields.species.as_ref().ok_or(Error::InvalidTransport)?;
-        if let Some(values) = &capacities {
-            if values.len() != species.names.len()
+        if let Some(values) = &capacities
+            && (values.len() != species.names.len()
                 || values.iter().any(|c| !positive(*c))
-                || self.gas_active()
-            {
-                return Err(Error::InvalidTransport);
-            }
+                || self.gas_active())
+        {
+            return Err(Error::InvalidTransport);
         }
         let energies = self
             .particles

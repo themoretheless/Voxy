@@ -276,7 +276,7 @@ impl Liquid {
             _ => Err(Error::InvalidPhaseChange),
         }
     }
-    #[allow(clippy::float_cmp)] // Pure phases must be exact outside their local plateau.
+    // Pure phases must be exact outside their local plateau.
     fn validate_exchange_phases(&mut self) -> Result<(), Error> {
         if let Some(phase) = self
             .transport

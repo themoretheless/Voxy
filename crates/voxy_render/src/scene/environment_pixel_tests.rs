@@ -10,9 +10,10 @@ fn real_hdr_scene_matches_ibl_oracle_after_atlas_install() {
     const W: u32 = 192;
     const H: u32 = 64;
     const COLOR: [f32; 3] = [0.8, 0.3, 0.1];
-    let output = std::env::var_os("VOXY_GGX_PIXEL_DIR")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|| std::path::PathBuf::from("/tmp/voxy-ggx-scene-pixels"));
+    let output = std::env::var_os("VOXY_GGX_PIXEL_DIR").map_or_else(
+        || std::path::PathBuf::from("/tmp/voxy-ggx-scene-pixels"),
+        std::path::PathBuf::from,
+    );
     std::fs::create_dir_all(&output).unwrap();
     let instance = crate::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -174,7 +175,7 @@ fn real_hdr_scene_matches_ibl_oracle_after_atlas_install() {
                     break;
                 }
                 Err(std::sync::mpsc::TryRecvError::Empty) => {
-                    std::thread::sleep(std::time::Duration::from_millis(1))
+                    std::thread::sleep(std::time::Duration::from_millis(1));
                 }
                 Err(e) => panic!("pixel readback disconnected {e}"),
             }

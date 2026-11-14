@@ -46,7 +46,6 @@ pub enum DestructionPlan {
 ///
 /// Rejects invalid/bounded-work settings, coordinate arithmetic overflow, unavailable chunks,
 /// unknown block IDs, an inconsistent view, or a write budget overflow.
-#[allow(clippy::too_many_lines)]
 pub fn plan_explosion(
     view: &impl VoxelView,
     registry: &voxy_world::BlockRegistry,

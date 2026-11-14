@@ -60,9 +60,16 @@ fn vs_main(input: VertexInput) -> VertexOutput {
         vec2<f32>(0.0, 0.0), vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0),
         vec2<f32>(1.0, 0.0), vec2<f32>(1.0, 1.0), vec2<f32>(0.0, 1.0),
     );
-    let corner = select(corners[input.vertex_index], flipped_corners[input.vertex_index],
-        (input.ao_diagonal.w & 0x80u) != 0u);
     let face = input.extent_face.z;
+    var v_idx = input.vertex_index;
+    if (face == 1u || face == 3u || face == 4u) {
+        if (v_idx == 1u) { v_idx = 2u; }
+        else if (v_idx == 2u) { v_idx = 1u; }
+        else if (v_idx == 4u) { v_idx = 5u; }
+        else if (v_idx == 5u) { v_idx = 4u; }
+    }
+    let corner = select(corners[v_idx], flipped_corners[v_idx],
+        (input.ao_diagonal.w & 0x80u) != 0u);
     var axis_u = vec3<f32>(1.0, 0.0, 0.0);
     var axis_v = vec3<f32>(0.0, 1.0, 0.0);
     if (face == 0u || face == 1u) {
@@ -93,9 +100,7 @@ fn vs_main(input: VertexInput) -> VertexOutput {
     return output;
 }
 
-@fragment
-fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
-    let albedo = textureSample(materials, material_sampler, input.uv, i32(input.material));
+fn shade_voxel(input: VertexOutput, albedo: vec4<f32>) -> vec3<f32> {
     let sun = normalize(vec3<f32>(0.45, 0.82, 0.35));
     let diffuse = 0.18 + 0.82 * max(dot(input.normal, sun), 0.0);
     let illumination = max(0.08, max(input.light.y, input.light.x * diffuse));
@@ -107,6 +112,26 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
     let level = floor(clamp(source, 0.0, 0.999) * 32.0) / 31.0;
     let lcd_paper = vec3<f32>(0.78, 0.78, 0.76);
     let lcd_ink = vec3<f32>(0.035, 0.035, 0.035);
-    let color = mix(lcd_ink, lcd_paper, level);
-    return vec4<f32>(color, albedo.a);
+    return mix(lcd_ink, lcd_paper, level);
+}
+
+@fragment
+fn fs_opaque(input: VertexOutput) -> @location(0) vec4<f32> {
+    let albedo = textureSample(materials, material_sampler, input.uv, i32(input.material));
+    return vec4<f32>(shade_voxel(input, albedo), 1.0);
+}
+
+@fragment
+fn fs_cutout(input: VertexOutput) -> @location(0) vec4<f32> {
+    let albedo = textureSample(materials, material_sampler, input.uv, i32(input.material));
+    if (albedo.a < 0.5) {
+        discard;
+    }
+    return vec4<f32>(shade_voxel(input, albedo), 1.0);
+}
+
+@fragment
+fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
+    let albedo = textureSample(materials, material_sampler, input.uv, i32(input.material));
+    return vec4<f32>(shade_voxel(input, albedo), albedo.a);
 }

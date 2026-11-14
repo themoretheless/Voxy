@@ -22,10 +22,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "/items",
         serde_json::json!({"name":"New item","quantity":1}),
     )?;
-    let scene = std::env::args_os()
-        .nth(1)
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|| std::env::temp_dir().join("voxy-collection-demo/scene.json"));
+    let scene = std::env::args_os().nth(1).map_or_else(
+        || std::env::temp_dir().join("voxy-collection-demo/scene.json"),
+        std::path::PathBuf::from,
+    );
     let root = scene
         .parent()
         .filter(|parent| !parent.as_os_str().is_empty())

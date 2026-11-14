@@ -160,6 +160,41 @@ impl FocusRouter {
             .map_or(KeyAction::None, KeyAction::Cancel)
     }
 }
+
+/// Evaluates a directional spatial focus navigation score (`Some(cost)`) for moving focus from
+/// `origin` to `candidate` along unit direction `dir` within a $\pm 45^\circ$ forward cone.
+/// Lower scores indicate better candidates (`d_parallel + 2.5 * d_orthogonal`).
+#[must_use]
+pub fn spatial_focus_navigation_score(
+    origin: [f32; 2],
+    candidate: [f32; 2],
+    dir: [f32; 2],
+) -> Option<f32> {
+    if origin.iter().any(|v| !v.is_finite())
+        || candidate.iter().any(|v| !v.is_finite())
+        || dir.iter().any(|v| !v.is_finite())
+    {
+        return None;
+    }
+    let d_len = dir[0].hypot(dir[1]);
+    if d_len <= 1e-6 {
+        return None;
+    }
+    let ux = dir[0] / d_len;
+    let uy = dir[1] / d_len;
+    let dx = candidate[0] - origin[0];
+    let dy = candidate[1] - origin[1];
+    let parallel = dx * ux + dy * uy;
+    if parallel <= 1e-4 {
+        return None;
+    }
+    let ortho = (dx * (-uy) + dy * ux).abs();
+    if ortho > parallel {
+        return None;
+    }
+    let score = parallel + 2.5 * ortho;
+    score.is_finite().then_some(score)
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -207,5 +242,9 @@ mod tests {
         assert_eq!(router.cancel(), KeyAction::Cancel(WidgetId(2)));
         assert_eq!(router.focused(), None);
         assert_eq!(router.release(), KeyAction::None);
+        let aligned = spatial_focus_navigation_score([0.0, 0.0], [50.0, 0.0], [1.0, 0.0]).unwrap();
+        let angled = spatial_focus_navigation_score([0.0, 0.0], [50.0, 20.0], [1.0, 0.0]).unwrap();
+        assert!(aligned < angled);
+        assert!(spatial_focus_navigation_score([0.0, 0.0], [-10.0, 0.0], [1.0, 0.0]).is_none());
     }
 }

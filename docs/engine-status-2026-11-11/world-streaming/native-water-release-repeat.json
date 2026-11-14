@@ -1,0 +1,102 @@
+{
+  "adapter": "AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }",
+  "cpu_stages": {
+    "actor_animation": {
+      "p50_ms": 0.04875,
+      "p95_ms": 0.222041,
+      "p99_ms": 0.236167
+    },
+    "pose_admission": {
+      "p50_ms": 0.140958,
+      "p95_ms": 1.165,
+      "p99_ms": 2.3064169999999997
+    },
+    "pose_caller_cpu": {
+      "p50_ms": 0.144541,
+      "p95_ms": 0.518834,
+      "p99_ms": 1.012292
+    },
+    "pose_family_certificate": {
+      "p50_ms": 0.133125,
+      "p95_ms": 0.231208,
+      "p99_ms": 0.258125
+    },
+    "pose_group_certificate": {
+      "p50_ms": 1.231791,
+      "p95_ms": 2.592292,
+      "p99_ms": 3.9567919999999996
+    },
+    "pose_join_cpu": {
+      "p50_ms": 0.0,
+      "p95_ms": 0.090833,
+      "p99_ms": 0.16179200000000002
+    },
+    "pose_join_wall": {
+      "p50_ms": 0.0,
+      "p95_ms": 0.720542,
+      "p99_ms": 1.5719589999999999
+    },
+    "pose_publication": {
+      "p50_ms": 0.07008400000000001,
+      "p95_ms": 0.40291699999999997,
+      "p99_ms": 2.2295000000000003
+    },
+    "pose_queue_writes": {
+      "p50_ms": 0.0895,
+      "p95_ms": 0.13449999999999998,
+      "p99_ms": 0.163416
+    },
+    "pose_spawn_wall": {
+      "p50_ms": 0.0,
+      "p95_ms": 0.233708,
+      "p99_ms": 0.376583
+    },
+    "pose_worker_cpu_sum": {
+      "p50_ms": 0.0,
+      "p95_ms": 1.941083,
+      "p99_ms": 4.471207
+    },
+    "pose_worker_launch_max": {
+      "p50_ms": 0.0,
+      "p95_ms": 0.42570800000000003,
+      "p99_ms": 1.7011669999999999
+    },
+    "water": {
+      "p50_ms": 0.0,
+      "p95_ms": 0.000584,
+      "p99_ms": 0.0011250000000000001
+    }
+  },
+  "frame_budget_met": false,
+  "frames": 2400,
+  "gpu_ms": null,
+  "gpu_pass_statistics": [
+    {
+      "p50_ms": 0.793417,
+      "p95_ms": 1.097292,
+      "p99_ms": 1.285167
+    },
+    null,
+    null
+  ],
+  "gpu_samples": 333,
+  "gpu_scope": "primary resident voxel pass only",
+  "limitations": [
+    "CPU render includes submission/presentation; not GPU execution time",
+    "presentation completion is not display scanout",
+    "GPU scene span excludes external postprocessing; delayed samples may cross warmup boundary",
+    "upload/memory counters unavailable"
+  ],
+  "max_ms": 19.254375,
+  "measurement_seconds": 20.0,
+  "over_120hz": 1220,
+  "over_60hz": 1,
+  "p50_ms": 8.336500000000001,
+  "p95_ms": 8.853,
+  "p99_ms": 9.051125,
+  "peak_memory_bytes": null,
+  "scenario": "water",
+  "skipped_frames": 0,
+  "upload_bytes": null,
+  "warmup_seconds": 1.0
+}

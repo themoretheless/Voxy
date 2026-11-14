@@ -18,13 +18,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let bodies: Vec<_> = (0..257_u32)
         .map(|i| {
-            #[allow(clippy::cast_precision_loss)]
             let position = [
                 (i % 17) as f32 * 0.5,
                 (i / 17) as f32 * 0.5,
                 (i % 3) as f32 * 0.25,
             ];
-            #[allow(clippy::cast_precision_loss)]
             let mass = 1.0 + (i % 7) as f32 * 0.25;
             GravityBody {
                 mass,

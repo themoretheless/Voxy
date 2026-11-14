@@ -1,6 +1,6 @@
 //! Bounded support queries over the same affine boxes used by character physics.
 mod queries;
-pub use queries::{RayHit, RayQuery, SceneQueries};
+pub use queries::{AngularBoxHit, BoxSweepHit, RayHit, RayQuery, SceneQueries};
 #[path = "support_checkpoint.rs"]
 mod checkpoint;
 use super::{
@@ -10,8 +10,8 @@ use super::{
 pub use checkpoint::SupportAnchorCheckpoint;
 use glam::{DMat3, DVec3};
 use voxy_scene::{NodeId, SceneGraph, SceneId};
-const MAX_COLLIDERS: usize = 4096;
-const MAX_QUERIES: usize = 65536;
+pub(crate) const MAX_COLLIDERS: usize = 4096;
+pub(crate) const MAX_QUERIES: usize = 65536;
 
 /// Budget shared by all probes and anchor resolutions in a staged tick.
 #[derive(Clone, Copy, Debug)]
@@ -78,6 +78,7 @@ pub struct SupportContact {
 #[derive(Clone, Debug)]
 struct Surface {
     owner: NodeId,
+    layers: crate::CollisionLayers,
     center: DVec3,
     edges: DMat3,
     inverse: DMat3,
@@ -95,6 +96,7 @@ fn normal_direction(vector: DVec3) -> Result<DVec3, PhysicsError> {
 pub struct SupportWorld {
     scene: SceneId,
     surfaces: Vec<Surface>,
+    character_layers: std::collections::BTreeMap<NodeId, crate::CollisionLayers>,
 }
 impl SupportWorld {
     /// Immutable geometry snapshot. Rebuild once after platform transform updates.
@@ -107,7 +109,9 @@ impl SupportWorld {
         for (owner, collider) in scene.active_components::<BoxCollider>() {
             validate_static_collider(scene, owner, *collider)?;
         }
-        Self::from_static_world(&static_world(scene)?)
+        let mut world = Self::from_static_world(&static_world(scene)?)?;
+        world.bind_character_layers(scene);
+        Ok(world)
     }
     pub(crate) fn from_static_world(world: &StaticWorld) -> Result<Self, PhysicsError> {
         if world.0.len() > MAX_COLLIDERS {
@@ -132,6 +136,7 @@ impl SupportWorld {
             ];
             surfaces.push(Surface {
                 owner: obstacle.owner,
+                layers: obstacle.layers,
                 center: obstacle.shape.center,
                 edges,
                 inverse,
@@ -143,8 +148,54 @@ impl SupportWorld {
         Ok(Self {
             scene: world.1,
             surfaces,
+            character_layers: Default::default(),
         })
     }
+    pub(crate) fn bind_character_layers(&mut self, scene: &SceneGraph) {
+        self.character_layers = scene
+            .active_components::<crate::CollisionLayers>()
+            .map(|(owner, layers)| (owner, *layers))
+            .collect();
+    }
+
+    /// Selects supports accepted by the character's collision layers.
+    /// # Errors
+    /// Rejects a snapshot scan that exceeds the remaining query budget.
+    pub fn for_character(
+        &self,
+        owner: NodeId,
+        budget: &mut SupportQueryBudget,
+    ) -> Result<std::borrow::Cow<'_, Self>, PhysicsError> {
+        if self.character_layers.is_empty() {
+            return Ok(std::borrow::Cow::Borrowed(self));
+        }
+        budget.charge_work(self.surfaces.len())?;
+        let layers = self
+            .character_layers
+            .get(&owner)
+            .copied()
+            .unwrap_or_default();
+        let Some(excluded) = self
+            .surfaces
+            .iter()
+            .position(|surface| !layers.interacts(surface.layers))
+        else {
+            return Ok(std::borrow::Cow::Borrowed(self));
+        };
+        let mut surfaces = self.surfaces[..excluded].to_vec();
+        surfaces.extend(
+            self.surfaces[excluded + 1..]
+                .iter()
+                .filter(|surface| layers.interacts(surface.layers))
+                .cloned(),
+        );
+        Ok(std::borrow::Cow::Owned(Self {
+            scene: self.scene,
+            surfaces,
+            character_layers: Default::default(),
+        }))
+    }
+
     /// Finds the nearest physical surface. An unwalkable nearest hit blocks
     /// support below it; rays never look through an occluding steep surface.
     /// Strictly interior origins have no support. Equal-distance ties use `NodeId` order.

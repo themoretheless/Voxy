@@ -188,11 +188,7 @@ pub fn look_at_error(
 /// Computes deterministic physiological ocular micro-saccade and drift angular offsets
 /// `[yaw_rad, pitch_rad]` bounded by `max_amplitude_rad`.
 #[must_use]
-pub fn micro_saccade_gaze_jitter_rad(
-    time_s: f32,
-    seed: u32,
-    max_amplitude_rad: f32,
-) -> [f32; 2] {
+pub fn micro_saccade_gaze_jitter_rad(time_s: f32, seed: u32, max_amplitude_rad: f32) -> [f32; 2] {
     if !time_s.is_finite() || !max_amplitude_rad.is_finite() || max_amplitude_rad <= 0.0 {
         return [0.0, 0.0];
     }
@@ -200,7 +196,8 @@ pub fn micro_saccade_gaze_jitter_rad(
     let phase_a = (seed & 0xFFFF) as f32 * 0.001;
     let phase_b = (seed >> 16) as f32 * 0.001;
     let yaw = ((time_s * 7.3 + phase_a).sin() * 0.6 + (time_s * 19.7 + phase_b).cos() * 0.4) * amp;
-    let pitch = ((time_s * 5.9 + phase_b).cos() * 0.6 + (time_s * 23.1 + phase_a).sin() * 0.4) * amp;
+    let pitch =
+        ((time_s * 5.9 + phase_b).cos() * 0.6 + (time_s * 23.1 + phase_a).sin() * 0.4) * amp;
     [yaw.clamp(-amp, amp), pitch.clamp(-amp, amp)]
 }
 

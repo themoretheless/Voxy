@@ -231,7 +231,7 @@ case was also time sensitive. Therefore fold retention is NOT established.
 The centroid-dual curvature/transport discretization needs further analysis
 and correction before claiming mesh-independent fold physics. Historical measurements above describe the previous curvature operator.
 `film-fold-retention.csv` is overwritten by each successful explicit study run. Run with
-`cargo test -p physics --test surface_film concave_fold -- --ignored --nocapture`.
+`cargo test -p physics --test physics_film concave_fold -- --ignored --nocapture`.
 The fixture is engineering validation, not physiological calibration.
 
 

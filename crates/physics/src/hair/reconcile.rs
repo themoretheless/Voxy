@@ -136,13 +136,13 @@ impl HairSystem {
         // restoration proposal, never at an exhausted Newton iterate.
         let recovery_origin = (continuous_mesh && self_collision).then(|| rods.to_vec());
         let mut feasible_reference: Option<Vec<(Vec<V>, Vec<Q>)>> = None;
-        if recovery_origin.is_some() {
-            if let Some(path) = &flags.replay_export {
-                let path = std::path::Path::new(path).with_extension("recovery-entry.vhr");
-                match contact_replay::save_measured(&path, rods, meshes, dt, radius, true, true) {
-                    Ok(()) => eprintln!("HAIR CONTACT ENTRY EXPORT path={}", path.display()),
-                    Err(error) => eprintln!("HAIR CONTACT ENTRY EXPORT ERROR {error}"),
-                }
+        if recovery_origin.is_some()
+            && let Some(path) = &flags.replay_export
+        {
+            let path = std::path::Path::new(path).with_extension("recovery-entry.vhr");
+            match contact_replay::save_measured(&path, rods, meshes, dt, radius, true, true) {
+                Ok(()) => eprintln!("HAIR CONTACT ENTRY EXPORT path={}", path.display()),
+                Err(error) => eprintln!("HAIR CONTACT ENTRY EXPORT ERROR {error}"),
             }
         }
         for attempt in 0..2 {
@@ -610,19 +610,20 @@ impl HairSystem {
             // IPC's feasibility/energy diagnostics. This is observation only:
             // constrained optimality must be established before changing the
             // completion gate, especially after initial overlap restoration.
-            if energy_trace && full_merit == 0. {
-                if let Some(before_energy) = feasible_energy {
-                    let energy = rods
-                        .iter()
-                        .map(|rod| direct::structural_energy(rod, dt))
-                        .collect::<Result<Vec<_>, _>>()?
-                        .iter()
-                        .sum::<f64>();
-                    eprintln!(
-                        "HAIR ELASTIC FULL iteration={iteration} before_j={before_energy:e} trial_j={energy:e} delta_j={:e}",
-                        energy - before_energy
-                    );
-                }
+            if energy_trace
+                && full_merit == 0.
+                && let Some(before_energy) = feasible_energy
+            {
+                let energy = rods
+                    .iter()
+                    .map(|rod| direct::structural_energy(rod, dt))
+                    .collect::<Result<Vec<_>, _>>()?
+                    .iter()
+                    .sum::<f64>();
+                eprintln!(
+                    "HAIR ELASTIC FULL iteration={iteration} before_j={before_energy:e} trial_j={energy:e} delta_j={:e}",
+                    energy - before_energy
+                );
             }
             if full_merit > merit {
                 let full: Vec<_> = rods
@@ -898,8 +899,7 @@ impl HairSystem {
                     };
                 if certified_prefix && flags.nonlinear_merit {
                     eprintln!(
-                        "HAIR CONTACT FEASIBLE PREFIX iteration={iteration} probe_rows={} probe_pairs={} tangent_complete=false",
-                        added_mesh, added_pairs
+                        "HAIR CONTACT FEASIBLE PREFIX iteration={iteration} probe_rows={added_mesh} probe_pairs={added_pairs} tangent_complete=false"
                     );
                 }
                 if added_mesh + added_pairs > 0 && !certified_prefix {
@@ -1030,8 +1030,8 @@ impl HairSystem {
                         rod.q = q;
                     }
                     Self::refresh_mesh_geometry(rods, meshes, radius, continuous_mesh)?;
-                    if let Some(path) = &flags.replay_export {
-                        if let Err(error) = contact_replay::save(
+                    if let Some(path) = &flags.replay_export
+                        && let Err(error) = contact_replay::save(
                             std::path::Path::new(path),
                             rods,
                             meshes,
@@ -1040,9 +1040,9 @@ impl HairSystem {
                             self_collision,
                             merit,
                             continuous_mesh,
-                        ) {
-                            eprintln!("HAIR CONTACT REPLAY EXPORT ERROR: {error}");
-                        }
+                        )
+                    {
+                        eprintln!("HAIR CONTACT REPLAY EXPORT ERROR: {error}");
                     }
                     if flags.nonlinear_merit {
                         eprintln!(
@@ -1167,8 +1167,8 @@ impl HairSystem {
             } else {
                 Vec::new()
             };
-            if let Ok(merit) = Self::contact_merit(rods, &pairs, radius) {
-                if let Err(error) = contact_replay::save(
+            if let Ok(merit) = Self::contact_merit(rods, &pairs, radius)
+                && let Err(error) = contact_replay::save(
                     std::path::Path::new(path),
                     rods,
                     meshes,
@@ -1177,9 +1177,9 @@ impl HairSystem {
                     self_collision,
                     merit,
                     continuous_mesh,
-                ) {
-                    eprintln!("HAIR CONTACT REPLAY EXPORT ERROR: {error}");
-                }
+                )
+            {
+                eprintln!("HAIR CONTACT REPLAY EXPORT ERROR: {error}");
             }
         }
         if flags.nonlinear_merit {
@@ -1257,15 +1257,13 @@ impl HairSystem {
             }
             return Ok(false);
         }
-        if self_collision {
-            if let Err(error) = contact::admit_staged_strands(rods, radius) {
-                if trace {
-                    eprintln!(
-                        "HAIR CONTACT PREFIX CHECK admitted=false gate=strand_path change_j={change:e} error={error:?}"
-                    );
-                }
-                return Ok(false);
+        if self_collision && let Err(error) = contact::admit_staged_strands(rods, radius) {
+            if trace {
+                eprintln!(
+                    "HAIR CONTACT PREFIX CHECK admitted=false gate=strand_path change_j={change:e} error={error:?}"
+                );
             }
+            return Ok(false);
         }
         if let Err(error) = mesh_motion::admit(rods, meshes, radius) {
             if trace {

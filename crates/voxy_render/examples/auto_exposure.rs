@@ -37,7 +37,6 @@ fn exposure_copy(
     frame.encode(encoder);
     encoder.copy_buffer_to_buffer(frame.output(), 0, readback, index * 256, 16);
 }
-#[allow(clippy::too_many_lines)]
 fn verify(device: &wgpu::Device, queue: &wgpu::Queue) -> Result<(), Box<dyn std::error::Error>> {
     let pixels: Vec<_> = (0..153)
         .map(|index| {

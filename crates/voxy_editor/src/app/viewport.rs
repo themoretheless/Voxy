@@ -14,7 +14,6 @@ impl App {
     /// presentation, UI input ownership, or advance the presented-frame counter.
     /// Offscreen callers advance simulation explicitly; snapshot rendering never
     /// consumes wall-clock time or runs an extra gameplay update.
-    #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
     pub(crate) fn draw_frame(
         &mut self,
         offscreen: Option<voxy_render::SceneViewTargets<'_>>,
@@ -40,13 +39,21 @@ impl App {
             .is_some_and(|s| s.profile)
             .then(Instant::now);
         self.tick()?;
+        self.poll_project_build();
+        self.poll_built_game();
+        let build_label = self.build_label();
+        let package_run_label = self.package_run_label();
         let load_status = self.editor_file_status();
-        if let Some(panels) = &mut self.panels {
-            if panels.load_status != load_status {
-                panels.load_status = load_status;
-                panels.invalidate_presentation();
-                self.panel_cache = None;
-            }
+        if let Some(panels) = &mut self.panels
+            && (panels.load_status != load_status
+                || panels.build_label != build_label
+                || panels.package_run_label != package_run_label)
+        {
+            panels.load_status = load_status;
+            panels.build_label = build_label;
+            panels.package_run_label = package_run_label;
+            panels.invalidate_presentation();
+            self.panel_cache = None;
         }
         if offscreen.is_none() && !self.restore_play_frozen() {
             let elapsed = self.play.simulation_time.elapsed().as_secs_f64();
@@ -155,7 +162,42 @@ impl App {
         } else {
             None
         };
+        let selected_trigger = if self.inspector == InspectorMode::Physics
+            && !self.standalone
+            && self.play.playing.is_none()
+            && let Some(&owner) = self.instances.get(self.selected)
+            && self.scene.active_in_hierarchy(owner)?
+            && let Some(trigger) = self.scene.component::<voxy_gameplay::BoxTrigger>(owner)?
+        {
+            Some(
+                self.scene.world_matrix(owner)?
+                    * Mat4::from_scale(Vec3::from_array(trigger.half_extents)),
+            )
+        } else {
+            None
+        };
         if let Some(graphics) = &mut self.graphics {
+            if selected_trigger.is_none()
+                || (graphics.trigger_outline.is_some()
+                    && graphics.geometry_bytes() > graphics.residency_cache.geometry_budget)
+            {
+                graphics.trigger_outline = None;
+                graphics.trigger_transforms.clear();
+            } else {
+                graphics
+                    .trigger_transforms
+                    .retain(|view, _| views.iter().any(|entry| entry.0 == *view));
+                if graphics.trigger_outline.is_none() {
+                    let mesh = gizmo::trigger_outline()?;
+                    let bytes = SceneRenderer::mesh_allocation_bytes(&mesh);
+                    if graphics.geometry_bytes().saturating_add(bytes)
+                        <= graphics.residency_cache.geometry_budget
+                    {
+                        graphics.trigger_outline =
+                            Some(graphics.renderer.upload_mesh(&graphics.device, &mesh)?);
+                    }
+                }
+            }
             let liquid_revision = self
                 .play
                 .liquid
@@ -350,6 +392,19 @@ impl App {
                         });
                     }
                 }
+                if let Some(world) = selected_trigger
+                    && graphics.trigger_outline.is_some()
+                {
+                    let transform = match graphics.trigger_transforms.entry(view) {
+                        std::collections::btree_map::Entry::Occupied(entry) => entry.into_mut(),
+                        std::collections::btree_map::Entry::Vacant(entry) => entry.insert(
+                            graphics
+                                .renderer
+                                .create_transform(&graphics.device, Mat4::IDENTITY)?,
+                        ),
+                    };
+                    transform.update(&graphics.queue, view_projection * world)?;
+                }
                 if let Some(instance) = selected {
                     let transform = match graphics.gizmo_transforms.entry(view) {
                         std::collections::btree_map::Entry::Occupied(entry) => entry.into_mut(),
@@ -520,6 +575,16 @@ impl App {
                 {
                     draws.push(SceneDraw {
                         geometry: &graphics.gizmo_geometry,
+                        texture: &graphics.texture,
+                        transform,
+                        overlay: true,
+                    });
+                }
+                if let Some(geometry) = &graphics.trigger_outline
+                    && let Some(transform) = graphics.trigger_transforms.get(&view)
+                {
+                    draws.push(SceneDraw {
+                        geometry,
                         texture: &graphics.texture,
                         transform,
                         overlay: true,
@@ -882,7 +947,6 @@ impl App {
         Ok(())
     }
 
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     pub(crate) fn view_pointer(
         &mut self,
         cursor: Vec2,
@@ -915,7 +979,6 @@ impl App {
         }
     }
 
-    #[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss)]
     pub(crate) fn cursor_in_viewport(&self, cursor: Vec2) -> bool {
         let Some(window) = &self.window else {
             return false;
@@ -939,8 +1002,11 @@ impl App {
         if size.width <= 0.0 || size.height <= 0.0 {
             return Ok(());
         }
-        let document = self.panel_document()?;
-        self.reconcile_component_edit(&document)?;
+        if self.component_edit.is_some()
+            && (self.field.is_none() || !matches!(self.inspector, InspectorMode::Components(_)))
+        {
+            self.component_edit = None;
+        }
         let preview_phase = self
             .authoring
             .animation_preview
@@ -948,90 +1014,109 @@ impl App {
             .filter(|preview| self.instances.get(self.selected) == Some(&preview.owner))
             .map(|preview| preview.phase);
         let retarget_draft = self.retarget_draft.is_some();
-        let bone_picker = self
+        let bone_picker_page = self
             .retarget_picker
             .as_ref()
-            .map(|p| (p.choices.clone(), p.page));
-        if let Some(panels) = &mut self.panels {
-            panels.preview_phase = preview_phase;
-            panels.retarget_draft = retarget_draft;
-            panels.bone_picker = bone_picker;
-        }
-        let input = PanelInput {
-            prefab_metadata: self
+            .map(|picker| (picker.choices.len(), picker.page));
+        let texture_has_image = self
+            .instances
+            .get(self.selected)
+            .and_then(|node| {
+                let model = self
+                    .scene
+                    .component::<ModelInstance>(*node)
+                    .ok()
+                    .flatten()?;
+                let asset = self.catalog.snapshot(&model.asset)?;
+                let part = self.scene.component::<ModelPart>(*node).ok().flatten()?;
+                asset.value().nodes.get(part.node as usize)?.image
+            })
+            .is_some();
+        let (focused, deleted_page) = self.panels.as_ref().map_or((None, 0), |panels| {
+            (panels.focus.focused(), panels.deleted_page)
+        });
+        let mut key = PanelRevisionKey {
+            scene_id: self.scene.identity(),
+            scene_token: self.scene.change_token(),
+            history_doc_ptr: self
                 .authoring
                 .history
                 .as_ref()
-                .map_or(serde_json::Value::Null, |history| {
-                    history.metadata().clone()
-                }),
-            focused: self
-                .panels
-                .as_ref()
-                .and_then(|panels| panels.focus.focused()),
-            document,
+                .map_or(0, |history| std::ptr::from_ref(history.current()) as usize),
+            retarget_draft,
+            bone_picker_page,
+            preview_phase_bits: preview_phase.map(f64::to_bits),
+            deleted_page,
+            focused,
             selected: self.selected,
-            size: [size.width, size.height],
+            size_bits: [size.width.to_bits(), size.height.to_bits()],
             playing: self.play.playing.is_some(),
             inspector: self.inspector,
+            texture_has_image,
             resource_notice: self.selected_model_notice(),
-            texture_label: self
-                .instances
-                .get(self.selected)
-                .and_then(|node| {
-                    let model = self
-                        .scene
-                        .component::<ModelInstance>(*node)
-                        .ok()
-                        .flatten()?;
-                    let asset = self.catalog.snapshot(&model.asset)?;
-                    let part = self.scene.component::<ModelPart>(*node).ok().flatten()?;
-                    asset.value().nodes.get(part.node as usize)?.image
-                })
-                .map_or_else(|| "Texture: none".into(), |_| "Texture: PNG/JPEG".into()),
-            prefab_label: self
+            prefab_choice: self
                 .authoring
                 .prefab_assets
                 .get(self.authoring.prefab_choice)
-                .map_or_else(|| "Prefab: none".into(), |id| format!("Prefab: {}", id.0)),
+                .cloned(),
             import_config: self.settings_config(),
             field: self.field.clone(),
             scroll: self.tree_scroll,
             parenting: self.parenting.is_some(),
             follow_pick: self.follow_pick.as_ref().map(|pick| pick.key),
         };
-        if self.panel_cache.as_ref() != Some(&input) {
-            let overrides = self.prefab_overridden_fields(&input.document)?;
-            let collection_resets = self.prefab_collection_resets(&input.document)?;
-            let order_resets = self.prefab_collection_order_resets(&input.document)?;
-            let deleted_items = self.prefab_collection_deleted_items(&input.document)?;
+        if self.panel_cache.as_ref() != Some(&key) {
+            let document = self.panel_document()?;
+            self.reconcile_component_edit(&document)?;
+            key.field.clone_from(&self.field);
+            key.inspector = self.inspector;
+            let bone_picker = self
+                .retarget_picker
+                .as_ref()
+                .map(|p| (p.choices.clone(), p.page));
+            let overrides = self.prefab_overridden_fields(&document)?;
+            let collection_resets = self.prefab_collection_resets(&document)?;
+            let order_resets = self.prefab_collection_order_resets(&document)?;
+            let deleted_items = self.prefab_collection_deleted_items(&document)?;
             let deleted_resets = deleted_items.keys().copied().collect();
+            let texture_label = if texture_has_image {
+                "Texture: PNG/JPEG"
+            } else {
+                "Texture: none"
+            };
+            let prefab_label = key
+                .prefab_choice
+                .as_ref()
+                .map_or_else(|| "Prefab: none".into(), |id| format!("Prefab: {}", id.0));
             let panels = self.panels.as_mut().ok_or("missing panels")?;
+            panels.preview_phase = preview_phase;
+            panels.retarget_draft = retarget_draft;
+            panels.bone_picker = bone_picker;
             panels.collection_deleted_resets = deleted_resets;
             panels.collection_deleted_items = deleted_items;
             panels.collection_order_resets = order_resets;
             panels.collection_resets = collection_resets;
             panels.overridden_fields = overrides;
-            panels.follow_pick = input.follow_pick;
-            panels.resource_notice.clone_from(&input.resource_notice);
+            panels.follow_pick = key.follow_pick;
+            panels.resource_notice.clone_from(&key.resource_notice);
             let mesh = panels.build(
-                &input.document,
-                input.selected,
-                Vec2::from_array(input.size),
-                input.playing,
-                input.field.as_ref().map(|(id, text)| (*id, text.as_str())),
-                input.scroll,
-                input.parenting,
-                input.inspector,
-                &input.texture_label,
-                &input.prefab_label,
-                input.import_config,
+                &document,
+                key.selected,
+                Vec2::new(size.width, size.height),
+                key.playing,
+                key.field.as_ref().map(|(id, text)| (*id, text.as_str())),
+                key.scroll,
+                key.parenting,
+                key.inspector,
+                texture_label,
+                &prefab_label,
+                key.import_config,
             )?;
             if let Some(graphics) = &mut self.graphics {
                 graphics.panel_geometry =
                     Some(graphics.renderer.upload_mesh(&graphics.device, &mesh)?);
             }
-            self.panel_cache = Some(input);
+            self.panel_cache = Some(key);
         }
         Ok(())
     }

@@ -529,7 +529,7 @@ fn full_rig_and_shell_gpu_composition_matches_cpu_pose() {
                 .unwrap()
                 .with_material_coordinates(demo.vertices.iter().map(|v| v.position).collect())
                 .unwrap()
-                .with_normals(demo.normals.iter().map(|n| n.to_array()).collect())
+                .with_normals(demo.normals.iter().map(glam::Vec3::to_array).collect())
                 .unwrap();
             let (offsets, weights, controls) =
                 demo.gpu_shell_binding(mesh.vertices().len()).unwrap();
@@ -574,7 +574,7 @@ fn full_rig_and_shell_gpu_composition_matches_cpu_pose() {
             let bind_reference =
                 voxy_render::SceneMesh::new(demo.vertices.clone(), demo.indices.clone())
                     .unwrap()
-                    .with_normals(demo.normals.iter().map(|n| n.to_array()).collect())
+                    .with_normals(demo.normals.iter().map(glam::Vec3::to_array).collect())
                     .unwrap();
             if tick == 1 {
                 surface
@@ -734,7 +734,7 @@ fn full_rig_and_shell_gpu_composition_matches_cpu_pose() {
                 .unwrap()
                 .with_material_coordinates(demo.vertices.iter().map(|v| v.position).collect())
                 .unwrap()
-                .with_normals(expected_normals.iter().map(|n| n.to_array()).collect())
+                .with_normals(expected_normals.iter().map(glam::Vec3::to_array).collect())
                 .unwrap();
             let cpu_geometry = renderer.upload_mesh(&device, &cpu_mesh).unwrap();
             let gpu_normals: Vec<[f32; 3]> = bytes

@@ -1,21 +1,13 @@
 //! Headless project bootstrap using the existing asset and scene documents.
-use serde::{Deserialize, Serialize};
 use std::{
     fs,
     io::{Read, Write},
     path::{Component, Path, PathBuf},
 };
+pub use voxy_assets::ProjectDescriptor;
 
 const LIMIT: usize = 8 * 1024 * 1024;
 pub const PROJECT_FILE: &str = "project.voxy";
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ProjectDescriptor {
-    pub version: u32,
-    pub name: String,
-    pub asset_manifest: PathBuf,
-    pub startup_scene: PathBuf,
-}
 #[derive(Debug)]
 pub struct OpenProject {
     pub root: PathBuf,
@@ -23,7 +15,7 @@ pub struct OpenProject {
     /// Expanded runtime view; editing retains the original prefab composition.
     pub scene: voxy_scene::SceneDocument,
     pub assets: voxy_assets::AssetLocations,
-    descriptor_path: PathBuf,
+    pub(super) descriptor_path: PathBuf,
     descriptor_text: String,
 }
 
@@ -1056,7 +1048,7 @@ mod tests {
                 }))
                 .unwrap(),
             )
-            .unwrap()
+            .unwrap();
         };
         write("missing/sub/model.obj");
         assert!(open_for_editor(&path, &registry).is_ok());

@@ -154,8 +154,10 @@ mod tests {
                 )
                 .is_err()
         );
-        let px_near = screen_space_geometric_error_px(0.05, 5.0, std::f32::consts::FRAC_PI_2, 1080.0);
-        let px_far = screen_space_geometric_error_px(0.05, 50.0, std::f32::consts::FRAC_PI_2, 1080.0);
+        let px_near =
+            screen_space_geometric_error_px(0.05, 5.0, std::f32::consts::FRAC_PI_2, 1080.0);
+        let px_far =
+            screen_space_geometric_error_px(0.05, 50.0, std::f32::consts::FRAC_PI_2, 1080.0);
         assert!((px_near - 5.4).abs() < 1e-4);
         assert!((px_near - 10.0 * px_far).abs() < 1e-4);
     }

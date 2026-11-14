@@ -1,0 +1,38 @@
++ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq libxcursor1 libxi6 libxrandr2 libxinerama1 libxrender1 libxss1 libxfixes3
+Selecting previously unselected package libxfixes3:arm64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 81816 files and directories currently installed.)
+Preparing to unpack .../libxfixes3_1%3a6.0.0-2build1_arm64.deb ...
+Unpacking libxfixes3:arm64 (1:6.0.0-2build1) ...
+Selecting previously unselected package libxcursor1:arm64.
+Preparing to unpack .../libxcursor1_1%3a1.2.1-1build1_arm64.deb ...
+Unpacking libxcursor1:arm64 (1:1.2.1-1build1) ...
+Selecting previously unselected package libxi6:arm64.
+Preparing to unpack .../libxi6_2%3a1.8.1-1build1_arm64.deb ...
+Unpacking libxi6:arm64 (2:1.8.1-1build1) ...
+Selecting previously unselected package libxinerama1:arm64.
+Preparing to unpack .../libxinerama1_2%3a1.1.4-3build1_arm64.deb ...
+Unpacking libxinerama1:arm64 (2:1.1.4-3build1) ...
+Selecting previously unselected package libxss1:arm64.
+Preparing to unpack .../libxss1_1%3a1.2.3-1build3_arm64.deb ...
+Unpacking libxss1:arm64 (1:1.2.3-1build3) ...
+Setting up libxi6:arm64 (2:1.8.1-1build1) ...
+Setting up libxfixes3:arm64 (1:6.0.0-2build1) ...
+Setting up libxinerama1:arm64 (2:1.1.4-3build1) ...
+Setting up libxss1:arm64 (1:1.2.3-1build3) ...
+Setting up libxcursor1:arm64 (1:1.2.1-1build1) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
++ cd /
++ xvfb-run -a env WGPU_BACKEND=vulkan /home/themoretheless.guest/voxy-portable-relocated/voxy_game --embedded-game-native-smoke
+MODEL PUBLISHED frames=0 first_x=0 asset=mesh
+GAME UI GPU PUBLISHED draws=0
+GAME NATIVE PASS frames=3 ticks=12

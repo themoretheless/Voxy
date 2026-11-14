@@ -33,7 +33,7 @@ fn main() {
         samples.sort_by(f64::total_cmp);
         let hash = strands
             .iter()
-            .flat_map(|s| s.positions())
+            .flat_map(physics::strand::Strand::positions)
             .flat_map(|p| p.iter())
             .fold(0u64, |sum, v| sum.rotate_left(7) ^ v.to_bits());
         println!(

@@ -162,11 +162,19 @@ pub fn swing_twist_cone_clamp_quat(
 ) -> [f32; 4] {
     let q = DQuat::from_array(quat_xyzw.map(f64::from));
     let axis = DVec3::from_array(twist_axis.map(f64::from));
-    if !q.is_finite() || q.length_squared() <= 1e-18 || !axis.is_finite() || axis.length_squared() <= 1e-18 {
+    if !q.is_finite()
+        || q.length_squared() <= 1e-18
+        || !axis.is_finite()
+        || axis.length_squared() <= 1e-18
+    {
         return [0.0, 0.0, 0.0, 1.0];
     }
-    let lo = min_twist_rad.min(max_twist_rad).clamp(-std::f32::consts::PI, std::f32::consts::PI);
-    let hi = max_twist_rad.max(min_twist_rad).clamp(-std::f32::consts::PI, std::f32::consts::PI);
+    let lo = min_twist_rad
+        .min(max_twist_rad)
+        .clamp(-std::f32::consts::PI, std::f32::consts::PI);
+    let hi = max_twist_rad
+        .max(min_twist_rad)
+        .clamp(-std::f32::consts::PI, std::f32::consts::PI);
     let limit = JointLimit {
         swing: max_swing_rad.clamp(0.0, std::f32::consts::PI),
         twist: [lo, hi],

@@ -1,5 +1,4 @@
 //! Stable roles for retained GPU publications; frame/LOD state is a separate participant.
-#![allow(dead_code)]
 use crate::{EditorError, import::EditorAsset};
 use std::{
     collections::{BTreeMap, HashSet},

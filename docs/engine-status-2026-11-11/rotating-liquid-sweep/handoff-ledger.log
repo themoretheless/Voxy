@@ -1,0 +1,46 @@
+   Compiling voxy_world v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_world)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_mesher v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_mesher)
+   Compiling voxy_lighting v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_lighting)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 50.68s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 1 test
+handoff contacts=1 queries=18 time=1.97495121857183421e-3 remaining=5.09851019226618529e-4 first=0 second=None feature=Some(0)
+handoff contacts=1 queries=9 time=6.89022776460812493e-4 remaining=9.10890803675705441e-4 first=0 second=Some(1) feature=Some(0)
+handoff impulse=[-6.944444429114031, 0.0, 0.0] a=ContactBody { motion: Body { mass: 1.0, position: [0.31874999999999776, -0.0020725138888887406, 0.0], velocity: [4.305555570885969, -0.2016499999999928, 0.0] }, spin: None } b=Some(ContactBody { motion: Body { mass: 2.0, position: [0.40625, -0.0020725138888887406, 0.02500000037252903], velocity: [3.4722222145570156, -0.20164999999999278, 0.0] }, spin: Some(Spin { orientation: [0.0, 0.0, 0.0, 1.0], angular_momentum: [0.0, -0.17361111331485793, 0.0], inertia: [0.005208333333333335, 0.005208333333333335, 0.005208333333333335] }) })
+handoff contacts=2 queries=12 time=1.42123378007684410e-14 remaining=9.10890803661493177e-4 first=0 second=Some(1) feature=Some(3)
+handoff impulse=[-6.097877185966864e-13, 0.0, -2.8888363844883575e-25] a=ContactBody { motion: Body { mass: 1.0, position: [0.3187500000000447, -0.0020725138888916064, 0.0], velocity: [4.305555570885359, -0.20165000000013222, -2.8888363844883575e-25] }, spin: None } b=Some(ContactBody { motion: Body { mass: 2.0, position: [0.40625000000004935, -0.0020725138888916064, 0.02500000037252903], velocity: [3.4722222145573207, -0.2016500000001322, 1.4444181922441788e-25] }, spin: Some(Spin { orientation: [0.0, -2.3687229968623177e-13, 0.0, 1.0], angular_momentum: [0.0, -0.17361111331487317, 0.0], inertia: [0.005208333333333335, 0.005208333333333335, 0.005208333333333335] }) })
+handoff impulse=[-7.064742182464554e-13, 0.0, -7.230258167087069e-25] a=ContactBody { motion: Body { mass: 1.0, position: [0.3187500000001015, -0.002072513888894932, -6.732315673798422e-27], velocity: [4.3055555708846525, -0.20165000000029398, -1.0119094551575427e-24] }, spin: None } b=Some(ContactBody { motion: Body { mass: 2.0, position: [0.4062500000001066, -0.002072513888894932, 0.02500000037252903], velocity: [3.4722222145576738, -0.20165000000029396, 5.059547275787714e-25] }, spin: Some(Spin { orientation: [0.0, -5.117142268144861e-13, 0.0, 1.0], angular_momentum: [0.0, -0.17361111331489082, 0.0], inertia: [0.005208333333333335, 0.005208333333333335, 0.005208333333333335] }) })
+handoff contacts=4 queries=18 time=1.69301637305373222e-14 remaining=9.10890803628072536e-4 first=0 second=Some(1) feature=Some(3)
+handoff impulse=[-0.5555555626084346, 0.0, -8.820929288708138e-13] a=ContactBody { motion: Body { mass: 1.0, position: [0.3187500000001602, -0.0020725138888983458, -2.127610873974073e-26], velocity: [3.750000008276218, -0.20165000000046007, -8.820929288718257e-13] }, spin: None } b=Some(ContactBody { motion: Body { mass: 2.0, position: [0.40625000000016537, -0.0020725138888983458, 0.02500000037252903], velocity: [3.749999995861891, -0.20165000000046004, 4.4104646443591283e-13] }, spin: Some(Spin { orientation: [0.0, -7.93883625905235e-13, 0.0, 1.0], angular_momentum: [0.0, -0.17361111352179626, 0.0], inertia: [0.005208333333333335, 0.005208333333333335, 0.005208333333333335] }) })
+handoff contacts=8 queries=30 time=2.02498062024879116e-8 remaining=9.10810054241967108e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=16 queries=54 time=2.02364463398429757e-8 remaining=9.10648223622310569e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=32 queries=102 time=2.02274197311939565e-8 remaining=9.10324423428220120e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=64 queries=198 time=2.02304207228861585e-8 remaining=9.09677185450669264e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=128 queries=390 time=2.02393611054607166e-8 remaining=9.08382512944764684e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=256 queries=774 time=2.02521200812404191e-8 remaining=9.05793097408581749e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=512 queries=1542 time=2.02311636510802923e-8 remaining=9.00614104352408652e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=1024 queries=3078 time=2.02279840813637771e-8 remaining=8.90255967522558442e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=2048 queries=6150 time=2.02550392934773957e-8 remaining=8.69538769707552681e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=4096 queries=12294 time=2.02082519594762255e-8 remaining=8.28108120113224631e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=8192 queries=24582 time=2.02310990225803096e-8 remaining=7.45245314370858621e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=16384 queries=49158 time=2.02351331882379235e-8 remaining=5.79516709169311138e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=32768 queries=98310 time=2.01881181802198151e-8 remaining=2.48062626932290761e-4 first=0 second=Some(1) feature=Some(3)
+handoff contacts=65536 queries=196617 time=2.02240877463887283e-8 remaining=1.69362473599608387e-3 first=0 second=Some(1) feature=Some(3)
+collision budget line=1188
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene liquid body step: CollisionBudget") } }
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 460 filtered out; finished in 31.28s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

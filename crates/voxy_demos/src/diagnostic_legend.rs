@@ -100,13 +100,17 @@ pub fn mesh(rows: &[[&str; 3]]) -> Result<SceneMesh, voxy_render::SceneError> {
 /// in linear sRGB `[r, g, b]` for normalized scalar `t` in `[0.0, 1.0]`.
 #[must_use]
 pub fn viridis_colormap_rgb(t: f32) -> [f32; 3] {
-    let x = if t.is_finite() { t.clamp(0.0, 1.0) } else { 0.0 };
+    let x = if t.is_finite() {
+        t.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
     let r = (0.280268
         + x * (-0.143511 + x * (2.225794 + x * (-5.076385 + x * (5.166253 - x * 1.45906)))))
         .clamp(0.0, 1.0);
     let g = (0.003362 + x * (1.268001 + x * (-0.270901 - x * 0.116085))).clamp(0.0, 1.0);
-    let b = (0.33001 + x * (1.394112 + x * (-4.414325 + x * (4.106652 - x * 1.29812))))
-        .clamp(0.0, 1.0);
+    let b =
+        (0.33001 + x * (1.394112 + x * (-4.414325 + x * (4.106652 - x * 1.29812)))).clamp(0.0, 1.0);
     [r, g, b]
 }
 
@@ -114,21 +118,19 @@ pub fn viridis_colormap_rgb(t: f32) -> [f32; 3] {
 /// for normalized scalar `t` in `[0.0, 1.0]`, providing smooth luminance progression without false bands.
 #[must_use]
 pub fn turbo_colormap_rgb(t: f32) -> [f32; 3] {
-    let x = if t.is_finite() { t.clamp(0.0, 1.0) } else { 0.0 };
+    let x = if t.is_finite() {
+        t.clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
     let r = (0.13572138
-        + x * (4.6153926
-            + x * (-42.660324
-                + x * (132.13109 + x * (-152.94239 + x * 59.28638)))))
+        + x * (4.6153926 + x * (-42.660324 + x * (132.13109 + x * (-152.94239 + x * 59.28638)))))
         .clamp(0.0, 1.0);
     let g = (0.09140261
-        + x * (2.1941884
-            + x * (4.8429665
-                + x * (-14.185033 + x * (4.277299 - x * 2.8295665)))))
+        + x * (2.1941884 + x * (4.8429665 + x * (-14.185033 + x * (4.277299 - x * 2.8295665)))))
         .clamp(0.0, 1.0);
     let b = (0.1066733
-        + x * (12.641946
-            + x * (-60.582047
-                + x * (110.36277 + x * (-89.90311 + x * 27.34825)))))
+        + x * (12.641946 + x * (-60.582047 + x * (110.36277 + x * (-89.90311 + x * 27.34825)))))
         .clamp(0.0, 1.0);
     [r, g, b]
 }

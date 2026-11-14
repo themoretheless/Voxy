@@ -1,9 +1,9 @@
 #![recursion_limit = "256"]
 //! Engine compute workloads with explicit hardware ownership and validated data.
 mod terrain;
-pub use terrain::{GpuTerrainError, clipmap_toroidal_wrap_coord};
 #[cfg(not(target_arch = "wasm32"))]
 pub use terrain::GpuTerrainGenerator;
+pub use terrain::{GpuTerrainError, clipmap_toroidal_wrap_coord};
 
 mod cuda_terrain;
 pub use cuda_terrain::{CudaTerrainError, CudaTerrainGenerator};
@@ -52,7 +52,9 @@ pub use cuda_collision::{CudaCollisionError, CudaVoxelCollisionWorld};
 mod vehicle_task;
 pub use vehicle_task::{ChassisMotion, PendingGpuVehicle, VehicleGpuError};
 
+#[cfg(not(target_arch = "wasm32"))]
 mod tissue_task;
+#[cfg(not(target_arch = "wasm32"))]
 pub use tissue_task::{GpuTissueError, GpuTissueProgram, is_gpu_tissue_search_failure};
 
 mod voxel_mesh;
@@ -78,3 +80,22 @@ pub use medium_solver::{
 
 mod residency;
 pub use residency::{ResidencyEvictionCandidate, body_chunks, select_eviction_victims};
+
+pub use voxy_gpu_core::{
+    BANDED_SOLVE_SHADER, BandedPackedReference, BandedSolveError, BandedSolveInput, BandedSystem,
+    BandedTransferProgram, EXPERIMENTAL_RESIDENT_CONTACT_SHADER,
+    EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_64_SHADER, EXPERIMENTAL_SEEDED_RESIDENT_CONTACT_SHADER,
+    ExperimentalExactFiveContactInput, ExperimentalFiveGapDecision, ExperimentalFiveGapInput,
+    ExperimentalFiveQrInput, ExperimentalFiveQrReadback, ExperimentalFiveQrValue,
+    ExperimentalFiveRelease, ExperimentalFiveReleaseInput, ExperimentalFiveSelection,
+    ExperimentalFiveSelectionInput, ExperimentalResidentContactBatch,
+    ExperimentalResidentContactInput, ExperimentalTripleActiveContactBatch,
+    ExperimentalTripleActiveContactInput, ExperimentalTripleActiveFactors,
+    ExperimentalTripleCompletedFactorReadback, ExperimentalTripleContactInput,
+    ExperimentalTripleExpandedCandidate, ExperimentalTripleExpansion, JOINT_CONTACT_DOT_SHADER,
+    JOINT_CONTACT_EQUALITY_SHADER, JOINT_CONTACT_NORMALIZE_SERIAL_SHADER,
+    JOINT_CONTACT_NORMALIZE_SHADER, JOINT_CONTACT_QR_SHADER, JointContactDotInput, JointDotError,
+    ResidentContactEqualityInput, ResidentContactEqualityOutput, ResidentContactQrInput,
+    ResidentContactQrOutput, ResidentContactQrPrefix, ValidatedResidentContactEquality,
+    experimental_seeded_resident_contact_shader,
+};

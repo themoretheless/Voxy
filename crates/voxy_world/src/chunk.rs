@@ -44,15 +44,62 @@ impl PalettedBlocks {
             return Ok(Self::Uniform(dense[0]));
         }
         let bits = bits_for_palette(palette.len());
-        let mut words = vec![0_u64; packed_word_count(bits)];
-        let mut cached = (dense[0], palette_slot(&palette, dense[0]));
-        for (cell, block) in dense.into_iter().enumerate() {
-            if block != cached.0 {
-                cached = (block, palette_slot(&palette, block));
-            }
-            write_packed(&mut words, cell, bits, cached.1);
-        }
+        let words = pack_dense_with_sorted_palette(&dense, &palette, bits);
         Ok(Self::Packed {
+            bits_per_index: bits,
+            palette: palette.into_boxed_slice(),
+            words: words.into_boxed_slice(),
+        })
+    }
+
+    /// Constructs a canonical [`PalettedBlocks::Packed`] representation directly from a validated
+    /// sorted unique palette (`2..=MAX_PALETTE`) and one palette slot (`< palette.len()`) per cell,
+    /// returning `None` if any slot is unused so canonicality matches [`Self::from_dense`].
+    #[must_use]
+    pub fn from_canonical_palette_slots(palette: Vec<BlockStateId>, slots: &[u16]) -> Option<Self> {
+        if slots.len() != CHUNK_VOLUME || palette.len() < 2 || palette.len() > MAX_PALETTE {
+            return None;
+        }
+        if palette.windows(2).any(|pair| pair[0] >= pair[1]) {
+            return None;
+        }
+        let palette_len = palette.len();
+        let mut seen = [false; MAX_PALETTE];
+        let mut seen_count = 0_usize;
+        let bits = bits_for_palette(palette_len);
+        let bit_width = u32::from(bits);
+        let mut words = Vec::with_capacity(packed_word_count(bits));
+        let mut acc = 0_u64;
+        let mut acc_bits = 0_u32;
+        for &raw_slot in slots {
+            let slot = usize::from(raw_slot);
+            if slot >= palette_len {
+                return None;
+            }
+            if !seen[slot] {
+                seen[slot] = true;
+                seen_count += 1;
+            }
+            let v = u64::from(raw_slot);
+            acc |= v << acc_bits;
+            acc_bits += bit_width;
+            if acc_bits >= 64 {
+                words.push(acc);
+                acc_bits -= 64;
+                acc = if acc_bits == 0 {
+                    0
+                } else {
+                    v >> (bit_width - acc_bits)
+                };
+            }
+        }
+        if acc_bits > 0 {
+            words.push(acc);
+        }
+        if seen_count != palette_len {
+            return None;
+        }
+        Some(Self::Packed {
             bits_per_index: bits,
             palette: palette.into_boxed_slice(),
             words: words.into_boxed_slice(),
@@ -130,26 +177,40 @@ impl PalettedBlocks {
     /// uniform chunks expand in one pass; direct chunks derive the sorted palette first.
     #[must_use]
     pub fn palette_indices(&self) -> (Vec<BlockStateId>, Vec<u16>) {
+        let mut palette = Vec::new();
+        let mut slots = Vec::new();
+        self.palette_indices_into(&mut palette, &mut slots);
+        (palette, slots)
+    }
+
+    /// [`Self::palette_indices`] into caller-owned buffers, which are cleared first.
+    /// Reusing the buffers avoids a 64 KiB allocation per chunk on the meshing and
+    /// lighting paths.
+    pub fn palette_indices_into(&self, palette: &mut Vec<BlockStateId>, slots: &mut Vec<u16>) {
+        palette.clear();
+        slots.clear();
         match self {
-            Self::Uniform(block) => (vec![*block], vec![0; CHUNK_VOLUME]),
+            Self::Uniform(block) => {
+                palette.push(*block);
+                slots.resize(CHUNK_VOLUME, 0);
+            }
             Self::Packed {
                 bits_per_index,
-                palette,
+                palette: packed,
                 words,
-            } => (palette.to_vec(), unpack_indices(words, *bits_per_index)),
+            } => {
+                palette.extend_from_slice(packed);
+                unpack_indices_into(words, *bits_per_index, slots);
+            }
             Self::Direct(blocks) => {
-                let mut palette = blocks.to_vec();
+                palette.extend_from_slice(blocks);
                 palette.sort_unstable();
                 palette.dedup();
-                let indices = blocks
-                    .iter()
-                    .map(|block| {
-                        palette
-                            .binary_search(block)
-                            .map_or(0, |slot| u16::try_from(slot).unwrap_or(0))
-                    })
-                    .collect();
-                (palette, indices)
+                slots.extend(blocks.iter().map(|block| {
+                    palette
+                        .binary_search(block)
+                        .map_or(0, |slot| u16::try_from(slot).unwrap_or(0))
+                }));
             }
         }
     }
@@ -492,6 +553,39 @@ fn packed_word_count(bits: u8) -> usize {
     (CHUNK_VOLUME * usize::from(bits)).div_ceil(64)
 }
 
+fn pack_dense_with_sorted_palette(
+    dense: &[BlockStateId],
+    palette: &[BlockStateId],
+    bits: u8,
+) -> Vec<u64> {
+    let bit_width = u32::from(bits);
+    let mut words = Vec::with_capacity(packed_word_count(bits));
+    let mut cached = (dense[0], palette_slot(palette, dense[0]));
+    let mut acc = 0_u64;
+    let mut acc_bits = 0_u32;
+    for &block in dense {
+        if block != cached.0 {
+            cached = (block, palette_slot(palette, block));
+        }
+        let v = cached.1;
+        acc |= v << acc_bits;
+        acc_bits += bit_width;
+        if acc_bits >= 64 {
+            words.push(acc);
+            acc_bits -= 64;
+            acc = if acc_bits == 0 {
+                0
+            } else {
+                v >> (bit_width - acc_bits)
+            };
+        }
+    }
+    if acc_bits > 0 {
+        words.push(acc);
+    }
+    words
+}
+
 /// Visits every cell's palette slot in index order with one bounds check per word.
 fn for_each_packed(words: &[u64], bits: u8, mut visit: impl FnMut(usize)) {
     scan_packed(words, bits, |slot| {
@@ -504,10 +598,10 @@ fn for_each_packed(words: &[u64], bits: u8, mut visit: impl FnMut(usize)) {
 ///
 /// Palette slots never exceed `CHUNK_VOLUME`, so they fit `u16`. Widths that divide
 /// a word never straddle two words, which makes the common case a plain shift loop.
-fn unpack_indices(words: &[u64], bits: u8) -> Vec<u16> {
+fn unpack_indices_into(words: &[u64], bits: u8, indices: &mut Vec<u16>) {
     let width = usize::from(bits);
     let mask = (1_u64 << width) - 1;
-    let mut indices = Vec::with_capacity(CHUNK_VOLUME);
+    indices.reserve(CHUNK_VOLUME);
     if width > 0 && 64 % width == 0 {
         let per_word = 64 / width;
         let mut remaining = CHUNK_VOLUME;
@@ -520,10 +614,9 @@ fn unpack_indices(words: &[u64], bits: u8) -> Vec<u16> {
             remaining -= count;
         }
         indices.resize(CHUNK_VOLUME, 0);
-        return indices;
+        return;
     }
     for_each_packed(words, bits, |slot| indices.push(slot as u16));
-    indices
 }
 
 /// Visits palette slots in index order until the visitor returns `false`.
@@ -547,17 +640,6 @@ fn scan_packed(words: &[u64], bits: u8, mut visit: impl FnMut(usize) -> bool) {
             word += 1;
             current = words.get(word).copied().unwrap_or(0);
         }
-    }
-}
-
-#[inline]
-fn write_packed(words: &mut [u64], index: usize, bits: u8, value: u64) {
-    let bit = index * usize::from(bits);
-    let word = bit / 64;
-    let shift = bit % 64;
-    words[word] |= value << shift;
-    if shift + usize::from(bits) > 64 {
-        words[word + 1] |= value >> (64 - shift);
     }
 }
 
@@ -971,7 +1053,9 @@ mod tests {
         assert_eq!(filled.column_top_solid_y(0, 0), None);
 
         assert!((chunk_shannon_entropy_bits_per_voxel(&[32_768], 32_768) - 0.0).abs() < 1e-6);
-        assert!((chunk_shannon_entropy_bits_per_voxel(&[16_384, 16_384], 32_768) - 1.0).abs() < 1e-5);
+        assert!(
+            (chunk_shannon_entropy_bits_per_voxel(&[16_384, 16_384], 32_768) - 1.0).abs() < 1e-5
+        );
         assert_eq!(optimal_palette_bit_width(1), 0);
         assert_eq!(optimal_palette_bit_width(2), 1);
         assert_eq!(optimal_palette_bit_width(17), 8);

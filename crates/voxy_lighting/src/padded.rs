@@ -4,6 +4,7 @@ use voxy_world::{BlockRegistry, BlockStateId, ChunkSnapshot, Occlusion, Paletted
 use crate::types::{EDGE, FaceNeighbor, LightingError};
 
 /// Padded occlusion and emission of the center chunk plus its one-cell face halo.
+#[derive(Debug)]
 pub(crate) struct PaddedCells {
     pub(crate) opaque: Vec<bool>,
     pub(crate) emission: Vec<u8>,
@@ -17,6 +18,13 @@ impl PaddedCells {
             emission: vec![0_u8; PADDED_VOLUME],
             has_emission: false,
         }
+    }
+
+    #[inline]
+    pub(crate) fn reset(&mut self) {
+        self.opaque.fill(true);
+        self.emission.fill(0);
+        self.has_emission = false;
     }
 
     #[inline]
@@ -43,11 +51,25 @@ impl PaddedCells {
         &mut self,
         registry: &BlockRegistry,
         blocks: &PalettedBlocks,
+        palette_buf: &mut Vec<BlockStateId>,
+        slots_buf: &mut Vec<u16>,
+        classes_buf: &mut Vec<(bool, u8)>,
     ) -> Result<(), LightingError> {
-        let (palette, slots) = blocks.palette_indices();
-        let mut classes = Vec::with_capacity(palette.len());
+        blocks.palette_indices_into(palette_buf, slots_buf);
+        self.fill_center_slots(registry, palette_buf, slots_buf, classes_buf)
+    }
+
+    fn fill_center_slots(
+        &mut self,
+        registry: &BlockRegistry,
+        palette: &[BlockStateId],
+        slots: &[u16],
+        classes: &mut Vec<(bool, u8)>,
+    ) -> Result<(), LightingError> {
+        classes.clear();
+        classes.reserve(palette.len());
         let mut any_emission = false;
-        for &block in &palette {
+        for &block in palette {
             let definition = registry
                 .get(block)
                 .ok_or(LightingError::UnknownBlock(block.get()))?;

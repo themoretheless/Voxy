@@ -98,6 +98,9 @@ mod tests {
         assert_eq!(align_external_allocation_size(0, 4096), None);
         assert_eq!(align_external_allocation_size(1024, 3000), None);
         assert!(!luid_is_valid_non_zero(&[0_u8; 8], &[0_u8; 8]));
-        assert!(luid_is_valid_non_zero(&[1, 0, 0, 0, 0, 0, 0, 0], &[1, 0, 0, 0, 0, 0, 0, 0]));
+        assert!(luid_is_valid_non_zero(
+            &[1, 0, 0, 0, 0, 0, 0, 0],
+            &[1, 0, 0, 0, 0, 0, 0, 0]
+        ));
     }
 }

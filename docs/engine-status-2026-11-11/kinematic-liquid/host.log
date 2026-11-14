@@ -1,0 +1,11 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 41.25s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 1 test
+test game_host_tests::moving_scene_platform_transfers_impulse_to_liquid_in_play_and_package ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 455 filtered out; finished in 0.09s
+

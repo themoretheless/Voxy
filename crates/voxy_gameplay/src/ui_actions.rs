@@ -155,7 +155,7 @@ impl UiActionHandlers {
                 match handler {
                     Handler::Callback(handler) => handler(scene, &event, &mut staged)?,
                     Handler::Checkpointed(handler) => {
-                        handler.dispatch(scene, &event, &mut staged)?
+                        handler.dispatch(scene, &event, &mut staged)?;
                     }
                 }
                 commands.append(&mut staged).map_err(GameplayError::from)

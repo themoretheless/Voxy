@@ -1,0 +1,38 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.13s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-6881f4558f0fcb19)
+
+running 1 test
+prefix start=0e0 depth=1.4145629112505276e-13
+prefix start=9.691330430713599e-11 depth=1.4144241333724494e-13
+prefix start=1.3587801489572768e-10 depth=1.4142853554943713e-13
+prefix start=1.5154406793084214e-10 depth=1.4142853554943713e-13
+prefix start=1.5784272054409688e-10 depth=1.4147016891286057e-13
+prefix start=1.6037514060353947e-10 depth=1.4144241333724494e-13
+prefix start=1.613933168574378e-10 depth=1.4145629112505276e-13
+prefix start=1.6180268128119885e-10 depth=1.4144241333724494e-13
+prefix start=1.6196727142615468e-10 depth=1.4142853554943713e-13
+prefix start=1.6203344542609066e-10 depth=1.4142853554943713e-13
+prefix start=1.6206005203876004e-10 depth=1.4147016891286057e-13
+prefix start=1.620707477688876e-10 depth=1.414979244884762e-13
+prefix start=1.6207504760144312e-10 depth=1.4147016891286057e-13
+prefix start=1.6207677798658063e-10 depth=1.4148404670066839e-13
+prefix start=1.6207747409266077e-10 depth=1.4147016891286057e-13
+prefix start=1.6207775342825197e-10 depth=1.4145629112505276e-13
+prefix start=1.6207786643800585e-10 depth=1.4145629112505276e-13
+prefix start=1.6207791157917094e-10 depth=1.4147016891286057e-13
+prefix start=1.6207792899936313e-10 depth=1.4147016891286057e-13
+prefix start=1.6207793686059917e-10 depth=1.4147016891286057e-13
+prefix start=1.6207793994235712e-10 depth=1.4147016891286057e-13
+prefix start=1.6207794111232383e-10 depth=1.4147016891286057e-13
+prefix start=1.6207794132639491e-10 depth=1.4147016891286057e-13
+prefix start=1.62077941540466e-10 depth=1.4147016891286057e-13
+prefix start=1.6207794175453709e-10 depth=1.4147016891286057e-13
+prefix start=1.6207794196860817e-10 depth=1.4147016891286057e-13
+prefix stop=1.6207794196860817e-10 witness_speed=2.360728487693642e-10 error=SweepBudget
+continued overlap Err(SweepBudget)
+prefix start=0e0 depth=1.4145629112505276e-13
+test angular_sweep::rigid_pair::spin_bridge_tests::initial_overlap_witness_uses_the_pair_allowance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 251 filtered out; finished in 0.01s
+

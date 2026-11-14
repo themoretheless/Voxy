@@ -1,5 +1,4 @@
 //! Playback source keys preserve clip and property allocation identity separately.
-#![allow(dead_code)]
 use crate::EditorError;
 use std::{
     collections::{HashMap, HashSet},

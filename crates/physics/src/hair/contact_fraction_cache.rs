@@ -157,12 +157,12 @@ impl FractionShard<'_> {
             .misses
             .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         let fraction = compute()?;
-        if fraction.is_finite() && fraction > 0. {
-            if let Some(cache) = self.cache.as_mut() {
-                if cache.contains_key(&pair) || cache.len() < FractionCache::PER_SHARD {
-                    cache.insert(pair, Entry { key, fraction });
-                }
-            }
+        if fraction.is_finite()
+            && fraction > 0.
+            && let Some(cache) = self.cache.as_mut()
+            && (cache.contains_key(&pair) || cache.len() < FractionCache::PER_SHARD)
+        {
+            cache.insert(pair, Entry { key, fraction });
         }
         Ok(fraction)
     }

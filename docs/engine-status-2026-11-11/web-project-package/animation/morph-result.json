@@ -1,0 +1,11 @@
+{
+  "fixture": "morph.vpak",
+  "ticks": 24,
+  "delta": {
+    "width": 756,
+    "height": 330,
+    "left": 3489,
+    "right": 0
+  },
+  "recoveredExact": true
+}

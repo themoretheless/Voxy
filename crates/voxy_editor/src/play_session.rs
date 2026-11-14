@@ -7,6 +7,7 @@ use voxy_scene::{SceneDocument, SceneGraph, SceneSimulation};
 pub(super) struct PlaySession {
     pub(super) playing: Option<SceneDocument>,
     pub(super) simulation_time: Instant,
+    pub(super) triggers: Option<voxy_gameplay::TriggerTracker>,
     pub(super) simulation: Option<SceneSimulation>,
     pub(super) animations: crate::animation_runtime::AnimationRuntime,
     pub(super) angular_motion: Option<voxy_gameplay::AngularMotionBatch>,
@@ -38,6 +39,7 @@ impl PlaySession {
         self.simulation_ticks = 0;
         self.follow_camera = None;
         self.physics = None;
+        self.triggers = None;
         self.liquid = None;
         self.liquid_optics.clear();
         self.animations.clear();

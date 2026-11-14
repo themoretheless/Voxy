@@ -439,8 +439,9 @@ pub(super) fn unilateral_with_proposals(
     seeds: &[f64],
     backend: &mut dyn FnMut(&[Vec<f64>], &[f64], f64) -> Option<HairContactEqualityProposal>,
 ) -> Option<(Vec<f64>, Vec<f64>)> {
-    if seeds.len() == columns.len() && seeds.iter().all(|v| v.is_finite() && *v >= 0.) {
-        if let Some(output) = unilateral_with_equality_backend(
+    if seeds.len() == columns.len()
+        && seeds.iter().all(|v| v.is_finite() && *v >= 0.)
+        && let Some(output) = unilateral_with_equality_backend(
             columns,
             bounds,
             tolerance,
@@ -449,9 +450,9 @@ pub(super) fn unilateral_with_proposals(
             true,
             Some(&mut *backend),
             Some(seeds),
-        ) {
-            return Some(output);
-        }
+        )
+    {
+        return Some(output);
     }
     unilateral_with_equality_backend(
         columns,
@@ -1458,7 +1459,13 @@ mod tests {
                     super::super::HairResponseSystem::solve_joint_load_inequalities_native(&requests,&original_bounds,tolerance)
                 } else {
                     super::super::HairResponseSystem::solve_joint_load_inequalities_with_coordinates(
-                        &requests,&original_bounds,tolerance,false,|prepared,bounds,tolerance|prepared.solve(bounds,tolerance))
+                        &requests,
+                        &original_bounds,
+                        tolerance,
+                        false,
+                        #[allow(clippy::redundant_closure_for_method_calls)]
+                        |prepared, bounds, tolerance| prepared.solve(bounds, tolerance),
+                    )
                 }.unwrap_or_else(|error|panic!("canonical physical owner guarded={append}: {error}"));
                 for i in 0..rows {
                     let gap = accurate_products(
@@ -1788,7 +1795,7 @@ mod tests {
                         .iter()
                         .any(|v| previous_storage.contains(&v.as_ptr()));
                 }
-                previous_storage = factor.q.iter().map(|v| v.as_ptr()).collect();
+                previous_storage = factor.q.iter().map(std::vec::Vec::as_ptr).collect();
                 assert!(factor.q.len() + factor.q_spares.len() <= columns.len());
                 assert!(factor.r.len() + factor.r_spares.len() <= columns.len());
                 let expected = uncached_equality_reference(&selected, &bounds, 1e-10).unwrap();

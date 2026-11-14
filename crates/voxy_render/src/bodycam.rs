@@ -1059,7 +1059,10 @@ mod tests {
         assert!(cam_zoomed.vertical_fov_radians < cam_1x.vertical_fov_radians);
         let coc = circle_of_confusion_px(0.035, 2.0, 2.0, 10.0, 0.036, 1920);
         assert!(coc > 1.0);
-        assert_eq!(circle_of_confusion_px(0.035, 2.0, 2.0, 2.0, 0.036, 1920), 0.0);
+        assert_eq!(
+            circle_of_confusion_px(0.035, 2.0, 2.0, 2.0, 0.036, 1920),
+            0.0
+        );
         let warped = brown_conrady_barrel_undistort([0.4, -0.3], 0.15, 0.05);
         assert!(warped[0] > 0.4 && warped[1] < -0.3);
         assert_eq!(natural_vignette_cos4_gain(0.0, 24.0), 1.0);

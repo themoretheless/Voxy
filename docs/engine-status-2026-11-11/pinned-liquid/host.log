@@ -1,0 +1,10 @@
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.50s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 2 tests
+test game_host_tests::moving_scene_platform_transfers_impulse_to_liquid_in_play_and_package ... ok
+test game_host_tests::moving_scene_platform_stops_at_pinned_liquid_in_play_and_package ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 455 filtered out; finished in 6.86s
+

@@ -112,8 +112,7 @@ fn local_restoration(
     let measure_path =
         collision && std::env::var("VOXY_HAIR_LOCAL_TRAJECTORY_MERIT").as_deref() == Ok("1");
     let limit = std::env::var("VOXY_HAIR_LOCAL_RESTORATION_STEPS")
-        .map(|value| value.parse::<usize>().unwrap())
-        .unwrap_or(32);
+        .map_or(32, |value| value.parse::<usize>().unwrap());
     assert!((1..=128).contains(&limit));
     for iteration in 0..=limit {
         let pairs = refresh(rods, meshes, radius, collision, continuous);
@@ -561,8 +560,7 @@ fn captured_second_order_feasibility_candidate() {
     )
     .unwrap();
     let scale: f64 = std::env::var("VOXY_HAIR_CORRECTION_TRIAL_SCALE")
-        .map(|value| value.parse().unwrap())
-        .unwrap_or(1.);
+        .map_or(1., |value| value.parse().unwrap());
     assert!(scale.is_finite() && scale > 0. && scale <= 1.);
     if scale < 1. {
         for (rod, initial) in rods.iter_mut().zip(&origin) {

@@ -125,21 +125,25 @@ fn zero_requested_allowance_still_reserves_derived_body_error_before_wall() {
     let vertices = rigid_vertex_enclosures(edges, DQuat::IDENTITY, DVec3::ZERO, 1.).unwrap();
     let speeds = cache.point_speed_bounds(&vertices, 1.).unwrap();
     let control = sweep_rigid_path_with_bounds(
-        center,
-        edges,
-        DQuat::IDENTITY,
+        SweepQuery {
+            center,
+            rest_edges: edges,
+            orientation: DQuat::IDENTITY,
+            basis: DQuat::IDENTITY,
+            origin: DVec3::ZERO,
+            scale: 1.,
+        },
         &approximation.path,
-        DQuat::IDENTITY,
-        DVec3::ZERO,
-        1.,
         0.,
         &[wall],
         256,
         &mut 4096,
-        Some(&speeds),
-        Some(&cache),
-        None,
-        [false; 3],
+        SweepEnclosureBounds {
+            enclosed_speeds: Some(&speeds),
+            enclosed_path: Some(&cache),
+            coordinate_certificate: None,
+            exact_projection_axes: [false; 3],
+        },
     )
     .unwrap();
     assert!(

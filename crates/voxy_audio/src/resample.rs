@@ -41,7 +41,6 @@ impl Clip {
         let polyphase_table: Option<Vec<[f64; 65]>> = if num_phases <= 1024 {
             let mut table = Vec::with_capacity(num_phases);
             for p in 0..num_phases {
-                #[allow(clippy::cast_possible_truncation)]
                 let remainder = (p as u32) * g;
                 let fraction = f64::from(remainder) / f64::from(target_rate);
                 table.push(compute_filter_weights(fraction, cutoff));
@@ -93,7 +92,7 @@ impl Clip {
                 (s0, s1)
             };
 
-            #[allow(clippy::cast_possible_truncation)] // Explicit clipping of filter overshoot.
+            // Explicit clipping of filter overshoot.
             frames.push([sum0.clamp(-1.0, 1.0) as f32, sum1.clamp(-1.0, 1.0) as f32]);
         }
         Self::new(target_rate, frames)
@@ -130,11 +129,8 @@ impl Clip {
             let sample = std::array::from_fn(|channel| {
                 let a = f64::from(self.frames[left][channel]);
                 let b = f64::from(self.frames[right][channel]);
-                #[allow(clippy::cast_possible_truncation)]
                 // Convex combination of normalized samples.
-                {
-                    (a + (b - a) * weight) as f32
-                }
+                (a + (b - a) * weight) as f32
             });
             frames.push(sample);
         }
@@ -211,6 +207,25 @@ fn dot_product_stereo_65(window: &[[f32; 2]], kernel: &[f64; 65]) -> (f64, f64) 
     (s0, s1)
 }
 
+/// Evaluates the Lanczos-windowed sinc interpolation kernel
+/// $L_a(x) = \operatorname{sinc}(x) \operatorname{sinc}(x / a)$ for support radius `lobes` ($a \ge 1$).
+#[must_use]
+pub fn lanczos_windowed_sinc_weight(x: f64, lobes: u32) -> f64 {
+    if !x.is_finite() || lobes == 0 {
+        return 0.0;
+    }
+    let a = f64::from(lobes);
+    if x.abs() >= a {
+        return 0.0;
+    }
+    if x.abs() < 1e-12 {
+        return 1.0;
+    }
+    let pi_x = std::f64::consts::PI * x;
+    let pi_x_a = pi_x / a;
+    (pi_x.sin() / pi_x) * (pi_x_a.sin() / pi_x_a)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -255,7 +270,7 @@ mod tests {
     #[test]
     fn passband_and_stopband_sines_at_two_to_one_ratio() {
         for (frequency, minimum, maximum) in [(1000.0, 0.69, 0.72), (18000.0, 0.0, 0.001)] {
-            #[allow(clippy::cast_possible_truncation)] // Unit-amplitude reference sine.
+            // Unit-amplitude reference sine.
             let source = Clip::new(
                 48_000,
                 (0..4800)
@@ -316,5 +331,8 @@ mod tests {
                 .flatten()
                 .all(|x| (*x - 0.25).abs() < f32::EPSILON)
         );
+        assert!((lanczos_windowed_sinc_weight(0.0, 3) - 1.0).abs() < 1e-12);
+        assert!(lanczos_windowed_sinc_weight(1.0, 3).abs() < 1e-12);
+        assert_eq!(lanczos_windowed_sinc_weight(3.5, 3), 0.0);
     }
 }

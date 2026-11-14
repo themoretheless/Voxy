@@ -327,12 +327,8 @@ fn gpu_exact_morph_component_edges_and_full_target_budget() {
             deltas[(shape * count + index) * 6] = values[shape];
         }
     }
-    let terms = include_str!("../world_exact_fused_affine.wgsl")
-        .split("fn affine_fused_axis")
-        .next()
-        .unwrap();
     let shader_source = format!(
-        "{terms}\n{}\n{}",
+        "{}\n{}",
         include_str!("morph.wgsl"),
         r"
 struct Parameters {color:vec4<f32>,count:u32,pad0:u32,pad1:u32,pad2:u32}

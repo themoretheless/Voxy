@@ -1,6 +1,6 @@
 //! Coarse volumetric cages embedded in the imported model's rest surface.
-use physics::{
-    strand::SphereCollider,
+use physics::strand::SphereCollider;
+use physics_bio::{
     tissue::{Material, Tissue},
     tissue_surface::EmbeddedSurface,
 };

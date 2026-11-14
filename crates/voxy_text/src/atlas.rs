@@ -56,6 +56,19 @@ impl GlyphAtlas {
     pub fn entries(&self) -> usize {
         self.entries
     }
+
+    /// Returns the fraction `[0.0, 1.0]` of total atlas texture area currently swept by the
+    /// active shelf rows (`(y + row_height) * width / (width * height)`).
+    #[must_use]
+    pub fn shelf_packing_efficiency(&self) -> f32 {
+        let total = self.width.saturating_mul(self.height);
+        if total == 0 {
+            return 0.0;
+        }
+        let used_rows = self.y.saturating_add(self.row_height).min(self.height);
+        let swept = used_rows.saturating_mul(self.width);
+        (swept as f32 / total as f32).clamp(0.0, 1.0)
+    }
     /// Empty glyphs (e.g. spaces) return None without using atlas space.
     /// All validation and fit checks precede mutation.
     /// # Errors
@@ -150,6 +163,7 @@ mod tests {
         };
         assert_eq!(atlas.insert(&empty), Ok(None));
         atlas.insert(&glyph()).unwrap();
+        assert!(atlas.shelf_packing_efficiency() > 0.0 && atlas.shelf_packing_efficiency() <= 1.0);
         assert_eq!(atlas.insert(&glyph()), Err(TextError::Capacity));
         assert_eq!(atlas.insert(&empty), Ok(None));
     }

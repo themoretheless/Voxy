@@ -9,7 +9,7 @@ mod ids;
 
 pub use cancel::CancelToken;
 pub use clock::{ClockError, ClockPlan, FixedClock};
-pub use codec::{BinaryCheckpoint, ByteReader, ByteWriter, CodecError};
+pub use codec::{BinaryCheckpoint, ByteReader, ByteWriter, CheckpointEnvelope, CodecError};
 pub use coordinates::{
     AabbI64, BitMatrix32, CHUNK_EDGE, CHUNK_VOLUME, ChunkPos, ChunkSphereIterator,
     CoordinateOverflow, Direction6, FaceMask, FloatingOrigin, InvalidLocalPos, LocalIndex,

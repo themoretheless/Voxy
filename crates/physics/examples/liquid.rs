@@ -1,5 +1,4 @@
 // Exact equality intentionally checks unchanged masses and exactly zero states.
-#![allow(clippy::float_cmp)]
 //! CPU dam-break smoke test: free-moving SPH particles in a closed tank.
 use physics::liquid::{Config, Container, Liquid, Material, Particle};
 fn main() -> Result<(), Box<dyn std::error::Error>> {

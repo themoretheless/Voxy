@@ -81,7 +81,6 @@ impl GgxSurfaceSample {
             return Err(RaySceneError::InvalidGeometry);
         }
         ray.direction_distance[..3].copy_from_slice(&sample.direction);
-        #[allow(clippy::cast_possible_truncation)]
         let weight = sample.throughput.map(|v| v as f32);
         Ok(Some(Self {
             ray,

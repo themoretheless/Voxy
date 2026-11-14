@@ -1380,11 +1380,7 @@ fn rotate(r: Mat3, theta: Vec3) -> Mat3 {
 /// Evaluates the inverse-CDF quantile of the Rosin–Rammler / Weibull brittle fragment mass
 /// distribution $m(u) = m_0 \left[-\ln(1 - u)\right]^{1/k}$ for $u \in [0, 1)$.
 #[must_use]
-pub fn weibull_fragment_mass_quantile(
-    u_01: f64,
-    scale_mass_kg: f64,
-    shape_k: f64,
-) -> Option<f64> {
+pub fn weibull_fragment_mass_quantile(u_01: f64, scale_mass_kg: f64, shape_k: f64) -> Option<f64> {
     if !u_01.is_finite()
         || !scale_mass_kg.is_finite()
         || !shape_k.is_finite()

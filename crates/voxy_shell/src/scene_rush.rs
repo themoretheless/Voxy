@@ -146,10 +146,10 @@ impl SceneRush {
                 KeyCode::F1 => self.panel_visible = !self.panel_visible,
                 KeyCode::PageUp => {
                     self.selected_message =
-                        (self.selected_message + 1).min(self.messages.len().saturating_sub(1))
+                        (self.selected_message + 1).min(self.messages.len().saturating_sub(1));
                 }
                 KeyCode::PageDown => {
-                    self.selected_message = self.selected_message.saturating_sub(1)
+                    self.selected_message = self.selected_message.saturating_sub(1);
                 }
                 _ => {}
             }

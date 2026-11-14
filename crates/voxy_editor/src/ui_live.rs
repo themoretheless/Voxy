@@ -145,7 +145,6 @@ impl UiLive {
             &mut graphics.ui_presented,
         )
     }
-    #[allow(clippy::too_many_arguments)]
     fn poll_gpu(
         &mut self,
         scene: &SceneGraph,

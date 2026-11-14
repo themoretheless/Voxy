@@ -35,9 +35,9 @@ pub use projectile::{
 pub use raycast::{RayOrigin, RaycastConfig, RaycastError, RaycastResult, VoxelHit, raycast};
 pub use vehicle::{
     RaceCheckpoint, RaceError, RaceProgress, RaceTrack, VehicleConfig, VehicleError, VehicleInput,
-    VehicleState, VehicleStep, ackermann_inner_outer_steer_angles_rad, anti_roll_bar_axle_torque_nm,
-    pacejka_lateral_force, pacejka_magic_formula_lateral_force, step_vehicle,
-    step_vehicle_with_chassis_step, update_race,
+    VehicleState, VehicleStep, ackermann_inner_outer_steer_angles_rad,
+    anti_roll_bar_axle_torque_nm, pacejka_lateral_force, pacejka_magic_formula_lateral_force,
+    step_vehicle, step_vehicle_with_chassis_step, update_race,
 };
 pub use water::{
     WaterBudget, WaterError, WaterPlan, WaterStates, step_water, submerged_aabb_buoyancy,

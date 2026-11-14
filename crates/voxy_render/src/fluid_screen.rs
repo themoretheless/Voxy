@@ -308,7 +308,6 @@ impl ScreenSpaceFluidRenderer {
     /// `other_live_bytes` must include any renderer retained during replacement.
     /// # Errors
     /// Budget overflow, unsupported adapter formats or device limits.
-    #[allow(clippy::too_many_arguments)]
     pub fn new_with_adapter_budget(
         device: &wgpu::Device,
         adapter: &wgpu::Adapter,
@@ -370,7 +369,6 @@ impl ScreenSpaceFluidRenderer {
     /// Recreate on resize/device recovery. Prefer `new_with_adapter` for format preflight.
     /// # Errors
     /// Rejects empty/excessive targets and particle buffers exceeding device limits.
-    #[allow(clippy::too_many_lines)]
     pub fn new(
         device: &wgpu::Device,
         format: wgpu::TextureFormat,
@@ -951,7 +949,6 @@ impl ScreenSpaceFluidRenderer {
 
     /// Generate final particle structs directly into shared memory. The producer
     /// runs once; a rejected particle/camera/film leaves the previous frame intact.
-    #[allow(clippy::too_many_arguments)]
     pub fn update_generated_with_film<I>(
         &mut self,
         queue: &wgpu::Queue,
@@ -1037,7 +1034,6 @@ impl ScreenSpaceFluidRenderer {
     /// Local overlays use the caller's full-window depth attachment.
     /// # Errors
     /// Empty/overflowing/out-of-bounds regions or size mismatch; rejected before encoding.
-    #[allow(clippy::too_many_arguments)]
     pub fn encode_viewport(
         &self,
         renderer: &crate::SceneRenderer,
@@ -1070,7 +1066,7 @@ impl ScreenSpaceFluidRenderer {
         if let Some(ring) = &self.camera_ring {
             let (slot, _) = ring
                 .write_or_stage(encoder, &self.camera, |mut bytes| {
-                    bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot))
+                    bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot));
                 })
                 .expect("live shared fluid camera");
             self.shared_groups.get(slot).unwrap_or(&self.groups)
@@ -1123,7 +1119,6 @@ impl ScreenSpaceFluidRenderer {
         (particles, films)
     }
 
-    #[allow(clippy::too_many_arguments)]
     fn encode_region(
         &self,
         renderer: &crate::SceneRenderer,
@@ -1391,7 +1386,7 @@ impl ScreenSpaceFluidRenderer {
     ) {
         if let Some(ring) = &self.camera_ring {
             ring.stage_legacy(encoder, &self.camera, |mut bytes| {
-                bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot))
+                bytes.copy_from_slice(bytemuck::bytes_of(&self.camera_snapshot));
             })
             .expect("live compute filter camera");
         }

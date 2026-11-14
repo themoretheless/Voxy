@@ -36,34 +36,33 @@ impl Liquid {
         if let Some(backend) = backend
             .as_mut()
             .filter(|backend| backend.supports_force_pipeline())
+            && !pairs.is_empty()
         {
-            if !pairs.is_empty() {
-                let inputs = pairs
-                    .iter()
-                    .map(|&(i, j)| {
-                        self.particle_pair_force_input(
-                            particles[i],
-                            particles[j],
-                            properties[i],
-                            properties[j],
-                            [density[i], density[j]],
-                            [pressure[i], pressure[j]],
-                            sub(normals[i], normals[j]),
-                        )
-                    })
-                    .collect::<Vec<_>>();
-                let operator = super::LiquidForcePipelineOperator {
-                    particles,
-                    pairs,
-                    inputs: &inputs,
-                    gravity: self.config.gravity,
-                };
-                if let Some(candidate) = backend.force_pipeline_candidate(&operator) {
-                    return (
-                        candidate.accumulation.accelerations,
-                        candidate.accumulation.viscous_rates,
-                    );
-                }
+            let inputs = pairs
+                .iter()
+                .map(|&(i, j)| {
+                    self.particle_pair_force_input(
+                        particles[i],
+                        particles[j],
+                        properties[i],
+                        properties[j],
+                        [density[i], density[j]],
+                        [pressure[i], pressure[j]],
+                        sub(normals[i], normals[j]),
+                    )
+                })
+                .collect::<Vec<_>>();
+            let operator = super::LiquidForcePipelineOperator {
+                particles,
+                pairs,
+                inputs: &inputs,
+                gravity: self.config.gravity,
+            };
+            if let Some(candidate) = backend.force_pipeline_candidate(&operator) {
+                return (
+                    candidate.accumulation.accelerations,
+                    candidate.accumulation.viscous_rates,
+                );
             }
         }
         let mut candidates = backend

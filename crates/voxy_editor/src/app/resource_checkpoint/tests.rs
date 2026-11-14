@@ -1520,9 +1520,8 @@ fn preview_runtime_aliases_restore_without_gpu_and_keep_equal_frames_independent
             value["runtime"]["owners"][0]["frame"]["transition_weight"] =
                 serde_json::json!(0.5_f32.to_bits());
             let mismatch: ModelAnimationCheckpoint = serde_json::from_value(value).unwrap();
-            let error = match load(&mismatch) {
-                Err(error) => error,
-                Ok(_) => panic!("different preview/runtime frame states joined"),
+            let Err(error) = load(&mismatch) else {
+                panic!("different preview/runtime frame states joined");
             };
             assert!(
                 error

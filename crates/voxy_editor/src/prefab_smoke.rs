@@ -7,9 +7,15 @@ use winit::keyboard::KeyCode;
 pub(super) struct Smoke {
     phase: u8,
     frame: u64,
+    play_ticks: u64,
     expected: Option<SceneDocument>,
 }
 impl App {
+    pub(crate) fn start_prefab_smoke(&mut self) {
+        self.prefab_smoke = Some(Smoke::default());
+        self.smoke_deadline = Some(std::time::Instant::now() + std::time::Duration::from_secs(30));
+    }
+
     fn verify_prefab_creation(
         &mut self,
         original: &SceneDocument,
@@ -219,6 +225,34 @@ impl App {
         );
         Ok(())
     }
+    fn invoke_package_toolbar(
+        &mut self,
+        expected: crate::panels::Action,
+    ) -> Result<bool, Box<dyn std::error::Error>> {
+        let panels = self
+            .panels
+            .as_mut()
+            .ok_or("missing project package toolbar")?;
+        let Some(&(rect, _)) = panels
+            .regions
+            .iter()
+            .find(|(_, action)| *action == expected)
+        else {
+            return Ok(false);
+        };
+        let action = panels
+            .hit(glam::Vec2::new(
+                rect[0] + rect[2] * 0.5,
+                rect[1] + rect[3] * 0.5,
+            ))
+            .ok_or("package action is not hit-testable")?;
+        if action != expected {
+            return Err("package action overlaps another region".into());
+        }
+        self.panel_action(action)?;
+        Ok(true)
+    }
+
     pub(super) fn prefab_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         let Some(smoke) = self.prefab_smoke.as_ref() else {
             return Ok(false);
@@ -297,12 +331,14 @@ impl App {
                 if self.play.simulation_ticks == 0 {
                     return Ok(false);
                 }
+                let play_ticks = self.play.simulation_ticks;
                 self.toggle_play()?;
                 let smoke = self.prefab_smoke.as_mut().ok_or("missing acceptance")?;
+                smoke.play_ticks = play_ticks;
                 smoke.phase = 3;
                 smoke.frame = self.frames;
             }
-            _ => {
+            3 => {
                 if self.authoring_document()?
                     != *self
                         .prefab_smoke
@@ -314,11 +350,49 @@ impl App {
                 }
                 println!(
                     "PREFAB NATIVE PLAY STOP PASS frames={} ticks={}",
-                    self.frames, self.play.simulation_ticks
+                    self.frames, smoke.play_ticks
                 );
-                self.prefab_smoke = None;
-                return Ok(true);
+                if self.build.project.is_none() {
+                    self.prefab_smoke = None;
+                    return Ok(true);
+                }
+                if !self.invoke_package_toolbar(crate::panels::Action::BuildGame)? {
+                    return Ok(false);
+                }
+                let smoke = self.prefab_smoke.as_mut().ok_or("missing acceptance")?;
+                smoke.phase = 4;
             }
+            4 => match self.build.result.as_ref() {
+                Some(Ok(path)) => {
+                    let path = path.clone();
+                    if self.build.player.is_none() {
+                        println!("PREFAB NATIVE BUILD PASS {}", path.display());
+                        self.prefab_smoke = None;
+                        return Ok(true);
+                    }
+                    if !self.invoke_package_toolbar(crate::panels::Action::RunBuiltGame)? {
+                        return Ok(false);
+                    }
+                    println!("PREFAB NATIVE BUILD PASS {}", path.display());
+                    self.prefab_smoke
+                        .as_mut()
+                        .ok_or("missing acceptance")?
+                        .phase = 5;
+                }
+                Some(Err(error)) => return Err(error.clone().into()),
+                None => {}
+            },
+            _ => match self.build.launch.as_ref() {
+                Some(Ok(status)) if status.success() => {
+                    println!("PREFAB NATIVE RUN BUILT GAME PASS");
+                    self.prefab_smoke = None;
+                    return Ok(true);
+                }
+                Some(result) => {
+                    return Err(format!("packaged game launch failed: {result:?}").into());
+                }
+                None => {}
+            },
         }
         Ok(false)
     }

@@ -264,6 +264,45 @@ impl World {
         Ok(())
     }
 
+    /// Loads or overwrites a canonical chunk from durable storage recovery (`WAL` / `RegionStore`)
+    /// at its exact persisted revision and advances the monotonic commit sequence watermark.
+    ///
+    /// # Errors
+    ///
+    /// Rejects unknown blocks, revision rollbacks, and commit sequence overflow.
+    pub fn apply_persisted_chunk(
+        &mut self,
+        snapshot: ChunkSnapshot,
+        commit_sequence: Option<u64>,
+    ) -> Result<(), CommitError> {
+        if self.unavailable.contains_key(&snapshot.pos) {
+            return Err(CommitError::InvalidChunk(snapshot.pos));
+        }
+        if let Some(slot) = self.chunks.get(&snapshot.pos)
+            && snapshot.revision < slot.revision
+        {
+            return Err(CommitError::RevisionConflict {
+                pos: snapshot.pos,
+                expected: snapshot.revision,
+                actual: slot.revision,
+            });
+        }
+        self.validate_chunk(&snapshot.data)?;
+        if let Some(seq) = commit_sequence {
+            let next = seq.checked_add(1).ok_or(CommitError::CommitIdOverflow)?;
+            self.next_commit = self.next_commit.max(next);
+        }
+        self.unloaded_revisions.remove(&snapshot.pos);
+        self.chunks.insert(
+            snapshot.pos,
+            ChunkSlot {
+                revision: snapshot.revision,
+                data: snapshot.data,
+            },
+        );
+        Ok(())
+    }
+
     pub fn mark_unavailable(&mut self, pos: ChunkPos, cause: UnavailableReason) {
         self.chunks.remove(&pos);
         self.unavailable.insert(pos, cause);
@@ -275,7 +314,6 @@ impl World {
     ///
     /// The entire transaction is rejected on limits, duplicate targets, missing chunks,
     /// revision conflicts, unknown blocks, or counter overflow.
-    #[allow(clippy::too_many_lines)]
     pub fn commit(&mut self, mut txn: EditTxn) -> Result<CommitReceipt, CommitError> {
         if txn.writes.is_empty() {
             return Err(CommitError::EmptyTransaction);

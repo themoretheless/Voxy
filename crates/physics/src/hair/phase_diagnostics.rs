@@ -292,12 +292,12 @@ mod observation_scope_tests {
                     .spawn(|| {
                         assert_eq!(observation_frame(), None);
                         with_observation_frame(Some(4), || {
-                            assert_eq!(observation_frame(), Some(4))
+                            assert_eq!(observation_frame(), Some(4));
                         });
                         assert_eq!(observation_frame(), None);
                     })
                     .join()
-                    .unwrap()
+                    .unwrap();
             });
         });
         assert_eq!(observation_frame(), None);

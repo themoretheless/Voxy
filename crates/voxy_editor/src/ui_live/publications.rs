@@ -1,6 +1,5 @@
 //! Portable CPU publication participant. Workers and native presentation fences
 //! belong to the enclosing UiLive save coordinator, not this archive.
-#![allow(dead_code)]
 use super::*;
 use crate::EditorError;
 use serde::{Deserialize, Serialize};
@@ -105,6 +104,7 @@ impl UiLive {
     }
 }
 impl PreparedUiPublications {
+    #[cfg(test)]
     pub(crate) fn checkpoint(
         &self,
         view: &SceneCheckpointView<'_>,
@@ -381,10 +381,10 @@ impl UiPublicationsCheckpoint {
             .into_iter()
             .flatten()
         {
-            if let Some(id) = visible.text {
-                if id >= self.archives.len() || (used.insert(id) && id != used.len() - 1) {
-                    return Err("invalid UI bundle publication reference".into());
-                }
+            if let Some(id) = visible.text
+                && (id >= self.archives.len() || (used.insert(id) && id != used.len() - 1))
+            {
+                return Err("invalid UI bundle publication reference".into());
             }
         }
         if used.len() != self.archives.len() {

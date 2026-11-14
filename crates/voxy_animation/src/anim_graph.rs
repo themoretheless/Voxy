@@ -718,7 +718,6 @@ impl GraphPlayer {
     /// Top-down pass: decides machine transitions, then assigns each active
     /// node its tick. Fading source subtrees receive only the remaining fade
     /// time, as in [`Animator`](crate::Animator).
-    #[allow(clippy::type_complexity)]
     fn activate(
         &self,
         staged: &mut Staged,

@@ -191,12 +191,19 @@ fn vs_voxel(input: VoxelQuadInput) -> PhotorealVertexOutput {
         vec2<f32>(0.0, 0.0), vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0),
         vec2<f32>(1.0, 0.0), vec2<f32>(1.0, 1.0), vec2<f32>(0.0, 1.0),
     );
+    let face = input.extent_face.z;
+    var v_idx = input.vertex_index;
+    if (face == 1u || face == 3u || face == 4u) {
+        if (v_idx == 1u) { v_idx = 2u; }
+        else if (v_idx == 2u) { v_idx = 1u; }
+        else if (v_idx == 4u) { v_idx = 5u; }
+        else if (v_idx == 5u) { v_idx = 4u; }
+    }
     let corner = select(
-        corners[input.vertex_index],
-        flipped_corners[input.vertex_index],
+        corners[v_idx],
+        flipped_corners[v_idx],
         (input.ao_diagonal.w & 0x80u) != 0u,
     );
-    let face = input.extent_face.z;
     var axis_u = vec3<f32>(1.0, 0.0, 0.0);
     var axis_v = vec3<f32>(0.0, 1.0, 0.0);
     if (face == 0u || face == 1u) {
@@ -522,8 +529,7 @@ fn flashlight_volumetric_inscatter(ray_origin: vec3<f32>, surface_pos: vec3<f32>
 // Fragment Entry Point (Photorealistic Linear HDR Output)
 // ============================================================================
 
-@fragment
-fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
+fn shade_photoreal(input: PhotorealVertexOutput) -> vec4<f32> {
     let tex_sample = textureSample(materials, material_sampler, input.uv, i32(input.material));
 
     // Resolve geometric normal (supports flat-shaded skinned triangles)
@@ -807,6 +813,26 @@ fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
             -clamp((-1.0-u)/pixel_width+0.5,0.0,1.0);
     }
     return vec4<f32>(max(hdr_color, vec3<f32>(0.0)), coverage);
+}
+
+@fragment
+fn fs_main(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
+    return shade_photoreal(input);
+}
+
+@fragment
+fn fs_voxel_opaque(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
+    let shaded = shade_photoreal(input);
+    return vec4<f32>(shaded.rgb, 1.0);
+}
+
+@fragment
+fn fs_voxel_cutout(input: PhotorealVertexOutput) -> @location(0) vec4<f32> {
+    let shaded = shade_photoreal(input);
+    if (shaded.a < 0.5) {
+        discard;
+    }
+    return vec4<f32>(shaded.rgb, 1.0);
 }
 
 // Packed coat.a ranges: [0,1] coat roughness, [1.02,1.5) skin (roughness+1),

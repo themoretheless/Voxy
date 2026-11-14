@@ -173,8 +173,12 @@ fn accumulate_rate(
     point_velocity: Vector,
     force: Vector,
     force_rate: Vector,
+    translation_only: bool,
 ) -> Result<(), Error> {
-    accumulate(wrench, body, point, force_rate)?;
+    accumulate(wrench, body, point, force_rate, translation_only)?;
+    if translation_only {
+        return Ok(());
+    }
     wrench.torque = add(
         wrench.torque,
         cross(sub(point_velocity, body.motion.velocity), force),
@@ -200,29 +204,56 @@ pub fn resolve_normal_reaction_rate_network(
     motion: &[SupportMotion],
     config: ReactionRateConfig,
 ) -> Result<NetworkReactionRate, Error> {
+    resolve_normal_reaction_rate_network_with_particles(
+        bodies,
+        0,
+        contacts,
+        external,
+        external_rate,
+        motion,
+        config,
+    )
+}
+
+/// Evolve contact reactions with translation-only particles in the leading range.
+pub fn resolve_normal_reaction_rate_network_with_particles(
+    bodies: &[ContactBody],
+    particle_count: usize,
+    contacts: &[NetworkSupport],
+    external: &[ContactWrench],
+    external_rate: &[ContactWrench],
+    motion: &[SupportMotion],
+    config: ReactionRateConfig,
+) -> Result<NetworkReactionRate, Error> {
     if external_rate.len() != bodies.len()
         || motion.len() != contacts.len()
         || !config.jerk_tolerance.is_finite()
         || config.jerk_tolerance <= 0.
+        || bodies.iter().zip(external_rate).any(|(body, rate)| {
+            !finite(rate.force)
+                || !finite(rate.torque)
+                || (body.spin.is_none() && rate.torque != [0.; 3])
+        })
     {
         return Err(Error::InvalidInput);
     }
-    if bodies.iter().zip(external_rate).any(|(body, rate)| {
-        !finite(rate.force)
-            || !finite(rate.torque)
-            || (body.spin.is_none() && rate.torque != [0.; 3])
-    }) {
-        return Err(Error::InvalidInput);
-    }
-    let baseline = resolve_normal_reaction_network(bodies, contacts, external, config.reaction)?;
-    resolve_rate_from_baseline(
+    let baseline = resolve_normal_reaction_network_with_particles(
         bodies,
+        particle_count,
+        contacts,
+        external,
+        config.reaction,
+    )?;
+    resolve_rate_from_baseline_mixed_interval(
+        bodies,
+        particle_count,
         contacts,
         external,
         external_rate,
         motion,
         config,
         baseline,
+        None,
     )
 }
 
@@ -249,6 +280,31 @@ pub(crate) fn resolve_rate_from_baseline(
 
 pub(crate) fn resolve_rate_from_baseline_interval(
     bodies: &[ContactBody],
+    contacts: &[NetworkSupport],
+    external: &[ContactWrench],
+    external_rate: &[ContactWrench],
+    motion: &[SupportMotion],
+    config: ReactionRateConfig,
+    baseline: NetworkReaction,
+    duration: Option<f64>,
+) -> Result<NetworkReactionRate, Error> {
+    resolve_rate_from_baseline_mixed_interval(
+        bodies,
+        0,
+        contacts,
+        external,
+        external_rate,
+        motion,
+        config,
+        baseline,
+        duration,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn resolve_rate_from_baseline_mixed_interval(
+    bodies: &[ContactBody],
+    particle_count: usize,
     contacts: &[NetworkSupport],
     external: &[ContactWrench],
     external_rate: &[ContactWrench],
@@ -299,6 +355,7 @@ pub(crate) fn resolve_rate_from_baseline_interval(
             motion[i].point_velocity,
             baseline.forces[i],
             fr,
+            entry.first < particle_count,
         )?;
         if let Some(j) = entry.second {
             accumulate_rate(
@@ -308,6 +365,7 @@ pub(crate) fn resolve_rate_from_baseline_interval(
                 motion[i].point_velocity,
                 scale(baseline.forces[i], -1.),
                 scale(fr, -1.),
+                j < particle_count,
             )?;
         }
     }
@@ -413,6 +471,7 @@ pub(crate) fn resolve_rate_from_baseline_interval(
             motion[i].point_velocity,
             baseline.forces[i],
             forces_rate[i],
+            entry.first < particle_count,
         )?;
         if let Some(j) = entry.second {
             accumulate_rate(
@@ -422,6 +481,7 @@ pub(crate) fn resolve_rate_from_baseline_interval(
                 motion[i].point_velocity,
                 scale(baseline.forces[i], -1.),
                 scale(forces_rate[i], -1.),
+                j < particle_count,
             )?;
         }
         let pressure = dot(normals[i], baseline.forces[i]);

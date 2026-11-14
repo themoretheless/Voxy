@@ -37,16 +37,14 @@ impl CollisionWorld for ScriptCollisionWorld {
                 displacement,
                 std::array::from_fn(|i| min[i] - anchor[i]),
                 std::array::from_fn(|i| max[i] - anchor[i]),
-            ) {
-                if fraction < result.fraction
-                    || (fraction == result.fraction && result.obstacle.is_none())
-                {
-                    result = SweepResult {
-                        fraction,
-                        normal,
-                        obstacle: Some(name.clone()),
-                    };
-                }
+            ) && (fraction < result.fraction
+                || (fraction == result.fraction && result.obstacle.is_none()))
+            {
+                result = SweepResult {
+                    fraction,
+                    normal,
+                    obstacle: Some(name.clone()),
+                };
             }
         }
         Ok(result)

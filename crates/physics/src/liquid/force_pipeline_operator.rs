@@ -23,7 +23,7 @@ impl LiquidForcePipelineOperator<'_> {
         let forces = self
             .inputs
             .iter()
-            .map(|input| input.evaluate_native())
+            .map(super::pair_forces::LiquidPairForceInput::evaluate_native)
             .collect::<Result<Vec<_>, _>>()?;
         let accumulation = LiquidAccumulationOperator {
             particles: self.particles,

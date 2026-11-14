@@ -1,0 +1,22 @@
+   Compiling voxy_lighting v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_lighting)
+   Compiling voxy_gpu_core v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gpu_core)
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_animation)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_scene)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 09s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-4cad393ae28acb4f)
+
+running 7 tests
+test app::model_reload::tests::native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work ... ignored, requires real GPU; native reload transaction without a window
+test app::model_reload::tests::model_completions_cannot_override_watcher_owned_manifest_inventory ... ok
+test app::model_reload::tests::explicit_panel_retry_recovers_unchanged_source_and_respects_checkpoint_fence ... ok
+test app::model_reload::tests::rejects_source_changed_after_worker_completion_and_recovers ... ok
+test app::model_reload::tests::source_budget_failure_settles_ticket_retains_model_and_does_not_block_checkpoint ... ok
+test app::model_reload::tests::watcher_capacity_rejects_unwatchable_model_and_settles_ticket_without_graph_changes ... ok
+test app::model_reload::tests::watcher_byte_budget_refuses_grown_source_and_recovers_when_valid_source_fits_again ... ok
+
+test result: ok. 6 passed; 0 failed; 1 ignored; 0 measured; 440 filtered out; finished in 0.43s
+

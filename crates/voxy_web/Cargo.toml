@@ -13,13 +13,21 @@ physics = { path = "../physics" }
 physics_voxel = { path = "../physics_voxel" }
 voxy_runtime = { path = "../voxy_runtime" }
 voxy_mesher = { path = "../voxy_mesher" }
-glam = "0.33.6"
+glam.workspace = true
 voxy_gpu = { path = "../voxy_gpu" }
 voxy_world = { path = "../voxy_world" }
 voxy_core = { path = "../voxy_core" }
+voxy_assets = { path = "../voxy_assets" }
+voxy_scene = { path = "../voxy_scene" }
+voxy_animation = { path = "../voxy_animation" }
+voxy_model = { path = "../voxy_model" }
+voxy_input = { path = "../voxy_input" }
+voxy_gameplay = { path = "../voxy_gameplay" }
+serde.workspace = true
+serde_json.workspace = true
 js-sys = "0.3.104"
 voxy_render = { path = "../voxy_render", features = ["webgl"] }
-wgpu = { version = "30.0.1", features = ["webgl"] }
+wgpu = { workspace = true, features = ["webgl"] }
 wasm-bindgen = "0.2.127"
 wasm-bindgen-futures = "0.4.77"
 web-sys = { version = "0.3.104", features = ["HtmlCanvasElement", "Window"] }

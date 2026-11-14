@@ -123,6 +123,42 @@ pub fn translation_gizmo() -> Result<SceneMesh, SceneError> {
     SceneMesh::new(vertices, indices)
 }
 
+/// Builds the twelve edges of a unit trigger box as thin solid strips.
+pub(crate) fn trigger_outline() -> Result<SceneMesh, SceneError> {
+    let mut vertices = Vec::with_capacity(96);
+    let mut indices = Vec::with_capacity(432);
+    for axis in 0..3 {
+        let cross = [(axis + 1) % 3, (axis + 2) % 3];
+        for a in [-1., 1.] {
+            for b in [-1., 1.] {
+                let base = vertices.len() as u32;
+                for corner in 0..8 {
+                    let mut position = [0.; 3];
+                    position[axis] = if corner & 1 == 0 { -1. } else { 1. };
+                    position[cross[0]] = a * if corner & 2 == 0 { 1. } else { 0.984 };
+                    position[cross[1]] = b * if corner & 4 == 0 { 1. } else { 0.984 };
+                    vertices.push(SceneVertex {
+                        position,
+                        uv: [0.; 2],
+                        color: [0.1, 0.9, 1., 1.],
+                    });
+                }
+                for [a, b, c, d] in [
+                    [0, 1, 3, 2],
+                    [4, 6, 7, 5],
+                    [0, 4, 5, 1],
+                    [2, 3, 7, 6],
+                    [0, 2, 6, 4],
+                    [1, 5, 7, 3],
+                ] {
+                    indices.extend([a, b, c, a, c, d].map(|index| base + index));
+                }
+            }
+        }
+    }
+    SceneMesh::new(vertices, indices)
+}
+
 /// Snaps a 3D world translation to the nearest uniform `grid_step` increment when `grid_step > 0.0`.
 #[must_use]
 pub fn snap_translation_to_grid(position: Vec3, grid_step: f32) -> Vec3 {

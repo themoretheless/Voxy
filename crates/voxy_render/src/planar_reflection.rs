@@ -263,7 +263,10 @@ pub fn anisotropic_road_streak_roughness(base_roughness: f32, n_dot_v: f32) -> (
 /// so geometry behind a water/mirror reflection plane is hardware-clipped without user clip planes.
 #[must_use]
 pub fn oblique_near_plane_clip_matrix(proj: glam::Mat4, clip_plane_view: glam::Vec4) -> glam::Mat4 {
-    if !proj.is_finite() || !clip_plane_view.is_finite() || clip_plane_view.truncate().length_squared() <= 1e-8 {
+    if !proj.is_finite()
+        || !clip_plane_view.is_finite()
+        || clip_plane_view.truncate().length_squared() <= 1e-8
+    {
         return proj;
     }
     let m00 = proj.x_axis.x;

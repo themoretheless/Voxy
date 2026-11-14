@@ -78,7 +78,6 @@ impl QuadraticBody {
     /// No history is modified. The plane's pressure is frozen for this kick.
     /// # Errors
     /// Invalid input/mass, sample limit, nonconvergence, or nonfinite diagnostics.
-    #[allow(clippy::too_many_arguments)]
     pub fn coulomb_plane_impulse_at(
         &self,
         positions: &[Vec3],

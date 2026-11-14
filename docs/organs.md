@@ -847,7 +847,7 @@ A separate regression increases hydraulic conductance to 1e-9 m3/(Pa s) and alte
 
 RK4 reference accumulated outlet volume: 1.617478454615e-8 m3. Errors reduce approximately by half on each step halving, consistent with first-order explicit integration. The regression also checks conservation of total volume and preservation of initially uniform protein concentration. Conservation alone is insufficient to establish dynamic accuracy: the coarsest step overestimates cumulative output by approximately 2.9 percent in this numerical fixture. This is time-discretization validation of the supplied lumped law, not physiological calibration, spatial convergence or validation of resolved lymphatic anatomy.
 
-Reproduce: `cargo test --release -p physics --test lymph active_wall_cycle_refines -- --nocapture`.
+Reproduce: `cargo test --release -p physics --test physics_bio active_wall_cycle_refines -- --nocapture`.
 
 ### Conservative second-order active-wall integration
 

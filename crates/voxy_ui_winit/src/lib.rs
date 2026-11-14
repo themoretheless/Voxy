@@ -23,7 +23,7 @@ impl Default for UiDispatch {
     }
 }
 #[derive(Debug)]
-#[allow(clippy::struct_excessive_bools)] // Independent native focus/key/modifier states.
+// Independent native focus/key/modifier states.
 pub struct WindowUi {
     pointer: PointerRouter,
     focus: FocusRouter,
@@ -135,7 +135,7 @@ impl WindowUi {
     /// Pixel events are physical pixels; line events use configured logical units.
     /// # Errors
     /// Rejects invalid/nonfinite input or conversion overflow.
-    #[allow(clippy::cast_possible_truncation)] // Converted coordinates validated below.
+    // Converted coordinates validated below.
     pub fn wheel_delta(&self, delta: MouseScrollDelta) -> Result<[f32; 2], UiError> {
         let values = match delta {
             MouseScrollDelta::LineDelta(x, y) => [
@@ -163,7 +163,7 @@ impl WindowUi {
         self.update_cursor();
         Ok(())
     }
-    #[allow(clippy::cast_possible_truncation)] // PointerRouter rejects nonfinite projected coordinates.
+    // PointerRouter rejects nonfinite projected coordinates.
     fn update_cursor(&mut self) -> bool {
         self.pointer.move_to(
             self.physical_cursor
@@ -308,6 +308,37 @@ pub fn clamp_popup_to_viewport(
         popup_pos[i].clamp(0.0, max_origin)
     })
 }
+
+/// Integrates one step of smooth inertial wheel/trackpad scroll momentum, returning
+/// `(frame_displacement_px, next_velocity_px_s)`.
+#[must_use]
+pub fn smooth_scroll_momentum_step(
+    velocity_px_s: [f32; 2],
+    impulse_px: [f32; 2],
+    friction_inv_s: f32,
+    dt_s: f32,
+) -> ([f32; 2], [f32; 2]) {
+    if !dt_s.is_finite()
+        || dt_s <= 0.0
+        || !friction_inv_s.is_finite()
+        || friction_inv_s <= 0.0
+        || velocity_px_s.iter().any(|v| !v.is_finite())
+        || impulse_px.iter().any(|v| !v.is_finite())
+    {
+        return ([0.0, 0.0], [0.0, 0.0]);
+    }
+    let dt = dt_s.clamp(1e-5, 0.1);
+    let decay = (-friction_inv_s * dt).exp();
+    let mut disp = [0.0; 2];
+    let mut next_vel = [0.0; 2];
+    for i in 0..2 {
+        let v0 = velocity_px_s[i] + impulse_px[i] * friction_inv_s;
+        disp[i] = v0 * (1.0 - decay) / friction_inv_s;
+        let v1 = v0 * decay;
+        next_vel[i] = if v1.abs() < 0.5 { 0.0 } else { v1 };
+    }
+    (disp, next_vel)
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -438,5 +469,8 @@ mod tests {
             clamp_popup_to_viewport([750.0, -10.0], [100.0, 50.0], [800.0, 600.0]),
             [700.0, 0.0]
         );
+        let (disp, next_v) =
+            smooth_scroll_momentum_step([0.0, 0.0], [0.0, 120.0], 8.0, 1.0 / 120.0);
+        assert!(disp[1] > 0.0 && next_v[1] > 0.0);
     }
 }
