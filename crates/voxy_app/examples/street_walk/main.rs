@@ -1300,7 +1300,7 @@ impl App {
         self.frames += 1;
         if self.benchmark > 0.
             && !self.offscreen_benchmark
-            && (self.frames <= 3 || (self.frames <= 180 && self.frames % 30 == 0))
+            && (self.frames <= 3 || (self.frames <= 180 && self.frames.is_multiple_of(30)))
         {
             eprintln!(
                 "STREET warmup submitted={}/180 simulation_steps={} world_query_frames={} render_ms={:.3}",
