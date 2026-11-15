@@ -2,8 +2,8 @@ use glam::{Mat4, Vec3};
 
 use super::ArchiveSceneRenderer;
 use super::types::{
-    ArchiveToneMapper, display_mode, ev100_from_camera, exposure_from_ev100, step_eye_adaptation,
-    step_wetness_accumulation,
+    ArchiveToneMapper, display_mode, ev100_from_camera, exposure_from_ev100, panorama_daylight,
+    step_eye_adaptation, step_wetness_accumulation,
 };
 
 impl ArchiveSceneRenderer {
@@ -131,6 +131,17 @@ impl ArchiveSceneRenderer {
         }
     }
 
+    /// Outdoor illuminance for the current sun in the scene's own units: its horizontal
+    /// component plus a sky worth a fifth of the `full_sun` illuminance at midday.
+    pub(super) fn daylight_level(&self, full_sun: f32) -> f32 {
+        self.sun_colour[3] * self.sun.y.max(0.) + 0.2 * full_sun * panorama_daylight(self.sun.y)
+    }
+
+    /// Direction toward the sun and its [r, g, b, illuminance].
+    pub fn sun(&self) -> (Vec3, [f32; 4]) {
+        (self.sun, self.sun_colour)
+    }
+
     /// Direction points toward the sun. Rebuild the matching directional shadow map.
     pub fn set_sun(
         &mut self,
@@ -145,6 +156,24 @@ impl ArchiveSceneRenderer {
         }
         self.sun = direction.normalize();
         self.sun_colour = colour;
+        // A sky panorama is one captured moment: dim it and its lighting with the sun.
+        self.queue.write_buffer(
+            &self.environment_bindings.intensity_buffer,
+            0,
+            bytemuck::cast_slice(&[
+                self.environment_bindings.intensity * panorama_daylight(self.sun.y),
+                0.,
+                0.,
+                0.,
+            ]),
+        );
+        // Probes hold the light of the hour they were baked in; follow the sun until a rebake.
+        if self.probe_daylight[1] > 0. {
+            let scale = (self.daylight_level(self.probe_daylight[0]) / self.probe_daylight[1])
+                .clamp(0., 4.);
+            self.queue
+                .write_buffer(&self.probe_grid, 28, bytemuck::bytes_of(&scale));
+        }
         let centre = (self.shadow_bounds.0 + self.shadow_bounds.1) * 0.5;
         let extent = ((self.shadow_bounds.1 - self.shadow_bounds.0).length() * 0.44).max(1.);
         let up = if self.sun.dot(Vec3::Y).abs() > 0.99 {

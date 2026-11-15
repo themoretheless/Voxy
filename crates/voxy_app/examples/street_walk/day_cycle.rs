@@ -119,6 +119,9 @@ pub struct DayCycle {
     schedule: WeatherSchedule,
     wetness: f32,
     base_ev: Option<f32>,
+    /// Scene units per lux: the scene's own sun against the clear-sky model at the same
+    /// elevation, so the cycle keeps the brightness the exposure was set for.
+    sun_scale: Option<f32>,
     applied: Option<(Vec3, f32, Weather)>,
     reported: f64,
 }
@@ -132,6 +135,7 @@ impl DayCycle {
             schedule: WeatherSchedule { seed },
             wetness: 0.,
             base_ev: None,
+            sun_scale: None,
             applied: None,
             reported: f64::NEG_INFINITY,
         }
@@ -180,6 +184,7 @@ impl DayCycle {
             schedule: WeatherSchedule { seed },
             wetness: 0.,
             base_ev: None,
+            sun_scale: None,
             applied: None,
             reported: f64::NEG_INFINITY,
         })
@@ -218,6 +223,15 @@ impl DayCycle {
         let base_ev = *self
             .base_ev
             .get_or_insert_with(|| renderer.exposure_ev100());
+        let sun_scale = *self.sun_scale.get_or_insert_with(|| {
+            let (direction, colour) = renderer.sun();
+            let model = climate::sunlight(direction, Weather::CLEAR)[3];
+            if model > 1. && colour[3] > 0. {
+                colour[3] / model
+            } else {
+                1.
+            }
+        });
         let hours = if self.paused || frozen {
             0.
         } else {
@@ -254,7 +268,9 @@ impl DayCycle {
             s.dot(sun) < 0.15_f32.to_radians().cos() || (e - ev).abs() > 0.05 || w != *weather
         });
         if stale {
-            renderer.set_sun(sun, climate::sunlight(sun, *weather))?;
+            let mut light = climate::sunlight(sun, *weather);
+            light[3] *= sun_scale;
+            renderer.set_sun(sun, light)?;
             renderer.set_exposure_ev100(ev)?;
             self.applied = Some((sun, ev, *weather));
         }

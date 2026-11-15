@@ -115,6 +115,9 @@ pub struct ArchiveSceneRenderer {
     exposure: f32,
     exposure_bias_ev: f32,
     adapted_exposure_scale: f32,
+    /// Sun illuminance and daylight level the irradiance probes were baked under; 0 before
+    /// a bake.
+    probe_daylight: [f32; 2],
     sky_strength: f32,
     _environment: crate::ImportedEnvironment,
     environment_bindings: crate::environment_lighting::EnvironmentBindings,
@@ -1366,6 +1369,7 @@ impl ArchiveSceneRenderer {
                 }),
             exposure_bias_ev: 0.,
             adapted_exposure_scale: 1.,
+            probe_daylight: [0.; 2],
             sky_strength: 4.,
             _environment: environment,
             environment_bindings,

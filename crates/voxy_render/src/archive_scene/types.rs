@@ -327,6 +327,15 @@ pub(super) fn twilight_sky(sun_y: f32) -> f32 {
     10_f32.powf(-4. * ((3. - elevation) / 15.).clamp(0., 1.))
 }
 
+/// Brightness of a captured midday sky panorama for the current sun: full with the sun
+/// 30 degrees up, about a third as it reaches the horizon (diffuse horizontal illuminance
+/// falls roughly with the sine of elevation), then the twilight ramp.
+pub(super) fn panorama_daylight(sun_y: f32) -> f32 {
+    let elevation = sun_y.clamp(-1., 1.).asin().to_degrees();
+    let high = ((elevation - 3.) / 27.).clamp(0., 1.);
+    (0.3 + 0.7 * high * high * (3. - 2. * high)) * twilight_sky(sun_y)
+}
+
 /// Saturation-based exposure: maximum luminance 1.2 * 2^EV100 maps to 1.
 pub fn exposure_from_ev100(ev100: f32) -> f32 {
     1. / (1.2 * 2_f32.powf(ev100))
