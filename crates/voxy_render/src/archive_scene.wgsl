@@ -48,7 +48,58 @@ struct Lights { count:vec4<u32>, values:array<Light,128>, z_masks:array<vec4<u32
 struct Vertex { @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) tangent:vec4<f32>, @location(3) uv:vec2<f32>, @location(4) w0:vec4<f32>, @location(5) w1:vec4<f32>, @location(6) w2:vec4<f32>, @location(7) w3:vec4<f32>, @location(8) n0:vec4<f32>, @location(9) n1:vec4<f32>, @location(10) n2:vec4<f32> }
 // Match clip positions across depth, material, shadow and guide pipelines.
 struct Fragment { @invariant @builtin(position) clip:vec4<f32>, @location(0) world:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) tangent:vec4<f32>, @location(3) uv:vec2<f32>, @location(4) shadow:vec4<f32> }
-fn vertex(v:Vertex, shadow:bool)->Fragment { let world=mat4x4<f32>(v.w0,v.w1,v.w2,v.w3);let p=world*vec4<f32>(v.position,1.);var f:Fragment;f.world=p.xyz;f.clip=select(camera.vp*p,camera.shadow*p,shadow);f.normal=normalize(mat3x3<f32>(v.n0.xyz,v.n1.xyz,v.n2.xyz)*v.normal);let t=(world*vec4<f32>(v.tangent.xyz,0.)).xyz;let determinant=dot(cross(v.w0.xyz,v.w1.xyz),v.w2.xyz);f.tangent=vec4<f32>(normalize(t),v.tangent.w*sign(determinant));f.uv=v.uv;f.shadow=camera.shadow*p;return f; }
+// Wind response of grown plants (workflow.z -1 wood, -2 leaves). Gusts are a smooth random
+// envelope that travels downwind at the wind speed, so neighbouring trees are struck in
+// turn. The stem is a cantilever: a static lean from drag (~speed^2) that follows the gust
+// with lag, plus a lightly damped first mode near 0.45 Hz traced as a narrow figure eight.
+// Limbs bob with continuous, spatially varying phase at 1-2 Hz in proportion to their reach;
+// leaves add a small fast shimmer. Height is preserved to first order and the root is fixed.
+fn sway_noise1(x:f32)->f32 {let i=floor(x);let f=fract(x);let u=f*f*(3.-2.*f);return mix(original_hash(vec3<f32>(i,7.,3.)),original_hash(vec3<f32>(i+1.,7.,3.)),u);}
+fn plant_sway(local:vec3<f32>,normal:vec3<f32>,uv:vec2<f32>,origin:vec3<f32>,kind:f32)->vec3<f32> {
+ let speed=length(camera.wind.xy);
+ if kind>-0.5||speed<=0.05 {return vec3<f32>(0.);}
+ let t=camera.atmosphere.x;
+ let dir=vec3<f32>(camera.wind.x,0.,camera.wind.y)/speed;let side=vec3<f32>(-dir.z,0.,dir.x);
+ // Gust envelope arriving at this tree: delayed by its downwind distance.
+ let arrival=t-dot(origin,dir)/max(speed,1.);
+ let envelope=0.65*sway_noise1(arrival*0.22)+0.35*sway_noise1(arrival*0.61+17.);
+ let gust=0.45+(0.6+0.8*camera.wind.z)*envelope*envelope;
+ let lagged=0.45+(0.6+0.8*camera.wind.z)*pow(0.65*sway_noise1((arrival-0.8)*0.22)+0.35*sway_noise1((arrival-0.8)*0.61+17.),2.);
+ let height=6.;let h=clamp(local.y/height,0.,1.2);
+ let shape=h*h*(3.-h)*0.5;
+ let drag=0.0022*speed*speed;
+ let w0=6.2831853*0.45;let ph=origin.x*0.73+origin.z*1.37;
+ let mode=0.35*drag*gust*sin(w0*t+ph);
+ let cross_mode=0.18*drag*gust*sin(2.*w0*t+ph*1.7);
+ var offset=(dir*(drag*lagged+mode)+side*cross_mode)*shape;
+ // Limbs move as rigid-ish cantilevers: one phase per limb (taken from its azimuth around
+ // the stem and its height band, both nearly constant along a limb), one rate per tree,
+ // and displacement growing with the square of the distance out along the limb.
+ let reach=length(local.xz);
+ let out=max(reach-0.3,0.);
+ let limb_weight=out*out*0.35;
+ let azimuth=normalize(local.xz+vec2<f32>(1e-4,0.));
+ let limb_phase=original_noise(vec3<f32>(azimuth*1.3,local.y*0.12)+origin*0.37)*6.2831853;
+ let limb_rate=6.2831853*(1.2+0.5*original_hash(floor(origin)+vec3<f32>(3.,9.,1.)));
+ let limb=min(limb_weight,0.8)*0.02*gust*min(speed/6.,2.)*sin(limb_rate*t+limb_phase);
+ offset+=vec3<f32>(0.,limb,0.)+dir*limb*0.5;
+ if kind<-1.5 {
+  // Each leaf card pivots on its petiole: the atlas cell's v runs from the petiole (0.12)
+  // to the tip (0.98), so displacement grows along the blade and points out of its plane.
+  // Clusters of leaves share a phase; rate and swing rise with the gust.
+  let along=clamp((fract(uv.y*2.)-0.12)/0.86,0.,1.);
+  let cluster=original_noise(local*4.+origin)*6.2831853;
+  let rate=6.2831853*(3.+3.*gust+1.5*original_noise(local*2.3));
+  let swing=(0.12+0.35*gust*gust)*min(speed/6.,1.8);
+  let angle=swing*(0.7*sin(rate*t+cluster)+0.3*sin(2.3*rate*t+cluster*1.9));
+  offset+=normalize(normal+vec3<f32>(0.,1e-4,0.))*along*0.09*angle;
+ }
+ // Keep arc length: a stem tipped sideways by d drops by about d^2/(2L).
+ let horizontal=length(offset.xz);
+ offset.y-=0.5*horizontal*horizontal/max(local.y,0.5);
+ return offset*smoothstep(0.,0.5,local.y);
+}
+fn vertex(v:Vertex, shadow:bool)->Fragment { let world=mat4x4<f32>(v.w0,v.w1,v.w2,v.w3);let p=world*vec4<f32>(v.position,1.)+vec4<f32>(plant_sway(v.position,v.normal,v.uv,v.w3.xyz,material.workflow.z),0.);var f:Fragment;f.world=p.xyz;f.clip=select(camera.vp*p,camera.shadow*p,shadow);f.normal=normalize(mat3x3<f32>(v.n0.xyz,v.n1.xyz,v.n2.xyz)*v.normal);let t=(world*vec4<f32>(v.tangent.xyz,0.)).xyz;let determinant=dot(cross(v.w0.xyz,v.w1.xyz),v.w2.xyz);f.tangent=vec4<f32>(normalize(t),v.tangent.w*sign(determinant));f.uv=v.uv;f.shadow=camera.shadow*p;return f; }
 @vertex fn vs_main(v:Vertex)->Fragment{return vertex(v,false);}
 @vertex fn vs_shadow(v:Vertex)->Fragment{return vertex(v,true);}
 @fragment fn fs_shadow(f:Fragment){if material.surface.w>=0. && textureSample(diffuse_map,material_sampler,surface_uv(f)).a*material.diffuse.a<material.surface.w{discard;}}
@@ -800,7 +851,7 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
  }else if ARCHIVE_EARLY_GI&&transmission<0.9 {early_bounce=screen_gi(f.clip.xy,f.world,normal);}
  let z=material.workflow.z;
  let nl_sun=dot(normal,camera.sun.xyz);
- let translucent_sun=z>5.5&&((z>5.5&&z<6.5)||(z>9.5&&z<11.5)||z>14.5);
+ let translucent_sun=z<-1.5||z>5.5&&((z>5.5&&z<6.5)||(z>9.5&&z<11.5)||z>14.5);
  var visibility=0.;
  if nl_sun>0.||translucent_sun {
   visibility=1.;

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "voxy-street": {
+      "command": "target/release/examples/street_mcp.exe",
+      "env": {"VOXY_STREET_MATERIALS": "D:\Source\voxy\assets\environments\original-street\materials"}
+    }
+  }
+}

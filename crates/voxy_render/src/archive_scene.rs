@@ -404,7 +404,7 @@ impl ArchiveSceneRenderer {
             Some("authored four-map PBR material"),
             6,
         )
-        .uniform_buffer(0, frag);
+        .uniform_buffer(0, wgpu::ShaderStages::VERTEX_FRAGMENT);
         for i in 1..=4 {
             material_builder = material_builder.texture_2d(i, frag, filterable_float);
         }

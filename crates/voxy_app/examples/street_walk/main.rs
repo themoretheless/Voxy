@@ -111,6 +111,15 @@ struct App {
     fov_degrees: f32,
     exposure_bias_ev: f32,
     pitch: Option<f32>,
+    /// `--eye x,y,z` / `--look x,y,z`: exact camera position and target for captures.
+    eye: Option<Vec3>,
+    look: Option<Vec3>,
+    /// `--capture-frames N`: after the snapshot, keep capturing until N frames exist
+    /// (`<stem>-00.png`...), `capture_interval` apart in wall time, then exit.
+    capture_frames: usize,
+    capture_taken: usize,
+    capture_interval: std::time::Duration,
+    capture_due: Option<Instant>,
     /// `--spawn pool` starts at the garden gate overlooking the villa pool.
     spawn_pool: bool,
     aa_validation: Option<aa_validation::AaValidation>,
@@ -224,6 +233,18 @@ impl App {
             fov_degrees: 65.,
             exposure_bias_ev: 0.,
             pitch: value("--pitch").and_then(|v| v.parse().ok()),
+            eye: value("--eye").and_then(|v| parse_vec3(&v)),
+            look: value("--look").and_then(|v| parse_vec3(&v)),
+            capture_frames: value("--capture-frames")
+                .and_then(|v| v.parse().ok())
+                .unwrap_or(0),
+            capture_taken: 0,
+            capture_interval: std::time::Duration::from_millis(
+                value("--capture-interval-ms")
+                    .and_then(|v| v.parse().ok())
+                    .unwrap_or(100),
+            ),
+            capture_due: None,
             spawn_pool: value("--spawn").as_deref() == Some("pool"),
             aa_validation: aa_validation::AaValidation::from_environment(),
             view: StreetView::FirstPerson,
@@ -395,6 +416,12 @@ impl App {
             scene.eye = eye;
             scene.direction = direction;
         }
+        if let Some(eye) = self.eye {
+            scene.eye = eye;
+            if let Some(look) = self.look {
+                scene.direction = (look - eye).normalize_or(scene.direction);
+            }
+        }
         let mut direction = scene.direction;
         if let Some(degrees) = self.pitch {
             let pitch = degrees.clamp(-80., 80.).to_radians();
@@ -407,8 +434,11 @@ impl App {
         let planar = Vec3::new(scene.direction.x, 0., scene.direction.z)
             .normalize()
             .as_dvec3();
-        let mut spawn = None;
+        let mut spawn = self.eye.map(|_| initial);
         for distance in [0., 1., 2., 3., 4., 5., -1., -2.] {
+            if spawn.is_some() {
+                break;
+            }
             let candidate = initial + planar * distance;
             if let Ok(recovered) =
                 scene
@@ -1486,10 +1516,23 @@ impl App {
                 true,
             )?;
         }
-        let capture_now = self.frames >= 120 && self.snapshot.is_some();
+        let capture_now = self.frames >= 120
+            && self.snapshot.is_some()
+            && self.capture_due.is_none_or(|due| Instant::now() >= due);
         if capture_now && let Some(path) = self.snapshot.take() {
-            snapshot(gpu, output, &path)?;
-            eprintln!("STREET snapshot {}", path.display());
+            let target = if self.capture_frames > 0 {
+                let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("frame");
+                path.with_file_name(format!("{stem}-{:02}.png", self.capture_taken))
+            } else {
+                path.clone()
+            };
+            snapshot(gpu, output, &target)?;
+            eprintln!("STREET snapshot {}", target.display());
+            self.capture_taken += 1;
+            if self.capture_taken < self.capture_frames {
+                self.snapshot = Some(path);
+                self.capture_due = Some(Instant::now() + self.capture_interval);
+            }
         }
         let mut trigger_splash = false;
         let mut trigger_photo = false;
@@ -1592,9 +1635,18 @@ impl App {
         if std::mem::take(&mut self.rebuild_scene) {
             return self.rebuild_original();
         }
-        if capture_now && gpu.config.usage.contains(wgpu::TextureUsages::COPY_SRC) {
+        if capture_now
+            && self.snapshot.is_none()
+            && gpu.config.usage.contains(wgpu::TextureUsages::COPY_SRC)
+        {
             gpu.config.usage.remove(wgpu::TextureUsages::COPY_SRC);
             gpu.surface.configure(&gpu.device, &gpu.config);
+        }
+        if capture_now && self.snapshot.is_none() && self.capture_frames > 0 {
+            eprintln!("STREET capture complete frames={}", self.capture_taken);
+            self.finished = true;
+            el.exit();
+            return Ok(());
         }
         let _ = gpu.device.poll(wgpu::PollType::Poll);
         if let Some(profile) = &mut self.profile {
@@ -1987,6 +2039,11 @@ fn world_ray_float32_images(gpu: &Gpu) -> Result<serde_json::Value, Box<dyn std:
     Ok(
         serde_json::json!({"scope":"all channels of the actual completed Float32 GI and SSR outputs","reference_textures_hashed":false,"row_padding_excluded":true,"readback_after_frame_timing":true,"images":records,"fps_qualified":false}),
     )
+}
+fn parse_vec3(v: &str) -> Option<Vec3> {
+    let mut it = v.split(',').map(|c| c.trim().parse::<f32>().ok());
+    let p = Vec3::new(it.next()??, it.next()??, it.next()??);
+    p.is_finite().then_some(p)
 }
 fn snapshot(
     gpu: &Gpu,

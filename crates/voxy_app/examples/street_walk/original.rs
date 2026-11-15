@@ -1112,6 +1112,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         age_rng: seed ^ 0x4147_4549_4e47_5f31,
         lights: Vec::new(),
     };
+    let mut street_trees = Vec::new();
     let curb_m = b.material([0.34, 0.33, 0.30], 0.76, 0., 1., 0., 0.);
     let dark_m = b.material([0.035, 0.045, 0.052], 0.35, 0.85, 5., 0., 0.);
     let wood_m = b.material([0.19, 0.075, 0.025], 0.65, 0., 4., 0., 0.);
@@ -2124,76 +2125,24 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             let crown_aspect = 0.65 + b.random() * 0.7;
             let crown_lean = Vec3::new((b.random() - 0.5) * 0.65, 0., (b.random() - 0.5) * 0.65);
             b.rng = geometry_rng;
-            let crown_rotation = Quat::from_rotation_y(crown_orientation);
-            let crown_direction = |angle: f32| {
-                crown_rotation
-                    * Vec3::new(angle.cos() * crown_aspect, 0., angle.sin() / crown_aspect)
-            };
             b.block(timber, [tx, 0.2, tz], [0.9, 0.4, 0.9]);
-            let root = Vec3::new(tx, 0.2, tz);
-            let fork = Vec3::new(
-                tx + b.random() * 0.20,
-                tree_height * 0.48,
-                tz + b.random() * 0.15,
-            );
-            b.beam(trunk, root, fork, 0.24);
-            // Hierarchical, tapered branches: each primary has secondary limbs,
-            // and leaves occupy their length as well as the tips.
-            for branch in 0..9 {
-                let a = branch as f32 * 2.399963 + b.random() * 0.8;
-                let elevation = b.random();
-                let radial = crown_radius * (0.65 + b.random() * 0.35);
-                let direction = crown_direction(a);
-                let origin = fork + Vec3::Y * (elevation - 0.3) * 0.8;
-                let elbow = origin
-                    + Vec3::new(
-                        direction.x * radial * 0.50,
-                        0.45 + elevation * 0.6,
-                        direction.z * radial * 0.50,
-                    );
-                let tip = Vec3::new(
-                    tx + direction.x * radial + crown_lean.x,
-                    tree_height * (0.72 + 0.25 * elevation),
-                    tz + direction.z * radial + crown_lean.z,
-                );
-                b.beam(trunk, origin, elbow, 0.085);
-                b.beam(trunk, elbow, tip, 0.050);
-                for twig in 0..8 {
-                    let theta = a + twig as f32 * 2.399963;
-                    let t = 0.20 + twig as f32 * 0.10;
-                    let twig_direction = crown_direction(theta);
-                    let start = elbow.lerp(tip, t);
-                    let end = start
-                        + Vec3::new(
-                            twig_direction.x * 0.55,
-                            0.12 + b.random() * 0.38,
-                            twig_direction.z * 0.55,
-                        );
-                    b.beam(trunk, start, end, 0.018);
-                    for _ in 0..45 {
-                        let along = b.random();
-                        let d =
-                            Vec3::new(b.random() - 0.5, (b.random() - 0.5) * 0.7, b.random() - 0.5)
-                                * 0.78;
-                        let size = 0.050 + b.random() * 0.035;
-                        let tilt = Quat::from_euler(
-                            glam::EulerRot::YXZ,
-                            #[allow(clippy::approx_constant)]
-                            {
-                                b.random() * 6.283185
-                            },
-                            b.random() * 2.4 - 1.2,
-                            b.random() * 2.4 - 1.2,
-                        );
-                        b.put(
-                            leaf,
-                            start.lerp(end, along) + d,
-                            Vec3::new(size * 1.2, size, size * 2.0),
-                            tilt,
-                        );
-                    }
-                }
+            // The crown itself is a self-organised (Palubicki) tree instanced after the
+            // street is laid out; burn the draws the old hand-built crown consumed so
+            // every later house keeps its authored randomness.
+            let variant =
+                (b.random() * STREET_TREE_VARIANTS as f32) as usize % STREET_TREE_VARIANTS;
+            for _ in 1..STREET_TREE_LEGACY_DRAWS {
+                b.random();
             }
+            street_trees.push(StreetTree {
+                position: Vec3::new(tx, 0.4, tz),
+                height: tree_height,
+                yaw: crown_orientation,
+                crown: Vec3::new(crown_aspect, 1., 1. / crown_aspect),
+                lean: crown_lean / tree_height,
+                variant,
+                spread: crown_radius,
+            });
         }
     }
     // Original end-of-street landmark and fountain, flanked by civic benches and planters.
@@ -2451,6 +2400,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
             glow_cyl,
         },
     );
+    let images = plant_street_trees(&mut b, &street_trees, seed)?;
     let count = b.triangles.len();
     let collision = StaticTriangleWorld::new(b.triangles)?;
     eprintln!(
@@ -2461,7 +2411,7 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
     );
     Ok(StreetScene {
         archive: None,
-        images: Vec::new(),
+        images,
         materials: b.materials,
         geometry: b.meshes,
         lights: b.lights,
@@ -2474,6 +2424,122 @@ fn geometry(seed: u64, ageing: Ageing) -> Result<StreetScene, Box<dyn std::error
         water: villa.water,
         pool_view: Some(villa.view),
     })
+}
+
+/// Distinct self-organised crowns shared by every street tree.
+const STREET_TREE_VARIANTS: usize = 5;
+/// Random draws the former hand-built crown consumed per tree (fork 2, then per
+/// limb 3 + 8 twigs × (1 + 45 leaves × 8)); kept so later houses are unchanged.
+const STREET_TREE_LEGACY_DRAWS: usize = 2 + 9 * (3 + 8 * (1 + 45 * 8));
+
+struct StreetTree {
+    position: Vec3,
+    height: f32,
+    yaw: f32,
+    crown: Vec3,
+    lean: Vec3,
+    variant: usize,
+    spread: f32,
+}
+
+/// Grows `STREET_TREE_VARIANTS` Palubicki trees with `voxy_model::plants` (light-competing
+/// metamers, apical control, shedding, Murray radii) and instances them at the street
+/// pits with per-tree height, yaw, crown aspect and lean. Wood is added to collision;
+/// leaves stay walk-through. Returns the plants' bark/leaf images.
+fn plant_street_trees(
+    b: &mut Builder,
+    trees: &[StreetTree],
+    seed: u64,
+) -> Result<Vec<ArchiveImageSource>, Box<dyn std::error::Error>> {
+    use voxy_model::plants::{PlantKind, PlantOptions, generate_world_plant_asset};
+    const MODEL_HEIGHT: f32 = 6.;
+    let mut images = Vec::new();
+    if std::env::var_os("VOXY_STREET_NO_PLANTS").is_some() {
+        return Ok(images);
+    }
+    for variant in 0..STREET_TREE_VARIANTS {
+        let asset = generate_world_plant_asset(PlantOptions {
+            kind: PlantKind::Tree,
+            seed: seed ^ 0x5452_4545_0000_0000 ^ variant as u64,
+            height: MODEL_HEIGHT,
+        })?;
+        let image_offset = images.len();
+        let material_offset = b.materials.len();
+        // The street binds every map as linear float32; plant albedo (0 bark, 2 leaf) is sRGB.
+        images.extend(asset.images.iter().enumerate().map(|(i, image)| {
+            let colour = i == 0 || i == 2;
+            ArchiveImageSource::Float {
+                width: image.width(),
+                height: image.height(),
+                pixels: image
+                    .rgba()
+                    .iter()
+                    .enumerate()
+                    .map(|(c, &v)| {
+                        let v = v as f32 / 255.;
+                        if colour && c % 4 != 3 {
+                            super::materials::srgb_to_linear(v)
+                        } else {
+                            v
+                        }
+                    })
+                    .collect(),
+            }
+        }));
+        for mut material in asset.materials {
+            for image in material.images.iter_mut().flatten() {
+                *image += image_offset;
+            }
+            // workflow.w flags foliage for vegetation wind, but the archive shader reads it
+            // as a world-space triplanar scale; plant cards must keep their own leaf UVs.
+            material.parameters.workflow[3] = 0.;
+            // Negative kinds mark grown wood (-1) and leaves (-2) for archive-shader sway.
+            material.parameters.workflow[2] = if material.double_sided { -2. } else { -1. };
+            b.materials.push(material);
+        }
+        // Mesh 0 is wood, 1 leaves; 2 is ground grass, which does not belong on paving.
+        for (id, mut mesh) in asset.geometry.into_iter().take(2).enumerate() {
+            mesh.material += material_offset;
+            mesh.instances = trees
+                .iter()
+                .filter(|t| t.variant == variant)
+                .map(|t| {
+                    let s = t.height / MODEL_HEIGHT;
+                    let width = s * (t.spread / 1.4).clamp(0.8, 1.25);
+                    let world = Mat4::from_translation(t.position)
+                        * Mat4::from_cols(
+                            glam::Vec4::X,
+                            glam::Vec4::new(t.lean.x, 1., t.lean.z, 0.),
+                            glam::Vec4::Z,
+                            glam::Vec4::W,
+                        )
+                        * Mat4::from_rotation_y(t.yaw)
+                        * Mat4::from_scale(Vec3::new(width * t.crown.x, s, width * t.crown.z));
+                    if id == 0 {
+                        for ids in mesh.indices.chunks_exact(3) {
+                            b.triangles.push(std::array::from_fn(|i| {
+                                world
+                                    .as_dmat4()
+                                    .transform_point3(
+                                        Vec3::from_array(mesh.vertices[ids[i] as usize].position)
+                                            .as_dvec3(),
+                                    )
+                                    .to_array()
+                            }));
+                        }
+                    }
+                    ArchiveInstance::new(world)
+                })
+                .collect();
+            if let Some(t) = trees.iter().find(|t| t.variant == variant) {
+                mesh.center = t.position;
+            }
+            if !mesh.instances.is_empty() {
+                b.meshes.push(mesh);
+            }
+        }
+    }
+    Ok(images)
 }
 
 #[cfg(test)]

@@ -69,6 +69,10 @@ physics_bio = { path = "../physics_bio" }
 voxy_scene = { path = "../voxy_scene" }
 
 [[example]]
+name = "street_mcp"
+path = "examples/street_mcp.rs"
+
+[[example]]
 name = "street_walk"
 path = "examples/street_walk/main.rs"
 test = true

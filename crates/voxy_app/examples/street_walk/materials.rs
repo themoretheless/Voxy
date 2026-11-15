@@ -4,7 +4,7 @@ use super::scene::StreetScene;
 use std::path::{Path, PathBuf};
 use voxy_render::archive_scene::ArchiveImageSource;
 
-fn srgb_to_linear(x: f32) -> f32 {
+pub fn srgb_to_linear(x: f32) -> f32 {
     if x <= 0.04045 {
         x / 12.92
     } else {
