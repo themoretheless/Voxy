@@ -19,7 +19,7 @@ use bytemuck::{Pod, Zeroable};
 use glam::{Mat4, Vec3};
 use probe_timing::Timing;
 use std::sync::Arc;
-use types::{LIGHT_Z_BIN_COUNT, archive_light_z_masks, display_mode, fully_covering_transmission};
+use types::{archive_light_z_masks, display_mode, fully_covering_transmission};
 use world_rays::validate_street_ray_env_config;
 
 #[repr(C)]
