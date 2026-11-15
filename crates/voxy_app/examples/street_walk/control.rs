@@ -3,6 +3,7 @@
 //! One command per stdin line, one reply per stdout line (`{"id":…,"ok":true,…}`); stdout
 //! carries nothing else. `{"event":"ready"}` is printed once the scene is warm. Commands:
 //! `camera {eye,look | place} | release`, `weather {…}`, `time {hour}`,
+//! `tour {on,time}` (the cinematic fly-through, for measuring in motion),
 //! `capture {path,frames,interval_ms,settle_ms}`, `stats {seconds}`, `quit`.
 //! The camera is pinned where it was put (no gravity) until `release`.
 use super::{App, apply_teleport_state, day_cycle, panel};
@@ -25,6 +26,7 @@ struct Stats {
     id: Value,
     until: Instant,
     frames_ms: Vec<f64>,
+    eyes: Vec<[f32; 3]>,
     gpu_from: usize,
     shading_from: usize,
 }
@@ -80,6 +82,9 @@ impl App {
         }
         if let Some(stats) = &mut control.stats {
             stats.frames_ms.push(frame_seconds * 1000.);
+            stats
+                .eyes
+                .push((self.feet + DVec3::Y * 1.65).as_vec3().to_array());
             if Instant::now() >= stats.until {
                 let stats = control.stats.take().unwrap();
                 reply(self.stats_report(stats));
@@ -149,6 +154,18 @@ impl App {
                     "eye": (feet + DVec3::Y * 1.65).to_array(),
                     "direction": self.camera.direction().to_array()
                 })))
+            }
+            "tour" => {
+                self.tour_active = command["on"].as_bool().unwrap_or(true);
+                if let Some(time) = command["time"].as_f64() {
+                    self.tour_time = time.max(0.);
+                }
+                if self.tour_active {
+                    control.pinned = None;
+                }
+                Ok(Some(
+                    json!({"tour": self.tour_active, "time": self.tour_time}),
+                ))
             }
             "release" => {
                 control.pinned = None;
@@ -228,6 +245,7 @@ impl App {
                     id: command["id"].clone(),
                     until: Instant::now() + Duration::from_secs_f64(seconds),
                     frames_ms: Vec::new(),
+                    eyes: Vec::new(),
                     gpu_from,
                     shading_from,
                 });
@@ -273,6 +291,21 @@ impl App {
         let frames = ms.len();
         let over_120 = ms.iter().filter(|t| **t > 1000. / 120.).count();
         let over_60 = ms.iter().filter(|t| **t > 1000. / 60.).count();
+        // The slowest frames in order of occurrence: when and where each hitch happened.
+        let mut order: Vec<usize> = (0..frames).collect();
+        order.sort_by(|a, b| ms[*b].total_cmp(&ms[*a]));
+        order.truncate(8);
+        order.sort_unstable();
+        let mut at = 0.;
+        let mut starts = Vec::with_capacity(frames);
+        for t in &ms {
+            starts.push(at);
+            at += t / 1000.;
+        }
+        let worst: Vec<Value> = order
+            .iter()
+            .map(|&i| json!({"frame": i, "at_s": starts[i], "ms": ms[i], "eye": stats.eyes.get(i)}))
+            .collect();
         ms.sort_by(f64::total_cmp);
         let mean = |values: &[f64]| {
             (!values.is_empty()).then(|| values.iter().sum::<f64>() / values.len() as f64)
@@ -290,7 +323,7 @@ impl App {
             "mean_fps": frames as f64 / (total / 1000.),
             "p50_ms": percentile(&ms, 0.5), "p95_ms": percentile(&ms, 0.95),
             "p99_ms": percentile(&ms, 0.99), "max_ms": ms[frames - 1],
-            "over_120hz_frames": over_120, "over_60hz_frames": over_60,
+            "over_120hz_frames": over_120, "over_60hz_frames": over_60, "worst_frames": worst,
             "gpu_scene_mean_ms": gpu_ms, "gpu_opaque_transparent_mean_ms": shading,
             "resolution": self.gpu.as_ref().map(|g| [g.config.width, g.config.height])
         })

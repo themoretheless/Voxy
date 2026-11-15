@@ -267,9 +267,16 @@ impl Server {
             "street_stats" => {
                 let session = self.session(a)?;
                 let state = session.apply(a)?;
+                let tour = a["tour"].as_bool().unwrap_or(false);
+                if tour {
+                    session.send(json!({"cmd": "tour", "time": 0}))?;
+                }
                 let mut stats = session.send(
                     json!({"cmd": "stats", "seconds": a["seconds"].as_f64().unwrap_or(3.)}),
                 )?;
+                if tour {
+                    session.send(json!({"cmd": "tour", "on": false}))?;
+                }
                 stats["applied"] = state;
                 text(&stats)
             }
@@ -391,8 +398,8 @@ fn tools() -> Value {
             "block": {"type": "integer", "minimum": 8, "maximum": 128},
             "distance_m": {"type": "number", "description": "camera-to-subject distance for px to metres"}}))),
          "annotations": {"readOnlyHint": true}},
-        {"name": "street_stats", "description": "Frame-time statistics over `seconds` (default 3) of the live window: mean FPS, p50/p95/p99/max ms, frames over the 120 Hz and 60 Hz budgets, GPU scene time.",
-         "inputSchema": with(json!({"seconds": {"type": "number", "minimum": 0.2, "maximum": 60}})),
+        {"name": "street_stats", "description": "Frame-time statistics over `seconds` (default 3) of the live window: mean FPS, p50/p95/p99/max ms, frames over the 120 Hz and 60 Hz budgets, GPU scene time, and the eight slowest frames with when and where they happened. `tour` flies the camera through the whole street while measuring (use 45 s for one pass) to find hitches in motion.",
+         "inputSchema": with(json!({"seconds": {"type": "number", "minimum": 0.2, "maximum": 60}, "tour": {"type": "boolean"}})),
          "annotations": {"readOnlyHint": true}}
     ])
 }
