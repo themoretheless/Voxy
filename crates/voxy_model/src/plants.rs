@@ -717,23 +717,23 @@ fn fbm(u: f32, v: f32, base: u32, seed: u64) -> f32 {
 fn bark_texel(u: f32, v: f32, seed: u64) -> (f32, [f32; 3], f32, f32) {
     const RIDGES: u32 = 13;
     let wander =
-        (fbm(u, v, 3, seed ^ 7) - 0.5) * 1.9 + (tile_noise(u, v, 6, 2, seed ^ 11) - 0.5) * 1.1;
+        (fbm(u, v, 3, seed ^ 0x07) - 0.5) * 1.9 + (tile_noise(u, v, 6, 2, seed ^ 0x0b) - 0.5) * 1.1;
     let x = u * RIDGES as f32 + wander;
     let lane = x.floor().rem_euclid(RIDGES as f32) as u32;
     let across = 1. - (2. * x.fract() - 1.).abs();
     // Each ridge has its own width, so furrows open and close along the stem.
-    let width = 0.22 + 0.3 * tile_noise(u, v, RIDGES, 3, seed ^ 13);
+    let width = 0.22 + 0.3 * tile_noise(u, v, RIDGES, 3, seed ^ 0x0d);
     let crest = ((across - width) / 0.35).clamp(0., 1.);
     let crest = crest * crest * (3. - 2. * crest);
     // Cross-checks: thin breaks at an irregular pitch, offset per ridge.
-    let pitch = 5. + 3. * noise(lane, 1, seed ^ 17);
-    let check_phase = (v * pitch.round() + noise(lane, 2, seed ^ 19)).fract();
+    let pitch = 5. + 3. * noise(lane, 1, seed ^ 0x11);
+    let check_phase = (v * pitch.round() + noise(lane, 2, seed ^ 0x13)).fract();
     let check = (((check_phase - 0.5).abs() - 0.455) / 0.045).clamp(0., 1.);
-    let fibre = tile_noise(u, v, 160, 10, seed ^ 31);
+    let fibre = tile_noise(u, v, 160, 10, seed ^ 0x1f);
     let flakes = fbm(u, v, 24, seed ^ 0x29);
     let h = crest * (0.72 + 0.28 * flakes) * (1. - 0.75 * check) + fibre * 0.06;
     // Weathered crests are grey; fresh furrow floors are warm dark brown.
-    let tone = 0.82 + 0.36 * fbm(u, v, 2, seed ^ 3);
+    let tone = 0.82 + 0.36 * fbm(u, v, 2, seed ^ 0x03);
     let top = [0.40 * tone, 0.37 * tone, 0.33 * tone];
     let furrow = [0.11, 0.075, 0.05];
     let t = (crest * (1. - 0.6 * check)).clamp(0., 1.);
@@ -780,8 +780,8 @@ fn leaf_texel(u: f32, v: f32, seed: u64) -> (f32, [f32; 3], f32, f32) {
     let vein_phase = s * 8. - mid * 2.2;
     let vein = (-((vein_phase.fract() - 0.5).powi(2)) * 160.).exp()
         * (1. - mid / half.max(0.05)).clamp(0., 1.);
-    let fine = tile_noise(u, v, 128, 128, seed ^ 5);
-    let speck = tile_noise(u, v, 40, 40, seed ^ 9);
+    let fine = tile_noise(u, v, 128, 128, seed ^ 0x05);
+    let speck = tile_noise(u, v, 40, 40, seed ^ 0x09);
     let tints: [[f32; 3]; 4] = [
         [0.20, 0.33, 0.07],
         [0.27, 0.40, 0.09],

@@ -2680,11 +2680,20 @@ mod tests {
     #[test]
     fn original_street_is_independent_and_walkable() {
         let scene = geometry(0x564f5859, Ageing::default()).unwrap();
-        assert!(scene.archive.is_none() && scene.images.is_empty());
+        assert!(
+            scene.archive.is_none()
+                && scene.images.len() == STREET_TREE_VARIANTS * 6
+                && scene
+                    .images
+                    .iter()
+                    .all(|i| matches!(i, ArchiveImageSource::Float { .. }))
+        );
         assert!(scene.materials.len() >= 34 && scene.lights.len() == 26);
+        // Grown leaves (kind -2) are deliberately walk-through; everything else collides.
         let rendered_triangles: usize = scene
             .geometry
             .iter()
+            .filter(|m| scene.materials[m.material].parameters.workflow[2] != -2.)
             .map(|m| m.indices.len() / 3 * m.instances.len())
             .sum();
         assert_eq!(
