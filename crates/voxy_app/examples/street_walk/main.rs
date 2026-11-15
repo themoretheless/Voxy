@@ -1,9 +1,9 @@
 //! Native street walk: original procedural scene by default, imported Bistro via --bistro.
 mod aa_validation;
-#[path = "../../src/graphics_options.rs"]
-mod graphics_options;
 mod benchmark_cycle;
 mod day_cycle;
+#[path = "../../src/graphics_options.rs"]
+mod graphics_options;
 mod materials;
 mod original;
 mod panel;
