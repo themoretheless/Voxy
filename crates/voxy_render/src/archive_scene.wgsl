@@ -614,9 +614,12 @@ fn filter_rough_ssr(reflected_scene:vec4<f32>,rough_eff:f32,fallback_radiance:ve
 // marched against the depth buffer and shaded from the reprojected previous
 // frame (which already carries earlier bounces). TAA integrates the noise.
 // Returns hit radiance and coverage; misses keep the sky/environment term.
+// The cap follows exposure: a ray that lands on a lamp carries light the
+// analytic lights already deliver, and at night exposure a fixed scene-unit cap
+// would let that single sample through as a white speck.
 fn clamp_gi_firefly(gi:vec4<f32>)->vec4<f32>{
  let luma=dot(gi.rgb,vec3<f32>(0.2126,0.7152,0.0722));
- let cap=1600.;
+ let cap=2.67/camera.viewport.z;
  if luma>cap {
   return vec4<f32>(gi.rgb*(cap/max(luma,1e-4)),gi.a);
  }
