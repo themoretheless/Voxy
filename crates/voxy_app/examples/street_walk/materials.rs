@@ -310,6 +310,9 @@ pub fn sun_direction(panorama: &voxy_render::HdrImageAsset) -> glam::Vec3 {
     .normalize()
 }
 
+/// Direct normal irradiance over diffuse horizontal irradiance under a clear sky.
+const CLEAR_SKY_BEAM_RATIO: f64 = 5.;
+
 /// Keep the display sky intact. Move only excess solar radiance from the
 /// indirect map into the shadow-casting directional source, preserving its
 /// integrated RGB irradiance rather than clamping HDR highlights.
@@ -324,8 +327,23 @@ pub fn daylight() -> Result<
     let background = sky()?;
     let sun = sun_direction(&background);
     let (lighting, irradiance) = separate_sun(&background, sun)?;
-    let intensity = 500.;
-    let rgb = irradiance.map(|c| (c * intensity as f64) as f32);
+    // Captured panoramas under-record the solar disc (haze, sensor clipping): this one
+    // gives a direct beam under three times the sky's horizontal irradiance, where a clear
+    // day measures five or more, and shadows come out grey. Raise the beam to that ratio
+    // and scale sun and sky together so sunlit ground keeps the brightness the exposure
+    // was set for.
+    let luminance = |c: [f64; 3]| 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    let sky = sky_irradiance(&lighting);
+    let (beam, diffuse) = (luminance(irradiance), luminance(sky));
+    let boost = if beam > 0. {
+        (CLEAR_SKY_BEAM_RATIO * diffuse / beam).max(1.)
+    } else {
+        1.
+    };
+    let lift = sun.y.max(0.) as f64;
+    let keep = (beam * lift + diffuse) / (boost * beam * lift + diffuse).max(1e-9);
+    let intensity = (500. * keep) as f32;
+    let rgb = irradiance.map(|c| (c * boost * intensity as f64) as f32);
     let peak = rgb.into_iter().fold(0.0_f32, f32::max);
     let colour = if peak > 0. {
         [rgb[0] / peak, rgb[1] / peak, rgb[2] / peak, peak]
@@ -333,7 +351,9 @@ pub fn daylight() -> Result<
         [1., 1., 1., 0.]
     };
     eprintln!(
-        "DAYLIGHT solar_irradiance={rgb:?} source_background_unchanged=true indirect_float32=true"
+        "DAYLIGHT solar_irradiance={rgb:?} sky_horizontal_irradiance={:?} beam_boost={boost:.2} sun_elevation={:.1} source_background_unchanged=true indirect_float32=true",
+        sky.map(|c| (c * intensity as f64) as f32),
+        sun.y.asin().to_degrees()
     );
     Ok((
         voxy_render::archive_scene::ArchiveEnvironmentSource {
@@ -344,6 +364,22 @@ pub fn daylight() -> Result<
         sun,
         colour,
     ))
+}
+/// Irradiance of the upper hemisphere on a horizontal surface.
+fn sky_irradiance(panorama: &voxy_render::HdrImageAsset) -> [f64; 3] {
+    let w = panorama.width() as usize;
+    let h = panorama.height() as usize;
+    let angular_area = std::f64::consts::TAU / w as f64 * std::f64::consts::PI / h as f64;
+    let mut sum = [0_f64; 3];
+    for y in 0..h / 2 {
+        let (sy, cy) = ((y as f64 + 0.5) / h as f64 * std::f64::consts::PI).sin_cos();
+        for p in panorama.rgb()[y * w * 3..][..w * 3].chunks_exact(3) {
+            for c in 0..3 {
+                sum[c] += p[c] as f64 * angular_area * sy * cy;
+            }
+        }
+    }
+    sum
 }
 fn separate_sun(
     source: &voxy_render::HdrImageAsset,
