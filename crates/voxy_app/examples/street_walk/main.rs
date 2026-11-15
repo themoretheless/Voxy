@@ -1,6 +1,7 @@
 //! Native street walk: original procedural scene by default, imported Bistro via --bistro.
 mod aa_validation;
 mod benchmark_cycle;
+mod control;
 mod day_cycle;
 #[path = "../../src/graphics_options.rs"]
 mod graphics_options;
@@ -120,6 +121,8 @@ struct App {
     capture_taken: usize,
     capture_interval: std::time::Duration,
     capture_due: Option<Instant>,
+    /// `--control-stdio`: JSON commands on stdin keep one warm scene for many captures.
+    control: Option<control::Control>,
     /// `--spawn pool` starts at the garden gate overlooking the villa pool.
     spawn_pool: bool,
     aa_validation: Option<aa_validation::AaValidation>,
@@ -245,6 +248,10 @@ impl App {
                     .unwrap_or(100),
             ),
             capture_due: None,
+            control: args
+                .iter()
+                .any(|a| a == "--control-stdio")
+                .then(control::Control::spawn),
             spawn_pool: value("--spawn").as_deref() == Some("pool"),
             aa_validation: aa_validation::AaValidation::from_environment(),
             view: StreetView::FirstPerson,
@@ -364,6 +371,7 @@ impl App {
         let interactive = (std::env::var("VOXY_STREET_BENCH_LIVE").as_deref() == Ok("1")
             || self.benchmark == 0. && self.profile.is_none())
             && self.snapshot.is_none()
+            && self.control.is_none()
             && self.aa_validation.is_none();
         let scale = el.primary_monitor().map_or(1., |m| m.scale_factor());
         let panel_px = if interactive {
@@ -558,7 +566,7 @@ impl App {
             wgpu::PresentMode::AutoNoVsync
         };
         config.desired_maximum_frame_latency = 2;
-        if self.snapshot.is_some() || self.aa_validation.is_some() {
+        if self.snapshot.is_some() || self.control.is_some() || self.aa_validation.is_some() {
             config.usage |= wgpu::TextureUsages::COPY_SRC;
         }
         let panel_px = panel_px.min(size.width / 2);
@@ -869,6 +877,10 @@ impl App {
         let now = Instant::now();
         let elapsed = now.duration_since(self.last).as_secs_f64();
         self.last = now;
+        self.control_poll(el, elapsed);
+        if self.finished {
+            return Ok(());
+        }
         if self.benchmark > 0. || self.profile.is_some() {
             self.input.cancel_all();
         }
@@ -949,6 +961,12 @@ impl App {
                 feet_interp,
                 dir_interp,
             );
+        }
+        if let Some(pinned) = self.control.as_ref().and_then(|c| c.pinned) {
+            self.feet = pinned;
+            self.previous = pinned;
+            self.velocity_y = 0.;
+            self.grounded = true;
         }
         let actor = self
             .previous
@@ -1634,6 +1652,10 @@ impl App {
         }
         if std::mem::take(&mut self.rebuild_scene) {
             return self.rebuild_original();
+        }
+        if capture_now && self.snapshot.is_none() && self.control.is_some() {
+            self.control_capture_done();
+            return Ok(());
         }
         if capture_now
             && self.snapshot.is_none()

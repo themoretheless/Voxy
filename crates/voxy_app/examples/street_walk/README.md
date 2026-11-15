@@ -237,3 +237,15 @@ On M4 Max / Metal, 1024×1024 reduced GI+SSR regions from 144 to 24 and active f
 
 
 The subsequent M4 Max screening pair retained **1280×1280** as a faster explicit setting: median 1036.674 ms versus a same-executable 1024×1024 control at 1153.130 ms (about 10.1% lower time). GI+SSR regions fall from 24 to 12. Input/output are 125 MiB each; two colour caches are 25 MiB each, adding 108 MiB relative to 1024×1024. The checked run reported zero sticky Float32 mismatches and PNG/PFM remained byte-identical. Device admission and nonzero/overflow checks still apply; the legacy default remains unchanged. This is not a full-cycle or 120 FPS qualification. Latest settings/evidence: `artifacts/original-street-realism-2026-10-15/world-ray-batching-v2/`.
+
+## Agent access (MCP)
+
+`cargo build --release -p voxy_app --example street_walk --example street_mcp` builds the
+`voxy-street` stdio MCP server registered in `.mcp.json`. It keeps one warm
+`street_walk --control-stdio` process (JSON commands on stdin, see `control.rs`) and exposes
+`street_set` (camera by `eye`/`look` or named place, wind, weather, hour), `street_capture`
+(frames and a motion heat map), `street_motion` (block-matched sway amplitude, frequency and
+neighbour coherence), `street_stats` (frame-time percentiles, GPU time) and
+`street_open`/`street_close`. `python tools/test_street_mcp.py` checks the protocol without a
+GPU; `--live --output DIR` runs the scene. Standalone captures also work without the server:
+`--eye x,y,z --look x,y,z --snapshot out.png --capture-frames N --capture-interval-ms M`.

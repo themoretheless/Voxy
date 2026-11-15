@@ -1,8 +1,11 @@
 {
   "mcpServers": {
+    "voxy-scene": {
+      "command": "target/debug/examples/scene_mcp.exe",
+      "args": ["assets/scenes/design.scene.json"]
+    },
     "voxy-street": {
-      "command": "target/release/examples/street_mcp.exe",
-      "env": {"VOXY_STREET_MATERIALS": "D:\Source\voxy\assets\environments\original-street\materials"}
+      "command": "target/release/examples/street_mcp.exe"
     }
   }
 }
