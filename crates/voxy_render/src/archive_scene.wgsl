@@ -48,51 +48,66 @@ struct Lights { count:vec4<u32>, values:array<Light,128>, z_masks:array<vec4<u32
 struct Vertex { @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) tangent:vec4<f32>, @location(3) uv:vec2<f32>, @location(4) w0:vec4<f32>, @location(5) w1:vec4<f32>, @location(6) w2:vec4<f32>, @location(7) w3:vec4<f32>, @location(8) n0:vec4<f32>, @location(9) n1:vec4<f32>, @location(10) n2:vec4<f32> }
 // Match clip positions across depth, material, shadow and guide pipelines.
 struct Fragment { @invariant @builtin(position) clip:vec4<f32>, @location(0) world:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) tangent:vec4<f32>, @location(3) uv:vec2<f32>, @location(4) shadow:vec4<f32> }
-// Wind response of grown plants (workflow.z -1 wood, -2 leaves). Gusts are a smooth random
-// envelope that travels downwind at the wind speed, so neighbouring trees are struck in
-// turn. The stem is a cantilever: a static lean from drag (~speed^2) that follows the gust
-// with lag, plus a lightly damped first mode near 0.45 Hz traced as a narrow figure eight.
-// Limbs bob with continuous, spatially varying phase at 1-2 Hz in proportion to their reach;
-// leaves add a small fast shimmer. Height is preserved to first order and the root is fixed.
+// Wind response of grown plants (workflow.z -1 wood, -2 leaves), built as a hierarchy the
+// way a real crown moves. The stem is stiff: a small lean from drag (~speed^2) that follows
+// the gust envelope, which travels downwind at the wind speed so trees are struck in turn.
+// Limbs carry most of the visible motion: each swings on its own aperiodic track (noise in
+// time, keyed by the limb's azimuth and height so a limb stays rigid), driven by eddies
+// advected through the crown. Leaves flutter on their petioles in patches: where an eddy
+// passes they shiver hard, elsewhere they hang nearly still. The root is fixed.
 fn sway_noise1(x:f32)->f32 {let i=floor(x);let f=fract(x);let u=f*f*(3.-2.*f);return mix(original_hash(vec3<f32>(i,7.,3.)),original_hash(vec3<f32>(i+1.,7.,3.)),u);}
 fn plant_sway(local:vec3<f32>,normal:vec3<f32>,uv:vec2<f32>,origin:vec3<f32>,kind:f32)->vec3<f32> {
  let speed=length(camera.wind.xy);
  if kind>-0.5||speed<=0.05 {return vec3<f32>(0.);}
  let t=camera.atmosphere.x;
  let dir=vec3<f32>(camera.wind.x,0.,camera.wind.y)/speed;let side=vec3<f32>(-dir.z,0.,dir.x);
+ let strength=min(speed/6.,2.5);
  // Gust envelope arriving at this tree: delayed by its downwind distance.
  let arrival=t-dot(origin,dir)/max(speed,1.);
  let envelope=0.65*sway_noise1(arrival*0.22)+0.35*sway_noise1(arrival*0.61+17.);
  let gust=0.45+(0.6+0.8*camera.wind.z)*envelope*envelope;
  let lagged=0.45+(0.6+0.8*camera.wind.z)*pow(0.65*sway_noise1((arrival-0.8)*0.22)+0.35*sway_noise1((arrival-0.8)*0.61+17.),2.);
+ // Eddies carried through the crown by the wind: metre-scale for limbs, finer for leaves.
+ let carried=origin+local-dir*(speed*0.55*t);
+ let eddy=original_noise(carried*0.45);
+ let fine=original_noise(carried*1.3+vec3<f32>(31.,5.,17.));
  let height=6.;let h=clamp(local.y/height,0.,1.2);
  let shape=h*h*(3.-h)*0.5;
- let drag=0.0022*speed*speed;
+ let drag=0.0007*speed*speed;
  let w0=6.2831853*0.45;let ph=origin.x*0.73+origin.z*1.37;
- let mode=0.35*drag*gust*sin(w0*t+ph);
- let cross_mode=0.18*drag*gust*sin(2.*w0*t+ph*1.7);
+ let mode=0.3*drag*gust*sin(w0*t+ph);
+ let cross_mode=0.15*drag*gust*sin(2.*w0*t+ph*1.7);
  var offset=(dir*(drag*lagged+mode)+side*cross_mode)*shape;
- // Limbs move as rigid-ish cantilevers: one phase per limb (taken from its azimuth around
- // the stem and its height band, both nearly constant along a limb), one rate per tree,
- // and displacement growing with the square of the distance out along the limb.
+ // Limbs: the key is constant along a limb (azimuth around the stem, slowly sheared with
+ // height so tiers differ), so a limb moves as one piece; time is the third noise axis, so
+ // neighbouring limbs neither repeat nor drift into a travelling wave.
  let reach=length(local.xz);
- let out=max(reach-0.3,0.);
- let limb_weight=out*out*0.35;
+ let out=max(reach-0.25,0.);
+ let limb_weight=min(out*out*0.4,1.3);
  let azimuth=normalize(local.xz+vec2<f32>(1e-4,0.));
- let limb_phase=original_noise(vec3<f32>(azimuth*1.3,local.y*0.12)+origin*0.37)*6.2831853;
- let limb_rate=6.2831853*(1.2+0.5*original_hash(floor(origin)+vec3<f32>(3.,9.,1.)));
- let limb=min(limb_weight,0.8)*0.02*gust*min(speed/6.,2.)*sin(limb_rate*t+limb_phase);
- offset+=vec3<f32>(0.,limb,0.)+dir*limb*0.5;
+ let key=azimuth*1.7+origin.xz*0.37+local.y*vec2<f32>(0.23,-0.17);
+ let along_wind=original_noise(vec3<f32>(key,t*1.25))*2.-1.;
+ let across=original_noise(vec3<f32>(key+vec2<f32>(13.,7.),t*1.6))*2.-1.;
+ let lift=original_noise(vec3<f32>(key+vec2<f32>(-9.,21.),t*1.45))*2.-1.;
+ let push=gust*(0.35+1.3*eddy);
+ let limb=limb_weight*strength*push;
+ offset+=dir*limb*(0.018+0.05*along_wind)+side*limb*0.032*across+vec3<f32>(0.,limb*0.028*lift,0.);
  if kind<-1.5 {
+  // Twigs carry their leaves a little way with each fine eddy.
+  let patch_gust=gust*(0.15+1.7*fine*fine);
+  let twig=original_noise(vec3<f32>(local.xz*1.9+origin.xz,local.y*1.9+t*2.6))*2.-1.;
+  offset+=dir*twig*0.022*strength*patch_gust;
   // Each leaf card pivots on its petiole: the atlas cell's v runs from the petiole (0.12)
   // to the tip (0.98), so displacement grows along the blade and points out of its plane.
-  // Clusters of leaves share a phase; rate and swing rise with the gust.
+  // The flutter rate is one constant (a spatially varying rate would shear the phase
+  // field ever finer); phase varies between clusters and the swing follows the eddies.
   let along=clamp((fract(uv.y*2.)-0.12)/0.86,0.,1.);
   let cluster=original_noise(local*4.+origin)*6.2831853;
-  let rate=6.2831853*(3.+3.*gust+1.5*original_noise(local*2.3));
-  let swing=(0.12+0.35*gust*gust)*min(speed/6.,1.8);
-  let angle=swing*(0.7*sin(rate*t+cluster)+0.3*sin(2.3*rate*t+cluster*1.9));
-  offset+=normalize(normal+vec3<f32>(0.,1e-4,0.))*along*0.09*angle;
+  let rate=6.2831853*4.3;
+  let tremble=original_noise(vec3<f32>(local.xz*2.7,local.y*2.7+t*5.))*2.-1.;
+  let swing=(0.05+0.6*patch_gust)*min(strength,1.8);
+  let angle=swing*(0.45*sin(rate*t+cluster)+0.25*sin(1.83*rate*t+cluster*1.9)+0.5*tremble);
+  offset+=normalize(normal+vec3<f32>(0.,1e-4,0.))*along*0.1*angle;
  }
  // Keep arc length: a stem tipped sideways by d drops by about d^2/(2L).
  let horizontal=length(offset.xz);
