@@ -703,28 +703,6 @@ fn tile_noise(u: f32, v: f32, nx: u32, ny: u32, seed: u64) -> f32 {
     let d = noise((ix + 1) % nx, (iy + 1) % ny, seed);
     (a + (b - a) * sx) * (1. - sy) + (c + (d - c) * sx) * sy
 }
-/// Tileable cellular noise: (F1, F2) distances to jittered feature points.
-fn cells(u: f32, v: f32, nx: u32, ny: u32, seed: u64) -> (f32, f32) {
-    let x = u * nx as f32;
-    let y = v * ny as f32;
-    let (ix, iy) = (x.floor() as i64, y.floor() as i64);
-    let mut f = (f32::INFINITY, f32::INFINITY);
-    for dy in -1..=1 {
-        for dx in -1..=1 {
-            let cx = (ix + dx).rem_euclid(nx as i64) as u32;
-            let cy = (iy + dy).rem_euclid(ny as i64) as u32;
-            let px = (ix + dx) as f32 + noise(cx, cy, seed);
-            let py = (iy + dy) as f32 + noise(cx, cy, seed ^ 0x55);
-            let d = ((px - x).powi(2) + (py - y).powi(2)).sqrt();
-            if d < f.0 {
-                f = (d, f.0);
-            } else if d < f.1 {
-                f.1 = d;
-            }
-        }
-    }
-    f
-}
 fn fbm(u: f32, v: f32, base: u32, seed: u64) -> f32 {
     let mut sum = 0.;
     let mut amplitude = 0.5;
@@ -736,38 +714,49 @@ fn fbm(u: f32, v: f32, base: u32, seed: u64) -> f32 {
     }
     sum / 0.9375
 }
-/// Bark: vertical plates split by deep fissures, with lichen in sheltered patches.
+/// Bark of a mature street tree (lime/plane): long interlacing ridges that wander, split
+/// and rejoin, dark furrows between them, occasional cross-checks breaking a ridge into
+/// segments, fibrous grain along the stem, weathered grey crests and lichen patches.
+/// `u` wraps around the stem and `v` runs along it; every term tiles in both.
 fn bark_texel(u: f32, v: f32, seed: u64) -> (f32, [f32; 3], f32, f32) {
-    let warp = fbm(u, v, 4, seed ^ 7) - 0.5;
-    let (f1, f2) = cells(u + warp * 0.08, v, 11, 4, seed);
-    let edge = f2 - f1;
-    let plate = (edge * 5.).clamp(0., 1.).powf(0.6);
-    let grain = tile_noise(u, v, 96, 12, seed ^ 31);
-    let flakes = fbm(u, v, 16, seed ^ 0x29);
-    let h = plate * (0.55 + flakes * 0.35) + grain * 0.08;
-    let tone = 0.75 + 0.5 * fbm(u, v, 3, seed ^ 3);
-    let mut rgb = [
-        (0.30 + 0.16 * plate + 0.05 * flakes) * tone,
-        (0.26 + 0.13 * plate + 0.04 * flakes) * tone,
-        (0.21 + 0.10 * plate + 0.03 * flakes) * tone,
-    ];
-    // Fissure floors are darker and redder where bark is fresh.
-    let floor = 1. - plate;
-    rgb = [
-        rgb[0] * (1. - 0.55 * floor) + 0.04 * floor,
-        rgb[1] * (1. - 0.62 * floor),
-        rgb[2] * (1. - 0.68 * floor),
-    ];
-    let lichen = ((fbm(u, v, 6, seed ^ 0x63) - 0.58) * 9.).clamp(0., 1.) * plate;
-    rgb = [
-        rgb[0] + (0.46 - rgb[0]) * lichen * 0.75,
-        rgb[1] + (0.52 - rgb[1]) * lichen * 0.75,
-        rgb[2] + (0.40 - rgb[2]) * lichen * 0.75,
-    ];
+    const RIDGES: u32 = 13;
+    let wander =
+        (fbm(u, v, 3, seed ^ 0x07) - 0.5) * 1.9 + (tile_noise(u, v, 6, 2, seed ^ 0x0b) - 0.5) * 1.1;
+    let x = u * RIDGES as f32 + wander;
+    let lane = x.floor().rem_euclid(RIDGES as f32) as u32;
+    let across = 1. - (2. * x.fract() - 1.).abs();
+    // Each ridge has its own width, so furrows open and close along the stem.
+    let width = 0.22 + 0.3 * tile_noise(u, v, RIDGES, 3, seed ^ 0x0d);
+    let crest = ((across - width) / 0.35).clamp(0., 1.);
+    let crest = crest * crest * (3. - 2. * crest);
+    // Cross-checks: thin breaks at an irregular pitch, offset per ridge.
+    let pitch = 5. + 3. * noise(lane, 1, seed ^ 0x11);
+    let check_phase = (v * pitch.round() + noise(lane, 2, seed ^ 0x13)).fract();
+    let check = (((check_phase - 0.5).abs() - 0.455) / 0.045).clamp(0., 1.);
+    let fibre = tile_noise(u, v, 160, 10, seed ^ 0x1f);
+    let flakes = fbm(u, v, 24, seed ^ 0x29);
+    let h = crest * (0.72 + 0.28 * flakes) * (1. - 0.75 * check) + fibre * 0.06;
+    // Weathered crests are grey; fresh furrow floors are warm dark brown.
+    let tone = 0.82 + 0.36 * fbm(u, v, 2, seed ^ 0x03);
+    let top = [0.40 * tone, 0.37 * tone, 0.33 * tone];
+    let furrow = [0.11, 0.075, 0.05];
+    let t = (crest * (1. - 0.6 * check)).clamp(0., 1.);
+    let mut rgb = [0usize, 1, 2].map(|i| {
+        furrow[i] + (top[i] - furrow[i]) * t + (flakes - 0.5) * 0.05 + (fibre - 0.5) * 0.025
+    });
+    // Crustose lichen in grey-green patches on crests, with sparse orange colonies.
+    let patch = ((fbm(u, v, 5, seed ^ 0x63) - 0.56) * 7.).clamp(0., 1.) * crest;
+    let speckle = ((tile_noise(u, v, 90, 30, seed ^ 0x71) - 0.55) * 6.).clamp(0., 1.);
+    let lichen = (patch * (0.55 + 0.45 * speckle)).clamp(0., 1.);
+    let orange = ((fbm(u, v, 9, seed ^ 0x83) - 0.7) * 8.).clamp(0., 1.) * crest * speckle;
+    for i in 0..3 {
+        rgb[i] += ([0.52, 0.56, 0.45][i] - rgb[i]) * lichen * 0.7;
+        rgb[i] += ([0.62, 0.38, 0.12][i] - rgb[i]) * orange * 0.6;
+    }
     (
-        h + lichen * 0.05,
-        rgb,
-        0.82 + 0.12 * floor - 0.06 * lichen,
+        h + lichen * 0.03,
+        rgb.map(|c| c.max(0.)),
+        0.93 - 0.08 * crest + 0.05 * check,
         1.,
     )
 }
@@ -795,8 +784,8 @@ fn leaf_texel(u: f32, v: f32, seed: u64) -> (f32, [f32; 3], f32, f32) {
     let vein_phase = s * 8. - mid * 2.2;
     let vein = (-((vein_phase.fract() - 0.5).powi(2)) * 160.).exp()
         * (1. - mid / half.max(0.05)).clamp(0., 1.);
-    let fine = tile_noise(u, v, 128, 128, seed ^ 5);
-    let speck = tile_noise(u, v, 40, 40, seed ^ 9);
+    let fine = tile_noise(u, v, 128, 128, seed ^ 0x05);
+    let speck = tile_noise(u, v, 40, 40, seed ^ 0x09);
     let tints: [[f32; 3]; 4] = [
         [0.20, 0.33, 0.07],
         [0.27, 0.40, 0.09],

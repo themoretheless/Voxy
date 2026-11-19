@@ -557,6 +557,8 @@ impl ArchiveSceneRenderer {
         // completed coefficients instead of indexing beyond the probe list.
         self.queue
             .write_buffer(&self.probe_grid, 0, bytemuck::bytes_of(&bake.grid));
+        let sun = self.sun_colour[3].max(1.);
+        self.probe_daylight = [sun, self.daylight_level(sun)];
         self.set_linear_output(bake.saved.1);
         self.set_camera_projection(bake.saved.2, bake.saved.3);
         self.set_antialiasing(bake.saved.0)?;
@@ -682,6 +684,8 @@ impl ArchiveSceneRenderer {
         cache.upload_to_buffer(&self.queue, &self.probe_sh);
         self.queue
             .write_buffer(&self.probe_grid, 0, bytemuck::bytes_of(&grid));
+        let sun = self.sun_colour[3].max(1.);
+        self.probe_daylight = [sun, self.daylight_level(sun)];
         self.previous_vp = None;
         self.reset_temporal_history();
         Ok(true)

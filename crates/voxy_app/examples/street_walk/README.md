@@ -7,8 +7,8 @@ from Poly Haven in `assets/environments/original-street/materials/provenance.jso
 `daylight-provenance.json`; these are external material data, not generated artwork.
 
 The current quality pass varies building frontage widths, setbacks, floor and opening
-counts, plaster/brick colours, balconies, shutters and shop entrances. Sidewalk trees use four seeded variants from the same native plant generator as the voxel world,
-with hierarchical branches, geometric leaves and generated bark and leaf materials. Every rendered triangle
+counts, plaster/brick colours, balconies, shutters and shop entrances. Sidewalk trees use five seeded variants from the same native plant generator as the voxel world,
+with hierarchical branches, geometric leaves, linear float32 generated bark/leaf materials and wind sway. Every rendered triangle
 is retained in the f64 collision world. Full 4K source maps retain their 8/16-bit precision
 in linear RGBA32F GPU textures with complete mip chains and 16x anisotropic sampling.
 There is no reduced rendering resolution, geometry decimation or distance LOD.
@@ -243,3 +243,15 @@ On M4 Max / Metal, 1024×1024 reduced GI+SSR regions from 144 to 24 and active f
 
 
 The subsequent M4 Max screening pair retained **1280×1280** as a faster explicit setting: median 1036.674 ms versus a same-executable 1024×1024 control at 1153.130 ms (about 10.1% lower time). GI+SSR regions fall from 24 to 12. Input/output are 125 MiB each; two colour caches are 25 MiB each, adding 108 MiB relative to 1024×1024. The checked run reported zero sticky Float32 mismatches and PNG/PFM remained byte-identical. Device admission and nonzero/overflow checks still apply; the legacy default remains unchanged. This is not a full-cycle or 120 FPS qualification. Latest settings/evidence: `artifacts/original-street-realism-2026-10-15/world-ray-batching-v2/`.
+
+## Agent access (MCP)
+
+`cargo build --release -p voxy_app --example street_walk --example street_mcp` builds the
+`voxy-street` stdio MCP server registered in `.mcp.json`. It keeps one warm
+`street_walk --control-stdio` process (JSON commands on stdin, see `control.rs`) and exposes
+`street_set` (camera by `eye`/`look` or named place, wind, weather, hour), `street_capture`
+(frames and a motion heat map), `street_motion` (block-matched sway amplitude, frequency and
+neighbour coherence), `street_stats` (frame-time percentiles, GPU time) and
+`street_open`/`street_close`. `python tools/test_street_mcp.py` checks the protocol without a
+GPU; `--live --output DIR` runs the scene. Standalone captures also work without the server:
+`--eye x,y,z --look x,y,z --snapshot out.png --capture-frames N --capture-interval-ms M`.

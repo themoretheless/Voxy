@@ -392,7 +392,8 @@ pub(crate) fn grid(
     Some((
         ProbeGrid {
             origin: [min.x, min.y, min.z, 1.],
-            spacing: [step.x, step.y, step.z, 0.],
+            // w scales the baked irradiance when daylight changes after the bake.
+            spacing: [step.x, step.y, step.z, 1.],
             dims: [dims.x, dims.y, dims.z, 0],
         },
         points,

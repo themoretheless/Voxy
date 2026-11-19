@@ -440,7 +440,11 @@ fn screen_reflection(origin:vec3<f32>, direction:vec3<f32>, ceiling:f32)->vec4<f
   let ssr_fade = 1. - smoothstep(0.06, 0.2, length(spread));
   if ssr_fade > 0. {
     let ssr = screen_reflection(f.world + n_up * 0.02, normalize(vec3<f32>(r.x, max(r.y, 0.02), r.z)), 1e9);
-    reflected = mix(reflected, ssr.rgb, ssr.a * ssr_fade);
+    // A mirror sample through unresolved ripples either hits a lamp or misses it, which
+    // shows as isolated sparks; bound it towards display white as the slope spread grows.
+    let ssr_cap = mix(40., 2.5, smoothstep(0.004, 0.03, length(spread))) / camera.viewport.z;
+    let ssr_luma = dot(ssr.rgb, vec3<f32>(0.2126, 0.7152, 0.0722));
+    reflected = mix(reflected, ssr.rgb * min(1., ssr_cap / max(ssr_luma, 1e-4)), ssr.a * ssr_fade);
   }
   let fr_eff = fr * meniscus;
 

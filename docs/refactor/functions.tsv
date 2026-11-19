@@ -1,7 +1,7 @@
 location	function	lines	params
 crates/physics/src/liquid/multi_body.rs:162	solve_contact	1282	14
 crates/voxy_ray_probe/src/material_sides_audit.rs:83	run	1194	2
-crates/voxy_render/src/archive_scene.rs:302	new_with_environment	1136	13
+crates/voxy_render/src/archive_scene.rs:305	new_with_environment	1137	13
 crates/physics_bio/src/biomechanics/inertia/implicit.rs:316	advance_implicit_surface_quadrature	1064	7
 crates/voxy_ray_probe/src/world_exact.rs:8	probe	993	7
 crates/voxy_render/src/world_nearest_job.rs:252	with_options	952	6
@@ -108,8 +108,8 @@ crates/voxy_app/src/cpu_replay.rs:10	run	214	3
 crates/voxy_demos/src/tissue_demo/continuum_step.rs:116	step_continuum_targets_with_skin	214	5
 crates/voxy_render/src/archive_world_ray_resolve.rs:853	encode_profiled	214	7
 crates/physics_astro/src/astrophysics/spherical/balanced.rs:146	step_composition_balanced_impl	213	8
+crates/voxy_render/src/archive_scene/probe_timing.rs:378	advance_probe_face	213	3
 crates/voxy_editor/src/animation_runtime_checkpoint.rs:268	prepare	212	6
-crates/voxy_render/src/archive_scene/probe_timing.rs:378	advance_probe_face	211	3
 crates/voxy_demos/src/gpu_hair_joint.rs:776	run_equality_tasks	209	9
 crates/physics/src/liquid/droplet_merge.rs:29	merge_droplets	208	3
 crates/physics_bio/src/biomechanics/inertia/viscous.rs:313	step_viscoelastic_support_accuracy	206	7
@@ -284,7 +284,7 @@ crates/voxy_runtime/src/bootstrap.rs:761	rebuild_vertical_chunks_from_snapshots	
 crates/voxy_shell/src/scene_app/init.rs:9	initialize	133	2
 crates/voxy_cuda/src/pose_eval.rs:267	validate	132	2
 crates/voxy_editor/src/app/viewport.rs:1039	update_editor_panels_for_frame	132	1
-crates/voxy_model/src/plants.rs:1153	generate	132	3
+crates/voxy_model/src/plants.rs:1142	generate	132	3
 crates/voxy_render/src/archive_depth_bounds.rs:47	create	132	6
 crates/voxy_web/src/project_game/model_upload.rs:64	load_model	132	7
 crates/physics_voxel/src/water.rs:148	step_liquid	131	7
@@ -320,7 +320,7 @@ crates/voxy_ray_probe/src/specular_guides.rs:1293	render_rough_image	126	3
 crates/voxy_render/src/ocean/mod.rs:916	create_screen	126	8
 crates/physics/src/plasticity/mesh.rs:165	equilibrate	125	5
 crates/physics_astro/src/astrophysics/spherical_radiation/spectrum.rs:216	radiate_free_free	125	6
-crates/voxy_model/src/plants.rs:1024	grow	125	2
+crates/voxy_model/src/plants.rs:1013	grow	125	2
 crates/voxy_ray_probe/src/shared_job_audit.rs:231	run	125	2
 crates/voxy_render/src/archive_water.rs:487	encode	125	4
 crates/voxy_world/src/world.rs:451	commit	125	2
@@ -538,7 +538,7 @@ crates/physics_bio/src/biomechanics/inertia/implicit.rs:89	average_material_path
 crates/voxy_demos/src/female_rig.rs:972	jump_pose	94	2
 crates/voxy_gameplay/src/audio_runtime.rs:54	synchronize_published	94	4
 crates/voxy_gpu_core/src/joint_contact_dot.rs:667	build	94	3
-crates/voxy_render/src/archive_scene/probe_timing.rs:766	capture_hdr_stages	94	5
+crates/voxy_render/src/archive_scene/probe_timing.rs:770	capture_hdr_stages	94	5
 crates/voxy_render/src/skinned_lod/checkpoint.rs:69	checkpoint	94	2
 crates/voxy_render/src/surface/temporal.rs:394	encode_temporal_inputs	94	5
 crates/voxy_runtime/src/bootstrap.rs:372	build_vertical_procedural_scene	94	5
@@ -569,7 +569,7 @@ crates/voxy_editor/src/app/resource_checkpoint/play.rs:104	capture_play_resource
 crates/voxy_editor/src/component_collections.rs:357	collection_action	92	4
 crates/voxy_gameplay/src/joints.rs:190	step_physics_joints	92	3
 crates/voxy_gameplay/src/liquid_runtime.rs:517	supported_shape_events	92	8
-crates/voxy_model/src/plants.rs:902	generate_world_plant_asset	92	1
+crates/voxy_model/src/plants.rs:891	generate_world_plant_asset	92	1
 crates/voxy_storage/src/region.rs:281	recover	92	3
 crates/physics/src/hair/velocity_contacts.rs:145	add_constraint	91	3
 crates/physics/src/liquid/droplet_optics.rs:223	directional_scattered_radiance_segment	91	6
@@ -988,7 +988,7 @@ crates/voxy_editor/src/retarget_authoring.rs:140	begin_retarget	68	1
 crates/voxy_gameplay/src/foot_placement/contact_events.rs:23	zero_windows	68	4
 crates/voxy_gameplay/src/foot_placement/contact_events.rs:91	mixed_swing	68	5
 crates/voxy_gameplay/src/liquid_runtime/body_world.rs:362	rigid_environment_support_contacts_with_error	68	5
-crates/voxy_model/src/plants.rs:819	texture_set	68	2
+crates/voxy_model/src/plants.rs:808	texture_set	68	2
 crates/voxy_render/src/native_vegetation/culling.rs:84	shadow_receivers	68	3
 crates/voxy_render/src/ray.rs:644	create_job	68	3
 crates/voxy_render/src/reconstruction_pass.rs:536	encode_object_ids	68	7
@@ -1249,7 +1249,7 @@ crates/physics_astro/src/astrophysics/equilibrium.rs:149	equilibrate_stellar_fre
 crates/physics_bio/src/biomechanics/vascular_pore.rs:45	implicit_vascular_pore_step	29	12
 crates/physics_voxel/src/moisture.rs:525	advance	29	9
 crates/voxy_animation/src/ragdoll.rs:753	spring_bone_verlet_step	29	8
-crates/voxy_render/src/archive_scene.rs:242	new	29	12
+crates/voxy_render/src/archive_scene.rs:245	new	29	12
 crates/voxy_gameplay/src/angular_sweep.rs:815	sweep_rigid_approximation	28	11
 crates/voxy_render/src/compute_chain.rs:172	encode_two_stage	28	9
 crates/physics_bio/src/lymph/wall.rs:86	momentum_response	27	9
@@ -1297,7 +1297,7 @@ crates/physics_bio/src/biomechanics/implicit_pore.rs:142	implicit_cell_pore_boun
 crates/voxy_editor/src/animation_runtime.rs:335	capture_owner_reference_with_scale	20	8
 crates/voxy_gameplay/src/foot_contact.rs:104	solve_frame	20	8
 crates/voxy_web/src/browser.rs:1415	encode_scene	20	8
-crates/voxy_render/src/archive_scene.rs:277	new_with_images	19	12
+crates/voxy_render/src/archive_scene.rs:280	new_with_images	19	12
 crates/physics/src/liquid/multi_body/world_trait.rs:621	sweep_supported_rigid_pair_point_motion	18	8
 crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs:600	cross_attached_dot_range	17	8
 crates/physics/src/liquid/multi_body/world_trait.rs:413	particle_body_impact_patch	16	9

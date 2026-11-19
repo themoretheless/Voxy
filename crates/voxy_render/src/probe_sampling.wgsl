@@ -43,5 +43,5 @@ fn probe_irradiance(p:vec3<f32>,n:vec3<f32>)->vec4<f32>{
     sum+=e101*(f.x*nf.y*f.z);
     sum+=e011*(nf.x*f.y*f.z);
     sum+=e111*(f.x*f.y*f.z);
-    return vec4<f32>(sum,fade);
+    return vec4<f32>(sum*probe_grid.spacing.w,fade);
 }
