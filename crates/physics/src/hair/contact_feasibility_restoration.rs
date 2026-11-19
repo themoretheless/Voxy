@@ -112,6 +112,10 @@ fn restore_candidate_mode(
         energy_reference,
     )
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn restore_candidate_mode_impl<const REUSE: bool>(
     rods: &mut [HairRod],
     meshes: &[TriangleMesh],
@@ -166,6 +170,8 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
         &[false, true]
     };
     let limit = if energy_reference.is_some() { 8 } else { 64 };
+    let mut trial = Vec::new();
+    let mut accepted_model = None;
     for &zero_free in phases {
         let mut merits = Vec::with_capacity(limit + 1);
         let mut changes = Vec::with_capacity(limit + 1);
@@ -195,7 +201,10 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
             let (mut rows, path_merit) = {
                 let _stage =
                     RecoveryTiming::new(timing, "restoration_model", Some(iteration), None);
-                safe_motion::restoration_model(&working, &start, &pairs, radius)?
+                match accepted_model.take() {
+                    Some(model) => model,
+                    None => safe_motion::restoration_model(&working, &start, &pairs, radius)?,
+                }
             };
             let merit = HairSystem::contact_merit(&working, &pairs, radius)? + path_merit;
             let work = HairSystem::elastic_energy_change(&working, &before, dt)?;
@@ -208,13 +217,16 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
                     "HAIR CONTACT RECOVERY zero_free={zero_free} iteration={iteration} merit={merit:e} work_j={work:e}"
                 );
             }
+            // With preservation enabled, both the initial pose and each
+            // accepted trial already passed this exact strand trajectory check.
             let admitted = {
                 let _stage =
                     RecoveryTiming::new(timing, "whole_motion_admission", Some(iteration), None);
                 merit == 0.
                     && (energy_reference.is_none() || work < 0.)
                     && strain <= 0.05
-                    && contact::admit_staged_strands(&working, radius).is_ok()
+                    && (REUSE && preserve_clear_strands
+                        || contact::admit_staged_strands(&working, radius).is_ok())
                     && mesh_motion::admit(&working, meshes, radius).is_ok()
             };
             if admitted {
@@ -225,7 +237,7 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
                 {
                     return Err("contact restoration moved a prescribed root");
                 }
-                rods.clone_from_slice(&working);
+                rods.swap_with_slice(&mut working);
                 return Ok(true);
             }
             // A feasibility-only SOC cannot qualify an objective-increasing
@@ -326,7 +338,7 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
                 let _trial =
                     RecoveryTiming::new(timing, "backtrack", Some(iteration), Some(backtrack));
                 let scale = 2f64.powi(-(backtrack as i32));
-                let mut trial = working.clone();
+                trial.clone_from(&working);
                 for (r, rod) in trial.iter_mut().enumerate() {
                     for i in 1..rod.x.len() {
                         rod.x[i] = add(rod.x[i], mul(direction.linear[r][i], scale * trust[r]));
@@ -347,7 +359,7 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
                     );
                     refresh(&mut trial, meshes, radius)?
                 };
-                let (_, path) = {
+                let (trial_rows, path) = {
                     let _stage = RecoveryTiming::new(
                         timing,
                         "trial_model",
@@ -373,7 +385,10 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
                 {
                     // Trial contacts describe this exact accepted geometry.
                     refreshed = Some(fresh);
-                    working = trial;
+                    if REUSE {
+                        accepted_model = Some((trial_rows, path));
+                    }
+                    std::mem::swap(&mut working, &mut trial);
                     accepted = true;
                     break;
                 }
@@ -383,7 +398,7 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
             }
         }
     }
-    if let Some(path) = std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_EXPORT") {
+    if let Some(path) = crate::hair::contact_replay::export_path() {
         let path = std::path::Path::new(&path).with_extension("recovery-rejected.vhr");
         if let Err(error) = crate::hair::contact_replay::save_measured(
             &path, &working, meshes, dt, radius, true, true,
@@ -397,6 +412,37 @@ fn restore_candidate_mode_impl<const REUSE: bool>(
 #[cfg(test)]
 mod refresh_reuse_tests {
     use super::*;
+    use std::time::Instant;
+
+    #[test]
+    #[ignore = "requires a captured full-groom restoration entry"]
+    fn captured_restoration_reuse_matches_fresh_recovery() {
+        let (dt, radius, _, self_collision, rods, meshes, continuous_mesh) =
+            crate::hair::contact_replay::tests::load_replay_with_mode();
+        assert!(self_collision && continuous_mesh);
+        let mut cached = rods.clone();
+        let mut fresh = rods;
+        let started = Instant::now();
+        let candidate =
+            restore_candidate_mode_impl::<true>(&mut cached, &meshes, dt, radius, None, true, None);
+        eprintln!(
+            "CAPTURED RESTORATION cached={candidate:?} elapsed={:?}",
+            started.elapsed()
+        );
+        let started = Instant::now();
+        let control =
+            restore_candidate_mode_impl::<false>(&mut fresh, &meshes, dt, radius, None, true, None);
+        eprintln!(
+            "CAPTURED RESTORATION fresh={control:?} elapsed={:?}",
+            started.elapsed()
+        );
+        assert_eq!(candidate.unwrap(), control.unwrap());
+        for (cached, fresh) in cached.iter().zip(&fresh) {
+            assert_eq!(cached.x, fresh.x);
+            assert_eq!(cached.q, fresh.q);
+        }
+    }
+
     #[test]
     fn accepted_geometry_refresh_reuse_matches_fresh_recovery() {
         let mesh = TriangleMesh::new(&[[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]], &[[0, 1, 2]])

@@ -2,6 +2,10 @@ use super::*;
 
 #[test]
 #[ignore = "requires a real GPU adapter; run explicitly for multi-view acceptance"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn gpu_disjoint_views_preserve_both_regions_and_clear_gap() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter =
@@ -55,11 +59,12 @@ fn gpu_disjoint_views_preserve_both_regions_and_clear_gap() {
         overlay: true,
     }];
     // A color permutation makes using a stale/default shader observable in pixels.
+    let texture_color = "let sample = textureSample(image, image_sampler, in.uv) * in.color;";
+    assert_eq!(DEFAULT_SCENE_SHADER.matches(texture_color).count(), 2);
     let custom = DEFAULT_SCENE_SHADER.replace(
-        "return textureSample(image, image_sampler, in.uv) * in.color;",
-        "let color = textureSample(image, image_sampler, in.uv) * in.color; return color.bgra;",
+        texture_color,
+        "let sample = (textureSample(image, image_sampler, in.uv) * in.color).bgra;",
     );
-    assert_ne!(custom, DEFAULT_SCENE_SHADER);
     assert!(pollster::block_on(renderer.reload_shader(&device, &custom)).unwrap());
     let revision = renderer.shader_revision();
     let (foreign, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
@@ -303,6 +308,10 @@ fn gpu_disjoint_views_preserve_both_regions_and_clear_gap() {
 
 #[test]
 #[ignore = "requires a real GPU adapter; run explicitly for multi-view X-ray acceptance"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn gpu_disjoint_views_xray_keeps_nearest_internals_and_world_depth() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter =

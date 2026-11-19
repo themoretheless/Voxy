@@ -85,6 +85,10 @@ impl Liquid {
     ) -> Result<ParticleExchange, Error> {
         self.exchange_particles_impl(remove, add, compositions, Some(pressures))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn exchange_particles_impl(
         &mut self,
         remove: &[usize],

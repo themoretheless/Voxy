@@ -210,6 +210,10 @@ trait FootRuntimeModelTestExt: Sized {
         settings: ModelFootPlacement,
         clips: &[Arc<voxy_animation::AnimationClip>],
     ) -> Result<Self, String>;
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn request_geometry_pivot(
         &mut self,
         foot_index: usize,

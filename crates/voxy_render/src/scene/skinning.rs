@@ -285,6 +285,10 @@ impl SceneSkinner {
 
     /// Allocate independently weighted morph state with the same geometry/palette
     /// transaction as skeletal instances. Initial preview uses the exact CPU sum.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn create_morph_instance(
         &self,
         renderer: &SceneRenderer,
@@ -301,6 +305,11 @@ impl SceneSkinner {
         self.create_instance_internal(renderer, source, joints, Some(weights), color, live, budget)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn create_instance_internal(
         &self,
         renderer: &SceneRenderer,
@@ -677,6 +686,13 @@ impl SceneSkinInstance {
     }
 }
 
+fn exact_morph_shader_source() -> String {
+    let (terms, _) = include_str!("../world_exact_fused_affine.wgsl")
+        .split_once("fn affine_fused_axis")
+        .expect("source term helpers");
+    format!("{terms}\n{}", include_str!("morph.wgsl"))
+}
+
 fn morph_shader_source() -> String {
     let skin = include_str!("skinning.wgsl")
         .replace(
@@ -687,7 +703,7 @@ fn morph_shader_source() -> String {
             "vec3<f32>(source[s+3u], source[s+4u], source[s+5u])",
             "vec3<f32>(morph_component(i,3u), morph_component(i,4u), morph_component(i,5u))",
         );
-    format!("{}\n{skin}", include_str!("morph.wgsl"))
+    format!("{}\n{skin}", exact_morph_shader_source())
 }
 
 #[cfg(test)]

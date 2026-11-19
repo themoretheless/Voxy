@@ -533,7 +533,13 @@ impl Spin {
     /// # Errors
     /// Invalid state or unrepresentable kinetic energy.
     pub fn energy(self) -> Result<f64, Error> {
-        let omega = self.angular_velocity()?;
+        self.validate()?;
+        self.energy_with_validated_inertia()
+    }
+
+    /// Orientation and inertia were validated before updating angular momentum.
+    pub(crate) fn energy_with_validated_inertia(self) -> Result<f64, Error> {
+        let omega = self.validated_inverse_inertia(self.angular_momentum)?;
         let energy = 0.5
             * self
                 .angular_momentum
@@ -551,6 +557,11 @@ impl Spin {
     /// Invalid inertia/orientation or an unrepresentable transformed vector.
     pub fn inverse_inertia(self, vector: Vector) -> Result<Vector, Error> {
         self.validate()?;
+        self.validated_inverse_inertia(vector)
+    }
+
+    /// The caller has already validated this spin. The input and result still require checks.
+    pub(crate) fn validated_inverse_inertia(self, vector: Vector) -> Result<Vector, Error> {
         if vector.iter().any(|v| !v.is_finite()) {
             return Err(Error::InvalidInput);
         }

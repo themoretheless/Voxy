@@ -2,6 +2,10 @@
 use glam::{Mat4, Vec2};
 use voxy_render::{SceneDraw, SceneRenderer, Sprite, SpriteBatch};
 use voxy_text::{FontLimits, GlyphAtlas, RasterFont};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter =

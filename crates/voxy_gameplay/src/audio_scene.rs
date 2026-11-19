@@ -278,6 +278,7 @@ mod tests {
                 name: "Sound".into(),
                 active: true,
                 translation: [0.; 3],
+                precise_translation_bits: None,
                 rotation: [0., 0., 0., 1.],
                 scale: [1.; 3],
                 components: [(

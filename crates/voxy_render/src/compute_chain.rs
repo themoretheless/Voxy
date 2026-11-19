@@ -165,6 +165,10 @@ fn encode_chain_inner(
         reuses,
     })
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(crate) fn encode_two_stage(
     device: &wgpu::Device,
     encoder: &mut wgpu::CommandEncoder,

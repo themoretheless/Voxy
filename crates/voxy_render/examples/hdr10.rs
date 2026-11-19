@@ -1,6 +1,10 @@
 //! HDR10 PQ/gamut GPU readback against a double-precision primary-derived oracle.
 use voxy_render::TextureBlit;
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn verify(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

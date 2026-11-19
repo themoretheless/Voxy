@@ -37,9 +37,14 @@ pub(crate) fn safe_view_rect(viewport: [u32; 2], region: [u32; 4], scale: f32) -
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) enum Action {
     Select(usize),
+    SearchHierarchy,
     FollowCamera([u8; 32]),
     FollowTarget([u8; 32]),
     FollowTargetChoice([u8; 32]),
+    Joint([u8; 32]),
+    JointTarget([u8; 32]),
+    JointKind([u8; 32]),
+    NpcDestination([u8; 32]),
     Field(usize),
     ResetField(usize),
     PreviewSeek,
@@ -126,6 +131,8 @@ pub(crate) struct Panels {
     pub resource_notice: Option<ResourceNotice>,
     pub retarget_draft: bool,
     pub follow_pick: Option<[u8; 32]>,
+    pub pick_title: &'static str,
+    pub hierarchy_search: Option<String>,
     pub bone_picker: Option<(Vec<String>, usize)>,
     pub overridden_fields: std::collections::BTreeSet<usize>,
     glyphs: BTreeMap<char, (voxy_text::GlyphBitmap, Option<GlyphRegion>)>,
@@ -189,6 +196,8 @@ impl Panels {
             retarget_draft: false,
             bone_picker: None,
             follow_pick: None,
+            pick_title: crate::camera_authoring::PickPurpose::FollowCamera.title(),
+            hierarchy_search: None,
             collection_resets: Default::default(),
             collection_order_resets: Default::default(),
             collection_deleted_resets: Default::default(),
@@ -259,6 +268,10 @@ impl Panels {
         clippy::too_many_arguments,
         reason = "editor panel layout consumes current authoring selection, scroll, field draft, and mode state"
     )]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn build(
         &mut self,
         document: &SceneDocument,
@@ -290,17 +303,23 @@ impl Panels {
             size,
             [0.06, 0.075, 0.1, 1.0],
         )?;
+        let hierarchy_title = match (&self.hierarchy_search, self.follow_pick) {
+            (_, Some(_)) => self.pick_title.into(),
+            (Some(query), None) => format!("Search: {query}"),
+            (None, None) if !playing => "Find objects…".into(),
+            (None, None) => "SCENE".into(),
+        };
         self.text(
             &mut batch,
-            if self.follow_pick.is_some() {
-                "PICK FOLLOW TARGET"
-            } else {
-                "SCENE"
-            },
+            &hierarchy_title,
             Vec2::new(10.0, 23.0),
             left - 16.0,
             size,
         )?;
+        if !playing && self.follow_pick.is_none() {
+            self.regions
+                .push(([4.0, 4.0, left - 8.0, 29.0], Action::SearchHierarchy));
+        }
         self.text(
             &mut batch,
             "INSPECTOR",

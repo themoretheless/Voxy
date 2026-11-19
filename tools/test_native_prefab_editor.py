@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -27,6 +28,7 @@ def main():
             result = subprocess.run(
                 [str(editor), *map(str, arguments)], cwd=workspace,
                 capture_output=True, text=True, timeout=90,
+                env=dict(os.environ, VOXY_PREFAB_SMOKE_HIERARCHY_SEARCH='1', VOXY_PREFAB_SMOKE_JOINT='1'),
             )
             log = result.stdout + result.stderr
             if result.returncode:
@@ -51,7 +53,7 @@ def main():
         previous_package = root / 'game.vpak'
         previous_package.write_bytes(b'previous package sentinel')
         log = run('authoring', '--project', path, '--prefab-smoke')
-        markers = ['PREFAB NATIVE PANEL CREATE PLACE SAVE UNDO PASS', 'PREFAB NATIVE PANEL PLACE SAVE UNDO REDO PASS', 'PREFAB NATIVE PANEL REVERT UNDO REDO PASS', 'PREFAB NATIVE STRUCTURAL SAVE UNDO PASS', 'PREFAB NATIVE SAVE UNDO AND LAST GOOD PASS', 'PREFAB NATIVE PRESENTED AFTER FAILURE PASS', 'PREFAB NATIVE PLAY STOP PASS']
+        markers = ['PREFAB NATIVE JOINT PICK KIND REMOVE PASS', 'PREFAB NATIVE HIERARCHY SEARCH PASS', 'PREFAB NATIVE PANEL CREATE PLACE SAVE UNDO PASS', 'PREFAB NATIVE PANEL PLACE SAVE UNDO REDO PASS', 'PREFAB NATIVE PANEL REVERT UNDO REDO PASS', 'PREFAB NATIVE STRUCTURAL SAVE UNDO PASS', 'PREFAB NATIVE SAVE UNDO AND LAST GOOD PASS', 'PREFAB NATIVE PRESENTED AFTER FAILURE PASS', 'PREFAB NATIVE PLAY STOP PASS']
         if any(marker not in log for marker in markers) or not re.search(
             r'PREFAB NATIVE PLAY STOP PASS frames=\d+ ticks=[1-9]\d*\b', log
         ):

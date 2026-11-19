@@ -80,6 +80,15 @@ pub struct Skin {
     hinges: Vec<Hinge>,
     material: SkinMaterial,
 }
+/// Dynamic shell state for a restart against the same rest mesh and material.
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SkinCheckpoint {
+    pub positions: Vec<Point>,
+    pub velocities: Vec<Point>,
+    pub pins: BTreeMap<usize, Point>,
+    pub memory: Vec<Vec<[f64; 3]>>,
+}
 /// Kinematic surface measures relative to the stress-free mesh.
 #[derive(Clone, Copy, Debug)]
 pub struct SurfaceMetrics {
@@ -323,6 +332,10 @@ impl Skin {
         Ok(())
     }
     /// invalid materials, indices, pins and fiber directions.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn new(
         rest: Vec<Point>,
         triangles: Vec<[usize; 3]>,
@@ -513,6 +526,43 @@ impl Skin {
         self.velocities = velocities;
         Ok(())
     }
+    /// Captures the dynamic state, including the viscoelastic branch history.
+    #[must_use]
+    pub fn checkpoint(&self) -> SkinCheckpoint {
+        SkinCheckpoint {
+            positions: self.positions.clone(),
+            velocities: self.velocities.clone(),
+            pins: self.pins.clone(),
+            memory: self.faces.iter().map(|face| face.memory.clone()).collect(),
+        }
+    }
+    /// Restores a checkpoint for this rest mesh and material.
+    ///
+    /// # Errors
+    /// Rejects invalid geometry, pin targets, or branch history without publishing changes.
+    pub fn restore_checkpoint(&mut self, checkpoint: SkinCheckpoint) -> Result<(), &'static str> {
+        if !checkpoint.pins.keys().eq(self.pins.keys())
+            || !checkpoint.pins.values().copied().all(finite)
+            || checkpoint.memory.len() != self.faces.len()
+            || checkpoint
+                .memory
+                .iter()
+                .zip(&self.faces)
+                .any(|(memory, face)| {
+                    memory.len() != face.memory.len() || !memory.iter().copied().all(finite)
+                })
+        {
+            return Err("invalid skin checkpoint");
+        }
+        let mut staged = self.clone();
+        for (face, memory) in staged.faces.iter_mut().zip(checkpoint.memory) {
+            face.memory = memory;
+        }
+        staged.set_state(checkpoint.positions, checkpoint.velocities)?;
+        staged.pins = checkpoint.pins;
+        *self = staged;
+        Ok(())
+    }
     /// Current elastic forces, including the stored Maxwell stresses, in newtons.
     /// # Errors
     /// Returns an error for numerical overflow or collapsed geometry.
@@ -652,6 +702,10 @@ impl Skin {
         }
         Ok(w * (f.area * f.stiffness_scale))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn evaluate(
         &self,
         p: &[Point],
@@ -979,6 +1033,10 @@ impl Skin {
     /// Implicit step with strictly positive-gap barrier contact.
     /// # Errors
     /// Rejects initial overlap, invalid contact data and nonconverged solves atomically.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn step_with_contacts(
         &mut self,
         dt: f64,
@@ -1272,6 +1330,38 @@ mod objective_tests {
             assert_eq!(serial.positions(), parallel.positions());
             assert_eq!(serial.velocities(), parallel.velocities());
         }
+    }
+
+    #[test]
+    fn checkpoint_preserves_pin_targets_and_viscoelastic_memory() {
+        let mut skin = patch(4, 4, 0.01, SkinMaterial::default()).unwrap();
+        skin.pins.insert(0, [0., 0., 0.001]);
+        skin.velocities[1] = [0.01, -0.02, 0.];
+        skin.faces[0].memory[0] = [0.02, -0.01, 0.003];
+        let bytes = serde_json::to_vec(&skin.checkpoint()).unwrap();
+        let checkpoint: SkinCheckpoint = serde_json::from_slice(&bytes).unwrap();
+        let mut restored = patch(4, 4, 0.01, SkinMaterial::default()).unwrap();
+        restored.pins.insert(0, [0.; 3]);
+        restored.restore_checkpoint(checkpoint.clone()).unwrap();
+        assert_eq!(format!("{restored:?}"), format!("{skin:?}"));
+        let mut invalid = checkpoint;
+        invalid.memory[0][0][0] = f64::NAN;
+        assert!(restored.restore_checkpoint(invalid).is_err());
+        assert_eq!(format!("{restored:?}"), format!("{skin:?}"));
+
+        let forces = vec![[0.; 3]; skin.positions().len()];
+        for candidate in [&mut skin, &mut restored] {
+            candidate
+                .step(
+                    1. / 120.,
+                    [0., 0., -9.81],
+                    &forces,
+                    &[],
+                    SolverConfig::default(),
+                )
+                .unwrap();
+        }
+        assert_eq!(format!("{restored:?}"), format!("{skin:?}"));
     }
 
     #[test]

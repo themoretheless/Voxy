@@ -157,6 +157,10 @@ impl FiniteDropletGasGrid {
     /// Each block deposits its nonnegative viscous heat in its gradient cell.
     /// Mass, volume and cv stay fixed. Atomic, including late budget failures.
     /// The block time splitting and one-sided mixed derivatives require refinement.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn relax_viscosity(
         &mut self,
         dt: f64,

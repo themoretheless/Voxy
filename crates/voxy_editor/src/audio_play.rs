@@ -242,6 +242,72 @@ impl AudioPlay {
         )?
         .ok_or_else(|| "native output queue not ready".into())
     }
+    /// Transfers the application PCM prefix without advancing the mixer. The
+    /// caller keeps the source queue frozen until retiring the native stream.
+    pub(super) fn poll_offline_transition(
+        &mut self,
+        frozen: &mut voxy_audio_device::FrozenOutputQueue,
+    ) -> Result<bool, EditorError> {
+        let (connection, pump) = self.output.as_ref().ok_or("missing native output")?;
+        let limits = self.transition_output_limits();
+        let Some(saved) =
+            voxy_audio_device::OutputCheckpoint::capture(connection, frozen, pump, limits)?
+        else {
+            return Ok(false);
+        };
+        let offline = saved.prepare_offline(limits)?;
+        self.output = None;
+        self.offline_output = Some(offline);
+        Ok(true)
+    }
+
+    pub(super) fn sample_rate(&self) -> u32 {
+        self.rate
+    }
+
+    fn transition_output_limits(&self) -> voxy_audio_device::OutputCheckpointLimits {
+        voxy_audio_device::OutputCheckpointLimits {
+            max_bytes: 64 * 1024,
+            max_queue_frames: 4096,
+            max_pump_frames: 256,
+            sample_rate: self.rate,
+        }
+    }
+
+    /// Publishes the remaining offline prefix and pump into a fresh same-rate
+    /// stream. The scene mixer and its sample clock remain owned by this play session.
+    pub(super) fn poll_native_transition(
+        &mut self,
+        connection: &voxy_audio_device::OutputConnection,
+    ) -> Result<bool, EditorError> {
+        if self.output.is_some() || self.rate != connection.sample_rate() {
+            return Err("audio reconnect output rate or owner mismatch".into());
+        }
+        let offline = self
+            .offline_output
+            .as_ref()
+            .ok_or("missing offline PCM prefix")?;
+        let mut prepared = offline
+            .checkpoint()
+            .prepare(self.transition_output_limits())?;
+        prepared.validate_connection(connection)?;
+        let mut frozen = Some(
+            connection
+                .sender()
+                .freeze_queue()
+                .map_err(|error| error.to_string())?,
+        );
+        let mut pump = voxy_audio_device::PcmPump::new(256)?;
+        let Some(publication) = prepared.stage_publication(connection, &mut frozen, &pump)? else {
+            return Ok(false);
+        };
+        let (frozen, _) = publication.publish(&mut pump);
+        self.output = Some((connection.clone(), pump));
+        self.offline_output = None;
+        drop(frozen);
+        Ok(true)
+    }
+
     pub(crate) fn output_connection(&self) -> Option<&voxy_audio_device::OutputConnection> {
         self.output.as_ref().map(|(connection, _)| connection)
     }
@@ -382,6 +448,14 @@ impl AudioPlay {
             &extract_scene_audio(scene, 128)?,
             &self.catalog,
         )?;
+        // A callback may report failure after the host's last poll. Do not
+        // advance the mixer into the failed stream while its prefix is captured.
+        if self
+            .output_connection()
+            .is_some_and(|connection| connection.stats().errors != 0)
+        {
+            return Ok(());
+        }
         let (budget, remainder) = self.checkpoint_clock().sample_budget(steps)?;
         self.remainder = remainder;
         if let Some((connection, pump)) = &mut self.output {
@@ -399,8 +473,7 @@ impl AudioPlay {
                     voxy_audio_device::SubmitError::Closed
                         | voxy_audio_device::SubmitError::InvalidFrame
                 )
-            ) || connection.stats().errors != 0
-            {
+            ) {
                 return Err("native audio output failed".into());
             }
             return Ok(());
@@ -485,6 +558,89 @@ mod tests {
         assert_eq!(audio.frames, 800);
         assert!(scene.active_in_hierarchy(owner).unwrap());
     }
+    fn paused_native_output() -> (
+        voxy_audio_device::OutputDeviceWorker,
+        voxy_audio_device::OutputConnection,
+    ) {
+        use std::time::{Duration, Instant};
+        let mut worker = voxy_audio_device::OutputDeviceWorker::spawn(4096).unwrap();
+        let deadline = Instant::now() + Duration::from_secs(10);
+        let connection = loop {
+            if let Some(connection) = worker.poll().unwrap() {
+                break connection;
+            }
+            assert!(Instant::now() < deadline);
+            std::thread::yield_now();
+        };
+        worker.request_pause().unwrap();
+        while worker.poll_paused().unwrap() != Some(true) {
+            assert!(Instant::now() < deadline);
+            std::thread::yield_now();
+        }
+        (worker, connection)
+    }
+
+    #[test]
+    #[ignore = "requires physical native stereo output"]
+    fn failed_native_output_retains_pcm_prefix_and_reconnects_at_same_rate() {
+        let (mut worker, connection) = paused_native_output();
+        let temp = crate::project_prefab_tests::Temp::new();
+        std::fs::write(
+            temp.0.join("tone.wav"),
+            crate::audio_session::checkpoint::tests::wav(),
+        )
+        .unwrap();
+        let project = AuthoringProject::new(&temp.0, &crate::InputRecipe::Direct).unwrap();
+        let mut scene = SceneGraph::new(1);
+        let owner = scene.spawn(None, Default::default()).unwrap();
+        scene
+            .insert_component(
+                owner,
+                voxy_gameplay::AudioSource {
+                    asset: "tone.wav".into(),
+                    import_settings: None,
+                    bus: 0,
+                    gain: 0.8,
+                    looping: true,
+                    spatial: false,
+                    near: 0.1,
+                    far: 5.,
+                },
+            )
+            .unwrap();
+        let mut play = AudioPlay::prepare(&scene, &project, Some(connection.clone()))
+            .unwrap()
+            .unwrap();
+        play.advance(&scene, 1).unwrap();
+        let mut frozen = connection.sender().freeze_queue().unwrap();
+        let before = play.capture_native_output(&mut frozen, 64 * 1024).unwrap();
+        assert!(!before.queue.frames.is_empty());
+        assert!(before.pump.cursor < before.pump.block.len());
+        let frames = play.frames;
+        let remainder = play.remainder;
+        assert!(play.poll_offline_transition(&mut frozen).unwrap());
+        assert!(play.output_connection().is_none());
+        assert_eq!(play.offline_output.as_ref().unwrap().checkpoint(), before);
+        assert_eq!((play.frames, play.remainder), (frames, remainder));
+        worker.join().unwrap();
+        drop(frozen);
+        let (mut replacement, connection) = paused_native_output();
+        assert!(play.poll_native_transition(&connection).unwrap());
+        let mut frozen = connection.sender().freeze_queue().unwrap();
+        assert_eq!(
+            play.capture_native_output(&mut frozen, 64 * 1024).unwrap(),
+            before
+        );
+        assert_eq!((play.frames, play.remainder), (frames, remainder));
+        drop(frozen);
+        play.advance(&scene, 3).unwrap();
+        replacement.join().unwrap();
+        assert!(play.frames > frames);
+        for worker in play.close() {
+            worker.join().unwrap();
+        }
+    }
+
     #[test]
     fn aggregate_input_and_pcm_admission_preserve_counters_on_rejection() {
         let mut budget = AudioBudget::default();

@@ -288,6 +288,10 @@ impl Spin {
         self.prepare_forcing_path_impl(duration, config, impulse_bound, None, forcing)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn prepare_forcing_path_impl(
         self,
         duration: f64,

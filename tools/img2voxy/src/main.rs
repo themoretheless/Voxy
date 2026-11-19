@@ -195,6 +195,7 @@ fn validate(spec: &Spec) -> Result<SceneDocument> {
                     name: p.id.clone(),
                     active: true,
                     translation: p.translation,
+                    precise_translation_bits: None,
                     rotation: p.rotation,
                     scale: p.scale,
                     components,
@@ -223,6 +224,7 @@ fn validate(spec: &Spec) -> Result<SceneDocument> {
             name: "Reconstruction camera".into(),
             active: true,
             translation: [0.; 3],
+            precise_translation_bits: None,
             rotation: [0., 0., 0., 1.],
             scale: [1.; 3],
             components: BTreeMap::from([(

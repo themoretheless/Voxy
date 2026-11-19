@@ -1,0 +1,16 @@
+[package]
+name = "voxy_player"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+voxy_assets = { path = "../voxy_assets" }
+voxy_gameplay = { path = "../voxy_gameplay" }
+voxy_scene = { path = "../voxy_scene" }
+
+[lints]
+workspace = true

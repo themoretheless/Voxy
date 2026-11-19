@@ -3,6 +3,10 @@
 use physics::liquid::*;
 use physics::surface_film::{FilmMixture, Material as FilmMaterial, SurfaceFilm};
 use std::io::{BufWriter, Write};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut out = BufWriter::new(std::io::stdout().lock());
     let mut fluid = Liquid::new(

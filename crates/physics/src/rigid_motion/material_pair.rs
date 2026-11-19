@@ -56,6 +56,10 @@ impl MaterialForcePair {
             config,
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn prepare_loaded(
         first: ContactBody,
         second: ContactBody,

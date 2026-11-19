@@ -60,6 +60,10 @@ impl SurfaceLightFrame {
     }
     /// Bind the authored lighting-normal stream independently of geometric draw
     /// normals. This stream may be produced by an earlier GPU transport pass.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub async fn new_with_normal_source(
         device: &wgpu::Device,
         geometry: &SceneGeometry,

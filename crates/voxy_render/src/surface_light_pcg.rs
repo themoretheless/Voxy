@@ -59,6 +59,10 @@ impl SurfaceLightPcg {
             Some((&geometry.mass, &geometry.edges)),
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn new_internal(
         device: &wgpu::Device,
         mass: &[f32],

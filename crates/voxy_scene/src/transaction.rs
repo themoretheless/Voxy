@@ -34,6 +34,7 @@ impl SceneGraph {
                     generation: slot.generation,
                     node: slot.node.as_ref().map(|n| Node {
                         local: n.local,
+                        precise_translation: n.precise_translation,
                         name: n.name.clone(),
                         active: n.active,
                         world: n.world,

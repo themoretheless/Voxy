@@ -91,7 +91,44 @@ pub struct Tissue {
     hardening: f64,
     surface: Vec<[usize; 3]>,
 }
+/// Positions and velocities at a completed step for the same tissue model.
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TissueCheckpoint {
+    positions: Vec<V>,
+    velocities: Vec<V>,
+}
+
 impl Tissue {
+    #[must_use]
+    pub fn checkpoint(&self) -> TissueCheckpoint {
+        TissueCheckpoint {
+            positions: self.positions.clone(),
+            velocities: self.velocities.clone(),
+        }
+    }
+
+    /// Restores kinematics for the same cage and material.
+    ///
+    /// # Errors
+    /// Rejects nonfinite or incompatible state before changing the tissue.
+    pub fn restore_checkpoint(&mut self, state: TissueCheckpoint) -> Result<(), &'static str> {
+        if state.positions.len() != self.positions.len()
+            || state.velocities.len() != self.velocities.len()
+            || !state
+                .positions
+                .iter()
+                .chain(&state.velocities)
+                .copied()
+                .all(finite)
+        {
+            return Err("invalid tissue checkpoint");
+        }
+        self.positions = state.positions;
+        self.velocities = state.velocities;
+        Ok(())
+    }
+
     /// Zero inverse mass pins a particle. Muscle edges shorten up to 35%.
     /// # Errors
     /// Rejects nonfinite data, invalid topology, degenerate cells and materials.
@@ -297,6 +334,10 @@ impl Tissue {
     /// multiplier / dt; multipliers reset at the start of every physical step.
     /// # Errors
     /// Invalid input, numerical overflow, or inverted cells leave state unchanged.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn step_with_contact(
         &mut self,
         dt: f64,
@@ -534,6 +575,10 @@ impl Tissue {
 /// Creates an octahedral volume, a triangulated skin patch, or a muscle ring.
 /// # Errors
 /// Rejects invalid centers through the validated solver constructor.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub fn sample(kind: TissueKind, center: V) -> Result<Tissue, &'static str> {
     let (points, weights, edges, tets) = match kind {
         TissueKind::Skin => {

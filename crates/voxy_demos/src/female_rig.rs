@@ -211,6 +211,10 @@ impl FemaleRig {
             &[],
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn new(vertices: &[SceneVertex]) -> Result<Self, voxy_animation::AnimationError> {
         let mut bones = vec![
             (
@@ -536,6 +540,10 @@ impl FemaleRig {
         self.grasp_cycle = false;
         Ok(())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn set_grasp_object(&mut self, object: Option<std::sync::Arc<GraspObject>>) {
         self.grasp_samples = object.as_ref().map(|object| {
             let adduction: [Quat; 5] = std::array::from_fn(|finger| {
@@ -783,6 +791,10 @@ impl FemaleRig {
         }
         Ok(())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn correct_grasp_skin(&self, vertices: &mut [SceneVertex], face_normals: &[Option<Vec3>]) {
         let inward_cylinder = self.inward_cylinder();
         let bend_enabled = !self.hand_faces.is_empty()
@@ -1205,6 +1217,10 @@ impl FemaleRig {
     }
     /// Deforms the mesh from an already accepted pose without resampling the
     /// animation clock and thereby losing physical IK corrections.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn deform_pose(&self, vertices: &mut [SceneVertex], time: f32, pose: &Pose) {
         let hand_sides: Vec<_> = if self.inward_cylinder() {
             vertices
@@ -1506,6 +1522,7 @@ mod tests {
         GraspObject::from_mesh(&vertices, asset.mesh.indices()).unwrap()
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grasp_fingertip_surface_follows_distal_bones() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1606,6 +1623,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grasp_distal_fingers_do_not_cross() {
         fn segment_distance(a: Vec3, b: Vec3, c: Vec3, d: Vec3) -> f32 {
             let u = b - a;
@@ -1687,6 +1705,10 @@ mod tests {
 
     #[test]
     #[ignore = "Offline mesh-based proximal thumb weight optimization"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn thumb_mesh_weight_optimization_diagnostic() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1961,6 +1983,10 @@ mod tests {
 
     #[test]
     #[ignore = "Offline stronger thumb articulation search"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn stronger_thumb_contact_search() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2205,6 +2231,10 @@ mod tests {
 
     #[test]
     #[ignore = "Offline thumb contact envelope diagnostic"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn thumb_contact_envelope_diagnostic() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2379,6 +2409,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn object_contact_limits_each_finger_without_penetration() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2484,6 +2515,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grasp_skin_surface_stays_outside_object() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2578,6 +2610,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn prepared_grasp_interpolation_preserves_contact() {
         for object in [
             GraspObject::Sphere {
@@ -2812,6 +2845,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn thumb_web_does_not_form_a_sharp_new_crease() {
         measure_thumb_web_crease(3);
     }
@@ -2910,6 +2944,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn isolated_grasp_keeps_wrists_fixed_while_fingers_close() {
         let mut rig = FemaleRig::new(&[]).unwrap();
         rig.set_grasp_object(Some(std::sync::Arc::new(GraspObject::Cylinder {
@@ -3196,6 +3231,7 @@ mod tests {
 mod thumb_tip_contact_tests {
     use super::*;
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn closed_thumb_tip_contacts_cylinder_and_sphere() {
         let asset = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -3249,6 +3285,10 @@ mod thumb_tip_contact_tests {
         }
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn actual_body_foot_surface_candidates_use_dominant_skin_weights() {
         let body = voxy_render::ObjAsset::parse(
             include_str!(
@@ -3407,6 +3447,10 @@ mod thumb_tip_contact_tests {
     fn actual_two_foot_owner_releases_and_reacquires_after_platform_drop() {
         actual_two_foot_support_sweep(2);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn actual_two_foot_support_sweep(mode: u8) {
         let moving = mode == 1;
         let body = voxy_render::ObjAsset::parse(
@@ -3670,6 +3714,10 @@ mod thumb_tip_contact_tests {
         }
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn actual_reference_feet_solve_against_accepted_physical_support() {
         use voxy_gameplay::{FootContactInput, FootContactSettings, FootContactState};
         let body = voxy_render::ObjAsset::parse(
@@ -3898,6 +3946,10 @@ mod thumb_tip_contact_tests {
         }
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn real_gait_skin_foot_envelope_compares_actual_deformation_to_rigid_reference() {
         use crate::humanoid_locomotion::{
             LocomotionClip, VoxyHumanoidLocomotion, prepare_quaternius_gait_source,

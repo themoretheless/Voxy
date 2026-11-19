@@ -4,12 +4,12 @@ use voxy_gpu::{
     GravityBody, GravityBudget, GravityJob, GravityParameters, GravityProgram, GravityView,
 };
 use voxy_render::{GraphicsBackend, GraphicsOptions, RenderOutcome, SceneSurface};
+use voxy_ui_winit::{WindowFrame, run_window_frame};
 use winit::{
-    application::ApplicationHandler,
     event::{ElementState, WindowEvent},
-    event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
+    event_loop::{ActiveEventLoop, ControlFlow},
     keyboard::{KeyCode, PhysicalKey},
-    window::{Window, WindowId},
+    window::{Window, WindowAttributes},
 };
 type Error = Box<dyn std::error::Error>;
 struct Resources {
@@ -91,7 +91,6 @@ impl Resources {
 }
 struct App {
     graphics: GraphicsOptions,
-    window: Option<Arc<Window>>,
     resources: Option<Resources>,
     paused: bool,
     last: Instant,
@@ -101,7 +100,6 @@ struct App {
     smoke: bool,
     frames: u32,
     steps: u64,
-    failure: Option<String>,
     resized: bool,
 }
 impl App {
@@ -153,130 +151,110 @@ impl App {
         }
         Ok(())
     }
-    fn fail(&mut self, event_loop: &ActiveEventLoop, error: Error) {
-        self.failure = Some(error.to_string());
-        event_loop.exit();
-    }
 }
-impl ApplicationHandler for App {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        if self.window.is_some() {
-            return;
-        }
-        let result = (|| -> Result<(), Error> {
-            let window = Arc::new(
-                event_loop.create_window(
-                    Window::default_attributes()
-                        .with_title("Voxy GPU gravity | Space: pause | R: reset | Esc: exit")
-                        .with_inner_size(winit::dpi::PhysicalSize::new(720, 720)),
-                )?,
-            );
-            let instance = self
-                .graphics
-                .create_instance_with_display(event_loop.owned_display_handle());
-            let mut resources = Resources::new(window.clone(), self.graphics, instance)?;
-            if self.smoke {
-                let size = window.inner_size();
-                resources.check_acquisition(size.width, size.height)?;
-            }
-            self.resources = Some(resources);
-            self.window = Some(window);
-            self.last = Instant::now();
-            Ok(())
-        })();
-        if let Err(error) = result {
-            self.fail(event_loop, error);
-        }
+impl WindowFrame for App {
+    fn window_attributes(&self) -> WindowAttributes {
+        Window::default_attributes()
+            .with_title("Voxy GPU gravity | Space: pause | R: reset | Esc: exit")
+            .with_inner_size(winit::dpi::PhysicalSize::new(720, 720))
     }
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, _id: WindowId, event: WindowEvent) {
+    fn start(&mut self, event_loop: &ActiveEventLoop, window: &Arc<Window>) -> Result<(), Error> {
+        let instance = self
+            .graphics
+            .create_instance_with_display(event_loop.owned_display_handle());
+        let mut resources = Resources::new(window.clone(), self.graphics, instance)?;
+        if self.smoke {
+            let size = window.inner_size();
+            resources.check_acquisition(size.width, size.height)?;
+        }
+        self.resources = Some(resources);
+        self.last = Instant::now();
+        Ok(())
+    }
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        window: &Arc<Window>,
+        event: WindowEvent,
+    ) -> Result<(), Error> {
         if self.smoke && self.frames >= 60 {
-            return;
+            return Ok(());
         }
-        let result = (|| -> Result<(), Error> {
-            match event {
-                WindowEvent::CloseRequested => event_loop.exit(),
-                WindowEvent::Resized(size) => {
-                    if size.width == 800 && size.height == 600 {
-                        self.resized = true;
-                    }
-                    if let Some(resources) = &mut self.resources {
-                        resources.host.resize(size.width, size.height)?;
-                    }
-                    self.accumulator = 0.0;
-                    self.last = Instant::now();
+        match event {
+            WindowEvent::CloseRequested => event_loop.exit(),
+            WindowEvent::Resized(size) => {
+                if size.width == 800 && size.height == 600 {
+                    self.resized = true;
                 }
-                WindowEvent::KeyboardInput { event, .. }
-                    if event.state == ElementState::Pressed && !event.repeat =>
-                {
-                    match event.physical_key {
-                        PhysicalKey::Code(KeyCode::Escape) => event_loop.exit(),
-                        PhysicalKey::Code(KeyCode::Space) => {
-                            self.paused = !self.paused;
-                            self.accumulator = 0.0;
-                        }
-                        PhysicalKey::Code(KeyCode::KeyR) => {
-                            if let Some(resources) = &mut self.resources {
-                                resources.reset()?;
-                            }
-                            self.accumulator = 0.0;
-                        }
-                        _ => {}
-                    }
+                if let Some(resources) = &mut self.resources {
+                    resources.host.resize(size.width, size.height)?;
                 }
-                WindowEvent::RedrawRequested => {
-                    self.draw()?;
-                    if self.smoke
-                        && self.frames == 10
-                        && let Some(window) = &self.window
-                    {
-                        let _ = window.request_inner_size(winit::dpi::PhysicalSize::new(800, 600));
-                    }
-                    if self.smoke && self.frames == 20 {
-                        self.paused = true;
-                    }
-                    if self.smoke && self.frames == 30 {
-                        self.paused = false;
-                    }
-                    if self.smoke
-                        && self.frames == 40
-                        && let Some(resources) = &mut self.resources
-                    {
-                        resources.reset()?;
-                    }
-                    if self.smoke && self.frames >= 60 {
-                        if self.steps != 200 || !self.resized {
-                            return Err(format!(
-                                "smoke failed: {} steps, resize observed {}",
-                                self.steps, self.resized
-                            )
-                            .into());
-                        }
-                        println!(
-                            "PASS: 60 presented GPU gravity frames, resize, 10 paused frames, reset; 200 resident steps, no body readback"
-                        );
-                        event_loop.exit();
-                    }
-                }
-                _ => {}
+                self.accumulator = 0.0;
+                self.last = Instant::now();
             }
-            Ok(())
-        })();
-        if let Err(error) = result {
-            self.fail(event_loop, error);
+            WindowEvent::KeyboardInput { event, .. }
+                if event.state == ElementState::Pressed && !event.repeat =>
+            {
+                match event.physical_key {
+                    PhysicalKey::Code(KeyCode::Escape) => event_loop.exit(),
+                    PhysicalKey::Code(KeyCode::Space) => {
+                        self.paused = !self.paused;
+                        self.accumulator = 0.0;
+                    }
+                    PhysicalKey::Code(KeyCode::KeyR) => {
+                        if let Some(resources) = &mut self.resources {
+                            resources.reset()?;
+                        }
+                        self.accumulator = 0.0;
+                    }
+                    _ => {}
+                }
+            }
+            WindowEvent::RedrawRequested => {
+                self.draw()?;
+                if self.smoke && self.frames == 10 {
+                    let _ = window.request_inner_size(winit::dpi::PhysicalSize::new(800, 600));
+                }
+                if self.smoke && self.frames == 20 {
+                    self.paused = true;
+                }
+                if self.smoke && self.frames == 30 {
+                    self.paused = false;
+                }
+                if self.smoke
+                    && self.frames == 40
+                    && let Some(resources) = &mut self.resources
+                {
+                    resources.reset()?;
+                }
+                if self.smoke && self.frames >= 60 {
+                    if self.steps != 200 || !self.resized {
+                        return Err(format!(
+                            "smoke failed: {} steps, resize observed {}",
+                            self.steps, self.resized
+                        )
+                        .into());
+                    }
+                    println!(
+                        "PASS: 60 presented GPU gravity frames, resize, 10 paused frames, reset; 200 resident steps, no body readback"
+                    );
+                    event_loop.exit();
+                }
+            }
+            _ => {}
         }
+        Ok(())
     }
-    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+    fn about_to_wait(&mut self, _: &ActiveEventLoop, window: &Arc<Window>) -> Result<(), Error> {
         if self.smoke && self.started.elapsed().as_secs() >= 30 {
-            self.failure = Some(format!(
+            return Err(format!(
                 "GPU gravity smoke timed out: {} frames, {} steps, last outcome {:?}",
                 self.frames, self.steps, self.last_outcome
-            ));
-            event_loop.exit();
-            return;
+            )
+            .into());
         }
-        if let Some(window) = &self.window {
-            window.request_redraw();
-        }
+        window.request_redraw();
+        Ok(())
     }
 }
 fn main() -> Result<(), Error> {
@@ -308,7 +286,6 @@ fn main() -> Result<(), Error> {
     }
     let mut app = App {
         graphics,
-        window: None,
         resources: None,
         paused: false,
         last: Instant::now(),
@@ -318,14 +295,7 @@ fn main() -> Result<(), Error> {
         smoke,
         frames: 0,
         steps: 0,
-        failure: None,
         resized: false,
     };
-    let event_loop = EventLoop::new()?;
-    event_loop.set_control_flow(ControlFlow::Wait);
-    event_loop.run_app(&mut app)?;
-    if let Some(error) = app.failure {
-        return Err(error.into());
-    }
-    Ok(())
+    run_window_frame(&mut app, Some(ControlFlow::Wait))
 }

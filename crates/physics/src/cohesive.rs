@@ -123,6 +123,10 @@ impl Material {
     /// # Errors
     /// Rejects invalid normal, nonfinite jumps and unrepresentable responses.
     // Validate the joint cohesive/contact candidate before publication.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn response(
         &self,
         old: &State,

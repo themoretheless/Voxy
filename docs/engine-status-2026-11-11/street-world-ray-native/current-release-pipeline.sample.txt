@@ -1,0 +1,7 @@
+Analysis of sampling street_walk (pid 67471) every 10 milliseconds
+    +                                                               92 _RNvMCsfoLLEO7WtMo_11street_walkNtB2_3App4init  (in street_walk) + 8644  [0x100c8d658]
+    +                                                                 92 _RNvNtCsfoLLEO7WtMo_11street_walk18world_ray_lighting7prepare  (in street_walk) + 3908  [0x100cddb34]
+    +                                                                   92 _RNvMs_NtCsfXgK35aVhHD_11voxy_render17world_nearest_jobNtB4_16WorldRayQueryJob12with_options  (in street_walk) + 5680  [0x10107bfec]
+    +                                                                                 92 -[AGXG16XFamilyDevice newComputePipelineStateWithDescriptor:options:reflection:error:]  (in AGXMetalG16X) + 76  [0x11f1577ec]
+    +                                                                                         92 MTLCompilerScheduler::buildRequest(unsigned int, MTLCompilerRequest*, bool, objc_object*, void (MTLCompilerError, NSObject<OS_dispatch_data>*, char const*) block_pointer)  (in Metal) + 140  [0x19b1415c0]
+    +                                                                                           92 MTLCompilerScheduler::buildRequest(unsigned int, std::shared_ptr<MTLCompilerRequest>, bool, objc_object*, void (MTLCompilerError, NSObject<OS_dispatch_data>*, char const*) block_pointer)  (in Metal) + 1344  [0x19b141f70]

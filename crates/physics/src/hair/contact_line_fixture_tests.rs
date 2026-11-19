@@ -1,6 +1,10 @@
 //! Captured frame3 restrictions, binary f64 values preserved by round-trip literals.
 use super::*;
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn nominal_frame3_restrictions_are_continuously_clear() {
     let a = CapsuleMotion {
         start: [

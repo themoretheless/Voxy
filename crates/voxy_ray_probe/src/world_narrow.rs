@@ -48,6 +48,10 @@ fn failure_case(
     }
     serde_json::json!({"error":"invalid stable slot"})
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn probe(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

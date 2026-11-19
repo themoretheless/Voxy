@@ -304,7 +304,18 @@ impl App {
                 .get(ticket.asset())
                 .map_or(0, ModelGraphics::geometry_bytes),
         };
-        match target.stage(assets) {
+        let started = self.reload_frame_sample.map(|_| Instant::now());
+        let staged = target.stage(assets);
+        if let Some(started) = started {
+            println!(
+                "MODEL GPU STAGE frames={} asset={} stage_us={} accepted={}",
+                self.frames,
+                ticket.asset().0,
+                started.elapsed().as_micros(),
+                staged.is_ok()
+            );
+        }
+        match staged {
             Ok(pending) => {
                 self.pending_model = Some(Pending {
                     ticket,
@@ -421,12 +432,19 @@ impl App {
         result: ResultAsset,
         gpu: Option<ReadyModelBatch>,
     ) -> Result<(), Error> {
+        let publication_started = Instant::now();
         // The worker checked its inputs at decode completion. They may have
         // changed while the result was queued or GPU admission was pending.
         let result =
             result.and_then(|source| {
                 let validated = (|| -> Result<(), Error> {
-                    let provider = self.authoring.authoring_project.input_provider()?;
+                    let provider = if let Some(package) = &self.model_package {
+                        voxy_assets::AssetSourceProvider::from_package(package.clone())
+                    } else {
+                        voxy_assets::AssetSourceProvider::from_files(
+                            self.authoring.authoring_project.input_provider()?,
+                        )
+                    };
                     for (id, observation) in source.inputs().observations() {
                         let snapshot = observation
                             .as_ref()
@@ -460,7 +478,7 @@ impl App {
             cache: &mut g.residency_cache,
             errors: &mut g.residency_errors,
         });
-        match complete_transaction(
+        let transaction = complete_transaction(
             &mut self.catalog,
             &mut self.sources,
             ticket,
@@ -468,7 +486,9 @@ impl App {
             gpu,
             target,
             source_watch,
-        ) {
+        );
+        let publication_us = publication_started.elapsed().as_micros();
+        match transaction {
             Ok(true) => {
                 self.recovered |= self.failed_at.is_some();
                 self.last_publication = Some(Instant::now());
@@ -477,7 +497,7 @@ impl App {
                 }
                 if let Some(asset) = self.catalog.snapshot(output) {
                     println!(
-                        "MODEL PUBLISHED frames={} first_x={} asset={}",
+                        "MODEL PUBLISHED frames={} first_x={} asset={} publication_us={publication_us}",
                         self.frames,
                         asset.value().mesh.vertices()[0].position[0],
                         output.0
@@ -491,7 +511,7 @@ impl App {
                     window.set_title("Voxy — import failed; showing previous model");
                 }
                 println!(
-                    "MODEL FAILED frames={} last_good={} asset={} status={:?}",
+                    "MODEL FAILED frames={} last_good={} asset={} status={:?} publication_us={publication_us}",
                     self.frames,
                     self.catalog.snapshot(output).is_some(),
                     output.0,

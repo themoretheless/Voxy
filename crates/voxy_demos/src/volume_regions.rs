@@ -17,6 +17,19 @@ pub struct Region {
     lumped_mass_kg: Vec<f64>,
 }
 impl Region {
+    #[cfg(test)]
+    pub(crate) fn checkpoint(&self) -> physics_bio::tissue::TissueCheckpoint {
+        self.body.checkpoint()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn restore_checkpoint(
+        &mut self,
+        state: physics_bio::tissue::TissueCheckpoint,
+    ) -> Result<(), &'static str> {
+        self.body.restore_checkpoint(state)
+    }
+
     pub fn mass_kg(&self) -> f64 {
         self.lumped_mass_kg.iter().sum()
     }
@@ -40,6 +53,10 @@ impl Region {
     pub fn build(mesh: &[SceneVertex]) -> Result<Vec<Self>, &'static str> {
         Self::build_parameterized(mesh, crate::body_parameters::BodyParameters::default())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn build_parameterized(
         mesh: &[SceneVertex],
         parameters: crate::body_parameters::BodyParameters,

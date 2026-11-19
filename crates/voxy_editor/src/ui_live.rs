@@ -145,6 +145,10 @@ impl UiLive {
             &mut graphics.ui_presented,
         )
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn poll_gpu(
         &mut self,
         scene: &SceneGraph,

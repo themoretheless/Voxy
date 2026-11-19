@@ -77,6 +77,11 @@ pub fn elliptical_tube_axial(
         Some(profiles),
     )
 }
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn build_elliptical_tube(
     radii: &[f64],
     length: f64,

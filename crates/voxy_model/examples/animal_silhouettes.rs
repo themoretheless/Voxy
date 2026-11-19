@@ -3,6 +3,10 @@
 use glam::Vec3;
 use image::{Rgb, RgbImage};
 use voxy_model::animals::{Breed, build_sculpt};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().collect();
     let output = args

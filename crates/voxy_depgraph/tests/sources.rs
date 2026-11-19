@@ -24,12 +24,8 @@ const CEILING_SLACK: usize = 200;
 
 /// Files over [`LINE_BUDGET`] with the ceiling each must stay under. Splitting
 /// a file lowers its ceiling or removes the entry; nothing is added here
-/// without a reason recorded in `docs/refactor/PLAN.md`.
-const KNOWN_OVERSIZED: &[(&str, usize)] = &[
-    ("crates/physics/src/liquid/multi_body.rs", 1700),
-    ("crates/voxy_gameplay/src/angular_sweep.rs", 1600),
-    ("crates/voxy_web/src/browser.rs", 1650),
-];
+/// without a reason recorded in `docs/PLAN.md`.
+const KNOWN_OVERSIZED: &[(&str, usize)] = &[];
 
 fn workspace() -> PathBuf {
     normalize(Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../..")))
@@ -109,7 +105,7 @@ fn production_files_stay_within_their_line_budget() {
     assert!(
         over.is_empty(),
         "production files over the {LINE_BUDGET}-line budget or over their recorded ceiling; \
-         split them (see docs/refactor/PLAN.md) instead of raising the ceiling:\n{}",
+         split them (see docs/PLAN.md) instead of raising the ceiling:\n{}",
         over.join("\n")
     );
 }
@@ -132,5 +128,24 @@ fn oversized_ceilings_only_shrink() {
         stale.is_empty(),
         "KNOWN_OVERSIZED is out of date; tighten it so the ratchet holds:\n{}",
         stale.join("\n")
+    );
+}
+
+#[test]
+fn vendored_wgpu_patches_preserve_core_device_identity_and_metal_surface_autorelease() {
+    let workspace = workspace();
+    let wgpu_core = fs::read_to_string(workspace.join("vendor/wgpu/src/backend/wgpu_core.rs"))
+        .expect("read vendor/wgpu/src/backend/wgpu_core.rs");
+    assert!(
+        wgpu_core.contains("fn identity(&self) -> (usize, wgc::id::DeviceId)")
+            && wgpu_core.contains("impl_eq_ord_hash_proxy!(CoreDevice => .identity());"),
+        "vendor/wgpu/src/backend/wgpu_core.rs must include the Global pointer in CoreDevice::identity()"
+    );
+
+    let metal_surface = fs::read_to_string(workspace.join("vendor/wgpu-hal/src/metal/surface.rs"))
+        .expect("read vendor/wgpu-hal/src/metal/surface.rs");
+    assert!(
+        metal_surface.contains("autoreleasepool"),
+        "vendor/wgpu-hal/src/metal/surface.rs must retain autoreleasepool protection for CAMetalDrawable acquisition"
     );
 }

@@ -1,6 +1,12 @@
 //! Conservative lumped fluid/protein exchange in SI units.
 //! Classical Starling/Kedem–Katchalsky approximation, not a resolved glycocalyx.
 //! A node may represent plasma, interstitium or lymph; no fitted defaults.
+
+// The adaptive step halves `h` on these two failures; one constant per message
+// keeps the producers and that retry in step.
+const ITERATION_LIMIT: &str = "inertial lymph iteration limit";
+const INVALID_TRIAL_INVENTORY: &str = "invalid inertial lymph trial inventory";
+
 pub mod profile;
 #[path = "lymph/wall.rs"]
 mod wall;
@@ -213,6 +219,10 @@ impl LymphNetwork {
     /// This wall-network step does not equilibrate an attached FEM tissue.
     /// # Errors
     /// Invalid inputs, nonpositive trial inventory or failed fixed-point solve.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn step_with_inertial_walls(
         &mut self,
         seconds: f64,
@@ -243,6 +253,11 @@ impl LymphNetwork {
             |_, _, _, _, rates| Ok(rates.to_vec()),
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub(crate) fn step_with_inertial_callbacks<F, G>(
         &mut self,
         seconds: f64,
@@ -342,7 +357,7 @@ impl LymphNetwork {
             if v.iter().any(|x| !x.is_finite() || *x <= 0.)
                 || m.iter().any(|x| !x.is_finite() || *x < 0.)
             {
-                return Err("invalid inertial lymph trial inventory");
+                return Err(INVALID_TRIAL_INVENTORY);
             }
             let error = v
                 .iter()
@@ -375,7 +390,7 @@ impl LymphNetwork {
             trial.volumes = v;
             trial.proteins = m;
         }
-        Err("inertial lymph iteration limit")
+        Err(ITERATION_LIMIT)
     }
     /// Joint backward-Euler inventory exchange through fixed-radius resolved pipes.
     /// Profiles and network commit together; trial iterations restart old profiles.
@@ -402,6 +417,11 @@ impl LymphNetwork {
             |_, _, _, _, rates| Ok(rates.to_vec()),
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub(crate) fn step_with_radial_callbacks<F, G>(
         &mut self,
         seconds: f64,
@@ -518,7 +538,7 @@ impl LymphNetwork {
             if v.iter().any(|x| !x.is_finite() || *x <= 0.)
                 || m.iter().any(|x| !x.is_finite() || *x < 0.)
             {
-                return Err("invalid inertial lymph trial inventory");
+                return Err(INVALID_TRIAL_INVENTORY);
             }
             let error = v
                 .iter()
@@ -549,12 +569,16 @@ impl LymphNetwork {
             trial.volumes = v;
             trial.proteins = m;
         }
-        Err("inertial lymph iteration limit")
+        Err(ITERATION_LIMIT)
     }
     /// Step-doubled backward-Euler wall/network integration with momentum error.
     /// Both network and flow history roll back on whole-call failure.
     /// # Errors
     /// Invalid tolerance, failed nonlinear solve or exhausted time-step budget.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn step_with_inertial_walls_adaptive(
         &mut self,
         seconds: f64,
@@ -815,6 +839,10 @@ impl LymphNetwork {
         self.step_with_pressure_and_flux_laws_order(seconds, max_step_seconds, false, law, flux)
     }
     /// Conservative SSPRK2 when selected; caller-owned callback effects require staging.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub(crate) fn step_with_pressure_and_flux_laws_order<F, G>(
         &mut self,
         seconds: f64,
@@ -1054,6 +1082,10 @@ pub(crate) fn adaptive_exchange<T: Clone>(
     adaptive_exchange_order(initial, seconds, config, 2, advance, network, extra_error)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(crate) fn adaptive_exchange_order<T: Clone>(
     initial: &T,
     seconds: f64,
@@ -1119,11 +1151,7 @@ pub(crate) fn adaptive_exchange_order<T: Clone>(
         let (coarse, fine, whole, first, second) = match attempt {
             Ok(states) => states,
             Err(reason)
-                if order == 1
-                    && matches!(
-                        reason,
-                        "inertial lymph iteration limit" | "invalid inertial lymph trial inventory"
-                    ) =>
+                if order == 1 && matches!(reason, ITERATION_LIMIT | INVALID_TRIAL_INVENTORY) =>
             {
                 report.rejected_steps += 1;
                 if 0.5 * h < config.min_step_seconds {

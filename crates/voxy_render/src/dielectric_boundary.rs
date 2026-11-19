@@ -437,6 +437,10 @@ mod gpu_tests {
     use wgpu::util::DeviceExt;
     #[test]
     #[ignore = "requires physical GPU; dielectric CPU parity"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn dielectric_gpu_matches_cpu_reference() {
         let instance = crate::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

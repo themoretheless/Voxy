@@ -69,6 +69,21 @@ impl ArchiveSceneRenderer {
         eye: Vec3,
         direction: Vec3,
     ) -> wgpu::SubmissionIndex {
+        self.draw_with_tail(output, eye, direction, None, |_, _| {})
+    }
+
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
+    pub(super) fn draw_with_tail(
+        &mut self,
+        output: &wgpu::TextureView,
+        eye: Vec3,
+        direction: Vec3,
+        opaque_capture: Option<&wgpu::Texture>,
+        encode_tail: impl FnOnce(&Self, &mut wgpu::CommandEncoder),
+    ) -> wgpu::SubmissionIndex {
         self.collect_gpu_time_sample();
         let time_this_frame = self.timing.as_ref().is_some_and(|t| !t.pending);
         #[allow(deprecated)]
@@ -93,37 +108,47 @@ impl ArchiveSceneRenderer {
             rows[3] - rows[2],
         ];
         let raw_planes = planes;
-        let planes = planes.map(|p| (p, p.truncate().length()));
-        for mesh in &mut self.meshes {
-            if let Some(culling) = &mesh.culling {
-                culling.prepare(&self.queue, raw_planes);
-                mesh.visible_count = mesh.copies;
-                continue;
-            }
-            mesh.frustum.collect(&planes, &mut mesh.scratch_ids);
-            let ids = &mut mesh.scratch_ids;
-            if self.materials[mesh.material].transparent {
-                ids.sort_by(|&a, &b| {
-                    mesh.spheres[b]
-                        .0
-                        .distance_squared(eye)
-                        .total_cmp(&mesh.spheres[a].0.distance_squared(eye))
-                });
-            }
-            if *ids != mesh.visible_ids {
-                if !ids.is_empty() {
-                    mesh.scratch_instances.clear();
-                    mesh.scratch_instances
-                        .extend(ids.iter().map(|&i| mesh.source_instances[i]));
-                    self.queue.write_buffer(
-                        &mesh.visible_instances,
-                        0,
-                        bytemuck::cast_slice(&mesh.scratch_instances),
-                    );
+        // The archive's meshes and materials are immutable. Temporal jitter
+        // changes rasterization, while culling uses the unjittered footprint.
+        let visibility_camera = (
+            eye.to_array().map(f32::to_bits),
+            raw_planes.map(|plane| plane.to_array().map(f32::to_bits)),
+        );
+        let update_visibility = self.visibility_camera != Some(visibility_camera);
+        if update_visibility {
+            let planes = planes.map(|p| (p, p.truncate().length()));
+            for mesh in &mut self.meshes {
+                if let Some(culling) = &mesh.culling {
+                    culling.prepare(&self.queue, raw_planes);
+                    mesh.visible_count = mesh.copies;
+                    continue;
                 }
-                mesh.visible_count = ids.len() as u32;
-                std::mem::swap(&mut mesh.visible_ids, &mut mesh.scratch_ids);
+                mesh.frustum.collect(&planes, &mut mesh.scratch_ids);
+                let ids = &mut mesh.scratch_ids;
+                if self.materials[mesh.material].transparent {
+                    ids.sort_by(|&a, &b| {
+                        mesh.spheres[b]
+                            .0
+                            .distance_squared(eye)
+                            .total_cmp(&mesh.spheres[a].0.distance_squared(eye))
+                    });
+                }
+                if *ids != mesh.visible_ids {
+                    if !ids.is_empty() {
+                        mesh.scratch_instances.clear();
+                        mesh.scratch_instances
+                            .extend(ids.iter().map(|&i| mesh.source_instances[i]));
+                        self.queue.write_buffer(
+                            &mesh.visible_instances,
+                            0,
+                            bytemuck::cast_slice(&mesh.scratch_instances),
+                        );
+                    }
+                    mesh.visible_count = ids.len() as u32;
+                    std::mem::swap(&mut mesh.visible_ids, &mut mesh.scratch_ids);
+                }
             }
+            self.visibility_camera = Some(visibility_camera);
         }
         let mut jittered_vp = vp;
         let output_mode = self.output_mode();
@@ -216,9 +241,11 @@ impl ArchiveSceneRenderer {
         }
         self.previous_vp = Some(jittered_vp);
         let mut encoder = self.device.create_command_encoder(&Default::default());
-        for mesh in &self.meshes {
-            if let Some(culling) = &mesh.culling {
-                culling.encode(&mut encoder);
+        if update_visibility {
+            for mesh in &self.meshes {
+                if let Some(culling) = &mesh.culling {
+                    culling.encode(&mut encoder);
+                }
             }
         }
         if !self.shadow_ready {
@@ -381,6 +408,13 @@ impl ArchiveSceneRenderer {
         }
         for transparent in [false, true] {
             if transparent {
+                if let Some(capture) = opaque_capture {
+                    encoder.copy_texture_to_texture(
+                        self.hdr.as_image_copy(),
+                        capture.as_image_copy(),
+                        self.hdr.size(),
+                    );
+                }
                 if let Some(water) = &mut self.water {
                     water.encode(
                         &self.queue,
@@ -639,6 +673,7 @@ impl ArchiveSceneRenderer {
                 depth_or_array_layers: 1,
             },
         );
+        encode_tail(self, &mut encoder);
         preceding_commands.push(encoder.finish());
         let submission = self.queue.submit(preceding_commands);
         if time_this_frame {

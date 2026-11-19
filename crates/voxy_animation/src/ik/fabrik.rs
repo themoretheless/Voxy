@@ -124,6 +124,10 @@ impl Pose {
     /// # Errors
     /// Rejects foreign rigs, nonfinite targets/settings, collapsed links and
     /// nonuniform ancestor scale.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn solve_fabrik(
         &self,
         chain: &IkChain,

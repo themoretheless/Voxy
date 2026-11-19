@@ -209,6 +209,10 @@ fn retain_cut(cuts: &mut Vec<Cut>, pair: StrandResponse, time: f64, scales: [f64
     dead_code,
     reason = "single-threaded activation kept beside the worker variant"
 )]
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn activate(
     constraints: &mut Vec<Constraint>,
     rods: &[HairRod],
@@ -235,6 +239,10 @@ pub(super) fn activate(
 #[allow(
     dead_code,
     reason = "worker activation of the swept path, kept for the in-progress solver"
+)]
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 pub(super) fn activate_with_workers(
     constraints: &mut Vec<Constraint>,
@@ -350,6 +358,10 @@ pub(in crate::hair) fn with_current_native_normals<T>(enabled: bool, run: impl F
     run()
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn activate_from_origin(
     constraints: &mut Vec<Constraint>,
     rods: &[HairRod],
@@ -381,6 +393,10 @@ pub(super) fn activate_from_origin(
     )
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn activate_current_normals(
     constraints: &mut Vec<Constraint>,
     rods: &[HairRod],
@@ -406,6 +422,11 @@ pub(super) fn activate_current_normals(
     )
 }
 
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn activate_with_normal_mode(
     constraints: &mut Vec<Constraint>,
     rods: &[HairRod],
@@ -644,7 +665,8 @@ fn activate_with_normal_mode(
     if changed {
         // Rebuild from the canonical base and all witnessed affine planes.
         // add_constraint retains its canonical coalescing and strongest bound.
-        *groups = base.to_vec();
+        groups.clear();
+        groups.extend_from_slice(base);
         groups.extend(cuts.iter().map(|cut| cut.pair.clone()));
         let (_, scales) = trust_components(rods, increment, groups)?;
         // Base endpoint planes and swept witnesses must evaluate the same
@@ -962,6 +984,10 @@ mod tests {
         assert!(position_constraints_on_clock(&rods, &[], 40e-6, Some(&[0., 1.])).is_err());
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn captured_blocking_pair_locator_retains_short_intersection() {
         let a = CapsuleMotion {
             start: [
@@ -1498,6 +1524,11 @@ mod tests {
 }
 
 #[cfg(test)]
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn activate_reference(
     constraints: &mut Vec<Constraint>,
     rods: &[HairRod],

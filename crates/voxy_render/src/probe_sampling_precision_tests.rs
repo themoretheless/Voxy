@@ -2,6 +2,10 @@
 #[test]
 #[ignore = "exclusive Metal GPU; VOXY_PROBE_SAMPLING_PROOF must be a fresh directory"]
 #[cfg(target_os = "macos")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn original_probe_interpolation_words_are_preserved() -> Result<(), Box<dyn std::error::Error>> {
     use wgpu::util::DeviceExt;
     let output = std::path::PathBuf::from(

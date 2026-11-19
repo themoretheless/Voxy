@@ -56,12 +56,39 @@ impl FaceFeatures {
     ) {
         self.lash_motion = candidate;
     }
+    #[cfg(test)]
+    pub(crate) fn lash_checkpoint(&self) -> Vec<[[f64; 3]; 2]> {
+        self.lash_motion
+            .iter()
+            .map(|motion| [motion.offset(), motion.velocity()])
+            .collect()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn prepare_lash_checkpoint(
+        &self,
+        states: Vec<[[f64; 3]; 2]>,
+    ) -> Result<Vec<physics_bio::secondary_motion::SecondaryMotion>, &'static str> {
+        if states.len() != self.lash_motion.len() {
+            return Err("invalid lash checkpoint count");
+        }
+        let mut motions = self.lash_motion.clone();
+        for (motion, state) in motions.iter_mut().zip(states) {
+            motion.restore_kinematics(state)?;
+        }
+        Ok(motions)
+    }
+
     pub fn exchange_lashes(
         &mut self,
         candidate: &mut Vec<physics_bio::secondary_motion::SecondaryMotion>,
     ) {
         std::mem::swap(&mut self.lash_motion, candidate);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Self {
         let face: Vec<[usize; 3]> = indices
             .chunks_exact(3)
@@ -298,6 +325,10 @@ impl FaceFeatures {
             &crate::face_parameters::FaceParameters::default(),
         );
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn append_configured(
         &self,
         body: &[SceneVertex],
@@ -312,6 +343,11 @@ impl FaceFeatures {
             body, normals, vertices, indices, head, pose, parameters, None,
         );
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn append_configured_with_bindings(
         &self,
         body: &[SceneVertex],
@@ -515,6 +551,10 @@ impl FaceFeatures {
     ) {
         self.append_lips_with_bindings(body, vertices, indices, head, pose, None);
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn append_lips_with_bindings(
         &self,
         body: &[SceneVertex],
@@ -818,6 +858,11 @@ fn skin_frame(triangle: [Vec3; 3]) -> Option<Quat> {
     Some(Quat::from_mat3(&Mat3::from_cols(tangent, bitangent, normal)).normalize())
 }
 /// Eight spans and a stable cross-section frame resolve the curled silhouette.
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn curved_lash(
     vertices: &mut Vec<SceneVertex>,
     indices: &mut Vec<u32>,
@@ -1000,6 +1045,10 @@ fn append_oral_anatomy(
         },
     );
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn append_oral_anatomy_pose(
     vertices: &mut Vec<SceneVertex>,
     indices: &mut Vec<u32>,
@@ -1415,6 +1464,10 @@ fn ellipsoid(
         false,
     );
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn ellipsoid_sampled(
     vertices: &mut Vec<SceneVertex>,
     indices: &mut Vec<u32>,
@@ -1589,6 +1642,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_lash_curls_never_reverse_the_open_lid_root_tangent() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1623,6 +1677,7 @@ mod tests {
         assert_eq!(checked, 144);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_closed_lash_contact_does_not_form_sharp_segment_reversals() {
         let mut preview = crate::face_preview::FacePreview::new().unwrap();
         for closure in [0., 0.5, 1.] {
@@ -1657,6 +1712,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_upper_lash_tips_point_down_at_full_closure() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1735,6 +1791,7 @@ mod tests {
     use super::*;
     use voxy_render::{ObjAsset, ObjLimits, SceneMesh};
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn rendered_follicle_follows_animated_triangle_without_vertex_snapping() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1789,6 +1846,7 @@ mod tests {
         assert!(closest_triangle_weights(Vec3::Z, [Vec3::ZERO; 3]).is_finite());
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_follicles_have_distributed_surface_anchors() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2072,6 +2130,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn neutral_lip_split_preserves_original_surface_area() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -2125,6 +2184,7 @@ mod tests {
         assert_eq!(open_mouth_surface(asset.mesh.vertices(), &mut indices), 0);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn attachments_follow_surface_and_topology_is_stable() {
         let asset = ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),

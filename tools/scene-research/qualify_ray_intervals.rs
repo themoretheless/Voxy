@@ -1,6 +1,10 @@
 //! Independent f64 admission test for conservative rejection arithmetic.
 use super::{Case, ResultRow};
 use wgpu::util::DeviceExt;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn run(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

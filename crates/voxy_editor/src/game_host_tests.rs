@@ -1055,6 +1055,30 @@ fn physics_inspector_edits_exact_collision_bits_and_reopens_project()
 }
 
 #[test]
+fn editor_save_and_reopen_preserve_precise_translation() -> Result<(), Box<dyn std::error::Error>> {
+    let temp = Temp::new();
+    let path = project::create(&temp.0.join("source"), "Precise translation")?;
+    let mut editor = App::from_project(&path)?;
+    editor.edit_key(KeyCode::KeyD)?;
+    let node = editor.instances[0];
+    let position = glam::DVec3::new(1., -260.1952625000003, 0.);
+    editor.scene.set_precise_translation(node, position)?;
+    editor.commit_authoring()?;
+    editor.save_authoring()?;
+    editor.stop_workers()?;
+
+    let mut reopened = App::from_project(&path)?;
+    let node = reopened.instances[0];
+    assert_eq!(reopened.scene.local_translation_f64(node)?, position);
+    assert_eq!(
+        reopened.scene.precise_world_matrix(node)?.w_axis.truncate(),
+        position
+    );
+    reopened.stop_workers()?;
+    Ok(())
+}
+
+#[test]
 fn dynamic_body_authored_in_physics_inspector_hits_wall_in_play_and_source_free_package()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -1083,7 +1107,7 @@ fn dynamic_body_authored_in_physics_inspector_hits_wall_in_play_and_source_free_
     editor.panel_action(panels::Action::Select(0))?;
     editor.panel_action(panels::Action::Physics)?;
     editor.panel_action(panels::Action::DynamicBody)?;
-    for (index, value) in [(5, "2.000000000000001"), (6, "1.000000000000001")] {
+    for (index, value) in [(5, "2.000000000000001"), (6, "120.00000000000001")] {
         editor.panel_action(panels::Action::Field(index))?;
         editor.field_key(KeyCode::Digit1, Some(value))?;
         editor.field_key(KeyCode::Enter, None)?;
@@ -1099,7 +1123,7 @@ fn dynamic_body_authored_in_physics_inspector_hits_wall_in_play_and_source_free_
     );
     assert_eq!(
         descriptor.initial_velocity_m_s[0].to_bits(),
-        1.000000000000001_f64.to_bits()
+        120.00000000000001_f64.to_bits()
     );
     editor.panel_action(panels::Action::DynamicBody)?;
     assert!(
@@ -1118,6 +1142,9 @@ fn dynamic_body_authored_in_physics_inspector_hits_wall_in_play_and_source_free_
         editor.advance_game(1. / 60.)?;
         trace.push(editor.authoring_document()?);
     }
+    // The first unconstrained tick travels 2 m, well past the 0.1 m wall.
+    let first = &trace[0].objects[0].translation;
+    assert!((first[0] - 0.5).abs() < 1e-6, "{first:?}");
     let end = &trace.last().unwrap().objects[0].translation;
     assert!((end[0] - 0.5).abs() < 1e-6, "{end:?}");
     assert!(end[1] < -4., "{end:?}");
@@ -1144,6 +1171,10 @@ fn dynamic_body_authored_in_physics_inspector_hits_wall_in_play_and_source_free_
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn kinematic_body_sweeps_to_wall_and_matches_source_free_package()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -1362,6 +1393,65 @@ fn kinematic_platform_carries_character_and_stops_at_rider_obstruction()
 }
 
 #[test]
+fn opposing_fast_dynamic_boxes_do_not_pass_through_each_other()
+-> Result<(), Box<dyn std::error::Error>> {
+    let temp = Temp::new();
+    let path = project::create(&temp.0.join("source"), "Dynamic box CCD")?;
+    let host = || Ok::<_, Box<dyn std::error::Error>>(GameHost::new(editor_component_registry()?));
+    let mut editor = app(&path, host()?)?;
+    editor.edit_key(KeyCode::KeyD)?;
+    editor.edit_key(KeyCode::KeyD)?;
+    let [left, right] = editor.instances[..] else {
+        return Err("expected two dynamic boxes".into());
+    };
+    for (node, sign) in [(left, -1.), (right, 1.)] {
+        editor.scene.set_local(
+            node,
+            Transform {
+                translation: glam::Vec3::X * sign * 0.5,
+                ..Default::default()
+            },
+        )?;
+        editor.scene.insert_component(
+            node,
+            BoxCollider {
+                half_extents: [0.0625; 3],
+            },
+        )?;
+        editor.scene.insert_component(
+            node,
+            voxy_gameplay::LiquidBody {
+                mass_kg: 1.,
+                initial_velocity_m_s: [-sign as f64 * 120., 0., 0.],
+            },
+        )?;
+    }
+    editor.commit_authoring()?;
+    editor.save_authoring()?;
+    editor.toggle_play()?;
+    let mut trace = Vec::new();
+    for _ in 0..4 {
+        editor.advance_game(1. / 60.)?;
+        let frame = editor.authoring_document()?;
+        // Without CCD each box travels 2 m in the first tick and swaps sides.
+        assert!((frame.objects[0].translation[0] + 0.0625).abs() < 1e-6);
+        assert!((frame.objects[1].translation[0] - 0.0625).abs() < 1e-6);
+        trace.push(frame);
+    }
+    editor.toggle_play()?;
+    editor.stop_workers()?;
+    let package = temp.0.join("ccd.vpak");
+    export_project_package_with_host(&path, &package, host()?)?;
+    std::fs::remove_dir_all(path.parent().unwrap())?;
+    let mut game = HeadlessGame::open_package(&package, host()?)?;
+    for expected in trace {
+        game.advance(1. / 60.)?;
+        assert_eq!(game.snapshot()?, expected);
+    }
+    Ok(())
+}
+
+#[test]
 fn kinematic_scene_collider_pushes_dynamic_body_in_play_and_package()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -1445,6 +1535,10 @@ fn kinematic_scene_collider_pushes_dynamic_body_in_play_and_package()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn kinematic_scene_collider_stops_when_dynamic_body_is_pinned()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -1594,7 +1688,6 @@ fn moving_scene_platform_compresses_particle_against_a_finite_body_in_one_step()
 }
 
 #[test]
-#[ignore = "known continuous contact budget failure after off-center particle impact"]
 fn moving_scene_platform_transmits_off_center_impulse_to_spinning_body()
 -> Result<(), Box<dyn std::error::Error>> {
     check_scene_platform_liquid(LiquidPlatformCase::RotatingRelay)
@@ -1610,6 +1703,10 @@ enum LiquidPlatformCase {
     RotatingRelay,
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn check_scene_platform_liquid(case: LiquidPlatformCase) -> Result<(), Box<dyn std::error::Error>> {
     let pinned = case == LiquidPlatformCase::Pinned;
     let rotating = case == LiquidPlatformCase::RotatingRelay;
@@ -1725,7 +1822,9 @@ fn check_scene_platform_liquid(case: LiquidPlatformCase) -> Result<(), Box<dyn s
                     glam::Vec3::new(
                         if packed { 0.34375 } else { 0.40625 },
                         0.,
-                        if rotating { 0.025 } else { 0. },
+                        // The particle collides as a 0.025 m box: the body centre must lie
+                        // beyond its face for the impact to carry a torque.
+                        if rotating { 0.05 } else { 0. },
                     )
                 } else {
                     glam::Vec3::new(0.25, 0., 0.25)
@@ -1782,8 +1881,20 @@ fn check_scene_platform_liquid(case: LiquidPlatformCase) -> Result<(), Box<dyn s
     };
     let mut trace = Vec::new();
     editor.toggle_play()?;
-    for tick in 1..=4 {
-        editor.advance_game(dt)?;
+    let ticks = if rotating {
+        std::env::var("VOXY_ROTATING_CONTACT_TICKS")
+            .ok()
+            .map(|value| value.parse::<u32>())
+            .transpose()?
+            .unwrap_or(4)
+            .max(4)
+    } else {
+        4
+    };
+    for tick in 1..=ticks {
+        editor
+            .advance_game(dt)
+            .map_err(|error| format!("platform tick {tick}: {error:?}"))?;
         let particles = read(&editor);
         assert_eq!(particles.len(), nozzles.len());
         if pinned {
@@ -1878,7 +1989,16 @@ fn check_scene_platform_liquid(case: LiquidPlatformCase) -> Result<(), Box<dyn s
             assert!((state.position[0] - (f64::from(tick) * 0.25 + 0.125)).abs() < 1e-10);
             assert!(state.velocity[1] < 0.);
         }
-        trace.push((editor.authoring_document()?, particles, rigid));
+        let precise_pose = if rotating {
+            Some(
+                editor
+                    .scene
+                    .precise_world_matrix(*editor.instances.last().unwrap())?,
+            )
+        } else {
+            None
+        };
+        trace.push((editor.authoring_document()?, particles, rigid, precise_pose));
     }
     editor.toggle_play()?;
     assert_eq!(editor.authoring_document()?, authored);
@@ -1889,10 +2009,14 @@ fn check_scene_platform_liquid(case: LiquidPlatformCase) -> Result<(), Box<dyn s
     let replay = |path: &std::path::Path| -> Result<(), Box<dyn std::error::Error>> {
         let mut standalone = App::from_project(path)?;
         standalone.start_standalone()?;
-        for (scene, particles, body) in &trace {
+        for (scene, particles, body, precise_pose) in &trace {
             standalone.advance_game(dt)?;
             assert_eq!(&standalone.authoring_document()?, scene);
             assert_eq!(&read(&standalone), particles);
+            if let Some(expected) = precise_pose {
+                let node = *standalone.instances.last().unwrap();
+                assert_eq!(&standalone.scene.precise_world_matrix(node)?, expected);
+            }
             assert_eq!(
                 &standalone
                     .play
@@ -1913,4 +2037,204 @@ fn check_scene_platform_liquid(case: LiquidPlatformCase) -> Result<(), Box<dyn s
     let package = packaged_game::MaterializedPackage::open(&package_path)?;
     replay(&package.project_path()?)?;
     Ok(())
+}
+
+#[test]
+fn authored_npc_route_runs_in_play_standalone_and_source_free_package()
+-> Result<(), Box<dyn std::error::Error>> {
+    npc_navigation_replay(false)
+}
+
+#[test]
+fn authored_npc_destination_plans_and_replays_after_packaging()
+-> Result<(), Box<dyn std::error::Error>> {
+    npc_navigation_replay(true)
+}
+
+fn configure_npc_navigation_scene(
+    editor: &mut App,
+    plan_destination: bool,
+) -> Result<(), Box<dyn std::error::Error>> {
+    for _ in 0..3 {
+        editor.edit_key(KeyCode::KeyD)?;
+    }
+    let [npc, floor, wall] = editor.instances[..] else {
+        return Err("unexpected test scene".into());
+    };
+    for (node, translation) in [
+        (npc, glam::Vec3::new(0., 0.1, 0.)),
+        (floor, glam::Vec3::new(0.5, -0.2, 0.5)),
+        (wall, glam::Vec3::new(0.5, 0.4, 0.)),
+    ] {
+        editor.scene.set_local(
+            node,
+            Transform {
+                translation,
+                ..Default::default()
+            },
+        )?;
+    }
+    editor.scene.insert_component(
+        floor,
+        BoxCollider {
+            half_extents: [2., 0.2, 2.],
+        },
+    )?;
+    editor.scene.insert_component(
+        wall,
+        BoxCollider {
+            half_extents: [0.1, 0.4, 0.55],
+        },
+    )?;
+    editor.scene.insert_component(
+        npc,
+        CharacterBody {
+            half_extents: [0.1; 3],
+            speed: 3.,
+            ..Default::default()
+        },
+    )?;
+    if plan_destination {
+        editor.scene.insert_component(
+            npc,
+            voxy_gameplay::NpcDestination {
+                origin: [-0.25; 2],
+                cells: [3; 2],
+                cell_size: 0.5,
+                floor_y: [-0.1, 0.15],
+                max_step_height: 0.02,
+                max_slope_tan: 0.6,
+                min_clearance: 0.2,
+                goal: [0.5, 0.],
+            },
+        )?;
+    } else {
+        editor.scene.insert_component(
+            npc,
+            voxy_gameplay::NpcRoute::new(vec![
+                [0., 0., 0.],
+                [0., 0., 1.],
+                [1., 0., 1.],
+                [1., 0., 0.],
+            ])?,
+        )?;
+    }
+    Ok(())
+}
+
+fn npc_navigation_replay(plan_destination: bool) -> Result<(), Box<dyn std::error::Error>> {
+    let temp = Temp::new();
+    let path = project::create(&temp.0.join("source"), "NPC route")?;
+    let host = || Ok::<_, Box<dyn std::error::Error>>(GameHost::new(editor_component_registry()?));
+    let mut editor = app(&path, host()?)?;
+    configure_npc_navigation_scene(&mut editor, plan_destination)?;
+    if plan_destination {
+        editor.commit_authoring()?;
+        let blocked = editor.authoring_document()?;
+        let error = editor
+            .toggle_play()
+            .expect_err("blocked NPC goal must reject Play");
+        assert!(error.to_string().contains("BlockedEndpoint"), "{error}");
+        assert_eq!(editor.authoring_document()?, blocked);
+        assert!(editor.play.playing.is_none());
+        let npc = editor.instances[0];
+        editor
+            .scene
+            .component_mut::<voxy_gameplay::NpcDestination>(npc)?
+            .expect("NPC destination restored")
+            .goal = [1., 0.];
+    }
+    editor.commit_authoring()?;
+    editor.save_authoring()?;
+    let authored = editor.authoring_document()?;
+    editor.toggle_play()?;
+    let mut trace = Vec::new();
+    for _ in 0..90 {
+        editor.advance_game(1. / 60.)?;
+        trace.push(editor.authoring_document()?);
+    }
+    let npc_id = &authored.objects[0].id;
+    let position = |document: &voxy_scene::SceneDocument| {
+        document
+            .objects
+            .iter()
+            .find(|object| &object.id == npc_id)
+            .unwrap()
+            .translation
+    };
+    assert!(position(&trace[19])[2] > 0.9);
+    let end = position(trace.last().unwrap());
+    assert!((end[0] - 1.).abs() < 1e-4 && end[2].abs() < 1e-4, "{end:?}");
+    editor.toggle_play()?;
+    assert_eq!(editor.authoring_document()?, authored);
+    editor.stop_workers()?;
+
+    let package = temp.0.join("navigation.vpak");
+    export_project_package_with_host(&path, &package, host()?)?;
+    let replay = |mut game: HeadlessGame| -> Result<(), Box<dyn std::error::Error>> {
+        for expected in &trace {
+            game.advance(1. / 60.)?;
+            assert_eq!(&game.snapshot()?, expected);
+        }
+        game.stop()
+    };
+    replay(HeadlessGame::open_project(&path, host()?)?)?;
+    std::fs::remove_dir_all(path.parent().unwrap())?;
+    replay(HeadlessGame::open_package(&package, host()?)?)
+}
+
+#[test]
+fn npc_goal_inspector_edit_save_and_undo() -> Result<(), Box<dyn std::error::Error>> {
+    use crate::{component_fields, navigation_authoring::SCHEMA};
+    let temp = Temp::new();
+    let path = project::create(&temp.0.join("source"), "NPC goal inspector")?;
+    let mut editor = App::from_project(&path)?;
+    editor.edit_key(KeyCode::KeyD)?;
+    editor.edit_key(KeyCode::KeyC)?;
+    let before = editor.authoring_document()?;
+    let token = component_fields::morph_edit_token(&before.objects[0]);
+    editor.panel_action(panels::Action::NpcDestination(token))?;
+    let added = editor.authoring_document()?;
+    assert!(added.objects[0].components.contains_key(SCHEMA));
+    assert!(
+        editor
+            .panel_action(panels::Action::NpcDestination(token))
+            .is_err()
+    );
+
+    let edit = |app: &mut App, path, value| -> Result<(), Box<dyn std::error::Error>> {
+        let document = app.authoring_document()?;
+        let index = component_fields::fields(&document.objects[app.selected])?
+            .iter()
+            .position(|field| field.schema == SCHEMA && field.path == path)
+            .ok_or("missing NPC destination field")?;
+        app.inspector = InspectorMode::Components(index / 6);
+        app.panel_action(panels::Action::Field(index))?;
+        app.field_key(KeyCode::Digit0, Some(value))?;
+        app.field_key(KeyCode::Enter, None)
+    };
+    edit(&mut editor, "/goal/0", "0.5")?;
+    let edited = editor.authoring_document()?;
+    assert_eq!(edited.objects[0].components[SCHEMA]["goal"][0], 0.5);
+    assert!(edit(&mut editor, "/cell_size", "0").is_err());
+    assert_eq!(editor.authoring_document()?, edited);
+    editor.edit_key(KeyCode::Escape)?;
+    editor.edit_key(KeyCode::KeyZ)?;
+    assert_eq!(editor.authoring_document()?, added);
+    editor.edit_key(KeyCode::KeyY)?;
+    assert_eq!(editor.authoring_document()?, edited);
+    editor.save_authoring()?;
+    editor.stop_workers()?;
+
+    let mut reopened = App::from_project(&path)?;
+    assert_eq!(reopened.authoring_document()?, edited);
+    reopened.edit_key(KeyCode::KeyC)?;
+    assert!(
+        !reopened.authoring_document()?.objects[0]
+            .components
+            .contains_key(SCHEMA)
+    );
+    reopened.edit_key(KeyCode::KeyZ)?;
+    assert_eq!(reopened.authoring_document()?, edited);
+    reopened.stop_workers()
 }

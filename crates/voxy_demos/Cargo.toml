@@ -4,17 +4,22 @@ version = "0.1.0"
 edition.workspace = true
 license.workspace = true
 publish = false
-description = "Character, tissue, liquid and material demos used by the native shell, examples and probes"
+description = "Character, tissue, liquid and material demos with their SceneDemo adapters, used by the examples and probes"
 
 [features]
 default = []
 experimental-strand-fraction-reuse = ["physics/experimental-strand-fraction-reuse"]
 experimental-reusable-query-workers = ["physics/experimental-reusable-query-workers"]
 cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda"]
+# Runs the library tests that take longer than 20 s each (character, grasp,
+# film and hair scenes). They are ignored by default and run by the separate
+# "Slow demo tests" CI job: `cargo test -p voxy_demos --lib --features slow-tests`.
+slow-tests = []
 
 [dependencies]
 voxy_gameplay = { path = "../voxy_gameplay" }
 voxy_scene = { path = "../voxy_scene" }
+voxy_scene_host = { path = "../voxy_scene_host" }
 voxy_input = { path = "../voxy_input" }
 blake3.workspace = true
 serde.workspace = true

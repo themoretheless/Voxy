@@ -2,6 +2,10 @@
 use super::{AnatomySurface, BreedAnatomy, Ear};
 use glam::Vec3;
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn append(mesh: &mut AnatomySurface, a: BreedAnatomy) {
     mesh.inner_ear.resize(mesh.positions.len(), false);
     mesh.inner_ear_weight.resize(mesh.positions.len(), 0.0);

@@ -1,0 +1,26 @@
+    Blocking waiting for file lock on build directory
+warning: unused import: `LIGHT_Z_BIN_COUNT`
+  --> crates/voxy_render/src/archive_scene.rs:22:13
+   |
+22 | use types::{LIGHT_Z_BIN_COUNT, archive_light_z_masks, display_mode, fully_covering_transmission};
+   |             ^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_render` (lib) generated 1 warning (run `cargo fix --lib -p voxy_render` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 52s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-5693088dacc5851a)
+
+running 9 tests
+test panel_focus::integration_tests::real_panels_and_native_key_adapter_share_focus_and_authoring_actions ... ok
+test panel_focus::integration_tests::unpresented_panels_block_hits_and_cancel_held_activation_until_represented ... ok
+test panels::gpu_tests::load_progress_and_cancel_render_readable_glyphs ... ignored, requires a real GPU and local TrueType font
+test panels::gpu_tests::marker_controls_render_readable_glyphs_without_hit_overlap ... ignored, requires a real GPU and local TrueType font
+test panels::gpu_tests::missing_model_notice_renders_three_readable_lines_without_control_overlap ... ignored, requires a real GPU and local TrueType font
+test panels::gpu_tests::relink_path_entry_renders_readable_path_and_cancel_target ... ignored, requires a real GPU and local TrueType font
+test panels::gpu_tests::snapshot_failure_notice_renders_diagnostic_and_retry_hint_without_overlap ... ignored, requires a real GPU and local TrueType font
+test panels::hierarchy::tests::hierarchy_order_preserves_document_indices_and_sibling_order ... ok
+test panels::safe_view_tests::panel_safe_areas_follow_dpi_and_odd_split_regions ... ok
+
+test result: ok. 4 passed; 0 failed; 5 ignored; 0 measured; 453 filtered out; finished in 0.08s
+

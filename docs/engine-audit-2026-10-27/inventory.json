@@ -429,7 +429,7 @@
       "evidence": {
         "api": "docs/adr/0002-general-engine-architecture.md",
         "consumer": "Cargo.toml",
-        "test": "docs/engine-roadmap-2026-10-25.md"
+        "test": "docs/PLAN.md"
       },
       "acceptance": "Authority, replication, loss/reconnect and server test required",
       "gap": "Locate any prototype, then define runtime contract; not qualified",

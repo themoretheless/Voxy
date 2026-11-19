@@ -24,6 +24,9 @@ __pycache__/
 /docs/architecture-performance/
 /.research/
 *.vpak
+*.vprobes.tmp
+*_skipped.face
+*_skipped.node
 *.profdata
 /lcov.info
 /rag.duckdb

@@ -247,6 +247,10 @@ fn same_group(a: &AnimationClip, b: &AnimationClip) -> bool {
         && Arc::ptr_eq(constant_translations, &b.constant_translations)
 }
 impl Group {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn capture(clip: &AnimationClip, sources: &mut Sources<'_>) -> Result<Self, Error> {
         let AnimationClip {
             rig,

@@ -37,11 +37,16 @@ fn read(
     read.slice(..).map_async(wgpu::MapMode::Read, move |r| {
         let _ = tx.send(r);
     });
-    device.poll(wgpu::PollType::Wait {
-        submission_index: Some(submission),
-        timeout: None,
-    })?;
-    rx.recv()??;
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: Some(std::time::Duration::from_secs(30)),
+        })
+        .map_err(|error| format!("shared ray producer GPU readback ({bytes} bytes): {error}"))?;
+    rx.recv_timeout(std::time::Duration::from_secs(1))
+        .map_err(|error| {
+            format!("shared ray producer readback callback ({bytes} bytes): {error}")
+        })??;
     let data = read.slice(..).get_mapped_range()?.to_vec();
     read.unmap();
     Ok(data)
@@ -269,6 +274,10 @@ fn consume(
         .map(|v| u32::from_le_bytes(v.try_into().unwrap()))
         .collect())
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn run(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -277,7 +286,7 @@ pub(super) fn run(
         .ok_or("producer audit output directory required")?;
     let root = Path::new(&root);
     std::fs::create_dir(root)?;
-    scale(device, queue, root)?;
+    scale(device, queue, root).map_err(|error| format!("exact coefficient transport: {error}"))?;
     reciprocal_node_audit(device, queue, root)?;
     deferred_queue_protocol(device, queue, root)?;
     separate_hint_safety(device, queue, root)?;

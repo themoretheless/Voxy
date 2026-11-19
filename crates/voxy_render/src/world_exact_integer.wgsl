@@ -338,11 +338,12 @@ fn ex_triangle(a:ExVec,b:ExVec,c:ExVec,d:ExVec)->ExDecision {
  }
  let normal=ex_cross(e1,e2);if ex_vec_valid(normal)==0u {return ex_unresolved();}
  if ex_vec_zero(normal) {return ex_edges(a,b,c,d);}
- let plane=ex_dot(normal,a);if plane.valid==0u {return ex_unresolved();}if plane.length!=0u {return ex_truth(false);}
+ let plane=ex_dot(normal,av);if plane.valid==0u {return ex_unresolved();}if plane.length!=0u {return ex_truth(false);}
  // Coplanar: origin inside the projected triangle, or a ray/edge intersection.
  let drop=ex_nonzero_axis(normal);var i=0u;var j=1u;if drop==0u {i=1u;j=2u;}else if drop==1u {i=0u;j=2u;}
  var area=ex_sub(ex_mul(ex_component(e1,i),ex_component(e2,j)),ex_mul(ex_component(e1,j),ex_component(e2,i)));
- let delta=ex_vneg(a);
+ // Area and the barycentric numerators must use the same radix scale.
+ let delta=ex_vneg(av);
  var u=ex_sub(ex_mul(ex_component(delta,i),ex_component(e2,j)),ex_mul(ex_component(delta,j),ex_component(e2,i)));
  var v=ex_sub(ex_mul(ex_component(e1,i),ex_component(delta,j)),ex_mul(ex_component(e1,j),ex_component(delta,i)));
  if (area.valid&u.valid&v.valid)==0u {return ex_unresolved();}if area.negative!=0u {area=ex_neg(area);u=ex_neg(u);v=ex_neg(v);}

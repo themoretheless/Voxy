@@ -9,6 +9,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         _ => return Err("choose idle, walk, jog or sprint".into()),
     };
     voxy_shell::SceneApp::new(false)?
-        .with_female_locomotion(clip)?
+        .with_demo(Box::new(voxy_demos::female_scene::FemaleScene::locomotion(
+            clip,
+        )?))
         .run(winit::event_loop::EventLoop::new()?)
 }

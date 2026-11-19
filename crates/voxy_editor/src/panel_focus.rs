@@ -237,6 +237,7 @@ mod tests {
                     name: (*id).into(),
                     active: true,
                     translation: [0.0; 3],
+                    precise_translation_bits: None,
                     rotation: [0.0, 0.0, 0.0, 1.0],
                     scale: [1.0; 3],
                     components: BTreeMap::new(),
@@ -409,6 +410,10 @@ mod integration_tests {
             .frame_outcome(voxy_render::RenderOutcome::Presented);
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn unpresented_panels_block_hits_and_cancel_held_activation_until_represented() {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../voxy_render/examples/assets/quad.obj");
@@ -526,6 +531,10 @@ mod integration_tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn real_panels_and_native_key_adapter_share_focus_and_authoring_actions() {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../voxy_render/examples/assets/quad.obj");

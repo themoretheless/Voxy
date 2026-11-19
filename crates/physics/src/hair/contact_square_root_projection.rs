@@ -172,6 +172,11 @@ fn solve_with_workers(
 ) -> Result<PositionIncrement, &'static str> {
     solve_with_workers_prepared(constraints, rods, dt, free, tolerance, workers, None, None)
 }
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn solve_with_workers_prepared(
     constraints: &mut [Constraint],
     rods: &[HairRod],
@@ -433,6 +438,10 @@ fn export_capacity_failure(
 }
 
 type IslandSolution = (Vec<Vec<f64>>, Vec<f64>);
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn solve_independent_islands(
     groups: &[(Vec<usize>, Vec<usize>)],
     constraints: &[Constraint],
@@ -464,39 +473,52 @@ fn solve_independent_islands(
     if workers <= 1 {
         return groups.iter().map(solve_one).collect();
     }
-    use std::sync::atomic::{AtomicUsize, Ordering};
-    let next = AtomicUsize::new(0);
     let observation_frame = crate::hair::phase_diagnostics::observation_frame();
-    std::thread::scope(|scope| {
-        let mut handles = Vec::new();
-        for _ in 0..workers {
-            let next = &next;
-            let solve_one = &solve_one;
-            handles.push(scope.spawn(move || {
-                crate::hair::phase_diagnostics::with_observation_frame(observation_frame, || {
-                    let mut output = Vec::new();
-                    loop {
-                        let index = next.fetch_add(1, Ordering::Relaxed);
-                        if index >= groups.len() {
-                            break;
-                        }
-                        output.push((index, solve_one(&groups[index])));
-                    }
-                    output
-                })
-            }));
-        }
-        let mut ordered = Vec::with_capacity(groups.len());
-        for handle in handles {
-            ordered.extend(
-                handle
-                    .join()
-                    .map_err(|_| "native contact island worker panicked")?,
-            );
-        }
-        ordered.sort_unstable_by_key(|(index, _)| *index);
-        ordered.into_iter().map(|(_, result)| result).collect()
-    })
+    #[cfg(feature = "experimental-reusable-query-workers")]
+    return crate::hair::ordered_queries::ordered_query_results(groups, workers, |group| {
+        crate::hair::phase_diagnostics::with_observation_frame(observation_frame, || {
+            solve_one(group).map(Some)
+        })
+    });
+
+    #[cfg(not(feature = "experimental-reusable-query-workers"))]
+    {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        let next = AtomicUsize::new(0);
+        std::thread::scope(|scope| {
+            let mut handles = Vec::new();
+            for _ in 0..workers {
+                let next = &next;
+                let solve_one = &solve_one;
+                handles.push(scope.spawn(move || {
+                    crate::hair::phase_diagnostics::with_observation_frame(
+                        observation_frame,
+                        || {
+                            let mut output = Vec::new();
+                            loop {
+                                let index = next.fetch_add(1, Ordering::Relaxed);
+                                if index >= groups.len() {
+                                    break;
+                                }
+                                output.push((index, solve_one(&groups[index])));
+                            }
+                            output
+                        },
+                    )
+                }));
+            }
+            let mut ordered = Vec::with_capacity(groups.len());
+            for handle in handles {
+                ordered.extend(
+                    handle
+                        .join()
+                        .map_err(|_| "native contact island worker panicked")?,
+                );
+            }
+            ordered.sort_unstable_by_key(|(index, _)| *index);
+            ordered.into_iter().map(|(_, result)| result).collect()
+        })
+    }
 }
 
 // Independent islands advance in ready rounds through original Newton-row
@@ -623,6 +645,10 @@ fn prepare_joint<'a>(
 
 // Refine numerical response addition against original Newton rows. A local
 // load inequality is insufficient when adding its response rounds again.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn solve_island_increment(
     requests: &[crate::hair::HairResponseSystem],
     ids: &[usize],
@@ -724,6 +750,10 @@ fn export_failed_island_context(
         eprintln!("HAIR FAILED ISLAND CONTEXT ERROR {error}");
     }
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn solve_prepared_island_increment(
     prepared: &crate::hair::contact_response_system::PreparedNativeJoint<'_>,
     requests: &[crate::hair::HairResponseSystem],
@@ -912,6 +942,10 @@ fn observe_island_input(
     }
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn admit_island_response(
     requests: &[crate::hair::HairResponseSystem],
     rows: &[usize],
@@ -966,8 +1000,9 @@ fn contact_islands(
     constraints: &[Constraint],
     count: usize,
 ) -> Result<Vec<(Vec<usize>, Vec<usize>)>, &'static str> {
-    fn root(parent: &[usize], mut i: usize) -> usize {
+    fn root(parent: &mut [usize], mut i: usize) -> usize {
         while parent[i] != i {
+            parent[i] = parent[parent[i]];
             i = parent[i];
         }
         i
@@ -976,19 +1011,19 @@ fn contact_islands(
     let mut owners = Vec::with_capacity(constraints.len());
     let mut involved = vec![false; count];
     for constraint in constraints {
-        let ids: Vec<_> = constraint
+        let mut ids = constraint
             .entries
             .iter()
             .filter(|e| e.gradient.iter().any(|&value| value != 0.))
-            .map(|e| e.rod)
-            .collect();
-        let Some(&first) = ids.first() else {
+            .map(|e| e.rod);
+        let Some(first) = ids.next() else {
             return Err("square-root contact has no movable owner");
         };
-        for &id in &ids {
+        involved[first] = true;
+        for id in ids {
             involved[id] = true;
-            let a = root(&parent, first);
-            let b = root(&parent, id);
+            let a = root(&mut parent, first);
+            let b = root(&mut parent, id);
             parent[a.max(b)] = a.min(b);
         }
         owners.push(first);
@@ -997,11 +1032,15 @@ fn contact_islands(
         Default::default();
     for (r, used) in involved.iter().enumerate() {
         if *used {
-            groups.entry(root(&parent, r)).or_default().0.push(r);
+            groups.entry(root(&mut parent, r)).or_default().0.push(r);
         }
     }
     for (i, owner) in owners.into_iter().enumerate() {
-        groups.entry(root(&parent, owner)).or_default().1.push(i);
+        groups
+            .entry(root(&mut parent, owner))
+            .or_default()
+            .1
+            .push(i);
     }
     Ok(groups.into_values().collect())
 }
@@ -1056,6 +1095,10 @@ mod tests {
         assert!(constraints.iter().all(|row| row.multiplier == 0.));
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn independent_physical_islands_batch_initial_trials_and_preserve_admission() {
         struct Backend {
             mode: usize,
@@ -1210,6 +1253,10 @@ mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn frozen_dual_hints_follow_exact_rows_and_only_opt_in_backends() {
         struct Backend {
             seen: Vec<Vec<f64>>,
@@ -1332,6 +1379,10 @@ mod tests {
     }
 
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn cooperative_newton_rounds_retry_only_unfinished_original_rows() {
         struct Backend {
             rounds: Vec<usize>,

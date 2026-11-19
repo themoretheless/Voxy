@@ -26,6 +26,15 @@ pub struct PreparedHairStep {
     collider: TriangleMesh,
     targets: Vec<Vec3>,
 }
+#[cfg(test)]
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct FemaleHairCheckpoint {
+    system: physics::hair::HairSystemCheckpoint,
+    collider: physics::hair::TriangleMeshCheckpoint,
+    targets: Vec<[f32; 3]>,
+}
+
 impl FemaleHair {
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Result<Self, &'static str> {
         Self::new_parameterized(body, indices, Default::default())
@@ -39,6 +48,10 @@ impl FemaleHair {
     }
     /// Candidate authoring retains both follicle coordinates. Native contact
     /// qualification is required before selecting it in the normal demo.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn new_parameterized_with_groom(
         body: &[SceneVertex],
         indices: &[u32],
@@ -449,7 +462,7 @@ impl FemaleHair {
                     }
                     let substeps = (effective * 2).min(32);
                     eprintln!(
-                        "HAIR TEMPORAL REFINEMENT retry from={effective} to={substeps} dt={dt}"
+                        "HAIR TEMPORAL REFINEMENT retry from={effective} to={substeps} dt={dt} reason={error}"
                     );
                     let next = refined.get_or_insert_with(|| self.system.clone());
                     next.substeps = substeps;
@@ -495,6 +508,42 @@ impl FemaleHair {
             targets: self.targets.clone(),
         }
     }
+    #[cfg(test)]
+    pub(crate) fn checkpoint(&self) -> FemaleHairCheckpoint {
+        FemaleHairCheckpoint {
+            system: self.system.kinematic_checkpoint(),
+            collider: self.collider.checkpoint(),
+            targets: self.targets.iter().map(glam::Vec3::to_array).collect(),
+        }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn prepare_checkpoint(
+        &self,
+        checkpoint: FemaleHairCheckpoint,
+    ) -> Result<PreparedHairStep, &'static str> {
+        if checkpoint.targets.len() != self.root_bindings.len()
+            || !checkpoint
+                .targets
+                .iter()
+                .flatten()
+                .all(|value| value.is_finite())
+        {
+            return Err("invalid hair root targets in checkpoint");
+        }
+        let mut staged = self.diagnostic_checkpoint();
+        staged
+            .system
+            .restore_kinematic_checkpoint(checkpoint.system)?;
+        staged.collider.restore_checkpoint(checkpoint.collider)?;
+        staged.targets = checkpoint
+            .targets
+            .into_iter()
+            .map(Vec3::from_array)
+            .collect();
+        Ok(staged)
+    }
+
     pub fn exchange_prepared(&mut self, staged: &mut PreparedHairStep) {
         std::mem::swap(&mut self.system, &mut staged.system);
         std::mem::swap(&mut self.collider, &mut staged.collider);
@@ -693,6 +742,11 @@ impl FemaleHair {
         // the caller's mesh. No guide or follower is removed.
         indices.extend(self.render_indices.iter().map(|index| mesh_base + index));
     }
+    #[cfg(test)]
+    pub(crate) fn last_step_substeps(&self) -> usize {
+        self.system.last_step_substeps()
+    }
+
     pub fn verify(&self, _head: Mat4) -> Result<(), &'static str> {
         Self::verify_system(&self.system, &self.targets)
     }
@@ -953,10 +1007,12 @@ mod tests {
         .unwrap();
         let before = fingerprint(&hair);
         let mut checkpoint = hair.diagnostic_checkpoint();
+        let encoded = serde_json::to_vec(&hair.checkpoint()).unwrap();
         let body = moved(0.0002);
         let head = Mat4::from_translation(Vec3::Y * 0.0002);
         hair.advance(1. / 240., 2. / 240., head, &body).unwrap();
         let after = fingerprint(&hair);
+        let expected = serde_json::to_vec(&hair.checkpoint()).unwrap();
         assert_ne!(before, after);
         hair.exchange_prepared(&mut checkpoint);
         assert_eq!(
@@ -970,6 +1026,12 @@ mod tests {
             after,
             "replayed step changed complete mutable state"
         );
+        let mut restored = hair
+            .prepare_checkpoint(serde_json::from_slice(&encoded).unwrap())
+            .unwrap();
+        hair.exchange_prepared(&mut restored);
+        hair.advance(1. / 240., 2. / 240., head, &body).unwrap();
+        assert_eq!(serde_json::to_vec(&hair.checkpoint()).unwrap(), expected);
     }
     #[test]
     fn full_resolution_basis_transport_matches_quaternion_reference() {
@@ -1128,6 +1190,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn complete_rig_loop_preserves_hair_and_scalp_bindings() {
         let body = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1283,6 +1346,10 @@ mod tests {
     }
     #[test]
     #[ignore = "native GPU full-model dynamics qualification"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn gpu_linear_solver_tracks_full_model_jump_with_contacts() {
         let body = voxy_render::ObjAsset::parse(
             include_str!(
@@ -2027,6 +2094,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn real_surface_contacts_and_moving_root_keep_mesh_capacity() {
         let body = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),

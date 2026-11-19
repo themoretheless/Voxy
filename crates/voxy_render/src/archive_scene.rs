@@ -19,7 +19,7 @@ use bytemuck::{Pod, Zeroable};
 use glam::{Mat4, Vec3};
 use probe_timing::Timing;
 use std::sync::Arc;
-use types::{LIGHT_Z_BIN_COUNT, archive_light_z_masks, display_mode, fully_covering_transmission};
+use types::{archive_light_z_masks, display_mode, fully_covering_transmission};
 use world_rays::validate_street_ray_env_config;
 
 #[repr(C)]
@@ -162,6 +162,7 @@ pub struct ArchiveSceneRenderer {
     adapted_wetness: f32,
     puddle_coverage: f32,
     previous_vp: Option<Mat4>,
+    visibility_camera: Option<([u32; 3], [[u32; 4]; 6])>,
     shadow_bounds: (Vec3, Vec3),
     sun: Vec3,
     sun_colour: [f32; 4],
@@ -234,6 +235,10 @@ fn depth(device: &wgpu::Device, w: u32, h: u32) -> wgpu::Texture {
 }
 
 impl ArchiveSceneRenderer {
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -265,6 +270,10 @@ impl ArchiveSceneRenderer {
     }
 
     /// Render imported or generated RGBA images with the same material/shadow pipeline.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn new_with_images(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -285,6 +294,11 @@ impl ArchiveSceneRenderer {
         )
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn new_with_environment(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -1410,6 +1424,7 @@ impl ArchiveSceneRenderer {
             adapted_wetness: 0.,
             puddle_coverage: 0.45,
             previous_vp: None,
+            visibility_camera: None,
             shadow_bounds: bounds,
             sun,
             sun_colour,

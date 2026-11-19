@@ -1,4 +1,8 @@
 use physics::liquid::{BoundarySample, Config, Container, Liquid, Material, Particle};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let spacing = 0.08_f64;
     let density = 1000.0;

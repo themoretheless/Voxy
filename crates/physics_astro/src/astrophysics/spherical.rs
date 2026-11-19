@@ -307,6 +307,11 @@ impl Sphere {
         Ok(result)
     }
     // Keep the transactional gravity/transport step together.
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn step_composition_impl(
         &mut self,
         dt: f64,

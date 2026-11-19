@@ -63,13 +63,36 @@ fn point_triangle(p: &RV, a: &RV, b: &RV, c: &RV) -> RV {
         .unwrap()
 }
 fn point_segment_prepared(p: &RV, a: &RV, edge: &RV, norm2: &R) -> RV {
-    let t = if *norm2 > zero_r() {
-        (dot(&sub(p, a), edge) / norm2).max(zero_r()).min(one())
-    } else {
-        zero_r()
-    };
-    add(a, &scale(edge, &t))
+    if *norm2 <= zero_r() {
+        return a.clone();
+    }
+    segment_point_from_numerator(a, edge, norm2, dot(&sub(p, a), edge))
 }
+fn segment_point_from_numerator(a: &RV, edge: &RV, norm2: &R, numerator: R) -> RV {
+    if numerator <= zero_r() {
+        return a.clone();
+    }
+    if numerator >= *norm2 {
+        return add(a, edge);
+    }
+    add(a, &scale(edge, &(numerator / norm2)))
+}
+#[test]
+fn exact_segment_clamping_matches_reference_projection() {
+    let a = [real(0.25), real(-0.5), real(1.0)];
+    for b in [a.clone(), [real(0.75), real(-0.5), real(1.0)]] {
+        let edge = sub(&b, &a);
+        let norm2 = dot(&edge, &edge);
+        for x in [-0.5, 0.25, 0.375, 0.75, 1.5] {
+            let point = [real(x), real(0.5), real(-0.25)];
+            assert_eq!(
+                point_segment_prepared(&point, &a, &edge, &norm2),
+                point_segment(&point, &a, &b),
+            );
+        }
+    }
+}
+
 struct TriangleFeatures<'a> {
     vertices: [&'a RV; 3],
     edges: [RV; 3],
@@ -101,17 +124,15 @@ impl<'a> TriangleFeatures<'a> {
     }
     fn closest(&self, p: &RV) -> RV {
         let norm2 = self.norm2.get_or_init(|| dot(&self.normal, &self.normal));
-        if *norm2 > zero_r() {
-            let q = sub(
+        // Moving along the normal leaves all three exact edge signs unchanged.
+        if *norm2 > zero_r() && self.inside(p) {
+            return sub(
                 p,
                 &scale(
                     &self.normal,
                     &(dot(&sub(p, self.vertices[0]), &self.normal) / norm2),
                 ),
             );
-            if self.inside(&q) {
-                return q;
-            }
         }
         (0..3)
             .map(|i| {
@@ -126,32 +147,58 @@ impl<'a> TriangleFeatures<'a> {
             .unwrap()
     }
 }
-fn segment_pair(p: &RV, q: &RV, a: &RV, b: &RV) -> (RV, RV) {
-    let u = sub(q, p);
-    let v = sub(b, a);
+struct ClosestPair {
+    points: (RV, RV),
+    distance2: R,
+}
+
+impl ClosestPair {
+    fn new(points: (RV, RV)) -> Self {
+        let distance2 = distance2(&points.0, &points.1);
+        Self { points, distance2 }
+    }
+}
+
+fn segment_pair(
+    p: &RV,
+    q: &RV,
+    a: &RV,
+    b: &RV,
+    (u, aa): (&RV, &R),
+    (v, cc): (&RV, &R),
+) -> ClosestPair {
     let w = sub(p, a);
-    let aa = dot(&u, &u);
-    let bb = dot(&u, &v);
-    let cc = dot(&v, &v);
-    let dd = dot(&u, &w);
-    let ee = dot(&v, &w);
-    let den = &aa * &cc - &bb * &bb;
-    let mut candidates = vec![
-        (p.clone(), point_segment_prepared(p, a, &v, &cc)),
-        (q.clone(), point_segment_prepared(q, a, &v, &cc)),
-        (point_segment_prepared(a, p, &u, &aa), a.clone()),
-        (point_segment_prepared(b, p, &u, &aa), b.clone()),
-    ];
+    let bb = dot(u, v);
+    let dd = dot(u, &w);
+    let ee = dot(v, &w);
+    let den = aa * cc - &bb * &bb;
     if den > zero_r() {
-        let s = (&bb * &ee - &cc * &dd) / &den;
-        let t = (&aa * &ee - &bb * &dd) / den;
-        if s >= zero_r() && s <= one() && t >= zero_r() && t <= one() {
-            candidates.push((add(p, &scale(&u, &s)), add(a, &scale(&v, &t))));
+        let s = &bb * &ee - cc * &dd;
+        let t = aa * &ee - &bb * &dd;
+        // With a positive determinant the squared distance is strictly convex.
+        // A feasible stationary pair is the unique minimum, even on a boundary.
+        if s >= zero_r() && s <= den && t >= zero_r() && t <= den {
+            return ClosestPair::new((
+                add(p, &scale(u, &(s / &den))),
+                add(a, &scale(v, &(t / den))),
+            ));
         }
     }
-    candidates
+    // Reuse the dot products already computed for the interior candidate.
+    // The endpoint offsets are w, w + u, -w, and v - w.
+    let endpoints = [
+        (
+            p.clone(),
+            segment_point_from_numerator(a, v, cc, ee.clone()),
+        ),
+        (q.clone(), segment_point_from_numerator(a, v, cc, &ee + &bb)),
+        (segment_point_from_numerator(p, u, aa, -&dd), a.clone()),
+        (segment_point_from_numerator(p, u, aa, &bb - &dd), b.clone()),
+    ];
+    endpoints
         .into_iter()
-        .min_by_key(|(a, b)| distance2(a, b))
+        .map(ClosestPair::new)
+        .min_by(|a, b| a.distance2.cmp(&b.distance2))
         .unwrap()
 }
 #[cfg(test)]
@@ -183,6 +230,26 @@ fn segment_pair_reference(p: &RV, q: &RV, a: &RV, b: &RV) -> (RV, RV) {
         .min_by_key(|(a, b)| distance2(a, b))
         .unwrap()
 }
+#[test]
+fn segment_pair_checks_parameter_bounds_before_exact_division() {
+    let point = |x, y, z| [real(x), real(y), real(z)];
+    let p = point(0.0, 0.0, 0.0);
+    let q = point(1.0, 0.0, 0.0);
+    for x in [-0.25, 0.0, 0.375, 1.0, 1.25] {
+        let a = point(x, -0.5, 0.25);
+        let b = point(x, 0.5, 0.25);
+        for (p, q) in [(&p, &q), (&q, &p), (&p, &p)] {
+            for (a, b) in [(&a, &b), (&b, &a)] {
+                let u = sub(q, p);
+                let v = sub(b, a);
+                let pair = segment_pair(p, q, a, b, (&u, &dot(&u, &u)), (&v, &dot(&v, &v)));
+                assert_eq!(pair.points, segment_pair_reference(p, q, a, b));
+                assert_eq!(pair.distance2, distance2(&pair.points.0, &pair.points.1));
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 fn axis_at(
     capsule: CapsuleMotion,
@@ -232,39 +299,68 @@ impl RelativeGeometry {
             return false;
         }
         let [p, q, a, b, c] = self.points_at(time);
-        let (first, last) = closest_pair_points(p, q, a, b, c);
-        distance2(&first, &last) < self.radius2
+        closest_pair_points(p, q, a, b, c).distance2 < self.radius2
     }
 }
-fn closest_pair_points(p: RV, q: RV, a: RV, b: RV, c: RV) -> (RV, RV) {
+fn closest_pair_points(p: RV, q: RV, a: RV, b: RV, c: RV) -> ClosestPair {
     let face = TriangleFeatures::new(&a, &b, &c);
     let n = &face.normal;
-    let den = dot(&sub(&q, &p), n);
+    let direction = sub(&q, &p);
+    let den = dot(&direction, n);
     if den != zero_r() {
-        let u = dot(&sub(&a, &p), n) / den;
-        let point = add(&p, &scale(&sub(&q, &p), &u));
-        if u >= zero_r() && u <= one() && face.inside(&point) {
-            return (point.clone(), point);
+        let numerator = dot(&sub(&a, &p), n);
+        let inside_segment = if den > zero_r() {
+            numerator >= zero_r() && numerator <= den
+        } else {
+            numerator <= zero_r() && numerator >= den
+        };
+        if inside_segment {
+            let point = add(&p, &scale(&direction, &(numerator / den)));
+            if face.inside(&point) {
+                return ClosestPair {
+                    points: (point.clone(), point),
+                    distance2: zero_r(),
+                };
+            }
         }
     }
-    let mut candidates = vec![(p.clone(), face.closest(&p)), (q.clone(), face.closest(&q))];
-    for (u, v) in [(&a, &b), (&b, &c), (&c, &a)] {
-        candidates.push(segment_pair(&p, &q, u, v));
+    let first = ClosestPair::new((p.clone(), face.closest(&p)));
+    // A point capsule has only this point-to-triangle candidate.
+    // Zero distance is already the global minimum for any capsule.
+    if p == q || first.distance2 == zero_r() {
+        return first;
     }
-    candidates
+    let second = ClosestPair::new((q.clone(), face.closest(&q)));
+    if second.distance2 == zero_r() {
+        return second;
+    }
+    let norm2 = dot(&direction, &direction);
+    [first, second]
         .into_iter()
-        .min_by_key(|(a, b)| distance2(a, b))
+        .chain((0..3).map(|i| {
+            let edge = &face.edges[i];
+            let edge_norm2 = face.edge_norms[i].get_or_init(|| dot(edge, edge));
+            segment_pair(
+                &p,
+                &q,
+                face.vertices[i],
+                face.vertices[(i + 1) % 3],
+                (&direction, &norm2),
+                (edge, edge_norm2),
+            )
+        }))
+        .min_by(|a, b| a.distance2.cmp(&b.distance2))
         .unwrap()
 }
 fn axis_at_points(p: RV, q: RV, a: RV, b: RV, c: RV, clearance_radius2: &R) -> Option<RV> {
-    let (first, last) = closest_pair_points(p, q, a, b, c);
+    let pair = closest_pair_points(p, q, a, b, c);
     // A sampled pair can reject penetration, never certify a trajectory.
-    if distance2(&first, &last) < *clearance_radius2 {
+    if pair.distance2 < *clearance_radius2 {
         return None;
     }
     // Arbitrary finite rounded directions keep polynomial operands small.
     // Exact closest points are not themselves clearance certificates.
-    let direction = sub(&first, &last);
+    let direction = sub(&pair.points.0, &pair.points.1);
     let mut axis = std::array::from_fn(|_| zero_r());
     for i in 0..3 {
         let value = direction[i].to_f64()?;
@@ -361,6 +457,7 @@ pub(in crate::hair::contact::triangle_sweep) fn certifies(
         return false;
     }
     let motion = ExactMotion::new(capsule, triangle, tolerance);
+    let geometry = std::cell::OnceCell::new();
     // A discovered floating-point minimum is only a time hint. Reject a
     // clearance proof early solely when exact interpolated feature distances
     // at that dyadic time violate the original radius minus tolerance.
@@ -375,14 +472,23 @@ pub(in crate::hair::contact::triangle_sweep) fn certifies(
             },
             false,
         )
-        && RelativeGeometry::new(&motion).penetrates_at(&real(witness.time))
+        && geometry
+            .get_or_init(|| RelativeGeometry::new(&motion))
+            .penetrates_at(&real(witness.time))
     {
         return false;
     }
     // Each exact certificate family has the original bounded proof budget.
     // Unknown feature-axis proofs retain the unchanged general discovery path.
     super::dyadic::feature_certifies(&motion, budget)
-        || walk::<false, true>(capsule, triangle, tolerance, budget).is_some()
+        || walk_prepared::<false, true>(
+            capsule,
+            triangle,
+            &motion,
+            geometry.get_or_init(|| RelativeGeometry::new(&motion)),
+            budget,
+        )
+        .is_some()
 }
 #[cfg(test)]
 pub(super) fn build(
@@ -393,6 +499,7 @@ pub(super) fn build(
 ) -> Option<Vec<(R, R, [Vec<R>; 3])>> {
     walk::<true, true>(capsule, triangle, tolerance, budget)
 }
+#[cfg(test)]
 fn walk<const RETAIN: bool, const EXACT: bool>(
     capsule: CapsuleMotion,
     triangle: TriangleMotion,
@@ -416,14 +523,24 @@ fn walk<const RETAIN: bool, const EXACT: bool>(
         return None;
     }
     let motion = ExactMotion::new(capsule, triangle, tolerance);
+    let geometry = RelativeGeometry::new(&motion);
+    walk_prepared::<RETAIN, EXACT>(capsule, triangle, &motion, &geometry, budget)
+}
+
+fn walk_prepared<const RETAIN: bool, const EXACT: bool>(
+    capsule: CapsuleMotion,
+    triangle: TriangleMotion,
+    motion: &ExactMotion,
+    geometry: &RelativeGeometry,
+    budget: usize,
+) -> Option<Vec<(R, R, [Vec<R>; 3])>> {
     if motion.radius <= zero_r() {
         return None;
     }
-    let geometry = RelativeGeometry::new(&motion);
     // Dyadic children share their parent's endpoints exactly. Reuse only these
     // immutable axes within this one motion query, never across changed geometry.
-    let first = selected_axis::<EXACT>(capsule, triangle, &zero_r(), &geometry)?;
-    let last = selected_axis::<EXACT>(capsule, triangle, &one(), &geometry)?;
+    let first = selected_axis::<EXACT>(capsule, triangle, &zero_r(), geometry)?;
+    let last = selected_axis::<EXACT>(capsule, triangle, &one(), geometry)?;
     let mut stack = vec![(zero_r(), one(), 0, first, last)];
     let mut visited = 0;
     let mut leaves = Vec::new();
@@ -433,7 +550,7 @@ fn walk<const RETAIN: bool, const EXACT: bool>(
             return None;
         }
         let mid = (&lo + &hi) / R::from_integer(2.into());
-        let middle = selected_axis::<EXACT>(capsule, triangle, &mid, &geometry)?;
+        let middle = selected_axis::<EXACT>(capsule, triangle, &mid, geometry)?;
         let axis = std::array::from_fn(|i| {
             vec![
                 first[i].clone(),
@@ -457,6 +574,10 @@ fn walk<const RETAIN: bool, const EXACT: bool>(
 }
 #[test]
 #[ignore = "requires original VRC1 geometry; constructs axes natively without serialized witnesses"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn captured_native_exact_axis_discovery_certifies_and_rejects_penetration() {
     let data =
         std::fs::read_to_string(std::env::var("VOXY_HAIR_EXACT_AXIS_FIXTURE").unwrap()).unwrap();

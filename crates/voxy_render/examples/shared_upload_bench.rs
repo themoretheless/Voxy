@@ -44,6 +44,10 @@ fn dispatch(
     pass.set_bind_group(0, group, &[]);
     pass.dispatch_workgroups(rows.div_ceil(64), 1, 1);
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
         backends: wgpu::Backends::METAL,

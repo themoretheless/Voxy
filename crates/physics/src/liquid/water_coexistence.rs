@@ -41,6 +41,10 @@ pub fn water_coexistence(t: f64) -> Result<WaterCoexistence, Error> {
     solve_coexistence(t).map(|(state, _)| state)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(in crate::liquid) fn solve_coexistence(
     t: f64,
 ) -> Result<(WaterCoexistence, [WaterHomogeneousResponse; 2]), Error> {

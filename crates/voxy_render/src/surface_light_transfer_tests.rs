@@ -6,6 +6,11 @@ use crate::{
     ComputeDispatch, GraphicsOptions, SceneMesh, SceneRenderer, SceneVertex, SurfaceLightGeometry,
 };
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn gpu_material_transfer_preserves_geometry_and_rejected_light() {
     pollster::block_on(async {
         let instance = GraphicsOptions::default().create_instance();
@@ -123,7 +128,12 @@ fn gpu_material_transfer_preserves_geometry_and_rejected_light() {
             .unwrap();
             queue.submit([encoder.finish()]);
             let mut pending = dispatch.begin_read();
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: None,
+                    timeout: Some(std::time::Duration::from_secs(30)),
+                })
+                .expect("Metal test GPU submission did not complete");
             let bytes = pending.try_read().unwrap().unwrap();
             let header: &[u32] = bytemuck::cast_slice(&bytes[192..]);
             assert_eq!(header[1], u32::from(stage == 1));
@@ -163,6 +173,11 @@ fn gpu_material_transfer_preserves_geometry_and_rejected_light() {
 }
 
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn resident_normal_lighting_updates_and_rejects_invalid_normals() {
     pollster::block_on(async {
         use crate::{SurfaceLightFrame, SurfaceLightFrameSettings};
@@ -251,7 +266,12 @@ fn resident_normal_lighting_updates_and_rejects_invalid_normals() {
             .unwrap();
             queue.submit([encoder.finish()]);
             let mut pending = dispatch.begin_read();
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: None,
+                    timeout: Some(std::time::Duration::from_secs(30)),
+                })
+                .expect("Metal test GPU submission did not complete");
             let bytes = pending.try_read().unwrap().unwrap();
             let header: &[u32] = bytemuck::cast_slice(&bytes[156..]);
             let valid = stage != 2;

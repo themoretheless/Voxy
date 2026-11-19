@@ -1,0 +1,19 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+warning: use of deprecated associated function `glam::Mat4::perspective_rh`: use the `glam::camera::rh::proj::directx::perspective` function instead
+   --> crates/voxy_render/src/native_vegetation/culling.rs:212:48
+    |
+212 |             ClipVolume::shadow_receivers(Mat4::perspective_rh(1., 1., 0.1, 512.), shadow, 4096,)
+    |                                                ^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: `voxy_render` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.58s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_render-5964849c32dd4096)
+
+running 2 tests
+test native_vegetation::culling::tests::receiver_footprint_keeps_off_camera_casters_and_filter_margin ... ok
+test native_vegetation::culling::tests::clip_ranges_preserve_order_edges_and_unknown_bounds ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 431 filtered out; finished in 0.00s
+

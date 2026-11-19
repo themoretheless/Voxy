@@ -1,0 +1,13 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.27s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_gameplay-7cc93979801cd70b)
+
+running 1 test
+MIXED SUPPORT LOOP intervals=19 contacts=38832 geometry_error_m=9.71000036232920440e-11
+MIXED REACTION RATE interval_s=1e-4 geometry_error_m=4.35774703137772164e-12 jerk_residual=0.00000000000000000e0 pressure_limit_s=6.88738362812819453e13
+MIXED REACTION RELEASE next_impact_s=6.85790619440957541e-8 normal_speed_m_s=-4.75120890525582845e-6
+MIXED REACTION REENTRY supports=4 particle_force_n=[-46.29604002701453, -9.882179915946999e-21, -0.154426432215236]
+test liquid_runtime::tests::runtime_particle_impacts_leave_distinct_support_snapshots ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 260 filtered out; finished in 9.97s
+

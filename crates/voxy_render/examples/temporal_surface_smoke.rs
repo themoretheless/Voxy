@@ -41,6 +41,10 @@ struct Smoke {
     )>,
 }
 impl Smoke {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn draw(&mut self) -> Result<bool, String> {
         if let Some((program, _)) = &mut self.integrated
             && self.attempt == 2
@@ -382,6 +386,10 @@ impl Smoke {
     }
 }
 impl ApplicationHandler for Smoke {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         if self.window.is_some() {
             return;

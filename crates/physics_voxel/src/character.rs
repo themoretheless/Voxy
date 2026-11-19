@@ -147,6 +147,10 @@ fn step_character_acceleration(
 /// Applies device-integrated motion with the authoritative voxel sweep controller.
 /// # Errors
 /// Invalid state/motion or world query errors preserve the original character.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub fn step_character_with_motion(
     view: &impl VoxelView,
     registry: &BlockRegistry,

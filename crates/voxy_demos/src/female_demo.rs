@@ -395,6 +395,10 @@ impl FemaleDemo {
         model.simulate_hair = false;
         Ok(model)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn from_assets(
         body_source: &str,
         eyes: [&str; 2],
@@ -664,6 +668,10 @@ impl FemaleDemo {
             max_displacement: 0.0,
         })
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn set_body_parameters(
         &mut self,
         parameters: crate::body_parameters::BodyParameters,
@@ -1026,6 +1034,10 @@ impl FemaleDemo {
     ) -> Result<(), &'static str> {
         self.advance_impl(dt, Some(solver))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn advance_impl(
         &mut self,
         dt: f64,
@@ -1279,7 +1291,7 @@ impl FemaleDemo {
                 });
                 let (next_skin, next_hair, skin_ms, hair_ms) = std::thread::scope(|scope| {
                     let hair_step = hair_pose.as_ref().map(|posed| {
-                        scope.spawn(move || {
+                        scope.spawn(physics::hair::inherit_contact_frame(move || {
                             let started = std::time::Instant::now();
                             let result = match backend {
                                 Some(backend) => hair.prepare_advance_with_solver(
@@ -1294,7 +1306,7 @@ impl FemaleDemo {
                                 }
                             };
                             (result, started.elapsed().as_secs_f64() * 1000.)
-                        })
+                        }))
                     });
                     let started = std::time::Instant::now();
                     let skin_result = skin.prepare_adaptive_with_contacts(
@@ -1418,7 +1430,7 @@ impl FemaleDemo {
                 .map(|backend| &mut **backend as &mut (dyn physics::hair::HairLinearSolver + Send));
             let (next_skin, next_hair, report, skin_ms, hair_ms) = std::thread::scope(|scope| {
                 let hair_step = hair_pose.as_ref().map(|posed| {
-                    scope.spawn(move || {
+                    scope.spawn(physics::hair::inherit_contact_frame(move || {
                         let started = std::time::Instant::now();
                         let result = match backend {
                             Some(backend) => hair.prepare_advance_with_solver(
@@ -1431,7 +1443,7 @@ impl FemaleDemo {
                             None => hair.prepare_advance(h, time, head, &posed[..body_vertices]),
                         };
                         (result, started.elapsed().as_secs_f64() * 1000.)
-                    })
+                    }))
                 });
                 let started = std::time::Instant::now();
                 let report = skin.prepare_adaptive_with_contacts(
@@ -1522,6 +1534,10 @@ impl FemaleDemo {
 mod tests {
     #[test]
     #[ignore = "exports actual lash centerlines and strict skin crossings"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn audit_lash_skin_crossings() {
         let mut demo = super::FemaleDemo::new().unwrap();
         if let Ok(path) = std::env::var("VOXY_FACE_DIAGNOSTIC_PRESET") {
@@ -1667,6 +1683,7 @@ mod tests {
         .unwrap();
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn surface_light_control_changes_irradiance_without_rebuilding_diffusion_or_geometry() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -1704,6 +1721,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn forehead_wrinkle_relief_follows_brow_pose_without_reapplying_mask() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -1753,6 +1771,7 @@ mod tests {
         assert_eq!(raised.indices(), raised_creased.indices());
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn camera_gaze_converges_from_both_eye_centers() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.preview_expression = Some(Default::default());
@@ -1768,6 +1787,7 @@ mod tests {
     }
     use super::*;
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grasp_preset_switch_preserves_pose_and_failed_load_keeps_target() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -1854,6 +1874,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn full_character_follows_elapsed_frame_time() {
         for frames in [180, 120] {
             let mut demo = FemaleDemo::new().unwrap();
@@ -1889,6 +1910,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn physical_skin_preserves_forearm_surface() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -1941,6 +1963,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn probe_contacts_actual_surface_and_retracts() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -1977,6 +2000,7 @@ mod tests {
         println!("SKIN PROBE: peak axial reaction {maximum_force:.6} N; retracts without overlap");
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn complexion_follows_face_animation_and_leaves_eyes_untinted() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2034,6 +2058,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn animation_preview_uses_elapsed_time_without_skin_solver() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2045,6 +2070,7 @@ mod tests {
         assert_eq!(demo.skin.positions(), demo.skin.rest_positions());
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn ordinary_gesture_keeps_rendered_feet_at_their_support_height() {
         let mut demo = FemaleDemo::new().unwrap();
         let rest = demo.mesh().unwrap();
@@ -2069,6 +2095,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn secondary_face_and_hair_colliders_share_the_rendered_head_pose() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2104,6 +2131,7 @@ mod tests {
         ));
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn jump_excitation_matches_visible_root_and_stops_during_settling() {
         let mut demo = FemaleDemo::new().unwrap();
         // A stationary root must not receive an invisible jump force.
@@ -2148,6 +2176,7 @@ mod tests {
         std::fs::write(path, serde_json::to_vec(&rows).unwrap()).unwrap();
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn delayed_full_model_frame_matches_six_fixed_physics_steps() {
         let mut delayed = FemaleDemo::new().unwrap();
         let mut fixed = FemaleDemo::new().unwrap();
@@ -2199,6 +2228,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn gpu_body_stream_preserves_every_non_hair_vertex() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2228,6 +2258,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn parallel_full_secondary_preserves_skin_and_hair_contacts() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2263,6 +2294,7 @@ mod tests {
         assert_eq!(demo.steps, 8);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn film_substrate_matches_rendered_body_without_visual_work() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -2332,6 +2364,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn rejected_skin_step_preserves_secondary_regions_and_attachment_state() {
         let snapshot = |demo: &FemaleDemo| {
             format!(
@@ -2366,6 +2399,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn full_secondary_demo_advances_skin_and_all_volume_regions() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2415,6 +2449,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn preview_has_visible_soft_region_motion_and_settles() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2462,6 +2497,7 @@ mod tests {
         assert!(demo.secondary.iter().all(|s| s.velocity()[1].abs() < 0.003));
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn secondary_motion_changes_actual_model_vertices() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -2488,6 +2524,7 @@ mod tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn real_mesh_loads_and_skin_deforms_rendered_surface() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.simulate_hair = false;
@@ -2548,6 +2585,7 @@ mod tests {
 #[cfg(test)]
 mod morphology_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn face_live_reload_keeps_last_valid_preset() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2566,6 +2604,7 @@ mod morphology_tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn face_constructor_preserves_animated_topology_and_attachment_density() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2596,6 +2635,7 @@ mod morphology_tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn parameters_preserve_real_model_topology_and_motion() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2638,6 +2678,7 @@ mod morphology_tests {
 #[cfg(test)]
 mod parameter_reload_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn watched_file_updates_and_invalid_json_keeps_last_body() {
         let path = std::env::temp_dir().join(format!("voxy-reload-{}.json", std::process::id()));
         std::fs::write(&path, "{\"height_cm\":182,\"breast_size\":1.3}").unwrap();
@@ -2659,6 +2700,7 @@ mod parameter_reload_tests {
 #[cfg(test)]
 mod film_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn actual_model_accepts_film_and_advances_a_frame() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2678,6 +2720,7 @@ mod film_tests {
 #[cfg(test)]
 mod parameter_skin_rebase_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn pupil_parameter_changes_only_eye_metadata_not_geometry_or_skin() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2716,6 +2759,7 @@ mod parameter_skin_rebase_tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn skin_material_coordinates_stay_attached_across_morph_and_animation() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2761,6 +2805,7 @@ mod parameter_skin_rebase_tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn parameter_edit_rebases_shell_without_accumulating_morphs() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2812,6 +2857,7 @@ mod parameter_skin_rebase_tests {
 #[cfg(test)]
 mod parameterized_hair_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn edited_groom_and_collider_advance_in_the_same_space() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2843,6 +2889,7 @@ mod parameterized_hair_tests {
 #[cfg(test)]
 mod nipple_refinement_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn response_advances_with_animation_time_and_survives_target_changes() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -2890,6 +2937,7 @@ mod nipple_refinement_tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn response_uses_integrated_solver_time_instead_of_unconsumed_frame_time() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -2911,6 +2959,7 @@ mod nipple_refinement_tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn refined_landmarks_have_complete_bindings_and_visible_cold_deformation() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.surface_diffusion_enabled = false;
@@ -2963,6 +3012,7 @@ mod nipple_refinement_tests {
 #[cfg(test)]
 mod film_state_capture_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn moving_body_film_conserves_source_adjusted_mass_over_two_seconds() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -3060,14 +3110,17 @@ mod film_state_capture_tests {
         assert!((actual - initial - demo.time * 1e-9 * density).abs() < initial * 1e-12);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn physical_film_uses_consumed_solver_time_and_current_surface() {
         check_physical_film_clock(true);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn full_skin_solver_film_uses_consumed_time_and_current_surface() {
         check_physical_film_clock(false);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn animated_film_uses_current_pose_and_rejects_truncated_time() {
         let mut demo = super::FemaleDemo::new().unwrap();
         demo.animation_only = true;
@@ -3122,6 +3175,7 @@ mod film_state_capture_tests {
         assert_eq!(demo.film.as_ref().unwrap().state_snapshot(), state);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn viewer_callback_exports_actual_film_once_for_the_requested_frame() {
         let directory = std::env::temp_dir().join(format!(
             "voxy-viewer-film-{}-{}",
@@ -3168,6 +3222,7 @@ mod film_state_capture_tests {
 #[cfg(test)]
 mod male_asset_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn male_source_has_complete_bindings_and_advances() {
         let mut male = super::FemaleDemo::new_male().unwrap();
         assert_eq!(male.body_vertices, 44_880);
@@ -3191,6 +3246,7 @@ mod male_asset_tests {
 #[cfg(test)]
 mod model_selection_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn source_switch_rebuilds_bindings_and_preserves_view_controls() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.show_strain = true;
@@ -3220,6 +3276,7 @@ mod model_selection_tests {
         );
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn source_switch_transfers_existing_fluid_without_mass_loss() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.enable_film([0., 0.20, 0.13], 0.04, 5e-8).unwrap();
@@ -3257,6 +3314,7 @@ mod model_selection_tests {
 #[cfg(test)]
 mod source_switch_geometry_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn switched_film_uses_morphed_geometry_in_the_first_frame() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.animation_only = true;
@@ -3292,6 +3350,7 @@ mod source_switch_geometry_tests {
 #[cfg(test)]
 mod same_source_film_morph_tests {
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn morphed_film_updates_immediately_without_resetting_time_or_mass() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.animation_only = true;
@@ -3336,6 +3395,7 @@ mod same_source_film_morph_tests {
         assert!((reset["massKg"].as_f64().unwrap() - mass).abs() / mass < 1e-12);
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn appearance_only_edit_preserves_live_physics_and_film() {
         let mut model = super::FemaleDemo::new().unwrap();
         model.animation_only = true;
@@ -3389,22 +3449,236 @@ mod warm_light_tests {
 #[cfg(test)]
 mod authored_jump_integration_tests {
     use super::*;
+    #[derive(serde::Serialize, serde::Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct JumpFrameCheckpoint {
+        version: u32,
+        executable_blake3: String,
+        frame: usize,
+        continuous_contacts: bool,
+        rows: Vec<serde_json::Value>,
+        time: f64,
+        animation_time: f64,
+        accumulator: f64,
+        max_displacement: f64,
+        targets: Vec<[f64; 3]>,
+        secondary: [[[f64; 3]; 2]; 4],
+        lashes: Vec<[[f64; 3]; 2]>,
+        regions: Vec<physics_bio::tissue::TissueCheckpoint>,
+        skin: physics_bio::skin::SkinCheckpoint,
+        hair: crate::female_hair::FemaleHairCheckpoint,
+    }
+
+    fn jump_pose_digest(demo: &FemaleDemo) -> String {
+        let mut pose = blake3::Hasher::new();
+        for position in demo.skin.positions() {
+            for coordinate in position {
+                pose.update(&coordinate.to_le_bytes());
+            }
+        }
+        for frame in demo.hair.gpu_surface_frames() {
+            for vector in [frame.position_arc, frame.u_red, frame.v_green, frame.w_blue] {
+                for coordinate in vector {
+                    pose.update(&coordinate.to_le_bytes());
+                }
+            }
+        }
+        pose.finalize().to_hex().to_string()
+    }
+
+    impl JumpFrameCheckpoint {
+        fn executable_digest() -> &'static str {
+            static DIGEST: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+            DIGEST.get_or_init(|| {
+                let executable = std::fs::File::open(std::env::current_exe().unwrap()).unwrap();
+                let mut hash = blake3::Hasher::new();
+                hash.update_reader(executable).unwrap();
+                hash.finalize().to_hex().to_string()
+            })
+        }
+
+        fn restore(self, demo: &mut FemaleDemo) -> Result<(), &'static str> {
+            if self.version != 2
+                || self.executable_blake3 != Self::executable_digest()
+                || self.frame > 720
+                || [self.time, self.animation_time, self.accumulator]
+                    .iter()
+                    .any(|v| !v.is_finite())
+                || !self.max_displacement.is_finite()
+                || self.max_displacement < 0.
+                || self.targets.len() != demo.targets.len()
+                || !self.targets.iter().flatten().all(|v| v.is_finite())
+                || self.regions.len() != demo.regions.len()
+            {
+                return Err("invalid jump checkpoint");
+            }
+
+            let mut skin = demo.skin.clone();
+            skin.restore_checkpoint(self.skin)?;
+            let mut hair = demo.hair.prepare_checkpoint(self.hair)?;
+            let mut secondary = demo.secondary.clone();
+            for (motion, state) in secondary.iter_mut().zip(self.secondary) {
+                motion.restore_kinematics(state)?;
+            }
+            let lashes = demo.features.prepare_lash_checkpoint(self.lashes)?;
+            let mut regions = demo.regions.clone();
+            for (region, state) in regions.iter_mut().zip(self.regions) {
+                region.restore_checkpoint(state)?;
+            }
+
+            demo.skin = skin;
+            demo.hair.exchange_prepared(&mut hair);
+            demo.secondary = secondary;
+            demo.features.publish_lashes(lashes);
+            demo.regions = regions;
+            demo.targets = self.targets;
+            demo.time = self.time;
+            demo.animation_time = self.animation_time;
+            demo.steps = self.frame;
+            demo.accumulator = self.accumulator;
+            demo.max_displacement = self.max_displacement;
+            Ok(())
+        }
+
+        fn write(
+            demo: &FemaleDemo,
+            directory: &std::path::Path,
+            continuous_contacts: bool,
+            rows: &[serde_json::Value],
+        ) -> std::io::Result<()> {
+            let checkpoint = Self {
+                version: 2,
+                executable_blake3: Self::executable_digest().to_owned(),
+                frame: demo.steps,
+                continuous_contacts,
+                rows: rows.to_vec(),
+                time: demo.time,
+                animation_time: demo.animation_time,
+                accumulator: demo.accumulator,
+                max_displacement: demo.max_displacement,
+                targets: demo.targets.clone(),
+                secondary: demo
+                    .secondary
+                    .each_ref()
+                    .map(|motion| [motion.offset(), motion.velocity()]),
+                lashes: demo.features.lash_checkpoint(),
+                regions: demo
+                    .regions
+                    .iter()
+                    .map(crate::volume_regions::Region::checkpoint)
+                    .collect(),
+                skin: demo.skin.checkpoint(),
+                hair: demo.hair.checkpoint(),
+            };
+            let temporary = directory.join("frame-state.json.tmp");
+            let file = std::fs::File::create(&temporary)?;
+            let mut writer = std::io::BufWriter::new(file);
+            serde_json::to_writer(&mut writer, &checkpoint)?;
+            std::io::Write::flush(&mut writer)?;
+            std::fs::rename(temporary, directory.join("frame-state.json"))
+        }
+    }
+
+    #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
+    fn jump_checkpoint_repeats_next_authored_frame() {
+        compare_next_authored_frame_after_checkpoint(false);
+    }
+
+    #[test]
+    #[ignore = "full-density continuous contacts can take several minutes per frame"]
+    fn jump_checkpoint_repeats_next_continuous_authored_frame() {
+        compare_next_authored_frame_after_checkpoint(true);
+    }
+
+    fn compare_next_authored_frame_after_checkpoint(continuous_contacts: bool) {
+        let mut demo = FemaleDemo::new().unwrap();
+        demo.secondary_only = true;
+        demo.simulate_hair = true;
+        demo.enable_authored_jump().unwrap();
+        if continuous_contacts {
+            demo.hair.qualify_continuous_contacts();
+        }
+        demo.advance(1. / 120.).unwrap();
+
+        let path = std::env::temp_dir().join(format!(
+            "voxy-jump-checkpoint-{}-{continuous_contacts}",
+            std::process::id()
+        ));
+        std::fs::create_dir(&path).unwrap();
+        let state_path = path.join("frame-state.json");
+        JumpFrameCheckpoint::write(&demo, &path, continuous_contacts, &[]).unwrap();
+        let checkpoint: JumpFrameCheckpoint =
+            serde_json::from_slice(&std::fs::read(&state_path).unwrap()).unwrap();
+
+        demo.advance(1. / 120.).unwrap();
+        JumpFrameCheckpoint::write(&demo, &path, continuous_contacts, &[]).unwrap();
+        let expected = std::fs::read(&state_path).unwrap();
+
+        let mut restored = FemaleDemo::new().unwrap();
+        restored.secondary_only = true;
+        restored.simulate_hair = true;
+        restored.enable_authored_jump().unwrap();
+        if continuous_contacts {
+            restored.hair.qualify_continuous_contacts();
+        }
+        checkpoint.restore(&mut restored).unwrap();
+        restored.advance(1. / 120.).unwrap();
+        JumpFrameCheckpoint::write(&restored, &path, continuous_contacts, &[]).unwrap();
+        let actual = std::fs::read(&state_path).unwrap();
+        std::fs::remove_dir_all(path).unwrap();
+        assert_eq!(blake3::hash(&actual), blake3::hash(&expected));
+    }
+
     #[test]
     #[ignore = "real GPU and original full-density coupled authored jump with continuous contacts"]
     fn coupled_authored_jump_real_gpu_hair_first_frame() {
-        qualify_coupled_gpu_frames(true, 1);
+        qualify_coupled_gpu_frames(true, 1, true, None);
     }
     #[test]
     #[ignore = "real GPU and original full-density coupled authored jump in default runtime contact mode"]
     fn coupled_authored_jump_real_gpu_hair_default_first_frame() {
-        qualify_coupled_gpu_frames(false, 1);
+        qualify_coupled_gpu_frames(false, 1, true, None);
     }
     #[test]
     #[ignore = "real GPU, full-density continuous-contact authored jump including the difficult second frame"]
     fn coupled_authored_jump_real_gpu_hair_two_frames() {
-        qualify_coupled_gpu_frames(true, 2);
+        qualify_coupled_gpu_frames(true, 2, true, None);
     }
-    fn qualify_coupled_gpu_frames(continuous: bool, frames: usize) {
+    #[test]
+    #[ignore = "requires real GPU; paired first frame of the full-density continuous-contact jump"]
+    fn coupled_authored_jump_real_gpu_refinement_readback_parity() {
+        let full = qualify_coupled_gpu_frames(true, 1, true, None);
+        let tail = qualify_coupled_gpu_frames(true, 1, false, None);
+        assert!(
+            full == tail,
+            "readback changed the published pose or GPU work"
+        );
+    }
+    #[test]
+    #[ignore = "requires real GPU; paired full-density first frame with selective precision fallback"]
+    fn coupled_authored_jump_real_gpu_five_fallback_parity() {
+        let ordinary = qualify_coupled_gpu_frames(true, 1, true, Some(false));
+        let selective = qualify_coupled_gpu_frames(true, 1, true, Some(true));
+        assert!(
+            ordinary == selective,
+            "selective fallback changed the pose or GPU work"
+        );
+    }
+
+    #[derive(PartialEq)]
+    struct CoupledFrameResult {
+        skin_bits: Vec<u64>,
+        hair_bits: Vec<u32>,
+        contact_submissions: usize,
+        native_fallbacks: usize,
+    }
+    fn qualify_coupled_gpu_frames(
+        continuous: bool,
+        frames: usize,
+        full_readback: bool,
+        five_fallback: Option<bool>,
+    ) -> CoupledFrameResult {
         assert!((1..=2).contains(&frames));
         let instance = voxy_render::GraphicsOptions::default().create_instance();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -3419,6 +3693,10 @@ mod authored_jump_integration_tests {
             crate::gpu_hair_solver::GpuHairLinearSolver::new_coupled(&device, &queue),
         )
         .unwrap();
+        solver.joint_full_refinement_readback = full_readback;
+        if let Some(enabled) = five_fallback {
+            solver.set_five_fallback_for_qualification(enabled);
+        }
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
         demo.simulate_hair = true;
@@ -3459,7 +3737,7 @@ mod authored_jump_integration_tests {
                     .all(|v| v.is_finite())
             );
             eprintln!(
-                "COUPLED HAIR GPU passed_frames={frame} bounded_frames={frames} required_full_cycle=720 continuous_contacts={continuous} elapsed_s={} structural_calls={} refinement_dispatches={} joint_coordinate_calls={} joint_equality_dispatches={} joint_equality_submissions={} coordinate_batches={} reused_qr_columns={} dual_hint_attempts={} early_release_directions={} admitted={} native_fallbacks={} scope=bounded_frames_only_no_full_cycle_or_FPS_claim",
+                "COUPLED HAIR GPU passed_frames={frame} bounded_frames={frames} required_full_cycle=720 continuous_contacts={continuous} full_refinement_readback={full_readback} elapsed_s={} structural_calls={} refinement_dispatches={} joint_coordinate_calls={} joint_equality_dispatches={} joint_equality_submissions={} coordinate_batches={} reused_qr_columns={} dual_hint_attempts={} early_release_directions={} admitted={} native_fallbacks={} scope=bounded_frames_only_no_full_cycle_or_FPS_claim",
                 began.elapsed().as_secs_f64(),
                 solver.calls,
                 solver.refinement_dispatches,
@@ -3474,8 +3752,31 @@ mod authored_jump_integration_tests {
                 solver.joint_native_fallbacks
             );
         }
+        CoupledFrameResult {
+            skin_bits: demo
+                .skin
+                .positions()
+                .iter()
+                .flatten()
+                .map(|v| v.to_bits())
+                .collect(),
+            hair_bits: demo
+                .hair
+                .gpu_surface_frames()
+                .into_iter()
+                .flat_map(|frame| {
+                    [frame.position_arc, frame.u_red, frame.v_green, frame.w_blue]
+                        .into_iter()
+                        .flatten()
+                        .map(f32::to_bits)
+                })
+                .collect(),
+            contact_submissions: solver.joint_equality_submissions,
+            native_fallbacks: solver.joint_native_fallbacks,
+        }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn coupled_hair_backend_preserves_publication_and_native_retry() {
         struct Backend {
             calls: usize,
@@ -3547,7 +3848,18 @@ mod authored_jump_integration_tests {
     }
     #[test]
     #[ignore = "full 720-frame authored jump with original skin and 469-guide groom"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn authored_jump_full_coupled_cycle_qualification() {
+        const FULL_CYCLE_FRAMES: usize = 720;
+        let frame_limit = std::env::var("VOXY_AUTHORED_JUMP_FRAME_LIMIT")
+            .ok()
+            .map_or(FULL_CYCLE_FRAMES, |limit| {
+                limit.parse::<usize>().expect("invalid frame limit")
+            });
+        assert!((1..=FULL_CYCLE_FRAMES).contains(&frame_limit));
         let directory = std::path::PathBuf::from(
             std::env::var("VOXY_AUTHORED_JUMP_QUALIFICATION_DIR")
                 .expect("set qualification output directory"),
@@ -3588,19 +3900,53 @@ mod authored_jump_integration_tests {
             None
         };
         assert_eq!(demo.hair.gpu_surface_frames().len(), 469 * 21);
-        let mut rows = Vec::new();
+        let resume = std::env::var_os("VOXY_AUTHORED_JUMP_RESUME_FRAME_STATE");
+        let write_frame_state =
+            resume.is_some() || std::env::var_os("VOXY_AUTHORED_JUMP_WRITE_FRAME_STATE").is_some();
+        assert!(
+            !gpu_enabled || !write_frame_state,
+            "GPU checkpoint support requires preserving backend state"
+        );
+        let mut rows = if let Some(path) = resume {
+            let checkpoint: JumpFrameCheckpoint = serde_json::from_reader(std::io::BufReader::new(
+                std::fs::File::open(path).unwrap(),
+            ))
+            .unwrap();
+            assert_eq!(checkpoint.continuous_contacts, continuous_contacts);
+            assert!(checkpoint.frame <= frame_limit);
+            assert_eq!(checkpoint.rows.len(), checkpoint.frame);
+            for (index, row) in checkpoint.rows.iter().enumerate() {
+                assert_eq!(row["frame"].as_u64(), Some(index as u64 + 1));
+            }
+            let rows = checkpoint.rows.clone();
+            checkpoint.restore(&mut demo).unwrap();
+            if let Some(last) = rows.last() {
+                assert_eq!(last["time_s"].as_f64(), Some(demo.time));
+                assert_eq!(
+                    last["published_pose_blake3"].as_str(),
+                    Some(jump_pose_digest(&demo).as_str()),
+                    "checkpoint pose differs from the last accepted frame"
+                );
+            }
+            rows
+        } else {
+            Vec::new()
+        };
+        let resumed_after_frame = write_frame_state
+            .then_some(demo.steps)
+            .filter(|&frame| frame > 0);
         let write = |status: &str,
                      phase: &str,
                      frame: usize,
                      error: Option<&str>,
                      rows: &Vec<serde_json::Value>| {
-            let report = serde_json::json!({"status":status,"phase":phase,"process_id":std::process::id(),"updated_unix_ms":std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis(),"attempted_frame":frame,"completed_frames":rows.len(),"required_frames":720,"simulated_seconds":rows.len() as f64/120.,"guide_count":469,"segments_per_guide":20,"authored_jump":true,"continuous_contacts":continuous_contacts,"gpu_hair_backend":gpu_enabled,"error":error,"steps":rows,"scope":"actual coupled simulation; skin and geometric admission CPU; no rendering or FPS claim"});
+            let report = serde_json::json!({"status":status,"phase":phase,"process_id":std::process::id(),"updated_unix_ms":std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis(),"attempted_frame":frame,"completed_frames":rows.len(),"resumed_after_frame":resumed_after_frame,"required_frames":FULL_CYCLE_FRAMES,"requested_frames":frame_limit,"simulated_seconds":rows.len() as f64/120.,"guide_count":469,"segments_per_guide":20,"authored_jump":true,"continuous_contacts":continuous_contacts,"gpu_hair_backend":gpu_enabled,"error":error,"steps":rows,"scope":"actual coupled simulation; skin and geometric admission CPU; no rendering or FPS claim"});
             let temporary = directory.join("summary.json.tmp");
             std::fs::write(&temporary, serde_json::to_vec_pretty(&report).unwrap()).unwrap();
             std::fs::rename(temporary, directory.join("summary.json")).unwrap();
         };
-        write("running", "initializing", 0, None, &rows);
-        for frame in 1..=720 {
+        write("running", "initializing", demo.steps, None, &rows);
+        for frame in demo.steps + 1..=frame_limit {
             let previous_time = demo.time;
             let previous_steps = demo.steps;
             let previous_skin = demo.skin.positions().to_vec();
@@ -3618,10 +3964,10 @@ mod authored_jump_integration_tests {
                 "AUTHORED FULL CYCLE BEGIN frame={frame}/720 completed={}",
                 rows.len()
             );
-            let advance = match gpu.as_mut() {
+            let advance = physics::hair::observe_contact_frame(frame, || match gpu.as_mut() {
                 Some(solver) => demo.advance_with_hair_solver(1. / 120., solver),
                 None => demo.advance(1. / 120.),
-            };
+            });
             if let Err(error) = advance {
                 let preserved = demo.time == previous_time
                     && demo.steps == previous_steps
@@ -3661,18 +4007,41 @@ mod authored_jump_integration_tests {
             }
             let elapsed = started.elapsed().as_secs_f64() * 1000.;
             let gpu_counts=gpu.as_ref().map(|solver|serde_json::json!({"structural_calls":solver.calls,"joint_coordinate_calls":solver.joint_coordinate_calls,"joint_equality_dispatches":solver.joint_equality_dispatches,"joint_equality_submissions":solver.joint_equality_submissions,"joint_result_cache_hits":solver.joint_result_cache_hits,"workspace_creations":solver.joint_workspace_creations,"workspace_reuses":solver.joint_workspace_reuses,"coordinate_batches":solver.joint_coordinate_batches,"joint_admitted":solver.joint_admitted,"native_contact_fallbacks":solver.joint_native_fallbacks}));
-            rows.push(serde_json::json!({"frame":frame,"time_s":demo.time,"elapsed_ms":elapsed,"skin_ms":demo.solver_ms[0],"hair_ms":demo.solver_ms[1],"gpu_counts":gpu_counts}));
+            if frame == 1 && std::env::var_os("VOXY_AUTHORED_JUMP_EXPORT_FIRST_POSE").is_some() {
+                let hair: Vec<_> = demo
+                    .hair
+                    .gpu_surface_frames()
+                    .iter()
+                    .map(|f| [f.position_arc, f.u_red, f.v_green, f.w_blue])
+                    .collect();
+                serde_json::to_writer(
+                    std::fs::File::create(directory.join("first-pose.json")).unwrap(),
+                    &serde_json::json!({"skin": demo.skin.positions(), "hair": hair}),
+                )
+                .unwrap();
+            }
+            let published_pose_blake3 = jump_pose_digest(&demo);
+            rows.push(serde_json::json!({"frame":frame,"time_s":demo.time,"elapsed_ms":elapsed,"skin_ms":demo.solver_ms[0],"hair_ms":demo.solver_ms[1],"gpu_counts":gpu_counts,"published_pose_blake3":published_pose_blake3,"hair_substeps":demo.hair.last_step_substeps()}));
+            if write_frame_state {
+                JumpFrameCheckpoint::write(&demo, &directory, continuous_contacts, &rows).unwrap();
+            }
             write("running", "completed_frame", frame, None, &rows);
             eprintln!(
                 "AUTHORED FULL CYCLE frame={frame}/720 time_s={} elapsed_ms={elapsed:.3} skin_ms={:.3} hair_ms={:.3}",
                 demo.time, demo.solver_ms[0], demo.solver_ms[1]
             );
         }
-        assert_eq!(demo.steps, 720);
-        write("passed", "complete", 720, None, &rows);
+        assert_eq!(demo.steps, frame_limit);
+        let status = if frame_limit == FULL_CYCLE_FRAMES {
+            "passed"
+        } else {
+            "partial"
+        };
+        write(status, "complete", frame_limit, None, &rows);
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn authored_jump_initialization_preserves_rest_and_advances_coupled_skin_hair() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.secondary_only = true;
@@ -3741,6 +4110,7 @@ mod authored_jump_integration_tests {
         ));
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn grounded_preview_keeps_shared_source_when_replacing_the_body() {
         use crate::humanoid_locomotion::LocomotionClip;
         let mut demo = FemaleDemo::new().unwrap();
@@ -3875,6 +4245,10 @@ mod authored_jump_integration_tests {
     #[allow(
         clippy::await_holding_refcell_ref,
         reason = "single-threaded test: the input is only borrowed immutably while the GPU work awaits"
+    )]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn physical_stance_gpu_incident_matches_cpu_equation() {
         pollster::block_on(async {
@@ -4141,6 +4515,7 @@ mod authored_jump_integration_tests {
     }
 
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn physical_stance_preview_renders_the_accepted_pose() {
         let mut demo = FemaleDemo::new().unwrap();
         demo.enable_physical_stance().unwrap();

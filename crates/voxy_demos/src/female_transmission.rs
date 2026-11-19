@@ -32,6 +32,10 @@ pub struct Cache {
     triangles: Vec<[usize; 3]>,
     surface: Option<physics::hair::TriangleMesh>,
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub fn apply(
     vertices: &mut [SceneVertex],
     indices: &[u32],

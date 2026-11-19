@@ -40,6 +40,10 @@ impl Drop for Temp {
     }
 }
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn project_nested_prefabs_preserve_overrides_recover_and_package_after_relocation()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -425,6 +429,10 @@ fn deferred_prefab_retarget_requires_resolvable_animated_rigs_and_valid_mapping(
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn deferred_prefab_model_parts_check_imported_nodes_after_nested_overrides()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -533,6 +541,10 @@ fn deferred_prefab_model_parts_check_imported_nodes_after_nested_overrides()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn deferred_prefab_animation_selection_uses_native_playback_and_retarget_source()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -845,6 +857,10 @@ fn deferred_prefab_morph_weights_validate_target_and_survive_package()
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn deferred_prefab_liquid_material_is_admitted_before_package_publication()
 -> Result<(), Box<dyn std::error::Error>> {
     let temp = Temp::new();
@@ -1034,17 +1050,9 @@ fn deferred_prefab_audio_and_import_settings_are_admitted_before_build()
     }
     export_project_package(&path, &output)?;
     std::fs::remove_dir_all(root)?;
-    let package = packaged_game::MaterializedPackage::open(&output)?;
-    let mut restored = App::from_project(&package.project_path()?)?;
+    let (mut restored, _package) =
+        open_packaged_nested_prefab(&output, &["tone.wav", "audio.json"])?;
     restored.audio.set_output_mode(AudioOutputMode::Offline);
-    restored.authoring.prefab_assets = restored.authoring.authoring_project.prefabs()?;
-    restored.authoring.prefab_choice = restored
-        .authoring
-        .prefab_assets
-        .iter()
-        .position(|asset| asset.0 == "nested")
-        .unwrap();
-    restored.place_prefab()?;
     restored.start_standalone()?;
     restored.advance_game(1. / 60.)?;
     let audio = restored.audio.play().unwrap();
@@ -1121,16 +1129,7 @@ fn deferred_prefab_ui_font_is_validated_observed_and_available_without_sources()
     std::fs::write(root.join("font.ttf"), &font)?;
     export_project_package(&path, &output)?;
     std::fs::remove_dir_all(root)?;
-    let package = packaged_game::MaterializedPackage::open(&output)?;
-    let mut restored = App::from_project(&package.project_path()?)?;
-    restored.authoring.prefab_assets = restored.authoring.authoring_project.prefabs()?;
-    restored.authoring.prefab_choice = restored
-        .authoring
-        .prefab_assets
-        .iter()
-        .position(|asset| asset.0 == "nested")
-        .unwrap();
-    restored.place_prefab()?;
+    let (mut restored, _package) = open_packaged_nested_prefab(&output, &["font.ttf"])?;
     let text = ui_text::UiTextPreparation::prepare_import(
         &restored.scene,
         &restored.authoring.authoring_project,
@@ -1142,4 +1141,29 @@ fn deferred_prefab_ui_font_is_validated_observed_and_available_without_sources()
     assert_eq!(restored.play.simulation_ticks, 1);
     restored.stop_workers()?;
     Ok(())
+}
+
+fn open_packaged_nested_prefab(
+    path: &std::path::Path,
+    remove: &[&str],
+) -> Result<(App, packaged_game::MaterializedPackage), Box<dyn std::error::Error>> {
+    let package = packaged_game::MaterializedPackage::open(path)?;
+    let descriptor = package.project_path()?;
+    let mut app = App::from_project_with_model_package(
+        &descriptor,
+        editor_component_registry()?,
+        Some(package.archive.clone()),
+    )?;
+    for file in remove {
+        std::fs::remove_file(descriptor.parent().unwrap().join(file))?;
+    }
+    app.authoring.prefab_assets = app.authoring.authoring_project.prefabs()?;
+    app.authoring.prefab_choice = app
+        .authoring
+        .prefab_assets
+        .iter()
+        .position(|asset| asset.0 == "nested")
+        .unwrap();
+    app.place_prefab()?;
+    Ok((app, package))
 }

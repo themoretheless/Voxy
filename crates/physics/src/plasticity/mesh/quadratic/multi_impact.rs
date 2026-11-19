@@ -41,6 +41,10 @@ impl ConsistentInertia {
     /// Coupled Newton normal restitution targets for approaching constraints.
     /// Initially separating contacts retain zero target. Some contact networks
     /// make these targets energetically inadmissible; such a solve rejects.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn restitution_impacts(
         &self,
         velocities: &[Vec3],

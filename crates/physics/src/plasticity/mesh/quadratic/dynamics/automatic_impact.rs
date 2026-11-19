@@ -66,6 +66,10 @@ impl QuadraticDynamics {
             impact,
         }))
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn detect_fragment_node_contacts(
         &self,
         capture_distance_m: f64,

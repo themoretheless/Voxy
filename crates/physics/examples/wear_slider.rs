@@ -2,6 +2,10 @@
 use physics::friction::Material as Contact;
 use physics::liquid::{Config, Liquid, LiquidField, Material, Particle, TransportMaterial};
 use physics::wear::{Layer, Material as Wear, WearSliderInput, WearSuspension};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let steps: u32 = std::env::args()
         .nth(1)

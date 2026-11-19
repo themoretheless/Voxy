@@ -1,0 +1,11 @@
+{
+  "scope": "Exact whitened KKT interval certificates for all original constraints; original physical admission is separately required from the native owner; not a trajectory proof",
+  "rows": 100,
+  "width": 1764,
+  "negative_reaction_intervals": 0,
+  "uncertified_original_gap_rows": 0,
+  "equilibrium_outside_certificate": 0,
+  "worst_nominal_gap_violation": 8.99514786814046e-37,
+  "worst_nominal_equilibrium_defect": 3.5555945876282784e-42,
+  "status": "passed"
+}

@@ -27,8 +27,10 @@ struct EqualityQr<'a> {
     q_spares: Vec<Vec<f64>>,
     r_spares: Vec<Vec<f64>>,
     q_supports: Vec<Vec<usize>>,
+    support_spares: Vec<Vec<usize>>,
     sparse_basis: bool,
     r: Vec<Vec<f64>>,
+    residual_scratch: Vec<f64>,
     rebuilt_columns: usize,
 }
 impl<'a> EqualityQr<'a> {
@@ -62,30 +64,33 @@ impl<'a> EqualityQr<'a> {
             q_spares: Vec::new(),
             r_spares: Vec::new(),
             q_supports: Vec::new(),
+            support_spares: Vec::new(),
             sparse_basis: false,
             r: Vec::new(),
+            residual_scratch: Vec::new(),
             rebuilt_columns: 0,
         }
     }
-    fn residuals(&self, active: &[usize], bounds: &[f64], state: &[f64]) -> Option<Vec<f64>> {
+    fn residuals(&mut self, active: &[usize], bounds: &[f64], state: &[f64]) -> Option<()> {
         if state.iter().any(|value| !value.is_finite()) {
             return None;
         }
-        Some(
-            active
-                .iter()
-                .zip(bounds)
-                .map(|(&id, bound)| {
-                    -accurate_residual(
-                        self.supports[id]
-                            .iter()
-                            .map(|&i| (self.columns[id][i], state[i])),
-                        *bound,
-                    )
-                })
-                .collect(),
-        )
+        self.residual_scratch.clear();
+        self.residual_scratch
+            .extend(active.iter().zip(bounds).map(|(&id, bound)| {
+                -accurate_residual(
+                    self.supports[id]
+                        .iter()
+                        .map(|&i| (self.columns[id][i], state[i])),
+                    *bound,
+                )
+            }));
+        Some(())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn solve(
         &mut self,
         active: &[usize],
@@ -115,7 +120,9 @@ impl<'a> EqualityQr<'a> {
         self.active.truncate(prefix);
         self.q_spares.extend(self.q.drain(prefix..));
         self.r_spares.extend(self.r.drain(prefix..));
-        self.q_supports.truncate(prefix);
+        if self.sparse_basis {
+            self.support_spares.extend(self.q_supports.drain(prefix..));
+        }
         for &id in &active[prefix..] {
             self.rebuilt_columns += 1;
             let k = self.q.len();
@@ -125,8 +132,8 @@ impl<'a> EqualityQr<'a> {
             let mut v = self.q_spares.pop().unwrap_or_default();
             v.clone_from(&self.columns[id]);
             let mut r = self.r_spares.pop().unwrap_or_default();
+            r.clear();
             r.resize(k + 1, 0.);
-            r.fill(0.);
             for _ in 0..2 {
                 for (j, basis) in self.q.iter().enumerate() {
                     let projection = if self.sparse_basis {
@@ -135,37 +142,29 @@ impl<'a> EqualityQr<'a> {
                         accurate_dot(basis, &v)
                     };
                     r[j] += projection;
-                    if self.sparse_basis {
-                        // Validate while writing: avoid a second traversal of
-                        // the same coordinate vector after every basis update.
-                        // Keep every FMA, including exact zero coefficients.
-                        let mut finite = true;
-                        for (value, &axis) in v.iter_mut().zip(basis) {
-                            *value = (-projection).mul_add(axis, *value);
-                            finite &= value.is_finite();
-                        }
-                        if !finite {
-                            return None;
-                        }
-                    } else {
-                        for (value, &axis) in v.iter_mut().zip(basis) {
-                            *value = (-projection).mul_add(axis, *value);
-                        }
+                    for (value, &axis) in v.iter_mut().zip(basis) {
+                        *value = (-projection).mul_add(axis, *value);
                     }
                 }
+            }
+            // An infinite or NaN coordinate cannot become finite through
+            // subsequent fused additions, so validate once per column.
+            if v.iter().any(|value| !value.is_finite()) {
+                return None;
             }
             // The sparse path already needs this support for subsequent
             // projections. Reuse it for normalization: positive-scale division
             // preserves signed zeros, and omitting zero square terms preserves
             // the ordered sum of all nonzero terms (including subnormals).
-            let mut support: Vec<usize> = if self.sparse_basis {
-                v.iter()
-                    .enumerate()
-                    .filter_map(|(i, &x)| (x != 0.).then_some(i))
-                    .collect()
-            } else {
-                Vec::new()
-            };
+            let mut support = self.support_spares.pop().unwrap_or_default();
+            if self.sparse_basis {
+                support.clear();
+                support.extend(
+                    v.iter()
+                        .enumerate()
+                        .filter_map(|(i, &x)| (x != 0.).then_some(i)),
+                );
+            }
             let scale = if self.sparse_basis {
                 support.iter().map(|&i| v[i].abs()).fold(0., f64::max)
             } else {
@@ -209,7 +208,11 @@ impl<'a> EqualityQr<'a> {
             z[i] -= accurate_products((0..i).map(|j| (self.r[i][j], z[j])));
             z[i] /= self.r[i][i];
         }
-        let mut result = accurate_column_combination(&self.q, &z, m);
+        let mut result = if self.sparse_basis {
+            accurate_supported_column_combination(&self.q, &z, m, &self.q_supports)
+        } else {
+            accurate_column_combination(&self.q, &z, m)
+        };
         // y=W*lambda=Q*R*lambda, so the same factor gives R*lambda=z.
         for i in (0..n).rev() {
             z[i] -= accurate_products((i + 1..n).map(|j| (self.r[j][i], z[j])));
@@ -220,7 +223,8 @@ impl<'a> EqualityQr<'a> {
         for _ in 0..8 {
             // Reject overflow before skipping zero products, so 0*infinity
             // cannot be hidden by exact structural sparsity.
-            let mut delta = self.residuals(active, bounds, &result)?;
+            self.residuals(active, bounds, &result)?;
+            let delta = &mut self.residual_scratch;
             // Stop at the caller's unchanged admission tolerance. Continuing
             // after admission can oscillate between neighboring rounded points.
             if delta.iter().all(|v| v.abs() <= tolerance) {
@@ -235,7 +239,7 @@ impl<'a> EqualityQr<'a> {
                 }
                 delta[i] /= self.r[i][i];
             }
-            for (column, value) in self.q.iter().zip(&delta) {
+            for (column, value) in self.q.iter().zip(delta.iter()) {
                 for (out, axis) in result.iter_mut().zip(column) {
                     *out += axis * value;
                 }
@@ -246,7 +250,7 @@ impl<'a> EqualityQr<'a> {
                 }
                 delta[i] /= self.r[i][i];
             }
-            for (value, correction) in z.iter_mut().zip(delta) {
+            for (value, correction) in z.iter_mut().zip(delta.iter()) {
                 *value += correction;
             }
         }
@@ -473,6 +477,22 @@ pub(super) fn unilateral_batch_with_proposals(
         &[super::HairContactEqualityRequest<'_>],
     ) -> Option<Vec<Option<HairContactEqualityProposal>>>,
 ) -> Option<Vec<(Vec<f64>, Vec<f64>)>> {
+    unilateral_batch_candidates(requests, equality, false)?
+        .into_iter()
+        .collect()
+}
+
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
+pub(super) fn unilateral_batch_candidates(
+    requests: &[super::HairContactCoordinateRequest<'_>],
+    equality: &mut dyn FnMut(
+        &[super::HairContactEqualityRequest<'_>],
+    ) -> Option<Vec<Option<HairContactEqualityProposal>>>,
+    keep_siblings: bool,
+) -> Option<Vec<Option<(Vec<f64>, Vec<f64>)>>> {
     let mut hinted = Vec::with_capacity(requests.len());
     let mut owners = Vec::with_capacity(requests.len());
     for request in requests {
@@ -509,11 +529,15 @@ pub(super) fn unilateral_batch_with_proposals(
             )?,
         });
     }
+    let mut rejected = vec![false; requests.len()];
     loop {
         let mut ready = Vec::new();
         for (index, owner) in owners.iter_mut().enumerate() {
+            if rejected[index] {
+                continue;
+            }
             let status = match owner.poll() {
-                Some(status) => status,
+                Some(status) => Some(status),
                 None if hinted[index] => {
                     let r = &requests[index];
                     *owner = UnilateralContinuation::new(
@@ -527,9 +551,16 @@ pub(super) fn unilateral_batch_with_proposals(
                         true,
                     )?;
                     hinted[index] = false;
-                    owner.poll()?
+                    owner.poll()
                 }
-                None => return None,
+                None => None,
+            };
+            let Some(status) = status else {
+                if !keep_siblings {
+                    return None;
+                }
+                rejected[index] = true;
+                continue;
             };
             if status {
                 ready.push(index);
@@ -539,7 +570,8 @@ pub(super) fn unilateral_batch_with_proposals(
             return Some(
                 owners
                     .into_iter()
-                    .map(|o| (o.state, o.multipliers))
+                    .zip(rejected)
+                    .map(|(o, rejected)| (!rejected).then_some((o.state, o.multipliers)))
                     .collect(),
             );
         }
@@ -562,7 +594,11 @@ pub(super) fn unilateral_batch_with_proposals(
         for (index, proposal) in ready.into_iter().zip(proposals) {
             if proposal.and_then(|p| owners[index].resume(p)).is_none() {
                 if !hinted[index] {
-                    return None;
+                    if !keep_siblings {
+                        return None;
+                    }
+                    rejected[index] = true;
+                    continue;
                 }
                 let r = &requests[index];
                 owners[index] = UnilateralContinuation::new(
@@ -581,6 +617,10 @@ pub(super) fn unilateral_batch_with_proposals(
     }
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn unilateral_with_equality_backend(
     columns: &[Vec<f64>],
     bounds: &[f64],
@@ -646,6 +686,10 @@ pub(super) struct UnilateralContinuation<'a> {
 }
 impl<'a> UnilateralContinuation<'a> {
     #[allow(clippy::fn_params_excessive_bools)]
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn new(
         columns: &'a [Vec<f64>],
         bounds: &'a [f64],
@@ -1371,6 +1415,10 @@ mod tests {
 
     #[test]
     #[ignore = "requires a captured VQC1 operator and original physical loads"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn captured_guarded_append_order_retains_original_physical_admission() {
         let data = std::fs::read(std::env::var("VOXY_HAIR_QR_INPUT_FIXTURE").unwrap()).unwrap();
         assert_eq!(&data[..4], b"VQC1");
@@ -1562,6 +1610,10 @@ mod tests {
     }
     #[test]
     #[ignore = "paired timing requires a captured VQC1 physical contact input"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn captured_prefix_reuse_matches_reference_and_reports_paired_time() {
         let data = std::fs::read(std::env::var("VOXY_HAIR_QR_INPUT_FIXTURE").unwrap()).unwrap();
         assert_eq!(&data[..4], b"VQC1");
@@ -1696,31 +1748,45 @@ mod tests {
         }
         eprintln!("captured orthogonalization dense/sparse basis seconds={basis_timings:?}");
 
-        let qr = EqualityQr::new(&reduced.columns);
+        let mut qr = EqualityQr::new(&reduced.columns);
         let active: Vec<_> = (0..rows).collect();
         let state = unilateral_supported(&reduced.columns, &bounds, tolerance, false, true)
             .unwrap()
             .0;
         let mut residual_timings = Vec::new();
         for repeat in 0..7 {
-            let run = |sparse| {
+            let mut run = |sparse| {
                 let began = std::time::Instant::now();
                 let mut last = Vec::new();
                 for _ in 0..100 {
                     let state = std::hint::black_box(&state);
                     last = if sparse {
-                        qr.residuals(&active, &bounds, state).unwrap()
+                        qr.residuals(&active, &bounds, state).unwrap();
+                        std::hint::black_box(&qr.residual_scratch);
+                        continue;
                     } else {
                         assert!(state.iter().all(|v| v.is_finite()));
                         active
                             .iter()
                             .zip(&bounds)
-                            .map(|(&id, b)| b - accurate_dot(&reduced.columns[id], state))
+                            .map(|(&id, &bound)| {
+                                -accurate_residual(
+                                    reduced.columns[id]
+                                        .iter()
+                                        .copied()
+                                        .zip(state.iter().copied()),
+                                    bound,
+                                )
+                            })
                             .collect()
                     };
                     std::hint::black_box(&last);
                 }
-                (last, began.elapsed().as_secs_f64())
+                let elapsed = began.elapsed().as_secs_f64();
+                if sparse {
+                    last.clone_from(&qr.residual_scratch);
+                }
+                (last, elapsed)
             };
             let (dense, sparse) = if repeat % 2 == 0 {
                 (run(false), run(true))
@@ -1824,6 +1890,10 @@ mod tests {
     }
     #[test]
     #[ignore = "requires a captured VQC1 contact input"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn captured_active_contacts_retain_original_clearance() {
         use std::io::Read;
         let path = std::env::var("VOXY_HAIR_QR_INPUT_FIXTURE").unwrap();
@@ -2050,7 +2120,9 @@ fn uncached_equality_reference(
         let mut delta: Vec<f64> = columns
             .iter()
             .zip(bounds)
-            .map(|(column, bound)| bound - accurate_dot(column, &result))
+            .map(|(column, &bound)| {
+                -accurate_residual(column.iter().copied().zip(result.iter().copied()), bound)
+            })
             .collect();
         // Stop at the caller's unchanged admission tolerance. Continuing
         // after admission can oscillate between neighboring rounded points.
@@ -2077,7 +2149,7 @@ fn uncached_equality_reference(
             }
             delta[i] /= r[i * n + i];
         }
-        for (value, correction) in z.iter_mut().zip(delta) {
+        for (value, correction) in z.iter_mut().zip(delta.iter()) {
             *value += correction;
         }
     }
@@ -2146,7 +2218,7 @@ fn uncached_unilateral_reference(
         let gaps: Vec<_> = columns
             .iter()
             .zip(bounds)
-            .map(|(c, b)| accurate_dot(c, &state) - b)
+            .map(|(c, &b)| accurate_residual(c.iter().copied().zip(state.iter().copied()), b))
             .collect();
         if gaps.iter().any(|v| !v.is_finite()) {
             return None;
@@ -2173,6 +2245,10 @@ fn uncached_unilateral_reference(
 mod continuation_tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn cooperative_rounds_match_serial_with_release_retry_and_early_completion() {
         let columns = [
             vec![vec![1., 0.], vec![0., 1.]],
@@ -2247,6 +2323,29 @@ mod continuation_tests {
         .unwrap();
         assert!(rejected);
         assert_eq!(retried, expected);
+        let partial = unilateral_batch_candidates(
+            &requests,
+            &mut |batch| {
+                Some(
+                    batch
+                        .iter()
+                        .map(|r| {
+                            if r.operator_index == 1 {
+                                None
+                            } else {
+                                proposal(r.columns, r.bounds, r.tolerance)
+                            }
+                        })
+                        .collect(),
+                )
+            },
+            true,
+        )
+        .unwrap();
+        assert_eq!(
+            partial,
+            vec![Some(expected[0].clone()), None, Some(expected[2].clone())]
+        );
         // A cold rejection cannot be converted into partial success.
         assert!(
             unilateral_batch_with_proposals(&requests, &mut |batch| Some(
@@ -2288,6 +2387,10 @@ mod continuation_tests {
         );
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn paused_coordinate_owners_interleave_without_crossing_state() {
         let columns = [
             vec![vec![1., 0.], vec![0., 1.]],

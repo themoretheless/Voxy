@@ -26,7 +26,7 @@ pub(super) use velocity_contacts::{
 };
 /// An exact surface query bounds clearance inside the ball around its query point.
 /// The distance function is 1-Lipschitz; the certificate expires at the next step.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, serde::Serialize, serde::Deserialize)]
 pub(super) struct Clearance {
     position: V,
     distance: f64,
@@ -68,6 +68,18 @@ pub struct TriangleMesh {
     feature_normals: Option<features::FeatureNormals>,
     motion_dt: Option<f64>,
 }
+/// Animated geometry at a completed step boundary.
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TriangleMeshCheckpoint {
+    current: Vec<V>,
+    previous: Vec<V>,
+    velocity: Vec<V>,
+    triangles: Vec<[usize; 3]>,
+    closed_normals: bool,
+    motion_dt: Option<f64>,
+}
+
 #[path = "contact_groom.rs"]
 mod groom;
 impl TriangleMesh {
@@ -99,6 +111,49 @@ impl TriangleMesh {
             t.velocity = t.ids.map(|i| velocity[i]);
         }
     }
+    #[must_use]
+    pub fn checkpoint(&self) -> TriangleMeshCheckpoint {
+        let (current, previous, velocity, triangles, closed_normals) = self.replay_geometry();
+        TriangleMeshCheckpoint {
+            current,
+            previous,
+            velocity,
+            triangles,
+            closed_normals,
+            motion_dt: self.motion_dt,
+        }
+    }
+
+    /// Restore motion against the same collider topology and hierarchy.
+    ///
+    /// # Errors
+    /// Rejects incompatible topology, invalid geometry or invalid motion.
+    pub fn restore_checkpoint(
+        &mut self,
+        state: TriangleMeshCheckpoint,
+    ) -> Result<(), &'static str> {
+        if !self.triangles.iter().map(|t| t.ids).eq(state.triangles)
+            || self.feature_normals.is_some() != state.closed_normals
+            || state.previous.len() != state.current.len()
+            || state.velocity.len() != state.current.len()
+            || !state
+                .previous
+                .iter()
+                .chain(&state.velocity)
+                .copied()
+                .all(finite)
+            || state
+                .motion_dt
+                .is_some_and(|dt| !dt.is_finite() || dt <= 0.)
+        {
+            return Err("invalid collider checkpoint");
+        }
+        self.refit(&state.current)?;
+        self.restore_replay_motion(&state.previous, &state.velocity);
+        self.motion_dt = state.motion_dt;
+        Ok(())
+    }
+
     pub fn new(vertices: &[V], indices: &[[usize; 3]]) -> Result<Self, &'static str> {
         if vertices.iter().any(|p| !finite(*p))
             || indices.iter().flatten().any(|i| *i >= vertices.len())
@@ -339,27 +394,31 @@ impl TriangleMesh {
         id
     }
     fn nearest(&self, p: V, node: usize, best: &mut (f64, usize, V)) {
+        self.nearest_bounded(p, node, self.nearest_box_distance(p, node), best);
+    }
+
+    fn nearest_box_distance(&self, p: V, node: usize) -> f64 {
         let n = &self.nodes[node];
-        let distance: f64 = (0..3)
+        (0..3)
             .map(|a| (n.min[a] - p[a]).max(0.0).max(p[a] - n.max[a]).powi(2))
-            .sum();
+            .sum()
+    }
+
+    fn nearest_bounded(&self, p: V, node: usize, distance: f64, best: &mut (f64, usize, V)) {
         if distance > best.0 {
             return;
         }
+        let n = &self.nodes[node];
         if let Some([a, b]) = n.children {
-            let box_distance = |id: usize| -> f64 {
-                let n = &self.nodes[id];
-                (0..3)
-                    .map(|a| (n.min[a] - p[a]).max(0.0).max(p[a] - n.max[a]).powi(2))
-                    .sum()
-            };
-            let order = if box_distance(a) < box_distance(b) {
-                [a, b]
+            let a_distance = self.nearest_box_distance(p, a);
+            let b_distance = self.nearest_box_distance(p, b);
+            let order = if a_distance < b_distance {
+                [(a, a_distance), (b, b_distance)]
             } else {
-                [b, a]
+                [(b, b_distance), (a, a_distance)]
             };
-            for child in order {
-                self.nearest(p, child, best);
+            for (child, distance) in order {
+                self.nearest_bounded(p, child, distance, best);
             }
         } else {
             for i in n.range.clone() {
@@ -858,6 +917,10 @@ mod terminal_side_replay_tests {
     }
     #[test]
     #[ignore = "requires failed rod199 full nonlinear contact replay"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn captured_terminal_trajectory_side_probe() {
         let (_, radius, _, _, rods, meshes, continuous) =
             crate::hair::contact_replay::tests::load_replay_with_mode();

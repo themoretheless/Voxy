@@ -352,6 +352,10 @@ impl ReconstructionGuidePass {
             material.sampler(),
         )
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn material_inputs(
         &self,
         device: &wgpu::Device,

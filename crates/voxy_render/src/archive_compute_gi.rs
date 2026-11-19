@@ -60,6 +60,11 @@ impl ArchiveComputeGi {
     pub(super) fn world_ray_guides(&self) -> [Arc<voxy_gpu_core::ManagedTexture>; 2] {
         [self.world.clone(), self.normal.clone()]
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub(super) fn new(
         device: &wgpu::Device,
         shader: &wgpu::ShaderModule,
@@ -414,6 +419,11 @@ impl ArchiveComputeGi {
     pub(super) fn world_frame_enabled(&self) -> bool {
         self.world_frame.is_some()
     }
+    pub(super) fn world_software_nearest_enabled(&self) -> bool {
+        self.world_frame
+            .as_ref()
+            .is_some_and(world_resolve::ArchiveWorldRayFrame::software_nearest_enabled)
+    }
     pub(super) fn world_frame_tiles(&self) -> Option<&[[u32; 4]]> {
         Some(self.world_frame.as_ref()?.rectangles())
     }
@@ -522,6 +532,11 @@ impl ArchiveComputeGi {
                 .map(stages::ArchiveRayStages::configuration)
         }
     }
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub(super) fn encode(
         &self,
         encoder: &mut wgpu::CommandEncoder,

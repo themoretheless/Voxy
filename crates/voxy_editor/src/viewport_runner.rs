@@ -127,6 +127,10 @@ fn run_model_viewport_configured(
     run_model_viewport_configured_registry(source, mode, scene_path, setup, None)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(crate) fn run_model_viewport_configured_registry(
     source: &ModelSource,
     mode: ViewportMode,

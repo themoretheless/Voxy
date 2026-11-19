@@ -50,6 +50,8 @@ mod perfusion;
 pub use perfusion::{PerfusionCellSolute, PerfusionPort, PorePerfusion, diascopy_blanching_factor};
 mod contact_mollifier;
 mod lbfgs;
+mod rejection;
+pub(crate) use rejection::Rejection;
 mod surface_contact;
 pub use contact_mollifier::edge_contact_mollifier;
 mod contact_precision;
@@ -580,6 +582,10 @@ impl Body {
     /// # Errors
     /// Invalid inputs/evaluation errors leave the positions unchanged.
     // Keep bounded line search and transactional commit together.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn equilibrate(
         &mut self,
         max_iterations: usize,

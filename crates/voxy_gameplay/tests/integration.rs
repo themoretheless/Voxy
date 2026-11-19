@@ -276,6 +276,7 @@ fn durable_descriptors_reload_with_new_runtime_identity_and_no_velocity() {
         name: "Player".into(),
         active: true,
         translation: [0.0; 3],
+        precise_translation_bits: None,
         rotation: [0.0, 0.0, 0.0, 1.0],
         scale: [1.0; 3],
         components: std::collections::BTreeMap::from([(
@@ -2643,6 +2644,10 @@ fn ordered_screw_trajectory_hits_wall_after_translation_and_budget_failure_is_at
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn rigid_preparation_stops_before_rounded_contact_and_preserves_callback_rollback() {
     use voxy_animation::{RootRigidPath, RootRigidTwist};
     use voxy_gameplay::{CharacterRigidTrajectoryMotion, CharacterTickError};
@@ -2750,6 +2755,10 @@ fn rigid_preparation_stops_before_rounded_contact_and_preserves_callback_rollbac
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_preparation() {
     use voxy_animation::{
         RootRigidCertifiedFadeInterval, RootRigidMappedPath, RootRigidPath, RootRigidTransform,
@@ -2922,6 +2931,10 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn mixed_certified_fade_tick_rolls_back_and_retries_all_motion_kinds() {
     use voxy_animation::{
         RootRigidCertifiedFadeInterval, RootRigidMappedPath, RootRigidPath, RootRigidTransform,
@@ -3163,6 +3176,7 @@ fn durable_point_loads_reload_without_runtime_state_and_reject_silent_play() {
             name: "Loaded body".into(),
             active: true,
             translation: [0.; 3],
+            precise_translation_bits: None,
             rotation: [0., 0., 0., 1.],
             scale: [1.; 3],
             components: std::collections::BTreeMap::from([(

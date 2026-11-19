@@ -3,6 +3,10 @@ use glam::Vec3;
 use physics_bio::biomechanics::{InertialBody, Material, TesticularGeometry};
 use voxy_demos::fem_surface;
 use voxy_render::{GraphicsOptions, SceneCamera, SceneDraw, SceneProjection, SceneRenderer};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args()
         .nth(1)

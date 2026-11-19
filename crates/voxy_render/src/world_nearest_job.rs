@@ -60,6 +60,8 @@ pub struct ExactWorldOptions {
     pub defer_visibility: bool,
     /// Prove nearest misses/unique winners; queue uncertain cases for full traversal.
     pub defer_nearest: bool,
+    /// Traverse the full source BVH without building or querying native acceleration structures.
+    pub software_nearest: bool,
     /// Native primitive ID hint, always source-certified and supplemented.
     pub native_seed: bool,
     /// Isolate hardware hint traversal from conservative source traversal.
@@ -202,6 +204,7 @@ pub struct WorldRayQueryJob {
     position_offset: Option<u64>,
     query_kind: WorldRayQueryKind,
     native_seed: bool,
+    software_nearest: bool,
     history_any_hit: bool,
     native_source_witness: bool,
     native_triangle_hint: bool,
@@ -242,6 +245,10 @@ impl WorldRayQueryJob {
     }
     /// Prepare with explicit conservative order-certificate selection.
     /// The certificate changes work only; uncertain/tied cases stay exact.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn with_options(
         device: &wgpu::Device,
         scene: Arc<RayScene>,
@@ -264,6 +271,11 @@ impl WorldRayQueryJob {
                     options.query_kind,
                     WorldRayQueryKind::Nearest | WorldRayQueryKind::MaterialSurface
                 ))
+        {
+            return Err(RaySceneError::Unsupported);
+        }
+        if options.software_nearest
+            && (!options.defer_nearest || options.native_seed || options.separate_native_seed)
         {
             return Err(RaySceneError::Unsupported);
         }
@@ -628,8 +640,45 @@ impl WorldRayQueryJob {
         } else {
             include_str!("world_exact_integer.wgsl").to_owned()
         };
+        let nearest = include_str!("world_nearest.wgsl");
+        let nearest = if options.node_reciprocal {
+            let init = "fn nearest_make_box(ray:u32,d:ExVec)->bool {";
+            let miss = "nearest_node_miss(base,ray)";
+            assert_eq!(nearest.matches(init).count(), 1);
+            assert_eq!(nearest.matches(miss).count(), 1);
+            let (before, rest) = nearest.split_once(init).unwrap();
+            let (body, after) = rest.split_once("\n return true;\n}").unwrap();
+            std::borrow::Cow::Owned(format!(
+                "{}\n{before}{init}{body}\n if (nearest_counts.values[4095u].w&2u)!=0u {{nearest_prepare_reciprocal();}}\n return true;\n}}{}",
+                include_str!("world_node_reciprocal.wgsl"),
+                after.replace(miss, "nearest_node_miss_cached(base,ray,1.)"),
+            ))
+        } else {
+            std::borrow::Cow::Borrowed(nearest)
+        };
+        let nearest = if options.software_nearest {
+            const BINDING: &str =
+                "@group(0) @binding(8) var nearest_scene:acceleration_structure;\n";
+            let (before, native) = nearest
+                .split_once(" // BEGIN native nearest candidates\n")
+                .expect("native nearest candidate block");
+            let (_, after) = native
+                .split_once(" // END native nearest candidates\n")
+                .expect("end of native nearest candidate block");
+            assert_eq!(before.matches(BINDING).count(), 1);
+            let before = before.replace(BINDING, "");
+            std::borrow::Cow::Owned(format!(
+                "{before} let native=false;\n if ex_vec_valid(direction)==0u {{nearest_numeric_unknown();}}\n{after}"
+            ))
+        } else {
+            nearest
+        };
         let source = [
-            "enable wgpu_ray_query;",
+            if options.software_nearest {
+                ""
+            } else {
+                "enable wgpu_ray_query;"
+            },
             if deferred {
                 include_str!("world_ray_deferred_input.wgsl")
             } else {
@@ -645,7 +694,7 @@ impl WorldRayQueryJob {
             include_str!("world_ray_bvh_interval.wgsl"),
             include_str!("world_source_certificate.wgsl"),
             include_str!("world_visibility_common.wgsl"),
-            include_str!("world_nearest.wgsl"),
+            nearest.as_ref(),
             include_str!("world_visibility.wgsl"),
             if options.defer_nearest {
                 include_str!("world_nearest_deferred_exact.wgsl")
@@ -664,6 +713,10 @@ impl WorldRayQueryJob {
             source.contains("let first_right=ex_low_word(b)"),
             options.skip_zero_prefix_multiply
         );
+        if options.software_nearest && std::env::var_os("VOXY_WORLD_RAY_PIPELINE_TIMING").is_some()
+        {
+            eprintln!("WORLD RAY using full software source traversal");
+        }
         let exact_integer_digest = *blake3::hash(integer_source.as_bytes()).as_bytes();
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("original-source world ray query"),
@@ -686,7 +739,22 @@ impl WorldRayQueryJob {
             exact_constants.push(("WORLD_EXACT_MATERIAL_SIDES", 1.));
             exact_constants.push(("WORLD_SOURCE_MATERIAL_SIDES", 1.));
         }
-        let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        let trace_pipelines = std::env::var_os("VOXY_WORLD_RAY_PIPELINE_TIMING").is_some();
+        let build_pipeline = |descriptor: &wgpu::ComputePipelineDescriptor<'_>| {
+            if !trace_pipelines {
+                return device.create_compute_pipeline(descriptor);
+            }
+            let entry = descriptor.entry_point.unwrap_or("<inferred>");
+            let started = std::time::Instant::now();
+            eprintln!("WORLD RAY PIPELINE begin entry={entry} exact_group={exact_group_size}");
+            let pipeline = device.create_compute_pipeline(descriptor);
+            eprintln!(
+                "WORLD RAY PIPELINE end entry={entry} elapsed_ms={:.3}",
+                started.elapsed().as_secs_f64() * 1000.
+            );
+            pipeline
+        };
+        let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("world ray query GPU job"),
             layout: None,
             module: &shader,
@@ -720,7 +788,7 @@ impl WorldRayQueryJob {
             &scratch,
             &counts,
             &hierarchy,
-            visibility,
+            visibility || options.software_nearest,
             capacity,
             false,
             None,
@@ -733,7 +801,7 @@ impl WorldRayQueryJob {
             })
         });
         let winner = if options.defer_nearest {
-            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("one certified primitive exact query"),
                 layout: None,
                 module: winner_shader.as_ref().unwrap_or(&shader),
@@ -768,7 +836,7 @@ impl WorldRayQueryJob {
             None
         };
         let candidates = if options.defer_nearest {
-            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("bounded exact nearest candidates"),
                 layout: None,
                 module: &shader,
@@ -833,8 +901,21 @@ impl WorldRayQueryJob {
                 label: Some("certificate-only opaque visibility"),
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
+            let visibility_budget = |name| {
+                if options.defer_nearest {
+                    std::env::var(name)
+                        .ok()
+                        .and_then(|value| value.parse::<u32>().ok())
+                        .unwrap_or(0)
+                } else {
+                    0
+                }
+            };
+            let node_budget = visibility_budget("VOXY_STREET_WORLD_RAY_VISIBILITY_NODE_BUDGET");
+            let triangle_budget =
+                visibility_budget("VOXY_STREET_WORLD_RAY_VISIBILITY_TRIANGLE_BUDGET");
             let build = |wide_override: u32| -> Result<_, RaySceneError> {
-                let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
                     label: Some("certificate-only opaque visibility"),
                     layout: None,
                     module: &shader,
@@ -852,6 +933,11 @@ impl WorldRayQueryJob {
                                 if options.traversal_work_stats { 1. } else { 0. },
                             ),
                             ("WORLD_FAST_CAN_BOUND", if can_bound { 1. } else { 0. }),
+                            ("WORLD_VISIBILITY_NODE_BUDGET", f64::from(node_budget)),
+                            (
+                                "WORLD_VISIBILITY_TRIANGLE_BUDGET",
+                                f64::from(triangle_budget),
+                            ),
                             ("WORLD_WIDE_BASE", wide_override as f64),
                             (
                                 "WORLD_WIDE_NEAR_FIRST",
@@ -933,7 +1019,7 @@ impl WorldRayQueryJob {
                 label: Some("source-history admission and queue compaction"),
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
-            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("render-only source admission"),
                 layout: None,
                 module: &shader,
@@ -982,7 +1068,7 @@ impl WorldRayQueryJob {
                 label: Some("isolated hardware primitive hint"),
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
-            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("isolated hardware primitive hint"),
                 layout: None,
                 module: &shader,
@@ -1028,8 +1114,8 @@ impl WorldRayQueryJob {
         let work_stats = if options.traversal_work_stats {
             let [stats] = crate::ComputeMemoryBudget::for_device(device)
                 .allocate_buffers([voxy_gpu_core::ManagedBufferDescriptor {
-                    label: "source certificate work counts",
-                    size: 48,
+                    label: "source ray work counts",
+                    size: 56,
                     contents: None,
                     usage: wgpu::BufferUsages::STORAGE
                         | wgpu::BufferUsages::COPY_SRC
@@ -1045,7 +1131,7 @@ impl WorldRayQueryJob {
                 label: Some("source work count reduction"),
                 source: wgpu::ShaderSource::Wgsl(source.into()),
             });
-            let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            let pipeline = build_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("diagnostic source work counts"),
                 layout: None,
                 module: &shader,
@@ -1053,7 +1139,8 @@ impl WorldRayQueryJob {
                 compilation_options: Default::default(),
                 cache: None,
             });
-            let group = Self::make_work_stats_group(device, &pipeline, &input, &stats, capacity);
+            let group =
+                Self::make_work_stats_group(device, &pipeline, &input, &output, &stats, capacity);
             Some((pipeline, group, stats))
         } else {
             None
@@ -1096,6 +1183,7 @@ impl WorldRayQueryJob {
             position_offset,
             query_kind: options.query_kind,
             native_seed: options.native_seed && !options.separate_native_seed,
+            software_nearest: options.software_nearest,
             history_any_hit,
             native_source_witness,
             native_triangle_hint: options.native_triangle_hint,
@@ -1107,7 +1195,9 @@ impl WorldRayQueryJob {
             skip_zero_prefix_multiply: options.skip_zero_prefix_multiply,
             exact_integer_digest,
             wide_source_base: wide_base,
-            wide_source_near_first: options.wide_source_near_first && wide_base != 0,
+            wide_source_near_first: options.wide_source_near_first
+                && wide_base != 0
+                && options.defer_nearest,
             wide_source_digest,
         })
     }
@@ -1115,6 +1205,7 @@ impl WorldRayQueryJob {
         device: &wgpu::Device,
         pipeline: &wgpu::ComputePipeline,
         input: &wgpu::Buffer,
+        output: &wgpu::Buffer,
         stats: &crate::ComputeStorage,
         count: u32,
     ) -> wgpu::BindGroup {
@@ -1134,6 +1225,10 @@ impl WorldRayQueryJob {
                     binding: 1,
                     resource: stats.as_entire_binding(),
                 },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: output.as_entire_binding(),
+                },
             ],
         })
     }
@@ -1142,6 +1237,10 @@ impl WorldRayQueryJob {
         let (_, _, stats) = self.work_stats.as_ref()?;
         Some(stats)
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn make_hint_group(
         device: &wgpu::Device,
         scene: &RayScene,
@@ -1205,6 +1304,10 @@ impl WorldRayQueryJob {
             entries: &entries,
         }))
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn make_group(
         device: &wgpu::Device,
         scene: &RayScene,

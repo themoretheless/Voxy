@@ -1,0 +1,37 @@
+Voxy profile enabled: Profile { scenario: Water, output: "docs/engine-status-2026-11-11/world-streaming/shadow-route-audit.csv", warmup: 10s, duration: 60s, start: None, previous: None, samples: [], gpu_samples: [], vegetation_gpu_samples: [], completed: Cell { value: false }, cpu_stages: {} }
+Voxy GPU: Apple M4 Max (Metal), 289 chunks, 87505 greedy quads
+Native vegetation: 6115 seeded plants, 4 shared mesh variants
+Voxy water activation: 98173 cells
+Voxy loaded in 5.05 seconds
+Voxy startup frame deferred: SkippedOccluded
+Voxy first voxel frame presented (Presented)
+SHADOW PARITY tick=60 width=1920 height=1080 casters_before=18345 casters_after=472 blake3=95ea1c3f3772f870742fc3b854c51954b0bf7a8384ab779bf42df494dca9a656
+SHADOW PARITY tick=120 width=1920 height=1080 casters_before=18345 casters_after=471 blake3=14b1b31a9680372c063cd5ffe853e35139b1aca6bcec4d2f5dbba70cb0273eed
+SHADOW PARITY tick=180 width=1920 height=1080 casters_before=18345 casters_after=468 blake3=bd55ba00d2eb3c3f707a267b2b21b2fe93d431660d57dcec8a48e524ad278834
+SHADOW PARITY tick=240 width=1920 height=1080 casters_before=18345 casters_after=160 blake3=218556214d7d4b38041f612f6853d576a84e80b583cc15aada62ba2a67015f94
+SHADOW PARITY tick=300 width=1920 height=1080 casters_before=18345 casters_after=159 blake3=57f74f8638ca0ad9904c2fd1c4b3c57ad866492d58460068d627826f6c583e00
+Voxy background rebuild: 2.11ms (3 changed / 289 resident chunks, full publication, upload_bytes=11229560, chunk_buffer_bytes=19415040)
+SHADOW PARITY tick=360 width=1920 height=1080 casters_before=18342 casters_after=181 blake3=3ba0910ba4dee3db4f4964da1db732122060f376a3f5c16aa3459be7e82fcebc
+SHADOW PARITY tick=420 width=1920 height=1080 casters_before=18342 casters_after=181 blake3=94c37cd6400eaac7cf3eb5c875580e4477a914e2a5b92c2c757cc9306567084d
+SHADOW PARITY tick=480 width=1920 height=1080 casters_before=18342 casters_after=181 blake3=f8bc6372864b03f27d55651618bb5ba341125e025b654e8ac6ed67c3a8ba8439
+SHADOW PARITY tick=540 width=1920 height=1080 casters_before=18342 casters_after=181 blake3=2346d210bc85ed88adf4c1a3ceac4e21294cc79e8123286821a8166c68534cae
+SHADOW PARITY tick=600 width=1920 height=1080 casters_before=18342 casters_after=182 blake3=e4c20b8b50ea93fb08dbf84191bb93c3b96ef1826939638e87750d54785b1657
+SHADOW PARITY tick=660 width=1920 height=1080 casters_before=18342 casters_after=464 blake3=d6280c4a8e6ffc999fb875bbad77235a372c8607dc65c2788ff6f007dd75ec4f
+Voxy autopilot destroyed natural water bed at VoxelPos { x: -256, y: 2, z: -232 }
+SHADOW PARITY tick=720 width=1920 height=1080 casters_before=18342 casters_after=466 blake3=a5c5e8f9194245e9adad2b448a7db379ead0bad9fefeda4e5515daca85141a5c
+Voxy background rebuild: 1.27ms (1 changed / 289 resident chunks, full publication, upload_bytes=11229700, chunk_buffer_bytes=19415040)
+SHADOW PARITY tick=780 width=1920 height=1080 casters_before=18342 casters_after=468 blake3=a60c2193d781e6ca557da13e6e569ccf23f90c402041229ec3ca83ce6a548676
+Voxy background rebuild: 1.33ms (1 changed / 289 resident chunks, partial publication, upload_bytes=50008, chunk_buffer_bytes=19415040)
+SHADOW PARITY tick=840 width=1920 height=1080 casters_before=18342 casters_after=469 blake3=c600c6aac9078ae7798ad3457d0888616606bce07bbcda034e8c11eb747f6723
+SHADOW PARITY tick=900 width=1920 height=1080 casters_before=18342 casters_after=471 blake3=b9ed2f62c8c6fefd05e9ef852289e40ee28848de26c8cd18ad96c6fe31c74a0a
+Voxy background rebuild: 3.37ms (1 changed / 289 resident chunks, full publication, upload_bytes=11230700, chunk_buffer_bytes=19415040)
+SHADOW PARITY tick=960 width=1920 height=1080 casters_before=18342 casters_after=476 blake3=35ccfb99069c7511a78ef0aafac17809f4fa6fd55edf468f0fa597085fdc7900
+Voxy background rebuild: 3.14ms (1 changed / 289 resident chunks, partial publication, upload_bytes=38608, chunk_buffer_bytes=19415040)
+SHADOW PARITY tick=1020 width=1920 height=1080 casters_before=18342 casters_after=481 blake3=d471e259aedd366f0258961c1229ff42eabbbbecfa38a09ee78f0572c8adf2ce
+Voxy background rebuild: 2.42ms (1 changed / 289 resident chunks, partial publication, upload_bytes=38568, chunk_buffer_bytes=19415040)
+SHADOW PARITY tick=1080 width=1920 height=1080 casters_before=18342 casters_after=483 blake3=bcba1c78070614168eaf39dd211d7ce5ba98ef4b21fb64b17fe5535d4a94259c
+Voxy background rebuild: 1.75ms (1 changed / 289 resident chunks, partial publication, upload_bytes=38508, chunk_buffer_bytes=19415040)
+SHADOW PARITY tick=1140 width=1920 height=1080 casters_before=18342 casters_after=482 blake3=ead2c3ae339b25db1f83da1b99226719327ceb6029e42cdae13cf9593515ef66
+Voxy background rebuild: 1.76ms (1 changed / 289 resident chunks, partial publication, upload_bytes=38488, chunk_buffer_bytes=19415040)
+SHADOW PARITY tick=1200 width=1920 height=1080 casters_before=18342 casters_after=483 blake3=ffeaafc909367a5daadc2dbeb04d144b6e044d82a084725fa4d002f2f8cbf961
+SHADOW PARITY PASS samples=20 resident_chunks=289

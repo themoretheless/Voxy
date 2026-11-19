@@ -64,6 +64,10 @@ impl App {
         Ok(())
     }
     /// Invoked after the ordinary frame has progressed the original restore fence.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub(crate) fn poll_editor_file_save(&mut self) -> Result<Option<PathBuf>, EditorError> {
         let Some(pending) = self.editor_save.take() else {
             return Ok(None);
@@ -338,6 +342,7 @@ pub(super) mod tests {
                     behaviors: &app.behavior_checkpoints,
                     ui_actions: &app.ui_action_checkpoints,
                     root: &target,
+                    package: None,
                     resources: policy.resources,
                     play: policy.play,
                     ui: policy.file.game.ui,

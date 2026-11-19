@@ -4,23 +4,21 @@ use voxy_render::{
     GraphicsOptions, ProcessedColorTarget, RenderOutcome, RendererError, SceneSurface,
     SurfaceOutput, TextureBlit,
 };
+use voxy_ui_winit::{FrameResult, WindowFrame, run_window_frame};
 use winit::{
-    application::ApplicationHandler,
     event::WindowEvent,
-    event_loop::{ActiveEventLoop, EventLoop},
-    window::{Window, WindowId},
+    event_loop::ActiveEventLoop,
+    window::{Window, WindowAttributes},
 };
 
 #[derive(Default)]
 struct Probe {
-    window: Option<Arc<Window>>,
     host: Option<SceneSurface>,
     output: SurfaceOutput,
     pq: Option<(ProcessedColorTarget, TextureBlit)>,
     presented: usize,
     attempts: usize,
     tested_suspension: bool,
-    failure: Option<String>,
 }
 impl Probe {
     fn draw(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
@@ -86,65 +84,59 @@ impl Probe {
         Ok(self.presented == 3)
     }
 }
-impl ApplicationHandler for Probe {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        let result = (|| -> Result<(), Box<dyn std::error::Error>> {
-            let window = Arc::new(
-                event_loop.create_window(
-                    Window::default_attributes()
-                        .with_title("Voxy linear HDR proof")
-                        .with_inner_size(winit::dpi::PhysicalSize::new(320, 240)),
-                )?,
-            );
-            let options = GraphicsOptions::default();
-            let instance = options.create_instance_with_display(event_loop.owned_display_handle());
-            let host = pollster::block_on(SceneSurface::new_with_instance_and_output(
-                Arc::clone(&window),
-                320,
-                240,
-                options,
-                instance,
-                self.output,
-            ))?;
-            println!(
-                "Configured HDR {:?}/{:?}; display {:?}",
-                host.color_format(),
-                host.color_space(),
-                host.display_hdr_info()
-            );
-            if self.output == SurfaceOutput::Hdr10 {
-                self.pq = Some((
-                    ProcessedColorTarget::new(host.device(), 320, 240, true)?,
-                    TextureBlit::hdr10(host.device(), host.color_format(), 203.0)
-                        .ok_or("HDR10 display encoder rejected")?,
-                ));
-            }
-            self.host = Some(host);
-            window.focus_window();
-            window.request_redraw();
-            self.window = Some(window);
-            Ok(())
-        })();
-        if let Err(error) = result {
-            self.failure = Some(error.to_string());
-            event_loop.exit();
-        }
+impl WindowFrame for Probe {
+    fn window_attributes(&self) -> WindowAttributes {
+        Window::default_attributes()
+            .with_title("Voxy linear HDR proof")
+            .with_inner_size(winit::dpi::PhysicalSize::new(320, 240))
     }
-    fn window_event(&mut self, event_loop: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
+    fn start(&mut self, event_loop: &ActiveEventLoop, window: &Arc<Window>) -> FrameResult {
+        let options = GraphicsOptions::default();
+        let instance = options.create_instance_with_display(event_loop.owned_display_handle());
+        let host = pollster::block_on(SceneSurface::new_with_instance_and_output(
+            Arc::clone(window),
+            320,
+            240,
+            options,
+            instance,
+            self.output,
+        ))?;
+        println!(
+            "Configured HDR {:?}/{:?}; display {:?}",
+            host.color_format(),
+            host.color_space(),
+            host.display_hdr_info()
+        );
+        if self.output == SurfaceOutput::Hdr10 {
+            self.pq = Some((
+                ProcessedColorTarget::new(host.device(), 320, 240, true)?,
+                TextureBlit::hdr10(host.device(), host.color_format(), 203.0)
+                    .ok_or("HDR10 display encoder rejected")?,
+            ));
+        }
+        self.host = Some(host);
+        window.focus_window();
+        window.request_redraw();
+        Ok(())
+    }
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        window: &Arc<Window>,
+        event: WindowEvent,
+    ) -> FrameResult {
         if event == WindowEvent::RedrawRequested {
-            match self.draw() {
-                Ok(true) => event_loop.exit(),
-                Ok(false) => {
-                    if let Some(window) = &self.window {
-                        window.request_redraw();
-                    }
-                }
-                Err(error) => {
-                    self.failure = Some(error.to_string());
-                    event_loop.exit();
-                }
+            if self.draw()? {
+                event_loop.exit();
+            } else {
+                window.request_redraw();
             }
         }
+        Ok(())
+    }
+    fn about_to_wait(&mut self, _: &ActiveEventLoop, _: &Arc<Window>) -> FrameResult {
+        // Redraws are requested from the frame itself.
+        Ok(())
     }
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -157,10 +149,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         output,
         ..Default::default()
     };
-    EventLoop::new()?.run_app(&mut probe)?;
-    if let Some(error) = probe.failure {
-        return Err(error.into());
-    }
+    run_window_frame(&mut probe, None)?;
     if probe.presented != 3 || !probe.tested_suspension {
         return Err("HDR surface proof incomplete".into());
     }

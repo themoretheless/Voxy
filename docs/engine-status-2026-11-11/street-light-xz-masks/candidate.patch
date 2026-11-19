@@ -1,0 +1,141 @@
+diff --git a/crates/voxy_render/src/archive_scene.rs b/crates/voxy_render/src/archive_scene.rs
+index 4aca8640..efe58dcb 100644
+--- a/crates/voxy_render/src/archive_scene.rs
++++ b/crates/voxy_render/src/archive_scene.rs
+@@ -19,7 +19,7 @@ use bytemuck::{Pod, Zeroable};
+ use glam::{Mat4, Vec3};
+ use probe_timing::Timing;
+ use std::sync::Arc;
+-use types::{archive_light_z_masks, display_mode, fully_covering_transmission};
++use types::{archive_light_axis_masks, display_mode, fully_covering_transmission};
+ use world_rays::validate_street_ray_env_config;
+ 
+ #[repr(C)]
+@@ -734,6 +734,14 @@ impl ArchiveSceneRenderer {
+                                     0.
+                                 },
+                             ),
++                            (
++                                "ARCHIVE_LIGHT_XZ_MASKS",
++                                if std::env::var_os("VOXY_STREET_LIGHT_XZ_MASKS").is_some() {
++                                    1.
++                                } else {
++                                    0.
++                                },
++                            ),
+                             (
+                                 "ARCHIVE_RAY_DEPTH_REUSE",
+                                 if std::env::var_os("VOXY_STREET_RAY_DEPTH_REUSE").is_some() {
+@@ -979,8 +987,10 @@ impl ArchiveSceneRenderer {
+         light_data[..4].copy_from_slice(&(lights.len() as u32).to_le_bytes());
+         light_data[16..16 + std::mem::size_of_val(lights)]
+             .copy_from_slice(bytemuck::cast_slice(lights));
+-        let masks = archive_light_z_masks(lights);
+-        light_data.extend_from_slice(bytemuck::cast_slice(&masks));
++        for axis in [2, 0] {
++            let masks = archive_light_axis_masks(lights, axis);
++            light_data.extend_from_slice(bytemuck::cast_slice(&masks));
++        }
+         let light_buffer = buffer(
+             device,
+             "unchanged authored punctual light constants",
+diff --git a/crates/voxy_render/src/archive_scene.wgsl b/crates/voxy_render/src/archive_scene.wgsl
+index 26f80503..eb3c9f9d 100644
+--- a/crates/voxy_render/src/archive_scene.wgsl
++++ b/crates/voxy_render/src/archive_scene.wgsl
+@@ -16,11 +16,12 @@ override ARCHIVE_RAY_BOUNDS:bool=true;
+ override ARCHIVE_REFINE_CACHE:bool=false;
+ override ARCHIVE_RAY_DEPTH_REUSE:bool=false;
+ override ARCHIVE_LIGHT_Z_MASKS:bool=false;
++override ARCHIVE_LIGHT_XZ_MASKS:bool=false;
+ struct Camera { vp:mat4x4<f32>, shadow:mat4x4<f32>, inverse_vp:mat4x4<f32>, eye:vec4<f32>, sun:vec4<f32>, sun_colour:vec4<f32>, viewport:vec4<f32>, weather:vec4<f32>, atmosphere:vec4<f32>, wind:vec4<f32>, previous_vp:mat4x4<f32>, previous_inverse_vp:mat4x4<f32>, surface:vec4<f32> }
+ struct Light { position_kind:vec4<f32>, colour_intensity:vec4<f32> }
+ struct Material { diffuse:vec4<f32>, specular_gloss:vec4<f32>, emissive_normal:vec4<f32>, surface:vec4<f32>, workflow:vec4<f32> }
+ @group(0) @binding(0) var<uniform> camera:Camera;
+-struct Lights { count:vec4<u32>, values:array<Light,128>, z_masks:array<vec4<u32>,256> }
++struct Lights { count:vec4<u32>, values:array<Light,128>, z_masks:array<vec4<u32>,256>, x_masks:array<vec4<u32>,256> }
+ @group(0) @binding(1) var<uniform> lights:Lights;
+ @group(1) @binding(0) var<uniform> material:Material;
+ @group(1) @binding(1) var diffuse_map:texture_2d<f32>;
+@@ -838,14 +839,17 @@ fn shade(f:Fragment,front:bool,tex:vec4<f32>)->vec4<f32>{
+  let bent_cone=clamp(dot(reflected,bent_normal)*0.5+0.5,0.35,1.);
+  var pt_diffuse=vec3<f32>(0.);
+  var candidates=vec4<u32>(0xffffffffu);
+- if ARCHIVE_LIGHT_Z_MASKS&&f.world.z>=-512.&&f.world.z<512. {
++ if (ARCHIVE_LIGHT_Z_MASKS||ARCHIVE_LIGHT_XZ_MASKS)&&f.world.z>=-512.&&f.world.z<512. {
+   candidates=lights.z_masks[u32(i32(floor(f.world.z*0.25))+128)];
+  }
++ if ARCHIVE_LIGHT_XZ_MASKS&&f.world.x>=-512.&&f.world.x<512. {
++  candidates&=lights.x_masks[u32(i32(floor(f.world.x*0.25))+128)];
++ }
+  var next_light=0u;
+  var word=0u;
+  loop {
+   var i=next_light;
+-  if ARCHIVE_LIGHT_Z_MASKS {
++  if ARCHIVE_LIGHT_Z_MASKS||ARCHIVE_LIGHT_XZ_MASKS {
+    while word<4u {
+     if candidates[word]!=0u {break;}
+     word+=1u;
+diff --git a/crates/voxy_render/src/archive_scene/types.rs b/crates/voxy_render/src/archive_scene/types.rs
+index 170436a5..49ec04d0 100644
+--- a/crates/voxy_render/src/archive_scene/types.rs
++++ b/crates/voxy_render/src/archive_scene/types.rs
+@@ -3,24 +3,28 @@ use bytemuck::{Pod, Zeroable};
+ use glam::{Mat4, Vec3};
+ use std::sync::{Arc, OnceLock};
+ 
+-/// Original display panorama and separately prepared indirect-light panorama.
+-pub(super) const LIGHT_Z_BIN_COUNT: usize = 256;
++const LIGHT_AXIS_BIN_COUNT: usize = 256;
+ 
+-pub(super) fn archive_light_z_masks(lights: &[ArchiveLight]) -> [[u32; 4]; LIGHT_Z_BIN_COUNT] {
+-    let mut masks = [[0; 4]; LIGHT_Z_BIN_COUNT];
++pub(super) fn archive_light_axis_masks(
++    lights: &[ArchiveLight],
++    axis: usize,
++) -> [[u32; 4]; LIGHT_AXIS_BIN_COUNT] {
++    let mut masks = [[0; 4]; LIGHT_AXIS_BIN_COUNT];
+     for (index, light) in lights.iter().enumerate() {
+-        let [_, _, z, radius] = light.position_kind;
+-        let (z, radius) = (f64::from(z), f64::from(radius));
++        let center = f64::from(light.position_kind[axis]);
++        let radius = f64::from(light.position_kind[3]);
++        let invalid_position = axis == 0 && light.position_kind.iter().any(|v| !v.is_finite());
+         // The original shader subtracts the two f32 coordinates. Widen
+         // the interval for that rounding and for classification at a bin edge.
+-        let slack = 4. + 8. * f64::from(f32::EPSILON) * (z.abs() + radius.abs() + 512.);
++        let slack = 4. + 8. * f64::from(f32::EPSILON) * (center.abs() + radius.abs() + 512.);
+         for (bin, mask) in masks.iter_mut().enumerate() {
+             let low = (bin as f64 - 128.) * 4.;
+             let high = low + 4.;
+-            if !z.is_finite()
++            if invalid_position
++                || !center.is_finite()
+                 || !radius.is_finite()
+                 || radius <= 0.
+-                || (z - radius - slack <= high && z + radius + slack >= low)
++                || (center - radius - slack <= high && center + radius + slack >= low)
+             {
+                 mask[index / 32] |= 1 << (index % 32);
+             }
+diff --git a/tools/scene-research/qualify_ray_schedule.rs b/tools/scene-research/qualify_ray_schedule.rs
+index a2991f2d..c8d2aa83 100644
+--- a/tools/scene-research/qualify_ray_schedule.rs
++++ b/tools/scene-research/qualify_ray_schedule.rs
+@@ -278,9 +278,14 @@ fn main() {
+         colour_intensity: [0.8, 0.3, 1., 300.],
+     }];
+     if args.iter().any(|a| a == "--many-lights") {
++        let spread_x = args.iter().any(|a| a == "--spread-light-x");
+         lights.extend((1..=96).map(|index| ArchiveLight {
+             position_kind: [
+-                1.,
++                if spread_x && index % 3 != 0 {
++                    (index as f32 - 48.) * 8.
++                } else {
++                    1.
++                },
+                 2.,
+                 if index % 7 == 0 {
+                     0.

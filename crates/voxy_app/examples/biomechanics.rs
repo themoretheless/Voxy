@@ -2,6 +2,6 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let smoke = std::env::args().any(|a| a == "--smoke");
     voxy_shell::SceneApp::new(smoke)?
-        .with_biomechanics()?
+        .with_demo(Box::new(voxy_demos::scenes::TissueScene::biomechanics()?))
         .run(winit::event_loop::EventLoop::new()?)
 }

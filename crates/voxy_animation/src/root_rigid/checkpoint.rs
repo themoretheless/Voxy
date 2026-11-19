@@ -88,6 +88,10 @@ impl RootRigidPathProgram {
     pub fn new(steps: Vec<RootRigidPathStep>) -> Self {
         Self { steps }
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn replay(
         &self,
         resolve: impl Fn(&str) -> Option<RootRigidCurve>,

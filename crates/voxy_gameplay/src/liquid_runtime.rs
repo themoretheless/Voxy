@@ -317,8 +317,10 @@ fn trajectory_events(
         budget,
         &mut steps,
         &mut queries,
+        &[],
     )
 }
+#[allow(clippy::too_many_arguments)]
 fn trajectory_events_counted(
     first: &physics::rigid_motion::RigidMotion,
     shapes: &[crate::convex::AffineBox],
@@ -327,6 +329,7 @@ fn trajectory_events_counted(
     budget: usize,
     steps: &mut usize,
     queries: &mut usize,
+    initial_overlap: &[(FeatureKey, f64)],
 ) -> Result<RigidGeometryHit, physics::liquid::Error> {
     use physics::liquid::{Error, GeometryHit};
     if budget == 0
@@ -341,9 +344,26 @@ fn trajectory_events_counted(
     let mut earliest = f64::INFINITY;
     for (first_index, shape) in shapes.iter().enumerate() {
         for (second_index, obstacle) in obstacles.iter().enumerate() {
-            let contact = crate::angular_sweep::sweep_nominal_rigid_contact(
-                first, *shape, second, *obstacle, steps, queries,
-            );
+            let overlap_limit = initial_overlap
+                .iter()
+                .filter(|(key, _)| key.first == first_index && key.second == second_index)
+                .map(|(_, error)| *error)
+                .fold(0., f64::max);
+            let contact = if overlap_limit > 0. {
+                crate::angular_sweep::sweep_nominal_rigid_contact_with_overlap_limit(
+                    first,
+                    *shape,
+                    second,
+                    *obstacle,
+                    steps,
+                    queries,
+                    overlap_limit,
+                )
+            } else {
+                crate::angular_sweep::sweep_nominal_rigid_contact(
+                    first, *shape, second, *obstacle, steps, queries,
+                )
+            };
             let hit = match contact {
                 Ok(None) => RigidGeometryHit::from(BodyGeometryHit::from(GeometryHit::Clear)),
                 Ok(Some(contact)) => RigidGeometryHit {
@@ -478,6 +498,7 @@ fn trajectory_environment_events_at(
             budget,
             &mut steps,
             &mut queries,
+            &[],
         )?;
         if let Some(token) = event.feature {
             let mut key = FeatureKey::decode(token)?;
@@ -489,6 +510,10 @@ fn trajectory_environment_events_at(
 }
 
 /// Search every shape pair, admitting only explicit active support branches.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn supported_shape_events(
     first: &physics::rigid_motion::RigidMotion,
     shapes: &[crate::convex::AffineBox],
@@ -497,9 +522,11 @@ fn supported_shape_events(
     supports: &[physics::liquid::RigidSupportPoint],
     point_models: Option<&[Option<physics::liquid::RigidSupportPointMotion>]>,
     budget: usize,
-    fixed: bool,
+    pair: rigid_support::SupportPair,
 ) -> Result<physics::liquid::SupportedGeometryHit, physics::liquid::Error> {
     use physics::liquid::Error;
+    let trace_budget =
+        first.duration() < 1e-9 && std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some();
     if point_models.is_some_and(|models| models.len() != supports.len()) {
         return Err(Error::InvalidCollision);
     }
@@ -543,7 +570,13 @@ fn supported_shape_events(
                     budget,
                     &mut steps,
                     &mut queries,
-                )?;
+                    &[],
+                )
+                .inspect_err(|error| {
+                    if trace_budget && *error == Error::CollisionBudget {
+                        eprintln!("support sweep budget branch=unowned shape={ia} obstacle={ib} steps={steps} queries={queries}");
+                    }
+                })?;
                 if let Some(feature) = hit.feature {
                     let key = FeatureKey::decode(feature)?;
                     hit.feature = Some(
@@ -557,9 +590,14 @@ fn supported_shape_events(
                 }
                 events.push(Ok(hit));
             } else {
-                error = error.max(rigid_support::admit_point_motion(
-                    first, *shape, second, *obstacle, fixed, &active, &models,
-                )?);
+                error = error.max(rigid_support::admit_pair_motion(
+                    first, *shape, second, *obstacle, pair, &active, &models,
+                )
+                .inspect_err(|error| {
+                    if trace_budget && *error == Error::CollisionBudget {
+                        eprintln!("support sweep budget branch=owned shape={ia} obstacle={ib} contacts={}", active.len());
+                    }
+                })?);
             }
         }
     }
@@ -656,6 +694,10 @@ fn contact_patch_points(
 ) -> Result<Vec<physics::contact::NormalContact>, physics::liquid::Error> {
     contact_patch_points_with_error(first, a, second, b, witness, normal, budget, 0.)
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn contact_patch_points_with_error(
     first: &[crate::convex::AffineBox],
     a: &physics::contact::ContactBody,
@@ -774,6 +816,15 @@ mod runtime;
 
 #[cfg(test)]
 mod tests;
+
+fn rigid_template_radius(templates: &[crate::convex::AffineBox]) -> f64 {
+    templates
+        .iter()
+        .map(|shape| {
+            shape.center.length() + shape.edges.iter().map(|edge| edge.length()).sum::<f64>()
+        })
+        .fold(0., f64::max)
+}
 
 mod checkpoint;
 pub use checkpoint::{SceneLiquidCheckpoint, SceneLiquidCheckpointLimits, SceneLiquidWireLimits};

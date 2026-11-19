@@ -29,6 +29,7 @@ fn gas(n: [usize; 3], h: f64) -> FiniteDropletGasGrid {
 }
 
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
 fn wgpu_medium_transport_matches_the_cpu_reference() {
     let instance = wgpu::Instance::default();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default()))

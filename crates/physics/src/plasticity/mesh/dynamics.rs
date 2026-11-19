@@ -301,6 +301,11 @@ impl DynamicBody {
     /// Rejects invalid inputs, singular tangents, inversion and overflow.
     // Keep all step candidates and the final commit transactional.
     // Force and energy tolerances use distinct physical units.
+    #[expect(
+        clippy::too_many_lines,
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn step(
         &mut self,
         dt: f64,

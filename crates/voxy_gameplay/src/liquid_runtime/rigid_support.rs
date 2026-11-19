@@ -541,6 +541,10 @@ fn cross_magnitude_range(
     Ok((lower, upper))
 }
 
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn cross_cubic_dot_range(
     a: DVec3,
     wa: DVec3,
@@ -589,6 +593,10 @@ fn cross_cubic_dot_range(
 
 /// Triple products reduce to a rotating-pair dot because affine centers and
 /// edges follow one of the two owners. This retains rigid-frame cancellation.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn cross_attached_dot_range(
     a: DVec3,
     wa: DVec3,
@@ -607,6 +615,90 @@ fn cross_attached_dot_range(
     Ok(if sign > 0. { (lo, hi) } else { (-hi, -lo) })
 }
 
+/// Bound the edge-axis numerator over all corners that can attain its minimum.
+/// The two crossed edges are orthogonal to the axis for the complete arc.
+fn correlated_edge_gap(
+    c: [DVec3; 5],
+    relative: [DVec3; 4],
+    first: (DQuat, DVec3, AffineBox, usize),
+    second: (DQuat, DVec3, AffineBox, usize),
+    h: f64,
+) -> Result<(f64, f64), Error> {
+    let corners = |(rotation, omega, template, cross_edge): (DQuat, DVec3, AffineBox, usize)| {
+        let mut edges = template
+            .edges
+            .iter()
+            .enumerate()
+            .filter(|(index, _)| *index != cross_edge)
+            .map(|(_, &edge)| rotate_vector(rotation, edge));
+        let x = edges.next().expect("first transverse edge");
+        let y = edges.next().expect("second transverse edge");
+        let center = rotate_vector(rotation, template.center);
+        [
+            center - x - y,
+            center - x + y,
+            center + x - y,
+            center + x + y,
+        ]
+        .map(|point| {
+            let v = omega.cross(point);
+            let a = omega.cross(v);
+            [point, v, a, omega.cross(a)]
+        })
+    };
+    let (first_corners, second_corners) = (corners(first), corners(second));
+    let radius = |template: AffineBox| {
+        template.center.length() + template.edges.iter().map(|edge| edge.length()).sum::<f64>()
+    };
+    let wa = first.1.length();
+    let wb = second.1.length();
+    let ra = radius(first.2);
+    let rb = radius(second.2);
+    let [r, v, a, j] = relative.map(DVec3::length);
+    let displacement = r + v * h + a * h.powi(2) / 2. + j * h.powi(3) / 6.;
+    let derivatives = [
+        displacement + ra + rb,
+        v + a * h + j * h.powi(2) / 2. + wa * ra + wb * rb,
+        a + j * h + wa.powi(2) * ra + wb.powi(2) * rb,
+        j + wa.powi(3) * ra + wb.powi(3) * rb,
+        wa.powi(4) * ra + wb.powi(4) * rb,
+    ];
+    // Both crossed edges are unit directions. Leibniz bounds the fourth
+    // derivative using the full arc radii and translation derivative bounds.
+    let remainder = (0..=4)
+        .map(|k| BINOMIAL[4][k] * (wa + wb).powi(k as i32) * derivatives[4 - k])
+        .sum::<f64>()
+        * h.powi(4)
+        / 24.;
+    let guard = 4096.
+        * f64::EPSILON
+        * (1.
+            + derivatives[0]
+            + derivatives[1] * h
+            + derivatives[2] * h.powi(2)
+            + derivatives[3] * h.powi(3));
+    let mut lower = f64::INFINITY;
+    let mut upper = f64::INFINITY;
+    for left in first_corners {
+        for right in second_corners {
+            let d: [DVec3; 4] = std::array::from_fn(|k| relative[k] + left[k] - right[k]);
+            let terms: [f64; 4] =
+                std::array::from_fn(|k| (0..=k).map(|i| BINOMIAL[k][i] * c[i].dot(d[k - i])).sum());
+            let (lo, hi) = polynomial_range(terms[1], terms[2], terms[3], h)?;
+            lower = lower.min(terms[0] + lo - remainder - guard);
+            upper = upper.min(terms[0] + hi + remainder + guard);
+        }
+    }
+    if !lower.is_finite() || !upper.is_finite() {
+        return Err(Error::NumericalFailure);
+    }
+    Ok((lower, upper))
+}
+
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn edge_gap_range(
     first: &physics::rigid_motion::RigidMotion,
     shape: AffineBox,
@@ -701,10 +793,22 @@ fn edge_gap_range(
         let values = [lo / mag_lo, lo / mag_hi, hi / mag_lo, hi / mag_hi];
         let mut interval_lo = values.iter().copied().fold(f64::INFINITY, f64::min);
         let mut interval_hi = values.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+        let c = cross_derivatives(a, wa, b, wb).map(|value| value * sign);
+        if (wa == DVec3::ZERO) != (wb == DVec3::ZERO) {
+            let (lo, hi) = correlated_edge_gap(
+                c,
+                [r, v, acc, jerk],
+                (qa, wa, shape, i as usize),
+                (qb, wb, obstacle, j as usize),
+                h,
+            )?;
+            let normalized = [lo / mag_lo, lo / mag_hi, hi / mag_lo, hi / mag_hi];
+            interval_lo = interval_lo.max(normalized.into_iter().fold(f64::INFINITY, f64::min));
+            interval_hi = interval_hi.min(normalized.into_iter().fold(f64::NEG_INFINITY, f64::max));
+        }
         // A second enclosure preserves cancellation when the cross magnitude
         // changes but its direction barely moves. Bound the perpendicular
         // component before normalization, never declare a small spin zero.
-        let c = cross_derivatives(a, wa, b, wb).map(|c| c * sign);
         let perpendicular = |c: DVec3| normal.cross(c);
         let remainder =
             (wa.length() + wb.length()).powi(4) * a.length() * b.length() * h.powi(4) / 24.;
@@ -786,6 +890,10 @@ fn edge_gap_range(
 
 /// Whole-interval SAT gap on a face-owned or normalized edge-cross direction,
 /// with both spin-arc timelines merged.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn face_gap_range(
     first: &physics::rigid_motion::RigidMotion,
     shape: AffineBox,
@@ -922,7 +1030,7 @@ fn face_gap_range(
 /// Changing material points still require a different reaction point model.
 /// Acceptance uses the emitting geometry witness plus floating pose evaluation
 /// allowance, never a user-chosen rest speed, position snap or force clamp.
-#[allow(dead_code)]
+#[cfg(test)]
 pub(super) fn admit_motion(
     first: &physics::rigid_motion::RigidMotion,
     first_shape: AffineBox,
@@ -942,6 +1050,14 @@ pub(super) fn admit_motion(
     )
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(super) enum SupportPair {
+    Rigid,
+    Environment,
+    Particle,
+}
+
+#[cfg(test)]
 pub(super) fn admit_point_motion(
     first: &physics::rigid_motion::RigidMotion,
     first_shape: AffineBox,
@@ -951,6 +1067,36 @@ pub(super) fn admit_point_motion(
     points: &[physics::liquid::RigidSupportPoint],
     motion: &[Option<physics::liquid::RigidSupportPointMotion>],
 ) -> Result<f64, Error> {
+    let pair = if fixed {
+        SupportPair::Environment
+    } else {
+        SupportPair::Rigid
+    };
+    admit_pair_motion(
+        first,
+        first_shape,
+        second,
+        second_shape,
+        pair,
+        points,
+        motion,
+    )
+}
+
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
+pub(super) fn admit_pair_motion(
+    first: &physics::rigid_motion::RigidMotion,
+    first_shape: AffineBox,
+    second: &physics::rigid_motion::RigidMotion,
+    second_shape: AffineBox,
+    pair: SupportPair,
+    points: &[physics::liquid::RigidSupportPoint],
+    motion: &[Option<physics::liquid::RigidSupportPointMotion>],
+) -> Result<f64, Error> {
+    let fixed = pair == SupportPair::Environment;
     if points.len() != motion.len() {
         return Err(Error::InvalidCollision);
     }
@@ -1042,6 +1188,12 @@ pub(super) fn admit_point_motion(
             // These interval enclosures already include floating-point guards.
             // Do not spend an additional snapshot-rounding allowance on them.
             if bounded_error > point.admission_error_m {
+                if duration < 1e-9 && std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some() {
+                    eprintln!(
+                        "support certificate reason=face_gap point={index} duration_s={duration:e} error_m={:e} limit_m={:e}",
+                        bounded_error, point.admission_error_m
+                    );
+                }
                 return Err(Error::CollisionBudget);
             }
             bounded_error
@@ -1063,6 +1215,11 @@ pub(super) fn admit_point_motion(
         };
         max_error = max_error.max(error);
         if error > tolerance {
+            if duration < 1e-9 && std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some() {
+                eprintln!(
+                    "support certificate reason=normal_gap point={index} duration_s={duration:e} error_m={error:e} limit_m={tolerance:e}"
+                );
+            }
             return Err(Error::CollisionBudget);
         }
         if !point.carrying_reaction {
@@ -1108,8 +1265,44 @@ pub(super) fn admit_point_motion(
                     }
                     max_error = max_error.max(excursion);
                     if excursion > point.admission_error_m {
+                        if duration < 1e-9
+                            && std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some()
+                        {
+                            eprintln!(
+                                "support certificate reason=moving_point_slab point={index} duration_s={duration:e} error_m={:e} limit_m={:e}",
+                                excursion, point.admission_error_m
+                            );
+                        }
                         return Err(Error::CollisionBudget);
                     }
+                }
+            }
+            continue;
+        }
+        if pair == SupportPair::Particle && point.admission_error_m > 0. {
+            // Use the same first-COM path as the force application model.
+            // Project it jointly with the rotating slab so relative motion
+            // cancels before the interval bound is taken.
+            let com_motion = physics::liquid::RigidSupportPointMotion {
+                velocity: first.initial().motion.velocity,
+                acceleration: first.acceleration(),
+                jerk: first.jerk(),
+            };
+            for (path, template) in [(first, first_shape), (second, second_shape)] {
+                let inverse =
+                    glam::DMat3::from_cols(template.edges[0], template.edges[1], template.edges[2])
+                        .inverse();
+                if !inverse.is_finite() {
+                    return Err(Error::InvalidCollision);
+                }
+                for axis in 0..3 {
+                    let extent = 1. / inverse.transpose().col(axis).length();
+                    let (lo, hi) = slab_range(path, template, axis, p, com_motion)?;
+                    let ownership_error = (-extent - lo).max(hi - extent).max(0.);
+                    if ownership_error > point.admission_error_m {
+                        return Err(Error::CollisionBudget);
+                    }
+                    max_error = max_error.max(ownership_error);
                 }
             }
             continue;
@@ -1144,12 +1337,42 @@ pub(super) fn admit_point_motion(
                 )?;
                 let (lo, hi) = polynomial_range(row.dot(v), row.dot(acc), row.dot(j), duration)?;
                 let extent = (initial[k] + lo).abs().max((initial[k] + hi).abs());
-                let ownership_error = ((extent - 1.) / row.length() + angular).max(0.);
+                let mut ownership_error = ((extent - 1.) / row.length() + angular).max(0.);
+                if fixed && ownership_error > point.admission_error_m {
+                    let template = if std::ptr::eq(path, first) {
+                        first_shape
+                    } else {
+                        second_shape
+                    };
+                    let motion = physics::liquid::RigidSupportPointMotion {
+                        velocity: a.motion.velocity,
+                        acceleration: first.acceleration(),
+                        jerk: first.jerk(),
+                    };
+                    let (joint_lo, joint_hi) = slab_range(path, template, k, p, motion)?;
+                    let bound = 1. / row.length();
+                    ownership_error =
+                        ownership_error.min((-bound - joint_lo).max(joint_hi - bound).max(0.));
+                }
                 max_error = max_error.max(ownership_error);
                 if point.admission_error_m > 0. && ownership_error > point.admission_error_m {
+                    if duration < 1e-9 && std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some() {
+                        eprintln!(
+                            "support certificate reason=unmodeled_ownership point={index} first_owner={} axis={k} duration_s={duration:e} error_m={ownership_error:e} limit_m={:e} translation_m={:e} angular_m={angular:e}",
+                            std::ptr::eq(path, first),
+                            point.admission_error_m,
+                            (extent - 1.) / row.length(),
+                        );
+                    }
                     return Err(Error::CollisionBudget);
                 }
-                if extent + row.length() * angular > 1. + row.length() * tolerance {
+                if ownership_error > tolerance {
+                    if duration < 1e-9 && std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some() {
+                        eprintln!(
+                            "support certificate reason=unmodeled_slab point={index} axis={k} duration_s={duration:e} error_m={ownership_error:e} limit_m={:e}",
+                            point.admission_error_m
+                        );
+                    }
                     return Err(Error::CollisionBudget);
                 }
             }
@@ -1181,6 +1404,10 @@ mod cubic_range_tests {
 }
 
 /// Differentiate the selected edge cross product twice in world coordinates.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn edge_normal_acceleration(
     first: ContactBody,
     first_shape: AffineBox,
@@ -1315,6 +1542,10 @@ mod edge_derivative_tests {
 mod projected_rotation_tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn projected_gap_and_arm_bounds_cover_all_nominal_prefixes() {
         let body = ContactBody {
             motion: physics::gravity::Body {
@@ -1447,578 +1678,8 @@ mod projected_rotation_tests {
     }
 }
 
-/// Differentiate the active slab constraints defining a clipped patch vertex.
-/// Coincident constraints must agree; topology kinks are not assigned an
-/// arbitrary material owner. Shapes are principal-body templates, except fixed
-/// environment geometry, whose coordinates are already world-oriented.
-pub(super) fn point_velocity(
-    first: ContactBody,
-    first_shape: AffineBox,
-    second: Option<ContactBody>,
-    second_shape: AffineBox,
-    point: [f64; 3],
-    tolerance_m: f64,
-) -> Result<[f64; 3], Error> {
-    solve_point_constraints(
-        first,
-        first_shape,
-        second,
-        second_shape,
-        point,
-        tolerance_m,
-        true,
-        |_, body, _, velocity| Ok(body.map_or(0., |_| velocity)),
-    )
-}
-
-/// Candidate second derivative from the same independent active-plane basis.
-/// The factor two accounts for both the rotating plane and sliding along it.
-/// Redundant plane rates may carry pressure-solver residual. Their actual
-/// distance is bounded by whole-interval admission, not forced to agree exactly.
-pub(super) fn point_acceleration(
-    first: ContactBody,
-    first_shape: AffineBox,
-    second: Option<ContactBody>,
-    second_shape: AffineBox,
-    point: [f64; 3],
-    tolerance_m: f64,
-    loads: [physics::contact::ContactWrench; 2],
-) -> Result<[f64; 3], Error> {
-    if loads.iter().any(|load| {
-        load.force
-            .iter()
-            .chain(&load.torque)
-            .any(|x| !x.is_finite())
-    }) {
-        return Err(Error::InvalidCollision);
-    }
-    let velocity = DVec3::from_array(point_velocity(
-        first,
-        first_shape,
-        second,
-        second_shape,
-        point,
-        tolerance_m,
-    )?);
-    let p = DVec3::from_array(point);
-    // Each shape contributes all its active planes through one load owner.
-    solve_point_constraints(
-        first,
-        first_shape,
-        second,
-        second_shape,
-        point,
-        tolerance_m,
-        false,
-        |owner, body, normal, _| {
-            let load = loads[owner];
-            let Some(body) = body else {
-                return Ok(0.);
-            };
-            if body.spin.is_none() && load.torque != [0.; 3] {
-                return Err(Error::InvalidCollision);
-            }
-            let material = DVec3::from_array(
-                body.point_velocity(point)
-                    .map_err(|_| Error::InvalidCollision)?,
-            );
-            let arm = p - DVec3::from_array(body.motion.position);
-            let (omega, alpha) = if let Some(spin) = body.spin {
-                (
-                    DVec3::from_array(
-                        spin.angular_velocity()
-                            .map_err(|_| Error::InvalidCollision)?,
-                    ),
-                    DVec3::from_array(
-                        spin.angular_acceleration(load.torque)
-                            .map_err(|_| Error::InvalidCollision)?,
-                    ),
-                )
-            } else {
-                (DVec3::ZERO, DVec3::ZERO)
-            };
-            let acceleration = DVec3::from_array(load.force) / body.motion.mass
-                + alpha.cross(arm)
-                + omega.cross(omega.cross(arm));
-            let value =
-                normal.dot(acceleration) + 2. * omega.cross(normal).dot(material - velocity);
-            if !value.is_finite() {
-                return Err(Error::InvalidCollision);
-            }
-            Ok(value)
-        },
-    )
-}
-
-/// Candidate third derivative of the same active-plane basis. Required by cubic
-/// common-point trajectories; not a certificate of finite branch persistence.
-pub(super) fn point_jerk(
-    first: ContactBody,
-    first_shape: AffineBox,
-    second: Option<ContactBody>,
-    second_shape: AffineBox,
-    point: [f64; 3],
-    tolerance_m: f64,
-    loads: [physics::contact::ContactWrench; 2],
-    rates: [physics::contact::ContactWrench; 2],
-) -> Result<[f64; 3], Error> {
-    if rates.iter().any(|load| {
-        load.force
-            .iter()
-            .chain(&load.torque)
-            .any(|v| !v.is_finite())
-    }) {
-        return Err(Error::InvalidCollision);
-    }
-    let velocity = DVec3::from_array(point_velocity(
-        first,
-        first_shape,
-        second,
-        second_shape,
-        point,
-        tolerance_m,
-    )?);
-    let acceleration = DVec3::from_array(point_acceleration(
-        first,
-        first_shape,
-        second,
-        second_shape,
-        point,
-        tolerance_m,
-        loads,
-    )?);
-    let p = DVec3::from_array(point);
-    solve_point_constraints(
-        first,
-        first_shape,
-        second,
-        second_shape,
-        point,
-        tolerance_m,
-        false,
-        |owner, body, normal, _| {
-            let Some(body) = body else {
-                return Ok(0.);
-            };
-            let load = loads[owner];
-            let rate = rates[owner];
-            if body.spin.is_none() && rate.torque != [0.; 3] {
-                return Err(Error::InvalidCollision);
-            }
-            let (omega, alpha, beta) = if let Some(spin) = body.spin {
-                (
-                    DVec3::from_array(
-                        spin.angular_velocity()
-                            .map_err(|_| Error::InvalidCollision)?,
-                    ),
-                    DVec3::from_array(
-                        spin.angular_acceleration(load.torque)
-                            .map_err(|_| Error::InvalidCollision)?,
-                    ),
-                    DVec3::from_array(
-                        spin.angular_jerk(load.torque, rate.torque)
-                            .map_err(|_| Error::InvalidCollision)?,
-                    ),
-                )
-            } else {
-                (DVec3::ZERO, DVec3::ZERO, DVec3::ZERO)
-            };
-            let nd = omega.cross(normal);
-            let ndd = alpha.cross(normal) + omega.cross(nd);
-            let nddd = beta.cross(normal)
-                + 2. * alpha.cross(nd)
-                + omega.cross(alpha.cross(normal))
-                + omega.cross(omega.cross(nd));
-            let value = normal.dot(DVec3::from_array(rate.force) / body.motion.mass)
-                - 3. * nd.dot(acceleration - DVec3::from_array(load.force) / body.motion.mass)
-                - 3. * ndd.dot(velocity - DVec3::from_array(body.motion.velocity))
-                - nddd.dot(p - DVec3::from_array(body.motion.position));
-            if !value.is_finite() {
-                return Err(Error::InvalidCollision);
-            }
-            Ok(value)
-        },
-    )
-}
-
-fn solve_point_constraints(
-    first: ContactBody,
-    first_shape: AffineBox,
-    second: Option<ContactBody>,
-    second_shape: AffineBox,
-    point: [f64; 3],
-    tolerance_m: f64,
-    require_coincident_rates: bool,
-    mut rate: impl FnMut(usize, Option<ContactBody>, DVec3, f64) -> Result<f64, Error>,
-) -> Result<[f64; 3], Error> {
-    first.energy().map_err(|_| Error::InvalidCollision)?;
-    if let Some(second) = second {
-        second.energy().map_err(|_| Error::InvalidCollision)?;
-    }
-    let point = DVec3::from_array(point);
-    if !point.is_finite() || !tolerance_m.is_finite() || tolerance_m < 0. {
-        return Err(Error::InvalidCollision);
-    }
-    let mut constraints = Vec::with_capacity(6);
-    for (owner, (body, shape)) in [(Some(first), first_shape), (second, second_shape)]
-        .into_iter()
-        .enumerate()
-    {
-        let q = body
-            .and_then(|b| b.spin)
-            .map_or(DQuat::IDENTITY, |s| DQuat::from_array(s.orientation));
-        let center = body.map_or(shape.center, |b| {
-            DVec3::from_array(b.motion.position) + rotate_vector(q, shape.center)
-        });
-        let edges = if body.is_some() {
-            shape.edges.map(|edge| rotate_vector(q, edge))
-        } else {
-            shape.edges
-        };
-        let inverse = glam::DMat3::from_cols(edges[0], edges[1], edges[2]).inverse();
-        if !inverse.is_finite() {
-            return Err(Error::InvalidCollision);
-        }
-        let coordinates = inverse * (point - center);
-        let rows = inverse.transpose().to_cols_array();
-        let velocity = body
-            .map_or(Ok([0.; 3]), |b| b.point_velocity(point.to_array()))
-            .map_err(|_| Error::InvalidCollision)?;
-        let velocity = DVec3::from_array(velocity);
-        for k in 0..3 {
-            let row = DVec3::new(rows[k * 3], rows[k * 3 + 1], rows[k * 3 + 2]);
-            let length = row.length();
-            let gap = (coordinates[k].abs() - 1.) / length;
-            let guard = tolerance_m
-                + 1024. * f64::EPSILON * (1. + edges[k].length() + (point - center).length());
-            if !gap.is_finite() || gap > guard {
-                return Err(Error::InvalidCollision);
-            }
-            if gap.abs() <= guard {
-                let normal = row / length;
-                constraints.push((normal, rate(owner, body, normal, normal.dot(velocity))?));
-            }
-        }
-    }
-    for i in 0..constraints.len() {
-        for j in i + 1..constraints.len() {
-            for k in j + 1..constraints.len() {
-                let matrix =
-                    glam::DMat3::from_cols(constraints[i].0, constraints[j].0, constraints[k].0)
-                        .transpose();
-                let determinant = matrix.determinant().abs();
-                if determinant < 1e-10 {
-                    continue;
-                }
-                let velocity = matrix.inverse()
-                    * DVec3::new(constraints[i].1, constraints[j].1, constraints[k].1);
-                let guard = 4096. * f64::EPSILON * (1. + velocity.length()) / determinant;
-                if velocity.is_finite()
-                    && (!require_coincident_rates
-                        || constraints
-                            .iter()
-                            .all(|(normal, rate)| (normal.dot(velocity) - rate).abs() <= guard))
-                {
-                    return Ok(velocity.to_array());
-                }
-            }
-        }
-    }
-    Err(Error::CollisionBackend)
-}
-
-#[cfg(test)]
-mod point_velocity_tests {
-    use super::*;
-
-    fn body(center: DVec3, velocity: DVec3) -> ContactBody {
-        ContactBody {
-            motion: physics::gravity::Body {
-                position: center.to_array(),
-                velocity: velocity.to_array(),
-                mass: 1.,
-            },
-            spin: None,
-        }
-    }
-    fn box_shape(x: f64, y: f64, z: f64) -> AffineBox {
-        AffineBox {
-            center: DVec3::ZERO,
-            edges: [DVec3::X * x, DVec3::Y * y, DVec3::Z * z],
-        }
-    }
-
-    #[test]
-    fn rotating_corner_velocity_matches_independent_finite_difference() {
-        let mut first = body(DVec3::Y, DVec3::ZERO);
-        first.spin = Some(physics::rotation::Spin {
-            orientation: [0., 0., 0., 1.],
-            angular_momentum: [0., 0.3, 0.],
-            inertia: [1.; 3],
-        });
-        let floor = AffineBox {
-            center: DVec3::Y * -0.5,
-            ..box_shape(4., 0.5, 4.)
-        };
-        let actual = DVec3::from_array(
-            point_velocity(
-                first,
-                box_shape(1., 1., 1.),
-                None,
-                floor,
-                [1., 0., 1.],
-                1e-12,
-            )
-            .unwrap(),
-        );
-        assert!((actual - DVec3::new(0.3, 0., -0.3)).length() < 1e-13);
-        for h in [1e-3, 1e-4] {
-            let corner =
-                |t: f64| DVec3::Y + DQuat::from_rotation_y(0.3 * t) * DVec3::new(1., -1., 1.);
-            assert!(((corner(h) - corner(-h)) / (2. * h) - actual).length() < 1e-8);
-        }
-    }
-
-    #[test]
-    fn clipped_vertex_follows_both_bodies_instead_of_one_material_owner() {
-        let first = body(DVec3::Y, DVec3::new(0.4, 0., 7.));
-        let second = body(-DVec3::Y, DVec3::new(8., 0., -0.2));
-        let point = [1., 0., 0.5];
-        let actual = DVec3::from_array(
-            point_velocity(
-                first,
-                box_shape(1., 1., 1.),
-                Some(second),
-                box_shape(2., 1., 0.5),
-                point,
-                1e-12,
-            )
-            .unwrap(),
-        );
-        let vertex = |t: f64| {
-            DVec3::new(
-                (1. + 0.4 * t).min(2. + 8. * t),
-                0.,
-                (1. + 7. * t).min(0.5 - 0.2 * t),
-            )
-        };
-        let h = 1e-4;
-        assert!(((vertex(h) - vertex(-h)) / (2. * h) - actual).length() < 1e-11);
-        assert!((actual - DVec3::from_array(first.point_velocity(point).unwrap())).length() > 1.);
-        assert!((actual - DVec3::from_array(second.point_velocity(point).unwrap())).length() > 1.);
-        let swapped = point_velocity(
-            second,
-            box_shape(2., 1., 0.5),
-            Some(first),
-            box_shape(1., 1., 1.),
-            point,
-            1e-12,
-        )
-        .unwrap();
-        assert!((actual - DVec3::from_array(swapped)).length() < 1e-13);
-        // Oblique slabs exercise inverse-matrix rows independently of the
-        // axis-aligned fixture. A shared affine map preserves intersection.
-        let map = glam::DMat3::from_quat(DQuat::from_rotation_z(0.7))
-            * glam::DMat3::from_cols(
-                DVec3::new(1.2, 0.1, 0.),
-                DVec3::new(0.2, 0.8, 0.1),
-                DVec3::new(-0.1, 0.3, 1.1),
-            );
-        let shift = DVec3::new(4., -3., 2.);
-        let transformed_body = |b: ContactBody| {
-            body(
-                map * DVec3::from_array(b.motion.position) + shift,
-                map * DVec3::from_array(b.motion.velocity),
-            )
-        };
-        let transformed_shape = |shape: AffineBox| AffineBox {
-            center: map * shape.center,
-            edges: shape.edges.map(|edge| map * edge),
-        };
-        let transformed = DVec3::from_array(
-            point_velocity(
-                transformed_body(first),
-                transformed_shape(box_shape(1., 1., 1.)),
-                Some(transformed_body(second)),
-                transformed_shape(box_shape(2., 1., 0.5)),
-                (map * DVec3::from_array(point) + shift).to_array(),
-                1e-12,
-            )
-            .unwrap(),
-        );
-        let reference = (map * vertex(h) + shift - (map * vertex(-h) + shift)) / (2. * h);
-        assert!((reference - transformed).length() < 1e-10);
-    }
-
-    #[test]
-    fn clipped_acceleration_includes_sliding_on_a_rotating_plane() {
-        let mut first = body(DVec3::Y, DVec3::ZERO);
-        first.spin = Some(physics::rotation::Spin {
-            orientation: [0., 0., 0., 1.],
-            angular_momentum: [0., 0.3, 0.],
-            inertia: [1.; 3],
-        });
-        let second = body(-DVec3::Y, DVec3::ZERO);
-        let point = [1., 0., 0.5];
-        let loads = [physics::contact::ContactWrench::default(); 2];
-        let acceleration = DVec3::from_array(
-            point_acceleration(
-                first,
-                box_shape(1., 1., 1.),
-                Some(second),
-                box_shape(2., 1., 0.5),
-                point,
-                1e-12,
-                loads,
-            )
-            .unwrap(),
-        );
-        assert!((acceleration - DVec3::new(0.09, 0., 0.)).length() < 1e-13);
-        let vertex = |t: f64| DVec3::new((1. + 0.5 * (0.3 * t).sin()) / (0.3 * t).cos(), 0., 0.5);
-        for h in [1e-3, 3e-4] {
-            let independent = (vertex(h) - 2. * vertex(0.) + vertex(-h)) / (h * h);
-            assert!((independent - acceleration).length() < 1e-7);
-        }
-        let swapped = point_acceleration(
-            second,
-            box_shape(2., 1., 0.5),
-            Some(first),
-            box_shape(1., 1., 1.),
-            point,
-            1e-12,
-            loads,
-        )
-        .unwrap();
-        assert!((acceleration - DVec3::from_array(swapped)).length() < 1e-13);
-        first.spin.as_mut().unwrap().angular_momentum = [0.; 3];
-        let loaded = [
-            physics::contact::ContactWrench {
-                force: [2., 0., 0.],
-                torque: [0., 0.4, 0.],
-            },
-            physics::contact::ContactWrench {
-                force: [0., 0., -0.6],
-                torque: [0.; 3],
-            },
-        ];
-        let actual = DVec3::from_array(
-            point_acceleration(
-                first,
-                box_shape(1., 1., 1.),
-                Some(second),
-                box_shape(2., 1., 0.5),
-                point,
-                1e-12,
-                loaded,
-            )
-            .unwrap(),
-        );
-        let vertex = |t: f64| {
-            let angle = 0.2 * t * t;
-            let z = 0.5 - 0.3 * t * t;
-            DVec3::new(t * t + (1. + z * angle.sin()) / angle.cos(), 0., z)
-        };
-        let h = 3e-4;
-        assert!(((vertex(h) - 2. * vertex(0.) + vertex(-h)) / (h * h) - actual).length() < 1e-6);
-        assert!((actual - DVec3::new(2.2, 0., -0.6)).length() < 1e-13);
-        let mut invalid = loads;
-        invalid[0].force[0] = f64::NAN;
-        assert_eq!(
-            point_acceleration(
-                first,
-                box_shape(1., 1., 1.),
-                Some(second),
-                box_shape(2., 1., 0.5),
-                point,
-                1e-12,
-                invalid
-            ),
-            Err(Error::InvalidCollision)
-        );
-    }
-
-    #[test]
-    fn clipped_jerk_matches_independent_plane_intersection() {
-        let mut first = body(DVec3::Y, DVec3::ZERO);
-        first.spin = Some(physics::rotation::Spin {
-            orientation: [0., 0., 0., 1.],
-            angular_momentum: [0., 0.3, 0.],
-            inertia: [1.; 3],
-        });
-        let second = body(-DVec3::Y, DVec3::ZERO);
-        let loads = [physics::contact::ContactWrench::default(); 2];
-        let rates = loads;
-        let actual = DVec3::from_array(
-            point_jerk(
-                first,
-                box_shape(1., 1., 1.),
-                Some(second),
-                box_shape(2., 1., 0.5),
-                [1., 0., 0.5],
-                1e-12,
-                loads,
-                rates,
-            )
-            .unwrap(),
-        );
-        let vertex = |t: f64| DVec3::new((1. + 0.5 * (0.3 * t).sin()) / (0.3 * t).cos(), 0., 0.5);
-        let h = 0.01;
-        let independent = (vertex(2. * h) - 2. * vertex(h) + 2. * vertex(-h) - vertex(-2. * h))
-            / (2. * h * h * h);
-        assert!((actual - DVec3::new(0.027, 0., 0.)).length() < 1e-13);
-        assert!((independent - actual).length() < 1e-6);
-        first.spin.as_mut().unwrap().angular_momentum = [0.; 3];
-        let rates = [
-            physics::contact::ContactWrench {
-                force: [0.6, 0., 0.],
-                torque: [0., 0.4, 0.],
-            },
-            physics::contact::ContactWrench {
-                force: [0., 0., -0.2],
-                torque: [0.; 3],
-            },
-        ];
-        let actual = DVec3::from_array(
-            point_jerk(
-                first,
-                box_shape(1., 1., 1.),
-                Some(second),
-                box_shape(2., 1., 0.5),
-                [1., 0., 0.5],
-                1e-12,
-                loads,
-                rates,
-            )
-            .unwrap(),
-        );
-        assert!((actual - DVec3::new(0.8, 0., -0.2)).length() < 1e-13);
-    }
-
-    #[test]
-    fn topology_kinks_and_unowned_points_are_rejected() {
-        let shape = box_shape(1., 1., 1.);
-        let stationary = body(DVec3::ZERO, DVec3::ZERO);
-        let moving = body(DVec3::ZERO, DVec3::X);
-        assert_eq!(
-            point_velocity(stationary, shape, Some(moving), shape, [1., 1., 1.], 1e-12),
-            Err(Error::CollisionBackend)
-        );
-        assert_eq!(
-            point_velocity(stationary, shape, None, shape, [0.; 3], 1e-12),
-            Err(Error::CollisionBackend)
-        );
-        assert_eq!(
-            point_velocity(stationary, shape, None, shape, [2., 0., 0.], 1e-12),
-            Err(Error::InvalidCollision)
-        );
-        let mut invalid = stationary;
-        invalid.motion.mass = 0.;
-        assert_eq!(
-            point_velocity(invalid, shape, None, shape, [1.; 3], 1e-12),
-            Err(Error::InvalidCollision)
-        );
-    }
-}
+mod point_kinematics;
+pub(super) use point_kinematics::{point_acceleration, point_jerk, point_velocity};
 
 #[cfg(test)]
 mod point_interval_tests {
@@ -2551,6 +2212,47 @@ mod moving_edge_gap_tests {
             },
         )
         .unwrap()
+    }
+    #[test]
+    fn moving_edge_gap_preserves_translation_and_support_radius_cancellation() {
+        let dt = 1e-4;
+        let shape = cube();
+        let first = path(
+            DVec3::X * 0.25,
+            DVec3::X * 0.125,
+            DVec3::X * 0.125,
+            DVec3::X * 0.25,
+            DVec3::ZERO,
+            DVec3::ZERO,
+            dt,
+        );
+        let second = path(
+            DVec3::ZERO,
+            DVec3::ZERO,
+            DVec3::ZERO,
+            DVec3::ZERO,
+            DVec3::Y,
+            DVec3::ZERO,
+            dt,
+        );
+        let (lo, hi) = edge_gap_range(
+            &first,
+            shape,
+            &second,
+            shape,
+            AxisFeature::Edges(1, 2),
+            DVec3::X,
+        )
+        .unwrap()
+        .unwrap();
+        assert!(lo.abs().max(hi.abs()) < 1e-10, "{lo}..{hi}");
+        for i in 0..=128 {
+            let t = dt * f64::from(i) / 128.;
+            let (sin, cos) = t.sin_cos();
+            let x = 0.25 + 0.125 * t + 0.0625 * t * t + t.powi(3) / 24.;
+            let exact_gap = cos * x - 0.125 * (cos + sin) - 0.125;
+            assert!((lo..=hi).contains(&exact_gap));
+        }
     }
     #[test]
     fn almost_stationary_edge_direction_keeps_gap_cancellation() {

@@ -41,6 +41,10 @@ fn cs_main(@builtin(global_invocation_id) id: vec3<u32>) {
     let hit = rayQueryGetCommittedIntersection(&query);
     result[id.x] = vec4<f32>(f32(hit.kind), hit.t, hit.barycentrics);
 }";
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let options = options::Options::parse(std::env::args().skip(1))?;
     #[cfg(not(feature = "face-demo"))]
@@ -99,7 +103,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ..Default::default()
     }))?;
     if std::env::var("VOXY_RAY_SHARED_PRODUCER_AUDIT").as_deref() == Ok("1") {
-        return shared_producer_audit::run(&device, &queue);
+        if let Err(error) = shared_producer_audit::run(&device, &queue) {
+            eprintln!("Shared ray producer audit failed: {error}");
+            // Metal queue destruction can wait indefinitely for a stalled
+            // submission. This standalone diagnostic owns the process.
+            std::process::exit(1);
+        }
+        return Ok(());
     }
     if std::env::var("VOXY_RAY_SHARED_JOB_AUDIT").as_deref() == Ok("1") {
         return shared_job_audit::run(&device, &queue);
@@ -458,6 +468,10 @@ fn visibility_probe(
     Ok(())
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn shadow_image(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

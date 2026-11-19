@@ -85,10 +85,9 @@ impl RenderPoseProfile {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, unix))]
 mod tests {
     use super::*;
-    #[cfg(unix)]
     #[test]
     fn thread_clock_excludes_sleep() {
         let clock = Clock::start();

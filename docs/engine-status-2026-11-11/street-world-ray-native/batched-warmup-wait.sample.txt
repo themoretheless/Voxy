@@ -1,0 +1,7 @@
+    +                                   !             : 66 _RNvMCsfoLLEO7WtMo_11street_walkNtB2_3App4draw  (in street_walk) + 348  [0x1023092ac]
+    +                                   !             :   65 _RNvMNtNtCs8OHBxdcj3UW_4wgpu3api6deviceNtB2_6Device4poll  (in street_walk) + 76  [0x10278723c]
+    +                                   !             :   | 65 _RNvMNtNtCsbjUAMBRpCYw_9wgpu_core6device6globalNtNtB6_6global6Global11device_poll  (in street_walk) + 212  [0x1028bbdb8]
+    +                                   !             :   |       65 _RNvXs_NtNtCsaIthzUBoJH8_8wgpu_hal5metal6deviceNtB6_6DeviceNtB8_6Device4wait  (in street_walk) + 296  [0x1028dfdc0]
+    +                                   !             :   |             65 __psynch_cvwait  (in libsystem_kernel.dylib) + 8  [0x18e8f050c]
+    +                                   !             :   1 _RNvMNtNtCs8OHBxdcj3UW_4wgpu3api6deviceNtB2_6Device4poll  (in street_walk) + 76  [0x10278723c]
+        __psynch_cvwait  (in libsystem_kernel.dylib)        65

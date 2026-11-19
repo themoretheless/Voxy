@@ -201,6 +201,10 @@ impl Panel {
     }
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn contents(ui: &mut egui::Ui, s: &mut Settings) {
     ui.heading("Настройки");
     ui.label("F1 скрыть · Esc отпустить мышь");

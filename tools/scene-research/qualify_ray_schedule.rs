@@ -145,6 +145,10 @@ fn compare_raw_gi(
     read.unmap();
     hits
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() {
     let args: Vec<_> = std::env::args().collect();
     let path = args.get(1).expect("output file");

@@ -1,0 +1,34 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_assets)
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_voxel)
+   Compiling physics_bio v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics_bio)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 21.43s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-5964849c32dd4096)
+
+running 1 test
+REJECTED SCENE SHADER: Validation Error
+
+Caused by:
+  In Device::create_shader_module, label = 'prepared scene shader'
+    
+Shader 'prepared scene shader' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found "this"
+  ┌─ wgsl:1:1
+  │
+1 │ this is not WGSL
+  │ ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file
+
+
+
+REJECTED SCENE SHADER: Validation Error
+
+Caused by:
+  In Device::create_render_pipeline, label = 'scene pipeline'
+    Error matching ShaderStages(VERTEX) shader requirements against the pipeline
+      Unable to find entry point 'vs_main'
+
+SHADER ROLLBACK GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+test scene::multi_view_tests::gpu_disjoint_views_preserve_both_regions_and_clear_gap ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 433 filtered out; finished in 0.19s
+

@@ -5,8 +5,9 @@ pub(super) fn guide_motions(
     rods: &[HairRod],
     radius: f64,
 ) -> (Vec<CapsuleMotion>, Vec<(usize, usize)>) {
-    let mut motions = Vec::new();
-    let mut ids = Vec::new();
+    let segment_count = rods.iter().map(|rod| rod.lengths.len()).sum();
+    let mut motions = Vec::with_capacity(segment_count);
+    let mut ids = Vec::with_capacity(segment_count);
     for (r, rod) in rods.iter().enumerate() {
         for i in 0..rod.lengths.len() {
             let mut start = [rod.old_x[i], rod.old_x[i + 1]];
@@ -28,6 +29,9 @@ pub(super) fn refresh(
     meshes: &[TriangleMesh],
     radius: f64,
 ) -> Result<(), &'static str> {
+    if meshes.is_empty() {
+        return Ok(());
+    }
     let (motions, ids) = guide_motions(rods, radius);
     for (mesh_index, mesh) in meshes.iter().enumerate() {
         for (i, witness) in mesh.trajectory_constraints(&motions, Default::default())? {
@@ -74,6 +78,9 @@ pub(super) fn admit(
     meshes: &[TriangleMesh],
     radius: f64,
 ) -> Result<(), &'static str> {
+    if meshes.is_empty() {
+        return Ok(());
+    }
     let (motions, ids) = guide_motions(rods, radius);
     for (mesh_index, mesh) in meshes.iter().enumerate() {
         let contacts = mesh.swept_capsule_contacts(&motions, Default::default())?;

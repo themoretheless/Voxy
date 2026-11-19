@@ -172,6 +172,10 @@ fn view(name: &str) -> Result<(Vec3, Vec3), Box<dyn std::error::Error>> {
     })
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = parse()?;
     let nodes = river_nodes();

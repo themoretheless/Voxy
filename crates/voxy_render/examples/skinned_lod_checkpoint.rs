@@ -5,6 +5,10 @@ use voxy_render::{
     CertifiedLodSubdivisionVariant, CertifiedLodVariant, LodSurface, SkinnedLodCheckpoint,
     SkinnedLodCheckpointLimits, SkinnedLodMesh, SkinnedMesh, SkinnedVertex,
 };
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn Error>> {
     let path = PathBuf::from(
         std::env::args_os()

@@ -8,6 +8,10 @@ pub fn enabled() -> bool {
     std::env::var("VOXY_STREET_WORLD_RAY_FRAME").as_deref() == Ok("1")
 }
 
+fn software_requested() -> bool {
+    std::env::var("VOXY_STREET_WORLD_RAY_SOFTWARE").as_deref() == Ok("1")
+}
+
 pub fn validate_configuration() -> Result<(), &'static str> {
     if !enabled() {
         return Ok(());
@@ -53,12 +57,17 @@ fn tile_size() -> Result<[u32; 2], Box<dyn std::error::Error>> {
     Ok(size)
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub fn prepare(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
     geometry: &[ArchiveMeshSource],
     materials: &[ArchiveMaterialSource],
     images: usize,
+    gpu_timeout: Option<std::time::Duration>,
 ) -> Result<Option<Arc<ExactWorldNearest>>, Box<dyn std::error::Error>> {
     if !enabled() {
         return Ok(None);
@@ -168,19 +177,33 @@ pub fn prepare(
             guarded_input: true,
             certify_visibility: true,
             defer_nearest: true,
+            software_nearest: software_requested(),
             exact_worker_limit: Some(exact_workers),
             exact_group_size: exact_group,
             single_ray_queue_claim,
             ..Default::default()
         },
     )?);
-    let mut encoder = device.create_command_encoder(&Default::default());
-    job.build_scene(&mut encoder);
-    let submission = queue.submit([encoder.finish()]);
-    device.poll(wgpu::PollType::Wait {
-        submission_index: Some(submission),
-        timeout: None,
-    })?;
+    if job.needs_scene_build() {
+        let mut encoder = device.create_command_encoder(&Default::default());
+        job.build_scene(&mut encoder);
+        let submission = queue.submit([encoder.finish()]);
+        if gpu_timeout.is_some() {
+            eprintln!(
+                "STREET WORLD SOURCE build submitted preparation_seconds={:.3}",
+                started.elapsed().as_secs_f64()
+            );
+        }
+        if let Err(error) = device.poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: gpu_timeout,
+        }) {
+            // Queue teardown can wait on the same stalled Metal work. Record the
+            // failing phase while the queue is still owned by the caller.
+            eprintln!("STREET WORLD SOURCE build GPU wait failed: {error}");
+            return Err(format!("world ray source build GPU wait: {error}").into());
+        }
+    }
     eprintln!(
         "STREET WORLD SOURCE ready meshes={} instances={} exact_workers={} source_simplified=false preparation_seconds={:.3}",
         geometry.len(),
@@ -205,6 +228,7 @@ pub fn prepare(
         "STREET WORLD SCHEDULING {}",
         serde_json::json!({
             "kind": format!("{:?}",job.query_kind()),
+            "software_nearest": job.software_nearest_enabled(),
             "nearest_queue_claim_width": if single_ray_queue_claim { 1 } else { 4 },
             "wide_source_nodes": job.wide_source_nodes_enabled(),
             "wide_source_near_first": job.wide_source_near_first_enabled(),

@@ -1,0 +1,8 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_model v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_model)
+   Compiling voxy_demos v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_demos)
+   Compiling voxy_ray_probe v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_ray_probe)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 14.81s
+     Running `target/wave3/debug/voxy_ray_probe --experimental`
+RAY GPU: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+SHARED EXACT JOB PASS GPU_producer_consumer=true same_submission=true low_origin_bits=true closed_endpoints=true removed_instance=true exact_pairs=true source_owner=true material_source_bits=true unresolved_alpha=true cutoff_one_ulp=true order_certificate_off_on=true repeated_partial_cache=true fps_qualified=false

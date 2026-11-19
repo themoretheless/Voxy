@@ -384,6 +384,10 @@ fn validate_source(mesh: &SceneMesh, variants: &LodIndexSet) -> Result<(), Scene
 mod tests {
     use super::*;
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn streamed_indices_obey_budget_share_streams_and_recover_after_eviction() {
         let (device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
         let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);

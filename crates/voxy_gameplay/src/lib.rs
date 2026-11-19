@@ -19,10 +19,12 @@ mod foot_contact;
 pub mod foot_placement;
 mod gameplay_checkpoint;
 mod input_checkpoint;
+mod joints;
 mod kinematic;
 mod liquid_body;
 mod liquid_runtime;
 mod liquid_source;
+mod navigation;
 mod point_loads;
 mod rigid_frame;
 mod staged_tick;
@@ -74,6 +76,10 @@ pub use gameplay_checkpoint::{
 pub use input_checkpoint::{
     InputCheckpointCodecError, decode_input_checkpoint, encode_input_checkpoint,
 };
+pub use joints::{
+    PhysicsJoint, PhysicsJointKind, collect_physics_joints, solve_distance_spring_position,
+    step_physics_joints, step_scene_physics_joints, validate_physics_joints,
+};
 pub use kinematic::{
     KinematicBody, PlatformMotion, step_kinematic_bodies, step_kinematic_bodies_with_dynamics,
 };
@@ -83,6 +89,10 @@ pub use liquid_runtime::{
     SceneLiquidWireLimits, SceneSupportReactions, SceneSupportedLiquidStep,
 };
 pub use liquid_source::{LiquidPulse, LiquidSource};
+pub use navigation::{
+    NavigationFollower, NpcDestination, NpcRoute, SceneNavigationError, SceneNavigationGrid,
+    SceneNavigationSettings, prepare_npc_routes, step_navigation_followers,
+};
 pub use point_loads::{RigidPointForce, RigidPointLoads};
 pub use rigid_frame::{PreparedRigidPose, RigidBodyFrame, RigidPoseEdit, publish_rigid_poses};
 pub use staged_tick::{AcceptedCharacterPose, CharacterTickError, CharacterTickPreview};
@@ -273,17 +283,35 @@ pub fn register_follow_camera(registry: &mut ComponentRegistry) -> Result<(), Do
     )
 }
 
+/// Registers the `PhysicsJoint` descriptor and remaps prefab-local target identities.
+/// # Errors
+/// Rejects duplicate schema names or component types.
+pub fn register_physics_joint(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
+    registry.register_with_reference_remap::<PhysicsJoint>(
+        "game.physics-joint.v1",
+        |joint| vec![joint.target.clone()],
+        |joint, ids| {
+            if let Some(target) = ids.get(&joint.target) {
+                joint.target = target.clone();
+            }
+        },
+    )
+}
+
 /// Adds authoring descriptors; controller velocity/grounding use separate runtime checkpoints.
 /// # Errors
 /// Rejects duplicate schema names/types.
 pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
     register_follow_camera(registry)?;
+    register_physics_joint(registry)?;
     registry.register::<RigidPointLoads>("game.rigid-point-loads.v1")?;
     registry.register::<LiquidBody>("game.liquid-body.v1")?;
     registry.register::<LiquidMassDistribution>("game.liquid-mass.v1")?;
     registry.register::<LiquidSource>("game.liquid-source.v1")?;
     registry.register::<KinematicBody>("game.kinematic-body.v1")?;
     registry.register::<CharacterBody>("game.character.v1")?;
+    registry.register::<NpcRoute>("game.npc-route.v1")?;
+    registry.register::<NpcDestination>("game.npc-destination.v1")?;
     registry.register::<BoxCollider>("game.box.v1")?;
     registry.register::<CollisionLayers>("game.collision-layers.v1")?;
     registry.register::<BoxTrigger>("game.box-trigger.v1")?;
@@ -341,6 +369,12 @@ fn validate_common_game_descriptors(
         .any(|(_, camera)| !camera.valid())
     {
         return Err("invalid game.follow-camera.v1 descriptor".into());
+    }
+    if scene
+        .components::<PhysicsJoint>()
+        .any(|(_, joint)| !joint.valid())
+    {
+        return Err("invalid game.physics-joint.v1 descriptor".into());
     }
     validate_behavior_descriptors(scene)?;
     kinematic::validate_kinematic_bodies(scene)?;

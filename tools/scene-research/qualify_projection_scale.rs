@@ -1,4 +1,8 @@
 //! Independent exhaustive GPU power-of-two input scaling gate.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() {
     let instance = voxy_render::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();

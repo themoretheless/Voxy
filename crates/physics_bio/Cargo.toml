@@ -10,3 +10,7 @@ workspace = true
 
 [dependencies]
 physics = { path = "../physics" }
+serde.workspace = true
+
+[dev-dependencies]
+serde_json = { workspace = true, features = ["float_roundtrip"] }

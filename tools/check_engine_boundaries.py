@@ -15,7 +15,10 @@ FORBIDDEN = {
     'voxy_scene': {'voxy_editor', 'voxy_render', 'voxy_runtime'},
     'voxy_render': {'voxy_editor', 'voxy_scene', 'voxy_runtime'},
     'voxy_runtime': {'voxy_editor', 'voxy_render'},
+    'voxy_player': {'voxy_editor', 'voxy_render', 'voxy_runtime'},
     'voxy_app': {'voxy_editor'},
+    'voxy_scene_host': {'voxy_editor', 'voxy_scene', 'voxy_runtime', 'voxy_shell', 'voxy_demos'},
+    'voxy_shell': {'voxy_editor', 'voxy_demos'},
 }
 
 

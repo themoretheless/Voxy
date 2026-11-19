@@ -5,6 +5,10 @@ use physics_astro::{
     astrophysics::spherical::{CompositionExterior, Sphere},
     astrophysics::spherical_radiation::{Heating, ReactiveSettings},
 };
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), String> {
     let mut dt = 0.01_f64;
     let mut shells = 16_usize;

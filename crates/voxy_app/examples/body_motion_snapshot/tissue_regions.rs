@@ -304,6 +304,10 @@ fn explicit_material(
     })
 }
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn load(
     path: &Path,
     model: &ModelAsset,

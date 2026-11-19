@@ -1,0 +1,4 @@
+Analysis of sampling street_walk (pid 26468) every 10 milliseconds
+    +                                   88 __CFRunLoopDoTimers  (in CoreFoundation) + 280  [0x18ea06c08]
+    +                                     88 __CFRunLoopDoTimer  (in CoreFoundation) + 1220  [0x18ea07180]
+        __CFRunLoopDoTimer  (in CoreFoundation)        88

@@ -1,6 +1,17 @@
 //! Diagnostic nonlinear replay. Spatial acceleration caches are rebuilt.
 use super::*;
 use std::io::{self, Write};
+pub(super) fn export_path() -> Option<std::ffi::OsString> {
+    let path = std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_EXPORT")?;
+    if let Some(frame) = std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_FRAME") {
+        let frame = frame.to_str()?.parse::<usize>().ok()?;
+        if super::phase_diagnostics::observation_frame() != Some(frame) {
+            return None;
+        }
+    }
+    Some(path)
+}
+
 /// Diagnostic capture with freshly measured geometry; does not change the
 /// caller's pose, contact state or acceleration caches.
 pub(super) fn save_measured(
@@ -47,6 +58,10 @@ fn vectors<const N: usize>(w: &mut impl Write, x: &[[f64; N]]) -> io::Result<()>
     }
     Ok(())
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn save(
     path: &std::path::Path,
     rods: &[HairRod],
@@ -57,7 +72,9 @@ pub(super) fn save(
     merit: f64,
     continuous_mesh: bool,
 ) -> io::Result<()> {
-    let mut w = std::io::BufWriter::new(std::fs::File::create(path)?);
+    let mut temporary = path.as_os_str().to_os_string();
+    temporary.push(format!(".{}.tmp", std::process::id()));
+    let mut w = std::io::BufWriter::new(std::fs::File::create(&temporary)?);
     w.write_all(if continuous_mesh { b"VHR2" } else { b"VHR1" })?;
     number(&mut w, dt)?;
     number(&mut w, radius)?;
@@ -108,7 +125,9 @@ pub(super) fn save(
         }
         count(&mut w, usize::from(closed))?;
     }
-    w.flush()
+    w.flush()?;
+    drop(w);
+    std::fs::rename(temporary, path)
 }
 #[cfg(test)]
 pub(in crate::hair) mod tests {
@@ -507,6 +526,10 @@ pub(in crate::hair) mod tests {
     }
     #[test]
     #[ignore = "requires rejected complete-step admission capture"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn captured_elastic_contact_preserves_strain_admission() {
         let (dt, radius, expected, self_collision, mut rods, mut meshes, continuous_mesh) =
             load_replay_with_mode();

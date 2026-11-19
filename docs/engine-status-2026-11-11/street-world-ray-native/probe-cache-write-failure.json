@@ -1,0 +1,11 @@
+{
+  "exit_code": 0,
+  "scope": "windowed Metal, eight probes, SDR, unavailable cache directory",
+  "evidence": [
+    "STREET GPU AdapterInfo { name: \"Apple M4 Max\", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: \"\", driver: \"\", driver_info: \"\", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }; 1920x1080 Immediate; full scene geometry; original mip chains when images are present",
+    "STREET probes=1/8 elapsed_seconds=1.660",
+    "STREET probes=8 completed in 2.637 s before measurement",
+    "STREET probes ready; cache write to file-in-place-of-directory/street.514fde2018b4701b93268dac660335c08aa6d6da6e35b5665dc34cb1b9f3b5b8.vprobes failed: Not a directory (os error 20)",
+    "STREET EVENT LOOP RETURN result=Ok(()) frames=214 simulation_steps=778 benchmark_complete=true"
+  ]
+}

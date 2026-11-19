@@ -104,6 +104,10 @@ fn front_at(vertices: &[SceneVertex], indices: &[u32], x: f32, y: f32) -> Option
 }
 impl LidSurface {
     /// Research replacement of the bind-space skin region, before rig integration.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn mesh_with_body(&self, body: &SceneMesh, closure: f32) -> Result<SceneMesh, SceneError> {
         let lids = self.mesh_with_canthi(closure)?;
         let mut vertices = body.vertices().to_vec();
@@ -591,6 +595,7 @@ mod tests {
             .unwrap()
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn added_neutral_lid_nodes_follow_source_depth() {
         let body = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -924,6 +929,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn replacement_body_preserves_source_positions_and_constant_indices() {
         let body = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),
@@ -1045,6 +1051,7 @@ mod tests {
         }
     }
     #[test]
+    #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
     fn continuous_lids_keep_borders_and_close_on_one_shared_edge() {
         let body = voxy_render::ObjAsset::parse(
             include_str!("../../../assets/characters/blender-female/body.obj"),

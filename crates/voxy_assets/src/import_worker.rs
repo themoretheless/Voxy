@@ -1,7 +1,7 @@
 //! Single import worker with owner-thread publication and bounded outstanding work.
 use crate::{
-    AssetId, AssetImport, AssetTicket, FailedImport, FileInputs, ImportInputs, ImportedAsset,
-    RebuildClaim, SourcePath,
+    AssetId, AssetImport, AssetSourceProvider, AssetTicket, FailedImport, FileInputs, ImportInputs,
+    ImportedAsset, RebuildClaim, SourcePath,
 };
 use std::{
     collections::BTreeMap,
@@ -74,6 +74,28 @@ impl<T: Send + Sync + 'static> AssetImportWorker<T> {
             move |asset, provider, inputs, _| decoder(asset, provider, inputs),
         )
     }
+    /// Creates a decoder with directory or immutable package sources.
+    /// # Errors
+    /// Returns OS thread creation errors.
+    pub fn new_with_source_provider(
+        provider: AssetSourceProvider,
+        max_inputs: usize,
+        max_input_bytes: usize,
+        mut decoder: impl FnMut(&AssetId, &AssetSourceProvider, &mut ImportInputs) -> Result<T, String>
+        + Send
+        + 'static,
+    ) -> std::io::Result<Self> {
+        Self::spawn(
+            provider,
+            AssetSourceProvider::read,
+            max_inputs,
+            max_input_bytes,
+            0,
+            false,
+            move |asset, _, provider, inputs, _| decoder(asset, provider, inputs),
+        )
+    }
+
     /// Supplies immutable compiled inputs captured by `AssetCatalog::prepare_import`.
     /// Limits bound file observations and dependency snapshot counts separately.
     /// # Errors
@@ -94,6 +116,7 @@ impl<T: Send + Sync + 'static> AssetImportWorker<T> {
     ) -> std::io::Result<Self> {
         Self::spawn(
             provider,
+            FileInputs::read,
             max_inputs,
             max_input_bytes,
             max_dependencies,
@@ -123,6 +146,7 @@ impl<T: Send + Sync + 'static> AssetImportWorker<T> {
     ) -> std::io::Result<Self> {
         Self::spawn(
             provider,
+            FileInputs::read,
             max_inputs,
             max_input_bytes,
             max_dependencies,
@@ -133,8 +157,9 @@ impl<T: Send + Sync + 'static> AssetImportWorker<T> {
             },
         )
     }
-    fn spawn(
-        provider: FileInputs,
+    fn spawn<P: Send + 'static>(
+        provider: P,
+        read: fn(&P, &AssetId, usize) -> Result<Vec<u8>, String>,
         max_inputs: usize,
         max_input_bytes: usize,
         max_dependencies: usize,
@@ -142,7 +167,7 @@ impl<T: Send + Sync + 'static> AssetImportWorker<T> {
         mut decoder: impl FnMut(
             &AssetId,
             Option<&SourcePath>,
-            &FileInputs,
+            &P,
             &mut ImportInputs,
             &DependencySnapshots<T>,
         ) -> Result<T, String>
@@ -173,7 +198,7 @@ impl<T: Send + Sync + 'static> AssetImportWorker<T> {
                         });
                     let result = match attempt {
                         Ok((value, inputs)) => inputs
-                            .finish_observed(value, |id, limit| provider.read(id, limit))
+                            .finish_observed(value, |id, limit| read(&provider, id, limit))
                             .map_err(|rejected| FailedImport {
                                 error: format!("{:?}", rejected.error),
                                 inputs: rejected.inputs,

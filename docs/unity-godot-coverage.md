@@ -1525,7 +1525,7 @@ external dependency tracking and enforced parallel access remain outstanding.
 ## Nine-direction goal and persistent prefab core (2026-10-02)
 
 The full delivery goal remains active; its current acceptance checklist is
-`engine-goal-2026-10-02.md`. Persistent prefab composition now uses the existing
+`archive/engine-goal-2026-10-02.md`. Persistent prefab composition now uses the existing
 SceneDocument loader and component registry, with nested stable instance identities,
 authoring overrides, typed reference remapping, bounded expansion and shared atomic
 file IO. The runnable persistent_prefab example saves/restores links and overrides.
@@ -1537,7 +1537,7 @@ inputs and saves ordinary property/component edits as overrides. The real native
 acceptance exercised two manifest-backed nested instances, edit/save/load/history,
 corrupted dependency retention, restoration and isolated Play/Stop across 13 frames
 on the final binary.
-See engine-goal-2026-10-02.md for evidence and remaining prefab UI/structural,
+See archive/engine-goal-2026-10-02.md for evidence and remaining prefab UI/structural,
 background-reload, history-metadata and standalone integration work. This does not
 close the full scenes/prefabs direction or the nine-direction goal.
 
@@ -1546,4 +1546,4 @@ Composition metadata is part of bounded SceneHistory snapshots, so undo/redo als
 restores source links across different scene compositions. Save captures against
 source baselines and refuses changed historical dependencies. The extended native
 prefab acceptance additionally deletes/saves/undoes/resaves a linked instance.
-See engine-goal-2026-10-02.md for the current evidence and open integration work.
+See archive/engine-goal-2026-10-02.md for the current evidence and open integration work.

@@ -4,7 +4,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .nth(1)
         .unwrap_or_else(|| "/tmp/voxy-face-current.json".to_owned());
     voxy_shell::SceneApp::new(false)?
-        .with_female_animation()?
-        .with_face_parameter_file(path)?
+        .with_demo(Box::new(
+            voxy_demos::female_scene::FemaleScene::animation()?.with_face_parameter_file(path)?,
+        ))
         .run(winit::event_loop::EventLoop::new()?)
 }

@@ -1,7 +1,7 @@
 //! Bounded scheduling control: uses the production key and insertion block.
 fn shader() -> String {
     let fast = include_str!("world_visibility_fast.wgsl");
-    let begin = fast.find("fn visibility_bound_key(").unwrap();
+    let begin = fast.find("fn visibility_prepare_rank(").unwrap();
     let end = begin + fast[begin..].find("\nfn visibility_node_key(").unwrap();
     let wide = include_str!("world_visibility_wide.wgsl");
     let start = wide.find("   if WORLD_WIDE_NEAR_FIRST&&").unwrap();
@@ -13,15 +13,18 @@ struct Pair {{lo:f32,hi:f32}}
 @group(0) @binding(1) var<storage,read_write> output:array<u32>;
 var<private> nearest_node_origin:array<Pair,3>;
 var<private> nearest_node_direction:array<Pair,3>;
+var<private> rank_origin:vec3<f32>;
+var<private> rank_direction:vec3<f32>;
 override WORLD_WIDE_NEAR_FIRST:bool=false;
 const WORLD_FAST_DEFER_NONCLEAR:bool=true;
-const WORLD_FAST_CAN_BOUND:bool=true;
 fn wi_finite(value:f32)->bool {{return (bitcast<u32>(value)&0x7f800000u)!=0x7f800000u;}}
 {}
 @compute @workgroup_size(1) fn main(@builtin(global_invocation_id) id:vec3<u32>) {{
  let batch=id.x;let begin=batch*72u;if begin>=arrayLength(&nearest_active){{return;}}
  let children=nearest_active[begin];
- nearest_node_direction[0]=Pair(bitcast<f32>(nearest_active[begin+1u]),bitcast<f32>(nearest_active[begin+1u]));
+ let direction=bitcast<f32>(nearest_active[begin+1u]);
+ nearest_node_direction[0]=Pair(direction-0.25,direction+0.25);
+ visibility_prepare_rank();
  var stack:array<u32,64>;let size=2u;stack[0]=0xdeadbeefu;stack[1]=0x13579bdfu;
  for(var lane=0u;lane<children;lane++){{stack[size+lane]=begin+8u+lane*8u;}}
 {}
@@ -33,6 +36,32 @@ fn wi_finite(value:f32)->bool {{return (bitcast<u32>(value)&0x7f800000u)!=0x7f80
         &wide[start..stop]
     )
 }
+#[test]
+fn complete_wide_visibility_shader_validates() {
+    let source = [
+        include_str!("world_ray_deferred_input.wgsl"),
+        include_str!("world_ray_source_bindings.wgsl"),
+        include_str!("archive_projection_pair.wgsl"),
+        include_str!("world_triangle_pair.wgsl"),
+        include_str!("world_ray_bvh_interval.wgsl"),
+        include_str!("world_node_reciprocal.wgsl"),
+        include_str!("world_source_certificate.wgsl"),
+        include_str!("world_visibility_common.wgsl"),
+        include_str!("world_visibility_fast.wgsl"),
+        include_str!("world_visibility_wide.wgsl"),
+        "fn visibility_seed(ray: u32) {}",
+    ]
+    .join("\n");
+    let module = naga::front::wgsl::parse_str(&source)
+        .unwrap_or_else(|error| panic!("{}", error.emit_to_string(&source)));
+    naga::valid::Validator::new(
+        naga::valid::ValidationFlags::all(),
+        naga::valid::Capabilities::all(),
+    )
+    .validate(&module)
+    .unwrap();
+}
+
 #[test]
 fn actual_scheduling_block_validates() {
     let module = naga::front::wgsl::parse_str(&shader()).unwrap();
@@ -46,6 +75,10 @@ fn actual_scheduling_block_validates() {
 #[test]
 #[ignore = "exclusive Metal GPU; fresh VOXY_WIDE_ORDER_PROOF required"]
 #[cfg(target_os = "macos")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn actual_sort_preserves_frontier_and_prior_stack() -> Result<(), Box<dyn std::error::Error>> {
     use wgpu::util::DeviceExt;
     let root = std::path::PathBuf::from(
@@ -150,11 +183,20 @@ fn actual_sort_preserves_frontier_and_prior_stack() -> Result<(), Box<dyn std::e
         read.slice(..).map_async(wgpu::MapMode::Read, move |r| {
             let _ = tx.send(r);
         });
-        device.poll(wgpu::PollType::Wait {
-            submission_index: Some(submission),
-            timeout: None,
-        })?;
-        rx.recv()??;
+        let timeout = std::time::Duration::from_secs(30);
+        // Metal queue destruction can itself wait for the submitted work.
+        // Emit the failing stage before unwinding drops the queue.
+        device
+            .poll(wgpu::PollType::Wait {
+                submission_index: Some(submission),
+                timeout: Some(timeout),
+            })
+            .inspect_err(|error| {
+                eprintln!("wide order enabled={enabled}: GPU submission wait failed: {error}");
+            })?;
+        rx.recv_timeout(timeout).inspect_err(|error| {
+            eprintln!("wide order enabled={enabled}: GPU readback wait failed: {error}");
+        })??;
         let mapped = read.slice(..).get_mapped_range()?;
         std::fs::write(root.join(format!("enabled-{enabled}.bin")), &mapped)?;
         for (i, row) in mapped.chunks_exact(48).enumerate() {

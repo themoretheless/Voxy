@@ -1,6 +1,6 @@
 use std::process::ExitCode;
 
-#[cfg(any(test, windows))]
+#[cfg(any(test, all(windows, feature = "wgpu-dx12")))]
 #[path = "support/fg_policy_args.rs"]
 mod fg_policy_args;
 

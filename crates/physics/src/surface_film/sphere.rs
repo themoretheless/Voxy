@@ -94,6 +94,10 @@ impl SurfaceFilm {
     ) -> Result<Option<SphereFilmHit>, &'static str> {
         self.sphere_hit_impl(start, end, radius, true, true)
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn sphere_hit_impl(
         &self,
         start: [f64; 3],

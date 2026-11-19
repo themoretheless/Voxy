@@ -296,6 +296,7 @@ mod tests {
                 name: "Fog".into(),
                 active: true,
                 translation: [3., 4., 5.],
+                precise_translation_bits: None,
                 rotation: [0., 0., 0., 1.],
                 scale: [2., 1., 1.],
                 components: std::collections::BTreeMap::from([(

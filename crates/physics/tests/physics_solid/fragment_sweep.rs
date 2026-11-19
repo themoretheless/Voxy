@@ -259,6 +259,10 @@ fn separated_interval_completes_without_a_stop_reason() {
 }
 
 #[test]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn automatic_proximity_impact_discovers_pair_and_preserves_momentum_and_energy() {
     use physics::plasticity::mesh::QuadraticDynamics;
     let reference = fixture();

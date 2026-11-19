@@ -150,6 +150,10 @@ fn morph_source_instance_admission_and_preflight_preserve_existing_owners() {
 
 #[test]
 #[ignore = "requires physical GPU; exact morph output readback, not a benchmark"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn gpu_exact_morph_precedes_skinning_and_preserves_independent_instance_weights() {
     let graphics = crate::GraphicsOptions::default().create_instance();
     let adapter = pollster::block_on(graphics.request_adapter(&Default::default())).unwrap();
@@ -259,6 +263,10 @@ fn gpu_exact_morph_precedes_skinning_and_preserves_independent_instance_weights(
 
 #[test]
 #[ignore = "requires physical GPU; exact morph integer arithmetic readback and rational oracle payload"]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn gpu_exact_morph_component_edges_and_full_target_budget() {
     use wgpu::util::DeviceExt;
     let graphics = crate::GraphicsOptions::default().create_instance();
@@ -294,9 +302,15 @@ fn gpu_exact_morph_component_edges_and_full_target_budget() {
     add(0., &[(1, f32::from_bits(1))]);
     add(f32::MAX, &[(7, f32::MAX)]);
     add(1., &[(4, f32::MAX), (8, f32::MAX)]);
+    // Exercise every digit offset at a tie and with a sticky bit below it.
+    for exponent in 0..16 {
+        let base = 2f32.powi(exponent);
+        add(base, &[(6, base)]);
+        add(base, &[(6, base), (0, f32::from_bits(1))]);
+    }
     cases.push((0., vec![1.; 256]));
     let mut seed = 0x97bd_0291_u32;
-    while cases.len() < 41 {
+    while cases.len() < 73 {
         let mut next = || {
             seed = seed.wrapping_mul(1664525).wrapping_add(1013904223);
             let mut bits = seed;
@@ -329,7 +343,7 @@ fn gpu_exact_morph_component_edges_and_full_target_budget() {
     }
     let shader_source = format!(
         "{}\n{}",
-        include_str!("morph.wgsl"),
+        super::exact_morph_shader_source(),
         r"
 struct Parameters {color:vec4<f32>,count:u32,pad0:u32,pad1:u32,pad2:u32}
 @group(0) @binding(0) var<storage,read> source:array<f32>;

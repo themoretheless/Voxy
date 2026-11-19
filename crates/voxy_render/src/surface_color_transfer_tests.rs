@@ -3,6 +3,11 @@ use crate::{
     SurfaceColorTransfer,
 };
 #[test]
+#[cfg_attr(target_os = "linux", ignore = "CI Linux runners have no GPU adapter")]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn inherited_colors_follow_current_sources_without_touching_geometry() {
     pollster::block_on(async {
         let adapter = GraphicsOptions::default()
@@ -108,7 +113,12 @@ fn inherited_colors_follow_current_sources_without_touching_geometry() {
             .unwrap();
             queue.submit([encoder.finish()]);
             let mut pending = dispatch.begin_read();
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: None,
+                    timeout: Some(std::time::Duration::from_secs(30)),
+                })
+                .expect("Metal test GPU submission did not complete");
             let bytes = pending.try_read().unwrap().unwrap();
             for (i, v) in vertices.iter().enumerate() {
                 let actual: &[f32] = bytemuck::cast_slice(&bytes[i * 36..(i + 1) * 36]);

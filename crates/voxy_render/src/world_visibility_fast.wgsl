@@ -57,9 +57,12 @@ fn visibility_triangle(slot:u32,primitive:u32,ray:u32,material:u32)->bool {
  let source=source_triangle_certificate(slot,exact_layout[slot].z+primitive*3u,ray,WORLD_FAST_DEFER_NONCLEAR&&!WORLD_FAST_HISTORY_ANY_HIT);
  let certificate=source.intersection;
  if certificate.state==0u {visibility_misses+=1u;return false;}
- // Even an uncertain or unknown-opacity event is irrelevant when its complete
- // source interval is strictly behind a proved nearer MaterialSurface hit.
- if WORLD_SOURCE_MATERIAL_SIDES&&WORLD_FAST_CAN_BOUND&&fast_winner_slot!=0xffffffffu&&source.t.valid!=0u&&source.t.lo>fast_winner_t.hi {return false;}
+ // Ordinary nearest must preserve unknown material events at any depth.
+ // A known material can be rejected behind a certified closer hit, just as
+ // in the exact pass. MaterialSurface may also reject farther unknown events.
+ if WORLD_FAST_DEFER_NONCLEAR&&!WORLD_FAST_HISTORY_ANY_HIT
+    &&(material==1u||material==2u||(WORLD_SOURCE_MATERIAL_SIDES&&WORLD_FAST_CAN_BOUND))
+    &&fast_winner_slot!=0xffffffffu&&source.t.valid!=0u&&source.t.lo>fast_winner_t.hi {return false;}
  if certificate.state!=1u {
   if WORLD_FAST_DEFER_NONCLEAR {fast_candidate_append(slot,primitive);return fast_candidate_overflow;}
   visibility_pending=true;return false;
@@ -96,6 +99,8 @@ fn visibility_defer(index:u32) {
  // expose unresolved numeric failure rather than an incomplete clear result.
  if !deferred_append(index) {visibility_early(index,WORLD_FAST_STRIDE,2u,64u);}
 }
+var<private> rank_origin:vec3<f32>;
+var<private> rank_direction:vec3<f32>;
 fn visibility_fast_process(index:u32) {
  let ray=index*20u;if ray+19u>=exact_ray_word_count() {return;}
  if (nearest_counts.values[4095u].w&8u)!=0u {
@@ -123,6 +128,7 @@ fn visibility_fast_process(index:u32) {
   previous_valid=exact_output[index*WORLD_FAST_STRIDE].x==1u&&previous.x==exact_ray_word(ray+18u)&&previous.y==exact_ray_word(ray+19u);
  }
  visibility_candidates=0u;visibility_misses=0u;visibility_hits=0u;visibility_exact=0u;
+ visibility_triangles_remaining=WORLD_VISIBILITY_TRIANGLE_BUDGET;
  visibility_nodes=0u;visibility_unknown=0u;visibility_slot=0xffffffffu;
  visibility_primitive=0xffffffffu;visibility_route=0u;visibility_pending=false;
  fast_winner_slot=0xffffffffu;fast_winner_primitive=0xffffffffu;fast_winner_t=wi_bad();
@@ -132,6 +138,9 @@ fn visibility_fast_process(index:u32) {
  for(var axis=0u;axis<3u;axis++) {
   nearest_node_origin[axis]=wi_add(wi_source_word(exact_ray_word(ray+axis)),wi_source_word(exact_ray_word(ray+4u+axis)));
   nearest_node_direction[axis]=wi_add(wi_source_word(exact_ray_word(ray+8u+axis)),wi_source_word(exact_ray_word(ray+12u+axis)));
+ }
+ if WORLD_FAST_DEFER_NONCLEAR&&(WORLD_FAST_CAN_BOUND||WORLD_WIDE_NEAR_FIRST) {
+  visibility_prepare_rank();
  }
  if WORLD_FAST_NODE_RECIPROCAL {nearest_prepare_reciprocal();}
  visibility_box_valid=visibility_make_float_box();
@@ -183,13 +192,17 @@ fn visibility_node_miss(base:u32,ray:u32)->bool {
  return nearest_node_miss(base,ray);
 }
 // This is a scheduling hint only. It never certifies a hit or rejects a node.
+fn visibility_prepare_rank() {
+  for(var axis=0u;axis<3u;axis++) {
+   rank_origin[axis]=nearest_node_origin[axis].lo*.5+nearest_node_origin[axis].hi*.5;
+   rank_direction[axis]=nearest_node_direction[axis].lo*.5+nearest_node_direction[axis].hi*.5;
+  }
+}
 fn visibility_bound_key(base:u32)->f32 {
  var rank=0.;
  for(var axis=0u;axis<3u;axis++) {
   let center=bitcast<f32>(nearest_active[base+axis])*.5+bitcast<f32>(nearest_active[base+3u+axis])*.5;
-  let origin=nearest_node_origin[axis].lo*.5+nearest_node_origin[axis].hi*.5;
-  let direction=nearest_node_direction[axis].lo*.5+nearest_node_direction[axis].hi*.5;
-  rank+=(center-origin)*direction;
+  rank+=(center-rank_origin[axis])*rank_direction[axis];
  }
  if !wi_finite(rank) {return 0.;}return rank;
 }

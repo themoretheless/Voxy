@@ -11,6 +11,10 @@ pub(super) struct WorldGeometryBounds {
     check: bool,
 }
 impl WorldGeometryBounds {
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn new(
         device: &wgpu::Device,
         scene: &RayScene,

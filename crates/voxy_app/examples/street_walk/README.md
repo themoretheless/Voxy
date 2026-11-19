@@ -7,8 +7,8 @@ from Poly Haven in `assets/environments/original-street/materials/provenance.jso
 `daylight-provenance.json`; these are external material data, not generated artwork.
 
 The current quality pass varies building frontage widths, setbacks, floor and opening
-counts, plaster/brick colours, balconies, shutters and shop entrances. Trees have
-hierarchical tapered branches and individual geometric leaves. Every rendered triangle
+counts, plaster/brick colours, balconies, shutters and shop entrances. Sidewalk trees use four seeded variants from the same native plant generator as the voxel world,
+with hierarchical branches, geometric leaves and generated bark and leaf materials. Every rendered triangle
 is retained in the f64 collision world. Full 4K source maps retain their 8/16-bit precision
 in linear RGBA32F GPU textures with complete mip chains and 16x anisotropic sampling.
 There is no reduced rendering resolution, geometry decimation or distance LOD.
@@ -224,12 +224,18 @@ Offscreen comparison stops at the requested simulation duration once warmup is c
 
 `VOXY_STREET_WORLD_RAY_WORK_STATS=1` enables cumulative work counts for the guarded deferred nearest job (without UV output). These are diagnostic samples, excluding the first ray in each encode because its padding belongs to the exact queue. They count visited software BVH nodes and every software source-triangle certificate attempt, including failed previous-hit seeds. Isolated native traversal and exact-fallback work are excluded. GI and SSR must share the same prepared job owner.
 
-The four-frame integration report includes `software_traversal_work`; set `VOXY_STREET_WORLD_RAY_WORK_RAW` to preserve its 48 raw bytes. Sums use explicit 64-bit carry; per-ray triangle counts saturate and the reader rejects saturation. Diagnostic fields use only reserved padding and add one reduction pass. Time measured with this option includes diagnostic overhead and is not a production FPS result. Default is off.
+The four-frame integration report includes `software_traversal_work`; set `VOXY_STREET_WORLD_RAY_WORK_RAW` to preserve its 56 raw bytes. Sums use explicit 64-bit carry; per-ray triangle counts saturate and the reader rejects saturation. The final eight bytes count rays still queued for the full exact traversal after the winner and candidate passes. Certificate counters use reserved padding. The reduction reads the queue and output states before the full exact pass. Time measured with this option includes diagnostic overhead and is not a production FPS result. Default is off.
 
 Validate coverage and raw counters with `tools/scene-research/audit_traversal_work.py REPORT --raw RAW --ray-kinds 2 --output PROOF`. This assumes the demo's single source owner was prepared before its full-frame encodes. Hardware candidate absence remains inconclusive and every original numeric predicate is unchanged.
 
 
 ### Full-resolution world-ray batch dimensions
+
+For diagnostic runs, `VOXY_STREET_WORLD_RAY_VISIBILITY_NODE_BUDGET` and
+`VOXY_STREET_WORLD_RAY_VISIBILITY_TRIANGLE_BUDGET` limit work per ray in the
+preliminary visibility pass. Zero disables each limit. Reaching either limit
+routes the ray to the complete exact traversal. The triangle limit counts
+source primitives in hierarchy leaves, excluding seed checks.
 
 Set `VOXY_STREET_WORLD_RAY_TILE_WIDTH` and `VOXY_STREET_WORLD_RAY_TILE_HEIGHT` before preparing the experimental world-ray frame. Defaults remain 512×256. The query owner is allocated at the matching capacity; nonzero dimensions, multiplication overflow, device/budget admission and prepare/connect capacity agreement are checked. These settings change scheduling only, preserving the complete source geometry, output/internal resolution, effects and every original ray.
 

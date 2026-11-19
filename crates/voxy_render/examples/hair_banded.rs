@@ -2,6 +2,10 @@
 use voxy_render::{ComputeProgram, GraphicsOptions};
 #[path = "support/compensated_math.rs"]
 mod arithmetic;
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args()
         .nth(1)

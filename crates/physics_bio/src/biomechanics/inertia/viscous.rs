@@ -4,6 +4,7 @@ use super::{
     Body, DrivenSupportStep, InertialBody, PlaneContact, PrescribedTriangleSurface, SupportTarget,
     Vec3,
 };
+use crate::biomechanics::Rejection;
 use std::sync::Arc;
 
 #[derive(Clone, Copy, Debug)]
@@ -305,6 +306,10 @@ impl InertialBody {
             max_substeps,
         )
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn step_viscoelastic_support_accuracy<const IMPLICIT: bool>(
         &mut self,
         targets: Option<&[SupportTarget]>,
@@ -441,25 +446,17 @@ impl InertialBody {
                     if position_error > position_difference_budget_m
                         || velocity_error > velocity_difference_budget_m_s
                     {
-                        return Err("implicit support motion difference exceeded");
+                        return Err(Rejection::SupportMotionDifference.message());
                     }
                 }
                 Ok(())
             })();
             if let Err(error) = attempt {
                 match error {
-                    "implicit support motion difference exceeded"
-                    | "implicit support line search failed"
-                    | "implicit support search direction failed"
-                    | "implicit support nonlinear nonconvergence"
-                    | "implicit support work defect"
-                    | "implicit support path crossing"
-                    | "finite-deformation inertial support work defect"
-                    | "finite-deformation inertial energy defect"
-                    | "inertial tetrahedral path collapse"
-                    | "inertial tissue gap path crossing"
-                    | "viscoelastic relaxation energy defect"
-                    | "viscoelastic inertial work heat defect" => {
+                    error
+                        if Rejection::of(error)
+                            .is_some_and(Rejection::refines_support_interval) =>
+                    {
                         if 2 * count == max_substeps {
                             return Err(if IMPLICIT {
                                 "implicit support accuracy subdivision limit"
@@ -524,6 +521,10 @@ impl InertialBody {
     /// Only the complete interval commits. This does not fix single-step feature kinks.
     /// # Errors
     /// Invalid owners/controls, crossing or exhausted subdivision preserves all state.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
         &mut self,
         targets: Option<&[SupportTarget]>,
@@ -647,16 +648,11 @@ impl InertialBody {
             }
             if let Some(error) = rejection {
                 match error {
-                    // Initial diagnostics above admit the committed state. A closed
-                    // barrier in a trial pose can therefore be retried at smaller dt;
-                    // every accepted substep still requires the original CCD and budget.
-                    "closed surface contact gap"
-                    | "implicit contact nonlinear nonconvergence"
-                    | "implicit contact line search failed"
-                    | "implicit contact quadrature nonconvergence"
-                    | "implicit midpoint work defect"
-                    | "viscoelastic relaxation energy defect"
-                    | "viscoelastic inertial work heat defect" => {
+                    // Every accepted substep still requires the original CCD and budget.
+                    error
+                        if Rejection::of(error)
+                            .is_some_and(Rejection::refines_contact_interval) =>
+                    {
                         if count == max_substeps {
                             return Err(error);
                         }
@@ -735,6 +731,10 @@ impl InertialBody {
             None,
         )
     }
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn step_viscoelastic_contacts_controlled<
         const IMPLICIT: bool,
         const TEMPORAL_REFINEMENT: bool,
@@ -771,7 +771,7 @@ impl InertialBody {
         let mut candidate = self.clone();
         let (first_heat, first_defect, first_thermal_defect) = candidate.relax_maxwell(0.5 * dt)?;
         if first_defect.abs() + first_thermal_defect.abs() > 0.25 * energy_tolerance_j {
-            return Err("viscoelastic relaxation energy defect");
+            return Err(Rejection::ViscoelasticRelaxation.message());
         }
         let (support, skin_work) = if IMPLICIT {
             if let Some(surface) = next_surface {
@@ -810,7 +810,7 @@ impl InertialBody {
         let (second_heat, second_defect, second_thermal_defect) =
             candidate.relax_maxwell(0.5 * dt)?;
         if second_defect.abs() + second_thermal_defect.abs() > 0.25 * energy_tolerance_j {
-            return Err("viscoelastic relaxation energy defect");
+            return Err(Rejection::ViscoelasticRelaxation.message());
         }
         let heat = first_heat + second_heat;
         let relaxation_defect = first_defect + second_defect;
@@ -827,7 +827,7 @@ impl InertialBody {
             || !absolute_defect.is_finite()
             || absolute_defect > energy_tolerance_j
         {
-            return Err("viscoelastic inertial work heat defect");
+            return Err(Rejection::ViscoelasticHeat.message());
         }
         *self = candidate;
         Ok((

@@ -228,6 +228,10 @@ fn admit_triangles(
     }
     Ok((triangles, lower, upper))
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn first_triangle_hit(
     triangles: &[Triangle],
     lower: DVec3,

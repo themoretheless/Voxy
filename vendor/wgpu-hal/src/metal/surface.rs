@@ -367,6 +367,8 @@ impl crate::Surface for super::Surface {
         let render_layer = self.render_layer.lock();
 
         #[cfg(target_os = "macos")]
+        let mut foreground_occlusion = false;
+        #[cfg(target_os = "macos")]
         {
             // Workaround for https://github.com/gfx-rs/wgpu/issues/8309
             // When the window is occluded on macOS, presented drawables get stuck waiting
@@ -397,16 +399,36 @@ impl crate::Surface for super::Surface {
                     }
                 }
                 if occlusion_state & NS_WINDOW_OCCLUSION_STATE_VISIBLE == 0 {
-                    return Err(crate::SurfaceError::Occluded);
+                    // AppKit can leave the visibility bit clear for a newly
+                    // focused standalone window. Let Metal test the drawable
+                    // with its timeout enabled, keeping background windows skipped.
+                    foreground_occlusion = available!(macos = 10.13)
+                        && objc2::MainThreadMarker::new().is_some()
+                        && unsafe { objc2::msg_send![&*window, isVisible] }
+                        && unsafe { objc2::msg_send![&*window, isKeyWindow] }
+                        && unsafe { objc2::msg_send![&*window, isOnActiveSpace] }
+                        && !unsafe { objc2::msg_send![&*window, isMiniaturized] };
+                    if !foreground_occlusion {
+                        return Err(crate::SurfaceError::Occluded);
+                    }
                 }
             }
         }
 
-        let (drawable, texture) = match autoreleasepool(|_| {
+        #[cfg(target_os = "macos")]
+        if foreground_occlusion {
+            render_layer.setAllowsNextDrawableTimeout(true);
+        }
+        let acquired = autoreleasepool(|_| {
             render_layer
                 .nextDrawable()
                 .map(|drawable| (drawable.to_owned(), drawable.texture().to_owned()))
-        }) {
+        });
+        #[cfg(target_os = "macos")]
+        if foreground_occlusion {
+            render_layer.setAllowsNextDrawableTimeout(false);
+        }
+        let (drawable, texture) = match acquired {
             Some(pair) => pair,
             None => return Err(crate::SurfaceError::Timeout),
         };

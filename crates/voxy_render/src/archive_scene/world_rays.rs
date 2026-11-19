@@ -365,6 +365,12 @@ impl ArchiveSceneRenderer {
             .is_some_and(super::compute_gi::ArchiveComputeGi::world_frame_enabled)
     }
 
+    pub fn world_software_nearest_enabled(&self) -> bool {
+        self.compute_gi
+            .as_ref()
+            .is_some_and(super::compute_gi::ArchiveComputeGi::world_software_nearest_enabled)
+    }
+
     /// One complete non-overlapping partition, shared by GI and optional SSR.
     pub fn world_ray_frame_tiles(&self) -> Option<&[[u32; 4]]> {
         self.compute_gi.as_ref()?.world_frame_tiles()

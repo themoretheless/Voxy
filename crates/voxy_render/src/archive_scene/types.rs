@@ -118,6 +118,10 @@ pub enum ArchiveImageSource {
 
 impl ArchiveImageSource {
     /// Upload source pixels and every mip level; float data retains float32 precision.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn upload(
         self,
         device: &wgpu::Device,

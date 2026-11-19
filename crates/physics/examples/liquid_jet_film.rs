@@ -4,6 +4,10 @@ use physics::liquid::{
     PulsedEmitter, TranslatingBody,
 };
 use physics::surface_film::{Material as FilmMaterial, SurfaceFilm};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let viscosity = std::env::args()
         .nth(1)

@@ -152,6 +152,10 @@ impl ClitoralGeometry {
     /// # Errors
     /// Invalid dimensions/resolution/material, intersecting paired reference cores
     /// or degenerate cells. No penile material values are silently substituted.
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn build(
         self,
         corpus: Material,

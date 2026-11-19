@@ -1,0 +1,9 @@
+
+running 2 tests
+test hair::contact_response_system::square_root_fixture_tests::captured_full_joint_operator_preserves_physical_admission ... FULL JOINT REPLAY systems=7 rows=100 coordinates=882 tolerance=0.00000000000001
+FULL JOINT REPLAY elapsed_s=0.012951708 error=None
+ok
+test hair::contact_response_system::square_root_qr::tests::captured_active_contacts_retain_original_clearance ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 445 filtered out; finished in 0.03s
+

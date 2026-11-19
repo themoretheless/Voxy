@@ -7,13 +7,14 @@ mod direct;
 mod math;
 mod ordered_queries;
 pub use contact::{
-    CapsuleMotion, CapsuleSweep, CapsuleSweepOptions, TriangleMesh, TriangleMotion,
-    sweep_capsule_triangle, sweep_capsules, swept_capsule_contacts, swept_capsule_pairs,
+    CapsuleMotion, CapsuleSweep, CapsuleSweepOptions, TriangleMesh, TriangleMeshCheckpoint,
+    TriangleMotion, sweep_capsule_triangle, sweep_capsules, swept_capsule_contacts,
+    swept_capsule_pairs,
 };
 use math::*;
 
 /// Circular fiber constitutive parameters. Values are tunable, not measured for this asset.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, serde::Serialize, serde::Deserialize)]
 pub struct HairMaterial {
     pub radius: f64,
     pub density: f64,
@@ -72,7 +73,7 @@ pub struct RootPose {
     pub position: V,
     pub rotation: Q,
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum ContactSource {
     Mesh(usize),
     Strand {
@@ -80,7 +81,7 @@ pub enum ContactSource {
         other_segment: usize,
     },
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 struct RodContact {
     segment: usize,
     fraction: f64,
@@ -97,7 +98,7 @@ impl RodContact {
         self.metric_scale * dot(sub(p, self.target), self.normal)
     }
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize)]
 pub struct HairRod {
     rest_x: Vec<V>,
     x: Vec<V>,
@@ -129,6 +130,18 @@ pub struct HairRod {
 #[path = "contact_diagnostics.rs"]
 mod contact_diagnostics;
 pub use contact_diagnostics::HairContactDiagnostic;
+/// Kinematic state of a rod at a completed step boundary.
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HairRodCheckpoint {
+    positions: Vec<V>,
+    velocities: Vec<V>,
+    orientations: Vec<Q>,
+    angular_velocities: Vec<V>,
+    #[serde(default)]
+    nearest_cache: Vec<Vec<usize>>,
+}
+
 impl HairRod {
     pub fn new(points: Vec<V>, material: HairMaterial) -> Result<Self, &'static str> {
         let lengths: Vec<_> = points.windows(2).map(|p| len(sub(p[1], p[0]))).collect();
@@ -291,6 +304,59 @@ impl HairRod {
             .map(|(p, l)| (len(sub(p[1], p[0])) / l - 1.).abs())
             .fold(0., f64::max)
     }
+    /// Captures the kinematics of this rod without copying its rest geometry.
+    #[must_use]
+    pub fn kinematic_checkpoint(&self) -> HairRodCheckpoint {
+        HairRodCheckpoint {
+            positions: self.x.clone(),
+            velocities: self.velocity.clone(),
+            orientations: self.q.clone(),
+            angular_velocities: self.omega.clone(),
+            nearest_cache: self.nearest_cache.clone(),
+        }
+    }
+
+    /// Restores kinematics against the same rest geometry.
+    ///
+    /// # Errors
+    /// Rejects incompatible lengths, nonfinite coordinates, or invalid rotations.
+    pub fn restore_kinematic_checkpoint(
+        &mut self,
+        state: HairRodCheckpoint,
+    ) -> Result<(), &'static str> {
+        if state.positions.len() != self.x.len()
+            || state.velocities.len() != self.velocity.len()
+            || state.orientations.len() != self.q.len()
+            || state.angular_velocities.len() != self.omega.len()
+            || state
+                .nearest_cache
+                .iter()
+                .any(|row| row.len() != self.x.len())
+            || !state
+                .positions
+                .iter()
+                .chain(&state.velocities)
+                .chain(&state.angular_velocities)
+                .copied()
+                .all(finite)
+            || state.orientations.iter().any(|q| {
+                let norm_squared: f64 = q.iter().map(|v| v * v).sum();
+                !norm_squared.is_finite() || (norm_squared - 1.).abs() > 1e-10
+            })
+        {
+            return Err("invalid hair rod kinematic checkpoint");
+        }
+        self.x = state.positions;
+        self.velocity = state.velocities;
+        self.q = state.orientations;
+        self.omega = state.angular_velocities;
+        self.contacts.clear();
+        self.nearest_cache = state.nearest_cache;
+        // Geometric clearance must be checked against the next step’s mesh.
+        self.clearance_cache.clear();
+        Ok(())
+    }
+
     fn predict(&mut self, dt: f64, root: RootPose, gravity: V, air: V) {
         self.old_x.clone_from(&self.x);
         self.old_q.clone_from(&self.q);
@@ -391,6 +457,11 @@ pub trait HairLinearSolver {
     fn joint_contact_expanded_enabled(&self) -> bool {
         false
     }
+    /// Permit a precision-preserving retry after an ordinary GPU rejection.
+    fn joint_contact_expanded_fallback_enabled(&self) -> bool {
+        false
+    }
+
     fn solve_joint_expanded_batch(
         &mut self,
         _requests: &[HairExpandedCoordinateRequest<'_>],
@@ -434,6 +505,14 @@ pub trait HairLinearSolver {
             .iter()
             .map(|r| self.solve_joint_coordinates_seeded(r.columns, r.bounds, r.tolerance, r.seeds))
             .collect()
+    }
+    /// Preserve ordinary coordinate candidates independently when supported.
+    fn solve_joint_coordinate_candidates(
+        &mut self,
+        requests: &[HairContactCoordinateRequest<'_>],
+    ) -> Option<Vec<Option<(Vec<f64>, Vec<f64>)>>> {
+        self.solve_joint_coordinates_batch(requests)
+            .map(|values| values.into_iter().map(Some).collect())
     }
     /// Physical owner reports whether the candidate survived original admission.
     fn joint_contact_result(&mut self, _accelerated: bool) {}
@@ -574,7 +653,9 @@ impl HairRod {
 /// Coupled guide solve. Segment contacts run inside the structural iterations.
 #[path = "phase_diagnostics.rs"]
 mod phase_diagnostics;
-pub use phase_diagnostics::{HairFrictionDiagnostic, HairPhaseDiagnostic, observe_contact_frame};
+pub use phase_diagnostics::{
+    HairFrictionDiagnostic, HairPhaseDiagnostic, inherit_contact_frame, observe_contact_frame,
+};
 mod projection_diagnostics;
 use projection_diagnostics::HairProjectionTrace;
 pub use projection_diagnostics::{HairContactProjectionDiagnostic, HairProjectionPairDiagnostic};
@@ -615,6 +696,15 @@ pub struct HairSystem {
     pub profiling: bool,
     pub last_profile: HairStepProfile,
 }
+/// Completed-step state for a system with the same groom, settings and collider.
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HairSystemCheckpoint {
+    rods: Vec<HairRodCheckpoint>,
+    last_step_substeps: usize,
+    swept_strand_initialized: bool,
+}
+
 impl HairSystem {
     pub fn new(rods: Vec<HairRod>) -> Result<Self, &'static str> {
         if rods.is_empty() {
@@ -644,6 +734,44 @@ impl HairSystem {
             last_profile: HairStepProfile::default(),
         })
     }
+    #[must_use]
+    pub fn kinematic_checkpoint(&self) -> HairSystemCheckpoint {
+        HairSystemCheckpoint {
+            rods: self
+                .rods
+                .iter()
+                .map(HairRod::kinematic_checkpoint)
+                .collect(),
+            last_step_substeps: self.last_step_substeps,
+            swept_strand_initialized: self.swept_strand_initialized,
+        }
+    }
+
+    /// Restores all guides together against the original groom and settings.
+    ///
+    /// # Errors
+    /// Rejects incompatible or invalid guide states without modifying the system.
+    pub fn restore_kinematic_checkpoint(
+        &mut self,
+        checkpoint: HairSystemCheckpoint,
+    ) -> Result<(), &'static str> {
+        if checkpoint.rods.len() != self.rods.len() {
+            return Err("invalid hair system checkpoint guide count");
+        }
+        let mut rods = self.rods.clone();
+        for (rod, state) in rods.iter_mut().zip(checkpoint.rods) {
+            rod.restore_kinematic_checkpoint(state)?;
+        }
+        self.rods = rods;
+        self.last_step_substeps = checkpoint.last_step_substeps;
+        self.swept_strand_initialized = checkpoint.swept_strand_initialized;
+        self.last_trace.clear();
+        self.last_friction_trace.clear();
+        self.last_projection_trace.clear();
+        self.last_profile = HairStepProfile::default();
+        Ok(())
+    }
+
     /// Stage all guide rebuilds before publishing a new system. Preserves solver
     /// settings; no dynamic pose or velocity is transferred to the edited groom.
     pub fn rebased(&self, curves: Vec<Vec<V>>) -> Result<Self, &'static str> {
@@ -714,6 +842,10 @@ impl HairSystem {
     /// Apply application-specific admission before publishing a solved state.
     /// Rejection preserves poses, velocities, contact history and diagnostics.
     /// Accelerator side effects are external and cannot be rolled back.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn step_validated(
         &mut self,
         dt: f64,
@@ -730,6 +862,10 @@ impl HairSystem {
     }
     /// Prepare an admitted state without publishing it, for coupled transactions.
     /// Accelerator observations remain external to the transaction.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn prepare_validated(
         &self,
         dt: f64,
@@ -1148,6 +1284,74 @@ pub fn cosserat_rod_bending_twist_energy(
 #[cfg(test)]
 mod cosserat_energy_tests {
     use super::*;
+
+    #[test]
+    fn system_checkpoint_restores_all_guides_atomically() {
+        let rod = HairRod::new(
+            vec![[0.; 3], [0.01, 0., 0.], [0.02, 0., 0.]],
+            HairMaterial::default(),
+        )
+        .unwrap();
+        let mut source = HairSystem::new(vec![rod.clone(), rod.clone()]).unwrap();
+        source.rods[0].velocity[1] = [0., 0.01, 0.];
+        source.last_step_substeps = 4;
+        source.swept_strand_initialized = true;
+        let bytes = serde_json::to_vec(&source.kinematic_checkpoint()).unwrap();
+        let mut restored = HairSystem::new(vec![rod.clone(), rod]).unwrap();
+        restored
+            .restore_kinematic_checkpoint(serde_json::from_slice(&bytes).unwrap())
+            .unwrap();
+        assert_eq!(
+            serde_json::to_vec(&restored.kinematic_checkpoint()).unwrap(),
+            bytes
+        );
+        let mut invalid = restored.kinematic_checkpoint();
+        invalid.rods[0].velocities[1] = [1., 0., 0.];
+        invalid.rods[1].orientations[0] = [0.; 4];
+        assert!(restored.restore_kinematic_checkpoint(invalid).is_err());
+        assert_eq!(
+            serde_json::to_vec(&restored.kinematic_checkpoint()).unwrap(),
+            bytes
+        );
+    }
+
+    #[test]
+    fn serialized_rod_preserves_coordinate_and_velocity_bits() {
+        let mut rod = HairRod::new(
+            vec![[0.; 3], [0.01, 0., 0.], [0.02, 0., 0.]],
+            HairMaterial::default(),
+        )
+        .unwrap();
+        rod.x[1][0] = f64::from_bits(rod.x[1][0].to_bits() + 1);
+        rod.velocity[1] = [f64::from_bits(1), -0., -1. / 3.];
+        rod.nearest_cache = vec![vec![usize::MAX, 3, 1]];
+        let checkpoint = serde_json::to_vec(&rod.kinematic_checkpoint()).unwrap();
+        let mut restored = HairRod::new(rod.rest_x.clone(), rod.material).unwrap();
+        restored
+            .restore_kinematic_checkpoint(serde_json::from_slice(&checkpoint).unwrap())
+            .unwrap();
+        assert_eq!(restored.nearest_cache, rod.nearest_cache);
+        assert_eq!(restored.x[1].map(f64::to_bits), rod.x[1].map(f64::to_bits));
+        assert_eq!(
+            restored.velocity[1].map(f64::to_bits),
+            rod.velocity[1].map(f64::to_bits)
+        );
+        let bytes = serde_json::to_vec(&rod).unwrap();
+        let state: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+        for (field, expected) in [("x", &rod.x), ("velocity", &rod.velocity)] {
+            let decoded: Vec<V> = serde_json::from_value(state[field].clone()).unwrap();
+            assert_eq!(
+                decoded
+                    .iter()
+                    .map(|v| v.map(f64::to_bits))
+                    .collect::<Vec<_>>(),
+                expected
+                    .iter()
+                    .map(|v| v.map(f64::to_bits))
+                    .collect::<Vec<_>>()
+            );
+        }
+    }
 
     #[test]
     fn cosserat_bending_twist_energy_is_zero_at_rest_and_quadratic_in_strain() {

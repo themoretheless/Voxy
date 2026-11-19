@@ -182,6 +182,10 @@ mod tests {
         )?)
     }
     #[test]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn save_barrier_drains_scan_retains_queue_and_restored_reload_publishes() {
         let path = std::env::temp_dir().join(format!(
             "voxy-audio-barrier-{}-{}",

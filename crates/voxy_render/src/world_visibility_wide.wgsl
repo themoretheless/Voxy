@@ -17,6 +17,7 @@ fn visibility_fast_walk(ray:u32)->bool {
  var stack:array<u32,64>;stack[0]=start+4u;var size=1u;var visited=0u;
  while size>0u {
   size-=1u;let base=stack[size];visited+=1u;visibility_nodes+=1u;
+  if WORLD_VISIBILITY_NODE_BUDGET!=0u&&visibility_nodes>WORLD_VISIBILITY_NODE_BUDGET {visibility_unknown|=64u;return false;}
   if base>length||length-base<8u||visited>count*8u+1u {visibility_unknown|=64u;return false;}
   if visibility_box_valid {
    var overlaps=true;
@@ -30,7 +31,7 @@ fn visibility_fast_walk(ray:u32)->bool {
    let group=start+12u+left*68u;let children=nearest_active[group];
    if children<2u||children>8u||size+children>64u {visibility_unknown|=64u;return false;}
    for(var lane=0u;lane<children;lane++) {stack[size+lane]=group+4u+lane*8u;}
-   if WORLD_WIDE_NEAR_FIRST&&WORLD_FAST_DEFER_NONCLEAR&&WORLD_FAST_CAN_BOUND {
+   if WORLD_WIDE_NEAR_FIRST&&WORLD_FAST_DEFER_NONCLEAR {
     // Descending keys on the LIFO stack visit nearer hints first. Every child
     // remains present; this hint never proves an intersection or rejects a node.
     var keys:array<f32,8>;
@@ -47,7 +48,10 @@ fn visibility_fast_walk(ray:u32)->bool {
   let slot=leaf.slot;if nearest_active[4u+slot]==0u {continue;}
   let material=visibility_material(exact_layout[slot].w);if material==0u {continue;}
   let end=leaf.first+leaf.count;
-  for(var primitive=leaf.first;primitive<end;primitive++) {if visibility_triangle(slot,primitive,ray,material) {return true;}}
+  for(var primitive=leaf.first;primitive<end;primitive++) {
+   if !visibility_admit_triangle() {return false;}
+   if visibility_triangle(slot,primitive,ray,material) {return true;}
+  }
  }
  return false;
 }

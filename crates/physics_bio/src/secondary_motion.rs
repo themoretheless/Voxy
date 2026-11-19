@@ -46,6 +46,26 @@ impl SecondaryMotion {
     pub fn velocity(&self) -> [f64; 3] {
         self.velocity
     }
+    /// Restores displacement and velocity using the current spring configuration.
+    ///
+    /// # Errors
+    /// Rejects nonfinite values before changing either vector.
+    pub fn restore_kinematics(
+        &mut self,
+        [offset, velocity]: [[f64; 3]; 2],
+    ) -> Result<(), &'static str> {
+        if !offset
+            .iter()
+            .chain(&velocity)
+            .all(|value| value.is_finite())
+        {
+            return Err("invalid secondary motion state");
+        }
+        self.offset = offset;
+        self.velocity = velocity;
+        Ok(())
+    }
+
     pub fn reset(&mut self) {
         self.offset = [0.0; 3];
         self.velocity = [0.0; 3];

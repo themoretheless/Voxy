@@ -373,6 +373,10 @@ pub(crate) fn sweep_spin_path_static(
 /// Sweep the admitted cubic COM path and `SpinPath` together. A returned normal
 /// still means possible contact under a floating model envelope, not an impact.
 #[allow(dead_code)]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(crate) fn sweep_rigid_motion_static(
     path: &physics::rigid_motion::RigidMotion,
     shape: AffineBox,
@@ -513,6 +517,11 @@ pub(crate) fn sweep_rigid_motions(
     )
 }
 
+#[expect(
+    clippy::too_many_lines,
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn sweep_rigid_motions_impl(
     first: &physics::rigid_motion::RigidMotion,
     first_shape: AffineBox,
@@ -945,15 +954,25 @@ pub(crate) fn sweep_nominal_rigid_contact_with_overlap_limit(
             b.point_velocity(point.to_array())
                 .map_err(|_| PhysicsError::Solver)?,
         );
-        if velocity.dot(normal) >= 0. {
+        let normal_speed = velocity.dot(normal);
+        if normal_speed >= 0. {
             if hit.time_s >= first.duration() {
                 return Ok(None);
             }
             super::query(queries)?;
+            let allowed_overlap = hit.time_s == from_s && overlap_limit > 0.;
             if hit.time_s > from_s {
                 overlap_limit = 0.;
             }
-            from_s = separating_prefix(first, first_shape, second, normal, hit.time_s)?;
+            let turnaround = if allowed_overlap {
+                separation_turnaround(first, second, point, normal, hit.time_s, normal_speed)?
+            } else {
+                None
+            };
+            from_s = match turnaround {
+                Some(time) => time,
+                None => separating_prefix(first, first_shape, second, normal, hit.time_s)?,
+            };
             if from_s >= first.duration() {
                 return Ok(None);
             }
@@ -972,9 +991,46 @@ pub(crate) fn sweep_nominal_rigid_contact_with_overlap_limit(
     }
 }
 
+/// Instant just past the turnaround of a pair that separates at `time` and is
+/// pulled back together. Inside an allowed overlap the pair stays in nominal
+/// contact after every separating prefix, and the prefix only converges on the
+/// turnaround; the closing rate of the same contact point estimates it instead.
+/// `None` when the pair is not closing.
+fn separation_turnaround(
+    first: &physics::rigid_motion::RigidMotion,
+    second: &physics::rigid_motion::RigidMotion,
+    point: DVec3,
+    normal: DVec3,
+    time: f64,
+    normal_speed: f64,
+) -> Result<Option<f64>, PhysicsError> {
+    let probe_s = (first.duration() - time) * 1e-6;
+    let later = time + probe_s;
+    if probe_s <= 0. || later >= first.duration() {
+        return Ok(None);
+    }
+    let velocity = |path: &physics::rigid_motion::RigidMotion| {
+        path.sample(later)
+            .map_err(|_| PhysicsError::InvalidMotion)?
+            .point_velocity(point.to_array())
+            .map(DVec3::from_array)
+            .map_err(|_| PhysicsError::Solver)
+    };
+    let (va, vb) = (velocity(first)?, velocity(second)?);
+    let rate = ((va - vb).dot(normal) - normal_speed) / probe_s;
+    // The restart must see a closing speed above velocity roundoff.
+    let roundoff = 64. * f64::EPSILON * (va.length() + vb.length() + 1.);
+    let turnaround = time - 1.01 * (normal_speed + roundoff) / rate;
+    Ok((rate < 0. && turnaround.is_finite() && turnaround > time).then_some(turnaround))
+}
+
 /// Monotone gap prefix along the second body's rotating supporting plane.
 /// Uses a floating derivative/curvature bound on nominal constant-axis arcs.
 /// Unresolved resting/edge cases fail explicitly instead of inventing clearance.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn separating_prefix(
     first: &physics::rigid_motion::RigidMotion,
     shape: AffineBox,
@@ -1199,7 +1255,7 @@ mod spin_bridge_tests {
         let normal = DQuat::from_array(second.initial().spin.unwrap().orientation) * -DVec3::X;
         let prefix = separating_prefix(&first, shape(0.025), &second, normal, 0.).unwrap();
         assert!(prefix > 0. && prefix < 1e-4);
-        assert_eq!(sweep(8.56e-12).unwrap_err(), PhysicsError::SweepBudget);
+        assert!(matches!(sweep(8.56e-12), Ok(Some(hit)) if (prefix..1e-4).contains(&hit.time_s)));
 
         // On the same geometry a genuinely closing initial witness is usable.
         let mut incoming = first.initial();

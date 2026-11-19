@@ -24,6 +24,10 @@ impl App {
         self.poll_snapshot_load_command();
         Ok(())
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn draw_frame_inner(
         &mut self,
         offscreen: Option<voxy_render::SceneViewTargets<'_>>,
@@ -38,7 +42,10 @@ impl App {
             .as_ref()
             .is_some_and(|s| s.profile)
             .then(Instant::now);
+        let reload_trace_start =
+            (offscreen.is_none() && self.reload_frame_sample.is_some()).then(Instant::now);
         self.tick()?;
+        let reload_trace_after_tick = reload_trace_start.map(|_| Instant::now());
         self.poll_project_build();
         self.poll_built_game();
         let build_label = self.build_label();
@@ -85,7 +92,11 @@ impl App {
             self.frame_styles = Some(styles);
             Ok::<(), EditorError>(())
         })?;
-        self.update_editor_panels_for_frame()?;
+        // The staged restore accounts for retained geometry, including the
+        // editor panel. Keep its last mesh alive while GPU/audio admission runs.
+        if !self.editor_load_holds_gpu_inventory() {
+            self.update_editor_panels_for_frame()?;
+        }
         let viewport = offscreen.as_ref().map_or_else(
             || {
                 self.window.as_ref().map_or([1, 1], |window| {
@@ -715,6 +726,11 @@ impl App {
                     }
                 }
             }
+            if reload_trace_start.is_some()
+                && let Some(host) = &mut graphics.host
+            {
+                host.measure_surface_acquire();
+            }
             let outcome = if let Some((_, volume, bounds)) = styles.fog.first() {
                 if styles.fog.len() != 1 {
                     return Err("multiple overlapping fog volumes are not yet composed".into());
@@ -925,6 +941,31 @@ impl App {
                 graphics.ui_presented |= self.ui_live.ready();
                 self.trace.pending = false;
                 self.frames += 1;
+                if let Some(previous) = &mut self.reload_frame_sample {
+                    let now = Instant::now();
+                    if self.frames > 1 {
+                        let (tick_us, draw_us) = reload_trace_start
+                            .zip(reload_trace_after_tick)
+                            .map_or((0, 0), |(start, tick)| {
+                                (
+                                    tick.duration_since(start).as_micros(),
+                                    now.duration_since(tick).as_micros(),
+                                )
+                            });
+                        let acquire_us = graphics
+                            .host
+                            .as_ref()
+                            .and_then(SceneSurface::surface_acquire_duration)
+                            .map_or(0, |elapsed| elapsed.as_micros());
+                        println!(
+                            "MODEL FRAME frame={} interval_us={} tick_us={tick_us} draw_us={draw_us} acquire_us={acquire_us} playing={}",
+                            self.frames,
+                            now.duration_since(*previous).as_micros(),
+                            self.play.playing.is_some()
+                        );
+                    }
+                    *previous = now;
+                }
             }
         }
         Ok(())
@@ -991,6 +1032,10 @@ impl App {
         cursor.x >= left && cursor.x < size.x - right && cursor.y >= 0. && cursor.y < size.y
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn update_editor_panels_for_frame(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let Some(window) = &self.window else {
             return Ok(());
@@ -1098,6 +1143,9 @@ impl App {
             panels.collection_resets = collection_resets;
             panels.overridden_fields = overrides;
             panels.follow_pick = key.follow_pick;
+            if let Some(pick) = &self.follow_pick {
+                panels.pick_title = pick.purpose.title();
+            }
             panels.resource_notice.clone_from(&key.resource_notice);
             let mesh = panels.build(
                 &document,

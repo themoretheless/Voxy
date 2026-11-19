@@ -4,7 +4,7 @@
 
 use super::*;
 
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub(in crate::hair) struct StrandResponse {
     pub(in crate::hair) a: (usize, usize, f64),
     pub(in crate::hair) b: (usize, usize, f64),

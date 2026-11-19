@@ -4,6 +4,10 @@ use voxy_render::{GraphicsOptions, ObjAsset, ObjLimits, SceneDraw, SceneRenderer
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     render_frames()
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn render_frames() -> Result<(), Box<dyn std::error::Error>> {
     let instance = GraphicsOptions::default().create_instance();
     let adapter =

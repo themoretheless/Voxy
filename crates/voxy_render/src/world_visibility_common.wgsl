@@ -1,5 +1,8 @@
 // Shared source hierarchy, material policy and outward certificates.
 // Both the certificate-only pass and the exact fallback use this authority.
+override WORLD_VISIBILITY_NODE_BUDGET:u32=0u;
+override WORLD_VISIBILITY_TRIANGLE_BUDGET:u32=0u;
+var<private> visibility_triangles_remaining:u32;
 var<private> visibility_candidates:u32;
 var<private> visibility_misses:u32;
 var<private> visibility_hits:u32;
@@ -11,11 +14,22 @@ var<private> visibility_primitive:u32;
 var<private> visibility_route:u32;
 var<private> visibility_box_valid:bool;
 var<private> visibility_integer_box:bool;
+fn visibility_admit_triangle()->bool {
+ if WORLD_VISIBILITY_TRIANGLE_BUDGET==0u {return true;}
+ if visibility_triangles_remaining==0u {
+  visibility_unknown|=64u;
+  return false;
+ }
+ visibility_triangles_remaining-=1u;
+ return true;
+}
+
 fn visibility_walk(ray:u32)->bool {
  if nearest_active[3]==4294967295u {return false;}
  var stack:array<u32,64>;stack[0]=nearest_active[3];var size=1u;
  while size>0u {
   size-=1u;let node=stack[size];visibility_nodes+=1u;
+  if WORLD_VISIBILITY_NODE_BUDGET!=0u&&visibility_nodes>WORLD_VISIBILITY_NODE_BUDGET {visibility_unknown|=64u;return false;}
   if node>=nearest_active[1]||visibility_nodes>nearest_active[1] {visibility_unknown|=64u;return false;}
   let base=nearest_active[2]+node*8u;
   if visibility_box_valid {
@@ -32,7 +46,10 @@ fn visibility_walk(ray:u32)->bool {
   let slot=leaf.slot;if nearest_active[4u+slot]==0u {continue;}
   let material=visibility_material(exact_layout[slot].w);if material==0u {continue;}
   let end=leaf.first+leaf.count;
-  for(var primitive=leaf.first;primitive<end;primitive++) {if visibility_triangle(slot,primitive,ray,material) {return true;}}
+  for(var primitive=leaf.first;primitive<end;primitive++) {
+   if !visibility_admit_triangle() {return false;}
+   if visibility_triangle(slot,primitive,ray,material) {return true;}
+  }
  }
  return false;
 }

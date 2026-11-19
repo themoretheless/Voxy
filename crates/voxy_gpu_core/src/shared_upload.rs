@@ -648,6 +648,10 @@ mod generated_tests {
     use super::*;
     #[test]
     #[ignore = "physical Apple Metal generated immutable snapshot lifecycle"]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn gpu_generated_snapshots_retain_all_uses_and_reclaim_failures() {
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
             backends: wgpu::Backends::METAL,

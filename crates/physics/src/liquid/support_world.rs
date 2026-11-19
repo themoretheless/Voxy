@@ -164,6 +164,10 @@ pub fn resolve_mixed_world_reactions(
 /// Closing points are left to the existing impact loop. After an impact, fresh
 /// snapshot assembly determines which zero-speed points can carry reactions.
 #[allow(clippy::too_many_arguments)]
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn assemble_reactions(
     bodies: &[ContactBody],
     particle_radii: &[f64],
@@ -212,6 +216,9 @@ pub(super) fn assemble_reactions(
             .chain((radius.is_none() && world.has_environment()).then_some(None))
         {
             if queries >= limits.max_queries {
+                if std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some() {
+                    eprintln!("support query budget exhausted queries={queries}");
+                }
                 return Err(Error::CollisionBudget);
             }
             queries += 1;
@@ -223,7 +230,7 @@ pub(super) fn assemble_reactions(
                     &bodies[j],
                     limits.contact.max_candidates,
                     geometry_error_m,
-                )?
+                )
             } else if let Some(j) = second {
                 world.rigid_pair_support_contacts_with_error(
                     i - particle_count,
@@ -232,16 +239,31 @@ pub(super) fn assemble_reactions(
                     &bodies[j],
                     limits.contact.max_candidates,
                     geometry_error_m,
-                )?
+                )
             } else {
                 world.rigid_environment_support_contacts_with_error(
                     i - particle_count,
                     &bodies[i],
                     limits.contact.max_candidates,
                     geometry_error_m,
-                )?
-            };
+                )
+            }
+            .inspect_err(|error| {
+                if *error == Error::CollisionBudget
+                    && std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some()
+                {
+                    eprintln!("support point query exhausted first={i} second={second:?}");
+                }
+            })?;
             if patch.len() > limits.max_contacts.min(128).saturating_sub(supports.len()) {
+                if std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some() {
+                    eprintln!(
+                        "support contact budget exhausted existing={} patch={} limit={}",
+                        supports.len(),
+                        patch.len(),
+                        limits.max_contacts.min(128)
+                    );
+                }
                 return Err(Error::CollisionBudget);
             }
             let speed = |point: &RigidSupportPoint| -> Result<f64, Error> {
@@ -309,6 +331,16 @@ pub(super) fn assemble_reactions(
                 external,
                 config,
             )
+            .inspect_err(|error| {
+                if *error == crate::contact::Error::Budget
+                    && std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some()
+                {
+                    eprintln!(
+                        "support reaction solve exhausted supports={}",
+                        supports.len()
+                    );
+                }
+            })
             .map_err(|e| match e {
                 crate::contact::Error::Budget => Error::CollisionBudget,
                 crate::contact::Error::NumericalFailure => Error::NumericalFailure,
@@ -350,6 +382,10 @@ impl Liquid {
     /// Read-only coupled reactions and rates for body-local material-point
     /// forces at the supplied snapshot. Recipes have this snapshot as time zero.
     /// This does not certify their finite supported trajectory.
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     pub fn rigid_world_point_reaction_rates(
         &self,
         bodies: &[ContactBody],
@@ -420,6 +456,16 @@ impl Liquid {
                 config,
                 baseline.clone(),
             )
+            .inspect_err(|error| {
+                if *error == crate::contact::Error::Budget
+                    && std::env::var_os("VOXY_SUPPORT_BUDGET_TRACE").is_some()
+                {
+                    eprintln!(
+                        "support reaction rate budget exhausted contacts={}",
+                        reactions.supports.len()
+                    );
+                }
+            })
             .map_err(|e| match e {
                 crate::contact::Error::Budget => Error::CollisionBudget,
                 crate::contact::Error::InvalidInput => Error::InvalidCollision,

@@ -1,0 +1,27 @@
+$ cargo test -p voxy_gameplay --lib joints
+running 5 tests
+test joints::tests::distance_spring_joint_relaxes_toward_rest_length ... ok
+test joints::tests::fixed_and_hinge_joints_follow_targets_across_different_parents ... ok
+test joints::tests::collect_resolves_targets_and_rejects_missing_or_self_references ... ok
+test joints::tests::preflight_rejects_invalid_unresolved_and_self_targeting_joints_even_when_inactive ... ok
+test joints::tests::joint_step_keeps_a_moving_platform_phase_admissible_unless_it_moves_the_platform ... ok
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 252 filtered out; finished in 0.00s
+
+$ cargo test -p voxy_editor --lib joint_authoring
+running 9 tests
+test joint_authoring_tests::joint_parameters_edit_through_component_fields_and_reject_invalid_values ... ok
+test joint_authoring_tests::joint_kind_cycles_from_the_authored_pose_and_unit_vectors_renormalize ... ok
+test joint_authoring_tests::joint_rejects_self_and_missing_targets_and_keeps_its_target_alive ... ok
+test joint_authoring_tests::play_preflight_rejects_broken_joints_before_the_first_tick ... ok
+test joint_authoring_tests::add_joint_through_target_pick_welds_in_place_and_undoes ... ok
+test joint_authoring_tests::joint_retarget_keeps_parameters_and_stale_or_canceled_picks_never_publish ... ok
+test joint_authoring_tests::joint_rows_buttons_and_pick_title_are_presented_by_the_panels ... ok
+test joint_authoring_tests::joint_survives_scene_save_reopen_and_play_stop ... ok
+test joint_authoring_tests::authored_joints_hold_in_play_stop_standalone_and_source_free_package ... ok
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 465 filtered out; finished in 0.13s
+
+$ cargo test -p voxy_editor --lib panels::gpu_tests::joint -- --ignored --nocapture --test-threads=1
+running 2 tests
+test panels::gpu_tests::joint_kind_row_and_toggle_render_readable_glyphs_without_hit_overlap ... MARKER PANEL GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+test panels::gpu_tests::joint_target_row_and_toggle_render_readable_glyphs_without_hit_overlap ... MARKER PANEL GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 472 filtered out; finished in 0.18s

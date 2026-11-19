@@ -524,6 +524,10 @@ pub(super) fn sweep_particles(
         None,
     )
 }
+#[expect(
+    clippy::too_many_arguments,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn sweep_particles_query(
     particles: &mut [Particle],
     body: &mut TranslatingBody,

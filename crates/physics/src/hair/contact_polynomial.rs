@@ -299,7 +299,7 @@ pub(in crate::hair) fn certify_nonnegative(input: &[(Poly, usize, bool)], budget
         .collect();
     let mut stack = vec![(initial, 0usize)];
     let mut visited = 0;
-    while let Some((polys, depth)) = stack.pop() {
+    while let Some((mut polys, depth)) = stack.pop() {
         visited += 1;
         if visited > budget {
             return false;
@@ -325,15 +325,14 @@ pub(in crate::hair) fn certify_nonnegative(input: &[(Poly, usize, bool)], budget
         {
             return false;
         }
-        let mut left = Vec::with_capacity(polys.len());
         let mut right = Vec::with_capacity(polys.len());
-        for (p, d, strict) in polys {
-            let (a, b) = split(p, d);
-            left.push((a, d, strict));
-            right.push((b, d, strict));
+        for (p, d, strict) in &mut polys {
+            let (left, right_half) = split(*p, *d);
+            *p = left;
+            right.push((right_half, *d, *strict));
         }
         stack.push((right, depth + 1));
-        stack.push((left, depth + 1));
+        stack.push((polys, depth + 1));
     }
     true
 }

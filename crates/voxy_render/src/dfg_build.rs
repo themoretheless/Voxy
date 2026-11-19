@@ -279,6 +279,10 @@ impl GgxEnergyAtlasBuild {
         }
         result
     }
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn poll_inner(
         &mut self,
         gpu: &GgxEnergyGpuPrecompute,

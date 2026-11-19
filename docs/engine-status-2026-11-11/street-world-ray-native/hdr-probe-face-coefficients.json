@@ -1,0 +1,61 @@
+{
+  "scope": "Apple M4 Max Metal, HDR 4K internal, Original Street, default probe density, debug binary, per-face GPU buffer copy",
+  "binary_sha256": "cfa815b3ee8497deaeb958085dc34d3f20b500b724f9afa606881002b033845c",
+  "probes": 372,
+  "faces": 2232,
+  "last_face_matches_saved_cache_in_each_run": true,
+  "post_bake_benchmark_exit": [
+    1,
+    0
+  ],
+  "changed": [
+    {
+      "probe": 0,
+      "changed_cumulative_faces": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "probe": 157,
+      "changed_cumulative_faces": [
+        2
+      ]
+    },
+    {
+      "probe": 280,
+      "changed_cumulative_faces": [
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "probe": 309,
+      "changed_cumulative_faces": [
+        5
+      ]
+    },
+    {
+      "probe": 317,
+      "changed_cumulative_faces": [
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "probe": 330,
+      "changed_cumulative_faces": [
+        3,
+        4,
+        5
+      ]
+    }
+  ]
+}

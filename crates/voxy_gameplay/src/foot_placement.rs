@@ -684,6 +684,10 @@ impl FootRuntime {
         clippy::too_many_arguments,
         reason = "internal staged foot IK transaction over clip/fade contact intervals and physical support queries"
     )]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn correct_at_phase_inner(
         &mut self,
         skeleton: &voxy_animation::Skeleton,

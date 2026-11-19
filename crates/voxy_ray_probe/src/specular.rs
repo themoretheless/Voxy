@@ -3,6 +3,10 @@ use voxy_render::{
     SpecularRay,
 };
 
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub fn probe(device: &wgpu::Device, queue: &wgpu::Queue) -> Result<(), Box<dyn std::error::Error>> {
     let scene = RayScene::new(
         device,

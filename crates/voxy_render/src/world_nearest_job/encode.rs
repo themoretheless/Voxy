@@ -109,10 +109,19 @@ impl WorldRayQueryJob {
     pub fn geometry_bounds_bytes(&self) -> u64 {
         self.geometry_bounds.as_ref().map_or(0, |c| c.buffer.size())
     }
+    pub const fn software_nearest_enabled(&self) -> bool {
+        self.software_nearest
+    }
+    /// Whether construction has GPU work beyond the initialized source buffers.
+    pub fn needs_scene_build(&self) -> bool {
+        !self.software_nearest || self.geometry_bounds.is_some() || self.vertex_cache.is_some()
+    }
     /// Build retained acceleration structures and optional derived bounds in order.
     /// Encode once for a new owner; subsequent queries reuse the completed build.
     pub fn build_scene(&self, encoder: &mut wgpu::CommandEncoder) {
-        self.scene.build(encoder);
+        if !self.software_nearest {
+            self.scene.build(encoder);
+        }
         if let Some(cache) = &self.geometry_bounds {
             cache.encode(encoder);
         }
@@ -185,7 +194,7 @@ impl WorldRayQueryJob {
         encoder: &mut wgpu::CommandEncoder,
         count: u32,
     ) -> Result<(), RaySceneError> {
-        self.encode_profiled(encoder, count, None)
+        self.encode_profiled(encoder, count, None, None)
     }
     pub(crate) fn nearest_profile_stage_count(&self) -> u32 {
         4 + u32::from(self.history_filter.is_some()) + u32::from(self.native_hint.is_some())
@@ -207,21 +216,22 @@ impl WorldRayQueryJob {
         encoder: &mut wgpu::CommandEncoder,
         count: u32,
         profile: Option<(&wgpu::QuerySet, u32)>,
+        trace: Option<&dyn Fn(&mut wgpu::CommandEncoder, &'static str)>,
     ) -> Result<(), RaySceneError> {
         if let Some(pair) = &self.traversal_pair {
             if profile.is_some() {
                 return Err(RaySceneError::Unsupported);
             }
-            self.encode_once(encoder, count, None, Some(&pair.original_fast))?;
+            self.encode_once(encoder, count, None, Some(&pair.original_fast), trace)?;
             if count == 0 {
                 return Ok(());
             }
             pair.snapshot(encoder, &self.input, &self.output);
-            self.encode_once(encoder, count, None, self.fast.as_ref())?;
+            self.encode_once(encoder, count, None, self.fast.as_ref(), trace)?;
             pair.compare(&self.device, encoder, &self.input, &self.output, count);
             return Ok(());
         }
-        self.encode_once(encoder, count, profile, self.fast.as_ref())
+        self.encode_once(encoder, count, profile, self.fast.as_ref(), trace)
     }
     /// Cumulative diagnostic record count and first protected-word failure.
     /// No CPU readback occurs during encoding; the caller must fence before reading.
@@ -283,12 +293,17 @@ impl WorldRayQueryJob {
         Ok(group)
     }
 
+    #[expect(
+        clippy::too_many_lines,
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+    )]
     fn encode_once(
         &self,
         encoder: &mut wgpu::CommandEncoder,
         count: u32,
         profile: Option<(&wgpu::QuerySet, u32)>,
         fast: Option<&(wgpu::ComputePipeline, wgpu::BindGroup)>,
+        trace: Option<&dyn Fn(&mut wgpu::CommandEncoder, &'static str)>,
     ) -> Result<(), RaySceneError> {
         if profile.is_some() && !self.can_profile_nearest() {
             return Err(RaySceneError::Unsupported);
@@ -322,7 +337,7 @@ impl WorldRayQueryJob {
                     &self._scratch,
                     &self._counts,
                     &self._hierarchy,
-                    self.query_kind == WorldRayQueryKind::OpaqueVisibility,
+                    self.query_kind == WorldRayQueryKind::OpaqueVisibility || self.software_nearest,
                     count,
                     false,
                     None,
@@ -409,6 +424,11 @@ impl WorldRayQueryJob {
             pass.set_bind_group(0, partial.as_ref().unwrap_or(group), &[]);
             pass.dispatch_workgroups(count.div_ceil(64), 1, 1);
         }
+        if fast.is_some()
+            && let Some(trace) = trace
+        {
+            trace(encoder, "visibility");
+        }
         if let Some((pipeline, group)) = &self.history_filter {
             // Rebuild only the padding queue after the exact render-only filter.
             // No coefficient, admission, source identity or unrequested tail changes.
@@ -491,7 +511,37 @@ impl WorldRayQueryJob {
                         1,
                     );
                 }
+                if let Some(trace) = trace {
+                    trace(encoder, label);
+                }
                 encoder.clear_buffer(&self.input, 44, Some(4));
+            }
+        }
+        if let Some((pipeline, group, stats)) = &self.work_stats {
+            let partial = if count != self.capacity {
+                Some(self.partial_group(pipeline, count, || {
+                    Ok(Self::make_work_stats_group(
+                        &self.device,
+                        pipeline,
+                        &self.input,
+                        &self.output,
+                        stats,
+                        count,
+                    ))
+                })?)
+            } else {
+                None
+            };
+            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("diagnostic software traversal work"),
+                ..Default::default()
+            });
+            pass.set_pipeline(pipeline);
+            pass.set_bind_group(0, partial.as_ref().unwrap_or(group), &[]);
+            pass.dispatch_workgroups(count.div_ceil(64), 1, 1);
+            drop(pass);
+            if let Some(trace) = trace {
+                trace(encoder, "exact fallback work counters");
             }
         }
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
@@ -514,28 +564,6 @@ impl WorldRayQueryJob {
             1,
         );
         drop(pass);
-        if let Some((pipeline, group, stats)) = &self.work_stats {
-            let partial = if count != self.capacity {
-                Some(self.partial_group(pipeline, count, || {
-                    Ok(Self::make_work_stats_group(
-                        &self.device,
-                        pipeline,
-                        &self.input,
-                        stats,
-                        count,
-                    ))
-                })?)
-            } else {
-                None
-            };
-            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                label: Some("diagnostic software traversal work"),
-                ..Default::default()
-            });
-            pass.set_pipeline(pipeline);
-            pass.set_bind_group(0, partial.as_ref().unwrap_or(group), &[]);
-            pass.dispatch_workgroups(count.div_ceil(64), 1, 1);
-        }
         Ok(())
     }
 }

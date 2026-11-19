@@ -48,6 +48,10 @@ fn finite(v: Vector) -> bool {
 }
 impl ContactBody {
     fn validate(self) -> Result<(), Error> {
+        self.validated_spin_energy().map(|_| ())
+    }
+
+    fn validated_spin_energy(self) -> Result<f64, Error> {
         if !self.motion.mass.is_finite()
             || self.motion.mass <= 0.
             || !finite(self.motion.position)
@@ -55,10 +59,9 @@ impl ContactBody {
         {
             return Err(Error::InvalidInput);
         }
-        if let Some(spin) = self.spin {
-            spin.energy().map_err(|_| Error::InvalidInput)?;
-        }
-        Ok(())
+        self.spin
+            .map_or(Ok(0.), Spin::energy)
+            .map_err(|_| Error::InvalidInput)
     }
     /// Velocity of the material point at the given world coordinate.
     pub fn point_velocity(self, point: Vector) -> Result<Vector, Error> {
@@ -66,10 +69,14 @@ impl ContactBody {
         if !finite(point) {
             return Err(Error::InvalidInput);
         }
+        self.validated_point_velocity(point)
+    }
+
+    fn validated_point_velocity(self, point: Vector) -> Result<Vector, Error> {
         let mut velocity = self.motion.velocity;
         if let Some(spin) = self.spin {
             let rotation = cross(
-                spin.angular_velocity()
+                spin.validated_inverse_inertia(spin.angular_momentum)
                     .map_err(|_| Error::NumericalFailure)?,
                 sub(point, self.motion.position),
             );
@@ -84,17 +91,17 @@ impl ContactBody {
     }
     /// Kinetic energy including intrinsic rigid rotation.
     pub fn energy(self) -> Result<f64, Error> {
-        self.validate()?;
+        self.energy_with_spin(self.validated_spin_energy()?)
+    }
+
+    fn energy_with_spin(self, spin_energy: f64) -> Result<f64, Error> {
         let energy = self
             .motion
             .velocity
             .iter()
             .map(|v| (0.5 * self.motion.mass * v) * v)
             .sum::<f64>()
-            + self
-                .spin
-                .map_or(Ok(0.), Spin::energy)
-                .map_err(|_| Error::NumericalFailure)?;
+            + spin_energy;
         if !energy.is_finite() {
             return Err(Error::NumericalFailure);
         }
@@ -117,6 +124,14 @@ impl ContactBody {
     /// Apply a world impulse at a world point; failure preserves the snapshot.
     pub fn apply_point_impulse(&mut self, point: Vector, impulse: Vector) -> Result<(), Error> {
         self.validate()?;
+        self.apply_impulse_to_validated_body(point, impulse)
+    }
+
+    fn apply_impulse_to_validated_body(
+        &mut self,
+        point: Vector,
+        impulse: Vector,
+    ) -> Result<(), Error> {
         if !finite(point) || !finite(impulse) {
             return Err(Error::InvalidInput);
         }
@@ -130,7 +145,14 @@ impl ContactBody {
                 spin.angular_momentum[k] += torque[k];
             }
         }
-        candidate.energy()?;
+        if !finite(candidate.motion.velocity) {
+            return Err(Error::InvalidInput);
+        }
+        let spin_energy = candidate
+            .spin
+            .map_or(Ok(0.), Spin::energy_with_validated_inertia)
+            .map_err(|_| Error::InvalidInput)?;
+        candidate.energy_with_spin(spin_energy)?;
         *self = candidate;
         Ok(())
     }
@@ -376,6 +398,10 @@ fn solve_normal_network_constraints(
 /// Same indexed mass/inertia operator for nonnegative reactions and their
 /// signed tangent rates. A finite lower bound marks a unilateral rate branch;
 /// negative infinity marks an already loaded branch with a signed derivative.
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn solve_normal_network_constraints_with_bounds(
     bodies: &mut [ContactBody],
     contacts: &[NetworkContact],
@@ -459,14 +485,16 @@ fn solve_normal_network_constraints_with_bounds(
         Ok(sums)
     };
     let before = energy(&staged)?;
+    // Energy validates the staged bodies before iteration. Each impulse
+    // validates its result before publishing, and contact points are fixed.
     let speed =
         |states: &[ContactBody], indexed: NetworkContact, index: usize| -> Result<f64, Error> {
             let contact = indexed.contact;
             let relative = sub(
-                states[indexed.first].point_velocity(contact.point)?,
-                indexed
-                    .second
-                    .map_or(Ok([0.; 3]), |j| states[j].point_velocity(contact.point))?,
+                states[indexed.first].validated_point_velocity(contact.point)?,
+                indexed.second.map_or(Ok([0.; 3]), |j| {
+                    states[j].validated_point_velocity(contact.point)
+                })?,
             );
             let value = dot(relative, contact.normal) + biases[index];
             if !value.is_finite() {
@@ -477,44 +505,57 @@ fn solve_normal_network_constraints_with_bounds(
     let apply =
         |states: &mut [ContactBody], indexed: NetworkContact, delta: f64| -> Result<(), Error> {
             let impulse = indexed.contact.normal.map(|n| n * delta);
-            states[indexed.first].apply_point_impulse(indexed.contact.point, impulse)?;
+            states[indexed.first]
+                .apply_impulse_to_validated_body(indexed.contact.point, impulse)?;
             if let Some(j) = indexed.second {
-                states[j].apply_point_impulse(indexed.contact.point, impulse.map(|v| -v))?;
+                states[j]
+                    .apply_impulse_to_validated_body(indexed.contact.point, impulse.map(|v| -v))?;
             }
             Ok(())
         };
     // Pair block minimization resolves strongly coupled face points without
     // the slow alternating scalar impulses of a nearly singular contact patch.
     // Diagonal/duplicate singular blocks retain scalar coordinate updates.
-    let coupling = |body: ContactBody, i: NormalContact, j: NormalContact| -> Result<f64, Error> {
-        let mut value = dot(i.normal, j.normal) / body.motion.mass;
-        if let Some(spin) = body.spin {
-            let ri = cross(sub(i.point, body.motion.position), i.normal);
-            let rj = cross(sub(j.point, body.motion.position), j.normal);
-            value += dot(
-                ri,
-                spin.inverse_inertia(rj)
-                    .map_err(|_| Error::NumericalFailure)?,
-            );
-        }
-        if !value.is_finite() {
-            return Err(Error::NumericalFailure);
-        }
-        Ok(value)
-    };
+    let participants = points
+        .iter()
+        .map(|point| {
+            let prepare = |index: usize, sign| {
+                let body = staged[index];
+                let angular = body
+                    .spin
+                    .map(|spin| {
+                        let arm = cross(
+                            sub(point.contact.point, body.motion.position),
+                            point.contact.normal,
+                        );
+                        let response = spin
+                            .validated_inverse_inertia(arm)
+                            .map_err(|_| Error::NumericalFailure)?;
+                        Ok::<_, Error>((arm, response))
+                    })
+                    .transpose()?;
+                Ok::<_, Error>((index, sign, angular))
+            };
+            Ok([
+                Some(prepare(point.first, 1.)?),
+                point.second.map(|index| prepare(index, -1.)).transpose()?,
+            ])
+        })
+        .collect::<Result<Vec<_>, Error>>()?;
     let n_points = points.len();
     let mut cross_mass = vec![0.; n_points * n_points];
     for i in 0..n_points {
         for j in (i + 1)..n_points {
-            let participants =
-                |point: NetworkContact| [Some((point.first, 1.)), point.second.map(|j| (j, -1.))];
             let mut value = 0.;
-            for (body, sign_i) in participants(points[i]).into_iter().flatten() {
-                for (other, sign_j) in participants(points[j]).into_iter().flatten() {
+            for (body, sign_i, angular_i) in participants[i].into_iter().flatten() {
+                for (other, sign_j, angular_j) in participants[j].into_iter().flatten() {
                     if body == other {
-                        value += sign_i
-                            * sign_j
-                            * coupling(staged[body], points[i].contact, points[j].contact)?;
+                        let mut coupling = dot(points[i].contact.normal, points[j].contact.normal)
+                            / staged[body].motion.mass;
+                        if let (Some((arm, _)), Some((_, response))) = (angular_i, angular_j) {
+                            coupling += dot(arm, response);
+                        }
+                        value += sign_i * sign_j * coupling;
                     }
                 }
             }
@@ -522,6 +563,24 @@ fn solve_normal_network_constraints_with_bounds(
                 return Err(Error::NumericalFailure);
             }
             cross_mass[i * n_points + j] = value;
+        }
+    }
+    let scales: Vec<_> = inverse.iter().map(|value| value.sqrt()).collect();
+    let mut pairs = Vec::new();
+    for i in 0..n_points {
+        for j in (i + 1)..n_points {
+            let si = scales[i];
+            let sj = scales[j];
+            let correlation = (cross_mass[i * n_points + j] / si) / sj;
+            if !correlation.is_finite() || correlation.abs() > 1. + 256. * f64::EPSILON {
+                return Err(Error::NumericalFailure);
+            }
+            let correlation = correlation.clamp(-1., 1.);
+            let determinant = 1. - correlation * correlation;
+            if determinant <= 256. * f64::EPSILON {
+                continue;
+            }
+            pairs.push((i, j, correlation, determinant));
         }
     }
     let mut strengths = vec![0.; n_points];
@@ -536,82 +595,76 @@ fn solve_normal_network_constraints_with_bounds(
             apply(&mut staged, contact, delta)?;
             strengths[index] = next;
         }
-        for i in 0..n_points {
-            for j in (i + 1)..n_points {
-                let si = inverse[i].sqrt();
-                let sj = inverse[j].sqrt();
-                let correlation = (cross_mass[i * n_points + j] / si) / sj;
-                if !correlation.is_finite() || correlation.abs() > 1. + 256. * f64::EPSILON {
-                    return Err(Error::NumericalFailure);
-                }
-                let correlation = correlation.clamp(-1., 1.);
-                let determinant = 1. - correlation * correlation;
-                if determinant <= 256. * f64::EPSILON {
-                    continue;
-                }
-                let u = strengths[i] * si;
-                let v = strengths[j] * sj;
-                let ri = u + correlation * v - speed(&staged, points[i], i)? / si;
-                let rj = v + correlation * u - speed(&staged, points[j], j)? / sj;
-                if !ri.is_finite() || !rj.is_finite() {
-                    return Err(Error::NumericalFailure);
-                }
-                let cost = |u: f64, v: f64| {
-                    0.5 * u * u + 0.5 * v * v + correlation * u * v - ri * u - rj * v
-                };
-                let mut best = if lower_bounds.is_none() {
-                    (0., 0., 0.)
-                } else {
-                    (0., 0., f64::INFINITY)
-                };
-                let candidates = [
-                    (
-                        if lower(j).is_finite() {
-                            (ri - correlation * lower(j) * sj).max(lower(i) * si)
-                        } else {
-                            f64::NAN
-                        },
-                        if lower(j).is_finite() {
-                            lower(j) * sj
-                        } else {
-                            f64::NAN
-                        },
-                    ),
-                    (
-                        if lower(i).is_finite() {
-                            lower(i) * si
-                        } else {
-                            f64::NAN
-                        },
-                        if lower(i).is_finite() {
-                            (rj - correlation * lower(i) * si).max(lower(j) * sj)
-                        } else {
-                            f64::NAN
-                        },
-                    ),
-                    (
-                        (ri - correlation * rj) / determinant,
-                        (rj - correlation * ri) / determinant,
-                    ),
-                ];
-                // Each edge minimizes the block objective with the other row
-                // on its bound. Zero bounds retain the unilateral candidates.
-                for (x, y) in candidates {
-                    if x >= lower(i) * si && y >= lower(j) * sj && x.is_finite() && y.is_finite() {
-                        let value = cost(x, y);
-                        if value.is_finite() && value < best.2 {
-                            best = (x, y, value);
-                        }
+        for &(i, j, correlation, determinant) in &pairs {
+            let si = scales[i];
+            let sj = scales[j];
+            let u = strengths[i] * si;
+            let v = strengths[j] * sj;
+            let gradient_i = speed(&staged, points[i], i)? / si;
+            let gradient_j = speed(&staged, points[j], j)? / sj;
+            let ri = u + correlation * v - gradient_i;
+            let rj = v + correlation * u - gradient_j;
+            if !ri.is_finite() || !rj.is_finite() {
+                return Err(Error::NumericalFailure);
+            }
+            let cost = |x: f64, y: f64| {
+                let dx = x - u;
+                let dy = y - v;
+                let sum = dx + correlation * dy;
+                0.5 * sum * sum + 0.5 * determinant * dy * dy + gradient_i * dx + gradient_j * dy
+            };
+            let mut best = if lower_bounds.is_none() {
+                (0., 0., cost(0., 0.))
+            } else {
+                (0., 0., f64::INFINITY)
+            };
+            let candidates = [
+                (
+                    if lower(j).is_finite() {
+                        (ri - correlation * lower(j) * sj).max(lower(i) * si)
+                    } else {
+                        f64::NAN
+                    },
+                    if lower(j).is_finite() {
+                        lower(j) * sj
+                    } else {
+                        f64::NAN
+                    },
+                ),
+                (
+                    if lower(i).is_finite() {
+                        lower(i) * si
+                    } else {
+                        f64::NAN
+                    },
+                    if lower(i).is_finite() {
+                        (rj - correlation * lower(i) * si).max(lower(j) * sj)
+                    } else {
+                        f64::NAN
+                    },
+                ),
+                (
+                    (ri - correlation * rj) / determinant,
+                    (rj - correlation * ri) / determinant,
+                ),
+            ];
+            // Each edge minimizes the block objective with the other row
+            // on its bound. Zero bounds retain the unilateral candidates.
+            for (x, y) in candidates {
+                if x >= lower(i) * si && y >= lower(j) * sj && x.is_finite() && y.is_finite() {
+                    let value = cost(x, y);
+                    if value.is_finite() && value < best.2 {
+                        best = (x, y, value);
                     }
                 }
-                for (index, next) in [(i, best.0 / si), (j, best.1 / sj)] {
-                    if !next.is_finite() {
-                        return Err(Error::NumericalFailure);
-                    }
-                    let delta = next - strengths[index];
-                    apply(&mut staged, points[index], delta)?;
-                    strengths[index] = next;
+            }
+            for (index, next) in [(i, best.0 / si), (j, best.1 / sj)] {
+                if !next.is_finite() {
+                    return Err(Error::NumericalFailure);
                 }
+                let delta = next - strengths[index];
+                apply(&mut staged, points[index], delta)?;
+                strengths[index] = next;
             }
         }
         let mut residual = 0_f64;
@@ -622,6 +675,78 @@ fn solve_normal_network_constraints_with_bounds(
             } else {
                 (-velocity).max(0.)
             });
+        }
+        if sweep == config.max_sweeps
+            && residual > config.velocity_tolerance
+            && !enforce_energy
+            && std::env::var_os("VOXY_TRACE_REACTION_BUDGET").is_some()
+        {
+            eprintln!(
+                "reaction network residual={residual:e} inverse={inverse:?} cross={cross_mass:?} strengths={strengths:?} biases={biases:?}"
+            );
+            for (index, contact) in points.iter().copied().enumerate() {
+                eprintln!(
+                    "reaction row={index} baseline={:e} residual={:e}",
+                    speed(bodies, contact, index)?,
+                    speed(&staged, contact, index)?,
+                );
+            }
+        }
+        if !enforce_energy
+            && lower_bounds.is_none()
+            && sweep == config.max_sweeps
+            && residual > config.velocity_tolerance
+            && n_points <= 32
+        {
+            let base = points
+                .iter()
+                .copied()
+                .enumerate()
+                .map(|(i, p)| speed(bodies, p, i))
+                .collect::<Result<Vec<_>, _>>()?;
+            let mass = |i: usize, j: usize| {
+                if i == j {
+                    inverse[i]
+                } else {
+                    cross_mass[i.min(j) * n_points + i.max(j)]
+                }
+            };
+            for i in 0..n_points {
+                for j in i + 1..n_points {
+                    for k in j + 1..n_points {
+                        let ids = [i, j, k];
+                        let mut a: [f64; 9] =
+                            std::array::from_fn(|entry| mass(ids[entry / 3], ids[entry % 3]));
+                        let mut x = ids.map(|r| -base[r]);
+                        if !crate::math::gauss_pivoted_solve_in_place(&mut a, &mut x, 3, 1e-10)
+                            || x.iter().any(|&v| v <= 0.)
+                        {
+                            continue;
+                        }
+                        let mut trial = bodies.to_vec();
+                        for (&row, &load) in ids.iter().zip(&x) {
+                            apply(&mut trial, points[row], load)?;
+                        }
+                        let mut error = 0_f64;
+                        for (row, point) in points.iter().copied().enumerate() {
+                            let v = speed(&trial, point, row)?;
+                            error = error.max(if ids.contains(&row) {
+                                v.abs()
+                            } else {
+                                (-v).max(0.)
+                            });
+                        }
+                        if error <= config.velocity_tolerance && error < residual {
+                            staged = trial;
+                            strengths.fill(0.);
+                            for (&row, &load) in ids.iter().zip(&x) {
+                                strengths[row] = load;
+                            }
+                            residual = error;
+                        }
+                    }
+                }
+            }
         }
         if residual <= config.velocity_tolerance {
             let after = energy(&staged)?;
@@ -673,7 +798,7 @@ fn solve_normal_network_constraints_with_bounds(
 use crate::math::cross;
 use crate::math::dot;
 use crate::math::sub;
-pub(crate) use reaction::{resolve_rate_from_baseline, resolve_rate_from_baseline_interval};
+pub(crate) use reaction::{resolve_rate_from_baseline, resolve_rate_from_baseline_mixed_interval};
 
 /// Evaluates the non-linear Hertz–Mindlin elastic sphere-sphere contact normal force,
 /// normal tangent stiffness, and Mindlin no-slip tangential stiffness `(f_normal, k_normal, k_tangent)`

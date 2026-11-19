@@ -2,6 +2,10 @@
 use glam::{Mat4, Vec3};
 use std::sync::Arc;
 use voxy_render::{ExactWorldNearest, RayScene, archive_scene::*};
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn audit_one(
     device: &wgpu::Device,
     queue: &wgpu::Queue,
@@ -142,11 +146,18 @@ fn audit_one(
     read.slice(..).map_async(wgpu::MapMode::Read, move |r| {
         let _ = tx.send(r);
     });
-    device.poll(wgpu::PollType::Wait {
-        submission_index: Some(submission),
-        timeout: None,
-    })?;
-    rx.recv()??;
+    let timeout = std::time::Duration::from_mins(2);
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: Some(timeout),
+        })
+        .map_err(|error| {
+            format!(
+                "shared ray job GPU wait failed (rays={count}, deferred={defer_nearest}, order_certificate={certify_order}, single_claim={single_ray_queue_claim}): {error}"
+            )
+        })?;
+    rx.recv_timeout(timeout)??;
     let mapped = read.slice(..).get_mapped_range()?;
     let (first, repeated) = mapped.split_at(result_bytes as usize);
     assert_eq!(first, repeated, "reused restricted bindings changed output");
@@ -213,6 +224,10 @@ fn audit(
     }
     Ok(())
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 pub(super) fn run(
     device: &wgpu::Device,
     queue: &wgpu::Queue,

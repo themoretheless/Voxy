@@ -18,6 +18,10 @@ struct ResultRow {
     world_high: [f32; 4],
     world_low: [f32; 4],
 }
+#[expect(
+    clippy::too_many_lines,
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
+)]
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     assert!(

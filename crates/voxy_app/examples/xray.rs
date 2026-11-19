@@ -2,10 +2,12 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = std::env::args().collect();
     let app = voxy_shell::SceneApp::new(args.iter().any(|a| a == "--smoke"))?;
-    let app = if args.iter().any(|a| a == "--abstract") {
-        app.with_xray()
+    use voxy_demos::scenes::XrayScene;
+    let demo = if args.iter().any(|a| a == "--abstract") {
+        XrayScene::new()
     } else {
-        app.with_xray_model()?
+        XrayScene::with_model()?
     };
-    app.run(winit::event_loop::EventLoop::new()?)
+    app.with_demo(Box::new(demo))
+        .run(winit::event_loop::EventLoop::new()?)
 }

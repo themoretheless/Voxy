@@ -1,0 +1,153 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_render)
+   Compiling voxy_runtime v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_runtime)
+error[E0616]: field `resident_presented_frames` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:268:14
+    |
+268 |             .resident_presented_frames
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^ private field
+
+error[E0616]: field `surface` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:271:46
+    |
+271 |         let (frame, suboptimal) = match self.surface.get_current_texture() {
+    |                                              ^^^^^^^ private field
+
+error[E0616]: field `surface` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:275:22
+    |
+275 |                 self.surface.configure(&self.device, &self.config);
+    |                      ^^^^^^^ private field
+
+error[E0616]: field `device` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:275:46
+    |
+275 |                 self.surface.configure(&self.device, &self.config);
+    |                                              ^^^^^^ private field
+    |
+help: a method `device` also exists, call it with parentheses
+    |
+275 |                 self.surface.configure(&self.device(), &self.config);
+    |                                                    ++
+
+error[E0616]: field `config` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:275:60
+    |
+275 |                 self.surface.configure(&self.device, &self.config);
+    |                                                            ^^^^^^ private field
+
+error[E0616]: field `device` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:289:14
+    |
+289 |             .device
+    |              ^^^^^^ private field
+    |
+help: a method `device` also exists, call it with parentheses
+    |
+289 |             .device()
+    |                    ++
+
+error[E0624]: method `encode_bodycam_passes_with_scene` is private
+   --> crates/voxy_render/src/render_graph.rs:294:18
+    |
+294 |               self.encode_bodycam_passes_with_scene(&mut encoder, &output_view, frame_id, scene);
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ private method
+    |
+   ::: crates/voxy_render/src/renderer/bodycam_capture.rs:17:5
+    |
+ 17 | /     pub(super) fn encode_bodycam_passes_with_scene(
+ 18 | |         &mut self,
+ 19 | |         encoder: &mut wgpu::CommandEncoder,
+ 20 | |         output_view: &wgpu::TextureView,
+ 21 | |         frame_id: u64,
+ 22 | |         scene_overlay: Option<(&crate::SceneRenderer, &[crate::SceneDraw<'_>])>,
+ 23 | |     ) {
+    | |_____- private method defined here
+
+error[E0616]: field `bodycam_post` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:298:26
+    |
+298 |                     self.bodycam_post.hdr_view(),
+    |                          ^^^^^^^^^^^^ private field
+
+error[E0616]: field `depth_view` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:299:27
+    |
+299 |                     &self.depth_view,
+    |                           ^^^^^^^^^^ private field
+    |
+help: a method `depth_view` also exists, call it with parentheses
+    |
+299 |                     &self.depth_view(),
+    |                                     ++
+
+error[E0616]: field `bodycam_post` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:302:22
+    |
+302 |                 self.bodycam_post.encode(&mut encoder, &output_view);
+    |                      ^^^^^^^^^^^^ private field
+
+error[E0616]: field `depth_view` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:313:68
+    |
+313 |             let _ = graph.encode(&mut encoder, &output_view, &self.depth_view);
+    |                                                                    ^^^^^^^^^^ private field
+    |
+help: a method `depth_view` also exists, call it with parentheses
+    |
+313 |             let _ = graph.encode(&mut encoder, &output_view, &self.depth_view());
+    |                                                                              ++
+
+error[E0616]: field `queue` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:315:14
+    |
+315 |         self.queue.submit([encoder.finish()]);
+    |              ^^^^^ private field
+    |
+help: a method `queue` also exists, call it with parentheses
+    |
+315 |         self.queue().submit([encoder.finish()]);
+    |                   ++
+
+error[E0616]: field `queue` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:316:14
+    |
+316 |         self.queue.present(frame);
+    |              ^^^^^ private field
+    |
+help: a method `queue` also exists, call it with parentheses
+    |
+316 |         self.queue().present(frame);
+    |                   ++
+
+error[E0616]: field `resident_presented_frames` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:317:14
+    |
+317 |         self.resident_presented_frames = frame_id;
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^ private field
+
+error[E0616]: field `surface` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:319:18
+    |
+319 |             self.surface.configure(&self.device, &self.config);
+    |                  ^^^^^^^ private field
+
+error[E0616]: field `device` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:319:42
+    |
+319 |             self.surface.configure(&self.device, &self.config);
+    |                                          ^^^^^^ private field
+    |
+help: a method `device` also exists, call it with parentheses
+    |
+319 |             self.surface.configure(&self.device(), &self.config);
+    |                                                ++
+
+error[E0616]: field `config` of struct `Renderer` is private
+   --> crates/voxy_render/src/render_graph.rs:319:56
+    |
+319 |             self.surface.configure(&self.device, &self.config);
+    |                                                        ^^^^^^ private field
+
+Some errors have detailed explanations: E0616, E0624.
+For more information about an error, try `rustc --explain E0616`.
+error: could not compile `voxy_render` (lib) due to 17 previous errors

@@ -1,0 +1,21 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_player v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_player)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 33.01s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-23ec838906e8badb)
+
+running 1 test
+EDITOR MIXED depth=1.61312629920473682e-12 allowance=0.00000000000000000e0 from=0.00000000000000000e0
+EDITOR MIXED overlap elapsed=4.79977969256385924e-3 duration=2.10847594865435240e-3 first=0 second=Some(1) active=false slots=0 previous=None particle=ContactBody { motion: Body { mass: 1.0, position: [0.3221466353192945, -0.0022602648061357043, -1.9438289693363597e-7], velocity: [3.707835599055028, -0.21058583878405143, -0.000640154055447657] }, spin: None } body=Some(ContactBody { motion: Body { mass: 2.0, position: [0.40967544290109054, -0.0022602648061357043, 0.025000097561222703], velocity: [3.771082200472556, -0.2105858387840514, 0.0003200770277238285] }, spin: Some(Spin { orientation: [6.711485338922324e-23, -0.015179768030190981, -4.611939445589239e-21, 0.9998847806835294], angular_momentum: [8.28650913222763e-21, -0.17357109776312263, -3.029965588209803e-19], inertia: [0.005208333333333335, 0.005208333333333335, 0.005208333333333335] }) })
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene liquid body step: InitialOverlap") } }
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 480 filtered out; finished in 7.62s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

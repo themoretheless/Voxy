@@ -3,6 +3,7 @@ use super::surface_distance::{
     PreparedTriangle, triangle_distance, triangle_distance_validated, triangle_pair_path_is_open,
 };
 use super::{Body, Vec3, add, cross, dot, scale, sub};
+use crate::biomechanics::Rejection;
 #[derive(Clone, Debug)]
 pub struct TissueSurfaceContact {
     pub faces: Vec<[usize; 3]>,
@@ -170,7 +171,7 @@ pub(super) fn barrier_response_gap(
     stiffness: f64,
 ) -> Result<(f64, f64), &'static str> {
     if !gap.is_finite() || gap <= 0. {
-        return Err("closed surface contact gap");
+        return Err(Rejection::ClosedSurfaceGap.message());
     }
     if gap >= activation {
         return Ok((0., 0.));
@@ -475,7 +476,7 @@ impl Body {
                     continue;
                 }
                 if gap <= 0. {
-                    return Err("closed surface contact gap");
+                    return Err(Rejection::ClosedSurfaceGap.message());
                 }
                 let offset = gap - contact.activation_gap_m;
                 let logarithm = if gap < 0.5 * contact.activation_gap_m {
