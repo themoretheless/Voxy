@@ -56,6 +56,29 @@ impl FaceFeatures {
     ) {
         self.lash_motion = candidate;
     }
+    #[cfg(test)]
+    pub(crate) fn lash_checkpoint(&self) -> Vec<[[f64; 3]; 2]> {
+        self.lash_motion
+            .iter()
+            .map(|motion| [motion.offset(), motion.velocity()])
+            .collect()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn prepare_lash_checkpoint(
+        &self,
+        states: Vec<[[f64; 3]; 2]>,
+    ) -> Result<Vec<physics_bio::secondary_motion::SecondaryMotion>, &'static str> {
+        if states.len() != self.lash_motion.len() {
+            return Err("invalid lash checkpoint count");
+        }
+        let mut motions = self.lash_motion.clone();
+        for (motion, state) in motions.iter_mut().zip(states) {
+            motion.restore_kinematics(state)?;
+        }
+        Ok(motions)
+    }
+
     pub fn exchange_lashes(
         &mut self,
         candidate: &mut Vec<physics_bio::secondary_motion::SecondaryMotion>,
@@ -64,7 +87,7 @@ impl FaceFeatures {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new(body: &[SceneVertex], indices: &[u32]) -> Self {
         let face: Vec<[usize; 3]> = indices
@@ -304,7 +327,7 @@ impl FaceFeatures {
     }
     #[expect(
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn append_configured(
         &self,
@@ -323,7 +346,7 @@ impl FaceFeatures {
     #[expect(
         clippy::too_many_lines,
         clippy::too_many_arguments,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn append_configured_with_bindings(
         &self,
@@ -530,7 +553,7 @@ impl FaceFeatures {
     }
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn append_lips_with_bindings(
         &self,
@@ -838,7 +861,7 @@ fn skin_frame(triangle: [Vec3; 3]) -> Option<Quat> {
 #[expect(
     clippy::too_many_lines,
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn curved_lash(
     vertices: &mut Vec<SceneVertex>,
@@ -1024,7 +1047,7 @@ fn append_oral_anatomy(
 }
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn append_oral_anatomy_pose(
     vertices: &mut Vec<SceneVertex>,
@@ -1443,7 +1466,7 @@ fn ellipsoid(
 }
 #[expect(
     clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn ellipsoid_sampled(
     vertices: &mut Vec<SceneVertex>,

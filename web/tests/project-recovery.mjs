@@ -54,6 +54,11 @@ try {
     window.testRecovery = {ticks:0, frames:0, failedAttempts:0, failNext:false};
     const t = window.testRecovery;
     WebEngine.create = function(...args) {
+      // Device loss is reported asynchronously. Capture the checkpoint when
+      // recovery starts, after the page has stopped scheduling frames.
+      t.checkpoint ??= {
+        state: t.last.project_game_state(), ticks: t.ticks, frames: t.frames,
+      };
       if (t.failNext) {
         t.failNext = false;
         ++t.failedAttempts;
@@ -88,6 +93,10 @@ try {
     return {state,ticks:t.ticks,frames:t.frames,backend:t.last.backend()};
   })()`);
   assert.equal(before.backend, 'BrowserWebGpu');
+  await waitFor("window.testRecovery.checkpoint !== undefined");
+  const checkpoint = await evaluate("window.testRecovery.checkpoint");
+  assert.ok(checkpoint.ticks >= before.ticks);
+  assert.ok(checkpoint.frames >= before.frames);
   let stopped = null;
   if (mode === 'retry') {
     await waitFor("document.querySelector('#recover').hidden === false");
@@ -96,21 +105,21 @@ try {
       return {ticks:t.ticks,frames:t.frames,failedAttempts:t.failedAttempts,state:t.last.project_game_state()};
     })()`);
     assert.equal(stopped.failedAttempts,1);
-    assert.equal(stopped.ticks,before.ticks);
-    assert.equal(stopped.frames,before.frames);
-    assert.equal(stopped.state,before.state);
+    assert.equal(stopped.ticks,checkpoint.ticks);
+    assert.equal(stopped.frames,checkpoint.frames);
+    assert.equal(stopped.state,checkpoint.state);
     await evaluate("document.querySelector('#recover').click()");
   }
   await waitFor(`document.querySelector('#status').textContent === ${JSON.stringify(packageName)} && window.testRecovery.restored`);
-  await waitFor(`window.testRecovery.ticks >= ${before.ticks + 30}`);
+  await waitFor(`window.testRecovery.ticks >= ${checkpoint.ticks + 30}`);
   const after = await evaluate(`(() => {
     const t = window.testRecovery;
     return {state:t.last.project_game_state(),restored:t.restored,ticks:t.ticks,frames:t.frames,
             newCanvas:t.canvas !== document.querySelector('canvas'),backend:t.last.backend()};
   })()`);
-  assert.equal(after.restored,before.state);
-  assert.notEqual(after.state,before.state);
-  assert.ok(after.frames > before.frames);
+  assert.equal(after.restored,checkpoint.state);
+  assert.notEqual(after.state,checkpoint.state);
+  assert.ok(after.frames > checkpoint.frames);
   assert.equal(after.newCanvas,true);
   assert.equal(after.backend,'BrowserWebGpu');
   const control = await evaluate(`(async () => {
@@ -132,9 +141,9 @@ try {
     const {data} = await send('Page.captureScreenshot');
     writeFileSync(screenshot,Buffer.from(data,'base64'));
   }
-  for (const row of [before, stopped, after].filter(Boolean)) {
+  for (const row of [before, checkpoint, stopped, after].filter(Boolean)) {
     row.state = JSON.parse(row.state);
     if (row.restored) row.restored = JSON.parse(row.restored);
   }
-  console.log(JSON.stringify({mode,before,stopped,after,matchesUninterrupted:true},null,2));
+  console.log(JSON.stringify({mode,before,checkpoint,stopped,after,matchesUninterrupted:true},null,2));
 } finally { ws.close(); }

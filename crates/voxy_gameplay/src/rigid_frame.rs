@@ -20,6 +20,7 @@ pub struct RigidBodyFrame {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct PreparedRigidPose {
     pub pose: Transform,
+    pub translation: DVec3,
     /// Bound for the stored root affine transform over points within the supplied
     /// physical radius from COM. Includes root f32 matrix formation, not GPU math.
     pub point_error_m: f64,
@@ -169,7 +170,40 @@ impl RigidBodyFrame {
         radius_m: f64,
         max_point_error_m: f64,
     ) -> Result<PreparedRigidPose, PhysicsError> {
-        if !radius_m.is_finite()
+        self.prepare_pose_relative(body, DVec3::ZERO, radius_m, max_point_error_m)
+    }
+
+    /// Prepare a scene pose relative to a world-space origin in meters.
+    /// The caller must use the same origin for the scene containing the pose.
+    pub fn prepare_pose_relative(
+        self,
+        body: ContactBody,
+        origin: DVec3,
+        radius_m: f64,
+        max_point_error_m: f64,
+    ) -> Result<PreparedRigidPose, PhysicsError> {
+        self.prepare_pose_in_frame(body, origin, radius_m, max_point_error_m, false)
+    }
+
+    pub(crate) fn prepare_precise_pose(
+        self,
+        body: ContactBody,
+        radius_m: f64,
+        max_point_error_m: f64,
+    ) -> Result<PreparedRigidPose, PhysicsError> {
+        self.prepare_pose_in_frame(body, DVec3::ZERO, radius_m, max_point_error_m, true)
+    }
+
+    fn prepare_pose_in_frame(
+        self,
+        body: ContactBody,
+        origin: DVec3,
+        radius_m: f64,
+        max_point_error_m: f64,
+        precise: bool,
+    ) -> Result<PreparedRigidPose, PhysicsError> {
+        if !origin.is_finite()
+            || !radius_m.is_finite()
             || radius_m < 0.
             || !max_point_error_m.is_finite()
             || max_point_error_m < 0.
@@ -184,10 +218,10 @@ impl RigidBodyFrame {
         }
         let root =
             (DQuat::from_array(spin.orientation) * self.principal_to_root.conjugate()).normalize();
-        let center = DVec3::from_array(body.motion.position);
-        let pivot = center - root * self.center_root;
-        let pose = Transform {
-            translation: pivot.as_vec3(),
+        let world_center = DVec3::from_array(body.motion.position);
+        let center = world_center - origin;
+        let mut pose = Transform {
+            translation: Vec3::ZERO,
             rotation: root.as_quat(),
             scale: self.scale,
         };
@@ -205,8 +239,17 @@ impl RigidBodyFrame {
         let delta =
             (DQuat::from_array(spin.orientation) * self.initial_principal.conjugate()).normalize();
         let desired = DMat3::from_quat(delta) * self.initial_root_affine;
-        let center_error =
-            (stored.w_axis.truncate().as_dvec3() + actual * self.center_root - center).length();
+        // Compensate for the rounded scene rotation when placing the COM.
+        let stored_center_offset = actual * self.center_root;
+        let translation = center - stored_center_offset;
+        pose.translation = translation.as_vec3();
+        pose.matrix()?;
+        let stored_translation = if precise {
+            translation
+        } else {
+            pose.translation.as_dvec3()
+        };
+        let center_error = (stored_translation + stored_center_offset - center).length();
         let difference = actual - desired;
         let frobenius = difference
             .to_cols_array()
@@ -216,7 +259,13 @@ impl RigidBodyFrame {
             .sqrt();
         let guard = 32.
             * f64::EPSILON
-            * (1. + center.abs().max_element() + self.center_root.length() + radius_m);
+            * (1.
+                + world_center
+                    .abs()
+                    .max_element()
+                    .max(origin.abs().max_element())
+                + self.center_root.length()
+                + radius_m);
         let inverse_radius_scale = self
             .initial_root_affine
             .inverse()
@@ -230,10 +279,17 @@ impl RigidBodyFrame {
         let error =
             center_error + frobenius * radius_m * inverse_radius_scale + spin_norm_defect + guard;
         if !error.is_finite() || error > max_point_error_m {
+            if std::env::var_os("VOXY_TRACE_RIGID_POSE_RANGE").is_some() {
+                let affine_error = frobenius * radius_m * inverse_radius_scale;
+                eprintln!(
+                    "rigid pose out of range: center={center:?} center_error={center_error:e} affine_error={affine_error:e} spin_error={spin_norm_defect:e} guard={guard:e} total={error:e} limit={max_point_error_m:e}"
+                );
+            }
             return Err(PhysicsError::CoordinateRange);
         }
         Ok(PreparedRigidPose {
             pose,
+            translation: stored_translation,
             point_error_m: error,
             center_error_m: center_error,
         })
@@ -287,6 +343,31 @@ mod tests {
         };
         RigidBodyFrame::new(pose, descriptor.prepare(1., pose).unwrap()).unwrap()
     }
+    #[test]
+    fn rigid_pose_rejects_unrepresentable_translation_at_ten_micrometers() {
+        let frame = frame(Transform::default());
+        let mut body = frame.prepare_body([0.; 3], [0.; 3], [0.; 3]).unwrap();
+        body.motion.position[1] = -260.1952625000003;
+        let limit_m = 1e-5;
+        assert!(
+            (f64::from(body.motion.position[1] as f32) - body.motion.position[1]).abs() > limit_m
+        );
+        assert!(matches!(
+            frame.prepare_pose(body, 1., limit_m),
+            Err(PhysicsError::CoordinateRange)
+        ));
+
+        let origin = DVec3::new(0., -256., 0.);
+        let relative = frame
+            .prepare_pose_relative(body, origin, 1., limit_m)
+            .unwrap();
+        let world_pivot = relative.pose.translation.as_dvec3() + origin;
+        assert!((world_pivot.y - body.motion.position[1]).abs() < limit_m);
+
+        body.motion.position[1] = f64::from(body.motion.position[1] as f32);
+        assert!(frame.prepare_pose(body, 1., limit_m).is_ok());
+    }
+
     #[test]
     fn quarter_turn_moves_pivot_around_fixed_com_and_converts_pivot_velocity() {
         let frame = frame(Transform::default());

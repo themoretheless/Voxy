@@ -29,7 +29,16 @@ impl VoxyApp {
                 self.profile_tick += 1;
                 self.input.cancel_all();
                 let tick = self.profile_tick;
-                if scenario != frame_profile::Scenario::Idle {
+                if scenario == frame_profile::Scenario::Terrain {
+                    if let Some(character) = self.character
+                        && let Some(key) = terrain_profile_direction(
+                            self.profile_terrain_transitions,
+                            self.terrain_center_for(character) == self.terrain_center,
+                        )
+                    {
+                        self.input.key(key, ElementState::Pressed, false);
+                    }
+                } else if scenario != frame_profile::Scenario::Idle {
                     self.input.key(
                         KeyCode::KeyW,
                         if tick % 1200 < 600 {
@@ -49,7 +58,11 @@ impl VoxyApp {
                         false,
                     );
                 }
-                if scenario == frame_profile::Scenario::Water && tick == 720 {
+                let water_scenario = matches!(
+                    scenario,
+                    frame_profile::Scenario::Water | frame_profile::Scenario::Terrain
+                );
+                if water_scenario && tick == 720 {
                     if let Err(error) = self.release_autopilot_water() {
                         self.startup_failure = Some(error);
                         event_loop.exit();
@@ -57,7 +70,7 @@ impl VoxyApp {
                     }
                     self.refresh_world_geometry(event_loop);
                 }
-                if scenario == frame_profile::Scenario::Water && tick % 600 == 300 {
+                if water_scenario && tick % 600 == 300 {
                     self.input.queue_fire();
                 }
             }
@@ -1524,4 +1537,22 @@ mod rebuild_publication_tests {
             }
         }
     }
+}
+
+fn terrain_profile_direction(transitions: u64, centered: bool) -> Option<KeyCode> {
+    match (transitions, centered) {
+        (0, true) => Some(KeyCode::KeyW),
+        (1, true) => Some(KeyCode::KeyS),
+        _ => None,
+    }
+}
+
+#[cfg(test)]
+#[test]
+fn terrain_profile_waits_for_each_window_before_reversing_or_finishing() {
+    assert_eq!(terrain_profile_direction(0, true), Some(KeyCode::KeyW));
+    assert_eq!(terrain_profile_direction(0, false), None);
+    assert_eq!(terrain_profile_direction(1, true), Some(KeyCode::KeyS));
+    assert_eq!(terrain_profile_direction(1, false), None);
+    assert_eq!(terrain_profile_direction(2, true), None);
 }

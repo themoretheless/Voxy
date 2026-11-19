@@ -1,0 +1,14 @@
+MODEL PUBLISHED frames=71 first_x=-0.5 asset=logical-quad publication_us=2096
+MODEL FAILED frames=99 last_good=true asset=logical-quad status=Some(Failed("OBJ line 1: unsupported OBJ directive")) publication_us=25
+MODEL FAILED frames=149 last_good=true asset=logical-quad status=Some(Failed("OBJ line 1: unsupported OBJ directive")) publication_us=25
+MODEL FAILED frames=173 last_good=true asset=logical-quad status=Some(Failed("OBJ line 1: unsupported OBJ directive")) publication_us=54
+MODEL PUBLISHED frames=237 first_x=0 asset=logical-quad publication_us=2151
+GAME UI GPU PUBLISHED draws=0
+MODEL PLAY PASS: fixed_ticks=0 native_frames=32 stop_presented=true
+MODEL PLAY PASS: fixed_ticks=0 native_frames=32 stop_presented=true
+MODEL DRAG PASS: one transaction, cancellation preserved redo
+MODEL DELETE PASS: empty scene and undo/redo restored object identities
+MODEL INSTANCES PASS: 2 independent transforms, shared geometry
+ASSET WINDOW PASS: 391 native frames; failed reload retained model; corrected file recovered
+NATIVE RELOAD TEST PASS: corrupt source retained model, rapid edits converged to final geometry, rendering continued
+MANIFEST RELOCATION PASS: native resource identity stayed logical-quad after real rename and manifest replacement

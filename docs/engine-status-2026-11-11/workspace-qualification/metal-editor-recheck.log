@@ -1,0 +1,32 @@
+
+running 4 tests
+test animated_models::tests::animated_lod_views_budget_and_cpu_fallback ... ok
+test app::model_reload::gpu_app_tests::offscreen_nested_locomotion_cycle_matches_packaged_gpu_frames ... LOCOMOTION CYCLE GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig publication_us=142
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig publication_us=171
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig publication_us=93
+GAME PACKAGE PASS sources=6 bytes=18998
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig publication_us=132
+MODEL PUBLISHED frames=0 first_x=0.0625 asset=rig publication_us=197
+GAME UI GPU PUBLISHED draws=0
+GPU CYCLE PASS ticks=720 packaged_ticks=720 exact_rgba_frames=720 cpu_oracle_frames=1440
+ok
+test app::model_reload::tests::native_transaction_switches_cpu_gpu_together_and_rejects_stale_or_failed_work ... NATIVE MODEL RELOAD GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=quad.obj publication_us=64
+MODEL FAILED frames=0 last_good=true asset=quad.obj status=Some(Failed("GPU import rejected: injected deferred GPU failure")) publication_us=2
+MODEL FAILED frames=0 last_good=true asset=quad.obj status=Some(Failed("GPU publication cancelled during shutdown")) publication_us=2
+ok
+test ui_live::gpu_reload_tests::gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher ... UI CHECKPOINT GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+GAME UI GPU PUBLISHED draws=2
+UI ARCHIVE GPU RESTORED without font source, including retired owner
+GAME UI GPU PUBLISHED draws=2
+UI BUNDLE GPU RESTORED both font generations without source or presentation ACK
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=2
+UI SAVE BARRIER GPU drained import, froze dispatch, retained failed last-good and recovered
+ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 477 filtered out; finished in 6.46s
+

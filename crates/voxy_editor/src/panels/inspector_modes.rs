@@ -194,13 +194,14 @@ impl Panels {
         right: f32,
         size: Vec2,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let label = if object
+        let has_joint = object
             .components
-            .contains_key(crate::joint_authoring::SCHEMA)
-        {
-            "Remove physics joint"
-        } else {
-            "Add physics joint"
+            .contains_key(crate::joint_authoring::SCHEMA);
+        let label = match (has_joint, right < 120.) {
+            (true, true) => "Remove joint",
+            (false, true) => "Add joint",
+            (true, false) => "Remove physics joint",
+            (false, false) => "Add physics joint",
         };
         let y = 610.0;
         self.text(
@@ -445,7 +446,33 @@ impl Panels {
                 .push(([rx + 4.0, y, right - 8.0, 23.0], Action::KinematicBody));
         }
         if matches!(inspector, InspectorMode::Components(_)) && !self.retarget_draft {
-            self.build_joint_button(batch, object, rx, right, size)?;
+            let character = object.components.contains_key("game.character.v1");
+            let joint_width = if character { right * 0.5 } else { right };
+            self.build_joint_button(batch, object, rx, joint_width, size)?;
+            if character {
+                let label = if object
+                    .components
+                    .contains_key(crate::navigation_authoring::SCHEMA)
+                {
+                    "Clear goal"
+                } else {
+                    "Add goal"
+                };
+                let x = rx + joint_width;
+                let width = right - joint_width;
+                let y = 610.0;
+                self.text(
+                    batch,
+                    label,
+                    Vec2::new(x + 8.0, y + 17.0),
+                    width - 12.0,
+                    size,
+                )?;
+                self.regions.push((
+                    [x + 4.0, y, width - 8.0, 23.0],
+                    Action::NpcDestination(crate::component_fields::morph_edit_token(object)),
+                ));
+            }
         }
         self.text(
             batch,

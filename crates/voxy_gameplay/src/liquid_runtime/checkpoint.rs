@@ -277,7 +277,13 @@ impl SceneLiquidCheckpoint {
                 }
                 if let Some(frame) = body.rigid_frame {
                     frame
-                        .prepare_pose(body.state, 0., 0.00001)
+                        .prepare_precise_pose(
+                            body.state,
+                            super::rigid_template_radius(
+                                body.principal_templates.as_deref().unwrap(),
+                            ),
+                            1e-5,
+                        )
                         .map_err(|e| format!("restored body frame: {e:?}"))?;
                     if let Some(loads) = &body.point_loads {
                         loads.prepare(frame, elapsed, 128)?;
@@ -545,6 +551,35 @@ mod tests {
                 .checkpoint(&restored_scene, |node| identify(&restored_ids, node))
                 .unwrap()
         );
+        let mut invalid_pose = saved.clone();
+        let body = &mut invalid_pose.bodies[0];
+        let spin = body.state.spin.as_mut().unwrap();
+        spin.orientation = glam::DQuat::from_rotation_z(0.731).to_array();
+        let templates = body.principal_templates.as_mut().unwrap();
+        templates[0].center = glam::DVec3::X * 10_000.;
+        let frame = body.rigid_frame.unwrap();
+        assert!(frame.prepare_pose(body.state, 0., 1e-5).is_ok());
+        assert!(matches!(
+            frame.prepare_pose(
+                body.state,
+                super::super::rigid_template_radius(templates),
+                1e-5
+            ),
+            Err(crate::PhysicsError::CoordinateRange)
+        ));
+        let error = invalid_pose
+            .prepare(
+                &restored_scene,
+                |id| restored_ids.get(id).copied(),
+                limits(),
+            )
+            .expect_err("restore must reject pose error at the collider");
+        assert!(
+            error
+                .to_string()
+                .contains("restored body frame: CoordinateRange")
+        );
+
         let mut invalid = saved.clone();
         invalid.sources[0].2.material = usize::MAX;
         assert!(

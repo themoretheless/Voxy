@@ -146,11 +146,18 @@ fn audit_one(
     read.slice(..).map_async(wgpu::MapMode::Read, move |r| {
         let _ = tx.send(r);
     });
-    device.poll(wgpu::PollType::Wait {
-        submission_index: Some(submission),
-        timeout: None,
-    })?;
-    rx.recv()??;
+    let timeout = std::time::Duration::from_mins(2);
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: Some(timeout),
+        })
+        .map_err(|error| {
+            format!(
+                "shared ray job GPU wait failed (rays={count}, deferred={defer_nearest}, order_certificate={certify_order}, single_claim={single_ray_queue_claim}): {error}"
+            )
+        })?;
+    rx.recv_timeout(timeout)??;
     let mapped = read.slice(..).get_mapped_range()?;
     let (first, repeated) = mapped.split_at(result_bytes as usize);
     assert_eq!(first, repeated, "reused restricted bindings changed output");

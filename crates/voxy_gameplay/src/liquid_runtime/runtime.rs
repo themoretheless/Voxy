@@ -368,33 +368,28 @@ impl SceneLiquidRuntime {
             .iter()
             .map(|body| {
                 let mut pose = body.published;
+                let mut precise_translation = None;
                 if let Some(frame) = body.rigid_frame {
-                    let radius = body
-                        .principal_templates
-                        .as_ref()
-                        .unwrap()
-                        .iter()
-                        .map(|s| {
-                            s.center.length() + s.edges.iter().map(|e| e.length()).sum::<f64>()
-                        })
-                        .fold(0., f64::max);
-                    pose = frame
-                        .prepare_pose(body.state, radius, 1e-5)
-                        .map_err(|e| format!("rigid pose publication: {e:?}"))?
-                        .pose;
+                    let radius =
+                        super::rigid_template_radius(body.principal_templates.as_deref().unwrap());
+                    let prepared = frame
+                        .prepare_precise_pose(body.state, radius, 1e-5)
+                        .map_err(|e| format!("rigid pose publication: {e:?}"))?;
+                    pose = prepared.pose;
+                    precise_translation = Some(prepared.translation);
                 } else {
                     pose.translation =
                         glam::DVec3::from_array(body.state.motion.position).as_vec3();
                 }
                 pose.matrix()
                     .map_err(|e| format!("liquid body publication: {e:?}"))?;
-                Ok((body.node, pose))
+                Ok((body.node, pose, precise_translation))
             })
             .collect::<Result<Vec<_>, GameplayError>>()?;
         scene
-            .set_locals(&poses)
+            .set_locals_with_precise_translations(&poses)
             .map_err(|e| format!("liquid body publication: {e:?}"))?;
-        for (body, (_, pose)) in self.body.iter_mut().zip(poses) {
+        for (body, (_, pose, _)) in self.body.iter_mut().zip(poses) {
             body.published = pose;
         }
         Ok(())
@@ -622,8 +617,19 @@ impl SceneLiquidRuntime {
         dt: f64,
         motion: &crate::PlatformMotion,
     ) -> Result<SceneLiquidStep, GameplayError> {
+        let supports = self.play_supports();
         if motion.boundaries.is_empty() {
-            return self.tick(scene, dt, None);
+            return self
+                .tick_impl(
+                    scene,
+                    dt,
+                    None,
+                    Default::default(),
+                    scene_rotation_config(),
+                    supports,
+                    None,
+                )
+                .map(|report| report.step);
         }
         if motion.step_s != dt || motion.scene_revision != Some(scene.change_token()) {
             return Err("invalid platform motion receipt".into());
@@ -634,10 +640,24 @@ impl SceneLiquidRuntime {
             None,
             Default::default(),
             scene_rotation_config(),
-            None,
+            supports,
             Some(motion),
         )
         .map(|report| report.step)
+    }
+
+    /// Reaction mode of the play loop. A particle resting on a rotating face is a
+    /// sustained contact: single impulses resolve it as an unbounded sequence of
+    /// zero-time impacts, so scenes with angular bodies integrate support
+    /// reactions instead. Translating-only scenes keep the impulse event loop.
+    fn play_supports(&self) -> Option<physics::liquid::SupportedWorldConfig> {
+        self.body
+            .iter()
+            .any(|owner| owner.state.spin.is_some())
+            .then(|| physics::liquid::SupportedWorldConfig {
+                reaction_jerk_tolerance: Some(1e-10),
+                ..Default::default()
+            })
     }
 
     /// Advance coupled bodies and shorten a conflicting platform trajectory.
@@ -854,7 +874,7 @@ impl SceneLiquidRuntime {
                         &point_loads,
                         config,
                     )
-                    .map_err(|e| format!("scene supported liquid body step: {e:?}"))?;
+                    .map_err(|e| world.impact_error(e, "scene supported liquid body step"))?;
                 support_report = Some(report);
                 report.rigid.world
             } else if has_points {

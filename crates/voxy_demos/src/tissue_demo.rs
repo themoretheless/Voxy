@@ -390,7 +390,7 @@ impl TissueDemo {
     // Explicit authored specifications always require disjoint physical volumes.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn build_region_specs(
         regions: Vec<TissueRegionSpec>,
@@ -1362,7 +1362,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn contact_fixture_roundtrip_preserves_ccd_and_does_not_mutate_body() {
         for origin in [0., 1e6] {
@@ -1653,7 +1653,7 @@ mod tests {
     #[test]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn adaptive_surface_motion_books_work_and_crossing_rolls_back() {
         let mut material = Body::new(

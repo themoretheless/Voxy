@@ -58,6 +58,10 @@ pub(crate) struct ArchiveWorldRayFrame {
     device: wgpu::Device,
 }
 impl ArchiveWorldRayFrame {
+    pub(crate) fn software_nearest_enabled(&self) -> bool {
+        self.kinds[0][0].job.software_nearest_enabled()
+    }
+
     pub(crate) fn new(
         device: &wgpu::Device,
         templates: Vec<ArchiveWorldRayRegion>,
@@ -182,7 +186,26 @@ impl ArchiveWorldRayFrame {
         // ordered batches so the queue can drain before the frame is fully
         // encoded. Shared ray scratch remains ordered on the same queue.
         let batch_metal = device.adapter_info().backend == wgpu::Backend::Metal;
-        const REGIONS_PER_SUBMISSION: usize = 8;
+        // A submission per region lets a diagnostic locate a stall before
+        // the first normal batch completes.
+        let single_region = batch_metal
+            && trace_batches
+            && std::env::var_os("VOXY_STREET_WORLD_RAY_TRACE_SINGLE_REGION").is_some();
+        let regions_per_submission = if single_region { 1 } else { 8 };
+        if single_region {
+            let next = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("archive world-ray first region"),
+            });
+            let submitted = std::time::Instant::now();
+            queue.submit([std::mem::replace(encoder, next).finish()]);
+            eprintln!("STREET WORLD frame={frame} submitted_before_regions");
+            queue.on_submitted_work_done(move || {
+                eprintln!(
+                    "STREET WORLD frame={frame} completed_before_regions observed_ms={:.3}",
+                    submitted.elapsed().as_secs_f64() * 1000.,
+                );
+            });
+        }
         let mut encoded_regions = 0;
         for (kind, regions) in self.kinds.iter().enumerate() {
             let base = 8 + kind as u32 * 2;
@@ -190,8 +213,10 @@ impl ArchiveWorldRayFrame {
                 region.encode_profiled(
                     encoder,
                     timing,
-                    (index == 0).then_some(base),
-                    (index + 1 == regions.len()).then_some(base + 1),
+                    (
+                        (index == 0).then_some(base),
+                        (index + 1 == regions.len()).then_some(base + 1),
+                    ),
                     self.consumer_pair
                         .as_ref()
                         .map(|p| (p, kind * self.tiles.len() + index)),
@@ -203,9 +228,10 @@ impl ArchiveWorldRayFrame {
                             p.resolve_query(kind * self.tiles.len() + index),
                         )
                     }),
+                    (single_region && encoded_regions == 0).then_some((device, queue)),
                 );
                 encoded_regions += 1;
-                if batch_metal && encoded_regions % REGIONS_PER_SUBMISSION == 0 {
+                if batch_metal && encoded_regions % regions_per_submission == 0 {
                     let next = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
                         label: Some("archive world-ray region batch"),
                     });
@@ -818,7 +844,7 @@ impl ArchiveWorldRayRegion {
         begin: Option<u32>,
         end: Option<u32>,
     ) {
-        self.encode_profiled(encoder, timing, begin, end, None, None);
+        self.encode_profiled(encoder, timing, (begin, end), None, None, None);
     }
     #[expect(
         clippy::too_many_lines,
@@ -828,11 +854,71 @@ impl ArchiveWorldRayRegion {
         &self,
         encoder: &mut wgpu::CommandEncoder,
         timing: Option<&wgpu::QuerySet>,
-        begin: Option<u32>,
-        end: Option<u32>,
+        (begin, end): (Option<u32>, Option<u32>),
         consumer_pair: Option<(&consumer_pair::ConsumerPair, usize)>,
         profile: Option<(&wgpu::QuerySet, u32, u32, Option<u32>)>,
+        first_region_trace: Option<(&wgpu::Device, &wgpu::Queue)>,
     ) {
+        let trace_stage = |encoder: &mut wgpu::CommandEncoder, stage| {
+            if let Some((device, queue)) = first_region_trace {
+                let next = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                    label: Some("archive world-ray diagnostic stage"),
+                });
+                let traversal_stats = self
+                    .job
+                    .traversal_work_stats_buffer()
+                    .filter(|_| stage == "exact fallback work counters")
+                    .map(|stats| {
+                        let read = device.create_buffer(&wgpu::BufferDescriptor {
+                            label: Some("first region traversal statistics"),
+                            size: stats.size(),
+                            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+                            mapped_at_creation: false,
+                        });
+                        encoder.copy_buffer_to_buffer(stats, 0, &read, 0, stats.size());
+                        read
+                    });
+                let submitted = std::time::Instant::now();
+                queue.submit([std::mem::replace(encoder, next).finish()]);
+                eprintln!("STREET WORLD first_region submitted_stage={stage}");
+                if let Some(read) = traversal_stats {
+                    let mapped = read.clone();
+                    read.slice(..).map_async(wgpu::MapMode::Read, move |result| {
+                        let counters = result
+                            .map_err(|error| error.to_string())
+                            .and_then(|()| {
+                                mapped
+                                    .slice(..)
+                                    .get_mapped_range()
+                                    .map(|bytes| {
+                                        let pair = |offset| {
+                                            u64::from_le_bytes(bytes[offset..offset + 8].try_into().unwrap())
+                                        };
+                                        let word = |offset| {
+                                            u32::from_le_bytes(bytes[offset..offset + 4].try_into().unwrap())
+                                        };
+                                        (pair(0), pair(8), pair(16), word(40), word(44), pair(48))
+                                    })
+                                    .map_err(|error| error.to_string())
+                            });
+                        match counters {
+                            Ok((records, nodes, triangles, max_nodes, max_triangles, count)) => {
+                                mapped.unmap();
+                                eprintln!("STREET WORLD first_region sampled_records={records} visited_nodes={nodes} triangle_tests={triangles} maximum_nodes={max_nodes} maximum_triangles={max_triangles}");
+                                eprintln!("STREET WORLD first_region exact_fallback_queued_records={count}");
+                            }
+                            Err(error) => eprintln!("STREET WORLD first_region traversal statistics unavailable: {error}"),
+                        }
+                    });
+                }
+                queue.on_submitted_work_done(move || {
+                    eprintln!(
+                        "STREET WORLD first_region completed_stage={stage} observed_ms={:.3}",
+                        submitted.elapsed().as_secs_f64() * 1000.,
+                    );
+                });
+            }
+        };
         if self.cache_check {
             // Keep the mismatch count across frames for this owner.
             encoder.clear_buffer(&self.audit, 0, Some(40));
@@ -899,13 +985,38 @@ impl ArchiveWorldRayRegion {
             }
             pass.dispatch_workgroups(self.extent[0].div_ceil(8), self.extent[1].div_ceil(8), 1);
         }
+        trace_stage(encoder, "ray_generation");
+        if let Some((device, queue)) = first_region_trace
+            && let Some(path) = std::env::var_os("VOXY_STREET_WORLD_RAY_INPUT_CAPTURE")
+            && let Err(error) = capture_world_ray_input(device, queue, self.job.input(), &path)
+        {
+            eprintln!("STREET WORLD first_region input capture failed: {error}");
+        }
+        if let Some((device, _)) = first_region_trace
+            && let Some(path) = std::env::var_os("VOXY_STREET_WORLD_RAY_INPUT_REPLAY")
+        {
+            use wgpu::util::DeviceExt as _;
+            let input = self.job.input();
+            let bytes = std::fs::read(path).expect("read first-region ray replay");
+            assert_eq!(bytes.len() as u64, input.size(), "ray replay buffer size");
+            let upload = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("first world-ray region replay upload"),
+                contents: &bytes,
+                usage: wgpu::BufferUsages::COPY_SRC,
+            });
+            encoder.copy_buffer_to_buffer(&upload, 0, input, 0, input.size());
+            trace_stage(encoder, "ray_replay_upload");
+        }
         self.job
             .encode_profiled(
                 encoder,
                 self.producer.count(),
                 profile.map(|(set, base, consumer, _)| (set, base + 2 + 2 * consumer)),
+                first_region_trace
+                    .map(|_| &trace_stage as &dyn Fn(&mut wgpu::CommandEncoder, &'static str)),
             )
             .expect("immutable prepared source region");
+        trace_stage(encoder, "ray_query");
         if let Some((pair, index)) = consumer_pair {
             let (groups, audit) = self
                 .original_groups
@@ -953,4 +1064,45 @@ impl ArchiveWorldRayRegion {
             pair.compare(encoder, self.views[2].texture(), index);
         }
     }
+}
+
+fn capture_world_ray_input(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    input: &wgpu::Buffer,
+    path: &std::ffi::OsStr,
+) -> Result<(), Box<dyn std::error::Error>> {
+    use std::io::Write as _;
+    let readback = device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("first world-ray region input capture"),
+        size: input.size(),
+        usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+        mapped_at_creation: false,
+    });
+    let mut encoder = device.create_command_encoder(&Default::default());
+    encoder.copy_buffer_to_buffer(input, 0, &readback, 0, input.size());
+    let submission = queue.submit([encoder.finish()]);
+    let (send, receive) = std::sync::mpsc::channel();
+    readback
+        .slice(..)
+        .map_async(wgpu::MapMode::Read, move |result| {
+            let _ = send.send(result);
+        });
+    device.poll(wgpu::PollType::Wait {
+        submission_index: Some(submission),
+        timeout: Some(std::time::Duration::from_secs(10)),
+    })?;
+    receive.recv_timeout(std::time::Duration::from_secs(1))??;
+    let mapped = readback.slice(..).get_mapped_range()?;
+    let mut file = std::fs::File::create_new(path)?;
+    if let Err(error) = file.write_all(&mapped) {
+        drop(file);
+        let _ = std::fs::remove_file(path);
+        return Err(error.into());
+    }
+    eprintln!(
+        "STREET WORLD first_region captured_input_bytes={}",
+        mapped.len()
+    );
+    Ok(())
 }

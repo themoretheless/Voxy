@@ -378,6 +378,7 @@ fn nearest_process_worker(index:u32,stride:u32,worker:u32) {
 
  let direction=nearest_start(index,stride,worker);
  // Candidate temporaries begin after all seven persistent operands.
+ // BEGIN native nearest candidates
  var native=ex_vec_valid(direction)!=0u&&!ex_vec_zero(direction);
  for(var k=0u;k<3u;k+=1u) {native=native&&nearest_native_word(exact_ray_word(ray+k))&&nearest_native_word(exact_ray_word(ray+8u+k))&&nearest_canonical_pair(exact_ray_word(ray+k),exact_ray_word(ray+4u+k))&&nearest_canonical_pair(exact_ray_word(ray+8u+k),exact_ray_word(ray+12u+k));}
  // A canonical low word is not covered by a fixed local BLAS padding.
@@ -391,6 +392,7 @@ fn nearest_process_worker(index:u32,stride:u32,worker:u32) {
   var query:ray_query;rayQueryInitialize(&query,nearest_scene,RayDesc(0u,255u,0.,1.,origin,high));
   while rayQueryProceed(&query) {let candidate=rayQueryGetCandidateIntersection(&query);if candidate.kind==3u {nearest_consider(candidate.instance_custom_data,candidate.primitive_index,ray,direction);if nearest_seen_count<64u {nearest_seen[nearest_seen_count]=vec2<u32>(candidate.instance_custom_data,candidate.primitive_index);nearest_seen_count+=1u;}}}
  }
+ // END native nearest candidates
  // Always supplement native candidates with conservative original-source traversal.
  // Native broad-phase completeness is never assumed, including zero-low rays.
  if ex_vec_valid(direction)!=0u {

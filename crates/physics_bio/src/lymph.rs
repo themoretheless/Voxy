@@ -1,6 +1,12 @@
 //! Conservative lumped fluid/protein exchange in SI units.
 //! Classical Starling/Kedem–Katchalsky approximation, not a resolved glycocalyx.
 //! A node may represent plasma, interstitium or lymph; no fitted defaults.
+
+// The adaptive step halves `h` on these two failures; one constant per message
+// keeps the producers and that retry in step.
+const ITERATION_LIMIT: &str = "inertial lymph iteration limit";
+const INVALID_TRIAL_INVENTORY: &str = "invalid inertial lymph trial inventory";
+
 pub mod profile;
 #[path = "lymph/wall.rs"]
 mod wall;
@@ -351,7 +357,7 @@ impl LymphNetwork {
             if v.iter().any(|x| !x.is_finite() || *x <= 0.)
                 || m.iter().any(|x| !x.is_finite() || *x < 0.)
             {
-                return Err("invalid inertial lymph trial inventory");
+                return Err(INVALID_TRIAL_INVENTORY);
             }
             let error = v
                 .iter()
@@ -384,7 +390,7 @@ impl LymphNetwork {
             trial.volumes = v;
             trial.proteins = m;
         }
-        Err("inertial lymph iteration limit")
+        Err(ITERATION_LIMIT)
     }
     /// Joint backward-Euler inventory exchange through fixed-radius resolved pipes.
     /// Profiles and network commit together; trial iterations restart old profiles.
@@ -532,7 +538,7 @@ impl LymphNetwork {
             if v.iter().any(|x| !x.is_finite() || *x <= 0.)
                 || m.iter().any(|x| !x.is_finite() || *x < 0.)
             {
-                return Err("invalid inertial lymph trial inventory");
+                return Err(INVALID_TRIAL_INVENTORY);
             }
             let error = v
                 .iter()
@@ -563,7 +569,7 @@ impl LymphNetwork {
             trial.volumes = v;
             trial.proteins = m;
         }
-        Err("inertial lymph iteration limit")
+        Err(ITERATION_LIMIT)
     }
     /// Step-doubled backward-Euler wall/network integration with momentum error.
     /// Both network and flow history roll back on whole-call failure.
@@ -1145,11 +1151,7 @@ pub(crate) fn adaptive_exchange_order<T: Clone>(
         let (coarse, fine, whole, first, second) = match attempt {
             Ok(states) => states,
             Err(reason)
-                if order == 1
-                    && matches!(
-                        reason,
-                        "inertial lymph iteration limit" | "invalid inertial lymph trial inventory"
-                    ) =>
+                if order == 1 && matches!(reason, ITERATION_LIMIT | INVALID_TRIAL_INVENTORY) =>
             {
                 report.rejected_steps += 1;
                 if 0.5 * h < config.min_step_seconds {

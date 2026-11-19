@@ -248,6 +248,7 @@ mod tests {
             name: id.into(),
             active: true,
             translation: [0.; 3],
+            precise_translation_bits: None,
             rotation: [0., 0., 0., 1.],
             scale: [1.; 3],
             components: Default::default(),
@@ -348,6 +349,13 @@ mod tests {
     #[test]
     fn one_file_restores_scene_allocator_history_behaviors_commands_and_continuation() {
         let (components, behaviors, mut source, mut original) = fixture();
+        let precise_node = source.resolve(&ObjectId("z-root".into())).unwrap();
+        let mut position = source.graph.local_translation_f64(precise_node).unwrap();
+        position.y = -260.1952625000003;
+        source
+            .graph
+            .set_precise_translation(precise_node, position)
+            .unwrap();
         let snapshot = original.checkpoint(&source, &components, BYTES).unwrap();
         let dir = Temp::new();
         let path = dir.0.join("slot.json");
@@ -366,6 +374,10 @@ mod tests {
         assert_eq!(identities(&source), identities(&restored_scene));
         let root = source.resolve(&ObjectId("z-root".into())).unwrap();
         let target = restored_scene.resolve(&ObjectId("z-root".into())).unwrap();
+        assert_eq!(
+            restored_scene.graph.local_translation_f64(target).unwrap(),
+            position
+        );
         assert_ne!(root, target);
         assert!(restored_scene.graph.local(root).is_err());
         assert_eq!(source.graph.component::<u32>(root).unwrap(), Some(&17));

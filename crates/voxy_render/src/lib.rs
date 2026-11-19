@@ -471,7 +471,9 @@ mod probe_gi;
 pub use probe_gi::{BakedProbeCache, chebyshev_probe_visibility};
 
 mod native_vegetation;
-pub use native_vegetation::{NativeVegetation, foliage_translucent_backlighting};
+pub use native_vegetation::{
+    NativeVegetation, NativeVegetationWindow, foliage_translucent_backlighting,
+};
 
 mod archive_hdr_diagnostics;
 mod archive_temporal;

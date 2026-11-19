@@ -17,8 +17,11 @@ experimental-strand-fraction-reuse = []
 experimental-reusable-query-workers = ["dep:rayon"]
 
 [dependencies]
+serde.workspace = true
 num-bigint.workspace = true
 num-rational = "0.4"
 num-traits = "0.2"
 
 rayon = { version = "1.12", optional = true }
+
+serde_json = { workspace = true, features = ["float_roundtrip"] }

@@ -237,6 +237,7 @@ mod tests {
                     name: (*id).into(),
                     active: true,
                     translation: [0.0; 3],
+                    precise_translation_bits: None,
                     rotation: [0.0, 0.0, 0.0, 1.0],
                     scale: [1.0; 3],
                     components: BTreeMap::new(),

@@ -93,7 +93,12 @@ fn fibre_scatter_preserves_draw_streams_and_neighbouring_geometry() {
     .unwrap();
     queue.submit([encoder.finish()]);
     let mut pending = dispatch.begin_read();
-    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: None,
+            timeout: Some(std::time::Duration::from_secs(30)),
+        })
+        .expect("Metal test GPU submission did not complete");
     let bytes = pending.try_read().unwrap().unwrap();
     let vertices = &bytes[..vertex_bytes as usize];
     let normals = &bytes[vertex_bytes as usize..(vertex_bytes + normal_bytes) as usize];
@@ -199,7 +204,12 @@ fn fibre_director_scatter_tracks_pose_and_preserves_neighbours() {
             .unwrap();
             queue.submit([encoder.finish()]);
             let mut pending = dispatch.begin_read();
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: None,
+                    timeout: Some(std::time::Duration::from_secs(30)),
+                })
+                .expect("Metal test GPU submission did not complete");
             let bytes = pending.try_read().unwrap().unwrap();
             let values: &[[f32; 4]] = bytemuck::cast_slice(&bytes);
             let expected = pose.transform_vector3(glam::Vec3::Z).normalize();

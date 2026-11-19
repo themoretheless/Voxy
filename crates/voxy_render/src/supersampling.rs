@@ -305,8 +305,16 @@ mod tests {
             );
             queue.submit([encoder.finish()]);
             let (tx, rx) = std::sync::mpsc::channel();
-            read.map_async(wgpu::MapMode::Read, .., move |r| tx.send(r).unwrap());
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            read.map_async(wgpu::MapMode::Read, .., move |result| {
+                // A timed-out test can drop the receiver before the callback runs.
+                let _ = tx.send(result);
+            });
+            device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: None,
+                    timeout: Some(std::time::Duration::from_secs(30)),
+                })
+                .expect("Metal test GPU submission did not complete");
             rx.recv().unwrap().unwrap();
             let bytes = read.get_mapped_range(..).unwrap();
             for y in 0..4 {

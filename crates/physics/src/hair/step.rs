@@ -170,7 +170,10 @@ impl HairSystem {
             self.swept_strand_initialized = true;
             self.record_phase("initial-contact-admission", 0, 0);
         }
+        let observed_frame = super::phase_diagnostics::observation_frame()
+            .filter(|_| std::env::var_os("VOXY_HAIR_SUBSTEP_PROGRESS").is_some());
         for substep in 0..substeps {
+            let substep_started = observed_frame.map(|_| std::time::Instant::now());
             let meshes = if let Some(sampled) = &mut sampled_meshes {
                 for ((sample, source), vertices) in sampled
                     .iter_mut()
@@ -632,6 +635,13 @@ impl HairSystem {
                 }
             }
             self.record_phase("finished", substep, self.iterations);
+            if let Some((frame, started)) = observed_frame.zip(substep_started) {
+                eprintln!(
+                    "HAIR SUBSTEP frame={frame} completed={}/{substeps} elapsed_ms={:.3}",
+                    substep + 1,
+                    started.elapsed().as_secs_f64() * 1000.
+                );
+            }
         }
         if self.rods.iter().any(|r| {
             r.x.iter()

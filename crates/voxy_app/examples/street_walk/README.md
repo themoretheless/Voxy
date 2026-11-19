@@ -7,8 +7,8 @@ from Poly Haven in `assets/environments/original-street/materials/provenance.jso
 `daylight-provenance.json`; these are external material data, not generated artwork.
 
 The current quality pass varies building frontage widths, setbacks, floor and opening
-counts, plaster/brick colours, balconies, shutters and shop entrances. Trees have
-hierarchical tapered branches and individual geometric leaves. Every rendered triangle
+counts, plaster/brick colours, balconies, shutters and shop entrances. Sidewalk trees use four seeded variants from the same native plant generator as the voxel world,
+with hierarchical branches, geometric leaves and generated bark and leaf materials. Every rendered triangle
 is retained in the f64 collision world. Full 4K source maps retain their 8/16-bit precision
 in linear RGBA32F GPU textures with complete mip chains and 16x anisotropic sampling.
 There is no reduced rendering resolution, geometry decimation or distance LOD.
@@ -230,6 +230,12 @@ Validate coverage and raw counters with `tools/scene-research/audit_traversal_wo
 
 
 ### Full-resolution world-ray batch dimensions
+
+For diagnostic runs, `VOXY_STREET_WORLD_RAY_VISIBILITY_NODE_BUDGET` and
+`VOXY_STREET_WORLD_RAY_VISIBILITY_TRIANGLE_BUDGET` limit work per ray in the
+preliminary visibility pass. Zero disables each limit. Reaching either limit
+routes the ray to the complete exact traversal. The triangle limit counts
+source primitives in hierarchy leaves, excluding seed checks.
 
 Set `VOXY_STREET_WORLD_RAY_TILE_WIDTH` and `VOXY_STREET_WORLD_RAY_TILE_HEIGHT` before preparing the experimental world-ray frame. Defaults remain 512×256. The query owner is allocated at the matching capacity; nonzero dimensions, multiplication overflow, device/budget admission and prepare/connect capacity agreement are checked. These settings change scheduling only, preserving the complete source geometry, output/internal resolution, effects and every original ray.
 

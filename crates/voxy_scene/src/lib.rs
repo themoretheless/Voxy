@@ -75,9 +75,12 @@ mod prefab;
 pub use prefab::{Prefab, PrefabError, PrefabNode};
 
 mod replication;
-pub use replication::{SceneSnapshotDelta, SnapshotRollbackBuffer, TickSnapshot};
+pub use replication::{
+    PredictionClient, PredictionUpdate, SceneDeltaStreamError, SceneSnapshotDelta,
+    SnapshotBaseline, SnapshotRollbackBuffer, SnapshotUpdate, TickSnapshot,
+};
 
-use glam::{Mat4, Quat, Vec3};
+use glam::{DMat4, DVec3, Mat4, Quat, Vec3};
 use std::any::{Any, TypeId};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -172,6 +175,7 @@ impl std::fmt::Debug for Component {
 #[derive(Debug)]
 struct Node {
     local: Transform,
+    precise_translation: Option<DVec3>,
     name: String,
     active: bool,
     world: Result<Mat4, SceneGraphError>,
@@ -389,6 +393,7 @@ impl SceneGraph {
         };
         self.slots[slot].node = Some(Node {
             local,
+            precise_translation: None,
             name: String::new(),
             active: true,
             world,
@@ -685,9 +690,11 @@ impl SceneGraph {
     /// Rejects invalid handles and invalid transforms before mutation.
     pub fn set_local(&mut self, id: NodeId, local: Transform) -> Result<(), SceneGraphError> {
         let matrix = local.matrix()?;
-        if self.node(id)?.local != local {
+        if self.node(id)?.local != local || self.node(id)?.precise_translation.is_some() {
             self.bump_change();
-            self.node_mut(id)?.local = local;
+            let node = self.node_mut(id)?;
+            node.local = local;
+            node.precise_translation = None;
             self.refresh_subtree_with(id, Some(matrix))?;
         }
         Ok(())
@@ -748,8 +755,10 @@ impl SceneGraph {
             }
             let (id, local) = edits[ordered[last].1];
             position = last + 1;
-            if self.node(id)?.local != local {
-                self.node_mut(id)?.local = local;
+            if self.node(id)?.local != local || self.node(id)?.precise_translation.is_some() {
+                let node = self.node_mut(id)?;
+                node.local = local;
+                node.precise_translation = None;
                 dirty_slots.push(slot);
                 unique.push(id);
             }
@@ -788,9 +797,11 @@ impl SceneGraph {
         let mut dirty = vec![false; self.slots.len()];
         for &id in &unique {
             if let Some(local) = values[id.slot]
-                && self.node(id)?.local != local
+                && (self.node(id)?.local != local || self.node(id)?.precise_translation.is_some())
             {
-                self.node_mut(id)?.local = local;
+                let node = self.node_mut(id)?;
+                node.local = local;
+                node.precise_translation = None;
                 dirty[id.slot] = true;
             }
         }
@@ -853,6 +864,77 @@ impl SceneGraph {
     /// Rejects stale/foreign handles and floating-point overflow in composed transforms.
     pub fn world_matrix(&self, id: NodeId) -> Result<Mat4, SceneGraphError> {
         self.node(id)?.world
+    }
+
+    /// Stores a double-precision local translation alongside the existing scene transform.
+    /// Subsequent ordinary local transform edits replace that translation.
+    pub fn set_precise_translation(
+        &mut self,
+        id: NodeId,
+        translation: DVec3,
+    ) -> Result<(), SceneGraphError> {
+        self.set_locals_with_precise_translations(&[(id, self.local(id)?, Some(translation))])
+    }
+
+    /// Publishes transforms and their optional precise local translations as a batch.
+    /// Repeated handles use the final edit.
+    pub fn set_locals_with_precise_translations(
+        &mut self,
+        edits: &[(NodeId, Transform, Option<DVec3>)],
+    ) -> Result<(), SceneGraphError> {
+        let locals = edits
+            .iter()
+            .map(|&(id, mut local, translation)| {
+                if let Some(translation) = translation {
+                    local.translation = translation.as_vec3();
+                }
+                (id, local)
+            })
+            .collect::<Vec<_>>();
+        self.set_locals(&locals)?;
+        for &(id, _, translation) in edits {
+            self.node_mut(id)?.precise_translation = translation;
+        }
+        Ok(())
+    }
+
+    pub fn precise_translation_bits(
+        &self,
+        id: NodeId,
+    ) -> Result<Option<[u64; 3]>, SceneGraphError> {
+        Ok(self
+            .node(id)?
+            .precise_translation
+            .map(|value| value.to_array().map(f64::to_bits)))
+    }
+
+    /// Returns the stored local translation, retaining any double-precision position.
+    pub fn local_translation_f64(&self, id: NodeId) -> Result<DVec3, SceneGraphError> {
+        let node = self.node(id)?;
+        Ok(node
+            .precise_translation
+            .unwrap_or_else(|| node.local.translation.as_dvec3()))
+    }
+
+    /// Composes the hierarchy using the precise translations where present.
+    pub fn precise_world_matrix(&self, id: NodeId) -> Result<DMat4, SceneGraphError> {
+        let mut world = DMat4::IDENTITY;
+        let mut current = Some(id);
+        while let Some(id) = current {
+            let node = self.node(id)?;
+            let mut local = node.local.matrix()?.as_dmat4();
+            local.w_axis = node
+                .precise_translation
+                .unwrap_or_else(|| node.local.translation.as_dvec3())
+                .extend(1.);
+            world = local * world;
+            current = node.parent;
+        }
+        if world.is_finite() {
+            Ok(world)
+        } else {
+            Err(SceneGraphError::WorldOverflow)
+        }
     }
 
     // Eager propagation preserves constant-time queries for every consumer.
@@ -987,6 +1069,38 @@ mod tests {
             translation: Vec3::new(x, 0.0, 0.0),
             ..Default::default()
         }
+    }
+
+    #[test]
+    fn precise_translation_batch_preserves_subtree_and_rejects_invalid_edits() {
+        let mut graph = SceneGraph::new(2);
+        let root = graph.spawn(None, Transform::default()).unwrap();
+        let child = graph.spawn(Some(root), Transform::default()).unwrap();
+        let translation = DVec3::new(0., -260.1952625000003, 0.);
+        graph.set_precise_translation(root, translation).unwrap();
+        assert_eq!(
+            graph.precise_world_matrix(child).unwrap().w_axis.truncate(),
+            translation
+        );
+
+        let edits = [
+            (root, Transform::default(), Some(DVec3::ZERO)),
+            (child, Transform::default(), Some(DVec3::splat(f64::NAN))),
+        ];
+        assert!(graph.set_locals_with_precise_translations(&edits).is_err());
+        assert_eq!(
+            graph.precise_world_matrix(root).unwrap().w_axis.truncate(),
+            translation
+        );
+
+        let rounded = graph.local(root).unwrap();
+        graph
+            .set_locals(&[(root, rounded), (child, Transform::default())])
+            .unwrap();
+        assert_eq!(
+            graph.precise_world_matrix(child).unwrap().w_axis.truncate(),
+            rounded.translation.as_dvec3()
+        );
     }
 
     #[test]

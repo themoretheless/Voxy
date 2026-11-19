@@ -2,6 +2,7 @@
 use super::{
     InertialBody, SupportTarget, Vec3, dot, push_secant, try_secant_direction, try_secant_scale,
 };
+use crate::biomechanics::Rejection;
 
 impl InertialBody {
     /// Path-averaged implicit midpoint mechanics with prescribed supports.
@@ -110,7 +111,7 @@ impl InertialBody {
             if !self.volume_path_is_open(&endpoint)
                 || !self.body.gap_path_is_open(&self.body.positions, &endpoint)
             {
-                return Err("implicit support path crossing");
+                return Err(Rejection::SupportPathCrossing.message());
             }
             let value = self.average_material_path(x, &end, &nodes, initial.potential_j)?;
             let mut residual = value.gradient.clone();
@@ -225,7 +226,7 @@ impl InertialBody {
                 .map(|(d, g)| dot(*d, *g))
                 .sum();
             if !slope.is_finite() || slope >= 0. {
-                return Err("implicit support search direction failed");
+                return Err(Rejection::SupportSearchDirection.message());
             }
             let mut accepted = None;
             let mut alpha = 1.;
@@ -249,7 +250,7 @@ impl InertialBody {
                 }
                 alpha *= 0.5;
             }
-            let (trial, value) = accepted.ok_or("implicit support line search failed")?;
+            let (trial, value) = accepted.ok_or(Rejection::SupportLineSearch.message())?;
             let displacement = trial
                 .iter()
                 .zip(&mid)
@@ -266,7 +267,7 @@ impl InertialBody {
             state = value;
         }
         if !converged {
-            return Err("implicit support nonlinear nonconvergence");
+            return Err(Rejection::SupportNonlinear.message());
         }
         let middle = state.0;
         let mut velocity = self.velocities.clone();
@@ -314,7 +315,7 @@ impl InertialBody {
             .any(|v| !v.is_finite())
             || defect.abs() > tolerance_j
         {
-            return Err("implicit support work defect");
+            return Err(Rejection::SupportWork.message());
         }
         self.body.positions = end;
         self.velocities = velocity;

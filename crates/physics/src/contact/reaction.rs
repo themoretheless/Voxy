@@ -374,7 +374,17 @@ pub fn resolve_normal_reaction_network_with_particles(
             },
             &biases,
             false,
-        )?;
+        )
+        .inspect_err(|error| {
+            if *error == Error::Budget && std::env::var_os("VOXY_TRACE_REACTION_BUDGET").is_some() {
+                eprintln!(
+                    "reaction solve exhausted: active={} sweeps={} tolerance={:e}",
+                    active.len(),
+                    config.max_sweeps,
+                    config.acceleration_tolerance * 0.5,
+                );
+            }
+        })?;
         for (index, force) in indices.iter().zip(report.impulses) {
             forces[*index] = force;
         }
@@ -434,6 +444,12 @@ pub fn resolve_normal_reaction_network_with_particles(
         });
     }
     if checked_residual > config.acceleration_tolerance {
+        if std::env::var_os("VOXY_TRACE_REACTION_BUDGET").is_some() {
+            eprintln!(
+                "reaction verification failed: solver_residual={residual:e} checked_residual={checked_residual:e} tolerance={:e}",
+                config.acceleration_tolerance,
+            );
+        }
         return Err(Error::Budget);
     }
     Ok(NetworkReaction {
@@ -460,4 +476,4 @@ pub use rate::{
 };
 
 use crate::math::add;
-pub(crate) use rate::{resolve_rate_from_baseline, resolve_rate_from_baseline_interval};
+pub(crate) use rate::{resolve_rate_from_baseline, resolve_rate_from_baseline_mixed_interval};

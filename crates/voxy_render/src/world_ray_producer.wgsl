@@ -35,7 +35,11 @@ fn world_scale_60(raw:u32)->WorldScaledWord {
  let pixel=ray_tile.offset+id.xy;let index=id.y*ray_tile.extent.x+id.x;let base=index*20u;
  if base+19u>=arrayLength(&world_exact_ray_words) {return;}
  let ray=archive_ray_input(pixel);var state=select(0u,1u,ray.admitted);
- for(var k=0u;k<20u;k++){world_exact_ray_words[base+k]=0u;}
+ // Clear only the words not written below. A region reuses the queue's
+ // storage, so padding and unused origin/source fields still need resetting.
+ for(var k=4u;k<8u;k++){world_exact_ray_words[base+k]=0u;}
+ world_exact_ray_words[base+11u]=0u;
+ for(var k=15u;k<18u;k++){world_exact_ray_words[base+k]=0u;}
  for(var axis=0u;axis<3u;axis++) {
   let origin=bitcast<u32>(ray.origin[axis]);let scaled=world_scale_60(bitcast<u32>(ray.direction[axis]));
   world_exact_ray_words[base+axis]=origin;

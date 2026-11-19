@@ -5,7 +5,7 @@ use crate::humanoid_locomotion::{LocomotionClip, VoxyHumanoidLocomotion};
 #[cfg_attr(not(feature = "slow-tests"), ignore = "slow: --features slow-tests")]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn actual_body_accepts_quaternius_locomotion_profile_and_keeps_leg_lengths() {
     let body = voxy_render::ObjAsset::parse(
@@ -494,7 +494,7 @@ fn shared_grounded_playback_preserves_pose_across_interrupted_fades_and_errors()
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn actual_authored_gaits_admit_support_relative_plants_without_changing_bone_metric() {
     use glam::{DQuat, DVec3};
@@ -772,7 +772,7 @@ fn graph_locomotion_matches_grounded_playback_at_rest_and_blends_gaits_by_speed(
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn humanoid_profiles_reproduce_the_hand_authored_quaternius_mapping() {
     use voxy_animation::{BoneRole, HumanoidProfile, RetargetBinding, Side};
@@ -925,7 +925,7 @@ fn library_clip_index(source: &voxy_model::ModelAsset, clip: LocomotionClip) -> 
 #[test]
 #[expect(
     clippy::too_many_lines,
-    reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
 )]
 fn gait_controller_locks_planted_feet_on_the_real_rig_across_walk_and_jog() {
     use crate::humanoid_locomotion::{JOG_SPEED_M_S, SPRINT_SPEED_M_S, WALK_SPEED_M_S};

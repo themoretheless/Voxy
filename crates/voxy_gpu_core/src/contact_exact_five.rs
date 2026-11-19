@@ -42,6 +42,113 @@ fn binary_scale(value: f64) -> f64 {
     }
 }
 
+pub(crate) struct PackedFiveContact {
+    pub(crate) columns: Vec<[u32; PARTS]>,
+    bounds_and_tolerance: Vec<[u32; PARTS]>,
+    pub(crate) column_scale: f64,
+    pub(crate) bound_scale: f64,
+}
+
+impl PackedFiveContact {
+    pub(crate) fn bounds(&self) -> &[[u32; PARTS]] {
+        &self.bounds_and_tolerance[..self.bounds_and_tolerance.len() - 1]
+    }
+
+    pub(crate) fn tolerance(&self) -> [u32; PARTS] {
+        *self.bounds_and_tolerance.last().expect("packed tolerance")
+    }
+}
+
+pub(crate) fn pack_five_contact(
+    columns: &[impl AsRef<[[f64; 2]]>],
+    bounds: &[f64],
+    tolerance: f64,
+) -> Result<PackedFiveContact, JointDotError> {
+    let rows = columns.len();
+    let width = columns.first().map_or(0, |column| column.as_ref().len());
+    if rows == 0
+        || width == 0
+        || rows != bounds.len()
+        || columns.iter().any(|c| c.as_ref().len() != width)
+    {
+        return Err(JointDotError::Shape);
+    }
+    if !tolerance.is_finite()
+        || tolerance <= 0.
+        || bounds.iter().any(|v| !v.is_finite())
+        || columns
+            .iter()
+            .flat_map(AsRef::as_ref)
+            .any(|&[hi, lo]| !hi.is_finite() || !lo.is_finite() || hi + lo != hi)
+    {
+        return Err(JointDotError::NumericRange);
+    }
+    let count = rows.checked_mul(width).ok_or(JointDotError::Capacity)?;
+    let items = count
+        .checked_add(rows)
+        .and_then(|n| n.checked_add(1))
+        .ok_or(JointDotError::Capacity)?;
+    let total = items
+        .checked_mul(PARTS * 2)
+        .and_then(|n| n.checked_add(HEADER))
+        .ok_or(JointDotError::Capacity)?;
+    if total > 16 * 1024 * 1024 / 4 {
+        return Err(JointDotError::Capacity);
+    }
+    let maximum = columns
+        .iter()
+        .flat_map(AsRef::as_ref)
+        .map(|v| v[0].abs())
+        .fold(0., f64::max);
+    let mut column_scale = if maximum == 0. {
+        1.
+    } else {
+        binary_scale(maximum)
+    };
+    let mut packed_columns = None;
+    for _ in 0..=64 {
+        let candidate = columns
+            .iter()
+            .flat_map(AsRef::as_ref)
+            .map(|&v| pack(v, column_scale))
+            .collect::<Option<Vec<_>>>();
+        if let Some(candidate) = candidate {
+            packed_columns = Some(candidate);
+            break;
+        }
+        column_scale *= 0.5;
+        if column_scale == 0. {
+            break;
+        }
+    }
+    let packed_columns = packed_columns.ok_or(JointDotError::NumericRange)?;
+    let (bound_scale, packed_bounds) = pack_five_bounds(bounds, tolerance)?;
+    Ok(PackedFiveContact {
+        columns: packed_columns,
+        bounds_and_tolerance: packed_bounds,
+        column_scale,
+        bound_scale,
+    })
+}
+
+pub(crate) fn pack_five_bounds(
+    bounds: &[f64],
+    tolerance: f64,
+) -> Result<(f64, Vec<[u32; PARTS]>), JointDotError> {
+    if !tolerance.is_finite() || tolerance <= 0. || bounds.iter().any(|v| !v.is_finite()) {
+        return Err(JointDotError::NumericRange);
+    }
+    let bound_scale = binary_scale(bounds.iter().map(|v| v.abs()).fold(tolerance, f64::max));
+    let packed_bounds = bounds
+        .iter()
+        .copied()
+        .chain([tolerance])
+        .map(|v| pack([v, 0.], bound_scale))
+        .collect::<Option<Vec<_>>>()
+        .ok_or(JointDotError::NumericRange)?;
+    Ok((bound_scale, packed_bounds))
+}
+
 /// Owned, versioned five-component coefficient input with a separate roundtrip
 /// output region. The GPU probe only tests transport, not numerical operations.
 #[derive(Debug)]
@@ -54,76 +161,22 @@ pub struct ExperimentalExactFiveContactInput {
 }
 impl ExperimentalExactFiveContactInput {
     pub fn new(
-        columns: &[Vec<[f64; 2]>],
+        columns: &[impl AsRef<[[f64; 2]]>],
         bounds: &[f64],
         tolerance: f64,
     ) -> Result<Self, JointDotError> {
+        let packed = pack_five_contact(columns, bounds, tolerance)?;
         let rows = columns.len();
-        let width = columns.first().map_or(0, Vec::len);
-        if rows == 0
-            || width == 0
-            || rows != bounds.len()
-            || columns.iter().any(|c| c.len() != width)
-        {
-            return Err(JointDotError::Shape);
-        }
-        if !tolerance.is_finite()
-            || tolerance <= 0.
-            || bounds.iter().any(|v| !v.is_finite())
-            || columns
-                .iter()
-                .flatten()
-                .any(|&[hi, lo]| !hi.is_finite() || !lo.is_finite() || hi + lo != hi)
-        {
-            return Err(JointDotError::NumericRange);
-        }
-        let count = rows.checked_mul(width).ok_or(JointDotError::Capacity)?;
-        let items = count
-            .checked_add(rows)
-            .and_then(|n| n.checked_add(1))
-            .ok_or(JointDotError::Capacity)?;
-        let total = items
-            .checked_mul(PARTS * 2)
-            .and_then(|n| n.checked_add(HEADER))
-            .ok_or(JointDotError::Capacity)?;
-        if total > 16 * 1024 * 1024 / 4 {
-            return Err(JointDotError::Capacity);
-        }
-        let maximum = columns
-            .iter()
-            .flatten()
-            .map(|v| v[0].abs())
-            .fold(0., f64::max);
-        let mut column_scale = if maximum == 0. {
-            1.
-        } else {
-            binary_scale(maximum)
-        };
-        let mut packed_columns = None;
-        for _ in 0..=64 {
-            let candidate = columns
-                .iter()
-                .flatten()
-                .map(|&v| pack(v, column_scale))
-                .collect::<Option<Vec<_>>>();
-            if let Some(candidate) = candidate {
-                packed_columns = Some(candidate);
-                break;
-            }
-            column_scale *= 0.5;
-            if column_scale == 0. {
-                break;
-            }
-        }
-        let packed_columns = packed_columns.ok_or(JointDotError::NumericRange)?;
-        let bound_scale = binary_scale(bounds.iter().map(|v| v.abs()).fold(tolerance, f64::max));
-        let packed_bounds = bounds
-            .iter()
-            .copied()
-            .chain([tolerance])
-            .map(|v| pack([v, 0.], bound_scale))
-            .collect::<Option<Vec<_>>>()
-            .ok_or(JointDotError::NumericRange)?;
+        let width = columns[0].as_ref().len();
+        let count = packed.columns.len();
+        let items = count + rows + 1;
+        let total = HEADER + items * PARTS * 2;
+        let PackedFiveContact {
+            columns: packed_columns,
+            bounds_and_tolerance: packed_bounds,
+            column_scale,
+            bound_scale,
+        } = packed;
         let output = HEADER + items * PARTS;
         let mut words = Vec::new();
         words

@@ -24,7 +24,7 @@ impl ReconcileTraceFlags {
             rejected_direction_export: std::env::var_os(
                 "VOXY_HAIR_REJECTED_CONTACT_DIRECTION_EXPORT",
             ),
-            replay_export: std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_EXPORT"),
+            replay_export: crate::hair::contact_replay::export_path(),
         }
     }
 }
@@ -289,7 +289,7 @@ impl HairSystem {
                                     );
                                 }
                             }
-                            rods.clone_from_slice(&candidate);
+                            rods.swap_with_slice(&mut candidate);
                             // Failed-attempt reactions must not leak into the
                             // resumed solve. A proposal is never completion.
                             history.truncate(original_history_len);
@@ -563,7 +563,7 @@ impl HairSystem {
                 };
                 match restored {
                     Ok(true) => {
-                        rods.clone_from_slice(&candidate);
+                        rods.swap_with_slice(&mut candidate);
                         fresh = contact::refresh_strand_responses(rods, radius, &[]);
                         Self::refresh_mesh_geometry(rods, meshes, radius, true)?;
                         let corrected = Self::contact_merit(rods, &fresh, radius)?;
@@ -1207,8 +1207,9 @@ impl HairSystem {
             );
             eprintln!("HAIR NONLINEAR MERIT HISTORY {merit_history:?}");
         }
+        let (attempts, accepted_steps, attempts_at_pose) = work.counts();
         eprintln!(
-            "HAIR NONLINEAR CONTACT NONCONVERGENCE first_gap_m={first_gap} worst=(rod,segment,fraction,gap,source,root,a,b,normal,target) {last_worst:?}"
+            "HAIR NONLINEAR CONTACT NONCONVERGENCE attempts={attempts} accepted_steps={accepted_steps}/{accepted_step_limit} attempts_at_pose={attempts_at_pose} first_gap_m={first_gap} worst=(rod,segment,fraction,gap,source,root,a,b,normal,target) {last_worst:?}"
         );
         Err("joint hair contact position linearization did not converge")
     }

@@ -106,7 +106,7 @@ impl LidSurface {
     /// Research replacement of the bind-space skin region, before rig integration.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn mesh_with_body(&self, body: &SceneMesh, closure: f32) -> Result<SceneMesh, SceneError> {
         let lids = self.mesh_with_canthi(closure)?;

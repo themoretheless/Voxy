@@ -9,6 +9,7 @@ fn document(objects: usize, moved: f32) -> SceneDocument {
         version: 1,
         objects: (0..objects)
             .map(|index| SceneObject {
+                precise_translation_bits: None,
                 id: ObjectId(format!("object-{index:06}")),
                 parent: None,
                 name: format!("Object {index}"),

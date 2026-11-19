@@ -91,7 +91,44 @@ pub struct Tissue {
     hardening: f64,
     surface: Vec<[usize; 3]>,
 }
+/// Positions and velocities at a completed step for the same tissue model.
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TissueCheckpoint {
+    positions: Vec<V>,
+    velocities: Vec<V>,
+}
+
 impl Tissue {
+    #[must_use]
+    pub fn checkpoint(&self) -> TissueCheckpoint {
+        TissueCheckpoint {
+            positions: self.positions.clone(),
+            velocities: self.velocities.clone(),
+        }
+    }
+
+    /// Restores kinematics for the same cage and material.
+    ///
+    /// # Errors
+    /// Rejects nonfinite or incompatible state before changing the tissue.
+    pub fn restore_checkpoint(&mut self, state: TissueCheckpoint) -> Result<(), &'static str> {
+        if state.positions.len() != self.positions.len()
+            || state.velocities.len() != self.velocities.len()
+            || !state
+                .positions
+                .iter()
+                .chain(&state.velocities)
+                .copied()
+                .all(finite)
+        {
+            return Err("invalid tissue checkpoint");
+        }
+        self.positions = state.positions;
+        self.velocities = state.velocities;
+        Ok(())
+    }
+
     /// Zero inverse mass pins a particle. Muscle edges shorten up to 35%.
     /// # Errors
     /// Rejects nonfinite data, invalid topology, degenerate cells and materials.

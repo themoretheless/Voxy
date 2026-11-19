@@ -140,6 +140,52 @@ fn draw(
     pass.draw(0..1, 0..native.meshes[0].instance_count);
 }
 #[test]
+#[ignore = "physical Apple Metal; vegetation residency and instance capacity"]
+fn gpu_vegetation_window_preserves_static_resources_and_grows_instances() {
+    let (_, device, queue) = support::device();
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let mut plants = fixture(&device, &queue, 1);
+    let vertices = (*plants.meshes[0].vertices).clone();
+    let indices = (*plants.meshes[0].indices).clone();
+    let shadow = std::sync::Arc::clone(&plants.shadow);
+    let old_projection = plants.shadow_vp;
+    let bounds = (Vec3::splat(2.), Vec3::splat(4.));
+    let values = vec![ArchiveInstance::new(Mat4::IDENTITY); 8];
+    let prepared = plants
+        .prepare_window(
+            &device,
+            NativeVegetationWindow {
+                instances: vec![values.clone()],
+                bounds,
+            },
+        )
+        .unwrap();
+    assert_eq!(plants.meshes[0].instance_count, 1);
+    assert_eq!(plants.shadow_vp, old_projection);
+    plants.publish_window(prepared);
+    assert_eq!(*plants.meshes[0].vertices, vertices);
+    assert_eq!(*plants.meshes[0].indices, indices);
+    assert!(std::sync::Arc::ptr_eq(&plants.shadow, &shadow));
+    assert_eq!(plants.meshes[0].instance_count, 8);
+    assert_eq!(plants.shadow_vp, vegetation_shadow_matrix(bounds).unwrap());
+    plants.update_instances(&queue, &[values]).unwrap();
+    assert!(
+        plants
+            .prepare_window(
+                &device,
+                NativeVegetationWindow {
+                    instances: vec![],
+                    bounds,
+                }
+            )
+            .is_err()
+    );
+    assert_eq!(plants.meshes[0].instance_count, 8);
+    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+    assert!(pollster::block_on(scope.pop()).is_none());
+}
+
+#[test]
 #[ignore = "physical Apple Metal; cameras and instance fetch parity"]
 fn gpu_frame_vegetation_instances_and_camera_match_legacy() {
     let (_, device, queue) = support::device();

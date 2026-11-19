@@ -128,7 +128,12 @@ fn gpu_material_transfer_preserves_geometry_and_rejected_light() {
             .unwrap();
             queue.submit([encoder.finish()]);
             let mut pending = dispatch.begin_read();
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: None,
+                    timeout: Some(std::time::Duration::from_secs(30)),
+                })
+                .expect("Metal test GPU submission did not complete");
             let bytes = pending.try_read().unwrap().unwrap();
             let header: &[u32] = bytemuck::cast_slice(&bytes[192..]);
             assert_eq!(header[1], u32::from(stage == 1));
@@ -261,7 +266,12 @@ fn resident_normal_lighting_updates_and_rejects_invalid_normals() {
             .unwrap();
             queue.submit([encoder.finish()]);
             let mut pending = dispatch.begin_read();
-            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: None,
+                    timeout: Some(std::time::Duration::from_secs(30)),
+                })
+                .expect("Metal test GPU submission did not complete");
             let bytes = pending.try_read().unwrap().unwrap();
             let header: &[u32] = bytemuck::cast_slice(&bytes[156..]);
             let valid = stage != 2;

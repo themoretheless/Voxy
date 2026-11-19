@@ -1,0 +1,193 @@
+{
+  "scope": "CPU ray-to-exported-triangle association for the eight changed projector sample positions in the opaque HDR snapshot",
+  "probe": 0,
+  "face": 0,
+  "geometry_seed": 1448040537,
+  "instanced_triangles": 3634960,
+  "method": "Unproject unchanged Metal depth using the captured inverse view projection. Intersect the corresponding rays with original geometry transformed by the exported instance matrices. Exclude blended materials and require a unique triangle within 0.2 percent of the depth-derived distance. This is a CPU association, without shader displacement or material evaluation.",
+  "matches": [
+    {
+      "pixel": [
+        2704,
+        776
+      ],
+      "mesh": 13,
+      "material": 7,
+      "instance": 26205,
+      "triangle": 11,
+      "relative_error": 8.4759e-06
+    },
+    {
+      "pixel": [
+        2752,
+        792
+      ],
+      "mesh": 13,
+      "material": 7,
+      "instance": 26078,
+      "triangle": 10,
+      "relative_error": 1.38024e-05
+    },
+    {
+      "pixel": [
+        2608,
+        856
+      ],
+      "mesh": 11,
+      "material": 11,
+      "instance": 789,
+      "triangle": 20,
+      "relative_error": 1.34917e-05
+    },
+    {
+      "pixel": [
+        2576,
+        904
+      ],
+      "mesh": 11,
+      "material": 11,
+      "instance": 769,
+      "triangle": 23,
+      "relative_error": 2.65556e-05
+    },
+    {
+      "pixel": [
+        2624,
+        904
+      ],
+      "mesh": 11,
+      "material": 11,
+      "instance": 729,
+      "triangle": 19,
+      "relative_error": 1.18947e-05
+    },
+    {
+      "pixel": [
+        2608,
+        984
+      ],
+      "mesh": 11,
+      "material": 11,
+      "instance": 728,
+      "triangle": 25,
+      "relative_error": 3.06906e-05
+    },
+    {
+      "pixel": [
+        2608,
+        1000
+      ],
+      "mesh": 11,
+      "material": 11,
+      "instance": 728,
+      "triangle": 25,
+      "relative_error": 9.63728e-06
+    },
+    {
+      "pixel": [
+        1248,
+        1832
+      ],
+      "mesh": 0,
+      "material": 0,
+      "instance": 0,
+      "triangle": 32,
+      "relative_error": 2.37649e-06
+    }
+  ],
+  "materials": {
+    "0": {
+      "authored_name": "curb",
+      "images": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "parameters": [
+        0.3400000035762787,
+        0.33000001311302185,
+        0.30000001192092896,
+        1.0,
+        0.03999999910593033,
+        0.03999999910593033,
+        0.03999999910593033,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.7599999904632568,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    "7": {
+      "authored_name": "foliage",
+      "images": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "parameters": [
+        0.04500000178813934,
+        0.125,
+        0.017999999225139618,
+        1.0,
+        0.03999999910593033,
+        0.03999999910593033,
+        0.03999999910593033,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.7200000286102295,
+        0.0,
+        -1.0,
+        1.0,
+        0.0,
+        6.0,
+        0.0
+      ]
+    },
+    "11": {
+      "authored_name": "bark",
+      "images": [
+        4,
+        null,
+        5,
+        null
+      ],
+      "parameters": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.03999999910593033,
+        0.03999999910593033,
+        0.03999999910593033,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0,
+        -1.0,
+        1.0,
+        2.0,
+        0.0,
+        -1.5
+      ]
+    }
+  }
+}

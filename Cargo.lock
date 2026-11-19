@@ -2032,6 +2032,8 @@ dependencies = [
  "num-rational",
  "num-traits",
  "rayon",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -2046,6 +2048,8 @@ name = "physics_bio"
 version = "0.1.0"
 dependencies = [
  "physics",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -3048,6 +3052,7 @@ dependencies = [
  "voxy_audio",
  "voxy_audio_device",
  "voxy_input",
+ "voxy_navigation",
  "voxy_scene",
  "voxy_text",
  "voxy_ui",
@@ -3144,6 +3149,7 @@ version = "0.1.0"
 name = "voxy_player"
 version = "0.1.0"
 dependencies = [
+ "serde",
  "serde_json",
  "voxy_assets",
  "voxy_gameplay",
@@ -3366,6 +3372,7 @@ dependencies = [
  "voxy_input",
  "voxy_mesher",
  "voxy_model",
+ "voxy_player",
  "voxy_render",
  "voxy_runtime",
  "voxy_scene",

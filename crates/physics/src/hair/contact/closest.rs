@@ -98,16 +98,19 @@ pub(super) fn segment_pair(a: V, b: V, c: V, d: V) -> (f64, f64, V, V) {
 pub(super) fn segment_triangle(a: V, b: V, tri: &Triangle) -> (f64, V, V) {
     let pa = closest_triangle(a, tri);
     let pb = closest_triangle(b, tri);
-    let mut best = if len(sub(a, pa)) < len(sub(b, pb)) {
-        (0., a, pa)
+    let da = len(sub(a, pa));
+    let db = len(sub(b, pb));
+    let (mut best, mut best_distance) = if da < db {
+        ((0., a, pa), da)
     } else {
-        (1., b, pb)
+        ((1., b, pb), db)
     };
-    let denominator = dot(sub(b, a), tri.normal);
+    let direction = sub(b, a);
+    let denominator = dot(direction, tri.normal);
     if denominator.abs() > 1e-20 {
         let s = dot(sub(tri.p[0], a), tri.normal) / denominator;
         if (0.0..=1.0).contains(&s) {
-            let p = add(a, mul(sub(b, a), s));
+            let p = add(a, mul(direction, s));
             let (q, feature) = closest_triangle_feature(p, tri);
             if matches!(feature, ClosestFeature::Face) {
                 // This is an interior plane/segment intersection, hence zero
@@ -124,8 +127,10 @@ pub(super) fn segment_triangle(a: V, b: V, tri: &Triangle) -> (f64, V, V) {
     }
     for i in 0..3 {
         let (s, _, p, q) = segment_pair(a, b, tri.p[i], tri.p[(i + 1) % 3]);
-        if len(sub(p, q)) < len(sub(best.1, best.2)) {
+        let distance = len(sub(p, q));
+        if distance < best_distance {
             best = (s, p, q);
+            best_distance = distance;
         }
     }
     best

@@ -1485,6 +1485,7 @@ pub(crate) mod tests {
             behaviors: &behaviors,
             ui_actions: &ui,
             root: &target_root,
+            package: None,
             resources: resource_limits,
             play: limits(),
             ui: crate::ui_live::checkpoint::tests::limits(),

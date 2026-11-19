@@ -665,7 +665,8 @@ fn activate_with_normal_mode(
     if changed {
         // Rebuild from the canonical base and all witnessed affine planes.
         // add_constraint retains its canonical coalescing and strongest bound.
-        *groups = base.to_vec();
+        groups.clear();
+        groups.extend_from_slice(base);
         groups.extend(cuts.iter().map(|cut| cut.pair.clone()));
         let (_, scales) = trust_components(rods, increment, groups)?;
         // Base endpoint planes and swept witnesses must evaluate the same

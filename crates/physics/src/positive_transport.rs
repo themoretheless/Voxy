@@ -1,4 +1,10 @@
 //! Positive conservative sparse transport iteration shared across physics owners.
+
+// `solve_protein` renames these two failures; one constant per message keeps
+// the producer and the mapping in step.
+const ITERATION_OVERFLOW: &str = "implicit positive transport iteration overflow";
+const INVENTORY_OVERFLOW: &str = "implicit positive transport inventory overflow";
+
 pub(crate) fn solve_mass(
     rhs_mass: &[f64],
     diagonal: &[f64],
@@ -46,12 +52,12 @@ pub(crate) fn solve_mass_with_budget(
             - total)
             .abs();
         if !residual.is_finite() || mass.iter().any(|m| !m.is_finite() || *m < 0.) {
-            return Err("implicit positive transport iteration overflow");
+            return Err(ITERATION_OVERFLOW);
         }
         if residual <= 1e-14 * total && drift <= 1e-14 * total {
             let output: Vec<_> = mass.into_iter().map(|m| m * scale).collect();
             if output.iter().any(|m| !m.is_finite()) {
-                return Err("implicit positive transport inventory overflow");
+                return Err(INVENTORY_OVERFLOW);
             }
             return Ok(output);
         }
@@ -69,8 +75,8 @@ pub fn solve_protein(
     external_out: &[f64],
 ) -> Result<Vec<f64>, &'static str> {
     solve_mass(rhs_mass, diagonal, incoming, external_out).map_err(|error| match error {
-        "implicit positive transport iteration overflow" => "implicit protein iteration overflow",
-        "implicit positive transport inventory overflow" => "implicit protein inventory overflow",
+        ITERATION_OVERFLOW => "implicit protein iteration overflow",
+        INVENTORY_OVERFLOW => "implicit protein inventory overflow",
         _ => "implicit protein transport did not converge",
     })
 }

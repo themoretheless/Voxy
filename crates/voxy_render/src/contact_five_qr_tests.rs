@@ -11,21 +11,46 @@ fn dispatch(input: &ExperimentalFiveQrInput) -> Vec<u8> {
         &ExperimentalFiveQrInput::shader_source(),
     ))
     .unwrap();
-    let job = program.create_job(&device, input.bytes()).unwrap();
-    let mut encoder = device.create_command_encoder(&Default::default());
-    for _ in 0..input.steps() {
-        job.encode_step(&mut encoder, [1, 1, 1]).unwrap();
-    }
-    let snapshot = job.encode_snapshot(&mut encoder).unwrap();
-    let submission = queue.submit([encoder.finish()]);
-    let mut read = snapshot.begin_read();
-    device
-        .poll(wgpu::PollType::Wait {
+    let run = |data: &[u8], steps: usize, repeated| {
+        let job = program.create_job(&device, data).unwrap();
+        let mut encoder = device.create_command_encoder(&Default::default());
+        if repeated {
+            job.encode_repeated_steps(&mut encoder, [1, 1, 1], steps.try_into().unwrap())
+                .unwrap();
+        } else {
+            for _ in 0..steps {
+                job.encode_step(&mut encoder, [1, 1, 1]).unwrap();
+            }
+        }
+        let snapshot = job.encode_snapshot(&mut encoder).unwrap();
+        let submission = queue.submit([encoder.finish()]);
+        let mut read = snapshot.begin_read();
+        let completion = device.poll(wgpu::PollType::Wait {
             submission_index: Some(submission),
-            timeout: None,
-        })
+            timeout: Some(std::time::Duration::from_mins(1)),
+        });
+        if let Err(error) = completion {
+            // Emit the cause before dropping GPU resources, which may also wait.
+            eprintln!("five-component QR GPU submission failed: {error}");
+            panic!("five-component QR GPU submission did not complete: {error}");
+        }
+        read.try_read().unwrap().unwrap()
+    };
+    let bytes = run(input.bytes(), input.steps(), true);
+    assert_eq!(
+        bytes,
+        run(input.bytes(), input.steps(), false),
+        "single-pass QR changed the complete readback"
+    );
+    input.candidate(&bytes).unwrap();
+    let factorized = input
+        .factorized_bytes(&bytes[input.factor_range()])
         .unwrap();
-    let bytes = read.try_read().unwrap().unwrap();
+    assert_eq!(
+        bytes,
+        run(&factorized, 1, true),
+        "reused factors changed the QR readback"
+    );
     if let Some(path) = std::env::var_os("VOXY_FIVE_QR_READBACK") {
         use std::io::Write;
         std::fs::OpenOptions::new()
@@ -55,6 +80,40 @@ fn native(value: &ExperimentalFiveQrValue, scale: f64) -> physics::hair::HairRes
 fn json_values(values: &[ExperimentalFiveQrValue]) -> Vec<serde_json::Value> {
     values.iter().map(|v|serde_json::json!({"words":v.words,"exponent":v.exponent,"error_bound_word":v.error_bound.to_bits()})).collect()
 }
+#[test]
+#[ignore = "requires real GPU; checks QR rejection across hardware subgroups"]
+fn gpu_five_qr_rejects_invalid_input_from_another_lane() {
+    let input = ExperimentalFiveQrInput::new(&[vec![[1., 0.]; 64]], &[1.], 1e-14).unwrap();
+    let mut corrupt = input.bytes().to_vec();
+    let offset = (32 + 63 * 5) * 4;
+    corrupt[offset..offset + 4].copy_from_slice(&f32::INFINITY.to_bits().to_le_bytes());
+    let instance = crate::GraphicsOptions::default().create_instance();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    assert_ne!(adapter.get_info().device_type, wgpu::DeviceType::Cpu);
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let program = pollster::block_on(crate::ComputeProgram::new(
+        &device,
+        &ExperimentalFiveQrInput::shader_source(),
+    ))
+    .unwrap();
+    let job = program.create_job(&device, &corrupt).unwrap();
+    let mut encoder = device.create_command_encoder(&Default::default());
+    job.encode_repeated_steps(&mut encoder, [1, 1, 1], input.steps().try_into().unwrap())
+        .unwrap();
+    let snapshot = job.encode_snapshot(&mut encoder).unwrap();
+    let submission = queue.submit([encoder.finish()]);
+    let mut read = snapshot.begin_read();
+    device
+        .poll(wgpu::PollType::Wait {
+            submission_index: Some(submission),
+            timeout: None,
+        })
+        .unwrap();
+    let bytes = read.try_read().unwrap().unwrap();
+    assert_eq!(u32::from_le_bytes(bytes[24..28].try_into().unwrap()), 2);
+    assert_eq!(u32::from_le_bytes(bytes[28..32].try_into().unwrap()), 0);
+}
+
 #[test]
 #[ignore = "requires physical GPU; exact low-part equality coordinates"]
 fn gpu_five_qr_diagonal_low_parts() {
@@ -263,4 +322,80 @@ fn gpu_five_gaps_all_original_constraints() {
         .open(std::env::var_os("VOXY_FIVE_GAP_EXPORT").unwrap())
         .unwrap();
     serde_json::to_writer(file, &report).unwrap();
+}
+
+#[test]
+#[ignore = "requires the original VQC1 operator and an automatic GPU active-set export"]
+fn saved_gpu_active_set_preserves_original_physical_admission() {
+    let fixture_path = std::env::var_os("VOXY_HAIR_QR_INPUT_FIXTURE").unwrap();
+    let f = fixture::read(std::path::Path::new(&fixture_path));
+    let state: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(std::env::var_os("VOXY_FIVE_QR_STATE").unwrap()).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(state["original_rows"].as_u64(), Some(f.rows as u64));
+    assert_eq!(state["width"].as_u64(), Some(f.width as u64));
+    assert_eq!(
+        state["original_tolerance_bits"].as_u64(),
+        Some(f.tolerance.to_bits())
+    );
+
+    let decode = |key: &str| {
+        state[key]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|value| {
+                let words = value["words"].as_array().unwrap();
+                assert_eq!(words.len(), 5);
+                native(
+                    &ExperimentalFiveQrValue {
+                        words: std::array::from_fn(|i| {
+                            words[i].as_u64().unwrap().try_into().unwrap()
+                        }),
+                        exponent: value["exponent"].as_i64().unwrap().try_into().unwrap(),
+                        error_bound: f32::from_bits(
+                            value["error_bound_word"]
+                                .as_u64()
+                                .unwrap()
+                                .try_into()
+                                .unwrap(),
+                        ),
+                    },
+                    1.,
+                )
+            })
+            .collect::<Vec<_>>()
+    };
+    let coordinates = decode("coordinates");
+    let reactions = decode("reactions");
+    assert_eq!(coordinates.len(), f.width);
+    assert_eq!(reactions.len(), f.rows);
+    let rounded = |value: &physics::hair::HairResponseCoefficient| {
+        let [high, low] = value.parts();
+        high + low
+    };
+    let reactions = reactions.iter().map(rounded).collect::<Vec<_>>();
+    let mut offset = 0;
+    let responses = f
+        .requests
+        .iter()
+        .map(|request| {
+            let end = offset + request.system.rhs.len();
+            let expanded = request
+                .backtransform_expanded(&coordinates[offset..end])
+                .unwrap();
+            offset = end;
+            expanded.iter().map(rounded).collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(offset, coordinates.len());
+    physics::hair::HairResponseSystem::validate_joint_solution(
+        &f.requests,
+        &f.bounds,
+        &responses,
+        &reactions,
+        f.tolerance,
+    )
+    .unwrap();
 }

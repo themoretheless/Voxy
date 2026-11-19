@@ -1,0 +1,20 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/physics)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_gameplay)
+   Compiling voxy_player v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_player)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/Sources/voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.92s
+     Running unittests src/lib.rs (target/wave3/debug/deps/voxy_editor-23ec838906e8badb)
+
+running 1 test
+EDITOR MANIFOLD supported sweep CollisionBudget elapsed=9.53574856805122079e-3 horizon=1.50425042242978628e-12 remaining=1.61517659233252923e-3 contacts=40 intervals=1343
+Error: System { completed_steps: 0, error: SystemFailure { system: "character.step", error: Motion("scene liquid body step: CollisionBudget") } }
+test game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body ... FAILED
+
+failures:
+
+failures:
+    game_host_tests::moving_scene_platform_transmits_off_center_impulse_to_spinning_body
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 480 filtered out; finished in 2.30s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

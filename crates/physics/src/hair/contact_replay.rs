@@ -1,6 +1,17 @@
 //! Diagnostic nonlinear replay. Spatial acceleration caches are rebuilt.
 use super::*;
 use std::io::{self, Write};
+pub(super) fn export_path() -> Option<std::ffi::OsString> {
+    let path = std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_EXPORT")?;
+    if let Some(frame) = std::env::var_os("VOXY_HAIR_CONTACT_REPLAY_FRAME") {
+        let frame = frame.to_str()?.parse::<usize>().ok()?;
+        if super::phase_diagnostics::observation_frame() != Some(frame) {
+            return None;
+        }
+    }
+    Some(path)
+}
+
 /// Diagnostic capture with freshly measured geometry; does not change the
 /// caller's pose, contact state or acceleration caches.
 pub(super) fn save_measured(
@@ -61,7 +72,9 @@ pub(super) fn save(
     merit: f64,
     continuous_mesh: bool,
 ) -> io::Result<()> {
-    let mut w = std::io::BufWriter::new(std::fs::File::create(path)?);
+    let mut temporary = path.as_os_str().to_os_string();
+    temporary.push(format!(".{}.tmp", std::process::id()));
+    let mut w = std::io::BufWriter::new(std::fs::File::create(&temporary)?);
     w.write_all(if continuous_mesh { b"VHR2" } else { b"VHR1" })?;
     number(&mut w, dt)?;
     number(&mut w, radius)?;
@@ -112,7 +125,9 @@ pub(super) fn save(
         }
         count(&mut w, usize::from(closed))?;
     }
-    w.flush()
+    w.flush()?;
+    drop(w);
+    std::fs::rename(temporary, path)
 }
 #[cfg(test)]
 pub(in crate::hair) mod tests {

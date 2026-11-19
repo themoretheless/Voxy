@@ -173,7 +173,7 @@ impl PelvicAnatomy {
     #[must_use]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn new(rest_vertices: &[SceneVertex], body_indices: &[u32]) -> Self {
         if rest_vertices.len() != FEMALE_BODY_VERTICES {
@@ -754,7 +754,7 @@ impl PelvicAnatomy {
     /// and optionally smooth grid-evaluated surface normals onto the character render streams.
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn append_with_normals(
         &self,

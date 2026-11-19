@@ -1,0 +1,14 @@
+{
+  "benchmark_complete": false,
+  "failure": "street probe bake timed out: completed_faces=2109 budget_ms=180000",
+  "frames": 0,
+  "gpu_wait_limit_ms": 180000,
+  "minimum_120_presented_fps_passed": false,
+  "phase": "probe_bake",
+  "probe_faces_completed": 2109,
+  "qualified": false,
+  "simulation_steps": 0,
+  "world_ray_audit_complete": false,
+  "world_ray_frame": true,
+  "world_ray_software": false
+}

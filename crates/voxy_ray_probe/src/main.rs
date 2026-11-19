@@ -103,7 +103,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ..Default::default()
     }))?;
     if std::env::var("VOXY_RAY_SHARED_PRODUCER_AUDIT").as_deref() == Ok("1") {
-        return shared_producer_audit::run(&device, &queue);
+        if let Err(error) = shared_producer_audit::run(&device, &queue) {
+            eprintln!("Shared ray producer audit failed: {error}");
+            // Metal queue destruction can wait indefinitely for a stalled
+            // submission. This standalone diagnostic owns the process.
+            std::process::exit(1);
+        }
+        return Ok(());
     }
     if std::env::var("VOXY_RAY_SHARED_JOB_AUDIT").as_deref() == Ok("1") {
         return shared_job_audit::run(&device, &queue);

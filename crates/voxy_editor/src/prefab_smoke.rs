@@ -9,11 +9,14 @@ pub(super) struct Smoke {
     frame: u64,
     play_ticks: u64,
     expected: Option<SceneDocument>,
+    checkpoint_scene: Option<voxy_scene::SceneId>,
 }
 impl App {
     pub(crate) fn start_prefab_smoke(&mut self) {
         self.prefab_smoke = Some(Smoke {
-            phase: if std::env::var_os("VOXY_PREFAB_SMOKE_JOINT").is_some() {
+            phase: if std::env::var_os("VOXY_PREFAB_SMOKE_NPC_GOAL").is_some() {
+                13
+            } else if std::env::var_os("VOXY_PREFAB_SMOKE_JOINT").is_some() {
                 8
             } else {
                 Self::prefab_smoke_entry_phase()
@@ -307,6 +310,184 @@ impl App {
         );
         Ok(())
     }
+    fn npc_checkpoint_smoke_phase(
+        &mut self,
+        phase: u8,
+    ) -> Result<bool, Box<dyn std::error::Error>> {
+        use crate::app::snapshot_commands::SnapshotCommand;
+        let hud = self
+            .resolve_object(&voxy_scene::ObjectId("hud".into()))
+            .ok_or("missing NPC smoke HUD")?;
+        let request = |app: &mut Self, command| -> Result<(), Box<dyn std::error::Error>> {
+            app.begin_snapshot_path(command)?;
+            app.snapshot_path_key(KeyCode::KeyA, Some("npc-route.voxyedr"))?;
+            Ok(app.snapshot_path_key(KeyCode::Enter, None)?)
+        };
+        if self.snapshot_error.is_some() {
+            return Err(format!("NPC checkpoint failed: {:?}", self.snapshot_error).into());
+        }
+        let next = match phase {
+            20 => {
+                if self.play.simulation_ticks < 3
+                    || self
+                        .graphics
+                        .as_ref()
+                        .is_none_or(|graphics| !graphics.ui_presented)
+                    || self
+                        .audio
+                        .play()
+                        .is_none_or(|audio| audio.frames == 0 || audio.peak <= 0.)
+                {
+                    return Ok(false);
+                }
+                let window = self.window.as_ref().ok_or("NPC smoke window missing")?;
+                let size = window.inner_size();
+                let viewport = glam::Vec2::new(size.width as f32, size.height as f32);
+                let point = viewport * 0.15;
+                self.game_ui_pointer(point, viewport, true)?;
+                self.game_ui_pointer(point, viewport, false)?;
+                24
+            }
+            24 if self.scene.active_self(hud)? => return Ok(false),
+            24 => 21,
+            21 => {
+                if self.play.simulation_ticks >= 50 {
+                    return Err("NPC reached the destination before the checkpoint request".into());
+                }
+                request(self, SnapshotCommand::Save)?;
+                22
+            }
+            22 => {
+                if self.editor_save.is_some() || !self.npc_window_acceptance()? {
+                    return Ok(false);
+                }
+                let identity = self.scene.identity();
+                request(self, SnapshotCommand::Open)?;
+                self.prefab_smoke
+                    .as_mut()
+                    .ok_or("missing NPC acceptance")?
+                    .checkpoint_scene = Some(identity);
+                23
+            }
+            _ => {
+                if self.editor_load.is_some() {
+                    return Ok(false);
+                }
+                let before = self
+                    .prefab_smoke
+                    .as_ref()
+                    .and_then(|smoke| smoke.checkpoint_scene)
+                    .ok_or("missing checkpoint source scene")?;
+                let audio = self.audio.play().ok_or("restored NPC audio missing")?;
+                if self.scene.identity() == before
+                    || self.scene.active_self(hud)?
+                    || !(1..50).contains(&self.play.simulation_ticks)
+                    || audio.frames == 0
+                    || audio.peak <= 0.
+                {
+                    return Err("NPC snapshot did not restore mid-route HUD and audio state".into());
+                }
+                println!(
+                    "NPC CHECKPOINT PASS ticks={} audio_frames={} peak={:.8}",
+                    self.play.simulation_ticks, audio.frames, audio.peak
+                );
+                18
+            }
+        };
+        let smoke = self.prefab_smoke.as_mut().ok_or("missing NPC acceptance")?;
+        smoke.phase = next;
+        smoke.frame = self.frames;
+        Ok(false)
+    }
+
+    fn npc_smoke_phase(&mut self, phase: u8) -> Result<bool, Box<dyn std::error::Error>> {
+        use crate::{
+            InspectorMode, component_fields, navigation_authoring::SCHEMA, panels::Action,
+        };
+        let clicked = match phase {
+            13 => {
+                self.selected = 0;
+                self.inspector = InspectorMode::Components(0);
+                true
+            }
+            14 => {
+                let document = self.authoring_document()?;
+                let object = document.objects.first().ok_or("missing NPC smoke object")?;
+                if object.components.contains_key(SCHEMA) {
+                    return Err("NPC smoke fixture already has a destination".into());
+                }
+                self.invoke_presented_action(Action::NpcDestination(
+                    component_fields::morph_edit_token(object),
+                ))?
+            }
+            15 => {
+                let document = self.authoring_document()?;
+                let row = component_fields::fields(&document.objects[0])?
+                    .iter()
+                    .position(|field| field.schema == SCHEMA && field.path == "/goal/0")
+                    .ok_or("NPC goal X field missing")?;
+                if !self.invoke_presented_action(Action::Field(row))? {
+                    return Ok(false);
+                }
+                self.field_key(KeyCode::Digit1, Some("1"))?;
+                self.field_key(KeyCode::Enter, None)?;
+                true
+            }
+            16 => {
+                if !self.invoke_presented_action(Action::Save)? {
+                    return Ok(false);
+                }
+                let saved = self.authoring_document()?;
+                if saved.objects[0].components[SCHEMA]["goal"][0] != 1. {
+                    return Err("NPC goal X edit did not apply".into());
+                }
+                self.prefab_smoke
+                    .as_mut()
+                    .ok_or("missing NPC acceptance")?
+                    .expected = Some(saved);
+                true
+            }
+            17 => self.invoke_presented_action(Action::Play)?,
+            18 => {
+                if self.play.simulation_ticks == 0 || !self.npc_window_acceptance()? {
+                    return Ok(false);
+                }
+                let ticks = self.play.simulation_ticks;
+                if !self.invoke_presented_action(Action::Play)? {
+                    return Ok(false);
+                }
+                self.prefab_smoke
+                    .as_mut()
+                    .ok_or("missing NPC acceptance")?
+                    .play_ticks = ticks;
+                true
+            }
+            _ => {
+                let smoke = self.prefab_smoke.as_ref().ok_or("missing NPC acceptance")?;
+                if smoke.expected.as_ref() != Some(&self.authoring_document()?) {
+                    return Err("NPC Play/Stop changed authoring".into());
+                }
+                println!(
+                    "NPC EDITOR PASS frames={} ticks={}",
+                    self.frames, smoke.play_ticks
+                );
+                self.prefab_smoke = None;
+                return Ok(true);
+            }
+        };
+        if clicked {
+            let smoke = self.prefab_smoke.as_mut().ok_or("missing NPC acceptance")?;
+            smoke.phase =
+                if phase == 17 && std::env::var_os("VOXY_PREFAB_SMOKE_NPC_CHECKPOINT").is_some() {
+                    20
+                } else {
+                    phase + 1
+                };
+            smoke.frame = self.frames;
+        }
+        Ok(false)
+    }
+
     fn invoke_presented_action(
         &mut self,
         expected: crate::panels::Action,
@@ -352,6 +533,8 @@ impl App {
             return Ok(false);
         }
         match phase {
+            13..=19 => return self.npc_smoke_phase(phase),
+            20..=24 => return self.npc_checkpoint_smoke_phase(phase),
             8..=12 => self.joint_smoke_phase(phase)?,
             6 => {
                 let document = self.panel_document()?;

@@ -276,6 +276,7 @@ fn durable_descriptors_reload_with_new_runtime_identity_and_no_velocity() {
         name: "Player".into(),
         active: true,
         translation: [0.0; 3],
+        precise_translation_bits: None,
         rotation: [0.0, 0.0, 0.0, 1.0],
         scale: [1.0; 3],
         components: std::collections::BTreeMap::from([(
@@ -3175,6 +3176,7 @@ fn durable_point_loads_reload_without_runtime_state_and_reject_silent_play() {
             name: "Loaded body".into(),
             active: true,
             translation: [0.; 3],
+            precise_translation_bits: None,
             rotation: [0., 0., 0., 1.],
             scale: [1.; 3],
             components: std::collections::BTreeMap::from([(

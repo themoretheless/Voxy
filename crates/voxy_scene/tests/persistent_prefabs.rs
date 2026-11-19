@@ -308,6 +308,7 @@ fn object(value: &str) -> SceneObject {
         name: value.into(),
         active: true,
         translation: [0.0; 3],
+        precise_translation_bits: None,
         rotation: [0.0, 0.0, 0.0, 1.0],
         scale: [1.0; 3],
         components: BTreeMap::new(),
@@ -1015,5 +1016,61 @@ fn external_parent_with_same_id_as_source_object_is_not_remapped() {
             .unwrap()
             .document,
         edited
+    );
+}
+
+#[test]
+fn precise_prefab_override_survives_save_and_source_update() {
+    let registry = registry(true);
+    let mut assets = fixture();
+    let mut source = document(vec![]);
+    source.instances.push(instance("first", "leaf"));
+    let baseline = source
+        .instance_baseline(&registry, PrefabLimits::default(), |asset| {
+            resolve(&assets, asset)
+        })
+        .unwrap();
+    let mut edited = source
+        .expand(&registry, PrefabLimits::default(), |asset| {
+            resolve(&assets, asset)
+        })
+        .unwrap()
+        .document;
+    let root = instance_object_id(&id("first"), &id("root"));
+    let precise = [1e-46_f64, 0., 0.];
+    let object = edited
+        .objects
+        .iter_mut()
+        .find(|object| object.id == root)
+        .unwrap();
+    assert_eq!(object.translation, precise.map(|value| value as f32));
+    object.precise_translation_bits = Some(precise.map(f64::to_bits));
+    let captured = source
+        .capture_edits(&baseline, &edited, &registry, 128)
+        .unwrap();
+    let saved = serde_json::to_vec(&captured).unwrap();
+    let reopened: PrefabSceneDocument = serde_json::from_slice(&saved).unwrap();
+
+    assets.get_mut("leaf").unwrap().objects[0].name = "Updated root".into();
+    let expanded = reopened
+        .expand(&registry, PrefabLimits::default(), |asset| {
+            resolve(&assets, asset)
+        })
+        .unwrap();
+    let object = expanded
+        .document
+        .objects
+        .iter()
+        .find(|object| object.id == root)
+        .unwrap();
+    assert_eq!(object.name, "Updated root");
+    let loaded = expanded.document.load(&registry, 128).unwrap();
+    assert_eq!(
+        loaded
+            .graph
+            .local_translation_f64(loaded.resolve(&root).unwrap())
+            .unwrap()
+            .to_array(),
+        precise
     );
 }

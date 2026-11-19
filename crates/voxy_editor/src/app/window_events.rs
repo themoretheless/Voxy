@@ -57,7 +57,11 @@ impl App {
                 return;
             }
             if self.standalone {
-                window.set_title("Voxy Game");
+                window.set_title(if self.standalone_snapshot_identity.is_some() {
+                    "Voxy Game — Ctrl/Cmd+Shift+S save, +O open"
+                } else {
+                    "Voxy Game"
+                });
                 return;
             }
             if self.play.playing.is_some() && self.play.physics.is_some() {
@@ -169,10 +173,127 @@ impl App {
         }
     }
 
+    pub(crate) fn npc_window_acceptance(&self) -> Result<bool, Box<dyn std::error::Error>> {
+        let Some(id) = std::env::var_os("VOXY_GAME_SMOKE_NPC_GOAL") else {
+            return Ok(true);
+        };
+        let id = id
+            .into_string()
+            .map_err(|_| "NPC smoke object ID must be UTF-8")?;
+        let owner = self
+            .resolve_object(&voxy_scene::ObjectId(id.clone()))
+            .ok_or("NPC smoke object is missing")?;
+        let route = self
+            .scene
+            .component::<voxy_gameplay::NpcRoute>(owner)?
+            .ok_or("NPC smoke object has no runtime route")?;
+        let physics = self
+            .play
+            .physics
+            .as_ref()
+            .ok_or("NPC smoke physics is missing")?;
+        if !physics.npc_route_completed(&self.scene, owner)? {
+            return Ok(false);
+        }
+        let pose = physics
+            .accepted_pose(&self.scene, owner)?
+            .ok_or("NPC smoke pose is missing")?;
+        let goal = route.goal();
+        let position = pose.physical_center;
+        if (position.x - goal.x).abs() > 1e-4 || (position.z - goal.z).abs() > 1e-4 {
+            return Err("NPC completed route outside its destination".into());
+        }
+        println!(
+            "NPC NATIVE PASS owner={id} frames={} ticks={} x={:.8} z={:.8}",
+            self.frames, self.play.simulation_ticks, position.x, position.z
+        );
+        Ok(true)
+    }
+
+    fn standalone_snapshot_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
+        let Some(operation) = std::env::var_os("VOXY_GAME_SMOKE_SNAPSHOT") else {
+            return Ok(true);
+        };
+        let save = match operation.to_str() {
+            Some("save") => true,
+            Some("load") => false,
+            _ => return Err("invalid standalone snapshot smoke operation".into()),
+        };
+        if let Some(error) = &self.snapshot_error {
+            return Err(format!("standalone snapshot failed: {error}").into());
+        }
+        let hud = self
+            .resolve_object(&voxy_scene::ObjectId("hud".into()))
+            .ok_or("missing standalone snapshot HUD")?;
+        if let Some((original, confirmed)) = self.standalone_snapshot_smoke {
+            if confirmed {
+                return Ok(true);
+            }
+            if self.editor_save.is_some() || self.editor_load.is_some() {
+                return Ok(false);
+            }
+            if save {
+                let path =
+                    std::env::var_os("VOXY_GAME_SAVE_FILE").ok_or("missing smoke save path")?;
+                if !std::path::Path::new(&path).is_file() {
+                    return Err("standalone snapshot was not written".into());
+                }
+                println!("STANDALONE SNAPSHOT SAVE PASS");
+            } else {
+                let audio = self
+                    .audio
+                    .play()
+                    .ok_or("missing restored standalone audio")?;
+                if self.scene.identity() == original
+                    || self.scene.active_self(hud)?
+                    || !(1..50).contains(&self.play.simulation_ticks)
+                    || audio.frames == 0
+                    || audio.peak <= 0.
+                {
+                    return Err(
+                        "standalone checkpoint did not restore mid-route HUD and audio".into(),
+                    );
+                }
+                println!(
+                    "STANDALONE SNAPSHOT LOAD PASS ticks={} audio_frames={} peak={:.8}",
+                    self.play.simulation_ticks, audio.frames, audio.peak
+                );
+            }
+            self.standalone_snapshot_smoke = Some((original, true));
+            return Ok(true);
+        }
+        if save && self.scene.active_self(hud)? {
+            let size = self
+                .window
+                .as_ref()
+                .ok_or("missing standalone window")?
+                .inner_size();
+            let viewport = glam::Vec2::new(size.width as f32, size.height as f32);
+            self.game_ui_pointer(viewport * 0.15, viewport, true)?;
+            self.game_ui_pointer(viewport * 0.15, viewport, false)?;
+            return Ok(false);
+        }
+        if save && !(1..50).contains(&self.play.simulation_ticks) {
+            return Err("standalone NPC reached its goal before save request".into());
+        }
+        let original = self.scene.identity();
+        let modifiers = self.modifiers;
+        self.modifiers =
+            winit::keyboard::ModifiersState::CONTROL | winit::keyboard::ModifiersState::SHIFT;
+        let request = self.snapshot_shortcut(if save { KeyCode::KeyS } else { KeyCode::KeyO });
+        self.modifiers = modifiers;
+        if !request? {
+            return Err("standalone snapshot shortcut was not handled".into());
+        }
+        self.standalone_snapshot_smoke = Some((original, false));
+        Ok(false)
+    }
+
     fn evaluate_window_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         if self.standalone && self.smoke_deadline.is_some() {
             if self.frames >= 3
                 && self.play.simulation_ticks > 0
+                && self.pending_model.is_none()
                 && self.graphics.as_ref().is_some_and(|graphics| {
                     self.required_gpu_assets()
                         .iter()
@@ -180,6 +301,8 @@ impl App {
                         && self.ui_live.ready()
                         && graphics.ui_presented
                 })
+                && self.standalone_snapshot_acceptance()?
+                && self.npc_window_acceptance()?
             {
                 println!(
                     "GAME NATIVE PASS frames={} ticks={}",
@@ -431,10 +554,9 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::Focused(focused) => {
-                self.play.player_input.set_focused(focused);
+                self.set_game_focus(focused);
                 if !focused {
                     self.authoring.preview_seek = None;
-                    self.game_ui_input.cancel();
                     self.modifiers = winit::keyboard::ModifiersState::empty();
                     if let Some(panels) = &mut self.panels {
                         panels.invalidate_presentation();

@@ -21,6 +21,8 @@ fn qr_input(offset:u32)->FiveRounded {
     return five_from_operand(five_normalize_operand(parts));
 }
 fn qr_failure(code:u32,lane:u32){
+    // Every lane must publish its error before lane zero reads the flag.
+    workgroupBarrier();
     if lane==0u {qr_decision=atomicLoad(&qr_invalid);if qr_decision!=0u {qr_words[6]=code;}}
     storageBarrier();workgroupBarrier();
 }

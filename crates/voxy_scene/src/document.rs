@@ -21,18 +21,33 @@ pub struct SceneObject {
     pub name: String,
     pub active: bool,
     pub translation: [f32; 3],
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub precise_translation_bits: Option<[u64; 3]>,
     pub rotation: [f32; 4],
     pub scale: [f32; 3],
     /// Keys are durable registered schema names, never Rust `TypeId` values.
     pub components: BTreeMap<String, Value>,
 }
 impl SceneObject {
-    fn transform(&self) -> Transform {
+    pub(crate) fn transform(&self) -> Transform {
         Transform {
             translation: Vec3::from_array(self.translation),
             rotation: Quat::from_array(self.rotation),
             scale: Vec3::from_array(self.scale),
         }
+    }
+
+    pub(crate) fn checked_precise_translation(&self) -> Result<Option<glam::DVec3>, DocumentError> {
+        let Some(bits) = self.precise_translation_bits else {
+            return Ok(None);
+        };
+        let precise = glam::DVec3::from_array(bits.map(f64::from_bits));
+        if !precise.is_finite() || precise.as_vec3().to_array() != self.translation {
+            return Err(DocumentError::Invalid(
+                "inconsistent precise translation".into(),
+            ));
+        }
+        Ok(Some(precise))
     }
 }
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
@@ -634,6 +649,9 @@ impl<'a> SceneCheckpointView<'a> {
                 name: node.name.clone(),
                 active: node.active,
                 translation: local.translation.to_array(),
+                precise_translation_bits: node
+                    .precise_translation
+                    .map(|value| value.to_array().map(f64::to_bits)),
                 rotation: local.rotation.to_array(),
                 scale: local.scale.to_array(),
                 components,
@@ -658,6 +676,7 @@ impl SceneDocument {
     pub fn to_json(&self) -> Result<String, DocumentError> {
         for object in &self.objects {
             object.transform().matrix()?;
+            object.checked_precise_translation()?;
         }
         Ok(serde_json::to_string_pretty(self)?)
     }
@@ -693,6 +712,9 @@ impl SceneDocument {
         let mut ids = BTreeMap::new();
         for object in &self.objects {
             let id = graph.spawn(None, object.transform())?;
+            if let Some(precise) = object.checked_precise_translation()? {
+                graph.set_precise_translation(id, precise)?;
+            }
             graph.set_name(id, object.name.clone())?;
             graph.set_active(id, object.active)?;
             for (name, value) in &object.components {
@@ -758,11 +780,46 @@ mod tests {
             name: id.into(),
             active: true,
             translation: [1.0, 0.0, 0.0],
+            precise_translation_bits: None,
             rotation: [0.0, 0.0, 0.0, 1.0],
             scale: [1.0; 3],
             components: BTreeMap::new(),
         }
     }
+    #[test]
+    fn precise_translation_survives_document_capture_and_reload() {
+        let registry = ComponentRegistry::default();
+        let id = ObjectId("root".into());
+        let original = SceneDocument {
+            version: 1,
+            objects: vec![object("root", None)],
+        };
+        let mut loaded = original.load(&registry, 1).unwrap();
+        let node = loaded.resolve(&id).unwrap();
+        let position = glam::DVec3::new(1., -260.1952625000003, 0.);
+        loaded
+            .graph
+            .set_precise_translation(node, position)
+            .unwrap();
+        let saved = loaded.capture(&registry).unwrap().to_json().unwrap();
+        let decoded = SceneDocument::from_json(&saved).unwrap();
+        let restored = decoded.load(&registry, 1).unwrap();
+        let node = restored.resolve(&id).unwrap();
+        assert_eq!(
+            restored
+                .graph
+                .local_translation_f64(node)
+                .unwrap()
+                .to_array()
+                .map(f64::to_bits),
+            position.to_array().map(f64::to_bits)
+        );
+
+        let mut inconsistent = decoded;
+        inconsistent.objects[0].translation[1] = 0.;
+        assert!(inconsistent.load(&registry, 1).is_err());
+    }
+
     #[test]
     fn cloned_registry_preserves_custom_reference_codecs_and_isolates_schema_edits() {
         let mut original = ComponentRegistry::default();

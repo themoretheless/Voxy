@@ -3,6 +3,7 @@ use super::super::lbfgs::{SecantPair, push_secant, try_secant_direction, try_sec
 #[cfg(test)]
 use super::super::lbfgs::{secant_direction, secant_scale};
 use super::{DrivenSupportStep, InertialBody, PrescribedTriangleSurface, SupportTarget, Vec3, dot};
+use crate::biomechanics::Rejection;
 use std::sync::Arc;
 // Observe failures without replacing the original error or changing admission.
 fn observe_contact_stage<T>(
@@ -271,11 +272,9 @@ impl InertialBody {
                 &mut knots,
                 next_skin.as_ref(),
             ) {
-                Err(
-                    reason @ ("implicit contact work defect"
-                    | "implicit contact path quadrature refinement"
-                    | "implicit material path quadrature refinement"),
-                ) => {
+                Err(reason)
+                    if Rejection::of(reason).is_some_and(Rejection::refines_quadrature_panels) =>
+                {
                     if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
                         eprintln!(
                             "IMPLICIT_QUADRATURE_RETRY attempt={attempt} panels={} reason={reason:?}",
@@ -283,10 +282,12 @@ impl InertialBody {
                         );
                     }
                 }
-                Err(
-                    reason @ ("implicit contact nonlinear nonconvergence"
-                    | "implicit contact line search failed"),
-                ) if next_skin.is_some() && knots.len() - 1 <= nonlinear_retry_panels => {
+                Err(reason)
+                    if Rejection::of(reason)
+                        .is_some_and(Rejection::retries_nonlinear_quadrature)
+                        && next_skin.is_some()
+                        && knots.len() - 1 <= nonlinear_retry_panels =>
+                {
                     // Re-evaluate actual sampled forces; no force averaging across poses
                     // or relaxation of nonlinear/work admission. Retry remains atomic.
                     let mut refined = Vec::with_capacity(2 * knots.len() - 1);
@@ -306,7 +307,7 @@ impl InertialBody {
                 result => return result,
             }
         }
-        Err("implicit contact quadrature nonconvergence")
+        Err(Rejection::ContactQuadrature.message())
     }
     #[expect(
         clippy::too_many_lines,
@@ -549,7 +550,8 @@ impl InertialBody {
                 .map_or_else(|| path_evaluation(&mid), Ok);
             let mut initial_feasible = iteration != 0 || feasible_guess(&mid);
             if iteration == 0
-                && (evaluation.is_ok() || matches!(evaluation, Err("closed surface contact gap")))
+                && (evaluation.is_ok()
+                    || matches!(evaluation, Err(error) if Rejection::of(error) == Some(Rejection::ClosedSurfaceGap)))
             {
                 // Compare objectives only between feasible initial trajectories.
                 // A stationary guess can be ill-conditioned or already crossed
@@ -626,7 +628,8 @@ impl InertialBody {
                 }
             }
             if iteration == 0
-                && (!initial_feasible || matches!(evaluation, Err("closed surface contact gap")))
+                && (!initial_feasible
+                    || matches!(evaluation, Err(error) if Rejection::of(error) == Some(Rejection::ClosedSurfaceGap)))
             {
                 let predicted: Vec<Vec3> = self
                     .body
@@ -996,9 +999,9 @@ impl InertialBody {
                         last_rejection_time.and_then(|time| prepared_path.refine_near(time))
                 {
                     *knots = refined;
-                    return Err("implicit contact path quadrature refinement");
+                    return Err(Rejection::ContactPathQuadrature.message());
                 }
-                return Err("implicit contact line search failed");
+                return Err(Rejection::ContactLineSearch.message());
             }
         }
         if !converged {
@@ -1027,7 +1030,7 @@ impl InertialBody {
                     "IMPLICIT_FRAME_GEOMETRY dt={dt:.17e} world_body={endpoint:?} local_body={local_body:?} world_obstacle={obstacle_triangle:?} local_obstacle={local_obstacle:?} nearest_world={nearest:?} nearest_local={local_nearest:?}"
                 );
             }
-            return Err("implicit contact nonlinear nonconvergence");
+            return Err(Rejection::ContactNonlinear.message());
         }
         if std::env::var_os("VOXY_CONTACT_FRAME_TRACE").is_some() {
             let endpoint = world_endpoint(&mid);
@@ -1307,7 +1310,7 @@ impl InertialBody {
                 prepared_path.refine_by_work(&self.body.positions, &end, faces, tolerance_j * 0.25),
             )? {
                 *knots = refined;
-                return Err("implicit contact work defect");
+                return Err(Rejection::ContactWork.message());
             }
             // Moving prescribed skin requires temporal refinement of its own samples.
             // Endpoint energy remains the admission oracle; never correct forces from it.
@@ -1320,9 +1323,9 @@ impl InertialBody {
                     }
                     refined.push(1.);
                     *knots = refined;
-                    return Err("implicit material path quadrature refinement");
+                    return Err(Rejection::MaterialPathQuadrature.message());
                 }
-                return Err("implicit midpoint work defect");
+                return Err(Rejection::MidpointWork.message());
             }
             if let Some(refined) = observe_contact_stage(
                 "material quadrature error estimator",
@@ -1338,9 +1341,9 @@ impl InertialBody {
                 ),
             )? {
                 *knots = refined;
-                return Err("implicit material path quadrature refinement");
+                return Err(Rejection::MaterialPathQuadrature.message());
             }
-            return Err("implicit midpoint work defect");
+            return Err(Rejection::MidpointWork.message());
         }
         let support_work = reaction + pin_work;
         let lost_work = if reaction != 0. && support_work == pin_work {

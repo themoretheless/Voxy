@@ -119,6 +119,7 @@ flowchart BT
     voxy_gameplay --> voxy_assets
     voxy_gameplay --> voxy_audio
     voxy_gameplay --> voxy_input
+    voxy_gameplay --> voxy_navigation
     voxy_gameplay --> voxy_scene
     voxy_gameplay --> voxy_text
     voxy_gameplay --> voxy_ui
@@ -176,6 +177,7 @@ flowchart BT
     voxy_vulkan --> voxy_cuda
     voxy_web --> physics
     voxy_web --> physics_voxel
+    voxy_web --> voxy_player
     voxy_web --> voxy_animation
     voxy_web --> voxy_assets
     voxy_web --> voxy_core

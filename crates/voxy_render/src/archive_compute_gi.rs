@@ -419,6 +419,11 @@ impl ArchiveComputeGi {
     pub(super) fn world_frame_enabled(&self) -> bool {
         self.world_frame.is_some()
     }
+    pub(super) fn world_software_nearest_enabled(&self) -> bool {
+        self.world_frame
+            .as_ref()
+            .is_some_and(world_resolve::ArchiveWorldRayFrame::software_nearest_enabled)
+    }
     pub(super) fn world_frame_tiles(&self) -> Option<&[[u32; 4]]> {
         Some(self.world_frame.as_ref()?.rectangles())
     }

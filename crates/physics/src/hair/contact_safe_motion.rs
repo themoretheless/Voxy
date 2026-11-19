@@ -511,16 +511,23 @@ fn component(parent: &[usize], mut index: usize) -> usize {
     index
 }
 fn join(parent: &mut [usize], a: usize, b: usize) -> bool {
-    let a = component(parent, a);
-    let b = component(parent, b);
+    fn compress(parent: &mut [usize], mut index: usize) -> usize {
+        while parent[index] != index {
+            parent[index] = parent[parent[index]];
+            index = parent[index];
+        }
+        index
+    }
+    let a = compress(parent, a);
+    let b = compress(parent, b);
     if a == b {
         return false;
     }
     parent[a.max(b)] = a.min(b);
     true
 }
-fn group_minimum(parent: &[usize], scales: &mut [f64]) {
-    let mut minimum = vec![1f64; parent.len()];
+fn group_minimum(parent: &[usize], scales: &mut [f64], minimum: &mut [f64]) {
+    minimum.fill(1.);
     for (rod, &scale) in scales.iter().enumerate() {
         let root = component(parent, rod);
         minimum[root] = minimum[root].min(scale);
@@ -551,16 +558,19 @@ pub(super) fn trust_components(
     }
     let mut scales = Vec::with_capacity(rods.len());
     for angles in &increment.angular {
-        if angles.iter().any(|angle| !finite(*angle)) {
-            return Err("swept angular trust overflow");
+        let mut maximum: f64 = 0.;
+        for &angle in angles {
+            if !finite(angle) {
+                return Err("swept angular trust overflow");
+            }
+            maximum = maximum.max(len(angle));
         }
-        let maximum = angles.iter().map(|angle| len(*angle)).fold(0., f64::max);
         if !maximum.is_finite() {
             return Err("swept angular trust overflow");
         }
         scales.push(if maximum > 0.35 { 0.35 / maximum } else { 1. });
     }
-    group_minimum(&parent, &mut scales);
+    group_minimum(&parent, &mut scales, &mut vec![1.; rods.len()]);
     Ok((parent, scales))
 }
 /// A reduced component can create a collision with a formerly clear moving
@@ -601,20 +611,23 @@ fn checked_component_backtrack(
     // Scratch belongs to this backtrack only. Every candidate overwrites all
     // coordinates before the unchanged whole-trajectory query consumes them.
     let mut end: Vec<Vec<V>> = rods.iter().map(|rod| rod.x.clone()).collect();
+    let mut groups = vec![false; rods.len()];
+    let mut candidate = scales.to_vec();
+    let mut minimum = vec![1.; rods.len()];
     for _ in 0..32 {
-        let mut groups = vec![false; rods.len()];
+        groups.fill(false);
         for (r, &active) in restricted.iter().enumerate() {
             if active {
                 groups[component(&parent, r)] = true;
             }
         }
-        let mut candidate = scales.to_vec();
+        candidate.copy_from_slice(scales);
         for r in 0..rods.len() {
             if groups[component(&parent, r)] {
                 candidate[r] *= fraction;
             }
         }
-        group_minimum(&parent, &mut candidate);
+        group_minimum(&parent, &mut candidate, &mut minimum);
         for (r, (rod, points)) in rods.iter().zip(&mut end).enumerate() {
             for (p, (&x, point)) in rod.x.iter().zip(points).enumerate() {
                 *point = add(x, mul(increment.linear[r][p], candidate[r]));
@@ -680,18 +693,16 @@ fn component_scales_from(
 
     let mut tried_scale_search = false;
     let trace_components = std::env::var_os("VOXY_HAIR_SWEEP_COMPONENT_TRACE").is_some();
+    let mut end: Vec<_> = rods.iter().map(|rod| rod.x.clone()).collect();
+    let mut next = scales.clone();
+    let mut minimum = vec![1.; rods.len()];
+    let mut moving_components = vec![false; rods.len()];
     for iteration in 0..64 {
-        let end: Vec<Vec<V>> = rods
-            .iter()
-            .enumerate()
-            .map(|(r, rod)| {
-                rod.x
-                    .iter()
-                    .enumerate()
-                    .map(|(p, x)| add(*x, mul(increment.linear[r][p], scales[r])))
-                    .collect()
-            })
-            .collect();
+        for (r, (rod, endpoint)) in rods.iter().zip(&mut end).enumerate() {
+            for (p, (position, end_position)) in rod.x.iter().zip(endpoint).enumerate() {
+                *end_position = add(*position, mul(increment.linear[r][p], scales[r]));
+            }
+        }
         let limits = strand_limits_cached(start, &end, radius, Some(&mut candidates))?;
         if trace_components {
             let limiting = limits.iter().min_by(|a, b| a.2.total_cmp(&b.2));
@@ -711,7 +722,7 @@ fn component_scales_from(
         if merged {
             // Previously independent motions changed their time scale. Their
             // old CCD fractions no longer describe the new common path.
-            group_minimum(&parent, &mut scales);
+            group_minimum(&parent, &mut scales, &mut minimum);
             continue;
         }
         // A rejected component whose rounded endpoint already equals its
@@ -719,7 +730,7 @@ fn component_scales_from(
         // Ask the caller for a new constrained direction rather than repeating
         // identical CCD queries until the scale underflows. Roots and the
         // original substep trajectory remain unchanged and still rejected.
-        let mut moving_components = vec![false; rods.len()];
+        moving_components.fill(false);
         for (r, rod) in rods.iter().enumerate() {
             if end[r] != rod.x {
                 moving_components[component(&parent, r)] = true;
@@ -747,11 +758,11 @@ fn component_scales_from(
                 return Ok(candidate);
             }
         }
-        let mut next = scales.clone();
+        next.copy_from_slice(&scales);
         for &(a, _, fraction) in &limits {
             next[a] = next[a].min(scales[a] * fraction * 0.9);
         }
-        group_minimum(&parent, &mut next);
+        group_minimum(&parent, &mut next, &mut minimum);
         if next.iter().any(|value| !value.is_finite() || *value <= 0.) || next == scales {
             let limiting = limits.iter().min_by(|a, b| a.2.total_cmp(&b.2));
             eprintln!(
@@ -763,7 +774,7 @@ fn component_scales_from(
             export_motion_failure(rods, start, increment, responses, radius);
             return Err("swept strand components have no admissible progress");
         }
-        scales = next;
+        std::mem::swap(&mut scales, &mut next);
     }
     export_motion_failure(rods, start, increment, responses, radius);
     Err("swept strand component admission did not converge")
@@ -872,6 +883,16 @@ fn save_swept_failure_state(
         directory.join("motion.vjr"),
         motion_failure_bytes(rods, previous, increment, groups, radius),
     )?;
+    let contacts: Vec<_> = rods.iter().map(|rod| rod.contacts.as_slice()).collect();
+    let mut writer =
+        std::io::BufWriter::new(std::fs::File::create(directory.join("contacts.json"))?);
+    serde_json::to_writer(&mut writer, &contacts)?;
+    std::io::Write::flush(&mut writer)?;
+    let mut writer = std::io::BufWriter::new(std::fs::File::create(
+        directory.join("strand-responses.json"),
+    )?);
+    serde_json::to_writer(&mut writer, groups)?;
+    std::io::Write::flush(&mut writer)?;
     let elastic = admission
         .as_ref()
         .map(|scales| elastic_motion_limited(rods, increment, scales));
@@ -1250,8 +1271,8 @@ fn advance_mode(
     contact_only: bool,
     approaching: &[StrandResponse],
 ) -> Result<f64, &'static str> {
-    let profile_started =
-        std::env::var_os("VOXY_HAIR_SWEEP_REFINEMENT_TRACE").map(|_| std::time::Instant::now());
+    let trace_refinement = std::env::var_os("VOXY_HAIR_SWEEP_REFINEMENT_TRACE").is_some();
+    let profile_started = trace_refinement.then(std::time::Instant::now);
     let mut responses = super::super::refresh_strand_responses(rods, radius, &[]);
     for pair in approaching {
         if !responses
@@ -1421,7 +1442,7 @@ fn advance_mode(
             if let Some(started) = admission_started {
                 refinement_admission_ms += started.elapsed().as_secs_f64() * 1000.;
             }
-            if std::env::var_os("VOXY_HAIR_SWEEP_REFINEMENT_TRACE").is_some() {
+            if trace_refinement {
                 let status = match &admission {
                     Ok(scales) => format!("fraction={}", scales.iter().copied().fold(1., f64::min)),
                     Err(error) => format!("error={error}"),
@@ -1440,6 +1461,18 @@ fn advance_mode(
             Err(_) => true,
         }
     {
+        if let Some(frame) = crate::hair::phase_diagnostics::observation_frame() {
+            let minimum_fraction = admission
+                .as_ref()
+                .ok()
+                .map(|scales| scales.iter().copied().fold(1., f64::min));
+            eprintln!(
+                "HAIR SWEPT BUDGET frame={frame} dt={dt} cuts={} constraints={} minimum_fraction={minimum_fraction:?} error={:?}",
+                cuts.len(),
+                constraints.len(),
+                admission.as_ref().err()
+            );
+        }
         export_motion_failure(rods, start.unwrap_or(rods), &increment, &groups, radius);
         export_swept_failure_state(
             rods,
@@ -1530,6 +1563,29 @@ fn advance_mode(
 mod tests {
     use super::*;
     use crate::hair::{HairLinearSolver, HairLinearSystem, HairMaterial, HairSystem, RootPose};
+    fn restore_captured_contacts(
+        directory: &std::path::Path,
+        rods: &mut [HairRod],
+    ) -> std::io::Result<bool> {
+        let file = match std::fs::File::open(directory.join("contacts.json")) {
+            Ok(file) => file,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(false),
+            Err(error) => return Err(error),
+        };
+        let contacts: Vec<Vec<crate::hair::RodContact>> =
+            serde_json::from_reader(std::io::BufReader::new(file))?;
+        if contacts.len() != rods.len() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "contact capture guide count mismatch",
+            ));
+        }
+        for (rod, contacts) in rods.iter_mut().zip(contacts) {
+            rod.contacts = contacts;
+        }
+        Ok(true)
+    }
+
     #[test]
     fn swept_failure_state_preserves_original_rest_and_elastic_admission() {
         let previous = HairRod::new(
@@ -1544,6 +1600,16 @@ mod tests {
         rod.velocity[1] = [1., 2., 3.];
         rod.omega[1] = [0.1, 0.2, 0.3];
         apply(&mut rod.q[1], [0., 0.1, 0.]);
+        rod.contacts.push(crate::hair::RodContact {
+            segment: 1,
+            fraction: 0.25,
+            normal: [1., 0., 0.],
+            target: [0.001, 0.014, 0.],
+            source: ContactSource::Mesh(0),
+            surface_velocity: [0.001, 0., 0.],
+            metric_scale: 0.125,
+            trajectory_time: Some(0.125),
+        });
         let rods = vec![rod];
         let increment = PositionIncrement {
             linear: vec![vec![[0.; 3]; 4]],
@@ -1572,8 +1638,13 @@ mod tests {
             &Ok(vec![0.5]),
         )
         .unwrap();
-        let (dt, radius, _, _, loaded, meshes, _) =
+        let (dt, radius, _, _, mut loaded, meshes, _) =
             crate::hair::contact_replay::tests::read_replay(root.join("current.vhr"));
+        assert!(restore_captured_contacts(&root, &mut loaded).unwrap());
+        assert_eq!(
+            format!("{:?}", loaded[0].contacts),
+            format!("{:?}", rods[0].contacts)
+        );
         assert_eq!(dt, 1. / 120.);
         assert_eq!(radius, 80e-6);
         assert!(meshes.is_empty());
@@ -2004,7 +2075,7 @@ mod tests {
         }
         let path =
             std::env::var("VOXY_HAIR_ROOT_MOTION_FAILURE_FIXTURE").expect("root motion fixture");
-        let mut reader = std::io::Cursor::new(std::fs::read(path).unwrap());
+        let mut reader = std::io::Cursor::new(std::fs::read(&path).unwrap());
         let mut magic = [0; 4];
         reader.read_exact(&mut magic).unwrap();
         assert_eq!(&magic, b"VJR1");
@@ -2046,6 +2117,92 @@ mod tests {
             });
         }
         assert_eq!(reader.position() as usize, reader.get_ref().len());
+        if std::env::var_os("VOXY_HAIR_REPLAY_SWEPT_FAILURE").is_some() {
+            let directory = std::path::Path::new(&path).parent().unwrap();
+            let (dt, _, _, _, mut current, _, _) =
+                crate::hair::contact_replay::tests::read_replay(directory.join("current.vhr"));
+            let (_, _, _, _, previous, _, _) =
+                crate::hair::contact_replay::tests::read_replay(directory.join("previous.vhr"));
+            assert_eq!(current.len(), rods.len());
+            assert_eq!(previous.len(), start.len());
+            assert!(current.iter().zip(&rods).all(|(a, b)| a.x == b.x));
+            assert!(previous.iter().zip(&start).all(|(a, b)| a.x == b.x));
+            match std::fs::File::open(directory.join("strand-responses.json")) {
+                Ok(file) => {
+                    responses = serde_json::from_reader(std::io::BufReader::new(file)).unwrap();
+                }
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+                Err(error) => panic!("cannot read strand responses: {error}"),
+            }
+            let contacts_restored = restore_captured_contacts(directory, &mut current).unwrap();
+            eprintln!("CAPTURED SWEPT CONTACTS restored={contacts_restored}");
+            if std::env::var_os("VOXY_HAIR_REPLAY_PROJECTION_TRACE").is_some() {
+                let (mut rows, _) = position_constraints(&current, &responses, radius).unwrap();
+                let step = NativeNewtonStep::new(&current, dt, 1e-14).unwrap();
+                trace_increment("replay_free", 0, &current, &step.free, None);
+                let projected = step
+                    .project_contacts_with_solver(&mut rows, 1e-14, None)
+                    .unwrap();
+                trace_increment("replay_projected", 0, &current, &projected, None);
+                trace_increment("replay_captured", 0, &current, &increment, None);
+                let mut replay = current.clone();
+                let result = advance_mode(
+                    &mut replay,
+                    dt,
+                    radius,
+                    None,
+                    &mut Vec::new(),
+                    Some(&previous),
+                    true,
+                    &responses,
+                );
+                eprintln!("CAPTURED REFINEMENT REPLAY result={result:?}");
+            }
+            let scales = component_scales_from(&current, &previous, &increment, &responses, radius);
+            let minimum = scales
+                .as_ref()
+                .map(|values| values.iter().copied().fold(1., f64::min));
+            let limited = scales.as_ref().map(|values| {
+                contact_motion_limited(&current, &increment, values, &responses).unwrap()
+            });
+            eprintln!("CAPTURED SWEPT FAILURE minimum={minimum:?} limited={limited:?}");
+            assert!(scales.is_err() || limited == Ok(true));
+            if std::env::var_os("VOXY_HAIR_ROOT_MOTION_RESTORATION_ZERO_FREE").is_some() {
+                for values in increment.linear.iter_mut().chain(&mut increment.angular) {
+                    values.fill([0.; 3]);
+                }
+                let pairs =
+                    crate::hair::contact::refresh_strand_responses(&mut current, radius, &[]);
+                let (mut rows, _) = position_constraints(&current, &pairs, radius).unwrap();
+                let use_current_normals =
+                    std::env::var_os("VOXY_HAIR_CURRENT_WITNESS_NORMALS").is_some();
+                let (direction, groups) =
+                    swept_constraints::with_current_native_normals(use_current_normals, || {
+                        project_guarded_restoration_direction(
+                            &mut rows, &current, &previous, &pairs, dt, radius, &increment, None,
+                        )
+                    })
+                    .unwrap();
+                let scales =
+                    component_scales_from(&current, &previous, &direction, &groups, radius)
+                        .unwrap();
+                let minimum = scales.iter().copied().fold(1., f64::min);
+                let limited =
+                    contact_motion_limited(&current, &direction, &scales, &groups).unwrap();
+                eprintln!("CAPTURED ZERO FREE minimum={minimum:?} limited={limited:?}");
+                assert!(!limited);
+                assert_eq!(
+                    strand_fraction(
+                        &previous,
+                        &scaled_end(&current, &direction, &scales),
+                        radius
+                    )
+                    .unwrap(),
+                    1.
+                );
+            }
+            return;
+        }
         if std::env::var_os("VOXY_HAIR_SWEEP_COMPONENT_TRACE").is_some() {
             for fraction in [0., 0.000001, 0.00001, 0.001, 0.1, 0.5, 1.] {
                 let end = scaled_end(&rods, &increment, &vec![fraction; rods.len()]);
@@ -2119,6 +2276,23 @@ mod tests {
                 "STRAND FRACTION REUSE captured_original_queries_admitted=true hits={hits} misses={misses}"
             );
         }
+        if let Ok(dt) = std::env::var("VOXY_HAIR_ROOT_MOTION_RESTORATION_DT") {
+            let dt = dt.parse::<f64>().unwrap();
+            assert!(dt.is_finite() && dt > 0.);
+            if std::env::var_os("VOXY_HAIR_ROOT_MOTION_RESTORATION_ZERO_FREE").is_some() {
+                for values in increment.linear.iter_mut().chain(&mut increment.angular) {
+                    values.fill([0.; 3]);
+                }
+            }
+            // VJR1 records connectivity only. Rebuild geometric contact rows
+            // from the staged pose before attempting a physical correction.
+            let pairs = crate::hair::contact::refresh_strand_responses(&mut rods, radius, &[]);
+            let (mut rows, _) = position_constraints(&rods, &pairs, radius).unwrap();
+            (increment, responses) = project_guarded_restoration_direction(
+                &mut rows, &rods, &start, &pairs, dt, radius, &increment, None,
+            )
+            .expect("captured joint root motion restoration must settle");
+        }
         let scales = component_scales_from(&rods, &start, &increment, &responses, radius)
             .expect("captured joint root motion must admit a full checked path");
         let end = scaled_end(&rods, &increment, &scales);
@@ -2126,6 +2300,47 @@ mod tests {
         for (r, points) in end.iter().enumerate() {
             assert_eq!(points[0], rods[r].x[0]);
         }
+    }
+    #[test]
+    fn moving_root_contact_can_redirect_free_segment() {
+        let a = [
+            [-0.001, 0., 0.],
+            [0., 0., 0.],
+            [0.001, 0., 0.],
+            [0.002, 0., 0.],
+        ];
+        let b = [
+            [0.0005, 0.00009, 0.],
+            [0.0005, 0.00012, 0.001],
+            [0.0005, 0.00012, 0.002],
+        ];
+        let start = vec![
+            HairRod::new(a.to_vec(), HairMaterial::default()).unwrap(),
+            HairRod::new(b.to_vec(), HairMaterial::default()).unwrap(),
+        ];
+        let mut rods = start.clone();
+        rods[1].x[0][1] = 0.00005;
+        let radius = 4e-5;
+        let free = PositionIncrement {
+            linear: rods.iter().map(|rod| vec![[0.; 3]; rod.x.len()]).collect(),
+            angular: rods.iter().map(|rod| vec![[0.; 3]; rod.q.len()]).collect(),
+        };
+        assert!(component_scales_from(&rods, &start, &free, &[], radius).is_err());
+        let (direction, groups) = project_guarded_restoration_direction(
+            &mut Vec::new(),
+            &rods,
+            &start,
+            &[],
+            1. / 120.,
+            radius,
+            &free,
+            None,
+        )
+        .unwrap();
+        let scales = component_scales_from(&rods, &start, &direction, &groups, radius).unwrap();
+        let end = scaled_end(&rods, &direction, &scales);
+        assert_eq!(end[1][0], rods[1].x[0]);
+        assert_eq!(strand_fraction(&start, &end, radius).unwrap(), 1.);
     }
     #[test]
     fn interval_planes_do_not_admit_a_tunnel_or_exhausted_query() {

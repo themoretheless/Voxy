@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
 use voxy_core::{ChunkPos, LocalPos, TickId, VoxelPos, WorldEpoch, split_voxel};
@@ -117,6 +117,7 @@ impl Default for WorldLimits {
 
 #[derive(Clone, Debug)]
 struct ChunkSlot {
+    regenerable: bool,
     revision: ChunkRevision,
     data: Arc<ChunkData>,
 }
@@ -128,6 +129,7 @@ pub struct World {
     chunks: BTreeMap<ChunkPos, ChunkSlot>,
     unavailable: BTreeMap<ChunkPos, UnavailableReason>,
     unloaded_revisions: BTreeMap<ChunkPos, ChunkRevision>,
+    generated_revision: ChunkRevision,
     tick: TickId,
     next_commit: u64,
     limits: WorldLimits,
@@ -142,6 +144,7 @@ impl World {
             chunks: BTreeMap::new(),
             unavailable: BTreeMap::new(),
             unloaded_revisions: BTreeMap::new(),
+            generated_revision: ChunkRevision::default(),
             tick: TickId::new(0),
             next_commit: 0,
             limits,
@@ -151,6 +154,10 @@ impl World {
     #[must_use]
     pub const fn epoch(&self) -> WorldEpoch {
         self.epoch
+    }
+
+    pub fn resident_chunk_positions(&self) -> impl Iterator<Item = ChunkPos> + '_ {
+        self.chunks.keys().copied()
     }
 
     #[must_use]
@@ -179,28 +186,38 @@ impl World {
         Ok(())
     }
 
-    /// Adds generated canonical data at revision zero.
+    /// Adds generated canonical data at the world's current generation revision.
     ///
     /// # Errors
     ///
     /// Rejects replacement of a loaded chunk and unknown block IDs.
     pub fn insert_generated(&mut self, generated: GeneratedChunk) -> Result<(), CommitError> {
+        self.validate_generated(&generated)?;
+        self.install_generated(generated, self.generated_revision);
+        Ok(())
+    }
+
+    fn validate_generated(&self, generated: &GeneratedChunk) -> Result<(), CommitError> {
         if self.chunks.contains_key(&generated.pos) {
             return Err(CommitError::ChunkAlreadyLoaded(generated.pos));
         }
         if self.unloaded_revisions.contains_key(&generated.pos) {
             return Err(CommitError::ChunkRequiresRestore(generated.pos));
         }
-        self.validate_chunk(&generated.data)?;
+        self.validate_chunk(&generated.data)
+    }
+
+    fn install_generated(&mut self, generated: GeneratedChunk, revision: ChunkRevision) {
         self.unavailable.remove(&generated.pos);
+        self.unloaded_revisions.remove(&generated.pos);
         self.chunks.insert(
             generated.pos,
             ChunkSlot {
-                revision: ChunkRevision::default(),
+                regenerable: true,
+                revision,
                 data: Arc::new(generated.data),
             },
         );
-        Ok(())
     }
 
     /// Removes residency while returning the exact edited data for caller retention.
@@ -208,6 +225,11 @@ impl World {
     /// # Errors
     /// Rejects missing chunks and revisions that cannot advance on restoration.
     pub fn unload_chunk(&mut self, pos: ChunkPos) -> Result<ChunkSnapshot, CommitError> {
+        self.validate_unload(pos)?;
+        Ok(self.remove_resident_chunk(pos))
+    }
+
+    fn validate_unload(&self, pos: ChunkPos) -> Result<(), CommitError> {
         let slot = self
             .chunks
             .get(&pos)
@@ -215,22 +237,35 @@ impl World {
         slot.revision
             .checked_next()
             .ok_or(CommitError::RevisionOverflow(pos))?;
-        let slot = self
-            .chunks
-            .remove(&pos)
-            .ok_or(CommitError::ChunkNotLoaded(pos))?;
+        Ok(())
+    }
+
+    fn remove_resident_chunk(&mut self, pos: ChunkPos) -> ChunkSnapshot {
+        let slot = self.chunks.remove(&pos).expect("validated resident chunk");
         self.unloaded_revisions.insert(pos, slot.revision);
-        Ok(ChunkSnapshot {
+        ChunkSnapshot {
             pos,
             revision: slot.revision,
             data: slot.data,
-        })
+        }
+    }
+
+    /// Revision that an evicted snapshot must match to be restored.
+    #[must_use]
+    pub fn unloaded_chunk_revision(&self, pos: ChunkPos) -> Option<ChunkRevision> {
+        self.unloaded_revisions.get(&pos).copied()
     }
 
     /// Restores retained data with a fresh revision, invalidating pre-unload plans.
     /// # Errors
     /// Rejects loaded/unavailable chunks, stale snapshots, unknown blocks and overflow.
     pub fn restore_chunk(&mut self, snapshot: &ChunkSnapshot) -> Result<(), CommitError> {
+        let revision = self.validate_restore(snapshot)?;
+        self.install_restored(snapshot, revision);
+        Ok(())
+    }
+
+    fn validate_restore(&self, snapshot: &ChunkSnapshot) -> Result<ChunkRevision, CommitError> {
         if self.chunks.contains_key(&snapshot.pos) {
             return Err(CommitError::ChunkAlreadyLoaded(snapshot.pos));
         }
@@ -253,15 +288,109 @@ impl World {
             .checked_next()
             .ok_or(CommitError::RevisionOverflow(snapshot.pos))?;
         self.validate_chunk(&snapshot.data)?;
+        Ok(revision)
+    }
+
+    fn install_restored(&mut self, snapshot: &ChunkSnapshot, revision: ChunkRevision) {
         self.chunks.insert(
             snapshot.pos,
             ChunkSlot {
+                regenerable: false,
                 revision,
                 data: Arc::clone(&snapshot.data),
             },
         );
         self.unloaded_revisions.remove(&snapshot.pos);
-        Ok(())
+    }
+
+    /// Changes residency as a single batch and returns the evicted data in input order.
+    /// Retain or persist the returned snapshots for later restoration.
+    ///
+    /// # Errors
+    /// Rejects repeated positions and any invalid individual change before mutating the world.
+    pub fn replace_resident_chunks(
+        &mut self,
+        evict: &[ChunkPos],
+        restore: &[ChunkSnapshot],
+        generate: Vec<GeneratedChunk>,
+    ) -> Result<Vec<ChunkSnapshot>, CommitError> {
+        self.replace_residency(evict, restore, generate, false)
+    }
+
+    /// Change residency while discarding untouched, reproducible generated data.
+    /// The caller must use the same generator and seed for every regenerated chunk.
+    /// Generated revisions advance globally, without retaining per-position markers.
+    ///
+    /// # Errors
+    /// Rejects invalid inputs before mutating the world.
+    pub fn replace_resident_generated_chunks(
+        &mut self,
+        evict: &[ChunkPos],
+        restore: &[ChunkSnapshot],
+        generate: Vec<GeneratedChunk>,
+    ) -> Result<Vec<ChunkSnapshot>, CommitError> {
+        self.replace_residency(evict, restore, generate, true)
+    }
+
+    fn replace_residency(
+        &mut self,
+        evict: &[ChunkPos],
+        restore: &[ChunkSnapshot],
+        generate: Vec<GeneratedChunk>,
+        discard_generated: bool,
+    ) -> Result<Vec<ChunkSnapshot>, CommitError> {
+        let mut positions = BTreeSet::new();
+        for pos in evict
+            .iter()
+            .copied()
+            .chain(restore.iter().map(|chunk| chunk.pos))
+            .chain(generate.iter().map(|chunk| chunk.pos))
+        {
+            if !positions.insert(pos) {
+                return Err(CommitError::DuplicateResidencyChange(pos));
+            }
+        }
+        for &pos in evict {
+            self.validate_unload(pos)?;
+        }
+        let revisions = restore
+            .iter()
+            .map(|chunk| self.validate_restore(chunk))
+            .collect::<Result<Vec<_>, _>>()?;
+        for chunk in &generate {
+            self.validate_generated(chunk)?;
+        }
+        // Generated chunks never modified since their generation share a
+        // world-wide watermark. Advance it before forgetting any of them so
+        // even a later direct insertion cannot reuse an evicted revision.
+        let generated_revision = if discard_generated
+            && let Some(pos) = evict
+                .first()
+                .copied()
+                .or_else(|| generate.first().map(|chunk| chunk.pos))
+        {
+            self.generated_revision
+                .checked_next()
+                .ok_or(CommitError::RevisionOverflow(pos))?
+        } else {
+            self.generated_revision
+        };
+        let mut evicted = Vec::new();
+        for &pos in evict {
+            if discard_generated && self.chunks[&pos].regenerable {
+                self.chunks.remove(&pos);
+            } else {
+                evicted.push(self.remove_resident_chunk(pos));
+            }
+        }
+        self.generated_revision = generated_revision;
+        for (chunk, revision) in restore.iter().zip(revisions) {
+            self.install_restored(chunk, revision);
+        }
+        for chunk in generate {
+            self.install_generated(chunk, generated_revision);
+        }
+        Ok(evicted)
     }
 
     /// Loads or overwrites a canonical chunk from durable storage recovery (`WAL` / `RegionStore`)
@@ -296,6 +425,7 @@ impl World {
         self.chunks.insert(
             snapshot.pos,
             ChunkSlot {
+                regenerable: false,
                 revision: snapshot.revision,
                 data: snapshot.data,
             },
@@ -427,6 +557,7 @@ impl World {
         for delta in &staged {
             if let Some(slot) = self.chunks.get_mut(&delta.pos) {
                 slot.revision = delta.after_revision;
+                slot.regenerable = false;
                 slot.data = Arc::clone(&delta.after);
             }
         }
@@ -548,6 +679,7 @@ pub enum CommitError {
     TooManyChunks(usize),
     DuplicateWrite(VoxelPos),
     DuplicateExpectation(ChunkPos),
+    DuplicateResidencyChange(ChunkPos),
     ChunkNotLoaded(ChunkPos),
     ChunkAlreadyLoaded(ChunkPos),
     ChunkRequiresRestore(ChunkPos),
@@ -589,6 +721,97 @@ mod tests {
             })
             .unwrap();
         (world, stone, pos)
+    }
+
+    #[test]
+    fn residency_batch_keeps_world_unchanged_when_later_input_is_invalid() {
+        let (mut world, _, resident) = setup();
+        let returning = ChunkPos { x: 1, ..resident };
+        let fresh = ChunkPos { x: 2, ..resident };
+        let generated = |pos| GeneratedChunk {
+            pos,
+            data: ChunkData::uniform(BlockStateId::AIR),
+        };
+        world.insert_generated(generated(returning)).unwrap();
+        let snapshot = world.unload_chunk(returning).unwrap();
+        assert!(matches!(
+            world.replace_resident_chunks(
+                &[resident],
+                std::slice::from_ref(&snapshot),
+                vec![generated(resident)]
+            ),
+            Err(CommitError::DuplicateResidencyChange(pos)) if pos == resident
+        ));
+        let mut stale = snapshot.clone();
+        stale.revision = stale.revision.checked_next().unwrap();
+        assert!(matches!(
+            world.replace_resident_chunks(&[resident], &[stale], vec![generated(fresh)]),
+            Err(CommitError::RevisionConflict { pos, .. }) if pos == returning
+        ));
+        assert!(world.chunk(resident).is_some());
+        assert!(world.chunk(returning).is_none());
+        assert!(world.chunk(fresh).is_none());
+        let evicted = world
+            .replace_resident_chunks(&[resident], &[snapshot], vec![generated(fresh)])
+            .unwrap();
+        assert_eq!(evicted[0].pos, resident);
+        assert!(world.chunk(resident).is_none());
+        assert!(world.chunk(returning).is_some());
+        assert!(world.chunk(fresh).is_some());
+    }
+
+    #[test]
+    fn streaming_discards_pristine_payload_but_keeps_revision_and_edits() {
+        let (mut world, stone, chunk) = setup();
+        let voxel = VoxelPos { x: 4, y: 5, z: 6 };
+        let generate = || GeneratedChunk {
+            pos: chunk,
+            data: ChunkData::uniform(BlockStateId::AIR),
+        };
+        for _ in 0..2 {
+            let previous = world.chunk(chunk).unwrap().revision;
+            assert!(
+                world
+                    .replace_resident_generated_chunks(&[chunk], &[], vec![])
+                    .unwrap()
+                    .is_empty()
+            );
+            assert!(world.unloaded_revisions.is_empty());
+            world.insert_generated(generate()).unwrap();
+            assert!(world.chunk(chunk).unwrap().revision > previous);
+            assert!(matches!(
+                world.commit(EditTxn {
+                    source: EditSource::Simulation,
+                    expected: vec![(chunk, previous)],
+                    writes: vec![VoxelWrite {
+                        pos: voxel,
+                        block: stone
+                    }],
+                }),
+                Err(CommitError::RevisionConflict { .. })
+            ));
+        }
+        world
+            .commit(EditTxn {
+                source: EditSource::Editor,
+                expected: vec![],
+                writes: vec![VoxelWrite {
+                    pos: voxel,
+                    block: stone,
+                }],
+            })
+            .unwrap();
+        let retained = world
+            .replace_resident_generated_chunks(&[chunk], &[], vec![])
+            .unwrap();
+        assert_eq!(retained.len(), 1);
+        assert!(
+            matches!(world.replace_resident_generated_chunks(&[], &[], vec![generate()]), Err(CommitError::ChunkRequiresRestore(pos)) if pos == chunk)
+        );
+        world
+            .replace_resident_generated_chunks(&[], &retained, vec![])
+            .unwrap();
+        assert_eq!(world.sample(voxel), Sample::Loaded(stone));
     }
 
     #[test]

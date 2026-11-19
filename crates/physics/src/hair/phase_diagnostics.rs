@@ -12,6 +12,11 @@ pub fn observe_contact_frame<T>(frame: usize, run: impl FnOnce() -> T) -> T {
     assert!(frame > 0, "contact observation frames are one-based");
     with_observation_frame(Some(frame), run)
 }
+/// Capture the current diagnostic frame for execution on another thread.
+pub fn inherit_contact_frame<T>(run: impl FnOnce() -> T) -> impl FnOnce() -> T {
+    let frame = observation_frame();
+    move || with_observation_frame(frame, run)
+}
 pub(super) fn observation_frame() -> Option<usize> {
     CONTACT_OBSERVATION_FRAME.get()
 }

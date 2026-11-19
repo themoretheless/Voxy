@@ -78,6 +78,17 @@ pub(crate) struct LoadStatus {
     pub cancellable: bool,
 }
 impl App {
+    pub(crate) fn editor_load_holds_gpu_inventory(&self) -> bool {
+        matches!(
+            self.editor_load,
+            Some(
+                PendingEditorLoad::Models { .. }
+                    | PendingEditorLoad::Ui { .. }
+                    | PendingEditorLoad::Audio { .. }
+            )
+        )
+    }
+
     pub(crate) fn editor_load_status(&self) -> Option<LoadStatus> {
         let pending = self.editor_load.as_ref()?;
         let cancelled = match pending {
@@ -355,9 +366,9 @@ impl App {
                     if !self.restore_audio_frozen() {
                         return Ok(PendingEditorLoad::Fencing { request, saved });
                     }
-                    let native_enabled = self.audio.output_mode()
-                        == audio_session::AudioOutputMode::Native
-                        || self.window.is_some();
+                    let native_enabled = !self.audio.reconnecting_offline()
+                        && (self.audio.output_mode() == audio_session::AudioOutputMode::Native
+                            || self.window.is_some());
                     let rate = native_enabled
                         .then(|| saved.game.audio.playback_rate())
                         .flatten();
@@ -396,6 +407,7 @@ impl App {
                     let ui_actions = self.ui_action_checkpoints.clone();
                     let prepare_registry = registry.clone();
                     let root = request.root.clone();
+                    let package = self.model_package.clone();
                     let policy = request.policy.clone();
                     let cache = self
                         .graphics
@@ -412,6 +424,7 @@ impl App {
                                         behaviors: &behaviors,
                                         ui_actions: &ui_actions,
                                         root: &root,
+                                        package,
                                         resources: policy.resources,
                                         play: policy.play,
                                         ui: policy.file.game.ui,

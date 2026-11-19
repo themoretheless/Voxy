@@ -33,6 +33,8 @@ pub struct ObjectOverride {
     pub name: Option<String>,
     pub active: Option<bool>,
     pub translation: Option<[f32; 3]>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub precise_translation_bits: Option<[u64; 3]>,
     pub rotation: Option<[f32; 4]>,
     pub scale: Option<[f32; 3]>,
     /// Some replaces/adds a registered component; None removes it.
@@ -60,6 +62,12 @@ impl ObjectOverride {
         }
         if let Some(value) = self.translation {
             object.translation = value;
+            object.precise_translation_bits = self.precise_translation_bits;
+            object.checked_precise_translation()?;
+        } else if self.precise_translation_bits.is_some() {
+            return Err(invalid(
+                "precise translation override requires a translation",
+            ));
         }
         if let Some(value) = self.rotation {
             object.rotation = value;
@@ -550,8 +558,11 @@ impl PrefabSceneDocument {
                 if old.active != new.active {
                     overrides.active = Some(new.active);
                 }
-                if old.translation != new.translation {
+                if old.translation != new.translation
+                    || old.precise_translation_bits != new.precise_translation_bits
+                {
                     overrides.translation = Some(new.translation);
+                    overrides.precise_translation_bits = new.precise_translation_bits;
                 }
                 if old.rotation != new.rotation {
                     overrides.rotation = Some(new.rotation);

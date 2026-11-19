@@ -345,7 +345,7 @@ impl FilmPreview {
     #[allow(dead_code)]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     pub fn restore_snapshot(&mut self, snapshot: &serde_json::Value) -> Result<(), &'static str> {
         use physics::surface_film::{SurfaceFilmState, Wetting};
@@ -841,7 +841,7 @@ mod tests {
     #[ignore = "expensive full-body spatial refinement study"]
     #[expect(
         clippy::too_many_lines,
-        reason = "predates the function-size ratchet (docs/refactor/PLAN.md 6.2)"
+        reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
     fn body_gravity_transport_spatial_refinement() {
         let (vertices, indices) = body_fixture();

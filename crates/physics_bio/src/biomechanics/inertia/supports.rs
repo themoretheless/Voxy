@@ -1,5 +1,6 @@
 //! Prescribed support motion with an independent reaction-work energy guard.
 use super::{InertialBody, PlaneContact, PrescribedTriangleSurface, Vec3, cross, dot};
+use crate::biomechanics::Rejection;
 use std::sync::Arc;
 
 #[derive(Clone, Copy, Debug)]
@@ -303,10 +304,10 @@ impl InertialBody {
             self.body.gap_path_is_open(&self.body.positions, &positions)
         };
         if !gaps_open {
-            return Err("inertial tissue gap path crossing");
+            return Err(Rejection::TissueGapPathCrossing.message());
         }
         if !self.volume_path_is_open(&positions) {
-            return Err("inertial tetrahedral path collapse");
+            return Err(Rejection::TetrahedralPathCollapse.message());
         }
         if angular_increment != [0.; 3] {
             self.certify_plane_motion_path(&positions, next_plane.unwrap(), angular_increment)?;
@@ -452,9 +453,9 @@ impl InertialBody {
             || defect.abs() > energy_tolerance_j
         {
             return Err(if prescribed.is_some() {
-                "finite-deformation inertial support work defect"
+                Rejection::FiniteDeformationSupportWork.message()
             } else {
-                "finite-deformation inertial energy defect"
+                Rejection::FiniteDeformationEnergy.message()
             });
         }
         if let Some(skin) = next_skin_motion {

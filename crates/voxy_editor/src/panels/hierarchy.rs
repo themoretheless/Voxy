@@ -309,6 +309,7 @@ mod tests {
             name: id.into(),
             active: true,
             translation: [0.; 3],
+            precise_translation_bits: None,
             rotation: [0., 0., 0., 1.],
             scale: [1.; 3],
             components: Default::default(),

@@ -15,6 +15,7 @@ pub fn audit(
     diagnostic_capture: bool,
     physics_steps: u64,
     completed_frame_seconds: &[f64],
+    completion_intervals_seconds: &[f64],
 ) -> RenderedCycle {
     let frames = completed_frame_seconds.len() as u64;
     let every_physics_step_rendered = offscreen && every_step_requested && physics_steps == frames;
@@ -26,14 +27,35 @@ pub fn audit(
     let minimum_120_completed_fps = every_physics_step_rendered
         && !diagnostic_capture
         && complete_cycles > 0
-        && completed_frame_seconds
-            .iter()
-            .all(|&seconds| seconds.is_finite() && seconds > 0. && seconds <= PHYSICS_DT);
+        && completion_intervals_seconds.len() == completed_frame_seconds.len()
+        && frames_within_budget(completed_frame_seconds)
+        && frames_within_budget(completion_intervals_seconds);
     RenderedCycle {
         every_physics_step_rendered,
         complete_cycles,
         minimum_120_completed_fps,
     }
+}
+
+pub fn minimum_120_presented_fps(
+    timing_valid: bool,
+    physics_steps: u64,
+    elapsed_seconds: f64,
+    frame_seconds: &[f64],
+) -> bool {
+    timing_valid
+        && physics_steps >= MOTION_CYCLE_STEPS
+        && frame_seconds.len() as u64 >= MOTION_CYCLE_STEPS
+        && elapsed_seconds.is_finite()
+        && elapsed_seconds > 0.
+        && elapsed_seconds <= frame_seconds.len() as f64 * PHYSICS_DT
+        && frames_within_budget(frame_seconds)
+}
+
+fn frames_within_budget(frame_seconds: &[f64]) -> bool {
+    frame_seconds
+        .iter()
+        .all(|&seconds| seconds.is_finite() && seconds > 0. && seconds <= PHYSICS_DT)
 }
 
 /// Outcome of comparing baseline and candidate p99 frame times.
@@ -89,24 +111,50 @@ pub fn compare_cycle_p99_ms(
 mod tests {
     use super::*;
     #[test]
+    fn window_gate_checks_wall_time_and_every_presented_frame() {
+        let mut samples = vec![PHYSICS_DT; 2400];
+        assert!(minimum_120_presented_fps(true, 2400, 20., &samples));
+        assert!(!minimum_120_presented_fps(true, 2400, 20.01, &samples));
+        assert!(!minimum_120_presented_fps(
+            true,
+            2400,
+            20.,
+            &samples[..2399]
+        ));
+        samples[0] = f64::NAN;
+        assert!(!minimum_120_presented_fps(true, 2400, 20., &samples));
+    }
+    #[test]
     fn a_physics_cycle_with_only_eighty_rendered_frames_cannot_pass() {
         let samples = vec![PHYSICS_DT; 80];
-        assert_eq!(audit(true, false, false, 2400, &samples).complete_cycles, 0);
-        assert!(!audit(true, true, false, 2400, &samples).minimum_120_completed_fps);
+        assert_eq!(
+            audit(true, false, false, 2400, &samples, &samples).complete_cycles,
+            0
+        );
+        assert!(!audit(true, true, false, 2400, &samples, &samples).minimum_120_completed_fps);
     }
     #[test]
     fn requires_a_complete_rendered_cycle_and_every_completed_frame_within_budget() {
         let mut samples = vec![PHYSICS_DT; 2400];
-        let passed = audit(true, true, false, 2400, &samples);
+        let passed = audit(true, true, false, 2400, &samples, &samples);
         assert_eq!(passed.complete_cycles, 1);
         assert!(passed.minimum_120_completed_fps);
-        assert!(!audit(true, true, false, 2399, &samples[..2399]).minimum_120_completed_fps);
-        assert!(!audit(true, true, false, 2399, &samples).minimum_120_completed_fps);
-        assert!(!audit(true, true, true, 2400, &samples).minimum_120_completed_fps);
-        assert!(!audit(false, true, false, 2400, &samples).minimum_120_completed_fps);
+        let mut intervals = samples.clone();
+        intervals[123] = PHYSICS_DT + 0.001;
+        assert!(!audit(true, true, false, 2400, &samples, &intervals).minimum_120_completed_fps);
+        assert!(
+            !audit(true, true, false, 2400, &samples, &intervals[..2399]).minimum_120_completed_fps
+        );
+        assert!(
+            !audit(true, true, false, 2399, &samples[..2399], &samples[..2399])
+                .minimum_120_completed_fps
+        );
+        assert!(!audit(true, true, false, 2399, &samples, &samples).minimum_120_completed_fps);
+        assert!(!audit(true, true, true, 2400, &samples, &samples).minimum_120_completed_fps);
+        assert!(!audit(false, true, false, 2400, &samples, &samples).minimum_120_completed_fps);
         for invalid in [PHYSICS_DT + 1e-9, f64::NAN, f64::INFINITY, -1., 0.] {
             samples[123] = invalid;
-            assert!(!audit(true, true, false, 2400, &samples).minimum_120_completed_fps);
+            assert!(!audit(true, true, false, 2400, &samples, &samples).minimum_120_completed_fps);
         }
     }
 

@@ -7,8 +7,8 @@
 
 use std::sync::Arc;
 use voxy_assets::{
-    AssetId, AssetLocations, AssetSourceProvider, ImportInputs, PROJECT_PACKAGE_LIMITS,
-    ProjectDescriptor, ResourcePackage, SourcePath,
+    AssetId, AssetLocations, AssetSourceProvider, ImportInputs, ImportedAsset,
+    PROJECT_PACKAGE_LIMITS, ProjectDescriptor, ResourcePackage, SourcePath,
 };
 use voxy_gameplay::{
     GameplayError, UiActionCheckpointRegistry, UiActionEvent, UiActionHandler, UiActionHandlers,
@@ -132,6 +132,105 @@ const DEFAULT_DOCUMENT_BYTES: usize = 8 * 1024 * 1024;
 const DEFAULT_MANIFEST_BYTES: usize = 65_536;
 const DEFAULT_MANIFEST_ENTRIES: usize = 128;
 
+/// Read the project bootstrap and its asset manifest directly from an archive.
+/// # Errors
+/// Rejects an invalid bootstrap, non-UTF-8 paths or manifests, and manifest budget violations.
+pub fn read_packaged_project_manifest(
+    package: &ResourcePackage,
+    max_entries: usize,
+    max_manifest_bytes: usize,
+    max_source_bytes: usize,
+) -> Result<(SourcePath, ProjectDescriptor, AssetLocations), String> {
+    let (bootstrap, descriptor) = package.open_project_descriptor()?;
+    let manifest = packaged_source_path(&descriptor.asset_manifest)?;
+    let bytes = package.read(&manifest.observation_id(), max_manifest_bytes)?;
+    let assets =
+        parse_packaged_manifest(&bytes, max_entries, max_manifest_bytes, max_source_bytes)?;
+    Ok((bootstrap, descriptor, assets))
+}
+
+fn parse_packaged_manifest(
+    bytes: &[u8],
+    max_entries: usize,
+    max_manifest_bytes: usize,
+    max_source_bytes: usize,
+) -> Result<AssetLocations, String> {
+    AssetLocations::from_json(
+        std::str::from_utf8(bytes).map_err(|error| format!("manifest UTF-8: {error}"))?,
+        max_entries,
+        max_source_bytes,
+        max_manifest_bytes,
+    )
+    .map_err(|error| format!("asset manifest: {error}"))
+}
+
+fn packaged_source_path(path: &std::path::Path) -> Result<SourcePath, String> {
+    let text = path
+        .to_str()
+        .ok_or_else(|| "project source path must be UTF-8".to_string())?;
+    SourcePath::new(text.to_owned()).map_err(|error| error.to_string())
+}
+
+const PACKAGED_PREFAB_LIMITS: PrefabLimits = PrefabLimits {
+    max_objects: 4096,
+    max_instances: 128,
+    max_depth: 16,
+};
+
+/// Startup composition, its expanded runtime scene, and observed prefab documents.
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub struct AuthoredScene {
+    pub source: PrefabSceneDocument,
+    pub expanded: SceneDocument,
+    pub dependencies: std::collections::BTreeMap<String, PrefabSceneDocument>,
+}
+
+/// Load the startup scene and its nested prefabs directly from the archive.
+/// # Errors
+/// Rejects missing sources, invalid documents, unknown components and exceeded prefab limits.
+pub fn read_packaged_project_scene(
+    package: &ResourcePackage,
+    descriptor: &ProjectDescriptor,
+    assets: &AssetLocations,
+    registry: &ComponentRegistry,
+) -> Result<LoadedScene, String> {
+    let source = packaged_source_path(&descriptor.startup_scene)?;
+    expand_packaged_scene(&source, assets, registry, |id| {
+        package.read(id, DEFAULT_DOCUMENT_BYTES)
+    })?
+    .expanded
+    .load(registry, PACKAGED_PREFAB_LIMITS.max_objects)
+    .map_err(|error| error.to_string())
+}
+
+fn expand_packaged_scene<B: AsRef<[u8]>>(
+    source: &SourcePath,
+    assets: &AssetLocations,
+    registry: &ComponentRegistry,
+    mut read: impl FnMut(&AssetId) -> Result<B, String>,
+) -> Result<AuthoredScene, String> {
+    let startup: PrefabSceneDocument =
+        serde_json::from_slice(read(&source.observation_id())?.as_ref())
+            .map_err(|error| error.to_string())?;
+    let mut dependencies = std::collections::BTreeMap::new();
+    let expanded = startup
+        .expand(registry, PACKAGED_PREFAB_LIMITS, |id| {
+            let path = assets
+                .source(&AssetId(id.into()))
+                .ok_or_else(|| DocumentError::Invalid(format!("missing prefab {id}")))?;
+            let bytes = read(&path.observation_id()).map_err(DocumentError::Invalid)?;
+            let document: PrefabSceneDocument = serde_json::from_slice(bytes.as_ref())?;
+            dependencies.insert(id.to_owned(), document.clone());
+            Ok(document)
+        })
+        .map_err(|error| error.to_string())?;
+    Ok(AuthoredScene {
+        source: startup,
+        expanded: expanded.document,
+        dependencies,
+    })
+}
+
 /// Zero-extract in-memory packaged project opened directly from a `.vpak` [`ResourcePackage`].
 ///
 /// Validates the launch bootstrap (`__voxy_game.json`), project descriptor, asset manifest,
@@ -143,6 +242,7 @@ pub struct InMemoryPackagedProject {
     pub assets: AssetLocations,
     pub document: SceneDocument,
     pub loaded: LoadedScene,
+    pub authoring: ImportedAsset<AuthoredScene>,
     pub package: Arc<ResourcePackage>,
     pub provider: AssetSourceProvider,
 }
@@ -164,15 +264,21 @@ impl InMemoryPackagedProject {
         package: Arc<ResourcePackage>,
         registry: &ComponentRegistry,
     ) -> Result<Self, String> {
+        Self::from_package_with_scene_limit(package, registry, DEFAULT_DOCUMENT_BYTES, false)
+    }
+
+    /// Open a package with the host's existing scene budget and missing-model policy.
+    /// # Errors
+    /// Rejects invalid sources, unsupported composition and exceeded quotas.
+    pub fn from_package_with_scene_limit(
+        package: Arc<ResourcePackage>,
+        registry: &ComponentRegistry,
+        max_scene_bytes: usize,
+        allow_missing_models: bool,
+    ) -> Result<Self, String> {
         let (bootstrap, descriptor) = package.open_project_descriptor()?;
-        let source_path = |path: &std::path::Path| -> Result<SourcePath, String> {
-            let text = path
-                .to_str()
-                .ok_or_else(|| "project source path must be UTF-8".to_string())?;
-            SourcePath::new(text.to_owned()).map_err(|error| error.to_string())
-        };
-        let manifest_source = source_path(&descriptor.asset_manifest)?;
-        let scene_source = source_path(&descriptor.startup_scene)?;
+        let manifest_source = packaged_source_path(&descriptor.asset_manifest)?;
+        let scene_source = packaged_source_path(&descriptor.startup_scene)?;
         if manifest_source == bootstrap
             || scene_source == bootstrap
             || manifest_source == scene_source
@@ -182,57 +288,49 @@ impl InMemoryPackagedProject {
 
         let provider = AssetSourceProvider::from_package(Arc::clone(&package));
         let mut inputs = ImportInputs::new(130, 16 * 1024 * 1024);
-        let manifest_snapshot = inputs
+        let manifest = inputs
             .read(manifest_source.observation_id(), |id, limit| {
                 provider.read(id, limit.min(DEFAULT_MANIFEST_BYTES))
             })
             .map_err(|error| format!("manifest input: {error:?}"))?;
-        let manifest_str = std::str::from_utf8(&manifest_snapshot.bytes)
-            .map_err(|error| format!("manifest UTF-8: {error}"))?;
-        let assets = AssetLocations::from_json(
-            manifest_str,
+        let assets = parse_packaged_manifest(
+            &manifest.bytes,
             DEFAULT_MANIFEST_ENTRIES,
             DEFAULT_MANIFEST_BYTES,
             DEFAULT_MANIFEST_BYTES,
-        )
-        .map_err(|error| format!("asset manifest: {error}"))?;
+        )?;
 
         for (_, source) in assets.bindings() {
-            provider.fingerprint(
-                &source.observation_id(),
-                PROJECT_PACKAGE_LIMITS.max_payload_bytes,
-            )?;
+            let may_be_missing = allow_missing_models
+                && std::path::Path::new(source.as_str())
+                    .extension()
+                    .and_then(|extension| extension.to_str())
+                    .is_some_and(|extension| {
+                        matches!(
+                            extension.to_ascii_lowercase().as_str(),
+                            "obj" | "gltf" | "glb" | "vmodel"
+                        )
+                    });
+            if !may_be_missing {
+                provider.fingerprint(
+                    &source.observation_id(),
+                    PROJECT_PACKAGE_LIMITS.max_payload_bytes,
+                )?;
+            }
         }
 
-        let scene_snapshot = inputs
-            .read(scene_source.observation_id(), |id, limit| {
-                provider.read(id, limit.min(DEFAULT_DOCUMENT_BYTES))
-            })
-            .map_err(|error| format!("scene input: {error:?}"))?;
-        let prefab_scene: PrefabSceneDocument =
-            serde_json::from_slice(&scene_snapshot.bytes).map_err(|error| error.to_string())?;
-        let limits = PrefabLimits {
-            max_objects: 4096,
-            max_instances: 128,
-            max_depth: 16,
-        };
-        let expanded = prefab_scene
-            .expand(registry, limits, |asset| {
-                let path = assets.source(&AssetId(asset.into())).ok_or_else(|| {
-                    DocumentError::Invalid(format!("unknown prefab asset {asset}"))
-                })?;
-                let snapshot = inputs
-                    .read(path.observation_id(), |id, limit| {
-                        provider.read(id, limit.min(DEFAULT_DOCUMENT_BYTES))
-                    })
-                    .map_err(|error| DocumentError::Invalid(format!("prefab input: {error:?}")))?;
-                serde_json::from_slice(&snapshot.bytes).map_err(Into::into)
-            })
-            .map_err(|error| error.to_string())?;
+        let expanded = expand_packaged_scene(&scene_source, &assets, registry, |id| {
+            inputs
+                .read(id.clone(), |id, limit| {
+                    provider.read(id, limit.min(max_scene_bytes))
+                })
+                .map(|snapshot| snapshot.bytes)
+                .map_err(|error| format!("packaged scene input: {error:?}"))
+        })?;
         let publication = inputs
-            .finish(expanded.document, |id, limit| provider.read(id, limit))
+            .finish(expanded, |id, limit| provider.read(id, limit))
             .map_err(|error| format!("packaged scene validation failed: {error:?}"))?;
-        let document = publication.value().clone();
+        let document = publication.value().expanded.clone();
         for object in &document.objects {
             if let Some(id) = object
                 .components
@@ -244,7 +342,7 @@ impl InMemoryPackagedProject {
             }
         }
         let loaded = document
-            .load(registry, limits.max_objects)
+            .load(registry, PACKAGED_PREFAB_LIMITS.max_objects)
             .map_err(|error| error.to_string())?;
 
         Ok(Self {
@@ -253,6 +351,7 @@ impl InMemoryPackagedProject {
             assets,
             document,
             loaded,
+            authoring: publication,
             package,
             provider,
         })

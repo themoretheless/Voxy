@@ -50,6 +50,8 @@ mod perfusion;
 pub use perfusion::{PerfusionCellSolute, PerfusionPort, PorePerfusion, diascopy_blanching_factor};
 mod contact_mollifier;
 mod lbfgs;
+mod rejection;
+pub(crate) use rejection::Rejection;
 mod surface_contact;
 pub use contact_mollifier::edge_contact_mollifier;
 mod contact_precision;
